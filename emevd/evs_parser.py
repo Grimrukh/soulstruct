@@ -1,11 +1,3 @@
-"""
-TODO:
-    - Work on event arguments. The issue is that these arguments could be used as implicit tests, like calling a Flag,
-      so I need to know what type they are. I guess the easiest way is to just call the
-
-"""
-
-
 import ast
 from collections import OrderedDict
 from functools import partial
