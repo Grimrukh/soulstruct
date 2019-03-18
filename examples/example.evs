@@ -26,7 +26,7 @@ from emevd import *
 # that you can carefully control which constants (particularly Flags) each map's script has access to, which will
 # reduce the chances of accidental, crippling, silent bugs caused by using the wrong one. Note that unlike the general
 # star import above, any imports here do matter to the compiler and will determine what constants it has access to.
-from emevd.example_constants import *
+from examples.example_constants import *
 
 # (I'll consider adding support for you to directly define your constants here, but it complicates things, and you
 # should really be keeping them separate anyway.)
