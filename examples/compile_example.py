@@ -7,14 +7,14 @@ if __name__ == '__main__':
 
     # Feed our script to the Emevd() class, which will read essentially anything you give it and convert it into a
     # fully transparent EMEVD structure. (Thank our EMEVD messiah, HotPocketRemix, for mapping the file structure.)
-    example_emevd = Emevd('example.evs')
+    example_emevd = Emevd('example.py')
 
     # We can convert our EMEVD file to numeric data (probably only useful for legacy reasons):
     print("NUMERIC:\n")
     print(example_emevd.to_numeric())
 
     # Write it to a text file. You can pass a specific file path to this method, but by default it will use your
-    # original EVS script path with the extension changed to 'numeric.txt'.
+    # original EVS/PY script path with the extension changed to 'numeric.txt'.
     example_emevd.write_numeric()
 
     # Or convert it to verbose, where you can see the final compiled instructions:
@@ -28,6 +28,6 @@ if __name__ == '__main__':
     # '{script_name}.emevd'.
     example_emevd.write_packed()
 
-    # Now try replacing 'example.evs' above with 'example.emevd', and you should see the exact same output. You can
+    # Now try replacing 'example.py' above with 'example.emevd', and you should see the exact same output. You can
     # also replacing it with 'example.numeric.txt', but not the verbose file, which is output only (just like EVS is
     # input only).
