@@ -3,13 +3,16 @@
                         Before you read any further, I recommend associating
                         the EVS file type with Python files in your IDE so
                         you can see all the useful syntax highlighting and
-                        even use auto-completion and inspection. (You can
-                        also just use the '.py' extension if you prefer.)
+                        even use auto-completion and inspection. 
+                        
+                        You can also just use the '.py' extension if you 
+                        prefer, which I've used here so that you can see the 
+                        syntax highlighting on GitHub.
 
                         You can ask me anything on the ?ServerName? Dark
                         Souls modding Discord. I'm sure there are bugs and
                         typos; I haven't tried every single instruction and
-                        test yet. You can raise these on Github as well.
+                        test yet. You can raise these on GitHub as well.
 
                         All the best with your event modding, and I hope this
                         helps.
