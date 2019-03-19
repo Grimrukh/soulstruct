@@ -51,10 +51,20 @@ def CONSTRUCTOR():
     """ 0: Constructor run on map load. """
 
     PullOutMeltedIronKey()
+
     # This event takes arguments when run, which creates an 'instance' of the event that has specific constants.
     # The names and types of the arguments are defined in the event argument list. You can only use positional
     # arguments here, as order matters, and the first argument must always be the slot number.
     DespawnChanneler(0, CHARACTERS.DepthsChanneler)
+
+    # The event above could probably have had the Channeler hard-coded into it, but here's an event that actually has
+    # multiple instance slots created: the trigger for Slimes falling onto you from the ceiling. I've just used the IDs
+    # for the trigger regions and Slimes directly, to show it works. The last argument is the delay between the trigger
+    # and the actually fall (see the event).
+    SlimeAmbush(0, 1002100, 1002110, 1000100, 0.0)
+    SlimeAmbush(1, 1002101, 1002112, 1000101, 0.5)
+    SlimeAmbush(2, 1002102, 1002113, 1000102, 0.4)
+    SlimeAmbush(3, 1002102, 1002113, 1000103, 0.2)  # The last two slimes have the same trigger regions.
 
 
 # Here's a better example of an event name.
@@ -63,7 +73,7 @@ def PullOutMeltedIronKey():
     # """ [ThisEventFlagName] EventID[: description] """
     # The EventID is compulsory, but the flag name and description are optional. The description will be attached to
     # the event data in EmevdCompiler.events. You can actually use this flag name elsewhere in your script, as they're
-    # all collected by the compiler before intepreting code, but if you want to access the flag from another script or
+    # all collected by the compiler before interpreting code, but if you want to access the flag from another script or
     # make your intelli-sense happy, you'll still need to put the same flag name and ID in your constants.
     """ MeltedIronKeyReceived 11000112: Inspect door to Depths from Blighttown and pull out Melted Iron Key. """
 
@@ -151,10 +161,10 @@ def DespawnChanneler(channeler: int):
 
 
 # To add to the above, this RestartOnRest decorator is most often used with events that control the appearance of
-# enemies. (NPC appeareance is usually controlled in event 50, the PRECONSTRUCTOR, which seems to restart on rest
+# enemies. (NPC appearance is usually controlled in event 50, the PRECONSTRUCTOR, which seems to restart on rest
 # by default.) Enemies will otherwise respawn as soon as you rest, despite being disabled once when the map loaded.
 @RestartOnRest
-def event11005100(trigger_region_1: Region, trigger_region_2: Region, slime: Character, delay: float):
+def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Character, delay: float):
     # Here we see that you can actually specify the exact DS type of your arguments. This is required to use them
     # implicitly in condition tests, because we need to know exactly what they are.
     """ 11005100: Slime ambushes. Now takes two region triggers rather than one. """
