@@ -56,6 +56,7 @@ class EmevdCompiler(object):
             self.tree = ast.parse(script.read())
 
         self.map_name = os.path.basename(evs_path).split('.')[0]
+        self.script_docstring = None
 
         self.constants = {}  # Will also contain all star-imported constants (Flags, Characters, etc.)
         constants = importlib.import_module('emevd.constants')
@@ -82,9 +83,10 @@ class EmevdCompiler(object):
         """ Top-level node traversal. Only acceptable nodes at this top level are ImportFrom (for importing your
         constants) and FunctionDef (for your event scripts). """
 
-        # self.map_name = ast.get_docstring(self.tree)  # Using file name instead.
+        self.script_docstring = ast.get_docstring(self.tree)
+        script_body = self.tree.body[1:] if self.script_docstring is not None else self.tree.body
 
-        for node in self.tree.body[1:]:
+        for node in script_body:
 
             if isinstance(node, ast.Import):
                 raise EmevdSyntaxError(node.lineno,
