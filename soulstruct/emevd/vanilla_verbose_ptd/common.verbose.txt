@@ -1,0 +1,1227 @@
+Event ID: 0
+Restarts: Never
+Event Arguments: {} ()
+    END event IF multiplayer status is Client
+    DISABLE Event Flag ID 760
+    DISABLE Event Flag ID 762
+    DISABLE Event Flag ID 765
+    Run Event (ID: 260, Slot: 0, Arguments: {11810000, 10010600, 0})
+    Run Event (ID: 260, Slot: 1, Arguments: {257, 10010610, 0})
+    Run Event (ID: 260, Slot: 2, Arguments: {710, 10010620, 0})
+    Run Event (ID: 761, Slot: 0, Arguments: {0})
+    Run Event (ID: 763, Slot: 0, Arguments: {0})
+    Run Event (ID: 290, Slot: 0, Arguments: {0})
+    Run Event (ID: 701, Slot: 0, Arguments: {0})
+    Run Event (ID: 702, Slot: 0, Arguments: {0})
+    Run Event (ID: 717, Slot: 0, Arguments: {0})
+    Run Event (ID: 718, Slot: 0, Arguments: {0})
+    Run Event (ID: 706, Slot: 0, Arguments: {0})
+    Run Event (ID: 740, Slot: 0, Arguments: {0})
+    Run Event (ID: 750, Slot: 0, Arguments: {0})
+    Run Event (ID: 752, Slot: 0, Arguments: {0})
+    Run Event (ID: 757, Slot: 0, Arguments: {0})
+    Run Event (ID: 758, Slot: 0, Arguments: {0})
+    Run Event (ID: 759, Slot: 0, Arguments: {0})
+    Run Event (ID: 754, Slot: 0, Arguments: {0})
+    Run Event (ID: 770, Slot: 0, Arguments: {0})
+    Run Event (ID: 772, Slot: 0, Arguments: {0})
+    Run Event (ID: 730, Slot: 0, Arguments: {0})
+    Run Event (ID: 731, Slot: 0, Arguments: {0})
+    Run Event (ID: 766, Slot: 0, Arguments: {0})
+    Run Event (ID: 710, Slot: 0, Arguments: {0})
+    Run Event (ID: 711, Slot: 0, Arguments: {2500, 711})
+    Run Event (ID: 711, Slot: 1, Arguments: {2501, 712})
+    Run Event (ID: 711, Slot: 2, Arguments: {2502, 713})
+    Run Event (ID: 711, Slot: 3, Arguments: {2504, 714})
+    Run Event (ID: 715, Slot: 0, Arguments: {0})
+    Run Event (ID: 716, Slot: 0, Arguments: {0})
+    Run Event (ID: 8131, Slot: 0, Arguments: {202, 203})
+    Run Event (ID: 8131, Slot: 1, Arguments: {204, 205})
+    Run Event (ID: 8131, Slot: 2, Arguments: {206, 207})
+    Run Event (ID: 8131, Slot: 3, Arguments: {208, 209})
+    Run Event (ID: 8131, Slot: 4, Arguments: {210, 211})
+    Run Event (ID: 8131, Slot: 5, Arguments: {212, 213})
+    Run Event (ID: 8131, Slot: 6, Arguments: {214, 215})
+    Run Event (ID: 819, Slot: 0, Arguments: {0})
+    Run Event (ID: 970, Slot: 0, Arguments: {2, 2500, 9020, 9030})
+    Run Event (ID: 970, Slot: 1, Arguments: {11010901, 0, 9000, 9030})
+    Run Event (ID: 970, Slot: 2, Arguments: {11010902, 2510, 9000, 9030})
+    Run Event (ID: 970, Slot: 3, Arguments: {3, 0, 9020, 0})
+    Run Event (ID: 970, Slot: 4, Arguments: {4, 2520, 9020, 0})
+    Run Event (ID: 970, Slot: 5, Arguments: {11200900, 2530, 9000, 0})
+    Run Event (ID: 970, Slot: 6, Arguments: {5, 2540, 9000, 9030})
+    Run Event (ID: 970, Slot: 7, Arguments: {6, 2550, 9000, 9030})
+    Run Event (ID: 970, Slot: 8, Arguments: {7, 2560, 9000, 0})
+    Run Event (ID: 970, Slot: 9, Arguments: {9, 2570, 9020, 0})
+    Run Event (ID: 970, Slot: 10, Arguments: {11410900, 0, 9000, 9030})
+    Run Event (ID: 970, Slot: 11, Arguments: {11410410, 0, 9000, 0})
+    Run Event (ID: 970, Slot: 12, Arguments: {11410901, 0, 9000, 9030})
+    Run Event (ID: 970, Slot: 13, Arguments: {10, 2580, 9000, 0})
+    Run Event (ID: 970, Slot: 14, Arguments: {11, 2590, 9000, 0})
+    Run Event (ID: 970, Slot: 15, Arguments: {11510900, 2600, 0, 0})
+    Run Event (ID: 970, Slot: 16, Arguments: {11510902, 2610, 9000, 0})
+    Run Event (ID: 970, Slot: 17, Arguments: {11510903, 2620, 9000, 0})
+    Run Event (ID: 970, Slot: 18, Arguments: {13, 2630, 9010, 0})
+    Run Event (ID: 970, Slot: 19, Arguments: {14, 2640, 9000, 0})
+    Run Event (ID: 970, Slot: 20, Arguments: {15, 2650, 0, 0})
+    Run Event (ID: 970, Slot: 21, Arguments: {16, 2660, 9000, 0})
+    Run Event (ID: 970, Slot: 22, Arguments: {11810900, 0, 9000, 9030})
+    Run Event (ID: 970, Slot: 23, Arguments: {11210000, 2680, 9000, 0})
+    Run Event (ID: 970, Slot: 24, Arguments: {11210001, 2690, 0, 0})
+    Run Event (ID: 970, Slot: 25, Arguments: {17, 2700, 9040, 0})
+    Run Event (ID: 970, Slot: 26, Arguments: {11210004, 2710, 0, 0})
+    Run Event (ID: 250, Slot: 0, Arguments: {2600, 250})
+    Run Event (ID: 250, Slot: 1, Arguments: {2601, 251})
+    Run Event (ID: 250, Slot: 2, Arguments: {2602, 252})
+    Run Event (ID: 250, Slot: 3, Arguments: {2603, 253})
+    Run Event (ID: 250, Slot: 4, Arguments: {2604, 254})
+    Run Event (ID: 250, Slot: 5, Arguments: {2605, 255})
+    Run Event (ID: 250, Slot: 6, Arguments: {2606, 256})
+    Run Event (ID: 250, Slot: 7, Arguments: {2607, 257})
+    Run Event (ID: 250, Slot: 8, Arguments: {2608, 258})
+    Run Event (ID: 250, Slot: 9, Arguments: {2609, 259})
+    Run Event (ID: 350, Slot: 0, Arguments: {350, 800})
+    Run Event (ID: 350, Slot: 1, Arguments: {351, 801})
+    Run Event (ID: 350, Slot: 2, Arguments: {352, 802})
+    Run Event (ID: 350, Slot: 6, Arguments: {356, 806})
+    Run Event (ID: 350, Slot: 7, Arguments: {357, 807})
+    Run Event (ID: 350, Slot: 8, Arguments: {358, 808})
+    Run Event (ID: 350, Slot: 9, Arguments: {359, 809})
+    Run Event (ID: 350, Slot: 10, Arguments: {360, 810})
+    Run Event (ID: 350, Slot: 12, Arguments: {362, 812})
+    Run Event (ID: 350, Slot: 13, Arguments: {363, 813})
+    Run Event (ID: 780, Slot: 0, Arguments: {1000, 780})
+    Run Event (ID: 780, Slot: 1, Arguments: {1010, 781})
+    Run Event (ID: 780, Slot: 2, Arguments: {1020, 782})
+    Run Event (ID: 780, Slot: 3, Arguments: {1030, 783})
+    Run Event (ID: 780, Slot: 4, Arguments: {1040, 784})
+    Run Event (ID: 780, Slot: 5, Arguments: {1050, 785})
+    Run Event (ID: 780, Slot: 6, Arguments: {1060, 786})
+    Run Event (ID: 780, Slot: 7, Arguments: {1070, 787})
+    Run Event (ID: 780, Slot: 8, Arguments: {1080, 788})
+    Run Event (ID: 780, Slot: 9, Arguments: {1090, 789})
+    Run Event (ID: 780, Slot: 10, Arguments: {1100, 790})
+    Run Event (ID: 780, Slot: 11, Arguments: {1110, 791})
+    Run Event (ID: 780, Slot: 12, Arguments: {1120, 792})
+    Run Event (ID: 780, Slot: 13, Arguments: {1130, 793})
+    Run Event (ID: 870, Slot: 0, Arguments: {0, 850})
+    Run Event (ID: 870, Slot: 1, Arguments: {1, 851})
+    Run Event (ID: 870, Slot: 2, Arguments: {2, 852})
+    Run Event (ID: 870, Slot: 3, Arguments: {3, 853})
+    Run Event (ID: 870, Slot: 4, Arguments: {4, 854})
+    Run Event (ID: 870, Slot: 5, Arguments: {5, 855})
+    Run Event (ID: 870, Slot: 6, Arguments: {6, 856})
+    Run Event (ID: 870, Slot: 7, Arguments: {7, 857})
+    Run Event (ID: 870, Slot: 8, Arguments: {8, 858})
+    Run Event (ID: 870, Slot: 9, Arguments: {9, 859})
+    Run Event (ID: 840, Slot: 0, Arguments: {840, 7905, 6370, 4294967295})
+    Run Event (ID: 840, Slot: 1, Arguments: {841, 7905, 6072, 4294967295})
+    Run Event (ID: 840, Slot: 2, Arguments: {842, 7905, 6080, 4294967295})
+    Run Event (ID: 840, Slot: 3, Arguments: {843, 7905, 6001, 4294967295})
+    Run Event (ID: 840, Slot: 4, Arguments: {844, 7898, 10000, 7896})
+    Run Event (ID: 840, Slot: 5, Arguments: {845, 7905, 6340, 4294967295})
+    Run Event (ID: 840, Slot: 6, Arguments: {846, 7905, 6341, 4294967295})
+    Run Event (ID: 840, Slot: 7, Arguments: {847, 7913, 10000, 7911})
+    Run Event (ID: 840, Slot: 8, Arguments: {848, 7905, 6380, 4294967295})
+    Run Event (ID: 840, Slot: 9, Arguments: {849, 7905, 1400700, 4294967295})
+    Run Event (ID: 690, Slot: 0, Arguments: {600, 4, 16, 1175})
+    Run Event (ID: 719, Slot: 0, Arguments: {0})
+    Run Event (ID: 720, Slot: 0, Arguments: {0})
+    Run Event (ID: 721, Slot: 0, Arguments: {0})
+    Run Event (ID: 722, Slot: 0, Arguments: {0})
+    Run Event (ID: 723, Slot: 0, Arguments: {0})
+    Run Event (ID: 724, Slot: 0, Arguments: {0})
+    Run Event (ID: 725, Slot: 0, Arguments: {0})
+    Run Event (ID: 726, Slot: 0, Arguments: {0})
+    Run Event (ID: 727, Slot: 0, Arguments: {0})
+    Run Event (ID: 745, Slot: 0, Arguments: {0})
+    Run Event (ID: 818, Slot: 0, Arguments: {0})
+    Run Event (ID: 810, Slot: 0, Arguments: {0})
+    Run Event (ID: 812, Slot: 0, Arguments: {51400350})
+    Run Event (ID: 812, Slot: 1, Arguments: {51010050})
+    Run Event (ID: 822, Slot: 0, Arguments: {0})
+    Run Event (ID: 823, Slot: 0, Arguments: {0})
+    Run Event (ID: 910, Slot: 0, Arguments: {11400591, 1280})
+    Run Event (ID: 911, Slot: 0, Arguments: {11010591, 1000, 1})
+    Run Event (ID: 911, Slot: 1, Arguments: {11510590, 1010, 1})
+    Run Event (ID: 911, Slot: 2, Arguments: {11700591, 1020, 1})
+    Run Event (ID: 911, Slot: 3, Arguments: {11000591, 1030, 1})
+    Run Event (ID: 911, Slot: 4, Arguments: {11400590, 1040, 1})
+    Run Event (ID: 911, Slot: 5, Arguments: {11410594, 1050, 1})
+    Run Event (ID: 911, Slot: 6, Arguments: {11020594, 1060, 1})
+    Run Event (ID: 911, Slot: 7, Arguments: {11020595, 1070, 1})
+    Run Event (ID: 911, Slot: 8, Arguments: {11810590, 1082, 1})
+    Run Event (ID: 911, Slot: 9, Arguments: {11810591, 1080, 1})
+    Run Event (ID: 911, Slot: 10, Arguments: {11510592, 1090, 1})
+    Run Event (ID: 911, Slot: 11, Arguments: {11600592, 1100, 1})
+    Run Event (ID: 911, Slot: 12, Arguments: {11020602, 1110, 1})
+    Run Event (ID: 911, Slot: 13, Arguments: {11010594, 1120, 1})
+    Run Event (ID: 911, Slot: 14, Arguments: {11010595, 1130, 1})
+    Run Event (ID: 911, Slot: 15, Arguments: {11020599, 1140, 1})
+    Run Event (ID: 911, Slot: 16, Arguments: {11020607, 1150, 1})
+    Run Event (ID: 911, Slot: 17, Arguments: {11200592, 1160, 1})
+    Run Event (ID: 911, Slot: 18, Arguments: {11200593, 1170, 1})
+    Run Event (ID: 911, Slot: 19, Arguments: {11200594, 1180, 1})
+    Run Event (ID: 911, Slot: 20, Arguments: {11300590, 1190, 1})
+    Run Event (ID: 911, Slot: 21, Arguments: {11300591, 1200, 1})
+    Run Event (ID: 911, Slot: 22, Arguments: {11310590, 1210, 1})
+    Run Event (ID: 911, Slot: 23, Arguments: {11310592, 1220, 1})
+    Run Event (ID: 911, Slot: 24, Arguments: {11310593, 1230, 1})
+    Run Event (ID: 911, Slot: 25, Arguments: {11310594, 1240, 1})
+    Run Event (ID: 911, Slot: 26, Arguments: {11320590, 1250, 1})
+    Run Event (ID: 911, Slot: 27, Arguments: {11320581, 1260, 1})
+    Run Event (ID: 911, Slot: 28, Arguments: {11320593, 1270, 1})
+    Run Event (ID: 911, Slot: 29, Arguments: {11400592, 1290, 1})
+    Run Event (ID: 911, Slot: 30, Arguments: {11400594, 1300, 1})
+    Run Event (ID: 911, Slot: 31, Arguments: {11400596, 1310, 1})
+    Run Event (ID: 911, Slot: 32, Arguments: {11400597, 1320, 1})
+    Run Event (ID: 911, Slot: 33, Arguments: {11400598, 1330, 1})
+    Run Event (ID: 911, Slot: 34, Arguments: {11400599, 1340, 1})
+    Run Event (ID: 911, Slot: 35, Arguments: {11510595, 1350, 1})
+    Run Event (ID: 911, Slot: 36, Arguments: {11510596, 1360, 1})
+    Run Event (ID: 911, Slot: 37, Arguments: {11510597, 1370, 1})
+    Run Event (ID: 911, Slot: 38, Arguments: {11600594, 1380, 1})
+    Run Event (ID: 911, Slot: 39, Arguments: {11600595, 1390, 1})
+    Run Event (ID: 911, Slot: 40, Arguments: {11600596, 1400, 1})
+    Run Event (ID: 911, Slot: 41, Arguments: {11010598, 1410, 0})
+    Run Event (ID: 911, Slot: 42, Arguments: {11210590, 1500, 1})
+    Run Event (ID: 911, Slot: 43, Arguments: {11210593, 1510, 1})
+    Run Event (ID: 911, Slot: 44, Arguments: {11210594, 1520, 1})
+    Run Event (ID: 911, Slot: 45, Arguments: {11600580, 1401, 1})
+    Run Event (ID: 911, Slot: 46, Arguments: {11600581, 1402, 1})
+    Run Event (ID: 911, Slot: 47, Arguments: {11600582, 1403, 1})
+    Run Event (ID: 911, Slot: 48, Arguments: {11600583, 1404, 1})
+    Run Event (ID: 890, Slot: 0, Arguments: {11310580, 1221, 1})
+    Run Event (ID: 890, Slot: 1, Arguments: {11510580, 1361, 1})
+    Run Event (ID: 890, Slot: 2, Arguments: {11510581, 1371, 1})
+    Run Event (ID: 890, Slot: 3, Arguments: {11320592, 1261, 1})
+    Run Event (ID: 960, Slot: 0, Arguments: {1322, 6190, 6190})
+    Run Event (ID: 960, Slot: 1, Arguments: {1315, 6180, 1100})
+    Run Event (ID: 960, Slot: 2, Arguments: {1402, 6230, 6230})
+    Run Event (ID: 960, Slot: 3, Arguments: {1402, 6230, 6231})
+    Run Event (ID: 8200, Slot: 0, Arguments: {3, 5500, 50000120, 11010594})
+    Run Event (ID: 8200, Slot: 1, Arguments: {3, 5510, 50000130, 11010595})
+    Run Event (ID: 8200, Slot: 2, Arguments: {2, 103, 50000160, 11200592})
+    Run Event (ID: 8200, Slot: 3, Arguments: {3, 240, 50000170, 11200593})
+    Run Event (ID: 8200, Slot: 4, Arguments: {2, 124, 50000180, 11200594})
+    Run Event (ID: 8200, Slot: 5, Arguments: {0, 453000, 50000220, 11310592})
+    Run Event (ID: 8200, Slot: 6, Arguments: {3, 5100, 50000225, 11310580})
+    Run Event (ID: 8200, Slot: 7, Arguments: {3, 5110, 50000230, 11310593})
+    Run Event (ID: 8200, Slot: 8, Arguments: {3, 114, 50000265, 11320581})
+    Run Event (ID: 8200, Slot: 9, Arguments: {3, 377, 50000260, 11320592})
+    Run Event (ID: 8200, Slot: 10, Arguments: {3, 378, 50000270, 11320593})
+    Run Event (ID: 8200, Slot: 11, Arguments: {3, 4500, 50000310, 11400596})
+    Run Event (ID: 8200, Slot: 12, Arguments: {3, 4520, 50000320, 11400597})
+    Run Event (ID: 8200, Slot: 13, Arguments: {3, 4510, 50000330, 11400598})
+    Run Event (ID: 8200, Slot: 14, Arguments: {2, 130, 50000350, 11510595})
+    Run Event (ID: 8200, Slot: 15, Arguments: {3, 113, 50000360, 11510596})
+    Run Event (ID: 8200, Slot: 16, Arguments: {2, 102, 50000365, 11510580})
+    Run Event (ID: 8200, Slot: 17, Arguments: {3, 5910, 50000370, 11510597})
+    Run Event (ID: 8200, Slot: 18, Arguments: {0, 1366000, 50000375, 11510581})
+    Run Event (ID: 8200, Slot: 19, Arguments: {0, 904000, 50000380, 11600594})
+    Run Event (ID: 8200, Slot: 20, Arguments: {3, 102, 50000390, 11600595})
+    Run Event (ID: 8200, Slot: 21, Arguments: {0, 210000, 50000400, 11600596})
+    Run Event (ID: 8200, Slot: 22, Arguments: {1, 40000, 50000410, 11600580})
+    Run Event (ID: 8200, Slot: 23, Arguments: {1, 41000, 50000420, 11600581})
+    Run Event (ID: 8200, Slot: 24, Arguments: {1, 42000, 50000430, 11600582})
+    Run Event (ID: 8200, Slot: 25, Arguments: {1, 43000, 50000440, 11600583})
+    Run Event (ID: 8300, Slot: 0, Arguments: {3, 100, 50000000})
+    Run Event (ID: 8300, Slot: 1, Arguments: {3, 101, 51100330})
+    Run Event (ID: 8300, Slot: 2, Arguments: {3, 102, 50000390})
+    Run Event (ID: 8300, Slot: 3, Arguments: {3, 106, 11017020})
+    Run Event (ID: 8300, Slot: 4, Arguments: {3, 108, 11607020})
+    Run Event (ID: 8300, Slot: 5, Arguments: {3, 112, 11407080})
+    Run Event (ID: 8300, Slot: 6, Arguments: {3, 2508, 11007010})
+    Run Event (ID: 8090, Slot: 0, Arguments: {3, 510, 11217010})
+    Run Event (ID: 8090, Slot: 1, Arguments: {3, 511, 11217020})
+    Run Event (ID: 8090, Slot: 2, Arguments: {3, 512, 11217030})
+    Run Event (ID: 8090, Slot: 3, Arguments: {3, 513, 11217040})
+    Run Event (ID: 8090, Slot: 4, Arguments: {3, 514, 11217050})
+
+Event ID: 50
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 80 lines IF Flag: 909 is ON
+    SKIP 1 lines IF Flag: 1000 to 1029 are any ON
+    ENABLE Event Flag ID 1000
+    SKIP 1 lines IF Flag: 1030 to 1059 are any ON
+    ENABLE Event Flag ID 1030
+    SKIP 1 lines IF Flag: 1060 to 1089 are any ON
+    ENABLE Event Flag ID 1060
+    SKIP 1 lines IF Flag: 1090 to 1109 are any ON
+    ENABLE Event Flag ID 1090
+    SKIP 1 lines IF Flag: 1110 to 1119 are any ON
+    ENABLE Event Flag ID 1110
+    SKIP 1 lines IF Flag: 1120 to 1139 are any ON
+    ENABLE Event Flag ID 1120
+    SKIP 1 lines IF Flag: 1140 to 1169 are any ON
+    ENABLE Event Flag ID 1140
+    SKIP 1 lines IF Flag: 1170 to 1189 are any ON
+    ENABLE Event Flag ID 1170
+    SKIP 1 lines IF Flag: 1190 to 1209 are any ON
+    ENABLE Event Flag ID 1202
+    SKIP 1 lines IF Flag: 1210 to 1219 are any ON
+    ENABLE Event Flag ID 1210
+    SKIP 1 lines IF Flag: 1220 to 1229 are any ON
+    ENABLE Event Flag ID 1220
+    SKIP 1 lines IF Flag: 1230 to 1239 are any ON
+    ENABLE Event Flag ID 1230
+    SKIP 1 lines IF Flag: 1240 to 1249 are any ON
+    ENABLE Event Flag ID 1240
+    SKIP 1 lines IF Flag: 1250 to 1259 are any ON
+    ENABLE Event Flag ID 1250
+    SKIP 1 lines IF Flag: 1270 to 1279 are any ON
+    ENABLE Event Flag ID 1270
+    SKIP 1 lines IF Flag: 1280 to 1289 are any ON
+    ENABLE Event Flag ID 1280
+    SKIP 1 lines IF Flag: 1290 to 1309 are any ON
+    ENABLE Event Flag ID 1290
+    SKIP 1 lines IF Flag: 1310 to 1319 are any ON
+    ENABLE Event Flag ID 1310
+    SKIP 1 lines IF Flag: 1320 to 1339 are any ON
+    ENABLE Event Flag ID 1320
+    SKIP 1 lines IF Flag: 1340 to 1359 are any ON
+    ENABLE Event Flag ID 1340
+    SKIP 1 lines IF Flag: 1360 to 1379 are any ON
+    ENABLE Event Flag ID 1360
+    SKIP 1 lines IF Flag: 1380 to 1399 are any ON
+    ENABLE Event Flag ID 1380
+    SKIP 1 lines IF Flag: 1400 to 1409 are any ON
+    ENABLE Event Flag ID 1400
+    SKIP 1 lines IF Flag: 1410 to 1419 are any ON
+    ENABLE Event Flag ID 1410
+    SKIP 1 lines IF Flag: 1420 to 1429 are any ON
+    ENABLE Event Flag ID 1420
+    SKIP 1 lines IF Flag: 1430 to 1459 are any ON
+    ENABLE Event Flag ID 1430
+    SKIP 1 lines IF Flag: 1460 to 1489 are any ON
+    ENABLE Event Flag ID 1460
+    SKIP 1 lines IF Flag: 1490 to 1539 are any ON
+    ENABLE Event Flag ID 1490
+    SKIP 1 lines IF Flag: 1540 to 1569 are any ON
+    ENABLE Event Flag ID 1540
+    SKIP 1 lines IF Flag: 1570 to 1599 are any ON
+    ENABLE Event Flag ID 1570
+    SKIP 1 lines IF Flag: 1600 to 1619 are any ON
+    ENABLE Event Flag ID 1600
+    SKIP 1 lines IF Flag: 1620 to 1639 are any ON
+    ENABLE Event Flag ID 1620
+    SKIP 1 lines IF Flag: 1640 to 1669 are any ON
+    ENABLE Event Flag ID 1640
+    SKIP 1 lines IF Flag: 1670 to 1679 are any ON
+    ENABLE Event Flag ID 1670
+    SKIP 1 lines IF Flag: 1690 to 1699 are any ON
+    ENABLE Event Flag ID 1690
+    SKIP 1 lines IF Flag: 1700 to 1709 are any ON
+    ENABLE Event Flag ID 1700
+    SKIP 1 lines IF Flag: 1710 to 1729 are any ON
+    ENABLE Event Flag ID 1710
+    SKIP 1 lines IF Flag: 1760 to 1769 are any ON
+    ENABLE Event Flag ID 1760
+    SKIP 1 lines IF Flag: 1770 to 1779 are any ON
+    ENABLE Event Flag ID 1770
+    SKIP 1 lines IF Flag: 1780 to 1789 are any ON
+    ENABLE Event Flag ID 1780
+    SKIP 1 lines IF Flag: 1820 to 1839 are any ON
+    ENABLE Event Flag ID 1820
+    SKIP 1 lines IF Flag: 1840 to 1859 are any ON
+    ENABLE Event Flag ID 1840
+    SKIP 1 lines IF Flag: 1860 to 1869 are any ON
+    ENABLE Event Flag ID 1860
+    SKIP 1 lines IF Flag: 1870 to 1889 are any ON
+    ENABLE Event Flag ID 1870
+    SKIP 24 lines IF Flag: 909 is ON
+    ENABLE Event Flag ID 11807020
+    ENABLE Event Flag ID 11807030
+    ENABLE Event Flag ID 11807040
+    ENABLE Event Flag ID 11807050
+    ENABLE Event Flag ID 11807060
+    ENABLE Event Flag ID 11807070
+    ENABLE Event Flag ID 11807080
+    ENABLE Event Flag ID 11807090
+    ENABLE Event Flag ID 11807100
+    ENABLE Event Flag ID 11807110
+    ENABLE Event Flag ID 11807120
+    ENABLE Event Flag ID 11807130
+    ENABLE Event Flag ID 11807170
+    ENABLE Event Flag ID 11807180
+    ENABLE Event Flag ID 11807190
+    ENABLE Event Flag ID 11807200
+    ENABLE Event Flag ID 11807210
+    ENABLE Event Flag ID 11807220
+    ENABLE Event Flag ID 11807230
+    ENABLE Event Flag ID 11807240
+    ENABLE Event Flag ID 11217060
+    ENABLE Event Flag ID 11217070
+    ENABLE Event Flag ID 11217080
+    ENABLE Event Flag ID 11217090
+    SKIP 4 lines IF Flag: 909 is ON
+    ENABLE Event Flag ID 909
+    ENABLE Event Flag ID 814
+    ENABLE Event Flag ID 50006071
+    ENABLE Event Flag ID 50006080
+
+Event ID: 290
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+    Batch SET Event Flag IDs from 280 to 290 to ON
+      OR[ 1 ] <-- IF player's class is Knight
+      OR[ 1 ] <-- IF player's class is Cleric
+     AND[ 1 ] <-- IF condition  OR[ 1 ] is TRUE
+     AND[ 2 ] <-- IF condition  OR[ 1 ] is FALSE
+      OR[ 2 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 2 ] <-- IF condition AND[ 2 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 2 ] is TRUE
+    SKIP 2 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    DISABLE Event Flag ID 287
+    END event
+    DISABLE Event Flag ID 288
+
+Event ID: 701
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+    Disable Vagrant Spawning: FALSE
+     --> AWAIT <-- IF it is TRUE that player is in Map<18><1> (Northern Undead Asylum)
+    Disable Vagrant Spawning: TRUE
+     --> AWAIT <-- IF Flag: 11810000 is ON
+    Disable Vagrant Spawning: FALSE
+
+Event ID: 702
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE Event Flag ID 702
+     AND[ 1 ] <-- IF Flag: 11800210 is OFF
+     AND[ 1 ] <-- IF it is TRUE that player is in Map<18><0> (Kiln of the First Flame)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 702
+      OR[ 1 ] <-- IF it is FALSE that player is in Map<18><0> (Kiln of the First Flame)
+      OR[ 1 ] <-- IF Flag: 11800210 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    DISABLE Event Flag ID 702
+    RESTART event
+
+Event ID: 717
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE Event Flag ID 717
+     AND[ 1 ] <-- IF Flag: 710 is OFF
+     AND[ 1 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+     AND[ 1 ] <-- IF local player is standing on Hitbox Entity ID: 1603300
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 717
+     AND[ 2 ] <-- IF local player is standing on Hitbox Entity ID: 1603300
+     --> AWAIT <-- IF condition AND[ 2 ] is FALSE
+    DISABLE Event Flag ID 717
+    RESTART event
+
+Event ID: 718
+Restarts: Never
+Event Arguments: {} ()
+    END event IF Flag: 8120 is OFF
+    Display Status Explanation Message (Message ID: 10010650, ENABLE Pad)
+    DISABLE Event Flag ID 8120
+
+Event ID: 706
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 710 is ON
+    ENABLE Event Flag ID 706
+      OR[ 1 ] <-- IF Flag: 11705170 is ON
+      OR[ 1 ] <-- IF it is TRUE that player is in Map<11><0> (Painted World)
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    DISABLE Event Flag ID 706
+     AND[ 1 ] <-- IF Flag: 11705170 is OFF
+     AND[ 1 ] <-- IF it is FALSE that player is in Map<11><0> (Painted World)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    RESTART event
+
+Event ID: 710
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     --> AWAIT <-- IF player Owns Item (Item Type: Good, Item ID: 2510)
+    ENABLE Event Flag ID 710
+
+Event ID: 711
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    END event IF This Event + Slot: 0 is ON
+     --> AWAIT <-- IF player Owns Item (Item Type: Good, Item ID: ARG_0_3)
+    ENABLE Event Flag ID ARG_4_7
+
+Event ID: 715
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE Event Flag ID 715
+     AND[ 1 ] <-- IF Flag: 11010595 is ON
+     AND[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 702)
+     AND[ 1 ] <-- IF player Does not own Item (Item Type: Good, Item ID: 5520) (Including in their BBox)
+     AND[ 1 ] <-- IF player's covenant is Warrior of Sunlight
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 715
+      OR[ 1 ] <-- IF player Does not own Item (Item Type: Good, Item ID: 702)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5520) (Including in their BBox)
+     AND[ 2 ] <-- IF player's covenant is Warrior of Sunlight
+      OR[ 1 ] <-- IF condition AND[ 2 ] is FALSE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    RESTART event
+
+Event ID: 716
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     --> AWAIT <-- IF Flag: 50000082 is ON
+    ENABLE Event Flag ID 716
+
+Event ID: 8131
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    END event IF This Event + Slot: 0 is ON
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: ARG_0_3)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: ARG_4_7)
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 1 lines IF (ARG_0_3 != 202)
+    ENABLE Event Flag ID 8131
+    SKIP 1 lines IF (ARG_0_3 != 204)
+    Batch SET Event Flag IDs from 8131 to 8132 to ON
+    SKIP 1 lines IF (ARG_0_3 != 206)
+    Batch SET Event Flag IDs from 8131 to 8133 to ON
+    SKIP 1 lines IF (ARG_0_3 != 208)
+    Batch SET Event Flag IDs from 8131 to 8134 to ON
+    SKIP 1 lines IF (ARG_0_3 != 210)
+    Batch SET Event Flag IDs from 8131 to 8135 to ON
+    SKIP 1 lines IF (ARG_0_3 != 212)
+    Batch SET Event Flag IDs from 8131 to 8136 to ON
+    SKIP 1 lines IF (ARG_0_3 != 214)
+    Batch SET Event Flag IDs from 8131 to 8137 to ON
+
+Event ID: 819
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+      OR[ 1 ] <-- IF Flag: 11017040 is ON
+      OR[ 1 ] <-- IF Flag: 11017170 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    ENABLE Event Flag ID 11017040
+    ENABLE Event Flag ID 11017170
+
+Event ID: 719
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3000)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3010)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3020)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3030)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3040)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3050)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3060)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3070)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3100)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3110)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3120)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3300)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3310)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3400)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3410)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3500)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3510)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3520)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3530)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3540)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3550)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3600)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3610)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3700)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4000)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4010)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4020)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4030)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4040)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4050)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4060)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4100)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4110)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4200)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4210)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4220)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4300)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4310)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4360)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4400)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4500)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4510)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4520)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5000)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5010)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5020)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5030)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5040)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5050)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5100)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5110)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5200)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5210)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5300)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5310)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5320)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5400)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5500)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5510)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5520)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5600)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5610)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5700)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5710)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5800)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5810)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5900)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 5910)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3710)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3720)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3730)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 3740)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4530)
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    ENABLE Event Flag ID 719
+
+Event ID: 720
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4020)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4030)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4040)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4060)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4110)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4500)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4510)
+      OR[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 4520)
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    ENABLE Event Flag ID 11020102
+
+Event ID: 730
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 1 ] <-- IF Flag: 732 is OFF
+     AND[ 1 ] <-- IF Flag: 8000 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 732
+    ENABLE Event Flag ID 735
+    RESTART event
+
+Event ID: 731
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 8000 is OFF
+    DISABLE Event Flag ID 732
+    DISABLE Event Flag ID 735
+     --> AWAIT <-- IF Flag: 8000 is ON
+    RESTART event
+
+Event ID: 250
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    END event IF This Event + Slot: 0 is ON
+     --> AWAIT <-- IF player Owns Item (Item Type: Good, Item ID: ARG_0_3)
+    ENABLE Event Flag ID ARG_4_7
+
+Event ID: 350
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    SKIP 2 lines IF This Event + Slot: 0 is OFF
+     AND[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: ARG_4_7)
+    END event IF condition AND[ 1 ] is FALSE
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    Remove 1 (0=All) of Item (Item Type: Good, Item ID: ARG_4_7) from player
+
+Event ID: 780
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    DISABLE Event Flag ID ARG_4_7
+     --> AWAIT <-- IF player Owns Item (Item Type: Good, Item ID: ARG_0_3)
+    ENABLE Event Flag ID ARG_4_7
+     --> AWAIT <-- IF player Does not own Item (Item Type: Good, Item ID: ARG_0_3)
+    RESTART event
+
+Event ID: 870
+Restarts: Never
+Event Arguments: {ARG_0_0, ARG_4_7} (B|i)
+     --> AWAIT <-- IF player's covenant is Covenant Type[ARG_0_0]
+    ENABLE Event Flag ID ARG_4_7
+     AND[ 1 ] <-- IF player's covenant is Covenant Type[ARG_0_0]
+     --> AWAIT <-- IF condition AND[ 1 ] is FALSE
+    DISABLE Event Flag ID ARG_4_7
+    RESTART event
+
+Event ID: 260
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11} (i|i|f)
+    END event IF Flag: ARG_0_3 is ON
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    WAIT ARG_8_11s
+    Display Status Explanation Message (Message ID: ARG_4_7, ENABLE Pad)
+
+Event ID: 970
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+    END event IF Flag: ARG_0_3 is ON
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    SKIP 1 lines IF (ARG_4_7 == 0)
+    Award Items (Item Lot ID: ARG_4_7) (HOST ONLY)
+    DISABLE network sync.
+    WAIT 5.000s
+    SKIP 1 lines IF (ARG_8_11 == 0)
+    Award Items (Item Lot ID: ARG_8_11) (HOST ONLY)
+    SKIP 1 lines IF (ARG_12_15 == 0)
+    Award Items (Item Lot ID: ARG_12_15) (HOST ONLY)
+
+Event ID: 911
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_8} (i|i|B)
+    END event IF Flag: ARG_0_3 is ON
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    Award Items (Item Lot ID: ARG_4_7) (HOST ONLY)
+    SET Event Flag ID ARG_0_3 to state ON/OFF[ARG_8_8]
+    END event IF Flag: ARG_0_3 is ON
+    RESTART event
+
+Event ID: 890
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_8} (i|i|B)
+    END event IF Flag: ARG_0_3 is ON
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    Award Items (Item Lot ID: ARG_4_7) (HOST ONLY)
+    SET Event Flag ID ARG_0_3 to state ON/OFF[ARG_8_8]
+    END event IF Flag: ARG_0_3 is ON
+    RESTART event
+
+Event ID: 960
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11} (i|i|i)
+    END event IF This Event + Slot: 0 is ON
+     AND[ 1 ] <-- IF Flag: ARG_0_3 is ON
+     AND[ 1 ] <-- IF Entity ID: ARG_4_7 is Dead
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Award Items (Item Lot ID: ARG_8_11) (HOST ONLY)
+
+Event ID: 8200
+Restarts: Never
+Event Arguments: {ARG_0_0, ARG_4_7, ARG_8_11, ARG_12_15} (B|i|i|i)
+    END event IF Flag: ARG_8_11 is ON
+     AND[ 1 ] <-- IF current New Game Cycle is >= 001
+    END event IF condition AND[ 1 ] is FALSE
+     AND[ 2 ] <-- IF player Owns Item (Item Type: Item Type[ARG_0_0], Item ID: ARG_4_7) (Including in their BBox)
+    END event IF condition AND[ 2 ] is FALSE
+    ENABLE Event Flag ID ARG_8_11
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 8300
+Restarts: Never
+Event Arguments: {ARG_0_0, ARG_4_7, ARG_8_11} (B|i|i)
+    END event IF Flag: ARG_8_11 is ON
+     AND[ 1 ] <-- IF current New Game Cycle is >= 001
+    END event IF condition AND[ 1 ] is FALSE
+     AND[ 2 ] <-- IF player Owns Item (Item Type: Item Type[ARG_0_0], Item ID: ARG_4_7) (Including in their BBox)
+    END event IF condition AND[ 2 ] is FALSE
+    ENABLE Event Flag ID ARG_8_11
+
+Event ID: 8090
+Restarts: Never
+Event Arguments: {ARG_0_0, ARG_4_7, ARG_8_11} (B|i|i)
+    END event IF Flag: ARG_8_11 is ON
+     AND[ 1 ] <-- IF current New Game Cycle is >= 001
+    END event IF condition AND[ 1 ] is FALSE
+     AND[ 2 ] <-- IF player Owns Item (Item Type: Item Type[ARG_0_0], Item ID: ARG_4_7) (Including in their BBox)
+    END event IF condition AND[ 2 ] is FALSE
+    ENABLE Event Flag ID ARG_8_11
+
+Event ID: 910
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    SKIP 2 lines IF Flag: ARG_0_3 is ON
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    Award Items (Item Lot ID: ARG_4_7) (HOST ONLY)
+     --> AWAIT <-- IF Flag: ARG_0_3 is OFF
+    RESTART event
+
+Event ID: 690
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|I|I|i)
+    SKIP 1 lines IF This Event + Slot: 0 is ON
+     --> AWAIT <-- IF Flag: ARG_12_15 is ON
+    SKIP 1 lines IF Flag: 2 is ON
+      OR[ 1 ] <-- IF Flag: 2 is ON
+    SKIP 1 lines IF Flag: 3 is ON
+      OR[ 1 ] <-- IF Flag: 3 is ON
+    SKIP 1 lines IF Flag: 4 is ON
+      OR[ 1 ] <-- IF Flag: 4 is ON
+    SKIP 1 lines IF Flag: 5 is ON
+      OR[ 1 ] <-- IF Flag: 5 is ON
+    SKIP 1 lines IF Flag: 6 is ON
+      OR[ 1 ] <-- IF Flag: 6 is ON
+    SKIP 1 lines IF Flag: 7 is ON
+      OR[ 1 ] <-- IF Flag: 7 is ON
+    SKIP 1 lines IF Flag: 8 is ON
+      OR[ 1 ] <-- IF Flag: 8 is ON
+    SKIP 1 lines IF Flag: 9 is ON
+      OR[ 1 ] <-- IF Flag: 9 is ON
+    SKIP 1 lines IF Flag: 10 is ON
+      OR[ 1 ] <-- IF Flag: 10 is ON
+    SKIP 1 lines IF Flag: 11 is ON
+      OR[ 1 ] <-- IF Flag: 11 is ON
+    SKIP 1 lines IF Flag: 12 is ON
+      OR[ 1 ] <-- IF Flag: 12 is ON
+    SKIP 1 lines IF Flag: 13 is ON
+      OR[ 1 ] <-- IF Flag: 13 is ON
+    SKIP 1 lines IF Flag: 14 is ON
+      OR[ 1 ] <-- IF Flag: 14 is ON
+    SKIP 1 lines IF Flag: 15 is ON
+      OR[ 1 ] <-- IF Flag: 15 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Increment Event Flag ARG_0_3 (Number of Bits: ARG_4_7, Maximum: ARG_8_11)
+    RESTART event
+
+Event ID: 721
+Restarts: Never
+Event Arguments: {} ()
+    END event IF Flag: 728 is ON
+     AND[ 1 ] <-- IF Flag: 11707000 is ON
+     AND[ 1 ] <-- IF Flag: 11707010 is ON
+     AND[ 1 ] <-- IF Flag: 11707020 is ON
+     AND[ 1 ] <-- IF Flag: 11707030 is ON
+     AND[ 1 ] <-- IF Flag: 11707040 is ON
+     AND[ 1 ] <-- IF Flag: 11707050 is ON
+     AND[ 1 ] <-- IF Flag: 11707060 is ON
+     AND[ 1 ] <-- IF Flag: 11707070 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 721
+     AND[ 2 ] <-- IF Flag: 11707090 is ON
+     AND[ 2 ] <-- IF Flag: 11707100 is ON
+     AND[ 2 ] <-- IF Flag: 11707110 is ON
+     --> AWAIT <-- IF condition AND[ 2 ] is TRUE
+    ENABLE Event Flag ID 728
+
+Event ID: 722
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 11407120 is ON
+     AND[ 1 ] <-- IF Flag: 11407130 is ON
+     AND[ 1 ] <-- IF Flag: 11407150 is ON
+     AND[ 1 ] <-- IF Flag: 11407160 is ON
+     AND[ 1 ] <-- IF Flag: 11407170 is ON
+     AND[ 1 ] <-- IF Flag: 11407140 is ON
+     AND[ 1 ] <-- IF Flag: 11407180 is ON
+     AND[ 1 ] <-- IF Flag: 11407190 is ON
+     AND[ 1 ] <-- IF Flag: 10 is ON
+     AND[ 1 ] <-- IF player Owns Item (Item Type: Weapon, Item ID: 1332500)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 722
+
+Event ID: 723
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 11027130 is ON
+     AND[ 1 ] <-- IF Flag: 11027140 is ON
+     AND[ 1 ] <-- IF Flag: 11027150 is ON
+     AND[ 1 ] <-- IF Flag: 11027160 is ON
+     AND[ 1 ] <-- IF Flag: 11027170 is ON
+     AND[ 1 ] <-- IF Flag: 11027180 is ON
+     AND[ 1 ] <-- IF Flag: 11027190 is ON
+     AND[ 1 ] <-- IF Flag: 11027200 is ON
+     AND[ 1 ] <-- IF Flag: 11027210 is ON
+     AND[ 1 ] <-- IF Flag: 11027220 is ON
+     AND[ 1 ] <-- IF Flag: 11027230 is ON
+     AND[ 1 ] <-- IF Flag: 11027240 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 723
+
+Event ID: 724
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 11017050 is ON
+     AND[ 1 ] <-- IF Flag: 11017060 is ON
+     AND[ 1 ] <-- IF Flag: 11017070 is ON
+     AND[ 1 ] <-- IF Flag: 11017080 is ON
+     AND[ 1 ] <-- IF Flag: 11017090 is ON
+     AND[ 1 ] <-- IF Flag: 11017100 is ON
+     AND[ 1 ] <-- IF Flag: 11017110 is ON
+     AND[ 1 ] <-- IF Flag: 11017120 is ON
+     AND[ 1 ] <-- IF Flag: 11017130 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 724
+
+Event ID: 725
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     --> AWAIT <-- IF Number of TRUE Flags from 11707100 to 11707190 is >= 2
+    ENABLE Event Flag ID 725
+
+Event ID: 726
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     --> AWAIT <-- IF Number of TRUE Flags from 11607000 to 11607090 is >= 2
+    ENABLE Event Flag ID 726
+
+Event ID: 727
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 11327000 is ON
+     AND[ 1 ] <-- IF Flag: 11327010 is ON
+     AND[ 1 ] <-- IF Flag: 11327020 is ON
+     AND[ 1 ] <-- IF Flag: 11327030 is ON
+     AND[ 1 ] <-- IF Flag: 11327040 is ON
+     AND[ 1 ] <-- IF Flag: 11327050 is ON
+     AND[ 1 ] <-- IF Flag: 11327060 is ON
+     AND[ 1 ] <-- IF Flag: 11327070 is ON
+     AND[ 1 ] <-- IF Flag: 11327080 is ON
+     AND[ 1 ] <-- IF Flag: 11327090 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 727
+
+Event ID: 740
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF player's class is Pyromancer
+    ENABLE Event Flag ID 740
+
+Event ID: 745
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 7 ] <-- IF Flag: 1604 is ON
+     AND[ 7 ] <-- IF Flag: 1764 is ON
+    SKIP 1 lines IF condition AND[ 7 ] is FALSE
+     --> AWAIT <-- IF Flag: 703 is ON
+    SKIP 1 lines IF Flag: 1604 is ON
+      OR[ 1 ] <-- IF Flag: 1604 is ON
+    SKIP 1 lines IF Flag: 1764 is ON
+      OR[ 1 ] <-- IF Flag: 1764 is ON
+     AND[ 1 ] <-- IF condition  OR[ 1 ] is TRUE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    END event
+
+Event ID: 754
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE Event Flag ID 754
+     --> AWAIT <-- IF Flag: 754 is ON
+    DISABLE Event Flag ID 754
+    Set Special Effect (Character ID: 10000, Special Effect ID: 4600)
+    Set Special Effect (Character ID: 10000, Special Effect ID: 4601)
+    Create One-Off SFX (SFX Type: Character, Entity ID: 10000, Damipoly ID: 7, SFX ID: 22715)
+    RESTART event
+
+Event ID: 770
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 755 is ON
+    DISABLE Event Flag ID 755
+    DISABLE Event Flag ID 742
+    DISABLE Event Flag ID 743
+    DISABLE Event Flag ID 744
+    DISABLE Event Flag ID 745
+    DISABLE Event Flag ID 746
+    Batch SET Event Flag IDs from 11000501 to 11000519 to OFF
+    Batch SET Event Flag IDs from 11010501 to 11010519 to OFF
+    Batch SET Event Flag IDs from 11020501 to 11020529 to OFF
+    Batch SET Event Flag IDs from 11100501 to 11100519 to OFF
+    Batch SET Event Flag IDs from 11200501 to 11200519 to OFF
+    Batch SET Event Flag IDs from 11300501 to 11300519 to OFF
+    Batch SET Event Flag IDs from 11310501 to 11310519 to OFF
+    Batch SET Event Flag IDs from 11320501 to 11320519 to OFF
+    Batch SET Event Flag IDs from 11400501 to 11400519 to OFF
+    Batch SET Event Flag IDs from 11410501 to 11410519 to OFF
+    Batch SET Event Flag IDs from 11500501 to 11500519 to OFF
+    Batch SET Event Flag IDs from 11510501 to 11510519 to OFF
+    Batch SET Event Flag IDs from 11600501 to 11600519 to OFF
+    Batch SET Event Flag IDs from 11700501 to 11700519 to OFF
+    Batch SET Event Flag IDs from 11800501 to 11800519 to OFF
+    Batch SET Event Flag IDs from 11810501 to 11810519 to OFF
+    Batch SET Event Flag IDs from 11210501 to 11210519 to OFF
+    DISABLE Event Flag ID 1004
+    DISABLE Event Flag ID 1033
+    DISABLE Event Flag ID 1096
+    DISABLE Event Flag ID 1114
+    DISABLE Event Flag ID 1176
+    DISABLE Event Flag ID 1179
+    DISABLE Event Flag ID 1195
+    DISABLE Event Flag ID 1197
+    DISABLE Event Flag ID 1213
+    DISABLE Event Flag ID 1223
+    DISABLE Event Flag ID 1241
+    DISABLE Event Flag ID 1253
+    DISABLE Event Flag ID 1282
+    DISABLE Event Flag ID 1283
+    DISABLE Event Flag ID 1287
+    DISABLE Event Flag ID 1294
+    DISABLE Event Flag ID 1314
+    DISABLE Event Flag ID 1321
+    DISABLE Event Flag ID 1341
+    DISABLE Event Flag ID 1361
+    DISABLE Event Flag ID 1381
+    DISABLE Event Flag ID 1401
+    DISABLE Event Flag ID 1411
+    DISABLE Event Flag ID 1421
+    DISABLE Event Flag ID 1434
+    DISABLE Event Flag ID 1461
+    DISABLE Event Flag ID 1512
+    DISABLE Event Flag ID 1547
+    DISABLE Event Flag ID 1574
+    DISABLE Event Flag ID 1603
+    DISABLE Event Flag ID 1627
+    DISABLE Event Flag ID 1646
+    DISABLE Event Flag ID 1675
+    DISABLE Event Flag ID 1691
+    ENABLE Event Flag ID 1710
+    DISABLE Event Flag ID 1711
+    DISABLE Event Flag ID 1712
+    DISABLE Event Flag ID 11200596
+    DISABLE Event Flag ID 71200035
+    DISABLE Event Flag ID 71200042
+    DISABLE Event Flag ID 1763
+    DISABLE Event Flag ID 1822
+    DISABLE Event Flag ID 1841
+    DISABLE Event Flag ID 1863
+    DISABLE Event Flag ID 1871
+    Switch Character ID: 6001 to team Ally
+    Switch Character ID: 6040 to team Ally
+    Switch Character ID: 6072 to team Ally
+    Switch Character ID: 6190 to team Ally
+    Switch Character ID: 6230 to team Ally
+    Switch Character ID: 6300 to team Ally
+    RESTART event
+
+Event ID: 772
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 744 is OFF
+      OR[ 1 ] <-- IF Flag: 1004 is ON
+      OR[ 1 ] <-- IF Flag: 1033 is ON
+      OR[ 1 ] <-- IF Flag: 1096 is ON
+      OR[ 1 ] <-- IF Flag: 1114 is ON
+      OR[ 1 ] <-- IF Flag: 1176 is ON
+      OR[ 1 ] <-- IF Flag: 1179 is ON
+      OR[ 1 ] <-- IF Flag: 1195 is ON
+      OR[ 1 ] <-- IF Flag: 1197 is ON
+      OR[ 1 ] <-- IF Flag: 1213 is ON
+      OR[ 1 ] <-- IF Flag: 1223 is ON
+      OR[ 1 ] <-- IF Flag: 1241 is ON
+      OR[ 1 ] <-- IF Flag: 1253 is ON
+      OR[ 1 ] <-- IF Flag: 1282 is ON
+      OR[ 1 ] <-- IF Flag: 1283 is ON
+      OR[ 1 ] <-- IF Flag: 1287 is ON
+      OR[ 1 ] <-- IF Flag: 1294 is ON
+      OR[ 1 ] <-- IF Flag: 1314 is ON
+      OR[ 1 ] <-- IF Flag: 1321 is ON
+      OR[ 1 ] <-- IF Flag: 1341 is ON
+      OR[ 1 ] <-- IF Flag: 1361 is ON
+      OR[ 1 ] <-- IF Flag: 1381 is ON
+      OR[ 1 ] <-- IF Flag: 1401 is ON
+      OR[ 1 ] <-- IF Flag: 1411 is ON
+      OR[ 1 ] <-- IF Flag: 1421 is ON
+      OR[ 1 ] <-- IF Flag: 1434 is ON
+      OR[ 1 ] <-- IF Flag: 1461 is ON
+      OR[ 1 ] <-- IF Flag: 1512 is ON
+      OR[ 1 ] <-- IF Flag: 1547 is ON
+      OR[ 1 ] <-- IF Flag: 1574 is ON
+      OR[ 1 ] <-- IF Flag: 1603 is ON
+      OR[ 1 ] <-- IF Flag: 1627 is ON
+      OR[ 1 ] <-- IF Flag: 1646 is ON
+      OR[ 1 ] <-- IF Flag: 1675 is ON
+      OR[ 1 ] <-- IF Flag: 1691 is ON
+      OR[ 1 ] <-- IF Flag: 1711 is ON
+      OR[ 1 ] <-- IF Flag: 1712 is ON
+      OR[ 1 ] <-- IF Flag: 71200035 is ON
+      OR[ 1 ] <-- IF Flag: 71200042 is ON
+      OR[ 1 ] <-- IF Flag: 1763 is ON
+      OR[ 1 ] <-- IF Flag: 1822 is ON
+      OR[ 1 ] <-- IF Flag: 1841 is ON
+      OR[ 1 ] <-- IF Flag: 1863 is ON
+      OR[ 1 ] <-- IF Flag: 1871 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    ENABLE Event Flag ID 744
+     --> AWAIT <-- IF Flag: 744 is OFF
+    RESTART event
+
+Event ID: 761
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     --> AWAIT <-- IF Flag: 760 is ON
+    WAIT 200 frames
+    DISABLE Event Flag ID 760
+    RESTART event
+
+Event ID: 763
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     --> AWAIT <-- IF Flag: 762 is ON
+    Force Entity ID: 10000 to play Animation ID: 7697 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    WAIT 3.500s
+    DISABLE Event Flag ID 762
+    WAIT 2.800s
+    DISABLE Event Flag ID 764
+    Force Entity ID: 10000 to play Animation ID: 7701 (Loop: TRUE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    RESTART event
+
+Event ID: 750
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 71 is TRUE
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 72 is TRUE
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 73 is TRUE
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 74 is TRUE
+      OR[ 1 ] <-- IF Flag: 751 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    ENABLE Event Flag ID 751
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 71 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 72 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 73 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 74 is FALSE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Event Flag ID 751
+    RESTART event
+
+Event ID: 752
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 5213 is TRUE
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 5214 is TRUE
+      OR[ 1 ] <-- IF Flag: 753 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    ENABLE Event Flag ID 753
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 5213 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 5214 is FALSE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Event Flag ID 753
+    DISABLE Event Flag ID 11400591
+    RESTART event
+
+Event ID: 757
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 1 lines IF Flag: 757 is OFF
+    Display Status Explanation Message (Message ID: 10010660, ENABLE Pad)
+    DISABLE Event Flag ID 757
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 71 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 72 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 73 is FALSE
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 74 is FALSE
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 33 is TRUE
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 34 is TRUE
+     AND[ 1 ] <-- IF condition  OR[ 1 ] is TRUE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    END event
+
+Event ID: 758
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 1 lines IF This Event: 0 is OFF
+    Display Status Explanation Message (Message ID: 10010670, ENABLE Pad)
+    DISABLE Event Flag ID 758
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF Entity ID: 10000 has Health Ratio <= 0.000
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 2130 is TRUE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+     AND[ 2 ] <-- IF player Multiplayer State is Host
+     AND[ 2 ] <-- IF Entity ID: 10000 is Dead
+     AND[ 2 ] <-- IF Entity ID: 10000 has Special Effect ID: 2130 is FALSE
+     --> AWAIT <-- IF condition AND[ 2 ] is TRUE
+    END event
+
+Event ID: 759
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 1 lines IF This Event: 0 is OFF
+    Display Status Explanation Message (Message ID: 10010680, ENABLE Pad)
+    DISABLE Event Flag ID 759
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF Entity ID: 10000 has Health Ratio <= 0.000
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 2131 is TRUE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+     AND[ 2 ] <-- IF player Multiplayer State is Host
+     AND[ 2 ] <-- IF Entity ID: 10000 is Dead
+     AND[ 2 ] <-- IF Entity ID: 10000 has Special Effect ID: 2131 is FALSE
+     --> AWAIT <-- IF condition AND[ 2 ] is TRUE
+    END event
+
+Event ID: 818
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 2 lines IF Flag: 11510150 is ON
+     --> AWAIT <-- IF Flag: 11510150 is ON
+    Display Status Explanation Message (Message ID: 10010690, ENABLE Pad)
+     AND[ 1 ] <-- IF Flag: 11510150 is ON
+     AND[ 1 ] <-- IF it is FALSE that player is in Map<15><1> (Anor Londo)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Event Flag ID 11510150
+    RESTART event
+
+Event ID: 810
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     --> AWAIT <-- IF Flag: 50001031 is ON
+    ENABLE Event Flag ID 810
+
+Event ID: 812
+Restarts: Never
+Event Arguments: {ARG_0_3} (i)
+    END event IF This Event + Slot: 0 is ON
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    END event
+
+Event ID: 822
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 830 is ON
+     AND[ 1 ] <-- IF 0.500s have elapsed
+     AND[ 1 ] <-- IF it is FALSE that player is in Map<18><0> (Kiln of the First Flame)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Event Flag ID 830
+    RESTART event
+
+Event ID: 823
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 831 is ON
+     AND[ 1 ] <-- IF 0.500s have elapsed
+     AND[ 1 ] <-- IF it is FALSE that player is in Map<18><0> (Kiln of the First Flame)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Event Flag ID 831
+    RESTART event
+
+Event ID: 840
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+    DISABLE Event Flag ID ARG_0_3
+     --> AWAIT <-- IF Flag: ARG_0_3 is ON
+    SKIP 2 lines IF Flag: 844 is ON
+    SKIP 1 lines IF Flag: 847 is ON
+    Rotate Entity ID: 10000 to face Entity ID: ARG_8_11
+    Force Entity ID: 10000 to play Animation ID: ARG_4_7 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    WAIT 1.000s
+    Play Sound Effect (Sound Type: s: SFX, Sound ID: 123456789) at Entity ID: 10000
+    WAIT 4.000s
+    SKIP 1 lines IF (ARG_12_15 == -1)
+    Force Entity ID: 10000 to play Animation ID: ARG_12_15 (Loop: TRUE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    RESTART event
+
+Event ID: 766
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 1 ] <-- IF it is TRUE that the game is in online mode
+    END event IF condition AND[ 1 ] is TRUE
+    ENABLE Event Flag ID 765

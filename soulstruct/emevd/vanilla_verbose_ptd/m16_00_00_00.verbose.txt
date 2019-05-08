@@ -1,0 +1,1499 @@
+Event ID: 0
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 1 lines IF Flag: 13 is OFF
+    Register Bonfire (Event Flag ID: 11600920, Entity ID: 1601950, Reaction Distance: 2.000, Reaction Angle: 180.000, Initial Kindle Level: 0)
+    Register Bonfire (Event Flag ID: 11600984, Entity ID: 1601961, Reaction Distance: 2.000, Reaction Angle: 180.000, Initial Kindle Level: 0)
+    Register Ladder (Entity ID: 1601140, Unknown Event Flag ID: 11600010, Unknown Event Flag ID: 11600011)
+    Register Ladder (Entity ID: 1601141, Unknown Event Flag ID: 11600012, Unknown Event Flag ID: 11600013)
+    ENABLE Event Flag ID 11600102
+    SKIP 7 lines IF multiplayer status is Client
+    ENABLE Event Flag ID 404
+    DISABLE Object with Entity ID: 1601994
+    Delete Map SFX (Entity ID: 1601995, Deletes only root: FALSE)
+    DISABLE Object with Entity ID: 1601996
+    Delete Map SFX (Entity ID: 1601997, Deletes only root: FALSE)
+    DISABLE Object with Entity ID: 1601998
+    Delete Map SFX (Entity ID: 1601999, Deletes only root: FALSE)
+    DISABLE spawner with Entity ID: 1603000
+    Run Event (ID: 11600090, Slot: 0, Arguments: {1601700, 1601701, 1602600, 1602601})
+    Run Event (ID: 11600090, Slot: 1, Arguments: {1601702, 1601703, 1602602, 1602603})
+    Run Event (ID: 11605090, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605091, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605092, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605100, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600150, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600100, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600101, Slot: 0, Arguments: {1601101, 11600102, 0})
+    Run Event (ID: 11600110, Slot: 0, Arguments: {11600110, 10010872, 1601111})
+    Run Event (ID: 11600120, Slot: 0, Arguments: {11600120, 10010867, 1601110, 10010883, 2008})
+    Run Event (ID: 11600160, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600200, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600250, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600199, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600210, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600251, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600220, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600252, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600230, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600253, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600810, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600400, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605397, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605398, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605360, Slot: 0, Arguments: {10000})
+    Run Event (ID: 11605360, Slot: 1, Arguments: {10001})
+    Run Event (ID: 11605360, Slot: 2, Arguments: {10002})
+    Run Event (ID: 11605360, Slot: 3, Arguments: {10003})
+    Run Event (ID: 11605360, Slot: 4, Arguments: {10004})
+    Run Event (ID: 11605360, Slot: 5, Arguments: {10005})
+    DISABLE Map Sound (Entity ID: 1603800)
+    SKIP 4 lines IF Flag: 13 is OFF
+    Run Event (ID: 11605392, Slot: 0, Arguments: {0})
+    DISABLE Object with Entity ID: 1601990
+    Delete Map SFX (Entity ID: 1601991, Deletes only root: FALSE)
+    SKIP 13 lines
+    Run Event (ID: 11605390, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605391, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605393, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605392, Slot: 0, Arguments: {0})
+    Run Event (ID: 11600001, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605394, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605395, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605396, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605350, Slot: 0, Arguments: {1600801})
+    Run Event (ID: 11605350, Slot: 1, Arguments: {1600802})
+    Run Event (ID: 11605350, Slot: 2, Arguments: {1600803})
+    Run Event (ID: 11605350, Slot: 3, Arguments: {1600804})
+    Run Event (ID: 11605399, Slot: 0, Arguments: {0})
+    DISABLE Map Sound (Entity ID: 1603801)
+    Run Event (ID: 11605150, Slot: 0, Arguments: {1600202, 1602850})
+    Run Event (ID: 11605150, Slot: 1, Arguments: {1600204, 1602850})
+    Run Event (ID: 11605150, Slot: 2, Arguments: {1600205, 1602850})
+    Run Event (ID: 11605150, Slot: 3, Arguments: {1600211, 1602850})
+    Run Event (ID: 11605150, Slot: 4, Arguments: {1600351, 1602850})
+    Run Event (ID: 11605150, Slot: 5, Arguments: {1600356, 1602850})
+    Run Event (ID: 11605150, Slot: 6, Arguments: {1600357, 1602850})
+    Run Event (ID: 11605150, Slot: 7, Arguments: {1600250, 1602850})
+    Run Event (ID: 11605150, Slot: 8, Arguments: {1600252, 1602851})
+    Run Event (ID: 11605150, Slot: 9, Arguments: {1600253, 1602851})
+    Run Event (ID: 11605150, Slot: 10, Arguments: {1600255, 1602851})
+    Run Event (ID: 11605150, Slot: 11, Arguments: {1600200, 1602852})
+    Run Event (ID: 11605150, Slot: 12, Arguments: {1600201, 1602852})
+    Run Event (ID: 11605150, Slot: 13, Arguments: {1600206, 1602852})
+    Run Event (ID: 11605150, Slot: 14, Arguments: {1600251, 1602852})
+    Run Event (ID: 11605150, Slot: 15, Arguments: {1600254, 1602852})
+    Run Event (ID: 11605150, Slot: 16, Arguments: {1600301, 1602852})
+    Run Event (ID: 11605150, Slot: 17, Arguments: {1600302, 1602852})
+    Run Event (ID: 11605150, Slot: 18, Arguments: {1600352, 1602852})
+    Run Event (ID: 11605150, Slot: 19, Arguments: {1600353, 1602852})
+    Run Event (ID: 11605150, Slot: 20, Arguments: {1600354, 1602852})
+    Run Event (ID: 11605150, Slot: 21, Arguments: {1600360, 1602852})
+    Run Event (ID: 11605150, Slot: 22, Arguments: {1600350, 1602853})
+    Run Event (ID: 11605150, Slot: 23, Arguments: {1600355, 1602853})
+    Run Event (ID: 11605150, Slot: 24, Arguments: {1600203, 1602853})
+    Run Event (ID: 11605150, Slot: 25, Arguments: {1600207, 1602853})
+    Run Event (ID: 11605150, Slot: 26, Arguments: {1600208, 1602853})
+    Run Event (ID: 11605150, Slot: 27, Arguments: {1600209, 1602853})
+    Run Event (ID: 11605150, Slot: 28, Arguments: {1600210, 1602853})
+    Run Event (ID: 11605150, Slot: 29, Arguments: {1600358, 1602854})
+    Run Event (ID: 11605150, Slot: 30, Arguments: {1600359, 1602854})
+    Run Event (ID: 11605150, Slot: 31, Arguments: {1600361, 1602854})
+    Run Event (ID: 11605150, Slot: 32, Arguments: {1600300, 1602860})
+    Run Event (ID: 11605150, Slot: 33, Arguments: {1600310, 1602860})
+    Run Event (ID: 11605001, Slot: 0, Arguments: {1600200, 1084227584, 9060})
+    Run Event (ID: 11605001, Slot: 1, Arguments: {1600201, 1084227584, 9060})
+    Run Event (ID: 11605001, Slot: 2, Arguments: {1600202, 1088421888, 9060})
+    Run Event (ID: 11605001, Slot: 3, Arguments: {1600203, 1088421888, 9060})
+    Run Event (ID: 11605001, Slot: 4, Arguments: {1600204, 1086324736, 9060})
+    Run Event (ID: 11605001, Slot: 5, Arguments: {1600205, 1086324736, 9060})
+    Run Event (ID: 11605001, Slot: 6, Arguments: {1600206, 1077936128, 9060})
+    Run Event (ID: 11605001, Slot: 7, Arguments: {1600210, 1084227584, 9060})
+    Run Event (ID: 11605050, Slot: 0, Arguments: {1600250, 1602250, 3007, 0, 0})
+    Run Event (ID: 11605050, Slot: 1, Arguments: {1600251, 1602251, 3007, 0, 0})
+    Run Event (ID: 11605050, Slot: 2, Arguments: {1600252, 1602252, 3006, 1, 1084227584})
+    Run Event (ID: 11605050, Slot: 3, Arguments: {1600253, 1602253, 3006, 1, 1084227584})
+    Run Event (ID: 11605050, Slot: 4, Arguments: {1600254, 1602254, 3005, 0, 0})
+    Run Event (ID: 11605050, Slot: 5, Arguments: {1600255, 1602255, 3005, 0, 0})
+    Run Event (ID: 11605050, Slot: 6, Arguments: {1600207, 1602270, 9060, 0, 0})
+    Run Event (ID: 11605050, Slot: 7, Arguments: {1600208, 1602270, 9060, 0, 0})
+    Run Event (ID: 11605050, Slot: 8, Arguments: {1600209, 1602270, 9060, 0, 0})
+    Run Event (ID: 11605050, Slot: 9, Arguments: {1600211, 1602271, 9060, 0, 0})
+    Run Event (ID: 11605200, Slot: 0, Arguments: {1600400, 1600410, 1, 11600100})
+    Run Event (ID: 11605200, Slot: 1, Arguments: {1600400, 1600411, 2, 11605200})
+    Run Event (ID: 11605200, Slot: 2, Arguments: {1600400, 1600412, 3, 11605201})
+    Run Event (ID: 11605200, Slot: 3, Arguments: {1600400, 1600413, 4, 11605202})
+    Run Event (ID: 11605200, Slot: 4, Arguments: {1600400, 1600414, 5, 11605203})
+    Run Event (ID: 11605200, Slot: 5, Arguments: {1600400, 1600415, 6, 11605204})
+    Run Event (ID: 11605200, Slot: 10, Arguments: {1600401, 1600416, 1, 11600100})
+    Run Event (ID: 11605200, Slot: 11, Arguments: {1600401, 1600417, 2, 11605210})
+    Run Event (ID: 11605200, Slot: 12, Arguments: {1600401, 1600418, 3, 11605211})
+    Run Event (ID: 11605200, Slot: 13, Arguments: {1600401, 1600419, 4, 11605212})
+    Run Event (ID: 11605200, Slot: 14, Arguments: {1600401, 1600420, 5, 11605213})
+    Run Event (ID: 11605200, Slot: 15, Arguments: {1600401, 1600421, 6, 11605214})
+    Run Event (ID: 11605250, Slot: 0, Arguments: {1600410})
+    Run Event (ID: 11605250, Slot: 1, Arguments: {1600411})
+    Run Event (ID: 11605250, Slot: 2, Arguments: {1600412})
+    Run Event (ID: 11605250, Slot: 3, Arguments: {1600413})
+    Run Event (ID: 11605250, Slot: 4, Arguments: {1600414})
+    Run Event (ID: 11605250, Slot: 5, Arguments: {1600415})
+    Run Event (ID: 11605250, Slot: 6, Arguments: {1600416})
+    Run Event (ID: 11605250, Slot: 7, Arguments: {1600417})
+    Run Event (ID: 11605250, Slot: 8, Arguments: {1600418})
+    Run Event (ID: 11605250, Slot: 9, Arguments: {1600419})
+    Run Event (ID: 11605250, Slot: 10, Arguments: {1600420})
+    Run Event (ID: 11605250, Slot: 11, Arguments: {1600421})
+    Run Event (ID: 11600850, Slot: 0, Arguments: {1600400})
+    Run Event (ID: 11600850, Slot: 1, Arguments: {1600401})
+    Run Event (ID: 11600600, Slot: 0, Arguments: {1601650, 11600600})
+    Run Event (ID: 11600600, Slot: 1, Arguments: {1601651, 11600601})
+    Run Event (ID: 11600600, Slot: 2, Arguments: {1601652, 11600602})
+    Run Event (ID: 11600650, Slot: 0, Arguments: {1601610, 1601310})
+    Run Event (ID: 11600650, Slot: 1, Arguments: {1601611, 1601311})
+
+Event ID: 50
+Restarts: Never
+Event Arguments: {} ()
+    Humanity Registration for Entity ID: 6520 (Initial Humanity Flag ID: 8932)
+    Run Event (ID: 11605030, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605032, Slot: 0, Arguments: {0})
+    Run Event (ID: 11605033, Slot: 0, Arguments: {0})
+    Humanity Registration for Entity ID: 6180 (Initial Humanity Flag ID: 8406)
+    SKIP 2 lines IF Flag: 1315 is ON
+    SKIP 1 lines IF Flag: 1313 is ON
+    SKIP 1 lines
+    DISABLE Character ID: 6180
+    Run Event (ID: 11600510, Slot: 0, Arguments: {6180, 1314})
+    Run Event (ID: 11600520, Slot: 0, Arguments: {6180, 1310, 1319, 1315})
+    Run Event (ID: 11600530, Slot: 0, Arguments: {6180, 1310, 1319, 1311})
+    Run Event (ID: 11600531, Slot: 0, Arguments: {6180, 1310, 1319, 1312})
+    Run Event (ID: 11600532, Slot: 0, Arguments: {6180, 1310, 1319, 1313})
+    Humanity Registration for Entity ID: 6220 (Initial Humanity Flag ID: 8414)
+    Run Event (ID: 11600510, Slot: 1, Arguments: {6220, 1381})
+    Run Event (ID: 11600520, Slot: 1, Arguments: {6220, 1380, 1399, 1382})
+    Switch character (Entity ID: 6271) to team Hostile Ally and exit forced standby animation
+    SKIP 1 lines IF Flag: 1464 is ON
+    DISABLE Character ID: 6271
+    Run Event (ID: 11600520, Slot: 5, Arguments: {6271, 1460, 1489, 1462})
+    Run Event (ID: 11600545, Slot: 0, Arguments: {6271})
+    SKIP 2 lines IF Flag: 15 is OFF
+    DISABLE Character ID: 6340
+    SKIP 11 lines IF Flag: 15 is ON
+    ENABLE Immortality for Character ID: 6340
+    SKIP 2 lines IF Flag: 1677 is ON
+    SKIP 1 lines IF Flag: 1676 is ON
+    SKIP 1 lines
+    DISABLE Character ID: 6340
+    Run Event (ID: 11600537, Slot: 0, Arguments: {6340, 1670, 1678, 1671})
+    Run Event (ID: 11600538, Slot: 0, Arguments: {6340, 1670, 1678, 1672})
+    Run Event (ID: 11600539, Slot: 0, Arguments: {6340, 1670, 1678, 1673})
+    Run Event (ID: 11600540, Slot: 0, Arguments: {6340, 1670, 1678, 1677})
+    Run Event (ID: 11600541, Slot: 0, Arguments: {6340, 1670, 1678, 1677})
+    Run Event (ID: 11606200, Slot: 0, Arguments: {0})
+
+Event ID: 11600090
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+    SKIP 3 lines IF This Event + Slot: 0 is OFF
+    DISABLE Object with Entity ID: ARG_0_3
+    Delete Map SFX (Entity ID: ARG_4_7, Deletes only root: FALSE)
+    END event
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Region, Target Entity ID: ARG_8_11, Reaction Angle: 0.000, Damipoly ID: 0, Reaction Distance: 0.000, Help ID: 10010403, Reaction Attribute: Human & Hollow, Pad ID: 0) and Line Segment Direction (Line Segment Endpoint Entity ID: ARG_0_3)
+     AND[ 2 ] <-- IF Dialog Activated (Target Type: Region, Target Entity ID: ARG_12_15, Reaction Angle: 0.000, Damipoly ID: 0, Reaction Distance: 0.000, Help ID: 10010407, Reaction Attribute: Human & Hollow, Pad ID: 0) and Line Segment Direction (Line Segment Endpoint Entity ID: ARG_0_3)
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 2 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    Issue short-range Warp request for Entity ID: 10000 (Warp Destination Type: Region, Destination Target ID: ARG_8_11, Damipoly ID: -1)
+    SKIP 1 lines
+    Issue short-range Warp request for Entity ID: 10000 (Warp Destination Type: Region, Destination Target ID: ARG_12_15, Damipoly ID: -1)
+    Force Entity ID: 10000 to play Animation ID: 7410 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    DISABLE Object with Entity ID: ARG_0_3
+    Delete Map SFX (Entity ID: ARG_4_7, Deletes only root: TRUE)
+
+Event ID: 11605090
+Restarts: On Rest
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+    DISABLE Character ID: 1600900
+    DISABLE Character ID: 1600901
+    DISABLE Character ID: 1600902
+    DISABLE Character ID: 1600903
+    DISABLE Character ID: 1600904
+    DISABLE Character ID: 1600905
+     --> AWAIT <-- IF Flag: 11600050 is ON
+    END event IF Flag: 735 is ON
+    ENABLE Event Flag ID 5000
+    ENABLE Character ID: 1600900
+    ENABLE Character ID: 1600901
+    ENABLE Character ID: 1600902
+    ENABLE Character ID: 1600903
+    ENABLE Character ID: 1600904
+    ENABLE Character ID: 1600905
+
+Event ID: 11605091
+Restarts: On Rest
+Event Arguments: {} ()
+      OR[ 1 ] <-- IF Flag: 11605095 is ON
+      OR[ 1 ] <-- IF Flag: 735 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 1 lines IF Flag: 735 is OFF
+    DISABLE Event Flag ID 735
+    DISABLE Event Flag ID 11600050
+    DISABLE Event Flag ID 11605095
+    ENABLE Event Flag ID 5001
+    Request forced death of Character ID: 1600900 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600901 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600902 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600903 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600904 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600905 (Yields souls: FALSE)
+
+Event ID: 11605092
+Restarts: On Rest
+Event Arguments: {} ()
+    END event IF multiplayer status is Client
+     AND[ 1 ] <-- IF Area Black Tendency > 50
+     AND[ 1 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF Flag: 11600050 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    WAIT 1 frames
+     AND[ 2 ] <-- IF Area Black Tendency > 50
+     AND[ 2 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 2 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 2 ] <-- IF Flag: 11600050 is ON
+    RESTART event IF condition  OR[ 2 ] is FALSE
+    WAIT 1 frames
+     AND[ 3 ] <-- IF Area Black Tendency > 50
+     AND[ 3 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 3 ] <-- IF condition AND[ 3 ] is TRUE
+      OR[ 3 ] <-- IF Flag: 11600050 is ON
+    RESTART event IF condition  OR[ 3 ] is FALSE
+    WAIT 1 frames
+     AND[ 4 ] <-- IF Area Black Tendency > 50
+     AND[ 4 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 4 ] <-- IF condition AND[ 4 ] is TRUE
+      OR[ 4 ] <-- IF Flag: 11600050 is ON
+    RESTART event IF condition  OR[ 4 ] is FALSE
+    WAIT 1 frames
+     AND[ 5 ] <-- IF Area Black Tendency > 50
+     AND[ 5 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 5 ] <-- IF condition AND[ 5 ] is TRUE
+      OR[ 5 ] <-- IF Flag: 11600050 is ON
+    RESTART event IF condition  OR[ 5 ] is FALSE
+    WAIT 1 frames
+     AND[ 6 ] <-- IF Area Black Tendency > 50
+     AND[ 6 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 6 ] <-- IF condition AND[ 6 ] is TRUE
+      OR[ 6 ] <-- IF Flag: 11600050 is ON
+    RESTART event IF condition  OR[ 6 ] is FALSE
+    ENABLE Event Flag ID 11600050
+    WAIT 600.000s
+     AND[ 7 ] <-- IF Area Black Tendency <= 50
+     AND[ 7 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+    RESTART event IF condition AND[ 7 ] is FALSE
+    DISABLE Event Flag ID 11600050
+    ENABLE Event Flag ID 11605095
+
+Event ID: 11605390
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 1 ] <-- IF Flag: 13 is OFF
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Region, Target Entity ID: 1602998, Reaction Angle: 0.000, Damipoly ID: -1, Reaction Distance: 0.000, Help ID: 10010403, Reaction Attribute: Human & Hollow, Pad ID: 0) and Line Segment Direction (Line Segment Endpoint Entity ID: 1601990) (BOSS ROOM VERSION)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Rotate Entity ID: 10000 to face Entity ID: 1602997
+    Force Entity ID: 10000 to play Animation ID: 7410 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    RESTART event
+
+Event ID: 11605391
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 1 ] <-- IF Flag: 13 is OFF
+     AND[ 1 ] <-- IF Flag: 11605393 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is of Character Type White Phantom
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Region, Target Entity ID: 1602998, Reaction Angle: 0.000, Damipoly ID: -1, Reaction Distance: 0.000, Help ID: 10010403, Reaction Attribute: All, Pad ID: 0) and Line Segment Direction (Line Segment Endpoint Entity ID: 1601990)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Rotate Entity ID: 10000 to face Entity ID: 1602997
+    Force Entity ID: 10000 to play Animation ID: 7410 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    RESTART event
+
+Event ID: 11605393
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 3 lines IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 13 is OFF
+     AND[ 1 ] <-- IF Flag: 11605390 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602996
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    SKIP 1 lines IF multiplayer status is Client
+    Issue Boss Room entry notification
+    Activate buffs for NPC ID: 1600800
+    Activate buffs for NPC ID: 1600801
+    Activate buffs for NPC ID: 1600802
+    Activate buffs for NPC ID: 1600803
+    Activate buffs for NPC ID: 1600804
+
+Event ID: 11605392
+Restarts: On Rest
+Event Arguments: {} ()
+    SKIP 12 lines IF Flag: 13 is OFF
+    DISABLE Character ID: 1600800
+    DISABLE Character ID: 1600801
+    DISABLE Character ID: 1600802
+    DISABLE Character ID: 1600803
+    DISABLE Character ID: 1600804
+    Request forced death of Character ID: 1600800 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600801 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600802 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600803 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600804 (Yields souls: FALSE)
+    ENABLE Treasure of Entity ID: 1601600
+    END event
+    DISABLE AI of Character ID: 1600800
+    DISABLE AI of Character ID: 1600801
+    DISABLE AI of Character ID: 1600802
+    DISABLE AI of Character ID: 1600803
+    DISABLE AI of Character ID: 1600804
+    DISABLE Character ID: 1600801
+    Request forced death of Character ID: 1600802 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600803 (Yields souls: FALSE)
+    Request forced death of Character ID: 1600804 (Yields souls: FALSE)
+    DISABLE Gravity for Character ID: 1600800
+    SKIP 5 lines IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 11605399 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602999
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE network sync.
+    WAIT 7.000s
+    ENABLE Character ID: 1600801
+    Force Entity ID: 1600801 to play Animation ID: 6200 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    ENABLE AI of Character ID: 1600801
+    ENABLE AI of Character ID: 1600802
+    ENABLE AI of Character ID: 1600803
+    ENABLE AI of Character ID: 1600804
+    ENABLE Boss Health Bar of Entity ID: 1600800 (Slot Number: 0, Name ID: 5390)
+    Refer damage from Entity ID: 1600801 to Entity ID: 1600800
+    Refer damage from Entity ID: 1600802 to Entity ID: 1600800
+    Refer damage from Entity ID: 1600803 to Entity ID: 1600800
+    Refer damage from Entity ID: 1600804 to Entity ID: 1600800
+
+Event ID: 11600001
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE Treasure of Entity ID: 1601600
+    DISABLE Object with Entity ID: 1601600
+    DISABLE Object with Entity ID: 1601950
+     AND[ 1 ] <-- IF Entity ID: 1600800 has Health Ratio <= 0.000
+     AND[ 1 ] <-- IF Flag: 11605395 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    SKIP 2 lines IF multiplayer status is Multiplayer
+    Play Cutscene (Cutscene ID: 160010, Playback Method: Skippable) and Warp Player Entity ID: 10000 to (Warp Point ID: 1602120, Map<16><0>)
+    SKIP 4 lines
+    SKIP 2 lines IF multiplayer status is Client
+    Play Cutscene (Cutscene ID: 160010, Playback Method: Unskippable) and Warp Player Entity ID: 10000 to (Warp Point ID: 1602120, Map<16><0>)
+    SKIP 1 lines
+    Play Cutscene (Cutscene ID: 160010, Playback Method: Unskippable) to Player Entity ID: 10000
+    WAIT 1 frames
+    DISABLE Character ID: 1600800
+    DISABLE Character ID: 1600801
+    DISABLE Character ID: 1600802
+    DISABLE Character ID: 1600803
+    DISABLE Character ID: 1600804
+    Request forced death of Character ID: 1600800 (Yields souls: TRUE)
+    Request forced death of Character ID: 1600801 (Yields souls: TRUE)
+    Request forced death of Character ID: 1600802 (Yields souls: TRUE)
+    Request forced death of Character ID: 1600803 (Yields souls: TRUE)
+    Request forced death of Character ID: 1600804 (Yields souls: TRUE)
+     --> AWAIT <-- IF Entity ID: 1600800 is Dead
+    ENABLE Event Flag ID 13
+    DISABLE spawner with Entity ID: 1603000
+    Kill Boss (Entity ID: 1600800)
+    DISABLE Object with Entity ID: 1601990
+    Delete Map SFX (Entity ID: 1601991, Deletes only root: TRUE)
+    ENABLE Treasure of Entity ID: 1601600
+    ENABLE Object with Entity ID: 1601600
+    END event IF multiplayer status is Client
+    Award Achievement ID: 37
+    Create One-Off SFX (SFX Type: Object, Entity ID: 1601950, Damipoly ID: -1, SFX ID: 90014)
+    WAIT 2.000s
+    ENABLE Object with Entity ID: 1601950
+    Register Bonfire (Event Flag ID: 11600920, Entity ID: 1601950, Reaction Distance: 2.000, Reaction Angle: 180.000, Initial Kindle Level: 0)
+
+Event ID: 11605394
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 13 is OFF
+     AND[ 1 ] <-- IF Flag: 11605392 is ON
+    SKIP 1 lines IF multiplayer status is Host
+     AND[ 1 ] <-- IF Flag: 11605391 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602990
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Map Sound (Entity ID: 1603800)
+
+Event ID: 11605395
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Entity ID: 1600800 has Health Ratio <= 0.000
+     AND[ 1 ] <-- IF Flag: 11605394 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Map Sound (Entity ID: 1603800)
+
+Event ID: 11605396
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Flag: 11605392 is ON
+     AND[ 7 ] <-- IF Entity ID: 1600800 has Health Ratio <= 0.000
+    END event IF condition AND[ 7 ] is TRUE
+     AND[ 1 ] <-- IF Entity ID: 1600801 is Alive
+    SKIP 5 lines IF condition AND[ 1 ] is FALSE
+    Issue AI instruction request to Character ID: 1600801 (Command ID: 1, Slot Number: 0)
+      OR[ 1 ] <-- IF Entity ID: 1600801 is Dead
+      OR[ 1 ] <-- IF it is TRUE that Entity ID: 1600801 has Event Message ID: 500
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Issue AI instruction request to Character ID: 1600801 (Command ID: -1, Slot Number: 0)
+     AND[ 2 ] <-- IF Entity ID: 1600802 is Alive
+    SKIP 5 lines IF condition AND[ 2 ] is FALSE
+    Issue AI instruction request to Character ID: 1600802 (Command ID: 1, Slot Number: 0)
+      OR[ 2 ] <-- IF Entity ID: 1600802 is Dead
+      OR[ 2 ] <-- IF it is TRUE that Entity ID: 1600802 has Event Message ID: 500
+     --> AWAIT <-- IF condition  OR[ 2 ] is TRUE
+    Issue AI instruction request to Character ID: 1600802 (Command ID: -1, Slot Number: 0)
+     AND[ 3 ] <-- IF Entity ID: 1600803 is Alive
+    SKIP 5 lines IF condition AND[ 3 ] is FALSE
+    Issue AI instruction request to Character ID: 1600803 (Command ID: 1, Slot Number: 0)
+      OR[ 3 ] <-- IF Entity ID: 1600803 is Dead
+      OR[ 3 ] <-- IF it is TRUE that Entity ID: 1600803 has Event Message ID: 500
+     --> AWAIT <-- IF condition  OR[ 3 ] is TRUE
+    Issue AI instruction request to Character ID: 1600803 (Command ID: -1, Slot Number: 0)
+     AND[ 4 ] <-- IF Entity ID: 1600804 is Alive
+    SKIP 5 lines IF condition AND[ 4 ] is FALSE
+    Issue AI instruction request to Character ID: 1600804 (Command ID: 1, Slot Number: 0)
+      OR[ 4 ] <-- IF Entity ID: 1600804 is Dead
+      OR[ 4 ] <-- IF it is TRUE that Entity ID: 1600804 has Event Message ID: 500
+     --> AWAIT <-- IF condition  OR[ 4 ] is TRUE
+    Issue AI instruction request to Character ID: 1600804 (Command ID: -1, Slot Number: 0)
+    RESTART event
+
+Event ID: 11605397
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+      OR[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 2200 is TRUE
+      OR[ 1 ] <-- IF Flag: 13 is ON
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    DISABLE Hitbox of Entity ID: 1603310
+    DISABLE Hitbox of Entity ID: 1603311
+    END event IF Flag: 13 is ON
+     --> AWAIT <-- IF Entity ID: 10000 has Special Effect ID: 2200 is FALSE
+    ENABLE Hitbox of Entity ID: 1603310
+    ENABLE Hitbox of Entity ID: 1603311
+    RESTART event
+
+Event ID: 11605398
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+    SKIP 3 lines IF Flag: 13 is OFF
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602999
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    SKIP 7 lines IF Flag: 13 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 has Special Effect ID: 2200 is TRUE
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602999
+     AND[ 2 ] <-- IF Entity ID: 10000 has Special Effect ID: 2200 is FALSE
+     AND[ 2 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602900
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 5 lines IF condition AND[ 1 ] is TRUE (FINISHED)
+    DISABLE Map Collision for Entity ID: 10000
+     --> AWAIT <-- IF Entity ID: 10000 is Dead
+    ENABLE Map Collision for Entity ID: 10000
+    ENABLE Event Flag ID 8120
+    END event
+    ENABLE Invincibility for Character ID: 10000
+    WAIT 2.000s
+    DISABLE Invincibility for Character ID: 10000
+
+Event ID: 11605399
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF local player is standing on Hitbox Entity ID: 1603300
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE spawner with Entity ID: 1603000
+    END event
+
+Event ID: 11605360
+Restarts: Never
+Event Arguments: {ARG_0_3} (i)
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 13 is OFF
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is INSIDE Region ID: 1602990
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 has Special Effect ID: 2200 is FALSE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Issue Animation Reset Request for Entity ID: ARG_0_3 (Interpolation: Not Interpolated)
+    Force Entity ID: ARG_0_3 to play Animation ID: 6084 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    DISABLE Character ID: ARG_0_3
+    END event IF (ARG_0_3 != 10000)
+    ENABLE Event Flag ID 8120
+
+Event ID: 11605350
+Restarts: Never
+Event Arguments: {ARG_0_3} (i)
+     AND[ 7 ] <-- IF player Multiplayer State is Host
+     AND[ 7 ] <-- IF Entity ID: ARG_0_3 has Health Ratio > 0.000
+     --> AWAIT <-- IF condition AND[ 7 ] is TRUE
+    ENABLE Immortality for Character ID: ARG_0_3
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF 1.000s have elapsed
+     AND[ 1 ] <-- IF Entity ID: 1600800 has Health Ratio > 0.000
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 has Health Ratio <= 0.010
+     AND[ 2 ] <-- IF Entity ID: 1600800 has Health Ratio <= 0.000
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 3 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    DISABLE Immortality for Character ID: ARG_0_3
+    Request forced death of Character ID: ARG_0_3 (Yields souls: FALSE)
+    RESTART event
+    Force Entity ID: ARG_0_3 to play Animation ID: 7000 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    DISABLE Character ID: ARG_0_3
+    DISABLE Immortality for Character ID: ARG_0_3
+    Request forced death of Character ID: ARG_0_3 (Yields souls: FALSE)
+
+Event ID: 11605380
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 1 ] <-- IF Flag: 11600900 is OFF
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Region, Target Entity ID: 1602898, Reaction Angle: 0.000, Damipoly ID: -1, Reaction Distance: 0.000, Help ID: 10010403, Reaction Attribute: Human & Hollow, Pad ID: 0) (BOSS ROOM)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    SKIP 1 lines IF multiplayer status is Client
+    Issue Boss Room entry notification
+    Rotate Entity ID: 10000 to face Entity ID: 1602897
+    Force Entity ID: 10000 to play Animation ID: 7410 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Activate buffs for NPC ID: 1600810
+    RESTART event
+
+Event ID: 11605381
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 11600900 is OFF
+     AND[ 1 ] <-- IF Flag: 11605380 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is of Character Type White Phantom
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Region, Target Entity ID: 1602898, Reaction Angle: 0.000, Damipoly ID: -1, Reaction Distance: 0.000, Help ID: 10010403, Reaction Attribute: All, Pad ID: 0)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Rotate Entity ID: 10000 to face Entity ID: 1602897
+    Force Entity ID: 10000 to play Animation ID: 7410 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    RESTART event
+
+Event ID: 11605382
+Restarts: On Rest
+Event Arguments: {} ()
+    SKIP 3 lines IF Flag: 11600900 is OFF
+    DISABLE Character ID: 1600810
+    Request forced death of Character ID: 1600810 (Yields souls: FALSE)
+    END event
+    DISABLE AI of Character ID: 1600810
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF Flag: 11605380 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602890
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE AI of Character ID: 1600810
+    ENABLE Boss Health Bar of Entity ID: 1600810 (Slot Number: 0, Name ID: 2390)
+
+Event ID: 11600900
+Restarts: Never
+Event Arguments: {} ()
+     --> AWAIT <-- IF Entity ID: 1600810 is Dead
+    Kill Boss (Entity ID: 1600810)
+    DISABLE Object with Entity ID: 1601890
+    Delete Map SFX (Entity ID: 1601891, Deletes only root: TRUE)
+    END event IF multiplayer status is Client
+     AND[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: 2013)
+    END event IF condition AND[ 1 ] is TRUE
+    Award Items (Item Lot ID: 1100)
+
+Event ID: 11605384
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 11600900 is OFF
+     AND[ 1 ] <-- IF Flag: 11605382 is ON
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602890
+    SKIP 1 lines IF multiplayer status is Host
+     AND[ 1 ] <-- IF Flag: 11605381 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Map Sound (Entity ID: 1603801)
+
+Event ID: 11605385
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602890
+     AND[ 1 ] <-- IF Entity ID: 1600810 is Dead
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Map Sound (Entity ID: 1603801)
+
+Event ID: 11600150
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 63 lines IF Flag: 11600100 is ON
+    DISABLE Hitbox of Entity ID: 1603250
+    DISABLE Hitbox of Entity ID: 1603251
+    DISABLE Hitbox of Entity ID: 1603252
+    DISABLE Hitbox of Entity ID: 1603253
+    DISABLE Hitbox of Entity ID: 1603254
+    DISABLE Hitbox of Entity ID: 1603255
+    DISABLE Hitbox of Entity ID: 1603256
+    DISABLE Hitbox of Entity ID: 1603257
+    DISABLE Hitbox of Entity ID: 1603258
+    DISABLE Hitbox of Entity ID: 1603259
+    DISABLE Hitbox of Entity ID: 1603260
+    DISABLE Hitbox of Entity ID: 1603261
+    DISABLE Hitbox of Entity ID: 1603262
+    DISABLE Hitbox of Entity ID: 1603263
+    DISABLE Hitbox of Entity ID: 1603264
+    DISABLE Hitbox of Entity ID: 1603265
+    DISABLE Hitbox of Entity ID: 1603266
+    DISABLE Hitbox of Entity ID: 1603267
+    DISABLE Map Part ID: 1603110
+    DISABLE Map Part ID: 1603111
+    DISABLE Map Part ID: 1603112
+    DISABLE Map Part ID: 1603113
+    DISABLE Map Part ID: 1603114
+    DISABLE Map Part ID: 1603115
+    DISABLE Map Part ID: 1603116
+    DISABLE Map Part ID: 1603117
+    DISABLE Map Part ID: 1603118
+    DISABLE Map Part ID: 1603119
+    DISABLE Map Part ID: 1603120
+    DISABLE Hitbox of Entity ID: 1603121
+    DISABLE Hitbox of Entity ID: 1603122
+     --> AWAIT <-- IF Flag: 11600100 is ON
+    ENABLE Hitbox of Entity ID: 1603250
+    ENABLE Hitbox of Entity ID: 1603251
+    ENABLE Hitbox of Entity ID: 1603252
+    ENABLE Hitbox of Entity ID: 1603253
+    ENABLE Hitbox of Entity ID: 1603254
+    ENABLE Hitbox of Entity ID: 1603255
+    ENABLE Hitbox of Entity ID: 1603256
+    ENABLE Hitbox of Entity ID: 1603257
+    ENABLE Hitbox of Entity ID: 1603258
+    ENABLE Hitbox of Entity ID: 1603259
+    ENABLE Hitbox of Entity ID: 1603260
+    ENABLE Hitbox of Entity ID: 1603261
+    ENABLE Hitbox of Entity ID: 1603262
+    ENABLE Hitbox of Entity ID: 1603263
+    ENABLE Hitbox of Entity ID: 1603264
+    ENABLE Hitbox of Entity ID: 1603265
+    ENABLE Hitbox of Entity ID: 1603266
+    ENABLE Hitbox of Entity ID: 1603267
+    ENABLE Map Part ID: 1603110
+    ENABLE Map Part ID: 1603111
+    ENABLE Map Part ID: 1603112
+    ENABLE Map Part ID: 1603113
+    ENABLE Map Part ID: 1603114
+    ENABLE Map Part ID: 1603115
+    ENABLE Map Part ID: 1603116
+    ENABLE Map Part ID: 1603117
+    ENABLE Map Part ID: 1603118
+    ENABLE Map Part ID: 1603119
+    ENABLE Map Part ID: 1603120
+    ENABLE Hitbox of Entity ID: 1603121
+    ENABLE Hitbox of Entity ID: 1603122
+    DISABLE Map Sound (Entity ID: 1603850)
+    DISABLE Hitbox of Entity ID: 1603200
+    DISABLE Hitbox of Entity ID: 1603201
+    DISABLE Hitbox of Entity ID: 1603202
+    DISABLE Hitbox of Entity ID: 1603203
+    DISABLE Hitbox of Entity ID: 1603204
+    DISABLE Hitbox of Entity ID: 1603205
+    DISABLE Hitbox of Entity ID: 1603206
+    DISABLE Hitbox of Entity ID: 1603207
+    DISABLE Hitbox of Entity ID: 1603208
+    DISABLE Hitbox of Entity ID: 1603209
+    DISABLE Hitbox of Entity ID: 1603210
+    DISABLE Hitbox of Entity ID: 1603211
+    DISABLE Hitbox of Entity ID: 1603212
+    DISABLE Hitbox of Entity ID: 1603213
+    DISABLE Hitbox of Entity ID: 1603214
+    DISABLE Hitbox of Entity ID: 1603215
+    DISABLE Hitbox of Entity ID: 1603216
+    DISABLE Hitbox of Entity ID: 1603217
+
+Event ID: 11605100
+Restarts: On Rest
+Event Arguments: {} ()
+    END event IF Flag: 11600100 is ON
+    Disable BackRead (Entity ID: 1600100, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600101, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600102, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600103, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600104, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600105, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600106, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600107, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600108, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600109, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600110, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600400, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600401, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600900, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600901, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600902, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600903, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600904, Should be removed: TRUE)
+    Disable BackRead (Entity ID: 1600905, Should be removed: TRUE)
+     --> AWAIT <-- IF Flag: 11600100 is ON
+    Disable BackRead (Entity ID: 1600100, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600101, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600102, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600103, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600104, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600105, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600106, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600107, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600108, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600109, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600110, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600400, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600401, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600900, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600901, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600902, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600903, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600904, Should be removed: FALSE)
+    Disable BackRead (Entity ID: 1600905, Should be removed: FALSE)
+
+Event ID: 11600100
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 1 lines IF Flag: 11600101 is ON
+    SKIP 8 lines IF This Event: 0 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601100, Animation ID: 10)
+    DISABLE Hitbox of Entity ID: 1603100
+    DISABLE Hitbox of Entity ID: 1603102
+    DISABLE Hitbox of Entity ID: 1603103
+    DISABLE Hitbox of Entity ID: 1603104
+    DISABLE Object with Entity ID: 1601120
+    DISABLE Event Flag ID 404
+    END event
+    ENABLE Hitbox of Entity ID: 1603103
+    ENABLE Hitbox of Entity ID: 1603104
+     --> AWAIT <-- IF Flag: 11600101 is ON
+    SKIP 2 lines IF multiplayer status is Multiplayer
+    Play Cutscene (Cutscene ID: 160000, Playback Method: Skippable) to Player Entity ID: 10000
+    SKIP 1 lines
+    Play Cutscene (Cutscene ID: 160000, Playback Method: Unskippable) to Player Entity ID: 10000
+    WAIT 1 frames
+    ENABLE Event Flag ID 11600100
+    RESTART event
+
+Event ID: 11600101
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11} (i|i|i)
+    SKIP 3 lines IF This Event + Slot: 0 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601100, Animation ID: ARG_8_11)
+    "Reproduction of object animation" (Object Entity ID: ARG_0_3, Animation ID: 0)
+    END event
+     --> AWAIT <-- IF Dialog Activated (Target Type: Object, Target Entity ID: ARG_0_3, Reaction Angle: 60.000, Damipoly ID: 104, Reaction Distance: 1.500, Help ID: 10010502, Reaction Attribute: All, Pad ID: 0)
+    Issue short-range Warp request for Entity ID: 10000 (Warp Destination Type: Object, Destination Target ID: ARG_0_3, Damipoly ID: 101)
+    Force Entity ID: 10000 to play Animation ID: 8020 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    Force Entity ID: ARG_0_3 to play Animation ID: 0 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    END event IF Flag: ARG_4_7 is ON
+    Force Entity ID: 1601100 to play Animation ID: ARG_8_11 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+
+Event ID: 11600110
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11} (i|i|i)
+    SKIP 5 lines IF This Event + Slot: 0 is OFF
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 0, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 1, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 2, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 3, State: DISABLE)
+    END event
+     --> AWAIT <-- IF ObjAct Execution Event ID: ARG_0_3
+    ENABLE Event Flag ID ARG_0_3
+    END event IF multiplayer status is Client
+    Display Dialog (Message ID: ARG_4_7, Button Type: YES/NO, Number of Buttons: No Button, Entity ID: ARG_8_11, Display Distance: 3.000)
+    DISABLE network sync.
+    WAIT 2.000s
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 0, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 1, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 2, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 3, State: DISABLE)
+
+Event ID: 11600120
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15, ARG_16_19} (i|i|i|i|i)
+    SKIP 5 lines IF This Event + Slot: 0 is OFF
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 0, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 1, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 2, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 3, State: DISABLE)
+    END event
+     --> AWAIT <-- IF ObjAct Execution Event ID: ARG_0_3
+    ENABLE Event Flag ID ARG_0_3
+    END event IF multiplayer status is Client
+     AND[ 1 ] <-- IF player Owns Item (Item Type: Good, Item ID: ARG_16_19)
+    SKIP 2 lines IF condition AND[ 1 ] is TRUE
+    Display Dialog (Message ID: ARG_12_15, Button Type: YES/NO, Number of Buttons: No Button, Entity ID: ARG_8_11, Display Distance: 3.000)
+    SKIP 1 lines
+    Display Dialog (Message ID: ARG_4_7, Button Type: YES/NO, Number of Buttons: No Button, Entity ID: ARG_8_11, Display Distance: 3.000)
+    DISABLE network sync.
+    WAIT 2.000s
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 0, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 1, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 2, State: DISABLE)
+    ObjAct Activation (IDX Designation) (Entity ID: ARG_8_11, Object Parameter ID: -1, Relative IDX: 3, State: DISABLE)
+
+Event ID: 11600160
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 3 lines IF This Event: 0 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601142, Animation ID: 0)
+    Register Ladder (Entity ID: 1601142, Unknown Event Flag ID: 11600014, Unknown Event Flag ID: 11600015)
+    END event
+     --> AWAIT <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601142, Reaction Angle: 60.000, Damipoly ID: 194, Reaction Distance: 1.500, Help ID: 10010500, Reaction Attribute: All, Pad ID: 0)
+    ENABLE Event Flag ID 11600160
+    Issue short-range Warp request for Entity ID: 10000 (Warp Destination Type: Object, Destination Target ID: 1601142, Damipoly ID: 192)
+    Force Entity ID: 10000 to play Animation ID: 8005 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    WAIT 0.500s
+    Force Entity ID: 1601142 to play Animation ID: 0 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Register Ladder (Entity ID: 1601142, Unknown Event Flag ID: 11600014, Unknown Event Flag ID: 11600015)
+
+Event ID: 11600200
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 3 lines IF Flag: 11600201 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601200, Animation ID: 21)
+    DISABLE Activation of Object ID: 1601202 (ObjAct Parameter ID: 6101)
+    SKIP 2 lines
+    "Reproduction of object animation" (Object Entity ID: 1601200, Animation ID: 20)
+    DISABLE Activation of Object ID: 1021201 (ObjAct Parameter ID: 6101)
+     AND[ 1 ] <-- IF player Multiplayer State is Singleplayer
+     AND[ 1 ] <-- IF Flag: 11600201 is OFF
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602200
+     AND[ 2 ] <-- IF player Multiplayer State is Singleplayer
+     AND[ 2 ] <-- IF Flag: 11600201 is ON
+     AND[ 2 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602201
+     AND[ 3 ] <-- IF player Multiplayer State is Singleplayer
+     AND[ 3 ] <-- IF ObjAct Execution Event ID: 11020202
+     AND[ 4 ] <-- IF player Multiplayer State is Singleplayer
+     AND[ 4 ] <-- IF ObjAct Execution Event ID: 11600203
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 4 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    WAIT 3.000s for network approval
+    ENABLE Event Flag ID 11605120
+    SKIP 10 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    SKIP 9 lines IF condition AND[ 3 ] is TRUE (FINISHED)
+    ENABLE Event Flag ID 11600201
+    DISABLE Activation of Object ID: 1601202 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601200 to play Animation ID: 11 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601200 to play Animation ID: 1 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602201
+    Force Entity ID: 1601200 to play Animation ID: 21 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1021201 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605120
+    RESTART event
+    DISABLE Event Flag ID 11600201
+    DISABLE Activation of Object ID: 1021201 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601200 to play Animation ID: 10 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601200 to play Animation ID: 0 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602200
+    Force Entity ID: 1601200 to play Animation ID: 20 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601202 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605120
+    RESTART event
+
+Event ID: 11600250
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 11605120 is OFF
+     AND[ 1 ] <-- IF Flag: 11600201 is OFF
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1021201, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 2 ] <-- IF Flag: 11605120 is OFF
+     AND[ 2 ] <-- IF Flag: 11600201 is ON
+     AND[ 2 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601202, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 3 ] <-- IF player Multiplayer State is Multiplayer
+     AND[ 3 ] <-- IF Flag: 11600201 is OFF
+     AND[ 3 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602200
+     AND[ 4 ] <-- IF player Multiplayer State is Multiplayer
+     AND[ 4 ] <-- IF Flag: 11600201 is ON
+     AND[ 4 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602201
+     AND[ 5 ] <-- IF player Multiplayer State is Multiplayer
+     AND[ 5 ] <-- IF ObjAct Execution Event ID: 11020202
+     AND[ 6 ] <-- IF player Multiplayer State is Multiplayer
+     AND[ 6 ] <-- IF ObjAct Execution Event ID: 11600203
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 4 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 5 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 6 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Display Dialog (Message ID: 10010170, Button Type: OK/CANCEL, Number of Buttons: No Button, Entity ID: -1, Display Distance: 3.000)
+    RESTART event
+
+Event ID: 11600199
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     --> AWAIT <-- IF Flag: 11600100 is ON
+    ENABLE Activation of Object ID: 1601211 (ObjAct Parameter ID: 6101)
+    ENABLE Activation of Object ID: 1601221 (ObjAct Parameter ID: 6101)
+
+Event ID: 11600210
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 3 lines IF Flag: 11600211 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601210, Animation ID: 22)
+    DISABLE Activation of Object ID: 1601211 (ObjAct Parameter ID: 6101)
+    SKIP 2 lines
+    "Reproduction of object animation" (Object Entity ID: 1601210, Animation ID: 21)
+    DISABLE Activation of Object ID: 1601212 (ObjAct Parameter ID: 6101)
+    SKIP 1 lines IF Flag: 11600100 is ON
+    DISABLE Activation of Object ID: 1601211 (ObjAct Parameter ID: 6101)
+     AND[ 1 ] <-- IF Flag: 11600100 is ON
+     AND[ 1 ] <-- IF Flag: 11600211 is OFF
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602211
+     AND[ 2 ] <-- IF Flag: 11600100 is ON
+     AND[ 2 ] <-- IF Flag: 11600211 is ON
+     AND[ 2 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602210
+     AND[ 3 ] <-- IF ObjAct Execution Event ID: 11600212
+     AND[ 4 ] <-- IF ObjAct Execution Event ID: 11600213
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 4 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    WAIT 3.000s for network approval
+    ENABLE Event Flag ID 11605121
+    SKIP 10 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    SKIP 9 lines IF condition AND[ 4 ] is TRUE (FINISHED)
+    ENABLE Event Flag ID 11600211
+    DISABLE Activation of Object ID: 1601211 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601210 to play Animation ID: 10 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601210 to play Animation ID: 2 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602210
+    Force Entity ID: 1601210 to play Animation ID: 22 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601212 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605121
+    RESTART event
+    DISABLE Event Flag ID 11600211
+    DISABLE Activation of Object ID: 1601212 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601210 to play Animation ID: 13 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601210 to play Animation ID: 3 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602211
+    Force Entity ID: 1601210 to play Animation ID: 21 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601211 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605121
+    RESTART event
+
+Event ID: 11600251
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 11605121 is OFF
+     AND[ 1 ] <-- IF Flag: 11600211 is ON
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601211, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 2 ] <-- IF Flag: 11605121 is OFF
+     AND[ 2 ] <-- IF Flag: 11600211 is OFF
+     AND[ 2 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601212, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 3 ] <-- IF Flag: 11600100 is OFF
+     AND[ 3 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601211, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Display Dialog (Message ID: 10010170, Button Type: OK/CANCEL, Number of Buttons: No Button, Entity ID: -1, Display Distance: 3.000)
+    RESTART event
+
+Event ID: 11600220
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 3 lines IF Flag: 11600221 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601220, Animation ID: 24)
+    DISABLE Activation of Object ID: 1601221 (ObjAct Parameter ID: 6101)
+    SKIP 2 lines
+    "Reproduction of object animation" (Object Entity ID: 1601220, Animation ID: 21)
+    DISABLE Activation of Object ID: 1601222 (ObjAct Parameter ID: 6101)
+    SKIP 1 lines IF Flag: 11600100 is ON
+    DISABLE Activation of Object ID: 1601221 (ObjAct Parameter ID: 6101)
+     AND[ 1 ] <-- IF Flag: 11600100 is ON
+     AND[ 1 ] <-- IF Flag: 11600221 is OFF
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602221
+     AND[ 2 ] <-- IF Flag: 11600100 is ON
+     AND[ 2 ] <-- IF Flag: 11600221 is ON
+     AND[ 2 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602220
+     AND[ 3 ] <-- IF ObjAct Execution Event ID: 11600222
+     AND[ 4 ] <-- IF ObjAct Execution Event ID: 11600223
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 4 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    WAIT 3.000s for network approval
+    ENABLE Event Flag ID 11605122
+    SKIP 10 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    SKIP 9 lines IF condition AND[ 4 ] is TRUE (FINISHED)
+    ENABLE Event Flag ID 11600221
+    DISABLE Activation of Object ID: 1601221 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601220 to play Animation ID: 10 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601220 to play Animation ID: 4 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602220
+    Force Entity ID: 1601220 to play Animation ID: 24 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601222 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605122
+    RESTART event
+    DISABLE Event Flag ID 11600221
+    DISABLE Activation of Object ID: 1601222 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601220 to play Animation ID: 15 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601220 to play Animation ID: 5 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602221
+    Force Entity ID: 1601220 to play Animation ID: 21 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601221 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605122
+    RESTART event
+
+Event ID: 11600252
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 11605122 is OFF
+     AND[ 1 ] <-- IF Flag: 11600221 is ON
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601221, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 2 ] <-- IF Flag: 11605122 is OFF
+     AND[ 2 ] <-- IF Flag: 11600221 is OFF
+     AND[ 2 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601222, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 3 ] <-- IF Flag: 11600100 is OFF
+     AND[ 3 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601221, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Display Dialog (Message ID: 10010170, Button Type: OK/CANCEL, Number of Buttons: No Button, Entity ID: -1, Display Distance: 3.000)
+    RESTART event
+
+Event ID: 11600230
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 3 lines IF Flag: 11600231 is OFF
+    "Reproduction of object animation" (Object Entity ID: 1601230, Animation ID: 26)
+    DISABLE Activation of Object ID: 1601231 (ObjAct Parameter ID: 6101)
+    SKIP 2 lines
+    "Reproduction of object animation" (Object Entity ID: 1601230, Animation ID: 21)
+    DISABLE Activation of Object ID: 1601232 (ObjAct Parameter ID: 6101)
+     AND[ 1 ] <-- IF Flag: 11600231 is OFF
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602231
+     AND[ 2 ] <-- IF Flag: 11600231 is ON
+     AND[ 2 ] <-- IF Entity ID: 10000 is INSIDE Region ID: 1602230
+     AND[ 3 ] <-- IF ObjAct Execution Event ID: 11600232
+     AND[ 4 ] <-- IF ObjAct Execution Event ID: 11600233
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 4 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    WAIT 3.000s for network approval
+    ENABLE Event Flag ID 11605123
+    SKIP 10 lines IF condition AND[ 2 ] is TRUE (FINISHED)
+    SKIP 9 lines IF condition AND[ 4 ] is TRUE (FINISHED)
+    ENABLE Event Flag ID 11600231
+    DISABLE Activation of Object ID: 1601231 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601230 to play Animation ID: 10 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601230 to play Animation ID: 6 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602230
+    Force Entity ID: 1601230 to play Animation ID: 26 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601232 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605123
+    RESTART event
+    DISABLE Event Flag ID 11600231
+    DISABLE Activation of Object ID: 1601232 (ObjAct Parameter ID: 6101)
+    Force Entity ID: 1601230 to play Animation ID: 17 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Force Entity ID: 1601230 to play Animation ID: 7 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF all players are OUTSIDE Region ID: 1602231
+    Force Entity ID: 1601230 to play Animation ID: 21 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Activation of Object ID: 1601231 (ObjAct Parameter ID: 6101)
+    DISABLE Event Flag ID 11605123
+    RESTART event
+
+Event ID: 11600253
+Restarts: Never
+Event Arguments: {} ()
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Flag: 11605123 is OFF
+     AND[ 1 ] <-- IF Flag: 11600231 is ON
+     AND[ 1 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601231, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+     AND[ 2 ] <-- IF Flag: 11605123 is OFF
+     AND[ 2 ] <-- IF Flag: 11600231 is OFF
+     AND[ 2 ] <-- IF Dialog Activated (Target Type: Object, Target Entity ID: 1601232, Reaction Angle: 60.000, Damipoly ID: 192, Reaction Distance: 1.500, Help ID: 10010501, Reaction Attribute: All, Pad ID: 0)
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Display Dialog (Message ID: 10010170, Button Type: OK/CANCEL, Number of Buttons: No Button, Entity ID: -1, Display Distance: 3.000)
+    RESTART event
+
+Event ID: 11605150
+Restarts: On Rest
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    DISABLE network sync.
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is Dead
+    END event IF condition AND[ 1 ] is TRUE
+     --> AWAIT <-- IF Entity ID: ARG_0_3 is OUTSIDE Region ID: ARG_4_7
+    Issue AI Re-plan request to Character ID: ARG_0_3
+    WAIT 5.000s
+    RESTART event
+
+Event ID: 11605001
+Restarts: On Rest
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11} (i|f|i)
+    SKIP 2 lines IF This Event + Slot: 0 is OFF
+    Set Animation Defaults for Character ID: ARG_0_3 [Standby: -1, Damage: -1, Cancel: -1, Death: -1, Standby Return: -1])
+    END event
+    DISABLE AI of Character ID: ARG_0_3
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is INSIDE radius ARG_4_7 of Entity ID: 10000
+     AND[ 2 ] <-- IF Entity ID: ARG_0_3 is attacked by Entity ID: 10000
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 2 lines IF condition AND[ 1 ] is TRUE (FINISHED)
+    Set Animation Defaults for Character ID: ARG_0_3 [Standby: -1, Damage: -1, Cancel: -1, Death: -1, Standby Return: -1])
+    SKIP 1 lines
+    Set Animation Defaults for Character ID: ARG_0_3 [Standby: -1, Damage: -1, Cancel: ARG_8_11, Death: -1, Standby Return: -1])
+    ENABLE AI of Character ID: ARG_0_3
+
+Event ID: 11605050
+Restarts: On Rest
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15, ARG_16_19} (i|i|i|i|f)
+    SKIP 2 lines IF This Event + Slot: 0 is OFF
+    Set Animation Defaults for Character ID: ARG_0_3 [Standby: -1, Damage: -1, Cancel: -1, Death: -1, Standby Return: -1])
+    END event
+    DISABLE AI of Character ID: ARG_0_3
+     AND[ 1 ] <-- IF Entity ID: 10000 is INSIDE Region ID: ARG_4_7
+     AND[ 2 ] <-- IF Entity ID: ARG_0_3 is attacked by Entity ID: 10000
+    SKIP 1 lines IF (ARG_12_15 == 0)
+     AND[ 3 ] <-- IF Entity ID: ARG_0_3 is INSIDE radius ARG_16_19 of Entity ID: 10000
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+    SKIP 1 lines IF (ARG_12_15 == 0)
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 2 lines IF condition AND[ 1 ] is TRUE (FINISHED)
+    Set Animation Defaults for Character ID: ARG_0_3 [Standby: -1, Damage: -1, Cancel: -1, Death: -1, Standby Return: -1])
+    SKIP 1 lines
+    Set Animation Defaults for Character ID: ARG_0_3 [Standby: -1, Damage: -1, Cancel: ARG_8_11, Death: -1, Standby Return: -1])
+    ENABLE AI of Character ID: ARG_0_3
+
+Event ID: 11605101
+Restarts: On Rest
+Event Arguments: {} ()
+    SKIP 2 lines IF This Event: 0 is OFF
+    Issue AI instruction request to Character ID: 1600300 (Command ID: 1, Slot Number: 0)
+    END event
+     --> AWAIT <-- IF it is TRUE that Entity ID: 1600300 has Event Message ID: 700
+    Set "Nest" of Character ID: 1600300 to Region ID: 1602300
+    Issue AI instruction request to Character ID: 1600300 (Command ID: 0, Slot Number: 0)
+    Issue AI Re-plan request to Character ID: 1600300
+     --> AWAIT <-- IF Entity ID: 1600300 is INSIDE Region ID: 1602301
+    Issue AI instruction request to Character ID: 1600300 (Command ID: 1, Slot Number: 0)
+
+Event ID: 11600810
+Restarts: On Rest
+Event Arguments: {} ()
+    SKIP 2 lines IF This Event: 0 is OFF
+    DISABLE Character ID: 1600500
+    END event
+     --> AWAIT <-- IF Entity ID: 1600500 is Dead
+      OR[ 1 ] <-- IF Entity ID: 10000 is of Character Type Human
+      OR[ 1 ] <-- IF Entity ID: 10000 is of Character Type Hollow
+    END event IF condition  OR[ 1 ] is FALSE
+    Award Items (Item Lot ID: 34200200) (HOST ONLY)
+
+Event ID: 11600400
+Restarts: On Rest
+Event Arguments: {} ()
+    DISABLE Map Collision for Entity ID: 1600500
+    DISABLE Gravity for Character ID: 1600500
+    SKIP 2 lines IF This Event: 0 is OFF
+    Set Animation Defaults for Character ID: 1600500 [Standby: -1, Damage: -1, Cancel: 29060, Death: -1, Standby Return: -1])
+    END event
+      OR[ 1 ] <-- IF Entity ID: 1600500 is INSIDE radius 10.000 of Entity ID: 10000
+      OR[ 1 ] <-- IF Entity ID: 1600500 is attacked by Entity ID: 10000
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    Set Animation Defaults for Character ID: 1600500 [Standby: -1, Damage: -1, Cancel: -1, Death: -1, Standby Return: -1])
+    Force Entity ID: 1600500 to play Animation ID: 29060 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+
+Event ID: 11605200
+Restarts: On Rest
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+    SKIP 3 lines IF This Event + Slot: 0 is OFF
+     --> AWAIT <-- IF Entity ID: ARG_0_3 BackRead status is TRUE
+    Issue AI instruction request to Character ID: ARG_0_3 (Command ID: ARG_8_11, Slot Number: 0)
+    END event
+    DISABLE Character ID: ARG_4_7
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 BackRead status is TRUE
+     AND[ 1 ] <-- IF it is TRUE that Entity ID: ARG_0_3 has Event Message ID: 300
+     AND[ 1 ] <-- IF Flag: ARG_12_15 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Issue AI instruction request to Character ID: ARG_0_3 (Command ID: ARG_8_11, Slot Number: 0)
+    ENABLE Character ID: ARG_4_7
+    Issue Warp request for Entity ID: ARG_4_7 (Warp Destination Type: Character, Destination Target ID: ARG_0_3, Damipoly ID: 100) and COPY draw hitbox from Entity ID: ARG_0_3
+    Force Entity ID: ARG_4_7 to play Animation ID: 8300 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+     AND[ 1 ] <-- IF it is FALSE that Entity ID: ARG_0_3 has Event Message ID: 300
+    END event
+
+Event ID: 11605250
+Restarts: On Rest
+Event Arguments: {ARG_0_3} (i)
+    DISABLE network sync.
+    SKIP 1 lines IF This Event + Slot: 0 is ON
+     --> AWAIT <-- IF it is TRUE that Entity ID: ARG_0_3 has Event Message ID: 400
+    DISABLE Character ID: ARG_0_3
+
+Event ID: 11600850
+Restarts: On Rest
+Event Arguments: {ARG_0_3} (i)
+    SKIP 3 lines IF This Event + Slot: 0 is OFF
+    DISABLE Character ID: ARG_0_3
+    Request forced death of Character ID: ARG_0_3 (Yields souls: FALSE)
+    END event
+     --> AWAIT <-- IF Entity ID: ARG_0_3 is Dead
+    END event
+
+Event ID: 11600600
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    SKIP 4 lines IF This Event + Slot: 0 is OFF
+    "Reproduction of object animation" (Object Entity ID: ARG_0_3, Animation ID: 0)
+    DISABLE Activation of Object ID: ARG_0_3 (ObjAct Parameter ID: -1)
+    ENABLE Treasure of Entity ID: ARG_0_3
+    END event
+    DISABLE Treasure of Entity ID: ARG_0_3
+     --> AWAIT <-- IF ObjAct Execution Event ID: ARG_4_7
+    WAIT 10 frames
+    ENABLE Treasure of Entity ID: ARG_0_3
+
+Event ID: 11600650
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+    SKIP 3 lines IF This Event + Slot: 0 is OFF
+    "Reproduction of object animation" (Object Entity ID: ARG_0_3, Animation ID: 101)
+    ENABLE Treasure of Entity ID: ARG_0_3
+    END event
+    DISABLE Treasure of Entity ID: ARG_0_3
+    Force Entity ID: ARG_0_3 to play Animation ID: 100 (Loop: TRUE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+     --> AWAIT <-- IF Object Entity ID: ARG_4_7 is Destroyed
+    Force Entity ID: ARG_0_3 to play Animation ID: 101 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    ENABLE Treasure of Entity ID: ARG_0_3
+
+Event ID: 11600510
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7} (i|i)
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 has Health Ratio <= 0.900
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 has Health Ratio > 0.000
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is attacked by Entity ID: 10000
+     AND[ 2 ] <-- IF Flag: ARG_4_7 is ON
+     AND[ 2 ] <-- IF This Event + Slot: 0 is ON
+     AND[ 3 ] <-- IF Flag: ARG_4_7 is ON
+     AND[ 3 ] <-- IF This Event + Slot: 0 is OFF
+      OR[ 1 ] <-- IF condition AND[ 1 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+      OR[ 1 ] <-- IF condition AND[ 3 ] is TRUE
+     --> AWAIT <-- IF condition  OR[ 1 ] is TRUE
+    SKIP 2 lines IF condition AND[ 3 ] is FALSE (FINISHED)
+    DISABLE Character ID: ARG_0_3
+     --> AWAIT <-- IF Flag: 703 is ON
+    ENABLE Event Flag ID ARG_4_7
+    Switch character (Entity ID: ARG_0_3) to team Hostile Ally and exit forced standby animation
+    Save Request
+
+Event ID: 11600520
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+    SKIP 2 lines IF This Event + Slot: 0 is OFF
+    Mandatory treasure at Entity ID: ARG_0_3
+    END event
+     --> AWAIT <-- IF Entity ID: ARG_0_3 has Health Ratio <= 0.000
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 11600530
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+     AND[ 1 ] <-- IF Flag: 1314 is OFF
+     AND[ 1 ] <-- IF Flag: 1310 is ON
+     AND[ 1 ] <-- IF Flag: 710 is ON
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is Alive
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 11600531
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+     AND[ 1 ] <-- IF Flag: 1314 is OFF
+     AND[ 1 ] <-- IF Flag: 1311 is ON
+     AND[ 1 ] <-- IF Flag: 11600100 is ON
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is Alive
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 11600532
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+     AND[ 1 ] <-- IF Flag: 1314 is OFF
+     AND[ 1 ] <-- IF Flag: 1312 is ON
+     AND[ 1 ] <-- IF Flag: 13 is ON
+     AND[ 1 ] <-- IF Flag: 11600593 is ON
+     AND[ 1 ] <-- IF it is FALSE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+    DISABLE Character ID: ARG_0_3
+
+Event ID: 11600537
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+    END event IF Flag: 1670 is OFF
+    DISABLE Character ID: ARG_0_3
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF Flag: 1670 is ON
+     AND[ 1 ] <-- IF Flag: 11800100 is OFF
+     AND[ 1 ] <-- IF Flag: 13 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Character ID: ARG_0_3
+    Force Entity ID: ARG_0_3 to play Animation ID: 9060 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 11600538
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+     AND[ 1 ] <-- IF Flag: 1671 is ON
+     AND[ 1 ] <-- IF Flag: 710 is ON
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is Alive
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 11600539
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+     AND[ 1 ] <-- IF Flag: 1672 is ON
+     AND[ 1 ] <-- IF Flag: 11800100 is ON
+     AND[ 1 ] <-- IF Entity ID: ARG_0_3 is Alive
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+
+Event ID: 11600540
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+      OR[ 1 ] <-- IF Flag: 1672 is ON
+      OR[ 1 ] <-- IF Flag: 1678 is ON
+     AND[ 1 ] <-- IF condition  OR[ 1 ] is TRUE
+     AND[ 1 ] <-- IF Flag: 11600590 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+    Force Entity ID: ARG_0_3 to play Animation ID: 7005 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    DISABLE Character ID: ARG_0_3
+
+Event ID: 11600541
+Restarts: Never
+Event Arguments: {ARG_0_3, ARG_4_7, ARG_8_11, ARG_12_15} (i|i|i|i)
+     AND[ 1 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+      OR[ 1 ] <-- IF Flag: 11600590 is ON
+     AND[ 2 ] <-- IF Entity ID: ARG_0_3 has Health Ratio <= 0.900
+     AND[ 2 ] <-- IF Entity ID: ARG_0_3 has Health Ratio > 0.000
+     AND[ 2 ] <-- IF Entity ID: ARG_0_3 is attacked by Entity ID: 10000
+     AND[ 2 ] <-- IF Entity ID: ARG_0_3 is OUTSIDE radius 15.000 of Entity ID: 10000
+      OR[ 1 ] <-- IF condition AND[ 2 ] is TRUE
+     AND[ 1 ] <-- IF condition  OR[ 1 ] is TRUE
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Batch SET Event Flag IDs from ARG_4_7 to ARG_8_11 to OFF
+    ENABLE Event Flag ID ARG_12_15
+    Force Entity ID: ARG_0_3 to play Animation ID: 7005 (Loop: FALSE, Wait for completion: TRUE, Do not wait for transition: FALSE)
+    DISABLE Character ID: ARG_0_3
+
+Event ID: 11600545
+Restarts: Never
+Event Arguments: {ARG_0_3} (i)
+     --> AWAIT <-- IF Flag: 1464 is ON
+    ENABLE Character ID: ARG_0_3
+    Switch character (Entity ID: ARG_0_3) to team Hostile Ally and exit forced standby animation
+
+Event ID: 11606200
+Restarts: Never
+Event Arguments: {} ()
+      OR[ 1 ] <-- IF Flag: 1672 is ON
+      OR[ 1 ] <-- IF Flag: 1673 is ON
+      OR[ 1 ] <-- IF Flag: 1674 is ON
+     AND[ 1 ] <-- IF condition  OR[ 1 ] is TRUE
+     AND[ 1 ] <-- IF it is TRUE that player is in Map<16><0> (New Londo Ruins/Valley of Drakes)
+     AND[ 1 ] <-- IF Flag: 821 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    DISABLE Event Flag ID 821
+    ENABLE Event Flag ID 831
+    ENABLE Character ID: 6341
+    Play Cutscene (Cutscene ID: 160040, Playback Method: Skippable) and Warp Player Entity ID: 10000 to (Warp Point ID: 1802110, Map<18><0>)
+    Play Cutscene (Cutscene ID: 180041, Playback Method: Skippable) to Player Entity ID: 10000
+    WAIT 1 frames
+    ENABLE Event Flag ID 823
+    RESTART event
+
+Event ID: 11605030
+Restarts: Never
+Event Arguments: {} ()
+    SKIP 1 lines IF multiplayer status is Client
+    Set Network Update Authority of Entity ID: 6520 to Forced
+    SKIP 3 lines IF Flag: 11605034 is ON
+     AND[ 2 ] <-- IF player Multiplayer State is Client
+     AND[ 2 ] <-- IF Flag: 11605031 is ON
+    SKIP 1 lines IF condition AND[ 2 ] is TRUE
+    DISABLE Character ID: 6520
+    END event IF Flag: 13 is ON
+     AND[ 1 ] <-- IF player Multiplayer State is Host
+     AND[ 1 ] <-- IF Entity ID: 10000 is of Character Type Human
+     AND[ 1 ] <-- IF Flag: 11200300 is ON
+     AND[ 1 ] <-- IF Entity ID: 6520 BackRead status is TRUE
+     AND[ 1 ] <-- IF Entity ID: 6520 is INSIDE radius 5.000 of Entity ID: 10000
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Place Summon Sign for Entity ID: 6520 at Point ID: 1602000 (Sign Type: Blue Eye Sign, When summoned SET Event Flag ID: 11605031, When dismissed SET Event Flag ID: 11605034)
+
+Event ID: 11605032
+Restarts: Never
+Event Arguments: {} ()
+    END event IF This Event: 0 is ON
+     AND[ 1 ] <-- IF Flag: 11605031 is ON
+     AND[ 1 ] <-- IF Flag: 11605393 is ON
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    Issue AI instruction request to Character ID: 6520 (Command ID: 10, Slot Number: 0)
+    Issue AI Re-plan request to Character ID: 6520
+     --> AWAIT <-- IF Entity ID: 6520 is INSIDE Region ID: 1602998
+    Rotate Entity ID: 6520 to face Entity ID: 1602997
+    Force Entity ID: 6520 to play Animation ID: 7410 (Loop: FALSE, Wait for completion: FALSE, Do not wait for transition: FALSE)
+    Issue AI instruction request to Character ID: 6520 (Command ID: -1, Slot Number: 0)
+    Issue AI Re-plan request to Character ID: 6520
+
+Event ID: 11605033
+Restarts: Never
+Event Arguments: {} ()
+     AND[ 1 ] <-- IF Flag: 11605031 is ON
+     AND[ 1 ] <-- IF Entity ID: 6520 has Special Effect ID: 2200 is TRUE
+     AND[ 1 ] <-- IF Entity ID: 6520 is INSIDE Region ID: 1602999
+     --> AWAIT <-- IF condition AND[ 1 ] is TRUE
+    ENABLE Invincibility for Character ID: 6520
+    WAIT 2.000s
+    DISABLE Invincibility for Character ID: 6520
