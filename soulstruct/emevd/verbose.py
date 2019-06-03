@@ -1,24 +1,16 @@
 # -*- coding: utf-8 -*-
 
-GAME_MAPS = {
-    (10, 0): "Depths",
-    (10, 1): "Undead Burg/Parish",
-    (10, 2): "Firelink Shrine",
-    (11, 0): "Painted World",
-    (12, 0): "Darkroot Garden/Basin",
-    (12, 1): "Oolacile/Chasm of the Abyss",
-    (13, 0): "Catacombs",
-    (13, 1): "Tomb of the Giants",
-    (13, 2): "Great Hollow/Ash Lake",
-    (14, 0): "Blighttown/Quelaag's Domain",
-    (14, 1): "Demon Ruins/Lost Izalith",
-    (15, 0): "Sen's Fortress",
-    (15, 1): "Anor Londo",
-    (16, 0): "New Londo Ruins/Valley of Drakes",
-    (17, 0): "Duke's Archives",
-    (18, 0): "Kiln of the First Flame",
-    (18, 1): "Northern Undead Asylum",
-}
+
+def get_game_map(area_id, block_id, game_module):
+    """ Attempts to get the name of the game map. """
+    try:
+        area_id = int(area_id)
+        block_id = int(block_id)
+    except ValueError:
+        # Event arg replacement(s).
+        return "<VARIABLE>"
+    return game_module.verbose.MAP_NAMES.get((int(area_id), int(block_id)), 'UNKNOWN')
+
 
 ENUM_RESTART_TYPE = {
     0: "Never",
@@ -396,7 +388,7 @@ def default_readable(instr_class, instr_index, req_args, opt_args):
     return f"{instr_class:04d}[{instr_index:02d}] {arg_array_string}"
 
 
-def verbose_instruction(instruction_class, instruction_index, req_args, opt_args):
+def verbose_instruction(instruction_class, instruction_index, req_args, opt_args, game_module):
     """Creates a human-readable representation of the command with
     command instr_class and instr_index with arguments fixed_args and var_args.
     If the command is known, the human-readable representation is
@@ -406,15 +398,16 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
 
     # Commands that make use of varargs come first:
 
-    if instruction_class == 2000 and instruction_index == 0:
-        return (f"Run Event (ID: {req_args[1]}, Slot: {req_args[0]}, "
-                f"Arguments: {{{', '.join([f'{req_args[2]}'] + [f'{s}' for s in opt_args])}}})")
+    if opt_args or (instruction_class == 2000 and instruction_index == 0):
+        slot, event_id, args = req_args
+        return (f"Run Event (ID: {event_id}, Slot: {slot}, "
+                f"Arguments: {{{', '.join([f'{args}'] + [f'{s}' for s in opt_args])}}})")
 
     # Commands that (we assume) do not make use of varargs come second:
 
-    if opt_args:
-        raise ValueError(f"Command {instruction_class}[{instruction_index}] has optional arguments when it is "
-                         f"assumed that it does not. Handle this!")
+    # if opt_args:
+    #     raise ValueError(f"Command {instruction_class}[{instruction_index}] has optional arguments when it is "
+    #                      f"assumed that it does not. Handle this!")
 
     if instruction_class == 2000:  # システム
         if instruction_index == 1:  # イベント強制終了
@@ -422,7 +415,7 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
             # 2	256	%d	起動イベントID	[0:0:0](Default: 0)
             pass
         if instruction_index == 2:
-            return "{0} network sync.".format(*stringify_args(["ENUM_ENABLE_STATE"], req_args))
+            return "{0} network sync".format(*stringify_args(["ENUM_ENABLE_STATE"], req_args))
         if instruction_index == 3:  # 終了済み条件グループ条件状態クリア
             # 0	0	%d	ダミー	[0:0:0](Default: 0)
             pass
@@ -586,7 +579,7 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
                     "ID: {2}, Damipoly ID: {3})"
                     .format(*stringify_args(["%d", "ENUM_CATEGORY", "%d", "%d"], req_args)))
         if instruction_index == 4:
-            return "Request forced death of Character ID: {0} (Yields souls: {1})".format(
+            return "Kill Character ID: {0} (Yields souls: {1})".format(
                 *stringify_args(["%d", "ENUM_BOOL"], req_args))
         if instruction_index == 5:
             return "{1} Character ID: {0}".format(*stringify_args(["%d", "ENUM_ENABLE_STATE"], req_args))
@@ -594,9 +587,9 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
             return "EzState instruction request (Entity ID: {0}, Command: {1}, Slot: {2})".format(
                 *stringify_args(["%d", "%d", "%d"], req_args))
         if instruction_index == 7:
-            return "Create Generator (Entity ID: {0})".format(*stringify_args(["%d"], req_args))
+            return "Create Spawner (Entity ID: {0})".format(*stringify_args(["%d"], req_args))
         if instruction_index == 8:
-            return "Set Special Effect (Character ID: {0}, Special Effect ID: {1})".format(
+            return "Add Special Effect (Character ID: {0}, Special Effect ID: {1})".format(
                 *stringify_args(["%d", "%d"], req_args))
         if instruction_index == 9:
             return ("Set Animation Defaults for Character ID: {0} [Standby: {1}, Damage: {2}, "
@@ -720,10 +713,10 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
             return '??? "Equal Recovery"'
     if instruction_class == 2005:  # オブジェクト
         if instruction_index == 1:
-            return "Request destruction of object (Entity ID: {0}, Slot Number: {1})".format(
+            return "Destroy object (Entity ID: {0}, Slot Number: {1})".format(
                 *stringify_args(["%d", "%d"], req_args))
         if instruction_index == 2:
-            return "Request restoration of object (Entity ID: {0})".format(*stringify_args(["%d"], req_args))
+            return "Restore Object (Entity ID: {0})".format(*stringify_args(["%d"], req_args))
         if instruction_index == 3:
             return "{1} Object with Entity ID: {0}".format(*stringify_args(["%d", "ENUM_ENABLE_STATE"], req_args))
         if instruction_index == 4:
@@ -738,13 +731,13 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
             elif state == 'DISABLE':
                 return "DISABLE Activation of Object ID: {0} (ObjAct Parameter ID: {1})".format(obj, objact_id)
         if instruction_index == 7:
-            return "\"Reproduction of object animation\" (Object Entity ID: {0}, Animation ID: {1})".format(
+            return "Set Object to Post-Animation State (Object Entity ID: {0}, Animation ID: {1})".format(
                 *stringify_args(["%d", "%d"], req_args))
         if instruction_index == 8:
-            return "\"Reproduction of object destruction\" (Object Entity ID: {0}, Slot Number: {1})".format(
+            return "Set Object to Post-Destruction State (Object Entity ID: {0}, Slot Number: {1})".format(
                 *stringify_args(["%d", "%d"], req_args))
         if instruction_index == 9:
-            return ("Create Damage-Dealing Object (Event Flag ID: {0}, Entity ID: {1}, Damipoly ID: {2}, "
+            return ("Create Hazard (Event Flag ID: {0}, Entity ID: {1}, Damipoly ID: {2}, "
                     "Behavior ID: {3}, Target Type: {4}, Radius: {5}, Life: {6}, Repetition Time: {7})"
                     .format(*stringify_args(["%d", "%d", "%d", "%d", "ENUM_DAMAGE_TARGET_TYPE", "%0.3f", "%0.3f",
                                              "%0.3f"], req_args)))
@@ -934,15 +927,15 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
             return "{0} event IF multiplayer status is {1}".format(
                 *stringify_args(["ENUM_EVENT_END_TYPE", "ENUM_MULTIPLAYER_STATE"], req_args))
         if instruction_index == 7:
-            skip_lines, value, block, sub = stringify_args(["%d", "ENUM_BOOL", "%d", "%d"], req_args)
-            name = GAME_MAPS.get((int(block), int(sub)), 'UNKNOWN')
+            skip_lines, value, area_id, block_id = stringify_args(["%d", "ENUM_BOOL", "%d", "%d"], req_args)
+            name = get_game_map(area_id, block_id, game_module)
             return "SKIP {0} lines IF it is {1} that player is in Map<{2}><{3}> ({4})".format(
-                skip_lines, value, block, sub, name)
+                skip_lines, value, area_id, block_id, name)
         if instruction_index == 8:  # マップIDでイベント終了
-            end_type, value, block, sub = stringify_args(["ENUM_EVENT_END_TYPE", "ENUM_BOOL", "%d", "%d"], req_args)
-            name = GAME_MAPS.get((int(block), int(sub)), 'UNKNOWN')
+            end_type, value, area_id, block_id = stringify_args(["ENUM_EVENT_END_TYPE", "ENUM_BOOL", "%d", "%d"], req_args)
+            name = get_game_map(area_id, block_id, game_module)
             return "{0} event IF it is {1} that player is in Map<{2}><{3}> ({4})".format(
-                end_type, value, block, sub, name)
+                end_type, value, area_id, block_id, name)
     if instruction_class == 1005:  # 【実行制御】オブジェクト
         if instruction_index == 0:  # オブジェクト破壊状態で待機
             # 0	0	%d	条件成立破壊状態	[ENUM: ENUM_DAMAGE_STATE](Default: 1)
@@ -1008,10 +1001,10 @@ def verbose_instruction(instruction_class, instruction_index, req_args, opt_args
             return " {0} <-- IF all players are {1} Region ID: {2}".format(
                 *stringify_args(["ENUM_CONDITION", "ENUM_CONTAINED", "%d"], req_args))
         if instruction_index == 8:
-            condition, value, block, sub = stringify_args(["ENUM_CONDITION", "ENUM_BOOL", "%d", "%d"], req_args)
-            name = GAME_MAPS.get((int(block), int(sub)), 'UNKNOWN')
+            condition, value, area_id, block_id = stringify_args(["ENUM_CONDITION", "ENUM_BOOL", "%d", "%d"], req_args)
+            name = get_game_map(area_id, block_id, game_module)
             return " {0} <-- IF it is {1} that player is in Map<{2}><{3}> ({4})".format(
-                condition, value, block, sub, name)
+                condition, value, area_id, block_id, name)
         if instruction_index == 9:
             return " {0} <-- IF Multiplayer Event ID: {1} was triggered".format(
                 *stringify_args(["ENUM_CONDITION", "%d"], req_args))

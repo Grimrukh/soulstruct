@@ -1,0 +1,1361 @@
+EMEDF
+
+
+Main Classes:
+0 - Condition - System
+ [00] - IF Condition Group
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Desired Condition Group State [ENUM: Condition State]
+      b  Target Condition Group [ENUM: Condition Group]
+ [01] - IF Parameter Comparison
+      b  Result Condition Group [ENUM: Condition Group]
+      b  Comparison Type [ENUM: Comparison Type]
+      i  Left-hand Side [-1:1:1000000000] (0)
+      i  Right-hand Side [-1:1:1000000000] (0)
+
+1 - Condition - Timer
+ [00] - IF Elapsed Seconds
+      b  Result Condition Group [ENUM: Condition Group]
+      f  Target Number Of Seconds [0.000:0.010:9999.000] (0.000)
+ [01] - IF Elapsed Frames
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Number Of Frames [0:1:99999] (0)
+ [02] - IF Random Elapsed Seconds
+      b  Result Condition Group [ENUM: Condition Group]
+      f  Target Seconds Min [0.000:0.010:9999.000] (0.000)
+      f  Target Seconds Max [0.000:0.010:9999.000] (0.000)
+ [03] - IF Random Elapsed Frames
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Frames Min [0:1:99999] (0)
+      i  Target Frames Max [0:1:99999] (0)
+
+3 - Condition - Event
+ [00] - IF Event Flag
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Desired Flag State [ENUM: ON/OFF/CHANGE]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [01] - IF Batch Event Flags
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Desired Flag State [ENUM: Logical Operation Type]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Starting Target Event Flag ID [00000000:00000001:100000000] (00000000)
+      i  Ending Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [02] - IF In/Outside Area
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Desired State [ENUM: Inside/Outside State]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      i  Area Entity ID [00000000:00000001:100000000] (00000000)
+ [03] - IF Entity In/Outside Radius Of Entity
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Desired State [ENUM: Inside/Outside State]
+      i  Target Entity A ID [00000000:00000001:100000000] (00000000)
+      i  Target Entity B ID [00000000:00000001:100000000] (00000000)
+      f  Target Distance [0.000:1.000:100000000.000] (0.000)
+ [04] - IF Player Has/Doesn't Have Item
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Item Type [ENUM: Item Type]
+      i  Item ID [00000000:00000001:100000000] (00000000)
+      B  Desired Possession State [ENUM: Ownership State]
+ [05] - IF Action Button
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity Type [ENUM: Target Entity Type]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      f  Reaction Angle (deg) [0.000:1.000:100000000.000] (0.000)
+      h  Dummypoly ID [-1:1:255] (0)
+      f  Reaction Distance [0.000:1.000:100000000.000] (0.000)
+      i  Help Message ID [0:1:100000000] (0)
+      B  Reaction Type [ENUM: Reaction Type]
+      i  Pad ID [0:1:100000000] (0)
+ [06] - IF Multiplayer State
+      b  Result Condition Group [ENUM: Condition Group]
+      b  Desired Multiplayer State [ENUM: Multiplayer State]
+ [07] - IF All Players In/Outside Area
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Desired State [ENUM: Inside/Outside State]
+      i  Area Entity ID [00000000:00000001:100000000] (00000000)
+ [08] - IF Player In/Out Map
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Should Player Be Inside [ENUM: BOOL]
+      B  Area ID [0:1:99] (10)
+      B  Block ID [0:1:99] (0)
+ [09] - IF Multiplayer Event
+      b  Result Condition Group [ENUM: Condition Group]
+      I  Multiplayer Event ID [00000000:00000001:100000000] (00000000)
+ [10] - IF Count Event Flags
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Starting Target Event Flag ID [00000000:00000001:100000000] (00000000)
+      i  Ending Target Event Flag ID [00000000:00000001:100000000] (00000000)
+      b  Comparison Type [ENUM: Comparison Type]
+      i  Count Threshold [0:1:1000000000] (0)
+ [11] - IF World Tendency
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Tendency Type [ENUM: Tendency Type]
+      B  Comparison Type [ENUM: Comparison Type]
+      B  Tendency Threshold [0:1:100] (0)
+ [12] - IF Event Value
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      B  Number of Used Flag Bits [1:1:32] (1)
+      B  Comparison Type [ENUM: Comparison Type]
+      I  Threshold Value [00000000:00000001:100000000] (00000000)
+ [13] - IF Action Button (Boss Fog)
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity Type [ENUM: Target Entity Type]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      f  Reaction Angle (deg) [0.000:1.000:100000000.000] (0.000)
+      h  Dummypoly ID [-1:1:255] (0)
+      f  Reaction Distance [0.000:1.000:100000000.000] (0.000)
+      i  Help Message ID [0:1:100000000] (0)
+      B  Reaction Type [ENUM: Reaction Type]
+      i  Pad ID [0:1:100000000] (0)
+ [14] - IF Dropped Items In Area
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Area Entity ID [00000000:00000001:100000000] (00000000)
+ [15] - IF Dropped Item
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Item Type [ENUM: Item Type]
+      i  Item ID [00000000:00000001:100000000] (00000000)
+ [16] - IF Player Has/Doesn't Have Item Including BBox
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Item Type [ENUM: Item Type]
+      i  Item ID [00000000:00000001:100000000] (00000000)
+      B  Desired Possession State [ENUM: Ownership State]
+ [17] - IF Game Cycle
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Comparison Type [ENUM: Comparison Type]
+      B  Completed Game Cycles Threshold [000:001:255] (000)
+ [18] - IF Action Button (Line Segment)
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity Type [ENUM: Target Entity Type]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      f  Reaction Angle (deg) [0.000:1.000:100000000.000] (0.000)
+      h  Dummypoly ID [-1:1:255] (0)
+      f  Reaction Distance [0.000:1.000:100000000.000] (0.000)
+      i  Help Message ID [0:1:100000000] (0)
+      B  Reaction Type [ENUM: Reaction Type]
+      i  Pad ID [0:1:100000000] (0)
+      i  Line Segment Defined By Entity ID  [00000000:00000001:100000000] (00000000)
+ [19] - IF Action Button (Line Segment) - Boss Room
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity Type [ENUM: Target Entity Type]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      f  Reaction Angle (deg) [0.000:1.000:100000000.000] (0.000)
+      h  Dummypoly ID [-1:1:255] (0)
+      f  Reaction Distance [0.000:1.000:100000000.000] (0.000)
+      i  Help Message ID [0:1:100000000] (0)
+      B  Reaction Type [ENUM: Reaction Type]
+      i  Pad ID [0:1:100000000] (0)
+      i  Line Segment Defined By Entity ID  [00000000:00000001:100000000] (00000000)
+ [20] - IF Compare Event Values
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Left-side Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      B  Left-side Number of Used Flag Bits [1:1:32] (1)
+      B  Comparison Type [ENUM: Comparison Type]
+      i  Right-side Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      B  Right-side Number of Used Flag Bits [1:1:32] (1)
+ [21] - IF Owns DLC
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Owns DLC [ENUM: BOOL]
+ [22] - IF Online Mode
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Online Mode [ENUM: BOOL]
+ [23] - UNKNOWN 3[23] (DS1R ONLY)
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Unknown [0:0:0] (1)
+      B  Unknown [0:0:0] (1)
+ [24] - IF Multiplayer Count (DS1R ONLY)
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Unknown [0:0:0] (1)
+      B  Unknown [0:0:0] (1)
+
+4 - Condition - Character
+ [00] - IF Character Dead/Alive
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      B  Desired Life State [ENUM: Death State]
+ [01] - IF Character Damaged By
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      i  Attacker Entity ID [00000000:00000001:1000000000] (00000000)
+ [02] - IF HP Ratio
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      b  Comparison Type [ENUM: Comparison Type]
+      f  Target HP Ratio [0.000:1.000:100000000.000] (0.000)
+ [03] - IF Character Type
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      b  Target Type [ENUM: Target Type]
+ [04] - IF Character Targeted By
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Aggressor Entity ID [00000000:00000001:1000000000] (00000000)
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      B  Should Have [ENUM: BOOL]
+ [05] - IF Character Has SpEffect
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      i  SpEffect ID [-1:1:1000000000] (-1)
+      B  Should Have [ENUM: BOOL]
+ [06] - IF NPC Part HP
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      i  NPC Part ID [0:1:1000000000] (0)
+      i  HP Threshold [0:1:1000000000] (0)
+      b  Comparison Type [ENUM: Comparison Type]
+ [07] - IF Character Backread Status
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      B  Is Backread [ENUM: BOOL]
+ [08] - IF Character Has Event Message
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      i  Target Event Message ID [-0000001:00000001:1000000000] (-0000001)
+      B  Should Have [ENUM: BOOL]
+ [09] - IF Character AI State
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      B  AI State [ENUM: AI State Type]
+ [10] - IF Player Using Skull Lantern
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Using Skull Lantern [ENUM: BOOL]
+ [11] - IF Player's Class
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Class [ENUM: Class Type]
+ [12] - IF Player's Covenant
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Covenant Index [0:1:20] (0)
+ [13] - IF Player's Soul Level
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Comparison Type [ENUM: Comparison Type]
+      I  Target Soul Level [00000000:00000001:100000000] (00000000)
+ [14] - IF Character HP Value
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:1000000000] (00000000)
+      B  Comparison Type [ENUM: Comparison Type]
+      i  Target HP [00000000:00000001:100000000] (00000000)
+ [15] - UNKNOWN 4[15] (DS1R ONLY)
+      b  Result Condition Group [ENUM: Condition Group]
+      I  Unknown [0:0:0] (1)
+ [16] - UNKNOWN 4[16] (DS1R ONLY)
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Unknown (Unused?) [0:0:0] (1)
+      B  Unknown (Unused?) [0:0:0] (1)
+      B  Unknown (Unused?) [0:0:0] (1)
+ [17] - IF Arena Matchmaking (DS1R ONLY)
+      b  Result Condition Group [ENUM: Condition Group]
+
+5 - Condition - Object
+ [00] - IF Object Destroyed
+      b  Result Condition Group [ENUM: Condition Group]
+      B  Damage State [ENUM: Destruction State]
+      i  Target Object Entity ID [00000000:00000001:100000000] (00000000)
+ [01] - IF Object Hit By
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      i  Attacker Entity ID [-0000001:00000001:100000000] (00000000)
+ [02] - IF ObjAct Event Flag
+      b  Result Condition Group [ENUM: Condition Group]
+      i  ObjAct Event Flag [00000000:00000001:100000000] (00000000)
+ [03] - IF Object HP
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Target Entity ID [00000000:00000001:100000000] (00000000)
+      b  Comparison Type [ENUM: Comparison Type]
+      i  HP Threshold [0:1:1000000000] (0)
+
+11 - Condition - Hit
+ [00] - IF Player Moving On Hit
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Hitbox Entity ID [00000000:00000001:100000000] (00000000)
+ [01] - IF Player Attacking On Hit
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Hitbox Entity ID [00000000:00000001:100000000] (00000000)
+ [02] - IF Player Standing On Hit
+      b  Result Condition Group [ENUM: Condition Group]
+      i  Hitbox Entity ID [00000000:00000001:100000000] (00000000)
+
+1000 - Control Flow - System
+ [00] - WAIT For Condition Group State
+      B  Desired Condition Group State [ENUM: Condition State]
+      b  Target Condition Group [ENUM: Condition Group]
+ [01] - SKIP IF Condition Group State (Uncompiled)
+      B  Number Of Skipped Lines [0:1:99] (1)
+      B  Desired Condition Group State [ENUM: Condition State]
+      b  Target Condition Group [ENUM: Condition Group]
+ [02] - END IF Condition Group State (Uncompiled)
+      B  Execution End Type [ENUM: Event End Type]
+      B  Desired Condition Group State [ENUM: Condition State]
+      b  Target Condition Group [ENUM: Condition Group]
+ [03] - SKIP Unconditionally
+      B  Number Of Skipped Lines [0:1:99] (1)
+ [04] - END Unconditionally
+      B  Execution End Type [ENUM: Event End Type]
+ [05] - SKIP IF Comparison
+      B  Number Of Skipped Lines [0:1:99] (1)
+      b  Comparison Type [ENUM: Comparison Type]
+      i  Left-hand Side [-1:1:1000000000] (0)
+      i  Right-hand Side [-1:1:1000000000] (0)
+ [06] - END IF Comparison
+      B  Execution End Type [ENUM: Event End Type]
+      b  Comparison Type [ENUM: Comparison Type]
+      i  Left-hand Side [-1:1:1000000000] (0)
+      i  Right-hand Side [-1:1:1000000000] (0)
+ [07] - SKIP IF Condition Group State (Compiled)
+      B  Number Of Skipped Lines [0:1:99] (1)
+      B  Desired Condition Group State [ENUM: Condition State]
+      b  Target Condition Group [ENUM: Condition Group]
+ [08] - END IF Condition Group State (Compiled)
+      B  Execution End Type [ENUM: Event End Type]
+      B  Desired Condition Group State [ENUM: Condition State]
+      b  Target Condition Group [ENUM: Condition Group]
+ [09] - WAIT For Network Approval
+      f  Timeout (s) [0.000:0.010:9999.000] (3.000)
+
+1001 - Control Flow - Timer
+ [00] - WAIT Fixed Time (Seconds)
+      f  Number Of Seconds [0.000:0.010:9999.000] (0.000)
+ [01] - WAIT Fixed Time (Frames)
+      i  Number Of Frames [0:1:99999] (0)
+ [02] - WAIT Random Time (Seconds)
+      f  Min Number Of Seconds [0.000:0.010:9999.000] (0.000)
+      f  Max Number Of Seconds [0.000:0.010:9999.000] (0.000)
+ [03] - WAIT Random Time (Frames)
+      i  Min Number Of Frames [0:1:99999] (0)
+      i  Max Number Of Frames [0:1:99999] (0)
+
+1003 - Control Flow - Event
+ [00] - WAIT For Event Flag
+      B  Desired Flag State [ENUM: ON/OFF/CHANGE]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [01] - SKIP IF Event Flag
+      B  Number Of Skipped Lines [0:1:99] (1)
+      B  Desired Flag State [ENUM: ON/OFF]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [02] - END IF Event Flag
+      B  Execution End Type [ENUM: Event End Type]
+      B  Desired Flag State [ENUM: ON/OFF]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [03] - SKIP IF Batch Event Flags
+      B  Number Of Skipped Lines [0:1:99] (1)
+      B  Desired Flag State [ENUM: Logical Operation Type]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Starting Target Event Flag ID [00000000:00000001:100000000] (00000000)
+      i  Ending Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [04] - END IF Batch Event Flags
+      B  Execution End Type [ENUM: Event End Type]
+      B  Desired Flag State [ENUM: Logical Operation Type]
+      B  Target Event Flag Type [ENUM: Target Event Flag Type]
+      i  Starting Target Event Flag ID [00000000:00000001:100000000] (00000000)
+      i  Ending Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [05] - SKIP IF Multiplayer State
+      B  Number Of Skipped Lines [0:1:99] (1)
+      b  Desired Multiplayer State [ENUM: Multiplayer State]
+ [06] - END IF Multiplayer State
+      B  Execution End Type [ENUM: Event End Type]
+      b  Desired Multiplayer State [ENUM: Multiplayer State]
+ [07] - SKIP IF Player In/Out Map
+      B  Number Of Skipped Lines [0:1:99] (1)
+      B  Inside [ENUM: BOOL]
+      B  Area ID [0:1:99] (10)
+      B  Block ID [0:1:99] (10)
+ [08] - END IF Player In/Out Map
+      B  Execution End Type [ENUM: Event End Type]
+      B  Inside [ENUM: BOOL]
+      B  Area ID [0:1:99] (10)
+      B  Block ID [0:1:99] (10)
+
+1005 - Control Flow - Object
+ [00] - WAIT For Object Destroyed
+      B  Damage State [ENUM: Destruction State]
+      i  Target Object Entity ID [00000000:00000001:100000000] (00000000)
+ [01] - SKIP IF Object Destroyed
+      B  Number Of Skipped Lines [0:1:99] (1)
+      B  Damage State [ENUM: Destruction State]
+      i  Target Object Entity ID [00000000:00000001:100000000] (00000000)
+ [02] - END IF Object Destroyed
+      B  Execution End Type [ENUM: Event End Type]
+      B  Damage State [ENUM: Destruction State]
+      i  Target Object Entity ID [00000000:00000001:100000000] (00000000)
+
+2000 - System
+ [00] - Initialize Event
+      i  Event Slot ID [-1:1:99] (0)
+      I  Event ID [0:0:0] (0)
+      I  Parameters [0:0:0] (0)
+ [01] - Terminate Event
+      i  Event Slot ID [-1:1:99] (0)
+      I  Event ID [0:0:0] (0)
+ [02] - Set Network Sync State
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [03] - Clear Compiled Condition Group State
+      B  Dummy [0:0:0] (0)
+ [04] - Prefetch Request
+      I  Request ID [0:1:1000000000] (0)
+ [05] - Save Request
+      B  Dummy [0:0:0] (0)
+ [06] - UNKNOWN 2000[06] (DS1R ONLY)
+      i  Unknown [0:0:0] (1)
+
+2001 - Timer
+
+2002 - Cutscene
+ [01] - Play Cutscene to All
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+ [02] - Play Cutscene and Warp All Players
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+      i  Point Entity ID [0:1:1000000000] (0)
+      B  Area ID [0:1:255] (0)
+      B  Block ID [0:1:255] (0)
+ [03] - Play Cutscene to Player
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [04] - Play Cutscene and Warp Player
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+      i  Point Entity ID [0:1:1000000000] (0)
+      B  Area ID [0:1:255] (0)
+      B  Block ID [0:1:255] (0)
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [05] - Play Cutscene and Rotate Player Around Vertical Axis
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+      f  Y-axis X Coord (m) [0.00:0.10:9999.00] (0.00)
+      f  Y-axis Z Coord (m) [0.00:1.00:9999.00] (0.00)
+      i  Rotation (deg) [-359.00:1.00:359.00] (0.00)
+      f  Vertical Translation (m) [-9999.00:0.10:9999.00] (0.00)
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [06] - Play Cutscene and Randomly Warp Player + UNKNOWN 2002[06] (DS1R ONLY)
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+      i  Starting Point Entity ID [0:1:1000000000] (0)
+      i  Ending Point Entity ID [0:1:1000000000] (0)
+      B  Area ID [0:1:255] (0)
+      B  Block ID [0:1:255] (0)
+ [07] - Play Cutscene and Randomly Warp Player + UNKNOWN 2002[07] (DS1R ONLY)
+      i  Cutscene ID [0:1:1000000000] (0)
+      I  Playback Method [ENUM: Cutscene Play Mode]
+      i  Starting Point Entity ID [0:1:1000000000] (0)
+      i  Ending Point Entity ID [0:1:1000000000] (0)
+      B  Area ID [0:1:255] (0)
+      B  Block ID [0:1:255] (0)
+
+2003 - Event
+ [01] - Request Animation Playback
+      i  Entity ID [0:1:1000000000] (0)
+      i  Animation ID [-1:1:1000000000] (-1)
+      B  Should Loop [ENUM: BOOL]
+      B  Should Wait For Completion [ENUM: BOOL]
+ [02] - Set Event Flag
+      i  Event Flag ID [0:1:1000000000] (0)
+      B  Flag State [ENUM: ON/OFF]
+ [03] - (De)activate Generator
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [04] - Award Item Lot
+      i  Item Lot ID [0:1:1000000000] (0)
+ [05] - Shoot Bullet
+      i  Bullet Team Entity ID [0:1:1000000000] (0)
+      i  Bullet Producer Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:255] (-1)
+      i  Behavior ID [0:1:1000000000] (0)
+      i  Firing Angle X [0:1:359] (0)
+      i  Firing Angle Y [0:1:359] (0)
+      i  Firing Angle Z [0:0:359] (0)
+ [06] - (De)activate Map Hit
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [07] - Set Map Visibility
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [08] - Set Event State
+      i  Event ID [0:1:1000000000] (0)
+      i  Event Slot ID [0:1:1000000000] (0)
+      B  Event State [ENUM: Event End Type]
+ [09] - Invert Event Flag
+      i  Event Flag ID [0:1:1000000000] (0)
+ [10] - Set Event Navimesh
+      h  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [11] - Display Boss Health Bar
+      b  Disabled/Enabled [ENUM: Disabled/Enabled]
+      i  Entity ID [0:1:1000000000] (0)
+      h  Slot Number [0:1:1] (0)
+      h  Name ID [0:1:9999] (0)
+ [12] - Handle Boss Defeat
+      i  Entity ID [0:1:1000000000] (0)
+ [13] - Modify Navimesh Connection Bitflag
+      i  Entity ID [0:1:1000000000] (0)
+      I  Navimesh Type [ENUM: Navimesh Type]
+      B  Type Bit Operation [ENUM: Bitop Type]
+ [14] - Warp Player
+      B  Area ID [0:1:99] (0)
+      B  Block ID [0:1:99] (0)
+      i  Initial Area ID [-1:1:1000000000] (-1)
+ [15] - Handle Miniboss Defeat
+      i  Entity ID [0:1:1000000000] (0)
+ [16] - Trigger Multiplayer Event
+      I  Multiplayer Event ID [0:1:1000000000] (0)
+ [17] - Randomly Set Event Flag In Range
+      I  Event Flag ID Min [0:1:1000000000] (0)
+      I  Event Flag ID Max [0:1:1000000000] (0)
+      B  Flag State [ENUM: ON/OFF]
+ [18] - Force Animation Playback
+      i  Entity ID [0:1:1000000000] (0)
+      i  Animation ID [-1:1:1000000000] (-1)
+      B  Should Loop [ENUM: BOOL]
+      B  Should Wait For Completion [ENUM: BOOL]
+      B  Ignore Wait For Transition [ENUM: BOOL]
+ [19] - Set Area DrawParam Bank Slot Index
+      h  Area ID [0:1:9999] (0)
+      h  Area DrawParam Bank Slot Index [0:1:9999] (0)
+ [20] - Set Temporary Player Respawn Point
+      i  Respawn Point Entity ID [0:1:1000000000] (0)
+ [21] - Increment Game Cycle
+      B  Dummy [0:1:1] (0)
+ [22] - Batch Set Event Flags
+      i  Event Flag ID Start [0:1:1000000000] (0)
+      i  Event Flag ID End [0:1:1000000000] (0)
+      B  Flag State [ENUM: ON/OFF]
+ [23] - Set Player Respawn Point
+      i  Respawn Point Entity ID [0:1:1000000000] (0)
+ [24] - Remove Item From Player
+      i  Item Type [ENUM: Item Type]
+      i  Item ID [0:1:1000000000] (0)
+      i  Number [0:1:999] (0)
+ [25] - Place NPC Summon Sign
+      i  Sign Type [ENUM: Summon Sign Type]
+      i  Summoned NPC Entity ID [0:1:1000000000] (0)
+      i  Spawn Point Entity ID [0:1:1000000000] (0)
+      i  Summon Event Flag ID [-1:1:1000000000] (0)
+      i  Dismissal Event Flag ID [-1:1:1000000000] (0)
+ [26] - Set Visibility of Message
+      i  Message Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [27] - [[MISSING]]
+      B  Dummy [0:1:1] (0)
+ [28] - Award Achievement
+      i  Achievement ID [0:1:1000000000] (0)
+ [29] - Change World Tendency
+      B  Tendency Type [ENUM: Tendency Type]
+      b  Change Value [-100:1:100] (0)
+ [30] - Disable Vagrant Spawning
+      B  Disabled [ENUM: BOOL]
+ [31] - Increment Event Value
+      i  Base Event Flag ID [0:1:1000000000] (0)
+      I  Number of Used Flag Bits [1:1:32] (1)
+      I  Maximum Allowed Value [0:1:1000000000] (0)
+ [32] - Clear Event Value
+      i  Base Event Flag ID [0:1:1000000000] (0)
+      I  Number of Used Flag Bits [1:1:32] (1)
+ [33] - Set Snuggly Next Trade
+      i  Event Flag ID [0:1:1000000000] (0)
+ [34] - Spawn Snuggly Item
+      i  Item Lot ID [0:1:1000000000] (0)
+      i  Placement Area Entity ID [0:1:1000000000] (0)
+      i  Event Flag ID [0:1:1000000000] (0)
+      i  Hitbox Entity ID [-1:1:1000000000] (0)
+ [35] - Move Bloodstain and Dropped Items
+      i  Source Area Entity ID [0:1:1000000000] (0)
+      i  Destination Area Entity ID [0:1:1000000000] (0)
+ [36] - Award Items (Including Clients)
+      i  Item Lot ID [0:1:1000000000] (0)
+ [37] - Battle of Stoicism 1v1 Ranking Request
+ [38] - Battle of Stoicism 2v2 Ranking Request
+ [39] - Battle of Stoicism FFA Ranking Request
+ [40] - Battle of Stoicism Exit Request
+ [41] - Initialize Character Model-Specific Killplane
+      i  Map ID [0:1:99] (0)
+      i  Block ID [0:1:99] (0)
+      f  Y Coordinate Threshold [-9999:0:9999] (0)
+      i  Target Character Model Type ID [0:1:9999] (0)
+ [42] - Copy Event Value (DS1R ONLY)
+      i  Source Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      i  Destination Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      B  Number of Used Flag Bits [1:1:32] (1)
+ [43] - UNKNOWN 2003[43] (DS1R ONLY)
+      i  Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      i  Number of Used Flag Bits [1:1:32] (1)
+      B  Unknown [0:0:0] (1)
+      B  Unknown [0:0:0] (1)
+ [44] - Force Animation Playback + UNKNOWN 2003[44] (DS1R ONLY)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Animation ID [-1:1:1000000000] (-1)
+      B  Should Loop [ENUM: BOOL]
+      B  Should Wait For Completion [ENUM: BOOL]
+      B  Ignore Wait For Transition [ENUM: BOOL]
+      B  Unknown (Unused?) [0:0:0] (1)
+ [46] - Force Animation Playback + UNKNOWN 2003[46] (DS1R ONLY)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Animation ID [-1:1:1000000000] (-1)
+      B  Should Loop [ENUM: BOOL]
+      B  Should Wait For Completion [ENUM: BOOL]
+      B  Ignore Wait For Transition [ENUM: BOOL]
+      f  Unknown [0.000:1.000:9999.000] (0.000)
+ [47] - UNKNOWN 2003[47] (DS1R ONLY)
+ [48] - UNKNOWN 2003[48] (DS1R ONLY)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Unknown [0:0:0] (1)
+      i  Dummypoly ID [-1:1:255] (-1)
+      i  Magic ID? [0:0:0] (1)
+      i  Firing Angle X? [0:0:0] (1)
+      i  Firing Angle Y? [0:0:0] (1)
+      i  Firing Angle Z? [0:0:0] (1)
+ [49] - Erase NPC Summon Sign (DS1R ONLY)
+      i  Summoned NPC Entity ID [0:1:1000000000] (0)
+
+2004 - Character
+ [01] - Set Character AI State
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [02] - Set Character Team Type
+      i  Entity ID [0:1:1000000000] (0)
+      B  Team Type [ENUM: Team Type]
+ [03] - Character Warp Request
+      i  Entity ID [0:1:1000000000] (0)
+      B  Warp Type [ENUM: Target Entity Type]
+      i  Warp Destination Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:255] (-1)
+ [04] - Force Character Death
+      i  Entity ID [0:1:1000000000] (0)
+      B  Should Receive Souls [ENUM: BOOL]
+ [05] - Change Character Enable State
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [06] - EzState Instruction Request
+      i  Entity ID [0:1:1000000000] (0)
+      i  Command [0:1:1000000000] (0)
+      B  Slot [0:1:3] (0)
+ [07] - Create Bullet Owner
+      i  Entity ID [0:1:1000000000] (0)
+ [08] - Set SpEffect
+      i  Entity ID [0:1:1000000000] (0)
+      i  SpEffect ID [0:1:1000000000] (0)
+ [09] - Set Special Animation(s)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Waiting Animation [-1:1:1000000000] (-1)
+      i  Damage Animation [-1:1:1000000000] (-1)
+      i  Cancel Animation [-1:1:1000000000] (-1)
+      i  Death Animation [-1:1:1000000000] (-1)
+      i  Return Animation [-1:1:1000000000] (-1)
+ [10] - Set Character Gravity
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [11] - Set Character Event Target
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [0:1:1000000000] (0)
+ [12] - Set Character Immortality
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [13] - Set Character Home
+      i  Entity ID [0:1:1000000000] (0)
+      i  Area Entity ID [0:1:1000000000] (0)
+ [14] - Rotate Character
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [0:1:1000000000] (0)
+ [15] - Set Character Invincibility
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [16] - Clear Character's AI Target
+      i  Entity ID [0:1:1000000000] (0)
+ [17] - Request Character AI Command
+      i  Entity ID [0:1:1000000000] (0)
+      i  Command ID [-1:1:1000000000] (0)
+      B  Slot Number [0:1:3] (0)
+ [18] - Set Event Point
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [0:1:1000000000] (0)
+      f  Reaction Distance [0.000:1.000:100000000.000] (0.000)
+ [19] - Set Character AI ID
+      i  Entity ID [0:1:1000000000] (0)
+      i  AI ID [0:1:1000000000] (0)
+ [20] - Request Character AI Re-plan
+      i  Entity ID [0:1:1000000000] (0)
+ [21] - Clear SpEffect
+      i  Entity ID [0:1:1000000000] (0)
+      i  SpEffect ID [0:1:1000000000] (0)
+ [22] - Create NPC Part
+      i  Entity ID [0:1:1000000000] (0)
+      h  NPC Part ID [0:1:10000] (0)
+      h  NPC Part Group IDx [ENUM: NPC Part Type]
+      i  NPC Part HP [-1:1:1000000000] (0)
+      f  Damage Correction [0:1:9999] (1)
+      f  Body Damage Compensation [0:1:9999] (1)
+      B  Is Invincible [ENUM: BOOL]
+      B  Start In Stopped State [ENUM: BOOL]
+ [23] - Set NPC Part HP
+      i  Entity ID [0:1:1000000000] (0)
+      i  NPC Part ID [0:1:10000] (0)
+      i  Desired HP [-100000000:1:100000000] (0)
+      B  Should Allow HP Above Max HP [ENUM: BOOL]
+ [24] - Set NPC Part SE and SFX
+      i  Entity ID [0:1:1000000000] (0)
+      i  NPC Part ID [0:1:10000] (0)
+      i  Defense Material SE ID [-1:1:1000000000] (-1)
+      i  Defense Material SFX ID [-1:1:1000000000] (-1)
+ [25] - Set NPC Part Bullet Damage Multiplier
+      i  Entity ID [0:1:1000000000] (0)
+      i  NPC Part ID [0:1:10000] (0)
+      f  Bullet Damage Multiplier [0:1:9999] (1)
+ [26] - Change Character DispMask
+      i  Entity ID [0:1:1000000000] (0)
+      B  Bit Number [0:1:32] (0)
+      B  Switch Type [ENUM: ON/OFF/CHANGE]
+ [27] - Change Character HitMask
+      i  Entity ID [0:1:1000000000] (0)
+      B  Bit Number [0:1:32] (0)
+      B  Switch Type [ENUM: ON/OFF/CHANGE]
+ [28] - Set Network Update Authority
+      i  Entity ID [0:1:1000000000] (0)
+      i  Authority Level [ENUM: Authority Level]
+ [29] - Set Character Backread State
+      i  Entity ID [0:1:1000000000] (0)
+      B  Removed [ENUM: BOOL]
+ [30] - Set Character HP Bar Display
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [31] - Set Character MapHits
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled [ENUM: BOOL]
+ [32] - Request Character AI Command + Event Value
+      i  Entity ID [0:1:1000000000] (0)
+      i  Command ID [-1:1:1000000000] (0)
+      B  Slot Number [0:1:3] (0)
+      i  Starting Target Event Flag ID [00000000:00000001:100000000] (00000000)
+      i  Ending Target Event Flag ID [00000000:00000001:100000000] (00000000)
+ [33] - Create Referred Damage Pair
+      i  Source Entity ID [0:1:1000000000] (0)
+      i  Target Entity ID [0:1:1000000000] (0)
+ [34] - Set Network Update Rate
+      i  Entity ID [0:1:1000000000] (0)
+      B  Use Fixed Frequency [ENUM: BOOL]
+      b  Update Frequency [ENUM: Character Update Frequency]
+ [35] - Set Character Default Backread State
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [36] - Hellkite Breath Control
+      i  Character Entity ID [0:1:1000000000] (0)
+      i  Object Entity ID [0:1:1000000000] (0)
+      i  Character Animation ID [0:1:1000000000] (0)
+ [37] - Force Character Treasure
+      i  Character Entity ID [0:1:1000000000] (0)
+ [38] - Betray Character's Current Covenant
+      B  Dummy [0:1:1] (0)
+ [39] - Set Character Animation State
+      i  Entity ID [0:1:1000000000] (0)
+      B  Disabled/Enabled [ENUM: Disabled/Enabled]
+ [40] - Warp Character and Set Floor
+      i  Entity ID [0:1:1000000000] (0)
+      B  Warp Type [ENUM: Target Entity Type]
+      i  Warp Destination Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:255] (-1)
+      i  Warp Destination Hitbox Entity ID [0:1:1000000000] (0)
+ [41] - Issue Short Warp Request
+      i  Entity ID [0:1:1000000000] (0)
+      B  Warp Type [ENUM: Target Entity Type]
+      i  Warp Destination Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:255] (-1)
+ [42] - Warp Character and Copy Floor
+      i  Entity ID [0:1:1000000000] (0)
+      B  Warp Type [ENUM: Target Entity Type]
+      i  Warp Destination Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:255] (-1)
+      i  Entity ID to Copy Floor From [0:1:1000000000] (0)
+ [43] - Request Character Animation Reset
+      i  Entity ID [0:1:1000000000] (0)
+      B  Interpolation Method [ENUM: Interpolation]
+ [44] - Change Character Team Type and Force Exit Special Animations
+      i  Entity ID [0:1:1000000000] (0)
+      B  Team Type [ENUM: Team Type]
+ [45] - Register NPC Humanity Event Value
+      i  NPC Entity ID [0:1:1000000000] (0)
+      i  Humanity Event Value Base Event Flag ID [0:1:1000000000] (0)
+ [46] - Increment Player PvP Sin
+      B  Dummy [0:1:1] (0)
+ [47] - Bonfire-like Recovery
+ [48] - Character Fade Out (DS1R ONLY)
+      i  Entity ID [0:1:1000000000] (0)
+      f  Time [0.000:1.000:9999.000] (0.000)
+ [49] - Character Fade In (DS1R ONLY)
+      i  Entity ID [0:1:1000000000] (0)
+      f  Time [0.000:1.000:9999.000] (0.000)
+ [50] - UNKNOWN 2004[50] (DS1R ONLY)
+ [51] - UNKNOWN 2004[51] (DS1R ONLY)
+      i  Unknown [ENUM: BOOL]
+ [52] - UNKNOWN 2004[52] (DS1R ONLY)
+
+2005 - Object
+ [01] - Request Object Destruction
+      i  Entity ID [0:1:1000000000] (0)
+      b  Slot Number [0:1:3] (0)
+ [02] - Request Object Restoration
+      i  Entity ID [0:1:1000000000] (0)
+ [03] - (De)activate Object
+      i  Target Object Entity ID [0:1:1000000000] (0)
+      B  State [ENUM: Disabled/Enabled]
+ [04] - Set Object Treasure State
+      i  Target Object Entity ID [0:1:1000000000] (0)
+      B  State [ENUM: Disabled/Enabled]
+ [05] - Initialize ObjAct
+      i  Entity ID [0:1:1000000000] (0)
+      i  Object Parameter ID [-1:1:1000000000] (-1)
+      i  Relative Target IDx [-1:1:1000000000] (-1)
+ [06] - Set ObjAct State
+      i  Entity ID [0:1:1000000000] (0)
+      i  Object Parameter ID [-1:1:1000000000] (-1)
+      B  State [ENUM: Disabled/Enabled]
+ [07] - Reproduce Object Animation
+      i  Target Object Entity ID [0:1:1000000000] (0)
+      i  Animation ID [0:1:1000000000] (0)
+ [08] - Reproduce Object Destruction
+      i  Entity ID [0:1:1000000000] (0)
+      b  Slot Number [0:1:3] (0)
+ [09] - Create Damaging Object
+      i  Event Flag ID [0:1:1000000000] (0)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [0:1:1000000000] (0)
+      i  Behavior ID [0:1:1000000000] (0)
+      i  Target [ENUM: Damage Target Type]
+      f  Radius [0.000:1.000:9999.000] (0.000)
+      f  Lifespan [0.000:1.000:9999.000] (0.000)
+      f  Repetition Time (s) [0.000:1.000:9999.000] (0.000)
+ [10] - Register Statue
+      i  Entity ID [0:1:1000000000] (0)
+      B  Area ID [0:1:99] (0)
+      B  Block ID [0:1:99] (0)
+      B  Statue Type [ENUM: Statue Type]
+ [11] - Warp Object To Character
+      i  Entity ID [0:1:1000000000] (0)
+      i  Character Entity ID [-1:1:1000000000] (-1)
+      h  Dummypoly ID [-1:1:255] (-1)
+ [12] - Delete Object Event
+      i  Event Flag ID [0:1:1000000000] (0)
+ [13] - Set Object Invulnerability
+      i  Target Object Entity ID [0:1:1000000000] (0)
+      B  State [ENUM: Disabled/Enabled]
+ [14] - (De)activate ObjAct (Assign IDx)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Object Parameter ID [-1:1:1000000000] (-1)
+      i  Relative Target IDx [-1:1:1000000000] (-1)
+      B  State [ENUM: Disabled/Enabled]
+ [15] - Reroll Object Treasure
+      i  Target Object Entity ID [0:1:1000000000] (0)
+
+2006 - SFX
+ [01] - Delete Map SFX
+      i  Entity ID [0:1:1000000000] (0)
+      B  Only Delete Root [ENUM: BOOL]
+ [02] - Spawn Map SFX
+      i  Entity ID [0:1:1000000000] (0)
+ [03] - Spawn Oneshot SFX
+      i  Type [ENUM: Target Entity Type]
+      i  Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:1000000000] (-1)
+      i  SFX ID [0:1:1000000000] (0)
+ [04] - Create Object-following SFX
+      i  Object Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [0:1:1000000000] (0)
+      i  SFX ID [0:1:1000000000] (0)
+ [05] - Delete Object-following SFX
+      i  Object Entity ID [0:1:1000000000] (0)
+      i  Should Delete Root [ENUM: BOOL]
+
+2007 - Message
+ [01] - Display Generic Dialog
+      i  Message ID [0:1:1000000000] (0)
+      h  Dialog Type [ENUM: Prompt Type]
+      h  Number of Options [ENUM: Number of Options]
+      i  Entity ID [-1:1:1000000000] (-1)
+      f  Display Distance [0.000:0.010:100.000] (0.000)
+ [02] - Display Banner
+      B  Banner Type [ENUM: Text Banner Type]
+ [03] - Display Status Message
+      i  Message ID [0:1:1000000000] (0)
+      B  Pad State [ENUM: Disabled/Enabled]
+ [04] - Display Message
+      i  Message ID [0:1:1000000000] (0)
+      B  Screen Location Index [0:1:1] (0)
+ [05] - Set Battle of Stocism Nametag A
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [06] - Set Battle of Stocism Nametag B
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [07] - Set Battle of Stocism Nametag C
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [08] - Set Battle of Stocism Nametag D
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [09] - Display Battle of Stocism Dissolution Message
+      i  Message ID [0:1:1000000000] (0)
+ [10] - Set Battle of Stocism Nametag E
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [11] - Set Battle of Stocism Nametag F
+      i  Player Entity ID [00000000:00000001:100000000] (00000000)
+ [12] - Display Concatenated Message (DS1R ONLY)
+      i  Message ID [0:1:1000000000] (0)
+      B  Pad State [ENUM: Disabled/Enabled]
+      i  Concatenator Base Event Flag ID [00000000:00000001:1000000000] (00000000)
+      B  Number of Used Flag Bits [1:1:32] (1)
+ [13] - UNKNOWN 2007[13] (DS1R ONLY)
+      i  Unknown [0:0:0] (1)
+
+2008 - Camera
+ [01] - Change Camera
+      i  Normal Camera ID [-1:1:1000000000] (-1)
+      i  Locked Camera ID [-1:1:1000000000] (-1)
+ [02] - Set Camera Vibration
+      i  Vibration ID [0:1:1000000000] (0)
+      i  Type [ENUM: Target Entity Type]
+      i  Entity ID [0:1:1000000000] (0)
+      i  Dummypoly ID [-1:1:1000000000] (-1)
+      f  Decay Start Distance [0.000:0.010:999.000] (0.000)
+      f  Decay End Distance [0.000:0.010:999.000] (0.000)
+ [03] - Set LockCam Slot Number
+      B  Area ID [0:1:255] (0)
+      B  Block ID [0:1:255] (0)
+      H  LockCam Slot Number [0:1:9999] (0)
+ [04] - UNKNOWN 2008[04] (DS1R ONLY)
+
+2009 - Script
+ [00] - Register Ladder
+      i  Disable Top Event Flag ID [0:1:1000000000] (0)
+      i  Disable Bottom Event Flag ID [0:1:1000000000] (0)
+      i  Entity ID [0:1:1000000000] (0)
+ [01] - Initialize Wandering Demon
+      i  Event Flag ID [0:1:1000000000] (0)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Appearence Event Flag ID [0:1:1000000000] (0)
+ [02] - Register Wandering Demon
+      i  Event Flag ID [0:1:1000000000] (0)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [0:1:1000000000] (0)
+ [03] - Register Bonfire
+      i  Event Flag ID [0:1:1000000000] (0)
+      i  Entity ID [0:1:1000000000] (0)
+      f  Reaction Distance [0.000:1.000:100000000.000] (0.000)
+      f  Reaction Angle [0.000:1.000:100000000.000] (0.000)
+      i  Set Standard Kindling Level [0:1:1000000000] (0)
+ [04] - Activate Multiplayer-dependant Buffs
+      i  Entity ID [0:1:1000000000] (0)
+ [05] - Register Healing Fountain
+      i  Event Flag ID [0:1:1000000000] (0)
+      i  Entity ID [0:1:1000000000] (0)
+ [06] - Issue Boss Room Entry Notification
+      B  Dummy [0:1:1] (0)
+
+2010 - Sound
+ [01] - Play BGM
+      B  Should Play [ENUM: ON/OFF]
+      H  Slot Number [0:1:20] (0)
+      i  Entity ID [0:1:1000000000] (0)
+      i  Sound Type [ENUM: Sound Type]
+      i  Sound ID [0:1:1000000000] (0)
+ [02] - Play SE
+      i  Entity ID [0:1:1000000000] (0)
+      i  Sound Type [ENUM: Sound Type]
+      i  Sound ID [0:1:1000000000] (0)
+ [03] - Set Map Sound State
+      i  Entity ID [0:1:1000000000] (0)
+      B  Enable/Disable [ENUM: Disabled/Enabled]
+
+2011 - Hit
+ [01] - Activate Hit
+      i  Hit Entity ID [0:1:1000000000] (0)
+      B  State [ENUM: Disabled/Enabled]
+ [02] - Activate Hit Backread Mask
+      i  Hit Entity ID [0:1:1000000000] (0)
+      B  State [ENUM: Disabled/Enabled]
+
+2012 - Map
+ [01] - Activate Map Part
+      i  Map Part Entity ID [0:1:1000000000] (0)
+      B  State [ENUM: Disabled/Enabled]
+
+
+Extra Classes:
+1 - Project
+ [01] - IF Character Death
+      i  Entity ID [0:1:1000000000] (0)
+ [02] - IF Character In Area
+      i  Character Entity ID [0:1:1000000000] (0)
+      i  Area Entity ID [0:1:1000000000] (0)
+ [03] - IF Event Flag ON
+      i  Event Flag ID [0:1:1000000000] (0)
+ [04] - IF Object Destroyed
+      i  Entity ID [0:1:1000000000] (0)
+ [05] - IF Character In Radius
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [0:1:1000000000] (0)
+      f  Distance (m) [0.000:0.010:9999.000] (0.000)
+ [06] - IF Character Taken Damage
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [-1:1:1000000000] (-1)
+ [07] - IF Object Taken Damage
+      i  Entity ID [0:1:1000000000] (0)
+      i  Entity ID 2 [-1:1:1000000000] (-1)
+ [08] - IF Player Has Item
+      I  Item Type [ENUM: Item Type]
+      i  Item ID [0:1:1000000000] (0)
+ [09] - IF Action Button
+      i  Target Entity Type [ENUM: Target Entity Type]
+      i  Entity ID [0:1:1000000000] (0)
+      i  Reaction Angle [0:1:180] (0)
+      i  Dummypoly ID [-1:1:1000000000] (-1)
+      f  Reaction Distance [0.000:0.010:9999.000] (0.000)
+      i  Help Message ID [0:1:1000000000] (0)
+      I  Reaction Type [ENUM: Reaction Type]
+      i  Event Flag ID [0:1:1000000000] (0)
+ [10] - Make System Call
+      I  Type [ENUM: Call Type]
+      i  Event ID [0:1:1000000000] (0)
+ [11] - IF Character HP
+      i  Entity ID [0:1:1000000000] (0)
+      f  HP Ratio [0.000:0.010:1.000] (0.000)
+ [12] - IF Character Type
+      i  Entity ID [0:1:1000000000] (0)
+      i  Target Type [ENUM: Target Type]
+ [13] - IF Untransmitted Data
+
+
+Enums:
+ON/OFF = {
+ 0: OFF
+ 1: ON
+}
+
+ON/OFF/CHANGE = {
+ 0: OFF
+ 1: ON
+ 2: CHANGE
+}
+
+Target Event Flag Type = {
+ 0: Event Flag
+ 1: Event ID
+ 2: Event ID + Slot Number
+}
+
+Comparison Type = {
+ 0: ==
+ 1: !=
+ 2: >
+ 3: <
+ 4: >=
+ 5: <=
+}
+
+Logical Operation Type = {
+ 0: All ON
+ 1: All OFF
+ 2: Not All OFF
+ 3: Not All ON
+}
+
+Calculation Type = {
+ 0: +
+ 1: -
+ 2: ×
+ 3: ÷
+ 4: mod
+}
+
+Condition Group = {
+ -7: OR(07)
+ -6: OR(06)
+ -5: OR(05)
+ -4: OR(04)
+ -3: OR(03)
+ -2: OR(02)
+ -1: OR(01)
+ 0: MAIN
+ 1: AND(01)
+ 2: AND(02)
+ 3: AND(03)
+ 4: AND(04)
+ 5: AND(05)
+ 6: AND(06)
+ 7: AND(07)
+ 8: AND(08) (DS1R ONLY)
+}
+
+Count Direction = {
+ 0: Count Up
+ 1: Count Down
+}
+
+Cutscene Play Mode = {
+ 0: Skippable
+ 2: Unskippable
+ 8: Skippable With Fade-Out
+ 10: Unskippable With Fade-Out
+}
+
+BOOL = {
+ 0: FALSE
+ 1: TRUE
+}
+
+○/× = {
+ 0: ×
+ 1: ○
+}
+
+Destruction State = {
+ 0: Undestroyed
+ 1: Destroyed
+}
+
+Inside/Outside State = {
+ 0: Outside
+ 1: Inside
+}
+
+Condition State = {
+ 0: FAIL
+ 1: PASS
+}
+
+Death State = {
+ 0: Alive
+ 1: Dead
+}
+
+Ownership State = {
+ 0: Doesn't Own
+ 1: Owns
+}
+
+Event End Type = {
+ 0: End
+ 1: Restart
+}
+
+Team Type = {
+ -1: Default
+ 0: Disabled
+ 1: Human
+ 2: White Phantom
+ 3: Black Phantom
+ 4: Hollow
+ 5: Wandering Phantom
+ 6: Enemy
+ 7: Strong Enemy
+ 8: Ally
+ 9: Hostile Ally
+ 10: Decoy Enemy
+ 11: Baby
+ 12: Friendly Enemy
+ 13: Invader
+}
+
+Target Entity Type = {
+ 0: Object
+ 1: Area
+ 2: Character
+}
+
+Disabled/Enabled = {
+ 0: Disabled
+ 1: Enabled
+}
+
+Bitop Type = {
+ 0: Add
+ 1: Delete
+ 2: Invert
+}
+
+Navimesh Type = {
+ 1: Solid
+ 2: Exit
+ 4: Obstacle
+ 8: Wall
+ 64: Landing Point
+ 128: Event
+ 256: Cliff
+ 512: Open Space
+ 1024: Ladder
+ 2048: Hole
+ 4096: Door
+ 8192: Closed Door
+ 32: Wall-touching Floor
+}
+
+Prompt Type = {
+ 0: YES/NO
+ 1: OK/CANCEL
+}
+
+Number of Options = {
+ 1: 1 Button
+ 2: 2 Buttons
+ 6: No Button
+}
+
+Event State = {
+ 0: Completed
+ 1: Restart
+ 2: Waiting
+ 3: Running
+}
+
+Sound Type = {
+ 0: a: Environmental Sound
+ 1: c: Character Motion
+ 2: f: Menu SE
+ 3: o: Object
+ 4: p: Cutscene SE
+ 5: s: SFX
+ 6: m: BGM
+ 7: v: Voice
+ 8: x: Depends On Floor Material
+ 9: b: Depends On Armor Material
+ 10: g: Ghost
+}
+
+Damage Target Type = {
+ 1: Character
+ 2: Map
+ 3: Character & Map
+}
+
+Item Type = {
+ 0: Weapon
+ 1: Armor
+ 2: Ring
+ 3: Goods
+}
+
+Reaction Type = {
+ 48: Hollow & Human
+ 255: All
+}
+
+Call Type = {
+ 0: Object Action
+ 1: Wandering System
+ 255: Other
+}
+
+Target Type = {
+ 0: Alive
+ 1: White Phantom
+ 2: Black Phantom
+ 8: Hollow
+ 12: Invader
+}
+
+Statue Type = {
+ 0: Stone Statue
+ 1: Crystal Statue
+}
+
+Text Banner Type = {
+ 1: Victory Achieved
+ 2: You Died
+ 3: Humanity Restored
+ 4: Retrieval
+ 5: Target Destroyed
+ 6: You Died (Phantom)
+ 7: Black Phantom Destroyed
+ 8: (Map Name)
+ 9: Magic Revival
+ 10: Ring Revival
+ 11: Rare Ring Revival
+ 12: Congratulations (broken)
+ 13: Bonfire Lit
+ 14: Humanity Acquired
+ 15: You Win
+ 16: You Lose
+ 17: Draw
+ 18: Begin Match (DS1R ONLY)
+}
+
+Multiplayer State = {
+ 0: Host
+ 1: Client
+ 2: Multiplayer
+ 3: Singleplayer
+ 4: UNKNOWN (4) (DS1R ONLY)
+ 5: UNKNOWN (5) (DS1R ONLY)
+}
+
+NPC Part Type = {
+ 1: Part 1
+ 2: Part 2
+ 3: Part 3
+ 4: Part 4
+ 5: Part 5
+ 6: Part 6
+ 7: Weak Point
+ 8: Part 7
+ 9: Part 8
+}
+
+Authority Level = {
+ 0: Normal
+ 4095: Forced
+}
+
+Handle Respawn Type = {
+ 0: Ignore
+ 1: Restart Event
+ 2: End Event
+}
+
+AI State Type = {
+ 0: Normal
+ 1: Recognition
+ 2: Alert
+ 3: Combat
+}
+
+Summon Sign Type = {
+ 0: White Sign
+ 1: Black Sign
+ 2: Red Sign
+ 3: Detection Sign
+ 4: White Relief Sign
+ 5: Black Relief Sign
+}
+
+Class Type = {
+ 0: Warrior
+ 1: Knight
+ 2: Wanderer
+ 3: Thief
+ 4: Bandit
+ 5: Hunter
+ 6: Sorcerer
+ 7: Pyromancer
+ 8: Cleric
+ 9: Deprived
+ 20: Temp: Warrior
+ 21: Temp: Knight
+ 22: Temp: Sorcerer
+ 23: Temp: Pyromancer
+ 24: Chi: Warrior
+ 25: Chi: Knight
+ 26: Chi: Sorcerer
+ 27: Chi: Pyromancer
+}
+
+Character Update Frequency = {
+ -1: No Update
+ 0: Always Update
+ 2: Every 2 Frames
+ 5: Every 5 Frames
+}
+
+Tendency Type = {
+ 0: White Tendency
+ 1: Black Tendency
+}
+
+Interpolation = {
+ 0: Interpolated
+ 1: Uninterpolated
+}

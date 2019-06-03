@@ -215,7 +215,8 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None):
         return array
 
 
-def read_chars(buffer, offset=None, length=None, encoding=None):
+def read_chars(buffer, offset=None, length=None, encoding=None, reset_old_offset=True):
+    # TODO: Buffer is too slow for this. Use bytes. (Actually, not sure if this is true.)
     """ Read characters from a buffer. If a bytes object is passed, it will be converted into a buffer automatically.
 
     If 'offset' is None, the buffer/bytes will be read from the start. Otherwise, the buffer will be reset to whatever
@@ -226,21 +227,24 @@ def read_chars(buffer, offset=None, length=None, encoding=None):
 
     Use 'encoding' to automatically decode the bytes into a string before returning (e.g. 'shift_jis_2004'). """
 
+    # traceback.print_stack()  # TODO
+
     if isinstance(buffer, bytes):
         buffer = BytesIO(buffer)
     chars = []
     old_offset = None
+    bytes_per_char = 2 if encoding == 'utf-16le' else 1
 
     if offset is not None:
         old_offset = buffer.tell()
         buffer.seek(offset)
 
     while 1:
-        c = buffer.read(1)
-        if length is None and c == b'\x00':
+        c = buffer.read(bytes_per_char)
+        if length is None and c == b'\x00' * bytes_per_char:
             # Null termination.
             array = b''.join(chars)
-            if old_offset is not None:
+            if reset_old_offset and old_offset is not None:
                 buffer.seek(old_offset)
             if encoding is not None:
                 try:
@@ -250,9 +254,9 @@ def read_chars(buffer, offset=None, length=None, encoding=None):
                     return array
             return array
         elif len(chars) == length:
-            if old_offset is not None:
+            if reset_old_offset and old_offset is not None:
                 buffer.seek(old_offset)
-            stripped_array = b''.join(chars).rstrip().replace(b'\x00', b'')
+            stripped_array = b''.join(chars).rstrip(b' \x00')
             if encoding is not None:
                 return stripped_array.decode(encoding)
             return stripped_array
@@ -260,7 +264,9 @@ def read_chars(buffer, offset=None, length=None, encoding=None):
             chars.append(c)
 
 
-def read_utf16le_string(buffer, offset=None):
+def read_utf16le_string(buffer, offset=None, reset_to_old_offset=True):
+    if not isinstance(buffer, BytesIO):
+        buffer = BytesIO(buffer)
     chars = []
     if offset is not None:
         old_offset = buffer.tell()
@@ -271,8 +277,7 @@ def read_utf16le_string(buffer, offset=None):
         c = buffer.read(2)
         if c == b'\x00\x00':
             # Null termination.
-            if old_offset is not None:
+            if reset_to_old_offset and old_offset is not None:
                 buffer.seek(old_offset)
             return b''.join(chars).decode('utf-16le')
         chars.append(c)
-        offset += 2

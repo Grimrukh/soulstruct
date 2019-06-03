@@ -4,17 +4,19 @@ from functools import partial
 import importlib
 import os
 import re
-import soulstruct.emevd.pydses as p
-from soulstruct.emevd import ds_types as dt
-from soulstruct.emevd import instructions
-from soulstruct.emevd import tests
+from soulstruct.emevd import game_types as gt
+from soulstruct.emevd.shared import instructions, tests
+from soulstruct.emevd.core import header, define_args
+
+# TODO: Condition skips are being made double-negative (condition is negated AND skip is negated).
 
 
 _AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
 _OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
 _RESTART_TYPES = {'NeverRestart': 0, 'RestartOnRest': 1, 'UnknownRestart': 2}
 _EVENT_DOCSTRING_RE = re.compile(r'(\w+ )?([0-9]+)(:\s*.*)?')
-_EVS_ARG_TYPES = {'int': 'i', 'uint': 'I', 'float': 'f', 'short': 'h', 'ushort': 'H', 'char': 'b', 'uchar': 'B'}
+_EVS_ARG_TYPES = {'int': 'i', 'uint': 'I', 'float': 'f', 'short': 'h', 'ushort': 'H', 'char': 'b', 'uchar': 'B',
+                  'str': 's'}
 
 
 class EmevdError(Exception):
@@ -52,22 +54,34 @@ class ConditionLimitError(ConditionError):
 
 class EmevdCompiler(object):
     """ Compiles Python-like EVS code to Dark Souls EMEVD scripts. """
-    def __init__(self, evs_path):
-        with open(evs_path) as script:
+    def __init__(self, evs_path, game_module=None):
+
+        if not game_module:
+            raise ValueError("No game specified. Try importing this class from the appropriate game emevd subpackage.")
+
+        self.game_name = game_module.NAME
+
+        with open(evs_path, encoding='utf-8') as script:
             self.tree = ast.parse(script.read())
 
         self.map_name = os.path.basename(evs_path).split('.')[0]
+        self.linked_offsets = []
+        self.strings_with_offsets = []
 
-        self.constants = {}  # Will also contain all star-imported constants (Flags, Characters, etc.)
-        constants = importlib.import_module('soulstruct.emevd.constants')
-        names = [name for name, attr in vars(constants).items() if name != 'dt']
-        self.constants.update({name: getattr(constants, name) for name in names})
+        # Game-specific constants. Will be updated to also include any user star-imported constants.
+        self.constants = {name: attr for name, attr in vars(game_module.enums).items() if name != 'gt'}
+        self.constants.update({name: attr for name, attr in vars(game_module.constants).items() if name != 'gt'})
 
-        self.instructions = vars(instructions)  # Grim's front-end EMEVD instructions accessible to the user.
-        self.tests = vars(tests)  # Test methods that can be used in IF statements or conditions.
+        self.instructions = vars(game_module.instructions)
+        self.tests = vars(game_module.tests)
         self.events = OrderedDict()  # Maps your event names to their IDs, so you can call them to initialize them.
 
-        self.conditions = [''] * 15  # Reset for every new event. Contains names of conditions.
+        if self.game_name == 'ds1':
+            self.conditions = [''] * 15  # Reset for every new event. Contains names of conditions.
+        elif self.game_name in {'bb', 'ds3'}:
+            self.conditions = [''] * 31
+        else:
+            raise ValueError(f"Invalid game name: {repr(self.game_name)}")
         self.held_conditions = []  # These conditions won't be re-allocated.
         self.finished_conditions = []  # These conditions need to be accessed with 'finished' instruction versions.
 
@@ -83,7 +97,15 @@ class EmevdCompiler(object):
         """ Top-level node traversal. Only acceptable nodes at this top level are ImportFrom (for importing your
         constants) and FunctionDef (for your event scripts). """
 
-        # self.map_name = ast.get_docstring(self.tree)  # Using file name instead.
+        docstring_groups = re.split(r'\n{2,}', ast.get_docstring(self.tree))
+        for group in docstring_groups:
+            if group.startswith('linked:'):
+                for offset in group[8:].split('\n'):
+                    if offset.strip():
+                        self.linked_offsets += [int(offset.strip())]
+            elif group.startswith('strings:'):
+                for offset_with_string in group[9:].split('\n'):
+                    self.strings_with_offsets.append(offset_with_string)
 
         for node in self.tree.body[1:]:
 
@@ -104,14 +126,17 @@ class EmevdCompiler(object):
 
         if self.script_event_flags:
             # noinspection PyTypeChecker
-            self.constants['EVENTS'] = dt.Flag('EVENTS', self.script_event_flags)
+            self.constants['EVENTS'] = gt.Flag('EVENTS', self.script_event_flags)
 
         for event_name, event_function in self.events.items():
             self.current_event_name = event_name
             self.conditions = [''] * 15
+            self.finished_conditions = []
             self.event_function_strings.append('\n'.join(self.build_event(event_function)))
 
         self.numeric_emevd = '\n\n'.join(self.event_function_strings)
+        self.numeric_emevd += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_offsets)
+        self.numeric_emevd += "\n\nstrings:\n" + "\n".join(self.strings_with_offsets)
 
     def import_constants(self, node: ast.ImportFrom):
         """ Import constants into 'constants' attribute. """
@@ -140,8 +165,11 @@ class EmevdCompiler(object):
         """
         event_name = node.name
 
+        docstring = ast.get_docstring(node)
+        if docstring is None:
+            raise EmevdSyntaxError(node.lineno, f"No docstring given for event {event_name}.")
         try:
-            flag_name, event_id, description = _EVENT_DOCSTRING_RE.match(ast.get_docstring(node)).group(1, 2, 3)
+            flag_name, event_id, description = _EVENT_DOCSTRING_RE.match(docstring).group(1, 2, 3)
         except AttributeError:
             raise EmevdSyntaxError(node.lineno, f"Invalid docstring for event {event_name}.")
 
@@ -158,17 +186,17 @@ class EmevdCompiler(object):
         for arg in node.args.args:
             arg_type_node = arg.annotation
             if isinstance(arg_type_node, ast.Str):
-                if arg_type_node.s not in 'BbHhIif':
+                if arg_type_node.s not in 'BbHhIifs':
                     raise EmevdSyntaxError(node.lineno,
                                            f"Invalid event argument type '{arg_type_node.s}'. "
-                                           f"Must be one of: B b H h I i f")
+                                           f"Must be one of: B b H h I i f s")
                 arg_type = arg_type_node.s
             elif isinstance(arg_type_node, ast.Name):
                 try:
                     arg_type = _EVS_ARG_TYPES[arg_type_node.id]
                 except KeyError:
-                    if arg_type_node.id in dt.DARK_SOULS_TYPES:
-                        arg_classes[arg.arg] = getattr(dt, arg_type_node.id)
+                    if arg_type_node.id in gt.GAME_TYPES:
+                        arg_classes[arg.arg] = getattr(gt, arg_type_node.id)
                         arg_type = 'I'
                     else:
                         raise EmevdSyntaxError(node.lineno, f"Invalid argument type: {arg_type_node.id}")
@@ -179,7 +207,7 @@ class EmevdCompiler(object):
             arg_names.append(arg.arg)
             arg_types += arg_type
 
-        arg_values = p.define_args(arg_types)
+        arg_values = define_args(arg_types)
         args = {name: value for name, value in zip(arg_names, arg_values)}
 
         if node.decorator_list:
@@ -215,13 +243,13 @@ class EmevdCompiler(object):
     def build_event(self, event_function: dict):
         """ Writes header, then iterates over all nodes in function body. """
 
-        event_emevd = p.header(event_function['id'], event_function['restart_type'])
+        event_emevd = header(event_function['id'], event_function['restart_type'])
 
         for node in event_function['nodes']:
             built_function = self.build_event_body_node(node)
             if built_function is None:
                 raise EmevdSyntaxError(node.lineno, "Builder returned None for instruction.")
-            event_emevd += self.build_event_body_node(node)
+            event_emevd += built_function
 
         return event_emevd
 
@@ -241,19 +269,21 @@ class EmevdCompiler(object):
                 args = [self._parse_function_arg(arg_node) for arg_node in arg_nodes]
                 if keyword_nodes:
                     raise EmevdSyntaxError(node.lineno,
-                                           "Run an event with only positional arguments (because order matters). The "
-                                           "first argument must be the slot number.")
+                                           "When running an event using its function name, use only positional "
+                                           "arguments (because order matters). The first argument must be the slot "
+                                           "number.")
                 if event_dict['args'] and len(args) != len(event_dict['args']) + 1:
                     raise EmevdSyntaxError(node.lineno,
                                            f"Number of arguments (excluding the first slot argument) does not match "
-                                           f"the event function signature: {['slot'] + event_dict['args']}.")
+                                           f"the event function signature: "
+                                           f"{['slot'] + list(event_dict['args'].keys())}.")
                 if not event_dict['args'] and args:
                     raise EmevdSyntaxError(node.lineno, f"Event function '{name}' takes no arguments.")
 
                 if args:
-                    return p.run_event_with_slot(event_dict['id'], args[0], args=args[1:],
-                                                 arg_types=event_dict['arg_types'])
-                return p.run_event(event_dict['id'])
+                    return instructions.RunEvent(
+                        event_dict['id'], args[0], args=args[1:], arg_types=event_dict['arg_types'])
+                return instructions.RunEvent(event_dict['id'])
 
             if name == 'Condition':
                 raise EmevdError(node.lineno, "You must assign the Condition() to a variable.")
@@ -285,6 +315,10 @@ class EmevdCompiler(object):
                     raise EmevdSyntaxError(node.lineno, f"Failed to compile instruction.\n    Error: {str(e)}")
 
             raise EmevdSyntaxError(node.lineno, f"Invalid instruction: {name}")
+
+        # AWAIT KEYWORD
+        if isinstance(node, ast.Expr) and isinstance(node.value, ast.Await):
+            return self.build_condition(node.value.value, condition=0)
 
         # IF
         if is_if(node):
@@ -319,9 +353,8 @@ class EmevdCompiler(object):
                     hold = True
 
             if not isinstance(condition_argument, ast.BoolOp):
-                raise EmevdSyntaxError(node.lineno, "Condition argument must be a boolean operation. It can have "
-                                                    "any number of operands (a and b and c and ...), but no 'not' in "
-                                                    "front.")
+                i = self.check_out_AND(name=condition_name, hold=hold)
+                return self.build_condition(condition_argument, condition=i)
 
             if isinstance(condition_argument.op, ast.Or):
                 i = self.check_out_OR(name=condition_name, hold=hold)
@@ -340,9 +373,9 @@ class EmevdCompiler(object):
         # RETURN
         if isinstance(node, ast.Return):
             if node.value is None or (isinstance(node.value, ast.Name) and node.value.id == 'END'):
-                return p.end()
+                return instructions.End()
             elif isinstance(node.value, ast.Name) and node.value.id == 'RESTART':
-                return p.restart()
+                return instructions.Restart()
             else:
                 raise EmevdSyntaxError(node.lineno,
                                        f"Invalid return value '{node.value}'. It should be None (empty) to end the "
@@ -359,16 +392,16 @@ class EmevdCompiler(object):
         # 0. Check if body is just one end/restart function.
         if len(node.body) == 1 and isinstance(node.body[0], ast.Return) and not node.orelse:
             return_node = node.body[0]
-            if return_node.value is None or (isinstance(node.value, ast.Name) and node.value.id == 'END'):
+            if return_node.value is None or (isinstance(return_node.value, ast.Name) and return_node.value.id == 'END'):
                 try:
                     return self.build_skip_or_terminate(node.test, end_event=True)
-                except dt.NoSkipOrTerminateError:
+                except gt.NoSkipOrTerminateError:
                     # Continue to try building skip (though it will have to be a chain) or full condition.
                     pass
-            elif isinstance(node.value, ast.Name) and node.value.id == 'RESTART':
+            elif isinstance(return_node.value, ast.Name) and return_node.value.id == 'RESTART':
                 try:
                     return self.build_skip_or_terminate(node.test, restart_event=True)
-                except dt.NoSkipOrTerminateError:
+                except gt.NoSkipOrTerminateError:
                     # Continue to try building skip (though it will have to be a chain) or full condition.
                     pass
             else:
@@ -398,7 +431,7 @@ class EmevdCompiler(object):
         # 4. Put these components together. Note that an extra skip line is added if an ELSE body is present.
         if_emevd += test_emevd + body_emevd
         if else_emevd:
-            if_emevd += p.skip(len([line for line in else_emevd if not line.startswith('    ^')]))
+            if_emevd += instructions.SkipLines(len([line for line in else_emevd if not line.startswith('    ^')]))
             if_emevd += else_emevd
 
         return if_emevd
@@ -418,7 +451,7 @@ class EmevdCompiler(object):
         try:
             # 2a. Try to build a simple or chain skip.
             test_emevd += self.build_skip_or_terminate(node, skip_lines=body_length, negate=negate)
-        except dt.NoSkipOrTerminateError:
+        except gt.NoSkipOrTerminateError:
             # 2b. If the skip failed (returned None), we build a full condition.
             test_emevd += self.build_condition(node, skip_lines=body_length, negate=negate)
 
@@ -438,7 +471,7 @@ class EmevdCompiler(object):
                                                     restart_event=restart_event, negate=not negate)
             raise EmevdSyntaxError(node.lineno, "The 'not' keyword is the only valid unary operator.")
 
-        # 2a. The condition is an constant.
+        # 2a. The condition is a constant.
         if isinstance(node, (ast.Attribute, ast.Name)):
 
             # 2a(ii). Constant.
@@ -460,7 +493,11 @@ class EmevdCompiler(object):
             except ValueError:
                 pass
             else:
-                return self._resolve_condition_skip(skip_lines, i, negate)
+                try:
+                    return self._resolve_condition_skip_or_terminate(i, negate, skip_lines, end_event, restart_event)
+                except ValueError:
+                    raise EmevdError(node.lineno, "Cannot resolve simple condition check: skip_lines, end_event,\n"
+                                                  "and restart_event are all 0 or False.")
 
             # 2a(ii). Constant.
             try:
@@ -477,14 +514,14 @@ class EmevdCompiler(object):
             except KeyError:
                 raise EmevdSyntaxError(node.lineno, f"Encountered unknown name: {name}")
             else:
-                if isinstance(test, dt.ConstantCondition):
+                if isinstance(test, gt.ConstantCondition):
                     return test(negate=negate, skip_lines=skip_lines, end_event=end_event, restart_event=restart_event)
-                if isinstance(test, (dt.Flag, dt.Object, dt.Map)):
+                if isinstance(test, (gt.Flag, gt.Object, gt.Map)):
                     test(negate=negate, skip_lines=skip_lines)
-                if isinstance(test, dt.FlagRange):
+                if isinstance(test, gt.FlagRange):
                     raise EmevdSyntaxError(node.lineno, "Cannot implicitly use a FlagRange as a condition. Call any() "
                                                         "or all() on it (with or without 'not' in front) to test it.")
-                if isinstance(test, dt.Character):
+                if isinstance(test, gt.Character):
                     # TODO: Actually, I was planning to allow this for an implicit 'IsAlive' check.
                     raise EmevdSyntaxError(node.lineno, "Cannot implicitly use a Character as a test. Call IsAlive(), "
                                                         "IsDead(), etc. on the Character to test its state.")
@@ -499,14 +536,14 @@ class EmevdCompiler(object):
                 try:
                     arg = self.current_event_args[name]
                 except KeyError:
-                    raise dt.NoSkipOrTerminateError
+                    raise gt.NoSkipOrTerminateError
                     # raise EmevdSyntaxError(node.lineno, f"Unrecognized event argument: {name}")
 
                 if negate:
-                    return p.skip_if_value_comparison(skip_lines, dt.NEG_COMPARISON_NODES[op_node],
-                                                      arg, comparison_value)
-                return p.skip_if_value_comparison(skip_lines, dt.COMPARISON_NODES[op_node],
-                                                  arg, comparison_value)
+                    return instructions.SkipLinesIfComparison(
+                        skip_lines, gt.NEG_COMPARISON_NODES[op_node], arg, comparison_value)
+                return instructions.SkipLinesIfComparison(
+                    skip_lines, gt.COMPARISON_NODES[op_node], arg, comparison_value)
 
         # 2c. The condition is a function expression (must be an EMEVD test that takes arguments, or any() or all()
         # called on a FlagRange or a sequence of simple skips that can be chained together).
@@ -527,15 +564,17 @@ class EmevdCompiler(object):
             # 2c(i). The function is any()
             if node.func.id == 'any':
 
+                # TODO: FlagRange or range() should be accepted.
+
                 if len(node.args) != 1:
                     raise EmevdSyntaxError(node.lineno, "'any' must have one argument (a sequence or FlagRange).")
 
                 if not isinstance(node.args[0], (ast.List, ast.Tuple)):
                     fr = self._get_constant(node.args[0])
-                    if isinstance(fr, dt.FlagRange):
+                    if isinstance(fr, gt.FlagRange):
                         if negate:
-                            return p.skip_if_event_flag_range_not_all_off(skip_lines, fr.first, fr.last)
-                        return p.skip_if_event_flag_range_all_off(skip_lines, fr.first, fr.last)
+                            return instructions.SkipLinesIfFlagRangeAnyOn(skip_lines, fr)
+                        return instructions.SkipLinesIfFlagRangeAllOff(skip_lines, fr)
                     raise EmevdSyntaxError(node.lineno, "The only valid non-sequence argument to 'any' is a FlagRange.")
 
                 sequence = node.args[0].elts
@@ -548,27 +587,29 @@ class EmevdCompiler(object):
                         try:
                             skip_emevd = self.build_skip_or_terminate(
                                 arg, skip_lines=chain_skip_lines, negate=True, chain=True)
-                        except dt.NoSkipOrTerminateError:
+                        except gt.NoSkipOrTerminateError:
                             # Non-simple test featured in chain. Proceed to build condition.
                             pass
                         else:
                             chain_skip_emevd += skip_emevd
                     if chain_skip_emevd:
                         if not negate:
-                            chain_skip_emevd += p.skip(skip_lines)  # Extra skip required for 'any' (but not 'not any').
+                            chain_skip_emevd += instructions.SkipLines(skip_lines)  # Extra skip required for 'any'
                         return chain_skip_emevd
 
             if node.func.id == 'all':
-                
+
+                # TODO: FlagRange or range() should be accepted.
+
                 if len(node.args) != 1:
                     raise EmevdSyntaxError(node.lineno, "'all' must have one argument (a sequence or FlagRange).")
 
                 if not isinstance(node.args[0], (ast.List, ast.Tuple)):
                     fr = self._get_constant(node.args[0])
-                    if isinstance(fr, dt.FlagRange):
+                    if isinstance(fr, gt.FlagRange):
                         if negate:
-                            return p.skip_if_event_flag_range_not_all_on(skip_lines, fr.first, fr.last)
-                        return p.skip_if_event_flag_range_all_on(skip_lines, fr.first, fr.last)
+                            return instructions.SkipLinesIfFlagRangeAnyOff(skip_lines, fr)
+                        return instructions.SkipLinesIfFlagRangeAllOn(skip_lines, fr)
                     raise EmevdSyntaxError(node.lineno, "The only valid non-sequence argument to 'all' is a FlagRange.")
 
                 sequence = node.args[0].elts
@@ -582,18 +623,18 @@ class EmevdCompiler(object):
                         try:
                             skip_emevd = self.build_skip_or_terminate(
                                 arg, skip_lines=chain_skip_lines, negate=False, chain=True)
-                        except dt.NoSkipOrTerminateError:
+                        except gt.NoSkipOrTerminateError:
                             # Non-simple test featured in chain. Proceed to build condition.
                             pass
                         else:
                             chain_skip_emevd += skip_emevd
                     if chain_skip_emevd:
                         if negate:
-                            chain_skip_emevd += p.skip(skip_lines)  # Extra skip required for 'not all' (but not 'all').
+                            chain_skip_emevd += instructions.SkipLines(skip_lines)  # Extra skip required for 'any off'
                         return chain_skip_emevd
 
         # Failed to build simple/chain skip or terminate.
-        raise dt.NoSkipOrTerminateError
+        raise gt.NoSkipOrTerminateError
 
     def build_condition(self, node, negate=False, condition=None, skip_lines=0):
         """ Called on the argument of Condition() or Await(), and a non-simple IF test node. """
@@ -630,14 +671,32 @@ class EmevdCompiler(object):
                 condition_emevd += self.build_condition(v, condition=i)
             if skip_lines > 0:
                 if negate:
-                    condition_emevd += p.skip_if_condition_true(skip_lines, i)
+                    if i in self.finished_conditions:
+                        condition_emevd += instructions.SkipLinesIfFinishedConditionTrue(skip_lines, i)
+                    else:
+                        condition_emevd += instructions.SkipLinesIfConditionTrue(skip_lines, i)
+                        self.finished_conditions.append(i)
                 else:
-                    condition_emevd += p.skip_if_condition_false(skip_lines, i)
+                    if i in self.finished_conditions:
+                        condition_emevd += instructions.SkipLinesIfFinishedConditionFalse(skip_lines, i)
+                    else:
+                        condition_emevd += instructions.SkipLinesIfConditionFalse(skip_lines, i)
+                        self.finished_conditions.append(i)
             else:
                 if negate:
-                    condition_emevd += p.if_condition_false(condition, i)
+                    if i in self.finished_conditions:
+                        raise EmevdSyntaxError(node.lineno, "Cannot use a finished condition as an input to another "
+                                                            "condition.")
+                    else:
+                        condition_emevd += instructions.IfConditionFalse(condition, i)
+                        self.finished_conditions.append(i)
                 else:
-                    condition_emevd += p.if_condition_true(condition, i)
+                    if i in self.finished_conditions:
+                        raise EmevdSyntaxError(node.lineno, "Cannot use a finished condition as an input to another "
+                                                            "condition.")
+                    else:
+                        condition_emevd += instructions.IfConditionTrue(condition, i)
+                        self.finished_conditions.append(i)
 
             return condition_emevd
 
@@ -681,9 +740,10 @@ class EmevdCompiler(object):
             else:
                 if i in self.finished_conditions:
                     raise EmevdSyntaxError(node.lineno, "Finished conditions cannot be used in other conditions.")
+                self.finished_conditions.append(i)
                 if negate:
-                    return p.if_condition_false(condition, i)
-                return p.if_condition_true(condition, i)
+                    return instructions.IfConditionFalse(condition, i)
+                return instructions.IfConditionTrue(condition, i)
 
             # Test function
             try:
@@ -694,7 +754,7 @@ class EmevdCompiler(object):
             try:
                 return test_function(
                     *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs)
-            except (dt.NoSkipOrTerminateError, dt.NoNegateError):
+            except (gt.NoSkipOrTerminateError, gt.NoNegateError):
 
                 condition_emevd = []
                 temp_condition = self.check_out_AND()  # TODO: use check_out_temporary().
@@ -702,16 +762,18 @@ class EmevdCompiler(object):
 
                 if skip_lines > 0:
                     if negate:
-                        condition_emevd += p.skip_if_condition_true(skip_lines, temp_condition)
+                        condition_emevd += instructions.SkipLinesIfConditionTrue(skip_lines, temp_condition)
                     else:
-                        condition_emevd += p.skip_if_condition_false(skip_lines, temp_condition)
+                        condition_emevd += instructions.SkipLinesIfConditionTrue(skip_lines, temp_condition)
                 else:
                     if negate:
-                        condition_emevd += p.if_condition_false(condition, temp_condition)
+                        condition_emevd += instructions.IfConditionFalse(condition, temp_condition)
                     else:
-                        condition_emevd += p.if_condition_true(condition, temp_condition)
+                        condition_emevd += instructions.IfConditionTrue(condition, temp_condition)
 
                 return condition_emevd
+            except ValueError:
+                raise EmevdSyntaxError(node.lineno, f"Error occurred in instruction.")
 
         raise EmevdSyntaxError(node.lineno,
                                f"Invalid node for condition content:\n{ast.dump(node)}")
@@ -811,16 +873,40 @@ class EmevdCompiler(object):
                 raise InvalidConstantError(node.lineno, node.id)
         raise EmevdError(node.lineno, "Constant can only be evaluated from a Name or Attribute node.")
 
-    def _resolve_condition_skip(self, skip_lines, i, negate=False):
-        if negate:
-            if i in self.finished_conditions:
-                return p.skip_if_condition_true_finished(skip_lines, i)
-            self.finished_conditions.append(i)  # Condition is now finished.
-            return p.skip_if_condition_true(skip_lines, i)
-        if i in self.finished_conditions:
-            return p.skip_if_condition_false_finished(skip_lines, i)
-        self.finished_conditions.append(i)  # Condition is now finished.
-        return p.skip_if_condition_false(skip_lines, i)
+    def _resolve_condition_skip_or_terminate(self, condition, negate=False, skip_lines=0,
+                                             end_event=False, restart_event=False):
+        if skip_lines > 0:
+            if negate:
+                if condition in self.finished_conditions:
+                    return instructions.SkipLinesIfFinishedConditionTrue(skip_lines, condition)
+                self.finished_conditions.append(condition)  # Condition is now finished.
+                return instructions.SkipLinesIfConditionTrue(skip_lines, condition)
+            if condition in self.finished_conditions:
+                return instructions.SkipLinesIfFinishedConditionFalse(skip_lines, condition)
+            self.finished_conditions.append(condition)  # Condition is now finished.
+            return instructions.SkipLinesIfConditionFalse(skip_lines, condition)
+        elif end_event:
+            if negate:
+                if condition in self.finished_conditions:
+                    return instructions.EndIfFinishedConditionFalse(condition)
+                self.finished_conditions.append(condition)  # Condition is now finished.
+                return instructions.EndIfConditionFalse(condition)
+            if condition in self.finished_conditions:
+                return instructions.EndIfFinishedConditionTrue(condition)
+            self.finished_conditions.append(condition)  # Condition is now finished.
+            return instructions.EndIfConditionTrue(condition)
+        elif restart_event:
+            if negate:
+                if condition in self.finished_conditions:
+                    return instructions.RestartIfFinishedConditionFalse(condition)
+                self.finished_conditions.append(condition)  # Condition is now finished.
+                return instructions.RestartIfConditionFalse(condition)
+            if condition in self.finished_conditions:
+                return instructions.RestartIfFinishedConditionTrue(condition)
+            self.finished_conditions.append(condition)  # Condition is now finished.
+            return instructions.RestartIfConditionTrue(condition)
+        else:
+            raise ValueError
 
     @staticmethod
     def _validate_comparison_node(node):
@@ -835,7 +921,7 @@ class EmevdCompiler(object):
             raise EmevdSyntaxError(node.lineno, "Comparisons must be between a name or function (left) "
                                                 "and number (right).")
 
-        if node.ops[0].__class__ not in dt.COMPARISON_NODES:
+        if node.ops[0].__class__ not in gt.COMPARISON_NODES:
             raise EmevdSyntaxError(node.lineno,
                                    f"Only valid comparisons operators are: ==, !=, >, <, >=, <= (not {node.ops[0]})")
 
