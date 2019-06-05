@@ -1,0 +1,56 @@
+from soulstruct.emevd import *
+
+
+@NeverRestart
+def Constructor():
+    """ 0: Event 0 """
+    RunEvent(11000112)
+    RunEvent(11000860, slot=0, args=(1000300,))
+    RunEvent(11005100, slot=0, args=(1002100, 1002110, 1000100, 0.0), arg_types='iiif')
+    RunEvent(11005100, slot=1, args=(1002101, 1002112, 1000101, 0.5), arg_types='iiif')
+    RunEvent(11005100, slot=2, args=(1002102, 1002113, 1000102, 0.4), arg_types='iiif')
+    RunEvent(11005100, slot=3, args=(1002102, 1002113, 1000103, 0.2), arg_types='iiif')
+
+
+@NeverRestart
+def Event11000112():
+    """ 11000112: Event 11000112 """
+    EndIfThisEventOn()
+    DisableObjectActivation(1001200, objact_param_id=-1)
+    IfDialogPromptActivated(0, prompt_text=10010400, anchor_entity=1001200, anchor_type=Category.object, facing_angle=60.0, max_distance=1.5, model_point=100, human_or_hollow_only=True)
+    DisplayDialog(10010631, anchor_entity=1001200, display_distance=3.0, button_type=ButtonType.ok_cancel, number_buttons=NumberButtons.no_button)
+    Wait(1.0)
+    IfDialogPromptActivated(0, prompt_text=10010632, anchor_entity=1001200, anchor_type=Category.object, facing_angle=60.0, max_distance=1.5, model_point=100, human_or_hollow_only=True)
+    AwardItemLot(1660, host_only=True)
+    Wait(2.0)
+    EnableObjectActivation(1001200, objact_param_id=-1)
+
+
+@RestartOnRest
+def Event11000860(ARG_0_3: int):
+    """ 11000860: Event 11000860 """
+    EndIfFlagOff(11002000)
+    IfInsideMap(0, DEPTHS)
+    DisableCharacter(ARG_0_3)
+    Kill(ARG_0_3, award_souls=False)
+
+
+@RestartOnRest
+def Event11005100(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: float):
+    """ 11005100: Event 11005100 """
+    SkipLinesIfThisEventSlotOn(12)
+    DisableGravity(ARG_8_11)
+    DisableCollision(ARG_8_11)
+    SkipLinesIfEqual(4, left_value=ARG_4_7, right_value=0)
+    IfPlayerInsideRegion(-3, ARG_0_3)
+    IfAttacked(-3, ARG_8_11, attacking_character=10000)
+    IfConditionTrue(0, input_condition=-3)
+    SkipLines(4)
+    IfPlayerInsideRegion(-4, ARG_0_3)
+    IfPlayerInsideRegion(-4, ARG_4_7)
+    IfAttacked(-4, ARG_8_11, attacking_character=10000)
+    IfConditionTrue(0, input_condition=-4)
+    Wait(ARG_12_15)
+    EnableGravity(ARG_8_11)
+    EnableCollision(ARG_8_11)
+    ResetStandbyAnimationSettings(ARG_8_11)

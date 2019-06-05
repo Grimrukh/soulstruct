@@ -52,11 +52,11 @@ def Event12110200(ARG_0_3: int, ARG_4_7: int):
     """ 12110200: Event 12110200 """
     GotoIfThisEventSlotOff(Label.L0)
     EndOfAnimation(ARG_0_3, 0)
-    DisableObjectActivation(ARG_0_3, objact_param_id=-1)
+    DisableObjectActivation(ARG_0_3, obj_act_id=-1)
     EnableTreasure(ARG_0_3)
     End()
     Label(0)
-    IfObjectActivated(0, objact_id=ARG_4_7)
+    IfObjectActivated(0, obj_act_id=ARG_4_7)
     WaitFrames(10)
     EnableTreasure(ARG_0_3)
 

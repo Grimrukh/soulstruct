@@ -1,36 +1,72 @@
-import glob
 import os
 from soulstruct.emevd.ds1 import EMEVD
 from soulstruct.emevd.ds1.constants import ALL_MAPS
 
 
-def build_all_vanilla_verbose(directory='vanilla_verbose_ptd'):
-    """ Build local vanilla verbose files. Useful after changes have been made to the verbose style. """
-    for emevd_name in glob.glob(os.path.join(os.path.dirname(__file__), 'vanilla_numeric_ptd/*.numeric.txt')):
-        e = EMEVD(emevd_name)
-        e.write_verbose(os.path.join(directory, os.path.basename(emevd_name).replace('numeric', 'verbose')))
+def unpack_all_emevd_to_numeric(emevd_dir, numeric_dir):
+    """ Build numeric files from all DCX-compressed EMEVD files in a directory.
 
-
-def build_all_evs():
+    I have not included the DS1 EMEVD in the package, but you can build them yourself from the packaged EVS files
+    and compare to the originals if you have them.
+    """
     for game_map in ALL_MAPS:
         map_name = game_map.file_name
-        print('Building', map_name)
+        print('Building EMEVD -> numeric', map_name)
+        e = EMEVD(os.path.join(emevd_dir, f'{map_name}.emevd.dcx'))
+        e.write_numeric(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
+
+
+def pack_all_numeric_to_emevd(numeric_dir, emevd_dir):
+    for game_map in ALL_MAPS:
+        map_name = game_map.file_name
+        print('Building numeric -> EMEVD:', map_name)
+        e = EMEVD(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
+        e.write_packed(os.path.join(emevd_dir, f'{map_name}.emevd.dcx'), dcx=True)
+
+
+def decompile_all_numeric(numeric_dir, evs_dir):
+    for game_map in ALL_MAPS:
+        map_name = game_map.file_name
+        print('File:', map_name)
         print('  Loading from numeric...')
-        e = EMEVD(f'vanilla_numeric_ptd/{map_name}.numeric.txt')
-        print('  Writing numeric to verbose...')
-        e.write_verbose(f'vanilla_verbose_ptd/{map_name}.verbose.txt')
+        e = EMEVD(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
         print('  Writing numeric to EVS...')
-        e.write_evs(f'vanilla_evs_ptd/{map_name}.evs')
+        e.write_evs(os.path.join(evs_dir, f'{map_name}.evs'))
+        print('  Numeric decompiled successfully.')
+
+
+def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='emevd_from_evs', maps=()):
+    """ Quickly build all scripts. You can replace 'ALL_MAPS' with whatever subset of maps you want to build.
+
+    Note that the files built from EVS will not be quite identical to the original numeric files:
+        - The order of event argument replacements (the indented lines starting with '^') may change.
+        - The scanned argument types in RunEvent calls (2000[00]) will be correct in the EVS-built version, rather than
+          assuming they are all integers.
+        - Instructions with string arguments (in the 2013 class) may have non-zero dummy values, which are offsets to
+          an empty string. These dummy values don't matter, and preserving them would be pointless effort, as these
+          'PlayLog' instructions aren't even particularly useful.
+        - Some other dummy values may not be quite correct. FromSoft couldn't decide whether to use 0 or -1 for many
+          integer arguments, for example. I've fixed as many of these as I can just for presentation, but again, it
+          doesn't even matter, as these dummy values will be overridden.
+
+    If you notice any changes *other* than those described above, it's likely a bug. Let me know!
+    """
+    if not maps:
+        maps = ALL_MAPS  # Includes common events and shared Chalice Dungeons events (m29).
+
+    for game_map in maps:
+        map_name = game_map.file_name
+        print('File:', map_name)
         print('  Loading from EVS...')
-        e = EMEVD(f'vanilla_evs_ptd/{map_name}.evs')
+        e = EMEVD(os.path.join(evs_dir, f'{map_name}.evs'))
         print('  Writing EVS to numeric...')
-        e.write_numeric(f'vanilla_numeric_from_evs_ptd/{map_name}.from_evs.numeric.txt')
-        print('  Writing EVS to verbose...')
-        e.write_verbose(f'vanilla_verbose_from_evs_ptd/{map_name}.from_evs.verbose.txt')
-        print('  Writing EVS to EMEVD...')
-        e.write_packed(f'vanilla_emevd_from_evs_ptd/{map_name}.from_evs.emevd')
-        print('  Success.')
+        e.write_numeric(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
+        print('  Writing EVS to EMEVD (DCX)... ')
+        e.write_packed(os.path.join(emevd_dir, f'{map_name}.emevd.dcx'), dcx=True)
+        print('  EVS compiled successfully.')
 
 
 if __name__ == '__main__':
-    build_all_evs()
+    unpack_all_emevd_to_numeric('C:/Steam/steamapps/common/DARK SOULS REMASTERED/event', 'numeric_from_vanilla')
+    decompile_all_numeric('numeric_from_vanilla', 'evs')
+    compile_all_evs()

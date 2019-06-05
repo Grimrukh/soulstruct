@@ -2,83 +2,65 @@
 missing other game-specific instructions anyway). The instructions are available within each game's package. """
 
 from __future__ import annotations
-from enum import Enum
+from soulstruct.emevd.core import numeric_instruction
 from soulstruct.emevd.shared.enums import *
-from soulstruct.emevd.core import get_write_offset, resolve_flag_range
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from soulstruct.emevd.game_types import *
 
 
-def format_instruction(event_format, *args):
-    """ Basic shared version. Dummy values are always set to 0 (suitable for DS1). """
-    event_args = []
-    arg_loads = []
-    for i, arg in enumerate(args):
-        if isinstance(arg, Enum):
-            event_args.append(args[i].value)
-        elif isinstance(arg, bool):
-            event_args.append(int(arg))
-        elif isinstance(arg, tuple):
-            # Start offset and size of an event argument.
-            write_offset = get_write_offset(event_format[2], i)
-            arg_loads.append(f'    ^({write_offset} <- {arg[0]}, {arg[1]})')
-            event_args.append(0)
-        else:
-            event_args.append(arg)
-    return [f' {event_format[0]}[{event_format[1]}] ({event_format[2]}){event_args}'] + arg_loads
-
 # RUN
 
 def RunEvent(event_id, slot=0, args=(0,), arg_types=None):
-    event_format = ['2000', '00', 'iI']  # List for this instruction only, as it may required modification.
+    instruction_info = [2000, 0]  # Mutable list for this instruction only, as it may required modification.
     if arg_types is None:
+        # Assume all unsigned integers.
         arg_types = 'I' * len(args)
     if len(args) != len(arg_types):
-        raise ValueError("Number of event arguments does not match length of argument type string.")
-    event_format[2] += str(arg_types[0])
+        raise ValueError("Number of event arguments does not match length of argument type string in RunEvent.")
+    format_string = 'iI' + str(arg_types[0])
     if len(arg_types) > 1:
-        event_format[2] += '|{}'.format(arg_types[1:])
-    return format_instruction(event_format, slot, event_id, *args)
+        format_string += f'|{arg_types[1:]}'
+    return numeric_instruction(instruction_info, slot, event_id, *args, arg_types=format_string)
 
 
 # WAITING
 
 def Wait(seconds: float):
     """ Wait for some number of seconds. """
-    event_format = ('1001', '00', 'f')
-    return format_instruction(event_format, seconds)
+    instruction_info = (1001, 0)
+    return numeric_instruction(instruction_info, seconds)
 
 
 def WaitFrames(frames: int):
     """ Wait for some number of frames. """
-    event_format = ('1001', '01', 'i')
-    return format_instruction(event_format, frames)
+    instruction_info = (1001, 1)
+    return numeric_instruction(instruction_info, frames)
 
 
 def WaitRandomSeconds(min_seconds: float, max_seconds: float):
     """ Wait for a random number of seconds between min and max. I assume the distribution is inclusive and uniform. """
-    event_format = ('1001', '02', 'ff')
-    return format_instruction(event_format, min_seconds, max_seconds)
+    instruction_info = (1001, 2)
+    return numeric_instruction(instruction_info, min_seconds, max_seconds)
 
 
 def WaitRandomFrames(min_frames: int, max_frames: int):
     """ Wait for a random number of seconds between min and max. I assume the distribution is inclusive and uniform. """
-    event_format = ('1001', '03', 'ii')
-    return format_instruction(event_format, min_frames, max_frames)
+    instruction_info = (1001, 3)
+    return numeric_instruction(instruction_info, min_frames, max_frames)
 
 
 def WaitForNetworkApproval(max_seconds: float):
     """ Wait for network to approve event (up to `max_seconds` seconds). """
-    event_format = ('1000', '09', 'f')
-    return format_instruction(event_format, max_seconds)
+    instruction_info = (1000, 9)
+    return numeric_instruction(instruction_info, max_seconds)
 
 
 # CHARACTERS
 
 def SetCharacterState(character: CharacterInt, state: bool):
-    event_format = ('2004', '05', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 5)
+    return numeric_instruction(instruction_info, character, state)
 
 def EnableCharacter(character: CharacterInt):
     return SetCharacterState(character, True)
@@ -88,8 +70,8 @@ def DisableCharacter(character: CharacterInt):
 
 
 def SetAIState(character: CharacterInt, state: bool):
-    event_format = ('2004', '01', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 1)
+    return numeric_instruction(instruction_info, character, state)
 
 def EnableAI(character: CharacterInt):
     return SetAIState(character, True)
@@ -99,20 +81,20 @@ def DisableAI(character: CharacterInt):
 
 
 def SetTeamType(character: CharacterInt, new_team: Union[TeamType, int]):
-    event_format = ('2004', '02', 'iB')
-    return format_instruction(event_format, character, new_team)
+    instruction_info = (2004, 2)
+    return numeric_instruction(instruction_info, character, new_team)
 
 
 def Kill(character: CharacterInt, award_souls: bool = False):
     """ Technically a kill 'request.' """
-    event_format = ('2004', '04', 'iB')
-    return format_instruction(event_format, character, award_souls)
+    instruction_info = (2004, 4)
+    return numeric_instruction(instruction_info, character, award_souls)
 
 
 def EzstateAIRequest(character: CharacterInt, command_id, slot):
     """ Slot number ranges from 0 to 3. """
-    event_format = ('2004', '06', 'iiB')
-    return format_instruction(event_format, character, command_id, slot)
+    instruction_info = (2004, 6)
+    return numeric_instruction(instruction_info, character, command_id, slot)
 
 
 # AddSpecialEffect function has different arguments in different games and is therefore not shared.
@@ -120,8 +102,8 @@ def EzstateAIRequest(character: CharacterInt, command_id, slot):
 
 def CancelSpecialEffect(character: CharacterInt, special_effect_id):
     """ 'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). """
-    event_format = ('2004', '21', 'ii')
-    return format_instruction(event_format, character, special_effect_id)
+    instruction_info = (2004, 21)
+    return numeric_instruction(instruction_info, character, special_effect_id)
 
 
 def ResetStandbyAnimationSettings(character: CharacterInt):
@@ -132,16 +114,16 @@ def ResetStandbyAnimationSettings(character: CharacterInt):
 def SetStandbyAnimationSettings(character: CharacterInt, standby_animation=-1, damage_animation=-1, cancel_animation=-1,
                                 death_animation=-1, standby_exit_animation=-1):
     """ Sets entity's default standby animations. -1 is default for each category. """
-    event_format = ('2004', '09', 'iiiiii')
-    return format_instruction(event_format, character, standby_animation, damage_animation, cancel_animation,
-                              death_animation, standby_exit_animation)
+    instruction_info = (2004, 9, [0, -1, -1, -1, -1, -1, -1])
+    return numeric_instruction(instruction_info, character, standby_animation, damage_animation, cancel_animation,
+                               death_animation, standby_exit_animation)
 
 
 def SetGravityState(character: CharacterInt, state: bool):
     """ Simply determines if the character loses height as it moves around. They will still gain height by running up
     slopes. """
-    event_format = ('2004', '10', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 10)
+    return numeric_instruction(instruction_info, character, state)
 
 def EnableGravity(character: CharacterInt):
     return SetGravityState(character, True)
@@ -152,14 +134,14 @@ def DisableGravity(character: CharacterInt):
 
 def SetCharacterEventTarget(character: CharacterInt, region: RegionInt):
     """ Likely refers to patrolling behavior. """
-    event_format = ('2004', '11', 'ii')
-    return format_instruction(event_format, character, region)
+    instruction_info = (2004, 11)
+    return numeric_instruction(instruction_info, character, region)
 
 
 def SetImmortalityState(character: CharacterInt, state: bool):
     """ Character will take damage, but not die (i.e. cannot go below 1 HP). """
-    event_format = ('2004', '12', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 12)
+    return numeric_instruction(instruction_info, character, state)
 
 
 def EnableImmortality(character: CharacterInt):
@@ -172,8 +154,8 @@ def DisableImmortality(character: CharacterInt):
 
 def SetNest(character: CharacterInt, region: RegionInt):
     """ Home point for entity AI. """
-    event_format = ('2004', '13', 'ii')
-    return format_instruction(event_format, character, region)
+    instruction_info = (2004, 13)
+    return numeric_instruction(instruction_info, character, region)
 
 
 # RotateToFaceEntity has different arguments in different games, and is therefore not shared.
@@ -181,8 +163,8 @@ def SetNest(character: CharacterInt, region: RegionInt):
 
 def SetInvincibilityState(character: CharacterInt, state):
     """ Character cannot take damage or die. """
-    event_format = ('2004', '15', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 15)
+    return numeric_instruction(instruction_info, character, state)
 
 
 def EnableInvincibility(character: CharacterInt):
@@ -196,32 +178,32 @@ def DisableInvincibility(character: CharacterInt):
 
 def ClearTargetList(character: CharacterInt):
     """ Clear list of targets from character AI. """
-    event_format = ('2004', '16', 'i')
-    return format_instruction(event_format, character)
+    instruction_info = (2004, 16)
+    return numeric_instruction(instruction_info, character)
 
 
 def AICommand(character: CharacterInt, command_id, slot):
     """ These instructions can be accessed in AI Lua scripts. """
-    event_format = ('2004', '17', 'iiB')
-    return format_instruction(event_format, character, command_id, slot)
+    instruction_info = (2004, 17)
+    return numeric_instruction(instruction_info, character, command_id, slot)
 
 
 def SetEventPoint(character: CharacterInt, region: RegionInt, reaction_range):
     """ Not sure what the usage of this is, but it is likely used to change patrol behavior. """
-    event_format = ('2004', '18', 'iif')
-    return format_instruction(event_format, character, region, reaction_range)
+    instruction_info = (2004, 18)
+    return numeric_instruction(instruction_info, character, region, reaction_range)
 
 
 def SetAIParamID(character: CharacterInt, ai_param_id):
     """ Change character's AI parameter index. """
-    event_format = ('2004', '19', 'ii')
-    return format_instruction(event_format, character, ai_param_id)
+    instruction_info = (2004, 19)
+    return numeric_instruction(instruction_info, character, ai_param_id)
 
 
 def ReplanAI(character: CharacterInt):
     """ Clear current AI goal list and force character to replan it. """
-    event_format = ('2004', '20', 'i')
-    return format_instruction(event_format, character)
+    instruction_info = (2004, 20)
+    return numeric_instruction(instruction_info, character)
 
 
 def CreateNPCPart(character: CharacterInt, npc_part_id: int, part_index: Union[NPCPartType, int], part_health: int,
@@ -229,28 +211,28 @@ def CreateNPCPart(character: CharacterInt, npc_part_id: int, part_index: Union[N
     """ Complex. Sets specific damage parameters for part of an NPC model. Further changes to the specific part can be
     made using the events below. The part is specified using the NPCPartType slot. Look at usage in tail cut events to
     understand these more. """
-    event_format = ('2004', '22', 'ihhiffBB', [0, 0, 0, 0, 1.0, 1.0, 0, 0])
-    return format_instruction(event_format, character, npc_part_id, part_index, part_health, damage_correction,
-                              body_damage_correction, is_invincible, start_in_stop_state)
+    instruction_info = (2004, 22, [0, 0, 0, 0, 1.0, 1.0, 0, 0])
+    return numeric_instruction(instruction_info, character, npc_part_id, part_index, part_health, damage_correction,
+                               body_damage_correction, is_invincible, start_in_stop_state)
 
 
 def SetNPCPartHealth(character: CharacterInt, npc_part_id: int, desired_hp: int, overwrite_max: bool):
     """ You must create the part first. """
-    event_format = ('2004', '23', 'iiiB')
-    return format_instruction(event_format, character, npc_part_id, desired_hp, overwrite_max)
+    instruction_info = (2004, 23)
+    return numeric_instruction(instruction_info, character, npc_part_id, desired_hp, overwrite_max)
 
 
 def SetNPCPartEffects(character: CharacterInt, npc_part_id: int, material_special_effect_id: int,
                       material_fx_id: int):
     """ Attach material effects to an NPC part. """
-    event_format = ('2004', '24', 'iiii')
-    return format_instruction(event_format, character, npc_part_id, material_special_effect_id, material_fx_id)
+    instruction_info = (2004, 24)
+    return numeric_instruction(instruction_info, character, npc_part_id, material_special_effect_id, material_fx_id)
 
 
 def SetNPCPartBulletDamageScaling(character: CharacterInt, npc_part_id: int, desired_scaling):
     """ Scale the damage dealt to the part. Usually used to set damage to zero, e.g. Smough's hammer. """
-    event_format = ('2004', '25', 'iif')
-    return format_instruction(event_format, character, npc_part_id, desired_scaling)
+    instruction_info = (2004, 25)
+    return numeric_instruction(instruction_info, character, npc_part_id, desired_scaling)
 
 
 def SetDisplayMask(character: CharacterInt, bit_index, switch_type):
@@ -258,20 +240,20 @@ def SetDisplayMask(character: CharacterInt, bit_index, switch_type):
     in the NPC params. This is generally used to disable tails when they are cut off.
 
     'switch_type' can be 0 (off), 1 (on), or 2 (change). """
-    event_format = ('2004', '26', 'iBB')
-    return format_instruction(event_format, character, bit_index, switch_type)
+    instruction_info = (2004, 26)
+    return numeric_instruction(instruction_info, character, bit_index, switch_type)
 
 
 def SetHitboxMask(character: CharacterInt, bit_index, switch_type):
     """ See above. This affects the NPC's hitbox, not appearance. """
-    event_format = ('2004', '27', 'iBB')
-    return format_instruction(event_format, character, bit_index, switch_type)
+    instruction_info = (2004, 27)
+    return numeric_instruction(instruction_info, character, bit_index, switch_type)
 
 
 def SetNetworkUpdateAuthority(character: CharacterInt, authority_level: UpdateAuthority):
     """ Complex; look at existing usage. Authority level must be 'Normal' or 'Forced'. """
-    event_format = ('2004', '28', 'ii')
-    return format_instruction(event_format, character, authority_level)
+    instruction_info = (2004, 28)
+    return numeric_instruction(instruction_info, character, authority_level)
 
 
 def SetBackreadState(character: CharacterInt, remove: bool):
@@ -281,8 +263,8 @@ def SetBackreadState(character: CharacterInt, remove: bool):
 
     Also note reversed bool.
     """
-    event_format = ('2004', '29', 'iB')
-    return format_instruction(event_format, character, remove)
+    instruction_info = (2004, 29)
+    return numeric_instruction(instruction_info, character, remove)
 
 
 def EnableBackread(character: CharacterInt):
@@ -295,8 +277,8 @@ def DisableBackread(character: CharacterInt):
 
 def SetHealthBarState(character: CharacterInt, state):
     """ Normal health bar that appears above character. """
-    event_format = ('2004', '30', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 30)
+    return numeric_instruction(instruction_info, character, state)
 
 
 def EnableHealthBar(character: CharacterInt):
@@ -314,8 +296,8 @@ def DisableHealthBar(character: CharacterInt):
 
 def SetCollisionState(character: CharacterInt, is_disabled: bool):
     """ Note that the bool is inverted from what you might expect. """
-    event_format = ('2004', '31', 'iB')
-    return format_instruction(event_format, character, is_disabled)
+    instruction_info = (2004, 31)
+    return numeric_instruction(instruction_info, character, is_disabled)
 
 
 def EnableCollision(character: CharacterInt):
@@ -328,8 +310,8 @@ def DisableCollision(character: CharacterInt):
 
 def AIEvent(character: CharacterInt, command_id, slot, first_event_flag, last_event_flag):
     """ I have no idea what this does. """
-    event_format = ('2004', '32', 'iiBii')
-    return format_instruction(event_format, character, command_id, slot, first_event_flag, last_event_flag)
+    instruction_info = (2004, 32)
+    return numeric_instruction(instruction_info, character, command_id, slot, first_event_flag, last_event_flag)
 
 
 def ReferDamageToEntity(character: CharacterInt, target_entity):
@@ -337,35 +319,35 @@ def ReferDamageToEntity(character: CharacterInt, target_entity):
     sure if the target entity can be an Object.
 
     Only used by the Four Kings in the vanilla game. """
-    event_format = ('2004', '33', 'ii')
-    return format_instruction(event_format, character, target_entity)
+    instruction_info = (2004, 33)
+    return numeric_instruction(instruction_info, character, target_entity)
 
 
 def SetNetworkUpdateRate(character: CharacterInt, is_fixed: bool, update_rate: CharacterUpdateRate):
     """ Not sure what 'is_fixed' does. I believe only 'Always' and 'Never' are used in the vanilla game. """
-    event_format = ('2004', '34', 'iBb')
-    return format_instruction(event_format, character, is_fixed, update_rate)
+    instruction_info = (2004, 34)
+    return numeric_instruction(instruction_info, character, is_fixed, update_rate)
 
 
 def SetBackreadStateAlternate(character: CharacterInt, state):
     """ I have no idea how this differs from the standard backread function above. """
     # TODO: Check and compare usage. If it's even used.
-    event_format = ('2004', '35', 'iB')
-    return format_instruction(event_format, character, state)
+    instruction_info = (2004, 35)
+    return numeric_instruction(instruction_info, character, state)
 
 
 def DropMandatoryTreasure(character: CharacterInt):
     """ This will disable the character and spawn any treasure they would drop. It's possible that it only spawns
     treasure that has a 100% drop rate, hence the name, but I haven't confirmed this. """
     # TODO: Confirm it actually disables the character.
-    event_format = ('2004', '37', 'i')
-    return format_instruction(event_format, character)
+    instruction_info = (2004, 37)
+    return numeric_instruction(instruction_info, character)
 
 
 def SetTeamTypeAndExitStandbyAnimation(character: CharacterInt, team_type: TeamType):
     """ Two for the price of one. Often used when NPCs with resting animations become hostile. """
-    event_format = ('2004', '44', 'iB')
-    return format_instruction(event_format, character, team_type)
+    instruction_info = (2004, 44)
+    return numeric_instruction(instruction_info, character, team_type)
 
 
 def HumanityRegistration(character: CharacterInt, event_flag: FlagInt):
@@ -376,29 +358,29 @@ def HumanityRegistration(character: CharacterInt, event_flag: FlagInt):
     I can confirm that NOT doing this for a new NPC means you can't drain any humanity from them, rather than being able
     to drain unlimited humanity.
     """
-    event_format = ('2004', '45', 'ii')
-    return format_instruction(event_format, character, event_flag)
+    instruction_info = (2004, 45)
+    return numeric_instruction(instruction_info, character, event_flag)
 
 
 def ResetAnimation(character, disable_interpolation: bool = False):
     """ Cancels an animation. Note the inverted bool for controlling interpolation. """
     # 0 = interpolated, 1 = not interpolated
-    event_format = ('2004', '43', 'iB')
-    return format_instruction(event_format, character, disable_interpolation)
+    instruction_info = (2004, 43)
+    return numeric_instruction(instruction_info, character, disable_interpolation)
 
 
 def ActivateMultiplayerBuffs(character: CharacterInt):
     """ Used to strengthen bosses based on the number of summons you have. Not sure if it works for every NPC. It
     could also be tied to certain special effects; haven't checked that yet. """
-    event_format = ('2009', '04', 'i')
-    return format_instruction(event_format, character)
+    instruction_info = (2009, 4)
+    return numeric_instruction(instruction_info, character)
 
 
 # OBJECTS
 
 def SetObjectState(obj: ObjectInt, state: bool):
-    event_format = ('2005', '03', 'iB')
-    return format_instruction(event_format, obj, state)
+    instruction_info = (2005, 3)
+    return numeric_instruction(instruction_info, obj, state)
 
 
 def EnableObject(obj: ObjectInt):
@@ -409,21 +391,21 @@ def DisableObject(obj: ObjectInt):
     return SetObjectState(obj, False)
 
 
-def DestroyObject(obj, slot=0):
+def DestroyObject(obj: ObjectInt, slot=0):
     """ Technically 'requests' the object's destruction. No idea what the slot number does. """
-    event_format = ('2005', '01', 'ib')
-    return format_instruction(event_format, obj, slot)
+    instruction_info = (2005, 1)
+    return numeric_instruction(instruction_info, obj, slot)
 
 
 def RestoreObject(obj: ObjectInt):
     """ The opposite of destruction. Restores it to its original MSB coordinates. """
-    event_format = ('2005', '02', 'i')
-    return format_instruction(event_format, obj)
+    instruction_info = (2005, 2)
+    return numeric_instruction(instruction_info, obj)
 
 
 def SetTreasureState(obj: ObjectInt, state: bool):
-    event_format = ('2005', '04', 'iB')
-    return format_instruction(event_format, obj, state)
+    instruction_info = (2005, 4)
+    return numeric_instruction(instruction_info, obj, state)
 
 
 def EnableTreasure(obj: ObjectInt):
@@ -439,50 +421,50 @@ def DisableTreasure(obj: ObjectInt):
     return SetTreasureState(obj, False)
 
 
-def ActivateObject(obj: ObjectInt, objact_param_id: int, relative_index: int):
+def ActivateObject(obj: ObjectInt, obj_act_id: int, relative_index: int):
     """ Manually call a specific ObjAct event attached to this object. I believe 'relative_index' refers to the points
     on the object at which it can be activated (e.g. which side of a gate you are on).
 
     Note that this will 'grab' a nearby NPC and force the appropriate animation from ObjAct params, which is how the
     game gets Patches to pull the lever in the Catacombs.
     """
-    event_format = ('2005', '05', 'iii')
-    return format_instruction(event_format, obj, objact_param_id, relative_index)
+    instruction_info = (2005, 5)
+    return numeric_instruction(instruction_info, obj, obj_act_id, relative_index)
 
 
-def SetObjectActivation(obj: ObjectInt, object_parameter_id: int, activation_status: bool):
+def SetObjectActivation(obj: ObjectInt, obj_act_id: int, state: bool):
     """ Sets whether the object can be activated (1) or not activated (0). """
-    event_format = ('2005', '06', 'iiB', [0, -1, 0])
-    return format_instruction(event_format, obj, object_parameter_id, activation_status)
+    instruction_info = (2005, 6, [0, -1, 0])
+    return numeric_instruction(instruction_info, obj, obj_act_id, state)
 
 
-def SetObjectActivationWithIdx(obj: ObjectInt, object_parameter_id: int, relative_index: int, state: bool):
+def SetObjectActivationWithIdx(obj: ObjectInt, obj_act_id: int, relative_index: int, state: bool):
     """ Similar to above, but you can provde the relative index to disable (e.g. one side of a door). """
-    event_format = ('2005', '14', 'iiiB')
-    return format_instruction(event_format, obj, object_parameter_id, relative_index, state)
+    instruction_info = (2005, 14, [0, -1, 0, 0])
+    return numeric_instruction(instruction_info, obj, obj_act_id, relative_index, state)
 
 
-def EnableObjectActivation(obj: ObjectInt, objact_param_id, relative_index=None):
+def EnableObjectActivation(obj: ObjectInt, obj_act_id, relative_index=None):
     """ Allows the given ObjAct to be performed with the object, optionally only at the given relative_index. I've
     combined two instructions into one here, as they're very similar. """
     if relative_index is None:
-        return SetObjectActivation(obj, objact_param_id, True)
-    return SetObjectActivationWithIdx(obj, objact_param_id, relative_index, True)
+        return SetObjectActivation(obj, obj_act_id, True)
+    return SetObjectActivationWithIdx(obj, obj_act_id, relative_index, True)
 
 
-def DisableObjectActivation(obj: ObjectInt, objact_param_id, relative_index=None):
+def DisableObjectActivation(obj: ObjectInt, obj_act_id, relative_index=None):
     """ Prevents the given ObjAct from being performed with the object. Used for doors that you can only open once,
     for example. Again, I've combined the relative index version here. """
     if relative_index is None:
-        return SetObjectActivation(obj, objact_param_id, False)
-    return SetObjectActivationWithIdx(obj, objact_param_id, relative_index, False)
+        return SetObjectActivation(obj, obj_act_id, False)
+    return SetObjectActivationWithIdx(obj, obj_act_id, relative_index, False)
 
 
 def PostDestruction(obj: ObjectInt, slot: int):
     """ Sets the object to whatever appearance it would have after being destroyed. Again, not sure what 'slot'
     does. """
-    event_format = ('2005', '08', 'ib')
-    return format_instruction(event_format, obj, slot)
+    instruction_info = (2005, 8)
+    return numeric_instruction(instruction_info, obj, slot)
 
 
 def CreateHazard(obj_flag: FlagInt, obj: ObjectInt, model_point: int, behavior_param_id: int,
@@ -495,28 +477,28 @@ def CreateHazard(obj_flag: FlagInt, obj: ObjectInt, model_point: int, behavior_p
 
     'target_type' determines what the hazard can damage (Character and/or Map).
     """
-    event_format = ('2005', '09', 'iiiiifff')
-    return format_instruction(event_format, obj_flag, obj, model_point, behavior_param_id, target_type, radius,
-                              life, repetition_time)
+    instruction_info = (2005, 9)
+    return numeric_instruction(instruction_info, obj_flag, obj, model_point, behavior_param_id, target_type, radius,
+                               life, repetition_time)
 
 
 def RegisterStatue(obj: ObjectInt, game_map: GameMap, statue_type: StatueType):
     """ Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online. """
-    event_format = ('2005', '10', 'iBBB')
+    instruction_info = (2005, 10)
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, obj, area_id, block_id, statue_type)
+    return numeric_instruction(instruction_info, obj, area_id, block_id, statue_type)
 
 
 def RemoveObjectFlag(obj_flag: FlagInt):
     """ No idea what this does. I believe it might undo the CreateHazard instruction, at least. """
-    event_format = ('2005', '12', 'i')
-    return format_instruction(event_format, obj_flag)
+    instruction_info = (2005, 12)
+    return numeric_instruction(instruction_info, obj_flag)
 
 
 def SetObjectInvulnerability(obj: ObjectInt, state: bool):
     """ 1 = invulnerable. """
-    event_format = ('2005', '13', 'iB')
-    return format_instruction(event_format, obj, state)
+    instruction_info = (2005, 13)
+    return numeric_instruction(instruction_info, obj, state)
 
 
 def EnableObjectInvulnerability(obj: ObjectInt):
@@ -531,16 +513,16 @@ def EnableTreasureCollection(obj: ObjectInt):
     """ Forces an object to spawn its treasure, even if the treasure's ItemLot flag is already enabled. Useful if
     you want some treasure to reappear (after, say, taking it from the player and disabling the ItemLot flag) without
     the player needing to reload the map. """
-    event_format = ('2005', '15', 'i')
-    return format_instruction(event_format, obj)
+    instruction_info = (2005, 15)
+    return numeric_instruction(instruction_info, obj)
 
 
 # FLAGS
 
 def SetFlagState(flag: FlagInt, state: FlagState):
     """ Enable, disable, or toggle (change) a binary flag. """
-    event_format = ('2003', '02', 'iB')
-    return format_instruction(event_format, flag, state)
+    instruction_info = (2003, 2)
+    return numeric_instruction(instruction_info, flag, state)
 
 def EnableFlag(flag: FlagInt):
     return SetFlagState(flag, FlagState.On)
@@ -554,9 +536,9 @@ def ToggleFlag(flag: FlagInt):
 
 def SetRandomFlagInRange(flag_range: FlagRangeOrSequence, state: FlagState):
     """ Set the state of a random flag from a given range (inclusive). """
-    event_format = ('2003', '17', 'IIB')
-    first_flag, last_flag = resolve_flag_range(flag_range)
-    return format_instruction(event_format, first_flag, last_flag, state)
+    instruction_info = (2003, 17)
+    first_flag, last_flag = tuple(flag_range)
+    return numeric_instruction(instruction_info, first_flag, last_flag, state)
 
 def EnableRandomFlagInRange(flag_range: FlagRangeOrSequence):
     return SetRandomFlagInRange(flag_range, FlagState.On)
@@ -570,9 +552,9 @@ def ToggleRandomFlagInRange(flag_range: FlagRangeOrSequence):
 
 def SetFlagRangeState(flag_range: FlagRangeOrSequence, state: FlagState):
     """ Set the state of an entire flag range (inclusive). """
-    event_format = ('2003', '22', 'iiB')
-    first_flag, last_flag = resolve_flag_range(flag_range)
-    return format_instruction(event_format, first_flag, last_flag, state)
+    instruction_info = (2003, 22)
+    first_flag, last_flag = tuple(flag_range)
+    return numeric_instruction(instruction_info, first_flag, last_flag, state)
 
 def EnableFlagRange(flag_range: FlagRangeOrSequence):
     return SetFlagRangeState(flag_range, FlagState.On)
@@ -592,15 +574,15 @@ def IncrementEventValue(flag: FlagInt, bit_count: int, max_value: int):
 
     This is used for counters in the vanilla game, such as the number of bosses killed while Rhea is at Undead Parish.
     """
-    event_format = ('2003', '31', 'iII')
-    return format_instruction(event_format, flag, bit_count, max_value)
+    instruction_info = (2003, 31, [0, 1, 0])
+    return numeric_instruction(instruction_info, flag, bit_count, max_value)
 
 
 def ClearEventValue(flag: FlagInt, bit_count: int):
     """ Clears the given multi-flag. This is basically like disabling 'bit_count' flags in a row, starting at
     'flag'. """
-    event_format = ('2003', '32', 'iI')
-    return format_instruction(event_format, flag, bit_count)
+    instruction_info = (2003, 32)
+    return numeric_instruction(instruction_info, flag, bit_count)
 
 
 def EnableThisFlag():
@@ -615,13 +597,13 @@ def DisableThisFlag():
 
 # EVENTS
 
-def SetEventState(event_id, slot=0, state: EventEndType = None):
+def SetEventState(event_id, slot=0, end_type: EventEndType = None):
     """ Stop or restart a particular slot (default of 0) of the given event ID. Note that you cannot restart events that
     have already ended. """
-    if state is None:
-        raise ValueError("State must be EventEndType.End (0) or EventEndType.Restart (1).")
-    event_format = ('2003', '08', 'iiB')
-    return format_instruction(event_format, event_id, slot, state)
+    if end_type is None:
+        raise ValueError("End type must be EventEndType.End (0) or EventEndType.Restart (1).")
+    instruction_info = (2003, 8)
+    return numeric_instruction(instruction_info, event_id, slot, end_type)
 
 
 def StopEvent(event_id, slot=0):
@@ -638,8 +620,8 @@ def RestartEvent(event_id, slot=0):
 # HITBOXES
 
 def SetHitboxState(hitbox: HitboxInt, state: bool):
-    event_format = ('2011', '01', 'iB')
-    return format_instruction(event_format, hitbox, state)
+    instruction_info = (2011, 1)
+    return numeric_instruction(instruction_info, hitbox, state)
 
 
 def EnableHitbox(hitbox: HitboxInt):
@@ -657,8 +639,8 @@ def DisableHitbox(hitbox: HitboxInt):
 
 def SetHitboxBackreadMaskState(hitbox: HitboxInt, state: bool):
     """ Unused. """
-    event_format = ('2011', '02', 'iB')
-    return format_instruction(event_format, hitbox, state)
+    instruction_info = (2011, 2)
+    return numeric_instruction(instruction_info, hitbox, state)
 
 def EnableHitboxBackreadMask(hitbox: HitboxInt):
     return SetHitboxBackreadMaskState(hitbox, True)
@@ -671,17 +653,17 @@ def DisableHitboxBackreadMask(hitbox: HitboxInt):
 
 def AwardItemLot(item_lot_param_id, host_only: bool = True):
     """ Directly award an item lot to the player. By default, only the host receives the item. """
-    event_format = ('2003', '04', 'i')
+    instruction_info = (2003, 4)
     if host_only:
         return AwardItemLotToHostOnly(item_lot_param_id)
-    return format_instruction(event_format, item_lot_param_id)
+    return numeric_instruction(instruction_info, item_lot_param_id)
 
 
 def AwardItemLotToHostOnly(item_lot_param_id):
     """ You can simply call AwardItemLot() with the same argument, which will redirect here, as you'll almost never
     *not* want to award an item lot to the host only. """
-    event_format = ('2003', '36', 'i')
-    return format_instruction(event_format, item_lot_param_id)
+    instruction_info = (2003, 36)
+    return numeric_instruction(instruction_info, item_lot_param_id)
 
 
 def RemoveItemFromPlayer(item: ItemInt, item_type=None, quantity=0):
@@ -690,10 +672,10 @@ def RemoveItemFromPlayer(item: ItemInt, item_type=None, quantity=0):
     have this bug.)
 
     WARNING: don't confuse 'Item' with the specific item type 'Good'. """
-    event_format = ('2003', '24', 'iii')
+    instruction_info = (2003, 24)
     if item_type is None:
         item_type = item.item_type
-    return format_instruction(event_format, item_type, item, quantity)
+    return numeric_instruction(instruction_info, item_type, item, quantity)
 
 
 def RemoveWeaponFromPlayer(weapon: WeaponInt, quantity=0):
@@ -719,34 +701,34 @@ def RemoveGoodFromPlayer(good: GoodInt, quantity=0):
 def SnugglyItemDrop(item_lot: ItemLotInt, region: RegionInt, flag: FlagInt, hitbox: HitboxInt):
     """ Makes Snuggly drop an item. There are complex limitations to this in the engine, so be careful. (The list of
     available Snuggly flags is a hard-coded limit, for example.) """
-    event_format = ('2003', '34', 'iiii')
-    return format_instruction(event_format, item_lot, region, flag, hitbox)
+    instruction_info = (2003, 34)
+    return numeric_instruction(instruction_info, item_lot, region, flag, hitbox)
 
 
 def SetNextSnugglyTrade(flag: FlagInt):
     """ Sets the flag for the next drop based on the item you deposit into the nest. """
-    event_format = ('2003', '33', 'i')
-    return format_instruction(event_format, flag)
+    instruction_info = (2003, 33)
+    return numeric_instruction(instruction_info, flag)
 
 
 # ANIMATIONS
 
 def RequestAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False):
     """ Not used very often, in favor of ForceAnimation below. """
-    event_format = ('2003', '01', 'iiBB')
-    return format_instruction(event_format, entity, animation_id, loop, wait_for_completion)
+    instruction_info = (2003, 1)
+    return numeric_instruction(instruction_info, entity, animation_id, loop, wait_for_completion)
 
 
 def ForceAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False,
                    skip_transition: bool = False):
     """ Used a lot. Standard way to make a Character or Object perform an animation. """
-    event_format = ('2003', '18', 'iiBBB', [0, -1, 0, 0, 0])
-    return format_instruction(event_format, entity, animation_id, loop, wait_for_completion, skip_transition)
+    instruction_info = (2003, 18, [0, -1, 0, 0, 0])
+    return numeric_instruction(instruction_info, entity, animation_id, loop, wait_for_completion, skip_transition)
 
 
 def SetAnimationsState(entity: AnimatedInt, state: bool):
-    event_format = ('2004', '39', 'iB')
-    return format_instruction(event_format, entity, state)
+    instruction_info = (2004, 39)
+    return numeric_instruction(instruction_info, entity, state)
 
 
 def EnableAnimations(entity: AnimatedInt):
@@ -757,73 +739,76 @@ def DisableAnimations(entity: AnimatedInt):
     return SetAnimationsState(entity, False)
 
 
-def EndOfAnimation(entity: AnimatedInt, animation_id):
+def EndOfAnimation(obj: AnimatedInt, animation_id):
     """ Sets entity to whatever state it would have after the given animation. Used often to open doors that have
-    already been opened when you reload the map, etc. Not very useful with characters. """
-    event_format = ('2005', '07', 'ii')
-    return format_instruction(event_format, entity, animation_id)
+    already been opened when you reload the map, etc. I doubt it can be used with characters, but haven't confirmed. """
+    instruction_info = (2005, 7)
+    return numeric_instruction(instruction_info, obj, animation_id)
 
 
 # FX
 
 def CreateFX(fx_id: int):
     """ Create visual FX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints) """
-    event_format = ('2006', '02', 'i')
-    return format_instruction(event_format, fx_id)
+    instruction_info = (2006, 2)
+    return numeric_instruction(instruction_info, fx_id)
 
 
 def DeleteFX(fx_id: int, erase_root_only: bool = True):
     """ Delete visual FX. If 'erase_root_only' is True (default), effect particles already emitted will live out the
     rest of their lifetimes (e.g. making a fog gate disappear organically). The ID is given in the MSB. """
-    event_format = ('2006', '01', 'iB')
-    return format_instruction(event_format, fx_id, erase_root_only)
+    instruction_info = (2006, 1)
+    return numeric_instruction(instruction_info, fx_id, erase_root_only)
 
 
 def CreateTemporaryFX(fx_id: int, anchor_entity: MapEntityInt, model_point: int, anchor_type=None):
     """ Create one-off visual FX attached to the given 'anchor_entity'. The FX type argument is determined from the
     Entity category. The FX, of course, must be current loaded (or in common effects). """
-    event_format = ('2006', '03', 'iiii')
+    instruction_info = (2006, 3, [0, 0, -1, 0])
     if anchor_type is None:
         try:
             anchor_type = anchor_entity.map_entity_type
         except AttributeError:
             raise AttributeError("anchor_type not detected. Use the keyword 'anchor_type' or a typed anchor_entity.")
-    return format_instruction(event_format, anchor_type, anchor_entity, model_point, fx_id)
+    return numeric_instruction(instruction_info, anchor_type, anchor_entity, model_point, fx_id)
 
 
 def CreateObjectFX(fx_id: int, obj: ObjectInt, model_point: int):
-    event_format = ('2006', '04', 'iii')
-    return format_instruction(event_format, obj, model_point, fx_id)
+    instruction_info = (2006, 4)
+    return numeric_instruction(instruction_info, obj, model_point, fx_id)
 
 
 def DeleteObjectFX(obj: ObjectInt, erase_root: bool = True):
     """ Note `erase_root` vs. `erase_root_only` for map SFX. """
-    event_format = ('2006', '05', 'ii')
-    return format_instruction(event_format, obj, erase_root)
+    instruction_info = (2006, 5)
+    return numeric_instruction(instruction_info, obj, erase_root)
 
 
 # AUDIO
 
+def SetBackgroundMusic(state: bool, slot: int, entity: MapEntityInt, sound_type: SoundType, sound_id: int):
+    instruction_info = (2010, 1)
+    return numeric_instruction(instruction_info, state, slot, entity, sound_type, sound_id)
+
+
 def PlaySoundEffect(anchor_entity: MapEntityInt, sound_type: Union[SoundType, int], sound_id: int):
     """ Anchor entity determines the localization of the sound, and the sound type is used to look up the source. """
-    event_format = ('2010', '02', 'iii')
-    return format_instruction(event_format, anchor_entity, sound_type, sound_id)
+    instruction_info = (2010, 2)
+    return numeric_instruction(instruction_info, anchor_entity, sound_type, sound_id)
 
+
+def SetMapSoundState(sound_id: int, state: bool):
+    """ The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambience. """
+    instruction_info = (2010, 3)
+    return numeric_instruction(instruction_info, sound_id, state)
 
 def EnableMapSound(sound_id: int):
     """ The sound ID is in the MSB. Used for boss music and ambiance. """
     return SetMapSoundState(sound_id, True)
 
-
 def DisableMapSound(sound_id: int):
     """ The sound ID is in the MSB. Used for boss music and ambiance. """
     return SetMapSoundState(sound_id, False)
-
-
-def SetMapSoundState(sound_id: int, state: bool):
-    """ The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambience. """
-    event_format = ('2010', '03', 'iB')
-    return format_instruction(event_format, sound_id, state)
 
 
 # MAP
@@ -831,8 +816,8 @@ def SetMapSoundState(sound_id: int, state: bool):
 def RegisterLadder(start_climbing_flag: FlagInt, stop_climbing_flag: FlagInt, obj: ObjectInt):
     """ Don't mess with these flags, generally; you can just delay when this is called after map load to disable
     certain ladders (which is kind of weird anyway). """
-    event_format = ('2009', '00', 'iii')
-    return format_instruction(event_format, start_climbing_flag, stop_climbing_flag, obj)
+    instruction_info = (2009, 0)
+    return numeric_instruction(instruction_info, start_climbing_flag, stop_climbing_flag, obj)
 
 
 def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0,
@@ -850,14 +835,14 @@ def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0
     There also seems to be an issue with registering a bonfire that has already been registered with a greater initial
     kindle level. Beware of this, if you find that you can't interact with bonfires or get them to even register.
     """
-    event_format = ('2009', '03', 'iiffi')
-    return format_instruction(event_format, bonfire_flag, obj, reaction_distance, reaction_angle, initial_kindle_level)
+    instruction_info = (2009, 3)
+    return numeric_instruction(instruction_info, bonfire_flag, obj, reaction_distance, reaction_angle, initial_kindle_level)
 
 
 def SetMapPartState(map_part_id, state: bool):
     """ Set the visibility of individual map parts (e.g. all the crystals in Seath's tower). """
-    event_format = ('2012', '01', 'iB')
-    return format_instruction(event_format, map_part_id, state)
+    instruction_info = (2012, 1)
+    return numeric_instruction(instruction_info, map_part_id, state)
 
 
 def DisableMapPart(map_part_id):
@@ -873,14 +858,14 @@ def EnableMapPart(map_part_id):
 def PlaceSummonSign(sign_type, character: CharacterInt, region: RegionInt,
                     summon_flag: FlagInt, dismissal_flag: FlagInt):
     """ If you set a black summon sign, the specified NPC will try to invade automatically. """
-    event_format = ('2003', '25', 'iiiii')
-    return format_instruction(event_format, sign_type, character, region, summon_flag, dismissal_flag)
+    instruction_info = (2003, 25)
+    return numeric_instruction(instruction_info, sign_type, character, region, summon_flag, dismissal_flag)
 
 
 def SetDeveloperMessageState(message_id, state: bool):
     """ Enable or disable developer message. """
-    event_format = ('2003', '26', 'iB')
-    return format_instruction(event_format, message_id, state)
+    instruction_info = (2003, 26)
+    return numeric_instruction(instruction_info, message_id, state)
 
 
 def EnableDeveloperMessage(message_id):
@@ -901,28 +886,28 @@ def DisplayDialog(text: TextInt, anchor_entity: MapEntityInt, display_distance=3
 
     The 'display_distance' argument specifies how far you can move away from the 'anchor_entity' (which is required)
     before the message automatically disappears. """
-    event_format = ('2007', '01', 'ihhif', [0, 0, 0, -1, 0])
-    return format_instruction(event_format, text, button_type, number_buttons, anchor_entity, display_distance)
+    instruction_info = (2007, 1, [0, 0, 0, -1, 0])
+    return numeric_instruction(instruction_info, text, button_type, number_buttons, anchor_entity, display_distance)
 
 
 def DisplayBanner(banner_type: BannerType):
     """ Display a pre-rendered banner. You'll have to change the textures (in menu_local.tpf) to change them. """
-    event_format = ('2007', '02', 'B')
-    return format_instruction(event_format, banner_type)
+    instruction_info = (2007, 2)
+    return numeric_instruction(instruction_info, banner_type)
 
 
 def DisplayStatus(text: TextInt, pad_enabled: bool = True):
     """ Displays a large message that appears at the top of the screen, such as the message that tells you how to
     remove your curse, or that the golden fog gates block your path. If 'pad_enabled' is False, you can't get rid of
     the message until it times out on its own. """
-    event_format = ('2007', '03', 'iB')
-    return format_instruction(event_format, text, pad_enabled)
+    instruction_info = (2007, 3)
+    return numeric_instruction(instruction_info, text, pad_enabled)
 
 
 def DisplayBattlefieldMessage(text: TextInt, display_location_index):
     """ Used in the Battle of Stoicism. Probably useless to you. """
-    event_format = ('2007', '04', 'iB')
-    return format_instruction(event_format, text, display_location_index)
+    instruction_info = (2007, 4)
+    return numeric_instruction(instruction_info, text, display_location_index)
 
 
 # CUTSCENE
@@ -952,7 +937,7 @@ def PlayCutscene(cutscene_id: int, skippable: bool = False, fade_out: bool = Fal
         if rotation or relative_rotation_axis_x or relative_rotation_axis_z or vertical_translation:
             raise ValueError("You cannot use move arguments *and* rotation/translation arguments with cutscenes.")
         if player_id is None:
-            return PlayCutsceneAndWarpPlayer(cutscene_id, cutscene_type, move_to_region, move_to_map)
+            return PlayCutsceneAndMovePlayer(cutscene_id, cutscene_type, move_to_region, move_to_map)
         return PlayCutsceneAndMoveSpecificPlayer(cutscene_id, cutscene_type, move_to_region, move_to_map, player_id)
 
     if player_id is None:
@@ -964,36 +949,36 @@ def PlayCutscene(cutscene_id: int, skippable: bool = False, fade_out: bool = Fal
 
     return PlayCutsceneToPlayer(cutscene_id, cutscene_type, player_id)
 
-def PlayCutsceneAndWarpPlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt, game_map: GameMap):
+def PlayCutsceneAndMovePlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt, game_map: GameMap):
     """ I recommend you use the PlayCutscene() wrapper instead of this or the ones below. """
-    event_format = ('2002', '02', 'iIiBB')
+    instruction_info = (2002, 2)
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, cutscene_id, playback_method, region, area_id, block_id)
+    return numeric_instruction(instruction_info, cutscene_id, playback_method, region, area_id, block_id)
 
-def PlayCutsceneToPlayer(cutscene_id: int, playback_method: CutsceneType, player_entity_id: int):
-    event_format = ('2002', '03', 'iIi')
-    return format_instruction(event_format, cutscene_id, playback_method, player_entity_id)
+def PlayCutsceneToPlayer(cutscene_id: int, playback_method: CutsceneType, player_id: int):
+    instruction_info = (2002, 3)
+    return numeric_instruction(instruction_info, cutscene_id, playback_method, player_id)
 
 def PlayCutsceneAndMoveSpecificPlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt,
-                                      game_map: GameMap, player_entity_id: int):
-    event_format = ('2002', '04', 'iIiBBi')
+                                      game_map: GameMap, player_id: int):
+    instruction_info = (2002, 4)
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, cutscene_id, playback_method, region, area_id, block_id, player_entity_id)
+    return numeric_instruction(instruction_info, cutscene_id, playback_method, region, area_id, block_id, player_id)
 
 def PlayCutsceneAndRotatePlayer(cutscene_id: int, playback_method: CutsceneType, axis_x: float = 0.0,
                                 axis_z: float = 0.0, rotation: float = 0.0, vertical_translation: float = 0.0,
-                                player_entity_id: int = 10000):
-    event_format = ('2002', '05', 'iIffifi')
-    return format_instruction(event_format, cutscene_id, playback_method, axis_x, axis_z, rotation,
-                              vertical_translation, player_entity_id)
+                                player_id: int = 10000):
+    instruction_info = (2002, 5)
+    return numeric_instruction(instruction_info, cutscene_id, playback_method, axis_x, axis_z, rotation,
+                               vertical_translation, player_id)
 
 
 # NAVIMESH
 
 def SetNavimeshType(navimesh_id: int, navimesh_type: NavimeshType, operation: BitOperation):
     """ Set given navimesh type. """
-    event_format = ('2003', '13', 'iIB')
-    return format_instruction(event_format, navimesh_id, navimesh_type, operation)
+    instruction_info = (2003, 13)
+    return numeric_instruction(instruction_info, navimesh_id, navimesh_type, operation)
 
 def EnableNavimeshType(navimesh_id, navimesh_type: NavimeshType):
     """ Mark a given navimesh with the given type, which affects how character AI will interact with it. The navimesh
@@ -1012,8 +997,8 @@ def ToggleNavimeshType(navimesh_id, navimesh_type: NavimeshType):
 # NETWORK
 
 def SetNetworkSync(state: bool):
-    event_format = ('2000', '02', 'B')
-    return format_instruction(event_format, state)
+    instruction_info = (2000, 2)
+    return numeric_instruction(instruction_info, state)
 
 def EnableNetworkSync():
     return SetNetworkSync(True)
@@ -1022,29 +1007,35 @@ def DisableNetworkSync():
     return SetNetworkSync(False)
 
 
+def ClearMainCondition(dummy_arg: int):
+    """ Likely clears all conditions currently loaded into the main condition (0). """
+    instruction_info = (2000, 3)
+    return numeric_instruction(instruction_info, dummy_arg)
+
+
 def IssuePrefetchRequest(request_id: int):
     """ No idea what this does. """
-    event_format = ('2000', '04', 'I')
-    return format_instruction(event_format, request_id)
+    instruction_info = (2000, 4)
+    return numeric_instruction(instruction_info, request_id)
 
 
 def SaveRequest():
     """ The game saves often, but sometimes you need to save immediately, often after changing a spawn point, for
     example. (Sneaky logic will often save the game before the player realizes what's happened.) """
-    event_format = ('2000', '05', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2000, 5)
+    return numeric_instruction(instruction_info, 0)
 
 
 def TriggerMultiplayerEvent(event_id: int):
     """ Used to make the Bell of Awakening sounds, for example. """
-    event_format = ('2003', '16', 'i')
-    return format_instruction(event_format, event_id)
+    instruction_info = (2003, 16)
+    return numeric_instruction(instruction_info, event_id)
 
 
 def SetVagrantSpawning(spawning_disabled: bool):
     """ Note inverted bool. """
-    event_format = ('2003', '30', 'B')
-    return format_instruction(event_format, spawning_disabled)
+    instruction_info = (2003, 30)
+    return numeric_instruction(instruction_info, spawning_disabled)
 
 def EnableVagrantSpawning():
     """ Allows Vagrants to spawn at all. """
@@ -1057,22 +1048,22 @@ def DisableVagrantSpawning():
 
 def IncrementPvPSin():
     """ Normally only happens when you kill an NPC. """
-    event_format = ('2004', '46', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2004, 46)
+    return numeric_instruction(instruction_info, 0)
 
 
 def NotifyBossBattleStart():
     """ Sends the message to all summons that the host has challenged the boss. """
-    event_format = ('2009', '06', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2009, 6)
+    return numeric_instruction(instruction_info, 0)
 
 
 # SPAWNER
 
 def SetSpawnerState(entity: MapEntityInt, state: bool):
     """ e.g. the baby skeletons in Tomb of the Giants. """
-    event_format = ('2003', '03', 'iB')
-    return format_instruction(event_format, entity, state)
+    instruction_info = (2003, 3)
+    return numeric_instruction(instruction_info, entity, state)
 
 def EnableSpawner(entity: MapEntityInt):
     return SetSpawnerState(entity, True)
@@ -1086,15 +1077,15 @@ def ShootProjectile(owner_entity: MapEntityInt, projectile_id, model_point, beha
     """ The owner entity sets the 'team' of the projectile (i.e. who it can hurt). You can use this to
     directly spawn bullets by setting the projectile_id to the owner_entity. Note that the angle arguments
     are all integers. """
-    event_format = ('2003', '05', 'iiiiiii')
-    return format_instruction(event_format, owner_entity, projectile_id, model_point, behavior_id,
-                              launch_angle_x, launch_angle_y, launch_angle_z)
+    instruction_info = (2003, 5, [0, 0, -1, 0, 0, 0, 0])
+    return numeric_instruction(instruction_info, owner_entity, projectile_id, model_point, behavior_id,
+                               launch_angle_x, launch_angle_y, launch_angle_z)
 
 
 def CreateSpawner(entity: MapEntityInt):
     """ A 'bullet owner' that will spawn things according to the Spawner section of the MSB. """
-    event_format = ('2004', '07', 'i')
-    return format_instruction(event_format, entity)
+    instruction_info = (2004, 7)
+    return numeric_instruction(instruction_info, entity)
 
 
 # WARP
@@ -1103,16 +1094,16 @@ def WarpToMap(game_map: GameMap, destination_player_id=-1):
     """ Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
     default, this warps to the 'default position' in the map (-1), which is the same point you would spawn at if the
     game lost track of your stable footing (e.g. in 'wrong warp' glitches). """
-    event_format = ('2003', '14', 'BBi')
+    instruction_info = (2003, 14, [0, 0, -1])
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, area_id, block_id, destination_player_id)
+    return numeric_instruction(instruction_info, area_id, block_id, destination_player_id)
 
 
 def MoveRemains(source_region: RegionInt, destination_region: RegionInt):
     """ Move all bloodstains and dropped items from one region to another (I assume). Used to move your
     remains out of Gwyndolin's endless corridor. """
-    event_format = ('2003', '35', 'ii')
-    return format_instruction(event_format, source_region, destination_region)
+    instruction_info = (2003, 35)
+    return numeric_instruction(instruction_info, source_region, destination_region)
 
 
 def Move(character: CharacterInt, destination: MapEntityInt, model_point=None,
@@ -1156,8 +1147,8 @@ def MoveToEntity(character: CharacterInt, destination: MapEntityInt, model_point
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
-    event_format = ('2004', '03', 'iBii')
-    return format_instruction(event_format, character, destination_type, destination, model_point)
+    instruction_info = (2004, 3, [0, 0, 0, -1])
+    return numeric_instruction(instruction_info, character, destination_type, destination, model_point)
 
 
 def MoveAndSetDrawHitbox(character: CharacterInt, destination: MapEntityInt, hitbox: HitboxInt, model_point=None,
@@ -1170,8 +1161,8 @@ def MoveAndSetDrawHitbox(character: CharacterInt, destination: MapEntityInt, hit
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
-    event_format = ('2004', '40', 'iBiii', [0, 0, 0, -1, 0])
-    return format_instruction(event_format, character, destination_type, destination, model_point, hitbox)
+    instruction_info = (2004, 40, [0, 0, 0, -1, 0])
+    return numeric_instruction(instruction_info, character, destination_type, destination, model_point, hitbox)
 
 
 def ShortMove(character: CharacterInt, destination: MapEntityInt, model_point=None, destination_type=None):
@@ -1183,8 +1174,8 @@ def ShortMove(character: CharacterInt, destination: MapEntityInt, model_point=No
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
-    event_format = ('2004', '41', 'iBii', [0, 0, 0, -1])
-    return format_instruction(event_format, character, destination_type, destination, model_point)
+    instruction_info = (2004, 41, [0, 0, 0, -1])
+    return numeric_instruction(instruction_info, character, destination_type, destination, model_point)
 
 
 def MoveAndCopyDrawHitbox(character: CharacterInt, destination: MapEntityInt, copy_draw_hitbox: AnimatedInt,
@@ -1197,20 +1188,20 @@ def MoveAndCopyDrawHitbox(character: CharacterInt, destination: MapEntityInt, co
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
-    event_format = ('2004', '42', 'iBiii', [0, 0, 0, -1, 0])
-    return format_instruction(event_format, character, destination_type, destination, model_point, copy_draw_hitbox)
+    instruction_info = (2004, 42, [0, 0, 0, -1, 0])
+    return numeric_instruction(instruction_info, character, destination_type, destination, model_point, copy_draw_hitbox)
 
 
 def MoveObjectToCharacter(obj: ObjectInt, character: CharacterInt, model_point: int):
     """ Move an object to a character. """
-    event_format = ('2005', '11', 'iih', [0, -1, 0])
-    return format_instruction(event_format, obj, character, model_point)
+    instruction_info = (2005, 11, [0, -1, -1])
+    return numeric_instruction(instruction_info, obj, character, model_point)
 
 
 def SetRespawnPoint(respawn_point: int):
     """ Respawn point is an event set in the MSB. """
-    event_format = ('2003', '23', 'i')
-    return format_instruction(event_format, respawn_point)
+    instruction_info = (2003, 23)
+    return numeric_instruction(instruction_info, respawn_point)
 
 
 # MISCELLANEOUS
@@ -1226,8 +1217,8 @@ def KillBoss(game_area_param_id: int):
     The Game Area param ID is generally identical to the entity ID of the appropriate boss. This is just convention,
     but it's one you should stick to for a sensible setup (and for the name of the instruction to make sense).
     """
-    event_format = ('2003', '12', 'i')
-    return format_instruction(event_format, game_area_param_id)
+    instruction_info = (2003, 12)
+    return numeric_instruction(instruction_info, game_area_param_id)
 
 
 def IncrementNewGameCycle(dummy_arg: int):
@@ -1236,41 +1227,55 @@ def IncrementNewGameCycle(dummy_arg: int):
 
     The dummy argument is always 0 or 1; not sure if or how it matters.
     """
-    event_format = ('2003', '21', 'B')
-    return format_instruction(event_format, dummy_arg)
+    instruction_info = (2003, 21)
+    return numeric_instruction(instruction_info, dummy_arg)
 
 
 def AwardAchievement(achievement_id: int):
     """ For obvious reasons, I *highly* discourage you from abusing this, except in the interest of maintaining the
     accessibility of existing achievements. This interacts with Steam, which is always dangerous. """
-    event_format = ('2003', '28', 'i')
-    return format_instruction(event_format, achievement_id)
+    instruction_info = (2003, 28)
+    return numeric_instruction(instruction_info, achievement_id)
 
 
 def BetrayCurrentCovenant():
     """ You'll obviously want to make sure you know what covenant the player has when using this. """
-    event_format = ('2004', '38', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2004, 38)
+    return numeric_instruction(instruction_info, 0)
 
 
 def EqualRecovery():
     """ Unknown effect. Only used in Battle of Stoicism, so likely useless to you. """
-    event_format = ('2004', '47', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2004, 47)
+    return numeric_instruction(instruction_info)
 
 
-def SetLockedCameraSlot(game_map: GameMap, locked_camera_slot: int):
+def ChangeCamera(normal_camera_id: int, locked_camera_id: int):
+    instruction_info = (2008, 1, [-1, -1])
+    return numeric_instruction(instruction_info, normal_camera_id, locked_camera_id)
+
+
+def SetCameraVibration(vibration_id: int, anchor_entity: MapEntityInt, model_point: int, decay_start_distance: float,
+                       decay_end_distance: float, anchor_type: Optional[MapEntityType] = None):
+    instruction_info = (2008, 2)
+    if anchor_type is None:
+        anchor_type = anchor_entity.map_entity_type
+    return numeric_instruction(instruction_info, vibration_id, anchor_type, anchor_entity, model_point,
+                               decay_start_distance, decay_end_distance)
+
+
+def SetLockedCameraSlot(game_map: GameMap, camera_slot: int):
     """ This isn't used very often; standard camera control is done with camera params in the MSB. """
-    event_format = ('2008', '03', 'BBH')
+    instruction_info = (2008, 3)
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, area_id, block_id, locked_camera_slot)
+    return numeric_instruction(instruction_info, area_id, block_id, camera_slot)
 
 
 def HellkiteBreathControl(character: CharacterInt, obj: ObjectInt, animation_id):
     """ I don't recommend you mess with this. It seems to be used to create the fire FX and damaging effect when the
     Hellkite breathes fire on the bridge. It may simply trigger a certain behavior param ID. """
-    event_format = ('2004', '36', 'iii')
-    return format_instruction(event_format, character, obj, animation_id)
+    instruction_info = (2004, 36)
+    return numeric_instruction(instruction_info, character, obj, animation_id)
 
 
 def SetMapDrawParamSlot(map_area_id: int, slot: int):
@@ -1281,8 +1286,8 @@ def SetMapDrawParamSlot(map_area_id: int, slot: int):
     if not isinstance(map_area_id, int):
         raise ValueError("DrawParams can only be set for a whole map *area* (e.g. area 15 for Sen's Fortress and "
                          "Anor Londo). I'm making you set the area ID alone so you don't forget this.")
-    event_format = ('2003', '19', 'hh')
-    return format_instruction(event_format, map_area_id, slot)
+    instruction_info = (2003, 19)
+    return numeric_instruction(instruction_info, map_area_id, slot)
 
 
 # CONTROL FLOW (LOW LEVEL)
@@ -1296,34 +1301,32 @@ def SetMapDrawParamSlot(map_area_id: int, slot: int):
 
 def SkipLines(line_count):
     """ Unconditional line skip. """
-    event_format = ('1000', '03', 'B')
-    return format_instruction(event_format, line_count)
+    instruction_info = (1000, 3)
+    return numeric_instruction(instruction_info, line_count)
 
 
 def Terminate(event_end_type: EventEndType):
     # Unconditional event end (0) or restart (1).
-    event_format = ('1000', '04', 'B')
-    return format_instruction(event_format, event_end_type)
-
+    instruction_info = (1000, 4)
+    return numeric_instruction(instruction_info, event_end_type)
 
 def End():
     return Terminate(EventEndType.End)
-
 
 def Restart():
     return Terminate(EventEndType.Restart)
 
 
 def IfValueComparison(condition: int, comparison_type: ComparisonType, left: int, right: int):
-    event_format = ('   0', '01', 'bbii')
-    return format_instruction(event_format, condition, comparison_type, left, right)
+    instruction_info = (0, 1)
+    return numeric_instruction(instruction_info, condition, comparison_type, left, right)
 
 
 # CONDITIONS
 
 def AwaitConditionState(state: bool, condition: int):
-    event_format = ('1000', '00', 'Bb')
-    return format_instruction(event_format, state, condition)
+    instruction_info = (1000, 0)
+    return numeric_instruction(instruction_info, state, condition)
 
 def AwaitConditionTrue(condition: int):
     return AwaitConditionState(True, condition)
@@ -1333,8 +1336,8 @@ def AwaitConditionFalse(condition: int):
 
 
 def SkipLinesIfConditionState(line_count, state: bool, condition: int):
-    event_format = ('1000', '01', 'BBb')
-    return format_instruction(event_format, line_count, state, condition)
+    instruction_info = (1000, 1)
+    return numeric_instruction(instruction_info, line_count, state, condition)
 
 
 def SkipLinesIfConditionTrue(line_count, condition):
@@ -1350,8 +1353,8 @@ def SkipLinesIfFinishedConditionState(line_count, state: bool, input_condition: 
     uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02) are
     true, but then afterwards, act conditionally on exactly which one of those two registers caused you to
     continue. """
-    event_format = ('1000', '07', 'BBb')
-    return format_instruction(event_format, line_count, state, input_condition)
+    instruction_info = (1000, 7)
+    return numeric_instruction(instruction_info, line_count, state, input_condition)
 
 
 def SkipLinesIfFinishedConditionTrue(line_count, condition):
@@ -1363,8 +1366,8 @@ def SkipLinesIfFinishedConditionFalse(line_count, condition):
 
 
 def TerminateIfConditionState(event_end_type: EventEndType, state: bool, input_condition: int):
-    event_format = ('1000', '02', 'BBb')
-    return format_instruction(event_format, event_end_type, state, input_condition)
+    instruction_info = (1000, 2)
+    return numeric_instruction(instruction_info, event_end_type, state, input_condition)
 
 
 def EndIfConditionTrue(input_condition: int):
@@ -1384,8 +1387,8 @@ def RestartIfConditionFalse(input_condition: int):
 
 
 def TerminateIfFinishedConditionState(event_end_type: EventEndType, state: bool, input_condition: int):
-    event_format = ('1000', '08', 'BBb')
-    return format_instruction(event_format, event_end_type, state, input_condition)
+    instruction_info = (1000, 8)
+    return numeric_instruction(instruction_info, event_end_type, state, input_condition)
 
 
 def EndIfFinishedConditionTrue(finished_input_condition):
@@ -1405,8 +1408,8 @@ def RestartIfFinishedConditionFalse(finished_input_condition):
 
 
 def IfConditionState(output_condition: int, state: bool, input_condition: int):
-    event_format = ['   0', '00', 'bBb']
-    return format_instruction(event_format, output_condition, state, input_condition)
+    instruction_info = (0, 0)
+    return numeric_instruction(instruction_info, output_condition, state, input_condition)
 
 
 def IfConditionTrue(output_condition, input_condition):
@@ -1421,34 +1424,34 @@ def IfConditionFalse(output_condition, input_condition):
 
 def IfTimeElapsed(output_condition: int, seconds: float):
     """ Time since event started. """
-    event_format = ['   1', '00', 'bf']
-    return format_instruction(event_format, output_condition, seconds)
+    instruction_info = (1, 0)
+    return numeric_instruction(instruction_info, output_condition, seconds)
 
 
 def IfFramesElapsed(output_condition: int, frames: int):
     """ Frames since event started. """
-    event_format = ['   1', '01', 'bi']
-    return format_instruction(event_format, output_condition, frames)
+    instruction_info = (1, 1)
+    return numeric_instruction(instruction_info, output_condition, frames)
 
 
 def IfRandomTimeElapsed(output_condition: int, min_seconds: float, max_seconds: float):
     """ Not used in vanilla DS1. Requires a random amount of time since event began. """
-    event_format = ['   1', '02', 'bff']
-    return format_instruction(event_format, output_condition, min_seconds, max_seconds)
+    instruction_info = (1, 2)
+    return numeric_instruction(instruction_info, output_condition, min_seconds, max_seconds)
 
 
 def IfRandomFramesElapsed(output_condition: int, min_frames: int, max_frames: int):
     """ Not used in vanilla DS1. Requires a random amount of frames since event began. """
-    event_format = ['   1', '03', 'bii']
-    return format_instruction(event_format, output_condition, min_frames, max_frames)
+    instruction_info = (1, 3)
+    return numeric_instruction(instruction_info, output_condition, min_frames, max_frames)
 
 
 # MAP
 
 def SkipLinesIfMapPresenceState(line_count, state: bool, game_map: GameMap):
-    event_format = ('1003', '07', 'BBBB')
+    instruction_info = (1003, 7)
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, line_count, state, area_id, block_id)
+    return numeric_instruction(instruction_info, line_count, state, area_id, block_id)
 
 def SkipLinesIfInsideMap(line_count, game_map: GameMap):
     return SkipLinesIfMapPresenceState(line_count, True, game_map)
@@ -1457,9 +1460,9 @@ def SkipLinesIfOutsideMap(line_count, game_map: GameMap):
     return SkipLinesIfMapPresenceState(line_count, False, game_map)
 
 def TerminateIfMapPresenceState(event_end_type: EventEndType, state: bool, game_map: Map):
-    event_format = ('1003', '08', 'BBBB')
+    instruction_info = (1003, 8)
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, event_end_type, state, area_id, block_id)
+    return numeric_instruction(instruction_info, event_end_type, state, area_id, block_id)
 
 def EndIfInsideMap(game_map: GameMap):
     return TerminateIfMapPresenceState(EventEndType.End, True, game_map)
@@ -1474,9 +1477,9 @@ def RestartIfOutsideMap(game_map: GameMap):
     return TerminateIfMapPresenceState(EventEndType.Restart, False, game_map)
 
 def IfMapPresenceState(output_condition, state: bool, game_map: GameMap):
-    event_format = ['   3', '08', 'bBBB', [0, 0, 10, 0]]
+    instruction_info = (3, 8, [0, 0, 10, 0])
     area_id, block_id = tuple(game_map)
-    return format_instruction(event_format, output_condition, state, area_id, block_id)
+    return numeric_instruction(instruction_info, output_condition, state, area_id, block_id)
 
 def IfInsideMap(output_condition, game_map: GameMap):
     return IfMapPresenceState(output_condition, True, game_map)
@@ -1489,15 +1492,15 @@ def IfOutsideMap(output_condition, game_map: GameMap):
 
 
 def IfMultiplayerEvent(condition: int, event_id: int):
-    event_format = ['   3', '09', 'bI']
-    return format_instruction(event_format, condition, event_id)
+    instruction_info = (3, 9)
+    return numeric_instruction(instruction_info, condition, event_id)
 
 
 # FLAGS
 
 def AwaitFlagState(state: FlagState, flag_type: FlagType, flag: FlagInt):
-    event_format = ('1003', '00', 'BBi')
-    return format_instruction(event_format, state, flag_type, flag)
+    instruction_info = (1003, 0)
+    return numeric_instruction(instruction_info, state, flag_type, flag)
 
 def AwaitThisEventOn():
     return AwaitFlagState(FlagState.On, FlagType.RelativeToThisEvent, 0)
@@ -1524,8 +1527,8 @@ def AwaitFlagChange(flag: FlagInt):
 def SkipLinesIfFlagState(line_count, state: FlagState, flag_type: FlagType, flag: FlagInt):
     """ Skip some number of lines if the specified flag (absolute, event-relative, or slot-relative) has the specified
     state. """
-    event_format = ('1003', '01', 'BBBi')
-    return format_instruction(event_format, line_count, state, flag_type, flag)
+    instruction_info = (1003, 1)
+    return numeric_instruction(instruction_info, line_count, state, flag_type, flag)
 
 def SkipLinesIfThisEventOn(line_count):
     return SkipLinesIfFlagState(line_count, FlagState.On, FlagType.RelativeToThisEvent, 0)
@@ -1546,8 +1549,8 @@ def SkipLinesIfFlagOff(line_count, flag: FlagInt):
     return SkipLinesIfFlagState(line_count, FlagState.Off, FlagType.Absolute, flag)
 
 def TerminateIfFlagState(event_end_type: EventEndType, state: FlagState, flag_type: FlagType, flag: FlagInt):
-    event_format = ('1003', '02', 'BBBi')
-    return format_instruction(event_format, event_end_type, state, flag_type, flag)
+    instruction_info = (1003, 2)
+    return numeric_instruction(instruction_info, event_end_type, state, flag_type, flag)
 
 def EndIfThisEventOn():
     return TerminateIfFlagState(EventEndType.End, FlagState.On, FlagType.RelativeToThisEvent, 0)
@@ -1586,8 +1589,8 @@ def RestartIfFlagOff(flag: FlagInt):
     return TerminateIfFlagState(EventEndType.Restart, FlagState.Off, FlagType.Absolute, flag)
 
 def IfFlagState(condition: int, state: FlagState, flag_type: FlagType, flag: FlagInt):
-    event_format = ['   3', '00', 'bBBi']
-    return format_instruction(event_format, condition, state, flag_type, flag)
+    instruction_info = (3, 0)
+    return numeric_instruction(instruction_info, condition, state, flag_type, flag)
 
 def IfThisEventOn(condition: int):
     return IfFlagState(condition, FlagState.On, FlagType.RelativeToThisEvent, 0)
@@ -1611,14 +1614,13 @@ def IfFlagChange(condition: int, flag: FlagInt):
     return IfFlagState(condition, FlagState.Change, FlagType.Absolute, flag)
 
 
-def SkipLinesIfFlagRangeState(line_count, state: RangeState, flag_type: FlagType,
-                              flag_range: FlagRangeOrSequence):
+def SkipLinesIfFlagRangeState(line_count, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence):
     """ Skip lines (or end/restart, below) if a flag range is all on, all off, any on, or any off. There are also tests
     that allow exact numeric comparisons below. You probably have very little reason to use relative flag values for
     this test, but it is possible. """
-    event_format = ('1003', '03', 'BBBii')
-    first_flag, last_flag = resolve_flag_range(flag_range)
-    return format_instruction(event_format, line_count, state, flag_type, first_flag, last_flag)
+    instruction_info = (1003, 3)
+    first_flag, last_flag = tuple(flag_range)
+    return numeric_instruction(instruction_info, line_count, state, flag_type, first_flag, last_flag)
 
 def SkipLinesIfFlagRangeAllOn(line_count, flag_range: FlagRangeOrSequence):
     return SkipLinesIfFlagRangeState(line_count, RangeState.AllOn, FlagType.Absolute, flag_range)
@@ -1634,9 +1636,9 @@ def SkipLinesIfFlagRangeAnyOff(line_count, flag_range: FlagRangeOrSequence):
 
 def TerminateIfFlagRangeState(event_end_type: EventEndType, state: RangeState, flag_type: FlagType,
                               flag_range: FlagRangeOrSequence):
-    event_format = ('1003', '04', 'BBBii')
-    first_flag, last_flag = resolve_flag_range(flag_range)
-    return format_instruction(event_format, event_end_type, state, flag_type, first_flag, last_flag)
+    instruction_info = (1003, 4)
+    first_flag, last_flag = tuple(flag_range)
+    return numeric_instruction(instruction_info, event_end_type, state, flag_type, first_flag, last_flag)
 
 def EndIfFlagRangeAllOn(flag_range: FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.End, RangeState.AllOn, FlagType.Absolute, flag_range)
@@ -1663,9 +1665,9 @@ def RestartIfFlagRangeAnyOff(flag_range: FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.Restart, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 def IfFlagRangeState(condition: int, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence):
-    event_format = ['   3', '01', 'bBBii']
-    first_flag, last_flag = resolve_flag_range(flag_range)
-    return format_instruction(event_format, condition, state, flag_type, first_flag, last_flag)
+    instruction_info = (3, 1)
+    first_flag, last_flag = tuple(flag_range)
+    return numeric_instruction(instruction_info, condition, state, flag_type, first_flag, last_flag)
 
 def IfFlagRangeAllOn(condition: int, flag_range: FlagRangeOrSequence):
     return IfFlagRangeState(condition, RangeState.AllOn, FlagType.Absolute, flag_range)
@@ -1681,9 +1683,9 @@ def IfFlagRangeAnyOff(condition: int, flag_range: FlagRangeOrSequence):
 
 def IfTrueFlagCountComparison(condition: int, value: int, flag_type: FlagType.Absolute, comparison_type: ComparisonType,
                               flag_range: FlagRangeOrSequence):
-    event_format = ['   3', '10', 'bBiibi']
-    first_flag, last_flag = resolve_flag_range(flag_range)
-    return format_instruction(event_format, condition, flag_type, first_flag, last_flag, comparison_type, value)
+    instruction_info = (3, 10)
+    first_flag, last_flag = tuple(flag_range)
+    return numeric_instruction(instruction_info, condition, flag_type, first_flag, last_flag, comparison_type, value)
 
 def IfTrueFlagCountEqual(condition: int, value: int, flag_range):
     return IfTrueFlagCountComparison(condition, value, FlagType.Absolute, ComparisonType.Equal, flag_range)
@@ -1705,8 +1707,8 @@ def IfTrueFlagCountLessThanOrEqual(condition: int, value: int, flag_range):
 
 
 def IfEventValueComparison(condition: int, flag: FlagInt, bit_count: int, comparison_type: ComparisonType, value: int):
-    event_format = ['   3', '12', 'biBBI']
-    return format_instruction(event_format, condition, flag, bit_count, comparison_type, value)
+    instruction_info = (3, 12, [0, 0, 1, 0, 0])
+    return numeric_instruction(instruction_info, condition, flag, bit_count, comparison_type, value)
 
 def IfEventValueEqual(condition: int, flag: FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.Equal, value)
@@ -1730,43 +1732,37 @@ def IfEventValueLessThanOrEqual(condition: int, flag: FlagInt, bit_count: int, v
 def IfEventsComparison(condition: int, left_flag: FlagInt, left_bit_count: int, comparison_type: ComparisonType,
                        right_flag: FlagInt, right_bit_count: int):
     """ Check comparison of two event flag values. Haven't bothered adding shortcut functions for this. """
-    event_format = ['   3', '20', 'biBBiB']
-    return format_instruction(event_format, condition, left_flag, left_bit_count, comparison_type,
-                              right_flag, right_bit_count)
+    instruction_info = (3, 20)
+    return numeric_instruction(instruction_info, condition, left_flag, left_bit_count, comparison_type,
+                               right_flag, right_bit_count)
 
 
 # REGIONS / DISTANCE
 
-def IfEntityRegionState(condition, entity: AnimatedInt, region: RegionInt, state: bool):
+def IfCharacterRegionState(condition, entity: AnimatedInt, region: RegionInt, state: bool):
     """ Not sure if this works for objects. """
-    event_format = ['   3', '02', 'bBii']
-    return format_instruction(event_format, condition, state, entity, region)
+    instruction_info = (3, 2)
+    return numeric_instruction(instruction_info, condition, state, entity, region)
 
+def IfCharacterInsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+    return IfCharacterRegionState(condition, entity, region, True)
 
-def IfEntityInsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
-    return IfEntityRegionState(condition, entity, region, True)
-
-
-def IfEntityOutsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
-    return IfEntityRegionState(condition, entity, region, False)
-
+def IfCharacterOutsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+    return IfCharacterRegionState(condition, entity, region, False)
 
 def IfPlayerInsideRegion(condition: int, region: RegionInt):
-    return IfEntityRegionState(condition, PLAYER, region, True)
-
+    return IfCharacterRegionState(condition, PLAYER, region, True)
 
 def IfPlayerOutsideRegion(condition: int, region: RegionInt):
-    return IfEntityRegionState(condition, PLAYER, region, False)
+    return IfCharacterRegionState(condition, PLAYER, region, False)
 
 
 def IfAllPlayersRegionState(condition: int, region: RegionInt, state: bool):
-    event_format = ['   3', '07', 'bBi']
-    return format_instruction(event_format, condition, state, region)
-
+    instruction_info = (3, 7)
+    return numeric_instruction(instruction_info, condition, state, region)
 
 def IfAllPlayersInsideRegion(condition: int, region: RegionInt):
     return IfAllPlayersRegionState(condition, region, True)
-
 
 def IfAllPlayersOutsideRegion(condition: int, region: RegionInt):
     return IfAllPlayersRegionState(condition, region, False)
@@ -1774,21 +1770,17 @@ def IfAllPlayersOutsideRegion(condition: int, region: RegionInt):
 
 def IfEntityDistanceState(condition: int, entity: MapEntityInt, other_entity: MapEntityInt, radius: float,
                           state: bool):
-    event_format = ['   3', '03', 'bBiif']
-    return format_instruction(event_format, condition, state, entity, other_entity, radius)
-
+    instruction_info = (3, 3)
+    return numeric_instruction(instruction_info, condition, state, entity, other_entity, radius)
 
 def IfEntityWithinDistance(condition: int, entity: MapEntityInt, other_entity: MapEntityInt, radius: float):
     return IfEntityDistanceState(condition, entity, other_entity, radius, True)
 
-
 def IfEntityBeyondDistance(condition: int, entity: MapEntityInt, other_entity: MapEntityInt, radius: float):
     return IfEntityDistanceState(condition, entity, other_entity, radius, False)
 
-
 def IfPlayerWithinDistance(condition: int, other_entity: MapEntityInt, radius: float):
     return IfEntityDistanceState(condition, PLAYER, other_entity, radius, True)
-
 
 def IfPlayerBeyondDistance(condition: int, other_entity: MapEntityInt, radius: float):
     return IfEntityDistanceState(condition, PLAYER, other_entity, radius, False)
@@ -1797,13 +1789,13 @@ def IfPlayerBeyondDistance(condition: int, other_entity: MapEntityInt, radius: f
 # ITEMS
 
 def IfPlayerItemStateNoBox(condition: int, item_type: ItemType, item: ItemInt, state: bool):
-    event_format = ['   3', '04', 'bBiB']
-    return format_instruction(event_format, condition, item_type, item, state)
+    instruction_info = (3, 4)
+    return numeric_instruction(instruction_info, condition, item_type, item, state)
 
 
 def IfPlayerItemStateBox(condition: int, item_type: ItemType, item: ItemInt, state: bool):
-    event_format = ['   3', '16', 'bBiB']
-    return format_instruction(event_format, condition, item_type, item, state)
+    instruction_info = (3, 16)
+    return numeric_instruction(instruction_info, condition, item_type, item, state)
 
 
 def IfPlayerItemState(condition: int, state: bool, item: ItemInt, item_type: Optional[ItemType] = None,
@@ -1820,69 +1812,69 @@ def IfPlayerItemState(condition: int, state: bool, item: ItemInt, item_type: Opt
         return IfPlayerItemStateNoBox(condition, item_type, item, state)
 
 
-def IfPlayerOwnsItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None, including_box: bool = True):
+def IfPlayerHasItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None, including_box: bool = True):
     return IfPlayerItemState(condition, True, item, item_type, including_box)
 
 
-def IfPlayerOwnsWeapon(condition: int, weapon: WeaponInt, including_box: bool = True):
+def IfPlayerHasWeapon(condition: int, weapon: WeaponInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, weapon, ItemType.Weapon, including_box)
 
 
-def IfPlayerOwnsArmor(condition: int, armor: ArmorInt, including_box: bool = True):
+def IfPlayerHasArmor(condition: int, armor: ArmorInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, armor, ItemType.Armor, including_box)
 
 
-def IfPlayerOwnsRing(condition: int, ring: RingInt, including_box: bool = True):
+def IfPlayerHasRing(condition: int, ring: RingInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, ring, ItemType.Ring, including_box)
 
 
-def IfPlayerOwnsGood(condition: int, good: GoodInt, including_box: bool = True):
+def IfPlayerHasGood(condition: int, good: GoodInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, good, ItemType.Good, including_box)
 
 
-def IfPlayerDoesNotOwnItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None,
-                           including_box: bool = True):
+def IfPlayerDoesNotHaveItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None,
+                            including_box: bool = True):
     return IfPlayerItemState(condition, False, item, item_type, including_box)
 
 
-def IfPlayerDoesNotOwnWeapon(condition: int, weapon: WeaponInt, including_box: bool = True):
+def IfPlayerDoesNotHaveWeapon(condition: int, weapon: WeaponInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, weapon, ItemType.Weapon, including_box)
 
 
-def IfPlayerDoesNotOwnArmor(condition: int, armor: ArmorInt, including_box: bool = True):
+def IfPlayerDoesNotHaveArmor(condition: int, armor: ArmorInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, armor, ItemType.Armor, including_box)
 
 
-def IfPlayerDoesNotOwnRing(condition: int, ring: RingInt, including_box: bool = True):
+def IfPlayerDoesNotHaveRing(condition: int, ring: RingInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, ring, ItemType.Ring, including_box)
 
 
-def IfPlayerDoesNotOwnGood(condition: int, good: GoodInt, including_box: bool = True):
+def IfPlayerDoesNotHaveGood(condition: int, good: GoodInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, good, ItemType.Good, including_box)
 
 
 def IfAnyItemDroppedInRegion(condition: int, region: RegionInt):
     """ Check if any item has been dropped in the specified region. Not sensitive to what the item is. """
-    event_format = ['   3', '14', 'bi']
-    return format_instruction(event_format, condition, region)
+    instruction_info = (3, 14)
+    return numeric_instruction(instruction_info, condition, region)
 
 
 def IfItemDropped(condition: int, item: ItemInt, item_type: Optional[ItemType] = None):
     """ Check if a certain item was (just) dropped. Not sensitive to region. """
-    event_format = ['   3', '15', 'bii']
+    instruction_info = (3, 15)
     if item_type is None:
         try:
             item_type = item.item_type
         except AttributeError:
             raise AttributeError("Item type not detected. Use keyword or typed item.")
-    return format_instruction(event_format, condition, item_type, item)
+    return numeric_instruction(instruction_info, condition, item_type, item)
 
 
 # OBJECTS
 
 def AwaitObjectDestructionState(state: bool, obj: ObjectInt):
-    event_format = ('1005', '00', 'Bi')
-    return format_instruction(event_format, state, obj)
+    instruction_info = (1005, 0)
+    return numeric_instruction(instruction_info, state, obj)
 
 def AwaitObjectDestroyed(obj: ObjectInt):
     return AwaitObjectDestructionState(True, obj)
@@ -1890,91 +1882,80 @@ def AwaitObjectDestroyed(obj: ObjectInt):
 def AwaitObjectNotDestroyed(obj: ObjectInt):
     return AwaitObjectDestructionState(False, obj)
 
-
 def SkipLinesIfObjectDestructionState(line_count, obj: ObjectInt, state: bool):
-    event_format = ('1005', '01', 'BBi')
-    return format_instruction(event_format, line_count, state, obj)
-
+    instruction_info = (1005, 1)
+    return numeric_instruction(instruction_info, line_count, state, obj)
 
 def SkipLinesIfObjectDestroyed(line_count, obj: ObjectInt):
     return SkipLinesIfObjectDestructionState(line_count, obj, True)
 
-
 def SkipLinesIfObjectNotDestroyed(line_count, obj: ObjectInt):
     return SkipLinesIfObjectDestructionState(line_count, obj, False)
 
-
 def TerminateIfObjectDestructionState(event_end_type: EventEndType, obj: ObjectInt, state: bool):
-    event_format = ('1005', '02', 'BBi')
-    return format_instruction(event_format, event_end_type, state, obj)
-
+    instruction_info = (1005, 2)
+    return numeric_instruction(instruction_info, event_end_type, state, obj)
 
 def EndIfObjectDestroyed(obj: ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.End, obj, True)
 
-
 def EndIfObjectNotDestroyed(obj: ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.End, obj, False)
-
 
 def RestartIfObjectDestroyed(obj: ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.Restart, obj, True)
 
-
 def RestartIfObjectNotDestroyed(obj: ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.Restart, obj, False)
 
-
 def IfObjectDestructionState(condition: int, obj: ObjectInt, state: bool):
-    event_format = ['   5', '00', 'bBi']
-    return format_instruction(event_format, condition, state, obj)
-
+    instruction_info = (5, 0)
+    return numeric_instruction(instruction_info, condition, state, obj)
 
 def IfObjectDestroyed(condition: int, obj: ObjectInt):
     return IfObjectDestructionState(condition, obj, True)
-
 
 def IfObjectNotDestroyed(condition: int, obj: ObjectInt):
     return IfObjectDestructionState(condition, obj, False)
 
 
 def IfObjectDamagedBy(condition: int, obj: ObjectInt, attacker: CharacterInt):
-    event_format = ['   5', '01', 'bii']
-    return format_instruction(event_format, condition, obj, attacker)
+    instruction_info = (5, 1)
+    return numeric_instruction(instruction_info, condition, obj, attacker)
 
 
-def IfObjectActivated(condition: int, objact_id: int):
-    event_format = ['   5', '02', 'bi']
-    return format_instruction(event_format, condition, objact_id)
+def IfObjectActivated(condition: int, obj_act_id: int):
+    instruction_info = (5, 2)
+    return numeric_instruction(instruction_info, condition, obj_act_id)
 
 
 def IfObjectHealthValueComparison(condition: int, obj: ObjectInt, comparison_type: ComparisonType, value: int):
-    event_format = ['   5', '03', 'bibi']
-    return format_instruction(event_format, condition, obj, comparison_type, value)
+    instruction_info = (5, 3)
+    return numeric_instruction(instruction_info, condition, obj, comparison_type, value)
 
 
 # HITBOX
 
 def IfMovingOnHitbox(condition: int, hitbox: Union[Hitbox, int]):
-    event_format = ['  11', '00', 'bi']
-    return format_instruction(event_format, condition, hitbox)
+    instruction_info = (11, 0)
+    return numeric_instruction(instruction_info, condition, hitbox)
 
 
 def IfRunningOnHitbox(condition: int, hitbox: Union[Hitbox, int]):
-    event_format = ['  11', '01', 'bi']
-    return format_instruction(event_format, condition, hitbox)
+    instruction_info = (11, 1)
+    return numeric_instruction(instruction_info, condition, hitbox)
 
 
 def IfStandingOnHitbox(condition: int, hitbox: Union[Hitbox, int]):
-    event_format = ['  11', '02', 'bi']
-    return format_instruction(event_format, condition, hitbox)
+    instruction_info = (11, 2)
+    return numeric_instruction(instruction_info, condition, hitbox)
 
 
 # VALUE COMPARISONS
 
 def SkipLinesIfComparison(line_count, comparison_type: ComparisonType, left: int, right: int):
-    event_format = ('1000', '05', 'Bbii', [1, 0, 0, 0])
-    return format_instruction(event_format, line_count, comparison_type, left, right)
+    instruction_info = (1000, 5, [1, 0, 0, 0])
+    return numeric_instruction(instruction_info, line_count, comparison_type, left, right)
 
 
 def SkipLinesIfEqual(line_count, left: int, right: int):
@@ -2002,8 +1983,8 @@ def SkipLinesIfLessThanOrEqual(line_count, left: int, right: int):
 
 
 def TerminateIfComparison(event_end_type: EventEndType, comparison_type: ComparisonType, left: int, right: int):
-    event_format = ('1000', '06', 'Bbii')
-    return format_instruction(event_format, event_end_type, comparison_type, left, right)
+    instruction_info = (1000, 6)
+    return numeric_instruction(instruction_info, event_end_type, comparison_type, left, right)
 
 
 def EndIfEqual(left: int, right: int):
@@ -2088,26 +2069,26 @@ def IfDialogPromptActivated(condition: int, prompt_text: TextInt, anchor_entity:
 
     if boss_version:
         if line_intersects is None:
-            event_format = ['   3', '13', 'biifhfiBi']
-            return format_instruction(event_format, *args)
+            instruction_info = (3, 13)
+            return numeric_instruction(instruction_info, *args)
         else:
-            event_format = ['   3', '19', 'biifhfiBii']
-            return format_instruction(event_format, *args, line_intersects)
+            instruction_info = (3, 19)
+            return numeric_instruction(instruction_info, *args, line_intersects)
     else:
         if line_intersects is None:
-            event_format = ['   3', '05', 'biifhfiBi']
-            return format_instruction(event_format, *args)
+            instruction_info = (3, 5)
+            return numeric_instruction(instruction_info, *args)
         else:
-            event_format = ['   3', '18', 'biifhfiBii']
-            return format_instruction(event_format, *args, line_intersects)
+            instruction_info = (3, 18)
+            return numeric_instruction(instruction_info, *args, line_intersects)
 
 
 # WORLD TENDENCY
 
 def IfWorldTendencyComparison(condition: int, world_tendency_type: WorldTendencyType, comparison_type: ComparisonType,
                               value: int):
-    event_format = ['   3', '11', 'bBBB']
-    return format_instruction(event_format, condition, world_tendency_type, comparison_type, value)
+    instruction_info = (3, 11)
+    return numeric_instruction(instruction_info, condition, world_tendency_type, comparison_type, value)
 
 
 def IfWhiteWorldTendencyComparison(condition: int, comparison_type: ComparisonType, value):
@@ -2129,8 +2110,8 @@ def IfBlackWorldTendencyGreaterThanOrEqual(condition: int, value):
 # NEW GAME CYCLE
 
 def IfNewGameCycleComparison(condition: int, comparison_type: ComparisonType, completion_count: int):
-    event_format = ['   3', '17', 'bBB']
-    return format_instruction(event_format, condition, comparison_type, completion_count)
+    instruction_info = (3, 17)
+    return numeric_instruction(instruction_info, condition, comparison_type, completion_count)
 
 
 def IfNewGameCycleEqual(condition: int, completion_count):
@@ -2143,9 +2124,9 @@ def IfNewGameCycleGreaterThanOrEqual(condition: int, completion_count):
 
 # SYSTEM
 
-def IfDLCState(condition: int, state: bool):
-    event_format = ['   3', '21', 'bB']
-    return format_instruction(event_format, condition, state)
+def IfDLCState(condition: int, is_owned: bool):
+    instruction_info = (3, 21)
+    return numeric_instruction(instruction_info, condition, is_owned)
 
 
 def IfDLCOwned(condition: int):
@@ -2157,8 +2138,8 @@ def IfDLCNotOwned(condition: int):
 
 
 def IfOnlineState(condition: int, state: bool):
-    event_format = ['   3', '22', 'bB']
-    return format_instruction(event_format, condition, state)
+    instruction_info = (3, 22)
+    return numeric_instruction(instruction_info, condition, state)
 
 
 def IfOnline(condition: int):
@@ -2172,60 +2153,50 @@ def IfOffline(condition: int):
 # CHARACTER
 
 def IfCharacterDeathState(condition: int, character: CharacterInt, state: bool):
-    event_format = ['   4', '00', 'biB']
-    return format_instruction(event_format, condition, character, state)
+    instruction_info = (4, 0)
+    return numeric_instruction(instruction_info, condition, character, state)
 
-
-def IfDead(condition: int, character: CharacterInt):
+def IfCharacterDead(condition: int, character: CharacterInt):
     return IfCharacterDeathState(condition, character, True)
 
-
-def IfAlive(condition: int, character: CharacterInt):
+def IfCharacterAlive(condition: int, character: CharacterInt):
     return IfCharacterDeathState(condition, character, False)
 
 
 def IfAttacked(condition: int, attacked_character: CharacterInt, attacking_character: CharacterInt):
-    event_format = ['   4', '01', 'bii']
-    return format_instruction(event_format, condition, attacked_character, attacking_character)
+    instruction_info = (4, 1)
+    return numeric_instruction(instruction_info, condition, attacked_character, attacking_character)
 
 
 def IfHealthComparison(condition: int, character: CharacterInt, comparison_type: ComparisonType, value):
-    event_format = ['   4', '02', 'bibf']
-    return format_instruction(event_format, condition, character, comparison_type, value)
-
+    instruction_info = (4, 2)
+    return numeric_instruction(instruction_info, condition, character, comparison_type, value)
 
 def IfHealthEqual(condition: int, character: CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.Equal, value)
 
-
 def IfHealthNotEqual(condition: int, character: CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.NotEqual, value)
-
 
 def IfHealthGreaterThan(condition: int, character: CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.GreaterThan, value)
 
-
 def IfHealthLessThan(condition: int, character: CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.LessThan, value)
 
-
 def IfHealthGreaterThanOrEqual(condition: int, character: CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.GreaterThanOrEqual, value)
-
 
 def IfHealthLessThanOrEqual(condition: int, character: CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.LessThanOrEqual, value)
 
 
 def IfCharacterType(condition: int, character: CharacterInt, character_type: CharacterType):
-    event_format = ['   4', '03', 'bib']
-    return format_instruction(event_format, condition, character, character_type)
-
+    instruction_info = (4, 3)
+    return numeric_instruction(instruction_info, condition, character, character_type)
 
 def IfCharacterHollow(condition: int, character: CharacterInt):
     return IfCharacterType(condition, character, CharacterType.Hollow)
-
 
 def IfCharacterHuman(condition: int, character: CharacterInt):
     return IfCharacterType(condition, character, CharacterType.Human)
@@ -2233,142 +2204,115 @@ def IfCharacterHuman(condition: int, character: CharacterInt):
 
 def IfCharacterTargetingState(condition: int, targeting_character: CharacterInt, targeted_character: CharacterInt,
                               state: bool):
-    event_format = ['   4', '04', 'biiB']
-    return format_instruction(event_format, condition, targeting_character, targeted_character, state)
-
+    instruction_info = (4, 4)
+    return numeric_instruction(instruction_info, condition, targeting_character, targeted_character, state)
 
 def IfCharacterTargeting(condition: int, targeting_character: CharacterInt,
                          targeted_character: CharacterInt):
     return IfCharacterTargetingState(condition, targeting_character, targeted_character, True)
-
 
 def IfCharacterNotTargeting(condition: int, targeting_character: CharacterInt,
                             targeted_character: CharacterInt):
     return IfCharacterTargetingState(condition, targeting_character, targeted_character, False)
 
 
-def IfCharacterSpecialEffectState(condition: int, character: CharacterInt, special_effect: int, state):
-    event_format = ['   4', '05', 'biiB', [0, 0, -1, 0]]
-    return format_instruction(event_format, condition, character, special_effect, state)
+def IfCharacterSpecialEffectState(condition: int, character: CharacterInt, special_effect: int, state: bool):
+    instruction_info = (4, 5, [0, 0, -1, 0])
+    return numeric_instruction(instruction_info, condition, character, special_effect, state)
 
-
-def IfCharacterHasSpecialEffect(condition: int, character: CharacterInt, special_effect):
+def IfCharacterHasSpecialEffect(condition: int, character: CharacterInt, special_effect: int):
     return IfCharacterSpecialEffectState(condition, character, special_effect, True)
 
-
-def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: CharacterInt, special_effect):
+def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: CharacterInt, special_effect: int):
     return IfCharacterSpecialEffectState(condition, character, special_effect, False)
-
-
-def IfPlayerHasSpecialEffect(condition: int, special_effect):
-    return IfCharacterSpecialEffectState(condition, PLAYER, special_effect, True)
-
-
-def IfPlayerDoesNotHaveSpecialEffect(condition: int, special_effect):
-    return IfCharacterSpecialEffectState(condition, PLAYER, special_effect, False)
 
 
 def IfCharacterPartHealthComparison(condition: int, character: CharacterInt, npc_part_id: int,
                                     comparison_type: ComparisonType, value):
-    event_format = ['   4', '06', 'biiib']
-    return format_instruction(event_format, condition, character, npc_part_id, value, comparison_type)
-
+    instruction_info = (4, 6)
+    return numeric_instruction(instruction_info, condition, character, npc_part_id, value, comparison_type)
 
 def IfCharacterPartHealthLessThanOrEqual(condition: int, character: CharacterInt, npc_part_id: int, value):
     return IfCharacterPartHealthComparison(condition, character, npc_part_id, ComparisonType.LessThanOrEqual, value)
 
 
-def IfBackreadState(condition: int, character: CharacterInt, state: bool):
-    event_format = ['   4', '07', 'biB']
-    return format_instruction(event_format, condition, character, state)
+def IfCharacterBackreadState(condition: int, character: CharacterInt, state: bool):
+    instruction_info = (4, 7)
+    return numeric_instruction(instruction_info, condition, character, state)
 
+def IfCharacterBackreadEnabled(condition: int, character: CharacterInt):
+    return IfCharacterBackreadState(condition, character, True)
 
-def IfBackreadEnabled(condition: int, character: CharacterInt):
-    return IfBackreadState(condition, character, True)
-
-
-def IfBackreadDisabled(condition: int, character: CharacterInt):
-    return IfBackreadState(condition, character, False)
+def IfCharacterBackreadDisabled(condition: int, character: CharacterInt):
+    return IfCharacterBackreadState(condition, character, False)
 
 
 def IfTAEEventState(condition: int, character: CharacterInt, tae_event_id: int, state: bool):
-    event_format = ['   4', '08', 'biiB', [0, 0, -1, 0]]
-    return format_instruction(event_format, condition, character, tae_event_id, state)
-
+    instruction_info = (4, 8, [0, 0, -1, 0])
+    return numeric_instruction(instruction_info, condition, character, tae_event_id, state)
 
 def IfHasTAEEvent(condition: int, character: CharacterInt, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, True)
-
 
 def IfDoesNotHaveTAEEvent(condition: int, character: CharacterInt, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, False)
 
 
 def IfHasAIStatus(condition: int, character: CharacterInt, ai_status: AIStatusType):
-    event_format = ['   4', '09', 'biB']
-    return format_instruction(event_format, condition, character, ai_status)
+    instruction_info = (4, 9)
+    return numeric_instruction(instruction_info, condition, character, ai_status)
 
 
 def IfSkullLanternState(condition: int, state: bool):
-    event_format = ['   4', '10', 'bB']
-    return format_instruction(event_format, condition, state)
-
+    instruction_info = (4, 10)
+    return numeric_instruction(instruction_info, condition, state)
 
 def IfSkullLanternActive(condition: int):
     return IfSkullLanternState(condition, True)
 
-
-def IfSkullLanternNotActive(condition: int):
+def IfSkullLanternInactive(condition: int):
     return IfSkullLanternState(condition, False)
 
 
 def IfPlayerClass(condition: int, class_type: ClassType):
-    event_format = ['   4', '11', 'bB']
-    return format_instruction(event_format, condition, class_type)
+    instruction_info = (4, 11)
+    return numeric_instruction(instruction_info, condition, class_type)
 
 
 def IfPlayerCovenant(condition: int, covenant: Covenant):
-    event_format = ['   4', '12', 'bB']
-    return format_instruction(event_format, condition, covenant)
+    instruction_info = (4, 12)
+    return numeric_instruction(instruction_info, condition, covenant)
 
 
 def IfPlayerSoulLevelComparison(condition: int, comparison_type: ComparisonType, value):
-    event_format = ['   4', '13', 'bBI']
-    return format_instruction(event_format, condition, comparison_type, value)
-
+    instruction_info = (4, 13, [0, 0, 1])
+    return numeric_instruction(instruction_info, condition, comparison_type, value)
 
 def IfPlayerSoulLevelGreaterThanOrEqual(condition: int, value):
     return IfPlayerSoulLevelComparison(condition, ComparisonType.GreaterThanOrEqual, value)
-
 
 def IfPlayerSoulLevelLessThanOrEqual(condition: int, value):
     return IfPlayerSoulLevelComparison(condition, ComparisonType.LessThanOrEqual, value)
 
 
 def IfHealthValueComparison(condition: int, character: CharacterInt, comparison_type: ComparisonType, value):
-    event_format = ['   4', '14', 'biBi']
-    return format_instruction(event_format, condition, character, comparison_type, value)
-
+    instruction_info = (4, 14)
+    return numeric_instruction(instruction_info, condition, character, comparison_type, value)
 
 def IfHealthValueEqual(condition: int, character: CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.Equal, value)
 
-
 def IfHealthValueNotEqual(condition: int, character: CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.NotEqual, value)
-
 
 def IfHealthValueGreaterThan(condition: int, character: CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.GreaterThan, value)
 
-
 def IfHealthValueLessThan(condition: int, character: CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.LessThan, value)
 
-
 def IfHealthValueGreaterThanOrEqual(condition: int, character: CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.GreaterThanOrEqual, value)
-
 
 def IfHealthValueLessThanOrEqual(condition: int, character: CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.LessThanOrEqual, value)
@@ -2377,55 +2321,55 @@ def IfHealthValueLessThanOrEqual(condition: int, character: CharacterInt, value)
 # BATTLE OF STOICISM (DO NOT USE)
 
 def ArenaRankingRequest1v1():
-    event_format = ('2003', '37', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2003, 37)
+    return numeric_instruction(instruction_info)
 
 
 def ArenaRankingRequest2v2():
-    event_format = ('2003', '38', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2003, 38)
+    return numeric_instruction(instruction_info)
 
 
 def ArenaRankingRequestFFA():
-    event_format = ('2003', '39', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2003, 39)
+    return numeric_instruction(instruction_info)
 
 
 def ArenaExitRequest():
-    event_format = ('2003', '40', 'B')
-    return format_instruction(event_format, 0)
+    instruction_info = (2003, 40)
+    return numeric_instruction(instruction_info)
 
 
-def ArenaSetNametag1():
-    event_format = ('2007', '05', 'B')
-    return format_instruction(event_format, 0)
+def ArenaSetNametag1(player_id: int):
+    instruction_info = (2007, 5)
+    return numeric_instruction(instruction_info, player_id)
 
 
-def ArenaSetNametag2():
-    event_format = ('2007', '06', 'B')
-    return format_instruction(event_format, 0)
+def ArenaSetNametag2(player_id: int):
+    instruction_info = (2007, 6)
+    return numeric_instruction(instruction_info, player_id)
 
 
-def ArenaSetNametag3():
-    event_format = ('2007', '07', 'B')
-    return format_instruction(event_format, 0)
+def ArenaSetNametag3(player_id: int):
+    instruction_info = (2007, 7)
+    return numeric_instruction(instruction_info, player_id)
 
 
-def ArenaSetNametag4():
-    event_format = ('2007', '08', 'B')
-    return format_instruction(event_format, 0)
+def ArenaSetNametag4(player_id: int):
+    instruction_info = (2007, 8)
+    return numeric_instruction(instruction_info, player_id)
 
 
 def DisplayArenaDissolutionMessage(text_id):
-    event_format = ('2007', '09', 'i')
-    return format_instruction(event_format, text_id)
+    instruction_info = (2007, 9)
+    return numeric_instruction(instruction_info, text_id)
 
 
-def ArenaSetNametag5():
-    event_format = ('2007', '10', 'B')
-    return format_instruction(event_format, 0)
+def ArenaSetNametag5(player_id: int):
+    instruction_info = (2007, 10)
+    return numeric_instruction(instruction_info, player_id)
 
 
-def ArenaSetNametag6():
-    event_format = ('2007', '11', 'B')
-    return format_instruction(event_format, 0)
+def ArenaSetNametag6(player_id: int):
+    instruction_info = (2007, 11)
+    return numeric_instruction(instruction_info, player_id)

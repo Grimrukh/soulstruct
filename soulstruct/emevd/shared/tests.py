@@ -31,7 +31,7 @@ _OFFLINE = ConstantCondition(if_true_func=IfOffline, if_false_func=IfOnline)
 
 _DLC_OWNED = ConstantCondition(if_true_func=IfDLCOwned, if_false_func=IfDLCNotOwned)
 
-_SKULL_LANTERN_ACTIVE = ConstantCondition(if_true_func=IfSkullLanternActive, if_false_func=IfSkullLanternNotActive)
+_SKULL_LANTERN_ACTIVE = ConstantCondition(if_true_func=IfSkullLanternActive, if_false_func=IfSkullLanternInactive)
 
 _COMPARISON_VARIABLES = ['WHITE_WORLD_TENDENCY', 'BLACK_WORLD_TENDENCY', 'NEW_GAME_CYCLE', 'SOUL_LEVEL']
 
@@ -154,29 +154,25 @@ def _FramesElapsed(elapsed_frames, condition):
 
 
 @__negate_only
-def _EntityInsideRegion(entity: MapEntity, region: Region, condition, negate=False):
-    return IfEntityRegionState(condition, entity, region, not negate)
-
+def _CharacterInsideRegion(entity: MapEntity, region: Region, condition, negate=False):
+    return IfCharacterRegionState(condition, entity, region, not negate)
 
 @__negate_only
-def _EntityOutsideRegion(entity: MapEntity, region: Region, condition, negate=False):
-    return IfEntityRegionState(condition, entity, region, negate)
-
+def _CharacterOutsideRegion(entity: MapEntity, region: Region, condition, negate=False):
+    return IfCharacterRegionState(condition, entity, region, negate)
 
 @__negate_only
 def _PlayerInsideRegion(region: Region, condition, negate=False):
-    return IfEntityRegionState(condition, PLAYER, region, not negate)
-
+    return IfCharacterRegionState(condition, PLAYER, region, not negate)
 
 @__negate_only
 def _PlayerOutsideRegion(region: Region, condition, negate=False):
-    return IfEntityRegionState(condition, PLAYER, region, negate)
+    return IfCharacterRegionState(condition, PLAYER, region, negate)
 
 
 @__negate_only
 def _AllPlayersInsideRegion(region: Region, condition, negate=False):
     return IfAllPlayersRegionState(condition, region, not negate)
-
 
 @__negate_only
 def _AllPlayersOutsideRegion(region: Region, condition, negate=False):
@@ -398,12 +394,12 @@ def _HasSpecialEffect(character: Character, special_effect, condition, negate=Fa
 
 @__negate_only
 def _BackreadEnabled(character: Character, condition, negate=False):
-    return IfBackreadState(condition, character, not negate)
+    return IfCharacterBackreadState(condition, character, not negate)
 
 
 @__negate_only
 def _BackreadDisabled(character: Character, condition, negate=False):
-    return IfBackreadState(condition, character, negate)
+    return IfCharacterBackreadState(condition, character, negate)
 
 
 @__negate_only

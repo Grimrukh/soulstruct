@@ -59,6 +59,6 @@ def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='em
 
 
 if __name__ == '__main__':
-    # unpack_all_emevd_to_numeric('G:/my/ripped/games/Bloodborne/event', 'numeric_from_vanilla')
-    decompile_all_numeric('numeric_from_vanilla', 'evs_from_vanilla')
+    unpack_all_emevd_to_numeric('C:/my/ripped/games/Bloodborne/event', 'numeric_from_vanilla')
+    decompile_all_numeric('numeric_from_vanilla', 'evs')
     compile_all_evs()

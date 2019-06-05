@@ -54,7 +54,7 @@ class TeamType(IntEnum):
     Ally = 8  # Targets no one, targeted by Enemy/Boss. (Not sure about HostileAlly.)
     HostileAlly = 9  # Targets and targeted by everyone.
     Decoy = 10
-    DecoyLike = 11
+    RedChild = 11
     FightingAlly = 12  # Targets Enemy/Boss, targeted by Enemy/Boss.
     Intruder = 13  # Targets and targeted by Human/WhitePhantom/Hollow
     Neutral = 14

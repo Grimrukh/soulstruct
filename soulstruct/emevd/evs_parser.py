@@ -5,7 +5,6 @@ import importlib
 import os
 import re
 from soulstruct.emevd import game_types as gt
-from soulstruct.emevd.shared import instructions, tests
 from soulstruct.emevd.core import header, define_args
 
 # TODO: Condition skips are being made double-negative (condition is negated AND skip is negated).
@@ -67,6 +66,7 @@ class EmevdCompiler(object):
         self.map_name = os.path.basename(evs_path).split('.')[0]
         self.linked_offsets = []
         self.strings_with_offsets = []
+        self.event_layers = []
 
         # Game-specific constants. Will be updated to also include any user star-imported constants.
         self.constants = {name: attr for name, attr in vars(game_module.enums).items() if name != 'gt'}
@@ -112,7 +112,7 @@ class EmevdCompiler(object):
             if isinstance(node, ast.Import):
                 raise EmevdSyntaxError(node.lineno,
                                        "All imports should be of the form 'from your_constants import *' (other than "
-                                       "'from emevd import *').")
+                                       "'from soulstruct.emevd.<game> import *').")
             elif isinstance(node, ast.ImportFrom):
                 self.import_constants(node)
 
@@ -264,14 +264,14 @@ class EmevdCompiler(object):
             keyword_nodes = node.value.keywords
 
             if name in self.events:
-                # Run event.
+                # Run event (2000[00]).
                 event_dict = self.events[name]
                 args = [self._parse_function_arg(arg_node) for arg_node in arg_nodes]
                 if keyword_nodes:
                     raise EmevdSyntaxError(node.lineno,
                                            "When running an event using its function name, use only positional "
                                            "arguments (because order matters). The first argument must be the slot "
-                                           "number.")
+                                           "number. (To run a common event in DS3, call RunCommonEvent() explicitly.)")
                 if event_dict['args'] and len(args) != len(event_dict['args']) + 1:
                     raise EmevdSyntaxError(node.lineno,
                                            f"Number of arguments (excluding the first slot argument) does not match "
@@ -281,9 +281,9 @@ class EmevdCompiler(object):
                     raise EmevdSyntaxError(node.lineno, f"Event function '{name}' takes no arguments.")
 
                 if args:
-                    return instructions.RunEvent(
+                    return self.instructions['RunEvent'](
                         event_dict['id'], args[0], args=args[1:], arg_types=event_dict['arg_types'])
-                return instructions.RunEvent(event_dict['id'])
+                return self.instructions['RunEvent'](event_dict['id'])
 
             if name == 'Condition':
                 raise EmevdError(node.lineno, "You must assign the Condition() to a variable.")
@@ -301,16 +301,27 @@ class EmevdCompiler(object):
                                                "Cannot use EnableThisFlag on an event that takes arguments, as the "
                                                "slot number cannot be inspected.")
                 if name == 'EnableThisFlag':
-                    return instructions.EnableFlag(self.current_event_id)
-                return instructions.DisableFlag(self.current_event_id)
+                    return self.instructions['EnableFlag'](self.current_event_id)
+                return self.instructions['DisableFlag'](self.current_event_id)
 
             if name in self.instructions:
                 # We need to build args and kwargs properly now. Each argument or kwarg value could be a literal or a
                 # name of a previously defined constant.
                 args = [self._parse_function_arg(arg_node) for arg_node in arg_nodes]
                 kwargs = {keyword.arg: self._parse_function_arg(keyword.value) for keyword in keyword_nodes}
+                if 'event_layers' in kwargs:
+                    event_layers = kwargs.pop('event_layers')
+                    if not isinstance(event_layers, (list, tuple)):
+                        print(event_layers)
+                        raise EmevdSyntaxError(node.lineno, f"'event_layers' value must be a list or tuple, but "
+                                                            f"received value {event_layers}")
+                    formatted_event_layers = '<' + str(event_layers)[1:-1] + '>'
+                else:
+                    formatted_event_layers = ''
                 try:
-                    return self.instructions[name](*args, **kwargs)
+                    instruction_lines = self.instructions[name](*args, **kwargs)  # includes event arg load lines
+                    instruction_lines[0] += formatted_event_layers
+                    return instruction_lines
                 except Exception as e:
                     raise EmevdSyntaxError(node.lineno, f"Failed to compile instruction.\n    Error: {str(e)}")
 
@@ -373,9 +384,9 @@ class EmevdCompiler(object):
         # RETURN
         if isinstance(node, ast.Return):
             if node.value is None or (isinstance(node.value, ast.Name) and node.value.id == 'END'):
-                return instructions.End()
+                return self.instructions['End']()
             elif isinstance(node.value, ast.Name) and node.value.id == 'RESTART':
-                return instructions.Restart()
+                return self.instructions['Restart']()
             else:
                 raise EmevdSyntaxError(node.lineno,
                                        f"Invalid return value '{node.value}'. It should be None (empty) to end the "
@@ -431,7 +442,7 @@ class EmevdCompiler(object):
         # 4. Put these components together. Note that an extra skip line is added if an ELSE body is present.
         if_emevd += test_emevd + body_emevd
         if else_emevd:
-            if_emevd += instructions.SkipLines(len([line for line in else_emevd if not line.startswith('    ^')]))
+            if_emevd += self.instructions['SkipLines'](len([line for line in else_emevd if not line.startswith('    ^')]))
             if_emevd += else_emevd
 
         return if_emevd
@@ -540,9 +551,9 @@ class EmevdCompiler(object):
                     # raise EmevdSyntaxError(node.lineno, f"Unrecognized event argument: {name}")
 
                 if negate:
-                    return instructions.SkipLinesIfComparison(
+                    return self.instructions['SkipLinesIfComparison'](
                         skip_lines, gt.NEG_COMPARISON_NODES[op_node], arg, comparison_value)
-                return instructions.SkipLinesIfComparison(
+                return self.instructions['SkipLinesIfComparison'](
                     skip_lines, gt.COMPARISON_NODES[op_node], arg, comparison_value)
 
         # 2c. The condition is a function expression (must be an EMEVD test that takes arguments, or any() or all()
@@ -573,8 +584,8 @@ class EmevdCompiler(object):
                     fr = self._get_constant(node.args[0])
                     if isinstance(fr, gt.FlagRange):
                         if negate:
-                            return instructions.SkipLinesIfFlagRangeAnyOn(skip_lines, fr)
-                        return instructions.SkipLinesIfFlagRangeAllOff(skip_lines, fr)
+                            return self.instructions['SkipLinesIfFlagRangeAnyOn'](skip_lines, fr)
+                        return self.instructions['SkipLinesIfFlagRangeAllOff'](skip_lines, fr)
                     raise EmevdSyntaxError(node.lineno, "The only valid non-sequence argument to 'any' is a FlagRange.")
 
                 sequence = node.args[0].elts
@@ -594,7 +605,7 @@ class EmevdCompiler(object):
                             chain_skip_emevd += skip_emevd
                     if chain_skip_emevd:
                         if not negate:
-                            chain_skip_emevd += instructions.SkipLines(skip_lines)  # Extra skip required for 'any'
+                            chain_skip_emevd += self.instructions['SkipLines'](skip_lines)  # Extra skip required for 'any'
                         return chain_skip_emevd
 
             if node.func.id == 'all':
@@ -608,8 +619,8 @@ class EmevdCompiler(object):
                     fr = self._get_constant(node.args[0])
                     if isinstance(fr, gt.FlagRange):
                         if negate:
-                            return instructions.SkipLinesIfFlagRangeAnyOff(skip_lines, fr)
-                        return instructions.SkipLinesIfFlagRangeAllOn(skip_lines, fr)
+                            return self.instructions['SkipLinesIfFlagRangeAnyOff'](skip_lines, fr)
+                        return self.instructions['SkipLinesIfFlagRangeAllOn'](skip_lines, fr)
                     raise EmevdSyntaxError(node.lineno, "The only valid non-sequence argument to 'all' is a FlagRange.")
 
                 sequence = node.args[0].elts
@@ -630,7 +641,7 @@ class EmevdCompiler(object):
                             chain_skip_emevd += skip_emevd
                     if chain_skip_emevd:
                         if negate:
-                            chain_skip_emevd += instructions.SkipLines(skip_lines)  # Extra skip required for 'any off'
+                            chain_skip_emevd += self.instructions['SkipLines'](skip_lines)  # Extra skip required for 'any off'
                         return chain_skip_emevd
 
         # Failed to build simple/chain skip or terminate.
@@ -672,15 +683,15 @@ class EmevdCompiler(object):
             if skip_lines > 0:
                 if negate:
                     if i in self.finished_conditions:
-                        condition_emevd += instructions.SkipLinesIfFinishedConditionTrue(skip_lines, i)
+                        condition_emevd += self.instructions['SkipLinesIfFinishedConditionTrue'](skip_lines, i)
                     else:
-                        condition_emevd += instructions.SkipLinesIfConditionTrue(skip_lines, i)
+                        condition_emevd += self.instructions['SkipLinesIfConditionTrue'](skip_lines, i)
                         self.finished_conditions.append(i)
                 else:
                     if i in self.finished_conditions:
-                        condition_emevd += instructions.SkipLinesIfFinishedConditionFalse(skip_lines, i)
+                        condition_emevd += self.instructions['SkipLinesIfFinishedConditionFalse'](skip_lines, i)
                     else:
-                        condition_emevd += instructions.SkipLinesIfConditionFalse(skip_lines, i)
+                        condition_emevd += self.instructions['SkipLinesIfConditionFalse'](skip_lines, i)
                         self.finished_conditions.append(i)
             else:
                 if negate:
@@ -688,14 +699,14 @@ class EmevdCompiler(object):
                         raise EmevdSyntaxError(node.lineno, "Cannot use a finished condition as an input to another "
                                                             "condition.")
                     else:
-                        condition_emevd += instructions.IfConditionFalse(condition, i)
+                        condition_emevd += self.instructions['IfConditionFalse'](condition, i)
                         self.finished_conditions.append(i)
                 else:
                     if i in self.finished_conditions:
                         raise EmevdSyntaxError(node.lineno, "Cannot use a finished condition as an input to another "
                                                             "condition.")
                     else:
-                        condition_emevd += instructions.IfConditionTrue(condition, i)
+                        condition_emevd += self.instructions['IfConditionTrue'](condition, i)
                         self.finished_conditions.append(i)
 
             return condition_emevd
@@ -742,8 +753,8 @@ class EmevdCompiler(object):
                     raise EmevdSyntaxError(node.lineno, "Finished conditions cannot be used in other conditions.")
                 self.finished_conditions.append(i)
                 if negate:
-                    return instructions.IfConditionFalse(condition, i)
-                return instructions.IfConditionTrue(condition, i)
+                    return self.instructions['IfConditionFalse'](condition, i)
+                return self.instructions['IfConditionTrue'](condition, i)
 
             # Test function
             try:
@@ -762,14 +773,14 @@ class EmevdCompiler(object):
 
                 if skip_lines > 0:
                     if negate:
-                        condition_emevd += instructions.SkipLinesIfConditionTrue(skip_lines, temp_condition)
+                        condition_emevd += self.instructions['SkipLinesIfConditionTrue'](skip_lines, temp_condition)
                     else:
-                        condition_emevd += instructions.SkipLinesIfConditionTrue(skip_lines, temp_condition)
+                        condition_emevd += self.instructions['SkipLinesIfConditionTrue'](skip_lines, temp_condition)
                 else:
                     if negate:
-                        condition_emevd += instructions.IfConditionFalse(condition, temp_condition)
+                        condition_emevd += self.instructions['IfConditionFalse'](condition, temp_condition)
                     else:
-                        condition_emevd += instructions.IfConditionTrue(condition, temp_condition)
+                        condition_emevd += self.instructions['IfConditionTrue'](condition, temp_condition)
 
                 return condition_emevd
             except ValueError:
@@ -878,33 +889,33 @@ class EmevdCompiler(object):
         if skip_lines > 0:
             if negate:
                 if condition in self.finished_conditions:
-                    return instructions.SkipLinesIfFinishedConditionTrue(skip_lines, condition)
+                    return self.instructions['SkipLinesIfFinishedConditionTrue'](skip_lines, condition)
                 self.finished_conditions.append(condition)  # Condition is now finished.
-                return instructions.SkipLinesIfConditionTrue(skip_lines, condition)
+                return self.instructions['SkipLinesIfConditionTrue'](skip_lines, condition)
             if condition in self.finished_conditions:
-                return instructions.SkipLinesIfFinishedConditionFalse(skip_lines, condition)
+                return self.instructions['SkipLinesIfFinishedConditionFalse'](skip_lines, condition)
             self.finished_conditions.append(condition)  # Condition is now finished.
-            return instructions.SkipLinesIfConditionFalse(skip_lines, condition)
+            return self.instructions['SkipLinesIfConditionFalse'](skip_lines, condition)
         elif end_event:
             if negate:
                 if condition in self.finished_conditions:
-                    return instructions.EndIfFinishedConditionFalse(condition)
+                    return self.instructions['EndIfFinishedConditionFalse'](condition)
                 self.finished_conditions.append(condition)  # Condition is now finished.
-                return instructions.EndIfConditionFalse(condition)
+                return self.instructions['EndIfConditionFalse'](condition)
             if condition in self.finished_conditions:
-                return instructions.EndIfFinishedConditionTrue(condition)
+                return self.instructions['EndIfFinishedConditionTrue'](condition)
             self.finished_conditions.append(condition)  # Condition is now finished.
-            return instructions.EndIfConditionTrue(condition)
+            return self.instructions['EndIfConditionTrue'](condition)
         elif restart_event:
             if negate:
                 if condition in self.finished_conditions:
-                    return instructions.RestartIfFinishedConditionFalse(condition)
+                    return self.instructions['RestartIfFinishedConditionFalse'](condition)
                 self.finished_conditions.append(condition)  # Condition is now finished.
-                return instructions.RestartIfConditionFalse(condition)
+                return self.instructions['RestartIfConditionFalse'](condition)
             if condition in self.finished_conditions:
-                return instructions.RestartIfFinishedConditionTrue(condition)
+                return self.instructions['RestartIfFinishedConditionTrue'](condition)
             self.finished_conditions.append(condition)  # Condition is now finished.
-            return instructions.RestartIfConditionTrue(condition)
+            return self.instructions['RestartIfConditionTrue'](condition)
         else:
             raise ValueError
 

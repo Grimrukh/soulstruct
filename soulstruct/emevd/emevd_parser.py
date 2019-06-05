@@ -7,10 +7,10 @@ from soulstruct.core import BinaryStruct, read_chars
 from soulstruct.dcx import DCX
 from soulstruct.emevd.evs_parser import EmevdCompiler
 from soulstruct.emevd import verbose
-from soulstruct.emevd.shared import decompiler
+from soulstruct.emevd.shared.decompiler import decompile_instruction
 from soulstruct.emevd.shared.enums import RestartType
 
-INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)\] \(([iIhHbBfs|]*)\)\[([\d, .-]*)\]")
+INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)\] \(([iIhHbBfs|]*)\)\[([\d, .-]*)\][ ]?(<[\d, ]*>)?")
 EVENT_ARG_REPLACEMENT_RE = re.compile(r" [ ]*\^\((\d+) <- (\d+), (\d+)\)")
 HEADER_RE = re.compile(r"^(\d+), ([012])")
 ELEMENT_MIN_MAX = {'b': (-128, 127), 'B': (0, 255),
@@ -42,7 +42,7 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
     if event_args_size == 0:
         return "", []
     try:
-        args_format = format_dict[instruction_class][instruction_index]
+        args_format = '@' + format_dict[instruction_class][instruction_index]
     except KeyError:
         raise KeyError(f"Cannot find argument types for instruction {instruction_class}[{instruction_index}].")
 
@@ -67,6 +67,8 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
         file.seek(previous_offset)
         return args_format[1:], list(req_args)
     elif extra_size % 4 != 0:
+        print(f"Instruction {instruction_class}[{instruction_index}] - event arg size {event_args_size}, "
+              f"required size {required_args_size}")
         raise ValueError(f"Optional argument size must be a multiple of four bytes. Your EMEVD file seems malformed.")
 
     opt_args = [struct.unpack('<I', file.read(4))[0] for _ in range(opt_arg_count)]
@@ -83,7 +85,6 @@ class BaseEMEVD(object):
 
     class Event(object):
 
-        use = 0
         STRUCT: BinaryStruct = None
 
         class Instruction(object):
@@ -91,7 +92,54 @@ class BaseEMEVD(object):
             STRUCT: BinaryStruct = None
             INSTRUCTION_ARG_TYPES = {}
 
-            def __init__(self, instruction_class, instruction_index, args_format='', args_list=None):
+            class EventLayers(object):
+                """ Only DS3 uses this (and rarely at that), though the infrastructure *may* be there for other games.
+
+                Each instruction will only run if the map's current event layer (e.g. set by a ceremony) is enabled in
+                the bit field (or by default, all are enabled).
+                """
+                STRUCT: BinaryStruct = None
+
+                def __init__(self, event_layers: list):
+                    """ The event layer is simply a 32-bit bit field (represented here as a list of enabled bit flags
+                    in little-Endian order). The bit field is packed as a 32-bit uint surrounded by a few constants.
+
+                    When packed, the instruction will contain an offset into a packed table of event layer values, which
+                    can be shared across multiple instructions. """
+                    self.event_layers = event_layers
+
+                @classmethod
+                def unpack(cls, file, event_layers_offset):
+                    """ Unpack event layer bit field as <a, b, c, ...> where a, b, c, ... are the little-endian bit
+                    zero-based indices of the event layer bit field. So field 01001..110 would be {1, 4, 29, 30}. """
+                    file.seek(event_layers_offset)
+                    d = cls.STRUCT.unpack(file)
+                    enabled_event_layers_list = []
+                    for i in range(32):
+                        if (2 ** i) & d.event_layers:
+                            enabled_event_layers_list.append(str(i))
+                    return cls(enabled_event_layers_list)
+
+                def pack(self):
+                    packed_field = sum(2 ** i for i in self.event_layers)
+                    return self.STRUCT.pack(event_layers=packed_field)
+
+                @staticmethod
+                def bit_field_to_on_list(bit_field):
+
+                    on_list = []
+                    for i in range(32):
+                        if (2 ** i) & bit_field:
+                            on_list.append(str(i))
+                    return on_list
+
+                def to_numeric(self):
+                    return f" <{', '.join(str(e) for e in self.event_layers)}>"
+
+                def to_evs(self):
+                    return f', event_layers={self.event_layers})'
+
+            def __init__(self, instruction_class, instruction_index, args_format='', args_list=None, event_layers=None):
                 if len(args_format.replace('|', '')) != len(args_list):
                     raise ValueError(f"Length of argument list ({len(args_list)}) in Instruction {instruction_class}"
                                      f"[{instruction_index}] does not match length of format string '{args_format}' "
@@ -103,14 +151,23 @@ class BaseEMEVD(object):
                 self.args_list = args_list if args_list else []
                 self.event_args = []  # Added after construction.
                 self.verbose_args_list = []  # So we don't modify 'args_list'.
+                if isinstance(event_layers, (list, tuple)):
+                    self.event_layers = self.EventLayers(event_layers)
+                elif isinstance(event_layers, self.EventLayers):
+                    self.event_layers = event_layers
+                else:
+                    self.event_layers = None
+                self.event_layers_offset = None  # Set by Event class during EMEVD packing.
 
             @classmethod
-            def unpack(cls, file, base_arg_data_offset, count=1):
+            def unpack(cls, file, base_arg_data_offset, event_layers_table_offset, count=1):
                 """ Unpack some number of Instructions into a list, starting from the current file offset. """
 
                 instructions = []
                 struct_dicts = cls.STRUCT.unpack(file, count=count)
                 for i, d in enumerate(struct_dicts):
+
+                    # Process arguments.
                     try:
                         args_format, args_list = get_instruction_args(
                             file, d.instruction_class, d.instruction_index,
@@ -123,7 +180,14 @@ class BaseEMEVD(object):
                         print(file.read(args_size))
                         raise
 
-                    instructions.append(cls(d.instruction_class, d.instruction_index, args_format, args_list))
+                    # Process event layers.
+                    if d.first_event_layers_offset != -1:
+                        event_layers = cls.EventLayers.unpack(file, event_layers_table_offset + d.first_event_layers_offset)
+                    else:
+                        event_layers = None
+
+                    instructions.append(cls(
+                        d.instruction_class, d.instruction_index, args_format, args_list, event_layers))
 
                 return instructions
 
@@ -136,10 +200,12 @@ class BaseEMEVD(object):
                 return len(self.event_args)
 
             def to_numeric(self):
-                numeric = [f"{self.instruction_class:04d}[{self.instruction_index:02d}] "
+                numeric = [f"{self.instruction_class: 5d}[{self.instruction_index:02d}] "
                            f"({self.visible_args_format})" + repr(self.args_list)]
+                if self.event_layers:
+                    numeric[-1] += self.event_layers.to_numeric()
                 for replacement in self.event_args:
-                    numeric.append("   ^" + replacement.to_numeric())
+                    numeric.append("    ^" + replacement.to_numeric())
                 return numeric
 
             def to_verbose(self, game_module):
@@ -149,17 +215,15 @@ class BaseEMEVD(object):
             def to_evs(self, game_module):
                 global EVENT_ARG_TYPES
                 req_args, opt_args = self.get_required_and_optional_args()
-                if self.instruction_class == 2000 and self.instruction_index == 0 and opt_args:
-                    try:
-                        opt_arg_types = EVENT_ARG_TYPES[req_args[1]]
-                    except KeyError:
-                        pass
-                    else:
-                        return decompiler.decompile_instruction(
-                            game_module, self.instruction_class, self.instruction_index, req_args, opt_args,
-                            opt_arg_types)
-                return decompiler.decompile_instruction(
-                    game_module, self.instruction_class, self.instruction_index, req_args, opt_args)
+                opt_arg_types = None
+                if (self.instruction_class == 2000 and self.instruction_index == 0
+                        and opt_args and req_args[1] in EVENT_ARG_TYPES):
+                    opt_arg_types = EVENT_ARG_TYPES[req_args[1]]
+                instruction = decompile_instruction(
+                    game_module, self.instruction_class, self.instruction_index, req_args, opt_args, opt_arg_types)
+                if self.event_layers:
+                    instruction = instruction[:-1] + self.event_layers.to_evs()
+                return instruction
 
             def get_required_and_optional_args(self):
                 split_point = self.visible_args_format.find('|')
@@ -231,11 +295,14 @@ class BaseEMEVD(object):
                 return b''.join([arg_replacement.to_binary() for arg_replacement in self.event_args])
 
             def to_binary(self, first_base_arg_offset):
+                if self.event_layers_offset is None:
+                    raise ValueError("Instruction event layer offset not set. (Only use EMEVD.pack() to pack events.)")
                 struct_dict = {
                     'instruction_class': self.instruction_class,
                     'instruction_index': self.instruction_index,
                     'base_args_size': self.args_size,
                     'first_base_arg_offset': first_base_arg_offset,
+                    'first_event_layers_offset': self.event_layers_offset,
                 }
                 return self.STRUCT.pack(struct_dict)
 
@@ -271,22 +338,22 @@ class BaseEMEVD(object):
                 return self.STRUCT.pack(instruction_line=self.line, write_from_byte=self.write_from_byte,
                                         read_from_byte=self.read_from_byte, bytes_to_write=self.bytes_to_write)
 
-        def __init__(self, event_id=0, restart_type=0, instruction_list=None):
-            if not self.use:
-                pass  # TODO
+        def __init__(self, event_id=0, restart_type=0, instructions=None):
             self.event_id = event_id
             self.restart_type = restart_type
-            self.instruction_list = instruction_list if instruction_list else []
+            self.instructions = instructions if instructions else []
 
         @classmethod
-        def unpack(cls, file, instruction_table_offset, base_arg_data_offset, event_arg_table_offset, count=1):
+        def unpack(cls, file, instruction_table_offset, base_arg_data_offset, event_arg_table_offset,
+                   event_layers_table_offset, count=1):
 
             event_dict = OrderedDict()
             struct_dicts = cls.STRUCT.unpack(file, count=count)
 
             for d in struct_dicts:
                 file.seek(instruction_table_offset + d['first_instruction_offset'])
-                instruction_list = cls.Instruction.unpack(file, base_arg_data_offset, count=d['instruction_count'])
+                instruction_list = cls.Instruction.unpack(file, base_arg_data_offset, event_layers_table_offset,
+                                                          count=d['instruction_count'])
 
                 file.seek(event_arg_table_offset + d['first_event_arg_offset'])
                 event_args = cls.EventArg.unpack(file, count=d['event_arg_count'])
@@ -301,26 +368,26 @@ class BaseEMEVD(object):
 
         @property
         def instruction_count(self):
-            return len(self.instruction_list)
+            return len(self.instructions)
 
         @property
         def total_args_size(self):
-            return sum([i.args_size for i in self.instruction_list])
+            return sum([i.args_size for i in self.instructions])
 
         @property
         def event_arg_count(self):
-            return sum([i.event_arg_count for i in self.instruction_list])
+            return sum([i.event_arg_count for i in self.instructions])
 
         def to_numeric(self):
             event_string = f"{self.event_id}, {self.restart_type}"
-            for instruction in self.instruction_list:
-                event_string += "\n " + "\n ".join(instruction.to_numeric())
+            for instruction in self.instructions:
+                event_string += "\n" + "\n".join(instruction.to_numeric())
             return event_string
 
         def guess_parameter_types(self):
             event_arg_set = set()
             event_arg_types = {}
-            for instruction in self.instruction_list:
+            for instruction in self.instructions:
                 instruction_arg_set, instruction_arg_types = instruction.apply_event_event_args()
                 event_arg_set = event_arg_set.union(instruction_arg_set)
                 for x in instruction_arg_types:
@@ -352,7 +419,7 @@ class BaseEMEVD(object):
             verbose_event_string = (f"Event ID: {self.event_id}\nRestarts: "
                                     f"{verbose.ENUM_RESTART_TYPE.get(self.restart_type, self.restart_type)}")
             verbose_event_string += "\n" + self.get_verbose_parameters()  # Also creates 'X[i:j]' instruction arg names.
-            for i, instr in enumerate(self.instruction_list):
+            for i, instr in enumerate(self.instructions):
                 if with_line_numbers:
                     verbose_event_string += f'\n    {i:3d} {instr.to_verbose(game_module)}'
                 else:
@@ -371,7 +438,7 @@ class BaseEMEVD(object):
             evs_event_string = (f"@{RestartType(self.restart_type).name}\n"
                                 f"def {function_name}({function_args}):\n"
                                 f"    {function_docstring}")
-            for i, instr in enumerate(self.instruction_list):
+            for i, instr in enumerate(self.instructions):
                 evs_event_string += f"\n    {instr.to_evs(game_module)}"
             return evs_event_string
 
@@ -395,7 +462,7 @@ class BaseEMEVD(object):
             instructions_binary = b''
             args_binary = b''
             event_args_list = []
-            for instruction in self.instruction_list:
+            for instruction in self.instructions:
                 instructions_binary += instruction.to_binary(base_arg_offset)
 
                 arg_binary = instruction.args_list_to_binary()
@@ -424,7 +491,7 @@ class BaseEMEVD(object):
             if not os.path.isfile(vanilla_base_map):
                 # Try resolving in local package directory.
                 vanilla_base_map = os.path.join(
-                    os.path.dirname(__file__), 'vanilla_numeric_ptd', vanilla_base_map + '.numeric.txt')
+                    os.path.dirname(__file__), 'numeric_from_vanilla', vanilla_base_map + '.numeric.txt')
             if not os.path.isfile(vanilla_base_map):
                 raise FileNotFoundError(f"Could not find vanilla numeric event file '{vanilla_base_map}' in package.")
             emevd_dict = numeric_file_to_emevd_dict(vanilla_base_map, self.GAME_MODULE)
@@ -509,7 +576,7 @@ class BaseEMEVD(object):
         emevd_buffer.seek(header.event_table_offset)
         self.events.update(self.Event.unpack(
             emevd_buffer, header.instruction_table_offset, header.base_arg_data_offset,
-            header.event_arg_table_offset, count=header.event_count))
+            header.event_arg_table_offset, header.event_layers_table_offset, count=header.event_count))
 
         if header.packed_strings_size != 0:
             emevd_buffer.seek(header.packed_strings_offset)
@@ -533,6 +600,26 @@ class BaseEMEVD(object):
     def instruction_count(self):
         return sum([e.instruction_count for e in self.events.values()])
 
+    def build_event_layers_table(self):
+        """ Scans all Instructions for event layers and packs them into a table. Also sets the offset within each
+        Instruction so that it can be packed. """
+        packed_event_layers_table = []
+        for event in self.events.values():
+            for instruction in event.instructions:
+                if instruction.event_layers:
+                    packed_event_layers = instruction.event_layers.pack()
+                    try:
+                        existing_offset = packed_event_layers_table.index(packed_event_layers) * self.Event.Instruction.EventLayers.STRUCT.size
+                        instruction.event_layers_offset = existing_offset
+                    except ValueError:
+                        new_offset = self.Event.Instruction.EventLayers.STRUCT.size * len(packed_event_layers_table)
+                        packed_event_layers_table.append(packed_event_layers)
+                        instruction.event_layers_offset = new_offset
+                else:
+                    # No event layers for this instruction.
+                    instruction.event_layers_offset = -1
+        return packed_event_layers_table
+
     def compute_base_args_size(self, existing_data_size):
         """ Must be overridden, as it works different for DS1 vs. the rest. """
         raise NotImplementedError
@@ -545,12 +632,12 @@ class BaseEMEVD(object):
     def event_arg_count(self):
         return sum([e.event_arg_count for e in self.events.values()])
 
-    def compute_table_offsets(self):
+    def compute_table_offsets(self, event_layers_table):
         offsets = {'event': self.HEADER_STRUCT.size}
         offsets['instruction'] = offsets['event'] + self.Event.STRUCT.size * self.event_count
-        # Ignore unknown table.
-        # Ignore event layer table (for now).
-        offsets['base_arg_data'] = offsets['instruction'] + self.Event.Instruction.STRUCT.size * self.instruction_count
+        # Ignore empty unknown table.
+        offsets['event_layers'] = offsets['instruction'] + self.Event.Instruction.STRUCT.size * self.instruction_count
+        offsets['base_arg_data'] = offsets['event_layers'] + self.Event.Instruction.EventLayers.STRUCT.size * len(event_layers_table)
         offsets['event_arg'] = offsets['base_arg_data'] + self.compute_base_args_size(offsets['base_arg_data'])
         offsets['linked_files'] = offsets['event_arg'] + self.Event.EventArg.STRUCT.size * self.event_arg_count
         offsets['packed_strings'] = offsets['linked_files'] + 8 * len(self.linked_file_offsets)
@@ -558,7 +645,9 @@ class BaseEMEVD(object):
         return offsets
 
     def build_emevd_header(self):
-        offsets = self.compute_table_offsets()
+        # TODO: Stop calculating offsets twice. Just calculate them during binary pack and create header last.
+        event_layers_table = self.build_event_layers_table()  # TODO: Also building this twice...
+        offsets = self.compute_table_offsets(event_layers_table)
         header_dict = {
             'file_size_1': offsets['end_of_file'],
             'event_count': self.event_count,
@@ -566,7 +655,8 @@ class BaseEMEVD(object):
             'instruction_count': self.instruction_count,
             'instruction_table_offset': offsets['instruction'],
             'unknown_table_offset': offsets['base_arg_data'],  # Absent.
-            'event_layer_table_offset': offsets['base_arg_data'],  # Absent.
+            'event_layers_count': len(event_layers_table),
+            'event_layers_table_offset': offsets['event_layers'],
             'event_arg_count': self.event_arg_count,
             'event_arg_table_offset': offsets['event_arg'],
             'linked_files_count': len(self.linked_file_offsets),
@@ -660,9 +750,11 @@ class BaseEMEVD(object):
             current_event_arg_offset += len(p_bin)
 
         linked_file_data_binary = struct.pack('<' + 'Q' * len(self.linked_file_offsets), *self.linked_file_offsets)
+        event_layers_table = self.build_event_layers_table()
+        event_layers_binary = b''.join(event_layers_table)
 
         emevd_binary = b''
-        offsets = self.compute_table_offsets()
+        offsets = self.compute_table_offsets(event_layers_table)
         if len(header) != offsets['event']:
             raise ValueError(f"Header was of size {len(header)} but expected size was {self.HEADER_STRUCT.size}.")
         emevd_binary += header
@@ -670,15 +762,18 @@ class BaseEMEVD(object):
             raise ValueError(f"Event table was of size {len(event_table_binary)} but expected size was "
                              f"{offsets['instruction'] - len(emevd_binary)}.")
         emevd_binary += event_table_binary
-        if len(emevd_binary) + len(instr_table_binary) != offsets['base_arg_data']:
+        if len(emevd_binary) + len(instr_table_binary) != offsets['event_layers']:
             raise ValueError(f"Instruction table was of size {len(instr_table_binary)} but expected size was "
-                             f"{offsets['base_arg_data'] - len(emevd_binary)}.")
+                             f"{offsets['event_layers'] - len(emevd_binary)}.")
         emevd_binary += instr_table_binary
-        # if len(emevd_binary) + len(argument_data_binary) != offsets['event_arg']:
-        #     raise ValueError(f"Argument data was of size {len(argument_data_binary)} but expected size was "
-        #                      f"{offsets['event_arg'] - len(emevd_binary)}.")
-        emevd_binary += argument_data_binary
+        if len(emevd_binary) + len(event_layers_binary) != offsets['base_arg_data']:
+            raise ValueError(f"Event layers table was of size {len(event_layers_binary)} but expected size was "
+                             f"{offsets['base_arg_data'] - len(emevd_binary)}.")
 
+        emevd_binary += event_layers_binary
+
+        # No argument data length check due to padding.
+        emevd_binary += argument_data_binary
         emevd_binary = self.pad_after_base_args(emevd_binary)
 
         if len(emevd_binary) + len(arg_r_binary) != offsets['linked_files']:
@@ -787,6 +882,10 @@ def numeric_string_to_event_dict(numeric_string, game_module):
                 instruction_index = int(m_instruction.group(2))
                 args_format = m_instruction.group(3)
                 args_list_string = m_instruction.group(4)
+                if m_instruction.group(5) is not None:
+                    event_layers = [int(e) for e in m_instruction.group(5)[1:-1].split(', ')]
+                else:
+                    event_layers = None
 
                 # Check the argument list against the format_string.
                 split_arg_list = args_list_string.split(",")
@@ -795,6 +894,7 @@ def numeric_string_to_event_dict(numeric_string, game_module):
                 if split_arg_list == ['']:
                     split_arg_list = []
                 if len(raw_args_format) != len(split_arg_list):
+                    print(args_format, raw_args_format, split_arg_list)
                     raise ValueError(f"Number of args ({len(raw_args_format)}) does not match length of the "
                                      f"instruction format string ('{args_format}') (Line {lineno})")
 
@@ -813,7 +913,7 @@ def numeric_string_to_event_dict(numeric_string, game_module):
                             raise ValueError(f"Argument '{arg}' is not inside the permitted range of data type "
                                              f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})")
                 instruction_list.append(game_module.EMEVD.Event.Instruction(
-                    instruction_class, instruction_index, args_format, args_list)
+                    instruction_class, instruction_index, args_format, args_list, event_layers)
                 )
 
             elif m_arg_r:
@@ -833,7 +933,7 @@ def numeric_string_to_event_dict(numeric_string, game_module):
             else:
                 # Malformed line.
                 raise ValueError(f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or "
-                                 f"arg replacement.")
+                                 f"event arg replacement.")
         emevd_dict[event_id] = game_module.EMEVD.Event(event_id, restart_type, instruction_list)
 
     emevd_dict['linked'] = linked_offsets

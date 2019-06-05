@@ -1,7 +1,5 @@
 from enum import IntEnum
 
-# TODO: Check what's shared with DS3.
-
 __all__ = ['RestartType',
 
            'PLAYER', 'CLIENT_PLAYER_1', 'CLIENT_PLAYER_2', 'CLIENT_PLAYER_3', 'CLIENT_PLAYER_4', 'CLIENT_PLAYER_5',

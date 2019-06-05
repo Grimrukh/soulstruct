@@ -1,10 +1,8 @@
-from soulstruct.emevd.core import get_enum_name, EnumStringError
-from soulstruct.emevd.shared.decompiler import boolify
+from soulstruct.emevd.core import boolify, get_enum_name, get_game_map_name, EnumStringError, InstructionNotFoundError
 from .enums import *
-from .constants import *
 
 
-def decompile_instruction(instruction_class, instruction_index, req_args):
+def decompile_instruction(instruction_class, instruction_index, req_args, game_module):
     """ Bloodborne-specific instruction decompiler. Run after the shared decompiler. Raises an error if it fails to
     resolve. """
 
@@ -154,38 +152,30 @@ def decompile_instruction(instruction_class, instruction_index, req_args):
         if instruction_index == 101:
             label, state, flag_type, flag = req_args
             label = get_enum_name(Label, label, True)
-            try:
-                if flag_type == FlagType.Absolute:
-                    if state == 1:
-                        return f"GotoIfFlagOn({label}, {flag})"
-                    if state == 0:
-                        return f"GotoIfFlagOff({label}, {flag})"
-                    raise EnumStringError
-                if flag != 0:
-                    raise EnumStringError
-                if flag_type == FlagType.RelativeToThisEvent:
-                    if state == 1:
-                        return f"GotoIfThisEventOn({label})"
-                    if state == 0:
-                        return f"GotoIfThisEventOff({label})"
-                    raise EnumStringError
-                if flag_type == FlagType.RelativeToThisEventSlot:
-                    if state == 1:
-                        return f"GotoIfThisEventSlotOn({label})"
-                    if state == 0:
-                        return f"GotoIfThisEventSlotOff({label})"
-                    raise EnumStringError
-            except EnumStringError:
-                flag_type = get_enum_name(FlagType, flag_type)
-                return f"GotoIfFlagState({label}, {boolify(state)}, flag_type={flag_type}, flag={flag})"
+            if flag_type == FlagType.Absolute:
+                if state == 1:
+                    return f"GotoIfFlagOn({label}, {flag})"
+                if state == 0:
+                    return f"GotoIfFlagOff({label}, {flag})"
+                raise EnumStringError
+            if flag_type == FlagType.RelativeToThisEvent:
+                if state == 1:
+                    return f"GotoIfThisEventOn({label})"
+                if state == 0:
+                    return f"GotoIfThisEventOff({label})"
+            if flag_type == FlagType.RelativeToThisEventSlot:
+                if state == 1:
+                    return f"GotoIfThisEventSlotOn({label})"
+                if state == 0:
+                    return f"GotoIfThisEventSlotOff({label})"
+            flag_type = get_enum_name(FlagType, flag_type)
+            return f"GotoIfFlagState({label}, {boolify(state)}, flag_type={flag_type}, flag={flag})"
 
         if instruction_index == 103:
             label, state, flag_type, first_flag, last_flag = req_args
             label = get_enum_name(Label, label, True)
-            try:
-                flag_type = get_enum_name(FlagType, flag_type)
-                if flag_type != FlagType.Absolute:
-                    raise EnumStringError
+            flag_type = get_enum_name(FlagType, flag_type)
+            if flag_type == FlagType.Absolute:
                 if state == RangeState.AllOn:
                     return f"GotoIfFlagRangeAllOn({label}, ({first_flag}, {last_flag}))"
                 if state == RangeState.AllOff:
@@ -194,30 +184,23 @@ def decompile_instruction(instruction_class, instruction_index, req_args):
                     return f"GotoIfFlagRangeAnyOn({label}, ({first_flag}, {last_flag}))"
                 if state == RangeState.AnyOff:
                     return f"GotoIfFlagRangeAnyOff({label}, ({first_flag}, {last_flag}))"
-                raise EnumStringError
-            except EnumStringError:
-                state = get_enum_name(RangeState, state, True)
-                return f"GotoIfFlagRangeState({label}, {state}, {flag_type}, ({first_flag}, {last_flag}))"
+            state = get_enum_name(RangeState, state, True)
+            return f"GotoIfFlagRangeState({label}, {state}, {flag_type}, ({first_flag}, {last_flag}))"
 
         if instruction_index == 105:
             label, state = req_args
             label = get_enum_name(Label, label, True)
-            if state == MultiplayerState.Host:
-                return f"GotoIfHost({label})"
-            if state == MultiplayerState.Client:
-                return f"GotoIfClient({label})"
-            if state == MultiplayerState.Multiplayer:
-                return f"GotoIfMultiplayer({label})"
-            if state == MultiplayerState.ConnectingMultiplayer:
-                return f"GotoIfConnectingMultiplayer({label})"
-            if state == MultiplayerState.Singleplayer:
-                return f"GotoIfSingleplayer({label})"
-            return f"GotoIfMultiplayerState({label: Label, state: MultiplayerState})"
+            try:
+                state_name = get_enum_name(MultiplayerState, state).split('.')[-1]
+            except EnumStringError:
+                return f"GotoIfMultiplayerState({label}, state={state})"
+            else:
+                return f"GotoIf{state_name}({label})"
 
         if instruction_index == 107:
-            label, area_id, block_id, state = req_args
+            label, state, area_id, block_id = req_args
             label = get_enum_name(Label, label, True)
-            game_map = GAME_MAPS[int(area_id), int(block_id)]
+            game_map = get_game_map_name(area_id, block_id, game_module)
             if state == 1:
                 return f"GotoIfInsideMap({label}, {game_map})"
             if state == 0:
@@ -251,20 +234,20 @@ def decompile_instruction(instruction_class, instruction_index, req_args):
     if instruction_class == 2002:
 
         if instruction_index == 6:
-            cutscene, cutscene_type, region, area_id, block_id, player_entity_id, time_period_id = req_args
-            game_map = GAME_MAPS[int(area_id), int(block_id)]
+            cutscene, cutscene_type, region, area_id, block_id, player_id, time_period_id = req_args
+            game_map = get_game_map_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
             return (f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
-                    f"{game_map}, player_entity_id={player_entity_id}, time_period_id={time_period_id})")
+                    f"{game_map}, player_id={player_id}, time_period_id={time_period_id})")
 
         if instruction_index == 7:
-            cutscene, cutscene_type, player_entity_id, time_period_id = req_args
+            cutscene, cutscene_type, player_id, time_period_id = req_args
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
-            return f"PlayCutsceneAndSetTimePeriod({cutscene}, {cutscene_type}, {player_entity_id}, {time_period_id})"
+            return f"PlayCutsceneAndSetTimePeriod({cutscene}, {cutscene_type}, {player_id}, {time_period_id})"
 
         if instruction_index == 8:
             region, area_id, block_id = req_args
-            game_map = GAME_MAPS[int(area_id), int(block_id)]
+            game_map = get_game_map_name(area_id, block_id, game_module)
             return f"PlayCutsceneAndMovePlayer_Dummy({region}, {game_map})"
 
     if instruction_class == 2003:
@@ -388,7 +371,6 @@ def decompile_instruction(instruction_class, instruction_index, req_args):
 
         if instruction_index == 52:
             character_init_param, = req_args
-            character = 'PLAYER' if character == 10000 else character
             return f"ChangePlayerCharacterInitParam({character_init_param})"
 
         if instruction_index == 53:
@@ -463,4 +445,4 @@ def decompile_instruction(instruction_class, instruction_index, req_args):
             output_multiplayer_state = get_enum_name(PlayLogMultiplayerType, output_multiplayer_state, True)
             return f"PlayLogParameterOutput({category}, {name_string}, {output_multiplayer_state})"
 
-    raise ValueError(f"Instruction not decompiled: {instruction_class}[{instruction_index:02d}].")
+    raise InstructionNotFoundError(f"Instruction not decompiled: {instruction_class}[{instruction_index:02d}].")

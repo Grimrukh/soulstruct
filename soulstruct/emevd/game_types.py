@@ -144,7 +144,7 @@ class Character(MapEntity):
             value = self
         return _get_value_condition(
             value=value, negate=negate, condition=condition, skip_lines=0,
-            if_true_func=instr.IfAlive, if_false_func=instr.IfDead)
+            if_true_func=instr.IfCharacterAlive, if_false_func=instr.IfCharacterDead)
 
     @property
     def map_entity_type(self):
@@ -176,8 +176,8 @@ class Weapon(Item):
         value = self if isinstance(self, (int, float)) else self.value
         return _get_value_condition(
             value=value, negate=negate, condition=condition,
-            if_true_func=lambda c, weapon: instr.IfPlayerOwnsWeapon(c, weapon, including_box=False),
-            if_false_func=lambda c, weapon: instr.IfPlayerDoesNotOwnWeapon(c, weapon, including_box=False))
+            if_true_func=lambda c, weapon: instr.IfPlayerHasWeapon(c, weapon, including_box=False),
+            if_false_func=lambda c, weapon: instr.IfPlayerDoesNotHaveWeapon(c, weapon, including_box=False))
 
     @property
     def item_type(self):
@@ -189,8 +189,8 @@ class Armor(Item):
         value = self if isinstance(self, (int, float)) else self.value
         return _get_value_condition(
             value=value, negate=negate, condition=condition,
-            if_true_func=lambda c, armor: instr.IfPlayerOwnsArmor(c, armor, including_box=False),
-            if_false_func=lambda c, armor: instr.IfPlayerDoesNotOwnArmor(c, armor, including_box=False))
+            if_true_func=lambda c, armor: instr.IfPlayerHasArmor(c, armor, including_box=False),
+            if_false_func=lambda c, armor: instr.IfPlayerDoesNotHaveArmor(c, armor, including_box=False))
 
     @property
     def item_type(self):
@@ -202,8 +202,8 @@ class Ring(Item):
         value = self if isinstance(self, (int, float)) else self.value
         return _get_value_condition(
             value=value, negate=negate, condition=condition,
-            if_true_func=lambda c, ring: instr.IfPlayerOwnsRing(c, ring, including_box=False),
-            if_false_func=lambda c, ring: instr.IfPlayerDoesNotOwnRing(c, ring, including_box=False))
+            if_true_func=lambda c, ring: instr.IfPlayerHasRing(c, ring, including_box=False),
+            if_false_func=lambda c, ring: instr.IfPlayerDoesNotHaveRing(c, ring, including_box=False))
 
     @property
     def item_type(self):
@@ -215,8 +215,8 @@ class Good(Item):
         value = self if isinstance(self, (int, float)) else self.value
         return _get_value_condition(
             value=value, negate=negate, condition=condition,
-            if_true_func=lambda c, good: instr.IfPlayerOwnsGood(c, good, including_box=False),
-            if_false_func=lambda c, good: instr.IfPlayerDoesNotOwnGood(c, good, including_box=False))
+            if_true_func=lambda c, good: instr.IfPlayerHasGood(c, good, including_box=False),
+            if_false_func=lambda c, good: instr.IfPlayerDoesNotHaveGood(c, good, including_box=False))
 
     @property
     def item_type(self):
@@ -257,6 +257,10 @@ class FlagRange(object):
             end_if_true_func=instr.EndIfFlagRangeAllOn, end_if_false_func=instr.EndIfFlagRangeAnyOff,
             restart_if_true_func=instr.RestartIfFlagRangeAllOn, restart_if_false_func=instr.RestartIfFlagRangeAnyOff,
         )
+
+    def __iter__(self):
+        yield self.first
+        yield self.last
 
 
 class Map(object):
