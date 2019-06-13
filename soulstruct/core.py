@@ -23,7 +23,6 @@ class BinaryStruct(object):
             raise ValueError("byte_order must be '<', '>', or '@'.")
         self._struct_format = byte_order
         self._fields = []  # (name, length) pairs
-        self._field_length = []
         self._asserted_values = {}
         self._jis_field_size = {}
         for field in fields:
@@ -86,7 +85,11 @@ class BinaryStruct(object):
         data = source if isinstance(source, bytes) else source.read(self.size * count)  # type: bytes
         offset = 0
         for i in range(count):
-            unpacked = struct.unpack(self._struct_format, data[offset:offset + self.size])
+            try:
+                unpacked = struct.unpack(self._struct_format, data[offset:offset + self.size])
+            except struct.error:
+                print(f'Offset {offset}:', data[offset:offset + self.size])
+                raise
             offset += self.size
             output = AttributeDict()
             unpacked_index = 0
@@ -150,13 +153,17 @@ class BinaryStruct(object):
                     jis_bytes += b'\0' * (self._jis_field_size[field_name] - len(jis_bytes))  # pad encoded string
                     value = [jis_bytes]
                 elif isinstance(value, (list, tuple)):
-                    value = list(self._asserted_values[field_name])
+                    value = list(value)
                 else:
                     value = [value]
                 to_pack += value
             if struct_dict:
                 raise ValueError(f"Struct dict has leftover keys: {struct_dict}")
-            output += struct.pack(self._struct_format, *to_pack)
+            try:
+                output += struct.pack(self._struct_format, *to_pack)
+            except struct.error:
+                print(self._struct_format, to_pack)
+                raise
         return output
 
     @staticmethod
@@ -165,6 +172,16 @@ class BinaryStruct(object):
         for key in struct_dict:
             if key.startswith(field_start):
                 struct_dict[key] = value
+
+    def __repr__(self):
+        s = f'BinaryStruct: {self._struct_format}\n'
+        for i, field in enumerate(self._fields):
+            s += f'    {field[0]} :: {field[1]}'
+            if field[0] in self._asserted_values:
+                s += f' (asserted: {self._asserted_values[field[0]]}\n'
+            else:
+                s += '\n'
+        return s
 
 
 class AttributeDict(dict):
@@ -179,6 +196,8 @@ class AttributeDict(dict):
 
 
 def read_null_terminated_string(buffer, offset=None, encoding=None):
+    if isinstance(buffer, bytes):
+        buffer = BytesIO(buffer)
     if offset is not None:
         old_offset = buffer.tell()
         buffer.seek(offset)
@@ -216,7 +235,6 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None):
 
 
 def read_chars(buffer, offset=None, length=None, encoding=None, reset_old_offset=True):
-    # TODO: Buffer is too slow for this. Use bytes. (Actually, not sure if this is true.)
     """ Read characters from a buffer. If a bytes object is passed, it will be converted into a buffer automatically.
 
     If 'offset' is None, the buffer/bytes will be read from the start. Otherwise, the buffer will be reset to whatever
@@ -227,7 +245,10 @@ def read_chars(buffer, offset=None, length=None, encoding=None, reset_old_offset
 
     Use 'encoding' to automatically decode the bytes into a string before returning (e.g. 'shift_jis_2004'). """
 
-    # traceback.print_stack()  # TODO
+    if length == 0:
+        if not reset_old_offset and not isinstance(buffer, bytes):
+            buffer.seek(offset)
+        return '' if encoding is not None else b''
 
     if isinstance(buffer, bytes):
         buffer = BytesIO(buffer)
@@ -241,6 +262,8 @@ def read_chars(buffer, offset=None, length=None, encoding=None, reset_old_offset
 
     while 1:
         c = buffer.read(bytes_per_char)
+        if not c and length is None:
+            raise ValueError("Ran out of bytes to read before null termination was found!")
         if length is None and c == b'\x00' * bytes_per_char:
             # Null termination.
             array = b''.join(chars)
@@ -256,7 +279,12 @@ def read_chars(buffer, offset=None, length=None, encoding=None, reset_old_offset
         elif len(chars) == length:
             if reset_old_offset and old_offset is not None:
                 buffer.seek(old_offset)
-            stripped_array = b''.join(chars).rstrip(b' \x00')
+            stripped_array = b''.join(chars)
+            # Spaces and nulls (in chunks of bytes_per_char) are stripped.
+            stripped_array = stripped_array.rstrip(b' ')
+            while stripped_array.endswith(b'\0' * bytes_per_char):
+                stripped_array = stripped_array[:-bytes_per_char]
+            stripped_array = stripped_array.rstrip(b' ')
             if encoding is not None:
                 return stripped_array.decode(encoding)
             return stripped_array

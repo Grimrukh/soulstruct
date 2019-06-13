@@ -794,9 +794,11 @@ class BaseEMEVD(object):
         return emevd_binary
 
     def write_packed(self, emevd_path=None, dcx=None):
+        if dcx is None:
+            dcx = self._dcx
         if not emevd_path:
             emevd_path = self.map_name
-            if self._dcx:
+            if dcx:
                 if not emevd_path.endswith('.emevd.dcx'):
                     emevd_path += '.emevd.dcx'
             else:

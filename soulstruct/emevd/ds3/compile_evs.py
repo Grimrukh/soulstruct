@@ -6,7 +6,7 @@ from soulstruct.emevd.ds3.constants import ALL_MAPS
 def unpack_all_emevd_to_numeric(emevd_dir, numeric_dir):
     """ Build numeric files from all DCX-compressed EMEVD files in a directory.
 
-    I have not included the DS3 EMEVD in the package, but you can build them yourself from the packaged EVS files
+    I have not included the Bloodborne EMEVD in the package, but you can build them yourself from the packaged EVS files
     and compare to the originals if you have them.
     """
     for game_map in ALL_MAPS:
@@ -67,6 +67,7 @@ def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='em
 
 
 if __name__ == '__main__':
-    unpack_all_emevd_to_numeric('C:/Steam/steamapps/common/Dark Souls III/event', 'numeric_from_vanilla')
-    decompile_all_numeric('numeric_from_vanilla', 'evs')
+    # unpack_all_emevd_to_numeric('game_data', 'numeric_from_vanilla')
+    # pack_all_numeric_to_emevd('numeric_from_vanilla', 'emevd_from_numeric')
+    # decompile_all_numeric('numeric_from_vanilla', 'evs')
     compile_all_evs()
