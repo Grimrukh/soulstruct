@@ -181,8 +181,9 @@ class BaseEMEVD(object):
                         raise
 
                     # Process event layers.
-                    if d.first_event_layers_offset != -1:
-                        event_layers = cls.EventLayers.unpack(file, event_layers_table_offset + d.first_event_layers_offset)
+                    if d.first_event_layers_offset > 0:
+                        event_layers = cls.EventLayers.unpack(
+                            file, event_layers_table_offset + d.first_event_layers_offset)
                     else:
                         event_layers = None
 
@@ -617,7 +618,7 @@ class BaseEMEVD(object):
                         instruction.event_layers_offset = new_offset
                 else:
                     # No event layers for this instruction.
-                    instruction.event_layers_offset = -1
+                    instruction.event_layers_offset = 0  # NOTE: Not -1.
         return packed_event_layers_table
 
     def compute_base_args_size(self, existing_data_size):
@@ -804,7 +805,8 @@ class BaseEMEVD(object):
             else:
                 if not emevd_path.endswith('.emevd'):
                     emevd_path += '.emevd'
-        os.makedirs(os.path.dirname(emevd_path), exist_ok=True)
+        if os.path.dirname(emevd_path):
+            os.makedirs(os.path.dirname(emevd_path), exist_ok=True)
         with open(emevd_path, 'wb') as f:
             f.write(self.pack(dcx))
 
@@ -813,7 +815,8 @@ class BaseEMEVD(object):
             numeric_path = self.map_name
             if not numeric_path.endswith('.numeric.txt'):
                 numeric_path += '.numeric.txt'
-        os.makedirs(os.path.dirname(numeric_path), exist_ok=True)
+        if os.path.dirname(numeric_path):
+            os.makedirs(os.path.dirname(numeric_path), exist_ok=True)
         with open(numeric_path, 'w', encoding='utf-8') as f:
             f.write(self.to_numeric())
 
@@ -822,7 +825,8 @@ class BaseEMEVD(object):
             verbose_path = self.map_name
             if not verbose_path.endswith('.verbose.txt'):
                 verbose_path += '.verbose.txt'
-        os.makedirs(os.path.dirname(verbose_path), exist_ok=True)
+        if os.path.dirname(verbose_path):
+            os.makedirs(os.path.dirname(verbose_path), exist_ok=True)
         with open(verbose_path, 'w') as f:
             f.write(self.to_verbose(self.GAME_MODULE, with_line_numbers=with_line_numbers))
 
@@ -831,7 +835,8 @@ class BaseEMEVD(object):
             evs_path = self.map_name
             if not evs_path.endswith('.evs'):
                 evs_path += '.evs'
-        os.makedirs(os.path.dirname(evs_path), exist_ok=True)
+        if os.path.dirname(evs_path):
+            os.makedirs(os.path.dirname(evs_path), exist_ok=True)
         with open(evs_path, 'w', encoding='utf-8') as f:
             f.write(self.to_evs())
 
