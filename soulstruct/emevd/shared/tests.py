@@ -1,39 +1,40 @@
 from soulstruct.emevd.game_types import *  # IDE may wrongly mark this import as unused.
-from soulstruct.emevd.shared.instructions import *
+import soulstruct.emevd.shared.instructions as instr
 
 
-_THIS_FLAG = ConstantCondition(
-    if_true_func=IfThisEventOn,
-    if_false_func=IfThisEventOff,
-    skip_if_true_func=SkipLinesIfThisEventOn,
-    skip_if_false_func=SkipLinesIfThisEventOff,
-    end_if_true_func=EndIfThisEventOn,
-    end_if_false_func=EndIfThisEventOff,
-    restart_if_true_func=RestartIfThisEventOn,
-    restart_if_false_func=RestartIfThisEventOff,
+THIS_FLAG = ConstantCondition(
+    if_true_func=instr.IfThisEventOn,
+    if_false_func=instr.IfThisEventOff,
+    skip_if_true_func=instr.SkipLinesIfThisEventOn,
+    skip_if_false_func=instr.SkipLinesIfThisEventOff,
+    end_if_true_func=instr.EndIfThisEventOn,
+    end_if_false_func=instr.EndIfThisEventOff,
+    restart_if_true_func=instr.RestartIfThisEventOn,
+    restart_if_false_func=instr.RestartIfThisEventOff,
 )
 
-_THIS_SLOT_FLAG = ConstantCondition(
-    if_true_func=IfThisEventSlotOn,
-    if_false_func=IfThisEventSlotOff,
-    skip_if_true_func=SkipLinesIfThisEventSlotOn,
-    skip_if_false_func=SkipLinesIfThisEventSlotOff,
-    end_if_true_func=EndIfThisEventSlotOn,
-    end_if_false_func=EndIfThisEventSlotOff,
-    restart_if_true_func=RestartIfThisEventSlotOn,
-    restart_if_false_func=RestartIfThisEventSlotOff,
+THIS_SLOT_FLAG = ConstantCondition(
+    if_true_func=instr.IfThisEventSlotOn,
+    if_false_func=instr.IfThisEventSlotOff,
+    skip_if_true_func=instr.SkipLinesIfThisEventSlotOn,
+    skip_if_false_func=instr.SkipLinesIfThisEventSlotOff,
+    end_if_true_func=instr.EndIfThisEventSlotOn,
+    end_if_false_func=instr.EndIfThisEventSlotOff,
+    restart_if_true_func=instr.RestartIfThisEventSlotOn,
+    restart_if_false_func=instr.RestartIfThisEventSlotOff,
 )
 
 
-_ONLINE = ConstantCondition(if_true_func=IfOnline, if_false_func=IfOffline)
+ONLINE = ConstantCondition(if_true_func=instr.IfOnline, if_false_func=instr.IfOffline)
 
-_OFFLINE = ConstantCondition(if_true_func=IfOffline, if_false_func=IfOnline)
+OFFLINE = ConstantCondition(if_true_func=instr.IfOffline, if_false_func=instr.IfOnline)
 
-_DLC_OWNED = ConstantCondition(if_true_func=IfDLCOwned, if_false_func=IfDLCNotOwned)
+DLC_OWNED = ConstantCondition(if_true_func=instr.IfDLCOwned, if_false_func=instr.IfDLCNotOwned)
 
-_SKULL_LANTERN_ACTIVE = ConstantCondition(if_true_func=IfSkullLanternActive, if_false_func=IfSkullLanternInactive)
+SKULL_LANTERN_ACTIVE = ConstantCondition(if_true_func=instr.IfSkullLanternActive,
+                                         if_false_func=instr.IfSkullLanternInactive)
 
-_COMPARISON_VARIABLES = ['WHITE_WORLD_TENDENCY', 'BLACK_WORLD_TENDENCY', 'NEW_GAME_CYCLE', 'SOUL_LEVEL']
+COMPARISON_VARIABLES = ['WHITE_WORLD_TENDENCY', 'BLACK_WORLD_TENDENCY', 'NEW_GAME_CYCLE', 'SOUL_LEVEL']
 
 
 def __no_skip_or_negate_or_terminate(func):
@@ -94,391 +95,391 @@ def __skip_and_negate_and_terminate(func):
 
 
 @__negate_only
-def _WHITE_WORLD_TENDENCY(op_node, comparison_value, condition, negate=False):
+def WHITE_WORLD_TENDENCY(op_node, comparison_value, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfWhiteWorldTendencyComparison(condition, comparison_type, comparison_value)
+    return instr.IfWhiteWorldTendencyComparison(condition, comparison_type, comparison_value)
 
 
 @__negate_only
-def _BLACK_WORLD_TENDENCY(op_node, comparison_value, condition, negate=False):
+def BLACK_WORLD_TENDENCY(op_node, comparison_value, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfBlackWorldTendencyComparison(condition, comparison_type, comparison_value)
+    return instr.IfBlackWorldTendencyComparison(condition, comparison_type, comparison_value)
 
 
 @__negate_only
-def _NEW_GAME_CYCLE(op_node, comparison_value, condition, negate=False):
+def NEW_GAME_CYCLE(op_node, comparison_value, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfNewGameCycleComparison(condition, comparison_type, comparison_value)
+    return instr.IfNewGameCycleComparison(condition, comparison_type, comparison_value)
 
 
 @__negate_only
-def _SOUL_LEVEL(op_node, comparison_value, condition, negate=False):
+def SOUL_LEVEL(op_node, comparison_value, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfPlayerSoulLevelComparison(condition, comparison_type, comparison_value)
+    return instr.IfPlayerSoulLevelComparison(condition, comparison_type, comparison_value)
 
 
 @__skip_and_negate_and_terminate
-def _FlagEnabled(flag: Flag, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False):
+def FlagEnabled(flag: Flag, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False):
     if condition is not None:
         if negate:
-            return IfFlagOff(condition, flag)
-        return IfFlagOn(condition, flag)
+            return instr.IfFlagOff(condition, flag)
+        return instr.IfFlagOn(condition, flag)
     if skip_lines > 0:
         if negate:
-            return SkipLinesIfFlagOn(skip_lines, flag)
-        return SkipLinesIfFlagOff(skip_lines, flag)
+            return instr.SkipLinesIfFlagOn(skip_lines, flag)
+        return instr.SkipLinesIfFlagOff(skip_lines, flag)
     if end_event:
         if negate:
-            return EndIfFlagOff(flag)
-        return EndIfFlagOn(flag)
+            return instr.EndIfFlagOff(flag)
+        return instr.EndIfFlagOn(flag)
     if restart_event:
         if negate:
-            return RestartIfFlagOff(flag)
-        return RestartIfFlagOn(flag)
+            return instr.RestartIfFlagOff(flag)
+        return instr.RestartIfFlagOn(flag)
 
 
 @__skip_and_negate_and_terminate
-def _FlagDisabled(flag: Flag, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False):
-    return _FlagEnabled(flag=flag, condition=condition, negate=not negate, skip_lines=skip_lines,
-                        end_event=end_event, restart_event=restart_event)
+def FlagDisabled(flag: Flag, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False):
+    return FlagEnabled(flag=flag, condition=condition, negate=not negate, skip_lines=skip_lines,
+                       end_event=end_event, restart_event=restart_event)
 
 
 @__no_skip_or_negate_or_terminate
-def _SecondsElapsed(elapsed_seconds, condition):
-    return IfTimeElapsed(condition, elapsed_seconds)
+def SecondsElapsed(elapsed_seconds, condition):
+    return instr.IfTimeElapsed(condition, elapsed_seconds)
 
 
 @__no_skip_or_negate_or_terminate
-def _FramesElapsed(elapsed_frames, condition):
-    return IfFramesElapsed(condition, elapsed_frames)
+def FramesElapsed(elapsed_frames, condition):
+    return instr.IfFramesElapsed(condition, elapsed_frames)
 
 
 @__negate_only
-def _CharacterInsideRegion(entity: MapEntity, region: Region, condition, negate=False):
-    return IfCharacterRegionState(condition, entity, region, not negate)
+def CharacterInsideRegion(entity: MapEntity, region: Region, condition, negate=False):
+    return instr.IfCharacterRegionState(condition, entity, region, not negate)
 
 @__negate_only
-def _CharacterOutsideRegion(entity: MapEntity, region: Region, condition, negate=False):
-    return IfCharacterRegionState(condition, entity, region, negate)
+def CharacterOutsideRegion(entity: MapEntity, region: Region, condition, negate=False):
+    return instr.IfCharacterRegionState(condition, entity, region, negate)
 
 @__negate_only
-def _PlayerInsideRegion(region: Region, condition, negate=False):
-    return IfCharacterRegionState(condition, PLAYER, region, not negate)
+def PlayerInsideRegion(region: Region, condition, negate=False):
+    return instr.IfCharacterRegionState(condition, PLAYER, region, not negate)
 
 @__negate_only
-def _PlayerOutsideRegion(region: Region, condition, negate=False):
-    return IfCharacterRegionState(condition, PLAYER, region, negate)
+def PlayerOutsideRegion(region: Region, condition, negate=False):
+    return instr.IfCharacterRegionState(condition, PLAYER, region, negate)
 
 
 @__negate_only
-def _AllPlayersInsideRegion(region: Region, condition, negate=False):
-    return IfAllPlayersRegionState(condition, region, not negate)
+def AllPlayersInsideRegion(region: Region, condition, negate=False):
+    return instr.IfAllPlayersRegionState(condition, region, not negate)
 
 @__negate_only
-def _AllPlayersOutsideRegion(region: Region, condition, negate=False):
-    return IfAllPlayersRegionState(condition, region, negate)
+def AllPlayersOutsideRegion(region: Region, condition, negate=False):
+    return instr.IfAllPlayersRegionState(condition, region, negate)
 
 
 @__skip_and_negate_and_terminate
-def _InsideMap(game_map: GameMap, condition=None, negate=False,
-               skip_lines=0, end_event=False, restart_event=False):
+def InsideMap(game_map: GameMap, condition=None, negate=False,
+              skip_lines=0, end_event=False, restart_event=False):
     if skip_lines > 0:
-        return SkipLinesIfMapPresenceState(skip_lines, negate, game_map)
+        return instr.SkipLinesIfMapPresenceState(skip_lines, negate, game_map)
     if end_event:
-        return TerminateIfMapPresenceState(EventEndType.End, not negate, game_map)
+        return instr.TerminateIfMapPresenceState(EventEndType.End, not negate, game_map)
     if restart_event:
-        return SkipLinesIfMapPresenceState(EventEndType.Restart, not negate, game_map)
-    return IfMapPresenceState(condition, not negate, game_map)
+        return instr.SkipLinesIfMapPresenceState(EventEndType.Restart, not negate, game_map)
+    return instr.IfMapPresenceState(condition, not negate, game_map)
 
 
 @__skip_and_negate_and_terminate
-def _OutsideMap(game_map: GameMap, sub_index=None, condition=None, negate=False, skip_lines=0,
-                end_event=False, restart_event=False):
-    return _InsideMap(game_map, sub_index, condition=condition, negate=not negate, skip_lines=skip_lines,
-                      end_event=end_event, restart_event=restart_event)
+def OutsideMap(game_map: GameMap, sub_index=None, condition=None, negate=False, skip_lines=0,
+               end_event=False, restart_event=False):
+    return InsideMap(game_map, sub_index, condition=condition, negate=not negate, skip_lines=skip_lines,
+                     end_event=end_event, restart_event=restart_event)
 
 
 @__negate_only
-def _EntityWithinDistance(first_entity: MapEntity, second_entity: MapEntity, max_distance, condition, negate=False):
-    return IfEntityDistanceState(condition, first_entity, second_entity, max_distance, not negate)
+def EntityWithinDistance(first_entity: MapEntity, second_entity: MapEntity, max_distance, condition, negate=False):
+    return instr.IfEntityDistanceState(condition, first_entity, second_entity, max_distance, not negate)
 
 
 @__negate_only
-def _EntityBeyondDistance(first_entity: MapEntity, second_entity: MapEntity, min_distance, condition, negate=False):
-    return IfEntityDistanceState(condition, first_entity, second_entity, min_distance, negate)
+def EntityBeyondDistance(first_entity: MapEntity, second_entity: MapEntity, min_distance, condition, negate=False):
+    return instr.IfEntityDistanceState(condition, first_entity, second_entity, min_distance, negate)
 
 
 @__negate_only
-def _PlayerWithinDistance(entity: MapEntity, max_distance, condition, negate=False):
-    return IfEntityDistanceState(condition, PLAYER, entity, max_distance, not negate)
+def PlayerWithinDistance(entity: MapEntity, max_distance, condition, negate=False):
+    return instr.IfEntityDistanceState(condition, PLAYER, entity, max_distance, not negate)
 
 
 @__negate_only
-def _PlayerBeyondDistance(entity: MapEntity, min_distance, condition, negate=False):
-    return IfEntityDistanceState(condition, PLAYER, entity, min_distance, negate)
+def PlayerBeyondDistance(entity: MapEntity, min_distance, condition, negate=False):
+    return instr.IfEntityDistanceState(condition, PLAYER, entity, min_distance, negate)
 
 
 @__negate_only
-def _HasItem(item: Item, condition, negate=False):
+def HasItem(item: Item, condition, negate=False):
     try:
         item_type = item.item_type
     except AttributeError:
         raise ValueError("Can only use auto-detecting HasItem() on declared item types (Weapon, Armor, Ring, Good).")
-    return IfPlayerItemStateNoBox(condition, item_type, item, not negate)
+    return instr.IfPlayerItemStateNoBox(condition, item_type, item, not negate)
 
 
 @__negate_only
-def _HasWeapon(weapon: Weapon, condition, negate=False):
-    return IfPlayerItemStateNoBox(condition, ItemType.Weapon, weapon, not negate)
+def HasWeapon(weapon: Weapon, condition, negate=False):
+    return instr.IfPlayerItemStateNoBox(condition, ItemType.Weapon, weapon, not negate)
 
 
 @__negate_only
-def _HasArmor(armor: Armor, condition, negate=False):
-    return IfPlayerItemStateNoBox(condition, ItemType.Armor, armor, not negate)
+def HasArmor(armor: Armor, condition, negate=False):
+    return instr.IfPlayerItemStateNoBox(condition, ItemType.Armor, armor, not negate)
 
 
 @__negate_only
-def _HasRing(ring: Ring, condition, negate=False):
-    return IfPlayerItemStateNoBox(condition, ItemType.Ring, ring, not negate)
+def HasRing(ring: Ring, condition, negate=False):
+    return instr.IfPlayerItemStateNoBox(condition, ItemType.Ring, ring, not negate)
 
 
 @__negate_only
-def _HasGood(good: Good, condition, negate=False):
-    return IfPlayerItemStateNoBox(condition, ItemType.Good, good, not negate)
+def HasGood(good: Good, condition, negate=False):
+    return instr.IfPlayerItemStateNoBox(condition, ItemType.Good, good, not negate)
 
 
 @__no_skip_or_negate_or_terminate
-def _DialogPromptActivated(prompt_text, anchor_entity: MapEntity, facing_angle=None, max_distance=None,
-                           model_point=-1, human_or_hollow_only=True, button=0, boss_version=False,
-                           line_intersects=None, anchor_type=None, condition=None):
-    return IfDialogPromptActivated(condition, prompt_text, anchor_entity, facing_angle, max_distance,
-                                   model_point, human_or_hollow_only, button, boss_version, line_intersects,
-                                   anchor_type)
+def DialogPromptActivated(prompt_text, anchor_entity: MapEntity, facing_angle=None, max_distance=None,
+                          model_point=-1, human_or_hollow_only=True, button=0, boss_version=False,
+                          line_intersects=None, anchor_type=None, condition=None):
+    return instr.IfDialogPromptActivated(condition, prompt_text, anchor_entity, facing_angle, max_distance,
+                                         model_point, human_or_hollow_only, button, boss_version, line_intersects,
+                                         anchor_type)
 
 
 @__no_skip_or_negate_or_terminate
-def _MultiplayerEvent(multiplayer_event, condition):
-    return IfMultiplayerEvent(condition, multiplayer_event)
+def MultiplayerEvent(multiplayer_event, condition):
+    return instr.IfMultiplayerEvent(condition, multiplayer_event)
 
 
 @__negate_only
-def _TrueFlagCount(op_node, comparison_value, flag_range: FlagRangeOrSequence, condition, negate=False):
+def TrueFlagCount(op_node, comparison_value, flag_range: FlagRangeOrSequence, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfTrueFlagCountComparison(condition, comparison_value, FlagType.Absolute, comparison_type, flag_range)
+    return instr.IfTrueFlagCountComparison(condition, comparison_value, FlagType.Absolute, comparison_type, flag_range)
 
 
 @__negate_only
-def _EventValue(op_node, comparison_value, start_flag, bit_count, condition, negate=False):
+def EventValue(op_node, comparison_value, start_flag, bit_count, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfEventValueComparison(condition, start_flag, bit_count, comparison_type, comparison_value)
+    return instr.IfEventValueComparison(condition, start_flag, bit_count, comparison_type, comparison_value)
 
 
-# TODO: This involves comparing two flags, which I haven't implemented.
+# TODO: This involves comparing two flags, which I haven't implemented in the EVS parser yet.
 @__negate_only
-def _EventFlagValue(op_node, left_start_flag, left_bit_count, right_start_flag, right_bit_count,
-                    condition, negate=False):
+def EventFlagValue(op_node, left_start_flag, left_bit_count, right_start_flag, right_bit_count,
+                   condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfEventsComparison(condition, left_start_flag, left_bit_count, comparison_type,
-                              right_start_flag, right_bit_count)
+    return instr.IfEventsComparison(condition, left_start_flag, left_bit_count, comparison_type,
+                                    right_start_flag, right_bit_count)
 
 
 @__no_skip_or_negate_or_terminate
-def _AnyItemDroppedInRegion(region: Region, condition):
-    return IfAnyItemDroppedInRegion(condition, region)
+def AnyItemDroppedInRegion(region: Region, condition):
+    return instr.IfAnyItemDroppedInRegion(condition, region)
 
 
 @__no_skip_or_negate_or_terminate
-def _ItemDropped(item: Item, condition):
+def ItemDropped(item: Item, condition):
     try:
         item_type = item.item_type
     except AttributeError:
         raise ValueError("Can only use HasItem() on declared item types (Weapon, Armor, Ring, Good).")
-    return IfItemDropped(condition, item, item_type)
+    return instr.IfItemDropped(condition, item, item_type)
 
 
 @__negate_only
-def _OwnsItem(item: Item, condition, negate=False):
+def OwnsItem(item: Item, condition, negate=False):
     try:
         item_type = item.type
     except AttributeError:
         raise ValueError("Can only use OwnsItem() on declared item types (Weapon, Armor, Ring, Good).")
-    return IfPlayerItemStateBox(condition, item_type, item, not negate)
+    return instr.IfPlayerItemStateBox(condition, item_type, item, not negate)
 
 
 @__negate_only
-def _OwnsWeapon(weapon: Weapon, condition, negate=False):
-    return IfPlayerItemStateBox(condition, ItemType.Weapon, weapon, not negate)
+def OwnsWeapon(weapon: Weapon, condition, negate=False):
+    return instr.IfPlayerItemStateBox(condition, ItemType.Weapon, weapon, not negate)
 
 
 @__negate_only
-def _OwnsArmor(armor: Armor, condition, negate=False):
-    return IfPlayerItemStateBox(condition, ItemType.Armor, armor, not negate)
+def OwnsArmor(armor: Armor, condition, negate=False):
+    return instr.IfPlayerItemStateBox(condition, ItemType.Armor, armor, not negate)
 
 
 @__negate_only
-def _OwnsRing(ring: Ring, condition, negate=False):
-    return IfPlayerItemStateBox(condition, ItemType.Ring, ring, not negate)
+def OwnsRing(ring: Ring, condition, negate=False):
+    return instr.IfPlayerItemStateBox(condition, ItemType.Ring, ring, not negate)
 
 
 @__negate_only
-def _OwnsGood(good: Good, condition, negate=False):
-    return IfPlayerItemStateBox(condition, ItemType.Good, good, not negate)
+def OwnsGood(good: Good, condition, negate=False):
+    return instr.IfPlayerItemStateBox(condition, ItemType.Good, good, not negate)
 
 
 @__negate_only
-def _IsAlive(character: Character, condition, negate=False):
-    return IfCharacterDeathState(condition, character, negate)
+def IsAlive(character: Character, condition, negate=False):
+    return instr.IfCharacterDeathState(condition, character, negate)
 
 
 @__negate_only
-def _IsDead(character: Character, condition, negate=False):
-    return IfCharacterDeathState(condition, character, not negate)
+def IsDead(character: Character, condition, negate=False):
+    return instr.IfCharacterDeathState(condition, character, not negate)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsAttacked(attacked_entity, attacking_character, condition):
-    return IfAttacked(condition, attacked_entity, attacking_character)
+def IsAttacked(attacked_entity, attacking_character, condition):
+    return instr.IfAttacked(condition, attacked_entity, attacking_character)
 
 
 @__negate_only
-def _HealthRatio(op_node, comparison_value, character: Character, condition, negate=False):
+def HealthRatio(op_node, comparison_value, character: Character, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfHealthComparison(condition, character, comparison_type, comparison_value)
+    return instr.IfHealthComparison(condition, character, comparison_type, comparison_value)
 
 
 @__negate_only
-def _PartHealthValue(op_node, comparison_value, character: Character, part_type, condition, negate=False):
+def PartHealthValue(op_node, comparison_value, character: Character, part_type, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfCharacterPartHealthComparison(condition, character, part_type, comparison_value, comparison_type)
+    return instr.IfCharacterPartHealthComparison(condition, character, part_type, comparison_value, comparison_type)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsCharacterType(character: Character, character_type: CharacterType, condition):
-    return IfCharacterType(condition, character, character_type)
+def IsCharacterType(character: Character, character_type: CharacterType, condition):
+    return instr.IfCharacterType(condition, character, character_type)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsHollow(character: Character, condition):
-    return IfCharacterHollow(condition, character)
+def IsHollow(character: Character, condition):
+    return instr.IfCharacterHollow(condition, character)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsHuman(character: Character, condition):
-    return IfCharacterHuman(condition, character)
+def IsHuman(character: Character, condition):
+    return instr.IfCharacterHuman(condition, character)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsInvader(character: Character, condition):
-    return IfCharacterType(condition, character, CharacterType.Intruder)
+def IsInvader(character: Character, condition):
+    return instr.IfCharacterType(condition, character, CharacterType.Intruder)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsBlackPhantom(character: Character, condition):
-    return IfCharacterType(condition, character, CharacterType.BlackPhantom)
+def IsBlackPhantom(character: Character, condition):
+    return instr.IfCharacterType(condition, character, CharacterType.BlackPhantom)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsWhitePhantom(character: Character, condition):
-    return IfCharacterType(condition, character, CharacterType.WhitePhantom)
+def IsWhitePhantom(character: Character, condition):
+    return instr.IfCharacterType(condition, character, CharacterType.WhitePhantom)
 
 
 @__negate_only
-def _IsTargeting(targeting_chr, targeted_chr, condition, negate=False):
-    return IfCharacterTargetingState(condition, targeting_chr, targeted_chr, not negate)
+def IsTargeting(targeting_chr, targeted_chr, condition, negate=False):
+    return instr.IfCharacterTargetingState(condition, targeting_chr, targeted_chr, not negate)
 
 
 @__negate_only
-def _HasSpecialEffect(character: Character, special_effect, condition, negate=False):
-    return IfCharacterSpecialEffectState(condition, character, special_effect, not negate)
+def HasSpecialEffect(character: Character, special_effect, condition, negate=False):
+    return instr.IfCharacterSpecialEffectState(condition, character, special_effect, not negate)
 
 
 @__negate_only
-def _BackreadEnabled(character: Character, condition, negate=False):
-    return IfCharacterBackreadState(condition, character, not negate)
+def BackreadEnabled(character: Character, condition, negate=False):
+    return instr.IfCharacterBackreadState(condition, character, not negate)
 
 
 @__negate_only
-def _BackreadDisabled(character: Character, condition, negate=False):
-    return IfCharacterBackreadState(condition, character, negate)
+def BackreadDisabled(character: Character, condition, negate=False):
+    return instr.IfCharacterBackreadState(condition, character, negate)
 
 
 @__negate_only
-def _HasTaeEvent(character: Character, tae_event_id, condition, negate=False):
-    return IfTAEEventState(condition, character, tae_event_id, not negate)
+def HasTaeEvent(character: Character, tae_event_id, condition, negate=False):
+    return instr.IfTAEEventState(condition, character, tae_event_id, not negate)
 
 
 @__no_skip_or_negate_or_terminate
-def _HasAiStatus(character: Character, ai_state, condition):
-    return IfHasAIStatus(condition, character, ai_state)
+def HasAiStatus(character: Character, ai_state, condition):
+    return instr.IfHasAIStatus(condition, character, ai_state)
 
 
 @__no_skip_or_negate_or_terminate
-def _AiStatusIsNormal(character: Character, condition):
-    return IfHasAIStatus(condition, character, AIStatusType.Normal)
+def AiStatusIsNormal(character: Character, condition):
+    return instr.IfHasAIStatus(condition, character, AIStatusType.Normal)
 
 
 @__no_skip_or_negate_or_terminate
-def _AiStatusIsRecognition(character: Character, condition):
-    return IfHasAIStatus(condition, character, AIStatusType.Recognition)
+def AiStatusIsRecognition(character: Character, condition):
+    return instr.IfHasAIStatus(condition, character, AIStatusType.Recognition)
 
 
 @__no_skip_or_negate_or_terminate
-def _AiStatusIsAlert(character: Character, condition):
-    return IfHasAIStatus(condition, character, AIStatusType.Alert)
+def AiStatusIsAlert(character: Character, condition):
+    return instr.IfHasAIStatus(condition, character, AIStatusType.Alert)
 
 
 @__no_skip_or_negate_or_terminate
-def _AiStatusIsBattle(character: Character, condition):
-    return IfHasAIStatus(condition, character, AIStatusType.Battle)
+def AiStatusIsBattle(character: Character, condition):
+    return instr.IfHasAIStatus(condition, character, AIStatusType.Battle)
 
 
 @__no_skip_or_negate_or_terminate
-def _PlayerIsClass(class_type: ClassType, condition):
-    return IfPlayerClass(condition, class_type)
+def PlayerIsClass(class_type: ClassType, condition):
+    return instr.IfPlayerClass(condition, class_type)
 
 
 @__no_skip_or_negate_or_terminate
-def _PlayerInCovenant(covenant_type: Covenant, condition):
-    return IfPlayerCovenant(condition, covenant_type)
+def PlayerInCovenant(covenant_type: Covenant, condition):
+    return instr.IfPlayerCovenant(condition, covenant_type)
 
 
 @__negate_only
-def _HealthValue(op_node, comparison_value, character: Character, condition, negate=False):
+def HealthValue(op_node, comparison_value, character: Character, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfHealthValueComparison(condition, character, comparison_type, comparison_value)
+    return instr.IfHealthValueComparison(condition, character, comparison_type, comparison_value)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsDamaged(attacked_obj: Object, attacking_character, condition):
-    return IfObjectDamagedBy(condition, attacked_obj, attacking_character)
+def IsDamaged(attacked_obj: Object, attacking_character, condition):
+    return instr.IfObjectDamagedBy(condition, attacked_obj, attacking_character)
 
 
 @__skip_and_negate_and_terminate
-def _IsDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=False, restart_event=False):
+def IsDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=False, restart_event=False):
     if skip_lines > 0:
-        return SkipLinesIfObjectDestructionState(skip_lines, obj, negate)
+        return instr.SkipLinesIfObjectDestructionState(skip_lines, obj, negate)
     if end_event:
-        return TerminateIfObjectDestructionState(EventEndType.End, obj, not negate)
+        return instr.TerminateIfObjectDestructionState(EventEndType.End, obj, not negate)
     if restart_event:
-        return TerminateIfObjectDestructionState(EventEndType.Restart, obj, not negate)
-    return IfObjectDestructionState(condition, obj, not negate)
+        return instr.TerminateIfObjectDestructionState(EventEndType.Restart, obj, not negate)
+    return instr.IfObjectDestructionState(condition, obj, not negate)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsActivated(obj: Object, condition):
-    return IfObjectActivated(condition, obj)
+def IsActivated(obj: Object, condition):
+    return instr.IfObjectActivated(condition, obj)
 
 
 @__no_skip_or_negate_or_terminate
-def _PlayerStandingOnHitbox(hitbox: Hitbox, condition):
-    return IfStandingOnHitbox(condition, hitbox)
+def PlayerStandingOnHitbox(hitbox: Hitbox, condition):
+    return instr.IfStandingOnHitbox(condition, hitbox)
 
 
 @__no_skip_or_negate_or_terminate
-def _PlayerMovingOnHitbox(hitbox: Hitbox, condition):
-    return IfMovingOnHitbox(condition, hitbox)
+def PlayerMovingOnHitbox(hitbox: Hitbox, condition):
+    return instr.IfMovingOnHitbox(condition, hitbox)
 
 
 @__no_skip_or_negate_or_terminate
-def _PlayerRunningOnHitbox(hitbox: Hitbox, condition):
-    return IfRunningOnHitbox(condition, hitbox)
+def PlayerRunningOnHitbox(hitbox: Hitbox, condition):
+    return instr.IfRunningOnHitbox(condition, hitbox)

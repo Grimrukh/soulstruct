@@ -1,50 +1,81 @@
 
 """
-                        Before you read any further, I recommend associating
-                        the EVS file type with Python files in your IDE so
-                        you can see all the useful syntax highlighting and
-                        even use auto-completion and inspection. 
-                        
-                        You can also just use the '.py' extension if you 
-                        prefer, which I've used here so that you can see the 
-                        syntax highlighting on GitHub.
+                        This is a completely made-up example of an event
+                        script for Dark Souls 1. In practice, you'll want
+                        to decompile the vanilla scripts, then edit them,
+                        or you'll lose all the events you don't want to
+                        change. (If this script were actually the EMEVD
+                        file for the Depths, you would experience broken
+                        bonfires and doors, impenetrable fog, and one
+                        very aggressive Gaping Dragon, among other large
+                        issues.) See 'example.py' in the same folder for
+                        a version of this script with no comments, which
+                        is easier to read for actual content.
 
-                        Check out the 'emevd/vanilla_evs_ptd' folder for
-                        EVS versions of the vanilla event scripts from Dark
-                        Souls: Prepare to Die Edition. You can also use
-                        the 'vanilla_base_map' argument of the EMEVD class
-                        to use the vanilla (again, PTD) versions of any
+                        Check out the 'soulstruct/emevd/vanilla_evs_ptd'
+                        folder for EVS versions of the vanilla event
+                        scripts from Dark Souls: Prepare to Die Edition.
+                        (These will work absolutely fine in Dark Souls
+                        Remastered as well, though the new Vamos bonfire
+                        won't work and the Battle of Stoicism PvP arena
+                        will be even more useless.)
+
+                        You can also use the 'vanilla_base_map' argument
+                        of the EMEVD class to use specify one of these
+                        vanilla maps to use as the 'base' versions of any
                         events you don't define in your own script, though
-                        you will likely need the Constructor (0) and maybe
-                        Preconstructor (50) event functions in most cases.
+                        you will still need the Constructor (event 0) and
+                        maybe Preconstructor (event 50) functions in most
+                        cases to run any new events you write. (This
+                        feature is currently for DS1 only.)
+
+                        The differences in EMEVD from Dark Souls 1 through
+                        to Sekiro are small (excluding DS2, where EMEVD is
+                        completely absent). The main changes are slight
+                        differences in the EMEVD instruction set, which
+                        generally expanded with each game. Bloodborne also
+                        introduced the "Label" and "Goto" family of
+                        instructions, which is easier to use than the
+                        "SkipLines" family but probably still not as easy
+                        as the Python-level control flow offered in EVS.
 
                         You can ask me anything on the ?ServerName? Dark
                         Souls modding Discord. I'm sure there are bugs and
                         typos; I haven't tried every single instruction and
                         test yet. You can raise these on GitHub as well.
 
-                        All the best with your event modding, and I hope this
-                        helps.
+                        Check out my StJudeSouls repository for the actual
+                        EVS 'source code' I used to create the St. Jude mod
+                        for LobosJr. It's not especially neat, but there's
+                        a lot of real EVS work there for you to look at. In
+                        particular, you'll see a lot of the useful high-
+                        level control flow features that don't appear in
+                        the decompiled vanilla scripts.
+
+                        All the best with your event modding, and I hope
+                        EVS helps.
                                                                    Grimrukh
 """
 
 # This star import is purely so your intelli-sense can pick up all the instructions, tests, and other EVS wrapper
 # functions. It is ignored by the compiler and can actually be removed entirely if you don't care about auto-completion
 # or intelli-sense inspection, etc.
-from soulstruct.emevd import *
+
+# Make sure you import from the right game!
+from soulstruct.emevd.ds1 import *
 
 # This import actually matters. You should define your constants in a separate Python script, and import them here.
 # See 'example_constants.py' for examples. You can then use these constants in your EVS script below. The intent is
 # that you can carefully control which constants (particularly Flags) each map's script has access to, which will
 # reduce the chances of accidental, crippling, silent bugs caused by using the wrong one. Note that unlike the general
 # star import above, any imports here do matter to the compiler and will determine what constants it has access to.
-from .example_constants import *
+from examples.emevd.example_constants import *
 
 # (I'll consider adding support for you to directly define your constants here, but it complicates things, and you
 # should really be keeping them separate anyway.)
 
 # After constant imports, the rest of the EVS script is strictly comprised of function declarations - one per event.
-# I'll go over the components of a couple of simple examples from Firelink Shrine in Daughters of Ash.
+# I'll go over the components of a couple of simple examples you might find in the Depths.
 
 
 # EVENT NAME: The name of the function should be the event name. This is completely up to you and will be stripped from
@@ -121,11 +152,10 @@ def PullOutMeltedIronKey():
     # We halt here for one second. Note that I like to pass floats where they're expected, but integers work fine too.
     Wait(1.0)
 
-    # Again, note that the prompt won't appear until the game actually cares about the player activating it.
-    Await(
-        DialogPromptActivated(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
-                              model_point=100, max_distance=1.5)
-    )
+    # We can also equivalently use the built-in 'await' keyword, which I find helps these critical instruction stand out
+    # from the rest. Again, note that the prompt won't appear until the previous conditions are true.
+    await DialogPromptActivated(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+                                model_point=100, max_distance=1.5)
 
     # This instruction defaults to 'host_only', which you can set to False to share the love with your summons.
     AwardItemLot(ITEMLOT.InDepthsDoor)

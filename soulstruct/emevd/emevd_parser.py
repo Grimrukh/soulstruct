@@ -12,14 +12,15 @@ from soulstruct.emevd.shared.enums import RestartType
 
 INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)\] \(([iIhHbBfs|]*)\)\[([\d, .-]*)\][ ]?(<[\d, ]*>)?")
 EVENT_ARG_REPLACEMENT_RE = re.compile(r" [ ]*\^\((\d+) <- (\d+), (\d+)\)")
-HEADER_RE = re.compile(r"^(\d+), ([012])")
+EVENT_HEADER_RE = re.compile(r"^(\d+), ([012])")
 ELEMENT_MIN_MAX = {'b': (-128, 127), 'B': (0, 255),
                    'h': (-32768, 32767), 'H': (0, 65535),
                    'i': (-2147483648, 2147483647), 'I': (0, 4294967295)}
-EVS_ARG_TYPES = {'i': 'int', 'I': 'uint', 'f': 'float', 'h': 'short', 'H': 'ushort', 'b': 'char', 'B': 'uchar',
-                 's': 'int'}
+EVS_ARG_TYPES = {
+    'i': 'int', 'I': 'uint', 'f': 'float', 'h': 'short', 'H': 'ushort', 'b': 'char', 'B': 'uchar', 's': 'int'
+}
 
-EVENT_ARG_TYPES = {}  # Global dictionary that maps event IDs to their type strings. Refreshed each verbose/EVS build.
+EVENT_ARG_TYPES = {}  # Global dictionary that maps event IDs to their type strings. Refreshed on each EVS build.
 
 
 def get_byte_offset_from_struct(format_string):
@@ -181,7 +182,7 @@ class BaseEMEVD(object):
                         raise
 
                     # Process event layers.
-                    if d.first_event_layers_offset > 0:
+                    if d.first_event_layers_offset != -1:
                         event_layers = cls.EventLayers.unpack(
                             file, event_layers_table_offset + d.first_event_layers_offset)
                     else:
@@ -495,17 +496,14 @@ class BaseEMEVD(object):
                     os.path.dirname(__file__), 'numeric_from_vanilla', vanilla_base_map + '.numeric.txt')
             if not os.path.isfile(vanilla_base_map):
                 raise FileNotFoundError(f"Could not find vanilla numeric event file '{vanilla_base_map}' in package.")
-            emevd_dict = numeric_file_to_emevd_dict(vanilla_base_map, self.GAME_MODULE)
+            emevd_dict = self.build_from_numeric_path(vanilla_base_map)
             self.linked_file_offsets = emevd_dict.pop('linked')
             self.packed_strings = emevd_dict.pop('strings')
             self.events.update(emevd_dict)
 
         if isinstance(emevd_source, EmevdCompiler):
             self.map_name = emevd_source.map_name
-            emevd_dict = numeric_string_to_event_dict(emevd_source.numeric_emevd, self.GAME_MODULE)
-            self.linked_file_offsets = emevd_dict.pop('linked')
-            self.packed_strings = emevd_dict.pop('strings')
-            self.events.update(emevd_dict)
+            self.build_from_numeric_string(emevd_source.numeric_emevd)
 
         elif isinstance(emevd_source, dict):
             self.map_name = None
@@ -525,14 +523,11 @@ class BaseEMEVD(object):
             if emevd_source.endswith('.py') or emevd_source.endswith('.evs'):
                 emevd_source = EmevdCompiler(emevd_source, self.GAME_MODULE)
                 self.map_name = emevd_source.map_name
-                emevd_dict = numeric_string_to_event_dict(emevd_source.numeric_emevd, self.GAME_MODULE)
-                self.linked_file_offsets = emevd_dict.pop('linked')
-                self.packed_strings = emevd_dict.pop('strings')
-                self.events.update(emevd_dict)
+                self.build_from_numeric_string(emevd_source.numeric_emevd)
 
             elif emevd_source.endswith('.txt'):
                 try:
-                    emevd_dict = numeric_file_to_emevd_dict(emevd_source, self.GAME_MODULE)
+                    emevd_dict = self.build_from_numeric_path(emevd_source)
                     self.linked_file_offsets = emevd_dict.pop('linked')
                     self.packed_strings = emevd_dict.pop('strings')
                     self.events.update(emevd_dict)
@@ -589,9 +584,113 @@ class BaseEMEVD(object):
             for _ in range(header.linked_files_count):
                 self.linked_file_offsets.append(struct.unpack('<Q', emevd_buffer.read(8))[0])
 
-    @classmethod
-    def build_from_numeric_file_path(cls, numeric_path):
-        return cls(numeric_file_to_emevd_dict(numeric_path, cls.GAME_MODULE))
+    def build_from_numeric_path(self, numeric_path):
+        with open(numeric_path, 'r', encoding='utf-8') as f:
+            numeric_string = f.read()
+        return self.build_from_numeric_string(numeric_string)
+
+    def build_from_numeric_string(self, numeric_source):
+        """ Parses the text data from the given numeric-style string into a dictionary of events suitable for use as an
+        EMEVD() source, which can then be packed to binary. Raises a ValueError if the numeric input cannot be parsed
+        for some reason. """
+        # TODO: Allow whitespace on blank lines between events.
+        text_events = re.split(r'\n{2,}', numeric_source)
+        linked_offsets = []
+        strings = b''
+
+        lineno = 0
+        for text_event in text_events:
+            if text_event.startswith('linked:'):
+                for offset in text_event[8:].split('\n'):
+                    if offset.strip():
+                        linked_offsets += [int(offset.strip())]
+                continue
+
+            if text_event.startswith('strings:'):
+                for offset_with_string in text_event[9:].split('\n'):
+                    if not offset_with_string:
+                        continue
+                    z_string = offset_with_string.split(':', 1)[-1].strip().encode('utf-16le') + b'\0\0'
+                    strings += z_string
+                continue
+
+            event_lines = text_event.splitlines()
+            header_line = event_lines[0]
+            m = EVENT_HEADER_RE.match(header_line)
+            if not m:
+                print(f'Event: {repr(text_event)}')
+                raise ValueError(f"Error parsing header line: '{header_line}'.")
+            event_id = int(m.group(1))
+            restart_type = int(m.group(2))
+
+            instruction_list = []
+            for instruction_or_event_arg in event_lines[1:]:
+                lineno += 1
+                m_instruction = INSTRUCTION_RE.match(instruction_or_event_arg)
+                m_arg_r = EVENT_ARG_REPLACEMENT_RE.match(instruction_or_event_arg)
+
+                if m_instruction:
+                    # Parse the line as an instruction.
+                    instruction_class = int(m_instruction.group(1))
+                    instruction_index = int(m_instruction.group(2))
+                    args_format = m_instruction.group(3)
+                    args_list_string = m_instruction.group(4)
+                    if m_instruction.group(5) is not None:
+                        event_layers = [int(e) for e in m_instruction.group(5)[1:-1].split(', ')]
+                    else:
+                        event_layers = None
+
+                    # Check the argument list against the format_string.
+                    split_arg_list = args_list_string.split(",")
+                    # Remove required|optional separator and replace 's' with 'I' (string offset).
+                    raw_args_format = args_format.replace('|', '').replace('s', 'I')
+                    if split_arg_list == ['']:
+                        split_arg_list = []
+                    if len(raw_args_format) != len(split_arg_list):
+                        print(args_format, raw_args_format, split_arg_list)
+                        raise ValueError(f"Number of args ({len(raw_args_format)}) does not match length of the "
+                                         f"instruction format string ('{args_format}') (Line {lineno})")
+
+                    args_list = []
+                    for i, element in enumerate(raw_args_format):
+                        arg = split_arg_list[i]
+                        if element == 'f':
+                            args_list.append(float(arg))
+                        elif element in ELEMENT_MIN_MAX:
+                            min_value, max_value = ELEMENT_MIN_MAX[element]
+                            parsed_arg = int(arg)
+                            if min_value <= parsed_arg <= max_value:
+                                args_list.append(parsed_arg)
+                            else:
+                                print(instruction_class, instruction_index, args_format, args_list_string)
+                                raise ValueError(f"Argument '{arg}' is not inside the permitted range of data type "
+                                                 f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})")
+                    instruction_list.append(self.Event.Instruction(
+                        instruction_class, instruction_index, args_format, args_list, event_layers)
+                    )
+
+                elif m_arg_r:
+                    if len(instruction_list) >= 1:
+                        # Parse the line as an arg replacement for the previous line.
+                        write_from_byte = int(m_arg_r.group(1))
+                        read_from_byte = int(m_arg_r.group(2))
+                        bytes_to_write = int(m_arg_r.group(3))
+
+                        instruction_list[-1].event_args.append(
+                            self.Event.EventArg(
+                                len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write)
+                        )
+                    else:
+                        raise ValueError(f"Parameter replacement '{instruction_or_event_arg}' does not follow an "
+                                         f"instruction line.")
+                else:
+                    # Malformed line.
+                    raise ValueError(f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or "
+                                     f"event arg replacement.")
+            self.events[event_id] = self.Event(event_id, restart_type, instruction_list)
+
+        self.linked_file_offsets = linked_offsets
+        self.packed_strings = strings
 
     @property
     def event_count(self):
@@ -610,7 +709,8 @@ class BaseEMEVD(object):
                 if instruction.event_layers:
                     packed_event_layers = instruction.event_layers.pack()
                     try:
-                        existing_offset = packed_event_layers_table.index(packed_event_layers) * self.Event.Instruction.EventLayers.STRUCT.size
+                        existing_offset = (packed_event_layers_table.index(packed_event_layers)
+                                           * self.Event.Instruction.EventLayers.STRUCT.size)
                         instruction.event_layers_offset = existing_offset
                     except ValueError:
                         new_offset = self.Event.Instruction.EventLayers.STRUCT.size * len(packed_event_layers_table)
@@ -618,7 +718,7 @@ class BaseEMEVD(object):
                         instruction.event_layers_offset = new_offset
                 else:
                     # No event layers for this instruction.
-                    instruction.event_layers_offset = 0  # NOTE: Not -1.
+                    instruction.event_layers_offset = -1
         return packed_event_layers_table
 
     def compute_base_args_size(self, existing_data_size):
@@ -638,7 +738,8 @@ class BaseEMEVD(object):
         offsets['instruction'] = offsets['event'] + self.Event.STRUCT.size * self.event_count
         # Ignore empty unknown table.
         offsets['event_layers'] = offsets['instruction'] + self.Event.Instruction.STRUCT.size * self.instruction_count
-        offsets['base_arg_data'] = offsets['event_layers'] + self.Event.Instruction.EventLayers.STRUCT.size * len(event_layers_table)
+        offsets['base_arg_data'] = offsets['event_layers'] + (self.Event.Instruction.EventLayers.STRUCT.size
+                                                              * len(event_layers_table))
         offsets['event_arg'] = offsets['base_arg_data'] + self.compute_base_args_size(offsets['base_arg_data'])
         offsets['linked_files'] = offsets['event_arg'] + self.Event.EventArg.STRUCT.size * self.event_arg_count
         offsets['packed_strings'] = offsets['linked_files'] + 8 * len(self.linked_file_offsets)
@@ -794,7 +895,7 @@ class BaseEMEVD(object):
             return DCX(emevd_binary, magic=self.DCX_MAGIC).pack()
         return emevd_binary
 
-    def write_packed(self, emevd_path=None, dcx=None):
+    def write_emevd(self, emevd_path=None, dcx=None):
         if dcx is None:
             dcx = self._dcx
         if not emevd_path:
@@ -805,8 +906,9 @@ class BaseEMEVD(object):
             else:
                 if not emevd_path.endswith('.emevd'):
                     emevd_path += '.emevd'
-        if os.path.dirname(emevd_path):
-            os.makedirs(os.path.dirname(emevd_path), exist_ok=True)
+        directory = os.path.dirname(emevd_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         with open(emevd_path, 'wb') as f:
             f.write(self.pack(dcx))
 
@@ -815,141 +917,19 @@ class BaseEMEVD(object):
             numeric_path = self.map_name
             if not numeric_path.endswith('.numeric.txt'):
                 numeric_path += '.numeric.txt'
-        if os.path.dirname(numeric_path):
-            os.makedirs(os.path.dirname(numeric_path), exist_ok=True)
+        directory = os.path.dirname(numeric_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         with open(numeric_path, 'w', encoding='utf-8') as f:
             f.write(self.to_numeric())
-
-    def write_verbose(self, verbose_path=None, with_line_numbers=False):
-        if not verbose_path:
-            verbose_path = self.map_name
-            if not verbose_path.endswith('.verbose.txt'):
-                verbose_path += '.verbose.txt'
-        if os.path.dirname(verbose_path):
-            os.makedirs(os.path.dirname(verbose_path), exist_ok=True)
-        with open(verbose_path, 'w') as f:
-            f.write(self.to_verbose(self.GAME_MODULE, with_line_numbers=with_line_numbers))
 
     def write_evs(self, evs_path=None):
         if not evs_path:
             evs_path = self.map_name
             if not evs_path.endswith('.evs'):
                 evs_path += '.evs'
-        if os.path.dirname(evs_path):
-            os.makedirs(os.path.dirname(evs_path), exist_ok=True)
+        directory = os.path.dirname(evs_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         with open(evs_path, 'w', encoding='utf-8') as f:
             f.write(self.to_evs())
-
-
-def numeric_string_to_event_dict(numeric_string, game_module):
-    """ Parses the text data from the given numeric-style string into an EMEVD() instance, which can then be packed to
-    binary or made verbose. Raises a ValueError if the numeric input cannot be parsed for some reason. """
-
-    # TODO: Allow whitespace on blank lines between events.
-    text_events = re.split(r'\n{2,}', numeric_string)
-    emevd_dict = OrderedDict()
-    linked_offsets = []
-    strings = b''
-
-    lineno = 0
-    for text_event in text_events:
-
-        if text_event.startswith('linked:'):
-            for offset in text_event[8:].split('\n'):
-                if offset.strip():
-                    linked_offsets += [int(offset.strip())]
-            continue
-
-        if text_event.startswith('strings:'):
-            for offset_with_string in text_event[9:].split('\n'):
-                if not offset_with_string:
-                    continue
-                z_string = offset_with_string.split(':', 1)[-1].strip().encode('utf-16le') + b'\0\0'
-                strings += z_string
-            continue
-
-        event_lines = text_event.splitlines()
-        header_line = event_lines[0]
-        m = HEADER_RE.match(header_line)
-        if not m:
-            print(f'Event: {repr(text_event)}')
-            raise ValueError(f"Error parsing header line: '{header_line}'.")
-        event_id = int(m.group(1))
-        restart_type = int(m.group(2))
-
-        instruction_list = []
-        for instruction_or_event_arg in event_lines[1:]:
-            lineno += 1
-            m_instruction = INSTRUCTION_RE.match(instruction_or_event_arg)
-            m_arg_r = EVENT_ARG_REPLACEMENT_RE.match(instruction_or_event_arg)
-
-            if m_instruction:
-                # Parse the line as an instruction.
-                instruction_class = int(m_instruction.group(1))
-                instruction_index = int(m_instruction.group(2))
-                args_format = m_instruction.group(3)
-                args_list_string = m_instruction.group(4)
-                if m_instruction.group(5) is not None:
-                    event_layers = [int(e) for e in m_instruction.group(5)[1:-1].split(', ')]
-                else:
-                    event_layers = None
-
-                # Check the argument list against the format_string.
-                split_arg_list = args_list_string.split(",")
-                # Remove required|optional separator and replace 's' with 'I' (string offset).
-                raw_args_format = args_format.replace('|', '').replace('s', 'I')
-                if split_arg_list == ['']:
-                    split_arg_list = []
-                if len(raw_args_format) != len(split_arg_list):
-                    print(args_format, raw_args_format, split_arg_list)
-                    raise ValueError(f"Number of args ({len(raw_args_format)}) does not match length of the "
-                                     f"instruction format string ('{args_format}') (Line {lineno})")
-
-                args_list = []
-                for i, element in enumerate(raw_args_format):
-                    arg = split_arg_list[i]
-                    if element == 'f':
-                        args_list.append(float(arg))
-                    elif element in ELEMENT_MIN_MAX:
-                        min_value, max_value = ELEMENT_MIN_MAX[element]
-                        parsed_arg = int(arg)
-                        if min_value <= parsed_arg <= max_value:
-                            args_list.append(parsed_arg)
-                        else:
-                            print(instruction_class, instruction_index, args_format, args_list_string)
-                            raise ValueError(f"Argument '{arg}' is not inside the permitted range of data type "
-                                             f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})")
-                instruction_list.append(game_module.EMEVD.Event.Instruction(
-                    instruction_class, instruction_index, args_format, args_list, event_layers)
-                )
-
-            elif m_arg_r:
-                if len(instruction_list) >= 1:
-                    # Parse the line as an arg replacement for the previous line.
-                    write_from_byte = int(m_arg_r.group(1))
-                    read_from_byte = int(m_arg_r.group(2))
-                    bytes_to_write = int(m_arg_r.group(3))
-
-                    instruction_list[-1].event_args.append(
-                        game_module.EMEVD.Event.EventArg(
-                            len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write)
-                    )
-                else:
-                    raise ValueError(f"Parameter replacement '{instruction_or_event_arg}' does not follow an "
-                                     f"instruction line.")
-            else:
-                # Malformed line.
-                raise ValueError(f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or "
-                                 f"event arg replacement.")
-        emevd_dict[event_id] = game_module.EMEVD.Event(event_id, restart_type, instruction_list)
-
-    emevd_dict['linked'] = linked_offsets
-    emevd_dict['strings'] = strings
-
-    return emevd_dict
-
-
-def numeric_file_to_emevd_dict(numeric_path, game_module):
-    with open(numeric_path, 'r', encoding='utf-8') as f:
-        numeric_string = f.read()
-    return numeric_string_to_event_dict(numeric_string, game_module)

@@ -54,7 +54,7 @@ def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='em
         print('  Writing EVS to numeric...')
         e.write_numeric(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
         print('  Writing EVS to EMEVD (DCX)... ')
-        e.write_packed(os.path.join(emevd_dir, f'{map_name}.emevd.dcx'), dcx=True)
+        e.write_emevd(os.path.join(emevd_dir, f'{map_name}.emevd.dcx'), dcx=True)
         print('  EVS compiled successfully.')
 
 

@@ -1,5 +1,5 @@
 from soulstruct.emevd.shared.tests import *
-from soulstruct.emevd.ds3.instructions import *
+import soulstruct.emevd.ds3.instructions as instr
 
 
 def __no_skip_or_negate_or_terminate(func):
@@ -59,45 +59,45 @@ def __skip_and_negate_and_terminate(func):
     return decorated
 
 
-_HOST = ConstantCondition(
-    if_true_func=IfHost,
-    skip_if_true_func=SkipLinesIfHost,
-    end_if_true_func=EndIfHost,
-    restart_if_true_func=RestartIfHost,
+HOST = ConstantCondition(
+    if_true_func=instr.IfHost,
+    skip_if_true_func=instr.SkipLinesIfHost,
+    end_if_true_func=instr.EndIfHost,
+    restart_if_true_func=instr.RestartIfHost,
 )
 
-_CLIENT = ConstantCondition(
-    if_true_func=IfClient,
-    skip_if_true_func=SkipLinesIfClient,
-    end_if_true_func=EndIfClient,
-    restart_if_true_func=RestartIfClient,
+CLIENT = ConstantCondition(
+    if_true_func=instr.IfClient,
+    skip_if_true_func=instr.SkipLinesIfClient,
+    end_if_true_func=instr.EndIfClient,
+    restart_if_true_func=instr.RestartIfClient,
 )
 
-_IN_OWN_WORLD = ConstantCondition(
-    if_true_func=IfPlayerInOwnWorld,
-    if_false_func=IfPlayerNotInOwnWorld,
-    end_if_true_func=EndIfPlayerInOwnWorld,
-    end_if_false_func=EndIfPlayerNotInOwnWorld,
-    restart_if_true_func=RestartIfPlayerInOwnWorld,
-    restart_if_false_func=RestartIfPlayerNotInOwnWorld,
+IN_OWN_WORLD = ConstantCondition(
+    if_true_func=instr.IfPlayerInOwnWorld,
+    if_false_func=instr.IfPlayerNotInOwnWorld,
+    end_if_true_func=instr.EndIfPlayerInOwnWorld,
+    end_if_false_func=instr.EndIfPlayerNotInOwnWorld,
+    restart_if_true_func=instr.RestartIfPlayerInOwnWorld,
+    restart_if_false_func=instr.RestartIfPlayerNotInOwnWorld,
 )
 
 
 @__no_skip_or_negate_or_terminate
-def _ActionButtonInRegion(action_button_id, region, condition):
-    return IfActionButtonInRegion(condition, action_button_id, region)
+def ActionButtonInRegion(action_button_id, region, condition):
+    return instr.IfActionButtonInRegion(condition, action_button_id, region)
 
 
 @__no_skip_or_negate_or_terminate
-def _IsAttackedWithDamageType(attacked_entity, attacking_character, damage_type, condition):
-    return IfDamageType(condition, attacked_entity, attacking_character, damage_type)
+def IsAttackedWithDamageType(attacked_entity, attacking_character, damage_type, condition):
+    return instr.IfDamageType(condition, attacked_entity, attacking_character, damage_type)
 
 
 @__no_skip_or_negate_or_terminate
-def _CharacterDrawGroupActive(character, condition):
-    return IfCharacterDrawGroupActive(condition, character)
+def CharacterDrawGroupActive(character, condition):
+    return instr.IfCharacterDrawGroupActive(condition, character)
 
 
 @__no_skip_or_negate_or_terminate
-def _CharacterDrawGroupInactive(character, condition):
-    return IfCharacterDrawGroupInactive(condition, character)
+def CharacterDrawGroupInactive(character, condition):
+    return instr.IfCharacterDrawGroupInactive(condition, character)

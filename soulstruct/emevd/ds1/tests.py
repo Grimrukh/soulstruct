@@ -1,34 +1,31 @@
 from soulstruct.emevd.shared.tests import *
-from soulstruct.emevd.ds1.instructions import *
+import soulstruct.emevd.ds1.instructions as instr
 
 
-_HOST = ConstantCondition(
-    if_true_func=IfHost,
-    skip_if_true_func=SkipLinesIfHost,
-    end_if_true_func=EndIfHost,
-    restart_if_true_func=RestartIfHost,
+HOST = ConstantCondition(
+    if_true_func=instr.IfHost,
+    skip_if_true_func=instr.SkipLinesIfHost,
+    end_if_true_func=instr.EndIfHost,
+    restart_if_true_func=instr.RestartIfHost,
 )
 
-_CLIENT = ConstantCondition(
-    if_true_func=IfClient,
-    skip_if_true_func=SkipLinesIfClient,
-    end_if_true_func=EndIfClient,
-    restart_if_true_func=RestartIfClient,
+CLIENT = ConstantCondition(
+    if_true_func=instr.IfClient,
+    skip_if_true_func=instr.SkipLinesIfClient,
+    end_if_true_func=instr.EndIfClient,
+    restart_if_true_func=instr.RestartIfClient,
 )
 
-_SINGLEPLAYER = ConstantCondition(
-    if_true_func=IfSingleplayer,
-    skip_if_true_func=SkipLinesIfSingleplayer,
-    end_if_true_func=EndIfSingleplayer,
-    restart_if_true_func=RestartIfSingleplayer,
+SINGLEPLAYER = ConstantCondition(
+    if_true_func=instr.IfSingleplayer,
+    skip_if_true_func=instr.SkipLinesIfSingleplayer,
+    end_if_true_func=instr.EndIfSingleplayer,
+    restart_if_true_func=instr.RestartIfSingleplayer,
 )
 
-_MULTIPLAYER = ConstantCondition(
-    if_true_func=IfMultiplayer,
-    skip_if_true_func=SkipLinesIfMultiplayer,
-    end_if_true_func=EndIfMultiplayer,
-    restart_if_true_func=RestartIfMultiplayer,
+MULTIPLAYER = ConstantCondition(
+    if_true_func=instr.IfMultiplayer,
+    skip_if_true_func=instr.SkipLinesIfMultiplayer,
+    end_if_true_func=instr.EndIfMultiplayer,
+    restart_if_true_func=instr.RestartIfMultiplayer,
 )
-
-
-# TODO

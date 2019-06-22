@@ -14,9 +14,6 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     """ Bloodborne-specific instruction decompiler. Run after the shared decompiler. Raises an error if it fails to
     resolve. """
 
-    # TODO: Probably easier to call the game-specific decompiler before trying the shared one, in case I forget to
-    #  remove one from shared that turns out to differ in one or more games.
-
     if instruction_class == 3:
 
         if instruction_index == 2:
@@ -636,8 +633,24 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"HandleMinibossDefeat(miniboss_id={miniboss_id})"
 
         if instruction_index == 18:
-            entity, animation_id, loop, wait_for_completion, skip_transition, unknown1, unknown2 = req_args
-            return f"ForceAnimation(entity={entity}, animation_id={animation_id}, loop={boolify(loop)}, wait_for_completion={boolify(wait_for_completion)}, skip_transition={boolify(skip_transition)}, unknown1={unknown1}, unknown2={unknown2})"
+            if instruction_index == 18:
+                entity, animation_id, loop, wait, skip_transition, unknown1, unknown2 = req_args
+                entity_id = 'PLAYER' if entity == 10000 else entity
+                keyword_args = []
+                if loop != 0:
+                    keyword_args.append(f'loop={boolify(loop)}')
+                if wait != 0:
+                    keyword_args.append(f'wait_for_completion={boolify(wait)}')
+                if skip_transition != 0:
+                    keyword_args.append(f'skip_transition={boolify(skip_transition)}')
+                if unknown1 != 0:
+                    keyword_args.append(f'unknown1={unknown1}')
+                if unknown2 != 1.0:
+                    keyword_args.append(f'unknown2={unknown2}')
+                keyword_args = ', '.join(keyword_args)
+                if keyword_args:
+                    return f"ForceAnimation({entity_id}, {animation_id}, {keyword_args})"
+                return f"ForceAnimation({entity_id}, {animation_id})"
 
         if instruction_index == 27:
             arg1, = req_args

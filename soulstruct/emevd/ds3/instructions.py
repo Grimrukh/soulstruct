@@ -1013,8 +1013,8 @@ def HandleMinibossDefeat(miniboss_id: int):
 
 
 def ForceAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False,
-                   skip_transition: bool = False, unknown1: int = 0, unknown2: float = 0.0):
-    """ TODO: Confirm default values for unknown1 and unknown2 so I can keep my other defaults and arg order. """
+                   skip_transition: bool = False, unknown1: int = 0, unknown2: float = 1.0):
+    """ Two extra useless arguments in DS3 that are almost always these default values. """
     instruction_info = (2003, 18, [0, -1, 0, 0, 0, 0, 0])
     return numeric_instruction(instruction_info, entity, animation_id, loop, wait_for_completion, skip_transition,
                                unknown1, unknown2)

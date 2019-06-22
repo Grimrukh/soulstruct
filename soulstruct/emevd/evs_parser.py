@@ -7,8 +7,6 @@ import re
 from soulstruct.emevd import game_types as gt
 from soulstruct.emevd.core import header, define_args
 
-# TODO: Condition skips are being made double-negative (condition is negated AND skip is negated).
-
 
 _AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
 _OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
@@ -173,7 +171,7 @@ class EmevdCompiler(object):
         except AttributeError:
             raise EmevdSyntaxError(node.lineno, f"Invalid docstring for event {event_name}.")
 
-        # TODO: Basic checks on event ID, like how it can't be zero.
+        # TODO: Basic checks on event ID, like how it can't be zero, etc.
         flag_name = None if not flag_name else flag_name.rstrip()  # Remove trailing space.
         description = '' if not description else description.lstrip(':')  # Remove leading colon.
 
@@ -521,7 +519,7 @@ class EmevdCompiler(object):
 
             # 2a(iii). EMEVD Test with no additional arguments (e.g. THIS_FLAG, ONLINE, HOST, SKULL_LANTERN_ACTIVE, ...)
             try:
-                test = self.tests['_' + name]
+                test = self.tests[name]
             except KeyError:
                 raise EmevdSyntaxError(node.lineno, f"Encountered unknown name: {name}")
             else:
@@ -533,7 +531,6 @@ class EmevdCompiler(object):
                     raise EmevdSyntaxError(node.lineno, "Cannot implicitly use a FlagRange as a condition. Call any() "
                                                         "or all() on it (with or without 'not' in front) to test it.")
                 if isinstance(test, gt.Character):
-                    # TODO: Actually, I was planning to allow this for an implicit 'IsAlive' check.
                     raise EmevdSyntaxError(node.lineno, "Cannot implicitly use a Character as a test. Call IsAlive(), "
                                                         "IsDead(), etc. on the Character to test its state.")
 
@@ -562,7 +559,7 @@ class EmevdCompiler(object):
 
             # 2c(i) The function is an EMEVD test that takes arguments.
             try:
-                test_function = self.tests['_' + node.func.id]
+                test_function = self.tests[node.func.id]
             except KeyError:
                 pass
             else:
@@ -574,9 +571,7 @@ class EmevdCompiler(object):
 
             # 2c(i). The function is any()
             if node.func.id == 'any':
-
-                # TODO: FlagRange or range() should be accepted.
-
+                # TODO: accept range(first, last) as well.
                 if len(node.args) != 1:
                     raise EmevdSyntaxError(node.lineno, "'any' must have one argument (a sequence or FlagRange).")
 
@@ -605,13 +600,11 @@ class EmevdCompiler(object):
                             chain_skip_emevd += skip_emevd
                     if chain_skip_emevd:
                         if not negate:
-                            chain_skip_emevd += self.instructions['SkipLines'](skip_lines)  # Extra skip required for 'any'
+                            chain_skip_emevd += self.instructions['SkipLines'](skip_lines)  # Extra skip required.
                         return chain_skip_emevd
 
             if node.func.id == 'all':
-
-                # TODO: FlagRange or range() should be accepted.
-
+                # TODO: accept range(first, last) as well.
                 if len(node.args) != 1:
                     raise EmevdSyntaxError(node.lineno, "'all' must have one argument (a sequence or FlagRange).")
 
@@ -641,7 +634,7 @@ class EmevdCompiler(object):
                             chain_skip_emevd += skip_emevd
                     if chain_skip_emevd:
                         if negate:
-                            chain_skip_emevd += self.instructions['SkipLines'](skip_lines)  # Extra skip required for 'any off'
+                            chain_skip_emevd += self.instructions['SkipLines'](skip_lines)  # Extra skip required.
                         return chain_skip_emevd
 
         # Failed to build simple/chain skip or terminate.
@@ -758,25 +751,26 @@ class EmevdCompiler(object):
 
             # Test function
             try:
-                test_function = self.tests['_' + name]
+                test_function = self.tests[name]
             except KeyError:
-                raise EmevdSyntaxError(node.lineno, f"Unrecognized function name: {name}")
+                [print(k, v) for k, v in self.tests.items()]
+                raise EmevdSyntaxError(node.lineno, f"Unrecognized test function name: {name}")
 
             try:
                 return test_function(
                     *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs)
             except (gt.NoSkipOrTerminateError, gt.NoNegateError):
-
                 condition_emevd = []
                 temp_condition = self.check_out_AND()  # TODO: use check_out_temporary().
-                condition_emevd += self.build_condition(node_to_recur, negate=negate, condition=temp_condition)
-
                 if skip_lines > 0:
+                    # Avoids double negative with negated skip.
+                    condition_emevd += self.build_condition(node_to_recur, negate=False, condition=temp_condition)
                     if negate:
                         condition_emevd += self.instructions['SkipLinesIfConditionTrue'](skip_lines, temp_condition)
                     else:
-                        condition_emevd += self.instructions['SkipLinesIfConditionTrue'](skip_lines, temp_condition)
+                        condition_emevd += self.instructions['SkipLinesIfConditionFalse'](skip_lines, temp_condition)
                 else:
+                    condition_emevd += self.build_condition(node_to_recur, negate=negate, condition=temp_condition)
                     if negate:
                         condition_emevd += self.instructions['IfConditionFalse'](condition, temp_condition)
                     else:

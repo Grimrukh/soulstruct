@@ -248,7 +248,6 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
                 return f"DisableRandomFlagInRange(({first_flag}, {last_flag}))"
             return f"SetRandomFlagInRange(({first_flag}, {last_flag}), state={boolify(state)})"
 
-        # TODO: Different for DS3.
         if instruction_index == 18:
             entity_id, animation_id, loop, wait, skip_transition = req_args
             entity_id = 'PLAYER' if entity_id == 10000 else entity_id

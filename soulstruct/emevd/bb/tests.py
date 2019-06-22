@@ -1,5 +1,5 @@
 from soulstruct.emevd.shared.tests import *
-from soulstruct.emevd.bb.instructions import *
+import soulstruct.emevd.bb.instructions as instr
 
 
 def __no_skip_or_negate_or_terminate(func):
@@ -59,56 +59,56 @@ def __skip_and_negate_and_terminate(func):
     return decorated
 
 
-_HOST = ConstantCondition(
-    if_true_func=IfHost,
-    skip_if_true_func=SkipLinesIfHost,
-    end_if_true_func=EndIfHost,
-    restart_if_true_func=RestartIfHost,
+HOST = ConstantCondition(
+    if_true_func=instr.IfHost,
+    skip_if_true_func=instr.SkipLinesIfHost,
+    end_if_true_func=instr.EndIfHost,
+    restart_if_true_func=instr.RestartIfHost,
 )
 
-_CLIENT = ConstantCondition(
-    if_true_func=IfClient,
-    skip_if_true_func=SkipLinesIfClient,
-    end_if_true_func=EndIfClient,
-    restart_if_true_func=RestartIfClient,
+CLIENT = ConstantCondition(
+    if_true_func=instr.IfClient,
+    skip_if_true_func=instr.SkipLinesIfClient,
+    end_if_true_func=instr.EndIfClient,
+    restart_if_true_func=instr.RestartIfClient,
 )
 
-_SINGLEPLAYER = ConstantCondition(
-    if_true_func=IfSingleplayer,
-    skip_if_true_func=SkipLinesIfSingleplayer,
-    end_if_true_func=EndIfSingleplayer,
-    restart_if_true_func=RestartIfSingleplayer,
+SINGLEPLAYER = ConstantCondition(
+    if_true_func=instr.IfSingleplayer,
+    skip_if_true_func=instr.SkipLinesIfSingleplayer,
+    end_if_true_func=instr.EndIfSingleplayer,
+    restart_if_true_func=instr.RestartIfSingleplayer,
 )
 
-_MULTIPLAYER = ConstantCondition(
-    if_true_func=IfMultiplayer,
-    skip_if_true_func=SkipLinesIfMultiplayer,
-    end_if_true_func=EndIfMultiplayer,
-    restart_if_true_func=RestartIfMultiplayer,
+MULTIPLAYER = ConstantCondition(
+    if_true_func=instr.IfMultiplayer,
+    skip_if_true_func=instr.SkipLinesIfMultiplayer,
+    end_if_true_func=instr.EndIfMultiplayer,
+    restart_if_true_func=instr.RestartIfMultiplayer,
 )
 
 
 @__no_skip_or_negate_or_terminate
-def _IsAttackedWithDamageType(attacked_entity, attacking_character, damage_type, condition):
-    return IfDamageType(condition, attacked_entity, attacking_character, damage_type)
+def IsAttackedWithDamageType(attacked_entity, attacking_character, damage_type, condition):
+    return instr.IfDamageType(condition, attacked_entity, attacking_character, damage_type)
 
 
 @__no_skip_or_negate_or_terminate
-def _WearingArmorTypeInRange(armor_type, required_armor_range_first, required_armor_range_last, condition):
-    return IfPlayerArmorType(condition, armor_type, required_armor_range_first, required_armor_range_last)
+def WearingArmorTypeInRange(armor_type, required_armor_range_first, required_armor_range_last, condition):
+    return instr.IfPlayerArmorType(condition, armor_type, required_armor_range_first, required_armor_range_last)
 
 
 @__no_skip_or_negate_or_terminate
-def _CharacterDrawGroupActive(character, condition):
-    return IfCharacterDrawGroupActive(condition, character)
+def CharacterDrawGroupActive(character, condition):
+    return instr.IfCharacterDrawGroupActive(condition, character)
 
 
 @__no_skip_or_negate_or_terminate
-def _CharacterDrawGroupInactive(character, condition):
-    return IfCharacterDrawGroupInactive(condition, character)
+def CharacterDrawGroupInactive(character, condition):
+    return instr.IfCharacterDrawGroupInactive(condition, character)
 
 
 @__negate_only
-def _INSIGHT(op_node, comparison_value, condition, negate=False):
+def INSIGHT(op_node, comparison_value, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return IfPlayerInsightAmountComparison(condition, comparison_value, comparison_type)
+    return instr.IfPlayerInsightAmountComparison(condition, comparison_value, comparison_type)
