@@ -58,7 +58,7 @@ def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='em
         map_name = game_map.file_name
         print('File:', map_name)
         print('  Loading from EVS...')
-        e = EMEVD(os.path.join(evs_dir, f'{map_name}.evs'))
+        e = EMEVD(os.path.join(evs_dir, f'{map_name}.py'))
         print('  Writing EVS to numeric...')
         e.write_numeric(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
         print('  Writing EVS to EMEVD (DCX)... ')
