@@ -72,8 +72,8 @@ class EMEVD(BaseEMEVD):
                 ('instruction_index', 'I'),
                 ('base_args_size', 'I'),
                 ('first_base_arg_offset', 'i'),
-                '4x',
                 ('first_event_layers_offset', 'i'),
+                '4x',
             )
 
             INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES

@@ -195,7 +195,8 @@ class BaseEMEVD(object):
 
             @property
             def args_size(self):
-                return struct.calcsize("@" + self.args_format.replace('|', ''))
+                """Note extra '0i' on the end, which fills the size out to the next 4-byte offset."""
+                return struct.calcsize("@" + self.args_format.replace('|', '') + '0i')
 
             @property
             def event_arg_count(self):
@@ -287,8 +288,9 @@ class BaseEMEVD(object):
                 return instruction_arg_set, instruction_arg_types
 
             def args_list_to_binary(self):
+                """Note extra '0i' on the end, which fills the format out to the next 4-byte offset."""
                 if self.args_list:
-                    format_string = "@" + self.args_format.replace('|', '')
+                    format_string = "@" + self.args_format.replace('|', '') + '0i'
                     return struct.pack(format_string, *self.args_list)
                 else:
                     return b''
