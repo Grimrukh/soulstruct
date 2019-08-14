@@ -1,10 +1,13 @@
+import os
 import zlib
 from soulstruct.core import *
 
 
 class DCX(object):
 
-    # NOTE: big-endian.
+    # TODO: Support types of DCX other than DCP-DFLT.
+
+    # NOTE: completely big-endian.
     HEADER_STRUCT = BinaryStruct(
         ('dcx_name', '4s', b'DCX\0'),
         ('unk1', 'i', 65536),
@@ -45,12 +48,13 @@ class DCX(object):
         if header.magic2 not in {44, 76}:
             raise ValueError(f"Expected 36 or 68 at offset 0x20 but found {header.magic1}.")
         self.magic = (header.magic1, header.magic2)
-        compressed = dcx_buffer.read()
-        if len(compressed) != header['compressed_size']:
+        compressed = dcx_buffer.read().rstrip(b'\0')  # Nulls stripped from the end.
+        if len(compressed) != header.compressed_size:
             # No error raised.
-            print("WARNING: Compressed data size does not match size in header.")
+            print(f"WARNING: Compressed data size ({len(compressed)}) does not match size in header "
+                  f"({header.compressed_size}).")
         self.data = zlib.decompressobj().decompress(compressed)
-        if len(self.data) != header['decompressed_size']:
+        if len(self.data) != header.decompressed_size:
             raise ValueError("Decompressed data size does not match size in header.")
 
     def pack(self):
@@ -63,7 +67,7 @@ class DCX(object):
         })
         return header + compressed
 
-    def write(self, dcx_path=None):
+    def write_packed(self, dcx_path=None):
         if dcx_path is None:
             if self.dcx_path is None:
                 raise ValueError("DCX path cannot be determined automatically.")
@@ -72,11 +76,10 @@ class DCX(object):
         with open(dcx_path, 'wb') as file:
             file.write(packed)
 
-
-if __name__ == '__main__':
-    # pd = DCX('param/paramdef.paramdefbnd.dcx')
-    # from soulstruct.param import DarkSoulsGameParameters
-    # d = DarkSoulsGameParameters(gp.data, pd.data)
-    # d = DarkSoulsGameParameters('param/GameParam.parambnd', 'param/paramdef.paramdefbnd')
-    # print(d.Bosses[0])
-    pass
+    def write_unpacked(self, data_path=None):
+        if data_path is None:
+            if self.dcx_path is None:
+                raise ValueError("DCX path cannot be determined automatically.")
+            data_path = os.path.splitext(self.dcx_path)[0]
+        with open(data_path, 'wb') as file:
+            file.write(self.data)

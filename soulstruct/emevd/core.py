@@ -1,4 +1,6 @@
+import ast
 from enum import Enum
+from functools import wraps
 
 
 class EnumStringError(Exception):
@@ -8,6 +10,24 @@ class EnumStringError(Exception):
 
 class InstructionNotFoundError(Exception):
     """ Indicates that an instruction was not found in some code segment. """
+
+
+class NoSkipOrTerminateError(Exception):
+    """Indicates that a test call has no skip/terminate variant in the EMEVD language.
+
+    This is generally handled internally by constructing a condition (which all test types can do) and skipping or
+    terminating based on that condition's truth value.
+    """
+    pass
+
+
+class NoNegateError(Exception):
+    """Indicates that a test call has no negated variant in the EMEVD language.
+
+    This is generally handled internally by constructing a condition (which all test types can do) and negating a test
+    of that condition's truth value.
+    """
+    pass
 
 
 INSTRUCTION_ARG_TYPES = {}
@@ -126,3 +146,182 @@ def get_game_map_name(area_id, block_id, game_module):
     except (ValueError, KeyError):
         # Event arg replacement(s) or unknown map. Return tuple instead, stripping quotes from any string elements.
         return f"({area_id}, {block_id})"
+
+
+def no_skip_or_negate_or_terminate(func):
+    @wraps(func)
+    def decorated(*args, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False, **kwargs):
+        if skip_lines != 0:
+            raise NoSkipOrTerminateError
+        if negate:
+            raise NoNegateError
+        if end_event or restart_event:
+            raise NoSkipOrTerminateError
+        if condition is None:
+            raise ValueError("Condition index must be specified (-7 to 7).")
+        return func(*args, condition=condition, **kwargs)
+
+    return decorated
+
+
+def negate_only(func):
+    @wraps(func)
+    def decorated(*args, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False, **kwargs):
+        if skip_lines != 0:
+            raise NoSkipOrTerminateError
+        if end_event or restart_event:
+            raise NoSkipOrTerminateError
+        if condition is None:
+            raise ValueError("Condition index must be specified (-7 to 7).")
+        return func(*args, condition=condition, negate=negate, **kwargs)
+
+    return decorated
+
+
+def skip_and_negate_and_terminate(func):
+    @wraps(func)
+    def decorated(*args, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False, **kwargs):
+        if skip_lines > 0:
+            if condition is not None or end_event or restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            return func(*args, skip_lines=skip_lines, negate=negate, **kwargs)
+        elif skip_lines < 0:
+            raise ValueError("You cannot skip a negative number of lines.")
+
+        if condition is not None:
+            if end_event or restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            if condition not in range(-7, 8):
+                raise ValueError("Condition register index must be in range [-7, 7], inclusive.")
+            return func(*args, condition=condition, negate=negate, **kwargs)
+
+        if end_event:
+            if restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            return func(*args, end_event=True, negate=negate, **kwargs)
+
+        if restart_event:
+            return func(*args, restart_event=True, negate=negate, **kwargs)
+
+        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
+
+    return decorated
+
+
+def get_value_test(
+        value, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False,
+        skip_if_true_func=None, skip_if_false_func=None,
+        if_true_func=None, if_false_func=None,
+        end_if_true_func=None, end_if_false_func=None,
+        restart_if_true_func=None, restart_if_false_func=None):
+    if skip_lines > 0:
+        if condition is not None or end_event or restart_event:
+            raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+        if skip_if_true_func is None or skip_if_false_func is None:
+            raise NoSkipOrTerminateError  # Both of these functions must be defined.
+        if negate:
+            return skip_if_true_func(skip_lines, value)
+        return skip_if_false_func(skip_lines, value)
+    elif skip_lines < 0:
+        raise ValueError("You cannot skip a negative number of lines.")
+
+    if condition is not None:
+        if condition not in range(-7, 8):
+            raise ValueError("Condition register index must be between -7 and 7.")
+        if end_event or restart_event:
+            raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+        if negate:
+            if if_false_func is None:
+                raise NoNegateError  # Some game types only have a positive condition test (e.g. IfObjectActivated).
+            return if_false_func(condition, value)
+        return if_true_func(condition, value)
+
+    if end_event:
+        if restart_event:
+            raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+        if negate:
+            if end_if_false_func is None:
+                raise NoSkipOrTerminateError
+            return end_if_false_func(value)
+        if end_if_true_func is None:
+            raise NoSkipOrTerminateError
+        return end_if_true_func(value)
+
+    if restart_event:
+        if negate:
+            if restart_if_false_func is None:
+                raise NoSkipOrTerminateError
+            return restart_if_false_func(value)
+        if restart_if_true_func is None:
+            raise NoSkipOrTerminateError
+        return restart_if_true_func(value)
+
+    raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
+
+
+class ConstantCondition(object):
+    """ Condition with no arguments. These conditions have 'hard-coded' methods in the EMEVD API. """
+
+    def __init__(self, if_true_func=None, if_false_func=None,
+                 skip_if_true_func=None, skip_if_false_func=None,
+                 end_if_true_func=None, end_if_false_func=None,
+                 restart_if_true_func=None, restart_if_false_func=None):
+        self.if_true_func = if_true_func
+        self.if_false_func = if_false_func
+        self.skip_if_true_func = skip_if_true_func
+        self.skip_if_false_func = skip_if_false_func
+        self.end_if_true_func = end_if_true_func
+        self.end_if_false_func = end_if_false_func
+        self.restart_if_true_func = restart_if_true_func
+        self.restart_if_false_func = restart_if_false_func
+
+    def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
+        """ Constants are called with no user-level args. """
+
+        if skip_lines > 0:
+            if condition is not None or end_event or restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                if self.skip_if_true_func is None:
+                    raise NoSkipOrTerminateError
+                return self.skip_if_true_func(skip_lines)
+            if self.skip_if_false_func is None:
+                raise NoSkipOrTerminateError
+            return self.skip_if_false_func(skip_lines)
+        elif skip_lines < 0:
+            raise ValueError("You cannot skip a negative number of lines.")
+
+        if condition is not None:
+            if condition not in range(-7, 8):
+                raise ValueError("Condition register index must be between -7 and 7.")
+            if end_event or restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                return self.if_false_func(condition)
+            return self.if_true_func(condition)
+
+        if end_event:
+            if restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                if self.end_if_false_func is None:
+                    raise NoSkipOrTerminateError
+                return self.end_if_false_func()
+            if self.end_if_true_func is None:
+                raise NoSkipOrTerminateError
+            return self.end_if_true_func()
+
+        if restart_event:
+            if negate:
+                if self.restart_if_false_func is None:
+                    raise NoSkipOrTerminateError
+                return self.restart_if_false_func()
+            if self.restart_if_true_func is None:
+                raise NoSkipOrTerminateError
+            return self.restart_if_true_func()
+
+        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
+
+
+COMPARISON_NODES = {ast.Eq: 0, ast.NotEq: 1, ast.Gt: 2, ast.Lt: 3, ast.GtE: 4, ast.LtE: 5}
+NEG_COMPARISON_NODES = {ast.Eq: 1, ast.NotEq: 0, ast.Gt: 5, ast.Lt: 4, ast.GtE: 3, ast.LtE: 2}

@@ -56,26 +56,40 @@
                         EVS helps.
                                                                    Grimrukh
 """
-
 # This star import is purely so your intelli-sense can pick up all the instructions, tests, and other EVS wrapper
-# functions. It is ignored by the compiler and can actually be removed entirely if you don't care about auto-completion
-# or intelli-sense inspection, etc.
+# functions. It is ignored by the compiler (along with all imports containing 'soulstruct.emevd') and can actually be
+# removed entirely if you don't care about auto-completion or intelli-sense inspection, etc. Make sure you import from
+# the right game, or your intelli-sense may lead you down paths that the game-specific compiler you call on this script
+# can't follow...
+from soulstruct.emevd.darksouls1 import *
 
-# Make sure you import from the right game!
-from soulstruct.emevd.ds1 import *
+# We'll need this import to declare our event arguments as specific game types like Character and Region, which in turn
+# allows us to test certain boolean properties of those objects directly. (Again, this is just for intelli-sense - the
+# compiler is fully aware of all the game types, whether you import them here or not.)
+from soulstruct.game_types import *
 
+# At this point, we can import any names we want into the script. The only restriction is that you have to use
 # This import actually matters. You should define your constants in a separate Python script, and import them here.
 # See 'example_constants.py' for examples. You can then use these constants in your EVS script below. The intent is
 # that you can carefully control which constants (particularly Flags) each map's script has access to, which will
 # reduce the chances of accidental, crippling, silent bugs caused by using the wrong one. Note that unlike the general
 # star import above, any imports here do matter to the compiler and will determine what constants it has access to.
-from examples.emevd.example_constants import *
+from .example_constants import *
 
-# (I'll consider adding support for you to directly define your constants here, but it complicates things, and you
-# should really be keeping them separate anyway.)
 
-# After constant imports, the rest of the EVS script is strictly comprised of function declarations - one per event.
-# I'll go over the components of a couple of simple examples you might find in the Depths.
+# After constant imports, the rest of the EVS script is strictly comprised of NAME ASSIGNMENTS and EVENT FUNCTION
+# DECLARATIONS (one per event). I'll go over the components of a couple of simple examples you might find in the Depths.
+
+
+# We've already imported a bunch of constants from 'example_constants.py', but you can also define constants in the
+# global namespace of your EVS script (i.e. outside all event function declarations). You can assign to any standard
+# Python statement except a function call. Let's define an extra constant now (in glorious all-caps for clarity):
+DOOR_INACTIVE_DELAY = 2.0
+
+# NOTE: There's a current 'gotcha' in EVS, where all of these global name assignments will be evaluated *before* any
+# event script functions are compiled. That means that ONLY THE LAST ASSIGNMENT to any given name will be used in ALL
+# of your event scripts. So you can't redefine any of these constants between event functions to change their value
+# which is something I'd strongly discourage anyway, as these are supposed to be constants.
 
 
 # EVENT NAME: The name of the function should be the event name. This is completely up to you and will be stripped from
@@ -103,8 +117,22 @@ def CONSTRUCTOR():
     # and the actually fall (see the event).
     SlimeAmbush(0, 1002100, 1002110, 1000100, 0.0)
     SlimeAmbush(1, 1002101, 1002112, 1000101, 0.5)
-    SlimeAmbush(2, 1002102, 1002113, 1000102, 0.4)
-    SlimeAmbush(3, 1002102, 1002113, 1000103, 0.2)  # The last two slimes have the same trigger regions.
+
+    # Often, you'll want to initialize numerous event slots that may only vary a little bit. You can take care of that
+    # with a nifty 'for' loop, which works basically exactly the way it does in Python, with a couple of restrictions:
+    #     - You can't use nested tuples as loop variables.
+    #     - You can't overwrite the names of any event arguments.
+    #     - The only functions you can use when generating the sequence to iterate over are builtins 'zip' and 'range'.
+    # This loop is made even more compact by only changing the values of our arguments relative to some base ID, which
+    # is hard-coded inside the loop and added to the changing loop variables.
+    for slot, trigger_region_1, trigger_region_2, slime, fall_delay in zip(
+            (2, 3, 4),  # slot
+            (2, 2, 2),  # trigger_region_1
+            (3, 3, 3),  # trigger_region_2
+            (2, 3, 4),  # slime
+            (0.4, 0.2, 0.2)  # fall_delay
+    ):
+        SlimeAmbush(slot, 1002100 + trigger_region_1, 1002110 + trigger_region_2, 1000100 + slime, fall_delay)
 
 
 # Here's a better example of an event name.
@@ -160,7 +188,8 @@ def PullOutMeltedIronKey():
     # This instruction defaults to 'host_only', which you can set to False to share the love with your summons.
     AwardItemLot(ITEMLOT.InDepthsDoor)
 
-    Wait(2.0)
+    # Here, we use the constant we defined at the top of the EVS script.
+    Wait(DOOR_INACTIVE_DELAY)
 
     # The player can open the door again.
     EnableObjectActivation(OBJECTS.DepthsDoor, -1)

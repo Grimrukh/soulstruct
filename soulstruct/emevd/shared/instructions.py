@@ -1,12 +1,14 @@
-""" These instructions should not be used directly, as some of the game-specific enums will be undefined (and you will be
-missing other game-specific instructions anyway). The instructions are available within each game's package. """
+"""EMEVD instructions shared by all FromSoft games supported by Soulstruct.
 
+DO NOT IMPORT THIS FILE. Import the specific game package (e.g. "from soulstruct.emevd.darksouls1 import *") to get the 
+full set of instructions, enums, game types, etc. for that game.
+"""
 from __future__ import annotations
+from typing import Optional, Union
+
 from soulstruct.emevd.core import numeric_instruction
-from soulstruct.emevd.shared.enums import *
-from typing import Optional, TYPE_CHECKING
-if TYPE_CHECKING:
-    from soulstruct.emevd.game_types import *
+from soulstruct.enums.shared import *
+import soulstruct.game_types as gt
 
 
 # RUN
@@ -58,40 +60,40 @@ def WaitForNetworkApproval(max_seconds: float):
 
 # CHARACTERS
 
-def SetCharacterState(character: CharacterInt, state: bool):
+def SetCharacterState(character: gt.CharacterInt, state: bool):
     instruction_info = (2004, 5)
     return numeric_instruction(instruction_info, character, state)
 
-def EnableCharacter(character: CharacterInt):
+def EnableCharacter(character: gt.CharacterInt):
     return SetCharacterState(character, True)
 
-def DisableCharacter(character: CharacterInt):
+def DisableCharacter(character: gt.CharacterInt):
     return SetCharacterState(character, False)
 
 
-def SetAIState(character: CharacterInt, state: bool):
+def SetAIState(character: gt.CharacterInt, state: bool):
     instruction_info = (2004, 1)
     return numeric_instruction(instruction_info, character, state)
 
-def EnableAI(character: CharacterInt):
+def EnableAI(character: gt.CharacterInt):
     return SetAIState(character, True)
 
-def DisableAI(character: CharacterInt):
+def DisableAI(character: gt.CharacterInt):
     return SetAIState(character, False)
 
 
-def SetTeamType(character: CharacterInt, new_team: Union[TeamType, int]):
+def SetTeamType(character: gt.CharacterInt, new_team: Union[TeamType, int]):
     instruction_info = (2004, 2)
     return numeric_instruction(instruction_info, character, new_team)
 
 
-def Kill(character: CharacterInt, award_souls: bool = False):
+def Kill(character: gt.CharacterInt, award_souls: bool = False):
     """ Technically a kill 'request.' """
     instruction_info = (2004, 4)
     return numeric_instruction(instruction_info, character, award_souls)
 
 
-def EzstateAIRequest(character: CharacterInt, command_id, slot):
+def EzstateAIRequest(character: gt.CharacterInt, command_id, slot):
     """ Slot number ranges from 0 to 3. """
     instruction_info = (2004, 6)
     return numeric_instruction(instruction_info, character, command_id, slot)
@@ -100,59 +102,59 @@ def EzstateAIRequest(character: CharacterInt, command_id, slot):
 # AddSpecialEffect function has different arguments in different games and is therefore not shared.
 
 
-def CancelSpecialEffect(character: CharacterInt, special_effect_id):
+def CancelSpecialEffect(character: gt.CharacterInt, special_effect_id):
     """ 'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). """
     instruction_info = (2004, 21)
     return numeric_instruction(instruction_info, character, special_effect_id)
 
 
-def ResetStandbyAnimationSettings(character: CharacterInt):
+def ResetStandbyAnimationSettings(character: gt.CharacterInt):
     """ Equivalent to calling `SetStandbyAnimationSettings` with no arguments, but clearer semantically. """
     return SetStandbyAnimationSettings(character)
 
 
-def SetStandbyAnimationSettings(character: CharacterInt, standby_animation=-1, damage_animation=-1, cancel_animation=-1,
-                                death_animation=-1, standby_exit_animation=-1):
+def SetStandbyAnimationSettings(character: gt.CharacterInt, standby_animation=-1, damage_animation=-1,
+                                cancel_animation=-1, death_animation=-1, standby_exit_animation=-1):
     """ Sets entity's default standby animations. -1 is default for each category. """
     instruction_info = (2004, 9, [0, -1, -1, -1, -1, -1, -1])
     return numeric_instruction(instruction_info, character, standby_animation, damage_animation, cancel_animation,
                                death_animation, standby_exit_animation)
 
 
-def SetGravityState(character: CharacterInt, state: bool):
+def SetGravityState(character: gt.CharacterInt, state: bool):
     """ Simply determines if the character loses height as it moves around. They will still gain height by running up
     slopes. """
     instruction_info = (2004, 10)
     return numeric_instruction(instruction_info, character, state)
 
-def EnableGravity(character: CharacterInt):
+def EnableGravity(character: gt.CharacterInt):
     return SetGravityState(character, True)
 
-def DisableGravity(character: CharacterInt):
+def DisableGravity(character: gt.CharacterInt):
     return SetGravityState(character, False)
 
 
-def SetCharacterEventTarget(character: CharacterInt, region: RegionInt):
+def SetCharacterEventTarget(character: gt.CharacterInt, region: gt.RegionInt):
     """ Likely refers to patrolling behavior. """
     instruction_info = (2004, 11)
     return numeric_instruction(instruction_info, character, region)
 
 
-def SetImmortalityState(character: CharacterInt, state: bool):
+def SetImmortalityState(character: gt.CharacterInt, state: bool):
     """ Character will take damage, but not die (i.e. cannot go below 1 HP). """
     instruction_info = (2004, 12)
     return numeric_instruction(instruction_info, character, state)
 
 
-def EnableImmortality(character: CharacterInt):
+def EnableImmortality(character: gt.CharacterInt):
     return SetImmortalityState(character, True)
 
 
-def DisableImmortality(character: CharacterInt):
+def DisableImmortality(character: gt.CharacterInt):
     return SetImmortalityState(character, False)
 
 
-def SetNest(character: CharacterInt, region: RegionInt):
+def SetNest(character: gt.CharacterInt, region: gt.RegionInt):
     """ Home point for entity AI. """
     instruction_info = (2004, 13)
     return numeric_instruction(instruction_info, character, region)
@@ -161,52 +163,52 @@ def SetNest(character: CharacterInt, region: RegionInt):
 # RotateToFaceEntity has different arguments in different games, and is therefore not shared.
 
 
-def SetInvincibilityState(character: CharacterInt, state):
+def SetInvincibilityState(character: gt.CharacterInt, state):
     """ Character cannot take damage or die. """
     instruction_info = (2004, 15)
     return numeric_instruction(instruction_info, character, state)
 
 
-def EnableInvincibility(character: CharacterInt):
+def EnableInvincibility(character: gt.CharacterInt):
     """ Character HP cannot be changed (positively or negatively) by anything. """
     return SetInvincibilityState(character, True)
 
 
-def DisableInvincibility(character: CharacterInt):
+def DisableInvincibility(character: gt.CharacterInt):
     return SetInvincibilityState(character, False)
 
 
-def ClearTargetList(character: CharacterInt):
+def ClearTargetList(character: gt.CharacterInt):
     """ Clear list of targets from character AI. """
     instruction_info = (2004, 16)
     return numeric_instruction(instruction_info, character)
 
 
-def AICommand(character: CharacterInt, command_id, slot):
+def AICommand(character: gt.CharacterInt, command_id, slot):
     """ These instructions can be accessed in AI Lua scripts. """
     instruction_info = (2004, 17)
     return numeric_instruction(instruction_info, character, command_id, slot)
 
 
-def SetEventPoint(character: CharacterInt, region: RegionInt, reaction_range):
+def SetEventPoint(character: gt.CharacterInt, region: gt.RegionInt, reaction_range):
     """ Not sure what the usage of this is, but it is likely used to change patrol behavior. """
     instruction_info = (2004, 18)
     return numeric_instruction(instruction_info, character, region, reaction_range)
 
 
-def SetAIParamID(character: CharacterInt, ai_param_id):
+def SetAIParamID(character: gt.CharacterInt, ai_param_id):
     """ Change character's AI parameter index. """
     instruction_info = (2004, 19)
     return numeric_instruction(instruction_info, character, ai_param_id)
 
 
-def ReplanAI(character: CharacterInt):
+def ReplanAI(character: gt.CharacterInt):
     """ Clear current AI goal list and force character to replan it. """
     instruction_info = (2004, 20)
     return numeric_instruction(instruction_info, character)
 
 
-def CreateNPCPart(character: CharacterInt, npc_part_id: int, part_index: Union[NPCPartType, int], part_health: int,
+def CreateNPCPart(character: gt.CharacterInt, npc_part_id: int, part_index: Union[NPCPartType, int], part_health: int,
                   damage_correction, body_damage_correction, is_invincible: bool, start_in_stop_state: bool):
     """ Complex. Sets specific damage parameters for part of an NPC model. Further changes to the specific part can be
     made using the events below. The part is specified using the NPCPartType slot. Look at usage in tail cut events to
@@ -216,26 +218,26 @@ def CreateNPCPart(character: CharacterInt, npc_part_id: int, part_index: Union[N
                                body_damage_correction, is_invincible, start_in_stop_state)
 
 
-def SetNPCPartHealth(character: CharacterInt, npc_part_id: int, desired_hp: int, overwrite_max: bool):
+def SetNPCPartHealth(character: gt.CharacterInt, npc_part_id: int, desired_hp: int, overwrite_max: bool):
     """ You must create the part first. """
     instruction_info = (2004, 23)
     return numeric_instruction(instruction_info, character, npc_part_id, desired_hp, overwrite_max)
 
 
-def SetNPCPartEffects(character: CharacterInt, npc_part_id: int, material_special_effect_id: int,
+def SetNPCPartEffects(character: gt.CharacterInt, npc_part_id: int, material_special_effect_id: int,
                       material_fx_id: int):
     """ Attach material effects to an NPC part. """
     instruction_info = (2004, 24)
     return numeric_instruction(instruction_info, character, npc_part_id, material_special_effect_id, material_fx_id)
 
 
-def SetNPCPartBulletDamageScaling(character: CharacterInt, npc_part_id: int, desired_scaling):
+def SetNPCPartBulletDamageScaling(character: gt.CharacterInt, npc_part_id: int, desired_scaling):
     """ Scale the damage dealt to the part. Usually used to set damage to zero, e.g. Smough's hammer. """
     instruction_info = (2004, 25)
     return numeric_instruction(instruction_info, character, npc_part_id, desired_scaling)
 
 
-def SetDisplayMask(character: CharacterInt, bit_index, switch_type):
+def SetDisplayMask(character: gt.CharacterInt, bit_index, switch_type):
     """ Different bits correspond to different parts of the character model. You can see the initial values for these
     in the NPC params. This is generally used to disable tails when they are cut off.
 
@@ -244,19 +246,19 @@ def SetDisplayMask(character: CharacterInt, bit_index, switch_type):
     return numeric_instruction(instruction_info, character, bit_index, switch_type)
 
 
-def SetHitboxMask(character: CharacterInt, bit_index, switch_type):
+def SetHitboxMask(character: gt.CharacterInt, bit_index, switch_type):
     """ See above. This affects the NPC's hitbox, not appearance. """
     instruction_info = (2004, 27)
     return numeric_instruction(instruction_info, character, bit_index, switch_type)
 
 
-def SetNetworkUpdateAuthority(character: CharacterInt, authority_level: UpdateAuthority):
+def SetNetworkUpdateAuthority(character: gt.CharacterInt, authority_level: UpdateAuthority):
     """ Complex; look at existing usage. Authority level must be 'Normal' or 'Forced'. """
     instruction_info = (2004, 28)
     return numeric_instruction(instruction_info, character, authority_level)
 
 
-def SetBackreadState(character: CharacterInt, remove: bool):
+def SetBackreadState(character: gt.CharacterInt, remove: bool):
     """ I'm not 100% certain how this differs from the standard Enable(), but I imagine controlling the 'backread' of
     a character has a larger effect on game resources. It is used, for example, to disable the Fair Lady and Eingyi
     during the Stray Demon boss fight.
@@ -267,26 +269,26 @@ def SetBackreadState(character: CharacterInt, remove: bool):
     return numeric_instruction(instruction_info, character, remove)
 
 
-def EnableBackread(character: CharacterInt):
+def EnableBackread(character: gt.CharacterInt):
     return SetBackreadState(character, False)
 
 
-def DisableBackread(character: CharacterInt):
+def DisableBackread(character: gt.CharacterInt):
     return SetBackreadState(character, True)
 
 
-def SetHealthBarState(character: CharacterInt, state):
+def SetHealthBarState(character: gt.CharacterInt, state):
     """ Normal health bar that appears above character. """
     instruction_info = (2004, 30)
     return numeric_instruction(instruction_info, character, state)
 
 
-def EnableHealthBar(character: CharacterInt):
+def EnableHealthBar(character: gt.CharacterInt):
     """ Not sure what effect this has on the boss health bar. """
     return SetHealthBarState(character, True)
 
 
-def DisableHealthBar(character: CharacterInt):
+def DisableHealthBar(character: gt.CharacterInt):
     """ Note that the normal health bar is disabled automatically if you give them a boss health bar. """
     return SetHealthBarState(character, False)
 
@@ -294,27 +296,27 @@ def DisableHealthBar(character: CharacterInt):
 # SetBossHealthBar takes different byte formats in different games.
 
 
-def SetCollisionState(character: CharacterInt, is_disabled: bool):
+def SetCollisionState(character: gt.CharacterInt, is_disabled: bool):
     """ Note that the bool is inverted from what you might expect. """
     instruction_info = (2004, 31)
     return numeric_instruction(instruction_info, character, is_disabled)
 
 
-def EnableCollision(character: CharacterInt):
+def EnableCollision(character: gt.CharacterInt):
     return SetCollisionState(character, False)
 
 
-def DisableCollision(character: CharacterInt):
+def DisableCollision(character: gt.CharacterInt):
     return SetCollisionState(character, True)
 
 
-def AIEvent(character: CharacterInt, command_id, slot, first_event_flag, last_event_flag):
+def AIEvent(character: gt.CharacterInt, command_id, slot, first_event_flag, last_event_flag):
     """ I have no idea what this does. """
     instruction_info = (2004, 32)
     return numeric_instruction(instruction_info, character, command_id, slot, first_event_flag, last_event_flag)
 
 
-def ReferDamageToEntity(character: CharacterInt, target_entity):
+def ReferDamageToEntity(character: gt.CharacterInt, target_entity):
     """ All damage dealt to the first character will *also* (not *only*) be dealt to the target entity. I'm not 100%
     sure if the target entity can be an Object.
 
@@ -323,20 +325,20 @@ def ReferDamageToEntity(character: CharacterInt, target_entity):
     return numeric_instruction(instruction_info, character, target_entity)
 
 
-def SetNetworkUpdateRate(character: CharacterInt, is_fixed: bool, update_rate: CharacterUpdateRate):
+def SetNetworkUpdateRate(character: gt.CharacterInt, is_fixed: bool, update_rate: CharacterUpdateRate):
     """ Not sure what 'is_fixed' does. I believe only 'Always' and 'Never' are used in the vanilla game. """
     instruction_info = (2004, 34)
     return numeric_instruction(instruction_info, character, is_fixed, update_rate)
 
 
-def SetBackreadStateAlternate(character: CharacterInt, state):
+def SetBackreadStateAlternate(character: gt.CharacterInt, state):
     """ I have no idea how this differs from the standard backread function above. """
     # TODO: Check and compare usage. If it's even used.
     instruction_info = (2004, 35)
     return numeric_instruction(instruction_info, character, state)
 
 
-def DropMandatoryTreasure(character: CharacterInt):
+def DropMandatoryTreasure(character: gt.CharacterInt):
     """ This will disable the character and spawn any treasure they would drop. It's possible that it only spawns
     treasure that has a 100% drop rate, hence the name, but I haven't confirmed this. """
     # TODO: Confirm it actually disables the character.
@@ -344,13 +346,13 @@ def DropMandatoryTreasure(character: CharacterInt):
     return numeric_instruction(instruction_info, character)
 
 
-def SetTeamTypeAndExitStandbyAnimation(character: CharacterInt, team_type: TeamType):
+def SetTeamTypeAndExitStandbyAnimation(character: gt.CharacterInt, team_type: TeamType):
     """ Two for the price of one. Often used when NPCs with resting animations become hostile. """
     instruction_info = (2004, 44)
     return numeric_instruction(instruction_info, character, team_type)
 
 
-def HumanityRegistration(character: CharacterInt, event_flag: FlagInt):
+def HumanityRegistration(character: gt.CharacterInt, event_flag: gt.FlagInt):
     """ I believe this designates the first event flag in a range of eight, which tracks how much humanity an NPC has
     for draining with Dark Hand. These flags are all in the 8000 range, and tightly packed, so you'll need to find your
     own range if you want to replicate this.
@@ -369,7 +371,7 @@ def ResetAnimation(character, disable_interpolation: bool = False):
     return numeric_instruction(instruction_info, character, disable_interpolation)
 
 
-def ActivateMultiplayerBuffs(character: CharacterInt):
+def ActivateMultiplayerBuffs(character: gt.CharacterInt):
     """ Used to strengthen bosses based on the number of summons you have. Not sure if it works for every NPC. It
     could also be tied to certain special effects; haven't checked that yet. """
     instruction_info = (2009, 4)
@@ -378,42 +380,42 @@ def ActivateMultiplayerBuffs(character: CharacterInt):
 
 # OBJECTS
 
-def SetObjectState(obj: ObjectInt, state: bool):
+def SetObjectState(obj: gt.ObjectInt, state: bool):
     instruction_info = (2005, 3)
     return numeric_instruction(instruction_info, obj, state)
 
 
-def EnableObject(obj: ObjectInt):
+def EnableObject(obj: gt.ObjectInt):
     return SetObjectState(obj, True)
 
 
-def DisableObject(obj: ObjectInt):
+def DisableObject(obj: gt.ObjectInt):
     return SetObjectState(obj, False)
 
 
-def DestroyObject(obj: ObjectInt, slot=0):
+def DestroyObject(obj: gt.ObjectInt, slot=0):
     """ Technically 'requests' the object's destruction. No idea what the slot number does. """
     instruction_info = (2005, 1)
     return numeric_instruction(instruction_info, obj, slot)
 
 
-def RestoreObject(obj: ObjectInt):
+def RestoreObject(obj: gt.ObjectInt):
     """ The opposite of destruction. Restores it to its original MSB coordinates. """
     instruction_info = (2005, 2)
     return numeric_instruction(instruction_info, obj)
 
 
-def SetTreasureState(obj: ObjectInt, state: bool):
+def SetTreasureState(obj: gt.ObjectInt, state: bool):
     instruction_info = (2005, 4)
     return numeric_instruction(instruction_info, obj, state)
 
 
-def EnableTreasure(obj: ObjectInt):
+def EnableTreasure(obj: gt.ObjectInt):
     """ Enables any treasure attached to this object by MSB events. """
     return SetTreasureState(obj, True)
 
 
-def DisableTreasure(obj: ObjectInt):
+def DisableTreasure(obj: gt.ObjectInt):
     """ Disables any treasure attached to this object by MSB events.
 
     If you want to disable treasure by default, you can do it in the MSB by changing a certain event value to 255.
@@ -421,7 +423,7 @@ def DisableTreasure(obj: ObjectInt):
     return SetTreasureState(obj, False)
 
 
-def ActivateObject(obj: ObjectInt, obj_act_id: int, relative_index: int):
+def ActivateObject(obj: gt.ObjectInt, obj_act_id: int, relative_index: int):
     """ Manually call a specific ObjAct event attached to this object. I believe 'relative_index' refers to the points
     on the object at which it can be activated (e.g. which side of a gate you are on).
 
@@ -432,19 +434,19 @@ def ActivateObject(obj: ObjectInt, obj_act_id: int, relative_index: int):
     return numeric_instruction(instruction_info, obj, obj_act_id, relative_index)
 
 
-def SetObjectActivation(obj: ObjectInt, obj_act_id: int, state: bool):
+def SetObjectActivation(obj: gt.ObjectInt, obj_act_id: int, state: bool):
     """ Sets whether the object can be activated (1) or not activated (0). """
     instruction_info = (2005, 6, [0, -1, 0])
     return numeric_instruction(instruction_info, obj, obj_act_id, state)
 
 
-def SetObjectActivationWithIdx(obj: ObjectInt, obj_act_id: int, relative_index: int, state: bool):
-    """ Similar to above, but you can provde the relative index to disable (e.g. one side of a door). """
+def SetObjectActivationWithIdx(obj: gt.ObjectInt, obj_act_id: int, relative_index: int, state: bool):
+    """ Similar to above, but you can provide the relative index to disable (e.g. one side of a door). """
     instruction_info = (2005, 14, [0, -1, 0, 0])
     return numeric_instruction(instruction_info, obj, obj_act_id, relative_index, state)
 
 
-def EnableObjectActivation(obj: ObjectInt, obj_act_id, relative_index=None):
+def EnableObjectActivation(obj: gt.ObjectInt, obj_act_id, relative_index=None):
     """ Allows the given ObjAct to be performed with the object, optionally only at the given relative_index. I've
     combined two instructions into one here, as they're very similar. """
     if relative_index is None:
@@ -452,7 +454,7 @@ def EnableObjectActivation(obj: ObjectInt, obj_act_id, relative_index=None):
     return SetObjectActivationWithIdx(obj, obj_act_id, relative_index, True)
 
 
-def DisableObjectActivation(obj: ObjectInt, obj_act_id, relative_index=None):
+def DisableObjectActivation(obj: gt.ObjectInt, obj_act_id, relative_index=None):
     """ Prevents the given ObjAct from being performed with the object. Used for doors that you can only open once,
     for example. Again, I've combined the relative index version here. """
     if relative_index is None:
@@ -460,14 +462,14 @@ def DisableObjectActivation(obj: ObjectInt, obj_act_id, relative_index=None):
     return SetObjectActivationWithIdx(obj, obj_act_id, relative_index, False)
 
 
-def PostDestruction(obj: ObjectInt, slot: int):
+def PostDestruction(obj: gt.ObjectInt, slot: int):
     """ Sets the object to whatever appearance it would have after being destroyed. Again, not sure what 'slot'
     does. """
     instruction_info = (2005, 8)
     return numeric_instruction(instruction_info, obj, slot)
 
 
-def CreateHazard(obj_flag: FlagInt, obj: ObjectInt, model_point: int, behavior_param_id: int,
+def CreateHazard(obj_flag: gt.FlagInt, obj: gt.ObjectInt, model_point: int, behavior_param_id: int,
                  target_type: DamageTargetType, radius: float, life: float, repetition_time: float):
     """ Turn an object into an environmental hazard. It deals damage when touched according to the NPC Behavior param
     you give it. The model_point determines which part of the object is hazardous (with the given radius and life,
@@ -482,34 +484,34 @@ def CreateHazard(obj_flag: FlagInt, obj: ObjectInt, model_point: int, behavior_p
                                life, repetition_time)
 
 
-def RegisterStatue(obj: ObjectInt, game_map: GameMap, statue_type: StatueType):
+def RegisterStatue(obj: gt.ObjectInt, game_map: gt.MapOrSequence, statue_type: StatueType):
     """ Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online. """
     instruction_info = (2005, 10)
     area_id, block_id = tuple(game_map)
     return numeric_instruction(instruction_info, obj, area_id, block_id, statue_type)
 
 
-def RemoveObjectFlag(obj_flag: FlagInt):
+def RemoveObjectFlag(obj_flag: gt.FlagInt):
     """ No idea what this does. I believe it might undo the CreateHazard instruction, at least. """
     instruction_info = (2005, 12)
     return numeric_instruction(instruction_info, obj_flag)
 
 
-def SetObjectInvulnerability(obj: ObjectInt, state: bool):
+def SetObjectInvulnerability(obj: gt.ObjectInt, state: bool):
     """ 1 = invulnerable. """
     instruction_info = (2005, 13)
     return numeric_instruction(instruction_info, obj, state)
 
 
-def EnableObjectInvulnerability(obj: ObjectInt):
+def EnableObjectInvulnerability(obj: gt.ObjectInt):
     return SetObjectInvulnerability(obj, True)
 
 
-def DisableObjectInvulnerability(obj: ObjectInt):
+def DisableObjectInvulnerability(obj: gt.ObjectInt):
     return SetObjectInvulnerability(obj, False)
 
 
-def EnableTreasureCollection(obj: ObjectInt):
+def EnableTreasureCollection(obj: gt.ObjectInt):
     """ Forces an object to spawn its treasure, even if the treasure's ItemLot flag is already enabled. Useful if
     you want some treasure to reappear (after, say, taking it from the player and disabling the ItemLot flag) without
     the player needing to reload the map. """
@@ -519,54 +521,54 @@ def EnableTreasureCollection(obj: ObjectInt):
 
 # FLAGS
 
-def SetFlagState(flag: FlagInt, state: FlagState):
+def SetFlagState(flag: gt.FlagInt, state: FlagState):
     """ Enable, disable, or toggle (change) a binary flag. """
     instruction_info = (2003, 2)
     return numeric_instruction(instruction_info, flag, state)
 
-def EnableFlag(flag: FlagInt):
+def EnableFlag(flag: gt.FlagInt):
     return SetFlagState(flag, FlagState.On)
 
-def DisableFlag(flag: FlagInt):
+def DisableFlag(flag: gt.FlagInt):
     return SetFlagState(flag, FlagState.Off)
 
-def ToggleFlag(flag: FlagInt):
+def ToggleFlag(flag: gt.FlagInt):
     return SetFlagState(flag, FlagState.Change)
 
 
-def SetRandomFlagInRange(flag_range: FlagRangeOrSequence, state: FlagState):
+def SetRandomFlagInRange(flag_range: gt.FlagRangeOrSequence, state: FlagState):
     """ Set the state of a random flag from a given range (inclusive). """
     instruction_info = (2003, 17)
     first_flag, last_flag = tuple(flag_range)
     return numeric_instruction(instruction_info, first_flag, last_flag, state)
 
-def EnableRandomFlagInRange(flag_range: FlagRangeOrSequence):
+def EnableRandomFlagInRange(flag_range: gt.FlagRangeOrSequence):
     return SetRandomFlagInRange(flag_range, FlagState.On)
 
-def DisableRandomFlagInRange(flag_range: FlagRangeOrSequence):
+def DisableRandomFlagInRange(flag_range: gt.FlagRangeOrSequence):
     return SetRandomFlagInRange(flag_range, FlagState.Off)
 
-def ToggleRandomFlagInRange(flag_range: FlagRangeOrSequence):
+def ToggleRandomFlagInRange(flag_range: gt.FlagRangeOrSequence):
     return SetRandomFlagInRange(flag_range, FlagState.Change)
 
 
-def SetFlagRangeState(flag_range: FlagRangeOrSequence, state: FlagState):
+def SetFlagRangeState(flag_range: gt.FlagRangeOrSequence, state: FlagState):
     """ Set the state of an entire flag range (inclusive). """
     instruction_info = (2003, 22)
     first_flag, last_flag = tuple(flag_range)
     return numeric_instruction(instruction_info, first_flag, last_flag, state)
 
-def EnableFlagRange(flag_range: FlagRangeOrSequence):
+def EnableFlagRange(flag_range: gt.FlagRangeOrSequence):
     return SetFlagRangeState(flag_range, FlagState.On)
 
-def DisableFlagRange(flag_range: FlagRangeOrSequence):
+def DisableFlagRange(flag_range: gt.FlagRangeOrSequence):
     return SetFlagRangeState(flag_range, FlagState.Off)
 
-def ChangeFlagRange(flag_range: FlagRangeOrSequence):
+def ChangeFlagRange(flag_range: gt.FlagRangeOrSequence):
     return SetFlagRangeState(flag_range, FlagState.Change)
 
 
-def IncrementEventValue(flag: FlagInt, bit_count: int, max_value: int):
+def IncrementEventValue(flag: gt.FlagInt, bit_count: int, max_value: int):
     """ You can use a contiguous array of flags as a single value. Use this to increment that value. The array begins
     at 'flag' and extends for 'bit_count'. (For example, a 'bit_count' of 4 gives you a theoretical maximum of 256. You
     can set a 'max_value' less than that to limit the value. (I'm not sure if it ticks over back to zero if max_value is
@@ -578,7 +580,7 @@ def IncrementEventValue(flag: FlagInt, bit_count: int, max_value: int):
     return numeric_instruction(instruction_info, flag, bit_count, max_value)
 
 
-def ClearEventValue(flag: FlagInt, bit_count: int):
+def ClearEventValue(flag: gt.FlagInt, bit_count: int):
     """ Clears the given multi-flag. This is basically like disabling 'bit_count' flags in a row, starting at
     'flag'. """
     instruction_info = (2003, 32)
@@ -619,33 +621,33 @@ def RestartEvent(event_id, slot=0):
 
 # HITBOXES
 
-def SetHitboxState(hitbox: HitboxInt, state: bool):
+def SetHitboxState(hitbox: gt.HitboxInt, state: bool):
     instruction_info = (2011, 1)
     return numeric_instruction(instruction_info, hitbox, state)
 
 
-def EnableHitbox(hitbox: HitboxInt):
+def EnableHitbox(hitbox: gt.HitboxInt):
     """ Enable a hitbox (sometimes called a 'collision'). The ID is specified in the MSB. Note that a hitbox doesn't
     have to be solid ground, but could be anything triggered by collision, such as a kill plane. """
     return SetHitboxState(hitbox, True)
 
 
-def DisableHitbox(hitbox: HitboxInt):
+def DisableHitbox(hitbox: gt.HitboxInt):
     """ Enable a hitbox (sometimes called a 'collision'). The ID is specified in the MSB. Note that a hitbox doesn't
     have to be solid ground, but could be anything triggered by collision, such as a kill plane (which this is often
     used to disable). """
     return SetHitboxState(hitbox, False)
 
 
-def SetHitboxBackreadMaskState(hitbox: HitboxInt, state: bool):
+def SetHitboxBackreadMaskState(hitbox: gt.HitboxInt, state: bool):
     """ Unused. """
     instruction_info = (2011, 2)
     return numeric_instruction(instruction_info, hitbox, state)
 
-def EnableHitboxBackreadMask(hitbox: HitboxInt):
+def EnableHitboxBackreadMask(hitbox: gt.HitboxInt):
     return SetHitboxBackreadMaskState(hitbox, True)
 
-def DisableHitboxBackreadMask(hitbox: HitboxInt):
+def DisableHitboxBackreadMask(hitbox: gt.HitboxInt):
     return SetHitboxBackreadMaskState(hitbox, False)
 
 
@@ -666,7 +668,7 @@ def AwardItemLotToHostOnly(item_lot_param_id):
     return numeric_instruction(instruction_info, item_lot_param_id)
 
 
-def RemoveItemFromPlayer(item: ItemInt, item_type=None, quantity=0):
+def RemoveItemFromPlayer(item: gt.ItemInt, item_type=None, quantity=0):
     """ Item type is automatically detected. This instruction has a 'quantity' argument, but it seems broken, so you
     always have to remove *all* instances of the item. (Strangely, the similar command used in EzState doesn't seem to
     have this bug.)
@@ -678,34 +680,34 @@ def RemoveItemFromPlayer(item: ItemInt, item_type=None, quantity=0):
     return numeric_instruction(instruction_info, item_type, item, quantity)
 
 
-def RemoveWeaponFromPlayer(weapon: WeaponInt, quantity=0):
+def RemoveWeaponFromPlayer(weapon: gt.WeaponInt, quantity=0):
     """ Weapons only. """
     return RemoveItemFromPlayer(weapon, ItemType.Weapon, quantity)
 
 
-def RemoveArmorFromPlayer(armor: ArmorInt, quantity=0):
+def RemoveArmorFromPlayer(armor: gt.ArmorInt, quantity=0):
     """ Armor only. """
     return RemoveItemFromPlayer(armor, ItemType.Armor, quantity)
 
 
-def RemoveRingFromPlayer(ring: RingInt, quantity=0):
+def RemoveRingFromPlayer(ring: gt.RingInt, quantity=0):
     """ Rings only. """
     return RemoveItemFromPlayer(ring, ItemType.Ring, quantity)
 
 
-def RemoveGoodFromPlayer(good: GoodInt, quantity=0):
+def RemoveGoodFromPlayer(good: gt.GoodInt, quantity=0):
     """ Goods only. """
     return RemoveItemFromPlayer(good, ItemType.Good, quantity)
 
 
-def SnugglyItemDrop(item_lot: ItemLotInt, region: RegionInt, flag: FlagInt, hitbox: HitboxInt):
+def SnugglyItemDrop(item_lot: gt.ItemLotInt, region: gt.RegionInt, flag: gt.FlagInt, hitbox: gt.HitboxInt):
     """ Makes Snuggly drop an item. There are complex limitations to this in the engine, so be careful. (The list of
     available Snuggly flags is a hard-coded limit, for example.) """
     instruction_info = (2003, 34)
     return numeric_instruction(instruction_info, item_lot, region, flag, hitbox)
 
 
-def SetNextSnugglyTrade(flag: FlagInt):
+def SetNextSnugglyTrade(flag: gt.FlagInt):
     """ Sets the flag for the next drop based on the item you deposit into the nest. """
     instruction_info = (2003, 33)
     return numeric_instruction(instruction_info, flag)
@@ -713,33 +715,33 @@ def SetNextSnugglyTrade(flag: FlagInt):
 
 # ANIMATIONS
 
-def RequestAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False):
+def RequestAnimation(entity: gt.AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False):
     """ Not used very often, in favor of ForceAnimation below. """
     instruction_info = (2003, 1)
     return numeric_instruction(instruction_info, entity, animation_id, loop, wait_for_completion)
 
 
-def ForceAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False,
+def ForceAnimation(entity: gt.AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False,
                    skip_transition: bool = False):
     """ Used a lot. Standard way to make a Character or Object perform an animation. """
     instruction_info = (2003, 18, [0, -1, 0, 0, 0])
     return numeric_instruction(instruction_info, entity, animation_id, loop, wait_for_completion, skip_transition)
 
 
-def SetAnimationsState(entity: AnimatedInt, state: bool):
+def SetAnimationsState(entity: gt.AnimatedInt, state: bool):
     instruction_info = (2004, 39)
     return numeric_instruction(instruction_info, entity, state)
 
 
-def EnableAnimations(entity: AnimatedInt):
+def EnableAnimations(entity: gt.AnimatedInt):
     return SetAnimationsState(entity, True)
 
 
-def DisableAnimations(entity: AnimatedInt):
+def DisableAnimations(entity: gt.AnimatedInt):
     return SetAnimationsState(entity, False)
 
 
-def EndOfAnimation(obj: AnimatedInt, animation_id):
+def EndOfAnimation(obj: gt.AnimatedInt, animation_id):
     """ Sets entity to whatever state it would have after the given animation. Used often to open doors that have
     already been opened when you reload the map, etc. I doubt it can be used with characters, but haven't confirmed. """
     instruction_info = (2005, 7)
@@ -761,24 +763,24 @@ def DeleteFX(fx_id: int, erase_root_only: bool = True):
     return numeric_instruction(instruction_info, fx_id, erase_root_only)
 
 
-def CreateTemporaryFX(fx_id: int, anchor_entity: MapEntityInt, model_point: int, anchor_type=None):
+def CreateTemporaryFX(fx_id: int, anchor_entity: gt.CoordEntityInt, model_point: int, anchor_type=None):
     """ Create one-off visual FX attached to the given 'anchor_entity'. The FX type argument is determined from the
     Entity category. The FX, of course, must be current loaded (or in common effects). """
     instruction_info = (2006, 3, [0, 0, -1, 0])
     if anchor_type is None:
         try:
-            anchor_type = anchor_entity.map_entity_type
+            anchor_type = anchor_entity.coord_entity_type
         except AttributeError:
             raise AttributeError("anchor_type not detected. Use the keyword 'anchor_type' or a typed anchor_entity.")
     return numeric_instruction(instruction_info, anchor_type, anchor_entity, model_point, fx_id)
 
 
-def CreateObjectFX(fx_id: int, obj: ObjectInt, model_point: int):
+def CreateObjectFX(fx_id: int, obj: gt.ObjectInt, model_point: int):
     instruction_info = (2006, 4)
     return numeric_instruction(instruction_info, obj, model_point, fx_id)
 
 
-def DeleteObjectFX(obj: ObjectInt, erase_root: bool = True):
+def DeleteObjectFX(obj: gt.ObjectInt, erase_root: bool = True):
     """ Note `erase_root` vs. `erase_root_only` for map SFX. """
     instruction_info = (2006, 5)
     return numeric_instruction(instruction_info, obj, erase_root)
@@ -786,19 +788,19 @@ def DeleteObjectFX(obj: ObjectInt, erase_root: bool = True):
 
 # AUDIO
 
-def SetBackgroundMusic(state: bool, slot: int, entity: MapEntityInt, sound_type: SoundType, sound_id: int):
+def SetBackgroundMusic(state: bool, slot: int, entity: gt.CoordEntityInt, sound_type: SoundType, sound_id: int):
     instruction_info = (2010, 1)
     return numeric_instruction(instruction_info, state, slot, entity, sound_type, sound_id)
 
 
-def PlaySoundEffect(anchor_entity: MapEntityInt, sound_type: Union[SoundType, int], sound_id: int):
+def PlaySoundEffect(anchor_entity: gt.CoordEntityInt, sound_type: Union[SoundType, int], sound_id: int):
     """ Anchor entity determines the localization of the sound, and the sound type is used to look up the source. """
     instruction_info = (2010, 2)
     return numeric_instruction(instruction_info, anchor_entity, sound_type, sound_id)
 
 
 def SetMapSoundState(sound_id: int, state: bool):
-    """ The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambience. """
+    """ The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance. """
     instruction_info = (2010, 3)
     return numeric_instruction(instruction_info, sound_id, state)
 
@@ -813,14 +815,14 @@ def DisableMapSound(sound_id: int):
 
 # MAP
 
-def RegisterLadder(start_climbing_flag: FlagInt, stop_climbing_flag: FlagInt, obj: ObjectInt):
+def RegisterLadder(start_climbing_flag: gt.FlagInt, stop_climbing_flag: gt.FlagInt, obj: gt.ObjectInt):
     """ Don't mess with these flags, generally; you can just delay when this is called after map load to disable
     certain ladders (which is kind of weird anyway). """
     instruction_info = (2009, 0)
     return numeric_instruction(instruction_info, start_climbing_flag, stop_climbing_flag, obj)
 
 
-def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0,
+def RegisterBonfire(bonfire_flag: gt.FlagInt, obj: gt.ObjectInt, reaction_distance=2.0,
                     reaction_angle=180.0, initial_kindle_level=0):
     """ Register a bonfire, which creates the flame FX and allows you to interact with it (via the MSB entity with ID
     (obj + 1000).
@@ -836,7 +838,8 @@ def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0
     kindle level. Beware of this, if you find that you can't interact with bonfires or get them to even register.
     """
     instruction_info = (2009, 3)
-    return numeric_instruction(instruction_info, bonfire_flag, obj, reaction_distance, reaction_angle, initial_kindle_level)
+    return numeric_instruction(instruction_info, bonfire_flag, obj, reaction_distance, reaction_angle,
+                               initial_kindle_level)
 
 
 def SetMapPartState(map_part_id, state: bool):
@@ -855,8 +858,8 @@ def EnableMapPart(map_part_id):
 
 # MESSAGES
 
-def PlaceSummonSign(sign_type, character: CharacterInt, region: RegionInt,
-                    summon_flag: FlagInt, dismissal_flag: FlagInt):
+def PlaceSummonSign(sign_type, character: gt.CharacterInt, region: gt.RegionInt,
+                    summon_flag: gt.FlagInt, dismissal_flag: gt.FlagInt):
     """ If you set a black summon sign, the specified NPC will try to invade automatically. """
     instruction_info = (2003, 25)
     return numeric_instruction(instruction_info, sign_type, character, region, summon_flag, dismissal_flag)
@@ -878,7 +881,7 @@ def DisableDeveloperMessage(message_id):
     return SetDeveloperMessageState(message_id, False)
 
 
-def DisplayDialog(text: TextInt, anchor_entity: MapEntityInt, display_distance=3.0,
+def DisplayDialog(text: gt.EventTextInt, anchor_entity: gt.CoordEntityInt, display_distance=3.0,
                   button_type: ButtonType = ButtonType.OK_or_Cancel,
                   number_buttons: NumberButtons = NumberButtons.NoButton):
     """ Display a dialog box at the bottom of the screen. You can't use this to get player input, but you can display
@@ -896,7 +899,7 @@ def DisplayBanner(banner_type: BannerType):
     return numeric_instruction(instruction_info, banner_type)
 
 
-def DisplayStatus(text: TextInt, pad_enabled: bool = True):
+def DisplayStatus(text: gt.EventTextInt, pad_enabled: bool = True):
     """ Displays a large message that appears at the top of the screen, such as the message that tells you how to
     remove your curse, or that the golden fog gates block your path. If 'pad_enabled' is False, you can't get rid of
     the message until it times out on its own. """
@@ -904,7 +907,7 @@ def DisplayStatus(text: TextInt, pad_enabled: bool = True):
     return numeric_instruction(instruction_info, text, pad_enabled)
 
 
-def DisplayBattlefieldMessage(text: TextInt, display_location_index):
+def DisplayBattlefieldMessage(text: gt.EventTextInt, display_location_index):
     """ Used in the Battle of Stoicism. Probably useless to you. """
     instruction_info = (2007, 4)
     return numeric_instruction(instruction_info, text, display_location_index)
@@ -913,7 +916,7 @@ def DisplayBattlefieldMessage(text: TextInt, display_location_index):
 # CUTSCENE
 
 def PlayCutscene(cutscene_id: int, skippable: bool = False, fade_out: bool = False, player_id: Optional[int] = None,
-                 move_to_map: Optional[GameMap] = None, move_to_region: Optional[RegionInt] = None,
+                 move_to_map: Optional[gt.MapOrSequence] = None, move_to_region: Optional[gt.RegionInt] = None,
                  rotation: int = 0, relative_rotation_axis_x: float = 0.0, relative_rotation_axis_z: float = 0.0,
                  vertical_translation: float = 0.0):
     """ Unified instruction for playing cutscenes. You can specify a player (defaults to local player, 10000), control
@@ -949,7 +952,8 @@ def PlayCutscene(cutscene_id: int, skippable: bool = False, fade_out: bool = Fal
 
     return PlayCutsceneToPlayer(cutscene_id, cutscene_type, player_id)
 
-def PlayCutsceneAndMovePlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt, game_map: GameMap):
+def PlayCutsceneAndMovePlayer(cutscene_id: int, playback_method: CutsceneType, region: gt.RegionInt,
+                              game_map: gt.MapOrSequence):
     """ I recommend you use the PlayCutscene() wrapper instead of this or the ones below. """
     instruction_info = (2002, 2)
     area_id, block_id = tuple(game_map)
@@ -959,8 +963,8 @@ def PlayCutsceneToPlayer(cutscene_id: int, playback_method: CutsceneType, player
     instruction_info = (2002, 3)
     return numeric_instruction(instruction_info, cutscene_id, playback_method, player_id)
 
-def PlayCutsceneAndMoveSpecificPlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt,
-                                      game_map: GameMap, player_id: int):
+def PlayCutsceneAndMoveSpecificPlayer(cutscene_id: int, playback_method: CutsceneType, region: gt.RegionInt,
+                                      game_map: gt.MapOrSequence, player_id: int):
     instruction_info = (2002, 4)
     area_id, block_id = tuple(game_map)
     return numeric_instruction(instruction_info, cutscene_id, playback_method, region, area_id, block_id, player_id)
@@ -1060,19 +1064,19 @@ def NotifyBossBattleStart():
 
 # SPAWNER
 
-def SetSpawnerState(entity: MapEntityInt, state: bool):
+def SetSpawnerState(entity: gt.CoordEntityInt, state: bool):
     """ e.g. the baby skeletons in Tomb of the Giants. """
     instruction_info = (2003, 3)
     return numeric_instruction(instruction_info, entity, state)
 
-def EnableSpawner(entity: MapEntityInt):
+def EnableSpawner(entity: gt.CoordEntityInt):
     return SetSpawnerState(entity, True)
 
-def DisableSpawner(entity: MapEntityInt):
+def DisableSpawner(entity: gt.CoordEntityInt):
     return SetSpawnerState(entity, False)
 
 
-def ShootProjectile(owner_entity: MapEntityInt, projectile_id, model_point, behavior_id,
+def ShootProjectile(owner_entity: gt.CoordEntityInt, projectile_id, model_point, behavior_id,
                     launch_angle_x=0, launch_angle_y=0, launch_angle_z=0):
     """ The owner entity sets the 'team' of the projectile (i.e. who it can hurt). You can use this to
     directly spawn bullets by setting the projectile_id to the owner_entity. Note that the angle arguments
@@ -1082,7 +1086,7 @@ def ShootProjectile(owner_entity: MapEntityInt, projectile_id, model_point, beha
                                launch_angle_x, launch_angle_y, launch_angle_z)
 
 
-def CreateSpawner(entity: MapEntityInt):
+def CreateSpawner(entity: gt.CoordEntityInt):
     """ A 'bullet owner' that will spawn things according to the Spawner section of the MSB. """
     instruction_info = (2004, 7)
     return numeric_instruction(instruction_info, entity)
@@ -1090,7 +1094,7 @@ def CreateSpawner(entity: MapEntityInt):
 
 # WARP
 
-def WarpToMap(game_map: GameMap, destination_player_id=-1):
+def WarpToMap(game_map: gt.MapOrSequence, destination_player_id=-1):
     """ Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
     default, this warps to the 'default position' in the map (-1), which is the same point you would spawn at if the
     game lost track of your stable footing (e.g. in 'wrong warp' glitches). """
@@ -1099,14 +1103,14 @@ def WarpToMap(game_map: GameMap, destination_player_id=-1):
     return numeric_instruction(instruction_info, area_id, block_id, destination_player_id)
 
 
-def MoveRemains(source_region: RegionInt, destination_region: RegionInt):
+def MoveRemains(source_region: gt.RegionInt, destination_region: gt.RegionInt):
     """ Move all bloodstains and dropped items from one region to another (I assume). Used to move your
     remains out of Gwyndolin's endless corridor. """
     instruction_info = (2003, 35)
     return numeric_instruction(instruction_info, source_region, destination_region)
 
 
-def Move(character: CharacterInt, destination: MapEntityInt, model_point=None,
+def Move(character: gt.CharacterInt, destination: gt.CoordEntityInt, model_point=None,
          copy_draw_hitbox=None, set_draw_hitbox=None, short_move=False, destination_type=None):
     """ Unified instruction for moving a character to some destination entity in the same map.
 
@@ -1120,7 +1124,7 @@ def Move(character: CharacterInt, destination: MapEntityInt, model_point=None,
     """
     if destination_type is None:
         try:
-            destination_type = destination.map_entity_type
+            destination_type = destination.coord_entity_type
         except AttributeError:
             raise AttributeError("Warp destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
@@ -1137,13 +1141,13 @@ def Move(character: CharacterInt, destination: MapEntityInt, model_point=None,
     return MoveToEntity(character, destination, model_point, destination_type)
 
 
-def MoveToEntity(character: CharacterInt, destination: MapEntityInt, model_point=None, destination_type=None):
+def MoveToEntity(character: gt.CharacterInt, destination: gt.CoordEntityInt, model_point=None, destination_type=None):
     """ Basic move. I recommend you use the easier 'Move' wrapper above. """
-    if model_point is None and not isinstance(destination, Region):
+    if model_point is None and not isinstance(destination, gt.Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
         try:
-            destination_type = destination.map_entity_type
+            destination_type = destination.coord_entity_type
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
@@ -1151,13 +1155,13 @@ def MoveToEntity(character: CharacterInt, destination: MapEntityInt, model_point
     return numeric_instruction(instruction_info, character, destination_type, destination, model_point)
 
 
-def MoveAndSetDrawHitbox(character: CharacterInt, destination: MapEntityInt, hitbox: HitboxInt, model_point=None,
-                         destination_type=None):
-    if model_point is None and not isinstance(destination, Region):
+def MoveAndSetDrawHitbox(character: gt.CharacterInt, destination: gt.CoordEntityInt, hitbox: gt.HitboxInt,
+                         model_point=None, destination_type=None):
+    if model_point is None and not isinstance(destination, gt.Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
         try:
-            destination_type = destination.map_entity_type
+            destination_type = destination.coord_entity_type
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
@@ -1165,12 +1169,12 @@ def MoveAndSetDrawHitbox(character: CharacterInt, destination: MapEntityInt, hit
     return numeric_instruction(instruction_info, character, destination_type, destination, model_point, hitbox)
 
 
-def ShortMove(character: CharacterInt, destination: MapEntityInt, model_point=None, destination_type=None):
-    if model_point is None and not isinstance(destination, Region):
+def ShortMove(character: gt.CharacterInt, destination: gt.CoordEntityInt, model_point=None, destination_type=None):
+    if model_point is None and not isinstance(destination, gt.Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
         try:
-            destination_type = destination.map_entity_type
+            destination_type = destination.coord_entity_type
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
@@ -1178,21 +1182,22 @@ def ShortMove(character: CharacterInt, destination: MapEntityInt, model_point=No
     return numeric_instruction(instruction_info, character, destination_type, destination, model_point)
 
 
-def MoveAndCopyDrawHitbox(character: CharacterInt, destination: MapEntityInt, copy_draw_hitbox: AnimatedInt,
+def MoveAndCopyDrawHitbox(character: gt.CharacterInt, destination: gt.CoordEntityInt, copy_draw_hitbox: gt.AnimatedInt,
                           model_point=None, destination_type=None):
-    if model_point is None and not isinstance(destination, Region):
+    if model_point is None and not isinstance(destination, gt.Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
         try:
-            destination_type = destination.map_entity_type
+            destination_type = destination.coord_entity_type
         except AttributeError:
             raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
                                  "typed destination.")
     instruction_info = (2004, 42, [0, 0, 0, -1, 0])
-    return numeric_instruction(instruction_info, character, destination_type, destination, model_point, copy_draw_hitbox)
+    return numeric_instruction(instruction_info, character, destination_type, destination, model_point,
+                               copy_draw_hitbox)
 
 
-def MoveObjectToCharacter(obj: ObjectInt, character: CharacterInt, model_point: int):
+def MoveObjectToCharacter(obj: gt.ObjectInt, character: gt.CharacterInt, model_point: int):
     """ Move an object to a character. """
     instruction_info = (2005, 11, [0, -1, -1])
     return numeric_instruction(instruction_info, obj, character, model_point)
@@ -1255,23 +1260,24 @@ def ChangeCamera(normal_camera_id: int, locked_camera_id: int):
     return numeric_instruction(instruction_info, normal_camera_id, locked_camera_id)
 
 
-def SetCameraVibration(vibration_id: int, anchor_entity: MapEntityInt, model_point: int, decay_start_distance: float,
-                       decay_end_distance: float, anchor_type: Optional[MapEntityType] = None):
+def SetCameraVibration(vibration_id: int, anchor_entity: gt.CoordEntityInt, model_point: int,
+                       decay_start_distance: float, decay_end_distance: float,
+                       anchor_type: Optional[CoordEntityType] = None):
     instruction_info = (2008, 2)
     if anchor_type is None:
-        anchor_type = anchor_entity.map_entity_type
+        anchor_type = anchor_entity.coord_entity_type
     return numeric_instruction(instruction_info, vibration_id, anchor_type, anchor_entity, model_point,
                                decay_start_distance, decay_end_distance)
 
 
-def SetLockedCameraSlot(game_map: GameMap, camera_slot: int):
+def SetLockedCameraSlot(game_map: gt.MapOrSequence, camera_slot: int):
     """ This isn't used very often; standard camera control is done with camera params in the MSB. """
     instruction_info = (2008, 3)
     area_id, block_id = tuple(game_map)
     return numeric_instruction(instruction_info, area_id, block_id, camera_slot)
 
 
-def HellkiteBreathControl(character: CharacterInt, obj: ObjectInt, animation_id):
+def HellkiteBreathControl(character: gt.CharacterInt, obj: gt.ObjectInt, animation_id):
     """ I don't recommend you mess with this. It seems to be used to create the fire FX and damaging effect when the
     Hellkite breathes fire on the bridge. It may simply trigger a certain behavior param ID. """
     instruction_info = (2004, 36)
@@ -1448,43 +1454,43 @@ def IfRandomFramesElapsed(output_condition: int, min_frames: int, max_frames: in
 
 # MAP
 
-def SkipLinesIfMapPresenceState(line_count, state: bool, game_map: GameMap):
+def SkipLinesIfMapPresenceState(line_count, state: bool, game_map: gt.MapOrSequence):
     instruction_info = (1003, 7)
     area_id, block_id = tuple(game_map)
     return numeric_instruction(instruction_info, line_count, state, area_id, block_id)
 
-def SkipLinesIfInsideMap(line_count, game_map: GameMap):
+def SkipLinesIfInsideMap(line_count, game_map: gt.MapOrSequence):
     return SkipLinesIfMapPresenceState(line_count, True, game_map)
 
-def SkipLinesIfOutsideMap(line_count, game_map: GameMap):
+def SkipLinesIfOutsideMap(line_count, game_map: gt.MapOrSequence):
     return SkipLinesIfMapPresenceState(line_count, False, game_map)
 
-def TerminateIfMapPresenceState(event_end_type: EventEndType, state: bool, game_map: Map):
+def TerminateIfMapPresenceState(event_end_type: EventEndType, state: bool, game_map: gt.MapOrSequence):
     instruction_info = (1003, 8)
     area_id, block_id = tuple(game_map)
     return numeric_instruction(instruction_info, event_end_type, state, area_id, block_id)
 
-def EndIfInsideMap(game_map: GameMap):
+def EndIfInsideMap(game_map: gt.MapOrSequence):
     return TerminateIfMapPresenceState(EventEndType.End, True, game_map)
 
-def EndIfOutsideMap(game_map: GameMap):
+def EndIfOutsideMap(game_map: gt.MapOrSequence):
     return TerminateIfMapPresenceState(EventEndType.End, False, game_map)
 
-def RestartIfInsideMap(game_map: GameMap):
+def RestartIfInsideMap(game_map: gt.MapOrSequence):
     return TerminateIfMapPresenceState(EventEndType.Restart, True, game_map)
 
-def RestartIfOutsideMap(game_map: GameMap):
+def RestartIfOutsideMap(game_map: gt.MapOrSequence):
     return TerminateIfMapPresenceState(EventEndType.Restart, False, game_map)
 
-def IfMapPresenceState(output_condition, state: bool, game_map: GameMap):
+def IfMapPresenceState(output_condition, state: bool, game_map: gt.MapOrSequence):
     instruction_info = (3, 8, [0, 0, 10, 0])
     area_id, block_id = tuple(game_map)
     return numeric_instruction(instruction_info, output_condition, state, area_id, block_id)
 
-def IfInsideMap(output_condition, game_map: GameMap):
+def IfInsideMap(output_condition, game_map: gt.MapOrSequence):
     return IfMapPresenceState(output_condition, True, game_map)
 
-def IfOutsideMap(output_condition, game_map: GameMap):
+def IfOutsideMap(output_condition, game_map: gt.MapOrSequence):
     return IfMapPresenceState(output_condition, False, game_map)
 
 
@@ -1498,7 +1504,7 @@ def IfMultiplayerEvent(condition: int, event_id: int):
 
 # FLAGS
 
-def AwaitFlagState(state: FlagState, flag_type: FlagType, flag: FlagInt):
+def AwaitFlagState(state: FlagState, flag_type: FlagType, flag: gt.FlagInt):
     instruction_info = (1003, 0)
     return numeric_instruction(instruction_info, state, flag_type, flag)
 
@@ -1514,17 +1520,17 @@ def AwaitThisEventSlotOn():
 def AwaitThisEventSlotOff():
     return AwaitFlagState(FlagState.Off, FlagType.RelativeToThisEventSlot, 0)
 
-def AwaitFlagOn(flag: FlagInt):
+def AwaitFlagOn(flag: gt.FlagInt):
     return AwaitFlagState(FlagState.On, FlagType.Absolute, flag)
 
-def AwaitFlagOff(flag: FlagInt):
+def AwaitFlagOff(flag: gt.FlagInt):
     return AwaitFlagState(FlagState.Off, FlagType.Absolute, flag)
 
-def AwaitFlagChange(flag: FlagInt):
+def AwaitFlagChange(flag: gt.FlagInt):
     return AwaitFlagState(FlagState.Change, FlagType.Absolute, flag)
 
 
-def SkipLinesIfFlagState(line_count, state: FlagState, flag_type: FlagType, flag: FlagInt):
+def SkipLinesIfFlagState(line_count, state: FlagState, flag_type: FlagType, flag: gt.FlagInt):
     """ Skip some number of lines if the specified flag (absolute, event-relative, or slot-relative) has the specified
     state. """
     instruction_info = (1003, 1)
@@ -1542,13 +1548,13 @@ def SkipLinesIfThisEventSlotOn(line_count):
 def SkipLinesIfThisEventSlotOff(line_count):
     return SkipLinesIfFlagState(line_count, FlagState.Off, FlagType.RelativeToThisEventSlot, 0)
 
-def SkipLinesIfFlagOn(line_count, flag: FlagInt):
+def SkipLinesIfFlagOn(line_count, flag: gt.FlagInt):
     return SkipLinesIfFlagState(line_count, FlagState.On, FlagType.Absolute, flag)
 
-def SkipLinesIfFlagOff(line_count, flag: FlagInt):
+def SkipLinesIfFlagOff(line_count, flag: gt.FlagInt):
     return SkipLinesIfFlagState(line_count, FlagState.Off, FlagType.Absolute, flag)
 
-def TerminateIfFlagState(event_end_type: EventEndType, state: FlagState, flag_type: FlagType, flag: FlagInt):
+def TerminateIfFlagState(event_end_type: EventEndType, state: FlagState, flag_type: FlagType, flag: gt.FlagInt):
     instruction_info = (1003, 2)
     return numeric_instruction(instruction_info, event_end_type, state, flag_type, flag)
 
@@ -1564,10 +1570,10 @@ def EndIfThisEventSlotOn():
 def EndIfThisEventSlotOff():
     return TerminateIfFlagState(EventEndType.End, FlagState.Off, FlagType.RelativeToThisEventSlot, 0)
 
-def EndIfFlagOn(flag: FlagInt):
+def EndIfFlagOn(flag: gt.FlagInt):
     return TerminateIfFlagState(EventEndType.End, FlagState.On, FlagType.Absolute, flag)
 
-def EndIfFlagOff(flag: FlagInt):
+def EndIfFlagOff(flag: gt.FlagInt):
     return TerminateIfFlagState(EventEndType.End, FlagState.Off, FlagType.Absolute, flag)
 
 def RestartIfThisEventOn():
@@ -1582,13 +1588,13 @@ def RestartIfThisEventSlotOn():
 def RestartIfThisEventSlotOff():
     return TerminateIfFlagState(EventEndType.Restart, FlagState.Off, FlagType.RelativeToThisEventSlot, 0)
 
-def RestartIfFlagOn(flag: FlagInt):
+def RestartIfFlagOn(flag: gt.FlagInt):
     return TerminateIfFlagState(EventEndType.Restart, FlagState.On, FlagType.Absolute, flag)
 
-def RestartIfFlagOff(flag: FlagInt):
+def RestartIfFlagOff(flag: gt.FlagInt):
     return TerminateIfFlagState(EventEndType.Restart, FlagState.Off, FlagType.Absolute, flag)
 
-def IfFlagState(condition: int, state: FlagState, flag_type: FlagType, flag: FlagInt):
+def IfFlagState(condition: int, state: FlagState, flag_type: FlagType, flag: gt.FlagInt):
     instruction_info = (3, 0)
     return numeric_instruction(instruction_info, condition, state, flag_type, flag)
 
@@ -1604,17 +1610,17 @@ def IfThisEventSlotOn(condition: int):
 def IfThisEventSlotOff(condition: int):
     return IfFlagState(condition, FlagState.Off, FlagType.RelativeToThisEventSlot, 0)
 
-def IfFlagOn(condition: int, flag: FlagInt):
+def IfFlagOn(condition: int, flag: gt.FlagInt):
     return IfFlagState(condition, FlagState.On, FlagType.Absolute, flag)
 
-def IfFlagOff(condition: int, flag: FlagInt):
+def IfFlagOff(condition: int, flag: gt.FlagInt):
     return IfFlagState(condition, FlagState.Off, FlagType.Absolute, flag)
 
-def IfFlagChange(condition: int, flag: FlagInt):
+def IfFlagChange(condition: int, flag: gt.FlagInt):
     return IfFlagState(condition, FlagState.Change, FlagType.Absolute, flag)
 
 
-def SkipLinesIfFlagRangeState(line_count, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence):
+def SkipLinesIfFlagRangeState(line_count, state: RangeState, flag_type: FlagType, flag_range: gt.FlagRangeOrSequence):
     """ Skip lines (or end/restart, below) if a flag range is all on, all off, any on, or any off. There are also tests
     that allow exact numeric comparisons below. You probably have very little reason to use relative flag values for
     this test, but it is possible. """
@@ -1622,67 +1628,67 @@ def SkipLinesIfFlagRangeState(line_count, state: RangeState, flag_type: FlagType
     first_flag, last_flag = tuple(flag_range)
     return numeric_instruction(instruction_info, line_count, state, flag_type, first_flag, last_flag)
 
-def SkipLinesIfFlagRangeAllOn(line_count, flag_range: FlagRangeOrSequence):
+def SkipLinesIfFlagRangeAllOn(line_count, flag_range: gt.FlagRangeOrSequence):
     return SkipLinesIfFlagRangeState(line_count, RangeState.AllOn, FlagType.Absolute, flag_range)
 
-def SkipLinesIfFlagRangeAllOff(line_count, flag_range: FlagRangeOrSequence):
+def SkipLinesIfFlagRangeAllOff(line_count, flag_range: gt.FlagRangeOrSequence):
     return SkipLinesIfFlagRangeState(line_count, RangeState.AllOff, FlagType.Absolute, flag_range)
 
-def SkipLinesIfFlagRangeAnyOn(line_count, flag_range: FlagRangeOrSequence):
+def SkipLinesIfFlagRangeAnyOn(line_count, flag_range: gt.FlagRangeOrSequence):
     return SkipLinesIfFlagRangeState(line_count, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
-def SkipLinesIfFlagRangeAnyOff(line_count, flag_range: FlagRangeOrSequence):
+def SkipLinesIfFlagRangeAnyOff(line_count, flag_range: gt.FlagRangeOrSequence):
     return SkipLinesIfFlagRangeState(line_count, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 def TerminateIfFlagRangeState(event_end_type: EventEndType, state: RangeState, flag_type: FlagType,
-                              flag_range: FlagRangeOrSequence):
+                              flag_range: gt.FlagRangeOrSequence):
     instruction_info = (1003, 4)
     first_flag, last_flag = tuple(flag_range)
     return numeric_instruction(instruction_info, event_end_type, state, flag_type, first_flag, last_flag)
 
-def EndIfFlagRangeAllOn(flag_range: FlagRangeOrSequence):
+def EndIfFlagRangeAllOn(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.End, RangeState.AllOn, FlagType.Absolute, flag_range)
 
-def EndIfFlagRangeAllOff(flag_range: FlagRangeOrSequence):
+def EndIfFlagRangeAllOff(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.End, RangeState.AllOff, FlagType.Absolute, flag_range)
 
-def EndIfFlagRangeAnyOn(flag_range: FlagRangeOrSequence):
+def EndIfFlagRangeAnyOn(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.End, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
-def EndIfFlagRangeAnyOff(flag_range: FlagRangeOrSequence):
+def EndIfFlagRangeAnyOff(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.End, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
-def RestartIfFlagRangeAllOn(flag_range: FlagRangeOrSequence):
+def RestartIfFlagRangeAllOn(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.Restart, RangeState.AllOn, FlagType.Absolute, flag_range)
 
-def RestartIfFlagRangeAllOff(flag_range: FlagRangeOrSequence):
+def RestartIfFlagRangeAllOff(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.Restart, RangeState.AllOff, FlagType.Absolute, flag_range)
 
-def RestartIfFlagRangeAnyOn(flag_range: FlagRangeOrSequence):
+def RestartIfFlagRangeAnyOn(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.Restart, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
-def RestartIfFlagRangeAnyOff(flag_range: FlagRangeOrSequence):
+def RestartIfFlagRangeAnyOff(flag_range: gt.FlagRangeOrSequence):
     return TerminateIfFlagRangeState(EventEndType.Restart, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
-def IfFlagRangeState(condition: int, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence):
+def IfFlagRangeState(condition: int, state: RangeState, flag_type: FlagType, flag_range: gt.FlagRangeOrSequence):
     instruction_info = (3, 1)
     first_flag, last_flag = tuple(flag_range)
     return numeric_instruction(instruction_info, condition, state, flag_type, first_flag, last_flag)
 
-def IfFlagRangeAllOn(condition: int, flag_range: FlagRangeOrSequence):
+def IfFlagRangeAllOn(condition: int, flag_range: gt.FlagRangeOrSequence):
     return IfFlagRangeState(condition, RangeState.AllOn, FlagType.Absolute, flag_range)
 
-def IfFlagRangeAllOff(condition: int, flag_range: FlagRangeOrSequence):
+def IfFlagRangeAllOff(condition: int, flag_range: gt.FlagRangeOrSequence):
     return IfFlagRangeState(condition, RangeState.AllOff, FlagType.Absolute, flag_range)
 
-def IfFlagRangeAnyOn(condition: int, flag_range: FlagRangeOrSequence):
+def IfFlagRangeAnyOn(condition: int, flag_range: gt.FlagRangeOrSequence):
     return IfFlagRangeState(condition, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
-def IfFlagRangeAnyOff(condition: int, flag_range: FlagRangeOrSequence):
+def IfFlagRangeAnyOff(condition: int, flag_range: gt.FlagRangeOrSequence):
     return IfFlagRangeState(condition, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 def IfTrueFlagCountComparison(condition: int, value: int, flag_type: FlagType.Absolute, comparison_type: ComparisonType,
-                              flag_range: FlagRangeOrSequence):
+                              flag_range: gt.FlagRangeOrSequence):
     instruction_info = (3, 10)
     first_flag, last_flag = tuple(flag_range)
     return numeric_instruction(instruction_info, condition, flag_type, first_flag, last_flag, comparison_type, value)
@@ -1706,31 +1712,32 @@ def IfTrueFlagCountLessThanOrEqual(condition: int, value: int, flag_range):
     return IfTrueFlagCountComparison(condition, value, FlagType.Absolute, ComparisonType.LessThanOrEqual, flag_range)
 
 
-def IfEventValueComparison(condition: int, flag: FlagInt, bit_count: int, comparison_type: ComparisonType, value: int):
+def IfEventValueComparison(condition: int, flag: gt.FlagInt, bit_count: int, comparison_type: ComparisonType,
+                           value: int):
     instruction_info = (3, 12, [0, 0, 1, 0, 0])
     return numeric_instruction(instruction_info, condition, flag, bit_count, comparison_type, value)
 
-def IfEventValueEqual(condition: int, flag: FlagInt, bit_count: int, value: int):
+def IfEventValueEqual(condition: int, flag: gt.FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.Equal, value)
 
-def IfEventValueNotEqual(condition: int, flag: FlagInt, bit_count: int, value: int):
+def IfEventValueNotEqual(condition: int, flag: gt.FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.NotEqual, value)
 
-def IfEventValueGreaterThan(condition: int, flag: FlagInt, bit_count: int, value: int):
+def IfEventValueGreaterThan(condition: int, flag: gt.FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.GreaterThan, value)
 
-def IfEventValueLessThan(condition: int, flag: FlagInt, bit_count: int, value: int):
+def IfEventValueLessThan(condition: int, flag: gt.FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.LessThan, value)
 
-def IfEventValueGreaterThanOrEqual(condition: int, flag: FlagInt, bit_count: int, value: int):
+def IfEventValueGreaterThanOrEqual(condition: int, flag: gt.FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.GreaterThanOrEqual, value)
 
-def IfEventValueLessThanOrEqual(condition: int, flag: FlagInt, bit_count: int, value: int):
+def IfEventValueLessThanOrEqual(condition: int, flag: gt.FlagInt, bit_count: int, value: int):
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.LessThanOrEqual, value)
 
 
-def IfEventsComparison(condition: int, left_flag: FlagInt, left_bit_count: int, comparison_type: ComparisonType,
-                       right_flag: FlagInt, right_bit_count: int):
+def IfEventsComparison(condition: int, left_flag: gt.FlagInt, left_bit_count: int, comparison_type: ComparisonType,
+                       right_flag: gt.FlagInt, right_bit_count: int):
     """ Check comparison of two event flag values. Haven't bothered adding shortcut functions for this. """
     instruction_info = (3, 20)
     return numeric_instruction(instruction_info, condition, left_flag, left_bit_count, comparison_type,
@@ -1739,66 +1746,66 @@ def IfEventsComparison(condition: int, left_flag: FlagInt, left_bit_count: int, 
 
 # REGIONS / DISTANCE
 
-def IfCharacterRegionState(condition, entity: AnimatedInt, region: RegionInt, state: bool):
+def IfCharacterRegionState(condition, entity: gt.AnimatedInt, region: gt.RegionInt, state: bool):
     """ Not sure if this works for objects. """
     instruction_info = (3, 2)
     return numeric_instruction(instruction_info, condition, state, entity, region)
 
-def IfCharacterInsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+def IfCharacterInsideRegion(condition: int, entity: gt.AnimatedInt, region: gt.RegionInt):
     return IfCharacterRegionState(condition, entity, region, True)
 
-def IfCharacterOutsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+def IfCharacterOutsideRegion(condition: int, entity: gt.AnimatedInt, region: gt.RegionInt):
     return IfCharacterRegionState(condition, entity, region, False)
 
-def IfPlayerInsideRegion(condition: int, region: RegionInt):
+def IfPlayerInsideRegion(condition: int, region: gt.RegionInt):
     return IfCharacterRegionState(condition, PLAYER, region, True)
 
-def IfPlayerOutsideRegion(condition: int, region: RegionInt):
+def IfPlayerOutsideRegion(condition: int, region: gt.RegionInt):
     return IfCharacterRegionState(condition, PLAYER, region, False)
 
 
-def IfAllPlayersRegionState(condition: int, region: RegionInt, state: bool):
+def IfAllPlayersRegionState(condition: int, region: gt.RegionInt, state: bool):
     instruction_info = (3, 7)
     return numeric_instruction(instruction_info, condition, state, region)
 
-def IfAllPlayersInsideRegion(condition: int, region: RegionInt):
+def IfAllPlayersInsideRegion(condition: int, region: gt.RegionInt):
     return IfAllPlayersRegionState(condition, region, True)
 
-def IfAllPlayersOutsideRegion(condition: int, region: RegionInt):
+def IfAllPlayersOutsideRegion(condition: int, region: gt.RegionInt):
     return IfAllPlayersRegionState(condition, region, False)
 
 
-def IfEntityDistanceState(condition: int, entity: MapEntityInt, other_entity: MapEntityInt, radius: float,
+def IfEntityDistanceState(condition: int, entity: gt.CoordEntityInt, other_entity: gt.CoordEntityInt, radius: float,
                           state: bool):
     instruction_info = (3, 3)
     return numeric_instruction(instruction_info, condition, state, entity, other_entity, radius)
 
-def IfEntityWithinDistance(condition: int, entity: MapEntityInt, other_entity: MapEntityInt, radius: float):
+def IfEntityWithinDistance(condition: int, entity: gt.CoordEntityInt, other_entity: gt.CoordEntityInt, radius: float):
     return IfEntityDistanceState(condition, entity, other_entity, radius, True)
 
-def IfEntityBeyondDistance(condition: int, entity: MapEntityInt, other_entity: MapEntityInt, radius: float):
+def IfEntityBeyondDistance(condition: int, entity: gt.CoordEntityInt, other_entity: gt.CoordEntityInt, radius: float):
     return IfEntityDistanceState(condition, entity, other_entity, radius, False)
 
-def IfPlayerWithinDistance(condition: int, other_entity: MapEntityInt, radius: float):
+def IfPlayerWithinDistance(condition: int, other_entity: gt.CoordEntityInt, radius: float):
     return IfEntityDistanceState(condition, PLAYER, other_entity, radius, True)
 
-def IfPlayerBeyondDistance(condition: int, other_entity: MapEntityInt, radius: float):
+def IfPlayerBeyondDistance(condition: int, other_entity: gt.CoordEntityInt, radius: float):
     return IfEntityDistanceState(condition, PLAYER, other_entity, radius, False)
 
 
 # ITEMS
 
-def IfPlayerItemStateNoBox(condition: int, item_type: ItemType, item: ItemInt, state: bool):
+def IfPlayerItemStateNoBox(condition: int, item_type: ItemType, item: gt.ItemInt, state: bool):
     instruction_info = (3, 4)
     return numeric_instruction(instruction_info, condition, item_type, item, state)
 
 
-def IfPlayerItemStateBox(condition: int, item_type: ItemType, item: ItemInt, state: bool):
+def IfPlayerItemStateBox(condition: int, item_type: ItemType, item: gt.ItemInt, state: bool):
     instruction_info = (3, 16)
     return numeric_instruction(instruction_info, condition, item_type, item, state)
 
 
-def IfPlayerItemState(condition: int, state: bool, item: ItemInt, item_type: Optional[ItemType] = None,
+def IfPlayerItemState(condition: int, state: bool, item: gt.ItemInt, item_type: Optional[ItemType] = None,
                       including_box: bool = True):
     """ My wrapper for the two versions that do and do not include the Bottomless Box in the test. """
     if item_type is None:
@@ -1812,54 +1819,54 @@ def IfPlayerItemState(condition: int, state: bool, item: ItemInt, item_type: Opt
         return IfPlayerItemStateNoBox(condition, item_type, item, state)
 
 
-def IfPlayerHasItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None, including_box: bool = True):
+def IfPlayerHasItem(condition: int, item: gt.ItemInt, item_type: Optional[ItemType] = None, including_box: bool = True):
     return IfPlayerItemState(condition, True, item, item_type, including_box)
 
 
-def IfPlayerHasWeapon(condition: int, weapon: WeaponInt, including_box: bool = True):
+def IfPlayerHasWeapon(condition: int, weapon: gt.WeaponInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, weapon, ItemType.Weapon, including_box)
 
 
-def IfPlayerHasArmor(condition: int, armor: ArmorInt, including_box: bool = True):
+def IfPlayerHasArmor(condition: int, armor: gt.ArmorInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, armor, ItemType.Armor, including_box)
 
 
-def IfPlayerHasRing(condition: int, ring: RingInt, including_box: bool = True):
+def IfPlayerHasRing(condition: int, ring: gt.RingInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, ring, ItemType.Ring, including_box)
 
 
-def IfPlayerHasGood(condition: int, good: GoodInt, including_box: bool = True):
+def IfPlayerHasGood(condition: int, good: gt.GoodInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, good, ItemType.Good, including_box)
 
 
-def IfPlayerDoesNotHaveItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None,
+def IfPlayerDoesNotHaveItem(condition: int, item: gt.ItemInt, item_type: Optional[ItemType] = None,
                             including_box: bool = True):
     return IfPlayerItemState(condition, False, item, item_type, including_box)
 
 
-def IfPlayerDoesNotHaveWeapon(condition: int, weapon: WeaponInt, including_box: bool = True):
+def IfPlayerDoesNotHaveWeapon(condition: int, weapon: gt.WeaponInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, weapon, ItemType.Weapon, including_box)
 
 
-def IfPlayerDoesNotHaveArmor(condition: int, armor: ArmorInt, including_box: bool = True):
+def IfPlayerDoesNotHaveArmor(condition: int, armor: gt.ArmorInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, armor, ItemType.Armor, including_box)
 
 
-def IfPlayerDoesNotHaveRing(condition: int, ring: RingInt, including_box: bool = True):
+def IfPlayerDoesNotHaveRing(condition: int, ring: gt.RingInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, ring, ItemType.Ring, including_box)
 
 
-def IfPlayerDoesNotHaveGood(condition: int, good: GoodInt, including_box: bool = True):
+def IfPlayerDoesNotHaveGood(condition: int, good: gt.GoodInt, including_box: bool = True):
     return IfPlayerItemState(condition, False, good, ItemType.Good, including_box)
 
 
-def IfAnyItemDroppedInRegion(condition: int, region: RegionInt):
+def IfAnyItemDroppedInRegion(condition: int, region: gt.RegionInt):
     """ Check if any item has been dropped in the specified region. Not sensitive to what the item is. """
     instruction_info = (3, 14)
     return numeric_instruction(instruction_info, condition, region)
 
 
-def IfItemDropped(condition: int, item: ItemInt, item_type: Optional[ItemType] = None):
+def IfItemDropped(condition: int, item: gt.ItemInt, item_type: Optional[ItemType] = None):
     """ Check if a certain item was (just) dropped. Not sensitive to region. """
     instruction_info = (3, 15)
     if item_type is None:
@@ -1872,54 +1879,54 @@ def IfItemDropped(condition: int, item: ItemInt, item_type: Optional[ItemType] =
 
 # OBJECTS
 
-def AwaitObjectDestructionState(state: bool, obj: ObjectInt):
+def AwaitObjectDestructionState(state: bool, obj: gt.ObjectInt):
     instruction_info = (1005, 0)
     return numeric_instruction(instruction_info, state, obj)
 
-def AwaitObjectDestroyed(obj: ObjectInt):
+def AwaitObjectDestroyed(obj: gt.ObjectInt):
     return AwaitObjectDestructionState(True, obj)
 
-def AwaitObjectNotDestroyed(obj: ObjectInt):
+def AwaitObjectNotDestroyed(obj: gt.ObjectInt):
     return AwaitObjectDestructionState(False, obj)
 
-def SkipLinesIfObjectDestructionState(line_count, obj: ObjectInt, state: bool):
+def SkipLinesIfObjectDestructionState(line_count, obj: gt.ObjectInt, state: bool):
     instruction_info = (1005, 1)
     return numeric_instruction(instruction_info, line_count, state, obj)
 
-def SkipLinesIfObjectDestroyed(line_count, obj: ObjectInt):
+def SkipLinesIfObjectDestroyed(line_count, obj: gt.ObjectInt):
     return SkipLinesIfObjectDestructionState(line_count, obj, True)
 
-def SkipLinesIfObjectNotDestroyed(line_count, obj: ObjectInt):
+def SkipLinesIfObjectNotDestroyed(line_count, obj: gt.ObjectInt):
     return SkipLinesIfObjectDestructionState(line_count, obj, False)
 
-def TerminateIfObjectDestructionState(event_end_type: EventEndType, obj: ObjectInt, state: bool):
+def TerminateIfObjectDestructionState(event_end_type: EventEndType, obj: gt.ObjectInt, state: bool):
     instruction_info = (1005, 2)
     return numeric_instruction(instruction_info, event_end_type, state, obj)
 
-def EndIfObjectDestroyed(obj: ObjectInt):
+def EndIfObjectDestroyed(obj: gt.ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.End, obj, True)
 
-def EndIfObjectNotDestroyed(obj: ObjectInt):
+def EndIfObjectNotDestroyed(obj: gt.ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.End, obj, False)
 
-def RestartIfObjectDestroyed(obj: ObjectInt):
+def RestartIfObjectDestroyed(obj: gt.ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.Restart, obj, True)
 
-def RestartIfObjectNotDestroyed(obj: ObjectInt):
+def RestartIfObjectNotDestroyed(obj: gt.ObjectInt):
     return TerminateIfObjectDestructionState(EventEndType.Restart, obj, False)
 
-def IfObjectDestructionState(condition: int, obj: ObjectInt, state: bool):
+def IfObjectDestructionState(condition: int, obj: gt.ObjectInt, state: bool):
     instruction_info = (5, 0)
     return numeric_instruction(instruction_info, condition, state, obj)
 
-def IfObjectDestroyed(condition: int, obj: ObjectInt):
+def IfObjectDestroyed(condition: int, obj: gt.ObjectInt):
     return IfObjectDestructionState(condition, obj, True)
 
-def IfObjectNotDestroyed(condition: int, obj: ObjectInt):
+def IfObjectNotDestroyed(condition: int, obj: gt.ObjectInt):
     return IfObjectDestructionState(condition, obj, False)
 
 
-def IfObjectDamagedBy(condition: int, obj: ObjectInt, attacker: CharacterInt):
+def IfObjectDamagedBy(condition: int, obj: gt.ObjectInt, attacker: gt.CharacterInt):
     instruction_info = (5, 1)
     return numeric_instruction(instruction_info, condition, obj, attacker)
 
@@ -1929,24 +1936,24 @@ def IfObjectActivated(condition: int, obj_act_id: int):
     return numeric_instruction(instruction_info, condition, obj_act_id)
 
 
-def IfObjectHealthValueComparison(condition: int, obj: ObjectInt, comparison_type: ComparisonType, value: int):
+def IfObjectHealthValueComparison(condition: int, obj: gt.ObjectInt, comparison_type: ComparisonType, value: int):
     instruction_info = (5, 3)
     return numeric_instruction(instruction_info, condition, obj, comparison_type, value)
 
 
 # HITBOX
 
-def IfMovingOnHitbox(condition: int, hitbox: Union[Hitbox, int]):
+def IfMovingOnHitbox(condition: int, hitbox: gt.HitboxInt):
     instruction_info = (11, 0)
     return numeric_instruction(instruction_info, condition, hitbox)
 
 
-def IfRunningOnHitbox(condition: int, hitbox: Union[Hitbox, int]):
+def IfRunningOnHitbox(condition: int, hitbox: gt.HitboxInt):
     instruction_info = (11, 1)
     return numeric_instruction(instruction_info, condition, hitbox)
 
 
-def IfStandingOnHitbox(condition: int, hitbox: Union[Hitbox, int]):
+def IfStandingOnHitbox(condition: int, hitbox: gt.HitboxInt):
     instruction_info = (11, 2)
     return numeric_instruction(instruction_info, condition, hitbox)
 
@@ -2037,29 +2044,29 @@ def RestartIfLessThanOrEqual(left: int, right: int):
 
 # ACTION PROMPT
 
-def IfDialogPromptActivated(condition: int, prompt_text: TextInt, anchor_entity: MapEntityInt,
+def IfDialogPromptActivated(condition: int, prompt_text: gt.EventTextInt, anchor_entity: gt.CoordEntityInt,
                             facing_angle=None, max_distance=None, model_point=-1, human_or_hollow_only=True, button=0,
                             boss_version=False, line_intersects=None, anchor_type=None):
     if anchor_type is None:
         try:
-            anchor_type = anchor_entity.map_entity_type
+            anchor_type = anchor_entity.coord_entity_type
         except AttributeError:
             raise ValueError("Anchor entity must be an Object, Region, or Character instance, or 'anchor_type' keyword "
                              "must be given.")
 
     if human_or_hollow_only:
-        reaction_attribute = ReactionAttribute.Human_or_Hollow
+        reaction_attribute = TriggerAttribute.Human_or_Hollow
     else:
-        reaction_attribute = ReactionAttribute.All
+        reaction_attribute = TriggerAttribute.All
 
     if facing_angle is None:
-        if anchor_type != MapEntityType.Region:
+        if anchor_type != CoordEntityType.Region:
             raise ValueError("Facing angle must be greater than zero for Object and Character targets.")
         else:
             facing_angle = 0.0
 
     if max_distance is None:
-        if anchor_type != MapEntityType.Region:
+        if anchor_type != CoordEntityType.Region:
             raise ValueError("Max distance must be greater than zero for Object and Character targets.")
         else:
             max_distance = 0.0
@@ -2152,113 +2159,113 @@ def IfOffline(condition: int):
 
 # CHARACTER
 
-def IfCharacterDeathState(condition: int, character: CharacterInt, state: bool):
+def IfCharacterDeathState(condition: int, character: gt.CharacterInt, state: bool):
     instruction_info = (4, 0)
     return numeric_instruction(instruction_info, condition, character, state)
 
-def IfCharacterDead(condition: int, character: CharacterInt):
+def IfCharacterDead(condition: int, character: gt.CharacterInt):
     return IfCharacterDeathState(condition, character, True)
 
-def IfCharacterAlive(condition: int, character: CharacterInt):
+def IfCharacterAlive(condition: int, character: gt.CharacterInt):
     return IfCharacterDeathState(condition, character, False)
 
 
-def IfAttacked(condition: int, attacked_character: CharacterInt, attacking_character: CharacterInt):
+def IfAttacked(condition: int, attacked_entity: gt.CharacterInt, attacking_character: gt.CharacterInt):
     instruction_info = (4, 1)
-    return numeric_instruction(instruction_info, condition, attacked_character, attacking_character)
+    return numeric_instruction(instruction_info, condition, attacked_entity, attacking_character)
 
 
-def IfHealthComparison(condition: int, character: CharacterInt, comparison_type: ComparisonType, value):
+def IfHealthComparison(condition: int, character: gt.CharacterInt, comparison_type: ComparisonType, value):
     instruction_info = (4, 2)
     return numeric_instruction(instruction_info, condition, character, comparison_type, value)
 
-def IfHealthEqual(condition: int, character: CharacterInt, value):
+def IfHealthEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.Equal, value)
 
-def IfHealthNotEqual(condition: int, character: CharacterInt, value):
+def IfHealthNotEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.NotEqual, value)
 
-def IfHealthGreaterThan(condition: int, character: CharacterInt, value):
+def IfHealthGreaterThan(condition: int, character: gt.CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.GreaterThan, value)
 
-def IfHealthLessThan(condition: int, character: CharacterInt, value):
+def IfHealthLessThan(condition: int, character: gt.CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.LessThan, value)
 
-def IfHealthGreaterThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthGreaterThanOrEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.GreaterThanOrEqual, value)
 
-def IfHealthLessThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthLessThanOrEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthComparison(condition, character, ComparisonType.LessThanOrEqual, value)
 
 
-def IfCharacterType(condition: int, character: CharacterInt, character_type: CharacterType):
+def IfCharacterType(condition: int, character: gt.CharacterInt, character_type: CharacterType):
     instruction_info = (4, 3)
     return numeric_instruction(instruction_info, condition, character, character_type)
 
-def IfCharacterHollow(condition: int, character: CharacterInt):
+def IfCharacterHollow(condition: int, character: gt.CharacterInt):
     return IfCharacterType(condition, character, CharacterType.Hollow)
 
-def IfCharacterHuman(condition: int, character: CharacterInt):
+def IfCharacterHuman(condition: int, character: gt.CharacterInt):
     return IfCharacterType(condition, character, CharacterType.Human)
 
 
-def IfCharacterTargetingState(condition: int, targeting_character: CharacterInt, targeted_character: CharacterInt,
+def IfCharacterTargetingState(condition: int, targeting_character: gt.CharacterInt, targeted_character: gt.CharacterInt,
                               state: bool):
     instruction_info = (4, 4)
     return numeric_instruction(instruction_info, condition, targeting_character, targeted_character, state)
 
-def IfCharacterTargeting(condition: int, targeting_character: CharacterInt,
-                         targeted_character: CharacterInt):
+def IfCharacterTargeting(condition: int, targeting_character: gt.CharacterInt,
+                         targeted_character: gt.CharacterInt):
     return IfCharacterTargetingState(condition, targeting_character, targeted_character, True)
 
-def IfCharacterNotTargeting(condition: int, targeting_character: CharacterInt,
-                            targeted_character: CharacterInt):
+def IfCharacterNotTargeting(condition: int, targeting_character: gt.CharacterInt,
+                            targeted_character: gt.CharacterInt):
     return IfCharacterTargetingState(condition, targeting_character, targeted_character, False)
 
 
-def IfCharacterSpecialEffectState(condition: int, character: CharacterInt, special_effect: int, state: bool):
+def IfCharacterSpecialEffectState(condition: int, character: gt.CharacterInt, special_effect: int, state: bool):
     instruction_info = (4, 5, [0, 0, -1, 0])
     return numeric_instruction(instruction_info, condition, character, special_effect, state)
 
-def IfCharacterHasSpecialEffect(condition: int, character: CharacterInt, special_effect: int):
+def IfCharacterHasSpecialEffect(condition: int, character: gt.CharacterInt, special_effect: int):
     return IfCharacterSpecialEffectState(condition, character, special_effect, True)
 
-def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: CharacterInt, special_effect: int):
+def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: gt.CharacterInt, special_effect: int):
     return IfCharacterSpecialEffectState(condition, character, special_effect, False)
 
 
-def IfCharacterPartHealthComparison(condition: int, character: CharacterInt, npc_part_id: int,
+def IfCharacterPartHealthComparison(condition: int, character: gt.CharacterInt, npc_part_id: int,
                                     comparison_type: ComparisonType, value):
     instruction_info = (4, 6)
     return numeric_instruction(instruction_info, condition, character, npc_part_id, value, comparison_type)
 
-def IfCharacterPartHealthLessThanOrEqual(condition: int, character: CharacterInt, npc_part_id: int, value):
+def IfCharacterPartHealthLessThanOrEqual(condition: int, character: gt.CharacterInt, npc_part_id: int, value):
     return IfCharacterPartHealthComparison(condition, character, npc_part_id, ComparisonType.LessThanOrEqual, value)
 
 
-def IfCharacterBackreadState(condition: int, character: CharacterInt, state: bool):
+def IfCharacterBackreadState(condition: int, character: gt.CharacterInt, state: bool):
     instruction_info = (4, 7)
     return numeric_instruction(instruction_info, condition, character, state)
 
-def IfCharacterBackreadEnabled(condition: int, character: CharacterInt):
+def IfCharacterBackreadEnabled(condition: int, character: gt.CharacterInt):
     return IfCharacterBackreadState(condition, character, True)
 
-def IfCharacterBackreadDisabled(condition: int, character: CharacterInt):
+def IfCharacterBackreadDisabled(condition: int, character: gt.CharacterInt):
     return IfCharacterBackreadState(condition, character, False)
 
 
-def IfTAEEventState(condition: int, character: CharacterInt, tae_event_id: int, state: bool):
+def IfTAEEventState(condition: int, character: gt.CharacterInt, tae_event_id: int, state: bool):
     instruction_info = (4, 8, [0, 0, -1, 0])
     return numeric_instruction(instruction_info, condition, character, tae_event_id, state)
 
-def IfHasTAEEvent(condition: int, character: CharacterInt, tae_event_id: int):
+def IfHasTAEEvent(condition: int, character: gt.CharacterInt, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, True)
 
-def IfDoesNotHaveTAEEvent(condition: int, character: CharacterInt, tae_event_id: int):
+def IfDoesNotHaveTAEEvent(condition: int, character: gt.CharacterInt, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, False)
 
 
-def IfHasAIStatus(condition: int, character: CharacterInt, ai_status: AIStatusType):
+def IfHasAIStatus(condition: int, character: gt.CharacterInt, ai_status: AIStatusType):
     instruction_info = (4, 9)
     return numeric_instruction(instruction_info, condition, character, ai_status)
 
@@ -2295,26 +2302,26 @@ def IfPlayerSoulLevelLessThanOrEqual(condition: int, value):
     return IfPlayerSoulLevelComparison(condition, ComparisonType.LessThanOrEqual, value)
 
 
-def IfHealthValueComparison(condition: int, character: CharacterInt, comparison_type: ComparisonType, value):
+def IfHealthValueComparison(condition: int, character: gt.CharacterInt, comparison_type: ComparisonType, value):
     instruction_info = (4, 14)
     return numeric_instruction(instruction_info, condition, character, comparison_type, value)
 
-def IfHealthValueEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.Equal, value)
 
-def IfHealthValueNotEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueNotEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.NotEqual, value)
 
-def IfHealthValueGreaterThan(condition: int, character: CharacterInt, value):
+def IfHealthValueGreaterThan(condition: int, character: gt.CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.GreaterThan, value)
 
-def IfHealthValueLessThan(condition: int, character: CharacterInt, value):
+def IfHealthValueLessThan(condition: int, character: gt.CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.LessThan, value)
 
-def IfHealthValueGreaterThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueGreaterThanOrEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.GreaterThanOrEqual, value)
 
-def IfHealthValueLessThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueLessThanOrEqual(condition: int, character: gt.CharacterInt, value):
     return IfHealthValueComparison(condition, character, ComparisonType.LessThanOrEqual, value)
 
 

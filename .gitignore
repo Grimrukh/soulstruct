@@ -1,4 +1,6 @@
-# Byte-compiled / optimized / DLL files
+soulstruct/config.py
+
+# Byte-compiled / optimized / DLL resources
 __pycache__/
 *.py[cod]
 *$py.class
@@ -26,7 +28,7 @@ wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
+#  Usually these resources are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
@@ -81,7 +83,7 @@ target/
 # celery beat schedule file
 celerybeat-schedule
 
-# SageMath parsed files
+# SageMath parsed resources
 *.sage.py
 
 # Environments

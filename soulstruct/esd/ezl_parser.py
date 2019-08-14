@@ -1,7 +1,7 @@
 import ast
 from binascii import hexlify
 import struct
-from soulstruct.core import read_chars
+from soulstruct.core import read_chars_from_buffer
 from soulstruct.esd.functions import TEST_FUNCTIONS
 
 __all__ = ['decompile', 'FUNCTION_ARG_BYTES_BY_COUNT', 'OPERATORS_BY_NODE', 'CLEAR_REGISTERS', 'SET_INTERNAL_SYMBOLS']
@@ -27,7 +27,7 @@ UNARY_OPERATORS_BY_BYTE = {
 BINARY_OPERATORS_BY_BYTE = {
     # byte: (symbol, priority)
     b'\x8c': ('+', 4),
-    # b'\x8d' is the unary negate operator.
+    # b'\x8d' is the unary negate operator. # TODO: Implement negation.
     b'\x8e': ('-', 4),
     b'\x8f': ('*', 5),
     b'\x90': ('/', 5),
@@ -86,11 +86,10 @@ def format_function(sequence: list, arg_count_key: bytes, esd_type: str):
     else:
         *args, f_id = pop_multiple(sequence, arg_count + 1)
     try:
-        # TODO: not using arg names yet, but make them available as kwargs?
-        function_name, arg_names = TEST_FUNCTIONS[esd_type][int(f_id)]
+        # TODO: not using arg names or types yet, but make them available as kwargs?
+        function_name, arg_names, arg_types = TEST_FUNCTIONS[esd_type][int(f_id)]
     except KeyError:
-        function_name = f'Function_{esd_type}_{f_id}'
-    # TODO: CHR test functions
+        function_name = f'Test_{esd_type}_{f_id}'
     return f"{function_name}({', '.join(str(arg) for arg in reversed(args))})"
 
 
@@ -108,8 +107,8 @@ def format_binary_operator(sequence: list, operator_key: bytes):
 def decompile(byte_sequence, esd_type):
     """ Input should be a sequence of bytes. """
 
-    if esd_type not in {'chr', 'talk'}:
-        raise ValueError("esd_type must be 'chr' or 'talk'.")
+    if esd_type not in {'CHR', 'TALK'}:
+        raise ValueError("esd_type must be 'CHR' or 'TALK'.")
 
     # print('Unparsed:', nice_hex_bytes(byte_sequence))
 
@@ -166,7 +165,7 @@ def decompile(byte_sequence, esd_type):
         elif b == b'\xa5':
             # Start of a null-terminated string. I believe it is always UTF-16LE.
             try:
-                string = read_chars(byte_sequence, offset=i + 1, encoding='utf-16le')
+                string = read_chars_from_buffer(byte_sequence, offset=i + 1, encoding='utf-16le')
             except ValueError:
                 print(byte_sequence)
                 raise
@@ -199,9 +198,24 @@ def decompile(byte_sequence, esd_type):
                 output[-1] += '!'
             i += 1
 
+        elif b == b'\xb8':
+            # Get state machine argument at index.
+            output.append(f'MACHINE_ARGS[{output.pop()}]')
+            i += 1
+
+        elif b == b'\xb9':
+            # Check status of state machine called (presumably just the last one called).
+            output.append('MACHINE_CALL_STATUS')
+            i += 1
+
+        elif b == b'\xba':
+            # State machine status. (No other values known, or used.)
+            output.append('ONGOING')
+            i += 1
+
         else:
             print('Current output:', output)
-            raise ValueError(rf"Unknown ESDL byte encountered: {b}")
+            raise ValueError(rf"Unknown EZL byte encountered: {b}")
 
     # print('Parsed:', output)
     return ''.join(str(o) for o in output)

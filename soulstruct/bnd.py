@@ -1,7 +1,7 @@
 from io import BytesIO
 import os
 from shutil import copyfile
-from soulstruct.core import BinaryStruct, read_chars
+from soulstruct.core import BinaryStruct, read_chars_from_buffer
 from soulstruct.dcx import DCX
 
 
@@ -114,7 +114,7 @@ class BND(object):
 
         for entry in entry_headers:
             bnd_buffer.seek(entry.data_offset)
-            entry_name = read_chars(bnd_buffer, offset=entry.name_offset, encoding='shift-jis')
+            entry_name = read_chars_from_buffer(bnd_buffer, offset=entry.name_offset, encoding='shift-jis')
             entry_data = bnd_buffer.read(entry.data_size)
             self.add_entry(BNDEntry(entry_id=entry.entry_id, name=entry_name, data=entry_data))
 

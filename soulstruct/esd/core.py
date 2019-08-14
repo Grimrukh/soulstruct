@@ -1,12 +1,13 @@
 import ast
 from collections import OrderedDict
+import glob
 from io import BytesIO
 import os
 from queue import Queue
 import re
 import struct
 from typing import List, Tuple
-from soulstruct.core import BinaryStruct, read_chars
+from soulstruct.core import BinaryStruct, read_chars_from_buffer
 from soulstruct.dcx import DCX
 from .ezl_parser import *
 from .functions import COMMANDS, COMMANDS_BANK_ID_BY_TYPE_NAME, TEST_FUNCTIONS_ID_BY_TYPE_NAME
@@ -32,7 +33,7 @@ class BaseESD(object):
     EXTERNAL_HEADER_STRUCT = None  # type: BinaryStruct
     INTERNAL_HEADER_STRUCT = None  # type: BinaryStruct
     STATE_MACHINE_HEADER_STRUCT = None  # type: BinaryStruct
-    DCX_MAGIC = None  # TODO: I assume I can copy this from EMEVD (i.e. DCX is consistent across files within games).
+    DCX_MAGIC = None
 
     class State(object):
 
@@ -121,7 +122,10 @@ class BaseESD(object):
             if self.conditions:
                 s += f'    def test(self):\n'
                 if len(self.conditions) == 1 and self.conditions[0].test_ezl == b'\x41\xa1':
-                    s += f'        return State_{self.conditions[0].next_state_index}\n'
+                    if self.conditions[0].next_state_index != -1:
+                        s += f'        return State_{self.conditions[0].next_state_index}\n'
+                    else:
+                        s += f'        return -1\n'
                 else:
                     for i, condition in enumerate(self.conditions):
                         if not comment and condition.test_ezl == b'\x41\xa1':
@@ -212,7 +216,7 @@ class BaseESD(object):
                     count=d.subcondition_pointers_count,
                 )
 
-                test_ezl = read_chars(esd_buffer, offset=d.test_ezl_offset, length=d.test_ezl_size)
+                test_ezl = read_chars_from_buffer(esd_buffer, offset=d.test_ezl_offset, length=d.test_ezl_size)
 
                 if d.next_state_offset > 0:
                     esd_buffer.seek(d.next_state_offset)
@@ -244,8 +248,14 @@ class BaseESD(object):
                 for command in self.pass_commands:
                     s += command.to_py(indent=indent + 1, comment=comment)
             if self.subconditions:
-                for condition in self.subconditions:
-                    s += condition.to_py(indent=indent + 1, comment=comment)
+                if len(self.subconditions) == 1 and self.subconditions[0].test_ezl == b'\x41\xa1':
+                    if self.subconditions[0].next_state_index != -1:
+                        s += f'{ind}    return State_{self.subconditions[0].next_state_index}\n'
+                    else:
+                        s += f'{ind}    return -1\n'
+                else:
+                    for condition in self.subconditions:
+                        s += condition.to_py(indent=indent + 1, comment=comment)
             if self.next_state_index != -1:
                 s += f'{ind}{c}    return State_{self.next_state_index}\n'
             return s
@@ -303,7 +313,7 @@ class BaseESD(object):
                 if d.args_offset > 0:
                     esd_buffer.seek(d.args_offset)
                     arg_structs = cls.ARG_STRUCT.unpack(esd_buffer, count=d.args_count)
-                    args = [read_chars(esd_buffer, offset=a.arg_ezl_offset, length=a.arg_ezl_size) for a in arg_structs]
+                    args = [read_chars_from_buffer(esd_buffer, offset=a.arg_ezl_offset, length=a.arg_ezl_size) for a in arg_structs]
                 else:
                     args = []
                 commands.append(cls(esd_type, d.bank, d.index, args))
@@ -322,8 +332,12 @@ class BaseESD(object):
             ind = '    ' * indent
             c = '# ' if comment else ''
             try:
-                command_name, arg_names = COMMANDS[self.esd_type][self.bank][self.index]
+                command_name, arg_names, arg_types = COMMANDS[self.esd_type][self.bank][self.index]
             except KeyError:
+                if self.bank == 6:
+                    # Start a child state machine.
+                    arguments = ', '.join([f'{decompile(arg, self.esd_type)}' for arg in self.args])
+                    return f'{ind}{c}CALL_STATE_MACHINE[{0x80000000 - self.index}]({arguments})\n'
                 command_name = f'Command_{self.esd_type}_{self.bank}_{self.index}'
                 arg_names = ()
             if len(arg_names) != len(self.args):
@@ -335,7 +349,7 @@ class BaseESD(object):
 
         def to_html(self):
             try:
-                command_name, arg_names = COMMANDS[self.esd_type][self.bank][self.index]
+                command_name, arg_names, arg_types = COMMANDS[self.esd_type][self.bank][self.index]
             except KeyError:
                 command_name = f'Command_{self.esd_type}_{self.bank}_{self.index}'
                 arg_names = ()
@@ -350,7 +364,9 @@ class BaseESD(object):
             - raw binary data (e.g. from a BND entry).
         """
 
-        self.magic = b''
+        esd_type = esd_type.upper() if esd_type is not None else None
+
+        self.magic = ()
         self.esd_name = ''
         self.file_tail = b''
         self._dcx = False
@@ -360,23 +376,20 @@ class BaseESD(object):
         self.state_machines = OrderedDict()
 
         if isinstance(esd_source, bytes):
-            self.unpack(BytesIO(esd_source))
-
-        elif isinstance(esd_source, (list, tuple)):
-            # TODO: Check names are the same aside from SM0/SM1, etc.
-            self.auto_path_name = re.sub(r'_SM[\d](\.esd)?(\.py)?', '', esd_source[0])
-            self.compile_from_esp(*esd_source)
+            self.unpack(BytesIO(esd_source), esd_type)
 
         elif isinstance(esd_source, str):
 
-            if esd_source.endswith('.py') or esd_source.endswith('.esp'):
-                self.auto_path_name = os.path.splitext(esd_source)[0]
-                self.compile_from_esp(esd_source)
+            if os.path.isdir(esd_source):
+                self.auto_path_name = esd_source
+                if self.auto_path_name.endswith('.py'):
+                    self.auto_path_name = self.auto_path_name[:-3]
+                self.compile_from_esp_dir(esd_source)
 
             elif esd_source.endswith('.esd.dcx'):
-                if esd_type not in {'chr', 'talk'}:
-                    raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected from"
-                                     "packed ESD files.")
+                if esd_type not in {'CHR', 'TALK'}:
+                    raise ValueError("esd_type must be 'CHR' or 'TALK'. This cannot be safely auto-detected from"
+                                     "packed ESD resources.")
                 esd_dcx = DCX(esd_source)
                 self.auto_path_name = esd_source[:-8]
                 self._dcx = True
@@ -388,17 +401,17 @@ class BaseESD(object):
                                   f"ESD, which you can create with the `pack()` method of this class.")
 
             elif esd_source.endswith('.esd'):
-                if esd_type not in {'chr', 'talk'}:
-                    raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected from"
-                                     "packed ESD files.")
+                if esd_type not in {'CHR', 'TALK'}:
+                    raise ValueError("esd_type must be 'CHR' or 'TALK'. This cannot be safely auto-detected from"
+                                     "packed ESD resources.")
                 self.auto_path_name = esd_source[:-4]
                 with open(esd_source, 'rb') as esd_buffer:
                     self.unpack(esd_buffer, esd_type)
 
     def unpack(self, esd_buffer, esd_type):
 
-        if esd_type not in {'chr', 'talk'}:
-            raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected.")
+        if esd_type not in {'CHR', 'TALK'}:
+            raise ValueError("esd_type must be 'CHR' or 'TALK'. This cannot be safely auto-detected.")
         self.esd_type = esd_type
 
         header = self.EXTERNAL_HEADER_STRUCT.unpack(esd_buffer)
@@ -408,8 +421,7 @@ class BaseESD(object):
         internal_header = self.INTERNAL_HEADER_STRUCT.unpack(esd_buffer)
         self.magic = internal_header.magic
         state_machine_headers = self.STATE_MACHINE_HEADER_STRUCT.unpack(esd_buffer, count=header.state_machine_count)
-        if len(state_machine_headers) > 2:
-            print("WARNING: More than two state tables is highly unusual!")
+        print(f"# Number of state machines: {len(state_machine_headers)}")  # todo
 
         for state_machine_header in state_machine_headers:
             states = self.State.unpack(
@@ -424,7 +436,7 @@ class BaseESD(object):
             esd_name_offset = internal_header.esd_name_offset
             esd_name_length = internal_header.esd_name_length
             # Note the given length is the length of the final string. The actual UTF-16 encoded bytes are twice that.
-            self.esd_name = read_chars(
+            self.esd_name = read_chars_from_buffer(
                 esd_buffer, offset=esd_name_offset, length=2 * esd_name_length, encoding='utf-16le')
             esd_buffer.seek(esd_name_offset + 2 * esd_name_length)
             self.file_tail = esd_buffer.read()
@@ -433,13 +445,49 @@ class BaseESD(object):
             esd_buffer.seek(header.unk_offset_1)  # after packed EZL
             self.file_tail = esd_buffer.read()
 
-    def compile_from_esp(self, *esp_paths):
-        for esp_path in esp_paths:
+    def compile_from_esp_dir(self, esp_dir):
+        # Compile header first.
+        header_path = glob.glob(os.path.join(esp_dir, 'ESD_Header*'))
+        if not header_path:
+            raise FileNotFoundError("Could not find 'ESD_Header file in directory.")
+        self.read_esp_header(header_path[0])
+
+        for esp_path in glob.glob(os.path.join(esp_dir, 'StateMachine_*')):
+            esp_name = os.path.basename(esp_path)
+            print(f"# Compiling {esp_name}...")
+            esp_match = re.match(r'StateMachine_(x?)(\d*)\.(py|esp)', esp_name)
+            if esp_match is None:
+                raise NameError(f"State machine resources should all be in format 'StateMachine_i' for main machines\n"
+                                f"or 'StateMachine_xi' for callable machines, not '{os.path.basename(esp_path)}'")
+            if esp_match.group(1) == 'x':
+                state_machine_index = 0x80000000 - int(esp_match.group(2))
+            else:
+                state_machine_index = int(esp_match.group(2))
             compiler = ESPCompiler(esp_path, self)
-            self.state_machines[compiler.state_machine_index] = compiler.states
-            self.esd_type = compiler.esd_type
-            self.esd_name = compiler.esd_name
-            self.magic = compiler.magic
+            self.state_machines[state_machine_index] = compiler.states
+
+    def read_esp_header(self, header_path):
+        with open(header_path, 'r') as f:
+            for line in f:
+                line = line.strip(' \r\n')
+                if not line:
+                    continue
+                if line.startswith('ESD_NAME = '):
+                    self.esd_name = ast.literal_eval(line[len('ESD_NAME = '):])
+                elif line.startswith('ESD_TYPE = '):
+                    self.esd_type = ast.literal_eval(line[len('ESD_TYPE = '):])
+                elif line.startswith('MAGIC = '):
+                    magic = line[len('MAGIC = '):]
+                    try:
+                        self.magic = tuple(ast.literal_eval(magic))
+                    except ValueError:
+                        raise ValueError(f"Could not read MAGIC value from ESD_Header: {magic}")
+                else:
+                    raise ValueError(f"Invalid ESD Header line: {line}")
+        if self.esd_type not in {'CHR', 'TALK'}:
+            raise ValueError(f"ESD type must be 'CHR' or 'TALK', not {repr(self.esd_type)}")
+        if len(self.magic) != 4:
+            raise ValueError(f"MAGIC should be a four-element sequence.")
 
     def pack(self):
         """ Packs tables and computes new byte offsets for them. """
@@ -512,30 +560,33 @@ class BaseESD(object):
 
         s = ('from soulstruct.esd import State\n'
              'from soulstruct.esd.functions import *\n\n')
-        s += f"STATE_MACHINE_INDEX = {state_machine_index}\n"
-        s += f"ESD_NAME = {repr(self.esd_name)}\n"
-        s += f"ESD_TYPE = {repr(self.esd_type)}\n"
-        s += f"UNKNOWN = {self.magic}\n\n"
         for i, state in self.state_machines[state_machine_index].items():
             s += state.to_py(from_states=from_states.get(i, None))
         s = s.strip('\n') + '\n'  # End with just one newline.
         return s
 
-    def write_py(self, py_path=None):
-        if py_path is None:
-            py_path = self.auto_path_name
-            if not py_path.endswith('.py'):
-                py_path += '.py'
-        base_name, ext = os.path.splitext(py_path)
+    def write_py(self, py_dir_path=None):
+        """ Write ESD to a collection of Python-like 'ESP' scripts (one per state machine) in the specified folder. """
+        if py_dir_path is None:
+            py_dir_path = self.auto_path_name
+            if not py_dir_path.endswith('.esp'):
+                py_dir_path += '.esp'
+        os.makedirs(py_dir_path, exist_ok=True)
         for i, state_machine in self.state_machines.items():
-            if len(self.state_machines) == 1 and i == 1:
-                # No need to append a state machine tail.
-                state_machine_path = base_name + ext
+            if i >= 0x70000000:
+                # 'Callable' state machine.
+                state_machine_path = os.path.join(py_dir_path, f'StateMachine_x{0x80000000 - i}.py')
             else:
-                state_machine_path = base_name + f'_SM{i}' + ext
+                # Primary state machine.
+                state_machine_path = os.path.join(py_dir_path, f'StateMachine_{i}.py')
             with open(state_machine_path, 'w', encoding='utf-8') as state_machine_file:
-                py_text = self.to_py(i)
-                state_machine_file.write(py_text)
+                state_machine_py = self.to_py(i)
+                state_machine_file.write(state_machine_py)
+        header = (f"ESD_NAME = {repr(self.esd_name)}\n"
+                  f"ESD_TYPE = {repr(self.esd_type)}\n"
+                  f"MAGIC = {repr(self.magic)}\n")
+        with open(os.path.join(py_dir_path, f'ESD_Header.py'), 'w', encoding='utf-8') as header_file:
+            header_file.write(header)
 
     def to_html(self):
 
@@ -822,7 +873,7 @@ class _ESDPacker(object):
 
     def build_ezl(self, ezl_bytes):
         # TODO: Conditions and commands are currently intermingled (ordered by state), which is not true for the
-        #  original files (where all condition data comes before all command data), but it shouldn't matter at all.
+        #  original resources (where all condition data comes before all command data), but it shouldn't matter at all.
         this_offset = len(self.ezl)
         self.ezl += ezl_bytes
         return this_offset
@@ -832,16 +883,14 @@ class ESPCompiler(object):
 
     registers: List[Tuple]
     _STATE_DOCSTRING_RE = re.compile(r'([0-9]+)(:\s*.*)?')
-    _COMMAND_DEFAULT_RE = re.compile(r'Command_(?:talk|chr)_(\d*)_(\d*)')
+    _COMMAND_DEFAULT_RE = re.compile(r'Command_(?:TALK|CHR)_(\d*)_(\d*)')
+    _TEST_DEFAULT_RE = re.compile(r'Test_(?:TALK|CHR)_(\d*)')
 
     def __init__(self, esp_path, esd_object):
         """ Builds a single state machine. """
 
         self.ESD = esd_object  # type: BaseESD
         self.docstring = ''
-        self.esd_type = ''
-        self.esd_name = ''
-        self.magic = b''
         self.state_machine_index = None
         self.state_info = {}
         self.states = {}
@@ -865,8 +914,6 @@ class ESPCompiler(object):
 
         self.docstring = ast.get_docstring(self.tree)
 
-        # TODO: Put ESD name and state machine index in docstring?
-
         for node in self.tree.body[1:]:
 
             if isinstance(node, ast.Import):
@@ -876,19 +923,6 @@ class ESPCompiler(object):
             elif isinstance(node, ast.ImportFrom):
                 # TODO: self.import_constants(node)
                 pass
-            elif isinstance(node, ast.Assign) and len(node.targets) == 1:
-                if node.targets[0].id == 'STATE_MACHINE_INDEX':
-                    self.state_machine_index = node.value.n
-                elif node.targets[0].id == 'ESD_TYPE':
-                    self.esd_type = node.value.s
-                elif node.targets[0].id == 'ESD_NAME':
-                    self.esd_name = node.value.s
-                elif node.targets[0].id == 'UNKNOWN':
-                    self.magic = node.value.s
-                else:
-                    raise EsdSyntaxError(node.lineno, "Only STATE_MACHINE_INDEX, ESD_TYPE, ESD_NAME, and MAGIC are"
-                                                      "permitted for assignments.")
-
             elif isinstance(node, ast.ClassDef):
                 self.scan_state(node)
             else:
@@ -917,24 +951,24 @@ class ESPCompiler(object):
                 continue
             elif node.name == 'test':
                 if conditions:
-                    raise EsdSyntaxError(node.lineno, "test() method defined twice.")
+                    raise EsdSyntaxError(node.lineno, "test() method defined more than once.")
                 conditions = self.build_conditions(node.body)
             elif node.name == 'enter':
                 if enter_commands:
-                    raise EsdSyntaxError(node.lineno, "enter() method defined twice.")
+                    raise EsdSyntaxError(node.lineno, "enter() method defined more than once.")
                 enter_commands = [self.build_command(command_node) for command_node in node.body]
             elif node.name == 'exit':
                 if exit_commands:
-                    raise EsdSyntaxError(node.lineno, "exit() method defined twice.")
+                    raise EsdSyntaxError(node.lineno, "exit() method defined more than once.")
                 exit_commands = [self.build_command(command_node) for command_node in node.body]
             elif node.name == 'ongoing':
                 if ongoing_commands:
-                    raise EsdSyntaxError(node.lineno, "ongoing() method defined twice.")
+                    raise EsdSyntaxError(node.lineno, "ongoing() method defined more than once.")
                 ongoing_commands = [self.build_command(command_node) for command_node in node.body]
             else:
                 raise EsdSyntaxError(node.lineno, f"Unexpected state function: '{node.name.id}'.")
 
-        return self.ESD.State(self.esd_type, index, conditions, enter_commands, exit_commands, ongoing_commands)
+        return self.ESD.State(self.ESD.esd_type, index, conditions, enter_commands, exit_commands, ongoing_commands)
 
     def scan_state(self, node):
         """ Get state name. """
@@ -954,17 +988,23 @@ class ESPCompiler(object):
 
     def build_command(self, node):
         """ Pass in the body of a function def, or a list of nodes before 'return' in a test block. """
-        if not self.is_call(node):
+        if self.is_state_machine_call(node):
+            bank = 6  # TODO: True in every game/file?
+            f_id = 0x80000000 - node.value.func.slice.value.n
+            if not isinstance(f_id, int):
+                raise EsdValueError(node.lineno, "State machine call must have an integer index.")
+        elif self.is_call(node):
+            try:
+                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.ESD.esd_type, node.value.func.id]
+            except KeyError:
+                bank, f_id = self._COMMAND_DEFAULT_RE.match(node.value.func.id).group(1, 2)
+                bank, f_id = int(bank), int(f_id)
+        else:
             raise EsdSyntaxError(node.lineno, f"Expected only function calls, not node type {type(node)}.")
-        try:
-            bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.esd_type, node.value.func.id]
-        except KeyError:
-            bank, f_id = self._COMMAND_DEFAULT_RE.match(node.value.func.id).group(1, 2)
-            bank, f_id = int(bank), int(f_id)
         # TODO: Check arg count against canonical function, once available, and order keyword args.
         args = node.value.args + [keyword.value for keyword in node.value.keywords]
         command_args = [self.compile_ezl(arg) + b'\xa1' for arg in args]
-        return self.ESD.Command(self.esd_type, bank, f_id, command_args)
+        return self.ESD.Command(self.ESD.esd_type, bank, f_id, command_args)
 
     def reset_condition_registers(self):
         self.registers = [()] * 8
@@ -980,19 +1020,27 @@ class ESPCompiler(object):
             - optional sequence of subcondition IF blocks
             - optional return statement specifying a state class name to change to
 
-        I'm only guessing that the 'pass commands' are run before the subconditions. In most files (e.g. talk files),
+        I'm only guessing that the 'pass commands' are run before the subconditions. In most resources (e.g. talk resources),
         pass command and subconditions are not used, but they are used extensively in, say, enemyCommon.esd, which is
         the core file controlling dynamic behavior in DS1.
 
         Returns a list of Condition instances.
         """
         if len(if_nodes) == 1 and isinstance(if_nodes[0], ast.Return):
+            if isinstance(if_nodes[0].value, ast.UnaryOp):
+                if (isinstance(if_nodes[0].value.op, ast.USub) and isinstance(if_nodes[0].value.operand, ast.Num)
+                        and if_nodes[0].value.operand.n == 1):
+                    # Last state of callable state machine.
+                    return [self.ESD.Condition(self.ESD.esd_type, -1, b'\x41\xa1', [], [])]
+                print(if_nodes[0].value.op, if_nodes[0].value.operand)
+                raise EsdSyntaxError(if_nodes[0].lineno, f"Next state must be a valid State class or -1.")
             if not isinstance(if_nodes[0].value, ast.Name):
+                print("Node:", if_nodes[0].value)
                 raise EsdSyntaxError(if_nodes[0].lineno, "Condition IF block should return a state class name.")
             if if_nodes[0].value.id not in self.state_info:
                 raise EsdError(if_nodes[0].lineno, f"Could not find a state class named '{if_nodes[0].value.id}'.")
             next_state_index = self.state_info[if_nodes[0].value.id]['index']
-            return [self.ESD.Condition(self.esd_type, next_state_index, b'\x41\xa1', [], [])]
+            return [self.ESD.Condition(self.ESD.esd_type, next_state_index, b'\x41\xa1', [], [])]
 
         for i, node in enumerate(if_nodes):
             if not isinstance(node, ast.If):
@@ -1030,16 +1078,20 @@ class ESPCompiler(object):
                 elif isinstance(node, ast.Return):
                     if j != len(if_node.body) - 1:
                         raise EsdSyntaxError(node.lineno, "'return NextState' should be last statement in IF block.")
-                    if not isinstance(node.value, ast.Name):
-                        raise EsdSyntaxError(node.lineno, "Condition IF block should return a state class name.")
-                    if node.value.id not in self.state_info:
-                        raise EsdError(node.lineno, f"Could not find a state class named '{node.value.id}'.")
-                    next_state_index = self.state_info[node.value.id]['index']
+                    if isinstance(node.value, ast.Num) and node.value.n == -1:
+                        # Last state of callable state machine.
+                        next_state_index = -1
+                    else:
+                        if not isinstance(node.value, ast.Name):
+                            raise EsdSyntaxError(node.lineno, "Condition IF block should return a state class name.")
+                        if node.value.id not in self.state_info:
+                            raise EsdError(node.lineno, f"Could not find a state class named '{node.value.id}'.")
+                        next_state_index = self.state_info[node.value.id]['index']
 
             # Condition registers are *not* reset when scanning and building subconditions.
             subconditions = self.build_conditions(subcondition_nodes) if subcondition_nodes else ()
 
-            conditions.append(self.ESD.Condition(self.esd_type, next_state_index, test_ezl,
+            conditions.append(self.ESD.Condition(self.ESD.esd_type, next_state_index, test_ezl,
                                                  pass_commands, subconditions))
 
         return conditions
@@ -1091,6 +1143,8 @@ class ESPCompiler(object):
                 args.append(node.n)
             elif isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
                 args.append(-node.operand.n)
+            elif isinstance(node, (ast.Subscript, ast.Name)):
+                args.append(node)
             else:
                 raise EsdValueError(node.lineno, "Function arguments must be numeric literals.")
         return tuple(args)
@@ -1106,9 +1160,12 @@ class ESPCompiler(object):
         if call_node.keywords:
             raise EsdSyntaxError(call_node.lineno, "You cannot use keyword arguments in test functions (yet).")
         try:
-            f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.esd_type, call_node.func.id]
+            f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.ESD.esd_type, call_node.func.id]
         except KeyError:
-            raise EsdValueError(call_node.lineno, f"Invalid ESD function name: '{call_node.func.id}'.")
+            try:
+                f_id = int(self._TEST_DEFAULT_RE.match(call_node.func.id).group(1))
+            except AttributeError:
+                raise EsdValueError(call_node.lineno, f"Invalid ESD function name: '{call_node.func.id}'.")
         args = self.parse_args(call_node.args)
         call = (f_id, *args)
 
@@ -1134,25 +1191,27 @@ class ESPCompiler(object):
 
         if isinstance(node, (int, float)):
             return self.compile_number(node)
-        elif isinstance(node, ast.Num):
+
+        if isinstance(node, ast.Num):
             return self.compile_number(node.n)
 
-        elif isinstance(node, str):
+        if isinstance(node, str):
             return self.compile_string(node)
-        elif isinstance(node, ast.Str):
+
+        if isinstance(node, ast.Str):
             return self.compile_string(node.s)
 
-        elif isinstance(node, ast.UnaryOp):
+        if isinstance(node, ast.UnaryOp):
             if isinstance(node.op, ast.USub):
                 if isinstance(node.operand, ast.Num):
                     return self.compile_number(-node.operand.n)
-                raise EsdSyntaxError(node.lineno, "Tried to negate a non-numeric value.")
+                raise EsdSyntaxError(node.lineno, "Tried to negate a non-numeric value. (TODO: Implement Negate op.)")
             elif isinstance(node.op, ast.Not):
                 if self.is_call(node.operand):
                     return self.compile_test_function(node.operand, equals=1)
                 raise EsdSyntaxError(node.lineno, "'not' keyword can only be applied to function calls.")
 
-        elif isinstance(node, ast.BoolOp):
+        if isinstance(node, ast.BoolOp):
             compiled = b''
             is_and = True if isinstance(node.op, ast.And) else False  # must be Or if false
             for i, value in enumerate(node.values):
@@ -1183,11 +1242,24 @@ class ESPCompiler(object):
             return (self.compile_ezl(node.left) + self.compile_ezl(node.comparators[0])
                     + OPERATORS_BY_NODE[type(node.ops[0])])
 
-        elif isinstance(node, ast.Call):
+        if isinstance(node, ast.Call):
             return self.compile_test_function(node)
 
-        raise TypeError(f"Invalid node type appeared in condition: {type(node)}.\n"
-                        f"Conditions must be bools, boolean ops, comparisons, or function calls.")
+        if isinstance(node, ast.Name):
+            if node.id == 'MACHINE_CALL_STATUS':
+                return b'\xb9'
+            elif node.id == 'ONGOING':
+                return b'\xba'
+            raise EsdSyntaxError(node.lineno, "Only valid name symbols are MACHINE_CALL_STATUS and ONGOING.")
+
+        if isinstance(node, ast.Subscript):
+            if (isinstance(node.value, ast.Name) and node.value.id == 'MACHINE_ARGS'
+                    and isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num)):
+                return self.compile_number(node.slice.value.n) + b'\xb8'
+            raise EsdSyntaxError(node.lineno, "Only valid subscripted symbol is MACHINE_ARGS[i].")
+
+        raise TypeError(f"Invalid node type appeared in condition test: {type(node)}.\n"
+                        f"Conditions must be bools, boolean ops, comparisons, function calls, or a permitted name.")
 
     @staticmethod
     def compile_number(n):
@@ -1198,7 +1270,7 @@ class ESPCompiler(object):
         elif isinstance(n, float):
             # TODO: How can I determine if I should write a single or double?
             #  I guess I could just always write a double.
-            #  Or, maybe certain files only use singles OR doubles.
+            #  Or, maybe certain resources only use singles OR doubles.
             # return b'\x80' + struct.pack('<f', n)
             return b'\x81' + struct.pack('<d', n)  # Always double for now.
         else:
@@ -1213,7 +1285,7 @@ class ESPCompiler(object):
 
         Returns a list of call tuples (f_id, arg1, arg2, ...).
         """
-        if self.is_bool(node) or isinstance(node, ast.Num):
+        if self.is_bool(node) or isinstance(node, (ast.Name, ast.Num)):
             return []
 
         elif isinstance(node, ast.UnaryOp):
@@ -1251,3 +1323,25 @@ class ESPCompiler(object):
     @staticmethod
     def is_call(node):
         return isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
+
+    @staticmethod
+    def is_state_machine_call(node):
+        return (isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
+                and isinstance(node.value.func, ast.Subscript)
+                and isinstance(node.value.func.value, ast.Name) and node.value.func.value.id == 'CALL_STATE_MACHINE'
+                and isinstance(node.value.func.slice, ast.Index) and isinstance(node.value.func.slice.value, ast.Num))
+
+    @staticmethod
+    def get_ast_sequence(node):
+        """ List/tuple can only contain literals. """
+        if isinstance(node, (ast.Tuple, ast.List)):
+            t = []
+            for e in node.elts:
+                if isinstance(e, ast.Num):
+                    t.append(e.n)
+                elif isinstance(e, ast.Str):
+                    t.append(e.s)
+                else:
+                    raise EsdValueError(node.lineno, f"Sequences must contain only numeric/string literals.")
+            return t
+        raise EsdSyntaxError(node.lineno, f"Expected a list or tuple node, but found: {type(node)}")

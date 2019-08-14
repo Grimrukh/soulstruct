@@ -3,12 +3,12 @@ from io import BytesIO
 import os
 import re
 import struct
-from soulstruct.core import BinaryStruct, read_chars
+from soulstruct.core import BinaryStruct, read_chars_from_buffer
 from soulstruct.dcx import DCX
 from soulstruct.emevd.evs_parser import EmevdCompiler
 from soulstruct.emevd import verbose
 from soulstruct.emevd.shared.decompiler import decompile_instruction
-from soulstruct.emevd.shared.enums import RestartType
+from soulstruct.enums.shared import RestartType
 
 INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)\] \(([iIhHbBfs|]*)\)\[([\d, .-]*)\][ ]?(<[\d, ]*>)?")
 EVENT_ARG_REPLACEMENT_RE = re.compile(r" [ ]*\^\((\d+) <- (\d+), (\d+)\)")
@@ -182,7 +182,7 @@ class BaseEMEVD(object):
                         raise
 
                     # Process event layers.
-                    if d.first_event_layers_offset != -1:
+                    if d.first_event_layers_offset > 0:
                         event_layers = cls.EventLayers.unpack(
                             file, event_layers_table_offset + d.first_event_layers_offset)
                     else:
@@ -195,7 +195,6 @@ class BaseEMEVD(object):
 
             @property
             def args_size(self):
-                """Note extra '0i' on the end, which fills the size out to the next 4-byte offset."""
                 return struct.calcsize("@" + self.args_format.replace('|', '') + '0i')
 
             @property
@@ -288,7 +287,6 @@ class BaseEMEVD(object):
                 return instruction_arg_set, instruction_arg_types
 
             def args_list_to_binary(self):
-                """Note extra '0i' on the end, which fills the format out to the next 4-byte offset."""
                 if self.args_list:
                     format_string = "@" + self.args_format.replace('|', '') + '0i'
                     return struct.pack(format_string, *self.args_list)
@@ -439,11 +437,19 @@ class BaseEMEVD(object):
                 function_name = f'Event{self.event_id}'
             function_docstring = f'""" {self.event_id}: Event {self.event_id} """'
             function_args = self.get_evs_function_args()  # Also creates 'ARG_i_j' instruction arg names.
-            evs_event_string = (f"@{RestartType(self.restart_type).name}\n"
-                                f"def {function_name}({function_args}):\n"
-                                f"    {function_docstring}")
+            restart_type_decorator = f"@{RestartType(self.restart_type).name}\n" if self.restart_type != 0 else ""
+            function_def = (f"def {function_name}({function_args}):\n"
+                            f"    {function_docstring}")
+            evs_event_string = restart_type_decorator + function_def
             for i, instr in enumerate(self.instructions):
-                evs_event_string += f"\n    {instr.to_evs(game_module)}"
+                instruction = instr.to_evs(game_module)
+                if instruction.startswith('Label('):
+                    # Extra newlines before and after Label, if appropriate.
+                    evs_event_string += (('\n' if i > 0 else '')
+                                         + f"\n    {instr.to_evs(game_module)}"
+                                         + ('\n' if i < len(self.instructions) - 1 else ''))
+                else:
+                    evs_event_string += f"\n    {instr.to_evs(game_module)}"
             return evs_event_string
 
         def to_binary(self, instruction_offset, first_base_arg_offset, first_event_arg_offset):
@@ -475,7 +481,7 @@ class BaseEMEVD(object):
 
                 event_args_list += instruction.event_args
 
-            # Collect and sort arg replacements to better match actual EMEVD files. (Should be purely cosmetic.)
+            # Collect and sort arg replacements to better match actual EMEVD resources. (Should be purely cosmetic.)
             sorted_event_args = sorted(event_args_list, key=lambda arg_r: (arg_r.read_from_byte, arg_r.line))
             event_args_binary = b''.join([arg_r.to_binary() for arg_r in sorted_event_args])
 
@@ -498,10 +504,7 @@ class BaseEMEVD(object):
                     os.path.dirname(__file__), 'numeric_from_vanilla', vanilla_base_map + '.numeric.txt')
             if not os.path.isfile(vanilla_base_map):
                 raise FileNotFoundError(f"Could not find vanilla numeric event file '{vanilla_base_map}' in package.")
-            emevd_dict = self.build_from_numeric_path(vanilla_base_map)
-            self.linked_file_offsets = emevd_dict.pop('linked')
-            self.packed_strings = emevd_dict.pop('strings')
-            self.events.update(emevd_dict)
+            self.build_from_numeric_path(vanilla_base_map)
 
         if isinstance(emevd_source, EmevdCompiler):
             self.map_name = emevd_source.map_name
@@ -529,10 +532,7 @@ class BaseEMEVD(object):
 
             elif emevd_source.endswith('.txt'):
                 try:
-                    emevd_dict = self.build_from_numeric_path(emevd_source)
-                    self.linked_file_offsets = emevd_dict.pop('linked')
-                    self.packed_strings = emevd_dict.pop('strings')
-                    self.events.update(emevd_dict)
+                    self.build_from_numeric_path(emevd_source)
                 except Exception:
                     raise IOError(f"Could not interpret file '{emevd_source}' as numeric-style EMEVD.\n"
                                   f"(Note that you cannot use verbose-style text files as EMEVD input.)\n"
@@ -621,7 +621,7 @@ class BaseEMEVD(object):
             m = EVENT_HEADER_RE.match(header_line)
             if not m:
                 print(f'Event: {repr(text_event)}')
-                raise ValueError(f"Error parsing header line: '{header_line}'.")
+                raise NumericEmevdError(lineno, f"Error parsing header line: '{header_line}'.")
             event_id = int(m.group(1))
             restart_type = int(m.group(2))
 
@@ -650,8 +650,9 @@ class BaseEMEVD(object):
                         split_arg_list = []
                     if len(raw_args_format) != len(split_arg_list):
                         print(args_format, raw_args_format, split_arg_list)
-                        raise ValueError(f"Number of args ({len(raw_args_format)}) does not match length of the "
-                                         f"instruction format string ('{args_format}') (Line {lineno})")
+                        raise NumericEmevdError(
+                            lineno, f"Number of args ({len(raw_args_format)}) does not match length of the instruction "
+                                    f"format string ('{args_format}') (Line {lineno})")
 
                     args_list = []
                     for i, element in enumerate(raw_args_format):
@@ -665,8 +666,9 @@ class BaseEMEVD(object):
                                 args_list.append(parsed_arg)
                             else:
                                 print(instruction_class, instruction_index, args_format, args_list_string)
-                                raise ValueError(f"Argument '{arg}' is not inside the permitted range of data type "
-                                                 f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})")
+                                raise NumericEmevdError(
+                                    lineno, f"Argument '{arg}' is not inside the permitted range of data type "
+                                            f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})")
                     instruction_list.append(self.Event.Instruction(
                         instruction_class, instruction_index, args_format, args_list, event_layers)
                     )
@@ -683,12 +685,14 @@ class BaseEMEVD(object):
                                 len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write)
                         )
                     else:
-                        raise ValueError(f"Parameter replacement '{instruction_or_event_arg}' does not follow an "
-                                         f"instruction line.")
+                        raise NumericEmevdError(
+                            lineno, f"Parameter replacement '{instruction_or_event_arg}' does not follow an "
+                                    f"instruction line.")
                 else:
                     # Malformed line.
-                    raise ValueError(f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or "
-                                     f"event arg replacement.")
+                    raise NumericEmevdError(
+                        lineno, f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or event arg "
+                                f"replacement.")
             self.events[event_id] = self.Event(event_id, restart_type, instruction_list)
 
         self.linked_file_offsets = linked_offsets
@@ -775,7 +779,7 @@ class BaseEMEVD(object):
     def get_linked_file_names(self):
         names = []
         for offset in self.linked_file_offsets:
-            names.append(read_chars(self.packed_strings, offset=offset))
+            names.append(read_chars_from_buffer(self.packed_strings, offset=offset))
         return names
 
     def unpack_strings(self):
@@ -783,7 +787,7 @@ class BaseEMEVD(object):
         string_buffer = BytesIO(self.packed_strings)
         while string_buffer.tell() != len(self.packed_strings):
             offset = string_buffer.tell()
-            string = read_chars(string_buffer, reset_old_offset=False, encoding=self.STRING_ENCODING)
+            string = read_chars_from_buffer(string_buffer, reset_old_offset=False, encoding=self.STRING_ENCODING)
             strings.append((str(offset), string))  # repr to include double backslash
         return strings
 
@@ -935,3 +939,8 @@ class BaseEMEVD(object):
             os.makedirs(directory, exist_ok=True)
         with open(evs_path, 'w', encoding='utf-8') as f:
             f.write(self.to_evs())
+
+
+class NumericEmevdError(Exception):
+    def __init__(self, lineno, msg):
+        super().__init__(f"LINE {lineno}: {msg}")

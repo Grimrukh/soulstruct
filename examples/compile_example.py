@@ -1,20 +1,21 @@
 """ Run this script to compile our example DS1 EVS script, 'example.py'. """
 
-from soulstruct.emevd.ds1 import EMEVD
+from soulstruct.emevd.darksouls1 import EMEVD
 
 
 def compile_evs():
     """ Feed our EVS script to the EMEVD() class.
 
-    The EMEVD class can read packed '.emevd' files, numeric '.txt' files (in the format designed by HotPocketRemix), or
-    Pythonic '.evs' / '.py' files. You can then output the same EMEVD as any of those three file types.
+    The EMEVD class can read packed '.emevd' resources, numeric '.txt' resources (in the format designed by
+    HotPocketRemix), or Pythonic '.evs' / '.py' resources. You can then output the same EMEVD as any of those three file
+    types.
 
     Note that the EMEVD class must be imported from the appropriate game sub-module, as each game changes the EMEVD
     structure and instruction set somewhat.
 
     The 'verbose' format used by HotPocketRemix is no longer supported here, because maintaining all these different
     formats is considerable work and EVS does a good impression of a verbose format anyway. You're still free to use
-    HotPocket's tools to generate those verbose read-only files.
+    HotPocket's tools to generate those verbose read-only resources.
     """
     # Again, I've used the '.py' extension here for rather than '.evs' so that code is colored on GitHub.
     example_emevd = EMEVD('example.py')

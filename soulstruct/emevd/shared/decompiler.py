@@ -75,8 +75,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             return decompile_run_event_instruction(req_args, opt_args, arg_types)
 
         if instruction_index == 6:
-            if game_module.NAME != 'ds3':
-                raise ValueError('Instruction 2000[06] can only be used in Dark Souls 3 (ds3 subpackage).')
+            if game_module.NAME != 'darksouls3':
+                raise ValueError('Instruction 2000[06] can only be used in Dark Souls 3 (darksouls3 subpackage).')
             # DS3 only. Same as above, but takes no slot argument. Functional difference unknown.
             return decompile_run_common_event_instruction(req_args, opt_args, arg_types)
 
@@ -171,7 +171,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 1:
             entity_id, animation_id, loop, wait = req_args
             entity_id = 'PLAYER' if entity_id == 10000 else entity_id
-            return f"RequestAnimation({entity_id}, {animation_id}, loop={boolify(loop)}, wait_for_completion={boolify(wait)})"
+            return (f"RequestAnimation({entity_id}, {animation_id}, loop={boolify(loop)}, "
+                    f"wait_for_completion={boolify(wait)})")
 
         if instruction_index == 2:
             flag, state = req_args
@@ -379,7 +380,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 3:
             character, destination_type, destination_id, model_point = req_args
             character = 'PLAYER' if character == 10000 else character
-            destination_type = get_enum_name(game_module.MapEntityType, destination_type, True)
+            destination_type = get_enum_name(game_module.CoordEntityType, destination_type, True)
             return (f"Move({character}, destination={destination_id}, model_point={model_point}, "
                     f"destination_type={destination_type})")
 
@@ -609,14 +610,14 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 40:
             character, destination_type, destination_id, model_point, hitbox_id = req_args
             character = 'PLAYER' if character == 10000 else character
-            destination_type = get_enum_name(game_module.MapEntityType, destination_type, True)
+            destination_type = get_enum_name(game_module.CoordEntityType, destination_type, True)
             return (f"Move({character}, destination={destination_id}, destination_type={destination_type}, "
                     f"model_point={model_point}, set_draw_hitbox={hitbox_id})")
 
         if instruction_index == 41:
             character, destination_type, destination_id, model_point = req_args
             character = 'PLAYER' if character == 10000 else character
-            destination_type = get_enum_name(game_module.MapEntityType, destination_type, True)
+            destination_type = get_enum_name(game_module.CoordEntityType, destination_type, True)
             return (f"Move({character}, destination={destination_id}, destination_type={destination_type}, "
                     f"model_point={model_point}, short_move=True)")
 
@@ -624,7 +625,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             character, destination_type, destination_id, model_point, copy_hitbox = req_args
             character = 'PLAYER' if character == 10000 else character
             copy_hitbox = 'PLAYER' if copy_hitbox == 10000 else copy_hitbox
-            destination_type = get_enum_name(game_module.MapEntityType, destination_type, True)
+            destination_type = get_enum_name(game_module.CoordEntityType, destination_type, True)
             return (f"Move({character}, destination={destination_id}, destination_type={destination_type}, "
                     f"model_point={model_point}, copy_draw_hitbox={copy_hitbox})")
 
@@ -752,7 +753,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 3:
             anchor_type, anchor_entity_id, model_point, fx_id = req_args
-            anchor_type = get_enum_name(game_module.MapEntityType, anchor_type, True)
+            anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             return (f"CreateTemporaryFX({fx_id}, anchor_entity={anchor_entity_id}, "
                     f"anchor_type={anchor_type}, model_point={model_point})")
 
@@ -822,7 +823,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 2:
             vibration_id, anchor_type, anchor_entity, model_point, decay_start_distance, decay_end_distance = req_args
-            anchor_type = get_enum_name(game_module.MapEntityType, anchor_type, True)
+            anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             return (f"SetCameraVibration(vibration_id={vibration_id}, anchor_entity={anchor_entity}, "
                     f"model_point={model_point}, decay_start_distance={decay_start_distance}, "
                     f"decay_end_distance={decay_end_distance}, anchor_type={anchor_type})")
@@ -1316,6 +1317,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 3:
             condition, state, entity, other_entity, radius = req_args
+            entity = 'PLAYER' if entity == 10000 else entity
+            other_entity = 'PLAYER' if other_entity == 10000 else other_entity
             if state == 1:
                 return f"IfEntityWithinDistance({condition}, {entity}, {other_entity}, radius={radius})"
             elif state == 0:
@@ -1339,7 +1342,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 5:
             condition, anchor_type, anchor_entity, reaction_angle, model_point, \
                 reaction_distance, text_id, reaction_attribute, pad_id = req_args
-            anchor_type = get_enum_name(game_module.MapEntityType, anchor_type, True)
+            anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             model_point_arg = f'model_point={model_point}, ' if model_point != -1 else ''
             button_arg = f'button={pad_id}, ' if pad_id != 0 else ''
             human_or_hollow_only = True if reaction_attribute == 48 else False
@@ -1425,7 +1428,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 13:
             condition, anchor_type, anchor_entity, reaction_angle, model_point, \
                 reaction_distance, text_id, reaction_attribute, pad_id = req_args
-            anchor_type = get_enum_name(game_module.MapEntityType, anchor_type, True)
+            anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             model_point_arg = f'model_point={model_point}, ' if model_point != -1 else ''
             button_arg = f'button={pad_id}, ' if pad_id != 0 else ''
             human_or_hollow_only = reaction_attribute == 48
@@ -1470,7 +1473,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 18:
             condition, anchor_type, anchor_entity, reaction_angle, model_point, \
                 reaction_distance, text_id, reaction_attribute, pad_id, line_intersects = req_args
-            anchor_type = get_enum_name(game_module.MapEntityType, anchor_type, True)
+            anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             model_point_arg = f'model_point={model_point}, ' if model_point != -1 else ''
             button_arg = f'button={pad_id}, ' if pad_id != 0 else ''
             human_or_hollow_only = reaction_attribute == 48
@@ -1482,7 +1485,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 19:
             condition, anchor_type, anchor_entity, reaction_angle, model_point, \
                 reaction_distance, text_id, reaction_attribute, pad_id, line_intersects = req_args
-            anchor_type = get_enum_name(game_module.MapEntityType, anchor_type, True)
+            anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             model_point_arg = f'model_point={model_point}, ' if model_point != -1 else ''
             button_arg = f'button={pad_id}, ' if pad_id != 0 else ''
             human_or_hollow_only = reaction_attribute == 48
@@ -1527,6 +1530,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 1:
             condition, attacked, attacker = req_args
+            attacked = 'PLAYER' if attacked == 10000 else attacked
+            attacker = 'PLAYER' if attacker == 10000 else attacker
             return f"IfAttacked({condition}, {attacked}, attacking_character={attacker})"
 
         if instruction_index == 2:

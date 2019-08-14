@@ -6,7 +6,7 @@ from struct import unpack, pack
 
 
 def floatify(i):
-    """ Convert an integer to a float. Useful for ambiguous data in the unpacked files. """
+    """ Convert an integer to a float. Useful for ambiguous data in the unpacked resources. """
     h = hex(i)[2:]
     return unpack('!f', bytes.fromhex(h))[0]
 
