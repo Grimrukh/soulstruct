@@ -100,6 +100,20 @@ class Blighttown:
         Quelaag = 1400800
 
 
+class LostIzalith:
+    class Characters(Character):
+        SolaireAlly = 6002
+        SolaireHollow = 6004
+        SolaireSummon = 6542
+        Siegmeyer = 6286
+        KnightKirkInvasionOne = 6560
+        KnightKickInvasionTwo = 6561
+        DaughterPyromancer = 6620
+        RedEyedChaosBug = 1410100
+        CeaselessDischarge = 1410600
+        CentipedeDemon = 1410700
+
+
 class SensFortress:
     class Characters(Character):
         Mimic = 1500010
@@ -131,8 +145,8 @@ class Common:
         AsylumDemonDead = 16
         FairLadyDead = 140
         RiteOfKindlingObtained = 257
-        WarpOptionPermitted = 706
-        WarpOptionDisplayed = 710
+        BonfireWarpingUnblocked = 706
+        BonfireWarpOptionDisplayed = 710
 
         NewGameFlagsInitialized = 909
 
@@ -219,20 +233,6 @@ class CharacterStoryFlags:
     class Elizabeth(Flag):
         Alive = 1870
         Dead = 1872
-
-
-class LostIzalith:
-    class Characters(Character):
-        SolaireAlly = 6002
-        SolaireHollow = 6004
-        SolaireSummon = 6542
-        Siegmeyer = 6286
-        KnightKirkInvasionOne = 6560
-        KnightKickInvasionTwo = 6561
-        DaughterPyromancer = 6620
-        RedEyedChaosBug = 1410100
-        CeaselessDischarge = 1410600
-        CentipedeDemon = 1410700
 
 
 class COMMON_TEXT(Text):

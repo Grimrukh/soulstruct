@@ -1,10 +1,20 @@
 # soulstruct
-Currently just my "EVS" (event scripting) compiler. 
+Python tools for inspecting and modding From Software games.
 
-EVS now supports Dark Souls 1, Bloodborne, and Dark Souls 3, including "event layers". See the examples and check out
-all the vanilla EVS files, which are included.
+Features:
+- Event scripts (**EMEVD**) and EzState state machines (**ESD**) can be translated to and from valid Python-based 
+languages with high-level programming features. 
+(*Dark Souls | Bloodborne | Dark Souls 3*)
 
-(NOTE: The 'verbose' functionality (originally added to stay parallel with HotPocketRemix's event tools) is currently
-not working because I wanted to focus on the decompiler, which is basically an editable verbose version anyway.)
+- Game parameters (**GameParam**), lighting parameters (**DrawParam**), and text data (**FMG**) can be loaded into 
+Python structures, edited, and repacked. 
+(*Dark Souls only*)
 
-More creator tools to come for other file formats.
+- Unpack/repack **BND** archives and automatically manage **DCX** compression. 
+(*Dark Souls | Bloodborne | Dark Souls 3*) 
+
+- Includes my ongoing documentation for game IDs in *Dark Souls*.
+
+Still to come:
+- Support for animation events (**TAE**) and Lua AI scripts.
+- Unified graphical application for modifying events, parameters, text, animations, and scripts in *Dark Souls*.
