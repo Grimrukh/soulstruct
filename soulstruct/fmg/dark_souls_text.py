@@ -1,5 +1,6 @@
 from copy import deepcopy
 import os
+from soulstruct.core import DEFAULT_GAME
 from soulstruct.bnd import BND
 from soulstruct.fmg.core import FMG
 
@@ -18,9 +19,9 @@ class DarkSoulsText(object):
     FeatureNames: dict
     FeatureSummaries: dict
     IngameMenus: dict
-    ItemDescriptions: dict
-    ItemNames: dict
-    ItemSummaries: dict
+    GoodDescriptions: dict
+    GoodNames: dict
+    GoodSummaries: dict
     KeyGuide: dict
     MenuDialogs: dict
     MenuHelpSnippets: dict
@@ -42,23 +43,27 @@ class DarkSoulsText(object):
     WeaponSummaries: dict
 
     def __init__(self, msg_directory=None):
-        """ Point this to the directory containing 'item.msgbnd' and 'menu.msgbnd' (should be PTD_DOA_DATA/msg). You can then
-        access and modify the `entries` attribute of the FMG data contained inside using the names of the FMGs (which
-        are converted to the standardized list below). The source (item/menu) of the FMG and its type (standard/Patch)
-        are handled internally.
+        """Unpack all Dark Souls 1 text data (from both 'item' and 'menu' MSGBND files) into one unified structure.
 
-        Note that only PTD uses Patch resources for the text data added in the DLC; in DSR, these have all been merged into
-        the base resources.
+        You can access and modify the `entries` attributes of each loaded `FMG` instance using the names of the FMGs,
+        which I have translated into a standard list (see above attribute hints). The source (item/menu) of the FMG and
+        its type (standard/Patch) are handled internally, though the latter does not matter in either version of DS1
+        (and neither do the names of the FMG files in the MSGBND archives).
+
+        Args:
+            msg_directory: Directory containing 'item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]', in any of the language
+                folders within the 'msg' directory in the Dark Souls data files.
         """
 
         if msg_directory is None:
-            msg_directory = default_path('msg/ENGLISH')
+            msg_directory = DEFAULT_GAME('msg/ENGLISH')
 
         self._bnd_dir = ''
         self._directory = msg_directory
         self._original_names = {}  # The actual within-BND FMG names are completely up to us. My names are nicer.
         self._is_menu = {}  # Records whether each FMG belongs in 'item' or 'menu' MSGBND.
         self._data = {}
+        self._dcx = False
 
         # Patch and non-Patch resources get put into the same attribute here so they can be edited together.
         # This set contains tuple pairs (fmg_name, entry_index) that came from Patch resources.
@@ -68,9 +73,9 @@ class DarkSoulsText(object):
             self.item_msgbnd = BND(os.path.join(msg_directory, 'item.msgbnd.dcx'))
         except FileNotFoundError:
             self.item_msgbnd = BND(os.path.join(msg_directory, 'item.msgbnd'))
-            self._item_dcx = False
+            self._dcx = False
         else:
-            self._item_dcx = True
+            self._dcx = True
             if os.path.isfile(os.path.join(msg_directory, 'item.msgbnd')):
                 print("# WARNING: Both DCX and non-DCX 'item.msgbnd' resources were found. Reading only the DCX file, "
                       "and will compress with DCX by default when `.write()` is called.")
@@ -79,9 +84,11 @@ class DarkSoulsText(object):
             self.menu_msgbnd = BND(os.path.join(msg_directory, 'menu.msgbnd.dcx'))
         except FileNotFoundError:
             self.menu_msgbnd = BND(os.path.join(msg_directory, 'menu.msgbnd'))
-            self._menu_dcx = False
+            if self._dcx:
+                raise ValueError("Found DCX-compressed 'item.msgbnd.dcx', but not 'menu.msgbnd.dcx'.")
         else:
-            self._menu_dcx = True
+            if not self._dcx:
+                raise ValueError("Found DCX-compressed 'menu.msgbnd.dcx', but not 'item.msgbnd.dcx'.")
             if os.path.isfile(os.path.join(msg_directory, 'menu.msgbnd')):
                 print("# WARNING: Both DCX and non-DCX 'menu.msgbnd' resources were found. Reading only the DCX file, "
                       "and will compress with DCX by default when `.write()` is called.")
@@ -98,7 +105,7 @@ class DarkSoulsText(object):
 
         for entry in msgbnd:
             try:
-                new_name = MSGBND_NAMES[entry.id]
+                new_name = MSGBND_INDEX_TO_SS[entry.id]
             except KeyError:
                 raise ValueError(f"BND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
 
@@ -145,7 +152,7 @@ class DarkSoulsText(object):
         self._data[item_fmg + 'Descriptions'][index] = ''
 
     def write(self, msg_directory=None, description_word_wrap_limit=50, separate_patch=False, use_original_names=False,
-              double_space_to_double_newline=True, dcx=None):
+              pipe_to_newline=True, dcx=None):
         """ Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods. """
 
         new_item_msgbnd = deepcopy(self.item_msgbnd)
@@ -153,14 +160,15 @@ class DarkSoulsText(object):
 
         if msg_directory is None:
             msg_directory = self._directory
-        item_dcx = self._item_dcx if dcx is None else dcx
-        menu_dcx = self._menu_dcx if dcx is None else dcx
+        if dcx is None:
+            dcx = self._dcx
 
         if not separate_patch:
             # Patch indices will all be merged into main resources, so remove any Patch entries from the BND.
             for fmg_name, fmg_entries in self._data.items():
                 try:
-                    bnd_index = [key for key in MSGBND_NAMES.keys() if MSGBND_NAMES[key] == fmg_name + 'Patch'][0]
+                    bnd_index = [key for key in MSGBND_INDEX_TO_SS.keys()
+                                 if MSGBND_INDEX_TO_SS[key] == fmg_name + 'Patch'][0]
                 except IndexError:
                     # No Patch version of this FMG.
                     pass
@@ -185,12 +193,12 @@ class DarkSoulsText(object):
                     fmg = FMG(fmg_entries_patch)
                     fmg.version = 1
                     fmg.unknown = 0
-                    fmg_patch_data = FMG.new_ds1(fmg_entries_patch).pack(
-                        word_wrap_limit=word_wrap, double_space_to_double_newline=double_space_to_double_newline)
+                    fmg_patch_data = FMG(fmg_entries_patch, version='ds1').pack(
+                        word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
                     original_name = self._original_names[fmg_name + 'Patch']
                     patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + 'Patch'] else new_item_msgbnd
                     try:
-                        bnd_entry_id = [k for k, v in MSGBND_NAMES.items() if v == fmg_name][0]
+                        bnd_entry_id = [k for k, v in MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
                     except IndexError:
                         raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
                     bnd_entry = patch_msgbnd.entries_by_id[bnd_entry_id]
@@ -199,12 +207,12 @@ class DarkSoulsText(object):
                         # Note that original path is kept.
                         bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + 'Patch.fmg')
 
-            fmg_main_data = FMG.new_ds1(fmg_entries_main).pack(
-                word_wrap_limit=word_wrap, double_space_to_double_newline=double_space_to_double_newline)
+            fmg_main_data = FMG(fmg_entries_main, version='ds1').pack(
+                word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
             original_name = self._original_names[fmg_name]
             msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
             try:
-                bnd_entry_id = [k for k, v in MSGBND_NAMES.items() if v == fmg_name][0]
+                bnd_entry_id = [k for k, v in MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
             except IndexError:
                 raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
             bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
@@ -214,14 +222,14 @@ class DarkSoulsText(object):
                 bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + '.fmg')
 
         # Write BNDs (to original directory by default).
-        new_item_msgbnd.write(os.path.join(msg_directory, 'item.msgbnd' + ('.dcx' if item_dcx else '')))
-        new_menu_msgbnd.write(os.path.join(msg_directory, 'menu.msgbnd' + ('.dcx' if menu_dcx else '')))
+        new_item_msgbnd.write(os.path.join(msg_directory, 'item.msgbnd' + ('.dcx' if dcx else '')))
+        new_menu_msgbnd.write(os.path.join(msg_directory, 'menu.msgbnd' + ('.dcx' if dcx else '')))
 
         # Update BNDs after successful write.
         self.item_msgbnd = new_item_msgbnd
         self.menu_msgbnd = new_menu_msgbnd
 
-    def change_item_text(self, text_dict, index=None, item_type=None):
+    def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:
             index = text_dict['index']
         if not isinstance(index, (list, tuple)):
@@ -229,50 +237,66 @@ class DarkSoulsText(object):
         if item_type is None:
             item_type = text_dict['item_type']
         item_fmg = self.resolve_item_type(item_type)
-        Patch = ''
+        patch = 'Patch' if patch else ''
         for i in index:
             if i not in self[item_fmg + 'Names']:
                 print(f"NEW ENTRY: {item_fmg} with index {i} has been added "
                       f"({text_dict.get('name', 'unknown name')})")
             if 'name' in text_dict:
-                self[item_fmg + 'Names' + Patch][i] = text_dict['name']
+                self[item_fmg + 'Names' + patch][i] = text_dict['name']
             if 'summary' in text_dict:
-                self[item_fmg + 'Summaries' + Patch][i] = text_dict['summary']
+                self[item_fmg + 'Summaries' + patch][i] = text_dict['summary']
             if 'description' in text_dict:
-                self[item_fmg + 'Descriptions' + Patch][i] = text_dict['description']
+                self[item_fmg + 'Descriptions' + patch][i] = text_dict['description']
 
-    def search_all(self, search_string, fmg=None, replace_with=None, exclude_conversations=True):
-        if fmg is None:
+    def find(self, search_string, replace_with=None, text_category=None, exclude_conversations=True):
+        """Search for the given text in the entire game.
+
+        Args:
+            search_string: Text to find. The text can appear anywhere inside an entry to return a result.
+            replace_with: String to replace the given text with in any results. (Default: None)
+            text_category: Name of text category (FMG) to search. If no category is given, all categories will be
+                searched (except perhaps Conversations; see below). (Default: None)
+            exclude_conversations: If True, the Conversations text category will not be searched when all categories are
+                searched. (This category contains a lot of text, and you are unlikely to want to modify it, given how it
+                lines up with the audio.) (Default: True)
+        """
+        if text_category is None:
             dicts_to_search = [(fmg_name, fmg_dict) for fmg_name, fmg_dict in self._data.items()
                                if fmg_name != 'Conversations'] if exclude_conversations else self._data.items()
         else:
-            dicts_to_search = (fmg, self[fmg]),
+            dicts_to_search = (text_category, self[text_category]),
 
+        found_something = False
         for fmg_name, fmg_dict in dicts_to_search:
             for index, text in fmg_dict.items():
                 if search_string in text:
+                    found_something = True
                     print(f"\n~~~ {fmg_name}[{index}]:\n{text}")
                     if replace_with is not None:
                         fmg_dict[index] = text.replace(search_string, replace_with)
                         print(f"-> {fmg_dict[index]}")
+        if not found_something:
+            print(f"Could not find any occurrences of string {repr(search_string)}.")
 
     @property
     def fmg_names(self):
         return list(self._data.keys())
+    text_categories = fmg_names
 
     def __iter__(self):
         return iter(self._data.items())
 
-    def __getitem__(self, fmg_name):
+    def __getitem__(self, text_category):
         try:
-            return self._data[fmg_name]
+            return self._data[text_category]
         except KeyError:
-            raise AttributeError(f"Non-existent FMG name: '{fmg_name}'")
+            raise AttributeError(f"Non-existent text category (FMG): '{text_category}'")
 
     @staticmethod
     def resolve_item_type(item_type):
-        if item_type.lower() in ('good', 'item', 'consumable'):
-            return 'Item'
+        if item_type.lower() in ('good', 'consumable'):
+            return 'Good'
         elif item_type.lower() in ('ring', 'accessory'):
             return 'Ring'
         elif item_type.lower() in ('weapon', 'shield'):
@@ -281,15 +305,18 @@ class DarkSoulsText(object):
             return 'Armor'
         elif item_type.lower() == 'equipment':
             raise ValueError("'Equipment' is ambiguous. Did you mean 'weapon', 'armor', or 'ring'?")
+        elif item_type.lower() == 'item':
+            raise ValueError("'Item' is ambiguous; it's the term used to describe everything in your inventory.\n"
+                             "Did you mean 'weapon', 'armor', 'ring', or 'good'?")
         else:
             raise ValueError(f"Unrecognized item type: '{item_type}'")
 
 
-MSGBND_NAMES = {
+MSGBND_INDEX_TO_SS = {
     1: 'Conversations',
     2: 'BloodMessages',
     3: 'MovieSubtitles',
-    10: 'ItemNames',
+    10: 'GoodNames',
     11: 'WeaponNames',
     12: 'ArmorNames',
     13: 'RingNames',
@@ -299,11 +326,11 @@ MSGBND_NAMES = {
     17: 'FeatureDescriptions',
     18: 'NPCNames',
     19: 'PlaceNames',
-    20: 'ItemSummaries',
+    20: 'GoodSummaries',
     21: 'WeaponSummaries',
     22: 'ArmorSummaries',
     23: 'RingSummaries',
-    24: 'ItemDescriptions',
+    24: 'GoodDescriptions',
     25: 'WeaponDescriptions',
     26: 'ArmorDescriptions',
     27: 'RingDescriptions',
@@ -321,7 +348,7 @@ MSGBND_NAMES = {
     91: 'DebugTags_Win32',
     92: 'SystemMessages_Win32',
     # Patch resources (all in menu.msgbnd in PTD; put with their main resources in DSR).
-    100: 'ItemDescriptionsPatch',
+    100: 'GoodDescriptionsPatch',
     101: 'EventTextsPatch',
     102: 'MenuDialogsPatch',
     103: 'SystemMessages_Win32Patch',
@@ -331,8 +358,8 @@ MSGBND_NAMES = {
     107: 'BloodMessagesPatch',
     108: 'ArmorDescriptionsPatch',
     109: 'RingDescriptionsPatch',
-    110: 'ItemSummariesPatch',
-    111: 'ItemNamesPatch',
+    110: 'GoodSummariesPatch',
+    111: 'GoodNamesPatch',
     112: 'RingSummariesPatch',
     113: 'RingNamesPatch',
     114: 'WeaponSummariesPatch',
@@ -359,9 +386,9 @@ DSR_TO_SS = {
     'Feature_long_desc_.fmg': 'FeatureDescriptions',
     'Feature_name_.fmg': 'FeatureNames',
     'Feature_description_.fmg': 'FeatureSummaries',
-    'Item_long_desc_.fmg': 'ItemDescriptions',
-    'Item_name_.fmg': 'ItemNames',
-    'Item_description_.fmg': 'ItemSummaries',
+    'Item_long_desc_.fmg': 'GoodDescriptions',
+    'Item_name_.fmg': 'GoodNames',
+    'Item_description_.fmg': 'GoodSummaries',
     'Magic_long_desc_.fmg': 'MagicDescriptions',
     'Magic_name_.fmg': 'MagicNames',
     'Magic_description_.fmg': 'MagicSummaries',
@@ -400,12 +427,12 @@ PTD_TO_SS = {
     '特徴うんちく.fmg': 'FeatureDescriptions',
     '特徴名.fmg': 'FeatureNames',
     '特徴説明.fmg': 'FeatureSummaries',
-    'アイテムうんちく.fmg': 'ItemDescriptions',
-    'アイテムうんちくパッチ.fmg': 'ItemDescriptionsPatch',
-    'アイテム名.fmg': 'ItemNames',
-    'アイテム名パッチ.fmg': 'ItemNamesPatch',
-    'アイテム説明.fmg': 'ItemSummaries',
-    'アイテム説明パッチ.fmg': 'ItemSummariesPatch',
+    'アイテムうんちく.fmg': 'GoodDescriptions',
+    'アイテムうんちくパッチ.fmg': 'GoodDescriptionsPatch',
+    'アイテム名.fmg': 'GoodNames',
+    'アイテム名パッチ.fmg': 'GoodNamesPatch',
+    'アイテム説明.fmg': 'GoodSummaries',
+    'アイテム説明パッチ.fmg': 'GoodSummariesPatch',
     'NPC名.fmg': 'NPCNames',
     'NPC名パッチ.fmg': 'NPCNamesPatch',
     '地名.fmg': 'PlaceNames',

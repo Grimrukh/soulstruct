@@ -6,13 +6,14 @@ TODO:
 import os
 import pickle
 from typing import Dict, List, Optional
+
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.core import DEFAULT_GAME, DEFAULT_GAME_DCX
-from soulstruct.param import ParamTable, ParamDefBND, DrawParamTable
+from soulstruct.param import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.param.fields import GAME_PARAM_INFO
 
 
-class GameParamBND(object):
+class DarkSoulsGameParameters(object):
 
     AI: ParamTable
     Armor: ParamTable
@@ -30,8 +31,8 @@ class GameParamBND(object):
     Terrains: ParamTable
     ItemLots: ParamTable
     MenuColors: ParamTable
-    MonsterAttacks: ParamTable
-    MonsterBehaviors: ParamTable
+    CreatureAttacks: ParamTable
+    CreatureBehaviors: ParamTable
     Movement: ParamTable
     NPCs: ParamTable
     Objects: ParamTable
@@ -65,9 +66,8 @@ class GameParamBND(object):
             try:
                 self._game_param_bnd = BND(game_param_bnd_source)
             except TypeError:
-                raise TypeError("Could not load GameParamBND from given source.")
-        is_dcx = bool(self._game_param_bnd.dcx)
-        self.paramdef_bnd = ParamDefBND('dsr' if is_dcx else 'ptd')
+                raise TypeError("Could not load DarkSoulsGameParameters from given source.")
+        self.paramdef_bnd = PARAMDEF_BND('dsr' if self._game_param_bnd.dcx else 'ptd')
 
         for entry in self._game_param_bnd:
             print(f"Loading PARAMBND entry {entry.id} ({entry.basename}) ...")
@@ -87,23 +87,23 @@ class GameParamBND(object):
             self._game_param_bnd.entries_by_path[param_table_entry_path].data = param_table.pack()
 
     def save(self, game_param_bnd_path=None, auto_pickle=True):
-        """Save the GameParamBND. If no path is given, it will attempt to save to the same BND file."""
+        """Save the DarkSoulsGameParameters. If no path is given, it will attempt to save to the same BND file."""
         self.update_bnd()
         if auto_pickle:
             self.pickle()
         self._game_param_bnd.write(game_param_bnd_path)
         if not self._reload_warning:
-            print('\nGameParamBND saved successfully. (Remember to reload your game.)')
+            print('\nDarkSoulsGameParameters saved successfully. (Remember to reload your game.)')
             self._reload_warning = True
         else:
-            print('\nGameParamBND saved successfully.')
+            print('\nDarkSoulsGameParameters saved successfully.')
 
     def pickle(self, game_param_pickle_path=None):
-        """Save the entire GameParamBND to a pickled file, which will be faster to load in future."""
+        """Save the entire DarkSoulsGameParameters to a pickled file, which will be faster to load in future."""
         if game_param_pickle_path is None:
             game_param_pickle_path = self._game_param_bnd.bnd_path
             if game_param_pickle_path is None:
-                raise ValueError("Could not automatically determine GameParamBND path for pickling.")
+                raise ValueError("Could not automatically determine DarkSoulsGameParameters path for pickling.")
         if game_param_pickle_path.endswith('.dcx'):
             game_param_pickle_path = game_param_pickle_path[:len('.dcx')]
         if game_param_pickle_path.endswith('.parambnd'):
@@ -115,6 +115,7 @@ class GameParamBND(object):
 
 DRAW_PARAM_TABLES = ('Dof', 'EnvLightTex', 'Fog', 'LensFlare', 'LensFlareEx', 'AmbientLight', 'ScatteredLight',
                      'PointLight', 'Shadow', 'ToneCorrect', 'ToneMap', 's_AmbientLight')
+
 
 class DrawParamBlock(object):
 
@@ -131,10 +132,14 @@ class DrawParamBlock(object):
     ToneMap: List[Optional[DrawParamTable]]
     s_AmbientLight: List[Optional[DrawParamTable]]
 
-    def __init__(self, draw_param_bnd: BaseBND, paramdef_bnd_source=None):
-        """Technically a single DrawParamBND, but I've used that class name for the combined structure."""
+    def __init__(self, draw_param_bnd, paramdef_bnd=None):
+        """Structure that holds a single DrawParam file for a single map block."""
 
         self._data = {}  # type: Dict[str, List[Optional[DrawParamTable], Optional[DrawParamTable]]]
+        self.paramdef_bnd = ParamDefBND('dsr' if bool(draw_param_bnd.dcx) else 'ptd')
+
+        if not isinstance(draw_param_bnd, BaseBND):
+            draw_param_bnd = BND(draw_param_bnd)
 
         for entry in draw_param_bnd:
             parts = entry.basename[:-len('.param')].split('_')
@@ -151,7 +156,7 @@ class DrawParamBlock(object):
             if parts[0].startswith('s'):
                 basename = 's_' + basename
 
-            self._data.setdefault(basename, [None, None])[slot] = DrawParamTable(entry.data, paramdef_bnd_source)
+            self._data.setdefault(basename, [None, None])[slot] = DrawParamTable(entry.data, self.paramdef_bnd)
             try:
                 param_nickname, field_nicknames = DRAWPARAM_ALIASES[basename]
             except KeyError:
@@ -165,10 +170,14 @@ class DrawParamBlock(object):
     def __iter__(self):
         return iter({DRAWPARAM_ALIASES[k]: v for k, v in self._data.items()})
 
+    def save(self):
+        pass  # TODO
+
 
 DRAWPARAM_MAPS = ('m10', 'm11', 'm12', 'm13', 'm14', 'm15', 'm16', 'm17', 'm18', 'default')
 
-class DrawParamBND(object):
+
+class DarkSoulsLightingParameters(object):
 
     _MAP_IDS = (10, 11, 12, 13, 14, 15, 16, 17, 18, 99, 'default')
 
@@ -185,13 +194,16 @@ class DrawParamBND(object):
     default: DrawParamBlock
 
     def __init__(self, draw_param_directory: Optional[str] = None):
-        """Unpack DS1 DrawParams into a single modifiable structure. (Not technically one DrawParamBND, but it's more
-        intuitive to compare think of it this way.)
+        """Unpack DS1 DrawParams into a single modifiable structure.
 
-        'game_param_bnd_source' can be any valid source for GameParam.parambnd[.dcx] (its file path, an unpacked BND
-        directory, or an existing BND instance). It will default to the DEFAULT_GAME package.
+        Opens all DrawParam BNDs simultaneously for editing and repacking. The appropriate bundled ParamDef file will be
+        loaded, with the game version determined by the DrawParam DCX compression.
 
-        The appropriate bundled ParamDef file will be loaded, with the game version determined by DCX compression.
+        Args:
+            draw_param_directory: Directory where all the 'aXX_DrawParam.parambnd[.dcx]' files are. This will be inside
+                'param/DrawParam' in your game directory. If left out, it will default to the DEFAULT_GAME package path
+                in your soulstruct/config.py.
+
         """
 
         self._reload_warning = True

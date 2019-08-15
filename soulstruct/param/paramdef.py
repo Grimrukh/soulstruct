@@ -3,6 +3,8 @@ import os
 from soulstruct.core import BinaryStruct, read_chars_from_bytes, PACKAGE_PATH
 from soulstruct.bnd import BND3
 
+# TODO: Pickle bundled ParamDef files.
+
 
 class ParamDefBND(BND3):
 

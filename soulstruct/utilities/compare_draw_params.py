@@ -1,5 +1,5 @@
 """Script that compares an arbitrary number of """
-from soulstruct.param.parambnd import DRAW_PARAM_TABLES, DRAWPARAM_MAPS
+from soulstruct.param.dark_souls_game_params import DRAW_PARAM_TABLES, DRAWPARAM_MAPS
 
 
 def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_matches=True, ignore_tables=(),

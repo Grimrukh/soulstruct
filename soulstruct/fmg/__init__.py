@@ -1,2 +1,2 @@
 from .core import *
-from .ds_text import DarkSoulsText
+from .dark_souls_text import DarkSoulsText

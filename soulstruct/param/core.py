@@ -1,5 +1,3 @@
-# TODO: DeS / DS1 format only.
-
 # TODO: GameParam BND indices of param tables are different in PTD/DSR. I'm guessing it may not actually matter, and
 #   that all the param tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
 
@@ -11,6 +9,22 @@ import struct
 from typing import Dict
 from soulstruct.core import BinaryStruct, read_chars_from_bytes
 from soulstruct.param.paramdef import ParamDefBND
+
+_PARAMDEF_PTD = None
+_PARAMDEF_DSR = None
+
+
+def PARAMDEF_BND(game_version):
+    global _PARAMDEF_PTD, _PARAMDEF_DSR
+    if game_version.lower() == 'ptd':
+        if _PARAMDEF_PTD is None:
+            _PARAMDEF_PTD = ParamDefBND('ptd')
+        return _PARAMDEF_PTD
+    elif game_version.lower() == 'dsr':
+        if _PARAMDEF_DSR is None:
+            _PARAMDEF_DSR = ParamDefBND('dsr')
+        return _PARAMDEF_DSR
+    raise ValueError(f"Could not find bundled ParamDef for game version {repr(game_version)}.")
 
 
 PARAM_TYPE_INFO = {
@@ -118,9 +132,7 @@ PARAM_TYPE_INFO = {
 
 class ParamEntry(object):
 
-    def __init__(self, entry_source, name=None, paramdef=None):
-        # TODO: subclass for every param type, with listed fields, for intelli-sense? nah, just let them print the keys.
-        # TODO: you can 'hide' keys. I should hide some useless ones by default (which you can change here).
+    def __init__(self, entry_source, paramdef, name=None):
         self.fields = OrderedDict()
         self.paramdef = paramdef
 
@@ -142,9 +154,7 @@ class ParamEntry(object):
         elif isinstance(entry_source, bytes):
             if name is None:
                 raise ValueError("`name` argument must be given explictly alongside raw entry data.")
-            if paramdef is None:
-                raise ValueError("`paramdef` argument must be given to interpret raw entry data.")
-            self.unpack(entry_source, paramdef, name)
+            self.unpack(entry_source, name)
             self.name = name
 
     def __iter__(self):
@@ -181,13 +191,13 @@ class ParamEntry(object):
         return f"\nName: {self.name}" + ''.join(
             [f"\n    {key} = {value}" for key, value in self.fields.items()])
 
-    def unpack(self, entry_buffer, paramdef, name: str):
+    def unpack(self, entry_buffer, name: str):
         bit_field = None
         bit_field_offset = 0
         if isinstance(entry_buffer, bytes):
             entry_buffer = BytesIO(entry_buffer)
 
-        for field in paramdef.fields:
+        for field in self.paramdef.fields:
 
             # Determine field format.
             if field['bit_size'] < 8:
@@ -266,12 +276,11 @@ class ParamTable(object):
 
     entries: Dict[int, ParamEntry]
 
-    def __init__(self, param_source, paramdef_bnd_source=None):
+    def __init__(self, param_source, paramdef_bnd):
         # TODO: Need to specify param type somewhere.
-
         self.param_path = ''
         self.param_name = ''  # internal name (shift-jis) with capitals and underscores
-        self.paramdef = None
+        self.paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.entries = {}
         self.__magic = []
 
@@ -279,7 +288,7 @@ class ParamTable(object):
             self.entries = param_source
 
         elif isinstance(param_source, bytes):
-            self.unpack(BytesIO(param_source), paramdef_bnd_source)
+            self.unpack(BytesIO(param_source))
 
         elif isinstance(param_source, str):
             self.param_path = param_source
@@ -302,7 +311,7 @@ class ParamTable(object):
         if isinstance(entry, dict):
             if 'name' not in entry:
                 raise ValueError("New entry must have a 'name' field.")
-            entry = ParamEntry(entry)
+            entry = ParamEntry(entry, self.paramdef_bnd[self.param_name])
         if isinstance(entry, ParamEntry):
             self.entries[entry_index] = entry
         raise TypeError("New entry must be a ParamEntry or a dictionary that contains all required fields.")
@@ -312,18 +321,12 @@ class ParamTable(object):
 
     # TODO: __repr__ method returns basic information about ParamTable (but not entire entry list).
 
-    def unpack(self, param_buffer, paramdef_bnd_source=None):
-
-        paramdef_bnd = ParamDefBND(paramdef_bnd_source) if not isinstance(
-            paramdef_bnd_source, ParamDefBND) else paramdef_bnd_source
-
+    def unpack(self, param_buffer):
         header = self.HEADER_STRUCT.unpack(param_buffer)
-        self.param_name = header.param_name.rstrip().rstrip('\0')
+        self.param_name = header.param_name
         self.__magic = [header.magic0, header.magic1, header.magic2]
         entry_data_offset = header.entry_data_offset
         name_data_offset = header.name_data_offset  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
-
-        self.paramdef = paramdef_bnd[self.param_name]
 
         # Load entry pointer data.
         entry_pointers = self.ENTRY_POINTER_STRUCT.unpack(param_buffer, count=header.entry_count)
@@ -352,20 +355,9 @@ class ParamTable(object):
                 name = read_chars_from_bytes(packed_name_data, offset=relative_name_offset, encoding='shift_jis_2004')
             else:
                 name = ''
-            self.entries[entry_struct.id] = ParamEntry(entry_data, name, self.paramdef)
+            self.entries[entry_struct.id] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
 
-    def pack(self, paramdef_source=None, sort=True):
-        # TODO: Not working properly, and I can confirm the offset to the packed name strings was off by +12.
-
-        if paramdef_source is None:
-            if self.paramdef is None:
-                # TODO: The ParamTable instance (if opened) should have enough information to not need paramdef here.
-                raise AttributeError("No pre-loaded ParamDef to use when packing ParamTable. "
-                                     "You must pass the .paramdefbnd file to ParamTable.pack().")
-        else:
-            paramdef_bnd = ParamDefBND(paramdef_source)
-            self.paramdef = paramdef_bnd[self.param_name]
-
+    def pack(self, sort=True):
         sorted_entries = sorted(self.entries.items()) if sort else self.entries.items()
 
         current_name_offset = 0
@@ -390,7 +382,7 @@ class ParamTable(object):
             bit_field = ''
             for field_name, field_value in entry.fields.items():  # These are ordered correctly already.
 
-                field = self.paramdef[field_name]
+                field = self.paramdef_bnd[field_name]
 
                 if field['bit_size'] < 8:
                     # Add bits.
@@ -399,7 +391,7 @@ class ParamTable(object):
                         raise ValueError(f"Value {field_value} (binary: {binary_value}) of binary field "
                                          f"{field_name} is too large for field size of {field['bit_size']} bits).")
                     binary_value = '0' * (field['bit_size'] - len(binary_value)) + binary_value  # leading zeroes
-                    bit_field += binary_value[::-1]  # TODO: still not correct when this is reversed.
+                    bit_field += binary_value[::-1]
                     if len(bit_field) >= 8:
                         completed_bit_field = bit_field[:8]
                         byte_to_write = int(completed_bit_field[::-1], 2)  # reversed
@@ -473,7 +465,7 @@ class ParamTable(object):
 
         return header + entry_pointer_data + packed_data + packed_names
 
-    def write_packed(self, param_path=None, paramdef_source=None):
+    def write_packed(self, param_path=None):
         if param_path is None:
             if self.param_path:
                 param_path = self.param_path
@@ -483,7 +475,7 @@ class ParamTable(object):
             param_path += '.param'
 
         with open(param_path, 'wb') as output:
-            output.write(self.pack(paramdef_source))
+            output.write(self.pack())
 
 
 class DrawParamTable(ParamTable):

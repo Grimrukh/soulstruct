@@ -1,2 +1,2 @@
 from .core import *
-from .parambnd import GameParamBND, DrawParamBND
+from .dark_souls_game_params import DarkSoulsGameParameters, DarkSoulsLightingParameters
