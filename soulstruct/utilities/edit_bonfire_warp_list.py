@@ -14,7 +14,7 @@ DSR_WARP_LIST_OFFSET = 28100512
 # the engine when you sit at the corresponding bonfire. The second
 # number is the entity ID of the bonfire object in the MSB. The
 # third number is the index of the displayed location name in the
-# PlaceNames FMG text table (in 'item.msgbnd').
+# PlaceNames FMG text table (in 'menu.msgbnd').
 VANILLA_EXE_DATA = [
     (200, 1021960, 2000),
     (205, 1011961, 2001),

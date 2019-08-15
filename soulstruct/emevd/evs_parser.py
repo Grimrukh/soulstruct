@@ -41,30 +41,35 @@ class EmevdValueError(EmevdError):
 
 class EmevdImportError(EmevdError):
     """Raised when a module cannot be imported."""
+
     def __init__(self, lineno, module):
         super().__init__(lineno, f"Could not import {repr(module)}.")
 
 
 class EmevdImportFromError(EmevdError):
     """Raised when a name cannot be imported from a module."""
+
     def __init__(self, lineno, module, name):
         super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}.")
 
 
 class EmevdNameError(EmevdError):
     """Raised when an invalid (undefined) name is parsed."""
+
     def __init__(self, lineno, name):
         super().__init__(lineno, f"Name {repr(name)} has not been imported or defined.")
 
 
 class EmevdAttributeError(EmevdError):
     """Raised when an attribute of an object cannot be retrieved."""
+
     def __init__(self, lineno, name, attribute):
         super().__init__(lineno, f"Object {repr(name)} has no attribute {repr(attribute)}.")
 
 
 class EmevdCallableError(EmevdError):
     """Raised when an un-callable object is called."""
+
     def __init__(self, lineno, name):
         super().__init__(lineno, f"Object {name} is not callable.")
 
@@ -83,6 +88,7 @@ class ConditionLimitError(ConditionError):
 
 class EmevdCompiler(object):
     """ Compiles Python-like EVS code to Dark Souls EMEVD scripts. """
+
     def __init__(self, evs_path, game_module=None):
 
         if not game_module:
@@ -1171,6 +1177,7 @@ def _parse_decorator(event_node: ast.FunctionDef):
                                                       f"Must be one of: {', '.join([d.id for d in decorators])}")
     return 0
 
+
 def _validate_comparison_node(node):
     """ Comparisons must:
         (a) only involve two values;
@@ -1189,6 +1196,7 @@ def _validate_comparison_node(node):
 
     return node.left, node.ops[0].__class__, node.comparators[0].n
 
+
 def _format_event_layers(event_layers):
     if event_layers is None:
         return ''
@@ -1197,6 +1205,7 @@ def _format_event_layers(event_layers):
     if not isinstance(event_layers, (list, tuple)):
         raise TypeError
     return f'<' + str(event_layers)[1:-1] + '>'
+
 
 def _import_module(node: ast.Import, namespace: dict):
     for alias in node.names:
@@ -1209,6 +1218,7 @@ def _import_module(node: ast.Import, namespace: dict):
             namespace[as_name] = getattr(module, name)
         except AttributeError:
             raise EmevdImportFromError(node.lineno, node.module, name)
+
 
 def _import_from(node: ast.ImportFrom, namespace: dict):
     """Import names into given namespace dictionary."""
