@@ -6,7 +6,7 @@ maps. (Unfortunately, no more than two slots can be used.)
 import os
 from soulstruct import BND
 
-DRAW_PARAM_DIR = 'G:\\Steam\\steamapps\\common\\DARK SOULS REMASTERED\\param\\DrawParam'
+DRAW_PARAM_DIR = 'G:\\Steam\\steamapps\\common\\DARK SOULS REMASTERED\\params\\DrawParam'
 REMASTERED = True
 
 for map_id in (10, 11, 12, 13, 14, 16, 17, 18):  # skip 15, which already has both slots

@@ -1,5 +1,5 @@
 
-from soulstruct.game_types import Character, Flag, ItemLot, Object, Text
+from soulstruct.types import Character, Flag, ItemLot, Object, Text
 
 
 class FLAGS(Flag):

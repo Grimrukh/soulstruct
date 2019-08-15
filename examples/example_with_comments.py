@@ -12,7 +12,7 @@
                         a version of this script with no comments, which
                         is easier to read for actual content.
 
-                        Check out the 'soulstruct/emevd/vanilla_evs_ptd'
+                        Check out the 'soulstruct/events/vanilla_evs_ptd'
                         folder for EVS versions of the vanilla event
                         scripts from Dark Souls: Prepare to Die Edition.
                         (These will work absolutely fine in Dark Souls
@@ -57,16 +57,16 @@
                                                                    Grimrukh
 """
 # This star import is purely so your intelli-sense can pick up all the instructions, tests, and other EVS wrapper
-# functions. It is ignored by the compiler (along with all imports containing 'soulstruct.emevd') and can actually be
+# functions. It is ignored by the compiler (along with all imports containing 'soulstruct.events') and can actually be
 # removed entirely if you don't care about auto-completion or intelli-sense inspection, etc. Make sure you import from
 # the right game, or your intelli-sense may lead you down paths that the game-specific compiler you call on this script
 # can't follow...
-from soulstruct.emevd.darksouls1 import *
+from soulstruct.events.darksouls1 import *
 
 # We'll need this import to declare our event arguments as specific game types like Character and Region, which in turn
 # allows us to test certain boolean properties of those objects directly. (Again, this is just for intelli-sense - the
 # compiler is fully aware of all the game types, whether you import them here or not.)
-from soulstruct.game_types import *
+from soulstruct.types import *
 
 # At this point, we can import any names we want into the script. The only restriction is that you have to use
 # This import actually matters. You should define your constants in a separate Python script, and import them here.
@@ -147,7 +147,7 @@ def PullOutMeltedIronKey():
 
     # Simple conditional check that terminates the event right at the start if this event's flag (the one given in the
     # docstring above) is already on. THIS_FLAG is an EVS constant you can use to check the flag of this event. Look at
-    # the other constants in emevd.constants. For example, you can 'return RESTART' to restart the event.
+    # the other constants in events.constants. For example, you can 'return RESTART' to restart the event.
 
     # If you look at the actual verbose output of your script, you'll notice that these two lines are compressed into a
     # single instruction that ends the event if the flag is enabled. The EVS compiler works hard to use as few lines of
@@ -156,7 +156,7 @@ def PullOutMeltedIronKey():
         return  # (You'll see this two-line combo a lot in 'one-off' events.)
 
     # Our first actual instruction (aside from running an event). This stops the player from being able to activate the
-    # door via its ObjAct event (specified in the MSB file). An objact_param_id of -1 finds the param that shares the
+    # door via its ObjAct event (specified in the MSB file). An objact_param_id of -1 finds the params that shares the
     # door's ID.
     DisableObjectActivation(OBJECTS.DepthsDoor, -1)
 

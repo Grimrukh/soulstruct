@@ -2,30 +2,166 @@ from io import BytesIO
 import os
 import re
 import struct
+import sys
+
+from soulstruct.utilities import auto_wrap
+
+__all__ = ['PACKAGE_PATH', 'LIVE_GAME', 'TEMP_GAME', 'DEFAULT_GAME', 'DEFAULT_GAME_DCX',
+           'create_config_file', 'BinaryStruct', 'read_chars_from_bytes', 'read_chars_from_buffer']
+
+
+# TODO: 'TEMP' -> 'WORKSPACE'
+# TODO: Function that creates and copies live game into temp workspace.
+# TODO: Get user input for config paths if file does not exist, rather than guessing.
+
+_DEFAULT_GAME_PATHS = {
+    'ptd': 'C:\\Program Files\\Steam\\steamapps\\common\\Dark Souls Prepare to Die Edition\\DATA\\',
+    'dsr': 'C:\\Program Files\\Steam\\steamapps\\common\\DARK SOULS REMASTERED\\',
+    # TODO: DS3
+}
+
+
+def pull_from_live():
+    """'Pull' all Soulstruct-relevant game files from LIVE directory into WORKSPACE directory."""
+    raise NotImplementedError  # TODO
+
+
+def push_into_live():
+    """'Push' all Soulstruct-relevant game files from WORKSPACE directory into LIVE directory."""
+    raise NotImplementedError  # TODO
+
+
+def create_config_file(paths=None):
+    if paths is None:
+
+        default_live_strings = '\n    '.join(f'{k}: {v}' for k, v in _DEFAULT_GAME_PATHS.items())
+        print(auto_wrap(
+                f"Type your LIVE GAME PATH and press Enter. This should be the Steam installation "
+                f"directory containing your game executable.\n\n"
+                f""
+                f"You can also enter one of the following shortcuts to use that path:\n"
+                f"    {default_live_strings}\n\n"
+                f""))
+        while 1:
+            live_path = input(f"\nLIVE GAME PATH ('q' to quit): ")
+            if live_path.lower() == 'q':
+                return None
+            elif live_path in _DEFAULT_GAME_PATHS:
+                live_path = _DEFAULT_GAME_PATHS[live_path]
+            elif os.path.isfile(live_path):
+                live_path = os.path.dirname(live_path)
+            elif not os.path.isdir(live_path):
+                if input(auto_wrap(
+                        "\nWARNING: Could not find the directory specified. Set it anyway? Y/[N]: ")).lower() != 'y':
+                    print("\nEnter a different path.")
+                    continue
+            print(f"\nLIVE GAME PATH = {live_path}")
+            break
+
+        # Backup
+        if os.path.isdir(live_path):
+            if input(auto_wrap("\nMake a backup of your LIVE game files now? [Y]/N: ")).lower() != 'n':
+                if len(os.listdir(temp_path)) != 0 and input(auto_wrap(
+                        "\nTEMP folder is not empty. Files may be overwritten. "
+                        "Pull anyway? Y/[N]: ")).lower() != 'y':
+                    print(auto_wrap("\nDid not pull LIVE files. You can do this with the "
+                                    "'--pull' command line option."))
+                else:
+                    pull_from_live()
+        else:
+            print(auto_wrap("\nCannot pull files until LIVE and WORKSPACE directories both exist. You can do this with "
+                            "the '--pull' command line option."))
+
+
+        print(auto_wrap(
+            f"Type your TEMP GAME PATH and press Enter. This should be a folder where you can freely "
+            f"edit copies of the game files without worrying about breaking your LIVE GAME directory. "
+            f"You can then use Soulstruct to 'pull' LIVE GAME files into your TEMP GAME folder and "
+            f"'push' TEMP GAME files into your LIVE GAME folder at will.\n\n"
+            f""
+            f"If you enter a relative path, the temp directory will be created inside the 'Soulstruct' "
+            f"directory in your 'Documents' folder.\n\n"
+            f""
+            f"Leave it blank to default to '~/Documents/Soulstruct/workspace/'.\n\n"
+            f""))
+        while 1:
+            temp_path = input(f"\nTEMP GAME PATH ('q' to quit): ")
+            if temp_path.lower() == 'q':
+                return None
+            if not temp_path:
+                temp_path = os.path.expanduser('~/Documents/Soulstruct/workspace')
+            elif os.path.isfile(temp_path):
+                temp_path = os.path.dirname(temp_path)
+            if not os.path.isdir(temp_path):
+                if input(auto_wrap("\nDirectory does not yet exist. Create it now? [Y]/N: ")).lower() != 'n':
+                    os.makedirs(temp_path, exist_ok=True)
+                    continue
+            print(auto_wrap(f"\nTEMP GAME PATH = {temp_path}"))
+            break
+
+        # Pull
+        if os.path.isdir(live_path) and os.path.isdir(temp_path):
+            if input(auto_wrap("\nPull LIVE game files into TEMP folder now? [Y]/N: ")).lower() != 'n':
+                if len(os.listdir(temp_path)) != 0 and input(auto_wrap(
+                        "\nTEMP folder is not empty. Files may be overwritten. "
+                        "Pull anyway? Y/[N]: ")).lower() != 'y':
+                    print(auto_wrap("\nDid not pull LIVE files. You can do this with the "
+                                    "'--pull' command line option."))
+                else:
+                    pull_from_live()
+        else:
+            print(auto_wrap("\nCannot pull files until LIVE and WORKSPACE directories both exist. You can do this with "
+                            "the '--pull' command line option."))
+
+        print(auto_wrap(
+            f"Your DEFAULT game path has been set to Type your TEMP GAME PATH and press Enter. This should be a folder where you can freely "
+            f"edit copies of the game files without worrying about breaking your LIVE GAME directory. "
+            f"You can then use Soulstruct to synchronize your LIVE GAME files with these TEMP GAME "
+            f"files at will.\n\n"
+            f""
+            f"If you enter a relative path, the temp directory will be created inside the 'Soulstruct' "
+            f"directory in your 'Documents' folder.\n\n"
+            f""
+            f"Leave it blank to default to '~/Documents/Soulstruct/workspace/'.\n\n"
+            f""))
+
+    else:
+        try:
+            live_path, temp_path, default_path = paths
+        except ValueError:
+            raise ValueError("Three paths (live, temp, default) must be passed as a sequence to `create_config_file`.")
+    if temp_path is None:
+        temp_path = PACKAGE_PATH('workspace')
+    if default_path is None or default_path.lower() == 'temp':
+        default_path = temp_path
+    with open(os.path.join(os.path.dirname(__file__), 'config.py'), 'w') as f:
+        f.write(f"LIVE_GAME_PATH = {repr(live_path)}\n")
+        f.write(f"TEMP_GAME_PATH = {repr(temp_path)}\n")
+        f.write(f"DEFAULT_GAME_PATH = {repr(default_path)}\n")
+    return live_path, temp_path, default_path
+
+
 try:
-    from .config import LIVE_GAME_PATH, TEMP_GAME_PATH, DEFAULT_GAME_PATH
+    from soulstruct.config import LIVE_GAME_PATH, TEMP_GAME_PATH, DEFAULT_GAME_PATH
 except ImportError:
     print("# No Soulstruct configuration file detected ('config.py'). Creating now...\n")
-    if not os.path.isfile(os.path.join(os.path.dirname(__file__), 'config.py')):
-        try:
-            temp_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'workspace'))
-            with open(os.path.join(os.path.dirname(__file__), 'config.py'), 'w') as f:
-                f.write("LIVE_GAME_PATH = 'C:\\Program Files\\Steam\\steamapps\\common\\DARK SOULS REMASTERED\\'\n")
-                f.write(f"TEMP_GAME_PATH = {repr(temp_dir)}\n")
-                f.write(f"DEFAULT_GAME_PATH = {repr(temp_dir)}\n")
-            print("# Configuration file created successfully.\n"
-                  "# Edit this file to set the directories of your game and temporary workspace,\n"
-                  "# which will be used throughout Soulstruct, as well as the default directory\n"
-                  "# to use when any structures or GUIs are loaded without specifying a directory.")
-        except PermissionError:
-            print("# ERROR: Could not import 'config.py' Soulstruct configuration file.\n"
-                  "# Using default directory values, which may not work.")
-        LIVE_GAME_PATH = 'C:/Program Files/Steam/steamapps/common/DARK SOULS REMASTERED/'
-        TEMP_GAME_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'workspace'))
-        DEFAULT_GAME_PATH = TEMP_GAME_PATH
+    try:
+        LIVE_GAME_PATH, TEMP_GAME_PATH, DEFAULT_GAME_PATH = create_config_file()
+    except PermissionError:
+        raise PermissionError("# ERROR: Could not create 'config.py' Soulstruct configuration file.\n"
+                              "# Do you have write permissions for the Soulstruct directory?")
+    print("# Configuration file created successfully.\n"
+          "# Edit this file to set the directories of your game and temporary workspace,\n"
+          "# which you can refer to with 'live' and 'temp' throughout Soulstruct, as well\n"
+          "# as well as the default directory 'default' to use when loading an editor program\n"
+          "# without specifying a directory\n."
+          "# (You can also edit it with the '--config' Soulstruct command line option.)")
 
-__all__ = ['LIVE_GAME', 'TEMP_GAME', 'DEFAULT_GAME', 'DEFAULT_GAME_DCX', 'PACKAGE_PATH',
-           'BinaryStruct', 'read_chars_from_bytes', 'read_chars_from_buffer']
+
+def PACKAGE_PATH(relative_path=None):
+    if getattr(sys, 'frozen', False):
+        return os.path.join(getattr(sys, '_MEIPASS', '.'), relative_path)
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
 
 def LIVE_GAME(relative_path):
@@ -57,10 +193,6 @@ def DEFAULT_GAME_DCX(relative_path):
     if os.path.isfile(no_dcx):
         return no_dcx, True
     raise FileNotFoundError(f"Could not find DCX or non-DCX version of {abs_path}.")
-
-
-def PACKAGE_PATH(relative_path):
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
 
 
 class BinaryStruct(object):

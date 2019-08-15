@@ -1,12 +1,12 @@
 """ Run this script to compile our example DS1 EVS script, 'example.py'. """
 
-from soulstruct.emevd.darksouls1 import EMEVD
+from soulstruct.events.darksouls1 import EMEVD
 
 
 def compile_evs():
     """ Feed our EVS script to the EMEVD() class.
 
-    The EMEVD class can read packed '.emevd' resources, numeric '.txt' resources (in the format designed by
+    The EMEVD class can read packed '.events' resources, numeric '.txt' resources (in the format designed by
     HotPocketRemix), or Pythonic '.evs' / '.py' resources. You can then output the same EMEVD as any of those three file
     types.
 
@@ -25,7 +25,7 @@ def compile_evs():
 
     # And pack it to final EMEVD binary, ready to be moved to your Dark Souls 'event' folder. You can pass a specific
     # EMEVD file path to this method, but by default it will use your original EVS script path with the extension
-    # changed to '.emevd'.
+    # changed to '.events'.
     example_emevd.write_emevd()
 
     # We can also decompile our script again to get a readable version back. If you see a bug, and suspect it's my
@@ -33,7 +33,7 @@ def compile_evs():
     # on the higher-level syntax in EVS.
     example_emevd.write_evs('re-example.py')
 
-    # Now try replacing 'example.evs' above with 'example.emevd', and you should see the exact same output.
+    # Now try replacing 'example.evs' above with 'example.events', and you should see the exact same output.
 
 
 if __name__ == '__main__':
