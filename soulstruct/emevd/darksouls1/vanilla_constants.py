@@ -11,6 +11,23 @@ class PlayerAnimations(PlayerAnimation):
     GettingUpFromKneelingDownOneLeg = 7897
 
 
+class Depths:
+    class Characters(Character):
+        Domnhall = 6260
+        SolaireSummon = 6541
+        KnightKirkInvader = 6562
+        GapingDragon = 1000800
+
+    class Flags(Flag):
+        GapingDragonDead = 2
+
+    class Regions(Region):
+        GapingDragonArena = 1002999
+
+    class Events:
+        GapingDragonBehavior = EventInfo(11005392)
+
+
 class FirelinkShrine:
     class Characters(Character):
         Logan = 6031

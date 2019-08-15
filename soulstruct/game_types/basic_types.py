@@ -4,8 +4,8 @@ from typing import Union
 from soulstruct.emevd.core import get_value_test
 from soulstruct.emevd.shared import instructions as instr
 
-__all__ = ['GameObject', 'Flag', 'FlagInt', 'FlagRange', 'Animation', 'PlayerAnimation', 'Map',
-           'FlagRangeOrSequence', 'AnimationInt', 'MapOrSequence']
+__all__ = ['GameObject', 'Flag', 'FlagRange', 'EventInfo', 'Animation', 'PlayerAnimation', 'Map',
+           'FlagInt', 'FlagRangeOrSequence', 'AnimationInt', 'MapOrSequence']
 
 
 class GameObject(object):
@@ -15,7 +15,6 @@ class GameObject(object):
 
 class Flag(GameObject, IntEnum):
     """ Condition upon a flag as a shortcut to condition upon it being enabled. """
-
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         value = self if isinstance(self, (int, float)) else self.value
         return get_value_test(
@@ -27,15 +26,12 @@ class Flag(GameObject, IntEnum):
             restart_if_true_func=instr.RestartIfFlagOn, restart_if_false_func=instr.RestartIfFlagOff)
 
 
-FlagInt = Union[Flag, int]
-
-
 class FlagRange(GameObject):
     def __init__(self, first, last):
         self.first = first
         self.last = last
 
-    # TODO: use the methods below in EVS parser.
+    # TODO (minor): use the methods below in EVS parser.
 
     def any(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         return get_value_test(
@@ -63,6 +59,17 @@ class FlagRange(GameObject):
         yield self.last
 
 
+class EventInfo(object):
+    """Contains the ID and description of an event (not an enum). Name is to avoid clash with emevd.Event.
+
+    The 'name' field is likely the key used to index instances of this, so is optional to pass in.
+    """
+    def __init__(self, event_id, description="None", name=""):
+        self.id = event_id
+        self.name = name
+        self.description = description
+
+
 class Animation(IntEnum):
     """Animation ID base class."""
     # TODO: playback methods.
@@ -73,8 +80,6 @@ class PlayerAnimation(IntEnum):
     """Animation IDs for player character and human NPCs."""
     # TODO: playback methods.
     pass
-
-
 
 
 class Map(GameObject):
@@ -93,6 +98,8 @@ class Map(GameObject):
     def __repr__(self):
         return self.file_name
 
+
+FlagInt = Union[Flag, int]
 FlagRangeOrSequence = Union[FlagRange, tuple, list]
 AnimationInt = Union[Animation, int]
 MapOrSequence = Union[Map, tuple, list]
