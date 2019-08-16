@@ -1,4 +1,4 @@
-from soulstruct.types import Map
+from soulstruct.game_types import Map
 
 class COMMON:
     """Dummy class that allows COMMON to be treated like a `Map` instance in scripts."""

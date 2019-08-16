@@ -9,7 +9,7 @@ from __future__ import annotations
 from soulstruct.events.core import set_instruction_arg_types
 from soulstruct.events.shared.instructions import *
 from soulstruct.enums.darksouls3 import *
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 
 INSTRUCTION_ARG_TYPES = {

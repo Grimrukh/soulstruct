@@ -1,4 +1,4 @@
-from soulstruct.core import BinaryStruct
+from soulstruct.utilities.core import BinaryStruct
 from soulstruct.esd import BaseESD
 
 

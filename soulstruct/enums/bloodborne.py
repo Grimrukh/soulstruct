@@ -153,7 +153,7 @@ class MultiplayerState(IntEnum):
 
 
 class NPCPartType(IntEnum):
-    # Used in definining different behavior for parts of NPC models.
+    """Used to define different behavior for different parts of NPC models."""
     Part1 = 1
     Part2 = 2
     Part3 = 3

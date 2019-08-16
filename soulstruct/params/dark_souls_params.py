@@ -8,7 +8,6 @@ import pickle
 from typing import Dict, List, Optional
 
 from soulstruct.bnd.core import BND, BaseBND
-from soulstruct.core import DEFAULT_GAME, DEFAULT_GAME_DCX
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.params.fields import GAME_PARAM_INFO
 
@@ -46,7 +45,7 @@ class DarkSoulsGameParameters(object):
     WeaponUpgrades: ParamTable
     VisualEffects: ParamTable
 
-    def __init__(self, game_param_bnd_source=None):
+    def __init__(self, game_param_bnd_source):
         """Unpack DS1 GameParams into a single modifiable structure.
 
         Args:
@@ -60,8 +59,6 @@ class DarkSoulsGameParameters(object):
 
         if os.path.isdir(game_param_bnd_source):
             game_param_bnd_source = os.path.join(game_param_bnd_source, 'GameParam.parambnd')
-        if game_param_bnd_source is None:
-            game_param_bnd_source, is_dcx = DEFAULT_GAME_DCX('params/GameParam/GameParam.parambnd')
         if isinstance(game_param_bnd_source, BaseBND):
             self._game_param_bnd = game_param_bnd_source
         else:
@@ -134,11 +131,11 @@ class DrawParamBlock(object):
     ToneMap: List[Optional[DrawParamTable]]
     s_AmbientLight: List[Optional[DrawParamTable]]
 
-    def __init__(self, draw_param_bnd, paramdef_bnd=None):
+    def __init__(self, draw_param_bnd):
         """Structure that holds a single DrawParam file for a single map block."""
 
         self._data = {}  # type: Dict[str, List[Optional[DrawParamTable], Optional[DrawParamTable]]]
-        self.paramdef_bnd = ParamDefBND('dsr' if bool(draw_param_bnd.dcx) else 'ptd')
+        self.paramdef_bnd = PARAMDEF_BND('dsr' if bool(draw_param_bnd.dcx) else 'ptd')
 
         if not isinstance(draw_param_bnd, BaseBND):
             draw_param_bnd = BND(draw_param_bnd)
@@ -195,7 +192,7 @@ class DarkSoulsLightingParameters(object):
     m99: DrawParamBlock
     default: DrawParamBlock
 
-    def __init__(self, draw_param_directory: Optional[str] = None):
+    def __init__(self, draw_param_directory: str):
         """Unpack DS1 DrawParams into a single modifiable structure.
 
         Opens all DrawParam BNDs simultaneously for editing and repacking. The appropriate bundled ParamDef file will be
@@ -210,10 +207,6 @@ class DarkSoulsLightingParameters(object):
 
         self._reload_warning = True
         self._data = {}
-        self.paramdef_bnd = None
-
-        if draw_param_directory is None:
-            draw_param_directory = DEFAULT_GAME(f'params/DrawParam/')
 
         for area_id in self._MAP_IDS:
             if isinstance(area_id, int):
@@ -229,9 +222,7 @@ class DarkSoulsLightingParameters(object):
                 except FileNotFoundError:
                     raise FileNotFoundError(f"Could not find '{file_map_name}_DrawParam.parambnd[.dcx]' in "
                                             f"given directory '{draw_param_directory}'.")
-            if self.paramdef_bnd is None:
-                self.paramdef_bnd = ParamDefBND('dsr' if bool(draw_param_bnd.dcx) else 'ptd')
-            self._data[map_name] = DrawParamBlock(draw_param_bnd, self.paramdef_bnd)
+            self._data[map_name] = DrawParamBlock(draw_param_bnd)
             setattr(self, map_name, self._data[map_name])
 
     def __getitem__(self, map_name):

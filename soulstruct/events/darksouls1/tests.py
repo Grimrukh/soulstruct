@@ -1,6 +1,6 @@
 from soulstruct.events.shared.tests import *
 import soulstruct.events.darksouls1.instructions as instr
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 
 HOST = ConstantCondition(

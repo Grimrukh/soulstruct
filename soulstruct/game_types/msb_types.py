@@ -4,7 +4,7 @@ from typing import Union
 from soulstruct.events.core import get_value_test
 from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import CoordEntityType
-from soulstruct.types.basic_types import GameObject
+from soulstruct.game_types.basic_types import GameObject
 
 __all__ = ['Entity', 'EventEntity', 'CoordEntity',
            'MapSound', 'ObjAct',

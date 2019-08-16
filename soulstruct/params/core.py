@@ -1,29 +1,27 @@
-# TODO: GameParam BND indices of params tables are different in PTD/DSR. I'm guessing it may not actually matter, and
-#   that all the params tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
-
-# TODO: Intelligent tools that change multiple relevant params at once.
-
 from collections import OrderedDict
 from io import BytesIO
 import struct
 from typing import Dict
-from soulstruct.core import BinaryStruct, read_chars_from_bytes
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
 from soulstruct.params.paramdef import ParamDefBND
 
-_PARAMDEF_PTD = None
-_PARAMDEF_DSR = None
+# TODO: GameParam BND indices of params tables are different in PTD/DSR. I'm guessing it may not actually matter, and
+#   that all the params tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
+
+_PARAMDEF_BND_PTD = None
+_PARAMDEF_BND_DSR = None
 
 
 def PARAMDEF_BND(game_version):
-    global _PARAMDEF_PTD, _PARAMDEF_DSR
+    global _PARAMDEF_BND_PTD, _PARAMDEF_BND_DSR
     if game_version.lower() == 'ptd':
-        if _PARAMDEF_PTD is None:
-            _PARAMDEF_PTD = ParamDefBND('ptd')
-        return _PARAMDEF_PTD
+        if _PARAMDEF_BND_PTD is None:
+            _PARAMDEF_BND_PTD = ParamDefBND('ptd')
+        return _PARAMDEF_BND_PTD
     elif game_version.lower() == 'dsr':
-        if _PARAMDEF_DSR is None:
-            _PARAMDEF_DSR = ParamDefBND('dsr')
-        return _PARAMDEF_DSR
+        if _PARAMDEF_BND_DSR is None:
+            _PARAMDEF_BND_DSR = ParamDefBND('dsr')
+        return _PARAMDEF_BND_DSR
     raise ValueError(f"Could not find bundled ParamDef for game version {repr(game_version)}.")
 
 

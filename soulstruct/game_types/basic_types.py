@@ -4,8 +4,7 @@ from typing import Union
 from soulstruct.events.core import get_value_test
 from soulstruct.events.shared import instructions as instr
 
-__all__ = ['GameObject', 'Flag', 'FlagInt', 'FlagRange', 'Animation', 'PlayerAnimation', 'Map',
-           'FlagRangeOrSequence', 'AnimationInt', 'MapOrSequence']
+__all__ = ['GameObject', 'Flag', 'FlagInt', 'FlagRange', 'Map', 'FlagRangeOrSequence', 'MapOrSequence']
 
 
 class GameObject(object):
@@ -63,20 +62,6 @@ class FlagRange(GameObject):
         yield self.last
 
 
-class Animation(IntEnum):
-    """Animation ID base class."""
-    # TODO: playback methods.
-    pass
-
-
-class PlayerAnimation(IntEnum):
-    """Animation IDs for player character and human NPCs."""
-    # TODO: playback methods.
-    pass
-
-
-
-
 class Map(GameObject):
     def __init__(self, area_id, block_id):
         self.area_id = area_id
@@ -93,6 +78,6 @@ class Map(GameObject):
     def __repr__(self):
         return self.file_name
 
+
 FlagRangeOrSequence = Union[FlagRange, tuple, list]
-AnimationInt = Union[Animation, int]
 MapOrSequence = Union[Map, tuple, list]

@@ -6,7 +6,7 @@ from shutil import copyfile
 from typing import Optional, List
 import zlib
 
-from soulstruct.core import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 from soulstruct.dcx import DCX
 from soulstruct.bnd.magic import *
 
@@ -31,7 +31,8 @@ class BNDEntry(object):
 
         for d in entry_header_dicts:
             bnd_buffer.seek(d.data_offset)
-            path = read_chars_from_buffer(bnd_buffer, offset=d.path_offset, encoding=path_encoding) if 'path_offset' in d else None
+            path = read_chars_from_buffer(
+                bnd_buffer, offset=d.path_offset, encoding=path_encoding) if 'path_offset' in d else None
             data = bnd_buffer.read(d.compressed_data_size)
             if is_entry_compressed(d.entry_magic):
                 data = zlib.decompressobj().decompress(data)
@@ -741,17 +742,6 @@ class BND4(BaseBND):
                 return True
         return True
 
-    def path_hash(self, path_string):
-        """ Simple string-hashing algorithm used by FROM. Strings use forward-slash path separators and always start
-        with a forward slash. """
-        hashable = path_string.replace('\\', '/')
-        if not hashable.startswith('/'):
-            hashable = '/' + hashable
-        h = 0
-        for i, s in enumerate(hashable):
-            h += i * 37 + ord(s)
-        return h
-
     def build_hash_table(self):
         """ Some BND4 resources include tables of hashed entry paths, which aren't needed to read file contents, but
         need to be re-hashed to properly pack the file in case any paths have changed (or the number of entries). """
@@ -794,6 +784,18 @@ class BND4(BaseBND):
         packed_path_hashes = self.PATH_HASH_STRUCT.pack(path_hashes)
 
         return packed_hash_table_header + packed_hash_groups + packed_path_hashes
+
+    @staticmethod
+    def path_hash(path_string):
+        """ Simple string-hashing algorithm used by FROM. Strings use forward-slash path separators and always start
+        with a forward slash. """
+        hashable = path_string.replace('\\', '/')
+        if not hashable.startswith('/'):
+            hashable = '/' + hashable
+        h = 0
+        for i, s in enumerate(hashable):
+            h += i * 37 + ord(s)
+        return h
 
 
 def BND(bnd_source=None, entry_class=None) -> BaseBND:

@@ -1,6 +1,6 @@
 from soulstruct.events.shared.tests import *
 from soulstruct.enums.darksouls3 import *
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 
 # Boolean constants.

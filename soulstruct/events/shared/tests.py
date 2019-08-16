@@ -7,7 +7,7 @@ from soulstruct.events.core import no_skip_or_negate_or_terminate, negate_only, 
     ConstantCondition, COMPARISON_NODES, NEG_COMPARISON_NODES
 import soulstruct.events.shared.instructions as instr
 from soulstruct.enums.shared import *
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 THIS_FLAG = ConstantCondition(
     if_true_func=instr.IfThisEventOn,

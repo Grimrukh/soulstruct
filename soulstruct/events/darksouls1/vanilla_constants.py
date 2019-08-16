@@ -1,5 +1,5 @@
 """My ongoing documentation for defining all IDs in Dark Souls 1."""
-from soulstruct.types import *
+from soulstruct.game_types import *
 
 
 class PlayerAnimations(PlayerAnimation):

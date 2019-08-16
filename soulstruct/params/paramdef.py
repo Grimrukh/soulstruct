@@ -1,6 +1,7 @@
 from io import BytesIO
 import os
-from soulstruct.core import BinaryStruct, read_chars_from_bytes, PACKAGE_PATH
+from soulstruct.core import PACKAGE_PATH
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
 from soulstruct.bnd import BND3
 
 # TODO: Pickle bundled ParamDef files.

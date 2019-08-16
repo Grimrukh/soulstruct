@@ -1,5 +1,5 @@
 from soulstruct.events.shared.tests import *
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 # Boolean constants.
 HOST = ...

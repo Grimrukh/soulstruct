@@ -1,5 +1,5 @@
 from typing import Union, Callable, Optional
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 from soulstruct.enums.shared import *
 
 

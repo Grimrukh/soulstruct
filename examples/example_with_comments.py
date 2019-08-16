@@ -66,7 +66,7 @@ from soulstruct.events.darksouls1 import *
 # We'll need this import to declare our event arguments as specific game types like Character and Region, which in turn
 # allows us to test certain boolean properties of those objects directly. (Again, this is just for intelli-sense - the
 # compiler is fully aware of all the game types, whether you import them here or not.)
-from soulstruct.types import *
+from soulstruct.game_types import *
 
 # At this point, we can import any names we want into the script. The only restriction is that you have to use
 # This import actually matters. You should define your constants in a separate Python script, and import them here.
@@ -149,7 +149,7 @@ def PullOutMeltedIronKey():
     # docstring above) is already on. THIS_FLAG is an EVS constant you can use to check the flag of this event. Look at
     # the other constants in events.constants. For example, you can 'return RESTART' to restart the event.
 
-    # If you look at the actual verbose output of your script, you'll notice that these two lines are compressed into a
+    # If you look at the actual numeric output of your script, you'll notice that these two lines are compressed into a
     # single instruction that ends the event if the flag is enabled. The EVS compiler works hard to use as few lines of
     # EMEVD as necessary, and particularly tries to avoid creating conditions whenever possible.
     if THIS_FLAG:

@@ -1,5 +1,5 @@
 import sys
-from soulstruct.core import BinaryStruct
+from soulstruct.utilities.core import BinaryStruct
 from soulstruct.events import BaseEMEVD
 from .constants import *
 from . import decompiler

@@ -1,6 +1,5 @@
 from copy import deepcopy
 import os
-from soulstruct.core import DEFAULT_GAME
 from soulstruct.bnd import BND
 from soulstruct.text.fmg import FMG
 
@@ -23,6 +22,9 @@ class DarkSoulsText(object):
     GoodNames: dict
     GoodSummaries: dict
     KeyGuide: dict
+    MagicDescriptions: dict
+    MagicNames: dict
+    MagicSummaries: dict
     MenuDialogs: dict
     MenuHelpSnippets: dict
     MenuText_Common: dict
@@ -33,16 +35,13 @@ class DarkSoulsText(object):
     RingDescriptions: dict
     RingNames: dict
     RingSummaries: dict
-    MagicDescriptions: dict
-    MagicNames: dict
-    MagicSummaries: dict
     SystemMessages_Win32: dict
     TextTagPlaceholders: dict
     WeaponDescriptions: dict
     WeaponNames: dict
     WeaponSummaries: dict
 
-    def __init__(self, msg_directory=None):
+    def __init__(self, msg_directory):
         """Unpack all Dark Souls 1 text data (from both 'item' and 'menu' MSGBND files) into one unified structure.
 
         You can access and modify the `entries` attributes of each loaded `FMG` instance using the names of the FMGs,
@@ -54,10 +53,6 @@ class DarkSoulsText(object):
             msg_directory: Directory containing 'item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]', in any of the language
                 folders within the 'msg' directory in the Dark Souls data files.
         """
-
-        if msg_directory is None:
-            msg_directory = DEFAULT_GAME('msg/ENGLISH')
-
         self._bnd_dir = ''
         self._directory = msg_directory
         self._original_names = {}  # The actual within-BND FMG names are completely up to us. My names are nicer.

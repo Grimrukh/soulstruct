@@ -8,7 +8,7 @@ from typing import Optional, Union
 
 from soulstruct.events.core import numeric_instruction
 from soulstruct.enums.shared import *
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 
 # RUN

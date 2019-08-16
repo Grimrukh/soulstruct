@@ -1,6 +1,6 @@
 import os
 import zlib
-from soulstruct.core import *
+from soulstruct.utilities import BinaryStruct
 
 
 class DCX(object):

@@ -5,7 +5,7 @@ import importlib
 import os
 import re
 
-from soulstruct import types as gt
+from soulstruct import game_types as gt
 from soulstruct.events.core import header, define_args, NoSkipOrTerminateError, NoNegateError, \
     ConstantCondition, COMPARISON_NODES, NEG_COMPARISON_NODES
 
@@ -1020,6 +1020,7 @@ class EmevdCompiler(object):
             func = self.globals[name]
         except KeyError:
             try:
+                # noinspection PyUnresolvedReferences
                 func = __builtins__[name]
             except KeyError:
                 raise EmevdNameError(lineno, name)

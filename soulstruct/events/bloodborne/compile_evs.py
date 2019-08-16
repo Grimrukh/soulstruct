@@ -59,7 +59,7 @@ def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='em
 
 
 if __name__ == '__main__':
-    # unpack_all_emevd_to_numeric('game_data', 'numeric_from_vanilla')
+    # unpack_all_emevd_to_numeric('vanilla_dump', 'numeric_from_vanilla')
     # decompile_all_numeric('numeric_from_vanilla', 'evs')
     compile_all_evs()
     unpack_all_emevd_to_numeric('emevd_from_evs', 'numeric_from_emevd_from_evs')

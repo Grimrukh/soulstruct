@@ -1,4 +1,4 @@
-import soulstruct.types as gt
+import soulstruct.game_types as gt
 
 class COMMON:
     file_name = 'common'

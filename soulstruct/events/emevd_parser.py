@@ -3,12 +3,12 @@ from io import BytesIO
 import os
 import re
 import struct
-from soulstruct.core import BinaryStruct, read_chars_from_buffer
+
 from soulstruct.dcx import DCX
-from soulstruct.events.evs_parser import EmevdCompiler
-from soulstruct.events import verbose
-from soulstruct.events.shared.decompiler import decompile_instruction
 from soulstruct.enums.shared import RestartType
+from soulstruct.events.evs_parser import EmevdCompiler
+from soulstruct.events.shared.decompiler import decompile_instruction
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 
 INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)\] \(([iIhHbBfs|]*)\)\[([\d, .-]*)\][ ]?(<[\d, ]*>)?")
 EVENT_ARG_REPLACEMENT_RE = re.compile(r" [ ]*\^\((\d+) <- (\d+), (\d+)\)")
@@ -209,10 +209,6 @@ class BaseEMEVD(object):
                 for replacement in self.event_args:
                     numeric.append("    ^" + replacement.to_numeric())
                 return numeric
-
-            def to_verbose(self, game_module):
-                return verbose.verbose_instruction(
-                    self.instruction_class, self.instruction_index, *self.get_required_and_optional_args(), game_module)
 
             def to_evs(self, game_module):
                 global EVENT_ARG_TYPES
@@ -416,17 +412,6 @@ class BaseEMEVD(object):
             EVENT_ARG_TYPES[self.event_id] = ''.join(
                 [next(iter(event_arg_types[arg])) for arg in evs_function_args_names])
             return ', '.join(evs_function_args)
-
-        def to_verbose(self, game_module, with_line_numbers=False):
-            verbose_event_string = (f"Event ID: {self.event_id}\nRestarts: "
-                                    f"{verbose.ENUM_RESTART_TYPE.get(self.restart_type, self.restart_type)}")
-            verbose_event_string += "\n" + self.get_verbose_parameters()  # Also creates 'X[i:j]' instruction arg names.
-            for i, instr in enumerate(self.instructions):
-                if with_line_numbers:
-                    verbose_event_string += f'\n    {i:3d} {instr.to_verbose(game_module)}'
-                else:
-                    verbose_event_string += f'\n    {instr.to_verbose(game_module)}'
-            return verbose_event_string
 
         def to_evs(self, game_module):
             if self.event_id == 0:

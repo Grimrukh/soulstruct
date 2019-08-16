@@ -1,6 +1,6 @@
 from io import BytesIO
 from textwrap import wrap
-from soulstruct.core import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 
 __all__ = ['FMG']
 

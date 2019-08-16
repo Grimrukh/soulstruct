@@ -7,7 +7,7 @@ from queue import Queue
 import re
 import struct
 from typing import List, Tuple
-from soulstruct.core import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 from soulstruct.dcx import DCX
 from .ezl_parser import *
 from .functions import COMMANDS, COMMANDS_BANK_ID_BY_TYPE_NAME, TEST_FUNCTIONS_ID_BY_TYPE_NAME
@@ -313,7 +313,8 @@ class BaseESD(object):
                 if d.args_offset > 0:
                     esd_buffer.seek(d.args_offset)
                     arg_structs = cls.ARG_STRUCT.unpack(esd_buffer, count=d.args_count)
-                    args = [read_chars_from_buffer(esd_buffer, offset=a.arg_ezl_offset, length=a.arg_ezl_size) for a in arg_structs]
+                    args = [read_chars_from_buffer(esd_buffer, offset=a.arg_ezl_offset, length=a.arg_ezl_size)
+                            for a in arg_structs]
                 else:
                     args = []
                 commands.append(cls(esd_type, d.bank, d.index, args))
@@ -1020,9 +1021,9 @@ class ESPCompiler(object):
             - optional sequence of subcondition IF blocks
             - optional return statement specifying a state class name to change to
 
-        I'm only guessing that the 'pass commands' are run before the subconditions. In most resources (e.g. talk resources),
-        pass command and subconditions are not used, but they are used extensively in, say, enemyCommon.esd, which is
-        the core file controlling dynamic behavior in DS1.
+        I'm only guessing that the 'pass commands' are run before the subconditions. In most resources (e.g. talk
+        resources), pass command and subconditions are not used, but they are used extensively in, say, enemyCommon.esd,
+        which is the core file controlling dynamic behavior in DS1.
 
         Returns a list of Condition instances.
         """

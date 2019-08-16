@@ -17,4 +17,5 @@ Python structures, edited, and repacked.
 
 Still to come:
 - Support for animation events (**TAE**) and Lua AI scripts.
+
 - Unified graphical application for modifying events, parameters, text, animations, and scripts in *Dark Souls*.
