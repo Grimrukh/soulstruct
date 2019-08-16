@@ -102,7 +102,7 @@ class SoulstructProject(BaseWindow):
     @_with_config_write
     def pull(self):
         print("# Pulling game files into project...")  # TODO: log
-        for path_sequence in traverse_path_tree(DARK_SOULS_FILES[self.game_name]):
+        for path_sequence in traverse_path_tree(SOULSTRUCT_MOD_FILES[self.game_name]):
             game_file = os.path.join(self.game_dir, *path_sequence)
             project_file = os.path.join(self.project_dir, *path_sequence)
             try:
@@ -115,7 +115,7 @@ class SoulstructProject(BaseWindow):
     @_with_config_write
     def push(self):
         print("# Pushing project files to game...")  # TODO: log
-        for path_sequence in traverse_path_tree(DARK_SOULS_FILES[self.game_name]):
+        for path_sequence in traverse_path_tree(SOULSTRUCT_MOD_FILES[self.game_name]):
             project_file = os.path.join(self.project_dir, *path_sequence)
             game_file = os.path.join(self.game_dir, *path_sequence)
             shutil.copy2(project_file, game_file)
@@ -125,15 +125,18 @@ class SoulstructProject(BaseWindow):
     def _get_timestamp():
         return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+    def _build_config_dict(self):
+        return {
+            'GameName': self.game_name,
+            'GameDirectory': self.game_dir,
+            'LastPullTime': self.last_pull_time,
+            'LastPushTime': self.last_push_time,
+        }
+
     def _write_config(self):
         try:
             with open(os.path.join(self.project_dir, 'config.json'), 'w') as f:
-                json.dump({
-                    'GameName': self.game_name,
-                    'GameDirectory': self.game_dir,
-                    'LastPullTime': self.last_pull_time,
-                    'LastPushTime': self.last_push_time,
-                }, f)
+                json.dump(self._build_config_dict(), f)
         except PermissionError:
             raise SoulstructProjectError("No write access to 'config.json' in project directory.")
 
@@ -212,7 +215,8 @@ def _get_relative_path(path_root, relative_path, check_dcx_first=False):
     raise FileNotFoundError(f"Could not find DCX or non-DCX version of {abs_path}.")
 
 
-DARK_SOULS_FILES = {
+# Path trees for files that Soulstruct will manage and modify.
+SOULSTRUCT_MOD_FILES = {
     'Dark Souls Prepare to Die Edition': {
         'event': [
             "common.emevd",
