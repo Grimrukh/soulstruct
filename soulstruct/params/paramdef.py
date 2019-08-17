@@ -1,7 +1,6 @@
 from io import BytesIO
 import os
-from soulstruct.core import PACKAGE_PATH
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes, PACKAGE_PATH
 from soulstruct.bnd import BND3
 
 # TODO: Pickle bundled ParamDef files.
@@ -18,10 +17,11 @@ class ParamDefBND(BND3):
 
         if paramdef_bnd_source.lower() in {'ptd', 'dsr'}:
             # Use bundled (recommended).
-            paramdef_bnd_source = PACKAGE_PATH(
-                'params/resources/paramdef.paramdefbnd' + ('.dcx' if paramdef_bnd_source.lower() == 'dsr' else ''))
+            dcx = '.dcx' if paramdef_bnd_source.lower() == 'dsr' else ''
+            paramdef_bnd_source = PACKAGE_PATH('params/resources/paramdef.paramdefbnd' + dcx)
             if not os.path.isfile(paramdef_bnd_source):
-                raise FileNotFoundError("Could not find bundled ParamDef files in 'soulstruct/params/resources'.")
+                raise FileNotFoundError("Could not find bundled ParamDef files in 'soulstruct/params/resources'.\n"
+                                        "Reinstall Soulstruct or copy the ParamDef files in yourself.")
 
         super().__init__(paramdef_bnd_source)
         self.paramdefs = {}
@@ -75,7 +75,7 @@ class ParamDef(object):
         ('description_offset', 'i'),  # null-terminated (unlimited length)
         ('internal_type', '32j'),  # could be an enum (see list)
         ('name', '32j'),
-        ('id', 'i'),
+        ('id', 'i'),  # TODO: what is this?
     )
 
     def __init__(self, paramdef_source):
@@ -134,7 +134,7 @@ class ParamDef(object):
             else:
                 bit_size = field.size * 8
 
-            field.index = field_index  # TODO: always equal to field.id?
+            field.index = field_index
             field.bit_size = bit_size
 
             self.fields.append(field)

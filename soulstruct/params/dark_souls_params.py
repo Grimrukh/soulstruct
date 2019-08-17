@@ -69,11 +69,11 @@ class DarkSoulsGameParameters(object):
         self.paramdef_bnd = PARAMDEF_BND('dsr' if self._game_param_bnd.dcx else 'ptd')
 
         for entry in self._game_param_bnd:
-            print(f"Loading PARAMBND entry {entry.id} ({entry.basename}) ...")
+            # print(f"Loading PARAMBND entry {entry.id} ({entry.basename}) ...")
             p = self._data[entry.path] = ParamTable(entry.data, self.paramdef_bnd)
-            print(f"  Success. Param attribute name: {p.param_name}")
+            # print(f"  Success. Param attribute name: {p.param_name}")
             try:
-                param_nickname, field_nicknames = GAME_PARAM_INFO[entry.basename[:-len('.params')]]
+                param_nickname, field_nicknames = GAME_PARAM_INFO[entry.basename[:-len('.param')]]
             except KeyError:
                 pass
             else:
@@ -141,7 +141,7 @@ class DrawParamBlock(object):
             draw_param_bnd = BND(draw_param_bnd)
 
         for entry in draw_param_bnd:
-            parts = entry.basename[:-len('.params')].split('_')
+            parts = entry.basename[:-len('.param')].split('_')
             if len(parts) == 2:
                 slot = 0
                 basename = parts[1]

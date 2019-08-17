@@ -847,7 +847,7 @@ def Event15105305():
     """ 15105305: Event 15105305 """
     CancelSpecialEffect(5100310, 16460)
     IfHasAIStatus(1, character=5100310, ai_status=AIStatusType.Battle)
-    IfHasAIStatus(1, character=5100310, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(1, character=5100310, ai_status=AIStatusType.Caution)
     IfConditionTrue(-1, input_condition=1)
     IfCharacterHasSpecialEffect(-1, character=5100310, special_effect=16460)
     IfConditionTrue(0, input_condition=-1)

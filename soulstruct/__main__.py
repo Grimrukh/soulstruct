@@ -10,20 +10,22 @@ python -m soulstruct [source]
     [--config] live_game_path temp_game_path default_game_path
     TODO: Event and ESD editors.
     TODO: fileLogLevel and consoleLogLevel.
-
-
 """
 import argparse
 import logging
 
+from soulstruct.project import SoulstructError
 from soulstruct.utilities import word_wrap
 
 LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'}
 
+# TODO
+DEFAULT_PATH = 'C:/Users/Scott/Documents/Soulstruct/dsr_project'
+
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")
 parser.add_argument(
-    "source", nargs='?', default=None,
+    "source", nargs='?', default=DEFAULT_PATH,
     help=word_wrap(
         "Source file or directory to read from. Use 'live' to use the LIVE_GAME_PATH, 'temp' to use the "
         "TEMP_GAME_PATH, or 'default' (or no source) to use the DEFAULT_GAME_PATH. If no additional arguments are "
@@ -123,13 +125,19 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     # No specific type. Open entire project.
-    from soulstruct.core import SoulstructProject
+    from soulstruct.project import SoulstructProject, SoulstructProjectError
     global Project
-    Project = SoulstructProject(ss_args.source)
+    try:
+        Project = SoulstructProject(ss_args.source)
+    except SoulstructError:
+        raise
+        # return False
     return ss_args.console
 
 
-if soulstruct_main(parser.parse_args()):
+launch_interactive = soulstruct_main(parser.parse_args())
+
+if launch_interactive:
     try:
         from IPython import embed
     except ImportError:

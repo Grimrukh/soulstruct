@@ -6,7 +6,7 @@ from shutil import copyfile
 from typing import Optional, List
 import zlib
 
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx
 from soulstruct.dcx import DCX
 from soulstruct.bnd.magic import *
 
@@ -798,18 +798,27 @@ class BND4(BaseBND):
         return h
 
 
-def BND(bnd_source=None, entry_class=None) -> BaseBND:
+def BND(bnd_source=None, entry_class=None, optional_dcx=True) -> BaseBND:
     """Auto-detects BND version (BND3 or BND4) to use when opening the source, if appropriate.
 
-    If the source is None, it defaults to an empty BND4 container.
+    Args:
+        bnd_source: path to BND file or BND file content. The BND version will be automatically detected from the data.
+            If None, this function will return an empty BND4 container. (Default: None)
+        entry_class: optional class to load data from each BND entry into after the BND is unpacked, which is convenient
+            for any BNDs that contain file types handled by Soulstruct. (Default: None)
+        optional_dcx: if 'bnd_source' is a file path and this is True, both DCX (preferred) and non-DCX versions of that
+            BND path will be checked. (It doesn't matter if 'bnd_source' ends in '.dcx' already.) Set this to False to
+            search only for the exact path given. (Default: True)
     """
-    dcx = None
+    dcx = False
     bnd_path = None
     if isinstance(bnd_source, str):
-        if not os.path.isfile(bnd_source):
+        if optional_dcx:
+            bnd_source = find_dcx(bnd_source)
+        elif not os.path.isfile(bnd_source):
             raise FileNotFoundError(f"Could not find BND file: {bnd_source}")
         if bnd_source.endswith('.dcx'):
-            # Unpack DCX resources before detection.
+            # Must unpack DCX archive before detecting BND type.
             bnd_path = os.path.abspath(bnd_source)
             bnd_dcx = DCX(bnd_source)
             bnd_source = bnd_dcx.data

@@ -35,8 +35,8 @@ CLIENT_PLAYER_5 = 10005
 
 class AIStatusType(IntEnum):
     Normal = 0
-    Recognition = 1
-    Alert = 2
+    Caution = 1
+    Search = 2
     Battle = 3
 
 
@@ -154,20 +154,21 @@ class CoordEntityType(IntEnum):
 
 
 class NavimeshType(IntEnum):
-    # These are bit flags.
-    Solid = 1
-    Exit = 2
-    Obstacle = 4
-    Wall = 8
-    WallTouchingFloor = 32
-    LandingPoint = 64
-    Event = 128
-    Cliff = 256
-    Wide = 512
-    Ladder = 1024
-    Hole = 2048
-    Door = 4096
-    ClosedDoor = 8192
+    """Bit flags for Navimesh types."""
+    Solid = 0b00000000000001
+    Exit = 0b00000000000010
+    Obstacle = 0b00000000000100
+    Wall = 0b00000000001000
+    # Note enum 16 is missing.
+    WallTouchingFloor = 0b00000000100000
+    LandingPoint = 0b00000001000000
+    Event = 0b00000010000000
+    Cliff = 0b00000100000000
+    WideSpace = 0b00001000000000
+    Ladder = 0b00010000000000
+    Hole = 0b00100000000000
+    Door = 0b01000000000000
+    ClosedDoor = 0b10000000000000
 
 
 class NumberButtons(IntEnum):

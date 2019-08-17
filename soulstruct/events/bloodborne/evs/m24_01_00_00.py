@@ -951,8 +951,8 @@ def Event12415470(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
     ReplanAI(ARG_0_3)
     IfCharacterInsideRegion(-1, ARG_0_3, region=ARG_4_7)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfConditionTrue(0, input_condition=-1)
     AICommand(ARG_0_3, command_id=-1, slot=0)
     ReplanAI(ARG_0_3)
@@ -996,7 +996,7 @@ def Event12415477(ARG_0_3: int):
     IfHost(0)
     SetNetworkUpdateAuthority(ARG_0_3, UpdateAuthority.Forced)
     DisableFlag(12415477)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(12415477)
@@ -1062,8 +1062,8 @@ def Event12415480(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
 @RestartOnRest
 def Event12415498(ARG_0_3: int, ARG_4_7: int):
     """ 12415498: Event 12415498 """
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     WaitRandomFrames(min_frames=0, max_frames=30)
@@ -1868,7 +1868,7 @@ def Event12414809():
 def Event12415225(ARG_0_3: int, ARG_4_7: int, ARG_8_11: float):
     """ 12415225: Event 12415225 """
     EndIfThisEventSlotOn()
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfEntityWithinDistance(1, ARG_0_3, 10000, radius=ARG_8_11)
     IfConditionTrue(1, input_condition=-1)
@@ -1899,7 +1899,7 @@ def Event12415228(ARG_0_3: int, ARG_4_7: int, ARG_8_11: float):
 def Event12415232(ARG_0_3: int, ARG_4_7: int):
     """ 12415232: Event 12415232 """
     GotoIfThisEventSlotOn(Label.L0)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     Label(0)
@@ -2014,8 +2014,8 @@ def Event12415250(ARG_0_3: int, ARG_4_7: int, ARG_8_11: float, ARG_12_15: float,
 @RestartOnRest
 def Event12415255(ARG_0_3: int):
     """ 12415255: Event 12415255 """
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     AICommand(ARG_0_3, command_id=-1, slot=0)
@@ -2358,7 +2358,7 @@ def Event12415360(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
 @NeverRestart
 def Event12415390(ARG_0_3: int):
     """ 12415390: Event 12415390 """
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     SetNest(ARG_0_3, 2412242)
@@ -2555,7 +2555,7 @@ def Event12415100(ARG_0_3: int):
     DisableAI(ARG_0_3)
     ForceAnimation(ARG_0_3, 7000)
     DisableGravity(ARG_0_3)
-    IfHasAIStatus(-1, 2410019, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, 2410019, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, 2410019, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     IfDamageType(2, attacked_entity=ARG_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
@@ -2592,9 +2592,9 @@ def Event12410030(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     ForceAnimation(ARG_0_3, ARG_4_7, loop=True, skip_transition=True)
     SetAIParamID(ARG_0_3, ARG_16_19)
     DisableGravity(ARG_0_3)
-    IfHasAIStatus(-1, ARG_12_15, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_12_15, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_12_15, ai_status=AIStatusType.Battle)
-    IfHasAIStatus(-2, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-2, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-2, ARG_0_3, ai_status=AIStatusType.Battle)
     IfDamageType(1, attacked_entity=ARG_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=-1)
@@ -2615,9 +2615,9 @@ def Event12410030(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
 def Event12410040(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG_16_19: int, ARG_20_23: int):
     """ 12410040: Event 12410040 """
     SetAIParamID(ARG_0_3, ARG_4_7)
-    IfHasAIStatus(-1, ARG_16_19, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_16_19, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_16_19, ai_status=AIStatusType.Battle)
-    IfHasAIStatus(-2, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-2, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-2, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(-3, input_condition=-1)
     IfConditionTrue(-3, input_condition=-2)
@@ -2640,7 +2640,7 @@ def Event12410040(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
 def Event12410050(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG_16_19: int, ARG_20_23: int):
     """ 12410050: Event 12410050 """
     SetAIParamID(ARG_0_3, ARG_4_7)
-    IfHasAIStatus(-1, ARG_16_19, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_16_19, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_16_19, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(ARG_16_19, ARG_20_23)
@@ -2655,7 +2655,7 @@ def Event12415160(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
     WaitRandomFrames(min_frames=0, max_frames=50)
     ForceAnimation(ARG_0_3, ARG_4_7, loop=True, skip_transition=True)
     DisableGravity(ARG_0_3)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     EnableGravity(ARG_0_3)
@@ -3560,8 +3560,8 @@ def Event12410748():
 def Event12410749():
     """ 12410749: Event 12410749 """
     IfCharacterBackreadEnabled(0, 2410111)
-    IfHasAIStatus(-1, 2410111, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, 2410111, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, 2410111, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, 2410111, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, 2410111, ai_status=AIStatusType.Battle)
     GotoIfConditionFalse(Label.L0, input_condition=-1)
     End()
@@ -4303,8 +4303,8 @@ def Event12415130(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     EndIfThisEventSlotOn()
     ForceAnimation(ARG_0_3, ARG_4_7, loop=True, skip_transition=True)
     SetAIParamID(ARG_0_3, ARG_16_19)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     SkipLinesIfEqual(1, left=0, right=ARG_24_27)
     IfFlagOn(-1, ARG_12_15)
@@ -4321,7 +4321,7 @@ def Event12415150(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: float, A
     ForceAnimation(ARG_0_3, ARG_4_7, loop=True, skip_transition=True)
     SetAIParamID(ARG_0_3, ARG_16_19)
     DisableGravity(ARG_0_3)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -4349,16 +4349,16 @@ def Event12410155(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int):
 @RestartOnRest
 def Event12410156(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
     """ 12410156: Event 12410156 """
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
-    IfHasAIStatus(-2, ARG_4_7, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-2, ARG_4_7, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-2, ARG_4_7, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-2, ARG_4_7, ai_status=AIStatusType.Search)
     IfHasAIStatus(-2, ARG_4_7, ai_status=AIStatusType.Battle)
     IfConditionTrue(2, input_condition=-2)
-    IfHasAIStatus(-3, ARG_8_11, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-3, ARG_8_11, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-3, ARG_8_11, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-3, ARG_8_11, ai_status=AIStatusType.Search)
     IfHasAIStatus(-3, ARG_8_11, ai_status=AIStatusType.Battle)
     IfConditionTrue(3, input_condition=-3)
     IfConditionTrue(-15, input_condition=1)
@@ -5203,7 +5203,7 @@ def Event12410340(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int):
     AICommand(ARG_0_3, command_id=ARG_8_11, slot=0)
     ReplanAI(ARG_0_3)
     IfCharacterInsideRegion(-1, ARG_0_3, region=ARG_4_7)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     AICommand(ARG_0_3, command_id=-1, slot=0)
@@ -5269,7 +5269,7 @@ def Event12415372(ARG_0_3: int):
     AICommand(ARG_0_3, command_id=10, slot=0)
     ReplanAI(ARG_0_3)
     IfCharacterInsideRegion(-1, ARG_0_3, region=2412212)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     AICommand(ARG_0_3, command_id=-1, slot=0)

@@ -35,7 +35,7 @@ PARAM_TYPE_INFO = {
     'u8': ('<B', int, 0, 2**8 - 1),
     's8': ('<b', int, -2**7, 2**7 - 1),
 
-    # Enums  # TODO: which are <B and which are <I?
+    # Enums  # TODO: Need to identify sizes (B, H, I). Can use debug type size until then.
     'EQUIP_MODEL_CATEGORY': (),
     'EQUIP_MODEL_GENDER': (),
     'WEAPON_CATEGORY': (),
@@ -262,7 +262,7 @@ class ParamTable(object):
         ('param_name', '32j'),
         ('big_endian', 'b', 0),  # TODO: check, rather than assert
         ('magic2', 'H'),  # TODO: Actually two format flag bytes.
-        ('unknown', 'B', 0),  # TODO: sometimes -1 in later formats.
+        ('unknown', 'B'),  # TODO: sometimes -1 in later formats.
     )
 
     ENTRY_POINTER_STRUCT = BinaryStruct(
@@ -329,12 +329,16 @@ class ParamTable(object):
         # Load entry pointer data.
         entry_pointers = self.ENTRY_POINTER_STRUCT.unpack(param_buffer, count=header.entry_count)
 
-        # Entry size is lazily determined.
+        # Entry size is lazily determined. TODO: Unpack entry data in sequence and associate with names separately.
         if len(entry_pointers) == 0:
             return
         elif len(entry_pointers) == 1:
-            # NOTE: No vanilla ParamTables have just one entry, so name_data_offset can be implicitly trusted here.
-            entry_size = name_data_offset - entry_data_offset
+            # NOTE: The only vanilla param in Dark Souls with one entry is LEVELSYNC_PARAM (Remastered only).
+            # Otherwise, we can probably trust the repacked name_data_offset from Soulstruct.
+            if self.param_name == 'LEVELSYNC_PARAM_ST':
+                entry_size = 220
+            else:
+                entry_size = name_data_offset - entry_data_offset
         else:
             entry_size = entry_pointers[1].data_offset - entry_pointers[0].data_offset
 
@@ -350,7 +354,15 @@ class ParamTable(object):
             entry_data = packed_entry_data[relative_entry_offset:relative_entry_offset + entry_size]
             if entry_struct.name_offset != 0:
                 relative_name_offset = entry_struct.name_offset - name_data_offset
-                name = read_chars_from_bytes(packed_name_data, offset=relative_name_offset, encoding='shift_jis_2004')
+                try:
+                    name = read_chars_from_bytes(packed_name_data, offset=relative_name_offset,
+                                                 encoding='shift_jis_2004')
+                except ValueError:
+                    print(f"# ERROR: Could not find null termination for entry name string in {self.param_name}.\n"
+                          f"#   Header: {header}\n"
+                          f"#   Entry Struct: {entry_struct}\n"
+                          f"#   Buffer: {packed_name_data}")
+                    raise
             else:
                 name = ''
             self.entries[entry_struct.id] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
@@ -469,8 +481,8 @@ class ParamTable(object):
                 param_path = self.param_path
             else:
                 raise ValueError("Param path could not be determined automatically (must be specified).")
-        if not param_path.endswith('.params'):
-            param_path += '.params'
+        if not param_path.endswith('.param'):
+            param_path += '.param'
 
         with open(param_path, 'wb') as output:
             output.write(self.pack())

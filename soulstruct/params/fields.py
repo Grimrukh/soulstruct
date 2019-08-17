@@ -1,4 +1,3 @@
-
 GAME_PARAM_INFO = {
 
     # Structure is:
@@ -6,20 +5,291 @@ GAME_PARAM_INFO = {
     #       ParamEntryName: ( ParamEntryNickname, VisibleDefault, ParamTableType, Docstring )
     # } ) }
 
-    'NpcThinkParam': ('AI', {}),
+    'NpcThinkParam': ('AI', {
+        'logicId': ('LogicID', True, '<AI:Logic>', "ID of logic (non-battle) Lua script."),
+        'battleGoalID': ('BattleID', True, '<AI:Battle>', "ID of battle Lua script."),
+        'nearDist': ('NearDistance', True, None, "Near distance parameter for scripts."),
+        'midDist': ('MidDistance', True, None, "Middle distance parameter for scripts."),
+        'farDist': ('FarDistance', True, None, "Far distance parameter for scripts."),
+        'outDist': ('OutDistance', True, None, "Outer distance parameter for scripts."),
+        'BackHomeLife_OnHitEneWal': ('', True, None, "DOC-TODO"),
+        'goalID_ToCaution': ('CautionGoalID', True, '<Lua:Logic>',
+                             "Lua script to use when NPC's AI enters the 'Caution' state (I think). Requires a "
+                             "CautionGoalAction value of 4. Used only by Hawkeye Gough (411000); zero otherwise."),
+        'idAttackCannotMove': ('StuckAnimationID', True, None,
+                               "Animation to use if the NPC gets stuck while navigating. Usually 3000 (basic attack)."),
+        'goalID_ToFind': ('SearchGoalID', True, '<Lua:Logic>',
+                          "Lua script to use when NPC's AI enters the 'Search' state (I think). Requires a "
+                          "SearchGoalAction value of 4. Not used by any vanilla NPC (all zero)."),
+        'callHelp_ActionAnimId': ('HelpCallAnimation', True, '<Animation>',
+                                  "Animation to play when calling for help (I think)."),
+        'callHelp_CallActionId': ('', True, None, "DOC-TODO"),
+        'eye_dist': ('SightDistance', True, None, "Distance of NPC eyesight."),
+        'ear_dist': ('HearingDistance', True, None, "Distance of NPC hearing."),
+        'ear_soundcut_dist': ('HearingCutDistance', False, None,
+                              "Unknown. Set to 1 for Bloatheads and Bloathead Sorcerers and 0 for everyone else."),
+        'nose_dist': ('SmellDistance', True, None, "Distance of NPC smell (auto-detect)."),
+        'maxBackhomeDist': ('MaxRetreatDistance', True, None,
+                            "Largest distance the NPC will travel from their nest before retreating. Usually set "
+                            "25-50% higher than RetreatDistance. Unclear how they differ; this distance may force "
+                            "the NPC to retreat more quickly (i.e. where they can be kited)."),
+        'backhomeDist': ('RetreatDistance', True, None,
+                         "Distance the NPC will travel from their nest before retreating."),
+        'backhomeBattleDist': ('RetreatBattleStartDistance', True, None,
+                               "Target distance at which battle mode is triggered while the enemy is retreating."),
+        'nonBattleActLife': ('NonBattleActLife', False, None,
+                             "Lifespan of Acts outside of battle. Set to 10 for Bloatheads and Bloathead Sorcerers, "
+                             "0 for Priscilla's Tail and the Bed of Chaos bug, and 5 for everyone else."),
+        'BackHome_LookTargetTime': ('SearchTimeBeforeRetreat', True, None,
+                                    "Time that NPC will search for a lost target before retreating (I think). Set to "
+                                    "20 for everyone except the Bounding Demons of Izalith, who have a value of 0."),
+        'BackHome_LookTargetDist': ('SearchDistanceBeforeRetreat', True, None,
+                                    "Distance that NPC will search for a lost target before retreating (I think). Set "
+                                    "to 20 for everyone except the Bounding Demons of Izaltih, who have a value of 0."),
+        'SightTargetForgetTime': ('SightForgetTime', True, None,
+                                  "Time to forget about sighted targets. Usually set to 600."),
+        'SoundTargetForgetTime': ('HearingForgetTime', True, None,
+                                  "Time to forget about heard targets. Usually set to 300."),
+        'BattleStartDist': ('BattleStartDistance', True, None, "Target distance at which battle mode is triggered."),
+        'callHelp_MyPeerId': ('HelpID', True, None,
+                              "ID that must match the HelpCallID of allies who calls for help (e.g. set to 1 for Male "
+                              "Ghosts, who are called by Female Ghosts). Only 0 (no ID) and 1 are used."),
+        'callHelp_CallPeerId': ('HelpCallID', True, None,
+                                "ID that must match the HelpID of allies when this NPC calls for help (e.g. set to 1 "
+                                "for Female Ghosts, who call Male Ghosts). Only 0 (no ID) and 1 are used."),
+        'targetSys_DmgEffectRate': ('TargetSysDamageRate', False, None,
+                                    "Unknown. Set to 0 for summons, phantoms, and the Parasitic Wall Hugger, and 100 "
+                                    "for everyone else."),
+        'TeamAttackEffectivity': ('TeamAttackEffectivity', True, None,
+                                  "Has an unknown effect on damage to allies. Generally set to 100 for bosses and 25 "
+                                  "for everyone else. Unclear why a value of 25 is used; effect may be pointless "
+                                  "when NPCs are on the same team already."),
+        'eye_angX': ('SightHorizontalAngle', True, None, "Angular width of sight box."),
+        'eye_angY': ('SightVerticalAngle', True, None, "Angular height of sight box."),
+        'ear_angX': ('HearingHorizontalAngle', True, None, "Angular width of hearing box."),
+        'ear_angY': ('HearingVerticalAngle', True, None, "Angular height of hearing box."),
+        'callHelp_CallValidMinDistTarget': ('HelpCallTargetMinDistance', False, None, "Unclear. Always set to zero."),
+        'callHelp_CallValidRange': ('HelpCallRange', True, None,
+                                    "Range of sending/receiving calls for help (I think). Set to 50 for both Male and "
+                                    "Female Ghosts, and 0 for everyone else."),
+        'callHelp_ForgetTimeByArrival': ('', True, None, "DOC-TODO"),
+        'callHelp_MinWaitTime': ('', True, None, "DOC-TODO"),
+        'callHelp_MaxWaitTime': ('', True, None, "DOC-TODO"),
+        'goalAction_ToCaution': ('', True, None, "DOC-TODO"),
+        'goalAction_ToFind': ('', True, None, "DOC-TODO"),
+        'callHelp_ReplyBehaviorType': ('', True, None, "DOC-TODO"),
+        'disablePathMove': ('IgnoreNavimesh', True, None,  # TODO: Seems to act like a bool.
+                            "If 1, this NPC will ignore navimesh. Used by Ghosts and enemies that don't move at all."),
+        'skipArrivalVisibleCheck': ('SkipArrivalVisibleCheck', False, '<bool>',
+                                    "Unknown. True only for Hawkeye Gough. Possibly skips an automatic sight check "
+                                    "that happens on spawn (or some other form of 'arrival')."),
+        'thinkAttr_doAdmirer': ('ThinkAttributeDoAdmirer', True, None,
+                                "Unclear, but likely relevant. Enabled for Soulmass and Pursuers, Rats (except the "
+                                "Giant Rat), Infested Ghouls, Mushrooms, most Hollows (not archers), Male Ghosts, "
+                                "normals Skeletons and Skeleton Beasts, Pisaca, Gardeners, Bloatheads (not Sorcerers), "
+                                "Humanity Phantoms, and the Four Kings."),
+        'enableNaviFlg_Edge:1': ('CanFallOffEdges', True, None,
+                                 "If True, this NPC will pursue targets off navimesh edges (survivable falls)."),
+        'enableNaviFlg_LargeSpace:1': ('CanNavigateWideSpaces', True, None,
+                                       "If True, this NPC will pursue targets into navimesh regions flagged as 'large "
+                                       "spaces'."),
+        'enableNaviFlg_Ladder:1': ('CanNavigateLadders', True, None,
+                                   "If True, this NPC will pursue targets up or down ladders."),
+        'enableNaviFlg_Hole:1': ('CanNavigateHoles', True, None,
+                                 "If True, this NPC will pursue targets into navimesh holes."),
+        'enableNaviFlg_Door:1': ('CanNavigateDoors', True, None,
+                                 "If True, this NPC will pursue targets through doors. (Unlikely this lets them open "
+                                 "closed doors, though.)"),
+        'enableNaviFlg_InSideWall:1': ('CanNavigateInSideWalls', True, None,
+                                       "Unclear what navimesh type this refers to. "),
+        'enableNaviFlg_reserve0:2': ('UnusedNavimeshFlagsX2', False, None,
+                                     "Two unused bytes reserved for other navimesh checks. No effect."),
+        'enableNaviFlg_reserve1[3]': ('UnusedNavimeshFlagX3', False, '<Pad:3>',
+                                      "Three unused bytes reserved for other navimesh checks. Marked as padding."),
+        'pad0[12]': ('Pad0', False, '<Pad:12>', "Null padding."),
+    }),
     'EquipParamProtector': ('Armor', {}),
     'ReinforceParamProtector': ('ArmorUpgrades', {}),
-    'GameAreaParam': ('Bosses',
-                      {
-                          'bonusSoul_single': ('SingleplayerSoulReward', True, None, "DOC-TODO"),
-                          'bonusSoul_multi': ('MultiplayerSoulReward', True, None, "DOC-TODO"),
-                      }),
-    'Bullet': ('Bullets', {}),
+    'GameAreaParam': ('Bosses', {
+        'bonusSoul_single': ('SingleplayerSoulReward', True, None,
+                             "Souls awarded (after delay) when boss is defeated with no summons."),
+        'bonusSoul_multi': ('MultiplayerSoulReward', True, None,
+                            "Souls awarded to each player (after delay) when boss is defeated with summons."),
+        'humanityPointCountFlagIdTop': ('FirstHumanityFlag', True, None,
+                                        "First flag for recording number of humanity drops awarded in boss's area."),
+        'humanityDropPoint1': ('HumanityDropPoint1', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for first Humanity."),
+        'humanityDropPoint2': ('HumanityDropPoint2', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for second Humanity."),
+        'humanityDropPoint3': ('HumanityDropPoint3', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for third Humanity."),
+        'humanityDropPoint4': ('HumanityDropPoint4', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for fourth Humanity."),
+        'humanityDropPoint5': ('HumanityDropPoint5', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for fifth Humanity."),
+        'humanityDropPoint6': ('HumanityDropPoint6', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for sixth Humanity."),
+        'humanityDropPoint7': ('HumanityDropPoint7', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for seventh Humanity."),
+        'humanityDropPoint8': ('HumanityDropPoint8', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for eighth Humanity."),
+        'humanityDropPoint9': ('HumanityDropPoint9', True, None,
+                               "Number of 'points' needed from killing enemies in the boss area for ninth Humanity."),
+        'humanityDropPoint10': ('HumanityDropPoint10', True, None,
+                                "Number of 'points' needed from killing enemies in the boss area for final Humanity."),
+    }),
+    'Bullet': ('Bullets', {
+        'atkId_Bullet': ('BulletAttack', True, '<Attacks>',  # TODO: <Attacks>?
+                         "Attack parameters for bullet impact. Could refer to either CharacterAttacks table or "
+                         "CreatureAttacks table, depending on the bullet's owner. Set to 0 if bullet deals no damage."),
+        'sfxId_Bullet': ('ProjectileFX', True, '<FX>', "Visual effect ID for bullet projectile."),
+        'sfxId_Hit': ('ImpactFX', True, '<FX>', "Visual effect ID for bullet impact."),
+        'sfxId_Flick': ('FlickFX', True, '<FX>',
+                        "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and "
+                        "throwing knives."),
+        'life': ('MaxTime', True, None, "Maximum time before bullet will disappear on its own."),
+        'dist': ('MaxDistance', True, None,
+                 "Maximum distance bullet can travel before it disappears. (Unclear if this is distance from its "
+                 "owner or total distance traversed by the bullet.)"),
+        'shootInterval': ('EmitInterval', True, None,
+                          "Time between emitted bullets. Does nothing for bullets that only shoot once and is "
+                          "generally left at zero for those bullets."),
+        'gravityInRange': ('GravityInRange', True, None,
+                           "Downward acceleration acting on bullet. Used rarely, and unclear how it it differs to "
+                           "GravityOutRange below. (I suspect 'in range' is true only at close distance to its "
+                           "owner.)"),
+        'gravityOutRange': ('GravityOutRange', True, None,
+                            "Downward acceleration acting on bullet. Used more than GravityInRange. (I suspect 'in "
+                            "range' is true only at close distance to its owner.)"),
+        'hormingStopRange': ('MaxHomingDistance', True, None,
+                             "Maximum distance that the bullet will home for. It will travel straight (plus gravity) "
+                             "after this distance is reached."),
+        'initVellocity': ('InitialSpeed', True, None, "Initial speed of bullet."),
+        'accelInRange': ('AccelerationInRange', True, None,
+                         "Forward acceleration acting on bullet. Negative values will slow the bullet down. (I suspect "
+                         "'in range' is true only at close distance.)"
+                         "to its owner."),
+        'accelOutRange': ('AccelerationOutRange', True, None,
+                          "Forward acceleration acting on bullet. Negative values will slow the bullet down. (I "
+                          "suspect 'in range' is true only at close distance.)"),
+        'maxVellocity': ('MaxSpeed', True, None, "Maximum speed of bullet."),
+        'minVellocity': ('MinSpeed', True, None, "Minimum speed of bullet."),
+        'accelTime': ('AccelerationTime', True, None, "Time that acceleration is active after bullet creation."),
+        'homingBeginDist': ('HomingStartDistance', True, None,
+                            "Distance from owner at which the bullet starts homing in on targets."),
+        'hitRadius': ('InitialHitRadius', True, None, "Initial hit radius of bullet projectile."),
+        'hitRadiusMax': ('FinalHitRadius', True, None,
+                         "Final hit radius of bullet projectile. Set to -1 if radius does not change, which is always "
+                         "coupled with a value of 0 for RadiusIncreaseDuration."),
+        'spreadTime': ('RadiusIncreaseDuration', True, None,
+                       "Time taken by bullet to transition from initial to final hit radius. Value of 0 are always "
+                       "coupled with values of -1 for RadiusIncreaseDuration."),
+        'expDelay': ('ExpDelay', False, None, "Unknown. Always set to zero."),
+        'hormingOffsetRange': ('HomingOffsetRange', True, None,
+                               "Unknown. Nonzero only for Hydra blasts and Vagrant attacks."),
+        'dmgHitRecordLifeTime': ('HitboxLifeTime', True, None,
+                                 "Duration of bullet impact hitbox. A value of zero means it is disabled immediately "
+                                 "after first impact."),
+        'externalForce': ('ExternalForce', True, None,
+                          "Unknown. Used only for Gargoyle fire breath and Undead Dragon poison breath."),
+        'spEffectIDForShooter': ('OwnerSpecialEffect', True, '<SpecialEffect>',
+                                 "Special effect applied to owner when bullet is created. (Unclear if it is applied "
+                                 "repeatedly by repeating bullets.)"),
+        'autoSearchNPCThinkID': ('BulletAI', True, '<AI>',
+                                 "AI parameter ID for triggered floating bullets. Only used by Homing [Crystal] "
+                                 "Soulmass (10000) and Pursuers (10001) in the vanilla game."),
+        'HitBulletID': ('BulletOnHit', True, '<Bullet>',
+                        "Bullet emitted on impact of this bullet. Used often for 'throw'/'landing' or 'parent'/'child' "
+                        "combinations, like a thrown Firebomb (bullet 110) triggering a fiery explosion (bullet 111). "
+                        "These can be chained together indefinitely (see White Dragon Breath, bullet 11500)."),
+        'spEffectId0': ('HitSpecialEffect0', True, '<SpecialEffect>',
+                        "Special effect applied to target hit by bullet. (Slot 0)"),
+        'spEffectId1': ('HitSpecialEffect1', True, '<SpecialEffect>',
+                        "Special effect applied to target hit by bullet. (Slot 1)"),
+        'spEffectId2': ('HitSpecialEffect2', True, '<SpecialEffect>',
+                        "Special effect applied to target hit by bullet. (Slot 2)"),
+        'spEffectId3': ('HitSpecialEffect3', True, '<SpecialEffect>',
+                        "Special effect applied to target hit by bullet. (Slot 3)"),
+        'spEffectId4': ('HitSpecialEffect4', True, '<SpecialEffect>',
+                        "Special effect applied to target hit by bullet. (Slot 4)"),
+        'numShoot': ('BulletCount', True, None, "Number of bullets emitted at once."),
+        'homingAngle': ('HomingAngle', True, None,
+                        "Turning angle of homing bullet. Higher values are better for homing."),
+        'shootAngle': ('FirstBulletYAngle', True, None,
+                       "Angle of first bullet in degrees around the vertical axis relative to the forward direction."),
+        'shootAngleInterval': ('YAngleBetweenBullets', True, None,
+                               "Angle from one bullet to the next around the vertical axis, beginning at "
+                               "FirstBulletYAngle."),
+        'shootAngleXInterval': ('ElevationAngleBetweenBullets', True, None,
+                                "Angle from one bullet to the next around the X (left-right) axis."),
+        'damageDamp': ('PhysicalDamageDamp', False, None,
+                       "Unknown. Set to 0 for all bullets except Throwing Knives (40) and arrows/bolts (100)."),
+        'spelDamageDamp': ('MagicDamageDamp', False, None,
+                           "Unknown. Set to 0 for all bullets except Throwing Knives (40) and arrows/bolts (100)."),
+        'fireDamageDamp': ('FireDamageDamp', False, None,
+                           "Unknown. Set to 0 for all bullets except Throwing Knives (40) and arrows/bolts (100)."),
+        'thunderDamageDamp': ('LightningDamageDamp', False, None,
+                              "Unknown. Set to 0 for all bullets except arrows/bolts (100). Throwing Knives lack this "
+                              "value, for some reason."),
+        'staminaDamp': ('StaminaDamp', False, None,
+                        "Unknown. Set to 0 for all bullets except Throwing Knives (40) and arrows/bolts (100)."),
+        'knockbackDamp': ('KnockbackDamp', False, None,
+                          "Unknown. Set to 0 for all bullets except Throwing Knives (40) and arrows/bolts (100)."),
+        'shootAngleXZ': ('FirstBulletElevationAngle', True, None,
+                         "Angle of elevation of first bullet. Positive values will angle the bullets up (e.g. "
+                         "Quelaag's fireballs) and negative values will angle the bullets down (e.g. most breath "
+                         "attacks)."),
+        'lockShootLimitAng': ('LockShootLimitAngle', True, None,
+                              "Unknown, but likely important. Set to 30 for most basic projectile magic."),
+        'isPenetrate': ('IsTargetPiercing', True, None, "Bullet will go through targets (I think)."),
+        'prevVelocityDirRate': ('PreviousVelocityDirectionRate', False, None,
+                                "Unknown. Like ExternalForce, this is used only for Gargoyle and Undead Dragon breath "
+                                "(100) and is zero for everything else."),
+        'atkAttribute': ('AttackAttribute', True, '<Enum:AttackAttribute>',
+                         "Attack type. Almost always 4 ('other'), but sometimes 3 (knives/arrows/bolts)."),
+        'spAttribute': ('ElementAttribute', True, None, "Element attached to bullet hit."),
+        'Material_AttackType': ('MaterialAttackType', True, None, "DOC-TODO"),
+        'Material_AttackMaterial': ('MaterialAttackMaterial', True, None, "DOC-TODO"),
+        'Material_Size': ('MaterialSize', True, None, "DOC-TODO"),
+        'launchConditionType': ('LaunchConditionType', True, None, "DOC-TODO"),
+        'FollowType:3': ('', True, None, "DOC-TODO"),
+        'EmittePosType:3': ('', True, None, "DOC-TODO"),
+        'isAttackSFX:1': ('IsAttackFX', True, '<bool>',
+                          "Indicates that FX ID should be taken from attack FX rather than general map FX (I think)."),
+        'isEndlessHit:1': ('IsEndlessHit', True, '<bool>',
+                           "Bullet hitbox is continuous. Only used for corrosion cloud in vanilla."),
+        'isPenetrateMap:1': ('IsMapPiercing', True, '<bool>', "Bullet will pierce the map (e.g. Stray Demon blast)."),
+        'isHitBothTeam:1': ('HitsBothTeams', True, '<bool>', "Bullet can hit any character."),
+        'isUseSharedHitList:1': ('SharedHitCheck', True, '<bool>',
+                                 "Repeating bullets share the amount of times they have hit a target (usually so the "
+                                 "target is only hit once by any of those repeating bullets)."),
+        'isUseMultiDmyPolyIfPlace:1': ('', True, None, "DOC-TODO"),
+        'attachEffectType:2': ('AttachEffectType', False, None,
+                               "Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles)."),
+        'isHitForceMagic:1': ('IsHitForceMagic', True, None,
+                              "Unclear effect, but True for knives/arrows/bolts and False otherwise."),
+        'isIgnoreSfxIfHitWater:1': ('IgnoreFXOnWaterHit', True, None,
+                                    "If True, hit FX are not produced if the bullet impacts water."),
+        'isIgnoreMoveStateIfHitWater:1': ('IgnoreMoveStateOnWaterHit', True, None,
+                                          "Unclear effect, but True for knives/arrows/bolts and False otherwise."),
+        'isHitDarkForceMagic:1': ('DarkMagic', True, None, "True for dark sorceries and False otherwise."),
+        'pad[3]': ('Pad3', False, '<Pad:3>', "Null padding."),
+
+    }),
     'LockCamParam': ('Cameras', {}),
     'AtkParam_Pc': ('CharacterAttacks', {}),
     'BehaviorParam_PC': ('CharacterBehaviors', {}),
     'CharaInitParam': ('CharacterSheets', {}),
-    'TalkParam': ('Dialogue', {}),
+    'TalkParam': ('Dialogue', {
+        'msgId': ('SubtitleText', True, '<Text:Conversations>', "Text ID for dialogue subtitle."),
+        'voiceId': ('VoiceSound', True, '<Sound:Voice>', "Sound ID (voice) for dialogue."),
+        'motionId': (),  # TODO
+        'returnPos': (),  # TODO
+        'reactionId': (),  # TODO
+        'eventId': (),  # TODO
+        'isMotionLoop': ('IsMotionLoop', True, '<bool>', "DOC-TODO"),
+        'pad0[7]': ('Pad', False, '<Pad:7>', "Null padding."),
+    }),
     'FaceGenParam': ('Faces', {}),
     'EquipParamGoods': ('Goods', {}),
     'HitMtrlParam': ('Terrains', {}),

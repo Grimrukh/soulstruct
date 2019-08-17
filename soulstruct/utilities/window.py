@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from functools import wraps
 import tkinter as tk
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
@@ -19,6 +20,7 @@ def _unbind_to_mousewheel(_, frame):
 def _embed_component(component_func):
     """ Handles labels and scrollbars for any decorated widget function. """
 
+    @wraps(component_func)
     def component_with_label(self, frame=None,
                              label='', label_font_type=None, label_font_size=None, label_position=None,
                              label_fg=None, label_bg=None, scrollbar=False, **kwargs):
@@ -128,15 +130,18 @@ class BaseWindow(tk.Toplevel):
 
     FileDialog = filedialog
 
+    STYLE_DEFAULTS = {
+        'bg': '#222222',
+        'text_fg': '#FFFFFF',
+        'text_cursor_fg': '#FFFFFF',
+        'disabled_fg': '#888888',
+        'disabled_bg': '#444444',
+        'readonly_bg': '#444444',
+    }
+
     def __init__(self, window_title, master=None):
         """ Base class for a simple interactive tkinter window, with simplified methods for adding and arranging
         elements and command functions. """
-
-        # Widget defaults (to be set before super call, to affect master frame).
-        if not hasattr(self, '_style_defaults'):
-            self._style_defaults = {}
-        for default_key in {'bg', 'text_fg', 'text_cursor_fg', 'disabled_fg', 'disabled_bg', 'readonly_bg'}:
-            self._style_defaults.setdefault(default_key, None)
 
         # List of variables (so they aren't destroyed).
         self._variables = []
@@ -157,7 +162,6 @@ class BaseWindow(tk.Toplevel):
 
         # Disable default root if used.
         if master is None:
-            print("Withdrawing master:", self.master)
             self.master.withdraw()
 
     def set_geometry(self, master=None, dimensions=None, absolute_position=None, relative_position=None,
@@ -190,9 +194,7 @@ class BaseWindow(tk.Toplevel):
 
         w_width, w_height = dimensions if dimensions is not None else self.winfo_reqwidth(), self.winfo_reqheight()
 
-        if relative_position is not None:
-            if not master.winfo_ismapped():
-                raise ValueError("Requested relative_position, but the window's master has no mapped geometry.")
+        if relative_position is not None and master.winfo_ismapped():
             rel_x, rel_y = relative_position
             m_width = master.winfo_width()
             m_height = master.winfo_height()
@@ -233,15 +235,15 @@ class BaseWindow(tk.Toplevel):
         self.current_column = None
 
     def set_style_defaults(self, kwargs_dict, text=False, cursor=False, entry=False):
-        kwargs_dict.setdefault('bg', self._style_defaults.get('bg', None))
+        kwargs_dict.setdefault('bg', self.STYLE_DEFAULTS.get('bg', None))
         if text:
-            kwargs_dict.setdefault('fg', self._style_defaults.get('text_fg', None))
+            kwargs_dict.setdefault('fg', self.STYLE_DEFAULTS.get('text_fg', None))
         if cursor:
-            kwargs_dict.setdefault('insertbackground', self._style_defaults.get('text_cursor_fg', None))
+            kwargs_dict.setdefault('insertbackground', self.STYLE_DEFAULTS.get('text_cursor_fg', None))
         if entry:
-            kwargs_dict.setdefault('disabledforeground', self._style_defaults.get('disabled_fg', None))
-            kwargs_dict.setdefault('disabledbackground', self._style_defaults.get('disabled_bg', None))
-            kwargs_dict.setdefault('readonlybackground', self._style_defaults.get('readonly_bg', None))
+            kwargs_dict.setdefault('disabledforeground', self.STYLE_DEFAULTS.get('disabled_fg', None))
+            kwargs_dict.setdefault('disabledbackground', self.STYLE_DEFAULTS.get('disabled_bg', None))
+            kwargs_dict.setdefault('readonlybackground', self.STYLE_DEFAULTS.get('readonly_bg', None))
 
     # VARIABLES
 
@@ -268,7 +270,7 @@ class BaseWindow(tk.Toplevel):
     # WIDGETS
 
     def Toplevel(self, frame=None, title="Window Title", **kwargs):
-        kwargs.setdefault('bg', self._style_defaults['bg'])
+        kwargs.setdefault('bg', self.STYLE_DEFAULTS['bg'])
         toplevel = tk.Toplevel(frame, **kwargs)
         toplevel.title(title)
         return toplevel
@@ -447,11 +449,14 @@ class BaseWindow(tk.Toplevel):
     def yesno_dialog(title, message, **kwargs):
         return messagebox.askyesno(title, message, **kwargs)
 
-    def custom_dialog(self, title, message, buttons=(), default_output=None, cancel_output=None, style_defaults=None,
-                      button_kwargs=(), font_size=None):
-        dialog = CustomDialog(master=self, title=title, text=message, buttons=buttons, default_output=default_output,
-                              cancel_output=cancel_output, style_defaults=style_defaults, button_kwargs=button_kwargs,
-                              font_size=font_size)
+    def custom_dialog(self, title, message, font_size=None, font_type=None,
+                      button_names=('OK',), button_kwargs=(), style_defaults=None,
+                      default_output=None, cancel_output=None):
+        if style_defaults is None:
+            style_defaults = self.STYLE_DEFAULTS
+        dialog = CustomDialog(master=self, title=title, message=message, font_size=font_size, font_type=font_type,
+                              button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
+                              default_output=default_output, cancel_output=cancel_output)
         return dialog.go()  # Returns index of button clicked (or default/cancel output).
 
     @contextmanager
@@ -494,28 +499,36 @@ class BaseWindow(tk.Toplevel):
 
 class CustomDialog(BaseWindow):
 
-    def __init__(self, master, title='Custom Dialog', text='', buttons=(), default_output=None, cancel_output=None,
-                 style_defaults=None, button_kwargs=(), font_size=None):
+    def __init__(self, master, title='Custom Dialog', message='', font_size=None, font_type=None,
+                 button_names=(), button_kwargs=(), style_defaults=None,
+                 default_output=None, cancel_output=None):
         if style_defaults:
-            self._style_defaults = style_defaults
-        if button_kwargs and len(buttons) != len(button_kwargs):
+            self.STYLE_DEFAULTS = style_defaults
+        if isinstance(button_names, str):
+            button_names = (button_names,)
+        if isinstance(button_kwargs, dict):
+            button_kwargs = (button_kwargs,)
+        if button_kwargs and len(button_names) != len(button_kwargs):
             raise ValueError("Number of button_kwargs dicts (if any are given) must match number of buttons.")
         super().__init__(window_title=title, master=master)
-        self.message = self.Label(text=text, font_size=font_size, row=0, column=0, padx=20, pady=40)
         self.output = default_output
         self.cancel = cancel_output
         self.default = default_output
         self.bind('<Return>', self.return_event)
-        with self.set_master(self.Frame(self.master_frame, row=1, column=0, pady=20)):
-            for i in range(len(buttons)):
-                button_text = buttons[i]
-                b_kwargs = button_kwargs[i] if button_kwargs else {}
-                b = self.Button(text=button_text, command=(lambda s=self, output=i: s.done(output)),
-                                row=0, column=i, padx=5, **b_kwargs)
-                if i == default_output:
-                    b.config(relief=RIDGE)
+
+        with self.set_master(auto_rows=0, padx=20, pady=20):
+            self.message = self.Label(text=message, font_size=font_size, font_type=font_type, pady=40)
+            with self.set_master(auto_columns=0, pady=20):
+                for i in range(len(button_names)):
+                    button_text = button_names[i]
+                    b_kwargs = button_kwargs[i] if button_kwargs else {}
+                    b = self.Button(text=button_text, command=(lambda s=self, output=i: s.done(output)),
+                                    padx=5, **b_kwargs)
+                    if i == default_output:
+                        b.config(relief=RIDGE)
+
         self.protocol('WM_DELETE_WINDOW', self.wm_delete_window)
-        self.resizable(0, 0)
+        self.resizable(width=False, height=False)
         self.set_geometry(relative_position=(0.5, 0.3))
 
     def go(self):

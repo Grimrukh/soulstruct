@@ -83,14 +83,9 @@ class FMG(object):
                              "be automatically detected.")
 
         if isinstance(fmg_source, bytes):
-            print("# WARNING: FMG was initialized with raw bytes, which means the FMG version is unknown.\n"
-                  "#     You should use a class constructor like `FMG.new_ds1(fmg_dict)` instead of `FMG()`.")
             self.unpack(BytesIO(fmg_source), remove_empty_entries)
 
         elif isinstance(fmg_source, str):
-            if version is not None:
-                raise ValueError("You cannot specify 'version' when reading from an FMG file (version will\n"
-                                 "be auto-detected).")
             self.fmg_path = fmg_source
             with open(fmg_source, 'rb') as file:
                 self.unpack(file, remove_empty_entries)

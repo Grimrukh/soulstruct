@@ -602,7 +602,7 @@ def Event12804500(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
 def Event12805020(ARG_0_3: int, ARG_4_7: int):
     """ 12805020: Event 12805020 """
     EndIfThisEventSlotOn()
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -727,7 +727,7 @@ def Event12805460(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: float, A
     ForceAnimation(ARG_0_3, ARG_4_7, loop=True, skip_transition=True)
     SetAIParamID(ARG_0_3, ARG_16_19)
     DisableGravity(ARG_0_3)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -846,7 +846,7 @@ def Event12805600(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     GotoIfThisEventSlotOn(Label.L0)
     ForceAnimation(ARG_0_3, ARG_4_7, loop=True)
     SetAIParamID(ARG_0_3, ARG_8_11)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -899,8 +899,8 @@ def Event12805670(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     """ 12805670: Event 12805670 """
     EndIfFlagOn(ARG_8_11)
     GotoIfValueComparison(Label.L0, ComparisonType.Equal, left=ARG_12_15, right=1)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     Goto(Label.L1)

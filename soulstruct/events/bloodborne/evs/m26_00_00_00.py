@@ -1974,8 +1974,8 @@ def Event12600150(ARG_0_3: int):
 def Event12600025():
     """ 12600025: Event 12600025 """
     IfCharacterHuman(1, PLAYER)
-    IfHasAIStatus(-1, 2600100, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, 2600100, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, 2600100, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, 2600100, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, 2600100, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
@@ -2144,8 +2144,8 @@ def Event12600035(ARG_0_3: int):
     """ 12600035: Event 12600035 """
     ForceAnimation(ARG_0_3, 7000)
     IfCharacterTargeting(-1, ARG_0_3, PLAYER)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfAttacked(1, ARG_0_3, attacking_character=10000)
     IfConditionTrue(-2, input_condition=-1)
@@ -2201,8 +2201,8 @@ def Event12600180(ARG_0_3: int, ARG_4_7: int):
     DisableNetworkSync()
     EndIfClient()
     AddSpecialEffect(ARG_0_3, 5001, affect_npc_part_hp=False)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     Wait(60.0)
@@ -2372,8 +2372,8 @@ def Event12600400(ARG_0_3: int, ARG_4_7: int):
 def Event12600410():
     """ 12600410: Event 12600410 """
     EndIfFlagOn(12600403)
-    IfHasAIStatus(-1, 2600403, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, 2600403, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, 2600403, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, 2600403, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, 2600403, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     SetNest(2600403, 2602029)

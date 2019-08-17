@@ -23,7 +23,7 @@ class DCX(object):
         ('unk4', '6i', (32, 150994944, 0, 0, 0, 65792)),
         ('dca_name', '4s', b'DCA\0'),
         ('compressed_header_size', 'i', 8),  # TODO: asserting for now, haven't come across any variation
-        byte_order='>'
+        byte_order='>',
     )
 
     def __init__(self, dcx_source, magic=()):

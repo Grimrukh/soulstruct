@@ -1943,7 +1943,7 @@ def Event12705200():
     """ 12705200: Event 12705200 """
     ForceAnimation(2700135, 7010)
     SetAIParamID(2700135, 263098)
-    IfHasAIStatus(-1, 2700135, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, 2700135, ai_status=AIStatusType.Search)
     IfEntityWithinDistance(-1, 10000, 2700135, radius=2.5)
     IfConditionTrue(0, input_condition=-1)
     SetAIParamID(2700135, 263097)
@@ -1959,7 +1959,7 @@ def Event12705201():
     SetAIParamID(2700135, 263050)
     End()
     Label(0)
-    IfHasAIStatus(-1, 2700135, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, 2700135, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, 2700135, ai_status=AIStatusType.Battle)
     IfDamageType(-1, attacked_entity=2700135, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
@@ -2009,7 +2009,7 @@ def Event12705300(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
 @NeverRestart
 def Event12705301(ARG_0_3: int, ARG_4_7: int, ARG_8_11: float, ARG_12_15: int):
     """ 12705301: Event 12705301 """
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     IfEntityWithinDistance(1, ARG_0_3, ARG_4_7, radius=ARG_8_11)
@@ -2101,7 +2101,7 @@ def Event12705370(ARG_0_3: int, ARG_4_7: float, ARG_8_11: int, ARG_12_15: int):
     Label(0)
     DisableAI(ARG_0_3)
     DisableCharacter(ARG_0_3)
-    IfHasAIStatus(-1, ARG_8_11, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_8_11, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_8_11, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(ARG_8_11, 3014)
@@ -2274,7 +2274,7 @@ def Event12705510(ARG_0_3: int, ARG_4_7: int):
     IfConditionTrue(-1, input_condition=1)
     IfDamageType(-1, attacked_entity=ARG_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfCharacterInsideRegion(-1, ARG_0_3, region=2702041)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     IfFlagOn(1, ARG_4_7)

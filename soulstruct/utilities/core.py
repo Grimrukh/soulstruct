@@ -4,11 +4,33 @@ import os
 import re
 import string
 import struct
+import sys
 import textwrap
 from io import BytesIO
 
-__all__ = ['word_wrap', 'find_steam_common_paths', 'traverse_path_tree', 'BinaryStruct', 'AttributeDict',
-           'read_chars_from_bytes', 'read_chars_from_buffer']
+__all__ = ['PACKAGE_PATH', 'find_dcx', 'word_wrap', 'find_steam_common_paths', 'traverse_path_tree',
+           'BinaryStruct', 'AttributeDict', 'read_chars_from_bytes', 'read_chars_from_buffer']
+
+
+def PACKAGE_PATH(*relative_parts):
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        return os.path.join(getattr(sys, '_MEIPASS'), '..', *relative_parts)
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', *relative_parts))
+
+
+def find_dcx(file_path):
+    """Returns DCX (preferred) or non-DCX version of the given file path.
+
+    It doesn't matter if the file path already ends with '.dcx'. If neither file exists, FileNotFoundError is raised.
+    """
+    no_dcx, dcx = (file_path[:-4], file_path) if file_path.endswith('.dcx') else (file_path, file_path + '.dcx')
+    if os.path.isfile(dcx):
+        return dcx
+    elif os.path.isfile(no_dcx):
+        return no_dcx
+    print('No DCX:', no_dcx)
+    print('DCX:', dcx)
+    raise FileNotFoundError(f"Could not find DCX or non-DCX version of {file_path}.")
 
 
 def word_wrap(text, line_limit=50):

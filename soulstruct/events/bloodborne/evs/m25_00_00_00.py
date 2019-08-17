@@ -956,7 +956,7 @@ def Event12500390(ARG_0_3: int):
     """ 12500390: Event 12500390 """
     ForceAnimation(ARG_0_3, 7010, loop=True)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(ARG_0_3, 7012)
 
@@ -1824,8 +1824,8 @@ def Event12501000(ARG_0_3: int):
 def Event12505000(ARG_0_3: int, ARG_4_7: int):
     """ 12505000: Event 12505000 """
     DisableNetworkSync()
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Alert)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(ARG_4_7)

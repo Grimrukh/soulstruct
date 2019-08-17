@@ -1371,7 +1371,7 @@ def Event13205100(ARG_0_3: int, ARG_4_7: int):
     EndIfThisEventSlotOn()
     IfCharacterBackreadEnabled(0, ARG_0_3)
     ForceAnimation(ARG_0_3, 7004, loop=True)
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -1388,7 +1388,7 @@ def Event13205100(ARG_0_3: int, ARG_4_7: int):
 def Event13205140(ARG_0_3: int, ARG_4_7: int):
     """ 13205140: Event 13205140 """
     EndIfThisEventSlotOn()
-    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, ARG_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)

@@ -637,7 +637,7 @@ def Event13305209():
 def Event13305210():
     """ 13305210: Event 13305210 """
     EndIfThisEventSlotOn()
-    IfHasAIStatus(-1, character=3300484, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, character=3300484, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, character=3300484, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     AddSpecialEffect(3300484, 12140)
@@ -648,7 +648,7 @@ def Event13305210():
 def Event13305211(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG_16_19: int):
     """ 13305211: Event 13305211 """
     GotoIfThisEventSlotOn(Label.L0)
-    IfHasAIStatus(-1, character=ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, character=ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, character=ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     IfCharacterHasSpecialEffect(1, character=ARG_0_3, special_effect=ARG_8_11)

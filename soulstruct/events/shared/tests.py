@@ -380,12 +380,12 @@ def AiStatusIsNormal(character: gt.Character, condition):
 
 @no_skip_or_negate_or_terminate
 def AiStatusIsRecognition(character: gt.Character, condition):
-    return instr.IfHasAIStatus(condition, character, AIStatusType.Recognition)
+    return instr.IfHasAIStatus(condition, character, AIStatusType.Caution)
 
 
 @no_skip_or_negate_or_terminate
 def AiStatusIsAlert(character: gt.Character, condition):
-    return instr.IfHasAIStatus(condition, character, AIStatusType.Alert)
+    return instr.IfHasAIStatus(condition, character, AIStatusType.Search)
 
 
 @no_skip_or_negate_or_terminate

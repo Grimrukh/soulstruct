@@ -313,7 +313,7 @@ def Event13415270(ARG_0_3: int):
     """ 13415270: Event 13415270 """
     GotoIfThisEventSlotOn(Label.L0)
     CancelSpecialEffect(ARG_0_3, 11970)
-    IfHasAIStatus(-1, character=ARG_0_3, ai_status=AIStatusType.Recognition)
+    IfHasAIStatus(-1, character=ARG_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, character=ARG_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(-2, input_condition=-1)
     IfAttacked(-2, ARG_0_3, attacking_character=10000)
