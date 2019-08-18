@@ -85,7 +85,7 @@ class DarkSoulsGameParameters(object):
         for param_table_entry_path, param_table in self._data.items():
             self._game_param_bnd.entries_by_path[param_table_entry_path].data = param_table.pack()
 
-    def save(self, game_param_bnd_path=None, auto_pickle=True):
+    def save(self, game_param_bnd_path=None, auto_pickle=False):
         """Save the DarkSoulsGameParameters. If no path is given, it will attempt to save to the same BND file."""
         self.update_bnd()
         if auto_pickle:

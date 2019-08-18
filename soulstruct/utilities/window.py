@@ -122,8 +122,8 @@ def _embed_component(component_func):
 # noinspection PyPep8Naming
 class BaseWindow(tk.Toplevel):
     FONT_DEFAULTS = {
-        'label_font_type': 'Arial',
-        'label_font_size': 10,
+        'label_font_type': 'Roboto',
+        'label_font_size': 12,
         'heading_font_type': 'Helvetica',
         'heading_font_size': 15,
     }
@@ -153,6 +153,7 @@ class BaseWindow(tk.Toplevel):
         self.focus_force()
 
         self.style = ttk.Style()
+        self.set_notebook_style()
         self.grid_defaults = {}
         self.current_row = None
         self.current_column = None
@@ -221,6 +222,15 @@ class BaseWindow(tk.Toplevel):
             w_y = 0
         self.geometry(f'{w_width:d}x{w_height:d}+{w_x:d}+{w_y:d}')
         self.deiconify()  # Become visible at the desired location
+
+    def set_notebook_style(self):
+        self.style.theme_use('alt')
+        self.style.configure(
+            'TNotebook', background=self.STYLE_DEFAULTS['bg'], tabmargins=[2, 10, 2, 0], tabposition=N)
+        self.style.configure(
+            'TNotebook.Tab', background='#555555', foreground='#FFFFFF', padding=[15, 1])
+        self.style.map(
+            'TNotebook.Tab', background=[('selected', '#774444')], expand=[('selected', [5, 3, 3, 0])])
 
     def start_auto_rows(self, start=0):
         self.current_row = start

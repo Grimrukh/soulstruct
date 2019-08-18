@@ -8,7 +8,8 @@ import sys
 import textwrap
 from io import BytesIO
 
-__all__ = ['PACKAGE_PATH', 'find_dcx', 'word_wrap', 'find_steam_common_paths', 'traverse_path_tree',
+__all__ = ['PACKAGE_PATH', 'find_dcx', 'word_wrap', 'camel_case_to_spaces',
+           'find_steam_common_paths', 'traverse_path_tree',
            'BinaryStruct', 'AttributeDict', 'read_chars_from_bytes', 'read_chars_from_buffer']
 
 
@@ -28,13 +29,15 @@ def find_dcx(file_path):
         return dcx
     elif os.path.isfile(no_dcx):
         return no_dcx
-    print('No DCX:', no_dcx)
-    print('DCX:', dcx)
     raise FileNotFoundError(f"Could not find DCX or non-DCX version of {file_path}.")
 
 
 def word_wrap(text, line_limit=50):
     return '\n'.join(textwrap.wrap(text, line_limit))
+
+
+def camel_case_to_spaces(camel_string):
+    return re.sub(' +', ' ', re.sub(r"([A-Z])([a-z]+)", r" \1\2 ", camel_string)).strip()
 
 
 def find_steam_common_paths():

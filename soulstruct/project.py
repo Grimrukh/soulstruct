@@ -3,16 +3,20 @@ import datetime
 from functools import wraps
 import json
 import os
+import pickle
 import shutil
+from tkinter import Frame
+from tkinter.constants import *
 
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.text import DarkSoulsText
-from soulstruct.utilities import find_steam_common_paths, traverse_path_tree, word_wrap
+from soulstruct.utilities import find_steam_common_paths, traverse_path_tree, word_wrap, camel_case_to_spaces
 from soulstruct.utilities.window import BaseWindow
 
 __all__ = ['SoulstructProject', 'SoulstructError', 'SoulstructProjectError']
 
 
+# TODO: SoulstructProject needs to wrap BaseWindow, not subclass it, to keep the namespace clear for interactive mode.
 # TODO: Inspect PTD directory for lack of unpacking.
 
 
@@ -34,24 +38,134 @@ def _with_config_write(func):
     return project_method
 
 
-# TODO: Eventually have subclasses for different games, with shared methods here.
-class SoulstructProject(BaseWindow):
+# TODO: Separate Frame subclasses for each tab, so they can be launched independently.
+class _TextEditor(Frame):
+
+    def __init__(self, *args, soulstruct_project, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._project = soulstruct_project  # Will need whole project for resolving references.
+
+
+class _SoulstructProjectWindow(BaseWindow):
+
+    def __init__(self, soulstruct_project: SoulstructProject, master=None):
+        """TODO: Build window.
+
+        I'm thinking: main tabs up top (Text, Params, Lighting) in large text.
+
+        In Text:
+            Select category (FMG) in left pane.
+            Right pane is a two-column scrollable window of IDs and text. Loads when a category is selected.
+
+            You can freely edit both IDs and names, but when confirming the edit, it will complain if the ID matches an
+            existing ID and refuse to make the change.
+
+            Empty entries are highlighted in red. These will be removed when you next save (a warning will pop up when
+                you save, which you can set to never appear again).
+            Buttons to delete entries and insert a new empty one below the current selection (auto-numbered).
+
+            LATER: Undo/redo button. It takes about 30 ms to make an entire copy of the Text dictionary, so it's easy
+                to save stacks of states.
+
+            LATER: You can find all usages of a given text entry. They pop up in a separate window with hyperlinks to
+                each occurrence.
+
+        In Params:
+
+
+        """
+        self.project = soulstruct_project
+        super().__init__("Soulstruct", master=master)
+
+        self.file_types = None
+
+        self.f_text_categories = None
+        self.category_boxes = {}
+
+    def build(self):
+
+        self.file_types = self.Notebook()
+
+        text_tab = self.Frame(frame=self.file_types)
+        self.file_types.add(text_tab, text='Text')
+        self.build_text_tab(text_tab)
+
+        # TODO
+        self.set_geometry()
+
+    def build_text_tab(self, text_tab):
+        with self.set_master(text_tab, auto_columns=0):
+            category_canvas = self.Canvas(scrollbar=True, width=250, height=500, padx=40, pady=40, highlightthickness=0)
+            with self.set_master(category_canvas):
+                self.f_text_categories = self.Frame(width=250, height=500, sticky=EW)
+                category_canvas.create_window(125, 250, window=self.f_text_categories, anchor=CENTER)
+                self.f_text_categories.bind(
+                    "<Configure>", lambda event, c=category_canvas: self.reset_canvas_scroll_region(event, c))
+
+                with self.set_master(self.f_text_categories):
+                    row = 0
+                    for category in self.project.Text.fmg_names:
+                        box = self.Frame(row=row, width=250, height=30)
+                        label_text = camel_case_to_spaces(category).replace(' _', ':')
+                        label = self.Label(text=label_text, sticky=EW, row=row)
+                        label.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
+                        box.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
+                        self.category_boxes[category] = (box, label)
+                        row += 1
+
+        self.selected_text_category = 'PlaceNames'
+
+    def populate_text(self):
+
+
+            category_canvas = self.Canvas(scrollbar=True, width=250, height=500, padx=40, pady=40, highlightthickness=0)
+            with self.set_master(category_canvas):
+                self.f_text_categories = self.Frame(width=250, height=500, sticky=EW)
+                category_canvas.create_window(125, 250, window=self.f_text_categories, anchor=CENTER)
+                self.f_text_categories.bind(
+                    "<Configure>", lambda event, c=category_canvas: self.reset_canvas_scroll_region(event, c))
+
+                with self.set_master(self.f_text_categories):
+                    row = 0
+                    for category in self.project.Text.fmg_names:
+                        box = self.Frame(row=row, width=250, height=30)
+                        label_text = camel_case_to_spaces(category).replace(' _', ':')
+                        label = self.Label(text=label_text, sticky=EW, row=row)
+                        label.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
+                        box.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
+                        self.category_boxes[category] = (box, label)
+                        row += 1
+
+    def select_text_category(self, selected: str):
+        for category, (box, label) in self.category_boxes.items():
+            if selected == category:
+                box['bg'] = '#555555'
+                label['bg'] = '#555555'
+                # TODO: Load window if this category isn't already selected.
+            else:
+                box['bg'] = self.STYLE_DEFAULTS['bg']
+                label['bg'] = self.STYLE_DEFAULTS['bg']
+
+
+class SoulstructProject(object):
     """Manages a directory of files that can be modded and 'pushed' into the appropriate game directory at will.
 
     It is recommended that you create one of these projects for each Soulstruct-based mod.
 
     Currently supports only Dark Souls 1.
+    TODO:
+        - Eventually have subclasses for different games, with shared methods here.
+        - Auto-save decorators that operate at ten minute intervals on write methods.
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
     _OK_BUTTON_KWARGS = {'fg': '#FFFFFF', 'bg': '#442222', 'width': 20}
     _YES_BUTTON_KWARGS = {'fg': '#FFFFFF', 'bg': '#772222'}
     _NO_BUTTON_KWARGS = {'fg': '#FFFFFF', 'bg': '#444444'}
 
-    def __init__(self, project_directory: str = '', master=None):
+    def __init__(self, project_directory: str = ''):
 
-        super().__init__("Soulstruct", master=master)
-        self.set_geometry()
-        self.withdraw()
+        self._window = _SoulstructProjectWindow(soulstruct_project=self, master=None)
+        # self._window.withdraw()
 
         self.game_name = ''
         self.game_dir = ''
@@ -59,14 +173,18 @@ class SoulstructProject(BaseWindow):
         self.last_push_time = ''
         # TODO: Record last edit time for each file/structure.
 
-        self.Text = None
-        self.Params = None
-        self.Lighting = None
+        self.Text = None    # type: DarkSoulsText
+        self.Params = None  # type: DarkSoulsGameParameters
+        self.Lighting = None  # type: DarkSoulsLightingParameters
 
         try:
             self.project_dir = self._validate_project_directory(project_directory, self._DEFAULT_PROJECT_ROOT)
             self.load_config()
-            self.load_project()
+            try:
+                self.unpickle_all()
+            except FileNotFoundError:
+                # TODO: Should try to unpickle all, then prompt you to pull missing files.
+                self.load_project()
         except SoulstructProjectError as e:
             self.dialog(title="Project Error", message=str(e), button_kwargs=self._OK_BUTTON_KWARGS)
             raise
@@ -74,6 +192,9 @@ class SoulstructProject(BaseWindow):
             msg = "Internal Python Error:\n\n" + str(e)
             self.dialog(title="Unknown Error", message=msg, button_kwargs=self._OK_BUTTON_KWARGS)
             raise
+
+        self._window.build()
+        self._window.wait_window()
 
     def load_project(self):
         """Load project structures (params, text, etc.) into dictionary as attributes.
@@ -83,6 +204,44 @@ class SoulstructProject(BaseWindow):
         self.Text = DarkSoulsText(self.project_path('msg/ENGLISH'))
         self.Params = DarkSoulsGameParameters(self.project_path('param/GameParam/GameParam.parambnd'))
         self.Lighting = DarkSoulsLightingParameters(self.project_path('param/DrawParam'))
+
+    def export_project(self, export_directory: str = None):
+        if export_directory is None:
+            export_directory = self.project_path(f'export/{self._get_timestamp(for_path=True)}')
+
+        text_path = os.path.join(export_directory, 'msg/ENGLISH/')
+        os.makedirs(text_path, exist_ok=True)
+        self.Text.write(text_path)
+
+        params_path = os.path.join(export_directory, 'param/GameParam/GameParam.parambnd')
+        os.makedirs(params_path, exist_ok=True)
+        self.Params.save(params_path)
+
+        # TODO
+        # lighting_path = os.path.join(export_directory, 'param/DrawParam/')
+        # os.makedirs(lighting_path, exist_ok=True)
+        # self.Lighting.write(lighting_path)
+
+    def pickle_all(self):
+        with open(self.project_path('Text.dstext'), 'wb') as f:
+            pickle.dump(self.Text, f)
+        with open(self.project_path('Params.dstext'), 'wb') as f:
+            pickle.dump(self.Params, f)
+        with open(self.project_path('Lighting.dstext'), 'wb') as f:
+            pickle.dump(self.Lighting, f)
+
+    def unpickle_all(self):
+        try:
+            with open(self.project_path('Text.dstext'), 'rb') as f:
+                self.Text = pickle.load(f)
+            with open(self.project_path('Params.dstext'), 'rb') as f:
+                self.Params = pickle.load(f)
+            with open(self.project_path('Lighting.dstext'), 'rb') as f:
+                self.Lighting = pickle.load(f)
+        except FileNotFoundError:
+            self.dialog(title="Project Error", message="(TODO) Could not unpickle files. Will try to pull.",
+                        button_kwargs=self._OK_BUTTON_KWARGS)
+            raise
 
     def load_config(self):
         try:
@@ -148,7 +307,9 @@ class SoulstructProject(BaseWindow):
         return os.path.abspath(os.path.join(self.project_dir, *relative_parts))
 
     @staticmethod
-    def _get_timestamp():
+    def _get_timestamp(for_path=False):
+        if for_path:
+            return datetime.datetime.now().strftime('%Y %B %d %H.%M.%S')
         return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def _build_config_dict(self):
@@ -162,7 +323,7 @@ class SoulstructProject(BaseWindow):
     def _write_config(self):
         try:
             with open(os.path.join(self.project_dir, 'config.json'), 'w') as f:
-                json.dump(self._build_config_dict(), f)
+                json.dump(self._build_config_dict(), f, indent=4)
         except PermissionError:
             raise SoulstructProjectError("No write access to 'config.json' in project directory.")
 
@@ -174,7 +335,7 @@ class SoulstructProject(BaseWindow):
                     "If you want to create a new project, create an empty directory and select it."
                     "The name of the directory will be the name of the project.", 50),
                 button_names='OK', button_kwargs={**self._YES_BUTTON_KWARGS, 'width': 15})
-            project_dir = self.FileDialog.askdirectory(
+            project_dir = self._window.FileDialog.askdirectory(
                 title="Choose Soulstruct project directory", initialdir=os.path.expanduser('~/Documents'))
             if not project_dir:
                 raise SoulstructProjectError(word_wrap("No directory chosen. Quitting Soulstruct.", 50))
@@ -206,11 +367,20 @@ class SoulstructProject(BaseWindow):
         else:
             initial_dir = None
 
-        self.dialog(title="Select game",
-                    message="Navigate to your Steam game executable.",
-                    button_names='OK', button_kwargs={**self._YES_BUTTON_KWARGS, 'width': 15})
-        live_dir = BaseWindow.FileDialog.askdirectory(
-            title="Choose game directory", initialdir=initial_dir)
+        message = ("Navigate to the game executable for this project.\n"
+                   "This can normally be found in:\n\n"
+                   ""
+                   "Prepare to Die Edition:\n"
+                   "C:/Program Files/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/DARKSOULS.exe\n\n"
+                   ""
+                   "Remastered:\n"
+                   "C:/Program Files/Steam/steamapps/common/DARK SOULS REMASTERED/DarkSoulsRemastered.exe\n\n"
+                   ""
+                   "Otherwise, you can use Steam to find your Steam directory.")
+        self.dialog(title="Select game for project", message=message,
+                    button_names='OK', button_kwargs={**self._YES_BUTTON_KWARGS, 'width': 15}, font_size=14)
+        live_dir = self._window.FileDialog.askopenfilename(
+            title="Choose your game executable", initialdir=initial_dir, filetypes=[('Game executable', '.exe')])
         if not live_dir:
             raise SoulstructProjectError("No game directory selected.")
         if os.path.isfile(os.path.join(live_dir, 'DarkSoulsRemastered.exe')):
@@ -219,12 +389,11 @@ class SoulstructProject(BaseWindow):
             return live_dir, 'Dark Souls Prepare to Die Edition'
         else:
             raise SoulstructProjectError("Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
-                                         "but neither 'DarkSoulsRemastered.exe' nor 'DARKSOULS.exe' could be found\n"
-                                         "in the game directory selected.")
+                                         "but your selected executable was not a version of Dark Souls.")
 
     def dialog(self, title, message, *args, **kwargs):
         message = word_wrap(message, 50)
-        return self.custom_dialog(title, message, *args, **kwargs)
+        return self._window.custom_dialog(title, message, *args, **kwargs)
 
 
 MODIFIABLE_FILES = {

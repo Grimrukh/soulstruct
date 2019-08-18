@@ -44,8 +44,9 @@ class ParamDefBND(BND3):
         try:
             return self.paramdefs[param_name]
         except KeyError:
+
             raise KeyError(f"There is no ParamDef with name '{param_name}'. The available names are:\n"
-                           f"    {PARAMDEF_BASE_NAMES.keys()}")
+                           f"    {list(PARAMDEF_BASE_NAMES.keys())}")
 
 
 class ParamDef(object):
