@@ -50,9 +50,9 @@ def _embed_component(component_func):
 
         if label:
             if label_bg is None:
-                label_bg = kwargs.get('bg', self._style_defaults['bg'])
+                label_bg = kwargs.get('bg', self.STYLE_DEFAULTS['bg'])
             if label_fg is None:
-                label_fg = kwargs.get('text_fg', self._style_defaults['text_fg'])
+                label_fg = kwargs.get('text_fg', self.STYLE_DEFAULTS['text_fg'])
             if label_font_type is None:
                 label_font_type = self.FONT_DEFAULTS['label_font_type']
             if label_font_size is None:
@@ -124,19 +124,19 @@ class BaseWindow(tk.Toplevel):
     FONT_DEFAULTS = {
         'label_font_type': 'Roboto',
         'label_font_size': 12,
-        'heading_font_type': 'Helvetica',
+        'heading_font_type': 'Roboto',
         'heading_font_size': 15,
     }
 
     FileDialog = filedialog
 
     STYLE_DEFAULTS = {
-        'bg': '#222222',
-        'text_fg': '#FFFFFF',
-        'text_cursor_fg': '#FFFFFF',
-        'disabled_fg': '#888888',
-        'disabled_bg': '#444444',
-        'readonly_bg': '#444444',
+        'bg': '#222',
+        'text_fg': '#FFF',
+        'text_cursor_fg': '#FFF',
+        'disabled_fg': '#888',
+        'disabled_bg': '#444',
+        'readonly_bg': '#444',
     }
 
     def __init__(self, window_title, master=None):
@@ -228,7 +228,8 @@ class BaseWindow(tk.Toplevel):
         self.style.configure(
             'TNotebook', background=self.STYLE_DEFAULTS['bg'], tabmargins=[2, 10, 2, 0], tabposition=N)
         self.style.configure(
-            'TNotebook.Tab', background='#555555', foreground='#FFFFFF', padding=[15, 1])
+            'TNotebook.Tab', background='#555555', foreground='#FFFFFF', padding=[15, 1],
+            font=('Roboto', 16))
         self.style.map(
             'TNotebook.Tab', background=[('selected', '#774444')], expand=[('selected', [5, 3, 3, 0])])
 
@@ -440,8 +441,16 @@ class BaseWindow(tk.Toplevel):
         return text
 
     @staticmethod
-    def reset_canvas_scroll_region(_, canvas):
+    def reset_canvas_scroll_region(canvas):
+        """Sets scrollable canvas region to the entire bounding box."""
         canvas.configure(scrollregion=canvas.bbox("all"))
+
+    @staticmethod
+    def link_to_scrollable(scrollable_widget, *widgets):
+        """Registers <Enter> and <Leave> events that enable the scrollbar for the second widget."""
+        for widget in widgets:
+            widget.bind('<Enter>', lambda _, f=scrollable_widget: _bind_to_mousewheel(_, f))
+            widget.bind('<Leave>', lambda _, f=scrollable_widget: _unbind_to_mousewheel(_, f))
 
     @staticmethod
     def info_dialog(title, message, **kwargs):

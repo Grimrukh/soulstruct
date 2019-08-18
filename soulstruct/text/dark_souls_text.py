@@ -9,7 +9,6 @@ class DarkSoulsText(object):
     ArmorDescriptions: dict
     ArmorNames: dict
     ArmorSummaries: dict
-    BloodMessages: dict
     ContextualHelp: dict
     Conversations: dict
     DebugTags_Win32: dict
@@ -29,12 +28,13 @@ class DarkSoulsText(object):
     MenuHelpSnippets: dict
     MenuText_Common: dict
     MenuText_Other: dict
-    MovieSubtitles: dict
     NPCNames: dict
+    OpeningSubtitles: dict
     PlaceNames: dict
     RingDescriptions: dict
     RingNames: dict
     RingSummaries: dict
+    SoapstoneMessages: dict
     SystemMessages_Win32: dict
     TextTagPlaceholders: dict
     WeaponDescriptions: dict
@@ -280,9 +280,14 @@ class DarkSoulsText(object):
             print(f"Could not find any occurrences of string {repr(search_string)}.")
 
     @property
-    def fmg_names(self):
-        return list(self._data.keys())
-    text_categories = fmg_names
+    def all_fmg_names(self):
+        return sorted(self._data.keys())
+    all_text_categories = all_fmg_names
+
+    @property
+    def useful_fmg_names(self):
+        return sorted(USEFUL_FMG_NAMES)
+    useful_text_categories = useful_fmg_names
 
     def __iter__(self):
         return iter(self._data.items())
@@ -317,10 +322,33 @@ class DarkSoulsText(object):
             raise ValueError(f"Unrecognized item type: '{item_type}'")
 
 
+USEFUL_FMG_NAMES = [
+    'ArmorDescriptions',
+    'ArmorNames',
+    'ArmorSummaries',
+    'EventTexts',
+    'GoodDescriptions',
+    'GoodNames',
+    'GoodSummaries',
+    'MagicDescriptions',
+    'MagicNames',
+    'MagicSummaries',
+    'NPCNames',
+    'PlaceNames',
+    'RingDescriptions',
+    'RingNames',
+    'RingSummaries',
+    'SoapstoneMessages',
+    'WeaponDescriptions',
+    'WeaponNames',
+    'WeaponSummaries',
+]
+
+
 MSGBND_INDEX_TO_SS = {
     1: 'Conversations',
-    2: 'BloodMessages',
-    3: 'MovieSubtitles',
+    2: 'SoapstoneMessages',
+    3: 'OpeningSubtitles',
     10: 'GoodNames',
     11: 'WeaponNames',
     12: 'ArmorNames',
@@ -360,7 +388,7 @@ MSGBND_INDEX_TO_SS = {
     104: 'ConversationsPatch',
     105: 'MagicDescriptionsPatch',
     106: 'WeaponDescriptionsPatch',
-    107: 'BloodMessagesPatch',
+    107: 'SoapstoneMessagesPatch',
     108: 'ArmorDescriptionsPatch',
     109: 'RingDescriptionsPatch',
     110: 'GoodSummariesPatch',
@@ -404,7 +432,7 @@ DSR_TO_SS = {
     'Weapon_description_.text': 'WeaponSummaries',
 
     # menu.msgbnd
-    'Blood_writing_.text': 'BloodMessages',
+    'Blood_writing_.text': 'SoapstoneMessages',
     'Conversation_.text': 'Conversations',
     'Dialogue_.text': 'MenuDialogs',
     'Event_text_.text': 'EventTexts',
@@ -413,7 +441,7 @@ DSR_TO_SS = {
     'Key_guide_.text': 'KeyGuide',
     'Menu_general_text_.text': 'MenuText_Common',
     'Menu_others_.text': 'MenuText_Other',
-    'Movie_subtitles_.text': 'MovieSubtitles',
+    'Movie_subtitles_.text': 'OpeningSubtitles',
     'Single_line_help_.text': 'MenuHelpSnippets',
     'System_message_win32_.text': 'SystemMessages_Win32',
     'System_specific_tags_win32_.text': 'DebugTags_Win32',
@@ -422,7 +450,7 @@ DSR_TO_SS = {
 
 
 PTD_TO_SS = {
-    # item.msgbnd
+    # item.msgbnd (including patch)
     '防具うんちく.text': 'ArmorDescriptions',
     '防具うんちくパッチ.text': 'ArmorDescriptionsPatch',
     '防具名.text': 'ArmorNames',
@@ -461,8 +489,6 @@ PTD_TO_SS = {
     '武器説明パッチ.text': 'WeaponSummariesPatch',
 
     # menu.msgbnd
-    '血文字.text': 'BloodMessages',
-    '血文字パッチ.text': 'BloodMessagesPatch',
     '項目ヘルプ.text': 'ContextualHelp',
     '会話.text': 'Conversations',
     '会話パッチ.text': 'ConversationsPatch',
@@ -480,7 +506,9 @@ PTD_TO_SS = {
     'メニュー共通テキストパッチ.text': 'MenuText_CommonPatch',
     'メニューその他.text': 'MenuText_Other',
     'メニューその他パッチ.text': 'MenuText_OtherPatch',
-    'ムービー字幕.text': 'MovieSubtitles',
+    'ムービー字幕.text': 'OpeningSubtitles',
+    '血文字.text': 'SoapstoneMessages',
+    '血文字パッチ.text': 'SoapstoneMessagesPatch',
     'システムメッセージ_win32.text': 'SystemMessages_Win32',
     'システムメッセージ_win32パッチ.text': 'SystemMessages_Win32Patch',
     'テキスト表示用タグ一覧.text': 'TextTagPlaceholders',

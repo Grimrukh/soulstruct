@@ -49,15 +49,16 @@ class _TextEditor(Frame):
 class _TextEditBox(BaseWindow):
     """Small pop-up widget that allows you to modify longer text more freely, with newlines and all."""
 
-    def __init__(self, master: _SoulstructProjectWindow, text_category: str, text_id: int, starting_text: str):
+    def __init__(self, master: _SoulstructProjectWindow, text_category: str, text_id: int, initial_text: str):
         super().__init__(window_title=f"Editing {text_category}[{text_id}]", master=master)
 
-        self.output = starting_text
+        self.initial_text = initial_text
+        self.output = None
 
         self.start_auto_rows()
-        self._text = self.Text(padx=20, pady=20, width=30, height=10)
-        self._text.insert(END, starting_text)
-        with self.set_master(auto_columns=0):
+        self._text = self.Text(padx=20, pady=20, width=50, height=10)
+        self._text.insert(END, initial_text)
+        with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
             self.Button(text="Confirm changes", command=lambda: self.done(True), **master.DEFAULT_BUTTON_KWARGS['YES'])
             self.Button(text="Cancel changes", command=lambda: self.done(False), **master.DEFAULT_BUTTON_KWARGS['NO'])
 
@@ -74,14 +75,18 @@ class _TextEditBox(BaseWindow):
 
     def done(self, confirm=True):
         if confirm:
-            self.output = self._text.get('1.0', END+'-1c')
+            new_text = self._text.get('1.0', END + '-1c')
+            if new_text == self.initial_text:
+                self.output = None
+            else:
+                self.output = self._text.get('1.0', END + '-1c')
         self.quit()
 
 
 class _SoulstructProjectWindow(BaseWindow):
     DEFAULT_BUTTON_KWARGS = {
         'OK': {
-            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20
+            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
         },
         'YES': {
             'fg': '#FFFFFF', 'bg': '#772222', 'width': 20,
@@ -91,15 +96,21 @@ class _SoulstructProjectWindow(BaseWindow):
         },
     }
 
+    TEXT_CANVAS_BG = '#111'
+    TEXT_CATEGORY_BOX_WIDTH = 250
+    TEXT_SELECTED_CATEGORY = '#555'
+    TEXT_BOX_WIDTH = 800
+    TEXT_DISPLAY_COUNT = 50
+    TEXT_ALTERNATING_BG = ('#222', '#333')
+    TEXT_SPACE_ONLY_ALTERNATING_BG = ('#332', '#443')
+    TEXT_SELECTED_BG = '#445'
+
     def __init__(self, soulstruct_project: SoulstructProject, master=None):
         """TODO: Build window.
 
         I'm thinking: main tabs up top (Text, Params, Lighting) in large text.
 
         In Text:
-            Select category (FMG) in left pane.
-            Right pane is a two-column scrollable window of IDs and text. Loads when a category is selected.
-
             You can freely edit both IDs and names, but when confirming the edit, it will complain if the ID matches an
             existing ID and refuse to make the change.
 
@@ -122,12 +133,18 @@ class _SoulstructProjectWindow(BaseWindow):
 
         self.file_types = None
 
+        self.text_category_canvas = None
         self.f_text_categories = None
+        self.show_all_categories = self.BooleanVar()
         self.category_boxes = {}
         self.selected_text_category = 'PlaceNames'
+        self.fmg_canvas = None
         self.f_fmg_entries = None
+        self.previous_range_button = None
+        self.next_range_button = None
         self.text_boxes = {}
         self.selected_text_id = None
+        self.text_entry = None
         self.editing_text = False
         self.text_start_index = 0
 
@@ -136,126 +153,237 @@ class _SoulstructProjectWindow(BaseWindow):
         self.file_types = self.Notebook()
 
         text_tab = self.Frame(frame=self.file_types)
-        self.file_types.add(text_tab, text='Text')
+        self.file_types.add(text_tab, text='  Text  ')
         self.build_text_tab(text_tab)
 
-        # TODO
+        # TODO: Params and lighting. Events. Etc.
+        self.resizable(False, False)
         self.set_geometry()
+
+    def populate_text_categories(self):
+        for box, label in self.category_boxes.values():
+            box.destroy()
+            label.destroy()
+        self.category_boxes = {}
+        with self.set_master(self.f_text_categories):
+            names = 'all_fmg_names' if self.show_all_categories.get() else 'useful_fmg_names'
+            categories = getattr(self.project.Text, names)
+            if self.selected_text_category not in categories:
+                self.select_text_category(None)
+            for row, category in enumerate(categories):
+                box = self.Frame(row=row, width=self.TEXT_CATEGORY_BOX_WIDTH, height=30, highlightthickness=1)
+                label_text = camel_case_to_spaces(category).replace(' _', ':')
+                label = self.Label(text=label_text, sticky=EW, row=row)
+                label.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
+                box.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
+                if category == self.selected_text_category:
+                    label['bg'] = self.TEXT_SELECTED_CATEGORY
+                    box['bg'] = self.TEXT_SELECTED_CATEGORY
+                self.link_to_scrollable(self.text_category_canvas, box, label)
+                self.category_boxes[category] = (box, label)
 
     def build_text_tab(self, text_tab):
         with self.set_master(text_tab, auto_columns=0):
-            with self.set_master():
-                category_canvas = self.Canvas(scrollbar=True, width=250, height=500, padx=40, pady=40,
-                                              highlightthickness=0)
-                self.f_text_categories = self.Frame(width=250, height=500, sticky=EW)
-                category_canvas.create_window(125, 250, window=self.f_text_categories, anchor=CENTER)
-                self.f_text_categories.bind(
-                    "<Configure>", lambda event, c=category_canvas: self.reset_canvas_scroll_region(event, c))
+            with self.set_master(auto_rows=0):
+                with self.set_master():
+                    self.text_category_canvas = self.Canvas(
+                        scrollbar=True, width=self.TEXT_CATEGORY_BOX_WIDTH, height=575, padx=40, pady=40,
+                        highlightthickness=0)
+                    self.f_text_categories = self.Frame(width=self.TEXT_CATEGORY_BOX_WIDTH, height=575, sticky=EW)
+                    self.link_to_scrollable(self.text_category_canvas, self.f_text_categories)
+                    self.text_category_canvas.create_window(
+                        self.TEXT_CATEGORY_BOX_WIDTH / 2, 300, window=self.f_text_categories, anchor=NW)
+                    self.f_text_categories.bind(
+                        "<Configure>", lambda e, c=self.text_category_canvas: self.reset_canvas_scroll_region(c))
 
-                with self.set_master(self.f_text_categories):
-                    row = 0
-                    for category in self.project.Text.fmg_names:
-                        box = self.Frame(row=row, width=250, height=30)
-                        label_text = camel_case_to_spaces(category).replace(' _', ':')
-                        label = self.Label(text=label_text, sticky=EW, row=row)
-                        label.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
-                        box.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
-                        self.category_boxes[category] = (box, label)
-                        row += 1
+                    self.populate_text_categories()
+
+                self.show_all_categories = self.Checkbutton(label='Show internal categories ', initial_state=False,
+                                                            command=self.populate_text_categories, pady=20).var
 
             with self.set_master():
-                self.Button(text="Previous 50", bg='#722', width=30, command=lambda: None, pady=5, row=0)
+                self.previous_range_button = self.Button(
+                    text=f"Previous {self.TEXT_DISPLAY_COUNT}", bg='#722', width=30, command=self.previous_text_range,
+                    padx=10, pady=20, row=0)
                 with self.set_master(row=1):
-                    fmg_canvas = self.Canvas(scrollbar=True, width=500, height=500, highlightthickness=2,
-                                             padx=40, pady=40)
-                    self.f_fmg_entries = self.Frame(frame=fmg_canvas, width=500, height=500, sticky=EW)
-                    fmg_canvas.create_window(250, 250, window=self.f_fmg_entries, anchor=CENTER)
+                    self.fmg_canvas = self.Canvas(scrollbar=True, width=self.TEXT_BOX_WIDTH, height=500,
+                                                  highlightthickness=1, padx=40, pady=40, bg=self.TEXT_CANVAS_BG)
+                    self.f_fmg_entries = self.Frame(frame=self.fmg_canvas, width=self.TEXT_BOX_WIDTH, sticky=EW)
+                    self.fmg_canvas.create_window(self.TEXT_BOX_WIDTH / 2, 250, window=self.f_fmg_entries, anchor=NW)
                     self.f_fmg_entries.bind(
-                        "<Configure>", lambda event, c=fmg_canvas: self.reset_canvas_scroll_region(event, c))
-                self.Button(text="Next 50", bg='#722', width=30, command=lambda: None, pady=5, row=2)
+                        "<Configure>", lambda e, c=self.fmg_canvas: self.reset_canvas_scroll_region(c))
+                self.next_range_button = self.Button(
+                    text=f"Next {self.TEXT_DISPLAY_COUNT}", bg='#722', width=30, command=self.next_text_range,
+                    padx=10, pady=20, row=2)
 
                 self.populate_text()
 
-    def select_text_category(self, selected: str):
+    def select_text_category(self, selected):
         if selected == self.selected_text_category:
             return  # No change.
+
+        self.cancel_text_edit(self.selected_text_id)
+        self.text_start_index = 0
+
+        if selected is None:
+            self.selected_text_category = None
+            for widgets in self.text_boxes.values():
+                for w in widgets.values():
+                    w.destroy()
+            return
 
         self.selected_text_category = selected
         for category, (box, label) in self.category_boxes.items():
             if selected == category:
-                box['bg'] = '#555555'
-                label['bg'] = '#555555'
-                self.populate_text()  # TODO: Deselect any text being edited WITHOUT saving.
+                box['bg'] = self.TEXT_SELECTED_CATEGORY
+                label['bg'] = self.TEXT_SELECTED_CATEGORY
+                self.populate_text()
             else:
                 box['bg'] = self.STYLE_DEFAULTS['bg']
                 label['bg'] = self.STYLE_DEFAULTS['bg']
 
+        self.update()
+        self.fmg_canvas.yview_moveto(0)
+        self.previous_range_button['state'] = DISABLED
+
+        if self.text_start_index == min(max(len(self.project.Text[self.selected_text_category])
+                                            - self.TEXT_DISPLAY_COUNT, 0),
+                                        self.text_start_index + self.TEXT_DISPLAY_COUNT):
+            self.next_range_button['state'] = DISABLED
+        else:
+            self.next_range_button['state'] = NORMAL
+
     def populate_text(self):
         for widgets in self.text_boxes.values():
-            for w in widgets:
+            for w in widgets.values():
                 w.destroy()
-
         self.text_boxes = {}
+
         with self.set_master(self.f_fmg_entries):
             for row, (text_id, text) in enumerate(
-                    self.project.Text.get_range(
-                        self.selected_text_category, self.text_start_index, self.text_start_index+50)):
-                id_box = self.Frame(row=row, column=0, width=150, height=30, highlightthickness=1)
-                id_box.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
-                id_box.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
-                id_label = self.Label(text=str(text_id), sticky=EW, row=row, column=0)
-                id_label.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
-                id_label.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
+                    self.project.Text.get_range(self.selected_text_category, self.text_start_index,
+                                                self.text_start_index + self.TEXT_DISPLAY_COUNT)):
+                bg = self.TEXT_ALTERNATING_BG[row % 2]
+                text_bg = self.TEXT_SPACE_ONLY_ALTERNATING_BG[row % 2] if text == ' ' else bg
+                row_box = self.Frame(width=self.TEXT_BOX_WIDTH, height=30, row=row, columnspan=2, sticky=NSEW, bg=bg)
+                self._bind_text_events(row_box, text_id)
 
-                text_box = self.Frame(row=row, column=1, width=350, height=30, highlightthickness=1)
-                text_box.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
-                text_box.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
-                text_label = self.Label(text=text, sticky=EW, row=row, column=1)
-                text_label.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
-                text_label.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
-                text_entry = self.Entry(initial_text='', sticky=EW, row=row, column=1)
-                text_entry.bind('<Return>', lambda e, i=text_id: self.confirm_text_edit(i))
-                text_entry.bind('<FocusOut>', lambda e, i=text_id: self.cancel_text_edit(i))
-                text_entry.bind('<Escape>', lambda e, i=text_id: self.cancel_text_edit(i))
-                text_entry.grid_remove()
+                id_label = self.Label(text=str(text_id), width=15, row=row, column=0, bg=bg, sticky=E)
+                self._bind_text_events(id_label, text_id)
 
-                self.text_boxes[text_id] = (id_box, id_label, text_box, text_label, text_entry)
+                text_box = self.Frame(row=row, column=1, bg=bg, sticky=EW)
+                self._bind_text_events(text_box, text_id)
+
+                text_label = self.Label(text_box, text=text, bg=text_bg, sticky=SW, justify=LEFT)
+                self._bind_text_events(text_label, text_id)
+
+                self.text_boxes[text_id] = {'row_box': row_box, 'id_label': id_label,
+                                            'text_box': text_box, 'text_label': text_label}
                 row += 1
+
+        self.f_fmg_entries.grid_columnconfigure(1, weight=1)
+
+    def _bind_text_events(self, widget, text_id):
+        widget.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
+        widget.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
+        widget.bind('<Prior>', lambda e: self.previous_text_range())
+        widget.bind('<Next>', lambda e: self.next_text_range())
+
+    def previous_text_range(self):
+        if self.selected_text_category is None:
+            return
+        target_start = max(self.text_start_index - self.TEXT_DISPLAY_COUNT, 0)
+        if target_start == self.text_start_index:
+            self.previous_range_button['state'] = DISABLED
+            return
+        self.previous_range_button['state'] = NORMAL
+        self.text_start_index = target_start
+        self.cancel_text_edit(self.selected_text_id)
+        self.populate_text()
+        first_text_id = list(self.text_boxes)[0]
+        if self.selected_text_id != first_text_id:
+            self.select_text(first_text_id)
+        self.geometry()
+        self.fmg_canvas.yview_moveto(0)
+
+        if self.text_start_index == max(self.text_start_index - self.TEXT_DISPLAY_COUNT, 0):
+            self.previous_range_button['state'] = DISABLED
+
+        if self.text_start_index != min(max(len(self.project.Text[self.selected_text_category])
+                                            - self.TEXT_DISPLAY_COUNT, 0),
+                                        self.text_start_index + self.TEXT_DISPLAY_COUNT):
+            self.next_range_button['state'] = NORMAL
+
+    def next_text_range(self):
+        if self.selected_text_category is None:
+            return
+        target_start = min(max(len(self.project.Text[self.selected_text_category]) - self.TEXT_DISPLAY_COUNT, 0),
+                           self.text_start_index + self.TEXT_DISPLAY_COUNT)
+        if target_start == self.text_start_index:
+            self.next_range_button['state'] = DISABLED
+            return  # TODO: Check if button should be disabled more often (whenever a new category is loaded).
+        self.next_range_button['state'] = NORMAL
+        self.text_start_index = target_start
+        self.cancel_text_edit(self.selected_text_id)
+        self.populate_text()
+        first_text_id = list(self.text_boxes)[0]
+        if self.selected_text_id != first_text_id:
+            self.select_text(first_text_id)
+        self.geometry()
+        self.fmg_canvas.yview_moveto(0)
+
+        if self.text_start_index != max(self.text_start_index - self.TEXT_DISPLAY_COUNT, 0):
+            self.previous_range_button['state'] = NORMAL
+
+        if self.text_start_index == min(max(len(self.project.Text[self.selected_text_category])
+                                            - self.TEXT_DISPLAY_COUNT, 0),
+                                        self.text_start_index + self.TEXT_DISPLAY_COUNT):
+            self.next_range_button['state'] = DISABLED
 
     def start_text_edit(self, edited_text_id):
         if not self.editing_text:
-            label, entry = self.text_boxes[edited_text_id][3:5]
+            widgets = self.text_boxes[edited_text_id]
+            text_box = widgets['text_box']
+            label = widgets['text_label']
             label.grid_remove()
-            entry.grid()
-            entry.var.set(label.var.get())
-            entry.focus_set()
+            self.text_entry = self.Entry(text_box, initial_text=label.var.get(), sticky=EW, font=('Roboto', 12),
+                                         width=60)
+            self.text_entry.bind('<Return>', lambda e, i=edited_text_id: self.confirm_text_edit(i))
+            self.text_entry.bind('<FocusOut>', lambda e, i=edited_text_id: self.cancel_text_edit(i))
+            self.text_entry.bind('<Escape>', lambda e, i=edited_text_id: self.cancel_text_edit(i))
+            self.text_entry.grid()
+            self.text_entry.focus_set()
             self.editing_text = True
 
     def floating_edit_text(self, edited_text_id):
         if not self.editing_text:
             self.editing_text = True
-            label = self.text_boxes[edited_text_id][3]
+            label = self.text_boxes[edited_text_id]['text_label']
             floating_edit = _TextEditBox(self, self.selected_text_category, edited_text_id, label.var.get())
-            text = floating_edit.go()
-            print(repr(text))  # TODO
+            new_text = floating_edit.go()
+            if new_text is not None:  # Confirmed text change.
+                label.var.set(new_text)
+                self.project.Text[self.selected_text_category][edited_text_id] = new_text
+            self.editing_text = False
 
     def cancel_text_edit(self, edited_text_id):
         if self.editing_text:
-            label, entry = self.text_boxes[edited_text_id][3:5]
-            entry.grid_remove()
+            widgets = self.text_boxes[edited_text_id]
+            label = widgets['text_label']
+            self.text_entry.destroy()
             label.grid()
-            entry.var.set(label.var.get())
             self.editing_text = False
 
     def confirm_text_edit(self, edited_text_id):
         if self.editing_text:
-            new_text = self.text_boxes[edited_text_id][4].var.get()
+            new_text = self.text_entry.var.get()
             if self.project.Text[self.selected_text_category][edited_text_id] != new_text:
                 pass  # TODO: flag unsaved change to Text. Add (category, text) tuple to an unsaved set. Red entry BG.
             self.project.Text[self.selected_text_category][edited_text_id] = new_text
-            label, entry = self.text_boxes[edited_text_id][3:5]
+            widgets = self.text_boxes[edited_text_id]
+            label = widgets['text_label']
+            self.text_entry.destroy()
             label.var.set(new_text)
-            entry.grid_remove()
             label.grid()
             self.editing_text = False
 
@@ -263,20 +391,18 @@ class _SoulstructProjectWindow(BaseWindow):
         if self.selected_text_id is not None and selected_text_id == self.selected_text_id:
             return self.start_text_edit(selected_text_id)
 
-        # Update selected text.
         self.selected_text_id = selected_text_id
-        for text_id, (id_box, id_label, text_box, text_label, text_entry) in self.text_boxes.items():
+        for row, (text_id, widgets) in enumerate(self.text_boxes.items()):
+            bg = self.TEXT_ALTERNATING_BG[row % 2]
+            text_bg = self.TEXT_SPACE_ONLY_ALTERNATING_BG[row % 2] if widgets['text_label'].var.get() == ' ' else bg
             if text_id == selected_text_id:
-                id_box['bg'] = '#555'
-                id_label['bg'] = '#555'
-                text_box['bg'] = '#555'
-                text_label['bg'] = '#555'
-                text_label.focus_set()
+                widgets['row_box']['bg'] = widgets['id_label']['bg'] = self.TEXT_SELECTED_BG
+                widgets['text_box']['bg'] = widgets['text_label']['bg'] = self.TEXT_SELECTED_BG
+                widgets['text_label'].focus_set()
             else:
-                id_box['bg'] = self.STYLE_DEFAULTS['bg']
-                id_label['bg'] = self.STYLE_DEFAULTS['bg']
-                text_box['bg'] = self.STYLE_DEFAULTS['bg']
-                text_label['bg'] = self.STYLE_DEFAULTS['bg']
+                widgets['row_box']['bg'] = widgets['id_label']['bg'] = bg
+                widgets['text_box']['bg'] = bg
+                widgets['text_label']['bg'] = text_bg
 
     def dialog(self, *args, **kwargs):
         button_kwargs = kwargs.get('button_kwargs', None)
