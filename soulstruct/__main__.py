@@ -13,6 +13,7 @@ python -m soulstruct [source]
 """
 import argparse
 import logging
+import os
 
 from soulstruct.project import SoulstructError
 from soulstruct.utilities import word_wrap
@@ -20,7 +21,7 @@ from soulstruct.utilities import word_wrap
 LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'}
 
 # TODO
-DEFAULT_PATH = 'C:/Users/seven/Documents/Soulstruct/dsr_project'
+DEFAULT_PATH = os.path.expanduser('~/Documents/Soulstruct/dsr_project')
 
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")

@@ -64,6 +64,11 @@ class DarkSoulsText(object):
         # This set contains tuple pairs (fmg_name, entry_index) that came from Patch resources.
         self._is_patch = set()
 
+        if msg_directory is None:
+            self.item_msgbnd = None
+            self.menu_msgbnd = None
+            return
+
         try:
             self.item_msgbnd = BND(os.path.join(msg_directory, 'item.msgbnd.dcx'))
         except FileNotFoundError:
@@ -287,6 +292,11 @@ class DarkSoulsText(object):
             return self._data[text_category]
         except KeyError:
             raise AttributeError(f"Non-existent text category (FMG): '{text_category}'")
+
+    def get_range(self, category, start, end):
+        """Get a list of (id, text) pairs from a certain range inside the ordered text dictionary."""
+        sorted_ids = sorted(self._data[category].keys())
+        return [(text_id, self._data[category][text_id]) for text_id in sorted_ids[start:end]]
 
     @staticmethod
     def resolve_item_type(item_type):

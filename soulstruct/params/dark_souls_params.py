@@ -57,6 +57,11 @@ class DarkSoulsGameParameters(object):
         self._reload_warning = True
         self._data = {}
 
+        if game_param_bnd_source is None:
+            self._game_param_bnd = None
+            self.paramdef_bnd = None
+            return
+
         if os.path.isdir(game_param_bnd_source):
             game_param_bnd_source = os.path.join(game_param_bnd_source, 'GameParam.parambnd')
         if isinstance(game_param_bnd_source, BaseBND):
@@ -192,7 +197,7 @@ class DarkSoulsLightingParameters(object):
     m99: DrawParamBlock
     default: DrawParamBlock
 
-    def __init__(self, draw_param_directory: str):
+    def __init__(self, draw_param_directory):
         """Unpack DS1 DrawParams into a single modifiable structure.
 
         Opens all DrawParam BNDs simultaneously for editing and repacking. The appropriate bundled ParamDef file will be
@@ -207,6 +212,9 @@ class DarkSoulsLightingParameters(object):
 
         self._reload_warning = True
         self._data = {}
+
+        if draw_param_directory is None:
+            return
 
         for area_id in self._MAP_IDS:
             if isinstance(area_id, int):

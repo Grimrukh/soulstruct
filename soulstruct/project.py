@@ -46,7 +46,50 @@ class _TextEditor(Frame):
         self._project = soulstruct_project  # Will need whole project for resolving references.
 
 
+class _TextEditBox(BaseWindow):
+    """Small pop-up widget that allows you to modify longer text more freely, with newlines and all."""
+
+    def __init__(self, master: _SoulstructProjectWindow, text_category: str, text_id: int, starting_text: str):
+        super().__init__(window_title=f"Editing {text_category}[{text_id}]", master=master)
+
+        self.output = starting_text
+
+        self.start_auto_rows()
+        self._text = self.Text(padx=20, pady=20, width=30, height=10)
+        self._text.insert(END, starting_text)
+        with self.set_master(auto_columns=0):
+            self.Button(text="Confirm changes", command=lambda: self.done(True), **master.DEFAULT_BUTTON_KWARGS['YES'])
+            self.Button(text="Cancel changes", command=lambda: self.done(False), **master.DEFAULT_BUTTON_KWARGS['NO'])
+
+        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3))
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            self.output = self._text.get('1.0', END+'-1c')
+        self.quit()
+
+
 class _SoulstructProjectWindow(BaseWindow):
+    DEFAULT_BUTTON_KWARGS = {
+        'OK': {
+            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20
+        },
+        'YES': {
+            'fg': '#FFFFFF', 'bg': '#772222', 'width': 20,
+        },
+        'NO': {
+            'fg': '#FFFFFF', 'bg': '#444444', 'width': 20,
+        },
+    }
 
     def __init__(self, soulstruct_project: SoulstructProject, master=None):
         """TODO: Build window.
@@ -81,6 +124,12 @@ class _SoulstructProjectWindow(BaseWindow):
 
         self.f_text_categories = None
         self.category_boxes = {}
+        self.selected_text_category = 'PlaceNames'
+        self.f_fmg_entries = None
+        self.text_boxes = {}
+        self.selected_text_id = None
+        self.editing_text = False
+        self.text_start_index = 0
 
     def build(self):
 
@@ -95,8 +144,9 @@ class _SoulstructProjectWindow(BaseWindow):
 
     def build_text_tab(self, text_tab):
         with self.set_master(text_tab, auto_columns=0):
-            category_canvas = self.Canvas(scrollbar=True, width=250, height=500, padx=40, pady=40, highlightthickness=0)
-            with self.set_master(category_canvas):
+            with self.set_master():
+                category_canvas = self.Canvas(scrollbar=True, width=250, height=500, padx=40, pady=40,
+                                              highlightthickness=0)
                 self.f_text_categories = self.Frame(width=250, height=500, sticky=EW)
                 category_canvas.create_window(125, 250, window=self.f_text_categories, anchor=CENTER)
                 self.f_text_categories.bind(
@@ -113,38 +163,132 @@ class _SoulstructProjectWindow(BaseWindow):
                         self.category_boxes[category] = (box, label)
                         row += 1
 
-        self.selected_text_category = 'PlaceNames'
+            with self.set_master():
+                self.Button(text="Previous 50", bg='#722', width=30, command=lambda: None, pady=5, row=0)
+                with self.set_master(row=1):
+                    fmg_canvas = self.Canvas(scrollbar=True, width=500, height=500, highlightthickness=2,
+                                             padx=40, pady=40)
+                    self.f_fmg_entries = self.Frame(frame=fmg_canvas, width=500, height=500, sticky=EW)
+                    fmg_canvas.create_window(250, 250, window=self.f_fmg_entries, anchor=CENTER)
+                    self.f_fmg_entries.bind(
+                        "<Configure>", lambda event, c=fmg_canvas: self.reset_canvas_scroll_region(event, c))
+                self.Button(text="Next 50", bg='#722', width=30, command=lambda: None, pady=5, row=2)
 
-    def populate_text(self):
-
-
-            category_canvas = self.Canvas(scrollbar=True, width=250, height=500, padx=40, pady=40, highlightthickness=0)
-            with self.set_master(category_canvas):
-                self.f_text_categories = self.Frame(width=250, height=500, sticky=EW)
-                category_canvas.create_window(125, 250, window=self.f_text_categories, anchor=CENTER)
-                self.f_text_categories.bind(
-                    "<Configure>", lambda event, c=category_canvas: self.reset_canvas_scroll_region(event, c))
-
-                with self.set_master(self.f_text_categories):
-                    row = 0
-                    for category in self.project.Text.fmg_names:
-                        box = self.Frame(row=row, width=250, height=30)
-                        label_text = camel_case_to_spaces(category).replace(' _', ':')
-                        label = self.Label(text=label_text, sticky=EW, row=row)
-                        label.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
-                        box.bind("<Button-1>", lambda e, c=category: self.select_text_category(c))
-                        self.category_boxes[category] = (box, label)
-                        row += 1
+                self.populate_text()
 
     def select_text_category(self, selected: str):
+        if selected == self.selected_text_category:
+            return  # No change.
+
+        self.selected_text_category = selected
         for category, (box, label) in self.category_boxes.items():
             if selected == category:
                 box['bg'] = '#555555'
                 label['bg'] = '#555555'
-                # TODO: Load window if this category isn't already selected.
+                self.populate_text()  # TODO: Deselect any text being edited WITHOUT saving.
             else:
                 box['bg'] = self.STYLE_DEFAULTS['bg']
                 label['bg'] = self.STYLE_DEFAULTS['bg']
+
+    def populate_text(self):
+        for widgets in self.text_boxes.values():
+            for w in widgets:
+                w.destroy()
+
+        self.text_boxes = {}
+        with self.set_master(self.f_fmg_entries):
+            for row, (text_id, text) in enumerate(
+                    self.project.Text.get_range(
+                        self.selected_text_category, self.text_start_index, self.text_start_index+50)):
+                id_box = self.Frame(row=row, column=0, width=150, height=30, highlightthickness=1)
+                id_box.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
+                id_box.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
+                id_label = self.Label(text=str(text_id), sticky=EW, row=row, column=0)
+                id_label.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
+                id_label.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
+
+                text_box = self.Frame(row=row, column=1, width=350, height=30, highlightthickness=1)
+                text_box.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
+                text_box.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
+                text_label = self.Label(text=text, sticky=EW, row=row, column=1)
+                text_label.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
+                text_label.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
+                text_entry = self.Entry(initial_text='', sticky=EW, row=row, column=1)
+                text_entry.bind('<Return>', lambda e, i=text_id: self.confirm_text_edit(i))
+                text_entry.bind('<FocusOut>', lambda e, i=text_id: self.cancel_text_edit(i))
+                text_entry.bind('<Escape>', lambda e, i=text_id: self.cancel_text_edit(i))
+                text_entry.grid_remove()
+
+                self.text_boxes[text_id] = (id_box, id_label, text_box, text_label, text_entry)
+                row += 1
+
+    def start_text_edit(self, edited_text_id):
+        if not self.editing_text:
+            label, entry = self.text_boxes[edited_text_id][3:5]
+            label.grid_remove()
+            entry.grid()
+            entry.var.set(label.var.get())
+            entry.focus_set()
+            self.editing_text = True
+
+    def floating_edit_text(self, edited_text_id):
+        if not self.editing_text:
+            self.editing_text = True
+            label = self.text_boxes[edited_text_id][3]
+            floating_edit = _TextEditBox(self, self.selected_text_category, edited_text_id, label.var.get())
+            text = floating_edit.go()
+            print(repr(text))  # TODO
+
+    def cancel_text_edit(self, edited_text_id):
+        if self.editing_text:
+            label, entry = self.text_boxes[edited_text_id][3:5]
+            entry.grid_remove()
+            label.grid()
+            entry.var.set(label.var.get())
+            self.editing_text = False
+
+    def confirm_text_edit(self, edited_text_id):
+        if self.editing_text:
+            new_text = self.text_boxes[edited_text_id][4].var.get()
+            if self.project.Text[self.selected_text_category][edited_text_id] != new_text:
+                pass  # TODO: flag unsaved change to Text. Add (category, text) tuple to an unsaved set. Red entry BG.
+            self.project.Text[self.selected_text_category][edited_text_id] = new_text
+            label, entry = self.text_boxes[edited_text_id][3:5]
+            label.var.set(new_text)
+            entry.grid_remove()
+            label.grid()
+            self.editing_text = False
+
+    def select_text(self, selected_text_id):
+        if self.selected_text_id is not None and selected_text_id == self.selected_text_id:
+            return self.start_text_edit(selected_text_id)
+
+        # Update selected text.
+        self.selected_text_id = selected_text_id
+        for text_id, (id_box, id_label, text_box, text_label, text_entry) in self.text_boxes.items():
+            if text_id == selected_text_id:
+                id_box['bg'] = '#555'
+                id_label['bg'] = '#555'
+                text_box['bg'] = '#555'
+                text_label['bg'] = '#555'
+                text_label.focus_set()
+            else:
+                id_box['bg'] = self.STYLE_DEFAULTS['bg']
+                id_label['bg'] = self.STYLE_DEFAULTS['bg']
+                text_box['bg'] = self.STYLE_DEFAULTS['bg']
+                text_label['bg'] = self.STYLE_DEFAULTS['bg']
+
+    def dialog(self, *args, **kwargs):
+        button_kwargs = kwargs.get('button_kwargs', None)
+        if button_kwargs is not None:
+            if button_kwargs in self.DEFAULT_BUTTON_KWARGS:
+                button_kwargs = self.DEFAULT_BUTTON_KWARGS[button_kwargs]
+            else:
+                for b in button_kwargs:
+                    if b in self.DEFAULT_BUTTON_KWARGS:
+                        button_kwargs[b] = self.DEFAULT_BUTTON_KWARGS[b]
+            kwargs['button_kwargs'] = button_kwargs
+        return self.custom_dialog(*args, **kwargs)
 
 
 class SoulstructProject(object):
@@ -158,9 +302,6 @@ class SoulstructProject(object):
         - Auto-save decorators that operate at ten minute intervals on write methods.
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
-    _OK_BUTTON_KWARGS = {'fg': '#FFFFFF', 'bg': '#442222', 'width': 20}
-    _YES_BUTTON_KWARGS = {'fg': '#FFFFFF', 'bg': '#772222'}
-    _NO_BUTTON_KWARGS = {'fg': '#FFFFFF', 'bg': '#444444'}
 
     def __init__(self, project_directory: str = ''):
 
@@ -173,9 +314,9 @@ class SoulstructProject(object):
         self.last_push_time = ''
         # TODO: Record last edit time for each file/structure.
 
-        self.Text = None    # type: DarkSoulsText
-        self.Params = None  # type: DarkSoulsGameParameters
-        self.Lighting = None  # type: DarkSoulsLightingParameters
+        self.Text = DarkSoulsText(None)
+        self.Params = DarkSoulsGameParameters(None)
+        self.Lighting = DarkSoulsLightingParameters(None)
 
         try:
             self.project_dir = self._validate_project_directory(project_directory, self._DEFAULT_PROJECT_ROOT)
@@ -185,12 +326,13 @@ class SoulstructProject(object):
             except FileNotFoundError:
                 # TODO: Should try to unpickle all, then prompt you to pull missing files.
                 self.load_project()
+                self.pickle_all()
         except SoulstructProjectError as e:
-            self.dialog(title="Project Error", message=str(e), button_kwargs=self._OK_BUTTON_KWARGS)
+            self.dialog(title="Project Error", message=str(e), button_kwargs='OK')
             raise
         except Exception as e:
             msg = "Internal Python Error:\n\n" + str(e)
-            self.dialog(title="Unknown Error", message=msg, button_kwargs=self._OK_BUTTON_KWARGS)
+            self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
             raise
 
         self._window.build()
@@ -240,7 +382,7 @@ class SoulstructProject(object):
                 self.Lighting = pickle.load(f)
         except FileNotFoundError:
             self.dialog(title="Project Error", message="(TODO) Could not unpickle files. Will try to pull.",
-                        button_kwargs=self._OK_BUTTON_KWARGS)
+                        button_kwargs='OK')
             raise
 
     def load_config(self):
@@ -274,7 +416,7 @@ class SoulstructProject(object):
             if self.dialog(title="Initial project pull",
                            message="Pull game files from game directory into project directory now?",
                            button_names=("Yes, pull the files", "No, I'll do it later"),
-                           button_kwargs=(self._YES_BUTTON_KWARGS, self._NO_BUTTON_KWARGS),
+                           button_kwargs=('YES', 'NO'),
                            cancel_output=1, default_output=1) == 0:
                 self.pull()
 
@@ -334,7 +476,7 @@ class SoulstructProject(object):
                 message="Navigate to your Soulstruct project directory.\n\n" + word_wrap(
                     "If you want to create a new project, create an empty directory and select it."
                     "The name of the directory will be the name of the project.", 50),
-                button_names='OK', button_kwargs={**self._YES_BUTTON_KWARGS, 'width': 15})
+                button_names='OK', button_kwargs='OK')
             project_dir = self._window.FileDialog.askdirectory(
                 title="Choose Soulstruct project directory", initialdir=os.path.expanduser('~/Documents'))
             if not project_dir:
@@ -377,8 +519,8 @@ class SoulstructProject(object):
                    "C:/Program Files/Steam/steamapps/common/DARK SOULS REMASTERED/DarkSoulsRemastered.exe\n\n"
                    ""
                    "Otherwise, you can use Steam to find your Steam directory.")
-        self.dialog(title="Select game for project", message=message,
-                    button_names='OK', button_kwargs={**self._YES_BUTTON_KWARGS, 'width': 15}, font_size=14)
+        self.dialog(title="Select game for project", message=message, font_size=14,
+                    button_names='OK', button_kwargs='OK')
         live_dir = self._window.FileDialog.askopenfilename(
             title="Choose your game executable", initialdir=initial_dir, filetypes=[('Game executable', '.exe')])
         if not live_dir:
@@ -393,7 +535,7 @@ class SoulstructProject(object):
 
     def dialog(self, title, message, *args, **kwargs):
         message = word_wrap(message, 50)
-        return self._window.custom_dialog(title, message, *args, **kwargs)
+        return self._window.dialog(title, message, *args, **kwargs)
 
 
 MODIFIABLE_FILES = {

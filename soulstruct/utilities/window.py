@@ -532,7 +532,7 @@ class CustomDialog(BaseWindow):
                 for i in range(len(button_names)):
                     button_text = button_names[i]
                     b_kwargs = button_kwargs[i] if button_kwargs else {}
-                    b = self.Button(text=button_text, command=(lambda s=self, output=i: s.done(output)),
+                    b = self.Button(text=button_text, command=lambda s=self, output=i: s.done(output),
                                     padx=5, **b_kwargs)
                     if i == default_output:
                         b.config(relief=RIDGE)
