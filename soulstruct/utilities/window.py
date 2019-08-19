@@ -137,6 +137,7 @@ class BaseWindow(tk.Toplevel):
         'disabled_fg': '#888',
         'disabled_bg': '#444',
         'readonly_bg': '#444',
+        'entry_font': ('Roboto', 12),
     }
 
     def __init__(self, window_title, master=None):
@@ -255,6 +256,7 @@ class BaseWindow(tk.Toplevel):
             kwargs_dict.setdefault('disabledforeground', self.STYLE_DEFAULTS.get('disabled_fg', None))
             kwargs_dict.setdefault('disabledbackground', self.STYLE_DEFAULTS.get('disabled_bg', None))
             kwargs_dict.setdefault('readonlybackground', self.STYLE_DEFAULTS.get('readonly_bg', None))
+            kwargs_dict.setdefault('font', self.STYLE_DEFAULTS.get('entry_font', None))
 
     # VARIABLES
 
