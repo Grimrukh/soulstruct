@@ -15,7 +15,7 @@ import argparse
 import logging
 import os
 
-from soulstruct.project import SoulstructError
+from soulstruct.core import SoulstructError
 from soulstruct.utilities import word_wrap
 
 LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'}
@@ -126,7 +126,7 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     # No specific type. Open entire project.
-    from soulstruct.project import SoulstructProject, SoulstructProjectError
+    from soulstruct.project import SoulstructProject
     global Project
     try:
         Project = SoulstructProject(ss_args.source)

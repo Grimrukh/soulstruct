@@ -128,6 +128,9 @@ PARAM_TYPE_INFO = {
 }
 
 
+JUNK_ENTRY_NAMES = (b'\x80\x1e', b'\xfe\x1e')  # These appear in LIGHT_BANK in DS1.
+
+
 class ParamEntry(object):
 
     def __init__(self, entry_source, paramdef, name=None):
@@ -355,8 +358,9 @@ class ParamTable(object):
             if entry_struct.name_offset != 0:
                 relative_name_offset = entry_struct.name_offset - name_data_offset
                 try:
-                    name = read_chars_from_bytes(packed_name_data, offset=relative_name_offset,
-                                                 encoding='shift_jis_2004')
+                    name = read_chars_from_bytes(
+                        packed_name_data, offset=relative_name_offset, encoding='shift_jis_2004',
+                        ignore_encoding_error_for_these_chars=JUNK_ENTRY_NAMES)
                 except ValueError:
                     print(f"# ERROR: Could not find null termination for entry name string in {self.param_name}.\n"
                           f"#   Header: {header}\n"

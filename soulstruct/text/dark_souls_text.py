@@ -12,7 +12,7 @@ class DarkSoulsText(object):
     ContextualHelp: dict
     Conversations: dict
     DebugTags_Win32: dict
-    EventTexts: dict
+    EventText: dict
     FeatureDescriptions: dict
     FeatureNames: dict
     FeatureSummaries: dict
@@ -40,6 +40,28 @@ class DarkSoulsText(object):
     WeaponDescriptions: dict
     WeaponNames: dict
     WeaponSummaries: dict
+
+    # These are text categories you are likely to want to change in mod projects.
+    main_categories = main_fmg_names = [
+        'NPCNames', 'PlaceNames', 'EventText', 'SoapstoneMessages',
+        'WeaponNames', 'WeaponSummaries', 'WeaponDescriptions',
+        'ArmorNames', 'ArmorSummaries', 'ArmorDescriptions',
+        'RingNames', 'RingSummaries', 'RingDescriptions',
+        'GoodNames', 'GoodSummaries', 'GoodDescriptions',
+        'MagicNames', 'MagicSummaries', 'MagicDescriptions',
+    ]
+
+    # These are text categories you are unlikely to change, whether it's for pragmatic
+    # reasons (like Conversations) or because they contain low-level menu/system text.
+    internal_categories = internal_fmg_names = [
+        'Conversations', 'ContextualHelp', 'DebugTags_Win32',
+        'FeatureNames', 'FeatureSummaries', 'FeatureDescriptions',
+        'IngameMenus', 'KeyGuide', 'MenuDialogs', 'MenuHelpSnippets',
+        'MenuText_Common', 'MenuText_Other', 'OpeningSubtitles',
+        'SystemMessages_Win32', 'TextTagPlaceholders',
+    ]
+
+    all_categories = all_fmg_names = main_categories + internal_categories
 
     def __init__(self, msg_directory):
         """Unpack all Dark Souls 1 text data (from both 'item' and 'menu' MSGBND files) into one unified structure.
@@ -105,7 +127,7 @@ class DarkSoulsText(object):
 
         for entry in msgbnd:
             try:
-                new_name = MSGBND_INDEX_TO_SS[entry.id]
+                new_name = _MSGBND_INDEX_TO_SS[entry.id]
             except KeyError:
                 raise ValueError(f"BND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
 
@@ -167,8 +189,8 @@ class DarkSoulsText(object):
             # Patch indices will all be merged into main resources, so remove any Patch entries from the BND.
             for fmg_name, fmg_entries in self._data.items():
                 try:
-                    bnd_index = [key for key in MSGBND_INDEX_TO_SS.keys()
-                                 if MSGBND_INDEX_TO_SS[key] == fmg_name + 'Patch'][0]
+                    bnd_index = [key for key in _MSGBND_INDEX_TO_SS.keys()
+                                 if _MSGBND_INDEX_TO_SS[key] == fmg_name + 'Patch'][0]
                 except IndexError:
                     # No Patch version of this FMG.
                     pass
@@ -198,7 +220,7 @@ class DarkSoulsText(object):
                     original_name = self._original_names[fmg_name + 'Patch']
                     patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + 'Patch'] else new_item_msgbnd
                     try:
-                        bnd_entry_id = [k for k, v in MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
+                        bnd_entry_id = [k for k, v in _MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
                     except IndexError:
                         raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
                     bnd_entry = patch_msgbnd.entries_by_id[bnd_entry_id]
@@ -212,7 +234,7 @@ class DarkSoulsText(object):
             original_name = self._original_names[fmg_name]
             msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
             try:
-                bnd_entry_id = [k for k, v in MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
+                bnd_entry_id = [k for k, v in _MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
             except IndexError:
                 raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
             bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
@@ -279,16 +301,6 @@ class DarkSoulsText(object):
         if not found_something:
             print(f"Could not find any occurrences of string {repr(search_string)}.")
 
-    @property
-    def all_fmg_names(self):
-        return sorted(self._data.keys())
-    all_text_categories = all_fmg_names
-
-    @property
-    def useful_fmg_names(self):
-        return sorted(USEFUL_FMG_NAMES)
-    useful_text_categories = useful_fmg_names
-
     def __iter__(self):
         return iter(self._data.items())
 
@@ -299,9 +311,8 @@ class DarkSoulsText(object):
             raise AttributeError(f"Non-existent text category (FMG): '{text_category}'")
 
     def get_range(self, category, start, end):
-        """Get a list of (id, text) pairs from a certain range inside the ordered text dictionary."""
-        sorted_ids = sorted(self._data[category].keys())
-        return [(text_id, self._data[category][text_id]) for text_id in sorted_ids[start:end]]
+        """Get a list of (id, text) pairs from a certain range inside the ID-sorted text dictionary."""
+        return [(text_id, self._data[category][text_id]) for text_id in sorted(self._data[category])[start:end]]
 
     @staticmethod
     def resolve_item_type(item_type):
@@ -322,30 +333,7 @@ class DarkSoulsText(object):
             raise ValueError(f"Unrecognized item type: '{item_type}'")
 
 
-USEFUL_FMG_NAMES = [
-    'ArmorDescriptions',
-    'ArmorNames',
-    'ArmorSummaries',
-    'EventTexts',
-    'GoodDescriptions',
-    'GoodNames',
-    'GoodSummaries',
-    'MagicDescriptions',
-    'MagicNames',
-    'MagicSummaries',
-    'NPCNames',
-    'PlaceNames',
-    'RingDescriptions',
-    'RingNames',
-    'RingSummaries',
-    'SoapstoneMessages',
-    'WeaponDescriptions',
-    'WeaponNames',
-    'WeaponSummaries',
-]
-
-
-MSGBND_INDEX_TO_SS = {
+_MSGBND_INDEX_TO_SS = {
     1: 'Conversations',
     2: 'SoapstoneMessages',
     3: 'OpeningSubtitles',
@@ -369,7 +357,7 @@ MSGBND_INDEX_TO_SS = {
     27: 'RingDescriptions',
     28: 'MagicSummaries',
     29: 'MagicDescriptions',
-    30: 'EventTexts',
+    30: 'EventText',
     70: 'IngameMenus',
     76: 'MenuText_Common',
     77: 'MenuText_Other',
@@ -382,7 +370,7 @@ MSGBND_INDEX_TO_SS = {
     92: 'SystemMessages_Win32',
     # Patch resources (all in menu.msgbnd in PTD; put with their main resources in DSR).
     100: 'GoodDescriptionsPatch',
-    101: 'EventTextsPatch',
+    101: 'EventTextPatch',
     102: 'MenuDialogsPatch',
     103: 'SystemMessages_Win32Patch',
     104: 'ConversationsPatch',
@@ -408,7 +396,7 @@ MSGBND_INDEX_TO_SS = {
     124: 'MenuText_CommonPatch',
 }
 
-DSR_TO_SS = {
+_DSR_TO_SS = {
     # item.msgbnd
     'Accessory_long_desc_.text': 'RingDescriptions',
     'Accessory_name_.text': 'RingNames',
@@ -435,7 +423,7 @@ DSR_TO_SS = {
     'Blood_writing_.text': 'SoapstoneMessages',
     'Conversation_.text': 'Conversations',
     'Dialogue_.text': 'MenuDialogs',
-    'Event_text_.text': 'EventTexts',
+    'Event_text_.text': 'EventText',
     'Ingame_menu.text': 'IngameMenus',
     'Item_help_.text': 'ContextualHelp',
     'Key_guide_.text': 'KeyGuide',
@@ -449,7 +437,7 @@ DSR_TO_SS = {
 }
 
 
-PTD_TO_SS = {
+_PTD_TO_SS = {
     # item.msgbnd (including patch)
     '防具うんちく.text': 'ArmorDescriptions',
     '防具うんちくパッチ.text': 'ArmorDescriptionsPatch',
@@ -493,8 +481,8 @@ PTD_TO_SS = {
     '会話.text': 'Conversations',
     '会話パッチ.text': 'ConversationsPatch',
     '機種別タグ_win32.text': 'DebugTags_Win32',
-    'イベントテキスト.text': 'EventTexts',
-    'イベントテキストパッチ.text': 'EventTextsPatch',
+    'イベントテキスト.text': 'EventText',
+    'イベントテキストパッチ.text': 'EventTextPatch',
     'インゲームメニュー.text': 'IngameMenus',
     'キーガイド.text': 'KeyGuide',
     'キーガイドパッチ.text': 'KeyGuidePatch',
@@ -513,8 +501,3 @@ PTD_TO_SS = {
     'システムメッセージ_win32パッチ.text': 'SystemMessages_Win32Patch',
     'テキスト表示用タグ一覧.text': 'TextTagPlaceholders',
 }
-
-
-if __name__ == '__main__':
-    text_ptd = DarkSoulsText(r"G:\Steam\steamapps\common\Dark Souls Prepare to Die Edition\DATA\msg\ENGLISH")
-    text_dsr = DarkSoulsText(r"G:\Steam\steamapps\common\DARK SOULS REMASTERED\msg\ENGLISH")

@@ -216,10 +216,6 @@ class BaseBND(object):
     def add_entry(self, entry: BNDEntry):
         if entry.id in self.entries_by_id:
             raise ValueError(f"Entry with ID {entry.id} already exists in BND.")
-        if entry.path in self.entries_by_path:
-            print(f"# WARNING: Entry path {repr(entry.path)} appeared more than once in BND.\n"
-                  f"# If you access this entry by path, you will only get the last one unpacked.")
-            # raise ValueError(f"Entry with path '{entry.path}' already exists in BND.")
         self.binary_entries.append(entry)
         self._entries.append(self._entry_class(entry.data) if self._entry_class else entry)
 
@@ -253,17 +249,28 @@ class BaseBND(object):
 
     @property
     def entries_by_path(self):
-        """ Dictionary mapping entry path to entries. """
-        return {binary_entry.path: entry for binary_entry, entry in zip(self.binary_entries, self._entries)}
+        """Dictionary mapping entry paths to (classed) entries.
+
+        The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
+        Remastered). If it does, this property will raise an exception.
+        """
+        entries = {}
+        for binary_entry, entry in zip(self.binary_entries, self._entries):
+            if binary_entry.path in entries:
+                raise ValueError(f"Path '{binary_entry.path}' appears in multiple BND entry paths.")
+            entries[binary_entry.path] = entry
+        return entries
 
     @property
     def entries_by_basename(self):
-        """ You are technically allowed to have the same basename appear in multiple paths in a BND, but that will
-        never happen naturally (AFAIK) and I don't recommend you ever let it happen. If it does, this property will
-        raise an exception. """
+        """Dictionary mapping entry basenames to (classed) entries.
+
+        The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
+        Remastered). If it does, this property will raise an exception.
+        """
         entries = {}
-        for entry in self._entries:
-            basename = os.path.basename(entry.path)
+        for binary_entry, entry in zip(self.binary_entries, self._entries):
+            basename = os.path.basename(binary_entry.path)
             if basename in entries:
                 raise ValueError(f"Basename '{basename}' appears in multiple BND entry paths.")
             entries[basename] = entry

@@ -359,7 +359,7 @@ def _get_drives():
     return drives
 
 
-def read_chars_from_bytes(data, offset=0, length=None, encoding=None):
+def read_chars_from_bytes(data, offset=0, length=None, encoding=None, ignore_encoding_error_for_these_chars=()):
     """Read characters from a bytes object (an encoded string). Use 'read_chars_from_buffer' if you are using a buffer.
 
     If 'length=None' (default), characters will be read until null termination from the given offset. Otherwise,
@@ -385,23 +385,35 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None):
             try:
                 return array.decode(encoding)
             except UnicodeDecodeError:
-                print('Could not decode characters (returning raw bytes):', array)
-                return array
+                if array in ignore_encoding_error_for_these_chars:
+                    return array
+                raise
         return array
 
 
-def read_chars_from_buffer(buffer, offset=None, length=None, encoding=None, reset_old_offset=True):
+def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=True, encoding=None,
+                           ignore_encoding_error_for_these_chars=()):
     """Read characters from a buffer (type IOBase). Use 'read_chars_from_bytes' if your data is already in bytes format.
 
-    If 'offset' is None, the buffer will be read from the current position. Otherwise, by default, the buffer will be
-    reset to whatever offset it was at after the string has been read. (Set 'reset_old_offset=False' to prevent this.)
+    Args:
+        buffer: byte-format data stream to read from.
 
-    If 'length' is None, the chars are assumed to be null-terminated (with b'\x00'). Otherwise, 'length' characters will
-    be read, and any null padding at the right end will be stripped.
+        offset: offset to seek() in buffer before starting to read characters. Defaults to current offset.
 
-    Use 'encoding' to automatically decode the bytes into a string before returning (e.g. 'shift_jis_2004'). Note that
-    if 'utf-16-le' is specified as the encoding with no length, a double-null termination of b'\0\0' is required to
-    terminate the string (as single nulls can appear in the two-byte characters).
+        reset_old_offset: if True, and 'offset' is not None, the buffer offset will be restored to its original position
+            (at function call time) before returning. (Default: True)
+
+        length: number of characters to read (i.e. the length of the returned string). If None (default), characters
+            will be read until a null termination is encountered. Otherwise, if a length is specified, any spaces at
+            the end of the string will be stripped, then any nulls at the end will be stripped.
+
+        encoding: attempt to decode characters in this encoding before returning. If 'utf-16-le' is specified, this
+            function will infer that characters are two bytes long (and null terminations will be two bytes). Otherwise,
+            it assumes they are one byte long. You can decode the characters yourself if you want to use another
+            multiple-bytes-per-character encoding).
+
+        ignore_encoding_error_for_these_chars: if a decoding error occurs for any character (bytes) in this sequence,
+            the encoded bytes will be returned instead of raising a UnicodeDecodeError.
     """
     if length == 0:
         if not reset_old_offset and not isinstance(buffer, bytes):
@@ -431,8 +443,9 @@ def read_chars_from_buffer(buffer, offset=None, length=None, encoding=None, rese
                 try:
                     return array.decode(encoding)
                 except UnicodeDecodeError:
-                    print('Could not decode characters (returning raw bytes):', array)
-                    return array
+                    if array in ignore_encoding_error_for_these_chars:
+                        return array
+                    raise
             return array
         elif len(chars) == length:
             if reset_old_offset and old_offset is not None:

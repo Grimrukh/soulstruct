@@ -1,10 +1,11 @@
 from contextlib import contextmanager
 from functools import wraps
+from typing import Optional
 import tkinter as tk
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
-__all__ = ['BaseWindow']
+__all__ = ['SmartFrame', 'SoulstructSmartFrame']
 
 _GRID_KEYWORDS = {'column', 'columnspan', 'in', 'ipadx', 'ipady', 'padx', 'pady', 'row', 'rowspan', 'sticky'}
 
@@ -120,7 +121,7 @@ def _embed_component(component_func):
 
 
 # noinspection PyPep8Naming
-class BaseWindow(tk.Toplevel):
+class SmartFrame(tk.Frame):
     FONT_DEFAULTS = {
         'label_font_type': 'Roboto',
         'label_font_size': 12,
@@ -140,18 +141,24 @@ class BaseWindow(tk.Toplevel):
         'entry_font': ('Roboto', 12),
     }
 
-    def __init__(self, window_title, master=None):
-        """ Base class for a simple interactive tkinter window, with simplified methods for adding and arranging
-        elements and command functions. """
+    toplevel: Optional[tk.Toplevel]
 
-        # List of variables (so they aren't destroyed).
+    def __init__(self, master=None, toplevel=True, window_title='Window Title', **frame_kwargs):
+        # List of variables (so they aren't garbage-collected).
         self._variables = []
 
         # Initialize window.
-        super().__init__(master)
-        self.title(window_title)
-        self.iconname(window_title)
-        self.focus_force()
+        toplevel_master = master
+        if toplevel:
+            master = self.toplevel = tk.Toplevel(master)
+            self.toplevel.title(window_title)
+            self.toplevel.iconname(window_title)
+            self.toplevel.focus_force()
+            super().__init__(master, **frame_kwargs)
+            self.grid()
+        else:
+            self.toplevel = None
+            super().__init__(master, **frame_kwargs)
 
         self.style = ttk.Style()
         self.set_notebook_style()
@@ -163,8 +170,40 @@ class BaseWindow(tk.Toplevel):
         self.master_frame = self.current_frame = self.Frame(frame=self, row=0, column=0)
 
         # Disable default root if used.
-        if master is None:
+        if self.toplevel and toplevel_master is None:
+            self.toplevel.master.withdraw()
+        elif master is None:
             self.master.withdraw()
+
+    def protocol(self, name, func):
+        if not self.toplevel:
+            raise AttributeError("Cannot use protocol() method if SmartFrame was initialized without 'toplevel=True'.")
+        self.toplevel.protocol(name, func)
+
+    def resizable(self, width, height):
+        if not self.toplevel:
+            raise AttributeError("Cannot use resizable() method if SmartFrame was initialized without 'toplevel=True'.")
+        self.toplevel.resizable(width, height)
+
+    def withdraw(self):
+        if not self.toplevel:
+            raise AttributeError("Cannot use withdraw() method if SmartFrame was initialized without 'toplevel=True'.")
+        self.toplevel.withdraw()
+
+    def deiconify(self):
+        if not self.toplevel:
+            raise AttributeError("Cannot use deiconify() method if SmartFrame was initialized without 'toplevel=True'.")
+        self.toplevel.deiconify()
+
+    def destroy(self):
+        super().destroy()
+        if self.toplevel:
+            self.toplevel.destroy()
+
+    def quit(self):
+        super().quit()
+        if self.toplevel:
+            self.toplevel.quit()
 
     def set_geometry(self, master=None, dimensions=None, absolute_position=None, relative_position=None,
                      transient=False):
@@ -184,17 +223,22 @@ class BaseWindow(tk.Toplevel):
         A 'transient' window won't show up in the task bar on Windows, is always drawn on top of its master, and is
         automatically hidden when the master is iconified or withdrawn.
         """
+        if self.toplevel is None:
+            raise AttributeError("Window was created as a Frame (toplevel=False) and has no geometry to set.")
         if master is None:
-            master = self.master
+            master = self.toplevel.master
 
         if absolute_position is not None and relative_position is not None:
             raise ValueError("You cannot specify both 'absolute_position' and 'relative_position' of the window.")
-        self.withdraw()  # Remain invisible while we figure out the geometry
+        self.toplevel.withdraw()  # Remain invisible while we figure out the geometry
         if transient:
-            self.transient(master)
-        self.update_idletasks()  # Actualize geometry information
+            self.toplevel.transient(master)
+        self.toplevel.update_idletasks()  # Actualize geometry information
 
-        w_width, w_height = dimensions if dimensions is not None else self.winfo_reqwidth(), self.winfo_reqheight()
+        if dimensions is not None:
+            w_width, w_height = dimensions
+        else:
+            w_width, w_height = self.toplevel.winfo_reqwidth(), self.toplevel.winfo_reqheight()
 
         if relative_position is not None and master.winfo_ismapped():
             rel_x, rel_y = relative_position
@@ -221,8 +265,8 @@ class BaseWindow(tk.Toplevel):
             w_y = master.winfo_screenheight() - w_height
         elif w_y < 0:
             w_y = 0
-        self.geometry(f'{w_width:d}x{w_height:d}+{w_x:d}+{w_y:d}')
-        self.deiconify()  # Become visible at the desired location
+        self.toplevel.geometry(f'{w_width:d}x{w_height:d}+{w_x:d}+{w_y:d}')
+        self.toplevel.deiconify()  # Become visible at the desired location
 
     def set_notebook_style(self):
         self.style.theme_use('alt')
@@ -297,6 +341,15 @@ class BaseWindow(tk.Toplevel):
         self.set_style_defaults(kwargs)
         frame = tk.Frame(frame, **kwargs)
         return frame
+
+    @_embed_component
+    def SmartFrame(self, frame=None, smart_frame_class=None, **kwargs):
+        if smart_frame_class is None:
+            smart_frame_class = SmartFrame
+        elif not issubclass(smart_frame_class, SmartFrame):
+            raise TypeError("'smart_frame_class' must be a subclass of SmartFrame.")
+        smart_frame = smart_frame_class(master=frame, **kwargs)
+        return smart_frame
 
     @_embed_component
     def Canvas(self, frame=None, **kwargs):
@@ -525,7 +578,7 @@ class BaseWindow(tk.Toplevel):
         self.current_frame = previous_frame
 
 
-class CustomDialog(BaseWindow):
+class CustomDialog(SmartFrame):
 
     def __init__(self, master, title='Custom Dialog', message='', font_size=None, font_type=None,
                  button_names=(), button_kwargs=(), style_defaults=None,
@@ -538,7 +591,7 @@ class CustomDialog(BaseWindow):
             button_kwargs = (button_kwargs,)
         if button_kwargs and len(button_names) != len(button_kwargs):
             raise ValueError("Number of button_kwargs dicts (if any are given) must match number of buttons.")
-        super().__init__(window_title=title, master=master)
+        super().__init__(toplevel=True, window_title=title, master=master)
         self.output = default_output
         self.cancel = cancel_output
         self.default = default_output
@@ -557,29 +610,58 @@ class CustomDialog(BaseWindow):
 
         self.protocol('WM_DELETE_WINDOW', self.wm_delete_window)
         self.resizable(width=False, height=False)
-        self.set_geometry(relative_position=(0.5, 0.3))
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
 
     def go(self):
-        self.wait_visibility()
-        self.grab_set()
-        self.mainloop()
-        self.destroy()
+        self.toplevel.wait_visibility()
+        self.toplevel.grab_set()
+        self.toplevel.mainloop()
+        self.toplevel.destroy()
         return self.output
 
     def return_event(self, _):
         """ Event that occurs when the user presses the Enter key. """
         if self.default is None:
-            self.bell()
+            self.toplevel.bell()
         else:
             self.done(self.default)
 
     def wm_delete_window(self):
         """ Function that occurs when the user closes the window using the corner X, Alt-F4, etc. """
         if self.cancel is None:
-            self.bell()
+            self.toplevel.bell()
         else:
             self.done(self.cancel)
 
     def done(self, num):
         self.output = num
-        self.quit()
+        self.toplevel.quit()
+
+
+class SoulstructSmartFrame(SmartFrame):
+    DEFAULT_BUTTON_KWARGS = {
+        'OK': {
+            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
+        },
+        'YES': {
+            'fg': '#FFFFFF', 'bg': '#772222', 'width': 20,
+        },
+        'NO': {
+            'fg': '#FFFFFF', 'bg': '#444444', 'width': 20,
+        },
+    }
+
+    def dialog(self, *args, **kwargs):
+        button_kwargs = kwargs.get('button_kwargs', None)
+        if button_kwargs is not None:
+            if button_kwargs in self.DEFAULT_BUTTON_KWARGS:
+                button_kwargs = self.DEFAULT_BUTTON_KWARGS[button_kwargs]
+            else:
+                for b in button_kwargs:
+                    if b in self.DEFAULT_BUTTON_KWARGS:
+                        button_kwargs[b] = self.DEFAULT_BUTTON_KWARGS[b]
+            kwargs['button_kwargs'] = button_kwargs
+        else:
+            button_kwargs = self.DEFAULT_BUTTON_KWARGS['OK']
+        kwargs['button_kwargs'] = button_kwargs
+        return self.custom_dialog(*args, **kwargs)

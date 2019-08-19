@@ -1,8 +1,3 @@
-"""
-TODO:
-    - Filter fields and create more intelligent names.
-"""
-
 import os
 import pickle
 from typing import Dict, List, Optional
@@ -10,6 +5,9 @@ from typing import Dict, List, Optional
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.params.fields import GAME_PARAM_INFO
+
+# TODO: Finish field name documentation.
+# TODO: Suppress decoding error from LevelSyncParam entry names (b'\x80\x1e' and b'\xfe\x1e').
 
 
 class DarkSoulsGameParameters(object):
