@@ -342,11 +342,18 @@ class BaseWindow(tk.Toplevel):
             initial_value = values[0] if values else ''
         string_var = tk.StringVar(frame, value=initial_value)
         self._variables.append(string_var)
-        combobox = ttk.Combobox(frame, textvariable=string_var, values=values, state=state, width=width)
+        combobox = ttk.Combobox(frame, textvariable=string_var, values=values, state=state, width=width, **kwargs)
         combobox.var = string_var
         if on_select_function is not None:
             combobox.bind('<<ComboboxSelected>>', on_select_function)
         return combobox
+
+    def Menu(self, frame=None, tearoff=0, **kwargs):  # TODO: options? don't know what tearoff does
+        if frame is None:
+            frame = self.current_frame
+        self.set_style_defaults(kwargs)
+        menu = tk.Menu(frame, tearoff=tearoff, **kwargs)
+        return menu
 
     @_embed_component
     def Entry(self, frame=None, initial_text='', integers_only=False, numbers_only=False, **kwargs):

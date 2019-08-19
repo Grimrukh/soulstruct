@@ -49,14 +49,17 @@ class _TextEditor(Frame):
 class _TextEditBox(BaseWindow):
     """Small pop-up widget that allows you to modify longer text more freely, with newlines and all."""
 
+    WIDTH = 50  # characters
+    HEIGHT = 10  # lines
+
     def __init__(self, master: _SoulstructProjectWindow, text_category: str, text_id: int, initial_text: str):
-        super().__init__(window_title=f"Editing {text_category}[{text_id}]", master=master)
+        super().__init__(window_title=f"Editing {camel_case_to_spaces(text_category)} [{text_id}]", master=master)
 
         self.initial_text = initial_text
         self.output = None
 
         self.start_auto_rows()
-        self._text = self.Text(padx=20, pady=20, width=50, height=10)
+        self._text = self.Text(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
         self._text.insert(END, initial_text)
         with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
             self.Button(text="Confirm changes", command=lambda: self.done(True), **master.DEFAULT_BUTTON_KWARGS['YES'])
@@ -103,6 +106,7 @@ class _SoulstructProjectWindow(BaseWindow):
     TEXT_DISPLAY_COUNT = 50
     TEXT_ALTERNATING_BG = ('#222', '#333')
     TEXT_SPACE_ONLY_ALTERNATING_BG = ('#332', '#443')
+    TEXT_EMPTY_ALTERNATING_BG = ('#422', '#533')
     TEXT_SELECTED_BG = '#445'
 
     def __init__(self, soulstruct_project: SoulstructProject, master=None):
@@ -201,10 +205,17 @@ class _SoulstructProjectWindow(BaseWindow):
                 self.show_all_categories = self.Checkbutton(label='Show internal categories ', initial_state=False,
                                                             command=self.populate_text_categories, pady=20).var
 
+            # TODO: Field to add brand new text entries (ID and text).
+            # TODO: Field to navigate straight to entry (ID).
+            # TODO: Field to search for text in this category (text). Can click repeatedly to go to next (loops around).
+            # TODO: Detect if sequential entries are +1 to ID and add '+N' to text string, and collapse them. They can
+            #  be edited by editing the first one, or you can manually un-collapse them with right click.
+
             with self.set_master():
                 self.previous_range_button = self.Button(
                     text=f"Previous {self.TEXT_DISPLAY_COUNT}", bg='#722', width=30, command=self.previous_text_range,
                     padx=10, pady=20, row=0)
+
                 with self.set_master(row=1):
                     self.fmg_canvas = self.Canvas(scrollbar=True, width=self.TEXT_BOX_WIDTH, height=500,
                                                   highlightthickness=1, padx=40, pady=40, bg=self.TEXT_CANVAS_BG)
@@ -246,9 +257,9 @@ class _SoulstructProjectWindow(BaseWindow):
         self.fmg_canvas.yview_moveto(0)
         self.previous_range_button['state'] = DISABLED
 
-        if self.text_start_index == min(max(len(self.project.Text[self.selected_text_category])
-                                            - self.TEXT_DISPLAY_COUNT, 0),
-                                        self.text_start_index + self.TEXT_DISPLAY_COUNT):
+        if self.text_start_index == min(max(
+                len(self.project.Text[self.selected_text_category]) - self.TEXT_DISPLAY_COUNT, 0),
+                self.text_start_index + self.TEXT_DISPLAY_COUNT):
             self.next_range_button['state'] = DISABLED
         else:
             self.next_range_button['state'] = NORMAL
@@ -263,8 +274,13 @@ class _SoulstructProjectWindow(BaseWindow):
             for row, (text_id, text) in enumerate(
                     self.project.Text.get_range(self.selected_text_category, self.text_start_index,
                                                 self.text_start_index + self.TEXT_DISPLAY_COUNT)):
-                bg = self.TEXT_ALTERNATING_BG[row % 2]
-                text_bg = self.TEXT_SPACE_ONLY_ALTERNATING_BG[row % 2] if text == ' ' else bg
+                bg = self.TEXT_ALTERNATING_BG[row % 2] if text else self.TEXT_EMPTY_ALTERNATING_BG[row % 2]
+                if text == ' ':
+                    text_bg = self.TEXT_SPACE_ONLY_ALTERNATING_BG[row % 2]
+                elif not text:
+                    text_bg = self.TEXT_EMPTY_ALTERNATING_BG[row % 2]
+                else:
+                    text_bg = bg
                 row_box = self.Frame(width=self.TEXT_BOX_WIDTH, height=30, row=row, columnspan=2, sticky=NSEW, bg=bg)
                 self._bind_text_events(row_box, text_id)
 
@@ -277,17 +293,57 @@ class _SoulstructProjectWindow(BaseWindow):
                 text_label = self.Label(text_box, text=text, bg=text_bg, sticky=SW, justify=LEFT)
                 self._bind_text_events(text_label, text_id)
 
-                self.text_boxes[text_id] = {'row_box': row_box, 'id_label': id_label,
-                                            'text_box': text_box, 'text_label': text_label}
+                context_menu = self.Menu()
+                context_menu.add_command(
+                    label="Edit in Floating Box (shift + click)", foreground=self.STYLE_DEFAULTS['text_fg'],
+                    command=lambda i=text_id: self.floating_edit_text(i))
+                context_menu.add_command(
+                    label="Duplicate Entry to Next ID", foreground=self.STYLE_DEFAULTS['text_fg'],
+                    command=lambda i=text_id: self._add_relative_entry(self.selected_text_category, i, offset=1))
+                context_menu.add_command(
+                    label="Delete Entry", foreground=self.STYLE_DEFAULTS['text_fg'],
+                    command=lambda i=text_id: self._delete_entry(self.selected_text_category, i))
+
+                self.text_boxes[text_id] = {'row_box': row_box, 'id_label': id_label, 'text_box': text_box,
+                                            'text_label': text_label, 'context_menu': context_menu}
                 row += 1
 
         self.f_fmg_entries.grid_columnconfigure(1, weight=1)
+
+    def _right_click_text_entry(self, event, text_id):
+        self.select_text(text_id, edit_if_already_selected=False)
+        self.text_boxes[text_id]['context_menu'].tk_popup(event.x_root, event.y_root)
+
+    def _add_relative_entry(self, category, text_id, offset=1, new_text=None):
+        if offset == 0:
+            raise ValueError("Offset for adding relative entry cannot be zero.")
+        if text_id + offset < 0:
+            raise ValueError(f"Offset from entry cannot be negative (offset {offset} from text ID {text_id}).")
+        if text_id + offset in self.project.Text[category]:
+            self.dialog("Existing Text Error", f"Text entry {text_id + offset} already exists for category {category}.",
+                        button_names='OK', button_kwargs='OK')
+            return
+        if new_text is None:
+            new_text = self.project.Text[category][text_id]
+        self.cancel_text_edit(self.selected_text_id)
+        self.project.Text[category][text_id + offset] = new_text
+        if category == self.selected_text_category:
+            self.populate_text()
+            # TODO: Is full refresh necessary? What's the best way to adjust displayed range?
+
+    def _delete_entry(self, category, text_id):
+        self.cancel_text_edit(self.selected_text_id)
+        self.project.Text[category].pop(text_id)
+        if category == self.selected_text_category:
+            self.populate_text()
+            # TODO: Is full refresh necessary? What's the best way to adjust displayed range?
 
     def _bind_text_events(self, widget, text_id):
         widget.bind('<Button-1>', lambda e, i=text_id: self.select_text(i))
         widget.bind('<Shift-Button-1>', lambda e, i=text_id: self.floating_edit_text(i))
         widget.bind('<Prior>', lambda e: self.previous_text_range())
         widget.bind('<Next>', lambda e: self.next_text_range())
+        widget.bind('<Button-3>', lambda e, i=text_id: self._right_click_text_entry(e, i))
 
     def previous_text_range(self):
         if self.selected_text_category is None:
@@ -345,6 +401,8 @@ class _SoulstructProjectWindow(BaseWindow):
             widgets = self.text_boxes[edited_text_id]
             text_box = widgets['text_box']
             label = widgets['text_label']
+            if '\n' in label.var.get():
+                return self.floating_edit_text(edited_text_id)
             label.grid_remove()
             self.text_entry = self.Entry(text_box, initial_text=label.var.get(), sticky=EW, font=('Roboto', 12),
                                          width=60)
@@ -387,14 +445,22 @@ class _SoulstructProjectWindow(BaseWindow):
             label.grid()
             self.editing_text = False
 
-    def select_text(self, selected_text_id):
+    def select_text(self, selected_text_id, edit_if_already_selected=True):
         if self.selected_text_id is not None and selected_text_id == self.selected_text_id:
-            return self.start_text_edit(selected_text_id)
+            if edit_if_already_selected:
+                return self.start_text_edit(selected_text_id)
+            return
 
         self.selected_text_id = selected_text_id
         for row, (text_id, widgets) in enumerate(self.text_boxes.items()):
-            bg = self.TEXT_ALTERNATING_BG[row % 2]
-            text_bg = self.TEXT_SPACE_ONLY_ALTERNATING_BG[row % 2] if widgets['text_label'].var.get() == ' ' else bg
+            text = widgets['text_label'].var.get()
+            bg = self.TEXT_ALTERNATING_BG[row % 2] if text else self.TEXT_EMPTY_ALTERNATING_BG[row % 2]
+            if text == ' ':
+                text_bg = self.TEXT_SPACE_ONLY_ALTERNATING_BG[row % 2]
+            elif not text:
+                text_bg = self.TEXT_EMPTY_ALTERNATING_BG[row % 2]
+            else:
+                text_bg = bg
             if text_id == selected_text_id:
                 widgets['row_box']['bg'] = widgets['id_label']['bg'] = self.TEXT_SELECTED_BG
                 widgets['text_box']['bg'] = widgets['text_label']['bg'] = self.TEXT_SELECTED_BG
