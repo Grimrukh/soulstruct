@@ -651,17 +651,19 @@ class SoulstructSmartFrame(SmartFrame):
         },
     }
 
-    def dialog(self, *args, **kwargs):
-        button_kwargs = kwargs.get('button_kwargs', None)
+    def dialog(self, title, message, font_size=None, font_type=None,
+               button_names=('OK',), button_kwargs=(), style_defaults=None,
+               default_output=None, cancel_output=None):
         if button_kwargs is not None:
             if button_kwargs in self.DEFAULT_BUTTON_KWARGS:
                 button_kwargs = self.DEFAULT_BUTTON_KWARGS[button_kwargs]
             else:
-                for b in button_kwargs:
+                button_kwargs = list(button_kwargs)
+                for i, b in enumerate(button_kwargs):
                     if b in self.DEFAULT_BUTTON_KWARGS:
-                        button_kwargs[b] = self.DEFAULT_BUTTON_KWARGS[b]
-            kwargs['button_kwargs'] = button_kwargs
+                        button_kwargs[i] = self.DEFAULT_BUTTON_KWARGS[b]
         else:
             button_kwargs = self.DEFAULT_BUTTON_KWARGS['OK']
-        kwargs['button_kwargs'] = button_kwargs
-        return self.custom_dialog(*args, **kwargs)
+        return self.custom_dialog(title=title, message=message, font_size=font_size, font_type=font_type,
+                                  button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
+                                  default_output=default_output, cancel_output=cancel_output)

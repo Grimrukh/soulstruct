@@ -4,10 +4,9 @@ from typing import Dict, List, Optional
 
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
-from soulstruct.params.fields import GAME_PARAM_INFO
+from soulstruct.params.fields import GAME_PARAM_NICKNAMES
 
 # TODO: Finish field name documentation.
-# TODO: Suppress decoding error from LevelSyncParam entry names (b'\x80\x1e' and b'\xfe\x1e').
 
 
 class DarkSoulsGameParameters(object):
@@ -15,33 +14,42 @@ class DarkSoulsGameParameters(object):
     AI: ParamTable
     Armor: ParamTable
     ArmorUpgrades: ParamTable
-    Behaviors: ParamTable
     Bosses: ParamTable
     Bullets: ParamTable
     Cameras: ParamTable
-    CharacterAttacks: ParamTable
-    CharacterBehaviors: ParamTable
-    CharacterSheets: ParamTable
     Dialogue: ParamTable
     Faces: ParamTable
     Goods: ParamTable
-    Terrains: ParamTable
+    Humans: ParamTable
+    HumanAttacks: ParamTable
+    HumanBehaviors: ParamTable
     ItemLots: ParamTable
+    NonHumans: ParamTable
+    NonHumanAttacks: ParamTable
+    NonHumanBehaviors: ParamTable
     MenuColors: ParamTable
-    CreatureAttacks: ParamTable
-    CreatureBehaviors: ParamTable
     Movement: ParamTable
-    NPCs: ParamTable
     Objects: ParamTable
     ObjectActivations: ParamTable
     Rings: ParamTable
     Shops: ParamTable
     SpecialEffects: ParamTable
     Spells: ParamTable
+    Terrains: ParamTable
     Throws: ParamTable
     Weapons: ParamTable
     WeaponUpgrades: ParamTable
     VisualEffects: ParamTable
+
+    param_names = [
+        'Humans', 'HumanBehaviors', 'HumanAttacks',
+        'NonHumans', 'NonHumanBehaviors', 'NonHumanAttacks',
+        'Bullets', 'SpecialEffects', 'Throws',
+        'Weapons', 'WeaponUpgrades', 'Armor', 'ArmorUpgrades', 'Rings', 'Goods',
+        'ItemLots', 'Shops', 'Spells', 'Objects', 'ObjectActivations',
+        'Movement', 'Cameras', 'Terrains', 'Faces', 'Dialogue',
+        'MenuColors', 'VisualEffects',
+    ]
 
     def __init__(self, game_param_bnd_source):
         """Unpack DS1 GameParams into a single modifiable structure.
@@ -72,16 +80,15 @@ class DarkSoulsGameParameters(object):
         self.paramdef_bnd = PARAMDEF_BND('dsr' if self._game_param_bnd.dcx else 'ptd')
 
         for entry in self._game_param_bnd:
-            # print(f"Loading PARAMBND entry {entry.id} ({entry.basename}) ...")
             p = self._data[entry.path] = ParamTable(entry.data, self.paramdef_bnd)
-            # print(f"  Success. Param attribute name: {p.param_name}")
             try:
-                param_nickname, field_nicknames = GAME_PARAM_INFO[entry.basename[:-len('.param')]]
+                # Nickname assigned here (ParamTable isn't aware of its own basename).
+                param_nickname = GAME_PARAM_NICKNAMES[entry.basename[:-len('.param')]]
             except KeyError:
+                # ParamTables without nicknames (i.e. useless params) are excluded from this structure.
                 pass
             else:
-                setattr(self, param_nickname, p)
-                # TODO: field nicknames
+                setattr(self, param_nickname, p)  # NOTE: Reference to dictionary in self._data[entry.path].
 
     def update_bnd(self):
         """Update the internal BND by packing the current ParamTables. Called automatically by `save()`."""
@@ -113,6 +120,14 @@ class DarkSoulsGameParameters(object):
         game_param_pickle_path += '.pickle'
         with open(game_param_pickle_path, 'wb') as f:
             pickle.dump(self, f)
+
+    def __getitem__(self, category):
+        return getattr(self, category)
+
+    def get_range(self, category, start, end):
+        """Get a list of (id, entry) pairs from a certain range inside an ID-sorted param dictionary."""
+        param_table = getattr(self, category)
+        return [(param_id, param_table[param_id]) for param_id in sorted(param_table.entries)[start:end]]
 
 
 DRAW_PARAM_TABLES = ('Dof', 'EnvLightTex', 'Fog', 'LensFlare', 'LensFlareEx', 'AmbientLight', 'ScatteredLight',

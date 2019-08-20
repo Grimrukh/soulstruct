@@ -12,11 +12,12 @@ class ActionHistory(object):
         if not callable(undo) or not callable(redo):
             raise TypeError("Action and inverse action functions must be callable, with no arguments.")
         self._undo_stack.append((undo, redo))
+        self._redo_stack = []  # old timeline dies
 
     def undo(self, _=None):
         if self._undo_stack:
             undo, redo = self._undo_stack.pop()
-            undo(record_action=False)
+            undo(from_history=True)
             self._redo_stack.append((undo, redo))
             return True
         else:
@@ -25,7 +26,7 @@ class ActionHistory(object):
     def redo(self, _=None):
         if self._redo_stack:
             undo, redo = self._redo_stack.pop()
-            redo(record_action=False)
+            redo(from_history=True)
             self._undo_stack.append((undo, redo))
             return True
         else:

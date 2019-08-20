@@ -2,8 +2,10 @@ from collections import OrderedDict
 from io import BytesIO
 import struct
 from typing import Dict
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
+
+from soulstruct.params.fields import GAME_PARAM_INFO
 from soulstruct.params.paramdef import ParamDefBND
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
 
 # TODO: GameParam BND indices of params tables are different in PTD/DSR. I'm guessing it may not actually matter, and
 #   that all the params tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
@@ -283,6 +285,7 @@ class ParamTable(object):
         self.param_name = ''  # internal name (shift-jis) with capitals and underscores
         self.paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.entries = {}
+        self.field_info = None
         self.__magic = []
 
         if isinstance(param_source, dict):
@@ -319,6 +322,14 @@ class ParamTable(object):
 
     def __iter__(self):
         return iter(self.entries.items())
+
+    def __len__(self):
+        return len(self.entries)
+
+    @property
+    def field_names(self):
+        # TODO: hack job. get nice field names and structure from fields.py.
+        return self.entries[list(self.entries)[0]].field_names
 
     # TODO: __repr__ method returns basic information about ParamTable (but not entire entry list).
 
@@ -370,6 +381,8 @@ class ParamTable(object):
             else:
                 name = ''
             self.entries[entry_struct.id] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
+
+        self.field_info = GAME_PARAM_INFO.get(self.param_name, None)
 
     def pack(self, sort=True):
         sorted_entries = sorted(self.entries.items()) if sort else self.entries.items()

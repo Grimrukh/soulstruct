@@ -1,6 +1,6 @@
 from .enums import *
 
-__all__ = ['GAME_PARAM_INFO']
+__all__ = ['GAME_PARAM_NICKNAMES', 'GAME_PARAM_INFO']
 
 class AI:
     Logic = '<AI:Logic>'
@@ -24,15 +24,56 @@ class Text:
     Conversations = '<Text:Conversations>'
 
 
+GAME_PARAM_NICKNAMES = {
+    # Nicknames are per BND entry basename, not per internal param table name.
+    'NpcThinkParam': 'AI',
+    'EquipParamProtector': 'Armor',
+    'ReinforceParamProtector': 'ArmorUpgrades',
+    'GameAreaParam': 'Bosses',
+    'Bullet': 'Bullets',  # note not 'BulletParam'
+    # 'CalcCorrectGraph': 'CalcCorrectionGraph',
+    'LockCamParam': 'Cameras',
+    # 'default_EnemyBehaviorBank': 'DefaultEnemyBehavior',
+    # 'default_AIStandardInfoBank': 'DefaultAIStandardInfoBank',
+    'CharaInitParam': 'Humans',
+    'AtkParam_Pc': 'HumanAttacks',
+    'BehaviorParam_PC': 'HumanBehaviors',
+    'TalkParam': 'Dialogue',
+    'FaceGenParam': 'Faces',
+    'EquipParamGoods': 'Goods',
+    'HitMtrlParam': 'Terrains',
+    'ItemLotParam': 'ItemLots',
+    'KnockbackParam': 'Knockback',
+    'MenuColorTableParam': 'MenuColors',
+    'MoveParam': 'Movement',
+    'NpcParam': 'NonHumans',
+    'AtkParam_Npc': 'NonHumanAttacks',
+    'BehaviorParam': 'NonHumanBehaviors',
+    'EquipParamAccessory': 'Rings',
+    'ObjectParam': 'Objects',
+    'ObjActParam': 'ObjectActivations',
+    # 'QwcChange': 'QwcChange',
+    # 'QwcJudge': 'QwcJudge',
+    # 'RagdollParam': 'Ragdolls',
+    'ShopLineupParam': 'Shops',
+    # 'SkeletonParam': 'Skeletons',
+    'SpEffectParam': 'SpecialEffects',
+    'Magic': 'Spells',
+    'HitMtrlParam': 'Terrains',
+    'ThrowParam': 'Throws',
+    'EquipMtrlSetParam': 'UpgradeMaterials',
+    'SpEffectVfxParam': 'VisualEffects',
+    'EquipParamWeapon': 'Weapons',
+    'ReinforceParamWeapon': 'WeaponUpgrades',
+
+    # TODO: DrawParams?
+}
+
+
 GAME_PARAM_INFO = {
+    # PARAM_TABLE_NAME: (ParamEntryNickname, VisibleDefault, ParamTableType, Docstring)
 
-    # Structure is:
-    # { ParamTableName: ( ParamTableAttributeName, {
-    #       ParamEntryName: ( ParamEntryNickname, VisibleDefault, ParamTableType, Docstring )
-    # } ) }
-
-    'NpcThinkParam': (
-        'AI', {
+    'NPC_THINK_PARAM_ST': {
             'logicId': (
                 'LogicID', True, AI.Logic,
                 "ID of logic (non-battle) Lua script."),
@@ -227,9 +268,8 @@ GAME_PARAM_INFO = {
             'pad0[12]': (
                 'Pad0', False, None,
                 "Null padding."),
-        }),
-    'EquipParamProtector': (
-        'Armor', {
+        },
+    'EQUIP_PARAM_PROTECTOR_ST': {
             'sortId': (
                 'SortIndex', True, None,
                 "Index for automatic inventory sorting."),
@@ -263,10 +303,10 @@ GAME_PARAM_INFO = {
                 'WearerSpecialEffect1', True, Params.SpecialEffects,
                 "Special effect granted to wearer (first of three)."),
             'residentSpEffectId2': (
-                '', True, Params.SpecialEffects,
+                'WearerSpecialEffect2', True, Params.SpecialEffects,
                 "Special effect granted to wearer (second of three)."),
             'residentSpEffectId3': (
-                '', True, Params.SpecialEffects,
+                'WearerSpecialEffect3', True, Params.SpecialEffects,
                 "Special effect granted to wearer (third of three)."),
             'materialSetId': (
                 'UpgradeMaterialID', True, '<Param:UpgradeMaterials>',
@@ -647,9 +687,8 @@ GAME_PARAM_INFO = {
             'pad_1[6]': (
                 'Pad1', False, None,
                 "Null padding."),
-        }),
-    'ReinforceParamProtector': (
-        'ArmorUpgrades', {
+        },
+    'REINFORCE_PARAM_PROTECTOR_ST': {
             'physicsDefRate': (
                 'PhysicalDefenseMultiplier', True, float,
                 "Multiplier for physical defense at this upgrade level."),
@@ -695,9 +734,8 @@ GAME_PARAM_INFO = {
             'materialSetId': (
                 'UpgradeMaterialID', True, '<Param:UpgradeMaterials>',
                 "Upgrade material set for reinforcement."),  # TODO: I assume this overrides ID for base Armor.
-        }),
-    'GameAreaParam': (
-        'Bosses', {
+        },
+    'GAME_AREA_PARAM_ST': {
             'bonusSoul_single': (
                 'SingleplayerSoulReward', True, None,
                 "Souls awarded (after delay) when boss is defeated with no summons."),
@@ -737,13 +775,12 @@ GAME_PARAM_INFO = {
             'humanityDropPoint10': (
                 'HumanityDropPoint10', True, None,
                 "Number of 'points' needed from killing enemies in the boss area for final Humanity."),
-        }),
-    'Bullet': (
-        'Bullets', {
+        },
+    'BULLET_PARAM_ST': {
             'atkId_Bullet': (
                 'BulletAttack', True, '<Params:Attacks>',  # TODO: Ambiguous attack parameter.
                 "Attack parameters for bullet impact. Only certain fields in the attack parameter are used. "
-                "Could be directed to either CharacterAttacks table or CreatureAttacks table, depending on "
+                "Could be directed to either HumanAttacks table or NonHumanAttacks table, depending on "
                 "the bullet's owner. Set to 0 if bullet has no attack data (no damage)."),
             'sfxId_Bullet': (
                 'ProjectileFX', True, '<Params:VisualEffects>',
@@ -965,54 +1002,39 @@ GAME_PARAM_INFO = {
                 'Pad3', False, None,
                 "Null padding."),
 
-        }),
-    'LockCamParam': (
-        'Cameras', {}),
-    'AtkParam_Pc': (
-        'CharacterAttacks', {}),
-    'BehaviorParam_PC': (
-        'CharacterBehaviors', {}),
-    'CharaInitParam': (
-        'CharacterSheets', {}),
-    'TalkParam': (
-        'Dialogue', {
+        },
+    'LOCK_CAM_PARAM_ST': {},
+    'ATK_PARAM_ST': {},
+    'BEHAVIOR_PARAM_ST': {},
+    'CHARACTER_INIT_PARAM': {},
+    'TALK_PARAM_ST': {
             'msgId': (
                 'SubtitleText', True, Text.Conversations,
                 "Text ID for dialogue subtitle."),
             'voiceId': (
                 'VoiceSound', True, '<Sound:Voice>',
                 "Sound ID (voice) for dialogue."),
-            'motionId': (
-            ),  # TODO
-            'returnPos': (
-            ),  # TODO
-            'reactionId': (
-            ),  # TODO
-            'eventId': (
-            ),  # TODO
+            # 'motionId': (
+            # ),  # TODO
+            # 'returnPos': (
+            # ),  # TODO
+            # 'reactionId': (
+            # ),  # TODO
+            # 'eventId': (
+            # ),  # TODO
             'isMotionLoop': (
                 'IsMotionLoop', True, bool,
                 "DOC-TODO"),
             'pad0[7]': (
                 'Pad', False, None,
                 "Null padding."),
-        }),
-    'FaceGenParam': (
-        'Faces', {}),
-    'EquipParamGoods': (
-        'Goods', {}),
-    'HitMtrlParam': (
-        'Terrains', {}),
-    'ItemLotParam': (
-        'ItemLots', {}),
-    'MenuColorTableParam': (
-        'MenuColors', {}),
-    'AtkParam_Npc': (
-        'CreatureAttacks', {}),
-    'BehaviorParam': (
-        'CreatureBehaviors', {}),
-    'NpcParam': (
-        'NPCs', {
+        },
+    'FACE_PARAM_ST': {},
+    'EQUIP_PARAM_GOODS_ST': {},
+    'HIT_MTRL_PARAM_ST': {},  # TODO
+    'ITEMLOT_PARAM_ST': {},  # TODO
+    'MENU_COLOR_TABLE_ST': {},
+    'NPC_PARAM_ST': {
             'behaviorVariationId': (
                 'BehaviorVariationID', True, None,
                 "DOC-TODO"),
@@ -1502,27 +1524,16 @@ GAME_PARAM_INFO = {
             'pad2[6]': (
                 '__Pad2', False, None,
                 "DOC-TODO"),
-        }),
-    # 'RagdollParam': ('Ragdolls', {}),
-    'EquipParamAccessory': (
-        'Rings', {}),
-    'ObjectParam': (
-        'Objects', {}),
-    'ObjActParam': (
-        'ObjectActivations', {}),
-    'ShopLineupParam': (
-        'Shops', {}),
-    # 'SkeletonParam': ('Skeletons', {}),
-    'SpEffectParam': (
-        'SpecialEffects', {}),
-    'Magic': (
-        'Spells', {}),
-    'ThrowParam': (
-        'Throws', {}),
-    'EquipMtrlSetParam': (
-        'UpgradeMaterials', {}),
-    'EquipParamWeapon': (
-        'Weapons', {}),
-    'ReinforceParamWeapon': (
-        'WeaponUpgrades', {}),
+        },
+    'EQUIP_PARAM_ACCESSORY': {},
+    'OBJECT_PARAM_ST': {},
+    'OBJ_ACT_PARAMST': {},
+    'SHOP_LINEUP_PARAM': {},
+    'SP_EFFECT_PARAM_ST': {},
+    'MAGIC_PARAM_ST': {},
+    'THROW_INFO_BANK': {},
+    'EQUIP_MTRL_SET_PARAM_ST': {},
+    'EQUIP_PARAM_WEAPON_ST': {},
+    'REINFORCE_PARAM_WEAPON_ST': {},
+    'MOVE_PARAM_ST': {},
 }

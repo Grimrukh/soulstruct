@@ -9,6 +9,7 @@ import shutil
 from soulstruct.core import SoulstructError
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.project.text import SoulstructTextEditor
+from soulstruct.project.params import SoulstructParamsEditor
 from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import find_steam_common_paths, traverse_path_tree, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
@@ -38,19 +39,43 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.text_tab = None
         self.params_tab = None
         self.lighting_tab = None
+        self.set_geometry()
+        # self.withdraw()
 
     def build(self):
         self.page_tabs = self.Notebook(row=0)
+
+        f_params_tab = self.Frame(frame=self.page_tabs)
+        self.page_tabs.add(f_params_tab, text='  Params  ')
+        self.params_tab = self.SmartFrame(
+            frame=f_params_tab, smart_frame_class=SoulstructParamsEditor, project=self.project)
 
         f_text_tab = self.Frame(frame=self.page_tabs)
         self.page_tabs.add(f_text_tab, text='  Text  ')
         self.text_tab = self.SmartFrame(
             frame=f_text_tab, smart_frame_class=SoulstructTextEditor, project=self.project)
 
-        # TODO: Params and lighting. Events. Etc.
+        # TODO: Should obviously go first.
+        f_main_tab = self.Frame(frame=self.page_tabs)
+        self.page_tabs.add(f_main_tab, text='  Main  ')
+        self.build_main_tab(f_main_tab)
+
+        # TODO: Lighting. Events. Game saves. MSB?
 
         self.resizable(False, False)
         self.set_geometry()
+        self.deiconify()
+
+    def build_main_tab(self, main_frame):
+        with self.set_master(main_frame, auto_rows=0, grid_defaults={'padx': 100, 'pady': 50}):
+            self.Button(text="Pull All from Game Directory", bg='#722', width=30, font_size=20,
+                        command=lambda: self.project.load_project(force_game_pull=True))
+            self.Button(text="Pull Params", bg='#722', width=30, font_size=20,
+                        command=self.project.pull_params)
+            self.Button(text="Pull Text", bg='#722', width=30, font_size=20,
+                        command=self.project.pull_text)
+            self.Button(text="Pull Lighting", bg='#722', width=30, font_size=20,
+                        command=self.project.pull_lighting)
 
 
 class SoulstructProject(object):
@@ -65,6 +90,7 @@ class SoulstructProject(object):
         - Eventually have subclasses for different games, with shared methods here.
         - Auto-save decorators that operate at ten minute intervals on write methods.
         - Inspect PTD directory for lack of unpacking when pulled.
+        - Store location of game save data for a future save manager.
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
 
@@ -86,31 +112,56 @@ class SoulstructProject(object):
         try:
             self.project_dir = self._validate_project_directory(project_directory, self._DEFAULT_PROJECT_ROOT)
             self.load_config()
-            try:
-                self.unpickle_all()
-            except FileNotFoundError:
-                # TODO: Should try to unpickle all, then prompt you to pull missing files.
-                self.load_project()
-                self.pickle_all()
+            self.load_project()
         except SoulstructProjectError as e:
-            self.dialog(title="Project Error", message=str(e), button_kwargs='OK')
-            raise
+            self.dialog(title="Project Error", message=str(e) + "\n\nAborting startup.", button_kwargs='OK')
+            raise  # TODO: should not raise an error; just flag startup failure.
         except Exception as e:
-            msg = "Internal Python Error:\n\n" + str(e)
+            msg = "Internal Python Error:\n\n" + str(e) + "\n\nAborting startup."
             self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
-            raise
+            raise  # TODO: should not raise an error; just flag startup failure.
 
         self._window.build()
         self._window.wait_window()
 
-    def load_project(self):
-        """Load project structures (params, text, etc.) into dictionary as attributes.
+    def load_project(self, force_game_pull=False):
+        """Load project structures (params, text, etc.) into class as attributes."""
+        for attr, attr_class, pickled, pull_func in zip(
+                ('Text', 'Params', 'Lighting'),
+                (DarkSoulsText, DarkSoulsGameParameters, DarkSoulsLightingParameters),
+                ('text.d1s', 'params.d1s', 'lighting.d1s'),
+                (self.pull_text, self.pull_params, self.pull_lighting)):
+            try:
+                if force_game_pull:
+                    raise FileNotFoundError
+                with open(self.project_path(pickled), 'rb') as f:
+                    setattr(self, attr, pickle.load(f))
+            except FileNotFoundError:
+                if force_game_pull or self.dialog(
+                        title="Project Error",
+                        message=f"Could not find saved {attr} data in project ('{pickled}').\n"
+                                f"Would you like to pull it from the game directory?",
+                        button_names=('Yes, pull the files', 'No, quit now'), button_kwargs=('YES', 'NO'),
+                        cancel_output=1, default_output=1) == 0:
+                    pull_func()
+                else:
+                    raise SoulstructProjectError("Could not open project files.")
 
-        TODO: Will eventually look for entire pickled project file first.
-        """
-        self.Text = DarkSoulsText(self.project_path('msg/ENGLISH'))
-        self.Params = DarkSoulsGameParameters(self.project_path('param/GameParam/GameParam.parambnd'))
-        self.Lighting = DarkSoulsLightingParameters(self.project_path('param/DrawParam'))
+    def save_in_project(self, obj, pickled_path):
+        with open(self.project_path(pickled_path), 'wb') as f:
+            pickle.dump(obj, f)
+
+    def pull_text(self):
+        self.Text = DarkSoulsText(self.game_path('msg/ENGLISH'))
+        self.save_in_project(self.Text, 'text.d1s')
+
+    def pull_params(self):
+        self.Params = DarkSoulsGameParameters(self.game_path('param/GameParam/GameParam.parambnd'))
+        self.save_in_project(self.Params, 'params.d1s')
+
+    def pull_lighting(self):
+        self.Lighting = DarkSoulsLightingParameters(self.game_path('param/DrawParam'))
+        self.save_in_project(self.Lighting, 'lighting.d1s')
 
     def export_project(self, export_directory: str = None):
         if export_directory is None:
@@ -124,31 +175,10 @@ class SoulstructProject(object):
         os.makedirs(params_path, exist_ok=True)
         self.Params.save(params_path)
 
-        # TODO
+        # TODO: can't save DrawParams yet.
         # lighting_path = os.path.join(export_directory, 'param/DrawParam/')
         # os.makedirs(lighting_path, exist_ok=True)
         # self.Lighting.write(lighting_path)
-
-    def pickle_all(self):
-        with open(self.project_path('Text.dstext'), 'wb') as f:
-            pickle.dump(self.Text, f)
-        with open(self.project_path('Params.dstext'), 'wb') as f:
-            pickle.dump(self.Params, f)
-        with open(self.project_path('Lighting.dstext'), 'wb') as f:
-            pickle.dump(self.Lighting, f)
-
-    def unpickle_all(self):
-        try:
-            with open(self.project_path('Text.dstext'), 'rb') as f:
-                self.Text = pickle.load(f)
-            with open(self.project_path('Params.dstext'), 'rb') as f:
-                self.Params = pickle.load(f)
-            with open(self.project_path('Lighting.dstext'), 'rb') as f:
-                self.Lighting = pickle.load(f)
-        except FileNotFoundError:
-            self.dialog(title="Project Error", message="(TODO) Could not unpickle files. Will try to pull.",
-                        button_kwargs='OK')
-            raise
 
     def load_config(self):
         try:
@@ -178,25 +208,13 @@ class SoulstructProject(object):
                 self.game_dir, self.game_name = self._get_live_game_directory()
             except SoulstructProjectError as e:
                 raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
-            if self.dialog(title="Initial project pull",
-                           message="Pull game files from game directory into project directory now?",
+            if self.dialog(title="Initial project load",
+                           message="Pull game files now? This will override any '.d1s' files\n"
+                                   "that are already in this folder.",
                            button_names=("Yes, pull the files", "No, I'll do it later"),
                            button_kwargs=('YES', 'NO'),
                            cancel_output=1, default_output=1) == 0:
-                self.pull()
-
-    @_with_config_write
-    def pull(self):
-        print("# Pulling game files into project...")  # TODO: log
-        for path_sequence in traverse_path_tree(MODIFIABLE_FILES[self.game_name]):
-            game_file = os.path.join(self.game_dir, *path_sequence)
-            project_file = os.path.join(self.project_dir, *path_sequence)
-            try:
-                os.makedirs(os.path.dirname(project_file), exist_ok=True)
-                shutil.copy2(game_file, project_file)
-            except FileNotFoundError:
-                raise SoulstructProjectError(f"Could not find expected game file: {repr(game_file)}")
-        self.last_pull_time = self._get_timestamp()
+                self.load_project()
 
     @_with_config_write
     def push(self):
@@ -220,6 +238,7 @@ class SoulstructProject(object):
         return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def _build_config_dict(self):
+        # TODO: Separate pull times for different types.
         return {
             'GameName': self.game_name,
             'GameDirectory': self.game_dir,
@@ -298,9 +317,14 @@ class SoulstructProject(object):
             raise SoulstructProjectError("Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
                                          "but your selected executable was not a version of Dark Souls.")
 
-    def dialog(self, title, message, *args, **kwargs):
+    def dialog(self, title, message, font_size=None, font_type=None,
+               button_names=('OK',), button_kwargs=(), style_defaults=None,
+               default_output=None, cancel_output=None):
         message = word_wrap(message, 50)
-        return self._window.dialog(title, message, *args, **kwargs)
+        return self._window.dialog(title=title, message=message, font_size=font_size, font_type=font_type,
+                                   button_names=button_names, button_kwargs=button_kwargs,
+                                   style_defaults=style_defaults,
+                                   default_output=default_output, cancel_output=cancel_output)
 
 
 MODIFIABLE_FILES = {
