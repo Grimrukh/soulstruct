@@ -73,7 +73,7 @@ class ParamDef(object):
         ('increment', 'f'),
         ('debug_display', 'i'),
         ('size', 'i'),
-        ('description_offset', 'i'),  # null-terminated (unlimited length)
+        ('description_offset', 'i'),  # offset of null-terminated string (unlimited length)
         ('internal_type', '32j'),  # could be an enum (see list)
         ('name', '32j'),
         ('id', 'i'),  # TODO: what is this?
@@ -116,7 +116,7 @@ class ParamDef(object):
                 field.description = read_chars_from_bytes(packed_desc_data, offset=fdo, encoding='shift_jis_2004')
             else:
                 field.description = ''
-            # print(f"{self.param_name} {field_index} | {field.debug_name} | {field.description}")
+            # print(f"{self.param_name} {field_index} | {field.debug_name} | {field.description}")  # todo
 
             is_bits = field.name.find(': ')
             if is_bits == -1:

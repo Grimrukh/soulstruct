@@ -102,7 +102,9 @@ class BEHAVIOR_CATEGORY(IntEnum):
 
 
 class BEHAVIOR_REF_TYPE(IntEnum):
-    pass
+    Attack = 0
+    Bullet = 1
+    # TODO: Possibly a 2 somewhere? Throw?
 
 
 class BULLET_ATTACH_EFFECT_TYPE(IntEnum):
@@ -126,11 +128,21 @@ class BULLET_LAUNCH_CONDITION_TYPE(IntEnum):
 
 
 class CHARACTER_INIT_SEX(IntEnum):
-    pass
+    Male = 0
+    Female = 1
 
 
 class CHRINIT_VOW_TYPE(IntEnum):
-    pass
+    NoCovenant = 0
+    WayOfWhite = 1
+    PrincessGuard = 2
+    WarriorOfSunlight = 3
+    Darkwraith = 4
+    PathOfTheDragon = 5
+    GravelordServant = 6
+    ForestHunter = 7
+    DarkmoonBlade = 8
+    ChaosServant = 9
 
 
 class ChrType(IntEnum):
