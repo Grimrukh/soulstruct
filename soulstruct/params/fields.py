@@ -1,7 +1,23 @@
+from functools import partial
+
 from .enums import *
 
 __all__ = ['GAME_PARAM_NICKNAMES', 'GAME_PARAM_INFO']
 
+
+# Overrides for certain basic enums.
+ATK_PARAM_HIT_SOURCE = int
+SP_EFFECT_SPCATEGORY = int
+
+ATK_PARAM_BOOL = bool
+DURABILITY_DIVERGENCE_CATEGORY = bool
+EQUIP_BOOL = bool
+MAGIC_BOOL = bool
+NPC_BOOL = bool
+NPC_THINK_REPLY_BEHAVIOR_TYPE = bool
+ON_OFF = bool
+RAGDOLL_PARAM_BOOL = bool
+SP_EFFECT_BOOL = bool
 
 class AI:
     Logic = '<AI:Logic>'
@@ -9,26 +25,39 @@ class AI:
 
 
 Animation = '<Animation>'
+Flag = '<Flag>'
 Model = '<Model>'
+Texture = '<Texture>'
 
 
 class Params:
     AI = '<Params:AI>'
     Armor = '<Params:Armor>'
     Attacks = '<Params:Attacks>'
+    Behaviors = '<Params:Behaviors>'
     Bosses = '<Params:Bosses>'
     Bullets = '<Params:Bullets>'
     Cameras = '<Params:Cameras>'
+    Conversations = '<Params:Conversations>'
     Faces = '<Params:Faces>'
+    Goods = '<Params:Goods>'
     ItemLots = '<Params:ItemLots>'
     Knockback = '<Params:Knockback>'
     Rings = '<Params:Rings>'
     SpecialEffects = '<Params:SpecialEffects>'
+    Spells = '<Params:Spells>'
+    Terrains = '<Params:Terrains>'
+    SpecialEffectVisuals = '<Params:SpecialEffectVisuals>'
     Weapons = '<Params:Weapons>'
+
+
+class Sound:
+    SFX = '<Sound:SFX>'
 
 
 class Text:
     Conversations = '<Text:Conversations>'
+    EventText = '<Text:EventText>'
     NPCNames = '<Text:NPCNames>'
 
 
@@ -42,6 +71,60 @@ def behavior_ref_id(behavior_param_entry):
     else:
         return ('UnknownReferenceID', True, int,
                 "Could not determine reference ID type (usually Attack or Bullet).")
+
+
+def obj_act_success_condition(condition_field_name, obj_act_param_entry):
+    if obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasGood:
+        return ('RequiredGood', True, Params.Goods,
+                "First condition: object action will succeed if user has this good in their inventory (does not "
+                "include Bottomless Box).")
+    elif obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasSpecialEffect:
+        return ('RequiredSpecialEffect', True, Params.SpecialEffects,
+                "First condition: object action will succeed if user has this special effect.")
+    else:
+        return ('UnknownCondition', True, int,
+                "Could not determine success condition ID type (usually HasGood or HasSpecialEffect).")
+
+
+def item_lot_item_id(item_lot_slot: int, item_lot_param_entry):
+    item_type = item_lot_param_entry[f'lotItemCategory0{item_lot_slot}']
+    if item_type == ITEMLOT_ITEMCATEGORY.Weapon:
+        return (f'ItemSlot{item_lot_slot}', True, Params.Weapons,
+                f"Item slot {item_lot_slot} (Weapon).")
+    elif item_type == ITEMLOT_ITEMCATEGORY.Armor:
+        return (f'ItemSlot{item_lot_slot}', True, Params.Armor,
+                f"Item slot {item_lot_slot} (Armor).")
+    elif item_type == ITEMLOT_ITEMCATEGORY.Ring:
+        return (f'ItemSlot{item_lot_slot}', True, Params.Rings,
+                f"Item slot {item_lot_slot} (Ring).")
+    elif item_type == ITEMLOT_ITEMCATEGORY.Good:
+        return (f'ItemSlot{item_lot_slot}', True, Params.Goods,
+                f"Item slot {item_lot_slot} (Good).")
+    else:
+        return (f'ItemSlot{item_lot_slot}', True, int,
+                f"Item slot {item_lot_slot} (unknown item type {item_type}).")
+
+
+def shop_item_id(shops_param_entry):
+    item_type = shops_param_entry[f'equipType']
+    if item_type == SHOP_LINEUP_EQUIPTYPE.Weapon:
+        return (f'Weapon', True, Params.Weapons,
+                f"Weapon to be listed in shop menu.")
+    if item_type == SHOP_LINEUP_EQUIPTYPE.Armor:
+        return (f'Armor', True, Params.Armor,
+                f"Armor to be listed in shop menu.")
+    if item_type == SHOP_LINEUP_EQUIPTYPE.Ring:
+        return (f'Ring', True, Params.Rings,
+                f"Ring to be listed in shop menu.")
+    if item_type == SHOP_LINEUP_EQUIPTYPE.Good:
+        return (f'Good', True, Params.Goods,
+                f"Good to be listed in shop menu.")
+    if item_type == SHOP_LINEUP_EQUIPTYPE.Spell:
+        return (f'Spell', True, Params.Spells,
+                f"Spell to be listed in attunement menu.")
+    else:
+        return (f'ItemID', True, int,
+                f"Item to be listed in shop/attunement menu (unknown item type {item_type}).")
 
 
 GAME_PARAM_NICKNAMES = {
@@ -87,6 +170,7 @@ GAME_PARAM_NICKNAMES = {
 
     # TODO: DrawParams?
 }
+
 
 GAME_PARAM_INFO = {
     # PARAM_TABLE_NAME: (ParamEntryNickname, VisibleDefault, ParamTableType, Docstring)
@@ -304,18 +388,18 @@ GAME_PARAM_INFO = {
             'VagrantItemEnemyDropItemLot', True, Params.ItemLots,
             "DOC-TODO"),
         'fixPrice': (
-            'RepairCost', True, None,
+            'RepairCost', True, int,
             "Amount of souls required to repair weapon fully. Actual repair cost is this multiplied by current "
             "durability over max durability."),
         'basicPrice': (
-            'BasicCost', False, None,
+            'BasicCost', False, int,
             "Unsure when this is used. Possibly sets the default if the cost is not specified in Shop parameters. "
             "Always set to 200."),
         'sellValue': (
-            'FramptSellValue', True, None,
-            "Amount of souls received when fed to Frampt."),
+            'FramptSellValue', True, int,
+            "Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold."),
         'weight': (
-            'Weight', True, None,
+            'Weight', True, float,
             "Weight of armor."),
         'residentSpEffectId': (
             'WearerSpecialEffect1', True, Params.SpecialEffects,
@@ -493,8 +577,8 @@ GAME_PARAM_INFO = {
             'ReinforcementID', True, '<Params:ArmorUpgrades>',
             "DOC-TODO"),
         'trophySGradeId': (
-            'AchievementID', True, None,
-            "DOC-TODO"),
+            'AchievementContributionID', True, None,
+            "Index of armor as it contributes to certain multi-item achievements."),
         'shopLv': (
             'ShopLevel', False, None,
             "Level of armor that can be sold in 'the shop'. Always -1 or 0. Probably unused."),
@@ -505,13 +589,13 @@ GAME_PARAM_INFO = {
             'RepelDamageMultiplier', True, None,
             "I think this affects damage taken during a missed parry."),
         'equipModelCategory': (
-            'EquipmentModelCategory', True, '<ParamEnum:EQUIP_MODEL_CATEGORY>',
+            'EquipmentModelCategory', True, EQUIP_MODEL_CATEGORY,
             "DOC-TODO"),
         'equipModelGender': (
-            '', True, '<ParamEnum:EQUIP_MODEL_GENDER>',
+            'EquipmentModelGender', True, EQUIP_MODEL_GENDER,
             "DOC-TODO"),
         'protectorCategory': (
-            'ArmorType', True, '<ParamEnum:PROTECTOR_CATEGORY>',
+            'ArmorType', True, PROTECTOR_CATEGORY,
             "DOC-TODO"),
         'defenseMaterial': (
             'DefenseMaterialVisualEffect', True, None,
@@ -959,10 +1043,10 @@ GAME_PARAM_INFO = {
             "sliding bullet hits the wall.' Like ExternalForce, this is used only for Gargoyle and Undead Dragon "
             "breath (100) and is zero for everything else."),
         'atkAttribute': (
-            'AttackAttribute', True, '<Enum:AttackAttribute>',
+            'AttackAttribute', True, ATKPARAM_ATKATTR_TYPE,
             "Attack type. Almost always 4 ('other'), but sometimes 3 (knives/arrows/bolts)."),
         'spAttribute': (
-            'ElementAttribute', True, '<Enum:SpecialAttribute>',
+            'ElementAttribute', True, ATKPARAM_SPATTR_TYPE,
             "Element attached to bullet hit."),
         'Material_AttackType': (
             'MaterialAttackType', True, None,
@@ -974,13 +1058,13 @@ GAME_PARAM_INFO = {
             'MaterialSize', True, None,
             "DOC-TODO"),
         'launchConditionType': (
-            'LaunchConditionType', True, '<ParamEnum:BULLET_LAUNCH_CONDITION_TYPE>',
+            'LaunchConditionType', True, BULLET_LAUNCH_CONDITION_TYPE,
             "Condition for determing if a new bullet will be generated when this bullet lands or expires."),
         'FollowType:3': (
-            'FollowType', True, '<ParamEnum:BULLET_FOLLOW_TYPE>',
+            'FollowType', True, BULLET_FOLLOW_TYPE,
             "Follow type."),
         'EmittePosType:3': (
-            'OriginType', True, '<ParamEnum:BULLET_EMITTE_POS_TYPE>',
+            'OriginType', True, BULLET_EMITTE_POS_TYPE,
             "Origin type of bullet. Usually comes from model points ('damipoly')."),
         'isAttackSFX:1': (
             'RemainAttachedToTarget', True, bool,
@@ -1041,7 +1125,7 @@ GAME_PARAM_INFO = {
         'mp': ('DurabilityCost', True, int,
                "Weapon/shield durability cost of behavior."),
         'category': ('Category', True, BEHAVIOR_CATEGORY,
-                     "Unknown."),  # TODO: look at usage.
+                     "Determines compatibility with special effects that affect certain types of attacks."),
         'heroPoint': ('HumanityCost', True, int,
                       "Humanity cost of behavior."),  # TODO: ever used? does it even work?
         'pad1[2]': ('Pad2', False, '<Pad:2>', "Null padding."),
@@ -1159,38 +1243,289 @@ GAME_PARAM_INFO = {
         'voiceId': (
             'VoiceSound', True, '<Sound:Voice>',
             "Sound ID (voice) for dialogue."),
-        # 'motionId': (
-        # ),  # TODO
-        # 'returnPos': (
-        # ),  # TODO
-        # 'reactionId': (
-        # ),  # TODO
-        # 'eventId': (
-        # ),  # TODO
+        'motionId': (
+            'TalkingAnimation', True, Animation,
+            "Animation used for talking (-1 for default, or no animation). Usually 7000 (e.g. Fair Lady) or 7001 (e.g. "
+            "Andre) when used."),
+        'returnPos': (
+            'ReturnConversation', False, Params.Conversations,
+            "Conversation ID to use instead if the player has 'returned' to this conversation. Used exactly once for "
+            "one line by the Crestfallen Warrior, so presumably works, but probably not useful."),
+        'reactionId': (
+            'ReactionConverastion', False, Params.Conversations,
+            "Conversation ID to use as 'reaction'. Always -1."),
+        'eventId': (
+            'EventFlag', False, Flag,
+            "Flag that is enabled when conversation plays (I assume). Used exactly once, for the same Crestfallen "
+            "Warrior line that uses the ReturnConversation field."),
         'isMotionLoop': (
             'IsMotionLoop', True, bool,
-            "DOC-TODO"),
+            "If True, specified TalkingAnimation will loop while dialogue is being spoken. Always True for any entry "
+            "that has a non-zero TalkingAnimation."),
         'pad0[7]': (
-            'Pad', False, None,
+            'Pad', False, '<Pad:7>',
             "Null padding."),
     },
     'FACE_PARAM_ST': {},
     'EQUIP_PARAM_GOODS_ST': {},
-    'HIT_MTRL_PARAM_ST': {},  # TODO
-    'ITEMLOT_PARAM_ST': {},  # TODO
-    'MENU_COLOR_TABLE_ST': {},
+    'HIT_MTRL_PARAM_ST': {
+        'aiVolumeRate': (
+            'SoundRadiusMultiplier', True, float,
+            "Multiplier for foot sound effect radius on this terrain."),
+        'spEffectIdOnHit0': (
+            'SpecialEffect1', True, None,
+            "Special effect applied to character walking on terrain (first of two)."),
+        'spEffectIdOnHit1': (
+            'SpecialEffect2', True, None,
+            "Special effect applied to character walking on terrain (second of two)."),
+        'footEffectHeightType:2': (
+            'FootEffectHeightType', True, HMP_FOOT_EFFECT_HEIGHT_TYPE,
+            "Determines the height at which foot impact effects are generated."),
+        'footEffectDirType:2': (
+            'FootEffectDirectionType', True, HMP_FOOT_EFFECT_DIR_TYPE,
+            "Determines the direction of foot impact effects."),
+        'floorHeightType:2': (
+            'TerrainHeightType', True, HMP_FLOOR_HEIGHT_TYPE,
+            "Determines distance from floor collision at which effects are applied."),
+        'pad0[3]': (
+            'Pad1', False, '<Pad:3>',
+            "Null padding."),
+    },
+    'ITEMLOT_PARAM_ST': {
+        'lotItemCategory01': (
+            'Item1Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 1)."),
+        'lotItemId01': partial(item_lot_item_id, 1),
+        'lotItemNum01': (
+            'Item1Count', True, int,
+            "Count of item (slot 1)."),
+        'lotItemBasePoint01': (
+            'Item1ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId01': (
+            'Item1Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck01:1': (
+            'Item1LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint01': (
+            'Item1CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset01:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory02': (
+            'Item2Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 2)."),
+        'lotItemId02': partial(item_lot_item_id, 2),
+        'lotItemNum02': (
+            'Item2Count', True, int,
+            "Count of item (slot 2)."),
+        'lotItemBasePoint02': (
+            'Item2ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId02': (
+            'Item2Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck02:1': (
+            'Item2LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint02': (
+            'Item2CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset02:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory03': (
+            'Item3Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 3)."),
+        'lotItemId03': partial(item_lot_item_id, 3),
+        'lotItemNum03': (
+            'Item3Count', True, int,
+            "Count of item (slot 3)."),
+        'lotItemBasePoint03': (
+            'Item3ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId03': (
+            'Item3Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck03:1': (
+            'Item3LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint03': (
+            'Item3CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset03:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory04': (
+            'Item4Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 4)."),
+        'lotItemId04': partial(item_lot_item_id, 4),
+        'lotItemNum04': (
+            'Item4Count', True, int,
+            "Count of item (slot 4)."),
+        'lotItemBasePoint04': (
+            'Item4ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId04': (
+            'Item4Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck04:1': (
+            'Item4LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint04': (
+            'Item4CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset04:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory05': (
+            'Item5Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 5)."),
+        'lotItemId05': partial(item_lot_item_id, 5),
+        'lotItemNum05': (
+            'Item5Count', True, int,
+            "Count of item (slot 5)."),
+        'lotItemBasePoint05': (
+            'Item5ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId05': (
+            'Item5Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck05:1': (
+            'Item5LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint05': (
+            'Item5CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset05:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory06': (
+            'Item6Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 6)."),
+        'lotItemId06': partial(item_lot_item_id, 6),
+        'lotItemNum06': (
+            'Item6Count', True, int,
+            "Count of item (slot 6)."),
+        'lotItemBasePoint06': (
+            'Item6ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId06': (
+            'Item6Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck06:1': (
+            'Item6LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint06': (
+            'Item6CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset06:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory07': (
+            'Item7Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 7)."),
+        'lotItemId07': partial(item_lot_item_id, 7),
+        'lotItemNum07': (
+            'Item7Count', True, int,
+            "Count of item (slot 7)."),
+        'lotItemBasePoint07': (
+            'Item7ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId07': (
+            'Item7Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck07:1': (
+            'Item7LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint07': (
+            'Item7CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset07:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'lotItemCategory08': (
+            'Item8Category', True, ITEMLOT_ITEMCATEGORY,
+            "Type of item (slot 8)."),
+        'lotItemId08': partial(item_lot_item_id, 8),
+        'lotItemNum08': (
+            'Item8Count', True, int,
+            "Count of item (slot 8)."),
+        'lotItemBasePoint08': (
+            'Item8ChancePoints', True, int,
+            "Relative chance (divided by total chance points across all eight slots) that this item will be dropped."),
+        'getItemFlagId08': (
+            'Item8Flag', False, Flag,
+            "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
+        'enableLuck08:1': (
+            'Item8LuckEnabled', True, None,
+            "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
+            "item slot so that rarer items have a relatively better chance of dropping."),
+        'cumulateLotPoint08': (
+            'Item8CumulativePoints', True, None,
+            "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
+            "This "),
+        'cumulateReset08:1': (
+            'ResetCumulativePointsOnDrop', True, bool,
+            "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
+
+        'getItemFlagId': (
+            'ItemFlag', True, Flag,
+            "Flag enabled when any item from this item lot is picked up."),
+        'cumulateNumFlagId': (
+            'FirstCumulativeFlag', True, Flag,
+            "First of eight consecutive flags used to store the cumulative points for this item lot."),
+        'cumulateNumMax': (
+            'MaxCumulativeAdditions', True, int,
+            "Maximum number of times that cumulative points will be added to the total. I suspect that the cumulative "
+            "slot may be awarded automatically after this; if not, I don't know how the Symbol of Avarice always drops "
+            "after all seven Mimics are killed."),
+        'lotItem_Rarity': (
+            'ItemLotRarity', True, int,
+            "Overall rarity of item lot, from 0 to 3. Used fairly consistently, but seems to have no effect. Set to 2 "
+            "for all character drops except Crystal Lizards, who have 3."),
+    },
+    'MENU_PARAM_COLOR_TABLE_ST': {
+        'r': ('RedChannel', True, int, "Red value of RGBA color (0-255)."),
+        'g': ('GreenChannel', True, int, "Green value of RGBA color (0-255)."),
+        'b': ('BlueChannel', True, int, "Blue value of RGBA color (0-255)."),
+        'a': ('AlphaChannel', True, int, "Alpha value of RGBA color (0-255). Higher means less transparent."),
+    },
     'NPC_PARAM_ST': {
         'behaviorVariationId': (
-            'BehaviorVariationID', True, None,
+            'BehaviorVariationID', True, int,
             "DOC-TODO"),
         'aiThinkId': (
-            'AiThinkID', True, '<Param:AI>',
+            'AiThinkID', True, Params.AI,
             "DOC-TODO"),
         'nameId': (
-            'NameID', True, '<Text:NPCNames>',
+            'NameID', True, Text.NPCNames,
             "DOC-TODO"),
         'turnVellocity': (
-            'TurnVelocity', True, None,
+            'TurnVelocity', True, None,  # TODO: types from here on.
             "DOC-TODO"),
         'hitHeight': (
             'HitHeight', True, None,
@@ -1670,11 +2005,791 @@ GAME_PARAM_INFO = {
             '__Pad2', False, None,
             "DOC-TODO"),
     },
-    'EQUIP_PARAM_ACCESSORY_ST': {},
-    'OBJECT_PARAM_ST': {},
-    'OBJ_ACT_PARAMST': {},
-    'SHOP_LINEUP_PARAM': {},
-    'SP_EFFECT_PARAM_ST': {},
+    'EQUIP_PARAM_ACCESSORY_ST': {
+        'refId': (
+            'SpecialEffect', True, Params.SpecialEffects,
+            "Special effect applied when ring is equipped."),
+        'sfxVariationId': (
+            'SFXVariation', False, int,
+            "SFX variation ID combined with the value specified in TAE animation data. Always -1; likely works with "
+            "unused Behavior parameter below."),
+        'weight': (
+            'Weight', False, float,
+            "Weight of ring. Always set to zero in vanilla Dark Souls, but likely works just like other equipment."),
+        'behaviorId': (
+            'Behavior', False, Params.Behaviors,
+            "Behavior of ring 'skill'. Always zero in the vanilla game."),
+        'basicPrice': (
+            'BasicCost', False, int,
+            "Unknown purpose, and unused."),
+        'sellValue': (
+            'FramptSellValue', True, int,
+            "Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold."),
+        'sortId': (
+            'SortIndex', True, int,
+            "Index for automatic inventory sorting."),
+        'qwcId': (
+            'QWCID', False, int,
+            "Unused world tendency remnant."),
+        'equipModelId': (
+            'EquipmentModel', False, Model,
+            "Always zero. (Rings have no model, presumably.)"),
+        'iconId': (
+            'MenuIcon', True, Texture,
+            "Icon ID of ring in menu."),
+        'shopLv': (
+            'ShopLevel', False, int,
+            "Internal description: 'Level that can be solved in the shop.' Unknown and unused (rings have no level)."),
+        'trophySGradeId': (
+            'AchievementContributionID', False, int,
+            "Index of ring as it contributes to certain multi-item achievements (none for rings)."),
+        'trophySeqId': (
+            'AchievementUnlockID', False, int,
+            "Achievement unlocked when ring is acquired (Covenant of Artorias)."),
+        'equipModelCategory': (
+            'EquipmentModelCategory', False, EQUIP_MODEL_CATEGORY,
+            "Always zero."),
+        'equipModelGender': (
+            'EquipmentModelGender', False, EQUIP_MODEL_GENDER,
+            "Always zero."),
+        'accessoryCategory': (
+            'AccessoryCategory', False, ACCESSORY_CATEGORY,
+            "Always zero."),
+        'refCategory': (
+            'ReferenceType', False, BEHAVIOR_REF_TYPE,
+            "Always set to Special Effects. No idea what happens if you set it to Attacks for a ring..."),
+        'spEffectCategory': (
+            'SpecialEffectCategory', False, SP_EFFECT_SPCATEGORY,
+            "Determines what type of special effects affect the stats of this equipment. Unused for rings."),
+        'pad[1]': (
+            'Pad1', False, '<Pad:1>',
+            "Null padding."),
+        'vagrantItemLotId': (
+            'VagrantItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'vagrantBonusEneDropItemLotId': (
+            'VagrantBonusEnemyDropItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'vagrantItemEneDropItemLotId': (
+            'VagrantItemEnemyDropItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'isDeposit:1': (
+            'CanBeStored', False, bool,
+            "If True, this ring can be stored in the Bottomless Box. Always True for rings."),
+        'isEquipOutBrake:1': (
+            'BreaksWhenUnequipped', True, bool,
+            "If True, this ring will break when it is unequipped (e.g. Ring of Favor and Protection)."),
+        'disableMultiDropShare:1': (
+            'DisableMultiplayerShare', False, None,
+            "If True, this ring cannot be given to other players by dropping it. Always False in vanilla."),
+        'pad1[3]': (
+            'Pad2', False, '<Pad:3>',
+            "Null padding."),
+    },
+    'OBJECT_PARAM_ST': {
+        'hp': (
+            'ObjectHP', True, int,
+            "Amount of damage object can take before it is destroyed. (Set to -1 for invulnerability.)"),
+        'defense': (
+            'MinAttackForDamage', True, int,
+            "Minimum attack power required to damage object. Attacks with less power than this will deal no damage."),
+        'extRefTexId': (
+            'ExternalTextureID', False, int,
+            "Internal description: 'mAA / mAA_????.tpf (-1: None) (AA: Area number)'."),
+        'materialId': (
+            'MaterialID', True, Params.Terrains,
+            "Treated the same as floor material. (Set to -1 to use default.)"),
+        'animBreakIdMax': (
+            'MaxDestructionAnimationID', False, Animation,
+            "Upper limit of range of destruction animations, which seem to always start at 0."),
+        'isCamHit:1': (
+            'CollidesWithCamera', True, bool,
+            "If True, the camera will collide with this object."),
+        'isBreakByPlayerCollide:1': (
+            'BrokenByPlayerCollision', True, bool,
+            "If True, the player will break the object just by touching it."),
+        'isAnimBreak:1': (
+            'HasDestructionAnimation', True, bool,
+            "If True, the object will use an animation when destroyed rather than using physics-based destruction."),
+        'isPenetrationBulletHit:1': (
+            'HitByPiercingBullets', True, bool,
+            "If True, the object can be damaged by Bullets with target-piercing enabled."),
+        'isChrHit:1': (
+            '', True, None, ""),
+        'isAttackBacklash:1': (
+            '', True, None, ""),
+        'isDisableBreakForFirstAppear:1': (
+            '', True, None, ""),
+        'isLadder:1': (
+            '', True, None, ""),
+        'isAnimPauseOnRemoPlay:1': (
+            'StopAnimationDuringCutscenes', True, bool,
+            "If True, object animation will not play in cutscenes."),
+        'isDamageNoHit:1': (
+            'PreventAllDamage', True, bool,
+            "If True, all damage to the object will be prevented. (Not sure if this is the same effet as settings its "
+            "HP to -1.)"),
+        'isMoveObj:1': (
+            'IsMovingObject', True, bool,
+            "If True, this object can move."),
+        'pad_1:5': (
+            'Pad1', False, '<Pad:5>', "Null padding."),
+        'defaultLodParamId': (
+            'DefaultLOD', True, int,  # TODO: LOD.
+            "Default LOD (level of default) parameter."),
+        'breakSfxId': (
+            'DestructionSoundEffect', True, Sound.SFX,
+            "Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)"),
+
+    },
+    'OBJ_ACT_PARAM_ST': {
+        'actionEnableMsgId': (
+            'SuccessMessage', True, Text.EventText,
+            "Message displayed in dialog box upon successful action (e.g. 'Door opened')."),
+        'actionFailedMsgId': (
+            'FailureMessage', True, Text.EventText,
+            "Message displayed in dialog box upon failed action (e.g. 'Door locked')."),
+        'spQualifiedPassEventFlag': (
+            'FlagForAutomaticSuccess', True, Flag,
+            "Action will always be successful if this flag is enabled."),
+        'validDist': (
+            'MaxActionDistance', True, float,
+            "Maximum distance from action model point at which the object action will be prompted."),
+        'playerAnimId': (
+            'PlayerActionAnimation', True, Animation,
+            "Animation played by a player character when they successfully activate the object."),
+        'chrAnimId': (
+            'NonPlayerActionAnimation', True, Animation,
+            "Animation played by a non-player character when they successfully activate the object."),
+        'spQualifiedId': partial(obj_act_success_condition, 'spQualifiedId'),
+        'spQualifiedId2': partial(obj_act_success_condition, 'spQualifiedId2'),
+        'objDummyId': (
+            'ObjectActionModelPoint', True, int,
+            "Model point that specifies where the action occurs on the object (for snapping the player and distance "
+            "check)."),
+        'objAnimId': (
+            'ObjectActionAnimation', True, Animation,
+            "Animation played by the object when it is successfully activated."),
+        'validPlayerAngle': (
+            'MaxPlayerAngle', True, int,
+            "Maximum angle between the character's forward direction and the direction to the object "
+            "action point for the action prompt to appear."),
+        'spQualifiedType': (
+            'SuccessCondition1Type', True, OBJACT_SP_QUALIFIED_TYPE,
+            "Type of first success condition."),
+        'spQualifiedType2': (
+            'SuccessCondition2Type', True, OBJACT_SP_QUALIFIED_TYPE,
+            "Type of second success condition."),
+        'validObjAngle': (
+            'MaxObjectAngle', True, None,
+            "Maximum angle between the object's forward direction and the direction to the player for "
+            "the action prompt to appear."),
+        'chrSorbType': (
+            'CharacterSnapType', True, OBJACT_CHR_SORB_TYPE,
+            "Type of method used to snap the character to the object before animations are played."),
+        'eventKickTiming': (
+            'EventTriggerDelay', True, int,
+            "I believe this is the delay between successful object activation and the outgoing "
+            "'success' trigger used by game events."),
+        'pad1[2]': (
+            'Pad1', False, '<Pad:2>',
+            "Null padding."),
+
+    },
+    'SHOP_LINEUP_PARAM': {
+        'equipId': shop_item_id,
+        'value': (
+            'SoulCost', True, int,
+            "Cost of item, in souls."),
+        'mtrlId': (
+            'RequiredGood', True, Params.Goods,
+            "Good that must be possessed for item to be listed. Used to control appearance of spells in attunement "
+            "menu."),
+        'eventFlag': (
+            'QuantityFlag', True, Flag,
+            "Flag value that holds the count of this item that have been sold already."),
+        'qwcId': (
+            'QWCID', False, int,
+            "Unused world tendency condition."),
+        'sellQuantity': (
+            'InitialQuantity', True, int,
+            "Quantity of this item initially available to be sold. Set to -1 for infinite quantity."),
+        'shopType': (
+            'ShopMenuType', True, SHOP_LINEUP_SHOPTYPE,
+            "Determines if this is a standard shop menu or the spell attunement menu."),
+        'equipType': (
+            'ItemType', True, SHOP_LINEUP_EQUIPTYPE,
+            "Type of item listed in menu."),
+        'pad_0[8]': (
+            'Pad1', False, '<Pad:8>',
+            "Null padding."),
+    },
+    'SP_EFFECT_PARAM_ST': {
+        'iconId': (
+            'StatusIcon', True, Texture,
+            "Icon that appears in HUD under stamina bar while special effect is active. Set to -1 for no icon."),
+        'conditionHp': (
+            'MaxHPPercentageForEffect', True, float,
+            "Special effect will only take effect if character's current HP is less than or equal to this percentage "
+            "(from 0 to 100). Set to -1 for no HP condition."),
+        'effectEndurance': (
+            'EffectDuration', True, float,
+            "Duration of special effect. Set to 0 for an effect that occurs for only one frame (e.g. to award souls) "
+            "or to -1 for an effect that will last until specifically removed or its source is lost (e.g. rings)."),
+        'motionInterval': (
+            'UpdateInterval', True, float,
+            "Time (in seconds) between applications of the special effect, while active. Set to higher values to have "
+            "the effect apply less frequently. Set to 0 to have it occur every frame."),
+        'maxHpRate': (
+            'MaxHPMultiplier', True, float,
+            "Multiplier applied to maximum HP."),
+        'maxMpRate': (
+            'MaxMPMultiplier', False, float,
+            "Multiplier applied to maximum MP. (Unused in Dark Souls; does NOT refer to spell usages.)"),
+        'maxStaminaRate': (
+            'MaxStaminaMultiplier', True, float,
+            "Multiplier applied to maximum stamina."),
+        'slashDamageCutRate': (
+            'IncomingSlashDamageMultiplier', True, float,
+            "Multiplier applied to incoming slashing physical damage."),
+        'blowDamageCutRate': (
+            'IncomingStrikeDamageMultiplier', True, float,
+            "Multiplier applied to incoming striking physical damage."),
+        'thrustDamageCutRate': (
+            'IncomingThrustDamageMultiplier', True, float,
+            "Multiplier applied to incoming thrusting physical damage."),
+        'neutralDamageCutRate': (
+            'IncomingNeutralDamageMultiplier', True, float,
+            "Multiplier applied to incoming neutral physical damage."),
+        'magicDamageCutRate': (
+            'IncomingMagicDamageMultiplier', True, float,
+            "Multiplier applied to incoming magic damage."),
+        'fireDamageCutRate': (
+            'IncomingFireDamageMultiplier', True, float,
+            "Multiplier applied to incoming fire damage."),
+        'thunderDamageCutRate': (
+            'IncomingLightningDamageMultiplier', True, float,
+            "Multiplier applied to incoming lightning damage."),
+        'physicsAttackRate': (
+            'OutgoingPhysicalDamageMultiplier', True, float,
+            "Multiplier applied to outgoing physical damage (of any type)."),
+        'magicAttackRate': (
+            'OutgoingMagicDamageMultiplier', True, float,
+            "Multiplier applied to outgoing magic damage."),
+        'fireAttackRate': (
+            'OutgoingFireDamageMultiplier', True, float,
+            "Multiplier applied to outgoing fire damage."),
+        'thunderAttackRate': (
+            'OutgoingLightningDamageMultiplier', True, float,
+            "Multiplier applied to outgoing lightning damage."),
+        'physicsAttackPowerRate': (
+            'PhysicalAttackPowerMultiplier', True, float,
+            "Multiplier applied to character's physical attack power (of any type)."),
+        'magicAttackPowerRate': (
+            'MagicAttackPowerMultiplier', True, float,
+            "Multiplier applied to character's magic attack power."),
+        'fireAttackPowerRate': (
+            'FireAttackPowerMultiplier', True, float,
+            "Multiplier applied to character's fire attack power."),
+        'thunderAttackPowerRate': (
+            'LightningAttackPowerMultiplier', True, float,
+            "Multiplier applied to character's lightning attack power."),
+        'physicsAttackPower': (
+            'PhysicalAttackPowerAddition', True, int,
+            "Value to add to or subtract fromcharacter's physical attack power (of any type)."),
+        'magicAttackPower': (
+            'MagicAttackPowerAddition', True, int,
+            "Value to add to or subtract fromcharacter's magic attack power."),
+        'fireAttackPower': (
+            'FireAttackPowerAddition', True, int,
+            "Value to add to or subtract fromcharacter's fire attack power."),
+        'thunderAttackPower': (
+            'LightningAttackPowerAddition', True, int,
+            "Value to add to or subtract fromcharacter's lightning attack power."),
+        'physicsDiffenceRate': (
+            'PhysicalDefenseMultiplier', True, float,
+            "Multiplier applied to character's physical defense (all types)."),
+        'magicDiffenceRate': (
+            'MagicDefenseMultiplier', True, float,
+            "Multiplier applied to character's magic defense."),
+        'fireDiffenceRate': (
+            'FireDefenseMultiplier', True, float,
+            "Multiplier applied to character's fire defense."),
+        'thunderDiffenceRate': (
+            'LightningDefenseMultiplier', True, float,
+            "Multiplier applied to character's lightning defense."),
+        'physicsDiffence': (
+            'PhysicalDefenseAddition', True, float,
+            "Value to add to or subtract from character's physical defense."),
+        'magicDiffence': (
+            'MagicDefenseAddition', True, float,
+            "Value to add to or subtract from character's magic defense."),
+        'fireDiffence': (
+            'FireDefenseAddition', True, float,
+            "Value to add to or subtract from character's fire defense."),
+        'thunderDiffence': (
+            'LightningDefenseAddition', True, float,
+            "Value to add to or subtract from character's lightning defense."),
+        'NoGuardDamageRate': (
+            'NoGuardIncomingDamageMultiplier', False, float,
+            "Multiplier to use instead of usual multiplier if character is not guarding. (Always set to 0 in vanilla "
+            "game, which must deactivate it. Only an educated guess that it refers to incoming damage, not outgoing.)"),
+        'vitalSpotChangeRate': (
+            'CriticalHitIncomingDamageMultiplier', False, float,
+            "Multiplier to use instead of usual multiplier if character is hit in a weak spot. (Always set to -1 in "
+            "vanilla game, which deactivates it. Only an educated guess that it affects incoming damage.)"),
+        'normalSpotChangeRate': (
+            'NonCriticalHitIncomingDamageMultiplier', False, float,
+            "Multiplier to use instead of usual multiplier if character is *not* hit in a weak spot. (Always set to -1 "
+            "in vanilla game, which deactivates it. Only an educated guess that it affects incoming damage.)"),
+        'maxHpChangeRate': (
+            'MaxHPChangeRatio', False, float,
+            "Appears to be an unused variant of MaxHPMultiplier. Always set to 0."),
+        'behaviorId': (
+            'BehaviorToTrigger', True, Params.Behaviors,
+            "Behavior ID to trigger (which can in turn trigger an Attack or Bullet) whenever special effect is "
+            "applied. Set to -1 to use no behavior."),
+        'changeHpRate': (
+            'HPReductionPercentage', True, int,
+            "Percentage reduction of maximum HP (from 0 to 100). Negative values (to -100) will restore that "
+            "percentage instead. Applied every time the special effect updates."),
+        'changeHpPoint': (
+            'HPPointsLost', True, int,
+            "HP value to subtract (if positive) or add (if negative) to character's current HP on every update of the "
+            "special effect."),
+        'changeMpRate': (
+            'MPReductionPercentage', False, int,
+            "Percentage reduction of maximum MP (from 0 to 100). Negative values (to -100) will restore that "
+            "percentage instead. Applied every time the special effect updates. (Unused in Dark Souls 1.)"),
+        'changeMpPoint': (
+            'MPPointsLost', False, int,
+            "MP value to subtract (if positive) or add (if negative) to character's current MP on every update of the "
+            "special effect. (Unused in Dark Souls 1.)"),
+        'mpRecoverChangeSpeed': (
+            'MPRecoverySpeedChange', False, int,
+            "Points added to or subtracted from MP recovery formula. (Unused in Dark Souls 1.)"),
+        'changeStaminaRate': (
+            'StaminaReductionPercentage', True, int,
+            "Percentage reduction of maximum stamina (from 0 to 100). Negative values (to -100) will restore that "
+            "percentage instead. Applied every time the special effect updates."),
+        'changeStaminaPoint': (
+            'StaminaPointsLost', True, int,
+            "Stamina value to subtract (if positive) or add (if negative) to character's current stamina on every "
+            "update of the special effect."),
+        'staminaRecoverChangeSpeed': (
+            'StaminaRecoverySpeedChange', True, int,
+            "Points added to or subtracted from stamina recovery formula. I believe this affects the amount of stamina "
+            "restored every second. (For reference, a Green Blossom adds 40 points.)"),
+        'magicEffectTimeChange': (
+            'MagicEffectTimeChange', False, float,
+            "Name suggests this changes the duration of magic effects, but it is never used (always zero)."),
+        'insideDurability': (
+            'CurrentDurabilityAddition', True, int,
+            "Amount of durability to subtract (if positive) or add (if negative) to current durability on every update "
+            "of the special effect. The equipment affected is determined by... "),  # TODO
+        'maxDurability': (
+            'MaxDurabilityAddition', True, int,
+            "Amount of durability to subtract (if positive) or add (if negative) to the character's maximum "
+            "durability while the special effect is active. The equipment affected is determined by... "),  # TODO
+        'staminaAttackRate': (
+            'OutgoingStaminaDamageMultiplier', True, float,
+            "Multiplier applied to the amount of damage dealt to targets' stamina."),
+        'poizonAttackPower': (
+            'PoisonDamage', True, int,
+            "Amount of poison damage (in units of resistance) added to the character on every update. Negative values "
+            "will heal poison damage instead (e.g. Purple Moss Clump). Unclear how this distinguishes between "
+            "reducing build-up and actually healing the status."),
+        'registIllness': (
+            'ToxicDamage', True, int,
+            "Amount of toxic damage (in units of resistance) added to the character on every update. Negative values "
+            "will heal toxic damage instead (e.g. Blooming Purple Moss Clump). Unclear how this distinguishes between "
+            "reducing build-up and actually healing the status."),
+        'registBlood': (
+            'BleedDamage', True, int,
+            "Amount of bleed damage (in units of resistance) added to the character on every update. Negative values "
+            "will heal bleed damage instead (e.g. Blood-Red Moss Clump). Unclear how this distinguishes between "
+            "reducing build-up and actually healing the status."),
+        'registCurse': (
+            'CurseDamage', True, int,
+            "Amount of curse damage (in units of resistance) added to the character on every update. Negative values "
+            "will heal curse damage instead (e.g. Purging Stone). Unclear how this distinguishes between "
+            "reducing build-up and actually healing the status."),
+        'fallDamageRate': (
+            'FallDamageMultiplier', True, float,
+            "Multiplier applied to amount of fall damage taken by character. Cannot prevent lethal falls."),
+        'soulRate': (
+            'SoulsFromKillsMultiplier', True, float,
+            "Multiplier applied to the amount of souls received when enemies or bosses are killed."),
+        'equipWeightChangeRate': (
+            'MaxEquipLoadMultiplier', True, float,
+            "Multiplier applied to the character's maximum equip load."),
+        'allItemWeightChangeRate': (
+            'MaxItemLoadMultiplier', False, float,
+            "Multiplier applied to how much the character can carry, equipped or not. Seems to have no effect in Dark "
+            "Souls 1."),
+        'soul': (
+            'SoulAmountChange', True, int,
+            "Amount of souls received (if positive) or taken away (if negative) every time the special effect is "
+            "updated."),
+        'animIdOffset': (
+            'AnimationIDOffset', True, int,
+            "Override default animation ID offset of character, which can change their animation set temporarily."),
+        'haveSoulRate': (
+            'SoulRewardMultiplier', True, float,
+            "Multiplier applied to the amount of souls given to the player when they kill this character (e.g. enemies "
+            "in NG+)."),
+        'targetPriority': (
+            'TargetPriorityChange', True, float,
+            "Value added to or subtract from this character's priority in the target queue. Higher priority means "
+            "they are more likely to be targeted by enemies."),
+        'sightSearchEnemyCut': (
+            'EnemySightPercentageReduction', True, int,
+            "Percentage reduction in enemy sight (from 0 to 100) when looking for this character. Not sure if negative "
+            "values can be used to make this character *more* visible."),
+        'hearingSearchEnemyCut': (
+            'EnemyHearingPercentageReduction', True, int,
+            "Percentage reduction in enemy hearing (from 0 to 100) when looking for this character. Not sure if "
+            "negative values can be used to make this character *more* audible."),
+        'grabityRate': (
+            'AnimationSpeedMultiplier', True, float,
+            "Multiplier applied to all of this character's animations. Values other than 1 can lead to cool but "
+            "potentially glitchy behavior (e.g. desynchronized grab animations and missed hitboxes)."),
+        'registPoizonChangeRate': (
+            'PoisonResistanceMultiplier', True, float,
+            "Multiplier applied to character's maximum poison resistance."),
+        'registIllnessChangeRate': (
+            'ToxicResistanceMultiplier', True, float,
+            "Multiplier applied to character's maximum toxic resistance."),
+        'registBloodChangeRate': (
+            'BleedResistanceMultiplier', True, float,
+            "Multiplier applied to character's maximum bleed resistance."),
+        'registCurseChangeRate': (
+            'CurseResistanceMultiplier', True, float,
+            "Multiplier applied to character's maximum curse resistance."),
+        'soulStealRate': (
+            'SoulStealMultiplier', False, float,
+            "Internal description says 'defense against HP when NPCs are robbed by soul steal'. Probably unused."),
+        'lifeReductionRate': (
+            'EffectDurationMultiplier', False, int,
+            "Multiplier applied to the duration of the effect specified in EffectDurationMultiplierType. Used only by "
+            "Hawkeye Gough to reduce poison and toxic duration in vanilla game."),
+        'hpRecoverRate': (
+            'HPRecoveryRate', True, float,
+            "Multiplier applied to any increase in character's current HP."),
+        'replaceSpEffectId': (
+            'NextSpecialEffect', True, Params.SpecialEffects,
+            "Special effect to apply to character automatically when this special effect ends (if not terminated "
+            "manually by an event)."),
+        'cycleOccurrenceSpEffectId': (
+            'SpecialEffectPerUpdate', True, Params.SpecialEffects,
+            "Special effect to apply to character every time this special effect updates (e.g. Symbol of Avarice HP "
+            "reduction)."),
+        'atkOccurrenceSpEffectId': (
+            'SpecialEffectOnAttack', True, Params.SpecialEffects,
+            "Special effect to apply to any target hit by an attack.\n\nWARNING: This will not trigger unless "
+            "SpecialStateIndex is set to 152 (PoisonedWeapon), and must therefore always be accompanied by the poison "
+            "weapon visual effect."),
+        'guardDefFlickPowerRate': (
+            'GuardDefenseFlickPowerRate', False, float,
+            "Unknown; never used."),
+        'guardStaminaCutRate': (
+            'GuardStaminaMultiplier', True, float,
+            "Multiplier applied to amount of stamina lost when an attack is blocked."),
+        'rayCastPassedTime': (
+            'RayCastPassingTime', False, int,
+            "Internal description says 'Gaze passing: activation time (milliseconds).' Likely unused."),
+        'changeSuperArmorPoint': (
+            'PoiseAddition', True, int,
+            "Amount added (if positive) or subtracted (if negative) from character's poise."),
+        'bowDistRate': (
+            'BowRangePercentageChange', True, int,
+            "Percentage change (from 0 to 100) in bow range. Requires SpecialStateIndex BowBoostRange (168) to work."),
+        'spCategory': (
+            'SpecialEffectCategory', True, SP_EFFECT_SPCATEGORY,
+            "Category of special effect. This effect will override (i.e. cancel out) all other active effects with "
+            "the same category when it is added."),
+        'categoryPriority': (
+            'SpecialEffectPriority', True, int,
+            "Priority ordering for special effect to be applied on each update (lower values are updated first)."),
+        'saveCategory': (
+            'SaveCategory', True, SP_EFFECT_SAVE_CATEGORY,
+            "Determines automatic game saving behavior (used for status ailments only). Set to -1 for no saving."),
+        'changeMagicSlot': (
+            'AttunementSlotCountChange', False, int,
+            "Supposed to modify attunement slots, but does nothing. You can use special state 'Extra Attunement' to "
+            "get 50% extra attunment slots, if needed."),
+        'changeMiracleSlot': (
+            'AttunementMiracleSlotCountChange', False, int,
+            "Miracle slots are not even separate from other magic slots, so this is likely an abandoned field."),
+        'heroPointDamage': (
+            'HumanityDamage', True, int,
+            "Damage applied to soft humanity count. Negative values will add soft humanity."),
+        'defFlickPower': (
+            'RiposteDefenseAddition', True, int,
+            "Value added to or subtracted from defense against riposte attacks."),
+        'flickDamageCutRate': (
+            'FlickDamageMultiplier', True, float,
+            "Multiplier to use instead of usual multiplier on incoming (I assume) riposte attacks). Never used."),
+        'bloodDamageRate': (
+            'IncomingBleedDamagePercentage', True, int,
+            "Percentage of incoming bleed damage received (usually 100)."),
+        'dmgLv_None': (
+            'ReplaceNoDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of NoDamage level."),
+        'dmgLv_S': (
+            'ReplaceSmallDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Small damage level."),
+        'dmgLv_M': (
+            'ReplaceMediumDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Medium damage level."),
+        'dmgLv_L': (
+            'ReplaceLargeDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Large damage level."),
+        'dmgLv_BlowM': (
+            'ReplaceBlowoffDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Blowoff damage level."),
+        'dmgLv_Push': (
+            'ReplacePushDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Push damage level."),
+        'dmgLv_Strike': (
+            'ReplaceStrikeDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Strike damage level."),
+        'dmgLv_BlowS': (
+            'ReplaceSmallBlowDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Blow damage level."),
+        'dmgLv_Min': (
+            'ReplaceMinimalDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Minimal damage level."),
+        'dmgLv_Uppercut': (
+            'ReplaceLaunchDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of Launch damage level."),
+        'dmgLv_BlowLL': (
+            'ReplaceBlowBackwardDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of BlowBackward damage level."),
+        'dmgLv_Breath': (
+            'ReplaceBreathBurnDamageLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Damage level that will occur instead of BreathBurn damage level."),
+        'atkAttribute': (
+            'AttackAttribute', True, ATKPARAM_ATKATTR_TYPE,
+            "Attack type attached to hits while special effect is active."),
+        'spAttribute': (
+            'ElementAttribute', True, ATKPARAM_SPATTR_TYPE,
+            "Element attached to hits while special effect is active."),
+        'stateInfo': (
+            'SpecialState', True, SpecialStateInfo,  # TODO: right click can edit numeric entry directly.
+            "Hard-coded special state to use. Also determines visual effect from Special Effect Visuals table."),
+        'wepParamChange': (
+            'AffectedWeaponType', True, SP_EFE_WEP_CHANGE_PARAM,
+            "Weapon category that is affected by special effect. "),
+        'moveType': (
+            'MovementType', True, SP_EFFECT_MOVE_TYPE,
+            "Determines how movement is affected. (Does not correspond to Movement param entries.)"),
+        'lifeReductionType': (
+            'EffectDurationMultiplierType', False, int,
+            "Type of effect whose duration is affected by EffectDurationMultiplier. Known values: 2 = poison, "
+            "5 = toxic."),
+        'throwCondition': (
+            'ThrowCondition', False, SP_EFFECT_THROW_CONDITION_TYPE,
+            "Determines how throws are affected while special effect is active. Values still unknown (rarely used)."),
+        'addBehaviorJudgeId_condition': (
+            'AddBehaviorJudgeIDCondition', False, int,
+            "Unclear; used only to manage the Hydra as more heads are cut off. All other values are -1."),
+        'addBehaviorJudgeId_add': (
+            'AddBehaviorJudgeIDAdd', False, int,
+            "Always zero. Unknown effect. Internal description suggests that this is a constant added to all behavior "
+            "judge IDs (from TAE) issued by character."),
+        'effectTargetSelf:1': (
+            'CanAffectSelf', True, bool,
+            "Effect will target self."),
+        'effectTargetFriend:1': (
+            'CanAffectAlly', True, bool,
+            "Effect will target self."),
+        'effectTargetEnemy:1': (
+            'CanAffectEnemy', True, bool,
+            "Effect will target enemies."),
+        'effectTargetPlayer:1': (
+            'CanAffectPlayer', True, bool,
+            "Effect will target player characters."),
+        'effectTargetAI:1': (
+            'CanAffectAI', True, bool,
+            "Effect will target non-player characters."),
+        'effectTargetLive:1': (
+            'CanAffectHumans', True, bool,
+            "Effect will target humans."),
+        'effectTargetGhost:1': (
+            'CanAffectPhantoms', True, bool,
+            "Effect will target phantoms (white or black)."),
+        'effectTargetWhiteGhost:1': (
+            'CanAffectWhitePhantoms', True, bool,
+            "Effect will target white phantoms."),
+        'effectTargetBlackGhost:1': (
+            'CanAffectWhitePhantoms', True, bool,
+            "Effect will target white phantoms."),
+        'effectTargetAttacker:1': (
+            'CanAffectAttacker', True, bool,
+            "Effect will target character when they attack (e.g. HP drain)."),
+        'dispIconNonactive:1': (
+            'DisplayIconWhenInactive', False, bool,
+            "Display icon even when special effect is inactive (not sure what that means). Never enabled."),
+        'useSpEffectEffect:1': (
+            'UseVisualEffect', True, bool,
+            "Use visual effect from Special Effect Visuals table (indexed by Special State field)."),
+        'bAdjustMagicAblity:1': (
+            'UseMagicCorrection', True, bool,
+            "If True, correction will be applied to magic (or intelligence?). Not sure what this does."),
+        'bAdjustFaithAblity:1': (
+            'UseFaithCorrection', True, bool,
+            "If True, correction will be applied to faith (or miracles?). Not sure what this does."),
+        'bGameClearBonus:1': (
+            'ForNewGamePlus', True, bool,
+            "If True, this effect will be applied multiple times depending on the NG+ cycle (I think)."),
+        'magParamChange:1': (
+            'AffectsMagic', True, bool,
+            "If True, multipliers will be applied to magic attacks."),
+        'miracleParamChange:1': (
+            'AffectsMiracles', True, bool,
+            "If True, multipliers will be applied to miracle attacks."),
+        'clearSoul:1': (
+            'ClearSoul', False, bool,
+            "Unused Demon's Souls remnant."),
+        'requestSOS:1': (
+            'RequestWhitePhantomSummon', False, bool,
+            "Used only by White Sign Soapstone."),
+        'requestBlackSOS:1': (
+            'RequestBlackPhantomSummon', False, bool,
+            "Used only by Red Sign Soapstone."),
+        'requestForceJoinBlackSOS:1': (
+            'RequestInvasion', False, bool,
+            "Used only be (Cracked) Red Eye Orb."),
+        'requestKickSession:1': (
+            'RequestKick', False, bool,
+            "Not used by any item. Likely kicks all clients out of your world."),
+        'requestLeaveSession:1': (
+            'RequestReturnToOwnWorld', False, bool,
+            "Used only by Black Separation Crystal."),
+        'requestNpcInveda:1': (
+            'RequestNPCInvasion', False, bool,
+            "Used only by Black Eye Orb (Lautrec quest and cut Shiva quest)."),
+        'noDead:1': (
+            'Immortal', True, bool,
+            "If True, character cannot die. Never used in vanilla game."),
+        'bCurrHPIndependeMaxHP:1': (
+            'CurrentHPIgnoresMaxHPChange', True, bool,
+            "If True, changes to maximum HP will not affect current HP (unless it must be reduced to new maximum)."),
+        'corrosionIgnore:1': (
+            'IgnoreCorrosion', False, bool,
+            "If True, character will ignore corrosion damage to durability. Used only by Demon's Souls junk."),
+        'sightSearchCutIgnore:1': (
+            'IgnoreSightReduction', False, bool,
+            "If True, character will ignore any changes to their sight range from other special effects. Used only by "
+            "Demon's Souls junk."),
+        'hearingSearchCutIgnore:1': (
+            'IgnoreHearingReduction', False, bool,
+            "If True, character will ignore any changes to their hearing range from other special effects. Used only "
+            "by Demon's Souls junk."),
+        'antiMagicIgnore:1': (
+            'IgnoreMagicDisabling', False, bool,
+            "If True, character will ignore any special effect that attempts to disable their magic. Used only by "
+            "Demon's Souls junk."),
+        'fakeTargetIgnore:1': (
+            'IgnoreFakeTargets', False, bool,
+            "Unknown; never used."),
+        'fakeTargetIgnoreUndead:1': (
+            'IgnoreUndeadFakeTargets', False, bool,
+            "Unknown; never used."),
+        'fakeTargetIgnoreAnimal:1': (
+            'IgnoreBeastFakeTargets', False, bool,
+            "Unknown; never used."),
+        'grabityIgnore:1': (
+            'IgnoreGravity', True, bool,
+            "Ignore gravity. (Not sure if this actually works.)"),
+        'disablePoison:1': (
+            'PoisonImmunity', True, bool,
+            "Immune to poison."),
+        'disableDisease:1': (
+            'ToxicImmunity', True, bool,
+            "Immune to toxic."),
+        'disableBlood:1': (
+            'CurseImmunity', True, bool,
+            "Immune to curse."),
+        'disableCurse:1': (
+            'PoisonImmunity', True, bool,
+            "Immune to poison."),
+        'enableCharm:1': (
+            'EnableCharming', False, bool,
+            "Not sure if this refers to the Alluring Skull. May not work at all."),
+        'enableLifeTime:1': (
+            'EnableLifeTime', False, bool,
+            "Internal description: 'Is the life extended when setting a flag by TAE?'. Effect unknown. Used by Dragon "
+            "Head and Torso Stones and some internal summon-related effects."),
+        'hasTarget : 1': (
+            'HasTarget', False, bool,
+            "For unused 'evil eye' mechanics, probably a Demon's Souls remnant."),
+        'isFireDamageCancel:1': (
+            'FireImmunity', True, bool,
+            "Immune to fire damage. Never enabled, and may not actually work. Needs testing."),
+        'isExtendSpEffectLife:1': (
+            'AffectedByLingeringDragoncrestRing', True, bool,
+            "If True, this special effect will be affected by the Lingering Dragoncrest Ring special state (193) that "
+            "extends effect durations."),
+        'requestLeaveColiseumSession:1': (
+            'RequestColiseumExit', False, bool,
+            "Used only by Purple Coward's Crystal."),
+        'pad_2:4': (
+            'Pad1', False, '<Pad:4>',
+            "Null padding."),
+        'vowType0:1': (
+            'AffectsCharactersWithNoCovenant', True, bool,
+            "Determines if this special effect will affect characters with no covenant."),
+        'vowType1:1': (
+            'AffectsWayOfWhite', True, bool,
+            "Determines if this special effect will affect characters in the Way of White covenant."),
+        'vowType2:1': (
+            'AffectsPrincessGuard', True, bool,
+            "Determines if this special effect will affect characters in the Princess's Guard covenant."),
+        'vowType3:1': (
+            'AffectsWarriorOfSunlight', True, bool,
+            "Determines if this special effect will affect characters in the Warriors of Sunlight covenant."),
+        'vowType4:1': (
+            'AffectsDarkwraith', True, bool,
+            "Determines if this special effect will affect characters in the Darkwraith covenant."),
+        'vowType5:1': (
+            'AffectsPathOfTheDragon', True, bool,
+            "Determines if this special effect will affect characters in the Path of the Dragon covenant."),
+        'vowType6:1': (
+            'AffectsGravelordServant', True, bool,
+            "Determines if this special effect will affect characters in the Gravelord Servant covenant."),
+        'vowType7:1': (
+            'AffectsForestHunter', True, bool,
+            "Determines if this special effect will affect characters in the Forest Hunters covenant."),
+        'vowType8:1': (
+            'AffectsDarkmoonBlade', True, bool,
+            "Determines if this special effect will affect characters in the Blades of the Darkmoon covenant."),
+        'vowType9:1': (
+            'AffectsChaosServant', True, bool,
+            "Determines if this special effect will affect characters in the Chaos Servants covenant."),
+        'vowType10:1': (
+            'AffectsCovenant10', False, bool,
+            "Determines if this special effect will affect characters in unused covenant."),
+        'vowType11:1': (
+            'AffectsCovenant11', False, bool,
+            "Determines if this special effect will affect characters in unused covenant."),
+        'vowType12:1': (
+            'AffectsCovenant12', False, bool,
+            "Determines if this special effect will affect characters in unused covenant."),
+        'vowType13:1': (
+            'AffectsCovenant13', False, bool,
+            "Determines if this special effect will affect characters in unused covenant."),
+        'vowType14:1': (
+            'AffectsCovenant14', False, bool,
+            "Determines if this special effect will affect characters in unused covenant."),
+        'vowType15:1': (
+            'AffectsCovenant15', False, bool,
+            "Determines if this special effect will affect characters in unused covenant."),
+        'pad1[11]': (
+            'Pad2', False, '<Pad:11>',
+            "Null padding."),
+    },
     'MAGIC_PARAM_ST': {},
     'THROW_INFO_BANK': {},
     'EQUIP_MTRL_SET_PARAM_ST': {},

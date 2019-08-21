@@ -1,0 +1,1979 @@
+G:\Code\DarkSoulsMods\soulstruct-git\venv\Scripts\python.exe G:/Code/DarkSoulsMods/soulstruct-git/soulstruct/__main__.py
+FOG_BANK 0 | s16 | s16 | fogBeginZ | 開始距離[m] | フォグの開始距離です
+FOG_BANK 1 | s16 | s16 | fogEndZ | 終了距離[m] | フォグの終了距離です
+FOG_BANK 2 | s16 | s16 | degRotZ | ダミー | ダミー
+FOG_BANK 3 | s16 | s16 | degRotW | 強度 | 通常100にしてください(0だとフォグが掛かりません)
+FOG_BANK 4 | s16 | s16 | colR | Ｒ | フォグカラー
+FOG_BANK 5 | s16 | s16 | colG | Ｇ | フォグカラー
+FOG_BANK 6 | s16 | s16 | colB | Ｂ | フォグカラー
+FOG_BANK 7 | s16 | s16 | colA | RGB倍率[％] | フォグカラーの倍率(100が標準)
+LIGHT_BANK 0 | s16 | s16 | degRotX_0 | X角度 | 平行光源：０
+LIGHT_BANK 1 | s16 | s16 | degRotY_0 | Ｙ角度 | 平行光源：０
+LIGHT_BANK 2 | s16 | s16 | colR_0 | Ｒ | 平行光源：０
+LIGHT_BANK 3 | s16 | s16 | colG_0 | Ｇ | 平行光源：０
+LIGHT_BANK 4 | s16 | s16 | colB_0 | Ｂ | 平行光源：０
+LIGHT_BANK 5 | s16 | s16 | colA_0 | RGB倍率[％] | 平行光源：０
+LIGHT_BANK 6 | s16 | s16 | degRotX_1 | X角度 | 平行光源：１
+LIGHT_BANK 7 | s16 | s16 | degRotY_1 | Ｙ角度 | 平行光源：１
+LIGHT_BANK 8 | s16 | s16 | colR_1 | Ｒ | 平行光源：１
+LIGHT_BANK 9 | s16 | s16 | colG_1 | Ｇ | 平行光源：１
+LIGHT_BANK 10 | s16 | s16 | colB_1 | Ｂ | 平行光源：１
+LIGHT_BANK 11 | s16 | s16 | colA_1 | RGB倍率[％] | 平行光源：１
+LIGHT_BANK 12 | s16 | s16 | degRotX_2 | X角度 | 平行光源：２
+LIGHT_BANK 13 | s16 | s16 | degRotY_2 | Ｙ角度 | 平行光源：２
+LIGHT_BANK 14 | s16 | s16 | colR_2 | Ｒ | 平行光源：２
+LIGHT_BANK 15 | s16 | s16 | colG_2 | Ｇ | 平行光源：２
+LIGHT_BANK 16 | s16 | s16 | colB_2 | Ｂ | 平行光源：２
+LIGHT_BANK 17 | s16 | s16 | colA_2 | RGB倍率[％] | 平行光源：２
+LIGHT_BANK 18 | s16 | s16 | colR_u | Ｒ | アンビエント上半球
+LIGHT_BANK 19 | s16 | s16 | colG_u | Ｇ | アンビエント上半球
+LIGHT_BANK 20 | s16 | s16 | colB_u | Ｂ | アンビエント上半球
+LIGHT_BANK 21 | s16 | s16 | colA_u | RGB倍率[％] | アンビエント上半球
+LIGHT_BANK 22 | s16 | s16 | colR_d | Ｒ | アンビエント下半球
+LIGHT_BANK 23 | s16 | s16 | colG_d | Ｇ | アンビエント下半球
+LIGHT_BANK 24 | s16 | s16 | colB_d | Ｂ | アンビエント下半球
+LIGHT_BANK 25 | s16 | s16 | colA_d | RGB倍率[％] | アンビエント下半球
+LIGHT_BANK 26 | s16 | s16 | degRotX_s | X角度 | 平行光源：スペキュラ
+LIGHT_BANK 27 | s16 | s16 | degRotY_s | Ｙ角度 | 平行光源：スペキュラ
+LIGHT_BANK 28 | s16 | s16 | colR_s | Ｒ | 平行光源：スペキュラ
+LIGHT_BANK 29 | s16 | s16 | colG_s | Ｇ | 平行光源：スペキュラ
+LIGHT_BANK 30 | s16 | s16 | colB_s | Ｂ | 平行光源：スペキュラ
+LIGHT_BANK 31 | s16 | s16 | colA_s | RGB倍率[％] | 平行光源：スペキュラ
+LIGHT_BANK 32 | s16 | s16 | envDif_colR | Ｒ | 環境光源：ディフューズ乗算色
+LIGHT_BANK 33 | s16 | s16 | envDif_colG | Ｇ | 環境光源：ディフューズ乗算色
+LIGHT_BANK 34 | s16 | s16 | envDif_colB | Ｂ | 環境光源：ディフューズ乗算色
+LIGHT_BANK 35 | s16 | s16 | envDif_colA | RGB倍率[％] | 環境光源：ディフューズ乗算色
+LIGHT_BANK 36 | s16 | s16 | envSpc_colR | Ｒ | 環境光源：スペキュラ乗算色
+LIGHT_BANK 37 | s16 | s16 | envSpc_colG | Ｇ | 環境光源：スペキュラ乗算色
+LIGHT_BANK 38 | s16 | s16 | envSpc_colB | Ｂ | 環境光源：スペキュラ乗算色
+LIGHT_BANK 39 | s16 | s16 | envSpc_colA | RGB倍率[％] | 環境光源：スペキュラ乗算色
+LIGHT_BANK 40 | s16 | s16 | envDif | 環境ディフューズ | 環境光源：ディフューズテクスチャID
+LIGHT_BANK 41 | s16 | s16 | envSpc_0 | 環境スペキュラ０ | 環境光源：スペキュラ０テクスチャID
+LIGHT_BANK 42 | s16 | s16 | envSpc_1 | 環境スペキュラ１ | 環境光源：スペキュラ１テクスチャID
+LIGHT_BANK 43 | s16 | s16 | envSpc_2 | 環境スペキュラ２ | 環境光源：スペキュラ２テクスチャID
+LIGHT_BANK 44 | s16 | s16 | envSpc_3 | 環境スペキュラ３ | 環境光源：スペキュラ３テクスチャID
+LIGHT_BANK 45 | dummy8 | dummy8 | pad[2] | パディング | 
+LIGHT_SCATTERING_BANK 0 | s16 | s16 | sunRotX | X角度 | 光源
+LIGHT_SCATTERING_BANK 1 | s16 | s16 | sunRotY | Ｙ角度 | 光源
+LIGHT_SCATTERING_BANK 2 | s16 | s16 | distanceMul | 距離倍率[％] | 距離倍率[%](0〜1000)
+LIGHT_SCATTERING_BANK 3 | s16 | s16 | sunR | Ｒ | 光源
+LIGHT_SCATTERING_BANK 4 | s16 | s16 | sunG | Ｇ | 光源
+LIGHT_SCATTERING_BANK 5 | s16 | s16 | sunB | Ｂ | 光源
+LIGHT_SCATTERING_BANK 6 | s16 | s16 | sunA | RGB倍率[％] | 光源
+LIGHT_SCATTERING_BANK 7 | dummy8 | dummy8 | pad_0[2] | パディング | 
+LIGHT_SCATTERING_BANK 8 | f32 | f32 | lsHGg | 散乱方向係数 | 散乱方向係数（-1:後方 1:前方）
+LIGHT_SCATTERING_BANK 9 | f32 | f32 | lsBetaRay | レイリー散乱係数 | レイリー散乱係数（空気の分子）
+LIGHT_SCATTERING_BANK 10 | f32 | f32 | lsBetaMie | ミー散乱係数 | ミー散乱係数（微粒子）
+LIGHT_SCATTERING_BANK 11 | s16 | s16 | blendCoef | ブレンド係数[％] | スキャッタリングの係具合(100で最大)
+LIGHT_SCATTERING_BANK 12 | s16 | s16 | reflectanceR | Ｒ | 地上の乱反射光色
+LIGHT_SCATTERING_BANK 13 | s16 | s16 | reflectanceG | Ｇ | 地上の乱反射光色
+LIGHT_SCATTERING_BANK 14 | s16 | s16 | reflectanceB | Ｂ | 地上の乱反射光色
+LIGHT_SCATTERING_BANK 15 | s16 | s16 | reflectanceA | RGB倍率[％] | 地上の乱反射光色
+LIGHT_SCATTERING_BANK 16 | dummy8 | dummy8 | pad_1[2] | パディング | 
+POINT_LIGHT_BANK 0 | f32 | f32 | dwindleBegin | 減衰開始距離[m] | 点光源
+POINT_LIGHT_BANK 1 | f32 | f32 | dwindleEnd | 減衰終了距離[m] | 点光源
+POINT_LIGHT_BANK 2 | s16 | s16 | colR | Ｒ | 点光源
+POINT_LIGHT_BANK 3 | s16 | s16 | colG | Ｇ | 点光源
+POINT_LIGHT_BANK 4 | s16 | s16 | colB | Ｂ | 点光源
+POINT_LIGHT_BANK 5 | s16 | s16 | colA | RGB倍率[％] | 点光源
+LENS_FLARE_BANK 0 | s8 | s8 | texId | テクスチャID | テクスチャ(lensflare_??)
+LENS_FLARE_BANK 1 | u8 | u8 | isFlare | フレアか | 0:ゴースト, 1:フレア
+LENS_FLARE_BANK 2 | u8 | u8 | enableRoll | 回転有効 | 0:無効, 1:有効
+LENS_FLARE_BANK 3 | u8 | u8 | enableScale | スケール有効 | 0:無効, 1:有効
+LENS_FLARE_BANK 4 | f32 | f32 | locateDistRate | 配置距離率 | 0.0:光源位置〜1.0:画面中心
+LENS_FLARE_BANK 5 | f32 | f32 | texScale | テクスチャスケール | テクスチャのスケール
+LENS_FLARE_BANK 6 | s16 | s16 | colR | Ｒ | テクスチャ乗算色
+LENS_FLARE_BANK 7 | s16 | s16 | colG | Ｇ | テクスチャ乗算色
+LENS_FLARE_BANK 8 | s16 | s16 | colB | Ｂ | テクスチャ乗算色
+LENS_FLARE_BANK 9 | s16 | s16 | colA | Ａ | テクスチャ乗算色
+LENS_FLARE_EX_BANK 0 | s16 | s16 | lightDegRotX | 光源X角度[deg] | 光源のX角度
+LENS_FLARE_EX_BANK 1 | s16 | s16 | lightDegRotY | 光源Y角度[deg] | 光源のY角度
+LENS_FLARE_EX_BANK 2 | s16 | s16 | colR | 色R | レンズフレア乗算色
+LENS_FLARE_EX_BANK 3 | s16 | s16 | colG | 色G | レンズフレア乗算色
+LENS_FLARE_EX_BANK 4 | s16 | s16 | colB | 色B | レンズフレア乗算色
+LENS_FLARE_EX_BANK 5 | s16 | s16 | colA | 色RGB倍率[％] | レンズフレア乗算色
+LENS_FLARE_EX_BANK 6 | f32 | f32 | lightDist | 光源距離[m] | 光源距離
+DOF_BANK 0 | f32 | f32 | farDofBegin | 遠方開始距離[m] | 被写界深度で遠くがぼけ始める距離
+DOF_BANK 1 | f32 | f32 | farDofEnd | 遠方終了距離[m] | 被写界深度で遠くがぼけ終わる距離
+DOF_BANK 2 | u8 | u8 | farDofMul | 遠方強度[％] | 被写界深度のぼけ具合(0でぼけなくなります)
+DOF_BANK 3 | dummy8 | dummy8 | pad_0[3] | パディング | ダミー
+DOF_BANK 4 | f32 | f32 | nearDofBegin | 近傍開始距離[m] | 被写界深度で近くがぼけ始める距離(終了距離より遠くします)
+DOF_BANK 5 | f32 | f32 | nearDofEnd | 近傍終了距離[m] | 被写界深度で近くがぼけ終わる距離(開始距離より近くします)
+DOF_BANK 6 | u8 | u8 | nearDofMul | 近傍強度[％] | 被写界深度のぼけ具合(0でぼけなくなります)
+DOF_BANK 7 | dummy8 | dummy8 | pad_1[3] | パディング | ダミー
+DOF_BANK 8 | f32 | f32 | dispersionSq | ボケの大きさ | 値を大きくすると被写界深度のボケが強くなります
+TONE_MAP_BANK 0 | s16 | s16 | bloomBegin | 近傍ブルーム閾値[％] | 
+TONE_MAP_BANK 1 | s16 | s16 | bloomMul | 近傍ブルーム倍率[％] | 
+TONE_MAP_BANK 2 | s16 | s16 | bloomBeginFar | 遠方ブルーム閾値[％] | 
+TONE_MAP_BANK 3 | s16 | s16 | bloomMulFar | 遠方ブルーム倍率[％] | 
+TONE_MAP_BANK 4 | f32 | f32 | bloomNearDist | ブルーム近傍距離 | 傍のパラメータが適用されます。(m)
+TONE_MAP_BANK 5 | f32 | f32 | bloomFarDist | ブルーム遠方距離 | 方のパラメータが適用されます。(m)
+TONE_MAP_BANK 6 | f32 | f32 | grayKeyValue | トーンマップの基準値 | と画面が明るくなり小さいと画面が暗くなります
+TONE_MAP_BANK 7 | f32 | f32 | minAdaptedLum | 最小適応輝度 | と暗い場所に適応して見えるようになります
+TONE_MAP_BANK 8 | f32 | f32 | maxAdapredLum | 最大適応輝度 | と明るい場所に適応して見えるようになります
+TONE_MAP_BANK 9 | f32 | f32 | adaptSpeed | 適応速度 | 明順応、暗順応の速度が速くなります
+TONE_MAP_BANK 10 | s8 | s8 | lightShaftBegin | ライトシャフト閾値[％] | えると光の筋がでます
+TONE_MAP_BANK 11 | dummy8 | dummy8 | pad_0[3] | パディング | 
+TONE_MAP_BANK 12 | f32 | f32 | lightShaftPower | ライトシャフトの強さ | 強さです。(0で消えます)
+TONE_MAP_BANK 13 | f32 | f32 | lightShaftAttenRate | ライトシャフトの減衰率 | 減衰率です。小さくすると短くなります
+TONE_MAP_BANK 14 | f32 | f32 | inverseToneMapMul | inverseToneMapMul | 
+TONE_CORRECT_BANK 0 | f32 | f32 | brightnessR | 輝度R | 輝度
+TONE_CORRECT_BANK 1 | f32 | f32 | brightnessG | 輝度G | 輝度
+TONE_CORRECT_BANK 2 | f32 | f32 | brightnessB | 輝度B | 輝度
+TONE_CORRECT_BANK 3 | f32 | f32 | contrastR | コントラストR | コントラスト
+TONE_CORRECT_BANK 4 | f32 | f32 | contrastG | コントラストG | コントラスト
+TONE_CORRECT_BANK 5 | f32 | f32 | contrastB | コントラストB | コントラスト
+TONE_CORRECT_BANK 6 | f32 | f32 | saturation | 彩度 | 彩度
+TONE_CORRECT_BANK 7 | f32 | f32 | hue | 色相 | 色相
+TONE_CORRECT_BANK 8 |  | f32 | sfxMultiplier | sfxMultiplier | 
+SHADOW_BANK 0 | s16 | s16 | lightDegRotX | 光源X角度[deg] | マップに影を落とす光源のX角度
+SHADOW_BANK 1 | s16 | s16 | lightDegRotY | 光源Y角度[deg] | マップに影を落とす光源のY角度
+SHADOW_BANK 2 | s16 | s16 | densityRatio | 濃さ[％] | 100％で最も濃くなります
+SHADOW_BANK 3 | s16 | s16 | colR | 色R | 0〜255
+SHADOW_BANK 4 | s16 | s16 | colG | 色G | 0〜255
+SHADOW_BANK 5 | s16 | s16 | colB | 色B | 0〜255
+SHADOW_BANK 6 | f32 | f32 | beginDist | 開始距離[m] | 0にしておくとカメラのニアクリップを使用
+SHADOW_BANK 7 | f32 | f32 | endDist | 終了距離[m] | 終了距離[m]
+SHADOW_BANK 8 | f32 | f32 | calibulateFar | ファークリップ自動調整距離(PSM用) | 光源方向を向いたときに終了距離を指定した距離分短くします
+SHADOW_BANK 9 | f32 | f32 | fadeBeginDist | フェード開始距離[m] | フェード開始距離[m]
+SHADOW_BANK 10 | f32 | f32 | fadeDist | フェード距離[m] | フェード距離[m]
+SHADOW_BANK 11 | f32 | f32 | persedDepthOffset | Zオフセット(PSM用) | Zオフセット [m] （−）にするほどセルフシャードウが出難くなります(PSM用)
+SHADOW_BANK 12 | f32 | f32 | ｇradFactor | パース調整パラメータ(PSM用) | −にするとシャドウマップのパースが弱まり,＋にするとパースが強まります
+SHADOW_BANK 13 | f32 | f32 | shadowVolumeDepth | シャドウボリュームの長さ[m] | ビルなど高いオブジェクトの影を落としたいときは値を大きくします
+LENS_FLARE_EX_BANK 0 | s16 | s16 | lightDegRotX | 光源X角度[deg] | 光源のX角度
+LENS_FLARE_EX_BANK 1 | s16 | s16 | lightDegRotY | 光源Y角度[deg] | 光源のY角度
+LENS_FLARE_EX_BANK 2 | s16 | s16 | colR | 色R | レンズフレア乗算色
+LENS_FLARE_EX_BANK 3 | s16 | s16 | colG | 色G | レンズフレア乗算色
+LENS_FLARE_EX_BANK 4 | s16 | s16 | colB | 色B | レンズフレア乗算色
+LENS_FLARE_EX_BANK 5 | s16 | s16 | colA | 色RGB倍率[％] | レンズフレア乗算色
+LENS_FLARE_EX_BANK 6 | f32 | f32 | lightDist | 光源距離[m] | 光源距離
+ENV_LIGHT_TEX_BANK 0 | s8 | s8 | isUse | 使用するか | 0:しない, 1:する
+ENV_LIGHT_TEX_BANK 1 | s8 | s8 | autoUpdate | 自動更新するか | 0:しない, 1:する
+ENV_LIGHT_TEX_BANK 2 | dummy8 | dummy8 | pad_0[12] | パディング | ダミー
+ENV_LIGHT_TEX_BANK 3 | s16 | s16 | invMulCol | RGB逆倍率[％] | 全ての光源色にこの値の逆数を掛けます
+ENV_LIGHT_TEX_BANK 4 | s16 | s16 | resNameId_Dif0 | リソース名ID | [DIF0] テクスチャファイル名のID(-1:なし)
+ENV_LIGHT_TEX_BANK 5 | s16 | s16 | invMulCol_Dif0 | RGB逆倍率[％] | [DIF0] 光源色にこの値の逆数を掛けます
+ENV_LIGHT_TEX_BANK 6 | f32 | f32 | sepcPow_Dif0 | スペキュラ次数 | [DIF0] スペキュラ次数
+ENV_LIGHT_TEX_BANK 7 | dummy8 | dummy8 | pad_Dif0[8] | パディング | [DIF0]  ダミー
+ENV_LIGHT_TEX_BANK 8 | s16 | s16 | resNameId_Spc0 | リソース名ID | [SPC0] テクスチャファイル名のID(-1:なし)
+ENV_LIGHT_TEX_BANK 9 | s16 | s16 | invMulCol_Spc0 | RGB逆倍率[％] | [SPC0] 光源色にこの値の逆数を掛けます
+ENV_LIGHT_TEX_BANK 10 | f32 | f32 | sepcPow_Spc0 | スペキュラ次数 | [SPC0] スペキュラ次数
+ENV_LIGHT_TEX_BANK 11 | dummy8 | dummy8 | pad_Spc0[8] | パディング | [SPC0]  ダミー
+ENV_LIGHT_TEX_BANK 12 | s16 | s16 | resNameId_Spc1 | リソース名ID | [SPC1] テクスチャファイル名のID(-1:なし)
+ENV_LIGHT_TEX_BANK 13 | s16 | s16 | invMulCol_Spc1 | RGB逆倍率[％] | [SPC1] 光源色にこの値の逆数を掛けます
+ENV_LIGHT_TEX_BANK 14 | f32 | f32 | sepcPow_Spc1 | スペキュラ次数 | [SPC1] スペキュラ次数
+ENV_LIGHT_TEX_BANK 15 | dummy8 | dummy8 | pad_Spc1[8] | パディング | [SPC1]  ダミー
+ENV_LIGHT_TEX_BANK 16 | s16 | s16 | resNameId_Spc2 | リソース名ID | [SPC2] テクスチャファイル名のID(-1:なし)
+ENV_LIGHT_TEX_BANK 17 | s16 | s16 | invMulCol_Spc2 | RGB逆倍率[％] | [SPC2] 光源色にこの値の逆数を掛けます
+ENV_LIGHT_TEX_BANK 18 | f32 | f32 | sepcPow_Spc2 | スペキュラ次数 | [SPC2] スペキュラ次数
+ENV_LIGHT_TEX_BANK 19 | dummy8 | dummy8 | pad_Spc2[8] | パディング | [SPC2]  ダミー
+ENV_LIGHT_TEX_BANK 20 | s16 | s16 | resNameId_Spc3 | リソース名ID | [SPC3] テクスチャファイル名のID(-1:なし)
+ENV_LIGHT_TEX_BANK 21 | s16 | s16 | invMulCol_Spc3 | RGB逆倍率[％] | [SPC3] 光源色にこの値の逆数を掛けます
+ENV_LIGHT_TEX_BANK 22 | f32 | f32 | sepcPow_Spc3 | スペキュラ次数 | [SPC3] スペキュラ次数
+ENV_LIGHT_TEX_BANK 23 | dummy8 | dummy8 | pad_Spc3[8] | パディング | [SPC3]  ダミー
+ENV_LIGHT_TEX_BANK 24 | s16 | s16 | degRotX_00 | X角度 | 平行光源：００
+ENV_LIGHT_TEX_BANK 25 | s16 | s16 | degRotY_00 | Ｙ角度 | 平行光源：００
+ENV_LIGHT_TEX_BANK 26 | s16 | s16 | colR_00 | Ｒ | 平行光源：００
+ENV_LIGHT_TEX_BANK 27 | s16 | s16 | colG_00 | Ｇ | 平行光源：００
+ENV_LIGHT_TEX_BANK 28 | s16 | s16 | colB_00 | Ｂ | 平行光源：００
+ENV_LIGHT_TEX_BANK 29 | s16 | s16 | colA_00 | RGB倍率[％] | 平行光源：００ (0:未使用)
+ENV_LIGHT_TEX_BANK 30 | dummy8 | dummy8 | pad_00[4] | パディング | 平行光源：００
+ENV_LIGHT_TEX_BANK 31 | s16 | s16 | degRotX_01 | X角度 | 平行光源：０１
+ENV_LIGHT_TEX_BANK 32 | s16 | s16 | degRotY_01 | Ｙ角度 | 平行光源：０１
+ENV_LIGHT_TEX_BANK 33 | s16 | s16 | colR_01 | Ｒ | 平行光源：０１
+ENV_LIGHT_TEX_BANK 34 | s16 | s16 | colG_01 | Ｇ | 平行光源：０１
+ENV_LIGHT_TEX_BANK 35 | s16 | s16 | colB_01 | Ｂ | 平行光源：０１
+ENV_LIGHT_TEX_BANK 36 | s16 | s16 | colA_01 | RGB倍率[％] | 平行光源：０１ (0:未使用)
+ENV_LIGHT_TEX_BANK 37 | dummy8 | dummy8 | pad_01[4] | パディング | 平行光源：０１
+ENV_LIGHT_TEX_BANK 38 | s16 | s16 | degRotX_02 | X角度 | 平行光源：０２
+ENV_LIGHT_TEX_BANK 39 | s16 | s16 | degRotY_02 | Ｙ角度 | 平行光源：０２
+ENV_LIGHT_TEX_BANK 40 | s16 | s16 | colR_02 | Ｒ | 平行光源：０２
+ENV_LIGHT_TEX_BANK 41 | s16 | s16 | colG_02 | Ｇ | 平行光源：０２
+ENV_LIGHT_TEX_BANK 42 | s16 | s16 | colB_02 | Ｂ | 平行光源：０２
+ENV_LIGHT_TEX_BANK 43 | s16 | s16 | colA_02 | RGB倍率[％] | 平行光源：０２ (0:未使用)
+ENV_LIGHT_TEX_BANK 44 | dummy8 | dummy8 | pad_02[4] | パディング | 平行光源：０２
+ENV_LIGHT_TEX_BANK 45 | s16 | s16 | degRotX_03 | X角度 | 平行光源：０３
+ENV_LIGHT_TEX_BANK 46 | s16 | s16 | degRotY_03 | Ｙ角度 | 平行光源：０３
+ENV_LIGHT_TEX_BANK 47 | s16 | s16 | colR_03 | Ｒ | 平行光源：０３
+ENV_LIGHT_TEX_BANK 48 | s16 | s16 | colG_03 | Ｇ | 平行光源：０３
+ENV_LIGHT_TEX_BANK 49 | s16 | s16 | colB_03 | Ｂ | 平行光源：０３
+ENV_LIGHT_TEX_BANK 50 | s16 | s16 | colA_03 | RGB倍率[％] | 平行光源：０３ (0:未使用)
+ENV_LIGHT_TEX_BANK 51 | dummy8 | dummy8 | pad_03[4] | パディング | 平行光源：０３
+ENV_LIGHT_TEX_BANK 52 | s16 | s16 | degRotX_04 | X角度 | 平行光源：０４
+ENV_LIGHT_TEX_BANK 53 | s16 | s16 | degRotY_04 | Ｙ角度 | 平行光源：０４
+ENV_LIGHT_TEX_BANK 54 | s16 | s16 | colR_04 | Ｒ | 平行光源：０４
+ENV_LIGHT_TEX_BANK 55 | s16 | s16 | colG_04 | Ｇ | 平行光源：０４
+ENV_LIGHT_TEX_BANK 56 | s16 | s16 | colB_04 | Ｂ | 平行光源：０４
+ENV_LIGHT_TEX_BANK 57 | s16 | s16 | colA_04 | RGB倍率[％] | 平行光源：０４ (0:未使用)
+ENV_LIGHT_TEX_BANK 58 | dummy8 | dummy8 | pad_04[4] | パディング | 平行光源：０４
+ENV_LIGHT_TEX_BANK 59 | s16 | s16 | degRotX_05 | X角度 | 平行光源：０５
+ENV_LIGHT_TEX_BANK 60 | s16 | s16 | degRotY_05 | Ｙ角度 | 平行光源：０５
+ENV_LIGHT_TEX_BANK 61 | s16 | s16 | colR_05 | Ｒ | 平行光源：０５
+ENV_LIGHT_TEX_BANK 62 | s16 | s16 | colG_05 | Ｇ | 平行光源：０５
+ENV_LIGHT_TEX_BANK 63 | s16 | s16 | colB_05 | Ｂ | 平行光源：０５
+ENV_LIGHT_TEX_BANK 64 | s16 | s16 | colA_05 | RGB倍率[％] | 平行光源：０５ (0:未使用)
+ENV_LIGHT_TEX_BANK 65 | dummy8 | dummy8 | pad_05[4] | パディング | 平行光源：０５
+ENV_LIGHT_TEX_BANK 66 | s16 | s16 | degRotX_06 | X角度 | 平行光源：０６
+ENV_LIGHT_TEX_BANK 67 | s16 | s16 | degRotY_06 | Ｙ角度 | 平行光源：０６
+ENV_LIGHT_TEX_BANK 68 | s16 | s16 | colR_06 | Ｒ | 平行光源：０６
+ENV_LIGHT_TEX_BANK 69 | s16 | s16 | colG_06 | Ｇ | 平行光源：０６
+ENV_LIGHT_TEX_BANK 70 | s16 | s16 | colB_06 | Ｂ | 平行光源：０６
+ENV_LIGHT_TEX_BANK 71 | s16 | s16 | colA_06 | RGB倍率[％] | 平行光源：０６ (0:未使用)
+ENV_LIGHT_TEX_BANK 72 | dummy8 | dummy8 | pad_06[4] | パディング | 平行光源：０６
+ENV_LIGHT_TEX_BANK 73 | s16 | s16 | degRotX_07 | X角度 | 平行光源：０７
+ENV_LIGHT_TEX_BANK 74 | s16 | s16 | degRotY_07 | Ｙ角度 | 平行光源：０７
+ENV_LIGHT_TEX_BANK 75 | s16 | s16 | colR_07 | Ｒ | 平行光源：０７
+ENV_LIGHT_TEX_BANK 76 | s16 | s16 | colG_07 | Ｇ | 平行光源：０７
+ENV_LIGHT_TEX_BANK 77 | s16 | s16 | colB_07 | Ｂ | 平行光源：０７
+ENV_LIGHT_TEX_BANK 78 | s16 | s16 | colA_07 | RGB倍率[％] | 平行光源：０７ (0:未使用)
+ENV_LIGHT_TEX_BANK 79 | dummy8 | dummy8 | pad_07[4] | パディング | 平行光源：０７
+ENV_LIGHT_TEX_BANK 80 | s16 | s16 | degRotX_08 | X角度 | 平行光源：０８
+ENV_LIGHT_TEX_BANK 81 | s16 | s16 | degRotY_08 | Ｙ角度 | 平行光源：０８
+ENV_LIGHT_TEX_BANK 82 | s16 | s16 | colR_08 | Ｒ | 平行光源：０８
+ENV_LIGHT_TEX_BANK 83 | s16 | s16 | colG_08 | Ｇ | 平行光源：０８
+ENV_LIGHT_TEX_BANK 84 | s16 | s16 | colB_08 | Ｂ | 平行光源：０８
+ENV_LIGHT_TEX_BANK 85 | s16 | s16 | colA_08 | RGB倍率[％] | 平行光源：０８ (0:未使用)
+ENV_LIGHT_TEX_BANK 86 | dummy8 | dummy8 | pad_08[4] | パディング | 平行光源：０８
+ENV_LIGHT_TEX_BANK 87 | s16 | s16 | degRotX_09 | X角度 | 平行光源：０９
+ENV_LIGHT_TEX_BANK 88 | s16 | s16 | degRotY_09 | Ｙ角度 | 平行光源：０９
+ENV_LIGHT_TEX_BANK 89 | s16 | s16 | colR_09 | Ｒ | 平行光源：０９
+ENV_LIGHT_TEX_BANK 90 | s16 | s16 | colG_09 | Ｇ | 平行光源：０９
+ENV_LIGHT_TEX_BANK 91 | s16 | s16 | colB_09 | Ｂ | 平行光源：０９
+ENV_LIGHT_TEX_BANK 92 | s16 | s16 | colA_09 | RGB倍率[％] | 平行光源：０９ (0:未使用)
+ENV_LIGHT_TEX_BANK 93 | dummy8 | dummy8 | pad_09[4] | パディング | 平行光源：０９
+LOD_BANK 0 | f32 | f32 | lv01_BorderDist | LODレベル0-1境界距離[m] | 切り替わる中心
+LOD_BANK 1 | f32 | f32 | lv01_PlayDist | LODレベル0-1遊び距離[m] | 境界中心で±遊び
+LOD_BANK 2 | f32 | f32 | lv12_BorderDist | LODレベル1-2境界距離[m] | 切り替わる中心
+LOD_BANK 3 | f32 | f32 | lv12_PlayDist | LODレベル1-2遊び距離[m] | 境界中心で±遊び
+ATK_PARAM_ST 0 | f32 | f32 | hit0_Radius | あたり0 半径 | 球、カプセルの半径
+ATK_PARAM_ST 1 | f32 | f32 | hit1_Radius | あたり1 半径 | 球、カプセルの半径
+ATK_PARAM_ST 2 | f32 | f32 | hit2_Radius | あたり2 半径 | 球、カプセルの半径
+ATK_PARAM_ST 3 | f32 | f32 | hit3_Radius | あたり3 半径 | 球、カプセルの半径
+ATK_PARAM_ST 4 | f32 | f32 | knockbackDist | ノックバック距離[m] | ノックバック距離[m]
+ATK_PARAM_ST 5 | f32 | f32 | hitStopTime | ヒットストップ時間[s] | ヒットストップの停止時間[s]
+ATK_PARAM_ST 6 | s32 | s32 | spEffectId0 | 特殊効果0 | 特殊効果パラメータで作成したＩＤを入れる
+ATK_PARAM_ST 7 | s32 | s32 | spEffectId1 | 特殊効果1 | 特殊効果パラメータで作成したＩＤを入れる
+ATK_PARAM_ST 8 | s32 | s32 | spEffectId2 | 特殊効果2 | 特殊効果パラメータで作成したＩＤを入れる
+ATK_PARAM_ST 9 | s32 | s32 | spEffectId3 | 特殊効果3 | 特殊効果パラメータで作成したＩＤを入れる
+ATK_PARAM_ST 10 | s32 | s32 | spEffectId4 | 特殊効果4 | 特殊効果パラメータで作成したＩＤを入れる
+ATK_PARAM_ST 11 | s16 | s16 | hit0_DmyPoly1 | あたり0 ダミポリ1 | 球、カプセル位置のダミポリ
+ATK_PARAM_ST 12 | s16 | s16 | hit1_DmyPoly1 | あたり1 ダミポリ1 | 球、カプセル位置のダミポリ
+ATK_PARAM_ST 13 | s16 | s16 | hit2_DmyPoly1 | あたり2 ダミポリ1 | 球、カプセル位置のダミポリ
+ATK_PARAM_ST 14 | s16 | s16 | hit3_DmyPoly1 | あたり3 ダミポリ1 | 球、カプセル位置のダミポリ
+ATK_PARAM_ST 15 | s16 | s16 | hit0_DmyPoly2 | あたり0 ダミポリ2 | カプセルのもうひとつの点の位置ダミポリ。-1だと球になる
+ATK_PARAM_ST 16 | s16 | s16 | hit1_DmyPoly2 | あたり1 ダミポリ2 | カプセルのもうひとつの点の位置ダミポリ。-1だと球になる
+ATK_PARAM_ST 17 | s16 | s16 | hit2_DmyPoly2 | あたり2 ダミポリ2 | カプセルのもうひとつの点の位置ダミポリ。-1だと球になる
+ATK_PARAM_ST 18 | s16 | s16 | hit3_DmyPoly2 | あたり3 ダミポリ2 | カプセルのもうひとつの点の位置ダミポリ。-1だと球になる
+ATK_PARAM_ST 19 | u16 | u16 | blowingCorrection | 吹き飛ばし補正値 | 吹き飛ばす時の補正値
+ATK_PARAM_ST 20 | u16 | u16 | atkPhysCorrection | 物理攻撃力補正値 | PCのみ。物理攻撃力基本値に掛ける倍率
+ATK_PARAM_ST 21 | u16 | u16 | atkMagCorrection | 魔法攻撃力補正値 | PCのみ。魔法攻撃力に掛ける倍率（弓の場合は、飛び道具を補正）
+ATK_PARAM_ST 22 | u16 | u16 | atkFireCorrection | 炎攻撃力補正値 | PCのみ。炎攻撃力に掛ける倍率（弓の場合は、飛び道具を補正）
+ATK_PARAM_ST 23 | u16 | u16 | atkThunCorrection | 電撃攻撃力補正値 | PCのみ。電撃攻撃力に掛ける倍率（弓の場合は、飛び道具を補正）
+ATK_PARAM_ST 24 | u16 | u16 | atkStamCorrection | スタミナ攻撃力補正値 | PCのみ。スタミナ攻撃力に掛ける倍率
+ATK_PARAM_ST 25 | u16 | u16 | guardAtkRateCorrection | はじき攻撃力補正値 | PCのみ。1のみ
+ATK_PARAM_ST 26 | u16 | u16 | guardBreakCorrection | はじき防御力補正値 | PCのみ。攻撃のはじかれ基本値に掛ける倍率
+ATK_PARAM_ST 27 | u16 | u16 | atkThrowEscapeCorrection | 投げ抜け攻撃力補正値 | 投げ抜け攻撃に対する武器補正値
+ATK_PARAM_ST 28 | u16 | u16 | atkSuperArmorCorrection | SA攻撃力補正値 | PCのみ。武器に設定された【基本値】にかける補正値
+ATK_PARAM_ST 29 | u16 | u16 | atkPhys | 物理攻撃力 | NPCのみ。物理攻撃の基本ダメージ
+ATK_PARAM_ST 30 | u16 | u16 | atkMag | 魔法攻撃力 | NPCのみ。魔法攻撃の追加ダメージ
+ATK_PARAM_ST 31 | u16 | u16 | atkFire | 炎攻撃力 | NPCのみ。炎攻撃の追加ダメージ
+ATK_PARAM_ST 32 | u16 | u16 | atkThun | 電撃攻撃力 | NPCのみ。電撃攻撃の追加ダメージ
+ATK_PARAM_ST 33 | u16 | u16 | atkStam | スタミナ攻撃力 | NPCのみ。敵（プレイヤー）のスタミナに対するダメージ量
+ATK_PARAM_ST 34 | u16 | u16 | guardAtkRate | はじき攻撃力 | NPCのみ。はじき値
+ATK_PARAM_ST 35 | u16 | u16 | guardBreakRate | はじき防御力 | NPCのみ。攻撃がはじかれるかどうかの判定に利用する値
+ATK_PARAM_ST 36 | u16 | u16 | atkSuperArmor | SA攻撃力 | NPCのみ。SAブレイク計算式に利用すする値
+ATK_PARAM_ST 37 | u16 | u16 | atkThrowEscape | 投げ抜け攻撃力 | 投げ抜け攻撃力
+ATK_PARAM_ST 38 | u16 | u16 | atkObj | オブジェ攻撃力 | ＯＢＪに対する攻撃力
+ATK_PARAM_ST 39 | s16 | s16 | guardStaminaCutRate | ガード時スタミナカット率補正 | 武器パラメータ、ＮＰＣパラメータに設定されている【ガード時スタミナカット率】を補正する
+ATK_PARAM_ST 40 | s16 | s16 | guardRate | ガード倍率 | ＮＰＣ、武器パラメータで設定してあるガード性能を一律で補正を掛ける0で、1倍／100で、2倍／−100で、0　にパラメータが増減するようにするガード倍率　=　（ガード倍率/100　+　1）
+ATK_PARAM_ST 41 | u16 | u16 | throwTypeId | 投げタイプID | 投げパラメータと紐付けされているID
+ATK_PARAM_ST 42 | ATK_PARAM_HIT_TYPE | u8 | hit0_hitType | あたり0 部位 | あたり部位
+ATK_PARAM_ST 43 | ATK_PARAM_HIT_TYPE | u8 | hit1_hitType | あたり1 部位 | あたり部位
+ATK_PARAM_ST 44 | ATK_PARAM_HIT_TYPE | u8 | hit2_hitType | あたり2 部位 | あたり部位
+ATK_PARAM_ST 45 | ATK_PARAM_HIT_TYPE | u8 | hit3_hitType | あたり3 部位 | あたり部位
+ATK_PARAM_ST 46 | u8 | u8 | hti0_Priority | あたり0 優先順位 | 優先度。同時に2つ以上のあたりがあたった場合、優先度が高いほうを採用する。
+ATK_PARAM_ST 47 | u8 | u8 | hti1_Priority | あたり1 優先順位 | 優先度。同時に2つ以上のあたりがあたった場合、優先度が高いほうを採用する。
+ATK_PARAM_ST 48 | u8 | u8 | hti2_Priority | あたり2 優先順位 | 優先度。同時に2つ以上のあたりがあたった場合、優先度が高いほうを採用する。
+ATK_PARAM_ST 49 | u8 | u8 | hti3_Priority | あたり3 優先順位 | 優先度。同時に2つ以上のあたりがあたった場合、優先度が高いほうを採用する。
+ATK_PARAM_ST 50 | u8 | u8 | dmgLevel | ダメージレベル | 攻撃したとき、敵にどのダメージモーションを再生するか？を決める.
+ATK_PARAM_ST 51 | ATK_PARAM_MAP_HIT | u8 | mapHitType | マップあたり参照 | 攻撃あたりが、どのマップあたりを見るか？を設定
+ATK_PARAM_ST 52 | s8 | s8 | guardCutCancelRate | ガードカット率無効化倍率 | ガードカット率無効化倍率（−100〜100）　→0のとき通常／−100で完全無効化／100で相手の防御効果倍増 　→−50とすれば、100％カットの盾が、50％カットになります 
+ATK_PARAM_ST 53 | ATKPARAM_ATKATTR_TYPE | u8 | atkAttribute | 物理属性 | 攻撃に設定する物理属性
+ATK_PARAM_ST 54 | ATKPARAM_SPATTR_TYPE | u8 | spAttribute | 特殊属性 | 攻撃に設定する特殊属性
+ATK_PARAM_ST 55 | BEHAVIOR_ATK_TYPE | u8 | atkType | 攻撃属性[SFX/SE] | 攻撃時のSFX/SEを指定(属性、材質、サイズで1セット)
+ATK_PARAM_ST 56 | WEP_MATERIAL_ATK | u8 | atkMaterial | 攻撃材質[SFX/SE] | 攻撃時のSFX/SEを指定(属性、材質、サイズで1セット)
+ATK_PARAM_ST 57 | BEHAVIOR_ATK_SIZE | u8 | atkSize | 攻撃サイズ[SFX/SE] | 攻撃時のSFX/SEを指定（予備だが使用されているので、必ず空欄or小を設定すること）
+ATK_PARAM_ST 58 | WEP_MATERIAL_DEF | u8 | defMaterial | 防御材質[SE] | ガード時のSEに使用
+ATK_PARAM_ST 59 | WEP_MATERIAL_DEF_SFX | u8 | defSfxMaterial | 防御材質[SFX] | ガード時のSFXに使用.
+ATK_PARAM_ST 60 | ATK_PARAM_HIT_SOURCE | u8 | hitSourceType | あたり発生源 | 攻撃あたりのダミポリＩＤをどこから取ってくるか？を指定する
+ATK_PARAM_ST 61 | ATK_PATAM_THROWFLAG_TYPE | u8 | throwFlag | 投げ | 投げ情報に用いるフラグ
+ATK_PARAM_ST 62 | ATK_PARAM_BOOL | u8 | disableGuard:1 | ガード不可フラグ | 1の場合、ガード側のガードを無視して、ダメージレベルを入れる
+ATK_PARAM_ST 63 | ATK_PARAM_BOOL | u8 | disableStaminaAttack:1 | スタミナ減らない | スタミナ攻撃力による「崩され判定」は行うが、実際にスタミナは減らさない
+ATK_PARAM_ST 64 | ATK_PARAM_BOOL | u8 | disableHitSpEffect:1 | ヒット時特殊効果無効 | 攻撃ヒットしたときの特殊効果を無効にします。SCEバグ対策
+ATK_PARAM_ST 65 | ATK_PARAM_BOOL | u8 | IgnoreNotifyMissSwingForAI:1 | AIに空振り通知しない | AIに空振り通知しない
+ATK_PARAM_ST 66 | ATK_PARAM_BOOL | u8 | repeatHitSfx:1 | ＨＩＴ時にＳＦＸを何度も出すか | 敵専用：壁Hit時のSFXが連続で発生するか
+ATK_PARAM_ST 67 | ATK_PARAM_BOOL | u8 | isArrowAtk:1 | 矢攻撃か | 部位ダメージ判定に使用する。
+ATK_PARAM_ST 68 | ATK_PARAM_BOOL | u8 | isGhostAtk:1 | 霊体攻撃か | 霊体ダメージ判定に使用。
+ATK_PARAM_ST 69 | ATK_PARAM_BOOL | u8 | isDisableNoDamage:1 | 無敵無効か | ステップ等の無敵効果を無視します、TAEの完全無敵は無視できません。
+ATK_PARAM_ST 70 | dummy8 | dummy8 | pad[1] | pad | pad
+BEHAVIOR_PARAM_ST 0 | s32 | s32 | variationId | 行動バリエーションID | 攻撃パラメータ用のIDを算出する際に使用します。実機上では直接使用しません。
+BEHAVIOR_PARAM_ST 1 | s32 | s32 | behaviorJudgeId | 行動判定ID | 攻撃パラメータ用のIDを算出する際に使用します。このIDはTimeActEditorで入力される行動判定IDと一致させます。実機上では直接使用しません。
+BEHAVIOR_PARAM_ST 2 | u8 | u8 | ezStateBehaviorType_old | IDルール用 | ID算出ルール用
+BEHAVIOR_PARAM_ST 3 | BEHAVIOR_REF_TYPE | u8 | refType | 参照IDタイプ | 参照IDを間違わないように指定.
+BEHAVIOR_PARAM_ST 4 | dummy8 | dummy8 | pad0[2] | パディング0 | パディング0.
+BEHAVIOR_PARAM_ST 5 | s32 | s32 | refId | 参照ID | 攻撃力、飛び道具、特殊効果パラメータのID、refTypeによって使い分けられる。
+BEHAVIOR_PARAM_ST 6 | s32 | s32 | sfxVariationId | SFX バリエーションID | ＳＦＸのバリエーションを指定（TimeActEditorのＩＤと組み合わせて、ＳＦＸを特定するのに使用する）
+BEHAVIOR_PARAM_ST 7 | s32 | s32 | stamina | 消費スタミナ | 行動時の消費スタミナ量を設定.
+BEHAVIOR_PARAM_ST 8 | s32 | s32 | mp | 消費MP | 行動時の消費MP量を設定.
+BEHAVIOR_PARAM_ST 9 | BEHAVIOR_CATEGORY | u8 | category | カテゴリ | スキルや、魔法、アイテムなどで、パラメータが変動する効果（エンチャントウェポンなど）があるので、│定した効果が、「武器攻撃のみをパワーアップする」といった効果に対応できるように行動ごとに設定するバリスタなど、設定の必要のないものは「なし」を設定する
+
+BEHAVIOR_PARAM_ST 10 | u8 | u8 | heroPoint | 消費人間性 | 行動時の消費人間性量を設定
+BEHAVIOR_PARAM_ST 11 | dummy8 | dummy8 | pad1[2] | パディング1 | パディング1.
+BULLET_PARAM_ST 0 | s32 | s32 | atkId_Bullet | 攻撃ID | 攻撃パラメータのＩＤをそれぞれ登録する.→攻撃タイプ／攻撃材質／物理攻撃力／魔法攻撃力／スタミナ攻撃力／ノックバック距離.
+BULLET_PARAM_ST 1 | s32 | s32 | sfxId_Bullet | SFXID【弾】 | SFX IDを入れる。
+BULLET_PARAM_ST 2 | s32 | s32 | sfxId_Hit | SFXID【着弾】 | 着弾SFXID。-1は発生しない。
+BULLET_PARAM_ST 3 | s32 | s32 | sfxId_Flick | SFXID【はじき時】 | はじき時SFXID。-1は発生しない。
+BULLET_PARAM_ST 4 | f32 | f32 | life | 寿命[s] | 飛び道具が存在し続けられる時間（-1なら無限）.
+BULLET_PARAM_ST 5 | f32 | f32 | dist | 射程距離[m] | 減衰が開始される距離（実際の飛距離ではない）.
+BULLET_PARAM_ST 6 | f32 | f32 | shootInterval | 発射間隔[s] | 飛び道具を何秒間隔で発射するかを指定.
+BULLET_PARAM_ST 7 | f32 | f32 | gravityInRange | 射程距離内重力[m/s^2] | 射程距離内での下向きにかかる重力.
+BULLET_PARAM_ST 8 | f32 | f32 | gravityOutRange | 射程距離外重力[m/s^2] | 減衰がはじまったときの下向きにかかる重力（ポトンと落ちる感じを表現.
+BULLET_PARAM_ST 9 | f32 | f32 | hormingStopRange | 誘導停止距離[m] | 誘導を停止するターゲットとの距離。誘導弾で当たり過ぎないようにするパラメータ。
+BULLET_PARAM_ST 10 | f32 | f32 | initVellocity | 初速[m/s] | ＳＦＸの初速度.
+BULLET_PARAM_ST 11 | f32 | f32 | accelInRange | 射程距離内加速度[m/s^2] | ＳＦＸの射程内の加速度.
+BULLET_PARAM_ST 12 | f32 | f32 | accelOutRange | 射程距離外加速度[m/s^2] | ＳＦＸが射程距離外に出たときの加速度.
+BULLET_PARAM_ST 13 | f32 | f32 | maxVellocity | 最高速度[m/s] | 最高速度.
+BULLET_PARAM_ST 14 | f32 | f32 | minVellocity | 最低速度[m/s] | 最低保証速度.
+BULLET_PARAM_ST 15 | f32 | f32 | accelTime | 加速開始時間[s] | この時間までは、加速しない（ロケット弾みたいな魔法を撃つことができるようにしておく）.
+BULLET_PARAM_ST 16 | f32 | f32 | homingBeginDist | 誘導開始距離[m] | 何ｍ進んだ地点から誘導を開始するか.
+BULLET_PARAM_ST 17 | f32 | f32 | hitRadius | 初期弾半径[m] | 当たり球の半径を設定する.
+BULLET_PARAM_ST 18 | f32 | f32 | hitRadiusMax | 最大弾半径[m] | あたり球の最大半径（−1の場合、初期半径と同じにする／デフォルト）
+BULLET_PARAM_ST 19 | f32 | f32 | spreadTime | 範囲拡散時間[s] | 範囲半径が細大にまで広がる時間.
+BULLET_PARAM_ST 20 | f32 | f32 | expDelay | 発動遅延[s] | 着弾後、爆発までの時間（０の場合はすぐに爆発）.
+BULLET_PARAM_ST 21 | f32 | f32 | hormingOffsetRange | 誘導ずらし量[m] | ０だと正確。射撃時にXYZ各成分を、この量だけずらして狙うようにする。
+BULLET_PARAM_ST 22 | f32 | f32 | dmgHitRecordLifeTime | ダメージヒット履歴の生存時間[s] | ダメージヒット履歴の生存時間[sec](<=0.0f：無期限)
+BULLET_PARAM_ST 23 | f32 | f32 | externalForce | 外力[m/s^2] | 射撃時の方向にかかる外力.(Y軸は抜いている)
+BULLET_PARAM_ST 24 | s32 | s32 | spEffectIDForShooter | 射撃した人にかける特殊効果 | 射撃した人にかける特殊効果
+BULLET_PARAM_ST 25 | s32 | s32 | autoSearchNPCThinkID | ファンネルNPC思考ID | ファンネルがターゲットの検索使用するパラメータ
+BULLET_PARAM_ST 26 | s32 | s32 | HitBulletID | 発生弾丸ID | 弾丸パラメータから、新しく弾丸パラメータを発生させるときにＩＤを指定する
+BULLET_PARAM_ST 27 | s32 | s32 | spEffectId0 | 特殊効果ID0 | 特殊効果パラメータのＩＤをそれぞれ登録する.→特殊効果全般.
+BULLET_PARAM_ST 28 | s32 | s32 | spEffectId1 | 特殊効果ID1 | 特殊効果パラメータのＩＤをそれぞれ登録する.→特殊効果全般.
+BULLET_PARAM_ST 29 | s32 | s32 | spEffectId2 | 特殊効果ID2 | 特殊効果パラメータのＩＤをそれぞれ登録する.→特殊効果全般.
+BULLET_PARAM_ST 30 | s32 | s32 | spEffectId3 | 特殊効果ID3 | 特殊効果パラメータのＩＤをそれぞれ登録する.→特殊効果全般.
+BULLET_PARAM_ST 31 | s32 | s32 | spEffectId4 | 特殊効果ID4 | 特殊効果パラメータのＩＤをそれぞれ登録する.→特殊効果全般.
+BULLET_PARAM_ST 32 | u16 | u16 | numShoot | 発射数 | 一度に発射する飛び道具の数.
+BULLET_PARAM_ST 33 | s16 | s16 | homingAngle | 誘導性能[deg/s] | 1秒間に何度まで補正するか？.
+BULLET_PARAM_ST 34 | s16 | s16 | shootAngle | 発射角度[deg] | 飛び道具を前方何度に向かって発射するかを指定.
+BULLET_PARAM_ST 35 | s16 | s16 | shootAngleInterval | 発射角度間隔[deg] | 飛び道具を複数発射する場合、何度間隔で発射するかを指定.(Y軸)
+BULLET_PARAM_ST 36 | s16 | s16 | shootAngleXInterval | 発射仰角間隔[deg] | 飛び道具を複数発射する場合、何度間隔で発射するかを指定.(X軸)
+BULLET_PARAM_ST 37 | s8 | s8 | damageDamp | 物理攻撃力減衰率[%/s] | 減衰距離以降、1秒間に減少する補正値.
+BULLET_PARAM_ST 38 | s8 | s8 | spelDamageDamp | 魔法攻撃力減衰率[%/s] | 
+BULLET_PARAM_ST 39 | s8 | s8 | fireDamageDamp | 炎攻撃力減衰率[%/s] | 
+BULLET_PARAM_ST 40 | s8 | s8 | thunderDamageDamp | 電撃攻撃力減衰率[%/s] | 
+BULLET_PARAM_ST 41 | s8 | s8 | staminaDamp | スタミナダメージ減衰率[%/s] | 減衰距離以降、1秒間に減少する補正値.
+BULLET_PARAM_ST 42 | s8 | s8 | knockbackDamp | ノックバック減衰率[%/s] | 減衰距離以降、1秒間に減少する補正値.
+BULLET_PARAM_ST 43 | s8 | s8 | shootAngleXZ | 発射仰角[deg] | 水平方向からの追加仰角。
+BULLET_PARAM_ST 44 | u8 | u8 | lockShootLimitAng | ロック方向制限角度 | ロック方向を向かせるときの制限角度
+BULLET_PARAM_ST 45 | u8 | u8 | isPenetrate | キャラ・OBJを貫通？ | ＰＣ、ＮＰＣ、ＯＢＪに当たったときに、寿命まで消滅しないかどうか？を設定
+BULLET_PARAM_ST 46 | u8 | u8 | prevVelocityDirRate | 前回の移動方向加算率[%] | 滑る弾が壁にヒット時に前回の移動方向を今の方向へ加算する比率
+BULLET_PARAM_ST 47 | ATKPARAM_ATKATTR_TYPE | u8 | atkAttribute | 物理属性 | 弾丸に設定する物理属性を設定
+BULLET_PARAM_ST 48 | ATKPARAM_SPATTR_TYPE | u8 | spAttribute | 特殊属性 | 弾丸に設定する特殊属性を設定
+BULLET_PARAM_ST 49 | ATK_TYPE | u8 | Material_AttackType | SFX材質 攻撃タイプ | 攻撃属性が何かを指定する
+BULLET_PARAM_ST 50 | WEP_MATERIAL_ATK | u8 | Material_AttackMaterial | SFX材質 攻撃材質 | 攻撃時のSFX/ＳＥに使用
+BULLET_PARAM_ST 51 | ATK_SIZE | u8 | Material_Size | SFX材質 サイズ | 攻撃時のSFX/ＳＥに使用（予備／デフォルト0）
+BULLET_PARAM_ST 52 | BULLET_LAUNCH_CONDITION_TYPE | u8 | launchConditionType | 発生条件 | 着弾・寿命消滅時に弾を発生させるか判定する条件を指定
+BULLET_PARAM_ST 53 | BULLET_FOLLOW_TYPE | u8 | FollowType:3 | 追従タイプ | 追従タイプ。「追従しない」がデフォルト。
+BULLET_PARAM_ST 54 | BULLET_EMITTE_POS_TYPE | u8 | EmittePosType:3 | 発生源タイプ | 発生源タイプ。ダミポリからが通常。（メテオを判定するために導入）
+BULLET_PARAM_ST 55 | ON_OFF | u8 | isAttackSFX:1 | 刺さったままになるか | 矢などの弾丸が、キャラクターに刺さったままになるかどうかを設定する
+BULLET_PARAM_ST 56 | ON_OFF | u8 | isEndlessHit:1 | あたり続けるか？ | あたり続けるか？
+BULLET_PARAM_ST 57 | ON_OFF | u8 | isPenetrateMap:1 | マップを貫通？ | マップを貫通するか？
+BULLET_PARAM_ST 58 | ON_OFF | u8 | isHitBothTeam:1 | 敵味方共にあたる？ | 敵味方共にあたるか？（徘徊ゴーストにはあたらない）
+BULLET_PARAM_ST 59 | ON_OFF | u8 | isUseSharedHitList:1 | ヒットリストを共有するか？ | ヒットリストを共有するかを指定
+BULLET_PARAM_ST 60 | ON_OFF | u8 | isUseMultiDmyPolyIfPlace:1 | 複数のダミポリを使うか？ | 弾配置時に同一ダミポリIDを複数使うか？
+BULLET_PARAM_ST 61 | BULLET_ATTACH_EFFECT_TYPE | u8 | attachEffectType:2 | アタッチ効果タイプ | アタッチする効果タイプ
+BULLET_PARAM_ST 62 | u8 | u8 | isHitForceMagic:1 | フォース魔法に当たるか | フォース魔法に当たるか
+BULLET_PARAM_ST 63 | u8 | u8 | isIgnoreSfxIfHitWater:1 | 水面衝突時のエフェクト無視するか | 水面に当たった場合はエフェクト無視するか
+BULLET_PARAM_ST 64 | u8 | u8 | isIgnoreMoveStateIfHitWater:1 | 水面衝突時の状態遷移を無視するか | 水に当たっても状態遷移を無視するか
+BULLET_PARAM_ST 65 | u8 | u8 | isHitDarkForceMagic:1 | 闇フォース魔法に当たるか | 闇フォース魔法に当たるか
+BULLET_PARAM_ST 66 | dummy8 | dummy8 | pad[3] | パディング | pad
+CHARACTER_INIT_PARAM 0 | f32 | f32 | baseRec_mp | ＭＰ回復速度基本値[s] | ＭＰが、1ポイント回復するまでの時間（小数点第一位）
+CHARACTER_INIT_PARAM 1 | f32 | f32 | baseRec_sp | スタミナ回復速度基本値[s] | スタミナが、1ポイント回復するまでの時間（小数点第一位）
+CHARACTER_INIT_PARAM 2 | f32 | f32 | red_Falldam | 落下ダメージ軽減補正[%] | 他のキャラクターに上からのしかかれたときに、クッションとなりえるダメージ軽減量（％）（小数点第一位）
+CHARACTER_INIT_PARAM 3 | s32 | s32 | soul | 初期ソウル | 初期に所持しているソウル量
+CHARACTER_INIT_PARAM 4 | s32 | s32 | equip_Wep_Right | 右手武器 | 装備品パラメータの武器ＩＤ(右手)
+CHARACTER_INIT_PARAM 5 | s32 | s32 | equip_Subwep_Right | 右手予備武器 | 装備品パラメータの武器ＩＤ(右手予備)
+CHARACTER_INIT_PARAM 6 | s32 | s32 | equip_Wep_Left | 左手武器 | 装備品パラメータの武器ＩＤ(左手)
+CHARACTER_INIT_PARAM 7 | s32 | s32 | equip_Subwep_Left | 左手予備武器 | 装備品パラメータの武器ＩＤ(左手予備)
+CHARACTER_INIT_PARAM 8 | s32 | s32 | equip_Helm | 頭防具 | 装備品パラメータの防具ＩＤ(頭防具)
+CHARACTER_INIT_PARAM 9 | s32 | s32 | equip_Armer | 胴体防具 | 装備品パラメータの防具ＩＤ(胴体防具)
+CHARACTER_INIT_PARAM 10 | s32 | s32 | equip_Gaunt | 腕防具 | 装備品パラメータの防具ＩＤ(腕防具)
+CHARACTER_INIT_PARAM 11 | s32 | s32 | equip_Leg | 脚防具 | 装備品パラメータの防具ＩＤ(脚防具)
+CHARACTER_INIT_PARAM 12 | s32 | s32 | equip_Arrow | 矢 | 装備品パラメータの武器ＩＤ(矢)
+CHARACTER_INIT_PARAM 13 | s32 | s32 | equip_Bolt | ボルト | 装備品パラメータの武器ＩＤ(ボルト)
+CHARACTER_INIT_PARAM 14 | s32 | s32 | equip_SubArrow | 予備矢 | 装備品パラメータの武器ＩＤ(矢予備)
+CHARACTER_INIT_PARAM 15 | s32 | s32 | equip_SubBolt | 予備ボルト | 装備品パラメータの武器ＩＤ(ボルト予備)
+CHARACTER_INIT_PARAM 16 | s32 | s32 | equip_Accessory01 | 装飾品1 | 装備品パラメータの装飾品ＩＤ01
+CHARACTER_INIT_PARAM 17 | s32 | s32 | equip_Accessory02 | 装飾品2 | 装備品パラメータの装飾品ＩＤ02
+CHARACTER_INIT_PARAM 18 | s32 | s32 | equip_Accessory03 | 装飾品3 | 装備品パラメータの装飾品ＩＤ03
+CHARACTER_INIT_PARAM 19 | s32 | s32 | equip_Accessory04 | 装飾品4 | 装備品パラメータの装飾品ＩＤ04
+CHARACTER_INIT_PARAM 20 | s32 | s32 | equip_Accessory05 | 装飾品5 | 装備品パラメータの装飾品ＩＤ05
+CHARACTER_INIT_PARAM 21 | s32 | s32 | equip_Skill_01 | スキル1 | 初期装備のスキルＩD01
+CHARACTER_INIT_PARAM 22 | s32 | s32 | equip_Skill_02 | スキル2 | 初期装備のスキルＩD02
+CHARACTER_INIT_PARAM 23 | s32 | s32 | equip_Skill_03 | スキル3 | 初期装備のスキルＩD03
+CHARACTER_INIT_PARAM 24 | s32 | s32 | equip_Spell_01 | 魔法・奇跡1 | 初期配置の魔法・奇跡ID01
+CHARACTER_INIT_PARAM 25 | s32 | s32 | equip_Spell_02 | 魔法・奇跡2 | 初期配置の魔法・奇跡ID02
+CHARACTER_INIT_PARAM 26 | s32 | s32 | equip_Spell_03 | 魔法・奇跡3 | 初期配置の魔法・奇跡ID03
+CHARACTER_INIT_PARAM 27 | s32 | s32 | equip_Spell_04 | 魔法・奇跡4 | 初期配置の魔法・奇跡ID04
+CHARACTER_INIT_PARAM 28 | s32 | s32 | equip_Spell_05 | 魔法・奇跡5 | 初期配置の魔法・奇跡ID05
+CHARACTER_INIT_PARAM 29 | s32 | s32 | equip_Spell_06 | 魔法・奇跡6 | 初期配置の魔法・奇跡ID06
+CHARACTER_INIT_PARAM 30 | s32 | s32 | equip_Spell_07 | 魔法・奇跡7 | 初期配置の魔法・奇跡ID07
+CHARACTER_INIT_PARAM 31 | s32 | s32 | item_01 | アイテム01 | 初期所持のアイテムID01
+CHARACTER_INIT_PARAM 32 | s32 | s32 | item_02 | アイテム02 | 初期所持のアイテムID02
+CHARACTER_INIT_PARAM 33 | s32 | s32 | item_03 | アイテム03 | 初期所持のアイテムID03
+CHARACTER_INIT_PARAM 34 | s32 | s32 | item_04 | アイテム04 | 初期所持のアイテムID04
+CHARACTER_INIT_PARAM 35 | s32 | s32 | item_05 | アイテム05 | 初期所持のアイテムID05
+CHARACTER_INIT_PARAM 36 | s32 | s32 | item_06 | アイテム06 | 初期所持のアイテムID06
+CHARACTER_INIT_PARAM 37 | s32 | s32 | item_07 | アイテム07 | 初期所持のアイテムID07
+CHARACTER_INIT_PARAM 38 | s32 | s32 | item_08 | アイテム08 | 初期所持のアイテムID08
+CHARACTER_INIT_PARAM 39 | s32 | s32 | item_09 | アイテム09 | 初期所持のアイテムID09
+CHARACTER_INIT_PARAM 40 | s32 | s32 | item_10 | アイテム10 | 初期所持のアイテムID10
+CHARACTER_INIT_PARAM 41 | s32 | s32 | npcPlayerFaceGenId | フェイスジェンパラメータID | NPCプレイヤーで使用するフェイスジェンパラメータID。通常プレイヤーでは使用しません。
+CHARACTER_INIT_PARAM 42 | s32 | s32 | npcPlayerThinkId | NPCプレイヤーの思考ID | NPCプレイヤーで使用するNPC思考パラメータID。通常プレイヤーでは使用しません。
+CHARACTER_INIT_PARAM 43 | u16 | u16 | baseHp | ＨＰ基本値 | ＨＰの基本値（実際は、計算式で補正される）
+CHARACTER_INIT_PARAM 44 | u16 | u16 | baseMp | ＭＰ基本値 | ＭＰの基本値（実際は、計算式で補正される）
+CHARACTER_INIT_PARAM 45 | u16 | u16 | baseSp | スタミナ基本値 | スタミナの基本値（実際は、計算式で補正される）
+CHARACTER_INIT_PARAM 46 | u16 | u16 | arrowNum | 矢の所持数 | 矢の初期所持数
+CHARACTER_INIT_PARAM 47 | u16 | u16 | boltNum | ボルトの所持数 | ボルトの初期所持数
+CHARACTER_INIT_PARAM 48 | u16 | u16 | subArrowNum | 予備矢の所持数 | 矢の初期所持数
+CHARACTER_INIT_PARAM 49 | u16 | u16 | subBoltNum | 予備ボルトの所持数 | ボルトの初期所持数
+CHARACTER_INIT_PARAM 50 | s16 | s16 | QWC_sb | 傾向係数　S-B軸 | 基本QWC値(Sword-Bow)
+CHARACTER_INIT_PARAM 51 | s16 | s16 | QWC_mw | 傾向係数　M-W軸 | 基本QWC値(Mace-Wand)
+CHARACTER_INIT_PARAM 52 | s16 | s16 | QWC_cd | 傾向係数　C-D軸 | 基本QWC値(理解-拡散)
+CHARACTER_INIT_PARAM 53 | s16 | s16 | soulLv | ソウルLv | 初期Lv
+CHARACTER_INIT_PARAM 54 | u8 | u8 | baseVit | 体力 | 体力の基本値
+CHARACTER_INIT_PARAM 55 | u8 | u8 | baseWil | 精神 | 精神の基本値
+CHARACTER_INIT_PARAM 56 | u8 | u8 | baseEnd | 頑強 | 頑強の基本値
+CHARACTER_INIT_PARAM 57 | u8 | u8 | baseStr | 筋力 | 筋力の基本値
+CHARACTER_INIT_PARAM 58 | u8 | u8 | baseDex | 俊敏 | 俊敏の基本値
+CHARACTER_INIT_PARAM 59 | u8 | u8 | baseMag | 魔力 | 魔力の基本値
+CHARACTER_INIT_PARAM 60 | u8 | u8 | baseFai | 信仰 | 信仰の基本値
+CHARACTER_INIT_PARAM 61 | u8 | u8 | baseLuc | 運 | 運の基本値
+CHARACTER_INIT_PARAM 62 | u8 | u8 | baseHeroPoint | 人間性 | 人間性の基本値
+CHARACTER_INIT_PARAM 63 | u8 | u8 | baseDurability | 耐久力 | 耐久力の基本値
+CHARACTER_INIT_PARAM 64 | u8 | u8 | itemNum_01 | アイテム01の所持数 | 初期所持のアイテム個数01
+CHARACTER_INIT_PARAM 65 | u8 | u8 | itemNum_02 | アイテム02の所持数 | 初期所持のアイテム個数02
+CHARACTER_INIT_PARAM 66 | u8 | u8 | itemNum_03 | アイテム03の所持数 | 初期所持のアイテム個数03
+CHARACTER_INIT_PARAM 67 | u8 | u8 | itemNum_04 | アイテム個数04 | 初期所持のアイテム個数04
+CHARACTER_INIT_PARAM 68 | u8 | u8 | itemNum_05 | アイテム個数05 | 初期所持のアイテム個数05
+CHARACTER_INIT_PARAM 69 | u8 | u8 | itemNum_06 | アイテム個数06 | 初期所持のアイテム個数06
+CHARACTER_INIT_PARAM 70 | u8 | u8 | itemNum_07 | アイテム個数07 | 初期所持のアイテム個数07
+CHARACTER_INIT_PARAM 71 | u8 | u8 | itemNum_08 | アイテム個数08 | 初期所持のアイテム個数08
+CHARACTER_INIT_PARAM 72 | u8 | u8 | itemNum_09 | アイテム個数09 | 初期所持のアイテム個数09
+CHARACTER_INIT_PARAM 73 | u8 | u8 | itemNum_10 | アイテム個数10 | 初期所持のアイテム個数10
+CHARACTER_INIT_PARAM 74 | s8 | s8 | bodyScaleHead | 頭部 | 体型変化用スケール
+CHARACTER_INIT_PARAM 75 | s8 | s8 | bodyScaleBreast | 胸部 | 体型変化用スケール
+CHARACTER_INIT_PARAM 76 | s8 | s8 | bodyScaleAbdomen | 腹部 | 体型変化用スケール
+CHARACTER_INIT_PARAM 77 | s8 | s8 | bodyScaleArm | 腕部 | 体型変化用スケール
+CHARACTER_INIT_PARAM 78 | s8 | s8 | bodyScaleLeg | 脚部 | 体型変化用スケール
+CHARACTER_INIT_PARAM 79 | s8 | s8 | gestureId0 | ジェスチャーID0 | ジェスチャー0番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 80 | s8 | s8 | gestureId1 | ジェスチャーID1 | ジェスチャー1番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 81 | s8 | s8 | gestureId2 | ジェスチャーID2 | ジェスチャー2番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 82 | s8 | s8 | gestureId3 | ジェスチャーID3 | ジェスチャー3番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 83 | s8 | s8 | gestureId4 | ジェスチャーID4 | ジェスチャー4番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 84 | s8 | s8 | gestureId5 | ジェスチャーID5 | ジェスチャー5番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 85 | s8 | s8 | gestureId6 | ジェスチャーID6 | ジェスチャー6番目(EzStateのジェスチャー0を再生したいなら0)
+CHARACTER_INIT_PARAM 86 | NPC_TYPE | u8 | npcPlayerType | NPCプレイヤーのNPCタイプ | NPCプレイヤーで使用するNPCタイプ。通常プレイヤーでは使用しません。
+CHARACTER_INIT_PARAM 87 | NPC_DRAW_TYPE | u8 | npcPlayerDrawType | NPCプレイヤーの描画タイプ | NPCプレイヤーで使用する描画タイプ。通常プレイヤーでは使用しません。
+CHARACTER_INIT_PARAM 88 | CHARACTER_INIT_SEX | u8 | npcPlayerSex | NPCプレイヤーの性別 | NPCプレイヤーで使用する性別です。通常プレイヤーには反映しません。
+CHARACTER_INIT_PARAM 89 | CHRINIT_VOW_TYPE | u8 | vowType:4 | 誓約 | 誓約タイプ(なし：0)
+CHARACTER_INIT_PARAM 90 | dummy8 | dummy8 | pad:4 | pad | 
+CHARACTER_INIT_PARAM 91 | dummy8 | dummy8 | pad0[10] | パディング | パディング
+EQUIP_MTRL_SET_PARAM_ST 0 | s32 | s32 | materialId01 | 必要素材アイテムID01 | 武具強化に必要な素材アイテムIDです。
+EQUIP_MTRL_SET_PARAM_ST 1 | s32 | s32 | materialId02 | 必要素材アイテムID02 | 武具強化に必要な素材アイテムIDです。
+EQUIP_MTRL_SET_PARAM_ST 2 | s32 | s32 | materialId03 | 必要素材アイテムID03 | 武具強化に必要な素材アイテムIDです。
+EQUIP_MTRL_SET_PARAM_ST 3 | s32 | s32 | materialId04 | 必要素材アイテムID04 | 武具強化に必要な素材アイテムIDです。
+EQUIP_MTRL_SET_PARAM_ST 4 | s32 | s32 | materialId05 | 必要素材アイテムID05 | 武具強化に必要な素材アイテムIDです。
+EQUIP_MTRL_SET_PARAM_ST 5 | s8 | s8 | itemNum01 | 必要個数01 | 武具強化に必要な素材アイテムの個数です。
+EQUIP_MTRL_SET_PARAM_ST 6 | s8 | s8 | itemNum02 | 必要個数02 | 武具強化に必要な素材アイテムの個数です。
+EQUIP_MTRL_SET_PARAM_ST 7 | s8 | s8 | itemNum03 | 必要個数03 | 武具強化に必要な素材アイテムの個数です。
+EQUIP_MTRL_SET_PARAM_ST 8 | s8 | s8 | itemNum04 | 必要個数04 | 武具強化に必要な素材アイテムの個数です。
+EQUIP_MTRL_SET_PARAM_ST 9 | s8 | s8 | itemNum05 | 必要個数05 | 武具強化に必要な素材アイテムの個数です。
+EQUIP_MTRL_SET_PARAM_ST 10 | u8 | u8 | isDisableDispNum01:1 | 個数表示を無効化01 | 個数表示を無効化するか(強化ショップ用)
+EQUIP_MTRL_SET_PARAM_ST 11 | u8 | u8 | isDisableDispNum02:1 | 個数表示を無効化02 | 個数表示を無効化するか
+EQUIP_MTRL_SET_PARAM_ST 12 | u8 | u8 | isDisableDispNum03:1 | 個数表示を無効化03 | 個数表示を無効化するか
+EQUIP_MTRL_SET_PARAM_ST 13 | u8 | u8 | isDisableDispNum04:1 | 個数表示を無効化04 | 個数表示を無効化するか
+EQUIP_MTRL_SET_PARAM_ST 14 | u8 | u8 | isDisableDispNum05:1 | 個数表示を無効化05 | 個数表示を無効化するか
+EQUIP_MTRL_SET_PARAM_ST 15 | dummy8 | dummy8 | pad[6] | パディング | パディングです。
+EQUIP_PARAM_ACCESSORY_ST 0 | s32 | s32 | refId | 呼び出しID | 装飾品から呼び出すID
+EQUIP_PARAM_ACCESSORY_ST 1 | s32 | s32 | sfxVariationId | SFXバリエーションID | ＳＦＸのバリエーションを指定（TimeActEditorのＩＤと組み合わせて、ＳＦＸを特定するのに使用する）
+EQUIP_PARAM_ACCESSORY_ST 2 | f32 | f32 | weight | 重量[kg] | 重量[kg]
+EQUIP_PARAM_ACCESSORY_ST 3 | s32 | s32 | behaviorId | 行動ID | 行動ID(=Skill)
+EQUIP_PARAM_ACCESSORY_ST 4 | s32 | s32 | basicPrice | 基本価格 | 基本価格
+EQUIP_PARAM_ACCESSORY_ST 5 | s32 | s32 | sellValue | 販売価格 | 販売価格
+EQUIP_PARAM_ACCESSORY_ST 6 | s32 | s32 | sortId | sortID | 
+EQUIP_PARAM_ACCESSORY_ST 7 | s32 | s32 | qwcId | QWCID | 
+EQUIP_PARAM_ACCESSORY_ST 8 | u16 | u16 | equipModelId | 装備モデル番号 | 装備モデルの番号
+EQUIP_PARAM_ACCESSORY_ST 9 | u16 | u16 | iconId | アイコンID | メニューアイコンID
+EQUIP_PARAM_ACCESSORY_ST 10 | s16 | s16 | shopLv | ショップレベル | お店で販売できるレベル
+EQUIP_PARAM_ACCESSORY_ST 11 | s16 | s16 | trophySGradeId | トロフィー | 
+EQUIP_PARAM_ACCESSORY_ST 12 | s16 | s16 | trophySeqId | トロフィーSEQ番号 | トロフィーのSEQ番号
+EQUIP_PARAM_ACCESSORY_ST 13 | EQUIP_MODEL_CATEGORY | u8 | equipModelCategory | 装備モデル種別 | 装備モデルの種別
+EQUIP_PARAM_ACCESSORY_ST 14 | EQUIP_MODEL_GENDER | u8 | equipModelGender | 装備モデル性別 | 装備モデルの性別
+EQUIP_PARAM_ACCESSORY_ST 15 | ACCESSORY_CATEGORY | u8 | accessoryCategory | 装飾カテゴリ | 防具のカテゴリ
+EQUIP_PARAM_ACCESSORY_ST 16 | BEHAVIOR_REF_TYPE | u8 | refCategory | IDカテゴリ | ↓のIDのカテゴリ[攻撃、飛び道具、特殊]
+EQUIP_PARAM_ACCESSORY_ST 17 | BEHAVIOR_CATEGORY | u8 | spEffectCategory | 特殊効果カテゴリ | スキルや、魔法、アイテムなどで、パラメータが変動する効果（エンチャントウェポンなど）があるので、│定した効果が、「武器攻撃のみをパワーアップする」といった効果に対応できるように行動ごとに設定するバリスタなど、設定の必要のないものは「なし」を設定する
+
+EQUIP_PARAM_ACCESSORY_ST 18 | dummy8 | dummy8 | pad[1] | パディング | 
+EQUIP_PARAM_ACCESSORY_ST 19 | s32 | s32 | vagrantItemLotId | ベイグラント時アイテム抽選ID | -1：ベイグラントなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_ACCESSORY_ST 20 | s32 | s32 | vagrantBonusEneDropItemLotId | ベイグラントボーナス敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_ACCESSORY_ST 21 | s32 | s32 | vagrantItemEneDropItemLotId | ベイグラントアイテム敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_ACCESSORY_ST 22 | EQUIP_BOOL | u8 | isDeposit:1 | 預けれるか | 倉庫へ預けれるか
+EQUIP_PARAM_ACCESSORY_ST 23 | EQUIP_BOOL | u8 | isEquipOutBrake:1 | 外すと壊れるか | 装備して外す時に壊れるか
+EQUIP_PARAM_ACCESSORY_ST 24 | EQUIP_BOOL | u8 | disableMultiDropShare:1 | マルチドロップ共有禁止か | マルチドロップ共有禁止か
+EQUIP_PARAM_ACCESSORY_ST 25 | dummy8 | dummy8 | pad1[3] | pad | pad
+EQUIP_PARAM_GOODS_ST 0 | s32 | s32 | refId | 呼び出しID | アイテムから呼び出されるID
+EQUIP_PARAM_GOODS_ST 1 | s32 | s32 | sfxVariationId | SFXバリエーションID | ＳＦＸのバリエーションを指定（TimeActEditorのＩＤと組み合わせて、ＳＦＸを特定するのに使用する）
+EQUIP_PARAM_GOODS_ST 2 | f32 | f32 | weight | 重量[kg] | 重量[kg]
+EQUIP_PARAM_GOODS_ST 3 | s32 | s32 | basicPrice | 基本価格 | 基本価格
+EQUIP_PARAM_GOODS_ST 4 | s32 | s32 | sellValue | 販売価格 | 販売価格
+EQUIP_PARAM_GOODS_ST 5 | s32 | s32 | behaviorId | 行動ID | 道具を使ったときに発生する効果を設定します
+EQUIP_PARAM_GOODS_ST 6 | s32 | s32 | replaceItemId | 差し替えアイテムID | 差し替えるときのアイテムID
+EQUIP_PARAM_GOODS_ST 7 | s32 | s32 | sortId | ソートID | ソートID(-1:集めない)
+EQUIP_PARAM_GOODS_ST 8 | s32 | s32 | qwcId | QWCID | QWCのパラメタiD
+EQUIP_PARAM_GOODS_ST 9 | s32 | s32 | yesNoDialogMessageId | YES/NOメッセージID | YesNoダイアログ表示時に使用するメッセージID
+EQUIP_PARAM_GOODS_ST 10 | s32 | s32 | magicId | 魔法ID | 巻物と紐づいた魔法ID
+EQUIP_PARAM_GOODS_ST 11 | u16 | u16 | iconId | アイコンID | メニュー用アイコンID
+EQUIP_PARAM_GOODS_ST 12 | u16 | u16 | modelId | モデルID | モデルID
+EQUIP_PARAM_GOODS_ST 13 | s16 | s16 | shopLv | ショップレベル | お店で販売できるレベル
+EQUIP_PARAM_GOODS_ST 14 | s16 | s16 | compTrophySedId | コンプトロフィーSEQ番号 | コンプリート系トロフィのSEQ番号
+EQUIP_PARAM_GOODS_ST 15 | s16 | s16 | trophySeqId | トロフィーSEQ番号 | トロフィーのSEQ番号
+EQUIP_PARAM_GOODS_ST 16 | s16 | s16 | maxNum | 最大所持数 | 最大所持数
+EQUIP_PARAM_GOODS_ST 17 | u8 | u8 | consumeHeroPoint | 消費人間性 | 消費人間性
+EQUIP_PARAM_GOODS_ST 18 | u8 | u8 | overDexterity | 技量オーバー開始値 | 技量オーバー開始値
+EQUIP_PARAM_GOODS_ST 19 | GOODS_TYPE | u8 | goodsType | 道具のタイプ | 道具の種類
+EQUIP_PARAM_GOODS_ST 20 | BEHAVIOR_REF_TYPE | u8 | refCategory | IDカテゴリ | ↓のIDのカテゴリ[攻撃、飛び道具、特殊]
+EQUIP_PARAM_GOODS_ST 21 | BEHAVIOR_CATEGORY | u8 | spEffectCategory | 特殊効果カテゴリ | スキルや、魔法、アイテムなどで、パラメータが変動する効果（エンチャントウェポンなど）があるので、│定した効果が、「武器攻撃のみをパワーアップする」といった効果に対応できるように行動ごとに設定するバリスタなど、設定の必要のないものは「なし」を設定する
+
+EQUIP_PARAM_GOODS_ST 22 | GOODS_CATEGORY | u8 | goodsCategory | 道具カテゴリ | 道具カテゴリ
+EQUIP_PARAM_GOODS_ST 23 | GOODS_USE_ANIM | u8 | goodsUseAnim | 道具使用時アニメ | 道具を使ったときに再生するアニメを設定します
+EQUIP_PARAM_GOODS_ST 24 | GOODS_OPEN_MENU | u8 | opmeMenuType | メニュー開くか | アイテム使用時に開くメニュータイプ
+EQUIP_PARAM_GOODS_ST 25 | SP_EFFECT_USELIMIT_CATEGORY | u8 | useLimitCategory | 特殊効果カテゴリによる使用制限 | かかっている特殊効果によって使用可能かを制御する為に指定
+EQUIP_PARAM_GOODS_ST 26 | REPLACE_CATEGORY | u8 | replaceCategory | 差し替えカテゴリ | 呼び出しIDに加算しる条件カテゴリ
+EQUIP_PARAM_GOODS_ST 27 | EQUIP_BOOL | u8 | vowType0:1 | 誓約0 | 誓約0で使用可能か
+EQUIP_PARAM_GOODS_ST 28 | EQUIP_BOOL | u8 | vowType1:1 | 誓約1 | 誓約1で使用可能か
+EQUIP_PARAM_GOODS_ST 29 | EQUIP_BOOL | u8 | vowType2:1 | 誓約2 | 誓約2で使用可能か
+EQUIP_PARAM_GOODS_ST 30 | EQUIP_BOOL | u8 | vowType3:1 | 誓約3 | 誓約3で使用可能か
+EQUIP_PARAM_GOODS_ST 31 | EQUIP_BOOL | u8 | vowType4:1 | 誓約4 | 誓約4で使用可能か
+EQUIP_PARAM_GOODS_ST 32 | EQUIP_BOOL | u8 | vowType5:1 | 誓約5 | 誓約5で使用可能か
+EQUIP_PARAM_GOODS_ST 33 | EQUIP_BOOL | u8 | vowType6:1 | 誓約6 | 誓約6で使用可能か
+EQUIP_PARAM_GOODS_ST 34 | EQUIP_BOOL | u8 | vowType7:1 | 誓約7 | 誓約7で使用可能か
+EQUIP_PARAM_GOODS_ST 35 | EQUIP_BOOL | u8 | vowType8:1 | 誓約8 | 誓約8で使用可能か
+EQUIP_PARAM_GOODS_ST 36 | EQUIP_BOOL | u8 | vowType9:1 | 誓約9 | 誓約9で使用可能か
+EQUIP_PARAM_GOODS_ST 37 | EQUIP_BOOL | u8 | vowType10:1 | 誓約10 | 誓約10で使用可能か
+EQUIP_PARAM_GOODS_ST 38 | EQUIP_BOOL | u8 | vowType11:1 | 誓約11 | 誓約11で使用可能か
+EQUIP_PARAM_GOODS_ST 39 | EQUIP_BOOL | u8 | vowType12:1 | 誓約12 | 誓約12で使用可能か
+EQUIP_PARAM_GOODS_ST 40 | EQUIP_BOOL | u8 | vowType13:1 | 誓約13 | 誓約13で使用可能か
+EQUIP_PARAM_GOODS_ST 41 | EQUIP_BOOL | u8 | vowType14:1 | 誓約14 | 誓約14で使用可能か
+EQUIP_PARAM_GOODS_ST 42 | EQUIP_BOOL | u8 | vowType15:1 | 誓約15 | 誓約15で使用可能か
+EQUIP_PARAM_GOODS_ST 43 | EQUIP_BOOL | u8 | enable_live:1 | 生存使用可 | 生存プレイヤー使用可能か
+EQUIP_PARAM_GOODS_ST 44 | EQUIP_BOOL | u8 | enable_gray:1 | グレイ使用可 | グレイゴースト使用可能か
+EQUIP_PARAM_GOODS_ST 45 | EQUIP_BOOL | u8 | enable_white:1 | 白使用可 | ホワイトゴースト使用可能か
+EQUIP_PARAM_GOODS_ST 46 | EQUIP_BOOL | u8 | enable_black:1 | 黒使用可 | ブラックゴーストしよう可能か
+EQUIP_PARAM_GOODS_ST 47 | EQUIP_BOOL | u8 | enable_multi:1 | マルチプレイ可 | マルチプレイ中に使用可能か？
+EQUIP_PARAM_GOODS_ST 48 | EQUIP_BOOL | u8 | enable_pvp:1 | 戦闘 | マルチプレイ中に使用可能か？
+EQUIP_PARAM_GOODS_ST 49 | EQUIP_BOOL | u8 | disable_offline:1 | オフラインで使用不可 | オフライン中に使用不可か？
+EQUIP_PARAM_GOODS_ST 50 | EQUIP_BOOL | u8 | isEquip:1 | 装備可能 | 装備できるかどうか
+EQUIP_PARAM_GOODS_ST 51 | EQUIP_BOOL | u8 | isConsume:1 | 消耗品か | 使用時に消耗するか(所持数が減るか)
+EQUIP_PARAM_GOODS_ST 52 | EQUIP_BOOL | u8 | isAutoEquip:1 | 自動装備するか？ | 拾った時に自動で装備するか？
+EQUIP_PARAM_GOODS_ST 53 | EQUIP_BOOL | u8 | isEstablishment:1 | 設置型アイテムか？ | 設置型アイテムか？
+EQUIP_PARAM_GOODS_ST 54 | EQUIP_BOOL | u8 | isOnlyOne:1 | 1個しか持てないか | 1個しか持てないアイテムか
+EQUIP_PARAM_GOODS_ST 55 | EQUIP_BOOL | u8 | isDrop:1 | 捨てれるか | アイテムを捨てれるか？TRUE=捨てれる
+EQUIP_PARAM_GOODS_ST 56 | EQUIP_BOOL | u8 | isDeposit:1 | 預けれるか | 倉庫に預けれるか
+EQUIP_PARAM_GOODS_ST 57 | EQUIP_BOOL | u8 | isDisableHand:1 | 右素手に使えないか | 右手武器が素手の場合に使用不可か
+EQUIP_PARAM_GOODS_ST 58 | EQUIP_BOOL | u8 | IsTravelItem:1 | 旅するアイテムか | 旅するアイテム判別に使用します
+EQUIP_PARAM_GOODS_ST 59 | EQUIP_BOOL | u8 | isSuppleItem:1 | 補充アイテムか | 補充可能アイテムを判別するのに使用します
+EQUIP_PARAM_GOODS_ST 60 | EQUIP_BOOL | u8 | isFullSuppleItem:1 | 補充済みアイテムか | 補充済みアイテムを判別するのに使用します
+EQUIP_PARAM_GOODS_ST 61 | EQUIP_BOOL | u8 | isEnhance:1 | エンチャントするか？ | 武器にエンチャントするか？
+EQUIP_PARAM_GOODS_ST 62 | EQUIP_BOOL | u8 | isFixItem:1 | 修理アイテムか | 修理するアイテムか？
+EQUIP_PARAM_GOODS_ST 63 | EQUIP_BOOL | u8 | disableMultiDropShare:1 | マルチドロップ共有禁止か | マルチドロップ共有禁止か
+EQUIP_PARAM_GOODS_ST 64 | EQUIP_BOOL | u8 | disableUseAtColiseum:1 | 闘技場で使用禁止か | 闘技場で使用禁止か
+EQUIP_PARAM_GOODS_ST 65 | EQUIP_BOOL | u8 | disableUseAtOutOfColiseum:1 | 闘技場以外で使用禁止か | 闘技場以外で使用禁止か
+EQUIP_PARAM_GOODS_ST 66 | dummy8 | dummy8 | pad[9] | パディング | 
+EQUIP_PARAM_GOODS_ST 67 | s32 | s32 | vagrantItemLotId | ベイグラント時アイテム抽選ID | -1：ベイグラントなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_GOODS_ST 68 | s32 | s32 | vagrantBonusEneDropItemLotId | ベイグラントボーナス敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_GOODS_ST 69 | s32 | s32 | vagrantItemEneDropItemLotId | ベイグラントアイテム敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_PROTECTOR_ST 0 | s32 | s32 | sortId | ソートID | ソートID
+EQUIP_PARAM_PROTECTOR_ST 1 | u32 | u32 | wanderingEquipId | 徘徊装備ID | 徘徊ゴースト用の差し替え装備ID.
+EQUIP_PARAM_PROTECTOR_ST 2 | s32 | s32 | vagrantItemLotId | ベイグラント時アイテム抽選ID | -1：ベイグラントなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_PROTECTOR_ST 3 | s32 | s32 | vagrantBonusEneDropItemLotId | ベイグラントボーナス敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_PROTECTOR_ST 4 | s32 | s32 | vagrantItemEneDropItemLotId | ベイグラントアイテム敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_PROTECTOR_ST 5 | s32 | s32 | fixPrice | 修理価格 | 修理基本価格
+EQUIP_PARAM_PROTECTOR_ST 6 | s32 | s32 | basicPrice | 基本価格 | 基本価格
+EQUIP_PARAM_PROTECTOR_ST 7 | s32 | s32 | sellValue | 販売価格 | 販売価格
+EQUIP_PARAM_PROTECTOR_ST 8 | f32 | f32 | weight | 重量[kg] | 重量[kg].
+EQUIP_PARAM_PROTECTOR_ST 9 | s32 | s32 | residentSpEffectId | 常駐特殊効果ID1 | 常駐特殊効果ID1
+EQUIP_PARAM_PROTECTOR_ST 10 | s32 | s32 | residentSpEffectId2 | 常駐特殊効果ID2 | 常駐特殊効果ID2
+EQUIP_PARAM_PROTECTOR_ST 11 | s32 | s32 | residentSpEffectId3 | 常駐特殊効果ID3 | 常駐特殊効果ID3
+EQUIP_PARAM_PROTECTOR_ST 12 | s32 | s32 | materialSetId | 素材ID | 武器強化に必要な素材パラメータID
+EQUIP_PARAM_PROTECTOR_ST 13 | f32 | f32 | partsDamageRate | 部位ダメージ率 | 部位ダメージ率
+EQUIP_PARAM_PROTECTOR_ST 14 | f32 | f32 | corectSARecover | SA回復時間補正値 | スーパーアーマー回復時間の補正値
+EQUIP_PARAM_PROTECTOR_ST 15 | s32 | s32 | originEquipPro | 派生元 | この防具の強化元防具ID
+EQUIP_PARAM_PROTECTOR_ST 16 | s32 | s32 | originEquipPro1 | 派生元 強化+1 | この防具の強化元防具ID1
+EQUIP_PARAM_PROTECTOR_ST 17 | s32 | s32 | originEquipPro2 | 派生元 強化+2 | この防具の強化元防具ID2
+EQUIP_PARAM_PROTECTOR_ST 18 | s32 | s32 | originEquipPro3 | 派生元 強化+3 | この防具の強化元防具ID3
+EQUIP_PARAM_PROTECTOR_ST 19 | s32 | s32 | originEquipPro4 | 派生元 強化+4 | この防具の強化元防具ID4
+EQUIP_PARAM_PROTECTOR_ST 20 | s32 | s32 | originEquipPro5 | 派生元 強化+5 | この防具の強化元防具ID5
+EQUIP_PARAM_PROTECTOR_ST 21 | s32 | s32 | originEquipPro6 | 派生元 強化+6 | この防具の強化元防具ID6
+EQUIP_PARAM_PROTECTOR_ST 22 | s32 | s32 | originEquipPro7 | 派生元 強化+7 | この防具の強化元防具ID7
+EQUIP_PARAM_PROTECTOR_ST 23 | s32 | s32 | originEquipPro8 | 派生元 強化+8 | この防具の強化元防具ID8
+EQUIP_PARAM_PROTECTOR_ST 24 | s32 | s32 | originEquipPro9 | 派生元 強化+9 | この防具の強化元防具ID9
+EQUIP_PARAM_PROTECTOR_ST 25 | s32 | s32 | originEquipPro10 | 派生元 強化+10 | この防具の強化元防具ID10
+EQUIP_PARAM_PROTECTOR_ST 26 | s32 | s32 | originEquipPro11 | 派生元 強化+11 | この防具の強化元防具ID11
+EQUIP_PARAM_PROTECTOR_ST 27 | s32 | s32 | originEquipPro12 | 派生元 強化+12 | この防具の強化元防具ID12
+EQUIP_PARAM_PROTECTOR_ST 28 | s32 | s32 | originEquipPro13 | 派生元 強化+13 | この防具の強化元防具ID13
+EQUIP_PARAM_PROTECTOR_ST 29 | s32 | s32 | originEquipPro14 | 派生元 強化+14 | この防具の強化元防具ID14
+EQUIP_PARAM_PROTECTOR_ST 30 | s32 | s32 | originEquipPro15 | 派生元 強化+15 | この防具の強化元防具ID15
+EQUIP_PARAM_PROTECTOR_ST 31 | f32 | f32 | faceScaleM_ScaleX | 男横顔拡大スケール | 
+EQUIP_PARAM_PROTECTOR_ST 32 | f32 | f32 | faceScaleM_ScaleZ | 男前顔拡大スケール | 
+EQUIP_PARAM_PROTECTOR_ST 33 | f32 | f32 | faceScaleM_MaxX | 男横顔拡大最大倍率 | 
+EQUIP_PARAM_PROTECTOR_ST 34 | f32 | f32 | faceScaleM_MaxZ | 男前顔拡大最大倍率 | 
+EQUIP_PARAM_PROTECTOR_ST 35 | f32 | f32 | faceScaleF_ScaleX | 女横顔拡大スケール | 
+EQUIP_PARAM_PROTECTOR_ST 36 | f32 | f32 | faceScaleF_ScaleZ | 女前顔拡大スケール | 
+EQUIP_PARAM_PROTECTOR_ST 37 | f32 | f32 | faceScaleF_MaxX | 女横顔拡大最大倍率 | 
+EQUIP_PARAM_PROTECTOR_ST 38 | f32 | f32 | faceScaleF_MaxZ | 女前顔拡大最大倍率 | 
+EQUIP_PARAM_PROTECTOR_ST 39 | s32 | s32 | qwcId | QWCID | QWCのパラメタID
+EQUIP_PARAM_PROTECTOR_ST 40 | u16 | u16 | equipModelId | 装備モデル番号 | 装備モデルの番号.
+EQUIP_PARAM_PROTECTOR_ST 41 | u16 | u16 | iconIdM | 男用アイコンID | 男用メニューアイコンID.
+EQUIP_PARAM_PROTECTOR_ST 42 | u16 | u16 | iconIdF | 女用アイコンID | 女用メニューアイコンID.
+EQUIP_PARAM_PROTECTOR_ST 43 | u16 | u16 | knockBack | ノックバックカット率 | ノックバックの減少値.
+EQUIP_PARAM_PROTECTOR_ST 44 | u16 | u16 | knockbackBounceRate | ノックバック反発率 | ノックバックの反発率.
+EQUIP_PARAM_PROTECTOR_ST 45 | u16 | u16 | durability | 耐久度 | 初期耐久度.
+EQUIP_PARAM_PROTECTOR_ST 46 | u16 | u16 | durabilityMax | 耐久度最大値 | 新品耐久度.
+EQUIP_PARAM_PROTECTOR_ST 47 | s16 | s16 | saDurability | SA耐久値 | スーパーアーマー耐久力
+EQUIP_PARAM_PROTECTOR_ST 48 | u16 | u16 | defFlickPower | はじき防御力 | 敵の攻撃のはじき返し判定に利用.
+EQUIP_PARAM_PROTECTOR_ST 49 | u16 | u16 | defensePhysics | 物理防御力 | 物理攻撃のダメージ防御.
+EQUIP_PARAM_PROTECTOR_ST 50 | u16 | u16 | defenseMagic | 魔法防御力 | 魔法攻撃のダメージ防御.
+EQUIP_PARAM_PROTECTOR_ST 51 | u16 | u16 | defenseFire | 炎防御力 | 炎攻撃のダメージ防御.
+EQUIP_PARAM_PROTECTOR_ST 52 | u16 | u16 | defenseThunder | 電撃防御力 | 電撃攻撃のダメージ防御.
+EQUIP_PARAM_PROTECTOR_ST 53 | s16 | s16 | defenseSlash | 斬撃防御力 | 攻撃タイプを見て、斬撃属性のときは、防御力を減少させる
+EQUIP_PARAM_PROTECTOR_ST 54 | s16 | s16 | defenseBlow | 打撃防御力 | 攻撃属性を見て、打撃属性のときは、防御力を減少させる.
+EQUIP_PARAM_PROTECTOR_ST 55 | s16 | s16 | defenseThrust | 刺突防御力 | 攻撃属性を見て、打撃属性のときは、防御力を減少させる.
+EQUIP_PARAM_PROTECTOR_ST 56 | u16 | u16 | resistPoison | 毒耐性 | 毒状態異常へのかかりにくさ
+EQUIP_PARAM_PROTECTOR_ST 57 | u16 | u16 | resistDisease | 疫病耐性 | 疫病状態異常へのかかりにくさ
+EQUIP_PARAM_PROTECTOR_ST 58 | u16 | u16 | resistBlood | 出血耐性 | 出血状態異常へのかかりにくさ
+EQUIP_PARAM_PROTECTOR_ST 59 | u16 | u16 | resistCurse | 呪耐性 | 呪い状態異常へのかかりにくさ
+EQUIP_PARAM_PROTECTOR_ST 60 | s16 | s16 | reinforceTypeId | 強化タイプID | 強化タイプID
+EQUIP_PARAM_PROTECTOR_ST 61 | s16 | s16 | trophySGradeId | トロフィー | トロフィーシステムに関係あるか？
+EQUIP_PARAM_PROTECTOR_ST 62 | s16 | s16 | shopLv | ショップレベル | お店で販売できるレベル
+EQUIP_PARAM_PROTECTOR_ST 63 | u8 | u8 | knockbackParamId | ノックバックパラメータID | ノックバックで使用するパラメータのID
+EQUIP_PARAM_PROTECTOR_ST 64 | u8 | u8 | flickDamageCutRate | はじき時ダメージ減衰率[%] | はじき時のダメージ減衰率に使用
+EQUIP_PARAM_PROTECTOR_ST 65 | EQUIP_MODEL_CATEGORY | u8 | equipModelCategory | 装備モデル種別 | 装備モデルの種別.
+EQUIP_PARAM_PROTECTOR_ST 66 | EQUIP_MODEL_GENDER | u8 | equipModelGender | 装備モデル性別 | 装備モデルの性別.
+EQUIP_PARAM_PROTECTOR_ST 67 | PROTECTOR_CATEGORY | u8 | protectorCategory | 防具カテゴリ | 防具のカテゴリ.
+EQUIP_PARAM_PROTECTOR_ST 68 | WEP_MATERIAL_DEF | u8 | defenseMaterial | 防御材質【SE】 | 移動/防御時のSE用.
+EQUIP_PARAM_PROTECTOR_ST 69 | WEP_MATERIAL_DEF_SFX | u8 | defenseMaterialSfx | 防御材質【SFX】 | 移動/防御時のSFX用.
+EQUIP_PARAM_PROTECTOR_ST 70 | ATK_PARAM_PARTSDMGTYPE | u8 | partsDmgType | 部位ダメージ適用攻撃 | 部位ダメージ判定を行う攻撃タイプを設定
+EQUIP_PARAM_PROTECTOR_ST 71 | WEP_MATERIAL_DEF | u8 | defenseMaterial_Weak | 弱点防御材質【SE】 | 弱点部位ダメージ時のSE用
+EQUIP_PARAM_PROTECTOR_ST 72 | WEP_MATERIAL_DEF_SFX | u8 | defenseMaterialSfx_Weak | 弱点防御材質【SFX】 | 弱点部位ダメージ時のSFX用
+EQUIP_PARAM_PROTECTOR_ST 73 | EQUIP_BOOL | u8 | isDeposit:1 | 預けれるか | 倉庫に預けれるか
+EQUIP_PARAM_PROTECTOR_ST 74 | EQUIP_BOOL | u8 | headEquip:1 | 頭装備 | 頭装備か.
+EQUIP_PARAM_PROTECTOR_ST 75 | EQUIP_BOOL | u8 | bodyEquip:1 | 胴装備 | 胴装備か.
+EQUIP_PARAM_PROTECTOR_ST 76 | EQUIP_BOOL | u8 | armEquip:1 | 腕装備 | 腕装備か.
+EQUIP_PARAM_PROTECTOR_ST 77 | EQUIP_BOOL | u8 | legEquip:1 | 脚装備 | 脚装備か.
+EQUIP_PARAM_PROTECTOR_ST 78 | EQUIP_BOOL | u8 | useFaceScale:1 | 顔スケールを使用するか | 顔スケールを使用するか
+EQUIP_PARAM_PROTECTOR_ST 79 | u8 | u8 | invisibleFlag00:1 | #00#非表示 | 前髪の先
+EQUIP_PARAM_PROTECTOR_ST 80 | u8 | u8 | invisibleFlag01:1 | #01#非表示 | 前髪の根元
+EQUIP_PARAM_PROTECTOR_ST 81 | u8 | u8 | invisibleFlag02:1 | #02#非表示 | もみあげ
+EQUIP_PARAM_PROTECTOR_ST 82 | u8 | u8 | invisibleFlag03:1 | #03#非表示 | 頭頂部
+EQUIP_PARAM_PROTECTOR_ST 83 | u8 | u8 | invisibleFlag04:1 | #04#非表示 | 頭頂部
+EQUIP_PARAM_PROTECTOR_ST 84 | u8 | u8 | invisibleFlag05:1 | #05#非表示 | 後ろ髪
+EQUIP_PARAM_PROTECTOR_ST 85 | u8 | u8 | invisibleFlag06:1 | #06#非表示 | 後ろ髪の先
+EQUIP_PARAM_PROTECTOR_ST 86 | u8 | u8 | invisibleFlag07:1 | #07#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 87 | u8 | u8 | invisibleFlag08:1 | #08#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 88 | u8 | u8 | invisibleFlag09:1 | #09#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 89 | u8 | u8 | invisibleFlag10:1 | #10#非表示 | 襟
+EQUIP_PARAM_PROTECTOR_ST 90 | u8 | u8 | invisibleFlag11:1 | #11#非表示 | 襟回り
+EQUIP_PARAM_PROTECTOR_ST 91 | u8 | u8 | invisibleFlag12:1 | #12#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 92 | u8 | u8 | invisibleFlag13:1 | #13#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 93 | u8 | u8 | invisibleFlag14:1 | #14#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 94 | u8 | u8 | invisibleFlag15:1 | #15#非表示 | 頭巾の裾
+EQUIP_PARAM_PROTECTOR_ST 95 | u8 | u8 | invisibleFlag16:1 | #16#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 96 | u8 | u8 | invisibleFlag17:1 | #17#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 97 | u8 | u8 | invisibleFlag18:1 | #18#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 98 | u8 | u8 | invisibleFlag19:1 | #19#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 99 | u8 | u8 | invisibleFlag20:1 | #20#非表示 | 袖A
+EQUIP_PARAM_PROTECTOR_ST 100 | u8 | u8 | invisibleFlag21:1 | #21#非表示 | 袖B
+EQUIP_PARAM_PROTECTOR_ST 101 | u8 | u8 | invisibleFlag22:1 | #22#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 102 | u8 | u8 | invisibleFlag23:1 | #23#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 103 | u8 | u8 | invisibleFlag24:1 | #24#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 104 | u8 | u8 | invisibleFlag25:1 | #25#非表示 | 腕
+EQUIP_PARAM_PROTECTOR_ST 105 | u8 | u8 | invisibleFlag26:1 | #26#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 106 | u8 | u8 | invisibleFlag27:1 | #27#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 107 | u8 | u8 | invisibleFlag28:1 | #28#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 108 | u8 | u8 | invisibleFlag29:1 | #29#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 109 | u8 | u8 | invisibleFlag30:1 | #30#非表示 | ベルト
+EQUIP_PARAM_PROTECTOR_ST 110 | u8 | u8 | invisibleFlag31:1 | #31#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 111 | u8 | u8 | invisibleFlag32:1 | #32#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 112 | u8 | u8 | invisibleFlag33:1 | #33#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 113 | u8 | u8 | invisibleFlag34:1 | #34#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 114 | u8 | u8 | invisibleFlag35:1 | #35#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 115 | u8 | u8 | invisibleFlag36:1 | #36#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 116 | u8 | u8 | invisibleFlag37:1 | #37#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 117 | u8 | u8 | invisibleFlag38:1 | #38#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 118 | u8 | u8 | invisibleFlag39:1 | #39#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 119 | u8 | u8 | invisibleFlag40:1 | #40#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 120 | u8 | u8 | invisibleFlag41:1 | #41#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 121 | u8 | u8 | invisibleFlag42:1 | #42#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 122 | u8 | u8 | invisibleFlag43:1 | #43#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 123 | u8 | u8 | invisibleFlag44:1 | #44#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 124 | u8 | u8 | invisibleFlag45:1 | #45#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 125 | u8 | u8 | invisibleFlag46:1 | #46#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 126 | u8 | u8 | invisibleFlag47:1 | #47#非表示 | 
+EQUIP_PARAM_PROTECTOR_ST 127 | EQUIP_BOOL | u8 | disableMultiDropShare:1 | マルチドロップ共有禁止か | マルチドロップ共有禁止か
+EQUIP_PARAM_PROTECTOR_ST 128 | EQUIP_BOOL | u8 | simpleModelForDlc:1 | DLC用シンプルモデルありか | ＤＬＣ用シンプルモデルが存在しているか
+EQUIP_PARAM_PROTECTOR_ST 129 | dummy8 | dummy8 | pad_0[1] | パディング | 
+EQUIP_PARAM_PROTECTOR_ST 130 | s16 | s16 | oldSortId | 旧ソートID | 旧ソートID(-1:集めない)
+EQUIP_PARAM_PROTECTOR_ST 131 | dummy8 | dummy8 | pad_1[6] | パディング | 
+EQUIP_PARAM_WEAPON_ST 0 | s32 | s32 | behaviorVariationId | 行動バリエーションID | 攻撃時に参照する行動パラメータIDを決定するときに使う
+EQUIP_PARAM_WEAPON_ST 1 | s32 | s32 | sortId | ソートID | ソートID(-1:集めない)
+EQUIP_PARAM_WEAPON_ST 2 | u32 | u32 | wanderingEquipId | 徘徊装備ID | 徘徊ゴースト用の差し替え装備ID.
+EQUIP_PARAM_WEAPON_ST 3 | f32 | f32 | weight | 重量[kg] | 重量[kg].
+EQUIP_PARAM_WEAPON_ST 4 | f32 | f32 | weaponWeightRate | 装備重量比率 | 装備重量比率
+EQUIP_PARAM_WEAPON_ST 5 | s32 | s32 | fixPrice | 修理価格 | 修理基本価格
+EQUIP_PARAM_WEAPON_ST 6 | s32 | s32 | basicPrice | 基本価格 | 基本価格
+EQUIP_PARAM_WEAPON_ST 7 | s32 | s32 | sellValue | 販売価格 | 販売価格
+EQUIP_PARAM_WEAPON_ST 8 | f32 | f32 | correctStrength | 筋力補正 | キャラパラ補正値.
+EQUIP_PARAM_WEAPON_ST 9 | f32 | f32 | correctAgility | 俊敏補正 | キャラパラ補正値.
+EQUIP_PARAM_WEAPON_ST 10 | f32 | f32 | correctMagic | 魔力補正 | キャラパラ補正値.
+EQUIP_PARAM_WEAPON_ST 11 | f32 | f32 | correctFaith | 信仰補正 | キャラパラ補正値.
+EQUIP_PARAM_WEAPON_ST 12 | f32 | f32 | physGuardCutRate | ガード時物理攻撃カット率 | ガード時のダメージカット率を各攻撃ごとに設定
+EQUIP_PARAM_WEAPON_ST 13 | f32 | f32 | magGuardCutRate | ガード時魔法攻撃カット率 | ガード攻撃でない場合は、0を入れる
+EQUIP_PARAM_WEAPON_ST 14 | f32 | f32 | fireGuardCutRate | ガード時炎攻撃力カット率 | 炎攻撃をどれだけカットするか？
+EQUIP_PARAM_WEAPON_ST 15 | f32 | f32 | thunGuardCutRate | ガード時電撃攻撃力カット率 | 電撃攻撃をどれだけカットするか？
+EQUIP_PARAM_WEAPON_ST 16 | s32 | s32 | spEffectBehaviorId0 | 特殊効果行動ID0 | 武器に特殊効果を追加するときに登録する
+EQUIP_PARAM_WEAPON_ST 17 | s32 | s32 | spEffectBehaviorId1 | 特殊効果行動ID1 | 武器に特殊効果を追加するときに登録する
+EQUIP_PARAM_WEAPON_ST 18 | s32 | s32 | spEffectBehaviorId2 | 特殊効果行動ID2 | 武器に特殊効果を追加するときに登録する
+EQUIP_PARAM_WEAPON_ST 19 | s32 | s32 | residentSpEffectId | 常駐特殊効果ID | 常駐特殊効果ID0
+EQUIP_PARAM_WEAPON_ST 20 | s32 | s32 | residentSpEffectId1 | 常駐特殊効果ID1 | 常駐特殊効果ID1
+EQUIP_PARAM_WEAPON_ST 21 | s32 | s32 | residentSpEffectId2 | 常駐特殊効果ID2 | 常駐特殊効果ID2
+EQUIP_PARAM_WEAPON_ST 22 | s32 | s32 | materialSetId | 素材ID | 武器強化に必要な素材パラメータID
+EQUIP_PARAM_WEAPON_ST 23 | s32 | s32 | originEquipWep | 派生元 | この武器の強化元武器ID
+EQUIP_PARAM_WEAPON_ST 24 | s32 | s32 | originEquipWep1 | 派生元 強化+1 | この武器の強化元武器ID1
+EQUIP_PARAM_WEAPON_ST 25 | s32 | s32 | originEquipWep2 | 派生元 強化+2 | この武器の強化元武器ID2
+EQUIP_PARAM_WEAPON_ST 26 | s32 | s32 | originEquipWep3 | 派生元 強化+3 | この武器の強化元武器ID3
+EQUIP_PARAM_WEAPON_ST 27 | s32 | s32 | originEquipWep4 | 派生元 強化+4 | この武器の強化元武器ID4
+EQUIP_PARAM_WEAPON_ST 28 | s32 | s32 | originEquipWep5 | 派生元 強化+5 | この武器の強化元武器ID5
+EQUIP_PARAM_WEAPON_ST 29 | s32 | s32 | originEquipWep6 | 派生元 強化+6 | この武器の強化元武器ID6
+EQUIP_PARAM_WEAPON_ST 30 | s32 | s32 | originEquipWep7 | 派生元 強化+7 | この武器の強化元武器ID7
+EQUIP_PARAM_WEAPON_ST 31 | s32 | s32 | originEquipWep8 | 派生元 強化+8 | この武器の強化元武器ID8
+EQUIP_PARAM_WEAPON_ST 32 | s32 | s32 | originEquipWep9 | 派生元 強化+9 | この武器の強化元武器ID9
+EQUIP_PARAM_WEAPON_ST 33 | s32 | s32 | originEquipWep10 | 派生元 強化+10 | この武器の強化元武器ID10
+EQUIP_PARAM_WEAPON_ST 34 | s32 | s32 | originEquipWep11 | 派生元 強化+11 | この武器の強化元武器ID11
+EQUIP_PARAM_WEAPON_ST 35 | s32 | s32 | originEquipWep12 | 派生元 強化+12 | この武器の強化元武器ID12
+EQUIP_PARAM_WEAPON_ST 36 | s32 | s32 | originEquipWep13 | 派生元 強化+13 | この武器の強化元武器ID13
+EQUIP_PARAM_WEAPON_ST 37 | s32 | s32 | originEquipWep14 | 派生元 強化+14 | この武器の強化元武器ID14
+EQUIP_PARAM_WEAPON_ST 38 | s32 | s32 | originEquipWep15 | 派生元 強化+15 | この武器の強化元武器ID15
+EQUIP_PARAM_WEAPON_ST 39 | f32 | f32 | antiDemonDamageRate | 対デーモンダメージ倍率 | 対デーモン用のダメージ倍率
+EQUIP_PARAM_WEAPON_ST 40 | f32 | f32 | antSaintDamageRate | 対神聖ダメージ倍率 | 対神聖弱点用ダメージ倍率
+EQUIP_PARAM_WEAPON_ST 41 | f32 | f32 | antWeakA_DamageRate | 対弱点Aダメージ倍率 | 対弱点A用ダメージ倍率
+EQUIP_PARAM_WEAPON_ST 42 | f32 | f32 | antWeakB_DamageRate | 対弱点Bダメージ倍率 | 対弱点B用ダメージ倍率
+EQUIP_PARAM_WEAPON_ST 43 | s32 | s32 | vagrantItemLotId | ベイグラント時アイテム抽選ID | -1：ベイグラントなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_WEAPON_ST 44 | s32 | s32 | vagrantBonusEneDropItemLotId | ベイグラントボーナス敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_WEAPON_ST 45 | s32 | s32 | vagrantItemEneDropItemLotId | ベイグラントアイテム敵ドロップアイテム抽選ID | -1：ドロップなし 0：抽選なし 1〜：抽選あり
+EQUIP_PARAM_WEAPON_ST 46 | u16 | u16 | equipModelId | 装備モデル番号 | 装備モデルの番号.
+EQUIP_PARAM_WEAPON_ST 47 | u16 | u16 | iconId | アイコンID | メニューアイコンID.
+EQUIP_PARAM_WEAPON_ST 48 | u16 | u16 | durability | 耐久度 | 初期耐久度.
+EQUIP_PARAM_WEAPON_ST 49 | u16 | u16 | durabilityMax | 耐久度最大値 | 新品耐久度.
+EQUIP_PARAM_WEAPON_ST 50 | u16 | u16 | attackThrowEscape | 投げ抜け攻撃力基本値 | 投げ抜け攻撃力の基本値
+EQUIP_PARAM_WEAPON_ST 51 | s16 | s16 | parryDamageLife | パリィ発生時間[frame] | パリィダメージの寿命を制限する。TimeActで設定されている以上には持続しない。
+EQUIP_PARAM_WEAPON_ST 52 | u16 | u16 | attackBasePhysics | 物理攻撃力基本値 | 敵のＨＰにダメージを与える物理属性攻撃の基本値
+EQUIP_PARAM_WEAPON_ST 53 | u16 | u16 | attackBaseMagic | 魔法攻撃力基本値 | 敵のＨＰにダメージを与える魔法属性攻撃の基本値
+EQUIP_PARAM_WEAPON_ST 54 | u16 | u16 | attackBaseFire | 炎攻撃力基本値 | 敵のＨＰにダメージを与える炎属性攻撃の基本値
+EQUIP_PARAM_WEAPON_ST 55 | u16 | u16 | attackBaseThunder | 電撃攻撃力基本値 | 敵のＨＰにダメージを与える電撃属性攻撃の基本値
+EQUIP_PARAM_WEAPON_ST 56 | u16 | u16 | attackBaseStamina | スタミナ攻撃力 | 敵へのスタミナ攻撃力
+EQUIP_PARAM_WEAPON_ST 57 | u16 | u16 | saWeaponDamage | SA武器攻撃力 | スーパーアーマー基本攻撃力
+EQUIP_PARAM_WEAPON_ST 58 | s16 | s16 | saDurability | SA耐久値 | 攻撃モーション中に使われる追加SA耐久値
+EQUIP_PARAM_WEAPON_ST 59 | s16 | s16 | guardAngle | ガード範囲[deg] | 武器のガード時の防御発生範囲角度
+EQUIP_PARAM_WEAPON_ST 60 | s16 | s16 | staminaGuardDef | ガード時スタミナ防御力 | ガード成功時に、敵のスタミナ攻撃に対する防御力
+EQUIP_PARAM_WEAPON_ST 61 | s16 | s16 | reinforceTypeId | 強化タイプID | 強化タイプID
+EQUIP_PARAM_WEAPON_ST 62 | s16 | s16 | trophySGradeId | トロフィーＳグレードID | トロフィーシステムに関係あるか？
+EQUIP_PARAM_WEAPON_ST 63 | s16 | s16 | trophySeqId | トロフィーSEQ番号 | トロフィーのSEQ番号（１３〜２９）
+EQUIP_PARAM_WEAPON_ST 64 | s16 | s16 | throwAtkRate | 投げ攻撃力倍率 | 投げの攻撃力倍率
+EQUIP_PARAM_WEAPON_ST 65 | s16 | s16 | bowDistRate | 弓飛距離補正[％] | 飛距離を伸ばすアップ％
+EQUIP_PARAM_WEAPON_ST 66 | EQUIP_MODEL_CATEGORY | u8 | equipModelCategory | 装備モデル種別 | 装備モデルの種別.
+EQUIP_PARAM_WEAPON_ST 67 | EQUIP_MODEL_GENDER | u8 | equipModelGender | 装備モデル性別 | 装備モデルの性別.
+EQUIP_PARAM_WEAPON_ST 68 | WEAPON_CATEGORY | u8 | weaponCategory | 武器カテゴリ | 武器のカテゴリ.
+EQUIP_PARAM_WEAPON_ST 69 | WEPMOTION_CATEGORY | u8 | wepmotionCategory | 武器モーションカテゴリ | 武器モーションのカテゴリ.
+EQUIP_PARAM_WEAPON_ST 70 | GUARDMOTION_CATEGORY | u8 | guardmotionCategory | ガードモーションカテゴリ | ガードモーションのカテゴリ
+EQUIP_PARAM_WEAPON_ST 71 | WEP_MATERIAL_ATK | u8 | atkMaterial | 攻撃材質 | 攻撃パラから使用される攻撃材質
+EQUIP_PARAM_WEAPON_ST 72 | WEP_MATERIAL_DEF | u8 | defMaterial | 防御材質 | 攻撃パラから使用される防御材質
+EQUIP_PARAM_WEAPON_ST 73 | WEP_MATERIAL_DEF_SFX | u8 | defSfxMaterial | 防御SFX材質 | 攻撃パラから使用される防御SFX材質
+EQUIP_PARAM_WEAPON_ST 74 | WEP_CORRECT_TYPE | u8 | correctType | 補正タイプ | 一次パラメータによる補正グラフのタイプを決める
+EQUIP_PARAM_WEAPON_ST 75 | ATKPARAM_SPATTR_TYPE | u8 | spAttribute | 特殊属性 | 武器の特殊属性値
+EQUIP_PARAM_WEAPON_ST 76 | u8 | u8 | spAtkcategory | 特殊攻撃カテゴリ | 特殊攻撃カテゴリ（50〜199まで可能)
+EQUIP_PARAM_WEAPON_ST 77 | u8 | u8 | wepmotionOneHandId | 武器モーション片手ID | 片手装備時の基本モーションID.
+EQUIP_PARAM_WEAPON_ST 78 | u8 | u8 | wepmotionBothHandId | 武器モーション両手ID | 両手装備時の基本モーションID.
+EQUIP_PARAM_WEAPON_ST 79 | u8 | u8 | properStrength | 装備適正筋力 | 装備適正値.
+EQUIP_PARAM_WEAPON_ST 80 | u8 | u8 | properAgility | 装備適正俊敏 | 装備適正値.
+EQUIP_PARAM_WEAPON_ST 81 | u8 | u8 | properMagic | 装備適正魔力 | 装備適正値.
+EQUIP_PARAM_WEAPON_ST 82 | u8 | u8 | properFaith | 装備適正信仰 | 装備適正値.
+EQUIP_PARAM_WEAPON_ST 83 | u8 | u8 | overStrength | 筋力オーバー開始値 | 筋力オーバー開始値
+EQUIP_PARAM_WEAPON_ST 84 | u8 | u8 | attackBaseParry | パリィ攻撃基本値 | 敵のパリィをやぶるための基本値
+EQUIP_PARAM_WEAPON_ST 85 | u8 | u8 | defenseBaseParry | パリィ防御値 | パリィ判定時に、パリィになるかガードになるかの判定に利用
+EQUIP_PARAM_WEAPON_ST 86 | u8 | u8 | guardBaseRepel | はじき防御力基本値 | ガード敵を攻撃した時に、はじかれるかどうかの判定に利用
+EQUIP_PARAM_WEAPON_ST 87 | u8 | u8 | attackBaseRepel | はじき攻撃力基本値 | 敵の攻撃をガードしたときに、はじけるかどうかの判定に利用
+EQUIP_PARAM_WEAPON_ST 88 | s8 | s8 | guardCutCancelRate | ガードカット無効化倍率 | 相手のガードカットを無効化させる倍率。-100で完全無効。100で相手の防御効果倍増。
+EQUIP_PARAM_WEAPON_ST 89 | s8 | s8 | guardLevel | ガードレベル | ガードしたとき、敵の攻撃をどのガードモーションで受けるか？を決める
+EQUIP_PARAM_WEAPON_ST 90 | s8 | s8 | slashGuardCutRate | 斬撃攻撃カット率 | 攻撃タイプを見て、斬撃属性のダメージを何％カットするか？を指定
+EQUIP_PARAM_WEAPON_ST 91 | s8 | s8 | blowGuardCutRate | 打撃攻撃カット率 | 攻撃タイプを見て、打撃属性のダメージを何％カットするか？を指定
+EQUIP_PARAM_WEAPON_ST 92 | s8 | s8 | thrustGuardCutRate | 刺突攻撃カット率 | 攻撃タイプを見て、刺突属性のダメージを何％カットするか？を指定
+EQUIP_PARAM_WEAPON_ST 93 | s8 | s8 | poisonGuardResist | 毒耐性カット率 | 毒にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+EQUIP_PARAM_WEAPON_ST 94 | s8 | s8 | diseaseGuardResist | 疫病攻撃カット率 | 疫病にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+EQUIP_PARAM_WEAPON_ST 95 | s8 | s8 | bloodGuardResist | 出血攻撃カット率 | 出血にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+EQUIP_PARAM_WEAPON_ST 96 | s8 | s8 | curseGuardResist | 呪攻撃カット率 | 呪いにする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+EQUIP_PARAM_WEAPON_ST 97 | DURABILITY_DIVERGENCE_CATEGORY | u8 | isDurabilityDivergence | 耐久度で分岐するか | 魔法使用武器対応：耐久度によるモーション分岐
+EQUIP_PARAM_WEAPON_ST 98 | EQUIP_BOOL | u8 | rightHandEquipable:1 | 右手装備 | 右手装備可能か.
+EQUIP_PARAM_WEAPON_ST 99 | EQUIP_BOOL | u8 | leftHandEquipable:1 | 左手装備 | 左手装備可能か.
+EQUIP_PARAM_WEAPON_ST 100 | EQUIP_BOOL | u8 | bothHandEquipable:1 | 両手装備 | 両手装備可能か.
+EQUIP_PARAM_WEAPON_ST 101 | EQUIP_BOOL | u8 | arrowSlotEquipable:1 | 弓矢弾装備 | 弓用矢弾装備可能か.
+EQUIP_PARAM_WEAPON_ST 102 | EQUIP_BOOL | u8 | boltSlotEquipable:1 | 弩矢弾装備 | 弩用矢弾装備可能か.
+EQUIP_PARAM_WEAPON_ST 103 | EQUIP_BOOL | u8 | enableGuard:1 | ガード可能 | 左手装備時L1でガード
+EQUIP_PARAM_WEAPON_ST 104 | EQUIP_BOOL | u8 | enableParry:1 | パリィ可能 | 左手装備時L2でパリィ
+EQUIP_PARAM_WEAPON_ST 105 | EQUIP_BOOL | u8 | enableMagic:1 | 魔法可能 | 攻撃時に魔法発動
+EQUIP_PARAM_WEAPON_ST 106 | EQUIP_BOOL | u8 | enableSorcery:1 | 呪術可能 | 攻撃時に呪術発動
+EQUIP_PARAM_WEAPON_ST 107 | EQUIP_BOOL | u8 | enableMiracle:1 | 奇蹟可能 | 攻撃時に奇蹟発動
+EQUIP_PARAM_WEAPON_ST 108 | EQUIP_BOOL | u8 | enableVowMagic:1 | 誓約魔法可能 | 攻撃時に誓約魔法発動
+EQUIP_PARAM_WEAPON_ST 109 | EQUIP_BOOL | u8 | isNormalAttackType:1 | 通常 | メニュー表示用攻撃タイプ。通常か
+EQUIP_PARAM_WEAPON_ST 110 | EQUIP_BOOL | u8 | isBlowAttackType:1 | 打撃 | メニュー表示用攻撃タイプ。打撃か
+EQUIP_PARAM_WEAPON_ST 111 | EQUIP_BOOL | u8 | isSlashAttackType:1 | 斬撃 | メニュー表示用攻撃タイプ。斬撃か
+EQUIP_PARAM_WEAPON_ST 112 | EQUIP_BOOL | u8 | isThrustAttackType:1 | 刺突 | メニュー表示用攻撃タイプ。刺突か
+EQUIP_PARAM_WEAPON_ST 113 | EQUIP_BOOL | u8 | isEnhance:1 | エンチャント可能か？ | 松脂などで、強化可能か？
+EQUIP_PARAM_WEAPON_ST 114 | EQUIP_BOOL | u8 | isLuckCorrect:1 | 運補正あるか | 運による攻撃力補正があるか
+EQUIP_PARAM_WEAPON_ST 115 | EQUIP_BOOL | u8 | isCustom:1 | 強化できるか？ | 強化ショップで強化対象リストに並ぶ(仕様変更で削除するかも？)
+EQUIP_PARAM_WEAPON_ST 116 | EQUIP_BOOL | u8 | disableBaseChangeReset:1 | 転職リセット禁止か | 転職リセット禁止か
+EQUIP_PARAM_WEAPON_ST 117 | EQUIP_BOOL | u8 | disableRepair:1 | 修理禁止か | 修理禁止か
+EQUIP_PARAM_WEAPON_ST 118 | EQUIP_BOOL | u8 | isDarkHand:1 | ダークハンドか | ダークハンドか
+EQUIP_PARAM_WEAPON_ST 119 | EQUIP_BOOL | u8 | simpleModelForDlc:1 | DLC用シンプルモデルありか | ＤＬＣ用シンプルモデルが存在しているか
+EQUIP_PARAM_WEAPON_ST 120 | EQUIP_BOOL | u8 | lanternWep:1 | ランタン武器 | ランタン武器か
+EQUIP_PARAM_WEAPON_ST 121 | EQUIP_BOOL | u8 | isVersusGhostWep:1 | 対霊武器 | 対霊武器か
+EQUIP_PARAM_WEAPON_ST 122 | WEP_BASE_CHANGE_CATEGORY | u8 | baseChangeCategory:6 | 武器転職カテゴリ | 武器転職カテゴリ
+EQUIP_PARAM_WEAPON_ST 123 | EQUIP_BOOL | u8 | isDragonSlayer:1 | 竜狩りか | 竜狩り武器か
+EQUIP_PARAM_WEAPON_ST 124 | EQUIP_BOOL | u8 | isDeposit:1 | 預けれるか | 倉庫に預けれるか
+EQUIP_PARAM_WEAPON_ST 125 | EQUIP_BOOL | u8 | disableMultiDropShare:1 | マルチドロップ共有禁止か | マルチドロップ共有禁止か
+EQUIP_PARAM_WEAPON_ST 126 | dummy8 | dummy8 | pad_0[1] | パディング | 
+EQUIP_PARAM_WEAPON_ST 127 | s16 | s16 | oldSortId | 旧ソートID | 旧ソートID(-1:集めない)
+EQUIP_PARAM_WEAPON_ST 128 | s16 | s16 | levelSyncCorrectID | レベルの同期ID | レベルの同期ID
+EQUIP_PARAM_WEAPON_ST 129 | dummy8 | dummy8 | pad_1[6] | パディング | 
+FACE_PARAM_ST 0 | u8 | u8 | faceGeoData00 | 顔作成ジオメトリデータ00 | 顔作成ジオメトリデータ00
+FACE_PARAM_ST 1 | u8 | u8 | faceGeoData01 | 顔作成ジオメトリデータ01 | 顔作成ジオメトリデータ01
+FACE_PARAM_ST 2 | u8 | u8 | faceGeoData02 | 顔作成ジオメトリデータ02 | 顔作成ジオメトリデータ02
+FACE_PARAM_ST 3 | u8 | u8 | faceGeoData03 | 顔作成ジオメトリデータ03 | 顔作成ジオメトリデータ03
+FACE_PARAM_ST 4 | u8 | u8 | faceGeoData04 | 顔作成ジオメトリデータ04 | 顔作成ジオメトリデータ04
+FACE_PARAM_ST 5 | u8 | u8 | faceGeoData05 | 顔作成ジオメトリデータ05 | 顔作成ジオメトリデータ05
+FACE_PARAM_ST 6 | u8 | u8 | faceGeoData06 | 顔作成ジオメトリデータ06 | 顔作成ジオメトリデータ06
+FACE_PARAM_ST 7 | u8 | u8 | faceGeoData07 | 顔作成ジオメトリデータ07 | 顔作成ジオメトリデータ07
+FACE_PARAM_ST 8 | u8 | u8 | faceGeoData08 | 顔作成ジオメトリデータ08 | 顔作成ジオメトリデータ08
+FACE_PARAM_ST 9 | u8 | u8 | faceGeoData09 | 顔作成ジオメトリデータ09 | 顔作成ジオメトリデータ09
+FACE_PARAM_ST 10 | u8 | u8 | faceGeoData10 | 顔作成ジオメトリデータ10 | 顔作成ジオメトリデータ10
+FACE_PARAM_ST 11 | u8 | u8 | faceGeoData11 | 顔作成ジオメトリデータ11 | 顔作成ジオメトリデータ11
+FACE_PARAM_ST 12 | u8 | u8 | faceGeoData12 | 顔作成ジオメトリデータ12 | 顔作成ジオメトリデータ12
+FACE_PARAM_ST 13 | u8 | u8 | faceGeoData13 | 顔作成ジオメトリデータ13 | 顔作成ジオメトリデータ13
+FACE_PARAM_ST 14 | u8 | u8 | faceGeoData14 | 顔作成ジオメトリデータ14 | 顔作成ジオメトリデータ14
+FACE_PARAM_ST 15 | u8 | u8 | faceGeoData15 | 顔作成ジオメトリデータ15 | 顔作成ジオメトリデータ15
+FACE_PARAM_ST 16 | u8 | u8 | faceGeoData16 | 顔作成ジオメトリデータ16 | 顔作成ジオメトリデータ16
+FACE_PARAM_ST 17 | u8 | u8 | faceGeoData17 | 顔作成ジオメトリデータ17 | 顔作成ジオメトリデータ17
+FACE_PARAM_ST 18 | u8 | u8 | faceGeoData18 | 顔作成ジオメトリデータ18 | 顔作成ジオメトリデータ18
+FACE_PARAM_ST 19 | u8 | u8 | faceGeoData19 | 顔作成ジオメトリデータ19 | 顔作成ジオメトリデータ19
+FACE_PARAM_ST 20 | u8 | u8 | faceGeoData20 | 顔作成ジオメトリデータ20 | 顔作成ジオメトリデータ20
+FACE_PARAM_ST 21 | u8 | u8 | faceGeoData21 | 顔作成ジオメトリデータ21 | 顔作成ジオメトリデータ21
+FACE_PARAM_ST 22 | u8 | u8 | faceGeoData22 | 顔作成ジオメトリデータ22 | 顔作成ジオメトリデータ22
+FACE_PARAM_ST 23 | u8 | u8 | faceGeoData23 | 顔作成ジオメトリデータ23 | 顔作成ジオメトリデータ23
+FACE_PARAM_ST 24 | u8 | u8 | faceGeoData24 | 顔作成ジオメトリデータ24 | 顔作成ジオメトリデータ24
+FACE_PARAM_ST 25 | u8 | u8 | faceGeoData25 | 顔作成ジオメトリデータ25 | 顔作成ジオメトリデータ25
+FACE_PARAM_ST 26 | u8 | u8 | faceGeoData26 | 顔作成ジオメトリデータ26 | 顔作成ジオメトリデータ26
+FACE_PARAM_ST 27 | u8 | u8 | faceGeoData27 | 顔作成ジオメトリデータ27 | 顔作成ジオメトリデータ27
+FACE_PARAM_ST 28 | u8 | u8 | faceGeoData28 | 顔作成ジオメトリデータ28 | 顔作成ジオメトリデータ28
+FACE_PARAM_ST 29 | u8 | u8 | faceGeoData29 | 顔作成ジオメトリデータ29 | 顔作成ジオメトリデータ29
+FACE_PARAM_ST 30 | u8 | u8 | faceGeoData30 | 顔作成ジオメトリデータ30 | 顔作成ジオメトリデータ30
+FACE_PARAM_ST 31 | u8 | u8 | faceGeoData31 | 顔作成ジオメトリデータ31 | 顔作成ジオメトリデータ31
+FACE_PARAM_ST 32 | u8 | u8 | faceGeoData32 | 顔作成ジオメトリデータ32 | 顔作成ジオメトリデータ32
+FACE_PARAM_ST 33 | u8 | u8 | faceGeoData33 | 顔作成ジオメトリデータ33 | 顔作成ジオメトリデータ33
+FACE_PARAM_ST 34 | u8 | u8 | faceGeoData34 | 顔作成ジオメトリデータ34 | 顔作成ジオメトリデータ34
+FACE_PARAM_ST 35 | u8 | u8 | faceGeoData35 | 顔作成ジオメトリデータ35 | 顔作成ジオメトリデータ35
+FACE_PARAM_ST 36 | u8 | u8 | faceGeoData36 | 顔作成ジオメトリデータ36 | 顔作成ジオメトリデータ36
+FACE_PARAM_ST 37 | u8 | u8 | faceGeoData37 | 顔作成ジオメトリデータ37 | 顔作成ジオメトリデータ37
+FACE_PARAM_ST 38 | u8 | u8 | faceGeoData38 | 顔作成ジオメトリデータ38 | 顔作成ジオメトリデータ38
+FACE_PARAM_ST 39 | u8 | u8 | faceGeoData39 | 顔作成ジオメトリデータ39 | 顔作成ジオメトリデータ39
+FACE_PARAM_ST 40 | u8 | u8 | faceGeoData40 | 顔作成ジオメトリデータ40 | 顔作成ジオメトリデータ40
+FACE_PARAM_ST 41 | u8 | u8 | faceGeoData41 | 顔作成ジオメトリデータ41 | 顔作成ジオメトリデータ41
+FACE_PARAM_ST 42 | u8 | u8 | faceGeoData42 | 顔作成ジオメトリデータ42 | 顔作成ジオメトリデータ42
+FACE_PARAM_ST 43 | u8 | u8 | faceGeoData43 | 顔作成ジオメトリデータ43 | 顔作成ジオメトリデータ43
+FACE_PARAM_ST 44 | u8 | u8 | faceGeoData44 | 顔作成ジオメトリデータ44 | 顔作成ジオメトリデータ44
+FACE_PARAM_ST 45 | u8 | u8 | faceGeoData45 | 顔作成ジオメトリデータ45 | 顔作成ジオメトリデータ45
+FACE_PARAM_ST 46 | u8 | u8 | faceGeoData46 | 顔作成ジオメトリデータ46 | 顔作成ジオメトリデータ46
+FACE_PARAM_ST 47 | u8 | u8 | faceGeoData47 | 顔作成ジオメトリデータ47 | 顔作成ジオメトリデータ47
+FACE_PARAM_ST 48 | u8 | u8 | faceGeoData48 | 顔作成ジオメトリデータ48 | 顔作成ジオメトリデータ48
+FACE_PARAM_ST 49 | u8 | u8 | faceGeoData49 | 顔作成ジオメトリデータ49 | 顔作成ジオメトリデータ49
+FACE_PARAM_ST 50 | u8 | u8 | faceTexData00 | 顔作成テクスチャデータ00 | 顔作成テクスチャデータ00
+FACE_PARAM_ST 51 | u8 | u8 | faceTexData01 | 顔作成テクスチャデータ01 | 顔作成テクスチャデータ01
+FACE_PARAM_ST 52 | u8 | u8 | faceTexData02 | 顔作成テクスチャデータ02 | 顔作成テクスチャデータ02
+FACE_PARAM_ST 53 | u8 | u8 | faceTexData03 | 顔作成テクスチャデータ03 | 顔作成テクスチャデータ03
+FACE_PARAM_ST 54 | u8 | u8 | faceTexData04 | 顔作成テクスチャデータ04 | 顔作成テクスチャデータ04
+FACE_PARAM_ST 55 | u8 | u8 | faceTexData05 | 顔作成テクスチャデータ05 | 顔作成テクスチャデータ05
+FACE_PARAM_ST 56 | u8 | u8 | faceTexData06 | 顔作成テクスチャデータ06 | 顔作成テクスチャデータ06
+FACE_PARAM_ST 57 | u8 | u8 | faceTexData07 | 顔作成テクスチャデータ07 | 顔作成テクスチャデータ07
+FACE_PARAM_ST 58 | u8 | u8 | faceTexData08 | 顔作成テクスチャデータ08 | 顔作成テクスチャデータ08
+FACE_PARAM_ST 59 | u8 | u8 | faceTexData09 | 顔作成テクスチャデータ09 | 顔作成テクスチャデータ09
+FACE_PARAM_ST 60 | u8 | u8 | faceTexData10 | 顔作成テクスチャデータ10 | 顔作成テクスチャデータ10
+FACE_PARAM_ST 61 | u8 | u8 | faceTexData11 | 顔作成テクスチャデータ11 | 顔作成テクスチャデータ11
+FACE_PARAM_ST 62 | u8 | u8 | faceTexData12 | 顔作成テクスチャデータ12 | 顔作成テクスチャデータ12
+FACE_PARAM_ST 63 | u8 | u8 | faceTexData13 | 顔作成テクスチャデータ13 | 顔作成テクスチャデータ13
+FACE_PARAM_ST 64 | u8 | u8 | faceTexData14 | 顔作成テクスチャデータ14 | 顔作成テクスチャデータ14
+FACE_PARAM_ST 65 | u8 | u8 | faceTexData15 | 顔作成テクスチャデータ15 | 顔作成テクスチャデータ15
+FACE_PARAM_ST 66 | u8 | u8 | faceTexData16 | 顔作成テクスチャデータ16 | 顔作成テクスチャデータ16
+FACE_PARAM_ST 67 | u8 | u8 | faceTexData17 | 顔作成テクスチャデータ17 | 顔作成テクスチャデータ17
+FACE_PARAM_ST 68 | u8 | u8 | faceTexData18 | 顔作成テクスチャデータ18 | 顔作成テクスチャデータ18
+FACE_PARAM_ST 69 | u8 | u8 | faceTexData19 | 顔作成テクスチャデータ19 | 顔作成テクスチャデータ19
+FACE_PARAM_ST 70 | u8 | u8 | faceTexData20 | 顔作成テクスチャデータ20 | 顔作成テクスチャデータ20
+FACE_PARAM_ST 71 | u8 | u8 | faceTexData21 | 顔作成テクスチャデータ21 | 顔作成テクスチャデータ21
+FACE_PARAM_ST 72 | u8 | u8 | faceTexData22 | 顔作成テクスチャデータ22 | 顔作成テクスチャデータ22
+FACE_PARAM_ST 73 | u8 | u8 | faceTexData23 | 顔作成テクスチャデータ23 | 顔作成テクスチャデータ23
+FACE_PARAM_ST 74 | u8 | u8 | faceTexData24 | 顔作成テクスチャデータ24 | 顔作成テクスチャデータ24
+FACE_PARAM_ST 75 | u8 | u8 | faceTexData25 | 顔作成テクスチャデータ25 | 顔作成テクスチャデータ25
+FACE_PARAM_ST 76 | u8 | u8 | faceTexData26 | 顔作成テクスチャデータ26 | 顔作成テクスチャデータ26
+FACE_PARAM_ST 77 | u8 | u8 | faceTexData27 | 顔作成テクスチャデータ27 | 顔作成テクスチャデータ27
+FACE_PARAM_ST 78 | u8 | u8 | faceTexData28 | 顔作成テクスチャデータ28 | 顔作成テクスチャデータ28
+FACE_PARAM_ST 79 | u8 | u8 | faceTexData29 | 顔作成テクスチャデータ29 | 顔作成テクスチャデータ29
+FACE_PARAM_ST 80 | u8 | u8 | faceTexData30 | 顔作成テクスチャデータ30 | 顔作成テクスチャデータ30
+FACE_PARAM_ST 81 | u8 | u8 | faceTexData31 | 顔作成テクスチャデータ31 | 顔作成テクスチャデータ31
+FACE_PARAM_ST 82 | u8 | u8 | faceTexData32 | 顔作成テクスチャデータ32 | 顔作成テクスチャデータ32
+FACE_PARAM_ST 83 | u8 | u8 | faceTexData33 | 顔作成テクスチャデータ33 | 顔作成テクスチャデータ33
+FACE_PARAM_ST 84 | u8 | u8 | faceTexData34 | 顔作成テクスチャデータ34 | 顔作成テクスチャデータ34
+FACE_PARAM_ST 85 | u8 | u8 | faceTexData35 | 顔作成テクスチャデータ35 | 顔作成テクスチャデータ35
+FACE_PARAM_ST 86 | u8 | u8 | faceTexData36 | 顔作成テクスチャデータ36 | 顔作成テクスチャデータ36
+FACE_PARAM_ST 87 | u8 | u8 | faceTexData37 | 顔作成テクスチャデータ37 | 顔作成テクスチャデータ37
+FACE_PARAM_ST 88 | u8 | u8 | faceTexData38 | 顔作成テクスチャデータ38 | 顔作成テクスチャデータ38
+FACE_PARAM_ST 89 | u8 | u8 | faceTexData39 | 顔作成テクスチャデータ39 | 顔作成テクスチャデータ39
+FACE_PARAM_ST 90 | u8 | u8 | faceTexData40 | 顔作成テクスチャデータ40 | 顔作成テクスチャデータ40
+FACE_PARAM_ST 91 | u8 | u8 | faceTexData41 | 顔作成テクスチャデータ41 | 顔作成テクスチャデータ41
+FACE_PARAM_ST 92 | u8 | u8 | faceTexData42 | 顔作成テクスチャデータ42 | 顔作成テクスチャデータ42
+FACE_PARAM_ST 93 | u8 | u8 | faceTexData43 | 顔作成テクスチャデータ43 | 顔作成テクスチャデータ43
+FACE_PARAM_ST 94 | u8 | u8 | faceTexData44 | 顔作成テクスチャデータ44 | 顔作成テクスチャデータ44
+FACE_PARAM_ST 95 | u8 | u8 | faceTexData45 | 顔作成テクスチャデータ45 | 顔作成テクスチャデータ45
+FACE_PARAM_ST 96 | u8 | u8 | faceTexData46 | 顔作成テクスチャデータ46 | 顔作成テクスチャデータ46
+FACE_PARAM_ST 97 | u8 | u8 | faceTexData47 | 顔作成テクスチャデータ47 | 顔作成テクスチャデータ47
+FACE_PARAM_ST 98 | u8 | u8 | faceTexData48 | 顔作成テクスチャデータ48 | 顔作成テクスチャデータ48
+FACE_PARAM_ST 99 | u8 | u8 | faceTexData49 | 顔作成テクスチャデータ49 | 顔作成テクスチャデータ49
+FACE_PARAM_ST 100 | FACE_PARAM_HAIRSTYLE_TYPE | u8 | hairStyle | 髪型 | 髪モデルを選択させる
+FACE_PARAM_ST 101 | FACE_PARAM_HAIRCOLOR_TYPE | u8 | hairColor_Base  | 髪の色 | デフォルトカラーを色名で選択
+FACE_PARAM_ST 102 | u8 | u8 | hairColor_R  | 髪の色(Ｒ) | デフォルトカラー状態からR値を変更可能
+FACE_PARAM_ST 103 | u8 | u8 | hairColor_G  | 髪の色(Ｇ) | デフォルトカラー状態からG値を変更可能
+FACE_PARAM_ST 104 | u8 | u8 | hairColor_B  | 髪の色(Ｂ) | デフォルトカラー状態からB値を変更可能
+FACE_PARAM_ST 105 | u8 | u8 | eyeColor_R | 瞳の色(Ｒ) | デフォルトカラー状態からR値を変更可能
+FACE_PARAM_ST 106 | u8 | u8 | eyeColor_G | 瞳の色(Ｇ) | デフォルトカラー状態からG値を変更可能
+FACE_PARAM_ST 107 | u8 | u8 | eyeColor_B | 瞳の色(Ｂ) | デフォルトカラー状態からB値を変更可能
+FACE_PARAM_ST 108 | dummy8 | dummy8 | pad[20] | パディング | パディング
+GAME_AREA_PARAM_ST 0 | u32 | u32 | bonusSoul_single | シングル時クリアボーナスソウル量 | エリアボスを倒したときに取得できるソウル量(シングルプレイ時)
+GAME_AREA_PARAM_ST 1 | u32 | u32 | bonusSoul_multi | マルチプレイ時クリアボーナスソウル量 | エリアボスを倒したときに取得できるソウル量(マルチプレイ時)
+GAME_AREA_PARAM_ST 2 | s32 | s32 | humanityPointCountFlagIdTop | 人間性ドロップポイントカウント先頭フラグID | 人間性ドロップポイントを管理する為の先頭フラグID(20Bit使用)
+GAME_AREA_PARAM_ST 3 | u16 | u16 | humanityDropPoint1 | 人間性ドロップ必要ポイント1 | 人間性を取得する為の閾値1
+GAME_AREA_PARAM_ST 4 | u16 | u16 | humanityDropPoint2 | 人間性ドロップ必要ポイント2 | 人間性を取得する為の閾値2
+GAME_AREA_PARAM_ST 5 | u16 | u16 | humanityDropPoint3 | 人間性ドロップ必要ポイント3 | 人間性を取得する為の閾値3
+GAME_AREA_PARAM_ST 6 | u16 | u16 | humanityDropPoint4 | 人間性ドロップ必要ポイント4 | 人間性を取得する為の閾値4
+GAME_AREA_PARAM_ST 7 | u16 | u16 | humanityDropPoint5 | 人間性ドロップ必要ポイント5 | 人間性を取得する為の閾値5
+GAME_AREA_PARAM_ST 8 | u16 | u16 | humanityDropPoint6 | 人間性ドロップ必要ポイント6 | 人間性を取得する為の閾値6
+GAME_AREA_PARAM_ST 9 | u16 | u16 | humanityDropPoint7 | 人間性ドロップ必要ポイント7 | 人間性を取得する為の閾値7
+GAME_AREA_PARAM_ST 10 | u16 | u16 | humanityDropPoint8 | 人間性ドロップ必要ポイント8 | 人間性を取得する為の閾値8
+GAME_AREA_PARAM_ST 11 | u16 | u16 | humanityDropPoint9 | 人間性ドロップ必要ポイント9 | 人間性を取得する為の閾値9
+GAME_AREA_PARAM_ST 12 | u16 | u16 | humanityDropPoint10 | 人間性ドロップ必要ポイント10 | 人間性を取得する為の閾値10
+HIT_MTRL_PARAM_ST 0 | f32 | f32 | aiVolumeRate | 音半径倍率 | 1倍のときは普通。0にすると音半径が0になる（SEとSFXは無関係のゲーム的なパラメータ）
+HIT_MTRL_PARAM_ST 1 | s32 | s32 | spEffectIdOnHit0 | ヒットマテリアルを踏んだ時にかかる特殊効果0 | キャラがヒットマテリアルを踏んだ時に、設定した特殊効果0が発揮される
+HIT_MTRL_PARAM_ST 2 | s32 | s32 | spEffectIdOnHit1 | ヒットマテリアルを踏んだ時にかかる特殊効果1 | キャラがヒットマテリアルを踏んだ時に、設定した特殊効果1が発揮される
+HIT_MTRL_PARAM_ST 3 | HMP_FOOT_EFFECT_HEIGHT_TYPE | u8 | footEffectHeightType:2 | フットエフェクトの高さタイプ | フットエフェクトを発生させる高さ
+HIT_MTRL_PARAM_ST 4 | HMP_FOOT_EFFECT_DIR_TYPE | u8 | footEffectDirType:2 | フットエフェクトの向きタイプ | フットエフェクトの発生向き
+HIT_MTRL_PARAM_ST 5 | HMP_FLOOR_HEIGHT_TYPE | u8 | floorHeightType:2 | 地面の高さタイプ | 水面などアイテムを浮かせるとき用
+HIT_MTRL_PARAM_ST 6 | dummy8 | dummy8 | pad0[3] | pad | pad
+ITEMLOT_PARAM_ST 0 | s32 | s32 | lotItemId01 | １：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 1 | s32 | s32 | lotItemId02 | ２：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 2 | s32 | s32 | lotItemId03 | ３：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 3 | s32 | s32 | lotItemId04 | ４：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 4 | s32 | s32 | lotItemId05 | ５：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 5 | s32 | s32 | lotItemId06 | ６：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 6 | s32 | s32 | lotItemId07 | ７：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 7 | s32 | s32 | lotItemId08 | ８：アイテムID | 取得できるアイテムのID
+ITEMLOT_PARAM_ST 8 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory01 | １：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 9 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory02 | ２：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 10 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory03 | ３：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 11 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory04 | ４：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 12 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory05 | ５：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 13 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory06 | ６：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 14 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory07 | ７：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 15 | ITEMLOT_ITEMCATEGORY | s32 | lotItemCategory08 | ８：アイテムカテゴリ | 取得できるアイテムのカテゴリ
+ITEMLOT_PARAM_ST 16 | u16 | u16 | lotItemBasePoint01 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 17 | u16 | u16 | lotItemBasePoint02 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 18 | u16 | u16 | lotItemBasePoint03 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 19 | u16 | u16 | lotItemBasePoint04 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 20 | u16 | u16 | lotItemBasePoint05 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 21 | u16 | u16 | lotItemBasePoint06 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 22 | u16 | u16 | lotItemBasePoint07 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 23 | u16 | u16 | lotItemBasePoint08 | 基本出現ポイント | 通常時の出現ポイント
+ITEMLOT_PARAM_ST 24 | u16 | u16 | cumulateLotPoint01 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 25 | u16 | u16 | cumulateLotPoint02 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 26 | u16 | u16 | cumulateLotPoint03 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 27 | u16 | u16 | cumulateLotPoint04 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 28 | u16 | u16 | cumulateLotPoint05 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 29 | u16 | u16 | cumulateLotPoint06 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 30 | u16 | u16 | cumulateLotPoint07 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 31 | u16 | u16 | cumulateLotPoint08 | 累積後出現ポイント | 最大累積時の出現ポイント
+ITEMLOT_PARAM_ST 32 | s32 | s32 | getItemFlagId01 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 33 | s32 | s32 | getItemFlagId02 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 34 | s32 | s32 | getItemFlagId03 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 35 | s32 | s32 | getItemFlagId04 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 36 | s32 | s32 | getItemFlagId05 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 37 | s32 | s32 | getItemFlagId06 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 38 | s32 | s32 | getItemFlagId07 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 39 | s32 | s32 | getItemFlagId08 | 別ザクザクフラグID | 取得済みフラグとザクザク枠兼用(0:共通使用)
+ITEMLOT_PARAM_ST 40 | s32 | s32 | getItemFlagId | ザクザクフラグID | 取得済みフラグとザクザク枠兼用(<0:フラグ無効)
+ITEMLOT_PARAM_ST 41 | s32 | s32 | cumulateNumFlagId | 抽選累積保存フラグID | 抽選回数保存用(※8フラグ連番使用)
+ITEMLOT_PARAM_ST 42 | u8 | u8 | cumulateNumMax | 抽選累積最大数 | 抽選累積最大数(0:累積なし)
+ITEMLOT_PARAM_ST 43 | u8 | u8 | lotItem_Rarity | レアリティ設定 | 宝箱などに、どれくらい貴重なアイテムが入っているかを指定する
+ITEMLOT_PARAM_ST 44 | u8 | u8 | lotItemNum01 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 45 | u8 | u8 | lotItemNum02 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 46 | u8 | u8 | lotItemNum03 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 47 | u8 | u8 | lotItemNum04 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 48 | u8 | u8 | lotItemNum05 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 49 | u8 | u8 | lotItemNum06 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 50 | u8 | u8 | lotItemNum07 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 51 | u8 | u8 | lotItemNum08 | 個数 | 取得できるアイテムの個数
+ITEMLOT_PARAM_ST 52 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck01:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 53 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck02:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 54 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck03:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 55 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck04:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 56 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck05:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 57 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck06:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 58 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck07:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 59 | ITEMLOT_ENABLE_LUCK | u16 | enableLuck08:1 | 運パラメータ有効 | 抽選の確率をプレイヤーの運を反映させるか
+ITEMLOT_PARAM_ST 60 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset01:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 61 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset02:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 62 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset03:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 63 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset04:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 64 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset05:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 65 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset06:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 66 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset07:1 | 累積リセット | 累積リセットするか
+ITEMLOT_PARAM_ST 67 | ITEMLOT_CUMULATE_RESET | u16 | cumulateReset08:1 | 累積リセット | 累積リセットするか
+KNOCKBACK_PARAM_ST 0 | f32 | f32 | damage_Min_ContTime | 極小ダメージ_速度維持時間[s] | 極小ダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 1 | f32 | f32 | damage_S_ContTime | 小ダメージ_速度維持時間[s] | 小ダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 2 | f32 | f32 | damage_M_ContTime | 中ダメージ_速度維持時間[s] | 中ダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 3 | f32 | f32 | damage_L_ContTime | 大ダメージ_速度維持時間[s] | 大ダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 4 | f32 | f32 | damage_BlowS_ContTime | 小吹っ飛び_速度維持時間[s] | 小吹っ飛びダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 5 | f32 | f32 | damage_BlowM_ContTime | 大吹っ飛び_速度維持時間[s] | 大吹っ飛びダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 6 | f32 | f32 | damage_Strike_ContTime | 叩きつけ_速度維持時間[s] | 叩きつけダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 7 | f32 | f32 | damage_Uppercut_ContTime | 打ち上げ_速度維持時間[s] | 打ち上げダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 8 | f32 | f32 | damage_Push_ContTime | プッシュ_速度維持時間[s] | プッシュダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 9 | f32 | f32 | damage_Breath_ContTime | ブレス_速度維持時間[s] | ブレスダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 10 | f32 | f32 | damage_HeadShot_ContTime | ヘッドショット_速度維持時間[s] | ヘッドショットダメージアニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 11 | f32 | f32 | guard_S_ContTime | ガード受け小_速度維持時間[s] | ガード受け小アニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 12 | f32 | f32 | guard_L_ContTime | ガード受け大_速度維持時間[s] | ガード受け大アニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 13 | f32 | f32 | guard_LL_ContTime | ガード受け特大_速度維持時間[s] | ガード受け特大アニメの時に使用される維持時間を設定
+KNOCKBACK_PARAM_ST 14 | f32 | f32 | guardBrake_ContTime | ガードくずされ_速度維持時間[s] | ガードくずされアニメの時に仕様される維持時間を設定
+KNOCKBACK_PARAM_ST 15 | f32 | f32 | damage_Min_DecTime | 極小ダメージ_減速時間[s] | 極小ダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 16 | f32 | f32 | damage_S_DecTime | 小ダメージ_減速時間[s] | 小ダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 17 | f32 | f32 | damage_M_DecTime | 中ダメージ_減速時間[s] | 中ダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 18 | f32 | f32 | damage_L_DecTime | 大ダメージ_減速時間[s] | 大ダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 19 | f32 | f32 | damage_BlowS_DecTime | 小吹っ飛び_減速時間[s] | 小吹っ飛びダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 20 | f32 | f32 | damage_BlowM_DecTime | 大吹っ飛び_減速時間[s] | 大吹っ飛びダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 21 | f32 | f32 | damage_Strike_DecTime | 叩きつけ_減速時間[s] | 叩きつけダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 22 | f32 | f32 | damage_Uppercut_DecTime | 打ち上げ_減速時間[s] | 打ち上げダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 23 | f32 | f32 | damage_Push_DecTime | プッシュ_減速時間[s] | プッシュダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 24 | f32 | f32 | damage_Breath_DecTime | ブレス_減速時間[s] | ブレスダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 25 | f32 | f32 | damage_HeadShot_DecTime | ヘッドショット_減速時間[s] | ヘッドショットダメージアニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 26 | f32 | f32 | guard_S_DecTime | ガード受け小_減速時間[s] | ガード受け小アニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 27 | f32 | f32 | guard_L_DecTime | ガード受け大_減速時間[s] | ガード受け大アニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 28 | f32 | f32 | guard_LL_DecTime | ガード受け特大_減速時間[s] | ガード受け特大アニメの時に使用される減速時間を設定
+KNOCKBACK_PARAM_ST 29 | f32 | f32 | guardBrake_DecTime | ガードくずされ_減速時間[s] | ガードくずされアニメの時に仕様される減速時間を設定
+KNOCKBACK_PARAM_ST 30 | dummy8 | dummy8 | pad[8] | pading | 
+LOCK_CAM_PARAM_ST 0 | f32 | f32 | camDistTarget | カメラ距離目標[m] | カメラ用
+LOCK_CAM_PARAM_ST 1 | f32 | f32 | rotRangeMinX | X軸回転最小値[deg] | カメラ用
+LOCK_CAM_PARAM_ST 2 | f32 | f32 | lockRotXShiftRatio | ロックX回転シフト率(0.0〜1.0) | カメラ用
+LOCK_CAM_PARAM_ST 3 | f32 | f32 | chrOrgOffset_Y | キャラ基点オフセット(キャラ空間) | カメラ用
+LOCK_CAM_PARAM_ST 4 | f32 | f32 | chrLockRangeMaxRadius | キャラ範囲最大半径[m] | ロック用
+LOCK_CAM_PARAM_ST 5 | f32 | f32 | camFovY | 縦画角[deg] | カメラ用
+LOCK_CAM_PARAM_ST 6 | dummy8 | dummy8 | pad[8] | パディング | 
+MAGIC_PARAM_ST 0 | s32 | s32 | yesNoDialogMessageId | Yes/NoダイアログメッセージID | 魔法使用時に出すYes/NoダイアログのメッセージID
+MAGIC_PARAM_ST 1 | s32 | s32 | limitCancelSpEffectId | 使用制限から外れる特殊効果ID | 指定した特殊効果IDが発動している時は使用制限を無視できる
+MAGIC_PARAM_ST 2 | s16 | s16 | sortId | SortID | ソートID(-1:集めない)
+MAGIC_PARAM_ST 3 | s16 | s16 | refId | 呼び出しID | 魔法から呼び出すID
+MAGIC_PARAM_ST 4 | s16 | s16 | mp | 消費MP | 消費MP
+MAGIC_PARAM_ST 5 | s16 | s16 | stamina | 消費スタミナ | 消費スタミナ
+MAGIC_PARAM_ST 6 | s16 | s16 | iconId | アイコンID | アイコンを指定　＞メニュー用
+MAGIC_PARAM_ST 7 | s16 | s16 | behaviorId | 行動ID | 行動IDを設定する
+MAGIC_PARAM_ST 8 | s16 | s16 | mtrlItemId | 必要アイテムID | 購入に必要なアイテムID
+MAGIC_PARAM_ST 9 | s16 | s16 | replaceMagicId | 差し替える魔法ID | 状態変化一致時に差し替えるID(-1:無効)
+MAGIC_PARAM_ST 10 | s16 | s16 | maxQuantity | 最大個数 | １個当たりの個数(-1:無限)
+MAGIC_PARAM_ST 11 | u8 | u8 | heroPoint | 消費人間性 | 消費人間性
+MAGIC_PARAM_ST 12 | u8 | u8 | overDexterity | 技量オーバー開始値 | 技量オーバー開始値
+MAGIC_PARAM_ST 13 | s8 | s8 | sfxVariationId | SFXバリエーションID | ＳＦＸのバリエーションを指定（TimeActEditorのＩＤと組み合わせて、ＳＦＸを特定するのに使用する）
+MAGIC_PARAM_ST 14 | u8 | u8 | slotLength | 必要スロット | 装備に必要なスロット数 ＞メニュー用
+MAGIC_PARAM_ST 15 | u8 | u8 | requirementIntellect | 装備条件【知力】 | PCの知力がこれ以上無いと装備できない
+MAGIC_PARAM_ST 16 | u8 | u8 | requirementFaith | 装備条件【理力】 | PCの理力がこれ以上無いと装備できない
+MAGIC_PARAM_ST 17 | u8 | u8 | analogDexiterityMin | アナログ最低技量 | モーションキャンセルアナログ化：最低技量値
+MAGIC_PARAM_ST 18 | u8 | u8 | analogDexiterityMax | アナログ最大技量 | モーションキャンセルアナログ化：最高技量値
+MAGIC_PARAM_ST 19 | MAGIC_CATEGORY | u8 | ezStateBehaviorType | カテゴリ | 並べ替えに使用　＞メニュー用
+MAGIC_PARAM_ST 20 | BEHAVIOR_REF_TYPE | u8 | refCategory | IDカテゴリ | ↓のIDのカテゴリ[攻撃、飛び道具、特殊]
+MAGIC_PARAM_ST 21 | BEHAVIOR_CATEGORY | u8 | spEffectCategory | 特殊効果カテゴリ | スキルや、魔法、アイテムなどで、パラメータが変動する効果（エンチャントウェポンなど）があるので、│定した効果が、「武器攻撃のみをパワーアップする」といった効果に対応できるように行動ごとに設定するバリスタなど、設定の必要のないものは「なし」を設定する
+
+MAGIC_PARAM_ST 22 | MAGIC_MOTION_TYPE | u8 | refType | モーションカテゴリ | モーションを指定　＞EzState用
+MAGIC_PARAM_ST 23 | GOODS_OPEN_MENU | u8 | opmeMenuType | 使用時メニュータイプ | 魔法使用時に出すメニュータイプ
+MAGIC_PARAM_ST 24 | SP_EFFECT_TYPE | u8 | hasSpEffectType | どの常態か？ | 魔法IDを差し替える必要がある状態変化を指定
+MAGIC_PARAM_ST 25 | REPLACE_CATEGORY | u8 | replaceCategory | 差し替えカテゴリ | 魔法IDを差し替える時の追加条件
+MAGIC_PARAM_ST 26 | SP_EFFECT_USELIMIT_CATEGORY | u8 | useLimitCategory | 特殊効果カテゴリによる使用制限 | 特殊効果によって使用可能かどうかを制御する為に指定
+MAGIC_PARAM_ST 27 | MAGIC_BOOL | u8 | vowType0:1 | 誓約0 | 誓約0
+MAGIC_PARAM_ST 28 | MAGIC_BOOL | u8 | vowType1:1 | 誓約1 | 誓約1
+MAGIC_PARAM_ST 29 | MAGIC_BOOL | u8 | vowType2:1 | 誓約2 | 誓約2
+MAGIC_PARAM_ST 30 | MAGIC_BOOL | u8 | vowType3:1 | 誓約3 | 誓約3
+MAGIC_PARAM_ST 31 | MAGIC_BOOL | u8 | vowType4:1 | 誓約4 | 誓約4
+MAGIC_PARAM_ST 32 | MAGIC_BOOL | u8 | vowType5:1 | 誓約5 | 誓約5
+MAGIC_PARAM_ST 33 | MAGIC_BOOL | u8 | vowType6:1 | 誓約6 | 誓約6
+MAGIC_PARAM_ST 34 | MAGIC_BOOL | u8 | vowType7:1 | 誓約7 | 誓約7
+MAGIC_PARAM_ST 35 | MAGIC_BOOL | u8 | enable_multi:1 | マルチでも使用可能か | マルチでも使用できるか。シングル、マルチ両方で使える
+MAGIC_PARAM_ST 36 | MAGIC_BOOL | u8 | enable_multi_only:1 | マルチ専用か | マルチ専用か。シングルのときには使えない。マルチのときは使える。
+MAGIC_PARAM_ST 37 | MAGIC_BOOL | u8 | isEnchant:1 | エンチャントか | エンチャントする魔法か
+MAGIC_PARAM_ST 38 | MAGIC_BOOL | u8 | isShieldEnchant:1 | 盾エンチャントか | ガード・盾エンチャントする魔法か
+MAGIC_PARAM_ST 39 | MAGIC_BOOL | u8 | enable_live:1 | 生存使用可 | 生存キャラが使用可能か
+MAGIC_PARAM_ST 40 | MAGIC_BOOL | u8 | enable_gray:1 | グレイ使用可 | グレイキャラが使用可能か
+MAGIC_PARAM_ST 41 | MAGIC_BOOL | u8 | enable_white:1 | 白使用可 | 白ゴーストキャラが使用可能か
+MAGIC_PARAM_ST 42 | MAGIC_BOOL | u8 | enable_black:1 | 黒使用可 | 黒ゴーストキャラが使用可能か
+MAGIC_PARAM_ST 43 | MAGIC_BOOL | u8 | disableOffline:1 | オフラインで使用不可か | オフラインで使用不可か
+MAGIC_PARAM_ST 44 | MAGIC_BOOL | u8 | castResonanceMagic:1 | 共鳴魔法配信するか | 共鳴魔法配信するか
+MAGIC_PARAM_ST 45 | dummy8 | dummy8 | pad_1:6 | pading | 
+MAGIC_PARAM_ST 46 | MAGIC_BOOL | u8 | vowType8:1 | 誓約8 | 誓約8
+MAGIC_PARAM_ST 47 | MAGIC_BOOL | u8 | vowType9:1 | 誓約9 | 誓約9
+MAGIC_PARAM_ST 48 | MAGIC_BOOL | u8 | vowType10:1 | 誓約10 | 誓約10
+MAGIC_PARAM_ST 49 | MAGIC_BOOL | u8 | vowType11:1 | 誓約11 | 誓約11
+MAGIC_PARAM_ST 50 | MAGIC_BOOL | u8 | vowType12:1 | 誓約12 | 誓約12
+MAGIC_PARAM_ST 51 | MAGIC_BOOL | u8 | vowType13:1 | 誓約13 | 誓約13
+MAGIC_PARAM_ST 52 | MAGIC_BOOL | u8 | vowType14:1 | 誓約14 | 誓約14
+MAGIC_PARAM_ST 53 | MAGIC_BOOL | u8 | vowType15:1 | 誓約15 | 誓約15
+MAGIC_PARAM_ST 54 | dummy8 | dummy8 | pad[2] | pading | 
+MENU_PARAM_COLOR_TABLE_ST 0 | u8 | u8 | r | 赤色 | カラーテーブルの赤色
+MENU_PARAM_COLOR_TABLE_ST 1 | u8 | u8 | g | 緑色 | カラーテーブルの緑
+MENU_PARAM_COLOR_TABLE_ST 2 | u8 | u8 | b | 青色 | カラーテーブルの青
+MENU_PARAM_COLOR_TABLE_ST 3 | u8 | u8 | a | アルファ | カラーテーブルのアルファ
+MOVE_PARAM_ST 0 | s32 | s32 | stayId | 待機 | 待機
+MOVE_PARAM_ST 1 | s32 | s32 | walkF | 歩行 前 | 歩行 前
+MOVE_PARAM_ST 2 | s32 | s32 | walkB | 歩行 後 | 歩行 後
+MOVE_PARAM_ST 3 | s32 | s32 | walkL | 歩行 左 | 歩行 左
+MOVE_PARAM_ST 4 | s32 | s32 | walkR | 歩行 右 | 歩行 右
+MOVE_PARAM_ST 5 | s32 | s32 | dashF | 走行 前 | 走行 前
+MOVE_PARAM_ST 6 | s32 | s32 | dashB | 走行 後 | 走行 後
+MOVE_PARAM_ST 7 | s32 | s32 | dashL | 走行 左 | 走行 左
+MOVE_PARAM_ST 8 | s32 | s32 | dashR | 走行 右 | 走行 右
+MOVE_PARAM_ST 9 | s32 | s32 | superDash | ダッシュ移動 | ダッシュ移動
+MOVE_PARAM_ST 10 | s32 | s32 | escapeF | 緊急回避 前 | 緊急回避 前
+MOVE_PARAM_ST 11 | s32 | s32 | escapeB | 緊急回避 後 | 緊急回避 後
+MOVE_PARAM_ST 12 | s32 | s32 | escapeL | 緊急回避 左 | 緊急回避 左
+MOVE_PARAM_ST 13 | s32 | s32 | escapeR | 緊急回避 右 | 緊急回避 右
+MOVE_PARAM_ST 14 | s32 | s32 | turnL | 90度旋回 左 | 90度旋回 左
+MOVE_PARAM_ST 15 | s32 | s32 | trunR | 90度旋回 右 | 90度旋回 右
+MOVE_PARAM_ST 16 | s32 | s32 | largeTurnL | 180度旋回 左 | 180度旋回 左
+MOVE_PARAM_ST 17 | s32 | s32 | largeTurnR | 180度旋回 右 | 180度旋回 右
+MOVE_PARAM_ST 18 | s32 | s32 | stepMove | ステップ移動 | 180度旋回 右
+MOVE_PARAM_ST 19 | s32 | s32 | flyStay | 飛行待機 | 飛行待機
+MOVE_PARAM_ST 20 | s32 | s32 | flyWalkF | 飛行前進 | 飛行前進
+MOVE_PARAM_ST 21 | s32 | s32 | flyWalkFL | 飛行左前進 | 飛行左前進。低回転
+MOVE_PARAM_ST 22 | s32 | s32 | flyWalkFR | 飛行右前進 | 飛行右前進。低回転
+MOVE_PARAM_ST 23 | s32 | s32 | flyWalkFL2 | 飛行左前進2 | 飛行左前進2。高回転
+MOVE_PARAM_ST 24 | s32 | s32 | flyWalkFR2 | 飛行右前進2 | 飛行右前進2。高回転
+MOVE_PARAM_ST 25 | s32 | s32 | flyDashF | 高速飛行前進 | 高速飛行前進
+MOVE_PARAM_ST 26 | s32 | s32 | flyDashFL | 高速飛行左前進 | 高速飛行左前進。低回転
+MOVE_PARAM_ST 27 | s32 | s32 | flyDashFR | 高速飛行右前進 | 高速飛行右前進。低回転
+MOVE_PARAM_ST 28 | s32 | s32 | flyDashFL2 | 高速飛行左前進2 | 高速飛行左前進2。高回転
+MOVE_PARAM_ST 29 | s32 | s32 | flyDashFR2 | 高速飛行右前進2 | 高速飛行右前進2。高回転
+MOVE_PARAM_ST 30 | s32 | s32 | dashEscapeF | ダッシュ緊急回避前 | ダッシュ緊急回避前
+MOVE_PARAM_ST 31 | s32 | s32 | dashEscapeB | ダッシュ緊急回避後 | ダッシュ緊急回避後
+MOVE_PARAM_ST 32 | s32 | s32 | dashEscapeL | ダッシュ緊急回避左 | ダッシュ緊急回避左
+MOVE_PARAM_ST 33 | s32 | s32 | dashEscapeR | ダッシュ緊急回避右 | ダッシュ緊急回避右
+MOVE_PARAM_ST 34 | s32 | s32 | analogMoveParamId | アナログ移動パラＩＤ | 移動アニメブレンドで使用される移動アニメパラメータＩＤ
+MOVE_PARAM_ST 35 | dummy8 | dummy8 | pad[4] | パディング | パディング
+NPC_PARAM_ST 0 | s32 | s32 | behaviorVariationId | 行動バリエーションID | 行動IDを算出するときに使用するバリエーションID.
+NPC_PARAM_ST 1 | s32 | s32 | aiThinkId | AI思考ID | 使用するAI思考のID.
+NPC_PARAM_ST 2 | s32 | s32 | nameId | NPC名ID | NPC名メッセージパラメータ用ID
+NPC_PARAM_ST 3 | f32 | f32 | turnVellocity | 旋回速度[deg/sec] | 1秒間に旋回できる回転速度[度/秒].
+NPC_PARAM_ST 4 | f32 | f32 | hitHeight | あたりの高さ[m] | 当たりカプセルの高さ.
+NPC_PARAM_ST 5 | f32 | f32 | hitRadius | あたりの半径[m] | 当たりカプセルの半径.
+NPC_PARAM_ST 6 | u32 | u32 | weight | 重量[kg] | 重量.
+NPC_PARAM_ST 7 | f32 | f32 | hitYOffset | 表示位置Yオフセット[m] | モデル表示位置のY（高さ）方向のオフセット。あたり位置より浮かせることができる。
+NPC_PARAM_ST 8 | u32 | u32 | hp | ＨＰ | 死亡猶予.
+NPC_PARAM_ST 9 | u32 | u32 | mp | ＭＰ | 魔法使用量.
+NPC_PARAM_ST 10 | u32 | u32 | getSoul | ソウル | 死亡時に、キャラクターが取得できるソウル量.
+NPC_PARAM_ST 11 | s32 | s32 | itemLotId_1 | アイテム抽選ID_1 | 死亡時に取得するアイテムの抽選IDを指定
+NPC_PARAM_ST 12 | s32 | s32 | itemLotId_2 | アイテム抽選ID_2 | 死亡時に取得するアイテムの抽選IDを指定
+NPC_PARAM_ST 13 | s32 | s32 | itemLotId_3 | アイテム抽選ID_3 | 死亡時に取得するアイテムの抽選IDを指定
+NPC_PARAM_ST 14 | s32 | s32 | itemLotId_4 | アイテム抽選ID_4 | 死亡時に取得するアイテムの抽選IDを指定
+NPC_PARAM_ST 15 | s32 | s32 | itemLotId_5 | アイテム抽選ID_5 | 死亡時に取得するアイテムの抽選IDを指定
+NPC_PARAM_ST 16 | s32 | s32 | itemLotId_6 | アイテム抽選ID_6 | 死亡時に取得するアイテムの抽選IDを指定
+NPC_PARAM_ST 17 | s32 | s32 | humanityLotId | 人間性抽選ID | 死亡時に取得する人間性の抽選IDを指定
+NPC_PARAM_ST 18 | s32 | s32 | spEffectID0 | 常駐特殊効果0 | 常駐特殊効果0
+NPC_PARAM_ST 19 | s32 | s32 | spEffectID1 | 常駐特殊効果1 | 常駐特殊効果1
+NPC_PARAM_ST 20 | s32 | s32 | spEffectID2 | 常駐特殊効果2 | 常駐特殊効果2
+NPC_PARAM_ST 21 | s32 | s32 | spEffectID3 | 常駐特殊効果3 | 常駐特殊効果3
+NPC_PARAM_ST 22 | s32 | s32 | spEffectID4 | 常駐特殊効果4 | 常駐特殊効果4
+NPC_PARAM_ST 23 | s32 | s32 | spEffectID5 | 常駐特殊効果5 | 常駐特殊効果5
+NPC_PARAM_ST 24 | s32 | s32 | spEffectID6 | 常駐特殊効果6 | 常駐特殊効果6
+NPC_PARAM_ST 25 | s32 | s32 | spEffectID7 | 常駐特殊効果7 | 常駐特殊効果7
+NPC_PARAM_ST 26 | s32 | s32 | GameClearSpEffectID | 周回ボーナス用特殊効果ＩＤ | 周回ボーナス用特殊効果ＩＤ
+NPC_PARAM_ST 27 | f32 | f32 | physGuardCutRate | 物理攻撃カット率[％] | ガード時のダメージカット率を各攻撃ごとに設定
+NPC_PARAM_ST 28 | f32 | f32 | magGuardCutRate | 魔法攻撃カット率[％] | ガード攻撃でない場合は、0を入れる
+NPC_PARAM_ST 29 | f32 | f32 | fireGuardCutRate | 炎攻撃力カット率[％] | 炎攻撃をどれだけカットするか？
+NPC_PARAM_ST 30 | f32 | f32 | thunGuardCutRate | 電撃攻撃力カット率[％] | 電撃攻撃をどれだけカットするか？
+NPC_PARAM_ST 31 | s32 | s32 | animIdOffset | アニメIDオフセット1 | すべてのアニメをこの数だけずらしたIDで再生します。なければ元のアニメIDを参照します。
+NPC_PARAM_ST 32 | s32 | s32 | moveAnimId | 移動アニメパラメータID | 移動アニメパラメータ参照ID
+NPC_PARAM_ST 33 | s32 | s32 | spMoveAnimId1 | 特殊移動アニメパラメータID0 | 特殊移動アニメパラメータ参照ID
+NPC_PARAM_ST 34 | s32 | s32 | spMoveAnimId2 | 特殊移動アニメパラメータID1 | 特殊移動アニメパラメータ参照ID
+NPC_PARAM_ST 35 | f32 | f32 | networkWarpDist | ネットワークワープ判定距離[m/秒] | ネットワークの同期で、補完移動でなくワープさせる距離。スピードの速い人（exドラゴン)は長めにしてあげる必要がある。
+NPC_PARAM_ST 36 | s32 | s32 | dbgBehaviorR1 | R1 | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 37 | s32 | s32 | dbgBehaviorL1 | L1 | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 38 | s32 | s32 | dbgBehaviorR2 | R2 | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 39 | s32 | s32 | dbgBehaviorL2 | L2 | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 40 | s32 | s32 | dbgBehaviorRL | □ | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 41 | s32 | s32 | dbgBehaviorRR | ○ | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 42 | s32 | s32 | dbgBehaviorRD | × | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 43 | s32 | s32 | dbgBehaviorRU | △ | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 44 | s32 | s32 | dbgBehaviorLL | ← | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 45 | s32 | s32 | dbgBehaviorLR | → | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 46 | s32 | s32 | dbgBehaviorLD | ↓ | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 47 | s32 | s32 | dbgBehaviorLU | ↑ | 行動パラメータツールからIDを登録し、行動を指定する.
+NPC_PARAM_ST 48 | s32 | s32 | animIdOffset2 | アニメIDオフセット2 | すべてのアニメをこの数だけずらしたIDで再生します。なければアニメIDオフセット1のアニメIDを参照します。
+NPC_PARAM_ST 49 | f32 | f32 | partsDamageRate1 | 部位1ダメージ倍率 | 部位1に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 50 | f32 | f32 | partsDamageRate2 | 部位2ダメージ倍率 | 部位2に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 51 | f32 | f32 | partsDamageRate3 | 部位3ダメージ倍率 | 部位3に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 52 | f32 | f32 | partsDamageRate4 | 部位4ダメージ倍率 | 部位4に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 53 | f32 | f32 | partsDamageRate5 | 部位5ダメージ倍率 | 部位5に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 54 | f32 | f32 | partsDamageRate6 | 部位6ダメージ倍率 | 部位6に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 55 | f32 | f32 | partsDamageRate7 | 部位7ダメージ倍率 | 部位7に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 56 | f32 | f32 | partsDamageRate8 | 部位8ダメージ倍率 | 部位8に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 57 | f32 | f32 | weakPartsDamageRate | 弱点部位ダメージ倍率 | 弱点部位に対するダメージ処理に適応する倍率
+NPC_PARAM_ST 58 | f32 | f32 | superArmorRecoverCorrection | SA回復時間補正値 | スーパーアーマー回復時間用の補正値
+NPC_PARAM_ST 59 | f32 | f32 | superArmorBrakeKnockbackDist | SAブレイク時ノックバック距離 | SAブレイクの時だけに使えるノックバック距離
+NPC_PARAM_ST 60 | u16 | u16 | stamina | スタミナ | スタミナ総量.
+NPC_PARAM_ST 61 | u16 | u16 | staminaRecoverBaseVel | スタミナ回復基本速度[point/s] | スタミナ回復基本速度[point/s]
+NPC_PARAM_ST 62 | u16 | u16 | def_phys | 物理防御力 | 物理攻撃に対するダメージ減少基本値.
+NPC_PARAM_ST 63 | s16 | s16 | def_slash | 斬撃防御力[％] | 攻撃属性を見て、斬撃属性のときは、防御力を減少させる.
+NPC_PARAM_ST 64 | s16 | s16 | def_blow | 打撃防御力[％] | 攻撃属性を見て、打撃属性のときは、防御力を減少させる.
+NPC_PARAM_ST 65 | s16 | s16 | def_thrust | 刺突防御力[％] | 攻撃属性を見て、刺突属性のときは、防御力を減少させる.
+NPC_PARAM_ST 66 | u16 | u16 | def_mag | 魔法防御力 | 魔法攻撃に対するダメージ減少基本値.
+NPC_PARAM_ST 67 | u16 | u16 | def_fire | 炎防御力 | 炎攻撃に対するダメージ減少基本値.
+NPC_PARAM_ST 68 | u16 | u16 | def_thunder | 電撃防御力 | 電撃攻撃に対するダメージ減少基本値.
+NPC_PARAM_ST 69 | u16 | u16 | defFlickPower | はじき防御力 | 敵の攻撃のはじき判定に使用。//ガード以外の通常攻撃でもはじけるようにするためのものです.//硬い表皮の敵は、何もしなくてもはじかれることがある…みたいな感じ通常の敵なら関係ないです.
+NPC_PARAM_ST 70 | u16 | u16 | resist_poison | 毒耐性 | 毒状態異常へのかかりにくさ
+NPC_PARAM_ST 71 | u16 | u16 | resist_desease | 疫病耐性 | 疫病状態異常へのかかりにくさ
+NPC_PARAM_ST 72 | u16 | u16 | resist_blood | 出血耐性 | 出血状態異常へのかかりにくさ
+NPC_PARAM_ST 73 | u16 | u16 | resist_curse | 呪耐性 | 呪状態異常へのかかりにくさ
+NPC_PARAM_ST 74 | s16 | s16 | ghostModelId | 徘徊ゴースト時差し替えモデルID | 徘徊ゴースト化したときの差し替えモデル、テクスチャID
+NPC_PARAM_ST 75 | s16 | s16 | normalChangeResouceId | 通常時差し替えリソースID | 通常時のリソースID差し替え（むやみに使わないこと）
+NPC_PARAM_ST 76 | s16 | s16 | guardAngle | ガード範囲[deg] | 武器のガード時の防御発生範囲角度.保留中
+NPC_PARAM_ST 77 | s16 | s16 | slashGuardCutRate | 斬撃攻撃カット率[％] | 攻撃タイプを見て、斬撃属性のダメージを何％カットするか？を指定
+NPC_PARAM_ST 78 | s16 | s16 | blowGuardCutRate | 打撃攻撃カット率[％] | 攻撃タイプを見て、打撃属性のダメージを何％カットするか？を指定
+NPC_PARAM_ST 79 | s16 | s16 | thrustGuardCutRate | 刺突攻撃カット率[％] | 攻撃タイプを見て、刺突属性のダメージを何％カットするか？を指定
+NPC_PARAM_ST 80 | s16 | s16 | superArmorDurability | SA耐久力 | スーパーアーマー耐久値
+NPC_PARAM_ST 81 | s16 | s16 | normalChangeTexChrId | 通常時差し替えテクスチャキャラID | 通常時差し替えテクスチャキャラID（むやみに使わないこと）
+NPC_PARAM_ST 82 | NPC_ITEMDROP_TYPE | u16 | dropType | ドロップアイテムの表示形式 | アイテムドロップ時の表示方法(死体発光orアイテム表示)
+NPC_PARAM_ST 83 | u8 | u8 | knockbackRate | ノックバックカット率[％] | ノックバックダメージを受けたときの減少値／具体的には、攻撃側のノックバック初速度をカットする
+NPC_PARAM_ST 84 | u8 | u8 | knockbackParamId | ノックバックパラメータID | ノックバック時に使用するパラメータIDを設定
+NPC_PARAM_ST 85 | u8 | u8 | fallDamageDump | 落下ダメージ軽減補正[％] | 落下ダメージ軽減補正[％]
+NPC_PARAM_ST 86 | u8 | u8 | staminaGuardDef | スタミナ攻撃カット率[％] | ガード成功時に、敵のスタミナ攻撃に対する防御力
+NPC_PARAM_ST 87 | u8 | u8 | pcAttrB | PC-黒 | QWC変化量　PC属性値黒
+NPC_PARAM_ST 88 | u8 | u8 | pcAttrW | PC-白 | QWC変化量　PC属性値白
+NPC_PARAM_ST 89 | u8 | u8 | pcAttrL | PC-左 | QWC変化量　PC属性値左
+NPC_PARAM_ST 90 | u8 | u8 | pcAttrR | PC-右 | QWC変化量　PC属性値右
+NPC_PARAM_ST 91 | u8 | u8 | areaAttrB | エリア-黒 | QWC変化量　エリア属性値黒
+NPC_PARAM_ST 92 | u8 | u8 | areaAttrW | エリア-白 | QWC変化量　エリア属性値白
+NPC_PARAM_ST 93 | u8 | u8 | areaAttrL | エリア-左 | QWC変化量　エリア属性値左
+NPC_PARAM_ST 94 | u8 | u8 | areaAttrR | エリア-右 | QWC変化量　エリア属性値右
+NPC_PARAM_ST 95 | u8 | u8 | mpRecoverBaseVel | MP回復基本速度[％/s] | MP回復基本速度[％/s]
+NPC_PARAM_ST 96 | u8 | u8 | flickDamageCutRate | はじき時ダメージ減衰率[%] | 攻撃をはじいた時にダメージを減衰する値を設定
+NPC_PARAM_ST 97 | s8 | s8 | defaultLodParamId | デフォルトLODパラムID | デフォルトLODパラムID(-1：なし)
+NPC_PARAM_ST 98 | NPC_DRAW_TYPE | u8 | drawType | 描画タイプ | 描画タイプ
+NPC_PARAM_ST 99 | NPC_TYPE | u8 | npcType | NPCタイプ | NPCの種類.ザコ敵/ボス敵が区別されていればOK
+NPC_PARAM_ST 100 | NPC_TEMA_TYPE | u8 | teamType | チームタイプ | NPCの攻撃が当たる/当たらない、狙う/狙わない設定
+NPC_PARAM_ST 101 | NPC_MOVE_TYPE | u8 | moveType | 移動タイプ | 移動方法。これにより制御が変更される.
+NPC_PARAM_ST 102 | u8 | u8 | lockDist | ロック距離 | ロックオンできる距離[m]
+NPC_PARAM_ST 103 | WEP_MATERIAL_DEF | u8 | material | 防御材質【SE】 | ダメージを受けたときに鳴らすＳＥを判定する。見た目で設定してＯＫ.
+NPC_PARAM_ST 104 | WEP_MATERIAL_DEF_SFX | u8 | materialSfx | 防御材質【SFX】 | ダメージを受けたときに発生するSFXを判定する。見た目で設定してＯＫ.
+NPC_PARAM_ST 105 | WEP_MATERIAL_DEF | u8 | material_Weak | 防御材質【SE】 | 弱点部位ダメージを受けた時に鳴らすSEを判定する。
+NPC_PARAM_ST 106 | WEP_MATERIAL_DEF_SFX | u8 | materialSfx_Weak | 防御材質【SFX】 | 弱点部位ダメージを受けた時に発生するSFXを判定する。
+NPC_PARAM_ST 107 | ATK_PARAM_PARTSDMGTYPE | u8 | partsDamageType | 部位ダメージ適用攻撃 | 部位ダメージを適用する攻撃タイプを設定する
+NPC_PARAM_ST 108 | u8 | u8 | maxUndurationAng | 起伏にあわせる最大角度 | 起伏に角度を合わせる場合の上限角度。全長が長い場合には低めに設定したほうがよいです。
+NPC_PARAM_ST 109 | s8 | s8 | guardLevel | ガードレベル | ガードしたとき、敵の攻撃をどのガードモーションで受けるか？を決める
+NPC_PARAM_ST 110 | NPC_BURN_TYPE | u8 | burnSfxType | 燃焼SFXタイプ | 燃焼時のSFXタイプ
+NPC_PARAM_ST 111 | s8 | s8 | poisonGuardResist | 毒耐性カット率[％] | 毒にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+NPC_PARAM_ST 112 | s8 | s8 | diseaseGuardResist | 疫病攻撃カット率[％] | 疫病にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+NPC_PARAM_ST 113 | s8 | s8 | bloodGuardResist | 出血攻撃カット率[％] | 出血にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+NPC_PARAM_ST 114 | s8 | s8 | curseGuardResist | 呪攻撃カット率[％] | 呪にする攻撃力（特殊効果パラメータに設定）をどれだけカットするか
+NPC_PARAM_ST 115 | u8 | u8 | parryAttack | パリィ攻撃力 | パリィ攻撃力。パリィする側が使用
+NPC_PARAM_ST 116 | u8 | u8 | parryDefence | パリィ防御力 | パリィ防御力。パリィされる側が使用。
+NPC_PARAM_ST 117 | NPC_SFX_SIZE | u8 | sfxSize | SFXサイズ | SFXサイズ
+NPC_PARAM_ST 118 | u8 | u8 | pushOutCamRegionRadius | カメラ押し出し領域半径[m] | カメラ押し出し領域半径[m]
+NPC_PARAM_ST 119 | NPC_HITSTOP_TYPE | u8 | hitStopType | ヒットストップするか | ヒットストップ処理を行うかどうかの設定
+NPC_PARAM_ST 120 | u8 | u8 | ladderEndChkOffsetTop | はしご上終端オフセット[1/10m] | はしご終端判定用オフセット上側
+NPC_PARAM_ST 121 | u8 | u8 | ladderEndChkOffsetLow | はしご下終端オフセット[1/10m] | はしご終端判定用オフセット下側
+NPC_PARAM_ST 122 | NPC_BOOL | u8 | useRagdollCamHit:1 | カメラヒットあたりラグドール | 敵のラグドールにカメラがあたるか。(プレイヤにも当たるときのみ有効)
+NPC_PARAM_ST 123 | NPC_BOOL | u8 | disableClothRigidHit:1 | クロスリジッドヒットを無効 | クロスリジッドが自分に当たらないようにしたければ○
+NPC_PARAM_ST 124 | NPC_BOOL | u8 | useRagdoll:1 | あたりラグドール | 敵のラグドールにプレイヤーがあたるか。デカキャラだけはラグドールにもプレイヤーがあたるようにしたいので、この設定でオンオフ.
+NPC_PARAM_ST 125 | NPC_BOOL | u8 | isDemon:1 | デーモンか | デーモンか。いまのところデモンブランドの効果があるかどうかだけ。
+NPC_PARAM_ST 126 | NPC_BOOL | u8 | isGhost:1 | 霊体か | 霊体か。ダメージ計算等が専用になります徘徊ゴーストと混同しないように注意
+NPC_PARAM_ST 127 | NPC_BOOL | u8 | isNoDamageMotion:1 | ダメージ0のときにダメージモーションなしか | ダメージ0のときにダメージモーションを再生しないか。
+NPC_PARAM_ST 128 | NPC_BOOL | u8 | isUnduration:1 | 起伏に角度をあわせるか | キャラの前後回転を地面の起伏に合わせるか。飛行キャラの場合は使用不可
+NPC_PARAM_ST 129 | NPC_BOOL | u8 | isChangeWanderGhost:1 | 徘徊ゴーストになるか | プレイヤーがクライアントのときに徘徊ゴーストになるか
+NPC_PARAM_ST 130 | u8 | u8 | modelDispMask0:1 | モデル表示マスク0 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 131 | u8 | u8 | modelDispMask1:1 | モデル表示マスク1 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 132 | u8 | u8 | modelDispMask2:1 | モデル表示マスク2 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 133 | u8 | u8 | modelDispMask3:1 | モデル表示マスク3 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 134 | u8 | u8 | modelDispMask4:1 | モデル表示マスク4 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 135 | u8 | u8 | modelDispMask5:1 | モデル表示マスク5 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 136 | u8 | u8 | modelDispMask6:1 | モデル表示マスク6 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 137 | u8 | u8 | modelDispMask7:1 | モデル表示マスク7 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 138 | u8 | u8 | modelDispMask8:1 | モデル表示マスク8 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 139 | u8 | u8 | modelDispMask9:1 | モデル表示マスク9 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 140 | u8 | u8 | modelDispMask10:1 | モデル表示マスク10 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 141 | u8 | u8 | modelDispMask11:1 | モデル表示マスク11 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 142 | u8 | u8 | modelDispMask12:1 | モデル表示マスク12 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 143 | u8 | u8 | modelDispMask13:1 | モデル表示マスク13 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 144 | u8 | u8 | modelDispMask14:1 | モデル表示マスク14 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 145 | u8 | u8 | modelDispMask15:1 | モデル表示マスク15 | 表示マスクに対応するモデルを表示します。
+NPC_PARAM_ST 146 | u8 | u8 | isEnableNeckTurn:1 | 首振り有効にするか | パラムウィーバで設定された首振りを有効にするか。
+NPC_PARAM_ST 147 | u8 | u8 | disableRespawn:1 | リスポン禁止か | リスポンを禁止するか
+NPC_PARAM_ST 148 | u8 | u8 | isMoveAnimWait:1 | 移動アニメを待つか | 移動アニメをアニメが終わるまで再生するか。（カゲロウ龍の様に。）
+NPC_PARAM_ST 149 | NPC_BOOL | u8 | isCrowd:1 | 群集用処理軽減するか | 群集時の処理負荷軽減を行なうか。赤子用（できればファランクスも）
+NPC_PARAM_ST 150 | NPC_BOOL | u8 | isWeakSaint:1 | 神聖弱点か | 神聖弱点か？神聖ダメージ倍率が計算に含まれるようになります
+NPC_PARAM_ST 151 | NPC_BOOL | u8 | isWeakA:1 | 弱点Aか | 弱点Aか？弱点Aダメージ倍率が計算に含まれるようになります
+NPC_PARAM_ST 152 | NPC_BOOL | u8 | isWeakB:1 | 弱点Bか | 弱点Bか？弱点Bダメージ倍率が計算に含まれるようになります
+NPC_PARAM_ST 153 | dummy8 | dummy8 | pad1:1 | pad | pad
+NPC_PARAM_ST 154 | u8 | u8 | vowType:3 | 誓約 | 誓約タイプ(なし：０)
+NPC_PARAM_ST 155 | NPC_BOOL | u8 | disableInitializeDead:1 | 初期死亡しない | 初期死亡をしない場合にTRUE、殺してセーブしても死体再現されません。
+NPC_PARAM_ST 156 | dummy8 | dummy8 | pad3:4 | pad | pad
+NPC_PARAM_ST 157 | dummy8 | dummy8 | pad2[6] | pad | 
+NPC_THINK_PARAM_ST 0 | s32 | s32 | logicId | ロジックスクリプトID | スクリプトで作成したロジックのIDを設定します。
+NPC_THINK_PARAM_ST 1 | s32 | s32 | battleGoalID | 戦闘ゴールID | 戦闘ゴールID
+NPC_THINK_PARAM_ST 2 | f32 | f32 | nearDist | 近距離 距離[m] | 近距離とみなす範囲です。近接格闘の判定に使用します。
+NPC_THINK_PARAM_ST 3 | f32 | f32 | midDist | 中距離 距離[m] | 中距離とみなす範囲です。中距離格闘の判定に使用します。
+NPC_THINK_PARAM_ST 4 | f32 | f32 | farDist | 遠距離 距離[m] | 遠距離とみなす範囲です。飛び道具の判定に使用します。
+NPC_THINK_PARAM_ST 5 | f32 | f32 | outDist | 範囲外 距離[m] | 戦闘範囲外とみなす距離です。範囲外の敵には戦闘行動を行おうとはしなくなります。
+NPC_THINK_PARAM_ST 6 | f32 | f32 | BackHomeLife_OnHitEneWal | 敵壁接触時のBackHome時間[sec] | ブロックをさえぎる敵壁に接触したとき、BackToHomeゴールの寿命
+NPC_THINK_PARAM_ST 7 | s32 | s32 | goalID_ToCaution | ゴール：警戒状態 | ゴール：警戒状態
+NPC_THINK_PARAM_ST 8 | s32 | s32 | idAttackCannotMove | 動けなくなったときに行うEzState番号 | 破壊可能なオブジェクトによって動きが止まっている場合、自動的に実行する行動。
+NPC_THINK_PARAM_ST 9 | s32 | s32 | goalID_ToFind | ゴール：発見状態 | ゴール：発見状態
+NPC_THINK_PARAM_ST 10 | s32 | s32 | callHelp_ActionAnimId | 仲間呼び 応答アクションアニメID | 応答する時のアニメID(EzStateAnimID)
+NPC_THINK_PARAM_ST 11 | s32 | s32 | callHelp_CallActionId | 仲間呼び_仲間呼びアクションID | 仲間呼ぶときのアクションID(EzStateAnimID)
+NPC_THINK_PARAM_ST 12 | u16 | u16 | eye_dist | 視覚_距離[m] | 視覚による索敵範囲.
+NPC_THINK_PARAM_ST 13 | u16 | u16 | ear_dist | 聴覚_距離[cm] | 聴覚による索敵範囲.。
+NPC_THINK_PARAM_ST 14 | u16 | u16 | ear_soundcut_dist | 聴覚　影響カット距離[m] | 音源のサイズを小さくする距離。この距離未満の音が聞こえなくなります。
+NPC_THINK_PARAM_ST 15 | u16 | u16 | nose_dist | 嗅覚_距離[m] | 嗅覚による索敵範囲.
+NPC_THINK_PARAM_ST 16 | u16 | u16 | maxBackhomeDist | 何があっても帰宅する距離[m] | COMMON_SetBattleActLogicの引き数
+NPC_THINK_PARAM_ST 17 | u16 | u16 | backhomeDist | 戦闘しつつ帰宅する距離[m] | COMMON_SetBattleActLogicの引き数
+NPC_THINK_PARAM_ST 18 | u16 | u16 | backhomeBattleDist | 巣に帰るのをあきらめて戦闘する距離[m] | COMMON_SetBattleActLogicの引き数
+NPC_THINK_PARAM_ST 19 | u16 | u16 | nonBattleActLife | 敵を意識しているときの非戦闘行動時間[sec] | COMMON_SetBattleActLogicの引き数
+NPC_THINK_PARAM_ST 20 | u16 | u16 | BackHome_LookTargetTime | 帰宅時：ターゲットを見ている時間[sec] | 帰宅時：ターゲットを見ている時間[sec]
+NPC_THINK_PARAM_ST 21 | u16 | u16 | BackHome_LookTargetDist | 帰宅時：ターゲットを見ている距離[m] | 帰宅時：ターゲットを見ている距離[m]
+NPC_THINK_PARAM_ST 22 | u16 | u16 | SightTargetForgetTime | 視覚ターゲット忘れる時間[frame] | 視覚ターゲット忘れる時間。フレームで入力です。
+NPC_THINK_PARAM_ST 23 | u16 | u16 | SoundTargetForgetTime | 音ターゲット忘れる時間[frame] | 音ターゲット忘れる時間。フレームで入力です。
+NPC_THINK_PARAM_ST 24 | u16 | u16 | BattleStartDist | 敵を発見してから戦闘を開始する距離[m] | 
+NPC_THINK_PARAM_ST 25 | u16 | u16 | callHelp_MyPeerId | 仲間呼び 自分の仲間グループID | 自分の仲間グループID
+NPC_THINK_PARAM_ST 26 | u16 | u16 | callHelp_CallPeerId | 仲間呼び 呼ぶ仲間グループID | 仲間を呼ぶ対象となる仲間グループID
+NPC_THINK_PARAM_ST 27 | u16 | u16 | targetSys_DmgEffectRate | ダメージ影響率[％] | ダメージ影響率取得(ターゲットシステム評価情報)
+NPC_THINK_PARAM_ST 28 | u8 | u8 | TeamAttackEffectivity | チーム攻撃影響力[0-100] | チーム内の同時攻撃人数を決めるための値。値を大きくすると、同時に攻撃参加できる人数が少なくなる。
+NPC_THINK_PARAM_ST 29 | u8 | u8 | eye_angX | 視覚_角度（高さ）[deg] | 視覚による索敵範囲.
+NPC_THINK_PARAM_ST 30 | u8 | u8 | eye_angY | 視覚_角度（幅）[deg] | 視覚による索敵範囲.
+NPC_THINK_PARAM_ST 31 | u8 | u8 | ear_angX | 聴覚　角度（高さ）[deg] | 聴覚による索敵範囲。
+NPC_THINK_PARAM_ST 32 | u8 | u8 | ear_angY | 聴覚　角度（幅）[deg] | 聴覚による索敵範囲。
+NPC_THINK_PARAM_ST 33 | u8 | u8 | callHelp_CallValidMinDistTarget | 仲間呼び_ターゲットとの最低距離[m] | この値より近い場合は仲間呼びできない.
+NPC_THINK_PARAM_ST 34 | u8 | u8 | callHelp_CallValidRange | 仲間呼び_仲間を呼ぶ有効距離[m] | この値より仲間が遠い場合は呼ばない。
+NPC_THINK_PARAM_ST 35 | u8 | u8 | callHelp_ForgetTimeByArrival | 仲間呼び 応答してから忘れる時間[sec] | 応答する時間
+NPC_THINK_PARAM_ST 36 | u8 | u8 | callHelp_MinWaitTime | 応答時の待機最小時間[ssm=>ss．mSec] | 応答ゴールの最初の待機ゴールでの最小時間[101=>10．1sec]
+NPC_THINK_PARAM_ST 37 | u8 | u8 | callHelp_MaxWaitTime | 応答時の待機最大時間[ssm=>ss．mSec] | 応答ゴールの最初の待機ゴールでの最大時間[101=>10．1sec]
+NPC_THINK_PARAM_ST 38 | NPC_THINK_GOAL_ACTION | u8 | goalAction_ToCaution | ゴールアクション：警戒状態 | ゴールアクション：ターゲットが警戒状態になった
+NPC_THINK_PARAM_ST 39 | NPC_THINK_GOAL_ACTION | u8 | goalAction_ToFind | ゴールアクション：発見状態 | ゴールアクション：ターゲットが発見状態になった
+NPC_THINK_PARAM_ST 40 | NPC_THINK_REPLY_BEHAVIOR_TYPE | u8 | callHelp_ReplyBehaviorType | 仲間呼び 応答後の行動タイプ | 応答後、目標位置までの行動タイプ
+NPC_THINK_PARAM_ST 41 | u8 | u8 | disablePathMove | パス移動しない | パス移動命令が来てもパスを辿らずに直接移動するか
+NPC_THINK_PARAM_ST 42 | ON_OFF | u8 | skipArrivalVisibleCheck | 視線による到着判定をスキップするか？ | 視線による到着判定をスキップするか？Onにすると、視線が通っていなくても、到着判定を行う。
+NPC_THINK_PARAM_ST 43 | ON_OFF | u8 | thinkAttr_doAdmirer | 取巻き役になるか？ | 思考属性：ＯＮにすると取巻き役を演じます。
+NPC_THINK_PARAM_ST 44 | u8 | u8 | enableNaviFlg_Edge:1 | フラグ「崖」通れるか？ | ノード「崖」を通過できるか？(def:1)
+NPC_THINK_PARAM_ST 45 | u8 | u8 | enableNaviFlg_LargeSpace:1 | フラグ「広い」通れるか？ | ノード「広い」を通過できるか？(def:1)
+NPC_THINK_PARAM_ST 46 | u8 | u8 | enableNaviFlg_Ladder:1 | フラグ「梯子」通れるか？ | ノード「梯子」を通過できるか？(def:0)
+NPC_THINK_PARAM_ST 47 | u8 | u8 | enableNaviFlg_Hole:1 | フラグ「穴」通れるか？ | ノード「穴」を通過できるか？(def:0)
+NPC_THINK_PARAM_ST 48 | u8 | u8 | enableNaviFlg_Door:1 | フラグ「扉」通れるか？ | ノード「扉」を通過できるか？(def:0)
+NPC_THINK_PARAM_ST 49 | u8 | u8 | enableNaviFlg_InSideWall:1 | フラグ「壁中」通れるか？ | ノード「壁中」を通過できるか？(def:0)
+NPC_THINK_PARAM_ST 50 | dummy8 | dummy8 | enableNaviFlg_reserve0:2 | ほんとに予約 | フラグが新しく必要になったらここにいれます（NotPadding)
+NPC_THINK_PARAM_ST 51 | dummy8 | dummy8 | enableNaviFlg_reserve1[3] | ほんとに予約 | フラグが新しく必要になったらここにいれます（NotPadding)
+NPC_THINK_PARAM_ST 52 | dummy8 | dummy8 | pad0[12] | パッド | pad
+OBJ_ACT_PARAM_ST 0 | s32 | s32 | actionEnableMsgId | アクション有効時のMsgID | アクションが有効時に表示するメニューのMsgIDです。
+OBJ_ACT_PARAM_ST 1 | s32 | s32 | actionFailedMsgId | アクション失敗時のMsgID | アクションが失敗時に表示するメニューのMsgIDです。
+OBJ_ACT_PARAM_ST 2 | s32 | s32 | spQualifiedPassEventFlag | 特殊条件パス用イベントフラグ | 特殊条件を無条件パスするためのイベントフラグ.
+OBJ_ACT_PARAM_ST 3 | u16 | u16 | validDist | アクションの有効距離[cm] | アクションの有効距離です。
+OBJ_ACT_PARAM_ST 4 | u16 | u16 | playerAnimId | プレイヤのアニメID0 | プレイヤーキャラのアクション時のアニメIDです。
+OBJ_ACT_PARAM_ST 5 | u16 | u16 | chrAnimId | キャラのアニメID0 | 敵などのアクション時のアニメID
+OBJ_ACT_PARAM_ST 6 | u16 | u16 | spQualifiedId | 特殊条件のID | 特殊条件のID
+OBJ_ACT_PARAM_ST 7 | u16 | u16 | spQualifiedId2 | 特殊条件のID 2 | 特殊条件のIDその2
+OBJ_ACT_PARAM_ST 8 | u8 | u8 | objDummyId | オブジェのダミポリID0 | オブジェクトのアクション位置となるダミポリIDです
+OBJ_ACT_PARAM_ST 9 | u8 | u8 | objAnimId | オブジェのアニメID0 | オブジェクトのアクション時のアニメＩＤです。
+OBJ_ACT_PARAM_ST 10 | u8 | u8 | validPlayerAngle | プレイヤのアクション有効角度 | プレイヤのアクションの有効角度です。プレイヤの向きベクトルとオブジェへの方向ベクトルの有効角度差
+OBJ_ACT_PARAM_ST 11 | OBJACT_SP_QUALIFIED_TYPE | u8 | spQualifiedType | 特殊条件のタイプ | 特殊条件の種類
+OBJ_ACT_PARAM_ST 12 | OBJACT_SP_QUALIFIED_TYPE | u8 | spQualifiedType2 | 特殊条件のタイプ2 | 特殊条件の種類2
+OBJ_ACT_PARAM_ST 13 | u8 | u8 | validObjAngle | オブジェのアクション有効角度 | オブジェのアクション有効角度です。オブジェのアクションベクトルとキャラベクトルの有効角度差
+OBJ_ACT_PARAM_ST 14 | OBJACT_CHR_SORB_TYPE | u8 | chrSorbType | キャラの吸着タイプ | オブジェアクション時のキャラの吸着方法です
+OBJ_ACT_PARAM_ST 15 | OBJACT_EVENT_KICK_TIMING | u8 | eventKickTiming | イベント発動タイミング | イベントの実行タイミング
+OBJ_ACT_PARAM_ST 16 | dummy8 | dummy8 | pad1[2] | pad1 | pad1
+OBJECT_PARAM_ST 0 | s16 | s16 | hp | HP | 破壊までの耐久力(-1:破壊不可)
+OBJECT_PARAM_ST 1 | u16 | u16 | defense | 防御力 | この値以下の攻撃力はダメージなし
+OBJECT_PARAM_ST 2 | s16 | s16 | extRefTexId | 外部参照テクスチャID | mAA/mAA_????.tpf(-1:なし)(AA:エリア番号)
+OBJECT_PARAM_ST 3 | s16 | s16 | materialId | 材質ID | マテリアルID。床材質と同じ扱い。-1のときは今までと同じ挙動
+OBJECT_PARAM_ST 4 | u8 | u8 | animBreakIdMax | アニメ破壊ID最大値 | アニメ破壊IDが0番から何番までか
+OBJECT_PARAM_ST 5 | u8 | u8 | isCamHit:1 | カメラが当たるか | カメラが当たるか(0:当たらない, 1:当たる)
+OBJECT_PARAM_ST 6 | u8 | u8 | isBreakByPlayerCollide:1 | プレイヤ衝突で壊れるか | プレイヤが接触したときに壊れ(0:ない, 1:る)
+OBJECT_PARAM_ST 7 | u8 | u8 | isAnimBreak:1 | アニメ破壊か | アニメ破壊か(0:物理破壊, 1:アニメ破壊)
+OBJECT_PARAM_ST 8 | u8 | u8 | isPenetrationBulletHit:1 | 貫通弾丸が当たるか | 貫通弾丸が当たるか(0:当たらない, 1:当たる)
+OBJECT_PARAM_ST 9 | u8 | u8 | isChrHit:1 | キャラが当たるか | キャラが当たるか(0:当たらない, 1:当たる)
+OBJECT_PARAM_ST 10 | u8 | u8 | isAttackBacklash:1 | 攻撃を弾くか | 攻撃を弾くか(0:弾かない, 1:弾く)
+OBJECT_PARAM_ST 11 | u8 | u8 | isDisableBreakForFirstAppear:1 | 初期出現用破壊禁止 | プレイヤの初期出現で壊れ(0:る, 1:ない)
+OBJECT_PARAM_ST 12 | u8 | u8 | isLadder:1 | ハシゴか | ハシゴか(0:ちがう, 1:そう)
+OBJECT_PARAM_ST 13 | u8 | u8 | isAnimPauseOnRemoPlay:1 | ポリ劇中アニメを停止するか | ポリ劇中アニメを停止するか(0:しない, 1:する)
+OBJECT_PARAM_ST 14 | u8 | u8 | isDamageNoHit:1 | ダメージが当たらないか | ダメージが当たらない(0:当たる, 1:当たらない)
+OBJECT_PARAM_ST 15 | u8 | u8 | isMoveObj:1 | 移動オブジェか | 移動オブジェか(0:ちがう, 1:そう)
+OBJECT_PARAM_ST 16 | dummy8 | dummy8 | pad_1:5 | パディング | pad
+OBJECT_PARAM_ST 17 | s8 | s8 | defaultLodParamId | デフォルトLODパラムID | デフォルトLODパラムID(-1：なし)
+OBJECT_PARAM_ST 18 | s32 | s32 | breakSfxId | 破壊時SFXID | オブジェ破壊時のSFXID(-1:デフォルト(80))
+REINFORCE_PARAM_PROTECTOR_ST 0 | f32 | f32 | physicsDefRate | 物理防御力 | 物理防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 1 | f32 | f32 | magicDefRate | 魔法防御力 | 魔法防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 2 | f32 | f32 | fireDefRate | 炎防御力 | 炎防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 3 | f32 | f32 | thunderDefRate | 電撃防御力 | 電撃防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 4 | f32 | f32 | slashDefRate | 斬撃防御力 | 斬撃防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 5 | f32 | f32 | blowDefRate | 打撃防御力 | 打撃防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 6 | f32 | f32 | thrustDefRate | 刺突防御力 | 刺突防御力の補正値
+REINFORCE_PARAM_PROTECTOR_ST 7 | f32 | f32 | resistPoisonRate | 毒耐性 | 毒耐性の補正値
+REINFORCE_PARAM_PROTECTOR_ST 8 | f32 | f32 | resistDiseaseRate | 疫病耐性 | 疫病耐性の補正値
+REINFORCE_PARAM_PROTECTOR_ST 9 | f32 | f32 | resistBloodRate | 出血耐性 | 出血耐性の補正値
+REINFORCE_PARAM_PROTECTOR_ST 10 | f32 | f32 | resistCurseRate | 呪耐性 | 呪耐性の補正値
+REINFORCE_PARAM_PROTECTOR_ST 11 | u8 | u8 | residentSpEffectId1 | 常駐特殊効果ID1 | 常駐特殊効果ID1の加算補正値
+REINFORCE_PARAM_PROTECTOR_ST 12 | u8 | u8 | residentSpEffectId2 | 常駐特殊効果ID2 | 常駐特殊効果ID2の加算補正値
+REINFORCE_PARAM_PROTECTOR_ST 13 | u8 | u8 | residentSpEffectId3 | 常駐特殊効果ID3 | 常駐特殊効果ID3の加算補正値
+REINFORCE_PARAM_PROTECTOR_ST 14 | u8 | u8 | materialSetId | 素材ID加算値 | 素材パラメータIDの加算補正値
+REINFORCE_PARAM_WEAPON_ST 0 | f32 | f32 | physicsAtkRate | 物理攻撃力基本値 | 物理攻撃力の補正値
+REINFORCE_PARAM_WEAPON_ST 1 | f32 | f32 | magicAtkRate | 魔法攻撃力基本値 | 魔法攻撃力の補正値
+REINFORCE_PARAM_WEAPON_ST 2 | f32 | f32 | fireAtkRate | 炎攻撃力基本値 | 炎攻撃力の補正値
+REINFORCE_PARAM_WEAPON_ST 3 | f32 | f32 | thunderAtkRate | 電撃攻撃力基本値 | 電撃攻撃力の補正値
+REINFORCE_PARAM_WEAPON_ST 4 | f32 | f32 | staminaAtkRate | スタミナ攻撃力 | スタミナ攻撃力の補正値
+REINFORCE_PARAM_WEAPON_ST 5 | f32 | f32 | saWeaponAtkRate | SA武器攻撃力 | スーパーアーマー武器攻撃色の補正値
+REINFORCE_PARAM_WEAPON_ST 6 | f32 | f32 | saDurabilityRate | SA耐久値 | SA耐久力の補正値
+REINFORCE_PARAM_WEAPON_ST 7 | f32 | f32 | correctStrengthRate | 筋力補正 | 筋力補正の補正値
+REINFORCE_PARAM_WEAPON_ST 8 | f32 | f32 | correctAgilityRate | 俊敏補正 | 俊敏補正の補正値
+REINFORCE_PARAM_WEAPON_ST 9 | f32 | f32 | correctMagicRate | 魔力補正 | 魔力補正の補正値
+REINFORCE_PARAM_WEAPON_ST 10 | f32 | f32 | correctFaithRate | 信仰補正 | 信仰補正の補正値
+REINFORCE_PARAM_WEAPON_ST 11 | f32 | f32 | physicsGuardCutRate | ガード時物理攻撃カット率 | ガード時物理攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 12 | f32 | f32 | magicGuardCutRate | ガード時魔法攻撃カット率 | ガード時魔法攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 13 | f32 | f32 | fireGuardCutRate | ガード時炎攻撃カット率 | ガード時炎攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 14 | f32 | f32 | thunderGuardCutRate | ガード時電撃攻撃カット率 | ガード時電撃攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 15 | f32 | f32 | poisonGuardResistRate | ガード時毒攻撃カット率 | ガード時毒攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 16 | f32 | f32 | diseaseGuardResistRate | ガード時疫病攻撃カット率 | ガード時疫病攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 17 | f32 | f32 | bloodGuardResistRate | ガード時出血攻撃カット率 | ガード時出血攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 18 | f32 | f32 | curseGuardResistRate | ガード時呪攻撃カット率 | ガード時呪い攻撃カット率の補正値
+REINFORCE_PARAM_WEAPON_ST 19 | f32 | f32 | staminaGuardDefRate | ガード時スタミナ防御力 | ガード時スタミナ防御力の補正値
+REINFORCE_PARAM_WEAPON_ST 20 | u8 | u8 | spEffectId1 | 特殊効果ID1 | 特殊効果ID1の加算補正値
+REINFORCE_PARAM_WEAPON_ST 21 | u8 | u8 | spEffectId2 | 特殊効果ID2 | 特殊効果ID2の加算補正値
+REINFORCE_PARAM_WEAPON_ST 22 | u8 | u8 | spEffectId3 | 特殊効果ID3 | 特殊効果ID3の加算補正値
+REINFORCE_PARAM_WEAPON_ST 23 | u8 | u8 | residentSpEffectId1 | 常駐特殊効果ID1 | 常駐特殊効果ID1の加算補正値
+REINFORCE_PARAM_WEAPON_ST 24 | u8 | u8 | residentSpEffectId2 | 常駐特殊効果ID2 | 常駐特殊効果ID2の加算補正値
+REINFORCE_PARAM_WEAPON_ST 25 | u8 | u8 | residentSpEffectId3 | 常駐特殊効果ID3 | 常駐特殊効果ID3の加算補正値
+REINFORCE_PARAM_WEAPON_ST 26 | u8 | u8 | materialSetId | 素材ID加算値 | 素材パラメータIDの加算補正値
+REINFORCE_PARAM_WEAPON_ST 27 | u8 | u8 | reinforcementLevel | 武器強化 | 武器強化度
+SHOP_LINEUP_PARAM 0 | s32 | s32 | equipId | 販売品の装備ID | 販売している装備品のID
+SHOP_LINEUP_PARAM 1 | s32 | s32 | value | 販売価格 | 販売価格
+SHOP_LINEUP_PARAM 2 | s32 | s32 | mtrlId | 購入に必要な素材ID | 購入に必要な素材ID
+SHOP_LINEUP_PARAM 3 | s32 | s32 | eventFlag | イベントフラグ | 個数を保持してあるイベントフラグ値
+SHOP_LINEUP_PARAM 4 | s32 | s32 | qwcId | QWCパラメタID | ＱＷＣパラメータのID
+SHOP_LINEUP_PARAM 5 | s16 | s16 | sellQuantity | 販売個数 | 販売個数
+SHOP_LINEUP_PARAM 6 | SHOP_LINEUP_SHOPTYPE | u8 | shopType | ショップタイプ | ショップの種類
+SHOP_LINEUP_PARAM 7 | SHOP_LINEUP_EQUIPTYPE | u8 | equipType | 販売品の装備タイプ | 販売している装備品の種類
+SHOP_LINEUP_PARAM 8 | dummy8 | dummy8 | pad_0[8] | pad | 
+SKELETON_PARAM_ST 0 | f32 | f32 | neckTurnGain | 首振りゲイン | 首振りゲイン。高いほど早く回る
+SKELETON_PARAM_ST 1 | s16 | s16 | originalGroundHeightMS | 原点から地面への高さ[cm] | 原点から地面への高さ[cm]
+SKELETON_PARAM_ST 2 | s16 | s16 | minAnkleHeightMS | 足首を上げられる最低の高さ[cm] | 足首を上げられる最低の高さ[cm]
+SKELETON_PARAM_ST 3 | s16 | s16 | maxAnkleHeightMS | 足首を上げられる最大の高さ[cm] | 足首を上げられる最大の高さ[cm]
+SKELETON_PARAM_ST 4 | s16 | s16 | cosineMaxKneeAngle | ひざを曲げられる最大の角度(コサインの値) | ひざを曲げられる最大の角度(コサインの値)
+SKELETON_PARAM_ST 5 | s16 | s16 | cosineMinKneeAngle | ひざを曲げられる最小の角度 | ひざを曲げられる最小の角度
+SKELETON_PARAM_ST 6 | s16 | s16 | footPlantedAnkleHeightMS | 足首がくっついていると仮定する最低位置[cm] | 足首がこの位置よりも低い場合には足がくっついていると仮定する[cm]
+SKELETON_PARAM_ST 7 | s16 | s16 | footRaisedAnkleHeightMS | 足首が離れていると仮定する最高位置[cm] | 足首がこの位置よりも高い場合には足が離れていると仮定する[cm]
+SKELETON_PARAM_ST 8 | s16 | s16 | raycastDistanceUp | 足首よりどれぐらい上からレイキャストするか[cm] | 足首よりどれぐらい上からレイキャストするか[cm]
+SKELETON_PARAM_ST 9 | s16 | s16 | raycastDistanceDown | 足首からどれぐらい下までレイキャストするか[cm] | 足首からどれぐらい下までレイキャストするか[cm]
+SKELETON_PARAM_ST 10 | s16 | s16 | footEndLS_X | つま先位置X[cm] | つま先位置X[cm]
+SKELETON_PARAM_ST 11 | s16 | s16 | footEndLS_Y | つま先位置Y[cm] | つま先位置Y[cm]
+SKELETON_PARAM_ST 12 | s16 | s16 | footEndLS_Z | つま先位置Z[cm] | つま先位置Z[cm]
+SKELETON_PARAM_ST 13 | s16 | s16 | onOffGain | 足の接地をオンオフするときのゲイン[1/100] | 足の接地をオンオフするときのゲイン[1/100]
+SKELETON_PARAM_ST 14 | s16 | s16 | groundAscendingGain | 地面の高さが高くなったときのゲイン[1/100] | 地面の高さが高くなったときのゲイン[1/100]
+SKELETON_PARAM_ST 15 | s16 | s16 | groundDescendingGain | 地面の高さが低くなったときのゲイン[1/100] | 地面の高さが低くなったときのゲイン[1/100]
+SKELETON_PARAM_ST 16 | s16 | s16 | footRaisedGain | 足が上がったときのゲイン[1/100] | 足が上がったときのゲイン[1/100]
+SKELETON_PARAM_ST 17 | s16 | s16 | footPlantedGain | 足が接地したときのゲイン[1/100] | 足が接地したときのゲイン[1/100]
+SKELETON_PARAM_ST 18 | s16 | s16 | footUnlockGain | 足がロック/アンロックしたときのゲイン[1/100] | 足がロック/アンロックしたときのゲイン[1/100]
+SKELETON_PARAM_ST 19 | SKELETON_PARAM_KNEE_AXIS_DIR | u8 | kneeAxisType | ひざの軸方向 | ひざの軸方向
+SKELETON_PARAM_ST 20 | RAGDOLL_PARAM_BOOL | u8 | useFootLocking | 足/足首をロック（固定？）するか | 足/足首をロック（固定？）するか
+SKELETON_PARAM_ST 21 | RAGDOLL_PARAM_BOOL | u8 | footPlacementOn | 足の接地が有効か | 足の接地が有効か
+SKELETON_PARAM_ST 22 | SKELETON_PARAM_KNEE_AXIS_DIR | u8 | twistKneeAxisType | ひねり用ひざ関節の軸方向 | ひねり用ひざ関節の回転を無視する軸方向
+SKELETON_PARAM_ST 23 | s8 | s8 | neckTurnPriority | 首振り優先度 | 低いほど先に回る。-1で首振りしない
+SKELETON_PARAM_ST 24 | u8 | u8 | neckTurnMaxAngle | 首振り最大角度 | この関節の最大旋回角度。この角度以上はまがらない
+SKELETON_PARAM_ST 25 | dummy8 | dummy8 | pad1[2] | パディング1 | 
+SP_EFFECT_PARAM_ST 0 | s32 | s32 | iconId | アイコンID | アイコンID(-1の時は、アイコン必要なし)
+SP_EFFECT_PARAM_ST 1 | f32 | f32 | conditionHp | 発動条件　残りHP比率[%] | 残りHPが、maxHPの何%になったら発動するかを設定
+SP_EFFECT_PARAM_ST 2 | f32 | f32 | effectEndurance | 効果持続時間　時間[s] | 変化持続時間　/-1で永続 /0で瞬間1回限り
+SP_EFFECT_PARAM_ST 3 | f32 | f32 | motionInterval | 発動間隔[s] | 何秒間隔で発生するのかを設定
+SP_EFFECT_PARAM_ST 4 | f32 | f32 | maxHpRate | 最大HP倍率[%] | 最大HPに補正をかける
+SP_EFFECT_PARAM_ST 5 | f32 | f32 | maxMpRate | 最大MP倍率[%] | 最大MPに補正をかける
+SP_EFFECT_PARAM_ST 6 | f32 | f32 | maxStaminaRate | 最大スタミナ倍率[%] | 最大SPに補正をかける
+SP_EFFECT_PARAM_ST 7 | f32 | f32 | slashDamageCutRate | 防御側：斬撃ダメージ倍率 | 斬撃ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 8 | f32 | f32 | blowDamageCutRate | 防御側：打撃ダメージ倍率 | 打撃ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 9 | f32 | f32 | thrustDamageCutRate | 防御側：刺突ダメージ倍率 | 刺突ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 10 | f32 | f32 | neutralDamageCutRate | 防御側：無属性ダメージ倍率 | 無属性ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 11 | f32 | f32 | magicDamageCutRate | 防御側：魔法ダメージ倍率 | 魔法ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 12 | f32 | f32 | fireDamageCutRate | 防御側：炎ダメージ倍率 | 炎ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 13 | f32 | f32 | thunderDamageCutRate | 防御側：電撃ダメージ倍率 | 炎ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 14 | f32 | f32 | physicsAttackRate | 攻撃側：物理ダメージ倍率 | 物理ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 15 | f32 | f32 | magicAttackRate | 攻撃側：魔法ダメージ倍率 | 魔法ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 16 | f32 | f32 | fireAttackRate | 攻撃側：炎ダメージ倍率 | 炎ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 17 | f32 | f32 | thunderAttackRate | 攻撃側：電撃ダメージ倍率 | 電撃ダメージ倍率：算出したダメージに×○倍で補正をかける。１が通常。
+SP_EFFECT_PARAM_ST 18 | f32 | f32 | physicsAttackPowerRate | 物理攻撃力倍率 | 物理攻撃力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 19 | f32 | f32 | magicAttackPowerRate | 魔法攻撃力倍率 | 魔法攻撃力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 20 | f32 | f32 | fireAttackPowerRate | 炎攻撃力倍率 | 炎攻撃力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 21 | f32 | f32 | thunderAttackPowerRate | 電撃攻撃力倍率 | 電撃攻撃力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 22 | s32 | s32 | physicsAttackPower | 物理攻撃力[point] | 物理攻撃力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 23 | s32 | s32 | magicAttackPower | 魔法攻撃力[point] | 魔法攻撃力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 24 | s32 | s32 | fireAttackPower | 炎攻撃力[point] | 炎攻撃力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 25 | s32 | s32 | thunderAttackPower | 電撃攻撃力[point] | 電撃攻撃力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 26 | f32 | f32 | physicsDiffenceRate | 物理防御力倍率 | 物理防御力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 27 | f32 | f32 | magicDiffenceRate | 魔法防御力倍率 | 魔法防御力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 28 | f32 | f32 | fireDiffenceRate | 炎防御力倍率 | 炎防御力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 29 | f32 | f32 | thunderDiffenceRate | 電撃防御力倍率 | 電撃防御力に設定した数値をかけます
+SP_EFFECT_PARAM_ST 30 | s32 | s32 | physicsDiffence | 物理防御力[point] | 物理防御力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 31 | s32 | s32 | magicDiffence | 魔法防御力[point] | 魔法防御力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 32 | s32 | s32 | fireDiffence | 炎防御力[point] | 炎防御力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 33 | s32 | s32 | thunderDiffence | 電撃防御力[point] | 電撃防御力に設定した数値を加減算する
+SP_EFFECT_PARAM_ST 34 | f32 | f32 | NoGuardDamageRate | 隙ダメージ倍率 | 隙のときのダメージ倍率を、設定した数値に置き換える（ダメージ側に設定）
+SP_EFFECT_PARAM_ST 35 | f32 | f32 | vitalSpotChangeRate | スィートスポット倍率 | スィートスポットのダメージ計算を指定した数値に差し替える(急所ダメージ補正) -1.0で無効
+SP_EFFECT_PARAM_ST 36 | f32 | f32 | normalSpotChangeRate | ノーマルヒット倍率 | ノーマルヒットのダメージ計算を指定した数値に差し替える  -1.0で無効
+SP_EFFECT_PARAM_ST 37 | f32 | f32 | maxHpChangeRate | 最大HP変化倍率 | 最大HPに対して、設定された倍率をかけて増減させる
+SP_EFFECT_PARAM_ST 38 | s32 | s32 | behaviorId | 行動ID指定枠 | 特殊効果から行動IDを使ってダメージを与える場合に指定-1で無効
+SP_EFFECT_PARAM_ST 39 | f32 | f32 | changeHpRate | HPダメージ量[%] | 最大HPの何%分を毎秒加算（または減算）するかを設定
+SP_EFFECT_PARAM_ST 40 | s32 | s32 | changeHpPoint | HPダメージ[point] | 1秒間に何ポイント加算（または減算）するかを設定
+SP_EFFECT_PARAM_ST 41 | f32 | f32 | changeMpRate | MPダメージ量[%] | 最大MPの何%分を毎秒加算（または減算）するかを設定
+SP_EFFECT_PARAM_ST 42 | s32 | s32 | changeMpPoint | MPダメージ[point] | 1秒間に何ポイント加算（または減算）するかを設定
+SP_EFFECT_PARAM_ST 43 | s32 | s32 | mpRecoverChangeSpeed | MP回復速度変化[point] | 回復速度を変化させる。回復計算式の基準回復速度、初期回復速度に加減算する。
+SP_EFFECT_PARAM_ST 44 | f32 | f32 | changeStaminaRate | スタミナダメージ量[%] | 最大スタミナの何%分を毎秒加算（または減算）するかを設定
+SP_EFFECT_PARAM_ST 45 | s32 | s32 | changeStaminaPoint | スタミナダメージ[point] | 1秒間に何ポイント加算（または減算）するかを設定
+SP_EFFECT_PARAM_ST 46 | s32 | s32 | staminaRecoverChangeSpeed | スタミナ回復速度変化[point] | 回復速度を変化させる。回復計算式の基準回復速度、初期回復速度に加減算する。
+SP_EFFECT_PARAM_ST 47 | f32 | f32 | magicEffectTimeChange | 魔法効果時間変化 | 効果持続時間に0.1秒以上設定されている魔法のみ、効果持続時間に設定されている時間を加減算する
+SP_EFFECT_PARAM_ST 48 | s32 | s32 | insideDurability | 耐久度変化：内部損耗度[point] | 内部損耗度に数値分を加減算する
+SP_EFFECT_PARAM_ST 49 | s32 | s32 | maxDurability | 耐久度変化：最大損耗度変化[point] | 耐久度の内部損耗度の最大値に、設定された数値を加算する
+SP_EFFECT_PARAM_ST 50 | f32 | f32 | staminaAttackRate | スタミナ攻撃力倍率 | スタミナ攻撃力に、倍率をかける(1.0 1倍 0.5 半分）
+SP_EFFECT_PARAM_ST 51 | s32 | s32 | poizonAttackPower | 毒耐性攻撃力[point] | ヒットした時に、対象の【毒耐性値】に加算する数値
+SP_EFFECT_PARAM_ST 52 | s32 | s32 | registIllness | 疫病耐性攻撃力[point] | ヒットした時に、対象の【疫病耐性値】に加算する数値
+SP_EFFECT_PARAM_ST 53 | s32 | s32 | registBlood | 出血耐性攻撃力[point] | ヒットした時に、対象の【出血耐性値】に加算する数値
+SP_EFFECT_PARAM_ST 54 | s32 | s32 | registCurse | 呪耐性攻撃力[point] | ヒットした時に、対象の【呪耐性値】に加算する数値
+SP_EFFECT_PARAM_ST 55 | f32 | f32 | fallDamageRate | 落下ダメージ倍率 | 落下時のダメージ計算に倍率をかける
+SP_EFFECT_PARAM_ST 56 | f32 | f32 | soulRate | 取得ソウル倍率 | 敵を倒した時の取得ソウル量が、指定倍数分上乗せされる
+SP_EFFECT_PARAM_ST 57 | f32 | f32 | equipWeightChangeRate | 装備重量変化倍率 | 最大装備重量に、設定された倍率をかける
+SP_EFFECT_PARAM_ST 58 | f32 | f32 | allItemWeightChangeRate | 所持重量変化倍率 | 最大所持重量に、設定された倍率をかける
+SP_EFFECT_PARAM_ST 59 | s32 | s32 | soul | ソウル加算 | 所持ソウルに、設定値を加算する
+SP_EFFECT_PARAM_ST 60 | s32 | s32 | animIdOffset | アニメIDオフセット | アニメIDオフセット
+SP_EFFECT_PARAM_ST 61 | f32 | f32 | haveSoulRate | 所持ソウル率 | 敵周回効果用。設定されているキャラから外にソウルが出て行く時に適用されます。
+SP_EFFECT_PARAM_ST 62 | f32 | f32 | targetPriority | ターゲット優先度加算分 | マルチプレイ時、敵から優先的にターゲットとして狙われるようになる。プライオリティの加算。０がデフォルト。プラス値でよく狙われるようになる。マイナスは、−１まで。
+SP_EFFECT_PARAM_ST 63 | s32 | s32 | sightSearchEnemyCut | 視覚索敵カット | AIの視覚索敵対象から外れやすくなる。０がデフォルト。
+SP_EFFECT_PARAM_ST 64 | s32 | s32 | hearingSearchEnemyCut | 聴覚索敵カット | AIの聴覚索敵対象から外れやすくなる。０がデフォルト。
+SP_EFFECT_PARAM_ST 65 | f32 | f32 | grabityRate | グラビティ率 | グラビティ率
+SP_EFFECT_PARAM_ST 66 | f32 | f32 | registPoizonChangeRate | 毒耐性変化倍率 | 毒耐性値に設定された倍率をかける
+SP_EFFECT_PARAM_ST 67 | f32 | f32 | registIllnessChangeRate | 疫病耐性変化倍率 | 疫病耐性値に設定された倍率をかける
+SP_EFFECT_PARAM_ST 68 | f32 | f32 | registBloodChangeRate | 出血耐性変化倍率 | 出血耐性値に設定された倍率をかける
+SP_EFFECT_PARAM_ST 69 | f32 | f32 | registCurseChangeRate | 呪耐性変化倍率 | 呪耐性値に設定された倍率をかける
+SP_EFFECT_PARAM_ST 70 | f32 | f32 | soulStealRate | ソウルスティール係数 | NPCがソウルスティールで奪われるHPに対する防御力
+SP_EFFECT_PARAM_ST 71 | f32 | f32 | lifeReductionRate | 防御：寿命係数 | 
+SP_EFFECT_PARAM_ST 72 | f32 | f32 | hpRecoverRate | HP回復量係数 | HPが減るときは、効かない。
+SP_EFFECT_PARAM_ST 73 | s32 | s32 | replaceSpEffectId | 差し替える特殊効果 | 寿命が尽きた時に追加される特殊効果ID(-1は無視)
+SP_EFFECT_PARAM_ST 74 | s32 | s32 | cycleOccurrenceSpEffectId | 周期発生特殊効果 | 発動周期毎に発生する特殊効果ID(-1は無視)
+SP_EFFECT_PARAM_ST 75 | s32 | s32 | atkOccurrenceSpEffectId | 攻撃発生特殊効果 | 攻撃Hit時に発生する特殊効果ID(-1は無視)
+SP_EFFECT_PARAM_ST 76 | f32 | f32 | guardDefFlickPowerRate | ガード時はじき防御力アップ倍率 | ガード時のはじき防御力補正値
+SP_EFFECT_PARAM_ST 77 | f32 | f32 | guardStaminaCutRate | ガード時スタミナカット倍率 | ガード時のスタミナカット率補正値
+SP_EFFECT_PARAM_ST 78 | s16 | s16 | rayCastPassedTime | 視線通過：発動時間[ms] | 視線通過：発動時間[ms]（邪眼用）
+SP_EFFECT_PARAM_ST 79 | s16 | s16 | changeSuperArmorPoint | SA値[point] | スーパーアーマー値に加算する値
+SP_EFFECT_PARAM_ST 80 | s16 | s16 | bowDistRate | 弓飛距離補正[％] | 武器の飛距離補正に加算される補正値
+SP_EFFECT_PARAM_ST 81 | SP_EFFECT_SPCATEGORY | u16 | spCategory | 特殊効果カテゴリ | 特殊効果の上書きなどの挙動を決めるカテゴリ
+SP_EFFECT_PARAM_ST 82 | u8 | u8 | categoryPriority | カテゴリ内優先度 | 同一カテゴリ内での優先度（低い方が優先）
+SP_EFFECT_PARAM_ST 83 | SP_EFFECT_SAVE_CATEGORY | s8 | saveCategory | 保存カテゴリ | 特殊効果を保存するカテゴリ
+SP_EFFECT_PARAM_ST 84 | u8 | u8 | changeMagicSlot | 魔法登録枠変化　魔法スロット | 魔法登録枠を指定数増やすことが出来る
+SP_EFFECT_PARAM_ST 85 | u8 | u8 | changeMiracleSlot | 奇跡登録枠変化　奇跡スロット | 軌跡登録枠を指定数増やすことが出来る
+SP_EFFECT_PARAM_ST 86 | s8 | s8 | heroPointDamage | 人間性ダメージ値 | 人間性値に与えるダメージ値
+SP_EFFECT_PARAM_ST 87 | u8 | u8 | defFlickPower | はじき防御力_上書き | はじき防御力を上書きする値を設定
+SP_EFFECT_PARAM_ST 88 | u8 | u8 | flickDamageCutRate | はじき時ダメージ減衰率[%]_上書き | はじき時のダメージ減衰率を上書きする値を設定
+SP_EFFECT_PARAM_ST 89 | u8 | u8 | bloodDamageRate | 出血ダメージ補正倍率 | 
+SP_EFFECT_PARAM_ST 90 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_None | DL_ダメージなし（0） | ダメージLv0を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 91 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_S | DL_小（1） | ダメージLv1を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 92 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_M | DL_中（2） | ダメージLv2を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 93 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_L | DL_大（3） | ダメージLv3を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 94 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_BlowM | DL_吹っ飛び（4） | ダメージLv4を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 95 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_Push | DL_プッシュ（5） | ダメージLv5を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 96 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_Strike | DL_叩きつけ（6） | ダメージLv6を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 97 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_BlowS | DL_小吹っ飛び（7） | ダメージLv7を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 98 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_Min | DL_極小（8） | ダメージLv8を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 99 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_Uppercut | DL_打ち上げ（9） | ダメージLv9を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 100 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_BlowLL | DL_特大吹っ飛び(10) | ダメージLv10を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 101 | ATKPARAM_REP_DMGTYPE | s8 | dmgLv_Breath | DL_ブレス(11) | ダメージLv11を差し替えるタイプを指定
+SP_EFFECT_PARAM_ST 102 | ATKPARAM_ATKATTR_TYPE | u8 | atkAttribute | 物理属性 | 特殊効果に設定する物理属性
+SP_EFFECT_PARAM_ST 103 | ATKPARAM_SPATTR_TYPE | u8 | spAttribute | 特殊属性 | 特殊効果に設定する特殊属性
+SP_EFFECT_PARAM_ST 104 | SP_EFFECT_TYPE | u8 | stateInfo | 状態変化タイプ | 状態変化の判定フラグ
+SP_EFFECT_PARAM_ST 105 | SP_EFE_WEP_CHANGE_PARAM | u8 | wepParamChange | 対武器パラメータ変化 | どの武器に対して効果を発揮するかを指定する。制限無しの場合は敵も含めた全ての攻撃・防御が対象
+SP_EFFECT_PARAM_ST 106 | SP_EFFECT_MOVE_TYPE | u8 | moveType | 移動タイプ | 移動タイプ。移動速度を変更する。
+SP_EFFECT_PARAM_ST 107 | SP_EFFECT_TYPE | u8 | lifeReductionType | 防御：寿命減少タイプ | 
+SP_EFFECT_PARAM_ST 108 | SP_EFFECT_THROW_CONDITION_TYPE | u8 | throwCondition | 投げ条件 | 投げ条件。投げマスクに影響する。
+SP_EFFECT_PARAM_ST 109 | s8 | s8 | addBehaviorJudgeId_condition | 行動判定IDに加算する条件値 | 行動判定ＩＤに値を加算する条件値(Def:-1)
+SP_EFFECT_PARAM_ST 110 | u8 | u8 | addBehaviorJudgeId_add | 行動判定IDに加算する加算値 | 行動判定IDの加算値 ０の場合は行動を切り替えるのではなく、行動しなくなります。
+SP_EFFECT_PARAM_ST 111 | SP_EFFECT_BOOL | u8 | effectTargetSelf:1 | 効果対象：所属　自分 | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 112 | SP_EFFECT_BOOL | u8 | effectTargetFriend:1 | 効果対象：所属　味方 | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 113 | SP_EFFECT_BOOL | u8 | effectTargetEnemy:1 | 効果対象：所属　敵 | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 114 | SP_EFFECT_BOOL | u8 | effectTargetPlayer:1 | 効果対象：操作　PC | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 115 | SP_EFFECT_BOOL | u8 | effectTargetAI:1 | 効果対象：操作　AI | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 116 | SP_EFFECT_BOOL | u8 | effectTargetLive:1 | 効果対象：状態　生存 | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 117 | SP_EFFECT_BOOL | u8 | effectTargetGhost:1 | 効果対象：状態　全ゴースト | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 118 | SP_EFFECT_BOOL | u8 | effectTargetWhiteGhost:1 | 効果対象：状態　白ゴースト | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 119 | SP_EFFECT_BOOL | u8 | effectTargetBlackGhost:1 | 効果対象：状態　黒ゴースト | この判定にチェックが入っている対象のみ効果を発揮する、デフォルトは×
+SP_EFFECT_PARAM_ST 120 | SP_EFFECT_BOOL | u8 | effectTargetAttacker:1 | 効果対象：攻撃者に発動 | ダメージ後に攻撃者に特殊効果を適用（防御側には入れない）
+SP_EFFECT_PARAM_ST 121 | SP_EFFECT_BOOL | u8 | dispIconNonactive:1 | 発動してなくてもアイコン表示 | 発動待ちの状態でもアイコンを表示する。
+SP_EFFECT_PARAM_ST 122 | SP_EFFECT_BOOL | u8 | useSpEffectEffect:1 | 特殊効果エフェクトを使用するか | 特殊効果エフェクトを使用するか
+SP_EFFECT_PARAM_ST 123 | SP_EFFECT_BOOL | u8 | bAdjustMagicAblity:1 | 魔力補正するか？ | 魔力補正するか？
+SP_EFFECT_PARAM_ST 124 | SP_EFFECT_BOOL | u8 | bAdjustFaithAblity:1 | 信仰補正するか？ | 信仰補正するか？
+SP_EFFECT_PARAM_ST 125 | SP_EFFECT_BOOL | u8 | bGameClearBonus:1 | 周回ボーナス用か？ | ゲームクリア周回ボーナス用かどうか。
+SP_EFFECT_PARAM_ST 126 | SP_EFFECT_BOOL | u8 | magParamChange:1 | 対魔法パラメータ変化 | 魔法に対して効果を発揮するかしないかを設定する
+SP_EFFECT_PARAM_ST 127 | SP_EFFECT_BOOL | u8 | miracleParamChange:1 | 対奇跡パラメータ変化 | 奇跡に対して効果を発揮するかしないかを設定する
+SP_EFFECT_PARAM_ST 128 | SP_EFFECT_BOOL | u8 | clearSoul:1 | 所持ソウルクリアするか | 所持ソウルが0になります。
+SP_EFFECT_PARAM_ST 129 | SP_EFFECT_BOOL | u8 | requestSOS:1 | SOSサイン　判定フラグ | チェックが付いている場合、発動時にSOSサイン要求を発行
+SP_EFFECT_PARAM_ST 130 | SP_EFFECT_BOOL | u8 | requestBlackSOS:1 | ブラックSOSサイン　判定フラグ | チェックが付いている場合、発動時にブラックSOSサイン要求を発行
+SP_EFFECT_PARAM_ST 131 | SP_EFFECT_BOOL | u8 | requestForceJoinBlackSOS:1 | ブラック強制参加SOSサイン　判定フラグ | チェックが付いている場合、発動時にブラック強制参加SOSサイン要求を発行
+SP_EFFECT_PARAM_ST 132 | SP_EFFECT_BOOL | u8 | requestKickSession:1 | キック　判定フラグ | チェックが付いている場合、発動時にキック要求を発行
+SP_EFFECT_PARAM_ST 133 | SP_EFFECT_BOOL | u8 | requestLeaveSession:1 | 退出　判定フラグ | チェックが付いている場合、発動時に退出要求を発行
+SP_EFFECT_PARAM_ST 134 | SP_EFFECT_BOOL | u8 | requestNpcInveda:1 | NPCへの侵入　判定フラグ | チェックが付いている場合、発動時にNPCへの侵入要求を発行
+SP_EFFECT_PARAM_ST 135 | SP_EFFECT_BOOL | u8 | noDead:1 | 成仏不可　判定フラグ | 死体状態になれるかどうか。このチェックが付いていると、死亡状態にならない
+SP_EFFECT_PARAM_ST 136 | SP_EFFECT_BOOL | u8 | bCurrHPIndependeMaxHP:1 | 最大HPが増減しても、現在HPは影響しないか？ | 最大HPが増減しても、現在HPは影響しないか？
+SP_EFFECT_PARAM_ST 137 | SP_EFFECT_BOOL | u8 | corrosionIgnore:1 | 腐食無視 | 【状態変化タイプ】が【腐食】による【耐久度】減少を無視する
+SP_EFFECT_PARAM_ST 138 | SP_EFFECT_BOOL | u8 | sightSearchCutIgnore:1 | 視覚索敵カット無視 | 視覚索敵無効を無視する
+SP_EFFECT_PARAM_ST 139 | SP_EFFECT_BOOL | u8 | hearingSearchCutIgnore:1 | 聴覚索敵カット無視 | 聴覚索敵無効を無視する
+SP_EFFECT_PARAM_ST 140 | SP_EFFECT_BOOL | u8 | antiMagicIgnore:1 | アンチマジック無効 | アンチマジック範囲でも魔法を使用できる
+SP_EFFECT_PARAM_ST 141 | SP_EFFECT_BOOL | u8 | fakeTargetIgnore:1 | 偽ターゲット無効 | 発生した偽ターゲットに引っかからなくなる
+SP_EFFECT_PARAM_ST 142 | SP_EFFECT_BOOL | u8 | fakeTargetIgnoreUndead:1 | 偽ターゲット無効_不死系 | 発生した不死系の偽ターゲットに引っかからなくなる
+SP_EFFECT_PARAM_ST 143 | SP_EFFECT_BOOL | u8 | fakeTargetIgnoreAnimal:1 | 偽ターゲット無効_獣系 | 発生した獣系の偽ターゲットに引っかからなくなる
+SP_EFFECT_PARAM_ST 144 | SP_EFFECT_BOOL | u8 | grabityIgnore:1 | グラビティ無効 | グラビティ効果無効
+SP_EFFECT_PARAM_ST 145 | SP_EFFECT_BOOL | u8 | disablePoison:1 | 毒無効 | この効果がかかっていると毒にかからなくなる
+SP_EFFECT_PARAM_ST 146 | SP_EFFECT_BOOL | u8 | disableDisease:1 | 疫病無効 | この効果がかかっていると疫病にかからなくなる
+SP_EFFECT_PARAM_ST 147 | SP_EFFECT_BOOL | u8 | disableBlood:1 | 出血無効 | この効果がかかっていると出血にかからなくなる
+SP_EFFECT_PARAM_ST 148 | SP_EFFECT_BOOL | u8 | disableCurse:1 | 呪無効 | この効果がかかっていると呪いにかからなくなる
+SP_EFFECT_PARAM_ST 149 | SP_EFFECT_BOOL | u8 | enableCharm:1 | 魅了有効 | この効果がかかっていると魅了にかかるようになる
+SP_EFFECT_PARAM_ST 150 | SP_EFFECT_BOOL | u8 | enableLifeTime:1 | 寿命延長するか？ | TAEによるフラグ設定時に寿命延長するか？
+SP_EFFECT_PARAM_ST 151 | SP_EFFECT_BOOL | u8 | hasTarget : 1 | 敵を把握しているか？ | 敵を把握しているか？：[発動条件](邪眼使用者用)
+SP_EFFECT_PARAM_ST 152 | SP_EFFECT_BOOL | u8 | isFireDamageCancel:1 | 解除条件:炎ダメージ | 炎ダメージによる特殊効果の解除を行うか？
+SP_EFFECT_PARAM_ST 153 | SP_EFFECT_BOOL | u8 | isExtendSpEffectLife:1 | 寿命延長効果で延長するか？ | 寿命延長効果が掛かっている時に延長対象になるかどうか
+SP_EFFECT_PARAM_ST 154 | SP_EFFECT_BOOL | u8 | requestLeaveColiseumSession:1 | 闘技場退出　判定フラグ | チェックが付いている場合、発動時に闘技場退出要求を発行
+SP_EFFECT_PARAM_ST 155 | dummy8 | dummy8 | pad_2:4 | pad | pad
+SP_EFFECT_PARAM_ST 156 | SP_EFFECT_BOOL | u8 | vowType0:1 | 誓約0 | 誓約0
+SP_EFFECT_PARAM_ST 157 | SP_EFFECT_BOOL | u8 | vowType1:1 | 誓約1 | 誓約1
+SP_EFFECT_PARAM_ST 158 | SP_EFFECT_BOOL | u8 | vowType2:1 | 誓約2 | 誓約2
+SP_EFFECT_PARAM_ST 159 | SP_EFFECT_BOOL | u8 | vowType3:1 | 誓約3 | 誓約3
+SP_EFFECT_PARAM_ST 160 | SP_EFFECT_BOOL | u8 | vowType4:1 | 誓約4 | 誓約4
+SP_EFFECT_PARAM_ST 161 | SP_EFFECT_BOOL | u8 | vowType5:1 | 誓約5 | 誓約5
+SP_EFFECT_PARAM_ST 162 | SP_EFFECT_BOOL | u8 | vowType6:1 | 誓約6 | 誓約6
+SP_EFFECT_PARAM_ST 163 | SP_EFFECT_BOOL | u8 | vowType7:1 | 誓約7 | 誓約7
+SP_EFFECT_PARAM_ST 164 | SP_EFFECT_BOOL | u8 | vowType8:1 | 誓約8 | 誓約8
+SP_EFFECT_PARAM_ST 165 | SP_EFFECT_BOOL | u8 | vowType9:1 | 誓約9 | 誓約9
+SP_EFFECT_PARAM_ST 166 | SP_EFFECT_BOOL | u8 | vowType10:1 | 誓約10 | 誓約10
+SP_EFFECT_PARAM_ST 167 | SP_EFFECT_BOOL | u8 | vowType11:1 | 誓約11 | 誓約11
+SP_EFFECT_PARAM_ST 168 | SP_EFFECT_BOOL | u8 | vowType12:1 | 誓約12 | 誓約12
+SP_EFFECT_PARAM_ST 169 | SP_EFFECT_BOOL | u8 | vowType13:1 | 誓約13 | 誓約13
+SP_EFFECT_PARAM_ST 170 | SP_EFFECT_BOOL | u8 | vowType14:1 | 誓約14 | 誓約14
+SP_EFFECT_PARAM_ST 171 | SP_EFFECT_BOOL | u8 | vowType15:1 | 誓約15 | 誓約15
+SP_EFFECT_PARAM_ST 172 | dummy8 | dummy8 | pad1[11] | pad | pad
+SP_EFFECT_VFX_PARAM_ST 0 | s32 | s32 | midstSfxId | 効果中SfxID | 効果中SfxID(-1：無効)
+SP_EFFECT_VFX_PARAM_ST 1 | s32 | s32 | midstSeId | 効果中SeID | 効果中SeID(-1：無効)
+SP_EFFECT_VFX_PARAM_ST 2 | s32 | s32 | initSfxId | 発動時SfxID | 発動時SfxID(-1：無効)
+SP_EFFECT_VFX_PARAM_ST 3 | s32 | s32 | initSeId | 発動時SeID | 発動時SeID(-1：無効)
+SP_EFFECT_VFX_PARAM_ST 4 | s32 | s32 | finishSfxId | 解除時SfxID | 解除時SfxID(-1：無効)
+SP_EFFECT_VFX_PARAM_ST 5 | s32 | s32 | finishSeId | 解除時SeID | 解除時SeID(-1：無効)
+SP_EFFECT_VFX_PARAM_ST 6 | f32 | f32 | camouflageBeginDist | 姿隠し開始距離[m] | カムフラージュ開始距離です
+SP_EFFECT_VFX_PARAM_ST 7 | f32 | f32 | camouflageEndDist | 姿隠し終了距離[m] | カムフラージュ終了距離です
+SP_EFFECT_VFX_PARAM_ST 8 | s32 | s32 | transformProtectorId | 変身防具ID | 変身防具ID(-1：なし)
+SP_EFFECT_VFX_PARAM_ST 9 | s16 | s16 | midstDmyId | 効果中ダミポリID | 効果中ダミポリID(-1：ルート)
+SP_EFFECT_VFX_PARAM_ST 10 | s16 | s16 | initDmyId | 発動時ダミポリID | 発動時ダミポリID(-1：ルート)
+SP_EFFECT_VFX_PARAM_ST 11 | s16 | s16 | finishDmyId | 解除時ダミポリID | 解除時ダミポリID(-1：ルート)
+SP_EFFECT_VFX_PARAM_ST 12 | SP_EFFECT_VFX_EFFECT_TYPE | u8 | effectType | エフェクトタイプ | エフェクトタイプ
+SP_EFFECT_VFX_PARAM_ST 13 | SP_EFFECT_VFX_SOUL_PARAM_TYPE | u8 | soulParamIdForWepEnchant | 武器エンチャント用ソウルパラムID | 武器エンチャント用ソウルパラムID(-1：なし)
+SP_EFFECT_VFX_PARAM_ST 14 | SP_EFFECT_VFX_PLAYCATEGORY | u8 | playCategory | VFX再生カテゴリ | 重複効果によるエフェクト再生を制御します
+SP_EFFECT_VFX_PARAM_ST 15 | u8 | u8 | playPriority | カテゴリ内優先度 | カテゴリ一致した場合の再生優先度を設定(低い方が優先)
+SP_EFFECT_VFX_PARAM_ST 16 | SP_EFFECT_BOOL | u8 | existEffectForLarge:1 | 大型用エフェクトがあるか | 大型用エフェクトがあるか
+SP_EFFECT_VFX_PARAM_ST 17 | SP_EFFECT_BOOL | u8 | existEffectForSoul:1 | ソウル体用エフェクトがあるか | ソウル体用エフェクトがあるか
+SP_EFFECT_VFX_PARAM_ST 18 | SP_EFFECT_BOOL | u8 | effectInvisibleAtCamouflage:1 | 姿隠し時にエフェクトを非表示にするか | 姿隠し時にエフェクトを非表示にするか
+SP_EFFECT_VFX_PARAM_ST 19 | SP_EFFECT_BOOL | u8 | useCamouflage:1 | 姿隠しするか | 姿隠しするか
+SP_EFFECT_VFX_PARAM_ST 20 | SP_EFFECT_BOOL | u8 | invisibleAtFriendCamouflage:1 | 姿隠し時に味方でも非表示か | 姿隠し時に味方でも非表示か
+SP_EFFECT_VFX_PARAM_ST 21 | SP_EFFECT_BOOL | u8 | addMapAreaBlockOffset:1 | SfxIDにマップ番号を足すか | SfxIDにマップ番号(AAB0)を加算します
+SP_EFFECT_VFX_PARAM_ST 22 | SP_EFFECT_BOOL | u8 | halfCamouflage:1 | 半透明の姿隠しか | 半透明の姿隠しか
+SP_EFFECT_VFX_PARAM_ST 23 | SP_EFFECT_BOOL | u8 | isFullBodyTransformProtectorId:1 | 変身防具IDが全身用か | 変身防具IDが全身用か
+SP_EFFECT_VFX_PARAM_ST 24 | SP_EFFECT_BOOL | u8 | isInvisibleWeapon:1 | 武器エンチャント用インビジブルウェポンか | 武器エンチャント用インビジブルウェポンか(0:武器表示, 1:武器非表示)
+SP_EFFECT_VFX_PARAM_ST 25 | SP_EFFECT_BOOL | u8 | isSilence:1 | サイレンスか | サイレンスか(0:ちがう, 1:そう)
+SP_EFFECT_VFX_PARAM_ST 26 | dummy8 | dummy8 | pad_1:6 | パディング | パディング
+SP_EFFECT_VFX_PARAM_ST 27 | dummy8 | dummy8 | pad[16] | パディング | パディング
+TALK_PARAM_ST 0 | s32 | s32 | msgId | メッセージID | メッセージを指定->メニュー
+TALK_PARAM_ST 1 | s32 | s32 | voiceId | ボイスID | ボイスを指定->サウンド
+TALK_PARAM_ST 2 | s32 | s32 | motionId | モーションID | モーションを指定->キャラ
+TALK_PARAM_ST 3 | s32 | s32 | returnPos | 復帰位置 | 復帰する会話の相対位置->会話
+TALK_PARAM_ST 4 | s32 | s32 | reactionId | リアクションID | 復帰時の会話指定->会話
+TALK_PARAM_ST 5 | s32 | s32 | eventId | イベントID | イベントID->イベント
+TALK_PARAM_ST 6 | u8 | u8 | isMotionLoop | モーションループ有効 | モーションループするか？
+TALK_PARAM_ST 7 | dummy8 | dummy8 | pad0[7] | dummy | padding
+THROW_INFO_BANK 0 | s32 | s32 | AtkChrId | 投げ側キャラID | 投げ側キャラID
+THROW_INFO_BANK 1 | s32 | s32 | DefChrId | 受け側キャラID | 受け側キャラID
+THROW_INFO_BANK 2 | f32 | f32 | Dist | 有効距離[m] | この値より近い距離じゃないと投げない[m]
+THROW_INFO_BANK 3 | f32 | f32 | DiffAngMin | 自分の向きと相手の向きの角度差範囲min | 投げ側と受け側の角度差(Y軸)がこの角度より大きくないと投げない
+THROW_INFO_BANK 4 | f32 | f32 | DiffAngMax | 自分の向きと相手の向きの角度差範囲max | 投げ側と受け側の角度差(Y軸)がこの角度より小さくないと投げない
+THROW_INFO_BANK 5 | f32 | f32 | upperYRange | 高さ範囲上[m] | 投げ側から受け側のY軸の相対距離がこの値より小さくないと投げない
+THROW_INFO_BANK 6 | f32 | f32 | lowerYRange | 高さ範囲下[m] | 投げ側から受け側のY軸の相対距離がこの値より小さくないと投げない
+THROW_INFO_BANK 7 | f32 | f32 | diffAngMyToDef | 自分の向きと自分から相手への方向の角度差 | 自分の正面のベクトルと、自分から相手への方向のベクトルの角度差。この値より大きいと投げない
+THROW_INFO_BANK 8 | s32 | s32 | throwTypeId | 投げタイプID | 投げの種類を特定するID(攻撃パラメタと紐付け)
+THROW_INFO_BANK 9 | s32 | s32 | atkAnimId | 投げ側アニメID | 攻撃アニメIDを設定(EzStateと紐付け)
+THROW_INFO_BANK 10 | s32 | s32 | defAnimId | 受け側アニメID | ダメージアニメIDを設定(EzStateと紐付け)
+THROW_INFO_BANK 11 | u16 | u16 | escHp | 投げ抜けHP | 投げ抜けに耐えられる値
+THROW_INFO_BANK 12 | u16 | u16 | selfEscCycleTime | 自力投げ抜けサイクル時間[ms] | 自力投げ抜けのサイクル時間[ms]
+THROW_INFO_BANK 13 | u16 | u16 | sphereCastRadiusRateTop | スフィアキャスト半径比率_上[1/100Rate] | スフィアキャストの上側半径の比率[80->0.8]
+THROW_INFO_BANK 14 | u16 | u16 | sphereCastRadiusRateLow | スフィアキャスト半径比率_下[1/100Rate] | スフィアキャストの下側半径の比率[80->0.8]
+THROW_INFO_BANK 15 | THROW_PAD_TYPE | u8 | PadType | 操作タイプ | 操作タイプ
+THROW_INFO_BANK 16 | THROW_ENABLE_STATE | u8 | AtkEnableState | 投げ側の投げ可能状態タイプ | 投げ側の投げが可能な状態タイプを設定してください
+THROW_INFO_BANK 17 | u8 | u8 | atkSorbDmyId | 投げ側 吸着ダミポリID | 投げ側のどこに受け側を吸着させるか？
+THROW_INFO_BANK 18 | u8 | u8 | defSorbDmyId | 受け側 吸着ダミポリID | 受け側のどこに投げ側を吸着させるか？
+THROW_INFO_BANK 19 | THROW_TYPE | u8 | throwType | 投げ種別 | 投げの種別
+THROW_INFO_BANK 20 | u8 | u8 | selfEscCycleCnt | 自力投げ抜けサイクル回数 | 自力投げ抜けのサイクル回数
+THROW_INFO_BANK 21 | THROW_DMY_CHR_DIR_TYPE | u8 | dmyHasChrDirType | 投げ発生時のダミポリ所持キャラの向き | 投げ発生時のダミポリ所持キャラの向き
+THROW_INFO_BANK 22 | u8 | u8 | isTurnAtker:1 | 投げ側が旋回するか？ | 投げ側が旋回するか？
+THROW_INFO_BANK 23 | u8 | u8 | isSkipWepCate:1 | 武器カテゴリチェックをスキップするか？ | 攻撃側の武器カテゴリチェックをスキップするか？
+THROW_INFO_BANK 24 | u8 | u8 | isSkipSphereCast:1 | スフィアキャストをスキップするか？ | スフィアキャストをスキップするか？
+THROW_INFO_BANK 25 | dummy8 | dummy8 | pad0:5 | pad | pad
+THROW_INFO_BANK 26 | dummy8 | dummy8 | pad1[4] | pad | pad
+LEVELSYNC_PARAM_ST 0 | s16 | s16 | SCLUA | SCLUA | SCLUA
+LEVELSYNC_PARAM_ST 1 | s16 | s16 | SDCLUR | SDCLUR | SDCLUR
+LEVELSYNC_PARAM_ST 2 | s16 | s16 | SDCWLM | SDCWLM | SDCWLM
+LEVELSYNC_PARAM_ST 3 | u8 | u8 | MLWSUR | MLWSUR | MLWSUR
+LEVELSYNC_PARAM_ST 4 | u8 | u8 | MLWSUA | MLWSUA | MLWSUA
+LEVELSYNC_PARAM_ST 5 | u8 | u8 | MLRSUR | MLRSUR | 
+LEVELSYNC_PARAM_ST 6 | u8 | u8 | MLRSUA | MLRSUA | 
+LEVELSYNC_PARAM_ST 7 | u8 | u8 | MWLUWS0 | MWLUWS0 | 
+LEVELSYNC_PARAM_ST 8 | u8 | u8 | MWLUWS1 | MWLUWS1 | 
+LEVELSYNC_PARAM_ST 9 | u8 | u8 | MWLUWS2 | MWLUWS2 | 
+LEVELSYNC_PARAM_ST 10 | u8 | u8 | MWLUWS3 | MWLUWS3 | 
+LEVELSYNC_PARAM_ST 11 | u8 | u8 | MWLUWS4 | MWLUWS4 | 
+LEVELSYNC_PARAM_ST 12 | u8 | u8 | MWLUWS5 | MWLUWS5 | 
+LEVELSYNC_PARAM_ST 13 | u8 | u8 | MWLUWS6 | MWLUWS6 | 
+LEVELSYNC_PARAM_ST 14 | u8 | u8 | MWLUWS7 | MWLUWS7 | 
+LEVELSYNC_PARAM_ST 15 | u8 | u8 | MWLUWS8 | MWLUWS8 | 
+LEVELSYNC_PARAM_ST 16 | u8 | u8 | MWLUWS9 | MWLUWS9 | 
+LEVELSYNC_PARAM_ST 17 | u8 | u8 | MWLUWS10 | MWLUWS10 | 
+LEVELSYNC_PARAM_ST 18 | u8 | u8 | MWLURS0 | MWLURS0 | 
+LEVELSYNC_PARAM_ST 19 | u8 | u8 | MWLURS1 | MWLURS1 | 
+LEVELSYNC_PARAM_ST 20 | u8 | u8 | MWLURS2 | MWLURS2 | 
+LEVELSYNC_PARAM_ST 21 | u8 | u8 | MWLURS3 | MWLURS3 | 
+LEVELSYNC_PARAM_ST 22 | u8 | u8 | MWLURS4 | MWLURS4 | 
+LEVELSYNC_PARAM_ST 23 | u8 | u8 | MWLURS5 | MWLURS5 | 
+LEVELSYNC_PARAM_ST 24 | u8 | u8 | MWLURS6 | MWLURS6 | 
+LEVELSYNC_PARAM_ST 25 | u8 | u8 | MWLURS7 | MWLURS7 | 
+LEVELSYNC_PARAM_ST 26 | u8 | u8 | MWLURS8 | MWLURS8 | 
+LEVELSYNC_PARAM_ST 27 | u8 | u8 | MWLURS9 | MWLURS9 | 
+LEVELSYNC_PARAM_ST 28 | u8 | u8 | MWLURS10 | MWLURS10 | 
+LEVELSYNC_PARAM_ST 29 | u8 | u8 | MWLUA0 | MWLUA0 | 
+LEVELSYNC_PARAM_ST 30 | u8 | u8 | MWLUA1 | MWLUA1 | 
+LEVELSYNC_PARAM_ST 31 | u8 | u8 | MWLUA2 | MWLUA2 | 
+LEVELSYNC_PARAM_ST 32 | u8 | u8 | MWLUA3 | MWLUA3 | 
+LEVELSYNC_PARAM_ST 33 | u8 | u8 | MWLUA4 | MWLUA4 | 
+LEVELSYNC_PARAM_ST 34 | u8 | u8 | MWLUA5 | MWLUA5 | 
+LEVELSYNC_PARAM_ST 35 | u8 | u8 | MWLUA6 | MWLUA6 | 
+LEVELSYNC_PARAM_ST 36 | u8 | u8 | MWLUA7 | MWLUA7 | 
+LEVELSYNC_PARAM_ST 37 | u8 | u8 | MWLUA8 | MWLUA8 | 
+LEVELSYNC_PARAM_ST 38 | u8 | u8 | MWLUA9 | MWLUA9 | 
+LEVELSYNC_PARAM_ST 39 | u8 | u8 | MWLUA10 | MWLUA10 | 
+LEVELSYNC_PARAM_ST 40 | u8 | u8 | MLASUR | MLASUR | 
+LEVELSYNC_PARAM_ST 41 | u8 | u8 | MLASUA | MLASUA | 
+LEVELSYNC_PARAM_ST 42 | dummy8 | dummy8 | Pad[3] | Pad[3] | 
+LEVELSYNC_PARAM_ST 43 | f32 | f32 | summonTimeoutTime | summonTimeoutTime | 
+LEVELSYNC_PARAM_ST 44 | u32 | u32 | singGetMax | singGetMax | 
+LEVELSYNC_PARAM_ST 45 | f32 | f32 | signDownloadSpan | signDownloadSpan | 
+LEVELSYNC_PARAM_ST 46 | f32 | f32 | nitoSignDownloadSpan | nitoSignDownloadSpan | 
+LEVELSYNC_PARAM_ST 47 | f32 | f32 | signUpdateSpan | signUpdateSpan | 
+LEVELSYNC_PARAM_ST 48 | u32 | u32 | maxBreakInTargetListCount | maxBreakInTargetListCount | 
+LEVELSYNC_PARAM_ST 49 | f32 | f32 | breakInRequestIntervalTimeSec | breakInRequestIntervalTimeSec | 
+LEVELSYNC_PARAM_ST 50 | f32 | f32 | breakInRequestTimeOutSec | breakInRequestTimeOutSec | 
+LEVELSYNC_PARAM_ST 51 | u32 | u32 | reloadSignTotalCount_0 | reloadSignTotalCount_0 | 
+LEVELSYNC_PARAM_ST 52 | f32 | f32 | reloadSignIntervalTime_0 | reloadSignIntervalTime_0 | 
+LEVELSYNC_PARAM_ST 53 | f32 | f32 | reloadSignIntervalTime_1 | reloadSignIntervalTime_1 | 
+LEVELSYNC_PARAM_ST 54 | u32 | u32 | reloadSignTotalCount_1 | reloadSignTotalCount_1 | 
+LEVELSYNC_PARAM_ST 55 | u32 | u32 | reloadSignCellCount | reloadSignCellCount | 
+LEVELSYNC_PARAM_ST 56 | f32 | f32 | reloadSignIntervalTime_2 | reloadSignIntervalTime_2 | 
+LEVELSYNC_PARAM_ST 57 | u32 | u32 | reloadGhostTotalCount | reloadGhostTotalCount | 
+LEVELSYNC_PARAM_ST 58 | u32 | u32 | reloadGhostCellCount | reloadGhostCellCount | 
+LEVELSYNC_PARAM_ST 59 | u32 | u32 | maxGhostTotalCount | maxGhostTotalCount | 
+LEVELSYNC_PARAM_ST 60 | f32 | f32 | updateWanderGhostIntervalTime | updateWanderGhostIntervalTime | 
+LEVELSYNC_PARAM_ST 61 | f32 | f32 | minReplayIntervalTime | minReplayIntervalTime | 
+LEVELSYNC_PARAM_ST 62 | f32 | f32 | maxReplayIntervalTime | maxReplayIntervalTime | 
+LEVELSYNC_PARAM_ST 63 | f32 | f32 | reloadGhostIntervalTime | reloadGhostIntervalTime | 
+LEVELSYNC_PARAM_ST 64 | f32 | f32 | replayBonfireModeRange | replayBonfireModeRange | 
+LEVELSYNC_PARAM_ST 65 | f32 | f32 | wanderGhostIntervalLifeTime | wanderGhostIntervalLifeTime | 
+LEVELSYNC_PARAM_ST 66 | f32 | f32 | summonMessageInterval | summonMessageInterval | 
+LEVELSYNC_PARAM_ST 67 | f32 | f32 | hostRegisterUpdateTime | hostRegisterUpdateTime | 
+LEVELSYNC_PARAM_ST 68 | u32 | u32 | requestSearchQuickMatchLimit | requestSearchQuickMatchLimit | 
+LEVELSYNC_PARAM_ST 69 | f32 | f32 | myTeamInviteTimeoutTime | myTeamInviteTimeoutTime | 
+LEVELSYNC_PARAM_ST 70 | u32 | u32 | VisitorListMax | VisitorListMax | 
+LEVELSYNC_PARAM_ST 71 | f32 | f32 | VisitorTimeOutTime | VisitorTimeOutTime | 
+LEVELSYNC_PARAM_ST 72 | f32 | f32 | DownloadSpan | DownloadSpan | 
+LEVELSYNC_PARAM_ST 73 | f32 | f32 | bonfireLowerBoundCoolTime | bonfireLowerBoundCoolTime | 
+LEVELSYNC_PARAM_ST 74 | f32 | f32 | bonfireUpperBoundCoolTime | bonfireUpperBoundCoolTime | 
+LEVELSYNC_PARAM_ST 75 | f32 | f32 | resonanceMagicDbDistInterval | resonanceMagicDbDistInterval | 
+LEVELSYNC_PARAM_ST 76 | f32 | f32 | inputTimeoutSec | inputTimeoutSec | 
+LEVELSYNC_PARAM_ST 77 | f32 | f32 | generalPurposeParam1 | generalPurposeParam1 | 
+LEVELSYNC_PARAM_ST 78 | f32 | f32 | generalPurposeParam2 | generalPurposeParam2 | 
+LEVELSYNC_PARAM_ST 79 | f32 | f32 | generalPurposeParam3 | generalPurposeParam3 | 
+LEVELSYNC_PARAM_ST 80 | f32 | f32 | generalPurposeParam4 | generalPurposeParam4 | 
+LEVELSYNC_PARAM_ST 81 | f32 | f32 | generalPurposeParam5 | generalPurposeParam5 | 
+LEVELSYNC_PARAM_ST 82 | u8 | u8 | MWLUWS_11 | MWLUWS_11 | 
+LEVELSYNC_PARAM_ST 83 | u8 | u8 | MWLUWS_12 | MWLUWS_12 | 
+LEVELSYNC_PARAM_ST 84 | u8 | u8 | MWLUWS_13 | MWLUWS_13 | 
+LEVELSYNC_PARAM_ST 85 | u8 | u8 | MWLUWS_14 | MWLUWS_14 | 
+LEVELSYNC_PARAM_ST 86 | u8 | u8 | MWLUWS_15 | MWLUWS_15 | 
+LEVELSYNC_PARAM_ST 87 | u8 | u8 | MWLURS_11 | MWLURS_11 | 
+LEVELSYNC_PARAM_ST 88 | u8 | u8 | MWLURS_12 | MWLURS_12 | 
+LEVELSYNC_PARAM_ST 89 | u8 | u8 | MWLURS_13 | MWLURS_13 | 
+LEVELSYNC_PARAM_ST 90 | u8 | u8 | MWLURS_14 | MWLURS_14 | 
+LEVELSYNC_PARAM_ST 91 | u8 | u8 | MWLURS_15 | MWLURS_15 | 
+LEVELSYNC_PARAM_ST 92 | u8 | u8 | MWLUAR_11 | MWLUAR_11 | 
+LEVELSYNC_PARAM_ST 93 | u8 | u8 | MWLUAR_12 | MWLUAR_12 | 
+LEVELSYNC_PARAM_ST 94 | u8 | u8 | MWLUAR_13 | MWLUAR_13 | 
+LEVELSYNC_PARAM_ST 95 | u8 | u8 | MWLUAR_14 | MWLUAR_14 | 
+LEVELSYNC_PARAM_ST 96 | u8 | u8 | MWLUAR_15 | MWLUAR_15 | 
+LEVELSYNC_PARAM_ST 97 | u8 | u8 | generalPurposeParam6 | generalPurposeParam6 | 
+COOL_TIME_PARAM_ST 0 | f32 | f32 | limitationTime_0 | limitationTime_0 | 
+COOL_TIME_PARAM_ST 1 | f32 | f32 | observationTime_0 | observationTime_0 | 
+COOL_TIME_PARAM_ST 2 | f32 | f32 | limitationTime_1 | limitationTime_1 | 
+COOL_TIME_PARAM_ST 3 | f32 | f32 | observationTime_1 | observationTime_1 | 
+COOL_TIME_PARAM_ST 4 | f32 | f32 | limitationTime_2 | limitationTime_2 | 
+COOL_TIME_PARAM_ST 5 | f32 | f32 | observationTime_2 | observationTime_2 | 
+COOL_TIME_PARAM_ST 6 | f32 | f32 | limitationTime_3 | limitationTime_3 | 
+COOL_TIME_PARAM_ST 7 | f32 | f32 | observationTime_3 | observationTime_3 | 
+WHITE_COOL_TIME_PARAM_ST 0 | f32 | f32 | timeLimit0 | timeLimit0 | 
+WHITE_COOL_TIME_PARAM_ST 1 | f32 | f32 | timeLimit1 | timeLimit1 | 
+WHITE_COOL_TIME_PARAM_ST 2 | f32 | f32 | timeLimit2 | timeLimit2 | 
+WHITE_COOL_TIME_PARAM_ST 3 | f32 | f32 | timeLimit3 | timeLimit3 | 
+AI_STANDARD_INFO_BANK 0 | u16 | u16 | RadarRange | 認識距離[m] | 敵性キャラクタを認識する距離
+AI_STANDARD_INFO_BANK 1 | u8 | u8 | RadarAngleX | 認識角度Ｘ[deg] | 敵性キャラクタを認識するX角度　現在の視線方向を０度として、上が＋。
+AI_STANDARD_INFO_BANK 2 | u8 | u8 | RadarAngleY | 認識角度Y[deg] | 敵性キャラクタを認識するY角度　現在の視線方向を０度として、右が＋。
+AI_STANDARD_INFO_BANK 3 | u16 | u16 | TerritorySize | 縄張り距離[m] | 自分の縄張りの距離。認識しているプレイヤーがこの距離から外れると初期位置に戻ります。
+AI_STANDARD_INFO_BANK 4 | u8 | u8 | ThreatBeforeAttackRate | 攻撃前威嚇率[0〜100] | 攻撃前に威嚇する確率
+AI_STANDARD_INFO_BANK 5 | ON_OFF | u8 | ForceThreatOnFirstLocked | 初回認識威嚇 | 初回プレイヤー認識時に必ず威嚇するかどうか
+AI_STANDARD_INFO_BANK 6 | dummy8 | dummy8 | reserve0[24] | 予約 | 
+AI_STANDARD_INFO_BANK 7 | u16 | u16 | Attack1_Distance | 攻撃１　間合い[m] | 攻撃するときの間合い[m]
+AI_STANDARD_INFO_BANK 8 | u16 | u16 | Attack1_Margin | 攻撃１　間合い遊び[m] | 攻撃間合いの遊び。間合い距離近辺で、振動しないように
+AI_STANDARD_INFO_BANK 9 | u8 | u8 | Attack1_Rate | 攻撃１　割合[0〜100] | 攻撃の頻度
+AI_STANDARD_INFO_BANK 10 | ACTION_PATTERN | u8 | Attack1_ActionID | 攻撃１　種類 | 攻撃の種類
+AI_STANDARD_INFO_BANK 11 | u8 | u8 | Attack1_DelayMin | 攻撃１　最小遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最小。
+AI_STANDARD_INFO_BANK 12 | u8 | u8 | Attack1_DelayMax | 攻撃１　最長遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最長。
+AI_STANDARD_INFO_BANK 13 | u8 | u8 | Attack1_ConeAngle | 攻撃１　攻撃許可円錐の角度[deg] | 視線方向とターゲットへの方向ベクトルのなす角が、この角度以内の場合、攻撃ＯＫ。
+AI_STANDARD_INFO_BANK 14 | dummy8 | dummy8 | reserve10[7] | 予約 | 
+AI_STANDARD_INFO_BANK 15 | u16 | u16 | Attack2_Distance | 攻撃２　間合い[m] | 攻撃するときの間合い[m]
+AI_STANDARD_INFO_BANK 16 | u16 | u16 | Attack2_Margin | 攻撃２　間合い遊び[m] | 攻撃間合いの遊び。間合い距離近辺で、振動しないように
+AI_STANDARD_INFO_BANK 17 | u8 | u8 | Attack2_Rate | 攻撃１　割合[0〜100] | 攻撃の頻度
+AI_STANDARD_INFO_BANK 18 | ACTION_PATTERN | u8 | Attack2_ActionID | 攻撃２　種類 | 攻撃の種類
+AI_STANDARD_INFO_BANK 19 | u8 | u8 | Attack2_DelayMin | 攻撃2　最小遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最小。
+AI_STANDARD_INFO_BANK 20 | u8 | u8 | Attack2_DelayMax | 攻撃2　最長遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最長。
+AI_STANDARD_INFO_BANK 21 | u8 | u8 | Attack2_ConeAngle | 攻撃2　攻撃許可円錐の角度[deg] | 視線方向とターゲットへの方向ベクトルのなす角が、この角度以内の場合、攻撃ＯＫ。
+AI_STANDARD_INFO_BANK 22 | dummy8 | dummy8 | reserve11[7] | 予約 | 
+AI_STANDARD_INFO_BANK 23 | u16 | u16 | Attack3_Distance | 攻撃３　間合い[m] | 攻撃するときの間合い[m]
+AI_STANDARD_INFO_BANK 24 | u16 | u16 | Attack3_Margin | 攻撃３　間合い遊び[m] | 攻撃間合いの遊び。間合い距離近辺で、振動しないように
+AI_STANDARD_INFO_BANK 25 | u8 | u8 | Attack3_Rate | 攻撃１　割合[0〜100] | 攻撃の頻度
+AI_STANDARD_INFO_BANK 26 | ACTION_PATTERN | u8 | Attack3_ActionID | 攻撃３　種類 | 攻撃の種類
+AI_STANDARD_INFO_BANK 27 | u8 | u8 | Attack3_DelayMin | 攻撃3　最小遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最小。
+AI_STANDARD_INFO_BANK 28 | u8 | u8 | Attack3_DelayMax | 攻撃3　最長遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最長。
+AI_STANDARD_INFO_BANK 29 | u8 | u8 | Attack3_ConeAngle | 攻撃3　攻撃許可円錐の角度[deg] | 視線方向とターゲットへの方向ベクトルのなす角が、この角度以内の場合、攻撃ＯＫ。
+AI_STANDARD_INFO_BANK 30 | dummy8 | dummy8 | reserve12[7] | 予約 | 
+AI_STANDARD_INFO_BANK 31 | u16 | u16 | Attack4_Distance | 攻撃４　間合い[m] | 攻撃するときの間合い[m]
+AI_STANDARD_INFO_BANK 32 | u16 | u16 | Attack4_Margin | 攻撃４　間合い遊び[m] | 攻撃間合いの遊び。間合い距離近辺で、振動しないように
+AI_STANDARD_INFO_BANK 33 | u8 | u8 | Attack4_Rate | 攻撃１　割合[0〜100] | 攻撃の頻度
+AI_STANDARD_INFO_BANK 34 | ACTION_PATTERN | u8 | Attack4_ActionID | 攻撃４　種類 | 攻撃の種類
+AI_STANDARD_INFO_BANK 35 | u8 | u8 | Attack4_DelayMin | 攻撃4　最小遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最小。
+AI_STANDARD_INFO_BANK 36 | u8 | u8 | Attack4_DelayMax | 攻撃4　最長遅延時間[frame] | 攻撃可能になった時点から、攻撃するまでの遅延時間の最長。
+AI_STANDARD_INFO_BANK 37 | u8 | u8 | Attack4_ConeAngle | 攻撃4　攻撃許可円錐の角度[deg] | 視線方向とターゲットへの方向ベクトルのなす角が、この角度以内の場合、攻撃ＯＫ。
+AI_STANDARD_INFO_BANK 38 | dummy8 | dummy8 | reserve13[7] | 予約 | 
+AI_STANDARD_INFO_BANK 39 | dummy8 | dummy8 | reserve_last[32] | 予約 | 
+CACL_CORRECT_GRAPH_ST 0 | f32 | f32 | stageMaxVal0 | 閾値ポイント0 | 仕様書に「n次閾値[point]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 1 | f32 | f32 | stageMaxVal1 | 閾値ポイント1 | 仕様書に「n次閾値[point]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 2 | f32 | f32 | stageMaxVal2 | 閾値ポイント2 | 仕様書に「n次閾値[point]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 3 | f32 | f32 | stageMaxVal3 | 閾値ポイント3 | 仕様書に「n次閾値[point]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 4 | f32 | f32 | stageMaxVal4 | 閾値ポイント4 | 仕様書に「n次閾値[point]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 5 | f32 | f32 | stageMaxGrowVal0 | 閾値係数0 | 仕様書に「n次閾値[係数]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 6 | f32 | f32 | stageMaxGrowVal1 | 閾値係数1 | 仕様書に「n次閾値[係数]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 7 | f32 | f32 | stageMaxGrowVal2 | 閾値係数2 | 仕様書に「n次閾値[係数]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 8 | f32 | f32 | stageMaxGrowVal3 | 閾値係数3 | 仕様書に「n次閾値[係数]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 9 | f32 | f32 | stageMaxGrowVal4 | 閾値係数4 | 仕様書に「n次閾値[係数]」と書いてあるもの
+CACL_CORRECT_GRAPH_ST 10 | f32 | f32 | adjPt_maxGrowVal0 | 調整係数0 | 調整係数
+CACL_CORRECT_GRAPH_ST 11 | f32 | f32 | adjPt_maxGrowVal1 | 調整係数1 | 調整係数
+CACL_CORRECT_GRAPH_ST 12 | f32 | f32 | adjPt_maxGrowVal2 | 調整係数2 | 調整係数
+CACL_CORRECT_GRAPH_ST 13 | f32 | f32 | adjPt_maxGrowVal3 | 調整係数3 | 調整係数
+CACL_CORRECT_GRAPH_ST 14 | f32 | f32 | adjPt_maxGrowVal4 | 調整係数4 | 調整係数
+CACL_CORRECT_GRAPH_ST 15 | f32 | f32 | init_inclination_soul | 成長ソウル 初期のグラフの傾きα1 | 成長ソウル 初期のグラフの傾きα1
+CACL_CORRECT_GRAPH_ST 16 | f32 | f32 | adjustment_value | 成長ソウル 初期のsoul調整α2 | 成長ソウル 初期のsoul調整α2
+CACL_CORRECT_GRAPH_ST 17 | f32 | f32 | boundry_inclination_soul | 成長ソウル 閾値後のグラフの傾きに影響α3 | 成長ソウル 閾値後のグラフの傾きに影響α3
+CACL_CORRECT_GRAPH_ST 18 | f32 | f32 | boundry_value | 成長ソウル 閾値 t | 成長ソウル 閾値 t
+CACL_CORRECT_GRAPH_ST 19 | dummy8 | dummy8 | pad[4] | パディング | 
+ENEMY_STANDARD_INFO_BANK 0 | ENEMY_BEHAVIOR_ID | s32 | EnemyBehaviorID | 挙動ｉｄ | 敵の挙動ＩＤ
+ENEMY_STANDARD_INFO_BANK 1 | u16 | u16 | HP | ヒットポイント | ヒットポイント
+ENEMY_STANDARD_INFO_BANK 2 | u16 | u16 | AttackPower | 攻撃力 | 攻撃力（プロト専用）
+ENEMY_STANDARD_INFO_BANK 3 | ChrType | s32 | ChrType | キャラタイプ | キャラタイプ
+ENEMY_STANDARD_INFO_BANK 4 | f32 | f32 | HitHeight | あたりの高さ[m] | あたりの高さ（直径以上のサイズを指定してください）
+ENEMY_STANDARD_INFO_BANK 5 | f32 | f32 | HitRadius | あたりの半径[m] | あたりの半径
+ENEMY_STANDARD_INFO_BANK 6 | f32 | f32 | Weight | 重さ[kg] | キャラの重さ
+ENEMY_STANDARD_INFO_BANK 7 | f32 | f32 | DynamicFriction | 動摩擦力 | 動摩擦力
+ENEMY_STANDARD_INFO_BANK 8 | f32 | f32 | StaticFriction | 静摩擦力 | 静止摩擦力
+ENEMY_STANDARD_INFO_BANK 9 | s32 | s32 | UpperDefState | 上半身初期状態 | 上半身初期状態（PG入力）
+ENEMY_STANDARD_INFO_BANK 10 | s32 | s32 | ActionDefState | アクション初期状態 | アクション初期状態（PG入力）
+ENEMY_STANDARD_INFO_BANK 11 | f32 | f32 | RotY_per_Second | 単位時間当たり旋回できる角度[deg/s] | 単位時間当たりのＹ軸旋回角度[deg/s]
+ENEMY_STANDARD_INFO_BANK 12 | dummy8 | dummy8 | reserve0[20] | 予約 | 
+ENEMY_STANDARD_INFO_BANK 13 | u8 | u8 | RotY_per_Second_old | 未使用 | 未使用
+ENEMY_STANDARD_INFO_BANK 14 | u8 | u8 | EnableSideStep | 左右移動できるか | 左右移動できるか
+ENEMY_STANDARD_INFO_BANK 15 | u8 | u8 | UseRagdollHit | キャラあたりにラグドールを使用するか | キャラあたりにラグドールを使用するか
+ENEMY_STANDARD_INFO_BANK 16 | dummy8 | dummy8 | reserve_last[5] | 予約 | 
+ENEMY_STANDARD_INFO_BANK 17 | u16 | u16 | stamina | スタミナ量 | スタミナ総量
+ENEMY_STANDARD_INFO_BANK 18 | u16 | u16 | staminaRecover | スタミナ回復 | 1秒間あたりのスタミナ回復量
+ENEMY_STANDARD_INFO_BANK 19 | u16 | u16 | staminaConsumption | スタミナ基本消費 | 攻撃、ガード時に使用するスタミナ消費の基本値
+ENEMY_STANDARD_INFO_BANK 20 | u16 | u16 | deffenct_Phys | 物理防御力 | 物理攻撃に対するダメージ減少基本値
+ENEMY_STANDARD_INFO_BANK 21 | dummy8 | dummy8 | reserve_last2[48] | 予約1 | 
+RAGDOLL_PARAM_ST 0 | f32 | f32 | hierarchyGain | ヒエラルキーゲイン | 低くすると元のポーズに近づき、大きくするとぐにゃぐにゃになる。
+RAGDOLL_PARAM_ST 1 | f32 | f32 | velocityDamping | 速度減衰 | ラグドールの移動スピードの減速率。0に近づくとゆっくり戻り、1に近づくとぱっと戻る
+RAGDOLL_PARAM_ST 2 | f32 | f32 | accelGain | 加速度ゲイン | リジッドの加速度の調整パラメータ。低くすると動きが柔らかくなり、高くすると硬くなる。加速度ゲインよりも低い値にするらしい。
+RAGDOLL_PARAM_ST 3 | f32 | f32 | velocityGain | 速度ゲイン | リジッドの速度の調整パラメータ。低くすると動きが柔らかくなり、高くすると硬くなる。速度ゲインよりも低い値にするらしい。
+RAGDOLL_PARAM_ST 4 | f32 | f32 | positionGain | 位置ゲイン | リジッドの移動位置の調整パラメータ。低くすると動きが柔らかくなり、高くすると硬くなる。
+RAGDOLL_PARAM_ST 5 | f32 | f32 | maxLinerVelocity | 最大速度 | リジッドの最大移動速度
+RAGDOLL_PARAM_ST 6 | f32 | f32 | maxAngularVelocity | 最大角速度 | リジッドの最大角速度
+RAGDOLL_PARAM_ST 7 | f32 | f32 | snapGain | スナップゲイン | 元のポーズに近づけるための調整値。位置ゲインと似た効果
+RAGDOLL_PARAM_ST 8 | RAGDOLL_PARAM_BOOL | u8 | enable | 動くか | ダメージラグドール時に動くか
+RAGDOLL_PARAM_ST 9 | s8 | s8 | partsHitMaskNo | 部位あたりマスク番号 | 部位あたりマスク番号。-1:マスク無効
+RAGDOLL_PARAM_ST 10 | dummy8 | dummy8 | pad[14] | パディング | パディング
+QWC_CHANGE_PARAM_ST 0 | s16 | s16 | pcAttrB | PC-黒 | PC黒属性変化値
+QWC_CHANGE_PARAM_ST 1 | s16 | s16 | pcAttrW | PC-白 | PC白属性変化値
+QWC_CHANGE_PARAM_ST 2 | s16 | s16 | pcAttrL | PC-左 | PC左属性変化値
+QWC_CHANGE_PARAM_ST 3 | s16 | s16 | pcAttrR | PC-右 | PC右属性変化値
+QWC_CHANGE_PARAM_ST 4 | s16 | s16 | areaAttrB | エリア-黒 | エリア黒属性変化値
+QWC_CHANGE_PARAM_ST 5 | s16 | s16 | areaAttrW | エリア-白 | エリア白属性変化値
+QWC_CHANGE_PARAM_ST 6 | s16 | s16 | areaAttrL | エリア-左 | エリア左属性変化値
+QWC_CHANGE_PARAM_ST 7 | s16 | s16 | areaAttrR | エリア-右 | エリア右属性変化値
+QWC_JUDGE_PARAM_ST 0 | s16 | s16 | pcJudgeUnderWB | PC-黒条件（下限） | PC白黒属性条件（下限）
+QWC_JUDGE_PARAM_ST 1 | s16 | s16 | pcJudgeTopWB | PC-白条件（上限） | PC白黒属性条件（上限）
+QWC_JUDGE_PARAM_ST 2 | s16 | s16 | pcJudgeUnderLR | PC-左条件（下限） | PC左右属性条件（下限）
+QWC_JUDGE_PARAM_ST 3 | s16 | s16 | pcJudgeTopLR | PC-右条件（上限） | PC左右属性条件（上限）
+QWC_JUDGE_PARAM_ST 4 | s16 | s16 | areaJudgeUnderWB | エリア-黒条件（下限） | エリア白黒属性条件（下限）
+QWC_JUDGE_PARAM_ST 5 | s16 | s16 | areaJudgeTopWB | エリア-白条件（上限） | エリア白黒属性条件（上限）
+QWC_JUDGE_PARAM_ST 6 | s16 | s16 | areaJudgeUnderLR | エリア-左条件（下限） | エリア左右属性条件（下限）
+QWC_JUDGE_PARAM_ST 7 | s16 | s16 | areaJudgeTopLR | エリア-右条件（上限） | エリア左右属性条件（上限）
+
+Process finished with exit code 0

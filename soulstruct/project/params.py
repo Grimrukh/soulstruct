@@ -23,7 +23,8 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
     CATEGORY_SELECTED_BG = '#555'
     ENTRY_BOX_WIDTH = 600
     ENTRY_RANGE_SIZE = 50
-    FIELD_BOX_WIDTH = 400
+    FIELD_BOX_WIDTH = 500
+    FIELD_ROW_COUNT = 150  # TODO: set to max field count
 
     def __init__(self, project: SoulstructProject, master=None, toplevel=False):
         self.Params = project.Params
@@ -31,15 +32,16 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
         self.active_category = 'Humans'
         self.category_boxes = {}
-        self.param_entry_boxes = {}
         self.param_id_selected = -1
         self.e_param_name_edit = None
         self.entry_range_start = 0
 
         self.param_field_boxes = {}
         self.field_name_selected = ''
+        self.field_index_selected = -1
         self.e_param_field_edit = None
         self.show_hidden_fields = self.BooleanVar()
+        self.displayed_field_count = 0
 
         self.param_name_edit_active = False
         self.field_value_edit_active = False
@@ -98,15 +100,26 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                         self.f_entry_table.bind(
                             "<Configure>", lambda e, c=self.entry_canvas: self.reset_canvas_scroll_region(c))
 
+                        with self.set_master(self.f_entry_table):
+                            self.entry_row_boxes = []
+                            for row in range(self.ENTRY_RANGE_SIZE):
+                                self.entry_row_boxes.append(self.create_entry_row(row))
+
                     with self.set_master():
                         self.field_canvas = self.Canvas(scrollbar=True, width=self.FIELD_BOX_WIDTH, height=500,
-                                                        highlightthickness=1, padx=40, pady=40, bg=self.CANVAS_BG)
+                                                        yscrollincrement=25, highlightthickness=1,
+                                                        padx=40, pady=40, bg=self.CANVAS_BG)
                         self.f_field_table = self.Frame(frame=self.field_canvas, width=self.ENTRY_BOX_WIDTH,
                                                         sticky='ew')
                         self.field_canvas.create_window(
                             self.FIELD_BOX_WIDTH / 2, 250, window=self.f_field_table, anchor='nw')
                         self.f_field_table.bind(
                             "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
+
+                        with self.set_master(self.f_field_table):
+                            self.field_row_boxes = []
+                            for row in range(self.FIELD_ROW_COUNT):
+                                self.field_row_boxes.append(self.create_field_row(row))
 
                 with self.set_master(auto_columns=0):
                     self.next_range_button = self.Button(
@@ -118,7 +131,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                     #     text="Create New Text ID", bg='#722', width=30, command=self.create_new_param_id,
                     #     padx=10, pady=20)
 
-        self.refresh_param_entries()
+        self.refresh_entry_rows()
         self.refresh_entry_fields()
         self.bind_all('<Control-z>', self.undo)
         self.bind_all('<Control-y>', self.redo)
@@ -140,8 +153,6 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.category_boxes = {}
         with self.set_master(self.f_params_categories):
             categories = self.Params.param_names
-            if self.active_category not in categories:
-                self.select_category(None)
             for row, category in enumerate(categories):
                 box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30, highlightthickness=1)
                 label_text = camel_case_to_spaces(category).replace(' _', ':')
@@ -158,17 +169,12 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.cancel_param_name_edit()
         self.entry_range_start = entry_range_start
         if selected_category == self.active_category:
-            self.refresh_param_entries()
+            self.refresh_entry_rows()
             return
 
         self.param_id_selected = -1
 
-        if selected_category is None:
-            self.active_category = None
-            for widgets in self.param_entry_boxes.values():
-                for w in widgets.values():
-                    w.destroy()
-            return
+        # TODO: Handle absent category. Hide all entry rows?
 
         self.active_category = selected_category
         for category, (box, label) in self.category_boxes.items():
@@ -179,80 +185,150 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                 box['bg'] = self.STYLE_DEFAULTS['bg']
                 label['bg'] = self.STYLE_DEFAULTS['bg']
 
-        self.refresh_param_entries()
+        self.refresh_entry_rows()
         self.refresh_entry_fields()
         self.update_idletasks()
         self.entry_canvas.yview_moveto(0)
         self._refresh_buttons()
 
-    def get_entry_colors(self, row, param_id, text):
-        """Inspects entry data and returns a tuple of 'bg' color values (row_and_id_bg, text_box_bg, text_label_bg)."""
-        base_bg = 222
-        row_and_id_bg = text_box_bg = text_label_bg = 0
-        if not text:
-            base_bg += 200
-        elif not text.strip():
-            text_label_bg += 110
-        if param_id == self.param_id_selected:
-            base_bg += 123
-        if row % 2:
-            base_bg += 111
-        return f'#{base_bg + row_and_id_bg}', f'#{base_bg + text_box_bg}', f'#{base_bg + text_label_bg}'
+    def create_entry_row(self, row):
+        row_and_id_bg, name_box_bg, name_label_bg = self.get_entry_colors(row)
+        row_box = self.Frame(
+            width=self.ENTRY_BOX_WIDTH, height=30, bg=row_and_id_bg, row=row, columnspan=2,
+            sticky='nsew')
+        self._bind_entry_row_events(row_box, row)
 
-    def get_field_colors(self, row, field_name, field_value):
-        """Inspects field name/data and returns a tuple of 'bg' color values."""
-        base_bg = 222
-        row_and_name_bg = value_box_bg = value_label_bg = 0
-        if field_value == '':
-            base_bg += 200
-        if field_name == self.field_name_selected:
-            base_bg += 123
-        if row % 2:
-            base_bg += 111
-        return f'#{base_bg + row_and_name_bg}', f'#{base_bg + value_box_bg}', f'#{base_bg + value_label_bg}'
+        id_label = self.Label(text='', width=15, row=row, column=0, bg=row_and_id_bg, sticky='e')
+        self._bind_entry_row_events(id_label, row)
 
-    def refresh_param_entries(self):
+        name_box = self.Frame(row=row, column=1, bg=name_box_bg, sticky='ew')
+        self._bind_entry_row_events(name_box, row)
+
+        name_label = self.Label(name_box, text='', bg=name_label_bg, anchor='w', width=60)
+        self._bind_entry_row_events(name_label, row)
+
+        # context_menu = self.build_entry_context_menu(param_id)  # TODO: do in refresh, not here
+
+        return {'row_box': row_box, 'id_label': id_label, 'name_box': name_box,
+                'name_label': name_label, 'param_id': -1, 'context_menu': None}
+
+    def create_field_row(self, row):
+        row_and_name_bg, value_box_bg, value_label_bg = self.get_field_colors(row)
+        row_box = self.Frame(
+            width=self.FIELD_BOX_WIDTH, height=25, bg=row_and_name_bg, row=row, columnspan=2, sticky='nsew')
+        self._bind_field_row_events(row_box, row)
+
+        field_name_box = self.Frame(row=row, column=0, bg=row_and_name_bg, sticky='w')
+        self._bind_field_row_events(field_name_box, row)
+
+        field_name_label = self.Label(field_name_box, text='', fg='#dde', bg=row_and_name_bg, anchor='w')
+        self._bind_field_row_events(field_name_label, row)
+
+        value_box = self.Frame(width=200, row=row, column=1, bg=value_box_bg, sticky='ew')
+        self._bind_field_row_events(value_box, row)
+
+        value_label = self.Label(value_box, text='', bg=value_label_bg, width=10, anchor='w')
+        self._bind_field_row_events(value_label, row)
+
+        # context_menu = self.build_field_context_menu(field_name, field_doc)  # TODO
+
+        return {'row_box': row_box, 'field_name_box': field_name_box, 'field_name_label': field_name_label,
+                'value_box': value_box, 'value_label': value_label, 'field_name': '', 'context_menu': None}
+
+    def refresh_entry_rows(self):
         self.cancel_param_name_edit()
+        self.cancel_field_value_edit()
 
-        for widgets in self.param_entry_boxes.values():
-            for w in widgets.values():
-                w.destroy()
-        self.param_entry_boxes = {}
-
-        if self.active_category is None:
-            return
-
-        with self.set_master(self.f_entry_table):
-
+        if self.active_category is not None:
             text_range = self.Params.get_range(
                 self.active_category, self.entry_range_start, self.entry_range_start + self.ENTRY_RANGE_SIZE)
+        else:
+            text_range = []  # All rows will be considered 'remaining' and hidden.
 
-            for row, (param_id, text) in enumerate(text_range):
-                self.param_entry_boxes[param_id] = self.build_param_entry_row(row, param_id, text)
+        row = 0
+        for param_id, param_entry in text_range:
+            row_dict = self.entry_row_boxes[row]
+            row_and_id_bg, name_box_bg, name_label_bg = self.get_entry_colors(row, param_id, param_entry.name)
+            row_dict['param_id'] = param_id
+            row_dict['row_box'].config(bg=row_and_id_bg)
+            row_dict['row_box'].grid()
+            row_dict['id_label'].config(bg=row_and_id_bg)
+            row_dict['id_label'].var.set(str(param_id))
+            row_dict['id_label'].grid()
+            row_dict['name_box'].config(bg=name_box_bg)
+            row_dict['name_box'].grid()
+            row_dict['name_label'].config(bg=name_label_bg)
+            row_dict['name_label'].var.set(param_entry.name)
+            row_dict['name_label'].grid()
+            row += 1
+
+        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+            row_dict = self.entry_row_boxes[remaining_row]
+            row_dict['param_id'] = -1
+            row_dict['row_box'].grid_remove()
+            row_dict['id_label'].grid_remove()
+            row_dict['name_box'].grid_remove()
+            row_dict['name_label'].grid_remove()
 
         self.f_entry_table.grid_columnconfigure(1, weight=1)
         self._refresh_buttons()
 
-    def build_param_entry_row(self, row, param_id, param_entry):
-        """Build widgets for a standard text entry row."""
-        row_and_id_bg, text_box_bg, text_label_bg = self.get_entry_colors(row, param_id, param_entry.name)
-        row_box = self.Frame(
-            width=self.ENTRY_BOX_WIDTH, height=30, bg=row_and_id_bg, row=row, columnspan=2, sticky='nsew')
-        self._bind_entry_row_events(row_box, param_id)
+    def get_entry_colors(self, row, param_id=None, entry_name=None):
+        """Inspects entry data and returns a tuple of 'bg' color values (row_and_id_bg, name_box_bg, name_label_bg)."""
+        base_bg = 222
+        row_and_id_bg = name_box_bg = name_label_bg = 0
+        if entry_name is not None:
+            if not entry_name:
+                base_bg += 200
+            elif not entry_name.strip():
+                name_label_bg += 110
+        if param_id is not None and param_id == self.param_id_selected:
+            base_bg += 123
+        if row % 2:
+            base_bg += 111
+        return f'#{base_bg + row_and_id_bg}', f'#{base_bg + name_box_bg}', f'#{base_bg + name_label_bg}'
 
-        id_label = self.Label(text=str(param_id), width=15, row=row, column=0, bg=row_and_id_bg, sticky='e')
-        self._bind_entry_row_events(id_label, param_id)
+    def select_entry(self, entry_index, set_focus_to_name=True, edit_if_already_selected=True):
 
-        text_box = self.Frame(row=row, column=1, bg=text_box_bg, sticky='ew')
-        self._bind_entry_row_events(text_box, param_id)
+        selected_param_id = self.entry_row_boxes[entry_index]['param_id']
 
-        text_label = self.Label(text_box, text=param_entry.name, bg=text_label_bg, sticky='sw', justify='left')
-        self._bind_entry_row_events(text_label, param_id)
+        if self.param_id_selected != -1 and selected_param_id == self.param_id_selected:
+            if edit_if_already_selected:
+                return self.start_entry_edit(entry_index)
+            return
+        else:
+            reset_scrollbar = self.param_id_selected == -1
 
-        context_menu = self.build_entry_context_menu(param_id)
+        old_selected_id = self.param_id_selected
+        self.param_id_selected = selected_param_id
+        for row, row_dict in enumerate(self.entry_row_boxes):
+            if row_dict['param_id'] == -1 or row_dict['param_id'] not in {selected_param_id, old_selected_id}:
+                continue
+            text = row_dict['name_label'].var.get()
+            row_and_id_bg, name_box_bg, name_label_bg = self.get_entry_colors(row, row_dict['param_id'], text)
+            row_dict['row_box']['bg'] = row_dict['id_label']['bg'] = row_and_id_bg
+            row_dict['name_box']['bg'] = name_box_bg
+            row_dict['name_label']['bg'] = name_label_bg
+            if row_dict['param_id'] == selected_param_id and set_focus_to_name:
+                row_dict['name_label'].focus_set()
 
-        return {'row_box': row_box, 'id_label': id_label, 'text_box': text_box,
-                'text_label': text_label, 'context_menu': context_menu}
+        self.refresh_entry_fields()
+
+        if reset_scrollbar:
+            self.update_idletasks()
+            self.field_canvas.yview_moveto(0)
+
+    def get_field_colors(self, row, field_name=None, field_value=None):
+        """Inspects field name/data and returns a tuple of 'bg' color values."""
+        base_bg = 222
+        row_and_name_bg = value_box_bg = value_label_bg = 0
+        if field_value is not None and field_value == '':
+            base_bg += 200
+        if field_name is not None and field_name == self.field_name_selected:
+            base_bg += 123
+        if row % 2:
+            base_bg += 111
+        return f'#{base_bg + row_and_name_bg}', f'#{base_bg + value_box_bg}', f'#{base_bg + value_label_bg}'
 
     def build_entry_context_menu(self, param_id, context_menu=None):
         # TODO: Only function I can think of here is 'view uses', which will search for things that link to this
@@ -269,29 +345,54 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.cancel_param_name_edit()
         self.cancel_field_value_edit()
 
-        for widgets in self.param_field_boxes.values():
-            for w in widgets.values():
-                w.destroy()
-        self.param_field_boxes = {}
+        try:
+            field_names = self.active_param_entry.field_names
+        except AttributeError:
+            field_names = []  # All rows will be considered 'remaining' and hidden.
 
-        if self.active_param_entry is None:
-            return
+        row = 0
+        for field_name in field_names:
+            row_dict = self.field_row_boxes[row]
+            field_info = self.active_category_param_table.field_info.get(
+                field_name, (field_name, True, None, "DOC-TODO"))
+            if callable(field_info):
+                field_info = field_info(self.active_param_entry)
+            field_nickname, is_main, field_type, field_doc = field_info  # TODO: use type and doc
+            if self.should_hide_field(is_main, field_type):
+                continue  # Skip hidden field.
 
-        with self.set_master(self.f_field_table):
-            row = 0
-            for field_name in self.active_param_entry.field_names:
-                field_info = self.active_category_param_table.field_info.get(
-                    field_name, (field_name, True, None, "DOC-TODO"))
-                if callable(field_info):
-                    field_info = field_info(self.active_param_entry)
-                field_nickname, is_main, field_type, field_doc = field_info
-                if self.should_hide_field(is_main, field_type):
-                    continue  # Skip hidden field.
-                self.param_field_boxes[field_name] = self.build_param_field_row(
-                    row, field_name, field_nickname, field_type, field_doc)
-                row += 1
+            field_value = str(self.active_param_entry[field_name])
+
+            row_and_name_bg, value_box_bg, value_label_bg = self.get_field_colors(row, field_name, field_value)
+            row_dict['field_name'] = field_name
+            row_dict['row_box'].config(bg=row_and_name_bg)
+            row_dict['row_box'].grid()
+            row_dict['field_name_box'].config(bg=row_and_name_bg)
+            row_dict['field_name_box'].grid()
+            row_dict['field_name_label'].config(bg=row_and_name_bg)
+            row_dict['field_name_label'].var.set(camel_case_to_spaces(field_nickname))
+            row_dict['field_name_label'].grid()
+            row_dict['value_box'].config(bg=value_box_bg)
+            row_dict['value_box'].grid()
+            row_dict['value_label'].config(bg=value_label_bg)
+            row_dict['value_label'].var.set(field_value)
+            row_dict['value_label'].grid()
+            row += 1
+
+        self.displayed_field_count = row
+
+        for remaining_row in range(row, self.FIELD_ROW_COUNT):
+            row_dict = self.field_row_boxes[remaining_row]
+            row_dict['field_name'] = ''
+            row_dict['row_box'].grid_remove()
+            row_dict['field_name_box'].grid_remove()
+            row_dict['field_name_label'].grid_remove()
+            row_dict['value_box'].grid_remove()
+            row_dict['value_label'].grid_remove()
 
         self.f_field_table.grid_columnconfigure(1, weight=1)
+        self._refresh_buttons()
+
         if scroll_to_top:
             self.field_canvas.yview_moveto(0)
 
@@ -299,49 +400,43 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         return ((isinstance(field_type, str) and 'Pad:' in field_type)
                 or (not is_main and not self.show_hidden_fields.get()))
 
-    def build_param_field_row(self, row, field_name, field_nickname, field_type, field_doc):
-        """Build widgets for a standard text entry row."""
-        value_string = str(self.active_param_entry[field_name])
-
-        # print(f"        '{field_name}': ('', True, None, ""),")  # TODO
-
-        row_and_name_bg, value_box_bg, value_label_bg = self.get_field_colors(row, field_name, value_string)
-        row_box = self.Frame(
-            width=self.FIELD_BOX_WIDTH, height=25, bg=row_and_name_bg, row=row, columnspan=2, sticky='nsew')
-        self._bind_field_row_events(row_box, field_name)
-
-        name_box = self.Frame(row=row, column=0, bg=row_and_name_bg, sticky='e')
-        self._bind_field_row_events(name_box, field_name)
-
-        name_label = self.Label(name_box, text=camel_case_to_spaces(field_nickname) + ': ',
-                                bg=row_and_name_bg, sticky='e', justify='right')
-        self._bind_field_row_events(name_label, field_name)
-
-        value_box = self.Frame(
-            width=200, row=row, column=1, bg=value_box_bg, sticky='ew')
-        self._bind_field_row_events(value_box, field_name)
-
-        value_label = self.Label(value_box, text=value_string, bg=value_label_bg, sticky='sw', justify='left')
-        self._bind_field_row_events(value_label, field_name)
-
-        context_menu = self.build_field_context_menu(field_name, field_doc)
-
-        # TODO: store field_type somewhere for casting upon confirmation.
-
-        return {'row_box': row_box, 'name_box': name_box, 'name_label': name_label, 'value_box': value_box,
-                'value_label': value_label, 'context_menu': context_menu}
-
     def build_field_context_menu(self, field_name, field_doc, context_menu=None):
         category = self.active_category
         if context_menu is None:
             context_menu = self.Menu()
-
         # TODO
-
         return context_menu
 
-    def _bind_field_row_events(self, widget, field_name):
-        widget.bind('<Button-1>', lambda e, f=field_name: self.select_field(f))
+    def _bind_field_row_events(self, widget, field_index):
+        widget.bind('<Button-1>', lambda e, f=field_index: self.select_field(f))
+        widget.bind('<Up>', self.field_press_up)
+        widget.bind('<Down>', self.field_press_down)
+
+    def field_press_up(self, _=None):
+        if self.field_index_selected != -1:
+            edit_new = self.field_value_edit_active
+            self.confirm_field_value_edit(self.field_index_selected)
+            self.shift_selected_field(-1)
+            if edit_new:
+                self.start_field_value_edit(self.field_index_selected)
+            if self.field_canvas.yview()[1] != 1.0 or self.field_index_selected < self.displayed_field_count - 5:
+                self.field_canvas.yview_scroll(-1, 'units')
+
+    def field_press_down(self, _=None):
+        if self.field_index_selected != -1:
+            edit_new = self.field_value_edit_active
+            self.confirm_field_value_edit(self.field_index_selected)
+            self.shift_selected_field(+1)
+            if edit_new:
+                self.start_field_value_edit(self.field_index_selected)
+            if self.field_canvas.yview()[0] != 0.0 or self.field_index_selected > 5:
+                self.field_canvas.yview_scroll(1, 'units')
+
+    def shift_selected_field(self, relative_index):
+        if (self.field_index_selected == -1
+                or not 0 <= self.field_index_selected + relative_index < self.displayed_field_count):
+            return
+        self.select_field(self.field_index_selected + relative_index)
 
     def jump_to_category_and_entry(self, category, param_id):
         """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
@@ -365,51 +460,35 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
     def deselect_all_entries(self):
         return self.select_entry(-1)
 
-    def select_entry(self, selected_param_id, set_focus_to_name=True, edit_if_already_selected=True):
-        if self.param_id_selected != -1 and selected_param_id == self.param_id_selected:
-            if edit_if_already_selected:
-                return self.start_entry_edit(selected_param_id)
-            return
-        else:
-            reset_scrollbar = self.param_id_selected == -1
-
-        self.param_id_selected = selected_param_id
-        for row, (param_id, widgets) in enumerate(self.param_entry_boxes.items()):
-            text = widgets['text_label'].var.get()
-            row_and_id_bg, name_box_bg, name_label_bg = self.get_entry_colors(row, param_id, text)
-            widgets['row_box']['bg'] = widgets['id_label']['bg'] = row_and_id_bg
-            widgets['text_box']['bg'] = name_box_bg
-            widgets['text_label']['bg'] = name_label_bg
-            if param_id == selected_param_id and set_focus_to_name:
-                widgets['text_label'].focus_set()
-
-        self.refresh_entry_fields()
-
-        if reset_scrollbar:
-            self.update_idletasks()
-            self.field_canvas.yview_moveto(0)
-
-    def select_field(self, field_name_selected, set_focus_to_value=True, edit_if_already_selected=True):
+    def select_field(self, field_index, set_focus_to_value=True, edit_if_already_selected=True):
         # TODO: should this start editing immediately (on left click)?
-        # TODO: tab while editing moves to next field.
+        # TODO: tab while editing moves to next field. Shift+Tab moves back. Up and down arrows also work.
+        # TODO: select entire value when editing starts.
+
+        field_name_selected = self.field_row_boxes[field_index]['field_name']
+
         if self.field_name_selected != '' and field_name_selected == self.field_name_selected:
             if edit_if_already_selected:
-                return self.start_field_value_edit(field_name_selected)
+                return self.start_field_value_edit(field_index)
             return
         else:
             old_selected_field = self.field_name_selected
+            self.cancel_field_value_edit()
 
         self.field_name_selected = field_name_selected
-        for row, (field_name, widgets) in enumerate(self.param_field_boxes.items()):
-            if field_name != field_name_selected and field_name != old_selected_field:
+        self.field_index_selected = field_index
+        for row, row_dict in enumerate(self.field_row_boxes):
+            field_name = row_dict['field_name']
+            if field_name == '' or field_name not in {field_name_selected, old_selected_field}:
                 continue
-            value_string = str(self.active_param_entry[field_name])  # never read from label directly!
+            value_string = str(self.active_param_entry[field_name])  # never reads from label directly
             row_and_name_bg, value_box_bg, value_label_bg = self.get_field_colors(row, field_name, value_string)
-            widgets['row_box']['bg'] = widgets['name_box']['bg'] = widgets['name_label']['bg'] = row_and_name_bg
-            widgets['value_label']['bg'] = value_label_bg
-            widgets['value_box']['bg'] = value_box_bg
+            row_dict['row_box']['bg'] = row_and_name_bg
+            row_dict['field_name_box']['bg'] = row_dict['field_name_label']['bg'] = row_and_name_bg
+            row_dict['value_label']['bg'] = value_label_bg
+            row_dict['value_box']['bg'] = value_box_bg
             if field_name == field_name_selected and set_focus_to_value:
-                widgets['value_label'].focus_set()
+                row_dict['value_label'].focus_set()
 
     def _change_entry_name(self, category, param_id, text, from_history=False):
         old_text = self.Params[category][param_id].name
@@ -419,7 +498,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         if from_history:
             self.jump_to_category_and_entry(category, param_id)
         elif category == self.active_category:
-            self.refresh_param_entries()
+            self.refresh_entry_rows()
         self.unsaved_changes.add((self.active_category, param_id, 'change'))
         if not from_history:
             self.action_history.record_action(
@@ -443,7 +522,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         if from_history:
             self.jump_to_category_and_entry(category, param_id)
         elif category == self.active_category:
-            self.refresh_param_entries()
+            self.refresh_entry_rows()
         if not from_history:
             self.action_history.record_action(
                 undo=partial(self._delete_entry, category, param_id),
@@ -460,7 +539,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.cancel_param_name_edit()
         param_entry = self.Params[category].pop(param_id)
         if category == self.active_category:
-            self.refresh_param_entries()
+            self.refresh_entry_rows()
         if not from_history:
             self.action_history.record_action(
                 undo=partial(self._add_entry, category, param_id, param_entry),
@@ -468,15 +547,15 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             )
         self.unsaved_changes.add((self.active_category, param_id, 'delete'))
 
-    def _bind_entry_row_events(self, widget, param_id):
-        widget.bind('<Button-1>', lambda e, i=param_id: self.select_entry(i))
+    def _bind_entry_row_events(self, widget, entry_index):
+        widget.bind('<Button-1>', lambda e, i=entry_index: self.select_entry(i))
         widget.bind('<Prior>', lambda e: self.previous_param_entry_range())
         widget.bind('<Next>', lambda e: self.next_param_entry_range())
-        widget.bind('<Button-3>', lambda e, i=param_id: self._right_click_param_entry(e, i))
+        widget.bind('<Button-3>', lambda e, i=entry_index: self._right_click_param_entry(e, i))
 
-    def _right_click_param_entry(self, event, param_id):
-        self.select_entry(param_id, edit_if_already_selected=False)
-        self.param_entry_boxes[param_id]['context_menu'].tk_popup(event.x_root, event.y_root)
+    def _right_click_param_entry(self, event, entry_index):
+        self.select_entry(entry_index, edit_if_already_selected=False)
+        self.context_menus[entry_index].tk_popup(event.x_root, event.y_root)
 
     def previous_param_entry_range(self):
         if self.active_category is None:
@@ -485,8 +564,8 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         if target_start == self.entry_range_start:
             return
         self.entry_range_start = target_start
-        self.refresh_param_entries()
-        self.select_entry(list(self.param_entry_boxes)[0], edit_if_already_selected=False)
+        self.refresh_entry_rows()
+        self.select_entry(0, edit_if_already_selected=False)
         self.update_idletasks()
         self.entry_canvas.yview_moveto(0)
 
@@ -496,15 +575,19 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         target_start = min(max(len(self.active_category_param_table) - self.ENTRY_RANGE_SIZE, 0),
                            self.entry_range_start + self.ENTRY_RANGE_SIZE)
         self.entry_range_start = target_start
-        self.refresh_param_entries()
-        self.select_entry(list(self.param_entry_boxes)[0], edit_if_already_selected=False)
+        self.refresh_entry_rows()
+        self.select_entry(0, edit_if_already_selected=False)
         self.update_idletasks()
         self.entry_canvas.yview_moveto(0)
 
-    def start_entry_edit(self, edited_param_id):
+    def start_entry_edit(self, entry_index):
         if not self.param_name_edit_active:
+            edited_param_id = self.entry_row_boxes[entry_index]['param_id']
+            if edited_param_id == -1:
+                print("# WARNING: Invalid entry box was selected somehow.")
+                return
             self.e_param_name_edit = self.Entry(
-                self.param_entry_boxes[edited_param_id]['text_box'], initial_text=self.active_param_entry.name,
+                self.entry_row_boxes[entry_index]['name_box'], initial_text=self.active_param_entry.name,
                 sticky='ew', width=60)
             self.e_param_name_edit.bind('<Return>', lambda e, i=edited_param_id: self.confirm_param_name_edit(i))
             self.e_param_name_edit.bind('<FocusOut>', lambda e: self.cancel_param_name_edit())
@@ -524,13 +607,15 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             self._change_entry_name(self.active_category, edited_param_id, new_text)
             self.cancel_param_name_edit()
 
-    def start_field_value_edit(self, field_name):
+    def start_field_value_edit(self, field_index):
         if not self.field_value_edit_active:
-            widgets = self.param_field_boxes[field_name]
-            value_box = widgets['value_box']
+            edited_field_name = self.field_row_boxes[field_index]['field_name']
             self.e_param_field_edit = self.Entry(
-                value_box, initial_text=self.active_param_entry[field_name], sticky='ew', width=60)
-            self.e_param_field_edit.bind('<Return>', lambda e, f=field_name: self.confirm_field_value_edit(f))
+                self.field_row_boxes[field_index]['value_box'],
+                initial_text=self.active_param_entry[edited_field_name], sticky='ew', width=5)
+            self.e_param_field_edit.bind('<Return>', lambda e, i=field_index: self.confirm_field_value_edit(i))
+            self.e_param_field_edit.bind('<Up>', self.field_press_up)
+            self.e_param_field_edit.bind('<Down>', self.field_press_down)
             self.e_param_field_edit.bind('<FocusOut>', lambda e: self.cancel_field_value_edit())
             self.e_param_field_edit.bind('<Escape>', lambda e: self.cancel_field_value_edit())
             self.e_param_field_edit.focus_set()
@@ -542,11 +627,13 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             self.e_param_field_edit.destroy()
             self.field_value_edit_active = False
 
-    def confirm_field_value_edit(self, field_name):
+    def confirm_field_value_edit(self, field_index):
         if self.field_value_edit_active:
             new_value_text = self.e_param_field_edit.var.get()
             # TODO: cast string to appropriate type.
+            field_name = self.field_name_selected
             self._change_field_value(self.active_category, self.param_id_selected, field_name, new_value_text)
+            self.field_row_boxes[field_index]['value_label'].var.set(new_value_text)
             self.cancel_field_value_edit()
 
     def _change_field_value(self, category, param_id, field_name, value, from_history=False):
@@ -557,8 +644,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         if from_history:
             # TODO
             self.jump_to_category_and_entry(category, param_id)
-        elif category == self.active_category:
-            self.refresh_entry_fields()
+
         # self.unsaved_changes.add((self.active_category, param_id, 'change'))  # TODO
         # if not from_history:  # TODO
         #     self.action_history.record_action(

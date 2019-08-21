@@ -1,83 +1,146 @@
 """Enums used in Dark Souls game parameters.
 
 I have kept all of the original names of these for simplicity (typos and all). They are only referenced internally
-anyway. Arranged alphabetically.
+anyway. Ordered alphabetically after the initial basic types.
 """
 from enum import IntEnum
 
 
-# TODO: Use appropriate enum types.
-
-class Int8Enum(IntEnum):
-    @property
-    def field_size(self):
-        return 8
-
-
-class Int16Enum(IntEnum):
-    @property
-    def field_size(self):
-        return 16
+class _UnsignedInfo(object):
+    SIZE = property(lambda self: NotImplementedError)
+    FORMAT = property(lambda self: NotImplementedError)
+    TYPE = property(lambda self: int)
+    MINIMUM = property(lambda self: 0)
+    MAXIMUM = property(lambda self: 2 ** self.SIZE - 1)
 
 
-class Int32Enum(IntEnum):
-    @property
-    def field_size(self):
-        return 32
+class _SignedInfo(_UnsignedInfo):
+    MINIMUM = property(lambda self: -2 ** (self.SIZE - 1))
+    MAXIMUM = property(lambda self: 2 ** (self.SIZE - 1) - 1)
 
 
-class ACCESSORY_CATEGORY(IntEnum):
+class UnsignedChar(_UnsignedInfo):
+    SIZE = property(lambda self: 8)
+    FORMAT = property(lambda self: '<B')
+
+
+class SignedChar(_SignedInfo):
+    SIZE = property(lambda self: 8)
+    FORMAT = property(lambda self: '<b')
+
+
+class UnsignedShort(_UnsignedInfo):
+    SIZE = property(lambda self: 16)
+    FORMAT = property(lambda self: '<H')
+
+
+class SignedShort(_SignedInfo):
+    SIZE = property(lambda self: 16)
+    FORMAT = property(lambda self: '<h')
+
+
+class UnsignedInt(_UnsignedInfo):
+    SIZE = property(lambda self: 32)
+    FORMAT = property(lambda self: '<I')
+
+
+class SignedInt(_SignedInfo):
+    SIZE = property(lambda self: 32)
+    FORMAT = property(lambda self: '<i')
+
+
+u8 = UnsignedChar
+s8 = SignedChar
+u16 = UnsignedShort
+s16 = SignedShort
+u32 = UnsignedInt
+s32 = SignedInt
+
+
+class ACCESSORY_CATEGORY(UnsignedChar, IntEnum):
+    """Always zero. Internal description says 'decoration' or 'armor' category."""
+    Default = 0
+
+
+class ACTION_PATTERN(UnsignedChar, IntEnum):
+    """Only used in the junk param table AI_STANDARD_INFO_BANK."""
     pass
 
 
-class ACTION_PATTERN(IntEnum):
-    pass
+class ATK_PARAM_BOOL(UnsignedChar, IntEnum):
+    Off = 0
+    On = 1
 
 
-class ATK_PARAM_BOOL(IntEnum):
-    pass
+class ATK_PARAM_HIT_SOURCE(UnsignedChar, IntEnum):
+    """Always zero. Internal description says 'model point ID used to initiate the attack'."""
+    Default = 0
 
 
-class ATK_PARAM_HIT_SOURCE(IntEnum):
-    pass
+class ATK_PARAM_HIT_TYPE(UnsignedChar, IntEnum):
+    """Always zero. Applied to each hitbox of an attack."""
+    Default = 0
 
 
-class ATK_PARAM_HIT_TYPE(IntEnum):
-    pass
+class ATK_PARAM_MAP_HIT(UnsignedChar, IntEnum):
+    """Type of contact attack has with the map. Names are just based on the attacks that tend to use them."""
+    Normal = 0
+    Projectile = 1  # arrows, bolts, knives, pyromancy
+    Hazard = 2  # fire, boulders, pendulums, lava
 
 
-class ATK_PARAM_MAP_HIT(IntEnum):
-    pass
+class ATK_PARAM_PARTSDMGTYPE(UnsignedChar, IntEnum):
+    """Always zero."""
+    Default = 0
 
 
-class ATK_PARAM_PARTSDMGTYPE(IntEnum):
-    pass
+class ATK_PATAM_THROWFLAG_TYPE(UnsignedChar, IntEnum):  # (sic)
+    NoThrow = 0
+    ThrowTrigger = 1
+    ThrowDamage = 2
 
 
-class ATK_PATAM_THROWFLAG_TYPE(IntEnum):  # (sic)
-    pass
+class ATK_SIZE(UnsignedChar, IntEnum):
+    """Always zero. Used to specify 'material size' of Bullets 'for SFX/SE'."""
+    Default = 0
 
 
-class ATK_SIZE(IntEnum):
-    pass
+class ATK_TYPE(UnsignedChar, IntEnum):
+    """Material attack type for Bullets, to determine sound effects, I believe."""
+    Normal = 0
+    Strong = 1
+    Stab = 2
 
 
-class ATK_TYPE(IntEnum):
-    pass
+class ATKPARAM_ATKATTR_TYPE(UnsignedChar, IntEnum):
+    """High correlation with BEHAVIOR_ATK_TYPE below, which seems to specify physical damage type more reliably."""
+    NoDamage = 0  # some Attacks are guarding actions
+    Slash = 1
+    Strike = 2
+    Thrust = 3
+    Neutral = 4  # most common
 
 
-class ATKPARAM_ATKATTR_TYPE(IntEnum):
-    NoType = 0  # test only
-    Blast = 1  # e.g. Iron Golem axe air blast
-    Sharp = 3  # e.g. arrows and throwing knives
-    Other = 4  # e.g. most bullets
+# TODO: Make sure the 'damage level' field in Attacks points to this type as well.
+class ATKPARAM_REP_DMGTYPE(SignedChar, IntEnum):
+    """Damage types. This enum is used by Special Effects to override one damage type with another (e.g. Iron Flesh
+    reduces the weaker half 1 and the stronger half to 5)."""
+    NoDamage = 0
+    Small = 1
+    Medium = 2
+    Large = 3
+    Blowoff = 4
+    Push = 5
+    Strike = 6
+    SmallBlow = 7
+    Minimal = 8
+    Launch = 9
+    BlowBackward = 10
+    BreathBurn = 11
 
 
-class ATKPARAM_REP_DMGTYPE(IntEnum):
-    pass
-
-
-class ATKPARAM_SPATTR_TYPE(IntEnum):
+class ATKPARAM_SPATTR_TYPE(UnsignedChar, IntEnum):
+    """Determines weaknesses and visual effect upon damage."""
     NoType = 0
     Physical = 1
     Fire = 2
@@ -85,54 +148,78 @@ class ATKPARAM_SPATTR_TYPE(IntEnum):
     Poison = 4
     # 5 is not used.
     Lightning = 6
-    # 7 is not used.
-    Crystal = 8
+    StoneCurse = 7  # e.g. Basilisk breath
+    CrystalCurse = 8  # e.g. Seath's crystal attacks
 
 
-class BEHAVIOR_ATK_SIZE(IntEnum):
-    pass
+class BEHAVIOR_ATK_SIZE(UnsignedChar, IntEnum):
+    """Always zero. Used to specify 'material size' of Attacks 'for SFX/SE'."""
+    Default = 0
 
 
-class BEHAVIOR_ATK_TYPE(IntEnum):
-    pass
+class BEHAVIOR_ATK_TYPE(UnsignedChar, IntEnum):
+    """The internal description says this specifies the 'SFX/SE at the time of attack'. Could determine sound effects.
+    Names are based on observed usage. Same as ATK_TYPE."""
+    Normal = 0
+    Strong = 1
+    Stab = 2
 
 
-class BEHAVIOR_CATEGORY(IntEnum):
-    pass
+class BEHAVIOR_CATEGORY(UnsignedChar, IntEnum):
+    """Determines which special effects buffs/debuffs will affect the behavior."""
+    HumanRightHand = 1  # includes two-handed
+    HumanLeftHand = 2
+    Magic = 3  # includes miracles and pyromancy
+    # 4 is missing.
+    ShieldBash = 5  # includes ladder bonks, etc.
+    NonHumanRightHand = 6
+    NonHumanLeftHand = 7
+    # 8 is missing.
+    Riposte = 9
 
 
-class BEHAVIOR_REF_TYPE(IntEnum):
+class BEHAVIOR_REF_TYPE(UnsignedChar, IntEnum):
     Attack = 0
     Bullet = 1
-    # TODO: Possibly a 2 somewhere? Throw?
+    Special = 2  # possibly Throw
 
 
-class BULLET_ATTACH_EFFECT_TYPE(IntEnum):
+class BULLET_ATTACH_EFFECT_TYPE(UnsignedChar, IntEnum):
     NoAttach = 0
     Attach = 1  # e.g. Grant special attack, Dragon Head Stone breath
-    # No more observed.
 
 
-class BULLET_EMITTE_POS_TYPE(IntEnum):
-    pass
+class BULLET_EMITTE_POS_TYPE(UnsignedChar, IntEnum):
+    """Source of projectile. Internal description says 'usually from model point'."""
+    ModelPoint = 0  # specified in TAE
+    Firestorm = 1  # and Chaos Storm, etc.
+    FromBullet = 2  # spawn projectile at position of the parent bullet that triggered it
+    # 3 is unused.
+    BedOfChaosFirestorm = 4  # used only by the Bed of Chaos's storm pyromancy
 
 
-class BULLET_FOLLOW_TYPE(IntEnum):
-    # TODO: Guess.
+class BULLET_FOLLOW_TYPE(UnsignedChar, IntEnum):
+    """This is a guess."""
     DoNotFollow = 0
     Follow = 1
 
 
-class BULLET_LAUNCH_CONDITION_TYPE(IntEnum):
-    pass
+class BULLET_LAUNCH_CONDITION_TYPE(UnsignedChar, IntEnum):
+    """Determines if child bullet should be generated when it lands and/or dies. Names are based solely on usage right
+    now. I suspect that 1 and 2 generate bullets on expiry, and -1 (255) and -2 (254) generate bullets on hit."""
+    NoChild = 0
+    LightningLastBullet = 1  # used by lightning 'great great grandchild' bullets
+    LightningParentBullet = 2  # used by all other lightning bullets
+    PrismStoneChild = 254  # -2; used by the second of three Prism Stone bullets
+    ChainBullet = 255  # -1; used for non-lightning chain bullets
 
 
-class CHARACTER_INIT_SEX(IntEnum):
+class CHARACTER_INIT_SEX(UnsignedChar, IntEnum):
     Male = 0
     Female = 1
 
 
-class CHRINIT_VOW_TYPE(IntEnum):
+class CHRINIT_VOW_TYPE(UnsignedChar, IntEnum):
     NoCovenant = 0
     WayOfWhite = 1
     PrincessGuard = 2
@@ -145,24 +232,29 @@ class CHRINIT_VOW_TYPE(IntEnum):
     ChaosServant = 9
 
 
-class ChrType(IntEnum):
-    # TODO: Did I create this one?
+class ChrType(SignedInt, IntEnum):
+    # This is a real enum used in the junk param table ENEMY_STANDARD_INFO_BANK.
     pass
 
 
-class DURABILITY_DIVERGENCE_CATEGORY(IntEnum):
+class DURABILITY_DIVERGENCE_CATEGORY(UnsignedChar, IntEnum):
+    """Interal description says 'do you branch by durability? Magic weapon support: motion branch by durability'."""
+    Off = 0
+    On = 1
+
+
+class ENEMY_BEHAVIOR_ID(SignedInt, IntEnum):
+    # From junk param table ENEMY_STANDARD_INFO_BANK.
     pass
 
 
-class ENEMY_BEHAVIOR_ID(IntEnum):
-    pass
+class EQUIP_BOOL(UnsignedChar, IntEnum):
+    """Just the name for the boolean used in EQUIP tables."""
+    Off = 0
+    On = 1
 
 
-class EQUIP_BOOL(IntEnum):
-    pass
-
-
-class EQUIP_MODEL_CATEGORY(IntEnum):
+class EQUIP_MODEL_CATEGORY(UnsignedChar, IntEnum):
     Hands = 1
     Torso = 2
     # 3 is missing.
@@ -172,116 +264,215 @@ class EQUIP_MODEL_CATEGORY(IntEnum):
     pass
 
 
-class EQUIP_MODEL_GENDER(IntEnum):
+class EQUIP_MODEL_GENDER(UnsignedChar, IntEnum):
     NoGender = 0  # guess
     Male = 1
     Female = 2
     Detected = 3  # guess
 
 
-class FACE_PARAM_HAIRCOLOR_TYPE(IntEnum):
+class FACE_PARAM_HAIRCOLOR_TYPE(UnsignedChar, IntEnum):
+    """Assuming these are in the same order as the choices in the character creation window."""
+    Black = 0
+    DarkBrown = 1
+    LightBrown = 2
+    DarkRed = 3
+    DarkBlue = 4
+    Gray = 5
+    Gold = 6
+    Silver = 7
+    DarkPurple = 8
+    Red = 9
+
+
+class FACE_PARAM_HAIRSTYLE_TYPE(UnsignedChar, IntEnum):
+    """Overloaded with both male and female hairstyles. Name format is Male_Female."""
+    Bald = 0
+    Receding_VeryShort = 1
+    Short_Wave = 2
+    SweptBack_StraightA = 3
+    Ponytail_StraightB = 4
+    Wild_PonytailA = 5
+    PartedCenter_PonytailB = 6
+    SemiLong_Pigtails = 7
+    Curly_Bun = 8
+    Bobbed_Braided = 9
+
+
+class GOODS_CATEGORY(UnsignedChar, IntEnum):
+    """Always zero."""
+    Default = 0
+
+
+class GOODS_OPEN_MENU(UnsignedChar, IntEnum):
+    """Menu or dialog activated when good is used."""
+    NoMenu = 0
+    YesOrNoDialog = 1
+    # 2 is unused.
+    # 3 is unused.
+    BlackSeparationCrystalMenu = 4
+    # 5 is unused.
+    OrangeSoapstoneMenu = 6
+    BookOfTheGuiltyMenu = 7
+    ServantRosterMenu = 8
+
+
+class GOODS_TYPE(UnsignedChar, IntEnum):
+    Basic = 0  # Consumables, orbs, soapstones, etc. (first inventory tab)
+    KeyItem = 1
+    Titanite = 2
+    # 3 is unused.
+    UnusedHumanity = 4  # unused good ID 350, "Humanity"
+    Spell = 5
+
+
+class GOODS_USE_ANIM(UnsignedChar, IntEnum):
+    """This only determines the basic animation; the exact sounds and visual effects are determined by the 'effect
+    variation ID'."""
+    NoAnimation = 0  # generally means cannot be used
+    ApplyToWeapon = 1  # Resins
+    Throw = 2  # Throwing Knife, Dung Pie, Alluring Skull
+    Lob = 3  # Firebomb, Lloyd's Talisman
+    HoldToEyes = 4  # Binoculars
+    Sprinkle = 5  # Repair Powder
+    KneelAndBow = 6  # Darksign, Homeward Bone,
+    TossOnGround = 7  # Carvings
+    WriteOnGround = 8  # Orange Guidance Soapstone, Book of the Guilty
+    CrushInHand = 9  # Soul consumables
+    Drink = 10
+    DragonHeadStone = 11
+    DragonTorsoStone = 12
+    BlackSeparationCrystal = 13
+    SilverPendant = 14
+    PurpleCowardsCrystal = 15
+    DrinkEmpty = 254  # -2
+
+
+class GUARDMOTION_CATEGORY(UnsignedChar, IntEnum):
+    """Type of guard animation."""
+    MediumShield = 0  # also arrows and bolts, so probably means 'default'
+    Greatshield = 1
+    SmallShieldOrWeapon = 2
+
+
+class HMP_FOOT_EFFECT_HEIGHT_TYPE(UnsignedChar, IntEnum):
+    """Determines height at which foot impact effects are generated. Named after observed usage."""
+    Normal = 0
+    WaterSwampLava = 1
+    SnowMucusTar = 2
+
+
+class HMP_FOOT_EFFECT_DIR_TYPE(UnsignedChar, IntEnum):
+    """Determines direction of foot impact effects."""
+    Normal = 0
+    SnowMucusTar = 1  # possibly more upward
+
+
+class HMP_FLOOR_HEIGHT_TYPE(UnsignedChar, IntEnum):
+    """Determines height of floor effects."""
+    Flat = 0
+    Raised = 1  # all liquids except 'mucus'
+
+
+class ITEMLOT_CUMULATE_RESET(UnsignedShort, IntEnum):
     pass
 
 
-class FACE_PARAM_HAIRSTYLE_TYPE(IntEnum):
+class ITEMLOT_ENABLE_LUCK(UnsignedShort, IntEnum):
     pass
 
 
-class GOODS_CATEGORY(IntEnum):
-    pass
+class ITEMLOT_ITEMCATEGORY(SignedInt, IntEnum):
+    """Inexplicably wide/reversed bit field for simply specifying the item type."""
+    NoItem = -1
+    Weapon = 0
+    Armor = 2 ** 28  # 268435456
+    Ring = 2 ** 29  # 536870912
+    Good = 2 ** 30  # 1073741824
 
 
-class GOODS_OPEN_MENU(IntEnum):
-    pass
+class MAGIC_BOOL(UnsignedChar, IntEnum):
+    """Boolean used in MAGIC_PARAM_ST."""
+    Off = 0
+    On = 1
 
 
-class GOODS_TYPE(IntEnum):
-    pass
+class MAGIC_CATEGORY(UnsignedChar, IntEnum):
+    """Also called 'EzState Behavior Type'."""
+    Sorcery = 0
+    Miracle = 1
+    Pyromancy = 2
 
 
-class GOODS_USE_ANIM(IntEnum):
-    pass
+class MAGIC_MOTION_TYPE(UnsignedChar, IntEnum):
+    """Determines if spell produces a Bullet or Special Effect."""
+    Bullet = 1
+    SpecialEffect = 2
 
 
-class GUARDMOTION_CATEGORY(IntEnum):
-    pass
+class NPC_BOOL(UnsignedChar, IntEnum):
+    """Boolean used in NPC_PARAM_ST."""
+    Off = 0
+    On = 1
 
 
-class HMP_FOOT_EFFECT_HEIGHT_TYPE(IntEnum):
-    pass
+class NPC_BURN_TYPE(UnsignedChar, IntEnum):
+    """Type of sound effect played during combustion, I believe. Only the Undead Dragon and Mass of Souls use value 1,
+    hence the name."""
+    Normal = 0
+    MassiveUndead = 1
 
 
-class HMP_FOOT_EFFECT_DIR_TYPE(IntEnum):
-    pass
+class NPC_DRAW_TYPE(UnsignedChar, IntEnum):
+    Normal = 0
+    WhitePhantom = 1
+    RedPhantom = 2
 
 
-class HMP_FLOOR_HEIGHT_TYPE(IntEnum):
-    pass
-
-
-class ITEMLOT_CUMULATE_RESET(IntEnum):
-    pass
-
-
-class ITEMLOT_ENABLE_LUCK(IntEnum):
-    pass
-
-
-class ITEMLOT_ITEMCATEGORY(IntEnum):
-    pass
-
-
-class MAGIC_BOOL(IntEnum):
-    pass
-
-
-class MAGIC_CATEGORY(IntEnum):
-    pass
-
-
-class MAGIC_MOTION_TYPE(IntEnum):
-    pass
-
-
-class NPC_BOOL(IntEnum):
-    pass
-
-
-class NPC_BURN_TYPE(IntEnum):
-    pass
-
-
-class NPC_DRAW_TYPE(IntEnum):
-    pass
-
-
-class NPC_HITSTOP_TYPE(IntEnum):
+class NPC_HITSTOP_TYPE(UnsignedChar, IntEnum):
     """Guesses only."""
     Normal = 0
     Tough = 1
     Boss = 2
-    # No other values observed.
 
 
-class NPC_ITEMDROP_TYPE(IntEnum):
-    pass
+class NPC_ITEMDROP_TYPE(UnsignedShort, IntEnum):
+    """Determines appearance of dropped item from NPC."""
+    GlowingCorpse = 0
+    ItemEffect = 1
 
 
-class NPC_MOVE_TYPE(IntEnum):
-    pass
+class NPC_MOVE_TYPE(UnsignedChar, IntEnum):
+    NoMovement = 0  # e.g. tails
+    Giant = 1  # e.g. Hydra, Living Tree
+    Insects = 2  # e.g. Rockworms, Chaos Bugs
+    Normal = 3
+    FourLegged = 4  # e.g. Rats, Basilisks, Dogs, Tree Lizards
+    FlyingDrake = 5
+    Flying = 6
+    # 7 unused.
+    # 8 unused.
+    BoundingDemon = 9
 
 
-class NPC_SFX_SIZE(IntEnum):
+class NPC_SFX_SIZE(UnsignedChar, IntEnum):
     Normal = 0
     Large = 1
     VeryLarge = 2
     # No other values observed.
 
-class NPC_TEMA_TYPE(IntEnum):
-    pass  # (sic)
+class NPC_TEMA_TYPE(UnsignedChar, IntEnum):  # (sic)
+    """Unsure how this differs from the standard TeamType event enum."""
+    Enemy = 0
+    Boss = 1  # can hurt Enemy team
+    Ally = 2
+    UnusedUndeadDragon = 6
+    Summon = 7
+    UnusedSkeletonTest = 9
 
 
-class NPC_THINK_GOAL_ACTION(IntEnum):
+class NPC_THINK_GOAL_ACTION(UnsignedChar, IntEnum):
+    # TODO
     # 0
     # 1
     # 2
@@ -289,148 +480,252 @@ class NPC_THINK_GOAL_ACTION(IntEnum):
     LogicScript = 4
 
 
-class NPC_THINK_REPLY_BEHAVIOR_TYPE(IntEnum):
+class NPC_THINK_REPLY_BEHAVIOR_TYPE(UnsignedChar, IntEnum):
     """Used to indicate whether NPCs respond to calls for help."""
     Ignore = 0
     Answer = 1
-    # No other values observed.
 
 
-class NPC_TYPE(IntEnum):
-    Enemy = 0
+class NPC_TYPE(UnsignedChar, IntEnum):
+    """Internal description: 'if the enemies/boss enemies are distinguished OK'. Just guessing at names."""
+    Normal = 0
     Boss = 1
-    Ally = 2
-    # No other values observed.
+    NonHumanAlly = 2
 
 
-class OBJACT_SP_QUALIFIED_TYPE(IntEnum):
-    pass
+class OBJACT_SP_QUALIFIED_TYPE(UnsignedChar, IntEnum):
+    HasGood = 1
+    HasSpecialEffect = 2
 
 
-class OBJACT_CHR_SORB_TYPE(IntEnum):
-    pass
+class OBJACT_CHR_SORB_TYPE(UnsignedChar, IntEnum):
+    """Method of snapping character to object when object is activated. Only occurrence of 1 is for opening chests."""
+    Normal = 0
+    OpenChest = 1
 
 
-class OBJACT_EVENT_KICK_TIMING(IntEnum):
-    pass
+class OBJACT_EVENT_KICK_TIMING(UnsignedChar, IntEnum):
+    """Guessing at these, based on the fact that actions that trigger cutscenes seem to use a value of 0."""
+    EndOfAction = 0
+    StartOfAction = 1
 
 
-class ON_OFF(IntEnum):
-    # TODO: Confirm my obvious guess.
+class ON_OFF(UnsignedChar, IntEnum):
     Off = 0
     On = 1
 
 
-class PROTECTOR_CATEGORY(IntEnum):
+class PROTECTOR_CATEGORY(UnsignedChar, IntEnum):
     Helm = 0
     Body = 1
     Hands = 2
     Legs = 3
 
 
-class RAGDOLL_PARAM_BOOL(IntEnum):
+class RAGDOLL_PARAM_BOOL(UnsignedChar, IntEnum):
+    """Boolean used in RAGDOLL_PARAM_ST, which I have hidden."""
+    Off = 0
+    On = 1
+
+
+class REPLACE_CATEGORY(UnsignedChar, IntEnum):
+    """I believe that goods/spells that have non-zero values here will replace the effects of previous goods/spells
+    used that have the same value. Names are based on vanilla usage, but presumably these are open slots."""
+    HealingMiracle = 2
+    DarkmoonSorcery = 3
+    GravelordMiracle = 4
+    DragonStones = 5
+
+
+class SHOP_LINEUP_SHOPTYPE(UnsignedChar, IntEnum):
+    Normal = 0
+    # 1 is unused.
+    AttunementMenu = 2
+
+
+class SHOP_LINEUP_EQUIPTYPE(UnsignedChar, IntEnum):
+    Weapon = 0
+    Armor = 1
+    Ring = 2
+    Good = 3
+    Spell = 4
+
+
+class SKELETON_PARAM_KNEE_AXIS_DIR(UnsignedChar, IntEnum):
     pass
 
 
-class REPLACE_CATEGORY(IntEnum):
+class SP_EFE_WEP_CHANGE_PARAM(UnsignedChar, IntEnum):
+    All = 0
+    CurrentRightHand = 1  # effect will end if weapon is changed
+    CurrentLeftHand = 2  # effect will end if weapon is changed
+    Self = 3  # affects character directly (i.e. status damage) rather than being applied to hits
+    LandingDamage = 4  # e.g. Orange Charred Ring effect
+
+
+class SP_EFFECT_BOOL(UnsignedChar, IntEnum):
+    """Boolean used in Special Effects table."""
+    Off = 0
+    On = 1
+
+
+class SP_EFFECT_MOVE_TYPE(UnsignedChar, IntEnum):
+    """Named after observed usage."""
+    Normal = 0
+    Chameleon = 3
+    DeepWater = 4
+    IronFlesh = 5
+
+
+class SP_EFFECT_SAVE_CATEGORY(SignedChar, IntEnum):
+    """Determines how often and/or in what order special effects are saved on every update. Names are from observed
+    usage only."""
+    NoSave = -1
+    Poison = 0
+    Bleed = 1
+    Toxic = 2
+    Egg = 3
+
+
+class SP_EFFECT_SPCATEGORY(UnsignedShort, IntEnum):
+    """Category of special effect, which determines which other special effects it will replace (and maybe more). Many
+    values used."""
     pass
 
 
-class SHOP_LINEUP_SHOPTYPE(IntEnum):
+class SP_EFFECT_THROW_CONDITION_TYPE(UnsignedChar, IntEnum):
+    Default = 0
+    # TODO: more.
+
+
+class SP_EFFECT_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class SHOP_LINEUP_EQUIPTYPE(IntEnum):
+class SP_EFFECT_USELIMIT_CATEGORY(UnsignedChar, IntEnum):
     pass
 
 
-class SKELETON_PARAM_KNEE_AXIS_DIR(IntEnum):
+class SP_EFFECT_VFX_EFFECT_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFE_WEP_CHANGE_PARAM(IntEnum):
+class SP_EFFECT_VFX_PLAYCATEGORY(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_BOOL(IntEnum):
+class SP_EFFECT_VFX_SOUL_PARAM_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_MOVE_TYPE(IntEnum):
+class SpecialStateInfo(UnsignedChar, IntEnum):
+    """Enum documented by me for the SpecialStateIndex field, which specifies many varying hard-coded effects in the
+    game engine, like ongoing animations, particle effects, and special triggers."""
+    LavaBurning = 1  # Lava damage on self, probably burning feet (not visible with resin though).
+    PoisonAura = 2  # Poison cloud on self.
+    SlimeCovered = 3  # "Jelly covered".
+    DurabilityDamage = 4  # Corrosive attack.
+    ToxicAura = 5  # Toxic on self.
+    BleedAura = 6  # Bleeding on self.
+    Transparent = 8  # Makes player transparent (Fog Ring/Hidden Figure) and possibly causes cancellation when hit.
+    PurpleMossClump = 10  # Purple Moss Clump application effect.
+    BloomingPurpleMossClump = 11  # Blooming Purple Moss Clump application effect.
+    BloodRedMossClump = 12  # Blood-Red Moss Clump application effect.
+    DivineBlessing = 13  # Divine Blessing full health recovery.
+    BinocularsZoom = 15  # Apply Binoculars camera zoom. Not recommended.
+    ForceRespawn = 16  # Return to last spawn point (Darksign/Homeward Bone).
+    # 17 CRASHES THE GAME. Unfinished "resurrection stone" stuff.
+    RepairPowder = 26  # Repair Powder, no visible effect for resin.
+    MagicWeapon = 28  # Magic Weapon.
+    FallingControl = 47  # Falling Control glowing blue feet. TODO: damage reduction as well?
+    TearstoneRingAura = 48  # Tearstone Ring aura; yellow rays come out of you. Kind of annoying, actually.
+    ElizabethMushroom = 50  # Elizabeth's Mushroom regen effect.
+    SilentMovement = 54  # Sound cancellation. Does not affect enemy hearing itself.
+    StrongMagicWeapon = 60  # Strong Magic Weapon.
+    CrystalMagicWeapon = 61  # Crystal Magic Weapon.
+    FireWeapon = 62  # Flaming right-hand weapon (Charcoal Pine Resin).
+    CovetousGoldSerpentRing = 66  # Must increase item discovery, e.g. by shifting points to other item lot slots.
+    MagicPowerUp = 71  # Magic/Miracle power up. Not sure what this does exactly.
+    GreenBlossom = 75  # Green aura VFX (Green Blossom).
+    CovetousSilverSerpentRing = 76  # Not sure what it does, since the soul increase is done with params.
+    TranquilWalkOfPeace = 102  # Stone Knight "gravity", probably enables Tranquil Walk glyph around player.
+    EggParasiteInvisible = 111  # no sign of it yet (incubation).
+    EggParasiteScratching = 112  # player scratches head every ten seconds (interval set in params).
+    EggParasiteStandby = 113  # seems to pass instantly.
+    EggParasiteHead = 114  # egg appears, eats half souls. Goes to 192.
+    FlipDodge = 115  # Enables flip dodges (Dark Wood Grain Ring).
+    CurseDamage = 116  # Petrification/crystal curse damage.
+    PurgingStone = 118  # Purging stone.
+    HumanityRecovery = 119  # "Humanity recovery", has no immediate effect. Also used for Darkwraith effect.
+    AnimationPoiseChange = 120  # Animation superarmor changes.
+    MimicSleep = 127  # Lloyd's Talisman used on Mimic.
+    SkeletonImmortality = 143  # Immortal skeleton.
+    SkeletonDisassembled = 144  # Skeleton disassembled?
+    CastLight = 147  # Ball of light from Cast Light.
+    LightningWeapon = 151  # Lightning right-hand weapon (Gold Pine Resin).
+    PoisonedWeapon = 152  # Adds poisoned weapon VFX and actually makes "atkOccurrenceSpEffectId" apply on each hit.
+    SunlightBlade = 153  # Sunlight Blade VFX.
+    WolfRing = 155  # Change in superarmor (Wolf Ring). White aura effect.
+    TransientCurse = 157  # Transient Curse effect (white aura).
+    MagicShield = 158  # Magic Shield.
+    RingOfSacrifice = 159  # Ring of Sacrifice, probably disables loss of souls.
+    RareRingOfSacrifice = 160  # Ring of Rare Sacrifice, probably disables loss of souls and negates curse.
+    # 161-165 are extra Homeward Bone effects, apparently unused (and they have no immediate effect).
+    PledgeStoneDestroyed = 166  # "Pledge stone destroyed", no immediate effect.
+    BowRangeBoost = 168  # from Hawk Ring. Seems necessary for boost to apply.
+    KarmicJustice = 170  # (Karmic Justice)
+    AlluringSkullA = 176  # Alluring Skull "A".
+    AlluringSkullB = 177  # Alluring Skull "B".
+    HiddenWeapon = 184  # Hidden Weapon.
+    OrangeCharredRing = 186  # "lava walk", probably involved with canceling damage from effect 4030.
+    EggParasiteFinal = 192  # kick replaced by larva attack.
+    LingeringDragoncrestRing = 193  # (Lingering Dragoncrest Ring)
+    ExtraAttunement = 194  # 50% attunement slot boost from Dusk Crown Ring. Does not include half HP effect.
+    AffectThrustCounterDamageOnly = 197  # Attack boosts only affect counter damage with thrusting-type attacks.
+    EggVermifuge = 198  # Egg Vermifuge treatment.
+    RingOfTheEvilEye = 199  # Triggers hard-coded special effect 2241 whenever an enemy is killed.
+    StrongMagicShield = 204  # Strong Magic Shield.
+
+
+class THROW_DMY_CHR_DIR_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_SAVE_CATEGORY(IntEnum):
+class THROW_ENABLE_STATE(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_SPCATEGORY(IntEnum):
+class THROW_PAD_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_THROW_CONDITION_TYPE(IntEnum):
+class THROW_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_TYPE(IntEnum):
+class WEAPON_CATEGORY(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_USELIMIT_CATEGORY(IntEnum):
+class WEP_MATERIAL_ATK(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_VFX_EFFECT_TYPE(IntEnum):
+class WEP_MATERIAL_DEF(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_VFX_PLAYCATEGORY(IntEnum):
+class WEP_MATERIAL_DEF_SFX(UnsignedChar, IntEnum):
     pass
 
 
-class SP_EFFECT_VFX_SOUL_PARAM_TYPE(IntEnum):
+class WEP_CORRECT_TYPE(UnsignedChar, IntEnum):
     pass
 
 
-class THROW_DMY_CHR_DIR_TYPE(IntEnum):
+class WEPMOTION_CATEGORY(UnsignedChar, IntEnum):
     pass
 
 
-class THROW_ENABLE_STATE(IntEnum):
-    pass
-
-
-class THROW_PAD_TYPE(IntEnum):
-    pass
-
-
-class THROW_TYPE(IntEnum):
-    pass
-
-
-class WEAPON_CATEGORY(IntEnum):
-    pass
-
-
-class WEP_MATERIAL_ATK(IntEnum):
-    pass
-
-
-class WEP_MATERIAL_DEF(IntEnum):
-    pass
-
-
-class WEP_MATERIAL_DEF_SFX(IntEnum):
-    pass
-
-
-class WEP_CORRECT_TYPE(IntEnum):
-    pass
-
-
-class WEPMOTION_CATEGORY(IntEnum):
-    pass
-
-
-class WEP_BASE_CHANGE_CATEGORY(IntEnum):
+class WEP_BASE_CHANGE_CATEGORY(UnsignedChar, IntEnum):
     pass

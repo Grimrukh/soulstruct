@@ -3,6 +3,7 @@ from io import BytesIO
 import struct
 from typing import Dict
 
+from soulstruct.params import enums
 from soulstruct.params.fields import GAME_PARAM_INFO
 from soulstruct.params.paramdef import ParamDefBND
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
@@ -27,26 +28,34 @@ def PARAMDEF_BND(game_version):
     raise ValueError(f"Could not find bundled ParamDef for game version {repr(game_version)}.")
 
 
+FLOAT_32 = ('<f', float, -float('inf'), float('inf'))
+SIGNED_INT = ('<i', int, -2**31, 2**31 - 1)
+UNSIGNED_INT = ('<I', int, 0, 2**32 - 1)
+SIGNED_SHORT = ('<h', int, -2**15, 2**15 - 1)
+UNSIGNED_SHORT = ('<H', int, 0, 2**16 - 1)
+SIGNED_CHAR = ('<b', int, -2**7, 2**7 - 1)
+UNSIGNED_CHAR = ('<B', int, 0, 2**8 - 1)
+
 PARAM_TYPE_INFO = {
     # (struct_type, python_type, min_value, max_value)
-    'u32': ('<I', int, 0, 2**32 - 1),
-    's32': ('<i', int, -2**31, 2**31 - 1),
-    'f32': ('<f', float, -float('inf'), float('inf')),
-    'u16': ('<H', int, 0, 2**16 - 1),
-    's16': ('<h', int, -2**15, 2**15 - 1),
-    'u8': ('<B', int, 0, 2**8 - 1),
-    's8': ('<b', int, -2**7, 2**7 - 1),
+    's32': SIGNED_INT,
+    'u32': UNSIGNED_INT,
+    'f32': FLOAT_32,
+    'u16': UNSIGNED_SHORT,
+    's16': SIGNED_SHORT,
+    'u8': UNSIGNED_CHAR,
+    's8': SIGNED_CHAR,
 
     # Enums  # TODO: Need to identify sizes (B, H, I). Can use debug type size until then.
-    'EQUIP_MODEL_CATEGORY': (),
-    'EQUIP_MODEL_GENDER': (),
-    'WEAPON_CATEGORY': (),
-    'WEPMOTION_CATEGORY': (),
-    'GUARDMOTION_CATEGORY': (),
-    'WEP_MATERIAL_ATK': (),
-    'WEP_MATERIAL_DEF': (),
-    'WEP_MATERIAL_DEF_SFX': (),
-    'WEP_CORRECT_TYPE': (),
+    'EQUIP_MODEL_CATEGORY': UNSIGNED_CHAR,
+    'EQUIP_MODEL_GENDER': UNSIGNED_CHAR,
+    'WEAPON_CATEGORY': UNSIGNED_CHAR,
+    'WEPMOTION_CATEGORY': UNSIGNED_CHAR,
+    'GUARDMOTION_CATEGORY': UNSIGNED_CHAR,
+    'WEP_MATERIAL_ATK': UNSIGNED_CHAR,
+    'WEP_MATERIAL_DEF': UNSIGNED_CHAR,
+    'WEP_MATERIAL_DEF_SFX': UNSIGNED_CHAR,
+    'WEP_CORRECT_TYPE': UNSIGNED_CHAR,
     'ATKPARAM_SPATTR_TYPE': (),
     'DURABILITY_DIVERGENCE_CATEGORY': (),
     'EQUIP_BOOL': (),
@@ -285,7 +294,6 @@ class ParamTable(object):
         self.param_name = ''  # internal name (shift-jis) with capitals and underscores
         self.paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.entries = {}
-        self.field_info = None
         self.__magic = []
 
         if isinstance(param_source, dict):
@@ -330,6 +338,10 @@ class ParamTable(object):
     def field_names(self):
         # TODO: hack job. get nice field names and structure from fields.py.
         return self.entries[list(self.entries)[0]].field_names
+
+    @property
+    def field_info(self):
+        return GAME_PARAM_INFO.get(self.param_name, None)
 
     # TODO: __repr__ method returns basic information about ParamTable (but not entire entry list).
 
@@ -381,8 +393,6 @@ class ParamTable(object):
             else:
                 name = ''
             self.entries[entry_struct.id] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
-
-        self.field_info = GAME_PARAM_INFO.get(self.param_name, None)
 
     def pack(self, sort=True):
         sorted_entries = sorted(self.entries.items()) if sort else self.entries.items()
