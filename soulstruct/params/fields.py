@@ -4,7 +4,6 @@ from .enums import *
 
 __all__ = ['GAME_PARAM_NICKNAMES', 'GAME_PARAM_INFO']
 
-
 # Overrides for certain basic enums.
 ATK_PARAM_HIT_SOURCE = int
 SP_EFFECT_SPCATEGORY = int
@@ -18,6 +17,8 @@ NPC_THINK_REPLY_BEHAVIOR_TYPE = bool
 ON_OFF = bool
 RAGDOLL_PARAM_BOOL = bool
 SP_EFFECT_BOOL = bool
+THROW_ENABLE_STATE = bool
+
 
 class AI:
     Logic = '<AI:Logic>'
@@ -170,7 +171,6 @@ GAME_PARAM_NICKNAMES = {
 
     # TODO: DrawParams?
 }
-
 
 GAME_PARAM_INFO = {
     # PARAM_TABLE_NAME: (ParamEntryNickname, VisibleDefault, ParamTableType, Docstring)
@@ -1108,133 +1108,236 @@ GAME_PARAM_INFO = {
     'LOCK_CAM_PARAM_ST': {},
     'ATK_PARAM_ST': {},
     'BEHAVIOR_PARAM_ST': {
-        'variationId': ('VariationID', True, int,  # TODO: connect to model/TAE somehow.
-                        ""),
-        'behaviorJudgeId': ('BehaviorJudgeID', True, int,
-                            "This is the ID specified by TAE events that trigger behaviors."),
-        'ezStateBehaviorType_old': ('EzstateBehaviorType', False, None,
-                                    "Unused remnant from Demon's Souls."),
-        'refType': ('ReferenceType', True, BEHAVIOR_REF_TYPE,
-                    "Is the reference ID below an Attack or Bullet ID?"),
-        'pad0[2]': ('Pad1', False, '<Pad:2>', "Null padding."),
+        'variationId': (
+            'VariationID', True, int,  # TODO: connect to model/TAE somehow.
+            ""),
+        'behaviorJudgeId': (
+            'BehaviorJudgeID', True, int,
+            "This is the ID specified by TAE events that trigger behaviors."),
+        'ezStateBehaviorType_old': (
+            'EzstateBehaviorType', False, None,
+            "Unused remnant from Demon's Souls."),
+        'refType': (
+            'ReferenceType', True, BEHAVIOR_REF_TYPE,
+            "Is the reference ID below an Attack or Bullet ID?"),
+        'pad0[2]': (
+            'Pad1', False, '<Pad:2>', "Null padding."),
         'refId': behavior_ref_id,  # TODO: wrap this whole dictionary in a class that calls this (with entry) if needed.
-        'sfxVariationId': ('FXVariationID', True, int,
-                           "Visual effect ID."),
-        'stamina': ('StaminaCost', True, int,
-                    "Stamina cost of behavior."),
-        'mp': ('DurabilityCost', True, int,
-               "Weapon/shield durability cost of behavior."),
-        'category': ('Category', True, BEHAVIOR_CATEGORY,
-                     "Determines compatibility with special effects that affect certain types of attacks."),
-        'heroPoint': ('HumanityCost', True, int,
-                      "Humanity cost of behavior."),  # TODO: ever used? does it even work?
-        'pad1[2]': ('Pad2', False, '<Pad:2>', "Null padding."),
+        'sfxVariationId': (
+            'FXVariationID', True, int,
+            "Visual effect ID."),
+        'stamina': (
+            'StaminaCost', True, int,
+            "Stamina cost of behavior."),
+        'mp': (
+            'DurabilityCost', True, int,
+            "Weapon/shield durability cost of behavior."),
+        'category': (
+            'Category', True, BEHAVIOR_CATEGORY,
+            "Determines compatibility with special effects that affect certain types of attacks."),
+        'heroPoint': (
+            'HumanityCost', True, int,
+            "Humanity cost of behavior."),  # TODO: ever used? does it even work?
+        'pad1[2]': (
+            'Pad2', False, '<Pad:2>', "Null padding."),
     },
     'CHARACTER_INIT_PARAM': {
-        'baseRec_mp': ('BaseRecMP', False, int, "Unknown."),
-        'baseRec_sp': ('BaseRecSP', False, int, "Unknown."),
-        'red_Falldam': ('RedFallDamage', False, int, "Unknown."),
-        'soul': ('SoulCount', True, int, "Starting soul count of character."),
-        'equip_Wep_Right': ('RightHandWeapon1', True, Params.Weapons,
-                            "First (default) weapon/shield equipped in right hand."),
-        'equip_Subwep_Right': ('RightHandWeapon2', True, Params.Weapons,
-                               "Second weapon/shield equipped in right hand."),
-        'equip_Wep_Left': ('LeftHandWeapon1', True, Params.Weapons,
-                           "First (default) weapon/shield equipped in left hand."),
-        'equip_Subwep_Left': ('LeftHandWeapon2', True, Params.Weapons,
-                              "Second weapon/shield equipped in left hand."),
-        'equip_Helm': ('HeadArmor', True, Params.Armor, "Armor equipped to head."),
-        'equip_Armer': ('BodyArmor', True, Params.Armor, "Armor equipped to body."),
-        'equip_Gaunt': ('HandsArmor', True, Params.Armor, "Armor equipped to hands."),
-        'equip_Leg': ('LegsArmor', True, Params.Armor, "Armor equipped to legs."),
-        'equip_Arrow': ('ArrowSlot1', True, Params.Weapons, "Arrows equipped in slot 1."),  # TODO: Show arrows only?
-        'equip_Bolt': ('BoltSlot1', True, Params.Weapons, "Bolts equipped in slot 1."),
-        'equip_SubArrow': ('ArrowSlot2', True, Params.Weapons, "Arrows equipped in slot 2."),
-        'equip_SubBolt': ('BoltSlot2', True, Params.Weapons, "Bolts equipped in slot 2."),
-        'equip_Accessory01': ('RingSlot1', True, Params.Rings,
-                              "First ring equipped. Note that up to five rings can be equipped to human NPCs."),
-        'equip_Accessory02': ('RingSlot2', True, Params.Rings,
-                              "Second ring equipped. Note that up to five rings can be equipped to human NPCs."),
-        'equip_Accessory03': ('RingSlot3', True, Params.Rings,
-                              "Third ring equipped. Note that up to five rings can be equipped to human NPCs."),
-        'equip_Accessory04': ('RingSlot4', True, Params.Rings,
-                              "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs."),
-        'equip_Accessory05': ('RingSlot5', True, Params.Rings,
-                              "Fifth ring equipped. Note that up to five rings can be equipped to human NPCs."),
-        'equip_Skill_01': ('SkillSlot1', False, int, ""),  # TODO: unused?
-        'equip_Skill_02': ('SkillSlot2', False, int, ""),
-        'equip_Skill_03': ('SkillSlot3', False, int, ""),
-        'equip_Spell_01': ('SpellSlot1', True, int, "First spell equipped."),  # TODO: points to Goods or Spells?
-        'equip_Spell_02': ('SpellSlot2', True, int, "Second spell equipped."),
-        'equip_Spell_03': ('SpellSlot3', True, int, "Third spell equipped."),
-        'equip_Spell_04': ('SpellSlot4', True, int, "Fourth spell equipped."),
-        'equip_Spell_05': ('SpellSlot5', True, int, "Fifth spell equipped."),
-        'equip_Spell_06': ('SpellSlot6', True, int, "Sixth spell equipped."),
-        'equip_Spell_07': ('SpellSlot7', True, int, "Seventh spell equipped."),
-        'item_01': ('GoodSlot1', True, int, "Good (item) equipped in slot 1."),
-        'item_02': ('GoodSlot2', True, int, "Good (item) equipped in slot 2."),
-        'item_03': ('GoodSlot3', True, int, "Good (item) equipped in slot 3."),
-        'item_04': ('GoodSlot4', True, int, "Good (item) equipped in slot 4."),
-        'item_05': ('GoodSlot5', True, int, "Good (item) equipped in slot 5."),
-        'item_06': ('GoodSlot6', True, int, "Good (item) equipped in slot 6."),
-        'item_07': ('GoodSlot7', True, int, "Good (item) equipped in slot 7."),
-        'item_08': ('GoodSlot8', True, int, "Good (item) equipped in slot 8."),
-        'item_09': ('GoodSlot9', True, int, "Good (item) equipped in slot 9."),
-        'item_10': ('GoodSlot10', True, int, "Good (item) equipped in slot 10."),
-        'npcPlayerFaceGenId': ('FaceID', True, Params.Faces,
-                               "Face parameter ID (NPCs only)."),
-        'npcPlayerThinkId': ('Default AI', True, Params.AI,
-                             "Default AI (NPCs only)."),
-        'baseHp': ('BaseMaxHP', True, int, "Base amount of maximum HP (excluding effects of vitality)."),
-        'baseMp': ('BaseMaxMP', False, int, "Base amount of maximum MP (unused in Dark Souls)."),
-        'baseSp': ('BaseMaxStamina', True, int, "Base maximum stamina (excluding effects of endurance)."),
-        'arrowNum': ('ArrowSlot1Count', True, int, "Count of arrows equipped in slot 1."),
-        'boltNum': ('BoltSlot1Count', True, int, "Count of arrows equipped in slot 2."),
-        'subArrowNum': ('ArrowSlot2Count', True, int, "Count of bolts equipped in slot 1."),
-        'subBoltNum': ('BoltSlot2Count', True, int, "Count of bolts equipped in slot 2."),
-        'QWC_sb': ('QWC_SB', False, int, "Unknown. Likely to be unused world tendency effect."),
-        'QWC_mw': ('QWC_MW', False, int, "Unknown. Likely to be unused world tendency effect."),
-        'QWC_cd': ('QWC_CD', False, int, "Unknown. Likely to be unused world tendency effect."),
-        'soulLv': ('SoulLevel', True, int,
-                   "Soul level, independent of actual stats. Determines amount of souls rewarded by human NPCs."),
-        'baseVit': ('Vitality', True, int, "Base vitality level. Determines maximum health."),
-        'baseWil': ('Attunement', True, int, "Base attunement level. Determines spell slots and casting speed."),
-        'baseEnd': ('Endurance', True, int, "Base endurance level. Determines maximum stamina and equip load."),
-        'baseStr': ('Strength', True, int, "Base strength level. Affects strength-based weapons and damage."),
-        'baseDex': ('Dexterity', True, int, "Base dexterity level. Affects skill-based weapons and damage."),
-        'baseMag': ('Intelligence', True, int, "Base intelligence level. Affects magic usability and effectiveness."),
-        'baseFai': ('Faith', True, int, "Base faith level. Affects miracle usability and effectiveness."),
-        'baseLuc': ('Luck', True, int, "Base luck level. Improves chances of rare item drops."),
-        'baseHeroPoint': ('Humanity', True, int, "Base 'soft' humanity."),
-        'baseDurability': ('Resistance', True, int, "Base resistance level. Improves resistances to status ailments."),
-        'itemNum_01': ('GoodSlot1Count', True, int, "Count of good equipped in slot 1."),
-        'itemNum_02': ('GoodSlot2Count', True, int, "Count of good equipped in slot 2."),
-        'itemNum_03': ('GoodSlot3Count', True, int, "Count of good equipped in slot 3."),
-        'itemNum_04': ('GoodSlot4Count', True, int, "Count of good equipped in slot 4."),
-        'itemNum_05': ('GoodSlot5Count', True, int, "Count of good equipped in slot 5."),
-        'itemNum_06': ('GoodSlot6Count', True, int, "Count of good equipped in slot 6."),
-        'itemNum_07': ('GoodSlot7Count', True, int, "Count of good equipped in slot 7."),
-        'itemNum_08': ('GoodSlot8Count', True, int, "Count of good equipped in slot 8."),
-        'itemNum_09': ('GoodSlot9Count', True, int, "Count of good equipped in slot 9."),
-        'itemNum_10': ('GoodSlot10Count', True, int, "Count of good equipped in slot 10."),
-        'bodyScaleHead': ('HeadScale', True, int, "Multiplier applied to head size."),
-        'bodyScaleBreast': ('ChestScale', True, int, "Multiplier applied to chest size."),
-        'bodyScaleAbdomen': ('AbdomenScale', True, int, "Multiplier applied to abdomen size."),
-        'bodyScaleArm': ('ArmScale', True, int, "Multiplier applied to arm size."),
-        'bodyScaleLeg': ('LegScale', True, int, "Multiplier applied to leg size."),
-        'gestureId0': ('Gesture1', True, int, "First equipped gesture."),
-        'gestureId1': ('Gesture2', True, int, "Second equipped gesture."),
-        'gestureId2': ('Gesture3', True, int, "Third equipped gesture."),
-        'gestureId3': ('Gesture4', True, int, "Fourth equipped gesture."),
-        'gestureId4': ('Gesture5', True, int, "Fifth equipped gesture."),
-        'gestureId5': ('Gesture6', True, int, "Sixth equipped gesture."),
-        'gestureId6': ('Gesture7', True, int, "Seventh equipped gesture."),
-        'npcPlayerType': ('NPCType', True, NPC_TYPE, "Type of human NPC."),
-        'npcPlayerDrawType': ('DrawType', True, NPC_DRAW_TYPE, "Draw type of human NPC."),
-        'npcPlayerSex': ('Sex', True, CHARACTER_INIT_SEX, "Character sex."),
-        'vowType:4': ('Covenant', True, CHRINIT_VOW_TYPE, "Character covenant."),
-        'pad:4': ('Pad0', False, '<Pad:4>', "Null padding."),
-        'pad0[10]': ('Pad1', False, '<Pad:10>', "Null padding."),
+        'baseRec_mp': (
+            'BaseRecMP', False, int, "Unknown."),
+        'baseRec_sp': (
+            'BaseRecSP', False, int, "Unknown."),
+        'red_Falldam': (
+            'RedFallDamage', False, int, "Unknown."),
+        'soul': (
+            'SoulCount', True, int, "Starting soul count of character."),
+        'equip_Wep_Right': (
+            'RightHandWeapon1', True, Params.Weapons,
+            "First (default) weapon/shield equipped in right hand."),
+        'equip_Subwep_Right': (
+            'RightHandWeapon2', True, Params.Weapons,
+            "Second weapon/shield equipped in right hand."),
+        'equip_Wep_Left': (
+            'LeftHandWeapon1', True, Params.Weapons,
+            "First (default) weapon/shield equipped in left hand."),
+        'equip_Subwep_Left': (
+            'LeftHandWeapon2', True, Params.Weapons,
+            "Second weapon/shield equipped in left hand."),
+        'equip_Helm': (
+            'HeadArmor', True, Params.Armor, "Armor equipped to head."),
+        'equip_Armer': (
+            'BodyArmor', True, Params.Armor, "Armor equipped to body."),
+        'equip_Gaunt': (
+            'HandsArmor', True, Params.Armor, "Armor equipped to hands."),
+        'equip_Leg': (
+            'LegsArmor', True, Params.Armor, "Armor equipped to legs."),
+        'equip_Arrow': (
+            'ArrowSlot1', True, Params.Weapons, "Arrows equipped in slot 1."),  # TODO: Show arrows only?
+        'equip_Bolt': (
+            'BoltSlot1', True, Params.Weapons, "Bolts equipped in slot 1."),
+        'equip_SubArrow': (
+            'ArrowSlot2', True, Params.Weapons, "Arrows equipped in slot 2."),
+        'equip_SubBolt': (
+            'BoltSlot2', True, Params.Weapons, "Bolts equipped in slot 2."),
+        'equip_Accessory01': (
+            'RingSlot1', True, Params.Rings,
+            "First ring equipped. Note that up to five rings can be equipped to human NPCs."),
+        'equip_Accessory02': (
+            'RingSlot2', True, Params.Rings,
+            "Second ring equipped. Note that up to five rings can be equipped to human NPCs."),
+        'equip_Accessory03': (
+            'RingSlot3', True, Params.Rings,
+            "Third ring equipped. Note that up to five rings can be equipped to human NPCs."),
+        'equip_Accessory04': (
+            'RingSlot4', True, Params.Rings,
+            "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs."),
+        'equip_Accessory05': (
+            'RingSlot5', True, Params.Rings,
+            "Fifth ring equipped. Note that up to five rings can be equipped to human NPCs."),
+        'equip_Skill_01': (
+            'SkillSlot1', False, int, ""),  # TODO: unused?
+        'equip_Skill_02': (
+            'SkillSlot2', False, int, ""),
+        'equip_Skill_03': (
+            'SkillSlot3', False, int, ""),
+        'equip_Spell_01': (
+            'SpellSlot1', True, int, "First spell equipped."),  # TODO: points to Goods or Spells?
+        'equip_Spell_02': (
+            'SpellSlot2', True, int, "Second spell equipped."),
+        'equip_Spell_03': (
+            'SpellSlot3', True, int, "Third spell equipped."),
+        'equip_Spell_04': (
+            'SpellSlot4', True, int, "Fourth spell equipped."),
+        'equip_Spell_05': (
+            'SpellSlot5', True, int, "Fifth spell equipped."),
+        'equip_Spell_06': (
+            'SpellSlot6', True, int, "Sixth spell equipped."),
+        'equip_Spell_07': (
+            'SpellSlot7', True, int, "Seventh spell equipped."),
+        'item_01': (
+            'GoodSlot1', True, int, "Good (item) equipped in slot 1."),
+        'item_02': (
+            'GoodSlot2', True, int, "Good (item) equipped in slot 2."),
+        'item_03': (
+            'GoodSlot3', True, int, "Good (item) equipped in slot 3."),
+        'item_04': (
+            'GoodSlot4', True, int, "Good (item) equipped in slot 4."),
+        'item_05': (
+            'GoodSlot5', True, int, "Good (item) equipped in slot 5."),
+        'item_06': (
+            'GoodSlot6', True, int, "Good (item) equipped in slot 6."),
+        'item_07': (
+            'GoodSlot7', True, int, "Good (item) equipped in slot 7."),
+        'item_08': (
+            'GoodSlot8', True, int, "Good (item) equipped in slot 8."),
+        'item_09': (
+            'GoodSlot9', True, int, "Good (item) equipped in slot 9."),
+        'item_10': (
+            'GoodSlot10', True, int, "Good (item) equipped in slot 10."),
+        'npcPlayerFaceGenId': (
+            'FaceID', True, Params.Faces,
+            "Face parameter ID (NPCs only)."),
+        'npcPlayerThinkId': (
+            'Default AI', True, Params.AI,
+            "Default AI (NPCs only)."),
+        'baseHp': (
+            'BaseMaxHP', True, int, "Base amount of maximum HP (excluding effects of vitality)."),
+        'baseMp': (
+            'BaseMaxMP', False, int, "Base amount of maximum MP (unused in Dark Souls)."),
+        'baseSp': (
+            'BaseMaxStamina', True, int, "Base maximum stamina (excluding effects of endurance)."),
+        'arrowNum': (
+            'ArrowSlot1Count', True, int, "Count of arrows equipped in slot 1."),
+        'boltNum': (
+            'BoltSlot1Count', True, int, "Count of arrows equipped in slot 2."),
+        'subArrowNum': (
+            'ArrowSlot2Count', True, int, "Count of bolts equipped in slot 1."),
+        'subBoltNum': (
+            'BoltSlot2Count', True, int, "Count of bolts equipped in slot 2."),
+        'QWC_sb': (
+            'QWC_SB', False, int, "Unknown. Likely to be unused world tendency effect."),
+        'QWC_mw': (
+            'QWC_MW', False, int, "Unknown. Likely to be unused world tendency effect."),
+        'QWC_cd': (
+            'QWC_CD', False, int, "Unknown. Likely to be unused world tendency effect."),
+        'soulLv': (
+            'SoulLevel', True, int,
+            "Soul level, independent of actual stats. Determines amount of souls rewarded by human NPCs."),
+        'baseVit': (
+            'Vitality', True, int, "Base vitality level. Determines maximum health."),
+        'baseWil': (
+            'Attunement', True, int, "Base attunement level. Determines spell slots and casting speed."),
+        'baseEnd': (
+            'Endurance', True, int, "Base endurance level. Determines maximum stamina and equip load."),
+        'baseStr': (
+            'Strength', True, int, "Base strength level. Affects strength-based weapons and damage."),
+        'baseDex': (
+            'Dexterity', True, int, "Base dexterity level. Affects skill-based weapons and damage."),
+        'baseMag': (
+            'Intelligence', True, int, "Base intelligence level. Affects magic usability and effectiveness."),
+        'baseFai': (
+            'Faith', True, int, "Base faith level. Affects miracle usability and effectiveness."),
+        'baseLuc': (
+            'Luck', True, int, "Base luck level. Improves chances of rare item drops."),
+        'baseHeroPoint': (
+            'Humanity', True, int, "Base 'soft' humanity."),
+        'baseDurability': (
+            'Resistance', True, int, "Base resistance level. Improves resistances to status ailments."),
+        'itemNum_01': (
+            'GoodSlot1Count', True, int, "Count of good equipped in slot 1."),
+        'itemNum_02': (
+            'GoodSlot2Count', True, int, "Count of good equipped in slot 2."),
+        'itemNum_03': (
+            'GoodSlot3Count', True, int, "Count of good equipped in slot 3."),
+        'itemNum_04': (
+            'GoodSlot4Count', True, int, "Count of good equipped in slot 4."),
+        'itemNum_05': (
+            'GoodSlot5Count', True, int, "Count of good equipped in slot 5."),
+        'itemNum_06': (
+            'GoodSlot6Count', True, int, "Count of good equipped in slot 6."),
+        'itemNum_07': (
+            'GoodSlot7Count', True, int, "Count of good equipped in slot 7."),
+        'itemNum_08': (
+            'GoodSlot8Count', True, int, "Count of good equipped in slot 8."),
+        'itemNum_09': (
+            'GoodSlot9Count', True, int, "Count of good equipped in slot 9."),
+        'itemNum_10': (
+            'GoodSlot10Count', True, int, "Count of good equipped in slot 10."),
+        'bodyScaleHead': (
+            'HeadScale', True, int, "Multiplier applied to head size."),
+        'bodyScaleBreast': (
+            'ChestScale', True, int, "Multiplier applied to chest size."),
+        'bodyScaleAbdomen': (
+            'AbdomenScale', True, int, "Multiplier applied to abdomen size."),
+        'bodyScaleArm': (
+            'ArmScale', True, int, "Multiplier applied to arm size."),
+        'bodyScaleLeg': (
+            'LegScale', True, int, "Multiplier applied to leg size."),
+        'gestureId0': (
+            'Gesture1', True, int, "First equipped gesture."),
+        'gestureId1': (
+            'Gesture2', True, int, "Second equipped gesture."),
+        'gestureId2': (
+            'Gesture3', True, int, "Third equipped gesture."),
+        'gestureId3': (
+            'Gesture4', True, int, "Fourth equipped gesture."),
+        'gestureId4': (
+            'Gesture5', True, int, "Fifth equipped gesture."),
+        'gestureId5': (
+            'Gesture6', True, int, "Sixth equipped gesture."),
+        'gestureId6': (
+            'Gesture7', True, int, "Seventh equipped gesture."),
+        'npcPlayerType': (
+            'NPCType', True, NPC_TYPE, "Type of human NPC."),
+        'npcPlayerDrawType': (
+            'DrawType', True, NPC_DRAW_TYPE, "Draw type of human NPC."),
+        'npcPlayerSex': (
+            'Sex', True, CHARACTER_INIT_SEX, "Character sex."),
+        'vowType:4': (
+            'Covenant', True, CHRINIT_VOW_TYPE, "Character covenant."),
+        'pad:4': (
+            'Pad0', False, '<Pad:4>', "Null padding."),
+        'pad0[10]': (
+            'Pad1', False, '<Pad:10>', "Null padding."),
     },
     'TALK_PARAM_ST': {
         'msgId': (
@@ -2115,13 +2218,17 @@ GAME_PARAM_INFO = {
             'HitByPiercingBullets', True, bool,
             "If True, the object can be damaged by Bullets with target-piercing enabled."),
         'isChrHit:1': (
-            '', True, None, ""),
+            'CharacterCollision', True, bool,
+            "If False, characters will pass through the object (e.g. branches)."),
         'isAttackBacklash:1': (
-            '', True, None, ""),
+            'DeflectsAttacks', True, bool,
+            "If True, attacks will bounce off the object as though it were a wall."),
         'isDisableBreakForFirstAppear:1': (
-            '', True, None, ""),
+            'CannotSpawnBroken', True, bool,
+            "If True, the object cannot be destroyed when the player first spawns."),
         'isLadder:1': (
-            '', True, None, ""),
+            'IsLadder', True, bool,
+            "Object is a ladder."),
         'isAnimPauseOnRemoPlay:1': (
             'StopAnimationDuringCutscenes', True, bool,
             "If True, object animation will not play in cutscenes."),
@@ -2791,7 +2898,102 @@ GAME_PARAM_INFO = {
             "Null padding."),
     },
     'MAGIC_PARAM_ST': {},
-    'THROW_INFO_BANK': {},
+    'THROW_INFO_BANK': {
+        'AtkChrId': (
+            'AttackingCharacterModel', True, Model,
+            "Model ID of attacking character."),
+        'DefChrId': (
+            'DefendingCharacterModel', True, Model,
+            "Model ID of defending character."),
+        'Dist': (
+            'MaxDistance', True, float,
+            "Maximum distance at which throw can be triggered."),
+        'DiffAngMin': (
+            'MinDifferenceInFacingAngle', True, float,
+            "Minimum angular difference between attacker's facing direction and defender's facing direction."),
+        'DiffAngMax': (
+            'MaxDifferenceInFacingAngle', True, float,
+            "Maximum angular difference between attacker's facing direction and defender's facing direction."),
+        'upperYRange': (
+            'MaxDistanceAbove', True, float,
+            "Maximum distance that defender can be above attacker."),
+        'lowerYRange': (
+            'MaxDistanceBelow', True, float,
+            "Maximum distance that defender can be below attacker."),
+        'diffAngMyToDef': (
+            'MaxAngleToDefender', True, None,
+            "Maximum angular difference between attacker's direction and the direction of the defender."),
+        'throwTypeId': (
+            'ThrowID', True, int,
+            "Throw ID that should be specified in Attacks to use this throw."),
+        'atkAnimId': (
+            'AttackerAnimation', True, Animation,
+            "Animation played by attacker during throw."),
+        'defAnimId': (
+            'DefenderAnimation', True, Animation,
+            "Animation played by defender during throw."),
+        'escHp': (
+            'MinHPPercentageForEscape', True, int,
+            "Minimum HP percentage required to escape the throw early by mashing buttons. (Not sure if 0 prevents any "
+            "escape, or if escapes are disabled by another parameter like "),
+        'selfEscCycleTime': (
+            'EscapeCycleTime', True, int,
+            "Time of escape cycle, in milliseconds. Not sure exactly what it does. Set to 100 milliseconds for throws "
+            "that can be escaped, and zero otherwise."),
+        'sphereCastRadiusRateTop': (
+            'SphereCastUpperRadiusRatio', True, int,
+            "Determines size of upper hemisphere of spherecast. I believe this is a percentage relative to the model "
+            "size, so a value of 80 will send out a sphere with a radius that is 0.8 times the attacker's model size."),
+        'sphereCastRadiusRateLow': (
+            'SphereCastLowerRadiusRatio', True, int,
+            "Determines size of lower hemisphere of spherecast. I believe this is a percentage relative to the model "
+            "size, so a value of 80 will send out a sphere with a radius that is 0.8 times the attacker's model size."),
+        'PadType': (
+            'ButtonMashType', True, THROW_PAD_TYPE,
+            "Determines buttons that can be mashed to escape. Enumeration is unknown, but it is set to 3 for the "
+            "Centipede Demon grab, Male Ghost grab, and Dark Hand grab, and 1 for every other throw."),
+        'AtkEnableState': (
+            'AttackEnabled', False, THROW_ENABLE_STATE,
+            "Internal description says 'Set the throwable throwable state type' (?). Set to 1 for all player backstabs "
+            "and ripostes, and 0 otherwise (including player plunging attacks and all enemy throws)."),
+        'atkSorbDmyId': (
+            'SnapToAttackerModelPoint', True, int,
+            "Model point ID on attacker that defender will be snapped to. If this is zero, 'Snap To Defender Model "
+            "Point' should be non-zero, and vice versa."),
+        'defSorbDmyId': (
+            'SnapToDefenderModelPoint', True, int,
+            "Model point ID on defender that attacker will be snapped to. If this is zero, 'Snap To Attacker Model "
+            "Point' should be non-zero, and vice versa."),
+        'throwType': (
+            'ThrowType', True, THROW_TYPE,
+            "Type of throw. Not sure what uses this, but it could affect various things."),
+        'selfEscCycleCnt': (
+            'EscapeCycleCount', True, int,
+            "Internal description says 'number of self-throwing cycles'. Always set to 1 when EscapeCycleTime is set "
+            "to 100 (and MinHPPercentageForEscape is almost always 25). Not sure how it determines *when* you can "
+            "escape the throw."),
+        'dmyHasChrDirType': (
+            'ModelPointCharacterDirectionType', False, THROW_DMY_CHR_DIR_TYPE,
+            "'Direction of model point possessed character when thrown'. Set to 1 for the Armored Tusk backstab, 255 "
+            "for the Iron Golem and Gaping Dragon grabs, and 0 otherwise."),
+        'isTurnAtker:1': (
+            'AttackerTurns', True, bool,
+            "Attacker will turn when throw begins (presumably before model point snapping occurs)."),
+        'isSkipWepCate:1': (
+            'SkipAttackerWeaponCategoryCheck', True, bool,
+            "If True, the weapon category check for the attacker will be skipped. Enabled only for Dark Hand drain."),
+        'isSkipSphereCast:1': (
+            'SkipSphereCast', True, bool,
+            "If True, the sphere cast check will be skipped. Usually False, but True for the coffin stab, Armored "
+            "Tusk backstab, and a few large enemy grabs. (Presumably, if False, the throw trigger relies on distance "
+            "and character angles only and is generally easier to trigger.)"),
+        'pad0:5': (
+            'Pad1', False, '<Pad:5>',
+            "Null padding."),
+        'pad1[4]': (
+            'Pad2', False, '<Pad:4>',
+            "Null padding."),
+    },
     'EQUIP_MTRL_SET_PARAM_ST': {},
     'EQUIP_PARAM_WEAPON_ST': {},
     'REINFORCE_PARAM_WEAPON_ST': {},

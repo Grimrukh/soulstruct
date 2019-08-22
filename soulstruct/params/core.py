@@ -339,9 +339,14 @@ class ParamTable(object):
         # TODO: hack job. get nice field names and structure from fields.py.
         return self.entries[list(self.entries)[0]].field_names
 
-    @property
-    def field_info(self):
-        return GAME_PARAM_INFO.get(self.param_name, None)
+    def get_field_info(self, param_entry: ParamEntry, field_name: str):
+        param_info = GAME_PARAM_INFO.get(self.param_name, None)
+        if param_info is None:
+            raise KeyError(f"No field info available for param table {self.param_name}.")
+        field_info = param_info.get(field_name, (field_name, True, None, "DOC-TODO"))
+        if callable(field_info):
+            field_info = field_info(param_entry)
+        return field_info
 
     # TODO: __repr__ method returns basic information about ParamTable (but not entire entry list).
 

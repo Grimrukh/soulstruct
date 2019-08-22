@@ -25,6 +25,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
     ENTRY_RANGE_SIZE = 50
     FIELD_BOX_WIDTH = 500
     FIELD_ROW_COUNT = 150  # TODO: set to max field count
+    FIELD_NAME_FG = '#DDE'
 
     def __init__(self, project: SoulstructProject, master=None, toplevel=False):
         self.Params = project.Params
@@ -37,7 +38,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.entry_range_start = 0
 
         self.param_field_boxes = {}
-        self.field_name_selected = ''
+        self.active_field_name = ''
         self.field_index_selected = -1
         self.e_param_field_edit = None
         self.show_hidden_fields = self.BooleanVar()
@@ -86,7 +87,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
                     self.show_hidden_fields = self.Checkbutton(
                         label='Show hidden fields', initial_state=False,
-                        command=lambda: self.refresh_entry_fields(True), pady=20).var
+                        command=lambda: self.refresh_field_values(True), pady=20).var
 
                 with self.set_master(auto_columns=0):
 
@@ -132,7 +133,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                     #     padx=10, pady=20)
 
         self.refresh_entry_rows()
-        self.refresh_entry_fields()
+        self.refresh_field_values()
         self.bind_all('<Control-z>', self.undo)
         self.bind_all('<Control-y>', self.redo)
 
@@ -186,7 +187,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                 label['bg'] = self.STYLE_DEFAULTS['bg']
 
         self.refresh_entry_rows()
-        self.refresh_entry_fields()
+        self.refresh_field_values()
         self.update_idletasks()
         self.entry_canvas.yview_moveto(0)
         self._refresh_buttons()
@@ -221,7 +222,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         field_name_box = self.Frame(row=row, column=0, bg=row_and_name_bg, sticky='w')
         self._bind_field_row_events(field_name_box, row)
 
-        field_name_label = self.Label(field_name_box, text='', fg='#dde', bg=row_and_name_bg, anchor='w')
+        field_name_label = self.Label(field_name_box, text='', fg=self.FIELD_NAME_FG, bg=row_and_name_bg, anchor='w')
         self._bind_field_row_events(field_name_label, row)
 
         value_box = self.Frame(width=200, row=row, column=1, bg=value_box_bg, sticky='ew')
@@ -312,7 +313,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             if row_dict['param_id'] == selected_param_id and set_focus_to_name:
                 row_dict['name_label'].focus_set()
 
-        self.refresh_entry_fields()
+        self.refresh_field_values()
 
         if reset_scrollbar:
             self.update_idletasks()
@@ -324,7 +325,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         row_and_name_bg = value_box_bg = value_label_bg = 0
         if field_value is not None and field_value == '':
             base_bg += 200
-        if field_name is not None and field_name == self.field_name_selected:
+        if field_name is not None and field_name == self.active_field_name:
             base_bg += 123
         if row % 2:
             base_bg += 111
@@ -341,7 +342,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
         return context_menu
 
-    def refresh_entry_fields(self, scroll_to_top=False):
+    def refresh_field_values(self, scroll_to_top=False):
         self.cancel_param_name_edit()
         self.cancel_field_value_edit()
 
@@ -352,12 +353,14 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
         row = 0
         for field_name in field_names:
+
+            # TODO: print utility
+            # print(f"        {repr(field_name)}: (\n"
+            #       f"            '', True, None,\n"
+            #       f"            \"\"),")
+
             row_dict = self.field_row_boxes[row]
-            field_info = self.active_category_param_table.field_info.get(
-                field_name, (field_name, True, None, "DOC-TODO"))
-            if callable(field_info):
-                field_info = field_info(self.active_param_entry)
-            field_nickname, is_main, field_type, field_doc = field_info  # TODO: use type and doc
+            field_nickname, is_main, field_type, field_doc = self.get_field_info(field_name)  # TODO: use type and doc
             if self.should_hide_field(is_main, field_type):
                 continue  # Skip hidden field.
 
@@ -467,15 +470,15 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
         field_name_selected = self.field_row_boxes[field_index]['field_name']
 
-        if self.field_name_selected != '' and field_name_selected == self.field_name_selected:
+        if self.active_field_name != '' and field_name_selected == self.active_field_name:
             if edit_if_already_selected:
                 return self.start_field_value_edit(field_index)
             return
         else:
-            old_selected_field = self.field_name_selected
+            old_selected_field = self.active_field_name
             self.cancel_field_value_edit()
 
-        self.field_name_selected = field_name_selected
+        self.active_field_name = field_name_selected
         self.field_index_selected = field_index
         for row, row_dict in enumerate(self.field_row_boxes):
             field_name = row_dict['field_name']
@@ -631,7 +634,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         if self.field_value_edit_active:
             new_value_text = self.e_param_field_edit.var.get()
             # TODO: cast string to appropriate type.
-            field_name = self.field_name_selected
+            field_name = self.active_field_name
             self._change_field_value(self.active_category, self.param_id_selected, field_name, new_value_text)
             self.field_row_boxes[field_index]['value_label'].var.set(new_value_text)
             self.cancel_field_value_edit()
@@ -667,3 +670,6 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         if self.param_id_selected == -1:
             return None
         return self.active_category_param_table[self.param_id_selected]
+
+    def get_field_info(self, field_name) -> tuple:
+        return self.active_category_param_table.get_field_info(self.active_param_entry, field_name)
