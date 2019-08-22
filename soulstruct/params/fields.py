@@ -9,7 +9,6 @@ ATK_PARAM_HIT_SOURCE = int
 SP_EFFECT_SPCATEGORY = int
 
 ATK_PARAM_BOOL = bool
-DURABILITY_DIVERGENCE_CATEGORY = bool
 EQUIP_BOOL = bool
 MAGIC_BOOL = bool
 NPC_BOOL = bool
@@ -34,6 +33,7 @@ Texture = '<Texture>'
 class Params:
     AI = '<Params:AI>'
     Armor = '<Params:Armor>'
+    ArmorUpgrades = '<Params:ArmorUpgrades>'
     Attacks = '<Params:Attacks>'
     Behaviors = '<Params:Behaviors>'
     Bosses = '<Params:Bosses>'
@@ -49,7 +49,9 @@ class Params:
     Spells = '<Params:Spells>'
     Terrains = '<Params:Terrains>'
     SpecialEffectVisuals = '<Params:SpecialEffectVisuals>'
+    UpgradeMaterials = '<Params:UpgradeMaterials>'
     Weapons = '<Params:Weapons>'
+    WeaponUpgrades = '<Params:WeaponUpgrades>'
 
 
 class Sound:
@@ -62,7 +64,7 @@ class Text:
     NPCNames = '<Text:NPCNames>'
 
 
-def behavior_ref_id(behavior_param_entry):
+def _behavior_ref_id(behavior_param_entry):
     if behavior_param_entry['refType'] == BEHAVIOR_REF_TYPE.Attack:
         return ('AttackID', True, Params.Attacks,
                 "Attack ID triggered by behavior.")
@@ -74,7 +76,7 @@ def behavior_ref_id(behavior_param_entry):
                 "Could not determine reference ID type (usually Attack or Bullet).")
 
 
-def obj_act_success_condition(condition_field_name, obj_act_param_entry):
+def _obj_act_success_condition(condition_field_name, obj_act_param_entry):
     if obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasGood:
         return ('RequiredGood', True, Params.Goods,
                 "First condition: object action will succeed if user has this good in their inventory (does not "
@@ -87,7 +89,7 @@ def obj_act_success_condition(condition_field_name, obj_act_param_entry):
                 "Could not determine success condition ID type (usually HasGood or HasSpecialEffect).")
 
 
-def item_lot_item_id(item_lot_slot: int, item_lot_param_entry):
+def _item_lot_item_id(item_lot_slot: int, item_lot_param_entry):
     item_type = item_lot_param_entry[f'lotItemCategory0{item_lot_slot}']
     if item_type == ITEMLOT_ITEMCATEGORY.Weapon:
         return (f'ItemSlot{item_lot_slot}', True, Params.Weapons,
@@ -106,7 +108,7 @@ def item_lot_item_id(item_lot_slot: int, item_lot_param_entry):
                 f"Item slot {item_lot_slot} (unknown item type {item_type}).")
 
 
-def shop_item_id(shops_param_entry):
+def _shop_item_id(shops_param_entry):
     item_type = shops_param_entry[f'equipType']
     if item_type == SHOP_LINEUP_EQUIPTYPE.Weapon:
         return (f'Weapon', True, Params.Weapons,
@@ -139,9 +141,9 @@ GAME_PARAM_NICKNAMES = {
     'LockCamParam': 'Cameras',
     # 'default_EnemyBehaviorBank': 'DefaultEnemyBehavior',
     # 'default_AIStandardInfoBank': 'DefaultAIStandardInfoBank',
-    'CharaInitParam': 'Humans',
-    'AtkParam_Pc': 'HumanAttacks',
-    'BehaviorParam_PC': 'HumanBehaviors',
+    'CharaInitParam': 'Players',
+    'AtkParam_Pc': 'PlayerAttacks',
+    'BehaviorParam_PC': 'PlayerBehaviors',
     'TalkParam': 'Dialogue',
     'FaceGenParam': 'Faces',
     'EquipParamGoods': 'Goods',
@@ -149,9 +151,9 @@ GAME_PARAM_NICKNAMES = {
     'KnockbackParam': 'Knockback',
     'MenuColorTableParam': 'MenuColors',
     'MoveParam': 'Movement',
-    'NpcParam': 'NonHumans',
-    'AtkParam_Npc': 'NonHumanAttacks',
-    'BehaviorParam': 'NonHumanBehaviors',
+    'NpcParam': 'NonPlayers',
+    'AtkParam_Npc': 'NonPlayerAttacks',
+    'BehaviorParam': 'NonPlayerBehaviors',
     'EquipParamAccessory': 'Rings',
     'ObjectParam': 'Objects',
     'ObjActParam': 'ObjectActivations',
@@ -165,7 +167,7 @@ GAME_PARAM_NICKNAMES = {
     'HitMtrlParam': 'Terrains',
     'ThrowParam': 'Throws',
     'EquipMtrlSetParam': 'UpgradeMaterials',
-    'SpEffectVfxParam': 'VisualEffects',
+    'SpEffectVfxParam': 'SpecialEffectVisuals',
     'EquipParamWeapon': 'Weapons',
     'ReinforceParamWeapon': 'WeaponUpgrades',
 
@@ -177,7 +179,7 @@ GAME_PARAM_INFO = {
 
     'NPC_THINK_PARAM_ST': {
         'logicId': (
-            'LogicID', True, AI.Logic,
+            'Logic ID', True, AI.Logic,
             "ID of logic (non-battle) Lua script."),
         'battleGoalID': (
             'BattleID', True, AI.Battle,
@@ -195,7 +197,7 @@ GAME_PARAM_INFO = {
             'OutOfRangeDistance', True, None,
             "Distance beyond which the NPC will not attempt to fight."),
         'BackHomeLife_OnHitEneWal': (
-            'RetreatTimeOnHitEnemyWal', False, None,
+            'RetreatTimeAfterHittingEnemyWall', False, None,
             "Retreat goal time when touching an 'enemy wall' that blocks the NPC's path. "
             "(Not clear what an 'enemy wall' means. Almost always set to 5 (rarely 6)."),
         'goalID_ToCaution': (
@@ -389,7 +391,7 @@ GAME_PARAM_INFO = {
             "DOC-TODO"),
         'fixPrice': (
             'RepairCost', True, int,
-            "Amount of souls required to repair weapon fully. Actual repair cost is this multiplied by current "
+            "Amount of souls required to repair armor fully. Actual repair cost is this multiplied by current "
             "durability over max durability."),
         'basicPrice': (
             'BasicCost', False, int,
@@ -411,7 +413,7 @@ GAME_PARAM_INFO = {
             'WearerSpecialEffect3', True, Params.SpecialEffects,
             "Special effect granted to wearer (third of three)."),
         'materialSetId': (
-            'UpgradeMaterialID', True, '<Param:UpgradeMaterials>',
+            'UpgradeMaterialID', True, Params.UpgradeMaterials,
             "Upgrade material set for reinforcement."),
         'partsDamageRate': (
             'SiteDamageMultiplier', True, None,
@@ -427,63 +429,63 @@ GAME_PARAM_INFO = {
             "Origin armor for level 0 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro1': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin1', True, None,
             "Origin armor for level 1 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro2': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin2', True, None,
             "Origin armor for level 2 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro3': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin3', True, None,
             "Origin armor for level 3 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro4': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin4', True, None,
             "Origin armor for level 4 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro5': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin5', True, None,
             "Origin armor for level 5 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro6': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin6', True, None,
             "Origin armor for level 6 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro7': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin7', True, None,
             "Origin armor for level 7 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro8': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin8', True, None,
             "Origin armor for level 8 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro9': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin9', True, None,
             "Origin armor for level 9 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro10': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin10', True, None,
             "Origin armor for level 10 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro11': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin11', True, None,
             "Origin armor for level 11 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro12': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin12', True, None,
             "Origin armor for level 12 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro13': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin13', True, None,
             "Origin armor for level 13 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro14': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin14', True, None,
             "Origin armor for level 14 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro15': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin15', True, None,
             "Origin armor for level 15 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'faceScaleM_ScaleX': (
@@ -778,16 +780,16 @@ GAME_PARAM_INFO = {
             'DisableMultiplayerShare', False, None,
             "If True, this armor cannot be given to other players by dropping it. Always False in vanilla."),
         'simpleModelForDlc:1': (
-            'SimpleDLCModelExists', False, None,
+            'SimpleDLCModelExists', False, bool,
             "Unknown; always set to False."),
         'pad_0[1]': (
-            'Pad0', False, None,
+            'Pad0', False, '<Pad:1>',
             "Null padding."),
         'oldSortId': (
-            'OldSortIndex', False, None,
+            'OldSortIndex', False, int,
             "Sorting index for an obsolete build of the game. No effect."),
         'pad_1[6]': (
-            'Pad1', False, None,
+            'Pad1', False, '<Pad:6>',
             "Null padding."),
     },
     'REINFORCE_PARAM_PROTECTOR_ST': {
@@ -882,16 +884,16 @@ GAME_PARAM_INFO = {
         'atkId_Bullet': (
             'BulletAttack', True, '<Params:Attacks>',  # TODO: Ambiguous attack parameter.
             "Attack parameters for bullet impact. Only certain fields in the attack parameter are used. "
-            "Could be directed to either HumanAttacks table or NonHumanAttacks table, depending on "
+            "Could be directed to either PlayerAttacks table or NonPlayerAttacks table, depending on "
             "the bullet's owner. Set to 0 if bullet has no attack data (no damage)."),
         'sfxId_Bullet': (
-            'ProjectileFX', True, '<Params:VisualEffects>',
+            'ProjectileFX', True, '<Params:SpecialEffectVisuals>',
             "Visual effect ID for bullet projectile."),
         'sfxId_Hit': (
-            'ImpactFX', True, '<Params:VisualEffects>',
+            'ImpactFX', True, '<Params:SpecialEffectVisuals>',
             "Visual effect ID for bullet impact."),
         'sfxId_Flick': (
-            'FlickFX', True, '<Params:VisualEffects>',
+            'FlickFX', True, '<Params:SpecialEffectVisuals>',
             "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and "
             "throwing knives."),
         'life': (
@@ -1106,7 +1108,258 @@ GAME_PARAM_INFO = {
 
     },
     'LOCK_CAM_PARAM_ST': {},
-    'ATK_PARAM_ST': {},
+    'ATK_PARAM_ST': {
+        'hit0_Radius': (
+            'Hitbox0Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 0)."),
+        'hit1_Radius': (
+            'Hitbox1Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 1)."),
+        'hit2_Radius': (
+            'Hitbox2Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 2)."),
+        'hit3_Radius': (
+            'Hitbox3Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 3)."),
+        'knockbackDist': (
+            'KnockbackDistance', True, float,
+            "Knockback distance of attack."),
+        'hitStopTime': (
+            'HitStopTime', True, float,
+            "Unclear. This isn't hitbox duration, which is determined by the duration of the triggering TAE event. It "
+            "may be the duration of the 'hit' flag on the target. Always set to 0, 0.08. or 0.11."),
+        'spEffectId0': (
+            'SpecialEffectOnHit0', True, Params.SpecialEffects,
+            "Special effect applied to target on hit (slot 0)."),
+        'spEffectId1': (
+            'SpecialEffectOnHit1', True, Params.SpecialEffects,
+            "Special effect applied to target on hit (slot 1)."),
+        'spEffectId2': (
+            'SpecialEffectOnHit2', True, Params.SpecialEffects,
+            "Special effect applied to target on hit (slot 2)."),
+        'spEffectId3': (
+            'SpecialEffectOnHit3', True, Params.SpecialEffects,
+            "Special effect applied to target on hit (slot 3)."),
+        'spEffectId4': (
+            'SpecialEffectOnHit4', True, Params.SpecialEffects,
+            "Special effect applied to target on hit (slot 4)."),
+        'hit0_DmyPoly1': (
+            'Hitbox0StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 0). If Hitbox0EndModelPoint is not -1, the hitbox will be a capsule "
+            "with hemispherical caps positioned at these origins (with a joining cylinder)."),
+        'hit1_DmyPoly1': (
+            'Hitbox1StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 1). If Hitbox1EndModelPoint is not -1, the hitbox will be a capsule "
+            "with hemispherical caps positioned at these origins (with a joining cylinder)."),
+        'hit2_DmyPoly1': (
+            'Hitbox2StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 2). If Hitbox2EndModelPoint is not -1, the hitbox will be a capsule "
+            "with hemispherical caps positioned at these origins (with a joining cylinder)."),
+        'hit3_DmyPoly1': (
+            'Hitbox3StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 3). If Hitbox3EndModelPoint is not -1, the hitbox will be a capsule "
+            "with hemispherical caps positioned at these origins (with a joining cylinder)."),
+        'hit0_DmyPoly2': (
+            'Hitbox0EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 0). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox0StartModelPoint."),
+        'hit1_DmyPoly2': (
+            'Hitbox1EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 1). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox1StartModelPoint."),
+        'hit2_DmyPoly2': (
+            'Hitbox2EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 2). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox2StartModelPoint."),
+        'hit3_DmyPoly2': (
+            'Hitbox3EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 3). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox3StartModelPoint."),
+        'blowingCorrection': (
+            'BlowOffCorrection', False, int,
+            "Unknown. Never used."),
+        'atkPhysCorrection': (
+            'PhysicalAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character attack power to "
+            "calculate physical attack damage."),
+        'atkMagCorrection': (
+            'MagicAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character attack power to "
+            "calculate magic attack damage."),
+        'atkFireCorrection': (
+            'FireAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character attack power to "
+            "calculate fire attack damage."),
+        'atkThunCorrection': (
+            'LightningAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character attack power to "
+            "calculate lightning attack damage."),
+        'atkStamCorrection': (
+            'PhysicalAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character attack power to "
+            "calculate physical attack damage."),
+        'guardAtkRateCorrection': (
+            'GuardAttackPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character guard attack power. "
+            "Throw attacks have a value of 9900, which must essentially ignore blocking completely."),
+        'guardBreakCorrection': (
+            'GuardBreakPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to character guard breaking power. "
+            "Not sure what that is, exactly, but this is set to 0 for parries and 100 for all other attacks."),
+        'atkThrowEscapeCorrection': (
+            'AttackDuringThrowPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to weapon attacks during throws. "
+            "Generally set to 100, except for throw attacks themselves."),
+        'atkSuperArmorCorrection': (
+            'PoiseAttackPercentage', True, int,  # TODO: Player Attacks only.
+            "Multiplier (as percentage from 0 upwards) applied to damage to target poise. "
+            "Generally set to 100, except for throw attacks themselves."),
+        'atkPhys': (
+            'PhysicalAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute physical attack power of attack."),
+        'atkMag': (
+            'MagicAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute magic attack power of attack."),
+        'atkFire': (
+            'FireAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute fire attack power of attack."),
+        'atkThun': (
+            'LightningAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute lightning attack power of attack."),
+        'atkStam': (
+            'StaminaAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute stamina attack power of attack."),
+        'guardAtkRate': (
+            'GuardAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute guard attack power of attack."),
+        'guardBreakRate': (
+            'GuardBreakPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute guard breaking power of attack."),
+        'atkSuperArmor': (
+            'PoiseAttackPower', True, int,  # TODO: Non Player Attacks only.
+            "Absolute poise attack power of attack."),
+        'atkThrowEscape': (
+            'AttackPowerDuringThrows', False, int,  # TODO: Non Player Attacks only.
+            "Absolute attack power of attack. Never used."),
+        'atkObj': (
+            'ObjectDamage', True, int,
+            "Amount of damage dealt to objects by this attack."),
+        'guardStaminaCutRate': (
+            'GuardStaminaPercentage', False, int,
+            "Correction applied to the stamina required to block this attack (I presume). Never used."),
+        'guardRate': (
+            'GuardPercentage', True, int,
+            "Percentage correction made to the guarding ability of the attack, as set in weapon parameters or NPC "
+            "parameters. Only used to halve the guarding ability of parries (-50)."),
+        'throwTypeId': (
+            'ThrowID', True, int,  # TODO: Link to Throws using the ThrowID field rather than by entry ID.
+            "Throw to trigger when attack hits. For some reason, throws are triggered using this ID, which is a field "
+            "within each Throw table entry rather than the ID of the Throw table entry itself."),
+        'hit0_hitType': (  # TODO: Player Attacks only.
+            'Hitbox0HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 0). Always zero, except for some whip attacks."),
+        'hit1_hitType': (
+            'Hitbox1HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 1). Always zero, except for some whip attacks."),
+        'hit2_hitType': (
+            'Hitbox2HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 2). Always zero, except for some whip attacks."),
+        'hit3_hitType': (
+            'Hitbox3HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 3). Always zero, except for some whip attacks."),
+        'hti0_Priority': (
+            'Hitbox0Priority', False, int,
+            "Priority of hitbox (slot 0). If two hits occur simultaneously, only the highest priority hit occurs. "
+            "Never used."),
+        'hti1_Priority': (
+            'Hitbox1Priority', False, int,
+            "Priority of hitbox (slot 1). If two hits occur simultaneously, only the highest priority hit occurs. "
+            "Never used."),
+        'hti2_Priority': (
+            'Hitbox2Priority', False, int,
+            "Priority of hitbox (slot 2). If two hits occur simultaneously, only the highest priority hit occurs. "
+            "Never used."),
+        'hti3_Priority': (
+            'Hitbox3Priority', False, int,
+            "Priority of hitbox (slot 3). If two hits occur simultaneously, only the highest priority hit occurs. "
+            "Never used."),
+        'dmgLevel': (
+            'ImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level of attack, which determines how the target reacts to it (e.g. knocked backward, launched "
+            "into the air, etc.). Certain special effects on the target (e.g. Iron Flesh) may re-map this impact level "
+            "to a different one."),
+        'mapHitType': (
+            'MapHitType', True, ATK_PARAM_MAP_HIT,
+            "Determines how this attack interacts with the map."),
+        'guardCutCancelRate': (
+            'IgnoreGuardPercentage', False, int,
+            "Percentage (from -100 to 100) of target's current guard rate to ignore. A value of 100 will ignore "
+            "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, in favor "
+            "of the simple 'IgnoreGuard' boolean field."),
+        'atkAttribute': (
+            'AttackAttribute', True, ATKPARAM_ATKATTR_TYPE,
+            "Type of physical damage done by attack."),
+        'spAttribute': (
+            'ElementAttribute', True, ATKPARAM_SPATTR_TYPE,
+            "Type of elemental damage done by attack. (Attacks can apply any combination of damage types, but this "
+            "value will determine what visual effects the attack generates, etc.)"),
+        'atkType': (
+            'VisualSoundEffectsOnAttack', True, ATK_TYPE,
+            "Determines the sounds and visual effects generated by the attack itself (before hit)."),
+        'atkMaterial': (
+            'VisualSoundEffectsOnHit', True, WEP_MATERIAL_ATK,
+            "Determines the sounds and visual effects generated when the attack hits. A value of 255 uses the weapon "
+            "default."),
+        'atkSize': (
+            'AttackSize', False, BEHAVIOR_ATK_SIZE,
+            "Internal description says this determines the size of sounds and visual effects, but it is never used."),
+        'defMaterial': (
+            'VisualEffectsWhileBlocking', False, WEP_MATERIAL_DEF,
+            "Determines the visual effects used when guarding. Usually 255 for Player Attacks and 0 (if not a block) "
+            "or 50 (if blocking) for Non-Player Attacks."),
+        'defSfxMaterial': (
+            'SoundEffectsWhileBlocking', False, WEP_MATERIAL_DEF_SFX,
+            "Determines the visual effects used when guarding. Usually 255 for Player Attacks and 0 (if not a block) "
+            "or 50 (if blocking) for Non-Player Attacks."),
+        'hitSourceType': (
+            'ModelPointSource', True, ATK_PARAM_HIT_SOURCE,
+            "Internal description says 'specify where you get the model point for attack'. Set to 1 for parries, "
+            "ripostes, and basic body attacks (falling, rolling, etc.), and zero otherwise. Use that pattern."),
+        'throwFlag': (
+            'ThrowFlag', True, ATK_PATAM_THROWFLAG_TYPE,
+            "Determines how this attack relates to throws: not at all, a throw trigger, or a throw damage parameter."),
+        'disableGuard:1': (
+            'IgnoreGuard', True, bool,
+            "If True, this attack cannot be blocked (e.g. throws)."),
+        'disableStaminaAttack:1': (
+            'NoStaminaDamage', True, bool,
+            "If True, this attack will deal no stamina damage, regardless of its stamina attack power."),
+        'disableHitSpEffect:1': (
+            'NoSpecialEffects', True, bool,
+            "If True, this attack will trigger no special effects on the target. Internal description mentions this is "
+            "an 'SCE bug countermeasure' (referring to the original Dark Souls demo)."),
+        'IgnoreNotifyMissSwingForAI:1': (
+            'NoMissNotificationForAI', True, bool,
+            "If True, the character's AI will not be informed when this attack misses. Enabled for basic body attacks "
+            "(falling, rolling, ladder punches, etc.) that are generally not considered to be serious attacks."),
+        'repeatHitSfx:1': (
+            'RepeatHitSoundEffects', False, bool,
+            "If True, sound effects will supposedly be repeated as long as the attack continuously hits a wall. Never "
+            "enabled, which is probably a good thing."),
+        'isArrowAtk:1': (
+            'IsPhysicalProjectile', True, bool,
+            "Flags if this is the attack damage parameter of a physical projectile (arrow, bolt, or throwing knife)."),
+        'isGhostAtk:1': (
+            'IsAttackByGhost', True, bool,  # TODO: Non Player Attacks only.
+            "Flags if this is an attack of a ghost, which presumably disables wall collision, etc."),
+        'isDisableNoDamage:1': (
+            'IgnoreInvincibilityFrames', True, bool,
+            "If True, this attack will ignore invincibility frames from rolling or backstepping (but not other sources "
+            "of invincibility such as TAE or events)."),
+        'pad[1]': (
+            'Pad1', False, '<Pad:1>',
+            "Null padding."),
+    },
     'BEHAVIOR_PARAM_ST': {
         'variationId': (
             'VariationID', True, int,  # TODO: connect to model/TAE somehow.
@@ -1122,7 +1375,7 @@ GAME_PARAM_INFO = {
             "Is the reference ID below an Attack or Bullet ID?"),
         'pad0[2]': (
             'Pad1', False, '<Pad:2>', "Null padding."),
-        'refId': behavior_ref_id,  # TODO: wrap this whole dictionary in a class that calls this (with entry) if needed.
+        'refId': _behavior_ref_id,  # TODO: wrap this whole dictionary in a class that calls this (with entry) if needed.
         'sfxVariationId': (
             'FXVariationID', True, int,
             "Visual effect ID."),
@@ -1398,7 +1651,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory01': (
             'Item1Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 1)."),
-        'lotItemId01': partial(item_lot_item_id, 1),
+        'lotItemId01': partial(_item_lot_item_id, 1),
         'lotItemNum01': (
             'Item1Count', True, int,
             "Count of item (slot 1)."),
@@ -1423,7 +1676,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory02': (
             'Item2Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 2)."),
-        'lotItemId02': partial(item_lot_item_id, 2),
+        'lotItemId02': partial(_item_lot_item_id, 2),
         'lotItemNum02': (
             'Item2Count', True, int,
             "Count of item (slot 2)."),
@@ -1448,7 +1701,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory03': (
             'Item3Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 3)."),
-        'lotItemId03': partial(item_lot_item_id, 3),
+        'lotItemId03': partial(_item_lot_item_id, 3),
         'lotItemNum03': (
             'Item3Count', True, int,
             "Count of item (slot 3)."),
@@ -1473,7 +1726,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory04': (
             'Item4Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 4)."),
-        'lotItemId04': partial(item_lot_item_id, 4),
+        'lotItemId04': partial(_item_lot_item_id, 4),
         'lotItemNum04': (
             'Item4Count', True, int,
             "Count of item (slot 4)."),
@@ -1498,7 +1751,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory05': (
             'Item5Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 5)."),
-        'lotItemId05': partial(item_lot_item_id, 5),
+        'lotItemId05': partial(_item_lot_item_id, 5),
         'lotItemNum05': (
             'Item5Count', True, int,
             "Count of item (slot 5)."),
@@ -1523,7 +1776,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory06': (
             'Item6Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 6)."),
-        'lotItemId06': partial(item_lot_item_id, 6),
+        'lotItemId06': partial(_item_lot_item_id, 6),
         'lotItemNum06': (
             'Item6Count', True, int,
             "Count of item (slot 6)."),
@@ -1548,7 +1801,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory07': (
             'Item7Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 7)."),
-        'lotItemId07': partial(item_lot_item_id, 7),
+        'lotItemId07': partial(_item_lot_item_id, 7),
         'lotItemNum07': (
             'Item7Count', True, int,
             "Count of item (slot 7)."),
@@ -1573,7 +1826,7 @@ GAME_PARAM_INFO = {
         'lotItemCategory08': (
             'Item8Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 8)."),
-        'lotItemId08': partial(item_lot_item_id, 8),
+        'lotItemId08': partial(_item_lot_item_id, 8),
         'lotItemNum08': (
             'Item8Count', True, int,
             "Count of item (slot 8)."),
@@ -1853,17 +2106,18 @@ GAME_PARAM_INFO = {
             'GuardAngle', False, int,
             "Zero for every NPC except the Phalanx Hollow (20)."),
         'slashGuardCutRate': (
-            'SlashGuardCutRate', False, float,
+            'SlashDamageReductionWhenGuarding', False, int,
             "Always zero."),
         'blowGuardCutRate': (
-            'BlowGuardCutRate', False, float,
+            'StrikeDamageReductionWhenGuarding', False, int,
             "Always zero."),
         'thrustGuardCutRate': (
-            'ThrustGuardCutRate', False, float,
+            'ThrustDamageReductionWhenGuarding', False, int,
             "Always zero."),
         'superArmorDurability': (
             'MaxPoise', True, int,
-            "DOC-TODO"),
+            "Maximum poise of character. Poise is reduced when attacked, but quickly refills. If reduced to zero, the "
+            "character will be staggered."),
         'normalChangeTexChrId': (
             'NormalChangeTextureChrID', False, int,
             "Unknown. Used for only some NPCs, where it is generally set to a number close to "
@@ -2268,8 +2522,8 @@ GAME_PARAM_INFO = {
         'chrAnimId': (
             'NonPlayerActionAnimation', True, Animation,
             "Animation played by a non-player character when they successfully activate the object."),
-        'spQualifiedId': partial(obj_act_success_condition, 'spQualifiedId'),
-        'spQualifiedId2': partial(obj_act_success_condition, 'spQualifiedId2'),
+        'spQualifiedId': partial(_obj_act_success_condition, 'spQualifiedId'),
+        'spQualifiedId2': partial(_obj_act_success_condition, 'spQualifiedId2'),
         'objDummyId': (
             'ObjectActionModelPoint', True, int,
             "Model point that specifies where the action occurs on the object (for snapping the player and distance "
@@ -2304,7 +2558,7 @@ GAME_PARAM_INFO = {
 
     },
     'SHOP_LINEUP_PARAM': {
-        'equipId': shop_item_id,
+        'equipId': _shop_item_id,
         'value': (
             'SoulCost', True, int,
             "Cost of item, in souls."),
@@ -2641,41 +2895,41 @@ GAME_PARAM_INFO = {
             'IncomingBleedDamagePercentage', True, int,
             "Percentage of incoming bleed damage received (usually 100)."),
         'dmgLv_None': (
-            'ReplaceNoDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of NoDamage level."),
+            'ReplaceNoImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of NoImpact level."),
         'dmgLv_S': (
-            'ReplaceSmallDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Small damage level."),
+            'ReplaceSmallImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Small impact level."),
         'dmgLv_M': (
-            'ReplaceMediumDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Medium damage level."),
+            'ReplaceMediumImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Medium impact level."),
         'dmgLv_L': (
-            'ReplaceLargeDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Large damage level."),
+            'ReplaceLargeImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Large impact level."),
         'dmgLv_BlowM': (
-            'ReplaceBlowoffDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Blowoff damage level."),
+            'ReplaceBlowoffImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Blowoff impact level."),
         'dmgLv_Push': (
-            'ReplacePushDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Push damage level."),
+            'ReplacePushImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Push impact level."),
         'dmgLv_Strike': (
-            'ReplaceStrikeDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Strike damage level."),
+            'ReplaceStrikeImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Strike impact level."),
         'dmgLv_BlowS': (
-            'ReplaceSmallBlowDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Blow damage level."),
+            'ReplaceSmallBlowImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Blow impact level."),
         'dmgLv_Min': (
-            'ReplaceMinimalDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Minimal damage level."),
+            'ReplaceMinimalImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Minimal impact level."),
         'dmgLv_Uppercut': (
-            'ReplaceLaunchDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of Launch damage level."),
+            'ReplaceLaunchImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of Launch impact level."),
         'dmgLv_BlowLL': (
-            'ReplaceBlowBackwardDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of BlowBackward damage level."),
+            'ReplaceBlowBackwardImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of BlowBackward impact level."),
         'dmgLv_Breath': (
-            'ReplaceBreathBurnDamageLevel', True, ATKPARAM_REP_DMGTYPE,
-            "Damage level that will occur instead of BreathBurn damage level."),
+            'ReplaceBreathBurnImpactLevel', True, ATKPARAM_REP_DMGTYPE,
+            "Impact level that will occur instead of BreathBurn impact level."),
         'atkAttribute': (
             'AttackAttribute', True, ATKPARAM_ATKATTR_TYPE,
             "Attack type attached to hits while special effect is active."),
@@ -2721,7 +2975,7 @@ GAME_PARAM_INFO = {
             'CanAffectAI', True, bool,
             "Effect will target non-player characters."),
         'effectTargetLive:1': (
-            'CanAffectHumans', True, bool,
+            'CanAffectPlayers', True, bool,
             "Effect will target humans."),
         'effectTargetGhost:1': (
             'CanAffectPhantoms', True, bool,
@@ -2742,11 +2996,11 @@ GAME_PARAM_INFO = {
             'UseVisualEffect', True, bool,
             "Use visual effect from Special Effect Visuals table (indexed by Special State field)."),
         'bAdjustMagicAblity:1': (
-            'UseMagicCorrection', True, bool,
-            "If True, correction will be applied to magic (or intelligence?). Not sure what this does."),
+            'UseIntelligenceScaling', True, bool,
+            "If True, special effect damage will be scaled by character intelligence (I believe)."),
         'bAdjustFaithAblity:1': (
-            'UseFaithCorrection', True, bool,
-            "If True, correction will be applied to faith (or miracles?). Not sure what this does."),
+            'UseFaithScaling', True, bool,
+            "If True, special effect damage will be scaled by character faith (I believe)."),
         'bGameClearBonus:1': (
             'ForNewGamePlus', True, bool,
             "If True, this effect will be applied multiple times depending on the NG+ cycle (I think)."),
@@ -2995,7 +3249,432 @@ GAME_PARAM_INFO = {
             "Null padding."),
     },
     'EQUIP_MTRL_SET_PARAM_ST': {},
-    'EQUIP_PARAM_WEAPON_ST': {},
+    'EQUIP_PARAM_WEAPON_ST': {
+        'behaviorVariationId': (
+            'BehaviorVariationID', True, int,
+            "Number attached to the front of behaviors triggered from TAE."),
+        'sortId': (
+            'SortIndex', True, int,
+            "Index for automatic inventory sorting."),
+        'wanderingEquipId': (
+            'GhostWeaponReplacement', True, Params.Weapons,
+            "Weapon replacement for ghosts."),
+        'weight': (
+            'Weight', True, float,
+            "Weight of weapon."),
+        'weaponWeightRate': (
+            'WeightRatio', True, float,
+            "Unknown effect. Value is about evenly split between 0 and 1 across weapons, with no obvious pattern."),
+        'fixPrice': (
+            'RepairCost', True, int,
+            "Amount of souls required to repair weapon fully. Actual repair cost is this multiplied by current "
+            "durability over max durability."),
+        'basicPrice': (
+            'BasicCost', False, int,
+            "Unknown purpose, and unused."),
+        'sellValue': (
+            'FramptSellValue', True, int,
+            "Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold."),
+        'correctStrength': (
+            'StrengthScaling', True, int,
+            "Amount of attack power gained from strength. (I believe this is the percentage of the player's strength "
+            "to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)"),
+        'correctAgility': (
+            'DexterityScaling', True, int,
+            "Amount of attack power gained from dexterity. (I believe this is the percentage of the player's "
+            "dexterity to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)."),
+        'correctMagic': (
+            'IntelligenceScaling', True, int,
+            "Amount of attack power gained from intelligence. (I believe this is the percentage of the player's "
+            "intelligence to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)"),
+        'correctFaith': (
+            'FaithScaling', True, int,
+            "Amount of attack power gained from faith. (I believe this is the percentage of the player's faith "
+            "to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)"),
+        'physGuardCutRate': (
+            'PhysicalGuardPercentage', True, int,
+            "Percentage of physical damage prevented when guarding with this weapon."),
+        'magGuardCutRate': (
+            'MagicGuardPercentage', True, int,
+            "Percentage of magic damage prevented when guarding with this weapon."),
+        'fireGuardCutRate': (
+            'FireGuardPercentage', True, int,
+            "Percentage of fire damage prevented when guarding with this weapon."),
+        'thunGuardCutRate': (
+            'LightningGuardPercentage', True, int,
+            "Percentage of lightning damage prevented when guarding with this weapon."),
+        'spEffectBehaviorId0': (
+            'SpecialEffectOnHit0', True, Params.SpecialEffects,
+            "Special effect applied to struck target (slot 0)."),
+        'spEffectBehaviorId1': (
+            'SpecialEffectOnHit1', True, Params.SpecialEffects,
+            "Special effect applied to struck target (slot 1)."),
+        'spEffectBehaviorId2': (
+            'SpecialEffectOnHit2', True, Params.SpecialEffects,
+            "Special effect applied to struck target (slot 2)."),
+        'residentSpEffectId': (
+            'EquippedSpecialEffect0', True, Params.SpecialEffects,
+            "Special effect granted to character with weapon equipped (slot 0)."),
+        'residentSpEffectId1': (
+            'EquippedSpecialEffect1', True, Params.SpecialEffects,
+            "Special effect granted to character with weapon equipped (slot 1)."),
+        'residentSpEffectId2': (
+            'EquippedSpecialEffect2', True, Params.SpecialEffects,
+            "Special effect granted to character with weapon equipped (slot 2)."),
+        'materialSetId': (
+            'WeaponUpgradeID', True, Params.WeaponUpgrades,
+            "Weapon Upgrade parameter for weapon reinforcement."),
+        'originEquipWep': (
+            'UpgradeOrigin0', True, Params.Weapons,
+            "Origin armor for level 0 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep1': (
+            'UpgradeOrigin1', True, Params.Weapons,
+            "Origin armor for level 1 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep2': (
+            'UpgradeOrigin2', True, Params.Weapons,
+            "Origin armor for level 2 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep3': (
+            'UpgradeOrigin3', True, Params.Weapons,
+            "Origin armor for level 3 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep4': (
+            'UpgradeOrigin4', True, Params.Weapons,
+            "Origin armor for level 4 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep5': (
+            'UpgradeOrigin5', True, Params.Weapons,
+            "Origin armor for level 5 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep6': (
+            'UpgradeOrigin6', True, Params.Weapons,
+            "Origin armor for level 6 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep7': (
+            'UpgradeOrigin7', True, Params.Weapons,
+            "Origin armor for level 7 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep8': (
+            'UpgradeOrigin8', True, Params.Weapons,
+            "Origin armor for level 8 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep9': (
+            'UpgradeOrigin9', True, Params.Weapons,
+            "Origin armor for level 9 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep10': (
+            'UpgradeOrigin10', True, Params.Weapons,
+            "Origin armor for level 10 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep11': (
+            'UpgradeOrigin11', True, Params.Weapons,
+            "Origin armor for level 11 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep12': (
+            'UpgradeOrigin12', True, Params.Weapons,
+            "Origin armor for level 12 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep13': (
+            'UpgradeOrigin13', True, Params.Weapons,
+            "Origin armor for level 13 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep14': (
+            'UpgradeOrigin14', True, Params.Weapons,
+            "Origin armor for level 14 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'originEquipWep15': (
+            'UpgradeOrigin15', True, Params.Weapons,
+            "Origin armor for level 15 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
+            "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
+        'antiDemonDamageRate': (
+            'DamageAgainstDemonsMultiplier', True, float,
+            "Multiplier applied to damage dealt against demons with this weapon."),
+        'antSaintDamageRate': (
+            'WeakToDivineDamageMultiplier', True, float,
+            "Multiplier applied to damage dealt against enemies weak to divine (e.g. skeletons) with this weapon."),
+        'antWeakA_DamageRate': (
+            'GodDamageMultiplier', True, float,
+            "Multiplier applied to damage dealt against Gods and Goddesses with this weapon."),
+        'antWeakB_DamageRate': (
+            'AbyssDamageMultiplier', True, float,
+            "Multiplier applied to damage dealt against enemies from the Abyss with this weapon."),
+        'vagrantItemLotId': (
+            'VagrantItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'vagrantBonusEneDropItemLotId': (
+            'VagrantBonusEnemyDropItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'vagrantItemEneDropItemLotId': (
+            'VagrantItemEnemyDropItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'equipModelId': (
+            'WeaponModel', True, Model,
+            "Weapon model ID."),
+        'iconId': (
+            'WeaponIcon', True, Texture,
+            "Weapon icon texture ID."),
+        'durability': (
+            'InitialDurability', True, None,
+            "Durability of weapon when it is obtained. Always equal to max durability in vanilla game."),
+        'durabilityMax': (
+            'MaxDurability', True, None,
+            "Maximum durability of weapon."),
+        'attackThrowEscape': (
+            'ThrowEscapePower', False, int,
+            "Power for escaping throws. Always 1, except for a few (and only a few) of the ghost replacement weapons."),
+        'parryDamageLife': (
+            'MaxParryWindowDuration', False, int,
+            "Maximum parry window duration (cannot exceed TAE duration). Always set to 10."),
+        'attackBasePhysics': (
+            'BasePhysicalDamage', True, int,
+            "Base physical damage of weapon attacks."),
+        'attackBaseMagic': (
+            'BaseMagicDamage', True, int,
+            "Base magic damage of weapon attacks."),
+        'attackBaseFire': (
+            'BaseFireDamage', True, int,
+            "Base fire damage of weapon attacks."),
+        'attackBaseThunder': (
+            'BaseLightningDamage', True, int,
+            "Base lightning damage of weapon attacks."),
+        'attackBaseStamina': (
+            'BaseStaminaDamage', True, int,
+            "Base stamina damage of weapon attacks."),
+        'saWeaponDamage': (
+            'BasePoiseDamage', True, int,
+            "Base poise damage of weapon attacks."),
+        'saDurability': (
+            'AttackPoiseBonus', False, int,
+            "Poise gained during attack animations with this weapon. Never used (probably done in TAE)."),
+        'guardAngle': (
+            'EffectiveGuardAngle', False, int,
+            "Angle that can be guarded with this weapon. Never used."),
+        'staminaGuardDef': (
+            'GuardStaminaDefense', True, int,
+            "Defense against (i.e. value subtracted from) stamina attack damage while guarding."),
+        'reinforceTypeId': (
+            'UpgradeMaterials', True, Params.UpgradeMaterials,
+            "Upgrade materials required for reinforcement at each level."),
+        'trophySGradeId': (
+            'KnightHonorIndex', False, int,
+            "Index of weapon as it contributes to the Knight's Honor achievement."),
+        'trophySeqId': (
+            'MaxUpgradeAchievementID', False, int,
+            "Achievement unlocked when weapon is upgraded to maximum level (one per upgrade path)."),
+        'throwAtkRate': (
+            'ThrowDamageChangePercentage', True, int,
+            "Percentage damage increase (if positive) or decrease (if negative) during backstabs and ripostes with "
+            "this weapon."),
+        'bowDistRate': (
+            'BowRangeChangePercentage', True, int,
+            "Percentage range increase (if positive) or decrease (if negative) with this bow."),
+        'equipModelCategory': (
+            'WeaponModelCategory', False, EQUIP_MODEL_CATEGORY,
+            "Model category for equipment. Only one option for weapons."),
+        'equipModelGender': (
+            'WeaponModelGender', False, EQUIP_MODEL_GENDER,
+            "Model gender variant. All weapons are genderless."),
+        'weaponCategory': (
+            'WeaponCategory', True, WEAPON_CATEGORY,
+            "Basic category of weapon. Many 'weapon types' you may be familiar with are merged here (e.g. whips are "
+            "straight swords)."),
+        'wepmotionCategory': (
+            'AttackAnimationCategory', True, WEPMOTION_CATEGORY,
+            "Basic weapon attack animation type. More diverse than WeaponCategory. This number is multiplied by "
+            "10000 and used as an animation offset for all attacks, I believe."),
+        'guardmotionCategory': (
+            'GuardAnimationCategory', True, GUARDMOTION_CATEGORY,
+            "Basic weapon/shield block animation type."),
+        'atkMaterial': (
+            'VisualSoundEffectsOnHit', True, WEP_MATERIAL_ATK,
+            "Determines the sounds and visual effects generated when this weapon hits."),
+        'defMaterial': (
+            'VisualEffectsOnBlock', True, WEP_MATERIAL_DEF,
+            "Determines the visual effects generated when this weapon blocks an attack."),
+        'defSfxMaterial': (
+            'SoundEffectsOnBlock', True, WEP_MATERIAL_DEF_SFX,
+            "Determines the sound effects generated when this weapon blocks an attack."),
+        'correctType': (
+            'ScalingFormulaType', True, WEP_CORRECT_TYPE,
+            "Determines how scaling changes with attribute level."),
+        'spAttribute': (
+            'ElementAttribute', True, ATKPARAM_SPATTR_TYPE,
+            "Element attached to hits with this weapon."),
+        'spAtkcategory': (
+            'SpecialAttackCategory', True, WEPMOTION_CATEGORY,
+            "Category of special attack (R2) performed with this weapon, from 50 to 199 (or 0 for none). This number "
+            "is multiplied by 10000 and used as an animation offset for R2 attacks, I believe."),
+        'wepmotionOneHandId': (
+            'OneHandedAnimationCategory', True, WEPMOTION_CATEGORY,
+            "Category for one-handed attacks.This number is multiplied by 10000 and used as an animation offset for "
+            "one-handed attacks, I believe. Not sure how it interacts with the base AttackAnimationCategory."),
+        'wepmotionBothHandId': (
+            'TwoHandedAnimationCategory', True, WEPMOTION_CATEGORY,
+            "Category for two-handed attacks. This number is multiplied by 10000 and used as an animation offset for "
+            "two-handed attacks, I believe. Not sure how it interacts with the base AttackAnimationCategory."),
+        'properStrength': (
+            'RequiredStrength', True, int,
+            "Required strength to wield weapon properly. (Reduced by one third if held two-handed.)"),
+        'properAgility': (
+            'RequiredDexterity', True, int,
+            "Required dexterity to wield weapon properly."),
+        'properMagic': (
+            'RequiredIntelligence', True, int,
+            "Required intelligence to wield weapon properly."),
+        'properFaith': (
+            'RequiredFaith', True, int,
+            "Required faith to wield weapon properly."),
+        'overStrength': (
+            'OverStrength', False, int,
+            "Unknown. Always set to 99, except for arrows and bolts."),
+        'attackBaseParry': (
+            'AttackBaseParry', False, int,
+            "Unknown. Never used."),
+        'defenseBaseParry': (
+            'DefenseBaseParry', False, int,
+            "Unknown. Never used."),
+        'guardBaseRepel': (
+            'DeflectOnBlock', True, int,
+            "Determines if an enemy will be deflected when you block them with this weapon (by comparing it to their "
+            "DeflectOnAttack)."),
+        'attackBaseRepel': (
+            'DeflectOnAttack', True, int,
+            "Determines if this weapon will be deflected when attacking a blocking enemy (by comparing it to their "
+            "DeflectOnBlock)."),
+        'guardCutCancelRate': (
+            'IgnoreGuardPercentage', False, int,
+            "Percentage (from -100 to 100) of target's current guard rate to ignore. A value of 100 will ignore "
+            "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, in favor "
+            "of the simple 'IgnoreGuard' boolean field."),
+        'guardLevel': (
+            'GuardLevel', True, None,
+            "Internal description: 'in which guard motion is the enemy attacked when guarded?' Exact effects are "
+            "unclear, but this ranges from 0 to 4 in effectiveness of blocking in a predictable way (daggers are worse "
+            "than swords, which are worse than greatswords, which are worse than all shields)."),
+        'slashGuardCutRate': (
+            'SlashDamageReductionWhenGuarding', False, int,
+            "Always zero."),
+        'blowGuardCutRate': (
+            'StrikeDamageReductionWhenGuarding', False, int,
+            "Always zero."),
+        'thrustGuardCutRate': (
+            'ThrustDamageReductionWhenGuarding', False, int,
+            "Always zero."),
+        'poisonGuardResist': (
+            'PoisonDamageReductionWhenGuarding', True, int,
+            "Percentage of incoming poison damage ignored when guarding."),
+        'diseaseGuardResist': (
+            'ToxicDamageReductionWhenGuarding', True, int,
+            "Percentage of incoming toxic damage ignored when guarding."),
+        'bloodGuardResist': (
+            'BleedDamageReductionWhenGuarding', True, int,
+            "Percentage of incoming bleed damage ignored when guarding."),
+        'curseGuardResist': (
+            'CurseDamageReductionWhenGuarding', True, int,
+            "Percentage of incoming curse damage ignored when guarding."),
+        'isDurabilityDivergence': (
+            'DurabilityDivergenceCategory', True, DURABILITY_DIVERGENCE_CATEGORY,
+            "Determines an alternate animation used if the player tries to use this weapon's special attack without "
+            "having enough durability to use it. Exact enumeration is unknown, but existing usages are documented."),
+        'rightHandEquipable:1': (
+            'RightHandAllowed', True, bool,
+            "If True, this weapon can be equipped in the right hand."),
+        'leftHandEquipable:1': (
+            'LeftHandAllowed', True, bool,
+            "If True, this weapon can be equipped in the left hand."),
+        'bothHandEquipable:1': (
+            'BothHandsAllowed', True, bool,
+            "If True, this weapon can be held in two-handed mode."),
+        'arrowSlotEquipable:1': (
+            'UsesEquippedArrows', True, bool,
+            "If True, this weapon will use equipped arrow slot."),
+        'boltSlotEquipable:1': (
+            'UsesEquippedBolts', True, bool,
+            "If True, this weapon will use equipped bolt slot."),
+        'enableGuard:1': (
+            'GuardEnabled', True, bool,
+            "If True, the player can guard with this weapon by holding L1."),
+        'enableParry:1': (
+            'ParryEnabled', True, bool,
+            "If True, the player can parry with htis weapon by pressing L2."),
+        'enableMagic:1': (
+            'CanCastMagic', True, bool,
+            "If True, this weapon can be used to cast magic."),  # TODO: what magic?
+        'enableSorcery:1': (
+            'CanCastSorcery', True, bool,
+            ""),
+        'enableMiracle:1': (
+            'CanCastMiracles', True, bool,
+            ""),
+        'enableVowMagic:1': (
+            'CanCastCovenantMagic', True, bool,
+            ""),
+        'isNormalAttackType:1': (
+            'DealsNeutralDamage', True, bool,
+            ""),
+        'isBlowAttackType:1': (
+            'DealsStrikeDamage', True, bool,
+            ""),
+        'isSlashAttackType:1': (
+            'DealsSlashDamage', True, bool,
+            ""),
+        'isThrustAttackType:1': (
+            'DealsThrustDamage', True, bool,
+            ""),
+        'isEnhance:1': (
+            'IsUpgraded', True, bool,
+            ""),
+        'isLuckCorrect:1': (
+            'IsAffectedByLuck', True, bool,
+            ""),
+        'isCustom:1': (
+            'IsCustom?', True, bool,
+            ""),
+        'disableBaseChangeReset:1': (
+            'DisableBaseChangeReset', True, bool,
+            ""),
+        'disableRepair:1': (
+            'DisableRepairs', True, bool,
+            "If True, this weapon cannot be repaired."),
+        'isDarkHand:1': (
+            'IsDarkHand', False, bool,
+            "Enabled only for the Dark Hand."),
+        'simpleModelForDlc:1': (
+            'SimpleDLCModelExists', False, bool,
+            "Unknown; always set to False."),
+        'lanternWep:1': (
+            '', True, bool,
+            ""),
+        'isVersusGhostWep:1': (
+            'CanHitGhosts', True, bool,
+            "If True, this weapon can hit ghosts without a Transient Curse active."),
+        'baseChangeCategory:6': (
+            'BaseChangeCategory', False, int,
+            "Never used. Likely Demon's Souls junk."),
+        'isDragonSlayer:1': (
+            'IsDragonSlayer', True, bool,
+            ""),
+        'isDeposit:1': (
+            'CanBeStored', True, bool,
+            "If True, this weapon can be stored in the Bottomless Box. Always True for rings."),
+        'disableMultiDropShare:1': (
+            'DisableMultiplayerShare', False, None,
+            "If True, this weapon cannot be given to other players by dropping it. Always False in vanilla."),
+        'pad_0[1]': (
+            'Pad1', False, '<Pad:1>',
+            "Null padding."),
+        'oldSortId': (
+            'OldSortIndex', False, None,
+            "Sorting index for an obsolete build of the game. No effect."),
+        'levelSyncCorrectID': (
+            '', True, None,
+            ""),
+        'pad_1[6]': (
+            'Pad2', False, '<Pad:6>',
+            "Null padding."),
+    },
     'REINFORCE_PARAM_WEAPON_ST': {},
     'MOVE_PARAM_ST': {},
 }

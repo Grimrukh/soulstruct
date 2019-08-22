@@ -37,7 +37,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
             with self.set_master(auto_rows=0):
                 with self.set_master():
                     self.text_category_canvas = self.Canvas(
-                        scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=575, padx=40, pady=40,
+                        vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=575, padx=40, pady=40,
                         highlightthickness=0)
                     self.f_text_categories = self.Frame(width=self.CATEGORY_BOX_WIDTH, height=575, sticky='ew')
                     self.link_to_scrollable(self.text_category_canvas, self.f_text_categories)
@@ -58,7 +58,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
                         command=self.previous_text_range, padx=10, pady=20, row=0, sticky='w')
                     self.find_text_id_entry = self.Entry(
                         label="Find ID:", label_position='left', width=10, padx=10)
-                    self.find_text_id_entry.bind('<Return>', lambda e: self.find_text_id())
+                    self.find_text_id_entry.bind('<Return>', self.find_text_id)
                     with self.set_master(auto_rows=0):
                         self.find_text_string_entry = self.Entry(
                             label="Find Text:", label_position='left', width=18, padx=10, sticky='e')
@@ -68,7 +68,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
                         self.replace_text_string_entry.bind('<Return>', lambda e: self.find_text_string(replace=True))
 
                 with self.set_master(row=1):
-                    self.entry_canvas = self.Canvas(scrollbar=True, width=self.ENTRY_BOX_WIDTH, height=500,
+                    self.entry_canvas = self.Canvas(vertical_scrollbar=True, width=self.ENTRY_BOX_WIDTH, height=500,
                                                     highlightthickness=1, padx=40, pady=40, bg=self.CANVAS_BG)
                     self.f_entry_table = self.Frame(frame=self.entry_canvas, width=self.ENTRY_BOX_WIDTH, sticky='ew')
                     self.entry_canvas.create_window(self.ENTRY_BOX_WIDTH / 2, 250, window=self.f_entry_table,
@@ -224,7 +224,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
             raise ValueError(f"Text ID {text_id} does not appear in category {category}.")
         return sorted(self._Text[category]).index(text_id)
 
-    def find_text_id(self):
+    def find_text_id(self, _=None):
         try:
             id_to_find = int(self.find_text_id_entry.var.get())
             if id_to_find < 0:
@@ -238,6 +238,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
             self.entry_range_start = self.get_text_index(self.active_category, id_to_find)
             self.refresh_text_entries()
             self.select_entry(id_to_find, edit_if_already_selected=False)
+            self.entry_canvas.yview_moveto(0)
         else:
             self.find_text_id_entry['bg'] = '#522'
             self.after(200, lambda: self.find_text_id_entry.config(bg=self.STYLE_DEFAULTS['bg']))
@@ -573,7 +574,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
 class _TextEditBox(SoulstructSmartFrame):
     """Small pop-out widget that allows you to modify longer text more freely, with newlines and all."""
 
-    WIDTH = 50  # characters
+    WIDTH = 70  # characters
     HEIGHT = 10  # lines
 
     def __init__(self, master: SoulstructTextEditor,

@@ -20,13 +20,13 @@ class DarkSoulsGameParameters(object):
     Dialogue: ParamTable
     Faces: ParamTable
     Goods: ParamTable
-    Humans: ParamTable
-    HumanAttacks: ParamTable
-    HumanBehaviors: ParamTable
+    Players: ParamTable
+    PlayerAttacks: ParamTable
+    PlayerBehaviors: ParamTable
     ItemLots: ParamTable
-    NonHumans: ParamTable
-    NonHumanAttacks: ParamTable
-    NonHumanBehaviors: ParamTable
+    NonPlayers: ParamTable
+    NonPlayerAttacks: ParamTable
+    NonPlayerBehaviors: ParamTable
     MenuColors: ParamTable
     Movement: ParamTable
     Objects: ParamTable
@@ -37,18 +37,20 @@ class DarkSoulsGameParameters(object):
     Spells: ParamTable
     Terrains: ParamTable
     Throws: ParamTable
+    UpgradeMaterials: ParamTable
     Weapons: ParamTable
     WeaponUpgrades: ParamTable
-    VisualEffects: ParamTable
+    SpecialEffectVisuals: ParamTable
 
     param_names = [
-        'Humans', 'HumanBehaviors', 'HumanAttacks',
-        'NonHumans', 'NonHumanBehaviors', 'NonHumanAttacks',
-        'Bullets', 'SpecialEffects', 'Throws',
-        'Weapons', 'WeaponUpgrades', 'Armor', 'ArmorUpgrades', 'Rings', 'Goods',
+        'Players', 'PlayerBehaviors', 'PlayerAttacks',
+        'NonPlayers', 'NonPlayerBehaviors', 'NonPlayerAttacks',
+        'Bullets', 'Throws', 'SpecialEffects',
+        'Weapons', 'Armor', 'Rings', 'Goods',
+        'WeaponUpgrades', 'ArmorUpgrades', 'UpgradeMaterials',
         'ItemLots', 'Shops', 'Spells', 'Objects', 'ObjectActivations',
         'Movement', 'Cameras', 'Terrains', 'Faces', 'Dialogue',
-        'MenuColors', 'VisualEffects',
+        'MenuColors', 'SpecialEffectVisuals',
     ]
 
     def __init__(self, game_param_bnd_source):
@@ -89,6 +91,7 @@ class DarkSoulsGameParameters(object):
                 pass
             else:
                 setattr(self, param_nickname, p)  # NOTE: Reference to dictionary in self._data[entry.path].
+                p.nickname = param_nickname
 
     def update_bnd(self):
         """Update the internal BND by packing the current ParamTables. Called automatically by `save()`."""
@@ -121,13 +124,12 @@ class DarkSoulsGameParameters(object):
         with open(game_param_pickle_path, 'wb') as f:
             pickle.dump(self, f)
 
-    def __getitem__(self, category):
+    def __getitem__(self, category) -> ParamTable:
         return getattr(self, category)
 
-    def get_range(self, category, start, end):
-        """Get a list of (id, entry) pairs from a certain range inside an ID-sorted param dictionary."""
-        param_table = getattr(self, category)
-        return [(param_id, param_table[param_id]) for param_id in sorted(param_table.entries)[start:end]]
+    def get_range(self, category, start, count):
+        """Get a list of (id, entry) pairs from a certain range inside ID-sorted param dictionary."""
+        return self[category].get_range(start, count)
 
 
 DRAW_PARAM_TABLES = ('Dof', 'EnvLightTex', 'Fog', 'LensFlare', 'LensFlareEx', 'AmbientLight', 'ScatteredLight',

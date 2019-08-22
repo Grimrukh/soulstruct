@@ -73,18 +73,21 @@ class ATK_PARAM_BOOL(UnsignedChar):
 
 
 class ATK_PARAM_HIT_SOURCE(UnsignedChar):
-    """Always zero. Internal description says 'model point ID used to initiate the attack'."""
+    """Almost always zero. Internal description says 'model point ID used to initiate the attack'."""
     Default = 0
+    BodyOrParryOrRiposte = 1
 
 
 class ATK_PARAM_HIT_TYPE(UnsignedChar):
-    """Always zero. Applied to each hitbox of an attack."""
+    """Almost always zero. Applied to each hitbox of an attack."""
     Default = 0
+    # 1 is unused.
+    WhipAttack = 2
 
 
 class ATK_PARAM_MAP_HIT(UnsignedChar):
     """Type of contact attack has with the map. Names are just based on the attacks that tend to use them."""
-    Normal = 0
+    Normal = 0  # deflected by map
     Projectile = 1  # arrows, bolts, knives, pyromancy
     Hazard = 2  # fire, boulders, pendulums, lava
 
@@ -142,7 +145,7 @@ class ATKPARAM_REP_DMGTYPE(SignedChar):
 class ATKPARAM_SPATTR_TYPE(UnsignedChar):
     """Determines weaknesses and visual effect upon damage."""
     NoType = 0
-    Physical = 1
+    SpecialPhysical = 1  # used for parries, ripostes, guarding, falls, Force miracles
     Fire = 2
     Magic = 3
     Poison = 4
@@ -150,6 +153,7 @@ class ATKPARAM_SPATTR_TYPE(UnsignedChar):
     Lightning = 6
     StoneCurse = 7  # e.g. Basilisk breath
     CrystalCurse = 8  # e.g. Seath's crystal attacks
+    Default = 255  # most basic physical attacks
 
 
 class BEHAVIOR_ATK_SIZE(UnsignedChar):
@@ -172,8 +176,8 @@ class BEHAVIOR_CATEGORY(UnsignedChar):
     Magic = 3  # includes miracles and pyromancy
     # 4 is missing.
     ShieldBash = 5  # includes ladder bonks, etc.
-    NonHumanRightHand = 6
-    NonHumanLeftHand = 7
+    NonPlayerRightHand = 6
+    NonPlayerLeftHand = 7
     # 8 is missing.
     Riposte = 9
 
@@ -238,9 +242,14 @@ class ChrType(SignedInt):
 
 
 class DURABILITY_DIVERGENCE_CATEGORY(UnsignedChar):
-    """Interal description says 'do you branch by durability? Magic weapon support: motion branch by durability'."""
-    Off = 0
-    On = 1
+    """Interal description says 'do you branch by durability? Magic weapon support: motion branch by durability'.
+    Probably related to weapons that consume durability for attacks - possibly determines what alternate animation
+    they use if the weapon doesn't have enough durability for the special attack."""
+    NoDivergence = 0
+    DragonslayerSpearGolemAxe = 1  # 20 durability? 30 durability?
+    TridentGrantDrakeSword = 3  # 80 durability? 200 durability?
+    MoonlightGreatsword = 4
+    CrystalRingShield = 7
 
 
 class ENEMY_BEHAVIOR_ID(SignedInt):
@@ -261,7 +270,7 @@ class EQUIP_MODEL_CATEGORY(UnsignedChar):
     Bare = 4
     Head = 5
     Legs = 6
-    pass
+    Weapon = 7
 
 
 class EQUIP_MODEL_GENDER(UnsignedChar):
@@ -491,7 +500,7 @@ class NPC_TYPE(UnsignedChar):
     """Internal description: 'if the enemies/boss enemies are distinguished OK'. Just guessing at names."""
     Normal = 0
     Boss = 1
-    NonHumanAlly = 2
+    NonPlayerAlly = 2
 
 
 class OBJACT_SP_QUALIFIED_TYPE(UnsignedChar):
@@ -710,7 +719,7 @@ class THROW_PAD_TYPE(UnsignedChar):
 
 class THROW_TYPE(UnsignedChar):
     """Named after observed usage. Not sure how 'strong' variant differs from normal variant, but strong variants
-    exist for player characters (Humans) only."""
+    exist for player characters (Players) only."""
     Backstab = 0
     # 1-7 unused.
     Riposte = 8
@@ -725,27 +734,82 @@ class THROW_TYPE(UnsignedChar):
 
 
 class WEAPON_CATEGORY(UnsignedChar):
-    pass
+    """Each category includes weapons of all sizes."""
+    Dagger = 0
+    StraightSword = 1  # includes whips
+    PiercingSword = 2
+    CurvedSword = 3  # includes katanas
+    Axe = 4
+    Hammer = 5
+    Spear = 6
+    Halberd = 7
+    SpellTool = 8  # includes Catalysts and Talismans
+    Fists = 9
+    Bow = 10
+    Crossbow = 11
+    Shield = 12
+    Arrow = 13
+    Bolt = 14
 
 
 class WEP_MATERIAL_ATK(UnsignedChar):
-    pass
+    Metal = 0
+    WoodOrLeather = 2
+    Riposte_Ladder_SpellTool = 3  # not sure why these are combined
+    Magic = 5
+    Special = 6  # cop-out name; used for dark sorceries, Firebombs, Moonlight Greatsword, and falling/rolling damage
+    Default = 255  # most attacks; uses weapon attack material, presumably.
 
 
 class WEP_MATERIAL_DEF(UnsignedChar):
-    pass
+    MetalWeapon = 50
+    WoodWeapon = 52  # includes catalysts
+    Hands = 53  # talismans, Pyromancy Flame, Skull Lantern, bare fists
+    MetalShield = 54
+    WoodenShield = 55
+    StoneShield = 79
 
 
 class WEP_MATERIAL_DEF_SFX(UnsignedChar):
-    pass
+    Metal = 50
+    WoodOrLeather = 52
+    Hands = 59
 
 
 class WEP_CORRECT_TYPE(UnsignedChar):
-    pass
+    """I believe this determines the graph used for applying scaling."""
+    PhysicalMelee = 0
+    MagicMelee = 1  # Magic/Enchanted/Divine/Occult weapon upgrades
+    PhysicalAndSorcerySpells = 11  # Logan's Catalyst (boosts dark sorceries more)
+    MiracleSpells = 12  # most talismans
+    DarkmoonTalisman = 13  # not sure why this has its own category rather than Velka's Talisman
+    SorcerySpells = 14  # most catalysts
+    OolacileOvryCatalyst = 15
+    IvorySunlightTalismans = 16
 
 
 class WEPMOTION_CATEGORY(UnsignedChar):
-    pass
+    ArrowOrBolt = 0
+    Dagger = 20
+    StraightSword = 23
+    Greatsword = 25  # includes Curved Greatswords
+    UltraGreatsword = 26
+    Rapier = 27
+    CurvedSword = 28
+    Katana = 29
+    Axe = 30
+    Greataxe = 32
+    Hammer = 33
+    GreatHammer = 35
+    Spear = 36
+    Halberd = 38
+    SpellTool = 41
+    Fists = 42
+    Whip = 43
+    Bow = 44
+    Crossbow = 46
+    Greatshield = 47
+    Shield = 48  # includes both bucklers and medium shields
 
 
 class WEP_BASE_CHANGE_CATEGORY(UnsignedChar):

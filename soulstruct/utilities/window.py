@@ -24,7 +24,7 @@ def _embed_component(component_func):
     @wraps(component_func)
     def component_with_label(self, frame=None,
                              label='', label_font_type=None, label_font_size=None, label_position=None,
-                             label_fg=None, label_bg=None, scrollbar=False, **kwargs):
+                             label_fg=None, label_bg=None, vertical_scrollbar=False, **kwargs):
 
         grid_kwargs = self.grid_defaults.copy()
         grid_kwargs.update({key: kwargs.pop(key) for key in list(kwargs.keys()) if key in _GRID_KEYWORDS})
@@ -62,14 +62,14 @@ def _embed_component(component_func):
             frame = tk.Frame(frame, bg=inherit_bg)
             label = tk.Label(frame, text=label, font=(label_font_type, label_font_size), fg=label_fg, bg=label_bg)
 
-        if scrollbar:
+        if vertical_scrollbar:
             inherit_bg = frame.cget('bg')
             frame_with_scrollbar = tk.Frame(frame, bg=inherit_bg)
             component = component_func(self, frame=frame, **kwargs)
-            scrollbar = tk.Scrollbar(frame, command=component.yview)
+            vertical_scrollbar = tk.Scrollbar(frame, command=component.yview)
             component.grid(row=0, column=0)
-            scrollbar.grid(row=0, column=1, sticky=NS)
-            component.config(bd=0, yscrollcommand=scrollbar.set)
+            vertical_scrollbar.grid(row=0, column=1, sticky=NS)
+            component.config(bd=0, yscrollcommand=vertical_scrollbar.set)
             component.bind('<Enter>', lambda _, f=component: _bind_to_mousewheel(_, f))
             component.bind('<Leave>', lambda _, f=component: _unbind_to_mousewheel(_, f))
             if label:

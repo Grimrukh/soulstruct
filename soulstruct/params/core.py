@@ -295,6 +295,7 @@ class ParamTable(object):
         self.paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.entries = {}
         self.__magic = []
+        self.nickname = ''
 
         if isinstance(param_source, dict):
             self.entries = param_source
@@ -314,10 +315,10 @@ class ParamTable(object):
             except ValueError:
                 raise ValueError("ParamTable source has a '.data' attribute, but it could not be interpreted.")
 
-    def __getitem__(self, entry_index):
-        if entry_index in self.entries:
-            return self.entries[entry_index]
-        raise KeyError(f"No entry with ID {entry_index} in {self.param_name}.")
+    def __getitem__(self, entry_id):
+        if entry_id in self.entries:
+            return self.entries[entry_id]
+        raise KeyError(f"No entry with ID {entry_id} in {self.param_name}.")
 
     def __setitem__(self, entry_index, entry):
         if isinstance(entry, dict):
@@ -518,6 +519,9 @@ class ParamTable(object):
 
         with open(param_path, 'wb') as output:
             output.write(self.pack())
+
+    def get_range(self, start, count):
+        return [(param_id, self[param_id]) for param_id in sorted(self.entries)[start:start + count]]
 
 
 class DrawParamTable(ParamTable):
