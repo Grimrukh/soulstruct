@@ -57,9 +57,9 @@ class _ParamFieldFrame(SoulstructSmartFrame):
         for field_name in field_names:
 
             # TODO: print utility
-            # print(f"        {repr(field_name)}: (\n"
-            #       f"            '', True, None,\n"
-            #       f"            \"\"),")
+            print(f"        {repr(field_name)}: (\n"
+                  f"            '', True, None,\n"
+                  f"            \"\"),")
 
             # TODO: use type and doc
             field_nickname, is_main, field_type, field_doc = field_info_func(param_entry, field_name)

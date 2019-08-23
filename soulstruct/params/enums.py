@@ -171,11 +171,12 @@ class BEHAVIOR_ATK_TYPE(UnsignedChar):
 
 class BEHAVIOR_CATEGORY(UnsignedChar):
     """Determines which special effects buffs/debuffs will affect the behavior."""
+    NoCategory = 0
     HumanRightHand = 1  # includes two-handed
     HumanLeftHand = 2
     Magic = 3  # includes miracles and pyromancy
     # 4 is missing.
-    ShieldBash = 5  # includes ladder bonks, etc.
+    Basic = 5  # includes rolls, ladder bonks, thrown goods, close-range shield behaviors (?) ...
     NonPlayerRightHand = 6
     NonPlayerLeftHand = 7
     # 8 is missing.
@@ -183,9 +184,10 @@ class BEHAVIOR_CATEGORY(UnsignedChar):
 
 
 class BEHAVIOR_REF_TYPE(UnsignedChar):
-    Attack = 0
+    """Also used by Goods, where 'Default' (0) does NOT mean Attack."""
+    Default = 0  # Attack for behaviors, None for goods
     Bullet = 1
-    Special = 2  # possibly Throw
+    SpecialEffect = 2
 
 
 class BULLET_ATTACH_EFFECT_TYPE(UnsignedChar):
@@ -331,7 +333,7 @@ class GOODS_TYPE(UnsignedChar):
     KeyItem = 1
     Titanite = 2
     # 3 is unused.
-    UnusedHumanity = 4  # unused good ID 350, "Humanity"
+    # UnusedHumanity = 4  # unused good ID 350, "Humanity"
     Spell = 5
 
 
@@ -613,7 +615,12 @@ class SP_EFFECT_TYPE(UnsignedChar):
 
 
 class SP_EFFECT_USELIMIT_CATEGORY(UnsignedChar):
-    pass
+    """Category of good-triggered special effect in which only one effect can be active at once. Additional attempts
+    to use these goods will be prohibited, rather than overriding the earlier one."""
+    NoLimit = 0
+    Resins = 1
+    Aura = 2  # Elizabeth's Mushroom, Green Blossom, Transient Curse
+    DragonStone = 3
 
 
 class SP_EFFECT_VFX_EFFECT_TYPE(UnsignedChar):

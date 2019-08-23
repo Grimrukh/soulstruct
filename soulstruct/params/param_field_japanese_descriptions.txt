@@ -553,7 +553,6 @@ EQUIP_PARAM_GOODS_ST 18 | u8 | u8 | overDexterity | 技量オーバー開始値 
 EQUIP_PARAM_GOODS_ST 19 | GOODS_TYPE | u8 | goodsType | 道具のタイプ | 道具の種類
 EQUIP_PARAM_GOODS_ST 20 | BEHAVIOR_REF_TYPE | u8 | refCategory | IDカテゴリ | ↓のIDのカテゴリ[攻撃、飛び道具、特殊]
 EQUIP_PARAM_GOODS_ST 21 | BEHAVIOR_CATEGORY | u8 | spEffectCategory | 特殊効果カテゴリ | スキルや、魔法、アイテムなどで、パラメータが変動する効果（エンチャントウェポンなど）があるので、│定した効果が、「武器攻撃のみをパワーアップする」といった効果に対応できるように行動ごとに設定するバリスタなど、設定の必要のないものは「なし」を設定する
-
 EQUIP_PARAM_GOODS_ST 22 | GOODS_CATEGORY | u8 | goodsCategory | 道具カテゴリ | 道具カテゴリ
 EQUIP_PARAM_GOODS_ST 23 | GOODS_USE_ANIM | u8 | goodsUseAnim | 道具使用時アニメ | 道具を使ったときに再生するアニメを設定します
 EQUIP_PARAM_GOODS_ST 24 | GOODS_OPEN_MENU | u8 | opmeMenuType | メニュー開くか | アイテム使用時に開くメニュータイプ

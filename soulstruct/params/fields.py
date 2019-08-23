@@ -65,15 +65,34 @@ class Text:
 
 
 def _behavior_ref_id(behavior_param_entry):
-    if behavior_param_entry['refType'] == BEHAVIOR_REF_TYPE.Attack:
-        return ('AttackID', True, Params.Attacks,
+    if behavior_param_entry['refType'] == BEHAVIOR_REF_TYPE.Default:
+        return ('Attack', True, Params.Attacks,
                 "Attack ID triggered by behavior.")
     elif behavior_param_entry['refType'] == BEHAVIOR_REF_TYPE.Bullet:
-        return ('BulletID', True, Params.Bullets,
+        return ('Bullet', True, Params.Bullets,
                 "Bullet ID triggered by behavior.")
+    elif behavior_param_entry['refType'] == BEHAVIOR_REF_TYPE.SpecialEffect:
+        return ('SpecialEffect', True, Params.SpecialEffects,
+                "Special Effect ID triggered by behavior. (Never used; may not work.)")
     else:
         return ('UnknownReferenceID', True, int,
                 "Could not determine reference ID type (usually Attack or Bullet).")
+
+
+def _good_ref_id(good_param_entry):
+    if good_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Default:
+        return ('NoReference', True, int,
+                "This value should be -1 when 'Default' reference type is selected for good.")
+    elif good_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Bullet:
+        return ('Bullet', True, Params.Bullets,
+                "Bullet triggered by using good (which may simply be targeted at self).")
+    elif good_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.SpecialEffect:
+        return ('SpecialEffect', True, Params.SpecialEffects,
+                "Special effect triggered (on self) by using good.")
+
+    else:
+        return ('UnknownReferenceID', True, int,
+                "Could not determine reference ID type (usually Bullet or SpecialEffect).")
 
 
 def _obj_act_success_condition(condition_field_name, obj_act_param_entry):
@@ -1107,7 +1126,7 @@ GAME_PARAM_INFO = {
             "Null padding."),
 
     },
-    'LOCK_CAM_PARAM_ST': {},
+    'LOCK_CAM_PARAM_ST': {},  # TODO
     'ATK_PARAM_ST': {
         'hit0_Radius': (
             'Hitbox0Radius', True, float,
@@ -1387,7 +1406,8 @@ GAME_PARAM_INFO = {
             "Weapon/shield durability cost of behavior."),
         'category': (
             'Category', True, BEHAVIOR_CATEGORY,
-            "Determines compatibility with special effects that affect certain types of attacks."),
+            "Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' for "
+            "thrown goods and 'No Category' otherwise."),
         'heroPoint': (
             'HumanityCost', True, int,
             "Humanity cost of behavior."),  # TODO: ever used? does it even work?
@@ -1622,8 +1642,220 @@ GAME_PARAM_INFO = {
             'Pad', False, '<Pad:7>',
             "Null padding."),
     },
-    'FACE_PARAM_ST': {},
-    'EQUIP_PARAM_GOODS_ST': {},
+    'FACE_PARAM_ST': {},  # TODO
+    'EQUIP_PARAM_GOODS_ST': {
+        'refId': _good_ref_id,
+        'sfxVariationId': (
+            'FXVariationID', True, int,
+            "Visual effect variation ID combined with the ID given by TAE."),
+        'weight': (
+            'Weight', False, float,
+            "Weight of good. Never used in vanilla Dark Souls."),
+        'basicPrice': (
+            'BasicCost', False, int,
+            "Unsure. Does not appear to be used."),
+        'sellValue': (
+            'FramptSellValue', True, int,
+            "Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold."),
+        'behaviorId': (
+            'Behavior', False, Params.Behaviors,
+            "Behavior triggered by good use. Never used."),
+        'replaceItemId': (
+            'GoodToReplace', True, Params.Goods,
+            "Good to replace when this item is obtained. Used only for full/empty Estus Flask exchange."),
+        'sortId': (
+            'SortIndex', True, int,
+            "Index for automatic inventory sorting."),
+        'qwcId': (
+            'QWCID', False, int,
+            "Unused world tendency remnant."),
+        'yesNoDialogMessageId': (
+            'ConfirmationMessage', True, Text.EventText,
+            "Message displayed in yes/no dialog box to confirm use of good."),
+        'magicId': (
+            'Spell', True, Params.Spells,
+            "Spell unlocked in attunement menu by possession of this good. (Usually matches the good ID.)"),
+        'iconId': (
+            'GoodIcon', True, Texture,
+            "Good icon texture ID."),
+        'modelId': (
+            'ModelID', True, Model,
+            "Model of good. Not sure if this is ever used."),  # TODO: check usage
+        'shopLv': (
+            'ShopLevel', False, int,
+            "Level of good that can be sold in 'the shop'. Always -1 or 0. Probably unused."),
+        'compTrophySedId': (
+            'CollectionAchievementID', False, int,
+            "Collection achievement (e.g. all spells) to which obtaining this good contributes."),
+        'trophySeqId': (
+            'AchievementID', False, int,
+            "Achievement unlocked when this good is first obtained (e.g. Estus Flask)."),
+        'maxNum': (
+            'MaxHoldQuantity', True, int,
+            "Maximum number of good that can be held at once."),
+        'consumeHeroPoint': (
+            'HumanityCost', True, None,
+            ""),  # TODO: probably unused
+        'overDexterity': (
+            'OverDexterity', False, int,
+            "'Skill over start value'. Unknown effect; set to 0 for spells and 50 otherwise."),
+        'goodsType': (
+            'GoodType', True, GOODS_TYPE,
+            "Determines if this is a basic good, upgrade material, key item, or spell."),
+        'refCategory': (
+            'ReferenceType', True, BEHAVIOR_REF_TYPE,
+            "Indicates if this good triggers a Bullet or Special Effect. (Attacks are possible, but unused.)"),
+        'spEffectCategory': (
+            'SpecialEffectCategory', True, BEHAVIOR_CATEGORY,
+            "Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' for "
+            "thrown goods and 'No Category' otherwise."),
+        'goodsCategory': (
+            'GoodCategory', False, GOODS_CATEGORY,
+            "Never used. Only one value (0) used."),
+        'goodsUseAnim': (
+            'UseAnimation', True, GOODS_USE_ANIM,  # TODO: just occurred to me that SFX must mean visual, not sound.
+            "Points to basic animation used when good is used. Visual effects are determined by the FXVariationID."),
+        'opmeMenuType': (
+            'MenuActivated', True, GOODS_OPEN_MENU,
+            "Menu activated (if any) when good is used. Generally only 'No Menu' or 'Yes or No Menu' will be useful."),
+        'useLimitCategory': (
+            'LimitCategory', True, SP_EFFECT_USELIMIT_CATEGORY,
+            "Only one good-triggered special effect with this category can be active at once. Additional attempts to "
+            "use goods in this category will be prevented. (Unclear how Dragon Stones work, though.)"),
+        'replaceCategory': (
+            'ReplaceCategory', False, REPLACE_CATEGORY,
+            "The special effect triggered by this good will replace any special effects in the same category as this "
+            "one. Used only by Dragon Stones."),
+        'vowType0:1': (
+            'UseableByNoCovenant', True, bool,
+            "Determines if this good can be used by characters with no covenant."),
+        'vowType1:1': (
+            'UseableByWayOfWhite', True, bool,
+            "Determines if this good can be used by characters in the Way of White."),
+        'vowType2:1': (
+            'UseableByPrincessGuard', True, bool,
+            "Determines if this good can be used by characters in the Princess's Guard."),
+        'vowType3:1': (
+            'UseableByWarriorsOfSunlight', True, bool,
+            "Determines if this good can be used by characters in the Warriors of Sunlight."),
+        'vowType4:1': (
+            'UseableByDarkwraith', True, bool,
+            "Determines if this good can be used by characters in the Darkwraith covenant."),
+        'vowType5:1': (
+            'UseableByPathOfTheDragon', True, bool,
+            "Determines if this good can be used by characters in the Path of the Dragon."),
+        'vowType6:1': (
+            'UseableByGravelordServant', True, bool,
+            "Determines if this good can be used by characters in the Gravelord Servants."),
+        'vowType7:1': (
+            'UseableByForestHunter', True, bool,
+            "Determines if this good can be used by characters in the Forest Hunters."),
+        'vowType8:1': (
+            'UseableByDarkmoonBlade', True, bool,
+            "Determines if this good can be used by characters in the Blades of the Darkmoon."),
+        'vowType9:1': (
+            'UseableByChaosServant', True, bool,
+            "Determines if this good can be used by characters in the Chaos Servant covenant."),
+        'vowType10:1': (
+            'UseableByCovenant10', False, bool,
+            "Determines if this good can be used by characters in unused covenant 10."),
+        'vowType11:1': (
+            'UseableByCovenant11', False, bool,
+            "Determines if this good can be used by characters in unused covenant 11."),
+        'vowType12:1': (
+            'UseableByCovenant12', False, bool,
+            "Determines if this good can be used by characters in unused covenant 12."),
+        'vowType13:1': (
+            'UseableByCovenant13', False, bool,
+            "Determines if this good can be used by characters in unused covenant 13."),
+        'vowType14:1': (
+            'UseableByCovenant14', False, bool,
+            "Determines if this good can be used by characters in unused covenant 14."),
+        'vowType15:1': (
+            'UseableByCovenant15', False, bool,
+            "Determines if this good can be used by characters in unused covenant 15."),
+        'enable_live:1': (
+            'UseableByHumans', True, bool,
+            "Determines if this good can be used by characters who have revived to Human status."),
+        'enable_gray:1': (
+            'UseableByHollows', True, bool,
+            "Determines if this good can be used by characters who are Hollow."),
+        'enable_white:1': (
+            'UseableByWhitePhantoms', True, bool,
+            "Determines if this good can be used by White Phantoms (summons)."),
+        'enable_black:1': (
+            'UseableByBlackPhantoms', True, bool,
+            "Determines if this good can be used by Black Phantoms (invaders)."),
+        'enable_multi:1': (
+            'UseableInMultiplayer', True, bool,
+            "Determines if this good can be used while multiple players are together."),
+        'enable_pvp:1': (
+            'UseableInPVP', True, bool,
+            "Determines if this good can be used in 'PVP' multiplayer. Not sure exactly what that refers to."),
+        'disable_offline:1': (
+            'DisabledOffline', True, bool,
+            "Determines if this good can be used while the game is disconnected from the network."),
+        'isEquip:1': (
+            'CanBeEquipped', True, bool,
+            "Determines if this good can be equipped in a quick item slot."),
+        'isConsume:1': (
+            'ConsumedOnUse', True, bool,
+            "Determines if this good is consumed (count decreases) when used."),
+        'isAutoEquip:1': (
+            'AutomaticallyEquipped', True, bool,
+            "Determines if this good will be equipped in an available quick slot when obtained."),
+        'isEstablishment:1': (
+            'IsStationary', True, bool,
+            "Unknown; need to look at usage."),
+        'isOnlyOne:1': (
+            'IsUnique', True, bool,
+            "Determines if only one of this good exists in the game."),
+        'isDrop:1': (
+            'CanBeDropped', True, bool,
+            "Determines if this item can be dropped."),
+        'isDeposit:1': (
+            'CanBeStored', True, bool,
+            "Determines if good can be stored in Bottomless Box."),
+        'isDisableHand:1': (
+            'IsDisableHand?', True, None,
+            ""),  # TODO
+        'IsTravelItem:1': (
+            'IsTravelItem?', True, None,
+            ""),  # TODO
+        'isSuppleItem:1': (
+            'IsSuppleItem?', True, None,
+            ""),  # TODO
+        'isFullSuppleItem:1': (
+            'IsFullSuppleItem?', True, None,
+            ""),  # TODO
+        'isEnhance:1': (
+            'IsUpgradeMaterial', True, bool,
+            "Determines if this is an upgrade material."),
+        'isFixItem:1': (
+            'IsFixItem?', True, None,
+            ""),  # TODO: repair powder?
+        'disableMultiDropShare:1': (
+            'DisableMultiplayerShare', True, bool,
+            "If True, this good cannot be given to other players by dropping it."),
+        'disableUseAtColiseum:1': (
+            'DisabledInArena', False, bool,
+            "If True, this good cannot be used in the PvP Arena in Oolacile."),
+        'disableUseAtOutOfColiseum:1': (
+            'DisabledOutsideArena', False, bool,
+            "If True, this good cannot be used outside the PvP Arena in Oolacile."),
+        'pad[9]': (
+            'Pad1', False, '<Pad:9>',
+            "Null padding."),
+        'vagrantItemLotId': (
+            'VagrantItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'vagrantBonusEneDropItemLotId': (
+            'VagrantBonusEnemyDropItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+        'vagrantItemEneDropItemLotId': (
+            'VagrantItemEnemyDropItemLot', False, Params.ItemLots,
+            "DOC-TODO"),
+    },
     'HIT_MTRL_PARAM_ST': {
         'aiVolumeRate': (
             'SoundRadiusMultiplier', True, float,
@@ -3151,7 +3383,7 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:11>',
             "Null padding."),
     },
-    'MAGIC_PARAM_ST': {},
+    'MAGIC_PARAM_ST': {},  # TODO
     'THROW_INFO_BANK': {
         'AtkChrId': (
             'AttackingCharacterModel', True, Model,
@@ -3248,7 +3480,7 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:4>',
             "Null padding."),
     },
-    'EQUIP_MTRL_SET_PARAM_ST': {},
+    'EQUIP_MTRL_SET_PARAM_ST': {},  # TODO
     'EQUIP_PARAM_WEAPON_ST': {
         'behaviorVariationId': (
             'BehaviorVariationID', True, int,
@@ -3675,6 +3907,6 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:6>',
             "Null padding."),
     },
-    'REINFORCE_PARAM_WEAPON_ST': {},
-    'MOVE_PARAM_ST': {},
+    'REINFORCE_PARAM_WEAPON_ST': {},  # TODO
+    'MOVE_PARAM_ST': {},  # TODO
 }
