@@ -44,6 +44,7 @@ class Params:
     Goods = '<Params:Goods>'
     ItemLots = '<Params:ItemLots>'
     Knockback = '<Params:Knockback>'
+    LevelSyncCorrect = '<Params:LevelSyncCorrect>'
     Rings = '<Params:Rings>'
     SpecialEffects = '<Params:SpecialEffects>'
     Spells = '<Params:Spells>'
@@ -96,15 +97,19 @@ def _good_ref_id(good_param_entry):
 
 
 def _obj_act_success_condition(condition_field_name, obj_act_param_entry):
-    if obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasGood:
-        return ('RequiredGood', True, Params.Goods,
-                "First condition: object action will succeed if user has this good in their inventory (does not "
+    n = '2' if condition_field_name.endswith('2') else '1'
+    if obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.NoCondition:
+        return (f'NoCondition{n}', True, int,
+                f"No condition type selected.")
+    elif obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasGood:
+        return (f'RequiredGood{n}', True, Params.Goods,
+                f"Condition: object action will succeed if user has this good in their inventory (does not "
                 "include Bottomless Box).")
     elif obj_act_param_entry[condition_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasSpecialEffect:
-        return ('RequiredSpecialEffect', True, Params.SpecialEffects,
-                "First condition: object action will succeed if user has this special effect.")
+        return (f'RequiredSpecialEffect{n}', True, Params.SpecialEffects,
+                "Condition: object action will succeed if user has this special effect.")
     else:
-        return ('UnknownCondition', True, int,
+        return (f'UnknownCondition{n}', True, int,
                 "Could not determine success condition ID type (usually HasGood or HasSpecialEffect).")
 
 
@@ -204,19 +209,19 @@ GAME_PARAM_INFO = {
             'BattleID', True, AI.Battle,
             "Battle goal ID used to look up battle Lua script."),
         'nearDist': (
-            'NearDistance', True, None,
+            'NearDistance', True, float,
             "Distance considered to be close range by this NPC (for scripts)."),
         'midDist': (
-            'MidDistance', True, None,
+            'MidDistance', True, float,
             "Distance considered to be medium range by this NPC (for scripts)."),
         'farDist': (
-            'FarDistance', True, None,
+            'FarDistance', True, float,
             "Distance considered to be long range by this NPC (for scripts)."),
         'outDist': (
-            'OutOfRangeDistance', True, None,
+            'OutOfRangeDistance', True, float,
             "Distance beyond which the NPC will not attempt to fight."),
         'BackHomeLife_OnHitEneWal': (
-            'RetreatTimeAfterHittingEnemyWall', False, None,
+            'RetreatTimeAfterHittingEnemyWall', False, float,
             "Retreat goal time when touching an 'enemy wall' that blocks the NPC's path. "
             "(Not clear what an 'enemy wall' means. Almost always set to 5 (rarely 6)."),
         'goalID_ToCaution': (
@@ -242,102 +247,102 @@ GAME_PARAM_INFO = {
             "Ghost and summons (-1). I assume -1 means no animation is played. Set to 0 for all "
             "other NPCs."),
         'eye_dist': (
-            'SightDistance', True, None,
+            'SightDistance', True, int,
             "Distance of NPC eyesight (in meters)."),
         'ear_dist': (
-            'HearingDistance', True, None,
+            'HearingDistance', True, int,
             "Distance of NPC hearing (in meters)."),
         'ear_soundcut_dist': (
-            'HearingCutDistance', False, None,
+            'HearingCutDistance', False, int,
             "Internal description: 'Distance to reduce the size of the sound source. Sounds less "
             "than this distance will not be heard.' Set to 1 for Bloatheads and Bloathead Sorcerers "
             "and 0 for everyone else."),
         'nose_dist': (
-            'SmellDistance', True, None,
+            'SmellDistance', True, int,
             "Distance of NPC smell (auto-detect)."),
         'maxBackhomeDist': (
-            'MaxRetreatDistance', True, None,
+            'MaxRetreatDistance', True, int,
             "Absolute furthest the NPC can travel from their nest before retreating, in or out of "
             "battle. (Argument of internal GOAL function 'COMMON_SetBattleActLogic()'.) Usually set to "
             "about 50% more than BattleRetreatDistance."),
         'backhomeDist': (
-            'BattleRetreatDistance', True, None,
+            'BattleRetreatDistance', True, int,
             "Furthest distance the NPC can travel from their nest before retreating in battle. (Argument "
             "of internal GOAL function 'COMMON_SetBattleActLogic()'.)"),
         'backhomeBattleDist': (
-            'RetreatBattleStartDistance', True, None,
+            'RetreatBattleStartDistance', True, int,
             "Target distance at which battle mode is triggered while the enemy is retreating. "
             "(Argument of internal GOAL function 'COMMON_SetBattleActLogic()'.)"),
         'nonBattleActLife': (
-            'NonBattleActLife', False, None,
+            'NonBattleActLife', False, int,
             "Lifespan of Acts outside of battle. Set to 10 for Bloatheads and Bloathead Sorcerers, "
             "0 for Priscilla's Tail and the Bed of Chaos bug, and 5 for everyone else. (Argument of "
             "internal GOAL function 'COMMON_SetBattleActLogic()'.)"),
         'BackHome_LookTargetTime': (
-            'SearchTimeBeforeRetreat', True, None,
+            'SearchTimeBeforeRetreat', True, int,
             "Time that NPC will search for a lost target before retreating (I think). Set to "
             "20 for everyone except the Bounding Demons of Izalith, who have a value of 0."),
         'BackHome_LookTargetDist': (
-            'SearchDistanceBeforeRetreat', True, None,
+            'SearchDistanceBeforeRetreat', True, int,
             "Distance that NPC will search for a lost target before retreating (I think). Set "
             "to 20 for everyone except the Bounding Demons of Izaltih, who have a value of 0."),
         'SightTargetForgetTime': (
-            'SightForgetTime', True, None,
+            'SightForgetTime', True, int,
             "Time to forget about sighted targets. Usually set to 600."),
         'SoundTargetForgetTime': (
-            'HearingForgetTime', True, None,
+            'HearingForgetTime', True, int,
             "Time to forget about heard targets. Usually set to 300."),
         'BattleStartDist': (
-            'BattleStartDistance', True, None,
+            'BattleStartDistance', True, int,
             "Target distance at which battle mode is triggered."),
         'callHelp_MyPeerId': (
-            'HelpGroupID', True, None,
+            'HelpGroupID', True, int,
             "Determines which calls for help this NPC will respond to (must match caller's "
             "HelpCallGroupID). Only 0 (no ID) and 1 are used."),
         'callHelp_CallPeerId': (
-            'HelpCallGroupID', True, None,
+            'HelpCallGroupID', True, int,
             "HelpGroupID value of NPCs who should respond to calls for help by this NPC. Only 0 "
             "(no ID) and 1 are used."),
         'targetSys_DmgEffectRate': (
-            'TargetSysDamageRate', False, None,
+            'TargetSysDamageRate', False, int,
             "Internal description: 'Get damage rate (%) for target system evaluation "
             "information.' Set to 0 for summons, phantoms, and the Parasitic Wall Hugger, and "
             "100 for everyone else."),
         'TeamAttackEffectivity': (
-            'TeamAttackEffectivity', True, None,
+            'TeamAttackEffectivity', True, int,
             "Value from 0 to 100 that determines the number of simultaneous attacks made by this "
             "NPC's team. Higher values mean that less members of this team can participate in "
             "attacks at the same time. (I presume that the total score of attacking team members "
             "cannot exceed 100.) Usually set to 25 or 100."),
         # TODO: Apparently X is height and Y is width here. The internal descriptions or names may be incorrect.
         'eye_angX': (
-            'SightRangeHeight', True, None,
+            'SightRangeHeight', True, int,
             "Angular width of sight field in degrees."),
         'eye_angY': (
-            'SightRangeWidth', True, None,
+            'SightRangeWidth', True, int,
             "Angular height of sight field in degrees."),
         'ear_angX': (
-            'HearingRangeHeight', True, None,
+            'HearingRangeHeight', True, int,
             "Angular width of hearing field in degrees."),
         'ear_angY': (
-            'HearingRangeWidth', True, None,
+            'HearingRangeWidth', True, int,
             "Angular height of hearing field in degrees."),
         'callHelp_CallValidMinDistTarget': (
-            'HelpCallTargetMinDistance', False, None,
+            'HelpCallTargetMinDistance', False, int,
             "Minimum distance from AI target for help call to be made. Always zero."),
         'callHelp_CallValidRange': (
-            'HelpCallFriendMaxDistance', True, None,
+            'HelpCallFriendMaxDistance', True, int,
             "Maximum distance of friend to receive help call from this NPC. Set to 50 for both "
             "Male and Female Ghosts, and 0 for everyone else."),
         'callHelp_ForgetTimeByArrival': (
-            'HelpCallForgetTime', True, None,
+            'HelpCallForgetTime', True, int,
             "Time until call for help is forgotten by responder."),
         'callHelp_MinWaitTime': (
-            'HelpCallMinWaitTime', True, None,
+            'HelpCallMinWaitTime', True, int,
             "Internal description: 'Minimum time for response goal at first waiting goal'. Units "
             "are in tenths of a second. Only used for Male Ghosts (20)."),
         'callHelp_MaxWaitTime': (
-            'HelpCallMaxWaitTime', True, None,
+            'HelpCallMaxWaitTime', True, int,
             "Internal description: 'Maximum time for response goal at first waiting goal'. Units "
             "are in tenths of a second. Only used for Female Ghosts (40)."),
         'goalAction_ToCaution': (
@@ -358,46 +363,46 @@ GAME_PARAM_INFO = {
             "Internal description: 'If enabled, arrival determination is performed even if the "
             "line of sight is not passed.' True only for Hawkeye Gough."),
         'thinkAttr_doAdmirer': (
-            'AdmirerAttribute', True, None,
+            'AdmirerAttribute', True, bool,
             "Internal description: 'Thought attribute: when enabled, it plays the role of a wrap.' "
             "I don't know exactly what that means, but this is likely important for something. "
             "Enabled for Soulmass and Pursuers, non-giant Rats, Infested Ghouls, Mushrooms, most "
-            "Hollows (not archers), Male Ghosts, normals Skeletons and Skeleton Beasts, Pisaca, "
+            "Hollows (not archers), Male Ghosts, normal Skeletons and Skeleton Beasts, Pisaca, "
             "Gardeners, Bloatheads (not Sorcerers), Humanity Phantoms, and the Four Kings."),
         'enableNaviFlg_Edge:1': (
-            'CanFallOffEdges', True, None,
+            'CanFallOffEdges', True, bool,
             "If True, this NPC will pursue targets off navimesh edges (survivable falls)."),
         'enableNaviFlg_LargeSpace:1': (
-            'CanNavigateWideSpaces', True, None,
+            'CanNavigateWideSpaces', True, bool,
             "If True, this NPC can enter navimesh regions flagged as 'large spaces'."),
         'enableNaviFlg_Ladder:1': (
-            'CanNavigateLadders', True, None,
+            'CanNavigateLadders', True, bool,
             "If True, this NPC will use ladders."),
         'enableNaviFlg_Hole:1': (
-            'CanNavigateHoles', True, None,
+            'CanNavigateHoles', True, bool,
             "If True, this NPC can fall into navimesh holes."),
         'enableNaviFlg_Door:1': (
-            'CanNavigateDoors', True, None,
+            'CanNavigateDoors', True, bool,
             "If True, this NPC can go through doors (but not necessarily open closed doors)."),
         'enableNaviFlg_InSideWall:1': (
-            'CanNavigateInsideWalls', True, None,
+            'CanNavigateInsideWalls', True, bool,
             "If True, this NPC can go through walls (i.e. ignores navimesh walls)."),
         'enableNaviFlg_reserve0:2': (
-            'UnusedNavimeshCheckX2', False, None,
+            'UnusedNavimeshCheckX2', False, bool,
             "Two unused bytes reserved for other navimesh checks. No effect."),
         'enableNaviFlg_reserve1[3]': (
-            'UnusedNavimeshCheckX3', False, None,
+            'UnusedNavimeshCheckX3', False, bool,
             "Three unused bytes reserved for other navimesh checks. No effect."),
         'pad0[12]': (
-            'Pad0', False, None,
+            'Pad0', False, '<Pad:12>',
             "Null padding."),
     },
     'EQUIP_PARAM_PROTECTOR_ST': {
         'sortId': (
-            'SortIndex', True, None,
+            'SortIndex', True, int,
             "Index for automatic inventory sorting."),
-        'NetworkGhostReplacement': (
-            'Ghost.', True, Params.Armor,
+        'wanderingEquipId': (
+            'GhostWeaponReplacement', True, Params.Armor,
             "Replacement equipment for network ghosts."),
         'vagrantItemLotId': (
             'VagrantItemLot', True, Params.ItemLots,
@@ -435,207 +440,207 @@ GAME_PARAM_INFO = {
             'UpgradeMaterialID', True, Params.UpgradeMaterials,
             "Upgrade material set for reinforcement."),
         'partsDamageRate': (
-            'SiteDamageMultiplier', True, None,
+            'SiteDamageMultiplier', True, float,
             "Multiplier for damage taken to this part of the body. Used to specify weakness, not strength, so is "
             "never less than 1. Usually 1.5 for weak head pieces, 1.3 for strong head pieces, 1.1 for gauntlets "
             "and leggings, and 1 for torso armor."),
         'corectSARecover': (
-            'PoiseRecoveryTimeModifier', True, None,
+            'PoiseRecoveryTimeModifier', True, float,
             "Value added to poise recovery time (so negative values are better). -0.1 for heavy armor and 0 "
             "otherwise."),
         'originEquipPro': (
-            'UpgradeOrigin0', True, None,
+            'UpgradeOrigin0', True, Params.Armor,
             "Origin armor for level 0 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro1': (
-            'UpgradeOrigin1', True, None,
+            'UpgradeOrigin1', True, Params.Armor,
             "Origin armor for level 1 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro2': (
-            'UpgradeOrigin2', True, None,
+            'UpgradeOrigin2', True, Params.Armor,
             "Origin armor for level 2 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro3': (
-            'UpgradeOrigin3', True, None,
+            'UpgradeOrigin3', True, Params.Armor,
             "Origin armor for level 3 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro4': (
-            'UpgradeOrigin4', True, None,
+            'UpgradeOrigin4', True, Params.Armor,
             "Origin armor for level 4 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro5': (
-            'UpgradeOrigin5', True, None,
+            'UpgradeOrigin5', True, Params.Armor,
             "Origin armor for level 5 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro6': (
-            'UpgradeOrigin6', True, None,
+            'UpgradeOrigin6', True, Params.Armor,
             "Origin armor for level 6 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro7': (
-            'UpgradeOrigin7', True, None,
+            'UpgradeOrigin7', True, Params.Armor,
             "Origin armor for level 7 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro8': (
-            'UpgradeOrigin8', True, None,
+            'UpgradeOrigin8', True, Params.Armor,
             "Origin armor for level 8 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro9': (
-            'UpgradeOrigin9', True, None,
+            'UpgradeOrigin9', True, Params.Armor,
             "Origin armor for level 9 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro10': (
-            'UpgradeOrigin10', True, None,
+            'UpgradeOrigin10', True, Params.Armor,
             "Origin armor for level 10 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro11': (
-            'UpgradeOrigin11', True, None,
+            'UpgradeOrigin11', True, Params.Armor,
             "Origin armor for level 11 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro12': (
-            'UpgradeOrigin12', True, None,
+            'UpgradeOrigin12', True, Params.Armor,
             "Origin armor for level 12 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro13': (
-            'UpgradeOrigin13', True, None,
+            'UpgradeOrigin13', True, Params.Armor,
             "Origin armor for level 13 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro14': (
-            'UpgradeOrigin14', True, None,
+            'UpgradeOrigin14', True, Params.Armor,
             "Origin armor for level 14 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'originEquipPro15': (
-            'UpgradeOrigin15', True, None,
+            'UpgradeOrigin15', True, Params.Armor,
             "Origin armor for level 15 of this armor (i.e. what you receive when a blacksmith removes upgrades)."
             "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu."),
         'faceScaleM_ScaleX': (
-            '', True, None,
-            "DOC-TODO"),
+            'MaleFaceScaleX', True, float,
+            "Scale factor applied to X dimension of male faces when worn."),
         'faceScaleM_ScaleZ': (
-            '', True, None,
-            "DOC-TODO"),
+            'MaleFaceScaleZ', True, float,
+            "Scale factor applied to Z dimension of male faces when worn."),
         'faceScaleM_MaxX': (
-            '', True, None,
-            "DOC-TODO"),
+            'MaleFaceMaxScaleX', True, float,
+            "Maximum scale permitted for X dimension of male faces when worn."),
         'faceScaleM_MaxZ': (
-            '', True, None,
-            "DOC-TODO"),
+            'MaleFaceMaxScaleZ', True, float,
+            "Maximum scale permitted for Z dimension of male faces when worn."),
         'faceScaleF_ScaleX': (
-            '', True, None,
-            "DOC-TODO"),
+            'FemaleFaceScaleX', True, float,
+            "Scale factor applied to X dimension of female faces when worn."),
         'faceScaleF_ScaleZ': (
-            '', True, None,
-            "DOC-TODO"),
+            'FemaleFaceScaleZ', True, float,
+            "Scale factor applied to Z dimension of female faces when worn."),
         'faceScaleF_MaxX': (
-            '', True, None,
-            "DOC-TODO"),
+            'FemaleFaceMaxScaleX', True, float,
+            "Maximum scale permitted for X dimension of female faces when worn."),
         'faceScaleF_MaxZ': (
-            '', True, None,
-            "DOC-TODO"),
+            'FemaleFaceMaxScaleZ', True, float,
+            "Maximum scale permitted for Z dimension of female faces when worn."),
         'qwcId': (
-            'QWC', True, '<Params:QWC>',  # TODO: Am I including QWC?
-            "DOC-TODO"),
+            'QWCID', False, int,
+            "Unused world tendency remnant."),
         'equipModelId': (
-            'EquipmentModel', True, '<Model>',
-            "DOC-TODO"),
+            'EquipmentModel', True, Model,
+            "Model ID of armor."),
         'iconIdM': (
-            'MaleIcon', True, '<Icon>',
-            "DOC-TODO"),
+            'MaleIcon', True, Texture,
+            "Icon of male variant of armor in inventory."),
         'iconIdF': (
-            'FemaleIcon', True, '<Icon>',
-            "DOC-TODO"),
+            'FemaleIcon', True, Texture,
+            "Icon of female variant of armor in inventory."),
         'knockBack': (
-            'KnockbackMultiplier', True, None,
-            "DOC-TODO"),
+            'KnockbackPercentageReduction', False, int,
+            "Never used. Probably the percentage of knockback reduced (from 0 to 100) when wearing armor."),
         'knockbackBounceRate': (
-            'KnockbackDeflectRate', True, None,
-            "DOC-TODO"),
+            'KnockbackBouncePercentage', False, int,
+            "Never used. Possibly affects knockback of incoming attacks."),
         'durability': (
-            'InitialDurability', True, None,
+            'InitialDurability', True, int,
             "Durability of armor when it is obtained. Always equal to max durability in vanilla game."),
         'durabilityMax': (
-            'MaxDurability', True, None,
+            'MaxDurability', True, int,
             "Maximum durability of armor."),
         'saDurability': (
-            'Poise', True, None,
+            'Poise', True, int,
             "Amount of poise added when wearing armor."),
         'defFlickPower': (
-            'RepelDefense', True, None,
-            "DOC-TODO"),
+            'RepelDefense', True, int,
+            "Determines when incoming attacks will bounce off."),
         'defensePhysics': (
-            'PhysicalDefense', True, None,
-            "DOC-TODO"),
+            'PhysicalDefense', True, int,
+            "Added defense against physical attack damage."),
         'defenseMagic': (
-            'MagicDefense', True, None,
-            "DOC-TODO"),
+            'MagicDefense', True, int,
+            "Added defense against magic attack damage."),
         'defenseFire': (
-            'FireDefense', True, None,
-            "DOC-TODO"),
+            'FireDefense', True, int,
+            "Added defense against fire attack damage."),
         'defenseThunder': (
-            'LightningDefense', True, None,
-            "DOC-TODO"),
+            'LightningDefense', True, int,
+            "Added defense against lightning attack damage."),
         'defenseSlash': (
-            'SlashDefense', True, None,
-            "DOC-TODO"),
+            'SlashDefense', True, int,
+            "Added defense against physical slash attack damage."),
         'defenseBlow': (
-            'StrikeDefense', True, None,
-            "DOC-TODO"),
+            'StrikeDefense', True, int,
+            "Added defense against physical strike attack damage."),
         'defenseThrust': (
-            'ThrustDefense', True, None,
-            "DOC-TODO"),
+            'ThrustDefense', True, int,
+            "Added defense against physical thrust attack damage."),
         'resistPoison': (
-            'PoisonResistance', True, None,
-            "DOC-TODO"),
+            'PoisonResistance', True, int,
+            "Poison resistance added by armor."),
         'resistDisease': (
-            'ToxicResistance', True, None,
-            "DOC-TODO"),
+            'ToxicResistance', True, int,
+            "Toxic resistance added by armor."),
         'resistBlood': (
-            'BleedResistance', True, None,
-            "DOC-TODO"),
+            'BleedResistance', True, int,
+            "Bleed resistance added by armor."),
         'resistCurse': (
-            'CurseResistance', True, None,
-            "DOC-TODO"),
+            'CurseResistance', True, int,
+            "Curse resistance added by armor."),
         'reinforceTypeId': (
-            'ReinforcementID', True, '<Params:ArmorUpgrades>',
-            "DOC-TODO"),
+            'ArmorUpgrades', True, Params.ArmorUpgrades,
+            "Armor Upgrades entry used to determine parameter changes from reinforcement."),
         'trophySGradeId': (
-            'AchievementContributionID', True, None,
+            'AchievementContributionID', False, int,
             "Index of armor as it contributes to certain multi-item achievements."),
         'shopLv': (
-            'ShopLevel', False, None,
+            'ShopLevel', False, int,
             "Level of armor that can be sold in 'the shop'. Always -1 or 0. Probably unused."),
         'knockbackParamId': (
-            'KnockbackID', True, '<Params:Knockback>',
-            "DOC-TODO"),
+            'KnockbackID', False, Params.Knockback,
+            "Knockback entry. Always 1."),
         'flickDamageCutRate': (
-            'RepelDamageMultiplier', True, None,
-            "I think this affects damage taken during a missed parry."),
+            'RepelDamagePercentageReduction', True, int,
+            "Determines some aspect of attack deflection. Always set to 0 (for light armor) or 255 (for heavy armor)."),
         'equipModelCategory': (
             'EquipmentModelCategory', True, EQUIP_MODEL_CATEGORY,
-            "DOC-TODO"),
+            "Body part covered by armor model."),
         'equipModelGender': (
             'EquipmentModelGender', True, EQUIP_MODEL_GENDER,
-            "DOC-TODO"),
+            "Gender variant of armor."),
         'protectorCategory': (
             'ArmorType', True, PROTECTOR_CATEGORY,
-            "DOC-TODO"),
+            "Type of armor (equip slot)."),
         'defenseMaterial': (
-            'DefenseMaterialVisualEffect', True, None,
-            "DOC-TODO"),
+            'SoundEffectOnHit', True, WEP_MATERIAL_DEF,
+            "Type of sound effect generated when this armor is hit."),
         'defenseMaterialSfx': (
-            'DefenseMaterialSound', True, None,
-            "DOC-TODO"),
+            'VisualEffectOnHit', True, WEP_MATERIAL_DEF_SFX,
+            "Type of visual effect generated when this armor is hit."),
         'partsDmgType': (
-            'PartsDamageType', False, None,  # TODO: Type is possibly ATK_PARAM_PARTSDMGTYPE
+            'PartsDamageType', False, ATK_PARAM_PARTSDMGTYPE,
             "Always zero."),
         'defenseMaterial_Weak': (
-            'WeakDefenseMaterialVisualEffect', True, None,
-            "Visual effects for when damage is taken to weak spot (used for head armor)."),
+            'SoundEffectOnWeakSpotHit', True, WEP_MATERIAL_DEF,
+            "Sound effect for when damage is taken to weak spot (used for head armor)."),
         'defenseMaterialSfx_Weak': (
-            'WeakDefenseMaterialSound', True, None,
-            "Sound to play when damage is taken to weak spot (used for head armor)."),
+            'VisualEffectOnWeakSpotHit', True, WEP_MATERIAL_DEF_SFX,
+            "Visual effect for when damage is taken to weak spot (used for head armor)."),
         'isDeposit:1': (
             'CanBeStored', True, bool,
-            "If True, this armor can be stored in the Bottomless Box. Always False for armor."),
+            "If True, this armor can be stored in the Bottomless Box."),
         'headEquip:1': (
             'EquippedToHead', True, bool,
             "This armor is equipped to the head."),
@@ -650,153 +655,153 @@ GAME_PARAM_INFO = {
             "This armor is equipped to the legs."),
         'useFaceScale:1': (
             'UseFaceScale', False, bool,
-            "DOC-TODO"),
+            "If True, the face-scaling parameters of this armor will be applied."),
         'invisibleFlag00:1': (
-            'HideFlag0', False, None,
+            'HideFlag0', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag01:1': (
-            'HideFlag1', False, None,
+            'HideFlag1', False, bool,
             "Hide part of the character model: (hair fringe)"),
         'invisibleFlag02:1': (
-            'HideFlag2', False, None,
+            'HideFlag2', False, bool,
             "Hide part of the character model: (sideburns)"),
         'invisibleFlag03:1': (
-            'HideFlag3', False, None,
+            'HideFlag3', False, bool,
             "Hide part of the character model: (top of head)"),
         'invisibleFlag04:1': (
-            'HideFlag4', False, None,
+            'HideFlag4', False, bool,
             "Hide part of the character model: (top of head)"),
         'invisibleFlag05:1': (
-            'HideFlag5', False, None,
+            'HideFlag5', False, bool,
             "Hide part of the character model: (back hair)"),
         'invisibleFlag06:1': (
-            'HideFlag6', False, None,
+            'HideFlag6', False, bool,
             "Hide part of the character model: (back hair tip)"),
         'invisibleFlag07:1': (
-            'HideFlag7', False, None,
+            'HideFlag7', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag08:1': (
-            'HideFlag8', False, None,
+            'HideFlag8', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag09:1': (
-            'HideFlag9', False, None,
+            'HideFlag9', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag10:1': (
-            'HideFlag10', False, None,
+            'HideFlag10', False, bool,
             "Hide part of the character model: (collar)"),
         'invisibleFlag11:1': (
-            'HideFlag11', False, None,
+            'HideFlag11', False, bool,
             "Hide part of the character model: (around collar)"),
         'invisibleFlag12:1': (
-            'HideFlag12', False, None,
+            'HideFlag12', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag13:1': (
-            'HideFlag13', False, None,
+            'HideFlag13', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag14:1': (
-            'HideFlag14', False, None,
+            'HideFlag14', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag15:1': (
-            'HideFlag15', False, None,
+            'HideFlag15', False, bool,
             "Hide part of the character model: (hood hem)"),
         'invisibleFlag16:1': (
-            'HideFlag16', False, None,
+            'HideFlag16', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag17:1': (
-            'HideFlag17', False, None,
+            'HideFlag17', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag18:1': (
-            'HideFlag18', False, None,
+            'HideFlag18', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag19:1': (
-            'HideFlag19', False, None,
+            'HideFlag19', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag20:1': (
-            'HideFlag20', False, None,
+            'HideFlag20', False, bool,
             "Hide part of the character model: (sleeve A)"),
         'invisibleFlag21:1': (
-            'HideFlag21', False, None,
+            'HideFlag21', False, bool,
             "Hide part of the character model: (sleeve B)"),
         'invisibleFlag22:1': (
-            'HideFlag22', False, None,
+            'HideFlag22', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag23:1': (
-            'HideFlag23', False, None,
+            'HideFlag23', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag24:1': (
-            'HideFlag24', False, None,
+            'HideFlag24', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag25:1': (
-            'HideFlag25', False, None,
+            'HideFlag25', False, bool,
             "Hide part of the character model: (arm)"),
         'invisibleFlag26:1': (
-            'HideFlag26', False, None,
+            'HideFlag26', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag27:1': (
-            'HideFlag27', False, None,
+            'HideFlag27', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag28:1': (
-            'HideFlag28', False, None,
+            'HideFlag28', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag29:1': (
-            'HideFlag29', False, None,
+            'HideFlag29', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag30:1': (
-            'HideFlag30', False, None,
+            'HideFlag30', False, bool,
             "Hide part of the character model: (belt)"),
         'invisibleFlag31:1': (
-            'HideFlag31', False, None,
+            'HideFlag31', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag32:1': (
-            'HideFlag32', False, None,
+            'HideFlag32', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag33:1': (
-            'HideFlag33', False, None,
+            'HideFlag33', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag34:1': (
-            'HideFlag34', False, None,
+            'HideFlag34', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag35:1': (
-            'HideFlag35', False, None,
+            'HideFlag35', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag36:1': (
-            'HideFlag36', False, None,
+            'HideFlag36', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag37:1': (
-            'HideFlag37', False, None,
+            'HideFlag37', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag38:1': (
-            'HideFlag38', False, None,
+            'HideFlag38', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag39:1': (
-            'HideFlag39', False, None,
+            'HideFlag39', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag40:1': (
-            'HideFlag40', False, None,
+            'HideFlag40', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag41:1': (
-            'HideFlag41', False, None,
+            'HideFlag41', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag42:1': (
-            'HideFlag42', False, None,
+            'HideFlag42', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag43:1': (
-            'HideFlag43', False, None,
+            'HideFlag43', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag44:1': (
-            'HideFlag44', False, None,
+            'HideFlag44', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag45:1': (
-            'HideFlag45', False, None,
+            'HideFlag45', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag46:1': (
-            'HideFlag46', False, None,
+            'HideFlag46', False, bool,
             "Hide part of the character model: (unknown)"),
         'invisibleFlag47:1': (
-            'HideFlag47', False, None,
+            'HideFlag47', False, bool,
             "Hide part of the character model: (unknown)"),
         'disableMultiDropShare:1': (
-            'DisableMultiplayerShare', False, None,
+            'DisableMultiplayerShare', False, bool,
             "If True, this armor cannot be given to other players by dropping it. Always False in vanilla."),
         'simpleModelForDlc:1': (
             'SimpleDLCModelExists', False, bool,
@@ -860,43 +865,43 @@ GAME_PARAM_INFO = {
     },
     'GAME_AREA_PARAM_ST': {
         'bonusSoul_single': (
-            'SingleplayerSoulReward', True, None,
+            'SingleplayerSoulReward', True, int,
             "Souls awarded (after delay) when boss is defeated with no summons."),
         'bonusSoul_multi': (
-            'MultiplayerSoulReward', True, None,
+            'MultiplayerSoulReward', True, int,
             "Souls awarded to each player (after delay) when boss is defeated with summons."),
         'humanityPointCountFlagIdTop': (
-            'FirstHumanityFlag', True, None,
+            'FirstHumanityFlag', True, Flag,
             "First flag for recording number of humanity drops awarded in boss's area."),
         'humanityDropPoint1': (
-            'HumanityDropPoint1', True, None,
+            'HumanityDropPoint1', True, int,
             "Number of 'points' needed from killing enemies in the boss area for first Humanity."),
         'humanityDropPoint2': (
-            'HumanityDropPoint2', True, None,
+            'HumanityDropPoint2', True, int,
             "Number of 'points' needed from killing enemies in the boss area for second Humanity."),
         'humanityDropPoint3': (
-            'HumanityDropPoint3', True, None,
+            'HumanityDropPoint3', True, int,
             "Number of 'points' needed from killing enemies in the boss area for third Humanity."),
         'humanityDropPoint4': (
-            'HumanityDropPoint4', True, None,
+            'HumanityDropPoint4', True, int,
             "Number of 'points' needed from killing enemies in the boss area for fourth Humanity."),
         'humanityDropPoint5': (
-            'HumanityDropPoint5', True, None,
+            'HumanityDropPoint5', True, int,
             "Number of 'points' needed from killing enemies in the boss area for fifth Humanity."),
         'humanityDropPoint6': (
-            'HumanityDropPoint6', True, None,
+            'HumanityDropPoint6', True, int,
             "Number of 'points' needed from killing enemies in the boss area for sixth Humanity."),
         'humanityDropPoint7': (
-            'HumanityDropPoint7', True, None,
+            'HumanityDropPoint7', True, int,
             "Number of 'points' needed from killing enemies in the boss area for seventh Humanity."),
         'humanityDropPoint8': (
-            'HumanityDropPoint8', True, None,
+            'HumanityDropPoint8', True, int,
             "Number of 'points' needed from killing enemies in the boss area for eighth Humanity."),
         'humanityDropPoint9': (
-            'HumanityDropPoint9', True, None,
+            'HumanityDropPoint9', True, int,
             "Number of 'points' needed from killing enemies in the boss area for ninth Humanity."),
         'humanityDropPoint10': (
-            'HumanityDropPoint10', True, None,
+            'HumanityDropPoint10', True, int,
             "Number of 'points' needed from killing enemies in the boss area for final Humanity."),
     },
     'BULLET_PARAM_ST': {
@@ -916,74 +921,74 @@ GAME_PARAM_INFO = {
             "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and "
             "throwing knives."),
         'life': (
-            'LifeTime', True, None,
+            'LifeTime', True, float,
             "Maximum time before bullet will disappear on its own. -1 means it will last indefinitely."),
         'dist': (
-            'AttenuationDistance', True, None,
+            'AttenuationDistance', True, float,
             "Distance at which attenuation of the projectile begins."),
         'shootInterval': (
-            'LaunchInterval', True, None,
+            'LaunchInterval', True, float,
             "Time between emitted bullets. Does nothing for bullets that only shoot once and is "
             "generally left at zero for those bullets."),
         'gravityInRange': (
-            'GravityBeforeAttenuation', True, None,
+            'GravityBeforeAttenuation', True, float,
             "Downward acceleration of bullet. Rarely used."),
         'gravityOutRange': (
-            'GravityAfterAttenuation', True, None,
+            'GravityAfterAttenuation', True, float,
             "Downward acceleration of bullet after it passes the attenuation distance."),
         'hormingStopRange': (
-            'ClosestHomingDistance', True, None,
+            'ClosestHomingDistance', True, float,
             "Bullet will stop homing if it is within this distance of its homing target. Use this to "
             "prevent homing bullets from being too oppressive."),
         'initVellocity': (
-            'InitialSpeed', True, None,
+            'InitialSpeed', True, float,
             "Initial speed of bullet."),
         'accelInRange': (
-            'AccelerationBeforeAttenuation', True, None,
+            'AccelerationBeforeAttenuation', True, float,
             "Forward acceleration acting on bullet before it reaches the attenuation distance. Negative "
             "values will slow the bullet down."),
         'accelOutRange': (
-            'AccelerationAfterAttenuation', True, None,
+            'AccelerationAfterAttenuation', True, float,
             "Forward acceleration acting on bullet after it passes the attenuation distance. Negative "
             "values will slow the bullet down."),
         'maxVellocity': (
-            'MaxSpeed', True, None,
+            'MaxSpeed', True, float,
             "Maximum speed of bullet, regardless of acceleration."),
         'minVellocity': (
-            'MinSpeed', True, None,
+            'MinSpeed', True, float,
             "Minimum speed of bullet, regardless of acceleration."),
         'accelTime': (
-            'AccelerationTime', True, None,
+            'AccelerationTime', True, float,
             "Time that acceleration is active after bullet creation."),
         'homingBeginDist': (
-            'HomingStartDistance', True, None,
+            'HomingStartDistance', True, float,
             "Distance from owner at which the bullet starts homing in on targets."),
         'hitRadius': (
-            'InitialHitRadius', True, None,
+            'InitialHitRadius', True, float,
             "Initial hit radius of bullet projectile."),
         'hitRadiusMax': (
-            'FinalHitRadius', True, None,
+            'FinalHitRadius', True, float,
             "Final hit radius of bullet projectile. Set to -1 if radius does not change, which is always "
             "coupled with a value of 0 for RadiusIncreaseDuration."),
         'spreadTime': (
-            'RadiusIncreaseTime', True, None,
+            'RadiusIncreaseTime', True, float,
             "Time taken by bullet to transition from initial to final hit radius. Value of 0 are always "
             "coupled with values of -1 for RadiusIncreaseDuration. I'm not sure if this can actually "
             "decrease the hit radius if the final value is less than the initial value."),
         'expDelay': (
-            'ExpDelay', False, None,
+            'ExpDelay', False, float,
             "Delay between impact and 'explosion' (not sure if that refers to the visual effect and/or "
             "hitbox). Never used (always zero)."),
         'hormingOffsetRange': (
-            'HomingOffsetRange', True, None,
+            'HomingOffsetRange', True, float,
             "Internal description: 'When shooting, aim to shift each component of XYZ by this "
             "amount.' Nonzero only for Hydra blasts and Vagrant attacks."),
         'dmgHitRecordLifeTime': (
-            'HitboxLifeTime', True, None,
+            'HitboxLifeTime', True, float,
             "Duration of bullet impact hitbox. A value of zero means it is disabled immediately "
             "after first impact."),
         'externalForce': (
-            'ExternalForce', True, None,
+            'ExternalForce', True, float,
             "Unknown. Used only for Gargoyle fire breath and Undead Dragon poison breath."),
         'spEffectIDForShooter': (
             'OwnerSpecialEffect', True, Params.SpecialEffects,
@@ -1014,52 +1019,52 @@ GAME_PARAM_INFO = {
             'HitSpecialEffect4', True, Params.SpecialEffects,
             "Special effect applied to target hit by bullet. (Slot 4)"),
         'numShoot': (
-            'BulletCount', True, None,
+            'BulletCount', True, int,
             "Number of bullets emitted at once."),
         'homingAngle': (
-            'HomingAnglePerSecond', True, None,
+            'HomingAnglePerSecond', True, int,
             "Turning angle of homing bullet per second. Higher values are better for homing."),
         'shootAngle': (
-            'AzimuthAngleStart', True, None,
+            'AzimuthAngleStart', True, int,
             "Angle of first bullet in degrees around the vertical axis, relative to the forward direction."),
         'shootAngleInterval': (
-            'AzimuthAngleInterval', True, None,
+            'AzimuthAngleInterval', True, int,
             "Angle from one bullet to the next around the vertical axis, beginning at the azimuth "
             "angle start."),
         'shootAngleXInterval': (
-            'ElevationAngleInterval', True, None,
+            'ElevationAngleInterval', True, int,
             "Angle between bullets in elevation."),
         'damageDamp': (
-            'PhysicalDamageDamp', True, None,
+            'PhysicalDamageDamp', True, int,
             "Percentage reduction in physical damage per second."),
         'spelDamageDamp': (
-            'MagicDamageDamp', True, None,
+            'MagicDamageDamp', True, int,
             "Percentage reduction in magic damage per second."),
         'fireDamageDamp': (
-            'FireDamageDamp', True, None,
+            'FireDamageDamp', True, int,
             "Percentage reduction in fire damage per second."),
         'thunderDamageDamp': (
-            'LightningDamageDamp', True, None,
+            'LightningDamageDamp', True, int,
             "Percentage reduction in lightning damage per second."),
         'staminaDamp': (
-            'StaminaDamp', False, None,
+            'StaminaDamp', False, int,
             "Percentage reduction in stamina damage per second."),
         'knockbackDamp': (
-            'KnockbackDamp', False, None,
+            'KnockbackDamp', False, int,
             "Percentage reduction in knockback power per second."),
         'shootAngleXZ': (
-            'FirstBulletElevationAngle', True, None,
+            'FirstBulletElevationAngle', True, int,
             "Angle of elevation of first bullet. Positive values will angle the bullets up (e.g. "
             "Quelaag's fireballs) and negative values will angle the bullets down (e.g. most breath "
             "attacks)."),
         'lockShootLimitAng': (
-            'LockShootLimitAngle', True, None,
+            'LockShootLimitAngle', True, int,
             "Unknown, but likely important. Set to 30 for most basic projectile magic."),
         'isPenetrate': (
-            'PiercesTargets', True, None,
+            'PiercesTargets', True, bool,
             "Bullet will go through objects, players, and NPCs."),
         'prevVelocityDirRate': (
-            'PreviousDirectionRatio', False, None,
+            'PreviousDirectionRatio', False, int,
             "Internal description: 'Ratio of adding the previous moving direction to the current direction when a "
             "sliding bullet hits the wall.' Like ExternalForce, this is used only for Gargoyle and Undead Dragon "
             "breath (100) and is zero for everything else."),
@@ -1070,14 +1075,14 @@ GAME_PARAM_INFO = {
             'ElementAttribute', True, ATKPARAM_SPATTR_TYPE,
             "Element attached to bullet hit."),
         'Material_AttackType': (
-            'MaterialAttackType', True, None,
-            "DOC-TODO"),
+            'MaterialAttackType', True, ATK_TYPE,
+            "Determines visual effects of bullet hit."),
         'Material_AttackMaterial': (
-            'MaterialAttackMaterial', True, None,
-            "DOC-TODO"),
+            'EffectsOnHit', True, WEP_MATERIAL_ATK,
+            "Sound and visual effects on hit."),
         'Material_Size': (
-            'MaterialSize', True, None,
-            "DOC-TODO"),
+            'MaterialSize', False, ATK_SIZE,
+            "'Size' of attack. Never used.'"),
         'launchConditionType': (
             'LaunchConditionType', True, BULLET_LAUNCH_CONDITION_TYPE,
             "Condition for determing if a new bullet will be generated when this bullet lands or expires."),
@@ -1110,21 +1115,20 @@ GAME_PARAM_INFO = {
             'AttachEffectType', False, '<ParamEnum:BULLET_ATTACH_EFFECT_TYPE>',
             "Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles)."),
         'isHitForceMagic:1': (
-            'CanBeDeflectedByMagic', True, None,
+            'CanBeDeflectedByMagic', True, bool,
             "If True, this bullet will impact appropriate Force-type magic (e.g. arrows, bolts, knives)."),
         'isIgnoreSfxIfHitWater:1': (
-            'IgnoreFXOnWaterHit', True, None,
+            'IgnoreFXOnWaterHit', True, bool,
             "If True, hit FX are not produced if the bullet impacts water."),
         'isIgnoreMoveStateIfHitWater:1': (
-            'IgnoreStateTransitionOnWaterHit', True, None,
+            'IgnoreStateTransitionOnWaterHit', True, bool,
             "Unclear effect, but True for knives/arrows/bolts and False otherwise."),
         'isHitDarkForceMagic:1': (
-            'CanBeDeflectedBySilverPendant', True, None,
+            'CanBeDeflectedBySilverPendant', True, bool,
             "If True, this bullet will impact the Silver Pendant shield effect. True only for dark sorceries."),
         'pad[3]': (
-            'Pad3', False, None,
+            'Pad3', False, '<Pad:3>',
             "Null padding."),
-
     },
     'LOCK_CAM_PARAM_ST': {},  # TODO
     'ATK_PARAM_ST': {
@@ -1387,7 +1391,7 @@ GAME_PARAM_INFO = {
             'BehaviorJudgeID', True, int,
             "This is the ID specified by TAE events that trigger behaviors."),
         'ezStateBehaviorType_old': (
-            'EzstateBehaviorType', False, None,
+            'EzstateBehaviorType', False, int,
             "Unused remnant from Demon's Souls."),
         'refType': (
             'ReferenceType', True, BEHAVIOR_REF_TYPE,
@@ -1694,8 +1698,8 @@ GAME_PARAM_INFO = {
             'MaxHoldQuantity', True, int,
             "Maximum number of good that can be held at once."),
         'consumeHeroPoint': (
-            'HumanityCost', True, None,
-            ""),  # TODO: probably unused
+            'HumanityCost', False, int,
+            "Humanity cost of using good. Always zero."),
         'overDexterity': (
             'OverDexterity', False, int,
             "'Skill over start value'. Unknown effect; set to 0 for spells and 50 otherwise."),
@@ -1817,23 +1821,23 @@ GAME_PARAM_INFO = {
             'CanBeStored', True, bool,
             "Determines if good can be stored in Bottomless Box."),
         'isDisableHand:1': (
-            'IsDisableHand?', True, None,
-            ""),  # TODO
+            'IsDisableHand?', True, bool,
+            "Not sure. Could disable model hand when good is used?"),
         'IsTravelItem:1': (
-            'IsTravelItem?', True, None,
-            ""),  # TODO
+            'IsTravelItem?', True, bool,
+            "Not sure. Could flag items that warp the player."),
         'isSuppleItem:1': (
-            'IsSuppleItem?', True, None,
-            ""),  # TODO
+            'IsSuppleItem?', True, bool,
+            "Not sure."),
         'isFullSuppleItem:1': (
-            'IsFullSuppleItem?', True, None,
-            ""),  # TODO
+            'IsFullSuppleItem?', True, bool,
+            "Not sure. Even more supple than before."),
         'isEnhance:1': (
             'IsUpgradeMaterial', True, bool,
             "Determines if this is an upgrade material."),
         'isFixItem:1': (
-            'IsFixItem?', True, None,
-            ""),  # TODO: repair powder?
+            'IsFixItem?', True, bool,
+            "Probably True for Repair Powder, etc."),
         'disableMultiDropShare:1': (
             'DisableMultiplayerShare', True, bool,
             "If True, this good cannot be given to other players by dropping it."),
@@ -1861,10 +1865,10 @@ GAME_PARAM_INFO = {
             'SoundRadiusMultiplier', True, float,
             "Multiplier for foot sound effect radius on this terrain."),
         'spEffectIdOnHit0': (
-            'SpecialEffect1', True, None,
+            'SpecialEffect1', True, Params.SpecialEffects,
             "Special effect applied to character walking on terrain (first of two)."),
         'spEffectIdOnHit1': (
-            'SpecialEffect2', True, None,
+            'SpecialEffect2', True, Params.SpecialEffects,
             "Special effect applied to character walking on terrain (second of two)."),
         'footEffectHeightType:2': (
             'FootEffectHeightType', True, HMP_FOOT_EFFECT_HEIGHT_TYPE,
@@ -1894,11 +1898,11 @@ GAME_PARAM_INFO = {
             'Item1Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck01:1': (
-            'Item1LuckEnabled', True, None,
+            'Item1LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint01': (
-            'Item1CumulativePoints', True, None,
+            'Item1CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset01:1': (
@@ -1919,11 +1923,11 @@ GAME_PARAM_INFO = {
             'Item2Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck02:1': (
-            'Item2LuckEnabled', True, None,
+            'Item2LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint02': (
-            'Item2CumulativePoints', True, None,
+            'Item2CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset02:1': (
@@ -1944,11 +1948,11 @@ GAME_PARAM_INFO = {
             'Item3Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck03:1': (
-            'Item3LuckEnabled', True, None,
+            'Item3LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint03': (
-            'Item3CumulativePoints', True, None,
+            'Item3CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset03:1': (
@@ -1969,11 +1973,11 @@ GAME_PARAM_INFO = {
             'Item4Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck04:1': (
-            'Item4LuckEnabled', True, None,
+            'Item4LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint04': (
-            'Item4CumulativePoints', True, None,
+            'Item4CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset04:1': (
@@ -1994,11 +1998,11 @@ GAME_PARAM_INFO = {
             'Item5Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck05:1': (
-            'Item5LuckEnabled', True, None,
+            'Item5LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint05': (
-            'Item5CumulativePoints', True, None,
+            'Item5CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset05:1': (
@@ -2019,11 +2023,11 @@ GAME_PARAM_INFO = {
             'Item6Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck06:1': (
-            'Item6LuckEnabled', True, None,
+            'Item6LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint06': (
-            'Item6CumulativePoints', True, None,
+            'Item6CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset06:1': (
@@ -2044,11 +2048,11 @@ GAME_PARAM_INFO = {
             'Item7Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck07:1': (
-            'Item7LuckEnabled', True, None,
+            'Item7LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint07': (
-            'Item7CumulativePoints', True, None,
+            'Item7CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset07:1': (
@@ -2069,11 +2073,11 @@ GAME_PARAM_INFO = {
             'Item8Flag', False, Flag,
             "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."),
         'enableLuck08:1': (
-            'Item8LuckEnabled', True, None,
+            'Item8LuckEnabled', True, bool,
             "If True, increased player luck will *reduce* the chance points of this slot. Usually used on the empty "
             "item slot so that rarer items have a relatively better chance of dropping."),
         'cumulateLotPoint08': (
-            'Item8CumulativePoints', True, None,
+            'Item8CumulativePoints', True, int,
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset08:1': (
@@ -2113,28 +2117,28 @@ GAME_PARAM_INFO = {
             'NameID', True, Text.NPCNames,
             "DOC-TODO"),
         'turnVellocity': (
-            'TurnVelocity', True, None,  # TODO: types from here on.
+            'TurnVelocity', True, float,
             "DOC-TODO"),
         'hitHeight': (
-            'HitHeight', True, None,
+            'HitHeight', True, float,
             "DOC-TODO"),
         'hitRadius': (
-            'HitRadius', True, None,
+            'HitRadius', True, float,
             "DOC-TODO"),
         'weight': (
-            'Weight', True, None,
+            'Weight', True, int,
             "DOC-TODO"),
         'hitYOffset': (
-            'HitYOffset', False, None,
+            'HitYOffset', False, float,
             "DOC-TODO"),
         'hp': (
-            'MaximumHP', True, None,
+            'MaximumHP', True, int,
             "DOC-TODO"),
         'mp': (
-            'MaximumMP', True, None,
+            'MaximumMP', True, int,
             "DOC-TODO"),
         'getSoul': (
-            'SoulReward', True, None,
+            'SoulReward', True, int,
             "DOC-TODO"),
         'itemLotId_1': (
             'ItemLotID1', True, Params.ItemLots,
@@ -2578,7 +2582,7 @@ GAME_PARAM_INFO = {
             'IsAbyssal', True, bool,
             "True for Darkwraiths, Primordial Serpents, and the Four Kings, but not Manus."),
         'pad1:1': (
-            'Pad1', False, None,
+            'Pad1', False, '<Pad:1>',
             "DOC-TODO"),
         'vowType:3': (
             'VowType', False, int,
@@ -2588,10 +2592,10 @@ GAME_PARAM_INFO = {
             "True for bosses and non-respawning enemies that are disabled in event scripts, "
             "but its effects are unknown."),
         'pad3:4': (
-            '__Pad3', False, None,
+            'Pad2', False, '<Pad:4>',
             "DOC-TODO"),
         'pad2[6]': (
-            '__Pad2', False, None,
+            'Pad3', False, '<Pad:6>',
             "DOC-TODO"),
     },
     'EQUIP_PARAM_ACCESSORY_ST': {
@@ -2669,7 +2673,7 @@ GAME_PARAM_INFO = {
             'BreaksWhenUnequipped', True, bool,
             "If True, this ring will break when it is unequipped (e.g. Ring of Favor and Protection)."),
         'disableMultiDropShare:1': (
-            'DisableMultiplayerShare', False, None,
+            'DisableMultiplayerShare', False, bool,
             "If True, this ring cannot be given to other players by dropping it. Always False in vanilla."),
         'pad1[3]': (
             'Pad2', False, '<Pad:3>',
@@ -2754,8 +2758,8 @@ GAME_PARAM_INFO = {
         'chrAnimId': (
             'NonPlayerActionAnimation', True, Animation,
             "Animation played by a non-player character when they successfully activate the object."),
-        'spQualifiedId': partial(_obj_act_success_condition, 'spQualifiedId'),
-        'spQualifiedId2': partial(_obj_act_success_condition, 'spQualifiedId2'),
+        'spQualifiedId': partial(_obj_act_success_condition, 'spQualifiedType'),
+        'spQualifiedId2': partial(_obj_act_success_condition, 'spQualifiedType2'),
         'objDummyId': (
             'ObjectActionModelPoint', True, int,
             "Model point that specifies where the action occurs on the object (for snapping the player and distance "
@@ -2774,7 +2778,7 @@ GAME_PARAM_INFO = {
             'SuccessCondition2Type', True, OBJACT_SP_QUALIFIED_TYPE,
             "Type of second success condition."),
         'validObjAngle': (
-            'MaxObjectAngle', True, None,
+            'MaxObjectAngle', True, int,
             "Maximum angle between the object's forward direction and the direction to the player for "
             "the action prompt to appear."),
         'chrSorbType': (
@@ -3407,7 +3411,7 @@ GAME_PARAM_INFO = {
             'MaxDistanceBelow', True, float,
             "Maximum distance that defender can be below attacker."),
         'diffAngMyToDef': (
-            'MaxAngleToDefender', True, None,
+            'MaxAngleToDefender', True, float,
             "Maximum angular difference between attacker's direction and the direction of the defender."),
         'throwTypeId': (
             'ThrowID', True, int,
@@ -3648,10 +3652,10 @@ GAME_PARAM_INFO = {
             'WeaponIcon', True, Texture,
             "Weapon icon texture ID."),
         'durability': (
-            'InitialDurability', True, None,
+            'InitialDurability', True, int,
             "Durability of weapon when it is obtained. Always equal to max durability in vanilla game."),
         'durabilityMax': (
-            'MaxDurability', True, None,
+            'MaxDurability', True, int,
             "Maximum durability of weapon."),
         'attackThrowEscape': (
             'ThrowEscapePower', False, int,
@@ -3781,7 +3785,7 @@ GAME_PARAM_INFO = {
             "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, in favor "
             "of the simple 'IgnoreGuard' boolean field."),
         'guardLevel': (
-            'GuardLevel', True, None,
+            'GuardLevel', True, int,
             "Internal description: 'in which guard motion is the enemy attacked when guarded?' Exact effects are "
             "unclear, but this ranges from 0 to 4 in effectiveness of blocking in a predictable way (daggers are worse "
             "than swords, which are worse than greatswords, which are worse than all shields)."),
@@ -3892,17 +3896,17 @@ GAME_PARAM_INFO = {
             'CanBeStored', True, bool,
             "If True, this weapon can be stored in the Bottomless Box. Always True for rings."),
         'disableMultiDropShare:1': (
-            'DisableMultiplayerShare', False, None,
+            'DisableMultiplayerShare', False, bool,
             "If True, this weapon cannot be given to other players by dropping it. Always False in vanilla."),
         'pad_0[1]': (
             'Pad1', False, '<Pad:1>',
             "Null padding."),
         'oldSortId': (
-            'OldSortIndex', False, None,
+            'OldSortIndex', False, int,
             "Sorting index for an obsolete build of the game. No effect."),
         'levelSyncCorrectID': (
-            '', True, None,
-            ""),
+            'LevelSyncCorrection', False, int,
+            "Level sync correction (DSR only). Probably not useful."),
         'pad_1[6]': (
             'Pad2', False, '<Pad:6>',
             "Null padding."),

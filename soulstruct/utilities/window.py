@@ -24,10 +24,13 @@ def _embed_component(component_func):
     @wraps(component_func)
     def component_with_label(self, frame=None,
                              label='', label_font_type=None, label_font_size=None, label_position=None,
-                             label_fg=None, label_bg=None, vertical_scrollbar=False, **kwargs):
+                             label_fg=None, label_bg=None, vertical_scrollbar=False, no_grid=False, **kwargs):
 
         grid_kwargs = self.grid_defaults.copy()
-        grid_kwargs.update({key: kwargs.pop(key) for key in list(kwargs.keys()) if key in _GRID_KEYWORDS})
+        passed_grid_kwargs = {key: kwargs.pop(key) for key in list(kwargs.keys()) if key in _GRID_KEYWORDS}
+        if passed_grid_kwargs and no_grid:
+            raise ValueError("If 'no_grid' is True, no grid keyword arguments can be used.")
+        grid_kwargs.update(passed_grid_kwargs)
 
         for dim in {'row', 'column'}:
             current_dim = getattr(self, 'current_' + dim)
@@ -88,9 +91,9 @@ def _embed_component(component_func):
                 else:
                     raise ValueError(f"Invalid label position {label_position}. "
                                      f"Must be 'left', 'right', 'above', 'below'.")
-                if grid_kwargs:
+                if not no_grid and grid_kwargs:
                     frame.grid(**grid_kwargs)
-            elif grid_kwargs:
+            elif not no_grid and grid_kwargs:
                 frame_with_scrollbar.grid(**grid_kwargs)
         else:
             component = component_func(self, frame=frame, **kwargs)
@@ -110,9 +113,9 @@ def _embed_component(component_func):
                 else:
                     raise ValueError(f"Invalid label position {label_position}. "
                                      f"Must be 'left', 'right', 'above', 'below'.")
-                if grid_kwargs:
+                if not no_grid and grid_kwargs:
                     frame.grid(**grid_kwargs)
-            elif grid_kwargs:
+            elif not no_grid and grid_kwargs:
                 component.grid(**grid_kwargs)
 
         return component
@@ -391,7 +394,6 @@ class SmartFrame(tk.Frame):
     @_embed_component
     def Combobox(self, frame=None, values=None, initial_value=None, readonly=True, width=20, on_select_function=None,
                  **kwargs):
-        self.set_style_defaults(kwargs, text=True)
         state = 'readonly' if readonly else ''
         if initial_value is None:
             initial_value = values[0] if values else ''
@@ -428,12 +430,21 @@ class SmartFrame(tk.Frame):
         return entry
 
     @staticmethod
-    def _validate_entry_integers(new_value):
+    def _validate_entry_integers(new_value, new_input):
         """ Callback invoked whenever the Entry contents change.
 
-        Checks the new value of the Entry ('%P') is a valid integer.
+        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
+        interpreted as an int.
         """
-        return str.isdigit(new_value) or new_value == ""
+        if new_value == "":
+            return True
+        if new_input not in '0123456789-':
+            return False
+        try:
+            int(new_value)
+        except ValueError:
+            return False
+        return True
 
     @staticmethod
     def _validate_entry_numbers(new_value, new_input):

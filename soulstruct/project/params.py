@@ -1,5 +1,6 @@
 from __future__ import annotations
-from functools import partial
+
+from enum import IntEnum
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from soulstruct.project.actions import ActionHistory
@@ -9,6 +10,192 @@ from soulstruct.utilities.window import SoulstructSmartFrame
 if TYPE_CHECKING:
     from soulstruct.params.core import ParamEntry, ParamTable
     from soulstruct.project.core import SoulstructProject
+
+
+class _ParamEntryRow(object):
+    """Container for components of a row in the _ParamEntryFrame.
+
+    These are only created once, and their contents are refreshed when needed.
+    """
+
+    def __init__(self):
+        pass  # TODO
+
+
+class _ParamFieldRow(object):
+    """Container for components of a row in the _ParamFieldFrame.
+
+    These are only created once, and their contents are refreshed when needed. Unlike entries, field value widgets may
+    be Labels (which turn to Entries for editing), Checkbuttons, or Comboboxes. Each of these widgets is created for
+    each row, so they can be displayed (with `grid()`) when needed, rather than dynamically created and destroyed
+    every time a new entry/category is selected.
+    """
+    ROW_HEIGHT = 30
+
+    def __init__(self, master: _ParamFieldFrame, row_index: int, change_value_func, main_bindings: dict = None):
+        self.index = row_index
+        self._active = False
+        self.field_name = ''
+        self.field_type = None
+        self.field_docstring = ""
+
+        bg_color = self._get_color()
+
+        self.row_box = master.Frame(
+            width=master.FIELD_BOX_WIDTH, height=self.ROW_HEIGHT, bg=bg_color,
+            row=row_index, columnspan=2, sticky='nsew')
+        self.bind_events(self.row_box, main_bindings)
+
+        self.field_name_box = master.Frame(row=row_index, column=0, bg=bg_color, sticky='w')
+        self.bind_events(self.field_name_box, main_bindings)
+
+        self.field_name_label = master.Label(
+            self.field_name_box, text='', fg=master.FIELD_NAME_FG, width=30, bg=bg_color, anchor='w')
+        self.bind_events(self.field_name_label, main_bindings)
+
+        self.value_box = master.Frame(width=200, row=row_index, column=1, bg=bg_color, sticky='ew')
+        self.bind_events(self.value_box, main_bindings)
+
+        # VALUE WIDGETS
+
+        self.value_label = master.Label(self.value_box, text='', bg=bg_color, width=10, anchor='w')
+        self.bind_events(self.value_label, main_bindings)
+
+        self.value_checkbutton = master.Checkbutton(
+            self.value_box, label=None, bg=bg_color, no_grid=True,
+            command=lambda: change_value_func(self.index, self.value_checkbutton.var.get()))
+        # Main focus bindings are not bound to Checkbutton.
+
+        self.value_combobox = master.Combobox(
+            self.value_box, values=None, width=20, no_grid=True,
+            on_select_function=lambda _: change_value_func(
+                self.index, getattr(self.field_type, self.value_combobox.var.get()).value))
+        # Main focus bindings are not bound to Combobox.
+        # TODO: Make sure the field actually updates from checkbutton and combobox.
+        # TODO: BEHAVIOR_REF_TYPE combobox should also force a refresh, as it may change field names.
+        #  (Class will need access to ParamEntry for this, which is fine.)
+
+        self.active_value_widget = self.value_label
+
+        # self.context_menu = self.build_field_context_menu(field_name, field_doc)  # TODO
+
+    def _activate_value_widget(self, widget):
+        if widget is self.value_label:
+            if id(self.active_value_widget) in {id(self.value_checkbutton), id(self.value_combobox)}:
+                self.active_value_widget.grid_remove()
+            self.active_value_widget = self.value_label
+        if widget is self.value_checkbutton:
+            if id(self.active_value_widget) in {id(self.value_label), id(self.value_combobox)}:
+                self.active_value_widget.grid_remove()
+            self.active_value_widget = self.value_checkbutton
+        if widget is self.value_combobox:
+            if id(self.active_value_widget) in {id(self.value_label), id(self.value_checkbutton)}:
+                self.active_value_widget.grid_remove()
+            self.active_value_widget = self.value_combobox
+
+    def build_field(self, name, value, nickname, field_type, docstring="DOC-TODO"):
+        """Update widgets with given field information.
+
+        Unfortunately, PyCharm is not properly aware of how IntEnums work, hence the tags above the def.
+        """
+        nickname = camel_case_to_spaces(nickname)
+        self.field_name = name
+        self.field_type = field_type
+        self.field_docstring = docstring
+
+        # TODO: temporary string link replacement
+        if isinstance(self.field_type, str):
+            self.field_type = int
+
+        print(name, self.field_type)
+
+        if issubclass(self.field_type, IntEnum):
+            self.value_combobox['values'] = [e.name for e in self.field_type]
+            try:
+                # noinspection PyUnresolvedReferences
+                enum_name = self.field_type(value).name
+            except ValueError:
+                enum_name = f'<Unknown: {value}>'  # TODO: ensure this is read back and saved properly
+            self.value_combobox.var.set(enum_name)
+            self._activate_value_widget(self.value_combobox)
+        elif self.field_type in {float, int}:
+            value_text = f'{value:.3f}' if self.field_type == float else str(value)
+            if self.value_label.var.get() != value_text:
+                self.value_label.var.set(value_text)  # TODO: probably a redundant check in terms of update efficiency
+            self._activate_value_widget(self.value_label)
+        elif self.field_type == bool:
+            if value not in {0, 1}:
+                raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
+            self.value_checkbutton.var.set(value)
+            self._activate_value_widget(self.value_checkbutton)
+
+        if self.field_name_label.var.get() != nickname:
+            self.field_name_label.var.set(nickname)
+
+        self.row_box.grid()
+        self.field_name_box.grid()
+        self.field_name_label.grid()
+        self.value_box.grid()
+        self.active_value_widget.grid()
+
+    def clear(self):
+        """Called when this row has no field to display (for smaller ParamTables)."""
+        self.row_box.grid_remove()
+        self.field_name_box.grid_remove()
+        self.field_name_label.grid_remove()
+        self.value_box.grid_remove()
+        self.active_value_widget.grid_remove()
+
+    @property
+    def editable(self):
+        return self.active_value_widget is self.value_label
+
+    def confirm_edit(self, new_text):
+        if not self.editable:
+            raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
+        self.value_label.var.set(new_text)
+        if self.field_type == float:
+            return float(new_text)
+        elif self.field_type == int:
+            return int(new_text)
+
+    def get_field_value(self):
+        """Converts current field value to appropriate type."""
+
+    @property
+    def active(self):
+        return self._active
+
+    @active.setter
+    def active(self, value: bool):
+        if not self._active and value:
+            self._active = True
+        elif self._active and not value:
+            self._active = False
+        else:
+            return  # No change to active state.
+
+        # All widget backgrounds need updating (except Combobox).
+        bg_color = self._get_color()
+        for widget in (self.row_box, self.field_name_box, self.field_name_label, self.value_box,
+                       self.value_label, self.value_checkbutton):
+            widget['bg'] = bg_color
+
+    @staticmethod  # TODO: global function
+    def bind_events(widget, bindings: dict):
+        if not bindings:
+            return
+        for event, func in bindings.items():
+            widget.bind(event, func)
+
+    def _get_color(self):
+        """Inspects field name/data and returns a tuple of 'bg' color values."""
+        base_bg = 222
+        if self._active:
+            base_bg += 123
+        if self.index % 2:
+            base_bg += 111
+        return f'#{base_bg}'
 
 
 class _ParamFieldFrame(SoulstructSmartFrame):
@@ -24,7 +211,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
         self.e_field_value_edit = None
         self.field_index_selected = None
         self.displayed_field_count = 0
-        self.field_row_boxes = []  # type: List[Dict[str, Dict]]
+        self.field_rows = []  # type: List[_ParamFieldRow]
 
         self.field_canvas = self.Canvas(vertical_scrollbar=True, width=self.FIELD_BOX_WIDTH, height=500,
                                         yscrollincrement=25, highlightthickness=1,
@@ -37,10 +224,22 @@ class _ParamFieldFrame(SoulstructSmartFrame):
             "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
 
         with self.set_master(self.f_field_table):
-            self.field_row_boxes = [self._create_field_row(row) for row in range(self.FIELD_ROW_COUNT)]
+            self.field_rows = []
+            for row in range(self.FIELD_ROW_COUNT):
+                self.field_rows.append(_ParamFieldRow(
+                    self, row_index=row, change_value_func=self._change_field_value,
+                    main_bindings={
+                        '<Button-1>': lambda e, i=row: self.select_field(i),
+                        '<Up>': self.field_press_up,
+                        '<Down>': self.field_press_down,
+                    }))
 
     def refresh(self, param_entry: ParamEntry = None, field_info_func=None,
                 show_hidden_fields=False, reset_display=False):
+        """Refresh all field name/value labels.
+
+        TODO: Show docstring on hover.
+        """
         self._cancel_field_value_edit()
 
         if param_entry is None:
@@ -55,59 +254,28 @@ class _ParamFieldFrame(SoulstructSmartFrame):
 
         row = 0
         for field_name in field_names:
-
             # TODO: print utility
-            print(f"        {repr(field_name)}: (\n"
-                  f"            '', True, None,\n"
-                  f"            \"\"),")
+            # print(f"        {repr(field_name)}: (\n"
+            #       f"            '', True, None,\n"
+            #       f"            \"\"),")
 
-            # TODO: use type and doc
             field_nickname, is_main, field_type, field_doc = field_info_func(param_entry, field_name)
             if (isinstance(field_type, str) and '<Pad:' in field_type) or (not is_main and not show_hidden_fields):
                 continue  # Skip hidden field.
 
-            field_value_raw = self.param_entry[field_name]
-            if isinstance(field_value_raw, float):
-                field_value_str = f'{field_value_raw:.3f}'
-            else:
-                field_value_str = str(field_value_raw)
-
-            row_dict = self.field_row_boxes[row]
-            field_nickname = camel_case_to_spaces(field_nickname)
-
-            row_and_name_bg, value_box_bg, value_label_bg = self._get_field_colors(row, field_value_str)
-            row_dict['field_name'] = field_name
-            if row_dict['row_box']['bg'] != row_and_name_bg:
-                row_dict['row_box'].config(bg=row_and_name_bg)
-            row_dict['row_box'].grid()
-            if row_dict['field_name_box']['bg'] != row_and_name_bg:
-                row_dict['field_name_box'].config(bg=row_and_name_bg)
-            row_dict['field_name_box'].grid()
-            if row_dict['field_name_label']['bg'] != row_and_name_bg:
-                row_dict['field_name_label'].config(bg=row_and_name_bg)
-            if row_dict['field_name_label'].var.get() != field_nickname:
-                row_dict['field_name_label'].var.set(field_nickname)
-            row_dict['field_name_label'].grid()
-            if row_dict['value_box']['bg'] != value_box_bg:
-                row_dict['value_box'].config(bg=value_box_bg)
-            row_dict['value_box'].grid()
-            if row_dict['value_label']['bg'] != value_label_bg:
-                row_dict['value_label'].config(bg=value_label_bg)
-            if row_dict['value_label'].var.get() != field_value_str:
-                row_dict['value_label'].var.set(field_value_str)
-            row_dict['value_label'].grid()
+            self.field_rows[row].build_field(
+                name=field_name,
+                value=self.param_entry[field_name],
+                nickname=field_nickname,
+                field_type=field_type,
+                docstring=field_doc,
+            )
             row += 1
 
         self.displayed_field_count = row
 
         for remaining_row in range(row, self.FIELD_ROW_COUNT):
-            row_dict = self.field_row_boxes[remaining_row]
-            row_dict['field_name'] = ''
-            row_dict['row_box'].grid_remove()
-            row_dict['field_name_box'].grid_remove()
-            row_dict['field_name_label'].grid_remove()
-            row_dict['value_box'].grid_remove()
-            row_dict['value_label'].grid_remove()
+            self.field_rows[remaining_row].clear()
 
         self.f_field_table.grid_columnconfigure(1, weight=1)
 
@@ -115,77 +283,26 @@ class _ParamFieldFrame(SoulstructSmartFrame):
             self.select_field(0, edit_if_already_selected=False)
             self.field_canvas.yview_moveto(0)
 
-    def select_field(self, field_index, set_focus_to_value=True, edit_if_already_selected=True):
+    def select_field(self, index, set_focus_to_value=True, edit_if_already_selected=True):
         # TODO: should this start editing immediately (on left click)?
         # TODO: tab while editing moves to next field. Shift+Tab moves back. Up and down arrows also work.
-        # TODO: select entire value when editing starts.
 
-        old_field_index = self.field_index_selected
+        old_index = self.field_index_selected
 
-        if old_field_index is not None and field_index == old_field_index:
-            if edit_if_already_selected:
-                return self._start_field_value_edit(field_index)
+        if old_index is not None and index == old_index:
+            if edit_if_already_selected and self.field_rows[index].editable:
+                return self._start_field_value_edit(index)
             return
         else:
             self._cancel_field_value_edit()
 
-        self.field_index_selected = field_index
+        self.field_index_selected = index
 
-        self._update_row_colors(field_index)
-        if old_field_index is not None:
-            self._update_row_colors(old_field_index)
+        if old_index is not None:
+            self.field_rows[old_index].active = False
+        self.field_rows[index].active = True
         if set_focus_to_value:
-            self.field_row_boxes[field_index]['value_label'].focus_set()
-
-    def _update_row_colors(self, row):
-        row_dict = self.field_row_boxes[row]
-        field_name = row_dict['field_name']
-        value_string = str(self.param_entry[field_name])  # never reads from label directly
-        row_and_name_bg, value_box_bg, value_label_bg = self._get_field_colors(row, value_string)
-        row_dict['row_box'].config(bg=row_and_name_bg)
-        row_dict['field_name_box'].config(bg=row_and_name_bg)
-        row_dict['field_name_label'].config(bg=row_and_name_bg)
-        row_dict['value_label'].config(bg=value_label_bg)
-        row_dict['value_box'].config(bg=value_box_bg)
-
-    def _create_field_row(self, row):
-        row_and_name_bg, value_box_bg, value_label_bg = self._get_field_colors(row)
-        row_box = self.Frame(
-            width=self.FIELD_BOX_WIDTH, height=25, bg=row_and_name_bg, row=row, columnspan=2, sticky='nsew')
-        self._bind_field_row_events(row_box, row)
-
-        field_name_box = self.Frame(row=row, column=0, bg=row_and_name_bg, sticky='w')
-        self._bind_field_row_events(field_name_box, row)
-
-        field_name_label = self.Label(field_name_box, text='', fg=self.FIELD_NAME_FG, width=30,
-                                      bg=row_and_name_bg, anchor='w')
-        self._bind_field_row_events(field_name_label, row)
-
-        value_box = self.Frame(width=200, row=row, column=1, bg=value_box_bg, sticky='ew')
-        self._bind_field_row_events(value_box, row)
-
-        value_label = self.Label(value_box, text='', bg=value_label_bg, width=10, anchor='w')
-        self._bind_field_row_events(value_label, row)
-
-        # context_menu = self.build_field_context_menu(field_name, field_doc)  # TODO
-
-        return {'row_box': row_box, 'field_name_box': field_name_box, 'field_name_label': field_name_label,
-                'value_box': value_box, 'value_label': value_label, 'field_name': '', 'context_menu': None}
-
-    def _get_field_colors(self, row, field_value=None):
-        """Inspects field name/data and returns a tuple of 'bg' color values."""
-        base_bg = 222
-        row_and_name_bg = value_box_bg = value_label_bg = 0
-        if field_value is not None and field_value == '':
-            base_bg += 200
-        if row == self.field_index_selected:
-            base_bg += 123
-        if row % 2:
-            base_bg += 111
-        return f'#{base_bg + row_and_name_bg}', f'#{base_bg + value_box_bg}', f'#{base_bg + value_label_bg}'
-
-    def should_hide_field(self, is_main, field_type):
-        return
+            self.field_rows[index].active_value_widget.focus_set()
 
     def build_field_context_menu(self, field_name, field_doc, context_menu=None):
         if context_menu is None:
@@ -193,44 +310,47 @@ class _ParamFieldFrame(SoulstructSmartFrame):
         # TODO
         return context_menu
 
-    def _bind_field_row_events(self, widget, field_index):
-        widget.bind('<Button-1>', lambda e, i=field_index: self.select_field(i))
-        widget.bind('<Up>', self.field_press_up)
-        widget.bind('<Down>', self.field_press_down)
-
     def field_press_up(self, _=None):
-        if self.field_index_selected != -1:
+        if self.field_index_selected is not None:
             edit_new = self.e_field_value_edit is not None
             self._confirm_field_value_edit(self.field_index_selected)
             self.shift_selected_field(-1)
-            if edit_new:
+            if edit_new and self.field_rows[self.field_index_selected].editable:
                 self._start_field_value_edit(self.field_index_selected)
             if self.field_canvas.yview()[1] != 1.0 or self.field_index_selected < self.displayed_field_count - 5:
                 self.field_canvas.yview_scroll(-1, 'units')
 
     def field_press_down(self, _=None):
-        if self.field_index_selected != -1:
+        if self.field_index_selected is not None:
             edit_new = self.e_field_value_edit is not None
             self._confirm_field_value_edit(self.field_index_selected)
             self.shift_selected_field(+1)
-            if edit_new:
+            if edit_new and self.field_rows[self.field_index_selected].editable:
                 self._start_field_value_edit(self.field_index_selected)
             if self.field_canvas.yview()[0] != 0.0 or self.field_index_selected > 5:
                 self.field_canvas.yview_scroll(1, 'units')
 
     def shift_selected_field(self, relative_index):
-        if (self.field_index_selected == -1
+        if (self.field_index_selected is None
                 or not 0 <= self.field_index_selected + relative_index < self.displayed_field_count):
             return
         self.select_field(self.field_index_selected + relative_index)
 
-    def _start_field_value_edit(self, field_index):
+    def _start_field_value_edit(self, index):
         if not self.e_field_value_edit:
-            field_name = self.field_row_boxes[field_index]['field_name']
-            self.e_field_value_edit = self.Entry(
-                self.field_row_boxes[field_index]['value_box'],
-                initial_text=self.param_entry[field_name], sticky='ew', width=5)
-            self.e_field_value_edit.bind('<Return>', lambda e, i=field_index: self._confirm_field_value_edit(i))
+            field_row = self.field_rows[index]
+            if not field_row.editable:
+                raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
+            field_name = field_row.field_name
+            if field_row.field_type == float:
+                self.e_field_value_edit = self.Entry(
+                    field_row.value_box, numbers_only=True, initial_text=self.param_entry[field_name],
+                    sticky='ew', width=5)
+            elif field_row.field_type == int:
+                self.e_field_value_edit = self.Entry(
+                    field_row.value_box, integers_only=True, initial_text=self.param_entry[field_name],
+                    sticky='ew', width=5)
+            self.e_field_value_edit.bind('<Return>', lambda e, i=index: self._confirm_field_value_edit(i))
             self.e_field_value_edit.bind('<Up>', self.field_press_up)
             self.e_field_value_edit.bind('<Down>', self.field_press_down)
             self.e_field_value_edit.bind('<FocusOut>', lambda e: self._cancel_field_value_edit())
@@ -243,16 +363,20 @@ class _ParamFieldFrame(SoulstructSmartFrame):
             self.e_field_value_edit.destroy()
             self.e_field_value_edit = None
 
-    def _confirm_field_value_edit(self, field_index):
+    def _confirm_field_value_edit(self, index):
         if self.e_field_value_edit:
-            new_value_text = self.e_field_value_edit.var.get()
-            self._change_field_value(field_index, new_value_text)
-            self.field_row_boxes[field_index]['value_label'].var.set(new_value_text)
+            try:
+                true_value = self.field_rows[index].confirm_edit(new_text=self.e_field_value_edit.var.get())
+            except ValueError:
+                # Entry input restrictions are supposed to prevent this.
+                self.bell()
+                return
+            self._change_field_value(index, true_value)
             self._cancel_field_value_edit()
 
-    def _change_field_value(self, field_index, new_value):
-        # TODO: Cast to proper field type.
-        field_name = self.field_row_boxes[field_index]['field_name']
+    def _change_field_value(self, index, new_value):
+        """New value should have already been converted to its appropriate type."""
+        field_name = self.field_rows[index].field_name
         old_value = self.param_entry[field_name]
         if old_value == new_value:
             return False  # Nothing to change.
@@ -278,7 +402,6 @@ class _ParamEntryFrame(SoulstructSmartFrame):
         self.e_entry_name_edit = None
 
         with self.set_master(auto_rows=0):
-
             with self.set_master(auto_columns=0):
                 self.previous_range_button = self.Button(
                     text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#722', width=30,
@@ -612,7 +735,7 @@ class _ParamEntryFrame(SoulstructSmartFrame):
             return  # Do nothing.
 
     def _entry_press_up(self, _=None):
-        if self.entry_index_selected != -1:
+        if self.entry_index_selected is not None:
             edit_new = self.e_entry_name_edit is not None
             self._confirm_entry_name_edit(self.entry_index_selected)
             self._shift_selected_entry(-1)
@@ -622,7 +745,7 @@ class _ParamEntryFrame(SoulstructSmartFrame):
                 self.entry_canvas.yview_scroll(-1, 'units')
 
     def _entry_press_down(self, _=None):
-        if self.entry_index_selected != -1:
+        if self.entry_index_selected is not None:
             edit_new = self.e_entry_name_edit is not None
             self._confirm_entry_name_edit(self.entry_index_selected)
             self._shift_selected_entry(+1)
@@ -644,21 +767,10 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.active_category = 'Players'
         self.category_boxes = {}
 
-        self.param_field_boxes = {}
-        self.active_field_name = ''
-        self.field_index_selected = -1
-        self.e_param_field_edit = None
-        self.show_hidden_fields = self.BooleanVar()
-        self.displayed_field_count = 0
-
-        self.param_name_edit_active = False
-        self.field_value_edit_active = False
-
         self.action_history = ActionHistory()
         self.unsaved_changes = set()  # set of changed (category, param_id, action_type) pairs to highlight
 
         with self.set_master(auto_columns=0):
-
             # Category selection window
             with self.set_master(auto_rows=0):
                 self.param_category_canvas = self.Canvas(
@@ -675,9 +787,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
             # Param entry window and field value window
             with self.set_master(auto_rows=0):
-
                 with self.set_master(auto_columns=0):
-
                     self.entry_display = self.SmartFrame(smart_frame_class=_ParamEntryFrame)  # type: _ParamEntryFrame
 
         self.entry_display.refresh(self.active_category_param_table)
@@ -726,6 +836,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                 box['bg'] = self.STYLE_DEFAULTS['bg']
                 label['bg'] = self.STYLE_DEFAULTS['bg']
 
+        self.entry_display.first_display_index = 0
         self.entry_display.refresh(self.active_category_param_table, reset_fields=True)
         self.entry_display.select_entry(0, edit_if_already_selected=False)
         self.entry_display.entry_canvas.yview_moveto(0)

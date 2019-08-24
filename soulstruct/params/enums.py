@@ -110,9 +110,9 @@ class ATK_SIZE(UnsignedChar):
 
 class ATK_TYPE(UnsignedChar):
     """Material attack type for Bullets, to determine sound effects, I believe."""
-    Normal = 0
-    Strong = 1
-    Stab = 2
+    Slash = 0
+    Strike = 1
+    Thrust = 2
 
 
 class ATKPARAM_ATKATTR_TYPE(UnsignedChar):
@@ -276,10 +276,10 @@ class EQUIP_MODEL_CATEGORY(UnsignedChar):
 
 
 class EQUIP_MODEL_GENDER(UnsignedChar):
-    NoGender = 0  # guess
+    NoGender = 0  # identical model
     Male = 1
     Female = 2
-    Detected = 3  # guess
+    Player = 3  # auto-detected (guess)
 
 
 class FACE_PARAM_HAIRCOLOR_TYPE(UnsignedChar):
@@ -506,6 +506,7 @@ class NPC_TYPE(UnsignedChar):
 
 
 class OBJACT_SP_QUALIFIED_TYPE(UnsignedChar):
+    NoCondition = 0
     HasGood = 1
     HasSpecialEffect = 2
 
@@ -639,6 +640,7 @@ class SpecialStateInfo(UnsignedChar):
     """Enum documented by me for the SpecialStateIndex field, which specifies many varying hard-coded effects in the
     game engine, like ongoing animations, particle effects, and special triggers. The visual effect parameters are
     specified by the same index in the Special Effect Visuals param table."""
+    NoState = 0
     LavaBurning = 1  # Lava damage on self, probably burning feet (not visible with resin though).
     PoisonAura = 2  # Poison cloud on self.
     SlimeCovered = 3  # "Jelly covered".
@@ -760,27 +762,35 @@ class WEAPON_CATEGORY(UnsignedChar):
 
 
 class WEP_MATERIAL_ATK(UnsignedChar):
+    """Determines both sound and visual effects of attack."""
     Metal = 0
     WoodOrLeather = 2
     Riposte_Ladder_SpellTool = 3  # not sure why these are combined
     Magic = 5
+    OtherBullet = 6  # Non-Magic bullet.
     Special = 6  # cop-out name; used for dark sorceries, Firebombs, Moonlight Greatsword, and falling/rolling damage
     Default = 255  # most attacks; uses weapon attack material, presumably.
 
 
 class WEP_MATERIAL_DEF(UnsignedChar):
+    Hairstyle = 29  # not sure when this would actually be used
     MetalWeapon = 50
     WoodWeapon = 52  # includes catalysts
     Hands = 53  # talismans, Pyromancy Flame, Skull Lantern, bare fists
     MetalShield = 54
     WoodenShield = 55
+    MetalArmor = 56  # e.g. Catarina, Dark, Black Iron, Favor
+    ChainArmor = 57  # e.g. Paladin, Channeler, Chain, Cleric
+    FabricArmor = 58  # e.g. Brigand, Shadow, Crystalline, Sealer
+    NoArmor = 59  # no armor; also Dragon Stone skin
     StoneShield = 79
 
 
 class WEP_MATERIAL_DEF_SFX(UnsignedChar):
-    Metal = 50
-    WoodOrLeather = 52
-    Hands = 59
+    MetalWeapon = 50
+    WoodOrLeatherWeapon = 52
+    MetalArmor = 56
+    HandsOrFabricArmor = 59
 
 
 class WEP_CORRECT_TYPE(UnsignedChar):
