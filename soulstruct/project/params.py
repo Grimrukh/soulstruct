@@ -104,7 +104,7 @@ class _ParamFieldRow(object):
                 self.active_value_widget.grid_remove()
             self.active_value_widget = self.value_combobox
 
-    def build_field(self, name, value, nickname, field_type, docstring="DOC-TODO", field_link=None):
+    def build_field(self, name, value, nickname, field_type, docstring="DOC-TODO", field_links: list = None):
         """Update widgets with given field information."""
         nickname = camel_case_to_spaces(nickname)
         self.field_name = name
@@ -122,11 +122,13 @@ class _ParamFieldRow(object):
             self._activate_value_widget(self.value_combobox)
         elif self.field_type in {float, int}:
             value_text = f'{value:.3f}' if self.field_type == float else str(value)
-            if field_link is not None:
-                if field_link[0] is None:
+            if field_links:
+                if len(field_links) > 1:
+                    value_text += f' [Ambiguous]'
+                if field_links[0][0] is None:
                     value_text += f' [MISSING]'
                 else:
-                    value_text += f' [{field_link[0]}]'
+                    value_text += f' [{field_links[0][0]}]'
             if self.value_label.var.get() != value_text:
                 self.value_label.var.set(value_text)  # TODO: probably a redundant check in terms of update efficiency
             self._activate_value_widget(self.value_label)
@@ -139,14 +141,14 @@ class _ParamFieldRow(object):
         if self.field_name_label.var.get() != nickname:
             self.field_name_label.var.set(nickname)
 
-        if field_link is not None and not field_link[0] and not self.link_missing:
+        if field_links and not any(link[0] for link in field_links) and not self.link_missing:
             self.link_missing = True
             self._update_colors()
         elif self.link_missing:
             self.link_missing = False
             self._update_colors()
 
-        self.build_field_context_menu(field_link)
+        self.build_field_context_menu(field_links)
 
         self.row_box.grid()
         self.field_name_box.grid()
@@ -154,13 +156,14 @@ class _ParamFieldRow(object):
         self.value_box.grid()
         self.active_value_widget.grid()
 
-    def build_field_context_menu(self, field_link):
+    def build_field_context_menu(self, field_links):
         # TODO: other stuff... docstring?
         self.context_menu.delete(0, 'end')
-        if field_link is not None:
-            self.context_menu.add_command(
-                label="Jump to entry" if field_link[0] else "Create missing entry",
-                foreground=self.STYLE_DEFAULTS['text_fg'], command=field_link[1])
+        if field_links:
+            for link_name, link_func in field_links:
+                self.context_menu.add_command(
+                    label="Jump to entry" if link_name else "Create missing entry",
+                    foreground=self.STYLE_DEFAULTS['text_fg'], command=link_func)
 
     def clear(self):
         """Called when this row has no field to display (for smaller ParamTables)."""
@@ -289,12 +292,14 @@ class _ParamFieldFrame(SoulstructSmartFrame):
         except AttributeError:
             field_names = []  # All rows will be considered 'remaining' and hidden.
 
-        row = 0
         for field_name in field_names:
             # TODO: print utility
-            # print(f"        {repr(field_name)}: (\n"
-            #       f"            '', True, None,\n"
-            #       f"            \"\"),")
+            print(f"        {repr(field_name)}: (\n"
+                  f"            '', True, None,\n"
+                  f"            \"\"),")
+
+        row = 0
+        for field_name in field_names:
 
             field_nickname, is_main, field_type, field_doc = field_info_func(param_entry, field_name)
             if (isinstance(field_type, str) and '<Pad:' in field_type) or (not is_main and not show_hidden_fields):
@@ -303,7 +308,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
             field_nickname = camel_case_to_spaces(field_nickname)
             field_value = self.param_entry[field_name]
 
-            field_link = None
+            field_links = None
             # TODO: may need table-specific link handler. e.g. missing Weapon Params from reinforcement additions.
             _MATCH_LINK = re.compile(r'<(.*)>')
             if isinstance(field_type, str):
@@ -316,30 +321,41 @@ class _ParamFieldFrame(SoulstructSmartFrame):
                         table_type, category = link.split(':')
                         if table_type != 'Params':
                             raise ValueError
-                        param_table = self.Params[category]
-                        if field_value == -1:
-                            field_link = ('None', None)
+                        if field_value in {-1, 0}:  # TODO: is 0 valid for some tables?
+                            field_links = [('None', None)]
+                        elif category in {'Behaviors', 'Attacks'}:
+                            # Could be Human or Non Human.
+                            human_table = self.Params['Human' + category]
+                            non_human_table = self.Params['NonHuman' + category]
+                            if field_value not in human_table and field_value not in non_human_table:
+                                raise MissingLinkError(f"No link to Human or Non Human table: {field_value}")
+                            field_links = []
+                            if field_value in human_table:
+                                field_links.append((human_table[field_value], partial(
+                                    self.jump_to_category_and_entry, 'Human' + category, field_value)))
+                            if field_value in human_table:
+                                field_links.append((non_human_table[field_value], partial(
+                                    self.jump_to_category_and_entry, 'NonHuman' + category, field_value)))
                         else:
+                            param_table = self.Params[category]
                             try:
                                 linked_name = param_table[field_value].name
                             except KeyError:
                                 raise MissingLinkError(f"Missing link to table {category}: {field_value}")
                             else:
-                                field_link = (
-                                    linked_name, partial(self.jump_to_category_and_entry, category, field_value))
-                        # TODO: display entry name along ID and provide right click link option.
+                                field_links = [(linked_name, partial(
+                                    self.jump_to_category_and_entry, category, field_value))]
                     else:
                         raise ValueError
                 except ValueError:
                     # TODO: This shouldn't happen once all possible links/tags are dealt with properly.
                     pass
                 except MissingLinkError:
-                    field_link = (None, None)  # TODO: second element is function to create the missing entry
+                    field_links = [(None, None)]  # TODO: second element is function to *create* the missing entry
                     pass
                 field_type = int
 
             # print(name, field_type)
-            # TODO: Getting jump link param ID key errors.
 
             self.field_rows[row].build_field(
                 name=field_name,
@@ -347,7 +363,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
                 nickname=field_nickname,
                 field_type=field_type,
                 docstring=field_doc,
-                field_link=field_link,
+                field_links=field_links,
                 # TODO: link may need refreshing when edited.
             )
             row += 1
@@ -906,17 +922,15 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                 self.category_boxes[category] = (box, label)
 
     def select_category(self, selected_category, first_display_index=0):
-        if selected_category == self.active_category:
-            return
-
-        self.active_category = selected_category
-        for category, (box, label) in self.category_boxes.items():
-            if selected_category == category:
-                box['bg'] = self.CATEGORY_SELECTED_BG
-                label['bg'] = self.CATEGORY_SELECTED_BG
-            else:
-                box['bg'] = self.STYLE_DEFAULTS['bg']
-                label['bg'] = self.STYLE_DEFAULTS['bg']
+        if selected_category != self.active_category:
+            self.active_category = selected_category
+            for category, (box, label) in self.category_boxes.items():
+                if selected_category == category:
+                    box['bg'] = self.CATEGORY_SELECTED_BG
+                    label['bg'] = self.CATEGORY_SELECTED_BG
+                else:
+                    box['bg'] = self.STYLE_DEFAULTS['bg']
+                    label['bg'] = self.STYLE_DEFAULTS['bg']
 
         self.entry_display.first_display_index = first_display_index
         self.entry_display.refresh(self.active_category_param_table, reset_fields=True)
@@ -936,7 +950,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
     def jump_to_category_and_entry(self, category, param_id, create_if_missing=False):
         """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
         # TODO: create if missing
-        index = sorted(self.Params[category]).index(param_id)
+        index = sorted(self.Params[category].entries).index(param_id)
         self.select_category(category, first_display_index=index)
-        self.entry_display.select_entry(index, edit_if_already_selected=False)
+        self.entry_display.select_entry(0, edit_if_already_selected=False)
         self.update_idletasks()

@@ -45,6 +45,7 @@ class Params:
     ItemLots = '<Params:ItemLots>'
     Knockback = '<Params:Knockback>'
     LevelSyncCorrect = '<Params:LevelSyncCorrect>'
+    Movement = '<Params:Movement>'
     Rings = '<Params:Rings>'
     SpecialEffects = '<Params:SpecialEffects>'
     Spells = '<Params:Spells>'
@@ -2737,7 +2738,6 @@ GAME_PARAM_INFO = {
         'breakSfxId': (
             'DestructionSoundEffect', True, Sound.SFX,
             "Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)"),
-
     },
     'OBJ_ACT_PARAM_ST': {
         'actionEnableMsgId': (
@@ -3387,7 +3387,173 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:11>',
             "Null padding."),
     },
-    'MAGIC_PARAM_ST': {},  # TODO
+    'MAGIC_PARAM_ST': {
+        'yesNoDialogMessageId': (
+            'ConfirmationMessage', True, Text.EventText,
+            "Message displayed in yes/no dialog box to confirm use of spell."),
+        'limitCancelSpEffectId': (
+            'LimitCancelSpecialEffect', False, Params.SpecialEffects,
+            "Unknown. Never used."),
+        'sortId': (
+            'SortIndex', True, int,
+            "Index for automatic inventory sorting."),
+        'refId': (
+            '', True, None,
+            ""),  # TODO: dynamic
+        'mp': (
+            '', True, None,
+7            ""),
+        'stamina': (
+            '', True, None,
+            ""),
+        'iconId': (
+            '', True, None,
+            ""),
+        'behaviorId': (
+            '', True, None,
+            ""),
+        'mtrlItemId': (
+            '', True, None,
+            ""),
+        'replaceMagicId': (
+            '', True, None,
+            ""),
+        'maxQuantity': (
+            '', True, None,
+            ""),
+        'heroPoint': (
+            '', True, None,
+            ""),
+        'overDexterity': (
+            '', True, None,
+            ""),
+        'sfxVariationId': (
+            '', True, None,
+            ""),
+        'slotLength': (
+            '', True, None,
+            ""),
+        'requirementIntellect': (
+            '', True, None,
+            ""),
+        'requirementFaith': (
+            '', True, None,
+            ""),
+        'analogDexiterityMin': (
+            '', True, None,
+            ""),
+        'analogDexiterityMax': (
+            '', True, None,
+            ""),
+        'ezStateBehaviorType': (
+            '', True, None,
+            ""),
+        'refCategory': (
+            '', True, None,
+            ""),
+        'spEffectCategory': (
+            '', True, None,
+            ""),
+        'refType': (
+            '', True, None,
+            ""),
+        'opmeMenuType': (
+            '', True, None,
+            ""),
+        'hasSpEffectType': (
+            '', True, None,
+            ""),
+        'replaceCategory': (
+            '', True, None,
+            ""),
+        'useLimitCategory': (
+            '', True, None,
+            ""),
+        'vowType0:1': (
+            '', True, None,
+            ""),
+        'vowType1:1': (
+            '', True, None,
+            ""),
+        'vowType2:1': (
+            '', True, None,
+            ""),
+        'vowType3:1': (
+            '', True, None,
+            ""),
+        'vowType4:1': (
+            '', True, None,
+            ""),
+        'vowType5:1': (
+            '', True, None,
+            ""),
+        'vowType6:1': (
+            '', True, None,
+            ""),
+        'vowType7:1': (
+            '', True, None,
+            ""),
+        'enable_multi:1': (
+            '', True, None,
+            ""),
+        'enable_multi_only:1': (
+            '', True, None,
+            ""),
+        'isEnchant:1': (
+            '', True, None,
+            ""),
+        'isShieldEnchant:1': (
+            '', True, None,
+            ""),
+        'enable_live:1': (
+            '', True, None,
+            ""),
+        'enable_gray:1': (
+            '', True, None,
+            ""),
+        'enable_white:1': (
+            '', True, None,
+            ""),
+        'enable_black:1': (
+            '', True, None,
+            ""),
+        'disableOffline:1': (
+            '', True, None,
+            ""),
+        'castResonanceMagic:1': (
+            '', True, None,
+            ""),
+        'pad_1:6': (
+            '', True, None,
+            ""),
+        'vowType8:1': (
+            '', True, None,
+            ""),
+        'vowType9:1': (
+            '', True, None,
+            ""),
+        'vowType10:1': (
+            '', True, None,
+            ""),
+        'vowType11:1': (
+            '', True, None,
+            ""),
+        'vowType12:1': (
+            '', True, None,
+            ""),
+        'vowType13:1': (
+            '', True, None,
+            ""),
+        'vowType14:1': (
+            '', True, None,
+            ""),
+        'vowType15:1': (
+            '', True, None,
+            ""),
+        'pad[2]': (
+            'Pad2', False, '<Pad:2>',
+            "Null padding."),
+    },  # TODO
     'THROW_INFO_BANK': {
         'AtkChrId': (
             'AttackingCharacterModel', True, Model,
@@ -3484,7 +3650,68 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:4>',
             "Null padding."),
     },
-    'EQUIP_MTRL_SET_PARAM_ST': {},  # TODO
+    'EQUIP_MTRL_SET_PARAM_ST': {
+        'materialId01': (
+            'UpgradeGood', True, Params.Goods,
+            "Good required to upgrade weapon."),
+        'materialId02': (
+            'UpgradeGood2', False, Params.Goods,
+            "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may "
+            "still work as a requirement)."),
+        'materialId03': (
+            'UpgradeGood3', False, Params.Goods,
+            "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may "
+            "still work as a requirement)."),
+        'materialId04': (
+            'UpgradeGood4', False, Params.Goods,
+            "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may "
+            "still work as a requirement)."),
+        'materialId05': (
+            'UpgradeGood5', False, Params.Goods,
+            "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may "
+            "still work as a requirement)."),
+        'itemNum01': (
+            'UpgradeQuantity', True, int,
+            "Amount of Upgrade Good required for reinforcement."),
+        'itemNum02': (
+            'UpgradeQuantity2', False, int,
+            "Amount of Upgrade Good 2 required for upgrade. Never used, and the upgrade menu can't display it (though "
+            "it may still work as a requirement)."),
+        'itemNum03': (
+            'UpgradeQuantity3', False, int,
+            "Amount of Upgrade Good 3 required for upgrade. Never used, and the upgrade menu can't display it (though "
+            "it may still work as a requirement)."),
+        'itemNum04': (
+            'UpgradeQuantity4', False, int,
+            "Amount of Upgrade Good 4 required for upgrade. Never used, and the upgrade menu can't display it (though "
+            "it may still work as a requirement)."),
+        'itemNum05': (
+            'UpgradeQuantity5', False, int,
+            "Amount of Upgrade Good 5 required for upgrade. Never used, and the upgrade menu can't display it (though "
+            "it may still work as a requirement)."),
+        'isDisableDispNum01:1': (
+            'DisableQuantityIndicator', True, bool,
+            "If True, the upgrade quantity will not be shown. Often used when only one of the upgrade good is needed."),
+        'isDisableDispNum02:1': (
+            'DisableQuantity Indicator2', False, bool,
+            "If True, the upgrade quantity for Upgrade Good 2 will not be shown. Often used when only one of the "
+            "upgrade good is needed (though again, this slot is never used)."),
+        'isDisableDispNum03:1': (
+            'DisableQuantity Indicator3', False, bool,
+            "If True, the upgrade quantity for Upgrade Good 3 will not be shown. Often used when only one of the "
+            "upgrade good is needed (though again, this slot is never used)."),
+        'isDisableDispNum04:1': (
+            'DisableQuantity Indicator4', False, bool,
+            "If True, the upgrade quantity for Upgrade Good 4 will not be shown. Often used when only one of the "
+            "upgrade good is needed (though again, this slot is never used)."),
+        'isDisableDispNum05:1': (
+            'DisableQuantity Indicator5', False, bool,
+            "If True, the upgrade quantity for Upgrade Good 5 will not be shown. Often used when only one of the "
+            "upgrade good is needed (though again, this slot is never used)."),
+        'pad[6]': (
+            'Pad1', False, '<Pad:6>',
+            "Null padding."),
+    },
     'EQUIP_PARAM_WEAPON_ST': {
         'behaviorVariationId': (
             'BehaviorVariationID', True, int,
@@ -3881,7 +4108,7 @@ GAME_PARAM_INFO = {
             'SimpleDLCModelExists', False, bool,
             "Unknown; always set to False."),
         'lanternWep:1': (
-            '', True, bool,
+            'IsLantern?', True, bool,
             ""),
         'isVersusGhostWep:1': (
             'CanHitGhosts', True, bool,
@@ -3911,6 +4138,204 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:6>',
             "Null padding."),
     },
-    'REINFORCE_PARAM_WEAPON_ST': {},  # TODO
-    'MOVE_PARAM_ST': {},  # TODO
+    'REINFORCE_PARAM_WEAPON_ST': {
+        'physicsAtkRate': (
+            'PhysicalDamageMultiplier', True, float,
+            "Multiplier applied to outgoing physical damage (of any type)."),
+        'magicAtkRate': (
+            'MagicDamageMultiplier', True, float,
+            "Multiplier applied to outgoing magic damage."),
+        'fireAtkRate': (
+            'FireDamageMultiplier', True, float,
+            "Multiplier applied to outgoing fire damage."),
+        'thunderAtkRate': (
+            'LightningDamageMultiplier', True, float,
+            "Multiplier applied to outgoing lightning damage."),
+        'staminaAtkRate': (
+            'StaminaDamageMultiplier', True, float,
+            "Multiplier applied to the amount of damage dealt to targets' stamina."),
+        'saWeaponAtkRate': (
+            'PoiseDamageMultiplier', True, float,
+            "Multiplier applied to the amount of damage dealt to targets' poise. Never used."),
+        'saDurabilityRate': (
+            'PoiseDefenseMultiplier', True, float,
+            "Multiplier applied to wielder's poise while using (attacking/blocking with?) weapon. Never used."),
+        'correctStrengthRate': (
+            'StrengthScalingMultiplier', True, float,
+            "Multiplier applied to strength scaling of this weapon."),
+        'correctAgilityRate': (
+            'DexterityScalingMultiplier', True, float,
+            "Multiplier applied to dexterity scaling of this weapon."),
+        'correctMagicRate': (
+            'IntelligenceScalingMultiplier', True, float,
+            "Multiplier applied to intelligence scaling of this weapon."),
+        'correctFaithRate': (
+            'FaithScalingMultiplier', True, float,
+            "Multiplier applied to faith scaling of this weapon."),
+        'physicsGuardCutRate': (
+            'PhysicalGuardReductionMultiplier', True, float,
+            "Multiplier applied to the percentage of physical damage blocked by this weapon/shield."),
+        'magicGuardCutRate': (
+            'MagicGuardReductionMultiplier', True, float,
+            "Multiplier applied to the percentage of magic damage blocked by this weapon/shield."),
+        'fireGuardCutRate': (
+            'FireGuardReductionMultiplier', True, float,
+            "Multiplier applied to the percentage of fire damage blocked by this weapon/shield."),
+        'thunderGuardCutRate': (
+            'LightningGuardReductionMultiplier', True, float,
+            "Multiplier applied to the percentage of lightning damage blocked by this weapon/shield."),
+        'poisonGuardResistRate': (
+            'PoisonGuardResistanceMultiplier', True, float,
+            "Multiplier applied to the percentage of poison damage blocked by this weapon/shield."),
+        'diseaseGuardResistRate': (
+            'ToxicGuardResistanceMultiplier', True, float,
+            "Multiplier applied to the percentage of toxic damage blocked by this weapon/shield."),
+        'bloodGuardResistRate': (
+            'BleedGuardResistanceMultiplier', True, float,
+            "Multiplier applied to the percentage of bleed damage blocked by this weapon/shield."),
+        'curseGuardResistRate': (
+            'CurseGuardResistanceMultiplier', True, float,
+            "Multiplier applied to the percentage of curse damage blocked by this weapon/shield."),
+        'staminaGuardDefRate': (
+            'StaminaGuardReductionMultiplier', True, float,
+            "Multiplier applied to the percentage of stamina damage blocked by this weapon/shield."),
+        'spEffectId1': (
+            'SpecialEffectOnHit0', True, Params.SpecialEffects,
+            "Special effect applied to struck target (slot 0). Overrides slot 0 of base weapon parameters."),
+        'spEffectId2': (
+            'SpecialEffectOnHit1', True, Params.SpecialEffects,
+            "Special effect applied to struck target (slot 1). Overrides slot 1 of base weapon parameters."),
+        'spEffectId3': (
+            'SpecialEffectOnHit2', True, Params.SpecialEffects,
+            "Special effect applied to struck target (slot 2). Overrides slot 2 of base weapon parameters."),
+        'residentSpEffectId1': (
+            'EquippedSpecialEffect0', True, Params.SpecialEffects,
+            "Special effect granted to character with weapon equipped (slot 0). Overrides slot 0 of base weapon "
+            "parameters."),
+        'residentSpEffectId2': (
+            'EquippedSpecialEffect1', True, Params.SpecialEffects,
+            "Special effect granted to character with weapon equipped (slot 1). Overrides slot 1 of base weapon "
+            "parameters."),
+        'residentSpEffectId3': (
+            'EquippedSpecialEffect2', True, Params.SpecialEffects,
+            "Special effect granted to character with weapon equipped (slot 2). Overrides slot 2 of base weapon "
+            "parameters."),
+        'materialSetId': (
+            'UpgradeMaterialOffset', True, int,
+            "Value to be added to Upgrade Materials field in base weapon parameters."),
+        'reinforcementLevel': (
+            'ReinforcementLevel', True, int,
+            "Reinforcement level. Not sure where this is used; it could be used to calculate the final weapon ID (e.g. "
+            "100005 for Dagger+5)."),
+    },
+    'MOVE_PARAM_ST': {
+        'stayId': (
+            'StillAnimation', True, Animation,
+            "Animation ID."),
+        'walkF': (
+            'WalkForwardAnimatiom', True, Animation,
+            "Animation ID."),
+        'walkB': (
+            'WalkBackwardAnimation', True, Animation,
+            "Animation ID."),
+        'walkL': (
+            'StrafeLeftAnimation', True, Animation,
+            "Animation ID."),
+        'walkR': (
+            'StrafeRightAnimation', True, Animation,
+            "Animation ID."),
+        'dashF': (
+            'RunForwardAnimation', True, Animation,
+            "Animation ID."),
+        'dashB': (
+            'RunBackwardAnimation', True, Animation,
+            "Animation ID."),
+        'dashL': (
+            'StrafeRunLeftAnimation', True, Animation,
+            "Animation ID."),
+        'dashR': (
+            'StrafeRunRightAnimation', True, Animation,
+            "Animation ID."),
+        'superDash': (
+            'SprintForwardAnimation', True, Animation,
+            "Animation ID."),
+        'escapeF': (
+            'RollForwardAnimation', True, Animation,
+            "Animation ID."),
+        'escapeB': (
+            'RollBackwardAnimation', True, Animation,
+            "Animation ID."),
+        'escapeL': (
+            'RollLeftAnimation', True, Animation,
+            "Animation ID."),
+        'escapeR': (
+            'RollRightAnimation', True, Animation,
+            "Animation ID."),
+        'turnL': (
+            'TurnLeftAnimation', True, Animation,
+            "Animation ID."),
+        'trunR': (
+            'TurnRightAnimation', True, Animation,
+            "Animation ID."),
+        'largeTurnL': (
+            'LargeTurnLeftAnimation', True, Animation,
+            "Animation ID."),
+        'largeTurnR': (
+            'LargeTurnRightAnimation', True, Animation,
+            "Animation ID."),
+        'stepMove': (
+            'BackstepAnimation', True, Animation,
+            "Animation ID."),
+        'flyStay': (
+            'HoverAnimation', True, Animation,
+            "Animation ID."),
+        'flyWalkF': (
+            'FlyForwardAnimation', True, Animation,
+            "Animation ID."),
+        'flyWalkFL': (
+            'FlyForwardLeftAnimation', True, Animation,
+            "Animation ID."),
+        'flyWalkFR': (
+            'FlyForwardRightAnimation', True, Animation,
+            "Animation ID."),
+        'flyWalkFL2': (
+            'FlyForwardLeft2Animation', True, Animation,
+            "Animation ID."),
+        'flyWalkFR2': (
+            'FlyForwardRight2Animation', True, Animation,
+            "Animation ID."),
+        'flyDashF': (
+            'FlyForwardFastAnimation', True, Animation,
+            "Animation ID."),
+        'flyDashFL': (
+            'FlyForwardLeftFastAnimation', True, Animation,
+            "Animation ID."),
+        'flyDashFR': (
+            'FlyForwardRightFastAnimation', True, Animation,
+            "Animation ID."),
+        'flyDashFL2': (
+            'FlyForwardLeftFast2Animation', True, Animation,
+            "Animation ID."),
+        'flyDashFR2': (
+            'FlyForwardRightFast2Animation', True, Animation,
+            "Animation ID."),
+        'dashEscapeF': (
+            'RunningRollForwardAnimation', True, Animation,
+            "Animation ID."),
+        'dashEscapeB': (
+            'RunningRollBackwardAnimation', True, Animation,
+            "Animation ID. (Never used.)"),
+        'dashEscapeL': (
+            'RunningRollLeftAnimation', True, Animation,
+            "Animation ID. (Never used.)"),
+        'dashEscapeR': (
+            'RunningRollRightAnimation', True, Animation,
+            "Animation ID. (Never used.)"),
+        'analogMoveParamId': (
+            'AnalogMovement', True, Params.Movement,
+            "Movement settings for analog stick version of movement."),
+        'pad[4]': (
+            'Pad1', False, '<Pad:4>',
+            "Null padding."),
+    },
 }
