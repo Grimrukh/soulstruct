@@ -1120,7 +1120,6 @@ MAGIC_PARAM_ST 18 | u8 | u8 | analogDexiterityMax | アナログ最大技量 | �
 MAGIC_PARAM_ST 19 | MAGIC_CATEGORY | u8 | ezStateBehaviorType | カテゴリ | 並べ替えに使用　＞メニュー用
 MAGIC_PARAM_ST 20 | BEHAVIOR_REF_TYPE | u8 | refCategory | IDカテゴリ | ↓のIDのカテゴリ[攻撃、飛び道具、特殊]
 MAGIC_PARAM_ST 21 | BEHAVIOR_CATEGORY | u8 | spEffectCategory | 特殊効果カテゴリ | スキルや、魔法、アイテムなどで、パラメータが変動する効果（エンチャントウェポンなど）があるので、│定した効果が、「武器攻撃のみをパワーアップする」といった効果に対応できるように行動ごとに設定するバリスタなど、設定の必要のないものは「なし」を設定する
-
 MAGIC_PARAM_ST 22 | MAGIC_MOTION_TYPE | u8 | refType | モーションカテゴリ | モーションを指定　＞EzState用
 MAGIC_PARAM_ST 23 | GOODS_OPEN_MENU | u8 | opmeMenuType | 使用時メニュータイプ | 魔法使用時に出すメニュータイプ
 MAGIC_PARAM_ST 24 | SP_EFFECT_TYPE | u8 | hasSpEffectType | どの常態か？ | 魔法IDを差し替える必要がある状態変化を指定

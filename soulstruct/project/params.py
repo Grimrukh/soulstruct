@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from enum import IntEnum
-import re
-from functools import partial
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from soulstruct.project.actions import ActionHistory
@@ -13,11 +11,6 @@ if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters
     from soulstruct.params.core import ParamEntry, ParamTable
     from soulstruct.project.core import SoulstructProject
-
-
-class MissingLinkError(KeyError):
-    """Exception raised when a param ID linked to another table can't be found in that table."""
-    pass
 
 
 class _ParamEntryRow(object):
@@ -41,7 +34,7 @@ class _ParamFieldRow(object):
     ROW_HEIGHT = 30
 
     def __init__(self, master: _ParamFieldFrame, row_index: int, change_value_func, main_bindings: dict = None):
-        self.Params = master.Params  # needed for global links
+        self.Params = master._Params  # needed for global links
         self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
 
         self.index = row_index
@@ -70,7 +63,7 @@ class _ParamFieldRow(object):
 
         # VALUE WIDGETS
 
-        self.value_label = master.Label(self.value_box, text='', bg=bg_color, width=10, anchor='w')
+        self.value_label = master.Label(self.value_box, text='', bg=bg_color, width=50, anchor='w')
         self.bind_events(self.value_label, main_bindings)
 
         self.value_checkbutton = master.Checkbutton(
@@ -104,7 +97,7 @@ class _ParamFieldRow(object):
                 self.active_value_widget.grid_remove()
             self.active_value_widget = self.value_combobox
 
-    def build_field(self, name, value, nickname, field_type, docstring="DOC-TODO", field_links: list = None):
+    def build_field(self, name, value, nickname, field_type, docstring="DOC-TODO", param_links: list = None):
         """Update widgets with given field information."""
         nickname = camel_case_to_spaces(nickname)
         self.field_name = name
@@ -112,23 +105,23 @@ class _ParamFieldRow(object):
         self.field_docstring = docstring
 
         if issubclass(self.field_type, IntEnum):
-            self.value_combobox['values'] = [e.name for e in self.field_type]
+            self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in self.field_type]
             try:
                 # noinspection PyUnresolvedReferences
-                enum_name = self.field_type(value).name
+                enum_name = camel_case_to_spaces(self.field_type(value).name)  # TODO: remove spaces when saving
             except ValueError:
                 enum_name = f'<Unknown: {value}>'  # TODO: ensure this is read back and saved properly
             self.value_combobox.var.set(enum_name)
             self._activate_value_widget(self.value_combobox)
         elif self.field_type in {float, int}:
             value_text = f'{value:.3f}' if self.field_type == float else str(value)
-            if field_links:
-                if len(field_links) > 1:
+            if param_links:
+                if len(param_links) > 1:
                     value_text += f' [Ambiguous]'
-                if field_links[0][0] is None:
+                if param_links[0].name is None:
                     value_text += f' [MISSING]'
                 else:
-                    value_text += f' [{field_links[0][0]}]'
+                    value_text += f' [{param_links[0].name}]'
             if self.value_label.var.get() != value_text:
                 self.value_label.var.set(value_text)  # TODO: probably a redundant check in terms of update efficiency
             self._activate_value_widget(self.value_label)
@@ -141,14 +134,14 @@ class _ParamFieldRow(object):
         if self.field_name_label.var.get() != nickname:
             self.field_name_label.var.set(nickname)
 
-        if field_links and not any(link[0] for link in field_links) and not self.link_missing:
+        if param_links and not any(link.name for link in param_links) and not self.link_missing:
             self.link_missing = True
             self._update_colors()
-        elif self.link_missing:
+        elif (not param_links or any(link.name for link in param_links)) and self.link_missing:
             self.link_missing = False
             self._update_colors()
 
-        self.build_field_context_menu(field_links)
+        self.build_field_context_menu(param_links)
 
         self.row_box.grid()
         self.field_name_box.grid()
@@ -156,14 +149,15 @@ class _ParamFieldRow(object):
         self.value_box.grid()
         self.active_value_widget.grid()
 
-    def build_field_context_menu(self, field_links):
+    def build_field_context_menu(self, param_links):
         # TODO: other stuff... docstring?
         self.context_menu.delete(0, 'end')
-        if field_links:
-            for link_name, link_func in field_links:
-                self.context_menu.add_command(
-                    label="Jump to entry" if link_name else "Create missing entry",
-                    foreground=self.STYLE_DEFAULTS['text_fg'], command=link_func)
+        if param_links:
+            for param_link in param_links:
+                if param_link.name != 'None':
+                    self.context_menu.add_command(
+                        label="Jump to entry" if param_link.name else "Create missing entry",
+                        foreground=self.STYLE_DEFAULTS['text_fg'], command=param_link.link)
 
     def clear(self):
         """Called when this row has no field to display (for smaller ParamTables)."""
@@ -233,14 +227,14 @@ class _ParamFieldRow(object):
 
 class _ParamFieldFrame(SoulstructSmartFrame):
     FIELD_CANVAS_BG = '#1d1d1d'
-    FIELD_BOX_WIDTH = 500
+    FIELD_BOX_WIDTH = 700
     FIELD_ROW_COUNT = 150  # TODO: set to max field count
     FIELD_NAME_FG = '#DDE'
 
-    def __init__(self, params, jump_func, master=None):
+    def __init__(self, params, linker, master=None):
         super().__init__(master=master, toplevel=False)
-        self.Params = params  # type: DarkSoulsGameParameters
-        self.jump_to_category_and_entry = jump_func
+        self._Params = params  # type: DarkSoulsGameParameters
+        self.linker = linker
 
         self.param_entry = None
         self.e_field_value_edit = None
@@ -282,78 +276,25 @@ class _ParamFieldFrame(SoulstructSmartFrame):
         """
         self._cancel_field_value_edit()
 
-        if param_entry is None:
-            param_entry = self.param_entry
-        else:
+        if param_entry is not None:
             self.param_entry = param_entry
 
-        try:
-            field_names = self.param_entry.field_names
-        except AttributeError:
-            field_names = []  # All rows will be considered 'remaining' and hidden.
-
-        for field_name in field_names:
-            # TODO: print utility
-            print(f"        {repr(field_name)}: (\n"
-                  f"            '', True, None,\n"
-                  f"            \"\"),")
+        field_names = field_info_func(self.param_entry).keys() if self.param_entry is not None else []
 
         row = 0
         for field_name in field_names:
 
-            field_nickname, is_main, field_type, field_doc = field_info_func(param_entry, field_name)
+            field_nickname, is_main, field_type, field_doc = field_info_func(self.param_entry, field_name)
             if (isinstance(field_type, str) and '<Pad:' in field_type) or (not is_main and not show_hidden_fields):
-                continue  # Skip hidden field.
+                continue  # Skip hidden field (or always skip Pad field).
 
             field_nickname = camel_case_to_spaces(field_nickname)
-            field_value = self.param_entry[field_name]
 
-            field_links = None
-            # TODO: may need table-specific link handler. e.g. missing Weapon Params from reinforcement additions.
-            _MATCH_LINK = re.compile(r'<(.*)>')
             if isinstance(field_type, str):
-                try:
-                    match_link = _MATCH_LINK.match(field_type)
-                    if not match_link:
-                        raise ValueError("Invalid link.")
-                    link = match_link.group(1)
-                    if ':' in link:
-                        table_type, category = link.split(':')
-                        if table_type != 'Params':
-                            raise ValueError
-                        if field_value in {-1, 0}:  # TODO: is 0 valid for some tables?
-                            field_links = [('None', None)]
-                        elif category in {'Behaviors', 'Attacks'}:
-                            # Could be Human or Non Human.
-                            human_table = self.Params['Human' + category]
-                            non_human_table = self.Params['NonHuman' + category]
-                            if field_value not in human_table and field_value not in non_human_table:
-                                raise MissingLinkError(f"No link to Human or Non Human table: {field_value}")
-                            field_links = []
-                            if field_value in human_table:
-                                field_links.append((human_table[field_value], partial(
-                                    self.jump_to_category_and_entry, 'Human' + category, field_value)))
-                            if field_value in human_table:
-                                field_links.append((non_human_table[field_value], partial(
-                                    self.jump_to_category_and_entry, 'NonHuman' + category, field_value)))
-                        else:
-                            param_table = self.Params[category]
-                            try:
-                                linked_name = param_table[field_value].name
-                            except KeyError:
-                                raise MissingLinkError(f"Missing link to table {category}: {field_value}")
-                            else:
-                                field_links = [(linked_name, partial(
-                                    self.jump_to_category_and_entry, category, field_value))]
-                    else:
-                        raise ValueError
-                except ValueError:
-                    # TODO: This shouldn't happen once all possible links/tags are dealt with properly.
-                    pass
-                except MissingLinkError:
-                    field_links = [(None, None)]  # TODO: second element is function to *create* the missing entry
-                    pass
+                field_links = self.linker.params_field_link(field_type, self.param_entry[field_name])
                 field_type = int
+            else:
+                field_links = []
 
             # print(name, field_type)
 
@@ -363,7 +304,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
                 nickname=field_nickname,
                 field_type=field_type,
                 docstring=field_doc,
-                field_links=field_links,
+                param_links=field_links,
                 # TODO: link may need refreshing when edited.
             )
             row += 1
@@ -477,16 +418,15 @@ class _ParamFieldFrame(SoulstructSmartFrame):
 class _ParamEntryFrame(SoulstructSmartFrame):
     """Manages param entry selection/modification in editor."""
     ENTRY_CANVAS_BG = '#1d1d1d'
-    ENTRY_BOX_WIDTH = 600
+    ENTRY_BOX_WIDTH = 450
     ENTRY_RANGE_SIZE = 50
 
     field_display: _ParamFieldFrame
 
-    def __init__(self, params, jump_func, master=None):
+    def __init__(self, params, linker, master=None):
         super().__init__(master=master, toplevel=False)
-
-        self.Params = params
-        self.jump_to_category_and_entry = jump_func
+        self._Params = params
+        self.linker = linker
 
         self.param_table = None  # type: Optional[ParamTable]
         self.entry_row_boxes = []  # type: List[Dict[str, Any]]
@@ -534,8 +474,8 @@ class _ParamEntryFrame(SoulstructSmartFrame):
                         "<Configure>", lambda e, c=self.entry_canvas: self.reset_canvas_scroll_region(c))
 
                 with self.set_master():
-                    self.field_display = self.SmartFrame(smart_frame_class=_ParamFieldFrame, params=self.Params,
-                                                         jump_func=self.jump_to_category_and_entry)
+                    self.field_display = self.SmartFrame(
+                        smart_frame_class=_ParamFieldFrame, params=self._Params, linker=self.linker)
 
             with self.set_master(self.f_entry_table):
                 self.entry_row_boxes = [self._create_entry_row(row) for row in range(self.ENTRY_RANGE_SIZE)]
@@ -546,7 +486,6 @@ class _ParamEntryFrame(SoulstructSmartFrame):
                     padx=10, pady=20)
 
     def refresh_field_display(self, reset_display=False):
-
         if self.entry_index_selected is not None:
             param_id = self.entry_row_boxes[self.entry_index_selected]['param_id']
             param_entry = self.param_table[param_id]
@@ -857,8 +796,9 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
     entry_display: _ParamEntryFrame
 
-    def __init__(self, project: SoulstructProject, master=None, toplevel=False):
-        self.Params = project.Params
+    def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
+        self._Params = project.Params
+        self.linker = linker
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Params")
 
         self.active_category = 'Players'
@@ -885,8 +825,8 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             # Param entry window and field value window
             with self.set_master(auto_rows=0):
                 with self.set_master(auto_columns=0):
-                    self.entry_display = self.SmartFrame(smart_frame_class=_ParamEntryFrame, params=self.Params,
-                                                         jump_func=self.jump_to_category_and_entry)
+                    self.entry_display = self.SmartFrame(
+                        smart_frame_class=_ParamEntryFrame, params=self._Params, linker=self.linker)
 
         self.entry_display.refresh(self.active_category_param_table)
         self.bind_all('<Control-z>', self.undo)
@@ -908,7 +848,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             label.destroy()
         self.category_boxes = {}
         with self.set_master(self.f_params_categories):
-            categories = self.Params.param_names
+            categories = self._Params.param_names
             for row, category in enumerate(categories):
                 box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30, highlightthickness=1)
                 label_text = camel_case_to_spaces(category).replace(' _', ':')
@@ -939,18 +879,10 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
     @property
     def active_category_param_table(self) -> ParamTable:
-        return self.Params[self.active_category]
+        return self._Params[self.active_category]
 
     @property
     def active_category_sorted_ids(self):
         if self.active_category is None:
             return None
-        return sorted(self.Params[self.active_category])
-
-    def jump_to_category_and_entry(self, category, param_id, create_if_missing=False):
-        """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
-        # TODO: create if missing
-        index = sorted(self.Params[category].entries).index(param_id)
-        self.select_category(category, first_display_index=index)
-        self.entry_display.select_entry(0, edit_if_already_selected=False)
-        self.update_idletasks()
+        return sorted(self._Params[self.active_category])

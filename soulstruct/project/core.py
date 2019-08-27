@@ -1,10 +1,13 @@
 from __future__ import annotations
 import datetime
-from functools import wraps
+from functools import wraps, partial
 import json
 import os
 import pickle
+import re
 import shutil
+from tkinter.ttk import Notebook
+from typing import Optional
 
 from soulstruct.core import SoulstructError
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
@@ -30,10 +33,175 @@ def _with_config_write(func):
     return project_method
 
 
+class MissingLinkError(KeyError):
+    """Exception raised when a param ID linked to another table can't be found in that table."""
+    pass
+
+
+class WindowLinker(object):
+    """Interface that generates links (go-to commands) between arbitrary parts of the Soulstruct unified window."""
+    _MATCH_LINK = re.compile(r'<(.*)>')
+
+    # TODO: Finalize these when tab order is set.
+    PARAMS_TAB = 0
+    TEXT_TAB = 1
+    MAIN_TAB = 2
+
+    class Link(object):
+        def __init__(self, name, link):
+            self.name = name
+            self.link = link
+
+    def __init__(self, window: SoulstructProjectWindow):
+        self.window = window
+        self.project = window.project
+
+    def _link_to_params(self, category, param_id, create_if_missing=False):
+        """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
+        # TODO: Jump to specific field, too.
+        self.window.page_tabs.select(self.PARAMS_TAB)
+        index = sorted(self.project.Params[category].entries).index(param_id)
+        self.window.params_tab.select_category(category, first_display_index=index)
+        self.window.params_tab.entry_display.select_entry(0, edit_if_already_selected=False)
+        self.window.params_tab.update_idletasks()
+
+    def _link_to_text(self, category, text_id, create_if_missing=False):
+        """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
+        self.window.page_tabs.select(self.TEXT_TAB)
+        self.window.text_tab.select_category(
+            category, first_display_index=sorted(self.project.Text[category]).index(text_id))
+        self.window.text_tab.select_entry(text_id, edit_if_already_selected=False)
+        self.window.text_tab.update_idletasks()
+        self.window.text_tab.entry_canvas.yview_moveto(0)
+
+    def create_link(self, data_type: str, **kwargs):
+        """Generates a callable link function that will jump to the desired tab, category, entry, etc."""
+        if data_type.lower() == 'params':
+            return partial(self._link_to_params, **kwargs)
+        elif data_type.lower() == 'text':
+            return partial(self._link_to_text, **kwargs)
+        else:
+            raise ValueError(f"Data type for link must be 'Params' or 'Text', not {data_type}.")
+
+    def check_armor_id(self, armor_id):
+        """Checks if the given armor ID (which may include a reinforcement offset) is valid by inspecting the
+        Weapons table."""
+        level = armor_id % 100
+        if level > 10:
+            return None
+        base_armor = armor_id - level
+        origin_field = 'originEquipPro' + ('' if level == 0 else str(level))
+        try:
+            origin = self.project.Params['Armor'][base_armor][origin_field]
+        except KeyError:
+            return None
+        if origin == -1:
+            return None
+        return base_armor
+
+    def check_weapon_id(self, weapon_id):
+        """Checks if the given weapon ID (which may include a reinforcement offset) is valid by inspecting the
+        Weapons table."""
+        level = weapon_id % 100
+        if level > 15:
+            return None
+        if level == 0:
+            return weapon_id
+        base_weapon = weapon_id - level
+        origin_field = 'originEquipWep' + ('' if level == 0 else str(level))
+        try:
+            origin = self.project.Params['Weapons'][base_weapon][origin_field]
+        except KeyError:
+            return None
+        if origin == -1:
+            return None
+        return base_weapon
+
+    def params_field_link(self, field_type, param_id):
+        """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
+        animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
+        resolved here."""
+        # TODO: may need table-specific link handler. e.g. missing Weapon Params from reinforcement additions.
+
+        match_link = self._MATCH_LINK.match(field_type)
+        if not match_link:
+            raise ValueError("Invalid link.")
+
+        name_extension = ''
+        link_text = match_link.group(1)
+
+        if ':' not in link_text:
+            return []  # TODO: haven't supported these links yet.
+
+        if ':' in link_text:
+            table_type, category = link_text.split(':')
+            if table_type != 'Params':
+                return []
+
+            if param_id in {-1, 0}:
+                # TODO: ensure that 0 means 'None' for all fields.
+                return [self.Link('None', None)]
+
+            if category in {'Attacks', 'Behaviors'}:
+                # Try to determine Player vs. Non Player table.
+                if category == 'Attacks':
+                    if self.window.params_tab.active_category == 'PlayerBehaviors':
+                        category = 'PlayerAttacks'
+                    elif self.window.params_tab.active_category == 'NonPlayerBehaviors':
+                        category = 'NonPlayerAttacks'
+                elif category == 'Behaviors':
+                    if self.window.params_tab.active_category == 'Players':
+                        category = 'PlayerBehaviors'
+                if category in {'Attacks', 'Behaviors'}:
+                    # Could be Player or Non Player. Provide both links.
+                    player_table = self.project.Params['Player' + category]
+                    non_player_table = self.project.Params['NonPlayer' + category]
+                    if param_id not in player_table and param_id not in non_player_table:
+                        return [self.Link(None, None)]
+                    links = []
+                    if param_id in player_table:
+                        links.append(self.Link(
+                            player_table[param_id],
+                            self.create_link(data_type='Params', category='Player' + category, param_id=param_id)
+                        ))
+                    if param_id in player_table:
+                        links.append(self.Link(
+                            non_player_table[param_id],
+                            self.create_link(data_type='Params', category='NonPlayer' + category, param_id=param_id)
+                        ))
+                    if links:
+                        return links
+                    return [self.Link(None, None)]
+
+            if category in {'Armor', 'Weapons'}:
+                true_param_id = self.check_armor_id(param_id) if category == 'Armor' else self.check_weapon_id(param_id)
+                if true_param_id is None:
+                    return [self.Link(None, None)]  # Invalid weapon/armor ID, even considering reinforcement.
+                if param_id != true_param_id:
+                    name_extension = '+' + str(param_id - true_param_id)
+                param_id = true_param_id
+
+            param_table = self.project.Params[category]
+            try:
+                name = param_table[param_id].name + name_extension
+            except KeyError:
+                return [self.Link(None, None)]
+            else:
+                return [self.Link(name, self.create_link(data_type='Params', category=category, param_id=param_id))]
+        else:
+            return []
+
+
 class SoulstructProjectWindow(SoulstructSmartFrame):
+
+    page_tabs: Optional[Notebook]
+    params_tab: Optional[SoulstructParamsEditor]
+    text_tab: Optional[SoulstructTextEditor]
+
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
         self.project = project
+        self.linker = WindowLinker(self)
 
         self.page_tabs = None
         self.text_tab = None
@@ -48,12 +216,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         f_params_tab = self.Frame(frame=self.page_tabs)
         self.page_tabs.add(f_params_tab, text='  Params  ')
         self.params_tab = self.SmartFrame(
-            frame=f_params_tab, smart_frame_class=SoulstructParamsEditor, project=self.project)
+            frame=f_params_tab, smart_frame_class=SoulstructParamsEditor, project=self.project, linker=self.linker)
 
         f_text_tab = self.Frame(frame=self.page_tabs)
         self.page_tabs.add(f_text_tab, text='  Text  ')
         self.text_tab = self.SmartFrame(
-            frame=f_text_tab, smart_frame_class=SoulstructTextEditor, project=self.project)
+            frame=f_text_tab, smart_frame_class=SoulstructTextEditor, project=self.project, linker=self.linker)
 
         # TODO: Should obviously go first.
         f_main_tab = self.Frame(frame=self.page_tabs)

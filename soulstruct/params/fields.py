@@ -34,8 +34,8 @@ class Params:
     AI = '<Params:AI>'
     Armor = '<Params:Armor>'
     ArmorUpgrades = '<Params:ArmorUpgrades>'
-    Attacks = '<Params:Attacks>'
-    Behaviors = '<Params:Behaviors>'
+    Attacks = '<Params:Attacks>'  # links to both Human and Non Human Attacks are provided
+    Behaviors = '<Params:Behaviors>'  # links to both Human and Non Human Behaviors are provided
     Bosses = '<Params:Bosses>'
     Bullets = '<Params:Bullets>'
     Cameras = '<Params:Cameras>'
@@ -58,6 +58,7 @@ class Params:
 
 class Sound:
     SFX = '<Sound:SFX>'
+    Voice = '<Sound:Voice>'
 
 
 class Text:
@@ -81,17 +82,31 @@ def _behavior_ref_id(behavior_param_entry):
                 "Could not determine reference ID type (usually Attack or Bullet).")
 
 
-def _good_ref_id(good_param_entry):
-    if good_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Default:
+def _good_ref_id(goods_param_entry):
+    if goods_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Default:
         return ('NoReference', True, int,
-                "This value should be -1 when 'Default' reference type is selected for good.")
-    elif good_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Bullet:
+                "This value should be -1 when 'Default' reference type is selected.")
+    elif goods_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Bullet:
         return ('Bullet', True, Params.Bullets,
                 "Bullet triggered by using good (which may simply be targeted at self).")
-    elif good_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.SpecialEffect:
+    elif goods_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.SpecialEffect:
         return ('SpecialEffect', True, Params.SpecialEffects,
                 "Special effect triggered (on self) by using good.")
+    else:
+        return ('UnknownReferenceID', True, int,
+                "Could not determine reference ID type (usually Bullet or SpecialEffect).")
 
+
+def _spell_ref_id(spells_param_entry):
+    if spells_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Default:
+        return ('NoReference', True, int,
+                "This value should be -1 when 'Default' reference type is selected.")
+    elif spells_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Bullet:
+        return ('Bullet', True, Params.Bullets,
+                "Bullet triggered by casting spell (which may simply be targeted at self).")
+    elif spells_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.SpecialEffect:
+        return ('SpecialEffect', True, Params.SpecialEffects,
+                "Special effect triggered (on self) by casting spell.")
     else:
         return ('UnknownReferenceID', True, int,
                 "Could not determine reference ID type (usually Bullet or SpecialEffect).")
@@ -403,7 +418,7 @@ GAME_PARAM_INFO = {
             'SortIndex', True, int,
             "Index for automatic inventory sorting."),
         'wanderingEquipId': (
-            'GhostWeaponReplacement', True, Params.Armor,
+            'GhostArmorReplacement', True, Params.Armor,
             "Replacement equipment for network ghosts."),
         'vagrantItemLotId': (
             'VagrantItemLot', True, Params.ItemLots,
@@ -851,7 +866,7 @@ GAME_PARAM_INFO = {
         'resistCurseRate': (
             'CurseResistanceMultiplier', True, float,
             "Multiplier for curse resistance at this upgrade level."),
-        'residentSpEffectId1': (  # TODO: Do these override the base Armor effects? Can't remember.
+        'residentSpEffectId1': (
             'WearerSpecialEffect1', True, Params.SpecialEffects,
             "Special effect granted to wearer (first of three)."),
         'residentSpEffectId2': (
@@ -861,8 +876,8 @@ GAME_PARAM_INFO = {
             'WearerSpecialEffect3', True, Params.SpecialEffects,
             "Special effect granted to wearer (third of three)."),
         'materialSetId': (
-            'UpgradeMaterialID', True, '<Param:UpgradeMaterials>',
-            "Upgrade material set for reinforcement."),  # TODO: I assume this overrides ID for base Armor.
+            'UpgradeMaterialID', True, Params.UpgradeMaterials,
+            "Upgrade material set for reinforcement."),
     },
     'GAME_AREA_PARAM_ST': {
         'bonusSoul_single': (
@@ -907,18 +922,18 @@ GAME_PARAM_INFO = {
     },
     'BULLET_PARAM_ST': {
         'atkId_Bullet': (
-            'BulletAttack', True, '<Params:Attacks>',  # TODO: Ambiguous attack parameter.
+            'BulletAttack', True, Params.Attacks,
             "Attack parameters for bullet impact. Only certain fields in the attack parameter are used. "
             "Could be directed to either PlayerAttacks table or NonPlayerAttacks table, depending on "
             "the bullet's owner. Set to 0 if bullet has no attack data (no damage)."),
         'sfxId_Bullet': (
-            'ProjectileFX', True, '<Params:SpecialEffectVisuals>',
+            'ProjectileFX', True, int,
             "Visual effect ID for bullet projectile."),
         'sfxId_Hit': (
-            'ImpactFX', True, '<Params:SpecialEffectVisuals>',
+            'ImpactFX', True, int,
             "Visual effect ID for bullet impact."),
         'sfxId_Flick': (
-            'FlickFX', True, '<Params:SpecialEffectVisuals>',
+            'FlickFX', True, int,
             "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and "
             "throwing knives."),
         'life': (
@@ -996,11 +1011,11 @@ GAME_PARAM_INFO = {
             "Special effect applied to owner when bullet is created. (Unclear if it is applied "
             "repeatedly by repeating bullets.)"),
         'autoSearchNPCThinkID': (
-            'BulletAI', True, '<Params:AI>',
+            'BulletAI', True, Params.AI,
             "AI parameter ID for triggered floating bullets. Only used by Homing [Crystal] "
             "Soulmass (10000) and Pursuers (10001) in the vanilla game."),
         'HitBulletID': (
-            'BulletOnHit', True, '<Params:Bullets>',
+            'BulletOnHit', True, Params.Bullets,
             "Bullet emitted on impact of this bullet. Used often for 'throw'/'landing' or 'parent'/'child' "
             "combinations, like a thrown Firebomb (bullet 110) triggering a fiery explosion (bullet 111). "
             "These can be chained together indefinitely (see White Dragon Breath, bullet 11500)."),
@@ -1113,7 +1128,7 @@ GAME_PARAM_INFO = {
             'UsesMultipleModelPoints', True, bool,
             "Set to True if the same model point ('damipoly') is used multiple times when spawning the bullet."),
         'attachEffectType:2': (
-            'AttachEffectType', False, '<ParamEnum:BULLET_ATTACH_EFFECT_TYPE>',
+            'AttachEffectType', False, BULLET_ATTACH_EFFECT_TYPE,
             "Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles)."),
         'isHitForceMagic:1': (
             'CanBeDeflectedByMagic', True, bool,
@@ -1131,7 +1146,30 @@ GAME_PARAM_INFO = {
             'Pad3', False, '<Pad:3>',
             "Null padding."),
     },
-    'LOCK_CAM_PARAM_ST': {},  # TODO
+    'LOCK_CAM_PARAM_ST': {
+        'camDistTarget': (
+            'CameraDistanceFromTarget', True, float,
+            "Distance maintained from target by camera in meters. (Default value is 4.)"),
+        'rotRangeMinX': (
+            'MinRotationElevation', True, float,
+            "Minimum angle of elevation (X-axis rotation) permitted for camera."),
+        'lockRotXShiftRatio': (
+            'LockElevationShiftRatio', True, float,
+            "'Lock X-rotation shift ratio (0.0 to 1.0).' Unclear effect. Default value is 0.6."),
+        'chrOrgOffset_Y': (
+            'CharacterVerticalOffset', True, float,
+            "Vertical offset of camera target from character's base. Default value is 1.42."),
+        'chrLockRangeMaxRadius': (
+            'MaxDistanceFromCharacter', True, float,
+            "Maximum distance ('radius') of camera from character in meters. Default value is 15; only other value "
+            "used is 7."),
+        'camFovY': (
+            'VerticalFieldOfView', True, float,
+            "Vertical field of view of camera in degrees. Default value is 43. Never goes above 48 (Lost Izalith)."),
+        'pad[8]': (
+            'Pad1', False, '<Pad:8>',
+            "Null padding."),
+    },
     'ATK_PARAM_ST': {
         'hit0_Radius': (
             'Hitbox0Radius', True, float,
@@ -1622,7 +1660,7 @@ GAME_PARAM_INFO = {
             'SubtitleText', True, Text.Conversations,
             "Text ID for dialogue subtitle."),
         'voiceId': (
-            'VoiceSound', True, '<Sound:Voice>',
+            'VoiceSound', True, Sound.Voice,
             "Sound ID (voice) for dialogue."),
         'motionId': (
             'TalkingAnimation', True, Animation,
@@ -1647,7 +1685,335 @@ GAME_PARAM_INFO = {
             'Pad', False, '<Pad:7>',
             "Null padding."),
     },
-    'FACE_PARAM_ST': {},  # TODO
+    'FACE_PARAM_ST': {
+        'faceGeoData00': (
+            'GeometryData00', True, int,
+            "Geometry data point 0."),
+        'faceGeoData01': (
+            'GeometryData01', True, int,
+            "Geometry data point 1."),
+        'faceGeoData02': (
+            'GeometryData02', True, int,
+            "Geometry data point 2."),
+        'faceGeoData03': (
+            'GeometryData03', True, int,
+            "Geometry data point 3."),
+        'faceGeoData04': (
+            'GeometryData04', True, int,
+            "Geometry data point 4."),
+        'faceGeoData05': (
+            'GeometryData05', True, int,
+            "Geometry data point 5."),
+        'faceGeoData06': (
+            'GeometryData06', True, int,
+            "Geometry data point 6."),
+        'faceGeoData07': (
+            'GeometryData07', True, int,
+            "Geometry data point 7."),
+        'faceGeoData08': (
+            'GeometryData08', True, int,
+            "Geometry data point 8."),
+        'faceGeoData09': (
+            'GeometryData09', True, int,
+            "Geometry data point 9."),
+        'faceGeoData10': (
+            'GeometryData10', True, int,
+            "Geometry data point 10."),
+        'faceGeoData11': (
+            'GeometryData11', True, int,
+            "Geometry data point 11."),
+        'faceGeoData12': (
+            'GeometryData12', True, int,
+            "Geometry data point 12."),
+        'faceGeoData13': (
+            'GeometryData13', True, int,
+            "Geometry data point 13."),
+        'faceGeoData14': (
+            'GeometryData14', True, int,
+            "Geometry data point 14."),
+        'faceGeoData15': (
+            'GeometryData15', True, int,
+            "Geometry data point 15."),
+        'faceGeoData16': (
+            'GeometryData16', True, int,
+            "Geometry data point 16."),
+        'faceGeoData17': (
+            'GeometryData17', True, int,
+            "Geometry data point 17."),
+        'faceGeoData18': (
+            'GeometryData18', True, int,
+            "Geometry data point 18."),
+        'faceGeoData19': (
+            'GeometryData19', True, int,
+            "Geometry data point 19."),
+        'faceGeoData20': (
+            'GeometryData20', True, int,
+            "Geometry data point 20."),
+        'faceGeoData21': (
+            'GeometryData21', True, int,
+            "Geometry data point 21."),
+        'faceGeoData22': (
+            'GeometryData22', True, int,
+            "Geometry data point 22."),
+        'faceGeoData23': (
+            'GeometryData23', True, int,
+            "Geometry data point 23."),
+        'faceGeoData24': (
+            'GeometryData24', True, int,
+            "Geometry data point 24."),
+        'faceGeoData25': (
+            'GeometryData25', True, int,
+            "Geometry data point 25."),
+        'faceGeoData26': (
+            'GeometryData26', True, int,
+            "Geometry data point 26."),
+        'faceGeoData27': (
+            'GeometryData27', True, int,
+            "Geometry data point 27."),
+        'faceGeoData28': (
+            'GeometryData28', True, int,
+            "Geometry data point 28."),
+        'faceGeoData29': (
+            'GeometryData29', True, int,
+            "Geometry data point 29."),
+        'faceGeoData30': (
+            'GeometryData30', True, int,
+            "Geometry data point 30."),
+        'faceGeoData31': (
+            'GeometryData31', True, int,
+            "Geometry data point 31."),
+        'faceGeoData32': (
+            'GeometryData32', True, int,
+            "Geometry data point 32."),
+        'faceGeoData33': (
+            'GeometryData33', True, int,
+            "Geometry data point 33."),
+        'faceGeoData34': (
+            'GeometryData34', True, int,
+            "Geometry data point 34."),
+        'faceGeoData35': (
+            'GeometryData35', True, int,
+            "Geometry data point 35."),
+        'faceGeoData36': (
+            'GeometryData36', True, int,
+            "Geometry data point 36."),
+        'faceGeoData37': (
+            'GeometryData37', True, int,
+            "Geometry data point 37."),
+        'faceGeoData38': (
+            'GeometryData38', True, int,
+            "Geometry data point 38."),
+        'faceGeoData39': (
+            'GeometryData39', True, int,
+            "Geometry data point 39."),
+        'faceGeoData40': (
+            'GeometryData40', True, int,
+            "Geometry data point 40."),
+        'faceGeoData41': (
+            'GeometryData41', True, int,
+            "Geometry data point 41."),
+        'faceGeoData42': (
+            'GeometryData42', True, int,
+            "Geometry data point 42."),
+        'faceGeoData43': (
+            'GeometryData43', True, int,
+            "Geometry data point 43."),
+        'faceGeoData44': (
+            'GeometryData44', True, int,
+            "Geometry data point 44."),
+        'faceGeoData45': (
+            'GeometryData45', True, int,
+            "Geometry data point 45."),
+        'faceGeoData46': (
+            'GeometryData46', True, int,
+            "Geometry data point 46."),
+        'faceGeoData47': (
+            'GeometryData47', True, int,
+            "Geometry data point 47."),
+        'faceGeoData48': (
+            'GeometryData48', True, int,
+            "Geometry data point 48."),
+        'faceGeoData49': (
+            'GeometryData49', True, int,
+            "Geometry data point 49."),
+        'faceTexData00': (
+            'TextureData00', True, int,
+            "Texture data point 0."),
+        'faceTexData01': (
+            'TextureData01', True, int,
+            "Texture data point 1."),
+        'faceTexData02': (
+            'TextureData02', True, int,
+            "Texture data point 2."),
+        'faceTexData03': (
+            'TextureData03', True, int,
+            "Texture data point 3."),
+        'faceTexData04': (
+            'TextureData04', True, int,
+            "Texture data point 4."),
+        'faceTexData05': (
+            'TextureData05', True, int,
+            "Texture data point 5."),
+        'faceTexData06': (
+            'TextureData06', True, int,
+            "Texture data point 6."),
+        'faceTexData07': (
+            'TextureData07', True, int,
+            "Texture data point 7."),
+        'faceTexData08': (
+            'TextureData08', True, int,
+            "Texture data point 8."),
+        'faceTexData09': (
+            'TextureData09', True, int,
+            "Texture data point 9."),
+        'faceTexData10': (
+            'TextureData10', True, int,
+            "Texture data point 10."),
+        'faceTexData11': (
+            'TextureData11', True, int,
+            "Texture data point 11."),
+        'faceTexData12': (
+            'TextureData12', True, int,
+            "Texture data point 12."),
+        'faceTexData13': (
+            'TextureData13', True, int,
+            "Texture data point 13."),
+        'faceTexData14': (
+            'TextureData14', True, int,
+            "Texture data point 14."),
+        'faceTexData15': (
+            'TextureData15', True, int,
+            "Texture data point 15."),
+        'faceTexData16': (
+            'TextureData16', True, int,
+            "Texture data point 16."),
+        'faceTexData17': (
+            'TextureData17', True, int,
+            "Texture data point 17."),
+        'faceTexData18': (
+            'TextureData18', True, int,
+            "Texture data point 18."),
+        'faceTexData19': (
+            'TextureData19', True, int,
+            "Texture data point 19."),
+        'faceTexData20': (
+            'TextureData20', True, int,
+            "Texture data point 20."),
+        'faceTexData21': (
+            'TextureData21', True, int,
+            "Texture data point 21."),
+        'faceTexData22': (
+            'TextureData22', True, int,
+            "Texture data point 22."),
+        'faceTexData23': (
+            'TextureData23', True, int,
+            "Texture data point 23."),
+        'faceTexData24': (
+            'TextureData24', True, int,
+            "Texture data point 24."),
+        'faceTexData25': (
+            'TextureData25', True, int,
+            "Texture data point 25."),
+        'faceTexData26': (
+            'TextureData26', True, int,
+            "Texture data point 26."),
+        'faceTexData27': (
+            'TextureData27', True, int,
+            "Texture data point 27."),
+        'faceTexData28': (
+            'TextureData28', True, int,
+            "Texture data point 28."),
+        'faceTexData29': (
+            'TextureData29', True, int,
+            "Texture data point 29."),
+        'faceTexData30': (
+            'TextureData30', True, int,
+            "Texture data point 30."),
+        'faceTexData31': (
+            'TextureData31', True, int,
+            "Texture data point 31."),
+        'faceTexData32': (
+            'TextureData32', True, int,
+            "Texture data point 32."),
+        'faceTexData33': (
+            'TextureData33', True, int,
+            "Texture data point 33."),
+        'faceTexData34': (
+            'TextureData34', True, int,
+            "Texture data point 34."),
+        'faceTexData35': (
+            'TextureData35', True, int,
+            "Texture data point 35."),
+        'faceTexData36': (
+            'TextureData36', True, int,
+            "Texture data point 36."),
+        'faceTexData37': (
+            'TextureData37', True, int,
+            "Texture data point 37."),
+        'faceTexData38': (
+            'TextureData38', True, int,
+            "Texture data point 38."),
+        'faceTexData39': (
+            'TextureData39', True, int,
+            "Texture data point 39."),
+        'faceTexData40': (
+            'TextureData40', True, int,
+            "Texture data point 40."),
+        'faceTexData41': (
+            'TextureData41', True, int,
+            "Texture data point 41."),
+        'faceTexData42': (
+            'TextureData42', True, int,
+            "Texture data point 42."),
+        'faceTexData43': (
+            'TextureData43', True, int,
+            "Texture data point 43."),
+        'faceTexData44': (
+            'TextureData44', True, int,
+            "Texture data point 44."),
+        'faceTexData45': (
+            'TextureData45', True, int,
+            "Texture data point 45."),
+        'faceTexData46': (
+            'TextureData46', True, int,
+            "Texture data point 46."),
+        'faceTexData47': (
+            'TextureData47', True, int,
+            "Texture data point 47."),
+        'faceTexData48': (
+            'TextureData48', True, int,
+            "Texture data point 48."),
+        'faceTexData49': (
+            'TextureData49', True, int,
+            "Texture data point 49."),
+        'hairStyle': (
+            'HairStyle', True, FACE_PARAM_HAIRSTYLE_TYPE,
+            "Hairstyle of face."),
+        'hairColor_Base ': (
+            'BaseHairColor', True, FACE_PARAM_HAIRCOLOR_TYPE,
+            "Base hair color of face."),
+        'hairColor_R ': (
+            'HairColorRed', True, int,
+            "Red channel of hair color (0 to 255)."),
+        'hairColor_G ': (
+            'HairColorGreen', True, int,
+            "Greenchannel of hair color (0 to 255)."),
+        'hairColor_B ': (
+            'HairColorBlue', True, int,
+            "Blue channel of hair color (0 to 255)."),
+        'eyeColor_R': (
+            'EyeColorRed', True, int,
+            "Red channel of eye color (0 to 255)."),
+        'eyeColor_G': (
+            'EyeColorGreen', True, int,
+            "Green channel of eye color (0 to 255)."),
+        'eyeColor_B': (
+            'EyeColorBlue', True, int,
+            "Blue channel of eye color (0 to 255)."),
+        'pad[20]': (
+            'Pad1', False, '<Pad:20>',
+            "Null padding."),
+    },
     'EQUIP_PARAM_GOODS_ST': {
         'refId': _good_ref_id,
         'sfxVariationId': (
@@ -1885,6 +2251,22 @@ GAME_PARAM_INFO = {
             "Null padding."),
     },
     'ITEMLOT_PARAM_ST': {
+        'getItemFlagId': (
+            'ItemFlag', True, Flag,
+            "Flag enabled when any item from this item lot is picked up."),
+        'cumulateNumFlagId': (
+            'FirstCumulativeFlag', True, Flag,
+            "First of eight consecutive flags used to store the cumulative points for this item lot."),
+        'cumulateNumMax': (
+            'MaxCumulativeAdditions', True, int,
+            "Maximum number of times that cumulative points will be added to the total. I suspect that the cumulative "
+            "slot may be awarded automatically after this; if not, I don't know how the Symbol of Avarice always drops "
+            "after all seven Mimics are killed."),
+        'lotItem_Rarity': (
+            'ItemLotRarity', True, int,
+            "Overall rarity of item lot, from 0 to 3. Used fairly consistently, but seems to have no effect. Set to 2 "
+            "for all character drops except Crystal Lizards, who have 3."),
+
         'lotItemCategory01': (
             'Item1Category', True, ITEMLOT_ITEMCATEGORY,
             "Type of item (slot 1)."),
@@ -2084,22 +2466,6 @@ GAME_PARAM_INFO = {
         'cumulateReset08:1': (
             'ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
-
-        'getItemFlagId': (
-            'ItemFlag', True, Flag,
-            "Flag enabled when any item from this item lot is picked up."),
-        'cumulateNumFlagId': (
-            'FirstCumulativeFlag', True, Flag,
-            "First of eight consecutive flags used to store the cumulative points for this item lot."),
-        'cumulateNumMax': (
-            'MaxCumulativeAdditions', True, int,
-            "Maximum number of times that cumulative points will be added to the total. I suspect that the cumulative "
-            "slot may be awarded automatically after this; if not, I don't know how the Symbol of Avarice always drops "
-            "after all seven Mimics are killed."),
-        'lotItem_Rarity': (
-            'ItemLotRarity', True, int,
-            "Overall rarity of item lot, from 0 to 3. Used fairly consistently, but seems to have no effect. Set to 2 "
-            "for all character drops except Crystal Lizards, who have 3."),
     },
     'MENU_PARAM_COLOR_TABLE_ST': {
         'r': ('RedChannel', True, int, "Red value of RGBA color (0-255)."),
@@ -2410,7 +2776,7 @@ GAME_PARAM_INFO = {
             "Unknown effect, but it is set to zero for most enemies, 50 for very heavy enemies "
             "like Great Stone Knights and Titanite Demons, and 100 for Mimics."),
         'defaultLodParamId': (
-            'DefaultLightingParamID', False, '<Lighting:Lod>',
+            'DefaultLightingParamID', False, '<Lighting:Lod>',  # TODO
             "Default lighting."),
         'drawType': (
             'DrawType', True, NPC_DRAW_TYPE,
@@ -3390,170 +3756,176 @@ GAME_PARAM_INFO = {
     'MAGIC_PARAM_ST': {
         'yesNoDialogMessageId': (
             'ConfirmationMessage', True, Text.EventText,
-            "Message displayed in yes/no dialog box to confirm use of spell."),
+            "Message displayed in yes/no dialog box to confirm use of spell. Requires the Yes/No menu type."),
         'limitCancelSpEffectId': (
             'LimitCancelSpecialEffect', False, Params.SpecialEffects,
             "Unknown. Never used."),
         'sortId': (
             'SortIndex', True, int,
             "Index for automatic inventory sorting."),
-        'refId': (
-            '', True, None,
-            ""),  # TODO: dynamic
+        'refId': _spell_ref_id,
         'mp': (
-            '', True, None,
-7            ""),
+            'MPCost', False, int,
+            "MP cost of spell. Unused in Dark Souls 1 (always zero)."),
         'stamina': (
-            '', True, None,
-            ""),
+            'StaminaCost', False, int,
+            "Stamina cost of spell. Always zero."),
         'iconId': (
-            '', True, None,
-            ""),
+            'SpellIcon', True, Texture,
+            "Spell icon texture for inventory and equipped slot."),
         'behaviorId': (
-            '', True, None,
-            ""),
+            'Behavior', False, Params.Behaviors,
+            "Behavior triggered by spell. Never used."),
         'mtrlItemId': (
-            '', True, None,
-            ""),
+            'RequiredGood', False, Params.Goods,
+            "Good required for use. Never used (usability is handled in Shops parameters)."),
         'replaceMagicId': (
-            '', True, None,
-            ""),
+            'ReplaceSpell', False, Params.Spells,
+            "Spell to replace 'when the state change matches'. Never used."),
         'maxQuantity': (
-            '', True, None,
-            ""),
+            'BaseCastCount', True, int,
+            "Number of spell casts. Note that some spells consume multiple casts per use (e.g. Firestorm)."),
         'heroPoint': (
-            '', True, None,
-            ""),
+            'HumanityCost', False, int,
+            "Soft humanity consumed when casting spell. Never used."),
         'overDexterity': (
-            '', True, None,
-            ""),
+            'OverDexterity', False, int,
+            "Unknown effect. Always 99."),
         'sfxVariationId': (
-            '', True, None,
-            ""),
+            'VisualEffectVariation', True, int,
+            "Visual effect variation. (I believe this alters the animation ID used for casting.)"),
         'slotLength': (
-            '', True, None,
-            ""),
+            'AttunementSlotsUsed', True, int,
+            "Number of attunement slots required to attune spell."),
         'requirementIntellect': (
-            '', True, None,
-            ""),
+            'RequiredIntelligence', True, int,
+            "Minimum intelligence required to cast spell."),
         'requirementFaith': (
-            '', True, None,
-            ""),
+            'RequiredFaith', True, int,
+            "Minimum faith required to cast spell."),
         'analogDexiterityMin': (
-            '', True, None,
-            ""),
+            'MinDexterityForBonus', False, int,
+            "Dexterity value where casting speed starts to be affected (I think). This is always 20, but apparently "
+            "speed isn't actually affected until dexterity is 35."),
         'analogDexiterityMax': (
-            '', True, None,
-            ""),
+            'MaxDexterityForBonus', False, int,
+            "Dexterity value where casting speed stops being further affected (I think). Always 45, which is "
+            "consistent with the observed dexterity cap."),
         'ezStateBehaviorType': (
-            '', True, None,
-            ""),
+            'SpellCategory', True, MAGIC_CATEGORY,
+            "Type of spell."),
         'refCategory': (
-            '', True, None,
-            ""),
+            'ReferenceType', True, BEHAVIOR_REF_TYPE,
+            "Determines if this spell triggers a Bullet or Special Effect. ('Default' is never used, but probably "
+            "triggers an Attack, which is unlikely to be useful to you.)"),
         'spEffectCategory': (
-            '', True, None,
-            ""),
+            'SpecialEffectCategory', True, SP_EFFECT_SPCATEGORY,
+            "Determines what type of special effects affect the stats of this spell. (Vanilla game uses 3 for "
+            "sorceries and pyromancies, and 4 for miracles.)"),
         'refType': (
-            '', True, None,
-            ""),
+            'AnimationType', True, MAGIC_MOTION_TYPE,
+            "Basic animation type when casting spell. The Visual Effect Variation field further refines it."),
         'opmeMenuType': (
-            '', True, None,
-            ""),
+            'MenuActivated', True, GOODS_OPEN_MENU,
+            "Menu activated (if any) when spell is cast. Only used by Homeward (Yes/No Dialog)."),
         'hasSpEffectType': (
-            '', True, None,
-            ""),
+            'HasSpecialEffectType', False, int,
+            "Determines 'the state change that needs to replace the spell ID'. Never used."),
         'replaceCategory': (
-            '', True, None,
-            ""),
+            'ReplaceCategory', True, REPLACE_CATEGORY,
+            "Determines which existing effects this spell will replace. Only used for a few spells."),
         'useLimitCategory': (
-            '', True, None,
-            ""),
+            'LimitCategory', True, SP_EFFECT_USELIMIT_CATEGORY,
+            "Only one special effect with this category can be active at once. Additional attempts to cast spells (or "
+            "use goods) in this category will be prevented."),
         'vowType0:1': (
-            '', True, None,
-            ""),
+            'UseableByNoCovenant', True, bool,
+            "Determines if this spell can be cast by characters with no covenant."),
         'vowType1:1': (
-            '', True, None,
-            ""),
+            'UseableByWayOfWhite', True, bool,
+            "Determines if this spell can be cast by characters in the Way of White."),
         'vowType2:1': (
-            '', True, None,
-            ""),
+            'UseableByPrincessGuard', True, bool,
+            "Determines if this spell can be cast by characters in the Princess's Guard."),
         'vowType3:1': (
-            '', True, None,
-            ""),
+            'UseableByWarriorsOfSunlight', True, bool,
+            "Determines if this spell can be cast by characters in the Warriors of Sunlight."),
         'vowType4:1': (
-            '', True, None,
-            ""),
+            'UseableByDarkwraith', True, bool,
+            "Determines if this spell can be cast by characters in the Darkwraith covenant."),
         'vowType5:1': (
-            '', True, None,
-            ""),
+            'UseableByPathOfTheDragon', True, bool,
+            "Determines if this spell can be cast by characters in the Path of the Dragon."),
         'vowType6:1': (
-            '', True, None,
-            ""),
+            'UseableByGravelordServant', True, bool,
+            "Determines if this spell can be cast by characters in the Gravelord Servants."),
         'vowType7:1': (
-            '', True, None,
-            ""),
-        'enable_multi:1': (
-            '', True, None,
-            ""),
-        'enable_multi_only:1': (
-            '', True, None,
-            ""),
-        'isEnchant:1': (
-            '', True, None,
-            ""),
-        'isShieldEnchant:1': (
-            '', True, None,
-            ""),
-        'enable_live:1': (
-            '', True, None,
-            ""),
-        'enable_gray:1': (
-            '', True, None,
-            ""),
-        'enable_white:1': (
-            '', True, None,
-            ""),
-        'enable_black:1': (
-            '', True, None,
-            ""),
-        'disableOffline:1': (
-            '', True, None,
-            ""),
-        'castResonanceMagic:1': (
-            '', True, None,
-            ""),
-        'pad_1:6': (
-            '', True, None,
-            ""),
+            'UseableByForestHunter', True, bool,
+            "Determines if this spell can be cast by characters in the Forest Hunters."),
         'vowType8:1': (
-            '', True, None,
-            ""),
+            'UseableByDarkmoonBlade', True, bool,
+            "Determines if this spell can be cast by characters in the Blades of the Darkmoon."),
         'vowType9:1': (
-            '', True, None,
-            ""),
+            'UseableByChaosServant', True, bool,
+            "Determines if this spell can be cast by characters in the Chaos Servant covenant."),
         'vowType10:1': (
-            '', True, None,
-            ""),
+            'UseableByCovenant10', False, bool,
+            "Determines if this spell can be cast by characters in unused covenant 10."),
         'vowType11:1': (
-            '', True, None,
-            ""),
+            'UseableByCovenant11', False, bool,
+            "Determines if this spell can be cast by characters in unused covenant 11."),
         'vowType12:1': (
-            '', True, None,
-            ""),
+            'UseableByCovenant12', False, bool,
+            "Determines if this spell can be cast by characters in unused covenant 12."),
         'vowType13:1': (
-            '', True, None,
-            ""),
+            'UseableByCovenant13', False, bool,
+            "Determines if this spell can be cast by characters in unused covenant 13."),
         'vowType14:1': (
-            '', True, None,
-            ""),
+            'UseableByCovenant14', False, bool,
+            "Determines if this spell can be cast by characters in unused covenant 14."),
         'vowType15:1': (
-            '', True, None,
-            ""),
+            'UseableByCovenant15', False, bool,
+            "Determines if this spell can be cast by characters in unused covenant 15."),
+        'enable_multi:1': (
+            'UseableInMultiplayer', True, bool,
+            "Determines if this spell can be cast while multiple players are together. Only disabled for Homeward in "
+            "vanilla game."),
+        'enable_multi_only:1': (
+            'DisabledOutsideMultiplayer', False, bool,
+            "Determines if this spell can ONLY be cast while multiple players are together. Always False."),
+        'isEnchant:1': (
+            'IsWeaponBuff', True, bool,
+            "Indicates if this spell buffs your weapon."),
+        'isShieldEnchant:1': (
+            'IsShieldBuff', True, bool,
+            "Indicates if this spell buffs your shield."),
+        'enable_live:1': (
+            'UseableByHumans', True, bool,
+            "Determines if this spell can be cast by players who have revived to human."),
+        'enable_gray:1': (
+            'UseableByHollows', True, bool,
+            "Determines if this spell can be cast by players who have NOT revived to human."),
+        'enable_white:1': (
+            'UseableByWhitePhantoms', True, bool,
+            "Determines if this spell can be cast by White Phantoms (summons). Only disabled for Homeward and the "
+            "unused Escape Death miracle in vanilla game."),
+        'enable_black:1': (
+            'UseableByBlackPhantoms', True, bool,
+            "Determines if this spell can be cast by Black Phantoms (invaders). Only disabled for Homeward and the "
+            "unused Escape Death miracle in vanilla game."),
+        'disableOffline:1': (
+            'DisabledOffline', False, bool,
+            "If True, this spell cannot be cast without a network connection. Always False."),
+        'castResonanceMagic:1': (
+            'CreateResonanceRing', True, bool,
+            "If True, using this spell will create a resonance ring to help players in other worlds."),
+        'pad_1:6': (
+            'Pad1', False, '<Pad:6>',
+            "Null padding."),
         'pad[2]': (
             'Pad2', False, '<Pad:2>',
             "Null padding."),
-    },  # TODO
+    },
     'THROW_INFO_BANK': {
         'AtkChrId': (
             'AttackingCharacterModel', True, Model,

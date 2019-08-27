@@ -117,8 +117,8 @@ class ParamDef(object):
             else:
                 field.description = ''
 
-            print(f"{self.param_name} {field_index} | {field.internal_type} | {field.debug_type} | {field.name} | "
-                  f"{field.debug_name} | {field.description}")  # todo
+            # print(f"{self.param_name} {field_index} | {field.internal_type} | {field.debug_type} | {field.name} | "
+            #       f"{field.debug_name} | {field.description}")
 
             is_bits = field.name.find(': ')
             if is_bits == -1:

@@ -416,9 +416,31 @@ class MAGIC_CATEGORY(UnsignedChar):
 
 
 class MAGIC_MOTION_TYPE(UnsignedChar):
-    """Determines if spell produces a Bullet or Special Effect."""
-    Bullet = 1
-    SpecialEffect = 2
+    """Determines the base animation used when casting a spell."""
+    SorceryFastProjectile = 0  # Soul Arrow (not Heavy), Soul Spear, Dark Bead
+    SorceryWeapon = 1  # Magic Weapon, Hidden Weapon
+    SorceryOtherBuff = 2  # Fall Control, Repair Weapon
+    MiracleOtherBuff = 3  # Tranquil Walk of Peace, Heal, Homeward
+    MiracleRegen = 4  # Soothing Sunlight, Bountiful Sunlight
+    PyromancyProjectile = 5
+    PyromancyAffectingBody = 6  # Iron Flesh, Flash Sweat, Power Within
+    # 7 is unused.
+    PyromancyCloseRane = 8  # Combustion, Black Flame
+    PyromancyMist = 9  # Poison Mist, Acid Mist
+    PyromancyStorm = 10  # Firestorm, Chaos Firestorm
+    PyromancyRapport = 11
+    ForceWrath = 12  # Force, Wrath of the Gods
+    Chameleon = 13
+    # 14 is unused.
+    Blade = 15  # Sunlight Blade, Darkmoon Blade
+    GravelordDance = 16
+    MagicShield = 17
+    EmitForce = 18
+    LightningSpear = 19  # Lightning Spear, Great Lightning Spear, Sunlight Spear
+    CastLight = 20
+    HeavySoulArrow = 22
+    FireSurge = 23
+    FireWhip = 24
 
 
 class NPC_BOOL(UnsignedChar):
@@ -544,6 +566,8 @@ class RAGDOLL_PARAM_BOOL(UnsignedChar):
 class REPLACE_CATEGORY(UnsignedChar):
     """I believe that goods/spells that have non-zero values here will replace the effects of previous goods/spells
     used that have the same value. Names are based on vanilla usage, but presumably these are open slots."""
+    NoReplacement = 0
+    # 1 is unused.
     HealingMiracle = 2
     DarkmoonSorcery = 3
     GravelordMiracle = 4
@@ -603,7 +627,8 @@ class SP_EFFECT_SAVE_CATEGORY(SignedChar):
 class SP_EFFECT_SPCATEGORY(UnsignedShort):
     """Category of special effect, which determines which other special effects it will replace (and maybe more). Many
     values used."""
-    pass
+    SorceryOrPyromancy = 3
+    Miracle = 4
 
 
 class SP_EFFECT_THROW_CONDITION_TYPE(UnsignedChar):
@@ -616,12 +641,14 @@ class SP_EFFECT_TYPE(UnsignedChar):
 
 
 class SP_EFFECT_USELIMIT_CATEGORY(UnsignedChar):
-    """Category of good-triggered special effect in which only one effect can be active at once. Additional attempts
-    to use these goods will be prohibited, rather than overriding the earlier one."""
+    """Category of special effect triggered by goods or spells in which only one effect can be active at once.
+    Additional attempts to use goods or cast spells in the same category will be prohibited, rather than overriding
+    the earlier one."""
     NoLimit = 0
-    Resins = 1
-    Aura = 2  # Elizabeth's Mushroom, Green Blossom, Transient Curse
+    BuffWeapon = 1
+    BuffBody = 2
     DragonStone = 3
+    BuffShield = 13
 
 
 class SP_EFFECT_VFX_EFFECT_TYPE(UnsignedChar):

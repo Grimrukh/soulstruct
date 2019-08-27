@@ -18,9 +18,10 @@ class SoulstructTextEditor(SoulstructSmartFrame):
 
     _MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Magic)(Names|Summaries|Descriptions)$')
 
-    def __init__(self, project: SoulstructProject, master=None, toplevel=False):
+    def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
         self._Text = project.Text  # TODO: not storing project yet, but may need to for hyperlinks eventually
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Text")
+        self.linker = linker
 
         self.active_category = 'NPCNames'
         self.category_boxes = {}
@@ -29,7 +30,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
         self.text_id_selected = -1
         self.inline_edit_active = False
         self.e_inline_text_edit = None
-        self.entry_range_start = 0
+        self.first_display_index = 0
         self.action_history = ActionHistory()
         self.unsaved_changes = set()  # set of changed (category, text_id, action_type) pairs to highlight
 
@@ -122,9 +123,9 @@ class SoulstructTextEditor(SoulstructSmartFrame):
                 self.link_to_scrollable(self.text_category_canvas, box, label)
                 self.category_boxes[category] = (box, label)
 
-    def select_category(self, selected_category, entry_range_start=0):
+    def select_category(self, selected_category, first_display_index=0):
         self.cancel_inline_entry_edit()
-        self.entry_range_start = entry_range_start
+        self.first_display_index = first_display_index
         if selected_category == self.active_category:
             self.refresh_text_entries()
             return
@@ -180,7 +181,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
         with self.set_master(self.f_entry_table):
 
             text_range = self._Text.get_range(
-                self.active_category, self.entry_range_start, self.entry_range_start + self.ENTRY_RANGE_SIZE)
+                self.active_category, self.first_display_index, self.first_display_index + self.ENTRY_RANGE_SIZE)
 
             for row, (text_id, text) in enumerate(text_range):
                 self.text_boxes[text_id] = self.build_entry_row(row, text_id, text)
@@ -235,7 +236,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
                         button_kwargs='OK')
             return
         if id_to_find in self.active_category_text_dict:
-            self.entry_range_start = self.get_text_index(self.active_category, id_to_find)
+            self.first_display_index = self.get_text_index(self.active_category, id_to_find)
             self.refresh_text_entries()
             self.select_entry(id_to_find, edit_if_already_selected=False)
             self.entry_canvas.yview_moveto(0)
@@ -263,7 +264,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
             self._change_entry(self.active_category, self.text_id_selected, new_text)
 
         if next_index is not None:
-            self.entry_range_start = next_index
+            self.first_display_index = next_index
             self.refresh_text_entries()
             selected_id = self.active_category_sorted_ids[next_index]
             self.select_entry(selected_id, set_focus_to_text=False, edit_if_already_selected=False)
@@ -372,7 +373,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
 
     def jump_to_category_and_entry(self, category, text_id):
         """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
-        self.select_category(category, entry_range_start=sorted(self._Text[category]).index(text_id))
+        self.select_category(category, first_display_index=sorted(self._Text[category]).index(text_id))
         self.select_entry(text_id, edit_if_already_selected=False)
         self.update_idletasks()
         self.entry_canvas.yview_moveto(0)
@@ -405,12 +406,12 @@ class SoulstructTextEditor(SoulstructSmartFrame):
 
     def _refresh_buttons(self):
         self.create_new_text_button['state'] = 'normal' if self.active_category else 'disabled'
-        if not self.active_category or self.entry_range_start == 0:
+        if not self.active_category or self.first_display_index == 0:
             self.previous_range_button['state'] = 'disabled'
         else:
             self.previous_range_button['state'] = 'normal'
         if (not self.active_category
-                or self.entry_range_start > len(self.active_category_text_dict) - self.ENTRY_RANGE_SIZE):
+                or self.first_display_index > len(self.active_category_text_dict) - self.ENTRY_RANGE_SIZE):
             self.next_range_button['state'] = 'disabled'
         else:
             self.next_range_button['state'] = 'normal'
@@ -484,10 +485,10 @@ class SoulstructTextEditor(SoulstructSmartFrame):
     def previous_text_range(self):
         if self.active_category is None:
             return
-        target_start = max(self.entry_range_start - self.ENTRY_RANGE_SIZE, 0)
-        if target_start == self.entry_range_start:
+        target_start = max(self.first_display_index - self.ENTRY_RANGE_SIZE, 0)
+        if target_start == self.first_display_index:
             return
-        self.entry_range_start = target_start
+        self.first_display_index = target_start
         self.refresh_text_entries()
         self.select_entry(list(self.text_boxes)[0], edit_if_already_selected=False)
         self.update_idletasks()
@@ -497,8 +498,8 @@ class SoulstructTextEditor(SoulstructSmartFrame):
         if self.active_category is None:
             return
         target_start = min(max(len(self.active_category_text_dict) - self.ENTRY_RANGE_SIZE, 0),
-                           self.entry_range_start + self.ENTRY_RANGE_SIZE)
-        self.entry_range_start = target_start
+                           self.first_display_index + self.ENTRY_RANGE_SIZE)
+        self.first_display_index = target_start
         self.refresh_text_entries()
         self.select_entry(list(self.text_boxes)[0], edit_if_already_selected=False)
         self.update_idletasks()
