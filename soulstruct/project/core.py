@@ -89,6 +89,8 @@ class WindowLinker(object):
         level = armor_id % 100
         if level > 10:
             return None
+        if level == 0:
+            return armor_id
         base_armor = armor_id - level
         origin_field = 'originEquipPro' + ('' if level == 0 else str(level))
         try:
@@ -117,7 +119,14 @@ class WindowLinker(object):
             return None
         return base_weapon
 
-    def params_field_link(self, field_type, param_id):
+    def entry_text_link(self, entry_id):
+        """Return name, summary, description for entries in item categories. Returns None if no link is
+         appropriate, and returns an empty tuple if text should exist but cannot be found."""
+        if self.window.params_tab.active_category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
+            return None
+        # TODO
+
+    def params_field_link(self, field_type, entry_id):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
         animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
         resolved here."""
@@ -135,12 +144,21 @@ class WindowLinker(object):
 
         if ':' in link_text:
             table_type, category = link_text.split(':')
+
+            if entry_id in {-1, 0}:
+                # TODO: ensure that 0 means 'None' for all param/text fields.
+                return [self.Link('None', None)]
+
+            if table_type == 'Text':
+                text_table = self.project.Text[category]
+                if entry_id not in text_table:
+                    return [self.Link(None, None)]
+                return [self.Link(
+                    text_table[entry_id],
+                    self.create_link(data_type='Text', category=category, text_id=entry_id))]
+
             if table_type != 'Params':
                 return []
-
-            if param_id in {-1, 0}:
-                # TODO: ensure that 0 means 'None' for all fields.
-                return [self.Link('None', None)]
 
             if category in {'Attacks', 'Behaviors'}:
                 # Try to determine Player vs. Non Player table.
@@ -156,38 +174,38 @@ class WindowLinker(object):
                     # Could be Player or Non Player. Provide both links.
                     player_table = self.project.Params['Player' + category]
                     non_player_table = self.project.Params['NonPlayer' + category]
-                    if param_id not in player_table and param_id not in non_player_table:
+                    if entry_id not in player_table and entry_id not in non_player_table:
                         return [self.Link(None, None)]
                     links = []
-                    if param_id in player_table:
+                    if entry_id in player_table:
                         links.append(self.Link(
-                            player_table[param_id],
-                            self.create_link(data_type='Params', category='Player' + category, param_id=param_id)
+                            player_table[entry_id],
+                            self.create_link(data_type='Params', category='Player' + category, param_id=entry_id)
                         ))
-                    if param_id in player_table:
+                    if entry_id in player_table:
                         links.append(self.Link(
-                            non_player_table[param_id],
-                            self.create_link(data_type='Params', category='NonPlayer' + category, param_id=param_id)
+                            non_player_table[entry_id],
+                            self.create_link(data_type='Params', category='NonPlayer' + category, param_id=entry_id)
                         ))
                     if links:
                         return links
                     return [self.Link(None, None)]
 
             if category in {'Armor', 'Weapons'}:
-                true_param_id = self.check_armor_id(param_id) if category == 'Armor' else self.check_weapon_id(param_id)
+                true_param_id = self.check_armor_id(entry_id) if category == 'Armor' else self.check_weapon_id(entry_id)
                 if true_param_id is None:
                     return [self.Link(None, None)]  # Invalid weapon/armor ID, even considering reinforcement.
-                if param_id != true_param_id:
-                    name_extension = '+' + str(param_id - true_param_id)
-                param_id = true_param_id
+                if entry_id != true_param_id:
+                    name_extension = '+' + str(entry_id - true_param_id)
+                entry_id = true_param_id
 
             param_table = self.project.Params[category]
             try:
-                name = param_table[param_id].name + name_extension
+                name = param_table[entry_id].name + name_extension
             except KeyError:
                 return [self.Link(None, None)]
             else:
-                return [self.Link(name, self.create_link(data_type='Params', category=category, param_id=param_id))]
+                return [self.Link(name, self.create_link(data_type='Params', category=category, param_id=entry_id))]
         else:
             return []
 

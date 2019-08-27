@@ -5,12 +5,21 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from soulstruct.project.actions import ActionHistory
 from soulstruct.utilities import camel_case_to_spaces
-from soulstruct.utilities.window import SoulstructSmartFrame
+from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 
 if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters
     from soulstruct.params.core import ParamEntry, ParamTable
     from soulstruct.project.core import SoulstructProject
+
+
+# TODO: Can't jump to Conversations, because they're internal by default.
+# TODO: right click on entry to gain options to edit name, summary, description for appropriate types
+
+
+def bind_events(widget, bindings: dict):
+    for event, func in bindings.items():
+        widget.bind(event, func)
 
 
 class _ParamEntryRow(object):
@@ -19,8 +28,83 @@ class _ParamEntryRow(object):
     These are only created once, and their contents are refreshed when needed.
     """
 
-    def __init__(self):
-        pass  # TODO
+    def __init__(self, master: _ParamEntryFrame, row_index: int, change_name_func, main_bindings: dict = None):
+        self.master = master
+        self.linker = master.linker
+        self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
+
+        self.entry_id = None
+        self.entry_name = None
+
+        self.index = row_index
+        self._active = False
+        self.text_missing = False
+
+        bg_color = self._get_color()
+
+        self.row_box = master.Frame(
+            width=master.ENTRY_BOX_WIDTH, height=30, bg=bg_color, row=row_index, columnspan=2,
+            sticky='nsew')
+        bind_events(self.row_box, main_bindings)
+
+        self.id_label = master.Label(text='', width=15, row=row_index, column=0, bg=bg_color, sticky='e')
+        bind_events(self.id_label, main_bindings)
+
+        self.name_box = master.Frame(row=row_index, column=1, bg=bg_color, sticky='ew')
+        bind_events(self.name_box, main_bindings)
+
+        self.name_label = master.Label(self.name_box, text='', bg=bg_color, anchor='w', width=60)
+        bind_events(self.name_label, main_bindings)
+
+        # context_menu = self.build_entry_context_menu(param_id)  # TODO: jump to text
+        # TODO: hover to see summary and description, if applicable
+
+    def build_entry(self, entry_id: int, entry_name: str):
+        # TODO: link to text for appropriate categories
+        self.entry_id = entry_id
+        self.entry_name = entry_name
+
+        self.linker.params_field_link
+
+        self.id_label.var.set(str(self.entry_id))
+        self.name_label.var.set(self.entry_name)
+
+    def clear(self):
+        """Called when this row has no entry to display."""
+        self.row_box.grid_remove()
+        self.id_label.grid_remove()
+        self.name_box.grid_remove()
+        self.name_label.grid_remove()
+
+    @property
+    def active(self):
+        return self._active
+
+    @active.setter
+    def active(self, value: bool):
+        if not self._active and value:
+            self._active = True
+        elif self._active and not value:
+            self._active = False
+        else:
+            return  # No change to active state.
+
+        # All widget backgrounds need updating (except Combobox).
+        self._update_colors()
+
+    def _update_colors(self):
+        bg_color = self._get_color()
+        for widget in (self.row_box, self.id_label, self.name_box, self.name_label):
+            widget['bg'] = bg_color
+
+    def _get_color(self):
+        """Inspects entry name/data and returns a tuple of 'bg' color values."""
+        base_bg = 222
+        if self._active:
+            base_bg += 123
+        if self.index % 2:
+            base_bg += 111
+        return f'#{base_bg}'
 
 
 class _ParamFieldRow(object):
@@ -34,8 +118,10 @@ class _ParamFieldRow(object):
     ROW_HEIGHT = 30
 
     def __init__(self, master: _ParamFieldFrame, row_index: int, change_value_func, main_bindings: dict = None):
-        self.Params = master._Params  # needed for global links
+        self.master = master
+        self.linker = master.linker
         self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
+        self.param_entry = None
 
         self.index = row_index
         self._active = False
@@ -49,22 +135,22 @@ class _ParamFieldRow(object):
         self.row_box = master.Frame(
             width=master.FIELD_BOX_WIDTH, height=self.ROW_HEIGHT, bg=bg_color,
             row=row_index, columnspan=2, sticky='nsew')
-        self.bind_events(self.row_box, main_bindings)
+        bind_events(self.row_box, main_bindings)
 
         self.field_name_box = master.Frame(row=row_index, column=0, bg=bg_color, sticky='w')
-        self.bind_events(self.field_name_box, main_bindings)
+        bind_events(self.field_name_box, main_bindings)
 
         self.field_name_label = master.Label(
             self.field_name_box, text='', fg=master.FIELD_NAME_FG, width=30, bg=bg_color, anchor='w')
-        self.bind_events(self.field_name_label, main_bindings)
+        bind_events(self.field_name_label, main_bindings)
 
         self.value_box = master.Frame(width=200, row=row_index, column=1, bg=bg_color, sticky='ew')
-        self.bind_events(self.value_box, main_bindings)
+        bind_events(self.value_box, main_bindings)
 
         # VALUE WIDGETS
 
         self.value_label = master.Label(self.value_box, text='', bg=bg_color, width=50, anchor='w')
-        self.bind_events(self.value_label, main_bindings)
+        bind_events(self.value_label, main_bindings)
 
         self.value_checkbutton = master.Checkbutton(
             self.value_box, label=None, bg=bg_color, no_grid=True,
@@ -74,14 +160,16 @@ class _ParamFieldRow(object):
         self.value_combobox = master.Combobox(
             self.value_box, values=None, width=20, no_grid=True,
             on_select_function=lambda _: change_value_func(
-                self.index, getattr(self.field_type, self.value_combobox.var.get()).value))
+                self.index, getattr(self.field_type, self.value_combobox.var.get().replace(' ', '')).value))
         # Main focus bindings are not bound to Combobox.
         # TODO: BEHAVIOR_REF_TYPE combobox should also force a refresh, as it may change field names.
         #  (Class will need access to ParamEntry for this, which is fine.)
 
         self.context_menu = master.Menu(self.row_box)
+        self.tool_tip = ToolTip(self.row_box, self.field_name_box, self.field_name_label, text=None)
 
         self.active_value_widget = self.value_label
+        self.clear()
 
     def _activate_value_widget(self, widget):
         if widget is self.value_label:
@@ -97,24 +185,31 @@ class _ParamFieldRow(object):
                 self.active_value_widget.grid_remove()
             self.active_value_widget = self.value_combobox
 
-    def build_field(self, name, value, nickname, field_type, docstring="DOC-TODO", param_links: list = None):
+    def build_field(self, entry, name, value, nickname, field_type, docstring="DOC-TODO"):
         """Update widgets with given field information."""
+        self.param_entry = entry
         nickname = camel_case_to_spaces(nickname)
         self.field_name = name
         self.field_type = field_type
         self.field_docstring = docstring
 
-        if issubclass(self.field_type, IntEnum):
-            self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in self.field_type]
+        if isinstance(self.field_type, str):
+            param_links = self.linker.params_field_link(self.field_type, self.param_entry[self.field_name])
+            field_type = int
+        else:
+            param_links = []
+
+        if issubclass(field_type, IntEnum):
+            self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
             try:
                 # noinspection PyUnresolvedReferences
-                enum_name = camel_case_to_spaces(self.field_type(value).name)  # TODO: remove spaces when saving
+                enum_name = camel_case_to_spaces(field_type(value).name)  # TODO: remove spaces when saving
             except ValueError:
                 enum_name = f'<Unknown: {value}>'  # TODO: ensure this is read back and saved properly
             self.value_combobox.var.set(enum_name)
             self._activate_value_widget(self.value_combobox)
-        elif self.field_type in {float, int}:
-            value_text = f'{value:.3f}' if self.field_type == float else str(value)
+        elif field_type in {float, int}:
+            value_text = f'{value:.3f}' if field_type == float else str(value)
             if param_links:
                 if len(param_links) > 1:
                     value_text += f' [Ambiguous]'
@@ -125,7 +220,7 @@ class _ParamFieldRow(object):
             if self.value_label.var.get() != value_text:
                 self.value_label.var.set(value_text)  # TODO: probably a redundant check in terms of update efficiency
             self._activate_value_widget(self.value_label)
-        elif self.field_type == bool:
+        elif field_type == bool:
             if value not in {0, 1}:
                 raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
             self.value_checkbutton.var.set(value)
@@ -142,6 +237,7 @@ class _ParamFieldRow(object):
             self._update_colors()
 
         self.build_field_context_menu(param_links)
+        self.tool_tip.text = docstring
 
         self.row_box.grid()
         self.field_name_box.grid()
@@ -150,7 +246,7 @@ class _ParamFieldRow(object):
         self.active_value_widget.grid()
 
     def build_field_context_menu(self, param_links):
-        # TODO: other stuff... docstring?
+        # TODO: other stuff? Pop out a scroll box to select an entry, for linked fields?
         self.context_menu.delete(0, 'end')
         if param_links:
             for param_link in param_links:
@@ -160,8 +256,7 @@ class _ParamFieldRow(object):
                         foreground=self.STYLE_DEFAULTS['text_fg'], command=param_link.link)
 
     def clear(self):
-        """Called when this row has no field to display (for smaller ParamTables)."""
-        # TODO: getting white boxes appearing on startup
+        """Called when this row has no field to display (e.g. for smaller ParamTables or unselected entry)."""
         self.row_box.grid_remove()
         self.field_name_box.grid_remove()
         self.field_name_label.grid_remove()
@@ -175,14 +270,25 @@ class _ParamFieldRow(object):
     def confirm_edit(self, new_text):
         if not self.editable:
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
+
+        if isinstance(self.field_type, str):
+            new_value = int(new_text)
+            param_links = self.linker.params_field_link(self.field_type, new_value)
+            if len(param_links) > 1:
+                new_text += f' [Ambiguous]'
+            if param_links[0].name is None:
+                new_text += f' [MISSING]'
+            else:
+                new_text += f' [{param_links[0].name}]'
+            self.value_label.var.set(new_text)
+            return new_value
+
         self.value_label.var.set(new_text)
+
         if self.field_type == float:
             return float(new_text)
         elif self.field_type == int:
             return int(new_text)
-
-    def get_field_value(self):
-        """Converts current field value to appropriate type."""
 
     @property
     def active(self):
@@ -206,13 +312,6 @@ class _ParamFieldRow(object):
                        self.value_label, self.value_checkbutton):
             widget['bg'] = bg_color
 
-    @staticmethod  # TODO: global function
-    def bind_events(widget, bindings: dict):
-        if not bindings:
-            return
-        for event, func in bindings.items():
-            widget.bind(event, func)
-
     def _get_color(self):
         """Inspects field name/data and returns a tuple of 'bg' color values."""
         base_bg = 222
@@ -227,13 +326,13 @@ class _ParamFieldRow(object):
 
 class _ParamFieldFrame(SoulstructSmartFrame):
     FIELD_CANVAS_BG = '#1d1d1d'
-    FIELD_BOX_WIDTH = 700
+    FIELD_BOX_WIDTH = 550
     FIELD_ROW_COUNT = 150  # TODO: set to max field count
     FIELD_NAME_FG = '#DDE'
 
     def __init__(self, params, linker, master=None):
         super().__init__(master=master, toplevel=False)
-        self._Params = params  # type: DarkSoulsGameParameters
+        self.Params = params  # type: DarkSoulsGameParameters
         self.linker = linker
 
         self.param_entry = None
@@ -253,7 +352,6 @@ class _ParamFieldFrame(SoulstructSmartFrame):
             "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
 
         with self.set_master(self.f_field_table):
-            self.field_rows = []
             for row in range(self.FIELD_ROW_COUNT):
                 self.field_rows.append(_ParamFieldRow(
                     self, row_index=row, change_value_func=self._change_field_value,
@@ -270,10 +368,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
 
     def refresh(self, param_entry: ParamEntry = None, field_info_func=None,
                 show_hidden_fields=False, reset_display=False):
-        """Refresh all field name/value labels.
-
-        TODO: Show docstring on hover.
-        """
+        """Refresh all field name/value labels."""
         self._cancel_field_value_edit()
 
         if param_entry is not None:
@@ -290,22 +385,13 @@ class _ParamFieldFrame(SoulstructSmartFrame):
 
             field_nickname = camel_case_to_spaces(field_nickname)
 
-            if isinstance(field_type, str):
-                field_links = self.linker.params_field_link(field_type, self.param_entry[field_name])
-                field_type = int
-            else:
-                field_links = []
-
-            # print(name, field_type)
-
             self.field_rows[row].build_field(
+                entry=self.param_entry,
                 name=field_name,
                 value=self.param_entry[field_name],
                 nickname=field_nickname,
                 field_type=field_type,
                 docstring=field_doc,
-                param_links=field_links,
-                # TODO: link may need refreshing when edited.
             )
             row += 1
 
@@ -377,7 +463,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
                 self.e_field_value_edit = self.Entry(
                     field_row.value_box, numbers_only=True, initial_text=self.param_entry[field_name],
                     sticky='ew', width=5)
-            elif field_row.field_type == int:
+            elif field_row.field_type == int or isinstance(field_row.field_type, str):
                 self.e_field_value_edit = self.Entry(
                     field_row.value_box, integers_only=True, initial_text=self.param_entry[field_name],
                     sticky='ew', width=5)
@@ -398,8 +484,9 @@ class _ParamFieldFrame(SoulstructSmartFrame):
         if self.e_field_value_edit:
             try:
                 true_value = self.field_rows[index].confirm_edit(new_text=self.e_field_value_edit.var.get())
-            except ValueError:
+            except ValueError as e:
                 # Entry input restrictions are supposed to prevent this.
+                print(str(e))
                 self.bell()
                 return
             self._change_field_value(index, true_value)
@@ -425,11 +512,11 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
     def __init__(self, params, linker, master=None):
         super().__init__(master=master, toplevel=False)
-        self._Params = params
+        self.Params = params
         self.linker = linker
 
         self.param_table = None  # type: Optional[ParamTable]
-        self.entry_row_boxes = []  # type: List[Dict[str, Any]]
+        self.entry_rows = []  # type: List[_ParamEntryRow]
         self.entry_index_selected = None
         self.first_display_index = 0
         self.displayed_entry_count = 0
@@ -475,10 +562,18 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
                 with self.set_master():
                     self.field_display = self.SmartFrame(
-                        smart_frame_class=_ParamFieldFrame, params=self._Params, linker=self.linker)
+                        smart_frame_class=_ParamFieldFrame, params=self.Params, linker=self.linker)
 
             with self.set_master(self.f_entry_table):
-                self.entry_row_boxes = [self._create_entry_row(row) for row in range(self.ENTRY_RANGE_SIZE)]
+                for row in range(self.ENTRY_RANGE_SIZE):
+                    self.entry_rows.append(_ParamEntryRow(
+                        self, row_index=row, change_name_func=self._change_entry_name,
+                        main_bindings={
+                            '<Button-1>': lambda _, i=row: self.select_entry(i),
+                            '<Button-3>': lambda e, i=row: self._right_click_param_entry(e, i),
+                            '<Up>': self._entry_press_up,
+                            '<Down>': self._entry_press_down,
+                        }))
 
             with self.set_master(auto_columns=0):
                 self.next_range_button = self.Button(
@@ -487,80 +582,12 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
     def refresh_field_display(self, reset_display=False):
         if self.entry_index_selected is not None:
-            param_id = self.entry_row_boxes[self.entry_index_selected]['param_id']
+            param_id = self.entry_rows[self.entry_index_selected]['param_id']
             param_entry = self.param_table[param_id]
         else:
             param_entry = None
         self.field_display.refresh(param_entry=param_entry, field_info_func=self.param_table.get_field_info,
                                    show_hidden_fields=self.show_hidden_fields.get(), reset_display=reset_display)
-
-    def _create_entry_row(self, row: int) -> dict:
-        row_and_id_bg, name_box_bg, name_label_bg = self._get_entry_colors(row)
-        row_box = self.Frame(
-            width=self.ENTRY_BOX_WIDTH, height=30, bg=row_and_id_bg, row=row, columnspan=2,
-            sticky='nsew')
-        self._bind_entry_row_events(row_box, row)
-
-        id_label = self.Label(text='', width=15, row=row, column=0, bg=row_and_id_bg, sticky='e')
-        self._bind_entry_row_events(id_label, row)
-
-        name_box = self.Frame(row=row, column=1, bg=name_box_bg, sticky='ew')
-        self._bind_entry_row_events(name_box, row)
-
-        name_label = self.Label(name_box, text='', bg=name_label_bg, anchor='w', width=60)
-        self._bind_entry_row_events(name_label, row)
-
-        # context_menu = self.build_entry_context_menu(param_id)  # TODO: do in refresh, not here?
-
-        return {'row_box': row_box, 'id_label': id_label, 'name_box': name_box,
-                'name_label': name_label, 'param_id': -1, 'context_menu': None}
-
-    def refresh(self, param_table: ParamTable = None, reset_fields=False):
-        """Display entry information from given ParamTable and current entry display range.
-
-        If no category is given, the last displayed category will be used.
-        """
-        self._cancel_entry_name_edit()
-
-        if param_table is not None:
-            self.param_table = param_table
-
-        if self.param_table != '':
-            entries_to_display = self.param_table.get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
-        else:
-            entries_to_display = []  # All rows will be considered 'remaining' and hidden.
-
-        row = 0
-        for param_id, param_entry in entries_to_display:
-            row_dict = self.entry_row_boxes[row]
-            row_and_id_bg, name_box_bg, name_label_bg = self._get_entry_colors(row, param_entry.name)
-            row_dict['param_id'] = param_id
-            row_dict['row_box'].config(bg=row_and_id_bg)
-            row_dict['row_box'].grid()
-            row_dict['id_label'].config(bg=row_and_id_bg)
-            row_dict['id_label'].var.set(str(param_id))
-            row_dict['id_label'].grid()
-            row_dict['name_box'].config(bg=name_box_bg)
-            row_dict['name_box'].grid()
-            row_dict['name_label'].config(bg=name_label_bg)
-            row_dict['name_label'].var.set(param_entry.name)
-            row_dict['name_label'].grid()
-            row += 1
-
-        self.displayed_entry_count = row
-
-        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
-            row_dict = self.entry_row_boxes[remaining_row]
-            row_dict['param_id'] = -1
-            row_dict['row_box'].grid_remove()
-            row_dict['id_label'].grid_remove()
-            row_dict['name_box'].grid_remove()
-            row_dict['name_label'].grid_remove()
-
-        self.f_entry_table.grid_columnconfigure(1, weight=1)
-        self._refresh_buttons()
-
-        self.refresh_field_display(reset_display=reset_fields)
 
     def select_entry(self, entry_index, set_focus_to_name=True, edit_if_already_selected=True):
         """Select entry from index, based on currently displayed category."""
@@ -615,6 +642,7 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
     def _get_entry_colors(self, row, entry_name=None):
         """Inspects entry data and returns a tuple of 'bg' color values (row_and_id_bg, name_box_bg, name_label_bg)."""
+        # TODO: move to _ParamEntryRow
         base_bg = 222
         row_and_id_bg = name_box_bg = name_label_bg = 0
         if entry_name is not None:
@@ -638,6 +666,41 @@ class _ParamEntryFrame(SoulstructSmartFrame):
         # TODO
 
         return context_menu
+
+    def refresh_entries(self, param_table: ParamTable = None, reset_fields=False):
+        self._cancel_entry_name_edit()
+
+        if param_table is not None:
+            self.param_table = param_table
+
+        if self.param_table != '':
+            entries_to_display = self.param_table.get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
+        else:
+            entries_to_display = []  # All rows will be considered 'remaining' and hidden.
+
+        row = 0
+        for entry_id, entry in entries_to_display:
+            self.entry_rows[row].build_entry(
+                entry_id=entry_id,
+                entry_name=entry.name,
+                # TODO: text link may need refreshing when edited.
+            )
+            row += 1
+
+        self.displayed_entry_count = row
+
+        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+            row_dict = self.entry_row_boxes[remaining_row]
+            row_dict['param_id'] = -1
+            row_dict['row_box'].grid_remove()
+            row_dict['id_label'].grid_remove()
+            row_dict['name_box'].grid_remove()
+            row_dict['name_label'].grid_remove()
+
+        self.f_entry_table.grid_columnconfigure(1, weight=1)
+        self._refresh_buttons()
+
+        self.refresh_field_display(reset_display=reset_fields)
 
     def _get_param_index(self, param_id):
         """Get index of given param ID in currently displayed category."""
@@ -797,7 +860,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
     entry_display: _ParamEntryFrame
 
     def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
-        self._Params = project.Params
+        self.Params = project.Params
         self.linker = linker
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Params")
 
@@ -826,7 +889,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             with self.set_master(auto_rows=0):
                 with self.set_master(auto_columns=0):
                     self.entry_display = self.SmartFrame(
-                        smart_frame_class=_ParamEntryFrame, params=self._Params, linker=self.linker)
+                        smart_frame_class=_ParamEntryFrame, params=self.Params, linker=self.linker)
 
         self.entry_display.refresh(self.active_category_param_table)
         self.bind_all('<Control-z>', self.undo)
@@ -848,7 +911,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
             label.destroy()
         self.category_boxes = {}
         with self.set_master(self.f_params_categories):
-            categories = self._Params.param_names
+            categories = self.Params.param_names
             for row, category in enumerate(categories):
                 box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30, highlightthickness=1)
                 label_text = camel_case_to_spaces(category).replace(' _', ':')
@@ -879,10 +942,10 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
     @property
     def active_category_param_table(self) -> ParamTable:
-        return self._Params[self.active_category]
+        return self.Params[self.active_category]
 
     @property
     def active_category_sorted_ids(self):
         if self.active_category is None:
             return None
-        return sorted(self._Params[self.active_category])
+        return sorted(self.Params[self.active_category])

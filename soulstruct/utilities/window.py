@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
-__all__ = ['SmartFrame', 'SoulstructSmartFrame']
+__all__ = ['SmartFrame', 'SoulstructSmartFrame', 'ToolTip']
 
 _GRID_KEYWORDS = {'column', 'columnspan', 'in', 'ipadx', 'ipady', 'padx', 'pady', 'row', 'rowspan', 'sticky'}
 
@@ -422,7 +422,7 @@ class SmartFrame(tk.Frame):
         if integers_only:
             if numbers_only:
                 raise ValueError("Use 'integers_only' or 'numbers_only', but not both.")
-            v_cmd = (self.master.register(self._validate_entry_integers), '%P')
+            v_cmd = (self.master.register(self._validate_entry_integers), '%P', '%S')
             entry.config(validate='key', validatecommand=v_cmd)
         elif numbers_only:
             v_cmd = (self.master.register(self._validate_entry_numbers), '%P', '%S')
@@ -678,3 +678,58 @@ class SoulstructSmartFrame(SmartFrame):
         return self.custom_dialog(title=title, message=message, font_size=font_size, font_type=font_type,
                                   button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
                                   default_output=default_output, cancel_output=cancel_output)
+
+
+class ToolTip(object):
+
+    def __init__(self, main_widget, *child_widgets, text='tool tip'):
+        """Entering *any* of the widgets is sufficient to trigger the tooltip, but you must leave *all* of them for it
+        to time out again. The main widget will be used to determine tooltip coordinates (generally the largest)."""
+        self.delay = 500
+        self.wraplength = 180
+        self.widgets = [main_widget] + list(child_widgets)
+        self.widget_status = {id(w): False for w in self.widgets}
+        self.text = text
+        for widget in self.widgets:
+            widget.bind('<Enter>', lambda _: self.enter(widget))
+            widget.bind('<Leave>', lambda _: self.leave(widget))
+            widget.bind('<ButtonPress>', lambda _: self.leave(widget))
+        self.schedule_id = None
+        self.tip_box = None
+
+    def enter(self, widget):
+        schedule_tip = not any(self.widget_status.values())
+        self.widget_status[id(widget)] = True
+        if schedule_tip and self.text is not None:
+            self.schedule()
+
+    def leave(self, widget):
+        self.widget_status[id(widget)] = False
+        if not any(self.widget_status.values()):
+            self.unschedule()
+            self.hide_tip()
+
+    def schedule(self):
+        self.unschedule()
+        self.schedule_id = self.widgets[0].after(self.delay, self.show_tip)
+
+    def unschedule(self):
+        schedule_id, self.schedule_id = self.schedule_id, None
+        if schedule_id:
+            self.widgets[0].after_cancel(schedule_id)
+
+    def show_tip(self, _=None):
+        x, y, cx, cy = self.widgets[0].bbox('insert')
+        x += self.widgets[0].winfo_rootx() + 25
+        y += self.widgets[0].winfo_rooty() + 20
+        self.tip_box = tk.Toplevel(self.widgets[0])
+        self.tip_box.wm_overrideredirect(True)  # remove border
+        self.tip_box.wm_geometry(f'+{x}+{y}')
+        tip_message = tk.Label(self.tip_box, text=self.text, justify='left', bg='#FFFFFF', relief='solid',
+                               borderwidth=1, wraplength=self.wraplength)
+        tip_message.pack(ipadx=1)
+
+    def hide_tip(self):
+        tip_box, self.tip_box = self.tip_box, None
+        if tip_box:
+            tip_box.destroy()
