@@ -48,9 +48,10 @@ class WindowLinker(object):
     MAIN_TAB = 2
 
     class Link(object):
-        def __init__(self, name, link):
+        def __init__(self, name, link, menu_text='Go to link'):
             self.name = name
             self.link = link
+            self.menu_text = menu_text
 
     def __init__(self, window: SoulstructProjectWindow):
         self.window = window
@@ -82,6 +83,38 @@ class WindowLinker(object):
             return partial(self._link_to_text, **kwargs)
         else:
             raise ValueError(f"Data type for link must be 'Params' or 'Text', not {data_type}.")
+
+    def entry_text_link(self, entry_id):
+        """Return three (name, link) pairs for entries in item categories. Returns None if no link is appropriate, and
+        returns an empty tuple if text should exist but cannot be found."""
+        category = self.window.params_tab.active_category
+        if category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
+            return []
+        text_ids = {'Names': entry_id, 'Summaries': entry_id, 'Descriptions': entry_id}
+        links = []
+
+        prefix = category.rstrip('s')
+
+        if category == 'Weapons':
+            base_weapon_id = self.check_weapon_id(entry_id)
+            if base_weapon_id is not None:
+                text_ids['Summaries'] = base_weapon_id
+                text_ids['Descriptions'] = base_weapon_id
+        elif category == 'Armor':
+            base_armor_id = self.check_armor_id(entry_id)
+            if base_armor_id is not None:
+                text_ids['Summaries'] = base_armor_id
+                text_ids['Descriptions'] = base_armor_id
+        for text_category, text_id in text_ids.items():
+            if text_ids[text_category] not in self.project.Text[prefix + text_category]:
+                links.append(self.Link(None, None, f'{prefix + text_category} entry missing - click to create (TODO)'))
+            else:
+                links.append(self.Link(
+                    name=self.project.Text[prefix + text_category][text_id],
+                    link=self.create_link(data_type='Text', category=prefix + text_category, text_id=text_id),
+                    menu_text=f"Go to {prefix + text_category} entry in Text"))
+
+        return links
 
     def check_armor_id(self, armor_id):
         """Checks if the given armor ID (which may include a reinforcement offset) is valid by inspecting the
@@ -118,13 +151,6 @@ class WindowLinker(object):
         if origin == -1:
             return None
         return base_weapon
-
-    def entry_text_link(self, entry_id):
-        """Return name, summary, description for entries in item categories. Returns None if no link is
-         appropriate, and returns an empty tuple if text should exist but cannot be found."""
-        if self.window.params_tab.active_category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
-            return None
-        # TODO
 
     def params_field_link(self, field_type, entry_id):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,

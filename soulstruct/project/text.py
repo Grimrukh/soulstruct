@@ -16,7 +16,7 @@ class SoulstructTextEditor(SoulstructSmartFrame):
     ENTRY_BOX_WIDTH = 800
     ENTRY_RANGE_SIZE = 50
 
-    _MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Magic)(Names|Summaries|Descriptions)$')
+    _MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$')
 
     def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
         self._Text = project.Text  # TODO: not storing project yet, but may need to for hyperlinks eventually

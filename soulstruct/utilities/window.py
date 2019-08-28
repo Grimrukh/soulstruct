@@ -682,11 +682,11 @@ class SoulstructSmartFrame(SmartFrame):
 
 class ToolTip(object):
 
-    def __init__(self, main_widget, *child_widgets, text='tool tip'):
+    def __init__(self, main_widget, *child_widgets, text='tool tip', delay=500, wraplength=180):
         """Entering *any* of the widgets is sufficient to trigger the tooltip, but you must leave *all* of them for it
         to time out again. The main widget will be used to determine tooltip coordinates (generally the largest)."""
-        self.delay = 500
-        self.wraplength = 180
+        self.delay = delay
+        self.wraplength = wraplength
         self.widgets = [main_widget] + list(child_widgets)
         self.widget_status = {id(w): False for w in self.widgets}
         self.text = text

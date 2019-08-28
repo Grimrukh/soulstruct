@@ -21,9 +21,9 @@ class DarkSoulsText(object):
     GoodNames: dict
     GoodSummaries: dict
     KeyGuide: dict
-    MagicDescriptions: dict
-    MagicNames: dict
-    MagicSummaries: dict
+    SpellDescriptions: dict
+    SpellNames: dict
+    SpellSummaries: dict
     MenuDialogs: dict
     MenuHelpSnippets: dict
     MenuText_Common: dict
@@ -48,7 +48,7 @@ class DarkSoulsText(object):
         'ArmorNames', 'ArmorSummaries', 'ArmorDescriptions',
         'RingNames', 'RingSummaries', 'RingDescriptions',
         'GoodNames', 'GoodSummaries', 'GoodDescriptions',
-        'MagicNames', 'MagicSummaries', 'MagicDescriptions',
+        'SpellNames', 'SpellSummaries', 'SpellDescriptions',
     ]
 
     # These are text categories you are unlikely to change, whether it's for pragmatic
@@ -341,7 +341,7 @@ _MSGBND_INDEX_TO_SS = {
     11: 'WeaponNames',
     12: 'ArmorNames',
     13: 'RingNames',
-    14: 'MagicNames',
+    14: 'SpellNames',
     15: 'FeatureNames',
     16: 'FeatureSummaries',
     17: 'FeatureDescriptions',
@@ -355,8 +355,8 @@ _MSGBND_INDEX_TO_SS = {
     25: 'WeaponDescriptions',
     26: 'ArmorDescriptions',
     27: 'RingDescriptions',
-    28: 'MagicSummaries',
-    29: 'MagicDescriptions',
+    28: 'SpellSummaries',
+    29: 'SpellDescriptions',
     30: 'EventText',
     70: 'IngameMenus',
     76: 'MenuText_Common',
@@ -374,7 +374,7 @@ _MSGBND_INDEX_TO_SS = {
     102: 'MenuDialogsPatch',
     103: 'SystemMessages_Win32Patch',
     104: 'ConversationsPatch',
-    105: 'MagicDescriptionsPatch',
+    105: 'SpellDescriptionsPatch',
     106: 'WeaponDescriptionsPatch',
     107: 'SoapstoneMessagesPatch',
     108: 'ArmorDescriptionsPatch',
@@ -387,7 +387,7 @@ _MSGBND_INDEX_TO_SS = {
     115: 'WeaponNamesPatch',
     116: 'ArmorSummariesPatch',
     117: 'ArmorNamesPatch',
-    118: 'MagicNamesPatch',
+    118: 'SpellNamesPatch',
     119: 'NPCNamesPatch',
     120: 'PlaceNamesPatch',
     121: 'MenuHelpSnippetsPatch',
@@ -410,9 +410,9 @@ _DSR_TO_SS = {
     'Item_long_desc_.text': 'GoodDescriptions',
     'Item_name_.text': 'GoodNames',
     'Item_description_.text': 'GoodSummaries',
-    'Magic_long_desc_.text': 'MagicDescriptions',
-    'Magic_name_.text': 'MagicNames',
-    'Magic_description_.text': 'MagicSummaries',
+    'Magic_long_desc_.text': 'SpellDescriptions',
+    'Magic_name_.text': 'SpellNames',
+    'Magic_description_.text': 'SpellSummaries',
     'NPC_name_.text': 'NPCNames',
     'Place_name_.text': 'PlaceNames',
     'Weapon_long_desc_.text': 'WeaponDescriptions',
@@ -464,11 +464,11 @@ _PTD_TO_SS = {
     'アクセサリ名パッチ.text': 'RingNamesPatch',
     'アクセサリ説明.text': 'RingSummaries',
     'アクセサリ説明パッチ.text': 'RingSummariesPatch',
-    '魔法うんちく.text': 'MagicDescriptions',
-    '魔法うんちくパッチ.text': 'MagicDescriptionsPatch',
-    '魔法名.text': 'MagicNames',
-    '魔法名パッチ.text': 'MagicNamesPatch',
-    '魔法説明.text': 'MagicSummaries',
+    '魔法うんちく.text': 'SpellDescriptions',
+    '魔法うんちくパッチ.text': 'SpellDescriptionsPatch',
+    '魔法名.text': 'SpellNames',
+    '魔法名パッチ.text': 'SpellNamesPatch',
+    '魔法説明.text': 'SpellSummaries',
     '武器うんちく.text': 'WeaponDescriptions',
     '武器うんちくパッチ.text': 'WeaponDescriptionsPatch',
     '武器名.text': 'WeaponNames',

@@ -10,7 +10,7 @@ from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters
     from soulstruct.params.core import ParamEntry, ParamTable
-    from soulstruct.project.core import SoulstructProject
+    from soulstruct.project.core import SoulstructProject, WindowLinker
 
 
 # TODO: Can't jump to Conversations, because they're internal by default.
@@ -30,7 +30,7 @@ class _ParamEntryRow(object):
 
     def __init__(self, master: _ParamEntryFrame, row_index: int, change_name_func, main_bindings: dict = None):
         self.master = master
-        self.linker = master.linker
+        self.linker = master.linker  # type: WindowLinker
         self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
 
         self.entry_id = None
@@ -38,7 +38,7 @@ class _ParamEntryRow(object):
 
         self.index = row_index
         self._active = False
-        self.text_missing = False
+        self.any_text_missing = False
 
         bg_color = self._get_color()
 
@@ -56,18 +56,36 @@ class _ParamEntryRow(object):
         self.name_label = master.Label(self.name_box, text='', bg=bg_color, anchor='w', width=60)
         bind_events(self.name_label, main_bindings)
 
-        # context_menu = self.build_entry_context_menu(param_id)  # TODO: jump to text
-        # TODO: hover to see summary and description, if applicable
+        self.context_menu = master.Menu(self.row_box)
+        self.tool_tip = ToolTip(self.row_box, self.id_label, self.name_box, self.name_label, text=None,
+                                wraplength=350)
 
     def build_entry(self, entry_id: int, entry_name: str):
-        # TODO: link to text for appropriate categories
         self.entry_id = entry_id
         self.entry_name = entry_name
 
-        self.linker.params_field_link
-
+        text_links = self.linker.entry_text_link(self.entry_id)
+        name_extension = f" [{text_links[0].name}]" if text_links and text_links[0].name else ""
         self.id_label.var.set(str(self.entry_id))
-        self.name_label.var.set(self.entry_name)
+        self.name_label.var.set(self.entry_name + name_extension)
+
+        if text_links and not any(link.name for link in text_links) and not self.any_text_missing:
+            self.any_text_missing = True
+            self._update_colors()
+        elif (not text_links or all(link.name for link in text_links)) and self.any_text_missing:
+            self.any_text_missing = False
+            self._update_colors()
+
+        self.build_entry_context_menu(text_links)
+        if text_links and text_links[2].name:
+            self.tool_tip.text = text_links[2].name
+        else:
+            self.tool_tip.text = None
+
+        self.row_box.grid()
+        self.id_label.grid()
+        self.name_box.grid()
+        self.name_label.grid()
 
     def clear(self):
         """Called when this row has no entry to display."""
@@ -75,6 +93,17 @@ class _ParamEntryRow(object):
         self.id_label.grid_remove()
         self.name_box.grid_remove()
         self.name_label.grid_remove()
+
+    def build_entry_context_menu(self, text_links):
+        # TODO: other stuff? Pop out a text edit box?
+        # TODO: Other function I can think of here is 'view uses', which will search for things that link to this
+        #  type of param (e.g. other params). Such places should be indexed already so they can be searched.
+        self.context_menu.delete(0, 'end')
+        if text_links:
+            for text_link in text_links:
+                if text_link.name != 'None':
+                    self.context_menu.add_command(
+                        label=text_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=text_link.link)
 
     @property
     def active(self):
@@ -169,7 +198,7 @@ class _ParamFieldRow(object):
         self.tool_tip = ToolTip(self.row_box, self.field_name_box, self.field_name_label, text=None)
 
         self.active_value_widget = self.value_label
-        self.clear()
+        self.clear()  # TODO: still getting white box before I click or scroll
 
     def _activate_value_widget(self, widget):
         if widget is self.value_label:
@@ -357,12 +386,12 @@ class _ParamFieldFrame(SoulstructSmartFrame):
                     self, row_index=row, change_value_func=self._change_field_value,
                     main_bindings={
                         '<Button-1>': lambda _, i=row: self.select_field(i),
-                        '<Button-3>': lambda e, i=row: self._right_click_param_entry(e, i),
+                        '<Button-3>': lambda e, i=row: self._right_click_field(e, i),
                         '<Up>': self.field_press_up,
                         '<Down>': self.field_press_down,
                     }))
 
-    def _right_click_param_entry(self, event, field_index):
+    def _right_click_field(self, event, field_index):
         self.select_field(field_index, edit_if_already_selected=False)
         self.field_rows[field_index].context_menu.tk_popup(event.x_root, event.y_root)
 
@@ -404,6 +433,7 @@ class _ParamFieldFrame(SoulstructSmartFrame):
 
         if reset_display:
             self.select_field(0, edit_if_already_selected=False)
+            self.update_idletasks()
             self.field_canvas.yview_moveto(0)
 
     def select_field(self, index, set_focus_to_value=True, edit_if_already_selected=True):
@@ -573,6 +603,8 @@ class _ParamEntryFrame(SoulstructSmartFrame):
                             '<Button-3>': lambda e, i=row: self._right_click_param_entry(e, i),
                             '<Up>': self._entry_press_up,
                             '<Down>': self._entry_press_down,
+                            '<Prior>': lambda e: self._go_to_previous_entry_range(),
+                            '<Next>': lambda e: self._go_to_next_entry_range(),
                         }))
 
             with self.set_master(auto_columns=0):
@@ -582,45 +614,33 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
     def refresh_field_display(self, reset_display=False):
         if self.entry_index_selected is not None:
-            param_id = self.entry_rows[self.entry_index_selected]['param_id']
+            param_id = self.entry_rows[self.entry_index_selected].entry_id
             param_entry = self.param_table[param_id]
         else:
             param_entry = None
         self.field_display.refresh(param_entry=param_entry, field_info_func=self.param_table.get_field_info,
                                    show_hidden_fields=self.show_hidden_fields.get(), reset_display=reset_display)
 
-    def select_entry(self, entry_index, set_focus_to_name=True, edit_if_already_selected=True):
+    def select_entry(self, index, set_focus_to_name=True, edit_if_already_selected=True):
         """Select entry from index, based on currently displayed category."""
+        old_index = self.entry_index_selected
 
-        old_entry_index = self.entry_index_selected
-        self.entry_index_selected = entry_index
-
-        if old_entry_index is not None:
-            if entry_index == old_entry_index:
+        if old_index is not None:
+            if index == old_index:
                 if edit_if_already_selected:
-                    return self._start_entry_name_edit(entry_index)
+                    return self._start_entry_name_edit(index)
                 return
-            self._update_row_colors(old_entry_index)
-            reset_field_scrollbar = False
         else:
-            reset_field_scrollbar = True
+            self._cancel_entry_name_edit()
 
-        self._update_row_colors(entry_index)
+        self.entry_index_selected = index
+
+        if old_index is not None:
+            self.entry_rows[old_index].active = False
+        self.entry_rows[index].active = True
         if set_focus_to_name:
-            self.entry_row_boxes[entry_index]['name_label'].focus_set()
+            self.entry_rows[index].name_label.focus_set()
         self.refresh_field_display()
-        if reset_field_scrollbar:
-            self.update_idletasks()
-            self.field_display.field_canvas.yview_moveto(0)
-
-    def _update_row_colors(self, row):
-        row_dict = self.entry_row_boxes[row]
-        entry_name = self.param_table[self.entry_row_boxes[row]['param_id']].name
-        row_and_id_bg, name_box_bg, name_label_bg = self._get_entry_colors(row, entry_name)
-        row_dict['row_box'].config(bg=row_and_id_bg)
-        row_dict['id_label'].config(bg=row_and_id_bg)
-        row_dict['name_box'].config(bg=name_box_bg)
-        row_dict['name_label'].config(bg=name_label_bg)
 
     def _refresh_buttons(self):
         # self.b_create_new_param['state'] = 'normal' if self.active_category else 'disabled'  # TODO
@@ -632,13 +652,6 @@ class _ParamEntryFrame(SoulstructSmartFrame):
             self.next_range_button['state'] = 'disabled'
         else:
             self.next_range_button['state'] = 'normal'
-
-    def jump_to_param_id(self, param_id):
-        self.first_display_index = self._get_param_index(param_id)
-        self.refresh()
-        self.select_entry(self.first_display_index, edit_if_already_selected=False)
-        self.update_idletasks()
-        self.entry_canvas.yview_moveto(0)
 
     def _get_entry_colors(self, row, entry_name=None):
         """Inspects entry data and returns a tuple of 'bg' color values (row_and_id_bg, name_box_bg, name_label_bg)."""
@@ -656,24 +669,13 @@ class _ParamEntryFrame(SoulstructSmartFrame):
             base_bg += 111
         return f'#{base_bg + row_and_id_bg}', f'#{base_bg + name_box_bg}', f'#{base_bg + name_label_bg}'
 
-    def build_entry_context_menu(self, param_id, context_menu=None):
-        # TODO: Only function I can think of here is 'view uses', which will search for things that link to this
-        #  type of param (e.g. other params). Such places should be indexed already so they can be searched.
-        category = self.active_category
-        if context_menu is None:
-            context_menu = self.Menu()
-
-        # TODO
-
-        return context_menu
-
     def refresh_entries(self, param_table: ParamTable = None, reset_fields=False):
         self._cancel_entry_name_edit()
 
         if param_table is not None:
             self.param_table = param_table
 
-        if self.param_table != '':
+        if self.param_table:
             entries_to_display = self.param_table.get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
         else:
             entries_to_display = []  # All rows will be considered 'remaining' and hidden.
@@ -690,17 +692,13 @@ class _ParamEntryFrame(SoulstructSmartFrame):
         self.displayed_entry_count = row
 
         for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
-            row_dict = self.entry_row_boxes[remaining_row]
-            row_dict['param_id'] = -1
-            row_dict['row_box'].grid_remove()
-            row_dict['id_label'].grid_remove()
-            row_dict['name_box'].grid_remove()
-            row_dict['name_label'].grid_remove()
+            self.entry_rows[remaining_row].clear()
 
         self.f_entry_table.grid_columnconfigure(1, weight=1)
         self._refresh_buttons()
 
-        self.refresh_field_display(reset_display=reset_fields)
+        if self.param_table:
+            self.refresh_field_display(reset_display=reset_fields)
 
     def _get_param_index(self, param_id):
         """Get index of given param ID in currently displayed category."""
@@ -714,12 +712,11 @@ class _ParamEntryFrame(SoulstructSmartFrame):
         TODO: parent class manages undo/redo with all-purpose navigation and editing. This returns True if any change
          actually happens, and False otherwise, to signal to that manager.
         """
-        param_id = self.entry_row_boxes[entry_index]['param_id']
-        old_text = self.param_table[param_id].name
+        entry_id = self.entry_rows[entry_index].entry_id
+        old_text = self.param_table[entry_id].name
         if old_text == new_text:
             return False  # Nothing to change.
-        self.param_table[param_id].name = new_text
-        self.entry_row_boxes[entry_index]['name_label'].var.set(new_text)
+        self.param_table[entry_id].name = new_text
         return True
 
     def _add_entry(self, param_id, name):
@@ -737,7 +734,7 @@ class _ParamEntryFrame(SoulstructSmartFrame):
         self.param_table[param_id].name = name
         new_index = self._get_param_index(param_id)
         self._update_first_display_index(new_index)
-        self.refresh()
+        self.refresh_entries()
         self.select_entry(new_index)
         return True
 
@@ -749,16 +746,8 @@ class _ParamEntryFrame(SoulstructSmartFrame):
     def _delete_entry(self, entry_index):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         self._cancel_entry_name_edit()
-        param_id = self.entry_row_boxes[entry_index]['param_id']
-        return self.param_table.pop(param_id)
-
-    def _bind_entry_row_events(self, widget, entry_index):
-        widget.bind('<Button-1>', lambda e, i=entry_index: self.select_entry(i))
-        widget.bind('<Up>', self._entry_press_up)
-        widget.bind('<Down>', self._entry_press_down)
-        widget.bind('<Prior>', lambda e: self._go_to_previous_entry_range())
-        widget.bind('<Next>', lambda e: self._go_to_next_entry_range())
-        widget.bind('<Button-3>', lambda e, i=entry_index: self._right_click_param_entry(e, i))
+        entry_id = self.entry_rows[entry_index].entry_id
+        return self.param_table.pop(entry_id)   # TODO: or False?
 
     def _update_first_display_index(self, new_index):
         """Updates first display index, ensuring that at least the last ten entries are visible."""
@@ -767,11 +756,11 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
     def _right_click_param_entry(self, event, entry_index):
         self.select_entry(entry_index, edit_if_already_selected=False)
-        self.context_menus[entry_index].tk_popup(event.x_root, event.y_root)
+        self.entry_rows[entry_index].context_menu.tk_popup(event.x_root, event.y_root)
 
     def _update_range(self, first_index):
         self._update_first_display_index(first_index)
-        self.refresh()
+        self.refresh_entries()
         self.select_entry(0, edit_if_already_selected=False)
         self.update_idletasks()
         self.entry_canvas.yview_moveto(0)
@@ -791,9 +780,9 @@ class _ParamEntryFrame(SoulstructSmartFrame):
 
     def _start_entry_name_edit(self, entry_index):
         if not self.e_entry_name_edit:
-            param_id = self.entry_row_boxes[entry_index]['param_id']
+            param_id = self.entry_rows[entry_index].entry_id
             self.e_entry_name_edit = self.Entry(
-                self.entry_row_boxes[entry_index]['name_box'], initial_text=self.param_table[param_id].name,
+                self.entry_rows[entry_index].name_box, initial_text=self.param_table[param_id].name,
                 sticky='ew', width=60)
             self.e_entry_name_edit.bind('<Return>', lambda e, i=param_id: self._confirm_entry_name_edit(i))
             self.e_entry_name_edit.bind('<Up>', self._entry_press_up)
@@ -864,7 +853,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
         self.linker = linker
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Params")
 
-        self.active_category = 'Players'
+        self.active_category = None
         self.category_boxes = {}
 
         self.action_history = ActionHistory()
@@ -891,7 +880,7 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                     self.entry_display = self.SmartFrame(
                         smart_frame_class=_ParamEntryFrame, params=self.Params, linker=self.linker)
 
-        self.entry_display.refresh(self.active_category_param_table)
+        self.entry_display.refresh_entries(param_table=self.active_category_param_table)
         self.bind_all('<Control-z>', self.undo)
         self.bind_all('<Control-y>', self.redo)
 
@@ -936,13 +925,13 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
                     label['bg'] = self.STYLE_DEFAULTS['bg']
 
         self.entry_display.first_display_index = first_display_index
-        self.entry_display.refresh(self.active_category_param_table, reset_fields=True)
+        self.entry_display.refresh_entries(param_table=self.active_category_param_table, reset_fields=True)
         self.entry_display.select_entry(0, edit_if_already_selected=False)
         self.entry_display.entry_canvas.yview_moveto(0)
 
     @property
     def active_category_param_table(self) -> ParamTable:
-        return self.Params[self.active_category]
+        return self.Params[self.active_category] if self.active_category is not None else None
 
     @property
     def active_category_sorted_ids(self):
