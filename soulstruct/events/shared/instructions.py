@@ -977,25 +977,25 @@ def PlayCutsceneAndRotatePlayer(cutscene_id: int, playback_method: CutsceneType,
                                vertical_translation, player_id)
 
 
-# NAVIMESH
+# NAVMESH
 
-def SetNavimeshType(navimesh_id: int, navimesh_type: NavimeshType, operation: BitOperation):
-    """ Set given navimesh type. """
+def SetNavmeshType(navmesh_id: int, navmesh_type: NavmeshType, operation: BitOperation):
+    """ Set given navmesh type. """
     instruction_info = (2003, 13)
-    return numeric_instruction(instruction_info, navimesh_id, navimesh_type, operation)
+    return numeric_instruction(instruction_info, navmesh_id, navmesh_type, operation)
 
-def EnableNavimeshType(navimesh_id, navimesh_type: NavimeshType):
-    """ Mark a given navimesh with the given type, which affects how character AI will interact with it. The navimesh
+def EnableNavmeshType(navmesh_id, navmesh_type: NavmeshType):
+    """ Mark a given navmesh with the given type, which affects how character AI will interact with it. The navmesh
     ID is set in the MSB. """
-    return SetNavimeshType(navimesh_id, navimesh_type, BitOperation.Add)
+    return SetNavmeshType(navmesh_id, navmesh_type, BitOperation.Add)
 
-def DisableNavimeshType(navimesh_id, navimesh_type: NavimeshType):
-    """ Remove the given type from the given navimesh. The navimesh ID is set in the MSB. """
-    return SetNavimeshType(navimesh_id, navimesh_type, BitOperation.Delete)
+def DisableNavmeshType(navmesh_id, navmesh_type: NavmeshType):
+    """ Remove the given type from the given navmesh. The navmesh ID is set in the MSB. """
+    return SetNavmeshType(navmesh_id, navmesh_type, BitOperation.Delete)
 
-def ToggleNavimeshType(navimesh_id, navimesh_type: NavimeshType):
-    """ Set the given navimesh type to the opposite of whatever it currently is for the given navimesh. """
-    return SetNavimeshType(navimesh_id, navimesh_type, BitOperation.Invert)
+def ToggleNavmeshType(navmesh_id, navmesh_type: NavmeshType):
+    """ Set the given navmesh type to the opposite of whatever it currently is for the given navmesh. """
+    return SetNavmeshType(navmesh_id, navmesh_type, BitOperation.Invert)
 
 
 # NETWORK

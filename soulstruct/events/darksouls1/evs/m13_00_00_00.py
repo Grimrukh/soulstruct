@@ -769,10 +769,10 @@ def Event11300900(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int):
     EndOfAnimation(ARG_4_7, 2)
     DisableObjectActivation(ARG_4_7, obj_act_id=-1)
     End()
-    EnableNavimeshType(ARG_12_15, NavimeshType.Solid)
+    EnableNavmeshType(ARG_12_15, NavmeshType.Solid)
     IfObjectActivated(0, obj_act_id=ARG_0_3)
     ForceAnimation(ARG_8_11, 1)
-    DisableNavimeshType(ARG_12_15, NavimeshType.Solid)
+    DisableNavmeshType(ARG_12_15, NavmeshType.Solid)
 
 
 @NeverRestart
@@ -784,7 +784,7 @@ def Event11305030(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     EndOfAnimation(ARG_12_15, 2)
     SkipLines(2)
     DisableObjectActivation(ARG_12_15, obj_act_id=3012)
-    EnableNavimeshType(ARG_20_23, NavimeshType.Solid)
+    EnableNavmeshType(ARG_20_23, NavmeshType.Solid)
     IfFlagOn(1, ARG_4_7)
     IfFlagOn(2, ARG_8_11)
     IfConditionTrue(-1, input_condition=1)
@@ -797,13 +797,13 @@ def Event11305030(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     ForceAnimation(ARG_16_19, 3)
     WaitFrames(140)
     EnableObjectActivation(ARG_12_15, obj_act_id=3012)
-    DisableNavimeshType(ARG_20_23, NavimeshType.Solid)
+    DisableNavmeshType(ARG_20_23, NavmeshType.Solid)
     Restart()
     DisableFlag(ARG_0_3)
     ForceAnimation(ARG_16_19, 1)
     WaitFrames(140)
     EnableObjectActivation(ARG_12_15, obj_act_id=3011)
-    EnableNavimeshType(ARG_20_23, NavimeshType.Solid)
+    EnableNavmeshType(ARG_20_23, NavmeshType.Solid)
     Restart()
 
 

@@ -1632,13 +1632,13 @@ def Event12300235():
 def Event12300240():
     """ 12300240: Event 12300240 """
     GotoIfThisEventOff(Label.L0)
-    EnableNavimeshType(2303070, NavimeshType.Solid)
+    EnableNavmeshType(2303070, NavmeshType.Solid)
     EndOfAnimation(2301322, 1)
     CreateObjectFX(923240, obj=2301323, model_point=750)
     End()
     Label(0)
     IfObjectDestroyed(0, 2301320)
-    EnableNavimeshType(2303070, NavimeshType.Solid)
+    EnableNavmeshType(2303070, NavmeshType.Solid)
     ForceAnimation(2301322, 1, wait_for_completion=True)
     DisableObject(2301322)
     CreateObjectFX(923240, obj=2301323, model_point=750)

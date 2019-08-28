@@ -222,15 +222,15 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             return f"KillBoss({game_area_param_id})"
 
         if instruction_index == 13:
-            navimesh_id, navimesh_type, bitop = req_args
-            navimesh_type = get_enum_name(game_module.NavimeshType, navimesh_type, True)
+            navmesh_id, navmesh_type, bitop = req_args
+            navmesh_type = get_enum_name(game_module.NavmeshType, navmesh_type, True)
             if bitop == 2:
-                return f"ToggleNavimeshType({navimesh_id}, {navimesh_type})"
+                return f"ToggleNavmeshType({navmesh_id}, {navmesh_type})"
             elif bitop == 1:
-                return f"DisableNavimeshType({navimesh_id}, {navimesh_type})"
+                return f"DisableNavmeshType({navmesh_id}, {navmesh_type})"
             elif bitop == 0:
-                return f"EnableNavimeshType({navimesh_id}, {navimesh_type})"
-            return f"SetNavimeshType({navimesh_id}, {navimesh_type}, {bitop})"
+                return f"EnableNavmeshType({navmesh_id}, {navmesh_type})"
+            return f"SetNavmeshType({navmesh_id}, {navmesh_type}, {bitop})"
 
         if instruction_index == 14:
             area_id, block_id, destination_player_id = req_args

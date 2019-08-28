@@ -981,7 +981,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 4:
             hitbox, state = req_args
-            return f"ActivateHitboxAndCreateNavimesh(hitbox={hitbox}, state={boolify(state)})"
+            return f"ActivateHitboxAndCreateNavmesh(hitbox={hitbox}, state={boolify(state)})"
 
     if instruction_class == 2012:
 

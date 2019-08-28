@@ -1384,19 +1384,19 @@ def Event12901400(ARG_0_3: int, ARG_4_7: int):
 def Event12901447(ARG_0_3: int, ARG_4_7: int):
     """ 12901447: Event 12901447 """
     EndIfThisEventSlotOn()
-    EnableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    EnableNavmeshType(ARG_4_7, NavmeshType.Solid)
     IfObjectActivated(0, obj_act_id=ARG_0_3)
-    DisableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    DisableNavmeshType(ARG_4_7, NavmeshType.Solid)
 
 
 @NeverRestart
 def Event12901525(ARG_0_3: int, ARG_4_7: int):
     """ 12901525: Event 12901525 """
     EndIfThisEventSlotOn()
-    EnableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    EnableNavmeshType(ARG_4_7, NavmeshType.Solid)
     IfObjectActivated(0, obj_act_id=ARG_0_3)
     Wait(3.0)
-    DisableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    DisableNavmeshType(ARG_4_7, NavmeshType.Solid)
 
 
 @RestartOnRest

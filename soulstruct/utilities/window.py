@@ -666,7 +666,7 @@ class SoulstructSmartFrame(SmartFrame):
                button_names=('OK',), button_kwargs=(), style_defaults=None,
                default_output=None, cancel_output=None):
         if button_kwargs is not None:
-            if button_kwargs in self.DEFAULT_BUTTON_KWARGS:
+            if isinstance(button_kwargs, str) and button_kwargs in self.DEFAULT_BUTTON_KWARGS:
                 button_kwargs = self.DEFAULT_BUTTON_KWARGS[button_kwargs]
             else:
                 button_kwargs = list(button_kwargs)
@@ -682,11 +682,14 @@ class SoulstructSmartFrame(SmartFrame):
 
 class ToolTip(object):
 
-    def __init__(self, main_widget, *child_widgets, text='tool tip', delay=500, wraplength=180):
+    def __init__(self, main_widget, *child_widgets, text='tool tip', delay=500, wraplength=180,
+                 x_offset=25, y_offset=30):
         """Entering *any* of the widgets is sufficient to trigger the tooltip, but you must leave *all* of them for it
         to time out again. The main widget will be used to determine tooltip coordinates (generally the largest)."""
         self.delay = delay
         self.wraplength = wraplength
+        self.x_offset = x_offset
+        self.y_offset = y_offset
         self.widgets = [main_widget] + list(child_widgets)
         self.widget_status = {id(w): False for w in self.widgets}
         self.text = text
@@ -698,12 +701,16 @@ class ToolTip(object):
         self.tip_box = None
 
     def enter(self, widget):
+        if self.text is None:
+            return
         schedule_tip = not any(self.widget_status.values())
         self.widget_status[id(widget)] = True
-        if schedule_tip and self.text is not None:
+        if schedule_tip:
             self.schedule()
 
     def leave(self, widget):
+        if self.text is None:
+            return
         self.widget_status[id(widget)] = False
         if not any(self.widget_status.values()):
             self.unschedule()
@@ -720,8 +727,8 @@ class ToolTip(object):
 
     def show_tip(self, _=None):
         x, y, cx, cy = self.widgets[0].bbox('insert')
-        x += self.widgets[0].winfo_rootx() + 25
-        y += self.widgets[0].winfo_rooty() + 20
+        x += self.widgets[0].winfo_rootx() + self.x_offset
+        y += self.widgets[0].winfo_rooty() + self.y_offset
         self.tip_box = tk.Toplevel(self.widgets[0])
         self.tip_box.wm_overrideredirect(True)  # remove border
         self.tip_box.wm_geometry(f'+{x}+{y}')

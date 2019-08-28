@@ -1780,9 +1780,9 @@ def Event12405250(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(2, 2)
-    DisableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    DisableNavmeshType(ARG_4_7, NavmeshType.Solid)
     SkipLines(1)
-    EnableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    EnableNavmeshType(ARG_4_7, NavmeshType.Solid)
     IfFlagOn(0, ARG_8_11)
     Restart()
 
@@ -1796,9 +1796,9 @@ def Event12405251(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(2, 2)
-    DisableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    DisableNavmeshType(ARG_4_7, NavmeshType.Solid)
     SkipLines(1)
-    EnableNavimeshType(ARG_4_7, NavimeshType.Solid)
+    EnableNavmeshType(ARG_4_7, NavmeshType.Solid)
     IfFlagOn(0, ARG_8_11)
     Restart()
 

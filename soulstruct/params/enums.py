@@ -364,6 +364,8 @@ class GUARDMOTION_CATEGORY(UnsignedChar):
     MediumShield = 0  # also arrows and bolts, so probably means 'default'
     Greatshield = 1
     SmallShieldOrWeapon = 2
+    GiantSkeletonGuard = 3  # I thought this might be 'two-handed weapon guard', but normal Skeletons do that as well.
+    NonPlayerGuard = 4
 
 
 class HMP_FOOT_EFFECT_HEIGHT_TYPE(UnsignedChar):

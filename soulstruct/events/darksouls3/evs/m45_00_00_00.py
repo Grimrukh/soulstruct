@@ -1538,8 +1538,8 @@ def Event14505499():
 @RestartOnRest
 def Event14505500():
     """ 14505500: Event 14505500 """
-    ActivateHitboxAndCreateNavimesh(hitbox=4503505, state=False)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503506, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503505, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503506, state=False)
     IfObjectDestroyed(-1, obj=4501503)
     IfObjectDestroyed(-1, obj=4501504)
     GotoIfConditionTrue(Label.L0, input_condition=-1)
@@ -1548,13 +1548,13 @@ def Event14505500():
     GotoIfConditionTrue(Label.L0, input_condition=2)
     DisableObject(4501501)
     DisableObject(4501502)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503506, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503506, state=True)
     IfObjectDestroyed(-2, obj=4501503)
     IfObjectDestroyed(-2, obj=4501504)
     IfConditionTrue(0, input_condition=-2)
     SetNetworkConnectedFlagState(flag=14505500, state=FlagState.On)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503506, state=False)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503505, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503506, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503505, state=True)
     EnableObject(4501501)
     EnableObjectInvulnerability(4501501)
     WaitFrames(1)
@@ -1575,7 +1575,7 @@ def Event14505500():
     DisableObject(4501503)
     DisableObject(4501504)
     RegisterLadder(start_climbing_flag=14500502, stop_climbing_flag=14500503, obj=4501502)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503505, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503505, state=True)
     IfObjectBackreadEnabled(0, obj=4501500)
     EndOfAnimation(4501500, 2)
 
@@ -1729,20 +1729,20 @@ def Event14505536(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int):
 @RestartOnRest
 def Event14505540(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG_16_19: int, ARG_20_23: int, ARG_24_27: int, ARG_28_31: int, ARG_32_35: int, ARG_36_39: int):
     """ 14505540: Event 14505540 """
-    ActivateHitboxAndCreateNavimesh(hitbox=ARG_12_15, state=False)
-    ActivateHitboxAndCreateNavimesh(hitbox=ARG_16_19, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=ARG_12_15, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=ARG_16_19, state=False)
     GotoIfFlagOff(Label.L0, ARG_0_3)
     EndOfAnimation(ARG_4_7, 2)
-    ActivateHitboxAndCreateNavimesh(hitbox=ARG_16_19, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=ARG_16_19, state=True)
     End()
     Label(0)
-    ActivateHitboxAndCreateNavimesh(hitbox=ARG_12_15, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=ARG_12_15, state=True)
     IfPlayerInOwnWorld(1)
     IfFlagOff(1, ARG_0_3)
     IfActionButtonInRegion(1, action_button_id=ARG_8_11, region=ARG_4_7)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(ARG_0_3)
-    ActivateHitboxAndCreateNavimesh(hitbox=ARG_12_15, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=ARG_12_15, state=False)
     Move(PLAYER, destination=ARG_4_7, destination_type=CoordEntityType.Object, model_point=100, short_move=True)
     ForceAnimation(entity=10000, animation_id=60440, loop=False, wait_for_completion=False, skip_transition=False, unknown1=0, unknown2=1.0)
     ForceAnimation(entity=ARG_4_7, animation_id=1, loop=False, wait_for_completion=False, skip_transition=False, unknown1=0, unknown2=1.0)
@@ -1760,7 +1760,7 @@ def Event14505540(ARG_0_3: int, ARG_4_7: int, ARG_8_11: int, ARG_12_15: int, ARG
     RemoveObjectFlag(ARG_36_39)
     Wait(2.200000047683716)
     EndOfAnimation(ARG_4_7, 2)
-    ActivateHitboxAndCreateNavimesh(hitbox=ARG_16_19, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=ARG_16_19, state=True)
 
 
 @RestartOnRest
@@ -1809,29 +1809,29 @@ def Event14505600():
 @RestartOnRest
 def Event14505610():
     """ 14505610: Event 14505610 """
-    ActivateHitboxAndCreateNavimesh(hitbox=4503611, state=False)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503612, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503611, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503612, state=False)
     GotoIfFlagOff(Label.L0, 14500610)
     PostDestruction(4501610, slot=1)
     EndOfAnimation(4501610, 2)
     DisableObjectActivation(4501611, obj_act_id=-1)
     PostDestruction(4506610, slot=1)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503612, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503612, state=True)
     End()
     Label(0)
     DisableHitbox(4503610)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503611, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503611, state=True)
     IfPlayerInOwnWorld(1)
     IfObjectActivated(1, obj_act_id=4503611)
     IfConditionTrue(0, input_condition=1)
     SetNetworkConnectedFlagState(flag=14500610, state=FlagState.On)
     DisableObjectActivation(4501611, obj_act_id=-1)
     Wait(4.0)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503611, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503611, state=False)
     CreateHazard(14505611, 4501610, model_point=41, behavior_param_id=6200, target_type=DamageTargetType.Character_and_Map, radius=2.0, life=3.299999952316284, repetition_time=0.0)
     ForceAnimation(entity=4501610, animation_id=1, loop=True, wait_for_completion=True, skip_transition=False, unknown1=0, unknown2=1.0)
     EnableHitbox(4503610)
-    ActivateHitboxAndCreateNavimesh(hitbox=4503612, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=4503612, state=True)
 
 
 @RestartOnRest

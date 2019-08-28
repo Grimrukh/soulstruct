@@ -9,7 +9,7 @@ import textwrap
 from io import BytesIO
 
 __all__ = ['PACKAGE_PATH', 'find_dcx', 'word_wrap', 'camel_case_to_spaces',
-           'find_steam_common_paths', 'traverse_path_tree',
+           'find_steam_common_paths', 'traverse_path_tree', 'Vector',
            'BinaryStruct', 'AttributeDict', 'read_chars_from_bytes', 'read_chars_from_buffer']
 
 
@@ -58,6 +58,48 @@ def traverse_path_tree(tree, cur=()):
         for node, leaf in tree.items():
             for path in traverse_path_tree(leaf, cur + (node,)):
                 yield path
+
+
+class Vector(object):
+    """Simple [x, y, z] container."""
+    def __init__(self, x, y=None, z=None):
+        if y is None and z is None:
+            x, y, z = x
+        elif y is None or z is None:
+            raise ValueError("Vector must be initialized with [x, y, z] as a single list or three separate arguments.")
+        self.x, self.y, self.z = x, y, z
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        elif index == 2:
+            return self.z
+        raise IndexError("Index of Vector must be between 0 and 2.")
+
+    def __setitem__(self, index, value):
+        if index == 0:
+            self.x = value
+        elif index == 1:
+            self.y = value
+        elif index == 2:
+            self.z = value
+        raise IndexError("Index of Vector must be between 0 and 2.")
+
+    def __eq__(self, other_vector):
+        return len(other_vector) == 3 and all(self[i] == other_vector[i] for i in range(3))
+
+    def __len__(self):
+        return 3
+
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
+
+    def __repr__(self):
+        return f'Vector({self.x}, {self.y}, {self.z})'
 
 
 class BinaryStruct(object):

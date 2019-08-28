@@ -6,8 +6,6 @@ from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.params.fields import GAME_PARAM_NICKNAMES
 
-# TODO: Finish field name documentation.
-
 
 class DarkSoulsGameParameters(object):
 
@@ -48,7 +46,7 @@ class DarkSoulsGameParameters(object):
         'Bullets', 'Throws', 'SpecialEffects',
         'Weapons', 'Armor', 'Rings', 'Goods',
         'WeaponUpgrades', 'ArmorUpgrades', 'UpgradeMaterials',
-        'ItemLots', 'Shops', 'Spells', 'Objects', 'ObjectActivations',
+        'ItemLots', 'Bosses', 'Shops', 'Spells', 'Objects', 'ObjectActivations',
         'Movement', 'Cameras', 'Terrains', 'Faces', 'Dialogue',
         'MenuColors', 'SpecialEffectVisuals',
     ]

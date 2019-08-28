@@ -1518,7 +1518,7 @@ def SetHitboxResState(hitbox: gt.HitboxInt, state: bool):
     return numeric_instruction(instruction_info, hitbox, state)
 
 
-def ActivateHitboxAndCreateNavimesh(hitbox: gt.HitboxInt, state: bool):
+def ActivateHitboxAndCreateNavmesh(hitbox: gt.HitboxInt, state: bool):
     instruction_info = (2011, 4)
     return numeric_instruction(instruction_info, hitbox, state)
 

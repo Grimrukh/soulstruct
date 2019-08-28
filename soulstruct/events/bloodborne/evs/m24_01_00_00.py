@@ -825,7 +825,7 @@ def Event12410140():
 def Event12410337(ARG_0_3: int):
     """ 12410337: Event 12410337 """
     IfObjectActivated(0, obj_act_id=12411303)
-    EnableNavimeshType(ARG_0_3, NavimeshType.Solid)
+    EnableNavmeshType(ARG_0_3, NavmeshType.Solid)
 
 
 @RestartOnRest

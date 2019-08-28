@@ -1235,12 +1235,12 @@ def Event12700170():
     Label(0)
     EndOfAnimation(2701013, 3)
     DisableFlag(12700173)
-    DisableNavimeshType(2703050, NavimeshType.Solid)
+    DisableNavmeshType(2703050, NavmeshType.Solid)
     Goto(Label.L2)
     Label(1)
     EndOfAnimation(2701013, 0)
     EnableFlag(12700173)
-    EnableNavimeshType(2703050, NavimeshType.Solid)
+    EnableNavmeshType(2703050, NavmeshType.Solid)
     Label(2)
 
 
@@ -1257,7 +1257,7 @@ def Event12700171():
     WaitFrames(100)
     DisableFlag(12700174)
     EnableObjectActivation(2701090, obj_act_id=2700000)
-    DisableNavimeshType(2703050, NavimeshType.Solid)
+    DisableNavmeshType(2703050, NavmeshType.Solid)
     Restart()
 
 
@@ -1271,7 +1271,7 @@ def Event12700172():
     EnableFlag(12700173)
     EnableFlag(12700174)
     ForceAnimation(2701013, 2)
-    EnableNavimeshType(2703050, NavimeshType.Solid)
+    EnableNavmeshType(2703050, NavmeshType.Solid)
     WaitFrames(100)
     DisableFlag(12700174)
     EnableObjectActivation(2701090, obj_act_id=2700000)
@@ -2201,7 +2201,7 @@ def Event12705490():
     RotateToFaceEntity(2700145, 2701090, animation=7100, wait_for_completion=False)
     ForceAnimation(2701090, 1)
     WaitFrames(55)
-    EnableNavimeshType(2703050, NavimeshType.Solid)
+    EnableNavmeshType(2703050, NavmeshType.Solid)
     ForceAnimation(2701013, 2)
     EnableFlag(12700173)
     EnableFlag(12700174)

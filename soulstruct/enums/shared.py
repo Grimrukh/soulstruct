@@ -7,7 +7,7 @@ __all__ = ['RestartType',
            # Identical in all games.
            'AIStatusType', 'BitOperation', 'ButtonType', 'CharacterType', 'CharacterUpdateRate', 'ClassType',
            'ComparisonType', 'CutsceneType', 'DamageTargetType', 'EventEndType', 'FlagState', 'FlagType',
-           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavimeshType', 'NumberButtons',
+           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavmeshType', 'NumberButtons',
            'OnOffChange', 'RestartType', 'SoundType', 'StatueType', 'SummonSignType', 'TriggerAttribute',
            'WorldTendencyType', 'UpdateAuthority',
 
@@ -153,8 +153,8 @@ class CoordEntityType(IntEnum):
     Character = 2
 
 
-class NavimeshType(IntEnum):
-    """Bit flags for Navimesh types."""
+class NavmeshType(IntEnum):
+    """Bit flags for Navmesh types."""
     Solid = 0b00000000000001
     Exit = 0b00000000000010
     Obstacle = 0b00000000000100

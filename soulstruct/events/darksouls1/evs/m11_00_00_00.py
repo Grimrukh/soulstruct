@@ -669,16 +669,16 @@ def Event11100030():
     """ 11100030: Event 11100030 """
     SkipLinesIfThisEventSlotOff(3)
     EndOfAnimation(1101130, 2)
-    DisableNavimeshType(1102040, NavimeshType.Solid)
+    DisableNavmeshType(1102040, NavmeshType.Solid)
     End()
-    EnableNavimeshType(1102040, NavimeshType.Solid)
+    EnableNavmeshType(1102040, NavmeshType.Solid)
     IfFlagOff(1, 11100700)
     IfDialogPromptActivated(1, prompt_text=10010400, anchor_entity=1101130, anchor_type=CoordEntityType.Object, facing_angle=60.0, max_distance=1.5, model_point=100, human_or_hollow_only=False)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=1102090, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7120)
     ForceAnimation(1101130, 1, wait_for_completion=True)
-    DisableNavimeshType(1102040, NavimeshType.Solid)
+    DisableNavmeshType(1102040, NavmeshType.Solid)
 
 
 @NeverRestart
@@ -707,7 +707,7 @@ def Event11100135():
     SkipLinesIfThisEventSlotOff(4)
     EndOfAnimation(1101160, 1)
     EndOfAnimation(1101170, 1)
-    DisableNavimeshType(1102041, NavimeshType.Solid)
+    DisableNavmeshType(1102041, NavmeshType.Solid)
     End()
     IfDialogPromptActivated(0, prompt_text=10010503, anchor_entity=1101150, anchor_type=CoordEntityType.Object, facing_angle=60.0, max_distance=1.5, model_point=192, human_or_hollow_only=False)
     DisableObject(1101018)
@@ -722,7 +722,7 @@ def Event11100135():
     PlayCutscene(110000, skippable=True, fade_out=False, player_id=PLAYER)
     ForceAnimation(1101160, 1)
     ForceAnimation(1101170, 1)
-    DisableNavimeshType(1102041, NavimeshType.Solid)
+    DisableNavmeshType(1102041, NavmeshType.Solid)
 
 
 @NeverRestart

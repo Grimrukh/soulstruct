@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 
 from soulstruct.project.actions import ActionHistory
 from soulstruct.utilities import camel_case_to_spaces
@@ -10,7 +10,7 @@ from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters
     from soulstruct.params.core import ParamEntry, ParamTable
-    from soulstruct.project.core import SoulstructProject, WindowLinker
+    from soulstruct.project.core import SoulstructProject
 
 
 # TODO: Can't jump to Conversations, because they're internal by default.
@@ -28,9 +28,9 @@ class _ParamEntryRow(object):
     These are only created once, and their contents are refreshed when needed.
     """
 
-    def __init__(self, master: _ParamEntryFrame, row_index: int, change_name_func, main_bindings: dict = None):
+    def __init__(self, master: _ParamEntryFrame, row_index: int, main_bindings: dict = None):
         self.master = master
-        self.linker = master.linker  # type: WindowLinker
+        self.linker = master.linker
         self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
 
         self.entry_id = None
@@ -129,6 +129,11 @@ class _ParamEntryRow(object):
     def _get_color(self):
         """Inspects entry name/data and returns a tuple of 'bg' color values."""
         base_bg = 222
+        if self.entry_name is not None:
+            if not self.entry_name:
+                base_bg += 200
+            elif not self.entry_name.strip():
+                base_bg += 110
         if self._active:
             base_bg += 123
         if self.index % 2:
@@ -232,7 +237,7 @@ class _ParamFieldRow(object):
             self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
             try:
                 # noinspection PyUnresolvedReferences
-                enum_name = camel_case_to_spaces(field_type(value).name)  # TODO: remove spaces when saving
+                enum_name = camel_case_to_spaces(field_type(value).name)
             except ValueError:
                 enum_name = f'<Unknown: {value}>'  # TODO: ensure this is read back and saved properly
             self.value_combobox.var.set(enum_name)
@@ -356,7 +361,7 @@ class _ParamFieldRow(object):
 class _ParamFieldFrame(SoulstructSmartFrame):
     FIELD_CANVAS_BG = '#1d1d1d'
     FIELD_BOX_WIDTH = 550
-    FIELD_ROW_COUNT = 150  # TODO: set to max field count
+    FIELD_ROW_COUNT = 173  # highest count (Special Effects)
     FIELD_NAME_FG = '#DDE'
 
     def __init__(self, params, linker, master=None):
@@ -597,8 +602,7 @@ class _ParamEntryFrame(SoulstructSmartFrame):
             with self.set_master(self.f_entry_table):
                 for row in range(self.ENTRY_RANGE_SIZE):
                     self.entry_rows.append(_ParamEntryRow(
-                        self, row_index=row, change_name_func=self._change_entry_name,
-                        main_bindings={
+                        self, row_index=row, main_bindings={
                             '<Button-1>': lambda _, i=row: self.select_entry(i),
                             '<Button-3>': lambda e, i=row: self._right_click_param_entry(e, i),
                             '<Up>': self._entry_press_up,
@@ -652,22 +656,6 @@ class _ParamEntryFrame(SoulstructSmartFrame):
             self.next_range_button['state'] = 'disabled'
         else:
             self.next_range_button['state'] = 'normal'
-
-    def _get_entry_colors(self, row, entry_name=None):
-        """Inspects entry data and returns a tuple of 'bg' color values (row_and_id_bg, name_box_bg, name_label_bg)."""
-        # TODO: move to _ParamEntryRow
-        base_bg = 222
-        row_and_id_bg = name_box_bg = name_label_bg = 0
-        if entry_name is not None:
-            if not entry_name:
-                base_bg += 200
-            elif not entry_name.strip():
-                name_label_bg += 110
-        if row == self.entry_index_selected:
-            base_bg += 123
-        if row % 2:
-            base_bg += 111
-        return f'#{base_bg + row_and_id_bg}', f'#{base_bg + name_box_bg}', f'#{base_bg + name_label_bg}'
 
     def refresh_entries(self, param_table: ParamTable = None, reset_fields=False):
         self._cancel_entry_name_edit()

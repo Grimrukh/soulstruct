@@ -156,7 +156,6 @@ class WindowLinker(object):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
         animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
         resolved here."""
-        # TODO: may need table-specific link handler. e.g. missing Weapon Params from reinforcement additions.
 
         match_link = self._MATCH_LINK.match(field_type)
         if not match_link:
@@ -300,8 +299,8 @@ class SoulstructProject(object):
     TODO:
         - Only pull exact file types that have no project pickles, and prompt for each one.
         - Eventually have subclasses for different games, with shared methods here.
-        - Auto-save decorators that operate at ten minute intervals on write methods.
-        - Inspect PTD directory for lack of unpacking when pulled.
+        - Auto-save scheduled Tk functions that operate at ten minute intervals.
+        - Inspect PTD directory for lack of UDSFM when pulled.
         - Store location of game save data for a future save manager.
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'

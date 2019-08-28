@@ -921,8 +921,8 @@ def Event15005480(ARG_0_3: int, ARG_4_7: float, ARG_8_11: int, ARG_12_15: int, A
 @RestartOnRest
 def Event15005500():
     """ 15005500: Event 15005500 """
-    ActivateHitboxAndCreateNavimesh(hitbox=5001505, state=False)
-    ActivateHitboxAndCreateNavimesh(hitbox=5001506, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=5001505, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=5001506, state=False)
     GotoIfFlagOff(Label.L0, 15000500)
     EndOfAnimation(5001500, 2)
     DisableObject(5001501)
@@ -931,10 +931,10 @@ def Event15005500():
     EnableObject(5001504)
     CreateFX(5003500)
     CreateFX(5003501)
-    ActivateHitboxAndCreateNavimesh(hitbox=5001506, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=5001506, state=True)
     End()
     Label(0)
-    ActivateHitboxAndCreateNavimesh(hitbox=5001505, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=5001505, state=True)
     DisableObject(5001504)
     IfCharacterInsideRegion(-1, PLAYER, region=5002500)
     IfCharacterInsideRegion(-1, PLAYER, region=5002501)
@@ -943,7 +943,7 @@ def Event15005500():
     IfConditionTrue(0, input_condition=1)
     EnableFlag(15000500)
     EnableFlag(15005500)
-    ActivateHitboxAndCreateNavimesh(hitbox=5001505, state=False)
+    ActivateHitboxAndCreateNavmesh(hitbox=5001505, state=False)
     ForceAnimation(entity=5001500, animation_id=1, loop=False, wait_for_completion=False, skip_transition=False, unknown1=0, unknown2=1.0)
     Wait(1.5)
     CreateHazard(15005500, 5001500, model_point=40, behavior_param_id=6210, target_type=DamageTargetType.Character, radius=2.0, life=6.0, repetition_time=0.0)
@@ -959,7 +959,7 @@ def Event15005500():
     RemoveObjectFlag(15005500)
     RemoveObjectFlag(15005501)
     Wait(2.200000047683716)
-    ActivateHitboxAndCreateNavimesh(hitbox=5001506, state=True)
+    ActivateHitboxAndCreateNavmesh(hitbox=5001506, state=True)
 
 
 @RestartOnRest

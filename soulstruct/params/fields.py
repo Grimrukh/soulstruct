@@ -171,7 +171,7 @@ def _shop_item_id(shops_param_entry):
 
 
 GAME_PARAM_NICKNAMES = {
-    # Nicknames are per BND entry basename, not per internal param table name.
+    # Nicknames are per BND entry basename, not per internal param table name. Unused tables are commented out.
     'NpcThinkParam': 'AI',
     'EquipParamProtector': 'Armor',
     'ReinforceParamProtector': 'ArmorUpgrades',
@@ -371,8 +371,8 @@ GAME_PARAM_INFO = {
             'HelpCallReplyType', True, NPC_THINK_REPLY_BEHAVIOR_TYPE,
             "Set to 0 for NPCs who do not reply to calls for help and 1 for NPCs who do."),
         'disablePathMove': (
-            'IgnoreNavimesh', True, bool,  # NOTE: Not a boolean field, but used like one.
-            "If 1, this NPC will ignore navimesh when moving. True for Ghosts and enemies that don't "
+            'IgnoreNavmesh', True, bool,  # NOTE: Not a boolean field, but used like one.
+            "If 1, this NPC will ignore navmesh when moving. True for Ghosts and enemies that don't "
             "move at all."),
         'skipArrivalVisibleCheck': (
             'SkipArrivalVisibleCheck', False, bool,
@@ -387,28 +387,28 @@ GAME_PARAM_INFO = {
             "Gardeners, Bloatheads (not Sorcerers), Humanity Phantoms, and the Four Kings."),
         'enableNaviFlg_Edge:1': (
             'CanFallOffEdges', True, bool,
-            "If True, this NPC will pursue targets off navimesh edges (survivable falls)."),
+            "If True, this NPC will pursue targets off navmesh edges (survivable falls)."),
         'enableNaviFlg_LargeSpace:1': (
             'CanNavigateWideSpaces', True, bool,
-            "If True, this NPC can enter navimesh regions flagged as 'large spaces'."),
+            "If True, this NPC can enter navmesh regions flagged as 'large spaces'."),
         'enableNaviFlg_Ladder:1': (
             'CanNavigateLadders', True, bool,
             "If True, this NPC will use ladders."),
         'enableNaviFlg_Hole:1': (
             'CanNavigateHoles', True, bool,
-            "If True, this NPC can fall into navimesh holes."),
+            "If True, this NPC can fall into navmesh holes."),
         'enableNaviFlg_Door:1': (
             'CanNavigateDoors', True, bool,
             "If True, this NPC can go through doors (but not necessarily open closed doors)."),
         'enableNaviFlg_InSideWall:1': (
             'CanNavigateInsideWalls', True, bool,
-            "If True, this NPC can go through walls (i.e. ignores navimesh walls)."),
+            "If True, this NPC can go through walls (i.e. ignores navmesh walls)."),
         'enableNaviFlg_reserve0:2': (
-            'UnusedNavimeshCheckX2', False, bool,
-            "Two unused bytes reserved for other navimesh checks. No effect."),
+            'UnusedNavmeshCheckX2', False, bool,
+            "Two unused bytes reserved for other navmesh checks. No effect."),
         'enableNaviFlg_reserve1[3]': (
-            'UnusedNavimeshCheckX3', False, bool,
-            "Three unused bytes reserved for other navimesh checks. No effect."),
+            'UnusedNavmeshCheckX3', False, bool,
+            "Three unused bytes reserved for other navmesh checks. No effect."),
         'pad0[12]': (
             'Pad0', False, '<Pad:12>',
             "Null padding."),
@@ -1437,7 +1437,7 @@ GAME_PARAM_INFO = {
             "Is the reference ID below an Attack or Bullet ID?"),
         'pad0[2]': (
             'Pad1', False, '<Pad:2>', "Null padding."),
-        'refId': _behavior_ref_id,  # TODO: wrap this whole dictionary in a class that calls this (with entry) if needed.
+        'refId': _behavior_ref_id,
         'sfxVariationId': (
             'FXVariationID', True, int,
             "Visual effect ID."),
@@ -1452,8 +1452,8 @@ GAME_PARAM_INFO = {
             "Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' for "
             "thrown goods and 'No Category' otherwise."),
         'heroPoint': (
-            'HumanityCost', True, int,
-            "Humanity cost of behavior."),  # TODO: ever used? does it even work?
+            'HumanityCost', False, int,
+            "Humanity cost of behavior. Never used."),
         'pad1[2]': (
             'Pad2', False, '<Pad:2>', "Null padding."),
     },
@@ -2017,8 +2017,8 @@ GAME_PARAM_INFO = {
     'EQUIP_PARAM_GOODS_ST': {
         'refId': _good_ref_id,
         'sfxVariationId': (
-            'FXVariationID', True, int,
-            "Visual effect variation ID combined with the ID given by TAE."),
+            'AnimationVariationID', True, int,
+            "Animation variation ID to combine with the base usage animation."),
         'weight': (
             'Weight', False, float,
             "Weight of good. Never used in vanilla Dark Souls."),
@@ -2050,8 +2050,8 @@ GAME_PARAM_INFO = {
             'GoodIcon', True, Texture,
             "Good icon texture ID."),
         'modelId': (
-            'ModelID', True, Model,
-            "Model of good. Not sure if this is ever used."),  # TODO: check usage
+            'ModelID', False, Model,
+            "Model of good. Never used."),
         'shopLv': (
             'ShopLevel', False, int,
             "Level of good that can be sold in 'the shop'. Always -1 or 0. Probably unused."),
@@ -2084,8 +2084,8 @@ GAME_PARAM_INFO = {
             'GoodCategory', False, GOODS_CATEGORY,
             "Never used. Only one value (0) used."),
         'goodsUseAnim': (
-            'UseAnimation', True, GOODS_USE_ANIM,  # TODO: just occurred to me that SFX must mean visual, not sound.
-            "Points to basic animation used when good is used. Visual effects are determined by the FXVariationID."),
+            'UseAnimation', True, GOODS_USE_ANIM,
+            "Points to basic animation used when good is used. Visual/sound effects are set by the variation ID."),
         'opmeMenuType': (
             'MenuActivated', True, GOODS_OPEN_MENU,
             "Menu activated (if any) when good is used. Generally only 'No Menu' or 'Yes or No Menu' will be useful."),
@@ -2526,7 +2526,7 @@ GAME_PARAM_INFO = {
             'ItemLotID6', True, Params.ItemLots,
             "DOC-TODO"),
         'humanityLotId': (
-            'HumanityLotID', True, int,  # TODO: flags?
+            'HumanityLotID', True, Flag,
             "DOC-TODO"),
         'spEffectID0': (
             'SpecialEffectID0', True, Params.SpecialEffects,
@@ -2814,7 +2814,7 @@ GAME_PARAM_INFO = {
             "Unknown effect, but it is generally set to 30 for all four-legged enemies, and 0 for all "
             "others."),
         'guardLevel': (
-            'GuardLevel', False, int,  # TODO: possibly GUARDMOTION_CATEGORY
+            'GuardLevel', False, GUARDMOTION_CATEGORY,  # TODO: possibly GUARDMOTION_CATEGORY
             "Set to 4 for enemies who can guard (including Manus), except Giant "
             "Skeletons, who have a value of 3. All other NPCs have zero."),
         'burnSfxType': (
@@ -4704,8 +4704,8 @@ GAME_PARAM_INFO = {
             'RunningRollRightAnimation', True, Animation,
             "Animation ID. (Never used.)"),
         'analogMoveParamId': (
-            'AnalogMovement', True, Params.Movement,
-            "Movement settings for analog stick version of movement."),
+            'AnalogMovement', True, int,
+            "Movement settings for analog stick version of movement. (Unknown enum.)"),
         'pad[4]': (
             'Pad1', False, '<Pad:4>',
             "Null padding."),

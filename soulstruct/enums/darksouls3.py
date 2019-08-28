@@ -8,7 +8,7 @@ __all__ = ['RestartType',
            # Identical in all games.
            'AIStatusType', 'BitOperation', 'ButtonType', 'CharacterType', 'CharacterUpdateRate', 'ClassType',
            'ComparisonType', 'CutsceneType', 'DamageTargetType', 'EventEndType', 'FlagState', 'FlagType',
-           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavimeshType', 'NumberButtons',
+           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavmeshType', 'NumberButtons',
            'OnOffChange', 'RestartType', 'SoundType', 'StatueType', 'SummonSignType', 'TriggerAttribute',
            'WorldTendencyType', 'UpdateAuthority',
 
