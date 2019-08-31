@@ -10,7 +10,7 @@ from io import BytesIO
 
 __all__ = ['PACKAGE_PATH', 'find_dcx', 'word_wrap', 'camel_case_to_spaces',
            'find_steam_common_paths', 'traverse_path_tree', 'Vector',
-           'BinaryStruct', 'AttributeDict', 'read_chars_from_bytes', 'read_chars_from_buffer']
+           'BinaryStruct', 'AttributeDict', 'read_chars_from_bytes', 'read_chars_from_buffer', 'pad_chars']
 
 
 def PACKAGE_PATH(*relative_parts):
@@ -500,6 +500,17 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
             return stripped_array
         else:
             chars.append(c)
+
+
+def pad_chars(text, encoding=None, pad_to_multiple_of=4):
+    """Pad text out to given multiple of byte length with null bytes. Optionally, encode it first."""
+    if pad_to_multiple_of < 0 or not isinstance(pad_to_multiple_of, int):
+        raise ValueError("pad must be an integer greater than zero.")
+    encoded = text.encode(encoding) if encoding is not None else text
+    pad = b'\0' if encoding is not None else '\0'
+    while len(encoded) % pad_to_multiple_of != 0:
+        encoded += pad
+    return encoded
 
 
 def shift_msb_coordinates(ry, distance, xyz=(0.0, 0.0, 0.0)):
