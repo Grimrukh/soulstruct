@@ -10,9 +10,11 @@ from tkinter.ttk import Notebook
 from typing import Optional
 
 from soulstruct.core import SoulstructError
+from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
-from soulstruct.project.text import SoulstructTextEditor
+from soulstruct.project.maps import SoulstructMapEditor
 from soulstruct.project.params import SoulstructParamsEditor
+from soulstruct.project.text import SoulstructTextEditor
 from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import find_steam_common_paths, traverse_path_tree, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
@@ -240,6 +242,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     page_tabs: Optional[Notebook]
     params_tab: Optional[SoulstructParamsEditor]
     text_tab: Optional[SoulstructTextEditor]
+    maps_tab: Optional[SoulstructMapEditor]
 
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
@@ -250,6 +253,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.text_tab = None
         self.params_tab = None
         self.lighting_tab = None
+        self.maps_tab = None
         self.set_geometry()
         # self.withdraw()
 
@@ -271,7 +275,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.page_tabs.add(f_main_tab, text='  Main  ')
         self.build_main_tab(f_main_tab)
 
-        # TODO: Lighting. Events. Game saves. MSB?
+        # TODO: Lighting. Events (somehow). Game saves. MSB.
 
         self.resizable(False, False)
         self.set_geometry()
@@ -319,6 +323,7 @@ class SoulstructProject(object):
         self.Text = DarkSoulsText(None)
         self.Params = DarkSoulsGameParameters(None)
         self.Lighting = DarkSoulsLightingParameters(None)
+        self.Maps = DarkSoulsMaps(None)
 
         try:
             self.project_dir = self._validate_project_directory(project_directory, self._DEFAULT_PROJECT_ROOT)

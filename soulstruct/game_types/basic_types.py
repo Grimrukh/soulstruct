@@ -63,10 +63,11 @@ class FlagRange(GameObject):
 
 
 class Map(GameObject):
-    def __init__(self, area_id, block_id):
+    def __init__(self, area_id, block_id, msb_file_name=None):
         self.area_id = area_id
         self.block_id = block_id
-        self.file_name = f'm{area_id:02d}_{block_id:02d}_00_00'
+        self.emevd_file_name = f'm{area_id:02d}_{block_id:02d}_00_00'
+        self.msb_file_name = self.emevd_file_name if msb_file_name is None else msb_file_name
 
     def __eq__(self, other_map):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id
@@ -76,7 +77,7 @@ class Map(GameObject):
         yield self.block_id
 
     def __repr__(self):
-        return self.file_name
+        return self.emevd_file_name
 
 
 FlagRangeOrSequence = Union[FlagRange, tuple, list]

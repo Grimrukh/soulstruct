@@ -502,11 +502,14 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
             chars.append(c)
 
 
-def pad_chars(text, encoding=None, pad_to_multiple_of=4):
+def pad_chars(text, encoding=None, null_terminate=True, pad_to_multiple_of=4):
     """Pad text out to given multiple of byte length with null bytes. Optionally, encode it first."""
     if pad_to_multiple_of < 0 or not isinstance(pad_to_multiple_of, int):
         raise ValueError("pad must be an integer greater than zero.")
-    encoded = text.encode(encoding) if encoding is not None else text
+    if encoding is not None:
+        encoded = text.encode(encoding) + (b'\0' if null_terminate else b'')
+    else:
+        encoded = text + ('\0' if null_terminate else '')
     pad = b'\0' if encoding is not None else '\0'
     while len(encoded) % pad_to_multiple_of != 0:
         encoded += pad

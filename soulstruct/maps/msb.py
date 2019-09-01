@@ -1,4 +1,7 @@
+import copy
+import os
 from io import BytesIO, BufferedReader
+import shutil
 
 from soulstruct.maps.models import MSBModel
 from soulstruct.maps.events import MSBEvent
@@ -47,6 +50,7 @@ class MSBEntryList(object):
             raise TypeError(f"Invalid MSB entry list source: {msb_entry_list_source}")
 
     def unpack(self, msb_buffer):
+
         header = self.MAP_ENTITY_LIST_HEADER.unpack(msb_buffer)
         entry_offsets = [self.MAP_ENTITY_ENTRY_OFFSET.unpack(msb_buffer).entry_offset
                          for _ in range(header.entry_offset_count - 1)]
@@ -60,34 +64,46 @@ class MSBEntryList(object):
 
         msb_buffer.seek(next_entry_list_offset)
 
-    def pack(self):
+    def pack(self, start_offset=0, is_last_table=False):
         entry_offsets = []
         packed_entries = b''
-        offset = (self.MAP_ENTITY_LIST_HEADER.size
-                  + self.MAP_ENTITY_ENTRY_OFFSET.size * len(self.entries)
-                  + self.MAP_ENTITY_LIST_TAIL.size)
+        offset = start_offset + (self.MAP_ENTITY_LIST_HEADER.size
+                                 + self.MAP_ENTITY_ENTRY_OFFSET.size * len(self.entries)
+                                 + self.MAP_ENTITY_LIST_TAIL.size)
         packed_name = self.name.encode('utf-8')
         name_offset = offset
         while len(packed_name) % 4 != 0:
             packed_name += b'\0'
+        offset += len(packed_name)
         for entry in self.entries:
             entry_offsets.append(offset)
-            packed_entry = entry.pack()  # TODO: ensure this has a length that is a multiple of 4
+            packed_entry = entry.pack()
             packed_entries += packed_entry
             offset += len(packed_entry)
-        next_entry_list_offset = offset
+
+        next_entry_list_offset = offset if not is_last_table else 0
 
         packed_header = self.MAP_ENTITY_LIST_HEADER.pack(
             name_offset=name_offset,
-            entry_offset_count=len(self.entries),
+            entry_offset_count=len(self.entries) + 1,
         )
         packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack([{'entry_offset': o} for o in entry_offsets])
         packed_header += self.MAP_ENTITY_LIST_TAIL.pack(next_entry_list_offset=next_entry_list_offset)
 
-        return packed_header + packed_entries
+        return packed_header + packed_name + packed_entries
 
     def __getitem__(self, index):
         return self.entries[index]
+
+    def __iter__(self):
+        return iter(self.entries)
+
+    def duplicate_entry(self, index, insert_below_original=False):
+        duplicated = copy.deepcopy(self.entries[index])
+        if insert_below_original:
+            self.entries.insert(index + 1, duplicated)
+        else:
+            self.entries.append(duplicated)
 
     def get_indices(self):
         entry_indices = {}
@@ -253,33 +269,42 @@ class MSB(object):
         self.regions.set_indices()
         self.parts.set_indices(model_indices=model_indices, region_indices=region_indices, part_indices=part_indices)
 
-        # TODO: remove ' <i>' tags from all names? or just leave?
-
-        packed_models = self.models.pack()
-        packed_events = self.events.pack()
-        packed_regions = self.regions.pack()
-        packed_parts = self.parts.pack()
+        offset = 0
+        packed_models = self.models.pack(start_offset=offset)
+        offset += len(packed_models)
+        packed_events = self.events.pack(start_offset=offset)
+        offset += len(packed_events)
+        packed_regions = self.regions.pack(start_offset=offset)
+        offset += len(packed_regions)
+        packed_parts = self.parts.pack(start_offset=offset, is_last_table=True)
 
         return packed_models + packed_events + packed_regions + packed_parts
 
-    def write_packed(self, msb_path):
+    def write_packed(self, msb_path=None, create_bak=True):
         if msb_path is None:
             if self.msb_path is None:
                 raise ValueError("MSB path cannot be automatically determined from input.")
             msb_path = self.msb_path
+
+        if create_bak and os.path.isfile(msb_path) and not os.path.isfile(msb_path + '.bak'):
+            print(f"# Backup of file {repr(msb_path)} does not exist. Creating now...")
+            shutil.copy(msb_path, msb_path + '.bak')
 
         with open(msb_path, 'wb') as f:
             f.write(self.pack())
 
     # TODO: pickle/load
 
+    def __iter__(self):
+        yield self.models
+        yield self.events
+        yield self.regions
+        yield self.parts
+
 
 if __name__ == '__main__':
-    # my_msb_path = r"G:\Steam\steamapps\common\DARK SOULS REMASTERED\map\MapStudio\m10_00_00_00.msb"
-    my_msb_path = r"C:\Dark Souls\DARK SOULS REMASTERED\map\MapStudio\m15_01_00_00.msb"
-
-    msb = MSB(my_msb_path)
-
-    msb.write_packed('test_repack.msb')
-
-    msb_from_repack = MSB('test_repack.msb')  # TODO: event_type error.
+    from soulstruct.events.darksouls1.constants import ALL_MSB_FILE_NAMES
+    for m in ALL_MSB_FILE_NAMES:
+        my_msb_path = f"G:/Steam/steamapps/common/DARK SOULS REMASTERED/map/MapStudio/{m}.msb"
+        msb = MSB(my_msb_path)
+        msb.write_packed(f'{m}_repack.msb')

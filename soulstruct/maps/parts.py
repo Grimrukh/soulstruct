@@ -2,7 +2,8 @@ from io import BufferedReader, BytesIO
 from enum import IntEnum
 import struct
 
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector, pad_chars
+from soulstruct.maps.core import MSBEntry
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector
 
 
 class MSB_PART_TYPE(IntEnum):
@@ -23,7 +24,7 @@ def MSBPart(msb_buffer):
     return BaseMSBPart.auto_part_subclass(msb_buffer)
 
 
-class BaseMSBPart(object):
+class BaseMSBPart(MSBEntry):
     PART_HEADER_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
         ('part_type', 'i'),
@@ -66,7 +67,7 @@ class BaseMSBPart(object):
     PART_TYPE = -1
 
     def __init__(self, msb_part_source):
-        self.name = ''
+        super().__init__()
         self.sib_path = ''
         self._part_type_index = None  # TODO: investigate Wulf MSB Editor issue with global index misalignment
         self.model_name = None
@@ -153,9 +154,11 @@ class BaseMSBPart(object):
 
     def pack(self):
         name_offset = self.PART_HEADER_STRUCT.size
-        packed_name = pad_chars(self.name, encoding='shift_jis', pad_to_multiple_of=4)
+        packed_name = self.get_name_to_pack().encode('shift-jis') + b'\0'  # Name not padded on its own.
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = pad_chars(self.sib_path, encoding='shift-jis', pad_to_multiple_of=4)
+        packed_sib_path = self.sib_path.encode('shift-jis') + b'\0' if self.sib_path else b'\0' * 6
+        while len(packed_name + packed_sib_path) % 4 != 0:
+            packed_sib_path += b'\0'
         base_data_offset = sib_path_offset + len(packed_sib_path)
         packed_base_data = self.PART_BASE_DATA_STRUCT.pack(
             entity_id=self.entity_id,
@@ -244,9 +247,10 @@ class MSBObject(BaseMSBPart):
         '4x',
         ('collision_index', 'i'),
         ('unk_x08_x0c', 'i'),
-        ('unk_x0c_x0e', 'h'),
+        ('object_pose', 'h'),
         ('unk_x0e_x10', 'h'),
         ('unk_x10_x14', 'i'),
+        '4x',
     )
 
     PART_TYPE = MSB_PART_TYPE.Object
@@ -255,7 +259,7 @@ class MSBObject(BaseMSBPart):
         self.collision_name = None
         self._collision_index = None
         self.unk_x08_x0c = None
-        self.unk_x0c_x0e = None
+        self.object_pose = None
         self.unk_x0e_x10 = None
         self.unk_x10_x14 = None
         super().__init__(msb_part_source)
@@ -264,7 +268,7 @@ class MSBObject(BaseMSBPart):
         data = BinaryStruct(*self.PART_OBJECT_STRUCT).unpack(msb_buffer)
         self._collision_index = data.collision_index
         self.unk_x08_x0c = data.unk_x08_x0c
-        self.unk_x0c_x0e = data.unk_x0c_x0e
+        self.object_pose = data.object_pose
         self.unk_x0e_x10 = data.unk_x0e_x10
         self.unk_x10_x14 = data.unk_x10_x14
 
@@ -272,9 +276,9 @@ class MSBObject(BaseMSBPart):
         return BinaryStruct(*self.PART_OBJECT_STRUCT).pack(
             collision_index=self._collision_index,
             unk_x08_x0c=self.unk_x08_x0c,
-            unk_x0c_x0e=self.unk_x08_x0c,
-            unk_x0e_x10=self.unk_x08_x0c,
-            unk_x10_x14=self.unk_x08_x0c,
+            object_pose=self.object_pose,
+            unk_x0e_x10=self.unk_x0e_x10,
+            unk_x10_x14=self.unk_x10_x14,
         )
 
     def set_indices(self, part_type_index, model_indices, region_indices, part_indices):

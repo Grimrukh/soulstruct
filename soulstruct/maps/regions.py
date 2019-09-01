@@ -2,6 +2,7 @@ from io import BufferedReader, BytesIO
 from enum import IntEnum
 import struct
 
+from soulstruct.maps.core import MSBEntry
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, Vector
 
 
@@ -20,7 +21,7 @@ def MSBRegion(msb_buffer):
     return BaseMSBRegion.auto_region_subclass(msb_buffer)
 
 
-class BaseMSBRegion(object):
+class BaseMSBRegion(MSBEntry):
 
     REGION_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
@@ -39,7 +40,7 @@ class BaseMSBRegion(object):
     REGION_TYPE = None
 
     def __init__(self, msb_region_source):
-        self.name = ''
+        super().__init__()
         self._region_index = None
         self.translate = None
         self.rotate = None
@@ -67,7 +68,7 @@ class BaseMSBRegion(object):
             msb_buffer.seek(region_offset + base_data.type_data_offset)
             self.unpack_type_data(msb_buffer)
 
-        msb_buffer.seek(base_data.entity_id_offset)
+        msb_buffer.seek(region_offset + base_data.entity_id_offset)
         self.entity_id = struct.unpack('i', msb_buffer.read(4))[0]
 
         return region_offset + base_data.entity_id_offset
@@ -77,7 +78,7 @@ class BaseMSBRegion(object):
 
     def pack(self):
         name_offset = self.REGION_STRUCT.size
-        packed_name = pad_chars(self.name, encoding='shift-jis', pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding='shift-jis', pad_to_multiple_of=4)
         unknown_offset_1 = name_offset + len(packed_name)
         unknown_offset_2 = unknown_offset_1 + 4
         packed_type_data = self.pack_type_data()

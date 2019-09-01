@@ -1,7 +1,8 @@
 from io import BufferedReader, BytesIO
 from enum import IntEnum
 
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
+from soulstruct.maps.core import MSBEntry
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
 
 class MODEL_TYPE(IntEnum):
@@ -13,20 +14,20 @@ class MODEL_TYPE(IntEnum):
     Navmesh = 6
 
 
-class MSBModel(object):
+class MSBModel(MSBEntry):
 
     MODEL_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
         ('model_type', 'i'),
         ('model_type_index', 'i'),
-        ('sib_offset', 'i'),
+        ('sib_path_offset', 'i'),
         ('instance_count', 'i'),
         '12x',
     )
 
     def __init__(self, msb_model_source):
+        super().__init__()
         self.model_type = -1
-        self.name = ''
         self._model_type_index = None  # not sure if this matters.
         self.sib_path = ''
         self._instance_count = None
@@ -44,19 +45,23 @@ class MSBModel(object):
         self.name = read_chars_from_buffer(
             msb_buffer, offset=model_offset + model_data.name_offset, encoding='shift-jis')
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data.sib_offset, encoding='shift-jis')
+            msb_buffer, offset=model_offset + model_data.sib_path_offset, encoding='shift-jis')
         self.model_type = MODEL_TYPE(model_data.model_type)
         self._model_type_index = model_data.model_type_index
         self._instance_count = model_data.instance_count
 
     def pack(self):
-        packed_name = pad_chars(self.name, encoding='shift-jis', pad_to_multiple_of=4)
-        packed_sib_path = pad_chars(self.sib_path, encoding='shift-jis', pad_to_multiple_of=4)
+        name_offset = self.MODEL_STRUCT.size
+        packed_name = self.get_name_to_pack().encode('shift-jis') + b'\0'
+        sib_path_offset = name_offset + len(packed_name)
+        packed_sib_path = self.sib_path.encode('shift-jis') + b'\0' if self.sib_path else b'\0' * 6
+        while len(packed_name + packed_sib_path) % 4 != 0:
+            packed_sib_path += b'\0'
         packed_model_data = self.MODEL_STRUCT.pack(
-            name_offset=self.MODEL_STRUCT.size,
+            name_offset=name_offset,
             model_type=MODEL_TYPE(self.model_type).value,
             model_type_index=self._model_type_index,
-            sib_offset=self.MODEL_STRUCT.size + len(packed_name),
+            sib_path_offset=sib_path_offset,
             instance_count=self._instance_count,
         )
         return packed_model_data + packed_name + packed_sib_path

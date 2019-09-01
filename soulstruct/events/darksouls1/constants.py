@@ -2,14 +2,15 @@ from soulstruct.game_types import Map
 
 class COMMON:
     """Dummy class that allows COMMON to be treated like a `Map` instance in scripts."""
-    file_name = 'common'
+    emevd_file_name = 'common'
+    msb_file_name = None
 
 
 DEPTHS = Map(10, 0)
 UNDEAD_BURG = UNDEAD_PARISH = Map(10, 1)
 FIRELINK_SHRINE = Map(10, 2)
 PAINTED_WORLD = Map(11, 0)
-DARKROOT_GARDEN = DARKROOT_BASIN = DARKROOT = Map(12, 0)
+DARKROOT_GARDEN = DARKROOT_BASIN = DARKROOT = Map(12, 0, msb_file_name='m12_00_00_01')
 OOLACILE = OOLACILE_SANCTUARY = ROYAL_WOOD = OOLACILE_TOWNSHIP = CHASM_OF_THE_ABYSS = DLC_MAP = Map(12, 1)
 CATACOMBS = Map(13, 0)
 TOMB_OF_THE_GIANTS = Map(13, 1)
@@ -26,6 +27,8 @@ UNDEAD_ASYLUM = NORTHERN_UNDEAD_ASYLUM = Map(18, 1)
 ALL_MAPS = [COMMON, DEPTHS, UNDEAD_BURG, FIRELINK_SHRINE, PAINTED_WORLD, DARKROOT_GARDEN, OOLACILE, CATACOMBS,
             TOMB_OF_THE_GIANTS, GREAT_HOLLOW, BLIGHTTOWN, DEMON_RUINS, SENS_FORTRESS, ANOR_LONDO,
             NEW_LONDO_RUINS, DUKES_ARCHIVES, KILN_OF_THE_FIRST_FLAME, UNDEAD_ASYLUM]
+
+ALL_MSB_FILE_NAMES = [m.msb_file_name for m in ALL_MAPS if m.msb_file_name]
 
 MAP_NAMES = {
     (10, 0): "DEPTHS",
