@@ -1,17 +1,21 @@
+from collections import OrderedDict
 import copy
-import os
 from io import BytesIO, BufferedReader
+from itertools import chain
+import os
 import shutil
 
-from soulstruct.maps.models import MSBModel
-from soulstruct.maps.events import MSBEvent
-from soulstruct.maps.regions import MSBRegion
-from soulstruct.maps.parts import MSBPart
+from soulstruct.maps.models import MSBEntry
+from soulstruct.maps.models import MSBModel, MSB_MODEL_TYPE
+from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE
+from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE
+from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE
 
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
 
 class MSBEntryList(object):
+
     MAP_ENTITY_LIST_HEADER = BinaryStruct(
         '4x',
         ('name_offset', 'i'),
@@ -24,25 +28,36 @@ class MSBEntryList(object):
         ('next_entry_list_offset', 'i'),
     )
 
+    ENTRY_LIST_NAME = None
     ENTRY_CLASS = None
+    ENTRY_TYPE_ENUM = None
 
     def __init__(self, msb_entry_list_source=None, name=''):
 
         self.name = ''
-        self.entries = []
+        self._entries = OrderedDict()
+        for entry_type in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME].values():
+            self._entries[entry_type] = []
 
         if msb_entry_list_source is None:
             return
 
-        if isinstance(msb_entry_list_source, (list, tuple)):
+        if isinstance(msb_entry_list_source, (list, tuple, dict)):
             if not name:
                 raise ValueError("Name of MSB entry list must be given if created manually.")
             if name not in {'POINT_PARAM_ST', 'EVENT_PARAM_ST', 'PARTS_PARAM_ST', 'MODEL_PARAM_ST'}:
                 raise ValueError("Name of MSB entry list must be MODEL_PARAM_ST, EVENT_PARAM_ST, POINT_PARAM_ST, "
                                  "or PARTS_PARAM_ST.")
-            self.entries = list(msb_entry_list_source)
+            if isinstance(msb_entry_list_source, dict):
+                self._entries = msb_entry_list_source
+            else:
+                for entry in msb_entry_list_source:
+                    if isinstance(entry, MSBEntry):
+                        self._entries.setdefault(entry.ENTRY_TYPE, []).append(entry)
+                    else:
+                        raise TypeError("Non-MSBEntry found in source sequence for MSB.")
             return
-        elif isinstance(msb_entry_list_source, bytes):
+        if isinstance(msb_entry_list_source, bytes):
             msb_entry_list_source = BytesIO(msb_entry_list_source)
         if isinstance(msb_entry_list_source, BufferedReader):
             self.unpack(msb_entry_list_source)
@@ -57,25 +72,33 @@ class MSBEntryList(object):
         next_entry_list_offset = self.MAP_ENTITY_LIST_TAIL.unpack(msb_buffer).next_entry_list_offset
         self.name = read_chars_from_buffer(msb_buffer, header.name_offset, encoding='utf-8')
 
-        self.entries = []
+        self._entries = OrderedDict()
+        for entry_type in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME].values():
+            self._entries[entry_type] = []
+
         for entry_offset in entry_offsets:
             msb_buffer.seek(entry_offset)
-            self.entries.append(self.ENTRY_CLASS(msb_buffer))
+            entry = self.ENTRY_CLASS(msb_buffer)
+            self._entries[entry.ENTRY_TYPE].append(entry)
+
+        for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME]:
+            setattr(self, entry_type_name, self._entries[entry_type_enum])
 
         msb_buffer.seek(next_entry_list_offset)
 
     def pack(self, start_offset=0, is_last_table=False):
+        entries = self.get_all_entries()
         entry_offsets = []
         packed_entries = b''
         offset = start_offset + (self.MAP_ENTITY_LIST_HEADER.size
-                                 + self.MAP_ENTITY_ENTRY_OFFSET.size * len(self.entries)
+                                 + self.MAP_ENTITY_ENTRY_OFFSET.size * len(entries)
                                  + self.MAP_ENTITY_LIST_TAIL.size)
         packed_name = self.name.encode('utf-8')
         name_offset = offset
         while len(packed_name) % 4 != 0:
             packed_name += b'\0'
         offset += len(packed_name)
-        for entry in self.entries:
+        for entry in entries:
             entry_offsets.append(offset)
             packed_entry = entry.pack()
             packed_entries += packed_entry
@@ -85,29 +108,39 @@ class MSBEntryList(object):
 
         packed_header = self.MAP_ENTITY_LIST_HEADER.pack(
             name_offset=name_offset,
-            entry_offset_count=len(self.entries) + 1,
+            entry_offset_count=len(entries) + 1,
         )
         packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack([{'entry_offset': o} for o in entry_offsets])
         packed_header += self.MAP_ENTITY_LIST_TAIL.pack(next_entry_list_offset=next_entry_list_offset)
 
         return packed_header + packed_name + packed_entries
 
-    def __getitem__(self, index):
-        return self.entries[index]
+    def __getitem__(self, entry_type):
+        if isinstance(entry_type, str) and entry_type in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME]:
+            return self._entries[MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME][entry_type]]
+        else:
+            try:
+                return self._entries[entry_type]
+            except KeyError:
+                pass
+        raise AttributeError(f"MSB entry list {self.ENTRY_LIST_NAME} has no entry type sub-list {repr(entry_type)}")
 
     def __iter__(self):
-        return iter(self.entries)
+        return iter(self.get_all_entries())
 
-    def duplicate_entry(self, index, insert_below_original=False):
-        duplicated = copy.deepcopy(self.entries[index])
+    def get_all_entries(self):
+        return list(chain(*self._entries.values()))
+
+    def duplicate_entry(self, entry_type, index, insert_below_original=False):
+        duplicated = copy.deepcopy(self._entries[entry_type][index])
         if insert_below_original:
-            self.entries.insert(index + 1, duplicated)
+            self._entries[entry_type].insert(index + 1, duplicated)
         else:
-            self.entries.append(duplicated)
+            self._entries[entry_type].append(duplicated)
 
     def get_indices(self):
         entry_indices = {}
-        for i, entry in enumerate(self.entries):
+        for i, entry in enumerate(self.get_all_entries()):
             if entry.name in entry_indices:
                 raise NameError(f"Name {repr(entry.name)} appears more than once in MSB.")
             entry_indices[entry.name] = i
@@ -116,7 +149,7 @@ class MSBEntryList(object):
     def set_and_get_unique_names(self):
         unique_names = {}
         repeat_count = {}
-        for i, entry in enumerate(self.entries):
+        for i, entry in enumerate(self.get_all_entries()):
             if entry.name in unique_names.values():
                 repeat_count.setdefault(entry.name, 0)
                 repeat_count[entry.name] += 1
@@ -126,47 +159,94 @@ class MSBEntryList(object):
 
 
 class MSBModelList(MSBEntryList):
+
+    ENTRY_LIST_NAME = 'Models'
     ENTRY_CLASS = staticmethod(MSBModel)
+    ENTRY_TYPE_ENUM = MSB_MODEL_TYPE
+
+    MapPieces: list
+    Objects: list
+    Characters: list
+    Players: list
+    Collisions: list
+    Navmeshes: list
 
     def set_indices(self, part_instance_counts):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
         type_indices = {}
-        for entry in self.entries:
+        for entry in self.get_all_entries():
             entry.set_indices(model_type_index=type_indices.setdefault(entry.model_type, 0),
                               instance_count=part_instance_counts.get(entry.name, 0))
             type_indices[entry.model_type] += 1
 
 
 class MSBEventList(MSBEntryList):
+    ENTRY_LIST_NAME = 'Events'
     ENTRY_CLASS = staticmethod(MSBEvent)
+    ENTRY_TYPE_ENUM = MSB_EVENT_TYPE
+
+    Lights: list
+    Sounds: list
+    FX: list
+    Wind: list
+    Treasure: list
+    Spawners: list
+    Messages: list
+    ObjActs: list
+    SpawnPoints: list
+    MapOffsets: list
+    Navigation: list
+    Environment: list
+    NPCInvasion: list
 
     def set_names(self, region_names, part_names):
-        for entry in self.entries:
+        for entry in self.get_all_entries():
             entry.set_names(region_names, part_names)
 
     def set_indices(self, region_indices, part_indices):
         """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
         type_indices = {}
-        for i, entry in enumerate(self.entries):
+        for i, entry in enumerate(self.get_all_entries()):
             entry.set_indices(event_index=i, event_type_index=type_indices.setdefault(entry.EVENT_TYPE, 0),
                               region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.EVENT_TYPE] += 1
 
 
 class MSBRegionList(MSBEntryList):
+    ENTRY_LIST_NAME = 'Regions'
     ENTRY_CLASS = staticmethod(MSBRegion)
+    ENTRY_TYPE_ENUM = MSB_REGION_TYPE
+
+    Points: list
+    Circles: list
+    Spheres: list
+    Cylinders: list
+    Rectangles: list
+    Boxes: list
 
     def set_indices(self):
         """Global region index only."""
-        for i, entry in enumerate(self.entries):
+        for i, entry in enumerate(self.get_all_entries()):
             entry.set_indices(region_index=i)
 
 
 class MSBPartList(MSBEntryList):
+    ENTRY_LIST_NAME = 'Parts'
     ENTRY_CLASS = staticmethod(MSBPart)
+    ENTRY_TYPE_ENUM = MSB_PART_TYPE
+
+    MapPieces: list
+    Objects: list
+    Characters: list
+    PlayerStarts: list
+    Collisions: list
+    Navmeshes: list
+    DummyObjects: list
+    DummyCharacters: list
+    MapLoadTriggers: list
 
     def set_names(self, model_names, region_names, part_names):
-        for entry in self.entries:
+        for entry in self.get_all_entries():
             entry.set_names(model_names, region_names, part_names)
 
     def set_indices(self, model_indices, region_indices, part_indices):
@@ -179,7 +259,7 @@ class MSBPartList(MSBEntryList):
         Note that cutscene files (remo) access Parts by index as well.
         """
         type_indices = {}
-        for entry in self.entries:
+        for entry in self.get_all_entries():
             entry.set_indices(part_type_index=type_indices.setdefault(entry.PART_TYPE, 0),
                               model_indices=model_indices, region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.PART_TYPE] += 1
@@ -187,7 +267,7 @@ class MSBPartList(MSBEntryList):
     def get_instance_counts(self):
         """Returns a dictionary mapping model names to part instance counts."""
         instance_counts = {}
-        for entry in self.entries:
+        for entry in self.get_all_entries():
             instance_counts.setdefault(entry.model_name, 0)
             instance_counts[entry.model_name] += 1
         return instance_counts
@@ -302,9 +382,47 @@ class MSB(object):
         yield self.parts
 
 
-if __name__ == '__main__':
-    from soulstruct.events.darksouls1.constants import ALL_MSB_FILE_NAMES
-    for m in ALL_MSB_FILE_NAMES:
-        my_msb_path = f"G:/Steam/steamapps/common/DARK SOULS REMASTERED/map/MapStudio/{m}.msb"
-        msb = MSB(my_msb_path)
-        msb.write_packed(f'{m}_repack.msb')
+MAP_ENTRY_TYPES = {
+    'Models': {
+        'MapPieces': MSB_MODEL_TYPE.MapPiece,
+        'Objects': MSB_MODEL_TYPE.Object,
+        'Characters': MSB_MODEL_TYPE.Enemy,
+        'Players': MSB_MODEL_TYPE.Player,
+        'Collisions': MSB_MODEL_TYPE.Collision,
+        'Navmeshes': MSB_MODEL_TYPE.Navmesh,
+    },
+    'Events': {
+        'Lights': MSB_EVENT_TYPE.Light,
+        'Sounds': MSB_EVENT_TYPE.Sound,
+        'FX': MSB_EVENT_TYPE.FX,
+        'Wind': MSB_EVENT_TYPE.Wind,
+        'Treasure': MSB_EVENT_TYPE.Treasure,
+        'Spawners': MSB_EVENT_TYPE.Spawner,
+        'Messages': MSB_EVENT_TYPE.Message,
+        'ObjActs': MSB_EVENT_TYPE.ObjAct,
+        'SpawnPoints': MSB_EVENT_TYPE.SpawnPoint,
+        'MapOffsets': MSB_EVENT_TYPE.MapOffset,
+        'Navigation': MSB_EVENT_TYPE.Navigation,
+        'Environment': MSB_EVENT_TYPE.Environment,
+        'NPCInvasion': MSB_EVENT_TYPE.NPCInvasion,
+    },
+    'Regions': {
+        'Points': MSB_REGION_TYPE.Point,
+        'Circles': MSB_REGION_TYPE.Circle,
+        'Spheres': MSB_REGION_TYPE.Sphere,
+        'Cylinders': MSB_REGION_TYPE.Cylinder,
+        'Rectangles': MSB_REGION_TYPE.Rect,
+        'Boxes': MSB_REGION_TYPE.Box,
+    },
+    'Parts': {
+        'MapPieces': MSB_PART_TYPE.MapPiece,
+        'Objects': MSB_PART_TYPE.Object,
+        'Characters': MSB_PART_TYPE.Character,
+        'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
+        'Collisions': MSB_PART_TYPE.Collision,
+        'Navmeshes': MSB_PART_TYPE.Navmesh,
+        'DummyObjects': MSB_PART_TYPE.DummyObject,
+        'DummyCharacters': MSB_PART_TYPE.DummyCharacter,
+        'MapLoadTriggers': MSB_PART_TYPE.MapLoadTrigger,
+    }
+}

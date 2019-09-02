@@ -17,7 +17,7 @@ class MSB_EVENT_TYPE(IntEnum):
     ObjAct = 7
     SpawnPoint = 8
     MapOffset = 9
-    Navmesh = 10
+    Navigation = 10
     Environment = 11
     NPCInvasion = 12
 
@@ -49,7 +49,7 @@ class BaseMSBEvent(MSBEntry):
         '4x',
     )
 
-    EVENT_TYPE = -1
+    ENTRY_TYPE = None
 
     def __init__(self, msb_event_source):
         super().__init__()
@@ -71,7 +71,7 @@ class BaseMSBEvent(MSBEntry):
     def unpack(self, msb_buffer):
         event_offset = msb_buffer.tell()
         header = self.EVENT_HEADER_STRUCT.unpack(msb_buffer)
-        if header.event_type != self.EVENT_TYPE:
+        if header.event_type != self.ENTRY_TYPE:
             raise ValueError(f"Unexpected event type enum {header.event_type} for class {self.__class__.__name__}.")
 
         msb_buffer.seek(event_offset + header.base_data_offset)
@@ -112,7 +112,7 @@ class BaseMSBEvent(MSBEntry):
         packed_header = self.EVENT_HEADER_STRUCT.pack(
             name_offset=name_offset,
             event_index=self._event_index,
-            event_type=self.EVENT_TYPE,
+            event_type=self.ENTRY_TYPE,
             event_type_index=self._event_type_index,
             base_data_offset=base_data_offset,
             type_data_offset=type_data_offset,
@@ -140,7 +140,7 @@ class MSBLight(BaseMSBEvent):
         ('unk_x00_x04', 'i'),
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Light
+    ENTRY_TYPE = MSB_EVENT_TYPE.Light
 
     def __init__(self, msb_event_source):
         self.unk_x00_x04 = None
@@ -162,7 +162,7 @@ class MSBSound(BaseMSBEvent):
         ('sound_id', 'i'),
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Sound
+    ENTRY_TYPE = MSB_EVENT_TYPE.Sound
 
     def __init__(self, msb_event_source):
         self.sound_type = None
@@ -186,7 +186,7 @@ class MSBFX(BaseMSBEvent):
         ('fx_id', 'i'),
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.FX
+    ENTRY_TYPE = MSB_EVENT_TYPE.FX
 
     def __init__(self, msb_event_source):
         self.fx_id = None
@@ -222,7 +222,7 @@ class MSBWind(BaseMSBEvent):
         ('unk_x3c_x40', 'f'),
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Wind
+    ENTRY_TYPE = MSB_EVENT_TYPE.Wind
 
     def __init__(self, msb_event_source):
         """Data consists of 16 floats, which likely specify the transform parameters (e.g. position, direction) of wind
@@ -304,7 +304,7 @@ class MSBTreasure(BaseMSBEvent):
         '2x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Treasure
+    ENTRY_TYPE = MSB_EVENT_TYPE.Treasure
 
     def __init__(self, msb_event_source):
         self.treasure_part_name = None
@@ -365,7 +365,7 @@ class MSBSpawner(BaseMSBEvent):
         '64x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Spawner
+    ENTRY_TYPE = MSB_EVENT_TYPE.Spawner
 
     def __init__(self, msb_event_source):
         self.max_count = None
@@ -425,7 +425,7 @@ class MSBMessage(BaseMSBEvent):
         '3x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Message
+    ENTRY_TYPE = MSB_EVENT_TYPE.Message
 
     def __init__(self, msb_event_source):
         self.text_id = None
@@ -456,7 +456,7 @@ class MSBObjAct(BaseMSBEvent):
         ('obj_act_flag', 'i'),
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.ObjAct
+    ENTRY_TYPE = MSB_EVENT_TYPE.ObjAct
 
     def __init__(self, msb_event_source):
         self.obj_act_entity_id = None
@@ -499,7 +499,7 @@ class MSBSpawnPoint(BaseMSBEvent):
         '12x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.SpawnPoint
+    ENTRY_TYPE = MSB_EVENT_TYPE.SpawnPoint
 
     def __init__(self, msb_event_source):
         self.spawn_point_region_name = None
@@ -538,7 +538,7 @@ class MSBMapOffset(BaseMSBEvent):
         ('rotate_y', 'f'),
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.MapOffset
+    ENTRY_TYPE = MSB_EVENT_TYPE.MapOffset
 
     def __init__(self, msb_event_source):
         self.translate = None
@@ -565,7 +565,7 @@ class MSBNavmesh(BaseMSBEvent):
         '12x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Navmesh
+    ENTRY_TYPE = MSB_EVENT_TYPE.Navigation
 
     def __init__(self, msb_event_source):
         self.navmesh_region_name = None
@@ -604,7 +604,7 @@ class MSBEnvironment(BaseMSBEvent):
         '8x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.Environment
+    ENTRY_TYPE = MSB_EVENT_TYPE.Environment
 
     def __init__(self, msb_event_source):
         self.unk_x00_x04 = None
@@ -643,7 +643,7 @@ class MSBNPCInvasion(BaseMSBEvent):
         '4x',
     )
 
-    EVENT_TYPE = MSB_EVENT_TYPE.NPCInvasion
+    ENTRY_TYPE = MSB_EVENT_TYPE.NPCInvasion
 
     def __init__(self, msb_event_source):
         self.host_entity_id = None
@@ -691,7 +691,7 @@ MSB_EVENT_TYPE_CLASSES = {
     MSB_EVENT_TYPE.ObjAct: MSBObjAct,
     MSB_EVENT_TYPE.SpawnPoint: MSBSpawnPoint,
     MSB_EVENT_TYPE.MapOffset: MSBMapOffset,
-    MSB_EVENT_TYPE.Navmesh: MSBNavmesh,
+    MSB_EVENT_TYPE.Navigation: MSBNavmesh,
     MSB_EVENT_TYPE.Environment: MSBEnvironment,
     MSB_EVENT_TYPE.NPCInvasion: MSBNPCInvasion,
 }

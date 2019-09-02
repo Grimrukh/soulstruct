@@ -37,7 +37,20 @@ class BaseMSBRegion(MSBEntry):
         '4x',
     )
 
-    REGION_TYPE = None
+    FIELD_INFO = {
+        'translate': (
+            'Translate', Vector,
+            "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
+            "regions."),
+        'rotate': (
+            'Rotate', Vector,
+            "Euler angles for region rotation around its local X, Y, and Z axes."),
+        'entity_id': (
+            'Entity ID', int,
+            "Entity ID used to refer to the region in other game files."),
+    }
+
+    ENTRY_TYPE = None
 
     def __init__(self, msb_region_source):
         super().__init__()
@@ -91,7 +104,7 @@ class BaseMSBRegion(MSBEntry):
         packed_base_data = self.REGION_STRUCT.pack(
             name_offset=name_offset,
             region_index=self._region_index,
-            region_type=self.REGION_TYPE,
+            region_type=self.ENTRY_TYPE,
             translate=list(self.translate),
             rotate=list(self.rotate),
             unknown_offset_1=unknown_offset_1,
@@ -131,7 +144,7 @@ class BaseMSBRegion(MSBEntry):
 class MSBRegionPoint(BaseMSBRegion):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
     player be facing when they spawn?)."""
-    REGION_TYPE = MSB_REGION_TYPE.Point
+    ENTRY_TYPE = MSB_REGION_TYPE.Point
 
     def unpack_type_data(self, msb_buffer):
         """No data to unpack."""
@@ -147,7 +160,15 @@ class MSBRegionCircle(BaseMSBRegion):
         ('radius', 'f'),
     )
 
-    REGION_TYPE = MSB_REGION_TYPE.Circle
+    FIELD_INFO = {
+        **BaseMSBRegion.FIELD_INFO,
+        'radius': (
+            'Radius', float,
+            "Radius (in xy-plane) of circular region.",
+        )
+    }
+
+    ENTRY_TYPE = MSB_REGION_TYPE.Circle
 
     def __init__(self, msb_region_shape_source):
         self.radius = None
@@ -167,7 +188,15 @@ class MSBRegionSphere(BaseMSBRegion):
         ('radius', 'f'),
     )
 
-    REGION_TYPE = MSB_REGION_TYPE.Sphere
+    FIELD_INFO = {
+        **BaseMSBRegion.FIELD_INFO,
+        'radius': (
+            'Radius', float,
+            "Radius of sphere-shaped region.",
+        )
+    }
+
+    ENTRY_TYPE = MSB_REGION_TYPE.Sphere
 
     def __init__(self, msb_region_shape_source):
         self.radius = None
@@ -188,7 +217,17 @@ class MSBRegionCylinder(BaseMSBRegion):
         ('height', 'f'),
     )
 
-    REGION_TYPE = MSB_REGION_TYPE.Cylinder
+    FIELD_INFO = {
+        **BaseMSBRegion.FIELD_INFO,
+        'radius': (
+            'Radius', float,
+            "Radius (in xz-plane) of cylinder-shaped region."),
+        'height': (
+            'Height', float,
+            "Height (along y-axis) of cylinder-shaped region.")
+    }
+
+    ENTRY_TYPE = MSB_REGION_TYPE.Cylinder
 
     def __init__(self, msb_region_shape_source):
         self.radius = None
@@ -214,7 +253,17 @@ class MSBRegionRect(BaseMSBRegion):
         ('depth', 'f'),
     )
 
-    REGION_TYPE = MSB_REGION_TYPE.Rect
+    FIELD_INFO = {
+        **BaseMSBRegion.FIELD_INFO,
+        'width': (
+            'Width', float,
+            "Width (along x-axis) of rectangle-shaped region."),
+        'height': (
+            'Height', float,
+            "Height (along y-axis) of rectangle-shaped region."),
+    }
+
+    ENTRY_TYPE = MSB_REGION_TYPE.Rect
 
     def __init__(self, msb_region_shape_source):
         self.width = None
@@ -240,7 +289,20 @@ class MSBRegionBox(BaseMSBRegion):
         ('height', 'f'),
     )
 
-    REGION_TYPE = MSB_REGION_TYPE.Box
+    FIELD_INFO = {
+        **BaseMSBRegion.FIELD_INFO,
+        'width': (
+            'Width', float,
+            "Width (along x-axis) of box-shaped region."),
+        'depth': (
+            'Depth', float,
+            "Depth (along z-axis) of box-shaped region."),
+        'height': (
+            'Height', float,
+            "Height (along y-axis) of box-shaped region."),
+    }
+
+    ENTRY_TYPE = MSB_REGION_TYPE.Box
 
     def __init__(self, msb_region_shape_source):
         self.width = None

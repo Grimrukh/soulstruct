@@ -5,7 +5,7 @@ from soulstruct.maps.core import MSBEntry
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
 
-class MODEL_TYPE(IntEnum):
+class MSB_MODEL_TYPE(IntEnum):
     MapPiece = 0
     Object = 1
     Enemy = 2
@@ -25,9 +25,15 @@ class MSBModel(MSBEntry):
         '12x',
     )
 
+    FIELD_INFO = {
+        'sib_path': (
+            'Placeholder Path', str,
+            "Internal path to model placeholder SIB file. The path's base name should match the model name."),
+    }
+
     def __init__(self, msb_model_source):
         super().__init__()
-        self.model_type = -1
+        self.ENTRY_TYPE = None
         self._model_type_index = None  # not sure if this matters.
         self.sib_path = ''
         self._instance_count = None
@@ -46,7 +52,7 @@ class MSBModel(MSBEntry):
             msb_buffer, offset=model_offset + model_data.name_offset, encoding='shift-jis')
         self.sib_path = read_chars_from_buffer(
             msb_buffer, offset=model_offset + model_data.sib_path_offset, encoding='shift-jis')
-        self.model_type = MODEL_TYPE(model_data.model_type)
+        self.ENTRY_TYPE = MSB_MODEL_TYPE(model_data.model_type)
         self._model_type_index = model_data.model_type_index
         self._instance_count = model_data.instance_count
 
@@ -59,7 +65,7 @@ class MSBModel(MSBEntry):
             packed_sib_path += b'\0'
         packed_model_data = self.MODEL_STRUCT.pack(
             name_offset=name_offset,
-            model_type=MODEL_TYPE(self.model_type).value,
+            model_type=MSB_MODEL_TYPE(self.ENTRY_TYPE).value,
             model_type_index=self._model_type_index,
             sib_path_offset=sib_path_offset,
             instance_count=self._instance_count,

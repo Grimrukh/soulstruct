@@ -25,6 +25,8 @@ DARK_SOULS_MAP_NAMES = {
 
 }
 
+DARK_SOULS_MAP_IDS = {v: k for k, v in DARK_SOULS_MAP_NAMES.items()}
+
 
 class DarkSoulsMaps(object):
 
@@ -91,9 +93,12 @@ class DarkSoulsMaps(object):
     def __getitem__(self, map_name):
         return self._data[map_name]
 
-    def save(self):
+    def save(self, msb_directory=None):
+        if msb_directory is None:
+            msb_directory = self._directory
         for msb_name in DARK_SOULS_MAP_NAMES.values():
-            self._data[msb_name].write_packed()
+            msb_path = os.path.join(msb_directory, os.path.basename(self._data[msb_name].msb_path))
+            self._data[msb_name].write_packed(msb_path)
         print("\n# All Dark Souls map files saved successfully.")
 
 

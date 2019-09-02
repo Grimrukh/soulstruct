@@ -5,6 +5,9 @@ _DUPLICATE_TAG_MATCH = re.compile(r' <(\d+)>$')
 
 class MSBEntry(object):
 
+    ENTRY_TYPE = None
+    FIELD_INFO = {}
+
     def __init__(self):
         self.name = None
 

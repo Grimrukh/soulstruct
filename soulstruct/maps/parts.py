@@ -10,7 +10,7 @@ class MSB_PART_TYPE(IntEnum):
     MapPiece = 0
     Object = 1
     Character = 2
-    Player = 4
+    PlayerStarts = 4
     Collision = 5
     Navmesh = 8
     DummyObject = 9
@@ -64,7 +64,31 @@ class BaseMSBPart(MSBEntry):
         '2x',
     )
 
-    PART_TYPE = -1
+    FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Map:Model>',
+            "Name of model to use for this part."),
+        'translate': (
+            'Translate', Vector,
+            "3D coordinates of the part's position. Note that the anchor of the part is usually at its base."),
+        'rotate': (
+            'Rotate', Vector,
+            "Euler angles for part rotation around its local X, Y, and Z axes."),
+        'scale': (
+            'Scale', Vector,
+            "Scale of part. Only relevant for objects and collisions."),
+        'draw_groups': (
+            'Draw Groups', list,
+            "Draw groups of part. These are not yet fully understood, but they determined when the part appears."),
+        'display_groups': (
+            'Display Groups', list,
+            "Display groups of part. These are not yet fully understood, but they determined when the part appears."),
+        'entity_id': (
+            'Entity ID', int,
+            "Entity ID used to refer to the part in other game files."),
+    }
+
+    ENTRY_TYPE = None
 
     def __init__(self, msb_part_source):
         super().__init__()
@@ -114,7 +138,7 @@ class BaseMSBPart(MSBEntry):
         part_offset = msb_buffer.tell()
 
         header = self.PART_HEADER_STRUCT.unpack(msb_buffer)
-        if header.part_type != self.PART_TYPE:
+        if header.part_type != self.ENTRY_TYPE:
             raise ValueError(f"Unexpected part type enum {header.part_type} for class {self.__class__.__name__}.")
         self._model_index = header.model_index
         self._part_type_index = header.part_type_index
@@ -186,7 +210,7 @@ class BaseMSBPart(MSBEntry):
 
         packed_header = self.PART_HEADER_STRUCT.pack(
             name_offset=name_offset,
-            part_type=self.PART_TYPE,
+            part_type=self.ENTRY_TYPE,
             part_type_index=self._part_type_index,
             model_index=self._model_index,
             sib_path_offset=sib_path_offset,
@@ -231,7 +255,7 @@ class MSBMapPiece(BaseMSBPart):
         '8x',
     )
 
-    PART_TYPE = MSB_PART_TYPE.MapPiece
+    ENTRY_TYPE = MSB_PART_TYPE.MapPiece
 
     def unpack_type_data(self, msb_buffer):
         BinaryStruct(*self.MAP_PIECE_STRUCT).unpack(msb_buffer)  # Simply checks for the nulls.
@@ -253,7 +277,7 @@ class MSBObject(BaseMSBPart):
         '4x',
     )
 
-    PART_TYPE = MSB_PART_TYPE.Object
+    ENTRY_TYPE = MSB_PART_TYPE.Object
 
     def __init__(self, msb_part_source):
         self.collision_name = None
@@ -307,7 +331,7 @@ class MSBCharacter(BaseMSBPart):
         ('unk_x3c_x40', 'i'),
     )
 
-    PART_TYPE = MSB_PART_TYPE.Character
+    ENTRY_TYPE = MSB_PART_TYPE.Character
 
     def __init__(self, msb_part_source):
         self.think_param_id = None
@@ -366,7 +390,7 @@ class MSBPlayer(BaseMSBPart):
         '16x',
     )
 
-    PART_TYPE = MSB_PART_TYPE.Player
+    ENTRY_TYPE = MSB_PART_TYPE.PlayerStarts
 
     def unpack_type_data(self, msb_buffer):
         BinaryStruct(*self.PLAYER_STRUCT).unpack(msb_buffer)  # Simply checks for the nulls.
@@ -395,7 +419,7 @@ class MSBCollision(BaseMSBPart):
         '16x',
     )
 
-    PART_TYPE = MSB_PART_TYPE.Collision
+    ENTRY_TYPE = MSB_PART_TYPE.Collision
 
     def __init__(self, msb_part_source):
         self.hit_filter_id = None
@@ -452,7 +476,7 @@ class MSBNavmesh(BaseMSBPart):
         '16x',
     )
 
-    PART_TYPE = MSB_PART_TYPE.Navmesh
+    ENTRY_TYPE = MSB_PART_TYPE.Navmesh
 
     def __init__(self, msb_part_source):
         self.navmesh_groups = None
@@ -470,12 +494,12 @@ class MSBNavmesh(BaseMSBPart):
 
 class MSBDummyObject(MSBObject):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to standard MSBObject."""
-    PART_TYPE = MSB_PART_TYPE.DummyObject
+    ENTRY_TYPE = MSB_PART_TYPE.DummyObject
 
 
 class MSBDummyCharacter(MSBCharacter):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to standard MSBCharacter."""
-    PART_TYPE = MSB_PART_TYPE.DummyCharacter
+    ENTRY_TYPE = MSB_PART_TYPE.DummyCharacter
 
 
 class MSBMapLoadTrigger(BaseMSBPart):
@@ -487,7 +511,7 @@ class MSBMapLoadTrigger(BaseMSBPart):
         '8x',
     )
 
-    PART_TYPE = MSB_PART_TYPE.MapLoadTrigger
+    ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
 
     def __init__(self, msb_part_source):
         self.collision_name = None
@@ -520,7 +544,7 @@ MSB_PART_TYPE_CLASSES = {
     MSB_PART_TYPE.MapPiece: MSBMapPiece,
     MSB_PART_TYPE.Object: MSBObject,
     MSB_PART_TYPE.Character: MSBCharacter,
-    MSB_PART_TYPE.Player: MSBPlayer,
+    MSB_PART_TYPE.PlayerStarts: MSBPlayer,
     MSB_PART_TYPE.Collision: MSBCollision,
     MSB_PART_TYPE.Navmesh: MSBNavmesh,
     MSB_PART_TYPE.DummyObject: MSBDummyObject,

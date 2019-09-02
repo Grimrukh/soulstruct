@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from enum import IntEnum
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
+from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_IDS
 from soulstruct.project.actions import ActionHistory
-from soulstruct.utilities import camel_case_to_spaces
+from soulstruct.utilities import camel_case_to_spaces, Vector
 from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 
 if TYPE_CHECKING:
@@ -17,110 +17,6 @@ def bind_events(widget, bindings: dict):
         widget.bind(event, func)
 
 
-# TODO:
-#  - Select MSB from a dropdown at the top.
-#  - Left canvas is MSB entry type (category).
-#  - Middle/right canvas is a table with entries as rows and fields as columns, like Wulf's.
-
-
-class _MapEntryRow(object):
-    """Container for components of a row in the _MapEntryFrame.
-
-    These are only created once, and their contents are refreshed when needed.
-    """
-
-    def __init__(self, master: _MapEntryFrame, row_index: int, main_bindings: dict = None):
-        self.master = master
-        self.linker = master.linker
-        self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
-
-        self.entry_id = None
-        self.entry_name = None
-
-        self.index = row_index
-        self._active = False
-        self.any_text_missing = False
-
-        bg_color = self._get_color()
-
-        self.row_box = master.Frame(
-            width=master.ENTRY_BOX_WIDTH, height=30, bg=bg_color, row=row_index, columnspan=2,
-            sticky='nsew')
-        bind_events(self.row_box, main_bindings)
-
-        self.id_label = master.Label(text='', width=15, row=row_index, column=0, bg=bg_color, sticky='e')
-        bind_events(self.id_label, main_bindings)
-
-        self.name_box = master.Frame(row=row_index, column=1, bg=bg_color, sticky='ew')
-        bind_events(self.name_box, main_bindings)
-
-        self.name_label = master.Label(self.name_box, text='', bg=bg_color, anchor='w', width=60)
-        bind_events(self.name_label, main_bindings)
-
-        self.context_menu = master.Menu(self.row_box)
-        self.tool_tip = ToolTip(self.row_box, self.id_label, self.name_box, self.name_label, text=None,
-                                wraplength=350)
-
-    def build_entry(self, entry_id: int, entry_name: str):
-        self.entry_id = entry_id
-        self.entry_name = entry_name
-
-        self.row_box.grid()
-        self.id_label.grid()
-        self.name_box.grid()
-        self.name_label.grid()
-
-    def clear(self):
-        """Called when this row has no entry to display."""
-        self.row_box.grid_remove()
-        self.id_label.grid_remove()
-        self.name_box.grid_remove()
-        self.name_label.grid_remove()
-
-    def build_entry_context_menu(self, text_links):
-        self.context_menu.delete(0, 'end')
-        if text_links:
-            for text_link in text_links:
-                if text_link.name != 'None':
-                    self.context_menu.add_command(
-                        label=text_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=text_link.link)
-
-    @property
-    def active(self):
-        return self._active
-
-    @active.setter
-    def active(self, value: bool):
-        if not self._active and value:
-            self._active = True
-        elif self._active and not value:
-            self._active = False
-        else:
-            return  # No change to active state.
-
-        # All widget backgrounds need updating (except Combobox).
-        self._update_colors()
-
-    def _update_colors(self):
-        bg_color = self._get_color()
-        for widget in (self.row_box, self.id_label, self.name_box, self.name_label):
-            widget['bg'] = bg_color
-
-    def _get_color(self):
-        """Inspects entry name/data and returns a tuple of 'bg' color values."""
-        base_bg = 222
-        if self.entry_name is not None:
-            if not self.entry_name:
-                base_bg += 200
-            elif not self.entry_name.strip():
-                base_bg += 110
-        if self._active:
-            base_bg += 123
-        if self.index % 2:
-            base_bg += 111
-        return f'#{base_bg}'
-
-
 class _MapFieldRow(object):
     """Container for components of a row in the _MapFieldFrame.
 
@@ -128,10 +24,10 @@ class _MapFieldRow(object):
     be Labels (which turn to Entries for editing), Checkbuttons, or Comboboxes. Each of these widgets is created for
     each row, so they can be displayed (with `grid()`) when needed, rather than dynamically created and destroyed
     every time a new entry/category is selected.
-
-    TODO: Much more dynamic within-Maps linking going on.
     """
     ROW_HEIGHT = 30
+    NAME_WIDTH = 15
+    VALUE_WIDTH = 60
 
     def __init__(self, master: _MapFieldFrame, row_index: int, change_value_func, main_bindings: dict = None):
         self.master = master
@@ -157,18 +53,29 @@ class _MapFieldRow(object):
         bind_events(self.field_name_box, main_bindings)
 
         self.field_name_label = master.Label(
-            self.field_name_box, text='', fg=master.FIELD_NAME_FG, width=30, bg=bg_color, anchor='w')
+            self.field_name_box, text='', fg=master.FIELD_NAME_FG, width=self.NAME_WIDTH, bg=bg_color, anchor='w')
         bind_events(self.field_name_label, main_bindings)
 
-        self.value_box = master.Frame(width=200, row=row_index, column=1, bg=bg_color, sticky='ew')
+        self.value_box = master.Frame(width=400, row=row_index, column=1, bg=bg_color, sticky='ew')
         bind_events(self.value_box, main_bindings)
 
         # VALUE WIDGETS
 
-        # TODO: Triple-value vector entries.
-
-        self.value_label = master.Label(self.value_box, text='', bg=bg_color, width=50, anchor='w')
+        self.value_label = master.Label(self.value_box, text='', bg=bg_color, width=self.VALUE_WIDTH, anchor='w', row=0)
         bind_events(self.value_label, main_bindings)
+
+        self.value_vector_frame = master.Frame(
+            self.value_box, bg=bg_color, width=self.VALUE_WIDTH, height=self.ROW_HEIGHT, no_grid=True)
+        self.value_vector_x = master.Label(
+            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=0)
+        self.value_vector_y = master.Label(
+            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=1)
+        self.value_vector_z = master.Label(
+            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=2)
+        for coord, label in zip('xyz', (self.value_vector_x, self.value_vector_y, self.value_vector_z)):
+            vector_bindings = main_bindings.copy()
+            vector_bindings.update({'<Button-1>': lambda _, c=coord: master.select_field(row_index, coord=c)})
+            bind_events(label, vector_bindings)
 
         self.value_checkbutton = master.Checkbutton(
             self.value_box, label=None, bg=bg_color, no_grid=True,
@@ -176,7 +83,7 @@ class _MapFieldRow(object):
         # Main focus bindings are not bound to Checkbutton.
 
         self.value_combobox = master.Combobox(
-            self.value_box, values=None, width=20, no_grid=True,
+            self.value_box, values=None, width=self.VALUE_WIDTH, no_grid=True,
             on_select_function=lambda _: change_value_func(
                 self.index, getattr(self.field_type, self.value_combobox.var.get().replace(' ', '')).value))
         # Main focus bindings are not bound to Combobox.
@@ -188,53 +95,51 @@ class _MapFieldRow(object):
         self.clear()  # TODO: still getting white box before I click or scroll
 
     def _activate_value_widget(self, widget):
-        if widget is self.value_label:
-            if id(self.active_value_widget) in {id(self.value_checkbutton), id(self.value_combobox)}:
-                self.active_value_widget.grid_remove()
-            self.active_value_widget = self.value_label
-        if widget is self.value_checkbutton:
-            if id(self.active_value_widget) in {id(self.value_label), id(self.value_combobox)}:
-                self.active_value_widget.grid_remove()
-            self.active_value_widget = self.value_checkbutton
-        if widget is self.value_combobox:
-            if id(self.active_value_widget) in {id(self.value_label), id(self.value_checkbutton)}:
-                self.active_value_widget.grid_remove()
-            self.active_value_widget = self.value_combobox
+        if id(self.active_value_widget) != id(widget):
+            self.active_value_widget.grid_remove()
+        self.active_value_widget = widget
 
-    def build_field(self, entry, name, value, nickname, field_type, docstring="DOC-TODO"):
+    def build_field(self, entry, name, nickname, value, field_type, docstring="DOC-TODO"):
         """Update widgets with given field information."""
         self.map_entry = entry
-        nickname = camel_case_to_spaces(nickname)
         self.field_name = name
         self.field_type = field_type
         self.field_docstring = docstring
 
-        if isinstance(self.field_type, str):
-            map_links = self.linker.maps_field_link(self.field_type, self.map_entry[self.field_name])
-            field_type = int
-        else:
-            map_links = []
+        # TODO: seems inefficient; there can't be multiple links.
+        internal_link = None
+        external_link = None
 
-        if issubclass(field_type, IntEnum):
-            self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
-            try:
-                # noinspection PyUnresolvedReferences
-                enum_name = camel_case_to_spaces(field_type(value).name)
-            except ValueError:
-                enum_name = f'<Unknown: {value}>'  # TODO: ensure this is read back and saved properly
-            self.value_combobox.var.set(enum_name)
-            self._activate_value_widget(self.value_combobox)
+        self.field_name_label.var.set(nickname)
+
+        if isinstance(self.field_type, str):
+            if self.field_type.startswith('<Map:'):
+                # Internal map entry name (will be converted to index later).
+                internal_link = self.linker.maps_field_link(self.field_type, value)
+            else:
+                # e.g. AI think ID, talk ID (not implemented), lighting parameter (still to come).
+                external_link = self.linker.soulstruct_link(self.field_type, value)[0]  # Note unpacking.
+                field_type = int
+
+        if field_type == str:
+            # Name of another MSB entry.
+            # TODO: confirm name is valid when editing finishes.
+            self.value_label.var.set(value)
+            self._activate_value_widget(self.value_label)
+        elif field_type == Vector:
+            # No chance of a link here.
+            self.value_vector_x.var.set(f'x = {value.x:.3g}')
+            self.value_vector_y.var.set(f'y = {value.y:.3g}')
+            self.value_vector_z.var.set(f'z = {value.z:.3g}')
+            self._activate_value_widget(self.value_vector_frame)
         elif field_type in {float, int}:
-            value_text = f'{value:.3f}' if field_type == float else str(value)
-            if map_links:
-                if len(map_links) > 1:
-                    value_text += f' [Ambiguous]'
-                if map_links[0].name is None:
+            value_text = f'{value:.3g}' if field_type == float else str(value)
+            if external_link:
+                if external_link.name is None:
                     value_text += f' [MISSING]'
                 else:
-                    value_text += f' [{map_links[0].name}]'
-            if self.value_label.var.get() != value_text:
-                self.value_label.var.set(value_text)  # TODO: probably a redundant check in terms of update efficiency
+                    value_text += f' [{external_link.name}]'
+            self.value_label.var.set(value_text)
             self._activate_value_widget(self.value_label)
         elif field_type == bool:
             if value not in {0, 1}:
@@ -245,14 +150,14 @@ class _MapFieldRow(object):
         if self.field_name_label.var.get() != nickname:
             self.field_name_label.var.set(nickname)
 
-        if map_links and not any(link.name for link in map_links) and not self.link_missing:
+        if external_link and not external_link.link.name and not self.link_missing:
             self.link_missing = True
             self._update_colors()
-        elif (not map_links or any(link.name for link in map_links)) and self.link_missing:
+        elif (not external_link or external_link.link.name) and self.link_missing:
             self.link_missing = False
             self._update_colors()
 
-        self.build_field_context_menu(map_links)
+        self.build_field_context_menu(internal_link, external_link)
         self.tool_tip.text = docstring
 
         self.row_box.grid()
@@ -261,15 +166,19 @@ class _MapFieldRow(object):
         self.value_box.grid()
         self.active_value_widget.grid()
 
-    def build_field_context_menu(self, map_links):
-        # TODO: other stuff? Pop out a scroll box to select an entry, for linked fields?
+    def build_field_context_menu(self, internal_link, external_link):
         self.context_menu.delete(0, 'end')
-        if map_links:
-            for map_link in map_links:
-                if map_link.name != 'None':
-                    self.context_menu.add_command(
-                        label="Jump to entry" if map_link.name else "Create missing entry",
-                        foreground=self.STYLE_DEFAULTS['text_fg'], command=map_link.link)
+        if internal_link:
+            if internal_link.name != 'None':
+                self.context_menu.add_command(
+                    label="Go to map entry" if internal_link.name else "Create missing map entry",
+                    foreground=self.STYLE_DEFAULTS['text_fg'], command=internal_link.link)
+                # TODO: open scrolling list to select name from entry list
+        if external_link:
+            if external_link.name != 'None':
+                self.context_menu.add_command(
+                    label="Go to external entry" if external_link.name else "Create missing external entry",
+                    foreground=self.STYLE_DEFAULTS['text_fg'], command=external_link.link)
 
     def clear(self):
         """Called when this row has no field to display."""
@@ -281,30 +190,44 @@ class _MapFieldRow(object):
 
     @property
     def editable(self):
-        return self.active_value_widget is self.value_label
+        return id(self.active_value_widget) in {id(self.value_label), id(self.value_vector_frame)}
 
-    def confirm_edit(self, new_text):
+    def confirm_edit(self, new_text, coord=None):
+        # TODO: if field type is str, confirm new name is a valid map entry.
         if not self.editable:
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
 
         if isinstance(self.field_type, str):
-            new_value = int(new_text)
-            map_links = self.linker.maps_field_link(self.field_type, new_value)
-            if len(map_links) > 1:
-                new_text += f' [Ambiguous]'
-            elif map_links and map_links[0].name is None:
-                new_text += f' [MISSING]'
-            elif map_links:
-                new_text += f' [{map_links[0].name}]'
+            if self.field_type.startswith('<Map:'):
+                # Map entry index. TODO: Check it's a valid name (don't need to update internal index though).
+                # TODO: Map link.
+                self.value_label.var.set(new_text)
+                return new_text
+            else:
+                # Param ID.
+                new_value = int(new_text)
+                param_links = self.linker.soulstruct_link(self.field_type, new_value)
+                if param_links and param_links[0].name is None:
+                    new_text += f' [MISSING]'
+                    # TODO: color red?
+                elif param_links:
+                    new_text += f' [{param_links[0].name}]'
+                self.value_label.var.set(new_text)
+                return new_value
+
+        if coord is not None:
+            getattr(self, f'value_vector_{coord}').var.set(f'{coord} = {new_text}')
+        else:
             self.value_label.var.set(new_text)
-            return new_value
 
-        self.value_label.var.set(new_text)
-
-        if self.field_type == float:
+        if self.field_type in (float, Vector):
             return float(new_text)
         elif self.field_type == int:
             return int(new_text)
+        elif self.field_type == str:
+            return new_text
+        else:
+            raise TypeError(f"Could not confirm new field value of type {self.field_type}.")
 
     @property
     def active(self):
@@ -324,8 +247,9 @@ class _MapFieldRow(object):
 
     def _update_colors(self):
         bg_color = self._get_color()
-        for widget in (self.row_box, self.field_name_box, self.field_name_label, self.value_box,
-                       self.value_label, self.value_checkbutton):
+        for widget in (self.row_box, self.field_name_box, self.field_name_label, self.value_box, self.value_label,
+                       self.value_vector_frame, self.value_vector_x, self.value_vector_y, self.value_vector_z,
+                       self.value_checkbutton):
             widget['bg'] = bg_color
 
     def _get_color(self):
@@ -340,9 +264,93 @@ class _MapFieldRow(object):
         return f'#{base_bg}'
 
 
+class _MapEntryRow(object):
+    """Container for components of a row in the _MapEntryFrame.
+
+    These are only created once, and their contents are refreshed when needed.
+    """
+
+    def __init__(self, master: _MapEntryFrame, row_index: int, main_bindings: dict = None):
+        self.master = master
+        self.linker = master.linker
+        self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
+
+        self.entry_name = None
+
+        self.index = row_index
+        self._active = False
+        self.any_text_missing = False
+
+        bg_color = self._get_color()
+
+        self.row_box = master.Frame(width=master.ENTRY_BOX_WIDTH, height=25, bg=bg_color, row=row_index, sticky='nsew')
+        bind_events(self.row_box, main_bindings)
+        self.name_box = master.Frame(bg=bg_color, row=row_index)
+        bind_events(self.name_box, main_bindings)
+        self.name_label = master.Label(self.name_box, text='', bg=bg_color, anchor='w', width=60, padx=3)
+        bind_events(self.name_label, main_bindings)
+
+        self.context_menu = master.Menu(self.row_box)
+        self.tool_tip = ToolTip(self.row_box, self.name_box, self.name_label, text=None, wraplength=350)
+
+    def build_entry(self, entry_name: str):
+        self.entry_name = entry_name
+        self.name_label.var.set(entry_name)
+
+        self.row_box.grid()
+        self.name_box.grid()
+        self.name_label.grid()
+
+    def clear(self):
+        """Called when this row has no entry to display."""
+        self.row_box.grid_remove()
+        self.name_box.grid_remove()
+        self.name_label.grid_remove()
+
+    def build_entry_context_menu(self):
+        self.context_menu.delete(0, 'end')
+        # TODO: Nothing to do here yet.
+
+    @property
+    def active(self):
+        return self._active
+
+    @active.setter
+    def active(self, value: bool):
+        if not self._active and value:
+            self._active = True
+        elif self._active and not value:
+            self._active = False
+        else:
+            return  # No change to active state.
+
+        # All widget backgrounds need updating (except Combobox).
+        self._update_colors()
+
+    def _update_colors(self):
+        bg_color = self._get_color()
+        for widget in (self.row_box, self.name_box, self.name_label):
+            widget['bg'] = bg_color
+
+    def _get_color(self):
+        """Inspects entry name/data and returns a tuple of 'bg' color values."""
+        base_bg = 222
+        if self.entry_name is not None:
+            if not self.entry_name:
+                base_bg += 200
+            elif not self.entry_name.strip():
+                base_bg += 110
+        if self._active:
+            base_bg += 123
+        if self.index % 2:
+            base_bg += 111
+        return f'#{base_bg}'
+
+
 class _MapFieldFrame(SoulstructSmartFrame):
     FIELD_CANVAS_BG = '#1d1d1d'
-    FIELD_BOX_WIDTH = 550
+    FIELD_BOX_WIDTH = 700
+    FIELD_BOX_HEIGHT = 500
     FIELD_ROW_COUNT = 173  # highest count (Special Effects)
     FIELD_NAME_FG = '#DDE'
 
@@ -353,17 +361,18 @@ class _MapFieldFrame(SoulstructSmartFrame):
 
         self.map_entry = None
         self.e_field_value_edit = None
+        self.e_coord = None
         self.field_index_selected = None
         self.displayed_field_count = 0
         self.field_rows = []  # type: List[_MapFieldRow]
 
-        self.field_canvas = self.Canvas(vertical_scrollbar=True, width=self.FIELD_BOX_WIDTH, height=500,
-                                        yscrollincrement=25, highlightthickness=1,
+        self.field_canvas = self.Canvas(vertical_scrollbar=True, width=self.FIELD_BOX_WIDTH,
+                                        height=self.FIELD_BOX_HEIGHT, yscrollincrement=25, highlightthickness=1,
                                         padx=40, pady=40, bg=self.FIELD_CANVAS_BG)
         self.f_field_table = self.Frame(frame=self.field_canvas, width=self.FIELD_BOX_WIDTH,
                                         sticky='ew')
         self.field_canvas.create_window(
-            self.FIELD_BOX_WIDTH / 2, 250, window=self.f_field_table, anchor='nw')
+            self.FIELD_BOX_WIDTH / 2, self.FIELD_BOX_HEIGHT / 2, window=self.f_field_table, anchor='nw')
         self.f_field_table.bind(
             "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
 
@@ -382,29 +391,23 @@ class _MapFieldFrame(SoulstructSmartFrame):
         self.select_field(field_index, edit_if_already_selected=False)
         self.field_rows[field_index].context_menu.tk_popup(event.x_root, event.y_root)
 
-    def refresh(self, map_entry=None, field_info_func=None, show_hidden_fields=False, reset_display=False):
+    def refresh_fields(self, map_entry=None, reset_display=False):
         """Refresh all field name/value labels."""
         self._cancel_field_value_edit()
 
         if map_entry is not None:
             self.map_entry = map_entry
 
-        field_names = field_info_func(self.map_entry).keys() if self.map_entry is not None else []
+        field_info = self.map_entry.FIELD_INFO if self.map_entry is not None else {}
 
         row = 0
-        for field_name in field_names:
-
-            field_nickname, is_main, field_type, field_doc = field_info_func(self.map_entry, field_name)
-            if (isinstance(field_type, str) and '<Pad:' in field_type) or (not is_main and not show_hidden_fields):
-                continue  # Skip hidden field (or always skip Pad field).
-
-            field_nickname = camel_case_to_spaces(field_nickname)
+        for field_name, (field_nickname, field_type, field_doc) in field_info.items():
 
             self.field_rows[row].build_field(
                 entry=self.map_entry,
                 name=field_name,
-                value=self.map_entry[field_name],
                 nickname=field_nickname,
+                value=getattr(self.map_entry, field_name),
                 field_type=field_type,
                 docstring=field_doc,
             )
@@ -422,15 +425,14 @@ class _MapFieldFrame(SoulstructSmartFrame):
             self.update_idletasks()
             self.field_canvas.yview_moveto(0)
 
-    def select_field(self, index, set_focus_to_value=True, edit_if_already_selected=True):
+    def select_field(self, index, set_focus_to_value=True, edit_if_already_selected=True, coord=None):
         # TODO: should this start editing immediately (on left click)?
         # TODO: tab while editing moves to next field. Shift+Tab moves back. Up and down arrows also work.
-
         old_index = self.field_index_selected
 
         if old_index is not None and index == old_index:
             if edit_if_already_selected and self.field_rows[index].editable:
-                return self._start_field_value_edit(index)
+                return self._start_field_value_edit(index, coord=coord)
             return
         else:
             self._cancel_field_value_edit()
@@ -469,7 +471,10 @@ class _MapFieldFrame(SoulstructSmartFrame):
             return
         self.select_field(self.field_index_selected + relative_index)
 
-    def _start_field_value_edit(self, index):
+    def _start_field_value_edit(self, index, coord=None):
+        if self.e_field_value_edit and self.e_coord and coord and coord != self.e_coord:
+            # Change to editing a different coordinate.
+            self._confirm_field_value_edit(index)
         if not self.e_field_value_edit:
             field_row = self.field_rows[index]
             if not field_row.editable:
@@ -477,16 +482,29 @@ class _MapFieldFrame(SoulstructSmartFrame):
             field_name = field_row.field_name
             if field_row.field_type == float:
                 self.e_field_value_edit = self.Entry(
-                    field_row.value_box, numbers_only=True, initial_text=self.map_entry[field_name],
-                    sticky='ew', width=5)
+                    field_row.value_box, initial_text=getattr(self.map_entry, field_name),
+                    numbers_only=True, sticky='ew', width=5)
             elif field_row.field_type == int or isinstance(field_row.field_type, str):
                 self.e_field_value_edit = self.Entry(
-                    field_row.value_box, integers_only=True, initial_text=self.map_entry[field_name],
+                    field_row.value_box, initial_text=getattr(self.map_entry, field_name),
+                    integers_only=True, sticky='ew', width=5)
+            elif field_row.field_type == str:
+                self.e_field_value_edit = self.Entry(
+                    field_row.value_box, initial_text=getattr(self.map_entry, field_name),
                     sticky='ew', width=5)
+            elif field_row.field_type == Vector:
+                if coord is None:
+                    return  # Exact coordinate not clicked.
+                self.e_field_value_edit = self.Entry(
+                    field_row.value_vector_frame, initial_text=getattr(getattr(self.map_entry, field_name), coord),
+                    numbers_only=True, sticky='ew', width=5, column='xyz'.index(coord))
+                self.e_coord = coord
+            else:
+                raise TypeError(f"Could not determine editing box from type {field_row.field_type}.")
             self.e_field_value_edit.bind('<Return>', lambda e, i=index: self._confirm_field_value_edit(i))
             self.e_field_value_edit.bind('<Up>', self.field_press_up)
             self.e_field_value_edit.bind('<Down>', self.field_press_down)
-            self.e_field_value_edit.bind('<FocusOut>', lambda e: self._cancel_field_value_edit())
+            self.e_field_value_edit.bind('<FocusOut>', lambda e, i=index: self._confirm_field_value_edit(i))
             self.e_field_value_edit.bind('<Escape>', lambda e: self._cancel_field_value_edit())
             self.e_field_value_edit.focus_set()
             self.e_field_value_edit.select_range(0, 'end')
@@ -495,11 +513,13 @@ class _MapFieldFrame(SoulstructSmartFrame):
         if self.e_field_value_edit:
             self.e_field_value_edit.destroy()
             self.e_field_value_edit = None
+            self.e_coord = None
 
     def _confirm_field_value_edit(self, index):
         if self.e_field_value_edit:
             try:
-                true_value = self.field_rows[index].confirm_edit(new_text=self.e_field_value_edit.var.get())
+                true_value = self.field_rows[index].confirm_edit(
+                    new_text=self.e_field_value_edit.var.get(), coord=self.e_coord)
             except ValueError as e:
                 # Entry input restrictions are supposed to prevent this.
                 print(str(e))
@@ -511,17 +531,22 @@ class _MapFieldFrame(SoulstructSmartFrame):
     def _change_field_value(self, index, new_value):
         """New value should have already been converted to its appropriate type."""
         field_name = self.field_rows[index].field_name
-        old_value = self.map_entry[field_name]
+        old_value = getattr(self.map_entry, field_name)
+        if self.e_coord:
+            old_value = getattr(old_value, self.e_coord)
         if old_value == new_value:
             return False  # Nothing to change.
-        self.map_entry[field_name] = new_value
+        if self.e_coord:
+            setattr(getattr(self.map_entry, field_name), self.e_coord, new_value)
+        else:
+            setattr(self.map_entry, field_name, new_value)
         return True
 
 
 class _MapEntryFrame(SoulstructSmartFrame):
     """Manages map entry selection/modification in editor."""
     ENTRY_CANVAS_BG = '#1d1d1d'
-    ENTRY_BOX_WIDTH = 450
+    ENTRY_BOX_WIDTH = 300
     ENTRY_RANGE_SIZE = 50
 
     field_display: _MapFieldFrame
@@ -531,7 +556,7 @@ class _MapEntryFrame(SoulstructSmartFrame):
         self.Maps = maps
         self.linker = linker
 
-        self.active_msb = None  # type: Optional[MapTable]
+        self.msb_entries = None
         self.entry_rows = []  # type: List[_MapEntryRow]
         self.entry_index_selected = None
         self.first_display_index = 0
@@ -561,15 +586,11 @@ class _MapEntryFrame(SoulstructSmartFrame):
                 #         label="Replace With:", label_position='left', width=14, padx=10)
                 #     self.replace_text_string_entry.bind('<Return>', lambda e: self.find_text_string(replace=True))
 
-                self.show_hidden_fields = self.Checkbutton(
-                    label='Show hidden fields', initial_state=False,
-                    command=lambda: self.refresh_field_display(reset_display=True), pady=20).var
-
             with self.set_master(auto_columns=0):
                 with self.set_master():
                     self.entry_canvas = self.Canvas(  # TODO: what should height actually be?
                         vertical_scrollbar=True, width=self.ENTRY_BOX_WIDTH, height=500, highlightthickness=1,
-                        yscrollincrement=30, padx=40, pady=40, bg=self.ENTRY_CANVAS_BG)
+                        yscrollincrement=25, padx=40, pady=40, bg=self.ENTRY_CANVAS_BG)
                     self.f_entry_table = self.Frame(frame=self.entry_canvas, width=self.ENTRY_BOX_WIDTH, sticky='ew')
                     self.entry_canvas.create_window(self.ENTRY_BOX_WIDTH / 2, 250, window=self.f_entry_table,
                                                     anchor='nw')
@@ -599,12 +620,10 @@ class _MapEntryFrame(SoulstructSmartFrame):
 
     def refresh_field_display(self, reset_display=False):
         if self.entry_index_selected is not None:
-            map_id = self.entry_rows[self.entry_index_selected].entry_id
-            map_entry = self.active_msb[map_id]
+            map_entry = self.msb_entries[self.entry_index_selected]
         else:
             map_entry = None
-        self.field_display.refresh(map_entry=map_entry, field_info_func=self.active_msb.get_field_info,
-                                   show_hidden_fields=self.show_hidden_fields.get(), reset_display=reset_display)
+        self.field_display.refresh_fields(map_entry=map_entry, reset_display=reset_display)
 
     def select_entry(self, index, set_focus_to_name=True, edit_if_already_selected=True):
         """Select entry from index, based on currently displayed category."""
@@ -615,47 +634,44 @@ class _MapEntryFrame(SoulstructSmartFrame):
                 if edit_if_already_selected:
                     return self._start_entry_name_edit(index)
                 return
+            else:
+                self.entry_rows[old_index].active = False
         else:
             self._cancel_entry_name_edit()
 
         self.entry_index_selected = index
-
-        if old_index is not None:
-            self.entry_rows[old_index].active = False
-        self.entry_rows[index].active = True
-        if set_focus_to_name:
-            self.entry_rows[index].name_label.focus_set()
+        if index is not None:
+            self.entry_rows[index].active = True
+            if set_focus_to_name:
+                self.entry_rows[index].name_label.focus_set()
         self.refresh_field_display()
 
     def _refresh_buttons(self):
         # self.b_create_new_map['state'] = 'normal' if self.active_category else 'disabled'  # TODO
-        if not self.active_msb or self.first_display_index == 0:
+        if not self.msb_entries or self.first_display_index == 0:
             self.previous_range_button['state'] = 'disabled'
         else:
             self.previous_range_button['state'] = 'normal'
-        if not self.active_msb or self.first_display_index >= len(self.active_msb) - self.ENTRY_RANGE_SIZE:
+        if not self.msb_entries or self.first_display_index >= len(self.msb_entries) - self.ENTRY_RANGE_SIZE:
             self.next_range_button['state'] = 'disabled'
         else:
             self.next_range_button['state'] = 'normal'
 
-    def refresh_entries(self, msb, reset_fields=False):
+    def refresh_entries(self, msb_entries=None, reset_fields=False):
         self._cancel_entry_name_edit()
 
-        if msb is not None:
-            self.active_msb = msb
+        if msb_entries is not None:
+            self.msb_entries = msb_entries
 
-        if self.active_msb:
-            entries_to_display = self.active_msb.get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
+        if self.msb_entries:
+            entries_to_display = self.msb_entries[
+                self.first_display_index:self.first_display_index + self.ENTRY_RANGE_SIZE]
         else:
             entries_to_display = []  # All rows will be considered 'remaining' and hidden.
 
         row = 0
-        for entry_id, entry in entries_to_display:
-            self.entry_rows[row].build_entry(
-                entry_id=entry_id,
-                entry_name=entry.name,
-                # TODO: text link may need refreshing when edited.
-            )
+        for entry in entries_to_display:
+            self.entry_rows[row].build_entry(entry_name=entry.name)
             row += 1
 
         self.displayed_entry_count = row
@@ -666,14 +682,8 @@ class _MapEntryFrame(SoulstructSmartFrame):
         self.f_entry_table.grid_columnconfigure(1, weight=1)
         self._refresh_buttons()
 
-        if self.active_msb:
+        if self.msb_entries:
             self.refresh_field_display(reset_display=reset_fields)
-
-    def _get_map_index(self, map_id):
-        """Get index of given map ID in currently displayed category."""
-        if map_id not in self.active_msb:
-            raise ValueError(f"There is no MapEntry with ID {map_id} in category {self.active_msb.name}.")
-        return sorted(self.active_msb).index(map_id)
 
     def _change_entry_name(self, entry_index, new_text):
         """Change entry by index in the displayed category.
@@ -681,46 +691,20 @@ class _MapEntryFrame(SoulstructSmartFrame):
         TODO: parent class manages undo/redo with all-purpose navigation and editing. This returns True if any change
          actually happens, and False otherwise, to signal to that manager.
         """
-        entry_id = self.entry_rows[entry_index].entry_id
-        old_text = self.active_msb[entry_id].name
+        old_text = self.msb_entries[entry_index].name
         if old_text == new_text:
             return False  # Nothing to change.
-        self.active_msb[entry_id].name = new_text
+        self.msb_entries[entry_index].name = new_text
         return True
-
-    def _add_entry(self, map_id, name):
-        # TODO: Need some kind of default template for each map if this will be allowed - better to duplicate.
-        #  Maybe you can indicate what map ID you want to copy, at least.
-        if map_id < 0:
-            self.dialog("Text ID Error", message=f"Text ID cannot be negative.")
-            return False
-        if map_id in self.active_msb:
-            self.dialog("Text ID Error", message=f"Text ID {map_id} already exists in category "
-                                                 f"{camel_case_to_spaces(self.active_msb.nickname)}.")
-            return False
-
-        self._cancel_entry_name_edit()
-        self.active_msb[map_id].name = name
-        new_index = self._get_map_index(map_id)
-        self._update_first_display_index(new_index)
-        self.refresh_entries()
-        self.select_entry(new_index)
-        return True
-
-    def _add_relative_entry(self, map_id, offset=1, name=None):
-        if name is None:
-            name = self.active_msb[map_id].name
-        self._add_entry(map_id=map_id + offset, name=name)
 
     def _delete_entry(self, entry_index):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         self._cancel_entry_name_edit()
-        entry_id = self.entry_rows[entry_index].entry_id
-        return self.active_msb.pop(entry_id)   # TODO: or False?
+        return self.msb_entries.pop(entry_index)   # TODO: or False?
 
     def _update_first_display_index(self, new_index):
         """Updates first display index, ensuring that at least the last ten entries are visible."""
-        new_index = min(new_index, len(self.active_msb) - 10)
+        new_index = min(new_index, len(self.msb_entries) - 10)
         self.first_display_index = new_index
 
     def _right_click_map_entry(self, event, entry_index):
@@ -742,18 +726,17 @@ class _MapEntryFrame(SoulstructSmartFrame):
 
     def _go_to_next_entry_range(self):
         first_index = min(self.first_display_index + self.ENTRY_RANGE_SIZE,
-                          max(len(self.active_msb) - self.ENTRY_RANGE_SIZE, 0))
+                          max(len(self.msb_entries) - self.ENTRY_RANGE_SIZE, 0))
         if first_index == self.first_display_index:
             return
         self._update_range(first_index)
 
     def _start_entry_name_edit(self, entry_index):
         if not self.e_entry_name_edit:
-            map_id = self.entry_rows[entry_index].entry_id
             self.e_entry_name_edit = self.Entry(
-                self.entry_rows[entry_index].name_box, initial_text=self.active_msb[map_id].name,
+                self.entry_rows[entry_index].row_box, initial_text=self.msb_entries[entry_index].name,
                 sticky='ew', width=60)
-            self.e_entry_name_edit.bind('<Return>', lambda e, i=map_id: self._confirm_entry_name_edit(i))
+            self.e_entry_name_edit.bind('<Return>', lambda e, i=entry_index: self._confirm_entry_name_edit(i))
             self.e_entry_name_edit.bind('<Up>', self._entry_press_up)
             self.e_entry_name_edit.bind('<Down>', self._entry_press_down)
             self.e_entry_name_edit.bind('<FocusOut>', lambda e: self._cancel_entry_name_edit())
@@ -822,26 +805,34 @@ class SoulstructMapEditor(SoulstructSmartFrame):
         self.linker = linker
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Maps")
 
-        self.active_category = None
-        self.category_boxes = {}
+        self.active_entry_type_index = None
+        self.entry_type_rows = {}
 
         self.action_history = ActionHistory()
-        self.unsaved_changes = set()  # set of changed (category, map_id, action_type) pairs to highlight
+        self.unsaved_changes = set()
 
         with self.set_master(auto_columns=0):
-            # Category selection window
-            with self.set_master(auto_rows=0):
-                self.map_category_canvas = self.Canvas(
-                    vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=575, padx=40, pady=40,
-                    highlightthickness=0)
-                self.f_maps_categories = self.Frame(width=self.CATEGORY_BOX_WIDTH, height=575, sticky='ew')
-                self.link_to_scrollable(self.map_category_canvas, self.f_maps_categories)
-                self.map_category_canvas.create_window(
-                    self.CATEGORY_BOX_WIDTH / 2, 300, window=self.f_maps_categories, anchor='nw')
-                self.f_maps_categories.bind(
-                    "<Configure>", lambda e, c=self.map_category_canvas: self.reset_canvas_scroll_region(c))
+            with self.set_master(auto_rows=0, sticky='n'):
+                self.map_choice = self.Combobox(
+                    # TODO: refresh entries only
+                    values=[camel_case_to_spaces(m) for m in DARK_SOULS_MAP_IDS], initial_value='Depths',
+                    font=20, on_select_function=lambda _: self.refresh_entry_types(clear_selection=True),
+                    padx=10, pady=10, sticky='n').var
+                self.entry_list_choice = self.Combobox(
+                    values=['Models', 'Events', 'Regions', 'Parts'], initial_value='Parts', font=16,
+                    on_select_function=lambda _: self.refresh_entry_types(clear_selection=True),
+                    padx=10, pady=10, sticky='n').var
 
-                self.refresh_categories()
+                self.f_maps_categories = self.Frame(width=self.CATEGORY_BOX_WIDTH, height=575, sticky='n')
+                with self.set_master(self.f_maps_categories):
+                    for row in range(13):
+                        box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30,
+                                         highlightthickness=1, sticky='n')
+                        label = self.Label(text='', sticky='ew', row=row)
+                        label.bind("<Button-1>", lambda e, i=row: self.select_entry_type(i))
+                        box.bind("<Button-1>", lambda e, i=row: self.select_entry_type(i))
+                        self.entry_type_rows[row] = {
+                            'box': box, 'label': label, 'entry_type_name': None, 'entry_type_enum': None}
 
             # Map entry window and field value window
             with self.set_master(auto_rows=0):
@@ -849,7 +840,8 @@ class SoulstructMapEditor(SoulstructSmartFrame):
                     self.entry_display = self.SmartFrame(
                         smart_frame_class=_MapEntryFrame, maps=self.Maps, linker=self.linker)
 
-        self.entry_display.refresh_entries(msb=self.active_category_map_table)
+        self.refresh_entry_types()
+        self.entry_display.refresh_entries(msb_entries=self.active_entry_type_data)
         self.bind_all('<Control-z>', self.undo)
         self.bind_all('<Control-y>', self.redo)
 
@@ -863,47 +855,71 @@ class SoulstructMapEditor(SoulstructSmartFrame):
             self['bg'] = '#522'
             self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
 
-    def refresh_categories(self):
-        for box, label in self.category_boxes.values():
-            box.destroy()
-            label.destroy()
-        self.category_boxes = {}
-        with self.set_master(self.f_maps_categories):
-            categories = self.Maps.map_names
-            for row, category in enumerate(categories):
-                box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30, highlightthickness=1)
-                label_text = camel_case_to_spaces(category).replace(' _', ':')
-                label = self.Label(text=label_text, sticky='ew', row=row)
-                label.bind("<Button-1>", lambda e, c=category: self.select_category(c))
-                box.bind("<Button-1>", lambda e, c=category: self.select_category(c))
-                if category == self.active_category:
-                    label['bg'] = self.CATEGORY_SELECTED_BG
-                    box['bg'] = self.CATEGORY_SELECTED_BG
-                self.link_to_scrollable(self.map_category_canvas, box, label)
-                self.category_boxes[category] = (box, label)
+    def refresh_entry_types(self, _=None, clear_selection=False):
+        row = 0
+        for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[self.active_entry_list_name].items():
+            self.build_row(row, entry_type_name, entry_type_enum)
+            row += 1
 
-    def select_category(self, selected_category, first_display_index=0):
-        if selected_category != self.active_category:
-            self.active_category = selected_category
-            for category, (box, label) in self.category_boxes.items():
-                if selected_category == category:
-                    box['bg'] = self.CATEGORY_SELECTED_BG
-                    label['bg'] = self.CATEGORY_SELECTED_BG
-                else:
-                    box['bg'] = self.STYLE_DEFAULTS['bg']
-                    label['bg'] = self.STYLE_DEFAULTS['bg']
+        for remaining_row in range(row, 13):
+            self.clear_row(remaining_row)
+
+        if clear_selection:
+            self.select_entry_type(None)
+            self.entry_display.select_entry(None)
+            self.entry_display.refresh_entries(self.active_entry_type_data, reset_fields=True)
+
+    def select_entry_type(self, entry_type_index, first_display_index=0):
+        old_entry_type_index = self.active_entry_type_index
+        if entry_type_index is not None and entry_type_index == old_entry_type_index:
+            return  # Nothing to change (no editing).
+        self.active_entry_type_index = entry_type_index
+
+        if old_entry_type_index is not None:
+            self.set_row_bg(old_entry_type_index, self.STYLE_DEFAULTS['bg'])
+
+        if self.active_entry_type_index is not None:
+            self.set_row_bg(self.active_entry_type_index, self.CATEGORY_SELECTED_BG)
 
         self.entry_display.first_display_index = first_display_index
-        self.entry_display.refresh_entries(msb=self.active_category_map_table, reset_fields=True)
-        self.entry_display.select_entry(0, edit_if_already_selected=False)
+        self.entry_display.select_entry(None, edit_if_already_selected=False)
+        self.entry_display.refresh_entries(self.active_entry_type_data, reset_fields=True)
         self.entry_display.entry_canvas.yview_moveto(0)
 
-    @property
-    def active_category_map_table(self):
-        return self.Maps[self.active_category] if self.active_category is not None else None
+    def build_row(self, row, entry_type_name, entry_type_enum):
+        self.entry_type_rows[row]['entry_type_name'] = entry_type_name
+        self.entry_type_rows[row]['entry_type_enum'] = entry_type_enum
+        self.entry_type_rows[row]['label'].var.set(entry_type_name)
+        self.entry_type_rows[row]['box'].grid()
+        self.entry_type_rows[row]['label'].grid()
+
+    def clear_row(self, row):
+        self.entry_type_rows[row]['entry_type_name'] = ''
+        self.entry_type_rows[row]['entry_type_enum'] = None
+        self.entry_type_rows[row]['label'].var.set('')
+        self.entry_type_rows[row]['box'].grid_remove()
+        self.entry_type_rows[row]['label'].grid_remove()
+
+    def set_row_bg(self, row, color):
+        self.entry_type_rows[row]['box']['bg'] = color
+        self.entry_type_rows[row]['label']['bg'] = color
 
     @property
-    def active_category_sorted_ids(self):
-        if self.active_category is None:
-            return None
-        return sorted(self.Maps[self.active_category])
+    def active_map_name(self) -> str:
+        return self.map_choice.get().replace(' ', '')
+
+    @property
+    def active_map_data(self) -> MSB:
+        return self.Maps[self.active_map_name]
+
+    @property
+    def active_entry_list_name(self) -> str:
+        return self.entry_list_choice.get()
+
+    @property
+    def active_entry_type_data(self) -> list:
+        if self.active_entry_type_index is None:
+            return []
+        entry_type_enum = self.entry_type_rows[self.active_entry_type_index]['entry_type_enum']
+        entry_list = getattr(self.active_map_data, self.active_entry_list_name.lower())
+        return entry_list[entry_type_enum]

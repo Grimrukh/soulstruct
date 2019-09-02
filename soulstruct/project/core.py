@@ -10,7 +10,7 @@ from tkinter.ttk import Notebook
 from typing import Optional
 
 from soulstruct.core import SoulstructError
-from soulstruct.maps import DarkSoulsMaps
+from soulstruct.maps import DarkSoulsMaps, MAP_ENTRY_TYPES
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.project.maps import SoulstructMapEditor
 from soulstruct.project.params import SoulstructParamsEditor
@@ -48,6 +48,7 @@ class WindowLinker(object):
     PARAMS_TAB = 0
     TEXT_TAB = 1
     MAIN_TAB = 2
+    MAPS_TAB = 3
 
     class Link(object):
         def __init__(self, name, link, menu_text='Go to link'):
@@ -60,7 +61,7 @@ class WindowLinker(object):
         self.project = window.project
 
     def _link_to_params(self, category, param_id, create_if_missing=False):
-        """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
+        """Simple no-questions-asked navigation. Sets start of visible range to given param entry ID."""
         # TODO: Jump to specific field, too.
         self.window.page_tabs.select(self.PARAMS_TAB)
         index = sorted(self.project.Params[category].entries).index(param_id)
@@ -76,6 +77,19 @@ class WindowLinker(object):
         self.window.text_tab.select_entry(text_id, edit_if_already_selected=False)
         self.window.text_tab.update_idletasks()
         self.window.text_tab.entry_canvas.yview_moveto(0)
+
+    def _link_to_maps(self, entry_list_type, entry_type, entry_name, create_if_missing=False):
+        """Simple no-questions-asked navigation. Sets start of visible range to given map entry ID. Only ever used
+        internally by individual maps, so no need to worry about the active map."""
+        self.window.page_tabs.select(self.MAPS_TAB)
+        self.window.maps_tab.map_choice.var.set(entry_list_type)
+        entry_type_index = list(MAP_ENTRY_TYPES[entry_list_type].values()).index(entry_type)  # TODO: improve...
+        entry_type_list = getattr(self.window.maps_tab.active_map_data, entry_list_type.lower())[entry_type]  # TODO...
+        first_display_index = [entry.name for entry in entry_type_list].index(entry_name)  # TODO...
+        self.window.maps_tab.select_entry_type(
+            entry_type_index=entry_type_index, first_display_index=first_display_index)
+        self.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
+        self.window.maps_tab.update_idletasks()
 
     def create_link(self, data_type: str, **kwargs):
         """Generates a callable link function that will jump to the desired tab, category, entry, etc."""
@@ -154,7 +168,7 @@ class WindowLinker(object):
             return None
         return base_weapon
 
-    def params_field_link(self, field_type, entry_id):
+    def soulstruct_link(self, field_type, entry_id):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
         animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
         resolved here."""
@@ -236,6 +250,10 @@ class WindowLinker(object):
         else:
             return []
 
+    def maps_field_link(self, field_type, field_value):
+        # TODO: Generate an internal or external link.
+        return []
+
 
 class SoulstructProjectWindow(SoulstructSmartFrame):
 
@@ -275,6 +293,11 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.page_tabs.add(f_main_tab, text='  Main  ')
         self.build_main_tab(f_main_tab)
 
+        f_maps_tab = self.Frame(frame=self.page_tabs)
+        self.page_tabs.add(f_maps_tab, text='  Maps  ')
+        self.maps_tab = self.SmartFrame(
+            frame=f_maps_tab, smart_frame_class=SoulstructMapEditor, project=self.project, linker=self.linker)
+
         # TODO: Lighting. Events (somehow). Game saves. MSB.
 
         self.resizable(False, False)
@@ -282,7 +305,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.deiconify()
 
     def build_main_tab(self, main_frame):
-        with self.set_master(main_frame, auto_rows=0, grid_defaults={'padx': 100, 'pady': 50}):
+        with self.set_master(main_frame, auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
             self.Button(text="Pull All from Game Directory", bg='#722', width=30, font_size=20,
                         command=lambda: self.project.load_project(force_game_pull=True))
             self.Button(text="Pull Params", bg='#722', width=30, font_size=20,
@@ -291,6 +314,8 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
                         command=self.project.pull_text)
             self.Button(text="Pull Lighting", bg='#722', width=30, font_size=20,
                         command=self.project.pull_lighting)
+            self.Button(text="Pull Maps", bg='#722', width=30, font_size=20,
+                        command=self.project.pull_maps)
 
 
 class SoulstructProject(object):
@@ -343,10 +368,10 @@ class SoulstructProject(object):
     def load_project(self, force_game_pull=False):
         """Load project structures (params, text, etc.) into class as attributes."""
         for attr, attr_class, pickled, pull_func in zip(
-                ('Text', 'Params', 'Lighting'),
-                (DarkSoulsText, DarkSoulsGameParameters, DarkSoulsLightingParameters),
-                ('text.d1s', 'params.d1s', 'lighting.d1s'),
-                (self.pull_text, self.pull_params, self.pull_lighting)):
+                ('Text', 'Params', 'Lighting', 'Maps'),
+                (DarkSoulsText, DarkSoulsGameParameters, DarkSoulsLightingParameters, DarkSoulsMaps),
+                ('text.d1s', 'params.d1s', 'lighting.d1s', 'maps.d1s'),
+                (self.pull_text, self.pull_params, self.pull_lighting, self.pull_maps)):
             try:
                 if force_game_pull:
                     raise FileNotFoundError
@@ -379,6 +404,10 @@ class SoulstructProject(object):
         self.Lighting = DarkSoulsLightingParameters(self.game_path('param/DrawParam'))
         self.save_in_project(self.Lighting, 'lighting.d1s')
 
+    def pull_maps(self):
+        self.Maps = DarkSoulsMaps(self.game_path('map/MapStudio'))
+        self.save_in_project(self.Maps, 'maps.d1s')
+
     def export_project(self, export_directory: str = None):
         if export_directory is None:
             export_directory = self.project_path(f'export/{self._get_timestamp(for_path=True)}')
@@ -390,6 +419,10 @@ class SoulstructProject(object):
         params_path = os.path.join(export_directory, 'param/GameParam/GameParam.parambnd')
         os.makedirs(params_path, exist_ok=True)
         self.Params.save(params_path)
+
+        maps_path = os.path.join(export_directory, 'map/MapStudio/')
+        os.makedirs(maps_path, exist_ok=True)
+        self.Maps.save(maps_path)
 
         # TODO: can't save DrawParams yet.
         # lighting_path = os.path.join(export_directory, 'param/DrawParam/')
