@@ -35,7 +35,7 @@ class MSBEntryList(object):
     def __init__(self, msb_entry_list_source=None, name=''):
 
         self.name = ''
-        self._entries = OrderedDict()
+        self._entries = OrderedDict()  # {entry_type_enum: list}
         for entry_type in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME].values():
             self._entries[entry_type] = []
 
@@ -87,7 +87,7 @@ class MSBEntryList(object):
         msb_buffer.seek(next_entry_list_offset)
 
     def pack(self, start_offset=0, is_last_table=False):
-        entries = self.get_all_entries()
+        entries = self.get_entries()
         entry_offsets = []
         packed_entries = b''
         offset = start_offset + (self.MAP_ENTITY_LIST_HEADER.size
@@ -115,21 +115,63 @@ class MSBEntryList(object):
 
         return packed_header + packed_name + packed_entries
 
-    def __getitem__(self, entry_type):
-        if isinstance(entry_type, str) and entry_type in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME]:
-            return self._entries[MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME][entry_type]]
-        else:
-            try:
-                return self._entries[entry_type]
-            except KeyError:
-                pass
-        raise AttributeError(f"MSB entry list {self.ENTRY_LIST_NAME} has no entry type sub-list {repr(entry_type)}")
-
     def __iter__(self):
-        return iter(self.get_all_entries())
+        """Iterate over all entries."""
+        return iter(self.get_entries())
 
-    def get_all_entries(self):
-        return list(chain(*self._entries.values()))
+    def __getitem__(self, entry_name_or_index) -> MSBEntry:
+        """You can access entries using their enum, enum value, enum name, or pluralized name from MAP_ENTRY_TYPES."""
+        if isinstance(entry_name_or_index, int):
+            entry_index = entry_name_or_index
+        elif isinstance(entry_name_or_index, str):
+            entry_names = self.get_entry_names()
+            if entry_names.count(entry_name_or_index) > 1:
+                raise ValueError(f"Entry name {entry_name_or_index} appears more than once in MSBEntryList. You must "
+                                 f"access it by index.")
+            entry_index = self.get_entry_names().index(entry_name_or_index)
+        else:
+            raise TypeError("MSBEntryList key must be an entry index or entry name.")
+        return self.get_entries()[entry_index]
+
+    def get_entries(self, entry_type=None):
+        if entry_type is None:
+            return list(chain(*self._entries.values()))
+        entry_type = self.resolve_entry_type(entry_type)
+        return self._entries[entry_type]
+
+    def get_entry_names(self, entry_type=None):
+        """Returns an ordered list of entry names (global or type-specific)."""
+        return [entry.name for entry in self.get_entries(entry_type=entry_type)]
+
+    def get_entry_type(self, entry_name_or_index):
+        """Returns type enum of given entry name or list-wide index."""
+        return self[entry_name_or_index].ENTRY_TYPE
+
+    def get_entry_type_index(self, entry_name_or_index):
+        """Get index of entry name or global index, local to its type."""
+        if isinstance(entry_name_or_index, int):  # Convert to name.
+            entry_name_or_index = self[entry_name_or_index].name
+        entry_type = self.get_entry_type(entry_name_or_index)
+        return self.get_entries(entry_type).index(entry_name_or_index)
+
+    def get_entry_index(self, entry_name):
+        """Get global index of entry with given name."""
+        return self.get_entry_names().index(entry_name)
+
+    def resolve_entry_type(self, entry_type):
+        """Converts any valid entry type specification into the proper type enum."""
+        if isinstance(entry_type, self.ENTRY_TYPE_ENUM):
+            return entry_type
+        try:
+            if isinstance(entry_type, str):
+                if entry_type in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME]:
+                    return MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME][entry_type]
+                return getattr(self.ENTRY_TYPE_ENUM, entry_type)
+            elif isinstance(entry_type, int):
+                return self.ENTRY_TYPE_ENUM(entry_type)
+            raise ValueError
+        except ValueError:
+            raise TypeError(f"Invalid entry type for entry list {self.ENTRY_LIST_NAME}: {entry_type}")
 
     def duplicate_entry(self, entry_type, index, insert_below_original=False):
         duplicated = copy.deepcopy(self._entries[entry_type][index])
@@ -140,7 +182,7 @@ class MSBEntryList(object):
 
     def get_indices(self):
         entry_indices = {}
-        for i, entry in enumerate(self.get_all_entries()):
+        for i, entry in enumerate(self.get_entries()):
             if entry.name in entry_indices:
                 raise NameError(f"Name {repr(entry.name)} appears more than once in MSB.")
             entry_indices[entry.name] = i
@@ -149,7 +191,7 @@ class MSBEntryList(object):
     def set_and_get_unique_names(self):
         unique_names = {}
         repeat_count = {}
-        for i, entry in enumerate(self.get_all_entries()):
+        for i, entry in enumerate(self.get_entries()):
             if entry.name in unique_names.values():
                 repeat_count.setdefault(entry.name, 0)
                 repeat_count[entry.name] += 1
@@ -174,7 +216,7 @@ class MSBModelList(MSBEntryList):
     def set_indices(self, part_instance_counts):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
         type_indices = {}
-        for entry in self.get_all_entries():
+        for entry in self.get_entries():
             entry.set_indices(model_type_index=type_indices.setdefault(entry.model_type, 0),
                               instance_count=part_instance_counts.get(entry.name, 0))
             type_indices[entry.model_type] += 1
@@ -197,16 +239,16 @@ class MSBEventList(MSBEntryList):
     MapOffsets: list
     Navigation: list
     Environment: list
-    NPCInvasion: list
+    NPCInvasions: list
 
     def set_names(self, region_names, part_names):
-        for entry in self.get_all_entries():
+        for entry in self.get_entries():
             entry.set_names(region_names, part_names)
 
     def set_indices(self, region_indices, part_indices):
         """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
         type_indices = {}
-        for i, entry in enumerate(self.get_all_entries()):
+        for i, entry in enumerate(self.get_entries()):
             entry.set_indices(event_index=i, event_type_index=type_indices.setdefault(entry.EVENT_TYPE, 0),
                               region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.EVENT_TYPE] += 1
@@ -226,7 +268,7 @@ class MSBRegionList(MSBEntryList):
 
     def set_indices(self):
         """Global region index only."""
-        for i, entry in enumerate(self.get_all_entries()):
+        for i, entry in enumerate(self.get_entries()):
             entry.set_indices(region_index=i)
 
 
@@ -246,7 +288,7 @@ class MSBPartList(MSBEntryList):
     MapLoadTriggers: list
 
     def set_names(self, model_names, region_names, part_names):
-        for entry in self.get_all_entries():
+        for entry in self.get_entries():
             entry.set_names(model_names, region_names, part_names)
 
     def set_indices(self, model_indices, region_indices, part_indices):
@@ -259,7 +301,7 @@ class MSBPartList(MSBEntryList):
         Note that cutscene files (remo) access Parts by index as well.
         """
         type_indices = {}
-        for entry in self.get_all_entries():
+        for entry in self.get_entries():
             entry.set_indices(part_type_index=type_indices.setdefault(entry.PART_TYPE, 0),
                               model_indices=model_indices, region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.PART_TYPE] += 1
@@ -267,7 +309,7 @@ class MSBPartList(MSBEntryList):
     def get_instance_counts(self):
         """Returns a dictionary mapping model names to part instance counts."""
         instance_counts = {}
-        for entry in self.get_all_entries():
+        for entry in self.get_entries():
             instance_counts.setdefault(entry.model_name, 0)
             instance_counts[entry.model_name] += 1
         return instance_counts
@@ -375,19 +417,22 @@ class MSB(object):
 
     # TODO: pickle/load
 
+    def __getitem__(self, entry_list_name) -> MSBEntryList:
+        if entry_list_name.lower() not in {'Models', 'Events', 'Regions', 'Parts'}:
+            raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
+        return getattr(self, entry_list_name.lower())
+
     def __iter__(self):
-        yield self.models
-        yield self.events
-        yield self.regions
-        yield self.parts
+        return iter((self.models, self.events, self.regions, self.parts))
 
 
 MAP_ENTRY_TYPES = {
     'Models': {
         'MapPieces': MSB_MODEL_TYPE.MapPiece,
         'Objects': MSB_MODEL_TYPE.Object,
-        'Characters': MSB_MODEL_TYPE.Enemy,
-        'Players': MSB_MODEL_TYPE.Player,
+        'NonHumanCharacters': MSB_MODEL_TYPE.NonHumanCharacter,
+        'Unknown': MSB_MODEL_TYPE.Unknown,
+        'HumanCharacters': MSB_MODEL_TYPE.HumanCharacter,
         'Collisions': MSB_MODEL_TYPE.Collision,
         'Navmeshes': MSB_MODEL_TYPE.Navmesh,
     },
@@ -404,7 +449,7 @@ MAP_ENTRY_TYPES = {
         'MapOffsets': MSB_EVENT_TYPE.MapOffset,
         'Navigation': MSB_EVENT_TYPE.Navigation,
         'Environment': MSB_EVENT_TYPE.Environment,
-        'NPCInvasion': MSB_EVENT_TYPE.NPCInvasion,
+        'NPCInvasions': MSB_EVENT_TYPE.NPCInvasion,
     },
     'Regions': {
         'Points': MSB_REGION_TYPE.Point,

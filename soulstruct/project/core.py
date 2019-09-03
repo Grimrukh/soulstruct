@@ -1,6 +1,6 @@
 from __future__ import annotations
 import datetime
-from functools import wraps, partial
+from functools import wraps
 import json
 import os
 import pickle
@@ -10,7 +10,7 @@ from tkinter.ttk import Notebook
 from typing import Optional
 
 from soulstruct.core import SoulstructError
-from soulstruct.maps import DarkSoulsMaps, MAP_ENTRY_TYPES
+from soulstruct.maps import DarkSoulsMaps, MAP_ENTRY_TYPES, MSB
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.project.maps import SoulstructMapEditor
 from soulstruct.project.params import SoulstructParamsEditor
@@ -51,54 +51,191 @@ class WindowLinker(object):
     MAPS_TAB = 3
 
     class Link(object):
-        def __init__(self, name, link, menu_text='Go to link'):
+        def __init__(self, linker: WindowLinker = None, name=None, menu_text='Go to link'):
+            """Create a link within the Soulstruct GUI.
+
+            Args:
+                name: Name that will appear in [] next to ID. If None, no name will appear.
+                menu_text: Text that will appear in right-click menu. Usually "Go to [type]".
+            """
+            self.linker = linker
             self.name = name
-            self.link = link
             self.menu_text = menu_text
+
+        def __call__(self):
+            raise NotImplementedError
+
+    class NullLink(Link):
+        """Link field has a null value, usually 0 or -1, which means the field is unused or set to a default."""
+        def __init__(self, linker: WindowLinker):
+            super().__init__(linker, name='None', menu_text='')
+
+        def __call__(self):
+            raise MissingLinkError("Null link cannot be called.")
+
+    class ParamLink(Link):
+        def __init__(self, linker, category, param_entry_id, create_if_missing=False, name=None):
+            super().__init__(linker, name=name, menu_text=f"Jump to param entry {category}[{param_entry_id}]")
+            self.category = category
+            self.param_entry_id = param_entry_id
+
+        def __call__(self):
+            # TODO: Jump to specific field, for undo/redo.
+            # TODO: Create if missing.
+            self.linker.window.page_tabs.select(self.linker.PARAMS_TAB)
+            index = sorted(self.linker.project.Params[self.category].entries).index(self.param_entry_id)
+            self.linker.window.params_tab.select_category(self.category, first_display_index=index)
+            self.linker.window.params_tab.entry_display.select_entry(0, edit_if_already_selected=False)
+            self.linker.window.params_tab.update_idletasks()
+
+    class TextLink(Link):
+        def __init__(self, linker, category, text_id, create_if_missing=False, name=None):
+            super().__init__(linker, name=name, menu_text=f"Jump to text entry {category}[{text_id}]")
+            self.category = category
+            self.text_id = text_id
+
+        def __call__(self):
+            # TODO: Create if missing.
+            self.linker.window.page_tabs.select(self.linker.TEXT_TAB)
+            self.linker.window.text_tab.select_category(
+                self.category, first_display_index=sorted(self.linker.project.Text[self.category]).index(self.text_id))
+            self.linker.window.text_tab.select_entry(self.text_id, edit_if_already_selected=False)
+            self.linker.window.text_tab.update_idletasks()
+            self.linker.window.text_tab.entry_canvas.yview_moveto(0)
+
+    class MapLink(Link):
+        def __init__(self, linker, entry_list_name, entry_type_index, entry_local_index,
+                     entry_type_name=None, name=None):
+            super().__init__(
+                linker, name=name,
+                menu_text=f"Jump to map entry {entry_list_name}"
+                          f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]")
+            self.entry_list_name = entry_list_name
+            self.entry_type_index = entry_type_index
+            self.entry_local_index = entry_local_index
+
+        def __call__(self):
+            self.linker.window.page_tabs.select(self.linker.MAPS_TAB)
+            self.linker.window.maps_tab.map_choice.var.set(self.entry_list_name)
+            self.linker.window.maps_tab.select_entry_type(
+                entry_type_index=self.entry_type_index, first_display_index=self.entry_local_index)
+            self.linker.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
+            self.linker.window.maps_tab.update_idletasks()
 
     def __init__(self, window: SoulstructProjectWindow):
         self.window = window
         self.project = window.project
 
-    def _link_to_params(self, category, param_id, create_if_missing=False):
-        """Simple no-questions-asked navigation. Sets start of visible range to given param entry ID."""
-        # TODO: Jump to specific field, too.
-        self.window.page_tabs.select(self.PARAMS_TAB)
-        index = sorted(self.project.Params[category].entries).index(param_id)
-        self.window.params_tab.select_category(category, first_display_index=index)
-        self.window.params_tab.entry_display.select_entry(0, edit_if_already_selected=False)
-        self.window.params_tab.update_idletasks()
+    def soulstruct_link(self, field_type, field_value):
+        """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
+        animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
+        resolved here."""
 
-    def _link_to_text(self, category, text_id, create_if_missing=False):
-        """Simple no-questions-asked navigation. Sets start of visible range to given text ID."""
-        self.window.page_tabs.select(self.TEXT_TAB)
-        self.window.text_tab.select_category(
-            category, first_display_index=sorted(self.project.Text[category]).index(text_id))
-        self.window.text_tab.select_entry(text_id, edit_if_already_selected=False)
-        self.window.text_tab.update_idletasks()
-        self.window.text_tab.entry_canvas.yview_moveto(0)
+        match_link = self._MATCH_LINK.match(field_type)
+        if not match_link:
+            raise ValueError("Invalid link.")
 
-    def _link_to_maps(self, entry_list_type, entry_type, entry_name, create_if_missing=False):
-        """Simple no-questions-asked navigation. Sets start of visible range to given map entry ID. Only ever used
-        internally by individual maps, so no need to worry about the active map."""
-        self.window.page_tabs.select(self.MAPS_TAB)
-        self.window.maps_tab.map_choice.var.set(entry_list_type)
-        entry_type_index = list(MAP_ENTRY_TYPES[entry_list_type].values()).index(entry_type)  # TODO: improve...
-        entry_type_list = getattr(self.window.maps_tab.active_map_data, entry_list_type.lower())[entry_type]  # TODO...
-        first_display_index = [entry.name for entry in entry_type_list].index(entry_name)  # TODO...
-        self.window.maps_tab.select_entry_type(
-            entry_type_index=entry_type_index, first_display_index=first_display_index)
-        self.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
-        self.window.maps_tab.update_idletasks()
+        name_extension = ''
+        link_text = match_link.group(1)
 
-    def create_link(self, data_type: str, **kwargs):
-        """Generates a callable link function that will jump to the desired tab, category, entry, etc."""
-        if data_type.lower() == 'params':
-            return partial(self._link_to_params, **kwargs)
-        elif data_type.lower() == 'text':
-            return partial(self._link_to_text, **kwargs)
-        else:
-            raise ValueError(f"Data type for link must be 'Params' or 'Text', not {data_type}.")
+        if ':' not in link_text:
+            return []  # TODO: haven't supported these bare links yet (e.g. Flag, Animation, ...)
+
+        link_pieces = link_text.split(':')
+        table_type = link_pieces[0]
+
+        if table_type == 'Maps':
+            entry_name = field_value
+            active_map = self.window.maps_tab.active_map_data  # type: MSB
+            entry_list_name = link_pieces[1]
+            if entry_list_name not in MAP_ENTRY_TYPES:
+                raise ValueError(f"Invalid map entry list: {entry_list_name}")
+            entry_list = active_map[entry_list_name]
+
+            try:
+                entry_local_index = entry_list.get_entry_type_index(entry_name)
+
+                if len(link_pieces) == 3:
+                    # Technically, map links only care about entry list type, but I'm sometimes adding some additional
+                    # enforcement (like parts.characters[i].model_index linking to models.characters only).
+                    entry_type_name = link_pieces[2]
+                    if entry_type_name not in MAP_ENTRY_TYPES[entry_list_name]:
+                        raise ValueError(f"Invalid map entry type for entry list {entry_list_name}: {entry_type_name}")
+                    if entry_list[entry_name].ENTRY_TYPE != entry_list.resolve_entry_type(entry_type_name):
+                        raise ValueError("Type of entry name in field does not match enforced type of field.")
+                    entry_type_index = MAP_ENTRY_TYPES[entry_list_name][entry_type_name].value
+                else:
+                    entry_type_name = None
+                    entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
+
+            except ValueError:
+                # Entry name is missing (or is not of the enforced entry type).
+                return [self.Link()]
+
+            return [self.MapLink(
+                self, name=field_value, entry_list_name=entry_list_name, entry_type_index=entry_type_index,
+                entry_type_name=entry_type_name, entry_local_index=entry_local_index)]
+
+        if field_value in {-1, 0}:
+            # TODO: ensure that 0 means 'None' for all param/text fields.
+            return [self.Link(self, name='None', menu_text='')]
+
+        category = link_pieces[1]
+
+        if table_type == 'Text':
+            text_table = self.project.Text[category]
+            if field_value not in text_table:
+                return [self.Link()]
+            return [self.TextLink(self, category=category, text_id=field_value, name=text_table[field_value])]
+
+        if table_type == 'Params':
+            if category in {'Attacks', 'Behaviors'}:
+                # Try to determine Player vs. Non Player table.
+                if category == 'Attacks':
+                    if self.window.params_tab.active_category == 'PlayerBehaviors':
+                        category = 'PlayerAttacks'
+                    elif self.window.params_tab.active_category == 'NonPlayerBehaviors':
+                        category = 'NonPlayerAttacks'
+                elif category == 'Behaviors':
+                    if self.window.params_tab.active_category == 'Players':
+                        category = 'PlayerBehaviors'
+                if category in {'Attacks', 'Behaviors'}:
+                    # Could be Player or Non Player. Provide both links.
+                    player_table = self.project.Params['Player' + category]
+                    non_player_table = self.project.Params['NonPlayer' + category]
+                    if field_value not in player_table and field_value not in non_player_table:
+                        return [self.Link()]
+                    links = []
+                    if field_value in player_table:
+                        links.append(self.ParamLink(
+                            self, category='Player' + category, param_entry_id=field_value,
+                            name=player_table[field_value]))
+                    if field_value in player_table:
+                        links.append(self.ParamLink(
+                            self, category='NonPlayer' + category, param_entry_id=field_value,
+                            name=player_table[field_value]))
+                    if links:
+                        return links
+                    return [self.Link()]
+
+            if category in {'Armor', 'Weapons'}:
+                true_param_id = (self.check_armor_id(field_value) if category == 'Armor'
+                                 else self.check_weapon_id(field_value))
+                if true_param_id is None:
+                    return [self.Link()]  # Invalid weapon/armor ID, even considering reinforcement.
+                if field_value != true_param_id:
+                    name_extension = '+' + str(field_value - true_param_id)
+                field_value = true_param_id
+
+            param_table = self.project.Params[category]
+            try:
+                name = param_table[field_value].name + name_extension
+            except KeyError:
+                return [self.Link()]
+            else:
+                return [self.ParamLink(self, category=category, param_entry_id=field_value, name=name)]
+
+        return []  # No other table types supported yet.
 
     def entry_text_link(self, entry_id):
         """Return three (name, link) pairs for entries in item categories. Returns None if no link is appropriate, and
@@ -123,12 +260,11 @@ class WindowLinker(object):
                 text_ids['Descriptions'] = base_armor_id
         for text_category, text_id in text_ids.items():
             if text_ids[text_category] not in self.project.Text[prefix + text_category]:
-                links.append(self.Link(None, None, f'{prefix + text_category} entry missing - click to create (TODO)'))
+                links.append(self.Link())
             else:
-                links.append(self.Link(
-                    name=self.project.Text[prefix + text_category][text_id],
-                    link=self.create_link(data_type='Text', category=prefix + text_category, text_id=text_id),
-                    menu_text=f"Go to {prefix + text_category} entry in Text"))
+                links.append(self.TextLink(
+                    self, category=prefix + text_category, text_id=text_id,
+                    name=self.project.Text[prefix + text_category][text_id]))
 
         return links
 
@@ -167,92 +303,6 @@ class WindowLinker(object):
         if origin == -1:
             return None
         return base_weapon
-
-    def soulstruct_link(self, field_type, entry_id):
-        """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
-        animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
-        resolved here."""
-
-        match_link = self._MATCH_LINK.match(field_type)
-        if not match_link:
-            raise ValueError("Invalid link.")
-
-        name_extension = ''
-        link_text = match_link.group(1)
-
-        if ':' not in link_text:
-            return []  # TODO: haven't supported these links yet.
-
-        if ':' in link_text:
-            table_type, category = link_text.split(':')
-
-            if entry_id in {-1, 0}:
-                # TODO: ensure that 0 means 'None' for all param/text fields.
-                return [self.Link('None', None)]
-
-            if table_type == 'Text':
-                text_table = self.project.Text[category]
-                if entry_id not in text_table:
-                    return [self.Link(None, None)]
-                return [self.Link(
-                    text_table[entry_id],
-                    self.create_link(data_type='Text', category=category, text_id=entry_id))]
-
-            if table_type != 'Params':
-                return []
-
-            if category in {'Attacks', 'Behaviors'}:
-                # Try to determine Player vs. Non Player table.
-                if category == 'Attacks':
-                    if self.window.params_tab.active_category == 'PlayerBehaviors':
-                        category = 'PlayerAttacks'
-                    elif self.window.params_tab.active_category == 'NonPlayerBehaviors':
-                        category = 'NonPlayerAttacks'
-                elif category == 'Behaviors':
-                    if self.window.params_tab.active_category == 'Players':
-                        category = 'PlayerBehaviors'
-                if category in {'Attacks', 'Behaviors'}:
-                    # Could be Player or Non Player. Provide both links.
-                    player_table = self.project.Params['Player' + category]
-                    non_player_table = self.project.Params['NonPlayer' + category]
-                    if entry_id not in player_table and entry_id not in non_player_table:
-                        return [self.Link(None, None)]
-                    links = []
-                    if entry_id in player_table:
-                        links.append(self.Link(
-                            player_table[entry_id],
-                            self.create_link(data_type='Params', category='Player' + category, param_id=entry_id)
-                        ))
-                    if entry_id in player_table:
-                        links.append(self.Link(
-                            non_player_table[entry_id],
-                            self.create_link(data_type='Params', category='NonPlayer' + category, param_id=entry_id)
-                        ))
-                    if links:
-                        return links
-                    return [self.Link(None, None)]
-
-            if category in {'Armor', 'Weapons'}:
-                true_param_id = self.check_armor_id(entry_id) if category == 'Armor' else self.check_weapon_id(entry_id)
-                if true_param_id is None:
-                    return [self.Link(None, None)]  # Invalid weapon/armor ID, even considering reinforcement.
-                if entry_id != true_param_id:
-                    name_extension = '+' + str(entry_id - true_param_id)
-                entry_id = true_param_id
-
-            param_table = self.project.Params[category]
-            try:
-                name = param_table[entry_id].name + name_extension
-            except KeyError:
-                return [self.Link(None, None)]
-            else:
-                return [self.Link(name, self.create_link(data_type='Params', category=category, param_id=entry_id))]
-        else:
-            return []
-
-    def maps_field_link(self, field_type, field_value):
-        # TODO: Generate an internal or external link.
-        return []
 
 
 class SoulstructProjectWindow(SoulstructSmartFrame):

@@ -286,8 +286,7 @@ class _ParamFieldRow(object):
             for param_link in param_links:
                 if param_link.name != 'None':
                     self.context_menu.add_command(
-                        label="Jump to entry" if param_link.name else "Create missing entry",
-                        foreground=self.STYLE_DEFAULTS['text_fg'], command=param_link.link)
+                        label=param_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=param_link)
 
     def clear(self):
         """Called when this row has no field to display (e.g. for smaller ParamTables or unselected entry)."""

@@ -107,18 +107,14 @@ class _MapFieldRow(object):
         self.field_docstring = docstring
 
         # TODO: seems inefficient; there can't be multiple links.
-        internal_link = None
-        external_link = None
+        field_link = None
 
         self.field_name_label.var.set(nickname)
 
         if isinstance(self.field_type, str):
-            if self.field_type.startswith('<Map:'):
-                # Internal map entry name (will be converted to index later).
-                internal_link = self.linker.maps_field_link(self.field_type, value)
-            else:
-                # e.g. AI think ID, talk ID (not implemented), lighting parameter (still to come).
-                external_link = self.linker.soulstruct_link(self.field_type, value)[0]  # Note unpacking.
+            # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
+            field_link = self.linker.soulstruct_link(self.field_type, value)[0]
+            if not self.field_type.startswith('<Map:'):
                 field_type = int
 
         if field_type == str:
@@ -134,11 +130,11 @@ class _MapFieldRow(object):
             self._activate_value_widget(self.value_vector_frame)
         elif field_type in {float, int}:
             value_text = f'{value:.3g}' if field_type == float else str(value)
-            if external_link:
-                if external_link.name is None:
+            if field_link:
+                if field_link.name is None:
                     value_text += f' [MISSING]'
                 else:
-                    value_text += f' [{external_link.name}]'
+                    value_text += f' [{field_link.name}]'
             self.value_label.var.set(value_text)
             self._activate_value_widget(self.value_label)
         elif field_type == bool:
@@ -150,14 +146,14 @@ class _MapFieldRow(object):
         if self.field_name_label.var.get() != nickname:
             self.field_name_label.var.set(nickname)
 
-        if external_link and not external_link.link.name and not self.link_missing:
+        if field_link and field_link.link.name and not self.link_missing:
             self.link_missing = True
             self._update_colors()
-        elif (not external_link or external_link.link.name) and self.link_missing:
+        elif (not field_link or not field_link.link.name) and self.link_missing:
             self.link_missing = False
             self._update_colors()
 
-        self.build_field_context_menu(internal_link, external_link)
+        self.build_field_context_menu(self.field_type, field_link)
         self.tool_tip.text = docstring
 
         self.row_box.grid()
@@ -166,19 +162,13 @@ class _MapFieldRow(object):
         self.value_box.grid()
         self.active_value_widget.grid()
 
-    def build_field_context_menu(self, internal_link, external_link):
+    def build_field_context_menu(self, field_type, field_link):
         self.context_menu.delete(0, 'end')
-        if internal_link:
-            if internal_link.name != 'None':
+        if field_link:
+            if field_link.name != 'None':
                 self.context_menu.add_command(
-                    label="Go to map entry" if internal_link.name else "Create missing map entry",
-                    foreground=self.STYLE_DEFAULTS['text_fg'], command=internal_link.link)
-                # TODO: open scrolling list to select name from entry list
-        if external_link:
-            if external_link.name != 'None':
-                self.context_menu.add_command(
-                    label="Go to external entry" if external_link.name else "Create missing external entry",
-                    foreground=self.STYLE_DEFAULTS['text_fg'], command=external_link.link)
+                    label=field_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=field_link.link)
+                # TODO: open scrolling list to select name from entry list.
 
     def clear(self):
         """Called when this row has no field to display."""
@@ -922,4 +912,4 @@ class SoulstructMapEditor(SoulstructSmartFrame):
             return []
         entry_type_enum = self.entry_type_rows[self.active_entry_type_index]['entry_type_enum']
         entry_list = getattr(self.active_map_data, self.active_entry_list_name.lower())
-        return entry_list[entry_type_enum]
+        return entry_list.get_entries(entry_type=entry_type_enum)
