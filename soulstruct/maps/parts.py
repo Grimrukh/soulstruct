@@ -66,7 +66,7 @@ class BaseMSBPart(MSBEntry):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Map:Model>',
+            'Model Name', '<Maps:Models>',
             "Name of model to use for this part."),
         'translate': (
             'Translate', Vector,

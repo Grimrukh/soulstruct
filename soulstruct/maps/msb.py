@@ -81,7 +81,7 @@ class MSBEntryList(object):
             entry = self.ENTRY_CLASS(msb_buffer)
             self._entries[entry.ENTRY_TYPE].append(entry)
 
-        for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME]:
+        for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[self.ENTRY_LIST_NAME].items():
             setattr(self, entry_type_name, self._entries[entry_type_enum])
 
         msb_buffer.seek(next_entry_list_offset)
@@ -128,7 +128,7 @@ class MSBEntryList(object):
             if entry_names.count(entry_name_or_index) > 1:
                 raise ValueError(f"Entry name {entry_name_or_index} appears more than once in MSBEntryList. You must "
                                  f"access it by index.")
-            entry_index = self.get_entry_names().index(entry_name_or_index)
+            entry_index = entry_names.index(entry_name_or_index)
         else:
             raise TypeError("MSBEntryList key must be an entry index or entry name.")
         return self.get_entries()[entry_index]
@@ -152,7 +152,7 @@ class MSBEntryList(object):
         if isinstance(entry_name_or_index, int):  # Convert to name.
             entry_name_or_index = self[entry_name_or_index].name
         entry_type = self.get_entry_type(entry_name_or_index)
-        return self.get_entries(entry_type).index(entry_name_or_index)
+        return self.get_entry_names(entry_type).index(entry_name_or_index)
 
     def get_entry_index(self, entry_name):
         """Get global index of entry with given name."""
@@ -418,7 +418,7 @@ class MSB(object):
     # TODO: pickle/load
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:
-        if entry_list_name.lower() not in {'Models', 'Events', 'Regions', 'Parts'}:
+        if entry_list_name.lower() not in {'models', 'events', 'regions', 'parts'}:
             raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
         return getattr(self, entry_list_name.lower())
 

@@ -106,18 +106,21 @@ class _MapFieldRow(object):
         self.field_type = field_type
         self.field_docstring = docstring
 
-        # TODO: seems inefficient; there can't be multiple links.
         field_link = None
 
         self.field_name_label.var.set(nickname)
 
         if isinstance(self.field_type, str):
             # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
-            field_link = self.linker.soulstruct_link(self.field_type, value)[0]
-            if not self.field_type.startswith('<Map:'):
+            try:
+                field_link = self.linker.soulstruct_link(self.field_type, value)[0]
+            except IndexError:
+                print("No field link for type:", self.field_type)
+                field_link = None
+            if not self.field_type.startswith('<Maps:'):
                 field_type = int
 
-        if field_type == str:
+        if isinstance(field_type, str):
             # Name of another MSB entry.
             # TODO: confirm name is valid when editing finishes.
             self.value_label.var.set(value)
@@ -128,7 +131,7 @@ class _MapFieldRow(object):
             self.value_vector_y.var.set(f'y = {value.y:.3g}')
             self.value_vector_z.var.set(f'z = {value.z:.3g}')
             self._activate_value_widget(self.value_vector_frame)
-        elif field_type in {float, int}:
+        elif field_type in {float, int, str}:
             value_text = f'{value:.3g}' if field_type == float else str(value)
             if field_link:
                 if field_link.name is None:
@@ -146,10 +149,10 @@ class _MapFieldRow(object):
         if self.field_name_label.var.get() != nickname:
             self.field_name_label.var.set(nickname)
 
-        if field_link and field_link.link.name and not self.link_missing:
+        if field_link and not field_link.name and not self.link_missing:
             self.link_missing = True
             self._update_colors()
-        elif (not field_link or not field_link.link.name) and self.link_missing:
+        elif (not field_link or field_link.name) and self.link_missing:
             self.link_missing = False
             self._update_colors()
 
@@ -167,7 +170,7 @@ class _MapFieldRow(object):
         if field_link:
             if field_link.name != 'None':
                 self.context_menu.add_command(
-                    label=field_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=field_link.link)
+                    label=field_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=field_link)
                 # TODO: open scrolling list to select name from entry list.
 
     def clear(self):
@@ -188,7 +191,7 @@ class _MapFieldRow(object):
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
 
         if isinstance(self.field_type, str):
-            if self.field_type.startswith('<Map:'):
+            if self.field_type.startswith('<Maps:'):
                 # Map entry index. TODO: Check it's a valid name (don't need to update internal index though).
                 # TODO: Map link.
                 self.value_label.var.set(new_text)
@@ -385,9 +388,7 @@ class _MapFieldFrame(SoulstructSmartFrame):
         """Refresh all field name/value labels."""
         self._cancel_field_value_edit()
 
-        if map_entry is not None:
-            self.map_entry = map_entry
-
+        self.map_entry = map_entry
         field_info = self.map_entry.FIELD_INFO if self.map_entry is not None else {}
 
         row = 0

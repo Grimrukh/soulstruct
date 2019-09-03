@@ -116,7 +116,8 @@ class WindowLinker(object):
 
         def __call__(self):
             self.linker.window.page_tabs.select(self.linker.MAPS_TAB)
-            self.linker.window.maps_tab.map_choice.var.set(self.entry_list_name)
+            self.linker.window.maps_tab.entry_list_choice.set(self.entry_list_name)
+            self.linker.window.maps_tab.refresh_entry_types(clear_selection=True)
             self.linker.window.maps_tab.select_entry_type(
                 entry_type_index=self.entry_type_index, first_display_index=self.entry_local_index)
             self.linker.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
