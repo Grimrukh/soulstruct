@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from ast import literal_eval
 from enum import IntEnum
 from typing import List, TYPE_CHECKING
 
@@ -116,18 +117,17 @@ class _MapFieldRow(object):
             try:
                 field_link = self.linker.soulstruct_link(self.field_type, value)[0]
             except IndexError:
-                # TODO: Handle links to Flags, Sounds, etc.
-                # print("No field link for type:", self.field_type)
+                print("No field link for type:", self.field_type)
                 field_link = None
-            if not self.field_type.startswith('<Maps:'):
+            if not self.field_type.startswith('<Maps'):
                 field_type = int
-                
-        # TODO: rushing to write this: camel case to space for entry types
 
         if isinstance(field_type, str):
-            # Name of another MSB entry.
-            # TODO: confirm name is valid when editing finishes.
-            self.value_label.var.set(value)
+            if field_type.startswith('<MapsList:'):
+                self.value_label.var.set('(select to edit)')
+            else:
+                # Name of another MSB entry.
+                self.value_label.var.set(value)
             self._activate_value_widget(self.value_label)
         elif field_type == Vector:
             # No chance of a link here.
@@ -149,6 +149,11 @@ class _MapFieldRow(object):
                 raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
             self.value_checkbutton.var.set(value)
             self._activate_value_widget(self.value_checkbutton)
+        elif field_type == list:
+            value_text = repr(value)
+            print(value_text)
+            self.value_label.var.set(value_text)
+            self._activate_value_widget(self.value_label)
         elif issubclass(field_type, IntEnum):
             self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
             try:
@@ -171,7 +176,7 @@ class _MapFieldRow(object):
             self.link_missing = False
             self._update_colors()
 
-        self.build_field_context_menu(self.field_type, field_link)
+        self.build_field_context_menu(field_link)
         self.tool_tip.text = docstring
 
         self.row_box.grid()
@@ -180,7 +185,7 @@ class _MapFieldRow(object):
         self.value_box.grid()
         self.active_value_widget.grid()
 
-    def build_field_context_menu(self, field_type, field_link):
+    def build_field_context_menu(self, field_link):
         self.context_menu.delete(0, 'end')
         if field_link:
             if field_link.name != 'None':
@@ -201,25 +206,27 @@ class _MapFieldRow(object):
         return id(self.active_value_widget) in {id(self.value_label), id(self.value_vector_frame)}
 
     def confirm_edit(self, new_text, coord=None):
-        # TODO: if field type is str, confirm new name is a valid map entry.
         if not self.editable:
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
 
         if isinstance(self.field_type, str):
-            if self.field_type.startswith('<Maps:'):
-                # Map entry index. TODO: Check it's a valid name (don't need to update internal index though).
-                # TODO: Map link.
-                self.value_label.var.set(new_text)
-                return new_text
+            new_value = str(new_text) if not self.field_type.startswith('<Maps') else new_text
+            try:
+                field_link = self.linker.soulstruct_link(self.field_type, new_text)[0]
+            except IndexError:
+                pass  # No link for this field.
             else:
-                # Param ID.
-                new_value = int(new_text)
-                param_links = self.linker.soulstruct_link(self.field_type, new_value)
-                if param_links and param_links[0].name is None:
+                if not field_link.name:
                     new_text += f' [MISSING]'
-                    # TODO: color red?
-                elif param_links:
-                    new_text += f' [{param_links[0].name}]'
+                    if not self.link_missing:
+                        self.link_missing = True
+                        self._update_colors()
+                else:
+                    if not self.field_type.startswith('<Maps:'):  # not <MapsList:
+                        new_text += f' [{field_link.name}]'
+                    if self.link_missing:
+                        self.link_missing = False
+                        self._update_colors()
                 self.value_label.var.set(new_text)
                 return new_value
 
@@ -234,6 +241,14 @@ class _MapFieldRow(object):
             return int(new_text)
         elif self.field_type == str:
             return new_text
+        elif self.field_type == list:
+            try:
+                true_value = literal_eval(new_text)
+                if not isinstance(true_value, list):
+                    raise ValueError()
+            except (SyntaxError, ValueError):
+                raise ValueError("Field value must be a list.")
+            return true_value
         else:
             raise TypeError(f"Could not confirm new field value of type {self.field_type}.")
 
@@ -491,12 +506,13 @@ class _MapFieldFrame(SoulstructSmartFrame):
                     field_row.value_box, initial_text=getattr(self.map_entry, field_name),
                     numbers_only=True, sticky='ew', width=5)
             elif field_row.field_type == int or isinstance(field_row.field_type, str):
+                # TODO: Pop-out list editor for MapsList.
                 self.e_field_value_edit = self.Entry(
                     field_row.value_box, initial_text=getattr(self.map_entry, field_name),
-                    integers_only=True, sticky='ew', width=5)
-            elif field_row.field_type == str:
+                    integers_only=field_row.field_type == int, sticky='ew', width=5)
+            elif field_row.field_type in (str, list):
                 self.e_field_value_edit = self.Entry(
-                    field_row.value_box, initial_text=getattr(self.map_entry, field_name),
+                    field_row.value_box, initial_text=str(getattr(self.map_entry, field_name)),
                     sticky='ew', width=5)
             elif field_row.field_type == Vector:
                 if coord is None:

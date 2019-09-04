@@ -108,8 +108,9 @@ class WindowLinker(object):
                      entry_type_name=None, name=None):
             super().__init__(
                 linker, name=name,
-                menu_text=f"Jump to map entry {entry_list_name}"
-                          f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]")
+                menu_text=f"Go to {entry_list_name}"
+                          f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}] "
+                          f"[{name}]")
             self.entry_list_name = entry_list_name
             self.entry_type_index = entry_type_index
             self.entry_local_index = entry_local_index
@@ -144,6 +145,15 @@ class WindowLinker(object):
 
         link_pieces = link_text.split(':')
         table_type = link_pieces[0]
+
+        if table_type == 'MapsList':
+            links = []
+            field_type = f'<Maps:{":".join(link_pieces[1:])}>'
+            for entry_name in field_value:
+                if not entry_name:
+                    continue
+                links += self.soulstruct_link(field_type, entry_name)
+            return links
 
         if table_type == 'Maps':
             entry_name = field_value
