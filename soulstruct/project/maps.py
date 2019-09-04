@@ -28,7 +28,7 @@ class _MapFieldRow(object):
     every time a new entry/category is selected.
     """
     ROW_HEIGHT = 30
-    NAME_WIDTH = 15
+    NAME_WIDTH = 20
     VALUE_WIDTH = 60
 
     def __init__(self, master: _MapFieldFrame, row_index: int, change_value_func, main_bindings: dict = None):
@@ -117,7 +117,7 @@ class _MapFieldRow(object):
             try:
                 field_link = self.linker.soulstruct_link(self.field_type, value)[0]
             except IndexError:
-                print("No field link for type:", self.field_type)
+                # print("No field link for type:", self.field_type)
                 field_link = None
             if not self.field_type.startswith('<Maps'):
                 field_type = int
@@ -151,7 +151,6 @@ class _MapFieldRow(object):
             self._activate_value_widget(self.value_checkbutton)
         elif field_type == list:
             value_text = repr(value)
-            print(value_text)
             self.value_label.var.set(value_text)
             self._activate_value_widget(self.value_label)
         elif issubclass(field_type, IntEnum):
@@ -247,7 +246,7 @@ class _MapFieldRow(object):
                 if not isinstance(true_value, list):
                     raise ValueError()
             except (SyntaxError, ValueError):
-                raise ValueError("Field value must be a list.")
+                raise ValueError("Field value must be a list of integers.")
             return true_value
         else:
             raise TypeError(f"Could not confirm new field value of type {self.field_type}.")

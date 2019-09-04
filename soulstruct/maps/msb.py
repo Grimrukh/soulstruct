@@ -130,7 +130,7 @@ class MSBEntryList(object):
                                  f"access it by index.")
             entry_index = entry_names.index(entry_name_or_index)
         else:
-            raise TypeError("MSBEntryList key must be an entry index or entry name.")
+            raise TypeError(f"MSBEntryList key must be an entry index or entry name, not {entry_name_or_index}.")
         return self.get_entries()[entry_index]
 
     def get_entries(self, entry_type=None):

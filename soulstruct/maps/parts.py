@@ -277,6 +277,25 @@ class MSBObject(BaseMSBPart):
         '4x',
     )
 
+    FIELD_INFO = {
+        **BaseMSBPart.FIELD_INFO,
+        'collision_name': (
+            'Draw Parent', '<Maps:Parts>',
+            "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
+        'unk_x08_x0c': (
+            'Unknown [08-0c]', int,
+            "Unknown."),
+        'object_pose': (
+            'Object Pose', int,
+            "ID of an object animation that determines its appearance, e.g. for different corpse poses."),
+        'unk_x0e_x10': (
+            'Unknown [0e-10]', int,
+            "Unknown."),
+        'unk_x10_x14': (
+            'Unknown [10-14]', int,
+            "Unknown."),
+    }
+
     ENTRY_TYPE = MSB_PART_TYPE.Object
 
     def __init__(self, msb_part_source):
@@ -327,9 +346,43 @@ class MSBCharacter(BaseMSBPart):
         ('collision_index', 'i'),
         '8x',
         ('patrol_point_indices', '8h'),
-        ('unk_x38_x3c', 'i'),
+        ('default_animation', 'i'),
         ('unk_x3c_x40', 'i'),
     )
+
+    FIELD_INFO = {
+        **BaseMSBPart.FIELD_INFO,
+        'think_param_id': (
+            'AI ID', '<Params:AI>',
+            "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used."),
+        'npc_param_id': (
+            'NPC ID', '<Params:NonPlayers>',
+            "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
+            "unused."),
+        'talk_id': (
+            'Talk ID', int,  # TODO: '<Talk>'
+            "EzState ID of character, which determines their interactions (conversations, shops, etc.). This is used "
+            "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map."),
+        'unk_x14_x18': (
+            'Unknown [14-18]', float,
+            "Unknown floating-point number."),
+        'chara_init_id': (
+            'Player ID', '<Params:Players>',
+            "Contains information for 'player' (human) characters, such as their stats and equipment."),
+        'collision_name': (
+            'Draw Parent', '<Maps:Parts>',
+            "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
+        'patrol_point_names': (
+            'Patrol Regions', '<MapsList:Regions>',
+            "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
+            "AI logic."),
+        'default_animation': (
+            'Default Animation', int,  # TODO: '<Animation>'
+            "Default looping animation for character."),
+        'unk_x3c_x40': (
+            'Unknown [3c-40]', int,
+            "Unknown."),
+    }
 
     ENTRY_TYPE = MSB_PART_TYPE.Character
 
@@ -343,7 +396,7 @@ class MSBCharacter(BaseMSBPart):
         self._collision_index = None
         self.patrol_point_names = None
         self._patrol_point_indices = None
-        self.unk_x38_x3c = None
+        self.default_animation = None
         self.unk_x3c_x40 = None
         super().__init__(msb_part_source)
 
@@ -356,7 +409,7 @@ class MSBCharacter(BaseMSBPart):
         self.chara_init_id = data.chara_init_id
         self._collision_index = data.collision_index
         self._patrol_point_indices = data.patrol_point_indices
-        self.unk_x38_x3c = data.unk_x38_x3c
+        self.default_animation = data.default_animation
         self.unk_x3c_x40 = data.unk_x3c_x40
 
     def pack_type_data(self):
@@ -368,7 +421,7 @@ class MSBCharacter(BaseMSBPart):
             chara_init_id=self.chara_init_id,
             collision_index=self._collision_index,
             patrol_point_indices=self._patrol_point_indices,
-            unk_x38_x3c=self.unk_x38_x3c,
+            default_animation=self.default_animation,
             unk_x3c_x40=self.unk_x3c_x40,
         )
 
@@ -409,15 +462,80 @@ class MSBCollision(BaseMSBPart):
         ('reflect_plane_height', 'f'),
         ('navmesh_groups', '4I'),
         ('vagrant_entity_ids', '3i'),
-        ('map_name_id', 'h'),
-        ('start_disabled', 'h'),
-        ('disable_bonfire_entity_id', 'i'),
-        ('minus_ones', '3i', [-1, -1, -1]),
+        ('area_name_id', 'h'),
+        ('starts_disabled', 'h'),
+        ('attached_bonfire', 'i'),
+        ('minus_ones', '3i', [-1, -1, -1]),  # Possibly more bonfires?
         ('play_region_id', 'i'),
         ('lock_cam_param_id_1', 'h'),
         ('lock_cam_param_id_2', 'h'),
         '16x',
     )
+
+    FIELD_INFO = {
+        **BaseMSBPart.FIELD_INFO,
+        'hit_filter_id': (
+            'Hit Filter ID', int,
+            "Unknown."),
+        'sound_space_type': (
+            'Sound Space Type', int,
+            "Unknown."),
+        'env_light_map_spot_index': (
+            'Environment Light Map Spot Index', int,
+            "Unknown."),
+        'reflect_plane_height': (
+            'Reflect Plane Height', float,
+            "Unknown."),
+        'navmesh_groups': (
+            'Navmesh Groups', list,
+            "Unknown."),
+        'vagrant_entity_ids': (
+            'Vagrant Entity IDs', list,
+            "Unknown."),
+        'area_name_id': (
+            'Area Name', '<Text:PlaceNames>',
+            "Name of area that this collision is in, which determines the area banner that is shown when you step on "
+            "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
+            "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY')."),
+        'force_area_banner': (
+            'Show Area Banner', bool,
+            "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
+            "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
+            "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
+            "different area (a 'silent area transition') and have it enabled for collision that are further away, "
+            "which produces a 'delayed area banner' effect.\n\n"
+            ""
+            "Do NOT enable this for two adjacent collision with different area names, or moving back and forth between "
+            "those collisions will build up a huge queue of area banners to display, which can only be fixed by "
+            "restarting the game entirely."),
+        'starts_disabled': (
+            'Starts Disabled', bool,
+            "If True, this collision is disabled on map load and must be manually enabled with an event script."),
+        'attached_bonfire': (
+            'Attached Bonfire', '<Maps:Parts:Objects>',
+            "If this is set to a bonfire, that bonfire will be disabled if any living enemy characters are on this "
+            "collision. Note that this also checks for enemies that are disabled by events."),
+        'play_region_id': (
+            'Play Region ID', int,
+            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
+            ""
+            "NOTE: This field shares space with the stable footing flag, so only one of them can be set to a non-zero "
+            "value per collision."),
+        'stable_footing_flag': (
+            'Stable Footing Flag', int,
+            "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
+            "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
+            "defeated. If set to -1, the player's position will never be saved on this collision.\n\n"
+            ""
+            "NOTE: This field shares space with the play region ID, so only one of them can be set to a non-zero value "
+            "per collision."),
+        'lock_cam_param_id_1': (
+            'Camera Param ID 1', '<Params:Cameras>',
+            "First camera ID to use on this collision. Unsure how the two slots differ."),
+        'lock_cam_param_id_2': (
+            'Camera Param ID 2', '<Params:Cameras>',
+            "Second camera ID to use on this collision. Unsure how the two slots differ."),
+    }
 
     ENTRY_TYPE = MSB_PART_TYPE.Collision
 
@@ -428,10 +546,12 @@ class MSBCollision(BaseMSBPart):
         self.reflect_plane_height = None
         self.navmesh_groups = None
         self.vagrant_entity_ids = None
-        self.map_name_id = None
-        self.start_disabled = None
-        self.disable_bonfire_entity_id = None
-        self.play_region_id = None
+        self.area_name_id = None
+        self.force_area_banner = None  # Custom field.
+        self.starts_disabled = None
+        self.attached_bonfire = None
+        self.__play_region_id = None
+        self.__stable_footing_flag = None
         self.lock_cam_param_id_1 = None
         self.lock_cam_param_id_2 = None
         super().__init__(msb_part_source)
@@ -444,14 +564,49 @@ class MSBCollision(BaseMSBPart):
         self.reflect_plane_height = data.reflect_plane_height
         self.navmesh_groups = data.navmesh_groups
         self.vagrant_entity_ids = data.vagrant_entity_ids
-        self.map_name_id = data.map_name_id
-        self.start_disabled = data.start_disabled
-        self.disable_bonfire_entity_id = data.disable_bonfire_entity_id
-        self.play_region_id = data.play_region_id
+        self.area_name_id = abs(data.area_name_id)
+        self.force_area_banner = data.area_name_id < -1  # Custom field.
+        self.starts_disabled = data.starts_disabled
+        self.attached_bonfire = data.attached_bonfire
+        if data.play_region_id >= -2:
+            self.__play_region_id = data.play_region_id
+            self.__stable_footing_flag = 0
+        else:
+            self.__play_region_id = 0
+            self.__stable_footing_flag = -data.play_region_id - 10
         self.lock_cam_param_id_1 = data.lock_cam_param_id_1
         self.lock_cam_param_id_2 = data.lock_cam_param_id_2
 
+    @property
+    def play_region_id(self):
+        return self.__play_region_id
+
+    @play_region_id.setter
+    def play_region_id(self, value):
+        if self.__stable_footing_flag != 0:
+            raise ValueError("Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' is non-zero.")
+        if not isinstance(value, int) or value < 0:
+            raise ValueError("'play_region_id' must be an integer greater than or equal to 0.")
+        self.__play_region_id = value
+
+    @property
+    def stable_footing_flag(self):
+        return self.__stable_footing_flag
+
+    @stable_footing_flag.setter
+    def stable_footing_flag(self, value):
+        if self.__play_region_id != 0:
+            raise ValueError("Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' is non-zero.")
+        if not isinstance(value, int) or value < -1:
+            raise ValueError("'stable_footing_flag' must be an integer greater than or equal to -1.")
+        self.__stable_footing_flag = value
+
     def pack_type_data(self):
+        signed_area_name_id = self.area_name_id * (-1 if self.force_area_banner else 1)
+        if self.__stable_footing_flag != 0:
+            play_region_id = -self.__stable_footing_flag - 10 if self.__stable_footing_flag > 0 else -1
+        else:
+            play_region_id = self.__play_region_id
         return BinaryStruct(*self.PART_COLLISION_STRUCT).pack(
             hit_filter_id=self.hit_filter_id,
             sound_space_type=self.sound_space_type,
@@ -459,10 +614,10 @@ class MSBCollision(BaseMSBPart):
             reflect_plane_height=self.reflect_plane_height,
             navmesh_groups=self.navmesh_groups,
             vagrant_entity_ids=self.vagrant_entity_ids,
-            map_name_id=self.map_name_id,
-            start_disabled=self.start_disabled,
-            disable_bonfire_entity_id=self.disable_bonfire_entity_id,
-            play_region_id=self.play_region_id,
+            area_name_id=signed_area_name_id,
+            starts_disabled=self.starts_disabled,
+            attached_bonfire=self.attached_bonfire,
+            play_region_id=play_region_id,
             lock_cam_param_id_1=self.lock_cam_param_id_1,
             lock_cam_param_id_2=self.lock_cam_param_id_2,
         )
@@ -475,6 +630,13 @@ class MSBNavmesh(BaseMSBPart):
         ('navmesh_groups', '4I'),
         '16x',
     )
+
+    FIELD_INFO = {
+        **BaseMSBPart.FIELD_INFO,
+        'navmesh_groups': (
+            'Navmesh Groups', list,
+            "Unknown."),
+    }
 
     ENTRY_TYPE = MSB_PART_TYPE.Navmesh
 
@@ -510,6 +672,16 @@ class MSBMapLoadTrigger(BaseMSBPart):
         ('map_id', '4b'),
         '8x',
     )
+
+    FIELD_INFO = {
+        **BaseMSBPart.FIELD_INFO,
+        'collision_name': (
+            'Collision', '<Maps:Parts:Collisions>',
+            "Collision that triggers this map load."),
+        'map_id': (
+            'Map ID', list,
+            "Parts of map name this will trigger."),  # TODO: Combobox of maps.
+    }
 
     ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
 

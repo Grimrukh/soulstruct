@@ -157,6 +157,8 @@ class WindowLinker(object):
 
         if table_type == 'Maps':
             entry_name = field_value
+            if not entry_name:  # None or empty string
+                return [self.Link(self, name='None')]
             active_map = self.window.maps_tab.active_map_data  # type: MSB
             entry_list_name = link_pieces[1]
             if entry_list_name not in MAP_ENTRY_TYPES:
