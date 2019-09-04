@@ -2,6 +2,7 @@ from io import BufferedReader, BytesIO
 from enum import IntEnum
 import struct
 
+from soulstruct.enums.darksouls1 import SoundType
 from soulstruct.maps.core import MSBEntry
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector, pad_chars
 
@@ -33,7 +34,7 @@ class BaseMSBEvent(MSBEntry):
         ('name_offset', 'i'),
         ('event_index', 'i'),
         ('event_type', 'I'),
-        ('event_type_index', 'i'),
+        ('local_event_index', 'i'),
         ('base_data_offset', 'i'),
         ('type_data_offset', 'i'),
         '4x',
@@ -54,7 +55,7 @@ class BaseMSBEvent(MSBEntry):
     def __init__(self, msb_event_source):
         super().__init__()
         self._event_index = None  # global index
-        self._event_type_index = None  # local type index
+        self._local_event_index = None  # local type index
         self.entity_id = None
         self.base_part_name = None
         self._base_part_index = None
@@ -78,16 +79,16 @@ class BaseMSBEvent(MSBEntry):
         base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(msb_buffer, offset=event_offset + header.name_offset, encoding='shift-jis')
         self._event_index = header.event_index
-        self._event_type_index = header.event_type_index
+        self._local_event_index = header.local_event_index
         self._base_part_index = base_data.part_index
         self._base_region_index = base_data.region_index
         self.entity_id = base_data.entity_id
         msb_buffer.seek(event_offset + header.type_data_offset)
         self.unpack_type_data(msb_buffer)
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         self._event_index = event_index  # TODO: confirm this can safely be handled automatically.
-        self._event_type_index = event_type_index
+        self._local_event_index = local_event_index
         self._base_part_index = part_indices[self.base_part_name] if self.base_part_name else -1
         self._base_region_index = region_indices[self.base_region_name] if self.base_region_name else -1
 
@@ -113,7 +114,7 @@ class BaseMSBEvent(MSBEntry):
             name_offset=name_offset,
             event_index=self._event_index,
             event_type=self.ENTRY_TYPE,
-            event_type_index=self._event_type_index,
+            local_event_index=self._local_event_index,
             base_data_offset=base_data_offset,
             type_data_offset=type_data_offset,
         )
@@ -140,6 +141,12 @@ class MSBLight(BaseMSBEvent):
         ('unk_x00_x04', 'i'),
     )
 
+    FIELD_INFO = {
+        'unk_x00_x04': (
+            'Unknown [00-04]', int,
+            "Unknown Light parameter (integer)."),
+    }
+
     ENTRY_TYPE = MSB_EVENT_TYPE.Light
 
     def __init__(self, msb_event_source):
@@ -161,6 +168,15 @@ class MSBSound(BaseMSBEvent):
         ('sound_type', 'i'),
         ('sound_id', 'i'),
     )
+
+    FIELD_INFO = {
+        'sound_type': (
+            'Sound Type', SoundType,
+            "Type of sound, which is used to find the sound data (sound name prefix letter)."),
+        'sound_id': (
+            'Sound ID', '<Sound>',
+            "Sound data ID, which refers to an ID in loaded sound events."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Sound
 
@@ -185,6 +201,12 @@ class MSBFX(BaseMSBEvent):
     EVENT_FX_STRUCT = (
         ('fx_id', 'i'),
     )
+
+    FIELD_INFO = {
+        'fx_id': (
+            'FX ID', int,
+            "Visual effect ID, which refers to a loaded FX file."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.FX
 
@@ -221,6 +243,57 @@ class MSBWind(BaseMSBEvent):
         ('unk_x38_x3c', 'f'),
         ('unk_x3c_x40', 'f'),
     )
+
+    FIELD_INFO = {
+        'unk_x00_x04': (
+            'Unknown [00-04]', int,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x04_x08': (
+            'Unknown [04-08]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x08_x0c': (
+            'Unknown [08-0c]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x0c_x10': (
+            'Unknown [0c-10]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x10_x14': (
+            'Unknown [10-14]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x14_x18': (
+            'Unknown [14-18]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x18_x1c': (
+            'Unknown [18-1c]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x1c_x20': (
+            'Unknown [1c-20]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x20_x24': (
+            'Unknown [20-24]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x24_x28': (
+            'Unknown [24-28]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x28_x2c': (
+            'Unknown [28-2c]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x2c_x30': (
+            'Unknown [2c-30]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x30_x34': (
+            'Unknown [30-34]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x34_x38': (
+            'Unknown [34-38]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x38_x3c': (
+            'Unknown [38-3c]', float,
+            "Unknown Wind parameter (floating-point number)."),
+        'unk_x3c_x40': (
+            'Unknown [3c-40]', float,
+            "Unknown Wind parameter (floating-point number)."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Wind
 
@@ -300,9 +373,41 @@ class MSBTreasure(BaseMSBEvent):
         ('item_lot_5', 'i'),
         ('minus_one_5', 'i', -1),
         ('in_chest', '?'),
-        ('start_disabled', '?'),
+        ('starts_disabled', '?'),
         '2x',
     )
+
+    FIELD_INFO = {
+        'treasure_part_name': (
+            'Treasure Object', '<Maps:Parts:Objects>',
+            "Object on which treasure will appear (usually a corpse or chest)."),
+        'item_lot_1': (
+            'Item Lot 1', '<Params:ItemLots>',
+            "First item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
+            "awarded.)"),
+        'item_lot_2': (
+            'Item Lot 2', '<Params:ItemLots>',
+            "Second item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
+            "awarded.)"),
+        'item_lot_3': (
+            'Item Lot 3', '<Params:ItemLots>',
+            "Third item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
+            "awarded.)"),
+        'item_lot_4': (
+            'Item Lot 4', '<Params:ItemLots>',
+            "Fourth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
+            "awarded.)"),
+        'item_lot_5': (
+            'Item Lot 5', '<Params:ItemLots>',
+            "Fifth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
+            "awarded.)"),
+        'in_chest': (
+            'Is In Chest', bool,
+            "Indicates if this treasure is inside a chest (affects appearance)."),  # TODO: effect?
+        'starts_disabled': (
+            'Starts Disabled', bool,
+            "If True, this treasure will start disabled and will need to be enabled manually with an event script."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Treasure
 
@@ -315,7 +420,7 @@ class MSBTreasure(BaseMSBEvent):
         self.item_lot_4 = None
         self.item_lot_5 = None
         self.in_chest = None
-        self.start_disabled = None
+        self.starts_disabled = None
         super().__init__(msb_event_source)
 
     def unpack_type_data(self, msb_buffer):
@@ -327,7 +432,7 @@ class MSBTreasure(BaseMSBEvent):
         self.item_lot_4 = data.item_lot_4
         self.item_lot_5 = data.item_lot_5
         self.in_chest = data.in_chest
-        self.start_disabled = data.start_disabled
+        self.starts_disabled = data.starts_disabled
 
     def pack_type_data(self):
         return BinaryStruct(*self.EVENT_TREASURE_STRUCT).pack(
@@ -338,11 +443,11 @@ class MSBTreasure(BaseMSBEvent):
             item_lot_4=self.item_lot_4,
             item_lot_5=self.item_lot_5,
             in_chest=self.in_chest,
-            start_disabled=self.start_disabled,
+            starts_disabled=self.starts_disabled,
         )
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
-        super().set_indices(event_index, event_type_index, region_indices, part_indices)
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
+        super().set_indices(event_index, local_event_index, region_indices, part_indices)
         self._treasure_part_index = part_indices[self.treasure_part_name] if self.treasure_part_name else -1
 
     def set_names(self, region_names, part_names):
@@ -364,6 +469,37 @@ class MSBSpawner(BaseMSBEvent):
         ('spawn_part_indices', '32i'),
         '64x',
     )
+
+    FIELD_INFO = {
+        # TODO: investigate all these counts.
+        'max_count': (
+            'Max Count', int,
+            "Unsure; I suspect this is the total number of entities this spawner can produce."),
+        'limit_count': (
+            'Limit Count', int,
+            "Unsure; I suspect this is the number of spawned entities that can be alive at once."),
+        'min_spawner_count': (
+            'Min Spawner Count', int,
+            "Unsure."),
+        'max_spawner_count': (
+            'Max Spawner Count', int,
+            "Unsure."),
+        'min_interval': (
+            'Min Interval', float,
+            "Minimum number of seconds between spawns."),
+        'max_interval': (
+            'Max Interval', float,
+            "Maximum number of seconds between spawns."),
+        'initial_spawn_count': (
+            'Initial Spawn Count', int,
+            'Unsure; I suspect this is the number of entities spawned immediately on map load.'),
+        'spawn_region_names': (
+            'Spawn Regions', '<MapsList:Regions>',  # TODO: need a special pop-out window of entries for this.
+            "Regions where entities will be spawned."),
+        'spawn_part_names': (
+            'Spawn Characters', '<MapsList:Parts:Characters>',  # TODO: ditto
+            "Entities that will be spawned at given regions."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Spawner
 
@@ -406,8 +542,8 @@ class MSBSpawner(BaseMSBEvent):
             spawn_part_indices=self._spawn_part_indices,
         )
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
-        super().set_indices(event_index, event_type_index, region_indices, part_indices)
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
+        super().set_indices(event_index, local_event_index, region_indices, part_indices)
         self._spawn_part_indices = [part_indices[n] if n else -1 for n in self.spawn_part_names]
         self._spawn_region_indices = [region_indices[n] if n else -1 for n in self.spawn_region_names]
 
@@ -421,29 +557,41 @@ class MSBMessage(BaseMSBEvent):
     EVENT_MESSAGE_STRUCT = (
         ('text_id', 'h'),
         ('unk_x02_x04', 'h'),
-        ('is_hidden', '?'),
+        ('starts_disabled', '?'),
         '3x',
     )
+
+    FIELD_INFO = {
+        'text_id': (
+            'Message Text', '<Text:SoapstoneMessages>',
+            "Text shown when soapstone message is examined."),
+        'unk_x02_x04': (
+            'Unknown [02-04]', int,
+            "Unknown."),  # TODO: investigate
+        'starts_disabled': (
+            'Starts Disabled', bool,
+            "If True, the message starts disabled and must be manually enabled with an event script."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Message
 
     def __init__(self, msb_event_source):
         self.text_id = None
         self.unk_x02_x04 = None
-        self.is_hidden = None
+        self.starts_disabled = None
         super().__init__(msb_event_source)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.EVENT_MESSAGE_STRUCT).unpack(msb_buffer)
         self.text_id = data.text_id
         self.unk_x02_x04 = data.unk_x02_x04
-        self.is_hidden = data.is_hidden
+        self.starts_disabled = data.starts_disabled
 
     def pack_type_data(self):
         return BinaryStruct(*self.EVENT_MESSAGE_STRUCT).pack(
             text_id=self.text_id,
             unk_x02_x04=self.unk_x02_x04,
-            is_hidden=self.is_hidden,
+            starts_disabled=self.starts_disabled,
         )
 
 
@@ -455,6 +603,24 @@ class MSBObjAct(BaseMSBEvent):
         ('unk_x0a_x0c', 'h'),
         ('obj_act_flag', 'i'),
     )
+
+    FIELD_INFO = {
+        'obj_act_entity_id': (
+            'ObjAct Entity ID', int,
+            "ID that identifies this object activation event in event scripts."),
+        'obj_act_part_name': (
+            'Object', '<Maps:Parts:Objects>',
+            "Object to which this object activation event is attached."),
+        'obj_act_param_id': (
+            'ObjAct Param', '<Params:ObjectActivations>',
+            "Param entry containing information about this object activation event."),
+        'unk_x0a_x0c': (
+            'Unknown [0a-0c]', int,
+            "Unknown."),  # TODO: investigate
+        'obj_act_flag': (
+            'ObjAct Flag', '<Flag>',
+            "Flag that stores the persistent state (e.g. open/closed) of this object activation."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.ObjAct
 
@@ -484,8 +650,8 @@ class MSBObjAct(BaseMSBEvent):
             obj_act_flag=self.obj_act_flag,
         )
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
-        super().set_indices(event_index, event_type_index, region_indices, part_indices)
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
+        super().set_indices(event_index, local_event_index, region_indices, part_indices)
         self._obj_act_part_index = part_indices[self.obj_act_part_name] if self.obj_act_part_name else -1
 
     def set_names(self, region_names, part_names):
@@ -498,6 +664,12 @@ class MSBSpawnPoint(BaseMSBEvent):
         ('spawn_point_region_index', 'i'),
         '12x',
     )
+
+    FIELD_INFO = {
+        'spawn_point_region_name': (
+            'Spawn Point Region', '<Maps:Regions>',
+            "Region where player will spawn when registered to this spawn point."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.SpawnPoint
 
@@ -515,8 +687,8 @@ class MSBSpawnPoint(BaseMSBEvent):
             spawn_point_region_index=self._spawn_point_region_index,
         )
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
-        super().set_indices(event_index, event_type_index, region_indices, part_indices)
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
+        super().set_indices(event_index, local_event_index, region_indices, part_indices)
         if self.spawn_point_region_name:
             self._spawn_point_region_index = region_indices[self.spawn_point_region_name]
         else:
@@ -532,11 +704,18 @@ class MSBSpawnPoint(BaseMSBEvent):
 
 class MSBMapOffset(BaseMSBEvent):
     EVENT_MAP_OFFSET_STRUCT = (
-        ('translate_x', 'f'),
-        ('translate_y', 'f'),
-        ('translate_z', 'f'),
+        ('translate', '3f'),
         ('rotate_y', 'f'),
     )
+
+    FIELD_INFO = {
+        'translate': (
+            'Translate', Vector,
+            "Vector of (x, y, z) coordinates of map offset."),
+        'rotate_y': (
+            'Y Rotation', float,
+            "Euler angle of rotation around the Y (vertical) axis."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.MapOffset
 
@@ -547,7 +726,7 @@ class MSBMapOffset(BaseMSBEvent):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.EVENT_MAP_OFFSET_STRUCT).unpack(msb_buffer)
-        self.translate = Vector(data.translate_x, data.translate_y, data.translate_z)
+        self.translate = Vector(data.translate)
         self.rotate_y = data.rotate_y
 
     def pack_type_data(self):
@@ -565,6 +744,12 @@ class MSBNavmesh(BaseMSBEvent):
         '12x',
     )
 
+    FIELD_INFO = {
+        'navmesh_region_name': (
+            'Navmesh Region', '<Maps:Regions>',
+            "Region to which navmesh event is attached."),
+    }
+
     ENTRY_TYPE = MSB_EVENT_TYPE.Navigation
 
     def __init__(self, msb_event_source):
@@ -581,8 +766,8 @@ class MSBNavmesh(BaseMSBEvent):
             navmesh_region_index=self._navmesh_region_index,
         )
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
-        super().set_indices(event_index, event_type_index, region_indices, part_indices)
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
+        super().set_indices(event_index, local_event_index, region_indices, part_indices)
         self._navmesh_region_index = region_indices[self.navmesh_region_name] if self.navmesh_region_name else -1
 
     def set_names(self, region_names, part_names):
@@ -603,6 +788,27 @@ class MSBEnvironment(BaseMSBEvent):
         ('unk_x14_x18', 'f'),
         '8x',
     )
+
+    FIELD_INFO = {
+        'unk_x00_x04': (
+            'Unknown [00-04]', int,
+            "Unknown Environment parameter (integer)."),
+        'unk_x04_x08': (
+            'Unknown [04-08]', float,
+            "Unknown Environment parameter (floating-point number)."),
+        'unk_x08_x0c': (
+            'Unknown [08-0c]', float,
+            "Unknown Environment parameter (floating-point number)."),
+        'unk_x0c_x10': (
+            'Unknown [0c-10]', float,
+            "Unknown Environment parameter (floating-point number)."),
+        'unk_x10_x14': (
+            'Unknown [10-14]', float,
+            "Unknown Environment parameter (floating-point number)."),
+        'unk_x14_x18': (
+            'Unknown [14-18]', float,
+            "Unknown Environment parameter (floating-point number)."),
+    }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Environment
 
@@ -643,6 +849,18 @@ class MSBNPCInvasion(BaseMSBEvent):
         '4x',
     )
 
+    FIELD_INFO = {
+        'host_entity_id': (
+            'Host Entity ID', int,
+            "Entity ID of NPC character to be invaded."),
+        'invasion_flag_id': (
+            'Invasion Flag', '<Flag>',
+            "Flag that is enabled while the invasion is active, which should trigger changes to the world."),
+        'spawn_point_region_name': (
+            'Spawn Point Region', '<Maps:Regions>',
+            "Region where player will spawn during invasion event."),
+    }
+
     ENTRY_TYPE = MSB_EVENT_TYPE.NPCInvasion
 
     def __init__(self, msb_event_source):
@@ -665,8 +883,8 @@ class MSBNPCInvasion(BaseMSBEvent):
             spawn_point_region_index=self._spawn_point_region_index,
         )
 
-    def set_indices(self, event_index, event_type_index, region_indices, part_indices):
-        super().set_indices(event_index, event_type_index, region_indices, part_indices)
+    def set_indices(self, event_index, local_event_index, region_indices, part_indices):
+        super().set_indices(event_index, local_event_index, region_indices, part_indices)
         if self.spawn_point_region_name:
             self._spawn_point_region_index = region_indices[self.spawn_point_region_name]
         else:

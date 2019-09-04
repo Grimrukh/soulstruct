@@ -249,7 +249,7 @@ class MSBEventList(MSBEntryList):
         """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
         type_indices = {}
         for i, entry in enumerate(self.get_entries()):
-            entry.set_indices(event_index=i, event_type_index=type_indices.setdefault(entry.EVENT_TYPE, 0),
+            entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.EVENT_TYPE, 0),
                               region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.EVENT_TYPE] += 1
 

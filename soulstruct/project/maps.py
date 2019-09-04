@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import IntEnum
 from typing import List, TYPE_CHECKING
 
 from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_IDS
@@ -115,10 +116,13 @@ class _MapFieldRow(object):
             try:
                 field_link = self.linker.soulstruct_link(self.field_type, value)[0]
             except IndexError:
-                print("No field link for type:", self.field_type)
+                # TODO: Handle links to Flags, Sounds, etc.
+                # print("No field link for type:", self.field_type)
                 field_link = None
             if not self.field_type.startswith('<Maps:'):
                 field_type = int
+                
+        # TODO: rushing to write this: camel case to space for entry types
 
         if isinstance(field_type, str):
             # Name of another MSB entry.
@@ -145,6 +149,17 @@ class _MapFieldRow(object):
                 raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
             self.value_checkbutton.var.set(value)
             self._activate_value_widget(self.value_checkbutton)
+        elif issubclass(field_type, IntEnum):
+            self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
+            try:
+                # noinspection PyUnresolvedReferences
+                enum_name = camel_case_to_spaces(field_type(value).name)
+            except ValueError:
+                enum_name = f'<Unknown: {value}>'  # TODO: ensure this is read back and saved properly
+            self.value_combobox.var.set(enum_name)
+            self._activate_value_widget(self.value_combobox)
+        else:
+            raise TypeError(f"Invalid field type: {field_type}")
 
         if self.field_name_label.var.get() != nickname:
             self.field_name_label.var.set(nickname)
