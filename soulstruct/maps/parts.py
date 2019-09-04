@@ -13,8 +13,8 @@ class MSB_PART_TYPE(IntEnum):
     PlayerStarts = 4
     Collision = 5
     Navmesh = 8
-    DummyObject = 9
-    DummyCharacter = 10
+    UnusedObject = 9
+    UnusedCharacter = 10
     MapLoadTrigger = 11
 
 
@@ -65,6 +65,9 @@ class BaseMSBPart(MSBEntry):
     )
 
     FIELD_INFO = {
+        'entity_id': (
+            'Entity ID', int,
+            "Entity ID used to refer to the part in other game files."),
         'model_name': (
             'Model Name', '<Maps:Models>',
             "Name of model to use for this part."),
@@ -83,9 +86,6 @@ class BaseMSBPart(MSBEntry):
         'display_groups': (
             'Display Groups', list,
             "Display groups of part. These are not yet fully understood, but they determined when the part appears."),
-        'entity_id': (
-            'Entity ID', int,
-            "Entity ID used to refer to the part in other game files."),
     }
 
     ENTRY_TYPE = None
@@ -512,9 +512,9 @@ class MSBCollision(BaseMSBPart):
             'Starts Disabled', bool,
             "If True, this collision is disabled on map load and must be manually enabled with an event script."),
         'attached_bonfire': (
-            'Attached Bonfire', '<Maps:Parts:Objects>',
-            "If this is set to a bonfire, that bonfire will be disabled if any living enemy characters are on this "
-            "collision. Note that this also checks for enemies that are disabled by events."),
+            'Attached Bonfire', int,
+            "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
+            "on this collision. Note that this also checks for enemies that are disabled by events."),
         'play_region_id': (
             'Play Region ID', int,
             "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
@@ -564,11 +564,11 @@ class MSBCollision(BaseMSBPart):
         self.reflect_plane_height = data.reflect_plane_height
         self.navmesh_groups = data.navmesh_groups
         self.vagrant_entity_ids = data.vagrant_entity_ids
-        self.area_name_id = abs(data.area_name_id)
-        self.force_area_banner = data.area_name_id < -1  # Custom field.
+        self.area_name_id = abs(data.area_name_id) if data.area_name_id >= 0 else -1
+        self.force_area_banner = data.area_name_id < 0  # Custom field.
         self.starts_disabled = data.starts_disabled
         self.attached_bonfire = data.attached_bonfire
-        if data.play_region_id >= -2:
+        if data.play_region_id > -10:
             self.__play_region_id = data.play_region_id
             self.__stable_footing_flag = 0
         else:
@@ -585,8 +585,8 @@ class MSBCollision(BaseMSBPart):
     def play_region_id(self, value):
         if self.__stable_footing_flag != 0:
             raise ValueError("Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' is non-zero.")
-        if not isinstance(value, int) or value < 0:
-            raise ValueError("'play_region_id' must be an integer greater than or equal to 0.")
+        if not isinstance(value, int) or value <= -10:
+            raise ValueError("'play_region_id' must be an integer greater than or equal to -9.")
         self.__play_region_id = value
 
     @property
@@ -597,14 +597,16 @@ class MSBCollision(BaseMSBPart):
     def stable_footing_flag(self, value):
         if self.__play_region_id != 0:
             raise ValueError("Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' is non-zero.")
-        if not isinstance(value, int) or value < -1:
-            raise ValueError("'stable_footing_flag' must be an integer greater than or equal to -1.")
+        if not isinstance(value, int) or value < 0:
+            raise ValueError("'stable_footing_flag' must be an integer greater than or equal to 0.")
         self.__stable_footing_flag = value
 
     def pack_type_data(self):
-        signed_area_name_id = self.area_name_id * (-1 if self.force_area_banner else 1)
+        if self.area_name_id == -1 and not self.force_area_banner:
+            raise ValueError("'force_area_banner' must be enabled if 'area_name_id' is -1 (default).")
+        signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self.force_area_banner else 1)
         if self.__stable_footing_flag != 0:
-            play_region_id = -self.__stable_footing_flag - 10 if self.__stable_footing_flag > 0 else -1
+            play_region_id = -self.__stable_footing_flag - 10
         else:
             play_region_id = self.__play_region_id
         return BinaryStruct(*self.PART_COLLISION_STRUCT).pack(
@@ -654,30 +656,30 @@ class MSBNavmesh(BaseMSBPart):
         )
 
 
-class MSBDummyObject(MSBObject):
+class MSBUnusedObject(MSBObject):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to standard MSBObject."""
-    ENTRY_TYPE = MSB_PART_TYPE.DummyObject
+    ENTRY_TYPE = MSB_PART_TYPE.UnusedObject
 
 
-class MSBDummyCharacter(MSBCharacter):
+class MSBUnusedCharacter(MSBCharacter):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to standard MSBCharacter."""
-    ENTRY_TYPE = MSB_PART_TYPE.DummyCharacter
+    ENTRY_TYPE = MSB_PART_TYPE.UnusedCharacter
 
 
 class MSBMapLoadTrigger(BaseMSBPart):
-    """Links to an MSBCollision entry and causes another map to load when the player stands on that collision."""
+    """Links to an MSBMapPiece entry and causes another map to load when the player stands on that collision."""
 
     PART_MAP_LOAD_TRIGGER_STRUCT = (
-        ('collision_index', 'i'),
+        ('map_piece_index', 'i'),
         ('map_id', '4b'),
         '8x',
     )
 
     FIELD_INFO = {
         **BaseMSBPart.FIELD_INFO,
-        'collision_name': (
-            'Collision', '<Maps:Parts:Collisions>',
-            "Collision that triggers this map load."),
+        'map_piece_name': (
+            'Map Piece', '<Maps:Parts:MapPieces>',
+            "Map Piece that triggers this map load."),
         'map_id': (
             'Map ID', list,
             "Parts of map name this will trigger."),  # TODO: Combobox of maps.
@@ -686,30 +688,30 @@ class MSBMapLoadTrigger(BaseMSBPart):
     ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
 
     def __init__(self, msb_part_source):
-        self.collision_name = None
-        self._collision_index = None
+        self.map_piece_name = None
+        self._map_piece_index = None
         self.map_id = None
         super().__init__(msb_part_source)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).unpack(msb_buffer)
-        self.collision_name = None
-        self._collision_index = data.collision_index
+        self.map_piece_name = None
+        self._map_piece_index = data.map_piece_index
         self.map_id = data.map_id  # TODO: Convert to a GameMap instance.
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).pack(
-            collision_index=self._collision_index,
+            map_piece_index=self._map_piece_index,
             map_id=self.map_id,
         )
 
     def set_indices(self, part_type_index, model_indices, region_indices, part_indices):
         super().set_indices(part_type_index, model_indices, region_indices, part_indices)
-        self._collision_index = part_indices[self.collision_name] if self.collision_name else -1
+        self._map_piece_index = part_indices[self.map_piece_name] if self.map_piece_name else -1
 
     def set_names(self, model_names, region_names, part_names):
         super().set_names(model_names, region_names, part_names)
-        self.collision_name = part_names[self._collision_index] if self._collision_index != -1 else None
+        self.map_piece_name = part_names[self._map_piece_index] if self._map_piece_index != -1 else None
 
 
 MSB_PART_TYPE_CLASSES = {
@@ -719,7 +721,7 @@ MSB_PART_TYPE_CLASSES = {
     MSB_PART_TYPE.PlayerStarts: MSBPlayer,
     MSB_PART_TYPE.Collision: MSBCollision,
     MSB_PART_TYPE.Navmesh: MSBNavmesh,
-    MSB_PART_TYPE.DummyObject: MSBDummyObject,
-    MSB_PART_TYPE.DummyCharacter: MSBDummyCharacter,
+    MSB_PART_TYPE.UnusedObject: MSBUnusedObject,
+    MSB_PART_TYPE.UnusedCharacter: MSBUnusedCharacter,
     MSB_PART_TYPE.MapLoadTrigger: MSBMapLoadTrigger,
 }

@@ -315,9 +315,9 @@ class _MapEntryRow(object):
         self.context_menu = master.Menu(self.row_box)
         self.tool_tip = ToolTip(self.row_box, self.name_box, self.name_label, text=None, wraplength=350)
 
-    def build_entry(self, entry_name: str):
+    def build_entry(self, entry_name: str, entity_id: int = -1):
         self.entry_name = entry_name
-        self.name_label.var.set(entry_name)
+        self.name_label.var.set(entry_name + (f'  [{entity_id}]' if entity_id != -1 else ''))
 
         self.row_box.grid()
         self.name_box.grid()
@@ -692,7 +692,7 @@ class _MapEntryFrame(SoulstructSmartFrame):
 
         row = 0
         for entry in entries_to_display:
-            self.entry_rows[row].build_entry(entry_name=entry.name)
+            self.entry_rows[row].build_entry(entry_name=entry.name, entity_id=getattr(entry, 'entity_id', -1))
             row += 1
 
         self.displayed_entry_count = row
@@ -840,7 +840,7 @@ class SoulstructMapEditor(SoulstructSmartFrame):
                     font=20, on_select_function=lambda _: self.refresh_entry_types(clear_selection=True),
                     padx=10, pady=10, sticky='n').var
                 self.entry_list_choice = self.Combobox(
-                    values=['Models', 'Events', 'Regions', 'Parts'], initial_value='Parts', font=16,
+                    values=list(MAP_ENTRY_TYPES.keys()), initial_value='Parts', font=16,
                     on_select_function=lambda _: self.refresh_entry_types(clear_selection=True),
                     padx=10, pady=10, sticky='n').var
 
@@ -910,7 +910,7 @@ class SoulstructMapEditor(SoulstructSmartFrame):
     def build_row(self, row, entry_type_name, entry_type_enum):
         self.entry_type_rows[row]['entry_type_name'] = entry_type_name
         self.entry_type_rows[row]['entry_type_enum'] = entry_type_enum
-        self.entry_type_rows[row]['label'].var.set(entry_type_name)
+        self.entry_type_rows[row]['label'].var.set(camel_case_to_spaces(entry_type_name))
         self.entry_type_rows[row]['box'].grid()
         self.entry_type_rows[row]['label'].grid()
 

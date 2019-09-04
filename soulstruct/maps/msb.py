@@ -283,8 +283,8 @@ class MSBPartList(MSBEntryList):
     PlayerStarts: list
     Collisions: list
     Navmeshes: list
-    DummyObjects: list
-    DummyCharacters: list
+    UnusedObjects: list
+    UnusedCharacters: list
     MapLoadTriggers: list
 
     def set_names(self, model_names, region_names, part_names):
@@ -466,8 +466,8 @@ MAP_ENTRY_TYPES = {
         'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
         'Collisions': MSB_PART_TYPE.Collision,
         'Navmeshes': MSB_PART_TYPE.Navmesh,
-        'DummyObjects': MSB_PART_TYPE.DummyObject,
-        'DummyCharacters': MSB_PART_TYPE.DummyCharacter,
+        'UnusedObjects': MSB_PART_TYPE.UnusedObject,
+        'UnusedCharacters': MSB_PART_TYPE.UnusedCharacter,
         'MapLoadTriggers': MSB_PART_TYPE.MapLoadTrigger,
     }
 }

@@ -45,10 +45,11 @@ class WindowLinker(object):
     _MATCH_LINK = re.compile(r'<(.*)>')
 
     # TODO: Finalize these when tab order is set.
-    PARAMS_TAB = 0
-    TEXT_TAB = 1
-    MAIN_TAB = 2
-    MAPS_TAB = 3
+    TAB_ORDER = ['maps', 'params', 'text', 'main']
+
+    @classmethod
+    def get_tab_index(cls, tab_name):
+        return cls.TAB_ORDER.index(tab_name)
 
     class Link(object):
         def __init__(self, linker: WindowLinker = None, name=None, menu_text='Go to link'):
@@ -82,7 +83,7 @@ class WindowLinker(object):
         def __call__(self):
             # TODO: Jump to specific field, for undo/redo.
             # TODO: Create if missing.
-            self.linker.window.page_tabs.select(self.linker.PARAMS_TAB)
+            self.linker.window.page_tabs.select(self.linker.get_tab_index('params'))
             index = sorted(self.linker.project.Params[self.category].entries).index(self.param_entry_id)
             self.linker.window.params_tab.select_category(self.category, first_display_index=index)
             self.linker.window.params_tab.entry_display.select_entry(0, edit_if_already_selected=False)
@@ -96,7 +97,7 @@ class WindowLinker(object):
 
         def __call__(self):
             # TODO: Create if missing.
-            self.linker.window.page_tabs.select(self.linker.TEXT_TAB)
+            self.linker.window.page_tabs.select(self.linker.get_tab_index('text'))
             self.linker.window.text_tab.select_category(
                 self.category, first_display_index=sorted(self.linker.project.Text[self.category]).index(self.text_id))
             self.linker.window.text_tab.select_entry(self.text_id, edit_if_already_selected=False)
@@ -116,7 +117,7 @@ class WindowLinker(object):
             self.entry_local_index = entry_local_index
 
         def __call__(self):
-            self.linker.window.page_tabs.select(self.linker.MAPS_TAB)
+            self.linker.window.page_tabs.select(self.linker.get_tab_index('maps'))
             self.linker.window.maps_tab.entry_list_choice.set(self.entry_list_name)
             self.linker.window.maps_tab.refresh_entry_types(clear_selection=True)
             self.linker.window.maps_tab.select_entry_type(
@@ -141,7 +142,7 @@ class WindowLinker(object):
         link_text = match_link.group(1)
 
         if ':' not in link_text:
-            return []  # TODO: haven't supported these bare links yet (e.g. Flag, Animation, ...)
+            return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
 
         link_pieces = link_text.split(':')
         table_type = link_pieces[0]
@@ -341,6 +342,11 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     def build(self):
         self.page_tabs = self.Notebook(row=0)
 
+        f_maps_tab = self.Frame(frame=self.page_tabs)
+        self.page_tabs.add(f_maps_tab, text='  Maps  ')
+        self.maps_tab = self.SmartFrame(
+            frame=f_maps_tab, smart_frame_class=SoulstructMapEditor, project=self.project, linker=self.linker)
+
         f_params_tab = self.Frame(frame=self.page_tabs)
         self.page_tabs.add(f_params_tab, text='  Params  ')
         self.params_tab = self.SmartFrame(
@@ -356,12 +362,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.page_tabs.add(f_main_tab, text='  Main  ')
         self.build_main_tab(f_main_tab)
 
-        f_maps_tab = self.Frame(frame=self.page_tabs)
-        self.page_tabs.add(f_maps_tab, text='  Maps  ')
-        self.maps_tab = self.SmartFrame(
-            frame=f_maps_tab, smart_frame_class=SoulstructMapEditor, project=self.project, linker=self.linker)
-
-        # TODO: Lighting. Events (somehow). Game saves. MSB.
+        # TODO: Lighting. Events (somehow). Game saves.
 
         self.resizable(False, False)
         self.set_geometry()

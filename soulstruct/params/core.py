@@ -3,7 +3,6 @@ from io import BytesIO
 import struct
 from typing import Dict
 
-from soulstruct.params import enums
 from soulstruct.params.fields import GAME_PARAM_INFO
 from soulstruct.params.paramdef import ParamDefBND
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
