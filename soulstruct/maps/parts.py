@@ -2,6 +2,7 @@ from io import BufferedReader, BytesIO
 from enum import IntEnum
 import struct
 
+from soulstruct.core import InvalidFieldValueError
 from soulstruct.maps.core import MSBEntry
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector
 
@@ -547,7 +548,7 @@ class MSBCollision(BaseMSBPart):
         self.navmesh_groups = None
         self.vagrant_entity_ids = None
         self.area_name_id = None
-        self.force_area_banner = None  # Custom field.
+        self.__force_area_banner = None  # Custom field.
         self.starts_disabled = None
         self.attached_bonfire = None
         self.__play_region_id = None
@@ -565,7 +566,7 @@ class MSBCollision(BaseMSBPart):
         self.navmesh_groups = data.navmesh_groups
         self.vagrant_entity_ids = data.vagrant_entity_ids
         self.area_name_id = abs(data.area_name_id) if data.area_name_id >= 0 else -1
-        self.force_area_banner = data.area_name_id < 0  # Custom field.
+        self.__force_area_banner = data.area_name_id < 0  # Custom field.
         self.starts_disabled = data.starts_disabled
         self.attached_bonfire = data.attached_bonfire
         if data.play_region_id > -10:
@@ -578,15 +579,28 @@ class MSBCollision(BaseMSBPart):
         self.lock_cam_param_id_2 = data.lock_cam_param_id_2
 
     @property
+    def force_area_banner(self):
+        return self.__force_area_banner
+
+    @force_area_banner.setter
+    def force_area_banner(self, value: bool):
+        if not value and self.area_name_id == -1:
+            raise InvalidFieldValueError(
+                "Banner must appear when area name is set to default (-1). You must specify the area name manually to "
+                "set this to False.")
+        self.__force_area_banner = bool(value)
+
+    @property
     def play_region_id(self):
         return self.__play_region_id
 
     @play_region_id.setter
     def play_region_id(self, value):
         if self.__stable_footing_flag != 0:
-            raise ValueError("Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' is non-zero.")
+            raise InvalidFieldValueError("Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' "
+                                         "is non-zero.")
         if not isinstance(value, int) or value <= -10:
-            raise ValueError("'play_region_id' must be an integer greater than or equal to -9.")
+            raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")
         self.__play_region_id = value
 
     @property
@@ -596,15 +610,16 @@ class MSBCollision(BaseMSBPart):
     @stable_footing_flag.setter
     def stable_footing_flag(self, value):
         if self.__play_region_id != 0:
-            raise ValueError("Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' is non-zero.")
+            raise InvalidFieldValueError("Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' "
+                                         "is non-zero.")
         if not isinstance(value, int) or value < 0:
-            raise ValueError("'stable_footing_flag' must be an integer greater than or equal to 0.")
+            raise InvalidFieldValueError("'stable_footing_flag' must be an integer greater than or equal to 0.")
         self.__stable_footing_flag = value
 
     def pack_type_data(self):
-        if self.area_name_id == -1 and not self.force_area_banner:
-            raise ValueError("'force_area_banner' must be enabled if 'area_name_id' is -1 (default).")
-        signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self.force_area_banner else 1)
+        if self.area_name_id == -1 and not self.__force_area_banner:
+            raise InvalidFieldValueError("'force_area_banner' must be enabled if 'area_name_id' is -1 (default).")
+        signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self.__force_area_banner else 1)
         if self.__stable_footing_flag != 0:
             play_region_id = -self.__stable_footing_flag - 10
         else:

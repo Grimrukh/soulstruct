@@ -279,7 +279,7 @@ class SmartFrame(tk.Frame):
             'TNotebook.Tab', background='#555555', foreground='#FFFFFF', padding=[15, 1],
             font=('Roboto', 16))
         self.style.map(
-            'TNotebook.Tab', background=[('selected', '#774444')], expand=[('selected', [5, 3, 3, 0])])
+            'TNotebook.Tab', background=[('selected', '#446666')], expand=[('selected', [5, 3, 3, 0])])
 
     def start_auto_rows(self, start=0):
         self.current_row = start
@@ -652,10 +652,10 @@ class CustomDialog(SmartFrame):
 class SoulstructSmartFrame(SmartFrame):
     DEFAULT_BUTTON_KWARGS = {
         'OK': {
-            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
+            'fg': '#FFFFFF', 'bg': '#223333', 'width': 20,
         },
         'YES': {
-            'fg': '#FFFFFF', 'bg': '#772222', 'width': 20,
+            'fg': '#FFFFFF', 'bg': '#224444', 'width': 20,
         },
         'NO': {
             'fg': '#FFFFFF', 'bg': '#444444', 'width': 20,

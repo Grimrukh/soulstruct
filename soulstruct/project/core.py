@@ -129,7 +129,7 @@ class WindowLinker(object):
         self.window = window
         self.project = window.project
 
-    def soulstruct_link(self, field_type, field_value):
+    def soulstruct_link(self, field_type, field_value, special_values: dict = None):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
         animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
         resolved here."""
@@ -190,9 +190,8 @@ class WindowLinker(object):
                 self, name=field_value, entry_list_name=entry_list_name, entry_type_index=entry_type_index,
                 entry_type_name=entry_type_name, entry_local_index=entry_local_index)]
 
-        if field_value in {-1, 0}:
-            # TODO: ensure that 0 means 'None' for all param/text fields.
-            return [self.Link(self, name='None', menu_text='')]
+        if field_value in special_values:
+            return [self.Link(self, name=special_values[field_value], menu_text='')]
 
         category = link_pieces[1]
 
@@ -370,15 +369,15 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
     def build_main_tab(self, main_frame):
         with self.set_master(main_frame, auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
-            self.Button(text="Pull All from Game Directory", bg='#722', width=30, font_size=20,
+            self.Button(text="Pull All from Game Directory", bg='#235', width=30, font_size=20,
                         command=lambda: self.project.load_project(force_game_pull=True))
-            self.Button(text="Pull Params", bg='#722', width=30, font_size=20,
+            self.Button(text="Pull Params", bg='#235', width=30, font_size=20,
                         command=self.project.pull_params)
-            self.Button(text="Pull Text", bg='#722', width=30, font_size=20,
+            self.Button(text="Pull Text", bg='#235', width=30, font_size=20,
                         command=self.project.pull_text)
-            self.Button(text="Pull Lighting", bg='#722', width=30, font_size=20,
+            self.Button(text="Pull Lighting", bg='#235', width=30, font_size=20,
                         command=self.project.pull_lighting)
-            self.Button(text="Pull Maps", bg='#722', width=30, font_size=20,
+            self.Button(text="Pull Maps", bg='#235', width=30, font_size=20,
                         command=self.project.pull_maps)
 
 

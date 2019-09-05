@@ -4,6 +4,7 @@ from ast import literal_eval
 from enum import IntEnum
 from typing import List, TYPE_CHECKING
 
+from soulstruct.core import InvalidFieldValueError
 from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_IDS
 from soulstruct.project.actions import ActionHistory
 from soulstruct.utilities import camel_case_to_spaces, Vector
@@ -81,7 +82,7 @@ class _MapFieldRow(object):
 
         self.value_checkbutton = master.Checkbutton(
             self.value_box, label=None, bg=bg_color, no_grid=True,
-            command=lambda: change_value_func(self.index, self.value_checkbutton.var.get()))
+            command=lambda: self._checkbutton_toggle(change_value_func))
         # Main focus bindings are not bound to Checkbutton.
 
         self.value_combobox = master.Combobox(
@@ -101,6 +102,12 @@ class _MapFieldRow(object):
             self.active_value_widget.grid_remove()
         self.active_value_widget = widget
 
+    def _checkbutton_toggle(self, change_value_func):
+        new_value = self.value_checkbutton.var.get()
+        if not change_value_func(self.index, new_value):
+            # Checkbutton toggle is invalid.
+            self.value_checkbutton.var.set(not new_value)
+
     def build_field(self, entry, name, nickname, value, field_type, docstring="DOC-TODO"):
         """Update widgets with given field information."""
         self.map_entry = entry
@@ -114,8 +121,12 @@ class _MapFieldRow(object):
 
         if isinstance(self.field_type, str):
             # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
+            if self.field_type == '<Text:PlaceNames>':
+                special_values = {-1: 'Default Map Name (With Banner)'}
+            else:
+                special_values = {0: 'Default', -1: 'Default'}
             try:
-                field_link = self.linker.soulstruct_link(self.field_type, value)[0]
+                field_link = self.linker.soulstruct_link(self.field_type, value, special_values=special_values)[0]
             except IndexError:
                 # print("No field link for type:", self.field_type)
                 field_link = None
@@ -557,10 +568,15 @@ class _MapFieldFrame(SoulstructSmartFrame):
             old_value = getattr(old_value, self.e_coord)
         if old_value == new_value:
             return False  # Nothing to change.
-        if self.e_coord:
-            setattr(getattr(self.map_entry, field_name), self.e_coord, new_value)
-        else:
-            setattr(self.map_entry, field_name, new_value)
+        try:
+            if self.e_coord:
+                setattr(getattr(self.map_entry, field_name), self.e_coord, new_value)
+            else:
+                setattr(self.map_entry, field_name, new_value)
+        except InvalidFieldValueError as e:
+            self.bell()
+            self.dialog(title="Value Error", message=str(e), button_kwargs='OK')
+            return False
         return True
 
 
@@ -587,12 +603,12 @@ class _MapEntryFrame(SoulstructSmartFrame):
         with self.set_master(auto_rows=0):
             with self.set_master(auto_columns=0):
                 self.previous_range_button = self.Button(
-                    text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#722', width=30,
+                    text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#235', width=30,
                     command=self._go_to_previous_entry_range, padx=10, pady=20, row=0, sticky='w')
 
                 # TODO
                 # self.b_create_new_map = self.Button(
-                #     text="Create New Text ID", bg='#722', width=30, command=self.create_new_map_id,
+                #     text="Create New Text ID", bg='#235', width=30, command=self.create_new_map_id,
                 #     padx=10, pady=20)
 
                 # TODO: restore
@@ -636,7 +652,7 @@ class _MapEntryFrame(SoulstructSmartFrame):
 
             with self.set_master(auto_columns=0):
                 self.next_range_button = self.Button(
-                    text=f"Next {self.ENTRY_RANGE_SIZE}", bg='#722', width=30, command=self._go_to_next_entry_range,
+                    text=f"Next {self.ENTRY_RANGE_SIZE}", bg='#235', width=30, command=self._go_to_next_entry_range,
                     padx=10, pady=20)
 
     def refresh_field_display(self, reset_display=False):

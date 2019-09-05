@@ -228,7 +228,8 @@ class _ParamFieldRow(object):
         self.field_docstring = docstring
 
         if isinstance(self.field_type, str):
-            param_links = self.linker.soulstruct_link(self.field_type, self.param_entry[self.field_name])
+            param_links = self.linker.soulstruct_link(self.field_type, self.param_entry[self.field_name],
+                                                      special_values={0: 'Default', -1: 'Default'})
             field_type = int
         else:
             param_links = []
@@ -306,7 +307,8 @@ class _ParamFieldRow(object):
 
         if isinstance(self.field_type, str):
             new_value = int(new_text)
-            param_links = self.linker.soulstruct_link(self.field_type, new_value)
+            param_links = self.linker.soulstruct_link(self.field_type, new_value,
+                                                      special_values={0: 'Default', -1: 'Default'})
             if len(param_links) > 1:
                 new_text += f' [Ambiguous]'
             elif param_links and param_links[0].name is None:
