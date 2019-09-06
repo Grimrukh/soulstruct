@@ -136,7 +136,7 @@ class WindowLinker(object):
 
         match_link = self._MATCH_LINK.match(field_type)
         if not match_link:
-            raise ValueError("Invalid link.")
+            raise ValueError(f"Invalid link: {field_type}")
 
         name_extension = ''
         link_text = match_link.group(1)
@@ -249,6 +249,37 @@ class WindowLinker(object):
                 return [self.ParamLink(self, category=category, param_entry_id=field_value, name=name)]
 
         return []  # No other table types supported yet.
+
+    def get_map_entry_type_names(self, field_type):
+        match_link = self._MATCH_LINK.match(field_type)
+        if not match_link:
+            raise ValueError(f"Invalid link: {field_type}")
+
+        link_text = match_link.group(1)
+
+        if ':' not in link_text:
+            return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
+
+        link_pieces = link_text.split(':')
+        table_type = link_pieces[0]
+
+        if table_type == 'Maps':
+            active_map = self.window.maps_tab.active_map_data  # type: MSB
+            entry_list_name = link_pieces[1]
+            if entry_list_name not in MAP_ENTRY_TYPES:
+                raise ValueError(f"Invalid map entry list: {entry_list_name}")
+            entry_list = active_map[entry_list_name]
+
+            if len(link_pieces) == 3:
+                # Technically, map links only care about entry list type, but I'm sometimes adding some additional
+                # enforcement (like parts.characters[i].model_index linking to models.characters only).
+                entry_type_name = link_pieces[2]
+                if entry_type_name not in MAP_ENTRY_TYPES[entry_list_name]:
+                    raise ValueError(f"Invalid map entry type for entry list {entry_list_name}: {entry_type_name}")
+            else:
+                entry_type_name = None
+
+            return entry_list.get_entry_names(entry_type=entry_type_name)
 
     def entry_text_link(self, entry_id):
         """Return three (name, link) pairs for entries in item categories. Returns None if no link is appropriate, and

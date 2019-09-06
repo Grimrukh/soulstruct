@@ -201,7 +201,32 @@ class _MapFieldRow(object):
             if field_link.name != 'None':
                 self.context_menu.add_command(
                     label=field_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=field_link)
-                # TODO: open scrolling list to select name from entry list.
+                # TODO: Should not appear for params.
+                self.context_menu.add_command(
+                    label="Select linked entry name from list", foreground=self.STYLE_DEFAULTS['text_fg'],
+                    command=self.open_map_name_selection_box)
+
+    def open_map_name_selection_box(self):
+        window = _MapNameSelectionBox(self.master, self.field_type)
+        selected_name = window.go()
+        if selected_name is not None:
+            try:
+                field_link = self.linker.soulstruct_link(self.field_type, selected_name)[0]
+            except IndexError:
+                raise IndexError("Link was broken after selecting entry from list. This should not happen; please try "
+                                 "restarting Soulstruct.")
+            if not field_link.name:
+                selected_name += f' [MISSING]'
+                if not self.link_missing:
+                    self.link_missing = True
+                    self._update_colors()
+            else:
+                if self.link_missing:
+                    self.link_missing = False
+                    self._update_colors()
+
+            self.value_label.var.set(selected_name)
+            self.build_field_context_menu(field_link)
 
     def clear(self):
         """Called when this row has no field to display."""
@@ -238,6 +263,7 @@ class _MapFieldRow(object):
                         self.link_missing = False
                         self._update_colors()
                 self.value_label.var.set(new_text)
+                self.build_field_context_menu(field_link)
                 return new_value
 
         if coord is not None:
@@ -960,3 +986,41 @@ class SoulstructMapEditor(SoulstructSmartFrame):
         entry_type_enum = self.entry_type_rows[self.active_entry_type_index]['entry_type_enum']
         entry_list = getattr(self.active_map_data, self.active_entry_list_name.lower())
         return entry_list.get_entries(entry_type=entry_type_enum)
+
+
+class _MapNameSelectionBox(SoulstructSmartFrame):
+    """Small pop-out widget that allows you to select a particular type."""
+
+    WIDTH = 50  # characters
+    HEIGHT = 25  # lines
+
+    def __init__(self, master: _MapFieldFrame, field_type):
+        self.field_row = master
+        super().__init__(toplevel=True, master=master, window_title="Select Entry")
+        names = self.field_row.linker.get_map_entry_type_names(field_type)
+
+        self.output = None
+
+        with self.set_master(padx=20, pady=20):
+            self._names = self.Listbox(
+                values=names, width=self.WIDTH, height=self.HEIGHT, vertical_scrollbar=True, selectmode='single',
+                font=16, padx=20, pady=20)
+
+        self._names.bind('<Double-Button-1>', lambda e: self.done(True))
+
+        self.bind_all('<Escape>', lambda e: self.done(False))
+        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            self.output = self._names.get(self._names.curselection())
+        self.quit()
