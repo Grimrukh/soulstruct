@@ -20,6 +20,12 @@ def bind_events(widget, bindings: dict):
         widget.bind(event, func)
 
 
+# TODO: Models are handled automatically. Model entries are auto-generated from all model names.
+#  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
+#  - Validation/SIB path depends on game version.
+#  - Right-click pop-out selection list is available for characters (and eventually, some objects).
+
+
 class _MapFieldRow(object):
     """Container for components of a row in the _MapFieldFrame.
 
@@ -70,11 +76,11 @@ class _MapFieldRow(object):
         self.value_vector_frame = master.Frame(
             self.value_box, bg=bg_color, width=self.VALUE_WIDTH, height=self.ROW_HEIGHT, no_grid=True)
         self.value_vector_x = master.Label(
-            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=0)
+            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=0, anchor='w')
         self.value_vector_y = master.Label(
-            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=1)
+            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=1, anchor='w')
         self.value_vector_z = master.Label(
-            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=2)
+            self.value_vector_frame, text='', bg=bg_color, width=self.VALUE_WIDTH // 8, column=2, anchor='w')
         for coord, label in zip('xyz', (self.value_vector_x, self.value_vector_y, self.value_vector_z)):
             vector_bindings = main_bindings.copy()
             vector_bindings.update({'<Button-1>': lambda _, c=coord: master.select_field(row_index, coord=c)})
@@ -150,9 +156,9 @@ class _MapFieldRow(object):
             value_text = f'{value:.3g}' if field_type == float else str(value)
             if field_link:
                 if field_link.name is None:
-                    value_text += f' [MISSING]'
+                    value_text += f'   [MISSING]'
                 else:
-                    value_text += f' [{field_link.name}]'
+                    value_text += f'   [{field_link.name}]'
             self.value_label.var.set(value_text)
             self._activate_value_widget(self.value_label)
         elif field_type == bool:
@@ -354,7 +360,7 @@ class _MapEntryRow(object):
 
     def build_entry(self, entry_name: str, entity_id: int = -1):
         self.entry_name = entry_name
-        self.name_label.var.set(entry_name + (f'  [{entity_id}]' if entity_id != -1 else ''))
+        self.name_label.var.set(entry_name + (f'   [{entity_id}]' if entity_id != -1 else ''))
 
         self.row_box.grid()
         self.name_box.grid()
@@ -610,7 +616,7 @@ class _MapEntryFrame(SoulstructSmartFrame):
     """Manages map entry selection/modification in editor."""
     ENTRY_CANVAS_BG = '#1d1d1d'
     ENTRY_BOX_WIDTH = 300
-    ENTRY_RANGE_SIZE = 50
+    ENTRY_RANGE_SIZE = 100
 
     field_display: _MapFieldFrame
 
@@ -683,7 +689,7 @@ class _MapEntryFrame(SoulstructSmartFrame):
 
     def refresh_field_display(self, reset_display=False):
         if self.entry_index_selected is not None:
-            map_entry = self.msb_entries[self.entry_index_selected]
+            map_entry = self.msb_entries[self.first_display_index + self.entry_index_selected]
         else:
             map_entry = None
         self.field_display.refresh_fields(map_entry=map_entry, reset_display=reset_display)
@@ -754,16 +760,16 @@ class _MapEntryFrame(SoulstructSmartFrame):
         TODO: parent class manages undo/redo with all-purpose navigation and editing. This returns True if any change
          actually happens, and False otherwise, to signal to that manager.
         """
-        old_text = self.msb_entries[entry_index].name
+        old_text = self.msb_entries[self.first_display_index + entry_index].name
         if old_text == new_text:
             return False  # Nothing to change.
-        self.msb_entries[entry_index].name = new_text
+        self.msb_entries[self.first_display_index + entry_index].name = new_text
         return True
 
     def _delete_entry(self, entry_index):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         self._cancel_entry_name_edit()
-        return self.msb_entries.pop(entry_index)   # TODO: or False?
+        return self.msb_entries.pop(self.first_display_index + entry_index)   # TODO: or False?
 
     def _update_first_display_index(self, new_index):
         """Updates first display index, ensuring that at least the last ten entries are visible."""
@@ -797,7 +803,8 @@ class _MapEntryFrame(SoulstructSmartFrame):
     def _start_entry_name_edit(self, entry_index):
         if not self.e_entry_name_edit:
             self.e_entry_name_edit = self.Entry(
-                self.entry_rows[entry_index].row_box, initial_text=self.msb_entries[entry_index].name,
+                self.entry_rows[entry_index].row_box,
+                initial_text=self.msb_entries[self.first_display_index + entry_index].name,
                 sticky='ew', width=60)
             self.e_entry_name_edit.bind('<Return>', lambda e, i=entry_index: self._confirm_entry_name_edit(i))
             self.e_entry_name_edit.bind('<Up>', self._entry_press_up)

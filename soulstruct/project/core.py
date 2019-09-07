@@ -110,8 +110,8 @@ class WindowLinker(object):
             super().__init__(
                 linker, name=name,
                 menu_text=f"Go to {entry_list_name}"
-                          f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}] "
-                          f"[{name}]")
+                          f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
+                          f"   [{name}]")
             self.entry_list_name = entry_list_name
             self.entry_type_index = entry_type_index
             self.entry_local_index = entry_local_index
@@ -172,12 +172,12 @@ class WindowLinker(object):
                 if len(link_pieces) == 3:
                     # Technically, map links only care about entry list type, but I'm sometimes adding some additional
                     # enforcement (like parts.characters[i].model_index linking to models.characters only).
-                    entry_type_name = link_pieces[2]
-                    if entry_type_name not in MAP_ENTRY_TYPES[entry_list_name]:
-                        raise ValueError(f"Invalid map entry type for entry list {entry_list_name}: {entry_type_name}")
-                    if entry_list[entry_name].ENTRY_TYPE != entry_list.resolve_entry_type(entry_type_name):
+                    entry_types = [MAP_ENTRY_TYPES[entry_list_name][entry_type].name
+                                   for entry_type in link_pieces[2].split('|')]
+                    if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
                         raise ValueError("Type of entry name in field does not match enforced type of field.")
-                    entry_type_index = MAP_ENTRY_TYPES[entry_list_name][entry_type_name].value
+                    entry_type_name = entry_list[entry_name].ENTRY_TYPE.name
+                    entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
                 else:
                     entry_type_name = None
                     entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
@@ -273,13 +273,12 @@ class WindowLinker(object):
             if len(link_pieces) == 3:
                 # Technically, map links only care about entry list type, but I'm sometimes adding some additional
                 # enforcement (like parts.characters[i].model_index linking to models.characters only).
-                entry_type_name = link_pieces[2]
-                if entry_type_name not in MAP_ENTRY_TYPES[entry_list_name]:
-                    raise ValueError(f"Invalid map entry type for entry list {entry_list_name}: {entry_type_name}")
+                names = []
+                for name in link_pieces[2].split('|'):
+                    names += entry_list.get_entry_names(entry_type=name)
+                return names
             else:
-                entry_type_name = None
-
-            return entry_list.get_entry_names(entry_type=entry_type_name)
+                return entry_list.get_entry_names()
 
     def entry_text_link(self, entry_id):
         """Return three (name, link) pairs for entries in item categories. Returns None if no link is appropriate, and

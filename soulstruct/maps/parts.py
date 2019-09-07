@@ -69,9 +69,6 @@ class BaseMSBPart(MSBEntry):
         'entity_id': (
             'Entity ID', int,
             "Entity ID used to refer to the part in other game files."),
-        'model_name': (
-            'Model Name', '<Maps:Models>',
-            "Name of model to use for this part."),
         'translate': (
             'Translate', Vector,
             "3D coordinates of the part's position. Note that the anchor of the part is usually at its base."),
@@ -256,6 +253,13 @@ class MSBMapPiece(BaseMSBPart):
         '8x',
     )
 
+    FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Maps:Models:MapPieces>',
+            "Name of map piece model to use for this map piece."),
+        **BaseMSBPart.FIELD_INFO,
+    }
+
     ENTRY_TYPE = MSB_PART_TYPE.MapPiece
 
     def unpack_type_data(self, msb_buffer):
@@ -279,6 +283,9 @@ class MSBObject(BaseMSBPart):
     )
 
     FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Maps:Models:Objects>',
+            "Name of object model to use for this object."),
         **BaseMSBPart.FIELD_INFO,
         'collision_name': (
             'Draw Parent', '<Maps:Parts>',
@@ -352,6 +359,9 @@ class MSBCharacter(BaseMSBPart):
     )
 
     FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Maps:Models:HumanCharacters|NonHumanCharacters>',
+            "Name of character model to use for this character."),
         **BaseMSBPart.FIELD_INFO,
         'think_param_id': (
             'AI ID', '<Params:AI>',
@@ -444,6 +454,11 @@ class MSBPlayer(BaseMSBPart):
         '16x',
     )
 
+    FIELD_INFO = {
+        # model_name not exposed; should always be 'c0000'.
+        **BaseMSBPart.FIELD_INFO,
+    }
+
     ENTRY_TYPE = MSB_PART_TYPE.PlayerStarts
 
     def unpack_type_data(self, msb_buffer):
@@ -474,6 +489,9 @@ class MSBCollision(BaseMSBPart):
     )
 
     FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Maps:Models:Collisions>',
+            "Name of collision model to use for this collision."),
         **BaseMSBPart.FIELD_INFO,
         'hit_filter_id': (
             'Hit Filter ID', int,
@@ -649,6 +667,9 @@ class MSBNavmesh(BaseMSBPart):
     )
 
     FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Maps:Models:Navmeshes>',
+            "Name of navmesh model to use for this navmesh."),
         **BaseMSBPart.FIELD_INFO,
         'navmesh_groups': (
             'Navmesh Groups', list,
@@ -691,6 +712,9 @@ class MSBMapLoadTrigger(BaseMSBPart):
     )
 
     FIELD_INFO = {
+        'model_name': (
+            'Model Name', '<Maps:Models>',
+            "Name of model to use for this map load trigger (?)."),
         **BaseMSBPart.FIELD_INFO,
         'map_piece_name': (
             'Map Piece', '<Maps:Parts:MapPieces>',

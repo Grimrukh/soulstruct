@@ -103,7 +103,7 @@ class _ParamEntryRow(object):
             for text_link in text_links:
                 if text_link.name != 'None':
                     self.context_menu.add_command(
-                        label=text_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=text_link.link)
+                        label=text_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=text_link)
 
     @property
     def active(self):
