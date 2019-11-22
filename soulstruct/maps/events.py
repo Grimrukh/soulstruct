@@ -731,9 +731,7 @@ class MSBMapOffset(BaseMSBEvent):
 
     def pack_type_data(self):
         return BinaryStruct(*self.EVENT_MAP_OFFSET_STRUCT).pack(
-            translate_x=self.translate.x,
-            translate_y=self.translate.y,
-            translate_z=self.translate.z,
+            translate=list(self.translate),
             rotate_y=self.rotate_y,
         )
 

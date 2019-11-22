@@ -21,7 +21,7 @@ from soulstruct.utilities import word_wrap
 LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'}
 
 # TODO
-DEFAULT_PATH = os.path.expanduser('~/Documents/Soulstruct/dsr_project')
+DEFAULT_PATH = os.path.expanduser('~/Documents/Dark Souls/soulstruct-projects/ptd-project')
 
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")
@@ -139,7 +139,7 @@ def soulstruct_main(ss_args):
 launch_interactive = soulstruct_main(parser.parse_args())
 
 exit()
-# TODO
+# TODO: Skipping interactive for now.
 
 if launch_interactive:
     try:

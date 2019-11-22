@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from ctypes import windll
 from functools import wraps
 from typing import Optional
 import tkinter as tk
@@ -8,6 +9,16 @@ from tkinter import filedialog, messagebox, ttk
 __all__ = ['SmartFrame', 'SoulstructSmartFrame', 'ToolTip']
 
 _GRID_KEYWORDS = {'column', 'columnspan', 'in', 'ipadx', 'ipady', 'padx', 'pady', 'row', 'rowspan', 'sticky'}
+
+
+# TODO: Fixes blurry text at 4K, but widgets are too small.
+SET_DPI_AWARENESS = False
+if SET_DPI_AWARENESS:
+    try:
+        windll.shcore.SetProcessDpiAwareness(1)
+    except Exception as e:
+        print(f"Could not set DPI awareness of system. GUI font may appear blurry on scaled Windows displays.\n"
+              f"Error: {str(e)}")
 
 
 def _bind_to_mousewheel(_, frame):
@@ -174,8 +185,12 @@ class SmartFrame(tk.Frame):
 
         # Disable default root if used.
         if self.toplevel and toplevel_master is None:
+            # if self.winfo_screenwidth() == 3840:
+            #     self.toplevel.master.tk.call('tk', 'scaling', 2.0)
             self.toplevel.master.withdraw()
         elif master is None:
+            # if self.winfo_screenwidth() == 3840:
+            #     self.master.tk.call('tk', 'scaling', 1.0)
             self.master.withdraw()
 
     def protocol(self, name, func):

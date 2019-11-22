@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import zlib
 from soulstruct.utilities import BinaryStruct
 
@@ -32,9 +32,9 @@ class DCX(object):
         self.data = b''
         self.magic = magic
 
-        if isinstance(dcx_source, str):
-            self.dcx_path = dcx_source
-            with open(dcx_source, 'rb') as file:
+        if isinstance(dcx_source, (str, Path)):
+            self.dcx_path = Path(dcx_source)
+            with self.dcx_path.open('rb') as file:
                 self.unpack(file)
         elif isinstance(dcx_source, bytes):
             self.data = dcx_source
@@ -80,6 +80,8 @@ class DCX(object):
         if data_path is None:
             if self.dcx_path is None:
                 raise ValueError("DCX path cannot be determined automatically.")
-            data_path = os.path.splitext(self.dcx_path)[0]
-        with open(data_path, 'wb') as file:
+            data_path = self.dcx_path.parent / self.dcx_path.stem
+        else:
+            data_path = Path(data_path)
+        with data_path.open('wb') as file:
             file.write(self.data)

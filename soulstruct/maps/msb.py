@@ -2,7 +2,7 @@ from collections import OrderedDict
 import copy
 from io import BytesIO, BufferedReader
 from itertools import chain
-import os
+from pathlib import Path
 import shutil
 
 from soulstruct.maps.models import MSBEntry
@@ -217,9 +217,9 @@ class MSBModelList(MSBEntryList):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
         type_indices = {}
         for entry in self.get_entries():
-            entry.set_indices(model_type_index=type_indices.setdefault(entry.model_type, 0),
+            entry.set_indices(model_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
                               instance_count=part_instance_counts.get(entry.name, 0))
-            type_indices[entry.model_type] += 1
+            type_indices[entry.ENTRY_TYPE] += 1
 
 
 class MSBEventList(MSBEntryList):
@@ -249,9 +249,9 @@ class MSBEventList(MSBEntryList):
         """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
         type_indices = {}
         for i, entry in enumerate(self.get_entries()):
-            entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.EVENT_TYPE, 0),
+            entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
                               region_indices=region_indices, part_indices=part_indices)
-            type_indices[entry.EVENT_TYPE] += 1
+            type_indices[entry.ENTRY_TYPE] += 1
 
 
 class MSBRegionList(MSBEntryList):
@@ -302,9 +302,9 @@ class MSBPartList(MSBEntryList):
         """
         type_indices = {}
         for entry in self.get_entries():
-            entry.set_indices(part_type_index=type_indices.setdefault(entry.PART_TYPE, 0),
+            entry.set_indices(part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
                               model_indices=model_indices, region_indices=region_indices, part_indices=part_indices)
-            type_indices[entry.PART_TYPE] += 1
+            type_indices[entry.ENTRY_TYPE] += 1
 
     def get_instance_counts(self):
         """Returns a dictionary mapping model names to part instance counts."""
@@ -353,10 +353,10 @@ class MSB(object):
 
         if msb_source is None:
             return
-        elif isinstance(msb_source, str):
+        elif isinstance(msb_source, (str, Path)):
             # File path.
-            self.msb_path = msb_source
-            with open(msb_source, 'rb') as msb_buffer:
+            self.msb_path = Path(msb_source)
+            with self.msb_path.open('rb') as msb_buffer:
                 self.unpack(msb_buffer)
         elif isinstance(msb_source, bytes):
             self.unpack(BytesIO(msb_source))
@@ -405,14 +405,16 @@ class MSB(object):
     def write_packed(self, msb_path=None, create_bak=True):
         if msb_path is None:
             if self.msb_path is None:
-                raise ValueError("MSB path cannot be automatically determined from input.")
+                raise ValueError("MSB path cannot be automatically determined from instance source.")
             msb_path = self.msb_path
+        elif isinstance(msb_path, str):
+            msb_path = Path(msb_path)
 
-        if create_bak and os.path.isfile(msb_path) and not os.path.isfile(msb_path + '.bak'):
+        if create_bak and msb_path.is_file() and not (msb_path + '.bak').is_file():
             print(f"# Backup of file {repr(msb_path)} does not exist. Creating now...")
-            shutil.copy(msb_path, msb_path + '.bak')
+            shutil.copy(str(msb_path), str(msb_path + '.bak'))
 
-        with open(msb_path, 'wb') as f:
+        with msb_path.open('wb') as f:
             f.write(self.pack())
 
     # TODO: pickle/load

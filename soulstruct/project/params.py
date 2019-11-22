@@ -10,7 +10,6 @@ from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters
     from soulstruct.params.core import ParamEntry, ParamTable
-    from soulstruct.project.core import SoulstructProject
 
 
 # TODO: Can't jump to Conversations, because they're internal by default.
@@ -101,7 +100,7 @@ class _ParamEntryRow(object):
         self.context_menu.delete(0, 'end')
         if text_links:
             for text_link in text_links:
-                if text_link.name != 'None':
+                if text_link.menu_text:
                     self.context_menu.add_command(
                         label=text_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=text_link)
 
@@ -229,7 +228,7 @@ class _ParamFieldRow(object):
 
         if isinstance(self.field_type, str):
             param_links = self.linker.soulstruct_link(self.field_type, self.param_entry[self.field_name],
-                                                      special_values={0: 'Default', -1: 'Default'})
+                                                      valid_null_values={0: 'Default', -1: 'Default'})
             field_type = int
         else:
             param_links = []
@@ -285,7 +284,7 @@ class _ParamFieldRow(object):
         self.context_menu.delete(0, 'end')
         if param_links:
             for param_link in param_links:
-                if param_link.name != 'None':
+                if param_link.menu_text:
                     self.context_menu.add_command(
                         label=param_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=param_link)
 
@@ -308,7 +307,7 @@ class _ParamFieldRow(object):
         if isinstance(self.field_type, str):
             new_value = int(new_text)
             param_links = self.linker.soulstruct_link(self.field_type, new_value,
-                                                      special_values={0: 'Default', -1: 'Default'})
+                                                      valid_null_values={0: 'Default', -1: 'Default'})
             if len(param_links) > 1:
                 new_text += f' [Ambiguous]'
             elif param_links and param_links[0].name is None:
@@ -837,8 +836,8 @@ class SoulstructParamsEditor(SoulstructSmartFrame):
 
     entry_display: _ParamEntryFrame
 
-    def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
-        self.Params = project.Params
+    def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
+        self.Params = params
         self.linker = linker
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Params")
 

@@ -3,6 +3,8 @@ from io import BytesIO
 import struct
 from typing import Dict
 
+from soulstruct.core import SoulstructError
+from soulstruct.params import enums
 from soulstruct.params.fields import GAME_PARAM_INFO
 from soulstruct.params.paramdef import ParamDefBND
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
@@ -27,118 +29,55 @@ def PARAMDEF_BND(game_version):
     raise ValueError(f"Could not find bundled ParamDef for game version {repr(game_version)}.")
 
 
-FLOAT_32 = ('<f', float, -float('inf'), float('inf'))
-SIGNED_INT = ('<i', int, -2**31, 2**31 - 1)
-UNSIGNED_INT = ('<I', int, 0, 2**32 - 1)
-SIGNED_SHORT = ('<h', int, -2**15, 2**15 - 1)
-UNSIGNED_SHORT = ('<H', int, 0, 2**16 - 1)
-SIGNED_CHAR = ('<b', int, -2**7, 2**7 - 1)
-UNSIGNED_CHAR = ('<B', int, 0, 2**8 - 1)
-
-PARAM_TYPE_INFO = {
-    # (struct_type, python_type, min_value, max_value)
-    's32': SIGNED_INT,
-    'u32': UNSIGNED_INT,
-    'f32': FLOAT_32,
-    'u16': UNSIGNED_SHORT,
-    's16': SIGNED_SHORT,
-    'u8': UNSIGNED_CHAR,
-    's8': SIGNED_CHAR,
-
-    # Enums  # TODO: Need to identify sizes (B, H, I). Can use debug type size until then.
-    'EQUIP_MODEL_CATEGORY': UNSIGNED_CHAR,
-    'EQUIP_MODEL_GENDER': UNSIGNED_CHAR,
-    'WEAPON_CATEGORY': UNSIGNED_CHAR,
-    'WEPMOTION_CATEGORY': UNSIGNED_CHAR,
-    'GUARDMOTION_CATEGORY': UNSIGNED_CHAR,
-    'WEP_MATERIAL_ATK': UNSIGNED_CHAR,
-    'WEP_MATERIAL_DEF': UNSIGNED_CHAR,
-    'WEP_MATERIAL_DEF_SFX': UNSIGNED_CHAR,
-    'WEP_CORRECT_TYPE': UNSIGNED_CHAR,
-    'ATKPARAM_SPATTR_TYPE': (),
-    'DURABILITY_DIVERGENCE_CATEGORY': (),
-    'EQUIP_BOOL': (),
-    'WEP_BASE_CHANGE_CATEGORY': (),
-    # 'dummy8': (),
-    'PROTECTOR_CATEGORY': (),
-    'ATK_PARAM_PARTSDMGTYPE': (),
-    'ACCESSORY_CATEGORY': (),
-    'BEHAVIOR_REF_TYPE': (),
-    'BEHAVIOR_CATEGORY': (),
-    'GOODS_TYPE': (),
-    'GOODS_CATEGORY': (),
-    'GOODS_USE_ANIM': (),
-    'GOODS_OPEN_MENU': (),
-    'SP_EFFECT_USELIMIT_CATEGORY': (),
-    'REPLACE_CATEGORY': (),
-    'SHOP_LINEUP_SHOPTYPE': (),
-    'SHOP_LINEUP_EQUIPTYPE': (),
-    'ON_OFF': (),
-    'ACTION_PATTERN': (),
-    'THROW_PAD_TYPE': (),
-    'THROW_ENABLE_STATE': (),
-    'THROW_TYPE': (),
-    'THROW_DMY_CHR_DIR_TYPE': (),
-    'ENEMY_BEHAVIOR_ID': (),
-    'ChrType': (),
-    'NPC_ITEMDROP_TYPE': (),
-    'NPC_DRAW_TYPE': (),
-    'NPC_TYPE': (),
-    'NPC_TEMA_TYPE': (),  # (sic)
-    'NPC_MOVE_TYPE': (),
-    'NPC_BURN_TYPE': (),
-    'NPC_SFX_SIZE': (),
-    'NPC_HITSTOP_TYPE': (),
-    'NPC_BOOL': (),
-    'ATK_PARAM_HIT_TYPE': (),
-    'ATK_PARAM_MAP_HIT': (),
-    'ATKPARAM_ATKATTR_TYPE': (),
-    'BEHAVIOR_ATK_TYPE': (),
-    'BEHAVIOR_ATK_SIZE': (),
-    'ATK_PARAM_HIT_SOURCE': (),
-    'ATK_PATAM_THROWFLAG_TYPE': (),
-    'ATK_PARAM_BOOL': (),
-    'NPC_THINK_GOAL_ACTION': (),
-    'NPC_THINK_REPLY_BEHAVIOR_TYPE': (),
-    'MAGIC_CATEGORY': (),
-    'MAGIC_MOTION_TYPE': (),
-    'SP_EFFECT_TYPE': (),
-    'MAGIC_BOOL': (),
-    'ATK_TYPE': (),
-    'ATK_SIZE': (),
-    'BULLET_LAUNCH_CONDITION_TYPE': (),
-    'BULLET_FOLLOW_TYPE': (),
-    'BULLET_EMITTE_POS_TYPE': (),
-    'BULLET_ATTACH_EFFECT_TYPE': (),
-    'SP_EFFECT_SPCATEGORY': (),
-    'SP_EFFECT_SAVE_CATEGORY': (),
-    'ATKPARAM_REP_DMGTYPE': (),
-    'SP_EFE_WEP_CHANGE_PARAM': (),
-    'SP_EFFECT_MOVE_TYPE': (),
-    'SP_EFFECT_THROW_CONDITION_TYPE': (),
-    'SP_EFFECT_BOOL': (),
-    'SP_EFFECT_VFX_EFFECT_TYPE': (),
-    'SP_EFFECT_VFX_SOUL_PARAM_TYPE': (),
-    'SP_EFFECT_VFX_PLAYCATEGORY': (),
-    'ITEMLOT_ITEMCATEGORY': (),
-    'ITEMLOT_ENABLE_LUCK': (),
-    'ITEMLOT_CUMULATE_RESET': (),
-    'CHARACTER_INIT_SEX': (),
-    'CHRINIT_VOW_TYPE': (),
-    'FACE_PARAM_HAIRSTYLE_TYPE': (),
-    'FACE_PARAM_HAIRCOLOR_TYPE': (),
-    'RAGDOLL_PARAM_BOOL': (),
-    'SKELETON_PARAM_KNEE_AXIS_DIR': (),
-    'OBJACT_SP_QUALIFIED_TYPE': (),
-    'OBJACT_CHR_SORB_TYPE': (),
-    'OBJACT_EVENT_KICK_TIMING': (),
-    'HMP_FOOT_EFFECT_HEIGHT_TYPE': (),
-    'HMP_FOOT_EFFECT_DIR_TYPE': (),
-    'HMP_FLOOR_HEIGHT_TYPE': (),
-}
-
-
 JUNK_ENTRY_NAMES = (b'\x80\x1e', b'\xfe\x1e')  # These appear in LIGHT_BANK in DS1.
+
+
+class ParamError(SoulstructError):
+    pass
+
+
+class BitField(object):
+    def __init__(self):
+        self.__field = ''
+        self.__offset = 0
+
+    def unpack(self, buffer, bit_count):
+        if self.__field == '':
+            # Consume (and reverse) new one-byte bit field.
+            self.__field = format(struct.unpack('<B', buffer.read(1))[0], '08b')[::-1]
+        value = int(self.__field[self.__offset:self.__offset + bit_count][::-1], 2)
+        self.__offset += bit_count
+        if self.__offset >= 8:
+            self.__field = ''
+            self.__offset = self.__offset % 8
+        return value
+
+    def pack(self, value, bit_count):
+        binary_value = bin(value)[2:]
+        if len(binary_value) > bit_count:
+            raise ValueError(f"Value {value} (binary: {binary_value}) of binary field is "
+                             f"larger than given bit count ({bit_count}).")
+        binary_value = '0' * (bit_count - len(binary_value)) + binary_value  # leading zeroes
+        self.__field += binary_value[::-1]
+        if len(self.__field) >= 8:
+            completed_bit_field = self.__field[:8]
+            # Leftover bytes go into next lot (though this should never happen due to pad fields).
+            self.__field = self.__field[8:] if len(self.__field) > 8 else ''
+            return int(completed_bit_field[::-1], 2)  # reversed
+        return None
+
+    def pad(self):
+        if self.__field:
+            # Pad out existing non-empty bit field and write it.
+            self.__field += '0' * (8 - len(self.__field))
+            completed_byte = int(self.__field[::-1], 2)  # note reversal
+            self.__field = ''
+            return completed_byte
+        return None
+
+    def clear(self):
+        self.__field = ''
+        self.__offset = 0
 
 
 class ParamEntry(object):
@@ -146,6 +85,7 @@ class ParamEntry(object):
     def __init__(self, entry_source, paramdef, name=None):
         self.fields = OrderedDict()
         self.paramdef = paramdef
+        self.bit_field = BitField()
 
         if isinstance(entry_source, OrderedDict):
             if name is None:
@@ -165,8 +105,8 @@ class ParamEntry(object):
         elif isinstance(entry_source, bytes):
             if name is None:
                 raise ValueError("`name` argument must be given explictly alongside raw entry data.")
-            self.unpack(entry_source, name)
             self.name = name
+            self.unpack(entry_source, name)
 
     def __iter__(self):
         return iter(self.fields.items())
@@ -181,7 +121,7 @@ class ParamEntry(object):
             try:
                 return self.fields[field]
             except KeyError:
-                raise KeyError(f"No field with name '{field}' in entry {self.fields['name']}.")
+                raise KeyError(f"No field with name '{field}' in entry {self.name}.")
 
     def __setitem__(self, field, value):
         if isinstance(field, int):
@@ -203,64 +143,80 @@ class ParamEntry(object):
             [f"\n    {key} = {value}" for key, value in self.fields.items()])
 
     def unpack(self, entry_buffer, name: str):
-        bit_field = None
-        bit_field_offset = 0
         if isinstance(entry_buffer, bytes):
             entry_buffer = BytesIO(entry_buffer)
 
         for field in self.paramdef.fields:
 
-            # Determine field format.
             if field['bit_size'] < 8:
-                field_format = 'bit'
+                field_value = self.bit_field.unpack(entry_buffer, field['bit_size'])
             elif field['internal_type'] == 'dummy8':
-                field_format = field['size']
-            elif not field['internal_type'] or not PARAM_TYPE_INFO[field['internal_type']]:
-                # Internal type missing or has no information; use debug type.
+                self.bit_field.clear()
+                field_value = entry_buffer.read(field['size'])
+                if not field_value == b'\0' * field['size']:
+                    raise ValueError(f"Pad value of field {field} in entry {self.name} of ParamTable "
+                                     f"{self.paramdef.param_name} is not null: {field_value}.")
+            else:
+                self.bit_field.clear()
                 try:
-                    field_format = PARAM_TYPE_INFO[field['debug_type']][0]
-                except IndexError:
-                    # It's an enum whose size I haven't written yet (so guess based on size).
-                    raise KeyError(f"Field {field['name']} has unknown debug type {field['debug_type']}.")
-            else:
-                field_format = PARAM_TYPE_INFO[field['internal_type']][0]
-
-            if field_format == 'bit':
-                if bit_field is None:
-                    # Consume (and reverse) new one-byte bit field.
-                    bit_field = format(struct.unpack('<B', entry_buffer.read(1))[0], '08b')[::-1]
-
-                field_value = int(bit_field[bit_field_offset:bit_field_offset + field['bit_size']][::-1], 2)
-                bit_field_offset += field['bit_size']
-                if bit_field_offset >= 8:
-                    bit_field = None
-                    bit_field_offset = bit_field_offset % 8
-
-            else:
-                if bit_field is not None:
-                    # Terminate unfinished bit field.
-                    bit_field = None
-                    bit_field_offset = 0
-                if isinstance(field_format, int):
-                    # Padding.
-                    field_value = entry_buffer.read(field['size'])
-                    if not field_value == b'\0' * field['size']:
-                        print(field, "Value:", field_value, "Format:", field_format)
-                        raise ValueError("Pad value is not null.")
-                else:
-                    data = entry_buffer.read(struct.calcsize(field_format))
-                    try:
-                        field_value, = struct.unpack(field_format, data)
-                    except struct.error:
-                        if field['debug_name'] in {'inverseToneMapMul', 'sfxMultiplier'}:
-                            # These fields are screwed up in m99 and default ToneMapBank.
-                            field_value = 1.0
-                        else:
-                            raise ValueError(f"Could not read any data for field: {field}")
+                    field_type = getattr(enums, field['internal_type'])
+                except AttributeError:
+                    raise KeyError(f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
+                                   f"internal type {field['internal_type']} (debug type {field['debug_type']}).")
+                data = entry_buffer.read(field_type.size())
+                try:
+                    field_value, = struct.unpack(field_type.format(), data)
+                except struct.error as e:
+                    if field['debug_name'] in {'inverseToneMapMul', 'sfxMultiplier'}:
+                        # These fields are screwed up in m99 and default ToneMapBank.
+                        field_value = 1.0
+                    else:
+                        raise ValueError(f"Could not unpack data for field {field}. Error:\n{str(e)}")
 
             self.fields[field['name']] = field_value
 
         self.name = name
+
+    def pack(self):
+        packed_entry = b''
+        for field_name, field_value in self.fields.items():  # These are ordered correctly already.
+
+            field = self.paramdef[field_name]
+
+            if field['bit_size'] < 8:
+                # Add bits.
+                completed_byte = self.bit_field.pack(field_value, field['bit_size'])
+                if completed_byte is not None:
+                    packed_entry += struct.pack('<B', completed_byte)
+                continue
+
+            completed_byte = self.bit_field.pad()
+            if completed_byte is not None:
+                packed_entry += struct.pack('<B', completed_byte)
+
+            if field['internal_type'] == 'dummy8':
+                # Write nulls.
+                packed_entry += b'\x00' * field['size']
+                continue
+
+            try:
+                field_type = getattr(enums, field['internal_type'])
+            except AttributeError:
+                raise ParamError(f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
+                                 f"internal type {field['internal_type']} (debug type {field['debug_type']}).")
+            if not isinstance(self[field['name']], field_type.python_type()):
+                raise ParamError(f"Bad type: field {field['name']} in entry {repr(self.name)} of table "
+                                 f"{self.paramdef.param_name} has value {self[field['name']]} with type "
+                                 f"{type(self[field['name']])}, but should have type {field_type.python_type()}.")
+            if not field_type.minimum() <= self[field['name']] <= field_type.maximum():
+                print(field)
+                raise ParamError(f"Invalid: field {field['name']} in entry {repr(self.name)} of table "
+                                 f"{self.paramdef.param_name} has out-of-range value {self[field['name']]} "
+                                 f"(range is {field_type.minimum()} to {field_type.maximum()}).")
+
+            packed_entry += struct.pack(field_type.format(), field_value)
+
+        return packed_entry
 
 
 class ParamTable(object):
@@ -294,6 +250,7 @@ class ParamTable(object):
         self.paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.entries = {}
         self.__magic = []
+        self.__unknown = None
         self.nickname = ''
 
         if isinstance(param_source, dict):
@@ -356,6 +313,7 @@ class ParamTable(object):
         header = self.HEADER_STRUCT.unpack(param_buffer)
         self.param_name = header.param_name
         self.__magic = [header.magic0, header.magic1, header.magic2]
+        self.__unknown = header.unknown
         entry_data_offset = header.entry_data_offset
         name_data_offset = header.name_data_offset  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
 
@@ -366,8 +324,8 @@ class ParamTable(object):
         if len(entry_pointers) == 0:
             return
         elif len(entry_pointers) == 1:
-            # NOTE: The only vanilla param in Dark Souls with one entry is LEVELSYNC_PARAM (Remastered only).
-            # Otherwise, we can probably trust the repacked name_data_offset from Soulstruct.
+            # NOTE: The only vanilla param in Dark Souls with one entry is LEVELSYNC_PARAM_ST (Remastered only).
+            # Otherwise, we can trust the repacked name_data_offset from Soulstruct.
             if self.param_name == 'LEVELSYNC_PARAM_ST':
                 entry_size = 220
             else:
@@ -411,76 +369,16 @@ class ParamTable(object):
         packed_names = b''
         packed_data = b''
 
-        warned_enum_names = set()
-
         for entry_id, entry in sorted_entries:
 
-            # 1. Pack names with relative offsets (to be globally offset later).
+            # Pack names with relative offsets (to be globally offset later).
             name_z_str = entry.name.encode('shift_jis_2004') + b'\x00'
             packed_names += name_z_str
             name_offset_list.append(current_name_offset)
             current_name_offset += len(name_z_str)
 
-            # 2. Pack data after validating the type for each field.
-            packed_entry = b''
-            bit_field = ''
-            for field_name, field_value in entry.fields.items():  # These are ordered correctly already.
-
-                field = self.paramdef_bnd[field_name]
-
-                if field['bit_size'] < 8:
-                    # Add bits.
-                    binary_value = bin(field_value)[2:]
-                    if len(binary_value) > field['bit_size']:
-                        raise ValueError(f"Value {field_value} (binary: {binary_value}) of binary field "
-                                         f"{field_name} is too large for field size of {field['bit_size']} bits).")
-                    binary_value = '0' * (field['bit_size'] - len(binary_value)) + binary_value  # leading zeroes
-                    bit_field += binary_value[::-1]
-                    if len(bit_field) >= 8:
-                        completed_bit_field = bit_field[:8]
-                        byte_to_write = int(completed_bit_field[::-1], 2)  # reversed
-                        packed_entry += struct.pack('<B', byte_to_write)
-                        # Leftover bytes go into next lot (though this should never happen due to pad fields).
-                        bit_field = bit_field[8:] if len(bit_field) > 8 else ''
-                else:
-                    if bit_field:
-                        # Pad out existing non-empty bit field and write it.
-                        bit_field += '0' * (8 - len(bit_field))
-                        byte_to_write = int(bit_field[::-1], 2)  # note reversal
-                        packed_entry += struct.pack('<B', byte_to_write)
-                        bit_field = ''
-
-                    if field['internal_type'] == 'dummy8':
-                        # Write nulls.
-                        packed_entry += b'\x00' * field['size']
-                        continue
-
-                    if field['internal_type'] in PARAM_TYPE_INFO and PARAM_TYPE_INFO[field['internal_type']]:
-                        try:
-                            field_fmt, field_type, field_min, field_max = PARAM_TYPE_INFO[field['internal_type']]
-                        except ValueError:
-                            raise ValueError(f"Found incomplete enum {field['internal_type']} in PARAM_TYPE_INFO.")
-                    else:
-                        # It's an enum whose size I haven't written yet. TODO: Get all the enum sizes.
-                        if field_name not in warned_enum_names:
-                            print(f"# WARNING: Field {field_name} has unknown enum type {field['internal_type']} "
-                                  f"(field size: {field['size']}).")
-                            warned_enum_names.add(field_name)
-                        if field['size'] == 1:
-                            field_fmt, field_type, field_min, field_max = '<B', int, 0, 2 ** 8 - 1
-                        else:
-                            field_fmt, field_type, field_min, field_max = '<I', int, 0, 2 ** 32 - 1
-
-                    if not isinstance(entry[field['name']], field_type):
-                        raise ValueError(f"Bad type: field {field['name']} in entry {entry_id} has value "
-                                         f"{entry[field['name']]} with type {type(entry[field['name']])},\n"
-                                         f"but should have type {field_type}.")
-                    if not field_min <= entry[field['name']] <= field_max:
-                        raise ValueError(f"Invalid: field {field['name']} in entry {entry_id} has out-of-range value "
-                                         f"{entry[field['name']]}")
-
-                    packed_entry += struct.pack(field_fmt, field_value)
-
+            # Pack entry data.
+            packed_entry = entry.pack()
             packed_data += packed_entry
             data_offset_list.append(data_offset)
             data_offset += len(packed_entry)
@@ -505,6 +403,7 @@ class ParamTable(object):
             entry_count=len(sorted_entries),
             param_name=self.param_name,
             magic2=self.__magic[2],
+            unknown=self.__unknown,
         ))
 
         return header + entry_pointer_data + packed_data + packed_names

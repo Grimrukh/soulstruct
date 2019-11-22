@@ -1,6 +1,6 @@
 from copy import deepcopy
-import os
-from soulstruct.bnd import BND
+from pathlib import Path
+from soulstruct.bnd import BND, BaseBND
 from soulstruct.text.fmg import FMG
 
 
@@ -76,7 +76,7 @@ class DarkSoulsText(object):
                 folders within the 'msg' directory in the Dark Souls data files.
         """
         self._bnd_dir = ''
-        self._directory = msg_directory
+        self._directory = None
         self._original_names = {}  # The actual within-BND FMG names are completely up to us. My names are nicer.
         self._is_menu = {}  # Records whether each FMG belongs in 'item' or 'menu' MSGBND.
         self._data = {}
@@ -91,27 +91,29 @@ class DarkSoulsText(object):
             self.menu_msgbnd = None
             return
 
+        self._directory = Path(msg_directory)
+
         try:
-            self.item_msgbnd = BND(os.path.join(msg_directory, 'item.msgbnd.dcx'))
+            self.item_msgbnd = BND(self._directory / 'item.msgbnd.dcx', optional_dcx=False)
         except FileNotFoundError:
-            self.item_msgbnd = BND(os.path.join(msg_directory, 'item.msgbnd'))
+            self.item_msgbnd = BND(self._directory / 'item.msgbnd', optional_dcx=False)
             self._dcx = False
         else:
             self._dcx = True
-            if os.path.isfile(os.path.join(msg_directory, 'item.msgbnd')):
+            if (self._directory / 'item.msgbnd').is_file():
                 print("# WARNING: Both DCX and non-DCX 'item.msgbnd' resources were found. Reading only the DCX file, "
                       "and will compress with DCX by default when `.write()` is called.")
 
         try:
-            self.menu_msgbnd = BND(os.path.join(msg_directory, 'menu.msgbnd.dcx'))
+            self.menu_msgbnd = BND(self._directory / 'menu.msgbnd.dcx', optional_dcx=False)
         except FileNotFoundError:
-            self.menu_msgbnd = BND(os.path.join(msg_directory, 'menu.msgbnd'))
+            self.menu_msgbnd = BND(self._directory / 'menu.msgbnd', optional_dcx=False)
             if self._dcx:
                 raise ValueError("Found DCX-compressed 'item.msgbnd.dcx', but not 'menu.msgbnd.dcx'.")
         else:
             if not self._dcx:
                 raise ValueError("Found DCX-compressed 'menu.msgbnd.dcx', but not 'item.msgbnd.dcx'.")
-            if os.path.isfile(os.path.join(msg_directory, 'menu.msgbnd')):
+            if (self._directory / 'menu.msgbnd').is_file():
                 print("# WARNING: Both DCX and non-DCX 'menu.msgbnd' resources were found. Reading only the DCX file, "
                       "and will compress with DCX by default when `.write()` is called.")
 
@@ -121,7 +123,7 @@ class DarkSoulsText(object):
         for key, fmg_dict in self._data.items():
             setattr(self, key, fmg_dict)
 
-    def load_fmg_entries_from_bnd(self, msgbnd: BND, is_menu: bool):
+    def load_fmg_entries_from_bnd(self, msgbnd: BaseBND, is_menu: bool):
 
         # remastered = False if 'win32' in msgbnd[0].path else True
 
@@ -131,7 +133,7 @@ class DarkSoulsText(object):
             except KeyError:
                 raise ValueError(f"BND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
 
-            original_name = os.path.basename(entry.path)
+            original_name = entry.name
 
             self._original_names[new_name] = original_name
             self._is_menu[new_name] = is_menu
@@ -173,15 +175,14 @@ class DarkSoulsText(object):
         self._data[item_fmg + 'Summaries'][index] = ''
         self._data[item_fmg + 'Descriptions'][index] = ''
 
-    def write(self, msg_directory=None, description_word_wrap_limit=50, separate_patch=False, use_original_names=False,
-              pipe_to_newline=True, dcx=None):
+    def save(self, msg_directory=None, description_word_wrap_limit=50, separate_patch=False, use_original_names=False,
+             pipe_to_newline=True, dcx=None):
         """ Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods. """
 
-        new_item_msgbnd = deepcopy(self.item_msgbnd)
-        new_menu_msgbnd = deepcopy(self.menu_msgbnd)
+        new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
+        new_menu_msgbnd = deepcopy(self.menu_msgbnd)  # type: BaseBND
 
-        if msg_directory is None:
-            msg_directory = self._directory
+        msg_directory = self._directory if msg_directory is None else Path(msg_directory)
         if dcx is None:
             dcx = self._dcx
 
@@ -244,12 +245,14 @@ class DarkSoulsText(object):
                 bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + '.text')
 
         # Write BNDs (to original directory by default).
-        new_item_msgbnd.write(os.path.join(msg_directory, 'item.msgbnd' + ('.dcx' if dcx else '')))
-        new_menu_msgbnd.write(os.path.join(msg_directory, 'menu.msgbnd' + ('.dcx' if dcx else '')))
+        new_item_msgbnd.write(msg_directory / ('item.msgbnd' + ('.dcx' if dcx else '')))
+        new_menu_msgbnd.write(msg_directory / ('menu.msgbnd' + ('.dcx' if dcx else '')))
 
         # Update BNDs after successful write.
         self.item_msgbnd = new_item_msgbnd
         self.menu_msgbnd = new_menu_msgbnd
+
+        print('# Dark Souls text (MSGBND) saved successfully.')
 
     def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:

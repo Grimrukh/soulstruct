@@ -2,16 +2,17 @@ from __future__ import annotations
 import datetime
 from functools import wraps
 import json
-import os
+from pathlib import Path
 import pickle
-import re
 import shutil
+from textwrap import wrap
 from tkinter.ttk import Notebook
 from typing import Optional
 
 from soulstruct.core import SoulstructError
-from soulstruct.maps import DarkSoulsMaps, MAP_ENTRY_TYPES, MSB
+from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
+from soulstruct.project.links import WindowLinker
 from soulstruct.project.maps import SoulstructMapEditor
 from soulstruct.project.params import SoulstructParamsEditor
 from soulstruct.project.text import SoulstructTextEditor
@@ -19,7 +20,7 @@ from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import find_steam_common_paths, traverse_path_tree, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
 
-__all__ = ['SoulstructProject', 'SoulstructProjectError']
+__all__ = ['SoulstructProject', 'SoulstructProjectError', 'SoulstructProjectWindow']
 
 
 class SoulstructProjectError(SoulstructError):
@@ -35,319 +36,6 @@ def _with_config_write(func):
     return project_method
 
 
-class MissingLinkError(KeyError):
-    """Exception raised when a param ID linked to another table can't be found in that table."""
-    pass
-
-
-class WindowLinker(object):
-    """Interface that generates links (go-to commands) between arbitrary parts of the Soulstruct unified window."""
-    _MATCH_LINK = re.compile(r'<(.*)>')
-
-    # TODO: Finalize these when tab order is set.
-    TAB_ORDER = ['maps', 'params', 'text', 'main']
-
-    @classmethod
-    def get_tab_index(cls, tab_name):
-        return cls.TAB_ORDER.index(tab_name)
-
-    class Link(object):
-        def __init__(self, linker: WindowLinker = None, name=None, menu_text='Go to link'):
-            """Create a link within the Soulstruct GUI.
-
-            Args:
-                name: Name that will appear in [] next to ID. If None, no name will appear.
-                menu_text: Text that will appear in right-click menu. Usually "Go to [type]".
-            """
-            self.linker = linker
-            self.name = name
-            self.menu_text = menu_text
-
-        def __call__(self):
-            raise NotImplementedError
-
-    class NullLink(Link):
-        """Link field has a null value, usually 0 or -1, which means the field is unused or set to a default."""
-        def __init__(self, linker: WindowLinker):
-            super().__init__(linker, name='None', menu_text='')
-
-        def __call__(self):
-            raise MissingLinkError("Null link cannot be called.")
-
-    class ParamLink(Link):
-        def __init__(self, linker, category, param_entry_id, create_if_missing=False, name=None):
-            super().__init__(linker, name=name, menu_text=f"Jump to param entry {category}[{param_entry_id}]")
-            self.category = category
-            self.param_entry_id = param_entry_id
-
-        def __call__(self):
-            # TODO: Jump to specific field, for undo/redo.
-            # TODO: Create if missing.
-            self.linker.window.page_tabs.select(self.linker.get_tab_index('params'))
-            index = sorted(self.linker.project.Params[self.category].entries).index(self.param_entry_id)
-            self.linker.window.params_tab.select_category(self.category, first_display_index=index)
-            self.linker.window.params_tab.entry_display.select_entry(0, edit_if_already_selected=False)
-            self.linker.window.params_tab.update_idletasks()
-
-    class TextLink(Link):
-        def __init__(self, linker, category, text_id, create_if_missing=False, name=None):
-            super().__init__(linker, name=name, menu_text=f"Jump to text entry {category}[{text_id}]")
-            self.category = category
-            self.text_id = text_id
-
-        def __call__(self):
-            # TODO: Create if missing.
-            self.linker.window.page_tabs.select(self.linker.get_tab_index('text'))
-            self.linker.window.text_tab.select_category(
-                self.category, first_display_index=sorted(self.linker.project.Text[self.category]).index(self.text_id))
-            self.linker.window.text_tab.select_entry(self.text_id, edit_if_already_selected=False)
-            self.linker.window.text_tab.update_idletasks()
-            self.linker.window.text_tab.entry_canvas.yview_moveto(0)
-
-    class MapLink(Link):
-        def __init__(self, linker, entry_list_name, entry_type_index, entry_local_index,
-                     entry_type_name=None, name=None):
-            super().__init__(
-                linker, name=name,
-                menu_text=f"Go to {entry_list_name}"
-                          f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
-                          f"   [{name}]")
-            self.entry_list_name = entry_list_name
-            self.entry_type_index = entry_type_index
-            self.entry_local_index = entry_local_index
-
-        def __call__(self):
-            self.linker.window.page_tabs.select(self.linker.get_tab_index('maps'))
-            self.linker.window.maps_tab.entry_list_choice.set(self.entry_list_name)
-            self.linker.window.maps_tab.refresh_entry_types(clear_selection=True)
-            self.linker.window.maps_tab.select_entry_type(
-                entry_type_index=self.entry_type_index, first_display_index=self.entry_local_index)
-            self.linker.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
-            self.linker.window.maps_tab.update_idletasks()
-
-    def __init__(self, window: SoulstructProjectWindow):
-        self.window = window
-        self.project = window.project
-
-    def soulstruct_link(self, field_type, field_value, special_values: dict = None):
-        """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
-        animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
-        resolved here."""
-
-        match_link = self._MATCH_LINK.match(field_type)
-        if not match_link:
-            raise ValueError(f"Invalid link: {field_type}")
-
-        name_extension = ''
-        link_text = match_link.group(1)
-
-        if ':' not in link_text:
-            return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
-
-        link_pieces = link_text.split(':')
-        table_type = link_pieces[0]
-
-        if table_type == 'MapsList':
-            links = []
-            field_type = f'<Maps:{":".join(link_pieces[1:])}>'
-            for entry_name in field_value:
-                if not entry_name:
-                    continue
-                links += self.soulstruct_link(field_type, entry_name)
-            return links
-
-        if table_type == 'Maps':
-            entry_name = field_value
-            if not entry_name:  # None or empty string
-                return [self.Link(self, name='None')]
-            active_map = self.window.maps_tab.active_map_data  # type: MSB
-            entry_list_name = link_pieces[1]
-            if entry_list_name not in MAP_ENTRY_TYPES:
-                raise ValueError(f"Invalid map entry list: {entry_list_name}")
-            entry_list = active_map[entry_list_name]
-
-            try:
-                entry_local_index = entry_list.get_entry_type_index(entry_name)
-
-                if len(link_pieces) == 3:
-                    # Technically, map links only care about entry list type, but I'm sometimes adding some additional
-                    # enforcement (like parts.characters[i].model_index linking to models.characters only).
-                    entry_types = [MAP_ENTRY_TYPES[entry_list_name][entry_type].name
-                                   for entry_type in link_pieces[2].split('|')]
-                    if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
-                        raise ValueError("Type of entry name in field does not match enforced type of field.")
-                    entry_type_name = entry_list[entry_name].ENTRY_TYPE.name
-                    entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
-                else:
-                    entry_type_name = None
-                    entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
-
-            except ValueError:
-                # Entry name is missing (or is not of the enforced entry type).
-                return [self.Link()]
-
-            return [self.MapLink(
-                self, name=field_value, entry_list_name=entry_list_name, entry_type_index=entry_type_index,
-                entry_type_name=entry_type_name, entry_local_index=entry_local_index)]
-
-        if field_value in special_values:
-            return [self.Link(self, name=special_values[field_value], menu_text='')]
-
-        category = link_pieces[1]
-
-        if table_type == 'Text':
-            text_table = self.project.Text[category]
-            if field_value not in text_table:
-                return [self.Link()]
-            return [self.TextLink(self, category=category, text_id=field_value, name=text_table[field_value])]
-
-        if table_type == 'Params':
-            if category in {'Attacks', 'Behaviors'}:
-                # Try to determine Player vs. Non Player table.
-                if category == 'Attacks':
-                    if self.window.params_tab.active_category == 'PlayerBehaviors':
-                        category = 'PlayerAttacks'
-                    elif self.window.params_tab.active_category == 'NonPlayerBehaviors':
-                        category = 'NonPlayerAttacks'
-                elif category == 'Behaviors':
-                    if self.window.params_tab.active_category == 'Players':
-                        category = 'PlayerBehaviors'
-                if category in {'Attacks', 'Behaviors'}:
-                    # Could be Player or Non Player. Provide both links.
-                    player_table = self.project.Params['Player' + category]
-                    non_player_table = self.project.Params['NonPlayer' + category]
-                    if field_value not in player_table and field_value not in non_player_table:
-                        return [self.Link()]
-                    links = []
-                    if field_value in player_table:
-                        links.append(self.ParamLink(
-                            self, category='Player' + category, param_entry_id=field_value,
-                            name=player_table[field_value]))
-                    if field_value in player_table:
-                        links.append(self.ParamLink(
-                            self, category='NonPlayer' + category, param_entry_id=field_value,
-                            name=player_table[field_value]))
-                    if links:
-                        return links
-                    return [self.Link()]
-
-            if category in {'Armor', 'Weapons'}:
-                true_param_id = (self.check_armor_id(field_value) if category == 'Armor'
-                                 else self.check_weapon_id(field_value))
-                if true_param_id is None:
-                    return [self.Link()]  # Invalid weapon/armor ID, even considering reinforcement.
-                if field_value != true_param_id:
-                    name_extension = '+' + str(field_value - true_param_id)
-                field_value = true_param_id
-
-            param_table = self.project.Params[category]
-            try:
-                name = param_table[field_value].name + name_extension
-            except KeyError:
-                return [self.Link()]
-            else:
-                return [self.ParamLink(self, category=category, param_entry_id=field_value, name=name)]
-
-        return []  # No other table types supported yet.
-
-    def get_map_entry_type_names(self, field_type):
-        match_link = self._MATCH_LINK.match(field_type)
-        if not match_link:
-            raise ValueError(f"Invalid link: {field_type}")
-
-        link_text = match_link.group(1)
-
-        if ':' not in link_text:
-            return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
-
-        link_pieces = link_text.split(':')
-        table_type = link_pieces[0]
-
-        if table_type == 'Maps':
-            active_map = self.window.maps_tab.active_map_data  # type: MSB
-            entry_list_name = link_pieces[1]
-            if entry_list_name not in MAP_ENTRY_TYPES:
-                raise ValueError(f"Invalid map entry list: {entry_list_name}")
-            entry_list = active_map[entry_list_name]
-
-            if len(link_pieces) == 3:
-                # Technically, map links only care about entry list type, but I'm sometimes adding some additional
-                # enforcement (like parts.characters[i].model_index linking to models.characters only).
-                names = []
-                for name in link_pieces[2].split('|'):
-                    names += entry_list.get_entry_names(entry_type=name)
-                return names
-            else:
-                return entry_list.get_entry_names()
-
-    def entry_text_link(self, entry_id):
-        """Return three (name, link) pairs for entries in item categories. Returns None if no link is appropriate, and
-        returns an empty tuple if text should exist but cannot be found."""
-        category = self.window.params_tab.active_category
-        if category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
-            return []
-        text_ids = {'Names': entry_id, 'Summaries': entry_id, 'Descriptions': entry_id}
-        links = []
-
-        prefix = category.rstrip('s')
-
-        if category == 'Weapons':
-            base_weapon_id = self.check_weapon_id(entry_id)
-            if base_weapon_id is not None:
-                text_ids['Summaries'] = base_weapon_id
-                text_ids['Descriptions'] = base_weapon_id
-        elif category == 'Armor':
-            base_armor_id = self.check_armor_id(entry_id)
-            if base_armor_id is not None:
-                text_ids['Summaries'] = base_armor_id
-                text_ids['Descriptions'] = base_armor_id
-        for text_category, text_id in text_ids.items():
-            if text_ids[text_category] not in self.project.Text[prefix + text_category]:
-                links.append(self.Link())
-            else:
-                links.append(self.TextLink(
-                    self, category=prefix + text_category, text_id=text_id,
-                    name=self.project.Text[prefix + text_category][text_id]))
-
-        return links
-
-    def check_armor_id(self, armor_id):
-        """Checks if the given armor ID (which may include a reinforcement offset) is valid by inspecting the
-        Weapons table."""
-        level = armor_id % 100
-        if level > 10:
-            return None
-        if level == 0:
-            return armor_id
-        base_armor = armor_id - level
-        origin_field = 'originEquipPro' + ('' if level == 0 else str(level))
-        try:
-            origin = self.project.Params['Armor'][base_armor][origin_field]
-        except KeyError:
-            return None
-        if origin == -1:
-            return None
-        return base_armor
-
-    def check_weapon_id(self, weapon_id):
-        """Checks if the given weapon ID (which may include a reinforcement offset) is valid by inspecting the
-        Weapons table."""
-        level = weapon_id % 100
-        if level > 15:
-            return None
-        if level == 0:
-            return weapon_id
-        base_weapon = weapon_id - level
-        origin_field = 'originEquipWep' + ('' if level == 0 else str(level))
-        try:
-            origin = self.project.Params['Weapons'][base_weapon][origin_field]
-        except KeyError:
-            return None
-        if origin == -1:
-            return None
-        return base_weapon
-
-
 class SoulstructProjectWindow(SoulstructSmartFrame):
 
     page_tabs: Optional[Notebook]
@@ -355,10 +43,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     text_tab: Optional[SoulstructTextEditor]
     maps_tab: Optional[SoulstructMapEditor]
 
+    TAB_ORDER = ['maps', 'params', 'text', 'main']
+
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
         self.project = project
-        self.linker = WindowLinker(self)
+        self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
         self.page_tabs = None
         self.text_tab = None
@@ -371,44 +61,52 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     def build(self):
         self.page_tabs = self.Notebook(row=0)
 
-        f_maps_tab = self.Frame(frame=self.page_tabs)
-        self.page_tabs.add(f_maps_tab, text='  Maps  ')
+        tab_frames = {tab_name: self.Frame(frame=self.page_tabs) for tab_name in self.TAB_ORDER}
+
         self.maps_tab = self.SmartFrame(
-            frame=f_maps_tab, smart_frame_class=SoulstructMapEditor, project=self.project, linker=self.linker)
+            frame=tab_frames['maps'], smart_frame_class=SoulstructMapEditor,
+            maps=self.project.Maps, linker=self.linker)
 
-        f_params_tab = self.Frame(frame=self.page_tabs)
-        self.page_tabs.add(f_params_tab, text='  Params  ')
         self.params_tab = self.SmartFrame(
-            frame=f_params_tab, smart_frame_class=SoulstructParamsEditor, project=self.project, linker=self.linker)
+            frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
+            params=self.project.Params, linker=self.linker)
 
-        f_text_tab = self.Frame(frame=self.page_tabs)
-        self.page_tabs.add(f_text_tab, text='  Text  ')
         self.text_tab = self.SmartFrame(
-            frame=f_text_tab, smart_frame_class=SoulstructTextEditor, project=self.project, linker=self.linker)
+            frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
+            text=self.project.Text, linker=self.linker)
 
-        # TODO: Should obviously go first.
-        f_main_tab = self.Frame(frame=self.page_tabs)
-        self.page_tabs.add(f_main_tab, text='  Main  ')
-        self.build_main_tab(f_main_tab)
+        self.build_main_tab(tab_frames['main'])
 
         # TODO: Lighting. Events (somehow). Game saves.
 
-        self.resizable(False, False)
+        for tab_name, tab_frame in tab_frames.items():
+            self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
+
+        self.resizable(False, False)  # TODO
         self.set_geometry()
         self.deiconify()
 
     def build_main_tab(self, main_frame):
-        with self.set_master(main_frame, auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
-            self.Button(text="Pull All from Game Directory", bg='#235', width=30, font_size=20,
-                        command=lambda: self.project.load_project(force_game_pull=True))
-            self.Button(text="Pull Params", bg='#235', width=30, font_size=20,
-                        command=self.project.pull_params)
-            self.Button(text="Pull Text", bg='#235', width=30, font_size=20,
-                        command=self.project.pull_text)
-            self.Button(text="Pull Lighting", bg='#235', width=30, font_size=20,
-                        command=self.project.pull_lighting)
-            self.Button(text="Pull Maps", bg='#235', width=30, font_size=20,
-                        command=self.project.pull_maps)
+        with self.set_master(main_frame, auto_columns=0):
+            with self.set_master(auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
+                self.Button(text="Pull All from Game Directory", bg='#235', width=30, font_size=20,
+                            command=lambda: self.project.load_project(force_game_pull=True))
+                self.Button(text="Pull Params", bg='#235', width=30, font_size=20,
+                            command=self.project.pull_params)
+                self.Button(text="Pull Text", bg='#235', width=30, font_size=20,
+                            command=self.project.pull_text)
+                self.Button(text="Pull Lighting", bg='#235', width=30, font_size=20,
+                            command=self.project.pull_lighting)
+                self.Button(text="Pull Maps", bg='#235', width=30, font_size=20,
+                            command=self.project.pull_maps)
+            with self.set_master(auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
+                self.Button(text='Export Project', bg='#623', width=30, font_size=20,
+                            command=self.project.export_project)
+
+    def destroy(self):
+        """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
+        self.withdraw()
+        super().destroy()
 
 
 class SoulstructProject(object):
@@ -427,13 +125,13 @@ class SoulstructProject(object):
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
 
-    def __init__(self, project_directory: str = ''):
+    def __init__(self, project_path: str = ''):
 
         self._window = SoulstructProjectWindow(project=self, master=None)
         # self._window.withdraw()
 
         self.game_name = ''
-        self.game_dir = ''
+        self.game_root = Path()
         self.last_pull_time = ''
         self.last_push_time = ''
         # TODO: Record last edit time for each file/structure.
@@ -444,14 +142,15 @@ class SoulstructProject(object):
         self.Maps = DarkSoulsMaps(None)
 
         try:
-            self.project_dir = self._validate_project_directory(project_directory, self._DEFAULT_PROJECT_ROOT)
+            self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
             self.load_config()
             self.load_project()
         except SoulstructProjectError as e:
-            self.dialog(title="Project Error", message=str(e) + "\n\nAborting startup.", button_kwargs='OK')
+            self.dialog(title="Project Error", message='\n'.join(wrap(str(e), 50)) + "\n\nAborting startup.",
+                        button_kwargs='OK')
             raise  # TODO: should not raise an error; just flag startup failure.
         except Exception as e:
-            msg = "Internal Python Error:\n\n" + str(e) + "\n\nAborting startup."
+            msg = "Internal Python Error:\n\n" + '\n'.join(wrap(str(e), 50)) + "\n\nAborting startup."
             self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
             raise  # TODO: should not raise an error; just flag startup failure.
 
@@ -468,7 +167,7 @@ class SoulstructProject(object):
             try:
                 if force_game_pull:
                     raise FileNotFoundError
-                with open(self.project_path(pickled), 'rb') as f:
+                with (self.project_root / pickled).open('rb') as f:
                     setattr(self, attr, pickle.load(f))
             except FileNotFoundError:
                 if force_game_pull or self.dialog(
@@ -482,40 +181,52 @@ class SoulstructProject(object):
                     raise SoulstructProjectError("Could not open project files.")
 
     def save_in_project(self, obj, pickled_path):
-        with open(self.project_path(pickled_path), 'wb') as f:
+        with (self.project_root / pickled_path).open('wb') as f:
             pickle.dump(obj, f)
 
+    # PULL METHODS. These pull game data sub-structures from the live game directory, and save them
+    # as pickled structure instances inside the project directory.
+
     def pull_text(self):
-        self.Text = DarkSoulsText(self.game_path('msg/ENGLISH'))
+        self.Text = DarkSoulsText(self.game_root / 'msg/ENGLISH')
         self.save_in_project(self.Text, 'text.d1s')
 
     def pull_params(self):
-        self.Params = DarkSoulsGameParameters(self.game_path('param/GameParam/GameParam.parambnd'))
+        self.Params = DarkSoulsGameParameters(self.game_root / 'param/GameParam/GameParam.parambnd')
         self.save_in_project(self.Params, 'params.d1s')
 
     def pull_lighting(self):
-        self.Lighting = DarkSoulsLightingParameters(self.game_path('param/DrawParam'))
+        self.Lighting = DarkSoulsLightingParameters(self.game_root / 'param/DrawParam')
         self.save_in_project(self.Lighting, 'lighting.d1s')
 
     def pull_maps(self):
-        self.Maps = DarkSoulsMaps(self.game_path('map/MapStudio'))
+        self.Maps = DarkSoulsMaps(self.game_root / 'map/MapStudio')
         self.save_in_project(self.Maps, 'maps.d1s')
 
+    def push_project(self):
+        """Writes all data substructures in game formats in the live game directory, ready for play."""
+        self.export_project(self.game_root)
+
     def export_project(self, export_directory: str = None):
+        """Writes all data substructures in game formats in the chosen directory, under the same folders they
+        would be in the live game directory.
+
+        By default, the root export directory is 'export/{timestamp}' within the project directory.
+        """
         if export_directory is None:
-            export_directory = self.project_path(f'export/{self._get_timestamp(for_path=True)}')
+            export_directory = self.project_root / 'export' / self._get_timestamp(for_path=True)
 
-        text_path = os.path.join(export_directory, 'msg/ENGLISH/')
-        os.makedirs(text_path, exist_ok=True)
-        self.Text.write(text_path)
+        maps_path = export_directory / 'map/MapStudio/'
+        maps_path.mkdir(parents=True, exist_ok=True)
+        self.Maps.save(maps_path)
 
-        params_path = os.path.join(export_directory, 'param/GameParam/GameParam.parambnd')
-        os.makedirs(params_path, exist_ok=True)
+        params_path = export_directory / 'param/GameParam/GameParam.parambnd'  # DCX compression handled by BND
+        params_path.parent.mkdir(parents=True, exist_ok=True)
         self.Params.save(params_path)
 
-        maps_path = os.path.join(export_directory, 'map/MapStudio/')
-        os.makedirs(maps_path, exist_ok=True)
-        self.Maps.save(maps_path)
+        text_path = export_directory / 'msg/ENGLISH/'
+        text_path.mkdir(parents=True, exist_ok=True)
+        self.Text.save(text_path)
 
         # TODO: can't save DrawParams yet.
         # lighting_path = os.path.join(export_directory, 'param/DrawParam/')
@@ -524,7 +235,7 @@ class SoulstructProject(object):
 
     def load_config(self):
         try:
-            with open(os.path.join(self.project_dir, 'config.json'), 'r') as f:
+            with (self.project_root / 'config.json').open('r') as f:
                 try:
                     config = json.load(f)
                 except json.JSONDecodeError:
@@ -535,7 +246,7 @@ class SoulstructProject(object):
                 else:
                     try:
                         self.game_name = config['GameName']
-                        self.game_dir = config['GameDirectory']
+                        self.game_root = Path(config['GameDirectory'])
                         self.last_pull_time = config.get('LastPullTime', None)
                         self.last_push_time = config['LastPushTime']
                     except KeyError:
@@ -547,9 +258,10 @@ class SoulstructProject(object):
         except FileNotFoundError:
             # Create project config file.
             try:
-                self.game_dir, self.game_name = self._get_live_game_directory()
+                self.game_root, self.game_name = self._get_game_root()
             except SoulstructProjectError as e:
                 raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
+            self._write_config()
             if self.dialog(title="Initial project load",
                            message="Pull game files now? This will override any '.d1s' files\n"
                                    "that are already in this folder.",
@@ -562,75 +274,68 @@ class SoulstructProject(object):
     def push(self):
         print("# Pushing project files to game...")  # TODO: log
         for path_sequence in traverse_path_tree(MODIFIABLE_FILES[self.game_name]):
-            project_file = os.path.join(self.project_dir, *path_sequence)
-            game_file = os.path.join(self.game_dir, *path_sequence)
-            shutil.copy2(project_file, game_file)
+            project_file = self.project_root.joinpath(*path_sequence)
+            game_file = self.game_root.joinpath(*path_sequence)
+            shutil.copy2(str(project_file), str(game_file))
         self.last_push_time = self._get_timestamp()
-
-    def game_path(self, *relative_parts):
-        return os.path.abspath(os.path.join(self.game_dir, *relative_parts))
-
-    def project_path(self, *relative_parts):
-        return os.path.abspath(os.path.join(self.project_dir, *relative_parts))
 
     @staticmethod
     def _get_timestamp(for_path=False):
-        if for_path:
-            return datetime.datetime.now().strftime('%Y %B %d %H.%M.%S')
-        return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.now().strftime('%Y-%m-%d %H%M%S' if for_path else '%Y-%m-%d %H:%M:%S')
 
     def _build_config_dict(self):
         # TODO: Separate pull times for different types.
         return {
             'GameName': self.game_name,
-            'GameDirectory': self.game_dir,
+            'GameDirectory': str(self.game_root),
             'LastPullTime': self.last_pull_time,
             'LastPushTime': self.last_push_time,
         }
 
     def _write_config(self):
         try:
-            with open(os.path.join(self.project_dir, 'config.json'), 'w') as f:
+            with (self.project_root / 'config.json').open('w') as f:
                 json.dump(self._build_config_dict(), f, indent=4)
         except PermissionError:
             raise SoulstructProjectError("No write access to 'config.json' in project directory.")
 
-    def _validate_project_directory(self, project_dir, default_root):
-        if not project_dir:
+    def _validate_project_directory(self, project_path, default_root):
+        if not project_path:
             self.dialog(
                 title="Choose Soulstruct project directory",
                 message="Navigate to your Soulstruct project directory.\n\n" + word_wrap(
                     "If you want to create a new project, create an empty directory and select it."
                     "The name of the directory will be the name of the project.", 50),
                 button_names='OK', button_kwargs='OK')
-            project_dir = self._window.FileDialog.askdirectory(
-                title="Choose Soulstruct project directory", initialdir=os.path.expanduser('~/Documents'))
-            if not project_dir:
+            project_path = self._window.FileDialog.askdirectory(
+                title="Choose Soulstruct project directory", initialdir=str(Path('~/Documents').expanduser()))
+            if not project_path:
                 raise SoulstructProjectError(word_wrap("No directory chosen. Quitting Soulstruct.", 50))
-        if not os.path.isabs(project_dir):
-            project_dir = os.path.abspath(os.path.join(default_root, project_dir))
-        if os.path.isfile(project_dir):
+
+        project_path = Path(project_path)
+        if not project_path.is_absolute():
+            project_path = (default_root / project_path).expanduser().absolute()
+        if project_path.is_file():
             raise SoulstructProjectError("You must specify a project *directory*, not a file.")
-
-        if not os.path.isdir(project_dir):
+        if not project_path.is_dir():
             try:
-                os.makedirs(project_dir, exist_ok=True)
+                project_path.mkdir(parents=True, exist_ok=True)
             except NotADirectoryError:
-                raise SoulstructProjectError(f"Invalid directory path: {repr(project_dir)}.")
+                raise SoulstructProjectError(f"Invalid directory path: {str(project_path)}.")
             except PermissionError:
-                raise SoulstructProjectError(f"No write access to create directory: {repr(project_dir)}.")
+                raise SoulstructProjectError(f"No write access to create directory: {str(project_path)}.")
 
-        return project_dir
+        return project_path
 
-    def _get_live_game_directory(self):
+    def _get_game_root(self):
         for common_path in find_steam_common_paths():
-            dsr_path = os.path.join(common_path, 'DARK SOULS REMASTERED')
-            if os.path.isdir(dsr_path):
-                initial_dir = dsr_path
+            dsr_path = Path(common_path, 'DARK SOULS REMASTERED')
+            if dsr_path.is_dir():
+                initial_dir = str(dsr_path)
                 break
-            ptd_path = os.path.join(common_path, 'Dark Souls Prepare to Die Edition/DATA')
-            if os.path.isdir(ptd_path):
-                initial_dir = ptd_path
+            ptd_path = Path(common_path, 'Dark Souls Prepare to Die Edition/DATA')
+            if ptd_path.is_dir():
+                initial_dir = str(ptd_path)
                 break
         else:
             initial_dir = None
@@ -645,24 +350,26 @@ class SoulstructProject(object):
                    "C:/Program Files/Steam/steamapps/common/DARK SOULS REMASTERED/DarkSoulsRemastered.exe\n\n"
                    ""
                    "Otherwise, you can use Steam to find your Steam directory.")
-        self.dialog(title="Select game for project", message=message, font_size=14,
+        self.dialog(title="Select game for project", message=message, font_size=12,
                     button_names='OK', button_kwargs='OK')
-        live_dir = self._window.FileDialog.askopenfilename(
+        game_exe = self._window.FileDialog.askopenfilename(
             title="Choose your game executable", initialdir=initial_dir, filetypes=[('Game executable', '.exe')])
-        if not live_dir:
-            raise SoulstructProjectError("No game directory selected.")
-        if os.path.isfile(os.path.join(live_dir, 'DarkSoulsRemastered.exe')):
-            return live_dir, 'Dark Souls Remastered'
-        elif os.path.isfile(os.path.join(live_dir, 'DARKSOULS.exe')):
-            return live_dir, 'Dark Souls Prepare to Die Edition'
+        if not game_exe:
+            raise SoulstructProjectError("No game executable selected.")
+        game_root = Path(game_exe).parent
+        if (game_root / 'DarkSoulsRemastered.exe').is_file():
+            return game_root, 'Dark Souls Remastered'
+        elif (game_root / 'DARKSOULS.exe').is_file():
+            return game_root, 'Dark Souls Prepare to Die Edition'
         else:
             raise SoulstructProjectError("Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
                                          "but your selected executable was not a version of Dark Souls.")
 
     def dialog(self, title, message, font_size=None, font_type=None,
                button_names=('OK',), button_kwargs=(), style_defaults=None,
-               default_output=None, cancel_output=None):
-        message = word_wrap(message, 50)
+               default_output=None, cancel_output=None, word_wrap_limit=None):
+        if word_wrap_limit:
+            message = word_wrap(message, word_wrap_limit)
         return self._window.dialog(title=title, message=message, font_size=font_size, font_type=font_type,
                                    button_names=button_names, button_kwargs=button_kwargs,
                                    style_defaults=style_defaults,

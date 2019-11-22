@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from soulstruct.maps.msb import MSB
 
@@ -75,14 +75,16 @@ class DarkSoulsMaps(object):
         if map_studio_directory is None:
             return
 
-        if not os.path.isdir(map_studio_directory):
+        map_studio_directory = Path(map_studio_directory)
+
+        if not map_studio_directory.is_dir():
             raise ValueError("DarkSoulsMaps should be initialized with the directory containing your MSB files.")
 
         self._directory = map_studio_directory
         self._data = {}
 
         for msb_base_name, msb_attr_name in DARK_SOULS_MAP_NAMES.items():
-            msb_path = os.path.join(self._directory, msb_base_name) + '.msb'
+            msb_path = self._directory / (msb_base_name + '.msb')
             try:
                 self._data[msb_attr_name] = MSB(msb_path)
                 setattr(self, msb_attr_name, self._data[msb_attr_name])
@@ -96,10 +98,12 @@ class DarkSoulsMaps(object):
     def save(self, msb_directory=None):
         if msb_directory is None:
             msb_directory = self._directory
+        else:
+            msb_directory = Path(msb_directory)
         for msb_name in DARK_SOULS_MAP_NAMES.values():
-            msb_path = os.path.join(msb_directory, os.path.basename(self._data[msb_name].msb_path))
+            msb_path = msb_directory / self._data[msb_name].msb_path.name
             self._data[msb_name].write_packed(msb_path)
-        print("\n# All Dark Souls map files saved successfully.")
+        print("\n# All Dark Souls map (MSB) files saved successfully.")
 
 
 if __name__ == '__main__':

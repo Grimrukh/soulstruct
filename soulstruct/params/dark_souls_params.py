@@ -1,5 +1,5 @@
-import os
 import pickle
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from soulstruct.bnd.core import BND, BaseBND
@@ -68,11 +68,13 @@ class DarkSoulsGameParameters(object):
             self.paramdef_bnd = None
             return
 
-        if os.path.isdir(game_param_bnd_source):
-            game_param_bnd_source = os.path.join(game_param_bnd_source, 'GameParam.parambnd')
         if isinstance(game_param_bnd_source, BaseBND):
             self._game_param_bnd = game_param_bnd_source
         else:
+            if isinstance(game_param_bnd_source, (str, Path)):
+                game_param_bnd_source = Path(game_param_bnd_source)
+                if game_param_bnd_source.is_dir() and (game_param_bnd_source / 'GameParam.parambnd').is_file():
+                    game_param_bnd_source = game_param_bnd_source / 'GameParam.parambnd'
             try:
                 self._game_param_bnd = BND(game_param_bnd_source)
             except TypeError:
@@ -83,7 +85,7 @@ class DarkSoulsGameParameters(object):
             p = self._data[entry.path] = ParamTable(entry.data, self.paramdef_bnd)
             try:
                 # Nickname assigned here (ParamTable isn't aware of its own basename).
-                param_nickname = GAME_PARAM_NICKNAMES[entry.basename[:-len('.param')]]
+                param_nickname = GAME_PARAM_NICKNAMES[entry.name[:-len('.param')]]
             except KeyError:
                 # ParamTables without nicknames (i.e. useless params) are excluded from this structure.
                 pass
@@ -103,10 +105,10 @@ class DarkSoulsGameParameters(object):
             self.pickle()
         self._game_param_bnd.write(game_param_bnd_path)
         if not self._reload_warning:
-            print('\nDarkSoulsGameParameters saved successfully. (Remember to reload your game.)')
+            print('# Dark Souls game parameters (GameParam) saved successfully. (Remember to reload your game.)')
             self._reload_warning = True
         else:
-            print('\nDarkSoulsGameParameters saved successfully.')
+            print('# Dark Souls game parameters (GameParam) saved successfully.')
 
     def pickle(self, game_param_pickle_path=None):
         """Save the entire DarkSoulsGameParameters to a pickled file, which will be faster to load in future."""
@@ -159,7 +161,7 @@ class DrawParamBlock(object):
             draw_param_bnd = BND(draw_param_bnd)
 
         for entry in draw_param_bnd:
-            parts = entry.basename[:-len('.param')].split('_')
+            parts = entry.name[:-len('.param')].split('_')
             if len(parts) == 2:
                 slot = 0
                 basename = parts[1]
@@ -169,7 +171,7 @@ class DrawParamBlock(object):
                 slot = 1
                 basename = parts[2]
             else:
-                raise ValueError(f"Malformed params name: '{entry.basename}'")
+                raise ValueError(f"Malformed params name: '{entry.name}'")
             if parts[0].startswith('s'):
                 basename = 's_' + basename
 
@@ -228,6 +230,8 @@ class DarkSoulsLightingParameters(object):
 
         if draw_param_directory is None:
             return
+        else:
+            draw_param_directory = Path(draw_param_directory)
 
         for area_id in self._MAP_IDS:
             if isinstance(area_id, int):
@@ -236,10 +240,10 @@ class DarkSoulsLightingParameters(object):
             else:
                 file_map_name = map_name = area_id
             try:
-                draw_param_bnd = BND(os.path.join(draw_param_directory, f'{file_map_name}_DrawParam.parambnd.dcx'))
+                draw_param_bnd = BND(draw_param_directory / f'{file_map_name}_DrawParam.parambnd.dcx')
             except FileNotFoundError:
                 try:
-                    draw_param_bnd = BND(os.path.join(draw_param_directory, f'{file_map_name}_DrawParam.parambnd'))
+                    draw_param_bnd = BND(draw_param_directory / f'{file_map_name}_DrawParam.parambnd')
                 except FileNotFoundError:
                     raise FileNotFoundError(f"Could not find '{file_map_name}_DrawParam.parambnd[.dcx]' in "
                                             f"given directory '{draw_param_directory}'.")
@@ -274,6 +278,7 @@ class DarkSoulsLightingParameters(object):
         pass
 
 
+# TODO: Belongs in fields.py
 DRAWPARAM_ALIASES = {
     'DofBank': ('Dof', {}),
     'EnvLightTexBank': ('EnvLightTex', {}),
@@ -289,3 +294,13 @@ DRAWPARAM_ALIASES = {
     'ToneMapBank': ('ToneMap', {}),
     's_LightBank': ('s_AmbientLight', {}),
 }
+
+
+if __name__ == '__main__':
+    vanilla = DarkSoulsGameParameters('C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/param/GameParam/GameParam.parambnd')
+    print("Vanilla params loaded.")
+    vanilla.save('VanillaGP.parambnd')
+    print("Vanilla params saved.")
+    reloaded = DarkSoulsGameParameters('VanillaGP.parambnd')
+    print("Vanilla params RE-loaded.")
+    # p = DarkSoulsGameParameters('C:/Users/seven/Documents/Dark Souls/soulstruct-projects/ptd-project/export/2019-11-21 194600/param/GameParam/GameParam.parambnd')

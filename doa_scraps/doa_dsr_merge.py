@@ -14,7 +14,7 @@ def doa_dsr_merge():
     dsr_vanilla = DarkSoulsText(DSR_VANILLA_DIR)
     for fmg_name, fmg in dsr_vanilla:
         fmg.update(ptd_doa[fmg_name])
-    dsr_vanilla.write(msg_directory=DSR_LIVE_DIR, separate_patch=False, dcx=True)
+    dsr_vanilla.save(msg_directory=DSR_LIVE_DIR, separate_patch=False, dcx=True)
 
 
 def get_doa_changed_text(original_strings_only=True):

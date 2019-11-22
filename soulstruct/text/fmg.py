@@ -166,7 +166,7 @@ class FMG(object):
         Note that none of these arguments will modify the entries in this FMG instance.
         """
         if self.version not in {0, 1, 2}:
-            raise AttributeError("FMG version must be 0, 1, or 2. Set it manually with text.version.")
+            raise AttributeError("FMG version must be 0, 1, or 2. Set it manually with FMG.version.")
 
         # Convert to sorted list (sorted by ID).
         if remove_empty_entries:
@@ -249,7 +249,7 @@ class FMG(object):
         packed_ranges = b''.join(ranges)
 
         # Compute table offsets.
-        ranges_offset = self.header_struct.size
+        ranges_offset = self.pre_header_struct.size + self.header_struct.size
         string_offsets_offset = ranges_offset + len(packed_ranges)
         packed_strings_offset = string_offsets_offset + self.string_offset_struct.size * len(string_offset_list)
         file_size = packed_strings_offset + len(packed_strings)
@@ -260,16 +260,19 @@ class FMG(object):
             else:
                 packed_string_offsets += self.string_offset_struct.pack(offset=packed_strings_offset + string_offset)
 
-        packed_header = self.header_struct.pack(
+        packed_pre_header = self.pre_header_struct.pack(
             big_endian=self.big_endian,
             version=self.version,
+        )
+
+        packed_header = self.header_struct.pack(
             file_size=file_size,
             range_count=len(ranges),
             string_count=len(fmg_entries),
             string_offsets_offset=string_offsets_offset,
         )
 
-        return packed_header + packed_ranges + packed_string_offsets + packed_strings
+        return packed_pre_header + packed_header + packed_ranges + packed_string_offsets + packed_strings
 
     def write_packed(self, fmg_path=None, remove_empty_entries=True, pipe_to_newline=True,
                      word_wrap_limit=None, max_lines='ds1'):

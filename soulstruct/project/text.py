@@ -6,7 +6,7 @@ from soulstruct.project.actions import ActionHistory
 from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import SoulstructSmartFrame
 if TYPE_CHECKING:
-    from soulstruct.project.core import SoulstructProject
+    from soulstruct.text import DarkSoulsText
 
 
 class SoulstructTextEditor(SoulstructSmartFrame):
@@ -18,8 +18,8 @@ class SoulstructTextEditor(SoulstructSmartFrame):
 
     _MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$')
 
-    def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
-        self._Text = project.Text  # TODO: not storing project yet, but may need to for hyperlinks eventually
+    def __init__(self, text: DarkSoulsText, linker, master=None, toplevel=False):
+        self._Text = text
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Text")
         self.linker = linker
 

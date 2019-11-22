@@ -28,6 +28,7 @@ Animation = '<Animation>'
 Flag = '<Flag>'
 Model = '<Model>'
 Texture = '<Texture>'
+VisualEffect = '<VisualEffect>'
 
 
 class Params:
@@ -97,7 +98,7 @@ def _good_ref_id(goods_param_entry):
                 "Could not determine reference ID type (usually Bullet or SpecialEffect).")
 
 
-def _spell_ref_id(spells_param_entry):
+def _spells_ref_id(spells_param_entry):
     if spells_param_entry['refCategory'] == BEHAVIOR_REF_TYPE.Default:
         return ('NoReference', True, int,
                 "This value should be -1 when 'Default' reference type is selected.")
@@ -1376,11 +1377,11 @@ GAME_PARAM_INFO = {
             'AttackSize', False, BEHAVIOR_ATK_SIZE,
             "Internal description says this determines the size of sounds and visual effects, but it is never used."),
         'defMaterial': (
-            'VisualEffectsWhileBlocking', False, WEP_MATERIAL_DEF,
-            "Determines the visual effects used when guarding. Usually 255 for Player Attacks and 0 (if not a block) "
+            'SoundEffectsWhileBlocking', False, WEP_MATERIAL_DEF,
+            "Determines the sound effects used when guarding. Usually 255 for Player Attacks and 0 (if not a block) "
             "or 50 (if blocking) for Non-Player Attacks."),
         'defSfxMaterial': (
-            'SoundEffectsWhileBlocking', False, WEP_MATERIAL_DEF_SFX,
+            'VisualEffectsWhileBlocking', False, WEP_MATERIAL_DEF_SFX,
             "Determines the visual effects used when guarding. Usually 255 for Player Attacks and 0 (if not a block) "
             "or 50 (if blocking) for Non-Player Attacks."),
         'hitSourceType': (
@@ -3763,7 +3764,7 @@ GAME_PARAM_INFO = {
         'sortId': (
             'SortIndex', True, int,
             "Index for automatic inventory sorting."),
-        'refId': _spell_ref_id,
+        'refId': _spells_ref_id,
         'mp': (
             'MPCost', False, int,
             "MP cost of spell. Unused in Dark Souls 1 (always zero)."),
@@ -4710,4 +4711,91 @@ GAME_PARAM_INFO = {
             'Pad1', False, '<Pad:4>',
             "Null padding."),
     },
+    'SP_EFFECT_VFX_PARAM_ST': {
+        'effectType': (
+            'EffectType', True, SP_EFFECT_VFX_EFFECT_TYPE,
+            "Type of effect. Enum not yet mapped."),
+        'midstSfxId': (
+            'OngoingVisualEffect', True, '<VisualEffect>',
+            "Ongoing visual effect for special effect. -1 is no effect."),
+        'midstSeId': (
+            'OngoingSoundEffect', True, '<Sound.SFX>',
+            "Ongoing sound effect for special effect. -1 is no effect."),
+        'midstDmyId': (
+            'OngoingModelPoint', True, int,
+            "Model point where ongoing effects are centered. -1 is model root."),
+        'initSfxId': (
+            'InitialVisualEffect', True, '<VisualEffect>',
+            "One-off visual effect when special effect begins. -1 is no effect."),
+        'initSeId': (
+            'InitialSoundEffect', True, '<Sound.SFX>',
+            "One-off sound effect when special effect begins. -1 is no effect."),
+        'initDmyId': (
+            'InitialModelPoint', True, int,
+            "Model point where initial effect is centered. -1 is model root."),
+        'finishSfxId': (
+            'FinishVisualEffect', True, '<VisualEffect>',
+            "One-off visual effect when special effect ends. -1 is no effect."),
+        'finishSeId': (
+            'FinishSoundEffect', True, '<Sound.SFX>',
+            "One-off sound effect when special effect ends. -1 is no effect."),
+        'finishDmyId': (
+            'FinishModelPoint', True, int,
+            "Model point where finish effect is centered. -1 is model root."),
+        'camouflageBeginDist': (
+            'HideStartDistance', True, float,
+            "Closest distance at which effect is disabled."),
+        'camouflageEndDist': (
+            'HideStartDistance', True, float,
+            "Furthest distance at which effect is disabled."),
+        'transformProtectorId': (
+            'TransformationArmorID', True, Params.Armor,
+            "Transformation armor ID. Unknown effect. -1 is no armor."),
+        'soulParamIdForWepEnchant': (
+            'WeaponEnchantmentSoulParam', True, SP_EFFECT_VFX_SOUL_PARAM_TYPE,
+            "Internal description: 'Soul Param ID for weapon enchantment.' Enum not yet mapped."),
+        'playCategory': (
+            'PlaybackCategory', True, SP_EFFECT_VFX_PLAYCATEGORY,
+            "Only one effect in each category can be active at once (determined by PlaybackPriority)."),
+        'playPriority': (
+            'PlaybackPriority', True, int,
+            "Only the lowest-numbered-priority effect in each PlaybackCategory will be active at once."),
+        'existEffectForLarge:1': (
+            'LargeEffectExists', True, bool,
+            "Indicates if a large version of the effect exists."),
+        'existEffectForSoul:1': (
+            'SoulEffectExists', True, bool,
+            "Indicates if a 'soul version' of the effect exists."),
+        'effectInvisibleAtCamouflage:1': (
+            'InvisibleWhenHidden', True, bool,
+            "Indicates if the effect should be invisible when hidden (unclear exactly what this means)."),
+        'useCamouflage:1': (
+            'HidingActive', True, bool,
+            "I believe this determines if the hiding range fields are actually used."),
+        'invisibleAtFriendCamouflage:1': (
+            'InvisibleWhenFriendHidden', True, bool,
+            "Unclear."),
+        'addMapAreaBlockOffset:1': (
+            'AddMapAreaBlockOffset', True, bool,
+            "If enabled, the three-digit area/block number for the current map will be added to all effect IDs "
+            "(e.g. m13_02 -> adds 132)."),
+        'halfCamouflage:1': (
+            'HalfHiddenOnly', True, bool,
+            "If enabled, effects are made semi-transparent rather than fully hidden."),
+        'isFullBodyTransformProtectorId:1': (
+            'ArmorTransformationIsFullBody', True, bool,
+            "Indicates whether the armor transformation should be applied to the whole body."),
+        'isInvisibleWeapon:1': (
+            'HideWeapon', True, bool,
+            "Weapon is invisible if enabled."),
+        'isSilence:1': (
+            'IsSilent', True, bool,
+            "Movement noises are silenced if enabled."),
+        'pad_1[6]': (
+            'Pad1', False, '<Pad:6>',
+            "Null padding."),
+        'pad[16]': (
+            'Pad2', False, '<Pad:16>',
+            "Null padding."),
+    }
 }

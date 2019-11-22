@@ -1,60 +1,9 @@
-"""Enums used in Dark Souls game parameters.
+"""Enums used in Dark Souls 1 game parameters.
 
 I have kept all of the original names of these for simplicity (typos and all). They are only referenced internally
 anyway. Ordered alphabetically after the initial basic types.
 """
-from enum import IntEnum
-
-
-class _UnsignedInfo(IntEnum):
-    SIZE = property(lambda self: NotImplementedError)
-    FORMAT = property(lambda self: NotImplementedError)
-    TYPE = property(lambda self: int)
-    MINIMUM = property(lambda self: 0)
-    MAXIMUM = property(lambda self: 2 ** self.SIZE - 1)
-
-
-class _SignedInfo(_UnsignedInfo):
-    MINIMUM = property(lambda self: -2 ** (self.SIZE - 1))
-    MAXIMUM = property(lambda self: 2 ** (self.SIZE - 1) - 1)
-
-
-class UnsignedChar(_UnsignedInfo):
-    SIZE = property(lambda self: 8)
-    FORMAT = property(lambda self: '<B')
-
-
-class SignedChar(_SignedInfo):
-    SIZE = property(lambda self: 8)
-    FORMAT = property(lambda self: '<b')
-
-
-class UnsignedShort(_UnsignedInfo):
-    SIZE = property(lambda self: 16)
-    FORMAT = property(lambda self: '<H')
-
-
-class SignedShort(_SignedInfo):
-    SIZE = property(lambda self: 16)
-    FORMAT = property(lambda self: '<h')
-
-
-class UnsignedInt(_UnsignedInfo):
-    SIZE = property(lambda self: 32)
-    FORMAT = property(lambda self: '<I')
-
-
-class SignedInt(_SignedInfo):
-    SIZE = property(lambda self: 32)
-    FORMAT = property(lambda self: '<i')
-
-
-u8 = UnsignedChar
-s8 = SignedChar
-u16 = UnsignedShort
-s16 = SignedShort
-u32 = UnsignedInt
-s32 = SignedInt
+from soulstruct.params.field_types import *
 
 
 class ACCESSORY_CATEGORY(UnsignedChar):

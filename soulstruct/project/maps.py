@@ -12,7 +12,6 @@ from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 
 if TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps, MSB
-    from soulstruct.project.core import SoulstructProject
 
 
 def bind_events(widget, bindings: dict):
@@ -20,7 +19,7 @@ def bind_events(widget, bindings: dict):
         widget.bind(event, func)
 
 
-# TODO: Models are handled automatically. Model entries are auto-generated from all model names.
+# TODO: Models are handled automatically. Model entries are auto-generated from all used model names.
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
 #  - Validation/SIB path depends on game version.
 #  - Right-click pop-out selection list is available for characters (and eventually, some objects).
@@ -132,7 +131,7 @@ class _MapFieldRow(object):
             else:
                 special_values = {0: 'Default', -1: 'Default'}
             try:
-                field_link = self.linker.soulstruct_link(self.field_type, value, special_values=special_values)[0]
+                field_link = self.linker.soulstruct_link(self.field_type, value, valid_null_values=special_values)[0]
             except IndexError:
                 # print("No field link for type:", self.field_type)
                 field_link = None
@@ -203,14 +202,13 @@ class _MapFieldRow(object):
 
     def build_field_context_menu(self, field_link):
         self.context_menu.delete(0, 'end')
-        if field_link:
-            if field_link.name != 'None':
+        if field_link and field_link.name != 'None':
+            if field_link.menu_text:
                 self.context_menu.add_command(
                     label=field_link.menu_text, foreground=self.STYLE_DEFAULTS['text_fg'], command=field_link)
-                # TODO: Should not appear for params.
-                self.context_menu.add_command(
-                    label="Select linked entry name from list", foreground=self.STYLE_DEFAULTS['text_fg'],
-                    command=self.open_map_name_selection_box)
+            self.context_menu.add_command(
+                label="Select linked entry name from list", foreground=self.STYLE_DEFAULTS['text_fg'],
+                command=self.open_map_name_selection_box)
 
     def open_map_name_selection_box(self):
         window = _MapNameSelectionBox(self.master, self.field_type)
@@ -870,8 +868,8 @@ class SoulstructMapEditor(SoulstructSmartFrame):
 
     entry_display: _MapEntryFrame
 
-    def __init__(self, project: SoulstructProject, linker, master=None, toplevel=False):
-        self.Maps = project.Maps
+    def __init__(self, maps: DarkSoulsMaps, linker, master=None, toplevel=False):
+        self.Maps = maps
         self.linker = linker
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Maps")
 
