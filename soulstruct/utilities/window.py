@@ -126,6 +126,7 @@ def _embed_component(component_func):
                                      f"Must be 'left', 'right', 'above', 'below'.")
                 if not no_grid and grid_kwargs:
                     frame.grid(**grid_kwargs)
+                component.label = label
             elif not no_grid and grid_kwargs:
                 component.grid(**grid_kwargs)
 
@@ -365,7 +366,7 @@ class SmartFrame(tk.Frame):
         if smart_frame_class is None:
             smart_frame_class = SmartFrame
         elif not issubclass(smart_frame_class, SmartFrame):
-            raise TypeError("'smart_frame_class' must be a subclass of SmartFrame.")
+            raise TypeError(f"smart_frame_class ({smart_frame_class}) must be a subclass of SmartFrame.")
         smart_frame = smart_frame_class(master=frame, **kwargs)
         return smart_frame
 
@@ -398,11 +399,11 @@ class SmartFrame(tk.Frame):
         return button
 
     @_embed_component
-    def Checkbutton(self, frame=None, command=None, initial_state=False, **kwargs):
+    def Checkbutton(self, frame=None, command=None, initial_state=False, text='', **kwargs):
         self.set_style_defaults(kwargs)
         boolean_var = tk.BooleanVar(value=initial_state)
         self._variables.append(boolean_var)
-        checkbutton = tk.Checkbutton(frame, text='', variable=boolean_var, command=command, **kwargs)
+        checkbutton = tk.Checkbutton(frame, text=text, variable=boolean_var, command=command, **kwargs)
         checkbutton.var = boolean_var
         return checkbutton
 
@@ -522,7 +523,7 @@ class SmartFrame(tk.Frame):
         return ttk.Separator(frame, orient=orientation)
 
     @_embed_component
-    def Text(self, frame=None, initial_text='', **kwargs):
+    def TextBox(self, frame=None, initial_text='', **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=False)
         text = tk.Text(frame, **kwargs)
         text.insert(CURRENT, initial_text)

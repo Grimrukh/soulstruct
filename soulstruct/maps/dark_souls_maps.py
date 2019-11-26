@@ -72,6 +72,9 @@ class DarkSoulsMaps(object):
                 'map/MapStudio' in your game directory (either version). (Ignore the 'MapStudioNew' folder next to this
                 directory in DSR, which does nothing.)
         """
+        self._directory = None
+        self._data = {}
+
         if map_studio_directory is None:
             return
 
@@ -81,7 +84,6 @@ class DarkSoulsMaps(object):
             raise ValueError("DarkSoulsMaps should be initialized with the directory containing your MSB files.")
 
         self._directory = map_studio_directory
-        self._data = {}
 
         for msb_base_name, msb_attr_name in DARK_SOULS_MAP_NAMES.items():
             msb_path = self._directory / (msb_base_name + '.msb')

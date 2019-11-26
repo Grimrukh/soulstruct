@@ -1,5 +1,10 @@
 
-__all__ = ['ActionHistory']
+__all__ = ['ActionHistory', 'bind_events']
+
+
+def bind_events(widget, bindings: dict):
+    for event, func in bindings.items():
+        widget.bind(event, func)
 
 
 class ActionHistory(object):

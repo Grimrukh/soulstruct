@@ -18,7 +18,7 @@ class WindowLinker(object):
         self.project = window.project
 
     def get_tab_index(self, tab_name):
-        return self.window.TAB_ORDER.index(tab_name)
+        return self.window.TAB_ORDER.index(tab_name.lower())
 
     def soulstruct_link(self, field_type, field_value, valid_null_values: dict = None):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
@@ -77,7 +77,7 @@ class WindowLinker(object):
                 # Entry name is missing (or is not of the enforced entry type).
                 return [BaseLink()]
 
-            return [MapLink(
+            return [MapsLink(
                 self, name=field_value, entry_list_name=entry_list_name, entry_type_index=entry_type_index,
                 entry_type_name=entry_type_name, entry_local_index=entry_local_index)]
 
@@ -111,11 +111,11 @@ class WindowLinker(object):
                         return [BaseLink()]
                     links = []
                     if field_value in player_table:
-                        links.append(ParamLink(
+                        links.append(ParamsLink(
                             self, category='Player' + category, param_entry_id=field_value,
                             name=player_table[field_value]))
                     if field_value in player_table:
-                        links.append(ParamLink(
+                        links.append(ParamsLink(
                             self, category='NonPlayer' + category, param_entry_id=field_value,
                             name=player_table[field_value]))
                     if links:
@@ -137,7 +137,7 @@ class WindowLinker(object):
             except KeyError:
                 return [BaseLink()]
             else:
-                return [ParamLink(self, category=category, param_entry_id=field_value, name=name)]
+                return [ParamsLink(self, category=category, param_entry_id=field_value, name=name)]
 
         return []  # No other table types supported yet.
 
@@ -171,23 +171,26 @@ class WindowLinker(object):
             else:
                 return entry_list.get_entry_names()
 
-    def entry_text_link(self, entry_id):
-        """Return three (name, link) pairs for entries in item categories. Returns None if no link is appropriate, and
-        returns an empty tuple if text should exist but cannot be found."""
-        category = self.window.params_tab.active_category
-        if category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
+    def param_entry_text_link(self, entry_id):
+        """Return three (name, link) pairs for entries in item categories (Name, Summary, and Description).
+
+        Returns empty list if no link is appropriate, and returns an empty tuple if text *should* exist but cannot be
+        found.
+        """
+        param_category = self.window.params_tab.active_category
+        if param_category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
             return []
         text_ids = {'Names': entry_id, 'Summaries': entry_id, 'Descriptions': entry_id}
         links = []
 
-        prefix = category.rstrip('s')
+        prefix = param_category.rstrip('s')
 
-        if category == 'Weapons':
+        if param_category == 'Weapons':
             base_weapon_id = self.check_weapon_id(entry_id)
             if base_weapon_id is not None:
                 text_ids['Summaries'] = base_weapon_id
                 text_ids['Descriptions'] = base_weapon_id
-        elif category == 'Armor':
+        elif param_category == 'Armor':
             base_armor_id = self.check_armor_id(entry_id)
             if base_armor_id is not None:
                 text_ids['Summaries'] = base_armor_id
@@ -204,7 +207,7 @@ class WindowLinker(object):
 
     def check_armor_id(self, armor_id):
         """Checks if the given armor ID (which may include a reinforcement offset) is valid by inspecting the
-        Weapons table."""
+        Weapons table, then returns the base armor ID (with no reinforcement) or None if invalid."""
         level = armor_id % 100
         if level > 10:
             return None
@@ -222,7 +225,7 @@ class WindowLinker(object):
 
     def check_weapon_id(self, weapon_id):
         """Checks if the given weapon ID (which may include a reinforcement offset) is valid by inspecting the
-        Weapons table."""
+        Weapons table, then returns the base weapon ID (with no reinforcement) or None if invalid."""
         level = weapon_id % 100
         if level > 15:
             return None
@@ -238,86 +241,96 @@ class WindowLinker(object):
             return None
         return base_weapon
 
+    def text_link(self, category, text_id):
+        self.window.page_tabs.select(self.get_tab_index('text'))
+        # TODO: Create entry if missing.
+        self.window.text_tab.select_category(category)
+        self.window.text_tab.select_entry_id(text_id)
+        self.window.text_tab.update_idletasks()
+
+    def maps_link(self, entry_list_name, entry_type_index, entry_local_index):
+        self.window.page_tabs.select(self.get_tab_index('maps'))
+        self.window.maps_tab.entry_list_choice.set(entry_list_name)
+        self.window.maps_tab.refresh_entry_types(clear_selection=True)
+        self.window.maps_tab.select_entry_type(
+            entry_type_index=entry_type_index, first_display_index=entry_local_index)
+        self.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
+        self.window.maps_tab.update_idletasks()
+
+    def params_link(self, category, param_entry_id, field_name=None):
+        self.window.page_tabs.select(self.get_tab_index('params'))
+        # TODO: Create if missing.
+        self.window.params_tab.select_category(category)
+        self.window.params_tab.select_entry_id(param_entry_id)
+        if field_name is not None:
+            self.window.params_tab.select_field_name(field_name)
+        self.window.params_tab.update_idletasks()
+
 
 class BaseLink(object):
     def __init__(self, linker: WindowLinker = None, name=None, menu_text=None):
-        """Create a link within the Soulstruct GUI.
+        """Bundles right-click context menu text with a GUI-jumping link callback, with an optional name.
 
         Args:
-            name: Name that will appear in [] next to ID. If None, no name will appear.
-            menu_text: Text that will appear in right-click menu. Usually "Go to [type]".
+            name: Name that will appear in curly braces {} next to ID. If None, no name will appear.
+            menu_text: Text that will appear in right-click menu. Usually "Go to [type]". If None (default), no right
+                click option will be given.
         """
         self.linker = linker
         self.name = name
         self.menu_text = menu_text
+
+    def add_to_context_menu(self, context_menu, **kwargs):
+        if self.menu_text:
+            context_menu.add_command(label=self.menu_text, command=self, **kwargs)
 
     def __call__(self):
         raise NotImplementedError
 
 
 class NullLink(BaseLink):
-    """Link field has a null value, usually 0 or -1, which means the field is unused or set to a default."""
+    """Dummy link for a normally-linked field has a null value, usually 0 or -1, which means the field is unused or set
+    to a default. Simply displays '{None/Default}' next to name."""
     def __init__(self, linker: WindowLinker):
-        super().__init__(linker, name='None', menu_text='')
+        super().__init__(linker, name='None/Default', menu_text='')
 
     def __call__(self):
-        raise MissingLinkError("Null link cannot be called.")
+        raise AttributeError("Null link cannot be called.")
 
 
-class ParamLink(BaseLink):
-    def __init__(self, linker, category, param_entry_id, create_if_missing=False, name=None):
-        super().__init__(linker, name=name, menu_text=f"Jump to param entry {category}[{param_entry_id}]")
+class ParamsLink(BaseLink):
+    def __init__(self, linker, category, param_entry_id, name=None):
+        super().__init__(
+            linker, name=name,
+            menu_text=f"Go to Params.{category}[{param_entry_id}]" + f"  {{{name}}}" if name is not None else "")
         self.category = category
         self.param_entry_id = param_entry_id
 
     def __call__(self):
-        # TODO: Jump to specific field, for undo/redo.
-        # TODO: Create if missing.
-        self.linker.window.page_tabs.select(self.linker.get_tab_index('params'))
-        index = sorted(self.linker.project.Params[self.category].entries).index(self.param_entry_id)
-        self.linker.window.params_tab.select_category(self.category, first_display_index=index)
-        self.linker.window.params_tab.entry_display.select_entry(0, edit_if_already_selected=False)
-        self.linker.window.params_tab.update_idletasks()
+        self.linker.params_link(self.category, self.param_entry_id)
 
 
 class TextLink(BaseLink):
-    def __init__(self, linker, category, text_id, create_if_missing=False, name=None):
-        super().__init__(linker, name=name, menu_text=f"Jump to text entry {category}[{text_id}]")
+    def __init__(self, linker, category, text_id, name=None):
+        super().__init__(linker, name=name, menu_text=f"Go to Text.{category}[{text_id}]")
         self.category = category
         self.text_id = text_id
 
     def __call__(self):
-        # TODO: Create if missing.
-        self.linker.window.page_tabs.select(self.linker.get_tab_index('text'))
-        self.linker.window.text_tab.select_category(
-            self.category, first_display_index=sorted(self.linker.project.Text[self.category]).index(self.text_id))
-        self.linker.window.text_tab.select_entry(self.text_id, edit_if_already_selected=False)
-        self.linker.window.text_tab.update_idletasks()
-        self.linker.window.text_tab.entry_canvas.yview_moveto(0)
+        self.linker.text_link(self.category, self.text_id)
 
 
-class MapLink(BaseLink):
+class MapsLink(BaseLink):
     def __init__(self, linker, entry_list_name, entry_type_index, entry_local_index,
                  entry_type_name=None, name=None):
         super().__init__(
             linker, name=name,
-            menu_text=f"Go to {entry_list_name}"
+            menu_text=f"Go to Maps.{entry_list_name}"
                       f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
-                      f"   [{name}]")
+                      f" {{{name}}}")
         self.entry_list_name = entry_list_name
         self.entry_type_index = entry_type_index
         self.entry_local_index = entry_local_index
 
     def __call__(self):
-        self.linker.window.page_tabs.select(self.linker.get_tab_index('maps'))
-        self.linker.window.maps_tab.entry_list_choice.set(self.entry_list_name)
-        self.linker.window.maps_tab.refresh_entry_types(clear_selection=True)
-        self.linker.window.maps_tab.select_entry_type(
-            entry_type_index=self.entry_type_index, first_display_index=self.entry_local_index)
-        self.linker.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
-        self.linker.window.maps_tab.update_idletasks()
-
-
-class MissingLinkError(KeyError):
-    """Exception raised when an ID linked to another table can't be found in that table."""
-    pass
+        self.linker.maps_link(self.entry_list_name, self.entry_type_index, self.entry_local_index)

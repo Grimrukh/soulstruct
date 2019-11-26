@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from copy import deepcopy
 from io import BytesIO
 import struct
 from typing import Dict
@@ -142,6 +143,9 @@ class ParamEntry(object):
         return f"\nName: {self.name}" + ''.join(
             [f"\n    {key} = {value}" for key, value in self.fields.items()])
 
+    def copy(self):
+        return deepcopy(self)
+
     def unpack(self, entry_buffer, name: str):
         if isinstance(entry_buffer, bytes):
             entry_buffer = BytesIO(entry_buffer)
@@ -283,7 +287,8 @@ class ParamTable(object):
             entry = ParamEntry(entry, self.paramdef_bnd[self.param_name])
         if isinstance(entry, ParamEntry):
             self.entries[entry_index] = entry
-        raise TypeError("New entry must be a ParamEntry or a dictionary that contains all required fields.")
+        else:
+            raise TypeError("New entry must be a ParamEntry or a dictionary that contains all required fields.")
 
     def __iter__(self):
         return iter(self.entries.items())
@@ -422,6 +427,9 @@ class ParamTable(object):
 
     def get_range(self, start, count):
         return [(param_id, self[param_id]) for param_id in sorted(self.entries)[start:start + count]]
+
+    def pop(self, entry_id):
+        return self.entries.pop(entry_id)
 
 
 class DrawParamTable(ParamTable):

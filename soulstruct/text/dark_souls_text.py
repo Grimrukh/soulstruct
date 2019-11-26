@@ -63,7 +63,7 @@ class DarkSoulsText(object):
 
     all_categories = all_fmg_names = main_categories + internal_categories
 
-    def __init__(self, msg_directory):
+    def __init__(self, msg_directory=None):
         """Unpack all Dark Souls 1 text data (from both 'item' and 'menu' MSGBND files) into one unified structure.
 
         You can access and modify the `entries` attributes of each loaded `FMG` instance using the names of the FMGs,

@@ -80,10 +80,10 @@ class BaseMSBPart(MSBEntry):
             "Scale of part. Only relevant for objects and collisions."),
         'draw_groups': (
             'Draw Groups', list,
-            "Draw groups of part. These are not yet fully understood, but they determined when the part appears."),
+            "Draw groups of part. These are not yet fully understood, but they determine when the part appears."),
         'display_groups': (
             'Display Groups', list,
-            "Display groups of part. These are not yet fully understood, but they determined when the part appears."),
+            "Display groups of part. These are not yet fully understood, but they determine when the part appears."),
     }
 
     ENTRY_TYPE = None
@@ -97,8 +97,8 @@ class BaseMSBPart(MSBEntry):
         self.translate = Vector(1, 1, 1)
         self.rotate = Vector(1, 1, 1)
         self.scale = Vector(1, 1, 1)  # only relevant for MapPiece and Object
-        self.draw_groups = [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]
-        self.display_groups = [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]
+        self.draw_groups = list(range(128))  # [0, 1, 2, ..., 128]
+        self.display_groups = list(range(128))  # [0, 1, 2, ..., 128]
         self.entity_id = None
 
         # Lighting parameters
@@ -142,8 +142,8 @@ class BaseMSBPart(MSBEntry):
         self._part_type_index = header.part_type_index
         for transform in ('translate', 'rotate', 'scale'):
             setattr(self, transform, Vector(getattr(header, transform)))
-        self.draw_groups = header.draw_groups
-        self.display_groups = header.display_groups
+        self.draw_groups = _flag_group_to_enabled_flags(header.draw_groups)
+        self.display_groups = _flag_group_to_enabled_flags(header.display_groups)
         self.name = read_chars_from_buffer(
             msb_buffer, offset=part_offset + header.name_offset, encoding='shift-jis')
         self.sib_path = read_chars_from_buffer(
@@ -175,6 +175,9 @@ class BaseMSBPart(MSBEntry):
         self.unpack_type_data(msb_buffer)
 
     def pack(self):
+        draw_groups = _enabled_flags_to_flag_group(self.draw_groups)
+        display_groups = _enabled_flags_to_flag_group(self.display_groups)
+
         name_offset = self.PART_HEADER_STRUCT.size
         packed_name = self.get_name_to_pack().encode('shift-jis') + b'\0'  # Name not padded on its own.
         sib_path_offset = name_offset + len(packed_name)
@@ -215,8 +218,8 @@ class BaseMSBPart(MSBEntry):
             translate=list(self.translate),
             rotate=list(self.rotate),
             scale=list(self.scale),
-            draw_groups=self.draw_groups,
-            display_groups=self.display_groups,
+            draw_groups=draw_groups,
+            display_groups=display_groups,
             base_data_offset=base_data_offset,
             type_data_offset=type_data_offset,
         )
@@ -581,7 +584,7 @@ class MSBCollision(BaseMSBPart):
         self.sound_space_type = data.sound_space_type
         self.env_light_map_spot_index = data.env_light_map_spot_index
         self.reflect_plane_height = data.reflect_plane_height
-        self.navmesh_groups = data.navmesh_groups
+        self.navmesh_groups = _flag_group_to_enabled_flags(data.navmesh_groups)
         self.vagrant_entity_ids = data.vagrant_entity_ids
         self.area_name_id = abs(data.area_name_id) if data.area_name_id >= 0 else -1
         self.__force_area_banner = data.area_name_id < 0  # Custom field.
@@ -635,6 +638,8 @@ class MSBCollision(BaseMSBPart):
         self.__stable_footing_flag = value
 
     def pack_type_data(self):
+        navmesh_groups = _enabled_flags_to_flag_group(self.navmesh_groups)
+
         if self.area_name_id == -1 and not self.__force_area_banner:
             raise InvalidFieldValueError("'force_area_banner' must be enabled if 'area_name_id' is -1 (default).")
         signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self.__force_area_banner else 1)
@@ -647,7 +652,7 @@ class MSBCollision(BaseMSBPart):
             sound_space_type=self.sound_space_type,
             env_light_map_spot_index=self.env_light_map_spot_index,
             reflect_plane_height=self.reflect_plane_height,
-            navmesh_groups=self.navmesh_groups,
+            navmesh_groups=navmesh_groups,
             vagrant_entity_ids=self.vagrant_entity_ids,
             area_name_id=signed_area_name_id,
             starts_disabled=self.starts_disabled,
@@ -684,11 +689,11 @@ class MSBNavmesh(BaseMSBPart):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_NAVMESH_STRUCT).unpack(msb_buffer)
-        self.navmesh_groups = data.navmesh_groups
+        self.navmesh_groups = _flag_group_to_enabled_flags(data.navmesh_groups)
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_NAVMESH_STRUCT).pack(
-            navmesh_groups=self.navmesh_groups,
+            navmesh_groups=_enabled_flags_to_flag_group(self.navmesh_groups),
         )
 
 
@@ -764,3 +769,29 @@ MSB_PART_TYPE_CLASSES = {
     MSB_PART_TYPE.UnusedCharacter: MSBUnusedCharacter,
     MSB_PART_TYPE.MapLoadTrigger: MSBMapLoadTrigger,
 }
+
+
+def _flag_group_to_enabled_flags(flag_group):
+    """Get draw or display group 128-bit field <a, b, c, ...> where a, b, c, ... are the little-endian bit
+    zero-based indices of the draw groups bit field (which is unpacked/packed internally as four 32-bit integers).
+
+    So draw groups [01001..110, 0, 000...001, 100...000] would be {1, 4, 29, 30, 95, 96}.
+    """
+    enabled_flags = []
+    for i in range(4):
+        for j in range(32):
+            if (2 ** j) & flag_group[i]:
+                enabled_flags.append(32 * i + j)
+    return enabled_flags
+
+
+def _enabled_flags_to_flag_group(enabled_flags):
+    """Opposite of above method. Converts list of flag indices to four-integer bit field array for packing."""
+    flag_group = [0, 0, 0, 0]
+    for flag in enabled_flags:
+        if not isinstance(flag, int):
+            raise ValueError(f"Non-integer value {flag} appeared in MSBPart.DrawGroups or MSBPart.DisplayGroups.")
+        if not 0 <= flag <= 127:
+            raise ValueError(f"Invalid DrawGroups or DisplayGroups index {flag} (must be between 0 and 127).")
+        flag_group[flag // 32] += 2 ** (flag % 32)
+    return flag_group

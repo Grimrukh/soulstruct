@@ -6,7 +6,7 @@ from typing import List, TYPE_CHECKING
 
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_IDS
-from soulstruct.project.actions import ActionHistory
+from soulstruct.project.utilities import ActionHistory
 from soulstruct.utilities import camel_case_to_spaces, Vector
 from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
 
@@ -86,7 +86,7 @@ class _MapFieldRow(object):
             bind_events(label, vector_bindings)
 
         self.value_checkbutton = master.Checkbutton(
-            self.value_box, label=None, bg=bg_color, no_grid=True,
+            self.value_box, label=None, bg=bg_color, text='Off', no_grid=True, selectcolor='#000',
             command=lambda: self._checkbutton_toggle(change_value_func))
         # Main focus bindings are not bound to Checkbutton.
 
@@ -94,6 +94,7 @@ class _MapFieldRow(object):
             self.value_box, values=None, width=self.VALUE_WIDTH, no_grid=True,
             on_select_function=lambda _: change_value_func(
                 self.index, getattr(self.field_type, self.value_combobox.var.get().replace(' ', '')).value))
+        self.value_combobox.bind('<MouseWheel>', lambda _: 'break')  # prevent scrolling on collapsed Combobox
         # Main focus bindings are not bound to Combobox.
 
         self.context_menu = master.Menu(self.row_box)
@@ -112,8 +113,10 @@ class _MapFieldRow(object):
         if not change_value_func(self.index, new_value):
             # Checkbutton toggle is invalid.
             self.value_checkbutton.var.set(not new_value)
+        else:
+            self.value_checkbutton.config(fg='#3F3' if new_value else '#F33', text='ON' if new_value else 'OFF')
 
-    def build_field(self, entry, name, nickname, value, field_type, docstring="DOC-TODO"):
+    def update_field(self, entry, name, nickname, value, field_type, docstring="DOC-TODO"):
         """Update widgets with given field information."""
         self.map_entry = entry
         self.field_name = name
@@ -127,7 +130,7 @@ class _MapFieldRow(object):
         if isinstance(self.field_type, str):
             # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
             if self.field_type == '<Text:PlaceNames>':
-                special_values = {-1: 'Default Map Name (With Banner)'}
+                special_values = {-1: 'Default Map Name + Force Banner'}
             else:
                 special_values = {0: 'Default', -1: 'Default'}
             try:
@@ -155,15 +158,16 @@ class _MapFieldRow(object):
             value_text = f'{value:.3g}' if field_type == float else str(value)
             if field_link:
                 if field_link.name is None:
-                    value_text += f'   [MISSING]'
+                    value_text += '   {MISSING}'
                 else:
-                    value_text += f'   [{field_link.name}]'
+                    value_text += f'   {{{field_link.name}}}'
             self.value_label.var.set(value_text)
             self._activate_value_widget(self.value_label)
         elif field_type == bool:
             if value not in {0, 1}:
                 raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
             self.value_checkbutton.var.set(value)
+            self.value_checkbutton.config(fg='#3F3' if value else '#F33', text='ON' if value else 'OFF')
             self._activate_value_widget(self.value_checkbutton)
         elif field_type == list:
             value_text = repr(value)
@@ -262,7 +266,7 @@ class _MapFieldRow(object):
                         self._update_colors()
                 else:
                     if not self.field_type.startswith('<Maps:'):  # not <MapsList:
-                        new_text += f' [{field_link.name}]'
+                        new_text += f' {{{field_link.name}}}'
                     if self.link_missing:
                         self.link_missing = False
                         self._update_colors()
@@ -334,7 +338,6 @@ class _MapEntryRow(object):
     """
 
     def __init__(self, master: _MapEntryFrame, row_index: int, main_bindings: dict = None):
-        self.master = master
         self.linker = master.linker
         self.STYLE_DEFAULTS = master.STYLE_DEFAULTS
 
@@ -358,7 +361,7 @@ class _MapEntryRow(object):
 
     def build_entry(self, entry_name: str, entity_id: int = -1):
         self.entry_name = entry_name
-        self.name_label.var.set(entry_name + (f'   [{entity_id}]' if entity_id != -1 else ''))
+        self.name_label.var.set(entry_name + (f'   {{Entity ID: {entity_id}}}' if entity_id != -1 else ''))
 
         self.row_box.grid()
         self.name_box.grid()
@@ -437,7 +440,7 @@ class _MapFieldFrame(SoulstructSmartFrame):
         self.field_canvas.create_window(
             self.FIELD_BOX_WIDTH / 2, self.FIELD_BOX_HEIGHT / 2, window=self.f_field_table, anchor='nw')
         self.f_field_table.bind(
-            "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
+            '<Configure>', lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
 
         with self.set_master(self.f_field_table):
             for row in range(self.FIELD_ROW_COUNT):
@@ -464,7 +467,7 @@ class _MapFieldFrame(SoulstructSmartFrame):
         row = 0
         for field_name, (field_nickname, field_type, field_doc) in field_info.items():
 
-            self.field_rows[row].build_field(
+            self.field_rows[row].update_field(
                 entry=self.map_entry,
                 name=field_name,
                 nickname=field_nickname,
@@ -870,8 +873,8 @@ class SoulstructMapEditor(SoulstructSmartFrame):
 
     def __init__(self, maps: DarkSoulsMaps, linker, master=None, toplevel=False):
         self.Maps = maps
-        self.linker = linker
-        super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Maps")
+        self.linker = linker  # TODO: Create maps-only linker if absent.
+        super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Map Editor")
 
         self.active_entry_type_index = None
         self.entry_type_rows = {}

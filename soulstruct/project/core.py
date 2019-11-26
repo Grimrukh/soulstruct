@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 import datetime
-from functools import wraps
 import json
-from pathlib import Path
 import pickle
 import shutil
+from functools import wraps
+from pathlib import Path
 from textwrap import wrap
 from tkinter.ttk import Notebook
 from typing import Optional
@@ -43,7 +44,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     text_tab: Optional[SoulstructTextEditor]
     maps_tab: Optional[SoulstructMapEditor]
 
-    TAB_ORDER = ['maps', 'params', 'text', 'main']
+    TAB_ORDER = ['text', 'maps', 'params', 'main']  # TODO
 
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
@@ -56,7 +57,6 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.lighting_tab = None
         self.maps_tab = None
         self.set_geometry()
-        # self.withdraw()
 
     def build(self):
         self.page_tabs = self.Notebook(row=0)
@@ -69,11 +69,13 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.params_tab = self.SmartFrame(
             frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
-            params=self.project.Params, linker=self.linker)
+            params=self.project.Params, linker=self.linker, no_grid=True)
+        self.params_tab.pack()
 
         self.text_tab = self.SmartFrame(
             frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
-            text=self.project.Text, linker=self.linker)
+            text=self.project.Text, linker=self.linker, no_grid=True)
+        self.text_tab.pack()
 
         self.build_main_tab(tab_frames['main'])
 
@@ -82,23 +84,37 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
 
-        self.resizable(False, False)  # TODO
+        # self.resizable(False, False)  # TODO
         self.set_geometry()
         self.deiconify()
 
     def build_main_tab(self, main_frame):
+        """
+        TODO:
+            - SAVE ALL. Need a way to detect which files have actually changed (related to undo, redo, etc.).
+            - Put subtype import options on those editor screens.
+            - Button here to 'import all' from linked game directory, and from arbitrary directory (e.g. export folder).
+            - Option to launch game? And an option to launch Game + Gadget?
+            - Option to restart game, if it's running?
+            - Buttons to 'export all to game' and 'export to dest'. Individual subtype buttons on those editor screens.
+            - IMPORT EVENTS. Unpack into EVS and store in 'evs' subdirectory.
+            - IMPORT ESD. Unpack and store in 'ezs' subdirectory.
+            - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
+            - Make use of config.json project file. (Save directory, last times, etc.)
+
+        """
         with self.set_master(main_frame, auto_columns=0):
             with self.set_master(auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
-                self.Button(text="Pull All from Game Directory", bg='#235', width=30, font_size=20,
-                            command=lambda: self.project.load_project(force_game_pull=True))
-                self.Button(text="Pull Params", bg='#235', width=30, font_size=20,
-                            command=self.project.pull_params)
-                self.Button(text="Pull Text", bg='#235', width=30, font_size=20,
-                            command=self.project.pull_text)
-                self.Button(text="Pull Lighting", bg='#235', width=30, font_size=20,
-                            command=self.project.pull_lighting)
-                self.Button(text="Pull Maps", bg='#235', width=30, font_size=20,
-                            command=self.project.pull_maps)
+                self.Button(text="Import All from Game Directory", bg='#235', width=30, font_size=20,
+                            command=lambda: self.project.load_project(force_game_import=True))
+                self.Button(text="Import Params", bg='#235', width=30, font_size=20,
+                            command=self.project.import_params)
+                self.Button(text="Import Text", bg='#235', width=30, font_size=20,
+                            command=self.project.import_text)
+                self.Button(text="Import Lighting", bg='#235', width=30, font_size=20,
+                            command=self.project.import_lighting)
+                self.Button(text="Import Maps", bg='#235', width=30, font_size=20,
+                            command=self.project.import_maps)
             with self.set_master(auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
                 self.Button(text='Export Project', bg='#623', width=30, font_size=20,
                             command=self.project.export_project)
@@ -117,10 +133,9 @@ class SoulstructProject(object):
     Currently supports only Dark Souls 1.
 
     TODO:
-        - Only pull exact file types that have no project pickles, and prompt for each one.
         - Eventually have subclasses for different games, with shared methods here.
         - Auto-save scheduled Tk functions that operate at ten minute intervals.
-        - Inspect PTD directory for lack of UDSFM when pulled.
+        - Inspect PTD directory for lack of UDSFM when imported.
         - Store location of game save data for a future save manager.
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
@@ -128,18 +143,18 @@ class SoulstructProject(object):
     def __init__(self, project_path: str = ''):
 
         self._window = SoulstructProjectWindow(project=self, master=None)
-        # self._window.withdraw()
 
         self.game_name = ''
         self.game_root = Path()
-        self.last_pull_time = ''
+        self.last_import_time = ''
         self.last_push_time = ''
         # TODO: Record last edit time for each file/structure.
 
-        self.Text = DarkSoulsText(None)
-        self.Params = DarkSoulsGameParameters(None)
-        self.Lighting = DarkSoulsLightingParameters(None)
-        self.Maps = DarkSoulsMaps(None)
+        # Initialize with empty structures.
+        self.Text = DarkSoulsText()
+        self.Params = DarkSoulsGameParameters()
+        self.Lighting = DarkSoulsLightingParameters()
+        self.Maps = DarkSoulsMaps()
 
         try:
             self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
@@ -157,55 +172,53 @@ class SoulstructProject(object):
         self._window.build()
         self._window.wait_window()
 
-    def load_project(self, force_game_pull=False):
+    def load_project(self, force_game_import=False):
         """Load project structures (params, text, etc.) into class as attributes."""
-        for attr, attr_class, pickled, pull_func in zip(
+        for attr, attr_class, pickled, import_func in zip(
                 ('Text', 'Params', 'Lighting', 'Maps'),
                 (DarkSoulsText, DarkSoulsGameParameters, DarkSoulsLightingParameters, DarkSoulsMaps),
                 ('text.d1s', 'params.d1s', 'lighting.d1s', 'maps.d1s'),
-                (self.pull_text, self.pull_params, self.pull_lighting, self.pull_maps)):
+                (self.import_text, self.import_params, self.import_lighting, self.import_maps)):
             try:
-                if force_game_pull:
+                if force_game_import:
                     raise FileNotFoundError
                 with (self.project_root / pickled).open('rb') as f:
                     setattr(self, attr, pickle.load(f))
             except FileNotFoundError:
-                if force_game_pull or self.dialog(
+                self._window.withdraw()
+                if force_game_import or self.dialog(
                         title="Project Error",
                         message=f"Could not find saved {attr} data in project ('{pickled}').\n"
-                                f"Would you like to pull it from the game directory?",
-                        button_names=('Yes, pull the files', 'No, quit now'), button_kwargs=('YES', 'NO'),
+                                f"Would you like to import it from the game directory?",
+                        button_names=('Yes, import the files', 'No, quit now'), button_kwargs=('YES', 'NO'),
                         cancel_output=1, default_output=1) == 0:
-                    pull_func()
+                    import_func()
                 else:
                     raise SoulstructProjectError("Could not open project files.")
+                self._window.deiconify()
 
-    def save_in_project(self, obj, pickled_path):
+    def pickle_in_project(self, obj, pickled_path):
         with (self.project_root / pickled_path).open('wb') as f:
             pickle.dump(obj, f)
 
-    # PULL METHODS. These pull game data sub-structures from the live game directory, and save them
+    # IMPORT METHODS. These import game data sub-structures from the live game directory, and save them
     # as pickled structure instances inside the project directory.
 
-    def pull_text(self):
+    def import_text(self):
         self.Text = DarkSoulsText(self.game_root / 'msg/ENGLISH')
-        self.save_in_project(self.Text, 'text.d1s')
+        self.pickle_in_project(self.Text, 'text.d1s')
 
-    def pull_params(self):
+    def import_params(self):
         self.Params = DarkSoulsGameParameters(self.game_root / 'param/GameParam/GameParam.parambnd')
-        self.save_in_project(self.Params, 'params.d1s')
+        self.pickle_in_project(self.Params, 'params.d1s')
 
-    def pull_lighting(self):
+    def import_lighting(self):
         self.Lighting = DarkSoulsLightingParameters(self.game_root / 'param/DrawParam')
-        self.save_in_project(self.Lighting, 'lighting.d1s')
+        self.pickle_in_project(self.Lighting, 'lighting.d1s')
 
-    def pull_maps(self):
+    def import_maps(self):
         self.Maps = DarkSoulsMaps(self.game_root / 'map/MapStudio')
-        self.save_in_project(self.Maps, 'maps.d1s')
-
-    def push_project(self):
-        """Writes all data substructures in game formats in the live game directory, ready for play."""
-        self.export_project(self.game_root)
+        self.pickle_in_project(self.Maps, 'maps.d1s')
 
     def export_project(self, export_directory: str = None):
         """Writes all data substructures in game formats in the chosen directory, under the same folders they
@@ -233,6 +246,10 @@ class SoulstructProject(object):
         # os.makedirs(lighting_path, exist_ok=True)
         # self.Lighting.write(lighting_path)
 
+    def export_project_to_game(self):
+        """Writes all data substructures in game formats in the live game directory, ready for play."""
+        self.export_project(self.game_root)
+
     def load_config(self):
         try:
             with (self.project_root / 'config.json').open('r') as f:
@@ -247,7 +264,7 @@ class SoulstructProject(object):
                     try:
                         self.game_name = config['GameName']
                         self.game_root = Path(config['GameDirectory'])
-                        self.last_pull_time = config.get('LastPullTime', None)
+                        self.last_import_time = config.get('LastImportTime', None)
                         self.last_push_time = config['LastPushTime']
                     except KeyError:
                         raise SoulstructProjectError(
@@ -257,21 +274,24 @@ class SoulstructProject(object):
                         )
         except FileNotFoundError:
             # Create project config file.
+            self._window.withdraw()
             try:
                 self.game_root, self.game_name = self._get_game_root()
             except SoulstructProjectError as e:
                 raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
             self._write_config()
             if self.dialog(title="Initial project load",
-                           message="Pull game files now? This will override any '.d1s' files\n"
+                           message="Import game files now? This will override any '.d1s' files\n"
                                    "that are already in this folder.",
-                           button_names=("Yes, pull the files", "No, I'll do it later"),
+                           button_names=("Yes, import the files", "No, I'll do it later"),
                            button_kwargs=('YES', 'NO'),
                            cancel_output=1, default_output=1) == 0:
-                self.load_project()
+                self.load_project(force_game_import=True)
+            self._window.deiconify()
 
     @_with_config_write
     def push(self):
+        # TODO: Not using this at the moment. This would copy existing game-format files.
         print("# Pushing project files to game...")  # TODO: log
         for path_sequence in traverse_path_tree(MODIFIABLE_FILES[self.game_name]):
             project_file = self.project_root.joinpath(*path_sequence)
@@ -284,11 +304,11 @@ class SoulstructProject(object):
         return datetime.datetime.now().strftime('%Y-%m-%d %H%M%S' if for_path else '%Y-%m-%d %H:%M:%S')
 
     def _build_config_dict(self):
-        # TODO: Separate pull times for different types.
+        # TODO: Separate import times for different types.
         return {
             'GameName': self.game_name,
             'GameDirectory': str(self.game_root),
-            'LastPullTime': self.last_pull_time,
+            'LastImportTime': self.last_import_time,
             'LastPushTime': self.last_push_time,
         }
 

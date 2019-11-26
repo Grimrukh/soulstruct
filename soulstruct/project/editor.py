@@ -1,0 +1,1088 @@
+from __future__ import annotations
+
+from abc import ABC
+from enum import IntEnum
+from typing import List, TYPE_CHECKING
+
+from soulstruct.project.utilities import ActionHistory, bind_events
+from soulstruct.utilities import camel_case_to_spaces
+from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
+
+if TYPE_CHECKING:
+    from soulstruct.project.links import WindowLinker
+
+
+class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
+    CANVAS_BG = '#1d1d1d'
+    CATEGORY_BOX_WIDTH = 250
+    CATEGORY_BOX_HEIGHT = 500
+    CATEGORY_SELECTED_BG = '#555'
+    ENTRY_ANCHOR = 'center'
+    ENTRY_BOX_WIDTH = 800
+    ENTRY_BOX_HEIGHT = 400
+    ENTRY_RANGE_SIZE = 50
+    ENTRY_CANVAS_BG = '#1d1d1d'
+
+    class EntryRow(object):
+        """Container/manager for widgets of a single entry row in the Editor."""
+        def __init__(self, editor: SoulstructBaseEditor, row_index: int, main_bindings: dict = None):
+            self.master = editor
+            self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
+
+            self.index = row_index
+            self._entry_id = None
+            self._entry_text = None
+            self._active = False
+
+            bg_color = self._get_color()
+
+            self.row_box = editor.Frame(
+                width=editor.ENTRY_BOX_WIDTH, height=30, bg=bg_color, row=row_index, columnspan=2,
+                sticky='nsew')
+            bind_events(self.row_box, main_bindings)
+
+            self.id_label = editor.Label(text='', width=15, row=row_index, column=0, bg=bg_color, sticky='e')
+            bind_events(self.id_label, main_bindings)
+
+            self.text_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky='ew')
+            bind_events(self.text_box, main_bindings)
+
+            self.text_label = editor.Label(self.text_box, text='', bg=bg_color, anchor='w', justify='left', width=60)
+            bind_events(self.text_label, main_bindings)
+
+            self.context_menu = editor.Menu(self.row_box)
+
+            self.tool_tip = ToolTip(self.row_box, self.id_label, self.text_box, self.text_label, text=None,
+                                    wraplength=350)
+
+        def update_entry(self, entry_id: int, entry_text: str):
+            self.entry_id = entry_id
+            self.entry_text = entry_text
+            self._update_colors()
+            self.build_entry_context_menu()
+
+        def hide(self):
+            """Called when this row has no entry to display."""
+            self.row_box.grid_remove()
+            self.id_label.grid_remove()
+            self.text_box.grid_remove()
+            self.text_label.grid_remove()
+
+        def unhide(self):
+            self.row_box.grid()
+            self.id_label.grid()
+            self.text_box.grid()
+            self.text_label.grid()
+
+        def build_entry_context_menu(self):
+            self.context_menu.delete(0, 'end')
+            self.context_menu.add_command(
+                label="Edit in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
+                command=lambda: self.master.popout_entry_edit(self.index))
+            self.context_menu.add_command(
+                label="Duplicate Entry to Next ID", foreground=self.STYLE_DEFAULTS['text_fg'],
+                command=lambda: self.master.add_relative_entry(self.entry_id, offset=1))
+            self.context_menu.add_command(
+                label="Delete Entry", foreground=self.STYLE_DEFAULTS['text_fg'],
+                command=lambda: self.master.delete_entry(self.index))
+
+        @property
+        def active(self):
+            return self._active
+
+        @active.setter
+        def active(self, value: bool):
+            if not self._active and value:
+                self._active = True
+            elif self._active and not value:
+                self._active = False
+            else:
+                return  # No change to active state.
+
+            # All widget backgrounds need updating (except Combobox).
+            self._update_colors()
+
+        @property
+        def entry_id(self):
+            return self._entry_id
+
+        @entry_id.setter
+        def entry_id(self, value):
+            self._entry_id = value
+            self.id_label.var.set(str(self._entry_id))
+
+        @property
+        def entry_text(self):
+            return self._entry_text
+
+        @entry_text.setter
+        def entry_text(self, value):
+            self._entry_text = value
+            self.text_label.var.set(self._entry_text)
+
+        def _update_colors(self):
+            bg_color = self._get_color()
+            for widget in (self.row_box, self.id_label, self.text_box, self.text_label):
+                widget['bg'] = bg_color
+
+        def _get_color(self):
+            """Inspects entry text/data and returns a tuple of 'bg' color values."""
+            base_bg = 222
+            if self._entry_text is not None:
+                if not self._entry_text:
+                    base_bg += 200
+                elif not self._entry_text.strip():
+                    base_bg += 110
+            if self._active:
+                base_bg += 123
+            if self.index % 2:
+                base_bg += 111
+            return f'#{base_bg}'
+
+    def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
+        super().__init__(master=master, toplevel=toplevel, window_title=window_title)
+        self.linker = linker
+        self.action_history = ActionHistory()
+        self.unsaved_changes = set()  # set of changed (category, param_id, action_type) pairs to highlight
+
+        self.active_category = None
+        self.category_boxes = {}
+        self.category_canvas = None
+        self.f_categories = None
+
+        self.entry_rows = []  # type: List[SoulstructBaseEditor.EntryRow]
+        self.selected_entry_row_index = None
+        self.first_display_index = 0
+        self.displayed_entry_count = 0
+
+        self.entry_canvas = None
+        self.f_entry_table = None
+        self.previous_range_button = None
+        self.next_range_button = None
+        self._e_entry_text_edit = None
+
+        self.build()
+        self.bind_all('<Control-z>', self.undo)
+        self.bind_all('<Control-y>', self.redo)
+        self.refresh_categories()
+        self.refresh_entries()
+
+    def build_category_canvas(self):
+        self.category_canvas = self.Canvas(
+            vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, padx=40, pady=40,
+            borderwidth=0, highlightthickness=0)
+        self.f_categories = self.Frame(
+            self.category_canvas, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, sticky='ew')
+        self.link_to_scrollable(self.category_canvas, self.f_categories)
+        self.category_canvas.create_window(0, 0, window=self.f_categories, anchor='nw')
+        self.f_categories.bind(
+            "<Configure>", lambda e, c=self.category_canvas: self.reset_canvas_scroll_region(c))
+
+    def build_entry_frame(self):
+        with self.set_master(auto_rows=0):
+
+            self.previous_range_button = self.Button(
+                text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#722', width=30,
+                command=self._go_to_previous_entry_range, padx=10, pady=10)
+
+            with self.set_master():
+                self.entry_canvas = self.Canvas(
+                    vertical_scrollbar=True, width=self.ENTRY_BOX_WIDTH, height=self.ENTRY_BOX_HEIGHT, borderwidth=0,
+                    highlightthickness=0, yscrollincrement=30, padx=40, pady=40, bg=self.ENTRY_CANVAS_BG)
+                self.f_entry_table = self.Frame(self.entry_canvas, width=self.ENTRY_BOX_WIDTH, sticky='ew')
+                self.entry_canvas.create_window(0, 0, window=self.f_entry_table, anchor='nw')
+                self.f_entry_table.bind(
+                    "<Configure>", lambda e, c=self.entry_canvas: self.reset_canvas_scroll_region(c))
+
+            with self.set_master(self.f_entry_table):
+                for row in range(self.ENTRY_RANGE_SIZE):
+                    self.entry_rows.append(self.EntryRow(
+                        self, row_index=row, main_bindings={
+                            '<Button-1>': lambda _, i=row: self.select_displayed_entry_row(i),
+                            '<Shift-Button-1>': lambda e, i=row: self.popout_entry_edit(i),
+                            '<Button-3>': lambda e, i=row: self._right_click_entry(e, i),
+                            '<Up>': self._entry_press_up,
+                            '<Down>': self._entry_press_down,
+                            '<Prior>': lambda e: self._go_to_previous_entry_range(),
+                            '<Next>': lambda e: self._go_to_next_entry_range(),
+                        }))
+
+            self.next_range_button = self.Button(
+                text=f"Next {self.ENTRY_RANGE_SIZE}", bg='#722', width=30,
+                command=self._go_to_next_entry_range, padx=10, pady=10)
+
+    def build(self):
+        with self.set_master(auto_columns=0):
+            self.build_category_canvas()
+            self.build_entry_frame()
+
+    def undo(self, _=None):
+        if not self.action_history.undo():
+            self['bg'] = '#522'
+            self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
+
+    def redo(self, _=None):
+        if not self.action_history.redo():
+            self['bg'] = '#522'
+            self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
+
+    def refresh_categories(self):
+        """There are few enough categories that the widgets can be completely regenerated."""
+        for box, label in self.category_boxes.values():
+            box.destroy()
+            label.destroy()
+        self.category_boxes = {}
+        with self.set_master(self.f_categories):
+
+            categories = self._get_display_categories()
+
+            for row, category in enumerate(categories):
+                box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30, highlightthickness=1)
+                label_text = camel_case_to_spaces(category).replace(' _', ':')
+                label = self.Label(text=label_text, sticky='ew', row=row)
+                label.bind("<Button-1>", lambda e, c=category: self.select_category(c))
+                box.bind("<Button-1>", lambda e, c=category: self.select_category(c))
+                if category == self.active_category:
+                    label['bg'] = self.CATEGORY_SELECTED_BG
+                    box['bg'] = self.CATEGORY_SELECTED_BG
+                self.link_to_scrollable(self.category_canvas, box, label)
+                self.category_boxes[category] = (box, label)
+
+        self.category_canvas.yview_moveto(0)
+
+    def select_category(self, selected_category, first_display_index=0):
+        if selected_category != self.active_category:
+            self.active_category = selected_category
+            for category, (box, label) in self.category_boxes.items():
+                if selected_category == category:
+                    box['bg'] = self.CATEGORY_SELECTED_BG
+                    label['bg'] = self.CATEGORY_SELECTED_BG
+                else:
+                    box['bg'] = self.STYLE_DEFAULTS['bg']
+                    label['bg'] = self.STYLE_DEFAULTS['bg']
+
+        self.first_display_index = first_display_index
+        self.select_displayed_entry_row(None, edit_if_already_selected=False)
+        self.refresh_entries()
+        self.entry_canvas.yview_moveto(0)
+
+    def select_entry_id(self, entry_id, set_focus_to_text=True, edit_if_already_selected=True, as_row_index=None):
+        """Select entry based on ID and set the category display range to target_row_index rows before it."""
+        if as_row_index is None:
+            # 5 if no newlines are in the target entry, 0 if there are.
+            as_row_index = 0 if '\n' in self.get_entry_text(entry_id) else 5
+
+        entry_index = self.get_entry_index(entry_id)
+        row_index = self._update_first_entry_display_index(entry_index, as_row_index)
+        self.refresh_entries()
+        self.entry_canvas.yview_moveto(0)
+        self.select_displayed_entry_row(
+            row_index, set_focus_to_text=set_focus_to_text, edit_if_already_selected=edit_if_already_selected)
+
+    def select_displayed_entry_row(self, row_index, set_focus_to_text=True, edit_if_already_selected=True):
+        """Select entry from row index, based on currently displayed category and ID range."""
+        old_row_index = self.selected_entry_row_index
+
+        if old_row_index is not None and row_index is not None:
+            if row_index == old_row_index:
+                if edit_if_already_selected:
+                    return self._start_entry_text_edit(row_index)
+                return
+        else:
+            self._cancel_entry_name_edit()
+
+        self.selected_entry_row_index = row_index
+
+        if old_row_index is not None:
+            self.entry_rows[old_row_index].active = False
+        if row_index is not None:
+            self.entry_rows[row_index].active = True
+            if set_focus_to_text:
+                self.entry_rows[row_index].text_label.focus_set()
+
+    def refresh_entries(self):
+        self._cancel_entry_name_edit()
+
+        entries_to_display = self._get_category_name_range(
+            category=self.active_category,
+            first_index=self.first_display_index,
+            last_index=self.first_display_index + self.ENTRY_RANGE_SIZE) if self.active_category else []
+
+        row = 0
+        for entry_id, entry in entries_to_display:
+            self.entry_rows[row].update_entry(
+                entry_id=entry_id,
+                entry_text=self.get_entry_text(entry_id),
+            )
+            self.entry_rows[row].unhide()
+            row += 1
+
+        self.displayed_entry_count = row
+        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+            self.entry_rows[remaining_row].hide()
+
+        self.f_entry_table.grid_columnconfigure(1, weight=1)
+        self._refresh_buttons()
+
+    def get_entry_id(self, entry_index: int) -> int:
+        return self.entry_rows[entry_index].entry_id
+
+    def _get_display_categories(self):
+        raise NotImplementedError
+
+    def get_category_dict(self, category=None):
+        raise NotImplementedError
+
+    def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
+        raise NotImplementedError
+
+    def get_entry_index(self, entry_id: int, category=None) -> int:
+        raise NotImplementedError
+
+    def get_entry_text(self, entry_id: int, category=None) -> str:
+        raise NotImplementedError
+
+    def _set_entry_text(self, entry_id: int, text: str, category=None):
+        raise NotImplementedError
+
+    def _change_entry_text(self, entry_index, new_text, category=None):
+        """Set text of given entry index in the displayed category (if different from current)."""
+        if category is None:
+            category = self.active_category
+        entry_id = self.get_entry_id(entry_index)
+        current_text = self.get_entry_text(entry_id, category=category)
+        if current_text == new_text:
+            return False  # Nothing to change.
+        self._set_entry_text(entry_id, new_text, category=category)
+        if category == self.active_category:
+            self.entry_rows[entry_index].text_label.var.set(new_text)
+
+        # TODO: History action manager.
+        # if from_history:
+        #     self.jump_to_category_and_entry(category, text_id)
+        # elif category == self.active_category:
+        #     self.refresh_text_entries()
+        # self.unsaved_changes.add((self.active_category, text_id, 'change'))
+        # if not from_history:
+        #     self.action_history.record_action(
+        #         undo=partial(self._change_entry, category, text_id, old_text),
+        #         redo=partial(self._change_entry, category, text_id, text),
+        #     )
+
+        return True
+
+    def popout_entry_edit(self, entry_index):
+        entry_id = self.get_entry_id(entry_index)
+        if not self._e_entry_text_edit:
+            initial_text = self.get_entry_text(entry_id, self.active_category)
+            popout_editor = EntryTextEditBox(self, self.active_category, entry_id, initial_text)
+            _, new_text = popout_editor.go()
+            if new_text is not None:
+                self._change_entry_text(entry_index, new_text)
+
+    def _add_entry(self, entry_id, text):
+        if entry_id < 0:
+            self.dialog("Entry ID Error", message=f"Entry ID cannot be negative.")
+            return False
+        if entry_id in self.get_category_dict():
+            self.dialog("Text ID Error", message=f"Entry ID {entry_id} already exists in category "
+                                                 f"{camel_case_to_spaces(self.active_category)}.")
+            return False
+
+        self._cancel_entry_name_edit()
+        self._set_entry_text(entry_id, text)
+        self.select_entry_id(entry_id, set_focus_to_text=True, edit_if_already_selected=False)
+
+        # TODO
+        # if from_history:
+        #     self.jump_to_category_and_entry(category, text_id)
+        # if not from_history:
+        #     self.action_history.record_action(
+        #         undo=partial(self._delete_entry, category, text_id),
+        #         redo=partial(self._add_entry, category, text_id, text),
+        #     )
+        # self.unsaved_changes.add((self.active_category, text_id, 'add'))
+
+        return True
+
+    def add_relative_entry(self, entry_id, offset=1, text=None):
+        if text is None:
+            text = self.get_entry_text(entry_id)  # Copies name of origin entry by default.
+        self._add_entry(entry_id=entry_id + offset, text=text)
+
+    def delete_entry(self, entry_index, category=None):
+        """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
+        self._cancel_entry_name_edit()
+        entry_id = self.get_entry_id(entry_index)
+        deleted_text = self.get_category_dict(category=category).pop(entry_id)
+        self.refresh_entries()
+
+        # TODO
+        # if not from_history:
+        #     self.action_history.record_action(
+        #         undo=partial(self._add_entry, category, text_id, deleted_text),
+        #         redo=partial(self._delete_entry, category, text_id),
+        #     )
+        # self.unsaved_changes.add((self.active_category, text_id, 'delete'))
+
+        return deleted_text  # TODO: or return False?
+
+    # TODO
+    # def bulk_action(self, *category_id_text_action_tuples, jump_to_category, jump_to_text_id, from_history=False):
+    #     """Will jump to given category and ID (and refresh) once all actions have been resolved.
+    #
+    #     Used only by ActionHistory, so 'from_history' argument has no effect.
+    #     """
+    #     for category, text_id, text, action in category_id_text_action_tuples:
+    #         if action in {'add', 'change'}:
+    #             self.Text[category][text_id] = text
+    #         elif action == 'delete':
+    #             self.Text[category].pop(text_id)
+    #         else:
+    #             raise ValueError(f"Invalid action: {action}. (This is most likely a bug.)")
+    #     if from_history:
+    #         self.jump_to_category_and_entry(jump_to_category, jump_to_text_id)
+
+    def _update_first_entry_display_index(self, new_entry_index, as_row_index=0):
+        """Updates first display index so that 'new_entry_index' becomes displayed index 'as_row_index' (or as close
+        to it as possible, for very early entries).
+
+        Returns the resulting displayed row index of new_entry_index (once '.refresh_entries' is called).
+        """
+        self.first_display_index = max(0, new_entry_index - as_row_index)
+        return new_entry_index - self.first_display_index
+
+    def _right_click_entry(self, event, entry_index):
+        self.select_displayed_entry_row(entry_index, edit_if_already_selected=False)
+        self.entry_rows[entry_index].context_menu.tk_popup(event.x_root, event.y_root)
+
+    def _update_range(self, first_index):
+        self.first_display_index = first_index
+        self.refresh_entries()
+        self.select_displayed_entry_row(0, edit_if_already_selected=False)
+        self.update_idletasks()
+        self.entry_canvas.yview_moveto(0)
+
+    def _go_to_previous_entry_range(self):
+        first_index = max(self.first_display_index - self.ENTRY_RANGE_SIZE, 0)
+        if first_index == self.first_display_index:
+            return
+        self._update_range(first_index)
+
+    def _go_to_next_entry_range(self):
+        first_index = min(self.first_display_index + self.ENTRY_RANGE_SIZE,
+                          max(len(self.get_category_dict()) - self.ENTRY_RANGE_SIZE, 0))
+        if first_index == self.first_display_index:
+            return
+        self._update_range(first_index)
+
+    def _start_entry_text_edit(self, entry_index):
+        if not self._e_entry_text_edit:
+            entry_id = self.get_entry_id(entry_index)
+            initial_text = self.get_entry_text(entry_id)
+            if '\n' in initial_text:
+                return self.popout_entry_edit(entry_index)
+            self._e_entry_text_edit = self.Entry(
+                self.entry_rows[entry_index].text_box, initial_text=self.get_entry_text(entry_id),
+                sticky='ew', width=60)
+            self._e_entry_text_edit.bind('<Return>', lambda e, i=entry_index: self._confirm_entry_text_edit(i))
+            self._e_entry_text_edit.bind('<Up>', self._entry_press_up)
+            self._e_entry_text_edit.bind('<Down>', self._entry_press_down)
+            self._e_entry_text_edit.bind('<FocusOut>', lambda e: self._cancel_entry_name_edit())
+            self._e_entry_text_edit.bind('<Escape>', lambda e: self._cancel_entry_name_edit())
+            self._e_entry_text_edit.focus_set()
+            self._e_entry_text_edit.select_range(0, 'end')
+
+    def _cancel_entry_name_edit(self):
+        if self._e_entry_text_edit:
+            self._e_entry_text_edit.destroy()
+            self._e_entry_text_edit = None
+
+    def _confirm_entry_text_edit(self, entry_index):
+        if self._e_entry_text_edit:
+            new_text = self._e_entry_text_edit.var.get()
+            self._change_entry_text(entry_index, new_text)
+            self._cancel_entry_name_edit()
+
+    def _shift_selected_entry(self, relative_index):
+        if self.selected_entry_row_index is None:
+            return
+        new_index = self.selected_entry_row_index + relative_index
+        if new_index < 0 and self.previous_range_button['state'] == 'normal':
+            self._go_to_previous_entry_range()
+            self.select_displayed_entry_row(self.ENTRY_RANGE_SIZE - 1, edit_if_already_selected=False)
+            self.entry_canvas.yview_moveto(1.0)
+        elif new_index >= self.displayed_entry_count and self.next_range_button['state'] == 'normal':
+            self._go_to_next_entry_range()
+            self.select_displayed_entry_row(0, edit_if_already_selected=False)
+            self.entry_canvas.yview_moveto(0.0)
+        elif 0 <= new_index < self.displayed_entry_count:
+            self.select_displayed_entry_row(self.selected_entry_row_index + relative_index)
+        else:
+            return  # Do nothing.
+
+    def _entry_press_up(self, _=None):
+        if self.selected_entry_row_index is not None:
+            edit_new = self._e_entry_text_edit is not None
+            self._confirm_entry_text_edit(self.selected_entry_row_index)
+            self._shift_selected_entry(-1)
+            if edit_new:
+                self._start_entry_text_edit(self.selected_entry_row_index)
+            if self.entry_canvas.yview()[1] != 1.0 or self.selected_entry_row_index < self.displayed_entry_count - 5:
+                self.entry_canvas.yview_scroll(-1, 'units')
+
+    def _entry_press_down(self, _=None):
+        if self.selected_entry_row_index is not None:
+            edit_new = self._e_entry_text_edit is not None
+            self._confirm_entry_text_edit(self.selected_entry_row_index)
+            self._shift_selected_entry(+1)
+            if edit_new:
+                self._start_entry_text_edit(self.selected_entry_row_index)
+            if self.entry_canvas.yview()[0] != 0.0 or self.selected_entry_row_index > 5:
+                self.entry_canvas.yview_scroll(1, 'units')
+
+    def _refresh_buttons(self):
+        if not self.active_category or self.first_display_index == 0:
+            self.previous_range_button['state'] = 'disabled'
+        else:
+            self.previous_range_button['state'] = 'normal'
+        if (not self.active_category
+                or self.first_display_index >= len(self.get_category_dict()) - self.ENTRY_RANGE_SIZE):
+            self.next_range_button['state'] = 'disabled'
+        else:
+            self.next_range_button['state'] = 'normal'
+
+
+class EntryTextEditBox(SoulstructSmartFrame):
+    """Small pop-out widget that allows you to modify longer entry text/name more freely, with newlines and all."""
+
+    WIDTH = 70  # characters
+    HEIGHT = 10  # lines
+
+    def __init__(self, master: SoulstructBaseEditor, category, entry_id, initial_text='', allow_newlines=True):
+        if entry_id is None:
+            window_title = f"Adding entry to {camel_case_to_spaces(category)}"
+        else:
+            window_title = f"Editing {camel_case_to_spaces(category)}[{entry_id}]"
+        super().__init__(toplevel=True, master=master, window_title=window_title)
+        self.editor = master
+
+        self.initial_text = initial_text
+        self.category = category
+        self.output = [None, None]
+        self.allow_newlines = allow_newlines
+
+        self.start_auto_rows()
+        if entry_id is None:
+            self._id = self.Entry(label='New Entry ID:', label_position='left', width=10, integers_only=True,
+                                  padx=20, pady=20).var
+        else:
+            self._id = None
+
+        self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
+        self._text.insert('end', initial_text)
+        with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
+            self.Button(text="Confirm changes", command=lambda: self.done(True), **master.DEFAULT_BUTTON_KWARGS['YES'])
+            self.Button(text="Cancel changes", command=lambda: self.done(False), **master.DEFAULT_BUTTON_KWARGS['NO'])
+
+        self.bind_all('<Escape>', lambda e: self.done(False))
+        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            if self._id:
+                if not self._id.get():
+                    self.editor.dialog("ID Error", message="New entry ID must be set.")
+                    return
+                new_id = int(self._id.get())
+                if new_id in self.editor.get_category_dict():
+                    self.editor.dialog(
+                        "ID Error", message=f"Entry ID {new_id} already exists in category "
+                                            f"{camel_case_to_spaces(self.category)}.")
+                    return
+            else:
+                new_id = None
+            new_text = self._text.get('1.0', 'end' + '-1c')
+            if not self.allow_newlines and '\n' in new_text:
+                self.editor.dialog("Text Error", "Entry cannot contain newlines.")
+                return
+            if new_text == self.initial_text:
+                self.output = [None, None]
+            else:
+                self.output = [new_id, self._text.get('1.0', 'end' + '-1c')]
+        self.quit()
+
+
+class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
+    FIELD_CANVAS_BG = '#1d1d1d'
+    FIELD_BOX_WIDTH = 450
+    FIELD_BOX_HEIGHT = 400
+    FIELD_ROW_HEIGHT = 30
+    FIELD_ROW_COUNT = 173  # highest count (Special Effects)
+    FIELD_NAME_FG = '#DDE'
+
+    class FieldRow(object):
+        """Container/manager for widgets in a single field row in the Editor.
+
+        These are only created once, and their contents are refreshed when needed (e.g. when a new entry is selected).
+        Unlike entries, field value widgets may be Labels (which turn into Entries for editing), Checkbuttons, or
+        Comboboxes. Each of these widgets is created for each row, so they can be hidden/dispalyed when needed by a
+        given field type, rather than dynamically creating and destroying them every time a new entry/category is
+        selected.
+        """
+        def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
+            self.master = editor
+            self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
+
+            # self.linker = master.linker
+            self.source_entry = None
+
+            self.index = row_index
+            self._active = False
+            self.field_name = ''
+            self.field_type = None
+            self.field_docstring = ""
+            self.link_missing = False
+
+            bg_color = self._get_color()
+
+            self.row_box = editor.Frame(
+                width=editor.FIELD_BOX_WIDTH, height=editor.FIELD_ROW_HEIGHT, bg=bg_color,
+                row=row_index, columnspan=2, sticky='nsew')
+            bind_events(self.row_box, main_bindings)
+
+            self.field_name_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='w')
+            bind_events(self.field_name_box, main_bindings)
+
+            self.field_name_label = editor.Label(
+                self.field_name_box, text='', fg=editor.FIELD_NAME_FG, width=30, bg=bg_color, anchor='w')
+            bind_events(self.field_name_label, main_bindings)
+
+            self.value_box = editor.Frame(width=200, row=row_index, column=1, bg=bg_color, sticky='ew')
+            bind_events(self.value_box, main_bindings)
+
+            # VALUE WIDGETS
+
+            self.value_label = editor.Label(self.value_box, text='', bg=bg_color, width=50, anchor='w')
+            bind_events(self.value_label, main_bindings)
+
+            self.value_checkbutton = editor.Checkbutton(
+                self.value_box, label=None, bg=bg_color, no_grid=True, selectcolor='#000',
+                command=self._checkbutton_toggle)
+            # Main focus bindings are not bound to Checkbutton.
+
+            self.value_combobox = editor.Combobox(
+                self.value_box, values=None, width=20, no_grid=True, on_select_function=self._combobox_choice)
+            self.value_combobox.bind('<MouseWheel>', lambda _: 'break')  # prevent scrolling on collapsed Combobox
+            # Main focus bindings are not bound to Combobox.
+
+            # TODO: BEHAVIOR_REF_TYPE combobox should also force a refresh, as it may change field names.
+            #  (Class will need access to ParamEntry for this, which is fine.)
+
+            self.context_menu = editor.Menu(self.row_box)
+            self.tool_tip = ToolTip(self.row_box, self.field_name_box, self.field_name_label, text=None)
+
+            self.active_value_widget = self.value_label
+            self.hide()  # TODO: still getting white box before I click or scroll
+
+        def _combobox_choice(self, _=None):
+            """Updates field value with integer value from Combobox enum or unknown integer."""
+            combobox_string = self.value_combobox.var.get()
+            if combobox_string.startswith('Unknown: '):
+                value = int(combobox_string[len('Unknown: '):])
+            else:
+                value = getattr(self.field_type, self.value_combobox.var.get().replace(' ', '')).value
+            self.master.change_field_value(self.field_name, value)
+
+        def _activate_value_widget(self, widget):
+            if widget is self.value_label:
+                if id(self.active_value_widget) in {id(self.value_checkbutton), id(self.value_combobox)}:
+                    self.active_value_widget.grid_remove()
+                self.active_value_widget = self.value_label
+            if widget is self.value_checkbutton:
+                if id(self.active_value_widget) in {id(self.value_label), id(self.value_combobox)}:
+                    self.active_value_widget.grid_remove()
+                self.active_value_widget = self.value_checkbutton
+            if widget is self.value_combobox:
+                if id(self.active_value_widget) in {id(self.value_label), id(self.value_checkbutton)}:
+                    self.active_value_widget.grid_remove()
+                self.active_value_widget = self.value_combobox
+
+        def _checkbutton_toggle(self):
+            new_value = self.value_checkbutton.var.get()
+            self.master.change_field_value(self.field_name, new_value)
+            self.value_checkbutton.config(fg='#3F3' if new_value else '#F33', text='ON' if new_value else 'OFF')
+
+        def update_field(self, entry, name, nickname, value, field_type, docstring="DOC-TODO"):
+            """Update widgets with given field information."""
+            self.source_entry = entry
+            self.field_name = name
+            self.field_type = field_type
+            self.field_docstring = docstring
+
+            nickname = camel_case_to_spaces(nickname)
+            if self.field_name_label.var.get() != nickname:
+                self.field_name_label.var.set(nickname)
+
+            if isinstance(self.field_type, str):
+                # Note that the *argument* 'field_type' is used below, not attribute self.field_type.
+                field_links = self.master.get_field_links(self.field_type, value)
+                field_type = int
+            else:
+                field_links = []
+
+            if issubclass(field_type, IntEnum):
+                self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
+                try:
+                    # noinspection PyUnresolvedReferences
+                    enum_name = camel_case_to_spaces(field_type(value).name)
+                except ValueError:
+                    enum_name = f'Unknown: {value}'
+                self.value_combobox.var.set(enum_name)
+                self._activate_value_widget(self.value_combobox)
+            elif field_type in {float, int}:
+                value_text = f'{value:.3f}' if field_type == float else str(value)
+                if field_links:
+                    if len(field_links) > 1:
+                        value_text += '    {AMBIGUOUS}'
+                    if field_links[0].name is None:
+                        value_text += '    {MISSING}'
+                    else:
+                        value_text += f'    {{{field_links[0].name}}}'
+                if self.value_label.var.get() != value_text:
+                    self.value_label.var.set(value_text)  # TODO: probably redundant in terms of update efficiency
+                self._activate_value_widget(self.value_label)
+            elif field_type == bool:
+                if value not in {0, 1}:
+                    raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
+                self.value_checkbutton.var.set(value)
+                self.value_checkbutton.config(fg='#3F3' if value else '#F33', text='ON' if value else 'OFF')
+                self._activate_value_widget(self.value_checkbutton)
+
+            if field_links and not any(link.name for link in field_links) and not self.link_missing:
+                self.link_missing = True
+                self._update_colors()
+            elif (not field_links or any(link.name for link in field_links)) and self.link_missing:
+                self.link_missing = False
+                self._update_colors()
+
+            self.build_field_context_menu(field_links)
+            self.tool_tip.text = docstring
+
+            self.unhide()
+
+        def hide(self):
+            """Called when this row has no field to display (e.g. for smaller ParamTables or unselected entry)."""
+            self.row_box.grid_remove()
+            self.field_name_box.grid_remove()
+            self.field_name_label.grid_remove()
+            self.value_box.grid_remove()
+            self.active_value_widget.grid_remove()
+
+        def unhide(self):
+            self.row_box.grid()
+            self.field_name_box.grid()
+            self.field_name_label.grid()
+            self.value_box.grid()
+            self.active_value_widget.grid()
+
+        def build_field_context_menu(self, field_links=()):
+            # TODO: other stuff? Pop out a scroll box to select an entry, for linked fields?
+            self.context_menu.delete(0, 'end')
+            if field_links:
+                for field_link in field_links:
+                    field_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
+
+        @property
+        def editable(self):
+            return self.active_value_widget is self.value_label
+
+        def confirm_edit(self, new_text, field_links=None):
+            if not self.editable:
+                raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
+
+            if isinstance(self.field_type, str):
+                new_value = int(new_text)
+                if len(field_links) > 1:
+                    new_text += '    {AMBIGUOUS}'
+                elif field_links and field_links[0].name is None:
+                    new_text += '    {MISSING}'
+                elif field_links:
+                    new_text += f'    {{{field_links[0].name}}}'
+                self.value_label.var.set(new_text)
+                return new_value
+
+            self.value_label.var.set(new_text)
+
+            if self.field_type == float:
+                return float(new_text)
+            elif self.field_type == int:
+                return int(new_text)
+
+        @property
+        def active(self):
+            return self._active
+
+        @active.setter
+        def active(self, value: bool):
+            if not self._active and value:
+                self._active = True
+            elif self._active and not value:
+                self._active = False
+            else:
+                return  # No change to active state.
+
+            # All widget backgrounds need updating (except Combobox).
+            self._update_colors()
+
+        def _update_colors(self):
+            bg_color = self._get_color()
+            for widget in (self.row_box, self.field_name_box, self.field_name_label, self.value_box,
+                           self.value_label, self.value_checkbutton):
+                widget['bg'] = bg_color
+
+        def _get_color(self):
+            """Inspects field name/data and returns an RGB string."""
+            base_bg = 222
+            if self.link_missing:
+                base_bg += 100
+            if self._active:
+                base_bg += 123
+            if self.index % 2:
+                base_bg += 111
+            return f'#{base_bg}'
+
+    def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
+        self.show_hidden_fields = None
+        self.field_canvas = None
+        self.f_field_table = None
+        self.e_field_value_edit = None
+        self.selected_field_row_index = None
+        self.displayed_field_count = 0
+        self.field_rows = []  # type: List[SoulstructBaseFieldEditor.FieldRow]
+        super().__init__(linker=linker, master=master, toplevel=toplevel, window_title=window_title)
+
+    def build(self):
+        with self.set_master(auto_columns=0):
+            self.build_category_canvas()
+            self.build_entry_frame()
+            self.build_field_frame()
+
+    def build_field_frame(self):
+        with self.set_master(auto_rows=0):
+
+            self.show_hidden_fields = self.Checkbutton(
+                label='Show hidden fields', initial_state=False,
+                command=lambda: self.refresh_fields(reset_display=True), pady=20).var
+
+            with self.set_master():
+                self.field_canvas = self.Canvas(
+                    vertical_scrollbar=True, width=self.FIELD_BOX_WIDTH, height=self.FIELD_BOX_HEIGHT, borderwidth=0,
+                    yscrollincrement=25, highlightthickness=0, padx=40, pady=40, bg=self.FIELD_CANVAS_BG)
+                self.f_field_table = self.Frame(frame=self.field_canvas, width=self.FIELD_BOX_WIDTH, sticky='ew')
+                self.field_canvas.create_window(0, 0, window=self.f_field_table, anchor='nw')
+                self.f_field_table.bind(
+                    "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
+
+        with self.set_master(self.f_field_table):
+            for row in range(self.FIELD_ROW_COUNT):
+                self.field_rows.append(self.FieldRow(
+                    self, row_index=row,
+                    main_bindings={
+                        '<Button-1>': lambda _, i=row: self.select_displayed_field_row(i),
+                        '<Button-3>': lambda e, i=row: self._right_click_field(e, i),
+                        '<Up>': self._field_press_up,
+                        '<Down>': self._field_press_down,
+                    }))
+
+    def refresh_entries(self, reset_fields=False):
+        super().refresh_entries()
+        if self.active_category:
+            self.refresh_fields(reset_display=reset_fields)
+
+    def select_displayed_entry_row(self, row_index, set_focus_to_text=True, edit_if_already_selected=True):
+        super().select_displayed_entry_row(row_index, set_focus_to_text=set_focus_to_text,
+                                           edit_if_already_selected=edit_if_already_selected)
+        self.refresh_fields()
+
+    def refresh_fields(self, reset_display=False):
+        """Refresh all field information."""
+        field_dict = self.get_selected_field_dict()
+
+        self._cancel_field_value_edit()
+
+        show_hidden_fields = self.show_hidden_fields.get()
+        reset_display = reset_display
+
+        row = 0
+        for field_name in field_dict.field_names if field_dict else []:
+
+            field_nickname, is_main, field_type, field_doc = self.get_field_info(field_dict, field_name)
+
+            if (isinstance(field_type, str) and '<Pad:' in field_type) or (not is_main and not show_hidden_fields):
+                continue  # Skip hidden field (or always skip Pad field).
+
+            field_value = field_dict[field_name]
+
+            self.field_rows[row].update_field(
+                entry=field_dict,
+                name=field_name,
+                nickname=field_nickname,
+                value=field_value,
+                field_type=field_type,
+                docstring=field_doc,
+            )
+            row += 1
+
+        self.displayed_field_count = row
+
+        for remaining_row in range(row, self.FIELD_ROW_COUNT):
+            self.field_rows[remaining_row].hide()
+
+        self.f_field_table.grid_columnconfigure(1, weight=1)
+
+        if reset_display:
+            self.select_displayed_field_row(0, edit_if_already_selected=False)
+            self.update_idletasks()
+            self.field_canvas.yview_moveto(0)
+
+    def _right_click_field(self, event, field_index):
+        self.select_displayed_field_row(field_index, edit_if_already_selected=False)
+        self.field_rows[field_index].context_menu.tk_popup(event.x_root, event.y_root)
+
+    def select_field_name(self, field_name, set_focus_to_value=True, edit_if_already_selected=False):
+        row_index = self.get_field_row_index_from_name(field_name)
+        self.select_displayed_field_row(row_index, set_focus_to_value=set_focus_to_value,
+                                        edit_if_already_selected=edit_if_already_selected)
+        self.refresh_fields()
+        self.field_canvas.yview_moveto(0)  # TODO: How to scroll to exact field?
+
+    def select_displayed_field_row(self, row_index, set_focus_to_value=True, edit_if_already_selected=True):
+        # TODO: should this start editing immediately (on left click)?
+        # TODO: tab while editing moves to next field. Shift+Tab moves back. Up and down arrows also work.
+
+        old_row_index = self.selected_field_row_index
+
+        if old_row_index is not None and row_index == old_row_index:
+            if edit_if_already_selected and self.field_rows[row_index].editable:
+                return self._start_field_value_edit(row_index)
+            return
+        else:
+            self._cancel_field_value_edit()
+
+        self.selected_field_row_index = row_index
+
+        if old_row_index is not None:
+            self.field_rows[old_row_index].active = False
+        self.field_rows[row_index].active = True
+        if set_focus_to_value:
+            self.field_rows[row_index].active_value_widget.focus_set()
+
+    def _field_press_up(self, _=None):
+        if self.selected_field_row_index is not None:
+            edit_new = self.e_field_value_edit is not None
+            self._confirm_field_value_edit(self.selected_field_row_index)
+            self._shift_selected_field(-1)
+            if edit_new and self.field_rows[self.selected_field_row_index].editable:
+                self._start_field_value_edit(self.selected_field_row_index)
+            if self.field_canvas.yview()[1] != 1.0 or self.selected_field_row_index < self.displayed_field_count - 5:
+                self.field_canvas.yview_scroll(-1, 'units')
+
+    def _field_press_down(self, _=None):
+        if self.selected_field_row_index is not None:
+            edit_new = self.e_field_value_edit is not None
+            self._confirm_field_value_edit(self.selected_field_row_index)
+            self._shift_selected_field(+1)
+            if edit_new and self.field_rows[self.selected_field_row_index].editable:
+                self._start_field_value_edit(self.selected_field_row_index)
+            if self.field_canvas.yview()[0] != 0.0 or self.selected_field_row_index > 5:
+                self.field_canvas.yview_scroll(1, 'units')
+
+    def _shift_selected_field(self, relative_index):
+        if (self.selected_field_row_index is None
+                or not 0 <= self.selected_field_row_index + relative_index < self.displayed_field_count):
+            return
+        self.select_displayed_field_row(self.selected_field_row_index + relative_index)
+
+    def _start_field_value_edit(self, index):
+        if not self.e_field_value_edit:
+            field_row = self.field_rows[index]
+            if not field_row.editable:
+                raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
+            field_name = field_row.field_name
+            field_type = field_row.field_type
+            initial_text = self.get_field_dict(self.get_entry_id(index))[field_name]
+            if field_type == float:
+                self.e_field_value_edit = self.Entry(
+                    field_row.value_box, numbers_only=True, initial_text=initial_text,
+                    sticky='ew', width=5)
+            elif field_type == int or isinstance(field_type, str):
+                self.e_field_value_edit = self.Entry(
+                    field_row.value_box, integers_only=True, initial_text=initial_text,
+                    sticky='ew', width=5)
+            self.e_field_value_edit.bind('<Return>', lambda e, i=index: self._confirm_field_value_edit(i))
+            self.e_field_value_edit.bind('<Up>', self._field_press_up)
+            self.e_field_value_edit.bind('<Down>', self._field_press_down)
+            self.e_field_value_edit.bind('<FocusOut>', lambda e: self._cancel_field_value_edit())
+            self.e_field_value_edit.bind('<Escape>', lambda e: self._cancel_field_value_edit())
+            self.e_field_value_edit.focus_set()
+            self.e_field_value_edit.select_range(0, 'end')
+
+    def _cancel_field_value_edit(self):
+        if self.e_field_value_edit:
+            self.e_field_value_edit.destroy()
+            self.e_field_value_edit = None
+
+    def _confirm_field_value_edit(self, index):
+        if self.e_field_value_edit:
+            try:
+                true_value = self.field_rows[index].confirm_edit(new_text=self.e_field_value_edit.var.get())
+            except ValueError as e:
+                # Entry input restrictions are supposed to prevent this.
+                print(str(e))
+                self.bell()
+                return
+            self.change_field_value(self.field_rows[index].field_name, true_value)
+            self._cancel_field_value_edit()
+
+    def change_field_value(self, field_name: str, new_value):
+        """New value should have already been converted to its appropriate type."""
+        field_dict = self.get_selected_field_dict()
+        old_value = field_dict[field_name]
+        if old_value == new_value:
+            return False  # Nothing to change.
+        field_dict[field_name] = new_value
+        return True
+
+    def get_field_row_index_from_name(self, field_name):
+        for row in self.field_rows:
+            if row.field_name == field_name:
+                return row.index
+        raise KeyError(f"Field name {field_name} does not exist in active category/entry.")
+
+    def get_selected_field_dict(self):
+        """Returns None if no field is selected."""
+        if self.selected_entry_row_index is not None:
+            entry_id = self.get_entry_id(self.selected_entry_row_index)
+            return self.get_field_dict(entry_id)
+        else:
+            return None
+
+    def get_field_dict(self, entry_id: int, category=None):
+        raise NotImplementedError
+
+    def get_field_info(self, field_dict, field_name=None):
+        """This method should return the full field information dictionary if field_name is None."""
+        raise NotImplementedError
+
+    def get_field_links(self, field_type, field_name) -> list:
+        raise NotImplementedError

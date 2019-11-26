@@ -77,7 +77,7 @@ class ATKPARAM_ATKATTR_TYPE(UnsignedChar):
 class ATKPARAM_REP_DMGTYPE(SignedChar):
     """Damage types. This enum is used by Special Effects to override one damage type with another (e.g. Iron Flesh
     reduces the weaker half 1 and the stronger half to 5)."""
-    NoDamage = 0
+    Null = 0  # means no replacement in Special Effect params
     Small = 1
     Medium = 2
     Large = 3
