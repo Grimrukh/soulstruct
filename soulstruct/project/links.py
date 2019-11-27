@@ -51,11 +51,11 @@ class WindowLinker(object):
             entry_name = field_value
             if not entry_name:  # None or empty string
                 return [BaseLink(self, name='None')]
-            active_map = self.window.maps_tab.active_map_data  # type: MSB
+            active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
             entry_list_name = link_pieces[1]
             if entry_list_name not in MAP_ENTRY_TYPES:
                 raise ValueError(f"Invalid map entry list: {entry_list_name}")
-            entry_list = active_map[entry_list_name]
+            entry_list = active_msb[entry_list_name]
 
             try:
                 entry_local_index = entry_list.get_entry_type_index(entry_name)
@@ -67,19 +67,16 @@ class WindowLinker(object):
                                    for entry_type in link_pieces[2].split('|')]
                     if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
                         raise ValueError("Type of entry name in field does not match enforced type of field.")
-                    entry_type_name = entry_list[entry_name].ENTRY_TYPE.name
-                    entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
-                else:
-                    entry_type_name = None
-                    entry_type_index = entry_list[entry_name].ENTRY_TYPE.value
+
+                entry_type_name = entry_list[entry_name].ENTRY_TYPE.name
 
             except ValueError:
                 # Entry name is missing (or is not of the enforced entry type).
                 return [BaseLink()]
 
             return [MapsLink(
-                self, name=field_value, entry_list_name=entry_list_name, entry_type_index=entry_type_index,
-                entry_type_name=entry_type_name, entry_local_index=entry_local_index)]
+                self, name=field_value, entry_list_name=entry_list_name, entry_type_name=entry_type_name,
+                entry_local_index=entry_local_index)]
 
         if field_value in valid_null_values:
             return [BaseLink(self, name=valid_null_values[field_value])]
@@ -155,11 +152,11 @@ class WindowLinker(object):
         table_type = link_pieces[0]
 
         if table_type == 'Maps':
-            active_map = self.window.maps_tab.active_map_data  # type: MSB
+            active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
             entry_list_name = link_pieces[1]
             if entry_list_name not in MAP_ENTRY_TYPES:
                 raise ValueError(f"Invalid map entry list: {entry_list_name}")
-            entry_list = active_map[entry_list_name]
+            entry_list = active_msb[entry_list_name]
 
             if len(link_pieces) == 3:
                 # Technically, map links only care about entry list type, but I'm sometimes adding some additional
@@ -248,18 +245,20 @@ class WindowLinker(object):
         self.window.text_tab.select_entry_id(text_id)
         self.window.text_tab.update_idletasks()
 
-    def maps_link(self, entry_list_name, entry_type_index, entry_local_index):
+    def maps_link(self, entry_list_name, entry_type_name, entry_local_index):
+        self.window.maps_tab.select_displayed_field_row(None)
         self.window.page_tabs.select(self.get_tab_index('maps'))
-        self.window.maps_tab.entry_list_choice.set(entry_list_name)
-        self.window.maps_tab.refresh_entry_types(clear_selection=True)
-        self.window.maps_tab.select_entry_type(
-            entry_type_index=entry_type_index, first_display_index=entry_local_index)
-        self.window.maps_tab.entry_display.select_entry(0, edit_if_already_selected=False)
+        self.window.maps_tab.refresh_categories()
+        self.window.maps_tab.select_category(f'{entry_list_name}:{entry_type_name}')
+        self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
     def params_link(self, category, param_entry_id, field_name=None):
-        self.window.page_tabs.select(self.get_tab_index('params'))
         # TODO: Create if missing.
+        if param_entry_id not in self.window.params_tab.get_category_dict(category).entries:
+            self.window.dialog("Param ID Missing", f"Param ID {param_entry_id} is missing from Params.{category}.")
+            return
+        self.window.page_tabs.select(self.get_tab_index('params'))
         self.window.params_tab.select_category(category)
         self.window.params_tab.select_entry_id(param_entry_id)
         if field_name is not None:
@@ -321,16 +320,15 @@ class TextLink(BaseLink):
 
 
 class MapsLink(BaseLink):
-    def __init__(self, linker, entry_list_name, entry_type_index, entry_local_index,
-                 entry_type_name=None, name=None):
+    def __init__(self, linker, entry_list_name, entry_local_index, entry_type_name, name=None):
         super().__init__(
             linker, name=name,
             menu_text=f"Go to Maps.{entry_list_name}"
                       f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
                       f" {{{name}}}")
         self.entry_list_name = entry_list_name
-        self.entry_type_index = entry_type_index
+        self.entry_type_name = entry_type_name
         self.entry_local_index = entry_local_index
 
     def __call__(self):
-        self.linker.maps_link(self.entry_list_name, self.entry_type_index, self.entry_local_index)
+        self.linker.maps_link(self.entry_list_name, self.entry_type_name, self.entry_local_index)

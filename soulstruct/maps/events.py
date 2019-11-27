@@ -143,7 +143,7 @@ class MSBLight(BaseMSBEvent):
 
     FIELD_INFO = {
         'unk_x00_x04': (
-            'Unknown [00-04]', int,
+            'Unknown [00-04]', True, int,
             "Unknown Light parameter (integer)."),
     }
 
@@ -171,10 +171,10 @@ class MSBSound(BaseMSBEvent):
 
     FIELD_INFO = {
         'sound_type': (
-            'Sound Type', SoundType,
+            'Sound Type', True, SoundType,
             "Type of sound, which is used to find the sound data (sound name prefix letter)."),
         'sound_id': (
-            'Sound ID', '<Sound>',
+            'Sound ID', True, '<Sound>',
             "Sound data ID, which refers to an ID in loaded sound events."),
     }
 
@@ -204,7 +204,7 @@ class MSBFX(BaseMSBEvent):
 
     FIELD_INFO = {
         'fx_id': (
-            'FX ID', int,
+            'FX ID', True, int,
             "Visual effect ID, which refers to a loaded FX file."),
     }
 
@@ -246,52 +246,52 @@ class MSBWind(BaseMSBEvent):
 
     FIELD_INFO = {
         'unk_x00_x04': (
-            'Unknown [00-04]', int,
+            'Unknown [00-04]', True, int,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x04_x08': (
-            'Unknown [04-08]', float,
+            'Unknown [04-08]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x08_x0c': (
-            'Unknown [08-0c]', float,
+            'Unknown [08-0c]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x0c_x10': (
-            'Unknown [0c-10]', float,
+            'Unknown [0c-10]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x10_x14': (
-            'Unknown [10-14]', float,
+            'Unknown [10-14]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x14_x18': (
-            'Unknown [14-18]', float,
+            'Unknown [14-18]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x18_x1c': (
-            'Unknown [18-1c]', float,
+            'Unknown [18-1c]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x1c_x20': (
-            'Unknown [1c-20]', float,
+            'Unknown [1c-20]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x20_x24': (
-            'Unknown [20-24]', float,
+            'Unknown [20-24]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x24_x28': (
-            'Unknown [24-28]', float,
+            'Unknown [24-28]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x28_x2c': (
-            'Unknown [28-2c]', float,
+            'Unknown [28-2c]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x2c_x30': (
-            'Unknown [2c-30]', float,
+            'Unknown [2c-30]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x30_x34': (
-            'Unknown [30-34]', float,
+            'Unknown [30-34]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x34_x38': (
-            'Unknown [34-38]', float,
+            'Unknown [34-38]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x38_x3c': (
-            'Unknown [38-3c]', float,
+            'Unknown [38-3c]', True, float,
             "Unknown Wind parameter (floating-point number)."),
         'unk_x3c_x40': (
-            'Unknown [3c-40]', float,
+            'Unknown [3c-40]', True, float,
             "Unknown Wind parameter (floating-point number)."),
     }
 
@@ -379,33 +379,33 @@ class MSBTreasure(BaseMSBEvent):
 
     FIELD_INFO = {
         'treasure_part_name': (
-            'Treasure Object', '<Maps:Parts:Objects>',
+            'Treasure Object', True, '<Maps:Parts:Objects>',
             "Object on which treasure will appear (usually a corpse or chest)."),
         'item_lot_1': (
-            'Item Lot 1', '<Params:ItemLots>',
+            'Item Lot 1', True, '<Params:ItemLots>',
             "First item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)"),
         'item_lot_2': (
-            'Item Lot 2', '<Params:ItemLots>',
+            'Item Lot 2', True, '<Params:ItemLots>',
             "Second item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)"),
         'item_lot_3': (
-            'Item Lot 3', '<Params:ItemLots>',
+            'Item Lot 3', True, '<Params:ItemLots>',
             "Third item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)"),
         'item_lot_4': (
-            'Item Lot 4', '<Params:ItemLots>',
+            'Item Lot 4', True, '<Params:ItemLots>',
             "Fourth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)"),
         'item_lot_5': (
-            'Item Lot 5', '<Params:ItemLots>',
+            'Item Lot 5', True, '<Params:ItemLots>',
             "Fifth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)"),
         'in_chest': (
-            'Is In Chest', bool,
+            'Is In Chest', True, bool,
             "Indicates if this treasure is inside a chest (affects appearance)."),  # TODO: effect?
         'starts_disabled': (
-            'Starts Disabled', bool,
+            'Starts Disabled', True, bool,
             "If True, this treasure will start disabled and will need to be enabled manually with an event script."),
     }
 
@@ -473,31 +473,31 @@ class MSBSpawner(BaseMSBEvent):
     FIELD_INFO = {
         # TODO: investigate all these counts.
         'max_count': (
-            'Max Count', int,
+            'Max Count', True, int,
             "Unsure; I suspect this is the total number of entities this spawner can produce."),
         'limit_count': (
-            'Limit Count', int,
+            'Limit Count', True, int,
             "Unsure; I suspect this is the number of spawned entities that can be alive at once."),
         'min_spawner_count': (
-            'Min Spawner Count', int,
+            'Min Spawner Count', True, int,
             "Unsure."),
         'max_spawner_count': (
-            'Max Spawner Count', int,
+            'Max Spawner Count', True, int,
             "Unsure."),
         'min_interval': (
-            'Min Interval', float,
+            'Min Interval', True, float,
             "Minimum number of seconds between spawns."),
         'max_interval': (
-            'Max Interval', float,
+            'Max Interval', True, float,
             "Maximum number of seconds between spawns."),
         'initial_spawn_count': (
-            'Initial Spawn Count', int,
+            'Initial Spawn Count', True, int,
             'Unsure; I suspect this is the number of entities spawned immediately on map load.'),
         'spawn_region_names': (
-            'Spawn Regions', '<MapsList:Regions>',  # TODO: need a special pop-out window of entries for this.
+            'Spawn Regions', True, '<MapsList:Regions>',  # TODO: need a special pop-out window of entries for this.
             "Regions where entities will be spawned."),
         'spawn_part_names': (
-            'Spawn Characters', '<MapsList:Parts:Characters>',  # TODO: ditto
+            'Spawn Characters', True, '<MapsList:Parts:Characters>',  # TODO: ditto
             "Entities that will be spawned at given regions."),
     }
 
@@ -563,13 +563,13 @@ class MSBMessage(BaseMSBEvent):
 
     FIELD_INFO = {
         'text_id': (
-            'Message Text', '<Text:SoapstoneMessages>',
+            'Message Text', True, '<Text:SoapstoneMessages>',
             "Text shown when soapstone message is examined."),
         'unk_x02_x04': (
-            'Unknown [02-04]', int,
+            'Unknown [02-04]', True, int,
             "Unknown."),  # TODO: investigate
         'starts_disabled': (
-            'Starts Disabled', bool,
+            'Starts Disabled', True, bool,
             "If True, the message starts disabled and must be manually enabled with an event script."),
     }
 
@@ -606,19 +606,19 @@ class MSBObjAct(BaseMSBEvent):
 
     FIELD_INFO = {
         'obj_act_entity_id': (
-            'ObjAct Entity ID', int,
+            'ObjAct Entity ID', True, int,
             "ID that identifies this object activation event in event scripts."),
         'obj_act_part_name': (
-            'Object', '<Maps:Parts:Objects>',
+            'Object', True, '<Maps:Parts:Objects>',
             "Object to which this object activation event is attached."),
         'obj_act_param_id': (
-            'ObjAct Param', '<Params:ObjectActivations>',
+            'ObjAct Param', True, '<Params:ObjectActivations>',
             "Param entry containing information about this object activation event."),
         'unk_x0a_x0c': (
-            'Unknown [0a-0c]', int,
+            'Unknown [0a-0c]', True, int,
             "Unknown."),  # TODO: investigate
         'obj_act_flag': (
-            'ObjAct Flag', '<Flag>',
+            'ObjAct Flag', True, '<Flag>',
             "Flag that stores the persistent state (e.g. open/closed) of this object activation."),
     }
 
@@ -667,7 +667,7 @@ class MSBSpawnPoint(BaseMSBEvent):
 
     FIELD_INFO = {
         'spawn_point_region_name': (
-            'Spawn Point Region', '<Maps:Regions>',
+            'Spawn Point Region', True, '<Maps:Regions>',
             "Region where player will spawn when registered to this spawn point."),
     }
 
@@ -710,10 +710,10 @@ class MSBMapOffset(BaseMSBEvent):
 
     FIELD_INFO = {
         'translate': (
-            'Translate', Vector,
+            'Translate', True, Vector,
             "Vector of (x, y, z) coordinates of map offset."),
         'rotate_y': (
-            'Y Rotation', float,
+            'Y Rotation', True, float,
             "Euler angle of rotation around the Y (vertical) axis."),
     }
 
@@ -744,7 +744,7 @@ class MSBNavmesh(BaseMSBEvent):
 
     FIELD_INFO = {
         'navmesh_region_name': (
-            'Navmesh Region', '<Maps:Regions>',
+            'Navmesh Region', True, '<Maps:Regions>',
             "Region to which navmesh event is attached."),
     }
 
@@ -789,22 +789,22 @@ class MSBEnvironment(BaseMSBEvent):
 
     FIELD_INFO = {
         'unk_x00_x04': (
-            'Unknown [00-04]', int,
+            'Unknown [00-04]', True, int,
             "Unknown Environment parameter (integer)."),
         'unk_x04_x08': (
-            'Unknown [04-08]', float,
+            'Unknown [04-08]', True, float,
             "Unknown Environment parameter (floating-point number)."),
         'unk_x08_x0c': (
-            'Unknown [08-0c]', float,
+            'Unknown [08-0c]', True, float,
             "Unknown Environment parameter (floating-point number)."),
         'unk_x0c_x10': (
-            'Unknown [0c-10]', float,
+            'Unknown [0c-10]', True, float,
             "Unknown Environment parameter (floating-point number)."),
         'unk_x10_x14': (
-            'Unknown [10-14]', float,
+            'Unknown [10-14]', True, float,
             "Unknown Environment parameter (floating-point number)."),
         'unk_x14_x18': (
-            'Unknown [14-18]', float,
+            'Unknown [14-18]', True, float,
             "Unknown Environment parameter (floating-point number)."),
     }
 
@@ -849,13 +849,13 @@ class MSBNPCInvasion(BaseMSBEvent):
 
     FIELD_INFO = {
         'host_entity_id': (
-            'Host Entity ID', int,
+            'Host Entity ID', True, int,
             "Entity ID of NPC character to be invaded."),
         'invasion_flag_id': (
-            'Invasion Flag', '<Flag>',
+            'Invasion Flag', True, '<Flag>',
             "Flag that is enabled while the invasion is active, which should trigger changes to the world."),
         'spawn_point_region_name': (
-            'Spawn Point Region', '<Maps:Regions>',
+            'Spawn Point Region', True, '<Maps:Regions>',
             "Region where player will spawn during invasion event."),
     }
 

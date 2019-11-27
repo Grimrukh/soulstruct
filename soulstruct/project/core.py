@@ -44,7 +44,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     text_tab: Optional[SoulstructTextEditor]
     maps_tab: Optional[SoulstructMapEditor]
 
-    TAB_ORDER = ['text', 'maps', 'params', 'main']  # TODO
+    TAB_ORDER = ['maps', 'text', 'params', 'main']  # TODO
 
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
@@ -65,7 +65,8 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.maps_tab = self.SmartFrame(
             frame=tab_frames['maps'], smart_frame_class=SoulstructMapEditor,
-            maps=self.project.Maps, linker=self.linker)
+            maps=self.project.Maps, linker=self.linker, no_grid=True)
+        self.maps_tab.pack()
 
         self.params_tab = self.SmartFrame(
             frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
@@ -104,19 +105,18 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         """
         with self.set_master(main_frame, auto_columns=0):
-            with self.set_master(auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
-                self.Button(text="Import All from Game Directory", bg='#235', width=30, font_size=20,
+            with self.set_master(auto_rows=0, grid_defaults={'padx': 20, 'pady': 10}):
+                self.Button(text="Import All from Game Directory", bg='#235', width=30, font_size=15,
                             command=lambda: self.project.load_project(force_game_import=True))
-                self.Button(text="Import Params", bg='#235', width=30, font_size=20,
+                self.Button(text="Import Params", bg='#235', width=30, font_size=15,
                             command=self.project.import_params)
-                self.Button(text="Import Text", bg='#235', width=30, font_size=20,
+                self.Button(text="Import Text", bg='#235', width=30, font_size=15,
                             command=self.project.import_text)
-                self.Button(text="Import Lighting", bg='#235', width=30, font_size=20,
+                self.Button(text="Import Lighting", bg='#235', width=30, font_size=15,
                             command=self.project.import_lighting)
-                self.Button(text="Import Maps", bg='#235', width=30, font_size=20,
+                self.Button(text="Import Maps", bg='#235', width=30, font_size=15,
                             command=self.project.import_maps)
-            with self.set_master(auto_rows=0, grid_defaults={'padx': 100, 'pady': 20}):
-                self.Button(text='Export Project', bg='#623', width=30, font_size=20,
+                self.Button(text='Export Project', bg='#623', width=30, font_size=15,
                             command=self.project.export_project)
 
     def destroy(self):

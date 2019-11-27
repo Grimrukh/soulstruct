@@ -133,7 +133,7 @@ class MSBEntryList(object):
             raise TypeError(f"MSBEntryList key must be an entry index or entry name, not {entry_name_or_index}.")
         return self.get_entries()[entry_index]
 
-    def get_entries(self, entry_type=None):
+    def get_entries(self, entry_type=None) -> list:
         if entry_type is None:
             return list(chain(*self._entries.values()))
         entry_type = self.resolve_entry_type(entry_type)

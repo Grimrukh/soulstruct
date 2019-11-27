@@ -9,27 +9,25 @@ if TYPE_CHECKING:
     from soulstruct.text import DarkSoulsText
 
 
-_MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$')
-
-
 class SoulstructTextEditor(SoulstructBaseEditor):
 
     ENTRY_RANGE_SIZE = 100
 
     class EntryRow(SoulstructBaseEditor.EntryRow):
+        _MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$')
 
         def build_entry_context_menu(self):
             super().build_entry_context_menu()
             text_id = self.entry_id
 
-            item_match = _MATCH_ITEM.match(self.master.active_category)
+            item_match = self._MATCH_ITEM.match(self.master.active_category)
             if item_match:
                 item_type, text_type = item_match.group(1, 2)
 
                 # Category shortcuts.
                 separator_added = False
                 text_categories = ('Names', 'Summaries', 'Descriptions')
-                linked_id = (text_id // 100) * 100
+                linked_id = ((text_id // 100) * 100) if item_type != 'Ring' else text_id
                 for link_category in text_categories:
                     if text_type != link_category and linked_id in self.master.Text[item_type + link_category]:
                         if not separator_added:
@@ -40,6 +38,14 @@ class SoulstructTextEditor(SoulstructBaseEditor):
                             foreground=self.STYLE_DEFAULTS['text_fg'],
                             command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.text_link(
                                 it + lc, i))
+
+                # Param shortcut.
+                self.context_menu.add_separator()
+                param_category = item_type + ('s' if item_type != 'Armor' else '')
+                self.context_menu.add_command(
+                    label=f"Go to Params.{param_category}[{linked_id}]",
+                    foreground=self.STYLE_DEFAULTS['text_fg'],
+                    command=lambda c=param_category, i=linked_id: self.master.linker.params_link(c, i))
 
                 # Automatic upgrade text generation.
                 if item_type == 'Weapon' and text_type == 'Names' and text_id % 100 == 0:
@@ -65,7 +71,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
 
     def build(self):
         with self.set_master(auto_rows=0):
-            with self.set_master(auto_columns=0, pady=10):
+            with self.set_master(auto_columns=0, pady=5):
 
                 self.show_all_categories = self.Checkbutton(label='Show internal categories ', initial_state=False,
                                                             command=self.refresh_categories, pady=20).var
@@ -121,6 +127,10 @@ class SoulstructTextEditor(SoulstructBaseEditor):
 
         self.refresh_entries()
 
+    def _flash_red_bg(self, widget):
+        widget['bg'] = '#522'
+        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
+
     def find_text_id(self, _=None):
         try:
             id_to_find = int(self.find_text_id_entry.var.get())
@@ -131,18 +141,20 @@ class SoulstructTextEditor(SoulstructBaseEditor):
                                                f"The ID must be an integer (zero or greater).",
                         button_kwargs='OK')
             return
-        if id_to_find in self.Text[self.active_category]:
+        if self.active_category and id_to_find in self.Text[self.active_category]:
             row_index = self._update_first_entry_display_index(self.get_entry_index(id_to_find))
             self.refresh_entries()
-            self.select_displayed_entry_row(row_index, edit_if_already_selected=False)
+            self.select_entry_row_index(row_index, edit_if_already_selected=False)
             self.entry_canvas.yview_moveto(0)
         else:
-            self.find_text_id_entry['bg'] = '#522'
-            self.after(200, lambda: self.find_text_id_entry.config(bg=self.STYLE_DEFAULTS['bg']))
+            self._flash_red_bg(self.find_text_id_entry)
 
     def find_text_string(self, replace=False):
         text = self.find_text_string_entry.var.get()
         text_id_list = sorted(self.get_category_dict())
+        if not text_id_list:
+            self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
+            return
         text_id_selected = self.get_entry_id(self.selected_entry_row_index)
         first_index = None
         for i, text_id in enumerate(text_id_list):
@@ -163,14 +175,9 @@ class SoulstructTextEditor(SoulstructBaseEditor):
         if next_index is not None:
             row_index = self._update_first_entry_display_index(next_index)
             self.refresh_entries()
-            self.select_displayed_entry_row(row_index, set_focus_to_text=False, edit_if_already_selected=False)
+            self.select_entry_row_index(row_index, set_focus_to_text=False, edit_if_already_selected=False)
         else:
-            if replace:
-                self.replace_text_string_entry['bg'] = '#522'
-                self.after(200, lambda: self.replace_text_string_entry.config(bg=self.STYLE_DEFAULTS['bg']))
-            else:
-                self.find_text_string_entry['bg'] = '#522'
-                self.after(200, lambda: self.find_text_string_entry.config(bg=self.STYLE_DEFAULTS['bg']))
+            self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
 
     def _get_display_categories(self):
         return self.Text.all_categories if self.show_all_categories.get() else self.Text.main_categories

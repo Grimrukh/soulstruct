@@ -21,7 +21,6 @@ class MSB_PART_TYPE(IntEnum):
 
 def MSBPart(msb_buffer):
     """Detects the appropriate subclass of BaseMSBEvent to instantiate."""
-    # TODO: support more types?
     return BaseMSBPart.auto_part_subclass(msb_buffer)
 
 
@@ -67,22 +66,22 @@ class BaseMSBPart(MSBEntry):
 
     FIELD_INFO = {
         'entity_id': (
-            'Entity ID', int,
+            'Entity ID', True, int,
             "Entity ID used to refer to the part in other game files."),
         'translate': (
-            'Translate', Vector,
+            'Translate', True, Vector,
             "3D coordinates of the part's position. Note that the anchor of the part is usually at its base."),
         'rotate': (
-            'Rotate', Vector,
+            'Rotate', True, Vector,
             "Euler angles for part rotation around its local X, Y, and Z axes."),
         'scale': (
-            'Scale', Vector,
+            'Scale', True, Vector,
             "Scale of part. Only relevant for objects and collisions."),
         'draw_groups': (
-            'Draw Groups', list,
+            'Draw Groups', True, list,
             "Draw groups of part. These are not yet fully understood, but they determine when the part appears."),
         'display_groups': (
-            'Display Groups', list,
+            'Display Groups', True, list,
             "Display groups of part. These are not yet fully understood, but they determine when the part appears."),
     }
 
@@ -258,7 +257,7 @@ class MSBMapPiece(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Maps:Models:MapPieces>',
+            'Model Name', True, '<Maps:Models:MapPieces>',
             "Name of map piece model to use for this map piece."),
         **BaseMSBPart.FIELD_INFO,
     }
@@ -287,23 +286,23 @@ class MSBObject(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Maps:Models:Objects>',
+            'Model Name', True, '<Maps:Models:Objects>',
             "Name of object model to use for this object."),
         **BaseMSBPart.FIELD_INFO,
         'collision_name': (
-            'Draw Parent', '<Maps:Parts>',
+            'Draw Parent', True, '<Maps:Parts>',
             "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
         'unk_x08_x0c': (
-            'Unknown [08-0c]', int,
+            'Unknown [08-0c]', False, int,
             "Unknown."),
         'object_pose': (
-            'Object Pose', int,
+            'Object Pose', True, int,
             "ID of an object animation that determines its appearance, e.g. for different corpse poses."),
         'unk_x0e_x10': (
-            'Unknown [0e-10]', int,
+            'Unknown [0e-10]', False, int,
             "Unknown."),
         'unk_x10_x14': (
-            'Unknown [10-14]', int,
+            'Unknown [10-14]', False, int,
             "Unknown."),
     }
 
@@ -363,41 +362,40 @@ class MSBCharacter(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Maps:Models:HumanCharacters|NonHumanCharacters>',
+            'Model Name', True, '<Maps:Models:HumanCharacters|NonHumanCharacters>',
             "Name of character model to use for this character."),
         **BaseMSBPart.FIELD_INFO,
         'think_param_id': (
-            'AI ID', '<Params:AI>',
+            'AI ID', True, '<Params:AI>',
             "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used."),
         'npc_param_id': (
-            'NPC ID', '<Params:NonPlayers>',
+            'NPC ID', True, '<Params:NonPlayers>',
             "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
             "unused."),
         'talk_id': (
-            'Talk ID', int,  # TODO: '<Talk>'
+            'Talk ID', True, int,  # TODO: '<Talk>'
             "EzState ID of character, which determines their interactions (conversations, shops, etc.). This is used "
             "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map."),
         'unk_x14_x18': (
-            'Unknown [14-18]', float,
+            'Unknown [14-18]', False, float,
             "Unknown floating-point number."),
         'chara_init_id': (
-            'Player ID', '<Params:Players>',
+            'Player ID', True, '<Params:Players>',
             "Contains information for 'player' (human) characters, such as their stats and equipment."),
         'collision_name': (
-            'Draw Parent', '<Maps:Parts>',
+            'Draw Parent', True, '<Maps:Parts>',
             "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
         'patrol_point_names': (
-            'Patrol Regions', '<MapsList:Regions>',
+            'Patrol Regions', True, '<MapsList:Regions>',
             "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
             "AI logic."),
         'default_animation': (
-            'Default Animation', int,  # TODO: '<Animation>'
+            'Default Animation', True, int,  # TODO: '<Animation>'
             "Default looping animation for character."),
         'unk_x3c_x40': (
-            'Unknown [3c-40]', int,
+            'Unknown [3c-40]', False, int,
             "Unknown."),
     }
-
     ENTRY_TYPE = MSB_PART_TYPE.Character
 
     def __init__(self, msb_part_source):
@@ -493,34 +491,34 @@ class MSBCollision(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Maps:Models:Collisions>',
+            'Model Name', True, '<Maps:Models:Collisions>',
             "Name of collision model to use for this collision."),
         **BaseMSBPart.FIELD_INFO,
         'hit_filter_id': (
-            'Hit Filter ID', int,
+            'Hit Filter ID', True, int,
             "Unknown."),
         'sound_space_type': (
-            'Sound Space Type', int,
+            'Sound Space Type', True, int,
             "Unknown."),
         'env_light_map_spot_index': (
-            'Environment Light Map Spot Index', int,
+            'Environment Light Map Spot Index', True, int,
             "Unknown."),
         'reflect_plane_height': (
-            'Reflect Plane Height', float,
+            'Reflect Plane Height', True, float,
             "Unknown."),
         'navmesh_groups': (
-            'Navmesh Groups', list,
+            'Navmesh Groups', True, list,
             "Unknown."),
         'vagrant_entity_ids': (
-            'Vagrant Entity IDs', list,
+            'Vagrant Entity IDs', True, list,
             "Unknown."),
         'area_name_id': (
-            'Area Name', '<Text:PlaceNames>',
+            'Area Name', True, '<Text:PlaceNames>',
             "Name of area that this collision is in, which determines the area banner that is shown when you step on "
             "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
             "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY')."),
         'force_area_banner': (
-            'Show Area Banner', bool,
+            'Show Area Banner', True, bool,
             "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
             "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
             "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
@@ -531,20 +529,20 @@ class MSBCollision(BaseMSBPart):
             "those collisions will build up a huge queue of area banners to display, which can only be fixed by "
             "restarting the game entirely."),
         'starts_disabled': (
-            'Starts Disabled', bool,
+            'Starts Disabled', True, bool,
             "If True, this collision is disabled on map load and must be manually enabled with an event script."),
         'attached_bonfire': (
-            'Attached Bonfire', int,
+            'Attached Bonfire', True, int,
             "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
             "on this collision. Note that this also checks for enemies that are disabled by events."),
         'play_region_id': (
-            'Play Region ID', int,
+            'Play Region ID', True, int,
             "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
             ""
             "NOTE: This field shares space with the stable footing flag, so only one of them can be set to a non-zero "
             "value per collision."),
         'stable_footing_flag': (
-            'Stable Footing Flag', int,
+            'Stable Footing Flag', True, int,
             "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
             "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
             "defeated. If set to -1, the player's position will never be saved on this collision.\n\n"
@@ -552,10 +550,10 @@ class MSBCollision(BaseMSBPart):
             "NOTE: This field shares space with the play region ID, so only one of them can be set to a non-zero value "
             "per collision."),
         'lock_cam_param_id_1': (
-            'Camera Param ID 1', '<Params:Cameras>',
+            'Camera Param ID 1', True, '<Params:Cameras>',
             "First camera ID to use on this collision. Unsure how the two slots differ."),
         'lock_cam_param_id_2': (
-            'Camera Param ID 2', '<Params:Cameras>',
+            'Camera Param ID 2', True, '<Params:Cameras>',
             "Second camera ID to use on this collision. Unsure how the two slots differ."),
     }
 
@@ -673,11 +671,11 @@ class MSBNavmesh(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Maps:Models:Navmeshes>',
+            'Model Name', True, '<Maps:Models:Navmeshes>',
             "Name of navmesh model to use for this navmesh."),
         **BaseMSBPart.FIELD_INFO,
         'navmesh_groups': (
-            'Navmesh Groups', list,
+            'Navmesh Groups', True, list,
             "Unknown."),
     }
 
@@ -718,14 +716,14 @@ class MSBMapLoadTrigger(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', '<Maps:Models>',
+            'Model Name', True, '<Maps:Models>',
             "Name of model to use for this map load trigger (?)."),
         **BaseMSBPart.FIELD_INFO,
         'map_piece_name': (
-            'Map Piece', '<Maps:Parts:MapPieces>',
+            'Map Piece', True, '<Maps:Parts:MapPieces>',
             "Map Piece that triggers this map load."),
         'map_id': (
-            'Map ID', list,
+            'Map ID', True, list,
             "Parts of map name this will trigger."),  # TODO: Combobox of maps.
     }
 

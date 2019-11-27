@@ -39,14 +39,14 @@ class BaseMSBRegion(MSBEntry):
 
     FIELD_INFO = {
         'translate': (
-            'Translate', Vector,
+            'Translate', True, Vector,
             "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
             "regions."),
         'rotate': (
-            'Rotate', Vector,
+            'Rotate', True, Vector,
             "Euler angles for region rotation around its local X, Y, and Z axes."),
         'entity_id': (
-            'Entity ID', int,
+            'Entity ID', True, int,
             "Entity ID used to refer to the region in other game files."),
     }
 
@@ -163,7 +163,7 @@ class MSBRegionCircle(BaseMSBRegion):
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
         'radius': (
-            'Radius', float,
+            'Radius', True, float,
             "Radius (in xy-plane) of circular region.",
         )
     }
@@ -191,7 +191,7 @@ class MSBRegionSphere(BaseMSBRegion):
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
         'radius': (
-            'Radius', float,
+            'Radius', True, float,
             "Radius of sphere-shaped region.",
         )
     }
@@ -220,10 +220,10 @@ class MSBRegionCylinder(BaseMSBRegion):
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
         'radius': (
-            'Radius', float,
+            'Radius', True, float,
             "Radius (in xz-plane) of cylinder-shaped region."),
         'height': (
-            'Height', float,
+            'Height', True, float,
             "Height (along y-axis) of cylinder-shaped region.")
     }
 
@@ -256,10 +256,10 @@ class MSBRegionRect(BaseMSBRegion):
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
         'width': (
-            'Width', float,
+            'Width', True, float,
             "Width (along x-axis) of rectangle-shaped region."),
         'height': (
-            'Height', float,
+            'Height', True, float,
             "Height (along y-axis) of rectangle-shaped region."),
     }
 
@@ -292,13 +292,13 @@ class MSBRegionBox(BaseMSBRegion):
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
         'width': (
-            'Width', float,
+            'Width', True, float,
             "Width (along x-axis) of box-shaped region."),
         'depth': (
-            'Depth', float,
+            'Depth', True, float,
             "Depth (along z-axis) of box-shaped region."),
         'height': (
-            'Height', float,
+            'Height', True, float,
             "Height (along y-axis) of box-shaped region."),
     }
 
