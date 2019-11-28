@@ -155,7 +155,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
         if not text_id_list:
             self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
             return
-        text_id_selected = self.get_entry_id(self.selected_entry_row_index)
+        text_id_selected = self.get_entry_id(self.active_row_index)
         first_index = None
         for i, text_id in enumerate(text_id_list):
             if text in self.get_entry_text(text_id):
@@ -213,9 +213,27 @@ class SoulstructTextEditor(SoulstructBaseEditor):
                 raise ValueError("No text category selected.")
         return self.Text[category][entry_id]
 
-    def _set_entry_text(self, entry_id: int, text: str, category=None):
+    def _change_entry_id(self, row_index, new_id, category=None):
+        if category is None:
+            category = self.active_category
+        old_id = self.get_entry_id(row_index)
+        if old_id == new_id:
+            return False
+        if new_id in self.Text[category]:
+            self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Text.{category}. You must change or "
+                                          f"delete it first.")
+            return False
+        entry_text = self.Text[category].pop(old_id)
+        self.Text[category][new_id] = entry_text
+        if category == self.active_category and self.EntryRow.SHOW_ENTRY_ID:
+            self.entry_rows[row_index].update_entry(new_id, entry_text)
+        return True
+
+    def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No text category selected.")
         self.Text[category][entry_id] = text
+        if category == self.active_category and update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(entry_id, text)

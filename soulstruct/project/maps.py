@@ -6,14 +6,14 @@ from typing import List, TYPE_CHECKING
 
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_IDS
+from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events
 from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
 from soulstruct.utilities import camel_case_to_spaces, Vector
-from soulstruct.utilities.window import SoulstructSmartFrame
 
 if TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps
-
+    from soulstruct.maps.core import MSBEntry
 
 # TODO: Models are handled automatically. Model entries are auto-generated from all used model names.
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
@@ -21,16 +21,20 @@ if TYPE_CHECKING:
 #  - Right-click pop-out selection list is available for characters (and eventually, some objects).
 
 
-class _MapEntryFrame(SoulstructSmartFrame):
-    """Manages map entry selection/modification in editor."""
+ENTRY_LIST_FG_COLORS = {
+    'Models': '#FFC',
+    'Events': '#DFD',
+    'Regions': '#FDD',
+    'Parts': '#DDF',
+}
 
 
 class SoulstructMapEditor(SoulstructBaseFieldEditor):
-    CATEGORY_BOX_WIDTH = 300
+    CATEGORY_BOX_WIDTH = 245
     ENTRY_BOX_WIDTH = 300
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100
-    FIELD_BOX_WIDTH = 450
+    FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
     FIELD_ROW_COUNT = 50  # TODO: highest count in Maps? Probably closer to 20-30
     FIELD_NAME_WIDTH = 20
@@ -88,15 +92,22 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             # Type checking order: [link_string, Vector, float/int/str, bool, list, IntEnum]
             if isinstance(field_type, str):
                 if field_type.startswith('<MapsList:'):
-                    # TODO: better display?
+                    # TODO: better display? Pop-out?
                     self.value_label.var.set('(select to edit)')
                 else:
                     # Name of another MSB entry.
-                    self.value_label.var.set(value)
+                    value_text = str(value)
+                    if field_type == '<Maps:Models:HumanCharacters|NonHumanCharacters>':
+                        model_id = int(value.lstrip('c'))
+                        try:
+                            value_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
+                        except KeyError:
+                            value_text += '  {UNKNOWN}'
+                    self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
 
             elif field_type == Vector:
-                # No chance of a link here. TODO: replace equals?
+                # No chance of a link here.
                 self.value_vector_x.var.set(f'x: {value.x:.3g}')
                 self.value_vector_y.var.set(f'y: {value.y:.3g}')
                 self.value_vector_z.var.set(f'z: {value.z:.3g}')
@@ -194,25 +205,32 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
             if isinstance(self.field_type, str):
                 new_value = str(new_text) if not self.field_type.startswith('<Maps') else new_text
-                try:
-                    field_link = self.master.linker.soulstruct_link(self.field_type, new_text)[0]
-                except IndexError:
-                    pass  # No link for this field.
+                field_links = self.master.linker.soulstruct_link(self.field_type, new_text)
+                if len(field_links) > 1:
+                    new_text += '  {AMBIGUOUS}'
+                elif not field_links:
+                    new_text += '  {MISSING}'
+                    if not self.link_missing:
+                        self.link_missing = True
+                        self._update_colors()
                 else:
-                    if not field_link.name:
-                        new_text += '  {MISSING}'
-                        if not self.link_missing:
-                            self.link_missing = True
-                            self._update_colors()
-                    else:
-                        if not self.field_type.startswith('<Maps:'):  # not <MapsList:
-                            new_text += f'  {{{field_link.name}}}'
-                        if self.link_missing:
-                            self.link_missing = False
-                            self._update_colors()
-                    self.value_label.var.set(new_text)
-                    self.build_field_context_menu(field_link)
-                    return new_value
+                    if not self.field_type.startswith('<Maps:'):  # not <MapsList:
+                        new_text += f'  {{{field_links[0].name}}}'
+                    if self.field_type == '<Maps:Models:HumanCharacters|NonHumanCharacters>':
+                        # TODO: Currently, model ID must still be present in Models (MSB.ModelList).
+                        #  In future, this will be a '<Models>' link that allows player to select ANY DS1 model and
+                        #  have that model automatically added to MSB.ModelList when the MSB is saved/packed.
+                        model_id = int(new_text.lstrip('c'))
+                        try:
+                            new_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
+                        except KeyError:
+                            new_text += '  {UNKNOWN}'
+                    if self.link_missing:
+                        self.link_missing = False
+                        self._update_colors()
+                self.value_label.var.set(new_text)
+                self.build_field_context_menu(field_links)
+                return new_value
 
             if coord is not None:
                 # TODO: Not a fan of the equal sign.
@@ -247,21 +265,31 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
         """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
         ENTRY_ID_WIDTH = 5
+        EDIT_ENTRY_ID = False
 
         def __init__(self, editor: SoulstructMapEditor, row_index: int, main_bindings: dict = None):
             super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
-        def update_entry(self, entry_index: int, entry_text: str, entity_id: int = -1):
+        def update_entry(self, entry_index: int, entry_text: str):
             self.entry_id = entry_index
+            try:
+                entity_id = self.master.get_category_dict()[entry_index].entity_id
+            except AttributeError:
+                text_tail = ''
+                self.tool_tip.text = None
+            else:
+                self.tool_tip.text = f'ID: {entity_id}'
+                text_tail = f'  {{ID: {entity_id}}}' if entity_id not in {-1, 0} else ''
             self._entry_text = entry_text
-            self.text_label.var.set(entry_text + (f'   {{Entity ID: {entity_id}}}' if entity_id != -1 else ''))
+            self.text_label.var.set(entry_text + text_tail)
+            self.build_entry_context_menu()
             self.unhide()
 
         def build_entry_context_menu(self):
             self.context_menu.delete(0, 'end')
             self.context_menu.add_command(
                 label="Edit in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.popout_entry_edit(self.row_index))
+                command=lambda: self.master.popout_entry_text_edit(self.row_index))
             self.context_menu.add_command(
                 label="Duplicate Entry to Next Index", foreground=self.STYLE_DEFAULTS['text_fg'],
                 command=lambda: self.master.add_relative_entry(self.row_index, offset=1))
@@ -282,11 +310,11 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def build(self):
         with self.set_master(auto_rows=0):
-            map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_IDS]
-            self.map_choice = self.Combobox(
-                values=map_display_names, font=20,
-                on_select_function=lambda _: self.refresh_entries(reset_field_display=True),
-                padx=10, pady=10).var
+            with self.set_master(auto_columns=0):
+                map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_IDS]
+                self.Label(text='Map:', font_size=20)
+                self.map_choice = self.Combobox(
+                    values=map_display_names, font=20, on_select_function=self._on_map_choice, padx=10, pady=10).var
 
             with self.set_master(auto_columns=0):
                 self.build_category_canvas()
@@ -299,17 +327,33 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                         self.build_field_frame()
                     self.build_next_range_button(row=2, column=0)
 
-    def _add_entry(self, entry_index: int, text: str, field_dict=None):
-        """Requires additional field_dict argument."""
-        entry_list = self.get_category_dict()
-        if not 0 <= entry_index <= len(entry_list):
+    def _on_map_choice(self, _=None):
+        self.select_entry_row_index(None)
+        self.refresh_entries(reset_field_display=True)
+
+    @staticmethod
+    def _get_category_text_fg(category: str):
+        return ENTRY_LIST_FG_COLORS.get(category.split(':')[0], '#FFF')
+
+    def _add_entry(self, entry_type_index: int, text: str, category=None, new_field_dict: MSBEntry = None):
+        """Active category is required."""
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
+        entry_list_name, entry_type_name = category.split(':')
+        entry_list = self.Maps[self.map_choice.get().replace(' ', '')][entry_list_name]
+        global_index = entry_list.get_entry_global_index(entry_type_index)
+
+        if not 0 <= global_index <= len(entry_list):
             self.dialog("Entry Index Error", message=f"Entry index must be between zero and the current list length.")
             return False
 
         self._cancel_entry_text_edit()
-        entry_list.insert(entry_index, field_dict)  # insert entry into desired position in list
-        self._set_entry_text(entry_index, text)
-        self.select_entry_id(entry_index, set_focus_to_text=True, edit_if_already_selected=False)
+        new_field_dict.name = text
+        entry_list.add_entry(global_index, new_field_dict)
+        local_index = entry_list.get_entries(entry_type=new_field_dict.ENTRY_TYPE).index(new_field_dict)
+        self.select_entry_id(local_index, set_focus_to_text=True, edit_if_already_selected=False)
         # TODO: ActionHistory stuff?
         return True
 
@@ -317,7 +361,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         """Uses entry index instead of dictionary ID."""
         if text is None:
             text = self.get_entry_text(entry_index)  # Copies name of origin entry by default.
-        self._add_entry(entry_index + offset, text)
+        new_field_dict = self.get_category_dict()[entry_index].copy()
+        return self._add_entry(entry_index + offset, text, new_field_dict=new_field_dict)
 
     def select_displayed_field_row(self, row_index, set_focus_to_value=True, edit_if_already_selected=True, coord=None):
         old_row_index = self.selected_field_row_index
@@ -346,7 +391,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         if not field_row.editable:
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
         field_type = field_row.field_type
-        field_value = self.get_field_dict(self.get_entry_id(self.selected_entry_row_index))[field_row.field_name]
+        field_value = self.get_field_dict(self.get_entry_id(self.active_row_index))[field_row.field_name]
         if field_type in {int, float, str, list} or isinstance(field_type, str):
             return self.Entry(
                 field_row.value_box,
@@ -407,17 +452,17 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return True
 
     def _get_display_categories(self):
-        """ALl combinations of MSB entry list names and their subtypes."""
+        """ALl combinations of MSB entry list names and their subtypes, properly formatted."""
         categories = []
         for entry_list_name, entry_type_names in MAP_ENTRY_TYPES.items():
             for name in entry_type_names:
-                categories.append(f'{entry_list_name}:{name}')
+                categories.append(f'{entry_list_name}: {name}')
         return categories
 
     def get_selected_msb(self):
         return self.Maps[self.map_choice.get().replace(' ', '')]
 
-    def get_category_dict(self, category=None):
+    def get_category_dict(self, category=None) -> List[MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
         For Maps, this actually returns a *list*, not a dict. Entry IDs are equivalent to entry indexes in this list, so
@@ -428,7 +473,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if category is None:
                 return []
         map_choice = self.map_choice.get().replace(' ', '')
-        entry_list, entry_type = category.split(':')
+        entry_list, entry_type = category.split(': ')
         return self.Maps[map_choice][entry_list].get_entries(entry_type)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
@@ -447,11 +492,17 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_list = self.get_category_dict(category)
         return entry_list[entry_index].name
 
-    def _set_entry_text(self, entry_index: int, text: str, category=None):
+    def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_dict(category)
         entry_list[entry_index].name = text
+        if category == self.active_category and update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(entry_index, text)
 
-    def get_field_dict(self, entry_index: int, category=None):
+    def _change_entry_id(self, row_index, new_id, category=None):
+        """Not implemented for Map Editor."""
+        raise NotImplementedError
+
+    def get_field_dict(self, entry_index: int, category=None) -> MSBEntry:
         """Uses entry index instad of entry ID."""
         return self.get_category_dict(category)[entry_index]
 
@@ -459,6 +510,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         if field_name is not None:
             return field_dict.FIELD_INFO[field_name]
         return field_dict.FIELD_INFO
+
+    def get_field_names(self, field_dict):
+        return field_dict.field_names if field_dict else []
 
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
         if valid_null_values is None:

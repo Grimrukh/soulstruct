@@ -142,6 +142,15 @@ class MSBLight(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'base_part_name': (
+            'Draw Parent', True, '<Maps:Parts>',
+            "Light will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
+        'base_region_name': (
+            'Light Region', True, '<Maps:Regions>',
+            "Region (usually a Point) at which Light appears."),
+        'entity_id': (
+            'Entity ID', False, int,
+            "Entity ID used to refer to the event in other game files. (Unused for Lights.)"),
         'unk_x00_x04': (
             'Unknown [00-04]', True, int,
             "Unknown Light parameter (integer)."),
@@ -170,6 +179,15 @@ class MSBSound(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'base_part_name': (
+            'Draw Parent', True, '<Maps:Parts>',
+            "Sound is connected to this part (usually a Collision or Map Piece part), but this has an unknown effect."),
+        'base_region_name': (
+            'Sound Volume', True, '<Maps:Regions>',
+            "Region in which Sound can be heard, if it's enabled."),
+        'entity_id': (
+            'Entity ID', True, int,
+            "Entity ID used to refer to the Sound in other game files."),
         'sound_type': (
             'Sound Type', True, SoundType,
             "Type of sound, which is used to find the sound data (sound name prefix letter)."),
@@ -203,6 +221,15 @@ class MSBFX(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'base_part_name': (
+            'Draw Parent', True, '<Maps:Parts>',
+            "FX will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
+        'base_region_name': (
+            'FX Region', True, '<Maps:Regions>',
+            "Region (usually a Point) at which FX appears."),
+        'entity_id': (
+            'Entity ID', True, int,
+            "Entity ID used to refer to the FX in other game files."),
         'fx_id': (
             'FX ID', True, int,
             "Visual effect ID, which refers to a loaded FX file."),
@@ -245,6 +272,7 @@ class MSBWind(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        **BaseMSBEvent.FIELD_INFO,
         'unk_x00_x04': (
             'Unknown [00-04]', True, int,
             "Unknown Wind parameter (floating-point number)."),
@@ -378,6 +406,7 @@ class MSBTreasure(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        # base_part, base_region, and entity_id are unused for Treasure.
         'treasure_part_name': (
             'Treasure Object', True, '<Maps:Parts:Objects>',
             "Object on which treasure will appear (usually a corpse or chest)."),
@@ -471,6 +500,10 @@ class MSBSpawner(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        # base_part and base_region are unused for Spawners.
+        'entity_id': (
+            'Entity ID', True, int,
+            "Entity ID used to refer to the Spawner in other game files."),
         # TODO: investigate all these counts.
         'max_count': (
             'Max Count', True, int,
@@ -562,6 +595,15 @@ class MSBMessage(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'base_part_name': (
+            'Draw Parent', True, '<Maps:Parts>',
+            "Message will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
+        'base_region_name': (
+            'Message Region', True, '<Maps:Regions>',
+            "Region (usually a Point) at which Message appears."),
+        'entity_id': (
+            'Entity ID', True, int,
+            "Entity ID used to refer to the Message in other game files."),
         'text_id': (
             'Message Text', True, '<Text:SoapstoneMessages>',
             "Text shown when soapstone message is examined."),
@@ -605,6 +647,7 @@ class MSBObjAct(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        # base_part, base_region, and entity_id are unused in ObjActs.
         'obj_act_entity_id': (
             'ObjAct Entity ID', True, int,
             "ID that identifies this object activation event in event scripts."),
@@ -666,6 +709,13 @@ class MSBSpawnPoint(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        # base_region is unused in Spawn Points.
+        'base_part_name': (
+            'Draw Parent', True, '<Maps:Parts>',
+            "Some Spawn Points use this; unclear what it does, but it is presumably the Collision of the Spawn Point."),
+        'entity_id': (
+            'Entity ID', True, int,
+            "Entity ID used to refer to the Spawn Point in other game files."),
         'spawn_point_region_name': (
             'Spawn Point Region', True, '<Maps:Regions>',
             "Region where player will spawn when registered to this spawn point."),
@@ -743,6 +793,9 @@ class MSBNavmesh(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'entity_id': (
+            'Entity ID', True, int,
+            "Entity ID used to refer to the Navmesh in other game files."),
         'navmesh_region_name': (
             'Navmesh Region', True, '<Maps:Regions>',
             "Region to which navmesh event is attached."),
@@ -788,6 +841,16 @@ class MSBEnvironment(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'base_part_name': (
+            'Draw Parent', True, '<Maps:Parts>',
+            "Environment (or 'map spot') will be drawn whenever its parent is drawn."),
+        'base_region_name': (
+            'Environment Region', True, '<Maps:Regions>',
+            "Region (usually a Point) at which Environment appears (whatever that means)."),
+        'entity_id': (
+            'Environment ID', True, int,
+            "Unknown index. Note that this replaces the Entity ID field (unclear if it works as an Entity ID, as the "
+            "same value is used in separate maps)."),
         'unk_x00_x04': (
             'Unknown [00-04]', True, int,
             "Unknown Environment parameter (integer)."),
@@ -848,6 +911,13 @@ class MSBNPCInvasion(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        # base_part is unused for NPC Invasions.
+        'base_region_name': (
+            'Invasion Region', True, '<Maps:Regions>',
+            "Region (a volume) in which NPC Invasion can be triggered (e.g. with Black Eye Orb)."),
+        'entity_id': (
+            'Entity ID', False, int,
+            "Entity ID used to refer to the NPC Invasion in other game files (unused)."),
         'host_entity_id': (
             'Host Entity ID', True, int,
             "Entity ID of NPC character to be invaded."),

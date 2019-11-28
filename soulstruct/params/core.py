@@ -291,6 +291,7 @@ class ParamTable(object):
             raise TypeError("New entry must be a ParamEntry or a dictionary that contains all required fields.")
 
     def __iter__(self):
+        # TODO: Iterate over entry IDs, not items (use .items() for that).
         return iter(self.entries.items())
 
     def __len__(self):
@@ -429,7 +430,11 @@ class ParamTable(object):
         return [(param_id, self[param_id]) for param_id in sorted(self.entries)[start:start + count]]
 
     def pop(self, entry_id):
+        """Useful for changing entry ID, for example."""
         return self.entries.pop(entry_id)
+
+    def items(self):
+        return self.entries.items()
 
 
 class DrawParamTable(ParamTable):

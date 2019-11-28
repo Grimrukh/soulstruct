@@ -49,12 +49,13 @@ class DarkSoulsText(object):
         'RingNames', 'RingSummaries', 'RingDescriptions',
         'GoodNames', 'GoodSummaries', 'GoodDescriptions',
         'SpellNames', 'SpellSummaries', 'SpellDescriptions',
+        'Conversations',
     ]
 
     # These are text categories you are unlikely to change, whether it's for pragmatic
     # reasons (like Conversations) or because they contain low-level menu/system text.
     internal_categories = internal_fmg_names = [
-        'Conversations', 'ContextualHelp', 'DebugTags_Win32',
+        'ContextualHelp', 'DebugTags_Win32',
         'FeatureNames', 'FeatureSummaries', 'FeatureDescriptions',
         'IngameMenus', 'KeyGuide', 'MenuDialogs', 'MenuHelpSnippets',
         'MenuText_Common', 'MenuText_Other', 'OpeningSubtitles',

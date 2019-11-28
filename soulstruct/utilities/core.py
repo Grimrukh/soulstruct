@@ -41,7 +41,13 @@ def word_wrap(text, line_limit=50):
 
 
 def camel_case_to_spaces(camel_string):
-    return re.sub(' +', ' ', re.sub(r"([A-Z])([a-z]+)", r" \1\2 ", camel_string)).strip()
+    """Preserves consecutive capitals (e.g. JSONFileName -> JSON File Name) and non-alphabetical symbols.
+
+    Needs two passes to handle cases of singular capital letters and numbers (which need spaces on both sides).
+    """
+    camel_string = re.sub(r"([A-Z])([A-Z])([a-z])|([0-9]+)([A-Z])", r"\1\4 \2\3\5", camel_string)  # ABc -> A Bc
+    camel_string = re.sub(r"([a-z])([A-Z])|([A-z])([0-9]+)", r"\1\3 \2\4", camel_string)  # aB -> a B
+    return camel_string
 
 
 def find_steam_common_paths():

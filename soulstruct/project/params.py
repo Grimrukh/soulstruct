@@ -5,13 +5,11 @@ from typing import TYPE_CHECKING
 from soulstruct.project.editor import SoulstructBaseEditor, SoulstructBaseFieldEditor
 
 if TYPE_CHECKING:
-    from soulstruct.params import DarkSoulsGameParameters
-
-# TODO: Can't jump to Conversations, because they're internal by default. Make them a main Text category.
+    from soulstruct.params import DarkSoulsGameParameters, ParamEntry
 
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
-    CATEGORY_BOX_WIDTH = 200
+    CATEGORY_BOX_WIDTH = 170
     ENTRY_BOX_WIDTH = 450
     ENTRY_RANGE_SIZE = 200
 
@@ -90,14 +88,32 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
                 raise ValueError("No params category selected.")
         return self.Params[category][entry_id].name
 
-    def _set_entry_text(self, entry_id: int, text: str, category=None):
+    def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
         self.Params[category][entry_id].name = text
+        if category == self.active_category and update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(entry_id, text)
 
-    def get_field_dict(self, entry_id: int, category=None):
+    def _change_entry_id(self, row_index, new_id, category=None):
+        if category is None:
+            category = self.active_category
+        old_id = self.get_entry_id(row_index)
+        if old_id == new_id:
+            return False
+        if new_id in self.Params[category].entries:
+            self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Params.{category}. You must change or "
+                                          f"delete it first.")
+            return False
+        entry_data = self.Params[category].pop(old_id)
+        self.Params[category][new_id] = entry_data
+        if category == self.active_category and self.EntryRow.SHOW_ENTRY_ID:
+            self.entry_rows[row_index].update_entry(new_id, entry_data.name)
+        return True
+
+    def get_field_dict(self, entry_id: int, category=None) -> ParamEntry:
         if category is None:
             category = self.active_category
             if category is None:
@@ -109,6 +125,9 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         if category is None:
             category = self.active_category
         return self.Params[category].get_field_info(field_dict, field_name=field_name)
+
+    def get_field_names(self, field_dict):
+        return field_dict.field_names if field_dict else []
 
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:

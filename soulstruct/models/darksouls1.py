@@ -1,7 +1,7 @@
 
-# TODO: More sensible ordering.
-MODEL_IDS = {
+CHARACTER_MODELS = {
     0: 'Player Character',
+    1000: 'Empty Character',  # e.g. bonfires
     1200: 'Large Rat',
     1201: 'Small Rat',
     1202: 'Giant Rat',

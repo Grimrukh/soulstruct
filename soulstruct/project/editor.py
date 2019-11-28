@@ -15,9 +15,11 @@ if TYPE_CHECKING:
 class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
     CANVAS_BG = '#1d1d1d'
     CATEGORY_BOX_WIDTH = 250
+    CATEGORY_ROW_HEIGHT = 30
+    CATEGORY_ROW_HIGHLIGHT = 1
     CATEGORY_BOX_HEIGHT = 500
-    CATEGORY_UNSELECTED_BG = '#333'
-    CATEGORY_SELECTED_BG = '#655'
+    CATEGORY_UNSELECTED_BG = '#242424'
+    CATEGORY_SELECTED_BG = '#414141'
     ENTRY_CANVAS_BG = '#1d1d1d'
     ENTRY_BOX_WIDTH = 800
     ENTRY_BOX_HEIGHT = 400
@@ -29,6 +31,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         ENTRY_ROW_WIDTH = 800
         ENTRY_ROW_HEIGHT = 30
         SHOW_ENTRY_ID = True
+        EDIT_ENTRY_ID = True
         ENTRY_ID_WIDTH = 15
         ENTRY_TEXT_WIDTH = 60
 
@@ -49,9 +52,18 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             bind_events(self.row_box, main_bindings)
 
             if self.SHOW_ENTRY_ID:
+                self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='ew')
                 self.id_label = editor.Label(
-                    text='', width=self.ENTRY_ID_WIDTH, row=row_index, column=0, bg=bg_color, sticky='e')
-                bind_events(self.id_label, main_bindings)
+                    self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, sticky='e')
+                if self.EDIT_ENTRY_ID:
+                    id_bindings = main_bindings.copy()
+                    id_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
+                        i, id_clicked=True)
+                    id_bindings['<Shift-Button-1>'] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+                else:
+                    id_bindings = main_bindings
+                bind_events(self.id_box, id_bindings)
+                bind_events(self.id_label, id_bindings)
             else:
                 self.id_label = None
 
@@ -65,7 +77,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self.context_menu = editor.Menu(self.row_box)
 
             self.tool_tip = ToolTip(
-                self.row_box, self.id_label, self.text_box, self.text_label, text=None, wraplength=350)
+                self.row_box, self.id_box, self.id_label, self.text_box, self.text_label, text=None, wraplength=350)
 
         def update_entry(self, entry_id: int, entry_text: str):
             self.entry_id = entry_id
@@ -77,6 +89,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             """Called when this row has no entry to display."""
             self.row_box.grid_remove()
             if self.SHOW_ENTRY_ID:
+                self.id_box.grid_remove()
                 self.id_label.grid_remove()
             self.text_box.grid_remove()
             self.text_label.grid_remove()
@@ -84,6 +97,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         def unhide(self):
             self.row_box.grid()
             if self.SHOW_ENTRY_ID:
+                self.id_box.grid()
                 self.id_label.grid()
             self.text_box.grid()
             self.text_label.grid()
@@ -91,8 +105,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         def build_entry_context_menu(self):
             self.context_menu.delete(0, 'end')
             self.context_menu.add_command(
-                label="Edit in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.popout_entry_edit(self.row_index))
+                label="Edit Entry Text in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
+                command=lambda: self.master.popout_entry_text_edit(self.row_index))
             self.context_menu.add_command(
                 label="Duplicate Entry to Next ID", foreground=self.STYLE_DEFAULTS['text_fg'],
                 command=lambda: self.master.add_relative_entry(self.entry_id, offset=1))
@@ -113,7 +127,6 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             else:
                 return  # No change to active state.
 
-            # All widget backgrounds need updating (except Combobox).
             self._update_colors()
 
         @property
@@ -137,21 +150,21 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
         def _update_colors(self):
             bg_color = self._get_color()
-            for widget in (self.row_box, self.id_label, self.text_box, self.text_label):
+            for widget in (self.row_box, self.id_box, self.id_label, self.text_box, self.text_label):
                 widget['bg'] = bg_color
 
         def _get_color(self):
-            """Inspects entry text/data and returns a tuple of 'bg' color values."""
-            base_bg = 222
+            """Inspects entry text/state and assembles a tuple of 'bg' color values."""
+            base_bg = 222  # dark grey
             if self._entry_text is not None:
                 if not self._entry_text:
-                    base_bg += 200
+                    base_bg += 200  # entry text is empty (red)
                 elif not self._entry_text.strip():
-                    base_bg += 110
+                    base_bg += 110  # entry text contains only space (yellow)
             if self._active:
-                base_bg += 123
+                base_bg += 123  # turquoise boost
             if self.row_index % 2:
-                base_bg += 111
+                base_bg += 111  # every second row is slightly brighter
             return f'#{base_bg}'
 
     def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
@@ -166,7 +179,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.f_categories = None
 
         self.entry_rows = []  # type: List[SoulstructBaseEditor.EntryRow]
-        self.selected_entry_row_index = None
+        self.active_row_index = None
         self.first_display_index = 0
         self.displayed_entry_count = 0
 
@@ -175,6 +188,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.previous_range_button = None
         self.next_range_button = None
         self._e_entry_text_edit = None
+        self._e_entry_id_edit = None
 
         self.build()
         self.bind_all('<Control-z>', self.undo)
@@ -185,7 +199,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
     def build_category_canvas(self):
         self.category_canvas = self.Canvas(
             vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, padx=40, pady=40,
-            borderwidth=0, highlightthickness=0)
+            yscrollincrement=self.CATEGORY_ROW_HEIGHT, borderwidth=0, highlightthickness=0)
         self.f_categories = self.Frame(
             self.category_canvas, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, sticky='ew')
         self.link_to_scrollable(self.category_canvas, self.f_categories)
@@ -207,7 +221,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         with self.set_master():
             self.entry_canvas = self.Canvas(
                 vertical_scrollbar=True, width=self.ENTRY_BOX_WIDTH, height=self.ENTRY_BOX_HEIGHT, borderwidth=0,
-                highlightthickness=0, yscrollincrement=30, padx=10, pady=10, bg=self.ENTRY_CANVAS_BG)
+                highlightthickness=0, yscrollincrement=self.EntryRow.ENTRY_ROW_HEIGHT,
+                padx=10, pady=10, bg=self.ENTRY_CANVAS_BG)
             self.f_entry_table = self.Frame(self.entry_canvas, width=self.ENTRY_BOX_WIDTH, sticky='ew')
             self.entry_canvas.create_window(0, 0, window=self.f_entry_table, anchor='nw')
             self.f_entry_table.bind(
@@ -218,7 +233,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 self.entry_rows.append(self.EntryRow(
                     self, row_index=row, main_bindings={
                         '<Button-1>': lambda _, i=row: self.select_entry_row_index(i),
-                        '<Shift-Button-1>': lambda e, i=row: self.popout_entry_edit(i),
+                        '<Shift-Button-1>': lambda e, i=row: self.popout_entry_text_edit(i),
                         '<Button-3>': lambda e, i=row: self._right_click_entry(e, i),
                         '<Up>': self._entry_press_up,
                         '<Down>': self._entry_press_down,
@@ -256,12 +271,21 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             categories = self._get_display_categories()
 
             for row, category in enumerate(categories):
-                box = self.Frame(row=row, width=self.CATEGORY_BOX_WIDTH, height=30, highlightthickness=1,
-                                 bg=self.CATEGORY_UNSELECTED_BG)
-                label_text = camel_case_to_spaces(category).replace(' _', ':')
-                label = self.Label(text=label_text, sticky='ew', row=row, bg='#333')
-                label.bind("<Button-1>", lambda e, c=category: self.select_category(c))
-                box.bind("<Button-1>", lambda e, c=category: self.select_category(c))
+                box = self.Frame(
+                    row=row, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_ROW_HEIGHT,
+                    highlightthickness=self.CATEGORY_ROW_HIGHLIGHT,
+                    bg=self.CATEGORY_UNSELECTED_BG)
+                label_text = camel_case_to_spaces(category).replace('_', ': ')
+                label = self.Label(text=label_text, sticky='w', row=row, fg=self._get_category_text_fg(category),
+                                   bg=self.CATEGORY_UNSELECTED_BG)
+                for widget in {label, box}:
+                    bind_events(widget, {
+                        "<Button-1>": lambda e, c=category: self.select_category(c),
+                        '<Up>': self._category_press_up,
+                        '<Down>': self._category_press_down,
+                        '<Prior>': self._category_press_up,
+                        '<Next>': self._category_press_down,
+                    })
                 if category == self.active_category:
                     label['bg'] = self.CATEGORY_SELECTED_BG
                     box['bg'] = self.CATEGORY_SELECTED_BG
@@ -291,6 +315,39 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
 
+    def _shift_selected_category(self, relative_index):
+        if self.active_category is None:
+            return
+        categories = self._get_display_categories()
+        active_category_index = categories.index(self.active_category)
+        new_index = active_category_index + relative_index
+        if 0 <= new_index < len(categories):
+            new_category = categories[new_index]
+            self.select_category(new_category)
+        else:
+            return  # Do nothing.
+
+    def _category_press_up(self, _=None):
+        if self.active_category is not None:
+            categories = self._get_display_categories()
+            active_category_index = categories.index(self.active_category)
+            self._shift_selected_category(-1)
+            if self.category_canvas.yview()[1] != 1.0 or active_category_index < len(categories) - 5:
+                self.category_canvas.yview_scroll(-1, 'units')
+
+    def _category_press_down(self, _=None):
+        if self.active_category is not None:
+            categories = self._get_display_categories()
+            active_category_index = categories.index(self.active_category)
+            self._shift_selected_category(+1)
+            if self.category_canvas.yview()[0] != 0.0 or active_category_index > 5:
+                self.category_canvas.yview_scroll(1, 'units')
+
+    @staticmethod
+    def _get_category_text_fg(category: str):
+        """Returns white text by default; override to add more custom behavior."""
+        return '#FFF' if category else '#000'
+
     def select_entry_id(self, entry_id, set_focus_to_text=True, edit_if_already_selected=True, as_row_index=None):
         """Select entry based on ID and set the category display range to target_row_index rows before it."""
         if as_row_index is None:
@@ -304,19 +361,23 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.select_entry_row_index(
             row_index, set_focus_to_text=set_focus_to_text, edit_if_already_selected=edit_if_already_selected)
 
-    def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True):
+    def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
+                               id_clicked=False):
         """Select entry from row index, based on currently displayed category and ID range."""
-        old_row_index = self.selected_entry_row_index
+        old_row_index = self.active_row_index
 
         if old_row_index is not None and row_index is not None:
             if row_index == old_row_index:
                 if edit_if_already_selected:
-                    return self._start_entry_text_edit(row_index)
+                    if id_clicked:
+                        return self._start_entry_id_edit(row_index)
+                    else:
+                        return self._start_entry_text_edit(row_index)
                 return
         else:
             self._cancel_entry_text_edit()
 
-        self.selected_entry_row_index = row_index
+        self.active_row_index = row_index
 
         if old_row_index is not None:
             self.entry_rows[old_row_index].active = False
@@ -348,6 +409,9 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self.select_entry_row_index(None)
         self._refresh_buttons()
 
+    def get_category_position_ratio(self, category):
+        return list(self.category_boxes).index(category) / (len(self.category_boxes) + 1)
+
     def get_entry_id(self, row_index: int) -> int:
         """Retrieves true entry ID from the displayed row index (which is relative to first_display_index)."""
         return self.entry_rows[row_index].entry_id
@@ -367,20 +431,18 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
     def get_entry_text(self, entry_id: int, category=None) -> str:
         raise NotImplementedError
 
-    def _set_entry_text(self, entry_id: int, text: str, category=None):
+    def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         raise NotImplementedError
 
-    def _change_entry_text(self, entry_index, new_text, category=None):
+    def _change_entry_text(self, row_index, new_text, category=None):
         """Set text of given entry index in the displayed category (if different from current)."""
         if category is None:
             category = self.active_category
-        entry_id = self.get_entry_id(entry_index)
+        entry_id = self.get_entry_id(row_index)
         current_text = self.get_entry_text(entry_id, category=category)
         if current_text == new_text:
             return False  # Nothing to change.
-        self._set_entry_text(entry_id, new_text, category=category)
-        if category == self.active_category:
-            self.entry_rows[entry_index].text_label.var.set(new_text)
+        self._set_entry_text(entry_id, new_text, category=category, update_row_index=row_index)
 
         # TODO: History action manager.
         # if from_history:
@@ -396,16 +458,41 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
         return True
 
-    def popout_entry_edit(self, entry_index):
+    def _change_entry_id(self, row_index, new_id, category=None):
+        """Pop ID from given entry index in the displayed category (if different from current) and reassign."""
+        raise NotImplementedError
+
+    def popout_entry_id_edit(self, row_index):
+        entry_id = self.get_entry_id(row_index)
+        if not self._e_entry_text_edit and not self._e_entry_id_edit:
+            initial_text = str(entry_id)
+            popout_editor = TextEditBox(self, initial_text, allow_newlines=False, window_title="Editing Entry ID")
+            new_text = popout_editor.go()
+            if new_text is not None:
+                try:
+                    new_id = int(new_text)
+                    if new_id < 0:
+                        raise ValueError
+                except ValueError:
+                    self.dialog("Invalid Entry ID", "Entry ID must be a non-negative integer.")
+                    return
+                print(new_id)
+                self._change_entry_id(row_index, new_id)
+
+    def popout_entry_text_edit(self, entry_index):
         entry_id = self.get_entry_id(entry_index)
-        if not self._e_entry_text_edit:
+        if not self._e_entry_text_edit and not self._e_entry_id_edit:
             initial_text = self.get_entry_text(entry_id, self.active_category)
             popout_editor = EntryTextEditBox(self, self.active_category, entry_id, initial_text)
             _, new_text = popout_editor.go()
             if new_text is not None:
                 self._change_entry_text(entry_index, new_text)
 
-    def _add_entry(self, entry_id, text):
+    def _add_entry(self, entry_id, text, category=None):
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         if entry_id < 0:
             self.dialog("Entry ID Error", message=f"Entry ID cannot be negative.")
             return False
@@ -503,16 +590,46 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             return
         return self._update_range(first_index)
 
-    def _start_entry_text_edit(self, entry_index):
-        if not self._e_entry_text_edit:
-            entry_id = self.get_entry_id(entry_index)
+    def _start_entry_id_edit(self, row_index):
+        if not self._e_entry_text_edit and not self._e_entry_id_edit:
+            entry_id = self.get_entry_id(row_index)
+            initial_text = str(entry_id)
+            self._e_entry_id_edit = self.Entry(
+                self.entry_rows[row_index].id_box, initial_text=initial_text,
+                integers_only=True, sticky='ew', width=self.EntryRow.ENTRY_ID_WIDTH)
+            self._e_entry_id_edit.bind('<Return>', lambda e, i=row_index: self._confirm_entry_id_edit(i))
+            self._e_entry_id_edit.bind('<Up>', self._entry_press_up)
+            self._e_entry_id_edit.bind('<Down>', self._entry_press_down)
+            self._e_entry_id_edit.bind('<FocusOut>', lambda e: self._cancel_entry_id_edit())
+            self._e_entry_id_edit.bind('<Escape>', lambda e: self._cancel_entry_id_edit())
+            self._e_entry_id_edit.focus_set()
+            self._e_entry_id_edit.select_range(0, 'end')
+
+    def _cancel_entry_id_edit(self):
+        if self._e_entry_id_edit:
+            self._e_entry_id_edit.destroy()
+            self._e_entry_id_edit = None
+
+    def _confirm_entry_id_edit(self, row_index):
+        if self._e_entry_id_edit:
+            try:
+                new_id = int(self._e_entry_id_edit.var.get())
+            except ValueError:
+                pass  # shouldn't happen with 'integers_only=True' in Entry
+            else:
+                self._change_entry_id(row_index, new_id)
+            self._cancel_entry_id_edit()
+
+    def _start_entry_text_edit(self, row_index):
+        if not self._e_entry_text_edit and not self._e_entry_id_edit:
+            entry_id = self.get_entry_id(row_index)
             initial_text = self.get_entry_text(entry_id)
             if '\n' in initial_text:
-                return self.popout_entry_edit(entry_index)
+                return self.popout_entry_text_edit(row_index)
             self._e_entry_text_edit = self.Entry(
-                self.entry_rows[entry_index].text_box, initial_text=self.get_entry_text(entry_id),
-                sticky='ew', width=60)
-            self._e_entry_text_edit.bind('<Return>', lambda e, i=entry_index: self._confirm_entry_text_edit(i))
+                self.entry_rows[row_index].text_box, initial_text=initial_text, sticky='ew',
+                width=5)
+            self._e_entry_text_edit.bind('<Return>', lambda e, i=row_index: self._confirm_entry_text_edit(i))
             self._e_entry_text_edit.bind('<Up>', self._entry_press_up)
             self._e_entry_text_edit.bind('<Down>', self._entry_press_down)
             self._e_entry_text_edit.bind('<FocusOut>', lambda e: self._cancel_entry_text_edit())
@@ -525,16 +642,16 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self._e_entry_text_edit.destroy()
             self._e_entry_text_edit = None
 
-    def _confirm_entry_text_edit(self, entry_index):
+    def _confirm_entry_text_edit(self, row_index):
         if self._e_entry_text_edit:
             new_text = self._e_entry_text_edit.var.get()
-            self._change_entry_text(entry_index, new_text)
+            self._change_entry_text(row_index, new_text)
             self._cancel_entry_text_edit()
 
     def _shift_selected_entry(self, relative_index):
-        if self.selected_entry_row_index is None:
+        if self.active_row_index is None:
             return
-        new_index = self.selected_entry_row_index + relative_index
+        new_index = self.active_row_index + relative_index
         if new_index < 0 and self.previous_range_button['state'] == 'normal':
             delta = self._go_to_previous_entry_range()
             new_row_index = -1 - delta
@@ -546,28 +663,36 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self.select_entry_row_index(new_row_index, edit_if_already_selected=False)
             self.entry_canvas.yview_moveto(new_row_index / (self.ENTRY_RANGE_SIZE + 1))
         elif 0 <= new_index < self.displayed_entry_count:
-            self.select_entry_row_index(self.selected_entry_row_index + relative_index)
+            self.select_entry_row_index(self.active_row_index + relative_index)
         else:
             return  # Do nothing.
 
     def _entry_press_up(self, _=None):
-        if self.selected_entry_row_index is not None:
-            edit_new = self._e_entry_text_edit is not None
-            self._confirm_entry_text_edit(self.selected_entry_row_index)
+        if self.active_row_index is not None:
+            edit_new_text = self._e_entry_text_edit is not None
+            edit_new_id = self._e_entry_id_edit is not None
+            self._confirm_entry_text_edit(self.active_row_index)
+            self._confirm_entry_id_edit(self.active_row_index)
             self._shift_selected_entry(-1)
-            if edit_new:
-                self._start_entry_text_edit(self.selected_entry_row_index)
-            if self.entry_canvas.yview()[1] != 1.0 or self.selected_entry_row_index < self.displayed_entry_count - 5:
+            if edit_new_text:
+                self._start_entry_text_edit(self.active_row_index)
+            elif edit_new_id:
+                self._start_entry_id_edit(self.active_row_index)
+            if self.entry_canvas.yview()[1] != 1.0 or self.active_row_index < self.displayed_entry_count - 5:
                 self.entry_canvas.yview_scroll(-1, 'units')
 
     def _entry_press_down(self, _=None):
-        if self.selected_entry_row_index is not None:
-            edit_new = self._e_entry_text_edit is not None
-            self._confirm_entry_text_edit(self.selected_entry_row_index)
+        if self.active_row_index is not None:
+            edit_new_text = self._e_entry_text_edit is not None
+            edit_new_id = self._e_entry_id_edit is not None
+            self._confirm_entry_text_edit(self.active_row_index)
+            self._confirm_entry_id_edit(self.active_row_index)
             self._shift_selected_entry(+1)
-            if edit_new:
-                self._start_entry_text_edit(self.selected_entry_row_index)
-            if self.entry_canvas.yview()[0] != 0.0 or self.selected_entry_row_index > 5:
+            if edit_new_text:
+                self._start_entry_text_edit(self.active_row_index)
+            elif edit_new_id:
+                self._start_entry_id_edit(self.active_row_index)
+            if self.entry_canvas.yview()[0] != 0.0 or self.active_row_index > 5:
                 self.entry_canvas.yview_scroll(1, 'units')
 
     def _refresh_buttons(self):
@@ -582,37 +707,31 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self.next_range_button['state'] = 'normal'
 
 
-class EntryTextEditBox(SoulstructSmartFrame):
-    """Small pop-out widget that allows you to modify longer entry text/name more freely, with newlines and all."""
+class TextEditBox(SoulstructSmartFrame):
+    """Small pop-out widget that allows you to modify longer strings more freely, with newlines and all."""
+    WIDTH = 16  # characters
+    HEIGHT = 1  # lines
 
-    WIDTH = 70  # characters
-    HEIGHT = 10  # lines
-
-    def __init__(self, master: SoulstructBaseEditor, category, entry_id, initial_text='', allow_newlines=True):
-        if entry_id is None:
-            window_title = f"Adding entry to {camel_case_to_spaces(category)}"
-        else:
-            window_title = f"Editing {camel_case_to_spaces(category)}[{entry_id}]"
+    def __init__(self, master: SoulstructBaseEditor, initial_text='', allow_newlines=True, window_title="Editing Text"):
         super().__init__(toplevel=True, master=master, window_title=window_title)
         self.editor = master
-
         self.initial_text = initial_text
-        self.category = category
-        self.output = [None, None]
+        self.output = None
         self.allow_newlines = allow_newlines
 
-        self.start_auto_rows()
-        if entry_id is None:
-            self._id = self.Entry(label='New Entry ID:', label_position='left', width=10, integers_only=True,
-                                  padx=20, pady=20).var
-        else:
-            self._id = None
+        self._text = None
 
-        self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
-        self._text.insert('end', initial_text)
-        with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
-            self.Button(text="Confirm changes", command=lambda: self.done(True), **master.DEFAULT_BUTTON_KWARGS['YES'])
-            self.Button(text="Cancel changes", command=lambda: self.done(False), **master.DEFAULT_BUTTON_KWARGS['NO'])
+        self.build()
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
+            self._text.insert('end', self.initial_text)
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
+                self.Button(
+                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS['YES'])
+                self.Button(
+                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS['NO'])
 
         self.bind_all('<Escape>', lambda e: self.done(False))
         self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
@@ -625,6 +744,45 @@ class EntryTextEditBox(SoulstructSmartFrame):
         self.mainloop()
         self.destroy()
         return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            new_text = self._text.get('1.0', 'end' + '-1c')
+            if not self.allow_newlines and '\n' in new_text:
+                self.editor.dialog("Text Error", "Entry cannot contain newlines.")
+                return
+            if new_text == self.initial_text:
+                self.output = None
+            else:
+                self.output = self._text.get('1.0', 'end' + '-1c')
+        self.quit()
+
+
+class EntryTextEditBox(TextEditBox):
+    WIDTH = 70  # characters
+    HEIGHT = 10  # lines
+
+    def __init__(self, master: SoulstructBaseEditor, category, entry_id, initial_text='', allow_newlines=True):
+        if entry_id is None:
+            window_title = f"Adding entry to {camel_case_to_spaces(category)}"
+        else:
+            window_title = f"Editing {camel_case_to_spaces(category)}[{entry_id}]"
+        self.category = category
+        self.entry_id = entry_id
+        self._id = None
+        super().__init__(master=master, initial_text=initial_text, allow_newlines=allow_newlines,
+                         window_title=window_title)
+
+        self.output = [None, None]
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            if self.entry_id is None:
+                self._id = self.Entry(label='New Entry ID:', label_position='left', width=10, integers_only=True,
+                                      padx=20, pady=20).var
+            else:
+                self._id = None
+            super().build()
 
     def done(self, confirm=True):
         if confirm:
@@ -920,7 +1078,8 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         with self.set_master():
             self.field_canvas = self.Canvas(
                 vertical_scrollbar=True, width=self.FIELD_BOX_WIDTH, height=self.FIELD_BOX_HEIGHT, borderwidth=10,
-                yscrollincrement=25, highlightthickness=0, padx=40, pady=40, bg=self.FIELD_CANVAS_BG)
+                yscrollincrement=self.FIELD_ROW_HEIGHT, highlightthickness=0,
+                padx=40, pady=40, bg=self.FIELD_CANVAS_BG)
             self.f_field_table = self.Frame(frame=self.field_canvas, width=self.FIELD_BOX_WIDTH, sticky='ew')
             self.field_canvas.create_window(0, 0, window=self.f_field_table, anchor='nw')
             self.f_field_table.bind(
@@ -949,6 +1108,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 if selected_category == category:
                     box['bg'] = self.CATEGORY_SELECTED_BG
                     label['bg'] = self.CATEGORY_SELECTED_BG
+                    label.focus_set()
                 else:
                     box['bg'] = self.CATEGORY_UNSELECTED_BG
                     label['bg'] = self.CATEGORY_UNSELECTED_BG
@@ -962,9 +1122,10 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         super().refresh_entries()
         self.refresh_fields(reset_display=reset_field_display)
 
-    def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True):
+    def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
+                               id_clicked=False):
         super().select_entry_row_index(row_index, set_focus_to_text=set_focus_to_text,
-                                       edit_if_already_selected=edit_if_already_selected)
+                                       edit_if_already_selected=edit_if_already_selected, id_clicked=id_clicked)
         self.refresh_fields()
 
     def refresh_fields(self, reset_display=False):
@@ -974,8 +1135,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         self._cancel_field_value_edit()
 
         show_hidden_fields = self.show_hidden_fields.get()
-        reset_display = reset_display
-        field_names = self.get_field_info(field_dict).keys() if field_dict else []
+        field_names = self.get_field_names(field_dict)
 
         row = 0
         for field_name in field_names:
@@ -1009,8 +1169,12 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             self.update_idletasks()
             self.field_canvas.yview_moveto(0)
 
-    def _add_entry(self, entry_id, text, field_dict=None):
+    def _add_entry(self, entry_id, text, category=None, new_field_dict=None):
         """Requires additional field_dict argument."""
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         if entry_id < 0:
             self.dialog("Entry ID Error", message=f"Entry ID cannot be negative.")
             return False
@@ -1020,7 +1184,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             return False
 
         self._cancel_entry_text_edit()
-        self.get_category_dict()[entry_id] = field_dict  # add entry to category dictionary
+        self.get_category_dict()[entry_id] = new_field_dict  # add entry to category dictionary
         self._set_entry_text(entry_id, text)
         self.select_entry_id(entry_id, set_focus_to_text=True, edit_if_already_selected=False)
 
@@ -1041,7 +1205,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         if text is None:
             text = self.get_entry_text(entry_id)  # Copies name of origin entry by default (can be overridden).
         new_field_dict = self.get_field_dict(entry_id).copy()
-        self._add_entry(entry_id=entry_id + offset, text=text, field_dict=new_field_dict)
+        self._add_entry(entry_id=entry_id + offset, text=text, new_field_dict=new_field_dict)
 
     def _right_click_field(self, event, field_index):
         self.select_displayed_field_row(field_index, edit_if_already_selected=False)
@@ -1105,8 +1269,8 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         if not field_row.editable:
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
         field_type = field_row.field_type
-        field_value = self.get_field_dict(self.get_entry_id(self.selected_entry_row_index))[field_row.field_name]
-        if field_type in {int, float}:
+        field_value = self.get_field_dict(self.get_entry_id(self.active_row_index))[field_row.field_name]
+        if field_type in {int, float} or isinstance(field_type, str):
             return self.Entry(
                 field_row.value_box,
                 integers_only=field_type == int,
@@ -1162,13 +1326,16 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
     def get_selected_field_dict(self):
         """Returns None if no field is selected."""
-        if self.selected_entry_row_index is not None:
-            entry_id = self.get_entry_id(self.selected_entry_row_index)
+        if self.active_row_index is not None:
+            entry_id = self.get_entry_id(self.active_row_index)
             return self.get_field_dict(entry_id)
         else:
             return None
 
     def get_field_dict(self, entry_id: int, category=None):
+        raise NotImplementedError
+
+    def get_field_names(self, field_dict):
         raise NotImplementedError
 
     def get_field_info(self, field_dict, field_name=None):

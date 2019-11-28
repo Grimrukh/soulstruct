@@ -536,7 +536,7 @@ class SmartFrame(tk.Frame):
 
     @staticmethod
     def link_to_scrollable(scrollable_widget, *widgets):
-        """Registers <Enter> and <Leave> events that enable the scrollbar for the second widget."""
+        """Registers <Enter> and <Leave> events that enable the scrollbar for all *arg widgets."""
         for widget in widgets:
             widget.bind('<Enter>', lambda _, f=scrollable_widget: _bind_to_mousewheel(_, f))
             widget.bind('<Leave>', lambda _, f=scrollable_widget: _unbind_to_mousewheel(_, f))

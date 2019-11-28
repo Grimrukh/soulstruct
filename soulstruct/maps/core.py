@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 
 _DUPLICATE_TAG_MATCH = re.compile(r' <(\d+)>$')
 
@@ -25,3 +26,10 @@ class MSBEntry(object):
             setattr(self, field_name, value)
             return
         raise KeyError(f"Field {field_name} does not exist in MSB entry type {self.__class__.__name__}.")
+
+    @property
+    def field_names(self):
+        return list(self.FIELD_INFO.keys())
+
+    def copy(self):
+        return deepcopy(self)

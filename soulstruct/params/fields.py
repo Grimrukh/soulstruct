@@ -2195,11 +2195,11 @@ GAME_PARAM_INFO = {
             'IsTravelItem?', True, bool,
             "Not sure. Could flag items that warp the player."),
         'isSuppleItem:1': (
-            'IsSuppleItem?', True, bool,
-            "Not sure."),
+            'Is Empty Estus Flask?', True, bool,
+            "Not sure. Only enabled for empty Estus Flask."),
         'isFullSuppleItem:1': (
-            'IsFullSuppleItem?', True, bool,
-            "Not sure. Even more supple than before."),
+            'Is Non-Empty Estus Flask?', True, bool,
+            "Not sure. Only enabled for non-empty Estus Flask."),
         'isEnhance:1': (
             'IsUpgradeMaterial', True, bool,
             "Determines if this is an upgrade material."),
@@ -2290,7 +2290,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset01:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item1ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory02': (
@@ -2315,7 +2315,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset02:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item2ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory03': (
@@ -2340,7 +2340,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset03:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item3ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory04': (
@@ -2365,7 +2365,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset04:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item4ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory05': (
@@ -2390,7 +2390,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset05:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item5ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory06': (
@@ -2415,7 +2415,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset06:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item6ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory07': (
@@ -2440,7 +2440,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset07:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item7ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
 
         'lotItemCategory08': (
@@ -2465,7 +2465,7 @@ GAME_PARAM_INFO = {
             "Points that will be cumulatively added to this slot's chance points every time the item lot is rolled. "
             "This "),
         'cumulateReset08:1': (
-            'ResetCumulativePointsOnDrop', True, bool,
+            'Item8ResetCumulativePointsOnDrop', True, bool,
             "If True, all cumulative points in this slot will be reset when the slot is actually dropped."),
     },
     'MENU_PARAM_COLOR_TABLE_ST': {

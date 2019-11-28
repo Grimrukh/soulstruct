@@ -25,6 +25,9 @@ class WindowLinker(object):
         animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
         resolved here."""
 
+        if valid_null_values is None:
+            valid_null_values = {}
+
         match_link = self._MATCH_LINK.match(field_type)
         if not match_link:
             raise ValueError(f"Invalid link: {field_type}")
@@ -68,11 +71,13 @@ class WindowLinker(object):
                     if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
                         raise ValueError("Type of entry name in field does not match enforced type of field.")
 
-                entry_type_name = entry_list[entry_name].ENTRY_TYPE.name
+                # Need plural form of entry type.
+                entry_type_name = [key for key in MAP_ENTRY_TYPES[entry_list_name]
+                                   if MAP_ENTRY_TYPES[entry_list_name][key] == entry_list[entry_name].ENTRY_TYPE][0]
 
             except ValueError:
                 # Entry name is missing (or is not of the enforced entry type).
-                return [BaseLink()]
+                return []
 
             return [MapsLink(
                 self, name=field_value, entry_list_name=entry_list_name, entry_type_name=entry_type_name,
@@ -249,7 +254,10 @@ class WindowLinker(object):
         self.window.maps_tab.select_displayed_field_row(None)
         self.window.page_tabs.select(self.get_tab_index('maps'))
         self.window.maps_tab.refresh_categories()
-        self.window.maps_tab.select_category(f'{entry_list_name}:{entry_type_name}')
+        category = f'{entry_list_name}:{entry_type_name}'
+        self.window.maps_tab.select_category(category)
+        view_ratio = self.window.maps_tab.get_category_position_ratio(category)
+        self.window.maps_tab.category_canvas.yview_moveto(view_ratio)
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
