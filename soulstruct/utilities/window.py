@@ -21,12 +21,16 @@ if SET_DPI_AWARENESS:
               f"Error: {str(e)}")
 
 
-def _bind_to_mousewheel(_, frame):
-    frame.bind_all("<MouseWheel>", lambda event: frame.yview_scroll(-1 * (event.delta // 120), 'units'))
+def _bind_to_mousewheel(_, frame, vertical=True, horizontal=False):
+    if vertical:
+        frame.bind_all("<MouseWheel>", lambda event: frame.yview_scroll(-1 * (event.delta // 120), 'units'))
+    if horizontal:
+        frame.bind_all("<Shift-MouseWheel>", lambda event: frame.xview_scroll(-1 * (event.delta // 120), 'units'))
 
 
 def _unbind_to_mousewheel(_, frame):
     frame.unbind_all("<MouseWheel>")
+    frame.unbind_all("<Shift-MouseWheel>")
 
 
 def _embed_component(component_func):
@@ -35,7 +39,8 @@ def _embed_component(component_func):
     @wraps(component_func)
     def component_with_label(self, frame=None,
                              label='', label_font_type=None, label_font_size=None, label_position=None,
-                             label_fg=None, label_bg=None, vertical_scrollbar=False, no_grid=False, **kwargs):
+                             label_fg=None, label_bg=None, vertical_scrollbar=False, horizontal_scrollbar=False,
+                             no_grid=False, **kwargs):
 
         grid_kwargs = self.grid_defaults.copy()
         passed_grid_kwargs = {key: kwargs.pop(key) for key in list(kwargs.keys()) if key in _GRID_KEYWORDS}
@@ -76,36 +81,43 @@ def _embed_component(component_func):
             frame = tk.Frame(frame, bg=inherit_bg)
             label = tk.Label(frame, text=label, font=(label_font_type, label_font_size), fg=label_fg, bg=label_bg)
 
-        if vertical_scrollbar:
+        if vertical_scrollbar or horizontal_scrollbar:
             inherit_bg = frame.cget('bg')
-            frame_with_scrollbar = tk.Frame(frame, bg=inherit_bg)
-            component = component_func(self, frame=frame, **kwargs)
-            vertical_scrollbar = tk.Scrollbar(frame, command=component.yview)
+            frame_with_scrollbars = tk.Frame(frame, bg=inherit_bg)
+            component = component_func(self, frame=frame_with_scrollbars, **kwargs)
             component.grid(row=0, column=0)
-            vertical_scrollbar.grid(row=0, column=1, sticky=NS)
-            component.config(bd=0, yscrollcommand=vertical_scrollbar.set)
-            component.bind('<Enter>', lambda _, f=component: _bind_to_mousewheel(_, f))
+            if vertical_scrollbar:
+                vertical_scrollbar_w = tk.Scrollbar(frame_with_scrollbars, orient=VERTICAL, command=component.yview)
+                vertical_scrollbar_w.grid(row=0, column=1, sticky=NS)
+                component.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
+            if horizontal_scrollbar:
+                horizontal_scrollbar_w = tk.Scrollbar(frame_with_scrollbars, orient=HORIZONTAL, command=component.xview)
+                horizontal_scrollbar_w.grid(row=1, column=0, sticky=EW)
+                component.config(bd=0, xscrollcommand=horizontal_scrollbar_w.set)
+            component.bind('<Enter>', lambda _, f=component: _bind_to_mousewheel(
+                _, f, vertical_scrollbar, horizontal_scrollbar))
             component.bind('<Leave>', lambda _, f=component: _unbind_to_mousewheel(_, f))
             if label:
                 if label_position == 'left':
                     label.grid(row=0, column=0, padx=(0, 1))
-                    frame_with_scrollbar.grid(row=0, column=1)
+                    frame_with_scrollbars.grid(row=0, column=1)
                 elif label_position == 'right':
                     label.grid(row=0, column=1, padx=(-10, 0))
-                    frame_with_scrollbar.grid(row=0, column=0)
+                    frame_with_scrollbars.grid(row=0, column=0)
                 elif label_position == 'above':
                     label.grid(row=0, column=0)
-                    frame_with_scrollbar.grid(row=1, column=0)
+                    frame_with_scrollbars.grid(row=1, column=0)
                 elif label_position == 'below':
                     label.grid(row=1, column=0)
-                    frame_with_scrollbar.grid(row=0, column=0)
+                    frame_with_scrollbars.grid(row=0, column=0)
                 else:
                     raise ValueError(f"Invalid label position {label_position}. "
                                      f"Must be 'left', 'right', 'above', 'below'.")
                 if not no_grid and grid_kwargs:
                     frame.grid(**grid_kwargs)
+                component.label = label
             elif not no_grid and grid_kwargs:
-                frame_with_scrollbar.grid(**grid_kwargs)
+                frame_with_scrollbars.grid(**grid_kwargs)
         else:
             component = component_func(self, frame=frame, **kwargs)
             if label:

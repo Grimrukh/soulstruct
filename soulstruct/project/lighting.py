@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Union, TYPE_CHECKING
 
+from soulstruct.params.dark_souls_params import DRAW_PARAM_MAPS
 from soulstruct.project.editor import SoulstructBaseFieldEditor
-
 if TYPE_CHECKING:
-    from soulstruct.params import DarkSoulsGameParameters, ParamEntry
+    from soulstruct.params import DarkSoulsLightingParameters, ParamTable, ParamEntry
 
 
-class SoulstructParamsEditor(SoulstructBaseFieldEditor):
+class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     CATEGORY_BOX_WIDTH = 170
     ENTRY_BOX_WIDTH = 450
     ENTRY_RANGE_SIZE = 200
@@ -48,26 +48,73 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
                 for text_link in text_links:
                     text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
 
-    def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
-        self.Params = params
-        super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
+    def __init__(self, lighting: DarkSoulsLightingParameters, linker, master=None, toplevel=False):
+        self.Lighting = lighting
+        self.map_area_choice = None
+        self.slot_choice_label = None
+        self.slot_choice = None
+        super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Lighting Editor")
+        self._on_map_area_choice()  # Sets slot option correctly.
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            with self.set_master(auto_columns=0):
+                map_display_names = [f'{k} ({v})' for k, v in DRAW_PARAM_MAPS.items()]
+                self.Label(text='Map Area:', font_size=15)
+                self.map_area_choice = self.Combobox(
+                    values=map_display_names, font=20, on_select_function=self._on_map_area_choice, width=40,
+                    padx=10, pady=10).var
+                self.slot_choice_label = self.Label(text='Slot:', font_size=15, padx=(30, 0))
+                self.slot_choice = self.Combobox(
+                    values=('0', '1'), font=20, on_select_function=self._on_slot_choice, width=5, padx=10, pady=10)
+
+            with self.set_master(auto_columns=0):
+                self.build_category_canvas()
+                with self.set_master():
+                    self.build_previous_range_button(row=0, column=0)
+                    self.build_hidden_fields_checkbutton(row=0, column=1)
+                    with self.set_master(row=1, column=0):
+                        self.build_entry_frame()
+                    with self.set_master(row=1, column=1):
+                        self.build_field_frame()
+                    self.build_next_range_button(row=2, column=0)
+
+    def _on_map_area_choice(self, _=None):
+        new_map_area = self.map_area_choice.get().split(' (')[0]
+        param_tables = getattr(self.Lighting, new_map_area)['AmbientLight']  # picking a random category to check slots
+        if param_tables[1] is None:
+            self.slot_choice.config(values=['0'])
+            if self.slot_choice.var.get() == '1':
+                self._flash_red_bg(self.slot_choice_label)
+            self.slot_choice.var.set('0')
+        else:
+            self.slot_choice.config(values=['0', '1'])
+        self.select_entry_row_index(None)
+        self.refresh_entries(reset_field_display=True)
+
+    def _on_slot_choice(self, _=None):
+        self.select_entry_row_index(None)
+        self.refresh_entries(reset_field_display=True)
 
     def _get_display_categories(self):
-        return self.Params.param_names
+        return self.Lighting.param_names
 
-    def get_category_dict(self, category=None):
+    def get_category_dict(self, category=None) -> Union[ParamTable, dict]:
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        return self.Params[category]
+        map_area_choice = self.map_area_choice.get().split(' (')[0]
+        slot_choice = int(self.slot_choice.var.get())
+        return self.Lighting[map_area_choice][category][slot_choice]
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:
             category = self.active_category
             if category is None:
                 return []
-        return self.Params[category].get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
+        return self.get_category_dict(category).get_range(
+            start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Get index of entry in category. Ignores current display range."""
@@ -75,23 +122,23 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No param category selected.")
-        if entry_id not in self.Params[category].entries:
+        if entry_id not in self.get_category_dict(category).entries:
             raise ValueError(f"Param ID {entry_id} does not appear in category {category}.")
-        return sorted(self.Params[category].entries).index(entry_id)
+        return sorted(self.get_category_dict(category).entries).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.Params[category][entry_id].name
+        return self.get_category_dict(category)[entry_id].name
 
     def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        self.Params[category][entry_id].name = text
+        self.get_category_dict(category)[entry_id].name = text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text)
 
@@ -101,12 +148,12 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         old_id = self.get_entry_id(row_index)
         if old_id == new_id:
             return False
-        if new_id in self.Params[category].entries:
+        if new_id in self.get_category_dict(category).entries:
             self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Params.{category}. You must change or "
                                           f"delete it first.")
             return False
-        entry_data = self.Params[category].pop(old_id)
-        self.Params[category][new_id] = entry_data
+        entry_data = self.get_category_dict(category).pop(old_id)
+        self.get_category_dict(category)[new_id] = entry_data
         if category == self.active_category and self.EntryRow.SHOW_ENTRY_ID:
             self.entry_rows[row_index].update_entry(new_id, entry_data.name)
         return True
@@ -116,13 +163,13 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.Params[category][entry_id]
+        return self.get_category_dict(category)[entry_id]
 
     def get_field_info(self, field_dict, field_name=None, category=None):
         """This method should return the full field information dictionary if field_name is None."""
         if category is None:
             category = self.active_category
-        return self.Params[category].get_field_info(field_dict, field_name=field_name)
+        return self.get_category_dict(category).get_field_info(field_dict, field_name=field_name)
 
     def get_field_names(self, field_dict):
         return field_dict.field_names if field_dict else []

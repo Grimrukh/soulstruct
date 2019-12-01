@@ -33,7 +33,9 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         SHOW_ENTRY_ID = True
         EDIT_ENTRY_ID = True
         ENTRY_ID_WIDTH = 15
+        ENTRY_ID_FG = '#CDF'
         ENTRY_TEXT_WIDTH = 60
+        ENTRY_TEXT_FG = '#FFF'
 
         def __init__(self, editor: SoulstructBaseEditor, row_index: int, main_bindings: dict = None):
             self.master = editor
@@ -54,7 +56,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             if self.SHOW_ENTRY_ID:
                 self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='ew')
                 self.id_label = editor.Label(
-                    self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, sticky='e')
+                    self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, fg=self.ENTRY_ID_FG, sticky='e')
                 if self.EDIT_ENTRY_ID:
                     id_bindings = main_bindings.copy()
                     id_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
@@ -71,7 +73,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             bind_events(self.text_box, main_bindings)
 
             self.text_label = editor.Label(
-                self.text_box, text='', bg=bg_color, anchor='w', justify='left', width=self.ENTRY_TEXT_WIDTH)
+                self.text_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w',
+                justify='left', width=self.ENTRY_TEXT_WIDTH)
             bind_events(self.text_label, main_bindings)
 
             self.context_menu = editor.Menu(self.row_box)
@@ -198,7 +201,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
     def build_category_canvas(self):
         self.category_canvas = self.Canvas(
-            vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, padx=40, pady=40,
+            vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, padx=5,
             yscrollincrement=self.CATEGORY_ROW_HEIGHT, borderwidth=0, highlightthickness=0)
         self.f_categories = self.Frame(
             self.category_canvas, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, sticky='ew')
@@ -220,9 +223,9 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
     def build_entry_frame(self):
         with self.set_master():
             self.entry_canvas = self.Canvas(
-                vertical_scrollbar=True, width=self.ENTRY_BOX_WIDTH, height=self.ENTRY_BOX_HEIGHT, borderwidth=0,
-                highlightthickness=0, yscrollincrement=self.EntryRow.ENTRY_ROW_HEIGHT,
-                padx=10, pady=10, bg=self.ENTRY_CANVAS_BG)
+                width=self.ENTRY_BOX_WIDTH, height=self.ENTRY_BOX_HEIGHT, borderwidth=0,
+                vertical_scrollbar=True, horizontal_scrollbar=True,
+                highlightthickness=0, yscrollincrement=self.EntryRow.ENTRY_ROW_HEIGHT, bg=self.ENTRY_CANVAS_BG, padx=5)
             self.f_entry_table = self.Frame(self.entry_canvas, width=self.ENTRY_BOX_WIDTH, sticky='ew')
             self.entry_canvas.create_window(0, 0, window=self.f_entry_table, anchor='nw')
             self.f_entry_table.bind(
@@ -258,6 +261,10 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         if not self.action_history.redo():
             self['bg'] = '#522'
             self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
+
+    def _flash_red_bg(self, widget):
+        widget['bg'] = '#522'
+        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
 
     def refresh_categories(self):
         """There are few enough categories that the widgets can be completely regenerated."""
@@ -1077,9 +1084,9 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
     def build_field_frame(self):
         with self.set_master():
             self.field_canvas = self.Canvas(
-                vertical_scrollbar=True, width=self.FIELD_BOX_WIDTH, height=self.FIELD_BOX_HEIGHT, borderwidth=10,
-                yscrollincrement=self.FIELD_ROW_HEIGHT, highlightthickness=0,
-                padx=40, pady=40, bg=self.FIELD_CANVAS_BG)
+                width=self.FIELD_BOX_WIDTH, height=self.FIELD_BOX_HEIGHT, yscrollincrement=self.FIELD_ROW_HEIGHT,
+                borderwidth=10, highlightthickness=0, vertical_scrollbar=True, horizontal_scrollbar=True,
+                bg=self.FIELD_CANVAS_BG, padx=5)
             self.f_field_table = self.Frame(frame=self.field_canvas, width=self.FIELD_BOX_WIDTH, sticky='ew')
             self.field_canvas.create_window(0, 0, window=self.f_field_table, anchor='nw')
             self.f_field_table.bind(
@@ -1127,6 +1134,8 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         super().select_entry_row_index(row_index, set_focus_to_text=set_focus_to_text,
                                        edit_if_already_selected=edit_if_already_selected, id_clicked=id_clicked)
         self.refresh_fields()
+        if row_index is not None and set_focus_to_text:
+            self.entry_rows[row_index].text_label.focus_set()
 
     def refresh_fields(self, reset_display=False):
         """Refresh all field information."""

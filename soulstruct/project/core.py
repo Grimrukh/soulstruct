@@ -13,6 +13,7 @@ from typing import Optional
 from soulstruct.core import SoulstructError
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
+from soulstruct.project.lighting import SoulstructLightingEditor
 from soulstruct.project.links import WindowLinker
 from soulstruct.project.maps import SoulstructMapEditor
 from soulstruct.project.params import SoulstructParamsEditor
@@ -44,7 +45,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     text_tab: Optional[SoulstructTextEditor]
     maps_tab: Optional[SoulstructMapEditor]
 
-    TAB_ORDER = ['maps', 'text', 'params', 'main']  # TODO
+    TAB_ORDER = ['maps', 'text', 'params', 'lighting', 'main']  # TODO
 
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
@@ -77,6 +78,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
             text=self.project.Text, linker=self.linker, no_grid=True)
         self.text_tab.pack()
+
+        self.lighting_tab = self.SmartFrame(
+            frame=tab_frames['lighting'], smart_frame_class=SoulstructLightingEditor,
+            lighting=self.project.Lighting, linker=self.linker, no_grid=True
+        )
+        self.lighting_tab.pack()
 
         self.build_main_tab(tab_frames['main'])
 
@@ -118,6 +125,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
                             command=self.project.import_maps)
                 self.Button(text='Export Project', bg='#623', width=30, font_size=15,
                             command=self.project.export_project)
+
+    def reload_data(self, name: str, data):
+        name = name.lower()
+        if name not in self.TAB_ORDER:
+            raise ValueError(f"Invalid data type name: {name}")
+        setattr(getattr(self, f'{name}_tab'), name.capitalize(), data)
 
     def destroy(self):
         """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
@@ -185,7 +198,6 @@ class SoulstructProject(object):
                 with (self.project_root / pickled).open('rb') as f:
                     setattr(self, attr, pickle.load(f))
             except FileNotFoundError:
-                self._window.withdraw()
                 if force_game_import or self.dialog(
                         title="Project Error",
                         message=f"Could not find saved {attr} data in project ('{pickled}').\n"
@@ -206,18 +218,22 @@ class SoulstructProject(object):
 
     def import_text(self):
         self.Text = DarkSoulsText(self.game_root / 'msg/ENGLISH')
+        self._window.reload_data('text', self.Text)
         self.pickle_in_project(self.Text, 'text.d1s')
 
     def import_params(self):
         self.Params = DarkSoulsGameParameters(self.game_root / 'param/GameParam/GameParam.parambnd')
+        self._window.reload_data('params', self.Params)
         self.pickle_in_project(self.Params, 'params.d1s')
 
     def import_lighting(self):
         self.Lighting = DarkSoulsLightingParameters(self.game_root / 'param/DrawParam')
+        self._window.reload_data('lighting', self.Lighting)
         self.pickle_in_project(self.Lighting, 'lighting.d1s')
 
     def import_maps(self):
         self.Maps = DarkSoulsMaps(self.game_root / 'map/MapStudio')
+        self._window.reload_data('maps', self.Maps)
         self.pickle_in_project(self.Maps, 'maps.d1s')
 
     def export_project(self, export_directory: str = None):
@@ -274,7 +290,6 @@ class SoulstructProject(object):
                         )
         except FileNotFoundError:
             # Create project config file.
-            self._window.withdraw()
             try:
                 self.game_root, self.game_name = self._get_game_root()
             except SoulstructProjectError as e:

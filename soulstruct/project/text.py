@@ -127,10 +127,6 @@ class SoulstructTextEditor(SoulstructBaseEditor):
 
         self.refresh_entries()
 
-    def _flash_red_bg(self, widget):
-        widget['bg'] = '#522'
-        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
-
     def find_text_id(self, _=None):
         try:
             id_to_find = int(self.find_text_id_entry.var.get())

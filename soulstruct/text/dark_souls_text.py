@@ -195,10 +195,12 @@ class DarkSoulsText(object):
                                  if _MSGBND_INDEX_TO_SS[key] == fmg_name + 'Patch'][0]
                 except IndexError:
                     # No Patch version of this FMG.
+                    print('-- No patch version of', fmg_name)
                     pass
                 else:
                     if bnd_index >= 100 and self._is_menu.get(fmg_name + 'Patch', False):
-                        self.menu_msgbnd.remove_entry(bnd_index)
+                        new_menu_msgbnd.remove_entry(bnd_index)
+                        print('Removed patch FMG:', fmg_name + 'Patch', bnd_index)
 
         for fmg_name, fmg_entries in self._data.items():
             word_wrap = description_word_wrap_limit if 'Descriptions' in fmg_name else None
@@ -214,15 +216,14 @@ class DarkSoulsText(object):
                             # Don't bother adding if empty.
                             fmg_entries_patch[index] = patch_text
                 if fmg_entries_patch:
-                    fmg = FMG(fmg_entries_patch)
-                    fmg.version = 1
+                    fmg = FMG(fmg_entries_patch, version='ds1')
                     fmg.unknown = 0
                     fmg_patch_data = FMG(fmg_entries_patch, version='ds1').pack(
                         word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
                     original_name = self._original_names[fmg_name + 'Patch']
                     patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + 'Patch'] else new_item_msgbnd
                     try:
-                        bnd_entry_id = [k for k, v in _MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
+                        bnd_entry_id = [k for k, v in _MSGBND_INDEX_TO_SS.items() if v == fmg_name + 'Patch'][0]
                     except IndexError:
                         raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
                     bnd_entry = patch_msgbnd.entries_by_id[bnd_entry_id]
@@ -253,7 +254,7 @@ class DarkSoulsText(object):
         self.item_msgbnd = new_item_msgbnd
         self.menu_msgbnd = new_menu_msgbnd
 
-        print('# Dark Souls text (MSGBND) saved successfully.')
+        print("# Dark Souls text ('item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]') saved successfully.")
 
     def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:

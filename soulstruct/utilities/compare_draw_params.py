@@ -1,5 +1,5 @@
 """Script that compares an arbitrary number of """
-from soulstruct.params.dark_souls_params import DRAW_PARAM_TABLES, DRAWPARAM_MAPS
+from soulstruct.params.dark_souls_params import DRAW_PARAM_TABLES, DRAW_PARAM_MAPS
 
 
 def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_matches=True, ignore_tables=(),
@@ -9,7 +9,7 @@ def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_mat
     if names is None:
         names = ('DrawParams1', 'DrawParams2')
 
-    for map_name in DRAWPARAM_MAPS:
+    for map_name in DRAW_PARAM_MAPS.keys():
         draw_blocks = [draw_params_one[map_name], draw_params_two[map_name]]
         map_printed = False
         for table_name in DRAW_PARAM_TABLES:
@@ -33,10 +33,10 @@ def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_mat
                 for dt in draw_tables:
                     if dt[slot] is None:
                         # Default to slot 0.
-                        active_params.append(dt[0].get_active_draw_params())
+                        active_params.append(dt[0].get_nonzero_entries())
                         slots.append(0)
                     else:
-                        active_params.append(dt[slot].get_active_draw_params())
+                        active_params.append(dt[slot].get_nonzero_entries())
                         slots.append(slot)
                 combined_entries = []
                 for ap in active_params:

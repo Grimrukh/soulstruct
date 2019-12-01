@@ -439,10 +439,10 @@ class ParamTable(object):
 
 class DrawParamTable(ParamTable):
 
-    def get_active_draw_params(self, polyg=False):
+    def get_nonzero_entries(self, ignore_polyg=True):
         """ Filters table entries and returns only those with a non-empty name that does not start with '0' (or,
         by default, 'PolyG', which I assume is cutscene-specific lighting). """
-        if polyg:
+        if ignore_polyg:
             return {index: entry for index, entry in self.entries.items()
                     if entry.name and not entry.name.startswith('0')}
         return {index: entry for index, entry in self.entries.items()

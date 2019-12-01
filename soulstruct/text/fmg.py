@@ -98,7 +98,7 @@ class FMG(object):
         if str(version).lower() in {'des', '0'}:
             self.version = v = 0
             self.big_endian = True
-        elif str(version).lower() in {'ds1', 'ptd', 'dsr', 'ds2', 'bb', '1'}:
+        elif str(version).lower() in {'ds1', 'ptd', 'ptde', 'dsr', 'ds2', 'bb', '1'}:
             self.version = v = 1
             self.big_endian = False
         elif str(version).lower() in {'ds3', '2'}:

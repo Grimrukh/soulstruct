@@ -74,18 +74,21 @@ class ParamDef(object):
         ('debug_display', 'i'),
         ('size', 'i'),
         ('description_offset', 'i'),  # offset of null-terminated string (unlimited length)
-        ('internal_type', '32j'),  # could be an enum (see list)
+        ('internal_type', '32j'),  # could be an enum name (see params.enums)
         ('name', '32j'),
         ('id', 'i'),  # TODO: what is this?
     )
 
-    def __init__(self, paramdef_source):
+    def __init__(self, paramdef_source, param_name=None):
 
         self.param_name = None
         self.fields = []
         self.fields_by_name = {}
 
         if isinstance(paramdef_source, list):
+            if param_name is None:
+                raise ValueError("`param_name` must be given to ParamDef if a list of fields is passed.")
+            self.param_name = param_name
             self.fields = paramdef_source
 
         elif isinstance(paramdef_source, bytes):

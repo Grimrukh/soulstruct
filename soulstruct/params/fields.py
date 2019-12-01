@@ -2,7 +2,7 @@ from functools import partial
 
 from .enums import *
 
-__all__ = ['GAME_PARAM_NICKNAMES', 'GAME_PARAM_INFO']
+__all__ = ['PARAM_NICKNAMES', 'GAME_PARAM_INFO']
 
 # Overrides for certain basic enums.
 ATK_PARAM_HIT_SOURCE = int
@@ -171,7 +171,7 @@ def _shop_item_id(shops_param_entry):
                 f"Item to be listed in shop/attunement menu (unknown item type {item_type}).")
 
 
-GAME_PARAM_NICKNAMES = {
+PARAM_NICKNAMES = {
     # Nicknames are per BND entry basename, not per internal param table name. Unused tables are commented out.
     'NpcThinkParam': 'AI',
     'EquipParamProtector': 'Armor',
@@ -212,7 +212,19 @@ GAME_PARAM_NICKNAMES = {
     'EquipParamWeapon': 'Weapons',
     'ReinforceParamWeapon': 'WeaponUpgrades',
 
-    # TODO: DrawParams?
+    'DofBank': 'DepthOfField',
+    'EnvLightTexBank': 'EnvLightTex',
+    'FogBank': 'Fog',
+    'LensFlareBank': 'LensFlares',
+    'LensFlareExBank': 'LensFlareSources',
+    'LightBank': 'AmbientLight',
+    'LightScatteringBank': 'ScatteredLight',
+    'LodBank': 'Lod',  # default_DrawParam only
+    'PointLightBank': 'PlayerLights',
+    'ShadowBank': 'Shadows',
+    'ToneCorrectBank': 'ToneCorrection',
+    'ToneMapBank': 'ToneMapping',
+    's_LightBank': 'DebugAmbientLight',
 }
 
 GAME_PARAM_INFO = {
@@ -4596,6 +4608,9 @@ GAME_PARAM_INFO = {
         'materialSetId': (
             'UpgradeMaterialOffset', True, int,
             "Value to be added to Upgrade Materials field in base weapon parameters."),
+        'pad[9]': (
+            'Pad1', False, '<Pad:9>',
+            "Null padding."),
         'reinforcementLevel': (
             'ReinforcementLevel', True, int,
             "Reinforcement level. Not sure where this is used; it could be used to calculate the final weapon ID (e.g. "
@@ -4797,5 +4812,462 @@ GAME_PARAM_INFO = {
         'pad[16]': (
             'Pad2', False, '<Pad:16>',
             "Null padding."),
-    }
+    },
+    # TODO
+    'FOG_BANK': {
+        'fogBeginZ': (
+            'FogStartDistance', True, int,
+            'Distance (m) at which fog begins.'),
+        'fogEndZ': (
+            'FogEndDistance', True, int,
+            'Distance (m) at which fog ends.'),
+        'degRotZ': (
+            'RotationZ', True, int,
+            'Rotation of fog around the Z axis.'),
+        'degRotW': (
+            'RotationW', True, int,
+            'Rotation of fog around the W axis.'),
+        'colR': (
+            'Red', True, int,
+            'Red color channel (0-255).'),
+        'colG': (
+            'Green', True, int,
+            'Green color channel (0-255).'),
+        'colB': (
+            'Blue', True, int,
+            'Blue color channel (0-255).'),
+        'colA': (
+            'Alpha', True, int,
+            'Alpha channel (0-255).'),
+    },
+    'LIGHT_BANK': {
+        'degRotX_0': (
+            'AmbientLight0RotationX', False, int,
+            'Rotation (X-axis) of ambient (parallle) light source 0.'),
+        'degRotY_0': (
+            'AmbientLight0RotationY', False, int,
+            'Rotation (Y-axis) of ambient (parallle) light source 0.'),
+        'colR_0': (
+            'AmbientLight0Red', False, int,
+            'Red channel (0-255) of ambient (parallle) light source 0.'),
+        'colG_0': (
+            'AmbientLight0Green', False, int,
+            'Green channel (0-255) of ambient (parallle) light source 0.'),
+        'colB_0': (
+            'AmbientLight0Blue', False, int,
+            'Blue channel (0-255) of ambient (parallle) light source 0.'),
+        'colA_0': (
+            'AmbientLight0Alpha', False, int,
+            'Alpha channel (0-255) of ambient (parallle) light source 0.'),
+        'degRotX_1': (
+            'AmbientLight1RotationX', False, int,
+            'Rotation (X-axis) of ambient (parallle) light source 1.'),
+        'degRotY_1': (
+            'AmbientLight1RotationY', False, int,
+            'Rotation (Y-axis) of ambient (parallle) light source 1.'),
+        'colR_1': (
+            'AmbientLight1Red', False, int,
+            'Red channel (0-255) of ambient (parallle) light source 1.'),
+        'colG_1': (
+            'AmbientLight1Green', False, int,
+            'Green channel (0-255) of ambient (parallle) light source 1.'),
+        'colB_1': (
+            'AmbientLight1Blue', False, int,
+            'Blue channel (0-255) of ambient (parallle) light source 1.'),
+        'colA_1': (
+            'AmbientLight1Alpha', False, int,
+            'Alpha channel (0-255) of ambient (parallle) light source 1.'),
+        'degRotX_2': (
+            'AmbientLight2RotationX', False, int,
+            'Rotation (X-axis) of ambient (parallle) light source 2.'),
+        'degRotY_2': (
+            'AmbientLight2RotationY', False, int,
+            'Rotation (Y-axis) of ambient (parallle) light source 2.'),
+        'colR_2': (
+            'AmbientLight2Red', False, int,
+            'Red channel (0-255) of ambient (parallle) light source 2.'),
+        'colG_2': (
+            'AmbientLight2Green', False, int,
+            'Green channel (0-255) of ambient (parallle) light source 2.'),
+        'colB_2': (
+            'AmbientLight2Blue', False, int,
+            'Blue channel (0-255) of ambient (parallle) light source 2.'),
+        'colA_2': (
+            'AmbientLight2Alpha', False, int,
+            'Alpha channel (0-255) of ambient (parallle) light source 2.'),
+        'colR_u': (
+            'TopDownLightRed', True, int,
+            'Red channel (0-255) of ambient light of upward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly upward (e.g. floors) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colG_u': (
+            'TopDownLightGreen', True, int,
+            'Green channel (0-255) of ambient light of upward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly upward (e.g. floors) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colB_u': (
+            'TopDownLightBlue', True, int,
+            'Blue channel (0-255) of ambient light of upward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly upward (e.g. floors) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colA_u': (
+            'TopDownLightAlpha', True, int,
+            'Alpha channel (0-255) of ambient light of upward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly upward (e.g. floors) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colR_d': (
+            'BottomUpLightRed', True, int,
+            'Red channel (0-255) of ambient light of downward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly downward (e.g. ceilings) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colG_d': (
+            'BottomUpLightGreen', True, int,
+            'Green channel (0-255) of ambient light of downward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly downward (e.g. ceilings) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colB_d': (
+            'BottomUpLightBlue', True, int,
+            'Blue channel (0-255) of ambient light of downward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly downward (e.g. ceilings) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'colA_d': (
+            'BottomUpLightAlpha', True, int,
+            'Alpha channel (0-255) of ambient light of downward-facing surfaces. This has the largest effect for '
+            'surfaces oriented exactly downward (e.g. ceilings) and decreases as a function of orientation until the '
+            'surface is oriented sideways (e.g. walls).'),
+        'degRotX_s': (
+            'SpecularAmbientLightRotationX', True, int,
+            'Rotation (X-axis) of specular ambient (parallel) light source.'),
+        'degRotY_s': (
+            'SpecularAmbientLightRotationY', True, int,
+            'Rotation (Y-axis) of specular ambient (parallel) light source.'),
+        'colR_s': (
+            'SpecularAmbientLightRed', True, int,
+            'Red channel (0-255) of specular ambient light source.'),
+        'colG_s': (
+            'SpecularAmbientLightGreen', True, int,
+            'Green channel (0-255) of specular ambient light source.'),
+        'colB_s': (
+            'SpecularAmbientLightBlue', True, int,
+            'Blue channel (0-255) of specular ambient light source.'),
+        'colA_s': (
+            'SpecularAmbientLightAlpha', True, int,
+            'Alpha channel (0-255) of specular ambient light source.'),
+        'envDif_colR': (
+            'DiffuseLightRed', True, int,
+            'Red channel (0-255) of base diffuse ambient light of surfaces.'),
+        'envDif_colG': (
+            'DiffuseLightGreen', True, int,
+            'Green channel (0-255) of base diffuse ambient light of surfaces.'),
+        'envDif_colB': (
+            'DiffuseLightBlue', True, int,
+            'Blue channel (0-255) of base diffuse ambient light of surfaces.'),
+        'envDif_colA': (
+            'DiffuseLightAlpha', True, int,
+            'Alpha channel (0-255) of base diffuse ambient light of surfaces.'),
+        'envSpc_colR': (
+            'SpecularLightRed', True, int,
+            'Red channel (0-255) of specular ambient light of surfaces.'),
+        'envSpc_colG': (
+            'SpecularLightGreen', True, int,
+            'Green channel (0-255) of specular ambient light of surfaces.'),
+        'envSpc_colB': (
+            'SpecularLightBlue', True, int,
+            'Blue channel (0-255) of specular ambient light of surfaces.'),
+        'envSpc_colA': (
+            'SpecularLightAlpha', True, int,
+            'Alpha channel (0-255) of specular ambient light of surfaces.'),
+        'envDif': (
+            'DiffuseLightTextureID', False, int,
+            'Changing this has drastic effects on the diffuse ambient light.'),
+        'envSpc_0': (
+            'SpecularLightTextureID0', False, int,
+            'Changing this has drastic effects on the specular ambient light.'),
+        'envSpc_1': (
+            'SpecularLightTextureID1', False, int,
+            'Changing this has drastic effects on the specular ambient light.'),
+        'envSpc_2': (
+            'SpecularLightTextureID2', False, int,
+            'Changing this has drastic effects on the specular ambient light.'),
+        'envSpc_3': (
+            'SpecularLightTextureID3', False, int,
+            'Changing this has drastic effects on the specular ambient light.'),
+        'pad[2]': (
+            'Pad1', False, '<Pad:2>',
+            'Null padding.'),
+    },
+    'LIGHT_SCATTERING_BANK': {
+        'sunRotX': (
+            'LightRotationX', True, int,
+            'Rotation (X-axis) of scattering light source.'),
+        'sunRotY': (
+            'LightRotationY', True, int,
+            'Rotation (Y-axis) of scattering light source.'),
+        'distanceMul': (
+            'DistanceMultiplier', True, int,
+            'Magnification (0-100) of scattering light source distance.'),
+        'sunR': (
+            'LightRed', True, int,
+            'Red channel (0-255) of scattering light source.'),
+        'sunG': (
+            'LightGreen', True, int,
+            'Green channel (0-255) of scattering light source.'),
+        'sunB': (
+            'LightBlue', True, int,
+            'Blue channel (0-255) of scattering light source.'),
+        'sunA': (
+            'LightAlpha', True, int,
+            'Alpha channel (0-255) of scattering light source.'),
+        'pad_0[2]': (
+            'Pad0', False, '<Pad:2>',
+            'Null padding.'),
+        'lsHGg': (
+            'ScatteringDirection', True, float,
+            'Coefficient of scattering direction, between -1 (backward) and 1 (forward).'),
+        'lsBetaRay': (
+            'RayleighCoefficient', True, float,
+            'Coefficient determining how much light is lost to scattering (e.g. simulating amount of atmosphere).'),
+        'lsBetaMie': (
+            'MieCoefficient', True, float,
+            'Coefficient determining how much light is scattered by larger particles (e.g. simulating dust/smoke).'),
+        'blendCoef': (
+            'ScatteringCoefficient', True, int,
+            'Coefficient determining the overall amount of scattering from 0 (no scattering) to 100 (max scattering).'),
+        'reflectanceR': (
+            'SurfaceReflectanceRed', True, int,
+            'Red channel (0-255) of the effect of the scattered light as it hits surfaces.'),
+        'reflectanceG': (
+            'SurfaceReflectanceGreen', True, int,
+            'Green channel (0-255) of the effect of the scattered light as it hits surfaces.'),
+        'reflectanceB': (
+            'SurfaceReflectanceBlue', True, int,
+            'Blue channel (0-255) of the effect of the scattered light as it hits surfaces.'),
+        'reflectanceA': (
+            'SurfaceReflectanceAlpha', True, int,
+            'Alpha channel (0-255) of the effect of the scattered light as it hits surfaces.'),
+        'pad_1[2]': (
+            'Pad1', False, '<Pad:2>',
+            'Null padding.'),
+    },
+    'POINT_LIGHT_BANK': {
+        'dwindleBegin': (
+            'FadeStartDistance', True, float,
+            "Distance at which player's point light begins to fade."),
+        'dwindleEnd': (
+            'FadeEndDistance', True, float,
+            "Distance at which player's point light finishes fading and disappears entirely."),
+        'colR': (
+            'PlayerLightRed', True, int,
+            'Red channel (0-255) of point light.'),
+        'colG': (
+            'PlayerLightGreen', True, int,
+            'Green channel (0-255) of point light.'),
+        'colB': (
+            'PlayerLightBlue', True, int,
+            'Blue channel (0-255) of point light.'),
+        'colA': (
+            'PlayerLightAlpha', True, int,
+            'Alpha channel (0-255) of point light.'),
+    },
+    'LENS_FLARE_BANK': {
+        'texId': (
+            'LensFlareTextureID', True, int,
+            "Texture ID of lens flare (texture name format is 'lensflare_XX'). -1 means disabled."),
+        'isFlare': (
+            'IsLensFlare', True, bool,
+            "Flare if enabled, or 'ghost' if disabled."),
+        'enableRoll': (
+            'EnableRotation', True, bool,
+            'Allows lens flare texture to rotate with camera.'),
+        'enableScale': (
+            'EnableScaling', True, bool,
+            'Allows lens flare texture to change scale with camera.'),
+        'locateDistRate': (
+            'PositionRatio', True, float,
+            'Relative position of lens flare between light source (0.0) and center of screen (1.0).'),
+        'texScale': (
+            'TextureScale', True, float,
+            'Base scaling of lens flare texture.'),
+        'colR': (
+            'TextureRed', True, int,
+            'Red channel (0-255) of lens flare texture.'),
+        'colG': (
+            'TextureGreen', True, int,
+            'Green channel (0-255) of lens flare texture.'),
+        'colB': (
+            'TextureBlue', True, int,
+            'Blue channel (0-255) of lens flare texture.'),
+        'colA': (
+            'TextureAlpha', True, int,
+            'Alpha channel (0-255) of lens flare texture.'),
+    },
+    'LENS_FLARE_EX_BANK': {
+        'lightDegRotX': (
+            'LensFlareSourceRotationX', True, int,
+            'Rotation (X-axis) of visible light source (e.g. sun) that causes lens flares.'),
+        'lightDegRotY': (
+            'LensFlareSourceRotationX', True, int,
+            'Rotation (Y-axis) of visible light source (e.g. sun) that causes lens flares.'),
+        'colR': (
+            'LensFlareSourceRed', True, int,
+            'Red channel (0-255) of visible light source (e.g. sun).'),
+        'colG': (
+            'LensFlareSourceGreen', True, int,
+            'Green channel (0-255) of visible light source (e.g. sun).'),
+        'colB': (
+            'LensFlareSourceBlue', True, int,
+            'Blue channel (0-255) of visible light source (e.g. sun).'),
+        'colA': (
+            'LensFlareSourceAlpha', True, int,
+            'Alpha channel (0-255) of visible light source (e.g. sun).'),
+        'lightDist': (
+            'LensFlareSourceDistance', True, float,
+            'Distance of visible light source (e.g. sun). Not sure about the units.'),
+    },
+    'DOF_BANK': {
+        'farDofBegin': (
+            'FarBlurStartDistance', True, float,
+            'Distance (m) at which far depth of field blur begins.'),
+        'farDofEnd': (
+            'FarBlurEndDistance', True, float,
+            'Distance (m) at which far depth of field blur ends (reaches maximum).'),
+        'farDofMul': (
+            'FarBlurMagnitude', True, int,
+            'Amount of far depth of field blur applied between the start and end distances.'),
+        'pad_0[3]': (
+            'Pad0', False, '<Pad:3>',
+            'Null padding.'),
+        'nearDofBegin': (
+            'NearBlurStartDistance', True, float,
+            'Distance (m) at which near depth of field blur begins (further away than end distance).'),
+        'nearDofEnd': (
+            'NearBlurEndDistance', True, float,
+            'Distance (m) at which near depth of field blur ends (reaches maximum) (closer than start distance).'),
+        'nearDofMul': (
+            'NearBlurMagnitude', True, int,
+            'Amount of near depth of field blur applied between start and end distances.'),
+        'pad_1[3]': (
+            'Pad1', False, '<Pad:3>',
+            'Null padding.'),
+        'dispersionSq': (
+            'BlurSquaredDispersion', True, float,
+            'Squared dispersion of depth of field blur (greater value means more blur).'),
+    },
+    'TONE_MAP_BANK': {
+        'bloomBegin': (
+            'NearBloomThreshold', True, int,
+            'Near light blooming begins when brightness exceeds this threshold.'),
+        'bloomMul': (
+            'NearBloomMultiplier', True, int,
+            'Near light blooming multiplier.'),
+        'bloomBeginFar': (
+            'FarBloomThreshold', True, int,
+            'Far light blooming begins when brightness exceeds this threshold.'),
+        'bloomMulFar': (
+            'FarBloomMultiplier', True, int,
+            'Far light blooming multiplier.'),
+        'bloomNearDist': (
+            'NearBloomEndDistance', True, float,
+            'Near bloom parameters apply up to this maximum distance.'),
+        'bloomFarDist': (
+            'FarBloomStartDistance', True, float,
+            'Far bloom parameters apply beyond this minimum distance.'),
+        'grayKeyValue': (
+            'OverallBrightness', True, float,
+            'Larger values make the screen brighter overall.'),
+        'minAdaptedLum': (
+            'MinimumAdaptationBrightness', True, float,
+            'Minimum brightness for tone adaptation. Smaller values mean that darker places will be adapted.'),
+        'maxAdapredLum': (
+            'MaximumAdaptationBrightness', True, float,
+            'Maximum brightness for tone adaptation. Larger values mean that brighter places will be adapted.'),
+        'adaptSpeed': (
+            'AdaptationSpeed', True, float,
+            'Tone adaptation speed.'),
+        'lightShaftBegin': (
+            'LightShaftThreshold', True, int,
+            'Light shafts will appear when brightness exceeds this threshold.'),
+        'pad_0[3]': (
+            'Pad0', True, '<Pad:3>',
+            'Null padding.'),
+        'lightShaftPower': (
+            'LightShaftMagnitude', True, float,
+            'Light shaft magnitude (0 means no light shafts).'),
+        'lightShaftAttenRate': (
+            'LightShaftAttenuationRate', True, float,
+            'Smaller values will shorten the light shafts more.'),
+    },
+    'TONE_CORRECT_BANK': {
+        'brightnessR': (
+            'BrightnessRed', True, float,
+            'Red channel (0-255) of tone correction brightness.'),
+        'brightnessG': (
+            'BrightnessGreen', True, float,
+            'Green channel (0-255) of tone correction brightness.'),
+        'brightnessB': (
+            'BrightnessBlue', True, float,
+            'Blue channel (0-255) of tone correction brightness.'),
+        'contrastR': (
+            'ContrastRed', True, float,
+            'Red channel (0-255) of tone correction contrast.'),
+        'contrastG': (
+            'ContrastGreen', True, float,
+            'Green channel (0-255) of tone correction contrast.'),
+        'contrastB': (
+            'ContrastBlue', True, float,
+            'Blue channel (0-255) of tone correction contrast.'),
+        'saturation': (
+            'SaturationCorrection', True, float,
+            'Color saturation correction value.'),
+        'hue': (
+            'HueCorrection', True, float,
+            'Color hue correction value.'),
+    },
+    'SHADOW_BANK': {
+        'lightDegRotX': (
+            'ShadowSourceRotationX', True, int,
+            'Rotation (X-axis) of shadow-casting light source.'),
+        'lightDegRotY': (
+            'ShadowSourceRotationY', True, int,
+            'Rotation (Y-axis) of shadow-casting light source.'),
+        'densityRatio': (
+            'ShadowDensityPercentage', True, int,
+            'Density of cast shadow (0-100), where 100 is the darkest.'),
+        'colR': (
+            'ShadowRed', True, int,
+            'Red channel (0-255) of cast shadow.'),
+        'colG': (
+            'ShadowGreen', True, int,
+            'Green channel (0-255) of cast shadow.'),
+        'colB': (
+            'ShadowBlue', True, int,
+            'Blue channel (0-255) of cast shadow.'),
+        'beginDist': (
+            'ShadowStartDistance', True, float,
+            "Minimum distance (m) at which shadoes are cast. A value of 0 means the camera's near-clip plane is used."),
+        "endDist": (
+            'ShadowEndDistance', True, float,
+            'Maximum distance (m) at which shadows are cast.'),
+        'calibulateFar': (
+            'HeadOnDistanceReduction', True, float,
+            'Shorten the shadow end distance by this distance when facing the light source direction.'),
+        'fadeBeginDist': (
+            'FadeStartDistance', True, float,
+            'Shadow starts fading at this distance.'),
+        'fadeDist': (
+            'FadeDistance', True, float,
+            'Distance (after start distance) until shadow is fully faded.'),
+        'persedDepthOffset': (
+            'DepthOffset', True, float,
+            "Depth offset for shadows. With negative values, self-shadows are less likely to occur."),
+        'ｇradFactor': (
+            'ShadowMapStrength', True, float,
+            'Negative values weaken the shadow map, positive values strengthen it.'),
+        'shadowVolumeDepth': (
+            'ShadowVolumeDepth', True, float,
+            'Increase this value to cast shadows on tall objects such as buildings.'),
+    },
+    # 'LENS_FLAG_EX_BANK': 'LensFlareExBank',  # unused
+    # 'ENV_LIGHT_TEX_BANK': 'EnvLightTexBank',  # unused
+    # 'LOD_BANK': 'LodBank',  # unused
 }

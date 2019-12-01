@@ -174,10 +174,11 @@ class BaseBND(object):
         else:
             bnd_path = Path(bnd_path)
             if self.dcx and bnd_path.suffix != '.dcx':
-                bnd_path = bnd_path.with_suffix('.dcx')
+                bnd_path = bnd_path.with_suffix(bnd_path.suffix + '.dcx')
+        bnd_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if bnd_path.is_file() and not bnd_path.with_suffix('.bak').is_file():
-            backup_path = str(bnd_path.with_suffix('.bak'))
+        if bnd_path.is_file() and not bnd_path.with_suffix(bnd_path.suffix + '.bak').is_file():
+            backup_path = str(bnd_path.with_suffix(bnd_path.suffix + '.bak'))
             copyfile(str(bnd_path), backup_path)
             print(f"# INFO: Created {repr(backup_path)} backup file.")
 
@@ -195,7 +196,7 @@ class BaseBND(object):
             raise TypeError("Writing unpacked BND directories is only supported when BND entries have path strings.")
         if directory is None:
             if self.bnd_path:
-                directory = self.bnd_path.with_suffix('.unpacked')
+                directory = self.bnd_path.with_suffix(self.bnd_path.suffix + '.unpacked')
             else:
                 raise ValueError("Cannot set automatic unpacked BND directory name.")
         else:

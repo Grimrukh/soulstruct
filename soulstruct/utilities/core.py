@@ -28,7 +28,7 @@ def find_dcx(file_path):
     if file_path.suffix == '.dcx':
         no_dcx, dcx = (file_path.parent / file_path.stem, file_path)
     else:
-        no_dcx, dcx = (file_path, file_path.with_suffix('.dcx'))
+        no_dcx, dcx = (file_path, file_path.with_suffix(file_path.suffix + '.dcx'))
     if Path(dcx).is_file():
         return dcx
     elif Path(no_dcx).is_file():
@@ -46,7 +46,7 @@ def camel_case_to_spaces(camel_string):
     Needs two passes to handle cases of singular capital letters and numbers (which need spaces on both sides).
     """
     camel_string = re.sub(r"([A-Z])([A-Z])([a-z])|([0-9]+)([A-Z])", r"\1\4 \2\3\5", camel_string)  # ABc -> A Bc
-    camel_string = re.sub(r"([a-z])([A-Z])|([A-z])([0-9]+)", r"\1\3 \2\4", camel_string)  # aB -> a B
+    camel_string = re.sub(r"([a-z])([A-Z])|([A-Za-z])([0-9]+)", r"\1\3 \2\4", camel_string)  # aB -> a B
     return camel_string
 
 
