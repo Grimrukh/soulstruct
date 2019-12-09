@@ -129,7 +129,7 @@ def get_esd_class(game_version: int, long: bool):
                 ('condition_pointers_offset', 'i'),
                 ('condition_pointers_count', 'i'),
                 ('esd_name_offset', 'i'),
-                ('esd_name_size', 'i'),
+                ('esd_name_length', 'i'),
                 ('unk_offset_1', 'i'),
                 ('unk_size_1', 'i', 0),
                 ('unk_offset_2', 'i'),
@@ -141,7 +141,7 @@ def get_esd_class(game_version: int, long: bool):
                 ('state_machine_headers_offset', 'i', 44),
                 ('state_machine_count', 'i'),
                 ('esd_name_offset', 'i'),
-                ('esd_name_size', 'i'),
+                ('esd_name_length', 'i'),
                 internal_header_end,
             )
             STATE_MACHINE_HEADER_STRUCT = BinaryStruct(

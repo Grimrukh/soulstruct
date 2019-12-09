@@ -60,6 +60,13 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.set_geometry()
 
     def build(self):
+        self.top_menu = self.Menu()
+        self.top_menu.add_command(label="Hello", command=lambda: print("Hello there."))
+        self.top_menu.add_separator()
+        self.top_menu.add_command(label="Quit", command=self.destroy)
+        self.toplevel.config(menu=self.top_menu)
+        # TODO: Pulldown.
+
         self.page_tabs = self.Notebook(row=0)
 
         tab_frames = {tab_name: self.Frame(frame=self.page_tabs) for tab_name in self.TAB_ORDER}

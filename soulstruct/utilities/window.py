@@ -150,9 +150,9 @@ def _embed_component(component_func):
 # noinspection PyPep8Naming
 class SmartFrame(tk.Frame):
     FONT_DEFAULTS = {
-        'label_font_type': 'Roboto',
+        'label_font_type': 'Segoe UI',
         'label_font_size': 12,
-        'heading_font_type': 'Roboto',
+        'heading_font_type': 'Segoe UI',
         'heading_font_size': 15,
     }
 
@@ -165,7 +165,7 @@ class SmartFrame(tk.Frame):
         'disabled_fg': '#888',
         'disabled_bg': '#444',
         'readonly_bg': '#444',
-        'entry_font': ('Roboto', 12),
+        'entry_font': ('Segoe UI', 12),
     }
 
     toplevel: Optional[tk.Toplevel]
@@ -302,12 +302,12 @@ class SmartFrame(tk.Frame):
     def set_notebook_style(self):
         self.style.theme_use('alt')
         self.style.configure(
-            'TNotebook', background=self.STYLE_DEFAULTS['bg'], tabmargins=[2, 10, 2, 0], tabposition=N)
+            'TNotebook', background=self.STYLE_DEFAULTS['bg'], tabmargins=[2, 10, 2, 0], tabposition='nw')
         self.style.configure(
-            'TNotebook.Tab', background='#555555', foreground='#FFFFFF', padding=[15, 1],
-            font=('Roboto', 16))
+            'TNotebook.Tab', background='#555', foreground='#FFF', padding=[15, 1],
+            font=('Segoe UI', 12))
         self.style.map(
-            'TNotebook.Tab', background=[('selected', '#446666')], expand=[('selected', [5, 3, 3, 0])])
+            'TNotebook.Tab', background=[('selected', '#777')], expand=[('selected', [5, 3, 3, 0])])
 
     def start_auto_rows(self, start=0):
         self.current_row = start

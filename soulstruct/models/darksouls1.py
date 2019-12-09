@@ -150,7 +150,7 @@ CHARACTER_MODELS = {
     5310: 'Gwynevere',
     5320: 'Gwyndolin',
     5330: 'Primordial Serpent',  # Frampt / Kaathe
-    5340: 'Fair Lady',  # ala Daughter of Chaos, ala Quelaag's Sister
+    5340: 'Fair Lady',  # aka Daughter of Chaos, aka Quelaag's Sister
     5350: 'Bell Gargoyle',
     5351: 'Lightning Gargoyle',
     5352: 'Bell Gargoyle (tail)',

@@ -60,10 +60,9 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         with self.set_master(auto_rows=0):
             with self.set_master(auto_columns=0):
                 map_display_names = [f'{k} ({v})' for k, v in DRAW_PARAM_MAPS.items()]
-                self.Label(text='Map Area:', font_size=15)
                 self.map_area_choice = self.Combobox(
                     values=map_display_names, font=20, on_select_function=self._on_map_area_choice, width=40,
-                    padx=10, pady=10).var
+                    padx=10, pady=10, label='Map Area:', label_font_size=15, label_position='left').var
                 self.slot_choice_label = self.Label(text='Slot:', font_size=15, padx=(30, 0))
                 self.slot_choice = self.Combobox(
                     values=('0', '1'), font=20, on_select_function=self._on_slot_choice, width=5, padx=10, pady=10)

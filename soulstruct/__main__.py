@@ -1,5 +1,11 @@
 """SOULSTRUCT
 
+TODO:
+    - ESD state indices are wrong (or at least printing to esd.py wrong).
+    - Change 'EVS' extension to 'emevd.py'.
+    - Improve GUI aesthetics.
+    - Show LuaInfo and LuaGnl and offer decompiling (has to be optional because of decompile errors).
+
 Command Line Usage:
 
 python -m soulstruct [source]

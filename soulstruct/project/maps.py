@@ -312,7 +312,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         with self.set_master(auto_rows=0):
             with self.set_master(auto_columns=0):
                 map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_IDS]
-                self.Label(text='Map:', font_size=20)
+                self.Label(text='Map:', font_size=15)
                 self.map_choice = self.Combobox(
                     values=map_display_names, font=20, on_select_function=self._on_map_choice, padx=10, pady=10).var
 
