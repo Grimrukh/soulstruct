@@ -1,5 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
+
 from soulstruct.bnd import BND, BaseBND
 from soulstruct.text.fmg import FMG
 
@@ -176,6 +177,19 @@ class DarkSoulsText(object):
         self._data[item_fmg + 'Summaries'][index] = ''
         self._data[item_fmg + 'Descriptions'][index] = ''
 
+    def update_msgbnd_entry(self, msgbnd, fmg_name, fmg_entries: dict,
+                            word_wrap_limit=None, pipe_to_newline=False, use_original_names=False):
+        fmg_patch_data = FMG(fmg_entries, version='ds1').pack(
+            word_wrap_limit=word_wrap_limit, pipe_to_newline=pipe_to_newline)
+        try:
+            bnd_entry_id = _MSGBND_INDEX_to_SS_NAME_[fmg_name]
+        except IndexError:
+            raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
+        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
+        bnd_entry.data = fmg_patch_data
+        if not use_original_names:
+            bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + '.fmg')
+
     def save(self, msg_directory=None, description_word_wrap_limit=None, separate_patch=False, use_original_names=False,
              pipe_to_newline=True, dcx=None):
         """Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods."""
@@ -187,18 +201,11 @@ class DarkSoulsText(object):
             dcx = self._dcx
 
         if not separate_patch:
-            # Patch indices will all be merged into main resources, so remove any Patch entries from the BND.
-            for fmg_name, fmg_entries in self._data.items():
-                try:
-                    bnd_index = _MSGBND_INDEX_to_SS_NAME_[fmg_name + 'Patch']
-                except KeyError:
-                    # No Patch version of this FMG.
-                    print('-- No patch version of', fmg_name)
-                    pass
-                else:
-                    if bnd_index >= 100 and self._is_menu.get(fmg_name + 'Patch', False):
-                        new_menu_msgbnd.remove_entry(bnd_index)
-                        print('Removed patch FMG:', fmg_name + 'Patch', bnd_index)
+            # Select Patch indices will be merged into non-Patch FMG, so remove those Patch entries from the BND now.
+            for patch_fmg_name in _CAN_MERGE_PATCH:
+                if patch_fmg_name in self._is_menu:
+                    bnd_index = _MSGBND_INDEX_to_SS_NAME_[patch_fmg_name]
+                    (new_menu_msgbnd if self._is_menu[patch_fmg_name] else new_item_msgbnd).remove_entry(bnd_index)
 
         for fmg_name, fmg_entries in self._data.items():
             word_wrap = description_word_wrap_limit if 'Descriptions' in fmg_name else None
@@ -211,38 +218,17 @@ class DarkSoulsText(object):
                     if (fmg_name, index) in self._is_patch:
                         patch_text = fmg_entries_main.pop(index)
                         if patch_text:
-                            # Don't bother adding if empty.
-                            fmg_entries_patch[index] = patch_text
+                            fmg_entries_patch[index] = patch_text  # Don't bother adding if empty.
                 if fmg_entries_patch:
-                    fmg = FMG(fmg_entries_patch, version='ds1')
-                    fmg.unknown = 0
-                    fmg_patch_data = FMG(fmg_entries_patch, version='ds1').pack(
-                        word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
-                    original_name = self._original_names[fmg_name + 'Patch']
                     patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + 'Patch'] else new_item_msgbnd
-                    try:
-                        bnd_entry_id = [k for k, v in _MSGBND_INDEX_to_SS_NAME_.items() if v == fmg_name + 'Patch'][0]
-                    except IndexError:
-                        raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-                    bnd_entry = patch_msgbnd.entries_by_id[bnd_entry_id]
-                    bnd_entry.data = fmg_patch_data
-                    if not use_original_names:
-                        # Note that original path is kept.
-                        bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + 'Patch.fmg')
+                    self.update_msgbnd_entry(
+                        patch_msgbnd, fmg_name + 'Patch', fmg_entries_patch, word_wrap_limit=word_wrap,
+                        pipe_to_newline=pipe_to_newline, use_original_names=use_original_names)
 
-            fmg_main_data = FMG(fmg_entries_main, version='ds1').pack(
-                word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
-            original_name = self._original_names[fmg_name]
-            msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
-            try:
-                bnd_entry_id = [k for k, v in _MSGBND_INDEX_to_SS_NAME_.items() if v == fmg_name][0]
-            except IndexError:
-                raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-            bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
-            bnd_entry.data = fmg_main_data
-            if not use_original_names:
-                # Note that original path is kept.
-                bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + '.fmg')
+            main_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
+            self.update_msgbnd_entry(
+                main_msgbnd, fmg_name, fmg_entries, word_wrap_limit=word_wrap,
+                pipe_to_newline=pipe_to_newline, use_original_names=use_original_names)
 
         # Write BNDs (to original directory by default).
         new_item_msgbnd.write(msg_directory / ('item.msgbnd' + ('.dcx' if dcx else '')))
@@ -363,6 +349,28 @@ class BiDict(dict):
         return super().__len__() // 2
 
 
+_CAN_MERGE_PATCH = {
+    "WeaponNamesPatch",
+    "WeaponSummariesPatch",
+    "WeaponDescriptionsPatch",
+    "ArmorNamesPatch",
+    "ArmorSummariesPatch",
+    "ArmorDescriptionsPatch",
+    "RingNamesPatch",
+    "RingSummariesPatch",
+    "RingDescriptionsPatch",
+    "GoodNamesPatch",
+    "GoodSummariesPatch",
+    "GoodDescriptionsPatch",
+    "SpellNamesPatch",
+    "SpellDescriptionsPatch",
+    "NPCNamesPatch",
+    "PlaceNamesPatch",
+}
+_DO_NOT_MERGE_PATCH = {"EventText", "MenuDialogs", "SystemMessages_Win32", "Conversations", "SoapstoneMessages",
+                       "MenuHelpSnippets", "KeyGuide", "MenuText_Other", "MenuText_Common"}
+
+
 _MSGBND_INDEX_to_SS_NAME_ = BiDict(
     (1, 'Conversations'),
     (2, 'SoapstoneMessages'),
@@ -398,8 +406,7 @@ _MSGBND_INDEX_to_SS_NAME_ = BiDict(
     (90, 'TextTagPlaceholders'),
     (91, 'DebugTags_Win32'),
     (92, 'SystemMessages_Win32'),
-    # Patch resources (all in menu.msgbnd in PTD; put with their main resources in DSR).
-    # TODO: Only merge equipment and spells; the game seems sensitive to the location of (e.g.) MenuText.
+    # Patch resources (all in menu.msgbnd in PTDE, but some in item.msgbnd in DSR).
     (100, 'GoodDescriptionsPatch'),
     (101, 'EventTextPatch'),
     (102, 'MenuDialogsPatch'),
