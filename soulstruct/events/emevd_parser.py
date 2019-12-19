@@ -3,6 +3,7 @@ from io import BytesIO
 import os
 import re
 import struct
+from pathlib import Path
 
 from soulstruct.dcx import DCX
 from soulstruct.enums.shared import RestartType
@@ -507,7 +508,8 @@ class BaseEMEVD(object):
                 print("WARNING: No strings found in EMEVD source.")
             self.events.update(OrderedDict(emevd_source))
 
-        elif isinstance(emevd_source, str):
+        elif isinstance(emevd_source, (str, Path)):
+            # emevd_source = Path(emevd_source)  # TODO
             self.map_name = os.path.splitext(emevd_source)[0]
 
             if emevd_source.endswith('.py') or emevd_source.endswith('.evs'):

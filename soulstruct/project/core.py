@@ -100,7 +100,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         top_menu = self.Menu()
 
         import_menu = self.Menu(tearoff=0)
-        import_menu.add_command(label="Import Everything", foreground='#DDF',
+        import_menu.add_command(label="Import Everything", foreground='#FFF',
                                 command=lambda: self.project.load_project(force_game_import=True))
         import_menu.add_separator()
         import_menu.add_command(label="Import Maps", foreground='#FFF', command=self.project.import_maps)
@@ -108,15 +108,38 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         import_menu.add_command(label="Import Lighting", foreground='#FFF', command=self.project.import_lighting)
         import_menu.add_command(label="Import Text", foreground='#FFF', command=self.project.import_text)
 
+        export_menu = self.Menu(tearoff=0)
+        export_menu.add_command(label="Export Everything", foreground='#FFF',
+                                command=self.project.export_project)
+        export_menu.add_separator()
+        # TODO: Not allowing timestamp export for individual types (seems fairly useless), so these don't work yet
+        #  until I implement the file browser.
+        export_menu.add_command(label="Export Maps", foreground='#FFF', command=self.project.export_maps)
+        export_menu.add_command(label="Export Params", foreground='#FFF', command=self.project.export_params)
+        export_menu.add_command(label="Export Lighting", foreground='#FFF', command=self.project.export_lighting)
+        export_menu.add_command(label="Export Text", foreground='#FFF', command=self.project.export_text)
+
+        export_to_game_menu = self.Menu(tearoff=0)
+        export_to_game_menu.add_command(label="Export Everything", foreground='#FFF',
+                                        command=self.project.export_project_to_game)
+        export_to_game_menu.add_separator()
+        export_to_game_menu.add_command(label="Export Maps", foreground='#FFF',
+                                        command=lambda: self.project.export_maps(self.project.game_root))
+        export_to_game_menu.add_command(label="Export Params", foreground='#FFF',
+                                        command=lambda: self.project.export_params(self.project.game_root))
+        export_to_game_menu.add_command(label="Export Lighting", foreground='#FFF',
+                                        command=lambda: self.project.export_lighting(self.project.game_root))
+        export_to_game_menu.add_command(label="Export Text", foreground='#FFF',
+                                        command=lambda: self.project.export_text(self.project.game_root))
+
         file_menu = self.Menu(tearoff=0)
         file_menu.add_command(label="Open Project", foreground='#FFF', command=lambda: print("Open"))
         file_menu.add_command(label="Save Project", foreground='#FFF', command=lambda: print("Save"))
         file_menu.add_command(label="Save Project As", foreground='#FFF', command=lambda: print("Save As"))
         file_menu.add_separator()
         file_menu.add_cascade(label="Import...", foreground='#FFF', menu=import_menu)
-        file_menu.add_command(label="Export Project", foreground='#FFF', command=self.project.export_project)
-        file_menu.add_command(label="Export Project to Game", foreground='#FFF',
-                              command=self.project.export_project_to_game)
+        file_menu.add_cascade(label="Export...", foreground='#FFF', menu=export_menu)
+        file_menu.add_cascade(label="Export to Game...", foreground='#FFF', menu=export_to_game_menu)
         file_menu.add_separator()
         file_menu.add_command(label="Quit", foreground='#FFF', command=self.destroy)  # TODO: confirm changes lost
         top_menu.add_cascade(label="File", menu=file_menu)
@@ -145,7 +168,6 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             - IMPORT ESD. Unpack and store in 'esdpy' subdirectory.
             - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
             - Make use of config.json project file. (Save directory, last times, etc.)
-
         """
         pass
 
@@ -153,7 +175,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         name = name.lower()
         if name not in self.TAB_ORDER:
             raise ValueError(f"Invalid data type name: {name}")
-        setattr(getattr(self, f'{name}_tab'), name.capitalize(), data)
+        tab = getattr(self, f'{name}_tab')
+        if tab is not None:
+            setattr(tab, name.capitalize(), data)
 
     def destroy(self):
         """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
@@ -259,7 +283,7 @@ class SoulstructProject(object):
         self._window.reload_data('maps', self.Maps)
         self.pickle_in_project(self.Maps, 'maps.d1s')
 
-    def export_project(self, export_directory: str = None):
+    def export_project(self, export_directory=None):
         """Writes all data substructures in game formats in the chosen directory, under the same folders they
         would be in the live game directory.
 
@@ -267,23 +291,34 @@ class SoulstructProject(object):
         """
         if export_directory is None:
             export_directory = self.project_root / 'export' / self._get_timestamp(for_path=True)
+        self.export_maps(export_directory)
+        self.export_params(export_directory)
+        self.export_text(export_directory)
+        self.export_lighting(export_directory)
 
+    def export_maps(self, export_directory: Path):
+        export_directory = Path(export_directory)
         maps_path = export_directory / 'map/MapStudio/'
         maps_path.mkdir(parents=True, exist_ok=True)
         self.Maps.save(maps_path)
 
+    def export_params(self, export_directory: Path):
+        export_directory = Path(export_directory)
         params_path = export_directory / 'param/GameParam/GameParam.parambnd'  # DCX compression handled by BND
         params_path.parent.mkdir(parents=True, exist_ok=True)
         self.Params.save(params_path)
 
+    def export_text(self, export_directory: Path):
+        export_directory = Path(export_directory)
         text_path = export_directory / 'msg/ENGLISH/'
         text_path.mkdir(parents=True, exist_ok=True)
         self.Text.save(text_path)
 
-        # TODO: can't save DrawParams yet.
-        # lighting_path = os.path.join(export_directory, 'param/DrawParam/')
-        # os.makedirs(lighting_path, exist_ok=True)
-        # self.Lighting.write(lighting_path)
+    def export_lighting(self, export_directory: Path):
+        export_directory = Path(export_directory)
+        lighting_path = export_directory / 'param/DrawParam/'
+        lighting_path.mkdir(parents=True, exist_ok=True)
+        self.Lighting.save(lighting_path)
 
     def export_project_to_game(self):
         """Writes all data substructures in game formats in the live game directory, ready for play."""

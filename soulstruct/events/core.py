@@ -4,12 +4,12 @@ from functools import wraps
 
 
 class EnumStringError(Exception):
-    """ Indicates that a value expected to be found in an enum was a string, suggesting it is a placeholder arg. """
+    """Indicates that a value expected to be found in an enum was a string, suggesting it is a placeholder arg."""
     pass
 
 
 class InstructionNotFoundError(Exception):
-    """ Indicates that an instruction was not found in some code segment. """
+    """Indicates that an instruction was not found in some code segment."""
 
 
 class NoSkipOrTerminateError(Exception):
@@ -39,7 +39,7 @@ def set_instruction_arg_types(arg_type_dict):
 
 
 def numeric_instruction(instruction_info, *args, arg_types=None):
-    """ Instruction info should be (class, index, [defaults]), with defaults assumed all zeroes if absent. """
+    """Instruction info should be (class, index, [defaults]), with defaults assumed all zeroes if absent."""
     global INSTRUCTION_ARG_TYPES
     event_args = []
     arg_loads = []
@@ -68,7 +68,7 @@ def numeric_instruction(instruction_info, *args, arg_types=None):
 
 
 def header(event_id, restart_type=0):
-    return ['{}, {}'.format(event_id, restart_type)]
+    return [f"{event_id}, {restart_type}"]
 
 
 def define_args(arg_types):
@@ -81,7 +81,7 @@ def define_args(arg_types):
         elif c in 'Iif':
             c_size = 4
         else:
-            raise ValueError('Invalid character {} in arg_types.'.format(c))
+            raise ValueError(f"Invalid character {c} in arg_types.")
         args.append((get_write_offset(arg_types, i), c_size))
     return args
 
@@ -89,7 +89,7 @@ def define_args(arg_types):
 def load_arg(write_from_offset, read_from_offset, bytes_length):
     """ Loads bytes from event initialization arguments (see 0[00]) into the instruction immediately above.
     Reading starts at read_from_offset and writing starts at write_from_offset, and bytes_length bytes are written. """
-    return ['    ^({} <- {}, {})'.format(write_from_offset, read_from_offset, bytes_length)]
+    return [f"    ^({write_from_offset} <- {read_from_offset}, {bytes_length})"]
 
 
 def get_write_offset(event_format, arg_index):

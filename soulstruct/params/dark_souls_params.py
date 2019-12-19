@@ -104,11 +104,10 @@ class DarkSoulsGameParameters(object):
         if auto_pickle:
             self.pickle()
         self._game_param_bnd.write(game_param_bnd_path)
+        print('# INFO: --------> Dark Souls game parameters (GameParam) saved successfully.')
         if not self._reload_warning:
-            print('# Dark Souls game parameters (GameParam) saved successfully. (Remember to reload your game.)')
+            print('# INFO: --------> Remember to reload your game to see changes.')
             self._reload_warning = True
-        else:
-            print('# Dark Souls game parameters (GameParam) saved successfully.')
 
     def pickle(self, game_param_pickle_path=None):
         """Save the entire DarkSoulsGameParameters to a pickled file, which will be faster to load in future."""
@@ -322,12 +321,10 @@ class DarkSoulsLightingParameters(object):
         if not draw_param_directory:
             draw_param_directory = self._draw_param_directory
         draw_param_directory = Path(draw_param_directory)
-
         for map_name, map_draw_param in self._data.items():
             bnd_file_name = self._bnd_file_names[map_name]
             map_draw_param.save(draw_param_directory / bnd_file_name)
+        print('# INFO: --------> Dark Souls lighting parameters (DrawParam) saved successfully.')
         if not self._reload_warning_given:
-            print('# Dark Souls lighting parameters (DrawParam) saved successfully. (Remember to reload your game.)')
+            print('# INFO: Remember to reload your game to see changes.')
             self._reload_warning_given = True
-        else:
-            print('# Dark Souls lighting parameters (DrawParam) saved successfully.')

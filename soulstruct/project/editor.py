@@ -159,7 +159,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
         def _get_color(self):
             """Inspects entry text/state and assembles a tuple of 'bg' color values."""
-            base_bg = 222  # dark grey
+            base_bg = int(self.STYLE_DEFAULTS['bg'].lstrip('#'))  # dark grey
             if self._entry_text is not None:
                 if not self._entry_text:
                     base_bg += 200  # entry text is empty (red)
@@ -213,12 +213,12 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
     def build_previous_range_button(self, **kwargs):
         self.previous_range_button = self.Button(
-            text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#722', width=30,
+            text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#111', width=30,
             command=self._go_to_previous_entry_range, padx=10, pady=10, **kwargs)
 
     def build_next_range_button(self, **kwargs):
         self.next_range_button = self.Button(
-            text=f"Next {self.ENTRY_RANGE_SIZE}", bg='#722', width=30,
+            text=f"Next {self.ENTRY_RANGE_SIZE}", bg='#111', width=30,
             command=self._go_to_next_entry_range, padx=10, pady=10, **kwargs)
 
     def build_entry_frame(self):
@@ -285,7 +285,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                     bg=self.CATEGORY_UNSELECTED_BG)
                 label_text = camel_case_to_spaces(category).replace('_', ': ')
                 label = self.Label(text=label_text, sticky='w', row=row, fg=self._get_category_text_fg(category),
-                                   bg=self.CATEGORY_UNSELECTED_BG, font_size=10)
+                                   bg=self.CATEGORY_UNSELECTED_BG, padx=1, font_size=10)
                 for widget in {label, box}:
                     bind_events(widget, {
                         "<Button-1>": lambda e, c=category: self.select_category(c),
@@ -530,11 +530,12 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             text = self.get_entry_text(entry_id)  # Copies name of origin entry by default.
         self._add_entry(entry_id=entry_id + offset, text=text)
 
-    def delete_entry(self, entry_index, category=None):
+    def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         self._cancel_entry_text_edit()
-        entry_id = self.get_entry_id(entry_index)
-        deleted_text = self.get_category_dict(category=category).pop(entry_id)
+        entry_id = self.get_entry_id(row_index)
+        deleted_entry = self.get_category_dict(category=category).pop(entry_id)
+        print(deleted_entry)
         self.refresh_entries()
 
         # TODO
@@ -545,7 +546,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         #     )
         # self.unsaved_changes.add((self.active_category, text_id, 'delete'))
 
-        return deleted_text  # TODO: or return False?
+        return deleted_entry  # TODO: or return False?
 
     # TODO
     # def bulk_action(self, *category_id_text_action_tuples, jump_to_category, jump_to_text_id, from_history=False):
@@ -998,12 +999,13 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         def editable(self):
             return self.active_value_widget is self.value_label
 
-        def confirm_edit(self, new_text, field_links=None):
+        def confirm_edit(self, new_text):
             if not self.editable:
                 raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
 
             if isinstance(self.field_type, str):
                 new_value = int(new_text)
+                field_links = self.master.get_field_links(self.field_type, new_value)
                 if len(field_links) > 1:
                     new_text += '    {AMBIGUOUS}'
                 elif field_links and field_links[0].name is None:
@@ -1044,7 +1046,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
         def _get_color(self):
             """Inspects field name/data and returns an RGB string."""
-            base_bg = 222
+            base_bg = int(self.STYLE_DEFAULTS['bg'].lstrip('#'))  # dark grey
             if self.link_missing:
                 base_bg += 100
             if self._active:

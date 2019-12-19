@@ -1,14 +1,14 @@
 import copy
-import shutil
+import os
 from io import BytesIO, BufferedReader
 from pathlib import Path
-from typing import List
+from typing import List, Iterator
 
 from soulstruct.maps.models import MSBEntry
 from soulstruct.maps.models import MSBModel, MSB_MODEL_TYPE
-from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE
-from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE
-from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE
+from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE, BaseMSBEvent
+from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE, BaseMSBRegion
+from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE, BaseMSBPart
 
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
@@ -207,12 +207,16 @@ class MSBEntryList(object):
         return self.get_entry_names(entry_type).index(entry_name_or_index)
 
     def get_entry_global_index(self, entry_name_or_local_index, entry_type=None):
-        """Get global index of entry with given name."""
+        """Get global index of entry with given name or index. If an index past the length of the given type sub-list
+        is given, `None` is returned, which should be handled appropriately."""
         if isinstance(entry_name_or_local_index, int):
             if entry_type is None:
                 raise ValueError("Cannot get global entry index from local index without specifying `entry_type`.")
             entry_type = self.resolve_entry_type(entry_type)
-            entry_name = self.get_entry_names(entry_type).index(entry_name_or_local_index)
+            entry_type_names = self.get_entry_names(entry_type)
+            if entry_name_or_local_index >= len(entry_type_names):
+                return None
+            entry_name = entry_type_names[entry_name_or_local_index]
         else:
             entry_name = entry_name_or_local_index
         return self.get_entry_names().index(entry_name)
@@ -235,6 +239,10 @@ class MSBEntryList(object):
     def add_entry(self, global_index, entry):
         """Add entry at desired global index."""
         self._entries.insert(global_index, entry)
+
+    def delete_entry(self, global_index):
+        """Delete (and return) entry at desired global index."""
+        return self._entries.pop(global_index)
 
     def duplicate_entry(self, entry_type, local_index, insert_below_original=False):
         source_entry = self.get_entries(entry_type)[local_index]
@@ -299,6 +307,10 @@ class MSBModelList(MSBEntryList):
                               instance_count=part_instance_counts.get(entry.name, 0))
             type_indices[entry.ENTRY_TYPE] += 1
 
+    def __iter__(self) -> Iterator[MSBModel]:
+        """Iterate over all entries."""
+        return iter(self._entries)
+
 
 class MSBEventList(MSBEntryList):
     ENTRY_LIST_NAME = 'Events'
@@ -333,6 +345,10 @@ class MSBEventList(MSBEntryList):
                               region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.ENTRY_TYPE] += 1
 
+    def __iter__(self) -> Iterator[BaseMSBEvent]:
+        """Iterate over all entries."""
+        return iter(self._entries)
+
 
 class MSBRegionList(MSBEntryList):
     ENTRY_LIST_NAME = 'Regions'
@@ -353,13 +369,17 @@ class MSBRegionList(MSBEntryList):
         for i, entry in enumerate(self._entries):
             entry.set_indices(region_index=i)
 
+    def __iter__(self) -> Iterator[BaseMSBRegion]:
+        """Iterate over all entries."""
+        return iter(self._entries)
+
 
 class MSBPartList(MSBEntryList):
     ENTRY_LIST_NAME = 'Parts'
     ENTRY_CLASS = staticmethod(MSBPart)
     ENTRY_TYPE_ENUM = MSB_PART_TYPE
 
-    _entries: List[MSBPart]
+    _entries: List[BaseMSBPart]
 
     MapPieces: list
     Objects: list
@@ -371,11 +391,11 @@ class MSBPartList(MSBEntryList):
     UnusedCharacters: list
     MapLoadTriggers: list
 
-    def set_names(self, model_names, region_names, part_names):
+    def set_names(self, model_names, region_names, part_names, collision_names):
         for entry in self._entries:
-            entry.set_names(model_names, region_names, part_names)
+            entry.set_names(model_names, region_names, part_names, collision_names)
 
-    def set_indices(self, model_indices, region_indices, part_indices):
+    def set_indices(self, model_indices, region_indices, part_indices, local_collision_indices):
         """Local type-specific index only.
 
         Events and other Parts may point to Parts by global entry index, but it seems the local index still matters, as
@@ -383,11 +403,14 @@ class MSBPartList(MSBEntryList):
         of Wulf's MSB Editor. Either way, this method should ensure the global and local indices are consistent.
 
         Note that cutscene files (remo) access Parts by index as well.
+
+        `local_collision_indices` are needed for Map Load Triggers. No other MSB entry type requires local indices.
         """
         type_indices = {}
         for entry in self._entries:
             entry.set_indices(part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                              model_indices=model_indices, region_indices=region_indices, part_indices=part_indices)
+                              model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
+                              local_collision_indices=local_collision_indices)
             type_indices[entry.ENTRY_TYPE] += 1
 
     def get_instance_counts(self):
@@ -397,6 +420,10 @@ class MSBPartList(MSBEntryList):
             instance_counts.setdefault(entry.model_name, 0)
             instance_counts[entry.model_name] += 1
         return instance_counts
+
+    def __iter__(self) -> Iterator[BaseMSBPart]:
+        """Iterate over all entries."""
+        return iter(self._entries)
 
 
 # Set up shortcut attributes to sorted entry type lists (e.g. `MSBPartList.Characters`).
@@ -466,21 +493,26 @@ class MSB(object):
         model_names = self.models.set_and_get_unique_names()
         region_names = self.regions.set_and_get_unique_names()
         part_names = self.parts.set_and_get_unique_names()
+        collision_names = self.parts.get_entry_names(MSB_PART_TYPE.Collision)
 
         self.events.set_names(region_names=region_names, part_names=part_names)
-        self.parts.set_names(model_names=model_names, region_names=region_names, part_names=part_names)
+        self.parts.set_names(model_names=model_names, region_names=region_names, part_names=part_names,
+                             collision_names=collision_names)
 
     def pack(self):
         """Constructs {name: id} dictionaries, then passes them to pack() methods as required by each."""
         model_indices = self.models.get_indices()
         region_indices = self.regions.get_indices()
         part_indices = self.parts.get_indices()
+        local_collision_indices = {name: i for i, name in enumerate(
+            self.parts.get_entry_names(MSB_PART_TYPE.Collision))}
 
         # Set entry indices (both self and linked) and other auto-detected fields.
         self.models.set_indices(part_instance_counts=self.parts.get_instance_counts())
         self.events.set_indices(region_indices=region_indices, part_indices=part_indices)
         self.regions.set_indices()
-        self.parts.set_indices(model_indices=model_indices, region_indices=region_indices, part_indices=part_indices)
+        self.parts.set_indices(model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
+                               local_collision_indices=local_collision_indices)
 
         offset = 0
         packed_models = self.models.pack(start_offset=offset)
@@ -498,15 +530,23 @@ class MSB(object):
             if self.msb_path is None:
                 raise ValueError("MSB path cannot be automatically determined from instance source.")
             msb_path = self.msb_path
-        elif isinstance(msb_path, str):
+        if isinstance(msb_path, str):
             msb_path = Path(msb_path)
 
-        if create_bak and msb_path.is_file() and not (msb_path + '.bak').is_file():
-            print(f"# Backup of file {repr(msb_path)} does not exist. Creating now...")
-            shutil.copy(str(msb_path), str(msb_path + '.bak'))
+        if create_bak and msb_path.is_file() and not (msb_path.with_suffix(msb_path.suffix + '.bak')).is_file():
+            print(f"# INFO: Created {repr(str(msb_path))} backup file.")
+            os.rename(str(msb_path), str(msb_path) + '.bak')
 
         with msb_path.open('wb') as f:
             f.write(self.pack())
+
+    def translate_all(self, translate):
+        """Offset translations of all regions and parts by given input (which can be anything that can be added to a
+        Vector)."""
+        for p in self.parts:
+            p.translate += translate
+        for r in self.regions:
+            r.translate += translate
 
     # TODO: pickle/load
 

@@ -83,6 +83,57 @@ class BaseMSBPart(MSBEntry):
         'display_groups': (
             'Display Groups', True, list,
             "Display groups of part. These are not yet fully understood, but they determine when the part appears."),
+        'ambient_light_id': (
+            'Ambient Light ID', True, int,  # TODO: Link to Lighting.
+            "ID of Ambient Light parameter to use in this map's lighting parameters (DrawParam)."),
+        'fog_id': (
+            'Fog ID', True, int,
+            "ID of Fog parameter to use in this map's lighting parameters (DrawParam)."),
+        'scattered_light_id': (
+            'Scattered Light ID', True, int,
+            "ID of Scattered Light parameter to use in this map's lighting parameters (DrawParam)."),
+        'lens_flare_id': (
+            'Lens Flare ID', True, int,
+            "ID of Lens Flare parameter (both types) to use in this map's lighting parameters (DrawParam)."),
+        'shadow_id': (
+            'Shadow ID', True, int,
+            "ID of Shadow parameter to use in this map's lighting parameters (DrawParam)."),
+        'dof_id': (
+            'DoF ID', True, int,
+            "ID of Depth of Field (DoF) ID parameter to use in this map's lighting parameters (DrawParam)."),
+        'tone_map_id': (
+            'Tone Map ID', True, int,
+            "ID of Tone Map parameter to use in this map's lighting parameters (DrawParam)."),
+        'point_light_id': (
+            'Player Light ID', True, int,
+            "ID of Player Light parameter (point light) to use in this map's lighting parameters (DrawParam)."),
+        'tone_correct_id': (
+            'Tone Correction ID', True, int,
+            "ID of Tone Correction parameter to use in this map's lighting parameters (DrawParam)."),
+        'lod_param_id': (
+            'LoD Param ID', False, int,
+            "ID of Level of Detail (LoD) parameter to use in this map's lighting parameters (DrawParam)."),
+        'is_shadow_source': (
+            'Can Cast Shadow', True, bool,
+            "If True, this entity will cast dynamic shadows."),
+        'is_shadow_destination': (
+            'Can Receive Shadow', True, bool,
+            "If True, this entity can have dynamic shadows cast onto it."),
+        'is_shadow_only': (
+            'Cast Shadow Only', True, bool,
+            "If True, this entity only casts shadows."),
+        'draw_by_reflect_cam': (
+            'Is Reflected', True, bool,
+            "If True, this entity will be reflected in water, etc."),
+        'draw_only_reflect_cam': (
+            'Is Only Reflected', True, bool,
+            "If True, this entity will only be drawn in reflections in water, etc."),
+        'use_depth_bias_float': (
+            'Use Depth Bias Float', True, bool,
+            "Unknown."),
+        'disable_point_light_effect': (
+            'Disable Point Light Effect', True, bool,
+            "If True, this entity will not have a point light (I think)."),
     }
 
     ENTRY_TYPE = None
@@ -228,11 +279,11 @@ class BaseMSBPart(MSBEntry):
     def pack_type_data(self):
         raise NotImplementedError
 
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices):
+    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
         self._part_type_index = part_type_index
         self._model_index = model_indices[self.model_name] if self.model_name else -1
 
-    def set_names(self, model_names, region_names, part_names):
+    def set_names(self, model_names, region_names, part_names, collision_names):
         self.model_name = model_names[self._model_index]
 
     @staticmethod
@@ -334,12 +385,12 @@ class MSBObject(BaseMSBPart):
             unk_x10_x14=self.unk_x10_x14,
         )
 
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices):
-        super().set_indices(part_type_index, model_indices, region_indices, part_indices)
+    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
+        super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
         self._collision_index = part_indices[self.collision_name] if self.collision_name else -1
 
-    def set_names(self, model_names, region_names, part_names):
-        super().set_names(model_names, region_names, part_names)
+    def set_names(self, model_names, region_names, part_names, collision_names):
+        super().set_names(model_names, region_names, part_names, collision_names)
         self.collision_name = part_names[self._collision_index] if self._collision_index != -1 else None
 
 
@@ -437,13 +488,13 @@ class MSBCharacter(BaseMSBPart):
             unk_x3c_x40=self.unk_x3c_x40,
         )
 
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices):
-        super().set_indices(part_type_index, model_indices, region_indices, part_indices)
+    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
+        super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
         self._collision_index = part_indices[self.collision_name] if self.collision_name else -1
         self._patrol_point_indices = [region_indices[n] if n else -1 for n in self.patrol_point_names]
 
-    def set_names(self, model_names, region_names, part_names):
-        super().set_names(model_names, region_names, part_names)
+    def set_names(self, model_names, region_names, part_names, collision_names):
+        super().set_names(model_names, region_names, part_names, collision_names)
         self.collision_name = part_names[self._collision_index] if self._collision_index != -1 else None
         self.patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
 
@@ -709,19 +760,19 @@ class MSBMapLoadTrigger(BaseMSBPart):
     """Links to an MSBMapPiece entry and causes another map to load when the player stands on that collision."""
 
     PART_MAP_LOAD_TRIGGER_STRUCT = (
-        ('map_piece_index', 'i'),
+        ('collision_index', 'i'),
         ('map_id', '4b'),
         '8x',
     )
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', True, '<Maps:Models>',
-            "Name of model to use for this map load trigger (?)."),
+            'Collision Model Name', True, '<Maps:Models:Collisions>',
+            "Name of collision model to use for this map load trigger."),
         **BaseMSBPart.FIELD_INFO,
-        'map_piece_name': (
-            'Map Piece', True, '<Maps:Parts:MapPieces>',
-            "Map Piece that triggers this map load."),
+        'collision_name': (
+            'Collision Part Name', True, '<Maps:Parts:Collisions>',
+            "Collision part that triggers this map load."),
         'map_id': (
             'Map ID', True, list,
             "Parts of map name this will trigger."),  # TODO: Combobox of maps.
@@ -730,30 +781,30 @@ class MSBMapLoadTrigger(BaseMSBPart):
     ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
 
     def __init__(self, msb_part_source):
-        self.map_piece_name = None
-        self._map_piece_index = None
+        self.collision_name = None
+        self._collision_index = None
         self.map_id = None
         super().__init__(msb_part_source)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).unpack(msb_buffer)
-        self.map_piece_name = None
-        self._map_piece_index = data.map_piece_index
+        self.collision_name = None
+        self._collision_index = data.collision_index
         self.map_id = data.map_id  # TODO: Convert to a GameMap instance.
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).pack(
-            map_piece_index=self._map_piece_index,
+            collision_index=self._collision_index,
             map_id=self.map_id,
         )
 
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices):
-        super().set_indices(part_type_index, model_indices, region_indices, part_indices)
-        self._map_piece_index = part_indices[self.map_piece_name] if self.map_piece_name else -1
+    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
+        super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
+        self._collision_index = local_collision_indices[self.collision_name] if self.collision_name else -1
 
-    def set_names(self, model_names, region_names, part_names):
-        super().set_names(model_names, region_names, part_names)
-        self.map_piece_name = part_names[self._map_piece_index] if self._map_piece_index != -1 else None
+    def set_names(self, model_names, region_names, part_names, collision_names):
+        super().set_names(model_names, region_names, part_names, collision_names)
+        self.collision_name = collision_names[self._collision_index] if self._collision_index != -1 else None
 
 
 MSB_PART_TYPE_CLASSES = {

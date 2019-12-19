@@ -238,7 +238,7 @@ class DarkSoulsText(object):
         self.item_msgbnd = new_item_msgbnd
         self.menu_msgbnd = new_menu_msgbnd
 
-        print("# Dark Souls text ('item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]') saved successfully.")
+        print("# INFO: --------> Dark Souls text ('item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]') saved successfully.")
 
     def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:

@@ -4743,8 +4743,8 @@ GAME_PARAM_INFO = {
             'InitialVisualEffect', True, '<VisualEffect>',
             "One-off visual effect when special effect begins. -1 is no effect."),
         'initSeId': (
-            'InitialSoundEffect', True, '<Sound.SFX>',
-            "One-off sound effect when special effect begins. -1 is no effect."),
+            'InitialSoundEffect', False, '<Sound.SFX>',
+            "One-off sound effect when special effect begins. -1 is no effect. (Does not appear to work.)"),
         'initDmyId': (
             'InitialModelPoint', True, int,
             "Model point where initial effect is centered. -1 is model root."),
@@ -4752,8 +4752,8 @@ GAME_PARAM_INFO = {
             'FinishVisualEffect', True, '<VisualEffect>',
             "One-off visual effect when special effect ends. -1 is no effect."),
         'finishSeId': (
-            'FinishSoundEffect', True, '<Sound.SFX>',
-            "One-off sound effect when special effect ends. -1 is no effect."),
+            'FinishSoundEffect', False, '<Sound.SFX>',
+            "One-off sound effect when special effect ends. -1 is no effect. (Does not appear to work.)"),
         'finishDmyId': (
             'FinishModelPoint', True, int,
             "Model point where finish effect is centered. -1 is model root."),

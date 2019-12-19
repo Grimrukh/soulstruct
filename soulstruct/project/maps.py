@@ -264,6 +264,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
         """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
+        master: SoulstructMapEditor
+
         ENTRY_ID_WIDTH = 5
         EDIT_ENTRY_ID = False
 
@@ -273,7 +275,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         def update_entry(self, entry_index: int, entry_text: str):
             self.entry_id = entry_index
             try:
-                entity_id = self.master.get_category_dict()[entry_index].entity_id
+                entity_id = getattr(self.master.get_category_dict()[entry_index], 'entity_id')
             except AttributeError:
                 text_tail = ''
                 self.tool_tip.text = None
@@ -344,6 +346,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_list_name, entry_type_name = category.split(': ')
         entry_list = self.Maps[self.map_choice.get().replace(' ', '')][entry_list_name]
         global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
+        if global_index is None:
+            global_index = len(entry_list)  # appending to end locally -> appending to end globally
 
         if not 0 <= global_index <= len(entry_list):
             self.dialog("Entry Index Error", message=f"Entry index must be between zero and the current list length.")
@@ -363,6 +367,23 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             text = self.get_entry_text(entry_index)  # Copies name of origin entry by default.
         new_field_dict = self.get_category_dict()[entry_index].copy()
         return self._add_entry(entry_index + offset, text, new_field_dict=new_field_dict)
+
+    def delete_entry(self, row_index, category=None):
+        """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("Cannot delete entry without specifying category if 'active_category' is None.")
+        self._cancel_entry_text_edit()
+        entry_type_index = self.get_entry_id(row_index)
+
+        entry_list_name, entry_type_name = category.split(': ')
+        entry_list = self.Maps[self.map_choice.get().replace(' ', '')][entry_list_name]
+        global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
+        if global_index is None:
+            raise IndexError(f"Cannot delete entry with global index {global_index} (list length is {len(entry_list)}.")
+        entry_list.delete_entry(global_index)
+        self.refresh_entries()
 
     def select_displayed_field_row(self, row_index, set_focus_to_value=True, edit_if_already_selected=True, coord=None):
         old_row_index = self.selected_field_row_index
@@ -473,7 +494,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if category is None:
                 return []
         map_choice = self.map_choice.get().replace(' ', '')
-        entry_list, entry_type = category.split(': ')
+        try:
+            entry_list, entry_type = category.split(': ')
+        except ValueError:
+            raise ValueError(f"Category name was not in [List: Type] format: {category}")
         return self.Maps[map_choice][entry_list].get_entries(entry_type)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):

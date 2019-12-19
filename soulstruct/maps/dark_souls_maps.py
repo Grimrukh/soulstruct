@@ -105,7 +105,7 @@ class DarkSoulsMaps(object):
         for msb_name in DARK_SOULS_MAP_NAMES.values():
             msb_path = msb_directory / self._data[msb_name].msb_path.name
             self._data[msb_name].write_packed(msb_path)
-        print("\n# All Dark Souls map (MSB) files saved successfully.")
+        print("\n# INFO: --------> Dark Souls map (MSB) files saved successfully.")
 
 
 if __name__ == '__main__':

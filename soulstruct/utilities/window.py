@@ -159,7 +159,7 @@ class SmartFrame(tk.Frame):
     FileDialog = filedialog
 
     STYLE_DEFAULTS = {
-        'bg': '#222',
+        'bg': '#111',
         'text_fg': '#FFF',
         'text_cursor_fg': '#FFF',
         'disabled_fg': '#888',

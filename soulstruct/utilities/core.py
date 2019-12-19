@@ -100,6 +100,50 @@ class Vector(object):
     def __eq__(self, other_vector):
         return len(other_vector) == 3 and all(self[i] == other_vector[i] for i in range(3))
 
+    def __add__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 3:
+                raise ValueError("List or tuple to add to Vector must have three elements.")
+            return Vector(self.x + other[0], self.y + other[1], self.z + other[2])
+        elif isinstance(other, (int, float)):
+            return Vector(self.x + other, self.y + other, self.z + other)
+        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+
+    def __sub__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 3:
+                raise ValueError("List or tuple to add to Vector must have three elements.")
+            return Vector(self.x - other[0], self.y - other[1], self.z - other[2])
+        elif isinstance(other, (int, float)):
+            return Vector(self.x - other, self.y - other, self.z - other)
+        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+
+    def __mul__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 3:
+                raise ValueError("List or tuple to add to Vector must have three elements.")
+            return Vector(self.x * other[0], self.y * other[1], self.z * other[2])
+        elif isinstance(other, (int, float)):
+            return Vector(self.x * other, self.y * other, self.z * other)
+        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+
+    def __truediv__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x / other.x, self.y / other.y, self.z / other.z)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 3:
+                raise ValueError("List or tuple to add to Vector must have three elements.")
+            return Vector(self.x / other[0], self.y / other[1], self.z / other[2])
+        elif isinstance(other, (int, float)):
+            return Vector(self.x / other, self.y / other, self.z / other)
+        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+
     def __len__(self):
         return 3
 
