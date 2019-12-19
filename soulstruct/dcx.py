@@ -1,5 +1,6 @@
 from pathlib import Path
 import zlib
+
 from soulstruct.utilities import BinaryStruct
 
 

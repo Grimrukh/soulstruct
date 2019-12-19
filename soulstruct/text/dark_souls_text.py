@@ -1,5 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
+
 from soulstruct.bnd import BND, BaseBND
 from soulstruct.text.fmg import FMG
 
@@ -130,7 +131,7 @@ class DarkSoulsText(object):
 
         for entry in msgbnd:
             try:
-                new_name = _MSGBND_INDEX_TO_SS[entry.id]
+                new_name = _MSGBND_INDEX_to_SS_NAME_[entry.id]
             except KeyError:
                 raise ValueError(f"BND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
 
@@ -176,10 +177,22 @@ class DarkSoulsText(object):
         self._data[item_fmg + 'Summaries'][index] = ''
         self._data[item_fmg + 'Descriptions'][index] = ''
 
+    def update_msgbnd_entry(self, msgbnd, fmg_name, fmg_entries: dict,
+                            word_wrap_limit=None, pipe_to_newline=False, use_original_names=False):
+        fmg_patch_data = FMG(fmg_entries, version='ds1').pack(
+            word_wrap_limit=word_wrap_limit, pipe_to_newline=pipe_to_newline)
+        try:
+            bnd_entry_id = _MSGBND_INDEX_to_SS_NAME_[fmg_name]
+        except IndexError:
+            raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
+        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
+        bnd_entry.data = fmg_patch_data
+        if not use_original_names:
+            bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + '.fmg')
+
     def save(self, msg_directory=None, description_word_wrap_limit=None, separate_patch=False, use_original_names=False,
              pipe_to_newline=True, dcx=None):
-        """ Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods. """
-
+        """Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods."""
         new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
         new_menu_msgbnd = deepcopy(self.menu_msgbnd)  # type: BaseBND
 
@@ -188,19 +201,11 @@ class DarkSoulsText(object):
             dcx = self._dcx
 
         if not separate_patch:
-            # Patch indices will all be merged into main resources, so remove any Patch entries from the BND.
-            for fmg_name, fmg_entries in self._data.items():
-                try:
-                    bnd_index = [key for key in _MSGBND_INDEX_TO_SS.keys()
-                                 if _MSGBND_INDEX_TO_SS[key] == fmg_name + 'Patch'][0]
-                except IndexError:
-                    # No Patch version of this FMG.
-                    print('-- No patch version of', fmg_name)
-                    pass
-                else:
-                    if bnd_index >= 100 and self._is_menu.get(fmg_name + 'Patch', False):
-                        new_menu_msgbnd.remove_entry(bnd_index)
-                        print('Removed patch FMG:', fmg_name + 'Patch', bnd_index)
+            # Select Patch indices will be merged into non-Patch FMG, so remove those Patch entries from the BND now.
+            for patch_fmg_name in _CAN_MERGE_PATCH:
+                if patch_fmg_name in self._is_menu:
+                    bnd_index = _MSGBND_INDEX_to_SS_NAME_[patch_fmg_name]
+                    (new_menu_msgbnd if self._is_menu[patch_fmg_name] else new_item_msgbnd).remove_entry(bnd_index)
 
         for fmg_name, fmg_entries in self._data.items():
             word_wrap = description_word_wrap_limit if 'Descriptions' in fmg_name else None
@@ -213,38 +218,17 @@ class DarkSoulsText(object):
                     if (fmg_name, index) in self._is_patch:
                         patch_text = fmg_entries_main.pop(index)
                         if patch_text:
-                            # Don't bother adding if empty.
-                            fmg_entries_patch[index] = patch_text
+                            fmg_entries_patch[index] = patch_text  # Don't bother adding if empty.
                 if fmg_entries_patch:
-                    fmg = FMG(fmg_entries_patch, version='ds1')
-                    fmg.unknown = 0
-                    fmg_patch_data = FMG(fmg_entries_patch, version='ds1').pack(
-                        word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
-                    original_name = self._original_names[fmg_name + 'Patch']
                     patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + 'Patch'] else new_item_msgbnd
-                    try:
-                        bnd_entry_id = [k for k, v in _MSGBND_INDEX_TO_SS.items() if v == fmg_name + 'Patch'][0]
-                    except IndexError:
-                        raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-                    bnd_entry = patch_msgbnd.entries_by_id[bnd_entry_id]
-                    bnd_entry.data = fmg_patch_data
-                    if not use_original_names:
-                        # Note that original path is kept.
-                        bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + 'Patch.fmg')
+                    self.update_msgbnd_entry(
+                        patch_msgbnd, fmg_name + 'Patch', fmg_entries_patch, word_wrap_limit=word_wrap,
+                        pipe_to_newline=pipe_to_newline, use_original_names=use_original_names)
 
-            fmg_main_data = FMG(fmg_entries_main, version='ds1').pack(
-                word_wrap_limit=word_wrap, pipe_to_newline=pipe_to_newline)
-            original_name = self._original_names[fmg_name]
-            msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
-            try:
-                bnd_entry_id = [k for k, v in _MSGBND_INDEX_TO_SS.items() if v == fmg_name][0]
-            except IndexError:
-                raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-            bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
-            bnd_entry.data = fmg_main_data
-            if not use_original_names:
-                # Note that original path is kept.
-                bnd_entry.path = bnd_entry.path.replace(original_name, fmg_name + '.fmg')
+            main_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
+            self.update_msgbnd_entry(
+                main_msgbnd, fmg_name, fmg_entries, word_wrap_limit=word_wrap,
+                pipe_to_newline=pipe_to_newline, use_original_names=use_original_names)
 
         # Write BNDs (to original directory by default).
         new_item_msgbnd.write(msg_directory / ('item.msgbnd' + ('.dcx' if dcx else '')))
@@ -330,7 +314,7 @@ class DarkSoulsText(object):
         elif item_type.lower() in ('armour', 'armor', 'protector'):
             return 'Armor'
         elif item_type.lower() == 'equipment':
-            raise ValueError("'Equipment' is ambiguous. Did you mean 'weapon', 'armor', or 'ring'?")
+            raise ValueError("'Equipment' is ambiguous. Did you mean 'weapon', 'armor', 'ring', or 'good'?")
         elif item_type.lower() == 'item':
             raise ValueError("'Item' is ambiguous; it's the term used to describe everything in your inventory.\n"
                              "Did you mean 'weapon', 'armor', 'ring', or 'good'?")
@@ -338,69 +322,120 @@ class DarkSoulsText(object):
             raise ValueError(f"Unrecognized item type: '{item_type}'")
 
 
-_MSGBND_INDEX_TO_SS = {
-    1: 'Conversations',
-    2: 'SoapstoneMessages',
-    3: 'OpeningSubtitles',
-    10: 'GoodNames',
-    11: 'WeaponNames',
-    12: 'ArmorNames',
-    13: 'RingNames',
-    14: 'SpellNames',
-    15: 'FeatureNames',
-    16: 'FeatureSummaries',
-    17: 'FeatureDescriptions',
-    18: 'NPCNames',
-    19: 'PlaceNames',
-    20: 'GoodSummaries',
-    21: 'WeaponSummaries',
-    22: 'ArmorSummaries',
-    23: 'RingSummaries',
-    24: 'GoodDescriptions',
-    25: 'WeaponDescriptions',
-    26: 'ArmorDescriptions',
-    27: 'RingDescriptions',
-    28: 'SpellSummaries',
-    29: 'SpellDescriptions',
-    30: 'EventText',
-    70: 'IngameMenus',
-    76: 'MenuText_Common',
-    77: 'MenuText_Other',
-    78: 'MenuDialogs',
-    79: 'KeyGuide',
-    80: 'MenuHelpSnippets',
-    81: 'ContextualHelp',
-    90: 'TextTagPlaceholders',
-    91: 'DebugTags_Win32',
-    92: 'SystemMessages_Win32',
-    # Patch resources (all in menu.msgbnd in PTD; put with their main resources in DSR).
-    100: 'GoodDescriptionsPatch',
-    101: 'EventTextPatch',
-    102: 'MenuDialogsPatch',
-    103: 'SystemMessages_Win32Patch',
-    104: 'ConversationsPatch',
-    105: 'SpellDescriptionsPatch',
-    106: 'WeaponDescriptionsPatch',
-    107: 'SoapstoneMessagesPatch',
-    108: 'ArmorDescriptionsPatch',
-    109: 'RingDescriptionsPatch',
-    110: 'GoodSummariesPatch',
-    111: 'GoodNamesPatch',
-    112: 'RingSummariesPatch',
-    113: 'RingNamesPatch',
-    114: 'WeaponSummariesPatch',
-    115: 'WeaponNamesPatch',
-    116: 'ArmorSummariesPatch',
-    117: 'ArmorNamesPatch',
-    118: 'SpellNamesPatch',
-    119: 'NPCNamesPatch',
-    120: 'PlaceNamesPatch',
-    121: 'MenuHelpSnippetsPatch',
-    122: 'KeyGuidePatch',
-    123: 'MenuText_OtherPatch',
-    124: 'MenuText_CommonPatch',
-}
+class BiDict(dict):
 
+    def __init__(self, *args):
+        """Initialized with pairs of values to be connected."""
+        super().__init__()
+        for arg in args:
+            if not isinstance(arg, tuple) or len(arg) != 2:
+                raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
+            self.__setitem__(*arg)
+
+    def __setitem__(self, value_1, value_2):
+        """Removes any pre-existing connections using either value."""
+        if value_1 in self:
+            del self[value_1]
+        if value_2 in self:
+            del self[value_2]
+        super().__setitem__(value_1, value_2)
+        super().__setitem__(value_2, value_1)
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        super().__delitem__(self[key])
+
+    def __len__(self):
+        return super().__len__() // 2
+
+
+_CAN_MERGE_PATCH = {
+    "WeaponNamesPatch",
+    "WeaponSummariesPatch",
+    "WeaponDescriptionsPatch",
+    "ArmorNamesPatch",
+    "ArmorSummariesPatch",
+    "ArmorDescriptionsPatch",
+    "RingNamesPatch",
+    "RingSummariesPatch",
+    "RingDescriptionsPatch",
+    "GoodNamesPatch",
+    "GoodSummariesPatch",
+    "GoodDescriptionsPatch",
+    "SpellNamesPatch",
+    "SpellDescriptionsPatch",
+    "NPCNamesPatch",
+    "PlaceNamesPatch",
+}
+_DO_NOT_MERGE_PATCH = {"EventText", "MenuDialogs", "SystemMessages_Win32", "Conversations", "SoapstoneMessages",
+                       "MenuHelpSnippets", "KeyGuide", "MenuText_Other", "MenuText_Common"}
+
+
+_MSGBND_INDEX_to_SS_NAME_ = BiDict(
+    (1, 'Conversations'),
+    (2, 'SoapstoneMessages'),
+    (3, 'OpeningSubtitles'),
+    (10, 'GoodNames'),
+    (11, 'WeaponNames'),
+    (12, 'ArmorNames'),
+    (13, 'RingNames'),
+    (14, 'SpellNames'),
+    (15, 'FeatureNames'),
+    (16, 'FeatureSummaries'),
+    (17, 'FeatureDescriptions'),
+    (18, 'NPCNames'),
+    (19, 'PlaceNames'),
+    (20, 'GoodSummaries'),
+    (21, 'WeaponSummaries'),
+    (22, 'ArmorSummaries'),
+    (23, 'RingSummaries'),
+    (24, 'GoodDescriptions'),
+    (25, 'WeaponDescriptions'),
+    (26, 'ArmorDescriptions'),
+    (27, 'RingDescriptions'),
+    (28, 'SpellSummaries'),
+    (29, 'SpellDescriptions'),
+    (30, 'EventText'),
+    (70, 'IngameMenus'),
+    (76, 'MenuText_Common'),
+    (77, 'MenuText_Other'),
+    (78, 'MenuDialogs'),
+    (79, 'KeyGuide'),
+    (80, 'MenuHelpSnippets'),
+    (81, 'ContextualHelp'),
+    (90, 'TextTagPlaceholders'),
+    (91, 'DebugTags_Win32'),
+    (92, 'SystemMessages_Win32'),
+    # Patch resources (all in menu.msgbnd in PTDE, but some in item.msgbnd in DSR).
+    (100, 'GoodDescriptionsPatch'),
+    (101, 'EventTextPatch'),
+    (102, 'MenuDialogsPatch'),
+    (103, 'SystemMessages_Win32Patch'),
+    (104, 'ConversationsPatch'),
+    (105, 'SpellDescriptionsPatch'),
+    (106, 'WeaponDescriptionsPatch'),
+    (107, 'SoapstoneMessagesPatch'),
+    (108, 'ArmorDescriptionsPatch'),
+    (109, 'RingDescriptionsPatch'),
+    (110, 'GoodSummariesPatch'),
+    (111, 'GoodNamesPatch'),
+    (112, 'RingSummariesPatch'),
+    (113, 'RingNamesPatch'),
+    (114, 'WeaponSummariesPatch'),
+    (115, 'WeaponNamesPatch'),
+    (116, 'ArmorSummariesPatch'),
+    (117, 'ArmorNamesPatch'),
+    (118, 'SpellNamesPatch'),
+    (119, 'NPCNamesPatch'),
+    (120, 'PlaceNamesPatch'),
+    (121, 'MenuHelpSnippetsPatch'),
+    (122, 'KeyGuidePatch'),
+    (123, 'MenuText_OtherPatch'),
+    (124, 'MenuText_CommonPatch'),
+)
+
+
+# TODO: Unused; using BND index instead.
 _DSR_TO_SS = {
     # item.msgbnd
     'Accessory_long_desc_.fmg': 'RingDescriptions',
@@ -442,6 +477,7 @@ _DSR_TO_SS = {
 }
 
 
+# TODO: Unused; using BND index instead.
 _PTD_TO_SS = {
     # item.msgbnd (including patch)
     '防具うんちく.fmg': 'ArmorDescriptions',
