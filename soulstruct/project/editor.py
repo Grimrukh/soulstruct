@@ -56,7 +56,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             if self.SHOW_ENTRY_ID:
                 self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='ew')
                 self.id_label = editor.Label(
-                    self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, fg=self.ENTRY_ID_FG, sticky='e')
+                    self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, fg=self.ENTRY_ID_FG, font_size=11,
+                    sticky='e')
                 if self.EDIT_ENTRY_ID:
                     id_bindings = main_bindings.copy()
                     id_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
@@ -73,7 +74,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             bind_events(self.text_box, main_bindings)
 
             self.text_label = editor.Label(
-                self.text_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w',
+                self.text_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w', font_size=11,
                 justify='left', width=self.ENTRY_TEXT_WIDTH)
             bind_events(self.text_label, main_bindings)
 
@@ -284,7 +285,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                     bg=self.CATEGORY_UNSELECTED_BG)
                 label_text = camel_case_to_spaces(category).replace('_', ': ')
                 label = self.Label(text=label_text, sticky='w', row=row, fg=self._get_category_text_fg(category),
-                                   bg=self.CATEGORY_UNSELECTED_BG)
+                                   bg=self.CATEGORY_UNSELECTED_BG, font_size=10)
                 for widget in {label, box}:
                     bind_events(widget, {
                         "<Button-1>": lambda e, c=category: self.select_category(c),

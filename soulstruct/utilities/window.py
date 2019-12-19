@@ -300,14 +300,14 @@ class SmartFrame(tk.Frame):
         self.toplevel.deiconify()  # Become visible at the desired location
 
     def set_notebook_style(self):
-        self.style.theme_use('alt')
+        self.style.theme_use('clam')
         self.style.configure(
             'TNotebook', background=self.STYLE_DEFAULTS['bg'], tabmargins=[2, 10, 2, 0], tabposition='nw')
         self.style.configure(
-            'TNotebook.Tab', background='#555', foreground='#FFF', padding=[15, 1],
+            'TNotebook.Tab', background='#333', foreground='#FFF', padding=[15, 1],
             font=('Segoe UI', 12))
         self.style.map(
-            'TNotebook.Tab', background=[('selected', '#777')], expand=[('selected', [5, 3, 3, 0])])
+            'TNotebook.Tab', background=[('selected', '#555')], expand=[('selected', [5, 3, 3, 0])])
 
     def start_auto_rows(self, start=0):
         self.current_row = start

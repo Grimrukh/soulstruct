@@ -60,14 +60,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.set_geometry()
 
     def build(self):
-        self.top_menu = self.Menu()
-        self.top_menu.add_command(label="Hello", command=lambda: print("Hello there."))
-        self.top_menu.add_separator()
-        self.top_menu.add_command(label="Quit", command=self.destroy)
-        self.toplevel.config(menu=self.top_menu)
-        # TODO: Pulldown.
+        self.build_top_menu()
 
-        self.page_tabs = self.Notebook(row=0)
+        self.page_tabs = self.Notebook(row=0, padx=10)
 
         tab_frames = {tab_name: self.Frame(frame=self.page_tabs) for tab_name in self.TAB_ORDER}
 
@@ -94,14 +89,47 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.build_main_tab(tab_frames['main'])
 
-        # TODO: Lighting. Events (somehow). Game saves.
-
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
 
         # self.resizable(False, False)  # TODO
         self.set_geometry()
         self.deiconify()
+
+    def build_top_menu(self):
+        top_menu = self.Menu()
+
+        import_menu = self.Menu(tearoff=0)
+        import_menu.add_command(label="Import Everything", foreground='#DDF',
+                                command=lambda: self.project.load_project(force_game_import=True))
+        import_menu.add_separator()
+        import_menu.add_command(label="Import Maps", foreground='#FFF', command=self.project.import_maps)
+        import_menu.add_command(label="Import Params", foreground='#FFF', command=self.project.import_params)
+        import_menu.add_command(label="Import Lighting", foreground='#FFF', command=self.project.import_lighting)
+        import_menu.add_command(label="Import Text", foreground='#FFF', command=self.project.import_text)
+
+        file_menu = self.Menu(tearoff=0)
+        file_menu.add_command(label="Open Project", foreground='#FFF', command=lambda: print("Open"))
+        file_menu.add_command(label="Save Project", foreground='#FFF', command=lambda: print("Save"))
+        file_menu.add_command(label="Save Project As", foreground='#FFF', command=lambda: print("Save As"))
+        file_menu.add_separator()
+        file_menu.add_cascade(label="Import...", foreground='#FFF', menu=import_menu)
+        file_menu.add_command(label="Export Project", foreground='#FFF', command=self.project.export_project)
+        file_menu.add_command(label="Export Project to Game", foreground='#FFF',
+                              command=self.project.export_project_to_game)
+        file_menu.add_separator()
+        file_menu.add_command(label="Quit", foreground='#FFF', command=self.destroy)  # TODO: confirm changes lost
+        top_menu.add_cascade(label="File", menu=file_menu)
+
+        edit_menu = self.Menu(tearoff=0)
+        edit_menu.add_command(label="Undo", foreground='#FFF', command=lambda: print("Undo"))
+        edit_menu.add_command(label="Redo", foreground='#FFF', command=lambda: print("Redo"))
+        edit_menu.add_command(label="Copy", foreground='#FFF', command=lambda: print("Copy"))
+        edit_menu.add_command(label="Cut", foreground='#FFF', command=lambda: print("Cut"))
+        edit_menu.add_command(label="Paste", foreground='#FFF', command=lambda: print("Paste"))
+        top_menu.add_cascade(label="Edit", menu=edit_menu)
+
+        self.toplevel.config(menu=top_menu)
 
     def build_main_tab(self, main_frame):
         """
@@ -111,27 +139,15 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             - Button here to 'import all' from linked game directory, and from arbitrary directory (e.g. export folder).
             - Option to launch game? And an option to launch Game + Gadget?
             - Option to restart game, if it's running?
+            - Option to connect to running game and extract current player XYZ coordinates into an MSB entry?
             - Buttons to 'export all to game' and 'export to dest'. Individual subtype buttons on those editor screens.
-            - IMPORT EVENTS. Unpack into EVS and store in 'evs' subdirectory.
-            - IMPORT ESD. Unpack and store in 'ezs' subdirectory.
+            - IMPORT EVENTS. Unpack into EVS and store in 'emevdpy' subdirectory.
+            - IMPORT ESD. Unpack and store in 'esdpy' subdirectory.
             - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
             - Make use of config.json project file. (Save directory, last times, etc.)
 
         """
-        with self.set_master(main_frame, auto_columns=0):
-            with self.set_master(auto_rows=0, grid_defaults={'padx': 20, 'pady': 10}):
-                self.Button(text="Import All from Game Directory", bg='#235', width=30, font_size=15,
-                            command=lambda: self.project.load_project(force_game_import=True))
-                self.Button(text="Import Params", bg='#235', width=30, font_size=15,
-                            command=self.project.import_params)
-                self.Button(text="Import Text", bg='#235', width=30, font_size=15,
-                            command=self.project.import_text)
-                self.Button(text="Import Lighting", bg='#235', width=30, font_size=15,
-                            command=self.project.import_lighting)
-                self.Button(text="Import Maps", bg='#235', width=30, font_size=15,
-                            command=self.project.import_maps)
-                self.Button(text='Export Project', bg='#623', width=30, font_size=15,
-                            command=self.project.export_project)
+        pass
 
     def reload_data(self, name: str, data):
         name = name.lower()

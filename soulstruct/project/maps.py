@@ -312,9 +312,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         with self.set_master(auto_rows=0):
             with self.set_master(auto_columns=0):
                 map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_IDS]
-                self.Label(text='Map:', font_size=15)
                 self.map_choice = self.Combobox(
-                    values=map_display_names, font=20, on_select_function=self._on_map_choice, padx=10, pady=10).var
+                    values=map_display_names, label='Map:', label_font_size=12, label_position='left',
+                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10, pady=10).var
 
             with self.set_master(auto_columns=0):
                 self.build_category_canvas()
@@ -341,9 +341,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
-        entry_list_name, entry_type_name = category.split(':')
+        entry_list_name, entry_type_name = category.split(': ')
         entry_list = self.Maps[self.map_choice.get().replace(' ', '')][entry_list_name]
-        global_index = entry_list.get_entry_global_index(entry_type_index)
+        global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
 
         if not 0 <= global_index <= len(entry_list):
             self.dialog("Entry Index Error", message=f"Entry index must be between zero and the current list length.")
