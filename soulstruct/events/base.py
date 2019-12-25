@@ -1,15 +1,15 @@
+import os
 from collections import OrderedDict
 from io import BytesIO
-import os
 import re
 import struct
 from pathlib import Path
 
 from soulstruct.dcx import DCX
 from soulstruct.enums.shared import RestartType
-from soulstruct.events.evs_parser import EmevdCompiler
+from soulstruct.events.evs import EvsParser
 from soulstruct.events.shared.decompiler import decompile_instruction
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.core import BinaryStruct, create_bak, read_chars_from_buffer
 
 INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)\] \(([iIhHbBfs|]*)\)\[([\d, .-]*)\][ ]?(<[\d, ]*>)?")
 EVENT_ARG_REPLACEMENT_RE = re.compile(r" [ ]*\^\((\d+) <- (\d+), (\d+)\)")
@@ -481,18 +481,18 @@ class BaseEMEVD(object):
         self.events = OrderedDict()
         self.packed_strings = b''
         self.linked_file_offsets = []  # Offsets into packed strings.
-        self._dcx = False
+        self.dcx = False
 
         if vanilla_base_map:
-            if not os.path.isfile(vanilla_base_map):
+            vanilla_base_map = Path(vanilla_base_map)
+            if not vanilla_base_map.is_file():
                 # Try resolving in local package directory.
-                vanilla_base_map = os.path.join(
-                    os.path.dirname(__file__), 'numeric_from_vanilla', vanilla_base_map + '.numeric.txt')
-            if not os.path.isfile(vanilla_base_map):
-                raise FileNotFoundError(f"Could not find vanilla numeric event file '{vanilla_base_map}' in package.")
+                vanilla_base_map = Path(__file__, 'numeric_from_vanilla', (str(vanilla_base_map) + '.numeric.txt'))
+            if not vanilla_base_map.is_file():
+                raise FileNotFoundError(f"Could not find vanilla numeric event file '{str(vanilla_base_map)}'.")
             self.build_from_numeric_path(vanilla_base_map)
 
-        if isinstance(emevd_source, EmevdCompiler):
+        if isinstance(emevd_source, EvsParser):
             self.map_name = emevd_source.map_name
             self.build_from_numeric_string(emevd_source.numeric_emevd)
 
@@ -508,41 +508,46 @@ class BaseEMEVD(object):
                 print("WARNING: No strings found in EMEVD source.")
             self.events.update(OrderedDict(emevd_source))
 
-        elif isinstance(emevd_source, (str, Path)):
-            # emevd_source = Path(emevd_source)  # TODO
-            self.map_name = os.path.splitext(emevd_source)[0]
+        elif isinstance(emevd_source, str) and '\n' in emevd_source:
+            parsed = EvsParser(emevd_source, game_module=self.GAME_MODULE)
+            self.map_name = parsed.map_name
+            self.build_from_numeric_string(parsed.numeric_emevd)
 
-            if emevd_source.endswith('.py') or emevd_source.endswith('.evs'):
-                emevd_source = EmevdCompiler(emevd_source, self.GAME_MODULE)
-                self.map_name = emevd_source.map_name
-                self.build_from_numeric_string(emevd_source.numeric_emevd)
+        elif isinstance(emevd_source, Path) or (isinstance(emevd_source, str) and '\n' not in emevd_source):
+            emevd_path = Path(emevd_source)
+            self.map_name = emevd_path.stem
 
-            elif emevd_source.endswith('.txt'):
+            if emevd_path.suffix in {'.evs', '.py'}:
+                parsed = EvsParser(emevd_path, game_module=self.GAME_MODULE)
+                self.map_name = parsed.map_name
+                self.build_from_numeric_string(parsed.numeric_emevd)
+
+            elif emevd_path.suffix == '.txt':
                 try:
-                    self.build_from_numeric_path(emevd_source)
+                    self.build_from_numeric_path(emevd_path)
                 except Exception:
-                    raise IOError(f"Could not interpret file '{emevd_source}' as numeric-style EMEVD.\n"
+                    raise IOError(f"Could not interpret file '{str(emevd_path)}' as numeric-style EMEVD.\n"
                                   f"(Note that you cannot use verbose-style text files as EMEVD input.)\n"
                                   f"If your file is an EVS script, change the extension to '.py' or '.evs'.")
 
-            elif emevd_source.endswith('.events.dcx'):
-                emevd_data = DCX(emevd_source).data
-                self._dcx = True
-                self.map_name = os.path.splitext(self.map_name)[0]  # Strip both extensions.
+            elif emevd_path.name.endswith('.emevd.dcx'):
+                emevd_data = DCX(emevd_path).data
+                self.dcx = True  # DCX magic of EMEVD is applied automatically at pack.
+                self.map_name = emevd_path.name.split('.')[0]  # Strip all extensions.
                 try:
                     self.unpack(BytesIO(emevd_data))
                 except Exception:
-                    raise IOError(f"Could not interpret file '{emevd_source}' as binary EMEVD data.\n"
-                                  f"You should only use the '.events[.dcx]' extension for actual game-ready\n"
+                    raise IOError(f"Could not interpret file '{str(emevd_path)}' as binary EMEVD data.\n"
+                                  f"You should only use the '.emevd[.dcx]' extension for actual game-ready\n"
                                   f"EMEVD, which you can create with the `pack()` method of this class.")
 
-            elif emevd_source.endswith('.events'):
+            elif emevd_path.suffix == '.emevd':
                 try:
-                    with open(emevd_source, 'rb') as file:
-                        self.unpack(file)
+                    with emevd_path.open('rb') as f:
+                        self.unpack(f)
                 except Exception:
-                    raise IOError(f"Could not interpret file '{emevd_source}' as binary EMEVD data.\n"
-                                  f"You should only use the '.events' extension for actual game-ready\n"
+                    raise IOError(f"Could not interpret file '{str(emevd_source)}' as binary EMEVD data.\n"
+                                  f"You should only use the '.emevd' extension for actual game-ready\n"
                                   f"EMEVD, which you can create with the `pack()` method of this class.")
 
             else:
@@ -574,16 +579,19 @@ class BaseEMEVD(object):
                 self.linked_file_offsets.append(struct.unpack('<Q', emevd_buffer.read(8))[0])
 
     def build_from_numeric_path(self, numeric_path):
-        with open(numeric_path, 'r', encoding='utf-8') as f:
+        numeric_path = Path(numeric_path)
+        with numeric_path.open('r', encoding='utf-8') as f:
             numeric_string = f.read()
         return self.build_from_numeric_string(numeric_string)
 
-    def build_from_numeric_string(self, numeric_source):
-        """ Parses the text data from the given numeric-style string into a dictionary of events suitable for use as an
-        EMEVD() source, which can then be packed to binary. Raises a ValueError if the numeric input cannot be parsed
-        for some reason. """
+    def build_from_numeric_string(self, numeric_string: str):
+        """Parses the text data from the given numeric-style string into a dictionary of events suitable for use as an
+        `EMEVD` source, which can then be packed to binary.
+
+        Raises a ValueError if the numeric input cannot be parsed for any reason.
+        """
         # TODO: Allow whitespace on blank lines between events.
-        text_events = re.split(r'\n{2,}', numeric_source)
+        text_events = re.split(r'\n{2,}', numeric_string)
         linked_offsets = []
         strings = b''
 
@@ -806,7 +814,7 @@ class BaseEMEVD(object):
     def pack(self, dcx=None):
         if dcx is None:
             # Auto-detect DCX compression from source file (if applicable).
-            dcx = self._dcx
+            dcx = self.dcx
 
         event_table_binary = b''
         instr_table_binary = b''
@@ -890,19 +898,18 @@ class BaseEMEVD(object):
 
     def write_emevd(self, emevd_path=None, dcx=None):
         if dcx is None:
-            dcx = self._dcx
+            dcx = self.dcx
         if not emevd_path:
             emevd_path = self.map_name
-            if dcx:
-                if not emevd_path.endswith('.events.dcx'):
-                    emevd_path += '.events.dcx'
-            else:
-                if not emevd_path.endswith('.events'):
-                    emevd_path += '.events'
-        directory = os.path.dirname(emevd_path)
-        if directory:
-            os.makedirs(directory, exist_ok=True)
-        with open(emevd_path, 'wb') as f:
+            if dcx and not emevd_path.endswith('.emevd.dcx'):
+                emevd_path += '.emevd.dcx'
+            elif not emevd_path.endswith('.emevd'):
+                emevd_path += '.emevd'
+        emevd_path = Path(emevd_path)
+        if emevd_path.parent:
+            emevd_path.parent.mkdir(exist_ok=True, parents=True)
+        create_bak(emevd_path)
+        with emevd_path.open('wb') as f:
             f.write(self.pack(dcx))
 
     def write_numeric(self, numeric_path=None):
@@ -910,21 +917,21 @@ class BaseEMEVD(object):
             numeric_path = self.map_name
             if not numeric_path.endswith('.numeric.txt'):
                 numeric_path += '.numeric.txt'
-        directory = os.path.dirname(numeric_path)
-        if directory:
-            os.makedirs(directory, exist_ok=True)
-        with open(numeric_path, 'w', encoding='utf-8') as f:
+        numeric_path = Path(numeric_path)
+        if numeric_path.parent:
+            numeric_path.parent.mkdir(exist_ok=True, parents=True)
+        with numeric_path.open('w', encoding='utf-8') as f:
             f.write(self.to_numeric())
 
     def write_evs(self, evs_path=None):
         if not evs_path:
             evs_path = self.map_name
-            if not evs_path.endswith('.evs'):
-                evs_path += '.evs'
-        directory = os.path.dirname(evs_path)
-        if directory:
-            os.makedirs(directory, exist_ok=True)
-        with open(evs_path, 'w', encoding='utf-8') as f:
+            if not evs_path.endswith('.evs.py'):
+                evs_path += '.evs.py'
+        evs_path = Path(evs_path)
+        if evs_path.parent:
+            evs_path.parent.mkdir(exist_ok=True, parents=True)
+        with evs_path.open('w', encoding='utf-8') as f:
             f.write(self.to_evs())
 
 

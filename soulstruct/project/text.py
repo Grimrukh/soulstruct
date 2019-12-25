@@ -151,7 +151,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
         if not text_id_list:
             self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
             return
-        text_id_selected = self.get_entry_id(self.active_row_index)
+        text_id_selected = self.get_entry_id(self.active_row_index) if self.active_row_index is not None else -1
         first_index = None
         for i, text_id in enumerate(text_id_list):
             if text in self.get_entry_text(text_id):
@@ -172,6 +172,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
             row_index = self._update_first_entry_display_index(next_index)
             self.refresh_entries()
             self.select_entry_row_index(row_index, set_focus_to_text=False, edit_if_already_selected=False)
+            self.entry_canvas.yview_moveto(0)
         else:
             self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
 

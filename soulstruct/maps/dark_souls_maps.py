@@ -1,31 +1,28 @@
 from pathlib import Path
 
 from soulstruct.maps.msb import MSB
+from soulstruct.utilities.core import BiDict
 
 
-# TODO: unify with EMEVD constants.
-DARK_SOULS_MAP_NAMES = {
-    'm10_00_00_00': 'Depths',
-    'm10_01_00_00': 'UndeadBurg',
-    'm10_02_00_00': 'FirelinkShrine',
-    'm11_00_00_00': 'PaintedWorld',
-    'm12_00_00_01': 'DarkrootGarden',
-    'm12_01_00_00': 'Oolacile',
-    'm13_00_00_00': 'Catacombs',
-    'm13_01_00_00': 'TombOfTheGiants',
-    'm13_02_00_00': 'AshLake',
-    'm14_00_00_00': 'Blighttown',
-    'm14_01_00_00': 'LostIzalith',
-    'm15_00_00_00': 'SensFortress',
-    'm15_01_00_00': 'AnorLondo',
-    'm16_00_00_00': 'NewLondoRuins',
-    'm17_00_00_00': 'DukesArchives',
-    'm18_00_00_00': 'KilnOfTheFirstFlame',
-    'm18_01_00_00': 'UndeadAsylum',
-
-}
-
-DARK_SOULS_MAP_IDS = {v: k for k, v in DARK_SOULS_MAP_NAMES.items()}
+DARK_SOULS_MAP_NAMES = BiDict(
+    ('m10_00_00_00', 'Depths'),
+    ('m10_01_00_00', 'UndeadBurg'),
+    ('m10_02_00_00', 'FirelinkShrine'),
+    ('m11_00_00_00', 'PaintedWorld'),
+    ('m12_00_00_01', 'DarkrootGarden'),
+    ('m12_01_00_00', 'Oolacile'),
+    ('m13_00_00_00', 'Catacombs'),
+    ('m13_01_00_00', 'TombOfTheGiants'),
+    ('m13_02_00_00', 'AshLake'),
+    ('m14_00_00_00', 'Blighttown'),
+    ('m14_01_00_00', 'LostIzalith'),
+    ('m15_00_00_00', 'SensFortress'),
+    ('m15_01_00_00', 'AnorLondo'),
+    ('m16_00_00_00', 'NewLondoRuins'),
+    ('m17_00_00_00', 'DukesArchives'),
+    ('m18_00_00_00', 'KilnOfTheFirstFlame'),
+    ('m18_01_00_00', 'UndeadAsylum'),
+)
 
 
 class DarkSoulsMaps(object):

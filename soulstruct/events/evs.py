@@ -1,16 +1,13 @@
 import ast
+import importlib
+import re
 from collections import OrderedDict
 from functools import partial
-import importlib
-import os
-import re
+from pathlib import Path
 
 from soulstruct import game_types as gt
 from soulstruct.events.core import header, define_args, NoSkipOrTerminateError, NoNegateError, \
     ConstantCondition, COMPARISON_NODES, NEG_COMPARISON_NODES
-
-# TODO: Tested that DS1 common.events compiles/decompiles fine, but no high-level functionality in it obviously.
-#  Test example script.
 
 # TODO: Set up unit tests on vanilla scripts, and some examples that make use of high-level functionality.
 
@@ -86,20 +83,32 @@ class ConditionLimitError(ConditionError):
     pass
 
 
-class EmevdCompiler(object):
-    """ Compiles Python-like EVS code to Dark Souls EMEVD scripts. """
+class EvsParser(object):
 
-    def __init__(self, evs_path, game_module=None):
+    def __init__(self, evs_path_or_string, game_module=None, map_name=None):
+        """Converts Python-like EVS code to numeric EMEVD (in `.numeric_emevd`), which can be fed to an `EMEVD` class.
+
+        Args:
+            evs_path_or_string: string or Path pointing to an EVS file, or direct string input (auto-detected based on
+                any newlines being present in value).
+            game_module: appropriate imported events game module (e.g. `soulstruct.events.darksouls1`).
+            map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
+        """
 
         if not game_module:
             raise ValueError("No game specified. Try importing this class from the appropriate game events subpackage.")
 
         self.game_name = game_module.NAME
 
-        with open(evs_path, encoding='utf-8') as script:
-            self.tree = ast.parse(script.read())
+        if isinstance(evs_path_or_string, Path) or '\n' not in evs_path_or_string:
+            evs_path_or_string = Path(evs_path_or_string)
+            with evs_path_or_string.open('r', encoding='utf-8') as script:
+                self.tree = ast.parse(script.read())
+            self.map_name = evs_path_or_string.name.split('.')[0] if map_name is None else map_name
+        else:
+            self.tree = ast.parse(evs_path_or_string)
+            self.map_name = map_name
 
-        self.map_name = os.path.basename(evs_path).split('.')[0]
         self.linked_offsets = []
         self.strings_with_offsets = []
         self.event_layers = []

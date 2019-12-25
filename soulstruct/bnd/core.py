@@ -1,14 +1,13 @@
+import re
+import zlib
 from ast import literal_eval
 from io import BytesIO, IOBase
 from pathlib import Path
-import re
-from shutil import copyfile
 from typing import Optional, List, Iterator
-import zlib
 
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx
-from soulstruct.dcx import DCX
 from soulstruct.bnd.magic import *
+from soulstruct.dcx import DCX
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx, create_bak
 
 __all__ = ['BND', 'BND3', 'BND4', 'BaseBND']
 
@@ -176,12 +175,7 @@ class BaseBND(object):
             if self.dcx and bnd_path.suffix != '.dcx':
                 bnd_path = bnd_path.with_suffix(bnd_path.suffix + '.dcx')
         bnd_path.parent.mkdir(parents=True, exist_ok=True)
-
-        if bnd_path.is_file() and not bnd_path.with_suffix(bnd_path.suffix + '.bak').is_file():
-            backup_path = str(bnd_path.with_suffix(bnd_path.suffix + '.bak'))
-            copyfile(str(bnd_path), backup_path)
-            print(f"# INFO: Created {repr(backup_path)} backup file.")
-
+        create_bak(bnd_path)
         packed = self.pack()
 
         if self.dcx:

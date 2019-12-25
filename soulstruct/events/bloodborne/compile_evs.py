@@ -7,13 +7,13 @@ from soulstruct.events.bloodborne.constants import ALL_MAPS
 def unpack_all_emevd_to_numeric(emevd_dir, numeric_dir):
     """ Build numeric resources from all DCX-compressed EMEVD resources in a directory.
 
-    I have not included the Bloodborne EMEVD in the package, but you can build them yourself from the packaged EVS resources
-    and compare to the originals if you have them.
+    I have not included the Bloodborne EMEVD in the package, but you can build them yourself from the packaged EVS
+    resources and compare to the originals if you have them.
     """
-    for emevd_name in glob.glob(os.path.join(emevd_dir, '*.events.dcx')):
+    for emevd_name in glob.glob(os.path.join(emevd_dir, '*.emevd.dcx')):
         print('Building', emevd_name)
         e = EMEVD(emevd_name)
-        e.write_numeric(os.path.join(numeric_dir, os.path.basename(emevd_name).replace('.events.dcx', '.numeric.txt')))
+        e.write_numeric(os.path.join(numeric_dir, os.path.basename(emevd_name).replace('.emevd.dcx', '.numeric.txt')))
 
 
 def decompile_all_numeric(numeric_dir, evs_dir):
@@ -54,7 +54,7 @@ def compile_all_evs(evs_dir='evs', numeric_dir='numeric_from_evs', emevd_dir='em
         print('  Writing EVS to numeric...')
         e.write_numeric(os.path.join(numeric_dir, f'{map_name}.numeric.txt'))
         print('  Writing EVS to EMEVD (DCX)... ')
-        e.write_emevd(os.path.join(emevd_dir, f'{map_name}.events.dcx'), dcx=True)
+        e.write_emevd(os.path.join(emevd_dir, f'{map_name}.emevd.dcx'), dcx=True)
         print('  EVS compiled successfully.')
 
 

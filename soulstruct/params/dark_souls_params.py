@@ -73,8 +73,11 @@ class DarkSoulsGameParameters(object):
         else:
             if isinstance(game_param_bnd_source, (str, Path)):
                 game_param_bnd_source = Path(game_param_bnd_source)
-                if game_param_bnd_source.is_dir() and (game_param_bnd_source / 'GameParam.parambnd').is_file():
-                    game_param_bnd_source = game_param_bnd_source / 'GameParam.parambnd'
+                if game_param_bnd_source.is_dir():
+                    if (game_param_bnd_source / 'GameParam.parambnd').is_file():
+                        game_param_bnd_source = game_param_bnd_source / 'GameParam.parambnd'
+                    elif (game_param_bnd_source / 'GameParam.parambnd.dcx').is_file():
+                        game_param_bnd_source = game_param_bnd_source / 'GameParam.parambnd.dcx'
             try:
                 self._game_param_bnd = BND(game_param_bnd_source)
             except TypeError:

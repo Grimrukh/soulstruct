@@ -2,27 +2,30 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import pickle
-import shutil
 from functools import wraps
 from pathlib import Path
-from textwrap import wrap
-from tkinter.ttk import Notebook
 from typing import Optional
 
 from soulstruct.core import SoulstructError
+from soulstruct.events.darksouls1 import convert_events
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
+from soulstruct.project.events import SoulstructEmevdManager
 from soulstruct.project.lighting import SoulstructLightingEditor
 from soulstruct.project.links import WindowLinker
 from soulstruct.project.maps import SoulstructMapEditor
 from soulstruct.project.params import SoulstructParamsEditor
 from soulstruct.project.text import SoulstructTextEditor
 from soulstruct.text import DarkSoulsText
-from soulstruct.utilities import find_steam_common_paths, traverse_path_tree, word_wrap
+from soulstruct.utilities import find_steam_common_paths, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
 
 __all__ = ['SoulstructProject', 'SoulstructProjectError', 'SoulstructProjectWindow']
+
+DATA_TYPES = {'maps': DarkSoulsMaps, 'params': DarkSoulsGameParameters, 'text': DarkSoulsText,
+              'lighting': DarkSoulsLightingParameters, 'events': None}
 
 
 class SoulstructProjectError(SoulstructError):
@@ -40,29 +43,30 @@ def _with_config_write(func):
 
 class SoulstructProjectWindow(SoulstructSmartFrame):
 
-    page_tabs: Optional[Notebook]
-    params_tab: Optional[SoulstructParamsEditor]
-    text_tab: Optional[SoulstructTextEditor]
     maps_tab: Optional[SoulstructMapEditor]
+    text_tab: Optional[SoulstructTextEditor]
+    params_tab: Optional[SoulstructParamsEditor]
+    lighting_tab: Optional[SoulstructLightingEditor]
+    events_tab: Optional[SoulstructEmevdManager]
 
-    TAB_ORDER = ['maps', 'text', 'params', 'lighting', 'main']  # TODO
+    TAB_ORDER = ['maps', 'params', 'text', 'lighting', 'events', 'main']  # TODO: proper order
 
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
         self.project = project
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
-        self.page_tabs = None
-        self.text_tab = None
-        self.params_tab = None
-        self.lighting_tab = None
+        self.page_tabs = self.Notebook(row=0, padx=10)
         self.maps_tab = None
+        self.params_tab = None
+        self.text_tab = None
+        self.lighting_tab = None
+        self.events_tab = None
+
         self.set_geometry()
 
     def build(self):
         self.build_top_menu()
-
-        self.page_tabs = self.Notebook(row=0, padx=10)
 
         tab_frames = {tab_name: self.Frame(frame=self.page_tabs) for tab_name in self.TAB_ORDER}
 
@@ -83,9 +87,14 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.lighting_tab = self.SmartFrame(
             frame=tab_frames['lighting'], smart_frame_class=SoulstructLightingEditor,
-            lighting=self.project.Lighting, linker=self.linker, no_grid=True
-        )
+            lighting=self.project.Lighting, linker=self.linker, no_grid=True)
         self.lighting_tab.pack()
+
+        self.events_tab = self.SmartFrame(
+            frame=tab_frames['events'], smart_frame_class=SoulstructEmevdManager,
+            evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
+            dcx=self.project.game_name == "Dark Souls Remastered", no_grid=True)
+        self.events_tab.pack()
 
         self.build_main_tab(tab_frames['main'])
 
@@ -99,47 +108,42 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     def build_top_menu(self):
         top_menu = self.Menu()
 
-        import_menu = self.Menu(tearoff=0)
-        import_menu.add_command(label="Import Everything", foreground='#FFF',
-                                command=lambda: self.project.load_project(force_game_import=True))
-        import_menu.add_separator()
-        import_menu.add_command(label="Import Maps", foreground='#FFF', command=self.project.import_maps)
-        import_menu.add_command(label="Import Params", foreground='#FFF', command=self.project.import_params)
-        import_menu.add_command(label="Import Lighting", foreground='#FFF', command=self.project.import_lighting)
-        import_menu.add_command(label="Import Text", foreground='#FFF', command=self.project.import_text)
-
-        export_menu = self.Menu(tearoff=0)
-        export_menu.add_command(label="Export Everything", foreground='#FFF',
-                                command=self.project.export_project)
-        export_menu.add_separator()
-        # TODO: Not allowing timestamp export for individual types (seems fairly useless), so these don't work yet
-        #  until I implement the file browser.
-        export_menu.add_command(label="Export Maps", foreground='#FFF', command=self.project.export_maps)
-        export_menu.add_command(label="Export Params", foreground='#FFF', command=self.project.export_params)
-        export_menu.add_command(label="Export Lighting", foreground='#FFF', command=self.project.export_lighting)
-        export_menu.add_command(label="Export Text", foreground='#FFF', command=self.project.export_text)
-
-        export_to_game_menu = self.Menu(tearoff=0)
-        export_to_game_menu.add_command(label="Export Everything", foreground='#FFF',
-                                        command=self.project.export_project_to_game)
-        export_to_game_menu.add_separator()
-        export_to_game_menu.add_command(label="Export Maps", foreground='#FFF',
-                                        command=lambda: self.project.export_maps(self.project.game_root))
-        export_to_game_menu.add_command(label="Export Params", foreground='#FFF',
-                                        command=lambda: self.project.export_params(self.project.game_root))
-        export_to_game_menu.add_command(label="Export Lighting", foreground='#FFF',
-                                        command=lambda: self.project.export_lighting(self.project.game_root))
-        export_to_game_menu.add_command(label="Export Text", foreground='#FFF',
-                                        command=lambda: self.project.export_text(self.project.game_root))
+        # TODO: Add save/load options for pickled files.
 
         file_menu = self.Menu(tearoff=0)
         file_menu.add_command(label="Open Project", foreground='#FFF', command=lambda: print("Open"))
         file_menu.add_command(label="Save Project", foreground='#FFF', command=lambda: print("Save"))
         file_menu.add_command(label="Save Project As", foreground='#FFF', command=lambda: print("Save As"))
         file_menu.add_separator()
-        file_menu.add_cascade(label="Import...", foreground='#FFF', menu=import_menu)
-        file_menu.add_cascade(label="Export...", foreground='#FFF', menu=export_menu)
-        file_menu.add_cascade(label="Export to Game...", foreground='#FFF', menu=export_to_game_menu)
+        for import_dir in (None, self.project.game_root):
+            import_menu = self.Menu(tearoff=0)
+            import_menu.add_command(
+                label=f"Import Everything", foreground='#FFF',
+                command=lambda i=import_dir: self.project.import_data(import_directory=i))
+            import_menu.add_separator()
+            for data_type in DATA_TYPES:
+                import_menu.add_command(
+                    label=f"Import {data_type.capitalize()}", foreground='#FFF',
+                    command=lambda d=data_type, i=import_dir: self.project.import_data(d, import_directory=i))
+            file_menu.add_cascade(label=f"Import{' from Game' if import_dir else ''}...",
+                                  foreground='#FFF', menu=import_menu)
+        for export_dir in (None, self.project.game_root):
+            export_menu = self.Menu(tearoff=0)
+            export_menu.add_command(
+                label=f"Export Everything", foreground='#FFF',
+                command=lambda e=export_dir: self.project.export_data(export_directory=e))
+            export_menu.add_separator()
+            for data_type in DATA_TYPES:
+                export_menu.add_command(
+                    label=f"Export {data_type.capitalize()}", foreground='#FFF',
+                    command=lambda d=data_type, e=export_dir: self.project.export_data(d, export_directory=e))
+            file_menu.add_cascade(label=f"Export{' to Game' if export_dir else ''}...",
+                                  foreground='#FFF', menu=export_menu)
+        file_menu.add_separator()
+        file_menu.add_command(label="Restore .bak File", foreground='#FFF',
+                              command=lambda: self.project.restore_backup(full_folder=False))
+        file_menu.add_command(label="Restore .bak Files", foreground='#FFF',
+                              command=lambda: self.project.restore_backup(full_folder=True))
         file_menu.add_separator()
         file_menu.add_command(label="Quit", foreground='#FFF', command=self.destroy)  # TODO: confirm changes lost
         top_menu.add_cascade(label="File", menu=file_menu)
@@ -159,11 +163,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         TODO:
             - SAVE ALL. Need a way to detect which files have actually changed (related to undo, redo, etc.).
             - Put subtype import options on those editor screens.
-            - Button here to 'import all' from linked game directory, and from arbitrary directory (e.g. export folder).
             - Option to launch game? And an option to launch Game + Gadget?
             - Option to restart game, if it's running?
             - Option to connect to running game and extract current player XYZ coordinates into an MSB entry?
-            - Buttons to 'export all to game' and 'export to dest'. Individual subtype buttons on those editor screens.
             - IMPORT EVENTS. Unpack into EVS and store in 'emevdpy' subdirectory.
             - IMPORT ESD. Unpack and store in 'esdpy' subdirectory.
             - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
@@ -171,13 +173,13 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         """
         pass
 
-    def reload_data(self, name: str, data):
-        name = name.lower()
-        if name not in self.TAB_ORDER:
-            raise ValueError(f"Invalid data type name: {name}")
-        tab = getattr(self, f'{name}_tab')
+    def reload_data(self, data_type: str, data):
+        data_type = data_type.lower()
+        if data_type not in self.TAB_ORDER:
+            raise ValueError(f"Invalid data type name: {data_type}")
+        tab = getattr(self, f'{data_type}_tab')
         if tab is not None:
-            setattr(tab, name.capitalize(), data)
+            setattr(tab, data_type.capitalize(), data)
 
     def destroy(self):
         """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
@@ -186,7 +188,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
 
 class SoulstructProject(object):
-    """Manages a directory of files that can be modded and 'pushed' into the appropriate game directory at will.
+    """Manages a directory of easily-modded Soulstruct files that can imported and exported.
 
     It is recommended that you create one of these projects for each Soulstruct-based mod.
 
@@ -207,7 +209,7 @@ class SoulstructProject(object):
         self.game_name = ''
         self.game_root = Path()
         self.last_import_time = ''
-        self.last_push_time = ''
+        self.last_export_time = ''
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
@@ -219,110 +221,185 @@ class SoulstructProject(object):
         try:
             self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
             self.load_config()
-            self.load_project()
+            self.initialize_project()
         except SoulstructProjectError as e:
-            self.dialog(title="Project Error", message='\n'.join(wrap(str(e), 50)) + "\n\nAborting startup.",
+            self.dialog(title="Project Error", message=word_wrap(str(e), 50) + "\n\nAborting startup.",
                         button_kwargs='OK')
             raise  # TODO: should not raise an error; just flag startup failure.
         except Exception as e:
-            msg = "Internal Python Error:\n\n" + '\n'.join(wrap(str(e), 50)) + "\n\nAborting startup."
+            msg = "Internal Python Error:\n\n" + word_wrap(str(e), 50) + "\n\nAborting startup."
             self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
             raise  # TODO: should not raise an error; just flag startup failure.
 
         self._window.build()
         self._window.wait_window()
 
-    def load_project(self, force_game_import=False):
-        """Load project structures (params, text, etc.) into class as attributes."""
-        for attr, attr_class, pickled, import_func in zip(
-                ('Text', 'Params', 'Lighting', 'Maps'),
-                (DarkSoulsText, DarkSoulsGameParameters, DarkSoulsLightingParameters, DarkSoulsMaps),
-                ('text.d1s', 'params.d1s', 'lighting.d1s', 'maps.d1s'),
-                (self.import_text, self.import_params, self.import_lighting, self.import_maps)):
+    def initialize_project(self, force_import_from_game=False):
+        """Load project structures from pickled project files if available, or prompt for initial import to create."""
+        yes_to_all = force_import_from_game
+        for data_type in DATA_TYPES:
+            if data_type == "events":
+                continue  # Events are not saved and loaded, just imported and exported.
             try:
-                if force_game_import:
+                if force_import_from_game:
                     raise FileNotFoundError
-                with (self.project_root / pickled).open('rb') as f:
-                    setattr(self, attr, pickle.load(f))
+                self.load(data_type)
             except FileNotFoundError:
-                if force_game_import or self.dialog(
-                        title="Project Error",
-                        message=f"Could not find saved {attr} data in project ('{pickled}').\n"
-                                f"Would you like to import it from the game directory?",
-                        button_names=('Yes, import the files', 'No, quit now'), button_kwargs=('YES', 'NO'),
-                        cancel_output=1, default_output=1) == 0:
-                    import_func()
+                if yes_to_all:
+                    self.import_data_from_game(data_type)
+                    self.save(data_type)
                 else:
-                    raise SoulstructProjectError("Could not open project files.")
+                    result = self.dialog(
+                        title="Project Error",
+                        message=f"Could not find saved {data_type.capitalize()} data in project.\n"
+                                f"Would you like to import it from the game directory now?",
+                        button_names=("Yes", "Yes to All", "No, quit now"),
+                        button_kwargs=('YES', 'YES', 'NO'),
+                        cancel_output=2, default_output=2
+                    )
+                    if result in {0, 1}:
+                        self.import_data_from_game(data_type)
+                        self.save(data_type)
+                        if result == 1:
+                            yes_to_all = True
+                    else:
+                        raise SoulstructProjectError("Could not open project files.")
                 self._window.deiconify()
 
-    def pickle_in_project(self, obj, pickled_path):
+    def _choose_directory(self, initial_dir=None, **kwargs):
+        if initial_dir is None:
+            initial_dir = str(self.project_root)
+        directory = self._window.FileDialog.askdirectory(initialdir=initial_dir, **kwargs)
+        return Path(directory) if directory is not None else None
+
+    def _save_project_data(self, obj, pickled_path):
         with (self.project_root / pickled_path).open('wb') as f:
             pickle.dump(obj, f)
 
-    # IMPORT METHODS. These import game data sub-structures from the live game directory, and save them
-    # as pickled structure instances inside the project directory.
+    def _load_project_data(self, pickled_path):
+        with (self.project_root / pickled_path).open('rb') as f:
+            return pickle.load(f)
 
-    def import_text(self):
-        self.Text = DarkSoulsText(self.game_root / 'msg/ENGLISH')
-        self._window.reload_data('text', self.Text)
-        self.pickle_in_project(self.Text, 'text.d1s')
+    def save(self, data_type=None):
+        """Save given data type ('maps', 'text', etc.) as pickled project file. Defaults to saving all types."""
+        if data_type is not None:
+            data_type = data_type.lower()
+            if data_type not in DATA_TYPES:
+                raise ValueError(f"Data type to load should be one of {DATA_TYPES} (or None), not {data_type}.")
+        for d in DATA_TYPES:
+            if data_type == d or (data_type is None and d != "events"):
+                self._save_project_data(getattr(self, d.capitalize()), d + ".d1s")
 
-    def import_params(self):
-        self.Params = DarkSoulsGameParameters(self.game_root / 'param/GameParam/GameParam.parambnd')
-        self._window.reload_data('params', self.Params)
-        self.pickle_in_project(self.Params, 'params.d1s')
+    def load(self, data_type=None):
+        """Load give data type ('maps', 'text', etc.) from pickled project file. Defaults to loading all types (except
+        'events', which are handled manually)."""
+        if data_type is not None:
+            data_type = data_type.lower()
+            if data_type not in DATA_TYPES:
+                raise ValueError(f"Data type to save should be one of {DATA_TYPES} (or None), not {data_type}.")
+        for d in DATA_TYPES:
+            if data_type == d or (data_type is None and d != "events"):
+                setattr(self, d.capitalize(), self._load_project_data(d + ".d1s"))
 
-    def import_lighting(self):
-        self.Lighting = DarkSoulsLightingParameters(self.game_root / 'param/DrawParam')
-        self._window.reload_data('lighting', self.Lighting)
-        self.pickle_in_project(self.Lighting, 'lighting.d1s')
+    def import_data(self, data_type=None, import_directory=None):
+        """Import data sub-structure from binary game files.
 
-    def import_maps(self):
-        self.Maps = DarkSoulsMaps(self.game_root / 'map/MapStudio')
-        self._window.reload_data('maps', self.Maps)
-        self.pickle_in_project(self.Maps, 'maps.d1s')
-
-    def export_project(self, export_directory=None):
-        """Writes all data substructures in game formats in the chosen directory, under the same folders they
-        would be in the live game directory.
-
-        By default, the root export directory is 'export/{timestamp}' within the project directory.
+        If `data_type` is None (default), all data types will be imported, in which case the given `import_directory`
+        should contain the appropriate folder structure ('map/MapStudio', 'msg/ENGLISH', etc.) for all files.
         """
+        if data_type is not None:
+            data_type = data_type.lower()
+            if data_type not in DATA_TYPES:
+                raise ValueError(f"Data type to import should be one of {DATA_TYPES} (or None), not {data_type}.")
+        if import_directory is None:
+            import_directory = self._choose_directory()
+            if import_directory is None:
+                return  # Abort export.
+        import_directory = Path(import_directory)
+        for d, d_class in DATA_TYPES.items():
+            if data_type == d or data_type is None:
+                data_import_path = self._game_path(d, root=import_directory)
+                if d == "events":
+                    self._import_events(data_import_path)
+                else:
+                    setattr(self, d.capitalize(), d_class(data_import_path))
+                    self._window.reload_data(d, getattr(self, d.capitalize()))
+
+    def import_data_from_game(self, data_type=None):
+        """Reads data substructures in game formats from the live game directory."""
+        self.import_data(data_type=data_type, import_directory=self.game_root)
+
+    def _import_events(self, import_directory):
+        """Converts binary EMEVD to EVS.PY in '[project]/events'."""
+        convert_events(output_type="evs.py", output_directory=self.project_root / 'events',
+                       input_directory=import_directory)
+
+    def export_data(self, data_type=None, export_directory=None):
+        if data_type is not None:
+            data_type = data_type.lower()
+            if data_type not in DATA_TYPES:
+                raise ValueError(f"Data type to export should be one of {DATA_TYPES} (or None), not {data_type}.")
         if export_directory is None:
-            export_directory = self.project_root / 'export' / self._get_timestamp(for_path=True)
-        self.export_maps(export_directory)
-        self.export_params(export_directory)
-        self.export_text(export_directory)
-        self.export_lighting(export_directory)
-
-    def export_maps(self, export_directory: Path):
+            export_directory = self._choose_directory()
+            if export_directory is None:
+                return  # Abort export.
         export_directory = Path(export_directory)
-        maps_path = export_directory / 'map/MapStudio/'
-        maps_path.mkdir(parents=True, exist_ok=True)
-        self.Maps.save(maps_path)
+        for d in DATA_TYPES:
+            if data_type == d or data_type is None:
+                data_export_path = self._game_path(d, root=export_directory)
+                data_export_path.mkdir(parents=True, exist_ok=True)
+                if d == "events":
+                    self._export_events(data_export_path)
+                else:
+                    getattr(self, d.capitalize()).save(data_export_path)
 
-    def export_params(self, export_directory: Path):
-        export_directory = Path(export_directory)
-        params_path = export_directory / 'param/GameParam/GameParam.parambnd'  # DCX compression handled by BND
-        params_path.parent.mkdir(parents=True, exist_ok=True)
-        self.Params.save(params_path)
+    def export_data_to_game(self, data_type=None):
+        """Writes data substructures in game formats in the live game directory, ready for play."""
+        self.export_data(data_type=data_type, export_directory=self.game_root)
 
-    def export_text(self, export_directory: Path):
-        export_directory = Path(export_directory)
-        text_path = export_directory / 'msg/ENGLISH/'
-        text_path.mkdir(parents=True, exist_ok=True)
-        self.Text.save(text_path)
+    def export_timestamped_backup(self, data_type=None):
+        timestamped = self.project_root / 'export' / self._get_timestamp(for_path=True)
+        self.export_data(data_type=data_type, export_directory=timestamped)
 
-    def export_lighting(self, export_directory: Path):
-        export_directory = Path(export_directory)
-        lighting_path = export_directory / 'param/DrawParam/'
-        lighting_path.mkdir(parents=True, exist_ok=True)
-        self.Lighting.save(lighting_path)
+    def _export_events(self, export_directory):
+        """Converts EVS.PY in '[project]/events' to binary EMEVD."""
+        convert_events(output_type="emevd", output_directory=export_directory,
+                       input_directory=self.project_root / "events")
 
-    def export_project_to_game(self):
-        """Writes all data substructures in game formats in the live game directory, ready for play."""
-        self.export_project(self.game_root)
+    def restore_backup(self, target=None, full_folder=False):
+        """Restores '.bak' files, deleting whatever they would replace."""
+        if target is None:
+            if full_folder:
+                target = self._window.FileDialog.askdirectory(
+                    title="Choose Folder to Restore Backups", initialdir=str(self.game_root))
+            else:
+                target = self._window.FileDialog.askopenfilename(
+                    title="Choose File to Restore Backup", initialdir=str(self.game_root),
+                    filetypes=[("Bak file", ".bak")])
+            if target is None:
+                return
+        target = Path(target)
+        if target.is_file():
+            if target.suffix == ".bak":
+                if (target.with_suffix("")).is_file():
+                    os.remove(str(target.with_suffix("")))
+                os.rename(str(target), str(target.with_suffix("")))
+            elif not (target.with_suffix(".bak")).is_file():
+                return self.dialog("No Backup to Restore", f"Could not find a file '{str(target.with_suffix('.bak'))}'"
+                                                           f"to restore. No action taken.")
+            else:
+                os.remove(str(target))
+                os.rename(str(target.with_suffix(".bak")), str(target))
+        elif target.is_dir():
+            count = 0
+            for bak_file in target.glob("*.bak"):
+                self.restore_backup(bak_file)
+                count += 1
+            if count == 0:
+                return self.dialog("No Backups to Restore", f"Could not find any '.bak' files to restore in directory "
+                                                            f"'{str(target)}'. No action taken.")
+            else:
+                return self.dialog("Restore Successful", f"{count} '.bak' files restored in folder\n'{str(target)}'.")
 
     def load_config(self):
         try:
@@ -339,7 +416,7 @@ class SoulstructProject(object):
                         self.game_name = config['GameName']
                         self.game_root = Path(config['GameDirectory'])
                         self.last_import_time = config.get('LastImportTime', None)
-                        self.last_push_time = config['LastPushTime']
+                        self.last_export_time = config['LastExportTime']
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
@@ -359,18 +436,22 @@ class SoulstructProject(object):
                            button_names=("Yes, import the files", "No, I'll do it later"),
                            button_kwargs=('YES', 'NO'),
                            cancel_output=1, default_output=1) == 0:
-                self.load_project(force_game_import=True)
+                self.initialize_project(force_import_from_game=True)
             self._window.deiconify()
 
-    @_with_config_write
-    def push(self):
-        # TODO: Not using this at the moment. This would copy existing game-format files.
-        print("# Pushing project files to game...")  # TODO: log
-        for path_sequence in traverse_path_tree(MODIFIABLE_FILES[self.game_name]):
-            project_file = self.project_root.joinpath(*path_sequence)
-            game_file = self.game_root.joinpath(*path_sequence)
-            shutil.copy2(str(project_file), str(game_file))
-        self.last_push_time = self._get_timestamp()
+    def _game_path(self, data_type, root=None):
+        root = self.game_root if root is None else Path(root)
+        data_type = data_type.lower()
+        if data_type == 'maps':
+            return root / 'map/MapStudio'
+        elif data_type == 'params':
+            return root / 'param/GameParam'
+        elif data_type == 'text':
+            return root / 'msg/ENGLISH'
+        elif data_type == 'lighting':
+            return root / 'param/DrawParam'
+        elif data_type == 'events':
+            return root / 'event'
 
     @staticmethod
     def _get_timestamp(for_path=False):
@@ -382,7 +463,7 @@ class SoulstructProject(object):
             'GameName': self.game_name,
             'GameDirectory': str(self.game_root),
             'LastImportTime': self.last_import_time,
-            'LastPushTime': self.last_push_time,
+            'LastExportTime': self.last_export_time,
         }
 
     def _write_config(self):

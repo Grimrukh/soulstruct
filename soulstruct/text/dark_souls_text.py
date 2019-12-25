@@ -3,6 +3,7 @@ from pathlib import Path
 
 from soulstruct.bnd import BND, BaseBND
 from soulstruct.text.fmg import FMG
+from soulstruct.utilities.core import BiDict
 
 
 class DarkSoulsText(object):
@@ -320,33 +321,6 @@ class DarkSoulsText(object):
                              "Did you mean 'weapon', 'armor', 'ring', or 'good'?")
         else:
             raise ValueError(f"Unrecognized item type: '{item_type}'")
-
-
-class BiDict(dict):
-
-    def __init__(self, *args):
-        """Initialized with pairs of values to be connected."""
-        super().__init__()
-        for arg in args:
-            if not isinstance(arg, tuple) or len(arg) != 2:
-                raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
-            self.__setitem__(*arg)
-
-    def __setitem__(self, value_1, value_2):
-        """Removes any pre-existing connections using either value."""
-        if value_1 in self:
-            del self[value_1]
-        if value_2 in self:
-            del self[value_2]
-        super().__setitem__(value_1, value_2)
-        super().__setitem__(value_2, value_1)
-
-    def __delitem__(self, key):
-        super().__delitem__(key)
-        super().__delitem__(self[key])
-
-    def __len__(self):
-        return super().__len__() // 2
 
 
 _CAN_MERGE_PATCH = {

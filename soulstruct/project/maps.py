@@ -5,7 +5,7 @@ from enum import IntEnum
 from typing import List, TYPE_CHECKING
 
 from soulstruct.core import InvalidFieldValueError
-from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_IDS
+from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_NAMES
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events
 from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
@@ -313,7 +313,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
     def build(self):
         with self.set_master(auto_rows=0):
             with self.set_master(auto_columns=0):
-                map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_IDS]
+                map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_NAMES if not m.startswith('m')]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left',
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10, pady=10).var

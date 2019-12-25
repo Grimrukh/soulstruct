@@ -1,5 +1,4 @@
 import copy
-import os
 from io import BytesIO, BufferedReader
 from pathlib import Path
 from typing import List, Iterator
@@ -10,8 +9,7 @@ from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE, BaseMSBEvent
 from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE, BaseMSBRegion
 from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE, BaseMSBPart
 
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
-
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, create_bak
 
 MAP_ENTRY_TYPES = {
     'Models': {
@@ -525,30 +523,26 @@ class MSB(object):
 
         return packed_models + packed_events + packed_regions + packed_parts
 
-    def write_packed(self, msb_path=None, create_bak=True):
+    def write_packed(self, msb_path=None):
         if msb_path is None:
             if self.msb_path is None:
                 raise ValueError("MSB path cannot be automatically determined from instance source.")
             msb_path = self.msb_path
         if isinstance(msb_path, str):
             msb_path = Path(msb_path)
-
-        if create_bak and msb_path.is_file() and not (msb_path.with_suffix(msb_path.suffix + '.bak')).is_file():
-            print(f"# INFO: Created {repr(str(msb_path))} backup file.")
-            os.rename(str(msb_path), str(msb_path) + '.bak')
-
+        create_bak(msb_path)
         with msb_path.open('wb') as f:
             f.write(self.pack())
 
     def translate_all(self, translate):
-        """Offset translations of all regions and parts by given input (which can be anything that can be added to a
-        Vector)."""
+        """Offset translations of all regions and parts by given input.
+
+        The input value can be anything that can be added to a Vector.
+        """
         for p in self.parts:
             p.translate += translate
         for r in self.regions:
             r.translate += translate
-
-    # TODO: pickle/load
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:
         if entry_list_name.lower() not in {'models', 'events', 'regions', 'parts'}:

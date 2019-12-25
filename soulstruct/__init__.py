@@ -11,6 +11,6 @@ except ImportError:
     DSR_PATH = "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED"
     with (Path(__file__).parent / 'config.py').open('w') as f:
         f.write(
-            f"PTDE_PATH = {PTDE_PATH}\n"
-            f"DSR_PATH = {DSR_PATH}\n"
+            f"PTDE_PATH = \"{PTDE_PATH}\"\n"
+            f"DSR_PATH = \"{DSR_PATH}\"\n"
         )

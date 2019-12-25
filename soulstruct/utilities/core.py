@@ -1,5 +1,6 @@
 import ctypes
 import math
+import os
 import re
 import string
 import struct
@@ -8,15 +9,16 @@ import textwrap
 from io import BytesIO
 from pathlib import Path
 
-__all__ = ['PACKAGE_PATH', 'find_dcx', 'word_wrap', 'camel_case_to_spaces',
-           'find_steam_common_paths', 'traverse_path_tree', 'Vector',
-           'BinaryStruct', 'AttributeDict', 'read_chars_from_bytes', 'read_chars_from_buffer', 'pad_chars']
+__all__ = ["PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
+           "find_steam_common_paths", "traverse_path_tree", "Vector",
+           "BinaryStruct", "AttributeDict", "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
+           "BiDict"]
 
 
 def PACKAGE_PATH(*relative_parts):
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        return Path(getattr(sys, '_MEIPASS'), '..', *relative_parts)
-    return Path(__file__).absolute().parent.joinpath('..', *relative_parts)
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        return Path(getattr(sys, "_MEIPASS"), "..", *relative_parts)
+    return Path(__file__).absolute().parent.joinpath("..", *relative_parts)
 
 
 def find_dcx(file_path):
@@ -36,6 +38,15 @@ def find_dcx(file_path):
     raise FileNotFoundError(f"Could not find DCX or non-DCX version of {file_path}.")
 
 
+def create_bak(file_path):
+    file_path = Path(file_path)
+    if file_path.is_file() and not file_path.with_suffix(file_path.suffix + '.bak').is_file():
+        backup_path = str(file_path.with_suffix(file_path.suffix + '.bak'))
+        os.rename(str(file_path), backup_path)
+        print(f"# INFO: Created {repr(backup_path)} backup file.")
+        return True
+    return False
+
 def word_wrap(text, line_limit=50):
     return '\n'.join(textwrap.wrap(text, line_limit))
 
@@ -43,10 +54,10 @@ def word_wrap(text, line_limit=50):
 def camel_case_to_spaces(camel_string):
     """Preserves consecutive capitals (e.g. JSONFileName -> JSON File Name) and non-alphabetical symbols.
 
-    Needs two passes to handle cases of singular capital letters and numbers (which need spaces on both sides).
+    Needs two passes to handle cases of singular capital letters and numbers/symbols (which need spaces on both sides).
     """
-    camel_string = re.sub(r"([A-Z])([A-Z])([a-z])|([0-9]+)([A-Z])", r"\1\4 \2\3\5", camel_string)  # ABc -> A Bc
-    camel_string = re.sub(r"([a-z])([A-Z])|([A-Za-z])([0-9]+)", r"\1\3 \2\4", camel_string)  # aB -> a B
+    camel_string = re.sub(r"([A-Z])([A-Z])([a-z])|([0-9%]+)([A-Z])", r"\1\4 \2\3\5", camel_string)  # ABc -> A Bc
+    camel_string = re.sub(r"([a-z])([A-Z])|([A-Za-z])([0-9%]+)", r"\1\3 \2\4", camel_string)  # aB -> a B
     return camel_string
 
 
@@ -584,3 +595,30 @@ def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
     th += rot_rad
     dx, dz = r * -math.sin(th), r * -math.cos(th)
     return origin[0] + dx, origin[1] + dz
+
+
+class BiDict(dict):
+
+    def __init__(self, *args):
+        """Initialized with pairs of values to be connected."""
+        super().__init__()
+        for arg in args:
+            if not isinstance(arg, tuple) or len(arg) != 2:
+                raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
+            self.__setitem__(*arg)
+
+    def __setitem__(self, value_1, value_2):
+        """Removes any pre-existing connections using either value."""
+        if value_1 in self:
+            del self[value_1]
+        if value_2 in self:
+            del self[value_2]
+        super().__setitem__(value_1, value_2)
+        super().__setitem__(value_2, value_1)
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        super().__delitem__(self[key])
+
+    def __len__(self):
+        return super().__len__() // 2

@@ -441,6 +441,12 @@ class SmartFrame(tk.Frame):
         return menu
 
     @_embed_component
+    def Scrollbar(self, frame=None, **kwargs):
+        if frame is None:
+            frame = self.current_frame
+        return tk.Scrollbar(frame, **kwargs)
+
+    @_embed_component
     def Entry(self, frame=None, initial_text='', integers_only=False, numbers_only=False, **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=True)
         text_var = tk.StringVar(value=initial_text)
@@ -538,7 +544,7 @@ class SmartFrame(tk.Frame):
     def TextBox(self, frame=None, initial_text='', **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=False)
         text = tk.Text(frame, **kwargs)
-        text.insert(CURRENT, initial_text)
+        text.insert(1.0, initial_text)
         return text
 
     @staticmethod

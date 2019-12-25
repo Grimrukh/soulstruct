@@ -1,5 +1,6 @@
 from soulstruct.game_types import Map
 
+
 class COMMON:
     """Dummy class that allows COMMON to be treated like a `Map` instance in scripts."""
     emevd_file_name = 'common'

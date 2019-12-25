@@ -1,2 +1,2 @@
-from .emevd_parser import BaseEMEVD
-from .evs_parser import EmevdCompiler
+from .base import BaseEMEVD
+from .evs import EvsParser

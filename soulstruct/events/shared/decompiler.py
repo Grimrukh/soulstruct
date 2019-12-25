@@ -861,6 +861,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 2:
             anchor_entity_id, sound_type, sound_id = req_args
+            anchor_entity_id = 'PLAYER' if anchor_entity_id == 10000 else anchor_entity_id
             sound_type = get_enum_name(game_module.SoundType, sound_type, True)
             return f"PlaySoundEffect(anchor_entity={anchor_entity_id}, sound_type={sound_type}, sound_id={sound_id})"
 
