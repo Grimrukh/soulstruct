@@ -1,6 +1,7 @@
 """ Verbose output that matches EVS language for 'decompiling'. (Does not use IF blocks.) """
 import struct
-from soulstruct.events.core import boolify, get_enum_name, get_game_map_name, EnumStringError, InstructionNotFoundError
+from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
+    get_game_map_name
 
 
 def all_numbers(*args):
@@ -75,7 +76,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             return decompile_run_event_instruction(req_args, opt_args, arg_types)
 
         if instruction_index == 6:
-            if game_module.NAME != 'darksouls3':
+            if game_module.name != 'darksouls3':
                 raise ValueError('Instruction 2000[06] can only be used in Dark Souls 3 (darksouls3 subpackage).')
             # DS3 only. Same as above, but takes no slot argument. Functional difference unknown.
             return decompile_run_common_event_instruction(req_args, opt_args, arg_types)
@@ -337,8 +338,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             return f"SetNextSnugglyTrade({next_snuggly_flag})"
 
         if instruction_index == 34:
-            item_lot_id, region, flag, hitbox_id = req_args
-            return f"SnugglyItemDrop({item_lot_id}, region={region}, flag={flag}, hitbox={hitbox_id})"
+            item_lot_id, region, flag, collision_id = req_args
+            return f"SnugglyItemDrop({item_lot_id}, region={region}, flag={flag}, collision={collision_id})"
 
         if instruction_index == 35:
             source_region, dest_region = req_args
@@ -528,7 +529,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             character, bit_index, switch_type = req_args
             character = 'PLAYER' if character == 10000 else character
             switch_type = get_enum_name(game_module.OnOffChange, switch_type, True)
-            return f"SetHitboxMask({character}, bit_index={bit_index}, switch_type={switch_type})"
+            return f"SetCollisionMask({character}, bit_index={bit_index}, switch_type={switch_type})"
 
         if instruction_index == 28:
             character, update_auth_type = req_args
@@ -558,10 +559,10 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             character, disabled = req_args
             character = 'PLAYER' if character == 10000 else character
             if disabled == 1:
-                return f"DisableCollision({character})"
+                return f"DisableCharacterCollision({character})"
             elif disabled == 0:
-                return f"EnableCollision({character})"
-            return f"SetCollisionState({character}, is_disabled={disabled})"
+                return f"EnableCharacterCollision({character})"
+            return f"SetCharacterCollisionState({character}, is_disabled={disabled})"
 
         if instruction_index == 32:
             character, command_id, slot, start_flag, end_flag = req_args
@@ -608,11 +609,11 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             return f"SetAnimationsState({character}, state={state})"
 
         if instruction_index == 40:
-            character, destination_type, destination_id, model_point, hitbox_id = req_args
+            character, destination_type, destination_id, model_point, draw_parent_id = req_args
             character = 'PLAYER' if character == 10000 else character
             destination_type = get_enum_name(game_module.CoordEntityType, destination_type, True)
             return (f"Move({character}, destination={destination_id}, destination_type={destination_type}, "
-                    f"model_point={model_point}, set_draw_hitbox={hitbox_id})")
+                    f"model_point={model_point}, set_draw_parent={draw_parent_id})")
 
         if instruction_index == 41:
             character, destination_type, destination_id, model_point = req_args
@@ -622,12 +623,12 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
                     f"model_point={model_point}, short_move=True)")
 
         if instruction_index == 42:
-            character, destination_type, destination_id, model_point, copy_hitbox = req_args
+            character, destination_type, destination_id, model_point, draw_parent_id = req_args
             character = 'PLAYER' if character == 10000 else character
-            copy_hitbox = 'PLAYER' if copy_hitbox == 10000 else copy_hitbox
+            draw_parent_id = 'PLAYER' if draw_parent_id == 10000 else draw_parent_id
             destination_type = get_enum_name(game_module.CoordEntityType, destination_type, True)
             return (f"Move({character}, destination={destination_id}, destination_type={destination_type}, "
-                    f"model_point={model_point}, copy_draw_hitbox={copy_hitbox})")
+                    f"model_point={model_point}, copy_draw_parent={draw_parent_id})")
 
         if instruction_index == 43:
             character, disable_interpolation = req_args
@@ -876,20 +877,20 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
     if instruction_class == 2011:  # ヒット
 
         if instruction_index == 1:
-            hitbox_id, state = req_args
+            collision_id, state = req_args
             if state == 1:
-                return f"EnableHitbox({hitbox_id})"
+                return f"EnableCollision({collision_id})"
             elif state == 0:
-                return f"DisableHitbox({hitbox_id})"
-            return f"SetHitboxState({hitbox_id}, state={boolify(state)})"
+                return f"DisableCollision({collision_id})"
+            return f"SetCollisionState({collision_id}, state={boolify(state)})"
 
         if instruction_index == 2:
-            hitbox_id, state = req_args
+            collision_id, state = req_args
             if state == 1:
-                return f"EnableHitboxBackreadMask({hitbox_id})"
+                return f"EnableCollisionBackreadMask({collision_id})"
             elif state == 0:
-                return f"DisableHitboxBackreadMask({hitbox_id})"
-            return f"SetHitboxBackreadMaskState({hitbox_id}, state={boolify(state)})"
+                return f"DisableCollisionBackreadMask({collision_id})"
+            return f"SetCollisionBackreadMaskState({collision_id}, state={boolify(state)})"
 
     if instruction_class == 2012:  # マップ
 
@@ -1665,19 +1666,19 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             comparison_type = get_enum_name(game_module.ComparisonType, comparison_type, True)
             return f"IfObjectHealthValueComparison({condition}, {obj}, {comparison_type}, {value})"
 
-    if instruction_class == 11:  # CONTROL (HITBOX)
+    if instruction_class == 11:  # CONTROL (Collision)
 
         if instruction_index == 0:
-            condition, hitbox_id = req_args
-            return f"IfMovingOnHitbox({condition}, {hitbox_id})"
+            condition, collision_id = req_args
+            return f"IfMovingOnCollision({condition}, {collision_id})"
 
         if instruction_index == 1:
-            condition, hitbox_id = req_args
-            return f"IfRunningOnHitbox({condition}, {hitbox_id})"
+            condition, collision_id = req_args
+            return f"IfRunningOnCollision({condition}, {collision_id})"
 
         if instruction_index == 2:
-            condition, hitbox_id = req_args
-            return f"IfStandingOnHitbox({condition}, {hitbox_id})"
+            condition, collision_id = req_args
+            return f"IfStandingOnCollision({condition}, {collision_id})"
 
     # Failed to find instruction in game's combined decompiler.
     raise InstructionNotFoundError(f"Could not decompile instruction {instruction_class}[{instruction_index:02d}].")

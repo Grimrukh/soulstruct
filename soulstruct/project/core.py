@@ -1,3 +1,8 @@
+"""
+TODO:
+    - Manage ESD. Unpack and store in 'esdpy' subdirectory.
+    - Resizable window. (Also make frame padding more consistent.)
+"""
 from __future__ import annotations
 
 import datetime
@@ -9,7 +14,7 @@ from pathlib import Path
 from typing import Optional
 
 from soulstruct.core import SoulstructError
-from soulstruct.events.darksouls1 import convert_events
+from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.project.events import SoulstructEmevdManager
@@ -49,7 +54,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     lighting_tab: Optional[SoulstructLightingEditor]
     events_tab: Optional[SoulstructEmevdManager]
 
-    TAB_ORDER = ['maps', 'params', 'text', 'lighting', 'events', 'main']  # TODO: proper order
+    TAB_ORDER = ['maps', 'params', 'text', 'lighting', 'events', 'runtime']
 
     def __init__(self, project: SoulstructProject, master=None):
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
@@ -96,7 +101,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             dcx=self.project.game_name == "Dark Souls Remastered", no_grid=True)
         self.events_tab.pack()
 
-        self.build_main_tab(tab_frames['main'])
+        self.build_runtime_tab(tab_frames['runtime'])
 
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
@@ -107,8 +112,6 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
     def build_top_menu(self):
         top_menu = self.Menu()
-
-        # TODO: Add save/load options for pickled files.
 
         file_menu = self.Menu(tearoff=0)
         file_menu.add_command(label="Open Project", foreground='#FFF', command=lambda: print("Open"))
@@ -158,18 +161,13 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.toplevel.config(menu=top_menu)
 
-    def build_main_tab(self, main_frame):
+    def build_runtime_tab(self, main_frame):
         """
         TODO:
-            - SAVE ALL. Need a way to detect which files have actually changed (related to undo, redo, etc.).
-            - Put subtype import options on those editor screens.
             - Option to launch game? And an option to launch Game + Gadget?
             - Option to restart game, if it's running?
             - Option to connect to running game and extract current player XYZ coordinates into an MSB entry?
-            - IMPORT EVENTS. Unpack into EVS and store in 'emevdpy' subdirectory.
-            - IMPORT ESD. Unpack and store in 'esdpy' subdirectory.
             - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
-            - Make use of config.json project file. (Save directory, last times, etc.)
         """
         pass
 

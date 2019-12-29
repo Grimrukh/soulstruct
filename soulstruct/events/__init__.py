@@ -1,2 +1,6 @@
-from .base import BaseEMEVD
-from .evs import EvsParser
+"""Empty namespace.
+
+All internal imports are from the appropriate subpackage.
+
+All user imports should be from a game subpackage (or `evs.EvsParser`).
+"""

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
-    CATEGORY_BOX_WIDTH = 170
+    CATEGORY_BOX_WIDTH = 150
     ENTRY_BOX_WIDTH = 450
     ENTRY_RANGE_SIZE = 200
 

@@ -10,7 +10,10 @@ if TYPE_CHECKING:
 
 
 class SoulstructTextEditor(SoulstructBaseEditor):
-
+    CATEGORY_BOX_WIDTH = 165
+    CATEGORY_BOX_HEIGHT = 400
+    ENTRY_BOX_WIDTH = 910
+    ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100
 
     class EntryRow(SoulstructBaseEditor.EntryRow):
@@ -71,22 +74,20 @@ class SoulstructTextEditor(SoulstructBaseEditor):
 
     def build(self):
         with self.set_master(auto_rows=0):
-            with self.set_master(auto_columns=0, pady=5):
+            with self.set_master(auto_columns=0, pady=10):
 
                 self.show_all_categories = self.Checkbutton(label='Show internal categories ', initial_state=False,
-                                                            command=self.refresh_categories, pady=20).var
+                                                            command=self.refresh_categories).var
 
                 self.find_text_id_entry = self.Entry(
                     label="Find ID:", label_position='left', width=10, padx=10)
                 self.find_text_id_entry.bind('<Return>', self.find_text_id)
-
-                with self.set_master(auto_rows=0):
-                    self.find_text_string_entry = self.Entry(
-                        label="Find Text:", label_position='left', width=18, padx=10, sticky='e')
-                    self.find_text_string_entry.bind('<Return>', lambda e: self.find_text_string())
-                    self.replace_text_string_entry = self.Entry(
-                        label="Replace With:", label_position='left', width=18, padx=10, sticky='e')
-                    self.replace_text_string_entry.bind('<Return>', lambda e: self.find_text_string(replace=True))
+                self.find_text_string_entry = self.Entry(
+                    label="Find Text:", label_position='left', width=18, padx=10, sticky='e')
+                self.find_text_string_entry.bind('<Return>', lambda e: self.find_text_string())
+                self.replace_text_string_entry = self.Entry(
+                    label="Replace With:", label_position='left', width=18, padx=10, sticky='e')
+                self.replace_text_string_entry.bind('<Return>', lambda e: self.find_text_string(replace=True))
 
             super().build()
 

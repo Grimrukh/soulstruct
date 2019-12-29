@@ -1,160 +1,259 @@
-import sys
-from pathlib import Path
-
-from soulstruct.utilities.core import BinaryStruct
-from soulstruct.events import BaseEMEVD
+from .core import EMEVD, convert_events
+from . import constants
 from .constants import *
-from . import decompiler
+from . import instructions
 from .instructions import *
+from . import tests
 from .tests import *
+import soulstruct.enums.darksouls1 as enums
 from soulstruct.enums.darksouls1 import *
+from . import decompiler
+name = 'darksouls1'
 
+__all__ = [
+    # EMEVD class
+    "EMEVD",
 
-NAME = 'darksouls1'
+    # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
+    "constants", "instructions", "tests", "enums", "name", "decompiler",
 
+    # Batch file conversion utility
+    "convert_events",
 
-def get_enums():
-    import soulstruct.enums.darksouls1
-    return soulstruct.enums.darksouls1
+    # Dark Souls 1 map constants
+    "COMMON", "DEPTHS", "UNDEAD_BURG", "FIRELINK_SHRINE", "PAINTED_WORLD", "DARKROOT_GARDEN", "OOLACILE", "CATACOMBS",
+    "TOMB_OF_THE_GIANTS", "ASH_LAKE", "BLIGHTTOWN", "LOST_IZALITH", "SENS_FORTRESS", "ANOR_LONDO", "NEW_LONDO_RUINS",
+    "DUKES_ARCHIVES", "KILN_OF_THE_FIRST_FLAME", "UNDEAD_ASYLUM",
 
+    # Shared instructions
+    "RunEvent",
+    "Wait", "WaitFrames", "WaitRandomSeconds", "WaitRandomFrames", "WaitForNetworkApproval",
+    "SetCharacterState", "EnableCharacter", "DisableCharacter",
+    "SetAIState", "EnableAI", "DisableAI", "SetTeamType",
+    "Kill",
+    "EzstateAIRequest",
+    "CancelSpecialEffect",
+    "ResetStandbyAnimationSettings", "SetStandbyAnimationSettings",
+    "SetGravityState", "EnableGravity", "DisableGravity",
+    "SetCharacterEventTarget",
+    "SetImmortalityState", "EnableImmortality", "DisableImmortality",
+    "SetNest",
+    "SetInvincibilityState", "EnableInvincibility", "DisableInvincibility",
+    "ClearTargetList", "AICommand", "SetEventPoint", "SetAIParamID", "ReplanAI",
+    "CreateNPCPart", "SetNPCPartHealth", "SetNPCPartEffects", "SetNPCPartBulletDamageScaling",
+    "SetDisplayMask", "SetCollisionMask",
+    "SetNetworkUpdateAuthority", "SetBackreadState",
+    "EnableBackread", "DisableBackread",
+    "SetHealthBarState", "EnableHealthBar", "DisableHealthBar",
+    "SetCharacterCollisionState", "EnableCharacterCollision", "DisableCharacterCollision",
+    "AIEvent",
+    "ReferDamageToEntity",
+    "SetNetworkUpdateRate",
+    "SetBackreadStateAlternate",
+    "DropMandatoryTreasure",
+    "SetTeamTypeAndExitStandbyAnimation",
+    "HumanityRegistration",
+    "ResetAnimation",
+    "ActivateMultiplayerBuffs",
+    "SetObjectState", "EnableObject", "DisableObject",
+    "DestroyObject", "RestoreObject",
+    "SetTreasureState", "EnableTreasure", "DisableTreasure",
+    "ActivateObject", "SetObjectActivation", "SetObjectActivationWithIdx",
+    "EnableObjectActivation", "DisableObjectActivation",
+    "PostDestruction",
+    "CreateHazard",
+    "RegisterStatue",
+    "RemoveObjectFlag",
+    "SetObjectInvulnerability", "EnableObjectInvulnerability", "DisableObjectInvulnerability",
+    "EnableTreasureCollection",
+    "SetFlagState", "EnableFlag", "DisableFlag", "ToggleFlag",
+    "SetRandomFlagInRange", "EnableRandomFlagInRange", "DisableRandomFlagInRange", "ToggleRandomFlagInRange",
+    "SetFlagRangeState", "EnableFlagRange", "DisableFlagRange", "ChangeFlagRange",
+    "IncrementEventValue", "ClearEventValue",
+    "EnableThisFlag", "DisableThisFlag",
+    "SetEventState", "StopEvent", "RestartEvent",
+    "SetCollisionState", "EnableCollision", "DisableCollision",
+    "SetCollisionBackreadMaskState", "EnableCollisionBackreadMask", "DisableCollisionBackreadMask",
+    "AwardItemLot", "AwardItemLotToHostOnly",
+    "RemoveItemFromPlayer", "RemoveWeaponFromPlayer", "RemoveArmorFromPlayer", "RemoveRingFromPlayer",
+    "RemoveGoodFromPlayer",
+    "SnugglyItemDrop", "SetNextSnugglyTrade",
+    "RequestAnimation", "ForceAnimation",
+    "SetAnimationsState", "EnableAnimations", "DisableAnimations", "EndOfAnimation",
+    "CreateFX", "DeleteFX", "CreateTemporaryFX", "CreateObjectFX", "DeleteObjectFX",
+    "SetBackgroundMusic",
+    "PlaySoundEffect",
+    "SetMapSoundState", "EnableMapSound", "DisableMapSound",
+    "RegisterLadder", "RegisterBonfire",
+    "SetMapPartState", "DisableMapPart", "EnableMapPart",
+    "PlaceSummonSign",
+    "SetDeveloperMessageState", "EnableDeveloperMessage", "DisableDeveloperMessage",
+    "DisplayDialog", "DisplayBanner", "DisplayStatus", "DisplayBattlefieldMessage",
+    "PlayCutscene", "PlayCutsceneAndMovePlayer", "PlayCutsceneToPlayer", "PlayCutsceneAndMoveSpecificPlayer",
+    "PlayCutsceneAndRotatePlayer",
+    "SetNavmeshType", "EnableNavmeshType", "DisableNavmeshType", "ToggleNavmeshType",
+    "SetNetworkSync", "EnableNetworkSync", "DisableNetworkSync",
+    "ClearMainCondition",
+    "IssuePrefetchRequest",
+    "SaveRequest",
+    "TriggerMultiplayerEvent",
+    "SetVagrantSpawning", "EnableVagrantSpawning", "DisableVagrantSpawning",
+    "IncrementPvPSin",
+    "NotifyBossBattleStart",
+    "SetSpawnerState", "EnableSpawner", "DisableSpawner",
+    "ShootProjectile",
+    "CreateSpawner",
+    "WarpToMap", "MoveRemains", "Move", "MoveToEntity", "MoveAndSetDrawParent", "ShortMove",
+    "MoveAndCopyDrawParent", "MoveObjectToCharacter",
+    "SetRespawnPoint",
+    "KillBoss",
+    "IncrementNewGameCycle",
+    "AwardAchievement",
+    "BetrayCurrentCovenant",
+    "EqualRecovery",
+    "ChangeCamera", "SetCameraVibration", "SetLockedCameraSlot",
+    "HellkiteBreathControl",
+    "SetMapDrawParamSlot",
 
-class EMEVD(BaseEMEVD):
-    GAME_MODULE = sys.modules[globals()['__name__']]
-    STRING_ENCODING = 'utf-8'
-    DCX_MAGIC = (36, 44)
+    # Line-for-line control flow instructions (high-level Python blocks are recommended instead)
+    "SkipLines", "Terminate", "End", "Restart",
+    "IfValueComparison", "AwaitConditionState", "AwaitConditionTrue", "AwaitConditionFalse",
+    "SkipLinesIfConditionState", "SkipLinesIfConditionTrue", "SkipLinesIfConditionFalse",
+    "SkipLinesIfFinishedConditionState", "SkipLinesIfFinishedConditionTrue", "SkipLinesIfFinishedConditionFalse",
+    "TerminateIfConditionState", "EndIfConditionTrue", "EndIfConditionFalse", "RestartIfConditionTrue",
+    "RestartIfConditionFalse", "TerminateIfFinishedConditionState", "EndIfFinishedConditionTrue",
+    "EndIfFinishedConditionFalse", "RestartIfFinishedConditionTrue", "RestartIfFinishedConditionFalse",
+    "IfConditionState", "IfConditionTrue", "IfConditionFalse", "IfTimeElapsed", "IfFramesElapsed",
+    "IfRandomTimeElapsed", "IfRandomFramesElapsed", "SkipLinesIfMapPresenceState", "SkipLinesIfInsideMap",
+    "SkipLinesIfOutsideMap", "TerminateIfMapPresenceState", "EndIfInsideMap", "EndIfOutsideMap", "RestartIfInsideMap",
+    "RestartIfOutsideMap", "IfMapPresenceState", "IfInsideMap", "IfOutsideMap", "IfMultiplayerEvent", "AwaitFlagState",
+    "AwaitThisEventOn", "AwaitThisEventOff", "AwaitThisEventSlotOn", "AwaitThisEventSlotOff", "AwaitFlagOn",
+    "AwaitFlagOff", "AwaitFlagChange", "SkipLinesIfFlagState", "SkipLinesIfThisEventOn", "SkipLinesIfThisEventOff",
+    "SkipLinesIfThisEventSlotOn", "SkipLinesIfThisEventSlotOff", "SkipLinesIfFlagOn", "SkipLinesIfFlagOff",
+    "TerminateIfFlagState", "EndIfThisEventOn", "EndIfThisEventOff", "EndIfThisEventSlotOn", "EndIfThisEventSlotOff",
+    "EndIfFlagOn", "EndIfFlagOff", "RestartIfThisEventOn", "RestartIfThisEventOff", "RestartIfThisEventSlotOn",
+    "RestartIfThisEventSlotOff", "RestartIfFlagOn", "RestartIfFlagOff", "IfFlagState", "IfThisEventOn",
+    "IfThisEventOff", "IfThisEventSlotOn", "IfThisEventSlotOff", "IfFlagOn", "IfFlagOff", "IfFlagChange",
+    "SkipLinesIfFlagRangeState", "SkipLinesIfFlagRangeAllOn", "SkipLinesIfFlagRangeAllOff", "SkipLinesIfFlagRangeAnyOn",
+    "SkipLinesIfFlagRangeAnyOff", "TerminateIfFlagRangeState", "EndIfFlagRangeAllOn", "EndIfFlagRangeAllOff",
+    "EndIfFlagRangeAnyOn", "EndIfFlagRangeAnyOff", "RestartIfFlagRangeAllOn", "RestartIfFlagRangeAllOff",
+    "RestartIfFlagRangeAnyOn", "RestartIfFlagRangeAnyOff", "IfFlagRangeState", "IfFlagRangeAllOn", "IfFlagRangeAllOff",
+    "IfFlagRangeAnyOn", "IfFlagRangeAnyOff", "IfTrueFlagCountComparison", "IfTrueFlagCountEqual",
+    "IfTrueFlagCountNotEqual", "IfTrueFlagCountGreaterThan", "IfTrueFlagCountLessThan",
+    "IfTrueFlagCountGreaterThanOrEqual", "IfTrueFlagCountLessThanOrEqual", "IfEventValueComparison",
+    "IfEventValueEqual", "IfEventValueNotEqual", "IfEventValueGreaterThan", "IfEventValueLessThan",
+    "IfEventValueGreaterThanOrEqual", "IfEventValueLessThanOrEqual", "IfEventsComparison",
+    # "IfCharacterRegionState" and shortcut versions overridden in Dark Souls 1.
+    "IfAllPlayersRegionState", "IfAllPlayersInsideRegion", "IfAllPlayersOutsideRegion", "IfEntityDistanceState",
+    "IfEntityWithinDistance", "IfEntityBeyondDistance", "IfPlayerWithinDistance", "IfPlayerBeyondDistance",
+    "IfPlayerItemStateNoBox", "IfPlayerItemStateBox", "IfPlayerItemState", "IfPlayerHasItem", "IfPlayerHasWeapon",
+    "IfPlayerHasArmor", "IfPlayerHasRing", "IfPlayerHasGood", "IfPlayerDoesNotHaveItem", "IfPlayerDoesNotHaveWeapon",
+    "IfPlayerDoesNotHaveArmor", "IfPlayerDoesNotHaveRing", "IfPlayerDoesNotHaveGood", "IfAnyItemDroppedInRegion",
+    "IfItemDropped", "AwaitObjectDestructionState", "AwaitObjectDestroyed", "AwaitObjectNotDestroyed",
+    "SkipLinesIfObjectDestructionState", "SkipLinesIfObjectDestroyed", "SkipLinesIfObjectNotDestroyed",
+    "TerminateIfObjectDestructionState", "EndIfObjectDestroyed", "EndIfObjectNotDestroyed", "RestartIfObjectDestroyed",
+    "RestartIfObjectNotDestroyed", "IfObjectDestructionState", "IfObjectDestroyed", "IfObjectNotDestroyed",
+    "IfObjectDamagedBy", "IfObjectActivated", "IfObjectHealthValueComparison", "IfMovingOnCollision",
+    "IfRunningOnCollision",
+    "IfStandingOnCollision", "SkipLinesIfComparison", "SkipLinesIfEqual", "SkipLinesIfNotEqual",
+    "SkipLinesIfGreaterThan",
+    "SkipLinesIfLessThan", "SkipLinesIfGreaterThanOrEqual", "SkipLinesIfLessThanOrEqual", "TerminateIfComparison",
+    "EndIfEqual", "EndIfNotEqual", "EndIfGreaterThan", "EndIfLessThan", "EndIfGreaterThanOrEqual",
+    "EndIfLessThanOrEqual", "RestartIfEqual", "RestartIfNotEqual", "RestartIfGreaterThan", "RestartIfLessThan",
+    "RestartIfGreaterThanOrEqual", "RestartIfLessThanOrEqual", "IfDialogPromptActivated", "IfWorldTendencyComparison",
+    "IfWhiteWorldTendencyComparison", "IfBlackWorldTendencyComparison", "IfWhiteWorldTendencyGreaterThanOrEqual",
+    "IfBlackWorldTendencyGreaterThanOrEqual", "IfNewGameCycleComparison", "IfNewGameCycleEqual",
+    "IfNewGameCycleGreaterThanOrEqual", "IfDLCState", "IfDLCOwned", "IfDLCNotOwned", "IfOnlineState", "IfOnline",
+    "IfOffline", "IfCharacterDeathState", "IfCharacterDead", "IfCharacterAlive", "IfAttacked", "IfHealthComparison",
+    "IfHealthEqual", "IfHealthNotEqual", "IfHealthGreaterThan", "IfHealthLessThan", "IfHealthGreaterThanOrEqual",
+    "IfHealthLessThanOrEqual", "IfCharacterType", "IfCharacterHollow", "IfCharacterHuman", "IfCharacterTargetingState",
+    "IfCharacterTargeting", "IfCharacterNotTargeting", "IfCharacterSpecialEffectState", "IfCharacterHasSpecialEffect",
+    "IfCharacterDoesNotHaveSpecialEffect", "IfCharacterPartHealthComparison", "IfCharacterPartHealthLessThanOrEqual",
+    "IfCharacterBackreadState", "IfCharacterBackreadEnabled", "IfCharacterBackreadDisabled", "IfTAEEventState",
+    "IfHasTAEEvent", "IfDoesNotHaveTAEEvent", "IfHasAIStatus", "IfSkullLanternState", "IfSkullLanternActive",
+    "IfSkullLanternInactive", "IfPlayerClass", "IfPlayerCovenant", "IfPlayerSoulLevelComparison",
+    "IfPlayerSoulLevelGreaterThanOrEqual", "IfPlayerSoulLevelLessThanOrEqual", "IfHealthValueComparison",
+    "IfHealthValueEqual", "IfHealthValueNotEqual", "IfHealthValueGreaterThan", "IfHealthValueLessThan",
+    "IfHealthValueGreaterThanOrEqual", "IfHealthValueLessThanOrEqual", "ArenaRankingRequest1v1",
+    "ArenaRankingRequest2v2", "ArenaRankingRequestFFA", "ArenaExitRequest", "ArenaSetNametag1", "ArenaSetNametag2",
+    "ArenaSetNametag3", "ArenaSetNametag4", "DisplayArenaDissolutionMessage", "ArenaSetNametag5", "ArenaSetNametag6",
 
-    HEADER_STRUCT = BinaryStruct(
-        ('version', '4s', b'EVD\x00'),
-        ('ds1_marker_1', 'I', 0),
-        ('ds1_marker_2', 'I', 204),
-        ('file_size_1', 'I'),
-        ('event_count', 'I'),
-        ('event_table_offset', 'I'),
-        ('instruction_count', 'I'),
-        ('instruction_table_offset', 'I'),
-        '4x',  # unknown table, unused in all games
-        ('unknown_table_offset', 'I'),
-        ('event_layers_count', 'I'),  # unused in DS1
-        ('event_layers_table_offset', 'I'),  # unused in DS1
-        ('event_arg_count', 'I'),
-        ('event_arg_table_offset', 'I'),
-        ('linked_files_count', 'I'),
-        ('linked_files_table_offset', 'I'),
-        ('base_arg_data_size', 'I'),
-        ('base_arg_data_offset', 'I'),
-        ('packed_strings_size', 'I'),
-        ('packed_strings_offset', 'I'),
-        '4x',
-    )
+    # Dark Souls 1 specific instructions
+    "IfCharacterRegionState", "IfCharacterInsideRegion", "IfCharacterOutsideRegion",
+    "IfPlayerInsideRegion", "IfPlayerOutsideRegion",
+    "SkipLinesIfMultiplayerState", "SkipLinesIfHost", "SkipLinesIfClient",
+    "SkipLinesIfMultiplayer", "SkipLinesIfSingleplayer",
+    "TerminateIfMultiplayerState", "EndIfHost", "EndIfClient", "EndIfMultiplayer", "EndIfSingleplayer",
+    "RestartIfHost", "RestartIfClient", "RestartIfMultiplayer", "RestartIfSingleplayer",
+    "IfMultiplayerState", "IfHost", "IfClient", "IfMultiplayer", "IfSingleplayer",
+    "SetBossHealthBarState", "EnableBossHealthBar", "DisableBossHealthBar",
+    "ActivateKillplaneForModel",
+    "AddSpecialEffect",
+    "RotateToFaceEntity",
 
-    def compute_base_args_size(self, existing_data_size):
-        return sum([e.total_args_size for e in self.events.values()]) + 4
+    # REMASTERED ONLY (mostly Arena events - no warning given if you try to use these in PTDE!)
+    "RegisterHealingFountain",
+    "Unknown_3_23",
+    "IfMultiplayerCount",
+    "Unknown_4_15",
+    "Unknown_4_16",
+    "IfArenaMatchmaking",
+    "Unknown_2000_06",
+    "PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1",
+    "PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2",
+    "CopyEventValue",
+    "Unknown_2003_43",
+    "ForceAnimation_WithUnknownEffect1",
+    "ForceAnimation_WithUnknownEffect2",
+    "Unknown_2003_48",
+    "EraseNPCSummonSign",
+    "FadeOutCharacter",
+    "FadeInCharacter",
 
-    def pad_after_base_args(self, emevd_binary_after_base_args):
-        # Terminate with z4.
-        return emevd_binary_after_base_args + b'\x00\x00\x00\x00'
+    # Names processed directly by EVS parser
+    "NeverRestart", "RestartOnRest", "UnknownRestart", "EVENTS", "Condition", "END", "RESTART", "Await",
 
-    class Event(BaseEMEVD.Event):
-        use = 1
+    # Shared tests
+    "THIS_FLAG", "THIS_SLOT_FLAG",
+    "ONLINE", "OFFLINE", "DLC_OWNED", "SKULL_LANTERN_ACTIVE",
+    "WHITE_WORLD_TENDENCY", "BLACK_WORLD_TENDENCY", "NEW_GAME_CYCLE", "SOUL_LEVEL",
+    "FlagEnabled", "FlagDisabled",
+    "SecondsElapsed", "FramesElapsed",
+    "CharacterInsideRegion", "CharacterOutsideRegion",
+    "PlayerInsideRegion", "PlayerOutsideRegion", "AllPlayersInsideRegion", "AllPlayersOutsideRegion",
+    "InsideMap", "OutsideMap",
+    "EntityWithinDistance", "EntityBeyondDistance", "PlayerWithinDistance", "PlayerBeyondDistance",
+    "HasItem", "HasWeapon", "HasArmor", "HasRing", "HasGood",
+    "DialogPromptActivated",
+    "MultiplayerEvent", "TrueFlagCount", "EventValue", "EventFlagValue",
+    "AnyItemDroppedInRegion", "ItemDropped",
+    "OwnsItem", "OwnsWeapon", "OwnsArmor", "OwnsRing", "OwnsGood",
+    "IsAlive", "IsDead", "IsAttacked",
+    "HealthRatio", "HealthValue", "PartHealthValue",
+    "IsCharacterType", "IsHollow", "IsHuman", "IsInvader", "IsBlackPhantom", "IsWhitePhantom",
+    "HasSpecialEffect",
+    "BackreadEnabled", "BackreadDisabled",
+    "HasTaeEvent",
+    "IsTargeting", "HasAiStatus", "AiStatusIsNormal", "AiStatusIsRecognition", "AiStatusIsAlert", "AiStatusIsBattle",
+    "PlayerIsClass", "PlayerInCovenant",
+    "IsDamaged", "IsDestroyed", "IsActivated",
+    "PlayerStandingOnCollision", "PlayerMovingOnCollision", "PlayerRunningOnCollision",
 
-        STRUCT = BinaryStruct(
-            ('event_id', 'I'),
-            ('instruction_count', 'I'),
-            ('first_instruction_offset', 'I'),
-            ('event_arg_count', 'I'),
-            ('first_event_arg_offset', 'i'),
-            ('restart_type', 'I'),
-            '4x',
-        )
+    # Dark Souls 1 specific tests
+    "HOST", "CLIENT", "SINGLEPLAYER", "MULTIPLAYER",
 
-        class Instruction(BaseEMEVD.Event.Instruction):
-            STRUCT = BinaryStruct(
-                ('instruction_class', 'I'),
-                ('instruction_index', 'I'),
-                ('base_args_size', 'I'),
-                ('first_base_arg_offset', 'i'),
-                ('first_event_layers_offset', 'i'),
-                '4x',
-            )
+    # Basic enums
+    "RestartType",
+    "uint", "short", "ushort", "char", "uchar",
+    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
 
-            INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES
+    # Enums identical in all games
+    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
+    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagType", "InterpolationState",
+    "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons", "OnOffChange",
+    "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute", "WorldTendencyType",
+    "UpdateAuthority",
 
-            class EventLayers(BaseEMEVD.Event.Instruction.EventLayers):
-                """ Never used in DS1 and very probably not actually supported by the engine. """
-
-                STRUCT = BinaryStruct(
-                    ('two', 'I', 2),
-                    ('event_layers', 'I'),  # 32-bit bit field
-                    ('zero', 'I', 0),  # format is a guess
-                    ('minus_one', 'i', -1),  # format is a guess
-                    ('one', 'I', 1),  # format is a guess
-                )
-
-        class EventArg(BaseEMEVD.Event.EventArg):
-            STRUCT = BinaryStruct(
-                ('instruction_line', 'I'),
-                ('write_from_byte', 'I'),
-                ('read_from_byte', 'I'),
-                ('bytes_to_write', 'I'),
-                '4x',
-            )
-
-
-EVENT_EXTENSIONS = {
-    "evs": {".evs", ".evs.py", ".py", ".emevd.py"},
-    "emevd": {".emevd"},
-    "emevd.dcx": {".emevd.dcx"},
-    "numeric": {".numeric", ".txt", ".numeric.txt"},
-}
-
-
-def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=()):
-    """Convert all events from one format to another.
-
-    The possible formats are 'evs' (or 'py'), 'emevd', 'emevd.dcx', and 'numeric' (or 'txt'). By default, the input
-    type is auto-detected from the name of each EMEVD file with the appropriate map formatting (e.g.
-    'm10_00_00_00.emevd.py', 'm10_01_00_00.numeric.txt') in the input directory (which defaults to the packaged vanilla
-    'evs.py' scripts).
-
-    A subset of EMEVD map constants to convert can be passed to `maps`, or it can be left to default to looking for all
-    EMEVD files used in this game (in which case an error will be raised if any are not found).
-    """
-    output_ext = "." + output_type.lower().lstrip(".")
-    output_type = None
-    for ext_type, exts in EVENT_EXTENSIONS.items():
-        if output_ext in exts:
-            output_type = ext_type
-    if output_type is None:
-        raise ValueError(f"Invalid EMEVD output extension: {repr(output_ext)}.")
-    output_directory = Path(output_directory)
-    input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
-    input_directory = Path(input_directory) if input_directory is not None else Path(__file__, 'evs')
-    if not maps:
-        maps = ALL_MAPS
-    emevd_sources = {m.emevd_file_name: None for m in maps}
-    all_exts = EVENT_EXTENSIONS["evs"].union(EVENT_EXTENSIONS["emevd"].union(
-        EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"])))
-    for available in input_directory.glob("*"):
-        parts = available.name.split(".")
-        name, ext = parts[0], '.' + '.'.join(parts[1:])
-        if name in emevd_sources and (ext == input_ext or (input_ext is None and ext in all_exts)):
-            if emevd_sources[name] is not None:
-                raise FileExistsError(f"Found multiple files named {repr(name)} with different extensions.")
-            emevd_sources[name] = available
-    missing = [name for name, source in emevd_sources.items() if source is None]
-    if missing:
-        raise FileNotFoundError(f"Could not find EMEVD sources for: {missing}.")
-    for name, source in emevd_sources.items():
-        try:
-            emevd = EMEVD(source)
-            output_path = output_directory / (name + output_ext)
-            if output_type == "evs":
-                emevd.write_evs(output_path)
-            elif output_type == "emevd":
-                emevd.write_emevd(output_path, dcx=False)
-            elif output_type == "emevd.dcx":
-                emevd.write_emevd(output_path, dcx=True)
-            elif output_type == "numeric":
-                emevd.write_numeric(output_path)
-        except Exception as e:
-            raise ValueError(f"Encountered an error while attempting to compile {name + output_ext}: {str(e)}")
+    # Enums for Dark Souls 1 (both PTD and DSR) only
+    "CalculationType", "ConditionGroup", "Covenant", "TeamType", "BannerType", "MultiplayerState", "NPCPartType",
+]

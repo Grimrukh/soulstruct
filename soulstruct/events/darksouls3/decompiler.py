@@ -1,4 +1,5 @@
-from soulstruct.events.core import boolify, get_enum_name, get_game_map_name, EnumStringError, InstructionNotFoundError
+from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
+    get_game_map_name
 from soulstruct.enums.darksouls3 import *
 
 
@@ -685,12 +686,12 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetDirectionDisplayState(state={boolify(state)})"
 
         if instruction_index == 45:
-            hitbox, level, grid_x, grid_y, state = req_args
+            collision, level, grid_x, grid_y, state = req_args
             if state == 1:
-                return f"EnableMapHitGridCorrespondence({hitbox}, {level}, {grid_x}, {grid_y})"
+                return f"EnableMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y})"
             if state == 0:
-                return f"DisableMapHitGridCorrespondence({hitbox}, {level}, {grid_x}, {grid_y})"
-            return f"SetMapHitGridCorrespondence({hitbox}, {level}, {grid_x}, {grid_y}, state={boolify(state)})"
+                return f"DisableMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y})"
+            return f"SetMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y}, state={boolify(state)})"
 
         if instruction_index == 46:
             content_image_part_id, state = req_args
@@ -976,12 +977,12 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     if instruction_class == 2011:
 
         if instruction_index == 3:
-            hitbox, state = req_args
-            return f"SetHitboxResState(hitbox={hitbox}, state={boolify(state)})"
+            collision, state = req_args
+            return f"SetCollisionResStatecollisionsn={collision}, state={boolify(state)})"
 
         if instruction_index == 4:
-            hitbox, state = req_args
-            return f"ActivateHitboxAndCreateNavmesh(hitbox={hitbox}, state={boolify(state)})"
+            collision, state = req_args
+            return f"ActivateCollisionAndCreateNavmesh(collision={collision}, state={boolify(state)})"
 
     if instruction_class == 2012:
 

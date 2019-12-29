@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import Union
 
-from soulstruct.events.core import get_value_test
+from soulstruct.events.internal import get_value_test
 from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import CoordEntityType
 from soulstruct.game_types.basic_types import GameObject
@@ -9,8 +9,8 @@ from soulstruct.game_types.basic_types import GameObject
 __all__ = ['Entity', 'EventEntity', 'CoordEntity',
            'MapSound', 'ObjAct',
            'Object', 'Region', 'Character',
-           'Hitbox',
-           'CoordEntityInt', 'ObjectInt', 'RegionInt', 'CharacterInt', 'AnimatedInt', 'HitboxInt']
+           'Collision',
+           'EntityInt', 'CoordEntityInt', 'ObjectInt', 'RegionInt', 'CharacterInt', 'AnimatedInt', 'CollisionInt']
 
 
 class Entity(GameObject, IntEnum):
@@ -122,14 +122,15 @@ class Character(CoordEntity):
         return CoordEntityType.Character
 
 
-class Hitbox(Entity):
-    """ Hitbox (or 'collision') added in MSB. No additional state. """
+class Collision(Entity):
+    """Collision added in MSB. No additional state."""
     pass
 
 
+EntityInt = Union[Entity, int]
 CoordEntityInt = Union[CoordEntity, int]
 ObjectInt = Union[Object, int]
 RegionInt = Union[Region, int]
 CharacterInt = Union[Character, int]
 AnimatedInt = Union[Character, Object, int]
-HitboxInt = Union[Hitbox, int]
+CollisionInt = Union[Collision, int]

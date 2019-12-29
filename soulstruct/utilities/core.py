@@ -1,4 +1,6 @@
+import abc
 import ctypes
+import io
 import math
 import os
 import re
@@ -6,13 +8,14 @@ import string
 import struct
 import sys
 import textwrap
-from io import BytesIO
 from pathlib import Path
 
-__all__ = ["PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
-           "find_steam_common_paths", "traverse_path_tree", "Vector",
-           "BinaryStruct", "AttributeDict", "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
-           "BiDict"]
+__all__ = [
+    "PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
+    "find_steam_common_paths", "traverse_path_tree", "Vector",
+    "BinaryStruct", "BaseStruct", "AttributeDict", "BiDict",
+    "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
+]
 
 
 def PACKAGE_PATH(*relative_parts):
@@ -444,6 +447,10 @@ class BinaryStruct(object):
         return self._struct_format
 
 
+class BaseStruct(abc.ABC):
+    STRUCT: BinaryStruct = None
+
+
 class AttributeDict(dict):
     """Simple dict extension that allows you to access values as attributes using dot notation."""
     def __init__(self, *args, **kwargs):
@@ -454,6 +461,33 @@ class AttributeDict(dict):
         for d in args + (kwargs,):
             dict.update(self, d)
         return self
+
+
+class BiDict(dict):
+
+    def __init__(self, *args):
+        """Initialized with pairs of values to be connected."""
+        super().__init__()
+        for arg in args:
+            if not isinstance(arg, tuple) or len(arg) != 2:
+                raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
+            self.__setitem__(*arg)
+
+    def __setitem__(self, value_1, value_2):
+        """Removes any pre-existing connections using either value."""
+        if value_1 in self:
+            del self[value_1]
+        if value_2 in self:
+            del self[value_2]
+        super().__setitem__(value_1, value_2)
+        super().__setitem__(value_2, value_1)
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        super().__delitem__(self[key])
+
+    def __len__(self):
+        return super().__len__() // 2
 
 
 def _get_drives():
@@ -528,7 +562,7 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
         return '' if encoding is not None else b''
 
     if isinstance(buffer, bytes):
-        buffer = BytesIO(buffer)
+        buffer = io.BytesIO(buffer)
     chars = []
     old_offset = None
     bytes_per_char = 2 if encoding is not None and encoding.replace('-', '') == 'utf16le' else 1
@@ -595,30 +629,3 @@ def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
     th += rot_rad
     dx, dz = r * -math.sin(th), r * -math.cos(th)
     return origin[0] + dx, origin[1] + dz
-
-
-class BiDict(dict):
-
-    def __init__(self, *args):
-        """Initialized with pairs of values to be connected."""
-        super().__init__()
-        for arg in args:
-            if not isinstance(arg, tuple) or len(arg) != 2:
-                raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
-            self.__setitem__(*arg)
-
-    def __setitem__(self, value_1, value_2):
-        """Removes any pre-existing connections using either value."""
-        if value_1 in self:
-            del self[value_1]
-        if value_2 in self:
-            del self[value_2]
-        super().__setitem__(value_1, value_2)
-        super().__setitem__(value_2, value_1)
-
-    def __delitem__(self, key):
-        super().__delitem__(key)
-        super().__delitem__(self[key])
-
-    def __len__(self):
-        return super().__len__() // 2

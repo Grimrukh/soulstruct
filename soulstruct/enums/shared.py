@@ -1,25 +1,27 @@
 from enum import IntEnum
 
-__all__ = ['RestartType',
-           'uint', 'short', 'ushort', 'char', 'uchar',
-           'PLAYER', 'CLIENT_PLAYER_1', 'CLIENT_PLAYER_2', 'CLIENT_PLAYER_3', 'CLIENT_PLAYER_4', 'CLIENT_PLAYER_5',
+__all__ = [
+    # Basic
+    "RestartType",
+    "uint", "short", "ushort", "char", "uchar",
+    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
 
-           # Identical in all games.
-           'AIStatusType', 'BitOperation', 'ButtonType', 'CharacterType', 'CharacterUpdateRate', 'ClassType',
-           'ComparisonType', 'CutsceneType', 'DamageTargetType', 'EventEndType', 'FlagState', 'FlagType',
-           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavmeshType', 'NumberButtons',
-           'OnOffChange', 'RestartType', 'SoundType', 'StatueType', 'SummonSignType', 'TriggerAttribute',
-           'WorldTendencyType', 'UpdateAuthority',
+    # Enums identical in all games
+    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
+    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
+    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
+    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
+    "WorldTendencyType", "UpdateAuthority",
 
-           # Require game-specific definition.
-           'BannerType', 'Covenant', 'MultiplayerState', 'NPCPartType', 'TeamType',
-           ]
+    # Enums that exist in all games but require game-specific definition
+    "BannerType", "Covenant", "MultiplayerState", "NPCPartType", "TeamType",
+]
 
-uint = 'I'
-short = 'h'
-ushort = 'H'
-char = 'b'
-uchar = 'B'
+uint = "I"
+short = "h"
+ushort = "H"
+char = "b"
+uchar = "B"
 
 PLAYER = 10000
 CLIENT_PLAYER_1 = 10001
@@ -29,8 +31,8 @@ CLIENT_PLAYER_4 = 10004
 CLIENT_PLAYER_5 = 10005
 
 
-# Basic obvious booleans are omitted: ENUM_ON_OFF, ENUM_CONTAINED, ENUM_OWN_STATE, ENUM_BOOL, ENUM_CONDITION_STATE,
-#                                     ENUM_DEATH_STATUS, ENUM_ENABLE_STATE.
+# Basic obvious booleans are omitted:
+# ENUM_ON_OFF, ENUM_CONTAINED, ENUM_OWN_STATE, ENUM_BOOL, ENUM_CONDITION_STATE, ENUM_DEATH_STATUS, ENUM_ENABLE_STATE
 
 
 class AIStatusType(IntEnum):

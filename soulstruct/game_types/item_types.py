@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import Union
 
-from soulstruct.events.core import get_value_test
+from soulstruct.events.internal import get_value_test
 from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import ItemType
 from soulstruct.game_types.basic_types import GameObject

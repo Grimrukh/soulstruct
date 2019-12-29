@@ -300,7 +300,7 @@ class BaseMSBPart(MSBEntry):
 
 
 class MSBMapPiece(BaseMSBPart):
-    """Visible map piece. Does not include hitboxes (collision)."""
+    """Visible map piece. Does not include collisions."""
 
     MAP_PIECE_STRUCT = (
         '8x',
@@ -521,7 +521,7 @@ class MSBPlayer(BaseMSBPart):
 
 
 class MSBCollision(BaseMSBPart):
-    """Physical hitbox geometry. Usually these are floor pieces."""
+    """Physical Collision geometry. Usually these are floor pieces."""
 
     PART_COLLISION_STRUCT = (
         ('hit_filter_id', 'b'),

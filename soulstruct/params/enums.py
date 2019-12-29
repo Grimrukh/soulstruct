@@ -28,7 +28,7 @@ class ATK_PARAM_HIT_SOURCE(UnsignedChar):
 
 
 class ATK_PARAM_HIT_TYPE(UnsignedChar):
-    """Almost always zero. Applied to each hitbox of an attack."""
+    """Almost always zero. Applied to each collision of an attack."""
     Default = 0
     # 1 is unused.
     WhipAttack = 2

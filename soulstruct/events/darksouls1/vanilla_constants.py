@@ -245,8 +245,8 @@ class COMMON_GOODS(Good):
     GravelordNitoLordSoul = 2500
     BedOfChaosLordSoul = 2501
     FourKingsLordSoul = 2502
-    # Note 2503 is missing, though strangely, it looks like 2504 is unused in the params...
-    SeathLordSoul = 2504
+    SeathLordSoul = 2503
+    # Good 2504 ('Demon Flame') is missing, but is still used to trigger some unused Darkmoon Knightess dialogue.
     Lordvessel = 2510
 
 

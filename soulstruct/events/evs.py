@@ -5,82 +5,15 @@ from collections import OrderedDict
 from functools import partial
 from pathlib import Path
 
-from soulstruct import game_types as gt
-from soulstruct.events.core import header, define_args, NoSkipOrTerminateError, NoNegateError, \
-    ConstantCondition, COMPARISON_NODES, NEG_COMPARISON_NODES
+import soulstruct.game_types as gt
+from soulstruct.events.numeric import SET_INSTRUCTION_ARG_TYPES
+from soulstruct.events.internal import *
+
+__all__ = ["EvsParser"]
 
 # TODO: Set up unit tests on vanilla scripts, and some examples that make use of high-level functionality.
 
 # TODO: Support event function imports from '.common_func', including kwarg names.
-
-
-_AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
-_OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
-_RESTART_TYPES = {'NeverRestart': 0, 'RestartOnRest': 1, 'UnknownRestart': 2}
-_EVENT_DOCSTRING_RE = re.compile(r'(\w+ )?([0-9]+)(:\s*.*)?')
-_EVS_TYPES = ('B', 'b', 'H', 'h', 'I', 'i', 'f', 's')
-_PY_TYPES = {'uchar': 'B', 'char': 'b', 'ushort': 'H', 'short': 'h', 'uint': 'I', 'int': 'i', 'float': 'f', 'str': 's'}
-_BUILTIN_NAMES = {'Condition', 'EVENTS'}.union(_RESTART_TYPES)
-
-
-class EmevdError(Exception):
-    def __init__(self, lineno, msg):
-        super().__init__(f"LINE {lineno}: {msg}")
-
-
-class EmevdSyntaxError(EmevdError):
-    pass
-
-
-class EmevdValueError(EmevdError):
-    pass
-
-
-class EmevdImportError(EmevdError):
-    """Raised when a module cannot be imported."""
-
-    def __init__(self, lineno, module):
-        super().__init__(lineno, f"Could not import {repr(module)}.")
-
-
-class EmevdImportFromError(EmevdError):
-    """Raised when a name cannot be imported from a module."""
-
-    def __init__(self, lineno, module, name):
-        super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}.")
-
-
-class EmevdNameError(EmevdError):
-    """Raised when an invalid (undefined) name is parsed."""
-
-    def __init__(self, lineno, name):
-        super().__init__(lineno, f"Name {repr(name)} has not been imported or defined.")
-
-
-class EmevdAttributeError(EmevdError):
-    """Raised when an attribute of an object cannot be retrieved."""
-
-    def __init__(self, lineno, name, attribute):
-        super().__init__(lineno, f"Object {repr(name)} has no attribute {repr(attribute)}.")
-
-
-class EmevdCallableError(EmevdError):
-    """Raised when an un-callable object is called."""
-
-    def __init__(self, lineno, name):
-        super().__init__(lineno, f"Object {name} is not callable.")
-
-
-class ConditionError(EmevdError):
-    pass
-
-
-class ConditionNameError(ConditionError):
-    pass
-
-
-class ConditionLimitError(ConditionError):
-    pass
 
 
 class EvsParser(object):
@@ -98,7 +31,8 @@ class EvsParser(object):
         if not game_module:
             raise ValueError("No game specified. Try importing this class from the appropriate game events subpackage.")
 
-        self.game_name = game_module.NAME
+        self.game_name = game_module.name
+        SET_INSTRUCTION_ARG_TYPES(game_module.EMEVD.Event.Instruction.INSTRUCTION_ARG_TYPES)
 
         if isinstance(evs_path_or_string, Path) or '\n' not in evs_path_or_string:
             evs_path_or_string = Path(evs_path_or_string)
@@ -114,7 +48,7 @@ class EvsParser(object):
         self.event_layers = []
 
         # Global namespace with game-specific enums and constants. May be updated with user imports and definitions.
-        self.globals = vars(game_module.get_enums())
+        self.globals = vars(game_module.enums)
         self.globals.update(vars(game_module.constants))
         # Note that there is no event-specific local namespace, except for this dictionary of 'for' loop variables:
         self.for_vars = {}
@@ -265,7 +199,7 @@ class EvsParser(object):
     def _compile_event_function(self, event_function: dict):
         """ Writes header, then iterates over all nodes in function body. """
 
-        event_emevd = header(event_function['id'], event_function['restart_type'])
+        event_emevd = _header(event_function['id'], event_function['restart_type'])
 
         for node in event_function['nodes']:
             built_function = self._compile_event_body_node(node)
@@ -1118,6 +1052,15 @@ class EvsParser(object):
             return highest_and
 
 
+_AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
+_OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
+_RESTART_TYPES = {'NeverRestart': 0, 'RestartOnRest': 1, 'UnknownRestart': 2}
+_EVENT_DOCSTRING_RE = re.compile(r'(\w+ )?([0-9]+)(:\s*.*)?')
+_EVS_TYPES = ('B', 'b', 'H', 'h', 'I', 'i', 'f', 's')
+_PY_TYPES = {'uchar': 'B', 'char': 'b', 'ushort': 'H', 'short': 'h', 'uint': 'I', 'int': 'i', 'float': 'f', 'str': 's'}
+_BUILTIN_NAMES = {'Condition', 'EVENTS'}.union(_RESTART_TYPES)
+
+
 def _parse_event_arguments(event_node: ast.FunctionDef):
     arg_names = []
     arg_types = ''
@@ -1165,7 +1108,7 @@ def _parse_event_arguments(event_node: ast.FunctionDef):
 
         arg_types += arg_type
 
-    arg_values = define_args(arg_types)
+    arg_values = _define_args(arg_types)
     arg_dict = OrderedDict()
     for name, value in zip(arg_names, arg_values):
         arg_dict[name] = value
@@ -1242,12 +1185,13 @@ def _import_from(node: ast.ImportFrom, namespace: dict):
                 all_names = vars(module)["__all__"]
             else:
                 # Get all names that were defined in the module and don't begin with an underscore.
-                all_names = [name for name, attr in vars(module).items() if not name.startswith("_")
+                all_names = [n for n, attr in vars(module).items() if not n.startswith("_")
                              and (not hasattr(attr, '__module__') or attr.__module__ == node.module)]
             for name_ in all_names:
                 try:
                     namespace[name_] = getattr(module, name_)
                 except AttributeError:
+                    print(all_names)
                     raise EmevdImportFromError(node.lineno, node.module, name_)
         else:
             as_name = alias.asname if alias.asname is not None else name
@@ -1256,3 +1200,82 @@ def _import_from(node: ast.ImportFrom, namespace: dict):
             except AttributeError:
                 raise EmevdImportFromError(node.lineno, node.module, name)
     del module
+
+
+def _header(event_id, restart_type=0):
+    return [f"{event_id}, {restart_type}"]
+
+
+def _define_args(arg_types):
+    args = []
+    for i, c in enumerate(arg_types):
+        if c in 'Bb':
+            c_size = 1
+        elif c in 'Hh':
+            c_size = 2
+        elif c in 'Iif':
+            c_size = 4
+        else:
+            raise ValueError(f"Invalid character {c} in arg_types.")
+        args.append((get_write_offset(arg_types, i), c_size))
+    return args
+
+
+class EmevdError(Exception):
+    def __init__(self, lineno, msg):
+        super().__init__(f"LINE {lineno}: {msg}")
+
+
+class EmevdSyntaxError(EmevdError):
+    pass
+
+
+class EmevdValueError(EmevdError):
+    pass
+
+
+class EmevdImportError(EmevdError):
+    """Raised when a module cannot be imported."""
+
+    def __init__(self, lineno, module):
+        super().__init__(lineno, f"Could not import {repr(module)}.")
+
+
+class EmevdImportFromError(EmevdError):
+    """Raised when a name cannot be imported from a module."""
+
+    def __init__(self, lineno, module, name):
+        super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}.")
+
+
+class EmevdNameError(EmevdError):
+    """Raised when an invalid (undefined) name is parsed."""
+
+    def __init__(self, lineno, name):
+        super().__init__(lineno, f"Name {repr(name)} has not been imported or defined.")
+
+
+class EmevdAttributeError(EmevdError):
+    """Raised when an attribute of an object cannot be retrieved."""
+
+    def __init__(self, lineno, name, attribute):
+        super().__init__(lineno, f"Object {repr(name)} has no attribute {repr(attribute)}.")
+
+
+class EmevdCallableError(EmevdError):
+    """Raised when an un-callable object is called."""
+
+    def __init__(self, lineno, name):
+        super().__init__(lineno, f"Object {name} is not callable.")
+
+
+class ConditionError(EmevdError):
+    pass
+
+
+class ConditionNameError(ConditionError):
+    pass
+
+
+class ConditionLimitError(ConditionError):
+    pass

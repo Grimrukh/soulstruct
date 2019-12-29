@@ -1,4 +1,4 @@
-from soulstruct.events.core import get_game_map_name, InstructionNotFoundError
+from soulstruct.events.internal import InstructionNotFoundError, get_game_map_name
 
 
 def decompile_instruction(instruction_class, instruction_index, req_args, game_module):
