@@ -18,7 +18,7 @@ def _get_verbose_map_name(emevd_name):
     return VERBOSE_MAP_NAMES[int(area), int(block)]
 
 
-class SoulstructEmevdManager(SoulstructSmartFrame):
+class SoulstructEventEditor(SoulstructSmartFrame):
 
     def __init__(self, evs_directory, game_root, dcx, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct EMEVD Manager")

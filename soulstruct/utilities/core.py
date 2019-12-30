@@ -468,19 +468,44 @@ class BiDict(dict):
     def __init__(self, *args):
         """Initialized with pairs of values to be connected."""
         super().__init__()
+        self.__keys = []
+        self.__values = []
         for arg in args:
             if not isinstance(arg, tuple) or len(arg) != 2:
                 raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
             self.__setitem__(*arg)
+            self.__keys.append(arg[0])
+            self.__values.append(arg[1])
 
     def __setitem__(self, value_1, value_2):
-        """Removes any pre-existing connections using either value."""
+        """Removes any pre-existing connections using either value.
+
+        Order of values determines whether they will appear in `keys()` or `values()`.
+        """
         if value_1 in self:
             del self[value_1]
+            try:
+                self.__keys.remove(value_1)
+            except ValueError:
+                pass
+            try:
+                self.__values.remove(value_1)
+            except ValueError:
+                pass
         if value_2 in self:
             del self[value_2]
+            try:
+                self.__keys.remove(value_2)
+            except ValueError:
+                pass
+            try:
+                self.__values.remove(value_2)
+            except ValueError:
+                pass
         super().__setitem__(value_1, value_2)
         super().__setitem__(value_2, value_1)
+        self.__keys.append(value_1)
+        self.__values.append(value_2)
 
     def __delitem__(self, key):
         super().__delitem__(key)
@@ -488,6 +513,18 @@ class BiDict(dict):
 
     def __len__(self):
         return super().__len__() // 2
+
+    def keys(self):
+        """Returns first elements of all set pairs."""
+        return self.__keys
+
+    def values(self):
+        """Returns second elements of all set pairs."""
+        return self.__values
+
+    def items(self):
+        """Returns all set pairs in order."""
+        return zip(self.__keys, self.__values)
 
 
 def _get_drives():

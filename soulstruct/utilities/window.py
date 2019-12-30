@@ -170,7 +170,7 @@ class SmartFrame(tk.Frame):
 
     toplevel: Optional[tk.Toplevel]
 
-    def __init__(self, master=None, toplevel=True, window_title='Window Title', **frame_kwargs):
+    def __init__(self, master=None, toplevel=True, window_title='Window Title', icon=None, **frame_kwargs):
         # List of variables (so they aren't garbage-collected).
         self._variables = []
 
@@ -182,6 +182,9 @@ class SmartFrame(tk.Frame):
             self.toplevel.iconname(window_title)
             self.toplevel.focus_force()
             super().__init__(master, **frame_kwargs)
+            if icon is not None:
+                self.icon = tk.PhotoImage(data=icon)
+                self.toplevel.tk.call('wm', 'iconphoto', self.toplevel._w, self.icon)
             self.grid()
         else:
             self.toplevel = None
@@ -583,7 +586,13 @@ class SmartFrame(tk.Frame):
         dialog = CustomDialog(master=self, title=title, message=message, font_size=font_size, font_type=font_type,
                               button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
                               default_output=default_output, cancel_output=cancel_output)
-        return dialog.go()  # Returns index of button clicked (or default/cancel output).
+        if not self.winfo_viewable():
+            self.deiconify()
+            result = dialog.go()
+            self.withdraw()
+        else:
+            result = dialog.go()
+        return result  # Returns index of button clicked (or default/cancel output).
 
     @contextmanager
     def set_master(self, master=None, auto_rows=None, auto_columns=None, grid_defaults=None, **kwargs):

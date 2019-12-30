@@ -17,20 +17,26 @@ from soulstruct.core import SoulstructError
 from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
-from soulstruct.project.events import SoulstructEmevdManager
-from soulstruct.project.lighting import SoulstructLightingEditor
-from soulstruct.project.links import WindowLinker
-from soulstruct.project.maps import SoulstructMapEditor
-from soulstruct.project.params import SoulstructParamsEditor
-from soulstruct.project.text import SoulstructTextEditor
 from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import find_steam_common_paths, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
 
+from .events import SoulstructEventEditor
+from .lighting import SoulstructLightingEditor
+from .links import WindowLinker
+from .maps import SoulstructMapEditor
+from .params import SoulstructParamsEditor
+from .text import SoulstructTextEditor
+
 __all__ = ['SoulstructProject', 'SoulstructProjectError', 'SoulstructProjectWindow']
 
-DATA_TYPES = {'maps': DarkSoulsMaps, 'params': DarkSoulsGameParameters, 'text': DarkSoulsText,
-              'lighting': DarkSoulsLightingParameters, 'events': None}
+DATA_TYPES = {
+    'maps': DarkSoulsMaps,
+    'params': DarkSoulsGameParameters,
+    'text': DarkSoulsText,
+    'lighting': DarkSoulsLightingParameters,
+    'events': None,  # modified via EVS script files
+}
 
 
 class SoulstructProjectError(SoulstructError):
@@ -52,11 +58,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     text_tab: Optional[SoulstructTextEditor]
     params_tab: Optional[SoulstructParamsEditor]
     lighting_tab: Optional[SoulstructLightingEditor]
-    events_tab: Optional[SoulstructEmevdManager]
+    events_tab: Optional[SoulstructEventEditor]
 
     TAB_ORDER = ['maps', 'params', 'text', 'lighting', 'events', 'runtime']
 
     def __init__(self, project: SoulstructProject, master=None):
+        # TODO: icon
         super().__init__(master=master, toplevel=True, window_title="Soulstruct")
         self.project = project
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
@@ -96,7 +103,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.lighting_tab.pack()
 
         self.events_tab = self.SmartFrame(
-            frame=tab_frames['events'], smart_frame_class=SoulstructEmevdManager,
+            frame=tab_frames['events'], smart_frame_class=SoulstructEventEditor,
             evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
             dcx=self.project.game_name == "Dark Souls Remastered", no_grid=True)
         self.events_tab.pack()
@@ -108,7 +115,6 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         # self.resizable(False, False)  # TODO
         self.set_geometry()
-        self.deiconify()
 
     def build_top_menu(self):
         top_menu = self.Menu()
@@ -203,6 +209,7 @@ class SoulstructProject(object):
     def __init__(self, project_path: str = ''):
 
         self._window = SoulstructProjectWindow(project=self, master=None)
+        self._window.withdraw()
 
         self.game_name = ''
         self.game_root = Path()
@@ -217,19 +224,24 @@ class SoulstructProject(object):
         self.Maps = DarkSoulsMaps()
 
         try:
+            # self._window.deiconify()
             self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
             self.load_config()
             self.initialize_project()
         except SoulstructProjectError as e:
+            self._window.deiconify()
             self.dialog(title="Project Error", message=word_wrap(str(e), 50) + "\n\nAborting startup.",
                         button_kwargs='OK')
             raise  # TODO: should not raise an error; just flag startup failure.
         except Exception as e:
+            self._window.deiconify()
             msg = "Internal Python Error:\n\n" + word_wrap(str(e), 50) + "\n\nAborting startup."
             self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
             raise  # TODO: should not raise an error; just flag startup failure.
 
+        self._window.withdraw()
         self._window.build()
+        self._window.deiconify()
         self._window.wait_window()
 
     def initialize_project(self, force_import_from_game=False):
@@ -374,7 +386,7 @@ class SoulstructProject(object):
                 target = self._window.FileDialog.askopenfilename(
                     title="Choose File to Restore Backup", initialdir=str(self.game_root),
                     filetypes=[("Bak file", ".bak")])
-            if target is None:
+            if not target:
                 return
         target = Path(target)
         if target.is_file():
