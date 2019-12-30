@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class SoulstructLightingEditor(SoulstructBaseFieldEditor):
-    CATEGORY_BOX_WIDTH = 150
-    ENTRY_BOX_WIDTH = 450
+    CATEGORY_BOX_WIDTH = 165
+    ENTRY_BOX_WIDTH = 435
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 450
     FIELD_BOX_HEIGHT = 400
@@ -168,6 +168,8 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
 
     def get_field_info(self, field_dict, field_name=None, category=None):
         """This method should return the full field information dictionary if field_name is None."""
+        if field_dict is None:
+            return {}
         if category is None:
             category = self.active_category
         return self.get_category_dict(category).get_field_info(field_dict, field_name=field_name)

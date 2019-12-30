@@ -199,11 +199,11 @@ __all__ = [
     "SkipLinesIfClient", "SkipLinesIfMultiplayer", "SkipLinesIfConnectingMultiplayer", "SkipLinesIfSingleplayer",
     "TerminateIfMultiplayerState", "EndIfHost", "EndIfClient", "EndIfMultiplayer", "EndIfSingleplayer", "RestartIfHost",
     "RestartIfClient", "RestartIfMultiplayer", "RestartIfSingleplayer", "IfMultiplayerState", "IfHost", "IfClient",
-    "IfMultiplayer", "IfConnectingMultiplayer", "IfSingleplayer", "PlayCutsceneAndMovePlayerAndSetTimePeriod",
-    "PlayCutsceneAndSetTimePeriod", "PlayCutsceneAndMovePlayer_Dummy", "SetBossHealthBarState", "EnableBossHealthBar",
-    "DisableBossHealthBar", "HandleMinibossDefeat", "Unknown_2003_27", "EventValueOperation",
-    "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue", "SetDirectionDisplayState",
-    "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
+    "IfMultiplayer", "IfConnectingMultiplayer", "IfSingleplayer", "DefineLabel",
+    "PlayCutsceneAndMovePlayerAndSetTimePeriod", "PlayCutsceneAndSetTimePeriod", "PlayCutsceneAndMovePlayer_Dummy",
+    "SetBossHealthBarState", "EnableBossHealthBar", "DisableBossHealthBar", "HandleMinibossDefeat", "Unknown_2003_27",
+    "EventValueOperation", "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue",
+    "SetDirectionDisplayState", "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
     "EnableMapHitGridCorrespondence", "DisableMapHitGridCorrespondence", "SetMapContentImageDisplayState",
     "SetMapBoundariesDisplay", "SetAreaWind", "MovePlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
     "InitializeWarpObject", "BossDefeat", "SendNPCSummonHome", "AddSpecialEffect", "RotateToFaceEntity",
@@ -213,6 +213,9 @@ __all__ = [
     "ActivateObjectWithSpecificCharacter", "SetObjectDamageShieldState", "RegisterHealingFountain", "SetBossMusicState",
     "NotifyDoorEventSoundDampening", "SetCollisionResState", "CreatePlayLog", "StartPlayLogMeasurement",
     "StopPlayLogMeasurement", "PlayLogParameterOutput",
+
+    # Names processed directly by EVS parser
+    "NeverRestart", "RestartOnRest", "UnknownRestart", "EVENTS", "Condition", "END", "RESTART", "Await",
 
     # Shared tests
     "THIS_FLAG", "THIS_SLOT_FLAG",
@@ -253,7 +256,7 @@ __all__ = [
 
     # Enums identical in all games
     "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
-    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagType", "InterpolationState",
+    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType", "InterpolationState",
     "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons", "OnOffChange",
     "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute", "WorldTendencyType",
     "UpdateAuthority",

@@ -228,7 +228,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     if instruction_class == 1014:
 
         if 0 <= instruction_index <= 9:
-            return f"Label({instruction_index})"
+            return f"DefineLabel({instruction_index})"
         else:
             raise ValueError("Label instruction index must be between 0 and 9.")
 

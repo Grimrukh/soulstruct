@@ -506,6 +506,7 @@ class PROTECTOR_CATEGORY(UnsignedChar):
     Body = 1
     Hands = 2
     Legs = 3
+    Hair = 4
 
 
 class RAGDOLL_PARAM_BOOL(UnsignedChar):
@@ -751,6 +752,8 @@ class WEP_MATERIAL_ATK(UnsignedChar):
 
 
 class WEP_MATERIAL_DEF(UnsignedChar):
+    """Sound effect when material is struck."""
+    NoEffect = 0
     Hairstyle = 29  # not sure when this would actually be used
     MetalWeapon = 50
     WoodWeapon = 52  # includes catalysts
@@ -761,14 +764,21 @@ class WEP_MATERIAL_DEF(UnsignedChar):
     ChainArmor = 57  # e.g. Paladin, Channeler, Chain, Cleric
     FabricArmor = 58  # e.g. Brigand, Shadow, Crystalline, Sealer
     NoArmor = 59  # no armor; also Dragon Stone skin
+    HeadshotFabric = 60
+    HeadshotMetal = 63
     StoneShield = 79
 
 
 class WEP_MATERIAL_DEF_SFX(UnsignedChar):
+    """Visual effect when material is struck."""
+    NoEffect = 0
+    Hairstyle = 29  # not sure when this would actually be used
     MetalWeapon = 50
     WoodOrLeatherWeapon = 52
     MetalArmor = 56
     HandsOrFabricArmor = 59
+    HeadshotFabric = 60
+    HeadshotMetal = 63
 
 
 class WEP_CORRECT_TYPE(UnsignedChar):

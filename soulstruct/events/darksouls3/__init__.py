@@ -221,7 +221,7 @@ __all__ = [
     "EndIfCharacterInsideRegion", "EndIfCharacterOutsideRegion", "RestartIfCharacterRegionState",
     "RestartIfCharacterInsideRegion", "RestartIfCharacterOutsideRegion", "SkipLinesIfCharacterRegionState",
     "SkipLinesIfCharacterInsideRegion", "SkipLinesIfCharacterOutsideRegion", "GotoIfHollowArenaMatchType",
-    "GotoIfObjectDestructionState", "GotoIfObjectDestroyed", "GotoIfObjectNotDestroyed",
+    "GotoIfObjectDestructionState", "GotoIfObjectDestroyed", "GotoIfObjectNotDestroyed", "DefineLabel",
     "PlayCutsceneAndMovePlayerAndSetTimePeriod", "PlayCutsceneAndSetTimePeriod", "PlayCutsceneAndMovePlayer_Dummy",
     "PlayCutsceneAndMovePlayerAndSetMapCeremony", "PlayCutsceneAndSetMapCeremony",
     "PlayCutsceneAndMovePlayer_WithUnknowns", "PlayCutsceneAndMovePlayer_WithSecondRegion", "SetBossHealthBarState",
@@ -296,8 +296,8 @@ __all__ = [
     "WorldTendencyType", "UpdateAuthority",
 
     # Enums in Dark Souls 3 only
-    "ArmorType", "BannerType", "CalculationType", "ClientType", "ConditionGroup", "DamageType", "DeleteOrAdd",
-    "DialogResult", "DisplayState", "DoorState", "Gender", "Label", "MultiplayerState", "NPCPartType",
+    "ArmorType", "BannerType", "CalculationType", "ClientType", "ConditionGroup", "Covenant", "DamageType",
+    "DeleteOrAdd", "DialogResult", "DisplayState", "DoorState", "Gender", "Label", "MultiplayerState", "NPCPartType",
     "PlayGoState", "PlayLogMultiplayerType", "PlayerPlayLogParameter", "SingleplayerSummonSignType", "TeamType",
     "HollowArenaMatchType", "HollowArenaResult",
 ]

@@ -182,11 +182,11 @@ __all__ = [
     "SkipLinesIfClient", "SkipLinesIfMultiplayer", "SkipLinesIfConnectingMultiplayer", "SkipLinesIfSingleplayer",
     "TerminateIfMultiplayerState", "EndIfHost", "EndIfClient", "EndIfMultiplayer", "EndIfSingleplayer", "RestartIfHost",
     "RestartIfClient", "RestartIfMultiplayer", "RestartIfSingleplayer", "IfMultiplayerState", "IfHost", "IfClient",
-    "IfMultiplayer", "IfConnectingMultiplayer", "IfSingleplayer", "PlayCutsceneAndMovePlayerAndSetTimePeriod",
-    "PlayCutsceneAndSetTimePeriod", "PlayCutsceneAndMovePlayer_Dummy", "SetBossHealthBarState", "EnableBossHealthBar",
-    "DisableBossHealthBar", "HandleMinibossDefeat", "Unknown_2003_27", "EventValueOperation",
-    "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue", "SetDirectionDisplayState",
-    "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
+    "IfMultiplayer", "IfConnectingMultiplayer", "IfSingleplayer", "DefineLabel",
+    "PlayCutsceneAndMovePlayerAndSetTimePeriod", "PlayCutsceneAndSetTimePeriod", "PlayCutsceneAndMovePlayer_Dummy",
+    "SetBossHealthBarState", "EnableBossHealthBar", "DisableBossHealthBar", "HandleMinibossDefeat", "Unknown_2003_27",
+    "EventValueOperation", "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue",
+    "SetDirectionDisplayState", "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
     "EnableMapHitGridCorrespondence", "DisableMapHitGridCorrespondence", "SetMapContentImageDisplayState",
     "SetMapBoundariesDisplay", "SetAreaWind", "MovePlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
     "InitializeWarpObject", "BossDefeat", "SendNPCSummonHome", "AddSpecialEffect", "RotateToFaceEntity",
@@ -590,7 +590,7 @@ def IfSingleplayer(condition: int):
     return IfMultiplayerState(condition, MultiplayerState.Singleplayer)
 
 
-def Label(label: Union[Label, int]):
+def DefineLabel(label: Union[Label, int]):
     if isinstance(Label, int) and not 0 <= label <= 9:
         raise ValueError("Label index must be between 0 and 9, inclusive.")
     instruction_info = (1014, label)

@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
-    CATEGORY_BOX_WIDTH = 150
-    ENTRY_BOX_WIDTH = 450
+    CATEGORY_BOX_WIDTH = 165
+    ENTRY_BOX_WIDTH = 435
     ENTRY_RANGE_SIZE = 200
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
@@ -50,7 +50,17 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
 
     def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
         self.Params = params
+        self.find_param_name = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            with self.set_master(auto_columns=0, pady=10):
+                self.find_param_name = self.Entry(
+                    label="Find Param Name (TODO):", label_position='left', width=30, padx=10)
+                # self.find_param_name.bind('<Return>', self.find_text_id)
+
+            super().build()
 
     def _get_display_categories(self):
         return self.Params.param_names
@@ -120,6 +130,8 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
 
     def get_field_info(self, field_dict, field_name=None, category=None):
         """This method should return the full field information dictionary if field_name is None."""
+        if field_dict is None:
+            return {}
         if category is None:
             category = self.active_category
         return self.Params[category].get_field_info(field_dict, field_name=field_name)

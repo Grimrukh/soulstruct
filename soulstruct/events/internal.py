@@ -323,7 +323,7 @@ def get_game_map_name(area_id, block_id, game_module):
     try:
         area_id = int(area_id)
         block_id = int(block_id)
-        return game_module.MAP_NAMES[(int(area_id), int(block_id))]
+        return game_module.constants.MAP_NAMES[(int(area_id), int(block_id))]
     except (ValueError, KeyError):
         # Event arg replacement(s) or unknown map. Return tuple instead, stripping quotes from any string elements.
         return f"({area_id}, {block_id})"

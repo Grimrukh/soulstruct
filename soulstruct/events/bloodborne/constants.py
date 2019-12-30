@@ -6,7 +6,7 @@ __all__ = [
     "NIGHTMARE_OF_MENSIS", "FORBIDDEN_WOODS", "YAHARGUL", "CHALICE_DUNGEON", "BYRGENWERTH", "NIGHTMARE_FRONTIER",
     "HUNTERS_NIGHTMARE", "RESEARCH_HALL", "FISHING_HAMLET",
 
-    "ALL_MAPS", "MAP_NAMES", "VERBOSE_MAP_NAMES",
+    "ALL_MAPS", "ALL_MSB_FILE_NAMES", "MAP_NAMES", "VERBOSE_MAP_NAMES",
 ]
 
 class COMMON:
@@ -42,6 +42,8 @@ ALL_MAPS = [COMMON, HUNTERS_DREAM, ABANDONED_OLD_WORKSHOP, HEMWICK_CHARNEL_LANE,
             YAHARGUL, BYRGENWERTH, NIGHTMARE_FRONTIER, HUNTERS_NIGHTMARE, RESEARCH_HALL, FISHING_HAMLET,
             CHALICE_DUNGEON_COMMON]
 
+ALL_MSB_FILE_NAMES = [m.msb_file_name for m in ALL_MAPS if m.msb_file_name]
+
 MAP_NAMES = {
     (21, 0): "HUNTERS_DREAM",
     (21, 1): "ABANDONED_OLD_WORKSHOP",
@@ -74,6 +76,7 @@ VERBOSE_MAP_NAMES = {
     (26, 0): "Nightmare of Mensis",
     (27, 0): "Forbidden Woods",
     (28, 0): "Yahar'gul, Unseen Village",
+    (29, 0): "Chalice Dungeons",
     (32, 0): "Byrgenwerth/Lecture Building",
     (33, 0): "Nightmare Frontier",
     (34, 0): "Hunter's Nightmare'",

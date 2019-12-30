@@ -695,10 +695,10 @@ class CustomDialog(SmartFrame):
 class SoulstructSmartFrame(SmartFrame):
     DEFAULT_BUTTON_KWARGS = {
         'OK': {
-            'fg': '#FFFFFF', 'bg': '#223333', 'width': 20,
+            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
         },
         'YES': {
-            'fg': '#FFFFFF', 'bg': '#224444', 'width': 20,
+            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
         },
         'NO': {
             'fg': '#FFFFFF', 'bg': '#444444', 'width': 20,

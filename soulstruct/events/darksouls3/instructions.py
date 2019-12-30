@@ -207,7 +207,7 @@ __all__ = [
     "EndIfCharacterInsideRegion", "EndIfCharacterOutsideRegion", "RestartIfCharacterRegionState",
     "RestartIfCharacterInsideRegion", "RestartIfCharacterOutsideRegion", "SkipLinesIfCharacterRegionState",
     "SkipLinesIfCharacterInsideRegion", "SkipLinesIfCharacterOutsideRegion", "GotoIfHollowArenaMatchType",
-    "GotoIfObjectDestructionState", "GotoIfObjectDestroyed", "GotoIfObjectNotDestroyed",
+    "GotoIfObjectDestructionState", "GotoIfObjectDestroyed", "GotoIfObjectNotDestroyed", "DefineLabel",
     "PlayCutsceneAndMovePlayerAndSetTimePeriod", "PlayCutsceneAndSetTimePeriod", "PlayCutsceneAndMovePlayer_Dummy",
     "PlayCutsceneAndMovePlayerAndSetMapCeremony", "PlayCutsceneAndSetMapCeremony",
     "PlayCutsceneAndMovePlayer_WithUnknowns", "PlayCutsceneAndMovePlayer_WithSecondRegion", "SetBossHealthBarState",
@@ -1220,7 +1220,7 @@ def GotoIfObjectNotDestroyed(label: Label, obj: ObjectInt):
 
 # 1014: LABELS
 
-def Label(label: Union[Label, int]):
+def DefineLabel(label: Union[Label, int]):
     """ Ranges from 0 to 20, inclusive, for DS3. """
     if isinstance(Label, int) and not 0 <= label <= 20:
         raise ValueError("Label index must be between 0 and 20, inclusive.")

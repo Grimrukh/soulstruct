@@ -12,14 +12,16 @@ from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE, BaseMSBPart
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, create_bak
 
 MAP_ENTRY_TYPES = {
-    'Models': {
-        'MapPieces': MSB_MODEL_TYPE.MapPiece,
-        'Objects': MSB_MODEL_TYPE.Object,
-        'NonHumanCharacters': MSB_MODEL_TYPE.NonHumanCharacter,
-        'Unknown': MSB_MODEL_TYPE.Unknown,
-        'HumanCharacters': MSB_MODEL_TYPE.HumanCharacter,
-        'Collisions': MSB_MODEL_TYPE.Collision,
-        'Navmeshes': MSB_MODEL_TYPE.Navmesh,
+    'Parts': {
+        'MapPieces': MSB_PART_TYPE.MapPiece,
+        'Objects': MSB_PART_TYPE.Object,
+        'Characters': MSB_PART_TYPE.Character,
+        'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
+        'Collisions': MSB_PART_TYPE.Collision,
+        'Navmeshes': MSB_PART_TYPE.Navmesh,
+        'UnusedObjects': MSB_PART_TYPE.UnusedObject,
+        'UnusedCharacters': MSB_PART_TYPE.UnusedCharacter,
+        'MapLoadTriggers': MSB_PART_TYPE.MapLoadTrigger,
     },
     'Events': {
         'Lights': MSB_EVENT_TYPE.Light,
@@ -44,17 +46,15 @@ MAP_ENTRY_TYPES = {
         'Rectangles': MSB_REGION_TYPE.Rect,
         'Boxes': MSB_REGION_TYPE.Box,
     },
-    'Parts': {
-        'MapPieces': MSB_PART_TYPE.MapPiece,
-        'Objects': MSB_PART_TYPE.Object,
-        'Characters': MSB_PART_TYPE.Character,
-        'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
-        'Collisions': MSB_PART_TYPE.Collision,
-        'Navmeshes': MSB_PART_TYPE.Navmesh,
-        'UnusedObjects': MSB_PART_TYPE.UnusedObject,
-        'UnusedCharacters': MSB_PART_TYPE.UnusedCharacter,
-        'MapLoadTriggers': MSB_PART_TYPE.MapLoadTrigger,
-    }
+    'Models': {
+        'MapPieces': MSB_MODEL_TYPE.MapPiece,
+        'Objects': MSB_MODEL_TYPE.Object,
+        'NonHumanCharacters': MSB_MODEL_TYPE.NonHumanCharacter,
+        'Unknown': MSB_MODEL_TYPE.Unknown,
+        'HumanCharacters': MSB_MODEL_TYPE.HumanCharacter,
+        'Collisions': MSB_MODEL_TYPE.Collision,
+        'Navmeshes': MSB_MODEL_TYPE.Navmesh,
+    },
 }
 
 

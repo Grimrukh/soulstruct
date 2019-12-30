@@ -312,11 +312,12 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def build(self):
         with self.set_master(auto_rows=0):
-            with self.set_master(auto_columns=0):
+
+            with self.set_master(auto_columns=0, pady=10):
                 map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_NAMES if not m.startswith('m')]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left',
-                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10, pady=10).var
+                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
 
             with self.set_master(auto_columns=0):
                 self.build_category_canvas()
@@ -531,6 +532,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return self.get_category_dict(category)[entry_index]
 
     def get_field_info(self, field_dict, field_name=None):
+        if field_dict is None:
+            return {}
         if field_name is not None:
             return field_dict.FIELD_INFO[field_name]
         return field_dict.FIELD_INFO

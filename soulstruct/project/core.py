@@ -33,8 +33,8 @@ __all__ = ['SoulstructProject', 'SoulstructProjectError', 'SoulstructProjectWind
 DATA_TYPES = {
     'maps': DarkSoulsMaps,
     'params': DarkSoulsGameParameters,
-    'text': DarkSoulsText,
     'lighting': DarkSoulsLightingParameters,
+    'text': DarkSoulsText,
     'events': None,  # modified via EVS script files
 }
 
@@ -60,7 +60,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     lighting_tab: Optional[SoulstructLightingEditor]
     events_tab: Optional[SoulstructEventEditor]
 
-    TAB_ORDER = ['maps', 'params', 'text', 'lighting', 'events', 'runtime']
+    TAB_ORDER = ['maps', 'params', 'lighting', 'text', 'events', 'runtime']
 
     def __init__(self, project: SoulstructProject, master=None):
         # TODO: icon
@@ -68,7 +68,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.project = project
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
-        self.page_tabs = self.Notebook(row=0, padx=10)
+        self.page_tabs = self.Notebook(row=0, padx=100)
         self.maps_tab = None
         self.params_tab = None
         self.text_tab = None
@@ -183,7 +183,10 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             raise ValueError(f"Invalid data type name: {data_type}")
         tab = getattr(self, f'{data_type}_tab')
         if tab is not None:
-            setattr(tab, data_type.capitalize(), data)
+            if data_type == "events":
+                self.events_tab.refresh()
+            else:
+                setattr(tab, data_type.capitalize(), data)
 
     def destroy(self):
         """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
@@ -291,7 +294,10 @@ class SoulstructProject(object):
             return pickle.load(f)
 
     def save(self, data_type=None):
-        """Save given data type ('maps', 'text', etc.) as pickled project file. Defaults to saving all types."""
+        """Save given data type ('maps', 'text', etc.) as pickled project file.
+
+        Defaults to saving all types except events, which are handled separately.
+        """
         if data_type is not None:
             data_type = data_type.lower()
             if data_type not in DATA_TYPES:
@@ -333,7 +339,7 @@ class SoulstructProject(object):
                     self._import_events(data_import_path)
                 else:
                     setattr(self, d.capitalize(), d_class(data_import_path))
-                    self._window.reload_data(d, getattr(self, d.capitalize()))
+                self._window.reload_data(d, getattr(self, d.capitalize()))
 
     def import_data_from_game(self, data_type=None):
         """Reads data substructures in game formats from the live game directory."""
@@ -441,7 +447,7 @@ class SoulstructProject(object):
                 raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
             self._write_config()
             if self.dialog(title="Initial project load",
-                           message="Import game files now? This will override any '.d1s' files\n"
+                           message="Import game files now? This will override any project files\n"
                                    "that are already in this folder.",
                            button_names=("Yes, import the files", "No, I'll do it later"),
                            button_kwargs=('YES', 'NO'),
@@ -524,16 +530,18 @@ class SoulstructProject(object):
         else:
             initial_dir = None
 
-        message = ("Navigate to the game executable for this project.\n"
-                   "This can normally be found in:\n\n"
-                   ""
-                   "Prepare to Die Edition:\n"
-                   "C:/Program Files/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/DARKSOULS.exe\n\n"
-                   ""
-                   "Remastered:\n"
-                   "C:/Program Files/Steam/steamapps/common/DARK SOULS REMASTERED/DarkSoulsRemastered.exe\n\n"
-                   ""
-                   "Otherwise, you can use Steam to find your Steam directory.")
+        message = (
+            "Navigate to the game executable for this project.\n"
+            "This can normally be found in:\n\n"
+            ""
+            "Prepare to Die Edition:\n"
+            "C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/DARKSOULS.exe\n\n"
+            ""
+            "Remastered:\n"
+            "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/DarkSoulsRemastered.exe\n\n"
+            ""
+            "Otherwise, you can use Steam to find your Steam directory."
+        )
         self.dialog(title="Select game for project", message=message, font_size=12,
                     button_names='OK', button_kwargs='OK')
         game_exe = self._window.FileDialog.askopenfilename(

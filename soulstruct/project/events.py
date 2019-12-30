@@ -27,6 +27,8 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.dcx = dcx
         self.evs_file_paths = {}
         self.evs_text = {}
+        self.selected_evs = None
+
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
             evs_name = evs_file_path.name.split('.')[0]
             self.evs_file_paths[evs_name] = evs_file_path
@@ -38,10 +40,9 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         map_options = [f"{m} ({_get_verbose_map_name(m)})" for m in self.evs_file_paths]
 
         self.evs_choice = self.Combobox(
-            values=map_options, initial_value=map_options[0], width=30,
+            values=map_options, initial_value=map_options[0] if map_options else "", width=30,
             on_select_function=self._on_evs_choice,
             label='Script:', label_font_size=12, label_position='left', font=('Segoe UI', 12), padx=10, pady=10).var
-        self.selected_evs = self.evs_choice.get().split(' (')[0]
 
         with self.set_master():
             self.evs_editor_canvas = self.Canvas(
@@ -56,7 +57,6 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             vertical_scrollbar_w = self.Scrollbar(
                 orient='vertical', command=self.evs_text_editor.yview, column=1, sticky='ns')
             self.evs_text_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
-            self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
 
         with self.set_master(auto_columns=0, pady=(10, 5)):
             self.Button(text="Save EVS", width=15, command=self._save_evs)
@@ -66,6 +66,18 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         with self.set_master(auto_columns=0):
             self.Button(text="Save & Export", width=15, padx=(0, 15), bg='#822', command=self._save_and_export)
             self.Button(text="Reload & Export", width=15, padx=(15, 0), bg='#822', command=self._reload_and_export)
+
+        if map_options:
+            self.selected_evs = self.evs_choice.get().split(' (')[0]
+            self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
+
+    def refresh(self):
+        map_options = [f"{m} ({_get_verbose_map_name(m)})" for m in self.evs_file_paths]
+        self.evs_choice["values"] = map_options
+        if map_options:
+            self.evs_choice.set(map_options[0])
+            self.selected_evs = self.evs_choice.get().split(' (')[0]
+            self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.evs_text[self.selected_evs]:

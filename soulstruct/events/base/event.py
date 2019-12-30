@@ -41,8 +41,8 @@ class BaseEventArg(BaseStruct):
 class BaseEvent(BaseStruct):
     Instruction = BaseInstruction
     EventArg = BaseEventArg
-
     EVENT_ARG_TYPES = {}  # Set before each EVS write.
+    WRAP_LIMIT = 120  # PyCharm default line length.
 
     def __init__(self, event_id=0, restart_type=0, instructions=None):
         if self.STRUCT is None:
@@ -125,16 +125,20 @@ class BaseEvent(BaseStruct):
         function_docstring = f'""" {self.event_id}: Event {self.event_id} """'
         function_args = self.get_evs_function_args()  # Also creates 'arg_i_j' instruction arg names.
         restart_type_decorator = f"@{RestartType(self.restart_type).name}\n" if self.restart_type != 0 else ""
-        function_def = (f"def {function_name}({function_args}):\n"
-                        f"    {function_docstring}")
+        function_def = indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
+        function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def
         for i, instr in enumerate(self.instructions):
             instruction = instr.to_evs(game_module, self.EVENT_ARG_TYPES)
-            if instruction.startswith('Label(') and i > 0:
-                evs_event_string += '\n'
-            evs_event_string += f"\n    {instruction}"
-            if instruction.startswith('Label(') and i < len(self.instructions):
-                evs_event_string += '\n'
+            if instruction.startswith("DefineLabel("):
+                label = instruction.split(")")[0][len("DefineLabel("):]
+            else:
+                label = None
+            if label is not None:
+                if evs_event_string[-1] != "\n":
+                    evs_event_string += "\n"
+                evs_event_string += f"\n    # --- {label} --- #"
+            evs_event_string += indent_and_wrap_instruction(instruction, wrap_limit=self.WRAP_LIMIT, indent=4)
         return evs_event_string
 
     def to_binary(self, instruction_offset, first_base_arg_offset, first_event_arg_offset):
@@ -171,3 +175,55 @@ class BaseEvent(BaseStruct):
         event_args_binary = b''.join([arg_r.to_binary() for arg_r in sorted_event_args])
 
         return event_binary, instructions_binary, args_binary, event_args_binary
+
+
+def indent_and_wrap_instruction(instr: str, wrap_limit=120, indent=4):
+    """Indent instruction and wrap its arguments if the instruction exceed the given wrap limit."""
+    instr = " " * indent + instr
+    if len(instr) <= wrap_limit:
+        return "\n" + instr
+    instr_def = instr.split("(")[0] + "("
+    def_length = len(instr_def)
+    max_arg_length = wrap_limit - def_length
+    args = list(reversed(instr[def_length:-1].split(" ")))
+    arg_lines = []
+    arg_line = ""
+    while args:
+        arg = args.pop()
+        arg += " " if args else ")"
+        if len(arg_line + arg) <= max_arg_length:
+            arg_line += arg
+        else:
+            arg_lines.append(arg_line)
+            arg_line = arg
+    if arg_line:
+        arg_lines.append(arg_line)
+    instr = "\n" + instr_def + arg_lines[0]
+    for arg_line in arg_lines[1:]:
+        instr += "\n" + " " * def_length + arg_line
+    return instr
+
+
+def indent_and_wrap_function_def(function_name, function_args, wrap_limit=120):
+    function_name = f"def {function_name}("
+    if len(function_name) + len(function_args) + 2 <= wrap_limit:
+        return function_name + f"{function_args}):"
+    def_length = len(function_name)
+    max_arg_length = wrap_limit - def_length
+    args = list(reversed([arg.strip(" ):") for arg in function_args.split(",")]))
+    arg_lines = []
+    arg_line = ""
+    while args:
+        arg = args.pop()
+        arg += ", " if args else "):"
+        if len(arg_line + arg) <= max_arg_length:
+            arg_line += arg
+        else:
+            arg_lines.append(arg_line)
+            arg_line = arg
+    if arg_line:
+        arg_lines.append(arg_line)
+    function = function_name + arg_lines[0]
+    for arg_line in arg_lines[1:]:
+        function += "\n" + " " * def_length + arg_line
+    return function

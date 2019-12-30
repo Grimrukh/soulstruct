@@ -629,8 +629,8 @@ GAME_PARAM_INFO = {
             'CurseResistance', True, int,
             "Curse resistance added by armor."),
         'reinforceTypeId': (
-            'ArmorUpgrades', True, Params.ArmorUpgrades,
-            "Armor Upgrades entry used to determine parameter changes from reinforcement."),
+            'UpgradeMaterials', True, Params.UpgradeMaterials,
+            "Upgrade materials required for reinforcement at each level."),
         'trophySGradeId': (
             'AchievementContributionID', False, int,
             "Index of armor as it contributes to certain multi-item achievements."),
@@ -2173,9 +2173,9 @@ GAME_PARAM_INFO = {
         'enable_multi:1': (
             'UseableInMultiplayer', True, bool,
             "Determines if this good can be used while multiple players are together."),
-        'enable_pvp:1': (
+        'enable_pvp:1': (  # DSR ONLY
             'UseableInPVP', True, bool,
-            "Determines if this good can be used in 'PVP' multiplayer. Not sure exactly what that refers to."),
+            "<DSR> Determines if this good can be used in 'PVP' multiplayer. Not sure exactly what that refers to."),
         'disable_offline:1': (
             'DisabledOffline', True, bool,
             "Determines if this good can be used while the game is disconnected from the network."),
@@ -4507,11 +4507,14 @@ GAME_PARAM_INFO = {
         'isDeposit:1': (
             'CanBeStored', True, bool,
             "If True, this weapon can be stored in the Bottomless Box. Always True for rings."),
+        'pad_1[8]': (
+            'Pad1', False, '<Pad:8>',
+            "Null padding."),
         'disableMultiDropShare:1': (
             'DisableMultiplayerShare', False, bool,
             "If True, this weapon cannot be given to other players by dropping it. Always False in vanilla."),
         'pad_0[1]': (
-            'Pad1', False, '<Pad:1>',
+            'Pad2', False, '<Pad:1>',
             "Null padding."),
         'oldSortId': (
             'OldSortIndex', False, int,
@@ -4520,7 +4523,7 @@ GAME_PARAM_INFO = {
             'LevelSyncCorrection', False, int,
             "Level sync correction (DSR only). Probably not useful."),
         'pad_1[6]': (
-            'Pad2', False, '<Pad:6>',
+            'Pad3', False, '<Pad:6>',
             "Null padding."),
     },
     'REINFORCE_PARAM_WEAPON_ST': {
@@ -4611,10 +4614,10 @@ GAME_PARAM_INFO = {
         'pad[9]': (
             'Pad1', False, '<Pad:9>',
             "Null padding."),
-        'reinforcementLevel': (
+        'reinforcementLevel': (  # DSR ONLY
             'ReinforcementLevel', True, int,
-            "Reinforcement level. Not sure where this is used; it could be used to calculate the final weapon ID (e.g. "
-            "100005 for Dagger+5)."),
+            "<DSR> Reinforcement level. Not sure where this is used; it could be used to calculate the final weapon ID "
+            "(e.g. 100005 for Dagger+5)."),
     },
     'MOVE_PARAM_ST': {
         'stayId': (

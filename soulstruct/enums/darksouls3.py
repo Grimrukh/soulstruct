@@ -15,8 +15,8 @@ __all__ = [
     "WorldTendencyType", "UpdateAuthority",
 
     # Enums in Dark Souls 3 only
-    "ArmorType", "BannerType", "CalculationType", "ClientType", "ConditionGroup", "DamageType", "DeleteOrAdd",
-    "DialogResult", "DisplayState", "DoorState", "Gender", "Label", "MultiplayerState", "NPCPartType",
+    "ArmorType", "BannerType", "CalculationType", "ClientType", "ConditionGroup", "Covenant", "DamageType",
+    "DeleteOrAdd", "DialogResult", "DisplayState", "DoorState", "Gender", "Label", "MultiplayerState", "NPCPartType",
     "PlayGoState", "PlayLogMultiplayerType", "PlayerPlayLogParameter", "SingleplayerSummonSignType", "TeamType",
     "HollowArenaMatchType", "HollowArenaResult",
 ]
@@ -95,6 +95,11 @@ class ConditionGroup(IntEnum):
     AND_13 = 13
     AND_14 = 14
     AND_15 = 15
+
+
+class Covenant(IntEnum):
+    # TODO
+    pass
 
 
 class DamageType(IntEnum):

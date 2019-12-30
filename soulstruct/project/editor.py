@@ -927,13 +927,13 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 self.field_name_label.var.set(nickname)
 
             if isinstance(self.field_type, str):
-                # Note that the *argument* 'field_type' is used below, not attribute self.field_type.
+                # Note that the *argument* `field_type` is used below, not attribute `self.field_type`.
                 field_links = self.master.get_field_links(self.field_type, value)
                 field_type = int
             else:
                 field_links = []
 
-            if issubclass(field_type, IntEnum):
+            if not isinstance(field_type, str) and issubclass(field_type, IntEnum):
                 self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
                 try:
                     # noinspection PyUnresolvedReferences
@@ -1066,18 +1066,16 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         super().__init__(linker=linker, master=master, toplevel=toplevel, window_title=window_title)
 
     def build(self):
-        with self.set_master(auto_rows=0):
-            self.Frame(pady=15)
-            with self.set_master(auto_columns=0):
-                self.build_category_canvas()
-                with self.set_master():
-                    self.build_previous_range_button(row=0, column=0)
-                    self.build_hidden_fields_checkbutton(row=0, column=1)
-                    with self.set_master(row=1, column=0):
-                        self.build_entry_frame()
-                    with self.set_master(row=1, column=1):
-                        self.build_field_frame()
-                    self.build_next_range_button(row=2, column=0)
+        with self.set_master(auto_columns=0):
+            self.build_category_canvas()
+            with self.set_master():
+                self.build_previous_range_button(row=0, column=0)
+                self.build_hidden_fields_checkbutton(row=0, column=1)
+                with self.set_master(row=1, column=0):
+                    self.build_entry_frame()
+                with self.set_master(row=1, column=1):
+                    self.build_field_frame()
+                self.build_next_range_button(row=2, column=0)
 
     def build_hidden_fields_checkbutton(self, **kwargs):
         self.show_hidden_fields = self.Checkbutton(
@@ -1147,17 +1145,27 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         self._cancel_field_value_edit()
 
         show_hidden_fields = self.show_hidden_fields.get()
-        field_names = self.get_field_names(field_dict)
+        field_info_dict = self.get_field_info(field_dict)
+        # field_names = self.get_field_names(field_dict)
 
         row = 0
-        for field_name in field_names:
+        for field_name in field_info_dict:
 
-            field_nickname, is_main, field_type, field_doc = self.get_field_info(field_dict, field_name)
+            try:
+                field_nickname, is_main, field_type, field_doc = self.get_field_info(field_dict, field_name)
+            except ValueError as e:
+                raise ValueError(f"Could not get field information for field {field_name}. Error: {str(e)}")
 
             if (isinstance(field_type, str) and '<Pad:' in field_type) or (not is_main and not show_hidden_fields):
                 continue  # Skip hidden field (or always skip Pad field).
 
-            field_value = field_dict[field_name]
+            try:
+                field_value = field_dict[field_name]
+            except KeyError:
+                # Only some DSR-specific fields are allowed to be absent.
+                if field_doc.startswith("<DSR>"):
+                    continue
+                raise
 
             self.field_rows[row].update_field(
                 entry=field_dict,
