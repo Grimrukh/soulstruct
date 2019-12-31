@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     CATEGORY_BOX_WIDTH = 165
-    ENTRY_BOX_WIDTH = 435
+    ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
-    FIELD_BOX_WIDTH = 450
+    FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
@@ -69,16 +69,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
                 self.slot_choice = self.Combobox(
                     values=('0', '1'), font=('Segoe UI', 12), on_select_function=self._on_slot_choice, width=5, padx=10)
 
-            with self.set_master(auto_columns=0):
-                self.build_category_canvas()
-                with self.set_master():
-                    self.build_previous_range_button(row=0, column=0)
-                    self.build_hidden_fields_checkbutton(row=0, column=1)
-                    with self.set_master(row=1, column=0):
-                        self.build_entry_frame()
-                    with self.set_master(row=1, column=1):
-                        self.build_field_frame()
-                    self.build_next_range_button(row=2, column=0)
+            super().build()
 
     def _on_map_area_choice(self, _=None):
         new_map_area = self.map_area_choice.get().split(' (')[0]

@@ -21,7 +21,7 @@ MAP_ENTRY_TYPES = {
         'Navmeshes': MSB_PART_TYPE.Navmesh,
         'UnusedObjects': MSB_PART_TYPE.UnusedObject,
         'UnusedCharacters': MSB_PART_TYPE.UnusedCharacter,
-        'MapLoadTriggers': MSB_PART_TYPE.MapLoadTrigger,
+        'MapConnections': MSB_PART_TYPE.MapConnection,
     },
     'Events': {
         'Lights': MSB_EVENT_TYPE.Light,
@@ -49,9 +49,9 @@ MAP_ENTRY_TYPES = {
     'Models': {
         'MapPieces': MSB_MODEL_TYPE.MapPiece,
         'Objects': MSB_MODEL_TYPE.Object,
-        'NonHumanCharacters': MSB_MODEL_TYPE.NonHumanCharacter,
+        'Characters': MSB_MODEL_TYPE.Character,
         'Unknown': MSB_MODEL_TYPE.Unknown,
-        'HumanCharacters': MSB_MODEL_TYPE.HumanCharacter,
+        'Players': MSB_MODEL_TYPE.Player,
         'Collisions': MSB_MODEL_TYPE.Collision,
         'Navmeshes': MSB_MODEL_TYPE.Navmesh,
     },
@@ -387,7 +387,7 @@ class MSBPartList(MSBEntryList):
     Navmeshes: list
     UnusedObjects: list
     UnusedCharacters: list
-    MapLoadTriggers: list
+    MapConnections: list
 
     def set_names(self, model_names, region_names, part_names, collision_names):
         for entry in self._entries:

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class SoulstructTextEditor(SoulstructBaseEditor):
     CATEGORY_BOX_WIDTH = 165
     CATEGORY_BOX_HEIGHT = 400
-    ENTRY_BOX_WIDTH = 910
+    ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100
 

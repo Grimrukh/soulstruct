@@ -250,7 +250,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self.build_category_canvas()
             with self.set_master(auto_rows=0):
                 self.build_previous_range_button()
-                self.build_entry_frame()
+                with self.set_master():
+                    self.build_entry_frame()
                 self.build_next_range_button()
 
     def undo(self, _=None):
@@ -1066,6 +1067,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         super().__init__(linker=linker, master=master, toplevel=toplevel, window_title=window_title)
 
     def build(self):
+        """Builds category, entry, and field tables."""
         with self.set_master(auto_columns=0):
             self.build_category_canvas()
             with self.set_master():

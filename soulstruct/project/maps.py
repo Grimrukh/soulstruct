@@ -30,13 +30,13 @@ ENTRY_LIST_FG_COLORS = {
 
 
 class SoulstructMapEditor(SoulstructBaseFieldEditor):
-    CATEGORY_BOX_WIDTH = 200
+    CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
     ENTRY_BOX_HEIGHT = 400
-    ENTRY_RANGE_SIZE = 100
+    ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
-    FIELD_ROW_COUNT = 50  # TODO: highest count in Maps? Probably closer to 20-30
+    FIELD_ROW_COUNT = 30  # TODO: confirm highest field count in Maps
     FIELD_NAME_WIDTH = 20
     FIELD_VALUE_BOX_WIDTH = 200
     FIELD_VALUE_WIDTH = 60
@@ -97,7 +97,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 else:
                     # Name of another MSB entry.
                     value_text = str(value)
-                    if field_type == '<Maps:Models:HumanCharacters|NonHumanCharacters>':
+                    if field_type == '<Maps:Models:PlayerCharacters|NonPlayerCharacters>':
                         model_id = int(value.lstrip('c'))
                         try:
                             value_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
@@ -216,7 +216,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 else:
                     if not self.field_type.startswith('<Maps:'):  # not <MapsList:
                         new_text += f'  {{{field_links[0].name}}}'
-                    if self.field_type == '<Maps:Models:HumanCharacters|NonHumanCharacters>':
+                    if self.field_type == '<Maps:Models:PlayerCharacters|NonPlayerCharacters>':
                         # TODO: Currently, model ID must still be present in Models (MSB.ModelList).
                         #  In future, this will be a '<Models>' link that allows player to select ANY DS1 model and
                         #  have that model automatically added to MSB.ModelList when the MSB is saved/packed.
@@ -319,16 +319,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left',
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
 
-            with self.set_master(auto_columns=0):
-                self.build_category_canvas()
-                with self.set_master():
-                    self.build_previous_range_button(row=0, column=0)
-                    self.build_hidden_fields_checkbutton(row=0, column=1)
-                    with self.set_master(row=1, column=0):
-                        self.build_entry_frame()
-                    with self.set_master(row=1, column=1):
-                        self.build_field_frame()
-                    self.build_next_range_button(row=2, column=0)
+            super().build()
 
     def _on_map_choice(self, _=None):
         self.select_entry_row_index(None)

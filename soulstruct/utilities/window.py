@@ -170,7 +170,7 @@ class SmartFrame(tk.Frame):
 
     toplevel: Optional[tk.Toplevel]
 
-    def __init__(self, master=None, toplevel=True, window_title='Window Title', icon=None, **frame_kwargs):
+    def __init__(self, master=None, toplevel=True, window_title='Window Title', icon_data=None, **frame_kwargs):
         # List of variables (so they aren't garbage-collected).
         self._variables = []
 
@@ -181,11 +181,13 @@ class SmartFrame(tk.Frame):
             self.toplevel.title(window_title)
             self.toplevel.iconname(window_title)
             self.toplevel.focus_force()
+            self.toplevel.rowconfigure(0, weight=1)
+            self.toplevel.columnconfigure(0, weight=1)
             super().__init__(master, **frame_kwargs)
-            if icon is not None:
-                self.icon = tk.PhotoImage(data=icon)
+            if icon_data is not None:
+                self.icon = tk.PhotoImage(data=icon_data)
                 self.toplevel.tk.call('wm', 'iconphoto', self.toplevel._w, self.icon)
-            self.grid()
+            self.grid(sticky='nsew')
         else:
             self.toplevel = None
             super().__init__(master, **frame_kwargs)
@@ -197,7 +199,11 @@ class SmartFrame(tk.Frame):
         self.current_column = None
 
         # Current frame tracked, defaults to master frame.
-        self.master_frame = self.current_frame = self.Frame(frame=self, row=0, column=0)
+        self.master_frame = self.current_frame = self.Frame(frame=self, row=0, column=0, sticky='nsew')
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.master_frame.rowconfigure(0, weight=1)
+        self.master_frame.columnconfigure(0, weight=1)
 
         # Disable default root if used.
         if self.toplevel and toplevel_master is None:
@@ -529,6 +535,12 @@ class SmartFrame(tk.Frame):
         return listbox
 
     @_embed_component
+    def PanedWindow(self, frame=None, **kwargs):
+        self.set_style_defaults(kwargs)
+        paned_window = tk.PanedWindow(frame, **kwargs)
+        return paned_window
+
+    @_embed_component
     def Radiobutton(self, frame=None, command=None, variable=None, **kwargs):
         self.set_style_defaults(kwargs)
         if variable is None:
@@ -549,6 +561,12 @@ class SmartFrame(tk.Frame):
         text = tk.Text(frame, **kwargs)
         text.insert(1.0, initial_text)
         return text
+
+    @staticmethod
+    def update_width(width, *widgets):
+        """Set width of given widget(s)."""
+        for widget in widgets:
+            widget['width'] = width
 
     @staticmethod
     def reset_canvas_scroll_region(canvas):

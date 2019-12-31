@@ -3137,7 +3137,13 @@ GAME_PARAM_INFO = {
         'chrAnimId': (
             'NonPlayerActionAnimation', True, Animation,
             "Animation played by a non-player character when they successfully activate the object."),
+        'spQualifiedType': (
+            'SuccessCondition1Type', True, OBJACT_SP_QUALIFIED_TYPE,
+            "Type of first success condition."),
         'spQualifiedId': partial(_obj_act_success_condition, 'spQualifiedType'),
+        'spQualifiedType2': (
+            'SuccessCondition2Type', True, OBJACT_SP_QUALIFIED_TYPE,
+            "Type of second success condition."),
         'spQualifiedId2': partial(_obj_act_success_condition, 'spQualifiedType2'),
         'objDummyId': (
             'ObjectActionModelPoint', True, int,
@@ -3150,12 +3156,6 @@ GAME_PARAM_INFO = {
             'MaxPlayerAngle', True, int,
             "Maximum angle between the character's forward direction and the direction to the object "
             "action point for the action prompt to appear."),
-        'spQualifiedType': (
-            'SuccessCondition1Type', True, OBJACT_SP_QUALIFIED_TYPE,
-            "Type of first success condition."),
-        'spQualifiedType2': (
-            'SuccessCondition2Type', True, OBJACT_SP_QUALIFIED_TYPE,
-            "Type of second success condition."),
         'validObjAngle': (
             'MaxObjectAngle', True, int,
             "Maximum angle between the object's forward direction and the direction to the player for "

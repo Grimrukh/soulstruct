@@ -16,7 +16,7 @@ class MSB_PART_TYPE(IntEnum):
     Navmesh = 8
     UnusedObject = 9
     UnusedCharacter = 10
-    MapLoadTrigger = 11
+    MapConnection = 11
 
 
 def MSBPart(msb_buffer):
@@ -413,7 +413,7 @@ class MSBCharacter(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', True, '<Maps:Models:HumanCharacters|NonHumanCharacters>',
+            'Model Name', True, '<Maps:Models:PlayerCharacters|NonPlayerCharacters>',
             "Name of character model to use for this character."),
         **BaseMSBPart.FIELD_INFO,
         'think_param_id': (
@@ -756,7 +756,7 @@ class MSBUnusedCharacter(MSBCharacter):
     ENTRY_TYPE = MSB_PART_TYPE.UnusedCharacter
 
 
-class MSBMapLoadTrigger(BaseMSBPart):
+class MSBMapConnection(BaseMSBPart):
     """Links to an MSBMapPiece entry and causes another map to load when the player stands on that collision."""
 
     PART_MAP_LOAD_TRIGGER_STRUCT = (
@@ -778,7 +778,7 @@ class MSBMapLoadTrigger(BaseMSBPart):
             "Parts of map name this will trigger."),  # TODO: Combobox of maps.
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
+    ENTRY_TYPE = MSB_PART_TYPE.MapConnection
 
     def __init__(self, msb_part_source):
         self.collision_name = None
@@ -816,7 +816,7 @@ MSB_PART_TYPE_CLASSES = {
     MSB_PART_TYPE.Navmesh: MSBNavmesh,
     MSB_PART_TYPE.UnusedObject: MSBUnusedObject,
     MSB_PART_TYPE.UnusedCharacter: MSBUnusedCharacter,
-    MSB_PART_TYPE.MapLoadTrigger: MSBMapLoadTrigger,
+    MSB_PART_TYPE.MapConnection: MSBMapConnection,
 }
 
 

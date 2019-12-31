@@ -8,9 +8,9 @@ from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 class MSB_MODEL_TYPE(IntEnum):
     MapPiece = 0
     Object = 1
-    NonHumanCharacter = 2
+    Character = 2
     Unknown = 3
-    HumanCharacter = 4
+    Player = 4
     Collision = 5
     Navmesh = 6
 

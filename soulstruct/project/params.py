@@ -10,8 +10,9 @@ if TYPE_CHECKING:
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     CATEGORY_BOX_WIDTH = 165
-    ENTRY_BOX_WIDTH = 435
+    ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
+    FIELD_BOX_WIDTH = 500
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
         ENTRY_ID_WIDTH = 10
