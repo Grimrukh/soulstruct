@@ -9,8 +9,6 @@ import soulstruct.game_types as gt
 from soulstruct.events.numeric import SET_INSTRUCTION_ARG_TYPES
 from soulstruct.events.internal import *
 
-__all__ = ["EvsParser"]
-
 # TODO: Set up unit tests on vanilla scripts, and some examples that make use of high-level functionality.
 
 # TODO: Support event function imports from '.common_func', including kwarg names.
@@ -1223,6 +1221,7 @@ def _define_args(arg_types):
 
 class EmevdError(Exception):
     def __init__(self, lineno, msg):
+        self.lineno = lineno
         super().__init__(f"LINE {lineno}: {msg}")
 
 

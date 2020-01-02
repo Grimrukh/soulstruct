@@ -45,29 +45,28 @@ class DarkSoulsMaps(object):
     KilnOfTheFirstFlame: MSB
     UndeadAsylum: MSB
 
-    # TODO: should I set up alias names for 'shared' maps (e.g. DemonRuins)?
-
     def __init__(self, map_studio_directory=None):
         """Unpack Dark Souls MSB map data files into one single modifiable structure.
 
         The format of these files is exactly the same in PTD and DSR. The vanilla DSR files have a few new additions
         (the bonfire near Vamos and lots of Arena-related entries), but you can safely use the exact same MSB files in
-        either version of the game.
+        either version of the game if you're not concerned with these differences.
 
-        Note that you only need to reload the map (e.g. by saving and quitting) to see changes in these files while
-        playing the game. You do NOT need to fully restart the game, unlike text and parameter data.
+        Note that you only need to reload the map (e.g. by saving and quitting, or getting sufficiently far away from
+        the map) to see changes in these files while playing the game. You do NOT need to fully restart the game, unlike
+        with text and parameter/lighting changes.
 
         Note that Darkroot Garden (m12_00) has two MSB files, one ending in '00' (pre-DLC map data) and one ending in
         '01' (post-DLC map data). The PC version of the game will always have the DLC, so the '00' version is completely
-        unused and ignored by Soulstruct. (You can even just delete the MSB file.) There are also plenty of other
-        MSB files that are completely unused.
+        unused and ignored by Soulstruct. (You can even just delete the MSB file.) Note that 'm12_00_00_00.emevd[.dcx]'
+        is still used for Darkroot's event scripts, however.
 
         TODO: Discuss/enforce unusual region limit in Duke's Archives (and possibly DSR Undead Asylum).
 
         Args:
-            map_studio_directory: Directory where all the 'mXX_XX_00_00.msb' files are stored. This will be inside
-                'map/MapStudio' in your game directory (either version). (Ignore the 'MapStudioNew' folder next to this
-                directory in DSR, which does nothing.)
+            map_studio_directory: Directory where all the MSB files are stored. This will be inside 'map/MapStudio' in
+                your game directory (either version). (Ignore the 'MapStudioNew' folder next to this directory in DSR,
+                which does nothing.)
         """
         self._directory = None
         self._data = {}
@@ -103,7 +102,3 @@ class DarkSoulsMaps(object):
             msb_path = msb_directory / self._data[msb_name].msb_path.name
             self._data[msb_name].write_packed(msb_path)
         print("\n# INFO: --------> Dark Souls map (MSB) files saved successfully.")
-
-
-if __name__ == '__main__':
-    dsm = DarkSoulsMaps('G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/map/MapStudio')

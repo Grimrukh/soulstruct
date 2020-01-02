@@ -132,8 +132,8 @@ class BaseMSBPart(MSBEntry):
             'Use Depth Bias Float', True, bool,
             "Unknown."),
         'disable_point_light_effect': (
-            'Disable Point Light Effect', True, bool,
-            "If True, this entity will not have a point light (I think)."),
+            'Ignore Player Light', True, bool,
+            "If True, this entity will not be illuminated by player light (I think)."),
     }
 
     ENTRY_TYPE = None
@@ -413,7 +413,7 @@ class MSBCharacter(BaseMSBPart):
 
     FIELD_INFO = {
         'model_name': (
-            'Model Name', True, '<Maps:Models:PlayerCharacters|NonPlayerCharacters>',
+            'Model Name', True, '<Maps:Models:Characters|Players>',
             "Name of character model to use for this character."),
         **BaseMSBPart.FIELD_INFO,
         'think_param_id': (
@@ -547,12 +547,12 @@ class MSBCollision(BaseMSBPart):
         **BaseMSBPart.FIELD_INFO,
         'hit_filter_id': (
             'Hit Filter ID', True, int,
-            "Unknown."),
+            "Determines what happens when the player activates this collision."),
         'sound_space_type': (
             'Sound Space Type', True, int,
             "Unknown."),
         'env_light_map_spot_index': (
-            'Environment Light Map Spot Index', True, int,
+            'Env. Lightmap Spot Index', True, int,
             "Unknown."),
         'reflect_plane_height': (
             'Reflect Plane Height', True, float,

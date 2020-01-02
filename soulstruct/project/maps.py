@@ -22,10 +22,10 @@ if TYPE_CHECKING:
 
 
 ENTRY_LIST_FG_COLORS = {
-    'Models': '#FFC',
-    'Events': '#DFD',
-    'Regions': '#FDD',
     'Parts': '#DDF',
+    'Regions': '#FDD',
+    'Events': '#DFD',
+    'Models': '#FFC',
 }
 
 
@@ -36,7 +36,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
-    FIELD_ROW_COUNT = 30  # TODO: confirm highest field count in Maps
+    FIELD_ROW_COUNT = 37  # highest count (Parts.Collisions)
     FIELD_NAME_WIDTH = 20
     FIELD_VALUE_BOX_WIDTH = 200
     FIELD_VALUE_WIDTH = 60
@@ -76,7 +76,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.field_type = field_type
             self.field_docstring = docstring
 
-            nickname = camel_case_to_spaces(nickname)
+            # Nicknames are already formatted properly (i.e. not CamelCase).
             if self.field_name_label.var.get() != nickname:
                 self.field_name_label.var.set(nickname)
 
@@ -97,7 +97,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 else:
                     # Name of another MSB entry.
                     value_text = str(value)
-                    if field_type == '<Maps:Models:PlayerCharacters|NonPlayerCharacters>':
+                    if field_type == '<Maps:Models:Characters|Players>':
                         model_id = int(value.lstrip('c'))
                         try:
                             value_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
@@ -168,9 +168,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     field_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
                 self.context_menu.add_command(
                     label="Select linked entry name from list", foreground=self.STYLE_DEFAULTS['text_fg'],
-                    command=self.open_map_name_selection_box)
+                    command=self.open_msb_element_selection_box)
 
-        def open_map_name_selection_box(self):
+        def open_msb_element_selection_box(self):
             names = self.master.linker.get_map_entry_type_names(self.field_type)
             window = NameSelectionBox(self.master, names)
             selected_name = window.go()
@@ -216,7 +216,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 else:
                     if not self.field_type.startswith('<Maps:'):  # not <MapsList:
                         new_text += f'  {{{field_links[0].name}}}'
-                    if self.field_type == '<Maps:Models:PlayerCharacters|NonPlayerCharacters>':
+                    if self.field_type == '<Maps:Models:Characters|Players>':
                         # TODO: Currently, model ID must still be present in Models (MSB.ModelList).
                         #  In future, this will be a '<Models>' link that allows player to select ANY DS1 model and
                         #  have that model automatically added to MSB.ModelList when the MSB is saved/packed.
@@ -311,15 +311,19 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
     def build(self):
-        with self.set_master(auto_rows=0):
+        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(auto_columns=0, pady=10):
-                map_display_names = [camel_case_to_spaces(m) for m in DARK_SOULS_MAP_NAMES if not m.startswith('m')]
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
+                map_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_MAP_NAMES.items()]
                 self.map_choice = self.Combobox(
-                    values=map_display_names, label='Map:', label_font_size=12, label_position='left',
+                    values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
 
             super().build()
+
+    def _get_map_choice_name(self):
+        """Just removes parenthetical and returns to CamelCase."""
+        return self.map_choice.get().split(' (')[0].replace(' ', '')
 
     def _on_map_choice(self, _=None):
         self.select_entry_row_index(None)
@@ -336,7 +340,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if category is None:
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         entry_list_name, entry_type_name = category.split(': ')
-        entry_list = self.Maps[self.map_choice.get().replace(' ', '')][entry_list_name]
+        entry_list = self.get_selected_msb()[entry_list_name]
         global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
         if global_index is None:
             global_index = len(entry_list)  # appending to end locally -> appending to end globally
@@ -370,7 +374,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_type_index = self.get_entry_id(row_index)
 
         entry_list_name, entry_type_name = category.split(': ')
-        entry_list = self.Maps[self.map_choice.get().replace(' ', '')][entry_list_name]
+        entry_list = self.get_selected_msb()[entry_list_name]
         global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
         if global_index is None:
             raise IndexError(f"Cannot delete entry with global index {global_index} (list length is {len(entry_list)}.")
@@ -473,7 +477,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return categories
 
     def get_selected_msb(self):
-        return self.Maps[self.map_choice.get().replace(' ', '')]
+        return self.Maps[self._get_map_choice_name()]
 
     def get_category_dict(self, category=None) -> List[MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
@@ -485,7 +489,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 return []
-        map_choice = self.map_choice.get().replace(' ', '')
+        map_choice = self._get_map_choice_name()
         try:
             entry_list, entry_type = category.split(': ')
         except ValueError:

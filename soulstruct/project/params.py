@@ -13,6 +13,7 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
+    FIELD_ROW_COUNT = 173  # highest count (Params[SpecialEffects])
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
         ENTRY_ID_WIDTH = 10
@@ -55,8 +56,9 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
 
     def build(self):
-        with self.set_master(auto_rows=0):
-            with self.set_master(auto_columns=0, pady=10):
+        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
+
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
                 self.find_param_name = self.Entry(
                     label="Find Param Name (TODO):", label_position='left', width=30, padx=10)
                 # self.find_param_name.bind('<Return>', self.find_text_id)

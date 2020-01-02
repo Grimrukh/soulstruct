@@ -106,6 +106,8 @@ class DarkSoulsGameParameters(object):
         self.update_bnd()
         if auto_pickle:
             self.pickle()
+        if game_param_bnd_path is not None and Path(game_param_bnd_path).is_dir():
+            game_param_bnd_path = Path(game_param_bnd_path) / 'GameParam.parambnd'
         self._game_param_bnd.write(game_param_bnd_path)
         print('# INFO: --------> Dark Souls game parameters (GameParam) saved successfully.')
         if not self._reload_warning:
@@ -208,7 +210,7 @@ class MapDrawParam(object):
     def items(self):
         return self._data.items()
 
-    # TODO: Method that adds slot 1 (duplicating slot 0). Will need to add entry path as well.
+    # TODO: Method that adds slot 1 (duplicating slot 0). Will need to add BND entry paths as well.
 
     def update_bnd(self):
         """Update the internal BND by packing the current ParamTables. Called automatically by `save()`."""

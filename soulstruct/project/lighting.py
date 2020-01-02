@@ -14,6 +14,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
+    FIELD_ROW_COUNT = 45  # highest count (AmbientLight)
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
         ENTRY_ID_WIDTH = 10
@@ -59,8 +60,9 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         self._on_map_area_choice()  # Sets slot option correctly.
 
     def build(self):
-        with self.set_master(auto_rows=0):
-            with self.set_master(auto_columns=0, pady=10):
+        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
+
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
                 map_display_names = [f'{k} ({v})' for k, v in DRAW_PARAM_MAPS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names, on_select_function=self._on_map_area_choice, width=40, padx=10,

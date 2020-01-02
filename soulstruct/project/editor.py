@@ -28,13 +28,12 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
     class EntryRow(object):
         """Container/manager for widgets of a single entry row in the Editor."""
         ENTRY_ANCHOR = 'center'
-        ENTRY_ROW_WIDTH = 800
         ENTRY_ROW_HEIGHT = 30
         SHOW_ENTRY_ID = True
         EDIT_ENTRY_ID = True
         ENTRY_ID_WIDTH = 15
         ENTRY_ID_FG = '#CDF'
-        ENTRY_TEXT_WIDTH = 60
+        ENTRY_TEXT_WIDTH = 150
         ENTRY_TEXT_FG = '#FFF'
 
         def __init__(self, editor: SoulstructBaseEditor, row_index: int, main_bindings: dict = None):
@@ -49,8 +48,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             bg_color = self._get_color()
 
             self.row_box = editor.Frame(
-                width=self.ENTRY_ROW_WIDTH, height=self.ENTRY_ROW_HEIGHT, bg=bg_color, row=row_index,
-                columnspan=2 if self.SHOW_ENTRY_ID else 1, sticky='nsew')
+                width=self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH, height=self.ENTRY_ROW_HEIGHT, bg=bg_color,
+                row=row_index, columnspan=2 if self.SHOW_ENTRY_ID else 1, sticky='nsew')
             bind_events(self.row_box, main_bindings)
 
             if self.SHOW_ENTRY_ID:
@@ -180,7 +179,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.active_category = None
         self.category_boxes = {}
         self.category_canvas = None
-        self.f_categories = None
+        self.category_i_frame = None
 
         self.entry_rows = []  # type: List[SoulstructBaseEditor.EntryRow]
         self.active_row_index = None
@@ -188,7 +187,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.displayed_entry_count = 0
 
         self.entry_canvas = None
-        self.f_entry_table = None
+        self.entry_i_frame = None
         self.previous_range_button = None
         self.next_range_button = None
         self._e_entry_text_edit = None
@@ -201,15 +200,16 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self.refresh_entries()
 
     def build_category_canvas(self):
-        self.category_canvas = self.Canvas(
-            vertical_scrollbar=True, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, padx=5,
-            yscrollincrement=self.CATEGORY_ROW_HEIGHT, borderwidth=0, highlightthickness=0)
-        self.f_categories = self.Frame(
-            self.category_canvas, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT, sticky='ew')
-        self.link_to_scrollable(self.category_canvas, self.f_categories)
-        self.category_canvas.create_window(0, 0, window=self.f_categories, anchor='nw')
-        self.f_categories.bind(
-            "<Configure>", lambda e, c=self.category_canvas: self.reset_canvas_scroll_region(c))
+        with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1], auto_columns=0):
+            self.category_canvas = self.Canvas(
+                vertical_scrollbar=True, yscrollincrement=self.CATEGORY_ROW_HEIGHT,
+                width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_BOX_HEIGHT,
+                borderwidth=0, highlightthickness=0, sticky='nsew')
+        with self.set_master(self.category_canvas):
+            self.category_i_frame = self.Frame(sticky='nsew')
+        self.link_to_scrollable(self.category_canvas, self.category_i_frame)
+        self.category_canvas.create_window(0, 0, window=self.category_i_frame, anchor='n')
+        self.category_i_frame.bind("<Configure>", lambda e, c=self.category_canvas: self.reset_canvas_scroll_region(c))
 
     def build_previous_range_button(self, **kwargs):
         self.previous_range_button = self.Button(
@@ -222,17 +222,17 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             command=self._go_to_next_entry_range, padx=10, pady=10, **kwargs)
 
     def build_entry_frame(self):
-        with self.set_master():
-            self.entry_canvas = self.Canvas(
-                width=self.ENTRY_BOX_WIDTH, height=self.ENTRY_BOX_HEIGHT, borderwidth=0,
-                vertical_scrollbar=True, horizontal_scrollbar=True,
-                highlightthickness=0, yscrollincrement=self.EntryRow.ENTRY_ROW_HEIGHT, bg=self.ENTRY_CANVAS_BG, padx=5)
-            self.f_entry_table = self.Frame(self.entry_canvas, width=self.ENTRY_BOX_WIDTH, sticky='ew')
-            self.entry_canvas.create_window(0, 0, window=self.f_entry_table, anchor='nw')
-            self.f_entry_table.bind(
-                "<Configure>", lambda e, c=self.entry_canvas: self.reset_canvas_scroll_region(c))
+        """Master should already be set."""
+        self.entry_canvas = self.Canvas(
+            width=self.ENTRY_BOX_WIDTH, height=self.ENTRY_BOX_HEIGHT, borderwidth=0,
+            vertical_scrollbar=True, horizontal_scrollbar=True, sticky='nsew',
+            highlightthickness=0, yscrollincrement=self.EntryRow.ENTRY_ROW_HEIGHT, bg=self.ENTRY_CANVAS_BG,
+            row_weights=[1], column_weights=[1])
+        self.entry_i_frame = self.Frame(frame=self.entry_canvas, sticky='ew')
+        self.entry_i_frame.bind("<Configure>", lambda e, c=self.entry_canvas: self.reset_canvas_scroll_region(c))
+        self.entry_canvas.create_window(0, 0, window=self.entry_i_frame, anchor='nw')
 
-        with self.set_master(self.f_entry_table):
+        with self.set_master(self.entry_i_frame):
             for row in range(self.ENTRY_RANGE_SIZE):
                 self.entry_rows.append(self.EntryRow(
                     self, row_index=row, main_bindings={
@@ -246,11 +246,11 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                     }))
 
     def build(self):
-        with self.set_master(auto_columns=0):
+        with self.set_master(sticky='nsew', row_weights=[1], column_weights=[0, 1], auto_columns=0):
             self.build_category_canvas()
-            with self.set_master(auto_rows=0):
+            with self.set_master(sticky='nsew', row_weights=[0, 1, 0], column_weights=[1], auto_rows=0):
                 self.build_previous_range_button()
-                with self.set_master():
+                with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1]):
                     self.build_entry_frame()
                 self.build_next_range_button()
 
@@ -275,7 +275,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             box.destroy()
             label.destroy()
         self.category_boxes = {}
-        with self.set_master(self.f_categories):
+        with self.set_master(self.category_i_frame):
 
             categories = self._get_display_categories()
 
@@ -283,7 +283,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 box = self.Frame(
                     row=row, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_ROW_HEIGHT,
                     highlightthickness=self.CATEGORY_ROW_HIGHLIGHT,
-                    bg=self.CATEGORY_UNSELECTED_BG)
+                    bg=self.CATEGORY_UNSELECTED_BG, sticky='nsew')
                 label_text = camel_case_to_spaces(category).replace('_', ': ')
                 label = self.Label(text=label_text, sticky='w', row=row, fg=self._get_category_text_fg(category),
                                    bg=self.CATEGORY_UNSELECTED_BG, padx=1, font_size=10)
@@ -302,6 +302,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 self.category_boxes[category] = (box, label)
 
         self.category_canvas.yview_moveto(0)
+        self.category_i_frame.columnconfigure(0, weight=1)
 
     def select_category(self, selected_category: Optional[str], first_display_index=0):
         """Updates `active_category` attribute and row colors.
@@ -413,7 +414,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
             self.entry_rows[remaining_row].hide()
 
-        self.f_entry_table.grid_columnconfigure(1, weight=1)
+        self.entry_i_frame.columnconfigure(0, weight=1)
+        self.entry_i_frame.columnconfigure(1, weight=1)
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)
         self._refresh_buttons()
@@ -827,7 +829,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
     FIELD_NAME_WIDTH = 30
     FIELD_VALUE_BOX_WIDTH = 200
     FIELD_VALUE_WIDTH = 50
-    FIELD_ROW_COUNT = 173  # highest count (Params[SpecialEffects])
+    FIELD_ROW_COUNT = 0  # must be set in child
     FIELD_NAME_FG = '#DDE'
 
     class FieldRow(object):
@@ -1057,9 +1059,11 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             return f'#{base_bg}'
 
     def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
+        if self.FIELD_ROW_COUNT == 0:
+            raise AttributeError("Class attribute `FIELD_ROW_COUNT` must be set by child of SoulstructBaseFieldEditor.")
         self.show_hidden_fields = None
         self.field_canvas = None
-        self.f_field_table = None
+        self.field_i_frame = None
         self.e_field_value_edit = None
         self.selected_field_row_index = None
         self.displayed_field_count = 0
@@ -1068,14 +1072,14 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
     def build(self):
         """Builds category, entry, and field tables."""
-        with self.set_master(auto_columns=0):
+        with self.set_master(sticky='nsew', row_weights=[1], column_weights=[0, 1], auto_columns=0):
             self.build_category_canvas()
-            with self.set_master():
+            with self.set_master(sticky='nsew', row_weights=[0, 1, 0], column_weights=[1, 1]):
                 self.build_previous_range_button(row=0, column=0)
                 self.build_hidden_fields_checkbutton(row=0, column=1)
-                with self.set_master(row=1, column=0):
+                with self.set_master(sticky='nsew', row=1, column=0, row_weights=[1], column_weights=[1]):
                     self.build_entry_frame()
-                with self.set_master(row=1, column=1):
+                with self.set_master(sticky='nsew', row=1, column=1, row_weights=[1], column_weights=[1]):
                     self.build_field_frame()
                 self.build_next_range_button(row=2, column=0)
 
@@ -1085,17 +1089,15 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             command=lambda: self.refresh_fields(reset_display=True), pady=10, **kwargs).var
 
     def build_field_frame(self):
-        with self.set_master():
-            self.field_canvas = self.Canvas(
-                width=self.FIELD_BOX_WIDTH, height=self.FIELD_BOX_HEIGHT, yscrollincrement=self.FIELD_ROW_HEIGHT,
-                borderwidth=10, highlightthickness=0, vertical_scrollbar=True, horizontal_scrollbar=True,
-                bg=self.FIELD_CANVAS_BG, padx=5)
-            self.f_field_table = self.Frame(frame=self.field_canvas, width=self.FIELD_BOX_WIDTH, sticky='ew')
-            self.field_canvas.create_window(0, 0, window=self.f_field_table, anchor='nw')
-            self.f_field_table.bind(
-                "<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
+        self.field_canvas = self.Canvas(
+            yscrollincrement=self.FIELD_ROW_HEIGHT, vertical_scrollbar=True, horizontal_scrollbar=True,
+            borderwidth=10, highlightthickness=0, bg=self.FIELD_CANVAS_BG, sticky='nsew',
+            row_weights=[1], column_weights=[1])
+        self.field_i_frame = self.Frame(frame=self.field_canvas, width=self.FIELD_BOX_WIDTH, sticky='nsew')
+        self.field_i_frame.bind("<Configure>", lambda e, c=self.field_canvas: self.reset_canvas_scroll_region(c))
+        self.field_canvas.create_window(0, 0, window=self.field_i_frame, anchor='nw')
 
-        with self.set_master(self.f_field_table):
+        with self.set_master(self.field_i_frame):
             for row in range(self.FIELD_ROW_COUNT):
                 self.field_rows.append(self.FieldRow(
                     self, row_index=row,
@@ -1184,7 +1186,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         for remaining_row in range(row, self.FIELD_ROW_COUNT):
             self.field_rows[remaining_row].hide()
 
-        self.f_field_table.grid_columnconfigure(1, weight=1)
+        self.field_i_frame.grid_columnconfigure(1, weight=1)
 
         if reset_display:
             self.select_displayed_field_row(0, edit_if_already_selected=False)

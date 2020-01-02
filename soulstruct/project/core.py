@@ -1,7 +1,6 @@
 """
 TODO:
     - Manage ESD. Unpack and store in 'esdpy' subdirectory.
-    - Resizable window. (Also make frame padding more consistent.)
 """
 from __future__ import annotations
 
@@ -9,6 +8,7 @@ import datetime
 import json
 import os
 import pickle
+import threading
 from functools import wraps
 from pathlib import Path
 from typing import Optional
@@ -67,52 +67,59 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.project = project
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
-        self.page_tabs = self.Notebook(sticky='nsew')
+        self.page_tabs = self.Notebook(name="project_notebook", sticky='nsew')
         self.maps_tab = None
         self.params_tab = None
         self.text_tab = None
         self.lighting_tab = None
         self.events_tab = None
 
+        self.toplevel.minsize(700, 500)
+        # self.toplevel.protocol("WM_DELETE_WINDOW", self.confirm_quit)  # TODO: enable on release
+
         self.set_geometry()
 
     def build(self):
         self.build_top_menu()
 
-        tab_frames = {tab_name: self.Frame(frame=self.page_tabs, sticky='nsew') for tab_name in self.TAB_ORDER}
+        tab_frames = {tab_name: self.Frame(name=tab_name, frame=self.page_tabs, sticky='nsew',
+                                           row_weights=[1], column_weights=[1])
+                      for tab_name in self.TAB_ORDER}
 
         self.maps_tab = self.SmartFrame(
             frame=tab_frames['maps'], smart_frame_class=SoulstructMapEditor,
             maps=self.project.Maps, linker=self.linker, no_grid=True)
         self.maps_tab.grid(sticky='nsew')
+        self.maps_tab['bg'] = '#123'
+        self.maps_tab.rowconfigure(0, weight=1)
+        self.maps_tab.columnconfigure(0, weight=1)
 
         self.params_tab = self.SmartFrame(
             frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
             params=self.project.Params, linker=self.linker, no_grid=True)
-        self.params_tab.pack(expand=True)
+        self.params_tab.grid(sticky='nsew')
 
         self.lighting_tab = self.SmartFrame(
             frame=tab_frames['lighting'], smart_frame_class=SoulstructLightingEditor,
             lighting=self.project.Lighting, linker=self.linker, no_grid=True)
-        self.lighting_tab.pack(expand=True)
+        self.lighting_tab.grid(sticky='nsew')
 
         self.text_tab = self.SmartFrame(
             frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
             text=self.project.Text, linker=self.linker, no_grid=True)
-        self.text_tab.pack(expand=True)
+        self.text_tab.grid(sticky='nsew')
 
         self.events_tab = self.SmartFrame(
             frame=tab_frames['events'], smart_frame_class=SoulstructEventEditor,
             evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
             dcx=self.project.game_name == "Dark Souls Remastered", no_grid=True)
-        self.events_tab.pack(expand=True)
+        self.events_tab.grid(sticky='nsew')
 
         self.build_runtime_tab(tab_frames['runtime'])
 
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
 
-        # self.resizable(False, False)  # TODO
         self.set_geometry()
 
     def build_top_menu(self):
@@ -153,7 +160,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         file_menu.add_command(label="Restore .bak Files", foreground='#FFF',
                               command=lambda: self.project.restore_backup(full_folder=True))
         file_menu.add_separator()
-        file_menu.add_command(label="Quit", foreground='#FFF', command=self.destroy)  # TODO: confirm changes lost
+        file_menu.add_command(label="Quit", foreground='#FFF', command=self.confirm_quit)
         top_menu.add_cascade(label="File", menu=file_menu)
 
         edit_menu = self.Menu(tearoff=0)
@@ -186,6 +193,14 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
                 self.events_tab.refresh()
             else:
                 setattr(tab, data_type.capitalize(), data)
+
+    def confirm_quit(self):
+        if self.dialog(title="Quit Soulstruct?",
+                       message="Quit Soulstruct? Any unsaved changes will be lost.",
+                       button_names=("Yes, quit", "No, go back"),
+                       button_kwargs=('YES', 'NO'),
+                       cancel_output=1, default_output=1) == 0:
+            self.destroy()
 
     def destroy(self):
         """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
@@ -226,7 +241,6 @@ class SoulstructProject(object):
         self.Maps = DarkSoulsMaps()
 
         try:
-            # self._window.deiconify()
             self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
             self.load_config()
             self.initialize_project()
@@ -244,6 +258,7 @@ class SoulstructProject(object):
         self._window.withdraw()
         self._window.build()
         self._window.deiconify()
+
         self._window.wait_window()
 
     def initialize_project(self, force_import_from_game=False):
@@ -336,9 +351,10 @@ class SoulstructProject(object):
                 data_import_path = self._game_path(d, root=import_directory)
                 if d == "events":
                     self._import_events(data_import_path)
+                    self._window.reload_data(d, None)
                 else:
                     setattr(self, d.capitalize(), d_class(data_import_path))
-                self._window.reload_data(d, getattr(self, d.capitalize()))
+                    self._window.reload_data(d, getattr(self, d.capitalize()))
 
     def import_data_from_game(self, data_type=None):
         """Reads data substructures in game formats from the live game directory."""

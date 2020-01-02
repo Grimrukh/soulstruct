@@ -1,8 +1,10 @@
+from __future__ import annotations
+
+import tkinter as tk
 from contextlib import contextmanager
 from ctypes import windll
 from functools import wraps
 from typing import Optional
-import tkinter as tk
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
@@ -21,23 +23,53 @@ if SET_DPI_AWARENESS:
               f"Error: {str(e)}")
 
 
-def _bind_to_mousewheel(_, frame, vertical=True, horizontal=False):
+def _bind_to_mousewheel(widget, vertical=True, horizontal=False):
     if vertical:
-        frame.bind_all("<MouseWheel>", lambda event: frame.yview_scroll(-1 * (event.delta // 120), 'units'))
+        widget.bind_all("<MouseWheel>", lambda event: widget.yview_scroll(-1 * (event.delta // 120), 'units'))
     if horizontal:
-        frame.bind_all("<Shift-MouseWheel>", lambda event: frame.xview_scroll(-1 * (event.delta // 120), 'units'))
+        widget.bind_all("<Shift-MouseWheel>", lambda event: widget.xview_scroll(-1 * (event.delta // 120), 'units'))
 
 
-def _unbind_to_mousewheel(_, frame):
-    frame.unbind_all("<MouseWheel>")
-    frame.unbind_all("<Shift-MouseWheel>")
+def _unbind_to_mousewheel(widget):
+    widget.unbind_all("<MouseWheel>")
+    widget.unbind_all("<Shift-MouseWheel>")
+
+
+def _grid_label(frame, label, component, label_position):
+    if label_position == 'left':
+        label.grid(row=0, column=0, padx=(0, 2))
+        component.grid(row=0, column=1)
+        frame.rowconfigure(0, weight=1)
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+    elif label_position == 'right':
+        label.grid(row=0, column=1, padx=(2, 0))
+        component.grid(row=0, column=0)
+        frame.rowconfigure(0, weight=1)
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=0)
+    elif label_position == 'above':
+        label.grid(row=0, column=0)
+        component.grid(row=1, column=0)
+        frame.rowconfigure(0, weight=0)
+        frame.rowconfigure(1, weight=1)
+        frame.columnconfigure(0, weight=1)
+    elif label_position == 'below':
+        label.grid(row=1, column=0)
+        component.grid(row=0, column=0)
+        frame.rowconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=0)
+        frame.columnconfigure(0, weight=1)
+    else:
+        raise ValueError(f"Invalid label position: {repr(label_position)}. "
+                         f"Must be 'left', 'right', 'above', or 'below'.")
 
 
 def _embed_component(component_func):
     """ Handles labels and scrollbars for any decorated widget function. """
 
     @wraps(component_func)
-    def component_with_label(self, frame=None,
+    def component_with_label(self: SmartFrame, frame=None,
                              label='', label_font_type=None, label_font_size=None, label_position=None,
                              label_fg=None, label_bg=None, vertical_scrollbar=False, horizontal_scrollbar=False,
                              no_grid=False, **kwargs):
@@ -85,7 +117,7 @@ def _embed_component(component_func):
             inherit_bg = frame.cget('bg')
             frame_with_scrollbars = tk.Frame(frame, bg=inherit_bg)
             component = component_func(self, frame=frame_with_scrollbars, **kwargs)
-            component.grid(row=0, column=0)
+            component.grid(row=0, column=0, sticky='nsew')
             if vertical_scrollbar:
                 vertical_scrollbar_w = tk.Scrollbar(frame_with_scrollbars, orient=VERTICAL, command=component.yview)
                 vertical_scrollbar_w.grid(row=0, column=1, sticky=NS)
@@ -94,25 +126,18 @@ def _embed_component(component_func):
                 horizontal_scrollbar_w = tk.Scrollbar(frame_with_scrollbars, orient=HORIZONTAL, command=component.xview)
                 horizontal_scrollbar_w.grid(row=1, column=0, sticky=EW)
                 component.config(bd=0, xscrollcommand=horizontal_scrollbar_w.set)
-            component.bind('<Enter>', lambda _, f=component: _bind_to_mousewheel(
-                _, f, vertical_scrollbar, horizontal_scrollbar))
-            component.bind('<Leave>', lambda _, f=component: _unbind_to_mousewheel(_, f))
+            component.bind(
+                "<Enter>", lambda _, f=component: _bind_to_mousewheel(f, vertical_scrollbar, horizontal_scrollbar))
+            component.bind(
+                "<Leave>", lambda _, f=component: _unbind_to_mousewheel(f))
+            frame_with_scrollbars.rowconfigure(0, weight=1)
+            if horizontal_scrollbar:
+                frame_with_scrollbars.rowconfigure(1, weight=0)
+            frame_with_scrollbars.columnconfigure(0, weight=1)
+            if vertical_scrollbar:
+                frame_with_scrollbars.columnconfigure(1, weight=0)
             if label:
-                if label_position == 'left':
-                    label.grid(row=0, column=0, padx=(0, 1))
-                    frame_with_scrollbars.grid(row=0, column=1)
-                elif label_position == 'right':
-                    label.grid(row=0, column=1, padx=(-10, 0))
-                    frame_with_scrollbars.grid(row=0, column=0)
-                elif label_position == 'above':
-                    label.grid(row=0, column=0)
-                    frame_with_scrollbars.grid(row=1, column=0)
-                elif label_position == 'below':
-                    label.grid(row=1, column=0)
-                    frame_with_scrollbars.grid(row=0, column=0)
-                else:
-                    raise ValueError(f"Invalid label position {label_position}. "
-                                     f"Must be 'left', 'right', 'above', 'below'.")
+                _grid_label(frame, label, frame_with_scrollbars, label_position)
                 if not no_grid and grid_kwargs:
                     frame.grid(**grid_kwargs)
                 component.label = label
@@ -121,21 +146,7 @@ def _embed_component(component_func):
         else:
             component = component_func(self, frame=frame, **kwargs)
             if label:
-                if label_position == 'left':
-                    label.grid(row=0, column=0, padx=(0, 2))
-                    component.grid(row=0, column=1)
-                elif label_position == 'right':
-                    label.grid(row=0, column=1, padx=(2, 0))
-                    component.grid(row=0, column=0)
-                elif label_position == 'above':
-                    label.grid(row=0, column=0)
-                    component.grid(row=1, column=0)
-                elif label_position == 'below':
-                    label.grid(row=1, column=0)
-                    component.grid(row=0, column=0)
-                else:
-                    raise ValueError(f"Invalid label position {label_position}. "
-                                     f"Must be 'left', 'right', 'above', 'below'.")
+                _grid_label(frame, label, component, label_position)
                 if not no_grid and grid_kwargs:
                     frame.grid(**grid_kwargs)
                 component.label = label
@@ -199,11 +210,10 @@ class SmartFrame(tk.Frame):
         self.current_column = None
 
         # Current frame tracked, defaults to master frame.
-        self.master_frame = self.current_frame = self.Frame(frame=self, row=0, column=0, sticky='nsew')
+        self.master_frame = self.current_frame = self.Frame(
+            frame=self, row=0, column=0, sticky='nsew', row_weights=[1], column_weights=[1])
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
-        self.master_frame.rowconfigure(0, weight=1)
-        self.master_frame.columnconfigure(0, weight=1)
 
         # Disable default root if used.
         if self.toplevel and toplevel_master is None:
@@ -366,35 +376,56 @@ class SmartFrame(tk.Frame):
 
     # WIDGETS
 
-    def Toplevel(self, frame=None, title="Window Title", **kwargs):
+    def Toplevel(self, frame=None, title="Window Title", row_weights=(), column_weights=(), **kwargs):
         kwargs.setdefault('bg', self.STYLE_DEFAULTS['bg'])
         toplevel = tk.Toplevel(frame, **kwargs)
         toplevel.title(title)
+        for i, w in enumerate(row_weights):
+            toplevel.rowconfigure(i, weight=w)
+        for i, w in enumerate(column_weights):
+            toplevel.columnconfigure(i, weight=w)
         return toplevel
 
     @_embed_component
-    def Notebook(self, frame=None, **kwargs):
-        return ttk.Notebook(frame, **kwargs)
+    def Notebook(self, frame=None, row_weights=(), column_weights=(), **kwargs):
+        notebook = ttk.Notebook(frame, **kwargs)
+        for i, w in enumerate(row_weights):
+            notebook.rowconfigure(i, weight=w)
+        for i, w in enumerate(column_weights):
+            notebook.columnconfigure(i, weight=w)
+        return notebook
 
     @_embed_component
-    def Frame(self, frame=None, **kwargs):
+    def Frame(self, frame=None, row_weights=(), column_weights=(), **kwargs):
         self.set_style_defaults(kwargs)
         frame = tk.Frame(frame, **kwargs)
+        for i, w in enumerate(row_weights):
+            frame.rowconfigure(i, weight=w)
+        for i, w in enumerate(column_weights):
+            frame.columnconfigure(i, weight=w)
         return frame
 
     @_embed_component
-    def SmartFrame(self, frame=None, smart_frame_class=None, **kwargs):
+    def SmartFrame(self, frame=None, smart_frame_class=None, row_weights=(), column_weights=(), **kwargs):
         if smart_frame_class is None:
             smart_frame_class = SmartFrame
         elif not issubclass(smart_frame_class, SmartFrame):
             raise TypeError(f"smart_frame_class ({smart_frame_class}) must be a subclass of SmartFrame.")
         smart_frame = smart_frame_class(master=frame, **kwargs)
+        for i, w in enumerate(row_weights):
+            smart_frame.rowconfigure(i, weight=w)
+        for i, w in enumerate(column_weights):
+            smart_frame.columnconfigure(i, weight=w)
         return smart_frame
 
     @_embed_component
-    def Canvas(self, frame=None, **kwargs):
+    def Canvas(self, frame=None, row_weights=(), column_weights=(), **kwargs):
         self.set_style_defaults(kwargs)
         canvas = tk.Canvas(frame, **kwargs)
+        for i, w in enumerate(row_weights):
+            canvas.rowconfigure(i, weight=w)
+        for i, w in enumerate(column_weights):
+            canvas.columnconfigure(i, weight=w)
         return canvas
 
     @_embed_component
@@ -472,40 +503,6 @@ class SmartFrame(tk.Frame):
             entry.config(validate='key', validatecommand=v_cmd)
         return entry
 
-    @staticmethod
-    def _validate_entry_integers(new_value, new_input):
-        """ Callback invoked whenever the Entry contents change.
-
-        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
-        interpreted as an int.
-        """
-        if new_value == "":
-            return True
-        if new_input not in '0123456789-':
-            return False
-        try:
-            int(new_value)
-        except ValueError:
-            return False
-        return True
-
-    @staticmethod
-    def _validate_entry_numbers(new_value, new_input):
-        """ Callback invoked whenever the Entry contents change.
-
-        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
-        interpreted as a float.
-        """
-        if new_value == "":
-            return True
-        if new_input not in '0123456789.+-':
-            return False
-        try:
-            float(new_value)
-        except ValueError:
-            return False
-        return True
-
     @_embed_component
     def Label(self, text='', frame=None, font_type=None, font_size=None, **kwargs):
         self.set_style_defaults(kwargs, text=True)
@@ -556,17 +553,63 @@ class SmartFrame(tk.Frame):
         return ttk.Separator(frame, orient=orientation)
 
     @_embed_component
+    def Progressbar(self, frame=None, **kwargs):
+        return ttk.Progressbar(frame, **kwargs)
+
+    @_embed_component
     def TextBox(self, frame=None, initial_text='', **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=False)
-        text = tk.Text(frame, **kwargs)
-        text.insert(1.0, initial_text)
-        return text
+        text_box = tk.Text(frame, **kwargs)
+        text_box.insert(1.0, initial_text)
+        return text_box
+
+    @_embed_component
+    def CustomWidget(self, frame=None, custom_widget_class=None, set_style_defaults=(),
+                     row_weights=(), column_weights=(), **kwargs):
+        if custom_widget_class is None:
+            raise ValueError("custom_widget_class cannot be None.")
+        style_default_kwargs = {k: k in set_style_defaults for k in ("text", "cursor", "entry")}
+        self.set_style_defaults(kwargs, **style_default_kwargs)
+        custom_widget = custom_widget_class(frame, **kwargs)
+        for i, w in enumerate(row_weights):
+            custom_widget.rowconfigure(i, weight=w)
+        for i, w in enumerate(column_weights):
+            custom_widget.columnconfigure(i, weight=w)
+        return custom_widget
 
     @staticmethod
-    def update_width(width, *widgets):
-        """Set width of given widget(s)."""
-        for widget in widgets:
-            widget['width'] = width
+    def _validate_entry_integers(new_value, new_input):
+        """ Callback invoked whenever the Entry contents change.
+
+        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
+        interpreted as an int.
+        """
+        if new_value == "":
+            return True
+        if new_input not in '0123456789-':
+            return False
+        try:
+            int(new_value)
+        except ValueError:
+            return False
+        return True
+
+    @staticmethod
+    def _validate_entry_numbers(new_value, new_input):
+        """ Callback invoked whenever the Entry contents change.
+
+        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
+        interpreted as a float.
+        """
+        if new_value == "":
+            return True
+        if new_input not in '0123456789.+-':
+            return False
+        try:
+            float(new_value)
+        except ValueError:
+            return False
+        return True
 
     @staticmethod
     def reset_canvas_scroll_region(canvas):
@@ -577,8 +620,8 @@ class SmartFrame(tk.Frame):
     def link_to_scrollable(scrollable_widget, *widgets):
         """Registers <Enter> and <Leave> events that enable the scrollbar for all *arg widgets."""
         for widget in widgets:
-            widget.bind('<Enter>', lambda _, f=scrollable_widget: _bind_to_mousewheel(_, f))
-            widget.bind('<Leave>', lambda _, f=scrollable_widget: _unbind_to_mousewheel(_, f))
+            widget.bind('<Enter>', lambda _, f=scrollable_widget: _bind_to_mousewheel(f))
+            widget.bind('<Leave>', lambda _, f=scrollable_widget: _unbind_to_mousewheel(f))
 
     @staticmethod
     def info_dialog(title, message, **kwargs):

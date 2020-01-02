@@ -474,8 +474,6 @@ class BiDict(dict):
             if not isinstance(arg, tuple) or len(arg) != 2:
                 raise ValueError("BiDict can only be initialized with (value_1, value_2) tuple pair args.")
             self.__setitem__(*arg)
-            self.__keys.append(arg[0])
-            self.__values.append(arg[1])
 
     def __setitem__(self, value_1, value_2):
         """Removes any pre-existing connections using either value.
