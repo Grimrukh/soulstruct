@@ -304,6 +304,9 @@ class BaseBND(object):
 
     def __iter__(self) -> Iterator[BNDEntry]:
         return iter(self._entries)
+    
+    def __len__(self):
+        return len(self._entries)
 
     @staticmethod
     def read_bnd_setting(line: bytes, setting_name: str, assert_type=None, assert_values=None):

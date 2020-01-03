@@ -2,7 +2,7 @@ from io import BufferedReader, BytesIO
 from enum import IntEnum
 import struct
 
-from soulstruct.maps.core import MSBEntry
+from soulstruct.maps.core import MSBEntryEntity
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, Vector
 
 
@@ -21,7 +21,7 @@ def MSBRegion(msb_buffer):
     return BaseMSBRegion.auto_region_subclass(msb_buffer)
 
 
-class BaseMSBRegion(MSBEntry):
+class BaseMSBRegion(MSBEntryEntity):
 
     REGION_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
@@ -57,7 +57,6 @@ class BaseMSBRegion(MSBEntry):
         self._region_index = None
         self.translate = None
         self.rotate = None
-        self.entity_id = None
 
         if isinstance(msb_region_source, bytes):
             msb_region_source = BytesIO(msb_region_source)

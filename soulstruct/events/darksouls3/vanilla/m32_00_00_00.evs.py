@@ -147,9 +147,9 @@ def Constructor():
 def Preconstructor():
     """ 50: Event 50 """
     RunEvent(13205100)
-    DisableMapSound(3204801)
-    DisableMapSound(3204851)
-    DisableMapSound(3204852)
+    DisableSoundEvent(3204801)
+    DisableSoundEvent(3204851)
+    DisableSoundEvent(3204852)
 
 
 def Event13205100():

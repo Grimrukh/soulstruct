@@ -28,8 +28,8 @@ def Constructor():
     RunEvent(7300, slot=50, args=(72103300, 3301950))
     RunEvent(7300, slot=51, args=(72103301, 3301951))
     RunEvent(9200, slot=10, args=(3303900,))
-    DisableMapSound(3304000)
-    DisableMapSound(3304001)
+    DisableSoundEvent(3304000)
+    DisableSoundEvent(3304001)
     StartPlayLogMeasurement(3300000, 0, overwrite=False)
     StartPlayLogMeasurement(3300001, 18, overwrite=True)
     RunEvent(13300990)
@@ -335,8 +335,8 @@ def Event13304730(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 def Event13301800():
     """ 13301800: Event 13301800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(3303802)
-    DisableMapSound(3303803)
+    DisableSoundEvent(3303802)
+    DisableSoundEvent(3303803)
     DisableCharacter(3300800)
     Kill(3300800, award_souls=True)
     DisableObject(3301800)
@@ -562,8 +562,8 @@ def Event13304803():
     DisableNetworkSync()
     EndIfFlagOn(13301800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(3303802)
-    DisableMapSound(3303803)
+    DisableSoundEvent(3303802)
+    DisableSoundEvent(3303803)
     IfFlagOff(1, 13301800)
     IfFlagOn(1, 13304802)
     SkipLinesIfHost(1)
@@ -921,7 +921,7 @@ def Event13300210():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableDeveloperMessage(3304020)
+    DisableSoapstoneMessage(3304020)
     DeleteFX(3303020, erase_root_only=True)
 
 

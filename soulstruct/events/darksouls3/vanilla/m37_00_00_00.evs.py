@@ -435,10 +435,10 @@ def Preconstructor():
     DisableAnimations(3700790)
     DisableGravity(3700790)
     DisableCharacterCollision(3700790)
-    DisableMapSound(3704801)
-    DisableMapSound(3704802)
-    DisableMapSound(3704851)
-    DisableMapSound(3704852)
+    DisableSoundEvent(3704801)
+    DisableSoundEvent(3704802)
+    DisableSoundEvent(3704851)
+    DisableSoundEvent(3704852)
     RunEvent(13705239)
     DisableFlag(13701162)
 
@@ -733,7 +733,7 @@ def Event13705244():
     """ 13705244: Event 13705244 """
     EndIfFlagOn(13700250)
     EndIfFlagOn(13700240)
-    CreateSpawner(3700249)
+    CreateProjectileOwner(3700249)
     IfCharacterAlive(1, 3700240)
     IfFlagOn(1, 13705241)
     IfCharacterInsideRegion(1, 3700240, region=3704370)

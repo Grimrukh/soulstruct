@@ -409,9 +409,9 @@ def Event11020001():
     DisableBackread(6301)
     DisableBackread(6322)
     DisableBackread(6330)
-    DisableMapSound(1023800)
+    DisableSoundEvent(1023800)
     IfFlagOn(0, 11810000)
-    EnableMapSound(1023800)
+    EnableSoundEvent(1023800)
     EnableFlag(11020001)
     Wait(3.0)
     EnableBackread(6031)
@@ -559,7 +559,7 @@ def Event11020350():
     EnableCollision(1023510)
     DisableObject(1021480)
     DisableCollision(1023500)
-    DisableMapPart(1023501)
+    DisableMapPiece(1023501)
     DisableCollision(1023502)
 
 

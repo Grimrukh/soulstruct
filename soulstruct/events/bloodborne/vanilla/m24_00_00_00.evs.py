@@ -77,10 +77,10 @@ def Constructor():
     RegisterLadder(start_climbing_flag=12400604, stop_climbing_flag=12400605, obj=2401022)
     RegisterLadder(start_climbing_flag=12400606, stop_climbing_flag=12400607, obj=2401023)
     RegisterLadder(start_climbing_flag=12400608, stop_climbing_flag=12400609, obj=2401024)
-    CreateSpawner(2400000)
-    CreateSpawner(2402070)
-    CreateSpawner(2402071)
-    CreateSpawner(2402072)
+    CreateProjectileOwner(2400000)
+    CreateProjectileOwner(2402070)
+    CreateProjectileOwner(2402071)
+    CreateProjectileOwner(2402072)
     DisableGravity(2400899)
     DisableCharacterCollision(2400899)
     CreateHazard(12400190, 2401017, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
@@ -1104,20 +1104,20 @@ def Event12400300():
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2404000)
-    DisableMapPart(2404001)
-    DisableMapPart(2404002)
+    EnableMapPiece(2404000)
+    DisableMapPiece(2404001)
+    DisableMapPiece(2404002)
     DisableCharacter(2400321)
     DisableCharacter(2400322)
-    DisableMapPart(2404750)
-    DisableMapPart(2404751)
+    DisableMapPiece(2404750)
+    DisableMapPiece(2404751)
     Goto(Label.L3)
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapPart(2404000)
-    EnableMapPart(2404001)
-    DisableMapPart(2404002)
+    DisableMapPiece(2404000)
+    EnableMapPiece(2404001)
+    DisableMapPiece(2404002)
     EnableCharacter(2400321)
     EnableCharacter(2400322)
     DisableBackread(2400350)
@@ -1126,8 +1126,8 @@ def Event12400300():
     DisableBackread(2400220)
     DisableBackread(2400116)
     DisableBackread(2400125)
-    DisableMapPart(2404700)
-    DisableMapPart(2404701)
+    DisableMapPiece(2404700)
+    DisableMapPiece(2404701)
     DeleteFX(2403400, erase_root_only=False)
     DeleteFX(2403401, erase_root_only=False)
     DeleteFX(2403402, erase_root_only=False)
@@ -1145,9 +1145,9 @@ def Event12400300():
 
     # --- 2 --- #
     DefineLabel(2)
-    DisableMapPart(2404000)
-    DisableMapPart(2404001)
-    EnableMapPart(2404002)
+    DisableMapPiece(2404000)
+    DisableMapPiece(2404001)
+    EnableMapPiece(2404002)
     EnableCharacter(2400321)
     EnableCharacter(2400322)
     DisableBackread(2400350)
@@ -1156,8 +1156,8 @@ def Event12400300():
     DisableBackread(2400220)
     DisableBackread(2400116)
     DisableBackread(2400125)
-    DisableMapPart(2404700)
-    DisableMapPart(2404701)
+    DisableMapPiece(2404700)
+    DisableMapPiece(2404701)
 
     # --- 3 --- #
     DefineLabel(3)
@@ -1248,16 +1248,16 @@ def Event12400410():
 
 def Event12400420():
     """ 12400420: Event 12400420 """
-    DisableMapSound(2406831)
+    DisableSoundEvent(2406831)
     EndIfThisEventOn()
     IfFlagOn(0, 9801)
     Wait(4.0)
-    EnableMapSound(2406831)
+    EnableSoundEvent(2406831)
 
 
 def Event12400750():
     """ 12400750: Event 12400750 """
-    DisableMapSound(2406832)
+    DisableSoundEvent(2406832)
     GotoIfThisEventOn(Label.L0)
     IfActionButtonInRegion(0, action_button_id=7030, region=2401210)
     EnableFlag(9180)
@@ -1266,7 +1266,7 @@ def Event12400750():
                                               player_id=10000, time_period_id=1)
     WaitFrames(1)
     DisableFlag(9180)
-    EnableMapSound(2406832)
+    EnableSoundEvent(2406832)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2200,16 +2200,16 @@ def Event12405790(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event12405800(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12405800: Event 12405800 """
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     EndIfFlagOn(arg_12_15)
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(arg_0_3)
+    EnableSoundEvent(arg_0_3)
     IfFlagOn(-1, arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     Restart()
 
 
@@ -2631,13 +2631,13 @@ def Event12400505():
     """ 12400505: Event 12400505 """
     GotoIfThisEventOn(Label.L0)
     GotoIfFlagOn(Label.L0, 1191)
-    DisableMapPart(2404602)
+    DisableMapPiece(2404602)
     IfFlagOn(0, 6001)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2404602)
+    EnableMapPiece(2404602)
     End()
 
 
@@ -2809,7 +2809,7 @@ def Event12400520():
     GotoIfFlagOn(Label.L5, 1230)
     GotoIfFlagOn(Label.L6, 1231)
     DisableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     DisableBackread(2400750)
     DisableBackread(2400754)
     DisableBackread(2400757)
@@ -2818,7 +2818,7 @@ def Event12400520():
     # --- 0 --- #
     DefineLabel(0)
     DisableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     DisableBackread(2400750)
     DisableBackread(2400754)
     DisableBackread(2400757)
@@ -2827,7 +2827,7 @@ def Event12400520():
     # --- 1 --- #
     DefineLabel(1)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     EnableBackread(2400750)
     DisableBackread(2400754)
     DisableBackread(2400757)
@@ -2838,7 +2838,7 @@ def Event12400520():
     # --- 2 --- #
     DefineLabel(2)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     DisableBackread(2400750)
     EnableBackread(2400754)
     DisableBackread(2400757)
@@ -2849,7 +2849,7 @@ def Event12400520():
     # --- 3 --- #
     DefineLabel(3)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     DisableBackread(2400750)
     DisableBackread(2400754)
     EnableBackread(2400757)
@@ -2860,7 +2860,7 @@ def Event12400520():
     # --- 4 --- #
     DefineLabel(4)
     EnableObject(2400748)
-    EnableMapPart(2404601)
+    EnableMapPiece(2404601)
     DisableBackread(2400750)
     DisableBackread(2400754)
     DisableBackread(2400757)
@@ -2869,7 +2869,7 @@ def Event12400520():
     # --- 5 --- #
     DefineLabel(5)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     EnableBackread(2400750)
     EnableCharacter(2400750)
     DisableBackread(2400754)
@@ -2884,7 +2884,7 @@ def Event12400520():
     # --- 6 --- #
     DefineLabel(6)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     DisableBackread(2400750)
     DisableCharacter(2400750)
     DisableBackread(2400754)
@@ -2918,13 +2918,13 @@ def Event12400522():
     GotoIfThisEventOn(Label.L0)
     GotoIfFlagOn(Label.L0, 1230)
     GotoIfFlagOn(Label.L0, 1231)
-    DisableMapPart(2404600)
+    DisableMapPiece(2404600)
     IfFlagOn(0, 6001)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2404600)
+    EnableMapPiece(2404600)
     End()
 
 
@@ -3200,13 +3200,13 @@ def Event12400568():
     """ 12400568: Event 12400568 """
     GotoIfThisEventOn(Label.L0)
     GotoIfFlagOn(Label.L0, 1166)
-    DisableMapPart(2404603)
+    DisableMapPiece(2404603)
     IfFlagOn(0, 6001)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2404603)
+    EnableMapPiece(2404603)
     End()
 
 
@@ -3278,20 +3278,20 @@ def Event12400580():
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(2)
-    EnableMapSound(2403300)
+    EnableSoundEvent(2403300)
 
 
 def Event12400581():
     """ 12400581: Event 12400581 """
     IfFlagOn(0, 72400400)
-    DisableMapSound(2403300)
+    DisableSoundEvent(2403300)
 
 
 def Event12400582():
     """ 12400582: Event 12400582 """
-    EnableMapPart(2404010)
+    EnableMapPiece(2404010)
     IfFlagOn(0, 12401802)
-    DisableMapPart(2404010)
+    DisableMapPiece(2404010)
 
 
 def Event12400590():
@@ -4000,9 +4000,9 @@ def Event12400652():
 def Event12400653():
     """ 12400653: Event 12400653 """
     EndIfThisEventOn()
-    DisableMapPart(2404610)
+    DisableMapPiece(2404610)
     IfFlagOn(0, 1370)
-    EnableMapPart(2404610)
+    EnableMapPiece(2404610)
 
 
 def Event12400654():
@@ -4166,7 +4166,7 @@ def Event12400700():
     GotoIfConditionFalse(Label.L1, input_condition=2)
     DisableBackread(2400700)
     DropMandatoryTreasure(2400700)
-    EnableMapPart(2404604)
+    EnableMapPiece(2404604)
 
     # --- 1 --- #
     DefineLabel(1)
@@ -4479,12 +4479,12 @@ def Event12400732():
 def Event12400737():
     """ 12400737: Event 12400737 """
     EndIfFlagOn(1108)
-    DisableMapPart(2404604)
+    DisableMapPiece(2404604)
 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagOn(0, 1108)
-    EnableMapPart(2404604)
+    EnableMapPiece(2404604)
     DropMandatoryTreasure(2400700)
 
 
@@ -4986,7 +4986,7 @@ def Event12400801():
     DefineLabel(1)
     GotoIfFlagOff(Label.L2, 1231)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     DisableBackread(2400750)
     DisableBackread(2400754)
     DisableBackread(2400757)
@@ -4997,7 +4997,7 @@ def Event12400801():
     DefineLabel(2)
     GotoIfFlagOff(Label.L3, 1230)
     EnableObject(2400748)
-    DisableMapPart(2404601)
+    DisableMapPiece(2404601)
     EnableBackread(2400750)
     DisableBackread(2400754)
     DisableBackread(2400757)
@@ -5019,7 +5019,7 @@ def Event12400801():
     # --- 4 --- #
     DefineLabel(4)
     GotoIfFlagOff(Label.L4, 1108)
-    EnableMapPart(2404604)
+    EnableMapPiece(2404604)
     DropMandatoryTreasure(2400700)
     DisableBackread(2400700)
 
@@ -5176,8 +5176,8 @@ def Event12405750(arg_0_3: int, arg_4_7: int, arg_8_11: float):
 def Event12401800():
     """ 12401800: Event 12401800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2403802)
-    DisableMapSound(2403803)
+    DisableSoundEvent(2403802)
+    DisableSoundEvent(2403803)
     DisableCharacter(2400800)
     DisableObject(2400801)
     Kill(2400800, award_souls=False)
@@ -5439,8 +5439,8 @@ def Event12404803():
     DisableNetworkSync()
     EndIfFlagOn(12401800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2403802)
-    DisableMapSound(2403803)
+    DisableSoundEvent(2403802)
+    DisableSoundEvent(2403803)
     IfFlagOff(1, 12401800)
     IfFlagOn(1, 12404802)
     SkipLinesIfHost(1)

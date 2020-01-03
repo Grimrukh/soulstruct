@@ -485,8 +485,8 @@ def Preconstructor():
     DisableAnimations(3500705)
     RunEvent(13500410)
     RunEvent(13500400)
-    DisableMapSound(3504801)
-    DisableMapSound(3504802)
+    DisableSoundEvent(3504801)
+    DisableSoundEvent(3504802)
     RunEvent(13505750, slot=0, args=(3500725, 3501725))
 
 
@@ -1135,7 +1135,7 @@ def Event13500490():
 @RestartOnRest
 def Event13505500(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: float):
     """ 13505500: Event 13505500 """
-    CreateSpawner(arg_0_3)
+    CreateProjectileOwner(arg_0_3)
     IfEntityWithinDistance(0, PLAYER, arg_4_7, radius=arg_8_11)
     SkipLinesIfFlagOff(1, 50)
     ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_4_7, model_point=arg_12_15, behavior_id=5500, 
@@ -1165,7 +1165,7 @@ def Event13505500(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, a
 @RestartOnRest
 def Event13505510(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: int, arg_20_23: float):
     """ 13505510: Event 13505510 """
-    CreateSpawner(arg_0_3)
+    CreateProjectileOwner(arg_0_3)
     IfEntityWithinDistance(0, PLAYER, arg_4_7, radius=arg_8_11)
     ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_4_7, model_point=arg_16_19, behavior_id=arg_12_15, 
                     launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)

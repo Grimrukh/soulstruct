@@ -182,7 +182,7 @@ def Constructor():
     RunEvent(12600500, slot=0, args=(2600720,))
     RunEvent(12600030)
     RunEvent(12600031)
-    DisableMapSound(2603100)
+    DisableSoundEvent(2603100)
     RunEvent(12600010, slot=0, args=(2602301, 260000001, 0))
     RunEvent(12600010, slot=1, args=(2602302, 260000001, 0))
     RunEvent(12600010, slot=2, args=(2602303, 260000001, 0))
@@ -579,8 +579,8 @@ def Event12604742():
 def Event12601800():
     """ 12601800: Event 12601800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2603802)
-    DisableMapSound(2603803)
+    DisableSoundEvent(2603802)
+    DisableSoundEvent(2603803)
     DisableCharacter(2600800)
     DisableCharacter(2600801)
     DisableCharacter(2600802)
@@ -663,7 +663,7 @@ def Event12601802():
     IfCharacterType(2, PLAYER, CharacterType.BlackPhantom)
     EndIfConditionTrue(2)
     EnableFlag(9180)
-    DisableMapSound(2603100)
+    DisableSoundEvent(2603100)
     WaitFrames(1)
     SkipLinesIfMultiplayer(2)
     PlayCutscene(26000010, skippable=True, fade_out=False, player_id=PLAYER)
@@ -844,8 +844,8 @@ def Event12604803():
     DisableNetworkSync()
     EndIfFlagOn(12601800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2603802)
-    DisableMapSound(2603803)
+    DisableSoundEvent(2603802)
+    DisableSoundEvent(2603803)
     IfFlagOff(1, 12601800)
     IfFlagOn(1, 12604802)
     SkipLinesIfHost(1)
@@ -1017,8 +1017,8 @@ def Event12604840():
 def Event12601850():
     """ 12601850: Event 12601850 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2603852)
-    DisableMapSound(2603853)
+    DisableSoundEvent(2603852)
+    DisableSoundEvent(2603853)
     DisableCharacter(2600850)
     Kill(2600850, award_souls=False)
     DisableObject(2601850)
@@ -1336,8 +1336,8 @@ def Event12604853():
     DisableNetworkSync()
     EndIfFlagOn(12601850)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2603852)
-    DisableMapSound(2603853)
+    DisableSoundEvent(2603852)
+    DisableSoundEvent(2603853)
     IfFlagOff(1, 12601850)
     IfFlagOn(1, 12604852)
     SkipLinesIfHost(1)
@@ -2182,7 +2182,7 @@ def Event12600010(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapSound(arg_4_7)
+    EnableSoundEvent(arg_4_7)
     End()
 
 

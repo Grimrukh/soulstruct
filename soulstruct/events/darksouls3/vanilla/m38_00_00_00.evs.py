@@ -372,12 +372,12 @@ def Preconstructor():
              1900, 3804700, 3804701))
     RunEvent(13805706, slot=0, args=(3800710, 3804711, 3804710, 3804712))
     RunEvent(13805707)
-    DisableMapSound(3804801)
-    DisableMapSound(3804802)
-    DisableMapSound(3804831)
-    DisableMapSound(3804832)
-    DisableMapSound(3804861)
-    DisableMapSound(3804862)
+    DisableSoundEvent(3804801)
+    DisableSoundEvent(3804802)
+    DisableSoundEvent(3804831)
+    DisableSoundEvent(3804832)
+    DisableSoundEvent(3804861)
+    DisableSoundEvent(3804862)
 
 
 @RestartOnRest
@@ -715,7 +715,7 @@ def Event13805402():
 @RestartOnRest
 def Event13805420(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 13805420: Event 13805420 """
-    CreateSpawner(arg_0_3)
+    CreateProjectileOwner(arg_0_3)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
     ForceAnimation(arg_8_11, 0, wait_for_completion=True)
     Wait(1.0)
@@ -733,7 +733,7 @@ def Event13805420(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 @RestartOnRest
 def Event13805430(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13805430: Event 13805430 """
-    CreateSpawner(arg_0_3)
+    CreateProjectileOwner(arg_0_3)
     IfCharacterInsideRegion(0, PLAYER, region=arg_8_11)
     ForceAnimation(arg_4_7, 0, wait_for_completion=True)
     Wait(0.5)
@@ -846,7 +846,7 @@ def Event13805430(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 def Event13805440(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
                   arg_24_27: int, arg_28_31: int):
     """ 13805440: Event 13805440 """
-    CreateSpawner(arg_0_3)
+    CreateProjectileOwner(arg_0_3)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_12_15)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_16_19)
     IfConditionTrue(-3, input_condition=-1)
@@ -981,7 +981,7 @@ def Event13805440(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 @RestartOnRest
 def Event13805450():
     """ 13805450: Event 13805450 """
-    CreateSpawner(3800560)
+    CreateProjectileOwner(3800560)
     SkipLinesIfObjectDestroyed(1, obj=3801305)
     IfObjectDestroyed(-1, obj=3801305)
     IfCharacterInsideRegion(-1, PLAYER, region=3802430)
@@ -2723,7 +2723,7 @@ def Event13805703(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     EndIfFlagOff(1485)
     DisableCharacter(arg_32_35)
     DisableBackread(arg_32_35)
-    EnableMapPart(arg_36_39)
+    EnableMapPiece(arg_36_39)
     CreateFX(arg_48_51)
     EnableCollision(arg_52_55)
     End()
@@ -2793,14 +2793,14 @@ def Event13805706(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     GotoIfFlagOn(Label.L2, 1485)
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
-    DisableMapPart(arg_4_7)
+    DisableMapPiece(arg_4_7)
     DeleteFX(arg_8_11, erase_root_only=True)
     DisableCollision(arg_12_15)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPart(arg_4_7)
+    DisableMapPiece(arg_4_7)
     DeleteFX(arg_8_11, erase_root_only=True)
     DisableCollision(arg_12_15)
     GotoIfFlagOn(Label.L1, 1498)

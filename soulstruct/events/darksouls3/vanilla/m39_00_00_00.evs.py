@@ -264,8 +264,8 @@ def Preconstructor():
     RunEvent(13900410)
     RunEvent(13905700, slot=0, args=(3900700, 90460))
     RunEvent(13905720, slot=0, args=(3900705, 3900706))
-    DisableMapSound(3904801)
-    DisableMapSound(3904802)
+    DisableSoundEvent(3904801)
+    DisableSoundEvent(3904802)
 
 
 @RestartOnRest

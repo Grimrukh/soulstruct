@@ -68,11 +68,11 @@ __all__ = [
     "CreateFX", "DeleteFX", "CreateTemporaryFX", "CreateObjectFX", "DeleteObjectFX",
     "SetBackgroundMusic",
     "PlaySoundEffect",
-    "SetMapSoundState", "EnableMapSound", "DisableMapSound",
+    "SetSoundEventState", "EnableSoundEvent", "DisableSoundEvent",
     "RegisterLadder", "RegisterBonfire",
-    "SetMapPartState", "DisableMapPart", "EnableMapPart",
+    "SetMapPieceState", "DisableMapPiece", "EnableMapPiece",
     "PlaceSummonSign",
-    "SetDeveloperMessageState", "EnableDeveloperMessage", "DisableDeveloperMessage",
+    "SetDeveloperMessageState", "EnableSoapstoneMessage", "DisableSoapstoneMessage",
     "DisplayDialog", "DisplayBanner", "DisplayStatus", "DisplayBattlefieldMessage",
     "PlayCutscene", "PlayCutsceneAndMovePlayer", "PlayCutsceneToPlayer", "PlayCutsceneAndMoveSpecificPlayer",
     "PlayCutsceneAndRotatePlayer",
@@ -87,7 +87,7 @@ __all__ = [
     "NotifyBossBattleStart",
     "SetSpawnerState", "EnableSpawner", "DisableSpawner",
     "ShootProjectile",
-    "CreateSpawner",
+    "CreateProjectileOwner",
     "WarpToMap", "MoveRemains", "Move", "MoveToEntity", "MoveAndSetDrawParent", "ShortMove",
     "MoveAndCopyDrawParent", "MoveObjectToCharacter",
     "SetRespawnPoint",
@@ -971,20 +971,20 @@ def PlaySoundEffect(anchor_entity: CoordEntityInt, sound_type: Union[SoundType, 
     return to_numeric(instruction_info, anchor_entity, sound_type, sound_id)
 
 
-def SetMapSoundState(sound_id: int, state: bool):
+def SetSoundEventState(sound_id: int, state: bool):
     """ The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance. """
     instruction_info = (2010, 3)
     return to_numeric(instruction_info, sound_id, state)
 
 
-def EnableMapSound(sound_id: int):
+def EnableSoundEvent(sound_id: int):
     """ The sound ID is in the MSB. Used for boss music and ambiance. """
-    return SetMapSoundState(sound_id, True)
+    return SetSoundEventState(sound_id, True)
 
 
-def DisableMapSound(sound_id: int):
+def DisableSoundEvent(sound_id: int):
     """ The sound ID is in the MSB. Used for boss music and ambiance. """
-    return SetMapSoundState(sound_id, False)
+    return SetSoundEventState(sound_id, False)
 
 
 # MAP
@@ -1016,18 +1016,18 @@ def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0
                       initial_kindle_level)
 
 
-def SetMapPartState(map_part_id, state: bool):
+def SetMapPieceState(map_part_id, state: bool):
     """ Set the visibility of individual map parts (e.g. all the crystals in Seath's tower). """
     instruction_info = (2012, 1)
     return to_numeric(instruction_info, map_part_id, state)
 
 
-def DisableMapPart(map_part_id):
-    return SetMapPartState(map_part_id, False)
+def DisableMapPiece(map_part_id):
+    return SetMapPieceState(map_part_id, False)
 
 
-def EnableMapPart(map_part_id):
-    return SetMapPartState(map_part_id, True)
+def EnableMapPiece(map_part_id: MapPieceInt):
+    return SetMapPieceState(map_part_id, True)
 
 
 # MESSAGES
@@ -1045,12 +1045,12 @@ def SetDeveloperMessageState(message_id, state: bool):
     return to_numeric(instruction_info, message_id, state)
 
 
-def EnableDeveloperMessage(message_id):
+def EnableSoapstoneMessage(message_id):
     """ Enable a developer message that has been added to the MSB. The text ID is set in the MSB as well. """
     return SetDeveloperMessageState(message_id, True)
 
 
-def DisableDeveloperMessage(message_id):
+def DisableSoapstoneMessage(message_id):
     """ Disable a developer message that has been added to the MSB. The text ID is set in the MSB as well. """
     return SetDeveloperMessageState(message_id, False)
 
@@ -1157,24 +1157,24 @@ def PlayCutsceneAndRotatePlayer(cutscene_id: int, playback_method: CutsceneType,
 
 # NAVMESH
 
-def SetNavmeshType(navmesh_id: int, navmesh_type: NavmeshType, operation: BitOperation):
+def SetNavmeshType(navmesh_id: NavmeshEventInt, navmesh_type: NavmeshType, operation: BitOperation):
     """ Set given navmesh type. """
     instruction_info = (2003, 13)
     return to_numeric(instruction_info, navmesh_id, navmesh_type, operation)
 
 
-def EnableNavmeshType(navmesh_id, navmesh_type: NavmeshType):
+def EnableNavmeshType(navmesh_id: NavmeshEventInt, navmesh_type: NavmeshType):
     """ Mark a given navmesh with the given type, which affects how character AI will interact with it. The navmesh
     ID is set in the MSB. """
     return SetNavmeshType(navmesh_id, navmesh_type, BitOperation.Add)
 
 
-def DisableNavmeshType(navmesh_id, navmesh_type: NavmeshType):
+def DisableNavmeshType(navmesh_id: NavmeshEventInt, navmesh_type: NavmeshType):
     """ Remove the given type from the given navmesh. The navmesh ID is set in the MSB. """
     return SetNavmeshType(navmesh_id, navmesh_type, BitOperation.Delete)
 
 
-def ToggleNavmeshType(navmesh_id, navmesh_type: NavmeshType):
+def ToggleNavmeshType(navmesh_id: NavmeshEventInt, navmesh_type: NavmeshType):
     """ Set the given navmesh type to the opposite of whatever it currently is for the given navmesh. """
     return SetNavmeshType(navmesh_id, navmesh_type, BitOperation.Invert)
 
@@ -1273,7 +1273,7 @@ def ShootProjectile(owner_entity: CoordEntityInt, projectile_id, model_point, be
                       launch_angle_x, launch_angle_y, launch_angle_z)
 
 
-def CreateSpawner(entity: CoordEntityInt):
+def CreateProjectileOwner(entity: CoordEntityInt):
     """ A 'bullet owner' that will spawn things according to the Spawner section of the MSB. """
     instruction_info = (2004, 7)
     return to_numeric(instruction_info, entity)

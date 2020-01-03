@@ -1,6 +1,5 @@
 """
 TODO:
-    - Create Entities tab.
     - Search for all existing entities and color them, and hyperlink to Entities tab or Maps tab with right click?
     - Replace entity ID with entity name from Entities tab (which can in turn be auto-generated from Maps names).
 """
@@ -24,6 +23,19 @@ def _get_verbose_map_name(emevd_name):
 
 
 class EvsTextEditor(tk.Text):
+
+    SYNTAX_RE = {
+        "restart_type": (r"^@[\w_]+", (0, 0)),
+        "event_def": (r"^def [\w\d_]+", (0, 0)),
+        "docstring": (r"^[ ]+\"\"\" [\w\d :]+ \"\"\"", (0, 0)),
+        "instruction": (r"^[ ]+[\w\d_]+", (0, 0)),
+        "low_level_test": (r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
+        "named_arg": (r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
+        "func_arg_name": (r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+    }
+
+    re.compile(r"(?<=[,(])[ ]+\w[\w\d.]+[ ]+(?=[,)])")
+
     def __init__(self, *args, **kwargs):
         """Text widget that generates a "<CursorChange>" event when appropriate for event bindings and can highlight
         arbitrary text patterns.
@@ -42,6 +54,7 @@ class EvsTextEditor(tk.Text):
         self.tag_configure("docstring", foreground='#BBBBBB')
         self.tag_configure("instruction", foreground='#AAAAFF')
         self.tag_configure("low_level_test", foreground='#AAFFAA')  # starts with 'If', 'Skip', or 'Goto'
+        self.tag_configure("named_arg", foreground='#AAFFFF')
         self.tag_configure("func_arg_name", foreground='#FFCCAA')
         self.tag_configure("event_arg_name", foreground='#FFAAFF')
 
@@ -61,7 +74,8 @@ class EvsTextEditor(tk.Text):
         self.tag_remove(tag, "1.0", "end")
         self.tag_add(tag, f"{number}.0 linestart", f"{number}.0 lineend")
 
-    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False, clear=True):
+    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False, clear=True,
+                          start_offset=0, end_offset=0):
         """Apply the given tag to all text that matches the given pattern. Clears tag first by default.
 
         If 'regexp' is set to True, pattern will be treated as a regular expression according to Tcl's regular
@@ -82,9 +96,38 @@ class EvsTextEditor(tk.Text):
                 break
             if count.get() == 0:
                 break  # degenerate pattern which matches zero-length strings
-            self.mark_set("matchStart", index)
-            self.mark_set("matchEnd", f"{index}+{count.get()}c")
+            self.mark_set("matchStart", f"{index}+{start_offset}c")
+            self.mark_set("matchEnd", f"{index}+{count.get() - end_offset}c")
             self.tag_add(tag, "matchStart", "matchEnd")
+
+    def color_syntax(self):
+        for tag, (pattern, offsets) in self.SYNTAX_RE.items():
+            self.highlight_pattern(pattern, tag, regexp=True, clear=True,
+                                   start_offset=offsets[0], end_offset=offsets[1])
+        self._apply_event_arg_name_tags()
+
+    def _apply_event_arg_name_tags(self):
+        """Get all event arg names (e.g. "arg_0_3") and color them."""
+        self.tag_remove("event_arg_name", "1.0", "end")
+        start_index = "1.0"
+        while 1:
+            def_index = self.search(r"^def [\w\d_]+\(", start_index, regexp=True)
+            next_def_index = self.search(r"^def [\w\d_]+\(", f"{def_index} lineend", regexp=True)
+            if int(next_def_index.split('.')[0]) <= int(def_index.split('.')[0]):
+                break  # finished searching
+            event_text = self.get(def_index, next_def_index)
+            event_args_match = re.match(r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", event_text, flags=re.MULTILINE)
+            if event_args_match:
+                event_args = event_args_match.group(1).replace('\n', '').replace(' ', '')
+                for event_arg in event_args.split(','):
+                    parts = event_arg.split(':')
+                    if len(parts) == 2:
+                        arg_name, arg_type = parts
+                    else:
+                        arg_name, arg_type = parts[0], None
+                    self.highlight_pattern(
+                        arg_name, tag="event_arg_name", start=def_index, end=next_def_index, clear=False)
+            start_index = next_def_index
 
 
 class SoulstructEventEditor(SoulstructSmartFrame):
@@ -107,6 +150,8 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.find_string = None
         self.evs_editor_canvas = None
         self.evs_text_editor = None
+        self.save_button = None
+        self.export_button = None
 
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
             evs_name = evs_file_path.name.split('.')[0]
@@ -159,13 +204,17 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.evs_text_editor.bind("<<CursorChange>>", _update_line_number)
 
         with self.set_master(auto_columns=0, pady=(10, 0), sticky='n'):
-            self.Button(text="Save EVS", width=15, command=self._save_evs)
+            self.save_button = self.Button(text="Save EVS", width=15, command=self.save_selected_evs)
             self.Button(text="Validate EVS", width=15, padx=(30, 30), command=self._check_syntax)
-            self.Button(text="Reload EVS", width=15, command=self._reload_selected)
+            self.Button(text="Reload EVS", width=15, command=self.reload_selected_evs)
 
         with self.set_master(auto_columns=0, pady=10, sticky='n'):
-            self.Button(text="Save & Export", width=15, padx=(0, 15), bg='#822', command=self._save_and_export)
-            self.Button(text="Reload & Export", width=15, padx=(15, 0), bg='#822', command=self._reload_and_export)
+            self.Button(
+                text="Save &\nExport to Game", width=15, padx=(0, 15), bg='#822',
+                command=self.save_and_export_to_game)
+            self.Button(
+                text="Reload &\nExport to Game", width=15, padx=(15, 0), bg='#822',
+                command=self.reload_and_export_to_game)
 
         self.refresh()
 
@@ -177,14 +226,14 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.selected_evs = self.evs_choice.get().split(' (')[0]
             self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.evs_text_editor.mark_set("insert", "1.0")
-            self.color_syntax()
+            self.evs_text_editor.color_syntax()
 
     def _go_to_line(self, _):
         number = self.go_to_line.var.get()
         if not number:
             return
         number = int(number)
-        if number < 1 or int(self.evs_text_editor.index('end-1c').split('.')[0]) < number:
+        if not self.selected_evs or number < 1 or int(self.evs_text_editor.index('end-1c').split('.')[0]) < number:
             self._flash_red_bg(self.go_to_line)
             return
         self.evs_text_editor.mark_set("insert", f"{number}.0")
@@ -193,7 +242,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
 
     def _find_string(self, _):
         string = self.find_string.var.get()
-        if not string:
+        if not string or not self.selected_evs:
             return
         start_line, start_char = self.evs_text_editor.index("insert").split('.')
         index = self.evs_text_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
@@ -207,43 +256,6 @@ class SoulstructEventEditor(SoulstructSmartFrame):
     def clear_bg_tags(self):
         for tag in {"found", "error"}:
             self.evs_text_editor.tag_remove(tag, "1.0", "end")
-
-    def color_syntax(self):
-        for tag in {"event_def", "instruction", "low_level_test"}:
-            self.evs_text_editor.tag_remove(tag, "1.0", "end")
-
-        self.evs_text_editor.highlight_pattern(r"^@[\w_]+", tag="restart_type", regexp=True)
-        self.evs_text_editor.highlight_pattern(r"^def [\w\d_]+", tag="event_def", regexp=True)
-        self.evs_text_editor.highlight_pattern(r"^[ ]+\"\"\" [\w\d :]+ \"\"\"", tag="docstring", regexp=True)
-        self.evs_text_editor.highlight_pattern(r"^[ ]+[\w\d_]+", tag="instruction", regexp=True)
-        self.evs_text_editor.highlight_pattern(r"^[ ]+(If|Skip|Goto)[\w\d_]+", tag="low_level_test", regexp=True)
-        self.evs_text_editor.highlight_pattern(r"[\w\d_]+[ ]*(?=\=)", tag="func_arg_name", regexp=True)
-
-        # Get all event arg names (e.g. "arg_0_3") and color them.
-        self.evs_text_editor.tag_remove("event_arg_name", "1.0", "end")
-        start_index = "1.0"
-        while 1:
-            def_index = self.evs_text_editor.search(r"^def [\w\d_]+\(", start_index, regexp=True)
-            next_def_index = self.evs_text_editor.search(r"^def [\w\d_]+\(", f"{def_index} lineend", regexp=True)
-            if int(next_def_index.split('.')[0]) <= int(def_index.split('.')[0]):
-                break  # finished searching
-            event_text = self.evs_text_editor.get(def_index, next_def_index)
-            event_args_match = re.match(r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", event_text, flags=re.MULTILINE)
-            if event_args_match:
-                event_args = event_args_match.group(1).replace('\n', '').replace(' ', '')
-                for event_arg in event_args.split(','):
-                    parts = event_arg.split(':')
-                    if len(parts) == 2:
-                        arg_name, arg_type = parts
-                    else:
-                        arg_name, arg_type = parts[0], None
-                    self.evs_text_editor.highlight_pattern(
-                        arg_name, tag="event_arg_name", start=def_index, end=next_def_index, clear=False)
-            start_index = next_def_index
-
-    def _flash_red_bg(self, widget):
-        widget['bg'] = '#522'
-        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.evs_text[self.selected_evs]:
@@ -262,15 +274,25 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.evs_text_editor.delete(1.0, 'end')
             self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.evs_text_editor.mark_set("insert", "1.0")
-            self.color_syntax()
+            self.evs_text_editor.color_syntax()
         else:
             self.evs_choice.var.set(f"{self.selected_evs} ({DARK_SOULS_MAP_NAMES[self.selected_evs]})")  # keep previous
 
-    def _save_evs(self):
-        current_text = self._get_current_text()
-        self.evs_text[self.selected_evs] = current_text
-        with self.evs_file_paths[self.selected_evs].open('w', encoding='utf-8') as f:
-            f.write(current_text)
+    def save_selected_evs(self):
+        if self.selected_evs:
+            current_text = self._get_current_text()
+            self.evs_text[self.selected_evs] = current_text
+            with self.evs_file_paths[self.selected_evs].open('w', encoding='utf-8') as f:
+                f.write(current_text)
+
+    def save_all_evs(self):
+        if self.selected_evs:
+            current_text = self._get_current_text()
+            self.evs_text[self.selected_evs] = current_text
+        for evs_name, text in self.evs_text.items():
+            evs_file_path = self.evs_file_paths[evs_name]
+            with evs_file_path.open('w', encoding='utf-8') as f:
+                f.write(text)
 
     def _raise_error(self, lineno=None, message=None):
         if lineno:
@@ -284,9 +306,11 @@ class SoulstructEventEditor(SoulstructSmartFrame):
                 f"{message}")
 
     def _check_syntax(self):
-        self.color_syntax()
+        if not self.selected_evs:
+            return
+        self.evs_text_editor.color_syntax()
         try:
-            EMEVD(self._get_current_text())
+            EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_evs].parent))
         except EmevdError as e:
             self._raise_error(e.lineno, str(e))
         except Exception as e:
@@ -299,17 +323,27 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.evs_text_editor.tag_remove("error", "1.0", "end")
             self.info_dialog("EVS Success", "No errors encountered when parsing EVS.")
 
-    def _export_evs(self):
+    def export_selected_evs(self, export_directory=None):
         """Convert project EVS file to game EMEVD file. Does not check any loaded text."""
+        if not self.selected_evs:
+            return
+        if export_directory is None:
+            export_directory = self.FileDialog.askdirectory(initialdir=str(self.evs_directory))
+            if export_directory is None:
+                return
+        export_directory = Path(export_directory)
         try:
             emevd = EMEVD(self.evs_file_paths[self.selected_evs])
         except Exception as e:
             return self.error_dialog(
                 "EVS Error", f"Could not interpret current EVS file in project.\n"
                              f"Fix this error and try again (see console for full traceback):\n\n{str(e)}")
-        emevd.write_emevd(self.game_root / f"event/{self.selected_evs}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx)
+        emevd.write_emevd(
+            export_directory / f"event/{self.selected_evs}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx)
 
-    def _reload_selected(self):
+    def reload_selected_evs(self):
+        if not self.selected_evs:
+            return
         if self._ignored_unsaved():
             evs_path = self.evs_file_paths[self.selected_evs]
             with evs_path.open('r', encoding='utf-8') as f:
@@ -317,15 +351,15 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.evs_text_editor.delete(1.0, 'end')
             self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.evs_text_editor.mark_set("insert", "1.0")
-            self.color_syntax()
+            self.evs_text_editor.color_syntax()
 
-    def _save_and_export(self):
-        self._save_evs()
-        self._export_evs()
+    def save_and_export_to_game(self):
+        self.save_selected_evs()
+        self.export_selected_evs(self.game_root)
 
-    def _reload_and_export(self):
-        self._reload_selected()
-        self._export_evs()
+    def reload_and_export_to_game(self):
+        self.reload_selected_evs()
+        self.export_selected_evs(self.game_root)
 
     def _get_current_text(self):
         """Get all current text from TextBox, minus final newline (added by Tk)."""

@@ -476,7 +476,7 @@ def Preconstructor():
     """ 50: Event 50 """
     SkipLinesIfFlagOn(2, 12410000)
     EnableFlag(9180)
-    DisableMapSound(2413900)
+    DisableSoundEvent(2413900)
     SkipLinesIfFlagOff(1, 12410998)
     EnableFlag(12410999)
     RunEvent(12410005, slot=0, args=(12410999,))
@@ -573,7 +573,7 @@ def Event12414100(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12410005(arg_0_3: int):
     """ 12410005: Event 12410005 """
     GotoIfFlagOn(Label.L0, arg_0_3)
-    DisableMapPart(2414220)
+    DisableMapPiece(2414220)
     DisableObject(2411700)
     DisableObject(2411701)
     DisableObject(2411702)
@@ -590,7 +590,7 @@ def Event12410005(arg_0_3: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2414220)
+    EnableMapPiece(2414220)
     DisableObject(2411316)
     DisableCharacter(2410951)
     DisableCharacter(2410195)
@@ -1174,8 +1174,8 @@ def Event12411899():
 def Event12411700():
     """ 12411700: Event 12411700 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2413802)
-    DisableMapSound(2413803)
+    DisableSoundEvent(2413802)
+    DisableSoundEvent(2413803)
     DisableCharacter(2410800)
     Kill(2410800, award_souls=False)
     DisableObject(2411800)
@@ -1403,8 +1403,8 @@ def Event12414703():
     DisableNetworkSync()
     EndIfFlagOn(12411700)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2413802)
-    DisableMapSound(2413803)
+    DisableSoundEvent(2413802)
+    DisableSoundEvent(2413803)
     IfFlagOff(1, 12411700)
     IfFlagOn(1, 12414702)
     SkipLinesIfHost(1)
@@ -1528,8 +1528,8 @@ def Event12414720(arg_0_3: int, arg_4_7: int, arg_8_8: uchar, arg_9_9: uchar):
 def Event12411800():
     """ 12411800: Event 12411800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2413812)
-    DisableMapSound(2413813)
+    DisableSoundEvent(2413812)
+    DisableSoundEvent(2413813)
     DisableCharacter(2410810)
     DisableCharacter(2410811)
     Kill(2410810, award_souls=False)
@@ -1788,8 +1788,8 @@ def Event12414803():
     DisableNetworkSync()
     EndIfFlagOn(12411800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2413812)
-    DisableMapSound(2413813)
+    DisableSoundEvent(2413812)
+    DisableSoundEvent(2413813)
     IfFlagOff(1, 12411800)
     IfFlagOn(1, 12414802)
     SkipLinesIfHost(1)
@@ -2476,34 +2476,34 @@ def Event12415700():
 @RestartOnRest
 def Event12415750(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12415750: Event 12415750 """
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     EndIfFlagOn(arg_12_15)
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(arg_0_3)
+    EnableSoundEvent(arg_0_3)
     IfFlagOn(-1, arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     Restart()
 
 
 @RestartOnRest
 def Event12415759(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12415759: Event 12415759 """
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     EndIfFlagOn(1245)
     EndIfFlagOn(1246)
     EndIfFlagOn(arg_12_15)
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(arg_0_3)
+    EnableSoundEvent(arg_0_3)
     IfFlagOn(-1, arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     Restart()
 
 
@@ -2540,36 +2540,36 @@ def Event12410310():
     GotoIfFlagOn(Label.L2, 9802)
     GotoIfFlagOn(Label.L1, 9801)
     GotoIfFlagOn(Label.L0, 9800)
-    EnableMapPart(2414010)
-    DisableMapPart(2414011)
-    DisableMapPart(2414012)
-    DisableMapPart(2414013)
-    DisableMapPart(2414070)
-    DisableMapPart(2414071)
+    EnableMapPiece(2414010)
+    DisableMapPiece(2414011)
+    DisableMapPiece(2414012)
+    DisableMapPiece(2414013)
+    DisableMapPiece(2414070)
+    DisableMapPiece(2414071)
     DeleteFX(2413350, erase_root_only=False)
     DeleteFX(2413380, erase_root_only=False)
     Goto(Label.L3)
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPart(2414010)
-    EnableMapPart(2414011)
-    DisableMapPart(2414012)
-    DisableMapPart(2414013)
-    DisableMapPart(2414070)
-    DisableMapPart(2414071)
+    DisableMapPiece(2414010)
+    EnableMapPiece(2414011)
+    DisableMapPiece(2414012)
+    DisableMapPiece(2414013)
+    DisableMapPiece(2414070)
+    DisableMapPiece(2414071)
     DeleteFX(2413350, erase_root_only=False)
     DeleteFX(2413380, erase_root_only=False)
     Goto(Label.L3)
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapPart(2414010)
-    DisableMapPart(2414011)
-    EnableMapPart(2414012)
-    DisableMapPart(2414013)
-    DisableMapPart(2414050)
-    DisableMapPart(2414051)
+    DisableMapPiece(2414010)
+    DisableMapPiece(2414011)
+    EnableMapPiece(2414012)
+    DisableMapPiece(2414013)
+    DisableMapPiece(2414050)
+    DisableMapPiece(2414051)
     DeleteFX(2413300, erase_root_only=False)
     DeleteFX(2413301, erase_root_only=False)
     DeleteFX(2413302, erase_root_only=False)
@@ -2581,12 +2581,12 @@ def Event12410310():
 
     # --- 2 --- #
     DefineLabel(2)
-    DisableMapPart(2414010)
-    DisableMapPart(2414011)
-    DisableMapPart(2414012)
-    EnableMapPart(2414013)
-    DisableMapPart(2414050)
-    DisableMapPart(2414051)
+    DisableMapPiece(2414010)
+    DisableMapPiece(2414011)
+    DisableMapPiece(2414012)
+    EnableMapPiece(2414013)
+    DisableMapPiece(2414050)
+    DisableMapPiece(2414051)
     DeleteFX(2413350, erase_root_only=False)
 
     # --- 3 --- #
@@ -2601,30 +2601,30 @@ def Event12410310():
 def Event12410010():
     """ 12410010: Event 12410010 """
     EndIfFlagOn(9401)
-    DisableDeveloperMessage(2413601)
-    DisableDeveloperMessage(2413604)
+    DisableSoapstoneMessage(2413601)
+    DisableSoapstoneMessage(2413604)
 
 
 def Event12410011():
     """ 12410011: Event 12410011 """
     End()
     EndIfThisEventOn()
-    DisableDeveloperMessage(2413603)
+    DisableSoapstoneMessage(2413603)
     IfCharacterHuman(1, PLAYER)
     SkipLinesIfClient(1)
     IfFlagOn(1, 52410120)
     IfConditionTrue(0, input_condition=1)
-    EnableDeveloperMessage(2413603)
+    EnableSoapstoneMessage(2413603)
 
 
 def Event12410012():
     """ 12410012: Event 12410012 """
     EndIfThisEventOn()
-    DisableDeveloperMessage(2413610)
-    DisableDeveloperMessage(2413611)
+    DisableSoapstoneMessage(2413610)
+    DisableSoapstoneMessage(2413611)
     IfFlagOn(0, 9401)
-    EnableDeveloperMessage(2413610)
-    EnableDeveloperMessage(2413611)
+    EnableSoapstoneMessage(2413610)
+    EnableSoapstoneMessage(2413611)
 
 
 @RestartOnRest
@@ -3385,23 +3385,23 @@ def Event12410715():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     GotoIfFlagOff(Label.L0, 1269)
-    DisableMapSound(2413100)
+    DisableSoundEvent(2413100)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     GotoIfFlagOff(Label.L1, 72410402)
-    DisableMapSound(2413100)
+    DisableSoundEvent(2413100)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    EnableMapSound(2413100)
+    EnableSoundEvent(2413100)
     DisableFlag(72410412)
     IfFlagOff(1, 1270)
     IfFlagOn(1, 72410412)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(2413100)
+    DisableSoundEvent(2413100)
 
 
 def Event12410716():
@@ -5102,8 +5102,8 @@ def Event12414504():
 @RestartOnRest
 def Event12414505():
     """ 12414505: Event 12414505 """
-    DisableDeveloperMessage(2413221)
-    DisableDeveloperMessage(2413223)
+    DisableSoapstoneMessage(2413221)
+    DisableSoapstoneMessage(2413223)
     DeleteFX(2413231, erase_root_only=False)
     DeleteFX(2413233, erase_root_only=False)
     EndIfThisEventOn()
@@ -5113,15 +5113,15 @@ def Event12414505():
     IfFlagOn(1, 72400461)
     IfFlagRangeAnyOn(1, (1340, 1341))
     IfConditionTrue(0, input_condition=1)
-    EnableDeveloperMessage(2413221)
-    EnableDeveloperMessage(2413223)
+    EnableSoapstoneMessage(2413221)
+    EnableSoapstoneMessage(2413223)
     CreateFX(2413231)
     CreateFX(2413233)
     IfFlagOn(-1, 12414506)
     IfFlagOn(-1, 12411700)
     IfConditionTrue(0, input_condition=-1)
-    DisableDeveloperMessage(2413221)
-    DisableDeveloperMessage(2413223)
+    DisableSoapstoneMessage(2413221)
+    DisableSoapstoneMessage(2413223)
     DeleteFX(2413231, erase_root_only=True)
     DeleteFX(2413233, erase_root_only=True)
 
@@ -5260,8 +5260,8 @@ def Event12414605():
 @RestartOnRest
 def Event12414606():
     """ 12414606: Event 12414606 """
-    DisableDeveloperMessage(2413220)
-    DisableDeveloperMessage(2413222)
+    DisableSoapstoneMessage(2413220)
+    DisableSoapstoneMessage(2413222)
     DeleteFX(2413230, erase_root_only=False)
     DeleteFX(2413232, erase_root_only=False)
     EndIfThisEventOn()
@@ -5270,16 +5270,16 @@ def Event12414606():
     IfFlagOff(1, 12411700)
     IfFlagOff(1, 12411802)
     IfConditionTrue(0, input_condition=1)
-    EnableDeveloperMessage(2413220)
-    EnableDeveloperMessage(2413222)
+    EnableSoapstoneMessage(2413220)
+    EnableSoapstoneMessage(2413222)
     CreateFX(2413230)
     CreateFX(2413232)
     IfFlagOn(-1, 12414609)
     IfFlagOn(-1, 12411700)
     IfFlagOn(-1, 12411802)
     IfConditionTrue(0, input_condition=-1)
-    DisableDeveloperMessage(2413220)
-    DisableDeveloperMessage(2413222)
+    DisableSoapstoneMessage(2413220)
+    DisableSoapstoneMessage(2413222)
     DeleteFX(2413230, erase_root_only=True)
     DeleteFX(2413232, erase_root_only=True)
 

@@ -70,11 +70,11 @@ __all__ = [
     "CreateFX", "DeleteFX", "CreateTemporaryFX", "CreateObjectFX", "DeleteObjectFX",
     "SetBackgroundMusic",
     "PlaySoundEffect",
-    "SetMapSoundState", "EnableMapSound", "DisableMapSound",
+    "SetSoundEventState", "EnableSoundEvent", "DisableSoundEvent",
     "RegisterLadder", "RegisterBonfire",
-    "SetMapPartState", "DisableMapPart", "EnableMapPart",
+    "SetMapPieceState", "DisableMapPiece", "EnableMapPiece",
     "PlaceSummonSign",
-    "SetDeveloperMessageState", "EnableDeveloperMessage", "DisableDeveloperMessage",
+    "SetDeveloperMessageState", "EnableSoapstoneMessage", "DisableSoapstoneMessage",
     "DisplayDialog", "DisplayBanner", "DisplayStatus", "DisplayBattlefieldMessage",
     "PlayCutscene", "PlayCutsceneAndMovePlayer", "PlayCutsceneToPlayer", "PlayCutsceneAndMoveSpecificPlayer",
     "PlayCutsceneAndRotatePlayer",
@@ -89,7 +89,7 @@ __all__ = [
     "NotifyBossBattleStart",
     "SetSpawnerState", "EnableSpawner", "DisableSpawner",
     "ShootProjectile",
-    "CreateSpawner",
+    "CreateProjectileOwner",
     "WarpToMap", "MoveRemains", "Move", "MoveToEntity", "MoveAndSetDrawParent", "ShortMove",
     "MoveAndCopyDrawParent", "MoveObjectToCharacter",
     "SetRespawnPoint",
@@ -231,8 +231,8 @@ __all__ = [
     "ExtinguishBurningObjects", "ShowObjectByMapCeremony", "DestroyObject_NoSlot", "DisplayDialogAndSetFlags",
     "DisplayAreaWelcomeMessage", "DisplayHollowArenaMessage", "RegisterHealingFountain", "BanishInvaders",
     "BanishPhantomsAndUpdateServerPvPStats", "BanishPhantoms", "SetBossMusicState", "EnableBossMusic",
-    "DisableBossMusic", "NotifyDoorEventSoundDampening", "SetMapSoundWithFade", "EnableMapSoundWithFade",
-    "DisableMapSoundWithFade", "Unknown_2010_07", "SetCollisionResState", "ActivateCollisionAndCreateNavmesh",
+    "DisableBossMusic", "NotifyDoorEventSoundDampening", "SetMapSoundWithFade", "EnableSoundEventWithFade",
+    "DisableSoundEventWithFade", "Unknown_2010_07", "SetCollisionResState", "ActivateCollisionAndCreateNavmesh",
     "SetAreaWelcomeMessageState", "EnableAreaWelcomeMessage", "DisableAreaWelcomeMessage", "CreatePlayLog",
     "StartPlayLogMeasurement", "StopPlayLogMeasurement", "PlayLogParameterOutput",
 ]
@@ -1772,11 +1772,11 @@ def SetMapSoundWithFade(sound_id: int, state: bool, fade_duration: float):
     return to_numeric(instruction_info, sound_id, state, fade_duration)
 
 
-def EnableMapSoundWithFade(sound_id: int, fade_duration: float):
+def EnableSoundEventWithFade(sound_id: int, fade_duration: float):
     return SetMapSoundWithFade(sound_id, True, fade_duration)
 
 
-def DisableMapSoundWithFade(sound_id: int, fade_duration: float):
+def DisableSoundEventWithFade(sound_id: int, fade_duration: float):
     return SetMapSoundWithFade(sound_id, False, fade_duration)
 
 

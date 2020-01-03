@@ -101,23 +101,23 @@ def Event12110400():
 
     # --- 2 --- #
     DefineLabel(2)
-    EnableMapPart(2114002)
-    DisableMapPart(2114000)
-    DisableMapPart(2114001)
+    EnableMapPiece(2114002)
+    DisableMapPiece(2114000)
+    DisableMapPiece(2114001)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapPart(2114002)
-    EnableMapPart(2114000)
-    DisableMapPart(2114001)
+    DisableMapPiece(2114002)
+    EnableMapPiece(2114000)
+    DisableMapPiece(2114001)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPart(2114002)
-    DisableMapPart(2114000)
-    EnableMapPart(2114001)
+    DisableMapPiece(2114002)
+    DisableMapPiece(2114000)
+    EnableMapPiece(2114001)
     End()
 
 

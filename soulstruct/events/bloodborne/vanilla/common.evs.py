@@ -1289,7 +1289,7 @@ def Event9198():
 def Event9200(arg_0_3: int):
     """ 9200: Event 9200 """
     DisableNetworkSync()
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     IfPlayerInsightAmountGreaterThanOrEqual(-1, 60)
     IfFlagOn(-1, 9802)
     IfConditionTrue(1, input_condition=-1)
@@ -1297,7 +1297,7 @@ def Event9200(arg_0_3: int):
     IfFlagOff(1, 9462)
     IfOutsideMap(1, game_map=NIGHTMARE_OF_MENSIS)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(arg_0_3)
+    EnableSoundEvent(arg_0_3)
     IfPlayerInsightAmountGreaterThanOrEqual(-2, 60)
     IfFlagOn(-2, 9802)
     IfConditionTrue(2, input_condition=-2)

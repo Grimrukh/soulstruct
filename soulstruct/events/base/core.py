@@ -18,7 +18,7 @@ class BaseEMEVD(BaseStruct):
     STRING_ENCODING = None
     DCX_MAGIC = None
 
-    def __init__(self, emevd_source):
+    def __init__(self, emevd_source, script_path=None):
 
         if not self.GAME_MODULE:
             raise NotImplementedError("You cannot instantiate BaseEMEVD. Use a game-specific child, e.g. "
@@ -49,7 +49,7 @@ class BaseEMEVD(BaseStruct):
             self.events.update(OrderedDict(emevd_source))
 
         elif isinstance(emevd_source, str) and '\n' in emevd_source:
-            parsed = EvsParser(emevd_source, game_module=self.GAME_MODULE)
+            parsed = EvsParser(emevd_source, game_module=self.GAME_MODULE, script_path=script_path)
             self.map_name = parsed.map_name
             events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
             self.events.update(events)
@@ -59,7 +59,7 @@ class BaseEMEVD(BaseStruct):
             self.map_name = emevd_path.stem
 
             if emevd_path.suffix in {'.evs', '.py'}:
-                parsed = EvsParser(emevd_path, game_module=self.GAME_MODULE)
+                parsed = EvsParser(emevd_path, game_module=self.GAME_MODULE, script_path=script_path)
                 self.map_name = parsed.map_name
                 events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
                 self.events.update(events)

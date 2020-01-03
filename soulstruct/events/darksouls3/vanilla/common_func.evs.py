@@ -4207,7 +4207,7 @@ def Event20005821(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event20005830(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 20005830: Event 20005830 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
+    DisableSoundEvent(arg_16_19)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4224,8 +4224,8 @@ def Event20005831(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 20005831: Event 20005831 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4251,8 +4251,8 @@ def Event20005832(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int, arg_28_31: int):
     """ 20005832: Event 20005832 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4278,9 +4278,9 @@ def Event20005833(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int, arg_28_31: int, arg_32_35: int):
     """ 20005833: Event 20005833 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
-    DisableMapSound(arg_24_27)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
+    DisableSoundEvent(arg_24_27)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4316,7 +4316,7 @@ def Event20005833(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 def Event20001835(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 20001835: Event 20001835 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
+    DisableSoundEvent(arg_16_19)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4333,8 +4333,8 @@ def Event20001836(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 20001836: Event 20001836 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4360,8 +4360,8 @@ def Event20001837(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int, arg_28_31: int):
     """ 20001837: Event 20001837 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)
@@ -4387,9 +4387,9 @@ def Event20001838(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int, arg_28_31: int, arg_32_35: int):
     """ 20001838: Event 20001838 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
-    DisableMapSound(arg_24_27)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
+    DisableSoundEvent(arg_24_27)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)

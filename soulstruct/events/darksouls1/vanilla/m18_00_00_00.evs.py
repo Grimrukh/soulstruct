@@ -46,7 +46,7 @@ def Constructor():
 def Preconstructor():
     """ 50: Event 50 """
     RunEvent(11800002)
-    DisableMapSound(1803800)
+    DisableSoundEvent(1803800)
     SkipLinesIfFlagOff(4, 15)
     RunEvent(11805392)
     DisableObject(1801990)
@@ -283,7 +283,7 @@ def Event11805394():
     IfFlagOn(1, 11805391)
     IfCharacterInsideRegion(1, PLAYER, region=1802990)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1803800)
+    EnableSoundEvent(1803800)
 
 
 def Event11805395():
@@ -292,7 +292,7 @@ def Event11805395():
     IfFlagOn(1, 15)
     IfFlagOn(1, 11805394)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1803800)
+    DisableSoundEvent(1803800)
 
 
 @RestartOnRest

@@ -50,9 +50,9 @@ def Constructor():
     RegisterLadder(start_climbing_flag=12200000, stop_climbing_flag=12200001, obj=2201100)
     StartPlayLogMeasurement(2200000, 0, overwrite=False)
     StartPlayLogMeasurement(2200001, 18, overwrite=True)
-    CreateSpawner(2200420)
-    CreateSpawner(2200421)
-    CreateSpawner(2200422)
+    CreateProjectileOwner(2200420)
+    CreateProjectileOwner(2200421)
+    CreateProjectileOwner(2200422)
     AICommand(2200310, command_id=200, slot=0)
     AICommand(2200311, command_id=200, slot=0)
     RunEvent(12204892)
@@ -326,8 +326,8 @@ def Preconstructor():
 def Event12201800():
     """ 12201800: Event 12201800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2203802)
-    DisableMapSound(2203803)
+    DisableSoundEvent(2203802)
+    DisableSoundEvent(2203803)
     DisableCharacter(2200800)
     Kill(2200800, award_souls=False)
     DisableCharacter(2200801)
@@ -579,8 +579,8 @@ def Event12204803():
     DisableNetworkSync()
     EndIfFlagOn(12201800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2203802)
-    DisableMapSound(2203803)
+    DisableSoundEvent(2203802)
+    DisableSoundEvent(2203803)
     IfFlagOff(1, 12201800)
     IfFlagOn(1, 12204802)
     SkipLinesIfHost(1)
@@ -1478,20 +1478,20 @@ def Event12200300():
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2206000)
-    DisableMapPart(2206001)
+    EnableMapPiece(2206000)
+    DisableMapPiece(2206001)
     Goto(Label.L3)
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapPart(2206000)
-    EnableMapPart(2206001)
+    DisableMapPiece(2206000)
+    EnableMapPiece(2206001)
     Goto(Label.L3)
 
     # --- 2 --- #
     DefineLabel(2)
-    DisableMapPart(2206000)
-    EnableMapPart(2206001)
+    DisableMapPiece(2206000)
+    EnableMapPiece(2206001)
 
     # --- 3 --- #
     DefineLabel(3)
@@ -2301,18 +2301,18 @@ def Event12205270(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 @RestartOnRest
 def Event12205300(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12205300: Event 12205300 """
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     DeleteFX(2203040, erase_root_only=False)
     EndIfFlagOn(arg_12_15)
     CreateFX(2203040)
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(arg_0_3)
+    EnableSoundEvent(arg_0_3)
     IfFlagOn(-1, arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
-    DisableMapSound(arg_0_3)
+    DisableSoundEvent(arg_0_3)
     Restart()
 
 

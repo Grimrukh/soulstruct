@@ -8,7 +8,6 @@ import datetime
 import json
 import os
 import pickle
-import threading
 from functools import wraps
 from pathlib import Path
 from typing import Optional
@@ -21,6 +20,7 @@ from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import find_steam_common_paths, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
 
+from .entities import SoulstructEntityEditor
 from .events import SoulstructEventEditor
 from .lighting import SoulstructLightingEditor
 from .links import WindowLinker
@@ -53,22 +53,49 @@ def _with_config_write(func):
 
 
 class SoulstructProjectWindow(SoulstructSmartFrame):
-
     maps_tab: Optional[SoulstructMapEditor]
+    entities_tab: Optional[SoulstructEntityEditor]
     params_tab: Optional[SoulstructParamsEditor]
     lighting_tab: Optional[SoulstructLightingEditor]
     text_tab: Optional[SoulstructTextEditor]
     events_tab: Optional[SoulstructEventEditor]
 
-    TAB_ORDER = ['maps', 'params', 'lighting', 'text', 'events', 'runtime']
+    TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events']
 
-    def __init__(self, project: SoulstructProject, master=None):
+    def __init__(self, project_path, master=None):
         super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct")
-        self.project = project
+        self.withdraw()
+
+        if not project_path:
+            self.dialog(
+                title="Choose Soulstruct project directory",
+                message="Navigate to your Soulstruct project directory.\n\n" + word_wrap(
+                    "If you want to create a new project, create an empty directory and select it."
+                    "The name of the directory will be the name of the project.", 50),
+                button_names='OK', button_kwargs='OK')
+            project_path = self.FileDialog.askdirectory(
+                title="Choose Soulstruct project directory", initialdir=str(Path('~/Documents').expanduser()))
+            if not project_path:
+                raise SoulstructProjectError(word_wrap("No directory chosen. Quitting Soulstruct.", 50))
+
+        try:
+            self.project = SoulstructProject(project_path, with_window=self)
+        except SoulstructProjectError as e:
+            self.deiconify()
+            self.dialog(title="Project Error", message=word_wrap(str(e), 50) + "\n\nAborting startup.",
+                        button_kwargs='OK')
+            raise  # TODO: should not raise an error; just flag startup failure.
+        except Exception as e:
+            self.deiconify()
+            msg = "Internal Python Error:\n\n" + word_wrap(str(e), 50) + "\n\nAborting startup."
+            self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
+            raise  # TODO: should not raise an error; just flag startup failure.
+
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
         self.page_tabs = self.Notebook(name="project_notebook", sticky='nsew')
         self.maps_tab = None
+        self.entities_tab = None
         self.params_tab = None
         self.text_tab = None
         self.lighting_tab = None
@@ -76,49 +103,52 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.toplevel.minsize(700, 500)
         # self.toplevel.protocol("WM_DELETE_WINDOW", self.confirm_quit)  # TODO: enable on release
-
-        self.set_geometry()
+        self.build()
+        self.deiconify()
 
     def build(self):
         self.build_top_menu()
 
-        tab_frames = {tab_name: self.Frame(name=tab_name, frame=self.page_tabs, sticky='nsew',
-                                           row_weights=[1], column_weights=[1])
+        tab_frames = {tab_name: self.Frame(frame=self.page_tabs, sticky='nsew', row_weights=[1], column_weights=[1])
                       for tab_name in self.TAB_ORDER}
 
         self.maps_tab = self.SmartFrame(
             frame=tab_frames['maps'], smart_frame_class=SoulstructMapEditor,
-            maps=self.project.Maps, linker=self.linker, no_grid=True)
+            maps=self.project.Maps, linker=self.linker)
         self.maps_tab.grid(sticky='nsew')
-        self.maps_tab['bg'] = '#123'
-        self.maps_tab.rowconfigure(0, weight=1)
-        self.maps_tab.columnconfigure(0, weight=1)
+
+        self.entities_tab = self.SmartFrame(
+            frame=tab_frames['entities'], smart_frame_class=SoulstructEntityEditor,
+            maps=self.project.Maps, evs_directory=self.project.project_root / "events", linker=self.linker)
+        self.entities_tab.grid(sticky='nsew')
 
         self.params_tab = self.SmartFrame(
             frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
-            params=self.project.Params, linker=self.linker, no_grid=True)
+            params=self.project.Params, linker=self.linker)
         self.params_tab.grid(sticky='nsew')
 
         self.lighting_tab = self.SmartFrame(
             frame=tab_frames['lighting'], smart_frame_class=SoulstructLightingEditor,
-            lighting=self.project.Lighting, linker=self.linker, no_grid=True)
+            lighting=self.project.Lighting, linker=self.linker)
         self.lighting_tab.grid(sticky='nsew')
 
         self.text_tab = self.SmartFrame(
             frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
-            text=self.project.Text, linker=self.linker, no_grid=True)
+            text=self.project.Text, linker=self.linker)
         self.text_tab.grid(sticky='nsew')
 
         self.events_tab = self.SmartFrame(
             frame=tab_frames['events'], smart_frame_class=SoulstructEventEditor,
             evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
-            dcx=self.project.game_name == "Dark Souls Remastered", no_grid=True)
+            dcx=self.project.game_name == "Dark Souls Remastered")
         self.events_tab.grid(sticky='nsew')
 
-        self.build_runtime_tab(tab_frames['runtime'])
+        # self.build_runtime_tab(tab_frames['runtime'])  # TODO: game launcher, etc.
 
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
+
+        self.set_key_bindings()
 
         self.set_geometry()
 
@@ -126,50 +156,49 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         top_menu = self.Menu()
 
         file_menu = self.Menu(tearoff=0)
-        file_menu.add_command(label="Open Project", foreground='#FFF', command=lambda: print("Open"))
-        file_menu.add_command(label="Save Project", foreground='#FFF', command=lambda: print("Save"))
-        file_menu.add_command(label="Save Project As", foreground='#FFF', command=lambda: print("Save As"))
+        file_menu.add_command(label="Save Entire Project", foreground='#FFF', command=self._save_data)
         file_menu.add_separator()
-        for import_dir in (None, self.project.game_root):
+        for import_dir in (self.project.game_root, None):
             import_menu = self.Menu(tearoff=0)
             import_menu.add_command(
                 label=f"Import Everything", foreground='#FFF',
-                command=lambda i=import_dir: self.project.import_data(import_directory=i))
+                command=lambda i=import_dir: self._import_data(import_directory=i))
             import_menu.add_separator()
             for data_type in DATA_TYPES:
                 import_menu.add_command(
                     label=f"Import {data_type.capitalize()}", foreground='#FFF',
-                    command=lambda d=data_type, i=import_dir: self.project.import_data(d, import_directory=i))
-            file_menu.add_cascade(label=f"Import{' from Game' if import_dir else ''}...",
+                    command=lambda d=data_type, i=import_dir: self._import_data(d, import_directory=i))
+            file_menu.add_cascade(label=f"Import from{' Game' if import_dir else '...'}",
                                   foreground='#FFF', menu=import_menu)
-        for export_dir in (None, self.project.game_root):
+        for export_dir in (self.project.game_root, None):
             export_menu = self.Menu(tearoff=0)
             export_menu.add_command(
                 label=f"Export Everything", foreground='#FFF',
-                command=lambda e=export_dir: self.project.export_data(export_directory=e))
+                command=lambda e=export_dir: self._export_data(export_directory=e))
             export_menu.add_separator()
             for data_type in DATA_TYPES:
                 export_menu.add_command(
                     label=f"Export {data_type.capitalize()}", foreground='#FFF',
-                    command=lambda d=data_type, e=export_dir: self.project.export_data(d, export_directory=e))
-            file_menu.add_cascade(label=f"Export{' to Game' if export_dir else ''}...",
+                    command=lambda d=data_type, e=export_dir: self._export_data(d, export_directory=e))
+            file_menu.add_cascade(label=f"Export to{' Game' if export_dir else '...'}",
                                   foreground='#FFF', menu=export_menu)
         file_menu.add_separator()
         file_menu.add_command(label="Restore .bak File", foreground='#FFF',
-                              command=lambda: self.project.restore_backup(full_folder=False))
+                              command=lambda: self._restore_backup(full_folder=False))
         file_menu.add_command(label="Restore .bak Files", foreground='#FFF',
-                              command=lambda: self.project.restore_backup(full_folder=True))
+                              command=lambda: self._restore_backup(full_folder=True))
         file_menu.add_separator()
         file_menu.add_command(label="Quit", foreground='#FFF', command=self.confirm_quit)
         top_menu.add_cascade(label="File", menu=file_menu)
 
-        edit_menu = self.Menu(tearoff=0)
-        edit_menu.add_command(label="Undo", foreground='#FFF', command=lambda: print("Undo"))
-        edit_menu.add_command(label="Redo", foreground='#FFF', command=lambda: print("Redo"))
-        edit_menu.add_command(label="Copy", foreground='#FFF', command=lambda: print("Copy"))
-        edit_menu.add_command(label="Cut", foreground='#FFF', command=lambda: print("Cut"))
-        edit_menu.add_command(label="Paste", foreground='#FFF', command=lambda: print("Paste"))
-        top_menu.add_cascade(label="Edit", menu=edit_menu)
+        # TODO: edit commands
+        # edit_menu = self.Menu(tearoff=0)
+        # edit_menu.add_command(label="Undo", foreground='#FFF', command=lambda: print("Undo"))
+        # edit_menu.add_command(label="Redo", foreground='#FFF', command=lambda: print("Redo"))
+        # edit_menu.add_command(label="Copy", foreground='#FFF', command=lambda: print("Copy"))
+        # edit_menu.add_command(label="Cut", foreground='#FFF', command=lambda: print("Cut"))
+        # edit_menu.add_command(label="Paste", foreground='#FFF', command=lambda: print("Paste"))
+        # top_menu.add_cascade(label="Edit", menu=edit_menu)
 
         self.toplevel.config(menu=top_menu)
 
@@ -183,16 +212,25 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         """
         pass
 
-    def reload_data(self, data_type: str, data):
+    def set_key_bindings(self):
+        self.bind_all("<Control-s>", lambda _: self._save_data(self.current_data_type))
+        self.bind_all("<Control-e>", lambda _: self._export_data(self.current_data_type, self.project.game_root))
+        self.bind_all("<Shift-Control-e>", lambda _: self._export_data(self.current_data_type, None))
+
+    def refresh_tab_data(self, data_type=None):
+        if data_type is None:
+            for data_type in self.TAB_ORDER:
+                self.refresh_tab_data(data_type)
         data_type = data_type.lower()
         if data_type not in self.TAB_ORDER:
             raise ValueError(f"Invalid data type name: {data_type}")
-        tab = getattr(self, f'{data_type}_tab')
-        if tab is not None:
-            if data_type == "events":
-                self.events_tab.refresh()
-            else:
-                setattr(tab, data_type.capitalize(), data)
+        if data_type == "events":
+            self.events_tab.refresh()
+        elif data_type == "entities":
+            self.entities_tab.Maps = self.project.Maps
+        else:
+            project_data = getattr(self.project, data_type.capitalize())
+            setattr(getattr(self, f'{data_type}_tab'), data_type.capitalize(), project_data)
 
     def confirm_quit(self):
         if self.dialog(title="Quit Soulstruct?",
@@ -206,6 +244,70 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         """Destruction takes a second or so, so we withdraw first to hide the awkward lag."""
         self.withdraw()
         super().destroy()
+
+    @property
+    def current_data_type(self):
+        data_type = self.TAB_ORDER[self.page_tabs.index(self.page_tabs.select())]
+        if data_type == "entities":
+            return "maps"
+        return data_type
+
+    def _import_data(self, data_type=None, import_directory=None):
+        if import_directory is None:
+            import_directory = self._choose_directory()
+            if import_directory is None:
+                return  # Abort import.
+        # TODO: progress bar
+        self.project.import_data(data_type, import_directory)
+        self.refresh_tab_data(data_type)
+
+    def _save_data(self, data_type=None):
+        if data_type == "events":
+            self.events_tab.save_selected_evs()
+            self.mimic_click(self.events_tab.save_button)
+            return
+        # TODO: progress bar
+        self.project.save(data_type)
+        if data_type is None:
+            self.events_tab.save_all_evs()
+        self._flash_red_bg(self)
+
+    def _export_data(self, data_type=None, export_directory=None):
+        if export_directory is None:
+            export_directory = self._choose_directory()
+            if export_directory is None:
+                return  # Abort export.
+        if data_type == "events":
+            self.events_tab.export_selected_evs(export_directory)
+            self.mimic_click(self.events_tab.export_button)
+            return
+        # TODO: progress bar
+        self.project.export_data(data_type, export_directory)
+
+    def _restore_backup(self, target=None, full_folder=False):
+        if target is None:
+            if full_folder:
+                target = self.FileDialog.askdirectory(
+                    title="Choose Folder to Restore Backups", initialdir=str(self.project.game_root))
+            else:
+                target = self.FileDialog.askopenfilename(
+                    title="Choose File to Restore Backup", initialdir=str(self.project.game_root),
+                    filetypes=[("Bak file", ".bak")])
+            if not target:
+                return
+        try:
+            count = self.project.restore_backup(target=target)
+        except RestoreBackupError as e:
+            return self.dialog("Restore Backup Error", message=str(e))
+        if count:
+            return self.dialog("Restore Successful", f"{count} '.bak' files restored in folder\n'{str(target)}'.")
+        return self.dialog("Restore Successful", f"Backup file '{str(target)}' restored.")
+
+    def _choose_directory(self, initial_dir=None, **kwargs):
+        if initial_dir is None:
+            initial_dir = str(self.project.project_root)
+        directory = self.FileDialog.askdirectory(initialdir=initial_dir, **kwargs)
+        return Path(directory) if directory is not None else None
 
 
 class SoulstructProject(object):
@@ -223,10 +325,7 @@ class SoulstructProject(object):
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
 
-    def __init__(self, project_path: str = ''):
-
-        self._window = SoulstructProjectWindow(project=self, master=None)
-        self._window.withdraw()
+    def __init__(self, project_path="", with_window: SoulstructProjectWindow = None):
 
         self.game_name = ''
         self.game_root = Path()
@@ -240,28 +339,11 @@ class SoulstructProject(object):
         self.Lighting = DarkSoulsLightingParameters()
         self.Maps = DarkSoulsMaps()
 
-        try:
-            self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
-            self.load_config()
-            self.initialize_project()
-        except SoulstructProjectError as e:
-            self._window.deiconify()
-            self.dialog(title="Project Error", message=word_wrap(str(e), 50) + "\n\nAborting startup.",
-                        button_kwargs='OK')
-            raise  # TODO: should not raise an error; just flag startup failure.
-        except Exception as e:
-            self._window.deiconify()
-            msg = "Internal Python Error:\n\n" + word_wrap(str(e), 50) + "\n\nAborting startup."
-            self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
-            raise  # TODO: should not raise an error; just flag startup failure.
+        self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
+        self.load_config(with_window=with_window)
+        self.initialize_project(with_window=with_window)
 
-        self._window.withdraw()
-        self._window.build()
-        self._window.deiconify()
-
-        self._window.wait_window()
-
-    def initialize_project(self, force_import_from_game=False):
+    def initialize_project(self, force_import_from_game=False, with_window: SoulstructProjectWindow = None):
         """Load project structures from pickled project files if available, or prompt for initial import to create."""
         yes_to_all = force_import_from_game
         for data_type in DATA_TYPES:
@@ -276,14 +358,23 @@ class SoulstructProject(object):
                     self.import_data_from_game(data_type)
                     self.save(data_type)
                 else:
-                    result = self.dialog(
-                        title="Project Error",
-                        message=f"Could not find saved {data_type.capitalize()} data in project.\n"
-                                f"Would you like to import it from the game directory now?",
-                        button_names=("Yes", "Yes to All", "No, quit now"),
-                        button_kwargs=('YES', 'YES', 'NO'),
-                        cancel_output=2, default_output=2
-                    )
+                    if with_window:
+                        result = with_window.dialog(
+                            title="Project Error",
+                            message=f"Could not find saved {data_type.capitalize()} data in project.\n"
+                                    f"Would you like to import it from the game directory now?",
+                            button_names=("Yes", "Yes to All", "No, quit now"),
+                            button_kwargs=('YES', 'YES', 'NO'),
+                            cancel_output=2, default_output=2
+                        )
+                    else:
+                        result = input(
+                            f"Could not find saved {data_type.capitalize()} data in project.\n"
+                            f"Would you like to import it from the game directory now? [y]/n")
+                        if result.lower == "n":
+                            result = 2
+                        else:
+                            result = 0
                     if result in {0, 1}:
                         self.import_data_from_game(data_type)
                         self.save(data_type)
@@ -291,13 +382,30 @@ class SoulstructProject(object):
                             yes_to_all = True
                     else:
                         raise SoulstructProjectError("Could not open project files.")
-                self._window.deiconify()
 
-    def _choose_directory(self, initial_dir=None, **kwargs):
-        if initial_dir is None:
-            initial_dir = str(self.project_root)
-        directory = self._window.FileDialog.askdirectory(initialdir=initial_dir, **kwargs)
-        return Path(directory) if directory is not None else None
+    def save(self, data_type=None):
+        """Save given data type ('maps', 'text', etc.) as pickled project file.
+
+        Defaults to saving all types except events, which are handled separately.
+        """
+        if data_type is None:
+            for data_type in [k for k, v in DATA_TYPES.items() if v]:
+                self.save(data_type)
+        data_type = data_type.lower()
+        if data_type not in DATA_TYPES:
+            raise ValueError(f"Data type to load should be one of {DATA_TYPES} (or None), not {data_type}.")
+        self._save_project_data(getattr(self, data_type.capitalize()), data_type + ".d1s")
+
+    def load(self, data_type=None):
+        """Load give data type ('maps', 'text', etc.) from pickled project file. Defaults to loading all types (except
+        'events', which are handled manually)."""
+        if data_type is None:
+            for data_type in [k for k, v in DATA_TYPES.items() if v]:
+                self.load(data_type)
+        data_type = data_type.lower()
+        if data_type not in DATA_TYPES:
+            raise ValueError(f"Data type to save should be one of {DATA_TYPES} (or None), not {data_type}.")
+        setattr(self, data_type.capitalize(), self._load_project_data(data_type + ".d1s"))
 
     def _save_project_data(self, obj, pickled_path):
         with (self.project_root / pickled_path).open('wb') as f:
@@ -307,54 +415,24 @@ class SoulstructProject(object):
         with (self.project_root / pickled_path).open('rb') as f:
             return pickle.load(f)
 
-    def save(self, data_type=None):
-        """Save given data type ('maps', 'text', etc.) as pickled project file.
-
-        Defaults to saving all types except events, which are handled separately.
-        """
-        if data_type is not None:
-            data_type = data_type.lower()
-            if data_type not in DATA_TYPES:
-                raise ValueError(f"Data type to load should be one of {DATA_TYPES} (or None), not {data_type}.")
-        for d in DATA_TYPES:
-            if data_type == d or (data_type is None and d != "events"):
-                self._save_project_data(getattr(self, d.capitalize()), d + ".d1s")
-
-    def load(self, data_type=None):
-        """Load give data type ('maps', 'text', etc.) from pickled project file. Defaults to loading all types (except
-        'events', which are handled manually)."""
-        if data_type is not None:
-            data_type = data_type.lower()
-            if data_type not in DATA_TYPES:
-                raise ValueError(f"Data type to save should be one of {DATA_TYPES} (or None), not {data_type}.")
-        for d in DATA_TYPES:
-            if data_type == d or (data_type is None and d != "events"):
-                setattr(self, d.capitalize(), self._load_project_data(d + ".d1s"))
-
     def import_data(self, data_type=None, import_directory=None):
         """Import data sub-structure from binary game files.
 
         If `data_type` is None (default), all data types will be imported, in which case the given `import_directory`
         should contain the appropriate folder structure ('map/MapStudio', 'msg/ENGLISH', etc.) for all files.
         """
-        if data_type is not None:
-            data_type = data_type.lower()
-            if data_type not in DATA_TYPES:
-                raise ValueError(f"Data type to import should be one of {DATA_TYPES} (or None), not {data_type}.")
-        if import_directory is None:
-            import_directory = self._choose_directory()
-            if import_directory is None:
-                return  # Abort export.
+        if data_type is None:
+            for data_type in DATA_TYPES:
+                self.import_data(data_type, import_directory)
+        data_type = data_type.lower()
+        if data_type not in DATA_TYPES:
+            raise ValueError(f"Data type to import should be one of {DATA_TYPES} (or None), not {data_type}.")
         import_directory = Path(import_directory)
-        for d, d_class in DATA_TYPES.items():
-            if data_type == d or data_type is None:
-                data_import_path = self._game_path(d, root=import_directory)
-                if d == "events":
-                    self._import_events(data_import_path)
-                    self._window.reload_data(d, None)
-                else:
-                    setattr(self, d.capitalize(), d_class(data_import_path))
-                    self._window.reload_data(d, getattr(self, d.capitalize()))
+        data_import_path = self._game_path(data_type, root=import_directory)
+        if data_type == "events":
+            self._import_events(data_import_path)
+        else:
+            setattr(self, data_type.capitalize(), DATA_TYPES[data_type](data_import_path))
 
     def import_data_from_game(self, data_type=None):
         """Reads data substructures in game formats from the live game directory."""
@@ -366,23 +444,19 @@ class SoulstructProject(object):
                        input_directory=import_directory)
 
     def export_data(self, data_type=None, export_directory=None):
-        if data_type is not None:
-            data_type = data_type.lower()
-            if data_type not in DATA_TYPES:
-                raise ValueError(f"Data type to export should be one of {DATA_TYPES} (or None), not {data_type}.")
-        if export_directory is None:
-            export_directory = self._choose_directory()
-            if export_directory is None:
-                return  # Abort export.
+        if data_type is None:
+            for data_type in DATA_TYPES:
+                self.export_data(data_type, export_directory)
+        data_type = data_type.lower()
+        if data_type not in DATA_TYPES:
+            raise ValueError(f"Data type to export should be one of {DATA_TYPES} (or None), not {data_type}.")
         export_directory = Path(export_directory)
-        for d in DATA_TYPES:
-            if data_type == d or data_type is None:
-                data_export_path = self._game_path(d, root=export_directory)
-                data_export_path.mkdir(parents=True, exist_ok=True)
-                if d == "events":
-                    self._export_events(data_export_path)
-                else:
-                    getattr(self, d.capitalize()).save(data_export_path)
+        data_export_path = self._game_path(data_type, root=export_directory)
+        data_export_path.mkdir(parents=True, exist_ok=True)
+        if data_type == "events":
+            self._export_events(data_export_path)
+        else:
+            getattr(self, data_type.capitalize()).save(data_export_path)
 
     def export_data_to_game(self, data_type=None):
         """Writes data substructures in game formats in the live game directory, ready for play."""
@@ -397,18 +471,8 @@ class SoulstructProject(object):
         convert_events(output_type="emevd", output_directory=export_directory,
                        input_directory=self.project_root / "events")
 
-    def restore_backup(self, target=None, full_folder=False):
+    def restore_backup(self, target=None):
         """Restores '.bak' files, deleting whatever they would replace."""
-        if target is None:
-            if full_folder:
-                target = self._window.FileDialog.askdirectory(
-                    title="Choose Folder to Restore Backups", initialdir=str(self.game_root))
-            else:
-                target = self._window.FileDialog.askopenfilename(
-                    title="Choose File to Restore Backup", initialdir=str(self.game_root),
-                    filetypes=[("Bak file", ".bak")])
-            if not target:
-                return
         target = Path(target)
         if target.is_file():
             if target.suffix == ".bak":
@@ -416,8 +480,8 @@ class SoulstructProject(object):
                     os.remove(str(target.with_suffix("")))
                 os.rename(str(target), str(target.with_suffix("")))
             elif not (target.with_suffix(".bak")).is_file():
-                return self.dialog("No Backup to Restore", f"Could not find a file '{str(target.with_suffix('.bak'))}'"
-                                                           f"to restore. No action taken.")
+                raise RestoreBackupError(f"Could not find a file '{str(target.with_suffix('.bak'))} "
+                                         f"to restore. No action taken.")
             else:
                 os.remove(str(target))
                 os.rename(str(target.with_suffix(".bak")), str(target))
@@ -427,12 +491,12 @@ class SoulstructProject(object):
                 self.restore_backup(bak_file)
                 count += 1
             if count == 0:
-                return self.dialog("No Backups to Restore", f"Could not find any '.bak' files to restore in directory "
-                                                            f"'{str(target)}'. No action taken.")
+                raise RestoreBackupError(f"Could not find any '.bak' files to restore in directory '{str(target)}'. "
+                                         f"No action taken.")
             else:
-                return self.dialog("Restore Successful", f"{count} '.bak' files restored in folder\n'{str(target)}'.")
+                return count
 
-    def load_config(self):
+    def load_config(self, with_window: SoulstructProjectWindow = None):
         try:
             with (self.project_root / 'config.json').open('r') as f:
                 try:
@@ -457,18 +521,26 @@ class SoulstructProject(object):
         except FileNotFoundError:
             # Create project config file.
             try:
-                self.game_root, self.game_name = self._get_game_root()
+                self.game_root, self.game_name = self._get_game_root(with_window=with_window)
             except SoulstructProjectError as e:
                 raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
             self._write_config()
-            if self.dialog(title="Initial project load",
-                           message="Import game files now? This will override any project files\n"
-                                   "that are already in this folder.",
-                           button_names=("Yes, import the files", "No, I'll do it later"),
-                           button_kwargs=('YES', 'NO'),
-                           cancel_output=1, default_output=1) == 0:
+            if with_window:
+                result = with_window.dialog(title="Initial project load",
+                                            message="Import game files now? This will override any project files\n"
+                                                    "that are already in this folder.",
+                                            button_names=("Yes, import the files", "No, I'll do it later"),
+                                            button_kwargs=('YES', 'NO'),
+                                            cancel_output=1, default_output=1)
+            else:
+                result = input("Import game files now? This will override any project files\n"
+                               "that are already in this folder. [y]/n")
+                if result.lower == "n":
+                    result = 1
+                else:
+                    result = 0
+            if result == 0:
                 self.initialize_project(force_import_from_game=True)
-            self._window.deiconify()
 
     def _game_path(self, data_type, root=None):
         root = self.game_root if root is None else Path(root)
@@ -504,19 +576,8 @@ class SoulstructProject(object):
         except PermissionError:
             raise SoulstructProjectError("No write access to 'config.json' in project directory.")
 
-    def _validate_project_directory(self, project_path, default_root):
-        if not project_path:
-            self.dialog(
-                title="Choose Soulstruct project directory",
-                message="Navigate to your Soulstruct project directory.\n\n" + word_wrap(
-                    "If you want to create a new project, create an empty directory and select it."
-                    "The name of the directory will be the name of the project.", 50),
-                button_names='OK', button_kwargs='OK')
-            project_path = self._window.FileDialog.askdirectory(
-                title="Choose Soulstruct project directory", initialdir=str(Path('~/Documents').expanduser()))
-            if not project_path:
-                raise SoulstructProjectError(word_wrap("No directory chosen. Quitting Soulstruct.", 50))
-
+    @staticmethod
+    def _validate_project_directory(project_path, default_root):
         project_path = Path(project_path)
         if not project_path.is_absolute():
             project_path = (default_root / project_path).expanduser().absolute()
@@ -532,7 +593,8 @@ class SoulstructProject(object):
 
         return project_path
 
-    def _get_game_root(self):
+    @staticmethod
+    def _get_game_root(with_window: SoulstructProjectWindow = None):
         for common_path in find_steam_common_paths():
             dsr_path = Path(common_path, 'DARK SOULS REMASTERED')
             if dsr_path.is_dir():
@@ -546,7 +608,8 @@ class SoulstructProject(object):
             initial_dir = None
 
         message = (
-            "Navigate to the game executable for this project.\n"
+            ("Navigate to " if with_window else "Type the full path of ") +
+            "the game executable for this project.\n"
             "This can normally be found in:\n\n"
             ""
             "Prepare to Die Edition:\n"
@@ -557,13 +620,24 @@ class SoulstructProject(object):
             ""
             "Otherwise, you can use Steam to find your Steam directory."
         )
-        self.dialog(title="Select game for project", message=message, font_size=12,
-                    button_names='OK', button_kwargs='OK')
-        game_exe = self._window.FileDialog.askopenfilename(
-            title="Choose your game executable", initialdir=initial_dir, filetypes=[('Game executable', '.exe')])
-        if not game_exe:
-            raise SoulstructProjectError("No game executable selected.")
-        game_root = Path(game_exe).parent
+        if with_window:
+            with_window.dialog(title="Select game for project", message=message, font_size=12,
+                               button_names='OK', button_kwargs='OK')
+            game_exe = with_window.FileDialog.askopenfilename(
+                title="Choose your game executable", initialdir=initial_dir, filetypes=[('Game executable', '.exe')])
+            if not game_exe:
+                raise SoulstructProjectError("No game executable selected.")
+            game_exe = Path(game_exe)
+        else:
+            game_exe = input(message + "\nPATH: ")
+            try:
+                game_exe = Path(game_exe)
+                if not Path(game_exe).is_file() and Path(game_exe).suffix == ".exe":
+                    raise ValueError
+            except ValueError:
+                raise SoulstructProjectError(f"Invalid executable file path: {str(game_exe)}.")
+
+        game_root = game_exe.parent
         if (game_root / 'DarkSoulsRemastered.exe').is_file():
             return game_root, 'Dark Souls Remastered'
         elif (game_root / 'DARKSOULS.exe').is_file():
@@ -571,16 +645,6 @@ class SoulstructProject(object):
         else:
             raise SoulstructProjectError("Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
                                          "but your selected executable was not a version of Dark Souls.")
-
-    def dialog(self, title, message, font_size=None, font_type=None,
-               button_names=('OK',), button_kwargs=(), style_defaults=None,
-               default_output=None, cancel_output=None, word_wrap_limit=None):
-        if word_wrap_limit:
-            message = word_wrap(message, word_wrap_limit)
-        return self._window.dialog(title=title, message=message, font_size=font_size, font_type=font_type,
-                                   button_names=button_names, button_kwargs=button_kwargs,
-                                   style_defaults=style_defaults,
-                                   default_output=default_output, cancel_output=cancel_output)
 
 
 MODIFIABLE_FILES = {
@@ -678,7 +742,6 @@ MODIFIABLE_FILES = {
     },
 }
 
-
 SOULSTRUCT_ICON = """
 R0lGODlhUABaAOfXAAABAAQABgACAAcAAAgBAAEEAAIFAQsEAwgFCgQHAgUIBAwGBAoGDA4HBQYKBQwJDggLBw8JBwkMCBAKCBELCg
 sNCg8MEBANEQwPCxEOEg0QDBIPEw4RDRMQFBASDxQRFRETEBUSFhIUERMUEhUTFxMVExYUFxsTGBQWFBcVGBUXFBgWGRYYFRkXGhkX
@@ -736,3 +799,7 @@ UQOjIDOK0EYQKhBUwBxA5B6uUARjtC1aFCiiwBUtYAo0UBi6EKIGUQF3QKLFiJr/4AopKlkysDQtMAqj
 jQ030jQAWWsC34OUqm0JYyQBJHiksEAQOWIhBCwAi/oQi6QAkUKQdwAAdAsqUUsQJ8wByDoClb0AqN0J9sShEmNmJ6oQX6oRsCQSFL
 eacD4R8wByEZtjIIO1AijYAQlCioDEEIsVAuXBCojloRAuBZP1GpG/Erq6SpGCEBNQCq4RkQADs=
 """
+
+
+class RestoreBackupError(Exception):
+    pass

@@ -33,3 +33,11 @@ class MSBEntry(object):
 
     def copy(self):
         return deepcopy(self)
+
+
+class MSBEntryEntity(MSBEntry):
+
+    def __init__(self):
+        """Subclass of MSBEntry with 'entity_id' field (everything except Models). Useful for type checking."""
+        super().__init__()
+        self.entity_id = None

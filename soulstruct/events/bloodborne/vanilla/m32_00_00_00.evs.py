@@ -717,8 +717,8 @@ def Event13200990():
 def Event13201800():
     """ 13201800: Event 13201800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(3203802)
-    DisableMapSound(3203803)
+    DisableSoundEvent(3203802)
+    DisableSoundEvent(3203803)
     DisableCharacter(3200800)
     Kill(3200800, award_souls=False)
     DisableObject(3201800)
@@ -1051,8 +1051,8 @@ def Event13204803():
     DisableNetworkSync()
     EndIfFlagOn(13201800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(3203802)
-    DisableMapSound(3203803)
+    DisableSoundEvent(3203802)
+    DisableSoundEvent(3203803)
     IfFlagOff(1, 13201800)
     IfFlagOn(1, 13204802)
     SkipLinesIfHost(1)

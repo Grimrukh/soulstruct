@@ -848,7 +848,7 @@ def Event13501801():
 @RestartOnRest
 def Event13501802():
     """ 13501802: Event 13501802 """
-    DisableMapSound(3503204)
+    DisableSoundEvent(3503204)
     GotoIfThisEventOff(Label.L0)
     EndOfAnimation(3501200, 3)
     DisableCollision(3504800)
@@ -1043,9 +1043,9 @@ def Event13504802():
 def Event13504803():
     """ 13504803: Event 13504803 """
     DisableNetworkSync()
-    DisableMapSound(3503802)
-    DisableMapSound(3503803)
-    DisableMapSound(3503804)
+    DisableSoundEvent(3503802)
+    DisableSoundEvent(3503803)
+    DisableSoundEvent(3503804)
     DeleteFX(3503501, erase_root_only=False)
     EndIfFlagOn(13501800)
     GotoIfThisEventOn(Label.L1)
@@ -1229,8 +1229,8 @@ def Event13501850():
 
 def Event13501851():
     """ 13501851: Event 13501851 """
-    DisableMapSound(3503211)
-    DisableMapSound(3503212)
+    DisableSoundEvent(3503211)
+    DisableSoundEvent(3503212)
     EndIfFlagOn(13501850)
     EndIfThisEventOn()
     ForceAnimation(3500851, 9000, loop=True)
@@ -1451,9 +1451,9 @@ def Event13504852():
 def Event13504853():
     """ 13504853: Event 13504853 """
     DisableNetworkSync()
-    DisableMapSound(3503812)
-    DisableMapSound(3503813)
-    DisableMapSound(3503814)
+    DisableSoundEvent(3503812)
+    DisableSoundEvent(3503813)
+    DisableSoundEvent(3503814)
     EndIfFlagOn(13501800)
     GotoIfThisEventOn(Label.L0)
     IfFlagOff(1, 13501850)
@@ -2706,7 +2706,7 @@ def Event13501400(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event13504799():
     """ 13504799: Event 13504799 """
-    CreateSpawner(3500799)
+    CreateProjectileOwner(3500799)
 
 
 def Event13500100():
@@ -2800,7 +2800,7 @@ def Event13500100():
 
 def Event13500105():
     """ 13500105: Event 13500105 """
-    DisableMapSound(3503202)
+    DisableSoundEvent(3503202)
     EndIfThisEventOn()
     IfCharacterHuman(1, PLAYER)
     IfStandingOnCollision(1, 3504020)
@@ -2810,7 +2810,7 @@ def Event13500105():
 
 def Event13500106():
     """ 13500106: Event 13500106 """
-    DisableMapSound(3503203)
+    DisableSoundEvent(3503203)
     EndIfThisEventOn()
     IfCharacterHuman(1, PLAYER)
     IfStandingOnCollision(1, 3504815)
@@ -2828,7 +2828,7 @@ def Event13500110():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPart(3501750)
+    DisableMapPiece(3501750)
     End()
 
 

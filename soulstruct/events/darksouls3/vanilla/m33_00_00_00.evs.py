@@ -379,11 +379,11 @@ def Preconstructor():
     DisableAnimations(3300790)
     DisableGravity(3300790)
     DisableCharacterCollision(3300790)
-    DisableMapSound(3304801)
-    DisableMapSound(3304802)
-    DisableMapSound(3304805)
-    DisableMapSound(3304851)
-    DisableMapSound(3304852)
+    DisableSoundEvent(3304801)
+    DisableSoundEvent(3304802)
+    DisableSoundEvent(3304805)
+    DisableSoundEvent(3304851)
+    DisableSoundEvent(3304852)
 
 
 @RestartOnRest
@@ -1117,7 +1117,7 @@ def Event13305810():
     IfCharacterInvadeType(-15, character=PLAYER, invade_type=4)
     EndIfConditionTrue(-15)
     GotoIfFlagOn(Label.L1, 13300801)
-    EnableMapSound(3304805)
+    EnableSoundEvent(3304805)
     DisableCharacter(3300801)
     DisableAnimations(3300801)
 
@@ -1130,7 +1130,7 @@ def Event13305810():
                                          value=0)
     BanishInvaders(unknown=0)
     GotoIfFlagOn(Label.L2, 13300801)
-    DisableMapSound(3304805)
+    DisableSoundEvent(3304805)
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(33000010, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
@@ -1273,8 +1273,8 @@ def Event13305828(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 13305828: Event 13305828 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)

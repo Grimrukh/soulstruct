@@ -612,6 +612,15 @@ class SmartFrame(tk.Frame):
         return True
 
     @staticmethod
+    def mimic_click(button: tk.Button):
+        button.config(relief=SUNKEN)
+        button.after(100, lambda: button.config(relief=RAISED))
+
+    def _flash_red_bg(self, widget, bg="#522"):
+        widget['bg'] = bg
+        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
+
+    @staticmethod
     def reset_canvas_scroll_region(canvas):
         """Sets scrollable canvas region to the entire bounding box."""
         canvas.configure(scrollregion=canvas.bbox("all"))

@@ -280,8 +280,8 @@ def Preconstructor():
     RunEvent(13415600)
     RunEvent(13415620, slot=0, args=(3410705, 1300, 3411705, 3412705))
     RunEvent(13415640, slot=0, args=(3410700,))
-    DisableMapSound(3412833)
-    DisableMapSound(3412834)
+    DisableSoundEvent(3412833)
+    DisableSoundEvent(3412834)
     RunEvent(13415700)
 
 
@@ -746,7 +746,7 @@ def Event13415830():
     DisableAnimations(3410830)
     DisableAnimations(3410831)
     DisableAnimations(3410832)
-    DisableMapSound(3412833)
+    DisableSoundEvent(3412833)
     DisableObject(3411810)
     EndIfFlagOn(13410830)
     EnableObject(3411810)

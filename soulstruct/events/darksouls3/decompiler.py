@@ -965,9 +965,9 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 6:
             sound_id, state, fade_duration = req_args
             if state == 1:
-                return f"EnableMapSoundWithFade(sound_id={sound_id}, fade_duration={fade_duration})"
+                return f"EnableSoundEventWithFade(sound_id={sound_id}, fade_duration={fade_duration})"
             elif state == 0:
-                return f"DisableMapSoundWithFade(sound_id={sound_id}, fade_duration={fade_duration})"
+                return f"DisableSoundEventWithFade(sound_id={sound_id}, fade_duration={fade_duration})"
             return f"SetMapSoundWithFade(sound_id={sound_id}, state={state}, fade_duration={fade_duration})"
 
         if instruction_index == 7:

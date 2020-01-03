@@ -500,7 +500,7 @@ def Event13600010():
     """ 13600010: Event 13600010 """
     DisableNetworkSync()
     EndIfFlagOn(13601803)
-    DisableMapSound(3603001)
+    DisableSoundEvent(3603001)
     IfStandingOnCollision(-1, 3604005)
     IfStandingOnCollision(-1, 3604007)
     IfStandingOnCollision(-1, 3604012)
@@ -518,7 +518,7 @@ def Event13600010():
     IfStandingOnCollision(-1, 3604035)
     IfStandingOnCollision(-1, 3604060)
     IfConditionTrue(0, input_condition=-1)
-    EnableMapSound(3603001)
+    EnableSoundEvent(3603001)
     IfStandingOnCollision(-2, 3604005)
     IfStandingOnCollision(-2, 3604007)
     IfStandingOnCollision(-2, 3604012)
@@ -937,8 +937,8 @@ def Event13601803():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapSound(3603000)
-    DisableMapSound(3603001)
+    DisableSoundEvent(3603000)
+    DisableSoundEvent(3603001)
     DeleteFX(3603810, erase_root_only=True)
     DeleteFX(3603811, erase_root_only=True)
     DeleteFX(3603812, erase_root_only=True)
@@ -1142,8 +1142,8 @@ def Event13604802():
 def Event13604803():
     """ 13604803: Event 13604803 """
     DisableNetworkSync()
-    DisableMapSound(3603802)
-    DisableMapSound(3603803)
+    DisableSoundEvent(3603802)
+    DisableSoundEvent(3603803)
     EndIfFlagOn(13601800)
     GotoIfThisEventOn(Label.L0)
     IfFlagOff(1, 13601800)
@@ -1711,7 +1711,7 @@ def Event13605770(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: float)
 @RestartOnRest
 def Event13605799():
     """ 13605799: Event 13605799 """
-    CreateSpawner(3600799)
+    CreateProjectileOwner(3600799)
 
 
 @RestartOnRest

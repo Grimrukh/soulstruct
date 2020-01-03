@@ -308,9 +308,9 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 26:
             tip_message_id, state = req_args
             if state == 1:
-                return f"EnableDeveloperMessage({tip_message_id})"
+                return f"EnableSoapstoneMessage({tip_message_id})"
             elif state == 0:
-                return f"DisableDeveloperMessage({tip_message_id})"
+                return f"DisableSoapstoneMessage({tip_message_id})"
             return f"SetDeveloperMessageState({tip_message_id}, state={boolify(state)})"
 
         if instruction_index == 28:
@@ -406,7 +406,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 7:
             entity_id, = req_args
-            return f"CreateSpawner({entity_id})"
+            return f"CreateProjectileOwner({entity_id})"
 
         # 8 is "AddSpecialEffect", which differs from game to game.
 
@@ -869,10 +869,10 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 3:
             sound_id, state = req_args
             if state == 1:
-                return f"EnableMapSound({sound_id})"
+                return f"EnableSoundEvent({sound_id})"
             elif state == 0:
-                return f"DisableMapSound({sound_id})"
-            return f"SetMapSoundState({sound_id}, state={state})"
+                return f"DisableSoundEvent({sound_id})"
+            return f"SetSoundEventState({sound_id}, state={state})"
 
     if instruction_class == 2011:  # ヒット
 
@@ -897,10 +897,10 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 1:
             map_part_id, state = req_args
             if state == 1:
-                return f"EnableMapPart({map_part_id})"
+                return f"EnableMapPiece({map_part_id})"
             elif state == 0:
-                return f"DisableMapPart({map_part_id})"
-            return f"SetMapPartState({map_part_id}, state={state})"
+                return f"DisableMapPiece({map_part_id})"
+            return f"SetMapPieceState({map_part_id}, state={state})"
 
     if instruction_class == 1000:  # 【実行制御】システム
 

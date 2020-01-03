@@ -264,10 +264,6 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             self['bg'] = '#522'
             self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
 
-    def _flash_red_bg(self, widget):
-        widget['bg'] = '#522'
-        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
-
     def refresh_categories(self):
         """There are few enough categories that the widgets can be completely regenerated."""
         self.select_category(None)
@@ -385,6 +381,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                         return self._start_entry_text_edit(row_index)
                 return
         else:
+            self._cancel_entry_id_edit()
             self._cancel_entry_text_edit()
 
         self.active_row_index = row_index
@@ -397,6 +394,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 self.entry_rows[row_index].text_label.focus_set()
 
     def refresh_entries(self):
+        self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
 
         entries_to_display = self._get_category_name_range(
@@ -512,6 +510,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                                                  f"{camel_case_to_spaces(self.active_category)}.")
             return False
 
+        self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         self._set_entry_text(entry_id, text)
         self.select_entry_id(entry_id, set_focus_to_text=True, edit_if_already_selected=False)
@@ -535,6 +534,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
+        self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         entry_id = self.get_entry_id(row_index)
         deleted_entry = self.get_category_dict(category=category).pop(entry_id)
@@ -608,7 +608,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             initial_text = str(entry_id)
             self._e_entry_id_edit = self.Entry(
                 self.entry_rows[row_index].id_box, initial_text=initial_text,
-                integers_only=True, sticky='ew', width=self.EntryRow.ENTRY_ID_WIDTH)
+                integers_only=True, sticky='ew', width=int(self.EntryRow.ENTRY_ID_WIDTH * 0.5))
             self._e_entry_id_edit.bind('<Return>', lambda e, i=row_index: self._confirm_entry_id_edit(i))
             self._e_entry_id_edit.bind('<Up>', self._entry_press_up)
             self._e_entry_id_edit.bind('<Down>', self._entry_press_down)
@@ -708,15 +708,17 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 self.entry_canvas.yview_scroll(1, 'units')
 
     def _refresh_buttons(self):
-        if not self.active_category or self.first_display_index == 0:
-            self.previous_range_button['state'] = 'disabled'
-        else:
-            self.previous_range_button['state'] = 'normal'
-        if (not self.active_category
-                or self.first_display_index >= len(self.get_category_dict()) - self.ENTRY_RANGE_SIZE):
-            self.next_range_button['state'] = 'disabled'
-        else:
-            self.next_range_button['state'] = 'normal'
+        if self.previous_range_button:
+            if not self.active_category or self.first_display_index == 0:
+                self.previous_range_button['state'] = 'disabled'
+            else:
+                self.previous_range_button['state'] = 'normal'
+        if self.next_range_button:
+            if (not self.active_category
+                    or self.first_display_index >= len(self.get_category_dict()) - self.ENTRY_RANGE_SIZE):
+                self.next_range_button['state'] = 'disabled'
+            else:
+                self.next_range_button['state'] = 'normal'
 
 
 class TextEditBox(SoulstructSmartFrame):
@@ -864,7 +866,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
             self.field_name_label = editor.Label(
                 self.field_name_box, text='', fg=editor.FIELD_NAME_FG, width=editor.FIELD_NAME_WIDTH,
-                bg=bg_color, anchor='w')
+                bg=bg_color, anchor='w', font_size=10)
             bind_events(self.field_name_label, main_bindings)
 
             self.value_box = editor.Frame(
@@ -1207,6 +1209,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                                                   f"{camel_case_to_spaces(self.active_category)}.")
             return False
 
+        self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         self.get_category_dict()[entry_id] = new_field_dict  # add entry to category dictionary
         self._set_entry_text(entry_id, text)

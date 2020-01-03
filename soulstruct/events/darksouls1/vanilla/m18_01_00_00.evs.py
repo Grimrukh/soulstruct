@@ -105,7 +105,7 @@ def Constructor():
     RunEvent(11810400, slot=7, args=(7, 1811617, 1811618, 1811619, 0, 1, 0, 0), arg_types='BiiiBBBB')
     RunEvent(11810400, slot=8, args=(8, 1811620, 1811621, 1811622, 0, 0, 0, 1), arg_types='BiiiBBBB')
     RunEvent(11810400, slot=9, args=(9, 1811623, 1811624, 1811624, 0, 0, 0, 0), arg_types='BiiiBBBB')
-    DisableMapSound(1813800)
+    DisableSoundEvent(1813800)
     SkipLinesIfFlagOn(2, 11810312)
     DisableFlag(11810310)
     DisableFlag(11810314)
@@ -127,7 +127,7 @@ def Constructor():
     RunEvent(11815395)
     DisableObject(1811890)
     DeleteFX(1811891, erase_root_only=False)
-    DisableMapSound(1813801)
+    DisableSoundEvent(1813801)
     EndIfFlagOff(11810000)
     SkipLinesIfFlagOff(2, 11810900)
     RunEvent(11815382)
@@ -210,7 +210,7 @@ def Event11815390():
     Move(1810800, destination=1812301, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     RotateToFaceEntity(PLAYER, 1812997)
     ForceAnimation(PLAYER, 7410)
-    DisableDeveloperMessage(1813210)
+    DisableSoapstoneMessage(1813210)
     ForceAnimation(1811115, 3)
     SkipLinesIfFlagOff(1, 11810112)
     ForceAnimation(1811111, 3)
@@ -276,7 +276,7 @@ def Event11815394():
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(11815396)
-    EnableMapSound(1813800)
+    EnableSoundEvent(1813800)
     EnableBossHealthBar(1810800, name=2232, slot=0)
     Restart()
 
@@ -292,7 +292,7 @@ def Event11815395():
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     DisableFlag(11815396)
-    DisableMapSound(1813800)
+    DisableSoundEvent(1813800)
     DisableBossHealthBar(1810800, name=2232, slot=0)
     Restart()
 
@@ -413,7 +413,7 @@ def Event11815384():
     IfFlagOn(1, 11815382)
     IfCharacterInsideRegion(1, PLAYER, region=1812890)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1813801)
+    EnableSoundEvent(1813801)
 
 
 def Event11815385():
@@ -422,7 +422,7 @@ def Event11815385():
     IfFlagOn(1, 11815384)
     IfFlagOn(1, 11810900)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1813801)
+    DisableSoundEvent(1813801)
 
 
 def Event11810000():
@@ -568,11 +568,11 @@ def Event11810400(arg_0_0: uchar, arg_4_7: int, arg_8_11: int, arg_12_15: int, a
     """ 11810400: Event 11810400 """
     IfPlayerClass(1, arg_0_0)
     EndIfConditionFalse(1)
-    DisableDeveloperMessage(1813200)
-    DisableDeveloperMessage(1813201)
-    DisableDeveloperMessage(1813202)
-    DisableDeveloperMessage(1813203)
-    DisableDeveloperMessage(1813204)
+    DisableSoapstoneMessage(1813200)
+    DisableSoapstoneMessage(1813201)
+    DisableSoapstoneMessage(1813202)
+    DisableSoapstoneMessage(1813203)
+    DisableSoapstoneMessage(1813204)
     DisableTreasure(1811601)
     DisableTreasure(1811602)
     DisableTreasure(1811603)
@@ -637,13 +637,13 @@ def Event11810400(arg_0_0: uchar, arg_4_7: int, arg_8_11: int, arg_12_15: int, a
 def Event11810450():
     """ 11810450: Event 11810450 """
     EndIfThisEventOn()
-    DisableDeveloperMessage(1813220)
-    DisableDeveloperMessage(1813221)
+    DisableSoapstoneMessage(1813220)
+    DisableSoapstoneMessage(1813221)
     IfFlagOn(-1, 11810590)
     IfFlagOn(-1, 50000082)
     IfConditionTrue(0, input_condition=-1)
-    EnableDeveloperMessage(1813220)
-    EnableDeveloperMessage(1813221)
+    EnableSoapstoneMessage(1813220)
+    EnableSoapstoneMessage(1813221)
 
 
 def Event11810220():

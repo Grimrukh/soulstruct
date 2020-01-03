@@ -1,6 +1,7 @@
 import ast
 import importlib
 import re
+import sys
 from collections import OrderedDict
 from functools import partial
 from pathlib import Path
@@ -16,7 +17,7 @@ from soulstruct.events.internal import *
 
 class EvsParser(object):
 
-    def __init__(self, evs_path_or_string, game_module=None, map_name=None):
+    def __init__(self, evs_path_or_string, game_module=None, map_name=None, script_path=None):
         """Converts Python-like EVS code to numeric EMEVD (in `.numeric_emevd`), which can be fed to an `EMEVD` class.
 
         Args:
@@ -25,6 +26,9 @@ class EvsParser(object):
             game_module: appropriate imported events game module (e.g. `soulstruct.events.darksouls1`).
             map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
         """
+
+        if script_path:
+            sys.path.append(str(script_path))
 
         if not game_module:
             raise ValueError("No game specified. Try importing this class from the appropriate game events subpackage.")
@@ -1173,7 +1177,10 @@ def _import_module(node: ast.Import, namespace: dict):
 
 def _import_from(node: ast.ImportFrom, namespace: dict):
     """Import names into given namespace dictionary."""
-    module = importlib.import_module(node.module)
+    try:
+        module = importlib.import_module(node.module)
+    except ImportError:
+        raise EmevdImportError(node.lineno, node.module)
     for alias in node.names:
         name = alias.name
         if 'soulstruct.events' in name:

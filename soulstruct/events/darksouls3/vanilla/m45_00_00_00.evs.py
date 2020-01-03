@@ -463,12 +463,12 @@ def Constructor():
 
 def Preconstructor():
     """ 50: Event 50 """
-    DisableMapSound(4504801)
-    DisableMapSound(4504802)
-    DisableMapSound(4504803)
-    DisableMapSound(4504804)
-    DisableMapSound(4504861)
-    DisableMapSound(4504862)
+    DisableSoundEvent(4504801)
+    DisableSoundEvent(4504802)
+    DisableSoundEvent(4504803)
+    DisableSoundEvent(4504804)
+    DisableSoundEvent(4504861)
+    DisableSoundEvent(4504862)
     RunEvent(14505699)
     RunEvent(14505700, slot=0, args=(4500700, 4500701))
     RunEvent(14505710, slot=0, args=(4500705, 4500706, 4506705, 4506706))
@@ -1948,7 +1948,7 @@ def Event14505620():
     DefineLabel(0)
     EnableObject(4501620)
     DisableObject(4501621)
-    EnableMapSound(4504803)
+    EnableSoundEvent(4504803)
     IfPlayerInOwnWorld(1)
     IfObjectActivated(1, obj_act_id=4503622)
     IfPlayerNotInOwnWorld(2)
@@ -1960,7 +1960,7 @@ def Event14505620():
                                          value=0)
     SetNetworkConnectedFlagState(flag=14505621, state=FlagState.On)
     DisableObjectActivation(4501622, obj_act_id=-1)
-    DisableMapSound(4504803)
+    DisableSoundEvent(4504803)
     Wait(3.0)
     EnableFlag(14505521)
     WaitFrames(1)
@@ -2081,7 +2081,7 @@ def Event14500800():
     EnableFlag(14500800)
     EnableFlag(9322)
     EnableFlag(6322)
-    EnableMapSound(4504804)
+    EnableSoundEvent(4504804)
 
 
 @RestartOnRest
@@ -2109,7 +2109,7 @@ def Event14505810():
     DisableObject(4501821)
     DisableObject(4501822)
     EnableObject(4501823)
-    EnableMapSound(4504804)
+    EnableSoundEvent(4504804)
     End()
 
     # --- 0 --- #

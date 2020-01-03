@@ -549,7 +549,7 @@ class SP_EFE_WEP_CHANGE_PARAM(UnsignedChar):
     CurrentRightHand = 1  # effect will end if weapon is changed
     CurrentLeftHand = 2  # effect will end if weapon is changed
     Self = 3  # affects character directly (i.e. status damage) rather than being applied to hits
-    LandingDamage = 4  # e.g. Orange Charred Ring effect
+    FootDamage = 4  # from kicking or landing, e.g. Orange Charred Ring effect
 
 
 class SP_EFFECT_BOOL(UnsignedChar):

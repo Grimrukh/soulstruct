@@ -1535,7 +1535,7 @@ def Event12901554(arg_0_3: int, arg_4_7: int):
 
 def Event12901555():
     """ 12901555: Event 12901555 """
-    CreateSpawner(2900000)
+    CreateProjectileOwner(2900000)
     DisableCharacter(2900000)
 
 
@@ -4973,8 +4973,8 @@ def Event12904891(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 def Event12904892(arg_0_3: int, arg_4_7: int):
     """ 12904892: Event 12904892 """
-    DisableMapSound(arg_0_3)
-    DisableMapSound(arg_4_7)
+    DisableSoundEvent(arg_0_3)
+    DisableSoundEvent(arg_4_7)
 
 
 def Event12904893(arg_0_3: int):
@@ -6590,9 +6590,9 @@ def Event12905244(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12905245(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12905245: Event 12905245 """
     SkipLinesIfFlagOff(2, arg_4_7)
-    DisableMapPart(arg_0_3)
+    DisableMapPiece(arg_0_3)
     SkipLines(1)
-    DisableMapPart(arg_8_11)
+    DisableMapPiece(arg_8_11)
     End()
 
 
@@ -8997,8 +8997,8 @@ def Event12906792(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 12906792: Event 12906792 """
     DisableNetworkSync()
-    DisableMapSound(arg_8_11)
-    DisableMapSound(arg_12_15)
+    DisableSoundEvent(arg_8_11)
+    DisableSoundEvent(arg_12_15)
     EndIfFlagOn(arg_16_19)
     GotoIfThisEventSlotOn(Label.L0)
     IfFlagOff(1, arg_16_19)
@@ -9279,8 +9279,8 @@ def Event12906810(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 12906810: Event 12906810 """
     DisableNetworkSync()
-    DisableMapSound(arg_8_11)
-    DisableMapSound(arg_12_15)
+    DisableSoundEvent(arg_8_11)
+    DisableSoundEvent(arg_12_15)
     EndIfFlagOn(arg_16_19)
     GotoIfThisEventSlotOn(Label.L0)
     IfFlagOff(1, arg_16_19)
@@ -9309,8 +9309,8 @@ def Event12906978(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 12906978: Event 12906978 """
     DisableNetworkSync()
-    DisableMapSound(arg_8_11)
-    DisableMapSound(arg_12_15)
+    DisableSoundEvent(arg_8_11)
+    DisableSoundEvent(arg_12_15)
     EndIfFlagOn(arg_16_19)
     GotoIfThisEventSlotOn(Label.L0)
     IfFlagOff(1, arg_16_19)

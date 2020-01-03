@@ -47,9 +47,9 @@ def Constructor():
 
 def Preconstructor():
     """ 50: Event 50 """
-    DisableMapSound(4104800)
-    DisableMapSound(4104801)
-    DisableMapSound(4104802)
+    DisableSoundEvent(4104800)
+    DisableSoundEvent(4104801)
+    DisableSoundEvent(4104802)
     DisableFlag(14105100)
     RunEvent(14105510)
 
@@ -318,8 +318,8 @@ def Event14105813(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
                   arg_24_27: int):
     """ 14105813: Event 14105813 """
     DisableNetworkSync()
-    DisableMapSound(arg_16_19)
-    DisableMapSound(arg_20_23)
+    DisableSoundEvent(arg_16_19)
+    DisableSoundEvent(arg_20_23)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Coop, comparison_type=ComparisonType.Equal, value=0)

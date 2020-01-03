@@ -362,12 +362,12 @@ def Preconstructor():
     RunEvent(13005620, slot=0, args=(3000700,))
     RunEvent(13005600, slot=0, args=(3000705, 3001875, 3001876))
     RunEvent(13005640, slot=0, args=(3000830,))
-    DisableMapSound(3002805)
-    DisableMapSound(3002806)
-    DisableMapSound(3002835)
-    DisableMapSound(3002836)
-    DisableMapSound(3002898)
-    DisableMapSound(3002899)
+    DisableSoundEvent(3002805)
+    DisableSoundEvent(3002806)
+    DisableSoundEvent(3002835)
+    DisableSoundEvent(3002836)
+    DisableSoundEvent(3002898)
+    DisableSoundEvent(3002899)
 
 
 def Event13000200():
@@ -392,9 +392,9 @@ def Event13000210():
 def Event13000230():
     """ 13000230: Event 13000230 """
     EndIfThisEventSlotOn()
-    DisableDeveloperMessage(3002280)
+    DisableSoapstoneMessage(3002280)
     IfPlayerHasGood(0, 2117, including_box=True)
-    EnableDeveloperMessage(3002280)
+    EnableSoapstoneMessage(3002280)
 
 
 def Event13000360():
@@ -1189,7 +1189,7 @@ def Event13005811():
     IfCharacterDead(0, 3000800)
     Wait(3.5)
     KillBoss(3000800)
-    DisableMapSound(3002805)
+    DisableSoundEvent(3002805)
     ChangeCamera(normal_camera_id=-1, locked_camera_id=-1)
     EnableFlag(13000800)
     EnableFlag(9301)
@@ -1340,7 +1340,7 @@ def Event13005830():
     DisableAI(3000830)
     DisableHealthBar(3000830)
     DisableCharacter(3000830)
-    DisableMapSound(3002835)
+    DisableSoundEvent(3002835)
     EndIfFlagOn(13000830)
     GotoIfThisEventSlotOn(Label.L1)
     GotoIfFlagOn(Label.L0, 13000838)
@@ -1535,8 +1535,8 @@ def Event13005890():
     DisableAI(3000899)
     DisableCharacter(3000899)
     DisableAnimations(3000899)
-    DisableMapSound(3002899)
-    DisableMapSound(3002898)
+    DisableSoundEvent(3002899)
+    DisableSoundEvent(3002898)
     ForceAnimation(3001895, 2, loop=True)
     DisableObjectActivation(3001895, obj_act_id=300370)
     CreateObjectFX(800030, obj=3001360, model_point=210)

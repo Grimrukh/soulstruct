@@ -1,1 +1,1 @@
-from .core import SoulstructProject
+from .core import SoulstructProject, SoulstructProjectWindow

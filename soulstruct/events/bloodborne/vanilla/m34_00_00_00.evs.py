@@ -606,10 +606,10 @@ def Event13401500():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPart(3404200)
-    DisableMapPart(3404201)
-    DisableMapPart(3404202)
-    DisableMapPart(3404203)
+    DisableMapPiece(3404200)
+    DisableMapPiece(3404201)
+    DisableMapPiece(3404202)
+    DisableMapPiece(3404203)
     DeleteFX(3403600, erase_root_only=True)
     DeleteFX(3403601, erase_root_only=True)
     DeleteFX(3403602, erase_root_only=True)
@@ -1122,8 +1122,8 @@ def Event13404802():
 def Event13404803():
     """ 13404803: Event 13404803 """
     DisableNetworkSync()
-    DisableMapSound(3403802)
-    DisableMapSound(3403803)
+    DisableSoundEvent(3403802)
+    DisableSoundEvent(3403803)
     EndIfFlagOn(9471)
     GotoIfThisEventOn(Label.L0)
     IfFlagOff(1, 13401800)
@@ -1449,8 +1449,8 @@ def Event13404841():
 def Event13401850():
     """ 13401850: Event 13401850 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(3403802)
-    DisableMapSound(3403803)
+    DisableSoundEvent(3403802)
+    DisableSoundEvent(3403803)
     DisableCharacter(3400850)
     Kill(3400850, award_souls=True)
     DisableObject(3401850)
@@ -1687,8 +1687,8 @@ def Event13404852():
 def Event13404853():
     """ 13404853: Event 13404853 """
     DisableNetworkSync()
-    DisableMapSound(3403852)
-    DisableMapSound(3403853)
+    DisableSoundEvent(3403852)
+    DisableSoundEvent(3403853)
     EndIfFlagOn(13401850)
     GotoIfThisEventOn(Label.L0)
     IfFlagOff(1, 13401850)
@@ -1945,7 +1945,7 @@ def Event13400330(arg_0_3: int):
 @RestartOnRest
 def Event13404799():
     """ 13404799: Event 13404799 """
-    CreateSpawner(3400799)
+    CreateProjectileOwner(3400799)
 
 
 @RestartOnRest

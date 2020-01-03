@@ -13,7 +13,7 @@ def Constructor():
     RegisterBonfire(11200984, obj=1201961, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
     RegisterLadder(start_climbing_flag=11200010, stop_climbing_flag=11200011, obj=1201140)
     RegisterLadder(start_climbing_flag=11200012, stop_climbing_flag=11200013, obj=1201141)
-    CreateSpawner(1200090)
+    CreateProjectileOwner(1200090)
     SkipLinesIfFlagOn(2, 11200000)
     SkipLinesIfFlagOn(1, 11200002)
     SkipLines(1)
@@ -44,7 +44,7 @@ def Constructor():
     RunEvent(11200690)
     RunEvent(11200600, slot=0, args=(1201650, 11200600))
     RunEvent(11200600, slot=1, args=(1201651, 11200601))
-    DisableMapSound(1203800)
+    DisableSoundEvent(1203800)
     SkipLinesIfFlagOff(4, 5)
     RunEvent(11205392)
     DisableObject(1201990)
@@ -60,7 +60,7 @@ def Constructor():
     RunEvent(11205395)
     RunEvent(11205396)
     RunEvent(11200002)
-    DisableMapSound(1203801)
+    DisableSoundEvent(1203801)
     SkipLinesIfFlagOff(6, 11200900)
     RunEvent(11205382)
     DisableObject(1201890)
@@ -501,7 +501,7 @@ def Event11205394():
     IfFlagOn(1, 11205391)
     IfCharacterInsideRegion(1, PLAYER, region=1202990)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1203800)
+    EnableSoundEvent(1203800)
 
 
 def Event11205395():
@@ -510,7 +510,7 @@ def Event11205395():
     IfFlagOn(1, 5)
     IfFlagOn(1, 11205394)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1203800)
+    DisableSoundEvent(1203800)
 
 
 @RestartOnRest
@@ -598,7 +598,7 @@ def Event11205384():
     IfFlagOn(1, 11205381)
     IfCharacterInsideRegion(1, PLAYER, region=1202890)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1203801)
+    EnableSoundEvent(1203801)
 
 
 def Event11205385():
@@ -607,7 +607,7 @@ def Event11205385():
     IfFlagOn(1, 11200900)
     IfFlagOn(1, 11205384)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1203801)
+    DisableSoundEvent(1203801)
 
 
 def Event11205120(arg_0_3: int, arg_4_7: int):

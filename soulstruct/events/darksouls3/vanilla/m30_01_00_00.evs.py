@@ -182,8 +182,8 @@ def Preconstructor():
     DisableAnimations(3010790)
     DisableGravity(3010790)
     DisableCharacterCollision(3010790)
-    DisableMapSound(3012803)
-    DisableMapSound(3012804)
+    DisableSoundEvent(3012803)
+    DisableSoundEvent(3012804)
 
 
 @RestartOnRest

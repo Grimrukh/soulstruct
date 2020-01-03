@@ -29,7 +29,7 @@ def Constructor():
     RunEvent(11215090)
     RunEvent(11215091)
     RunEvent(11215092)
-    DisableMapSound(1213800)
+    DisableSoundEvent(1213800)
     SkipLinesIfFlagOff(6, 11210000)
     RunEvent(11210000)
     DisableObject(1211790)
@@ -50,7 +50,7 @@ def Constructor():
     RunEvent(11215007)
     RunEvent(11215008)
     RunEvent(11215009)
-    DisableMapSound(1213801)
+    DisableSoundEvent(1213801)
     SkipLinesIfFlagOff(7, 11210001)
     RunEvent(11210001)
     DisableObject(1211890)
@@ -66,7 +66,7 @@ def Constructor():
     RunEvent(11215014)
     RunEvent(11215015)
     RunEvent(11210001)
-    DisableMapSound(1213802)
+    DisableSoundEvent(1213802)
     SkipLinesIfFlagOff(4, 11210002)
     RunEvent(11210002)
     DisableObject(1211990)
@@ -81,7 +81,7 @@ def Constructor():
     RunEvent(11215025)
     RunEvent(11210002)
     RunEvent(11215026)
-    DisableMapSound(1213803)
+    DisableSoundEvent(1213803)
     IfFlagOn(1, 11210592)
     IfFlagOff(1, 11210004)
     SkipLinesIfConditionTrue(3, 1)
@@ -172,8 +172,8 @@ def Constructor():
     RunEvent(11210170, slot=2, args=(11215222, 1213052, 1212125))
     RunEvent(11210170, slot=3, args=(11215223, 1213053, 1212135))
     RunEvent(11210170, slot=4, args=(11215224, 1213054, 1212145))
-    DisableMapSound(1213810)
-    DisableMapSound(1213811)
+    DisableSoundEvent(1213810)
+    DisableSoundEvent(1213811)
     RunEvent(11210200, slot=0, args=(1211200, 1212200))
     RunEvent(11210200, slot=1, args=(1211201, 1212201))
     RunEvent(11210205, slot=0, args=(1211200, 1212200, 11210200))
@@ -511,7 +511,7 @@ def Event11215004():
     IfFlagOn(1, 11215001)
     IfCharacterInsideRegion(1, PLAYER, region=1212886)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1213800)
+    EnableSoundEvent(1213800)
 
 
 def Event11215005():
@@ -520,7 +520,7 @@ def Event11215005():
     IfFlagOn(1, 11215004)
     IfFlagOn(1, 11210000)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1213800)
+    DisableSoundEvent(1213800)
 
 
 @RestartOnRest
@@ -748,7 +748,7 @@ def Event11215014():
     IfFlagOn(1, 11215011)
     IfCharacterInsideRegion(1, PLAYER, region=1212896)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1213801)
+    EnableSoundEvent(1213801)
 
 
 def Event11215015():
@@ -757,7 +757,7 @@ def Event11215015():
     IfFlagOn(1, 11215014)
     IfFlagOn(1, 11210001)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1213801)
+    DisableSoundEvent(1213801)
 
 
 @RestartOnRest
@@ -901,7 +901,7 @@ def Event11215024():
     SkipLines(1)
     IfCharacterInsideRegion(1, PLAYER, region=1212990)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1213802)
+    EnableSoundEvent(1213802)
 
 
 def Event11215025():
@@ -910,7 +910,7 @@ def Event11215025():
     IfFlagOn(1, 11215024)
     IfFlagOn(1, 11210002)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1213802)
+    DisableSoundEvent(1213802)
 
 
 def Event11210002():
@@ -1022,7 +1022,7 @@ def Event11215064():
     IfFlagOn(1, 11215067)
     IfCharacterInsideRegion(1, PLAYER, region=1212900)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1213803)
+    EnableSoundEvent(1213803)
 
 
 def Event11215065():
@@ -1031,7 +1031,7 @@ def Event11215065():
     IfFlagOn(1, 11215064)
     IfFlagOn(1, 11210004)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1213803)
+    DisableSoundEvent(1213803)
 
 
 def Event11215066():

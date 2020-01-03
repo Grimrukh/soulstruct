@@ -75,11 +75,11 @@ def Constructor():
     RunEvent(12420030, slot=3, args=(12420127,))
     RunEvent(12420050, slot=0, args=(2421100, 12421000, 9942))
     RunEvent(12420050, slot=1, args=(2421101, 12421001, 9942))
-    DisableMapSound(2423802)
-    DisableMapSound(2423803)
-    DisableMapSound(2423812)
-    DisableMapSound(2423813)
-    CreateSpawner(2420801)
+    DisableSoundEvent(2423802)
+    DisableSoundEvent(2423803)
+    DisableSoundEvent(2423812)
+    DisableSoundEvent(2423813)
+    CreateProjectileOwner(2420801)
     RunEvent(12424812)
     RunEvent(12424813)
     RunEvent(12421800)
@@ -268,8 +268,8 @@ def Event12420700():
 def Event12421800():
     """ 12421800: Event 12421800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2423802)
-    DisableMapSound(2423803)
+    DisableSoundEvent(2423802)
+    DisableSoundEvent(2423803)
     DisableCharacter(2420800)
     Kill(2420800, award_souls=False)
     DisableObject(2421800)
@@ -489,8 +489,8 @@ def Event12424803():
     DisableNetworkSync()
     EndIfFlagOn(12421800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2423802)
-    DisableMapSound(2423803)
+    DisableSoundEvent(2423802)
+    DisableSoundEvent(2423803)
     IfFlagOff(1, 12421800)
     IfFlagOn(1, 12424802)
     SkipLinesIfHost(1)
@@ -628,8 +628,8 @@ def Event12424990():
 def Event12421700():
     """ 12421700: Event 12421700 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2423812)
-    DisableMapSound(2423813)
+    DisableSoundEvent(2423812)
+    DisableSoundEvent(2423813)
     DisableCharacter(2420810)
     Kill(2420810, award_souls=False)
     DisableCharacter(2420711)
@@ -961,8 +961,8 @@ def Event12424703():
     DisableNetworkSync()
     EndIfFlagOn(12421700)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2703802)
-    DisableMapSound(2703803)
+    DisableSoundEvent(2703802)
+    DisableSoundEvent(2703803)
     IfFlagOff(1, 12421700)
     IfFlagOn(1, 12424702)
     SkipLinesIfHost(1)
@@ -1555,14 +1555,14 @@ def Event12420400():
 
     # --- 2 --- #
     DefineLabel(2)
-    EnableMapPart(2424000)
-    DisableMapPart(2424010)
+    EnableMapPiece(2424000)
+    DisableMapPiece(2424010)
     End()
 
     # --- 3 --- #
     DefineLabel(3)
-    DisableMapPart(2424000)
-    EnableMapPart(2424010)
+    DisableMapPiece(2424000)
+    EnableMapPiece(2424010)
 
 
 def Event12420500():
@@ -1744,15 +1744,15 @@ def Event12425225():
 def Event12425245():
     """ 12425245: Event 12425245 """
     DisableNetworkSync()
-    DisableMapSound(2423600)
+    DisableSoundEvent(2423600)
     IfInsideMap(1, game_map=UPPER_CATHEDRAL_WARD)
     IfFlagOff(1, 12425246)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(2423600)
+    EnableSoundEvent(2423600)
     IfOutsideMap(-1, game_map=UPPER_CATHEDRAL_WARD)
     IfFlagOn(-1, 12425246)
     IfConditionTrue(0, input_condition=-1)
-    DisableMapSound(2423600)
+    DisableSoundEvent(2423600)
     Restart()
 
 

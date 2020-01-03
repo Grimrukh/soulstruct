@@ -10,7 +10,7 @@ from soulstruct.events.darksouls1 import *
 
 def Constructor():
     """ 0: Event 0 """
-    CreateSpawner(1500200)
+    CreateProjectileOwner(1500200)
     SetNetworkUpdateRate(1500100, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     RegisterBonfire(11500984, obj=1501961, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
     RegisterLadder(start_climbing_flag=11500010, stop_climbing_flag=11500011, obj=1501140)
@@ -136,7 +136,7 @@ def Constructor():
     RunEvent(11505080)
     RunEvent(11500210)
     RunEvent(11500835)
-    DisableMapSound(1503800)
+    DisableSoundEvent(1503800)
     SkipLinesIfFlagOff(4, 11)
     RunEvent(11505392)
     DisableObject(1501990)
@@ -485,7 +485,7 @@ def Event11505394():
     IfCharacterInsideRegion(1, PLAYER, region=1502996)
     IfCharacterAlive(1, 1500800)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1503800)
+    EnableSoundEvent(1503800)
 
 
 def Event11505395():
@@ -494,7 +494,7 @@ def Event11505395():
     IfFlagOn(1, 11)
     IfFlagOn(1, 11505394)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1503800)
+    DisableSoundEvent(1503800)
     PlaySoundEffect(anchor_entity=1502990, sound_type=SoundType.a_Ambient, sound_id=150100002)
 
 

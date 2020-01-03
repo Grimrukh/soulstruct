@@ -101,7 +101,7 @@ def Constructor():
     RunEvent(11510260, slot=0, args=(11510251, 1512251, 1512250))
     RunEvent(11510260, slot=1, args=(11510257, 1512253, 1512252))
     RunEvent(11510260, slot=2, args=(11510258, 1512255, 1512254))
-    DisableMapSound(1513800)
+    DisableSoundEvent(1513800)
     SkipLinesIfFlagOff(10, 12)
     ForceAnimation(1511401, 0, loop=True)
     ForceAnimation(1511402, 0, loop=True)
@@ -124,7 +124,7 @@ def Constructor():
     RunEvent(11515397)
     RunEvent(11515398)
     RunEvent(11515399)
-    DisableMapSound(1513802)
+    DisableSoundEvent(1513802)
     SkipLinesIfFlagOff(6, 11510900)
     RunEvent(11515382)
     DisableObject(1511890)
@@ -525,7 +525,7 @@ def Event11515384():
     IfFlagOn(1, 11515382)
     IfCharacterInsideRegion(1, PLAYER, region=1512890)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1513802)
+    EnableSoundEvent(1513802)
 
 
 def Event11515385():
@@ -534,7 +534,7 @@ def Event11515385():
     IfHealthLessThanOrEqual(1, 1510650, 0.0)
     IfFlagOn(1, 11515384)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1513802)
+    DisableSoundEvent(1513802)
 
 
 @RestartOnRest
@@ -722,7 +722,7 @@ def Event11515394():
     IfFlagOn(1, 11515391)
     IfCharacterInsideRegion(1, PLAYER, region=1512990)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1513800)
+    EnableSoundEvent(1513800)
     EnableBackread(1510801)
 
 
@@ -732,7 +732,7 @@ def Event11515395():
     IfFlagOn(1, 12)
     IfFlagOn(1, 11515394)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1513800)
+    DisableSoundEvent(1513800)
 
 
 def Event11515396():
@@ -1329,13 +1329,13 @@ def Event11510310():
 
 def Event11510400():
     """ 11510400: Event 11510400 """
-    DisableMapPart(1513401)
+    DisableMapPiece(1513401)
     SkipLinesIfThisEventOff(7)
-    DisableMapSound(1513801)
+    DisableSoundEvent(1513801)
     SetMapDrawParamSlot(15, slot=1)
     SetLockedCameraSlot(game_map=ANOR_LONDO, camera_slot=1)
-    DisableMapPart(1513400)
-    EnableMapPart(1513401)
+    DisableMapPiece(1513400)
+    EnableMapPiece(1513401)
     DisableObject(1511400)
     End()
     EnableCharacter(1510600)
@@ -1343,7 +1343,7 @@ def Event11510400():
     IfEntityWithinDistance(1, 1510600, PLAYER, radius=15.0)
     IfConditionTrue(0, input_condition=1)
     Wait(3.0)
-    DisableMapSound(1513801)
+    DisableSoundEvent(1513801)
     EnableFlag(743)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterHollow(-1, PLAYER)
@@ -1362,8 +1362,8 @@ def Event11510400():
     WaitFrames(1)
     SetMapDrawParamSlot(15, slot=1)
     SetLockedCameraSlot(game_map=ANOR_LONDO, camera_slot=1)
-    DisableMapPart(1513400)
-    EnableMapPart(1513401)
+    DisableMapPiece(1513400)
+    EnableMapPiece(1513401)
     DisableObject(1511400)
     IfPlayerHasGood(2, 2510, including_box=False)
     EndIfConditionTrue(2)

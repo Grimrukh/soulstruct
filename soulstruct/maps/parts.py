@@ -3,7 +3,7 @@ from enum import IntEnum
 import struct
 
 from soulstruct.core import InvalidFieldValueError
-from soulstruct.maps.core import MSBEntry
+from soulstruct.maps.core import MSBEntryEntity
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector
 
 
@@ -24,7 +24,7 @@ def MSBPart(msb_buffer):
     return BaseMSBPart.auto_part_subclass(msb_buffer)
 
 
-class BaseMSBPart(MSBEntry):
+class BaseMSBPart(MSBEntryEntity):
     PART_HEADER_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
         ('part_type', 'i'),
@@ -149,7 +149,6 @@ class BaseMSBPart(MSBEntry):
         self.scale = Vector(1, 1, 1)  # only relevant for MapPiece and Object
         self.draw_groups = list(range(128))  # [0, 1, 2, ..., 128]
         self.display_groups = list(range(128))  # [0, 1, 2, ..., 128]
-        self.entity_id = None
 
         # Lighting parameters
         self.ambient_light_id = None

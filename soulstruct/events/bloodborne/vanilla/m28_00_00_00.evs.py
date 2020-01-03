@@ -1025,7 +1025,7 @@ def Event12805900(arg_0_3: int):
 def Event12805918():
     """ 12805918: Event 12805918 """
     SetTeamType(2800560, TeamType.Boss)
-    CreateSpawner(2800560)
+    CreateProjectileOwner(2800560)
 
 
 @RestartOnRest
@@ -1158,9 +1158,9 @@ def Event12800400():
 
     # --- 0 --- #
     DefineLabel(0)
-    EnableMapPart(2804000)
-    DisableMapPart(2804001)
-    DisableMapPart(2804002)
+    EnableMapPiece(2804000)
+    DisableMapPiece(2804001)
+    DisableMapPiece(2804002)
     DisableObject(2801000)
     DeleteFX(2803910, erase_root_only=False)
     DeleteFX(2803911, erase_root_only=False)
@@ -1168,9 +1168,9 @@ def Event12800400():
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapPart(2804000)
-    EnableMapPart(2804001)
-    DisableMapPart(2804002)
+    DisableMapPiece(2804000)
+    EnableMapPiece(2804001)
+    DisableMapPiece(2804002)
     DeleteFX(2803911, erase_root_only=False)
 
     # --- 4 --- #
@@ -1279,9 +1279,9 @@ def Event12800400():
     EnableFlag(2800)
     SkipLines(1)
     DisableFlag(2800)
-    DisableMapPart(2804000)
-    DisableMapPart(2804001)
-    EnableMapPart(2804002)
+    DisableMapPiece(2804000)
+    DisableMapPiece(2804001)
+    EnableMapPiece(2804002)
     EnableObject(2801000)
     DeleteFX(2803910, erase_root_only=False)
     EnableObject(2801052)
@@ -1463,17 +1463,17 @@ def Event12800433(arg_0_3: int):
 def Event12800435():
     """ 12800435: Event 12800435 """
     DisableNetworkSync()
-    DisableMapSound(2803600)
+    DisableSoundEvent(2803600)
     IfFlagOff(1, 9802)
     IfInsideMap(1, game_map=YAHARGUL)
     IfCharacterOutsideRegion(1, PLAYER, region=2802650)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(2803600)
+    EnableSoundEvent(2803600)
     IfFlagOn(-1, 9802)
     IfOutsideMap(-1, game_map=YAHARGUL)
     IfCharacterInsideRegion(-1, PLAYER, region=2802650)
     IfConditionTrue(0, input_condition=-1)
-    DisableMapSound(2803600)
+    DisableSoundEvent(2803600)
     Restart()
 
 
@@ -1483,11 +1483,11 @@ def Event12800436():
     IfCharacterInsideRegion(1, PLAYER, region=2802020)
     IfFlagOff(1, 9802)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(2803600)
+    DisableSoundEvent(2803600)
     IfCharacterInsideRegion(2, PLAYER, region=2802021)
     IfFlagOff(2, 9802)
     IfConditionTrue(0, input_condition=2)
-    EnableMapSound(2803600)
+    EnableSoundEvent(2803600)
     Restart()
 
 
@@ -1759,9 +1759,9 @@ def Event12800999():
 def Event12801800():
     """ 12801800: Event 12801800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2803802)
-    DisableMapSound(2803803)
-    DisableMapSound(2803804)
+    DisableSoundEvent(2803802)
+    DisableSoundEvent(2803803)
+    DisableSoundEvent(2803804)
     DisableCharacter(2800800)
     DisableCharacter(2800801)
     DisableCharacter(2800802)
@@ -2067,15 +2067,15 @@ def Event12804803():
     DisableNetworkSync()
     EndIfFlagOn(12801800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2803802)
-    DisableMapSound(2803803)
+    DisableSoundEvent(2803802)
+    DisableSoundEvent(2803803)
     IfFlagOff(1, 12801800)
     IfFlagOn(1, 12804802)
     SkipLinesIfHost(1)
     IfFlagOn(1, 12804801)
     IfCharacterInsideRegion(1, PLAYER, region=2802802)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(2803804)
+    DisableSoundEvent(2803804)
     SetBossMusicState(2803802, state=True)
     IfHasTAEEvent(2, 2800800, tae_event_id=300)
 
@@ -2087,7 +2087,7 @@ def Event12804803():
     IfFlagOn(2, 12804801)
     IfCharacterInsideRegion(2, PLAYER, region=2802802)
     IfConditionTrue(0, input_condition=2)
-    DisableMapSound(2803804)
+    DisableSoundEvent(2803804)
     SetBossMusicState(2803802, state=False)
     WaitFrames(0)
     SetBossMusicState(2803803, state=True)

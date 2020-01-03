@@ -2,8 +2,6 @@
 
 TODO:
     - ESD state indices are wrong (or at least printing to esd.py wrong).
-    - Change 'EVS' extension to 'emevd.py'.
-    - Improve GUI aesthetics.
     - Show LuaInfo and LuaGnl and offer decompiling (has to be optional because of decompile errors).
 
 Command Line Usage:
@@ -14,25 +12,20 @@ python -m soulstruct [source]
     [-p / --params]
     [-l / --lighting]
     [--config] live_game_path temp_game_path default_game_path
-    TODO: Event and ESD editors.
     TODO: fileLogLevel and consoleLogLevel.
 """
 import argparse
 import logging
-import os
 
-from soulstruct.core import SoulstructError
+from soulstruct import DEFAULT_PROJECT_PATH
 from soulstruct.utilities import word_wrap
 
 LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'}
 
-# TODO
-DEFAULT_PATH = os.path.expanduser('~/Documents/Dark Souls/soulstruct-projects/ptd-project')
-
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")
 parser.add_argument(
-    "source", nargs='?', default=DEFAULT_PATH,
+    "source", nargs='?', default=DEFAULT_PROJECT_PATH,
     help=word_wrap(
         "Source file or directory to read from. Use 'live' to use the LIVE_GAME_PATH, 'temp' to use the "
         "TEMP_GAME_PATH, or 'default' (or no source) to use the DEFAULT_GAME_PATH. If no additional arguments are "
@@ -42,8 +35,7 @@ parser.add_argument(
     )
 )
 parser.add_argument(
-    # TODO: Defaults to True until GUI is ready, and will then default to False.
-    "-c", "--console", action='store_true', default=True,
+    "-c", "--console", action='store_true', default=False,
     help=word_wrap(
         "Open an interactive IPython console rather than using the Soulstruct GUI. IPython must be installed to use "
         "this option, but you can always import and use Soulstruct from directly within an existing Python session."
@@ -90,6 +82,7 @@ parser.add_argument(
 
 
 Project = None
+Maps = None
 Text = None
 Params = None
 Lighting = None
@@ -114,6 +107,12 @@ def soulstruct_main(ss_args):
     # TODO: FILE_HANDLER.setLevel(file_log_level)
 
     if ss_args.text:
+        from soulstruct.maps import DarkSoulsMaps
+        global Maps
+        Maps = DarkSoulsMaps(ss_args.source)
+        return ss_args.console
+
+    if ss_args.text:
         from soulstruct.text import DarkSoulsText
         global Text
         Text = DarkSoulsText(ss_args.source)
@@ -132,20 +131,20 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     # No specific type. Open entire project.
-    from soulstruct.project import SoulstructProject
-    global Project
-    try:
+    if ss_args.console:
+        from soulstruct.project import SoulstructProject
+        global Project
         Project = SoulstructProject(ss_args.source)
-    except SoulstructError:
-        raise
-        # return False
-    return ss_args.console
+        return True
+    else:
+        from soulstruct.project import SoulstructProjectWindow
+        window = SoulstructProjectWindow(ss_args.source)
+        window.wait_window()  # MAIN LOOP
+        return False
 
 
 launch_interactive = soulstruct_main(parser.parse_args())
 
-exit()
-# TODO: Skipping interactive for now.
 
 if launch_interactive:
     try:

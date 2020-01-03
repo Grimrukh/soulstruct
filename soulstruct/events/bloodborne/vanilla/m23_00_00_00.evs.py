@@ -89,9 +89,9 @@ def Constructor():
     CreateObjectFX(923230, obj=2301221, model_point=1)
     CreateObjectFX(923230, obj=2301222, model_point=1)
     CreateObjectFX(923230, obj=2301223, model_point=1)
-    CreateSpawner(2300270)
-    CreateSpawner(2300271)
-    CreateSpawner(2300272)
+    CreateProjectileOwner(2300270)
+    CreateProjectileOwner(2300271)
+    CreateProjectileOwner(2300272)
     CreateHazard(12300300, 2301400, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
                  radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     CreateHazard(12300301, 2301401, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
@@ -534,8 +534,8 @@ def Preconstructor():
 def Event12301800():
     """ 12301800: Event 12301800 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2303802)
-    DisableMapSound(2303803)
+    DisableSoundEvent(2303802)
+    DisableSoundEvent(2303803)
     DisableCharacter(2300800)
     Kill(2300800, award_souls=False)
     DisableObject(2301800)
@@ -746,8 +746,8 @@ def Event12304803():
     DisableNetworkSync()
     EndIfFlagOn(12301800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2303802)
-    DisableMapSound(2303803)
+    DisableSoundEvent(2303802)
+    DisableSoundEvent(2303803)
     IfFlagOff(1, 12301800)
     IfFlagOn(1, 12304802)
     SkipLinesIfHost(1)
@@ -828,8 +828,8 @@ def Event12304808():
 def Event12301700():
     """ 12301700: Event 12301700 """
     GotoIfThisEventOff(Label.L0)
-    DisableMapSound(2303812)
-    DisableMapSound(2303813)
+    DisableSoundEvent(2303812)
+    DisableSoundEvent(2303813)
     DisableCharacter(2300810)
     Kill(2300810, award_souls=False)
     DisableObject(2301810)
@@ -1056,8 +1056,8 @@ def Event12304703():
     DisableNetworkSync()
     EndIfFlagOn(12301700)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2303812)
-    DisableMapSound(2303813)
+    DisableSoundEvent(2303812)
+    DisableSoundEvent(2303813)
     IfFlagOff(1, 12301700)
     IfFlagOn(1, 12304702)
     SkipLinesIfHost(1)
@@ -1461,7 +1461,7 @@ def Event12304505():
 @RestartOnRest
 def Event12304506():
     """ 12304506: Event 12304506 """
-    DisableDeveloperMessage(2303300)
+    DisableSoapstoneMessage(2303300)
     DeleteFX(2303400, erase_root_only=False)
     EndIfThisEventOn()
     IfPlayerHasGood(1, 200, including_box=False)
@@ -1470,12 +1470,12 @@ def Event12304506():
     IfFlagOn(1, 72400461)
     IfFlagRangeAnyOn(1, (1340, 1341))
     IfConditionTrue(0, input_condition=1)
-    EnableDeveloperMessage(2303300)
+    EnableSoapstoneMessage(2303300)
     CreateFX(2303400)
     IfFlagOn(-1, 12304509)
     IfFlagOn(-1, 12301800)
     IfConditionTrue(0, input_condition=-1)
-    DisableDeveloperMessage(2303300)
+    DisableSoapstoneMessage(2303300)
     DeleteFX(2303400, erase_root_only=True)
 
 
@@ -1592,7 +1592,7 @@ def Event12300160():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapSound(2304020)
+    DisableSoundEvent(2304020)
 
 
 def Event12300180():
@@ -1735,16 +1735,16 @@ def Event12300300():
     """ 12300300: Event 12300300 """
     GotoIfFlagOn(Label.L0, 9802)
     GotoIfFlagOn(Label.L0, 9801)
-    EnableMapPart(2306010)
-    DisableMapPart(2306011)
-    DisableMapPart(2304000)
+    EnableMapPiece(2306010)
+    DisableMapPiece(2306011)
+    DisableMapPiece(2304000)
     Goto(Label.L1)
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPart(2306010)
-    EnableMapPart(2306011)
-    EnableMapPart(2304000)
+    DisableMapPiece(2306010)
+    EnableMapPiece(2306011)
+    EnableMapPiece(2304000)
     DeleteFX(2303600, erase_root_only=False)
     DeleteFX(2303601, erase_root_only=False)
     DeleteFX(2303602, erase_root_only=False)

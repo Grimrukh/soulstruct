@@ -673,8 +673,8 @@ def Event12704803():
     DisableNetworkSync()
     EndIfFlagOn(12701800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2703802)
-    DisableMapSound(2703803)
+    DisableSoundEvent(2703802)
+    DisableSoundEvent(2703803)
     IfFlagOff(1, 12701800)
     IfFlagOn(1, 12704802)
     SkipLinesIfHost(1)
@@ -711,8 +711,8 @@ def Event12704805():
     """ 12704805: Event 12704805 """
     DisableNetworkSync()
     GotoIfFlagOff(Label.L0, 12701800)
-    DisableMapSound(2703802)
-    DisableMapSound(2703803)
+    DisableSoundEvent(2703802)
+    DisableSoundEvent(2703803)
     End()
 
     # --- 0 --- #

@@ -325,14 +325,14 @@ def Preconstructor():
     RunEvent(14005700, slot=0, args=(4000720, 4004720), event_layers=['0', '3', '4', '5', '6', '7', '8', '9'])
     RunEvent(14000401)
     RunEvent(14000100, event_layers=['0', '2', '3', '4', '5', '6', '7', '8', '9'])
-    DisableMapSound(4004800)
-    DisableMapSound(4004801)
-    DisableMapSound(4004830)
-    DisableMapSound(4004831)
-    DisableMapSound(4004450)
-    DisableMapSound(4004460)
-    DisableMapSound(4003700)
-    DisableMapSound(4003701)
+    DisableSoundEvent(4004800)
+    DisableSoundEvent(4004801)
+    DisableSoundEvent(4004830)
+    DisableSoundEvent(4004831)
+    DisableSoundEvent(4004450)
+    DisableSoundEvent(4004460)
+    DisableSoundEvent(4003700)
+    DisableSoundEvent(4003701)
 
 
 def Event14000100():
@@ -857,15 +857,15 @@ def Event14005442():
 def Event14005445():
     """ 14005445: Event 14005445 """
     EndIfFlagOff(131)
-    DisableDeveloperMessage(4004222)
+    DisableSoapstoneMessage(4004222)
 
 
 def Event14005450():
     """ 14005450: Event 14005450 """
     DisableNetworkSync()
     EndIfPlayerNotInOwnWorld()
-    DisableMapSoundWithFade(sound_id=4004450, fade_duration=5.0)
-    DisableMapSoundWithFade(sound_id=4004460, fade_duration=5.0)
+    DisableSoundEventWithFade(sound_id=4004450, fade_duration=5.0)
+    DisableSoundEventWithFade(sound_id=4004460, fade_duration=5.0)
     Wait(0.5)
     IfStandingOnCollision(-1, 4004100)
     IfStandingOnCollision(-1, 4004101)
@@ -877,9 +877,9 @@ def Event14005450():
     IfFlagOff(1, 74000122)
     IfConditionTrue(0, input_condition=1)
     SkipLinesIfFlagOff(2, 50006020)
-    EnableMapSoundWithFade(sound_id=4004450, fade_duration=5.0)
+    EnableSoundEventWithFade(sound_id=4004450, fade_duration=5.0)
     SkipLines(1)
-    EnableMapSoundWithFade(sound_id=4004460, fade_duration=5.0)
+    EnableSoundEventWithFade(sound_id=4004460, fade_duration=5.0)
     Wait(0.5)
     IfStandingOnCollision(-2, 4004100)
     IfStandingOnCollision(-2, 4004101)
@@ -892,8 +892,8 @@ def Event14005450():
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
     RestartIfFinishedConditionFalse(2)
-    DisableMapSoundWithFade(sound_id=4004450, fade_duration=5.0)
-    DisableMapSoundWithFade(sound_id=4004460, fade_duration=5.0)
+    DisableSoundEventWithFade(sound_id=4004450, fade_duration=5.0)
+    DisableSoundEventWithFade(sound_id=4004460, fade_duration=5.0)
     Wait(3.0)
     Restart()
 
@@ -902,8 +902,8 @@ def Event14005450():
 def Event1405451():
     """ 1405451: Event 1405451 """
     DisableNetworkSync()
-    DisableMapSound(4004450)
-    DisableMapSound(4004460)
+    DisableSoundEvent(4004450)
+    DisableSoundEvent(4004460)
 
 
 def Event14005460():
@@ -2636,14 +2636,14 @@ def Event14005605(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event14005615(arg_0_3: int):
     """ 14005615: Event 14005615 """
     EndIfPlayerNotInOwnWorld()
-    DisableMapSound(4003700)
-    DisableMapSound(4003701)
+    DisableSoundEvent(4003700)
+    DisableSoundEvent(4003701)
     IfCharacterHasSpecialEffect(0, character=arg_0_3, special_effect=155)
     IfPlayerGender(1, Gender.Male)
     SkipLinesIfConditionFalse(2, 1)
-    EnableMapSound(4003700)
+    EnableSoundEvent(4003700)
     SkipLines(1)
-    EnableMapSound(4003701)
+    EnableSoundEvent(4003701)
     IfCharacterDoesNotHaveSpecialEffect(0, character=arg_0_3, special_effect=155)
     Restart()
 

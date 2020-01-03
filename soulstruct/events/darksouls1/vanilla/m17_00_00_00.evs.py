@@ -95,7 +95,7 @@ def Constructor():
     RunEvent(11700141)
     RunEvent(11705170)
     RunEvent(11700700)
-    DisableMapSound(1703800)
+    DisableSoundEvent(1703800)
     SkipLinesIfFlagOff(5, 14)
     RunEvent(11705392)
     DisableObject(1701800)
@@ -495,12 +495,12 @@ def Event11705383():
 def Event11705384():
     """ 11705384: Event 11705384 """
     DisableNetworkSync()
-    DisableMapSound(1703801)
+    DisableSoundEvent(1703801)
     IfFlagOff(1, 11700000)
     IfFlagOn(1, 11705386)
     IfCharacterInsideRegion(1, PLAYER, region=1702890)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1703801)
+    EnableSoundEvent(1703801)
     IfFlagOn(-1, 11700000)
     IfCharacterOutsideRegion(-1, PLAYER, region=1702890)
     IfConditionTrue(0, input_condition=-1)
@@ -609,7 +609,7 @@ def Event11705394():
     IfFlagOn(1, 11705391)
     IfCharacterInsideRegion(1, PLAYER, region=1702990)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1703800)
+    EnableSoundEvent(1703800)
 
 
 def Event11705395():
@@ -618,7 +618,7 @@ def Event11705395():
     IfFlagOn(1, 14)
     IfFlagOn(1, 11705394)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1703800)
+    DisableSoundEvent(1703800)
 
 
 @RestartOnRest
@@ -918,7 +918,7 @@ def Event11705101():
     SkipLinesIfFlagOn(2, 61700105)
     RunEvent(11705108)
     Restart()
-    EnableMapSound(1703500)
+    EnableSoundEvent(1703500)
     ForceAnimation(1701400, 0)
     WaitFrames(150)
     ForceAnimation(1701400, 1)
@@ -927,7 +927,7 @@ def Event11705101():
     SkipLinesIfFlagOff(2, 61700105)
     RunEvent(11705108)
     Restart()
-    DisableMapSound(1703500)
+    DisableSoundEvent(1703500)
     EnableFlag(11700133)
     ForceAnimation(1701400, 2)
     WaitFrames(50)
@@ -939,7 +939,7 @@ def Event11705102():
     """ 11705102: Event 11705102 """
     DisableNetworkSync()
     SkipLinesIfFlagOn(1, 61700105)
-    DisableMapSound(1703500)
+    DisableSoundEvent(1703500)
 
 
 def Event11705103():

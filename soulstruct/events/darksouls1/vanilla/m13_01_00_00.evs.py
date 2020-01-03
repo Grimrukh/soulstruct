@@ -62,7 +62,7 @@ def Constructor():
     RunEvent(11315070, slot=4, args=(1310211, 1312251, 0.800000011920929), arg_types='iif')
     RunEvent(11310820, slot=0, args=(1310300, 27903000))
     RunEvent(11310820, slot=1, args=(1310400, 33005000))
-    DisableMapSound(1313800)
+    DisableSoundEvent(1313800)
     SkipLinesIfFlagOff(4, 7)
     RunEvent(11315392)
     DisableObject(1311990)
@@ -394,7 +394,7 @@ def Event11315394():
     SkipLinesIfHost(1)
     IfFlagOn(1, 11315391)
     IfConditionTrue(0, input_condition=1)
-    EnableMapSound(1313800)
+    EnableSoundEvent(1313800)
 
 
 def Event11315395():
@@ -403,7 +403,7 @@ def Event11315395():
     IfFlagOn(1, 7)
     IfFlagOn(1, 11315394)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(1313800)
+    DisableSoundEvent(1313800)
 
 
 def Event11315396():

@@ -1126,16 +1126,16 @@ def Event12100163():
 
 def Event12100164():
     """ 12100164: Event 12100164 """
-    DisableDeveloperMessage(2103000)
-    DisableDeveloperMessage(2103001)
+    DisableSoapstoneMessage(2103000)
+    DisableSoapstoneMessage(2103001)
     SkipLinesIfFlagOff(2, 1024)
     SkipLinesIfFlagOn(1, 5000)
-    EnableDeveloperMessage(2103000)
+    EnableSoapstoneMessage(2103000)
     IfFlagOn(-1, 1026)
     IfFlagOn(-1, 1027)
     SkipLinesIfConditionFalse(2, -1)
     SkipLinesIfFlagOn(1, 52400480)
-    EnableDeveloperMessage(2103001)
+    EnableSoapstoneMessage(2103001)
 
 
 def Event12100165():
@@ -1247,20 +1247,20 @@ def Event12100310():
     IfPlayerInsightAmountGreaterThanOrEqual(-1, 50)
     IfFlagOn(-1, 9802)
     GotoIfConditionTrue(Label.L0, input_condition=-1)
-    EnableMapSound(2103900)
-    DisableMapSound(2103901)
+    EnableSoundEvent(2103900)
+    DisableSoundEvent(2103901)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapSound(2103900)
-    EnableMapSound(2103901)
+    DisableSoundEvent(2103900)
+    EnableSoundEvent(2103901)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapSound(2103900)
-    DisableMapSound(2103901)
+    DisableSoundEvent(2103900)
+    DisableSoundEvent(2103901)
 
 
 def Event12100330():
@@ -1548,8 +1548,8 @@ def Event12100800():
 def Event12101800():
     """ 12101800: Event 12101800 """
     GotoIfThisEventSlotOff(Label.L0)
-    DisableMapSound(2103802)
-    DisableMapSound(2103803)
+    DisableSoundEvent(2103802)
+    DisableSoundEvent(2103803)
     End()
 
     # --- 0 --- #
@@ -1746,16 +1746,16 @@ def Event12104803():
     DisableNetworkSync()
     EndIfFlagOn(12101800)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2103802)
-    DisableMapSound(2103803)
+    DisableSoundEvent(2103802)
+    DisableSoundEvent(2103803)
     IfFlagOff(1, 12101800)
     IfFlagOn(1, 12104802)
     SkipLinesIfHost(1)
     IfFlagOn(1, 12104801)
     IfCharacterInsideRegion(1, PLAYER, region=2102802)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(2103900)
-    DisableMapSound(2103901)
+    DisableSoundEvent(2103900)
+    DisableSoundEvent(2103901)
     SetBossMusicState(2103802, state=True)
     IfHasTAEEvent(2, 2100800, tae_event_id=100)
 
@@ -1822,8 +1822,8 @@ def Event12104808():
 def Event12101850():
     """ 12101850: Event 12101850 """
     GotoIfThisEventSlotOff(Label.L0)
-    DisableMapSound(2103812)
-    DisableMapSound(2103813)
+    DisableSoundEvent(2103812)
+    DisableSoundEvent(2103813)
     End()
 
     # --- 0 --- #
@@ -2046,16 +2046,16 @@ def Event12104853():
     DisableNetworkSync()
     EndIfFlagOn(12101850)
     GotoIfThisEventOn(Label.L0)
-    DisableMapSound(2103812)
-    DisableMapSound(2103813)
+    DisableSoundEvent(2103812)
+    DisableSoundEvent(2103813)
     IfFlagOff(1, 12101850)
     IfFlagOn(1, 12101852)
     SkipLinesIfHost(1)
     IfFlagOn(1, 12104851)
     IfCharacterInsideRegion(1, PLAYER, region=2102801)
     IfConditionTrue(0, input_condition=1)
-    DisableMapSound(2103900)
-    DisableMapSound(2103901)
+    DisableSoundEvent(2103900)
+    DisableSoundEvent(2103901)
     SetBossMusicState(2103812, state=True)
     IfHasTAEEvent(0, 2100810, tae_event_id=500)
     IfFlagOff(2, 12101850)

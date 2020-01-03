@@ -1,4 +1,4 @@
-"""Script that compares an arbitrary number of """
+"""Script that compares an arbitrary number of DrawParam parameters."""
 from soulstruct.params.dark_souls_params import DRAW_PARAM_TABLES, DRAW_PARAM_MAPS
 
 

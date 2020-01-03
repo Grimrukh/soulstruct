@@ -306,8 +306,6 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         self.Maps = maps
         self.e_coord = None
         self.map_choice = None
-        self.entry_type_rows = {}
-        self.active_entry_type_index = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
     def build(self):
@@ -497,7 +495,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return self.Maps[map_choice][entry_list].get_entries(entry_type)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
-        """Returns an zip() generator for parent method."""
+        """Returns a zip() generator for parent method."""
         entry_list = self.get_category_dict(category)
         return zip(range(first_index, last_index), entry_list[first_index:last_index])
 

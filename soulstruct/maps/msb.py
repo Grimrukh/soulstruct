@@ -3,7 +3,7 @@ from io import BytesIO, BufferedReader
 from pathlib import Path
 from typing import List, Iterator
 
-from soulstruct.maps.models import MSBEntry
+from soulstruct.maps.core import MSBEntry
 from soulstruct.maps.models import MSBModel, MSB_MODEL_TYPE
 from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE, BaseMSBEvent
 from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE, BaseMSBRegion
@@ -54,6 +54,34 @@ MAP_ENTRY_TYPES = {
         'Players': MSB_MODEL_TYPE.Player,
         'Collisions': MSB_MODEL_TYPE.Collision,
         'Navmeshes': MSB_MODEL_TYPE.Navmesh,
+    },
+}
+
+
+MAP_ENTRY_ENTITY_TYPES = {
+    'Parts': {
+        'MapPieces': MSB_PART_TYPE.MapPiece,
+        'Objects': MSB_PART_TYPE.Object,
+        'Characters': MSB_PART_TYPE.Character,
+        'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
+        'Collisions': MSB_PART_TYPE.Collision,
+    },
+    'Events': {
+        'Sounds': MSB_EVENT_TYPE.Sound,
+        'FX': MSB_EVENT_TYPE.FX,
+        'Spawners': MSB_EVENT_TYPE.Spawner,
+        'Messages': MSB_EVENT_TYPE.Message,
+        'ObjActs': MSB_EVENT_TYPE.ObjAct,
+        'SpawnPoints': MSB_EVENT_TYPE.SpawnPoint,
+        'Navigation': MSB_EVENT_TYPE.Navigation,
+    },
+    'Regions': {
+        'Points': MSB_REGION_TYPE.Point,
+        'Circles': MSB_REGION_TYPE.Circle,
+        'Spheres': MSB_REGION_TYPE.Sphere,
+        'Cylinders': MSB_REGION_TYPE.Cylinder,
+        'Rectangles': MSB_REGION_TYPE.Rect,
+        'Boxes': MSB_REGION_TYPE.Box,
     },
 }
 
@@ -434,7 +462,7 @@ for cls in (MSBModelList, MSBEventList, MSBRegionList, MSBPartList):
 class MSB(object):
     """Handles MSB ('MapStudio') data for Dark Souls 1.
 
-    Only DS1 (either version) is supported.
+    Only DS1 (either version) is supported. PTDE and DSR have identical MSB formats (but a few changes in content).
 
     The MSB contains four types of data entries:
 
@@ -544,6 +572,21 @@ class MSB(object):
         for r in self.regions:
             r.translate += translate
 
+    def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
+        """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type."""
+        entry_list_name = entry_list_name.lower()
+        if entry_list_name == 'parts':
+            entries = self.parts.get_entries(entry_type)
+        elif entry_list_name == 'events':
+            entries = self.events.get_entries(entry_type)
+        elif entry_list_name == 'regions':
+            entries = self.regions.get_entries(entry_type)
+        else:
+            raise ValueError("Can only get entity IDs for parts, events, and regions.")
+        if names_only:
+            return {e.entity_id: e.name for e in entries if e.entity_id > 0}
+        return {e.entity_id: e for e in entries if e.entity_id > 0}
+
     def __getitem__(self, entry_list_name) -> MSBEntryList:
         if entry_list_name.lower() not in {'models', 'events', 'regions', 'parts'}:
             raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
@@ -551,3 +594,8 @@ class MSB(object):
 
     def __iter__(self):
         return iter((self.models, self.events, self.regions, self.parts))
+
+
+if __name__ == '__main__':
+    from soulstruct import PTDE_PATH
+    depths = MSB(PTDE_PATH + "/map/MapStudio/m10_00_00_00.msb")

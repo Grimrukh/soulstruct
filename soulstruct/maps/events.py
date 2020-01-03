@@ -3,7 +3,7 @@ from enum import IntEnum
 import struct
 
 from soulstruct.enums.darksouls1 import SoundType
-from soulstruct.maps.core import MSBEntry
+from soulstruct.maps.core import MSBEntryEntity
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector, pad_chars
 
 
@@ -29,7 +29,7 @@ def MSBEvent(msb_buffer):
     return BaseMSBEvent.auto_event_subclass(msb_buffer)
 
 
-class BaseMSBEvent(MSBEntry):
+class BaseMSBEvent(MSBEntryEntity):
     EVENT_HEADER_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
         ('event_index', 'i'),
@@ -56,7 +56,6 @@ class BaseMSBEvent(MSBEntry):
         super().__init__()
         self._event_index = None  # global index
         self._local_event_index = None  # local type index
-        self.entity_id = None
         self.base_part_name = None
         self._base_part_index = None
         self.base_region_name = None
