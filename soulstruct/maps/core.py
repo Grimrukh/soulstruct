@@ -11,6 +11,7 @@ class MSBEntry(object):
 
     def __init__(self):
         self.name = None
+        self.description = None  # Used for convenience in Soulstruct projects.
 
     def get_name_to_pack(self):
         """Remove duplicate tags '<i>' from end of name."""

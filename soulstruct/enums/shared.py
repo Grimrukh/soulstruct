@@ -58,7 +58,7 @@ class CharacterType(IntEnum):
     WhitePhantom = 1
     BlackPhantom = 2
     Hollow = 8  # Also called "Gray Ghost" in some resources.
-    Intruder = 10
+    Intruder = 12
 
 
 class CharacterUpdateRate(IntEnum):

@@ -403,7 +403,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         )
 
         row = 0
-        for entry_id, entry in entries_to_display:
+        for entry_id, _ in entries_to_display:
             self.entry_rows[row].update_entry(entry_id, self.get_entry_text(entry_id))
             self.entry_rows[row].unhide()
             row += 1

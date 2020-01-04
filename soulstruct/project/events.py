@@ -149,7 +149,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.go_to_line = None
         self.find_string = None
         self.evs_editor_canvas = None
-        self.evs_text_editor = None
+        self.text_editor = None
         self.save_button = None
         self.export_button = None
 
@@ -183,25 +183,22 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             editor_i_frame = self.Frame(self.evs_editor_canvas, sticky='nsew', row_weights=[1], column_weights=[1])
             self.evs_editor_canvas.create_window(0, 0, window=editor_i_frame, anchor='nw')
 
-            self.evs_text_editor = self.CustomWidget(
+            self.text_editor = self.CustomWidget(
                 editor_i_frame, custom_widget_class=EvsTextEditor, set_style_defaults=('text', 'cursor'),
                 width=300, height=50, wrap='word', bg='#232323', font=("Consolas", 10))
             vertical_scrollbar_w = self.Scrollbar(
-                orient='vertical', command=self.evs_text_editor.yview, column=1, sticky='ns')
-            self.evs_text_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
-            self.link_to_scrollable(self.evs_text_editor, editor_i_frame)
+                orient='vertical', command=self.text_editor.yview, column=1, sticky='ns')
+            self.text_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
+            self.link_to_scrollable(self.text_editor, editor_i_frame)
 
             def _update_textbox_height(e):
-                font_size = int(self.evs_text_editor['font'].split()[1])
-                self.evs_text_editor['height'] = e.height // (font_size * 1.5)  # 1.5 line spacing
+                font_size = int(self.text_editor['font'].split()[1])
+                self.text_editor['height'] = e.height // (font_size * 1.5)  # 1.5 line spacing
 
             self.evs_editor_canvas.bind("<Configure>", lambda e: _update_textbox_height(e))
 
-            def _update_line_number(_):
-                current_line = self.evs_text_editor.index('insert').split('.')[0]
-                self.line_number.set(f"Line: {current_line}")
-
-            self.evs_text_editor.bind("<<CursorChange>>", _update_line_number)
+            self.text_editor.bind("<<CursorChange>>", self._update_line_number)
+            self.text_editor.bind("<Control-f>", self._control_f_search)
 
         with self.set_master(auto_columns=0, pady=(10, 0), sticky='n'):
             self.save_button = self.Button(text="Save EVS", width=15, command=self.save_selected_evs)
@@ -224,38 +221,52 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         if map_options:
             self.evs_choice.var.set(map_options[0])
             self.selected_evs = self.evs_choice.get().split(' (')[0]
-            self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
-            self.evs_text_editor.mark_set("insert", "1.0")
-            self.evs_text_editor.color_syntax()
+            self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+            self.text_editor.mark_set("insert", "1.0")
+            self.text_editor.color_syntax()
+
+    def _update_line_number(self, _):
+        current_line = self.text_editor.index('insert').split('.')[0]
+        self.line_number.set(f"Line: {current_line}")
+
+    def _control_f_search(self, _):
+        print("CONTROL F")  # todo
+        if self.selected_evs:
+            highlighted = self.text_editor.selection_get()
+            self.find_string.var.set(highlighted)
+            self.find_string.select_range(0, 'end')
+            self.find_string.icursor('end')
+            self.find_string.focus_force()
 
     def _go_to_line(self, _):
         number = self.go_to_line.var.get()
         if not number:
             return
         number = int(number)
-        if not self.selected_evs or number < 1 or int(self.evs_text_editor.index('end-1c').split('.')[0]) < number:
+        if not self.selected_evs or number < 1 or int(self.text_editor.index('end-1c').split('.')[0]) < number:
             self._flash_red_bg(self.go_to_line)
             return
-        self.evs_text_editor.mark_set("insert", f"{number}.0")
-        self.evs_text_editor.see(f"{number}.0")
-        self.evs_text_editor.highlight_line(number, "found")
+        self.text_editor.mark_set("insert", f"{number}.0")
+        self.text_editor.see(f"{number}.0")
+        self.text_editor.highlight_line(number, "found")
 
     def _find_string(self, _):
         string = self.find_string.var.get()
         if not string or not self.selected_evs:
             return
-        start_line, start_char = self.evs_text_editor.index("insert").split('.')
-        index = self.evs_text_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
+        start_line, start_char = self.text_editor.index("insert").split('.')
+        index = self.text_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
 
-        self.clear_bg_tags()
-        self.evs_text_editor.mark_set("insert", index)
-        self.evs_text_editor.see(index)
-        index_line, index_char = index.split('.')
-        self.evs_text_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
+        if index:
+            self.clear_bg_tags()
+            self.text_editor.mark_set("insert", index)
+            self.text_editor.see(index)
+            index_line, index_char = index.split('.')
+            self.text_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
 
     def clear_bg_tags(self):
         for tag in {"found", "error"}:
-            self.evs_text_editor.tag_remove(tag, "1.0", "end")
+            self.text_editor.tag_remove(tag, "1.0", "end")
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.evs_text[self.selected_evs]:
@@ -271,10 +282,10 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         """Check if current text has changed (and warn), then switch to other text."""
         if self._ignored_unsaved():
             self.selected_evs = self.evs_choice.var.get().split(' (')[0]
-            self.evs_text_editor.delete(1.0, 'end')
-            self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
-            self.evs_text_editor.mark_set("insert", "1.0")
-            self.evs_text_editor.color_syntax()
+            self.text_editor.delete(1.0, 'end')
+            self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+            self.text_editor.mark_set("insert", "1.0")
+            self.text_editor.color_syntax()
         else:
             self.evs_choice.var.set(f"{self.selected_evs} ({DARK_SOULS_MAP_NAMES[self.selected_evs]})")  # keep previous
 
@@ -296,9 +307,9 @@ class SoulstructEventEditor(SoulstructSmartFrame):
 
     def _raise_error(self, lineno=None, message=None):
         if lineno:
-            self.evs_text_editor.mark_set("insert", f"{lineno}.0")
-            self.evs_text_editor.see(f"{lineno}.0")
-            self.evs_text_editor.highlight_line(lineno, "error")
+            self.text_editor.mark_set("insert", f"{lineno}.0")
+            self.text_editor.see(f"{lineno}.0")
+            self.text_editor.highlight_line(lineno, "error")
         if message:
             self.error_dialog(
                 "EVS Error",
@@ -308,7 +319,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
     def _check_syntax(self):
         if not self.selected_evs:
             return
-        self.evs_text_editor.color_syntax()
+        self.text_editor.color_syntax()
         try:
             EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_evs].parent))
         except EmevdError as e:
@@ -320,7 +331,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             else:
                 self._raise_error(message=str(e))
         else:
-            self.evs_text_editor.tag_remove("error", "1.0", "end")
+            self.text_editor.tag_remove("error", "1.0", "end")
             self.info_dialog("EVS Success", "No errors encountered when parsing EVS.")
 
     def export_selected_evs(self, export_directory=None):
@@ -348,10 +359,10 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             evs_path = self.evs_file_paths[self.selected_evs]
             with evs_path.open('r', encoding='utf-8') as f:
                 self.evs_text[self.selected_evs] = f.read()
-            self.evs_text_editor.delete(1.0, 'end')
-            self.evs_text_editor.insert(1.0, self.evs_text[self.selected_evs])
-            self.evs_text_editor.mark_set("insert", "1.0")
-            self.evs_text_editor.color_syntax()
+            self.text_editor.delete(1.0, 'end')
+            self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+            self.text_editor.mark_set("insert", "1.0")
+            self.text_editor.color_syntax()
 
     def save_and_export_to_game(self):
         self.save_selected_evs()
@@ -363,4 +374,4 @@ class SoulstructEventEditor(SoulstructSmartFrame):
 
     def _get_current_text(self):
         """Get all current text from TextBox, minus final newline (added by Tk)."""
-        return self.evs_text_editor.get(1.0, 'end')[:-1]
+        return self.text_editor.get(1.0, 'end')[:-1]

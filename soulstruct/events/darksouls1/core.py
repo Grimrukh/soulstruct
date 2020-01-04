@@ -33,10 +33,16 @@ class Instruction(BaseInstruction):
     EventLayers = EventLayers
     INSTRUCTION_ARG_TYPES = {
         2000: {
-            0: 'iII', 1: 'iI', 2: 'B', 3: 'B', 4: 'I', 5: 'B'},
+            0: 'iII', 1: 'iI', 2: 'B', 3: 'B', 4: 'I', 5: 'B',
+            # REMASTERED ONLY
+            6: 'i',
+        },
         2001: {},
         2002: {
-            1: 'iI', 2: 'iIiBB', 3: 'iIi', 4: 'iIiBBi', 5: 'iIffifi'},
+            1: 'iI', 2: 'iIiBB', 3: 'iIi', 4: 'iIiBBi', 5: 'iIffifi',
+            # REMASTERED ONLY
+            6: 'iIiiBB', 7: 'iIiiBB',
+        },
         2003: {
             1: 'iiBB', 2: 'iB', 3: 'iB', 4: 'i',
             5: 'iiiiiii', 6: 'iB', 7: 'iB', 8: 'iiB', 9: 'i',
@@ -46,7 +52,11 @@ class Instruction(BaseInstruction):
             25: 'iiiii', 26: 'iB', 27: 'B', 28: 'i', 29: 'Bb',
             30: 'B', 31: 'iII', 32: 'iI', 33: 'i', 34: 'iiii',
             35: 'ii', 36: 'i', 37: '', 38: '', 39: '',
-            40: '', 41: 'iifi', 49: 'i'},
+            40: '', 41: 'iifi',
+            # REMASTERED ONLY
+            42: 'iiB', 43: 'iiBB', 44: 'iiBBBB', 46: 'iiBBBf', 47: '',
+            48: 'iiiiiii', 49: 'i',
+        },
         2004: {
             1: 'iB', 2: 'iB', 3: 'iBii', 4: 'iB',
             5: 'iB', 6: 'iiB', 7: 'i', 8: 'ii', 9: 'iiiiii',
@@ -57,7 +67,11 @@ class Instruction(BaseInstruction):
             30: 'iB', 31: 'iB', 32: 'iiBii', 33: 'ii', 34: 'iBb',
             35: 'iB', 36: 'iii', 37: 'i', 38: 'B', 39: 'iB',
             40: 'iBiii', 41: 'iBii', 42: 'iBiii', 43: 'iB', 44: 'iB',
-            45: 'ii', 46: 'B', 47: ''},
+            45: 'ii', 46: 'B', 47: '',
+            # REMASTERED ONLY
+            48: 'if', 49: 'if', 50: '', 51: 'i', 52: '',
+
+        },
         2005: {
             1: 'ib', 2: 'i', 3: 'iB', 4: 'iB',
             5: 'iii', 6: 'iiB', 7: 'ii', 8: 'ib', 9: 'iiiiifff',
@@ -67,9 +81,15 @@ class Instruction(BaseInstruction):
             1: 'iB', 2: 'i', 3: 'iiii', 4: 'iii', 5: 'ii'},
         2007: {
             1: 'ihhif', 2: 'B', 3: 'iB', 4: 'iB',
-            5: 'i', 6: 'i', 7: 'i', 8: 'i', 9: 'i'},
+            5: 'i', 6: 'i', 7: 'i', 8: 'i', 9: 'i',
+            # REMASTERED ONLY
+            10: 'i', 11: 'i', 12: 'iBiB', 13: 'i',
+        },
         2008: {
-            1: 'ii', 2: 'iiiiff', 3: 'BBH'},
+            1: 'ii', 2: 'iiiiff', 3: 'BBH',
+            # REMASTERED ONLY
+            4: '',
+        },
         2009: {
             0: 'iii', 1: 'iii', 2: 'iii', 3: 'iiffi', 4: 'i', 5: 'ii', 6: 'B'},
         2010: {
@@ -97,10 +117,17 @@ class Instruction(BaseInstruction):
             5: 'biifhfiBi', 6: 'bb', 7: 'bBi', 8: 'bBBB', 9: 'bI',
             10: 'bBiibi', 11: 'bBBB', 12: 'biBBI', 13: 'biifhfiBi', 14: 'bi',
             15: 'bii', 16: 'bBiB', 17: 'bBB', 18: 'biifhfiBii', 19: 'biifhfiBii',
-            20: 'biBBiB', 21: 'bB', 22: 'bB'},
+            20: 'biBBiB', 21: 'bB', 22: 'bB',
+            # REMASTERED ONLY
+            23: 'bBB', 24: 'bBB',
+
+        },
         4: {0: 'biB', 1: 'bii', 2: 'bibf', 3: 'bib', 4: 'biiB',
             5: 'biiB', 6: 'biiib', 7: 'biB', 8: 'biiB', 9: 'biB',
-            10: 'bB', 11: 'bB', 12: 'bB', 13: 'bBI', 14: 'biBi'},
+            10: 'bB', 11: 'bB', 12: 'bB', 13: 'bBI', 14: 'biBi',
+            # REMASTERED ONLY
+            15: 'bI', 16: 'bBBB', 17: 'b',
+            },
         5: {
             0: 'bBi', 1: 'bii', 2: 'bi', 3: 'bibi'},
         11: {

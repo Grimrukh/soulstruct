@@ -165,7 +165,7 @@ __all__ = [
     "IfCharacterRegionState", "IfCharacterInsideRegion", "IfCharacterOutsideRegion", 
     "IfPlayerInsideRegion", "IfPlayerOutsideRegion",
     "SkipLinesIfMultiplayerState", "SkipLinesIfHost", "SkipLinesIfClient", 
-    "SkipLinesIfMultiplayer", "SkipLinesIfSingleplayer", 
+    "SkipLinesIfMultiplayer", "SkipLinesIfSingleplayer",
     "TerminateIfMultiplayerState", "EndIfHost", "EndIfClient", "EndIfMultiplayer", "EndIfSingleplayer", 
     "RestartIfHost", "RestartIfClient", "RestartIfMultiplayer", "RestartIfSingleplayer", 
     "IfMultiplayerState", "IfHost", "IfClient", "IfMultiplayer", "IfSingleplayer", 
@@ -188,10 +188,16 @@ __all__ = [
     "Unknown_2003_43", 
     "ForceAnimation_WithUnknownEffect1", 
     "ForceAnimation_WithUnknownEffect2",
+    "Unknown_2003_47",
     "Unknown_2003_48", 
     "EraseNPCSummonSign", 
     "FadeOutCharacter", 
     "FadeInCharacter",
+    "Unknown_2004_50",
+    "Unknown_2004_51",
+    "Unknown_2004_52",
+    "Unknown_2007_13",
+    "Unknown_2008_4",
 ]
 
 
@@ -435,6 +441,12 @@ def ForceAnimation_WithUnknownEffect2(entity: AnimatedInt, animation: int, loop:
 
 
 # REMASTERED ONLY
+def Unknown_2003_47():
+    instruction_info = (2003, 47)
+    return to_numeric(instruction_info)
+
+
+# REMASTERED ONLY
 def Unknown_2003_48(entity: AnimatedInt, arg1: int, model_point: int, magic_id: int, shoot_angle_x: int,
                     shoot_angle_y: int, shoot_angle_z: int):
     instruction_info = (2003, 48)
@@ -458,3 +470,46 @@ def FadeOutCharacter(character: CharacterInt, duration: float):
 def FadeInCharacter(character: CharacterInt, duration: float):
     instruction_info = (2004, 49)
     return to_numeric(instruction_info, character, duration)
+
+
+"""
+[50] - UNKNOWN 2004[50] (DS1R ONLY)
+ [51] - UNKNOWN 2004[51] (DS1R ONLY)
+      i  Unknown [ENUM: BOOL]
+ [52] - UNKNOWN 2004[52] (DS1R ONLY)
+"""
+
+# REMASTERED ONLY
+def Unknown_2004_50():
+    instruction_info = (2004, 50)
+    return to_numeric(instruction_info)
+
+
+# REMASTERED ONLY
+def Unknown_2004_51(arg1: bool):
+    instruction_info = (2004, 51)
+    return to_numeric(instruction_info, arg1)
+
+
+# REMASTERED ONLY
+def Unknown_2004_52():
+    instruction_info = (2004, 52)
+    return to_numeric(instruction_info)
+
+
+# REMASTERED ONLY
+def DisplayConcatenatedMessage(message_id: Text, pad_enabled: bool, concatenator_base_flag: Flag, bit_count: int):
+    instruction_info = (2007, 12)
+    return to_numeric(instruction_info, message_id, pad_enabled, concatenator_base_flag, bit_count)
+
+
+# REMASTERED ONLY
+def Unknown_2007_13(arg1: int):
+    instruction_info = (2007, 13)
+    return to_numeric(instruction_info, arg1)
+
+
+# REMASTERED ONLY
+def Unknown_2008_4():
+    instruction_info = (2008, 4)
+    return to_numeric(instruction_info)

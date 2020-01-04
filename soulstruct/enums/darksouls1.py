@@ -103,6 +103,8 @@ class MultiplayerState(IntEnum):
     Client = 1
     Multiplayer = 2
     Singleplayer = 3
+    Unknown4 = 4  # REMASTERED ONLY.
+    Unknown5 = 5  # REMASTERED ONLY.
 
 
 class NPCPartType(IntEnum):

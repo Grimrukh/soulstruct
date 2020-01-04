@@ -8,6 +8,10 @@ import datetime
 import json
 import os
 import pickle
+import shutil
+import subprocess
+import sys
+import threading
 from functools import wraps
 from pathlib import Path
 from typing import Optional
@@ -28,6 +32,11 @@ from .maps import SoulstructMapEditor
 from .params import SoulstructParamsEditor
 from .text import SoulstructTextEditor
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 __all__ = ['SoulstructProject', 'SoulstructProjectError', 'SoulstructProjectWindow']
 
 DATA_TYPES = {
@@ -36,6 +45,11 @@ DATA_TYPES = {
     'lighting': DarkSoulsLightingParameters,
     'text': DarkSoulsText,
     'events': None,  # modified via EVS script files
+}
+
+STEAM_APPIDS = {
+    "Dark Souls Prepare to Die Edition": 211420,
+    "Dark Souls Remastered": 570940,
 }
 
 
@@ -60,7 +74,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     text_tab: Optional[SoulstructTextEditor]
     events_tab: Optional[SoulstructEventEditor]
 
-    TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events']
+    TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'runtime']
 
     def __init__(self, project_path, master=None):
         super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct")
@@ -84,12 +98,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             self.deiconify()
             self.dialog(title="Project Error", message=word_wrap(str(e), 50) + "\n\nAborting startup.",
                         button_kwargs='OK')
-            raise  # TODO: should not raise an error; just flag startup failure.
+            raise
         except Exception as e:
             self.deiconify()
             msg = "Internal Python Error:\n\n" + word_wrap(str(e), 50) + "\n\nAborting startup."
             self.dialog(title="Unknown Error", message=msg, button_kwargs='OK')
-            raise  # TODO: should not raise an error; just flag startup failure.
+            raise
 
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
@@ -101,7 +115,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.lighting_tab = None
         self.events_tab = None
 
+        self.install_psutil_button = None
+        self.game_save_list = None
+        self.game_save_entry = None
+
         self.toplevel.minsize(700, 500)
+        self.alphanumeric_word_boundaries()
         # self.toplevel.protocol("WM_DELETE_WINDOW", self.confirm_quit)  # TODO: enable on release
         self.build()
         self.deiconify()
@@ -143,12 +162,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             dcx=self.project.game_name == "Dark Souls Remastered")
         self.events_tab.grid(sticky='nsew')
 
-        # self.build_runtime_tab(tab_frames['runtime'])  # TODO: game launcher, etc.
+        self.build_runtime_tab(tab_frames['runtime'])
 
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
 
-        self.set_key_bindings()
+        self.create_key_bindings()
 
         self.set_geometry()
 
@@ -202,17 +221,92 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.toplevel.config(menu=top_menu)
 
-    def build_runtime_tab(self, main_frame):
+    def build_runtime_tab(self, runtime_frame):
         """
         TODO:
-            - Option to launch game? And an option to launch Game + Gadget?
-            - Option to restart game, if it's running?
             - Option to connect to running game and extract current player XYZ coordinates into an MSB entry?
             - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
         """
-        pass
+        with self.set_master(runtime_frame):
+            with self.set_master(padx=10, pady=10, row_weights=[1, 1, 1], column_weights=[1], auto_rows=0):
 
-    def set_key_bindings(self):
+                if psutil is None:
+                    with self.set_master(padx=10, pady=10):
+                        self.Label(
+                            text="Cannot use launcher tools without Python package psutil.\n"
+                                 "Click below to install it, then restart Soulstruct.",
+                            font_size=14, pady=10, row=0)
+                        self.install_psutil_button = self.Button(
+                            text="Install psutil", command=self._install_psutil, bg="#422", width=30,
+                            font_size=16, row=1)
+                else:
+                    with self.set_master(padx=10, pady=10, row_weights=[1, 1], column_weights=[1, 1]):
+                        button_kwargs = {'width': 30, 'sticky': 'nsew', 'padx': 10, 'pady': 10, 'font_size': 14}
+                        self.Button(text="Launch Game", command=self._catch_error(self.project.launch_game),
+                                    bg="#222", row=0, column=0, **button_kwargs)
+                        debug_launch = self.Button(
+                            text="Launch Game (Debug)",
+                            command=self._catch_error(lambda: self.project.launch_game(debug=True)),
+                            bg="#222", row=0, column=1, **button_kwargs)
+                        if self.project.game_name != "Dark Souls Prepare to Die Edition":
+                            debug_launch['state'] = 'disabled'
+                            debug_launch.var.set("Debug Unavailable")
+                        self.Button(text="Launch DS Gadget", command=self._catch_error(self.project.launch_gadget),
+                                    bg="#222", row=1, column=0, **button_kwargs)
+                        self.Button(text="Close Game", command=self._catch_error(self.project.force_quit_game),
+                                    bg="#422", row=1, column=1, **button_kwargs)
+
+                with self.set_master(padx=10, pady=20, row_weights=[1], column_weights=[1, 1, 1], auto_columns=0):
+                    game_saves = self.project.get_game_saves()
+                    self.game_save_list = self.Combobox(
+                        values=game_saves, initial_value=game_saves[0] if game_saves else "", width=40,
+                        label="Available Saves:", label_position='left')
+                    self.Button(
+                        text="Load", bg="#222", padx=10, width=12,
+                        command=self._catch_error(self.load_game_save))
+                    delete_button = self.Button(
+                        text="Delete (Shift + Click)", bg="#422", padx=20, width=20, command=None)
+                    delete_button.bind("<Shift-Button-1>", self._catch_error(lambda _: self.delete_game_save()))
+
+                with self.set_master(padx=10, pady=10, row_weights=[1, 0], column_weights=[1, 1]):
+                    self.game_save_entry = self.Entry(width=40, label="New Save Name:", label_position='left',
+                                                      row=0, column=0).var
+                    create_save_button = self.Button(
+                        text="Create Save", bg="#222", padx=10, width=15, command=None, row=0, column=1)
+                    self.Label(text="Shift + Click to Overwrite", font_size=8, row=1, column=1)
+                    create_save_button.bind(
+                        "<Button-1>",
+                        self._catch_error(lambda _: self.create_game_save(overwrite=False)))
+                    create_save_button.bind(
+                        "<Shift-Button-1>",
+                        self._catch_error(lambda _: self.create_game_save(overwrite=True)))
+
+    def load_game_save(self):
+        selected_game_save = self.game_save_list.get()
+        if not selected_game_save:
+            return
+        self.project.load_game_save(selected_game_save)
+
+    def delete_game_save(self):
+        selected_game_save = self.game_save_list.get()
+        if not selected_game_save:
+            return
+        self.project.delete_game_save(selected_game_save)
+        self.game_save_list['values'] = self.project.get_game_saves()
+        self.game_save_list.set("")
+
+    def create_game_save(self, overwrite=False):
+        game_save_name = self.game_save_entry.get()
+        self.project.create_game_save(game_save_name, overwrite=overwrite)
+        self.game_save_list['values'] = self.project.get_game_saves()
+
+    def alphanumeric_word_boundaries(self):
+        """See: http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19"""
+        self.tk.call('tcl_wordBreakAfter', '', 0)
+        self.tk.call('set', 'tcl_wordchars', '[a-zA-Z0-9_.]')
+        self.tk.call('set', 'tcl_nonwordchars', '[^a-zA-Z0-9_.]')
+
+    def create_key_bindings(self):
         self.bind_all("<Control-s>", lambda _: self._save_data(self.current_data_type))
         self.bind_all("<Control-e>", lambda _: self._export_data(self.current_data_type, self.project.game_root))
         self.bind_all("<Shift-Control-e>", lambda _: self._export_data(self.current_data_type, None))
@@ -309,6 +403,39 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         directory = self.FileDialog.askdirectory(initialdir=initial_dir, **kwargs)
         return Path(directory) if directory is not None else None
 
+    def _catch_error(self, func):
+        @wraps(func)
+        def window_method(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except SoulstructProjectError as e:
+                self.dialog(
+                    title="Project Error",
+                    message=word_wrap(str(e), 50),
+                    button_kwargs='OK',
+                )
+            except Exception as e:
+                self.dialog(
+                    title="Unknown Internal Error",
+                    message="Internal Error:\n\n" + word_wrap(str(e), 50) + "\n\nPlease report this error.",
+                    button_kwargs='OK',
+                )
+
+        return window_method
+
+    def _install_psutil(self):
+        self.install_psutil_button.var.set("Installing...")
+        self.update_idletasks()
+        subprocess.run(f"{sys.executable} -m pip install psutil")
+        self.install_psutil_button.var.set("Installation successful.")
+        self.install_psutil_button['state'] = "disabled"
+        self.update_idletasks()
+        self.bell()
+        self.dialog(
+            title="Installation complete", message="psutil installed successfully.\n\nPlease restart Soulstruct.",
+            button_kwargs=("OK",),
+        )
+
 
 class SoulstructProject(object):
     """Manages a directory of easily-modded Soulstruct files that can imported and exported.
@@ -329,6 +456,8 @@ class SoulstructProject(object):
 
         self.game_name = ''
         self.game_root = Path()
+        self.game_exe_path = Path()
+        self.game_save_root = Path()
         self.last_import_time = ''
         self.last_export_time = ''
         # TODO: Record last edit time for each file/structure.
@@ -496,6 +625,109 @@ class SoulstructProject(object):
             else:
                 return count
 
+    def launch_game(self, try_force_quit_first=False, threaded=True, debug=False):
+        if not psutil:
+            raise ModuleNotFoundError("Python package `psutil` required for this method.")
+
+        if debug and not self.game_name == "Dark Souls Prepare to Die Edition":
+            raise SoulstructProjectError(f"Can only launch debug version of Dark Souls PTDE, not {self.game_name}.")
+        if try_force_quit_first:
+            self.force_quit_game()
+        self._check_steam_appid_file(self.game_root, self.game_name)
+        if debug:
+            game_exe_path = self.game_exe_path.parent / (self.game_exe_path.stem + "_DEBUG.exe")
+        else:
+            game_exe_path = self.game_exe_path
+        if not game_exe_path.is_file():
+            raise SoulstructProjectError(f"Could not find game executable: {str(game_exe_path)}")
+        game_exe_str = str(self.game_exe_path)
+        if self.game_exe_path.name in (p.name() for p in psutil.process_iter()):
+            print(f"# {self.game_exe_path.name} is already running.")
+            return
+        if threaded:
+            game_thread = threading.Thread(target=subprocess.run, args=(game_exe_str,))
+            game_thread.start()
+        else:
+            # Blocks Python (including window) until game is closed.
+            subprocess.run(game_exe_str)
+
+    def force_quit_game(self):
+        os.system(f"TASKKILL /F /IM {self.game_exe_path.name}")
+
+    def launch_gadget(self, threaded=True):
+        if self.game_name == "Dark Souls Prepare to Die Edition":
+            gadget_path = self.game_root / "DS Gadget.exe"
+        elif self.game_name == "Dark Souls Remastered":
+            gadget_path = self.game_root / "DSR-Gadget.exe"
+        else:
+            raise SoulstructProjectError(f"Invalid game name: {self.game_name}")
+        if not gadget_path.is_file():
+            raise SoulstructProjectError(f"Could not find DS Gadget file: {str(gadget_path)}")
+        if gadget_path.name in (p.name() for p in psutil.process_iter()):
+            print(f"# {gadget_path.name} is already running.")
+            return
+        if threaded:
+            gadget_thread = threading.Thread(target=subprocess.run, args=(str(gadget_path),))
+            gadget_thread.start()
+        else:
+            # Blocks Python (including window) until DS Gadget is closed.
+            subprocess.run(str(gadget_path))
+
+    def get_game_saves(self):
+        save_folder = self._get_save_folder()
+        return [save_file.stem for save_file in save_folder.glob("*.sl2") if save_file.stem != "DRAKS0005"]
+
+    def _get_save_folder(self):
+        if self.game_name == "Dark Souls Remastered":
+            steam_id_folders = list(self.game_save_root.glob("*"))
+            if len(steam_id_folders) > 1:
+                raise SoulstructProjectError(
+                    f"Multiple Dark Souls Remastered save folders found in {str(self.game_save_root)}. Please move all "
+                    f"of them except your real one.")
+            elif not steam_id_folders:
+                raise SoulstructProjectError(
+                    f"No Dark Souls Remastered save folders found in {str(self.game_save_root)}.")
+            return steam_id_folders[0]
+        elif self.game_name == "Dark Souls Prepare to Die Edition":
+            return self.game_save_root
+        else:
+            raise SoulstructProjectError(f"Invalid game name: {self.game_name}")
+
+    def load_game_save(self, save_name):
+        if not save_name:
+            raise SoulstructProjectError("No save name given.")
+        save_folder = self._get_save_folder()
+        save_file_path = (save_folder / save_name).with_suffix(".sl2")
+        if not save_file_path.is_file():
+            raise SoulstructProjectError(f"Could not find save file: {str(save_file_path)}")
+        active_path_str = str(save_folder / "DRAKS0005.sl2")
+        try:
+            os.remove(active_path_str)
+        except FileNotFoundError:
+            pass
+        shutil.copy2(str(save_file_path), active_path_str)
+
+    def delete_game_save(self, save_name):
+        if not save_name:
+            raise SoulstructProjectError("No save name given.")
+        save_folder = self._get_save_folder()
+        save_file_path = (save_folder / save_name).with_suffix(".sl2")
+        if not save_file_path.is_file():
+            raise SoulstructProjectError(f"Could not find save file: {str(save_file_path)}")
+        os.remove(save_file_path)
+
+    def create_game_save(self, save_name, overwrite=False):
+        if not save_name:
+            raise SoulstructProjectError("No save name given.")
+        save_folder = self._get_save_folder()
+        save_file_path = (save_folder / save_name).with_suffix(".sl2")
+        active_path = save_folder / "DRAKS0005.sl2"
+        if save_file_path.is_file() and not overwrite:
+            raise SoulstructProjectError(f"Save file already exists: {str(save_file_path)}")
+        if not active_path.is_file():
+            raise SoulstructProjectError(f"Active game save file {str(active_path)} could not be found.")
+        shutil.copy2(str(active_path), str(save_file_path))
+
     def load_config(self, with_window: SoulstructProjectWindow = None):
         try:
             with (self.project_root / 'config.json').open('r') as f:
@@ -509,21 +741,27 @@ class SoulstructProject(object):
                 else:
                     try:
                         self.game_name = config['GameName']
+                        self.game_exe_path = Path(config['GameExecutable'])
                         self.game_root = Path(config['GameDirectory'])
+                        self.game_save_root = Path(config['SaveDirectory'])
                         self.last_import_time = config.get('LastImportTime', None)
                         self.last_export_time = config['LastExportTime']
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
                             "Delete it and load the project directory again to create "
-                            "a fresh copy."
+                            "a fresh copy and re-link your project to the game."
                         )
         except FileNotFoundError:
             # Create project config file.
             try:
-                self.game_root, self.game_name = self._get_game_root(with_window=with_window)
+                self.game_root, self.game_exe_path, self.game_name = self._get_game_root(with_window=with_window)
             except SoulstructProjectError as e:
                 raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
+            if self.game_name == "Dark Souls Prepare to Die Edition":
+                self.game_save_root = Path("~/Documents/NBGI/DarkSouls").expanduser()
+            elif self.game_name == "Dark Souls Remastered":
+                self.game_save_root = Path("~/Documents/NBGI/DARK SOULS REMASTERED").expanduser()
             self._write_config()
             if with_window:
                 result = with_window.dialog(title="Initial project load",
@@ -561,10 +799,11 @@ class SoulstructProject(object):
         return datetime.datetime.now().strftime('%Y-%m-%d %H%M%S' if for_path else '%Y-%m-%d %H:%M:%S')
 
     def _build_config_dict(self):
-        # TODO: Separate import times for different types.
         return {
             'GameName': self.game_name,
+            'GameExecutable': str(self.game_exe_path),
             'GameDirectory': str(self.game_root),
+            'SaveDirectory': str(self.game_save_root),
             'LastImportTime': self.last_import_time,
             'LastExportTime': self.last_export_time,
         }
@@ -639,12 +878,24 @@ class SoulstructProject(object):
 
         game_root = game_exe.parent
         if (game_root / 'DarkSoulsRemastered.exe').is_file():
-            return game_root, 'Dark Souls Remastered'
+            return game_root, game_exe, 'Dark Souls Remastered'
         elif (game_root / 'DARKSOULS.exe').is_file():
-            return game_root, 'Dark Souls Prepare to Die Edition'
+            return game_root, game_exe, 'Dark Souls Prepare to Die Edition'
         else:
             raise SoulstructProjectError("Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
                                          "but your selected executable was not a version of Dark Souls.")
+
+    @staticmethod
+    def _check_steam_appid_file(game_root, game_name):
+        steam_appid_path = Path(game_root) / "steam_appid.txt"
+        if not steam_appid_path.is_file():
+            if game_name in STEAM_APPIDS:
+                with steam_appid_path.open("w") as f:
+                    f.write(str(STEAM_APPIDS[game_name]))
+                return True
+            else:
+                raise SoulstructProjectError(f"Invalid game name for creating 'steam_appid.txt': {game_name}")
+        return True
 
 
 MODIFIABLE_FILES = {

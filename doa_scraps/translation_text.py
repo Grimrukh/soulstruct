@@ -1,16 +1,16 @@
 from soulstruct.text import DarkSoulsText
 
-lang = 'JAPANESE'
-version = 'DSR'
+lang = 'RUSSIAN'
+version = 'PTDEd.'
 
 foreign_changes_paths = {
-    'JAPANESE': 'C:/Users/seven/Downloads/DoA_Translations_FinalDraft.txt',
-    'RUSSIAN': 'C:/Users/seven/Downloads/DoA - Russian.txt',
+    'JAPANESE': 'C:/Users/seven/Downloads/DoA_Japanese.txt',
+    'RUSSIAN': 'C:/Users/seven/Downloads/DoA_Russian.txt',
 }
 
 foreign_msg_paths = {
-    'PTDE': f'C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/MSG/{lang}',
-    'DSR': f'C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Remastered/MSG/{lang}',
+    'PTDE': f'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA/MSG/{lang}',
+    'DSR': f'G:/Steam/steamapps/common/Dark Souls Remastered/MSG/{lang}',
 }
 
 output = f'C:/Users/seven/Documents/Dark Souls/dump/MSG/DOA_{lang}_{version}'
@@ -39,6 +39,8 @@ def main():
     foreign_text = DarkSoulsText(foreign_msg_paths[version])
     r, e = get_translations()
     for fmg, text_id in r.keys():
+        # print(fmg, text_id, r[fmg, text_id])
+        # print(f"{fmg}[{text_id}] = {repr(r[fmg, text_id])}")
         foreign_text[fmg][text_id] = r[fmg, text_id]
 
     foreign_text.save(output, description_word_wrap_limit=None, separate_patch=True)

@@ -272,16 +272,19 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         def __init__(self, editor: SoulstructMapEditor, row_index: int, main_bindings: dict = None):
             super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
-        def update_entry(self, entry_index: int, entry_text: str):
+        def update_entry(self, entry_index: int, entry_text: str, entry_description: str = ""):
             self.entry_id = entry_index
             try:
                 entity_id = getattr(self.master.get_category_dict()[entry_index], 'entity_id')
             except AttributeError:
                 text_tail = ''
-                self.tool_tip.text = None
+
             else:
-                self.tool_tip.text = f'ID: {entity_id}'
                 text_tail = f'  {{ID: {entity_id}}}' if entity_id not in {-1, 0} else ''
+            if entry_description:
+                self.tool_tip.text = entry_description
+            else:
+                self.tool_tip.text = None
             self._entry_text = entry_text
             self.text_label.var.set(entry_text + text_tail)
             self.build_entry_context_menu()
@@ -318,6 +321,34 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
 
             super().build()
+
+    def refresh_entries(self, reset_field_display=False):
+        self._cancel_entry_id_edit()
+        self._cancel_entry_text_edit()
+
+        entries_to_display = self._get_category_name_range(
+            first_index=self.first_display_index,
+            last_index=self.first_display_index + self.ENTRY_RANGE_SIZE,
+        )
+
+        row = 0
+        for entry_id, _ in entries_to_display:
+            self.entry_rows[row].update_entry(entry_id, self.get_entry_text(entry_id),
+                                              self.get_entry_description(entry_id))
+            self.entry_rows[row].unhide()
+            row += 1
+
+        self.displayed_entry_count = row
+        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+            self.entry_rows[remaining_row].hide()
+
+        self.entry_i_frame.columnconfigure(0, weight=1)
+        self.entry_i_frame.columnconfigure(1, weight=1)
+        if self.displayed_entry_count == 0:
+            self.select_entry_row_index(None)
+        self._refresh_buttons()
+
+        self.refresh_fields(reset_display=reset_field_display)
 
     def _get_map_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
@@ -510,11 +541,15 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_list = self.get_category_dict(category)
         return entry_list[entry_index].name
 
+    def get_entry_description(self, entry_index: int, category=None) -> str:
+        entry_list = self.get_category_dict(category)
+        return entry_list[entry_index].description
+
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_dict(category)
         entry_list[entry_index].name = text
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(entry_index, text)
+            self.entry_rows[update_row_index].update_entry(entry_index, text, entry_list[entry_index].description)
 
     def _change_entry_id(self, row_index, new_id, category=None):
         """Not implemented for Map Editor."""

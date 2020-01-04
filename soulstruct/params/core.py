@@ -165,8 +165,11 @@ class ParamEntry(object):
                 try:
                     field_type = getattr(enums, field['internal_type'])
                 except AttributeError:
-                    raise KeyError(f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
-                                   f"internal type {field['internal_type']} (debug type {field['debug_type']}).")
+                    if field['name'] == 'sfxMultiplier':
+                        field_type = enums.f32
+                    else:
+                        raise KeyError(f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
+                                       f"internal type {field['internal_type']} (debug type = {field['debug_type']}).")
                 data = entry_buffer.read(field_type.size())
                 try:
                     field_value, = struct.unpack(field_type.format(), data)

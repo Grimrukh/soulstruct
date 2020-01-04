@@ -75,9 +75,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 0:
             return decompile_run_event_instruction(req_args, opt_args, arg_types)
 
-        if instruction_index == 6:
-            if game_module.name != 'darksouls3':
-                raise ValueError('Instruction 2000[06] can only be used in Dark Souls 3 (darksouls3 subpackage).')
+        if instruction_index == 6 and game_module.name == 'darksouls3':
             # DS3 only. Same as above, but takes no slot argument. Functional difference unknown.
             return decompile_run_common_event_instruction(req_args, opt_args, arg_types)
 

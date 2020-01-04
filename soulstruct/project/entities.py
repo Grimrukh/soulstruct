@@ -11,6 +11,7 @@ import soulstruct.game_types as gt
 from soulstruct.maps import DARK_SOULS_MAP_NAMES
 from soulstruct.maps.msb import MAP_ENTRY_ENTITY_TYPES
 from soulstruct.project.editor import SoulstructBaseEditor
+from soulstruct.project.utilities import bind_events
 from soulstruct.utilities import camel_case_to_spaces
 
 if TYPE_CHECKING:
@@ -75,22 +76,77 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
-    ENTRY_RANGE_SIZE = 100
+    ENTRY_RANGE_SIZE = 100  # More are added dynamically as needed.
 
     class EntryRow(SoulstructBaseEditor.EntryRow):
         """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
         master: SoulstructEntityEditor
 
         ENTRY_ID_WIDTH = 15
+        SHOW_ENTRY_ID = True
         EDIT_ENTRY_ID = True
+        ENTRY_TEXT_WIDTH = 30
+        ENTRY_DESCRIPTION_WIDTH = 120
 
         def __init__(self, editor: SoulstructEntityEditor, row_index: int, main_bindings: dict = None):
-            super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
+            self.master = editor
+            self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
-        def update_entry(self, entry_index: int, entry_text: str):
-            self.entry_id = entry_index
+            self.row_index = row_index
+            self._entry_id = None
+            self._entry_text = None
+            self._entry_description = None
+            self._active = False
+
+            bg_color = self._get_color()
+
+            self.row_box = editor.Frame(
+                width=self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH + self.ENTRY_DESCRIPTION_WIDTH,
+                height=self.ENTRY_ROW_HEIGHT, bg=bg_color,
+                row=row_index, columnspan=2, sticky='nsew')
+            bind_events(self.row_box, main_bindings)
+
+            self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='ew')
+            self.id_label = editor.Label(
+                self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, fg=self.ENTRY_ID_FG, font_size=11,
+                sticky='e')
+            if self.EDIT_ENTRY_ID:
+                id_bindings = main_bindings.copy()
+                id_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
+                    i, id_clicked=True)
+                id_bindings['<Shift-Button-1>'] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+            else:
+                id_bindings = main_bindings
+            bind_events(self.id_box, id_bindings)
+            bind_events(self.id_label, id_bindings)
+
+            self.text_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky='ew')
+            self.text_label = editor.Label(
+                self.text_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w', font_size=11,
+                justify='left', width=self.ENTRY_TEXT_WIDTH)
+            bind_events(self.text_box, main_bindings)
+            bind_events(self.text_label, main_bindings)
+
+            self.description_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky='nsew')
+            self.description_label = editor.Label(
+                self.description_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w', font_size=11,
+                justify='left', width=self.ENTRY_DESCRIPTION_WIDTH)
+            desc_bindings = main_bindings.copy()
+            desc_bindings.pop('<Shift-Button-1', None)
+            desc_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
+                i, description_clicked=True)
+            bind_events(self.description_box, desc_bindings)
+            bind_events(self.description_label, desc_bindings)
+
+            self.context_menu = editor.Menu(self.row_box)
+
+            self.tool_tip = None
+
+        def update_entry(self, entry_id: int, entry_text: str, entry_description: str = ""):
+            self.entry_id = entry_id
             self._entry_text = entry_text
             self.text_label.var.set(entry_text)
+            self.description_label.var.set(entry_description if entry_description else "<No Description>")
             self.build_entry_context_menu()
             self.unhide()
 
@@ -100,12 +156,40 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 label="Edit in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
                 command=lambda: self.master.popout_entry_text_edit(self.row_index))
 
+        def hide(self):
+            """Called when this row has no entry to display."""
+            self.row_box.grid_remove()
+            if self.SHOW_ENTRY_ID:
+                self.id_box.grid_remove()
+                self.id_label.grid_remove()
+            self.text_box.grid_remove()
+            self.text_label.grid_remove()
+            self.description_box.grid_remove()
+            self.description_label.grid_remove()
+
+        def unhide(self):
+            self.row_box.grid()
+            if self.SHOW_ENTRY_ID:
+                self.id_box.grid()
+                self.id_label.grid()
+            self.text_box.grid()
+            self.text_label.grid()
+            self.description_box.grid()
+            self.description_label.grid()
+
+        def _update_colors(self):
+            bg_color = self._get_color()
+            for widget in (self.row_box, self.id_box, self.id_label, self.text_box, self.text_label,
+                           self.description_box, self.description_label):
+                widget['bg'] = bg_color
+
     entry_rows: List[SoulstructEntityEditor.EntryRow]
 
     def __init__(self, maps: DarkSoulsMaps, evs_directory, linker, master=None, toplevel=False):
         self.Maps = maps
         self.map_choice = None
         self.evs_directory = Path(evs_directory)
+        self._e_entry_description_edit = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
     def build(self):
@@ -123,6 +207,148 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 self.build_category_canvas()
                 with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1], auto_rows=0):
                     self.build_entry_frame()
+
+    def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
+                               id_clicked=False, description_clicked=False):
+        """Select entry from row index, based on currently displayed category and ID range."""
+        old_row_index = self.active_row_index
+
+        if old_row_index is not None and row_index is not None:
+            if row_index == old_row_index:
+                if edit_if_already_selected:
+                    if id_clicked:
+                        return self._start_entry_id_edit(row_index)
+                    elif description_clicked:
+                        return self._start_entry_description_edit(row_index)
+                    else:
+                        return self._start_entry_text_edit(row_index)
+                return
+        else:
+            self._cancel_entry_id_edit()
+            self._cancel_entry_text_edit()
+
+        self.active_row_index = row_index
+
+        if old_row_index is not None:
+            self.entry_rows[old_row_index].active = False
+        if row_index is not None:
+            self.entry_rows[row_index].active = True
+            if set_focus_to_text:
+                self.entry_rows[row_index].text_label.focus_set()
+
+    def refresh_entries(self):
+        self._cancel_entry_id_edit()
+        self._cancel_entry_text_edit()
+
+        entries_to_display = self._get_category_name_range(
+            first_index=self.first_display_index,
+            last_index=self.first_display_index + self.ENTRY_RANGE_SIZE,
+        )
+
+        row = 0
+        for entry_id, entry in entries_to_display:
+            try:
+                self.entry_rows[row].update_entry(entry_id, entry.name, entry.description)
+            except KeyError:
+                # Create new rows as needed.
+                with self.set_master(self.entry_i_frame):
+                    self.entry_rows.append(self.EntryRow(
+                        self, row_index=row, main_bindings={
+                            '<Button-1>': lambda _, i=row: self.select_entry_row_index(i),
+                            '<Shift-Button-1>': lambda e, i=row: self.popout_entry_text_edit(i),
+                            '<Button-3>': lambda e, i=row: self._right_click_entry(e, i),
+                            '<Up>': self._entry_press_up,
+                            '<Down>': self._entry_press_down,
+                            '<Prior>': lambda e: self._go_to_previous_entry_range(),
+                            '<Next>': lambda e: self._go_to_next_entry_range(),
+                        }))
+                self.entry_rows[row].update_entry(entry_id, entry.name, entry.description)
+            self.entry_rows[row].unhide()
+            row += 1
+
+        self.displayed_entry_count = row
+        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+            self.entry_rows[remaining_row].hide()
+
+        self.entry_i_frame.columnconfigure(0, weight=1)
+        self.entry_i_frame.columnconfigure(1, weight=1)
+        if self.displayed_entry_count == 0:
+            self.select_entry_row_index(None)
+        self._refresh_buttons()
+
+    def _start_entry_description_edit(self, row_index):
+        if not self._e_entry_text_edit and not self._e_entry_id_edit and not self._e_entry_description_edit:
+            entry_id = self.get_entry_id(row_index)
+            initial_desc = self.get_entry_description(entry_id)
+            self._e_entry_description_edit = self.Entry(
+                self.entry_rows[row_index].description_box, initial_text=initial_desc, sticky='ew',
+                width=5)
+            self._e_entry_description_edit.bind(
+                '<Return>', lambda e, i=row_index: self._confirm_entry_description_edit(i))
+            self._e_entry_description_edit.bind('<Up>', self._entry_press_up)
+            self._e_entry_description_edit.bind('<Down>', self._entry_press_down)
+            self._e_entry_description_edit.bind('<FocusOut>', lambda e: self._cancel_entry_description_edit())
+            self._e_entry_description_edit.bind('<Escape>', lambda e: self._cancel_entry_description_edit())
+            self._e_entry_description_edit.focus_set()
+            self._e_entry_description_edit.select_range(0, 'end')
+
+    def _cancel_entry_description_edit(self):
+        if self._e_entry_description_edit:
+            self._e_entry_description_edit.destroy()
+            self._e_entry_description_edit = None
+
+    def _confirm_entry_description_edit(self, row_index):
+        if self._e_entry_description_edit:
+            new_description = self._e_entry_description_edit.var.get()
+            self._change_entry_description(row_index, new_description)
+            self._cancel_entry_description_edit()
+
+    def _change_entry_description(self, row_index, new_description, category=None):
+        """Set text of given entry index in the displayed category (if different from current)."""
+        if category is None:
+            category = self.active_category
+        entry_id = self.get_entry_id(row_index)
+        current_desc = self.get_entry_description(entry_id, category=category)
+        if current_desc == new_description:
+            return False  # Nothing to change.
+        self._set_entry_description(entry_id, new_description, category=category, update_row_index=row_index)
+        return True
+
+    def _entry_press_up(self, _=None):
+        if self.active_row_index is not None:
+            edit_new_text = self._e_entry_text_edit is not None
+            edit_new_id = self._e_entry_id_edit is not None
+            edit_new_description = self._e_entry_description_edit is not None
+            self._confirm_entry_text_edit(self.active_row_index)
+            self._confirm_entry_id_edit(self.active_row_index)
+            self._confirm_entry_description_edit(self.active_row_index)
+            self._shift_selected_entry(-1)
+            if edit_new_text:
+                self._start_entry_text_edit(self.active_row_index)
+            elif edit_new_id:
+                self._start_entry_id_edit(self.active_row_index)
+            elif edit_new_description:
+                self._start_entry_description_edit(self.active_row_index)
+            if self.entry_canvas.yview()[1] != 1.0 or self.active_row_index < self.displayed_entry_count - 5:
+                self.entry_canvas.yview_scroll(-1, 'units')
+
+    def _entry_press_down(self, _=None):
+        if self.active_row_index is not None:
+            edit_new_text = self._e_entry_text_edit is not None
+            edit_new_id = self._e_entry_id_edit is not None
+            edit_new_description = self._e_entry_description_edit is not None
+            self._confirm_entry_text_edit(self.active_row_index)
+            self._confirm_entry_id_edit(self.active_row_index)
+            self._confirm_entry_description_edit(self.active_row_index)
+            self._shift_selected_entry(+1)
+            if edit_new_text:
+                self._start_entry_text_edit(self.active_row_index)
+            elif edit_new_id:
+                self._start_entry_id_edit(self.active_row_index)
+            elif edit_new_description:
+                self._start_entry_description_edit(self.active_row_index)
+            if self.entry_canvas.yview()[0] != 0.0 or self.active_row_index > 5:
+                self.entry_canvas.yview_scroll(1, 'units')
 
     def _get_map_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
@@ -240,12 +466,23 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         entry_list = self.get_category_dict(category)
         return entry_list[entry_id].name
 
+    def get_entry_description(self, entry_id: int, category=None) -> str:
+        entry_list = self.get_category_dict(category)
+        return entry_list[entry_id].description
+
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_dict(category)
         entry_list[entry_index].name = text  # Will update Maps tab as well (once refreshed).
         # TODO: Might want to manually refresh corresponding Maps entry text with linker.
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_index, text)
+
+    def _set_entry_description(self, entry_index: int, description: str, category=None, update_row_index=None):
+        entry_list = self.get_category_dict(category)
+        entry_list[entry_index].description = description  # Will update Maps tab tooltip as well.
+        if category == self.active_category and update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(
+                entry_index, self.entry_rows[update_row_index].entry_text, description)
 
     def _change_entry_id(self, row_index, new_id, category=None):
         """Changes 'entity_id' of MSB entry."""
