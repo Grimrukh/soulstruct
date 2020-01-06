@@ -9,7 +9,7 @@ from soulstruct.bnd.magic import *
 from soulstruct.dcx import DCX
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx, create_bak
 
-__all__ = ['BND', 'BND3', 'BND4', 'BaseBND']
+__all__ = ['BND', 'BND3', 'BND4', 'BaseBND', 'BNDEntry']
 
 
 class BNDEntry(object):

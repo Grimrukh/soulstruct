@@ -1,4 +1,5 @@
 import copy
+import math
 from io import BytesIO, BufferedReader
 from pathlib import Path
 from typing import List, Iterator
@@ -456,7 +457,7 @@ class MSBPartList(MSBEntryList):
 for cls in (MSBModelList, MSBEventList, MSBRegionList, MSBPartList):
     for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[cls.ENTRY_LIST_NAME].items():
         setattr(cls, entry_type_name, property(
-            lambda self: [e for e in self._entries if e.ENTRY_TYPE == entry_type_enum]))
+            lambda self, enum=entry_type_enum: [e for e in self._entries if e.ENTRY_TYPE == enum]))
 
 
 class MSB(object):
@@ -571,6 +572,39 @@ class MSB(object):
             p.translate += translate
         for r in self.regions:
             r.translate += translate
+
+    def rotate_all_y_in_world(self, y_rotation, origin_x=0.0, origin_z=0.0):
+        """Rotate around world origin by `y_rotation` degrees.
+
+        Map Pieces, Collisions, Navmeshes, and Map Connections rotate around the world origin by default, but other
+        parts and all regions do not, and require a simple local -> world translation correction.
+        """
+        # TODO: Allow arbitrary (origin_x, origin_z).
+        for p in self.parts:
+            p.rotate.y += y_rotation
+        for r in self.regions:
+            r.rotate.y += y_rotation
+
+        y_rot_rad = math.radians(y_rotation)
+
+        for p in self.parts:
+            if not p.WORLD_ROTATION:
+                radius = math.hypot(p.translate.x, p.translate.z)
+                translate_x = radius * -math.sin(y_rot_rad)
+                translate_z = radius * -math.cos(y_rot_rad)
+                p.translate.x += translate_x
+                p.translate.z += translate_z
+        for r in self.regions:
+            radius = math.hypot(r.translate.x, r.translate.z)
+            translate_x = radius * -math.sin(y_rot_rad)
+            translate_z = radius * -math.cos(y_rot_rad)
+            r.translate.x += translate_x
+            r.translate.z += translate_z
+
+    def transform_all(self, translate_x, translate_y, translate_z, y_rotation):
+        """Rotate (around world origin) and translate at the same time."""
+        self.rotate_all_y_in_world(y_rotation)
+        self.translate_all((translate_x, translate_y, translate_z))
 
     def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
         """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type."""

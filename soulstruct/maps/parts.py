@@ -137,6 +137,7 @@ class BaseMSBPart(MSBEntryEntity):
     }
 
     ENTRY_TYPE = None
+    WORLD_ROTATION = False
 
     def __init__(self, msb_part_source):
         super().__init__()
@@ -313,6 +314,7 @@ class MSBMapPiece(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.MapPiece
+    WORLD_ROTATION = True
 
     def unpack_type_data(self, msb_buffer):
         BinaryStruct(*self.MAP_PIECE_STRUCT).unpack(msb_buffer)  # Simply checks for the nulls.
@@ -608,6 +610,7 @@ class MSBCollision(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Collision
+    WORLD_ROTATION = True
 
     def __init__(self, msb_part_source):
         self.hit_filter_id = None
@@ -730,6 +733,7 @@ class MSBNavmesh(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Navmesh
+    WORLD_ROTATION = True
 
     def __init__(self, msb_part_source):
         self.navmesh_groups = None
@@ -778,6 +782,7 @@ class MSBMapConnection(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.MapConnection
+    WORLD_ROTATION = True
 
     def __init__(self, msb_part_source):
         self.collision_name = None

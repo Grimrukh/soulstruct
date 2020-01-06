@@ -16,6 +16,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional
 
+from soulstruct.ai import DarkSoulsAIScripts
 from soulstruct.core import SoulstructError
 from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
@@ -24,6 +25,7 @@ from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import find_steam_common_paths, word_wrap
 from soulstruct.utilities.window import SoulstructSmartFrame
 
+from .ai import SoulstructAIEditor
 from .entities import SoulstructEntityEditor
 from .events import SoulstructEventEditor
 from .lighting import SoulstructLightingEditor
@@ -45,6 +47,7 @@ DATA_TYPES = {
     'lighting': DarkSoulsLightingParameters,
     'text': DarkSoulsText,
     'events': None,  # modified via EVS script files
+    'ai': DarkSoulsAIScripts,
 }
 
 STEAM_APPIDS = {
@@ -73,8 +76,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     lighting_tab: Optional[SoulstructLightingEditor]
     text_tab: Optional[SoulstructTextEditor]
     events_tab: Optional[SoulstructEventEditor]
+    ai_tab: Optional[SoulstructAIEditor]
 
-    TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'runtime']
+    TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'ai', 'runtime']
 
     def __init__(self, project_path, master=None):
         super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct")
@@ -114,6 +118,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.text_tab = None
         self.lighting_tab = None
         self.events_tab = None
+        self.ai_tab = None
 
         self.install_psutil_button = None
         self.game_save_list = None
@@ -161,6 +166,11 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
             dcx=self.project.game_name == "Dark Souls Remastered")
         self.events_tab.grid(sticky='nsew')
+
+        self.ai_tab = self.SmartFrame(
+            frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
+            ai=self.project.Ai, linker=self.linker)
+        self.ai_tab.grid(sticky='nsew')  # TODO: put grid inside above...
 
         self.build_runtime_tab(tab_frames['runtime'])
 
@@ -448,7 +458,6 @@ class SoulstructProject(object):
         - Eventually have subclasses for different games, with shared methods here.
         - Auto-save scheduled Tk functions that operate at ten minute intervals.
         - Inspect PTD directory for lack of UDSFM when imported.
-        - Store location of game save data for a future save manager.
     """
     _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
 
@@ -467,6 +476,7 @@ class SoulstructProject(object):
         self.Params = DarkSoulsGameParameters()
         self.Lighting = DarkSoulsLightingParameters()
         self.Maps = DarkSoulsMaps()
+        self.Ai = DarkSoulsAIScripts()
 
         self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
         self.load_config(with_window=with_window)
@@ -636,14 +646,20 @@ class SoulstructProject(object):
         self._check_steam_appid_file(self.game_root, self.game_name)
         if debug:
             game_exe_path = self.game_exe_path.parent / (self.game_exe_path.stem + "_DEBUG.exe")
+            if game_exe_path.name in (p.name() for p in psutil.process_iter()):
+                print(f"# {game_exe_path.name} is already running.")
+                return
         else:
             game_exe_path = self.game_exe_path
+
         if not game_exe_path.is_file():
             raise SoulstructProjectError(f"Could not find game executable: {str(game_exe_path)}")
-        game_exe_str = str(self.game_exe_path)
+
         if self.game_exe_path.name in (p.name() for p in psutil.process_iter()):
             print(f"# {self.game_exe_path.name} is already running.")
             return
+
+        game_exe_str = str(game_exe_path)
         if threaded:
             game_thread = threading.Thread(target=subprocess.run, args=(game_exe_str,))
             game_thread.start()
@@ -793,6 +809,10 @@ class SoulstructProject(object):
             return root / 'param/DrawParam'
         elif data_type == 'events':
             return root / 'event'
+        elif data_type == 'ai':
+            return root / 'script'
+        else:
+            raise ValueError(f"Invalid game data type: {data_type}")
 
     @staticmethod
     def _get_timestamp(for_path=False):

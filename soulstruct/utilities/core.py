@@ -586,7 +586,7 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
         encoding: attempt to decode characters in this encoding before returning. If 'utf-16-le' is specified, this
             function will infer that characters are two bytes long (and null terminations will be two bytes). Otherwise,
             it assumes they are one byte long. You can decode the characters yourself if you want to use another
-            multiple-bytes-per-character encoding).
+            multiple-bytes-per-character encoding.
 
         ignore_encoding_error_for_these_chars: if a decoding error occurs for any character (bytes) in this sequence,
             the encoded bytes will be returned instead of raising a UnicodeDecodeError.
