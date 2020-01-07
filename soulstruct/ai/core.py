@@ -27,6 +27,11 @@ DECOMPILER_x64 = Path(__file__).parent / "lua/x64/DSLuaDecompiler.exe"
 # No x86 decompiler.
 
 
+_SNAKE_CASE_RE = re.compile(r"(?<!^)(?=[A-Z])")
+_GOAL_SCRIPT_RE = re.compile(r"^(\d{6})_(battle|logic)\.lua$")
+_LUA_SCRIPT_RE = re.compile(r"(.*)\.lua$")
+
+
 class LuaError(SoulstructError):
     pass
 
@@ -42,7 +47,7 @@ class LuaDecompileError(LuaError):
 class LuaBND(object):
     """Automatically loads all scripts, LuaInfo, and LuaGNL objects."""
 
-    def __init__(self, luabnd_path):
+    def __init__(self, luabnd_path, sort_goals=True):
         self.bnd = BND(luabnd_path)  # path is remembered in BND
 
         self.goals = []  # type: List[LuaGoal]
@@ -71,12 +76,12 @@ class LuaBND(object):
 
         for entry in self.bnd:
             entry_path = Path(entry.path)
-            goal_match = re.match(r"^(\d{6})_(battle|logic)\.lua$", entry_path.name)
+            goal_match = _GOAL_SCRIPT_RE.match(entry_path.name)
             if goal_match:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
                 try:
-                    goal = self.get_goal(goal_id, logic=goal_type == "logic")
+                    goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
                     print(f"# WARNING: Lua file {entry_path.name} has no corresponding goal and will not be loaded.\n"
                           f"# (Future versions of Soulstruct will try to create the goal automatically.)")
@@ -89,12 +94,20 @@ class LuaBND(object):
                     self._bnd_path_parent = str(Path(entry.path).parent)
                     self.is_lua_64 = "INTERROOT_x64" in self._bnd_path_parent
             elif entry.id not in {1000000, 1000001}:
-                lua_match = re.match(r".*\.lua$", entry_path.name)
+                lua_match = _LUA_SCRIPT_RE.match(entry_path.name)
                 if not lua_match:
                     print(f"# WARNING: Found non-Lua file with BND path: '{entry.path}'. File will be ignored.")
                     continue
-                print(entry_path)
-                self.other.append(LuaOther(entry_path.stem, bytecode=entry.data))
+                for goal in self.goals:
+                    snake_name = _SNAKE_CASE_RE.sub("_", goal.goal_name).lower()
+                    if lua_match.group(1) == snake_name:
+                        goal.bytecode = entry.data
+                        break
+                else:
+                    self.other.append(LuaOther(entry_path.stem, bytecode=entry.data))
+
+        if sort_goals:
+            self.goals = sorted(self.goals, key=lambda g: (g.goal_id, g.goal_type))
 
     def compile_all(self, output_directory=None, including_other=False):
         """Compile all goals (and optionally, other Lua scripts) to Lua bytecode.
@@ -161,12 +174,12 @@ class LuaBND(object):
         """Load decompiled scripts from an arbitrary directory (e.g. to get DSR scripts into PTDE)."""
         directory = Path(directory)
         for lua_script in directory.glob("*.lua"):
-            goal_match = re.match(r"^(\d)+_(battle|logic)\.lua$", lua_script.name)
+            goal_match = _GOAL_SCRIPT_RE.match(lua_script.name)
             if goal_match:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
                 try:
-                    goal = self.get_goal(goal_id, logic=goal_type == "logic")
+                    goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
                     # TODO: parse script to guess what goal name should be (from Activate function name).
                     print(f"# WARNING: No goal found for script {lua_script.name}. Ignoring file.\n"
@@ -178,7 +191,7 @@ class LuaBND(object):
                 except UnicodeDecodeError:
                     raise LuaError(f"Could not read Lua script '{lua_script.name}'. Are you sure it's not compiled?")
             elif including_other:
-                lua_match = re.match(r"\.lua$", lua_script.name)
+                lua_match = _LUA_SCRIPT_RE.match(lua_script.name)
                 if not lua_match:
                     continue
                 try:
@@ -222,30 +235,22 @@ class LuaBND(object):
         self.update_bnd(use_decompiled_goals=use_decompiled_goals, use_decompiled_other=use_decompiled_other)
         self.bnd.write(luabnd_path)
 
-    def get_goal(self, goal_id, logic=False) -> LuaGoal:
-        if logic is None:
-            raise ValueError("`logic` must be True or False, not None.")
-        goals = [g for g in self.goals if g.goal_id == goal_id and g.has_logic_interrupt == logic]
+    def get_goal(self, goal_id, goal_type) -> LuaGoal:
+        if goal_type not in {LuaGoal.BATTLE_TYPE, LuaGoal.LOGIC_TYPE, LuaGoal.NEITHER_TYPE}:
+            raise ValueError("goal_type must be 'battle', 'logic', or 'neither'.")
+        goals = [g for g in self.goals if g.goal_id == goal_id and g.goal_type == goal_type]
         if not goals:
-            raise KeyError(f"No goal in LuaBND with ID {goal_id} and type {'logic' if logic else 'battle'}.")
+            raise KeyError(f"No goal in LuaBND with ID {goal_id} and type {repr(goal_type)}.")
         elif len(goals) >= 2:
-            raise LuaError(f"Multiple {'logic' if logic else 'battle'} goals with ID {goal_id}. You must have "
-                           f"done this intentionally, but it's not valid.")
+            raise LuaError(f"Multiple {repr(goal_type)} goals with ID {goal_id}. This shouldn't happen.")
         return goals[0]
 
-    def get_goal_index(self, goal_id, logic=False) -> int:
-        if logic is None:
-            raise ValueError("`logic` must be True or False, not None.")
-        goals = [g for g in self.goals if g.goal_id == goal_id and g.has_logic_interrupt == logic]
-        if not goals:
-            raise KeyError(f"No goal in LuaBND with ID {goal_id} and type {'logic' if logic else 'battle'}.")
-        elif len(goals) >= 2:
-            raise LuaError(f"Multiple {'logic' if logic else 'battle'} goals with ID {goal_id}. You must have "
-                           f"done this intentionally, but it's not valid.")
-        return self.goals.index(goals[0])
+    def get_goal_index(self, goal_id, goal_type) -> int:
+        goal = self.get_goal(goal_id, goal_type)
+        return self.goals.index(goal)
 
     def get_goal_dict(self):
-        return {(g.goal_id, g.has_logic_interrupt): g for g in self.goals}
+        return {(g.goal_id, g.goal_type): g for g in self.goals}
 
 
 @contextmanager
@@ -336,27 +341,96 @@ class LuaScriptBase(abc.ABC):
         raise NotImplementedError
 
 class LuaGoal(LuaScriptBase):
+    """Goals can have type 'battle', 'logic', or 'neither'.
 
-    def __init__(self, goal_id: int, goal_name: str, has_battle_interrupt: bool, has_logic_interrupt: bool,
-                 logic_interrupt_name: str = "", bytecode=b"", script=""):
+    All 'battle' goals have `has_battle_interrupt=True`, `has_logic_interrupt=False`, and `logic_interrupt_name=""`.
+    Their names usually end in 'Battle' (no underscore), but this is not necessary (e.g. common battle functions).
+
+    All 'logic' goals have `has_battle_interrupt=False`, `has_logic_interrupt=True`, and
+    `logic_interrupt_name={goal_name_prefix}_Interupt` [sic]. The goal name always ends in '_Logic'.
+
+    All 'neither' goals have `has_battle_interrupt=False`, `has_logic_interrupt=False`, and `logic_interrupt_name=""`.
+    These goals are typically referenced in other files (e.g. 'CrystalLizard330000Runaway'). They can have any name.
+    """
+    BATTLE_TYPE = "battle"
+    LOGIC_TYPE = "logic"
+    NEITHER_TYPE = "neither"
+
+    def __init__(self, goal_id: int, goal_name: str, goal_type: str = None,
+                 has_battle_interrupt: bool = None, has_logic_interrupt: bool = None, logic_interrupt_name="",
+                 bytecode=b"", script=""):
         super().__init__(bytecode=bytecode, script=script)
         self.goal_id = goal_id
-        self.goal_name = goal_name
-        self.has_battle_interrupt = has_battle_interrupt
-        self.has_logic_interrupt = has_logic_interrupt
-        self.logic_interrupt_name = logic_interrupt_name
+        self._goal_name = goal_name
+        self._goal_type = goal_type if goal_type is not None else self._detect_goal_type(
+            has_battle_interrupt, has_logic_interrupt, logic_interrupt_name)
+
+    def _detect_goal_type(self, has_battle_interrupt, has_logic_interrupt, logic_interrupt_name):
+        if has_battle_interrupt and not has_logic_interrupt and not logic_interrupt_name:
+            return self.BATTLE_TYPE
+        elif not has_battle_interrupt and has_logic_interrupt and logic_interrupt_name:
+            return self.LOGIC_TYPE
+        elif not has_battle_interrupt and not has_logic_interrupt and not logic_interrupt_name:
+            return self.NEITHER_TYPE
+        raise LuaError(f"Could not determine goal type (battle={has_battle_interrupt}, logic={has_logic_interrupt}, "
+                       f"logic_name={repr(logic_interrupt_name)}).")
+
+    @property
+    def goal_name(self):
+        return self._goal_name
+
+    @goal_name.setter
+    def goal_name(self, name):
+        if self._goal_type == "logic" and not name.endswith("_Logic"):
+            raise LuaError(f"Logic goal name must end in '_Logic'. Invalid: {repr(name)}")
+        elif self._goal_type == "battle" and not name.endswith("Battle"):
+            print(f"# WARNING: Battle goal name {repr(name)} does not end in 'Battle', which is unusual.")
+        self._goal_name = name
+
+    @property
+    def goal_type(self):
+        return self._goal_type
+
+    @goal_type.setter
+    def goal_type(self, goal_type):
+        goal_type = goal_type.lower()
+        if not self._goal_name.endswith("_Logic") and goal_type == "logic":
+            raise LuaError(f"Logic goal name must end in '_Logic'. Invalid: {repr(self._goal_name)}")
+        elif not self._goal_name.endswith("Battle") and goal_type == "battle":
+            print(f"# WARNING: Battle goal name {repr(self._goal_name)} does not end in 'Battle', which is unusual.")
+        self._goal_type = goal_type
+
+    def set_name_and_type(self, goal_name, goal_type):
+        self._goal_name = goal_name  # no type checking
+        self.goal_type = goal_type  # yes type checking
 
     @property
     def script_name(self):
-        return f"{self.goal_id:06d}_{'battle' if not self.has_logic_interrupt else 'logic'}.lua"
+        if self.goal_type == self.BATTLE_TYPE:
+            return f"{self.goal_id:06d}_battle.lua"
+        elif self.goal_type == self.LOGIC_TYPE:
+            return f"{self.goal_id:06d}_logic.lua"
+        elif self.goal_type == self.NEITHER_TYPE:
+            snake_case_name = _SNAKE_CASE_RE.sub("_", self.goal_name).lower()
+            return f"{snake_case_name}.lua"
 
     def __repr__(self):
-        return (f"LuaGoal({self.goal_id:06d}, {repr(self.goal_name)}, "
-                f"has_battle_interrupt={self.has_battle_interrupt}, has_logic_interrupt={self.has_logic_interrupt}, "
-                f"logic_interrupt_name={repr(self.logic_interrupt_name)})")
+        return f"LuaGoal({self.goal_id:06d}, {repr(self.goal_name)}, {repr(self.goal_type)})"
 
     def copy(self):
         return deepcopy(self)
+
+    def get_interrupt_details(self):
+        if self.goal_type == self.BATTLE_TYPE:
+            return {"has_battle_interrupt": True, "has_logic_interrupt": False, "logic_interrupt_name": ""}
+        elif self.goal_type == self.LOGIC_TYPE:
+            if self.goal_name.endswith("_Logic"):
+                name = self.goal_name[:-6] + "_Interupt"
+            else:
+                raise LuaError(f"Logic goal name must end in '_Logic'. Invalid: {repr(self._goal_name)}")
+            return {"has_battle_interrupt": False, "has_logic_interrupt": True, "logic_interrupt_name": name}
+        elif self.goal_type == self.NEITHER_TYPE:
+            return {"has_battle_interrupt": False, "has_logic_interrupt": False, "logic_interrupt_name": ""}
 
 
 class LuaOther(LuaScriptBase):
@@ -461,14 +535,16 @@ class LuaInfo(object):
         for goal in self.goals:
             name_offset = packed_strings_offset + len(packed_strings)
             packed_strings += goal.goal_name.encode(encoding="shift-jis") + b'\0'
-            if goal.logic_interrupt_name:
+            goal_kwargs = goal.get_interrupt_details()
+            logic_interrupt_name = goal_kwargs.pop("logic_interrupt_name")
+            if logic_interrupt_name:
                 logic_interrupt_name_offset = packed_strings_offset + len(packed_strings)
-                packed_strings += goal.logic_interrupt_name.encode(encoding="shift-jis") + b'\0'
+                packed_strings += logic_interrupt_name.encode(encoding="shift-jis") + b'\0'
             else:
                 logic_interrupt_name_offset = 0
             packed_goals += goal_struct.pack(
                 goal_id=goal.goal_id, name_offset=name_offset, logic_interrupt_name_offset=logic_interrupt_name_offset,
-                has_battle_interrupt=goal.has_battle_interrupt, has_logic_interrupt=goal.has_logic_interrupt)
+                **goal_kwargs)
 
         return header + packed_goals + packed_strings
 

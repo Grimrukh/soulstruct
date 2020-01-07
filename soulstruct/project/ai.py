@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import tkinter as tk
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from soulstruct.ai import DARK_SOULS_AI_BND_NAMES
 from soulstruct.ai.core import LuaError
@@ -50,9 +50,9 @@ class AIScriptTextEditor(tk.Text):
         # self.tag_configure("named_arg", foreground='#AAFFFF')
         # self.tag_configure("func_arg_name", foreground='#FFCCAA')
         # self.tag_configure("event_arg_name", foreground='#FFAAFF')
-        #
-        # self.tag_configure("found", background='#224433')
-        # self.tag_configure("error", background='#443322')
+
+        self.tag_configure("found", background='#224433')
+        self.tag_configure("error", background='#443322')
 
     def _proxy(self, *args):
         cmd = (self._orig,) + args
@@ -125,7 +125,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self._entry_id = None
             self._entry_text = None
             self._active = False
-            self._logic = False
+            self._goal_type = "battle"
 
             bg_color = self._get_color()
 
@@ -139,7 +139,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.type_box, text='B', width=self.ENTRY_TYPE_WIDTH, bg=bg_color, fg="#F33", font_size=11,
                 sticky='ew')
             type_bindings = main_bindings.copy()
-            type_bindings['<Button-1>'] = lambda _, i=row_index: self.master.toggle_entry_logic_state(i)
+            type_bindings['<Button-1>'] = lambda _, i=row_index: self.master.set_goal_type(i)
+            type_bindings['<Button-3>'] = lambda _, i=row_index: self.master.set_goal_type(i, reverse=True)
             bind_events(self.type_box, type_bindings)
             bind_events(self.type_label, type_bindings)
 
@@ -166,12 +167,12 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
             self.tool_tip = None
 
-        def update_entry(self, entry_id: int, entry_text: str, logic_state: bool = None):
+        def update_entry(self, entry_id: int, entry_text: str, goal_type=None):
             self.entry_id = entry_id
             self.entry_text = entry_text
-            if logic_state is None:
+            if goal_type is None:
                 raise ValueError("Logic state cannot be None (suggests design problem).")
-            self.logic = logic_state
+            self.goal_type = goal_type
             self._update_colors()
             self.build_entry_context_menu()
 
@@ -198,7 +199,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.context_menu.delete(0, 'end')
             self.context_menu.add_command(
                 label="Duplicate Entry to Next ID", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.add_relative_entry(self.entry_id, logic_state=self.logic, offset=1))
+                command=lambda: self.master.add_relative_entry(self.entry_id, goal_type=self.goal_type, offset=1))
             self.context_menu.add_command(
                 label="Delete Entry", foreground=self.STYLE_DEFAULTS['text_fg'],
                 command=lambda: self.master.delete_entry(self.row_index))
@@ -209,21 +210,25 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                            self.type_box, self.type_label):
                 widget['bg'] = bg_color
 
-        def toggle_logic(self):
-            self.logic = not self.logic
-
         @property
-        def logic(self):
-            return self.type_label.var.get() == "L"
+        def goal_type(self):
+            return self._goal_type
 
-        @logic.setter
-        def logic(self, enabled: bool):
-            if self.logic and not enabled:
-                self.type_label.var.set("B")
-                self.type_label['fg'] = '#F33'
-            elif not self.logic and enabled:
-                self.type_label.var.set("L")
-                self.type_label['fg'] = '#3F3'
+        @goal_type.setter
+        def goal_type(self, goal_type: str):
+            if goal_type != self._goal_type:
+                if goal_type == "battle":
+                    self.type_label.var.set("B")
+                    self.type_label['fg'] = '#F33'
+                elif goal_type == "logic":
+                    self.type_label.var.set("L")
+                    self.type_label['fg'] = '#3F3'
+                elif goal_type == "neither":
+                    self.type_label.var.set("N")
+                    self.type_label['fg'] = '#FFF'
+                else:
+                    raise ValueError(f"Invalid goal type: {goal_type}")
+                self._goal_type = goal_type
 
     entry_rows: List[SoulstructAIEditor.EntryRow]
 
@@ -233,10 +238,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.game_root = Path(game_root)
         self.e_coord = None
         self.bnd_choice = None
-        self.has_battle_interrupt = None
-        self.logic_interrupt = None
-        self.set_logic_interrupt_button = None
-        self.text_editor = None
+        self.text_editor = None  # type: Optional[AIScriptTextEditor]
         self.compile_button = None
         self.decompile_button = None
         super().__init__(linker=linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
@@ -247,29 +249,30 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[2, 1, 0, 2, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
                 bnd_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
                 self.bnd_choice = self.Combobox(
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
                     font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=10).var
-                self.Label(text="Has Battle Interrupt", padx=(15, 0))
-                self.has_battle_interrupt = self.Checkbutton(
-                    command=self.set_battle_interrupt, selectcolor='#000', fg="#FFF")
-                self.logic_interrupt = self.Entry(width=30, padx=(15, 0))
-                self.set_logic_interrupt_button = self.Button(
-                    text="Set Logic Interrupt", width=20, command=self.set_logic_interrupt_name, padx=5)
 
             with self.set_master(sticky='nsew', row_weights=[1], column_weights=[2, 1], auto_columns=0):
                 with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1]):
                     self.build_entry_frame()
                 with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1],
                                      padx=50, pady=10, auto_rows=0):
-                    with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1], pady=5, auto_columns=0):
-                        self.compile_button = self.Button(
-                            text="Compile", fg="#422", width=15, padx=5, command=self.compile_selected)
+                    with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1], pady=5,
+                                         auto_columns=0):
                         self.decompile_button = self.Button(
-                            text="Decompile", fg="#422", width=15, padx=5, command=self.decompile_selected)
-                    self.build_script_editor()
+                            text="Decompile", bg="#422", width=15, padx=5, command=self.decompile_selected,
+                            state="disabled")
+                        self.save_button = self.Button(
+                            text="Save Script", bg="#422", width=15, padx=5, command=self.save_selected,
+                            state="disabled")
+                        self.compile_button = self.Button(
+                            text="Compile", bg="#422", width=15, padx=5, command=self.compile_selected,
+                            state="disabled")
+                    with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 0]):
+                        self.build_script_editor()
 
     def build_script_editor(self):
         self.script_editor_canvas = self.Canvas(
@@ -295,48 +298,91 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         # self.text_editor.bind("<<CursorChange>>", self._update_line_number)
         # self.text_editor.bind("<Control-f>", self._control_f_search)
 
-    def set_battle_interrupt(self):
-        if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            self.get_category_dict()[entry_id, logic_state].has_battle_interrupt = self.has_battle_interrupt.var.get()
+    def _highlight_error(self, lineno):
+        self.text_editor.mark_set("insert", f"{lineno}.0")
+        self.text_editor.see(f"{lineno}.0")
+        self.text_editor.highlight_line(lineno, "error")
 
-    def set_logic_interrupt_name(self):
-        if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            self.get_category_dict()[entry_id, logic_state].logic_interrupt_name = self.logic_interrupt.var.get()
+    def _get_current_text(self):
+        """Get all current text from TextBox, minus final newline (added by Tk)."""
+        return self.text_editor.get(1.0, 'end')[:-1]
 
-    def toggle_entry_logic_state(self, row_index):
-        entry_id = self.get_entry_id(row_index)
-        old_logic_state = self.entry_rows[row_index].type_label.var.get() == "L"
-        new_logic_state = not old_logic_state
-        if (entry_id, new_logic_state) in self.get_category_dict():
-            self.dialog("Script Type Error", f"A {'logic' if new_logic_state else 'battle'} script already exists for "
-                                             f"goal ID {entry_id}.")
-            return
-        goal = self.get_category_dict()[entry_id, old_logic_state]
-        goal.has_logic_interrupt = new_logic_state
-        self.entry_rows[row_index].logic = new_logic_state
-        self.logic_interrupt['state'] = 'normal' if new_logic_state else 'disabled'
-        self.set_logic_interrupt_button['state'] = 'normal' if new_logic_state else 'disabled'
+    def _ignored_unsaved(self):
+        if self._get_current_text() != self.get_goal().script:
+            if self.dialog(title="Lose Unsaved Changes?",
+                           message="Current script has changed but not been saved. Lose changes?",
+                           button_names=("Yes, lose changes", "No, stay here"),
+                           button_kwargs=('YES', 'NO'),
+                           cancel_output=1, default_output=1) == 1:
+                return False
+        return True
+
+    def set_goal_type(self, row_index=None, goal_type=None, reverse=False):
+        if row_index is None:
+            row_index = self.active_row_index
+        goal = self.get_goal(row_index)
+        old_type = goal.goal_type
+        if goal_type is None:
+            if old_type == goal.BATTLE_TYPE:
+                goal_type = goal.NEITHER_TYPE if reverse else goal.LOGIC_TYPE
+            elif old_type == goal.LOGIC_TYPE:
+                goal_type = goal.BATTLE_TYPE if reverse else goal.NEITHER_TYPE
+            elif old_type == goal.NEITHER_TYPE:
+                goal_type = goal.LOGIC_TYPE if reverse else goal.BATTLE_TYPE
+        elif old_type == goal_type:
+            return False
+        if (goal.goal_id, goal_type) in self.get_category_dict():
+            self.dialog("Script Type Error", f"A {repr(goal.goal_type)} goal already exists with ID {goal.goal_id}.",
+                        button_kwargs="OK")
+            return False
+        try:
+            goal.goal_type = goal_type
+        except LuaError:
+            if goal_type != "logic":
+                raise
+            if self.dialog(title="Lose Unsaved Changes?",
+                           message=f"Logic goal name must end in '_Logic'. Add suffix to name?",
+                           button_names=("Yes, change name", "No, do nothing"),
+                           button_kwargs=('YES', 'NO'),
+                           cancel_output=1, default_output=1) == 1:
+                return False
+            else:
+                goal.set_name_and_type(goal.goal_name + "_Logic", "logic")
+                self.entry_rows[row_index].entry_text = goal.goal_name
+
+        self.entry_rows[row_index].goal_type = goal_type
+        return True
+
+    def save_selected(self):
+        if self.active_row_index is not None:
+            goal = self.get_goal()
+            goal.script = self._get_current_text()
 
     def compile_selected(self):
         if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+            goal = self.get_goal()
+            goal.script = self._get_current_text()
             try:
                 goal.compile(x64=self.get_selected_bnd().is_lua_64)
                 self.decompile_button['state'] = 'normal'
+                self.text_editor.tag_remove("error", "1.0", "end")
             except LuaError as e:
-                self.dialog("Lua Compile Error", f"Error encountered while compiling script:\n\n{str(e)}")
+                msg = self._parse_compile_error(str(e))
+                self.dialog(title="Lua Compile Error",
+                            message=f"Error encountered while compiling script "
+                                    f"for goal {goal.goal_id} ({repr(goal.goal_type)}):\n\n{msg}")
+
+    def _parse_compile_error(self, error_msg):
+        print(error_msg)
+        match = re.match(r".*\\temp:(\d+): (.*)", error_msg, flags=re.DOTALL)
+        if match:
+            self._highlight_error(int(match.group(1)))
+            return f"Line {match.group(1)}: {match.group(2)}"
+        return error_msg
 
     def decompile_selected(self):
         if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+            goal = self.get_goal()
             if goal.script:
                 if self.dialog(title="Overwrite Script?",
                                message="Overwrite existing decompiled script?",
@@ -346,15 +392,15 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                     return
             try:
                 goal.decompile()
+                self.save_button['state'] = 'normal'
                 self.compile_button['state'] = 'normal'
+                self.update_script_text(goal)
             except LuaError as e:
                 self.dialog("Lua Decompile Error", f"Error encountered while decompiling script:\n\n{str(e)}")
 
     def write_selected(self):
         if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+            goal = self.get_goal()
             try:
                 goal.write_decompiled(self.script_directory / goal.script_name)
             except LuaError as e:
@@ -362,9 +408,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def load_selected(self):
         if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+            goal = self.get_goal()
             try:
                 goal.load_decompiled(self.script_directory / goal.script_name)
             except FileNotFoundError:
@@ -380,9 +424,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         )
 
         row = 0
-        for entry_id, logic_state in entries_to_display:
-            self.entry_rows[row].update_entry(
-                entry_id, self.get_entry_text(entry_id, logic_state=logic_state), logic_state=logic_state)
+        for entry_id, goal_type in entries_to_display:
+            goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
+            self.entry_rows[row].update_entry(entry_id, goal.goal_name, goal.goal_type)
             self.entry_rows[row].unhide()
             row += 1
 
@@ -396,9 +440,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.select_entry_row_index(None)
         self._refresh_buttons()
 
-    def select_entry_id(self, entry_id, logic_state=None, set_focus_to_text=True, edit_if_already_selected=True):
+    def select_entry_id(self, entry_id, goal_type=None, set_focus_to_text=True, edit_if_already_selected=True):
         """Select entry based on ID and set the category display range to target_row_index rows before it."""
-        entry_index = self.get_entry_index(entry_id, logic_state=logic_state)
+        entry_index = self.get_entry_index(entry_id, goal_type=goal_type)
         self.refresh_entries()
         self.select_entry_row_index(
             entry_index, set_focus_to_text=set_focus_to_text, edit_if_already_selected=edit_if_already_selected)
@@ -428,28 +472,13 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.entry_rows[row_index].active = True
             if set_focus_to_text:
                 self.entry_rows[row_index].text_label.focus_set()
-            logic_state = self.get_entry_logic_state()
-            goal = self.get_category_dict()[self.get_entry_id(self.active_row_index), logic_state]
-            if goal.has_logic_interrupt:
-                self.logic_interrupt['state'] = 'normal'
-                self.logic_interrupt.var.set(goal.logic_interrupt_name)
-                self.set_logic_interrupt_button['state'] = 'normal'
-            else:
-                self.logic_interrupt.var.set("")
-                self.logic_interrupt['state'] = 'disabled'
-                self.set_logic_interrupt_button['state'] = 'disabled'
-            self.compile_button['state'] = 'normal' if goal.script else 'disabled'
+            goal = self.get_goal(row_index)
             self.decompile_button['state'] = 'normal' if goal.bytecode else 'disabled'
-            self.has_battle_interrupt['state'] = 'normal'
-            self.has_battle_interrupt.var.set(goal.has_battle_interrupt)
+            self.save_button['state'] = 'normal' if goal.script else 'disabled'
+            self.compile_button['state'] = 'normal' if goal.script else 'disabled'
             self.update_script_text(goal)
         else:
             # No entry is selected.
-            self.has_battle_interrupt.var.set(False)
-            self.has_battle_interrupt['state'] = 'disabled'
-            self.logic_interrupt.var.set("")
-            self.logic_interrupt['state'] = 'disabled'
-            self.set_logic_interrupt_button['state'] = 'disabled'
             self.text_editor.delete(1.0, 'end')
 
     def update_script_text(self, goal):
@@ -457,39 +486,37 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.text_editor.insert(1.0, goal.script)
         self.text_editor.mark_set("insert", "1.0")
 
-    def update_logic_interrupt_name(self):
-        """Called when an entry is selected."""
-        if self.active_row_index is not None:
-            entry_id = self.get_entry_id(self.active_row_index)
-            logic_state = self.get_entry_logic_state(self.active_row_index)
-            logic_interrupt_name = self.get_category_dict()[entry_id, logic_state].logic_interrupt_name
-            self.logic_interrupt.var.set(logic_interrupt_name)
-
-    def get_entry_logic_state(self, row_index=None):
+    def get_goal_id_and_type(self, row_index=None):
         if row_index is None:
             row_index = self.active_row_index
-        return self.entry_rows[row_index].type_label.var.get() == "L"
+        return self.entry_rows[row_index].entry_id, self.entry_rows[row_index].goal_type
 
     def _get_bnd_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
         return self.bnd_choice.get().split(' (')[0].replace(' ', '')
+
+    def get_goal(self, row_index=None):
+        if row_index is None:
+            row_index = self.active_row_index
+        goal_id, goal_type = self.get_goal_id_and_type(row_index)
+        return self.get_selected_bnd().get_goal(goal_id, goal_type)
 
     def _on_bnd_choice(self, _=None):
         self.select_entry_row_index(None)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
 
-    def _add_entry(self, entry_id, text, logic_state=None, category=None, at_index=None, new_goal=None):
+    def _add_entry(self, entry_id, text, goal_type=None, category=None, at_index=None, new_goal=None):
         if entry_id < 0:
             self.dialog("Goal ID Error", message=f"Entry ID cannot be negative.")
             return False
-        if (entry_id, logic_state) in self.get_category_dict():
+        if (entry_id, goal_type) in self.get_category_dict():
             self.dialog("Goal ID Error",
-                        message=f"Goal ID {entry_id} ({'logic' if logic_state else 'battle'}) already exists.")
+                        message=f"Goal ID {entry_id} with type {repr(goal_type)} already exists.")
             return False
 
         new_goal.goal_id = entry_id
-        new_goal.has_logic_interrupt = logic_state
+        new_goal.goal_type = goal_type
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         if at_index:
@@ -497,24 +524,22 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         else:
             self.get_selected_bnd().goals.append(new_goal)
 
-        self._set_entry_text(entry_id, text, logic_state)
-        self.select_entry_id(entry_id, logic_state=logic_state, set_focus_to_text=True, edit_if_already_selected=False)
+        self._set_entry_text(entry_id, text, goal_type)
+        self.select_entry_id(entry_id, goal_type=goal_type, set_focus_to_text=True, edit_if_already_selected=False)
 
-    def add_relative_entry(self, entry_id, logic_state=None, offset=1, text=None):
+    def add_relative_entry(self, entry_id, goal_type=None, offset=1, text=None):
+        goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
         if text is None:
-            text = self.get_entry_text(entry_id, logic_state=logic_state)  # Copies name of origin entry by default.
-        goal = self.get_selected_bnd().get_goal(entry_id, logic_state).copy()
-        goal_index = self.get_selected_bnd().get_goal_index(entry_id, logic_state) + 1
-        self._add_entry(entry_id=entry_id + offset, logic_state=logic_state, text=text,
-                        at_index=goal_index, new_goal=goal)
+            text = goal.goal_name  # Copies name of origin entry by default.
+        goal_index = self.get_selected_bnd().goals.index(goal) + 1
+        self._add_entry(entry_id=entry_id + offset, goal_type=goal_type, text=text,
+                        at_index=goal_index, new_goal=goal.copy())
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
-        entry_id = self.get_entry_id(row_index)
-        logic_state = self.get_entry_logic_state(row_index)
-        goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+        goal = self.get_goal(row_index)
         self.get_selected_bnd().goals.remove(goal)
         self.refresh_entries()
 
@@ -529,39 +554,37 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         """Always returns full dict (no previous/next buttons)."""
         return list(self.get_selected_bnd().get_goal_dict().keys())
 
-    def get_entry_index(self, entry_id: int, logic_state=None, category=None) -> int:
+    def get_entry_index(self, entry_id: int, goal_type=None, category=None) -> int:
         """Get index of entry. Ignores current display range."""
-        if logic_state is None:
-            raise ValueError(f"Logic state cannot be none (entry {entry_id}).")
-        if (entry_id, logic_state) not in self.get_category_dict():
-            raise ValueError(f"Goal ID {entry_id} with type '{'logic' if logic_state else 'battle'}' does not exist.")
-        goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+        if goal_type is None:
+            raise ValueError(f"Goal type cannot be none (goal ID {entry_id}).")
+        if (entry_id, goal_type) not in self.get_category_dict():
+            raise ValueError(f"Goal ID {entry_id} with type {repr(goal_type)} does not exist.")
+        goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
         return self.get_selected_bnd().goals.index(goal)
 
-    def get_entry_text(self, entry_id: int, category=None, logic_state=None) -> str:
-        return self.get_selected_bnd().get_goal(entry_id, logic_state).goal_name
+    def get_entry_text(self, entry_id: int, category=None, goal_type=None) -> str:
+        return self.get_selected_bnd().get_goal(entry_id, goal_type).goal_name
 
-    def _set_entry_text(self, entry_id: int, text: str, logic_state: bool = None, category=None, update_row_index=None):
-        goal = self.get_selected_bnd().get_goal(entry_id, logic_state)
+    def _set_entry_text(self, entry_id: int, text: str, goal_type=None, category=None, update_row_index=None):
+        goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
         goal.goal_name = text
         if update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(entry_id, text, logic_state)
+            self.entry_rows[update_row_index].update_entry(entry_id, text, goal_type)
 
     def _change_entry_text(self, row_index, new_text, category=None):
         """Set text of given entry index in the displayed category (if different from current)."""
-        entry_id = self.get_entry_id(row_index)
-        logic_state = self.get_entry_logic_state(row_index)
-        current_text = self.get_entry_text(entry_id, logic_state=logic_state)
+        goal = self.get_goal(row_index)
+        current_text = goal.goal_name
         if current_text == new_text:
             return False  # Nothing to change.
-        self._set_entry_text(entry_id, new_text, logic_state=logic_state, category=category, update_row_index=row_index)
+        self._set_entry_text(goal.goal_id, new_text, goal_type=goal.goal_type, update_row_index=row_index)
         return True
 
     def _start_entry_text_edit(self, row_index):
         if not self._e_entry_text_edit and not self._e_entry_id_edit:
-            entry_id = self.get_entry_id(row_index)
-            logic_state = self.get_entry_logic_state(row_index)
-            initial_text = self.get_entry_text(entry_id, logic_state=logic_state)
+            goal = self.get_goal(row_index)
+            initial_text = goal.goal_name
             if '\n' in initial_text:
                 return self.popout_entry_text_edit(row_index)
             self._e_entry_text_edit = self.Entry(
@@ -576,18 +599,17 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self._e_entry_text_edit.select_range(0, 'end')
 
     def _change_entry_id(self, row_index, new_id, category=None):
-        current_id = self.get_entry_id(row_index)
+        goal = self.get_goal(row_index)
+        current_id = goal.goal_id
         if current_id == new_id:
             return False
-        logic_state = self.get_entry_logic_state(row_index)
         goal_dict = self.get_category_dict()
-        if (new_id, logic_state) in goal_dict:
-            self.dialog("Entry ID Clash", f"Goal ID {new_id} with type {'logic' if logic_state else 'battle'} already "
+        if (new_id, goal.goal_type) in goal_dict:
+            self.dialog("Entry ID Clash", f"Goal ID {new_id} with type {repr(goal.goal_type)} already "
                                           f"exists. You must change or delete it first.")
             return False
-        goal = goal_dict[current_id, logic_state]
         goal.goal_id = new_id
-        self.entry_rows[row_index].update_entry(new_id, goal.goal_name, goal.has_logic_interrupt)
+        self.entry_rows[row_index].update_entry(new_id, goal.goal_name, goal.goal_type)
         return True
 
     def _get_display_categories(self):

@@ -112,6 +112,8 @@ class EvsTextEditor(tk.Text):
         start_index = "1.0"
         while 1:
             def_index = self.search(r"^def [\w\d_]+\(", start_index, regexp=True)
+            if not def_index:
+                break
             next_def_index = self.search(r"^def [\w\d_]+\(", f"{def_index} lineend", regexp=True)
             if int(next_def_index.split('.')[0]) <= int(def_index.split('.')[0]):
                 break  # finished searching

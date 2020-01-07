@@ -87,7 +87,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
     # Check game module first.
     try:
-        return game_module.decompiler_x64.decompile_instruction(instruction_class, instruction_index, req_args, game_module)
+        return game_module.decompiler.decompile_instruction(instruction_class, instruction_index, req_args, game_module)
     except InstructionNotFoundError:
         # Instruction not found in game-specific decompiler module. Try shared module below.
         pass
