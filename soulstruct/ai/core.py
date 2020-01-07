@@ -11,6 +11,7 @@ import re
 import struct
 import subprocess
 from contextlib import contextmanager
+from copy import deepcopy
 from io import BufferedIOBase, BytesIO
 from pathlib import Path
 from typing import List
@@ -51,7 +52,7 @@ class LuaBND(object):
         self.gnl = LuaGNL()
         self.bnd_name = ""
         self._bnd_path_parent = None
-        self._lua_64 = False
+        self.is_lua_64 = False
 
         try:
             gnl_entry = self.bnd.entries_by_id[1000000]
@@ -86,7 +87,7 @@ class LuaBND(object):
                     goal.bytecode = entry.data
                 if self._bnd_path_parent is None:
                     self._bnd_path_parent = str(Path(entry.path).parent)
-                    self._lua_64 = "INTERROOT_x64" in self._bnd_path_parent
+                    self.is_lua_64 = "INTERROOT_x64" in self._bnd_path_parent
             elif entry.id not in {1000000, 1000001}:
                 lua_match = re.match(r".*\.lua$", entry_path.name)
                 if not lua_match:
@@ -121,7 +122,7 @@ class LuaBND(object):
 
         Any files that produce errors will be reported, but will not halt the function.
         """
-        if not self._lua_64:
+        if not self.is_lua_64:
             raise ValueError("Cannot decompile PTDE Lua scripts. Decompile the DSR scripts, then copy those "
                              "into your PTDE Soulstruct project's 'ai' folder or call `.load_decompiled()`.")
         for goal in self.goals:
@@ -226,14 +227,22 @@ class LuaBND(object):
             raise ValueError("`logic` must be True or False, not None.")
         goals = [g for g in self.goals if g.goal_id == goal_id and g.has_logic_interrupt == logic]
         if not goals:
-            print(self.goals)
-            print(self.goals[0].goal_id, self.goals[0].has_logic_interrupt == logic)
-            raise KeyError(
-                f"No goal in LuaBND with ID {goal_id} and type {'logic' if logic else 'battle'}.")
+            raise KeyError(f"No goal in LuaBND with ID {goal_id} and type {'logic' if logic else 'battle'}.")
         elif len(goals) >= 2:
             raise LuaError(f"Multiple {'logic' if logic else 'battle'} goals with ID {goal_id}. You must have "
                            f"done this intentionally, but it's not valid.")
         return goals[0]
+
+    def get_goal_index(self, goal_id, logic=False) -> int:
+        if logic is None:
+            raise ValueError("`logic` must be True or False, not None.")
+        goals = [g for g in self.goals if g.goal_id == goal_id and g.has_logic_interrupt == logic]
+        if not goals:
+            raise KeyError(f"No goal in LuaBND with ID {goal_id} and type {'logic' if logic else 'battle'}.")
+        elif len(goals) >= 2:
+            raise LuaError(f"Multiple {'logic' if logic else 'battle'} goals with ID {goal_id}. You must have "
+                           f"done this intentionally, but it's not valid.")
+        return self.goals.index(goals[0])
 
     def get_goal_dict(self):
         return {(g.goal_id, g.has_logic_interrupt): g for g in self.goals}
@@ -316,6 +325,11 @@ class LuaScriptBase(abc.ABC):
         with lua_path.open("w", encoding="shift-jis") as f:
             f.write(self.script)
 
+    def load_decompiled(self, lua_path):
+        lua_path = Path(lua_path)
+        with lua_path.open("r", encoding="shift-jis") as f:
+            self.script = f.read()
+
     @property
     @abc.abstractmethod
     def script_name(self) -> str:
@@ -340,6 +354,9 @@ class LuaGoal(LuaScriptBase):
         return (f"LuaGoal({self.goal_id:06d}, {repr(self.goal_name)}, "
                 f"has_battle_interrupt={self.has_battle_interrupt}, has_logic_interrupt={self.has_logic_interrupt}, "
                 f"logic_interrupt_name={repr(self.logic_interrupt_name)})")
+
+    def copy(self):
+        return deepcopy(self)
 
 
 class LuaOther(LuaScriptBase):

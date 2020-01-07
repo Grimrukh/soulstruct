@@ -169,6 +169,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.ai_tab = self.SmartFrame(
             frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
+            script_directory=self.project.project_root / "ai_scripts", game_root=self.project.game_root,
             ai=self.project.Ai, linker=self.linker)
         self.ai_tab.grid(sticky='nsew')  # TODO: put grid inside above...
 

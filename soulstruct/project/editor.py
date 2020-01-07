@@ -664,12 +664,14 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         if self.active_row_index is None:
             return
         new_index = self.active_row_index + relative_index
-        if new_index < 0 and self.previous_range_button['state'] == 'normal':
+        if (new_index < 0
+                and self.previous_range_button and self.previous_range_button['state'] == 'normal'):
             delta = self._go_to_previous_entry_range()
             new_row_index = -1 - delta
             self.select_entry_row_index(new_row_index, edit_if_already_selected=False)
             self.entry_canvas.yview_moveto(new_row_index / (self.ENTRY_RANGE_SIZE + 1))
-        elif new_index >= self.displayed_entry_count and self.next_range_button['state'] == 'normal':
+        elif (new_index >= self.displayed_entry_count
+              and self.next_range_button and self.next_range_button['state'] == 'normal'):
             delta = self._go_to_next_entry_range()
             new_row_index = 0 + self.ENTRY_RANGE_SIZE - delta
             self.select_entry_row_index(new_row_index, edit_if_already_selected=False)
@@ -882,7 +884,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             self.value_checkbutton = editor.Checkbutton(
                 self.value_box, label=None, bg=bg_color, no_grid=True, selectcolor='#000',
                 command=self._checkbutton_toggle)
-            bind_events(self.value_checkbutton, main_bindings)  # TODO: why did I disable this?
+            # bind_events(self.value_checkbutton, main_bindings)  # TODO: why did I disable this?
             # Main focus bindings are not bound to Checkbutton.
 
             self.value_combobox = editor.Combobox(
