@@ -11,7 +11,6 @@ import tkinter as tk
 from soulstruct.events.darksouls1 import EMEVD
 from soulstruct.events.darksouls1.constants import VERBOSE_MAP_NAMES
 from soulstruct.events.evs import EmevdError
-from soulstruct.maps import DARK_SOULS_MAP_NAMES
 from soulstruct.utilities.window import SoulstructSmartFrame
 
 
@@ -32,6 +31,7 @@ class EvsTextEditor(tk.Text):
         "low_level_test": (r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
         "named_arg": (r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
         "func_arg_name": (r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+        "number_literal": (r"[ ,=({\[][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
     }
 
     re.compile(r"(?<=[,(])[ ]+\w[\w\d.]+[ ]+(?=[,)])")
@@ -52,11 +52,12 @@ class EvsTextEditor(tk.Text):
         self.tag_configure("restart_type", foreground='#FFFFAA')
         self.tag_configure("event_def", foreground='#FFAAAA')
         self.tag_configure("docstring", foreground='#BBBBBB')
-        self.tag_configure("instruction", foreground='#AAAAFF')
-        self.tag_configure("low_level_test", foreground='#AAFFAA')  # starts with 'If', 'Skip', or 'Goto'
+        self.tag_configure("instruction", foreground='#E6C975')
+        self.tag_configure("low_level_test", foreground='#AAAAFF')  # starts with 'If', 'Skip', or 'Goto'
         self.tag_configure("named_arg", foreground='#AAFFFF')
         self.tag_configure("func_arg_name", foreground='#FFCCAA')
         self.tag_configure("event_arg_name", foreground='#FFAAFF')
+        self.tag_configure("number_literal", foreground='#AADDFF')
 
         self.tag_configure("found", background='#224433')
         self.tag_configure("error", background='#443322')
@@ -184,6 +185,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
                 borderwidth=0, highlightthickness=0, column=0, row_weights=[1], column_weights=[1])
             editor_i_frame = self.Frame(self.evs_editor_canvas, sticky='nsew', row_weights=[1], column_weights=[1])
             self.evs_editor_canvas.create_window(0, 0, window=editor_i_frame, anchor='nw')
+            editor_i_frame.bind("<Configure>", lambda e, c=self.evs_editor_canvas: self.reset_canvas_scroll_region(c))
 
             self.text_editor = self.CustomWidget(
                 editor_i_frame, custom_widget_class=EvsTextEditor, set_style_defaults=('text', 'cursor'),
@@ -202,27 +204,24 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.text_editor.bind("<<CursorChange>>", self._update_line_number)
             self.text_editor.bind("<Control-f>", self._control_f_search)
 
-        with self.set_master(auto_columns=0, pady=(10, 0), sticky='n'):
-            self.save_button = self.Button(text="Save EVS", width=15, command=self.save_selected_evs)
-            self.Button(text="Validate EVS", width=15, padx=(30, 30), command=self._check_syntax)
-            self.Button(text="Reload EVS", width=15, command=self.reload_selected_evs)
-
-        with self.set_master(auto_columns=0, pady=10, sticky='n'):
+        with self.set_master(auto_columns=0, pady=10, column_weights=[2, 2, 2, 1, 1], sticky='n'):
+            self.save_button = self.Button(
+                text="Save EVS", font_size=10, width=15, padx=5, command=self.save_selected_evs)
+            self.Button(text="Validate EVS", font_size=10, width=15, padx=5, bg='#226', command=self._check_syntax)
+            self.Button(text="Reload EVS", font_size=10, width=15, padx=5, command=self.reload_selected_evs)
             self.Button(
-                text="Save &\nExport to Game", width=15, padx=(0, 15), bg='#822',
-                command=self.save_and_export_to_game)
+                text="Save & Export", font_size=10, width=15, padx=5, bg='#822', command=self.save_and_export)
             self.Button(
-                text="Reload &\nExport to Game", width=15, padx=(15, 0), bg='#822',
-                command=self.reload_and_export_to_game)
+                text="Reload & Export", font_size=10, width=15, padx=5, bg='#822', command=self.reload_and_export)
 
         self.refresh()
 
     def refresh(self):
-        map_options = [f"{m} ({_get_verbose_map_name(m)})" for m in self.evs_file_paths]
+        map_options = [f"{_get_verbose_map_name(m)} ({m})" for m in self.evs_file_paths]
         self.evs_choice["values"] = map_options
         if map_options:
             self.evs_choice.var.set(map_options[0])
-            self.selected_evs = self.evs_choice.get().split(' (')[0]
+            self.selected_evs = self.evs_choice.get().split(' (')[1][:-1]
             self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
@@ -232,7 +231,6 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.line_number.set(f"Line: {current_line}")
 
     def _control_f_search(self, _):
-        print("CONTROL F")  # todo
         if self.selected_evs:
             highlighted = self.text_editor.selection_get()
             self.find_string.var.set(highlighted)
@@ -246,7 +244,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             return
         number = int(number)
         if not self.selected_evs or number < 1 or int(self.text_editor.index('end-1c').split('.')[0]) < number:
-            self._flash_red_bg(self.go_to_line)
+            self.flash_bg(self.go_to_line)
             return
         self.text_editor.mark_set("insert", f"{number}.0")
         self.text_editor.see(f"{number}.0")
@@ -283,13 +281,13 @@ class SoulstructEventEditor(SoulstructSmartFrame):
     def _on_evs_choice(self, _):
         """Check if current text has changed (and warn), then switch to other text."""
         if self._ignored_unsaved():
-            self.selected_evs = self.evs_choice.var.get().split(' (')[0]
+            self.selected_evs = self.evs_choice.var.get().split(' (')[1][:-1]
             self.text_editor.delete(1.0, 'end')
             self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
         else:
-            self.evs_choice.var.set(f"{self.selected_evs} ({DARK_SOULS_MAP_NAMES[self.selected_evs]})")  # keep previous
+            self.evs_choice.var.set(f"{_get_verbose_map_name(self.selected_evs)} ({self.selected_evs})")  # keep old
 
     def save_selected_evs(self):
         if self.selected_evs:
@@ -366,11 +364,11 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
 
-    def save_and_export_to_game(self):
+    def save_and_export(self):
         self.save_selected_evs()
         self.export_selected_evs(self.game_root)
 
-    def reload_and_export_to_game(self):
+    def reload_and_export(self):
         self.reload_selected_evs()
         self.export_selected_evs(self.game_root)
 

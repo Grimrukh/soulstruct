@@ -16,18 +16,14 @@ if TYPE_CHECKING:
 
 
 class AIScriptTextEditor(tk.Text):
-
     SYNTAX_RE = {
-        "restart_type": (r"^@[\w_]+", (0, 0)),
-        "event_def": (r"^def [\w\d_]+", (0, 0)),
-        "docstring": (r"^[ ]+\"\"\" [\w\d :]+ \"\"\"", (0, 0)),
-        "instruction": (r"^[ ]+[\w\d_]+", (0, 0)),
-        "low_level_test": (r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "named_arg": (r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
-        "func_arg_name": (r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+        "function_def": ('#AABBFF', r"function [\w\d_]+", (0, 0)),
+        "lua_word": ('#FFBB99', r"(^| )(function|local|if|then|elseif|else|for|while|end|return|and|or|"
+                                r"not|do|break|repeat|nil|until)(?=($| ))", (0, 0)),
+        "lua_bool": ('#FFBB99', r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (0, 0)),
+        "number_literal": ('#AADDFF', r"[ ,=({\[][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
+        "function_call": ('#C0E665', r"(^|[ ,=({\[:])[\w\d_]+(?=[(])", (0, 0)),
     }
-
-    re.compile(r"(?<=[,(])[ ]+\w[\w\d.]+[ ]+(?=[,)])")
 
     def __init__(self, *args, **kwargs):
         """Text widget that generates a "<CursorChange>" event when appropriate for event bindings and can highlight
@@ -42,17 +38,18 @@ class AIScriptTextEditor(tk.Text):
         self.tk.call("rename", self._w, self._orig)
         self.tk.createcommand(self._w, self._proxy)
 
-        # self.tag_configure("restart_type", foreground='#FFFFAA')
-        # self.tag_configure("event_def", foreground='#FFAAAA')
-        # self.tag_configure("docstring", foreground='#BBBBBB')
-        # self.tag_configure("instruction", foreground='#AAAAFF')
-        # self.tag_configure("low_level_test", foreground='#AAFFAA')  # starts with 'If', 'Skip', or 'Goto'
-        # self.tag_configure("named_arg", foreground='#AAFFFF')
-        # self.tag_configure("func_arg_name", foreground='#FFCCAA')
-        # self.tag_configure("event_arg_name", foreground='#FFAAFF')
-
+        # Tag order is carefully set up.
         self.tag_configure("found", background='#224433')
         self.tag_configure("error", background='#443322')
+        self.tag_configure("suspected_global", foreground='#1FBA58')
+        self.tag_configure("outer_scope_name", foreground='#F091FA')
+        self.tag_configure("function_arg_name", foreground='#F5B74C')
+        self.tag_configure("local_name", foreground='#F97965')
+        self.tag_configure("number_literal", foreground='#AADDFF')
+        self.tag_configure("function_call", foreground='#C0E665')
+        self.tag_configure("function_def", foreground='#AABBFF')
+        self.tag_configure("lua_word", foreground='#FFBB99')
+        self.tag_configure("lua_bool", foreground='#FFBB99')
 
     def _proxy(self, *args):
         cmd = (self._orig,) + args
@@ -94,9 +91,57 @@ class AIScriptTextEditor(tk.Text):
             self.tag_add(tag, "matchStart", "matchEnd")
 
     def color_syntax(self):
-        for tag, (pattern, offsets) in self.SYNTAX_RE.items():
+        self._apply_name_tags()
+
+        for tag, (_, pattern, offsets) in self.SYNTAX_RE.items():
             self.highlight_pattern(pattern, tag, regexp=True, clear=True,
                                    start_offset=offsets[0], end_offset=offsets[1])
+
+    def _apply_name_tags(self):
+        """Find and color local and global variables."""
+        # Global
+        self.highlight_pattern(r"[ ,=({\[]\w[\w\d_]+(?=($|[ ,)}\[\]]))", tag="suspected_global",
+                               start_offset=1, regexp=True)
+
+        # Outer scope (up-values)
+        self.tag_remove("outer_scope_name", "1.0", "end")
+        outer_scope_matches = re.findall(r"^local ([\w\d_]+)[ ]*=", self.get("1.0", "end"), flags=re.MULTILINE)
+        for match in outer_scope_matches:
+            self.highlight_pattern(
+                rf"[ ,=(\[]{match}(?=($|[ ,)\]]))", tag="outer_scope_name", clear=False, start_offset=1, regexp=True)
+            self.highlight_pattern(
+                rf"^{match}(?=($|[ ,)\]]))", tag="outer_scope_name", clear=False, regexp=True)
+
+        # Function args and locals
+        self.tag_remove("local_name", "1.0", "end")
+        start_index = "1.0"
+        while 1:
+            function_index = self.search(r"^function [\w\d_]+\(", start_index, regexp=True)
+            if not function_index:
+                break
+            next_function_index = self.search(r"^function [\w\d_]+\(", f"{function_index} lineend", regexp=True)
+            if int(next_function_index.split('.')[0]) <= int(function_index.split('.')[0]):
+                next_function_index = "end"  # finished searching
+            function_text = self.get(function_index, next_function_index)
+
+            function_args_match = re.match(r"^function [\w\d_]+\(([\w\d_, \n]+)\)", function_text, flags=re.MULTILINE)
+            if function_args_match:
+                function_args = function_args_match.group(1).replace('\n', '').replace(' ', '')
+                for function_arg in function_args.split(','):
+                    self.highlight_pattern(
+                        rf"[ ,=([]{function_arg}(?=($|[: ,)[]))", tag="function_arg_name",
+                        start=function_index, end=next_function_index, clear=False, start_offset=1, regexp=True)
+
+            local_matches = re.findall(r"[ \t]local ([\w\d_]+)[ ]*=", function_text, flags=re.MULTILINE)
+            for match in local_matches:
+                self.highlight_pattern(
+                    rf"[\t ,=({{\[]{match}(?=($|[ ,)}}\[\]]))", tag="local_name",
+                    start=function_index, end=next_function_index, clear=False, start_offset=1, regexp=True)
+
+            if next_function_index == "end":
+                break
+            else:
+                start_index = next_function_index
 
 
 class SoulstructAIEditor(SoulstructBaseEditor):
@@ -104,6 +149,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     ENTRY_BOX_WIDTH = 150
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 200
+
+    _LUA_COMPILE_ERROR_RE = re.compile(r".*\\temp:(\d+): (.*)", flags=re.DOTALL)
 
     class EntryRow(SoulstructBaseEditor.EntryRow):
         """Container/manager for widgets of a single entry row in the Editor."""
@@ -232,13 +279,18 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     entry_rows: List[SoulstructAIEditor.EntryRow]
 
-    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, master=None, toplevel=False):
+    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, save_luabnd_func,
+                 master=None, toplevel=False):
         self.AI = ai
         self.script_directory = Path(script_directory)
         self.game_root = Path(game_root)
+        self.save_luabnd_func = save_luabnd_func
         self.e_coord = None
         self.bnd_choice = None
-        self.text_editor = None  # type: Optional[AIScriptTextEditor]
+        self.line_number = None
+        self.go_to_line = None
+        self.find_string = None
+        self.script_editor = None  # type: Optional[AIScriptTextEditor]
         self.compile_button = None
         self.decompile_button = None
         super().__init__(linker=linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
@@ -248,64 +300,129 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
-
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
                 bnd_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
                 self.bnd_choice = self.Combobox(
-                    values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
+                    values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=10).var
+                self.decompile_all_button = self.Button(
+                    text="Decompile All", font_size=10, bg='#422', width=15, padx=10,
+                    command=self.decompile_all)
+                self.write_all_button = self.Button(
+                    text="Write All", font_size=10, bg='#222', width=15, padx=10,
+                    command=self.write_all)
+                self.Button(text="Load All", font_size=10, bg='#222', width=15, padx=10,
+                            command=self.load_all_from_project_folder)
 
-            with self.set_master(sticky='nsew', row_weights=[1], column_weights=[2, 1], auto_columns=0):
+            with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1]):
                     self.build_entry_frame()
-                with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1],
-                                     padx=50, pady=10, auto_rows=0):
-                    with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1], pady=5,
-                                         auto_columns=0):
-                        self.decompile_button = self.Button(
-                            text="Decompile", bg="#422", width=15, padx=5, command=self.decompile_selected,
-                            state="disabled")
-                        self.save_button = self.Button(
-                            text="Save Script", bg="#422", width=15, padx=5, command=self.save_selected,
-                            state="disabled")
-                        self.compile_button = self.Button(
-                            text="Compile", bg="#422", width=15, padx=5, command=self.compile_selected,
-                            state="disabled")
+                with self.set_master(
+                        sticky='nsew', row_weights=[0, 1, 0, 0], column_weights=[1], padx=50, pady=10, auto_rows=0):
+                    with self.set_master(sticky='nsew', column_weights=[1, 1, 1], auto_columns=0, pady=5):
+                        self.line_number = self.Label(
+                            text="Line: None", padx=10, width=10, fg='#CCF', anchor='w', sticky='w').var
+                        self.go_to_line = self.Entry(label="Go to Line:", padx=5, width=6, sticky='w')
+                        self.go_to_line.bind("<Return>", self._go_to_line)
+                        self.find_string = self.Entry(label="Find Text:", padx=5, width=20, sticky='w')
+                        self.find_string.bind("<Return>", self._find_string)
                     with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 0]):
                         self.build_script_editor()
+                    with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1], pady=10,
+                                         auto_columns=0):
+                        self.save_button = self.Button(
+                            text="Save All", font_size=10, bg="#222", width=15, padx=5, command=self.save_all,
+                            state="disabled", sticky='e')
+                        self.compile_button = self.Button(
+                            text="Compile & Color", font_size=10, bg="#226", width=15, padx=5,
+                            command=self.compile_selected, state="disabled", sticky='ew')
+                        self.decompile_button = self.Button(
+                            text="Decompile", font_size=10, bg="#822", width=15, padx=5,
+                            command=self.decompile_selected, state="disabled", sticky='w')
+                    with self.set_master(
+                            sticky='nsew', row_weights=[1], column_weights=[1, 1], pady=5, auto_columns=0):
+                        self.write_button = self.Button(
+                            text="Write to Project", font_size=10, bg="#222", width=20, padx=5,
+                            command=self.write_selected, state="disabled", sticky='e')
+                        self.reload_button = self.Button(
+                            text="Load from Project", font_size=10, bg="#222", width=20, padx=5,
+                            command=self.reload_selected, sticky='w')
 
     def build_script_editor(self):
         self.script_editor_canvas = self.Canvas(
             horizontal_scrollbar=True, sticky='nsew', bg='#232323',
-            borderwidth=0, highlightthickness=0, column=0, row_weights=[1], column_weights=[1])
-        editor_i_frame = self.Frame(self.script_editor_canvas, sticky='nsew', row_weights=[1], column_weights=[1])
+            borderwidth=0, highlightthickness=0, row=0, column=0, row_weights=[1], column_weights=[1])
+        editor_i_frame = self.Frame(self.script_editor_canvas, row_weights=[1], column_weights=[1])
         self.script_editor_canvas.create_window(0, 0, window=editor_i_frame, anchor='nw')
+        editor_i_frame.bind("<Configure>", lambda e, c=self.script_editor_canvas: self.reset_canvas_scroll_region(c))
 
-        self.text_editor = self.CustomWidget(
+        self.script_editor = self.CustomWidget(
             editor_i_frame, custom_widget_class=AIScriptTextEditor, set_style_defaults=('text', 'cursor'),
-            width=300, height=50, wrap='word', bg='#232323', font=("Consolas", 10))
+            width=400, height=50, wrap='word', bg='#232323', font=("Consolas", 10), row=0)
         vertical_scrollbar_w = self.Scrollbar(
-            orient='vertical', command=self.text_editor.yview, column=1, sticky='ns')
-        self.text_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
-        self.link_to_scrollable(self.text_editor, editor_i_frame)
+            orient='vertical', command=self.script_editor.yview, row=0, column=1, sticky='ns')
+        self.script_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
+        self.link_to_scrollable(self.script_editor, editor_i_frame)
 
         def _update_textbox_height(e):
-            font_size = int(self.text_editor['font'].split()[1])
-            self.text_editor['height'] = e.height // (font_size * 1.5)  # 1.5 line spacing
+            font_size = int(self.script_editor['font'].split()[1])
+            self.script_editor['height'] = e.height // (font_size * 1.5)  # 1.5 line spacing
 
         self.script_editor_canvas.bind("<Configure>", lambda e: _update_textbox_height(e))
 
-        # self.text_editor.bind("<<CursorChange>>", self._update_line_number)
-        # self.text_editor.bind("<Control-f>", self._control_f_search)
+        self.script_editor.bind("<<CursorChange>>", self._update_line_number)
+        self.script_editor.bind("<Control-f>", self._control_f_search)
+
+    def _go_to_line(self, _):
+        number = self.go_to_line.var.get()
+        if not number:
+            return
+        number = int(number)
+        if not self.get_selected_bnd() or number < 1 or int(self.script_editor.index('end-1c').split('.')[0]) < number:
+            self.flash_bg(self.go_to_line)
+            return
+        self.script_editor.mark_set("insert", f"{number}.0")
+        self.script_editor.see(f"{number}.0")
+        self.script_editor.highlight_line(number, "found")
+
+    def _find_string(self, _):
+        string = self.find_string.var.get()
+        if not string or not self.get_selected_bnd():
+            return
+        start_line, start_char = self.script_editor.index("insert").split('.')
+        index = self.script_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
+
+        if index:
+            self.clear_bg_tags()
+            self.script_editor.mark_set("insert", index)
+            self.script_editor.see(index)
+            index_line, index_char = index.split('.')
+            self.script_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
+
+    def clear_bg_tags(self):
+        for tag in {"found", "error"}:
+            self.script_editor.tag_remove(tag, "1.0", "end")
+
+    def _update_line_number(self, _):
+        current_line = self.script_editor.index('insert').split('.')[0]
+        self.line_number.set(f"Line: {current_line}")
+
+    def _control_f_search(self, _):
+        if self.get_selected_bnd():
+            highlighted = self.script_editor.selection_get()
+            self.find_string.var.set(highlighted)
+            self.find_string.select_range(0, 'end')
+            self.find_string.icursor('end')
+            self.find_string.focus_force()
 
     def _highlight_error(self, lineno):
-        self.text_editor.mark_set("insert", f"{lineno}.0")
-        self.text_editor.see(f"{lineno}.0")
-        self.text_editor.highlight_line(lineno, "error")
+        self.script_editor.mark_set("insert", f"{lineno}.0")
+        self.script_editor.see(f"{lineno}.0")
+        self.script_editor.highlight_line(lineno, "error")
 
     def _get_current_text(self):
         """Get all current text from TextBox, minus final newline (added by Tk)."""
-        return self.text_editor.get(1.0, 'end')[:-1]
+        return self.script_editor.get(1.0, 'end')[:-1]
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.get_goal().script:
@@ -332,8 +449,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         elif old_type == goal_type:
             return False
         if (goal.goal_id, goal_type) in self.get_category_dict():
-            self.dialog("Script Type Error", f"A {repr(goal.goal_type)} goal already exists with ID {goal.goal_id}.",
-                        button_kwargs="OK")
+            self.dialog("Script Type Error", f"A {repr(goal_type)} goal already exists with ID {goal.goal_id}.",
+                        button_kwargs="OK", return_output=0, escape_output=0)
             return False
         try:
             goal.goal_type = goal_type
@@ -353,10 +470,17 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.entry_rows[row_index].goal_type = goal_type
         return True
 
-    def save_selected(self):
+    def save_all(self, save_project_file=True):
+        """Saves the selected script and (by default) saves the entire AI bundle in the project folder."""
         if self.active_row_index is not None:
-            goal = self.get_goal()
-            goal.script = self._get_current_text()
+            current_text = self._get_current_text()
+            if current_text:
+                goal = self.get_goal()
+                goal.script = self._get_current_text()
+                self.flash_bg(self.script_editor, '#232')
+                self.script_editor.color_syntax()
+        if save_project_file:
+            self.save_luabnd_func()
 
     def compile_selected(self):
         if self.active_row_index is not None:
@@ -365,20 +489,118 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             try:
                 goal.compile(x64=self.get_selected_bnd().is_lua_64)
                 self.decompile_button['state'] = 'normal'
-                self.text_editor.tag_remove("error", "1.0", "end")
+                self.script_editor.tag_remove("error", "1.0", "end")
+                self.flash_bg(self.script_editor, '#223')
+                self.script_editor.color_syntax()
             except LuaError as e:
                 msg = self._parse_compile_error(str(e))
                 self.dialog(title="Lua Compile Error",
                             message=f"Error encountered while compiling script "
-                                    f"for goal {goal.goal_id} ({repr(goal.goal_type)}):\n\n{msg}")
+                                    f"for goal {goal.goal_id}: {goal.goal_name} ({repr(goal.goal_type)}):\n\n{msg}")
 
     def _parse_compile_error(self, error_msg):
-        print(error_msg)
-        match = re.match(r".*\\temp:(\d+): (.*)", error_msg, flags=re.DOTALL)
+        match = self._LUA_COMPILE_ERROR_RE.match(error_msg)
         if match:
             self._highlight_error(int(match.group(1)))
-            return f"Line {match.group(1)}: {match.group(2)}"
+            error_msg = match.group(2).replace('\n', ' ')
+            return f"Line {match.group(1)}: {error_msg}"
         return error_msg
+
+    def decompile_all(self):
+        if self.dialog("Confirm Bulk Decompile",
+                       message="This will overwrite any decompiled scripts in your project's current state. Continue?",
+                       button_kwargs=("YES", "NO"), button_names=("Yes, continue", "No, go back"),
+                       cancel_output=1, default_output=1) == 1:
+            return
+        self.decompile_all_button['state'] = 'disabled'
+        self.decompile_all_button.var.set("Decompiling...")
+        self.update_idletasks()
+        failed_goals = []
+        for goal in self.get_selected_bnd().goals:
+            if not goal.bytecode:
+                continue
+            try:
+                goal.decompile()
+            except LuaError as e:
+                failed_goals.append(goal)
+                if self.dialog("Lua Decompile Error",
+                               message=f"Error encountered while decompiling script:\n\n{str(e)}"
+                                       f"\n\nContinue to next goal, or abort all remaining goals?",
+                               button_kwargs=("YES", "NO"""), button_names=("Continue to next goal", "Abort remaining"),
+                               return_output=0, escape_output=0) == 1:
+                    return
+        failed_goals_msg = '\n'.join(f"{g.goal_id}: {g.goal_name} ({g.goal_type}" for g in failed_goals)
+        if failed_goals_msg:
+            self.dialog("Lua Decompile Complete",
+                        message=f"All scripts have been decompiled except:\n\n{failed_goals_msg}",
+                        button_kwargs="OK", return_output=0, escape_output=0)
+        else:
+            self.dialog("Lua Decompile Complete",
+                        message=f"All scripts were decompiled successfully.",
+                        button_kwargs="OK", return_output=0, escape_output=0)
+        self.decompile_all_button['state'] = 'normal'
+        self.decompile_all_button.var.set("Decompile All")
+        if self.active_row_index is not None:
+            self.update_script_text()
+
+    def write_all(self):
+        if self.dialog("Confirm Bulk Write",
+                       message=f"This will overwrite any decompiled script files saved in\n"
+                               f"'/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
+                       button_kwargs=("YES", "NO"), button_names=("Yes, continue", "No, go back"),
+                       cancel_output=1, default_output=1) == 1:
+            return
+        self.write_all_button['state'] = 'disabled'
+        self.write_all_button.var.set("Writing...")
+        self.update_idletasks()
+        for goal in self.get_selected_bnd().goals:
+            if not goal.script:
+                continue
+            try:
+                goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
+            except LuaError as e:
+                if self.dialog("Lua Write Error",
+                               message=f"Error encountered while writing script for goal {goal.id}: {goal.goal_name} "
+                                       f"({goal.goal_type}):\n\n{str(e)}"
+                                       f"\n\nContinue to next goal, or abort all remaining goals?",
+                               button_kwargs=("YES", "NO"""), button_names=("Continue to next goal", "Abort remaining"),
+                               return_output=0, escape_output=0) == 1:
+                    return
+        self.write_all_button['state'] = 'normal'
+        self.write_all_button.var.set("Write All")
+
+    def load_all_from_project_folder(self):
+        if self.dialog("Confirm Lua Operation",
+                       message=f"This will overwrite any decompiled script in the current project state\n"
+                               f"that has a file in '/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
+                       button_kwargs=("YES", "NO"), button_names=("Yes, continue", "No, go back"),
+                       cancel_output=1, default_output=1) == 1:
+            return
+        failed_goals = []
+        for goal in self.get_selected_bnd().goals:
+            lua_path = self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}"
+            if not lua_path.is_file():
+                continue
+            try:
+                goal.load_decompiled(lua_path)
+            except Exception as e:
+                failed_goals.append(goal)
+                if self.dialog("Lua Read Error",
+                               message=f"Error encountered while reading script for goal {goal.id}: {goal.goal_name} "
+                                       f"({goal.goal_type}):\n\n{str(e)}"
+                                       f"\n\nContinue to next goal, or abort all remaining goals?",
+                               button_kwargs=("YES", "NO"""), button_names=("Continue to next goal", "Abort remaining"),
+                               return_output=0, escape_output=0) == 1:
+                    return
+        failed_goals_msg = '\n'.join(f"{g.goal_id}: {g.goal_name} ({g.goal_type}" for g in failed_goals)
+        if failed_goals_msg:
+            self.dialog("Lua Load Complete",
+                        message=f"All scripts have been loaded from '/ai_scripts/{self._get_bnd_choice_name()}' "
+                                f"except:\n\n{failed_goals_msg}",
+                        button_kwargs="OK", return_output=0, escape_output=0)
+        else:
+            self.dialog("Lua Load Successful", "All scripts were loaded successfully.",
+                        button_kwargs="OK", return_output=0, escape_output=0)
 
     def decompile_selected(self):
         if self.active_row_index is not None:
@@ -394,6 +616,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 goal.decompile()
                 self.save_button['state'] = 'normal'
                 self.compile_button['state'] = 'normal'
+                self.write_button['state'] = 'normal'
                 self.update_script_text(goal)
             except LuaError as e:
                 self.dialog("Lua Decompile Error", f"Error encountered while decompiling script:\n\n{str(e)}")
@@ -402,17 +625,22 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if self.active_row_index is not None:
             goal = self.get_goal()
             try:
-                goal.write_decompiled(self.script_directory / goal.script_name)
+                goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
             except LuaError as e:
-                self.dialog("Lua Write Error", f"Error encountered while writing script:\n\n{str(e)}")
+                self.dialog("Lua Write Error", f"Error encountered while writing script:\n\n{str(e)}",
+                            button_kwargs="OK", return_output=0, escape_output=0)
 
-    def load_selected(self):
+    def reload_selected(self):
         if self.active_row_index is not None:
             goal = self.get_goal()
             try:
-                goal.load_decompiled(self.script_directory / goal.script_name)
+                goal.load_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
+                self.update_script_text(goal)
             except FileNotFoundError:
-                self.dialog("Lua Read Error", "Decompiled script not found in '{project}/ai_scripts' directory.")
+                self.dialog("Lua Read Error",
+                            message=f"Decompiled script not found in\n"
+                                    f"'/ai_scripts/{self._get_bnd_choice_name()}' directory.",
+                            button_kwargs="OK", return_output=0, escape_output=0)
 
     def refresh_entries(self):
         self._cancel_entry_id_edit()
@@ -452,6 +680,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         """Select entry from row index, based on currently displayed category and ID range."""
         old_row_index = self.active_row_index
 
+        if old_row_index != row_index and old_row_index is not None:
+            if not self._ignored_unsaved():
+                return
+
         if old_row_index is not None and row_index is not None:
             if row_index == old_row_index:
                 if edit_if_already_selected:
@@ -476,15 +708,25 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.decompile_button['state'] = 'normal' if goal.bytecode else 'disabled'
             self.save_button['state'] = 'normal' if goal.script else 'disabled'
             self.compile_button['state'] = 'normal' if goal.script else 'disabled'
+            self.write_button['state'] = 'normal' if goal.script else 'disabled'
+            self.reload_button['state'] = 'normal'
             self.update_script_text(goal)
         else:
             # No entry is selected.
-            self.text_editor.delete(1.0, 'end')
+            self.script_editor.delete(1.0, 'end')
+            self.decompile_button['state'] = 'disabled'
+            self.save_button['state'] = 'disabled'
+            self.compile_button['state'] = 'disabled'
+            self.write_button['state'] = 'disabled'
+            self.reload_button['state'] = 'disabled'
 
-    def update_script_text(self, goal):
-        self.text_editor.delete(1.0, 'end')
-        self.text_editor.insert(1.0, goal.script)
-        self.text_editor.mark_set("insert", "1.0")
+    def update_script_text(self, goal=None):
+        if goal is None:
+            goal = self.get_goal()
+        self.script_editor.delete(1.0, 'end')
+        self.script_editor.insert(1.0, goal.script)
+        self.script_editor.mark_set("insert", "1.0")
+        self.script_editor.color_syntax()
 
     def get_goal_id_and_type(self, row_index=None):
         if row_index is None:
@@ -508,11 +750,13 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _add_entry(self, entry_id, text, goal_type=None, category=None, at_index=None, new_goal=None):
         if entry_id < 0:
-            self.dialog("Goal ID Error", message=f"Entry ID cannot be negative.")
+            self.dialog("Goal ID Error", message=f"Entry ID cannot be negative.",
+                        button_kwargs="OK", return_output=0, escape_output=0)
             return False
         if (entry_id, goal_type) in self.get_category_dict():
             self.dialog("Goal ID Error",
-                        message=f"Goal ID {entry_id} with type {repr(goal_type)} already exists.")
+                        message=f"Goal ID {entry_id} with type {repr(goal_type)} already exists.",
+                        button_kwargs="OK", return_output=0, escape_output=0)
             return False
 
         new_goal.goal_id = entry_id
@@ -568,9 +812,14 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _set_entry_text(self, entry_id: int, text: str, goal_type=None, category=None, update_row_index=None):
         goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
-        goal.goal_name = text
+        try:
+            goal.goal_name = text
+        except LuaError as e:
+            self.dialog("Goal Name Error", str(e), button_kwargs="OK", return_output=0, escape_output=0)
+            return False
         if update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text, goal_type)
+        return True
 
     def _change_entry_text(self, row_index, new_text, category=None):
         """Set text of given entry index in the displayed category (if different from current)."""
@@ -605,8 +854,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             return False
         goal_dict = self.get_category_dict()
         if (new_id, goal.goal_type) in goal_dict:
-            self.dialog("Entry ID Clash", f"Goal ID {new_id} with type {repr(goal.goal_type)} already "
-                                          f"exists. You must change or delete it first.")
+            self.dialog("Entry ID Clash",
+                        message=f"Goal ID {new_id} with type {repr(goal.goal_type)} already exists. You must change or "
+                                f"delete it first.",
+                        button_kwargs="OK", return_output=0, escape_output=0)
             return False
         goal.goal_id = new_id
         self.entry_rows[row_index].update_entry(new_id, goal.goal_name, goal.goal_type)

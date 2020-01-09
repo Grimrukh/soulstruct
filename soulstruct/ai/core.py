@@ -2,7 +2,6 @@
 
 Currently works for Dark Souls 1 (either version) only, with decompilation for DSR thanks to Katalash.
 """
-# TODO: there are goals in aiCommon with no battle_interrupt.
 from __future__ import annotations
 
 import abc
@@ -102,6 +101,7 @@ class LuaBND(object):
                     snake_name = _SNAKE_CASE_RE.sub("_", goal.goal_name).lower()
                     if lua_match.group(1) == snake_name:
                         goal.bytecode = entry.data
+                        goal.script_name = entry_path.name
                         break
                 else:
                     self.other.append(LuaOther(entry_path.stem, bytecode=entry.data))
@@ -152,7 +152,7 @@ class LuaBND(object):
                 except LuaError as e:
                     print(f"# ERROR: Could not decompile Lua non-goal script '{other.script_name}': {str(e)}")
 
-    def update_bnd_from_decompiled(self, lua_file: LuaScriptBase):
+    def update_bnd_from_decompiled(self, lua_file: LuaScriptBase, compile_script=True, x64=None):
         """Insert decompiled script into the BND.
 
         This will overwrite any existing scripts (compiled or decompiled) and create a new one if the BND entry is
@@ -160,6 +160,10 @@ class LuaBND(object):
         """
         if not lua_file.script:
             raise LuaError(f"No decompiled Lua script exists for '{lua_file.script_name}'.")
+        if compile_script:
+            if x64 is None:
+                raise ValueError("`x64` must be specified to test if script compiles.")
+            lua_file.compile(x64=x64)
         bnd_path = self._bnd_path_parent + f"\\{lua_file.script_name}"
         if bnd_path in self.bnd.entries_by_path:
             self.bnd.entries_by_path[bnd_path].data = lua_file.script.encode("shift-jis")
@@ -219,17 +223,31 @@ class LuaBND(object):
             for other in self.other:
                 other.write_decompiled(directory / other.script_name)
 
-    def update_bnd(self, use_decompiled_goals=True, use_decompiled_other=False):
+    def update_bnd(self, use_decompiled_goals=True, use_decompiled_other=False, compile_scripts=True):
         self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
         self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
         if use_decompiled_goals:
             for goal in self.goals:
                 if goal.script:
-                    self.update_bnd_from_decompiled(goal)
+                    try:
+                        self.update_bnd_from_decompiled(goal, compile_script=compile_scripts, x64=self.is_lua_64)
+                    except LuaCompileError:
+                        if goal.bytecode:
+                            print(f"# ERROR: Could not compile script {goal.script_name}. Using existing bytecode.")
+                        else:
+                            raise LuaError(f"Could not compile script {goal.script_name} and no bytecode exists to "
+                                           f"use instead. BND update aborted (it may have been partially updated).")
         if use_decompiled_other:
             for other in self.other:
                 if other.script:
-                    self.update_bnd_from_decompiled(other)
+                    try:
+                        self.update_bnd_from_decompiled(other, compile_script=compile_scripts, x64=self.is_lua_64)
+                    except LuaCompileError:
+                        if other.bytecode:
+                            print(f"# ERROR: Could not compile script {other.script_name}. Using existing bytecode.")
+                        else:
+                            raise LuaError(f"Could not compile script {other.script_name} and no bytecode exists to "
+                                           f"use instead. BND update aborted (it may have been partially updated).")
 
     def write(self, luabnd_path=None, use_decompiled_goals=True, use_decompiled_other=False):
         self.update_bnd(use_decompiled_goals=use_decompiled_goals, use_decompiled_other=use_decompiled_other)
@@ -273,7 +291,7 @@ def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
 
 
 def compile_lua(script: str, script_name="<unknown script>", output_path=None, x64=True):
-    with _temp_lua_path(script, as_bytes=False, set_cwd=True) as temp:
+    with _temp_lua_path(script, as_bytes=False, set_cwd=True, encoding="shift-jis") as temp:
         compiler = COMPILER_x64 if x64 else COMPILER_x86
         result = subprocess.run(
             [compiler, "-o", "temp.lua", temp], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -327,6 +345,7 @@ class LuaScriptBase(abc.ABC):
         if not self.script:
             raise LuaError(f"No decompiled Lua script to write.")
         lua_path = Path(lua_path)
+        lua_path.parent.mkdir(parents=True, exist_ok=True)
         with lua_path.open("w", encoding="shift-jis") as f:
             f.write(self.script)
 
@@ -358,12 +377,13 @@ class LuaGoal(LuaScriptBase):
 
     def __init__(self, goal_id: int, goal_name: str, goal_type: str = None,
                  has_battle_interrupt: bool = None, has_logic_interrupt: bool = None, logic_interrupt_name="",
-                 bytecode=b"", script=""):
+                 bytecode=b"", script="", script_name=None):
         super().__init__(bytecode=bytecode, script=script)
         self.goal_id = goal_id
         self._goal_name = goal_name
         self._goal_type = goal_type if goal_type is not None else self._detect_goal_type(
             has_battle_interrupt, has_logic_interrupt, logic_interrupt_name)
+        self._script_name = script_name
 
     def _detect_goal_type(self, has_battle_interrupt, has_logic_interrupt, logic_interrupt_name):
         if has_battle_interrupt and not has_logic_interrupt and not logic_interrupt_name:
@@ -392,13 +412,13 @@ class LuaGoal(LuaScriptBase):
         return self._goal_type
 
     @goal_type.setter
-    def goal_type(self, goal_type):
-        goal_type = goal_type.lower()
-        if not self._goal_name.endswith("_Logic") and goal_type == "logic":
+    def goal_type(self, new_type):
+        new_type = new_type.lower()
+        if not self._goal_name.endswith("_Logic") and new_type == "logic":
             raise LuaError(f"Logic goal name must end in '_Logic'. Invalid: {repr(self._goal_name)}")
-        elif not self._goal_name.endswith("Battle") and goal_type == "battle":
+        elif not self._goal_name.endswith("Battle") and new_type == "battle":
             print(f"# WARNING: Battle goal name {repr(self._goal_name)} does not end in 'Battle', which is unusual.")
-        self._goal_type = goal_type
+        self._goal_type = new_type
 
     def set_name_and_type(self, goal_name, goal_type):
         self._goal_name = goal_name  # no type checking
@@ -406,13 +426,20 @@ class LuaGoal(LuaScriptBase):
 
     @property
     def script_name(self):
-        if self.goal_type == self.BATTLE_TYPE:
+        if self._script_name is not None:
+            return self._script_name
+        elif self.goal_type == self.BATTLE_TYPE:
             return f"{self.goal_id:06d}_battle.lua"
         elif self.goal_type == self.LOGIC_TYPE:
             return f"{self.goal_id:06d}_logic.lua"
         elif self.goal_type == self.NEITHER_TYPE:
+            # TODO: when will this actually happen?
             snake_case_name = _SNAKE_CASE_RE.sub("_", self.goal_name).lower()
             return f"{snake_case_name}.lua"
+
+    @script_name.setter
+    def script_name(self, name):
+        self._script_name = name
 
     def __repr__(self):
         return f"LuaGoal({self.goal_id:06d}, {repr(self.goal_name)}, {repr(self.goal_type)})"
@@ -512,7 +539,7 @@ class LuaInfo(object):
         self.big_endian = self._check_big_endian(info_buffer)
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
         header = self.header_struct.unpack(info_buffer)
-        # TODO: auto-detect `use_struct_64` for 64-bit offsets (games after DS1/DSR)
+        # TODO: auto-detect `use_struct_64` for 64-bit offsets (PTDE and DSR both use 32-bit).
         goal_struct = BinaryStruct(*(self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32),
                                    byte_order=">" if self.big_endian else "<")
         self.goals = []

@@ -138,45 +138,40 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
         self.maps_tab = self.SmartFrame(
             frame=tab_frames['maps'], smart_frame_class=SoulstructMapEditor,
-            maps=self.project.Maps, linker=self.linker)
-        self.maps_tab.grid(sticky='nsew')
+            maps=self.project.Maps, linker=self.linker, sticky='nsew')
 
         self.entities_tab = self.SmartFrame(
             frame=tab_frames['entities'], smart_frame_class=SoulstructEntityEditor,
-            maps=self.project.Maps, evs_directory=self.project.project_root / "events", linker=self.linker)
-        self.entities_tab.grid(sticky='nsew')
+            maps=self.project.Maps, evs_directory=self.project.project_root / "events", linker=self.linker,
+            sticky='nsew')
 
         self.params_tab = self.SmartFrame(
             frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
-            params=self.project.Params, linker=self.linker)
-        self.params_tab.grid(sticky='nsew')
+            params=self.project.Params, linker=self.linker, sticky='nsew')
 
         self.lighting_tab = self.SmartFrame(
             frame=tab_frames['lighting'], smart_frame_class=SoulstructLightingEditor,
-            lighting=self.project.Lighting, linker=self.linker)
-        self.lighting_tab.grid(sticky='nsew')
+            lighting=self.project.Lighting, linker=self.linker, sticky='nsew')
 
         self.text_tab = self.SmartFrame(
             frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
-            text=self.project.Text, linker=self.linker)
-        self.text_tab.grid(sticky='nsew')
+            text=self.project.Text, linker=self.linker, sticky='nsew')
 
         self.events_tab = self.SmartFrame(
             frame=tab_frames['events'], smart_frame_class=SoulstructEventEditor,
             evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
-            dcx=self.project.game_name == "Dark Souls Remastered")
-        self.events_tab.grid(sticky='nsew')
+            dcx=self.project.game_name == "Dark Souls Remastered", sticky='nsew')
 
         self.ai_tab = self.SmartFrame(
             frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
-            script_directory=self.project.project_root / "ai_scripts", game_root=self.project.game_root,
-            ai=self.project.Ai, linker=self.linker)
-        self.ai_tab.grid(sticky='nsew')  # TODO: put grid inside above...
+            ai=self.project.AI, script_directory=self.project.project_root / "ai_scripts",
+            game_root=self.project.game_root, save_luabnd_func=lambda: self._save_data("ai"), linker=self.linker,
+            sticky='nsew')
 
         self.build_runtime_tab(tab_frames['runtime'])
 
         for tab_name, tab_frame in tab_frames.items():
-            self.page_tabs.add(tab_frame, text=f'  {tab_name.capitalize()}  ')
+            self.page_tabs.add(tab_frame, text=f'  {_fixed_caps(tab_name)}  ')
 
         self.create_key_bindings()
 
@@ -196,7 +191,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             import_menu.add_separator()
             for data_type in DATA_TYPES:
                 import_menu.add_command(
-                    label=f"Import {data_type.capitalize()}", foreground='#FFF',
+                    label=f"Import {_fixed_caps(data_type)}", foreground='#FFF',
                     command=lambda d=data_type, i=import_dir: self._import_data(d, import_directory=i))
             file_menu.add_cascade(label=f"Import from{' Game' if import_dir else '...'}",
                                   foreground='#FFF', menu=import_menu)
@@ -208,7 +203,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             export_menu.add_separator()
             for data_type in DATA_TYPES:
                 export_menu.add_command(
-                    label=f"Export {data_type.capitalize()}", foreground='#FFF',
+                    label=f"Export {_fixed_caps(data_type)}", foreground='#FFF',
                     command=lambda d=data_type, e=export_dir: self._export_data(d, export_directory=e))
             file_menu.add_cascade(label=f"Export to{' Game' if export_dir else '...'}",
                                   foreground='#FFF', menu=export_menu)
@@ -334,8 +329,8 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         elif data_type == "entities":
             self.entities_tab.Maps = self.project.Maps
         else:
-            project_data = getattr(self.project, data_type.capitalize())
-            setattr(getattr(self, f'{data_type}_tab'), data_type.capitalize(), project_data)
+            project_data = getattr(self.project, _fixed_caps(data_type))
+            setattr(getattr(self, f'{data_type}_tab'), _fixed_caps(data_type), project_data)
 
     def confirm_quit(self):
         if self.dialog(title="Quit Soulstruct?",
@@ -371,11 +366,14 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             self.events_tab.save_selected_evs()
             self.mimic_click(self.events_tab.save_button)
             return
+        elif data_type == "ai":
+            self.ai_tab.save_all(save_project_file=False)
+            self.mimic_click(self.ai_tab.save_button)
         # TODO: progress bar
         self.project.save(data_type)
         if data_type is None:
             self.events_tab.save_all_evs()
-        self._flash_red_bg(self)
+        self.flash_bg(self)
 
     def _export_data(self, data_type=None, export_directory=None):
         if export_directory is None:
@@ -477,7 +475,7 @@ class SoulstructProject(object):
         self.Params = DarkSoulsGameParameters()
         self.Lighting = DarkSoulsLightingParameters()
         self.Maps = DarkSoulsMaps()
-        self.Ai = DarkSoulsAIScripts()
+        self.AI = DarkSoulsAIScripts()
 
         self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
         self.load_config(with_window=with_window)
@@ -501,20 +499,16 @@ class SoulstructProject(object):
                     if with_window:
                         result = with_window.dialog(
                             title="Project Error",
-                            message=f"Could not find saved {data_type.capitalize()} data in project.\n"
+                            message=f"Could not find saved {_fixed_caps(data_type)} data in project.\n"
                                     f"Would you like to import it from the game directory now?",
                             button_names=("Yes", "Yes to All", "No, quit now"),
                             button_kwargs=('YES', 'YES', 'NO'),
                             cancel_output=2, default_output=2
                         )
                     else:
-                        result = input(
-                            f"Could not find saved {data_type.capitalize()} data in project.\n"
-                            f"Would you like to import it from the game directory now? [y]/n")
-                        if result.lower == "n":
-                            result = 2
-                        else:
-                            result = 0
+                        result = 2 if input(
+                            f"Could not find saved {_fixed_caps(data_type)} data in project.\n"
+                            f"Would you like to import it from the game directory now? [y]/n").lower() == 'n' else 0
                     if result in {0, 1}:
                         self.import_data_from_game(data_type)
                         self.save(data_type)
@@ -522,6 +516,25 @@ class SoulstructProject(object):
                             yes_to_all = True
                     else:
                         raise SoulstructProjectError("Could not open project files.")
+
+        if not (self.project_root / "events").is_dir() or not (self.project_root / "events").glob("*"):
+            if yes_to_all:
+                self.import_data_from_game("events")
+            else:
+                if with_window:
+                    result = with_window.dialog(
+                        title="Project Error",
+                        message=f"Could not find any event scripts in project.\n"
+                                f"Would you like to decompile and import them from the game directory now?",
+                        button_names=("Yes", "No, I'll handle events myself"),
+                        button_kwargs=('YES', 'NO'),
+                        cancel_output=1, default_output=1)
+                else:
+                    result = 1 if input(
+                        f"Could not find any event scripts in project.\n"
+                        f"Would you like to import them from the game directory now? [y]/n").lower() == 'n' else 0
+                if result == 0:
+                    self.import_data_from_game("events")
 
     def save(self, data_type=None):
         """Save given data type ('maps', 'text', etc.) as pickled project file.
@@ -534,7 +547,7 @@ class SoulstructProject(object):
         data_type = data_type.lower()
         if data_type not in DATA_TYPES:
             raise ValueError(f"Data type to load should be one of {DATA_TYPES} (or None), not {data_type}.")
-        self._save_project_data(getattr(self, data_type.capitalize()), data_type + ".d1s")
+        self._save_project_data(getattr(self, _fixed_caps(data_type)), data_type + ".d1s")
 
     def load(self, data_type=None):
         """Load give data type ('maps', 'text', etc.) from pickled project file. Defaults to loading all types (except
@@ -545,7 +558,7 @@ class SoulstructProject(object):
         data_type = data_type.lower()
         if data_type not in DATA_TYPES:
             raise ValueError(f"Data type to save should be one of {DATA_TYPES} (or None), not {data_type}.")
-        setattr(self, data_type.capitalize(), self._load_project_data(data_type + ".d1s"))
+        setattr(self, _fixed_caps(data_type), self._load_project_data(data_type + ".d1s"))
 
     def _save_project_data(self, obj, pickled_path):
         with (self.project_root / pickled_path).open('wb') as f:
@@ -572,7 +585,7 @@ class SoulstructProject(object):
         if data_type == "events":
             self._import_events(data_import_path)
         else:
-            setattr(self, data_type.capitalize(), DATA_TYPES[data_type](data_import_path))
+            setattr(self, _fixed_caps(data_type), DATA_TYPES[data_type](data_import_path))
 
     def import_data_from_game(self, data_type=None):
         """Reads data substructures in game formats from the live game directory."""
@@ -596,7 +609,7 @@ class SoulstructProject(object):
         if data_type == "events":
             self._export_events(data_export_path)
         else:
-            getattr(self, data_type.capitalize()).save(data_export_path)
+            getattr(self, _fixed_caps(data_type)).save(data_export_path)
 
     def export_data_to_game(self, data_type=None):
         """Writes data substructures in game formats in the live game directory, ready for play."""
@@ -917,6 +930,12 @@ class SoulstructProject(object):
             else:
                 raise SoulstructProjectError(f"Invalid game name for creating 'steam_appid.txt': {game_name}")
         return True
+
+
+def _fixed_caps(data_type):
+    if data_type.lower() == "ai":
+        return "AI"
+    return data_type.capitalize()
 
 
 MODIFIABLE_FILES = {

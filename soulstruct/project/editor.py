@@ -213,12 +213,12 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
 
     def build_previous_range_button(self, **kwargs):
         self.previous_range_button = self.Button(
-            text=f"Previous {self.ENTRY_RANGE_SIZE}", bg='#111', width=30,
+            text=f"Previous {self.ENTRY_RANGE_SIZE}", font_size=10, bg='#111', width=30,
             command=self._go_to_previous_entry_range, padx=10, pady=10, **kwargs)
 
     def build_next_range_button(self, **kwargs):
         self.next_range_button = self.Button(
-            text=f"Next {self.ENTRY_RANGE_SIZE}", bg='#111', width=30,
+            text=f"Next {self.ENTRY_RANGE_SIZE}", font_size=10, bg='#111', width=30,
             command=self._go_to_next_entry_range, padx=10, pady=10, **kwargs)
 
     def build_entry_frame(self):
@@ -485,7 +485,6 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 except ValueError:
                     self.dialog("Invalid Entry ID", "Entry ID must be a non-negative integer.")
                     return
-                print(new_id)
                 self._change_entry_id(row_index, new_id)
 
     def popout_entry_text_edit(self, entry_index):
@@ -538,7 +537,6 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
         self._cancel_entry_text_edit()
         entry_id = self.get_entry_id(row_index)
         deleted_entry = self.get_category_dict(category=category).pop(entry_id)
-        print(deleted_entry)
         self.refresh_entries()
 
         # TODO

@@ -147,13 +147,13 @@ class SoulstructTextEditor(SoulstructBaseEditor):
             self.select_entry_row_index(row_index, edit_if_already_selected=False)
             self.entry_canvas.yview_moveto(0)
         else:
-            self._flash_red_bg(self.find_text_id_entry)
+            self.flash_bg(self.find_text_id_entry)
 
     def find_text_string(self, replace=False):
         text = self.find_text_string_entry.var.get()
         text_id_list = sorted(self.get_category_dict())
         if not text_id_list:
-            self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
+            self.flash_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
             return
         text_id_selected = self.get_entry_id(self.active_row_index) if self.active_row_index is not None else -1
         first_index = None
@@ -178,7 +178,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
             self.select_entry_row_index(row_index, set_focus_to_text=False, edit_if_already_selected=False)
             self.entry_canvas.yview_moveto(0)
         else:
-            self._flash_red_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
+            self.flash_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
 
     def _get_display_categories(self):
         return self.Text.all_categories if self.show_all_categories.get() else self.Text.main_categories

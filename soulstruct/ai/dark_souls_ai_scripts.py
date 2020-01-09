@@ -124,10 +124,3 @@ class DarkSoulsAIScripts(object):
         for bnd_name, luabnd in self._data.items():
             print(f"# INFO: Decompiling Lua scripts in {bnd_name}...")
             luabnd.decompile_all(output_directory=output_directory, including_other=including_other)
-
-
-if __name__ == '__main__':
-    from soulstruct import DSR_PATH
-    d = DarkSoulsAIScripts(DSR_PATH + "/script")
-    # TODO: AI project tab. Just needs a map selector Combobox, entry list (not category), and AI script editor box
-    #  like the events tab, with Checkbutton for "has battle interrupt" and Entry for "logic interrupt name".

@@ -195,13 +195,15 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=5, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 map_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_MAP_NAMES.items()]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
-                self.Button(text="Generate EVS Constants", command=self._refresh_entities_module, width=25, padx=10)
-                self.Button(text="Replace EVS IDs", command=self._replace_evs_ids, width=25, padx=10)
+                self.Button(text="Generate EVS Constants", font_size=10, width=25, padx=10,
+                            command=self._refresh_entities_module, )
+                self.Button(text="Replace EVS IDs", font_size=10, width=25, padx=10,
+                            command=self._replace_evs_ids, )
 
             with self.set_master(sticky='nsew', row_weights=[1], column_weights=[0, 1], auto_columns=0):
                 self.build_category_canvas()
@@ -375,10 +377,13 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 try:
                     name = name.encode('utf-8').decode('ascii')
                 except UnicodeDecodeError:
-                    class_text += f"    # {name} = {entity_id}\n"
+                    class_text += f"    # {name} = {entity_id}"
                 else:
-                    class_text += f"    {name} = {entity_id}\n"
+                    class_text += f"    {name} = {entity_id}"
                     requires_pass = False
+                if msb_entry.description:
+                    class_text += f"  # {msb_entry.description}"
+                class_text += "\n"
             if class_text:
                 class_text = f"\n\nclass {class_name}({game_type.__name__}):\n" + class_text
                 if requires_pass:

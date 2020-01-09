@@ -75,5 +75,5 @@ VERBOSE_MAP_NAMES = {
     (16, 0): "New Londo Ruins/Valley of Drakes",
     (17, 0): "Duke's Archives/Crystal Cave",
     (18, 0): "Kiln of the First Flame",
-    (18, 1): "Northern Undead Asylum",
+    (18, 1): "Undead Asylum",
 }

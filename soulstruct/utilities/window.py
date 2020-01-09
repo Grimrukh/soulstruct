@@ -473,7 +473,7 @@ class SmartFrame(tk.Frame):
             combobox.bind('<<ComboboxSelected>>', on_select_function)
         return combobox
 
-    def Menu(self, frame=None, tearoff=0, **kwargs):  # TODO: options? don't know what tearoff does
+    def Menu(self, frame=None, tearoff=0, **kwargs):
         if frame is None:
             frame = self.current_frame
         self.set_style_defaults(kwargs)
@@ -616,9 +616,10 @@ class SmartFrame(tk.Frame):
         button.config(relief=SUNKEN)
         button.after(100, lambda: button.config(relief=RAISED))
 
-    def _flash_red_bg(self, widget, bg="#522"):
+    def flash_bg(self, widget, bg="#522"):
+        old_bg = widget['bg']
         widget['bg'] = bg
-        self.after(200, lambda: widget.config(bg=self.STYLE_DEFAULTS['bg']))
+        self.after(200, lambda: widget.config(bg=old_bg))
 
     @staticmethod
     def reset_canvas_scroll_region(canvas):
@@ -650,12 +651,14 @@ class SmartFrame(tk.Frame):
 
     def custom_dialog(self, title, message, font_size=None, font_type=None,
                       button_names=('OK',), button_kwargs=(), style_defaults=None,
-                      default_output=None, cancel_output=None):
+                      default_output=None, cancel_output=None,
+                      return_output=None, escape_output=None):
         if style_defaults is None:
             style_defaults = self.STYLE_DEFAULTS
         dialog = CustomDialog(master=self, title=title, message=message, font_size=font_size, font_type=font_type,
                               button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
-                              default_output=default_output, cancel_output=cancel_output)
+                              default_output=default_output, cancel_output=cancel_output, return_output=return_output,
+                              escape_output=escape_output)
         if not self.winfo_viewable():
             self.deiconify()
             result = dialog.go()
@@ -706,7 +709,8 @@ class CustomDialog(SmartFrame):
 
     def __init__(self, master, title='Custom Dialog', message='', font_size=None, font_type=None,
                  button_names=(), button_kwargs=(), style_defaults=None,
-                 default_output=None, cancel_output=None):
+                 default_output=None, cancel_output=None,
+                 return_output=None, escape_output=None):
         if style_defaults:
             self.STYLE_DEFAULTS = style_defaults
         if isinstance(button_names, str):
@@ -719,16 +723,23 @@ class CustomDialog(SmartFrame):
         self.output = default_output
         self.cancel = cancel_output
         self.default = default_output
+        self.return_output = return_output
+        self.escape_output = escape_output
         self.bind('<Return>', self.return_event)
+        self.bind('<Escape>', self.escape_event)
 
         with self.set_master(auto_rows=0, padx=20, pady=20):
             self.message = self.Label(text=message, font_size=font_size, font_type=font_type, pady=40)
+            self.message.bind('<Return>', self.return_event)
+            self.message.bind('<Escape>', self.escape_event)
             with self.set_master(auto_columns=0, pady=20):
                 for i in range(len(button_names)):
                     button_text = button_names[i]
                     b_kwargs = button_kwargs[i] if button_kwargs else {}
                     b = self.Button(text=button_text, command=lambda s=self, output=i: s.done(output),
                                     padx=5, **b_kwargs)
+                    b.bind('<Return>', self.return_event)
+                    b.bind('<Escape>', self.escape_event)
                     if i == default_output:
                         b.config(relief=RIDGE)
 
@@ -745,10 +756,17 @@ class CustomDialog(SmartFrame):
 
     def return_event(self, _):
         """ Event that occurs when the user presses the Enter key. """
-        if self.default is None:
+        print("RETURN")
+        if self.return_output is None:
             self.toplevel.bell()
         else:
-            self.done(self.default)
+            self.done(self.return_output)
+
+    def escape_event(self, _):
+        if self.escape_output is None:
+            self.toplevel.bell()
+        else:
+            self.done(self.escape_output)
 
     def wm_delete_window(self):
         """ Function that occurs when the user closes the window using the corner X, Alt-F4, etc. """
@@ -777,7 +795,8 @@ class SoulstructSmartFrame(SmartFrame):
 
     def dialog(self, title, message, font_size=None, font_type=None,
                button_names=('OK',), button_kwargs=(), style_defaults=None,
-               default_output=None, cancel_output=None):
+               default_output=None, cancel_output=None,
+               return_output=None, escape_output=None):
         if button_kwargs is not None:
             if isinstance(button_kwargs, str) and button_kwargs in self.DEFAULT_BUTTON_KWARGS:
                 button_kwargs = self.DEFAULT_BUTTON_KWARGS[button_kwargs]
@@ -790,7 +809,8 @@ class SoulstructSmartFrame(SmartFrame):
             button_kwargs = self.DEFAULT_BUTTON_KWARGS['OK']
         return self.custom_dialog(title=title, message=message, font_size=font_size, font_type=font_type,
                                   button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
-                                  default_output=default_output, cancel_output=cancel_output)
+                                  default_output=default_output, cancel_output=cancel_output,
+                                  return_output=return_output, escape_output=escape_output)
 
 
 class ToolTip(object):

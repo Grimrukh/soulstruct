@@ -79,7 +79,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         if param_tables[1] is None:
             self.slot_choice.config(values=['0'])
             if self.slot_choice.var.get() == '1':
-                self._flash_red_bg(self.slot_choice_label)
+                self.flash_bg(self.slot_choice_label)
             self.slot_choice.var.set('0')
         else:
             self.slot_choice.config(values=['0', '1'])
