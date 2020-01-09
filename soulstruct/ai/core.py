@@ -433,7 +433,7 @@ class LuaGoal(LuaScriptBase):
         elif self.goal_type == self.LOGIC_TYPE:
             return f"{self.goal_id:06d}_logic.lua"
         elif self.goal_type == self.NEITHER_TYPE:
-            # TODO: when will this actually happen?
+            # Shouldn't happen anymore.
             snake_case_name = _SNAKE_CASE_RE.sub("_", self.goal_name).lower()
             return f"{snake_case_name}.lua"
 
