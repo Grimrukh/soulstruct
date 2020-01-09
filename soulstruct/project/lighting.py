@@ -43,7 +43,6 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ''))
 
         def build_entry_context_menu(self, text_links=()):
-            # TODO: 'View uses': search things that link to this type of param for this ID.
             super().build_entry_context_menu()
             text_links = self.master.linker.param_entry_text_link(self.entry_id)
             if text_links:
@@ -62,7 +61,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 0, 1, 1], auto_columns=0):
                 map_display_names = [f'{k} ({v})' for k, v in DRAW_PARAM_MAPS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names, on_select_function=self._on_map_area_choice, width=40, padx=10,
@@ -70,13 +69,13 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
                 self.slot_choice_label = self.Label(text='Slot:', font_size=12, padx=(30, 0))
                 self.slot_choice = self.Combobox(
                     values=('0', '1'), font=('Segoe UI', 12), on_select_function=self._on_slot_choice, width=5, padx=10)
+                self.Button(text="Regenerate Slot 1", bg="#622", width=15, command=self.regenerate_slot_1, padx=5)
 
             super().build()
 
     def _on_map_area_choice(self, _=None):
         new_map_area = self.map_area_choice.get().split(' (')[0]
-        param_tables = getattr(self.Lighting, new_map_area)['AmbientLight']  # picking a random category to check slots
-        if param_tables[1] is None:
+        if getattr(self.Lighting, new_map_area)['AmbientLight'][1] is None:  # random table to check slots
             self.slot_choice.config(values=['0'])
             if self.slot_choice.var.get() == '1':
                 self.flash_bg(self.slot_choice_label)
@@ -88,6 +87,20 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
 
     def _on_slot_choice(self, _=None):
         self.select_entry_row_index(None)
+        self.refresh_entries(reset_field_display=True)
+
+    def regenerate_slot_1(self):
+        map_area = self.map_area_choice.get().split(' (')[0]
+        map_draw_param = getattr(self.Lighting, map_area)
+        if map_draw_param['AmbientLight'][1] is not None:  # picking a random category to check slots
+            if self.dialog(title="Overwrite Slot 1?",
+                           message="Current map area already has data in slot 1. Overwrite it from slot 0?",
+                           button_names=("Yes, overwrite it", "No, do nothing"),
+                           button_kwargs=('YES', 'NO'),
+                           cancel_output=1, default_output=1) == 1:
+                return
+        map_draw_param.copy_slot_0_to_slot_1()
+        self.slot_choice.config(values=['0', '1'])
         self.refresh_entries(reset_field_display=True)
 
     def _get_display_categories(self):

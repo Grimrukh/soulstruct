@@ -1,10 +1,13 @@
 import pickle
+import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.params.fields import PARAM_NICKNAMES
+
+_PARAM_FILE_NAME_RE = re.compile(r"(/[ms]\d\d)(_[\w]+\.DrawParam\.parambnd)")
 
 
 class DarkSoulsGameParameters(object):
@@ -157,7 +160,7 @@ class MapDrawParam(object):
     def __init__(self, draw_param_bnd):
         """Structure that manages double-slots and table nicknames for one DrawParam BND file (i.e. one map area)."""
         self._data = {}  # type: Dict[str, List[Optional[DrawParamTable], Optional[DrawParamTable]]]
-        self._bnd_entry_paths = {}
+        self._bnd_entry_paths = {}  # type: Dict[Tuple[str, int], str]
         paramdef_bnd = PARAMDEF_BND('dsr' if bool(draw_param_bnd.dcx) else 'ptd')
 
         if not isinstance(draw_param_bnd, BaseBND):
@@ -210,7 +213,35 @@ class MapDrawParam(object):
     def items(self):
         return self._data.items()
 
-    # TODO: Method that adds slot 1 (duplicating slot 0). Will need to add BND entry paths as well.
+    def copy_slot_0_to_slot_1(self):
+        """Also creates BND entries if needed, which involves shifting up the IDs of all the slot 0 entries.
+
+        Note that any new slot 1 BND entries are copied from the existing slot 0 entries, while the slot 1 `ParamTable`
+        attributes are copied from the slot 0 `ParamTable` attributes. If the `ParamTable` structures and BND entries
+        are out of sync (i.e. changes have been made to a table since the last `save()` or `update_bnd()` call), they
+        will be equally out of sync for slot 1.
+        """
+        if len(self._draw_param_bnd) == 12:
+            # Create new paths and move up slot 0 IDs.
+            for table_name, slots in self._data.items():
+                slot_0_path = self._bnd_entry_paths[table_name, 0]
+                self._bnd_entry_paths[table_name, 1] = _PARAM_FILE_NAME_RE.sub(r"\1_1\2", slot_0_path)
+            s_ambient = self._draw_param_bnd[11]
+            self._draw_param_bnd.remove_entry(11)
+            for i in range(11):
+                slot_0 = self._draw_param_bnd[i].copy()
+                slot_0.id += 11
+                new_path = _PARAM_FILE_NAME_RE.sub(r"\1_1\2", self._draw_param_bnd[i].path)
+                self._draw_param_bnd[i].path = new_path
+                self._draw_param_bnd.add_entry(slot_0)
+            s_ambient_0 = s_ambient.copy()
+            s_ambient_0.id = 23
+            s_ambient.path = _PARAM_FILE_NAME_RE.sub(r"\1_1\2", s_ambient.path)
+            s_ambient.id = 22
+            self._draw_param_bnd.add_entry(s_ambient)
+            self._draw_param_bnd.add_entry(s_ambient_0)
+        for table_name, slots in self._data.items():
+            slots[1] = slots[0].copy()
 
     def update_bnd(self):
         """Update the internal BND by packing the current ParamTables. Called automatically by `save()`."""

@@ -201,9 +201,9 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
                 self.Button(text="Generate EVS Constants", font_size=10, width=25, padx=10,
-                            command=self._refresh_entities_module, )
+                            command=self._refresh_entities_module)
                 self.Button(text="Replace EVS IDs", font_size=10, width=25, padx=10,
-                            command=self._replace_evs_ids, )
+                            command=self._replace_evs_ids)
 
             with self.set_master(sticky='nsew', row_weights=[1], column_weights=[0, 1], auto_columns=0):
                 self.build_category_canvas()
@@ -478,7 +478,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_dict(category)
         entry_list[entry_index].name = text  # Will update Maps tab as well (once refreshed).
-        # TODO: Might want to manually refresh corresponding Maps entry text with linker.
+        self.linker.window.maps_tab.refresh_entries()
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_index, text)
 
@@ -502,7 +502,8 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                                           f"delete it first.")
             return False
         # Change 'entity_id' field of MSBEntry.
-        entry_list[old_id].entity_id = new_id  # TODO: Might want to manually refresh corresponding Maps entry text.
+        entry_list[old_id].entity_id = new_id
+        self.linker.window.maps_tab.refresh_entries()
         entry_list[new_id] = entry = entry_list.pop(old_id)
         if category == self.active_category and self.EntryRow.SHOW_ENTRY_ID:
             self.entry_rows[row_index].update_entry(new_id, entry.name)

@@ -1,3 +1,4 @@
+import copy
 from collections import OrderedDict
 from copy import deepcopy
 from io import BytesIO
@@ -293,9 +294,17 @@ class ParamTable(object):
         else:
             raise TypeError("New entry must be a ParamEntry or a dictionary that contains all required fields.")
 
+    def keys(self):
+        return self.entries.keys()
+
+    def values(self):
+        return self.entries.values()
+
+    def items(self):
+        return self.entries.items()
+
     def __iter__(self):
-        # TODO: Iterate over entry IDs, not items (use .items() for that).
-        return iter(self.entries.items())
+        return self.keys()
 
     def __len__(self):
         return len(self.entries)
@@ -436,9 +445,6 @@ class ParamTable(object):
         """Useful for changing entry ID, for example."""
         return self.entries.pop(entry_id)
 
-    def items(self):
-        return self.entries.items()
-
 
 class DrawParamTable(ParamTable):
 
@@ -450,3 +456,7 @@ class DrawParamTable(ParamTable):
                     if entry.name and not entry.name.startswith('0')}
         return {index: entry for index, entry in self.entries.items()
                 if entry.name and not entry.name.startswith('0') and not entry.name.lower().startswith('polyg')}
+
+    def copy(self):
+        """Useful for copying slot 0 into slot 1."""
+        return copy.deepcopy(self)

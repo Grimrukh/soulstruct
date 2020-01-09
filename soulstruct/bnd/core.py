@@ -286,7 +286,7 @@ class BaseBND(object):
     def entry_count(self):
         return len(self._entries)
 
-    def __getitem__(self, id_or_path_or_basename):
+    def __getitem__(self, id_or_path_or_basename) -> BNDEntry:
         """ Shortcut for access by ID (int) or path (str) or basename (str).
 
         If one entry's path is the basename of another's, the former will be given precedence here, but this should

@@ -52,18 +52,34 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
 
     def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
         self.Params = params
-        self.find_param_name = None
+        self.go_to_param_id_entry = None
+        self.search_result = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
 
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
-                self.find_param_name = self.Entry(
-                    label="Find Param Name (TODO):", label_position='left', width=30, padx=10)
-                # self.find_param_name.bind('<Return>', self.find_text_id)
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
+                self.go_to_param_id_entry = self.Entry(
+                    label="Go to Param ID:", label_position='left', integers_only=True, width=30, padx=10)
+                self.go_to_param_id_entry.bind('<Return>', self.go_to_param_id)
+                self.search_result = self.Label(font_size=10, fg="#CCF").var
 
             super().build()
+
+    def go_to_param_id(self, event):
+        param_id = event.widget.var.get()
+        if not param_id or self.active_category is None:
+            self.flash_bg(self.go_to_param_id_entry)
+            return
+        param_id = int(param_id)
+        params = self.get_category_dict()
+        if param_id not in params:
+            # Find closest.
+            param_id = max(p_id for p_id in params if p_id < param_id)
+            self.search_result.set(f"Found closest preceding entry: {param_id}")
+            self.after(2000, lambda: self.search_result.set(""))
+        self.select_entry_id(param_id, set_focus_to_text=False, edit_if_already_selected=False)
 
     def _get_display_categories(self):
         return self.Params.param_names
@@ -73,7 +89,7 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 return {}
-        return self.Params[category]
+        return self.Params[category].entries
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:
