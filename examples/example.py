@@ -1,4 +1,4 @@
-from soulstruct.emevd.darksouls1 import *
+from soulstruct.events.darksouls1 import *
 from soulstruct.game_types import *
 from .example_constants import *
 

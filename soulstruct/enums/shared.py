@@ -1,25 +1,27 @@
 from enum import IntEnum
 
-__all__ = ['RestartType',
-           'uint', 'short', 'ushort', 'char', 'uchar',
-           'PLAYER', 'CLIENT_PLAYER_1', 'CLIENT_PLAYER_2', 'CLIENT_PLAYER_3', 'CLIENT_PLAYER_4', 'CLIENT_PLAYER_5',
+__all__ = [
+    # Basic
+    "RestartType",
+    "uint", "short", "ushort", "char", "uchar",
+    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
 
-           # Identical in all games.
-           'AIStatusType', 'BitOperation', 'ButtonType', 'CharacterType', 'CharacterUpdateRate', 'ClassType',
-           'ComparisonType', 'CutsceneType', 'DamageTargetType', 'EventEndType', 'FlagState', 'FlagType',
-           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavimeshType', 'NumberButtons',
-           'OnOffChange', 'RestartType', 'SoundType', 'StatueType', 'SummonSignType', 'TriggerAttribute',
-           'WorldTendencyType', 'UpdateAuthority',
+    # Enums identical in all games
+    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
+    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
+    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
+    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
+    "WorldTendencyType", "UpdateAuthority",
 
-           # Require game-specific definition.
-           'BannerType', 'Covenant', 'MultiplayerState', 'NPCPartType', 'TeamType',
-           ]
+    # Enums that exist in all games but require game-specific definition
+    "BannerType", "Covenant", "MultiplayerState", "NPCPartType", "TeamType",
+]
 
-uint = 'I'
-short = 'h'
-ushort = 'H'
-char = 'b'
-uchar = 'B'
+uint = "I"
+short = "h"
+ushort = "H"
+char = "b"
+uchar = "B"
 
 PLAYER = 10000
 CLIENT_PLAYER_1 = 10001
@@ -29,14 +31,14 @@ CLIENT_PLAYER_4 = 10004
 CLIENT_PLAYER_5 = 10005
 
 
-# Basic obvious booleans are omitted: ENUM_ON_OFF, ENUM_CONTAINED, ENUM_OWN_STATE, ENUM_BOOL, ENUM_CONDITION_STATE,
-#                                     ENUM_DEATH_STATUS, ENUM_ENABLE_STATE.
+# Basic obvious booleans are omitted:
+# ENUM_ON_OFF, ENUM_CONTAINED, ENUM_OWN_STATE, ENUM_BOOL, ENUM_CONDITION_STATE, ENUM_DEATH_STATUS, ENUM_ENABLE_STATE
 
 
 class AIStatusType(IntEnum):
     Normal = 0
-    Recognition = 1
-    Alert = 2
+    Caution = 1
+    Search = 2
     Battle = 3
 
 
@@ -56,7 +58,7 @@ class CharacterType(IntEnum):
     WhitePhantom = 1
     BlackPhantom = 2
     Hollow = 8  # Also called "Gray Ghost" in some resources.
-    Intruder = 10
+    Intruder = 12
 
 
 class CharacterUpdateRate(IntEnum):
@@ -153,21 +155,22 @@ class CoordEntityType(IntEnum):
     Character = 2
 
 
-class NavimeshType(IntEnum):
-    # These are bit flags.
-    Solid = 1
-    Exit = 2
-    Obstacle = 4
-    Wall = 8
-    WallTouchingFloor = 32
-    LandingPoint = 64
-    Event = 128
-    Cliff = 256
-    Wide = 512
-    Ladder = 1024
-    Hole = 2048
-    Door = 4096
-    ClosedDoor = 8192
+class NavmeshType(IntEnum):
+    """Bit flags for Navmesh types."""
+    Solid = 0b00000000000001
+    Exit = 0b00000000000010
+    Obstacle = 0b00000000000100
+    Wall = 0b00000000001000
+    # Note enum 16 is missing.
+    WallTouchingFloor = 0b00000000100000
+    LandingPoint = 0b00000001000000
+    Event = 0b00000010000000
+    Cliff = 0b00000100000000
+    WideSpace = 0b00001000000000
+    Ladder = 0b00010000000000
+    Hole = 0b00100000000000
+    Door = 0b01000000000000
+    ClosedDoor = 0b10000000000000
 
 
 class NumberButtons(IntEnum):

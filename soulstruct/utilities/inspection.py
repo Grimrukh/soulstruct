@@ -12,6 +12,6 @@ def print_binary_as_integers(file_name):
             except struct.error:
                 print('Less than 4 bytes remaining.')
                 return
-            print('{} | {} | {}'.format(offset, hex(offset), integer))
+            print(f"{offset} | {hex(offset)} | {integer}")
             data = file.read(4)
             offset += 4

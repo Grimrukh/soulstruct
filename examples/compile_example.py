@@ -1,6 +1,6 @@
 """ Run this script to compile our example DS1 EVS script, 'example.py'. """
 
-from soulstruct.emevd.darksouls1 import EMEVD
+from soulstruct.events.darksouls1 import EMEVD
 
 
 def compile_evs():
@@ -8,14 +8,14 @@ def compile_evs():
 
     The EMEVD class can read packed '.emevd' resources, numeric '.txt' resources (in the format designed by
     HotPocketRemix), or Pythonic '.evs' / '.py' resources. You can then output the same EMEVD as any of those three file
-    types.
+    game_types.
 
     Note that the EMEVD class must be imported from the appropriate game sub-module, as each game changes the EMEVD
     structure and instruction set somewhat.
 
     The 'verbose' format used by HotPocketRemix is no longer supported here, because maintaining all these different
-    formats is considerable work and EVS does a good impression of a verbose format anyway. You're still free to use
-    HotPocket's tools to generate those verbose read-only resources.
+    formats is considerable work and EVS does a good impression of a verbose format anyway. You're obviously still free
+    to use HotPocket's tools to generate those verbose outputs for inspection (you can use the same numeric files).
     """
     # Again, I've used the '.py' extension here for rather than '.evs' so that code is colored on GitHub.
     example_emevd = EMEVD('example.py')
@@ -33,7 +33,7 @@ def compile_evs():
     # on the higher-level syntax in EVS.
     example_emevd.write_evs('re-example.py')
 
-    # Now try replacing 'example.evs' above with 'example.emevd', and you should see the exact same output.
+    # Now try replacing 'example.evs' above with 'example.events', and you should see the exact same output.
 
 
 if __name__ == '__main__':

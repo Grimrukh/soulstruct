@@ -1,20 +1,22 @@
 from enum import IntEnum
 from .shared import *
 
-__all__ = ['RestartType',
-           'uint', 'short', 'ushort', 'char', 'uchar',
-           'PLAYER', 'CLIENT_PLAYER_1', 'CLIENT_PLAYER_2', 'CLIENT_PLAYER_3', 'CLIENT_PLAYER_4', 'CLIENT_PLAYER_5',
+__all__ = [
+    # Basic enums/types
+    "RestartType",
+    "uint", "short", "ushort", "char", "uchar",
+    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
 
-           # Identical in all games.
-           'AIStatusType', 'BitOperation', 'ButtonType', 'CharacterType', 'CharacterUpdateRate', 'ClassType',
-           'ComparisonType', 'CutsceneType', 'DamageTargetType', 'EventEndType', 'FlagType', 'InterpolationState',
-           'ItemType', 'RangeState', 'CoordEntityType', 'NavimeshType', 'NumberButtons', 'OnOffChange',
-           'RestartType', 'SoundType', 'StatueType', 'SummonSignType', 'TriggerAttribute', 'WorldTendencyType',
-           'UpdateAuthority',
+    # Enums identical in all games
+    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
+    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
+    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
+    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
+    "WorldTendencyType", "UpdateAuthority",
 
-           # Dark Souls 1 (both PTD and DSR) only.
-           'CalculationType', 'ConditionGroup', 'Covenant', 'TeamType', 'BannerType', 'MultiplayerState', 'NPCPartType',
-           ]
+    # Enums in Dark Souls 1 (both PTD and DSR) only
+    "CalculationType", "ConditionGroup", "Covenant", "TeamType", "BannerType", "MultiplayerState", "NPCPartType",
+]
 
 
 class CalculationType(IntEnum):
@@ -84,7 +86,7 @@ class BannerType(IntEnum):
     TargetDestroyed = 5
     YouDiedPhantom = 6  # Phantom version of "YOU DIED"
     BlackPhantomDestroyed = 7
-    AreaName = 8  # Name determined by current floor hitbox.
+    AreaName = 8  # Name determined by current floor collision.
     MagicRevival = 9
     RingRevival = 10
     RareRingRevival = 11
@@ -101,6 +103,8 @@ class MultiplayerState(IntEnum):
     Client = 1
     Multiplayer = 2
     Singleplayer = 3
+    Unknown4 = 4  # REMASTERED ONLY.
+    Unknown5 = 5  # REMASTERED ONLY.
 
 
 class NPCPartType(IntEnum):

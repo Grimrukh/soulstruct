@@ -1,4 +1,5 @@
 soulstruct/config.py
+venv*
 
 # Byte-compiled / optimized / DLL resources
 __pycache__/

@@ -1,4 +1,4 @@
-from soulstruct.fmg import DarkSoulsText
+from soulstruct.text import DarkSoulsText
 
 PTD_VANILLA_DIR = 'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/pre-doa-backup/msg/ENGLISH'
 PTD_DOA_DIR = 'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/PTD_DOA_DATA/msg/ENGLISH'
@@ -14,13 +14,13 @@ def doa_dsr_merge():
     dsr_vanilla = DarkSoulsText(DSR_VANILLA_DIR)
     for fmg_name, fmg in dsr_vanilla:
         fmg.update(ptd_doa[fmg_name])
-    dsr_vanilla.write(msg_directory=DSR_LIVE_DIR, separate_patch=False, dcx=True)
+    dsr_vanilla.save(msg_directory=DSR_LIVE_DIR, separate_patch=False, dcx=True)
 
 
 def get_doa_changed_text(original_strings_only=True):
     ptd_vanilla = DarkSoulsText(PTD_VANILLA_DIR)
     ptd_doa = DarkSoulsText(PTD_DOA_DIR)
-    changed = {}  # {fmg_name: fmg}
+    changed = {}  # {fmg_name: text}
 
     for fmg_name, fmg_dict in ptd_doa:
         vanilla_fmg = ptd_vanilla[fmg_name]

@@ -1,8 +1,9 @@
 """BND magic information.
 
-BND ("binder") resources are simple containers that glue multiple resources of the same type together. They are used across all
-FromSoft games, and come in two primary version (BND3 and BND4), but there are different subtypes of BND within each 
-version as well, marked by a certain "magic" byte in the header. Classifications of each magic type are specified here.
+BND ("binder") resources are simple containers that glue multiple resources of the same type together. They are used
+across all FromSoft games, and come in two primary version (BND3 and BND4), but there are different subtypes of BND
+within each version as well, marked by a certain "magic" byte in the header. Classifications of each magic type are
+specified here.
 
 TODO: Determine which file types in which games use which magic values.
 """

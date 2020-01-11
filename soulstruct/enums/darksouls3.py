@@ -1,23 +1,25 @@
 from enum import IntEnum
 from .shared import *
 
-__all__ = ['RestartType',
-           'uint', 'short', 'ushort', 'char', 'uchar',
-           'PLAYER', 'CLIENT_PLAYER_1', 'CLIENT_PLAYER_2', 'CLIENT_PLAYER_3', 'CLIENT_PLAYER_4', 'CLIENT_PLAYER_5',
+__all__ = [
+    # Basic enums
+    "RestartType",
+    "uint", "short", "ushort", "char", "uchar",
+    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
 
-           # Identical in all games.
-           'AIStatusType', 'BitOperation', 'ButtonType', 'CharacterType', 'CharacterUpdateRate', 'ClassType',
-           'ComparisonType', 'CutsceneType', 'DamageTargetType', 'EventEndType', 'FlagState', 'FlagType',
-           'InterpolationState', 'ItemType', 'RangeState', 'CoordEntityType', 'NavimeshType', 'NumberButtons',
-           'OnOffChange', 'RestartType', 'SoundType', 'StatueType', 'SummonSignType', 'TriggerAttribute',
-           'WorldTendencyType', 'UpdateAuthority',
+    # Enums identical in all games
+    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
+    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
+    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
+    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
+    "WorldTendencyType", "UpdateAuthority",
 
-           # Dark Souls 3 only.
-           'ArmorType', 'BannerType', 'CalculationType', 'ClientType', 'ConditionGroup', 'DamageType', 'DeleteOrAdd',
-           'DialogResult', 'DisplayState', 'DoorState', 'Gender', 'Label',  'MultiplayerState', 'NPCPartType',
-           'PlayGoState', 'PlayLogMultiplayerType', 'PlayerPlayLogParameter', 'SingleplayerSummonSignType', 'TeamType',
-           'HollowArenaMatchType', 'HollowArenaResult',
-           ]
+    # Enums in Dark Souls 3 only
+    "ArmorType", "BannerType", "CalculationType", "ClientType", "ConditionGroup", "Covenant", "DamageType",
+    "DeleteOrAdd", "DialogResult", "DisplayState", "DoorState", "Gender", "Label", "MultiplayerState", "NPCPartType",
+    "PlayGoState", "PlayLogMultiplayerType", "PlayerPlayLogParameter", "SingleplayerSummonSignType", "TeamType",
+    "HollowArenaMatchType", "HollowArenaResult",
+]
 
 
 class ArmorType(IntEnum):
@@ -35,7 +37,7 @@ class BannerType(IntEnum):
     TargetedDefeated = 5
     PhantomDeath = 6  # Phantom version of "YOU DIED"
     BlackPhantomDestroyed = 7
-    AreaName = 8  # Name determined by current floor hitbox.
+    AreaName = 8  # Name determined by current floor Collision.
     BeginMatch = 12
     HollowArenaDraw = 14
     HollowArenaWin = 15
@@ -93,6 +95,11 @@ class ConditionGroup(IntEnum):
     AND_13 = 13
     AND_14 = 14
     AND_15 = 15
+
+
+class Covenant(IntEnum):
+    # TODO
+    pass
 
 
 class DamageType(IntEnum):
@@ -170,7 +177,7 @@ class MultiplayerState(IntEnum):
 
 
 class NPCPartType(IntEnum):
-    # Used in definining different behavior for parts of NPC models.
+    """Used to define different behavior for different parts of NPC models."""
     Part1 = 1
     Part2 = 2
     Part3 = 3

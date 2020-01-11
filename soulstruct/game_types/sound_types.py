@@ -1,11 +1,11 @@
 from enum import IntEnum
 
-from soulstruct.emevd.shared import instructions as instr
+from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import SoundType
 from soulstruct.game_types.basic_types import GameObject
-from soulstruct.game_types.msb_types import CoordEntityInt, MapSound
+from soulstruct.game_types.msb_types import CoordEntityInt, SoundEvent
 
-__all__ = ['Sound', 'SFXSound', 'ObjectSound', 'VoiceSound', 'CharacterMotionSound', 'MapSound']
+__all__ = ['Sound', 'SFXSound', 'ObjectSound', 'VoiceSound', 'CharacterMotionSound', 'SoundEvent']
 
 
 class Sound(GameObject, IntEnum):

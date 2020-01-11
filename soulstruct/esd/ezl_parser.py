@@ -1,7 +1,7 @@
 import ast
 from binascii import hexlify
 import struct
-from soulstruct.core import read_chars_from_buffer
+from soulstruct.utilities.core import read_chars_from_buffer
 from soulstruct.esd.functions import TEST_FUNCTIONS
 
 __all__ = ['decompile', 'FUNCTION_ARG_BYTES_BY_COUNT', 'OPERATORS_BY_NODE', 'CLEAR_REGISTERS', 'SET_INTERNAL_SYMBOLS']

@@ -1,16 +1,15 @@
+import re
+import zlib
 from ast import literal_eval
 from io import BytesIO, IOBase
-import os
-import re
-from shutil import copyfile
-from typing import Optional, List
-import zlib
+from pathlib import Path
+from typing import Optional, List, Iterator
 
-from soulstruct.core import BinaryStruct, read_chars_from_buffer
-from soulstruct.dcx import DCX
 from soulstruct.bnd.magic import *
+from soulstruct.dcx import DCX
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx, create_bak
 
-__all__ = ['BND', 'BND3', 'BND4', 'BaseBND']
+__all__ = ['BND', 'BND3', 'BND4', 'BaseBND', 'BNDEntry']
 
 
 class BNDEntry(object):
@@ -31,7 +30,8 @@ class BNDEntry(object):
 
         for d in entry_header_dicts:
             bnd_buffer.seek(d.data_offset)
-            path = read_chars_from_buffer(bnd_buffer, offset=d.path_offset, encoding=path_encoding) if 'path_offset' in d else None
+            path = read_chars_from_buffer(
+                bnd_buffer, offset=d.path_offset, encoding=path_encoding) if 'path_offset' in d else None
             data = bnd_buffer.read(d.compressed_data_size)
             if is_entry_compressed(d.entry_magic):
                 data = zlib.decompressobj().decompress(data)
@@ -55,8 +55,12 @@ class BNDEntry(object):
         return self.path.encode(encoding) + b'\x00'
 
     @property
-    def basename(self):
-        return os.path.basename(self.path)
+    def name(self):
+        return Path(self.path).name
+
+    @property
+    def path_with_forward_slashes(self):
+        return self.path.replace('\\', '/')
 
     def __eq__(self, other_bnd_entry):
         return self.id == other_bnd_entry.id and self.path == other_bnd_entry.path and self.data == other_bnd_entry.data
@@ -86,7 +90,7 @@ class BaseBND(object):
         self.header_struct = None
         self.entry_header_struct = None
 
-        self.bnd_path = ''  # Always a '.bnd' file path after the BND is loaded.
+        self.bnd_path = Path()  # Always a '.bnd' file Path after the BND is loaded.
         self.bnd_version = b''
         self.bnd_signature = b''
         self.bnd_magic = None  # Can't guess this; you'll need to specify it based on your BND type.
@@ -101,23 +105,24 @@ class BaseBND(object):
         self.binary_entries = []  # Always stores binary (unpacked) entries. Only updated when pack() is called.
         self._entries = []  # List of entries, instantiated with given entry class (or left as binary).
 
-        if isinstance(bnd_source, str):
-            if os.path.isfile(bnd_source) and os.path.basename(bnd_source) == 'bnd_manifest.txt':
-                bnd_source = os.path.dirname(bnd_source)
-            if os.path.isdir(bnd_source):
-                if bnd_source.endswith('.unpacked'):
-                    self.bnd_path = os.path.abspath(bnd_source)[:-len('.unpacked')]
+        if isinstance(bnd_source, (str, Path)):
+            bnd_path = Path(bnd_source)
+            if bnd_path.is_file() and bnd_path.name == 'bnd_manifest.txt':
+                bnd_path = bnd_path.parent
+            if bnd_path.is_dir():
+                if bnd_path.suffix == '.unpacked':
+                    self.bnd_path = bnd_path.parent.absolute() / bnd_path.stem
                 else:
-                    self.bnd_path = os.path.abspath(bnd_source)
-                self.load_unpacked_dir(bnd_source)
+                    self.bnd_path = Path(bnd_path).absolute()
+                self.load_unpacked_dir(bnd_path)
             else:
-                self.bnd_path = os.path.abspath(bnd_source)
-                if bnd_source.endswith('.dcx'):
-                    bnd_dcx = DCX(bnd_source)
+                self.bnd_path = bnd_path.absolute()
+                if bnd_path.suffix == '.dcx':
+                    bnd_dcx = DCX(bnd_path)
                     self.unpack(bnd_dcx.data)
                     self.dcx = bnd_dcx.magic
                 else:
-                    with open(bnd_source, 'rb') as file:
+                    with open(bnd_path, 'rb') as file:
                         self.unpack(file)
         elif bnd_source is not None:
             self.unpack(bnd_source)
@@ -132,6 +137,7 @@ class BaseBND(object):
         raise NotImplementedError
 
     def add_entries_from_manifest_paths(self, file_buffer, directory):
+        directory = Path(directory)
         current_directory = None
         for line in file_buffer:
             line.strip(b' \r\n')
@@ -156,7 +162,7 @@ class BaseBND(object):
                 entry_basename_jis = entry_basename.decode('shift-jis').strip('\r\n')
                 entry_path = '\\'.join((current_directory, entry_basename_jis))
 
-                with open(os.path.join(directory, entry_basename_jis), 'rb') as entry_file:
+                with (directory / entry_basename_jis).open('rb') as entry_file:
                     entry_data = entry_file.read()
 
                 self.add_entry(BNDEntry(entry_id=entry_id, path=entry_path, data=entry_data, magic=entry_magic))
@@ -164,18 +170,19 @@ class BaseBND(object):
     def write(self, bnd_path=None):
         if bnd_path is None:
             bnd_path = self.bnd_path
-
-        if os.path.isfile(bnd_path) and not os.path.isfile(bnd_path + '.bak'):
-            print(f"# INFO: Created '{bnd_path + '.bak'}' backup file.")
-            copyfile(bnd_path, bnd_path + '.bak')
-
+        else:
+            bnd_path = Path(bnd_path)
+            if self.dcx and bnd_path.suffix != '.dcx':
+                bnd_path = bnd_path.with_suffix(bnd_path.suffix + '.dcx')
+        bnd_path.parent.mkdir(parents=True, exist_ok=True)
+        create_bak(bnd_path)
         packed = self.pack()
 
         if self.dcx:
             # Apply DCX compression.
             packed = DCX(packed, magic=self.dcx).pack()
 
-        with open(bnd_path, 'wb') as f:
+        with bnd_path.open('wb') as f:
             f.write(packed)
 
     def write_unpacked_dir(self, directory=None):
@@ -183,42 +190,38 @@ class BaseBND(object):
             raise TypeError("Writing unpacked BND directories is only supported when BND entries have path strings.")
         if directory is None:
             if self.bnd_path:
-                directory = self.bnd_path + '.unpacked'
+                directory = self.bnd_path.with_suffix(self.bnd_path.suffix + '.unpacked')
             else:
                 raise ValueError("Cannot set automatic unpacked BND directory name.")
         else:
-            directory = os.path.join(directory, f'{os.path.basename(self.bnd_path)}.unpacked')
+            directory = Path(directory, self.bnd_path.name + '.unpacked')
 
         current_directory = ''
         manifest_lines = []
 
         for entry in self.binary_entries:
-            entry_directory = os.path.dirname(entry.path).replace('\\', '/')  # File uses forward slashes.
+            entry_directory = entry.path_with_forward_slashes  # File uses forward slashes.
             if entry_directory != current_directory:
                 # Write new path group to file list.
                 manifest_lines.append(f" PATH: {entry_directory}")
                 current_directory = entry_directory
             if has_id(self.bnd_magic):
-                manifest_lines.append(f"    ({entry.magic}) {entry.id}: {os.path.basename(entry.path)}")
+                manifest_lines.append(f"    ({entry.magic}) {entry.id}: {entry.name}")
             else:
-                manifest_lines.append(f"    ({entry.magic}) {os.path.basename(entry.path)}")
-            os.makedirs(directory, exist_ok=True)
-            with open(os.path.join(directory, os.path.basename(entry.path)), 'wb') as f:
+                manifest_lines.append(f"    ({entry.magic}) {entry.name}")
+            directory.mkdir(parents=True, exist_ok=True)
+            with (directory / entry.name).open('wb') as f:
                 packed_entry, _ = entry.get_data_for_pack()
                 f.write(packed_entry)
 
         # NOTE: BND manifest is always encoded in shift-JIS.
-        with open(os.path.join(directory, 'bnd_manifest.txt'), 'w', encoding='shift-jis') as f:
+        with (directory / 'bnd_manifest.txt').open('w', encoding='shift-jis') as f:
             f.write(self.bnd_manifest_header)
             f.write("\n".join(manifest_lines))
 
     def add_entry(self, entry: BNDEntry):
         if entry.id in self.entries_by_id:
             raise ValueError(f"Entry with ID {entry.id} already exists in BND.")
-        if entry.path in self.entries_by_path:
-            print(f"# WARNING: Entry path {repr(entry.path)} appeared more than once in BND.\n"
-                  f"# If you access this entry by path, you will only get the last one unpacked.")
-            # raise ValueError(f"Entry with path '{entry.path}' already exists in BND.")
         self.binary_entries.append(entry)
         self._entries.append(self._entry_class(entry.data) if self._entry_class else entry)
 
@@ -252,27 +255,38 @@ class BaseBND(object):
 
     @property
     def entries_by_path(self):
-        """ Dictionary mapping entry path to entries. """
-        return {binary_entry.path: entry for binary_entry, entry in zip(self.binary_entries, self._entries)}
+        """Dictionary mapping entry paths to (classed) entries.
+
+        The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
+        Remastered). If it does, this property will raise an exception.
+        """
+        entries = {}
+        for binary_entry, entry in zip(self.binary_entries, self._entries):
+            if binary_entry.path in entries:
+                raise ValueError(f"Path '{binary_entry.path}' appears in multiple BND entry paths.")
+            entries[binary_entry.path] = entry
+        return entries
 
     @property
     def entries_by_basename(self):
-        """ You are technically allowed to have the same basename appear in multiple paths in a BND, but that will
-        never happen naturally (AFAIK) and I don't recommend you ever let it happen. If it does, this property will
-        raise an exception. """
+        """Dictionary mapping entry basenames to (classed) entries.
+
+        The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
+        Remastered). If it does, this property will raise an exception.
+        """
         entries = {}
-        for entry in self._entries:
-            basename = os.path.basename(entry.path)
-            if basename in entries:
-                raise ValueError(f"Basename '{basename}' appears in multiple BND entry paths.")
-            entries[basename] = entry
+        for binary_entry, entry in zip(self.binary_entries, self._entries):
+            entry_name = binary_entry.name
+            if entry_name in entries:
+                raise ValueError(f"Basename '{entry_name}' appears in multiple BND entry paths.")
+            entries[entry_name] = entry
         return entries
 
     @property
     def entry_count(self):
         return len(self._entries)
 
-    def __getitem__(self, id_or_path_or_basename):
+    def __getitem__(self, id_or_path_or_basename) -> BNDEntry:
         """ Shortcut for access by ID (int) or path (str) or basename (str).
 
         If one entry's path is the basename of another's, the former will be given precedence here, but this should
@@ -288,8 +302,11 @@ class BaseBND(object):
         else:
             raise TypeError("Key should be an entry ID (int) or path/basename (str).")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[BNDEntry]:
         return iter(self._entries)
+    
+    def __len__(self):
+        return len(self._entries)
 
     @staticmethod
     def read_bnd_setting(line: bytes, setting_name: str, assert_type=None, assert_values=None):
@@ -318,18 +335,19 @@ class BaseBND(object):
     @classmethod
     def detect(cls, bnd_source):
         """ Returns True iff BND source appears to be a BND of this type. Does not support DCX sources. """
-        if isinstance(bnd_source, str):
-            if os.path.isfile(bnd_source) and os.path.basename(bnd_source) == 'bnd_manifest.txt':
-                bnd_source = os.path.dirname(bnd_source)
-            if os.path.isdir(bnd_source):
+        if isinstance(bnd_source, (str, Path)):
+            bnd_path = Path(bnd_source)
+            if bnd_path.is_file() and bnd_path.name == 'bnd_manifest.txt':
+                bnd_path = bnd_path.parent
+            if bnd_path.is_dir():
                 try:
-                    with open(os.path.join(bnd_source, 'bnd_manifest.txt'), 'rb') as f:
+                    with (bnd_path / 'bnd_manifest.txt').open('rb') as f:
                         version = cls.read_bnd_setting(f.readline(), 'version')
                         return version.decode() == cls.__name__
                 except FileNotFoundError:
                     return False
-            elif os.path.isfile(bnd_source):
-                with open(bnd_source, 'rb') as buffer:
+            elif bnd_path.is_file():
+                with bnd_path.open('rb') as buffer:
                     try:
                         version = read_chars_from_buffer(buffer, length=4, encoding='utf-8')
                     except ValueError:
@@ -405,9 +423,10 @@ class BND3(BaseBND):
             self.add_entry(entry)
 
     def load_unpacked_dir(self, directory):
-        if not os.path.isdir(directory):
+        directory = Path(directory)
+        if not directory.is_dir():
             raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
-        with open(os.path.join(directory, 'bnd_manifest.txt'), 'rb') as f:
+        with (directory / 'bnd_manifest.txt').open('rb') as f:
             self.bnd_version = self.read_bnd_setting(f.readline(), 'version')
             self.bnd_signature = self.read_bnd_setting(f.readline(), 'bnd_signature')
             self.bnd_magic = self.read_bnd_setting(f.readline(), 'bnd_magic', assert_type=int)
@@ -599,9 +618,10 @@ class BND4(BaseBND):
         self._most_recent_paths = [entry.path for entry in self.binary_entries]
 
     def load_unpacked_dir(self, directory):
-        if not os.path.isdir(directory):
+        directory = Path(directory)
+        if not directory.is_dir():
             raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
-        with open(os.path.join(directory, 'bnd_manifest.txt'), 'rb') as f:
+        with (directory / 'bnd_manifest.txt').open('rb') as f:
             self.bnd_version = self.read_bnd_setting(f.readline(), 'version', assert_values=[b'BND4'])
             self.bnd_signature = self.read_bnd_setting(f.readline(), 'bnd_signature')
             self.bnd_magic = self.read_bnd_setting(f.readline(), 'bnd_magic', assert_type=int)
@@ -741,17 +761,6 @@ class BND4(BaseBND):
                 return True
         return True
 
-    def path_hash(self, path_string):
-        """ Simple string-hashing algorithm used by FROM. Strings use forward-slash path separators and always start
-        with a forward slash. """
-        hashable = path_string.replace('\\', '/')
-        if not hashable.startswith('/'):
-            hashable = '/' + hashable
-        h = 0
-        for i, s in enumerate(hashable):
-            h += i * 37 + ord(s)
-        return h
-
     def build_hash_table(self):
         """ Some BND4 resources include tables of hashed entry paths, which aren't needed to read file contents, but
         need to be re-hashed to properly pack the file in case any paths have changed (or the number of entries). """
@@ -795,23 +804,46 @@ class BND4(BaseBND):
 
         return packed_hash_table_header + packed_hash_groups + packed_path_hashes
 
+    @staticmethod
+    def path_hash(path_string):
+        """ Simple string-hashing algorithm used by FROM. Strings use forward-slash path separators and always start
+        with a forward slash. """
+        hashable = path_string.replace('\\', '/')
+        if not hashable.startswith('/'):
+            hashable = '/' + hashable
+        h = 0
+        for i, s in enumerate(hashable):
+            h += i * 37 + ord(s)
+        return h
 
-def BND(bnd_source=None, entry_class=None) -> BaseBND:
+
+def BND(bnd_source=None, entry_class=None, optional_dcx=True) -> BaseBND:
     """Auto-detects BND version (BND3 or BND4) to use when opening the source, if appropriate.
 
-    If the source is None, it defaults to an empty BND4 container.
+    Args:
+        bnd_source: path to BND file or BND file content. The BND version will be automatically detected from the data.
+            If None, this function will return an empty BND4 container. (Default: None)
+        entry_class: optional class to load data from each BND entry into after the BND is unpacked, which is convenient
+            for any BNDs that contain file types handled by Soulstruct. (Default: None)
+        optional_dcx: if 'bnd_source' is a file path and this is True, both DCX (preferred) and non-DCX versions of that
+            BND path will be checked. (It doesn't matter if 'bnd_source' ends in '.dcx' already.) Set this to False to
+            search only for the exact path given. (Default: True)
     """
-    dcx = None
+    dcx = False
     bnd_path = None
-    if isinstance(bnd_source, str):
-        if not os.path.isfile(bnd_source):
-            raise FileNotFoundError(f"Could not find BND file: {bnd_source}")
-        if bnd_source.endswith('.dcx'):
-            # Unpack DCX resources before detection.
-            bnd_path = os.path.abspath(bnd_source)
-            bnd_dcx = DCX(bnd_source)
+    if isinstance(bnd_source, (str, Path)):
+        bnd_path = Path(bnd_source).absolute()
+        if optional_dcx:
+            bnd_path = find_dcx(bnd_path)
+        elif not bnd_path.is_file():
+            raise FileNotFoundError(f"Could not find BND file: {bnd_path}")
+        if bnd_path.suffix == '.dcx':
+            # Must unpack DCX archive before detecting BND type.
+            bnd_dcx = DCX(bnd_path)
             bnd_source = bnd_dcx.data
             dcx = bnd_dcx.magic
+        else:
+            bnd_source = bnd_path
     if BND3.detect(bnd_source):
         bnd = BND3(bnd_source, entry_class=entry_class)
         if dcx:
