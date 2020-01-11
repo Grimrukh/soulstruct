@@ -794,7 +794,7 @@ class SoulstructSmartFrame(SmartFrame):
     }
 
     def dialog(self, title, message, font_size=None, font_type=None,
-               button_names=('OK',), button_kwargs=(), style_defaults=None,
+               button_names=('OK',), button_kwargs=("OK",), style_defaults=None,
                default_output=None, cancel_output=None,
                return_output=None, escape_output=None):
         if button_kwargs is not None:

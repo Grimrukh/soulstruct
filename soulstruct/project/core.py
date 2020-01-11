@@ -404,8 +404,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         except RestoreBackupError as e:
             return self.dialog("Restore Backup Error", message=str(e))
         if count:
-            return self.dialog("Restore Successful", f"{count} '.bak' files restored in folder\n'{str(target)}'.")
-        return self.dialog("Restore Successful", f"Backup file '{str(target)}' restored.")
+            return self.dialog("Restore Successful", f"{count} '.bak' files restored in folder\n'{str(target)}'.",
+                               button_kwargs="OK")
+        return self.dialog("Restore Successful", f"Backup file '{str(target)}' restored.", button_kwargs="OK")
 
     def _choose_directory(self, initial_dir=None, **kwargs):
         if initial_dir is None:

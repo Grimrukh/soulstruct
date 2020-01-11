@@ -580,26 +580,21 @@ class MSB(object):
         parts and all regions do not, and require a simple local -> world translation correction.
         """
         # TODO: Allow arbitrary (origin_x, origin_z).
-        for p in self.parts:
-            p.rotate.y += y_rotation
-        for r in self.regions:
-            r.rotate.y += y_rotation
-
         y_rot_rad = math.radians(y_rotation)
 
         for p in self.parts:
+            p.rotate.y += y_rotation
             if not p.WORLD_ROTATION:
                 radius = math.hypot(p.translate.x, p.translate.z)
-                translate_x = radius * -math.sin(y_rot_rad)
-                translate_z = radius * -math.cos(y_rot_rad)
-                p.translate.x += translate_x
-                p.translate.z += translate_z
+                rotation = math.atan2(-p.translate.x, -p.translate.z)
+                p.translate.x = radius * -math.sin(y_rot_rad + rotation)
+                p.translate.z = radius * -math.cos(y_rot_rad + rotation)
         for r in self.regions:
+            r.rotate.y += y_rotation
             radius = math.hypot(r.translate.x, r.translate.z)
-            translate_x = radius * -math.sin(y_rot_rad)
-            translate_z = radius * -math.cos(y_rot_rad)
-            r.translate.x += translate_x
-            r.translate.z += translate_z
+            rotation = math.atan2(-r.translate.x, -r.translate.z)
+            r.translate.x = radius * -math.sin(y_rot_rad + rotation)
+            r.translate.z = radius * -math.cos(y_rot_rad + rotation)
 
     def transform_all(self, translate_x, translate_y, translate_z, y_rotation):
         """Rotate (around world origin) and translate at the same time."""

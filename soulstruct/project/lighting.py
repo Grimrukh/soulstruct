@@ -69,7 +69,8 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
                 self.slot_choice_label = self.Label(text='Slot:', font_size=12, padx=(30, 0))
                 self.slot_choice = self.Combobox(
                     values=('0', '1'), font=('Segoe UI', 12), on_select_function=self._on_slot_choice, width=2, padx=10)
-                self.Button(text="Copy Slot 0 to Slot 1", bg="#622", width=20, command=self.regenerate_slot_1, padx=5)
+                self.Button(text="Copy Slot 0 to Slot 1", bg="#622", width=20, font_size=10, padx=5,
+                            command=self.regenerate_slot_1)
 
             super().build()
 
