@@ -1,6 +1,8 @@
 # soulstruct
 Python tools for inspecting and modding From Software games, including an "all in one" GUI.
 
+**Tutorial videos to come.**
+
 Features:
 - Unified graphical application for modifying maps, events, parameters, text, AI, and scripts in *Dark Souls* 
 (either version). Game data is imported as a **project**, edited in the window (or in Python if you prefer), and 
@@ -22,7 +24,3 @@ loaded into Python structures, edited, and repacked.
 (*Dark Souls | Bloodborne | Dark Souls 3*) 
 
 - Includes my ongoing documentation for game IDs in *Dark Souls*.
-
-Still to come:
-- Support for animation events (**TAE**) and Lua AI scripts.
-
