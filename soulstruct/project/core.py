@@ -231,7 +231,6 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         """
         TODO:
             - Option to connect to running game and extract current player XYZ coordinates into an MSB entry?
-            - Connect to save files (Documents/NGBI/...) and show Combobox + load button. (Also 'backup current save'.)
         """
         with self.set_master(runtime_frame):
             with self.set_master(padx=10, pady=10, row_weights=[1, 1, 1], column_weights=[1], auto_rows=0):
@@ -257,10 +256,12 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
                         if self.project.game_name != "Dark Souls Prepare to Die Edition":
                             debug_launch['state'] = 'disabled'
                             debug_launch.var.set("Debug Unavailable")
-                        self.Button(text="Launch DS Gadget", command=self._catch_error(self.project.launch_gadget),
-                                    bg="#222", row=1, column=0, **button_kwargs)
-                        self.Button(text="Close Game", command=self._catch_error(self.project.force_quit_game),
-                                    bg="#422", row=1, column=1, **button_kwargs)
+                        self.Button(text="Launch DS Gadget", bg="#222",
+                                    command=self._catch_error(self.project.launch_gadget),
+                                    row=1, column=0, **button_kwargs)
+                        self.Button(text="Close Game", bg="#422",
+                                    command=self._catch_error(self.project.force_quit_game),
+                                    row=1, column=1, **button_kwargs)
 
                 with self.set_master(padx=10, pady=20, row_weights=[1], column_weights=[1, 1, 1], auto_columns=0):
                     game_saves = self.project.get_game_saves()
@@ -268,17 +269,17 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
                         values=game_saves, initial_value=game_saves[0] if game_saves else "", width=40,
                         label="Available Saves:", label_position='left')
                     self.Button(
-                        text="Load", bg="#222", padx=10, width=12,
+                        text="Load", font_size=10, bg="#222", padx=10, width=12,
                         command=self._catch_error(self.load_game_save))
                     delete_button = self.Button(
-                        text="Delete (Shift + Click)", bg="#422", padx=20, width=20, command=None)
+                        text="Delete (Shift + Click)", font_size=10, bg="#422", padx=20, width=20, command=None)
                     delete_button.bind("<Shift-Button-1>", self._catch_error(lambda _: self.delete_game_save()))
 
                 with self.set_master(padx=10, pady=10, row_weights=[1, 0], column_weights=[1, 1]):
                     self.game_save_entry = self.Entry(width=40, label="New Save Name:", label_position='left',
                                                       row=0, column=0).var
                     create_save_button = self.Button(
-                        text="Create Save", bg="#222", padx=10, width=15, command=None, row=0, column=1)
+                        text="Create Save", font_size=10, bg="#222", padx=10, width=15, command=None, row=0, column=1)
                     self.Label(text="Shift + Click to Overwrite", font_size=8, row=1, column=1)
                     create_save_button.bind(
                         "<Button-1>",
@@ -526,7 +527,7 @@ class SoulstructProject(object):
                         title="Project Error",
                         message=f"Could not find any event scripts in project.\n"
                                 f"Would you like to decompile and import them from the game directory now?",
-                        button_names=("Yes", "No, I'll handle events myself"),
+                        button_names=("Yes", "No, I'll handle events"),
                         button_kwargs=('YES', 'NO'),
                         cancel_output=1, default_output=1)
                 else:

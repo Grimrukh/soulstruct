@@ -287,12 +287,18 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.save_luabnd_func = save_luabnd_func
         self.e_coord = None
         self.bnd_choice = None
+        self.decompile_all_button = None
+        self.write_all_button = None
         self.line_number = None
         self.go_to_line = None
         self.find_string = None
+        self.script_editor_canvas = None
         self.script_editor = None  # type: Optional[AIScriptTextEditor]
+        self.save_button = None
         self.compile_button = None
         self.decompile_button = None
+        self.write_button = None
+        self.reload_button = None
         super().__init__(linker=linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
 
     def refresh_categories(self):
