@@ -15,6 +15,9 @@ python -m soulstruct [source]
 """
 import argparse
 import logging
+import sys
+from contextlib import redirect_stdout
+from pathlib import Path
 
 from soulstruct import DEFAULT_PROJECT_PATH
 from soulstruct.utilities import word_wrap
@@ -24,7 +27,7 @@ LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")
 parser.add_argument(
-    "source", nargs='?', default=None,
+    "source", nargs='?', default=DEFAULT_PROJECT_PATH,
     help=word_wrap(
         "Source file or directory to read from. Use 'live' to use the LIVE_GAME_PATH, 'temp' to use the "
         "TEMP_GAME_PATH, or 'default' (or no source) to use the DEFAULT_GAME_PATH. If no additional arguments are "
@@ -142,14 +145,24 @@ def soulstruct_main(ss_args):
         return False
 
 
-launch_interactive = soulstruct_main(parser.parse_args())
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    log_path = Path(sys.executable).parent / "soulstruct.log"
+else:
+    log_path = Path(__file__).parent / "soulstruct.log"
 
 
-if launch_interactive:
-    try:
-        from IPython import embed
-    except ImportError:
-        print("# ERROR: IPython must be installed to open an interactive console from a script.\n"
-              "# You can install it, or directly import Soulstruct within an existing Python session.")
-    else:
-        embed()
+with log_path.open("w") as f:
+    with redirect_stdout(f):
+        try:
+            launch_interactive = soulstruct_main(parser.parse_args())
+        except Exception as e:
+            print(f"# Soulstruct terminated with exception: {str(e)}")
+        else:
+            if launch_interactive:
+                try:
+                    from IPython import embed
+                except ImportError:
+                    print("# ERROR: IPython must be installed to open an interactive console from a script.\n"
+                          "# You can install it, or directly import Soulstruct within an existing Python session.")
+                else:
+                    embed()

@@ -17,12 +17,12 @@ from typing import List
 
 from soulstruct.core import SoulstructError
 from soulstruct.bnd import BND, BNDEntry
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH
 
 
-COMPILER_x64 = Path(__file__).parent / "lua/x64/LuaC.exe"
-COMPILER_x86 = Path(__file__).parent / "lua/x86/luac50.exe"
-DECOMPILER_x64 = Path(__file__).parent / "lua/x64/DSLuaDecompiler.exe"
+COMPILER_x64 = PACKAGE_PATH("ai/lua/x64/LuaC.exe")
+COMPILER_x86 = PACKAGE_PATH("ai/lua/x86/luac50.exe")
+DECOMPILER_x64 = PACKAGE_PATH("ai/lua/x64/DSLuaDecompiler.exe")
 # No x86 decompiler.
 
 
@@ -273,7 +273,7 @@ class LuaBND(object):
 
 @contextmanager
 def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
-    temp = Path(__file__).parent / "lua/temp"
+    temp = PACKAGE_PATH("ai/lua/temp")
     if set_cwd:
         previous_cwd = os.getcwd()
         os.chdir(str(temp.parent))
@@ -283,7 +283,7 @@ def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
         f.write(content)
     yield temp
     try:
-        os.remove(str(Path(__file__).parent / "lua/temp"))
+        os.remove(str(PACKAGE_PATH("ai/lua/temp")))
     except FileNotFoundError:
         pass
     if previous_cwd:

@@ -19,8 +19,8 @@ class ParamDefBND(BND3):
             # Use bundled (recommended).
             dcx = '.dcx' if paramdef_bnd_source.lower() == 'dsr' else ''
             paramdef_bnd_source = PACKAGE_PATH('params/resources/paramdef.paramdefbnd' + dcx)
-            if not os.path.isfile(paramdef_bnd_source):
-                raise FileNotFoundError("Could not find bundled ParamDef files in 'soulstruct/params/resources'.\n"
+            if not paramdef_bnd_source.is_file():
+                raise FileNotFoundError(f"Could not find bundled ParamDef files in {paramdef_bnd_source}.\n"
                                         "Reinstall Soulstruct or copy the ParamDef files in yourself.")
 
         super().__init__(paramdef_bnd_source)

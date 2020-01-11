@@ -279,12 +279,13 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     entry_rows: List[SoulstructAIEditor.EntryRow]
 
-    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, save_luabnd_func,
+    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, save_luabnd_func, allow_decompile,
                  master=None, toplevel=False):
         self.AI = ai
         self.script_directory = Path(script_directory)
         self.game_root = Path(game_root)
         self.save_luabnd_func = save_luabnd_func
+        self.allow_decompile = allow_decompile
         self.e_coord = None
         self.bnd_choice = None
         self.decompile_all_button = None
@@ -312,8 +313,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=10).var
                 self.decompile_all_button = self.Button(
-                    text="Decompile All", font_size=10, bg='#422', width=15, padx=10,
-                    command=self.decompile_all)
+                    text="Decompile All" if self.allow_decompile else "Cannot Decompile", font_size=10,
+                    bg='#422', width=20, padx=10, command=self.decompile_all,
+                    state='normal' if self.allow_decompile else 'disabled')
                 self.write_all_button = self.Button(
                     text="Write All", font_size=10, bg='#222', width=15, padx=10,
                     command=self.write_all)
@@ -494,7 +496,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             goal.script = self._get_current_text()
             try:
                 goal.compile(x64=self.get_selected_bnd().is_lua_64)
-                self.decompile_button['state'] = 'normal'
+                if self.allow_decompile:
+                    self.decompile_button['state'] = 'normal'
                 self.script_editor.tag_remove("error", "1.0", "end")
                 self.flash_bg(self.script_editor, '#223')
                 self.script_editor.color_syntax()
@@ -711,7 +714,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             if set_focus_to_text:
                 self.entry_rows[row_index].text_label.focus_set()
             goal = self.get_goal(row_index)
-            self.decompile_button['state'] = 'normal' if goal.bytecode else 'disabled'
+            if self.allow_decompile:
+                self.decompile_button['state'] = 'normal' if goal.bytecode else 'disabled'
             self.save_button['state'] = 'normal' if goal.script else 'disabled'
             self.compile_button['state'] = 'normal' if goal.script else 'disabled'
             self.write_button['state'] = 'normal' if goal.script else 'disabled'

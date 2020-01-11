@@ -20,7 +20,7 @@ __all__ = [
 
 def PACKAGE_PATH(*relative_parts):
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        return Path(getattr(sys, "_MEIPASS"), "..", *relative_parts)
+        return Path(getattr(sys, "_MEIPASS"), *relative_parts)
     return Path(__file__).absolute().parent.joinpath("..", *relative_parts)
 
 

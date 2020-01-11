@@ -81,7 +81,8 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
     TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'ai', 'runtime']
 
     def __init__(self, project_path=None, master=None):
-        super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct")
+        super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON,
+                         window_title="Soulstruct Project Editor")
         self.withdraw()
 
         if not project_path:
@@ -94,7 +95,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             project_path = self.FileDialog.askdirectory(
                 title="Choose Soulstruct project directory", initialdir=str(Path('~/Documents').expanduser()))
             if not project_path:
-                raise SoulstructProjectError(word_wrap("No directory chosen. Quitting Soulstruct.", 50))
+                self.dialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.",
+                            button_kwargs='OK')
+                raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
 
         try:
             self.project = SoulstructProject(project_path, with_window=self)
@@ -165,8 +168,9 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
         self.ai_tab = self.SmartFrame(
             frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
             ai=self.project.AI, script_directory=self.project.project_root / "ai_scripts",
-            game_root=self.project.game_root, save_luabnd_func=lambda: self._save_data("ai"), linker=self.linker,
-            sticky='nsew')
+            game_root=self.project.game_root, save_luabnd_func=lambda: self._save_data("ai"),
+            allow_decompile=self.project.game_name == "Dark Souls Remastered",
+            linker=self.linker, sticky='nsew')
 
         self.build_runtime_tab(tab_frames['runtime'])
 
@@ -255,7 +259,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
                             bg="#222", row=0, column=1, **button_kwargs)
                         if self.project.game_name != "Dark Souls Prepare to Die Edition":
                             debug_launch['state'] = 'disabled'
-                            debug_launch.var.set("Debug Unavailable")
+                            debug_launch.var.set("No Debug for DSR")
                         self.Button(text="Launch DS Gadget", bg="#222",
                                     command=self._catch_error(self.project.launch_gadget),
                                     row=1, column=0, **button_kwargs)
