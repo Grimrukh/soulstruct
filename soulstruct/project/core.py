@@ -80,7 +80,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
 
     TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'ai', 'runtime']
 
-    def __init__(self, project_path, master=None):
+    def __init__(self, project_path=None, master=None):
         super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct")
         self.withdraw()
 
@@ -88,7 +88,7 @@ class SoulstructProjectWindow(SoulstructSmartFrame):
             self.dialog(
                 title="Choose Soulstruct project directory",
                 message="Navigate to your Soulstruct project directory.\n\n" + word_wrap(
-                    "If you want to create a new project, create an empty directory and select it."
+                    "If you want to create a new project, create an empty directory and select it. "
                     "The name of the directory will be the name of the project.", 50),
                 button_names='OK', button_kwargs='OK')
             project_path = self.FileDialog.askdirectory(

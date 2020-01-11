@@ -2,7 +2,6 @@
 
 TODO:
     - ESD state indices are wrong (or at least printing to esd.py wrong).
-    - Show LuaInfo and LuaGnl and offer decompiling (has to be optional because of decompile errors).
 
 Command Line Usage:
 
@@ -25,7 +24,7 @@ LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")
 parser.add_argument(
-    "source", nargs='?', default=DEFAULT_PROJECT_PATH,
+    "source", nargs='?', default=None,
     help=word_wrap(
         "Source file or directory to read from. Use 'live' to use the LIVE_GAME_PATH, 'temp' to use the "
         "TEMP_GAME_PATH, or 'default' (or no source) to use the DEFAULT_GAME_PATH. If no additional arguments are "
