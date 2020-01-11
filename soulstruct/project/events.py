@@ -1,10 +1,10 @@
 """
 TODO:
     - Search for all existing entities and color them, and hyperlink to Entities tab or Maps tab with right click?
-    - Replace entity ID with entity name from Entities tab (which can in turn be auto-generated from Maps names).
 """
 
 import re
+from collections import namedtuple
 from pathlib import Path
 import tkinter as tk
 
@@ -21,17 +21,23 @@ def _get_verbose_map_name(emevd_name):
     return VERBOSE_MAP_NAMES[int(area), int(block)]
 
 
+TagData = namedtuple("TagData", ('foreground', 'pattern', 'offsets'))
+
+
 class EvsTextEditor(tk.Text):
 
     SYNTAX_RE = {
-        "restart_type": (r"^@[\w_]+", (0, 0)),
-        "event_def": (r"^def [\w\d_]+", (0, 0)),
-        "docstring": (r"^[ ]+\"\"\" [\w\d :]+ \"\"\"", (0, 0)),
-        "instruction": (r"^[ ]+[\w\d_]+", (0, 0)),
-        "low_level_test": (r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "named_arg": (r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
-        "func_arg_name": (r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
-        "number_literal": (r"[ ,=({\[][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
+        "restart_type": TagData('#FFFFAA', r"^@[\w_]+", (0, 0)),
+        "event_def": TagData('#FFAAAA', r"^def [\w\d_]+", (0, 0)),
+        "import": TagData('#FFAAAA', r"^(from|import) [\w\d_ .*]+", (0, 0)),
+        "docstring": TagData('#BBBBBB', r"^[ ]+\"\"\" [\w\d :]+ \"\"\"", (0, 0)),
+        "instruction": TagData('#E6C975', r"^[ ]+[\w\d_]+", (0, 0)),
+        "low_level_test": TagData('#AAAAFF', r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
+        "main_condition": TagData('#FF7766', r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
+        "named_arg": TagData('#AAFFFF', r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
+        "func_arg_name": TagData('#FFCCAA', r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+        "event_arg_name": TagData('#FFAAFF', r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
+        "number_literal": TagData('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
     }
 
     re.compile(r"(?<=[,(])[ ]+\w[\w\d.]+[ ]+(?=[,)])")
@@ -49,15 +55,8 @@ class EvsTextEditor(tk.Text):
         self.tk.call("rename", self._w, self._orig)
         self.tk.createcommand(self._w, self._proxy)
 
-        self.tag_configure("restart_type", foreground='#FFFFAA')
-        self.tag_configure("event_def", foreground='#FFAAAA')
-        self.tag_configure("docstring", foreground='#BBBBBB')
-        self.tag_configure("instruction", foreground='#E6C975')
-        self.tag_configure("low_level_test", foreground='#AAAAFF')  # starts with 'If', 'Skip', or 'Goto'
-        self.tag_configure("named_arg", foreground='#AAFFFF')
-        self.tag_configure("func_arg_name", foreground='#FFCCAA')
-        self.tag_configure("event_arg_name", foreground='#FFAAFF')
-        self.tag_configure("number_literal", foreground='#AADDFF')
+        for tag_name, tag_data in self.SYNTAX_RE.items():
+            self.tag_configure(tag_name, foreground=tag_data.foreground)
 
         self.tag_configure("found", background='#224433')
         self.tag_configure("error", background='#443322')
@@ -102,9 +101,10 @@ class EvsTextEditor(tk.Text):
             self.tag_add(tag, "matchStart", "matchEnd")
 
     def color_syntax(self):
-        for tag, (pattern, offsets) in self.SYNTAX_RE.items():
-            self.highlight_pattern(pattern, tag, regexp=True, clear=True,
-                                   start_offset=offsets[0], end_offset=offsets[1])
+        for tag, tag_data in self.SYNTAX_RE.items():
+            if tag_data.offsets is not None:
+                self.highlight_pattern(tag_data.pattern, tag, regexp=True, clear=True,
+                                       start_offset=tag_data.offsets[0], end_offset=tag_data.offsets[1])
         self._apply_event_arg_name_tags()
 
     def _apply_event_arg_name_tags(self):
@@ -119,7 +119,7 @@ class EvsTextEditor(tk.Text):
             if int(next_def_index.split('.')[0]) <= int(def_index.split('.')[0]):
                 break  # finished searching
             event_text = self.get(def_index, next_def_index)
-            event_args_match = re.match(r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", event_text, flags=re.MULTILINE)
+            event_args_match = re.match(self.SYNTAX_RE["event_arg_name"].pattern, event_text, flags=re.MULTILINE)
             if event_args_match:
                 event_args = event_args_match.group(1).replace('\n', '').replace(' ', '')
                 for event_arg in event_args.split(','):

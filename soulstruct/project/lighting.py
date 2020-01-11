@@ -61,15 +61,15 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 0, 1, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):
                 map_display_names = [f'{k} ({v})' for k, v in DRAW_PARAM_MAPS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names, on_select_function=self._on_map_area_choice, width=40, padx=10,
                     label='Map Area:', label_font_size=12, label_position='left', font=('Segoe UI', 12)).var
                 self.slot_choice_label = self.Label(text='Slot:', font_size=12, padx=(30, 0))
                 self.slot_choice = self.Combobox(
-                    values=('0', '1'), font=('Segoe UI', 12), on_select_function=self._on_slot_choice, width=5, padx=10)
-                self.Button(text="Regenerate Slot 1", bg="#622", width=15, command=self.regenerate_slot_1, padx=5)
+                    values=('0', '1'), font=('Segoe UI', 12), on_select_function=self._on_slot_choice, width=2, padx=10)
+                self.Button(text="Copy Slot 0 to Slot 1", bg="#622", width=20, command=self.regenerate_slot_1, padx=5)
 
             super().build()
 

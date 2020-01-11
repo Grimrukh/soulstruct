@@ -21,7 +21,7 @@ class AIScriptTextEditor(tk.Text):
         "lua_word": ('#FFBB99', r"(^| )(function|local|if|then|elseif|else|for|while|end|return|and|or|"
                                 r"not|do|break|repeat|nil|until)(?=($| ))", (0, 0)),
         "lua_bool": ('#FFBB99', r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (0, 0)),
-        "number_literal": ('#AADDFF', r"[ ,=({\[][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
+        "number_literal": ('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
         "function_call": ('#C0E665', r"(^|[ ,=({\[:])[\w\d_]+(?=[(])", (0, 0)),
     }
 
