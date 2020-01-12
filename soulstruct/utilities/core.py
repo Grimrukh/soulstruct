@@ -6,6 +6,7 @@ import os
 import re
 import string
 import struct
+import subprocess
 import sys
 import textwrap
 from pathlib import Path
@@ -15,6 +16,7 @@ __all__ = [
     "find_steam_common_paths", "traverse_path_tree", "Vector",
     "BinaryStruct", "BaseStruct", "AttributeDict", "BiDict",
     "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
+    "get_startupinfo",
 ]
 
 
@@ -664,3 +666,16 @@ def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
     th += rot_rad
     dx, dz = r * -math.sin(th), r * -math.cos(th)
     return origin[0] + dx, origin[1] + dz
+
+
+def get_startupinfo():
+    """Disables command window for PyInstaller `--noconsole`` option.
+
+    See `https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess`
+    """
+    if hasattr(subprocess, 'STARTUPINFO'):
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    else:
+        si = None
+    return si

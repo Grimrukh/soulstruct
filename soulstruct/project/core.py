@@ -600,6 +600,7 @@ class SoulstructProject(object):
     def _import_events(self, import_directory):
         """Converts binary EMEVD to EVS.PY in '[project]/events'."""
         convert_events(output_type="evs.py", output_directory=self.project_root / 'events',
+                       input_type="emevd.dcx" if self.game_name == "Dark Souls Remastered" else "emevd",
                        input_directory=import_directory)
 
     def export_data(self, data_type=None, export_directory=None):
@@ -627,7 +628,9 @@ class SoulstructProject(object):
 
     def _export_events(self, export_directory):
         """Converts EVS.PY in '[project]/events' to binary EMEVD."""
-        convert_events(output_type="emevd", output_directory=export_directory,
+        convert_events(output_type="emevd.dcx" if self.game_name == "Dark Souls Remastered" else "emevd",
+                       output_directory=export_directory,
+                       input_type="evs.py",
                        input_directory=self.project_root / "events")
 
     def restore_backup(self, target=None):

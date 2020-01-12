@@ -17,7 +17,7 @@ from typing import List
 
 from soulstruct.core import SoulstructError
 from soulstruct.bnd import BND, BNDEntry
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo
 
 
 COMPILER_x64 = PACKAGE_PATH("ai/lua/x64/LuaC.exe")
@@ -294,7 +294,8 @@ def compile_lua(script: str, script_name="<unknown script>", output_path=None, x
     with _temp_lua_path(script, as_bytes=False, set_cwd=True, encoding="shift-jis") as temp:
         compiler = COMPILER_x64 if x64 else COMPILER_x86
         result = subprocess.run(
-            [compiler, "-o", "temp.lua", temp], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            [compiler, "-o", "temp.lua", temp], text=True, stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=get_startupinfo())
         if result.stdout.strip():
             print(f"# LUA COMPILE WARNING in script {script_name}: {result.stdout.strip()}")
         if result.returncode != 0:
@@ -311,7 +312,8 @@ def compile_lua(script: str, script_name="<unknown script>", output_path=None, x
 def decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=None):
     with _temp_lua_path(bytecode, as_bytes=True, set_cwd=True) as temp:
         result = subprocess.run(
-            [DECOMPILER_x64, temp], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            [DECOMPILER_x64, temp], text=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            startupinfo=get_startupinfo())
         if result.stdout.strip():
             print(f"# LUA DECOMPILE WARNING in script {script_name}: {result.stdout.strip()}")
         if result.returncode != 0:
