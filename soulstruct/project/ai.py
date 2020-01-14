@@ -613,6 +613,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         else:
             self.dialog("Lua Load Successful", "All scripts were loaded successfully.",
                         button_kwargs="OK", return_output=0, escape_output=0)
+        if self.active_row_index is not None:
+            self.update_script_text()
 
     def decompile_selected(self):
         if self.active_row_index is not None:
@@ -688,11 +690,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             entry_index, set_focus_to_text=set_focus_to_text, edit_if_already_selected=edit_if_already_selected)
 
     def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
-                               id_clicked=False):
+                               id_clicked=False, check_unsaved=True):
         """Select entry from row index, based on currently displayed category and ID range."""
         old_row_index = self.active_row_index
 
-        if old_row_index != row_index and old_row_index is not None:
+        if check_unsaved and old_row_index != row_index and old_row_index is not None:
             if not self._ignored_unsaved():
                 return
 
@@ -758,11 +760,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         return self.get_selected_bnd().get_goal(goal_id, goal_type)
 
     def _on_bnd_choice(self, _=None):
-        if not self._ignored_unsaved():
+        if self.active_row_index is not None and not self._ignored_unsaved():
             self.bnd_choice.set(f"{camel_case_to_spaces(self.selected_bnd_name)} ({self.selected_bnd_name})")
             return
         self.selected_bnd_name = self._get_bnd_choice_name()
-        self.select_entry_row_index(None)
+        self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
 
