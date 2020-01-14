@@ -493,9 +493,10 @@ class SmartFrame(tk.Frame):
         self._variables.append(text_var)
         entry = tk.Entry(frame, textvariable=text_var, **kwargs)
         entry.var = text_var
+        entry.integers_only = integers_only
         if integers_only:
             if numbers_only:
-                raise ValueError("Use 'integers_only' or 'numbers_only', but not both.")
+                raise ValueError("Use `integers_only` or `numbers_only`, but not both.")
             v_cmd = (self.master.register(self._validate_entry_integers), '%P', '%S')
             entry.config(validate='key', validatecommand=v_cmd)
         elif numbers_only:
@@ -577,14 +578,13 @@ class SmartFrame(tk.Frame):
             custom_widget.columnconfigure(i, weight=w)
         return custom_widget
 
-    @staticmethod
-    def _validate_entry_integers(new_value, new_input):
-        """ Callback invoked whenever the Entry contents change.
+    def _validate_entry_integers(self, new_value, new_input):
+        """Callback invoked whenever the Entry contents change.
 
         Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
         interpreted as an int.
         """
-        if new_value == "":
+        if new_value in {"", "-"}:
             return True
         if new_input not in '0123456789-':
             return False
@@ -601,7 +601,7 @@ class SmartFrame(tk.Frame):
         Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
         interpreted as a float.
         """
-        if new_value == "":
+        if new_value in {"", "-"}:
             return True
         if new_input not in '0123456789.+-':
             return False

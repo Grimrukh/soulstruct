@@ -573,7 +573,7 @@ class MSB(object):
         for r in self.regions:
             r.translate += translate
 
-    def rotate_all_y_in_world(self, y_rotation, origin_x=0.0, origin_z=0.0):
+    def rotate_all_y_in_world(self, y_rotation, pivot_x=0.0, pivot_y=0.0):
         """Rotate around world origin by `y_rotation` degrees.
 
         Map Pieces, Collisions, Navmeshes, and Map Connections rotate around the world origin by default, but other
@@ -595,11 +595,6 @@ class MSB(object):
             rotation = math.atan2(-r.translate.x, -r.translate.z)
             r.translate.x = radius * -math.sin(y_rot_rad + rotation)
             r.translate.z = radius * -math.cos(y_rot_rad + rotation)
-
-    def transform_all(self, translate_x, translate_y, translate_z, y_rotation):
-        """Rotate (around world origin) and translate at the same time."""
-        self.rotate_all_y_in_world(y_rotation)
-        self.translate_all((translate_x, translate_y, translate_z))
 
     def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
         """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type."""

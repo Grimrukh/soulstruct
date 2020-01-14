@@ -151,6 +151,11 @@ else:
     log_path = Path(__file__).parent / "soulstruct.log"
 
 
+# TODO
+launch_interactive = soulstruct_main(parser.parse_args())
+exit()
+
+
 with log_path.open("w") as f:
     with redirect_stdout(f):
         try:

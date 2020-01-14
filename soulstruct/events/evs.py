@@ -1167,20 +1167,25 @@ def _import_module(node: ast.Import, namespace: dict):
         name = alias.name
         if 'soulstruct.events' in name:
             return
-        module = importlib.import_module(alias.name)
+        try:
+            module = importlib.import_module(alias.name)
+            importlib.reload(module)
+        except ImportError as e:
+            raise EmevdImportError(node.lineno, alias.name, str(e))
         as_name = alias.asname if alias.asname is not None else name
         try:
             namespace[as_name] = getattr(module, name)
-        except AttributeError:
-            raise EmevdImportFromError(node.lineno, node.module, name)
+        except AttributeError as e:
+            raise EmevdImportFromError(node.lineno, node.module, name, str(e))
 
 
 def _import_from(node: ast.ImportFrom, namespace: dict):
     """Import names into given namespace dictionary."""
     try:
         module = importlib.import_module(node.module)
-    except ImportError:
-        raise EmevdImportError(node.lineno, node.module)
+        importlib.reload(module)
+    except ImportError as e:
+        raise EmevdImportError(node.lineno, node.module, str(e))
     for alias in node.names:
         name = alias.name
         if 'soulstruct.events' in name:
@@ -1195,15 +1200,15 @@ def _import_from(node: ast.ImportFrom, namespace: dict):
             for name_ in all_names:
                 try:
                     namespace[name_] = getattr(module, name_)
-                except AttributeError:
+                except AttributeError as e:
                     print(all_names)
-                    raise EmevdImportFromError(node.lineno, node.module, name_)
+                    raise EmevdImportFromError(node.lineno, node.module, name_, str(e))
         else:
             as_name = alias.asname if alias.asname is not None else name
             try:
                 namespace[as_name] = getattr(module, name)
-            except AttributeError:
-                raise EmevdImportFromError(node.lineno, node.module, name)
+            except AttributeError as e:
+                raise EmevdImportFromError(node.lineno, node.module, name, str(e))
     del module
 
 
@@ -1243,15 +1248,15 @@ class EmevdValueError(EmevdError):
 class EmevdImportError(EmevdError):
     """Raised when a module cannot be imported."""
 
-    def __init__(self, lineno, module):
-        super().__init__(lineno, f"Could not import {repr(module)}.")
+    def __init__(self, lineno, module, msg):
+        super().__init__(lineno, f"Could not import {repr(module)}. Error: {msg}")
 
 
 class EmevdImportFromError(EmevdError):
     """Raised when a name cannot be imported from a module."""
 
-    def __init__(self, lineno, module, name):
-        super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}.")
+    def __init__(self, lineno, module, name, msg):
+        super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}. Error: {msg}")
 
 
 class EmevdNameError(EmevdError):

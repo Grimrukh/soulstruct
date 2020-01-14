@@ -625,7 +625,8 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
             try:
                 new_id = int(self._e_entry_id_edit.var.get())
             except ValueError:
-                pass  # shouldn't happen with 'integers_only=True' in Entry
+                if self._e_entry_id_edit.var.get() != "-":
+                    raise
             else:
                 self._change_entry_id(row_index, new_id)
             self._cancel_entry_id_edit()
@@ -1005,6 +1006,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             return self.active_value_widget is self.value_label
 
         def confirm_edit(self, new_text):
+            """Inspects new text and returns new field value, or None if the field shouldn't be changed."""
             if not self.editable:
                 raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
 
@@ -1020,12 +1022,15 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 self.value_label.var.set(new_text)
                 return new_value
 
-            self.value_label.var.set(new_text)
-
-            if self.field_type == float:
-                return float(new_text)
-            elif self.field_type == int:
-                return int(new_text)
+            if self.field_type in {float, int}:
+                if new_text == "-":
+                    return None  # no change
+                if self.field_type == float:
+                    self.value_label.var.set(f"{float(new_text):.3f}")
+                    return float(new_text)
+                elif self.field_type == int:
+                    self.value_label.var.set(new_text)
+                    return int(new_text)
 
         @property
         def active(self):
@@ -1330,10 +1335,11 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 true_value = self.field_rows[index].confirm_edit(new_text=self.e_field_value_edit.var.get())
             except ValueError as e:
                 # Entry input restrictions are supposed to prevent this.
-                print(str(e))
+                print(f"# ERROR: could not interpret field value: {str(e)}")
                 self.bell()
                 return
-            self.change_field_value(self.field_rows[index].field_name, true_value)
+            if true_value is not None:
+                self.change_field_value(self.field_rows[index].field_name, true_value)
             self._cancel_field_value_edit()
 
     def change_field_value(self, field_name: str, new_value):

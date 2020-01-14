@@ -280,14 +280,14 @@ class SoulstructEventEditor(SoulstructSmartFrame):
 
     def _on_evs_choice(self, _):
         """Check if current text has changed (and warn), then switch to other text."""
-        if self._ignored_unsaved():
-            self.selected_evs = self.evs_choice.var.get().split(' (')[1][:-1]
-            self.text_editor.delete(1.0, 'end')
-            self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
-            self.text_editor.mark_set("insert", "1.0")
-            self.text_editor.color_syntax()
-        else:
+        if not self._ignored_unsaved():
             self.evs_choice.var.set(f"{_get_verbose_map_name(self.selected_evs)} ({self.selected_evs})")  # keep old
+            return
+        self.selected_evs = self.evs_choice.var.get().split(' (')[1][:-1]
+        self.text_editor.delete(1.0, 'end')
+        self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+        self.text_editor.mark_set("insert", "1.0")
+        self.text_editor.color_syntax()
 
     def save_selected_evs(self):
         if self.selected_evs:

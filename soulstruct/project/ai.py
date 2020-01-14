@@ -286,6 +286,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.game_root = Path(game_root)
         self.save_luabnd_func = save_luabnd_func
         self.allow_decompile = allow_decompile
+        self.selected_bnd_name = ""
+
         self.e_coord = None
         self.bnd_choice = None
         self.decompile_all_button = None
@@ -312,6 +314,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.bnd_choice = self.Combobox(
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=10).var
+                self.selected_bnd_name = self._get_bnd_choice_name()
                 self.decompile_all_button = self.Button(
                     text="Decompile All" if self.allow_decompile else "Cannot Decompile", font_size=10,
                     bg='#422', width=20, padx=10, command=self.decompile_all,
@@ -748,12 +751,17 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         return self.bnd_choice.get().split(' (')[0].replace(' ', '')
 
     def get_goal(self, row_index=None):
+        # print("Goal", self.selected_bnd_name)
         if row_index is None:
             row_index = self.active_row_index
         goal_id, goal_type = self.get_goal_id_and_type(row_index)
         return self.get_selected_bnd().get_goal(goal_id, goal_type)
 
     def _on_bnd_choice(self, _=None):
+        if not self._ignored_unsaved():
+            self.bnd_choice.set(f"{camel_case_to_spaces(self.selected_bnd_name)} ({self.selected_bnd_name})")
+            return
+        self.selected_bnd_name = self._get_bnd_choice_name()
         self.select_entry_row_index(None)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
@@ -798,7 +806,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.refresh_entries()
 
     def get_selected_bnd(self) -> LuaBND:
-        return self.AI[self._get_bnd_choice_name()]
+        # print(self.selected_bnd_name)
+        return self.AI[self.selected_bnd_name]
 
     def get_category_dict(self, category=None) -> Dict[(int, bool), LuaGoal]:
         """Gets dictionary of goals in LuaInfo from LuaBND. Category does nothing."""
