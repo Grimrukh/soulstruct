@@ -151,23 +151,19 @@ else:
     log_path = Path(__file__).parent / "soulstruct.log"
 
 
-# TODO
-launch_interactive = soulstruct_main(parser.parse_args())
-exit()
-
-
 with log_path.open("w") as f:
     with redirect_stdout(f):
         try:
             launch_interactive = soulstruct_main(parser.parse_args())
         except Exception as e:
             print(f"# Soulstruct terminated with exception: {str(e)}")
-        else:
-            if launch_interactive:
-                try:
-                    from IPython import embed
-                except ImportError:
-                    print("# ERROR: IPython must be installed to open an interactive console from a script.\n"
-                          "# You can install it, or directly import Soulstruct within an existing Python session.")
-                else:
-                    embed()
+            exit()
+
+if launch_interactive:
+    try:
+        from IPython import embed
+    except ImportError:
+        print("# ERROR: IPython must be installed to open an interactive console from a script.\n"
+              "# You can install it, or directly import Soulstruct within an existing Python session.")
+    else:
+        embed()
