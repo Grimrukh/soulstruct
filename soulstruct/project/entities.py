@@ -73,6 +73,7 @@ MODULE_CLASS_NAMES = {
 
 
 class SoulstructEntityEditor(SoulstructBaseEditor):
+    DATA_NAME = "Maps"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
@@ -196,7 +197,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
-                map_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_MAP_NAMES.items()]
+                map_display_names = [f"{camel_case_to_spaces(v)} [{k}]" for k, v in DARK_SOULS_MAP_NAMES.items()]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
@@ -354,7 +355,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     def _get_map_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
-        return self.map_choice.get().split(' (')[0].replace(' ', '')
+        return self.map_choice.get().split(' [')[0].replace(' ', '')
 
     def _on_map_choice(self, _=None):
         self.select_entry_row_index(None)
@@ -498,8 +499,9 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             return False
         entry_list = self.get_category_dict(category)
         if new_id in entry_list:
-            self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Maps.{category}. You must change or "
-                                          f"delete it first.")
+            self.CustomDialog(
+                title="Entry ID Clash",
+                message=f"Entry ID {new_id} already exists in Maps.{category}. You must change or delete it first.")
             return False
         # Change 'entity_id' field of MSBEntry.
         entry_list[old_id].entity_id = new_id

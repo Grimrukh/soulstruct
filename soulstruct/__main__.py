@@ -147,17 +147,17 @@ def soulstruct_main(ss_args):
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     log_path = Path(sys.executable).parent / "soulstruct.log"
+    with log_path.open("w") as f:
+        with redirect_stdout(f):
+            try:
+                launch_interactive = soulstruct_main(parser.parse_args())
+            except Exception as e:
+                print(f"# Soulstruct terminated with exception: {str(e)}")
+                exit()
 else:
-    log_path = Path(__file__).parent / "soulstruct.log"
+    # log_path = Path(__file__).parent / "soulstruct.log"
+    launch_interactive = soulstruct_main(parser.parse_args())  # errors raised
 
-
-with log_path.open("w") as f:
-    with redirect_stdout(f):
-        try:
-            launch_interactive = soulstruct_main(parser.parse_args())
-        except Exception as e:
-            print(f"# Soulstruct terminated with exception: {str(e)}")
-            exit()
 
 if launch_interactive:
     try:

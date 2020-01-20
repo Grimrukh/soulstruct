@@ -11,7 +11,7 @@ import tkinter as tk
 from soulstruct.events.darksouls1 import EMEVD
 from soulstruct.events.darksouls1.constants import VERBOSE_MAP_NAMES
 from soulstruct.events.evs import EmevdError
-from soulstruct.utilities.window import SoulstructSmartFrame
+from soulstruct.utilities.window import SmartFrame
 
 
 def _get_verbose_map_name(emevd_name):
@@ -133,8 +133,8 @@ class EvsTextEditor(tk.Text):
             start_index = next_def_index
 
 
-class SoulstructEventEditor(SoulstructSmartFrame):
-
+class SoulstructEventEditor(SmartFrame):
+    DATA_NAME = "Events"
     TEXT_BG = '#232323'
     TEXT_BOX_WIDTH = 300
 
@@ -150,7 +150,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.evs_choice = None
         self.line_number = None
         self.go_to_line = None
-        self.find_string = None
+        self.string_to_find = None
         self.evs_editor_canvas = None
         self.text_editor = None
         self.save_button = None
@@ -176,8 +176,8 @@ class SoulstructEventEditor(SoulstructSmartFrame):
                 text="Line: None", padx=10, width=10, fg='#CCF', anchor='w', sticky='w').var
             self.go_to_line = self.Entry(label="Go to Line:", padx=5, width=6, sticky='w')
             self.go_to_line.bind("<Return>", self._go_to_line)
-            self.find_string = self.Entry(label="Find Text:", padx=5, width=20, sticky='w')
-            self.find_string.bind("<Return>", self._find_string)
+            self.string_to_find = self.Entry(label="Find Text:", padx=5, width=20, sticky='w')
+            self.string_to_find.bind("<Return>", self._find_string)
 
         with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 0], padx=50, pady=10):
             self.evs_editor_canvas = self.Canvas(
@@ -217,11 +217,11 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.refresh()
 
     def refresh(self):
-        map_options = [f"{_get_verbose_map_name(m)} ({m})" for m in self.evs_file_paths]
+        map_options = [f"{_get_verbose_map_name(m)} [{m}]" for m in self.evs_file_paths]
         self.evs_choice["values"] = map_options
         if map_options:
             self.evs_choice.var.set(map_options[0])
-            self.selected_evs = self.evs_choice.get().split(' (')[1][:-1]
+            self.selected_evs = self.evs_choice.get().split(' [')[1][:-1]
             self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
@@ -233,10 +233,10 @@ class SoulstructEventEditor(SoulstructSmartFrame):
     def _control_f_search(self, _):
         if self.selected_evs:
             highlighted = self.text_editor.selection_get()
-            self.find_string.var.set(highlighted)
-            self.find_string.select_range(0, 'end')
-            self.find_string.icursor('end')
-            self.find_string.focus_force()
+            self.string_to_find.var.set(highlighted)
+            self.string_to_find.select_range(0, 'end')
+            self.string_to_find.icursor('end')
+            self.string_to_find.focus_force()
 
     def _go_to_line(self, _):
         number = self.go_to_line.var.get()
@@ -251,7 +251,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
         self.text_editor.highlight_line(number, "found")
 
     def _find_string(self, _):
-        string = self.find_string.var.get()
+        string = self.string_to_find.var.get()
         if not string or not self.selected_evs:
             return
         start_line, start_char = self.text_editor.index("insert").split('.')
@@ -263,6 +263,8 @@ class SoulstructEventEditor(SoulstructSmartFrame):
             self.text_editor.see(index)
             index_line, index_char = index.split('.')
             self.text_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
+        else:
+            self.flash_bg(self.string_to_find)
 
     def clear_bg_tags(self):
         for tag in {"found", "error"}:
@@ -270,18 +272,19 @@ class SoulstructEventEditor(SoulstructSmartFrame):
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.evs_text[self.selected_evs]:
-            if self.dialog(title="Lose Unsaved Changes?",
-                           message="Current text has changed but not been saved. Lose changes?",
-                           button_names=("Yes, lose changes", "No, stay here"),
-                           button_kwargs=('YES', 'NO'),
-                           cancel_output=1, default_output=1) == 1:
+            if self.CustomDialog(
+                    title="Lose Unsaved Changes?",
+                    message="Current text has changed but not been saved. Lose changes?",
+                    button_names=("Yes, lose changes", "No, stay here"),
+                    button_kwargs=('YES', 'NO'),
+                    cancel_output=1, default_output=1) == 1:
                 return False
         return True
 
     def _on_evs_choice(self, _):
         """Check if current text has changed (and warn), then switch to other text."""
         if not self._ignored_unsaved():
-            self.evs_choice.var.set(f"{_get_verbose_map_name(self.selected_evs)} ({self.selected_evs})")  # keep old
+            self.evs_choice.var.set(f"{_get_verbose_map_name(self.selected_evs)} [{self.selected_evs}]")  # keep old
             return
         self.selected_evs = self.evs_choice.var.get().split(' (')[1][:-1]
         self.text_editor.delete(1.0, 'end')
@@ -297,6 +300,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
                 f.write(current_text)
 
     def save_all_evs(self):
+        """Updates the current script, then saves all EVS scripts to 'events' project subdirectory."""
         if self.selected_evs:
             current_text = self._get_current_text()
             self.evs_text[self.selected_evs] = current_text
@@ -332,7 +336,7 @@ class SoulstructEventEditor(SoulstructSmartFrame):
                 self._raise_error(message=str(e))
         else:
             self.text_editor.tag_remove("error", "1.0", "end")
-            self.info_dialog("EVS Success", "No errors encountered when parsing EVS.")
+            self.CustomDialog(title="EVS Success", message="No errors encountered when parsing EVS.")
 
     def export_selected_evs(self, export_directory=None):
         """Convert project EVS file to game EMEVD file. Does not check any loaded text."""

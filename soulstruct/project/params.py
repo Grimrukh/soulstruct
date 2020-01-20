@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
+    DATA_NAME = "Params"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
@@ -131,8 +132,10 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         if old_id == new_id:
             return False
         if new_id in self.Params[category].entries:
-            self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Params.{category}. You must change or "
-                                          f"delete it first.")
+            self.CustomDialog(
+                title="Entry ID Clash",
+                message=f"Entry ID {new_id} already exists in Params.{category}. You must change or "
+                        f"delete it first.")
             return False
         entry_data = self.Params[category].pop(old_id)
         self.Params[category][new_id] = entry_data

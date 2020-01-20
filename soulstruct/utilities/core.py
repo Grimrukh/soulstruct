@@ -67,6 +67,7 @@ def camel_case_to_spaces(camel_string):
 
 
 def find_steam_common_paths():
+    """Not using anymore. Seems to cause 'WinError 87' OSErrors for some people for some drives."""
     steam_common_paths = []
     for drive in _get_drives():
         for arch in {'', ' (x86)'}:

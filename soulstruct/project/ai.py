@@ -53,7 +53,12 @@ class AIScriptTextEditor(tk.Text):
 
     def _proxy(self, *args):
         cmd = (self._orig,) + args
-        result = self.tk.call(cmd)
+        try:
+            result = self.tk.call(cmd)
+        except Exception as e:
+            print(cmd)
+            print(e)
+            raise
         if args[0] in ("insert", "delete") or args[0:3] == ("mark", "set", "insert"):
             self.event_generate("<<CursorChange>>", when="tail")
 
@@ -145,6 +150,7 @@ class AIScriptTextEditor(tk.Text):
 
 
 class SoulstructAIEditor(SoulstructBaseEditor):
+    DATA_NAME = "AI"
     CATEGORY_BOX_WIDTH = 0
     ENTRY_BOX_WIDTH = 150
     ENTRY_BOX_HEIGHT = 400
@@ -310,7 +316,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
-                bnd_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
+                bnd_display_names = [f"{camel_case_to_spaces(v)} [{k}]" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
                 self.bnd_choice = self.Combobox(
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=10).var
@@ -437,11 +443,12 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.get_goal().script:
-            if self.dialog(title="Lose Unsaved Changes?",
-                           message="Current script has changed but not been saved. Lose changes?",
-                           button_names=("Yes, lose changes", "No, stay here"),
-                           button_kwargs=('YES', 'NO'),
-                           cancel_output=1, default_output=1) == 1:
+            if self.CustomDialog(
+                    title="Lose Unsaved Changes?",
+                    message="Current script has changed but not been saved. Lose changes?",
+                    button_names=("Yes, lose changes", "No, stay here"),
+                    button_kwargs=('YES', 'NO'),
+                    cancel_output=1, default_output=1) == 1:
                 return False
         return True
 
@@ -460,19 +467,21 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         elif old_type == goal_type:
             return False
         if (goal.goal_id, goal_type) in self.get_category_dict():
-            self.dialog("Script Type Error", f"A {repr(goal_type)} goal already exists with ID {goal.goal_id}.",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Script Type Error",
+                message=f"A {repr(goal_type)} goal already exists with ID {goal.goal_id}.")
             return False
         try:
             goal.goal_type = goal_type
         except LuaError:
             if goal_type != "logic":
                 raise
-            if self.dialog(title="Lose Unsaved Changes?",
-                           message=f"Logic goal name must end in '_Logic'. Add suffix to name?",
-                           button_names=("Yes, change name", "No, do nothing"),
-                           button_kwargs=('YES', 'NO'),
-                           cancel_output=1, default_output=1) == 1:
+            if self.CustomDialog(
+                    title="Lose Unsaved Changes?",
+                    message=f"Logic goal name must end in '_Logic'. Add suffix to name?",
+                    button_names=("Yes, change name", "No, do nothing"),
+                    button_kwargs=('YES', 'NO'),
+                    return_output=0, cancel_output=1, default_output=1) == 1:
                 return False
             else:
                 goal.set_name_and_type(goal.goal_name + "_Logic", "logic")
@@ -483,15 +492,15 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def save_all(self, save_project_file=True):
         """Saves the selected script and (by default) saves the entire AI bundle in the project folder."""
-        if self.active_row_index is not None:
+        if save_project_file:
+            self.save_luabnd_func()  # calls this function again with `save_project_file=False` to reach block below
+        elif self.active_row_index is not None:
             current_text = self._get_current_text()
             if current_text:
                 goal = self.get_goal()
-                goal.script = self._get_current_text()
-                self.flash_bg(self.script_editor, '#232')
+                goal.script = current_text
                 self.script_editor.color_syntax()
-        if save_project_file:
-            self.save_luabnd_func()
+                self.flash_bg(self.script_editor, '#232')
 
     def compile_selected(self):
         if self.active_row_index is not None:
@@ -506,23 +515,27 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.script_editor.color_syntax()
             except LuaError as e:
                 msg = self._parse_compile_error(str(e))
-                self.dialog(title="Lua Compile Error",
-                            message=f"Error encountered while compiling script "
-                                    f"for goal {goal.goal_id}: {goal.goal_name} ({repr(goal.goal_type)}):\n\n{msg}")
+                self.CustomDialog(
+                    title="Lua Compile Error",
+                    message=f"Error encountered while compiling script for goal {goal.goal_id}: "
+                            f"{goal.goal_name} ({repr(goal.goal_type)}):\n\n{msg}")
 
     def _parse_compile_error(self, error_msg):
+        error_msg = error_msg.replace('\n', ' ')
         match = self._LUA_COMPILE_ERROR_RE.match(error_msg)
         if match:
             self._highlight_error(int(match.group(1)))
-            error_msg = match.group(2).replace('\n', ' ')
+            error_msg = match.group(2)
             return f"Line {match.group(1)}: {error_msg}"
         return error_msg
 
     def decompile_all(self):
-        if self.dialog("Confirm Bulk Decompile",
-                       message="This will overwrite any decompiled scripts in your project's current state. Continue?",
-                       button_kwargs=("YES", "NO"), button_names=("Yes, continue", "No, go back"),
-                       cancel_output=1, default_output=1) == 1:
+        if self.CustomDialog(
+                title="Confirm Bulk Decompile",
+                message="This will overwrite any decompiled scripts in your project's current state. Continue?",
+                button_names=("Yes, continue", "No, go back"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1, default_output=1) == 1:
             return
         self.decompile_all_button['state'] = 'disabled'
         self.decompile_all_button.var.set("Decompiling...")
@@ -535,32 +548,37 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 goal.decompile()
             except LuaError as e:
                 failed_goals.append(goal)
-                if self.dialog("Lua Decompile Error",
-                               message=f"Error encountered while decompiling script:\n\n{str(e)}"
-                                       f"\n\nContinue to next goal, or abort all remaining goals?",
-                               button_kwargs=("YES", "NO"""), button_names=("Continue to next goal", "Abort remaining"),
-                               return_output=0, escape_output=0) == 1:
+                if self.CustomDialog(
+                        title="Lua Decompile Error",
+                        message=f"Error encountered while decompiling script:\n\n{str(e)}"
+                                f"\n\nContinue to next goal, or abort all remaining goals?",
+                        button_names=("Continue to next goal", "Abort remaining"),
+                        button_kwargs=("YES", "NO"""),
+                        cancel_output=0, default_output=0, return_output=0) == 1:
                     return
         failed_goals_msg = '\n'.join(f"{g.goal_id}: {g.goal_name} ({g.goal_type}" for g in failed_goals)
         if failed_goals_msg:
-            self.dialog("Lua Decompile Complete",
-                        message=f"All scripts have been decompiled except:\n\n{failed_goals_msg}",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Lua Decompile Complete",
+                message=f"All scripts have been decompiled except:\n\n{failed_goals_msg}",
+                cancel_output=0, default_output=0, return_output=0)
         else:
-            self.dialog("Lua Decompile Complete",
-                        message=f"All scripts were decompiled successfully.",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Lua Decompile Complete",
+                message=f"All scripts were decompiled successfully.")
         self.decompile_all_button['state'] = 'normal'
         self.decompile_all_button.var.set("Decompile All")
         if self.active_row_index is not None:
             self.update_script_text()
 
     def write_all(self):
-        if self.dialog("Confirm Bulk Write",
-                       message=f"This will overwrite any decompiled script files saved in\n"
-                               f"'/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
-                       button_kwargs=("YES", "NO"), button_names=("Yes, continue", "No, go back"),
-                       cancel_output=1, default_output=1) == 1:
+        if self.CustomDialog(
+                title="Confirm Bulk Write",
+                message=f"This will overwrite any decompiled script files saved in "
+                        f"'/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
+                button_names=("Yes, continue", "No, go back"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1, default_output=1) == 1:
             return
         self.write_all_button['state'] = 'disabled'
         self.write_all_button.var.set("Writing...")
@@ -571,22 +589,26 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             try:
                 goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
             except LuaError as e:
-                if self.dialog("Lua Write Error",
-                               message=f"Error encountered while writing script for goal {goal.id}: {goal.goal_name} "
-                                       f"({goal.goal_type}):\n\n{str(e)}"
-                                       f"\n\nContinue to next goal, or abort all remaining goals?",
-                               button_kwargs=("YES", "NO"""), button_names=("Continue to next goal", "Abort remaining"),
-                               return_output=0, escape_output=0) == 1:
+                if self.CustomDialog(
+                        title="Lua Write Error",
+                        message=f"Error encountered while writing script for goal {goal.id}: {goal.goal_name} "
+                                f"({goal.goal_type}):\n\n{str(e)}"
+                                f"\n\nContinue to next goal, or abort all remaining goals?",
+                        button_names=("Continue to next goal", "Abort remaining"),
+                        button_kwargs=("YES", "NO"""),
+                        return_output=0, cancel_output=1, default_output=0) == 1:
                     return
         self.write_all_button['state'] = 'normal'
         self.write_all_button.var.set("Write All")
 
     def load_all_from_project_folder(self):
-        if self.dialog("Confirm Lua Operation",
-                       message=f"This will overwrite any decompiled script in the current project state\n"
-                               f"that has a file in '/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
-                       button_kwargs=("YES", "NO"), button_names=("Yes, continue", "No, go back"),
-                       cancel_output=1, default_output=1) == 1:
+        if self.CustomDialog(
+                title="Confirm Lua Operation",
+                message=f"This will overwrite any decompiled script in the current project state\n"
+                        f"that has a file in '/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
+                button_names=("Yes, continue", "No, go back"),
+                button_kwargs=("YES", "NO"),
+                return_output=0, cancel_output=1, default_output=0) == 1:
             return
         failed_goals = []
         for goal in self.get_selected_bnd().goals:
@@ -597,22 +619,25 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 goal.load_decompiled(lua_path)
             except Exception as e:
                 failed_goals.append(goal)
-                if self.dialog("Lua Read Error",
-                               message=f"Error encountered while reading script for goal {goal.id}: {goal.goal_name} "
-                                       f"({goal.goal_type}):\n\n{str(e)}"
-                                       f"\n\nContinue to next goal, or abort all remaining goals?",
-                               button_kwargs=("YES", "NO"""), button_names=("Continue to next goal", "Abort remaining"),
-                               return_output=0, escape_output=0) == 1:
+                if self.CustomDialog(
+                        title="Lua Read Error",
+                        message=f"Error encountered while reading script for goal {goal.id}: {goal.goal_name} "
+                                f"({goal.goal_type}):\n\n{str(e)}"
+                                f"\n\nContinue to next goal, or abort all remaining goals?",
+                        button_names=("Continue to next goal", "Abort remaining"),
+                        button_kwargs=("YES", "NO"),
+                        return_output=0, cancel_output=1, default_output=1) == 1:
                     return
         failed_goals_msg = '\n'.join(f"{g.goal_id}: {g.goal_name} ({g.goal_type}" for g in failed_goals)
         if failed_goals_msg:
-            self.dialog("Lua Load Complete",
-                        message=f"All scripts have been loaded from '/ai_scripts/{self._get_bnd_choice_name()}' "
-                                f"except:\n\n{failed_goals_msg}",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Lua Load Complete",
+                message=f"All scripts have been loaded from '/ai_scripts/{self._get_bnd_choice_name()}' "
+                        f"except:\n\n{failed_goals_msg}")
         else:
-            self.dialog("Lua Load Successful", "All scripts were loaded successfully.",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Lua Load Successful",
+                message="All scripts were loaded successfully.")
         if self.active_row_index is not None:
             self.update_script_text()
 
@@ -620,11 +645,12 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if self.active_row_index is not None:
             goal = self.get_goal()
             if goal.script:
-                if self.dialog(title="Overwrite Script?",
-                               message="Overwrite existing decompiled script?",
-                               button_names=("Yes, overwrite", "No, do nothing"),
-                               button_kwargs=('YES', 'NO'),
-                               cancel_output=1, default_output=1) == 1:
+                if self.CustomDialog(
+                        title="Overwrite Script?",
+                        message="Overwrite existing decompiled script?",
+                        button_names=("Yes, overwrite", "No, do nothing"),
+                        button_kwargs=('YES', 'NO'),
+                        return_output=0, cancel_output=1, default_output=1) == 1:
                     return
             try:
                 goal.decompile()
@@ -633,7 +659,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.write_button['state'] = 'normal'
                 self.update_script_text(goal)
             except LuaError as e:
-                self.dialog("Lua Decompile Error", f"Error encountered while decompiling script:\n\n{str(e)}")
+                self.CustomDialog(
+                    title="Lua Decompile Error",
+                    message=f"Error encountered while decompiling script:\n\n{str(e)}")
 
     def write_selected(self):
         if self.active_row_index is not None:
@@ -641,8 +669,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             try:
                 goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
             except LuaError as e:
-                self.dialog("Lua Write Error", f"Error encountered while writing script:\n\n{str(e)}",
-                            button_kwargs="OK", return_output=0, escape_output=0)
+                self.CustomDialog(
+                    title="Lua Write Error",
+                    message=f"Error encountered while writing script:\n\n{str(e)}")
 
     def reload_selected(self):
         if self.active_row_index is not None:
@@ -651,10 +680,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 goal.load_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
                 self.update_script_text(goal)
             except FileNotFoundError:
-                self.dialog("Lua Read Error",
-                            message=f"Decompiled script not found in\n"
-                                    f"'/ai_scripts/{self._get_bnd_choice_name()}' directory.",
-                            button_kwargs="OK", return_output=0, escape_output=0)
+                self.CustomDialog(
+                    title="Lua Read Error",
+                    message=f"Decompiled script not found in '/ai_scripts/{self._get_bnd_choice_name()}' directory.")
 
     def refresh_entries(self):
         self._cancel_entry_id_edit()
@@ -750,7 +778,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _get_bnd_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
-        return self.bnd_choice.get().split(' (')[0].replace(' ', '')
+        return self.bnd_choice.get().split(' [')[0].replace(' ', '')
 
     def get_goal(self, row_index=None):
         # print("Goal", self.selected_bnd_name)
@@ -770,13 +798,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _add_entry(self, entry_id, text, goal_type=None, category=None, at_index=None, new_goal=None):
         if entry_id < 0:
-            self.dialog("Goal ID Error", message=f"Entry ID cannot be negative.",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(title="Goal ID Error", message=f"Entry ID cannot be negative.")
             return False
         if (entry_id, goal_type) in self.get_category_dict():
-            self.dialog("Goal ID Error",
-                        message=f"Goal ID {entry_id} with type {repr(goal_type)} already exists.",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Goal ID Error", message=f"Goal ID {entry_id} with type {repr(goal_type)} already exists.")
             return False
 
         new_goal.goal_id = entry_id
@@ -836,7 +862,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         try:
             goal.goal_name = text
         except LuaError as e:
-            self.dialog("Goal Name Error", str(e), button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(title="Goal Name Error", message=str(e))
             return False
         if update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text, goal_type)
@@ -875,10 +901,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             return False
         goal_dict = self.get_category_dict()
         if (new_id, goal.goal_type) in goal_dict:
-            self.dialog("Entry ID Clash",
-                        message=f"Goal ID {new_id} with type {repr(goal.goal_type)} already exists. You must change or "
-                                f"delete it first.",
-                        button_kwargs="OK", return_output=0, escape_output=0)
+            self.CustomDialog(
+                title="Entry ID Clash",
+                message=f"Goal ID {new_id} with type {repr(goal.goal_type)} already exists. You must change or "
+                        f"delete it first.")
             return False
         goal.goal_id = new_id
         self.entry_rows[row_index].update_entry(new_id, goal.goal_name, goal.goal_type)

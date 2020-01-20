@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class SoulstructLightingEditor(SoulstructBaseFieldEditor):
+    DATA_NAME = "Lighting"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
@@ -62,20 +63,20 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):
-                map_display_names = [f'{k} ({v})' for k, v in DRAW_PARAM_MAPS.items()]
+                map_display_names = [f'{k} [{v}]' for k, v in DRAW_PARAM_MAPS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names, on_select_function=self._on_map_area_choice, width=40, padx=10,
                     label='Map Area:', label_font_size=12, label_position='left', font=('Segoe UI', 12)).var
-                self.slot_choice_label = self.Label(text='Slot:', font_size=12, padx=(30, 0))
+                self.slot_choice_label = self.Label(text='Slot:', font_size=10, padx=(30, 0))
                 self.slot_choice = self.Combobox(
-                    values=('0', '1'), font=('Segoe UI', 12), on_select_function=self._on_slot_choice, width=2, padx=10)
+                    values=('0', '1'), font=('Segoe UI', 10), on_select_function=self._on_slot_choice, width=2, padx=10)
                 self.Button(text="Copy Slot 0 to Slot 1", bg="#622", width=20, font_size=10, padx=5,
                             command=self.regenerate_slot_1)
 
             super().build()
 
     def _on_map_area_choice(self, _=None):
-        new_map_area = self.map_area_choice.get().split(' (')[0]
+        new_map_area = self._get_map_area_name()
         if getattr(self.Lighting, new_map_area)['AmbientLight'][1] is None:  # random table to check slots
             self.slot_choice.config(values=['0'])
             if self.slot_choice.var.get() == '1':
@@ -91,18 +92,22 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         self.refresh_entries(reset_field_display=True)
 
     def regenerate_slot_1(self):
-        map_area = self.map_area_choice.get().split(' (')[0]
+        map_area = self._get_map_area_name()
         map_draw_param = getattr(self.Lighting, map_area)
         if map_draw_param['AmbientLight'][1] is not None:  # picking a random category to check slots
-            if self.dialog(title="Overwrite Slot 1?",
-                           message="Current map area already has data in slot 1. Overwrite it from slot 0?",
-                           button_names=("Yes, overwrite it", "No, do nothing"),
-                           button_kwargs=('YES', 'NO'),
-                           cancel_output=1, default_output=1) == 1:
+            if self.CustomDialog(
+                    title="Overwrite Slot 1?",
+                    message="Current map area already has data in slot 1. Overwrite it from slot 0?",
+                    button_names=("Yes, overwrite it", "No, do nothing"),
+                    button_kwargs=('YES', 'NO'),
+                    cancel_output=1, default_output=1) == 1:
                 return
         map_draw_param.copy_slot_0_to_slot_1()
         self.slot_choice.config(values=['0', '1'])
         self.refresh_entries(reset_field_display=True)
+
+    def _get_map_area_name(self):
+        return self.map_area_choice.get().split(' [')[0]
 
     def _get_display_categories(self):
         return self.Lighting.param_names
@@ -112,7 +117,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 return {}
-        map_area_choice = self.map_area_choice.get().split(' (')[0]
+        map_area_choice = self._get_map_area_name()
         slot_choice = int(self.slot_choice.var.get())
         return self.Lighting[map_area_choice][category][slot_choice]
 
@@ -157,8 +162,9 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         if old_id == new_id:
             return False
         if new_id in self.get_category_dict(category).entries:
-            self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Params.{category}. You must change or "
-                                          f"delete it first.")
+            self.CustomDialog(
+                title="Entry ID Clash",
+                message=f"Entry ID {new_id} already exists in Params.{category}. You must change or delete it first.")
             return False
         entry_data = self.get_category_dict(category).pop(old_id)
         self.get_category_dict(category)[new_id] = entry_data

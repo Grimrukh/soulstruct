@@ -30,6 +30,7 @@ ENTRY_LIST_FG_COLORS = {
 
 
 class SoulstructMapEditor(SoulstructBaseFieldEditor):
+    DATA_NAME = "Maps"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
     ENTRY_BOX_HEIGHT = 400
@@ -315,7 +316,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
-                map_display_names = [f"{camel_case_to_spaces(v)} ({k})" for k, v in DARK_SOULS_MAP_NAMES.items()]
+                map_display_names = [f"{camel_case_to_spaces(v)} [{k}]" for k, v in DARK_SOULS_MAP_NAMES.items()]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
@@ -352,7 +353,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def _get_map_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
-        return self.map_choice.get().split(' (')[0].replace(' ', '')
+        return self.map_choice.get().split(' [')[0].replace(' ', '')
 
     def _on_map_choice(self, _=None):
         self.select_entry_row_index(None)
@@ -375,7 +376,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             global_index = len(entry_list)  # appending to end locally -> appending to end globally
 
         if not 0 <= global_index <= len(entry_list):
-            self.dialog("Entry Index Error", message=f"Entry index must be between zero and the current list length.")
+            self.CustomDialog(
+                title="Entry Index Error",
+                message=f"Entry index must be between zero and the current list length.")
             return False
 
         self._cancel_entry_text_edit()
@@ -493,7 +496,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 field_dict[field_name] = new_value
         except InvalidFieldValueError as e:
             self.bell()
-            self.dialog(title="Value Error", message=str(e), button_kwargs='OK')
+            self.CustomDialog(title="Field Value Error", message=str(e))
             return False
         return True
 

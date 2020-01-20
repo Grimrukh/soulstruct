@@ -8,7 +8,7 @@ from typing import Optional
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
-__all__ = ['SmartFrame', 'SoulstructSmartFrame', 'ToolTip']
+__all__ = ['SmartFrame', 'CustomDialog', 'ToolTip']
 
 _GRID_KEYWORDS = {'column', 'columnspan', 'in', 'ipadx', 'ipady', 'padx', 'pady', 'row', 'rowspan', 'sticky'}
 
@@ -21,6 +21,16 @@ if SET_DPI_AWARENESS:
     except Exception as e:
         print(f"Could not set DPI awareness of system. GUI font may appear blurry on scaled Windows displays.\n"
               f"Error: {str(e)}")
+
+
+def bind_to_all_children(widget: tk.BaseWidget, sequence, func, add=None):
+    """Bind given event to specified widget and all its children, recursively.
+
+    No trivial way to unbind them all, so make this is only used for short-lived widget hierarchies.
+    """
+    widget.bind(sequence=sequence, func=func, add=add)
+    for child in widget.winfo_children():
+        bind_to_all_children(child, sequence=sequence, func=func, add=add)
 
 
 def _bind_to_mousewheel(widget, vertical=True, horizontal=False):
@@ -72,7 +82,7 @@ def _embed_component(component_func):
     def component_with_label(self: SmartFrame, frame=None,
                              label='', label_font_type=None, label_font_size=None, label_position=None,
                              label_fg=None, label_bg=None, vertical_scrollbar=False, horizontal_scrollbar=False,
-                             no_grid=False, **kwargs):
+                             no_grid=False, tooltip_text=None, **kwargs):
 
         grid_kwargs = self.grid_defaults.copy()
         passed_grid_kwargs = {key: kwargs.pop(key) for key in list(kwargs.keys()) if key in _GRID_KEYWORDS}
@@ -153,6 +163,9 @@ def _embed_component(component_func):
             elif not no_grid and grid_kwargs:
                 component.grid(**grid_kwargs)
 
+        if tooltip_text is not None:
+            ToolTip(component, text=tooltip_text)
+
         return component
 
     return component_with_label
@@ -162,7 +175,7 @@ def _embed_component(component_func):
 class SmartFrame(tk.Frame):
     FONT_DEFAULTS = {
         'label_font_type': 'Segoe UI',
-        'label_font_size': 12,
+        'label_font_size': 10,
         'heading_font_type': 'Segoe UI',
         'heading_font_size': 15,
     }
@@ -176,7 +189,13 @@ class SmartFrame(tk.Frame):
         'disabled_fg': '#888',
         'disabled_bg': '#444',
         'readonly_bg': '#444',
-        'entry_font': ('Segoe UI', 12),
+        'entry_font': ('Segoe UI', 10),
+    }
+
+    DEFAULT_BUTTON_KWARGS = {
+        'OK': {'fg': '#FFFFFF', 'bg': '#222222', 'width': 20},
+        'YES': {'fg': '#FFFFFF', 'bg': '#442222', 'width': 20},
+        'NO': {'fg': '#FFFFFF', 'bg': '#444444', 'width': 20},
     }
 
     toplevel: Optional[tk.Toplevel]
@@ -257,29 +276,33 @@ class SmartFrame(tk.Frame):
 
     def set_geometry(self, master=None, dimensions=None, absolute_position=None, relative_position=None,
                      transient=False):
-        """ Set the size and position of this window. Should be called in your window's constructor after all widgets
-        have been initialized, unless you already know the exact dimensions you want.
+        """Set the size and position of this SmartFrame, if `toplevel=True`. Should not be called otherwise.
 
-        'dimensions' should be (width, height) in pixels, and will default to the dimensions requested by the window.
+        Should be called in your SmartFrame's constructor after all widgets have been initialized, unless you already
+        know the exact dimensions you want. The SmartFrame will always attempt to remain fully visible on the screen.
+        If neither `absolute_position` nor `relative_position` are given, the SmartFrame will appear centered in the
+        display.
 
-        'absolute_position' should be used to specify coordinates in pixels on the screen (where 0, 0 is the bottom-left
-        corner), and 'relative_position' should be used to specify coordinates as a proportion of the size of the
-        window's master (where 0, 0 is the top-left corner). You cannot use both arguments. If the master does not have
-        a mapped size, and 'relative_position' has been requested, an error will be raised.
-
-        If neither type of position is given, the window will default to the middle of the screen. And no matter what
-        you specify, the window will attempt to remain fully visible.
-
-        A 'transient' window won't show up in the task bar on Windows, is always drawn on top of its master, and is
-        automatically hidden when the master is iconified or withdrawn.
+        Args:
+            master (tk.BaseWidget): master of this SmartFrame, used for calculating `relative_position` and `transient`
+                master. Defaults to master set in constructor.
+            dimensions (tuple): pair of (width, height) values in pixels. Defaults to dimensions requested by the
+                window.
+            absolute_position (tuple): pair of (x, y) values in pixels on the screen, where (0, 0) is the bottom-left
+                corner. Cannot be used at the same time as `relative_position`.
+            relative_position (tuple): pair of (x, y) values as proportions of the size of the `master`, where (0, 0)
+                is the top-left corner and (1, 1) is the bottom-right corner. If `master` does not have a mapped size,
+                this argument will be ignored. Cannot be used at the same time as `absolute_position`.
+            transient (bool): if True, this SmartFrame won't appear in the task bar, will always be drawn on top of its
+                master, and will be automatically hidden when its master is iconified or withdrawn.
         """
         if self.toplevel is None:
-            raise AttributeError("Window was created as a Frame (toplevel=False) and has no geometry to set.")
+            raise AttributeError("SmartFrame was created with `toplevel=False` and has no geometry to set.")
         if master is None:
             master = self.toplevel.master
 
         if absolute_position is not None and relative_position is not None:
-            raise ValueError("You cannot specify both 'absolute_position' and 'relative_position' of the window.")
+            raise ValueError("You cannot specify both `absolute_position` and `relative_position` of the SmartFrame.")
         self.toplevel.withdraw()  # Remain invisible while we figure out the geometry
         if transient:
             self.toplevel.transient(master)
@@ -316,17 +339,25 @@ class SmartFrame(tk.Frame):
         elif w_y < 0:
             w_y = 0
         self.toplevel.geometry(f'{w_width:d}x{w_height:d}+{w_x:d}+{w_y:d}')
-        self.toplevel.deiconify()  # Become visible at the desired location
+        self.toplevel.deiconify()  # become visible at the desired location
 
     def set_notebook_style(self):
-        self.style.theme_use('clam')
+        self.style.theme_use("clam")
         self.style.configure(
-            'TNotebook', background=self.STYLE_DEFAULTS['bg'], tabmargins=[2, 10, 2, 0], tabposition='nw')
+            "TNotebook", background=self.STYLE_DEFAULTS["bg"], tabmargins=[2, 10, 2, 0], tabposition="nw")
         self.style.configure(
-            'TNotebook.Tab', background='#333', foreground='#FFF', padding=[15, 1],
-            font=('Segoe UI', 12))
+            "TNotebook.Tab", background="#333", foreground="#FFF", padding=[15, 1],
+            font=("Segoe UI", 10))
         self.style.map(
-            'TNotebook.Tab', background=[('selected', '#555')], expand=[('selected', [5, 3, 3, 0])])
+            "TNotebook.Tab", background=[("selected", "#555")], expand=[("selected", [5, 3, 3, 0])])
+        self.style.configure(
+            "TCombobox", foreground="#FFF",)
+        self.style.map(
+            "TCombobox", fieldbackground=[("readonly", "#222")], selectedbackground=[("readonly", "#222")],
+        )
+        self.option_add("*TCombobox*Listbox*background", "#222")
+        self.option_add("*TCombobox*Listbox*font", ("Segoe UI", 10))
+        self.option_add("*TCombobox*Listbox*foreground", "#FFF")
 
     def start_auto_rows(self, start=0):
         self.current_row = start
@@ -410,7 +441,7 @@ class SmartFrame(tk.Frame):
         if smart_frame_class is None:
             smart_frame_class = SmartFrame
         elif not issubclass(smart_frame_class, SmartFrame):
-            raise TypeError(f"smart_frame_class ({smart_frame_class}) must be a subclass of SmartFrame.")
+            raise TypeError(f"`smart_frame_class` must be a subclass of `SmartFrame`, not {smart_frame_class}.")
         smart_frame = smart_frame_class(master=frame, **kwargs)
         for i, w in enumerate(row_weights):
             smart_frame.rowconfigure(i, weight=w)
@@ -578,48 +609,63 @@ class SmartFrame(tk.Frame):
             custom_widget.columnconfigure(i, weight=w)
         return custom_widget
 
-    def _validate_entry_integers(self, new_value, new_input):
-        """Callback invoked whenever the Entry contents change.
+    def CustomDialog(self, title, message, font_size=10, font_type="Segoe UI",
+                     button_names=("OK",), button_kwargs=("OK",), style_defaults=None,
+                     default_output=None, cancel_output=None,
+                     return_output=None, escape_enabled=True,
+                     custom_dialog_subclass=None):
+        """Creates a child `CustomDialog` with `style_defaults` taken from SmartFrame by default."""
+        if custom_dialog_subclass is None:
+            custom_dialog_subclass = CustomDialog
+        elif not issubclass(custom_dialog_subclass, CustomDialog):
+            raise TypeError("`custom_dialog_subclass` must be a subclass of `CustomDialog`, if specified.")
 
-        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
-        interpreted as an int.
-        """
-        if new_value in {"", "-"}:
-            return True
-        if new_input not in '0123456789-':
-            return False
-        try:
-            int(new_value)
-        except ValueError:
-            return False
-        return True
+        if style_defaults is None:
+            style_defaults = self.STYLE_DEFAULTS
+        if isinstance(button_names, str):
+            button_names = (button_names,)
+        button_kwargs = self._process_button_kwargs(button_kwargs)
 
-    @staticmethod
-    def _validate_entry_numbers(new_value, new_input):
-        """ Callback invoked whenever the Entry contents change.
+        if cancel_output is None:
+            # `cancel_output`, `default_output`, and `return_output` all default to 0 if only one button is present.
+            if len(button_names) == 1:
+                default_output = cancel_output = return_output = 0
 
-        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
-        interpreted as a float.
-        """
-        if new_value in {"", "-"}:
-            return True
-        if new_input not in '0123456789.+-':
-            return False
-        try:
-            float(new_value)
-        except ValueError:
-            return False
-        return True
+        dialog = custom_dialog_subclass(
+            master=self, title=title, message=message, font_size=font_size, font_type=font_type,
+            button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
+            default_output=default_output, cancel_output=cancel_output, return_output=return_output,
+            escape_enabled=escape_enabled)
+
+        if self.toplevel and not self.toplevel.winfo_viewable():
+            # Briefly deiconify toplevel to allow child dialog to appear.
+            self.toplevel.deiconify()
+            result = dialog.go()
+            self.toplevel.withdraw()
+            return result
+        return dialog.go()  # Returns index of button clicked (or default/cancel output).
+
+    # PUBLIC METHODS
 
     @staticmethod
     def mimic_click(button: tk.Button):
-        button.config(relief=SUNKEN)
+        button["relief"] = SUNKEN
+        button.update_idletasks()
         button.after(100, lambda: button.config(relief=RAISED))
 
     def flash_bg(self, widget, bg="#522"):
+        if getattr(widget, "flashing", False):
+            return  # already flashing
         old_bg = widget['bg']
         widget['bg'] = bg
-        self.after(200, lambda: widget.config(bg=old_bg))
+        widget.flashing = True
+        widget.update_idletasks()
+        widget.after(100, lambda w=widget, o=old_bg: self._end_flash(w, o))
+
+    @staticmethod
+    def _end_flash(widget, old_bg):
+        widget["bg"] = old_bg
+        widget.flashing = False
 
     @staticmethod
     def reset_canvas_scroll_region(canvas):
@@ -628,7 +674,7 @@ class SmartFrame(tk.Frame):
 
     @staticmethod
     def link_to_scrollable(scrollable_widget, *widgets):
-        """Registers <Enter> and <Leave> events that enable the scrollbar for all *arg widgets."""
+        """Registers <Enter> and <Leave> events that enable scrolling for the first widget for all following widgets."""
         for widget in widgets:
             widget.bind('<Enter>', lambda _, f=scrollable_widget: _bind_to_mousewheel(f))
             widget.bind('<Leave>', lambda _, f=scrollable_widget: _unbind_to_mousewheel(f))
@@ -648,24 +694,6 @@ class SmartFrame(tk.Frame):
     @staticmethod
     def yesno_dialog(title, message, **kwargs):
         return messagebox.askyesno(title, message, **kwargs)
-
-    def custom_dialog(self, title, message, font_size=None, font_type=None,
-                      button_names=('OK',), button_kwargs=(), style_defaults=None,
-                      default_output=None, cancel_output=None,
-                      return_output=None, escape_output=None):
-        if style_defaults is None:
-            style_defaults = self.STYLE_DEFAULTS
-        dialog = CustomDialog(master=self, title=title, message=message, font_size=font_size, font_type=font_type,
-                              button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
-                              default_output=default_output, cancel_output=cancel_output, return_output=return_output,
-                              escape_output=escape_output)
-        if not self.winfo_viewable():
-            self.deiconify()
-            result = dialog.go()
-            self.withdraw()
-        else:
-            result = dialog.go()
-        return result  # Returns index of button clicked (or default/cancel output).
 
     @contextmanager
     def set_master(self, master=None, auto_rows=None, auto_columns=None, grid_defaults=None, **kwargs):
@@ -704,48 +732,114 @@ class SmartFrame(tk.Frame):
             self.grid_defaults = previous_grid_defaults
         self.current_frame = previous_frame
 
+    # INTERNAL METHODS
+
+    @staticmethod
+    def _validate_entry_integers(new_value, new_input):
+        """Callback invoked whenever the Entry contents change.
+
+        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
+        interpreted as an int.
+        """
+        if new_value in {"", "-"}:
+            return True
+        if new_input not in '0123456789-':
+            return False
+        try:
+            int(new_value)
+        except ValueError:
+            return False
+        return True
+
+    @staticmethod
+    def _validate_entry_numbers(new_value, new_input):
+        """ Callback invoked whenever the Entry contents change.
+
+        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
+        interpreted as a float.
+        """
+        if new_value in {"", "-"}:
+            return True
+        if new_input not in '0123456789.+-':
+            return False
+        try:
+            float(new_value)
+        except ValueError:
+            return False
+        return True
+
+    def _process_button_kwargs(self, button_kwargs):
+        if button_kwargs is None:
+            return None
+        elif isinstance(button_kwargs, str):
+            try:
+                return self.DEFAULT_BUTTON_KWARGS[button_kwargs],
+            except KeyError:
+                raise KeyError(f"Invalid `SmartFrame.DEFAULT_BUTTON_KWARGS` key: {button_kwargs}")
+        elif isinstance(button_kwargs, (tuple, list)):
+            button_kwargs = list(button_kwargs)
+            for i, b in enumerate(button_kwargs):
+                if isinstance(b, str):
+                    try:
+                        button_kwargs[i] = self.DEFAULT_BUTTON_KWARGS[b]
+                    except KeyError:
+                        raise KeyError(f"Invalid `SmartFrame.DEFAULT_BUTTON_KWARGS` key: {b}")
+                elif not isinstance(b, dict):
+                    raise TypeError(
+                        f"If `button_kwargs` is a list or tuple, each element should be a string key to "
+                        f"`SmartFrame.DEFAULT_BUTTON_KWARGS` or a dictionary of `Button` kwargs, not {type(b)}.")
+            return button_kwargs
+        elif not isinstance(button_kwargs, dict):
+            raise TypeError(f"`button_kwargs` should be a dictionary of `Button` kwargs, a list or tuple of such "
+                            f"dictionaries (one per button name), or a string or list of strings that are keys to "
+                            f"`SmartFrame.DEFAULT_BUTTON_KWARGS`, not {type(button_kwargs)}.")
+        return button_kwargs
+
 
 class CustomDialog(SmartFrame):
 
     def __init__(self, master, title='Custom Dialog', message='', font_size=None, font_type=None,
                  button_names=(), button_kwargs=(), style_defaults=None,
                  default_output=None, cancel_output=None,
-                 return_output=None, escape_output=None):
+                 return_output=None, escape_enabled=True):
         if style_defaults:
             self.STYLE_DEFAULTS = style_defaults
-        if isinstance(button_names, str):
-            button_names = (button_names,)
-        if isinstance(button_kwargs, dict):
-            button_kwargs = (button_kwargs,)
         if button_kwargs and len(button_names) != len(button_kwargs):
-            raise ValueError("Number of button_kwargs dicts (if any are given) must match number of buttons.")
+            raise ValueError("Number of `button_kwargs` dicts (if any are given) must match number of `button_names`.")
         super().__init__(toplevel=True, window_title=title, master=master)
         self.output = default_output
-        self.cancel = cancel_output
-        self.default = default_output
-        self.return_output = return_output
-        self.escape_output = escape_output
-        self.bind('<Return>', self.return_event)
-        self.bind('<Escape>', self.escape_event)
+        self.cancel_output = cancel_output
+        self.default_output = default_output
 
-        with self.set_master(auto_rows=0, padx=20, pady=20):
-            self.message = self.Label(text=message, font_size=font_size, font_type=font_type, pady=40)
-            self.message.bind('<Return>', self.return_event)
-            self.message.bind('<Escape>', self.escape_event)
-            with self.set_master(auto_columns=0, pady=20):
-                for i in range(len(button_names)):
-                    button_text = button_names[i]
-                    b_kwargs = button_kwargs[i] if button_kwargs else {}
-                    b = self.Button(text=button_text, command=lambda s=self, output=i: s.done(output),
-                                    padx=5, **b_kwargs)
-                    b.bind('<Return>', self.return_event)
-                    b.bind('<Escape>', self.escape_event)
-                    if i == default_output:
-                        b.config(relief=RIDGE)
+        self.build(message, font_size, font_type, button_names, button_kwargs)
 
         self.protocol('WM_DELETE_WINDOW', self.wm_delete_window)
         self.resizable(width=False, height=False)
+        if escape_enabled:
+            bind_to_all_children(self.toplevel, '<Escape>', lambda _: self.wm_delete_window())
+        self.return_output = return_output
+        bind_to_all_children(self.toplevel, '<Return>', self.return_event)
+
         self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def build(self, message, font_size, font_type, button_names, button_kwargs):
+        """You can override this as desired, as long as you call `self.build_buttons()` at some point.
+
+        Otherwise you can construct your own buttons with commands `lambda s=self, output=i: s.done(output)` for each
+        button index `i`).
+        """
+        with self.set_master(auto_rows=0, padx=20, pady=20):
+            self.Label(text=message, font_size=font_size, font_type=font_type, pady=20)
+            self.build_buttons(button_names, button_kwargs)
+
+    def build_buttons(self, button_names, button_kwargs):
+        with self.set_master(auto_columns=0, pady=20):
+            for i in range(len(button_names)):
+                button = self.Button(
+                    text=button_names[i], command=lambda output=i: self.done(output), padx=5,
+                    **(button_kwargs[i] if button_kwargs else {}))
+                if i == self.default_output:
+                    button["relief"] = RIDGE
 
     def go(self):
         self.toplevel.wait_visibility()
@@ -755,62 +849,27 @@ class CustomDialog(SmartFrame):
         return self.output
 
     def return_event(self, _):
-        """ Event that occurs when the user presses the Enter key. """
-        print("RETURN")
+        """Event that occurs when the user presses the Enter key. Returns `self.return_output` if specified, or rings
+        bell."""
         if self.return_output is None:
             self.toplevel.bell()
         else:
             self.done(self.return_output)
 
-    def escape_event(self, _):
-        if self.escape_output is None:
-            self.toplevel.bell()
-        else:
-            self.done(self.escape_output)
-
     def wm_delete_window(self):
-        """ Function that occurs when the user closes the window using the corner X, Alt-F4, etc. """
-        if self.cancel is None:
+        """Function that occurs when the user closes the window using the corner X, Alt-F4, etc. Returns
+        `self.cancel_output` if specified, or rings bell.
+
+        If dialog was created with `escape_enabled=True`, pressing Escape will also close the window (if.
+        """
+        if self.cancel_output is None:
             self.toplevel.bell()
         else:
-            self.done(self.cancel)
+            self.done(self.cancel_output)
 
     def done(self, num):
         self.output = num
         self.toplevel.quit()
-
-
-class SoulstructSmartFrame(SmartFrame):
-    DEFAULT_BUTTON_KWARGS = {
-        'OK': {
-            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
-        },
-        'YES': {
-            'fg': '#FFFFFF', 'bg': '#442222', 'width': 20,
-        },
-        'NO': {
-            'fg': '#FFFFFF', 'bg': '#444444', 'width': 20,
-        },
-    }
-
-    def dialog(self, title, message, font_size=None, font_type=None,
-               button_names=('OK',), button_kwargs=("OK",), style_defaults=None,
-               default_output=None, cancel_output=None,
-               return_output=None, escape_output=None):
-        if button_kwargs is not None:
-            if isinstance(button_kwargs, str) and button_kwargs in self.DEFAULT_BUTTON_KWARGS:
-                button_kwargs = self.DEFAULT_BUTTON_KWARGS[button_kwargs]
-            else:
-                button_kwargs = list(button_kwargs)
-                for i, b in enumerate(button_kwargs):
-                    if b in self.DEFAULT_BUTTON_KWARGS:
-                        button_kwargs[i] = self.DEFAULT_BUTTON_KWARGS[b]
-        else:
-            button_kwargs = self.DEFAULT_BUTTON_KWARGS['OK']
-        return self.custom_dialog(title=title, message=message, font_size=font_size, font_type=font_type,
-                                  button_names=button_names, button_kwargs=button_kwargs, style_defaults=style_defaults,
-                                  default_output=default_output, cancel_output=cancel_output,
-                                  return_output=return_output, escape_output=escape_output)
 
 
 class ToolTip(object):
@@ -873,3 +932,9 @@ class ToolTip(object):
         tip_box, self.tip_box = self.tip_box, None
         if tip_box:
             tip_box.destroy()
+
+
+def print_widget_hierarchy(widget, indent=0):
+    print(" " * indent + str(widget))
+    for child in widget.winfo_children():
+        print_widget_hierarchy(child, indent=indent + 4)

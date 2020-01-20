@@ -6,13 +6,14 @@ from typing import List, Optional, TYPE_CHECKING
 
 from soulstruct.project.utilities import ActionHistory, bind_events
 from soulstruct.utilities import camel_case_to_spaces
-from soulstruct.utilities.window import SoulstructSmartFrame, ToolTip
+from soulstruct.utilities.window import SmartFrame, ToolTip
 
 if TYPE_CHECKING:
     from soulstruct.project.links import WindowLinker
 
 
-class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
+class SoulstructBaseEditor(SmartFrame, ABC):
+    DATA_NAME = ""
     CANVAS_BG = '#1d1d1d'
     CATEGORY_BOX_WIDTH = 250
     CATEGORY_BOX_HEIGHT = 400
@@ -722,7 +723,7 @@ class SoulstructBaseEditor(SoulstructSmartFrame, ABC):
                 self.next_range_button['state'] = 'normal'
 
 
-class TextEditBox(SoulstructSmartFrame):
+class TextEditBox(SmartFrame):
     """Small pop-out widget that allows you to modify longer strings more freely, with newlines and all."""
     WIDTH = 16  # characters
     HEIGHT = 1  # lines
@@ -887,7 +888,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             # Main focus bindings are not bound to Checkbutton.
 
             self.value_combobox = editor.Combobox(
-                self.value_box, values=None, width=editor.FIELD_VALUE_WIDTH, no_grid=True,
+                self.value_box, values=None, width=editor.FIELD_VALUE_WIDTH, no_grid=True, font=("Segoe UI", 10),
                 on_select_function=self._combobox_choice)
             self.value_combobox.bind('<MouseWheel>', lambda _: 'break')  # prevent scrolling on collapsed Combobox
             # Main focus bindings are not bound to Combobox.
@@ -1379,7 +1380,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         raise NotImplementedError
 
 
-class NameSelectionBox(SoulstructSmartFrame):
+class NameSelectionBox(SmartFrame):
     """Small pop-out widget that allows you to select a name from some list."""
     WIDTH = 50  # characters
     HEIGHT = 20  # lines

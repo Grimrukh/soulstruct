@@ -1,10 +1,37 @@
+from functools import wraps
 
-__all__ = ['ActionHistory', 'bind_events']
+from soulstruct.core import SoulstructError
+from soulstruct.utilities import word_wrap
+
+__all__ = ["SoulstructProjectError", "error_as_dialog", "ActionHistory", "bind_events"]
+
+
+class SoulstructProjectError(SoulstructError):
+    pass
 
 
 def bind_events(widget, bindings: dict):
     for event, func in bindings.items():
         widget.bind(event, func)
+
+
+def error_as_dialog(window, func):
+    @wraps(func)
+    def window_method(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except SoulstructProjectError as e:
+            window.CustomDialog(
+                title="Runtime Manager Error",
+                message=word_wrap(str(e), 50),
+            )
+        except Exception as e:
+            window.CustomDialog(
+                title="Unknown Internal Error",
+                message="Internal Error:\n\n" + word_wrap(str(e), 50) + "\n\nPlease report this error.",
+            )
+
+    return window_method
 
 
 class ActionHistory(object):

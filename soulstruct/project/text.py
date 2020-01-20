@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 
 class SoulstructTextEditor(SoulstructBaseEditor):
+    DATA_NAME = "Text"
     CATEGORY_BOX_WIDTH = 165
     CATEGORY_BOX_HEIGHT = 400
     ENTRY_BOX_WIDTH = 870
@@ -100,14 +101,18 @@ class SoulstructTextEditor(SoulstructBaseEditor):
 
         text_dict = self.Text[category]
         if base_text_id % 100 != 0:
-            self.dialog("Invalid Base ID for Upgrades",
-                        message=f"The base text ID for weapons or armor should be a multiple of 100.")
+            self.CustomDialog(
+                title="Invalid Base ID for Upgrades",
+                message=f"The base text ID for weapons or armor should be a multiple of 100.")
             return
         if any(base_text_id + i in text_dict for i in range(1, count + 1)):
-            if self.dialog("Upgrade IDs already exist",
-                           message=f"Overwrite all existing entries in ID range "
-                                   f"{base_text_id + 1} to {base_text_id + count}?",
-                           button_names=('Yes, overwrite them', 'No, go back'), button_kwargs=('YES', 'NO')) == 1:
+            if self.CustomDialog(
+                    title="Upgrade IDs already exist",
+                    message=f"Overwrite all existing entries in ID range "
+                            f"{base_text_id + 1} to {base_text_id + count}?",
+                    button_names=('Yes, overwrite them', 'No, go back'),
+                    button_kwargs=('YES', 'NO'),
+                    cancel_output=1, default_output=1) == 1:
                 return
         base_text = text_dict[base_text_id]
         undo_bulk = []
@@ -137,9 +142,10 @@ class SoulstructTextEditor(SoulstructBaseEditor):
             if id_to_find < 0:
                 raise ValueError
         except ValueError:
-            self.dialog("Value Error", message=f"Invalid text ID: {self.find_text_id_entry.var.get()}.\n\n"
-                                               f"The ID must be an integer (zero or greater).",
-                        button_kwargs='OK')
+            self.CustomDialog(
+                title="Value Error",
+                message=f"Invalid text ID: {self.find_text_id_entry.var.get()}.\n\n"
+                        f"The ID must be an integer (zero or greater).")
             return
         if self.active_category and id_to_find in self.Text[self.active_category]:
             row_index = self._update_first_entry_display_index(self.get_entry_index(id_to_find))
@@ -221,8 +227,10 @@ class SoulstructTextEditor(SoulstructBaseEditor):
         if old_id == new_id:
             return False
         if new_id in self.Text[category]:
-            self.dialog("Entry ID Clash", f"Entry ID {new_id} already exists in Text.{category}. You must change or "
-                                          f"delete it first.")
+            self.CustomDialog(
+                title="Entry ID Clash",
+                message=f"Entry ID {new_id} already exists in Text.{category}. You must change or "
+                        f"delete it first.")
             return False
         entry_text = self.Text[category].pop(old_id)
         self.Text[category][new_id] = entry_text
