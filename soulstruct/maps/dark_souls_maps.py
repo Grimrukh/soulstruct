@@ -1,7 +1,10 @@
+import logging
 from pathlib import Path
 
 from soulstruct.maps.msb import MSB
 from soulstruct.utilities.core import BiDict
+
+_LOGGER = logging.getLogger(__name__)
 
 
 DARK_SOULS_MAP_NAMES = BiDict(
@@ -101,4 +104,4 @@ class DarkSoulsMaps(object):
         for msb_name in DARK_SOULS_MAP_NAMES.values():
             msb_path = msb_directory / self._data[msb_name].msb_path.name
             self._data[msb_name].write_packed(msb_path)
-        print("\n# INFO: --------> Dark Souls map (MSB) files saved successfully.")
+        _LOGGER.info("Dark Souls map files (MSB) written successfully.")

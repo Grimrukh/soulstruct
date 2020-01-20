@@ -1,9 +1,13 @@
+import logging
 from copy import deepcopy
 from pathlib import Path
 
 from soulstruct.bnd import BND, BaseBND
 from soulstruct.text.fmg import FMG
 from soulstruct.utilities.core import BiDict
+
+__all__ = ["DarkSoulsText"]
+_LOGGER = logging.getLogger(__name__)
 
 
 class DarkSoulsText(object):
@@ -104,8 +108,9 @@ class DarkSoulsText(object):
         else:
             self._dcx = True
             if (self._directory / 'item.msgbnd').is_file():
-                print("# WARNING: Both DCX and non-DCX 'item.msgbnd' resources were found. Reading only the DCX file, "
-                      "and will compress with DCX by default when `.write()` is called.")
+                _LOGGER.warning(
+                    "Both DCX and non-DCX 'item.msgbnd' resources were found. Reading only the DCX file, "
+                    "and will compress with DCX by default when `.write()` is called.")
 
         try:
             self.menu_msgbnd = BND(self._directory / 'menu.msgbnd.dcx', optional_dcx=False)
@@ -117,8 +122,9 @@ class DarkSoulsText(object):
             if not self._dcx:
                 raise ValueError("Found DCX-compressed 'menu.msgbnd.dcx', but not 'item.msgbnd.dcx'.")
             if (self._directory / 'menu.msgbnd').is_file():
-                print("# WARNING: Both DCX and non-DCX 'menu.msgbnd' resources were found. Reading only the DCX file, "
-                      "and will compress with DCX by default when `.write()` is called.")
+                _LOGGER.warning(
+                    "Both DCX and non-DCX 'menu.msgbnd' resources were found. Reading only the DCX file, "
+                    "and will compress with DCX by default when `.write()` is called.")
 
         self.load_fmg_entries_from_bnd(self.item_msgbnd, is_menu=False)
         self.load_fmg_entries_from_bnd(self.menu_msgbnd, is_menu=True)
@@ -239,7 +245,7 @@ class DarkSoulsText(object):
         self.item_msgbnd = new_item_msgbnd
         self.menu_msgbnd = new_menu_msgbnd
 
-        print("# INFO: --------> Dark Souls text ('item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]') saved successfully.")
+        _LOGGER.info("Dark Souls text files (MsgBND) written successfully.")
 
     def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:
@@ -252,8 +258,8 @@ class DarkSoulsText(object):
         patch = 'Patch' if patch else ''
         for i in index:
             if i not in self[item_fmg + 'Names']:
-                print(f"NEW ENTRY: {item_fmg} with index {i} has been added "
-                      f"({text_dict.get('name', 'unknown name')})")
+                _LOGGER.info(
+                    f"NEW ENTRY: {item_fmg} with index {i} has been added ({text_dict.get('name', 'unknown name')})")
             if 'name' in text_dict:
                 self[item_fmg + 'Names' + patch][i] = text_dict['name']
             if 'summary' in text_dict:

@@ -5,6 +5,7 @@ Currently works for Dark Souls 1 (either version) only, with decompilation for D
 from __future__ import annotations
 
 import abc
+import logging
 import os
 import re
 import struct
@@ -19,6 +20,10 @@ from soulstruct.core import SoulstructError
 from soulstruct.bnd import BND, BNDEntry
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo
 
+__all__ = ["LuaBND", "LuaGoal", "LuaInfo", "LuaError", "LuaDecompileError", "LuaCompileError"]
+
+
+_LOGGER = logging.getLogger(__name__)
 
 COMPILER_x64 = PACKAGE_PATH("ai/lua/x64/LuaC.exe")
 COMPILER_x86 = PACKAGE_PATH("ai/lua/x86/luac50.exe")
@@ -82,8 +87,9 @@ class LuaBND(object):
                 try:
                     goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
-                    print(f"# WARNING: Lua file {entry_path.name} has no corresponding goal and will not be loaded.\n"
-                          f"# (Future versions of Soulstruct will try to create the goal automatically.)")
+                    _LOGGER.warning(
+                        f"Lua file {entry_path.name} has no corresponding goal and will not be loaded.\n"
+                        f"(Future versions of Soulstruct may guess the goal name.)")
                     continue
                 try:
                     goal.script = entry.data.decode("shift-jis")
@@ -95,7 +101,7 @@ class LuaBND(object):
             elif entry.id not in {1000000, 1000001}:
                 lua_match = _LUA_SCRIPT_RE.match(entry_path.name)
                 if not lua_match:
-                    print(f"# WARNING: Found non-Lua file with BND path: '{entry.path}'. File will be ignored.")
+                    _LOGGER.warning(f"Found non-Lua file with BND path: '{entry.path}'. File will be ignored.")
                     continue
                 for goal in self.goals:
                     snake_name = _SNAKE_CASE_RE.sub("_", goal.goal_name).lower()
@@ -121,14 +127,14 @@ class LuaBND(object):
             try:
                 goal.compile(output_path=output_path)
             except LuaDecompileError as e:
-                print(f"# ERROR: Could not compile Lua goal script '{goal.script_name}': {str(e)}")
+                _LOGGER.error(f"Could not compile Lua goal script '{goal.script_name}'. Error: {str(e)}")
         if including_other:
             for other in self.other:
                 output_path = Path(output_directory) / other.script_name if output_directory else None
                 try:
                     other.compile(output_path=output_path)
                 except LuaError as e:
-                    print(f"# ERROR: Could not compile Lua non-goal script '{other.script_name}': {str(e)}")
+                    _LOGGER.error(f"Could not compile Lua non-goal script '{other.script_name}'. Error: {str(e)}")
 
     def decompile_all(self, output_directory=None, including_other=False):
         """Decompile all goals (and optionally, other Lua scripts).
@@ -143,14 +149,14 @@ class LuaBND(object):
             try:
                 goal.decompile(output_path=output_path)
             except LuaDecompileError as e:
-                print(f"# ERROR: Could not decompile Lua goal script '{goal.script_name}': {str(e)}")
+                _LOGGER.error(f"Could not decompile Lua goal script '{goal.script_name}'. Error: {str(e)}")
         if including_other:
             for other in self.other:
                 output_path = Path(output_directory) / other.script_name if output_directory else None
                 try:
                     other.decompile(output_path=output_path)
                 except LuaError as e:
-                    print(f"# ERROR: Could not decompile Lua non-goal script '{other.script_name}': {str(e)}")
+                    _LOGGER.error(f"Could not decompile Lua non-goal script '{other.script_name}'. Error: {str(e)}")
 
     def update_bnd_from_decompiled(self, lua_file: LuaScriptBase, compile_script=True, x64=None):
         """Insert decompiled script into the BND.
@@ -172,7 +178,7 @@ class LuaBND(object):
             new_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
             new_entry = BNDEntry(data=lua_file.script.encode("shift-jis"), entry_id=new_id, path=bnd_path)
             self.bnd.add_entry(new_entry)
-            print(f"# INFO: New decompiled script added to LuaBND[{new_id}]: {lua_file.script_name}")
+            _LOGGER.info(f"New decompiled script added to LuaBND[{new_id}]: {lua_file.script_name}")
 
     def load_decompiled(self, directory, including_other=False):
         """Load decompiled scripts from an arbitrary directory (e.g. to get DSR scripts into PTDE)."""
@@ -186,8 +192,9 @@ class LuaBND(object):
                     goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
                     # TODO: parse script to guess what goal name should be (from Activate function name).
-                    print(f"# WARNING: No goal found for script {lua_script.name}. Ignoring file.\n"
-                          f"# (Coming soon: automatic goal creation for this occasion.)")
+                    _LOGGER.warning(
+                        f"# WARNING: No goal found for script {lua_script.name}. Ignoring file.\n"
+                        f"# (Future versions of Soulstruct may automatically create the goal.)")
                     continue
                 try:
                     with lua_script.open("r", encoding="shift-jis") as f:
@@ -226,28 +233,22 @@ class LuaBND(object):
     def update_bnd(self, use_decompiled_goals=True, use_decompiled_other=False, compile_scripts=True):
         self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
         self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
+        lua_list = []
         if use_decompiled_goals:
-            for goal in self.goals:
-                if goal.script:
-                    try:
-                        self.update_bnd_from_decompiled(goal, compile_script=compile_scripts, x64=self.is_lua_64)
-                    except LuaCompileError:
-                        if goal.bytecode:
-                            print(f"# ERROR: Could not compile script {goal.script_name}. Using existing bytecode.")
-                        else:
-                            raise LuaError(f"Could not compile script {goal.script_name} and no bytecode exists to "
-                                           f"use instead. BND update aborted (it may have been partially updated).")
+            lua_list += self.goals
         if use_decompiled_other:
-            for other in self.other:
-                if other.script:
+            lua_list += self.other
+        for lua_list in (self.goals, self.other):
+            for lua_entry in lua_list:
+                if lua_entry.script:
                     try:
-                        self.update_bnd_from_decompiled(other, compile_script=compile_scripts, x64=self.is_lua_64)
+                        self.update_bnd_from_decompiled(lua_entry, compile_script=compile_scripts, x64=self.is_lua_64)
                     except LuaCompileError:
-                        if other.bytecode:
-                            print(f"# ERROR: Could not compile script {other.script_name}. Using existing bytecode.")
+                        if lua_entry.bytecode:
+                            _LOGGER.error(f"Could not compile script {lua_entry.script_name}. Using existing bytecode.")
                         else:
-                            raise LuaError(f"Could not compile script {other.script_name} and no bytecode exists to "
-                                           f"use instead. BND update aborted (it may have been partially updated).")
+                            raise LuaError(f"Could not compile script {lua_entry.script_name} and no bytecode exists "
+                                           f"to use instead. BND update aborted (it may have been partially updated).")
 
     def write(self, luabnd_path=None, use_decompiled_goals=True, use_decompiled_other=False):
         self.update_bnd(use_decompiled_goals=use_decompiled_goals, use_decompiled_other=use_decompiled_other)
@@ -297,7 +298,7 @@ def compile_lua(script: str, script_name="<unknown script>", output_path=None, x
             [compiler, "-o", "temp.lua", temp], text=True, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=get_startupinfo())
         if result.stdout.strip():
-            print(f"# LUA COMPILE WARNING in script {script_name}: {result.stdout.strip()}")
+            _LOGGER.warning(f"Lua Compiler Warning for script {script_name}: {result.stdout.strip()}")
         if result.returncode != 0:
             raise LuaCompileError(f"Script {script_name}: {result.stderr.strip()}")
         with Path("temp.lua").open("rb") as f:
@@ -315,7 +316,7 @@ def decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=N
             [DECOMPILER_x64, temp], text=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             startupinfo=get_startupinfo())
         if result.stdout.strip():
-            print(f"# LUA DECOMPILE WARNING in script {script_name}: {result.stdout.strip()}")
+            _LOGGER.warning(f"Lua Decompiler Warning for script {script_name}: {result.stdout.strip()}")
         if result.returncode != 0:
             raise LuaDecompileError(f"Script {script_name}: {result.stderr.strip()}")
         with Path("temp.dec.lua").open("r", encoding="shift-jis") as f:
@@ -406,7 +407,7 @@ class LuaGoal(LuaScriptBase):
         if self._goal_type == "logic" and not name.endswith("_Logic"):
             raise LuaError(f"Logic goal name must end in '_Logic'. Invalid: {repr(name)}")
         elif self._goal_type == "battle" and not name.endswith("Battle"):
-            print(f"# WARNING: Battle goal name {repr(name)} does not end in 'Battle', which is unusual.")
+            _LOGGER.warning(f"Battle goal name {repr(name)} does not end in 'Battle', which is unusual.")
         self._goal_name = name
 
     @property
@@ -419,7 +420,7 @@ class LuaGoal(LuaScriptBase):
         if not self._goal_name.endswith("_Logic") and new_type == "logic":
             raise LuaError(f"Logic goal name must end in '_Logic'. Invalid: {repr(self._goal_name)}")
         elif not self._goal_name.endswith("Battle") and new_type == "battle":
-            print(f"# WARNING: Battle goal name {repr(self._goal_name)} does not end in 'Battle', which is unusual.")
+            _LOGGER.warning(f"Battle goal name {repr(self._goal_name)} does not end in 'Battle', which is unusual.")
         self._goal_type = new_type
 
     def set_name_and_type(self, goal_name, goal_type):
@@ -548,9 +549,10 @@ class LuaInfo(object):
         for _ in range(header.goal_count):
             goal = self.unpack_goal(info_buffer, goal_struct)
             if goal.script_name in [g.script_name for g in self.goals]:
-                print(f"# WARNING: Goal '{goal.goal_id}' is referenced multiple times in LuaInfo (same ID and type). "
-                      f"Each goal ID should have (at most) one 'battle' goal and one 'logic' goal. All goal entries "
-                      f"after the first will be ignored.")
+                _LOGGER.warning(
+                    f"Goal '{goal.goal_id}' is referenced multiple times in LuaInfo (same ID and type). Each goal ID "
+                    f"should have (at most) one 'battle' goal and one 'logic' goal. All goal entries after the first "
+                    f"will be ignored.")
             else:
                 self.goals.append(goal)
 
@@ -687,9 +689,3 @@ class LuaGNL(object):
             use_struct_64 = struct.unpack('i', gnl_buffer.read(4))[0] == 0
         gnl_buffer.seek(0)
         return big_endian, use_struct_64
-
-
-if __name__ == '__main__':
-    from soulstruct import DSR_PATH
-    common = LuaBND(DSR_PATH + "/script/aiCommon.luabnd.dcx")
-    print(common.goals)

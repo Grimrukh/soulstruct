@@ -1,4 +1,5 @@
 import copy
+import logging
 from collections import OrderedDict
 from copy import deepcopy
 from io import BytesIO
@@ -14,15 +15,17 @@ from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
 # TODO: GameParam BND indices of params tables are different in PTD/DSR. I'm guessing it may not actually matter, and
 #   that all the params tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
 
+_LOGGER = logging.getLogger(__name__)
+
 _PARAMDEF_BND_PTD = None
 _PARAMDEF_BND_DSR = None
 
 
 def PARAMDEF_BND(game_version):
     global _PARAMDEF_BND_PTD, _PARAMDEF_BND_DSR
-    if game_version.lower() == 'ptd':
+    if game_version.lower() == 'ptde':
         if _PARAMDEF_BND_PTD is None:
-            _PARAMDEF_BND_PTD = ParamDefBND('ptd')
+            _PARAMDEF_BND_PTD = ParamDefBND('ptde')
         return _PARAMDEF_BND_PTD
     elif game_version.lower() == 'dsr':
         if _PARAMDEF_BND_DSR is None:
@@ -95,10 +98,11 @@ class ParamEntry(object):
                     raise ValueError("Name must be specified in arguments or source dictionary.")
                 self.name = entry_source['name']
             elif isinstance(name, str):
-                # TODO: Name needs to be converted to shift-jis...
+                # TODO: Name needs to be converted to shift-jis?
                 if 'name' not in entry_source:
-                    print(f"# WARNING: Name in source dictionary of ParamEntry '{entry_source['name']}' will\n"
-                          f"be overridden with argument value ('{name}').")
+                    _LOGGER.warning(
+                        f"Name in source dictionary of ParamEntry '{entry_source['name']}' will be overridden with "
+                        f"argument value ('{name}').")
                 self.name = entry_source['name'] = name
             else:
                 raise ValueError("Name must be a string.")
@@ -217,7 +221,7 @@ class ParamEntry(object):
                                  f"{self.paramdef.param_name} has value {self[field['name']]} with type "
                                  f"{type(self[field['name']])}, but should have type {field_type.python_type()}.")
             if not field_type.minimum() <= self[field['name']] <= field_type.maximum():
-                print(field)
+                _LOGGER.error(f"Error in field. Field data: {field}")
                 raise ParamError(f"Invalid: field {field['name']} in entry {repr(self.name)} of table "
                                  f"{self.paramdef.param_name} has out-of-range value {self[field['name']]} "
                                  f"(range is {field_type.minimum()} to {field_type.maximum()}).")
@@ -368,10 +372,11 @@ class ParamTable(object):
                         packed_name_data, offset=relative_name_offset, encoding='shift_jis_2004',
                         ignore_encoding_error_for_these_chars=JUNK_ENTRY_NAMES)
                 except ValueError:
-                    print(f"# ERROR: Could not find null termination for entry name string in {self.param_name}.\n"
-                          f"#   Header: {header}\n"
-                          f"#   Entry Struct: {entry_struct}\n"
-                          f"#   Buffer: {packed_name_data}")
+                    _LOGGER.error(
+                        f"Could not find null termination for entry name string in {self.param_name}.\n"
+                        f"    Header: {header}\n"
+                        f"    Entry Struct: {entry_struct}\n"
+                        f"    Buffer: {packed_name_data}")
                     raise
             else:
                 name = ''

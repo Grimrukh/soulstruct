@@ -1,3 +1,4 @@
+import logging
 import pickle
 import re
 from pathlib import Path
@@ -6,6 +7,9 @@ from typing import Dict, List, Optional, Tuple
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.params.fields import PARAM_NICKNAMES
+
+__all__ = ["DarkSoulsGameParameters", "DarkSoulsLightingParameters", "DRAW_PARAM_TABLES", "DRAW_PARAM_MAPS"]
+_LOGGER = logging.getLogger(__name__)
 
 _PARAM_FILE_NAME_RE = re.compile(r"(/[ms]\d\d)(_[\w]+\.DrawParam\.parambnd)")
 
@@ -85,7 +89,7 @@ class DarkSoulsGameParameters(object):
                 self._game_param_bnd = BND(game_param_bnd_source)
             except TypeError:
                 raise TypeError("Could not load DarkSoulsGameParameters from given source.")
-        self.paramdef_bnd = PARAMDEF_BND('dsr' if self._game_param_bnd.dcx else 'ptd')
+        self.paramdef_bnd = PARAMDEF_BND('dsr' if self._game_param_bnd.dcx else 'ptde')
 
         for entry in self._game_param_bnd:
             p = self._data[entry.path] = ParamTable(entry.data, self.paramdef_bnd)
@@ -112,9 +116,9 @@ class DarkSoulsGameParameters(object):
         if game_param_bnd_path is not None and Path(game_param_bnd_path).is_dir():
             game_param_bnd_path = Path(game_param_bnd_path) / 'GameParam.parambnd'
         self._game_param_bnd.write(game_param_bnd_path)
-        print('# INFO: --------> Dark Souls game parameters (GameParam) saved successfully.')
+        _LOGGER.info("Dark Souls game parameters (GameParam) written successfully.")
         if not self._reload_warning:
-            print('# INFO: --------> Remember to reload your game to see changes.')
+            _LOGGER.info("Remember to reload your game to see changes.")
             self._reload_warning = True
 
     def pickle(self, game_param_pickle_path=None):
@@ -127,7 +131,7 @@ class DarkSoulsGameParameters(object):
                 game_param_pickle_path = game_param_pickle_path.parent / game_param_pickle_path.stem
             if not game_param_pickle_path.suffix != '.pickle':
                 game_param_pickle_path = game_param_pickle_path.with_suffix(game_param_pickle_path.suffix + '.pickle')
-        with open(game_param_pickle_path, 'wb') as f:
+        with Path(game_param_pickle_path).open('wb') as f:
             pickle.dump(self, f)
 
     def __getitem__(self, category) -> ParamTable:
@@ -161,7 +165,7 @@ class MapDrawParam(object):
         """Structure that manages double-slots and table nicknames for one DrawParam BND file (i.e. one map area)."""
         self._data = {}  # type: Dict[str, List[Optional[DrawParamTable], Optional[DrawParamTable]]]
         self._bnd_entry_paths = {}  # type: Dict[Tuple[str, int], str]
-        paramdef_bnd = PARAMDEF_BND('dsr' if bool(draw_param_bnd.dcx) else 'ptd')
+        paramdef_bnd = PARAMDEF_BND('dsr' if bool(draw_param_bnd.dcx) else 'ptde')
 
         if not isinstance(draw_param_bnd, BaseBND):
             draw_param_bnd = BND(draw_param_bnd)
@@ -263,15 +267,15 @@ class MapDrawParam(object):
 
 
 DRAW_PARAM_MAPS = {
-    'm10': 'Depths | Undead Burg/Parish | Firelink Shrine',
+    'm10': 'Depths, Undead Burg/Parish, Firelink Shrine',
     'm11': 'Painted World',
-    'm12': 'Darkroot | Oolacile',
-    'm13': 'Catacombs | Tomb of the Giants | Great Hollow/Ash Lake',
-    'm14': "Blighttown | Quelaag's Domain | Demon Ruins/Lost Izalith",
-    'm15': "Sen's Fortress | Anor Londo",
-    'm16': 'New Londo Ruins/Valley of Drakes',
+    'm12': 'Darkroot, Oolacile',
+    'm13': 'Catacombs, Tomb of the Giants, Great Hollow, Ash Lake',
+    'm14': "Blighttown, Quelaag's Domain, Demon Ruins, Lost Izalith",
+    'm15': "Sen's Fortress, Anor Londo",
+    'm16': 'New Londo Ruins, Valley of Drakes',
     'm17': "Duke's Archives",
-    'm18': 'Kiln of the First Flame | Undead Asylum',
+    'm18': 'Kiln of the First Flame, Undead Asylum',
     'default': 'Menus',
 }
 
@@ -350,7 +354,7 @@ class DarkSoulsLightingParameters(object):
 
     def pickle(self, lighting_param_pickle_path):
         """Save the entire `DarkSoulsLightingParameters` instance to a pickled file, which will be faster to load."""
-        with open(lighting_param_pickle_path, 'wb') as f:
+        with Path(lighting_param_pickle_path).open('wb') as f:
             pickle.dump(self, f)
 
     def save(self, draw_param_directory=None):
@@ -360,7 +364,7 @@ class DarkSoulsLightingParameters(object):
         for map_name, map_draw_param in self._data.items():
             bnd_file_name = self._bnd_file_names[map_name]
             map_draw_param.save(draw_param_directory / bnd_file_name)
-        print('# INFO: --------> Dark Souls lighting parameters (DrawParam) saved successfully.')
+        _LOGGER.info("Dark Souls lighting parameters (DrawParam) written successfully.")
         if not self._reload_warning_given:
-            print('# INFO: Remember to reload your game to see changes.')
+            _LOGGER.info("Remember to reload your game to see changes.")
             self._reload_warning_given = True

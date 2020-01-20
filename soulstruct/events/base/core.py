@@ -1,4 +1,5 @@
 import abc
+import logging
 import struct
 from collections import OrderedDict
 from io import BytesIO
@@ -10,6 +11,8 @@ from soulstruct.events.numeric import build_numeric
 from soulstruct.utilities import BaseStruct, read_chars_from_buffer, create_bak
 
 from .event import BaseEvent
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class BaseEMEVD(BaseStruct):
@@ -41,11 +44,11 @@ class BaseEMEVD(BaseStruct):
             try:
                 self.linked_file_offsets = emevd_source.pop('linked')
             except KeyError:
-                print("WARNING: No linked file offsets found in EMEVD source.")
+                _LOGGER.warning("No linked file offsets found in EMEVD source.")
             try:
                 self.packed_strings = emevd_source.pop('strings')
             except KeyError:
-                print("WARNING: No strings found in EMEVD source.")
+                _LOGGER.warning("No strings found in EMEVD source.")
             self.events.update(OrderedDict(emevd_source))
 
         elif isinstance(emevd_source, str) and '\n' in emevd_source:

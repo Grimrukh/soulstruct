@@ -1,6 +1,7 @@
 import abc
 import ctypes
 import io
+import logging
 import math
 import os
 import re
@@ -18,6 +19,8 @@ __all__ = [
     "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
     "get_startupinfo",
 ]
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def PACKAGE_PATH(*relative_parts):
@@ -48,7 +51,7 @@ def create_bak(file_path):
     if file_path.is_file() and not file_path.with_suffix(file_path.suffix + '.bak').is_file():
         backup_path = str(file_path.with_suffix(file_path.suffix + '.bak'))
         os.rename(str(file_path), backup_path)
-        print(f"# INFO: Created {repr(backup_path)} backup file.")
+        _LOGGER.info(f"Created {repr(backup_path)} backup file.")
         return True
     return False
 
@@ -330,7 +333,7 @@ class BinaryStruct(object):
             try:
                 unpacked = struct.unpack(struct_fmt, data)
             except struct.error:
-                print(f'Data:', data)
+                _LOGGER.error(f'Failed to unpack data:', data)
                 raise
             output = AttributeDict()
             unpacked_index = 0
@@ -354,8 +357,8 @@ class BinaryStruct(object):
                 try:
                     unpacked += struct.unpack(sub_fmt, data[offset:offset + size])
                 except struct.error:
-                    print(f'Struct sub-format:', sub_fmt)
-                    print(f'Offset {offset}:', data[offset:offset + size])
+                    _LOGGER.error(f"Failed to unpack data at offset {offset} with sub-format {sub_fmt}: "
+                                  f"{data[offset:offset + size]}")
                     raise
                 offset += size
             output = AttributeDict()
@@ -415,8 +418,8 @@ class BinaryStruct(object):
                 try:
                     output += struct.pack(sub_fmt, *to_pack[pack_index:pack_index + sub_fmt_length])
                 except struct.error:
-                    print("Struct sub-format:", sub_fmt, f"(length: {sub_fmt_length})")
-                    print("To Pack:", to_pack[pack_index:pack_index + sub_fmt_length])
+                    _LOGGER.error(f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
+                                  f"{sub_fmt_length}: {to_pack[pack_index:pack_index + sub_fmt_length]}")
                     raise
         return output
 

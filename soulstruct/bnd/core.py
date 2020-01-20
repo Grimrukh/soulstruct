@@ -1,3 +1,4 @@
+import logging
 import re
 import zlib
 from ast import literal_eval
@@ -10,7 +11,7 @@ from soulstruct.dcx import DCX
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx, create_bak
 
 __all__ = ['BND', 'BND3', 'BND4', 'BaseBND', 'BNDEntry']
-
+_LOGGER = logging.getLogger(__name__)
 
 class BNDEntry(object):
 
@@ -419,7 +420,6 @@ class BND3(BaseBND):
 
         for entry in BNDEntry.unpack(
                 bnd_buffer, self.entry_header_struct, path_encoding='shift-jis', count=header.entry_count):
-            # print(entry.id, entry.path)
             self.add_entry(entry)
 
     def load_unpacked_dir(self, directory):
@@ -588,9 +588,9 @@ class BND4(BaseBND):
             raise ValueError(f"Expected BND entry header size {header_size(self.bnd_magic)} based on magic\n"
                              f"{hex(self.bnd_magic)}, but BND header says {header.entry_header_size}.")
         if self.hash_table_type != 4 and self.hash_table_offset != 0:
-            print(f"# WARNINGL Non-zero hash table offset {self.hash_table_offset}, but "
-                  f"header says this BND has no hash table.")
-
+            _LOGGER.warning(
+                f"Found non-zero hash table offset {self.hash_table_offset}, but header says this BND has no hash "
+                f"table.")
         self.entry_header_struct = BinaryStruct(*self.BND_ENTRY_HEADER, byte_order=byte_order)
         if has_uncompressed_size(self.bnd_magic):
             self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
@@ -603,9 +603,9 @@ class BND4(BaseBND):
             # Extra pad.
             self.entry_header_struct.add_fields('8x')
         if header.entry_header_size != self.entry_header_struct.size:
-            print(f"# WARNING: Entry header size given in BND header ({header.entry_header_size}) does not match "
-                  f"actual entry header size ({self.entry_header_struct.size}).")
-
+            _LOGGER.warning(
+                f"Entry header size given in BND header ({header.entry_header_size}) does not match actual entry "
+                f"header size ({self.entry_header_struct.size}).")
         for entry in BNDEntry.unpack(bnd_buffer, self.entry_header_struct,
                                      path_encoding=path_encoding, count=header.entry_count):
             self.add_entry(entry)
@@ -651,10 +651,6 @@ class BND4(BaseBND):
             raise ValueError("Number of classed entries does not match number of binary entries.\n"
                              "You must use the add_entry() method to add new BND entries.")
 
-        print(len(self._most_recent_hash_table))
-        print(self._most_recent_paths)
-        print(self._most_recent_entry_count, len(self.binary_entries))
-
         if len(self.binary_entries) != self._most_recent_entry_count:
             rebuild_hash_table = True
         for i, entry in enumerate(self._entries):
@@ -699,7 +695,6 @@ class BND4(BaseBND):
         if self.hash_table_type == 4:
             hash_table_offset = entry_path_table_offset + len(packed_entry_paths)
             if rebuild_hash_table:
-                print("# Rebuilding hash table for BND4...")
                 packed_hash_table = self.build_hash_table()
             else:
                 packed_hash_table = self._most_recent_hash_table

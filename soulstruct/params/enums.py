@@ -111,11 +111,10 @@ class BEHAVIOR_ATK_SIZE(UnsignedChar):
 
 
 class BEHAVIOR_ATK_TYPE(UnsignedChar):
-    """The internal description says this specifies the 'SFX/SE at the time of attack'. Could determine sound effects.
-    Names are based on observed usage. Same as ATK_TYPE."""
-    Normal = 0
-    Strong = 1
-    Stab = 2
+    """Determines sound/visual effects of behaviors. Same as ATK_TYPE. Seems unused, though."""
+    Slash = 0
+    Strike = 1
+    Thrust = 2
 
 
 class BEHAVIOR_CATEGORY(UnsignedChar):
@@ -706,19 +705,18 @@ class THROW_PAD_TYPE(UnsignedChar):
 
 
 class THROW_TYPE(UnsignedChar):
-    """Named after observed usage. Not sure how 'strong' variant differs from normal variant, but strong variants
-    exist for player characters (Players) only."""
+    """Named after observed usage. The Hornet Ring variants have slightly different animations when used against PCs."""
     Backstab = 0
     # 1-7 unused.
     Riposte = 8
     CoffinStab = 9
     Plunging = 10
-    StrongBackstab = 11
-    StrongRiposte = 12
+    HornetBackstab = 11
+    HornetRiposte = 12
     Drain = 13
-    StrongCoffinStab = 14
-    StrongPlunging = 15
-    StrongDrain = 16
+    HornetCoffinStab = 14
+    HornetPlunging = 15
+    HornetDrain = 16
 
 
 class WEAPON_CATEGORY(UnsignedChar):

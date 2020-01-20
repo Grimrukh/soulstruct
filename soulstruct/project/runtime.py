@@ -12,6 +12,8 @@ except ImportError:
 
 
 class SoulstructRuntimeManager(SmartFrame):
+    DATA_NAME = None
+
     def __init__(self, project, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Runtime Manager")
         self.project = project
@@ -53,27 +55,30 @@ class SoulstructRuntimeManager(SmartFrame):
                                 command=self._error_as_dialog(self.project.launch_gadget),
                                 row=1, column=0, **button_kwargs)
                     self.Button(text="Close Game", bg="#422",
-                                command=self._error_as_dialog(self.project.force_quit_game),
+                                command=self._error_as_dialog(lambda: self.project.force_quit_game(
+                                    including_debug=self.project.game_name == "Dark Souls Prepare to Die Edition")),
                                 row=1, column=1, **button_kwargs)
 
-            with self.set_master(padx=10, pady=20, row_weights=[1], column_weights=[1, 1, 1], auto_columns=0):
+            with self.set_master(padx=10, pady=20, row_weights=[1, 1], column_weights=[1, 1, 1]):
                 game_saves = self.project.get_game_saves()
                 self.game_save_list = self.Combobox(
                     values=game_saves, initial_value=game_saves[0] if game_saves else "", width=40,
-                    label_font_size=10, label="Available Saves:", label_position='left', font=("Segoe UI", 10))
+                    label_font_size=10, label="Available Saves:", label_position='left', font=("Segoe UI", 10),
+                    row=0, column=0)
                 self.Button(
-                    text="Load", font_size=10, bg="#222", padx=10, width=12,
-                    command=self._error_as_dialog(self.load_game_save))
+                    text="Load Save", font_size=10, bg="#222", padx=10, width=15,
+                    command=self._error_as_dialog(self.load_game_save), row=0, column=1)
                 delete_button = self.Button(
-                    text="Delete (Shift + Click)", font_size=10, bg="#422", padx=20, width=20, command=None)
+                    text="Delete (Shift + Click)", font_size=10, bg="#422", padx=20, width=20, command=None,
+                    row=0, column=2)
                 delete_button.bind("<Shift-Button-1>", self._error_as_dialog(lambda _: self.delete_game_save()))
 
-            with self.set_master(padx=10, pady=10, row_weights=[1, 0], column_weights=[1, 1]):
-                self.game_save_entry = self.Entry(width=40, label="New Save Name:", label_position='left',
-                                                  row=0, column=0).var
+                self.game_save_entry = self.Entry(
+                    width=43, label="New Save Name:", label_position='left', row=1, column=0).var
                 create_save_button = self.Button(
-                    text="Create Save", font_size=10, bg="#222", padx=10, width=15, command=None, row=0, column=1)
-                self.Label(text="Shift + Click to Overwrite", font_size=8, row=1, column=1)
+                    text="Create Save", font_size=10, bg="#222", padx=10, pady=(10, 0), width=15,
+                    command=None, row=1, column=1)
+                self.Label(text="Shift + Click to Overwrite", font_size=8, row=2, column=1)
                 create_save_button.bind(
                     "<Button-1>",
                     self._error_as_dialog(lambda _: self.create_game_save(overwrite=False)))

@@ -1,8 +1,10 @@
+import logging
 from io import BytesIO
 from textwrap import wrap
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 
 __all__ = ['FMG']
+_LOGGER = logging.getLogger(__name__)
 
 
 class FMG(object):
@@ -126,7 +128,7 @@ class FMG(object):
         # Groups of contiguous text string IDs are defined by ranges (first ID, last ID) to save space.
         ranges = self.range_struct.unpack(fmg_buffer, count=header.range_count)
         if fmg_buffer.tell() != header.string_offsets_offset:
-            print("# WARNING: Range data did not end at string data offset given in FMG header.")
+            _LOGGER.warning("Range data did not end at string data offset given in FMG header.")
         string_offsets = self.string_offset_struct.unpack(fmg_buffer, count=header.string_count)
 
         # Text pointer table corresponds to all the IDs (joined together) of the above ranges, in order.
@@ -201,8 +203,8 @@ class FMG(object):
                                              f"determined from key {repr(max_lines)}.")
                     if wrapped_string.count('\n') > max_lines - 1:
                         line_count = wrapped_string.count('\n') + 1
-                        print(f"\nWARNING: FMG index {index} has {line_count} lines (max is {max_lines}):")
-                        print(wrapped_string)
+                        _LOGGER.warning(f"FMG index {index} has {line_count} lines (max is {max_lines}):\n"
+                                        f"{wrapped_string}")
                     fmg_entries[i] = (index, wrapped_string)
 
         # Encode all text entries and pack them, and record the offsets (will be globally offset later).

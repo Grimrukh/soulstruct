@@ -1,7 +1,10 @@
-from pathlib import Path
+import logging
 import zlib
+from pathlib import Path
 
 from soulstruct.utilities import BinaryStruct
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DCX(object):
@@ -52,8 +55,8 @@ class DCX(object):
         compressed = dcx_buffer.read().rstrip(b'\0')  # Nulls stripped from the end.
         if len(compressed) != header.compressed_size:
             # No error raised.
-            print(f"WARNING: Compressed data size ({len(compressed)}) does not match size in header "
-                  f"({header.compressed_size}).")
+            _LOGGER.warning(f"Compressed data size ({len(compressed)}) does not match size in header "
+                            f"({header.compressed_size}).")
         self.data = zlib.decompressobj().decompress(compressed)
         if len(self.data) != header.decompressed_size:
             raise ValueError("Decompressed data size does not match size in header.")

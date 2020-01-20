@@ -1,9 +1,12 @@
+import logging
 import struct
 
-from ..internal import get_byte_offset_from_struct, get_instruction_args
+from soulstruct.events.internal import get_byte_offset_from_struct, get_instruction_args
 from soulstruct.events.shared.decompiler import decompile_instruction
 from soulstruct.utilities import BaseStruct
 from .event_layers import BaseEventLayers
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class BaseInstruction(BaseStruct):
@@ -46,10 +49,10 @@ class BaseInstruction(BaseStruct):
                     base_arg_data_offset + d.first_base_arg_offset, d.base_args_size,
                     cls.INSTRUCTION_ARG_TYPES)
             except KeyError:
-                print("Raw arg data:")
                 args_size = struct_dicts[i + 1].first_base_arg_offset - d.first_base_arg_offset
                 file.seek(base_arg_data_offset + d.first_base_arg_offset)
-                print(file.read(args_size))
+                raw_data = file.read(args_size)
+                _LOGGER.error(f"Error while processing instruction arguments. Raw arg data: {raw_data}")
                 raise
 
             # Process event layers.
@@ -138,7 +141,10 @@ class BaseInstruction(BaseStruct):
 
             if (value_to_overwrite not in permitted and value_to_overwrite != arg_name
                     and argument_byte_type != 's'):
-                print(f"{self.instruction_class}[{self.instruction_index}]", self.args_format, self.args_list)
+                _LOGGER.error(
+                    f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
+                    f"(position {argument_index}) in instruction {self.instruction_class}[{self.instruction_index}] "
+                    f"with args {self.args_list} (format {self.args_format})")
                 raise ValueError(f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
                                  f"(position {argument_index}).")
 

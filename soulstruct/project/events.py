@@ -294,6 +294,7 @@ class SoulstructEventEditor(SmartFrame):
 
     def save_selected_evs(self):
         if self.selected_evs:
+            self.text_editor.color_syntax()
             current_text = self._get_current_text()
             self.evs_text[self.selected_evs] = current_text
             with self.evs_file_paths[self.selected_evs].open('w', encoding='utf-8') as f:
@@ -323,7 +324,7 @@ class SoulstructEventEditor(SmartFrame):
     def _check_syntax(self):
         if not self.selected_evs:
             return
-        self.text_editor.color_syntax()
+        self.save_selected_evs()
         try:
             EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_evs].parent))
         except EmevdError as e:

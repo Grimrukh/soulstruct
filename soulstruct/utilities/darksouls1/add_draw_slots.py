@@ -8,9 +8,12 @@ is always set to 0 when the map is loaded.
 Unfortunately, no more than two slots can be used; the renderer glitches out with insane colors when slot 2 is assigned,
 and shows nothing when any other slots are assigned.
 """
+import logging
 from pathlib import Path
 
 from soulstruct import BND
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def add_draw_slot_1_to_all_map_areas(game_root_path):
@@ -41,7 +44,7 @@ def add_draw_slot_1_to_drawparam(parambnd_path):
     draw_param = BND(parambnd_path)
 
     if len(draw_param) != 12:
-        print(f"# INFO: DrawParam file {str(parambnd_path)} already has more than one slot.")
+        _LOGGER.info(f"DrawParam file {str(parambnd_path)} already has more than one slot.")
         return
 
     try:
@@ -55,11 +58,11 @@ def add_draw_slot_1_to_drawparam(parambnd_path):
     for i in range(11):
         slot_0 = draw_param[i].copy()
         slot_0.id += 11
-        draw_param[i].name = draw_param[i].name.replace(f'm{area_id}_', f'm{area_id}_1_')
+        draw_param[i].path = draw_param[i].path.replace(f'm{area_id}_', f'm{area_id}_1_')
         draw_param.add_entry(slot_0)
     s_ambient_0 = s_ambient.copy()
     s_ambient_0.id = 23
-    s_ambient.name = s_ambient.name.replace(f's{area_id}_', f's{area_id}_1_')
+    s_ambient.path = s_ambient.path.replace(f's{area_id}_', f's{area_id}_1_')
     s_ambient.id = 22
     draw_param.add_entry(s_ambient)
     draw_param.add_entry(s_ambient_0)

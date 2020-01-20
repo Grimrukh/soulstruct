@@ -10,19 +10,19 @@ python -m soulstruct [source]
     [-t / --text]
     [-p / --params]
     [-l / --lighting]
-    [--config] live_game_path temp_game_path default_game_path
-    TODO: fileLogLevel and consoleLogLevel.
+    [--ai]
+    [--consoleLogLevel]
+    [--fileLogLevel]
 """
 import argparse
 import logging
-import sys
-from contextlib import redirect_stdout
-from pathlib import Path
 
-from soulstruct import DEFAULT_PROJECT_PATH
+from soulstruct._config import DEFAULT_PROJECT_PATH
+from soulstruct.core import CONSOLE_HANDLER, FILE_HANDLER
 from soulstruct.utilities import word_wrap
 
-LOG_LEVELS = {'debug', 'info', 'result', 'warning', 'error', 'fatal', 'critical'}
+LOG_LEVELS = {'debug', 'info', 'warning', 'error', 'fatal', 'critical'}
+_LOGGER = logging.getLogger(__name__)
 
 
 parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstruct programs or adjust settings.")
@@ -62,21 +62,20 @@ parser.add_argument(
     )
 )
 parser.add_argument(
-    "--config", nargs=3,
+    "--ai", action='store_true',
     help=word_wrap(
-        "Pass three strings for LIVE, TEMP, and DEFAULT game paths to be written to 'config.py'. Dark Souls files in "
-        "these directories can then be accessed using simply 'live', 'temp', or 'default' (which is usually the "
-        "default) for the different Soulstruct structures and editors."
+        "Open Soulstruct AI Script Editor with given source."
     )
 )
 parser.add_argument(
-    "--consoleLogLevel", action='store', default='WARNING',
+    "--consoleLogLevel", action='store', default='INFO',
     help=word_wrap(
-        "Set the console log level to 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'."
+        "Set the console log level to 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'. Note that the console is "
+        "disabled for frozen executable releases."
     )
 )
 parser.add_argument(
-    "--fileLogLevel", action='store', default='INFO',
+    "--fileLogLevel", action='store', default='DEBUG',
     help=word_wrap(
         "Set the file log level to 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'."
     )
@@ -88,82 +87,85 @@ Maps = None
 Text = None
 Params = None
 Lighting = None
+AI = None
 
 
 def soulstruct_main(ss_args):
 
-    # try:
-    #     console_log_level = int(ss_args.consoleLogLevel)
-    # except ValueError:
-    #     if ss_args.consoleLogLevel.lower() not in LOG_LEVELS:
-    #         raise argparse.ArgumentError(ss_args.consoleLogLevel, f"Log level must be one of: {LOG_LEVELS}")
-    #     console_log_level = getattr(logging, ss_args.consoleLogLevel.upper())
-    # TODO: CONSOLE_HANDLER.setLevel(console_log_level)
+    try:
+        console_log_level = int(ss_args.consoleLogLevel)
+    except ValueError:
+        if ss_args.consoleLogLevel.lower() not in LOG_LEVELS:
+            raise argparse.ArgumentError(ss_args.consoleLogLevel, f"Log level must be one of: {LOG_LEVELS}")
+        console_log_level = getattr(logging, ss_args.consoleLogLevel.upper())
+    CONSOLE_HANDLER.setLevel(console_log_level)
 
-    # try:
-    #     file_log_level = int(ss_args.fileLogLevel)
-    # except ValueError:
-    #     if ss_args.fileLogLevel.lower() not in LOG_LEVELS:
-    #         raise argparse.ArgumentError(ss_args.fileLogLevel, f"Log level must be one of: {LOG_LEVELS}")
-    #     file_log_level = getattr(logging, ss_args.fileLogLevel.upper())
-    # TODO: FILE_HANDLER.setLevel(file_log_level)
+    try:
+        file_log_level = int(ss_args.fileLogLevel)
+    except ValueError:
+        if ss_args.fileLogLevel.lower() not in LOG_LEVELS:
+            raise argparse.ArgumentError(ss_args.fileLogLevel, f"Log level must be one of: {LOG_LEVELS}")
+        file_log_level = getattr(logging, ss_args.fileLogLevel.upper())
+    FILE_HANDLER.setLevel(file_log_level)
+
+    source = None if not ss_args.source else ss_args.source
 
     if ss_args.text:
         from soulstruct.maps import DarkSoulsMaps
         global Maps
-        Maps = DarkSoulsMaps(ss_args.source)
+        Maps = DarkSoulsMaps(source)
         return ss_args.console
 
     if ss_args.text:
         from soulstruct.text import DarkSoulsText
         global Text
-        Text = DarkSoulsText(ss_args.source)
+        Text = DarkSoulsText(source)
         return ss_args.console
 
     if ss_args.params:
         from soulstruct.params import DarkSoulsGameParameters
         global Params
-        Params = DarkSoulsGameParameters(ss_args.source)
+        Params = DarkSoulsGameParameters(source)
         return ss_args.console
 
     if ss_args.lighting:
         from soulstruct.params import DarkSoulsLightingParameters
         global Lighting
-        Lighting = DarkSoulsLightingParameters(ss_args.source)
+        Lighting = DarkSoulsLightingParameters(source)
         return ss_args.console
 
-    # No specific type. Open entire project.
+    if ss_args.ai:
+        from soulstruct.ai import DarkSoulsAIScripts
+        global AI
+        AI = DarkSoulsAIScripts(source)
+        return ss_args.console
+
+    # No specific type. Open entire Soulstruct Project.
     if ss_args.console:
         from soulstruct.project import SoulstructProject
         global Project
-        Project = SoulstructProject(ss_args.source)
-        return True
+        Project = SoulstructProject(source)
     else:
         from soulstruct.project import SoulstructProjectWindow
-        window = SoulstructProjectWindow(ss_args.source)
+        window = SoulstructProjectWindow(source)
         window.wait_window()  # MAIN LOOP
-        return False
+    return ss_args.console
 
 
-if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-    log_path = Path(sys.executable).parent / "soulstruct.log"
-    with log_path.open("w") as f:
-        with redirect_stdout(f):
-            try:
-                launch_interactive = soulstruct_main(parser.parse_args())
-            except Exception as e:
-                print(f"# Soulstruct terminated with exception: {str(e)}")
-                exit()
-else:
-    # log_path = Path(__file__).parent / "soulstruct.log"
-    launch_interactive = soulstruct_main(parser.parse_args())  # errors raised
+try:
+    launch_interactive = soulstruct_main(parser.parse_args())
+except Exception as e:
+    logging.exception(f"Error occurred in soulstruct.__main__: {e}")
+    launch_interactive = False
 
 
 if launch_interactive:
     try:
         from IPython import embed
     except ImportError:
-        print("# ERROR: IPython must be installed to open an interactive console from a script.\n"
-              "# You can install it, or directly import Soulstruct within an existing Python session.")
+        _LOGGER.error(
+            "IPython must be installed to open an interactive console from a script.\n"
+            "You can install it with `python -m pip install ipython` and run `python -m soulstruct` again, or directly "
+            "`import soulstruct` within an existing Python session to use the default Python console.")
     else:
         embed()

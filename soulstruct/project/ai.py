@@ -9,7 +9,7 @@ from soulstruct.ai import DARK_SOULS_AI_BND_NAMES
 from soulstruct.ai.core import LuaError
 from soulstruct.project.editor import SoulstructBaseEditor
 from soulstruct.project.utilities import bind_events
-from soulstruct.utilities import camel_case_to_spaces
+from soulstruct.utilities.core import camel_case_to_spaces
 
 if TYPE_CHECKING:
     from soulstruct.ai import DarkSoulsAIScripts, LuaBND, LuaGoal
@@ -53,15 +53,9 @@ class AIScriptTextEditor(tk.Text):
 
     def _proxy(self, *args):
         cmd = (self._orig,) + args
-        try:
-            result = self.tk.call(cmd)
-        except Exception as e:
-            print(cmd)
-            print(e)
-            raise
+        result = self.tk.call(cmd)  # exceptions are caught by Tk
         if args[0] in ("insert", "delete") or args[0:3] == ("mark", "set", "insert"):
             self.event_generate("<<CursorChange>>", when="tail")
-
         return result
 
     def highlight_line(self, number, tag):
@@ -189,8 +183,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
             self.type_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='ew')
             self.type_label = editor.Label(
-                self.type_box, text='B', width=self.ENTRY_TYPE_WIDTH, bg=bg_color, fg="#F33", font_size=11,
-                sticky='ew')
+                self.type_box, text='B', width=self.ENTRY_TYPE_WIDTH, bg=bg_color, fg="#F33", font_size=11, sticky='ew',
+                tooltip_text="Type of goal: battle (B), logic (L), or neither (N). Left or right click to cycle "
+                             "between types.")
             type_bindings = main_bindings.copy()
             type_bindings['<Button-1>'] = lambda _, i=row_index: self.master.set_goal_type(i)
             type_bindings['<Button-3>'] = lambda _, i=row_index: self.master.set_goal_type(i, reverse=True)
@@ -285,12 +280,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     entry_rows: List[SoulstructAIEditor.EntryRow]
 
-    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, save_luabnd_func, allow_decompile,
+    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, allow_decompile,
                  master=None, toplevel=False):
         self.AI = ai
         self.script_directory = Path(script_directory)
         self.game_root = Path(game_root)
-        self.save_luabnd_func = save_luabnd_func
         self.allow_decompile = allow_decompile
         self.selected_bnd_name = ""
 
@@ -300,10 +294,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.write_all_button = None
         self.line_number = None
         self.go_to_line = None
-        self.find_string = None
+        self.string_to_find = None
         self.script_editor_canvas = None
         self.script_editor = None  # type: Optional[AIScriptTextEditor]
-        self.save_button = None
+        self.confirm_button = None
         self.compile_button = None
         self.decompile_button = None
         self.write_button = None
@@ -319,11 +313,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 bnd_display_names = [f"{camel_case_to_spaces(v)} [{k}]" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
                 self.bnd_choice = self.Combobox(
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=10).var
+                    font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=(10, 30)).var
                 self.selected_bnd_name = self._get_bnd_choice_name()
                 self.decompile_all_button = self.Button(
                     text="Decompile All" if self.allow_decompile else "Cannot Decompile", font_size=10,
-                    bg='#422', width=20, padx=10, command=self.decompile_all,
+                    bg='#622', width=20, padx=10, command=self.decompile_all,
                     state='normal' if self.allow_decompile else 'disabled')
                 self.write_all_button = self.Button(
                     text="Write All", font_size=10, bg='#222', width=15, padx=10,
@@ -331,7 +325,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.Button(text="Load All", font_size=10, bg='#222', width=15, padx=10,
                             command=self.load_all_from_project_folder)
 
-            with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1], auto_columns=0):
+            with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 2], auto_columns=0):
                 with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1]):
                     self.build_entry_frame()
                 with self.set_master(
@@ -341,29 +335,44 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                             text="Line: None", padx=10, width=10, fg='#CCF', anchor='w', sticky='w').var
                         self.go_to_line = self.Entry(label="Go to Line:", padx=5, width=6, sticky='w')
                         self.go_to_line.bind("<Return>", self._go_to_line)
-                        self.find_string = self.Entry(label="Find Text:", padx=5, width=20, sticky='w')
-                        self.find_string.bind("<Return>", self._find_string)
+                        self.string_to_find = self.Entry(label="Find Text:", padx=5, width=20, sticky='w')
+                        self.string_to_find.bind("<Return>", self._find_string)
                     with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 0]):
                         self.build_script_editor()
                     with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1], pady=10,
                                          auto_columns=0):
-                        self.save_button = self.Button(
-                            text="Save All", font_size=10, bg="#222", width=15, padx=5, command=self.save_all,
-                            state="disabled", sticky='e')
+                        self.confirm_button = self.Button(
+                            text="Confirm Changes", font_size=10, bg="#222", width=20, padx=5,
+                            command=self.confirm_selected, state="disabled", sticky='e',
+                            tooltip_text="Confirm changes to selected script and re-color syntax. Does not save "
+                                         "project AI files if clicked, but the project 'Save' function (Ctrl + S) "
+                                         "will always confirm changes first.")
                         self.compile_button = self.Button(
-                            text="Compile & Color", font_size=10, bg="#226", width=15, padx=5,
-                            command=self.compile_selected, state="disabled", sticky='ew')
+                            text="Compile", font_size=10, bg="#222", width=20, padx=5,
+                            command=self.compile_selected, state="disabled",
+                            tooltip_text="Compile script and re-color syntax. Not necessary for exporting, but useful "
+                                         "to ensure that Lua syntax is valid. (Ctrl + Shift + C)")
                         self.decompile_button = self.Button(
-                            text="Decompile", font_size=10, bg="#822", width=15, padx=5,
+                            text="Decompile", font_size=10, bg="#822", width=20, padx=5,
                             command=self.decompile_selected, state="disabled", sticky='w')
                     with self.set_master(
                             sticky='nsew', row_weights=[1], column_weights=[1, 1], pady=5, auto_columns=0):
                         self.write_button = self.Button(
                             text="Write to Project", font_size=10, bg="#222", width=20, padx=5,
-                            command=self.write_selected, state="disabled", sticky='e')
+                            command=self.write_selected, state="disabled", sticky='e',
+                            tooltip_text="Write script to 'ai_scripts' folder in your project directory, where it can "
+                                         "be edited by other text editors or Lua-friendly IDEs and reloaded here. "
+                                         "(Ctrl + W)")
                         self.reload_button = self.Button(
-                            text="Load from Project", font_size=10, bg="#222", width=20, padx=5,
-                            command=self.reload_selected, sticky='w')
+                            text="Reload from Project", font_size=10, bg="#222", width=20, padx=5,
+                            command=self.reload_selected, sticky='w',
+                            tooltip_text="Reload script from 'ai_scripts' folder in your project directory. If there "
+                                         "are unconfirmed changes in the current script, you will be asked to confirm "
+                                         "their loss first. (Ctrl + R)")
+
+        self.bind_to_all_children("<Control-C>", lambda _: self.compile_selected(mimic_click=True))
+        self.bind_to_all_children("<Control-w>", lambda _: self.write_selected(mimic_click=True))
+        self.bind_to_all_children("<Control-r>", lambda _: self.reload_selected(mimic_click=True))
 
     def build_script_editor(self):
         self.script_editor_canvas = self.Canvas(
@@ -403,7 +412,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.script_editor.highlight_line(number, "found")
 
     def _find_string(self, _):
-        string = self.find_string.var.get()
+        string = self.string_to_find.var.get()
         if not string or not self.get_selected_bnd():
             return
         start_line, start_char = self.script_editor.index("insert").split('.')
@@ -415,6 +424,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.script_editor.see(index)
             index_line, index_char = index.split('.')
             self.script_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
+        else:
+            self.flash_bg(self.string_to_find)
 
     def clear_bg_tags(self):
         for tag in {"found", "error"}:
@@ -427,10 +438,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     def _control_f_search(self, _):
         if self.get_selected_bnd():
             highlighted = self.script_editor.selection_get()
-            self.find_string.var.set(highlighted)
-            self.find_string.select_range(0, 'end')
-            self.find_string.icursor('end')
-            self.find_string.focus_force()
+            self.string_to_find.var.set(highlighted)
+            self.string_to_find.select_range(0, 'end')
+            self.string_to_find.icursor('end')
+            self.string_to_find.focus_force()
 
     def _highlight_error(self, lineno):
         self.script_editor.mark_set("insert", f"{lineno}.0")
@@ -489,36 +500,6 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
         self.entry_rows[row_index].goal_type = goal_type
         return True
-
-    def save_all(self, save_project_file=True):
-        """Saves the selected script and (by default) saves the entire AI bundle in the project folder."""
-        if save_project_file:
-            self.save_luabnd_func()  # calls this function again with `save_project_file=False` to reach block below
-        elif self.active_row_index is not None:
-            current_text = self._get_current_text()
-            if current_text:
-                goal = self.get_goal()
-                goal.script = current_text
-                self.script_editor.color_syntax()
-                self.flash_bg(self.script_editor, '#232')
-
-    def compile_selected(self):
-        if self.active_row_index is not None:
-            goal = self.get_goal()
-            goal.script = self._get_current_text()
-            try:
-                goal.compile(x64=self.get_selected_bnd().is_lua_64)
-                if self.allow_decompile:
-                    self.decompile_button['state'] = 'normal'
-                self.script_editor.tag_remove("error", "1.0", "end")
-                self.flash_bg(self.script_editor, '#223')
-                self.script_editor.color_syntax()
-            except LuaError as e:
-                msg = self._parse_compile_error(str(e))
-                self.CustomDialog(
-                    title="Lua Compile Error",
-                    message=f"Error encountered while compiling script for goal {goal.goal_id}: "
-                            f"{goal.goal_name} ({repr(goal.goal_type)}):\n\n{msg}")
 
     def _parse_compile_error(self, error_msg):
         error_msg = error_msg.replace('\n', ' ')
@@ -641,8 +622,45 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if self.active_row_index is not None:
             self.update_script_text()
 
-    def decompile_selected(self):
-        if self.active_row_index is not None:
+    def confirm_selected(self, mimic_click=False, flash_bg=True):
+        """Confirms changes to the selected script in its goal instance. Also re-colors syntax."""
+        if self.confirm_button["state"] == "normal" and self.active_row_index is not None:
+            if mimic_click:
+                self.mimic_click(self.confirm_button)
+            current_text = self._get_current_text()
+            if current_text:
+                goal = self.get_goal()
+                goal.script = current_text
+                self.script_editor.color_syntax()
+                if flash_bg:
+                    self.flash_bg(self.script_editor, '#232')
+
+    def compile_selected(self, mimic_click=False):
+        """Compile script, which is not necessary but can be used to test validity. Confirms changes first."""
+        if self.compile_button["state"] == "normal" and self.active_row_index is not None:
+            self.confirm_selected(mimic_click=True, flash_bg=False)
+            if mimic_click:
+                self.mimic_click(self.compile_button)
+            goal = self.get_goal()
+            goal.script = self._get_current_text()
+            try:
+                goal.compile(x64=self.get_selected_bnd().is_lua_64)
+                if self.allow_decompile:
+                    self.decompile_button['state'] = 'normal'
+                self.script_editor.tag_remove("error", "1.0", "end")
+                self.flash_bg(self.script_editor, '#223')
+            except LuaError as e:
+                msg = self._parse_compile_error(str(e))
+                self.CustomDialog(
+                    title="Lua Compile Error",
+                    message=f"Error encountered while compiling script for goal {goal.goal_id}: "
+                            f"{goal.goal_name} ({repr(goal.goal_type)}):\n\n{msg}")
+
+    def decompile_selected(self, mimic_click=False):
+        """Decompile script from compiled bytecode. Always confirms loss of existing decompiled script first."""
+        if self.decompile_button["state"] == "normal" and self.active_row_index is not None:
+            if mimic_click:
+                self.mimic_click(self.decompile_button)
             goal = self.get_goal()
             if goal.script:
                 if self.CustomDialog(
@@ -654,7 +672,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                     return
             try:
                 goal.decompile()
-                self.save_button['state'] = 'normal'
+                self.confirm_button['state'] = 'normal'
                 self.compile_button['state'] = 'normal'
                 self.write_button['state'] = 'normal'
                 self.update_script_text(goal)
@@ -663,8 +681,12 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                     title="Lua Decompile Error",
                     message=f"Error encountered while decompiling script:\n\n{str(e)}")
 
-    def write_selected(self):
-        if self.active_row_index is not None:
+    def write_selected(self, mimic_click=False):
+        """Write selected script to project directory. Confirms changes first."""
+        if self.write_button["state"] == "normal" and self.active_row_index is not None:
+            self.confirm_selected(mimic_click=True)
+            if mimic_click:
+                self.mimic_click(self.write_button)
             goal = self.get_goal()
             try:
                 goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
@@ -673,8 +695,13 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                     title="Lua Write Error",
                     message=f"Error encountered while writing script:\n\n{str(e)}")
 
-    def reload_selected(self):
-        if self.active_row_index is not None:
+    def reload_selected(self, mimic_click=False):
+        """Reload selected script from project directory. Confirms loss of unsaved changes first."""
+        if self.reload_button["state"] == "normal" and self.active_row_index is not None:
+            if mimic_click:
+                self.mimic_click(self.reload_button)
+            if not self._ignored_unsaved():
+                return
             goal = self.get_goal()
             try:
                 goal.load_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
@@ -749,7 +776,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             goal = self.get_goal(row_index)
             if self.allow_decompile:
                 self.decompile_button['state'] = 'normal' if goal.bytecode else 'disabled'
-            self.save_button['state'] = 'normal' if goal.script else 'disabled'
+            self.confirm_button['state'] = 'normal' if goal.script else 'disabled'
             self.compile_button['state'] = 'normal' if goal.script else 'disabled'
             self.write_button['state'] = 'normal' if goal.script else 'disabled'
             self.reload_button['state'] = 'normal'
@@ -758,7 +785,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             # No entry is selected.
             self.script_editor.delete(1.0, 'end')
             self.decompile_button['state'] = 'disabled'
-            self.save_button['state'] = 'disabled'
+            self.confirm_button['state'] = 'disabled'
             self.compile_button['state'] = 'disabled'
             self.write_button['state'] = 'disabled'
             self.reload_button['state'] = 'disabled'

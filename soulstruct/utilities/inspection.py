@@ -1,4 +1,7 @@
+import logging
 import struct
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def print_binary_as_integers(file_name):
@@ -10,7 +13,7 @@ def print_binary_as_integers(file_name):
             try:
                 integer = struct.unpack('<i', data)
             except struct.error:
-                print('Less than 4 bytes remaining.')
+                _LOGGER.warning("Finished with less than four bytes remaining.")
                 return
             print(f"{offset} | {hex(offset)} | {integer}")
             data = file.read(4)

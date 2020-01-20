@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from ast import literal_eval
 from enum import IntEnum
 from typing import List, TYPE_CHECKING
@@ -14,6 +15,9 @@ from soulstruct.utilities import camel_case_to_spaces, Vector
 if TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps
     from soulstruct.maps.core import MSBEntry
+
+_LOGGER = logging.getLogger(__name__)
+
 
 # TODO: Models are handled automatically. Model entries are auto-generated from all used model names.
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
@@ -476,7 +480,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     new_text=self.e_field_value_edit.var.get(), coord=self.e_coord)
             except ValueError as e:
                 # Entry input restrictions are supposed to prevent this.
-                print(str(e))
+                _LOGGER.error(f"Could not interpret field value. Error: {str(e)}")
                 self.bell()
                 return
             self.change_field_value(self.field_rows[index].field_name, true_value)

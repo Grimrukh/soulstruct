@@ -1,7 +1,9 @@
+import logging
 from io import BytesIO
-import os
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes, PACKAGE_PATH
 from soulstruct.bnd import BND3
+
+_LOGGER = logging.getLogger(__name__)
 
 # TODO: Pickle bundled ParamDef files.
 
@@ -11,11 +13,12 @@ class ParamDefBND(BND3):
     def __init__(self, paramdef_bnd_source=None):
 
         if paramdef_bnd_source is None:
-            print("# WARNING: No ParamDef source was given, so Soulstruct will assume that you want the\n"
-                  "# Dark Souls Remastered version. (Use paramdef_bnd_source='ptd' to get the PTD version.)")
+            _LOGGER.warning(
+                "No ParamDef source was given, so Soulstruct will assume that you want the Dark Souls Remastered "
+                "version. (Use `paramdef_bnd_source='ptde'` to get the PTDE version.)")
             paramdef_bnd_source = 'dsr'
 
-        if paramdef_bnd_source.lower() in {'ptd', 'dsr'}:
+        if paramdef_bnd_source.lower() in {'ptde', 'dsr'}:
             # Use bundled (recommended).
             dcx = '.dcx' if paramdef_bnd_source.lower() == 'dsr' else ''
             paramdef_bnd_source = PACKAGE_PATH('params/resources/paramdef.paramdefbnd' + dcx)
@@ -146,8 +149,9 @@ class ParamDef(object):
             self.fields.append(field)
             if self.fields_by_name is not None:
                 if field.name in self.fields_by_name:
-                    print(f"# WARNING: ParamDef field with name '{field.name}' was unpacked more than once,\n"
-                          f"so you will not be able to access fields by name. (Should NOT happen in any known files!)")
+                    _LOGGER.warning(
+                        f"ParamDef field with name '{field.name}' was unpacked more than once, so you will not be able "
+                        f"to access fields by name. (Should NOT happen in any known files.)")
                 else:
                     self.fields_by_name[field.name] = field
 

@@ -1,7 +1,10 @@
 """ Verbose output that matches EVS language for 'decompiling'. (Does not use IF blocks.) """
+import logging
 import struct
 from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
     get_game_map_name
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def all_numbers(*args):
@@ -27,7 +30,8 @@ def decompile_run_event_instruction(req_args, opt_args, arg_types):
             try:
                 args = process_args(args, arg_types)
             except struct.error:
-                print(f"Event ID: {event_id}, args: {args}, arg_types: {arg_types}")
+                _LOGGER.error(f"Error intepreting event arguments for event ID {event_id}: "
+                              f"args = {args}, arg_types = {arg_types}")
                 raise
         return f"RunEvent({event_id}, slot={slot}, args={args}, arg_types='{arg_types}')"
     elif not opt_args and first_arg == 0:
@@ -51,7 +55,8 @@ def decompile_run_common_event_instruction(req_args, opt_args, arg_types):
             try:
                 args = process_args(args, arg_types)
             except struct.error:
-                print(f"Event ID: {event_id}, args: {args}, arg_types: {arg_types}")
+                _LOGGER.error(f"Error intepreting event arguments for event ID {event_id}: "
+                              f"args = {args}, arg_types = {arg_types}")
                 raise
         return f"RunCommonEvent({event_id}, args={args}, arg_types='{arg_types}')"
     elif not opt_args and first_arg == 0:
@@ -82,7 +87,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
     # Remaining instructions do not accept optional arguments.
 
     if opt_args or arg_types:
-        print(req_args, opt_args)
+        _LOGGER.error(f"Command {instruction_class}[{instruction_index}] cannot use optional arguments: "
+                      f"req_args = {req_args}, opt_args = {opt_args}")
         raise ValueError(f"Command {instruction_class}[{instruction_index}] cannot use optional arguments.")
 
     # Check game module first.

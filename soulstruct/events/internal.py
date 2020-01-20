@@ -1,4 +1,5 @@
 import ast
+import logging
 import struct
 from functools import wraps
 
@@ -9,7 +10,7 @@ __all__ = [
     "ConstantCondition", "get_value_test", "get_enum_name", "get_game_map_name", "boolify",
     "get_write_offset", "get_instruction_args", "get_byte_offset_from_struct",
 ]
-
+_LOGGER = logging.getLogger(__name__)
 
 COMPARISON_NODES = {ast.Eq: 0, ast.NotEq: 1, ast.Gt: 2, ast.Lt: 3, ast.GtE: 4, ast.LtE: 5}
 NEG_COMPARISON_NODES = {ast.Eq: 1, ast.NotEq: 0, ast.Gt: 5, ast.Lt: 4, ast.GtE: 3, ast.LtE: 2}
@@ -277,8 +278,9 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
         file.seek(previous_offset)
         return args_format[1:], list(req_args)
     elif extra_size % 4 != 0:
-        print(f"Instruction {instruction_class}[{instruction_index}] - event arg size {event_args_size}, "
-              f"required size {required_args_size}")
+        _LOGGER.error(
+            f"Error in optional arguments for instruction {instruction_class}[{instruction_index}]: "
+            f"event_args_size = {event_args_size}, required_args_size = {required_args_size}")
         raise ValueError(f"Optional argument size must be a multiple of four bytes. Your EMEVD file seems malformed.")
 
     opt_args = [struct.unpack('<I', file.read(4))[0] for _ in range(opt_arg_count)]

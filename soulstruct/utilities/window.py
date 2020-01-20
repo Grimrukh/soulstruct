@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import tkinter as tk
 from contextlib import contextmanager
 from ctypes import windll
@@ -9,6 +10,7 @@ from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
 __all__ = ['SmartFrame', 'CustomDialog', 'ToolTip']
+_LOGGER = logging.getLogger(__name__)
 
 _GRID_KEYWORDS = {'column', 'columnspan', 'in', 'ipadx', 'ipady', 'padx', 'pady', 'row', 'rowspan', 'sticky'}
 
@@ -19,8 +21,9 @@ if SET_DPI_AWARENESS:
     try:
         windll.shcore.SetProcessDpiAwareness(1)
     except Exception as e:
-        print(f"Could not set DPI awareness of system. GUI font may appear blurry on scaled Windows displays.\n"
-              f"Error: {str(e)}")
+        _LOGGER.warning(
+            f"Could not set DPI awareness of system. GUI font may appear blurry on scaled Windows displays.\n"
+            f"Error: {str(e)}")
 
 
 def bind_to_all_children(widget: tk.BaseWidget, sequence, func, add=None):
@@ -653,14 +656,14 @@ class SmartFrame(tk.Frame):
         button.update_idletasks()
         button.after(100, lambda: button.config(relief=RAISED))
 
-    def flash_bg(self, widget, bg="#522"):
+    def flash_bg(self, widget, bg="#522", ms=100):
         if getattr(widget, "flashing", False):
             return  # already flashing
         old_bg = widget['bg']
         widget['bg'] = bg
         widget.flashing = True
         widget.update_idletasks()
-        widget.after(100, lambda w=widget, o=old_bg: self._end_flash(w, o))
+        widget.after(ms, lambda w=widget, o=old_bg: self._end_flash(w, o))
 
     @staticmethod
     def _end_flash(widget, old_bg):
@@ -678,6 +681,9 @@ class SmartFrame(tk.Frame):
         for widget in widgets:
             widget.bind('<Enter>', lambda _, f=scrollable_widget: _bind_to_mousewheel(f))
             widget.bind('<Leave>', lambda _, f=scrollable_widget: _unbind_to_mousewheel(f))
+
+    def bind_to_all_children(self, sequence, func, add=None):
+        bind_to_all_children(self, sequence=sequence, func=func, add=add)
 
     @staticmethod
     def info_dialog(title, message, **kwargs):

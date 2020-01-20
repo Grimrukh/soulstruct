@@ -1,9 +1,12 @@
+import logging
 import re
 from enum import Enum
 
 from soulstruct.events.internal import get_write_offset
 
 __all__ = ["SET_INSTRUCTION_ARG_TYPES", "to_numeric", "build_numeric"]
+_LOGGER = logging.getLogger(__name__)
+
 
 ELEMENT_MIN_MAX = {
     'b': (-128, 127), 'B': (0, 255),
@@ -91,7 +94,7 @@ def build_numeric(numeric_string: str, event_class):
         header_line = event_lines[0]
         m = EVENT_HEADER_RE.match(header_line)
         if not m:
-            print(f'Event: {repr(text_event)}')
+            _LOGGER.error(f"Error parsing event header line: {header_line}")
             raise NumericEmevdError(lineno, f"Error parsing header line: '{header_line}'.")
         event_id = int(m.group(1))
         restart_type = int(m.group(2))
@@ -120,7 +123,9 @@ def build_numeric(numeric_string: str, event_class):
                 if split_arg_list == ['']:
                     split_arg_list = []
                 if len(raw_args_format) != len(split_arg_list):
-                    print(args_format, raw_args_format, split_arg_list)
+                    _LOGGER.error(
+                        f"Number of args ({len(raw_args_format)}) does not match length of the instruction "
+                        f"format string ('{args_format}') (line {lineno}) (args = {split_arg_list})")
                     raise NumericEmevdError(
                         lineno, f"Number of args ({len(raw_args_format)}) does not match length of the instruction "
                                 f"format string ('{args_format}') (Line {lineno})")
@@ -136,7 +141,11 @@ def build_numeric(numeric_string: str, event_class):
                         if min_value <= parsed_arg <= max_value:
                             args_list.append(parsed_arg)
                         else:
-                            print(instruction_class, instruction_index, args_format, args_list_string)
+                            _LOGGER.error(
+                                f"Argument '{arg}' is not inside the permitted range of data type "
+                                f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (line {lineno}) "
+                                f"(instruction = {instruction_class}[{instruction_index}], "
+                                f"args_format = {args_format}, args_list = {args_list_string})")
                             raise NumericEmevdError(
                                 lineno, f"Argument '{arg}' is not inside the permitted range of data type "
                                         f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})")

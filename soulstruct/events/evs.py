@@ -1,5 +1,6 @@
 import ast
 import importlib
+import logging
 import re
 import sys
 from collections import OrderedDict
@@ -10,8 +11,10 @@ import soulstruct.game_types as gt
 from soulstruct.events.numeric import SET_INSTRUCTION_ARG_TYPES
 from soulstruct.events.internal import *
 
-# TODO: Set up unit tests on vanilla scripts, and some examples that make use of high-level functionality.
+__all__ = ["EvsParser", "EmevdError"]
+_LOGGER = logging.getLogger(__name__)
 
+# TODO: Set up unit tests on vanilla scripts, and some examples that make use of high-level functionality.
 # TODO: Support event function imports from '.common_func', including kwarg names.
 
 
@@ -1201,7 +1204,8 @@ def _import_from(node: ast.ImportFrom, namespace: dict):
                 try:
                     namespace[name_] = getattr(module, name_)
                 except AttributeError as e:
-                    print(all_names)
+                    _LOGGER.error(f"EVS error: could not import {name_} from module {node.module} "
+                                  f"(__all__ = {all_names})")
                     raise EmevdImportFromError(node.lineno, node.module, name_, str(e))
         else:
             as_name = alias.asname if alias.asname is not None else name

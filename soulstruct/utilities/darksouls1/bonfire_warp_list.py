@@ -1,6 +1,11 @@
 """Script that gets and sets the bonfire warp list, which is an array that is hard-coded into the game executable."""
+import logging
 import struct
+
 from .core import get_ds1_executable_and_version
+
+_LOGGER = logging.getLogger(__name__)
+
 
 # These offsets may be wrong if you do not have the latest version of the game.
 # They are unlikely to change in future game updates, so hard-coding them is fairly safe.
@@ -9,7 +14,6 @@ PTDE_DEBUG_WARP_LIST_OFFSET = 15599240
 DSR_WARP_LIST_OFFSET = 28100512
 # no debug version of DSR
 
-# (required_flag, bonfire_entity, location_name_text)
 # The order that these are listed is the order they will appear
 # in the warp menu. The first number is the flag that must be
 # enabled for the bonfire to appear; these flags are enabled by
@@ -18,6 +22,7 @@ DSR_WARP_LIST_OFFSET = 28100512
 # third number is the index of the displayed location name in the
 # PlaceNames FMG text table (in 'menu.msgbnd').
 PTDE_VANILLA_EXE_DATA = [
+    # (required_flag, bonfire_entity, location_name_text),
     (200, 1021960, 2000),  # Firelink Shrine
     (205, 1011961, 2001),  # Sunlight Altar
     (203, 1511960, 2002),  # Anor Londo
@@ -93,7 +98,6 @@ def get_executable_bonfire_warp_data(executable_path, dsr=None, debug=False):
                 f.seek(PTDE_WARP_LIST_OFFSET)
             bonfire_count = len(PTDE_VANILLA_EXE_DATA)
         bonfire_warp_data = []
-        print(f.tell())
         for _ in range(bonfire_count):
             bonfire_warp_data.append(struct.unpack('3i', f.read(12)))
     return bonfire_warp_data
@@ -121,11 +125,10 @@ def edit_executable_bonfire_warp_data(executable_path, bonfire_warp_data, dsr=No
             else:
                 f.seek(PTDE_WARP_LIST_OFFSET)
         f.write(new_warp_list_bytes)
-    print(f"# INFO: DS1 executable {str(executable_path)} modified successfully.")
+    _LOGGER.info(f"Bonfire warp list in DS1 executable {str(executable_path)} modified successfully.")
 
 
 if __name__ == '__main__':
     from soulstruct import PTDE_PATH
-    from soulstruct.utilities.darksouls1.bonfire_warp_list import get_executable_bonfire_warp_data
     bd = get_executable_bonfire_warp_data(PTDE_PATH)
     print(bd)

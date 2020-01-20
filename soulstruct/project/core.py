@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import logging
 import os
 import pickle
 import re
@@ -16,9 +17,9 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional
 
+from soulstruct._config import PTDE_PATH, DSR_PATH
 from soulstruct.ai import DarkSoulsAIScripts
 from soulstruct.bnd import BND
-from soulstruct.config import PTDE_PATH, DSR_PATH
 from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
@@ -43,6 +44,8 @@ except ImportError:
     psutil = None
 
 __all__ = ['SoulstructProject', 'SoulstructProjectWindow']
+_LOGGER = logging.getLogger(__name__)
+
 
 DATA_TYPES = {
     'maps': DarkSoulsMaps,
@@ -96,8 +99,11 @@ class SoulstructProjectWindow(SmartFrame):
                 self.CustomDialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.")
                 raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
 
+        self.toplevel.title("Soulstruct Project Editor: " + Path(project_path).name)
+
         try:
             self.project = SoulstructProject(project_path, with_window=self)
+            _LOGGER.info(f"Opened project: {project_path}")
         except SoulstructProjectError as e:
             self.deiconify()
             self.CustomDialog(title="Project Error", message=word_wrap(str(e), 50) + "\n\nAborting startup.")
@@ -130,7 +136,7 @@ class SoulstructProjectWindow(SmartFrame):
 
         self.toplevel.minsize(700, 500)
         self.alphanumeric_word_boundaries()
-        # self.toplevel.protocol("WM_DELETE_WINDOW", self.confirm_quit)  # TODO: enable on release
+        self.toplevel.protocol("WM_DELETE_WINDOW", self.confirm_quit)  # TODO: enable on release
         self.build()
         self.deiconify()
 
@@ -153,7 +159,7 @@ class SoulstructProjectWindow(SmartFrame):
             self.export_all_button = self.Button(
                 text="Export Entire Project", width=20, bg="#622",
                 tooltip_text="Saves and exports all project data types to the game directory. (Ctrl + Shift + E)",
-                command=self._export_data)
+                command=lambda: self._export_data(export_directory=self.project.game_root))
 
         tab_frames = {tab_name: self.Frame(frame=self.page_tabs, sticky='nsew', row_weights=[1], column_weights=[1])
                       for tab_name in self.TAB_ORDER}
@@ -193,8 +199,7 @@ class SoulstructProjectWindow(SmartFrame):
         self.ai_tab = self.SmartFrame(
             frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
             ai=self.project.AI, script_directory=self.project.project_root / "ai_scripts",
-            game_root=self.project.game_root, save_luabnd_func=lambda: self._save_data("ai"),
-            allow_decompile=self.project.game_name == "Dark Souls Remastered",
+            game_root=self.project.game_root, allow_decompile=self.project.game_name == "Dark Souls Remastered",
             linker=self.linker, sticky='nsew')
         self.ai_tab.bind("<Visibility>", self._update_banner)
 
@@ -253,6 +258,8 @@ class SoulstructProjectWindow(SmartFrame):
         file_menu.add_separator()
         file_menu.add_command(label="Set as Default Project", foreground='#FFF',
                               command=self._set_as_default_project)
+        file_menu.add_command(label="Clear Default Project", foreground='#FFF',
+                              command=self._clear_default_project)
         file_menu.add_separator()
         file_menu.add_command(label="Quit", foreground='#FFF', command=self.confirm_quit)
         top_menu.add_cascade(label="File", menu=file_menu)
@@ -343,11 +350,12 @@ class SoulstructProjectWindow(SmartFrame):
             return  # nothing to save
         elif data_type == "events":
             self.events_tab.save_selected_evs()
+            if mimic_click:
+                self.mimic_click(self.save_tab_button)
             return
-        elif data_type == "ai":
-            self.ai_tab.save_all(save_project_file=False)
-            self.mimic_click(self.ai_tab.save_button)
-            # doesn't return
+        elif data_type == "ai" and self.ai_tab.confirm_button["state"] == "normal":
+            self.ai_tab.confirm_selected(mimic_click=mimic_click)
+            # doesn't return here
         # TODO: progress bar
         if mimic_click:
             if data_type is None:
@@ -366,7 +374,11 @@ class SoulstructProjectWindow(SmartFrame):
                 return  # Abort export.
         if data_type == "events":
             # Specifying 'events' here means the selected script only.
+            self.events_tab.save_selected_evs()
+            self.mimic_click(self.save_tab_button)
             self.events_tab.export_selected_evs(export_directory)
+            if mimic_click:
+                self.mimic_click(self.export_tab_button)
             return
         # TODO: progress bar
         if mimic_click:
@@ -421,8 +433,13 @@ class SoulstructProjectWindow(SmartFrame):
 
     def _set_as_default_project(self):
         """Set this project directory as the Soulstruct default in `config.py`."""
-        from soulstruct import SET_CONFIG
+        from soulstruct._config import SET_CONFIG
         SET_CONFIG(default_project_path=str(self.project.project_root))
+
+    @staticmethod
+    def _clear_default_project():
+        from soulstruct._config import SET_CONFIG
+        SET_CONFIG(default_project_path='')
 
     def _choose_directory(self, initial_dir=None, **kwargs):
         if initial_dir is None:
@@ -437,8 +454,22 @@ class SoulstructProjectWindow(SmartFrame):
             data_name = event.widget.DATA_NAME
         except AttributeError:
             raise AttributeError(f"No `DATA_NAME` for widget: {type(event.widget)}")
-        self.save_tab_button.var.set(f"Save {data_name}")
-        self.export_tab_button.var.set(f"Export {data_name}")
+        if data_name is None:
+            self.save_tab_button.var.set(f"Save")
+            self.export_tab_button.var.set(f"Export")
+            self.save_tab_button["state"] = "disabled"
+            self.export_tab_button["state"] = "disabled"
+        else:
+            self.save_all_button["state"] = "normal"
+            self.save_tab_button["state"] = "normal"
+            self.export_all_button["state"] = "normal"
+            self.export_tab_button["state"] = "normal"
+            if data_name == "Events":
+                self.save_tab_button.var.set(f"Save Event Script")
+                self.export_tab_button.var.set(f"Export Event Script")
+            else:
+                self.save_tab_button.var.set(f"Save {data_name}")
+                self.export_tab_button.var.set(f"Export {data_name}")
 
 
 class SoulstructProject(object):
@@ -596,6 +627,7 @@ class SoulstructProject(object):
         if data_type is None:
             for data_type in DATA_TYPES:
                 self.export_data(data_type, export_directory)
+            return
         data_type = data_type.lower()
         if data_type not in DATA_TYPES:
             raise ValueError(f"Data type to export should be one of {DATA_TYPES} (or None), not {data_type}.")
@@ -621,6 +653,7 @@ class SoulstructProject(object):
                        output_directory=export_directory,
                        input_type="evs.py",
                        input_directory=self.project_root / "events")
+        _LOGGER.info("Dark Souls event files (EMEVD) written successfully.")
 
     def restore_backup(self, target=None):
         """Restores '.bak' files, deleting whatever they would replace."""
@@ -655,12 +688,12 @@ class SoulstructProject(object):
         if debug and not self.game_name == "Dark Souls Prepare to Die Edition":
             raise SoulstructProjectError(f"Can only launch debug version of Dark Souls PTDE, not {self.game_name}.")
         if try_force_quit_first:
-            self.force_quit_game()
+            self.force_quit_game(including_debug=debug)
         self._check_steam_appid_file(self.game_root, self.game_name)
         if debug:
             game_exe_path = self.game_exe_path.parent / (self.game_exe_path.stem + "_DEBUG.exe")
             if game_exe_path.name in (p.name() for p in psutil.process_iter()):
-                print(f"# {game_exe_path.name} is already running.")
+                _LOGGER.warning(f"Cannot launch debug game: {game_exe_path.name} is already running.")
                 return
         else:
             game_exe_path = self.game_exe_path
@@ -669,7 +702,7 @@ class SoulstructProject(object):
             raise SoulstructProjectError(f"Could not find game executable: {str(game_exe_path)}")
 
         if self.game_exe_path.name in (p.name() for p in psutil.process_iter()):
-            print(f"# {self.game_exe_path.name} is already running.")
+            _LOGGER.warning(f"Cannot launch game: {self.game_exe_path.name} is already running.")
             return
 
         game_exe_str = str(game_exe_path)
@@ -680,8 +713,10 @@ class SoulstructProject(object):
             # Blocks Python (including window) until game is closed.
             subprocess.run(game_exe_str)
 
-    def force_quit_game(self):
+    def force_quit_game(self, including_debug=False):
         os.system(f"TASKKILL /F /IM {self.game_exe_path.name}")
+        if including_debug:
+            os.system(f"TASKKILL /F /IM {self.game_exe_path.stem + '_DEBUG.exe'}")
 
     def launch_gadget(self, threaded=True):
         if self.game_name == "Dark Souls Prepare to Die Edition":
@@ -693,7 +728,7 @@ class SoulstructProject(object):
         if not gadget_path.is_file():
             raise SoulstructProjectError(f"Could not find DS Gadget file: {str(gadget_path)}")
         if gadget_path.name in (p.name() for p in psutil.process_iter()):
-            print(f"# {gadget_path.name} is already running.")
+            _LOGGER.warning(f"Cannot launch Gadget: {gadget_path.name} is already running.")
             return
         if threaded:
             gadget_thread = threading.Thread(target=subprocess.run, args=(str(gadget_path),))

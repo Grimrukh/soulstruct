@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from abc import ABC
 from enum import IntEnum
 from typing import List, Optional, TYPE_CHECKING
@@ -10,6 +11,8 @@ from soulstruct.utilities.window import SmartFrame, ToolTip
 
 if TYPE_CHECKING:
     from soulstruct.project.links import WindowLinker
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class SoulstructBaseEditor(SmartFrame, ABC):
@@ -1336,7 +1339,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 true_value = self.field_rows[index].confirm_edit(new_text=self.e_field_value_edit.var.get())
             except ValueError as e:
                 # Entry input restrictions are supposed to prevent this.
-                print(f"# ERROR: could not interpret field value: {str(e)}")
+                _LOGGER.error(f"Could not interpret field value. Error: {str(e)}")
                 self.bell()
                 return
             if true_value is not None:

@@ -574,7 +574,7 @@ class MSBCollision(BaseMSBPart):
             "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
             "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
             "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
-            "different area (a 'silent area transition') and have it enabled for collision that are further away, "
+            "different area (a 'silent area transition') and have it enabled for collisions that are further away, "
             "which produces a 'delayed area banner' effect.\n\n"
             ""
             "Do NOT enable this for two adjacent collision with different area names, or moving back and forth between "

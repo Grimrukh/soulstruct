@@ -1,8 +1,13 @@
+import logging
 from pathlib import Path
 
 from soulstruct.bnd import BND
 from soulstruct.ai.core import LuaBND
 from soulstruct.utilities import BiDict
+
+__all__ = ["DarkSoulsAIScripts", "DARK_SOULS_AI_BND_NAMES"]
+_LOGGER = logging.getLogger(__name__)
+
 
 DARK_SOULS_AI_BND_NAMES = BiDict(
     ('aiCommon', 'Common'),
@@ -113,14 +118,14 @@ class DarkSoulsAIScripts(object):
             self._data[luabnd_name].write(luabnd_path)
         event_common_path = script_directory / self.event_common_bnd.bnd_path.name
         self.event_common_bnd.write(event_common_path)
-        print("\n# INFO: --------> Dark Souls AI script (LuaBND) files saved successfully.")
+        _LOGGER.info("Dark Souls AI script files (LuaBND) written successfully.")
 
     def compile_all(self, output_directory=None, including_other=False):
         for bnd_name, luabnd in self._data.items():
-            print(f"# INFO: Compiling Lua scripts in {bnd_name}...")
+            _LOGGER.info(f"Compiling Lua scripts in {bnd_name}...")
             luabnd.compile_all(output_directory=output_directory, including_other=including_other)
 
     def decompile_all(self, output_directory=None, including_other=False):
         for bnd_name, luabnd in self._data.items():
-            print(f"# INFO: Decompiling Lua scripts in {bnd_name}...")
+            _LOGGER.info(f"Decompiling Lua scripts in {bnd_name}...")
             luabnd.decompile_all(output_directory=output_directory, including_other=including_other)
