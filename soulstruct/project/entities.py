@@ -252,7 +252,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         for entry_id, entry in entries_to_display:
             try:
                 self.entry_rows[row].update_entry(entry_id, entry.name, entry.description)
-            except KeyError:
+            except IndexError:
                 # Create new rows as needed.
                 with self.set_master(self.entry_i_frame):
                     self.entry_rows.append(self.EntryRow(
