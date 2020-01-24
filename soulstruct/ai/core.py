@@ -249,6 +249,22 @@ class LuaBND(object):
                         else:
                             raise LuaError(f"Could not compile script {lua_entry.script_name} and no bytecode exists "
                                            f"to use instead. BND update aborted (it may have been partially updated).")
+                    else:
+                        continue
+                elif lua_entry.bytecode:
+                    # Fall back to compiled bytecode if it exists; otherwise, skip (e.g. 'Runaway' and 'Hide' goals).
+                    bnd_path = self._bnd_path_parent + f"\\{lua_entry.script_name}"
+                    if bnd_path in self.bnd.entries_by_path:
+                        self.bnd.entries_by_path[bnd_path].data = lua_entry.bytecode
+                    else:
+                        # Get next ID below 1000000 (GNL).
+                        new_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
+                        new_entry = BNDEntry(data=lua_entry.bytecode, entry_id=new_id, path=bnd_path)
+                        self.bnd.add_entry(new_entry)
+                        _LOGGER.info(f"New compiled bytecode added to LuaBND[{new_id}]: {lua_entry.script_name}")
+                elif (not lua_entry.goal_name.endswith("Runaway") and not lua_entry.goal_name.endswith("Hide") and
+                        lua_entry.goal_name not in DS1_GOALS_WITH_NO_SCRIPT):
+                    _LOGGER.warning(f"Skipping unexpected goal with no script or bytecode: {lua_entry.goal_name}")
 
     def write(self, luabnd_path=None, use_decompiled_goals=True, use_decompiled_other=False):
         self.update_bnd(use_decompiled_goals=use_decompiled_goals, use_decompiled_other=use_decompiled_other)
@@ -689,3 +705,34 @@ class LuaGNL(object):
             use_struct_64 = struct.unpack('i', gnl_buffer.read(4))[0] == 0
         gnl_buffer.seek(0)
         return big_endian, use_struct_64
+
+
+DS1_GOALS_WITH_NO_SCRIPT = (
+    "Default_Logic",
+    "Stay",
+    "BackToHome",
+    "Wait",
+    "TurnAround",
+    "LeaveTarget",
+    "SidewayMove",
+    "KeepDist",
+    "MoveToSomewhere",
+    "SpinStep",
+    "LiftOff",
+    "Landing_Move",
+    "Landing_Landing",
+    "KeepDistYAxis",
+    "Guard",
+    "GuardBreakAttack",
+    "ApproachStep",
+    "DashAttack",
+    "DashAttack_Attack",
+    "Parry",
+    "SpecialTurn",
+    "ObjActTest",
+    "ComboAttack180",
+    "ComboRepeat_SuccessAngle180",
+    "GuardBreakTunable",
+    # "*Runaway",
+    # "*Hide",
+)

@@ -1,4 +1,4 @@
-from soulstruct.esd._structs import get_esd_class
+from soulstruct.esd.core import get_esd_class
 
 __all__ = ['ESD']
 

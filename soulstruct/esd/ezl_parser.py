@@ -1,10 +1,14 @@
 import ast
-from binascii import hexlify
+import logging
 import struct
+from binascii import hexlify
+
 from soulstruct.utilities.core import read_chars_from_buffer
-from soulstruct.esd.functions import TEST_FUNCTIONS
+
+from .functions import TEST_FUNCTIONS
 
 __all__ = ['decompile', 'FUNCTION_ARG_BYTES_BY_COUNT', 'OPERATORS_BY_NODE', 'CLEAR_REGISTERS', 'SET_INTERNAL_SYMBOLS']
+_LOGGER = logging.getLogger(__name__)
 
 _REGISTERS = [''] * 8
 _SHOW_INTERNAL_SYMBOLS = False
@@ -110,7 +114,7 @@ def decompile(byte_sequence, esd_type):
     if esd_type not in {'CHR', 'TALK'}:
         raise ValueError("esd_type must be 'CHR' or 'TALK'.")
 
-    # print('Unparsed:', nice_hex_bytes(byte_sequence))
+    # _LOGGER.debug(f"Unparsed: {nice_hex_bytes(byte_sequence)}")
 
     output = []  # Used as a stack.
 
@@ -167,7 +171,7 @@ def decompile(byte_sequence, esd_type):
             try:
                 string = read_chars_from_buffer(byte_sequence, offset=i + 1, encoding='utf-16le')
             except ValueError:
-                print(byte_sequence)
+                _LOGGER.error(f"Could not interpret ESD string from bytes: {byte_sequence}")
                 raise
             output.append(repr(string))
             i += 2 * len(string) + 3  # includes \xa5 and null termination
@@ -214,8 +218,9 @@ def decompile(byte_sequence, esd_type):
             i += 1
 
         else:
-            print('Current output:', output)
-            raise ValueError(rf"Unknown EZL byte encountered: {b}")
+            msg = f"Unknown EZL byte encountered: {b}, after output {output}"
+            _LOGGER.error(msg)
+            raise ValueError(msg)
 
-    # print('Parsed:', output)
+    # _LOGGER.debug(f"Parsed: {output}")
     return ''.join(str(o) for o in output)

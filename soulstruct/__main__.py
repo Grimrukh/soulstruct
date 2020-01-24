@@ -1,8 +1,5 @@
 """SOULSTRUCT
 
-TODO:
-    - ESD state indices are wrong (or at least printing to esd.py wrong).
-
 Command Line Usage:
 
 python -m soulstruct [source]
@@ -155,7 +152,7 @@ def soulstruct_main(ss_args):
 try:
     launch_interactive = soulstruct_main(parser.parse_args())
 except Exception as e:
-    logging.exception(f"Error occurred in soulstruct.__main__: {e}")
+    _LOGGER.exception(f"Error occurred in soulstruct.__main__: {e}")
     launch_interactive = False
 
 

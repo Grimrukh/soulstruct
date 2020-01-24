@@ -1,12 +1,21 @@
 from functools import wraps
 
+from soulstruct.ai import DarkSoulsAIScripts
 from soulstruct.core import SoulstructError
+from soulstruct.maps import DarkSoulsMaps
+from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
+from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import word_wrap
 
-__all__ = ["SoulstructProjectError", "error_as_dialog", "ActionHistory", "bind_events"]
+__all__ = ["SoulstructProjectError", "RestoreBackupError", "error_as_dialog",
+           "ActionHistory", "bind_events", "data_type_caps", "DATA_TYPES"]
 
 
 class SoulstructProjectError(SoulstructError):
+    pass
+
+
+class RestoreBackupError(SoulstructError):
     pass
 
 
@@ -63,3 +72,20 @@ class ActionHistory(object):
             return True
         else:
             return False
+
+
+def data_type_caps(data_type):
+    if data_type.lower() == "ai":
+        return "AI"
+    return data_type.capitalize()
+
+
+DATA_TYPES = {
+    'maps': DarkSoulsMaps,
+    'params': DarkSoulsGameParameters,
+    'lighting': DarkSoulsLightingParameters,
+    'text': DarkSoulsText,
+    'events': None,  # modified via EVS event script files
+    'ai': DarkSoulsAIScripts,
+    'talk': None,  # modified via ESP state machine script files
+}

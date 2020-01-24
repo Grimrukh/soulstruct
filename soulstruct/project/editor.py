@@ -232,7 +232,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
             vertical_scrollbar=True, horizontal_scrollbar=True, sticky='nsew',
             highlightthickness=0, yscrollincrement=self.EntryRow.ENTRY_ROW_HEIGHT, bg=self.ENTRY_CANVAS_BG,
             row_weights=[1], column_weights=[1])
-        self.entry_i_frame = self.Frame(frame=self.entry_canvas, sticky='ew')
+        self.entry_i_frame = self.Frame(frame=self.entry_canvas, sticky='ew', column_weights=[1, 1])
         self.entry_i_frame.bind("<Configure>", lambda e, c=self.entry_canvas: self.reset_canvas_scroll_region(c))
         self.entry_canvas.create_window(0, 0, window=self.entry_i_frame, anchor='nw')
 
@@ -416,8 +416,6 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
             self.entry_rows[remaining_row].hide()
 
-        self.entry_i_frame.columnconfigure(0, weight=1)
-        self.entry_i_frame.columnconfigure(1, weight=1)
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)
         self._refresh_buttons()

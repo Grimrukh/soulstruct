@@ -20,7 +20,7 @@ class AIScriptTextEditor(tk.Text):
         "function_def": ('#AABBFF', r"function [\w\d_]+", (0, 0)),
         "lua_word": ('#FFBB99', r"(^| )(function|local|if|then|elseif|else|for|while|end|return|and|or|"
                                 r"not|do|break|repeat|nil|until)(?=($| ))", (0, 0)),
-        "lua_bool": ('#FFBB99', r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (0, 0)),
+        "lua_bool": ('#FFBB99', r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (1, 0)),
         "number_literal": ('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
         "function_call": ('#C0E665', r"(^|[ ,=({\[:])[\w\d_]+(?=[(])", (0, 0)),
     }
@@ -280,15 +280,15 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     entry_rows: List[SoulstructAIEditor.EntryRow]
 
-    def __init__(self, ai: DarkSoulsAIScripts, linker, script_directory, game_root, allow_decompile,
-                 master=None, toplevel=False):
+    def __init__(self, ai: DarkSoulsAIScripts, script_directory, game_root, allow_decompile, global_map_choice_func,
+                 linker, master=None, toplevel=False):
         self.AI = ai
         self.script_directory = Path(script_directory)
+        self.global_map_choice_func = global_map_choice_func
         self.game_root = Path(game_root)
         self.allow_decompile = allow_decompile
         self.selected_bnd_name = ""
 
-        self.e_coord = None
         self.bnd_choice = None
         self.decompile_all_button = None
         self.write_all_button = None
@@ -310,10 +310,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
-                bnd_display_names = [f"{camel_case_to_spaces(v)} [{k}]" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
+                bnd_display_names = [f"{k} [{camel_case_to_spaces(v)}]" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
                 self.bnd_choice = self.Combobox(
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=(10, 30)).var
+                    font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=(10, 30))
                 self.selected_bnd_name = self._get_bnd_choice_name()
                 self.decompile_all_button = self.Button(
                     text="Decompile All" if self.allow_decompile else "Cannot Decompile", font_size=10,
@@ -384,7 +384,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
         self.script_editor = self.CustomWidget(
             editor_i_frame, custom_widget_class=AIScriptTextEditor, set_style_defaults=('text', 'cursor'),
-            width=400, height=50, wrap='word', bg='#232323', font=("Consolas", 10), row=0)
+            state="disabled", width=400, height=50, wrap='word', bg='#232323', font=("Consolas", 10), row=0)
         vertical_scrollbar_w = self.Scrollbar(
             orient='vertical', command=self.script_editor.yview, row=0, column=1, sticky='ns')
         self.script_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
@@ -773,6 +773,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.entry_rows[row_index].active = True
             if set_focus_to_text:
                 self.entry_rows[row_index].text_label.focus_set()
+            self.script_editor["state"] = "normal"
             goal = self.get_goal(row_index)
             if self.allow_decompile:
                 self.decompile_button['state'] = 'normal' if goal.bytecode else 'disabled'
@@ -784,6 +785,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         else:
             # No entry is selected.
             self.script_editor.delete(1.0, 'end')
+            self.script_editor["state"] = "disabled"
             self.decompile_button['state'] = 'disabled'
             self.confirm_button['state'] = 'disabled'
             self.compile_button['state'] = 'disabled'
@@ -805,7 +807,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _get_bnd_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
-        return self.bnd_choice.get().split(' [')[0].replace(' ', '')
+        return self.bnd_choice.var.get().split(' [')[1][:-1].replace(' ', '')
 
     def get_goal(self, row_index=None):
         # print("Goal", self.selected_bnd_name)
@@ -816,9 +818,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def _on_bnd_choice(self, _=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
-            self.bnd_choice.set(f"{camel_case_to_spaces(self.selected_bnd_name)} ({self.selected_bnd_name})")
+            self.bnd_choice.var.set(f"{self.selected_bnd_name} [{camel_case_to_spaces(self.selected_bnd_name)}]")
             return
         self.selected_bnd_name = self._get_bnd_choice_name()
+        if self.global_map_choice_func:
+            self.global_map_choice_func(self.bnd_choice.var.get().split(' [')[0])
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)

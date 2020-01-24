@@ -1,3 +1,4 @@
+import copy
 import logging
 import re
 import zlib
@@ -81,7 +82,7 @@ class BaseBND(object):
         """Load a BND.
 
         Source can be a .*bnd file, an unpacked BND directory (or the 'bnd_manifest.txt' file inside it), raw bytes,
-        or an open data stream.
+        or an open data stream (or None to create an empty BND).
 
         If an entry class is given, all entry data will be passed to that class to create instances of it. The paths and
         IDs of the entries will be maintained in self.binary_entries, but the data of these entries will be overwritten
@@ -240,6 +241,11 @@ class BaseBND(object):
         self.binary_entries.pop(index)
         self._entries.pop(index)
 
+    def clear_entries(self):
+        """Remove all entries from the BND."""
+        self._entries = []
+        self.binary_entries = []
+
     @property
     def bnd_manifest_header(self):
         raise NotImplementedError
@@ -308,6 +314,9 @@ class BaseBND(object):
     
     def __len__(self):
         return len(self._entries)
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     @staticmethod
     def read_bnd_setting(line: bytes, setting_name: str, assert_type=None, assert_values=None):

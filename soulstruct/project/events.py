@@ -37,10 +37,8 @@ class EvsTextEditor(tk.Text):
         "named_arg": TagData('#AAFFFF', r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
         "func_arg_name": TagData('#FFCCAA', r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
         "event_arg_name": TagData('#FFAAFF', r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
-        "number_literal": TagData('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
+        "number_literal": TagData('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
     }
-
-    re.compile(r"(?<=[,(])[ ]+\w[\w\d.]+[ ]+(?=[,)])")
 
     def __init__(self, *args, **kwargs):
         """Text widget that generates a "<CursorChange>" event when appropriate for event bindings and can highlight
@@ -138,16 +136,17 @@ class SoulstructEventEditor(SmartFrame):
     TEXT_BG = '#232323'
     TEXT_BOX_WIDTH = 300
 
-    def __init__(self, evs_directory, game_root, dcx, master=None, toplevel=False):
+    def __init__(self, evs_directory, game_root, global_map_choice_func, dcx, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct EMEVD Manager")
         self.evs_directory = Path(evs_directory)
         self.game_root = Path(game_root)
+        self.global_map_choice_func = global_map_choice_func
         self.dcx = dcx
         self.evs_file_paths = {}
         self.evs_text = {}
         self.selected_evs = None
 
-        self.evs_choice = None
+        self.map_choice = None
         self.line_number = None
         self.go_to_line = None
         self.string_to_find = None
@@ -165,13 +164,15 @@ class SoulstructEventEditor(SmartFrame):
         with self.set_master(sticky='nsew', row_weights=[0, 1, 0, 0], column_weights=[1], auto_rows=0):
             self.build()
 
+        self.refresh()
+
     def build(self):
 
         with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
-            self.evs_choice = self.Combobox(
-                values=(), initial_value="", width=30,
-                on_select_function=self._on_evs_choice,
-                label='Script:', label_font_size=12, label_position='left', font=('Segoe UI', 12), padx=10, pady=10)
+            self.map_choice = self.Combobox(
+                values=(), initial_value="", width=35,
+                on_select_function=self._on_map_choice, sticky='w',
+                label='Map:', label_font_size=12, label_position='left', font=('Segoe UI', 12), padx=10, pady=10)
             self.line_number = self.Label(
                 text="Line: None", padx=10, width=10, fg='#CCF', anchor='w', sticky='w').var
             self.go_to_line = self.Entry(label="Go to Line:", padx=5, width=6, sticky='w')
@@ -214,14 +215,12 @@ class SoulstructEventEditor(SmartFrame):
             self.Button(
                 text="Reload & Export", font_size=10, width=15, padx=5, bg='#822', command=self.reload_and_export)
 
-        self.refresh()
-
     def refresh(self):
-        map_options = [f"{_get_verbose_map_name(m)} [{m}]" for m in self.evs_file_paths]
-        self.evs_choice["values"] = map_options
+        map_options = [f"{m} [{_get_verbose_map_name(m)}]" for m in self.evs_file_paths]
+        self.map_choice["values"] = map_options
         if map_options:
-            self.evs_choice.var.set(map_options[0])
-            self.selected_evs = self.evs_choice.get().split(' [')[1][:-1]
+            self.map_choice.var.set(map_options[0])
+            self.selected_evs = self.map_choice.get().split(' [')[0]
             self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
@@ -281,12 +280,14 @@ class SoulstructEventEditor(SmartFrame):
                 return False
         return True
 
-    def _on_evs_choice(self, _):
+    def _on_map_choice(self, _):
         """Check if current text has changed (and warn), then switch to other text."""
         if not self._ignored_unsaved():
-            self.evs_choice.var.set(f"{_get_verbose_map_name(self.selected_evs)} [{self.selected_evs}]")  # keep old
+            self.map_choice.var.set(f"{self.selected_evs} [{_get_verbose_map_name(self.selected_evs)}]")  # keep old
             return
-        self.selected_evs = self.evs_choice.var.get().split(' [')[1][:-1]
+        self.selected_evs = self.map_choice.var.get().split(' [')[0]
+        if self.global_map_choice_func:
+            self.global_map_choice_func(self.selected_evs)
         self.text_editor.delete(1.0, 'end')
         self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
         self.text_editor.mark_set("insert", "1.0")

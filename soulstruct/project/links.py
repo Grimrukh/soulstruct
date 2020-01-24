@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from soulstruct.maps import MAP_ENTRY_TYPES
 
 if TYPE_CHECKING:
-    from soulstruct.project.core import SoulstructProjectWindow
+    from soulstruct.project import SoulstructProjectWindow
     from soulstruct.maps import MSB
 
 

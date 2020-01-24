@@ -14,7 +14,7 @@ def GET_CONFIG():
     else:
         from . import config
     try:
-        return config.DSR_PATH, config.PTDE_PATH, config.DEFAULT_PROJECT_PATH
+        return config.PTDE_PATH, config.DSR_PATH, config.DEFAULT_PROJECT_PATH
     except AttributeError as e:
         raise ImportError(str(e))
 

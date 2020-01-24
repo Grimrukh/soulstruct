@@ -1,5 +1,6 @@
-import os
 import re
+
+from soulstruct.utilities import PACKAGE_PATH
 
 __all__ = ['COMMANDS', 'TEST_FUNCTIONS']
 
@@ -37,7 +38,7 @@ def _parse_function_def(i_: int, line: str):
     return name_, tuple(args_), tuple(type_hints_)
 
 
-_stubs_path = os.path.join(os.path.dirname(__file__), 'functions.pyi')
+_stubs_path = PACKAGE_PATH("esd/functions.pyi")
 with open(_stubs_path) as f:
     _stub_lines = f.readlines()
 i = 0

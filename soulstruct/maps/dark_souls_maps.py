@@ -12,7 +12,7 @@ DARK_SOULS_MAP_NAMES = BiDict(
     ('m10_01_00_00', 'UndeadBurg'),
     ('m10_02_00_00', 'FirelinkShrine'),
     ('m11_00_00_00', 'PaintedWorld'),
-    ('m12_00_00_01', 'DarkrootGarden'),
+    ('m12_00_00_01', 'DarkrootGarden'),  # note the trailing 1, as in `m12_00_00_01.msb`, the DLC version
     ('m12_01_00_00', 'Oolacile'),
     ('m13_00_00_00', 'Catacombs'),
     ('m13_01_00_00', 'TombOfTheGiants'),

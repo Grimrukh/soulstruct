@@ -54,7 +54,7 @@ class DarkSoulsAIScripts(object):
     UndeadAsylum: LuaBND
 
     def __init__(self, script_directory=None):
-        """Unpack Dark Souls MSB AI LuaBND scripts into one single modifiable structure.
+        """Unpack Dark Souls AI LuaBND scripts into one single modifiable structure.
 
         Note that the vanilla game uses pre-compiled Lua bytecode for a minor efficiency upgrade, but uncompiled Lua
         scripts work just as well. Use the `.decompile_all()` method to generate them from any compiled scripts.

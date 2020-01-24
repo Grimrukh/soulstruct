@@ -186,9 +186,10 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     entry_rows: List[SoulstructEntityEditor.EntryRow]
 
-    def __init__(self, maps: DarkSoulsMaps, evs_directory, linker, master=None, toplevel=False):
+    def __init__(self, maps: DarkSoulsMaps, evs_directory, global_map_choice_func, linker, master=None, toplevel=False):
         self.Maps = maps
         self.map_choice = None
+        self.global_map_choice_func = global_map_choice_func
         self.evs_directory = Path(evs_directory)
         self._e_entry_description_edit = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
@@ -197,10 +198,10 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
-                map_display_names = [f"{camel_case_to_spaces(v)} [{k}]" for k, v in DARK_SOULS_MAP_NAMES.items()]
+                map_display_names = [f"{k} [{camel_case_to_spaces(v)}]" for k, v in DARK_SOULS_MAP_NAMES.items()]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
-                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10).var
+                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10)
                 self.Button(text="Generate EVS Constants", font_size=10, width=25, padx=10,
                             command=self._refresh_entities_module)
                 self.Button(text="Replace EVS IDs", font_size=10, width=25, padx=10,
@@ -355,9 +356,11 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     def _get_map_choice_name(self):
         """Just removes parenthetical and returns to CamelCase."""
-        return self.map_choice.get().split(' [')[0].replace(' ', '')
+        return self.map_choice.var.get().split(' [')[1][:-1].replace(' ', '')
 
     def _on_map_choice(self, _=None):
+        if self.global_map_choice_func:
+            self.global_map_choice_func(self.map_choice.var.get().split(' [')[0])
         self.select_entry_row_index(None)
         self.refresh_entries()
 
