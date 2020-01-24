@@ -6,6 +6,8 @@ dialogs and menus. Use this to test if the state machine behaves as expected wit
 
 Currently works only for DS1 'talk' ESD files (both PTDE and DSR).
 """
+from queue import Queue
+
 import soulstruct.enums.darksouls1 as enums
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
@@ -15,54 +17,12 @@ from soulstruct.utilities.core import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
 
-class GameState(object):
-    def __init__(self):
-        self.one_line_help_message = None
-        self.talk_list = None
-        self.menus_open = []
-        self.disable_talk_period_elapsed = False
-        self.conversation = None
-        self.level_up_menu_open = None
-        # TODO: other menus with specific launch commands
-
-
-class EntityState(object):
-    def __init__(self):
-        self.update_distance = 0  # TODO: unclear default
-        self.bonfire_level = {0: 0}
-        self.bonfire_state = 0  # TODO: both 0 and 1 are used as arguments. I think 0 is enabled and 1 is disabled.
-        self.is_dead = False
-        self.is_disabled = False
-        self.enemies_nearby = False
-        self.hp_percent = 100
-
-
-class PlayerState(object):
-    def __init__(self):
-        self.is_dead = False
-        self.is_client = False
-        self.distance = 20  # seems like a sensible starting default
-        self.y_distance = 0  # seems like a sensible starting default
-        self.facing_angle = 0
-        self.talking_to_entity = False
-        self.talking_to_other = False
-        self.character_type = enums.CharacterType.Hollow  # seems like a sensible default
-        self.has_equipment = []
-        self.wearing_equipment = []
-
-    def build(self, window: SmartFrame):
-        window.is_dead = self._create_button(window, "is_dead", "Is Dead")
-        window.is_client = self._create_button(window, "is_client", "Is Client")
-        window.talking_to_entity = self._create_button(window, "talking_to_entity", "Talking to Entity")
-        window.talking_to_other = self._create_button(window, "talking_to_other", "Talking to Other")
-        window.character_type = self._create_combobox(window, "character_type", "Character Type", enums.CharacterType)
-        window.distance = self._create_entry(window, "distance", "Distance")
-        window.y_distance = self._create_entry(window, "y_distance", "Y Distance")
+class BaseState(object):
 
     def _create_button(self, window, field, verbose):
         button = window.Button(
             text="{verbose}: {value}".format(verbose=verbose, value=getattr(self, field)),
-            command=lambda: self._toggle_button(window, field))
+            width=20, command=lambda: self._toggle_button(window, field))
         button.verbose_fmt = verbose
         return button
 
@@ -72,9 +32,9 @@ class PlayerState(object):
                                                                      value=getattr(self, field))
 
     def _create_combobox(self, window, field, verbose, enum):
-        values = [e.value for e in enum]
+        values = [camel_case_to_spaces(e.name) for e in enum]
         combobox = window.Combobox(
-            label=verbose, values=values, initial_value=getattr(self, field),
+            label=verbose, values=values, initial_value=camel_case_to_spaces(getattr(self, field).name),
             on_select_function=lambda e: self._set_combobox(e, field))
         combobox.enum = enum
         return combobox
@@ -85,10 +45,11 @@ class PlayerState(object):
         setattr(self, field, enum)
 
     def _create_entry(self, window, field, verbose):
-        entry = window.Entry(label=verbose, initial_text=getattr(self, field))
-        entry.bind("<Return>", self._update_entry)
+        entry = window.Entry(label=verbose + ":", initial_text=getattr(self, field), width=6, sticky="e")
+        entry.bind("<Return>", lambda e: self._update_entry(e, field))
+        return entry
 
-    def _update_entry(self, event):
+    def _update_entry(self, event, field):
         entry = event.widget
         new_text = entry.var.get()
         try:
@@ -98,12 +59,128 @@ class PlayerState(object):
                 old_bg = entry["bg"]
                 entry["bg"] = "#422"
                 entry.after(100, lambda: self._stop_flash(entry, old_bg))
+        else:
+            setattr(self, field, new_value)
 
     @staticmethod
     def _stop_flash(widget, old_bg):
         widget.flashing = False
         widget["bg"] = old_bg
 
+
+class GameState(BaseState):
+    def __init__(self):
+        """These are display only and can't be modified directly, unlike entity and player state."""
+        self._one_line_help_message = None
+        self._talk_list = None
+        self._conversation = None
+        self._disable_talk_period_elapsed = True  # presumably starts True
+
+        # TODO:
+        self._menus_open = []
+        self._level_up_menu_open = None
+        # TODO: other menus with specific launch commands
+
+        self._window = None
+
+    def build(self, window: SmartFrame):
+        window.one_line_help_message = window.Label(label="Action Prompt:", label_position="above", text="<None>")
+        window.talk_list = window.Listbox(label="Menu Options:", label_position="above")
+        window.conversation = window.Label(label="Conversation:", label_position="above", text="<None>")
+        # window.disable_talk_period_elapsed = window.Label("Talk Disabled Period Elapsed: True")  # TODO
+        self._window = window
+
+    @property
+    def one_line_help_message(self):
+        return self._one_line_help_message
+
+    @one_line_help_message.setter
+    def one_line_help_message(self, text):
+        self._one_line_help_message = text
+        if self._window:
+            self._window.one_line_help_message.var.set('<None>' if text is None else text)
+
+    def set_talk_list(self, talk_list):
+        self._talk_list = talk_list
+        if self._window:
+            listbox = self._window.talk_list
+            listbox.delete(0, "end")
+            for item in self._talk_list:
+                if not isinstance(item, str):
+                    raise ValueError("Only text strings should be added to talk list (text IDs are looked up).")
+                listbox.insert("end", item)
+
+    def append_talk_list(self, item: str):
+        if isinstance(self._talk_list, list):
+            self._talk_list.append(item)
+        else:
+            raise TypeError("Talk list has not been initialized. Cannot add item to it.")
+        if self._window:
+            self._window.talk_list.insert("end", item)
+
+    @property
+    def conversation(self):
+        return self._conversation
+
+    @conversation.setter
+    def conversation(self, text):
+        self._conversation = text
+        if self._window:
+            self._window.conversation.var.set('<None>' if text is None else text)
+
+    @property
+    def disable_talk_period_elapsed(self):
+        return self._disable_talk_period_elapsed
+
+    @disable_talk_period_elapsed.setter
+    def disable_talk_period_elapsed(self, text):
+        self._disable_talk_period_elapsed = text
+        # if self._window:  # TODO
+        #     self._window.disable_talk_period_elapsed.var.set(f"Talks Disabled: {self._disable_talk_period_elapsed}")
+
+
+class EntityState(BaseState):
+    def __init__(self):
+        self.update_distance = 0  # TODO: unclear default
+        self.bonfire_level = 0  # TODO: currently bonfire '0' only
+        self.bonfire_state = 0  # TODO: both 0 and 1 are used as arguments. I think 0 is enabled and 1 is disabled.
+        self.is_dead = False
+        self.is_disabled = False
+        self.enemies_nearby = False
+        self.hp_percent = 100
+
+    def build(self, window: SmartFrame):
+        window.is_dead = self._create_button(window, "is_dead", "Is Dead")
+        window.is_disabled = self._create_button(window, "is_disabled", "Is Disabled")
+        window.enemies_nearby = self._create_button(window, "enemies_nearby", "Enemies Nearby")
+        window.hp_percent = self._create_entry(window, "hp_percent", "HP Percent")
+        window.update_distance = self._create_entry(window, "update_distance", "Update Distance")
+        window.bonfire_level = self._create_entry(window, "bonfire_level", "Bonfire Level (0)")
+        window.bonfire_state = self._create_button(window, "bonfire_state", "Bonfire State")
+
+
+class PlayerState(BaseState):
+    def __init__(self):
+        self.is_dead = False
+        self.is_client = False
+        self.talking_to_entity = False
+        self.talking_to_other = False
+        self.character_type = enums.CharacterType.Hollow  # seems like a sensible default
+        self.distance = 20  # seems like a sensible starting default
+        self.y_distance = 0  # seems like a sensible starting default
+        self.facing_angle = 0
+        self.has_equipment = []  # TODO
+        self.wearing_equipment = []  # TODO
+
+    def build(self, window: SmartFrame):
+        window.is_dead = self._create_button(window, "is_dead", "Is Dead")
+        window.is_client = self._create_button(window, "is_client", "Is Client")
+        window.talking_to_entity = self._create_button(window, "talking_to_entity", "Talking to Entity")
+        window.talking_to_other = self._create_button(window, "talking_to_other", "Talking to Other")
+        window.character_type = self._create_combobox(window, "character_type", "Character Type", enums.CharacterType)
+        window.distance = self._create_entry(window, "distance", "Distance")
+        window.y_distance = self._create_entry(window, "y_distance", "Y Distance")
+        window.facing_angle = self._create_entry(window, "facing_angle", "Facing Angle")
 
 class InputEvents(object):
     def __init__(self):
@@ -125,13 +202,43 @@ class TalkSimulatorWindow(SmartFrame):
         self.sim = TalkSimulator(esd_source, game_version)
 
         with self.set_master(auto_rows=0):
-            # Panel
-            with self.set_master(auto_columns=0):
-                # Player State
-                pass
 
-            # Log
-            output_log = self.TextBox()
+            self.current_state = self.Label(text="State: None", font_size=20, pady=10)
+
+            self.current_conditions = self.Listbox(label="Conditions:", label_position="above", label_bg="#111",
+                                                   font=("Consolas", 8),
+                                                   width=100, height=10, padx=10, pady=10, bg="#333")
+
+            # Panel
+            with self.set_master():
+                self.Label(text="Game State", font_size=14, row=0, column=0)
+                with self.set_master(row=1, column=0, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
+                    self.sim.game_state.build(self)
+                self.Label(text="Entity State", font_size=14, row=0, column=1)
+                with self.set_master(row=1, column=1, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
+                    self.sim.entity_state.build(self)
+                self.Label(text="Player State", font_size=14, row=0, column=2)
+                with self.set_master(row=1, column=2, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
+                    self.sim.player_state.build(self)
+
+            # Buttons
+            with self.set_master(auto_columns=0):
+                self.Button(text="Update", command=self.update, width=20, bg="#622")
+
+            # Log  # TODO: in canvas
+            self.output_log = self.TextBox(width=50, height=10, vertical_scrollbar=True, padx=15, pady=15, bg="#333")
+
+    def update(self):
+        self.sim.update()
+        self.current_state.var.set(f"State: {self.sim.current_state}")
+        self.current_conditions.delete(0, "end")
+        for condition in self.sim.get_state_object().conditions:
+            test_string = decompile(condition.test_ezl, condition.esd_type)
+            condition_string = f"{self.sim.current_state} -> {condition.next_state_index}: {test_string}"
+            self.current_conditions.insert("end", condition_string)
+        while not self.sim.unprocessed_commands.empty():
+            command = self.sim.unprocessed_commands.get()
+            self.output_log.insert("end", "\n" + command)
 
 
 class TalkSimulator(object):
@@ -159,6 +266,8 @@ class TalkSimulator(object):
         self.player_state = PlayerState()
         self.input_events = InputEvents()
 
+        self.unprocessed_commands = Queue()
+
         self.reset(reset_flags=True)
 
     def reset(self, reset_flags=False):
@@ -183,39 +292,43 @@ class TalkSimulator(object):
         conditions = self.esd.state_machines[self.sm][self.current_state].conditions
         for condition in conditions:
             test_string = decompile(condition.test_ezl, condition.esd_type, func_prefix="self.")
-            print(f"CONDITION ({self.current_state} -> {condition.next_state_index}): {test_string}")
             try:
                 test_result = eval(test_string, {"self": self})
             except AttributeError as e:
                 attr_name = str(e).split("has no attribute '")[1][-1]
                 raise AttributeError(f"\ndef {attr_name}:\n    return ...")
             if test_result:
-                print(f"--> TEST SUCCESS: {test_string}")
                 self.change_state(condition.next_state_index)
-        pass
+        print("UPDATE")
 
     def change_state(self, new_state):
-        """TODO:
-            - Run exit commands of current state (if not None)
-            - Run enter commands of new state
-        """
         if self.current_state is not None:
-            self.exit()
+            self.run_commands("exit")
         self.current_state = new_state
-        self.enter()
+        self.run_commands("enter")
 
-    def enter(self, state=None):
-        if state is None:
-            state = self.current_state
-        commands = self.esd.state_machines[self.sm][state].enter_commands
+    def get_state_object(self, state_index=None):
+        if state_index is None:
+            state_index = self.current_state
+        return self.esd.state_machines[self.sm][state_index]
+
+    def run_commands(self, command_type, state=None):
+        state_instance = self.get_state_object(state)
+        if command_type == "enter":
+            commands = state_instance.enter_commands
+        elif command_type == "ongoing":
+            commands = state_instance.ongoing_commands
+        elif command_type == "exit":
+            commands = state_instance.exit_commands
+        else:
+            raise ValueError(f"`command_type` should be 'enter', 'ongoing', or 'exit', not {command_type}")
+
         for command in commands:
             try:
                 command_name, arg_names, arg_types = COMMANDS[command.esd_type][command.bank][command.index]
             except KeyError:
                 if command.bank == 6:
-                    # Start a child state machine.
-                    arguments = ', '.join([f'{decompile(arg, command.esd_type)}' for arg in command.args])
-                    print(f"ENTER: CALL_STATE_MACHINE[{0x80000000 - command.index}]({arguments})")  # TODO: unsupported
+                    raise ValueError("Child state machines cannot yet be simulated.")
                 command_name = f'Command_{command.esd_type}_{command.bank}_{command.index}'
                 arg_names = ()
             if len(arg_names) != len(command.args):
@@ -223,28 +336,17 @@ class TalkSimulator(object):
             else:
                 arguments = ', '.join([f'{arg_name}={decompile(arg, command.esd_type)}'
                                        for arg_name, arg in zip(arg_names, command.args)])
-            print(f'ENTER: {command_name}({arguments})')
-
-    def exit(self, state=None):
-        if state is None:
-            state = self.current_state
-        commands = self.esd.state_machines[self.sm][state].exit_commands
-        for command in commands:
+            command_string = f"{command_name}({arguments})"
             try:
-                command_name, arg_names, arg_types = COMMANDS[command.esd_type][command.bank][command.index]
-            except KeyError:
-                if command.bank == 6:
-                    # Start a child state machine.
-                    arguments = ', '.join([f'{decompile(arg, command.esd_type)}' for arg in command.args])
-                    print(f"EXIT: CALL_STATE_MACHINE[{0x80000000 - command.index}]({arguments})")  # TODO: unsupported
-                command_name = f'Command_{command.esd_type}_{command.bank}_{command.index}'
-                arg_names = ()
-            if len(arg_names) != len(command.args):
-                arguments = ', '.join([f'{decompile(arg, command.esd_type)}' for arg in command.args])
-            else:
-                arguments = ', '.join([f'{arg_name}={decompile(arg, command.esd_type)}'
-                                       for arg_name, arg in zip(arg_names, command.args)])
-            print(f'EXIT: {command_name}({arguments})')
+                eval("self." + command_string, {"self": self})
+            except AttributeError:
+                self.unprocessed_commands.put(f"{command_type.capitalize()}: {command_string}")
+
+    # COMMANDS
+
+
+
+    # TESTS
 
     def GetOneLineHelpStatus(self):
         return self.game_state.one_line_help_message is not None and self.input_events.press_action_button
@@ -277,17 +379,22 @@ class TalkSimulator(object):
         return self.player_state.facing_angle
 
     def CompareBonfireLevel(self, required_level, bonfire):
-        return self.entity_state.bonfire_level[bonfire] == required_level
+        """Currently accepts `bonfire=0` only."""
+        if bonfire != 0:
+            raise ValueError("Not implemented: checking bonfire level of non-zero bonfire index.")
+        return self.entity_state.bonfire_level == required_level
 
     def CompareBonfireState(self, required_state):
         return self.entity_state.bonfire_state == required_state
 
 
 if __name__ == '__main__':
-    ts = TalkSimulator(
-        "C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/script/talk/"
-        "m10_00_00_00.talkesdbnd.dcx.unpacked/t100000.esd", game_version="dsr")
-    while input("Press any key to update SM. Press Q to exit.").lower() != "q":
-        ts.update()
+    from soulstruct import DSR_PATH
+    ts = TalkSimulatorWindow(DSR_PATH + "/script/talk/m10_00_00_00.talkesdbnd.dcx.unpacked/t100000.esd",
+                             game_version="dsr")
+    # while input("Press any key to update SM. Press Q to exit.").lower() != "q":
+    #     ts.update()
+
+    ts.wait_window()
 
     print("\nFinished.")

@@ -1,7 +1,7 @@
 from soulstruct.text import DarkSoulsText
 
-lang = 'RUSSIAN'
-version = 'PTDEd.'
+lang = 'JAPANESE'
+version = 'DSR'
 
 foreign_changes_paths = {
     'JAPANESE': 'C:/Users/seven/Downloads/DoA_Japanese.txt',
