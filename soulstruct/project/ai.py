@@ -320,9 +320,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                     bg='#622', width=20, padx=10, command=self.decompile_all,
                     state='normal' if self.allow_decompile else 'disabled')
                 self.write_all_button = self.Button(
-                    text="Write All", font_size=10, bg='#222', width=15, padx=10,
+                    text="Write All in Map", font_size=10, bg='#222', width=20, padx=10,
                     command=self.write_all)
-                self.Button(text="Load All", font_size=10, bg='#222', width=15, padx=10,
+                self.Button(text="Reload All in Map", font_size=10, bg='#222', width=20, padx=10,
                             command=self.load_all_from_project_folder)
 
             with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 2], auto_columns=0):
