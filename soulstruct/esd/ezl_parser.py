@@ -82,7 +82,7 @@ def pop_multiple(sequence: list, count: int):
     return [sequence.pop() for _ in range(count)]
 
 
-def format_function(sequence: list, arg_count_key: bytes, esd_type: str):
+def format_function(sequence: list, arg_count_key: bytes, esd_type: str, func_prefix=""):
     arg_count = FUNCTION_ARG_COUNTS_BY_BYTE[arg_count_key]
     if arg_count == 0:
         f_id = sequence.pop()
@@ -94,7 +94,7 @@ def format_function(sequence: list, arg_count_key: bytes, esd_type: str):
         function_name, arg_names, arg_types = TEST_FUNCTIONS[esd_type][int(f_id)]
     except KeyError:
         function_name = f'Test_{esd_type}_{f_id}'
-    return f"{function_name}({', '.join(str(arg) for arg in reversed(args))})"
+    return f"{func_prefix}{function_name}({', '.join(str(arg) for arg in reversed(args))})"
 
 
 def format_binary_operator(sequence: list, operator_key: bytes):
@@ -108,7 +108,7 @@ def format_binary_operator(sequence: list, operator_key: bytes):
     return f'{left} {operator} {right}'
 
 
-def decompile(byte_sequence, esd_type):
+def decompile(byte_sequence, esd_type, func_prefix=""):
     """ Input should be a sequence of bytes. """
 
     if esd_type not in {'CHR', 'TALK'}:
@@ -146,7 +146,7 @@ def decompile(byte_sequence, esd_type):
 
         elif b'\x84' <= b <= b'\x8a':
             # Function call with 0-6 arguments.
-            output.append(format_function(output, b, esd_type))
+            output.append(format_function(output, b, esd_type, func_prefix))
             i += 1
 
         # b'\x8b' is unknown. Could simply be a function with seven arguments.

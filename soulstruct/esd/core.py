@@ -6,7 +6,7 @@ import struct
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 from soulstruct.dcx import DCX
@@ -368,7 +368,7 @@ class BaseESD(object):
         self.esd_type = esd_type
 
         self.auto_path = Path()
-        self.state_machines = OrderedDict()
+        self.state_machines = OrderedDict()  # type: Dict[int, Dict[int, BaseESD.State]]
 
         if isinstance(esd_source, bytes):
             self.unpack(BytesIO(esd_source), esd_type)

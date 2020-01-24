@@ -28,7 +28,7 @@ class ESPTextEditor(tk.Text):
     SYNTAX_RE = {
         "import": TagData('#FFAAAA', r"^(from|import) [\w\d_ .*]+", (0, 0)),
         "python_word": TagData(
-            '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False)($| )", (0, 0)),
+            '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False)(\n| |:)", (0, 1)),
         "test_func": TagData('#B2D8B2', r"[ (][\w\d_]+(?=\()", (1, 0)),
         "basic_arg": TagData('#888888', r"\((State|self)(?=\))", (1, 0)),
         "state_def": TagData('#FF6980', r"^class [\w\d_]+", (6, 0)),
