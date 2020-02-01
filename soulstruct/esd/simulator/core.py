@@ -6,6 +6,7 @@ dialogs and menus. Use this to test if the state machine behaves as expected wit
 
 Currently works only for DS1 'talk' ESD files (both PTDE and DSR).
 """
+import logging
 from queue import Queue
 
 import soulstruct.enums.darksouls1 as enums
@@ -13,23 +14,33 @@ from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.esd.ezl_parser import decompile
 from soulstruct.esd.functions import COMMANDS
+from soulstruct.text import DarkSoulsText
 from soulstruct.utilities.core import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class BaseState(object):
+    name = ""
 
-    def _create_button(self, window, field, verbose):
+    def _create_button(self, window: SmartFrame, field, verbose, is_boolean=True):
         button = window.Button(
-            text="{verbose}: {value}".format(verbose=verbose, value=getattr(self, field)),
+            text=f"{verbose}: {getattr(self, field)}", fg="#8F8" if getattr(self, field) else "#F88",
             width=20, command=lambda: self._toggle_button(window, field))
         button.verbose_fmt = verbose
+        button.is_boolean = is_boolean
         return button
 
     def _toggle_button(self, window, field):
-        setattr(self, field, not field)
-        getattr(window, field)["text"] = "{verbose}: {value}".format(verbose=getattr(window, field).verbose_fmt,
-                                                                     value=getattr(self, field))
+        button = getattr(window, self.name)[field]
+        if button.is_boolean:
+            setattr(self, field, not getattr(self, field))
+        else:
+            # Only other type of button right now is 0 - 1.
+            setattr(self, field, int(not getattr(self, field)))
+        button["fg"] = "#8F8" if getattr(self, field) else "#F88"
+        button.var.set(f"{button.verbose_fmt}: {getattr(self, field)}")
 
     def _create_combobox(self, window, field, verbose, enum):
         values = [camel_case_to_spaces(e.name) for e in enum]
@@ -47,6 +58,7 @@ class BaseState(object):
     def _create_entry(self, window, field, verbose):
         entry = window.Entry(label=verbose + ":", initial_text=getattr(self, field), width=6, sticky="e")
         entry.bind("<Return>", lambda e: self._update_entry(e, field))
+        entry.flashing = False
         return entry
 
     def _update_entry(self, event, field):
@@ -61,6 +73,10 @@ class BaseState(object):
                 entry.after(100, lambda: self._stop_flash(entry, old_bg))
         else:
             setattr(self, field, new_value)
+            if not entry.flashing:
+                old_bg = entry["bg"]
+                entry["bg"] = "#242"
+                entry.after(100, lambda: self._stop_flash(entry, old_bg))
 
     @staticmethod
     def _stop_flash(widget, old_bg):
@@ -74,9 +90,9 @@ class GameState(BaseState):
         self._one_line_help_message = None
         self._talk_list = None
         self._conversation = None
-        self._disable_talk_period_elapsed = True  # presumably starts True
+        self._disable_talk_period_elapsed = True  # internal timer that delays sequential talk prompts
 
-        # TODO:
+        # TODO
         self._menus_open = []
         self._level_up_menu_open = None
         # TODO: other menus with specific launch commands
@@ -84,10 +100,13 @@ class GameState(BaseState):
         self._window = None
 
     def build(self, window: SmartFrame):
-        window.one_line_help_message = window.Label(label="Action Prompt:", label_position="above", text="<None>")
-        window.talk_list = window.Listbox(label="Menu Options:", label_position="above")
-        window.conversation = window.Label(label="Conversation:", label_position="above", text="<None>")
-        # window.disable_talk_period_elapsed = window.Label("Talk Disabled Period Elapsed: True")  # TODO
+        window.game = {
+            "one_line_help_message": window.Label(label="One Line Help:", label_position="above", text="<None>"),
+            "talk_list": window.Listbox(label="Menu Options:", label_position="above"),
+            "conversation": window.Label(label="Conversation:", label_position="above", text="<None>"),
+            "disable_talk_period_elapsed": window.Label(
+                label="Talk Disabled Period Elapsed:", label_position="above", text="True")
+        }
         self._window = window
 
     @property
@@ -98,7 +117,7 @@ class GameState(BaseState):
     def one_line_help_message(self, text):
         self._one_line_help_message = text
         if self._window:
-            self._window.one_line_help_message.var.set('<None>' if text is None else text)
+            self._window.game["one_line_help_message"].var.set('<None>' if text is None else text)
 
     def set_talk_list(self, talk_list):
         self._talk_list = talk_list
@@ -140,26 +159,31 @@ class GameState(BaseState):
 
 
 class EntityState(BaseState):
+    name = "entity"
+
     def __init__(self):
         self.update_distance = 0  # TODO: unclear default
         self.bonfire_level = 0  # TODO: currently bonfire '0' only
-        self.bonfire_state = 0  # TODO: both 0 and 1 are used as arguments. I think 0 is enabled and 1 is disabled.
+        self.bonfire_state = 1  # 1 is unlit, 0 is lit
         self.is_dead = False
         self.is_disabled = False
         self.enemies_nearby = False
         self.hp_percent = 100
 
     def build(self, window: SmartFrame):
-        window.is_dead = self._create_button(window, "is_dead", "Is Dead")
-        window.is_disabled = self._create_button(window, "is_disabled", "Is Disabled")
-        window.enemies_nearby = self._create_button(window, "enemies_nearby", "Enemies Nearby")
-        window.hp_percent = self._create_entry(window, "hp_percent", "HP Percent")
-        window.update_distance = self._create_entry(window, "update_distance", "Update Distance")
-        window.bonfire_level = self._create_entry(window, "bonfire_level", "Bonfire Level (0)")
-        window.bonfire_state = self._create_button(window, "bonfire_state", "Bonfire State")
+        window.entity = {
+            "is_dead": self._create_button(window, "is_dead", "Is Dead"),
+            "is_disabled": self._create_button(window, "is_disabled", "Is Disabled"),
+            "enemies_nearby": self._create_button(window, "enemies_nearby", "Enemies Nearby"),
+            "hp_percent": self._create_entry(window, "hp_percent", "HP Percent"),
+            "update_distance": self._create_entry(window, "update_distance", "Update Distance"),
+            "bonfire_level": self._create_entry(window, "bonfire_level", "Bonfire Level (0)"),
+            "bonfire_state": self._create_button(window, "bonfire_state", "Bonfire State", is_boolean=False)}
 
 
 class PlayerState(BaseState):
+    name = "player"
+
     def __init__(self):
         self.is_dead = False
         self.is_client = False
@@ -173,14 +197,17 @@ class PlayerState(BaseState):
         self.wearing_equipment = []  # TODO
 
     def build(self, window: SmartFrame):
-        window.is_dead = self._create_button(window, "is_dead", "Is Dead")
-        window.is_client = self._create_button(window, "is_client", "Is Client")
-        window.talking_to_entity = self._create_button(window, "talking_to_entity", "Talking to Entity")
-        window.talking_to_other = self._create_button(window, "talking_to_other", "Talking to Other")
-        window.character_type = self._create_combobox(window, "character_type", "Character Type", enums.CharacterType)
-        window.distance = self._create_entry(window, "distance", "Distance")
-        window.y_distance = self._create_entry(window, "y_distance", "Y Distance")
-        window.facing_angle = self._create_entry(window, "facing_angle", "Facing Angle")
+        window.player = {
+            "is_dead": self._create_button(window, "is_dead", "Is Dead"),
+            "is_client": self._create_button(window, "is_client", "Is Client"),
+            "talking_to_entity": self._create_button(window, "talking_to_entity", "Talking to Entity"),
+            "talking_to_other": self._create_button(window, "talking_to_other", "Talking to Other"),
+            "character_type": self._create_combobox(window, "character_type", "Character Type", enums.CharacterType),
+            "distance": self._create_entry(window, "distance", "Distance"),
+            "y_distance": self._create_entry(window, "y_distance", "Y Distance"),
+            "facing_angle": self._create_entry(window, "facing_angle", "Facing Angle"),
+        }
+
 
 class InputEvents(object):
     def __init__(self):
@@ -196,18 +223,27 @@ class InputEvents(object):
 
 class TalkSimulatorWindow(SmartFrame):
 
-    def __init__(self, esd_source, game_version):
+    def __init__(self, esd_source, game_version, text_source):
         super().__init__(window_title="DS1 Talk Simulator")
 
-        self.sim = TalkSimulator(esd_source, game_version)
+        self.sim = TalkSimulator(esd_source, game_version, text_source)
 
-        with self.set_master(auto_rows=0):
+        with self.set_master(auto_columns=0, padx=10, pady=10):
+            with self.set_master(auto_rows=0):
 
-            self.current_state = self.Label(text="State: None", font_size=20, pady=10)
+                self.current_state = self.Label(text="State: None", font_size=20, pady=10)
 
-            self.current_conditions = self.Listbox(label="Conditions:", label_position="above", label_bg="#111",
-                                                   font=("Consolas", 8),
-                                                   width=100, height=10, padx=10, pady=10, bg="#333")
+                self.current_conditions = self.Listbox(label="Conditions:", label_position="above", label_bg="#111",
+                                                       font=("Consolas", 8),
+                                                       width=100, height=10, padx=10, pady=10, bg="#333")
+
+                # Log  # TODO: in canvas
+                self.output_log = self.TextBox(width=50, height=10, vertical_scrollbar=True, padx=15, pady=15,
+                                               bg="#333")
+
+                # Buttons
+                with self.set_master(auto_columns=0):
+                    self.Button(text="Update", command=self.update, width=20, bg="#622")
 
             # Panel
             with self.set_master():
@@ -221,12 +257,7 @@ class TalkSimulatorWindow(SmartFrame):
                 with self.set_master(row=1, column=2, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
                     self.sim.player_state.build(self)
 
-            # Buttons
-            with self.set_master(auto_columns=0):
-                self.Button(text="Update", command=self.update, width=20, bg="#622")
-
-            # Log  # TODO: in canvas
-            self.output_log = self.TextBox(width=50, height=10, vertical_scrollbar=True, padx=15, pady=15, bg="#333")
+        self.set_geometry()
 
     def update(self):
         self.sim.update()
@@ -243,7 +274,7 @@ class TalkSimulatorWindow(SmartFrame):
 
 class TalkSimulator(object):
 
-    def __init__(self, esd_source, game_version):
+    def __init__(self, esd_source, game_version, text_source):
         self.game_version = game_version
         if self.game_version == "ptde":
             self.esd_class = ESD_PTDE
@@ -251,6 +282,12 @@ class TalkSimulator(object):
             self.esd_class = ESD_DSR
         else:
             raise ValueError(f"`game_version` must be 'ptde' or 'dsr', not '{game_version}'.")
+
+        try:
+            self.text = DarkSoulsText(text_source)
+        except:
+            _LOGGER.error("Invalid text source for TalkSimulator. Should be 'msg/ENGLISH' directory.")
+            raise
 
         if isinstance(esd_source, (ESD_PTDE, ESD_DSR)):
             self.esd = esd_source
@@ -299,7 +336,7 @@ class TalkSimulator(object):
                 raise AttributeError(f"\ndef {attr_name}:\n    return ...")
             if test_result:
                 self.change_state(condition.next_state_index)
-        print("UPDATE")
+        print(f"# UPDATED (State {self.current_state})")
 
     def change_state(self, new_state):
         if self.current_state is not None:
@@ -337,16 +374,24 @@ class TalkSimulator(object):
                 arguments = ', '.join([f'{arg_name}={decompile(arg, command.esd_type)}'
                                        for arg_name, arg in zip(arg_names, command.args)])
             command_string = f"{command_name}({arguments})"
+            print("Command String: self." + command_string)
             try:
                 eval("self." + command_string, {"self": self})
             except AttributeError:
-                self.unprocessed_commands.put(f"{command_type.capitalize()}: {command_string}")
+                raise
+            #     self.unprocessed_commands.put(f"{command_type.capitalize()}: {command_string}")
+            # else:
+            #     print("Evaluated successfully:", command_string)
 
     # COMMANDS
 
-
+    def DisplayOneLineHelp(self, text_id):
+        self.game_state.one_line_help_message = self.text.EventText[text_id]
 
     # TESTS
+
+    def DebugEvent(self, message):
+        self.unprocessed_commands.put(f"DEBUG MESSAGE: {message}")
 
     def GetOneLineHelpStatus(self):
         return self.game_state.one_line_help_message is not None and self.input_events.press_action_button
@@ -391,7 +436,7 @@ class TalkSimulator(object):
 if __name__ == '__main__':
     from soulstruct import DSR_PATH
     ts = TalkSimulatorWindow(DSR_PATH + "/script/talk/m10_00_00_00.talkesdbnd.dcx.unpacked/t100000.esd",
-                             game_version="dsr")
+                             game_version="dsr", text_source=DSR_PATH + "/msg/ENGLISH")
     # while input("Press any key to update SM. Press Q to exit.").lower() != "q":
     #     ts.update()
 
