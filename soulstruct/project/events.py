@@ -28,16 +28,20 @@ class EvsTextEditor(tk.Text):
 
     SYNTAX_RE = {
         "restart_type": TagData('#FFFFAA', r"^@[\w_]+", (0, 0)),
-        "event_def": TagData('#FFAAAA', r"^def [\w\d_]+", (0, 0)),
+        "python_word": TagData(
+            '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)),
+        "event_def": TagData('#FF6980', r"^def [\w\d_]+", (4, 0)),
         "import": TagData('#FFAAAA', r"^(from|import) [\w\d_ .*]+", (0, 0)),
-        "docstring": TagData('#BBBBBB', r"^[ ]+\"\"\" [\w\d :]+ \"\"\"", (0, 0)),
-        "instruction": TagData('#E6C975', r"^[ ]+[\w\d_]+", (0, 0)),
+        "instruction_or_high_level_test": TagData('#E6C975', r"[ \(][\w\d_]+(?=\()", (1, 0)),
         "low_level_test": TagData('#AAAAFF', r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "main_condition": TagData('#FF7766', r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
+        "main_condition": TagData('#FF3355', r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
+        "await_statement": TagData('#FF3355', r" await ", (0, 0)),
         "named_arg": TagData('#AAFFFF', r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
         "func_arg_name": TagData('#FFCCAA', r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
         "event_arg_name": TagData('#FFAAFF', r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
         "number_literal": TagData('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
+        "comment": TagData('#777777', r"#.*$", (0, 0)),
+        "docstring": TagData('#00ABA9', r"^[ ]+\"\"\"[\w\d :.]+\"\"\"", (0, 0)),
     }
 
     def __init__(self, *args, **kwargs):
@@ -58,6 +62,13 @@ class EvsTextEditor(tk.Text):
 
         self.tag_configure("found", background='#224433')
         self.tag_configure("error", background='#443322')
+
+        self.bind("<Tab>", self._tab_four_spaces)
+
+    def _tab_four_spaces(self, _):
+        """Tab key inserts four spaces rather than a tab character."""
+        self.insert("insert", "    ")
+        return "break"
 
     def _proxy(self, *args):
         cmd = (self._orig,) + args
@@ -152,8 +163,8 @@ class SoulstructEventEditor(SmartFrame):
         self.string_to_find = None
         self.evs_editor_canvas = None
         self.text_editor = None
-        self.save_button = None
-        self.export_button = None
+        self.compile_button = None
+        self.reload_button = None
 
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
             evs_name = evs_file_path.name.split('.')[0]
@@ -163,6 +174,9 @@ class SoulstructEventEditor(SmartFrame):
 
         with self.set_master(sticky='nsew', row_weights=[0, 1, 0, 0], column_weights=[1], auto_rows=0):
             self.build()
+
+        self.bind_to_all_children("<Control-C>", lambda _: self._compile_selected(mimic_click=True))
+        self.bind_to_all_children("<Control-r>", lambda _: self.reload_selected(mimic_click=True))
 
         self.refresh()
 
@@ -205,15 +219,17 @@ class SoulstructEventEditor(SmartFrame):
             self.text_editor.bind("<<CursorChange>>", self._update_line_number)
             self.text_editor.bind("<Control-f>", self._control_f_search)
 
-        with self.set_master(auto_columns=0, pady=10, column_weights=[2, 2, 2, 1, 1], sticky='n'):
-            self.save_button = self.Button(
-                text="Save EVS", font_size=10, width=15, padx=5, command=self.save_selected_evs)
-            self.Button(text="Validate EVS", font_size=10, width=15, padx=5, bg='#226', command=self._check_syntax)
-            self.Button(text="Reload EVS", font_size=10, width=15, padx=5, command=self.reload_selected_evs)
+        with self.set_master(auto_columns=0, pady=10, column_weights=[1, 1, 1], sticky='n'):
+            self.compile_button = self.Button(
+                text="Save & Compile", font_size=10, width=15, padx=5, command=self._compile_selected,
+                tooltip_text="Save script, then compile it to test syntax. Text will flash blue if test is successful. "
+                             "(Ctrl + Shift + C)")
+            self.reload_button = self.Button(
+                text="Reload Script", font_size=10, width=15, padx=5, command=self.reload_selected,
+                tooltip_text="Reload script from project. Unsaved changes to current script will be lost. (Ctrl + R)")
             self.Button(
-                text="Save & Export", font_size=10, width=15, padx=5, bg='#822', command=self.save_and_export)
-            self.Button(
-                text="Reload & Export", font_size=10, width=15, padx=5, bg='#822', command=self.reload_and_export)
+                text="Reload & Export", font_size=10, width=15, padx=5, bg='#822', command=self.reload_and_export,
+                tooltip_text="Reload script from project, then immediately export it to game.")
 
     def refresh(self):
         map_options = [f"{m} [{_get_verbose_map_name(m)}]" for m in self.evs_file_paths]
@@ -322,10 +338,12 @@ class SoulstructEventEditor(SmartFrame):
                 f"Error encountered when trying to parse EVS script (see console for full traceback):\n\n"
                 f"{message}")
 
-    def _check_syntax(self):
+    def _compile_selected(self, mimic_click=False, flash_bg=True):
         if not self.selected_evs:
             return
         self.save_selected_evs()
+        if mimic_click:
+            self.mimic_click(self.compile_button)
         try:
             EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_evs].parent))
         except EmevdError as e:
@@ -338,7 +356,8 @@ class SoulstructEventEditor(SmartFrame):
                 self._raise_error(message=str(e))
         else:
             self.text_editor.tag_remove("error", "1.0", "end")
-            self.CustomDialog(title="EVS Success", message="No errors encountered when parsing EVS.")
+            if flash_bg:
+                self.flash_bg(self.text_editor, "#224")
 
     def export_selected_evs(self, export_directory=None):
         """Convert project EVS file to game EMEVD file. Does not check any loaded text."""
@@ -358,9 +377,11 @@ class SoulstructEventEditor(SmartFrame):
         emevd.write_emevd(
             export_directory / f"event/{self.selected_evs}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx)
 
-    def reload_selected_evs(self):
+    def reload_selected(self, mimic_click=False, flash_bg=True):
         if not self.selected_evs:
             return
+        if mimic_click:
+            self.mimic_click(self.reload_button)
         if self._ignored_unsaved():
             evs_path = self.evs_file_paths[self.selected_evs]
             with evs_path.open('r', encoding='utf-8') as f:
@@ -369,13 +390,15 @@ class SoulstructEventEditor(SmartFrame):
             self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
+            if flash_bg:
+                self.flash_bg(self.text_editor, "#242")
 
     def save_and_export(self):
         self.save_selected_evs()
         self.export_selected_evs(self.game_root)
 
     def reload_and_export(self):
-        self.reload_selected_evs()
+        self.reload_selected()
         self.export_selected_evs(self.game_root)
 
     def _get_current_text(self):

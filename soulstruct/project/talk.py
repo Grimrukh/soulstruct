@@ -448,7 +448,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             else:
                 self.esp_editor.tag_remove("error", "1.0", "end")
                 if flash_bg:
-                    self.flash_bg(self.esp_editor, "#422")
+                    self.flash_bg(self.esp_editor, "#224")
 
     def reload_selected(self, mimic_click=False):
         """Reload selected script from project directory. Confirms loss of unsaved changes first."""
