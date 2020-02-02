@@ -1,8 +1,8 @@
 import copy
 import math
+import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
-from typing import List, Iterator
 
 from soulstruct.maps.core import MSBEntry
 from soulstruct.maps.models import MSBModel, MSB_MODEL_TYPE
@@ -59,6 +59,7 @@ MAP_ENTRY_TYPES = {
 }
 
 
+# Subset of the above, only for entry types with entity IDs.
 MAP_ENTRY_ENTITY_TYPES = {
     'Parts': {
         'MapPieces': MSB_PART_TYPE.MapPiece,
@@ -317,7 +318,7 @@ class MSBModelList(MSBEntryList):
     ENTRY_CLASS = staticmethod(MSBModel)
     ENTRY_TYPE_ENUM = MSB_MODEL_TYPE
 
-    _entries: List[MSBModel]
+    _entries: tp.List[MSBModel]
 
     MapPieces: list
     Objects: list
@@ -334,7 +335,7 @@ class MSBModelList(MSBEntryList):
                               instance_count=part_instance_counts.get(entry.name, 0))
             type_indices[entry.ENTRY_TYPE] += 1
 
-    def __iter__(self) -> Iterator[MSBModel]:
+    def __iter__(self) -> tp.Iterator[MSBModel]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -344,7 +345,7 @@ class MSBEventList(MSBEntryList):
     ENTRY_CLASS = staticmethod(MSBEvent)
     ENTRY_TYPE_ENUM = MSB_EVENT_TYPE
 
-    _entries: List[MSBEvent]
+    _entries: tp.List[MSBEvent]
 
     Lights: list
     Sounds: list
@@ -372,7 +373,7 @@ class MSBEventList(MSBEntryList):
                               region_indices=region_indices, part_indices=part_indices)
             type_indices[entry.ENTRY_TYPE] += 1
 
-    def __iter__(self) -> Iterator[BaseMSBEvent]:
+    def __iter__(self) -> tp.Iterator[BaseMSBEvent]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -382,7 +383,7 @@ class MSBRegionList(MSBEntryList):
     ENTRY_CLASS = staticmethod(MSBRegion)
     ENTRY_TYPE_ENUM = MSB_REGION_TYPE
 
-    _entries: List[MSBRegion]
+    _entries: tp.List[MSBRegion]
 
     Points: list
     Circles: list
@@ -396,7 +397,7 @@ class MSBRegionList(MSBEntryList):
         for i, entry in enumerate(self._entries):
             entry.set_indices(region_index=i)
 
-    def __iter__(self) -> Iterator[BaseMSBRegion]:
+    def __iter__(self) -> tp.Iterator[BaseMSBRegion]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -406,7 +407,7 @@ class MSBPartList(MSBEntryList):
     ENTRY_CLASS = staticmethod(MSBPart)
     ENTRY_TYPE_ENUM = MSB_PART_TYPE
 
-    _entries: List[BaseMSBPart]
+    _entries: tp.List[BaseMSBPart]
 
     MapPieces: list
     Objects: list
@@ -448,7 +449,7 @@ class MSBPartList(MSBEntryList):
             instance_counts[entry.model_name] += 1
         return instance_counts
 
-    def __iter__(self) -> Iterator[BaseMSBPart]:
+    def __iter__(self) -> tp.Iterator[BaseMSBPart]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -610,6 +611,24 @@ class MSB(object):
         if names_only:
             return {e.entity_id: e.name for e in entries if e.entity_id > 0}
         return {e.entity_id: e for e in entries if e.entity_id > 0}
+
+    def get_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntry]:
+        """Search all entry types for the given ID and return that MSBEntry (or None if not found).
+
+        If multiple entries with the same (non-default) ID are found, an error will be raised.
+        """
+        if entity_id <= 0:
+            raise ValueError(f"MSB entity ID cannot be less than zero ({entity_id}).")
+        results = []
+        for entry_list_name in ("parts", "events", "regions"):
+            results += [e for e in self[entry_list_name].get_entries() if e.entity_id == entity_id]
+        if not results:
+            return None
+        elif len(results) > 1:
+            if allow_multiple:
+                return results
+            raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
+        return results[0]
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:
         if entry_list_name.lower() not in {'models', 'events', 'regions', 'parts'}:
