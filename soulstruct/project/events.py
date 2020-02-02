@@ -30,6 +30,8 @@ class EvsTextEditor(tk.Text):
         "restart_type": TagData('#FFFFAA', r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
             '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)),
+        "true_false": TagData(
+            '#FF7F50', r"[ =](True|False)(\n| |:|\))", (1, 1)),
         "event_def": TagData('#FF6980', r"^def [\w\d_]+", (4, 0)),
         "import": TagData('#FFAAAA', r"^(from|import) [\w\d_ .*]+", (0, 0)),
         "instruction_or_high_level_test": TagData('#E6C975', r"[ \(][\w\d_]+(?=\()", (1, 0)),
