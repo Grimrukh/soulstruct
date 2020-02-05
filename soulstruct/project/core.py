@@ -14,7 +14,8 @@ from pathlib import Path
 
 from soulstruct._config import PTDE_PATH, DSR_PATH
 from soulstruct.ai import DarkSoulsAIScripts
-from soulstruct.esd.dark_souls_talk import TalkESDBND, DARK_SOULS_TALKESDBND_NAMES
+from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
@@ -234,7 +235,7 @@ class SoulstructProject(object):
             if map_id in ("m12_00_00_01", "m14_02_00_00"):
                 continue  # skipped
             try:
-                map_name = DARK_SOULS_TALKESDBND_NAMES[map_id]
+                map_name = get_map(map_id).name
             except KeyError:
                 _LOGGER.warning(f"Ignoring unexpected `.talkesdbnd` file in Dark Souls files: {talkesdbnd.name}")
                 continue
@@ -284,8 +285,8 @@ class SoulstructProject(object):
             game_version = "dsr"
         else:
             raise ValueError("Cannot export talk for non-DS1 game.")
-        for map_directory in self.project_root / "talk":
-            if map_directory.name not in DARK_SOULS_TALKESDBND_NAMES.values():
+        for map_directory in (self.project_root / "talk").glob("*"):
+            if map_directory.name not in [g.name for g in ALL_MAPS]:
                 continue  # unexpected folder
             talk = TalkESDBND(map_directory, game_version=game_version)
             talk.write(export_directory)

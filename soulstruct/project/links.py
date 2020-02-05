@@ -263,8 +263,10 @@ class WindowLinker(object):
 
     def params_link(self, category, param_entry_id, field_name=None):
         # TODO: Create if missing.
-        if param_entry_id not in self.window.params_tab.get_category_dict(category).entries:
-            self.window.dialog("Param ID Missing", f"Param ID {param_entry_id} is missing from Params.{category}.")
+        if param_entry_id not in self.window.params_tab.get_category_dict(category):
+            self.window.CustomDialog(
+                title="Param ID Missing",
+                message=f"Param ID {param_entry_id} is missing from Params.{category}.")
             return
         self.window.page_tabs.select(self.get_tab_index('params'))
         self.window.params_tab.select_category(category)

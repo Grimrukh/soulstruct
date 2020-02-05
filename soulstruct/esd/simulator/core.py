@@ -292,7 +292,7 @@ class TalkSimulator(object):
         if isinstance(esd_source, (ESD_PTDE, ESD_DSR)):
             self.esd = esd_source
         else:
-            self.esd = self.esd_class(esd_source, "TALK")
+            self.esd = self.esd_class(esd_source, "talk")
         self.sm = 1  # only supported SM at the moment
         self.current_state = None
 

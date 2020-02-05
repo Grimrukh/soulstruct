@@ -9,16 +9,9 @@ from pathlib import Path
 import tkinter as tk
 
 from soulstruct.events.darksouls1 import EMEVD
-from soulstruct.events.darksouls1.constants import VERBOSE_MAP_NAMES
-from soulstruct.events.evs import EmevdError
+from soulstruct.constants.darksouls1.maps import get_map
+from soulstruct.events.evs import EvsError
 from soulstruct.utilities.window import SmartFrame
-
-
-def _get_verbose_map_name(emevd_name):
-    if emevd_name == "common":
-        return "Common"
-    area, block, _, version = re.match(r"m(\d+)_(\d+)_(\d+)_(\d+)", emevd_name).groups()
-    return VERBOSE_MAP_NAMES[int(area), int(block)]
 
 
 TagData = namedtuple("TagData", ('foreground', 'pattern', 'offsets'))
@@ -234,7 +227,8 @@ class SoulstructEventEditor(SmartFrame):
                 tooltip_text="Reload script from project, then immediately export it to game.")
 
     def refresh(self):
-        map_options = [f"{m} [{_get_verbose_map_name(m)}]" for m in self.evs_file_paths]
+        game_maps = [get_map(m) for m in self.evs_file_paths]
+        map_options = [f"{game_map.emevd_file_stem} [{game_map.verbose_name}]" for game_map in game_maps]
         self.map_choice["values"] = map_options
         if map_options:
             self.map_choice.var.set(map_options[0])
@@ -301,7 +295,8 @@ class SoulstructEventEditor(SmartFrame):
     def _on_map_choice(self, _):
         """Check if current text has changed (and warn), then switch to other text."""
         if not self._ignored_unsaved():
-            self.map_choice.var.set(f"{self.selected_evs} [{_get_verbose_map_name(self.selected_evs)}]")  # keep old
+            game_map = get_map(self.selected_evs)
+            self.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name}]")
             return
         self.selected_evs = self.map_choice.var.get().split(' [')[0]
         if self.global_map_choice_func:
@@ -348,7 +343,7 @@ class SoulstructEventEditor(SmartFrame):
             self.mimic_click(self.compile_button)
         try:
             EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_evs].parent))
-        except EmevdError as e:
+        except EvsError as e:
             self._raise_error(e.lineno, str(e))
         except Exception as e:
             lineno_match = re.search(r"line (\d+)", str(e))

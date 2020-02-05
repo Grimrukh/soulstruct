@@ -303,6 +303,16 @@ def IfSingleplayer(condition: int):
     return IfMultiplayerState(condition, MultiplayerState.Singleplayer)
 
 
+# REMASTERED ONLY
+def IfUnknownPlayerType4(condition: int):
+    return IfMultiplayerState(condition, MultiplayerState.UnknownPlayerType4)
+
+
+# REMASTERED ONLY
+def IfUnknownPlayerType5(condition: int):
+    return IfMultiplayerState(condition, MultiplayerState.UnknownPlayerType5)
+
+
 # BOSS
 
 def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, state: bool):

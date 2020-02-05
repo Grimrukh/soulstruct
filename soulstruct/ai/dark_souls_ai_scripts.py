@@ -3,32 +3,10 @@ from pathlib import Path
 
 from soulstruct.bnd import BND
 from soulstruct.ai.core import LuaBND
-from soulstruct.utilities import BiDict
+from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 
-__all__ = ["DarkSoulsAIScripts", "DARK_SOULS_AI_BND_NAMES"]
+__all__ = ["DarkSoulsAIScripts"]
 _LOGGER = logging.getLogger(__name__)
-
-
-DARK_SOULS_AI_BND_NAMES = BiDict(
-    ('aiCommon', 'Common'),
-    ('m10_00_00_00', 'Depths'),
-    ('m10_01_00_00', 'UndeadBurg'),
-    ('m10_02_00_00', 'FirelinkShrine'),
-    ('m11_00_00_00', 'PaintedWorld'),
-    ('m12_00_00_00', 'DarkrootGarden'),
-    ('m12_01_00_00', 'Oolacile'),
-    ('m13_00_00_00', 'Catacombs'),
-    ('m13_01_00_00', 'TombOfTheGiants'),
-    ('m13_02_00_00', 'AshLake'),
-    ('m14_00_00_00', 'Blighttown'),
-    ('m14_01_00_00', 'LostIzalith'),
-    ('m15_00_00_00', 'SensFortress'),
-    ('m15_01_00_00', 'AnorLondo'),
-    ('m16_00_00_00', 'NewLondoRuins'),
-    ('m17_00_00_00', 'DukesArchives'),
-    ('m18_00_00_00', 'KilnOfTheFirstFlame'),
-    ('m18_01_00_00', 'UndeadAsylum'),
-)
 
 
 class DarkSoulsAIScripts(object):
@@ -91,14 +69,14 @@ class DarkSoulsAIScripts(object):
         if not self._directory.is_dir():
             raise ValueError("DarkSoulsAIScripts should be initialized with the directory containing LuaBND files.")
 
-        for luabnd_base_name, luabnd_attr_name in DARK_SOULS_AI_BND_NAMES.items():
-            luabnd_path = self._directory / (luabnd_base_name + '.luabnd')
+        for game_map in ALL_MAPS:
+            luabnd_path = self._directory / (game_map.ai_file_stem + '.luabnd')
             try:
-                self._data[luabnd_attr_name] = LuaBND(luabnd_path)
-                setattr(self, luabnd_attr_name, self._data[luabnd_attr_name])
+                self._data[game_map.name] = LuaBND(luabnd_path)
+                setattr(self, game_map.name, self._data[game_map.name])
             except FileNotFoundError:
                 raise FileNotFoundError(
-                    f"Could not find LuaBND file {repr(luabnd_base_name)} ({luabnd_attr_name}) in given directory.")
+                    f"Could not find LuaBND file {repr(game_map.ai_file_stem)} ({game_map.name}) in given directory.")
 
         event_path = self._directory / "eventCommon.luabnd"
         try:
@@ -106,16 +84,17 @@ class DarkSoulsAIScripts(object):
         except FileNotFoundError:
             raise FileNotFoundError("Could not find `eventCommon.luabnd[.dcx]` file in given directory.")
 
-    def __getitem__(self, luabnd_name):
-        return self._data[luabnd_name]
+    def __getitem__(self, map_source):
+        game_map = get_map(map_source)
+        return self._data[game_map.name]
 
     def save(self, script_directory=None):
         if script_directory is None:
             script_directory = self._directory
         script_directory = Path(script_directory)
-        for luabnd_name in DARK_SOULS_AI_BND_NAMES.values():
-            luabnd_path = script_directory / self._data[luabnd_name].bnd.bnd_path.name
-            self._data[luabnd_name].write(luabnd_path)
+        for luabnd in self._data.values():
+            luabnd_path = script_directory / luabnd.bnd.bnd_path.name
+            luabnd.write(luabnd_path)
         event_common_path = script_directory / self.event_common_bnd.bnd_path.name
         self.event_common_bnd.write(event_common_path)
         _LOGGER.info("Dark Souls AI script files (LuaBND) written successfully.")

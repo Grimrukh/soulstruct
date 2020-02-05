@@ -5,10 +5,8 @@ from pathlib import Path
 from typing import Optional
 
 from soulstruct.bnd import BND
-from soulstruct.maps.dark_souls_maps import DARK_SOULS_MAP_NAMES
-from soulstruct.ai.dark_souls_ai_scripts import DARK_SOULS_AI_BND_NAMES
-from soulstruct.esd.dark_souls_talk import DARK_SOULS_TALKESDBND_NAMES
-from soulstruct.utilities import word_wrap, camel_case_to_spaces
+from soulstruct.constants.darksouls1.maps import get_map
+from soulstruct.utilities import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
 from .core import SoulstructProject
@@ -61,7 +59,7 @@ class SoulstructProjectWindow(SmartFrame):
                 self.CustomDialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.")
                 raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
 
-        self.toplevel.title("Soulstruct Project Editor: " + Path(project_path).name)
+        self.toplevel.title("Soulstruct Project Editor: " + str(Path(project_path)))
 
         try:
             self.project = SoulstructProject(project_path, with_window=self)
@@ -321,39 +319,35 @@ class SoulstructProjectWindow(SmartFrame):
         return data_type
 
     def set_global_map_choice(self, map_id, ignore_tabs=()):
-        if map_id == "m12_00_00_01":
-            map_id = "m12_00_00_00"
+        game_map = get_map(map_id)
         if "maps" not in ignore_tabs:
-            msb_map_id = "m12_00_00_01" if map_id == "m12_00_00_00" else map_id
             try:
                 self.maps_tab.map_choice.var.set(
-                    f"{msb_map_id} [{camel_case_to_spaces(DARK_SOULS_MAP_NAMES[msb_map_id])})")
+                    f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
             except KeyError:
                 pass
         if "entities" not in ignore_tabs:
-            msb_map_id = "m12_00_00_01" if map_id == "m12_00_00_00" else map_id
             try:
                 self.entities_tab.map_choice.var.set(
-                    f"{msb_map_id} [{camel_case_to_spaces(DARK_SOULS_MAP_NAMES[msb_map_id])})")
+                    f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
             except KeyError:
                 pass
         if "events" not in ignore_tabs:
-            # Just using AI BND names, which match.
             try:
                 self.events_tab.map_choice.var.set(
-                    f"{map_id} [{camel_case_to_spaces(DARK_SOULS_AI_BND_NAMES[map_id])})")
+                    f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
             except KeyError:
                 pass
         if "ai" not in ignore_tabs:
             try:
                 self.ai_tab.bnd_choice.var.set(
-                    f"{map_id} [{camel_case_to_spaces(DARK_SOULS_AI_BND_NAMES[map_id])})")
+                    f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
             except KeyError:
                 pass
         if "talk" not in ignore_tabs:
             try:
                 self.talk_tab.map_choice.var.set(
-                    f"{map_id} [{camel_case_to_spaces(DARK_SOULS_TALKESDBND_NAMES[map_id])}")
+                    f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
             except KeyError:
                 pass
 

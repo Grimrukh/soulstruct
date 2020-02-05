@@ -8,13 +8,13 @@ from collections import namedtuple
 from pathlib import Path
 from typing import List, Optional, Dict
 
-from soulstruct.esd.dark_souls_talk import DARK_SOULS_TALKESDBND_NAMES, TalkESDBND
+from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.esd.errors import EsdError
 from soulstruct.project.editor import SoulstructBaseEditor
 from soulstruct.project.utilities import bind_events
-from soulstruct.utilities.core import camel_case_to_spaces
 
 
 __all__ = ["SoulstructTalkEditor"]
@@ -189,7 +189,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.esp_directory = Path(esp_directory)
         self.game_root = Path(game_root)
         self.global_map_choice_func = global_map_choice_func
-        self.selected_map_name = ""
+        self.selected_map_id = ""
         self.esp_file_paths = {}
         self.esp_text = {}  # updated at the same time as files; used to check for unsaved changes
         if game_name == "Dark Souls Prepare to Die Edition":
@@ -221,9 +221,11 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.esp_file_paths = {}
         self.esp_text = {}
         for map_directory in self.esp_directory.glob("*"):
-            map_name = map_directory.name
-            if map_name not in DARK_SOULS_TALKESDBND_NAMES.values():
-                _LOGGER.warning(f"Unexpected folder found in project '/talk' directory and ignored: {map_name}")
+            try:
+                game_map = get_map(map_directory.name)
+            except ValueError:
+                _LOGGER.warning(f"Unexpected folder found in project '/talk' directory and ignored: "
+                                f"{map_directory.name}")
                 continue
             for esp_path in map_directory.glob("*.esp.py"):
                 talk_match = _TALK_ESP_MATCH.match(esp_path.name)
@@ -231,9 +233,9 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
                     _LOGGER.warning(f"Invalid ESP file found and ignored: {str(esp_path)}")
                     continue
                 talk_id = int(talk_match.group(1))
-                self.esp_file_paths.setdefault(map_name, {})[talk_id] = esp_path
+                self.esp_file_paths.setdefault(game_map.esd_file_stem, {})[talk_id] = esp_path
                 with esp_path.open(mode="r", encoding="utf-8") as f:
-                    self.esp_text.setdefault(map_name, {})[talk_id] = f.read()
+                    self.esp_text.setdefault(game_map.esd_file_stem, {})[talk_id] = f.read()
 
     def refresh_categories(self):
         pass  # Unused.
@@ -241,12 +243,12 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
-                map_display_strings = [f"{k} [{camel_case_to_spaces(v)}]"
-                                       for k, v in DARK_SOULS_TALKESDBND_NAMES.items()]
+                map_display_strings = [f"{game_map.esd_file_stem} [{game_map.verbose_name}]"
+                                       for game_map in ALL_MAPS if game_map.esd_file_stem]
                 self.map_choice = self.Combobox(
                     values=map_display_strings, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=(10, 30))
-                self.selected_map_name = self.map_choice.var.get().split(' [')[1][:-1].replace(' ', '')
+                self.selected_map_id = self.map_choice.var.get().split(' [')[0]
                 self.reload_all_button = self.Button(
                     text="Reload All in Map", font_size=10, bg="#222", width=25, padx=5,
                     command=self.reload_all_in_map,
@@ -316,7 +318,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         if not number:
             return
         number = int(number)
-        if not self.selected_map_name or number < 1 or int(self.esp_editor.index('end-1c').split('.')[0]) < number:
+        if not self.selected_map_id or number < 1 or int(self.esp_editor.index('end-1c').split('.')[0]) < number:
             self.flash_bg(self.go_to_line)
             return
         self.esp_editor.mark_set("insert", f"{number}.0")
@@ -326,7 +328,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
     def _find_string(self, _, string=None, flash_bg=True):
         if string is None:
             string = self.string_to_find.var.get()
-        if not string or not self.selected_map_name:
+        if not string or not self.selected_map_id:
             return
         start_line, start_char = self.esp_editor.index("insert").split('.')
         index = self.esp_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
@@ -345,7 +347,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
     def _find_state(self, _, state=None, flash_bg=True):
         if state is None:
             state = self.state_to_find.var.get()
-            if not state or not self.selected_map_name:
+            if not state or not self.selected_map_id:
                 return
             try:
                 state = int(state)
@@ -368,7 +370,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.line_number.set(f"Line: {current_line}")
 
     def _control_f_search(self, _):
-        if self.selected_map_name:
+        if self.selected_map_id:
             highlighted = self.esp_editor.selection_get()
             self.string_to_find.var.set(highlighted)
             self.string_to_find.select_range(0, 'end')
@@ -402,25 +404,25 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.esp_editor.color_syntax()
         current_text = self._get_current_text()
         talk_id = self.get_talk_id()
-        self.esp_text[self.selected_map_name][talk_id] = current_text
-        with self.esp_file_paths[self.selected_map_name][talk_id].open("w", encoding="utf-8") as f:
+        self.esp_text[self.selected_map_id][talk_id] = current_text
+        with self.esp_file_paths[self.selected_map_id][talk_id].open("w", encoding="utf-8") as f:
             f.write(current_text)
         if flash_bg:
             self.flash_bg(self.esp_editor, '#232')
 
     def export_all_in_map(self, export_directory=None):
-        if not self.selected_map_name:
+        if not self.selected_map_id:
             return
         if export_directory is None:
             export_directory = self.FileDialog.askdirectory(initialdir=str(self.esp_directory))
             if export_directory is None:
                 return
         export_directory = Path(export_directory)
-        bnd_name = DARK_SOULS_TALKESDBND_NAMES[self.selected_map_name]
+        bnd_name = self.selected_map_id
         try:
             TalkESDBND.write_from_dict(
-                talk_dict=self.esp_file_paths[self.selected_map_name], game_version=self.game_version,
-                talkesdbnd_path=export_directory / f"script/talk/{bnd_name}.talkesdbnd")  # DCX extension is automatic
+                talk_dict=self.esp_file_paths[self.selected_map_id], game_version=self.game_version,
+                talkesdbnd_path=export_directory / f"script/talk/{bnd_name}.talkesdbnd")  # DCX from `game_version`
         except Exception as e:
             _LOGGER.exception("Error encountered while trying to export ESP scripts.")
             self.CustomDialog(
@@ -436,13 +438,13 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
                 self.mimic_click(self.compile_button)
             talk_id = self.get_talk_id()
             try:
-                self.esd_class(self.esp_file_paths[self.selected_map_name][talk_id])
+                self.esd_class(self.esp_file_paths[self.selected_map_id][talk_id])
             except EsdError as e:
-                _LOGGER.error(f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_name}. "
+                _LOGGER.error(f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_id}. "
                               f"Error: {str(e)}.")
                 self._raise_error(e.lineno, message=str(e), internal=False)
             except Exception as e:
-                _LOGGER.exception(f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_name}. "
+                _LOGGER.exception(f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_id}. "
                                   f"See full traceback below.")
                 self._raise_error(message=str(e), internal=True)
             else:
@@ -458,15 +460,14 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             if not self._ignored_unsaved():
                 return
             talk_id = self.get_talk_id()
-            esp_path = self.esp_file_paths[self.selected_map_name][talk_id]
+            esp_path = self.esp_file_paths[self.selected_map_id][talk_id]
             try:
                 with esp_path.open("r", encoding="utf-8") as f:
-                    self.esp_text[self.selected_map_name][talk_id] = f.read()
+                    self.esp_text[self.selected_map_id][talk_id] = f.read()
             except FileNotFoundError:
                 self.CustomDialog(
                     title="ESP File Missing",
-                    message=f"ESP talk file 't{talk_id}.esp' not found in '/talk/{self.selected_map_name}' "
-                            f"in project directory.")
+                    message=f"ESP talk file 't{talk_id}.esp' not found in\n'{str(esp_path)}'.")
             else:
                 self.update_talk_text()
 
@@ -485,7 +486,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             self.mimic_click(self.reload_all_button)
 
         if map_name is None:
-            map_name = self.selected_map_name
+            map_name = get_map(self.selected_map_id).name
         map_directory = self.esp_directory / f"{map_name}"
 
         # Check for missing files.
@@ -597,14 +598,14 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
 
     def get_esd_text(self, row_index=None):
         talk_id = self.get_talk_id(row_index)
-        return self.esp_text[self.selected_map_name][talk_id]
+        return self.esp_text[self.selected_map_id][talk_id]
 
     def _on_map_choice(self, _=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
-            # Keep currently selected map name.
-            self.map_choice.var.set(f"{DARK_SOULS_TALKESDBND_NAMES[self.selected_map_name]} [{self.selected_map_name}]")
+            # Keep currently selected map.
+            self.map_choice.var.set(f"{self.selected_map_id} [{get_map(self.selected_map_id).name}]")
             return
-        self.selected_map_name = self.map_choice.var.get().split(' [')[1][:-1].replace(' ', '')
+        self.selected_map_id = self.map_choice.var.get().split(' [')[0]
         if self.global_map_choice_func:
             self.global_map_choice_func(self.map_choice.var.get().split(' [')[0])
         self.select_entry_row_index(None, check_unsaved=False)
@@ -621,14 +622,14 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             return False
 
         self._cancel_entry_id_edit()
-        with (self.esp_directory / f"{self.selected_map_name}/t{entry_id}.esp.py").open(
+        with (self.esp_directory / f"{self.selected_map_id}/t{entry_id}.esp.py").open(
                 mode="w", encoding="utf-8") as f:
             f.write(new_esp_string)
         self.refresh()  # scan for new talk ID
         self.select_entry_id(entry_id, set_focus_to_text=True, edit_if_already_selected=False)
 
     def add_relative_entry(self, entry_id, goal_type=None, offset=1, text=None):
-        esp_text = self.esp_text[self.selected_map_name][entry_id]
+        esp_text = self.esp_text[self.selected_map_id][entry_id]
         self._add_entry(entry_id=entry_id + offset, text=text, new_esp_string=esp_text)
 
     def delete_entry(self, row_index, category=None):
@@ -637,7 +638,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         talk_id = self.get_talk_id(row_index)
         if self.CustomDialog(
                 title="Confirm Deletion",
-                message=f"Delete talk ID {talk_id} in map {self.selected_map_name}? This will delete the ESP file in "
+                message=f"Delete talk ID {talk_id} in map {self.selected_map_id}? This will delete the ESP file in "
                         f"your project directory and cannot be undone.",
                 button_names=("Yes, delete it", "No, go back"),
                 button_kwargs=("YES", "NO"),
@@ -645,22 +646,22 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             return
         esp_path = self.get_esp_path(row_index)
         os.remove(str(esp_path))
-        self.esp_text[self.selected_map_name].pop(talk_id)
-        self.esp_file_paths[self.selected_map_name].pop(talk_id)
+        self.esp_text[self.selected_map_id].pop(talk_id)
+        self.esp_file_paths[self.selected_map_id].pop(talk_id)
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
 
     def get_category_dict(self, category=None) -> Dict[int, str]:
         """Gets list of talk IDs and their paths. Category argument does nothing."""
-        return self.esp_file_paths[self.selected_map_name]
+        return self.esp_file_paths[self.selected_map_id]
 
     def get_selected_text(self) -> str:
-        return self.esp_text[self.selected_map_name][self.get_talk_id()]
+        return self.esp_text[self.selected_map_id][self.get_talk_id()]
 
     def get_esp_path(self, row_index=None) -> Path:
         if row_index is None:
             row_index = self.active_row_index
-        return self.esp_directory / f"{self.selected_map_name}/t{self.get_talk_id(row_index)}.esp.py"
+        return self.esp_directory / f"{self.selected_map_id}/t{self.get_talk_id(row_index)}.esp.py"
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns list of talk IDs in map."""

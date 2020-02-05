@@ -111,8 +111,8 @@ def format_binary_operator(sequence: list, operator_key: bytes):
 def decompile(byte_sequence, esd_type, func_prefix=""):
     """ Input should be a sequence of bytes. """
 
-    if esd_type not in {'CHR', 'TALK'}:
-        raise ValueError("esd_type must be 'CHR' or 'TALK'.")
+    if esd_type not in {"chr", 'talk'}:
+        raise ValueError("esd_type must be 'chr' or 'talk'.")
 
     # _LOGGER.debug(f"Unparsed: {nice_hex_bytes(byte_sequence)}")
 

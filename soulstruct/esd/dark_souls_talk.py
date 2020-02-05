@@ -5,11 +5,12 @@ from collections import OrderedDict
 from pathlib import Path
 
 from soulstruct.bnd import BND, BNDEntry
+from soulstruct.constants.darksouls1.maps import ALL_MAPS
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
-from soulstruct.utilities import BiDict, PACKAGE_PATH
+from soulstruct.utilities import PACKAGE_PATH
 
-__all__ = ["DarkSoulsTalk", "TalkESDBND", "DARK_SOULS_TALKESDBND_NAMES"]
+__all__ = ["DarkSoulsTalk", "TalkESDBND"]
 _LOGGER = logging.getLogger(__name__)
 
 _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
@@ -166,29 +167,6 @@ class TalkESDBND(object):
             return pickle.load(f)
 
 
-DARK_SOULS_TALKESDBND_NAMES = BiDict(
-    ('m10_00_00_00', 'Depths'),
-    ('m10_01_00_00', 'UndeadBurg'),
-    ('m10_02_00_00', 'FirelinkShrine'),
-    ('m11_00_00_00', 'PaintedWorld'),
-    ('m12_00_00_00', 'DarkrootGarden'),
-    # ('m12_00_00_01', 'DarkrootGardenDLC'),  # only contains a single t100000 copy
-    ('m12_01_00_00', 'Oolacile'),
-    ('m13_00_00_00', 'Catacombs'),
-    ('m13_01_00_00', 'TombOfTheGiants'),
-    ('m13_02_00_00', 'AshLake'),
-    ('m14_00_00_00', 'Blighttown'),
-    ('m14_01_00_00', 'LostIzalith'),
-    # ('m14_02_00_00', 'UnusedMap'),  # unused
-    ('m15_00_00_00', 'SensFortress'),
-    ('m15_01_00_00', 'AnorLondo'),
-    ('m16_00_00_00', 'NewLondoRuins'),
-    ('m17_00_00_00', 'DukesArchives'),
-    ('m18_00_00_00', 'KilnOfTheFirstFlame'),
-    ('m18_01_00_00', 'UndeadAsylum'),
-)
-
-
 class DarkSoulsTalk(object):
     """Not actually used by SoulstructProject, but could still be useful for CLI editing."""
 
@@ -226,15 +204,15 @@ class DarkSoulsTalk(object):
         if not self._directory.is_dir():
             raise ValueError("DarkSoulsTalk should be initialized with the directory containing TalkESDBND files.")
 
-        for talkesdbnd_base_name, talkesdbnd_attr_name in DARK_SOULS_TALKESDBND_NAMES.items():
-            talkesdbnd_path = self._directory / (talkesdbnd_base_name + '.talkesdbnd')
+        for game_map in ALL_MAPS:
+            talkesdbnd_path = self._directory / (game_map.esd_file_stem + '.talkesdbnd')
             try:
-                self._data[talkesdbnd_attr_name] = TalkESDBND(talkesdbnd_path)
-                setattr(self, talkesdbnd_attr_name, self._data[talkesdbnd_attr_name])
+                self._data[game_map.name] = TalkESDBND(talkesdbnd_path)
+                setattr(self, game_map.name, self._data[game_map.name])
             except FileNotFoundError:
                 raise FileNotFoundError(
-                    f"Could not find TalkESDBND file {repr(talkesdbnd_base_name)} "
-                    f"({talkesdbnd_attr_name}) in given directory.")
+                    f"Could not find TalkESDBND file {repr(game_map.esd_file_stem)} "
+                    f"({game_map.name}) in given directory.")
 
     def __getitem__(self, talkesdbnd_name):
         return self._data[talkesdbnd_name]
@@ -246,7 +224,7 @@ class DarkSoulsTalk(object):
         if talk_directory is None:
             talk_directory = self._directory
         talk_directory = Path(talk_directory)
-        for talkesdbnd_name in DARK_SOULS_TALKESDBND_NAMES.values():
-            talkesdbnd_path = talk_directory / self._data[talkesdbnd_name].bnd.bnd_path.name
-            self._data[talkesdbnd_name].write(talkesdbnd_path)
+        for talkesdbnd in self._data.values():
+            talkesdbnd_path = talk_directory / talkesdbnd.bnd.bnd_path.name
+            talkesdbnd.write(talkesdbnd_path)
         _LOGGER.info("Dark Souls talk ESD files (TalkESDBND) written successfully.")

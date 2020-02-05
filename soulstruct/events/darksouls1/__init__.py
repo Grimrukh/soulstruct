@@ -1,6 +1,6 @@
 from .core import EMEVD, convert_events
-from . import constants
-from .constants import *
+import soulstruct.constants.darksouls1.maps as constants
+from soulstruct.constants.darksouls1.maps import *
 from . import instructions
 from .instructions import *
 from . import tests

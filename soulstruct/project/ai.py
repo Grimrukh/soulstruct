@@ -5,8 +5,8 @@ import tkinter as tk
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-from soulstruct.ai import DARK_SOULS_AI_BND_NAMES
 from soulstruct.ai.core import LuaError
+from soulstruct.constants.darksouls1.maps import ALL_MAPS
 from soulstruct.project.editor import SoulstructBaseEditor
 from soulstruct.project.utilities import bind_events
 from soulstruct.utilities.core import camel_case_to_spaces
@@ -310,7 +310,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
-                bnd_display_names = [f"{k} [{camel_case_to_spaces(v)}]" for k, v in DARK_SOULS_AI_BND_NAMES.items()]
+                bnd_display_names = [f"{game_map.ai_file_stem} [{game_map.verbose_name}]" for game_map in ALL_MAPS]
                 self.bnd_choice = self.Combobox(
                     values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=(10, 30))

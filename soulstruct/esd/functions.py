@@ -4,14 +4,14 @@ from soulstruct.utilities import PACKAGE_PATH
 
 __all__ = ['COMMANDS', 'TEST_FUNCTIONS']
 
-COMMANDS = {'CHR': {}, 'TALK': {}}
-TEST_FUNCTIONS = {'CHR': {}, 'TALK': {}}
+COMMANDS = {'chr': {}, 'talk': {}}
+TEST_FUNCTIONS = {'chr': {}, 'talk': {}}
 
 # Construct command/function tables.
 
-_COMMAND_RE = re.compile(r'# COMMAND (CHR|TALK)\[(\d*)\]\[(\d*)\]')
-_TEST_RE = re.compile(r'# TEST (CHR|TALK)\[(\d*)\]')
-_FUNCTION_DEF_RE = re.compile(r'def ([\w\d_]*)\(([\w\d :_,*]*)\)')
+_COMMAND_RE = re.compile(r"# command (chr|talk)\[(\d*)\]\[(\d*)\]")
+_TEST_RE = re.compile(r"# test (chr|talk)\[(\d*)\]")
+_FUNCTION_DEF_RE = re.compile(r"def ([\w\d_]*)\(([\w\d :_,*]*)\)")
 
 
 def _parse_function_def(i_: int, line: str):

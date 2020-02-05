@@ -38,7 +38,9 @@ class SoulstructRuntimeManager(SmartFrame):
                         font_size=14, pady=10, row=0)
                     self.install_psutil_button = self.Button(
                         text="Install psutil", command=self._install_psutil, bg="#422", width=30,
-                        font_size=16, row=1)
+                        font_size=16, row=1,
+                        tooltip_text="Install the Python package `psutil` into your Python distribution, which will "
+                                     "enable runtime tools.")
             else:
                 with self.set_master(padx=10, pady=10, row_weights=[1, 1], column_weights=[1, 1]):
                     button_kwargs = {'width': 30, 'sticky': 'nsew', 'padx': 10, 'pady': 10, 'font_size': 14}
@@ -47,17 +49,22 @@ class SoulstructRuntimeManager(SmartFrame):
                     debug_launch = self.Button(
                         text="Launch Game (Debug)",
                         command=self._error_as_dialog(lambda: self.project.launch_game(debug=True)),
-                        bg="#222", row=0, column=1, **button_kwargs)
+                        bg="#222", row=0, column=1,
+                        tooltip_text="Launch 'DARKSOULS_DEBUG.exe' if it exists next to the game executable.",
+                        **button_kwargs)
                     if self.project.game_name != "Dark Souls Prepare to Die Edition":
                         debug_launch['state'] = 'disabled'
                         debug_launch.var.set("No Debug for DSR")
                     self.Button(text="Launch DS Gadget", bg="#222",
                                 command=self._error_as_dialog(self.project.launch_gadget),
-                                row=1, column=0, **button_kwargs)
+                                row=1, column=0,
+                                tooltip_text="Launch 'DS Gadget.exe' or 'DSR-Gadget.exe' if it exists next to the game "
+                                             "executable.",
+                                **button_kwargs)
                     self.Button(text="Close Game", bg="#422",
                                 command=self._error_as_dialog(lambda: self.project.force_quit_game(
                                     including_debug=self.project.game_name == "Dark Souls Prepare to Die Edition")),
-                                row=1, column=1, **button_kwargs)
+                                row=1, column=1, tooltip_text="Force quit Dark Souls if it's running.", **button_kwargs)
 
             with self.set_master(padx=10, pady=20, row_weights=[1, 1], column_weights=[1, 1, 1]):
                 game_saves = self.project.get_game_saves()

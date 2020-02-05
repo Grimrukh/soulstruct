@@ -5,8 +5,9 @@ from ast import literal_eval
 from enum import IntEnum
 from typing import List, TYPE_CHECKING
 
+from soulstruct.constants.darksouls1.maps import ALL_MAPS
 from soulstruct.core import InvalidFieldValueError
-from soulstruct.maps import MAP_ENTRY_TYPES, DARK_SOULS_MAP_NAMES
+from soulstruct.maps import MAP_ENTRY_TYPES
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events
 from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
@@ -321,9 +322,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
-                map_display_names = [f"{k} [{camel_case_to_spaces(v)}]" for k, v in DARK_SOULS_MAP_NAMES.items()]
+                map_display_names = [f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
+                                     for game_map in ALL_MAPS if game_map.msb_file_stem]
                 self.map_choice = self.Combobox(
-                    values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=25,
+                    values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
                     font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10)
 
             super().build()

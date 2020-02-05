@@ -386,8 +386,8 @@ class BaseESD(object):
                 self.compile_from_esp_single_file(esd_source)
 
             elif esd_source.name.endswith('.esd.dcx'):
-                if esd_type not in {'CHR', 'TALK'}:
-                    raise ValueError("esd_type must be 'CHR' or 'TALK'. This cannot be safely auto-detected from"
+                if esd_type not in {'chr', 'talk'}:
+                    raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected from"
                                      "packed ESD resources.")
                 esd_dcx = DCX(esd_source)
                 self.auto_path = esd_source.parent / esd_source.name[:-8]
@@ -400,16 +400,16 @@ class BaseESD(object):
                                   f"ESD, which you can create with the `pack()` method of this class.")
 
             elif esd_source.name.endswith('.esd'):
-                if esd_type not in {'CHR', 'TALK'}:
-                    raise ValueError("esd_type must be 'CHR' or 'TALK'. This cannot be safely auto-detected from "
+                if esd_type not in {'chr', 'talk'}:
+                    raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected from "
                                      "packed ESD resources.")
                 self.auto_path = esd_source.parent / esd_source.stem
                 with esd_source.open("rb") as esd_buffer:
                     self.unpack(esd_buffer, esd_type)
 
     def unpack(self, esd_buffer, esd_type: str):
-        if esd_type not in {'CHR', 'TALK'}:
-            raise ValueError("esd_type must be 'CHR' or 'TALK'. This cannot be safely auto-detected.")
+        if esd_type not in {'chr', 'talk'}:
+            raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected.")
         self.esd_type = esd_type
 
         header = self.EXTERNAL_HEADER_STRUCT.unpack(esd_buffer)
@@ -466,7 +466,7 @@ class BaseESD(object):
 
     def compile_from_esp_single_file(self, esp_file):
         esp_file = Path(esp_file)
-        self.esd_type = "TALK"
+        self.esd_type = "talk"
         self.magic = (0, 0, 0, 0)
         _LOGGER.debug(f"Compiling single-file ESD state machine: {esp_file.name}")
         compiler = ESPCompiler(esp_file, self)
@@ -490,8 +490,8 @@ class BaseESD(object):
                         raise ValueError(f"Could not read MAGIC value from ESD_Header: {magic}")
                 else:
                     raise ValueError(f"Invalid ESD Header line: {line}")
-        if self.esd_type not in {'CHR', 'TALK'}:
-            raise ValueError(f"ESD type must be 'CHR' or 'TALK', not {repr(self.esd_type)}")
+        if self.esd_type not in {'chr', 'talk'}:
+            raise ValueError(f"ESD type must be 'chr' or 'talk', not {repr(self.esd_type)}")
         if len(self.magic) != 4:
             raise ValueError(f"MAGIC should be a four-element sequence.")
 
@@ -576,7 +576,7 @@ class BaseESD(object):
     def write_esp(self, esp_directory=None, force_folder=False):
         """Write ESD to a collection of Python-like 'ESP' scripts (one per state machine) in the specified folder.
 
-        If only one state machine is present and `esd_type` is 'TALK', it will be written to a single file in the given
+        If only one state machine is present and `esd_type` is 'talk', it will be written to a single file in the given
         directory named after the internal name (discarding any junk at the end of it), with the unknown 'magic' bytes
         discarded (neither the internal name nor magic matters in-game). You can disable this behavior and force an ESP
         folder to be written even in this case by setting `force_folder=True`.
@@ -589,7 +589,7 @@ class BaseESD(object):
             esp_directory = Path(esp_directory)
 
         single_file = (len(self.state_machines) == 1 and 1 in self.state_machines
-                       and self.esd_type == "TALK" and not esp_directory.is_dir() and not force_folder)
+                       and self.esd_type == "talk" and not esp_directory.is_dir() and not force_folder)
 
         # TODO: read from single file
 

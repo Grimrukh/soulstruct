@@ -321,11 +321,9 @@ def boolify(integer):
 
 
 def get_game_map_name(area_id, block_id, game_module):
-    """ Attempts to get the name of the game map. """
+    """Attempts to get the name of the game map."""
     try:
-        area_id = int(area_id)
-        block_id = int(block_id)
-        return game_module.constants.MAP_NAMES[(int(area_id), int(block_id))]
-    except (ValueError, KeyError):
-        # Event arg replacement(s) or unknown map. Return tuple instead, stripping quotes from any string elements.
+        return game_module.constants.get_map(area_id, block_id)
+    except ValueError:
+        # Event arg replacement(s) or unknown map. Write repr'd tuple instead.
         return f"({area_id}, {block_id})"

@@ -29,7 +29,7 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
     output_directory = Path(output_directory)
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
     input_directory = Path(input_directory)
-    emevd_sources = {m.emevd_file_name: None for m in maps}
+    emevd_sources = {m.emevd_file_stem: None for m in maps}
     all_exts = EVENT_EXTENSIONS["evs"].union(EVENT_EXTENSIONS["emevd"].union(
         EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"])))
     for available in input_directory.glob("*"):

@@ -2,30 +2,9 @@ import logging
 from pathlib import Path
 
 from soulstruct.maps.msb import MSB
-from soulstruct.utilities.core import BiDict
+from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 
 _LOGGER = logging.getLogger(__name__)
-
-
-DARK_SOULS_MAP_NAMES = BiDict(
-    ('m10_00_00_00', 'Depths'),
-    ('m10_01_00_00', 'UndeadBurg'),
-    ('m10_02_00_00', 'FirelinkShrine'),
-    ('m11_00_00_00', 'PaintedWorld'),
-    ('m12_00_00_01', 'DarkrootGarden'),  # note the trailing 1, as in `m12_00_00_01.msb`, the DLC version
-    ('m12_01_00_00', 'Oolacile'),
-    ('m13_00_00_00', 'Catacombs'),
-    ('m13_01_00_00', 'TombOfTheGiants'),
-    ('m13_02_00_00', 'AshLake'),
-    ('m14_00_00_00', 'Blighttown'),
-    ('m14_01_00_00', 'LostIzalith'),
-    ('m15_00_00_00', 'SensFortress'),
-    ('m15_01_00_00', 'AnorLondo'),
-    ('m16_00_00_00', 'NewLondoRuins'),
-    ('m17_00_00_00', 'DukesArchives'),
-    ('m18_00_00_00', 'KilnOfTheFirstFlame'),
-    ('m18_01_00_00', 'UndeadAsylum'),
-)
 
 
 class DarkSoulsMaps(object):
@@ -35,16 +14,16 @@ class DarkSoulsMaps(object):
     FirelinkShrine: MSB
     PaintedWorld: MSB
     DarkrootGarden: MSB  # and Darkroot Basin
-    Oolacile: MSB  # and all DLC
+    Oolacile: MSB  # and Royal Wood and Chasm of the Abyss
     Catacombs: MSB
     TombOfTheGiants: MSB
     AshLake: MSB  # and Great Hollow
-    Blighttown: MSB
+    Blighttown: MSB  # and Quelaag's Domain
     LostIzalith: MSB  # and Demon Ruins
     SensFortress: MSB
     AnorLondo: MSB
     NewLondoRuins: MSB  # and Valley of Drakes
-    DukesArchives: MSB
+    DukesArchives: MSB  # and Crystal Cave
     KilnOfTheFirstFlame: MSB
     UndeadAsylum: MSB
 
@@ -84,24 +63,27 @@ class DarkSoulsMaps(object):
 
         self._directory = map_studio_directory
 
-        for msb_base_name, msb_attr_name in DARK_SOULS_MAP_NAMES.items():
-            msb_path = self._directory / (msb_base_name + '.msb')
+        for game_map in ALL_MAPS:
+            if game_map.msb_file_stem is None:
+                continue
+            msb_path = self._directory / (game_map.msb_file_stem + '.msb')
             try:
-                self._data[msb_attr_name] = MSB(msb_path)
-                setattr(self, msb_attr_name, self._data[msb_attr_name])
+                self._data[game_map.name] = MSB(msb_path)
+                setattr(self, game_map.name, self._data[game_map.name])
             except FileNotFoundError:
-                raise FileNotFoundError(f"Could not find MSB file {repr(msb_base_name)} ({msb_attr_name}) in given "
-                                        f"directory.")
+                raise FileNotFoundError(f"Could not find MSB file {repr(game_map.msb_file_stem)} "
+                                        f"({game_map.name}) in given directory.")
 
-    def __getitem__(self, map_name):
-        return self._data[map_name]
+    def __getitem__(self, map_source):
+        game_map = get_map(map_source)
+        return self._data[game_map.name]
 
     def save(self, msb_directory=None):
         if msb_directory is None:
             msb_directory = self._directory
         else:
             msb_directory = Path(msb_directory)
-        for msb_name in DARK_SOULS_MAP_NAMES.values():
-            msb_path = msb_directory / self._data[msb_name].msb_path.name
-            self._data[msb_name].write_packed(msb_path)
+        for msb in self._data.values():
+            msb_path = msb_directory / msb.msb_path.name
+            msb.write_packed(msb_path)
         _LOGGER.info("Dark Souls map files (MSB) written successfully.")

@@ -58,26 +58,65 @@ class FlagRange(GameObject):
 
     def __iter__(self):
         """Allows easy conversion to sequence."""
-        yield self.first
-        yield self.last
+        return iter((self.first, self.last))
 
 
 class Map(GameObject):
-    def __init__(self, area_id, block_id, msb_file_name=None):
+    def __init__(self, area_id, block_id, name=None,
+                 emevd_file_stem=None, msb_file_stem=None, ai_file_stem=None, esd_file_stem=None,
+                 variable_name=None, verbose_name=None):
+        """
+        Create a game map instance with associated naming information. These instances can be used as arguments in EVS
+        instructions.
+
+        Soulstruct defines constants for existing game maps already, so you shouldn't need to use this class yourself.
+        (You can theoretically use transient `Map(a, b)` calls as arguments in EVS instructions, but you may as well
+        just use a tuple `(a, b)` in that case, which is also accepted.)
+
+        Args:
+            area_id: Area ID of map, which is the first number (of four) in the full map ID. Multiple maps can appear in
+                the same area. Some game files (such as lighting parameters) are area-specific rather than map-specific.
+            block_id: Block ID of map, which is the second number (of four) in the full map ID. Generally, the area ID
+                and block ID fully specify the map. The third number in the map ID is essentially never used and the
+                fourth number is only used for file revision purposes (e.g. the Dark Souls DLC version of Darkroot).
+
+            name: Canonical name of map (e.g. "undeadburg"). Note that the map-finding utility `get_map` ignores case
+                and underscores when looking for a specific name.
+
+            emevd_file_stem: Name of `emevd` file for this map, without extension.
+            msb_file_stem: Name of `msb` file for this map, without extension.
+            ai_file_stem: Name of 'luabnd[.dcx]' for this map, without extension(s).
+            esd_file_stem: Name of 'talkesdbnd[.dcx]' for this map, without extension(s).
+
+            variable_name: Name to use in EVS output (typically upper case with underscores).
+            verbose_name: Full descriptive name of map for display in certain output-only fields.
+
+        `name`, `emevd_file_stem`, `msb_file_stem`, `ai_file_stem`, and `esd_file_stem` all default to
+        `m{area_id:02d}_{block_id:02d}_00_00` if not specified. `verbose_name` defaults to `name`. `variable_name`
+        defaults to None (not a valid EVS instruction argument).
+        """
         self.area_id = area_id
         self.block_id = block_id
-        self.emevd_file_name = f'm{area_id:02d}_{block_id:02d}_00_00'
-        self.msb_file_name = self.emevd_file_name if msb_file_name is None else msb_file_name
+
+        base_id = f'm{area_id:02d}_{block_id:02d}_00_00' if area_id is not None and block_id is not None else None
+        self.name = base_id if name is None else name
+
+        self.emevd_file_stem = base_id if emevd_file_stem is None else emevd_file_stem
+        self.msb_file_stem = base_id if msb_file_stem is None else msb_file_stem
+        self.ai_file_stem = base_id if ai_file_stem is None else ai_file_stem
+        self.esd_file_stem = base_id if esd_file_stem is None else esd_file_stem
+
+        self.variable_name = variable_name
+        self.verbose_name = self.name if verbose_name is None else verbose_name
 
     def __eq__(self, other_map):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id
 
     def __iter__(self):
-        yield self.area_id
-        yield self.block_id
+        return iter((self.area_id, self.block_id))
 
     def __repr__(self):
-        return self.emevd_file_name
+        return self.emevd_file_stem
 
 
 FlagRangeOrSequence = Union[FlagRange, tuple, list]
