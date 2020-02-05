@@ -166,7 +166,7 @@ __all__ = [
     "IfPlayerInsideRegion", "IfPlayerOutsideRegion",
     "SkipLinesIfMultiplayerState", "SkipLinesIfHost", "SkipLinesIfClient", 
     "SkipLinesIfMultiplayer", "SkipLinesIfSingleplayer",
-    "TerminateIfMultiplayerState", "EndIfHost", "EndIfClient", "EndIfMultiplayer", "EndIfSingleplayer", 
+    "TerminateIfMultiplayerState", "EndIfHost", "EndIfClient", "EndIfMultiplayer", "EndIfSingleplayer",
     "RestartIfHost", "RestartIfClient", "RestartIfMultiplayer", "RestartIfSingleplayer", 
     "IfMultiplayerState", "IfHost", "IfClient", "IfMultiplayer", "IfSingleplayer", 
     "SetBossHealthBarState", "EnableBossHealthBar", "DisableBossHealthBar",
@@ -175,7 +175,12 @@ __all__ = [
     "RotateToFaceEntity",
     
     # REMASTERED ONLY (mostly Arena events - no warning given if you try to use these in PTDE!)
-    "RegisterHealingFountain", 
+    "SkipLinesIfUnknownPlayerType4", "SkipLinesIfUnknownPlayerType5",
+    "RestartIfUnknownPlayerType4", "RestartIfUnknownPlayerType5",
+    "EndIfUnknownPlayerType4", "EndIfUnknownPlayerType5",
+    "IfUnknownPlayerType4", "IfUnknownPlayerType5",
+
+    "RegisterHealingFountain",
     "Unknown_3_23",
     "IfMultiplayerCount", 
     "Unknown_4_15", 
@@ -245,6 +250,16 @@ def SkipLinesIfSingleplayer(line_count):
     return SkipLinesIfMultiplayerState(line_count, MultiplayerState.Singleplayer)
 
 
+# REMASTERED ONLY
+def SkipLinesIfUnknownPlayerType4(line_count):
+    return SkipLinesIfMultiplayerState(line_count, MultiplayerState.UnknownPlayerType4)
+
+
+# REMASTERED ONLY
+def SkipLinesIfUnknownPlayerType5(line_count):
+    return SkipLinesIfMultiplayerState(line_count, MultiplayerState.UnknownPlayerType5)
+
+
 def TerminateIfMultiplayerState(event_end_type: EventEndType, state: MultiplayerState):
     instruction_info = (1003, 6)
     return to_numeric(instruction_info, event_end_type, state)
@@ -266,6 +281,16 @@ def EndIfSingleplayer():
     return TerminateIfMultiplayerState(EventEndType.End, MultiplayerState.Singleplayer)
 
 
+# REMASTERED ONLY
+def EndIfUnknownPlayerType4():
+    return TerminateIfMultiplayerState(EventEndType.End, MultiplayerState.UnknownPlayerType4)
+
+
+# REMASTERED ONLY
+def EndIfUnknownPlayerType5():
+    return TerminateIfMultiplayerState(EventEndType.End, MultiplayerState.UnknownPlayerType5)
+
+
 def RestartIfHost():
     return TerminateIfMultiplayerState(EventEndType.Restart, MultiplayerState.Host)
 
@@ -280,6 +305,16 @@ def RestartIfMultiplayer():
 
 def RestartIfSingleplayer():
     return TerminateIfMultiplayerState(EventEndType.Restart, MultiplayerState.Singleplayer)
+
+
+# REMASTERED ONLY
+def RestartIfUnknownPlayerType4():
+    return TerminateIfMultiplayerState(EventEndType.Restart, MultiplayerState.UnknownPlayerType4)
+
+
+# REMASTERED ONLY
+def RestartIfUnknownPlayerType5():
+    return TerminateIfMultiplayerState(EventEndType.Restart, MultiplayerState.UnknownPlayerType5)
 
 
 def IfMultiplayerState(condition: int, state: MultiplayerState):

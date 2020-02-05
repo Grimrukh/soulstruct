@@ -359,7 +359,7 @@ class BaseESD(object):
               (or `StateMachine_xi.esp.py` for callable state machines).
         """
 
-        esd_type = esd_type.upper() if esd_type is not None else None
+        esd_type = esd_type.lower() if esd_type is not None else None
 
         self.magic = ()
         self.esd_name = esd_name
@@ -409,7 +409,7 @@ class BaseESD(object):
 
     def unpack(self, esd_buffer, esd_type: str):
         if esd_type not in {'chr', 'talk'}:
-            raise ValueError("esd_type must be 'chr' or 'talk'. This cannot be safely auto-detected.")
+            raise ValueError(f"esd_type must be 'chr' or 'talk', not {esd_type}. This cannot be safely auto-detected.")
         self.esd_type = esd_type
 
         header = self.EXTERNAL_HEADER_STRUCT.unpack(esd_buffer)

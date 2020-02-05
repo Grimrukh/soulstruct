@@ -1,5 +1,5 @@
 from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
-    get_game_map_name
+    get_game_map_variable_name
 from soulstruct.enums.bloodborne import *
 
 
@@ -201,7 +201,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 107:
             label, state, area_id, block_id = req_args
             label = get_enum_name(Label, label, True)
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if state == 1:
                 return f"GotoIfInsideMap({label}, {game_map})"
             if state == 0:
@@ -236,7 +236,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 6:
             cutscene, cutscene_type, region, area_id, block_id, player_id, time_period_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
             return (f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
                     f"{game_map}, player_id={player_id}, time_period_id={time_period_id})")
@@ -248,7 +248,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 8:
             region, area_id, block_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"PlayCutsceneAndMovePlayer_Dummy({region}, {game_map})"
 
     if instruction_class == 2003:

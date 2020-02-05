@@ -288,8 +288,9 @@ class SoulstructProject(object):
         for map_directory in (self.project_root / "talk").glob("*"):
             if map_directory.name not in [g.name for g in ALL_MAPS]:
                 continue  # unexpected folder
+            bnd_file_name = get_map(map_directory.name).esd_file_stem + ".talkesdbnd"
             talk = TalkESDBND(map_directory, game_version=game_version)
-            talk.write(export_directory)
+            talk.write(export_directory / bnd_file_name)
 
     def restore_backup(self, target=None):
         """Restores '.bak' files, deleting whatever they would replace."""

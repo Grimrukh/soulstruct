@@ -2,7 +2,7 @@
 import logging
 import struct
 from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
-    get_game_map_name
+    get_game_map_variable_name
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 2:
             cutscene_id, playback_method, move_region, area_id, block_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if not isinstance(playback_method, int):
                 # My wrapper instruction cannot wrap a variable cutscene playback type.
                 return (f"PlayCutsceneAndMovePlayer({cutscene_id}, playback_method={playback_method}, "
@@ -146,7 +146,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 4:
             cutscene_id, playback_method, move_region, area_id, block_id, player_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             player_id = 'PLAYER' if player_id == 10000 else player_id
             if not isinstance(playback_method, int):
                 # My wrapper instruction cannot wrap a variable cutscene playback type.
@@ -239,7 +239,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 14:
             area_id, block_id, destination_player_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"WarpToMap(game_map={game_map}, destination_player_id={destination_player_id})"
 
         if instruction_index == 16:
@@ -714,7 +714,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 10:
             obj, area_id, block_id, statue_type = req_args
             statue_type = get_enum_name(game_module.StatueType, statue_type, True)
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"RegisterStatue({obj}, game_map={game_map}, statue_type={statue_type})"
 
         if instruction_index == 11:
@@ -835,7 +835,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 3:
             area_id, block_id, camera_slot = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"SetLockedCameraSlot(game_map={game_map}, camera_slot={camera_slot})"
 
     if instruction_class == 2009:  # SCRIPT
@@ -1184,7 +1184,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 7:
             line_count, state, area_id, block_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if state == 1:
                 return f"SkipLinesIfInsideMap({line_count}, game_map={game_map})"
             elif state == 0:
@@ -1193,7 +1193,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 8:  # マップIDでイベント終了
             end_type, state, area_id, block_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if end_type == 0:
                 if state == 1:
                     return f"EndIfInsideMap(game_map={game_map})"
@@ -1376,7 +1376,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
 
         if instruction_index == 8:
             condition, state, area_id, block_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if state == 1:
                 return f"IfInsideMap({condition}, game_map={game_map})"
             elif state == 0:

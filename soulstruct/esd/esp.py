@@ -16,8 +16,8 @@ class ESPCompiler(object):
 
     registers: List[Tuple]
     _STATE_DOCSTRING_RE = re.compile(r'([0-9]+)(:\s*.*)?')
-    _COMMAND_DEFAULT_RE = re.compile(r'Command_(?:TALK|CHR)_(\d*)_(\d*)')
-    _TEST_DEFAULT_RE = re.compile(r'Test_(?:TALK|CHR)_(\d*)')
+    _COMMAND_DEFAULT_RE = re.compile(r'Command_(?:talk|chr)_(\d*)_(\d*)')
+    _TEST_DEFAULT_RE = re.compile(r'Test_(?:talk|chr)_(\d*)')
 
     def __init__(self, esp_path, esd_object):
         """ Builds a single state machine. """

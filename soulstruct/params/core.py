@@ -214,8 +214,11 @@ class ParamEntry(object):
             try:
                 field_type = getattr(enums, field['internal_type'])
             except AttributeError:
-                raise ParamError(f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
-                                 f"internal type {field['internal_type']} (debug type {field['debug_type']}).")
+                if field['name'] == 'sfxMultiplier':
+                    field_type = enums.f32
+                else:
+                    raise ParamError(f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
+                                     f"internal type {field['internal_type']} (debug type = {field['debug_type']}).")
             if not isinstance(self[field['name']], field_type.python_type()):
                 raise ParamError(f"Bad type: field {field['name']} in entry {repr(self.name)} of table "
                                  f"{self.paramdef.param_name} has value {self[field['name']]} with type "

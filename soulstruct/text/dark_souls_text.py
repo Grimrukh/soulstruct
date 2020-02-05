@@ -212,7 +212,9 @@ class DarkSoulsText(object):
             for patch_fmg_name in _CAN_MERGE_PATCH:
                 if patch_fmg_name in self._is_menu:
                     bnd_index = _MSGBND_INDEX_to_SS_NAME_[patch_fmg_name]
-                    (new_menu_msgbnd if self._is_menu[patch_fmg_name] else new_item_msgbnd).remove_entry(bnd_index)
+                    msgbnd = new_menu_msgbnd if self._is_menu[patch_fmg_name] else new_item_msgbnd
+                    if bnd_index in msgbnd.entries_by_id:
+                        msgbnd.remove_entry(bnd_index)
 
         for fmg_name, fmg_entries in self._data.items():
             word_wrap = description_word_wrap_limit if 'Descriptions' in fmg_name else None

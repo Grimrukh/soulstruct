@@ -612,6 +612,21 @@ class SmartFrame(tk.Frame):
             custom_widget.columnconfigure(i, weight=w)
         return custom_widget
 
+    def LoadingDialog(self, title, message, font_size=10, font_type="Segoe UI",
+                      style_defaults=None, loading_dialog_subclass=None, **progressbar_kwargs) -> LoadingDialog:
+        """Creates a child `LoadingDialog` with `style_defaults` taken from SmartFrame by default."""
+        if loading_dialog_subclass is None:
+            loading_dialog_subclass = LoadingDialog
+        elif not issubclass(loading_dialog_subclass, LoadingDialog):
+            raise TypeError("`loading_dialog_subclass` must be a subclass of `LoadingDialog`, if specified.")
+
+        if style_defaults is None:
+            style_defaults = self.STYLE_DEFAULTS
+
+        return loading_dialog_subclass(
+            master=self, title=title, message=message, font_size=font_size, font_type=font_type,
+            style_defaults=style_defaults, **progressbar_kwargs)
+
     def CustomDialog(self, title, message, font_size=10, font_type="Segoe UI",
                      button_names=("OK",), button_kwargs=("OK",), style_defaults=None,
                      default_output=None, cancel_output=None,
@@ -800,6 +815,26 @@ class SmartFrame(tk.Frame):
                             f"dictionaries (one per button name), or a string or list of strings that are keys to "
                             f"`SmartFrame.DEFAULT_BUTTON_KWARGS`, not {type(button_kwargs)}.")
         return button_kwargs
+
+
+class LoadingDialog(SmartFrame):
+    """Simple box with a message and a loading bar. It is destroyed when appropriate."""
+
+    def __init__(self, master, title="Loading...", message="", font_size=None, font_type=None,
+                 style_defaults=None, **progressbar_kwargs):
+        if style_defaults:
+            self.STYLE_DEFAULTS = style_defaults
+        super().__init__(master=master, toplevel=True, window_title=title)
+
+        progressbar_kwargs.setdefault("orient", HORIZONTAL)
+        progressbar_kwargs.setdefault("mode", "indeterminate")
+        progressbar_kwargs.setdefault("sticky", EW)
+
+        with self.set_master(auto_rows=0, padx=20, pady=20):
+            self.Label(text=message, font_size=font_size, font_type=font_type, pady=10)
+            self.progress = self.Progressbar(**progressbar_kwargs)
+
+        self.set_geometry(transient=True)
 
 
 class CustomDialog(SmartFrame):

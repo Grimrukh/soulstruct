@@ -161,11 +161,7 @@ class SoulstructEventEditor(SmartFrame):
         self.compile_button = None
         self.reload_button = None
 
-        for evs_file_path in self.evs_directory.glob("*.evs.py"):
-            evs_name = evs_file_path.name.split('.')[0]
-            self.evs_file_paths[evs_name] = evs_file_path
-            with evs_file_path.open('r', encoding='utf-8') as f:
-                self.evs_text[evs_name] = f.read()
+        self.scan_evs_files()
 
         with self.set_master(sticky='nsew', row_weights=[0, 1, 0, 0], column_weights=[1], auto_rows=0):
             self.build()
@@ -225,6 +221,13 @@ class SoulstructEventEditor(SmartFrame):
             self.Button(
                 text="Reload & Export", font_size=10, width=15, padx=5, bg='#822', command=self.reload_and_export,
                 tooltip_text="Reload script from project, then immediately export it to game.")
+
+    def scan_evs_files(self):
+        for evs_file_path in self.evs_directory.glob("*.evs.py"):
+            evs_name = evs_file_path.name.split('.')[0]
+            self.evs_file_paths[evs_name] = evs_file_path
+            with evs_file_path.open('r', encoding='utf-8') as f:
+                self.evs_text[evs_name] = f.read()
 
     def refresh(self):
         game_maps = [get_map(m) for m in self.evs_file_paths]

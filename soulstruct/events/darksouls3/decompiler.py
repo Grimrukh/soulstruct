@@ -1,5 +1,5 @@
 from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
-    get_game_map_name
+    get_game_map_variable_name
 from soulstruct.enums.darksouls3 import *
 
 
@@ -64,7 +64,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 28:
             condition, state, area_id, block_id, ceremony = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if state == 1:
                 return f"IfMapInCeremony({condition}, game_map={game_map}, ceremony_id={ceremony})"
             if state == 0:
@@ -451,7 +451,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 107:
             label, state, area_id, block_id = req_args
             label = get_enum_name(Label, label, True)
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             if state == 1:
                 return f"GotoIfInsideMap({label}, {game_map})"
             if state == 0:
@@ -582,7 +582,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 6:
             cutscene, cutscene_type, region, area_id, block_id, player_id, time_period_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
             return (f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
                     f"{game_map}, player_id={player_id}, time_period_id={time_period_id})")
@@ -594,12 +594,12 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 8:
             region, area_id, block_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"PlayCutsceneAndMovePlayer_Dummy({region}, {game_map})"
 
         if instruction_index == 9:
             cutscene, cutscene_type, ceremony_id, unknown, region, area_id, block_id, player_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
             return (f"PlayCutsceneAndMovePlayerAndSetMapCeremony({cutscene}, cutscene_type={cutscene_type}, "
                     f"ceremony_id={ceremony_id}, unknown={unknown}, region={region}, game_map={game_map}, "
@@ -612,13 +612,13 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 11:
             cutscene, cutscene_type, region, area_id, block_id, player_id, unknown1, unknown2 = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
             return f"PlayCutsceneAndMovePlayer_WithUnknowns(cutscene={cutscene}, cutscene_type={cutscene_type}, region={region}, game_map={game_map}, player_id={player_id}, unknown1={unknown1}, unknown2={unknown2})"
 
         if instruction_index == 12:
             cutscene, cutscene_type, region, area_id, block_id, player_id, other_region = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
             return f"PlayCutsceneAndMovePlayer_WithSecondRegion(cutscene={cutscene}, cutscene_type={cutscene_type}, region={region}, game_map={game_map}, player_id={player_id}, other_region={other_region})"
 
@@ -733,7 +733,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 59:
             area_id, block_id, ceremony_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"SetMapCeremony(game_map={game_map}, ceremony_id={ceremony_id})"
 
         if instruction_index == 61:

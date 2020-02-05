@@ -1,6 +1,8 @@
 import logging
 import re
 import sys
+import threading
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -46,6 +48,7 @@ class SoulstructProjectWindow(SmartFrame):
         super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON,
                          window_title="Soulstruct Project Editor")
         self.withdraw()
+        self._THREAD_EXCEPTION = None
 
         if not project_path:
             self.CustomDialog(
@@ -288,15 +291,28 @@ class SoulstructProjectWindow(SmartFrame):
         data_type = data_type.lower()
         if data_type not in self.TAB_ORDER:
             raise ValueError(f"Invalid data type name: {data_type}")
+
         if data_type == "events":
+            self.events_tab.scan_evs_files()
             self.events_tab.refresh()
         elif data_type == "talk":
             self.talk_tab.refresh()
         elif data_type == "entities":
             self.entities_tab.Maps = self.project.Maps
+            self.entities_tab.refresh_entries()
+        elif data_type == "runtime":
+            pass
         else:
             project_data = getattr(self.project, data_type_caps(data_type))
             setattr(getattr(self, f'{data_type}_tab'), data_type_caps(data_type), project_data)
+            if data_type == "params":
+                self.params_tab.refresh_entries()
+            elif data_type == "maps":
+                self.maps_tab.refresh_entries()
+            elif data_type == "lighting":
+                self.lighting_tab.refresh_entries()
+            elif data_type == "text":
+                self.text_tab.refresh_entries()
 
     def confirm_quit(self):
         if self.CustomDialog(title="Quit Soulstruct?",
@@ -356,8 +372,33 @@ class SoulstructProjectWindow(SmartFrame):
             import_directory = self._choose_directory()
             if import_directory is None:
                 return  # Abort import.
-        # TODO: progress bar
-        self.project.import_data(data_type, import_directory)
+
+        def _threaded_import():
+            try:
+                self.project.import_data(data_type, import_directory)
+            except Exception as e:
+                self._THREAD_EXCEPTION = e
+                raise
+
+        loading = self.LoadingDialog(
+            title="Importing...", message=f"Importing {data_type if data_type is not None else 'all files'}...",
+            maximum=20)
+        import_thread = threading.Thread(target=_threaded_import)
+        import_thread.start()
+        loading.update()
+        loading.progress.start()
+        while import_thread.is_alive():
+            loading.update()
+            time.sleep(1 / 60)
+        loading.progress.stop()
+        loading.destroy()
+
+        if self._THREAD_EXCEPTION:
+            message = (f"Error occurred while importing data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                       f"Import operation may have only partially completed.")
+            self._THREAD_EXCEPTION = None
+            return self.CustomDialog(title="Import Error", message=message)
+
         self.refresh_tab_data(data_type)
 
     def _save_data(self, data_type=None, mimic_click=False):
@@ -376,7 +417,6 @@ class SoulstructProjectWindow(SmartFrame):
         elif data_type == "ai" and self.ai_tab.confirm_button["state"] == "normal":
             self.ai_tab.confirm_selected(mimic_click=mimic_click)
             # doesn't return here
-        # TODO: progress bar
         if mimic_click:
             if data_type is None:
                 self.mimic_click(self.save_all_button)
@@ -409,13 +449,38 @@ class SoulstructProjectWindow(SmartFrame):
             if mimic_click:
                 self.mimic_click(self.export_tab_button)
             return
-        # TODO: progress bar
+
         if mimic_click:
             if data_type is None:
                 self.mimic_click(self.export_all_button)
             else:
                 self.mimic_click(self.export_tab_button)
-        self.project.export_data(data_type, export_directory)
+
+        def _threaded_export():
+            try:
+                self.project.export_data(data_type, export_directory)
+            except Exception as e:
+                self._THREAD_EXCEPTION = e
+                raise
+
+        loading = self.LoadingDialog(
+            title="Exporting...", message=f"Exporting {data_type if data_type is not None else 'all files'}...",
+            maximum=20)
+        export_thread = threading.Thread(target=_threaded_export)
+        export_thread.start()
+        loading.update()
+        loading.progress.start()
+        while export_thread.is_alive():
+            loading.update()
+            time.sleep(1 / 60)
+        loading.progress.stop()
+        loading.destroy()
+
+        if self._THREAD_EXCEPTION:
+            message = (f"Error occurred while exporting data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                       f"Export operation may have only partially completed.")
+            self._THREAD_EXCEPTION = None
+            return self.CustomDialog(title="Export Error", message=message)
 
     def _restore_backup(self, target=None, full_folder=False):
         if target is None:

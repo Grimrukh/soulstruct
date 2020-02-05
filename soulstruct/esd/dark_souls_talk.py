@@ -4,7 +4,7 @@ import re
 from collections import OrderedDict
 from pathlib import Path
 
-from soulstruct.bnd import BND, BNDEntry
+from soulstruct.bnd import BND, BNDEntry, BaseBND
 from soulstruct.constants.darksouls1.maps import ALL_MAPS
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
@@ -28,6 +28,8 @@ class TalkESDBND(object):
     DSR_DCX_MAGIC = (36, 44)
     DS1_BND_PATH_FMT = "N:\\FRPG\\data\\INTERROOT_{version}\\script\\talk\\t{talk_id}.esd"
 
+    bnd: BaseBND
+
     def __init__(self, talkesdbnd_source, game_version=None):
         if game_version not in (None, "ptde", "dsr"):
             raise ValueError(f"`game_version` should be 'ptde', 'dsr', or None (to auto-detect), not {game_version}.")
@@ -36,7 +38,6 @@ class TalkESDBND(object):
 
         self.talk = OrderedDict()
         self.game_version = game_version
-        self._bnd_path_parent = None
 
         if isinstance(talkesdbnd_source, (str, Path)):
             if talkesdbnd_source.is_file():
@@ -78,8 +79,6 @@ class TalkESDBND(object):
                 else:
                     raise ValueError(f"Could not detect DS1 version from path: {entry.path}")
                 self.esd_class = ESD_DSR if self.game_version == "dsr" else ESD_PTDE
-            if self._bnd_path_parent is None:
-                self._bnd_path_parent = str(Path(entry.path).parent)
             talk_match = _TALK_ESD_RE.match(entry_path.name)
             if talk_match:
                 talk_id = int(talk_match.group(1))
@@ -141,11 +140,12 @@ class TalkESDBND(object):
 
     def update_bnd(self):
         for talk_id, talk_entry in self.talk.items():
-            bnd_path = self._bnd_path_parent + f"\\t{talk_id}.esd"
+            bnd_path = self.DS1_BND_PATH_FMT.format(
+                    version="x64" if self.game_version == "dsr" else "win32", talk_id=talk_id)
             if bnd_path in self.bnd.entries_by_path:
                 self.bnd.entries_by_path[bnd_path].data = talk_entry.pack()
             else:
-                new_id = max([entry.id for entry in self.bnd.entries]) + 1
+                new_id = max([entry.id for entry in self.bnd.entries]) + 1 if self.bnd.entries else 1
                 new_entry = BNDEntry(data=talk_entry.pack(), entry_id=new_id, path=bnd_path)
                 self.bnd.add_entry(new_entry)
                 _LOGGER.debug(f"New ESD entry added to TalkESDBND: t{talk_id}.esd")

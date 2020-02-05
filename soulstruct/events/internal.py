@@ -7,7 +7,7 @@ __all__ = [
     "COMPARISON_NODES", "NEG_COMPARISON_NODES",
     "no_skip_or_negate_or_terminate", "negate_only", "skip_and_negate_and_terminate",
     "NoSkipOrTerminateError", "NoNegateError", "InstructionNotFoundError", "EnumStringError",
-    "ConstantCondition", "get_value_test", "get_enum_name", "get_game_map_name", "boolify",
+    "ConstantCondition", "get_value_test", "get_enum_name", "get_game_map_variable_name", "boolify",
     "get_write_offset", "get_instruction_args", "get_byte_offset_from_struct",
 ]
 _LOGGER = logging.getLogger(__name__)
@@ -320,10 +320,10 @@ def boolify(integer):
     return integer
 
 
-def get_game_map_name(area_id, block_id, game_module):
-    """Attempts to get the name of the game map."""
+def get_game_map_variable_name(area_id, block_id, game_module):
+    """Attempts to get the EVS variable name of the game map (e.g. 'UNDEAD_BURG'). Falls back to (area, block) tuple."""
     try:
-        return game_module.constants.get_map(area_id, block_id)
+        return game_module.constants.get_map(area_id, block_id).variable_name
     except ValueError:
         # Event arg replacement(s) or unknown map. Write repr'd tuple instead.
         return f"({area_id}, {block_id})"

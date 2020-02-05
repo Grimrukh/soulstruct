@@ -1,4 +1,4 @@
-from soulstruct.events.internal import InstructionNotFoundError, get_game_map_name, get_enum_name, boolify
+from soulstruct.events.internal import InstructionNotFoundError, get_game_map_variable_name, get_enum_name, boolify
 
 
 def decompile_instruction(instruction_class, instruction_index, req_args, game_module):
@@ -40,14 +40,14 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 6:
             condition, playback_method, first_region, last_region, area_id, block_id = req_args
             playback_method = get_enum_name(game_module.CutsceneType, playback_method, True)
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return (f"PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(condition={condition}, playback_method="
                     f"{playback_method}, first_region={first_region}, last_region={last_region}, game_map={game_map})")
 
         if instruction_index == 7:
             condition, playback_method, first_region, last_region, area_id, block_id = req_args
             playback_method = get_enum_name(game_module.CutsceneType, playback_method, True)
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return (f"PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2(condition={condition}, playback_method="
                     f"{playback_method}, first_region={first_region}, last_region={last_region}, game_map={game_map})")
 
@@ -55,7 +55,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 41:
             area_id, block_id, y, target_model_id = req_args
-            game_map = get_game_map_name(area_id, block_id, game_module)
+            game_map = get_game_map_variable_name(area_id, block_id, game_module)
             return f"ActivateKillplaneForModel(game_map={game_map}, y_threshold={y}, target_model_id={target_model_id})"
 
         if instruction_index == 42:
@@ -84,7 +84,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 48:
             entity, arg1, model_point, magic_id, shoot_angle_x, shoot_angle_y, shoot_angle_z = req_args
-            return (f"Unknown_2003_48(entity={entity}, arg={arg1}, model_point={model_point}, magic_id={magic_id}, "
+            return (f"Unknown_2003_48(entity={entity}, arg1={arg1}, model_point={model_point}, magic_id={magic_id}, "
                     f"shoot_angle_x={shoot_angle_x}, shoot_angle_y={shoot_angle_y}, shoot_angle_z={shoot_angle_z})")
 
         if instruction_index == 49:
