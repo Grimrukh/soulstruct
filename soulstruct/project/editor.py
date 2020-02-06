@@ -3,9 +3,10 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from enum import IntEnum
+from functools import partial
 from typing import List, Optional, TYPE_CHECKING
 
-from soulstruct.project.utilities import ActionHistory, bind_events
+from soulstruct.project.utilities import ActionHistory, ViewHistory, bind_events
 from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame, ToolTip
 
@@ -17,6 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class SoulstructBaseEditor(SmartFrame, ABC):
     DATA_NAME = ""
+    TAB_NAME = ""
     CANVAS_BG = '#1d1d1d'
     CATEGORY_BOX_WIDTH = 250
     CATEGORY_BOX_HEIGHT = 400
@@ -178,6 +180,8 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         super().__init__(master=master, toplevel=toplevel, window_title=window_title)
         self.linker = linker
         self.action_history = ActionHistory()
+        self.view_history = ViewHistory()
+        self.category_selected_entry_id = {}  # maps categories to their currently selected entry IDs
         self.unsaved_changes = set()  # set of changed (category, param_id, action_type) pairs to highlight
 
         self.active_category = None
@@ -260,56 +264,32 @@ class SoulstructBaseEditor(SmartFrame, ABC):
 
     def undo(self, _=None):
         if not self.action_history.undo():
-            self['bg'] = '#522'
-            self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
+            # TODO: flash undo button red to indicate there's nothing to undo.
+            pass
 
     def redo(self, _=None):
         if not self.action_history.redo():
-            self['bg'] = '#522'
-            self.after(200, lambda: self.config(bg=self.STYLE_DEFAULTS['bg']))
+            # TODO: flash redo button red to indicate there's nothing to undo.
+            pass
 
-    def refresh_categories(self):
-        """There are few enough categories that the widgets can be completely regenerated."""
-        self.select_category(None)
-        for box, label in self.category_boxes.values():
-            box.destroy()
-            label.destroy()
-        self.category_boxes = {}
-        with self.set_master(self.category_i_frame):
+    # ---------------------- #
+    #   CATEGORY SELECTION   #
+    # ---------------------- #
 
-            categories = self._get_display_categories()
-
-            for row, category in enumerate(categories):
-                box = self.Frame(
-                    row=row, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_ROW_HEIGHT,
-                    highlightthickness=self.CATEGORY_ROW_HIGHLIGHT,
-                    bg=self.CATEGORY_UNSELECTED_BG, sticky='nsew')
-                label_text = camel_case_to_spaces(category).replace('_', ': ')
-                label = self.Label(text=label_text, sticky='w', row=row, fg=self._get_category_text_fg(category),
-                                   bg=self.CATEGORY_UNSELECTED_BG, padx=1, font_size=10)
-                for widget in {label, box}:
-                    bind_events(widget, {
-                        "<Button-1>": lambda e, c=category: self.select_category(c),
-                        '<Up>': self._category_press_up,
-                        '<Down>': self._category_press_down,
-                        '<Prior>': self._category_press_up,
-                        '<Next>': self._category_press_down,
-                    })
-                if category == self.active_category:
-                    label['bg'] = self.CATEGORY_SELECTED_BG
-                    box['bg'] = self.CATEGORY_SELECTED_BG
-                self.link_to_scrollable(self.category_canvas, box, label)
-                self.category_boxes[category] = (box, label)
-
-        self.category_canvas.yview_moveto(0)
-        self.category_i_frame.columnconfigure(0, weight=1)
-
-    def select_category(self, selected_category: Optional[str], first_display_index=0):
+    def select_category(self, selected_category: Optional[str], first_display_index=0, auto_scroll=False,
+                        view_change=False):
         """Updates `active_category` attribute and row colors.
 
         By default, resets `first_display_index` to zero.
         Supports 'selected_category=None' to deselect all categories.
+        Optionally recorded as a view change (e.g. from manually clicking the category).
         """
+        old_category = self.active_category
+
+        if old_category is not None:
+            selected_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
+            self.category_selected_entry_id[old_category] = selected_entry_id
+
         if selected_category != self.active_category:
             self.active_category = selected_category
             for category, (box, label) in self.category_boxes.items():
@@ -320,12 +300,28 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                     box['bg'] = self.CATEGORY_UNSELECTED_BG
                     label['bg'] = self.CATEGORY_UNSELECTED_BG
 
+        if auto_scroll:
+            view_ratio = list(self.category_boxes).index(self.active_category) / (len(self.category_boxes) + 1)
+            self.category_canvas.yview_moveto(view_ratio)
+
         self.first_display_index = first_display_index
         self.select_entry_row_index(None, edit_if_already_selected=False)
         self.refresh_entries()
-        self.entry_canvas.yview_moveto(0)
+        last_selected_entry_id = self.category_selected_entry_id.get(self.active_category, None)
+        if last_selected_entry_id is not None:
+            self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+        else:
+            # Leave no entry selected.
+            self.entry_canvas.yview_moveto(0)
+
+        if view_change and old_category is not None:
+            self.view_history.record_view_change(
+                back=lambda: self.select_category(old_category),
+                forward=lambda: self.select_category(selected_category)
+            )
 
     def _shift_selected_category(self, relative_index):
+        """Change category by given relative index (usually +1 or -1). Doesn't count as a view change."""
         if self.active_category is None:
             return
         categories = self._get_display_categories()
@@ -353,27 +349,84 @@ class SoulstructBaseEditor(SmartFrame, ABC):
             if self.category_canvas.yview()[0] != 0.0 or active_category_index > 5:
                 self.category_canvas.yview_scroll(1, 'units')
 
+    def refresh_categories(self):
+        """There are few enough categories changing rarely enough that the widgets can just be regenerated."""
+        self.select_category(None)
+        for box, label in self.category_boxes.values():
+            box.destroy()
+            label.destroy()
+        self.category_boxes = {}
+        with self.set_master(self.category_i_frame):
+
+            categories = self._get_display_categories()
+
+            for row, category in enumerate(categories):
+                box = self.Frame(
+                    row=row, width=self.CATEGORY_BOX_WIDTH, height=self.CATEGORY_ROW_HEIGHT,
+                    highlightthickness=self.CATEGORY_ROW_HIGHLIGHT,
+                    bg=self.CATEGORY_UNSELECTED_BG, sticky='nsew')
+                label_text = camel_case_to_spaces(category).replace('_', ': ')
+                label = self.Label(text=label_text, sticky='w', row=row, fg=self._get_category_text_fg(category),
+                                   bg=self.CATEGORY_UNSELECTED_BG, padx=1, font_size=10)
+                for widget in {label, box}:
+                    bind_events(widget, {
+                        "<Button-1>": lambda e, c=category: self.select_category(c, view_change=True),
+                        '<Up>': self._category_press_up,
+                        '<Down>': self._category_press_down,
+                        '<Prior>': self._category_press_up,
+                        '<Next>': self._category_press_down,
+                    })
+                if category == self.active_category:
+                    label['bg'] = self.CATEGORY_SELECTED_BG
+                    box['bg'] = self.CATEGORY_SELECTED_BG
+                self.link_to_scrollable(self.category_canvas, box, label)
+                self.category_boxes[category] = (box, label)
+
+        self.category_canvas.yview_moveto(0)
+        self.category_i_frame.columnconfigure(0, weight=1)
+
     @staticmethod
     def _get_category_text_fg(category: str):
-        """Returns white text by default; override to add more custom behavior."""
+        """Returns white text by default. Override to add custom colors based on category name."""
         return '#FFF' if category else '#000'
 
+    # ------------------- #
+    #   ENTRY SELECTION   #
+    # ------------------- #
+
+    def get_entry_id(self, row_index: int = None) -> int:
+        """Retrieves true entry ID from the displayed row index (which is relative to `.first_display_index`).
+        Row index defaults to active row index.
+        """
+        if row_index is None:
+            row_index = self.active_row_index
+        return self.entry_rows[row_index].entry_id
+
     def select_entry_id(self, entry_id, set_focus_to_text=True, edit_if_already_selected=True, as_row_index=None):
-        """Select entry based on ID and set the category display range to target_row_index rows before it."""
+        """Select entry based on ID and set the category display range to a value such that the selected entry has
+        row index `as_row_index` (or as close as possible).
+
+        Optionally sets window focus to text (default True) and edits text if it's already selected (default True).
+
+        Never counts as a view change (more primitive method `select_entry_row_index` can, though).
+        """
         if as_row_index is None:
-            # 5 if no newlines are in the target entry, 0 if there are.
-            as_row_index = 0 if '\n' in self.get_entry_text(entry_id) else 5
+            # Default value is 5 if no newlines are in the target entry and 1 if there are.
+            as_row_index = 1 if '\n' in self.get_entry_text(entry_id) else 5
 
         entry_index = self.get_entry_index(entry_id)
-        row_index = self._update_first_entry_display_index(entry_index, as_row_index)
+        row_index = self._update_first_entry_display_index(entry_index, as_row_index=as_row_index)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
         self.select_entry_row_index(
             row_index, set_focus_to_text=set_focus_to_text, edit_if_already_selected=edit_if_already_selected)
 
     def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
-                               id_clicked=False):
-        """Select entry from row index, based on currently displayed category and ID range."""
+                               id_clicked=False, view_change=False):
+        """Select entry from row index, based on currently displayed category and ID range.
+
+        Optionally counts as a view change (default False).
+        """
         old_row_index = self.active_row_index
 
         if old_row_index is not None and row_index is not None:
@@ -397,7 +450,16 @@ class SoulstructBaseEditor(SmartFrame, ABC):
             if set_focus_to_text:
                 self.entry_rows[row_index].text_label.focus_set()
 
+        if view_change and old_row_index is not None:
+            # View history operates on entry ID rather than row index.
+            self.view_history.record_view_change(
+                back=lambda: self.select_entry_id(self.get_entry_id(old_row_index), edit_if_already_selected=False),
+                forward=lambda: self.select_entry_id(self.get_entry_id(row_index), edit_if_already_selected=False),
+            )
+
     def refresh_entries(self):
+        """Refresh entry display. Doesn't affect selected entry row (unless no entries are displayed, in which case
+        all rows are deselected)."""
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
 
@@ -418,60 +480,76 @@ class SoulstructBaseEditor(SmartFrame, ABC):
 
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)
-        self._refresh_buttons()
+        self._refresh_range_buttons()
 
-    def get_category_position_ratio(self, category):
-        return list(self.category_boxes).index(category) / (len(self.category_boxes) + 1)
+    def change_entry_id(self, row_index, new_id, category=None, record_action=True):
+        """Set ID of given entry row index in the displayed category (if different from current).
 
-    def get_entry_id(self, row_index: int) -> int:
-        """Retrieves true entry ID from the displayed row index (which is relative to first_display_index)."""
-        return self.entry_rows[row_index].entry_id
+        Optionally recorded as an action (default True).
+        """
+        if category is None:
+            category = self.active_category
+        old_id = self.get_entry_id(row_index)
+        if old_id == new_id:
+            return  # No change.
+        if new_id in self.get_category_data():
+            self.CustomDialog(
+                title="Entry ID Clash",
+                message=f"Entry ID {new_id} already exists in {self.DATA_NAME}.{category}. You must change or "
+                        f"delete it first.")
+            return
 
-    def _get_display_categories(self):
-        raise NotImplementedError
+        if not self._set_entry_id(old_id, new_id, category, update_row_index=row_index):
+            return
 
-    def get_category_dict(self, category=None):
-        raise NotImplementedError
+        if record_action:
+            self.action_history.record_action(
+                    undo=partial(self._set_entry_id,
+                                 entry_id=new_id, new_id=old_id, category=category),
+                    redo=partial(self._set_entry_id,
+                                 entry_id=old_id, new_id=new_id, category=category),
+                )
+        else:
+            # Also jump to given entry and record view change.
+            current_category = self.active_category
+            current_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
+            self.linker.jump(self.TAB_NAME, category, new_id)
+            self.view_history.record_view_change(
+                back=partial(self.linker.jump, self.TAB_NAME, current_category, current_entry_id),
+                forward=partial(self.linker.jump, self.TAB_NAME, category, new_id)
+            )
 
-    def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
-        raise NotImplementedError
+    def change_entry_text(self, row_index, new_text, category=None, record_action=True):
+        """Set text of given entry index in the displayed category (if different from current).
 
-    def get_entry_index(self, entry_id: int, category=None) -> int:
-        raise NotImplementedError
-
-    def get_entry_text(self, entry_id: int, category=None) -> str:
-        raise NotImplementedError
-
-    def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
-        raise NotImplementedError
-
-    def _change_entry_text(self, row_index, new_text, category=None):
-        """Set text of given entry index in the displayed category (if different from current)."""
+        Optionally recorded as an action (default True).
+        """
         if category is None:
             category = self.active_category
         entry_id = self.get_entry_id(row_index)
         current_text = self.get_entry_text(entry_id, category=category)
         if current_text == new_text:
-            return False  # Nothing to change.
-        self._set_entry_text(entry_id, new_text, category=category, update_row_index=row_index)
+            return  # Nothing to change.
 
-        # TODO: History action manager.
-        # if from_history:
-        #     self.jump_to_category_and_entry(category, text_id)
-        # elif category == self.active_category:
-        #     self.refresh_text_entries()
-        # self.unsaved_changes.add((self.active_category, text_id, 'change'))
-        # if not from_history:
-        #     self.action_history.record_action(
-        #         undo=partial(self._change_entry, category, text_id, old_text),
-        #         redo=partial(self._change_entry, category, text_id, text),
-        #     )
+        if not self._set_entry_text(entry_id, new_text, category=category, update_row_index=row_index):
+            return
 
-        return True
-
-    def _change_entry_id(self, row_index, new_id, category=None):
-        """Pop ID from given entry index in the displayed category (if different from current) and reassign."""
-        raise NotImplementedError
+        if record_action:
+            self.action_history.record_action(
+                    undo=partial(self._set_entry_text,
+                                 entry_id=entry_id, new_text=new_text, category=category),
+                    redo=partial(self._set_entry_text,
+                                 entry_id=entry_id, new_text=current_text, category=category),
+                )
+        else:
+            # Also jump to given entry and record view change.
+            current_category = self.active_category
+            current_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
+            self.linker.jump(self.TAB_NAME, category, entry_id)
+            self.view_history.record_view_change(
+                back=partial(self.linker.jump, self.TAB_NAME, current_category, current_entry_id),
+                forward=partial(self.linker.jump, self.TAB_NAME, category, entry_id)
+            )
 
     def popout_entry_id_edit(self, row_index):
         entry_id = self.get_entry_id(row_index)
@@ -485,18 +563,18 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                     if new_id < 0:
                         raise ValueError
                 except ValueError:
-                    self.dialog("Invalid Entry ID", "Entry ID must be a non-negative integer.")
+                    self.CustomDialog("Invalid Entry ID", "Entry ID must be a non-negative integer.")
                     return
-                self._change_entry_id(row_index, new_id)
+                self.change_entry_id(row_index, new_id)
 
-    def popout_entry_text_edit(self, entry_index):
-        entry_id = self.get_entry_id(entry_index)
+    def popout_entry_text_edit(self, row_index):
+        entry_id = self.get_entry_id(row_index)
         if not self._e_entry_text_edit and not self._e_entry_id_edit:
             initial_text = self.get_entry_text(entry_id, self.active_category)
             popout_editor = EntryTextEditBox(self, self.active_category, entry_id, initial_text)
             _, new_text = popout_editor.go()
             if new_text is not None:
-                self._change_entry_text(entry_index, new_text)
+                self.change_entry_text(row_index, new_text)
 
     def _add_entry(self, entry_id, text, category=None):
         if category is None:
@@ -504,11 +582,12 @@ class SoulstructBaseEditor(SmartFrame, ABC):
             if category is None:
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         if entry_id < 0:
-            self.dialog("Entry ID Error", message=f"Entry ID cannot be negative.")
+            self.CustomDialog("Entry ID Error", message=f"Entry ID cannot be negative.")
             return False
-        if entry_id in self.get_category_dict():
-            self.dialog("Text ID Error", message=f"Entry ID {entry_id} already exists in category "
-                                                 f"{camel_case_to_spaces(self.active_category)}.")
+        if entry_id in self.get_category_data():
+            self.CustomDialog(
+                title="Text ID Error",
+                message=f"Entry ID {entry_id} already exists in category {camel_case_to_spaces(self.active_category)}.")
             return False
 
         self._cancel_entry_id_edit()
@@ -538,7 +617,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         entry_id = self.get_entry_id(row_index)
-        deleted_entry = self.get_category_dict(category=category).pop(entry_id)
+        deleted_entry = self.get_category_data(category=category).pop(entry_id)
         self.refresh_entries()
 
         # TODO
@@ -597,7 +676,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
 
     def _go_to_next_entry_range(self):
         first_index = min(self.first_display_index + self.ENTRY_RANGE_SIZE,
-                          max(len(self.get_category_dict()) - self.ENTRY_RANGE_SIZE, 0))
+                          max(len(self.get_category_data()) - self.ENTRY_RANGE_SIZE, 0))
         if first_index == self.first_display_index:
             return
         return self._update_range(first_index)
@@ -630,7 +709,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                 if self._e_entry_id_edit.var.get() != "-":
                     raise
             else:
-                self._change_entry_id(row_index, new_id)
+                self.change_entry_id(row_index, new_id)
             self._cancel_entry_id_edit()
 
     def _start_entry_text_edit(self, row_index):
@@ -658,7 +737,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
     def _confirm_entry_text_edit(self, row_index):
         if self._e_entry_text_edit:
             new_text = self._e_entry_text_edit.var.get()
-            self._change_entry_text(row_index, new_text)
+            self.change_entry_text(row_index, new_text)
             self._cancel_entry_text_edit()
 
     def _shift_selected_entry(self, relative_index):
@@ -710,7 +789,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
             if self.entry_canvas.yview()[0] != 0.0 or self.active_row_index > 5:
                 self.entry_canvas.yview_scroll(1, 'units')
 
-    def _refresh_buttons(self):
+    def _refresh_range_buttons(self):
         if self.previous_range_button:
             if not self.active_category or self.first_display_index == 0:
                 self.previous_range_button['state'] = 'disabled'
@@ -718,10 +797,56 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                 self.previous_range_button['state'] = 'normal'
         if self.next_range_button:
             if (not self.active_category
-                    or self.first_display_index >= len(self.get_category_dict()) - self.ENTRY_RANGE_SIZE):
+                    or self.first_display_index >= len(self.get_category_data()) - self.ENTRY_RANGE_SIZE):
                 self.next_range_button['state'] = 'disabled'
             else:
                 self.next_range_button['state'] = 'normal'
+
+    # -------------------- #
+    #   ABSTRACT METHODS   #  These methods MUST be overridden in child classes.
+    # -------------------- #
+
+    def _get_display_categories(self) -> list:
+        """Get a list of categories to display."""
+        raise NotImplementedError
+
+    def get_category_data(self, category=None):
+        """Get a dictionary (or for some data types, a list) of entries from the active category."""
+        raise NotImplementedError
+
+    def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
+        """Get a sub-list of entry names to display within the given category."""
+        raise NotImplementedError
+
+    def get_entry_index(self, entry_id: int, category=None) -> int:
+        """Get the absolute index (NOT the displayed row index) of the given entry ID in its data dictionary/list.
+
+        Note that for some data types (such as maps), the entry index *is* the entry ID, making this a simple method.
+        """
+        raise NotImplementedError
+
+    def get_entry_text(self, entry_id: int, category=None) -> str:
+        """Get the name of the given entry ID."""
+        raise NotImplementedError
+
+    def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None) -> bool:
+        """Set the name of the given entry ID (exact implementation varies across the different data structures).
+        Returns True if the change was actually made, and False otherwise.
+
+        If `update_row_index` is given, that row index (which should contain the given entry ID) will be refreshed.
+
+        Never recorded as an action (the calling function should handle that).
+        """
+        raise NotImplementedError
+
+    def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
+        """Set the ID of the given entry ID (exact implementation varies across the different data structures).
+
+        If `update_row_index` is given, that row index (which should contain the given entry ID) will be refreshed.
+
+        Never recorded as an action (the calling function should handle that).
+        """
+        raise NotImplementedError
 
 
 class TextEditBox(SmartFrame):
@@ -766,7 +891,7 @@ class TextEditBox(SmartFrame):
         if confirm:
             new_text = self._text.get('1.0', 'end' + '-1c')
             if not self.allow_newlines and '\n' in new_text:
-                self.editor.dialog("Text Error", "Entry cannot contain newlines.")
+                self.editor.CustomDialog("Text Error", "Entry cannot contain newlines.")
                 return
             if new_text == self.initial_text:
                 self.output = None
@@ -805,11 +930,11 @@ class EntryTextEditBox(TextEditBox):
         if confirm:
             if self._id:
                 if not self._id.get():
-                    self.editor.dialog("ID Error", message="New entry ID must be set.")
+                    self.editor.CustomDialog("ID Error", message="New entry ID must be set.")
                     return
                 new_id = int(self._id.get())
-                if new_id in self.editor.get_category_dict():
-                    self.editor.dialog(
+                if new_id in self.editor.get_category_data():
+                    self.editor.CustomDialog(
                         "ID Error", message=f"Entry ID {new_id} already exists in category "
                                             f"{camel_case_to_spaces(self.category)}.")
                     return
@@ -817,7 +942,7 @@ class EntryTextEditBox(TextEditBox):
                 new_id = None
             new_text = self._text.get('1.0', 'end' + '-1c')
             if not self.allow_newlines and '\n' in new_text:
-                self.editor.dialog("Text Error", "Entry cannot contain newlines.")
+                self.editor.CustomDialog("Text Error", "Entry cannot contain newlines.")
                 return
             if new_text == self.initial_text:
                 self.output = [None, None]
@@ -836,6 +961,9 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
     FIELD_VALUE_WIDTH = 50
     FIELD_ROW_COUNT = 0  # must be set in child
     FIELD_NAME_FG = '#DDE'
+    FIELD_NAME_FG_DEFAULT = '#777'
+    FIELD_VALUE_FG = '#FFF'
+    FIELD_VALUE_FG_DEFAULT = '#777'
 
     class FieldRow(object):
         """Container/manager for widgets in a single field row in the Editor.
@@ -852,8 +980,10 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
             self.row_index = row_index
             self._active = False
-            self.field_name = ''
+            self._default_value = False
+            self.field_name = ""
             self.field_type = None
+            self.field_nickname = ""
             self.field_docstring = ""
             self.link_missing = False
 
@@ -885,7 +1015,6 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             self.value_checkbutton = editor.Checkbutton(
                 self.value_box, label=None, bg=bg_color, no_grid=True, selectcolor='#000',
                 command=self._checkbutton_toggle)
-            # bind_events(self.value_checkbutton, main_bindings)  # TODO: why did I disable this?
             # Main focus bindings are not bound to Checkbutton.
 
             self.value_combobox = editor.Combobox(
@@ -901,7 +1030,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             self.tool_tip = ToolTip(self.row_box, self.field_name_box, self.field_name_label, text=None)
 
             self.active_value_widget = self.value_label
-            self.hide()  # TODO: still getting white box before I click or scroll
+            self.hide()
 
         def _combobox_choice(self, _=None):
             """Updates field value with integer value from Combobox enum or unknown integer."""
@@ -928,11 +1057,11 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             """Update widgets with given field information."""
             self.field_name = name
             self.field_type = field_type
+            self.field_nickname = camel_case_to_spaces(nickname)
             self.field_docstring = docstring
 
-            nickname = camel_case_to_spaces(nickname)
-            if self.field_name_label.var.get() != nickname:
-                self.field_name_label.var.set(nickname)
+            if self.field_name_label.var.get() != self.field_nickname:
+                self.field_name_label.var.set(self.field_nickname)
 
             if isinstance(self.field_type, str):
                 # Note that the *argument* `field_type` is used below, not attribute `self.field_type`.
@@ -956,7 +1085,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                     if len(field_links) > 1:
                         value_text += '    {AMBIGUOUS}'
                     if field_links[0].name is None:
-                        value_text += '    {MISSING}'
+                        value_text += '    {BROKEN LINK}'
                     else:
                         value_text += f'    {{{field_links[0].name}}}'
                 if self.value_label.var.get() != value_text:
@@ -975,6 +1104,13 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             elif (not field_links or any(link.name for link in field_links)) and self.link_missing:
                 self.link_missing = False
                 self._update_colors()
+
+            if self._is_default(field_type, value, self.field_nickname):
+                self.field_name_label["fg"] = self.master.FIELD_NAME_FG_DEFAULT
+                self.value_label["fg"] = self.master.FIELD_VALUE_FG_DEFAULT
+            else:
+                self.field_name_label["fg"] = self.master.FIELD_NAME_FG
+                self.value_label["fg"] = self.master.FIELD_VALUE_FG
 
             self.build_field_context_menu(field_links)
             self.tool_tip.text = docstring
@@ -1018,7 +1154,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 if len(field_links) > 1:
                     new_text += '    {AMBIGUOUS}'
                 elif field_links and field_links[0].name is None:
-                    new_text += '    {MISSING}'
+                    new_text += '    {BROKEN LINK}'
                 elif field_links:
                     new_text += f'    {{{field_links[0].name}}}'
                 self.value_label.var.set(new_text)
@@ -1028,11 +1164,25 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 if new_text == "-":
                     return None  # no change
                 if self.field_type == float:
-                    self.value_label.var.set(f"{float(new_text):.3f}")
-                    return float(new_text)
+                    new_value = float(new_text)
+                    self.value_label.var.set(f"{new_value:.3f}")
+                    if self._is_default(self.field_type, new_value, self.field_nickname):
+                        self.field_name_label["fg"] = self.master.FIELD_NAME_FG_DEFAULT
+                        self.value_label["fg"] = self.master.FIELD_VALUE_FG_DEFAULT
+                    else:
+                        self.field_name_label["fg"] = self.master.FIELD_NAME_FG
+                        self.value_label["fg"] = self.master.FIELD_VALUE_FG
+                    return new_value
                 elif self.field_type == int:
-                    self.value_label.var.set(new_text)
-                    return int(new_text)
+                    new_value = int(new_text)
+                    self.value_label.var.set(str(new_value))
+                    if self._is_default(self.field_type, new_value, self.field_nickname):
+                        self.field_name_label["fg"] = self.master.FIELD_NAME_FG_DEFAULT
+                        self.value_label["fg"] = self.master.FIELD_VALUE_FG_DEFAULT
+                    else:
+                        self.field_name_label["fg"] = self.master.FIELD_NAME_FG
+                        self.value_label["fg"] = self.master.FIELD_VALUE_FG
+                    return new_value
 
         @property
         def active(self):
@@ -1066,6 +1216,21 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             if self.row_index % 2:
                 base_bg += 111
             return f'#{base_bg}'
+
+        def _is_default(self, field_type, value, field_nickname=""):
+            if self.master.TAB_NAME == "params":
+                if field_type == int:
+                    if value in (-1, 0, 1):
+                        # TODO: Will have some false positives.
+                        return True
+                elif field_type == float:
+                    if field_nickname.endswith("Multiplier"):
+                        if value == 1.0:
+                            return True
+                    else:
+                        if value in (0.0, 1.0):
+                            return True
+            return False
 
     def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
         if self.FIELD_ROW_COUNT == 0:
@@ -1117,12 +1282,19 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                         '<Down>': self._field_press_down,
                     }))
 
-    def select_category(self, selected_category: Optional[str], first_display_index=0):
+    def select_category(self, selected_category: Optional[str], first_display_index=0, auto_scroll=False,
+                        view_change=False):
         """Updates `active_category` attribute and row colors.
 
         By default, resets `first_display_index` to zero.
         Supports 'selected_category=None' to deselect all categories.
         """
+        old_category = self.active_category
+
+        if old_category is not None:
+            selected_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
+            self.category_selected_entry_id[old_category] = selected_entry_id
+
         if selected_category != self.active_category:
             self.active_category = selected_category
             for category, (box, label) in self.category_boxes.items():
@@ -1134,20 +1306,38 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                     box['bg'] = self.CATEGORY_UNSELECTED_BG
                     label['bg'] = self.CATEGORY_UNSELECTED_BG
 
+        if auto_scroll:
+            view_ratio = list(self.category_boxes).index(self.active_category) / (len(self.category_boxes) + 1)
+            self.category_canvas.yview_moveto(view_ratio)
+
         self.first_display_index = first_display_index
         self.select_entry_row_index(None, edit_if_already_selected=False)
-        self.refresh_entries(reset_field_display=True)
-        self.entry_canvas.yview_moveto(0)
+        self.refresh_entries(reset_field_display=True)  # TODO: this argument is the only difference. Better way?
+        last_selected_entry_id = self.category_selected_entry_id.get(self.active_category, None)
+        if last_selected_entry_id is not None:
+            self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+        else:
+            # Leave no entry selected.
+            self.entry_canvas.yview_moveto(0)
+
+        if view_change and old_category is not None:
+            self.view_history.record_view_change(
+                back=lambda: self.select_category(old_category),
+                forward=lambda: self.select_category(selected_category)
+            )
 
     def refresh_entries(self, reset_field_display=False):
         super().refresh_entries()
         self.refresh_fields(reset_display=reset_field_display)
 
     def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
-                               id_clicked=False):
+                               id_clicked=False, view_change=False):
         super().select_entry_row_index(row_index, set_focus_to_text=set_focus_to_text,
-                                       edit_if_already_selected=edit_if_already_selected, id_clicked=id_clicked)
+                                       edit_if_already_selected=edit_if_already_selected, id_clicked=id_clicked,
+                                       view_change=view_change)
         self.refresh_fields()
+
+        # `refresh_fields()` seems to steal focus aggressively, so end by setting it back to entry name.
         if row_index is not None and set_focus_to_text:
             self.entry_rows[row_index].text_label.focus_set()
 
@@ -1209,16 +1399,17 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             if category is None:
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         if entry_id < 0:
-            self.dialog("Entry ID Error", message=f"Entry ID cannot be negative.")
+            self.CustomDialog("Entry ID Error", message=f"Entry ID cannot be negative.")
             return False
-        if entry_id in self.get_category_dict():
-            self.dialog("Entry ID Error", message=f"Entry ID {entry_id} already exists in category "
-                                                  f"{camel_case_to_spaces(self.active_category)}.")
+        if entry_id in self.get_category_data():
+            self.CustomDialog(
+                title="Entry ID Error",
+                message=f"Entry ID {entry_id} already exists in category {camel_case_to_spaces(self.active_category)}.")
             return False
 
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
-        self.get_category_dict()[entry_id] = new_field_dict  # add entry to category dictionary
+        self.get_category_data()[entry_id] = new_field_dict  # add entry to category dictionary
         self._set_entry_text(entry_id, text)
         self.select_entry_id(entry_id, set_focus_to_text=True, edit_if_already_selected=False)
 
@@ -1245,12 +1436,15 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         self.select_displayed_field_row(field_index, edit_if_already_selected=False)
         self.field_rows[field_index].context_menu.tk_popup(event.x_root, event.y_root)
 
-    def select_field_name(self, field_name, set_focus_to_value=True, edit_if_already_selected=False):
+    def select_field_name(self, field_name, set_focus_to_value=True, edit_if_already_selected=False, auto_scroll=True):
         row_index = self.get_field_row_index_from_name(field_name)
         self.select_displayed_field_row(row_index, set_focus_to_value=set_focus_to_value,
                                         edit_if_already_selected=edit_if_already_selected)
         self.refresh_fields()
-        self.field_canvas.yview_moveto(0)  # TODO: How to scroll to exact field?
+
+        self.field_canvas.yview_moveto(0)
+        if auto_scroll:
+            self.field_canvas.yview_scroll(row_index, "units")
 
     def select_displayed_field_row(self, row_index, set_focus_to_value=True, edit_if_already_selected=True):
         old_row_index = self.selected_field_row_index

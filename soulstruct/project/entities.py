@@ -72,6 +72,7 @@ MODULE_CLASS_NAMES = BiDict(
 
 class SoulstructEntityEditor(SoulstructBaseEditor):
     DATA_NAME = "Maps"
+    TAB_NAME = "entities"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
@@ -288,7 +289,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         self.entry_i_frame.columnconfigure(1, weight=1)
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)
-        self._refresh_buttons()
+        self._refresh_range_buttons()
 
     def _start_entry_description_edit(self, row_index):
         if not self._e_entry_text_edit and not self._e_entry_id_edit and not self._e_entry_description_edit:
@@ -462,7 +463,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             class_name = MODULE_CLASS_NAMES[category]
             class_text = ""
             requires_pass = True
-            for entity_id, msb_entry in self.get_category_dict(category).items():
+            for entity_id, msb_entry in self.get_category_data(category).items():
                 name = msb_entry.name.replace(' ', '')
                 try:
                     name = name.encode('utf-8').decode('ascii')
@@ -551,7 +552,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     def get_selected_msb(self) -> MSB:
         return self.Maps[self._get_map_choice_name()]
 
-    def get_category_dict(self, category=None) -> Dict[int, MSBEntryEntity]:
+    def get_category_data(self, category=None) -> Dict[int, MSBEntryEntity]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
         Entity dictionary is generated from `MSB.get_entity_id_dict()` every time, and is definitively *not* sorted;
@@ -570,7 +571,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns entire dictionary (no previous/next range buttons here)."""
-        return list(self.get_category_dict(category).items())
+        return list(self.get_category_data(category).items())
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Returns index of given entry ID (entity ID) in dictionary."""
@@ -578,47 +579,36 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No text category selected.")
-        return list(self.get_category_dict(category)).index(entry_id)
+        return list(self.get_category_data(category)).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         return entry_list[entry_id].name
 
     def get_entry_description(self, entry_id: int, category=None) -> str:
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         return entry_list[entry_id].description
 
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         entry_list[entry_index].name = text  # Will update Maps tab as well (once refreshed).
         self.linker.window.maps_tab.refresh_entries()
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_index, text)
 
     def _set_entry_description(self, entry_index: int, description: str, category=None, update_row_index=None):
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         entry_list[entry_index].description = description  # Will update Maps tab tooltip as well.
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(
                 entry_index, self.entry_rows[update_row_index].entry_text, description)
 
-    def _change_entry_id(self, row_index, new_id, category=None):
-        """Changes 'entity_id' of MSB entry."""
-        if category is None:
-            category = self.active_category
-        old_id = self.get_entry_id(row_index)
-        if old_id == new_id:
-            return False
-        entry_list = self.get_category_dict(category)
-        if new_id in entry_list:
-            self.CustomDialog(
-                title="Entry ID Clash",
-                message=f"Entry ID {new_id} already exists in Maps.{category}. You must change or delete it first.")
-            return False
-        # Change 'entity_id' field of MSBEntry.
-        entry_list[old_id].entity_id = new_id
+    def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
+        """Changes 'entity_id' field of MSB entry."""
+        entry_list = self.get_category_data(category)
+        entry_list[entry_id].entity_id = new_id
         self.linker.window.maps_tab.refresh_entries()
-        entry_list[new_id] = entry = entry_list.pop(old_id)
-        if category == self.active_category and self.EntryRow.SHOW_ENTRY_ID:
-            self.entry_rows[row_index].update_entry(new_id, entry.name)
+        entry_list[new_id] = entry = entry_list.pop(entry_id)
+        if category == self.active_category and update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(new_id, entry.name)
         return True

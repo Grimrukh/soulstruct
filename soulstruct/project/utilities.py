@@ -8,7 +8,7 @@ from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import word_wrap
 
 __all__ = ["SoulstructProjectError", "RestoreBackupError", "error_as_dialog",
-           "ActionHistory", "bind_events", "data_type_caps", "DATA_TYPES"]
+           "ActionHistory", "ViewHistory", "bind_events", "data_type_caps", "DATA_TYPES"]
 
 
 class SoulstructProjectError(SoulstructError):
@@ -43,7 +43,43 @@ def error_as_dialog(window, func):
     return window_method
 
 
+class ViewHistory(object):
+    """Global window timeline of selected tab, category, entry, and (if applicable) field.
+
+    Note that view changes that are caused by undo and redo functions are not treated differently here.
+    """
+    def __init__(self):
+        self._back_stack = []
+        self._forward_stack = []
+
+    def record_view_change(self, back, forward):
+        if not callable(back) or not callable(forward):
+            raise TypeError("Back and forward view-changing functions must be callable and have no arguments.")
+        self._back_stack.append((back, forward))
+        self._forward_stack = []  # old future timeline dies
+
+    def back(self, _=None):
+        if self._back_stack:
+            back, forward = self._back_stack.pop()
+            back(from_history=True)
+            self._forward_stack.append((back, forward))
+            return True
+        else:
+            return False
+
+    def forward(self, _=None):
+        if self._forward_stack:
+            back, forward = self._forward_stack.pop()
+            forward(from_history=True)
+            self._back_stack.append((back, forward))
+            return True
+        else:
+            return False
+
+
 class ActionHistory(object):
+    """Each tab maintains a separate ActionHistory timeline of action/inverse-action data-modifying pairs for undo and
+    redo."""
     def __init__(self):
         self._undo_stack = []
         self._redo_stack = []
@@ -51,9 +87,9 @@ class ActionHistory(object):
     def record_action(self, undo, redo):
         """Record the undo and redo callbacks (no arguments) for an action."""
         if not callable(undo) or not callable(redo):
-            raise TypeError("Action and inverse action functions must be callable, with no arguments.")
+            raise TypeError("Action and inverse action functions must be callable and have no arguments.")
         self._undo_stack.append((undo, redo))
-        self._redo_stack = []  # old timeline dies
+        self._redo_stack = []  # old future timeline dies
 
     def undo(self, _=None):
         if self._undo_stack:

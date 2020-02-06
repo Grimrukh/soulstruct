@@ -8,16 +8,6 @@ __all__ = ['PARAM_NICKNAMES', 'GAME_PARAM_INFO']
 ATK_PARAM_HIT_SOURCE = int
 SP_EFFECT_SPCATEGORY = int
 
-ATK_PARAM_BOOL = bool
-EQUIP_BOOL = bool
-MAGIC_BOOL = bool
-NPC_BOOL = bool
-NPC_THINK_REPLY_BEHAVIOR_TYPE = bool
-ON_OFF = bool
-RAGDOLL_PARAM_BOOL = bool
-SP_EFFECT_BOOL = bool
-THROW_ENABLE_STATE = bool
-
 
 class AI:
     Logic = '<AI:Logic>'
@@ -228,7 +218,7 @@ PARAM_NICKNAMES = {
 }
 
 GAME_PARAM_INFO = {
-    # PARAM_TABLE_NAME: (ParamEntryNickname, VisibleDefault, ParamTableType, Docstring)
+    # {PARAM_TABLE_NAME: {field_name: (field_nickname, is_not_hidden, field_type, description)}}
 
     'NPC_THINK_PARAM_ST': {
         'logicId': (
@@ -1007,14 +997,14 @@ GAME_PARAM_INFO = {
         'expDelay': (
             'ExpDelay', False, float,
             "Delay between impact and 'explosion' (not sure if that refers to the visual effect and/or "
-            "Collision). Never used (always zero)."),
+            "hitbox). Never used (always zero)."),
         'hormingOffsetRange': (
             'HomingOffsetRange', True, float,
             "Internal description: 'When shooting, aim to shift each component of XYZ by this "
             "amount.' Nonzero only for Hydra blasts and Vagrant attacks."),
         'dmgHitRecordLifeTime': (
-            'CollisionLifeTime', True, float,
-            "Duration of bullet impact Collision. A value of zero means it is disabled immediately "
+            'HitboxLifeTime', True, float,
+            "Duration of bullet impact hitbox. A value of zero means it is disabled immediately "
             "after first impact."),
         'externalForce': (
             'ExternalForce', True, float,
@@ -1126,7 +1116,7 @@ GAME_PARAM_INFO = {
             "Set whether bullets (e.g. arrows) stay stuck upon impact."),
         'isEndlessHit:1': (
             'IsEndlessHit', True, bool,
-            "Bullet Collision is continuous (I think). Only used for corrosion cloud in vanilla."),
+            "Bullet hitbox is continuous (I think). Only used for corrosion cloud in vanilla."),
         'isPenetrateMap:1': (
             'IsMapPiercing', True, bool,
             "Bullet will pierce the map (e.g. Stray Demon blast)."),
@@ -1185,24 +1175,24 @@ GAME_PARAM_INFO = {
     },
     'ATK_PARAM_ST': {
         'hit0_Radius': (
-            'Collision0Radius', True, float,
-            "Radius of sphere/capsule Collision (slot 0)."),
+            'Hitbox0Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 0)."),
         'hit1_Radius': (
-            'Collision1Radius', True, float,
-            "Radius of sphere/capsule Collision (slot 1)."),
+            'Hitbox1Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 1)."),
         'hit2_Radius': (
-            'Collision2Radius', True, float,
-            "Radius of sphere/capsule Collision (slot 2)."),
+            'Hitbox2Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 2)."),
         'hit3_Radius': (
-            'Collision3Radius', True, float,
-            "Radius of sphere/capsule Collision (slot 3)."),
+            'Hitbox3Radius', True, float,
+            "Radius of sphere/capsule hitbox (slot 3)."),
         'knockbackDist': (
             'KnockbackDistance', True, float,
             "Knockback distance of attack."),
         'hitStopTime': (
             'HitStopTime', True, float,
-            "Unclear. This isn't Collision duration, which is determined by the duration of the triggering TAE event. It "
-            "may be the duration of the 'hit' flag on the target. Always set to 0, 0.08. or 0.11."),
+            "Unclear. This isn't hitbox duration, which is determined by the duration of the triggering TAE event. "
+            "It may be the duration of the 'hit' flag on the target. Always set to 0, 0.08. or 0.11."),
         'spEffectId0': (
             'SpecialEffectOnHit0', True, Params.SpecialEffects,
             "Special effect applied to target on hit (slot 0)."),
@@ -1219,37 +1209,37 @@ GAME_PARAM_INFO = {
             'SpecialEffectOnHit4', True, Params.SpecialEffects,
             "Special effect applied to target on hit (slot 4)."),
         'hit0_DmyPoly1': (
-            'Collision0StartModelPoint', True, int,
-            "Model point at origin of Collision (slot 0). If Collision0EndModelPoint is not -1, the Collision will be a capsule "
+            'Hitbox0StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 0). If Hitbox0EndModelPoint is not -1, the hitbox will be a capsule "
             "with hemispherical caps positioned at these origins (with a joining cylinder)."),
         'hit1_DmyPoly1': (
-            'Collision1StartModelPoint', True, int,
-            "Model point at origin of Collision (slot 1). If Collision1EndModelPoint is not -1, the Collision will be a capsule "
+            'Hitbox1StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 1). If Hitbox1EndModelPoint is not -1, the hitbox will be a capsule "
             "with hemispherical caps positioned at these origins (with a joining cylinder)."),
         'hit2_DmyPoly1': (
-            'Collision2StartModelPoint', True, int,
-            "Model point at origin of Collision (slot 2). If Collision2EndModelPoint is not -1, the Collision will be a capsule "
+            'Hitbox2StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 2). If Hitbox2EndModelPoint is not -1, the hitbox will be a capsule "
             "with hemispherical caps positioned at these origins (with a joining cylinder)."),
         'hit3_DmyPoly1': (
-            'Collision3StartModelPoint', True, int,
-            "Model point at origin of Collision (slot 3). If Collision3EndModelPoint is not -1, the Collision will be a capsule "
+            'Hitbox3StartModelPoint', True, int,
+            "Model point at origin of hitbox (slot 3). If Hitbox3EndModelPoint is not -1, the hitbox will be a capsule "
             "with hemispherical caps positioned at these origins (with a joining cylinder)."),
         'hit0_DmyPoly2': (
-            'Collision0EndModelPoint', True, int,
-            "Model point at end of capsule Collision (slot 0). If this is -1, the Collision will be a sphere placed at "
-            "Collision0StartModelPoint."),
+            'Hitbox0EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 0). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox0StartModelPoint."),
         'hit1_DmyPoly2': (
-            'Collision1EndModelPoint', True, int,
-            "Model point at end of capsule Collision (slot 1). If this is -1, the Collision will be a sphere placed at "
-            "Collision1StartModelPoint."),
+            'Hitbox1EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 1). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox1StartModelPoint."),
         'hit2_DmyPoly2': (
-            'Collision2EndModelPoint', True, int,
-            "Model point at end of capsule Collision (slot 2). If this is -1, the Collision will be a sphere placed at "
-            "Collision2StartModelPoint."),
+            'Hitbox2EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 2). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox2StartModelPoint."),
         'hit3_DmyPoly2': (
-            'Collision3EndModelPoint', True, int,
-            "Model point at end of capsule Collision (slot 3). If this is -1, the Collision will be a sphere placed at "
-            "Collision3StartModelPoint."),
+            'Hitbox3EndModelPoint', True, int,
+            "Model point at end of capsule hitbox (slot 3). If this is -1, the hitbox will be a sphere placed at "
+            "Hitbox3StartModelPoint."),
         'blowingCorrection': (
             'BlowOffCorrection', False, int,
             "Unknown. Never used."),
@@ -1331,32 +1321,32 @@ GAME_PARAM_INFO = {
             "Throw to trigger when attack hits. For some reason, throws are triggered using this ID, which is a field "
             "within each Throw table entry rather than the ID of the Throw table entry itself."),
         'hit0_hitType': (  # TODO: Player Attacks only.
-            'Collision0HitType', False, ATK_PARAM_HIT_TYPE,
-            "Type of hit applied by Collision (slot 0). Always zero, except for some whip attacks."),
+            'Hitbox0HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 0). Always zero, except for some whip attacks."),
         'hit1_hitType': (
-            'Collision1HitType', False, ATK_PARAM_HIT_TYPE,
-            "Type of hit applied by Collision (slot 1). Always zero, except for some whip attacks."),
+            'Hitbox1HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 1). Always zero, except for some whip attacks."),
         'hit2_hitType': (
-            'Collision2HitType', False, ATK_PARAM_HIT_TYPE,
-            "Type of hit applied by Collision (slot 2). Always zero, except for some whip attacks."),
+            'Hitbox2HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 2). Always zero, except for some whip attacks."),
         'hit3_hitType': (
-            'Collision3HitType', False, ATK_PARAM_HIT_TYPE,
-            "Type of hit applied by Collision (slot 3). Always zero, except for some whip attacks."),
+            'Hitbox3HitType', False, ATK_PARAM_HIT_TYPE,
+            "Type of hit applied by hitbox (slot 3). Always zero, except for some whip attacks."),
         'hti0_Priority': (
-            'Collision0Priority', False, int,
-            "Priority of Collision (slot 0). If two hits occur simultaneously, only the highest priority hit occurs. "
+            'Hitbox0Priority', False, int,
+            "Priority of hitbox (slot 0). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used."),
         'hti1_Priority': (
-            'Collision1Priority', False, int,
-            "Priority of Collision (slot 1). If two hits occur simultaneously, only the highest priority hit occurs. "
+            'Hitbox1Priority', False, int,
+            "Priority of hitbox (slot 1). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used."),
         'hti2_Priority': (
-            'Collision2Priority', False, int,
-            "Priority of Collision (slot 2). If two hits occur simultaneously, only the highest priority hit occurs. "
+            'Hitbox2Priority', False, int,
+            "Priority of hitbox (slot 2). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used."),
         'hti3_Priority': (
-            'Collision3Priority', False, int,
-            "Priority of Collision (slot 3). If two hits occur simultaneously, only the highest priority hit occurs. "
+            'Hitbox3Priority', False, int,
+            "Priority of hitbox (slot 3). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used."),
         'dmgLevel': (
             'ImpactLevel', True, ATKPARAM_REP_DMGTYPE,
@@ -3429,7 +3419,7 @@ GAME_PARAM_INFO = {
         'grabityRate': (
             'AnimationSpeedMultiplier', True, float,
             "Multiplier applied to all of this character's animations. Values other than 1 can lead to cool but "
-            "potentially glitchy behavior (e.g. desynchronized grab animations and missed Collisiones)."),
+            "potentially glitchy behavior (e.g. desynchronized grab animations and missed collision)."),
         'registPoizonChangeRate': (
             'PoisonResistanceMultiplier', True, float,
             "Multiplier applied to character's maximum poison resistance."),

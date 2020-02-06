@@ -577,9 +577,9 @@ class MSBCollision(BaseMSBPart):
             "different area (a 'silent area transition') and have it enabled for collisions that are further away, "
             "which produces a 'delayed area banner' effect.\n\n"
             ""
-            "Do NOT enable this for two adjacent collision with different area names, or moving back and forth between "
-            "those collisions will build up a huge queue of area banners to display, which can only be fixed by "
-            "restarting the game entirely."),
+            "Do NOT enable this for two adjacent collisions with different area names, or moving back and forth "
+            "between those collisions will build up a huge queue of area banners to display, which can only be cleared "
+            "by restarting the game entirely."),
         'starts_disabled': (
             'Starts Disabled', True, bool,
             "If True, this collision is disabled on map load and must be manually enabled with an event script."),

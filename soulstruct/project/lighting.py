@@ -5,11 +5,12 @@ from typing import Union, TYPE_CHECKING
 from soulstruct.params.dark_souls_params import DRAW_PARAM_MAPS
 from soulstruct.project.editor import SoulstructBaseFieldEditor
 if TYPE_CHECKING:
-    from soulstruct.params import DarkSoulsLightingParameters, ParamTable, ParamEntry
+    from soulstruct.params import DarkSoulsLightingParameters, ParamEntry, DrawParamTable
 
 
 class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     DATA_NAME = "Lighting"
+    TAB_NAME = "lighting"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
@@ -112,7 +113,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     def _get_display_categories(self):
         return self.Lighting.param_names
 
-    def get_category_dict(self, category=None) -> Union[ParamTable, dict]:
+    def get_category_data(self, category=None) -> Union[DrawParamTable, dict]:
         if category is None:
             category = self.active_category
             if category is None:
@@ -126,7 +127,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 return []
-        return self.get_category_dict(category).get_range(
+        return self.get_category_data(category).get_range(
             start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
@@ -135,41 +136,31 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No param category selected.")
-        if entry_id not in self.get_category_dict(category).entries:
+        if entry_id not in self.get_category_data(category).entries:
             raise ValueError(f"Param ID {entry_id} does not appear in category {category}.")
-        return sorted(self.get_category_dict(category).entries).index(entry_id)
+        return sorted(self.get_category_data(category).entries).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.get_category_dict(category)[entry_id].name
+        return self.get_category_data(category)[entry_id].name
 
     def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        self.get_category_dict(category)[entry_id].name = text
+        self.get_category_data(category)[entry_id].name = text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text)
 
-    def _change_entry_id(self, row_index, new_id, category=None):
-        if category is None:
-            category = self.active_category
-        old_id = self.get_entry_id(row_index)
-        if old_id == new_id:
-            return False
-        if new_id in self.get_category_dict(category).entries:
-            self.CustomDialog(
-                title="Entry ID Clash",
-                message=f"Entry ID {new_id} already exists in Params.{category}. You must change or delete it first.")
-            return False
-        entry_data = self.get_category_dict(category).pop(old_id)
-        self.get_category_dict(category)[new_id] = entry_data
-        if category == self.active_category and self.EntryRow.SHOW_ENTRY_ID:
-            self.entry_rows[row_index].update_entry(new_id, entry_data.name)
+    def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
+        entry_data = self.get_category_data(category).pop(entry_id)
+        self.get_category_data(category)[new_id] = entry_data
+        if category == self.active_category and update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(new_id, entry_data.name)
         return True
 
     def get_field_dict(self, entry_id: int, category=None) -> ParamEntry:
@@ -177,7 +168,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.get_category_dict(category)[entry_id]
+        return self.get_category_data(category)[entry_id]
 
     def get_field_info(self, field_dict, field_name=None, category=None):
         """This method should return the full field information dictionary if field_name is None."""
@@ -185,7 +176,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             return {}
         if category is None:
             category = self.active_category
-        return self.get_category_dict(category).get_field_info(field_dict, field_name=field_name)
+        return self.get_category_data(category).get_field_info(field_dict, field_name=field_name)
 
     def get_field_names(self, field_dict):
         return field_dict.field_names if field_dict else []

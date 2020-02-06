@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import tkinter as tk
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
@@ -145,6 +146,7 @@ class AIScriptTextEditor(tk.Text):
 
 class SoulstructAIEditor(SoulstructBaseEditor):
     DATA_NAME = "AI"
+    TAB_NAME = "ai"
     CATEGORY_BOX_WIDTH = 0
     ENTRY_BOX_WIDTH = 150
     ENTRY_BOX_HEIGHT = 400
@@ -477,7 +479,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 goal_type = goal.LOGIC_TYPE if reverse else goal.BATTLE_TYPE
         elif old_type == goal_type:
             return False
-        if (goal.goal_id, goal_type) in self.get_category_dict():
+        if (goal.goal_id, goal_type) in self.get_category_data():
             self.CustomDialog(
                 title="Script Type Error",
                 message=f"A {repr(goal_type)} goal already exists with ID {goal.goal_id}.")
@@ -735,7 +737,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.entry_i_frame.columnconfigure(1, weight=1)
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)
-        self._refresh_buttons()
+        self._refresh_range_buttons()
 
     def select_entry_id(self, entry_id, goal_type=None, set_focus_to_text=True, edit_if_already_selected=True):
         """Select entry based on ID and set the category display range to target_row_index rows before it."""
@@ -810,7 +812,6 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         return self.bnd_choice.var.get().split(' [')[1][:-1].replace(' ', '')
 
     def get_goal(self, row_index=None):
-        # print("Goal", self.selected_bnd_name)
         if row_index is None:
             row_index = self.active_row_index
         goal_id, goal_type = self.get_goal_id_and_type(row_index)
@@ -831,7 +832,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if entry_id < 0:
             self.CustomDialog(title="Goal ID Error", message=f"Entry ID cannot be negative.")
             return False
-        if (entry_id, goal_type) in self.get_category_dict():
+        if (entry_id, goal_type) in self.get_category_data():
             self.CustomDialog(
                 title="Goal ID Error", message=f"Goal ID {entry_id} with type {repr(goal_type)} already exists.")
             return False
@@ -868,7 +869,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         # print(self.selected_bnd_name)
         return self.AI[self.selected_bnd_name]
 
-    def get_category_dict(self, category=None) -> Dict[(int, bool), LuaGoal]:
+    def get_category_data(self, category=None) -> Dict[(int, bool), LuaGoal]:
         """Gets dictionary of goals in LuaInfo from LuaBND. Category does nothing."""
         return self.get_selected_bnd().get_goal_dict()
 
@@ -880,7 +881,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         """Get index of entry. Ignores current display range."""
         if goal_type is None:
             raise ValueError(f"Goal type cannot be none (goal ID {entry_id}).")
-        if (entry_id, goal_type) not in self.get_category_dict():
+        if (entry_id, goal_type) not in self.get_category_data():
             raise ValueError(f"Goal ID {entry_id} with type {repr(goal_type)} does not exist.")
         goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
         return self.get_selected_bnd().goals.index(goal)
@@ -899,14 +900,36 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self.entry_rows[update_row_index].update_entry(entry_id, text, goal_type)
         return True
 
-    def _change_entry_text(self, row_index, new_text, category=None):
+    def change_entry_text(self, row_index, new_text, category=None, record_action=True):
         """Set text of given entry index in the displayed category (if different from current)."""
         goal = self.get_goal(row_index)
         current_text = goal.goal_name
         if current_text == new_text:
-            return False  # Nothing to change.
-        self._set_entry_text(goal.goal_id, new_text, goal_type=goal.goal_type, update_row_index=row_index)
-        return True
+            return  # Nothing to change.
+
+        if not self._set_entry_text(goal.goal_id, new_text, goal_type=goal.goal_type, update_row_index=row_index):
+            return
+
+        if record_action:
+            self.action_history.record_action(
+                    undo=partial(self._set_entry_text,
+                                 entry_id=goal.goal_id, new_text=new_text, category=category),
+                    redo=partial(self._set_entry_text,
+                                 entry_id=goal.goal_id, new_text=current_text, category=category),
+                )
+        else:
+            # Also jump to given entry and record view change.
+            # TODO: Need to record CURRENT view, which could be a different tab entirely.
+            current_bnd_choice = self.bnd_choice.var.get()
+            current_category = self.active_category
+            current_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
+            self.linker.jump(self.TAB_NAME, category, goal.goal_id)
+            self.view_history.record_view_change(
+                back=partial(self.linker.jump, self.TAB_NAME, current_category, current_entry_id,
+                             lambda: self.bnd_choice.var.set(current_bnd_choice)),
+                forward=partial(self.linker.jump, self.TAB_NAME, category, goal.goal_id,
+                                lambda: self.bnd_choice.var.set(current_bnd_choice))
+            )
 
     def _start_entry_text_edit(self, row_index):
         if not self._e_entry_text_edit and not self._e_entry_id_edit:
@@ -925,12 +948,13 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             self._e_entry_text_edit.focus_set()
             self._e_entry_text_edit.select_range(0, 'end')
 
-    def _change_entry_id(self, row_index, new_id, category=None):
+    def change_entry_id(self, row_index, new_id, category=None, record_action=True):
+        # TODO: change for record action
         goal = self.get_goal(row_index)
         current_id = goal.goal_id
         if current_id == new_id:
             return False
-        goal_dict = self.get_category_dict()
+        goal_dict = self.get_category_data()
         if (new_id, goal.goal_type) in goal_dict:
             self.CustomDialog(
                 title="Entry ID Clash",
@@ -940,6 +964,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         goal.goal_id = new_id
         self.entry_rows[row_index].update_entry(new_id, goal.goal_name, goal.goal_type)
         return True
+
+    def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None, goal_type=None):
+        """Not used here (handled directly in overridden `change_entry_id`)."""
+        # TODO: may need to implement for action history.
+        raise NotImplementedError
 
     def _get_display_categories(self):
         """Unused."""

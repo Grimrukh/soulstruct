@@ -6,6 +6,7 @@ from soulstruct.maps import MAP_ENTRY_TYPES
 
 if TYPE_CHECKING:
     from soulstruct.project import SoulstructProjectWindow
+    from soulstruct.project.editor import SoulstructBaseFieldEditor
     from soulstruct.maps import MSB
 
 
@@ -19,6 +20,20 @@ class WindowLinker(object):
 
     def get_tab_index(self, tab_name):
         return self.window.TAB_ORDER.index(tab_name.lower())
+
+    def jump(self, tab_name, category, entry_id, field_name=None, choice_func=None):
+        data_tab = getattr(self.window, f"{tab_name}_tab")  # type: SoulstructBaseFieldEditor
+        self.window.page_tabs.select(self.get_tab_index(tab_name))
+        try:
+            if choice_func is not None:
+                choice_func()  # e.g. changing map choice combobox
+            data_tab.select_category(category, auto_scroll=True)
+            data_tab.select_entry_id(entry_id, edit_if_already_selected=False)
+            if field_name is not None:
+                data_tab.select_field_name(field_name)
+        except (IndexError, KeyError):
+            return False  # Jump failed.
+        return True  # Jump succeeded.
 
     def soulstruct_link(self, field_type, field_value, valid_null_values: dict = None):
         """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
@@ -109,17 +124,15 @@ class WindowLinker(object):
                     # Could be Player or Non Player. Provide both links.
                     player_table = self.project.Params['Player' + category]
                     non_player_table = self.project.Params['NonPlayer' + category]
-                    if field_value not in player_table and field_value not in non_player_table:
-                        return [BaseLink()]
                     links = []
                     if field_value in player_table:
                         links.append(ParamsLink(
                             self, category='Player' + category, param_entry_id=field_value,
-                            name=player_table[field_value]))
-                    if field_value in player_table:
+                            name=player_table[field_value].name))
+                    if field_value in non_player_table:
                         links.append(ParamsLink(
                             self, category='NonPlayer' + category, param_entry_id=field_value,
-                            name=player_table[field_value]))
+                            name=non_player_table[field_value].name))
                     if links:
                         return links
                     return [BaseLink()]
@@ -253,17 +266,15 @@ class WindowLinker(object):
     def maps_link(self, entry_list_name, entry_type_name, entry_local_index):
         self.window.maps_tab.select_displayed_field_row(None)
         self.window.page_tabs.select(self.get_tab_index('maps'))
-        self.window.maps_tab.refresh_categories()
+        self.window.maps_tab.refresh_categories()  # TODO: why do I need to call this?
         category = f'{entry_list_name}:{entry_type_name}'
-        self.window.maps_tab.select_category(category)
-        view_ratio = self.window.maps_tab.get_category_position_ratio(category)
-        self.window.maps_tab.category_canvas.yview_moveto(view_ratio)
+        self.window.maps_tab.select_category(category, auto_scroll=True)
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
     def params_link(self, category, param_entry_id, field_name=None):
         # TODO: Create if missing.
-        if param_entry_id not in self.window.params_tab.get_category_dict(category):
+        if param_entry_id not in self.window.params_tab.get_category_data(category):
             self.window.CustomDialog(
                 title="Param ID Missing",
                 message=f"Param ID {param_entry_id} is missing from Params.{category}.")

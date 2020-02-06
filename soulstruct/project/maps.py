@@ -36,6 +36,7 @@ ENTRY_LIST_FG_COLORS = {
 
 class SoulstructMapEditor(SoulstructBaseFieldEditor):
     DATA_NAME = "Maps"
+    TAB_NAME = "maps"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
     ENTRY_BOX_HEIGHT = 400
@@ -125,7 +126,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     if len(field_links) > 1:
                         value_text += '    {AMBIGUOUS}'
                     if field_links[0].name is None:
-                        value_text += '    {MISSING}'
+                        value_text += '    {BROKEN LINK}'
                     else:
                         value_text += f'    {{{field_links[0].name}}}'
                 if self.value_label.var.get() != value_text:
@@ -177,6 +178,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     command=self.open_msb_element_selection_box)
 
         def open_msb_element_selection_box(self):
+            if not self.field_type.startswith("<Maps:"):
+                return  # TODO: option shouldn't even appear
             names = self.master.linker.get_map_entry_type_names(self.field_type)
             window = NameSelectionBox(self.master, names)
             selected_name = window.go()
@@ -188,7 +191,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                         "Link was broken after selecting entry from list. This should not happen; please try "
                         "restarting Soulstruct.")
                 if not field_links[0].name:
-                    selected_name += '   {MISSING}'
+                    selected_name += '   {BROKEN LINK}'
                     if not self.link_missing:
                         self.link_missing = True
                         self._update_colors()
@@ -215,7 +218,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 if len(field_links) > 1:
                     new_text += '  {AMBIGUOUS}'
                 elif not field_links:
-                    new_text += '  {MISSING}'
+                    new_text += '  {BROKEN LINK}'
                     if not self.link_missing:
                         self.link_missing = True
                         self._update_colors()
@@ -281,7 +284,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         def update_entry(self, entry_index: int, entry_text: str, entry_description: str = ""):
             self.entry_id = entry_index
             try:
-                entity_id = getattr(self.master.get_category_dict()[entry_index], 'entity_id')
+                entity_id = getattr(self.master.get_category_data()[entry_index], 'entity_id')
             except AttributeError:
                 text_tail = ''
 
@@ -354,7 +357,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         self.entry_i_frame.columnconfigure(1, weight=1)
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)
-        self._refresh_buttons()
+        self._refresh_range_buttons()
 
         self.refresh_fields(reset_display=reset_field_display)
 
@@ -402,7 +405,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         """Uses entry index instead of dictionary ID."""
         if text is None:
             text = self.get_entry_text(entry_index)  # Copies name of origin entry by default.
-        new_field_dict = self.get_category_dict()[entry_index].copy()
+        new_field_dict = self.get_category_data()[entry_index].copy()
         return self._add_entry(entry_index + offset, text, new_field_dict=new_field_dict)
 
     def delete_entry(self, row_index, category=None):
@@ -520,7 +523,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
     def get_selected_msb(self):
         return self.Maps[self._get_map_choice_name()]
 
-    def get_category_dict(self, category=None) -> List[MSBEntry]:
+    def get_category_data(self, category=None) -> List[MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
         For Maps, this actually returns a *list*, not a dict. Entry IDs are equivalent to entry indexes in this list, so
@@ -539,7 +542,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns a zip() generator for parent method."""
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         return zip(range(first_index, last_index), entry_list[first_index:last_index])
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
@@ -550,26 +553,26 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return entry_id
 
     def get_entry_text(self, entry_index: int, category=None) -> str:
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         return entry_list[entry_index].name
 
     def get_entry_description(self, entry_index: int, category=None) -> str:
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         return entry_list[entry_index].description
 
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
-        entry_list = self.get_category_dict(category)
+        entry_list = self.get_category_data(category)
         entry_list[entry_index].name = text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_index, text, entry_list[entry_index].description)
 
-    def _change_entry_id(self, row_index, new_id, category=None):
+    def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
         """Not implemented for Map Editor."""
         raise NotImplementedError
 
     def get_field_dict(self, entry_index: int, category=None) -> MSBEntry:
         """Uses entry index instad of entry ID."""
-        return self.get_category_dict(category)[entry_index]
+        return self.get_category_data(category)[entry_index]
 
     def get_field_info(self, field_dict, field_name=None):
         if field_dict is None:

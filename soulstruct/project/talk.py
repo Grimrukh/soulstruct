@@ -108,6 +108,7 @@ class ESPTextEditor(tk.Text):
 
 class SoulstructTalkEditor(SoulstructBaseEditor):
     DATA_NAME = "Talk"
+    TAB_NAME = "talk"
     CATEGORY_BOX_WIDTH = 0
     ENTRY_BOX_WIDTH = 126
     ENTRY_BOX_HEIGHT = 400
@@ -403,7 +404,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             return self.CustomDialog(title="No Talk Selected", message="No talk ID selected to save.")
         self.esp_editor.color_syntax()
         current_text = self._get_current_text()
-        talk_id = self.get_talk_id()
+        talk_id = self.get_entry_id()
         self.esp_text[self.selected_map_id][talk_id] = current_text
         with self.esp_file_paths[self.selected_map_id][talk_id].open("w", encoding="utf-8") as f:
             f.write(current_text)
@@ -429,6 +430,9 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
                 title="Talk Export Error",
                 message=f"Error encountered while trying to export ESP scripts (see console for full traceback):\n\n"
                         f"{str(e)}")
+        return self.CustomDialog(
+            title="Talk Export Successful",
+            message=f"All talk scripts in {self.selected_map_id} were exported successfully.")
 
     def compile_selected(self, mimic_click=False, flash_bg=True):
         if self.compile_button["state"] == "normal" and self.active_row_index is not None:
@@ -436,7 +440,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             self.save_selected_esp(flash_bg=False)  # has to save to load from file
             if mimic_click:
                 self.mimic_click(self.compile_button)
-            talk_id = self.get_talk_id()
+            talk_id = self.get_entry_id()
             try:
                 self.esd_class(self.esp_file_paths[self.selected_map_id][talk_id])
             except EsdError as e:
@@ -459,7 +463,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
                 self.mimic_click(self.reload_button)
             if not self._ignored_unsaved():
                 return
-            talk_id = self.get_talk_id()
+            talk_id = self.get_entry_id()
             esp_path = self.esp_file_paths[self.selected_map_id][talk_id]
             try:
                 with esp_path.open("r", encoding="utf-8") as f:
@@ -543,7 +547,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
 
         if self.displayed_entry_count == 0:
             self.select_entry_row_index(None)  # TODO: select first index if present?
-        self._refresh_buttons()
+        self._refresh_range_buttons()
 
     def select_entry_id(self, entry_id, set_focus_to_text=False, edit_if_already_selected=True, as_row_index=None):
         """Select entry based on ID and set the category display range to target_row_index rows before it."""
@@ -591,13 +595,8 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.esp_editor.mark_set("insert", "1.0")
         self.esp_editor.color_syntax()
 
-    def get_talk_id(self, row_index=None):
-        if row_index is None:
-            row_index = self.active_row_index
-        return self.entry_rows[row_index].entry_id
-
     def get_esd_text(self, row_index=None):
-        talk_id = self.get_talk_id(row_index)
+        talk_id = self.get_entry_id(row_index)
         return self.esp_text[self.selected_map_id][talk_id]
 
     def _on_map_choice(self, _=None):
@@ -616,7 +615,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         if entry_id <= 0:
             self.CustomDialog(title="Talk ID Error", message=f"Talk ID must be greater than zero.")
             return False
-        if entry_id in self.get_category_dict():
+        if entry_id in self.get_category_data():
             self.CustomDialog(
                 title="Talk ID Error", message=f"Talk ID {entry_id} already exists.")
             return False
@@ -635,7 +634,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
     def delete_entry(self, row_index, category=None):
         """Deletes talk script in project. Cannot be undone."""
         self._cancel_entry_id_edit()
-        talk_id = self.get_talk_id(row_index)
+        talk_id = self.get_entry_id(row_index)
         if self.CustomDialog(
                 title="Confirm Deletion",
                 message=f"Delete talk ID {talk_id} in map {self.selected_map_id}? This will delete the ESP file in "
@@ -651,21 +650,21 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
 
-    def get_category_dict(self, category=None) -> Dict[int, str]:
+    def get_category_data(self, category=None) -> Dict[int, str]:
         """Gets list of talk IDs and their paths. Category argument does nothing."""
         return self.esp_file_paths[self.selected_map_id]
 
     def get_selected_text(self) -> str:
-        return self.esp_text[self.selected_map_id][self.get_talk_id()]
+        return self.esp_text[self.selected_map_id][self.get_entry_id()]
 
     def get_esp_path(self, row_index=None) -> Path:
         if row_index is None:
             row_index = self.active_row_index
-        return self.esp_directory / f"{self.selected_map_id}/t{self.get_talk_id(row_index)}.esp.py"
+        return self.esp_directory / f"{self.selected_map_id}/t{self.get_entry_id(row_index)}.esp.py"
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns list of talk IDs in map."""
-        return list(self.get_category_dict())
+        return list(self.get_category_data())
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Get index of entry. Ignores current display range."""
@@ -682,18 +681,11 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         # Not used.
         pass
 
-    def _change_entry_id(self, row_index, new_id, category=None):
-        current_id = self.get_talk_id(row_index)
-        if current_id == new_id:
-            return False
-        talk_dict = self.get_category_dict()
-        if new_id in talk_dict:
-            self.CustomDialog(
-                title="Talk ID Clash",
-                message=f"Talk ID {new_id} already exists. You must change or delete it first.")
-            return False
-        talk_dict[new_id] = talk_dict.pop(current_id)
-        self.entry_rows[row_index].update_entry(entry_id=new_id)
+    def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
+        talk_dict = self.get_category_data()
+        talk_dict[new_id] = talk_dict.pop(entry_id)
+        if update_row_index is not None:
+            self.entry_rows[update_row_index].update_entry(entry_id=new_id)
         return True
 
     def _get_display_categories(self):

@@ -139,6 +139,7 @@ class EvsTextEditor(tk.Text):
 
 class SoulstructEventEditor(SmartFrame):
     DATA_NAME = "Events"
+    TAB_NAME = "events"
     TEXT_BG = '#232323'
     TEXT_BOX_WIDTH = 300
 

@@ -311,7 +311,7 @@ class ParamTable(object):
         return self.entries.items()
 
     def __iter__(self):
-        return self.keys()
+        return iter(self.entries)
 
     def __len__(self):
         return len(self.entries)
@@ -321,7 +321,7 @@ class ParamTable(object):
         # TODO: hack job. get nice field names and structure from fields.py.
         return self.entries[list(self.entries)[0]].field_names
 
-    def get_field_info(self, param_entry: ParamEntry, field_name: str = None):
+    def get_field_info(self, param_entry: ParamEntry = None, field_name: str = None):
         param_info = GAME_PARAM_INFO.get(self.param_name, None)
         if param_info is None:
             raise KeyError(f"No field info available for param table {self.param_name}.")
