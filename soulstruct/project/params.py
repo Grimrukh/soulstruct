@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from soulstruct.params.enums import ITEMLOT_ITEMCATEGORY
 from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
 
 if TYPE_CHECKING:
@@ -109,6 +110,21 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             for entry_id, field_dict in self.Params[param_name].items():
                 if field_dict[field_name] == param_id:
                     links.append(f"{param_name} : {entry_id} : {field_name}")
+
+        # Check ItemLots manually, as they're particularly helpful/commonly used.
+        item_categories = ("Weapons", "Armor", "Rings", "Goods")
+        if category in item_categories:
+            enum_categories = (
+                ITEMLOT_ITEMCATEGORY.Weapon, ITEMLOT_ITEMCATEGORY.Armor,
+                ITEMLOT_ITEMCATEGORY.Ring, ITEMLOT_ITEMCATEGORY.Good)
+            for entry_id, field_dict in self.Params.ItemLots.items():
+                for i in range(1, 9):
+                    lot_category = field_dict[f"lotItemCategory0{i}"]
+                    item_id = field_dict[f"lotItemId0{i}"]
+                    if param_id == item_id:
+                        for enum_category, param_name in zip(enum_categories, item_categories):
+                            if lot_category == enum_category and category == param_name:
+                                links.append(f"ItemLots : {entry_id} : {f'lotItemId0{i}'}")
 
         name_box = NameSelectionBox(self.master, names=links, list_name=f"Param References to {category}[{param_id}]")
         selected_name = name_box.go()
