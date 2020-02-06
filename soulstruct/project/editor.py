@@ -1588,7 +1588,7 @@ class NameSelectionBox(SmartFrame):
         with self.set_master(padx=20, pady=20):
             self._names = self.Listbox(
                 values=names, width=self.WIDTH, height=self.HEIGHT, vertical_scrollbar=True, selectmode='single',
-                font=16, padx=20, pady=20)
+                font=("Consolas", 14), padx=20, pady=20)
 
         self._names.bind('<Double-Button-1>', lambda e: self.done(True))
 
