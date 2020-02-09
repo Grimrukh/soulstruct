@@ -109,6 +109,9 @@ class Map(GameObject):
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name
 
+    def stem_set(self):
+        return {self.emevd_file_stem, self.msb_file_stem, self.ai_file_stem, self.esd_file_stem}
+
     def __eq__(self, other_map):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id
 

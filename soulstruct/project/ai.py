@@ -7,10 +7,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from soulstruct.ai.core import LuaError
-from soulstruct.constants.darksouls1.maps import ALL_MAPS
+from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.project.editor import SoulstructBaseEditor
 from soulstruct.project.utilities import bind_events
-from soulstruct.utilities.core import camel_case_to_spaces
 
 if TYPE_CHECKING:
     from soulstruct.ai import DarkSoulsAIScripts, LuaBND, LuaGoal
@@ -289,9 +288,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.global_map_choice_func = global_map_choice_func
         self.game_root = Path(game_root)
         self.allow_decompile = allow_decompile
-        self.selected_bnd_name = ""
+        self.selected_map_id = ""
 
-        self.bnd_choice = None
+        self.map_choice = None
         self.decompile_all_button = None
         self.write_all_button = None
         self.line_number = None
@@ -312,11 +311,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
-                bnd_display_names = [f"{game_map.ai_file_stem} [{game_map.verbose_name}]" for game_map in ALL_MAPS]
-                self.bnd_choice = self.Combobox(
-                    values=bnd_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self._on_bnd_choice, sticky='w', padx=(10, 30))
-                self.selected_bnd_name = self._get_bnd_choice_name()
+                map_names = [f"{game_map.ai_file_stem} [{game_map.verbose_name}]" for game_map in ALL_MAPS]
+                self.map_choice = self.Combobox(
+                    values=map_names, label='Map:', label_font_size=12, label_position='left', width=35,
+                    font=('Segoe UI', 12), on_select_function=self.on_map_choice, sticky='w', padx=(10, 30))
+                self.selected_map_id = self.map_choice_id
                 self.decompile_all_button = self.Button(
                     text="Decompile All" if self.allow_decompile else "Cannot Decompile", font_size=10,
                     bg='#622', width=20, padx=10, command=self.decompile_all,
@@ -558,7 +557,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if self.CustomDialog(
                 title="Confirm Bulk Write",
                 message=f"This will overwrite any decompiled script files saved in "
-                        f"'/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
+                        f"'/ai_scripts/{self.selected_map_id}'.\n\nContinue?",
                 button_names=("Yes, continue", "No, go back"),
                 button_kwargs=("YES", "NO"),
                 cancel_output=1, default_output=1) == 1:
@@ -570,7 +569,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             if not goal.script:
                 continue
             try:
-                goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
+                goal.write_decompiled(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
             except LuaError as e:
                 if self.CustomDialog(
                         title="Lua Write Error",
@@ -588,14 +587,14 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if self.CustomDialog(
                 title="Confirm Lua Operation",
                 message=f"This will overwrite any decompiled script in the current project state\n"
-                        f"that has a file in '/ai_scripts/{self._get_bnd_choice_name()}'.\n\nContinue?",
+                        f"that has a file in '/ai_scripts/{self.selected_map_id}'.\n\nContinue?",
                 button_names=("Yes, continue", "No, go back"),
                 button_kwargs=("YES", "NO"),
                 return_output=0, cancel_output=1, default_output=0) == 1:
             return
         failed_goals = []
         for goal in self.get_selected_bnd().goals:
-            lua_path = self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}"
+            lua_path = self.script_directory / f"{self.selected_map_id}/{goal.script_name}"
             if not lua_path.is_file():
                 continue
             try:
@@ -615,7 +614,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         if failed_goals_msg:
             self.CustomDialog(
                 title="Lua Load Complete",
-                message=f"All scripts have been loaded from '/ai_scripts/{self._get_bnd_choice_name()}' "
+                message=f"All scripts have been loaded from '/ai_scripts/{self.selected_map_id}' "
                         f"except:\n\n{failed_goals_msg}")
         else:
             self.CustomDialog(
@@ -691,7 +690,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.mimic_click(self.write_button)
             goal = self.get_goal()
             try:
-                goal.write_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
+                goal.write_decompiled(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
             except LuaError as e:
                 self.CustomDialog(
                     title="Lua Write Error",
@@ -706,12 +705,12 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 return
             goal = self.get_goal()
             try:
-                goal.load_decompiled(self.script_directory / f"{self._get_bnd_choice_name()}/{goal.script_name}")
+                goal.load_decompiled(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
                 self.update_script_text(goal)
             except FileNotFoundError:
                 self.CustomDialog(
                     title="Lua Read Error",
-                    message=f"Decompiled script not found in '/ai_scripts/{self._get_bnd_choice_name()}' directory.")
+                    message=f"Decompiled script not found in '/ai_scripts/{self.selected_map_id}' directory.")
 
     def refresh_entries(self):
         self._cancel_entry_id_edit()
@@ -723,8 +722,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         )
 
         row = 0
+        luabnd = self.get_selected_bnd()
         for entry_id, goal_type in entries_to_display:
-            goal = self.get_selected_bnd().get_goal(entry_id, goal_type)
+            goal = luabnd.get_goal(entry_id, goal_type)
             self.entry_rows[row].update_entry(entry_id, goal.goal_name, goal.goal_type)
             self.entry_rows[row].unhide()
             row += 1
@@ -807,23 +807,20 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             row_index = self.active_row_index
         return self.entry_rows[row_index].entry_id, self.entry_rows[row_index].goal_type
 
-    def _get_bnd_choice_name(self):
-        """Just removes parenthetical and returns to CamelCase."""
-        return self.bnd_choice.var.get().split(' [')[1][:-1].replace(' ', '')
-
     def get_goal(self, row_index=None):
         if row_index is None:
             row_index = self.active_row_index
         goal_id, goal_type = self.get_goal_id_and_type(row_index)
         return self.get_selected_bnd().get_goal(goal_id, goal_type)
 
-    def _on_bnd_choice(self, _=None):
+    def on_map_choice(self, event=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
-            self.bnd_choice.var.set(f"{self.selected_bnd_name} [{camel_case_to_spaces(self.selected_bnd_name)}]")
+            game_map = get_map(self.selected_map_id)
+            self.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
             return
-        self.selected_bnd_name = self._get_bnd_choice_name()
-        if self.global_map_choice_func:
-            self.global_map_choice_func(self.bnd_choice.var.get().split(' [')[0])
+        self.selected_map_id = self.map_choice_id
+        if self.global_map_choice_func and event is not None:
+            self.global_map_choice_func(self.map_choice_id)
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
@@ -866,8 +863,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self.refresh_entries()
 
     def get_selected_bnd(self) -> LuaBND:
-        # print(self.selected_bnd_name)
-        return self.AI[self.selected_bnd_name]
+        return self.AI[self.selected_map_id]
 
     def get_category_data(self, category=None) -> Dict[(int, bool), LuaGoal]:
         """Gets dictionary of goals in LuaInfo from LuaBND. Category does nothing."""
@@ -920,15 +916,16 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         else:
             # Also jump to given entry and record view change.
             # TODO: Need to record CURRENT view, which could be a different tab entirely.
-            current_bnd_choice = self.bnd_choice.var.get()
+            current_map = get_map(self.selected_map_id)
+            map_choice_string = f"{current_map.ai_file_stem} [{current_map.verbose_name}]"
             current_category = self.active_category
             current_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
             self.linker.jump(self.TAB_NAME, category, goal.goal_id)
             self.view_history.record_view_change(
                 back=partial(self.linker.jump, self.TAB_NAME, current_category, current_entry_id,
-                             lambda: self.bnd_choice.var.set(current_bnd_choice)),
+                             lambda: self.map_choice.var.set(map_choice_string)),
                 forward=partial(self.linker.jump, self.TAB_NAME, category, goal.goal_id,
-                                lambda: self.bnd_choice.var.set(current_bnd_choice))
+                                lambda: self.map_choice.var.set(map_choice_string))
             )
 
     def _start_entry_text_edit(self, row_index):

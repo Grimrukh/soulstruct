@@ -184,6 +184,8 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         self.category_selected_entry_id = {}  # maps categories to their currently selected entry IDs
         self.unsaved_changes = set()  # set of changed (category, param_id, action_type) pairs to highlight
 
+        self.map_choice = None  # Combobox used by most tabs.
+
         self.active_category = None
         self.category_boxes = {}
         self.category_canvas = None
@@ -271,6 +273,12 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         if not self.action_history.redo():
             # TODO: flash redo button red to indicate there's nothing to undo.
             pass
+
+    @property
+    def map_choice_id(self):
+        if self.map_choice is None:
+            raise AttributeError("Tried to get map choice ID in a tab that does not have map choice.")
+        return self.map_choice.var.get().split(' [')[0]
 
     # ---------------------- #
     #   CATEGORY SELECTION   #

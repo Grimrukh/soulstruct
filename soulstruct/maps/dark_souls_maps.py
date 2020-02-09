@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+from soulstruct.core import SoulstructError
 from soulstruct.maps.msb import MSB
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 
@@ -85,5 +86,8 @@ class DarkSoulsMaps(object):
             msb_directory = Path(msb_directory)
         for msb in self._data.values():
             msb_path = msb_directory / msb.msb_path.name
-            msb.write_packed(msb_path)
+            try:
+                msb.write_packed(msb_path)
+            except Exception as e:
+                raise SoulstructError(f"Error encountered while writing MSB {msb_path.name}: {e}")
         _LOGGER.info("Dark Souls map files (MSB) written successfully.")

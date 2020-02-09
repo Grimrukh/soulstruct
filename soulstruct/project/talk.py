@@ -248,8 +248,8 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
                                        for game_map in ALL_MAPS if game_map.esd_file_stem]
                 self.map_choice = self.Combobox(
                     values=map_display_strings, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=(10, 30))
-                self.selected_map_id = self.map_choice.var.get().split(' [')[0]
+                    font=('Segoe UI', 12), on_select_function=self.on_map_choice, sticky='w', padx=(10, 30))
+                self.selected_map_id = self.map_choice_id
                 self.reload_all_button = self.Button(
                     text="Reload All in Map", font_size=10, bg="#222", width=25, padx=5,
                     command=self.reload_all_in_map,
@@ -599,14 +599,14 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         talk_id = self.get_entry_id(row_index)
         return self.esp_text[self.selected_map_id][talk_id]
 
-    def _on_map_choice(self, _=None):
+    def on_map_choice(self, event=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
             # Keep currently selected map.
             self.map_choice.var.set(f"{self.selected_map_id} [{get_map(self.selected_map_id).name}]")
             return
-        self.selected_map_id = self.map_choice.var.get().split(' [')[0]
-        if self.global_map_choice_func:
-            self.global_map_choice_func(self.map_choice.var.get().split(' [')[0])
+        self.selected_map_id = self.map_choice_id
+        if self.global_map_choice_func and event is not None:
+            self.global_map_choice_func(self.map_choice_id)
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)

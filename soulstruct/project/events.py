@@ -151,7 +151,7 @@ class SoulstructEventEditor(SmartFrame):
         self.dcx = dcx
         self.evs_file_paths = {}
         self.evs_text = {}
-        self.selected_evs = None
+        self.selected_map_id = None
 
         self.map_choice = None
         self.line_number = None
@@ -177,7 +177,7 @@ class SoulstructEventEditor(SmartFrame):
         with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
             self.map_choice = self.Combobox(
                 values=(), initial_value="", width=35,
-                on_select_function=self._on_map_choice, sticky='w',
+                on_select_function=self.on_map_choice, sticky='w',
                 label='Map:', label_font_size=12, label_position='left', font=('Segoe UI', 12), padx=10, pady=10)
             self.line_number = self.Label(
                 text="Line: None", padx=10, width=10, fg='#CCF', anchor='w', sticky='w').var
@@ -236,8 +236,9 @@ class SoulstructEventEditor(SmartFrame):
         self.map_choice["values"] = map_options
         if map_options:
             self.map_choice.var.set(map_options[0])
-            self.selected_evs = self.map_choice.get().split(' [')[0]
-            self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+            self.selected_map_id = self.map_choice.get().split(' [')[0]
+            self.text_editor.delete(1.0, "end")
+            self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
 
@@ -246,7 +247,7 @@ class SoulstructEventEditor(SmartFrame):
         self.line_number.set(f"Line: {current_line}")
 
     def _control_f_search(self, _):
-        if self.selected_evs:
+        if self.selected_map_id:
             highlighted = self.text_editor.selection_get()
             self.string_to_find.var.set(highlighted)
             self.string_to_find.select_range(0, 'end')
@@ -258,7 +259,7 @@ class SoulstructEventEditor(SmartFrame):
         if not number:
             return
         number = int(number)
-        if not self.selected_evs or number < 1 or int(self.text_editor.index('end-1c').split('.')[0]) < number:
+        if not self.selected_map_id or number < 1 or int(self.text_editor.index('end-1c').split('.')[0]) < number:
             self.flash_bg(self.go_to_line)
             return
         self.text_editor.mark_set("insert", f"{number}.0")
@@ -267,7 +268,7 @@ class SoulstructEventEditor(SmartFrame):
 
     def _find_string(self, _):
         string = self.string_to_find.var.get()
-        if not string or not self.selected_evs:
+        if not string or not self.selected_map_id:
             return
         start_line, start_char = self.text_editor.index("insert").split('.')
         index = self.text_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
@@ -286,7 +287,7 @@ class SoulstructEventEditor(SmartFrame):
             self.text_editor.tag_remove(tag, "1.0", "end")
 
     def _ignored_unsaved(self):
-        if self._get_current_text() != self.evs_text[self.selected_evs]:
+        if self._get_current_text() != self.evs_text[self.selected_map_id]:
             if self.CustomDialog(
                     title="Lose Unsaved Changes?",
                     message="Current text has changed but not been saved. Lose changes?",
@@ -296,33 +297,33 @@ class SoulstructEventEditor(SmartFrame):
                 return False
         return True
 
-    def _on_map_choice(self, _):
+    def on_map_choice(self, event=None):
         """Check if current text has changed (and warn), then switch to other text."""
         if not self._ignored_unsaved():
-            game_map = get_map(self.selected_evs)
+            game_map = get_map(self.selected_map_id)
             self.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name}]")
             return
-        self.selected_evs = self.map_choice.var.get().split(' [')[0]
-        if self.global_map_choice_func:
-            self.global_map_choice_func(self.selected_evs)
+        self.selected_map_id = self.map_choice.var.get().split(' [')[0]
+        if self.global_map_choice_func and event is not None:
+            self.global_map_choice_func(self.selected_map_id)
         self.text_editor.delete(1.0, 'end')
-        self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+        self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
         self.text_editor.mark_set("insert", "1.0")
         self.text_editor.color_syntax()
 
     def save_selected_evs(self):
-        if self.selected_evs:
+        if self.selected_map_id:
             self.text_editor.color_syntax()
             current_text = self._get_current_text()
-            self.evs_text[self.selected_evs] = current_text
-            with self.evs_file_paths[self.selected_evs].open('w', encoding='utf-8') as f:
+            self.evs_text[self.selected_map_id] = current_text
+            with self.evs_file_paths[self.selected_map_id].open('w', encoding='utf-8') as f:
                 f.write(current_text)
 
     def save_all_evs(self):
         """Updates the current script, then saves all EVS scripts to 'events' project subdirectory."""
-        if self.selected_evs:
+        if self.selected_map_id:
             current_text = self._get_current_text()
-            self.evs_text[self.selected_evs] = current_text
+            self.evs_text[self.selected_map_id] = current_text
         for evs_name, text in self.evs_text.items():
             evs_file_path = self.evs_file_paths[evs_name]
             with evs_file_path.open('w', encoding='utf-8') as f:
@@ -340,13 +341,13 @@ class SoulstructEventEditor(SmartFrame):
                 f"{message}")
 
     def _compile_selected(self, mimic_click=False, flash_bg=True):
-        if not self.selected_evs:
+        if not self.selected_map_id:
             return
         self.save_selected_evs()
         if mimic_click:
             self.mimic_click(self.compile_button)
         try:
-            EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_evs].parent))
+            EMEVD(self._get_current_text(), script_path=str(self.evs_file_paths[self.selected_map_id].parent))
         except EvsError as e:
             self._raise_error(e.lineno, str(e))
         except Exception as e:
@@ -362,7 +363,7 @@ class SoulstructEventEditor(SmartFrame):
 
     def export_selected_evs(self, export_directory=None):
         """Convert project EVS file to game EMEVD file. Does not check any loaded text."""
-        if not self.selected_evs:
+        if not self.selected_map_id:
             return
         if export_directory is None:
             export_directory = self.FileDialog.askdirectory(initialdir=str(self.evs_directory))
@@ -370,25 +371,25 @@ class SoulstructEventEditor(SmartFrame):
                 return
         export_directory = Path(export_directory)
         try:
-            emevd = EMEVD(self.evs_file_paths[self.selected_evs])
+            emevd = EMEVD(self.evs_file_paths[self.selected_map_id])
         except Exception as e:
             return self.error_dialog(
                 "EVS Error", f"Could not interpret current EVS file in project.\n"
                              f"Fix this error and try again (see console for full traceback):\n\n{str(e)}")
         emevd.write_emevd(
-            export_directory / f"event/{self.selected_evs}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx)
+            export_directory / f"event/{self.selected_map_id}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx)
 
     def reload_selected(self, mimic_click=False, flash_bg=True):
-        if not self.selected_evs:
+        if not self.selected_map_id:
             return
         if mimic_click:
             self.mimic_click(self.reload_button)
         if self._ignored_unsaved():
-            evs_path = self.evs_file_paths[self.selected_evs]
+            evs_path = self.evs_file_paths[self.selected_map_id]
             with evs_path.open('r', encoding='utf-8') as f:
-                self.evs_text[self.selected_evs] = f.read()
+                self.evs_text[self.selected_map_id] = f.read()
             self.text_editor.delete(1.0, 'end')
-            self.text_editor.insert(1.0, self.evs_text[self.selected_evs])
+            self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
             if flash_bg:

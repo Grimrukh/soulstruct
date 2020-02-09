@@ -340,37 +340,42 @@ class SoulstructProjectWindow(SmartFrame):
             try:
                 self.maps_tab.map_choice.var.set(
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
+                self.maps_tab.on_map_choice()
             except KeyError:
                 pass
         if "entities" not in ignore_tabs:
             try:
                 self.entities_tab.map_choice.var.set(
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
+                self.entities_tab.on_map_choice()
             except KeyError:
                 pass
         if "events" not in ignore_tabs:
             try:
                 self.events_tab.map_choice.var.set(
                     f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
+                self.events_tab.on_map_choice()
             except KeyError:
                 pass
         if "ai" not in ignore_tabs:
             try:
-                self.ai_tab.bnd_choice.var.set(
+                self.ai_tab.map_choice.var.set(
                     f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
+                self.ai_tab.on_map_choice()
             except KeyError:
                 pass
         if "talk" not in ignore_tabs:
             try:
                 self.talk_tab.map_choice.var.set(
                     f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
+                self.talk_tab.on_map_choice()
             except KeyError:
                 pass
 
     def _import_data(self, data_type=None, import_directory=None):
         if import_directory is None:
             import_directory = self._choose_directory()
-            if import_directory is None:
+            if not import_directory:
                 return  # Abort import.
 
         def _threaded_import():
@@ -430,7 +435,7 @@ class SoulstructProjectWindow(SmartFrame):
     def _export_data(self, data_type=None, export_directory=None, mimic_click=False):
         if export_directory is None:
             export_directory = self._choose_directory()
-            if export_directory is None:
+            if not export_directory:
                 return  # Abort export.
         if data_type == "events":
             # Specifying 'events' here means the selected script only.
@@ -539,7 +544,7 @@ class SoulstructProjectWindow(SmartFrame):
         if initial_dir is None:
             initial_dir = str(self.project.project_root)
         directory = self.FileDialog.askdirectory(initialdir=initial_dir, **kwargs)
-        if directory is None:
+        if not directory:
             return None
         return Path(directory)
 

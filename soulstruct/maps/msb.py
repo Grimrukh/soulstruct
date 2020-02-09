@@ -1,4 +1,5 @@
 import copy
+import logging
 import math
 import typing as tp
 from io import BytesIO, BufferedReader
@@ -11,6 +12,8 @@ from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE, BaseMSBRegion
 from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE, BaseMSBPart
 
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, create_bak
+
+_LOGGER = logging.getLogger(__name__)
 
 MAP_ENTRY_TYPES = {
     'Parts': {
@@ -291,7 +294,8 @@ class MSBEntryList(object):
         entry_indices = {}
         for i, entry in enumerate(self._entries):
             if entry.name in entry_indices:
-                raise NameError(f"Name {repr(entry.name)} appears more than once in MSB.")
+                raise NameError(f"Name {repr(entry.name)} (type {entry.ENTRY_TYPE.name}) appears more than once in "
+                                f"MSB. Please ensure all map entries have unique names.")
             entry_indices[entry.name] = i
         return entry_indices
 
@@ -598,7 +602,12 @@ class MSB(object):
             r.translate.z = radius * -math.cos(y_rot_rad + rotation)
 
     def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
-        """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type."""
+        """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type.
+
+        Optionally returns dictionary mapping ID to MSBEntry `name` only.
+
+        If multiple MSBEntry instances are found for a given ID, only the *first* one found is used.
+        """
         entry_list_name = entry_list_name.lower()
         if entry_list_name == 'parts':
             entries = self.parts.get_entries(entry_type)
@@ -608,9 +617,13 @@ class MSB(object):
             entries = self.regions.get_entries(entry_type)
         else:
             raise ValueError("Can only get entity IDs for parts, events, and regions.")
-        if names_only:
-            return {e.entity_id: e.name for e in entries if e.entity_id > 0}
-        return {e.entity_id: e for e in entries if e.entity_id > 0}
+        entries_by_id = {}
+        for entry in [e for e in entries if e.entity_id > 0]:
+            if entry.entity_id in entries_by_id:
+                _LOGGER.debug(f"Found multiple entries for entity ID {entry.entity_id}. Only using first.")
+            else:
+                entries_by_id[entry.entity_id] = entry.name if names_only else entry
+        return entries_by_id
 
     def get_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntry]:
         """Search all entry types for the given ID and return that MSBEntry (or None if not found).

@@ -70,6 +70,10 @@ MODULE_CLASS_NAMES = BiDict(
 )
 
 
+_RE_ENTITIES_ENUM_CLASS = re.compile(r"^class (\w+)\(\w+\): *$")
+_RE_ENTITIES_ENUM_MEMBER = re.compile(r"^ +([\w\d_]+) *= *(\d+) *#(.*)$")
+
+
 class SoulstructEntityEditor(SoulstructBaseEditor):
     DATA_NAME = "Maps"
     TAB_NAME = "entities"
@@ -201,7 +205,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                                      for game_map in ALL_MAPS if game_map.msb_file_stem]
                 self.map_choice = self.Combobox(
                     values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self._on_map_choice, sticky='w', padx=10)
+                    font=('Segoe UI', 12), on_select_function=self.on_map_choice, sticky='w', padx=10)
                 self.Button(text="Import Entities", font_size=10, width=15, padx=10,
                             command=self._import_entities_module,
                             tooltip_text="Import all entity ID names and descriptions from an existing Python module "
@@ -212,11 +216,11 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                                          "this map's EVS script. If you have changed any existing names and want to "
                                          "update the names in the EVS script, make sure to restore the IDs before "
                                          "regenerating this file.")
-                self.Button(text="EVS IDs to Names", font_size=10, width=17, padx=10,
+                self.Button(text="Event IDs to Names", font_size=10, width=18, padx=10,
                             command=self._replace_evs_ids,
                             tooltip_text="Go through this map's EVS script and replace any entity IDs with their names "
                                          "imported from the map's entities module, if present.")
-                self.Button(text="EVS Names to IDs", font_size=10, width=17, padx=10,
+                self.Button(text="Event Names to IDs", font_size=10, width=18, padx=10,
                             command=self._restore_evs_ids,
                             tooltip_text="Go through this map's EVS script and replace any names imported from the "
                                          "map's entities module with their original entity IDs, if present.")
@@ -365,20 +369,23 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             if self.entry_canvas.yview()[0] != 0.0 or self.active_row_index > 5:
                 self.entry_canvas.yview_scroll(1, 'units')
 
-    def _get_map_choice_name(self):
-        """Just removes parenthetical and returns to CamelCase."""
-        return self.map_choice.var.get().split(' [')[1][:-1].replace(' ', '')
-
-    def _on_map_choice(self, _=None):
-        if self.global_map_choice_func:
-            self.global_map_choice_func(self.map_choice.var.get().split(' [')[0])
+    def on_map_choice(self, event=None):
+        if self.global_map_choice_func and event is not None:
+            self.global_map_choice_func(self.map_choice_id)
         self.select_entry_row_index(None)
         self.refresh_entries()
 
+    def _get_map(self):
+        return get_map(self.map_choice_id)
+
     def _import_entities_module(self):
-        """Reads '{map_id}_entities.py' file and loads names from it into map data."""
-        # TODO: Descriptions (in module comments) are not imported. Python file will require manual parsing for that.
-        game_map = get_map(self._get_map_choice_name())
+        """Reads '{map_id}_entities.py' file and loads names from it into map data.
+
+        Also tries to read descriptions from inline comments with regex. (Messing too much with the formatting in the
+        module file may interfere with this.)
+        """
+        game_map = get_map(self.map_choice_id)
+        msb = self.get_selected_msb()
         module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
         if not module_path.is_file():
             return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
@@ -391,22 +398,22 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             entity_module = import_module(module_path.stem)
         except Exception as e:
             return self.error_dialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(e)}")
-        msb = self.get_selected_msb()
         entries_by_entity_enum = {}
         not_found = []
+        skipped = set()  # will also skip description
         for attr_name, attr in [m[0:2] for m in inspect.getmembers(entity_module, inspect.isclass)
                                 if m[1].__module__ == entity_module.__name__]:
             entry_list_name, entry_type_name = MODULE_CLASS_NAMES[attr_name].split(": ")
             entry_type = MAP_ENTRY_ENTITY_TYPES[entry_list_name][entry_type_name]
-            for entity in attr:
-                entry = msb.get_entity_id(entity.value, allow_multiple=True)
+            for entity_enum in attr:
+                entry = msb.get_entity_id(entity_enum.value, allow_multiple=True)
                 if entry is None:
-                    not_found.append(entity.value)
+                    not_found.append(entity_enum.value)
                     continue
                 if isinstance(entry, list):
                     choice = self.CustomDialog(
                         title="Multiple Entries with Same ID",
-                        message=f"Entity ID {entity.value} in Python module '{module_path.stem}' appears "
+                        message=f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' appears "
                                 f"multiple times in MSB. This will rename only the first one found (type "
                                 f"{entry[0].ENTRY_TYPE.name}). Is this OK?",
                         button_kwargs=("YES", "NO", "NO"),
@@ -415,13 +422,14 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                     if choice == 2:
                         return
                     elif choice == 1:
+                        skipped.add(entity_enum.value)
                         continue
                     else:
                         entry = entry[0]
                 if entry.ENTRY_TYPE != entry_type:
                     choice = self.CustomDialog(
                         title="Entry Type Mismatch",
-                        message=f"Entity ID {entity.value} in Python module '{module_path.stem}' has type "
+                        message=f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' has type "
                                 f"'{attr_name}', but has different type '{entry_list_name}.{entry_type_name} in MSB. "
                                 f"Change name anyway?",
                         button_kwargs=("YES", "NO", "NO"),
@@ -430,8 +438,9 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                     if choice == 2:
                         return
                     elif choice == 1:
+                        skipped.add(entity_enum.value)
                         continue
-                entries_by_entity_enum[entity] = entry
+                entries_by_entity_enum[entity_enum] = entry
         if not entries_by_entity_enum:
             return self.CustomDialog("No IDs to Update",
                                      "No IDs in the Python entities module are present in the MSB.")
@@ -448,14 +457,43 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             ) == 1:
                 return
 
-        for entity, entry in entries_by_entity_enum.items():
-            entry.name = entity.name
+        # Find descriptions with regular expressions.
+        skip_description = skipped.union(not_found)
+        current_attr_name = ""
+        descriptions_by_attr_and_id = {}
+        with module_path.open("r", encoding="utf-8") as module:
+            for line in module:
+                class_match = _RE_ENTITIES_ENUM_CLASS.match(line)
+                if class_match:
+                    attr_name = class_match.group(1)
+                    if attr_name in MODULE_CLASS_NAMES.values():
+                        current_attr_name = attr_name
+                    continue
+                if current_attr_name:
+                    member_match = _RE_ENTITIES_ENUM_MEMBER.match(line)
+                    if member_match:
+                        entity_id, description = member_match.group(2, 3)
+                        if entity_id not in skip_description:
+                            descriptions_by_attr_and_id[current_attr_name, int(entity_id)] = description.strip()
+
+        for entity_enum, entry in entries_by_entity_enum.items():
+            entry.name = entity_enum.name
+        for (attr_name, entity_id), description in descriptions_by_attr_and_id.items():
+            # attr_name not actually used, as entity ID uniqueness should have already been resolved
+            entry = msb.get_entity_id(entity_id, allow_multiple=True)
+            if not entry:
+                continue  # shouldn't happen (as missing entity ID should be skipped) but just in case
+            if isinstance(entry, list):
+                entry = entry[0]  # could happen
+            entry.description = description
+
         self.refresh_entries()
+
+        self.CustomDialog("Import Successful", f"Entity names and descriptions imported successfully.")
 
     def _write_entities_module(self):
         """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script."""
-        # TODO: This entities tab should be able to load this file as well.
-        game_map = get_map(self._get_map_choice_name())
+        game_map = self._get_map()
         module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
         module_text = "from soulstruct.game_types import *\n"
         for category in self._get_display_categories():
@@ -484,8 +522,11 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         with module_path.open('w', encoding='utf-8') as f:
             f.write(module_text)
 
+        self.CustomDialog("Write Successful", f"'{{project}}/events/{module_path.name}'\n"
+                                              f"created or overwritten successfully.")
+
     def _replace_evs_ids(self):
-        game_map = get_map(self._get_map_choice_name())
+        game_map = self._get_map()
         module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
         if not module_path.is_file():
             return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
@@ -512,7 +553,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             f.write(evs)
 
     def _restore_evs_ids(self):
-        game_map = get_map(self._get_map_choice_name())
+        game_map = self._get_map()
         module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
         if not module_path.is_file():
             return self.CustomDialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
@@ -550,24 +591,25 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         return categories
 
     def get_selected_msb(self) -> MSB:
-        return self.Maps[self._get_map_choice_name()]
+        map_name = get_map(self.map_choice_id).name
+        return self.Maps[map_name]
 
     def get_category_data(self, category=None) -> Dict[int, MSBEntryEntity]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
-        Entity dictionary is generated from `MSB.get_entity_id_dict()` every time, and is definitively *not* sorted;
-        entity IDs will appear in the order they appear in the MSB.
+        Entity dictionary is generated from `MSB.get_entity_id_dict()` every time, and is definitively *not* sorted by
+        ID; entity IDs will appear in the order their entries appear in the MSB.
         """
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        map_choice = self._get_map_choice_name()
+        selected_msb = self.get_selected_msb()
         try:
             entry_list, entry_type = category.split(': ')
         except ValueError:
             raise ValueError(f"Category name was not in [List: Type] format: {category}")
-        return self.Maps[map_choice].get_entity_id_dict(entry_list, entry_type)
+        return selected_msb.get_entity_id_dict(entry_list, entry_type)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns entire dictionary (no previous/next range buttons here)."""
@@ -592,9 +634,10 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_data(category)
         entry_list[entry_index].name = text  # Will update Maps tab as well (once refreshed).
+        description = entry_list[entry_index].description  # keep current description
         self.linker.window.maps_tab.refresh_entries()
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(entry_index, text)
+            self.entry_rows[update_row_index].update_entry(entry_index, text, description)
 
     def _set_entry_description(self, entry_index: int, description: str, category=None, update_row_index=None):
         entry_list = self.get_category_data(category)
@@ -610,5 +653,5 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         self.linker.window.maps_tab.refresh_entries()
         entry_list[new_id] = entry = entry_list.pop(entry_id)
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(new_id, entry.name)
+            self.entry_rows[update_row_index].update_entry(new_id, entry.name, entry.description)
         return True

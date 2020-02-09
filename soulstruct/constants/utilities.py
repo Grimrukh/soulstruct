@@ -39,9 +39,9 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()):
             area_id, block_id = source[:2], source[2:]
             matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
     elif isinstance(source, str):
-        if source.startswith("m") and "_" in source:
+        if (source.startswith("m") and "_" in source) or source == "aiCommon":
             source = Path(source).stem  # remove file extensions
-            matches = [g for g in game_maps if source in {g.emevd_file_stem, g.msb_file_stem}]
+            matches = [g for g in game_maps if source in g.stem_set()]
         else:
             # Canonical name. Change to lower case and remove underscores.
             source = source.lower().replace("_", "")
