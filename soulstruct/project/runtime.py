@@ -1,6 +1,7 @@
 import subprocess
 import sys
 
+from soulstruct.project.utilities import SoulstructProjectError
 from soulstruct.utilities.window import SmartFrame
 
 from .utilities import error_as_dialog
@@ -67,31 +68,37 @@ class SoulstructRuntimeManager(SmartFrame):
                                 row=1, column=1, tooltip_text="Force quit Dark Souls if it's running.", **button_kwargs)
 
             with self.set_master(padx=10, pady=20, row_weights=[1, 1], column_weights=[1, 1, 1]):
-                game_saves = self.project.get_game_saves()
-                self.game_save_list = self.Combobox(
-                    values=game_saves, initial_value=game_saves[0] if game_saves else "", width=40,
-                    label_font_size=10, label="Available Saves:", label_position='left', font=("Segoe UI", 10),
-                    row=0, column=0)
-                self.Button(
-                    text="Load Save", font_size=10, bg="#222", padx=10, width=15,
-                    command=self._error_as_dialog(self.load_game_save), row=0, column=1)
-                delete_button = self.Button(
-                    text="Delete (Shift + Click)", font_size=10, bg="#422", padx=20, width=20, command=None,
-                    row=0, column=2)
-                delete_button.bind("<Shift-Button-1>", self._error_as_dialog(lambda _: self.delete_game_save()))
+                try:
+                    game_saves = self.project.get_game_saves()
+                except SoulstructProjectError:
+                    self.Label(text="Could not find game saves.\n\nTry setting 'SaveDirectory' to your save directory "
+                                    "manually in 'config.json' in your project folder, then restart Soulstruct.",
+                               row=0, column=0)
+                else:
+                    self.game_save_list = self.Combobox(
+                        values=game_saves, initial_value=game_saves[0] if game_saves else "", width=40,
+                        label_font_size=10, label="Available Saves:", label_position='left', font=("Segoe UI", 10),
+                        row=0, column=0)
+                    self.Button(
+                        text="Load Save", font_size=10, bg="#222", padx=10, width=15,
+                        command=self._error_as_dialog(self.load_game_save), row=0, column=1)
+                    delete_button = self.Button(
+                        text="Delete (Shift + Click)", font_size=10, bg="#422", padx=20, width=20, command=None,
+                        row=0, column=2)
+                    delete_button.bind("<Shift-Button-1>", self._error_as_dialog(lambda _: self.delete_game_save()))
 
-                self.game_save_entry = self.Entry(
-                    width=43, label="New Save Name:", label_position='left', row=1, column=0).var
-                create_save_button = self.Button(
-                    text="Create Save", font_size=10, bg="#222", padx=10, pady=(10, 0), width=15,
-                    command=None, row=1, column=1)
-                self.Label(text="Shift + Click to Overwrite", font_size=8, row=2, column=1)
-                create_save_button.bind(
-                    "<Button-1>",
-                    self._error_as_dialog(lambda _: self.create_game_save(overwrite=False)))
-                create_save_button.bind(
-                    "<Shift-Button-1>",
-                    self._error_as_dialog(lambda _: self.create_game_save(overwrite=True)))
+                    self.game_save_entry = self.Entry(
+                        width=43, label="New Save Name:", label_position='left', row=1, column=0).var
+                    create_save_button = self.Button(
+                        text="Create Save", font_size=10, bg="#222", padx=10, pady=(10, 0), width=15,
+                        command=None, row=1, column=1)
+                    self.Label(text="Shift + Click to Overwrite", font_size=8, row=2, column=1)
+                    create_save_button.bind(
+                        "<Button-1>",
+                        self._error_as_dialog(lambda _: self.create_game_save(overwrite=False)))
+                    create_save_button.bind(
+                        "<Shift-Button-1>",
+                        self._error_as_dialog(lambda _: self.create_game_save(overwrite=True)))
 
     def load_game_save(self):
         selected_game_save = self.game_save_list.get()

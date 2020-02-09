@@ -379,6 +379,8 @@ class SoulstructProject(object):
         return [save_file.stem for save_file in save_folder.glob("*.sl2") if save_file.stem != "DRAKS0005"]
 
     def _get_save_folder(self):
+        if not self.game_save_root.is_dir():
+            raise SoulstructProjectError(f"Could not find Dark Souls save directory root: {str(self.game_save_root)}")
         if self.game_name == "Dark Souls Remastered":
             steam_id_folders = list(self.game_save_root.glob("*"))
             if len(steam_id_folders) > 1:
