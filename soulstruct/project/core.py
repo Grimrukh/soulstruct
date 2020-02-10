@@ -246,9 +246,9 @@ class SoulstructProject(object):
             for data_type in DATA_TYPES:
                 self.export_data(data_type, export_directory)
             return
-        if data_type == "ai":
-            # TODO: Fix AI export.
-            _LOGGER.error("AI export is glitched, and currently disabled until fixed.")
+        if data_type == "ai" and export_directory == self.game_root:
+            # TODO: Fix AI export and remove.
+            _LOGGER.error("AI export (to game) is glitched, and currently disabled until fixed.")
             return
         data_type = data_type.lower()
         if data_type not in DATA_TYPES:
