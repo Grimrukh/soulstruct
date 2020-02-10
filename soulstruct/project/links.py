@@ -267,7 +267,7 @@ class WindowLinker(object):
         self.window.maps_tab.select_displayed_field_row(None)
         self.window.page_tabs.select(self.get_tab_index('maps'))
         self.window.maps_tab.refresh_categories()  # TODO: why do I need to call this?
-        category = f'{entry_list_name}:{entry_type_name}'
+        category = f'{entry_list_name}: {entry_type_name}'
         self.window.maps_tab.select_category(category, auto_scroll=True)
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()

@@ -278,10 +278,8 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
         file.seek(previous_offset)
         return args_format[1:], list(req_args)
     elif extra_size % 4 != 0:
-        _LOGGER.error(
-            f"Error in optional arguments for instruction {instruction_class}[{instruction_index}]: "
-            f"event_args_size = {event_args_size}, required_args_size = {required_args_size}")
-        raise ValueError(f"Optional argument size must be a multiple of four bytes. Your EMEVD file seems malformed.")
+        raise ValueError(f"Error interpreting instruction {instruction_class}[{instruction_index}]: optional argument "
+                         f"size is not a multiple of four bytes ({extra_size}).")
 
     opt_args = [struct.unpack('<I', file.read(4))[0] for _ in range(opt_arg_count)]
     file.seek(previous_offset)

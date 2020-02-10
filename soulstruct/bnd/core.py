@@ -142,7 +142,7 @@ class BaseBND(object):
         directory = Path(directory)
         current_directory = None
         for line in file_buffer:
-            line.strip(b' \r\n')
+            line = line.strip(b' \r\n')
             if not line:
                 # Skip blank lines.
                 continue
@@ -152,7 +152,7 @@ class BaseBND(object):
                 if has_id(self.bnd_magic):
                     try:
                         entry_magic, entry_id, entry_basename = self.UNPACKED_ID_PATH_RE.match(line).group(1, 2, 3)
-                    except ValueError:
+                    except (AttributeError, ValueError):
                         raise ValueError("Expected '(magic) ID: path' format for entry, based on magic.")
                     entry_magic, entry_id = int(entry_magic), int(entry_id)
                 else:
@@ -441,8 +441,21 @@ class BND3(BaseBND):
             self.bnd_magic = self.read_bnd_setting(f.readline(), 'bnd_magic', assert_type=int)
             self.big_endian = self.read_bnd_setting(f.readline(), 'big_endian', assert_type=bool)
             self.unknown = self.read_bnd_setting(f.readline(), 'unknown', assert_type=bool)
+            self.dcx = self.read_bnd_setting(f.readline(), 'dcx', assert_type=tuple)
 
             self.add_entries_from_manifest_paths(f, directory)
+
+        # Create header structs.
+        self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order='<')
+        byte_order = '>' if self.big_endian else '<'
+        self.header_struct.add_fields(*self.HEADER_STRUCT_ENDIAN, byte_order=byte_order)
+        self.entry_header_struct = BinaryStruct(*self.BND_ENTRY_HEADER, byte_order=byte_order)
+        if has_id(self.bnd_magic):
+            self.entry_header_struct.add_fields(self.ENTRY_ID, byte_order=byte_order)
+        if has_path(self.bnd_magic):
+            self.entry_header_struct.add_fields(self.NAME_OFFSET, byte_order=byte_order)
+        if has_uncompressed_size(self.bnd_magic):
+            self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
 
     def pack(self):
         entry_header_dicts = []
@@ -836,18 +849,19 @@ def BND(bnd_source=None, entry_class=None, optional_dcx=True) -> BaseBND:
     dcx = False
     bnd_path = None
     if isinstance(bnd_source, (str, Path)):
-        bnd_path = Path(bnd_source).absolute()
-        if optional_dcx:
-            bnd_path = find_dcx(bnd_path)
-        elif not bnd_path.is_file():
-            raise FileNotFoundError(f"Could not find BND file: {bnd_path}")
-        if bnd_path.suffix == '.dcx':
-            # Must unpack DCX archive before detecting BND type.
-            bnd_dcx = DCX(bnd_path)
-            bnd_source = bnd_dcx.data
-            dcx = bnd_dcx.magic
-        else:
-            bnd_source = bnd_path
+        if not Path(bnd_source).is_dir():
+            bnd_path = Path(bnd_source).absolute()
+            if optional_dcx:
+                bnd_path = find_dcx(bnd_path)
+            elif not bnd_path.is_file():
+                raise FileNotFoundError(f"Could not find BND file: {bnd_path}")
+            if bnd_path.suffix == '.dcx':
+                # Must unpack DCX archive before detecting BND type.
+                bnd_dcx = DCX(bnd_path)
+                bnd_source = bnd_dcx.data
+                dcx = bnd_dcx.magic
+            else:
+                bnd_source = bnd_path
     if BND3.detect(bnd_source):
         bnd = BND3(bnd_source, entry_class=entry_class)
         if dcx:

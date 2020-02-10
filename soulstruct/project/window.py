@@ -437,6 +437,9 @@ class SoulstructProjectWindow(SmartFrame):
             export_directory = self._choose_directory()
             if not export_directory:
                 return  # Abort export.
+        if data_type == "ai":
+            self.CustomDialog("AI Export Disabled", "AI exporting is currently broken and disabled. Sorry!")
+            return
         if data_type == "events":
             # Specifying 'events' here means the selected script only.
             self.events_tab.save_selected_evs()

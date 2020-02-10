@@ -1,9 +1,12 @@
 from io import BufferedReader, BytesIO
 from enum import IntEnum
+import logging
 import struct
 
 from soulstruct.maps.core import MSBEntryEntity
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, Vector
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class MSB_REGION_TYPE(IntEnum):
@@ -125,7 +128,7 @@ class BaseMSBRegion(MSBEntryEntity):
         msb_buffer.seek(offset_to_null)
         zero = msb_buffer.read(4)
         if zero != b'\0\0\0\0':
-            raise ValueError("Null data entry in MSB region was not zero.")
+            _LOGGER.warning(f"Null data entry in MSB region was not zero: {zero}.")
 
     @staticmethod
     def auto_region_subclass(msb_buffer):

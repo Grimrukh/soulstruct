@@ -155,7 +155,7 @@ class MapDrawParam(object):
     LensFlareSources: List[Optional[DrawParamTable]]
     AmbientLight: List[Optional[DrawParamTable]]
     ScatteredLight: List[Optional[DrawParamTable]]
-    PlayerLights: List[Optional[DrawParamTable]]
+    PointLights: List[Optional[DrawParamTable]]
     Shadows: List[Optional[DrawParamTable]]
     ToneCorrection: List[Optional[DrawParamTable]]
     ToneMapping: List[Optional[DrawParamTable]]
@@ -299,7 +299,7 @@ class DarkSoulsLightingParameters(object):
     # Lod (default only), EnvLightTex (useless) and DebugAmbientLight (useless) are left out.
     param_names = [
         'DepthOfField', 'Fog', 'LensFlares', 'LensFlareSources',
-        'AmbientLight', 'ScatteredLight', 'PlayerLights',
+        'AmbientLight', 'ScatteredLight', 'PointLights',
         'Shadows', 'ToneCorrection', 'ToneMapping',
     ]
 

@@ -105,8 +105,8 @@ class BaseMSBPart(MSBEntryEntity):
             'Tone Map ID', True, int,
             "ID of Tone Map parameter to use in this map's lighting parameters (DrawParam)."),
         'point_light_id': (
-            'Player Light ID', True, int,
-            "ID of Player Light parameter (point light) to use in this map's lighting parameters (DrawParam)."),
+            'Point Light ID', True, int,
+            "ID of Point Light parameter to use in this map's lighting parameters (DrawParam)."),
         'tone_correct_id': (
             'Tone Correction ID', True, int,
             "ID of Tone Correction parameter to use in this map's lighting parameters (DrawParam)."),
@@ -132,8 +132,8 @@ class BaseMSBPart(MSBEntryEntity):
             'Use Depth Bias Float', True, bool,
             "Unknown."),
         'disable_point_light_effect': (
-            'Ignore Player Light', True, bool,
-            "If True, this entity will not be illuminated by player light (I think)."),
+            'Ignore Point Lights', True, bool,
+            "If True, this entity will not be illuminated by point lights (I think)."),
     }
 
     ENTRY_TYPE = None

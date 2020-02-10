@@ -3,6 +3,7 @@ TODO:
     - Search for all existing entities and color them, and hyperlink to Entities tab or Maps tab with right click?
 """
 
+import logging
 import re
 from collections import namedtuple
 from pathlib import Path
@@ -12,6 +13,8 @@ from soulstruct.events.darksouls1 import EMEVD
 from soulstruct.constants.darksouls1.maps import get_map
 from soulstruct.events.evs import EvsError
 from soulstruct.utilities.window import SmartFrame
+
+_LOGGER = logging.getLogger(__name__)
 
 
 TagData = namedtuple("TagData", ('foreground', 'pattern', 'offsets'))
@@ -67,7 +70,11 @@ class EvsTextEditor(tk.Text):
 
     def _proxy(self, *args):
         cmd = (self._orig,) + args
-        result = self.tk.call(cmd)
+        try:
+            result = self.tk.call(cmd)
+        except tk.TclError as e:
+            _LOGGER.warning(f"EvsTextEditor error from (cmd '{cmd}'): {e}")
+            return
         if args[0] in ("insert", "delete") or args[0:3] == ("mark", "set", "insert"):
             self.event_generate("<<CursorChange>>", when="tail")
 

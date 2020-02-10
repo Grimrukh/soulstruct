@@ -210,7 +210,7 @@ PARAM_NICKNAMES = {
     'LightBank': 'AmbientLight',
     'LightScatteringBank': 'ScatteredLight',
     'LodBank': 'Lod',  # default_DrawParam only
-    'PointLightBank': 'PlayerLights',
+    'PointLightBank': 'PointLights',
     'ShadowBank': 'Shadows',
     'ToneCorrectBank': 'ToneCorrection',
     'ToneMapBank': 'ToneMapping',
@@ -5050,16 +5050,16 @@ GAME_PARAM_INFO = {
             'FadeEndDistance', True, float,
             "Distance at which player's point light finishes fading and disappears entirely."),
         'colR': (
-            'PlayerLightRed', True, int,
+            'PointLightRed', True, int,
             'Red channel (0-255) of point light.'),
         'colG': (
-            'PlayerLightGreen', True, int,
+            'PointLightGreen', True, int,
             'Green channel (0-255) of point light.'),
         'colB': (
-            'PlayerLightBlue', True, int,
+            'PointLightBlue', True, int,
             'Blue channel (0-255) of point light.'),
         'colA': (
-            'PlayerLightAlpha', True, int,
+            'PointLightAlpha', True, int,
             'Alpha channel (0-255) of point light.'),
     },
     'LENS_FLARE_BANK': {

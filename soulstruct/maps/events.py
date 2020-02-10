@@ -137,7 +137,7 @@ class BaseMSBEvent(MSBEntryEntity):
 
 class MSBLight(BaseMSBEvent):
     EVENT_LIGHT_STRUCT = (
-        ('unk_x00_x04', 'i'),
+        ('point_light', 'i'),
     )
 
     FIELD_INFO = {
@@ -150,24 +150,24 @@ class MSBLight(BaseMSBEvent):
         'entity_id': (
             'Entity ID', False, int,
             "Entity ID used to refer to the event in other game files. (Unused for Lights.)"),
-        'unk_x00_x04': (
-            'Unknown [00-04]', True, int,
-            "Unknown Light parameter (integer)."),
+        'point_light': (
+            'Point Light', True, int,  # TODO: Link to Lighting.
+            "Point Light lighting parameter ID to use for this light."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Light
 
     def __init__(self, msb_event_source):
-        self.unk_x00_x04 = None
+        self.point_light = None
         super().__init__(msb_event_source)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.EVENT_LIGHT_STRUCT).unpack(msb_buffer)
-        self.unk_x00_x04 = data.unk_x00_x04
+        self.point_light = data.point_light
 
     def pack_type_data(self):
         return BinaryStruct(*self.EVENT_LIGHT_STRUCT).pack(
-            unk_x00_x04=self.unk_x00_x04,
+            point_light=self.point_light,
         )
 
 

@@ -581,7 +581,6 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def get_field_dict(self, entry_index: int, category=None) -> MSBEntry:
         """Uses entry index instad of entry ID."""
-        print(self.get_category_data(category))
         return self.get_category_data(category)[entry_index]
 
     def get_field_info(self, field_dict, field_name=None):

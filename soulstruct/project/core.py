@@ -246,6 +246,10 @@ class SoulstructProject(object):
             for data_type in DATA_TYPES:
                 self.export_data(data_type, export_directory)
             return
+        if data_type == "ai":
+            # TODO: Fix AI export.
+            _LOGGER.error("AI export is glitched, and currently disabled until fixed.")
+            return
         data_type = data_type.lower()
         if data_type not in DATA_TYPES:
             raise ValueError(f"Data type to export should be one of {DATA_TYPES} (or None), not {data_type}.")
