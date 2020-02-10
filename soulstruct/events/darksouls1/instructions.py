@@ -531,7 +531,7 @@ def Unknown_2004_50():
 
 
 # REMASTERED ONLY
-def Unknown_2004_51(arg1: bool):
+def Unknown_2004_51(arg1: int):
     instruction_info = (2004, 51)
     return to_numeric(instruction_info, arg1)
 

@@ -50,7 +50,7 @@ class DarkSoulsGameParameters(object):
     param_names = [
         'Players', 'PlayerBehaviors', 'PlayerAttacks',
         'NonPlayers', 'NonPlayerBehaviors', 'NonPlayerAttacks',
-        'Bullets', 'Throws', 'SpecialEffects',
+        'AI', 'Bullets', 'Throws', 'SpecialEffects',
         'Weapons', 'Armor', 'Rings', 'Goods',
         'WeaponUpgrades', 'ArmorUpgrades', 'UpgradeMaterials',
         'ItemLots', 'Bosses', 'Shops', 'Spells', 'Objects', 'ObjectActivations',

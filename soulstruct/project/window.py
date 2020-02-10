@@ -70,7 +70,7 @@ class SoulstructProjectWindow(SmartFrame):
         except SoulstructProjectError as e:
             self.deiconify()
             msg = (f"Fatal Soulstruct project error encountered (see log for full traceback):\n\n"
-                   f"{word_wrap(str(e), 50)}\n\nAbortin startup.")
+                   f"{word_wrap(str(e), 50)}\n\nAborting startup.")
             _LOGGER.exception("Fatal Soulstruct project error encountered. Aborting startup.")
             self.CustomDialog(title="Project Error", message=msg)
             raise

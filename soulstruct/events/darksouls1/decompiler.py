@@ -118,7 +118,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 51:
             arg1, = req_args
-            return f"Unknown_2004_51(arg1={boolify(arg1)})"
+            return f"Unknown_2004_51(arg1={arg1})"
 
         if instruction_index == 52:
             return "Unknown_2004_52()"

@@ -2143,7 +2143,7 @@ def IfAnyItemDroppedInRegion(condition: int, region: RegionInt):
     return to_numeric(instruction_info, condition, region)
 
 
-def IfItemDropped(condition: int, item: ItemInt, item_type: Optional[ItemType] = None):
+def IfItemDropped(condition: int, item: ItemInt, item_type: Union[ItemType, int, None] = None):
     """ Check if a certain item was (just) dropped. Not sensitive to region. """
     instruction_info = (3, 15)
     if item_type is None:

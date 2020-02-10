@@ -20,7 +20,8 @@ from soulstruct.core import SoulstructError
 from soulstruct.bnd import BND, BNDEntry
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo
 
-__all__ = ["LuaBND", "LuaGoal", "LuaInfo", "LuaError", "LuaDecompileError", "LuaCompileError"]
+__all__ = ["LuaBND", "LuaGoal", "LuaInfo", "LuaError", "LuaDecompileError", "LuaCompileError",
+           "decompile_lua", "compile_lua"]
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -327,6 +328,8 @@ def compile_lua(script: str, script_name="<unknown script>", output_path=None, x
 
 
 def decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=None):
+    if output_path:
+        output_path = Path(output_path).resolve()  # resolve before changing to temp working dir
     with _temp_lua_path(bytecode, as_bytes=True, set_cwd=True) as temp:
         result = subprocess.run(
             [DECOMPILER_x64, temp], text=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -339,8 +342,11 @@ def decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=N
             script_string = f.read()
         os.remove("temp.dec.lua")
         if output_path:
+            output_path = Path(output_path)
+            output_path.parent.mkdir(exist_ok=True, parents=True)
             with Path(output_path).open("w", encoding="shift-jis") as o:
                 o.write(script_string)
+                _LOGGER.info(f"Decompiled Lua file written: {str(output_path)}")
         return script_string
 
 
