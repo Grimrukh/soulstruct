@@ -778,7 +778,7 @@ class MSBMapConnection(BaseMSBPart):
             "Collision part that triggers this map load."),
         'map_id': (
             'Map ID', True, list,
-            "Parts of map name this will trigger."),  # TODO: Combobox of maps.
+            "Four components of map ID this will trigger."),  # TODO: Combobox of maps.
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.MapConnection

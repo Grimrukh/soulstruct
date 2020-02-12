@@ -304,9 +304,10 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 width=5)
             self._e_entry_description_edit.bind(
                 '<Return>', lambda e, i=row_index: self._confirm_entry_description_edit(i))
-            self._e_entry_description_edit.bind('<Up>', self._entry_press_up)
-            self._e_entry_description_edit.bind('<Down>', self._entry_press_down)
-            self._e_entry_description_edit.bind('<FocusOut>', lambda e: self._cancel_entry_description_edit())
+            self._e_entry_description_edit.bind('<Up>', self._entry_press_up)  # confirms edit
+            self._e_entry_description_edit.bind('<Down>', self._entry_press_down)  # confirms edit
+            self._e_entry_description_edit.bind(
+                '<FocusOut>', lambda e, i=row_index: self._confirm_entry_description_edit(i))
             self._e_entry_description_edit.bind('<Escape>', lambda e: self._cancel_entry_description_edit())
             self._e_entry_description_edit.focus_set()
             self._e_entry_description_edit.select_range(0, 'end')

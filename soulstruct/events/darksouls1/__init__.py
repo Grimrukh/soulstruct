@@ -192,6 +192,11 @@ __all__ = [
     "RotateToFaceEntity",
 
     # REMASTERED ONLY (mostly Arena events - no warning given if you try to use these in PTDE!)
+    "SkipLinesIfUnknownPlayerType4", "SkipLinesIfUnknownPlayerType5",
+    "RestartIfUnknownPlayerType4", "RestartIfUnknownPlayerType5",
+    "EndIfUnknownPlayerType4", "EndIfUnknownPlayerType5",
+    "IfUnknownPlayerType4", "IfUnknownPlayerType5",
+
     "RegisterHealingFountain",
     "Unknown_3_23",
     "IfMultiplayerCount",
@@ -205,10 +210,16 @@ __all__ = [
     "Unknown_2003_43",
     "ForceAnimation_WithUnknownEffect1",
     "ForceAnimation_WithUnknownEffect2",
+    "Unknown_2003_47",
     "Unknown_2003_48",
     "EraseNPCSummonSign",
     "FadeOutCharacter",
     "FadeInCharacter",
+    "Unknown_2004_50",
+    "Unknown_2004_51",
+    "Unknown_2004_52",
+    "Unknown_2007_13",
+    "Unknown_2008_4",
 
     # Names processed directly by EVS parser
     "NeverRestart", "RestartOnRest", "UnknownRestart", "EVENTS", "Condition", "END", "RESTART", "Await",

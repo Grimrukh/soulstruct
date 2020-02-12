@@ -93,7 +93,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
                 # Note that the *argument* 'field_type' is used below, not attribute self.field_type.
                 field_links = self.master.get_field_links(self.field_type, value)
-                if not self.field_type.startswith('<Maps'):
+                if not self.field_type.startswith('<Maps'):  # <Maps: or <MapsList:
                     field_type = int  # otherwise, leave as link string for first condition below
             else:
                 field_links = []
@@ -101,36 +101,44 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             # Type checking order: [link_string, Vector, float/int/str, bool, list, IntEnum]
             if isinstance(field_type, str):
                 if field_type.startswith('<MapsList:'):
+                    value_text = "(select to edit)"
+                    if field_links:
+                        if len(field_links) > 1:
+                            value_text += "  {AMBIGUOUS}"
+                        if field_links[0].name is None:
+                            value_text += "  {BROKEN LINK}"
+                        else:
+                            value_text += f"  {{{field_links[0].name}}}"
                     # TODO: better display? Pop-out?
-                    self.value_label.var.set('(select to edit)')
+                    self.value_label.var.set(value_text)
                 else:
                     # Name of another MSB entry.
                     value_text = str(value)
-                    if field_type == '<Maps:Models:Characters|Players>':
-                        model_id = int(value.lstrip('c'))
+                    if field_type == "<Maps:Models:Characters|Players>":
+                        model_id = int(value[1:])  # ignore 'c' prefix
                         try:
-                            value_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
+                            value_text += f"  {{{CHARACTER_MODELS[model_id]}}}"
                         except KeyError:
-                            value_text += '  {UNKNOWN}'
+                            value_text += "  {UNKNOWN}"
                     self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
 
             elif field_type == Vector:
                 # No chance of a link here.
-                self.value_vector_x.var.set(f'x: {value.x:.3g}')
-                self.value_vector_y.var.set(f'y: {value.y:.3g}')
-                self.value_vector_z.var.set(f'z: {value.z:.3g}')
+                self.value_vector_x.var.set(f'x: {value.x:.3f}')
+                self.value_vector_y.var.set(f'y: {value.y:.3f}')
+                self.value_vector_z.var.set(f'z: {value.z:.3f}')
                 self._activate_value_widget(self.value_vector_frame)
 
             elif field_type in {float, int, str}:
                 value_text = f'{value:.3f}' if field_type == float else str(value)
                 if field_links:
                     if len(field_links) > 1:
-                        value_text += '    {AMBIGUOUS}'
+                        value_text += "  {AMBIGUOUS}"
                     if field_links[0].name is None:
-                        value_text += '    {BROKEN LINK}'
+                        value_text += "  {BROKEN LINK}"
                     else:
-                        value_text += f'    {{{field_links[0].name}}}'
+                        value_text += f"  {{{field_links[0].name}}}"
                 if self.value_label.var.get() != value_text:
                     self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
@@ -153,7 +161,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     # noinspection PyUnresolvedReferences
                     enum_name = camel_case_to_spaces(field_type(value).name)
                 except ValueError:
-                    enum_name = f'Unknown: {value}'
+                    enum_name = f"Unknown: {value}"
                 self.value_combobox.var.set(enum_name)
                 self._activate_value_widget(self.value_combobox)
 
@@ -215,17 +223,40 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
 
             if isinstance(self.field_type, str):
-                # All links are integers except 'Maps' links (which are names).
-                new_value = int(new_text) if not self.field_type.startswith('<Maps') else new_text
+                # All links are integers except 'Maps' and 'MapsList'.
+                if self.field_type.startswith("<MapsList:"):
+                    try:
+                        new_value = literal_eval(new_text)
+                        if isinstance(new_value, tuple):
+                            new_value = list(new_value)
+                        elif not isinstance(new_value, list):
+                            raise ValueError
+                        if not all(i is None or isinstance(i, str) for i in new_value):
+                            raise ValueError
+                    except (SyntaxError, ValueError):
+                        raise ValueError(
+                            f"Value of field {self.field_nickname} must be a list of map entry name strings: "
+                            f"['Region1', 'Region2', ... ]")
+                    new_text = "(select to edit)"
+                elif self.field_type.startswith("<Maps:"):
+                    new_value = new_text  # map entry name
+                else:
+                    new_value = int(new_text)  # all other links are integer values
+
                 field_links = self.master.linker.soulstruct_link(self.field_type, new_value)
-                if len(field_links) > 1:
+                if self.field_type.startswith("<MapsList:"):
+                    if any(not link.name for link in field_links):  # at least one link is broken
+                        new_text += '  {BROKEN LINK}'
+                        if not self.link_missing:
+                            self.link_missing = True
+                            self._update_colors()
+                    else:
+                        # Either names are all None (no links) or all links are valid.
+                        if self.link_missing:
+                            self.link_missing = False
+                            self._update_colors()
+                elif len(field_links) > 1:
                     new_text += '  {AMBIGUOUS}'
-                elif not field_links:
-                    # Happens when a Maps link fails.
-                    new_text += '  {MISSING IN MAP}'
-                    if not self.link_missing:
-                        self.link_missing = True
-                        self._update_colors()
                 elif not field_links[0].name:
                     new_text += '  {BROKEN LINK}'
                     if not self.link_missing:
@@ -250,25 +281,46 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 self.build_field_context_menu(field_links)
                 return new_value
 
-            if coord is not None:
-                # TODO: Not a fan of the equal sign.
-                getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
-            else:
-                self.value_label.var.set(new_text)
-
             if self.field_type in (float, Vector):
-                return float(new_text)
+                if new_text == "-":
+                    return None  # no change
+                new_value = float(new_text)
+                new_text = f"{new_value:.3f}"
+                if coord is not None:
+                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                else:
+                    self.value_label.var.set(new_text)
+                return new_value
             elif self.field_type == int:
-                return int(new_text)
+                if new_text == "-":
+                    return None  # no change
+                new_value = int(new_text)
+                if coord is not None:
+                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                else:
+                    self.value_label.var.set(new_text)
+                return new_value
             elif self.field_type == str:
+                if coord is not None:
+                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                else:
+                    self.value_label.var.set(new_text)
                 return new_text
             elif self.field_type == list:
                 try:
                     true_value = literal_eval(new_text)
-                    if not isinstance(true_value, list):
-                        raise ValueError()
+                    if isinstance(true_value, tuple):
+                        true_value = list(true_value)
+                    elif not isinstance(true_value, list):
+                        raise ValueError
+                    if not all(isinstance(i, int) for i in true_value):
+                        raise ValueError
                 except (SyntaxError, ValueError):
-                    raise ValueError("Field value must be a list of integers.")
+                    raise ValueError(f"Value of field {self.field_nickname} must be a list of integers: [1, 2, 3, ...]")
+                if coord is not None:
+                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                else:
+                    self.value_label.var.set(new_text)
                 return true_value
             else:
                 raise TypeError(f"Could not confirm new field value of type {self.field_type}.")
@@ -495,9 +547,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 true_value = self.field_rows[index].confirm_edit(
                     new_text=self.e_field_value_edit.var.get(), coord=self.e_coord)
             except ValueError as e:
-                # Entry input restrictions are supposed to prevent this.
-                _LOGGER.error(f"Could not interpret field value. Error: {str(e)}")
+                # Entry input restrictions will usually prevent this.
+                _LOGGER.error(f"Invalid field value. Error: {str(e)}")
                 self.bell()
+                self.CustomDialog("Invalid Field Value", f"Invalid field value. Error:\n\n{str(e)}")
                 return
             self.change_field_value(self.field_rows[index].field_name, true_value)
             self._cancel_field_value_edit()

@@ -486,8 +486,18 @@ class SoulstructProjectWindow(SmartFrame):
         loading.destroy()
 
         if self._THREAD_EXCEPTION:
-            message = (f"Error occurred while exporting data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+            caps = data_type_caps(data_type)
+            message = (f"Error occurred while exporting {caps} data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
                        f"Export operation may have only partially completed.")
+            if " object has no attribute " in str(self._THREAD_EXCEPTION):
+                message += (
+                    f"\n\nThis error may have occurred because of a change in Soulstruct's internal data.\n"
+                    f"If you recently updated Soulstruct before seeing this error, try exporting {caps}\n"
+                    f"with the older version (File > Export to... > Export {caps}), then importing those\n"
+                    f"exported game files into this new version of Soulstruct (File > Import from... >\n"
+                    f"Import {caps}).\n\n"
+                    f"These format-changing updates will only happen while we are\n"
+                    f"discovering the correct data types for the handful of remaining unknown variables.")
             self._THREAD_EXCEPTION = None
             return self.CustomDialog(title="Export Error", message=message)
 

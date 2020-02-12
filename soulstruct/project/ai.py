@@ -938,9 +938,9 @@ class SoulstructAIEditor(SoulstructBaseEditor):
                 self.entry_rows[row_index].text_box, initial_text=initial_text, sticky='ew',
                 width=5)
             self._e_entry_text_edit.bind('<Return>', lambda e, i=row_index: self._confirm_entry_text_edit(i))
-            self._e_entry_text_edit.bind('<Up>', self._entry_press_up)
-            self._e_entry_text_edit.bind('<Down>', self._entry_press_down)
-            self._e_entry_text_edit.bind('<FocusOut>', lambda e: self._cancel_entry_text_edit())
+            self._e_entry_text_edit.bind('<Up>', self._entry_press_up)  # confirms edit
+            self._e_entry_text_edit.bind('<Down>', self._entry_press_down)  # confirms edit
+            self._e_entry_text_edit.bind('<FocusOut>', lambda e, i=row_index: self._confirm_entry_text_edit(i))
             self._e_entry_text_edit.bind('<Escape>', lambda e: self._cancel_entry_text_edit())
             self._e_entry_text_edit.focus_set()
             self._e_entry_text_edit.select_range(0, 'end')

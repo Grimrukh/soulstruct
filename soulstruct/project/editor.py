@@ -697,9 +697,9 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                 self.entry_rows[row_index].id_box, initial_text=initial_text,
                 integers_only=True, sticky='ew', width=int(self.EntryRow.ENTRY_ID_WIDTH * 0.5))
             self._e_entry_id_edit.bind('<Return>', lambda e, i=row_index: self._confirm_entry_id_edit(i))
-            self._e_entry_id_edit.bind('<Up>', self._entry_press_up)
-            self._e_entry_id_edit.bind('<Down>', self._entry_press_down)
-            self._e_entry_id_edit.bind('<FocusOut>', lambda e: self._cancel_entry_id_edit())
+            self._e_entry_id_edit.bind('<Up>', self._entry_press_up)  # confirms edit
+            self._e_entry_id_edit.bind('<Down>', self._entry_press_down)  # confirms edit
+            self._e_entry_id_edit.bind('<FocusOut>', lambda e, i=row_index: self._confirm_entry_id_edit(i))
             self._e_entry_id_edit.bind('<Escape>', lambda e: self._cancel_entry_id_edit())
             self._e_entry_id_edit.focus_set()
             self._e_entry_id_edit.select_range(0, 'end')
@@ -730,9 +730,9 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                 self.entry_rows[row_index].text_box, initial_text=initial_text, sticky='ew',
                 width=5)
             self._e_entry_text_edit.bind('<Return>', lambda e, i=row_index: self._confirm_entry_text_edit(i))
-            self._e_entry_text_edit.bind('<Up>', self._entry_press_up)
-            self._e_entry_text_edit.bind('<Down>', self._entry_press_down)
-            self._e_entry_text_edit.bind('<FocusOut>', lambda e: self._cancel_entry_text_edit())
+            self._e_entry_text_edit.bind('<Up>', self._entry_press_up)  # confirms edit
+            self._e_entry_text_edit.bind('<Down>', self._entry_press_down)  # confirms edit
+            self._e_entry_text_edit.bind('<FocusOut>', lambda e, i=row_index: self._confirm_entry_text_edit(i))
             self._e_entry_text_edit.bind('<Escape>', lambda e: self._cancel_entry_text_edit())
             self._e_entry_text_edit.focus_set()
             self._e_entry_text_edit.select_range(0, 'end')
@@ -1521,9 +1521,9 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             if not self.e_field_value_edit:
                 return  # Edit attempt was rejected.
             self.e_field_value_edit.bind('<Return>', lambda e, i=row_index: self._confirm_field_value_edit(i))
-            self.e_field_value_edit.bind('<Up>', self._field_press_up)
-            self.e_field_value_edit.bind('<Down>', self._field_press_down)
-            self.e_field_value_edit.bind('<FocusOut>', lambda e: self._cancel_field_value_edit())
+            self.e_field_value_edit.bind('<Up>', self._field_press_up)  # confirms edit
+            self.e_field_value_edit.bind('<Down>', self._field_press_down)  # confirms edit
+            self.e_field_value_edit.bind('<FocusOut>', lambda e, i=row_index: self._confirm_field_value_edit(i))
             self.e_field_value_edit.bind('<Escape>', lambda e: self._cancel_field_value_edit())
             self.e_field_value_edit.focus_set()
             self.e_field_value_edit.select_range(0, 'end')

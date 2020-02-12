@@ -62,13 +62,14 @@ class WindowLinker(object):
             for entry_name in field_value:
                 if not entry_name:
                     continue
-                links += self.soulstruct_link(field_type, entry_name)
+                link = self.soulstruct_link(field_type, entry_name)
+                links += link if link else [BaseLink()]
             return links
 
         if table_type == 'Maps':
             entry_name = field_value
             if not entry_name:  # None or empty string
-                return [BaseLink(self, name='None')]
+                return [BaseLink(self, name="None")]
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
             entry_list_name = link_pieces[1]
             if entry_list_name not in MAP_ENTRY_TYPES:
@@ -92,7 +93,7 @@ class WindowLinker(object):
 
             except ValueError:
                 # Entry name is missing (or is not of the enforced entry type).
-                return []
+                return [BaseLink()]
 
             return [MapsLink(
                 self, name=field_value, entry_list_name=entry_list_name, entry_type_name=entry_type_name,

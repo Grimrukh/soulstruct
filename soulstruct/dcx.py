@@ -56,7 +56,7 @@ class DCX(object):
         if len(compressed) != header.compressed_size:
             # No error raised.
             _LOGGER.warning(f"Compressed data size ({len(compressed)}) does not match size in header "
-                            f"({header.compressed_size}).")
+                            f"({header.compressed_size}) in file {self.dcx_path}.")
         self.data = zlib.decompressobj().decompress(compressed)
         if len(self.data) != header.decompressed_size:
             raise ValueError("Decompressed data size does not match size in header.")
