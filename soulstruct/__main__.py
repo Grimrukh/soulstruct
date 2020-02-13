@@ -10,6 +10,12 @@ python -m soulstruct [source]
     [--ai]
     [--consoleLogLevel]
     [--fileLogLevel]
+
+TODO:
+    - In TextEditorBox, have Home key ignore starting whitespace (unless only whitespace exists to the left already).
+    - EVS scripts are overzealous in asking you if you want to "lose changes".
+    - Keyboard shortcuts for commenting/uncommenting lines in EVS (and ESP).
+    - If you delete the entry that is currently selected, it needs to deselect so that fields go away.
 """
 import argparse
 import logging

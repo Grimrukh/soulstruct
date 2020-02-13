@@ -83,7 +83,11 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         param_id = int(param_id)
         params = self.get_category_data()
         if param_id not in params:
-            # Find closest.
+            # Find closest ID that is less than search target.
+            params_above = [p_id for p_id in params if p_id < param_id]
+            if not params_above:
+                self.flash_bg(self.go_to_param_id_entry)
+                return
             param_id = max(p_id for p_id in params if p_id < param_id)
             self.search_result.set(f"Found closest preceding entry: {param_id}")
             self.after(2000, lambda: self.search_result.set(""))
