@@ -222,7 +222,7 @@ GAME_PARAM_INFO = {
 
     'NPC_THINK_PARAM_ST': {
         'logicId': (
-            'Logic ID', True, AI.Logic,
+            'LogicID', True, AI.Logic,
             "ID of logic (non-battle) Lua script."),
         'battleGoalID': (
             'BattleID', True, AI.Battle,
@@ -1260,9 +1260,9 @@ GAME_PARAM_INFO = {
             "Multiplier (as percentage from 0 upwards) applied to character attack power to "
             "calculate lightning attack damage."),
         'atkStamCorrection': (
-            'PhysicalAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
+            'StaminaAttackPowerPercentage', True, int,  # TODO: Player Attacks only.
             "Multiplier (as percentage from 0 upwards) applied to character attack power to "
-            "calculate physical attack damage."),
+            "calculate stamina damage."),
         'guardAtkRateCorrection': (
             'GuardAttackPercentage', True, int,  # TODO: Player Attacks only.
             "Multiplier (as percentage from 0 upwards) applied to character guard attack power. "
@@ -1556,7 +1556,7 @@ GAME_PARAM_INFO = {
             'FaceID', True, Params.Faces,
             "Face parameter ID (NPCs only)."),
         'npcPlayerThinkId': (
-            'Default AI', True, Params.AI,
+            'DefaultAI', True, Params.AI,
             "Default AI (NPCs only)."),
         'baseHp': (
             'BaseMaxHP', True, int, "Base amount of maximum HP (excluding effects of vitality)."),
@@ -2197,10 +2197,10 @@ GAME_PARAM_INFO = {
             'IsTravelItem?', True, bool,
             "Not sure. Could flag items that warp the player."),
         'isSuppleItem:1': (
-            'Is Empty Estus Flask?', True, bool,
+            'IsEmptyEstusFlask?', True, bool,
             "Not sure. Only enabled for empty Estus Flask."),
         'isFullSuppleItem:1': (
-            'Is Non-Empty Estus Flask?', True, bool,
+            'IsNonEmptyEstusFlask?', True, bool,
             "Not sure. Only enabled for non-empty Estus Flask."),
         'isEnhance:1': (
             'IsUpgradeMaterial', True, bool,
@@ -3589,7 +3589,7 @@ GAME_PARAM_INFO = {
             'CanAffectWhitePhantoms', True, bool,
             "Effect will target white phantoms."),
         'effectTargetBlackGhost:1': (
-            'CanAffectWhitePhantoms', True, bool,
+            'CanAffectBlackPhantoms', True, bool,
             "Effect will target white phantoms."),
         'effectTargetAttacker:1': (
             'CanAffectAttacker', True, bool,
@@ -3676,10 +3676,10 @@ GAME_PARAM_INFO = {
             'ToxicImmunity', True, bool,
             "Immune to toxic."),
         'disableBlood:1': (
-            'CurseImmunity', True, bool,
+            'BleedImmunity', True, bool,
             "Immune to curse."),
         'disableCurse:1': (
-            'PoisonImmunity', True, bool,
+            'CurseImmunity', True, bool,
             "Immune to poison."),
         'enableCharm:1': (
             'EnableCharming', False, bool,
@@ -4754,7 +4754,7 @@ GAME_PARAM_INFO = {
             'HideStartDistance', True, float,
             "Closest distance at which effect is disabled."),
         'camouflageEndDist': (
-            'HideStartDistance', True, float,
+            'HideEndDistance', True, float,
             "Furthest distance at which effect is disabled."),
         'transformProtectorId': (
             'TransformationArmorID', True, Params.Armor,
