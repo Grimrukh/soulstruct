@@ -26,9 +26,9 @@ __all__ = ["LuaBND", "LuaGoal", "LuaInfo", "LuaError", "LuaDecompileError", "Lua
 
 _LOGGER = logging.getLogger(__name__)
 
-COMPILER_x64 = PACKAGE_PATH("ai/lua/x64/LuaC.exe")
-COMPILER_x86 = PACKAGE_PATH("ai/lua/x86/luac50.exe")
-DECOMPILER_x64 = PACKAGE_PATH("ai/lua/x64/DSLuaDecompiler.exe")
+COMPILER_x64 = str(PACKAGE_PATH("ai/lua/x64/LuaC.exe"))
+COMPILER_x86 = str(PACKAGE_PATH("ai/lua/x86/luac50.exe"))
+DECOMPILER_x64 = str(PACKAGE_PATH("ai/lua/x64/DSLuaDecompiler.exe"))
 # No x86 decompiler.
 
 
@@ -310,9 +310,9 @@ def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
 
 def compile_lua(script: str, script_name="<unknown script>", output_path=None, x64=True):
     with _temp_lua_path(script, as_bytes=False, set_cwd=True, encoding="shift-jis") as temp:
-        compiler = COMPILER_x64 if x64 else COMPILER_x86
+        compiler_path = COMPILER_x64 if x64 else COMPILER_x86
         result = subprocess.run(
-            [compiler, "-o", "temp.lua", temp], text=True, stdin=subprocess.PIPE,
+            [compiler_path, "-o", "temp.lua", temp], text=True, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=get_startupinfo())
         if result.stdout.strip():
             _LOGGER.warning(f"Lua Compiler Warning for script {script_name}: {result.stdout.strip()}")

@@ -626,33 +626,9 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         self._cancel_entry_text_edit()
         entry_id = self.get_entry_id(row_index)
         deleted_entry = self.get_category_data(category=category).pop(entry_id)
+        self.select_entry_row_index(None)
         self.refresh_entries()
-
-        # TODO
-        # if not from_history:
-        #     self.action_history.record_action(
-        #         undo=partial(self._add_entry, category, text_id, deleted_text),
-        #         redo=partial(self._delete_entry, category, text_id),
-        #     )
-        # self.unsaved_changes.add((self.active_category, text_id, 'delete'))
-
-        return deleted_entry  # TODO: or return False?
-
-    # TODO
-    # def bulk_action(self, *category_id_text_action_tuples, jump_to_category, jump_to_text_id, from_history=False):
-    #     """Will jump to given category and ID (and refresh) once all actions have been resolved.
-    #
-    #     Used only by ActionHistory, so 'from_history' argument has no effect.
-    #     """
-    #     for category, text_id, text, action in category_id_text_action_tuples:
-    #         if action in {'add', 'change'}:
-    #             self.Text[category][text_id] = text
-    #         elif action == 'delete':
-    #             self.Text[category].pop(text_id)
-    #         else:
-    #             raise ValueError(f"Invalid action: {action}. (This is most likely a bug.)")
-    #     if from_history:
-    #         self.jump_to_category_and_entry(jump_to_category, jump_to_text_id)
+        return deleted_entry
 
     def _update_first_entry_display_index(self, new_entry_index, as_row_index=0):
         """Updates first display index so that 'new_entry_index' becomes displayed index 'as_row_index' (or as close
@@ -993,6 +969,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             self.field_type = None
             self.field_nickname = ""
             self.field_docstring = ""
+            self.field_links = []
             self.link_missing = False
 
             bg_color = self._get_color()
@@ -1073,10 +1050,10 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
             if isinstance(self.field_type, str):
                 # Note that the *argument* `field_type` is used below, not attribute `self.field_type`.
-                field_links = self.master.get_field_links(self.field_type, value)
+                self.field_links = self.master.get_field_links(self.field_type, value)
                 field_type = int
             else:
-                field_links = []
+                self.field_links = []
 
             if not isinstance(field_type, str) and issubclass(field_type, IntEnum):
                 self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
@@ -1089,13 +1066,13 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 self._activate_value_widget(self.value_combobox)
             elif field_type in {float, int}:
                 value_text = f'{value:.3f}' if field_type == float else str(value)
-                if field_links:
-                    if len(field_links) > 1:
+                if self.field_links:
+                    if len(self.field_links) > 1:
                         value_text += '    {AMBIGUOUS}'
-                    if field_links[0].name is None:
+                    if self.field_links[0].name is None:
                         value_text += '    {BROKEN LINK}'
                     else:
-                        value_text += f'    {{{field_links[0].name}}}'
+                        value_text += f'    {{{self.field_links[0].name}}}'
                 if self.value_label.var.get() != value_text:
                     self.value_label.var.set(value_text)  # TODO: probably redundant in terms of update efficiency
                 self._activate_value_widget(self.value_label)
@@ -1106,10 +1083,10 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 self.value_checkbutton.config(fg='#3F3' if value else '#F33', text='ON' if value else 'OFF')
                 self._activate_value_widget(self.value_checkbutton)
 
-            if field_links and not any(link.name for link in field_links) and not self.link_missing:
+            if self.field_links and not any(link.name for link in self.field_links) and not self.link_missing:
                 self.link_missing = True
                 self._update_colors()
-            elif (not field_links or any(link.name for link in field_links)) and self.link_missing:
+            elif (not self.field_links or any(link.name for link in self.field_links)) and self.link_missing:
                 self.link_missing = False
                 self._update_colors()
 
@@ -1120,7 +1097,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 self.field_name_label["fg"] = self.master.FIELD_NAME_FG
                 self.value_label["fg"] = self.master.FIELD_VALUE_FG
 
-            self.build_field_context_menu(field_links)
+            self.build_field_context_menu()
             self.tool_tip.text = docstring
 
             self.unhide()
@@ -1140,11 +1117,11 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             self.value_box.grid()
             self.active_value_widget.grid()
 
-        def build_field_context_menu(self, field_links=()):
+        def build_field_context_menu(self):
             # TODO: other stuff? Pop out a scroll box to select an entry, for linked fields?
             self.context_menu.delete(0, 'end')
-            if field_links:
-                for field_link in field_links:
+            if self.field_links:
+                for field_link in self.field_links:
                     field_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
 
         @property
@@ -1158,14 +1135,20 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
             if isinstance(self.field_type, str):
                 new_value = int(new_text)
-                field_links = self.master.get_field_links(self.field_type, new_value)
-                if len(field_links) > 1:
+                self.field_links = self.master.get_field_links(self.field_type, new_value)
+                if len(self.field_links) > 1:
                     new_text += '    {AMBIGUOUS}'
-                elif field_links and field_links[0].name is None:
+                elif self.field_links and self.field_links[0].name is None:
                     new_text += '    {BROKEN LINK}'
-                elif field_links:
-                    new_text += f'    {{{field_links[0].name}}}'
+                elif self.field_links:
+                    new_text += f'    {{{self.field_links[0].name}}}'
                 self.value_label.var.set(new_text)
+                if self.field_links and not any(link.name for link in self.field_links) and not self.link_missing:
+                    self.link_missing = True
+                    self._update_colors()
+                elif (not self.field_links or any(link.name for link in self.field_links)) and self.link_missing:
+                    self.link_missing = False
+                    self._update_colors()
                 return new_value
 
             if self.field_type in {float, int}:
@@ -1579,7 +1562,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
         """This method should return the full field information dictionary if field_name is None."""
         raise NotImplementedError
 
-    def get_field_links(self, field_type, field_value, special_values=None) -> list:
+    def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
         raise NotImplementedError
 
 

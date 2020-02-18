@@ -372,7 +372,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     def on_map_choice(self, event=None):
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id)
+            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("entities",))
         self.select_entry_row_index(None)
         self.refresh_entries()
 

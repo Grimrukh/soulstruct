@@ -5,24 +5,20 @@ TODO:
 
 import logging
 import re
-from collections import namedtuple
 from pathlib import Path
-import tkinter as tk
 
 from soulstruct.events.darksouls1 import EMEVD
 from soulstruct.constants.darksouls1.maps import get_map
 from soulstruct.events.evs import EvsError
 from soulstruct.utilities.window import SmartFrame
+from soulstruct.project.utilities import TagData, TextEditor
 
 _LOGGER = logging.getLogger(__name__)
 
 
-TagData = namedtuple("TagData", ('foreground', 'pattern', 'offsets'))
+class EvsTextEditor(TextEditor):
 
-
-class EvsTextEditor(tk.Text):
-
-    SYNTAX_RE = {
+    TAGS = {
         "restart_type": TagData('#FFFFAA', r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
             '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)),
@@ -42,80 +38,8 @@ class EvsTextEditor(tk.Text):
         "docstring": TagData('#00ABA9', r"^[ ]+\"\"\"[\w\d :.]+\"\"\"", (0, 0)),
     }
 
-    def __init__(self, *args, **kwargs):
-        """Text widget that generates a "<CursorChange>" event when appropriate for event bindings and can highlight
-        arbitrary text patterns.
-
-        See:
-            https://stackoverflow.com/a/23574537
-            https://stackoverflow.com/a/3781773
-        """
-        super().__init__(*args, **kwargs)
-        self._orig = self._w + "_orig"
-        self.tk.call("rename", self._w, self._orig)
-        self.tk.createcommand(self._w, self._proxy)
-
-        for tag_name, tag_data in self.SYNTAX_RE.items():
-            self.tag_configure(tag_name, foreground=tag_data.foreground)
-
-        self.tag_configure("found", background='#224433')
-        self.tag_configure("error", background='#443322')
-
-        self.bind("<Tab>", self._tab_four_spaces)
-
-    def _tab_four_spaces(self, _):
-        """Tab key inserts four spaces rather than a tab character."""
-        self.insert("insert", "    ")
-        return "break"
-
-    def _proxy(self, *args):
-        cmd = (self._orig,) + args
-        try:
-            result = self.tk.call(cmd)
-        except tk.TclError as e:
-            _LOGGER.warning(f"EvsTextEditor error from (cmd '{cmd}'): {e}")
-            return
-        if args[0] in ("insert", "delete") or args[0:3] == ("mark", "set", "insert"):
-            self.event_generate("<<CursorChange>>", when="tail")
-
-        return result
-
-    def highlight_line(self, number, tag):
-        """Apply the given tag to all text in the given line. Clears tag first."""
-        self.tag_remove(tag, "1.0", "end")
-        self.tag_add(tag, f"{number}.0 linestart", f"{number}.0 lineend")
-
-    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False, clear=True,
-                          start_offset=0, end_offset=0):
-        """Apply the given tag to all text that matches the given pattern. Clears tag first by default.
-
-        If 'regexp' is set to True, pattern will be treated as a regular expression according to Tcl's regular
-        expression syntax.
-        """
-        if clear:
-            self.tag_remove(tag, "1.0", "end")
-        start = self.index(start)
-        end = self.index(end)
-        self.mark_set("matchStart", start)
-        self.mark_set("matchEnd", start)
-        self.mark_set("searchLimit", end)
-
-        count = tk.IntVar()
-        while 1:
-            index = self.search(pattern, index="matchEnd", stopindex="searchLimit", count=count, regexp=regexp)
-            if index == "":
-                break
-            if count.get() == 0:
-                break  # degenerate pattern which matches zero-length strings
-            self.mark_set("matchStart", f"{index}+{start_offset}c")
-            self.mark_set("matchEnd", f"{index}+{count.get() - end_offset}c")
-            self.tag_add(tag, "matchStart", "matchEnd")
-
-    def color_syntax(self):
-        for tag, tag_data in self.SYNTAX_RE.items():
-            if tag_data.offsets is not None:
-                self.highlight_pattern(tag_data.pattern, tag, regexp=True, clear=True,
-                                       start_offset=tag_data.offsets[0], end_offset=tag_data.offsets[1])
+    def color_syntax(self, start="1.0", end="end"):
+        super().color_syntax(start, end)
         self._apply_event_arg_name_tags()
 
     def _apply_event_arg_name_tags(self):
@@ -130,7 +54,7 @@ class EvsTextEditor(tk.Text):
             if int(next_def_index.split('.')[0]) <= int(def_index.split('.')[0]):
                 break  # finished searching
             event_text = self.get(def_index, next_def_index)
-            event_args_match = re.match(self.SYNTAX_RE["event_arg_name"].pattern, event_text, flags=re.MULTILINE)
+            event_args_match = re.match(self.TAGS["event_arg_name"].pattern, event_text, flags=re.MULTILINE)
             if event_args_match:
                 event_args = event_args_match.group(1).replace('\n', '').replace(' ', '')
                 for event_arg in event_args.split(','):
@@ -150,11 +74,13 @@ class SoulstructEventEditor(SmartFrame):
     TEXT_BG = '#232323'
     TEXT_BOX_WIDTH = 300
 
-    def __init__(self, evs_directory, game_root, global_map_choice_func, dcx, master=None, toplevel=False):
+    def __init__(self, evs_directory, game_root, global_map_choice_func, dcx, text_font_size=10,
+                 master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct EMEVD Manager")
         self.evs_directory = Path(evs_directory)
         self.game_root = Path(game_root)
         self.global_map_choice_func = global_map_choice_func
+        self.text_font_size = text_font_size
         self.dcx = dcx
         self.evs_file_paths = {}
         self.evs_text = {}
@@ -203,7 +129,7 @@ class SoulstructEventEditor(SmartFrame):
 
             self.text_editor = self.CustomWidget(
                 editor_i_frame, custom_widget_class=EvsTextEditor, set_style_defaults=('text', 'cursor'),
-                width=300, height=50, wrap='word', bg='#232323', font=("Consolas", 10))
+                width=300, height=50, wrap='word', bg='#232323', font=("Consolas", self.text_font_size))
             vertical_scrollbar_w = self.Scrollbar(
                 orient='vertical', command=self.text_editor.yview, column=1, sticky='ns')
             self.text_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
@@ -312,7 +238,7 @@ class SoulstructEventEditor(SmartFrame):
             return
         self.selected_map_id = self.map_choice.var.get().split(' [')[0]
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.selected_map_id)
+            self.global_map_choice_func(self.selected_map_id, ignore_tabs=("events",))
         self.text_editor.delete(1.0, 'end')
         self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
         self.text_editor.mark_set("insert", "1.0")

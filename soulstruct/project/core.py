@@ -20,6 +20,7 @@ from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.text import DarkSoulsText
+from soulstruct.utilities import PACKAGE_PATH, traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
 
 from .utilities import SoulstructProjectError, data_type_caps, RestoreBackupError, DATA_TYPES
@@ -72,6 +73,7 @@ class SoulstructProject(object):
         self.game_save_root = Path()
         self.last_import_time = ''
         self.last_export_time = ''
+        self.text_font_size = 10
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
@@ -88,6 +90,9 @@ class SoulstructProject(object):
 
     def initialize_project(self, force_import_from_game=False, with_window: SoulstructProjectWindow = None):
         """Load project structures from pickled project files if available, or prompt for initial import to create."""
+        if self.game_name == "Dark Souls Prepare to Die Edition":
+            self._check_ptde_unpacked()
+
         yes_to_all = force_import_from_game
         for data_type in DATA_TYPES:
             if data_type in ("events", "talk"):
@@ -435,6 +440,40 @@ class SoulstructProject(object):
             raise SoulstructProjectError(f"Active game save file {str(active_path)} could not be found.")
         shutil.copy2(str(active_path), str(save_file_path))
 
+    def create_game_backup(self, backup_path=None):
+        """Copy existing game files (that can be edited with Soulstruct) to a backup directory, which defaults to
+        'soulstruct-backup' in your game directory. Use `restore_game_backup(backup_dir)` to restore those files."""
+        if backup_path is None:
+            backup_path = self.game_root / "soulstruct-backup"
+        else:
+            backup_path = Path(backup_path)
+        with PACKAGE_PATH("project/files.json").open("rb") as f:
+            game_files = json.load(f)[self.game_name]
+        for file_path_parts in traverse_path_tree(game_files):
+            game_file_path = self.game_root / Path(*file_path_parts)
+            if not game_file_path.is_file():
+                raise FileNotFoundError(f"Could not find file in game directory to back up: "
+                                        f"{str(game_file_path)}")
+            backup_file_path = Path(backup_path, *file_path_parts)
+            backup_file_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(game_file_path), str(backup_file_path))
+
+    def restore_game_backup(self, backup_path=None):
+        """Restore game files from the given folder, which defaults to 'soulstruct-backup' in your game directory.
+        Create these backup files with `create_game_backup(backup_dir)`."""
+        if backup_path is None:
+            backup_path = self.game_root / "soulstruct-backup"
+        with PACKAGE_PATH("project/files.json").open("rb") as f:
+            game_files = json.load(f)[self.game_name]
+        for file_path_parts in traverse_path_tree(game_files):
+            backup_file_path = backup_path / Path(*file_path_parts)
+            if not backup_file_path.is_file():
+                raise FileNotFoundError(f"Could not find backup file to restore: "
+                                        f"{str(backup_file_path)}")
+            game_file_path = Path(self.game_root, *file_path_parts)
+            game_file_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(backup_file_path), str(game_file_path))
+
     def load_config(self, with_window: SoulstructProjectWindow = None):
         try:
             with (self.project_root / 'config.json').open('r') as f:
@@ -453,6 +492,7 @@ class SoulstructProject(object):
                         self.game_save_root = Path(config['SaveDirectory'])
                         self.last_import_time = config.get('LastImportTime', None)
                         self.last_export_time = config['LastExportTime']
+                        self.text_font_size = config.get('TextFontSize', 10)
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
@@ -488,6 +528,13 @@ class SoulstructProject(object):
             if result == 0:
                 self.initialize_project(force_import_from_game=True)
 
+    def _check_ptde_unpacked(self):
+        if not (self.game_root / 'map').is_dir():
+            raise SoulstructProjectError(
+                "Your Dark Souls: Prepare to Die Edition does not appear to be unpacked.\n"
+                "Please download and run 'UnpackDarkSoulsForModding' (UDSFM) from Nexus:\n"
+                "https://www.nexusmods.com/darksouls/mods/1304")
+
     def _game_path(self, data_type, root=None):
         root = self.game_root if root is None else Path(root)
         data_type = data_type.lower()
@@ -520,6 +567,7 @@ class SoulstructProject(object):
             'SaveDirectory': str(self.game_save_root),
             'LastImportTime': self.last_import_time,
             'LastExportTime': self.last_export_time,
+            'TextFontSize': self.text_font_size,
         }
 
     def _write_config(self):

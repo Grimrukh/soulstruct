@@ -168,7 +168,7 @@ PARAM_NICKNAMES = {
     'ReinforceParamProtector': 'ArmorUpgrades',
     'GameAreaParam': 'Bosses',
     'Bullet': 'Bullets',  # note not 'BulletParam'
-    # 'CalcCorrectGraph': 'CalcCorrectionGraph',
+    'CalcCorrectGraph': 'GrowthCurves',
     'LockCamParam': 'Cameras',
     # 'default_EnemyBehaviorBank': 'DefaultEnemyBehavior',
     # 'default_AIStandardInfoBank': 'DefaultAIStandardInfoBank',
@@ -2779,8 +2779,8 @@ GAME_PARAM_INFO = {
             "Unknown effect, but it is set to zero for most enemies, 50 for very heavy enemies "
             "like Great Stone Knights and Titanite Demons, and 100 for Mimics."),
         'defaultLodParamId': (
-            'DefaultLightingParamID', False, '<Lighting:Lod>',  # TODO
-            "Default lighting."),
+            'DefaultLightingParamID', False, int,
+            "Default lighting (Lod) parameter entry ID."),
         'drawType': (
             'DrawType', True, NPC_DRAW_TYPE,
             "DOC-TODO"),
@@ -4806,7 +4806,68 @@ GAME_PARAM_INFO = {
             'Pad2', False, '<Pad:16>',
             "Null padding."),
     },
-    # TODO
+    'CACL_CORRECT_GRAPH_ST': {
+        'stageMaxVal0': (
+            'StageMaxIntercept0', True, float,
+            "Y-intercept in equation of 'stage max' line 0."),
+        'stageMaxVal1': (
+            'StageMaxIntercept1', True, float,
+            "Y-intercept in equation of 'stage max' line 1."),
+        'stageMaxVal2': (
+            'StageMaxIntercept2', True, float,
+            "Y-intercept in equation of 'stage max' line 2."),
+        'stageMaxVal3': (
+            'StageMaxIntercept3', True, float,
+            "Y-intercept in equation of 'stage max' line 3."),
+        'stageMaxVal4': (
+            'StageMaxIntercept4', True, float,
+            "Y-intercept in equation of 'stage max' line 4."),
+        'stageMaxGrowVal0': (
+            'StageMaxSlope0', True, float,
+            "Slope in equation of 'stage max' line 0."),
+        'stageMaxGrowVal1': (
+            'StageMaxSlope1', True, float,
+            "Slope in equation of 'stage max' line 1."),
+        'stageMaxGrowVal2': (
+            'StageMaxSlope2', True, float,
+            "Slope in equation of 'stage max' line 2."),
+        'stageMaxGrowVal3': (
+            'StageMaxSlope3', True, float,
+            "Slope in equation of 'stage max' line 3."),
+        'stageMaxGrowVal4': (
+            'StageMaxSlope4', True, float,
+            "Slope in equation of 'stage max' line 4."),
+        'adjPt_maxGrowVal0': (
+            'AdustmentMaxSlope0', True, float,
+            "Adjustment factor for slope in equation of 'stage max' line 0."),
+        'adjPt_maxGrowVal1': (
+            'AdustmentMaxSlope1', True, float,
+            "Adjustment factor for slope in equation of 'stage max' line 1."),
+        'adjPt_maxGrowVal2': (
+            'AdustmentMaxSlope2', True, float,
+            "Adjustment factor for slope in equation of 'stage max' line 2."),
+        'adjPt_maxGrowVal3': (
+            'AdustmentMaxSlope3', True, float,
+            "Adjustment factor for slope in equation of 'stage max' line 3."),
+        'adjPt_maxGrowVal4': (
+            'AdustmentMaxSlope4', True, float,
+            "Adjustment factor for slope in equation of 'stage max' line 4."),
+        'init_inclination_soul': (
+            'InitialLevellingCostSlope', True, float,
+            "Initial slope of equation determining levelling costs (α1)."),
+        'adjustment_value': (
+            "LevellingCostEarlyAdjustment", True, float,
+            "'Early' adjustment value of equation determining levelling costs (α2)."),
+        'boundry_inclination_soul': (
+            'LateLevellingCostSlope', True, float,
+            "Slope of equation determining required levelling souls after 'LateLevellingCostThreshold' value (α3)."),
+        'boundry_value': (
+            'LateLevellingCostThreshold', True, float,
+            "Threshold at which 'LateLevellingCostSlope' takes over for levelling (t)."),
+        'pad[4]': (
+            "Pad0", False, '<Pad:4>',
+            "Null padding."),
+    },
     'FOG_BANK': {
         'fogBeginZ': (
             'FogStartDistance', True, int,

@@ -3,8 +3,6 @@ from __future__ import annotations
 import logging
 import os
 import re
-import tkinter as tk
-from collections import namedtuple
 from pathlib import Path
 from typing import List, Optional, Dict
 
@@ -14,18 +12,16 @@ from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.esd.errors import EsdError
 from soulstruct.project.editor import SoulstructBaseEditor
-from soulstruct.project.utilities import bind_events
+from soulstruct.project.utilities import bind_events, TagData, TextEditor
 
 
 __all__ = ["SoulstructTalkEditor"]
 _LOGGER = logging.getLogger(__name__)
 _TALK_ESP_MATCH = re.compile(r"^t(\d+)\.esp\.py$")
 
-TagData = namedtuple("TagData", ('foreground', 'pattern', 'offsets'))
 
-
-class ESPTextEditor(tk.Text):
-    SYNTAX_RE = {
+class ESPTextEditor(TextEditor):
+    TAGS = {
         "import": TagData('#FFAAAA', r"^(from|import) [\w\d_ .*]+", (0, 0)),
         "python_word": TagData(
             '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False)(\n| |:)", (0, 1)),
@@ -41,69 +37,6 @@ class ESPTextEditor(tk.Text):
         "string_arg": TagData('#B2D8B2', r"='[\w\d_ ]+'", (1, 0)),
         "docstring": TagData('#00ABA9', r"^[ ]+\"\"\"[\w\d :.]+\"\"\"", (0, 0)),
     }
-
-    def __init__(self, *args, **kwargs):
-        """Text widget that generates a "<CursorChange>" event when appropriate for event bindings and can highlight
-        arbitrary text patterns.
-
-        See:
-            https://stackoverflow.com/a/23574537
-            https://stackoverflow.com/a/3781773
-        """
-        super().__init__(*args, **kwargs)
-        self._orig = self._w + "_orig"
-        self.tk.call("rename", self._w, self._orig)
-        self.tk.createcommand(self._w, self._proxy)
-
-        for tag_name, tag_data in self.SYNTAX_RE.items():
-            self.tag_configure(tag_name, foreground=tag_data.foreground)
-
-        self.tag_configure("found", background='#224433')
-        self.tag_configure("error", background='#443322')
-
-    def _proxy(self, *args):
-        cmd = (self._orig,) + args
-        result = self.tk.call(cmd)  # exceptions are caught by Tk
-        if args[0] in ("insert", "delete") or args[0:3] == ("mark", "set", "insert"):
-            self.event_generate("<<CursorChange>>", when="tail")
-        return result
-
-    def highlight_line(self, number, tag):
-        """Apply the given tag to all text in the given line. Clears tag first."""
-        self.tag_remove(tag, "1.0", "end")
-        self.tag_add(tag, f"{number}.0 linestart", f"{number}.0 lineend")
-
-    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False, clear=True,
-                          start_offset=0, end_offset=0):
-        """Apply the given tag to all text that matches the given pattern. Clears tag first by default.
-
-        If 'regexp' is set to True, pattern will be treated as a regular expression according to Tcl's regular
-        expression syntax.
-        """
-        if clear:
-            self.tag_remove(tag, "1.0", "end")
-        start = self.index(start)
-        end = self.index(end)
-        self.mark_set("matchStart", start)
-        self.mark_set("matchEnd", start)
-        self.mark_set("searchLimit", end)
-
-        count = tk.IntVar()
-        while 1:
-            index = self.search(pattern, index="matchEnd", stopindex="searchLimit", count=count, regexp=regexp)
-            if index == "":
-                break
-            if count.get() == 0:
-                break  # degenerate pattern which matches zero-length strings
-            self.mark_set("matchStart", f"{index}+{start_offset}c")
-            self.mark_set("matchEnd", f"{index}+{count.get() - end_offset}c")
-            self.tag_add(tag, "matchStart", "matchEnd")
-
-    def color_syntax(self):
-        for tag, tag_data in self.SYNTAX_RE.items():
-            if tag_data.offsets is not None:
-                self.highlight_pattern(tag_data.pattern, tag, regexp=True, clear=True,
-                                       start_offset=tag_data.offsets[0], end_offset=tag_data.offsets[1])
 
 
 class SoulstructTalkEditor(SoulstructBaseEditor):
@@ -185,11 +118,12 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
 
     entry_rows: List[SoulstructTalkEditor.EntryRow]
 
-    def __init__(self, esp_directory, game_root, game_name: str, global_map_choice_func,
+    def __init__(self, esp_directory, game_root, game_name: str, global_map_choice_func, text_font_size=10,
                  linker=None, master=None, toplevel=False):
         self.esp_directory = Path(esp_directory)
         self.game_root = Path(game_root)
         self.global_map_choice_func = global_map_choice_func
+        self.text_font_size = text_font_size
         self.selected_map_id = ""
         self.esp_file_paths = {}
         self.esp_text = {}  # updated at the same time as files; used to check for unsaved changes
@@ -298,8 +232,8 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         editor_i_frame.bind("<Configure>", lambda e, c=self.esp_editor_canvas: self.reset_canvas_scroll_region(c))
 
         self.esp_editor = self.CustomWidget(
-            editor_i_frame, custom_widget_class=ESPTextEditor, set_style_defaults=('text', 'cursor'),
-            width=400, height=50, wrap='word', bg='#232323', font=("Consolas", 10), state="disabled", row=0)
+            editor_i_frame, custom_widget_class=ESPTextEditor, set_style_defaults=('text', 'cursor'), row=0,
+            width=400, height=50, wrap='word', bg='#232323', font=("Consolas", self.text_font_size), state="disabled")
         vertical_scrollbar_w = self.Scrollbar(
             orient='vertical', command=self.esp_editor.yview, row=0, column=1, sticky='ns')
         self.esp_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
@@ -311,7 +245,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
 
         self.esp_editor_canvas.bind("<Configure>", lambda e: _update_textbox_height(e))
 
-        self.esp_editor.bind("<<CursorChange>>", self._update_line_number)
+        self.esp_editor.set_callback(self._update_line_number)
         self.esp_editor.bind("<Control-f>", self._control_f_search)
 
     def _go_to_line(self, _):
@@ -366,7 +300,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         for tag in {"found", "error"}:
             self.esp_editor.tag_remove(tag, "1.0", "end")
 
-    def _update_line_number(self, _):
+    def _update_line_number(self, *_):
         current_line = self.esp_editor.index('insert').split('.')[0]
         self.line_number.set(f"Line: {current_line}")
 
@@ -632,13 +566,13 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self._add_entry(entry_id=entry_id + offset, text=text, new_esp_string=esp_text)
 
     def delete_entry(self, row_index, category=None):
-        """Deletes talk script in project. Cannot be undone."""
+        """Deletes talk script file in project. Cannot be undone."""
         self._cancel_entry_id_edit()
         talk_id = self.get_entry_id(row_index)
         if self.CustomDialog(
                 title="Confirm Deletion",
-                message=f"Delete talk ID {talk_id} in map {self.selected_map_id}? This will delete the ESP file in "
-                        f"your project directory and cannot be undone.",
+                message=f"Delete talk ID {talk_id} in map {self.selected_map_id}? This will\n"
+                        f"delete the ESP file in your project directory and cannot be undone.",
                 button_names=("Yes, delete it", "No, go back"),
                 button_kwargs=("YES", "NO"),
                 cancel_output=1, default_output=1) == 1:

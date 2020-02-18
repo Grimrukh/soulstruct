@@ -1,7 +1,9 @@
 import subprocess
 import sys
+import typing as tp
 
 from soulstruct.project.utilities import SoulstructProjectError
+from soulstruct.utilities.memory import DSRMemoryHook, MemoryHookError
 from soulstruct.utilities.window import SmartFrame
 
 from .utilities import error_as_dialog
@@ -21,20 +23,17 @@ class SoulstructRuntimeManager(SmartFrame):
         self.game_save_entry = None
         self.game_save_list = None
         self.install_psutil_button = None
+        self._hook = None  # type: tp.Optional[DSRMemoryHook]
 
         self.build()
 
     def build(self):
-        """
-        TODO:
-            - Option to connect to running game and extract current player XYZ coordinates into an MSB entry?
-        """
-        with self.set_master(padx=10, pady=10, row_weights=[1, 1, 1], column_weights=[1], auto_rows=0):
+        with self.set_master(padx=10, pady=10, row_weights=[1, 1], column_weights=[1], auto_rows=0):
 
             if psutil is None:
                 with self.set_master(padx=10, pady=10):
                     self.Label(
-                        text="Cannot use launcher tools without Python package psutil.\n"
+                        text="Cannot use runtime tools without Python package psutil.\n"
                              "Click below to install it, then restart Soulstruct.",
                         font_size=14, pady=10, row=0)
                     self.install_psutil_button = self.Button(
@@ -43,29 +42,33 @@ class SoulstructRuntimeManager(SmartFrame):
                         tooltip_text="Install the Python package `psutil` into your Python distribution, which will "
                                      "enable runtime tools.")
             else:
-                with self.set_master(padx=10, pady=10, row_weights=[1, 1], column_weights=[1, 1]):
-                    button_kwargs = {'width': 30, 'sticky': 'nsew', 'padx': 10, 'pady': 10, 'font_size': 14}
+                with self.set_master(auto_columns=0, padx=10, pady=10, row_weights=[1], column_weights=[1, 1, 1, 1, 1],
+                                     sticky="n"):
+                    button_kwargs = {'width': 20, 'sticky': 'nsew', 'padx': 10, 'pady': 10, 'font_size': 12}
                     self.Button(text="Launch Game", command=self._error_as_dialog(self.project.launch_game),
-                                bg="#222", row=0, column=0, **button_kwargs)
+                                bg="#222", **button_kwargs)
                     debug_launch = self.Button(
                         text="Launch Game (Debug)",
-                        command=self._error_as_dialog(lambda: self.project.launch_game(debug=True)),
-                        bg="#222", row=0, column=1,
+                        command=self._error_as_dialog(lambda: self.project.launch_game(debug=True)), bg="#222",
                         tooltip_text="Launch 'DARKSOULS_DEBUG.exe' if it exists next to the game executable.",
                         **button_kwargs)
                     if self.project.game_name != "Dark Souls Prepare to Die Edition":
                         debug_launch['state'] = 'disabled'
                         debug_launch.var.set("No Debug for DSR")
+                        gadget_tooltip = "Launch 'DSR-Gadget.exe' if it exists next to your game executable."
+                    else:
+                        gadget_tooltip = "Launch 'DS Gadget.exe' if it exists next to your game executable."
                     self.Button(text="Launch DS Gadget", bg="#222",
                                 command=self._error_as_dialog(self.project.launch_gadget),
-                                row=1, column=0,
-                                tooltip_text="Launch 'DS Gadget.exe' or 'DSR-Gadget.exe' if it exists next to the game "
-                                             "executable.",
+                                tooltip_text=gadget_tooltip,
                                 **button_kwargs)
+                    self.Button(text="Hook Game", bg="#222",
+                                command=self.hook_into_game,
+                                tooltip_text="Hook into running game memory to unlock more features.", **button_kwargs)
                     self.Button(text="Close Game", bg="#422",
                                 command=self._error_as_dialog(lambda: self.project.force_quit_game(
                                     including_debug=self.project.game_name == "Dark Souls Prepare to Die Edition")),
-                                row=1, column=1, tooltip_text="Force quit Dark Souls if it's running.", **button_kwargs)
+                                tooltip_text="Force quit Dark Souls if it's running.", **button_kwargs)
 
             with self.set_master(padx=10, pady=20, row_weights=[1, 1], column_weights=[1, 1, 1]):
                 try:
@@ -118,6 +121,32 @@ class SoulstructRuntimeManager(SmartFrame):
         game_save_name = self.game_save_entry.get()
         self.project.create_game_save(game_save_name, overwrite=overwrite)
         self.game_save_list['values'] = self.project.get_game_saves()
+
+    def hook_into_game(self):
+        """Returns True if hook was successful, and False if not."""
+        # TODO: Doesn't work for PTDE yet.
+        if self.project.game_name != "Dark Souls Remastered":
+            self.CustomDialog("Remastered Only", "Can currently only hook into Dark Souls Remastered.")
+            return False
+        for p in psutil.process_iter():
+            if p.name() == self.project.game_exe_path.name:
+                pid = p.pid
+                break
+        else:
+            self.CustomDialog("Game Not Running", "Could not find running game application to hook into.")
+            return False
+        self._hook = DSRMemoryHook(pid)
+        self.CustomDialog(
+            title="Hook Successful",
+            message="Hooked into Dark Souls Remastered successfully.\n\n"
+                    "You may now use features such as assigning current player coordinates to map entities.\n\n"
+                    "For more advanced runtime features, use DSR Gadget by TKGP.")
+        return True
+
+    def get_game_value(self, value_name):
+        if self._hook is None:
+            raise ConnectionError("Memory hook has not been created.")
+        return self._hook.get(value_name)
 
     def _install_psutil(self):
         self.install_psutil_button.var.set("Installing...")

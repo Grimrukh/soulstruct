@@ -81,13 +81,19 @@ def find_steam_common_paths():
 
 
 def traverse_path_tree(tree, cur=()):
-    if not isinstance(tree, dict):
-        for basename in tree:
-            yield cur + (basename,)  # Leaf.
-    else:
+    if isinstance(tree, dict):
         for node, leaf in tree.items():
             for path in traverse_path_tree(leaf, cur + (node,)):
                 yield path
+    elif isinstance(tree, (list, tuple)):
+        for item in tree:
+            if isinstance(item, str):
+                yield cur + (item,)
+            else:  # dict
+                for path in traverse_path_tree(item, cur):
+                    yield path
+    else:
+        raise ValueError(f"Invalid type encountered in path tree: {type(tree)}")
 
 
 class Vector(object):
@@ -517,6 +523,9 @@ class BiDict(dict):
 
     def __len__(self):
         return super().__len__() // 2
+
+    def __iter__(self):
+        return iter(self.__keys)
 
     def keys(self):
         """Returns first elements of all set pairs."""

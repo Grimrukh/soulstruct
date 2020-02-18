@@ -129,92 +129,98 @@
             "m18_00_00_00.emevd.dcx",
             "m18_01_00_00.emevd.dcx"
         ],
-        "map": [{
-            "MapStudio": [
-                "m10_00_00_00.msb",
-                "m10_01_00_00.msb",
-                "m10_02_00_00.msb",
-                "m11_00_00_00.msb",
-                "m12_00_00_01.msb",
-                "m12_01_00_00.msb",
-                "m13_00_00_00.msb",
-                "m13_01_00_00.msb",
-                "m13_02_00_00.msb",
-                "m14_00_00_00.msb",
-                "m14_01_00_00.msb",
-                "m15_00_00_00.msb",
-                "m15_01_00_00.msb",
-                "m16_00_00_00.msb",
-                "m17_00_00_00.msb",
-                "m18_00_00_00.msb",
-                "m18_01_00_00.msb"
-            ]
-        }],
-        "msg": [{
-            "ENGLISH": [
-                "item.msgbnd.dcx",
-                "menu.msgbnd.dcx"
-            ]
-        }],
-        "param": [{
-            "GameParam": [
-                "GameParam.parambnd.dcx"
-            ],
-            "DrawParam": [
-                "a10_DrawParam.parambnd.dcx",
-                "a11_DrawParam.parambnd.dcx",
-                "a12_DrawParam.parambnd.dcx",
-                "a13_DrawParam.parambnd.dcx",
-                "a14_DrawParam.parambnd.dcx",
-                "a15_DrawParam.parambnd.dcx",
-                "a16_DrawParam.parambnd.dcx",
-                "a17_DrawParam.parambnd.dcx",
-                "a18_DrawParam.parambnd.dcx",
-                "a99_DrawParam.parambnd.dcx",
-                "default_DrawParam.parambnd.dcx"
-            ]
-        }]
-    },
-    "script": [
-        "aiCommon.luabnd.dcx",
-        "eventCommon.luabnd.dcx",
-        "m10_00_00_00.luabnd.dcx",
-        "m10_01_00_00.luabnd.dcx",
-        "m10_02_00_00.luabnd.dcx",
-        "m11_00_00_00.luabnd.dcx",
-        "m12_00_00_00.luabnd.dcx",
-        "m12_01_00_00.luabnd.dcx",
-        "m13_00_00_00.luabnd.dcx",
-        "m13_01_00_00.luabnd.dcx",
-        "m13_02_00_00.luabnd.dcx",
-        "m14_00_00_00.luabnd.dcx",
-        "m14_01_00_00.luabnd.dcx",
-        "m15_00_00_00.luabnd.dcx",
-        "m15_01_00_00.luabnd.dcx",
-        "m16_00_00_00.luabnd.dcx",
-        "m17_00_00_00.luabnd.dcx",
-        "m18_00_00_00.luabnd.dcx",
-        "m18_01_00_00.luabnd.dcx",
-        {
-            "talk": [
-                "m10_00_00_00.talkesdbnd.dcx",
-                "m10_01_00_00.talkesdbnd.dcx",
-                "m10_02_00_00.talkesdbnd.dcx",
-                "m11_00_00_00.talkesdbnd.dcx",
-                "m12_00_00_00.talkesdbnd.dcx",
-                "m12_01_00_00.talkesdbnd.dcx",
-                "m13_00_00_00.talkesdbnd.dcx",
-                "m13_01_00_00.talkesdbnd.dcx",
-                "m13_02_00_00.talkesdbnd.dcx",
-                "m14_00_00_00.talkesdbnd.dcx",
-                "m14_01_00_00.talkesdbnd.dcx",
-                "m15_00_00_00.talkesdbnd.dcx",
-                "m15_01_00_00.talkesdbnd.dcx",
-                "m16_00_00_00.talkesdbnd.dcx",
-                "m17_00_00_00.talkesdbnd.dcx",
-                "m18_00_00_00.talkesdbnd.dcx",
-                "m18_01_00_00.talkesdbnd.dcx"
-            ]
-        }
-    ]
+        "map": [
+            {
+                "MapStudio": [
+                    "m10_00_00_00.msb",
+                    "m10_01_00_00.msb",
+                    "m10_02_00_00.msb",
+                    "m11_00_00_00.msb",
+                    "m12_00_00_01.msb",
+                    "m12_01_00_00.msb",
+                    "m13_00_00_00.msb",
+                    "m13_01_00_00.msb",
+                    "m13_02_00_00.msb",
+                    "m14_00_00_00.msb",
+                    "m14_01_00_00.msb",
+                    "m15_00_00_00.msb",
+                    "m15_01_00_00.msb",
+                    "m16_00_00_00.msb",
+                    "m17_00_00_00.msb",
+                    "m18_00_00_00.msb",
+                    "m18_01_00_00.msb"
+                ]
+            }
+        ],
+        "msg": [
+            {
+                "ENGLISH": [
+                    "item.msgbnd.dcx",
+                    "menu.msgbnd.dcx"
+                ]
+            }
+        ],
+        "param": [
+            {
+                "GameParam": [
+                    "GameParam.parambnd.dcx"
+                ],
+                "DrawParam": [
+                    "a10_DrawParam.parambnd.dcx",
+                    "a11_DrawParam.parambnd.dcx",
+                    "a12_DrawParam.parambnd.dcx",
+                    "a13_DrawParam.parambnd.dcx",
+                    "a14_DrawParam.parambnd.dcx",
+                    "a15_DrawParam.parambnd.dcx",
+                    "a16_DrawParam.parambnd.dcx",
+                    "a17_DrawParam.parambnd.dcx",
+                    "a18_DrawParam.parambnd.dcx",
+                    "a99_DrawParam.parambnd.dcx",
+                    "default_DrawParam.parambnd.dcx"
+                ]
+            }
+        ],
+        "script": [
+            "aiCommon.luabnd.dcx",
+            "eventCommon.luabnd.dcx",
+            "m10_00_00_00.luabnd.dcx",
+            "m10_01_00_00.luabnd.dcx",
+            "m10_02_00_00.luabnd.dcx",
+            "m11_00_00_00.luabnd.dcx",
+            "m12_00_00_00.luabnd.dcx",
+            "m12_01_00_00.luabnd.dcx",
+            "m13_00_00_00.luabnd.dcx",
+            "m13_01_00_00.luabnd.dcx",
+            "m13_02_00_00.luabnd.dcx",
+            "m14_00_00_00.luabnd.dcx",
+            "m14_01_00_00.luabnd.dcx",
+            "m15_00_00_00.luabnd.dcx",
+            "m15_01_00_00.luabnd.dcx",
+            "m16_00_00_00.luabnd.dcx",
+            "m17_00_00_00.luabnd.dcx",
+            "m18_00_00_00.luabnd.dcx",
+            "m18_01_00_00.luabnd.dcx",
+            {
+                "talk": [
+                    "m10_00_00_00.talkesdbnd.dcx",
+                    "m10_01_00_00.talkesdbnd.dcx",
+                    "m10_02_00_00.talkesdbnd.dcx",
+                    "m11_00_00_00.talkesdbnd.dcx",
+                    "m12_00_00_00.talkesdbnd.dcx",
+                    "m12_01_00_00.talkesdbnd.dcx",
+                    "m13_00_00_00.talkesdbnd.dcx",
+                    "m13_01_00_00.talkesdbnd.dcx",
+                    "m13_02_00_00.talkesdbnd.dcx",
+                    "m14_00_00_00.talkesdbnd.dcx",
+                    "m14_01_00_00.talkesdbnd.dcx",
+                    "m15_00_00_00.talkesdbnd.dcx",
+                    "m15_01_00_00.talkesdbnd.dcx",
+                    "m16_00_00_00.talkesdbnd.dcx",
+                    "m17_00_00_00.talkesdbnd.dcx",
+                    "m18_00_00_00.talkesdbnd.dcx",
+                    "m18_01_00_00.talkesdbnd.dcx"
+                ]
+            }
+        ]
+    }
 }

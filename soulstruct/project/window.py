@@ -37,6 +37,7 @@ class SoulstructProjectWindow(SmartFrame):
     events_tab: Optional[SoulstructEventEditor]
     ai_tab: Optional[SoulstructAIEditor]
     talk_tab: Optional[SoulstructTalkEditor]
+    runtime_tab: Optional[SoulstructRuntimeManager]
 
     TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'ai', 'talk', 'runtime']
 
@@ -165,7 +166,7 @@ class SoulstructProjectWindow(SmartFrame):
         self.events_tab = self.SmartFrame(
             frame=tab_frames['events'], smart_frame_class=SoulstructEventEditor,
             evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
-            global_map_choice_func=self.set_global_map_choice,
+            global_map_choice_func=self.set_global_map_choice, text_font_size=self.project.text_font_size,
             dcx=self.project.game_name == "Dark Souls Remastered", sticky='nsew')
         self.events_tab.bind("<Visibility>", self._update_banner)
 
@@ -173,7 +174,7 @@ class SoulstructProjectWindow(SmartFrame):
             frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
             ai=self.project.AI, script_directory=self.project.project_root / "ai_scripts",
             game_root=self.project.game_root, allow_decompile=self.project.game_name == "Dark Souls Remastered",
-            global_map_choice_func=self.set_global_map_choice,
+            global_map_choice_func=self.set_global_map_choice, text_font_size=self.project.text_font_size,
             linker=self.linker, sticky='nsew')
         self.ai_tab.bind("<Visibility>", self._update_banner)
 
@@ -181,7 +182,7 @@ class SoulstructProjectWindow(SmartFrame):
             frame=tab_frames['talk'], smart_frame_class=SoulstructTalkEditor,
             esp_directory=self.project.project_root / "talk", game_root=self.project.game_root,
             game_name=self.project.game_name,
-            global_map_choice_func=self.set_global_map_choice,
+            global_map_choice_func=self.set_global_map_choice, text_font_size=self.project.text_font_size,
             linker=self.linker, sticky='nsew'
         )
         self.talk_tab.bind("<Visibility>", self._update_banner)
@@ -238,16 +239,26 @@ class SoulstructProjectWindow(SmartFrame):
                     command=lambda d=data_type, e=export_dir: self._export_data(d, export_directory=e))
             file_menu.add_cascade(label=f"Export to{' Game' if export_dir else '...'}",
                                   foreground='#FFF', menu=export_menu)
+
         file_menu.add_separator()
+
         file_menu.add_command(label="Set as Default Project", foreground='#FFF',
                               command=self._set_as_default_project)
         file_menu.add_command(label="Clear Default Project", foreground='#FFF',
                               command=self._clear_default_project)
+
         file_menu.add_separator()
+
         file_menu.add_command(label="Quit", foreground='#FFF', command=self.confirm_quit)
+
         top_menu.add_cascade(label="File", menu=file_menu)
 
         tools_menu = self.Menu(tearoff=0)
+        tools_menu.add_command(label="Create Game Backup", foreground='#FFF',
+                               command=self._create_game_backup)
+        tools_menu.add_command(label="Restore Game Backup", foreground='#FFF',
+                               command=self._restore_game_backup)
+        tools_menu.add_separator()
         tools_menu.add_command(label="Restore .bak File", foreground='#FFF',
                                command=lambda: self._restore_backup(full_folder=False))
         tools_menu.add_command(label="Restore .bak Files", foreground='#FFF',
@@ -337,40 +348,30 @@ class SoulstructProjectWindow(SmartFrame):
     def set_global_map_choice(self, map_id, ignore_tabs=()):
         game_map = get_map(map_id)
         if "maps" not in ignore_tabs:
-            try:
+            if game_map.msb_file_stem is not None:
                 self.maps_tab.map_choice.var.set(
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
-            except KeyError:
-                pass
         if "entities" not in ignore_tabs:
-            try:
+            if game_map.msb_file_stem is not None:
                 self.entities_tab.map_choice.var.set(
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.entities_tab.on_map_choice()
-            except KeyError:
-                pass
         if "events" not in ignore_tabs:
-            try:
+            if game_map.emevd_file_stem is not None:
                 self.events_tab.map_choice.var.set(
                     f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
                 self.events_tab.on_map_choice()
-            except KeyError:
-                pass
         if "ai" not in ignore_tabs:
-            try:
+            if game_map.ai_file_stem is not None:
                 self.ai_tab.map_choice.var.set(
                     f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
                 self.ai_tab.on_map_choice()
-            except KeyError:
-                pass
         if "talk" not in ignore_tabs:
-            try:
+            if game_map.esd_file_stem is not None:
                 self.talk_tab.map_choice.var.set(
                     f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
                 self.talk_tab.on_map_choice()
-            except KeyError:
-                pass
 
     def _import_data(self, data_type=None, import_directory=None):
         if import_directory is None:
@@ -553,6 +554,49 @@ class SoulstructProjectWindow(SmartFrame):
     def _clear_default_project():
         from soulstruct._config import SET_CONFIG
         SET_CONFIG(default_project_path='')
+
+    def _create_game_backup(self):
+        backup_path = self.project.game_root / "soulstruct-backup"
+        if backup_path.is_dir():
+            if self.CustomDialog(
+                    title="Confirm Backup Overwrite",
+                    message="Backup directory `soulstruct-backup` in game directory already exists. Overwrite?",
+                    button_names=("Yes, overwrite", "No, go back"),
+                    button_kwargs=('YES', 'NO'),
+                    cancel_output=1, default_output=1) == 1:
+                return
+        try:
+            self.project.create_game_backup(backup_path)
+        except Exception as e:
+            self.CustomDialog("Backup Error", f"Error while creating game file backup:\n\n"
+                                              f"{e}\n\n"
+                                              f"Backup may have only been partially completed.")
+            _LOGGER.error(f"Error while creating game file backup: {e}", exc_info=True)
+        else:
+            self.CustomDialog("Backup Creation Successful", "Backup files created successfully.")
+
+    def _restore_game_backup(self):
+        backup_path = self.project.game_root / "soulstruct-backup"
+        if not backup_path.is_dir():
+            self.CustomDialog("No Backup Created",
+                              "Backup folder `soulstruct-backup` has not yet been created in game directory.")
+            return
+        if self.CustomDialog(
+                title="Confirm Backup Restore",
+                message="Are you sure you want to restore backup Dark Souls files?",
+                button_names=("Yes, continue", "No, go back"),
+                button_kwargs=('YES', 'NO'),
+                cancel_output=1, default_output=1) == 1:
+            return
+        try:
+            self.project.restore_game_backup(backup_path)
+        except Exception as e:
+            self.CustomDialog("Backup Error", f"Error while restoring game file backup:\n\n"
+                                              f"{e}\n\n"
+                                              f"Backup files may have been only partially restored.")
+            _LOGGER.error(f"Error while restoring game file backup: {e}", exc_info=True)
+        else:
+            self.CustomDialog("Backup Restore Successful", "All backup files restored successfully.")
 
     def _choose_directory(self, initial_dir=None, **kwargs):
         if initial_dir is None:

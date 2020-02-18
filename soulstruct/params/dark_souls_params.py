@@ -46,6 +46,7 @@ class DarkSoulsGameParameters(object):
     Weapons: ParamTable
     WeaponUpgrades: ParamTable
     SpecialEffectVisuals: ParamTable
+    GrowthCurves: ParamTable
 
     param_names = [
         'Players', 'PlayerBehaviors', 'PlayerAttacks',
@@ -55,7 +56,7 @@ class DarkSoulsGameParameters(object):
         'WeaponUpgrades', 'ArmorUpgrades', 'UpgradeMaterials',
         'ItemLots', 'Bosses', 'Shops', 'Spells', 'Objects', 'ObjectActivations',
         'Movement', 'Cameras', 'Terrains', 'Faces', 'Dialogue',
-        'MenuColors', 'SpecialEffectVisuals',
+        'MenuColors', 'SpecialEffectVisuals', 'GrowthCurves',
     ]
 
     def __init__(self, game_param_bnd_source=None):

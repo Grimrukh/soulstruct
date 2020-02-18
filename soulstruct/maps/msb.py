@@ -11,83 +11,83 @@ from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE, BaseMSBEvent
 from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE, BaseMSBRegion
 from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE, BaseMSBPart
 
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, create_bak
+from soulstruct.utilities import BinaryStruct, BiDict, read_chars_from_buffer, create_bak
 
 _LOGGER = logging.getLogger(__name__)
 
 MAP_ENTRY_TYPES = {
-    'Parts': {
-        'MapPieces': MSB_PART_TYPE.MapPiece,
-        'Objects': MSB_PART_TYPE.Object,
-        'Characters': MSB_PART_TYPE.Character,
-        'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
-        'Collisions': MSB_PART_TYPE.Collision,
-        'Navmeshes': MSB_PART_TYPE.Navmesh,
-        'UnusedObjects': MSB_PART_TYPE.UnusedObject,
-        'UnusedCharacters': MSB_PART_TYPE.UnusedCharacter,
-        'MapConnections': MSB_PART_TYPE.MapConnection,
-    },
-    'Events': {
-        'Lights': MSB_EVENT_TYPE.Light,
-        'Sounds': MSB_EVENT_TYPE.Sound,
-        'FX': MSB_EVENT_TYPE.FX,
-        'Wind': MSB_EVENT_TYPE.Wind,
-        'Treasure': MSB_EVENT_TYPE.Treasure,
-        'Spawners': MSB_EVENT_TYPE.Spawner,
-        'Messages': MSB_EVENT_TYPE.Message,
-        'ObjActs': MSB_EVENT_TYPE.ObjAct,
-        'SpawnPoints': MSB_EVENT_TYPE.SpawnPoint,
-        'MapOffsets': MSB_EVENT_TYPE.MapOffset,
-        'Navigation': MSB_EVENT_TYPE.Navigation,
-        'Environment': MSB_EVENT_TYPE.Environment,
-        'NPCInvasions': MSB_EVENT_TYPE.NPCInvasion,
-    },
-    'Regions': {
-        'Points': MSB_REGION_TYPE.Point,
-        'Circles': MSB_REGION_TYPE.Circle,
-        'Spheres': MSB_REGION_TYPE.Sphere,
-        'Cylinders': MSB_REGION_TYPE.Cylinder,
-        'Rectangles': MSB_REGION_TYPE.Rect,
-        'Boxes': MSB_REGION_TYPE.Box,
-    },
-    'Models': {
-        'MapPieces': MSB_MODEL_TYPE.MapPiece,
-        'Objects': MSB_MODEL_TYPE.Object,
-        'Characters': MSB_MODEL_TYPE.Character,
-        'Unknown': MSB_MODEL_TYPE.Unknown,
-        'Players': MSB_MODEL_TYPE.Player,
-        'Collisions': MSB_MODEL_TYPE.Collision,
-        'Navmeshes': MSB_MODEL_TYPE.Navmesh,
-    },
+    'Parts': BiDict(
+        ('MapPieces', MSB_PART_TYPE.MapPiece),
+        ('Objects', MSB_PART_TYPE.Object),
+        ('Characters', MSB_PART_TYPE.Character),
+        ('PlayerStarts', MSB_PART_TYPE.PlayerStarts),
+        ('Collisions', MSB_PART_TYPE.Collision),
+        ('Navmeshes', MSB_PART_TYPE.Navmesh),
+        ('UnusedObjects', MSB_PART_TYPE.UnusedObject),
+        ('UnusedCharacters', MSB_PART_TYPE.UnusedCharacter),
+        ('MapConnections', MSB_PART_TYPE.MapConnection),
+    ),
+    'Events': BiDict(
+        ('Lights', MSB_EVENT_TYPE.Light),
+        ('Sounds', MSB_EVENT_TYPE.Sound),
+        ('FX', MSB_EVENT_TYPE.FX),
+        ('Wind', MSB_EVENT_TYPE.Wind),
+        ('Treasure', MSB_EVENT_TYPE.Treasure),
+        ('Spawners', MSB_EVENT_TYPE.Spawner),
+        ('Messages', MSB_EVENT_TYPE.Message),
+        ('ObjActs', MSB_EVENT_TYPE.ObjAct),
+        ('SpawnPoints', MSB_EVENT_TYPE.SpawnPoint),
+        ('MapOffsets', MSB_EVENT_TYPE.MapOffset),
+        ('Navigation', MSB_EVENT_TYPE.Navigation),
+        ('Environment', MSB_EVENT_TYPE.Environment),
+        ('NPCInvasions', MSB_EVENT_TYPE.NPCInvasion),
+    ),
+    'Regions': BiDict(
+        ('Points', MSB_REGION_TYPE.Point),
+        ('Circles', MSB_REGION_TYPE.Circle),
+        ('Spheres', MSB_REGION_TYPE.Sphere),
+        ('Cylinders', MSB_REGION_TYPE.Cylinder),
+        ('Rectangles', MSB_REGION_TYPE.Rect),
+        ('Boxes', MSB_REGION_TYPE.Box),
+    ),
+    'Models': BiDict(
+        ('MapPieces', MSB_MODEL_TYPE.MapPiece),
+        ('Objects', MSB_MODEL_TYPE.Object),
+        ('Characters', MSB_MODEL_TYPE.Character),
+        ('Unknown', MSB_MODEL_TYPE.Unknown),
+        ('Players', MSB_MODEL_TYPE.Player),
+        ('Collisions', MSB_MODEL_TYPE.Collision),
+        ('Navmeshes', MSB_MODEL_TYPE.Navmesh),
+    ),
 }
 
 
 # Subset of the above, only for entry types with entity IDs.
 MAP_ENTRY_ENTITY_TYPES = {
-    'Parts': {
-        'MapPieces': MSB_PART_TYPE.MapPiece,
-        'Objects': MSB_PART_TYPE.Object,
-        'Characters': MSB_PART_TYPE.Character,
-        'PlayerStarts': MSB_PART_TYPE.PlayerStarts,
-        'Collisions': MSB_PART_TYPE.Collision,
-    },
-    'Events': {
-        'Sounds': MSB_EVENT_TYPE.Sound,
-        'FX': MSB_EVENT_TYPE.FX,
-        'Spawners': MSB_EVENT_TYPE.Spawner,
-        'Messages': MSB_EVENT_TYPE.Message,
-        'ObjActs': MSB_EVENT_TYPE.ObjAct,
-        'SpawnPoints': MSB_EVENT_TYPE.SpawnPoint,
-        'Navigation': MSB_EVENT_TYPE.Navigation,
-    },
-    'Regions': {
-        'Points': MSB_REGION_TYPE.Point,
-        'Circles': MSB_REGION_TYPE.Circle,
-        'Spheres': MSB_REGION_TYPE.Sphere,
-        'Cylinders': MSB_REGION_TYPE.Cylinder,
-        'Rectangles': MSB_REGION_TYPE.Rect,
-        'Boxes': MSB_REGION_TYPE.Box,
-    },
+    'Parts': BiDict(
+        ('MapPieces', MSB_PART_TYPE.MapPiece),
+        ('Objects', MSB_PART_TYPE.Object),
+        ('Characters', MSB_PART_TYPE.Character),
+        ('PlayerStarts', MSB_PART_TYPE.PlayerStarts),
+        ('Collisions', MSB_PART_TYPE.Collision),
+    ),
+    'Events': BiDict(
+        ('Sounds', MSB_EVENT_TYPE.Sound),
+        ('FX', MSB_EVENT_TYPE.FX),
+        ('Spawners', MSB_EVENT_TYPE.Spawner),
+        ('Messages', MSB_EVENT_TYPE.Message),
+        ('ObjActs', MSB_EVENT_TYPE.ObjAct),
+        ('SpawnPoints', MSB_EVENT_TYPE.SpawnPoint),
+        ('Navigation', MSB_EVENT_TYPE.Navigation),
+    ),
+    'Regions': BiDict(
+        ('Points', MSB_REGION_TYPE.Point),
+        ('Circles', MSB_REGION_TYPE.Circle),
+        ('Spheres', MSB_REGION_TYPE.Sphere),
+        ('Cylinders', MSB_REGION_TYPE.Cylinder),
+        ('Rectangles', MSB_REGION_TYPE.Rect),
+        ('Boxes', MSB_REGION_TYPE.Box),
+    ),
 }
 
 
@@ -243,7 +243,6 @@ class MSBEntryList(object):
         if isinstance(entry_name_or_local_index, int):
             if entry_type is None:
                 raise ValueError("Cannot get global entry index from local index without specifying `entry_type`.")
-            entry_type = self.resolve_entry_type(entry_type)
             entry_type_names = self.get_entry_names(entry_type)
             if entry_name_or_local_index >= len(entry_type_names):
                 return None
@@ -267,8 +266,16 @@ class MSBEntryList(object):
         except ValueError:
             raise TypeError(f"Invalid entry type for entry list {self.ENTRY_LIST_NAME}: {entry_type}")
 
-    def add_entry(self, global_index, entry):
-        """Add entry at desired global index."""
+    def add_entry(self, entry, global_index=None, append_to_entry_type=None):
+        """Add entry at desired global index. If `global_index` is None, it defaults to the end of the given entry type,
+        which in turn defaults to None (end of global entry list)."""
+        if global_index is None:
+            if append_to_entry_type is not None:
+                entry_type = self.resolve_entry_type(append_to_entry_type)
+                last_entry_local_index = len(self.get_entry_names(entry_type)) - 1
+                global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
+            else:
+                global_index = len(self)
         self._entries.insert(global_index, entry)
 
     def delete_entry(self, global_index):

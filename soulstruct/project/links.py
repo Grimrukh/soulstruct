@@ -2,12 +2,20 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
+from soulstruct.bnd.core import BND
+from soulstruct.maps.models import MSB_MODEL_TYPE
+from soulstruct.models.darksouls1 import CHARACTER_MODELS
+from soulstruct.core import SoulstructError
 from soulstruct.maps import MAP_ENTRY_TYPES
 
 if TYPE_CHECKING:
     from soulstruct.project import SoulstructProjectWindow
     from soulstruct.project.editor import SoulstructBaseFieldEditor
     from soulstruct.maps import MSB
+
+
+class InvalidMapPartNameError(SoulstructError):
+    pass
 
 
 class WindowLinker(object):
@@ -68,7 +76,7 @@ class WindowLinker(object):
 
         if table_type == 'Maps':
             entry_name = field_value
-            if not entry_name:  # None or empty string
+            if not entry_name:  # No link expected (None or empty string)
                 return [BaseLink(self, name="None")]
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
             entry_list_name = link_pieces[1]
@@ -78,26 +86,22 @@ class WindowLinker(object):
 
             try:
                 entry_local_index = entry_list.get_entry_type_index(entry_name)
-
                 if len(link_pieces) == 3:
-                    # Technically, map links only care about entry list type, but I'm sometimes adding some additional
-                    # enforcement (like parts.characters[i].model_index linking to models.characters only).
+                    # Technically, map links only care about entry list type (except for the collision field of Map
+                    # Connections) but I'm sometimes adding some additional subtype enforcement.
+                    # e.g. parts.characters[i].model_index links to models.characters only.
                     entry_types = [MAP_ENTRY_TYPES[entry_list_name][entry_type].name
                                    for entry_type in link_pieces[2].split('|')]
                     if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
                         raise ValueError("Type of entry name in field does not match enforced type of field.")
-
                 # Need plural form of entry type.
-                entry_type_name = [key for key in MAP_ENTRY_TYPES[entry_list_name]
-                                   if MAP_ENTRY_TYPES[entry_list_name][key] == entry_list[entry_name].ENTRY_TYPE][0]
-
+                entry_type_name = MAP_ENTRY_TYPES[entry_list_name][entry_list[entry_name].ENTRY_TYPE]
+                return [MapsLink(
+                    self, name=field_value, entry_list_name=entry_list_name, entry_type_name=entry_type_name,
+                    entry_local_index=entry_local_index)]
             except ValueError:
                 # Entry name is missing (or is not of the enforced entry type).
                 return [BaseLink()]
-
-            return [MapsLink(
-                self, name=field_value, entry_list_name=entry_list_name, entry_type_name=entry_type_name,
-                entry_local_index=entry_local_index)]
 
         if field_value in valid_null_values:
             return [BaseLink(self, name=valid_null_values[field_value])]
@@ -158,6 +162,7 @@ class WindowLinker(object):
         return []  # No other table types supported yet.
 
     def get_map_entry_type_names(self, field_type):
+        """Retrieves a list of names of the given entry type, sometimes with hint suffixes."""
         match_link = self._MATCH_LINK.match(field_type)
         if not match_link:
             raise ValueError(f"Invalid link: {field_type}")
@@ -181,8 +186,14 @@ class WindowLinker(object):
                 # Technically, map links only care about entry list type, but I'm sometimes adding some additional
                 # enforcement (like parts.characters[i].model_index linking to models.characters only).
                 names = []
-                for name in link_pieces[2].split('|'):
-                    names += entry_list.get_entry_names(entry_type=name)
+                for entry_type in link_pieces[2].split('|'):
+                    entry_type_names = entry_list.get_entry_names(entry_type=entry_type)
+                    if entry_list_name == "Models" and entry_type in {"Characters", "Players"}:
+                        # Add name as suffix.
+                        for i, name in enumerate(entry_type_names):
+                            model_id = int(name.lstrip("c"))
+                            entry_type_names[i] += f"  {{{CHARACTER_MODELS.get(model_id, 'UNKNOWN')}}}"
+                    names += entry_type_names
                 return names
             else:
                 return entry_list.get_entry_names()
@@ -273,6 +284,45 @@ class WindowLinker(object):
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
+    def validate_model_type(self, model_type, name, map_id):
+        """Check appropriate game model files to confirm the given model name is valid.
+
+        Note that Character and Object models don't actually need `map_id` to validate them.
+        """
+        if isinstance(model_type, int):
+            model_type = MSB_MODEL_TYPE(model_type)
+        elif isinstance(model_type, str):
+            model_type = MSB_MODEL_TYPE[model_type]
+        if not isinstance(model_type, MSB_MODEL_TYPE):
+            raise TypeError(f"`model_type` must be a MSB_MODEL_TYPE, or a name/value within.")
+
+        dcx = ".dcx" if self.project.game_name == "Dark Souls Remastered" else ""
+
+        if model_type == MSB_MODEL_TYPE.Character:
+            if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
+                return True
+        elif model_type == MSB_MODEL_TYPE.Object:
+            if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
+                return True
+        elif model_type == MSB_MODEL_TYPE.MapPiece:
+            if (self.project.game_root / f"map/{map_id}/{name}A10.flver{dcx}").is_file():
+                return True
+        elif model_type == MSB_MODEL_TYPE.Collision:
+            # TODO: Rough BHD string scan until I have that file format.
+            hkxbhd_path = self.project.game_root / f"map/{map_id}/h{map_id}.hkxbhd"
+            if hkxbhd_path.is_file():
+                with hkxbhd_path.open("r") as f:
+                    if name + "A10.hkx" in f.read():
+                        return True
+        elif model_type == MSB_MODEL_TYPE.Navmesh:
+            nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
+            if nvmbnd_path.is_file():
+                navmesh_bnd = BND(nvmbnd_path)
+                if name + "A10.nvm" in navmesh_bnd.entries_by_basename.keys():
+                    return True
+
+        return False
+
     def params_link(self, category, param_entry_id, field_name=None):
         # TODO: Create if missing.
         if param_entry_id not in self.window.params_tab.get_category_data(category):
@@ -286,6 +336,13 @@ class WindowLinker(object):
         if field_name is not None:
             self.window.params_tab.select_field_name(field_name)
         self.window.params_tab.update_idletasks()
+
+    def runtime_hook(self):
+        return self.window.runtime_tab.hook_into_game()
+
+    def get_game_value(self, value_name):
+        """Try to retrieve given game value (e.g. 'player_x') from runtime memory hook."""
+        return self.window.runtime_tab.get_game_value(value_name)
 
 
 class BaseLink(object):

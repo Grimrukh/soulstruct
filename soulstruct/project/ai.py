@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import tkinter as tk
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
@@ -9,38 +8,25 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 from soulstruct.ai.core import LuaError
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.project.editor import SoulstructBaseEditor
-from soulstruct.project.utilities import bind_events
+from soulstruct.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
     from soulstruct.ai import DarkSoulsAIScripts, LuaBND, LuaGoal
 
 
-class AIScriptTextEditor(tk.Text):
-    SYNTAX_RE = {
-        "function_def": ('#AABBFF', r"function [\w\d_]+", (0, 0)),
-        "lua_word": ('#FFBB99', r"(^| )(function|local|if|then|elseif|else|for|while|end|return|and|or|"
-                                r"not|do|break|repeat|nil|until)(?=($| ))", (0, 0)),
-        "lua_bool": ('#FFBB99', r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (1, 0)),
-        "number_literal": ('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
-        "function_call": ('#C0E665', r"(^|[ ,=({\[:])[\w\d_]+(?=[(])", (0, 0)),
+class AIScriptTextEditor(TextEditor):
+    TAGS = {
+        "function_def": TagData('#AABBFF', r"function [\w\d_]+", (0, 0)),
+        "lua_word": TagData('#FFBB99', r"(^| )(function|local|if|then|elseif|else|for|while|end|return|and|or|"
+                                       r"not|do|break|repeat|nil|until)(?=($| ))", (0, 0)),
+        "lua_bool": TagData('#FFBB99', r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (1, 0)),
+        "number_literal": TagData('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
+        "function_call": TagData('#C0E665', r"(^|[ ,=({\[:])[\w\d_]+(?=[(])", (0, 0)),
     }
 
     def __init__(self, *args, **kwargs):
-        """Text widget that generates a "<CursorChange>" event when appropriate for event bindings and can highlight
-        arbitrary text patterns.
-
-        See:
-            https://stackoverflow.com/a/23574537
-            https://stackoverflow.com/a/3781773
-        """
         super().__init__(*args, **kwargs)
-        self._orig = self._w + "_orig"
-        self.tk.call("rename", self._w, self._orig)
-        self.tk.createcommand(self._w, self._proxy)
-
         # Tag order is carefully set up.
-        self.tag_configure("found", background='#224433')
-        self.tag_configure("error", background='#443322')
         self.tag_configure("suspected_global", foreground='#1FBA58')
         self.tag_configure("outer_scope_name", foreground='#F091FA')
         self.tag_configure("function_arg_name", foreground='#F5B74C')
@@ -51,50 +37,9 @@ class AIScriptTextEditor(tk.Text):
         self.tag_configure("lua_word", foreground='#FFBB99')
         self.tag_configure("lua_bool", foreground='#FFBB99')
 
-    def _proxy(self, *args):
-        cmd = (self._orig,) + args
-        result = self.tk.call(cmd)  # exceptions are caught by Tk
-        if args[0] in ("insert", "delete") or args[0:3] == ("mark", "set", "insert"):
-            self.event_generate("<<CursorChange>>", when="tail")
-        return result
-
-    def highlight_line(self, number, tag):
-        """Apply the given tag to all text in the given line. Clears tag first."""
-        self.tag_remove(tag, "1.0", "end")
-        self.tag_add(tag, f"{number}.0 linestart", f"{number}.0 lineend")
-
-    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False, clear=True,
-                          start_offset=0, end_offset=0):
-        """Apply the given tag to all text that matches the given pattern. Clears tag first by default.
-
-        If 'regexp' is set to True, pattern will be treated as a regular expression according to Tcl's regular
-        expression syntax.
-        """
-        if clear:
-            self.tag_remove(tag, "1.0", "end")
-        start = self.index(start)
-        end = self.index(end)
-        self.mark_set("matchStart", start)
-        self.mark_set("matchEnd", start)
-        self.mark_set("searchLimit", end)
-
-        count = tk.IntVar()
-        while 1:
-            index = self.search(pattern, index="matchEnd", stopindex="searchLimit", count=count, regexp=regexp)
-            if index == "":
-                break
-            if count.get() == 0:
-                break  # degenerate pattern which matches zero-length strings
-            self.mark_set("matchStart", f"{index}+{start_offset}c")
-            self.mark_set("matchEnd", f"{index}+{count.get() - end_offset}c")
-            self.tag_add(tag, "matchStart", "matchEnd")
-
-    def color_syntax(self):
+    def color_syntax(self, start="1.0", end="end"):
         self._apply_name_tags()
-
-        for tag, (_, pattern, offsets) in self.SYNTAX_RE.items():
-            self.highlight_pattern(pattern, tag, regexp=True, clear=True,
-                                   start_offset=offsets[0], end_offset=offsets[1])
+        super().color_syntax(start, end)
 
     def _apply_name_tags(self):
         """Find and color local and global variables."""
@@ -282,10 +227,11 @@ class SoulstructAIEditor(SoulstructBaseEditor):
     entry_rows: List[SoulstructAIEditor.EntryRow]
 
     def __init__(self, ai: DarkSoulsAIScripts, script_directory, game_root, allow_decompile, global_map_choice_func,
-                 linker, master=None, toplevel=False):
+                 linker, text_font_size=10, master=None, toplevel=False):
         self.AI = ai
         self.script_directory = Path(script_directory)
         self.global_map_choice_func = global_map_choice_func
+        self.text_font_size = text_font_size
         self.game_root = Path(game_root)
         self.allow_decompile = allow_decompile
         self.selected_map_id = ""
@@ -384,8 +330,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         editor_i_frame.bind("<Configure>", lambda e, c=self.script_editor_canvas: self.reset_canvas_scroll_region(c))
 
         self.script_editor = self.CustomWidget(
-            editor_i_frame, custom_widget_class=AIScriptTextEditor, set_style_defaults=('text', 'cursor'),
-            state="disabled", width=400, height=50, wrap='word', bg='#232323', font=("Consolas", 10), row=0)
+            editor_i_frame, custom_widget_class=AIScriptTextEditor, set_style_defaults=('text', 'cursor'), row=0,
+            state="disabled", width=400, height=50, wrap='word', bg='#232323', font=("Consolas", self.text_font_size))
         vertical_scrollbar_w = self.Scrollbar(
             orient='vertical', command=self.script_editor.yview, row=0, column=1, sticky='ns')
         self.script_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
@@ -820,7 +766,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             return
         self.selected_map_id = self.map_choice_id
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id)
+            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("ai",))
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
@@ -860,6 +806,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
         self._cancel_entry_text_edit()
         goal = self.get_goal(row_index)
         self.get_selected_bnd().goals.remove(goal)
+        self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
 
     def get_selected_bnd(self) -> LuaBND:

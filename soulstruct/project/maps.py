@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import math
+import re
 from ast import literal_eval
 from enum import IntEnum
 from typing import List, TYPE_CHECKING
@@ -8,17 +10,18 @@ from typing import List, TYPE_CHECKING
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.maps import MAP_ENTRY_TYPES
+from soulstruct.maps.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events
 from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
 from soulstruct.utilities import camel_case_to_spaces, Vector
+from soulstruct.utilities.memory import MemoryHookError
 
 if TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps
     from soulstruct.maps.core import MSBEntry
 
 _LOGGER = logging.getLogger(__name__)
-
 
 # TODO: Models are handled automatically. Model entries are auto-generated from all used model names.
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
@@ -92,34 +95,37 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if isinstance(self.field_type, str):
                 # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
                 # Note that the *argument* 'field_type' is used below, not attribute self.field_type.
-                field_links = self.master.get_field_links(self.field_type, value)
+                self.field_links = self.master.get_field_links(self.field_type, value)
                 if not self.field_type.startswith('<Maps'):  # <Maps: or <MapsList:
                     field_type = int  # otherwise, leave as link string for first condition below
             else:
-                field_links = []
+                self.field_links = []
 
             # Type checking order: [link_string, Vector, float/int/str, bool, list, IntEnum]
             if isinstance(field_type, str):
                 if field_type.startswith('<MapsList:'):
                     value_text = "(select to edit)"
-                    if field_links:
-                        if len(field_links) > 1:
+                    if self.field_links:
+                        if len(self.field_links) > 1:
                             value_text += "  {AMBIGUOUS}"
-                        if field_links[0].name is None:
+                        if self.field_links[0].name is None:
                             value_text += "  {BROKEN LINK}"
                         else:
-                            value_text += f"  {{{field_links[0].name}}}"
+                            value_text += f"  {{{self.field_links[0].name}}}"
                     # TODO: better display? Pop-out?
                     self.value_label.var.set(value_text)
                 else:
                     # Name of another MSB entry.
                     value_text = str(value)
                     if field_type == "<Maps:Models:Characters|Players>":
-                        model_id = int(value[1:])  # ignore 'c' prefix
-                        try:
-                            value_text += f"  {{{CHARACTER_MODELS[model_id]}}}"
-                        except KeyError:
-                            value_text += "  {UNKNOWN}"
+                        if self.field_links[0].name is None:
+                            value_text += "  {BROKEN LINK}"
+                        else:
+                            model_id = int(value[1:])  # ignore 'c' prefix
+                            try:
+                                value_text += f"  {{{CHARACTER_MODELS[model_id]}}}"
+                            except KeyError:
+                                value_text += "  {UNKNOWN}"
                     self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
 
@@ -132,13 +138,13 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
             elif field_type in {float, int, str}:
                 value_text = f'{value:.3f}' if field_type == float else str(value)
-                if field_links:
-                    if len(field_links) > 1:
+                if self.field_links:
+                    if len(self.field_links) > 1:
                         value_text += "  {AMBIGUOUS}"
-                    if field_links[0].name is None:
+                    if self.field_links[0].name is None:
                         value_text += "  {BROKEN LINK}"
                     else:
-                        value_text += f"  {{{field_links[0].name}}}"
+                        value_text += f"  {{{self.field_links[0].name}}}"
                 if self.value_label.var.get() != value_text:
                     self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
@@ -165,54 +171,121 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 self.value_combobox.var.set(enum_name)
                 self._activate_value_widget(self.value_combobox)
 
-            if field_links and not any(link.name for link in field_links) and not self.link_missing:
+            if self.field_links and not any(link.name for link in self.field_links) and not self.link_missing:
                 self.link_missing = True
                 self._update_colors()
-            elif (not field_links or any(link.name for link in field_links)) and self.link_missing:
+            elif (not self.field_links or any(link.name for link in self.field_links)) and self.link_missing:
                 self.link_missing = False
                 self._update_colors()
 
-            self.build_field_context_menu(field_links)
+            self.build_field_context_menu()
             self.tool_tip.text = docstring
 
             self.unhide()
 
-        def build_field_context_menu(self, field_links=()):
+        def build_field_context_menu(self):
             """For linked fields, adds an option to select an entry name from the linked table."""
             self.context_menu.delete(0, 'end')
-            if field_links:
-                for field_link in field_links:
-                    field_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
-                self.context_menu.add_command(
-                    label="Select linked entry name from list", foreground=self.STYLE_DEFAULTS['text_fg'],
-                    command=self.open_msb_element_selection_box)
+            fg = self.STYLE_DEFAULTS['text_fg']
+            if isinstance(self.field_type, str):
+                for field_link in self.field_links:
+                    field_link.add_to_context_menu(self.context_menu, foreground=fg)
+                if self.field_type.startswith("<Maps:"):
+                    self.context_menu.add_command(
+                        label="Select linked entry name from list", foreground=fg,
+                        command=self.choose_linked_map_entry)
+                if self.field_type.startswith("<Maps:Models:Characters"):
+                    self.context_menu.add_command(
+                        label="Select model from complete list", foreground=fg,
+                        command=self.choose_character_model)
+            if self.field_type == Vector:
+                if self.field_name == "translate":
+                    self.context_menu.add_command(
+                        label="Copy current in-game player position", foreground=fg,
+                        command=lambda: self.master.copy_player_position(translate=True, rotate=False))
+                    if self.master.active_category.startswith("Regions:"):
+                        self.context_menu.add_command(
+                            label="Copy current in-game player position (-0.1 Y)", foreground=fg,
+                            command=lambda: self.master.copy_player_position(
+                                translate=True, rotate=False, y_offset=-0.1))
+                elif self.field_name == "rotate":
+                    self.context_menu.add_command(
+                        label="Copy current in-game player rotation", foreground=fg,
+                        command=lambda: self.master.copy_player_position(translate=False, rotate=True))
+                if self.field_name in {"translate", "rotate"}:
+                    self.context_menu.add_command(
+                        label="Copy current in-game player position + rotation", foreground=fg,
+                        command=lambda: self.master.copy_player_position(translate=True, rotate=True))
+                    if self.master.active_category.startswith("Regions:"):
+                        self.context_menu.add_command(
+                            label="Copy current in-game player position (-0.1 Y) + rotation", foreground=fg,
+                            command=lambda: self.master.copy_player_position(
+                                translate=True, rotate=True, y_offset=-0.1))
 
-        def open_msb_element_selection_box(self):
+        def choose_linked_map_entry(self):
             if not self.field_type.startswith("<Maps:"):
-                return  # TODO: option shouldn't even appear
-            names = self.master.linker.get_map_entry_type_names(self.field_type)
-            window = NameSelectionBox(self.master, names)
-            selected_name = window.go()
+                return  # option shouldn't even appear
+            names = self.master.linker.get_map_entry_type_names(self.field_type)  # adds suffix for Characters
+            selected_name = NameSelectionBox(self.master, names).go()
             if selected_name is not None:
-                try:
-                    field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
-                except IndexError:
-                    raise IndexError(
-                        "Link was broken after selecting entry from list. This should not happen; please try "
-                        "restarting Soulstruct.")
-                if not field_links[0].name:
-                    selected_name += '   {BROKEN LINK}'
+                selected_name = selected_name.split("  {")[0]  # remove suffix
+                self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
+                if not self.field_links[0].name:
+                    display_name = selected_name + "  {BROKEN LINK}"
                     if not self.link_missing:
                         self.link_missing = True
                         self._update_colors()
+                    self.master.CustomDialog(
+                        title="Map Link Error",
+                        message="Map link was broken after selecting map entry from list. This should not happen; "
+                                "please try restarting Soulstruct, and inform Grimrukh if the problem persists."
+                    )
                 else:
+                    if self.field_type == "<Maps:Models:Characters|Players>":
+                        model_id = int(selected_name[1:])  # ignore 'c' prefix
+                        try:
+                            display_name = selected_name + f"  {{{CHARACTER_MODELS[model_id]}}}"
+                        except KeyError:
+                            display_name = selected_name + "  {UNKNOWN}"
+                    else:
+                        display_name = selected_name
                     if self.link_missing:
                         self.link_missing = False
                         self._update_colors()
 
                 self.master.change_field_value(self.field_name, selected_name)
-                self.value_label.var.set(selected_name)
-                self.build_field_context_menu(field_links)
+                self.value_label.var.set(display_name)
+                self.build_field_context_menu()
+
+        def choose_character_model(self):
+            if not self.field_type.startswith("<Maps:Models:Characters"):
+                return  # option shouldn't even appear
+            names = [f"c{model_id:04d}  {{{model_name}}}" for model_id, model_name in CHARACTER_MODELS.items()]
+            selected_name = NameSelectionBox(self.master, names).go()
+            if selected_name is not None:
+                selected_name = selected_name.split("  {")[0]  # remove suffix
+                self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
+                if not self.field_links[0].name:
+                    self.master.add_models(self.field_type, selected_name)
+                    self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
+                if self.field_links[0].name:
+                    model_id = int(selected_name[1:])  # ignore 'c' prefix
+                    try:
+                        display_name = selected_name + f"  {{{CHARACTER_MODELS[model_id]}}}"
+                    except KeyError:
+                        display_name = selected_name + "  {UNKNOWN}"
+                    if self.link_missing:
+                        self.link_missing = False
+                        self._update_colors()
+                else:
+                    display_name = selected_name + "  {BROKEN LINK}"
+                    if not self.link_missing:
+                        self.link_missing = True
+                        self._update_colors()
+
+                self.master.change_field_value(self.field_name, selected_name)
+                self.value_label.var.set(display_name)
+                self.build_field_context_menu()
 
         @property
         def editable(self):
@@ -243,9 +316,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 else:
                     new_value = int(new_text)  # all other links are integer values
 
-                field_links = self.master.linker.soulstruct_link(self.field_type, new_value)
+                self.field_links = self.master.get_field_links(self.field_type, new_value)
+
                 if self.field_type.startswith("<MapsList:"):
-                    if any(not link.name for link in field_links):  # at least one link is broken
+                    if any(not link.name for link in self.field_links):  # at least one link is broken
                         new_text += '  {BROKEN LINK}'
                         if not self.link_missing:
                             self.link_missing = True
@@ -255,20 +329,17 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                         if self.link_missing:
                             self.link_missing = False
                             self._update_colors()
-                elif len(field_links) > 1:
+                elif len(self.field_links) > 1:
                     new_text += '  {AMBIGUOUS}'
-                elif not field_links[0].name:
+                elif not self.field_links[0].name:
                     new_text += '  {BROKEN LINK}'
                     if not self.link_missing:
                         self.link_missing = True
                         self._update_colors()
                 else:
-                    if not self.field_type.startswith('<Maps:'):  # not <MapsList:
-                        new_text += f'  {{{field_links[0].name}}}'
+                    if not self.field_type.startswith('<Maps:'):
+                        new_text += f'  {{{self.field_links[0].name}}}'
                     if self.field_type == '<Maps:Models:Characters|Players>':
-                        # TODO: Currently, model ID must still be present in Models (MSB.ModelList).
-                        #  In future, this will be a '<Models>' link that allows player to select ANY DS1 model and
-                        #  have that model automatically added to MSB.ModelList when the MSB is saved/packed.
                         model_id = int(new_text.lstrip('c'))
                         try:
                             new_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
@@ -278,7 +349,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                         self.link_missing = False
                         self._update_colors()
                 self.value_label.var.set(new_text)
-                self.build_field_context_menu(field_links)
+                self.build_field_context_menu()
                 return new_value
 
             if self.field_type in (float, Vector):
@@ -347,13 +418,19 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         def update_entry(self, entry_index: int, entry_text: str, entry_description: str = ""):
             self.entry_id = entry_index
-            try:
-                entity_id = getattr(self.master.get_category_data()[entry_index], 'entity_id')
-            except AttributeError:
-                text_tail = ''
-
+            entry_data = self.master.get_category_data()[entry_index]
+            if hasattr(entry_data, "entity_id"):
+                text_tail = f"  {{ID: {entry_data.entity_id}}}" if entry_data.entity_id not in {-1, 0} else ""
+            elif isinstance(entry_data, MSBModel) and entry_data.ENTRY_TYPE.name in {"Character", "Player"}:
+                try:
+                    model_id = int(entry_text.lstrip('c'))
+                except ValueError:
+                    text_tail = ""
+                else:
+                    text_tail = f"  {{{CHARACTER_MODELS[model_id]}}}"
             else:
-                text_tail = f'  {{ID: {entity_id}}}' if entity_id not in {-1, 0} else ''
+                text_tail = ""
+
             if entry_description:
                 self.tool_tip.text = entry_description
             else:
@@ -387,7 +464,6 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def build(self):
         with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
-
             with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
                 map_display_names = [f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
                                      for game_map in ALL_MAPS if game_map.msb_file_stem]
@@ -427,7 +503,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def on_map_choice(self, event=None):
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id)
+            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("maps",))
         self.select_entry_row_index(None)
         self.refresh_entries(reset_field_display=True)
 
@@ -455,7 +531,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         self._cancel_entry_text_edit()
         new_field_dict.name = text
-        entry_list.add_entry(global_index, new_field_dict)
+        entry_list.add_entry(new_field_dict, global_index)
         local_index = entry_list.get_entries(entry_type=new_field_dict.ENTRY_TYPE).index(new_field_dict)
         self.select_entry_id(local_index, set_focus_to_text=True, edit_if_already_selected=False)
         # TODO: ActionHistory stuff?
@@ -483,6 +559,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         if global_index is None:
             raise IndexError(f"Cannot delete entry with global index {global_index} (list length is {len(entry_list)}.")
         entry_list.delete_entry(global_index)
+        self.select_entry_row_index(None)
         self.refresh_entries()
 
     def select_displayed_field_row(self, row_index, set_focus_to_value=True, edit_if_already_selected=True, coord=None):
@@ -543,17 +620,23 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def _confirm_field_value_edit(self, index):
         if self.e_field_value_edit:
+            row = self.field_rows[index]
             try:
-                true_value = self.field_rows[index].confirm_edit(
-                    new_text=self.e_field_value_edit.var.get(), coord=self.e_coord)
+                true_value = row.confirm_edit(new_text=self.e_field_value_edit.var.get(), coord=self.e_coord)
             except ValueError as e:
                 # Entry input restrictions will usually prevent this.
                 _LOGGER.error(f"Invalid field value. Error: {str(e)}")
                 self.bell()
                 self.CustomDialog("Invalid Field Value", f"Invalid field value. Error:\n\n{str(e)}")
                 return
-            self.change_field_value(self.field_rows[index].field_name, true_value)
+            self.change_field_value(row.field_name, true_value)
             self._cancel_field_value_edit()
+
+            if (isinstance(row.field_type, str) and row.field_type.startswith("<Maps:Models:")
+                    and row.field_links[0].name is None):
+                # Offer to create models (after checking if they're valid).
+                if self.add_models(row.field_type, true_value):
+                    row.confirm_edit(true_value)  # Refresh links.
 
     def change_field_value(self, field_name: str, new_value):
         field_dict = self.get_selected_field_dict()
@@ -653,3 +736,70 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             else:
                 valid_null_values = {0: 'Default/None', -1: 'Default/None'}
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
+
+    def add_models(self, model_link, model_name):
+        if model_link == "<Maps:Models:Characters|Players>":
+            model_type = "Character"
+        else:
+            model_type = re.match(r"<Maps:Models:(\w+)>", model_link).group(1)
+
+        if self.linker.validate_model_type(model_type, model_name, map_id=self.map_choice_id):
+            if self.CustomDialog(
+                    title=f"Add {model_type} Model",
+                    message=f"Add {model_type} model {model_name} to map?",
+                    button_names=("Yes, add it", "No, leave as missing"),
+                    button_kwargs=("YES", "NO"),
+                    return_output=0, default_output=0, cancel_output=1
+            ) == 0:
+                new_model = MSBModel(name=model_name, entry_type=model_type)
+                self.get_selected_msb().models.add_entry(new_model, append_to_entry_type=model_type)
+                return True
+        else:
+            self.CustomDialog(
+                title=f"Invalid {model_type} Model",
+                message=f"{model_type} model {model_name} does not have any data in the game files.\n"
+                        f"This will likely cause severe problems in your game!",
+            )
+
+        return False
+
+    def copy_player_position(self, translate=False, rotate=False, y_offset=0.0):
+        if not translate and not rotate:
+            raise ValueError("At least one of `translate` and `rotate` should be True.")
+        new_translate = None
+        new_rotate_y = None
+        try:
+            if translate:
+                player_x = self.linker.get_game_value("player_x")
+                player_y = self.linker.get_game_value("player_y") + y_offset
+                player_z = self.linker.get_game_value("player_z")
+                new_translate = Vector(player_x, player_y, player_z)
+            if rotate:
+                new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
+        except ConnectionError:
+            if self.CustomDialog(
+                    title="Cannot Read Memory",
+                    message="Runtime hooks are not available. Would you like to try hooking into the game now?",
+                    default_output=0, cancel_output=1, return_output=0,
+                    button_names=("Yes, hook in", "No, forget it"),
+                    button_kwargs=("YES", "NO"),
+            ) == 1:
+                return
+            if self.linker.runtime_hook():
+                return self.copy_player_position(translate=translate, rotate=rotate, y_offset=y_offset)
+            return
+        except MemoryHookError as e:
+            _LOGGER.error(str(e), exc_info=True)
+            self.CustomDialog(
+                title="Cannot Read Memory",
+                message=f"An error occurred when trying to copy player position (see log for full traceback):\n\n"
+                        f"{str(e)}\n\n"
+                        f"If this error doesn't seem like it can be solved (e.g. did you close the game after\n"
+                        f"hooking into it?) please inform Grimrukh.")
+            return
+        field_dict = self.get_selected_field_dict()
+        if translate:
+            field_dict["translate"] = new_translate
+        if rotate:
+            field_dict["rotate"].y = new_rotate_y
+        self.refresh_fields()
