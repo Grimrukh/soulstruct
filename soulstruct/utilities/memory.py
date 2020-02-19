@@ -195,12 +195,12 @@ DSR_POINTER_TABLE = {
 DSR_VALUE_TABLE = {
     "player_angle": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x4), 4, "<f"),
     "player_x": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x10), 4, "<f"),
-    "player_y": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x18), 4, "<f"),
-    "player_z": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x14), 4, "<f"),
+    "player_y": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x14), 4, "<f"),
+    "player_z": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x18), 4, "<f"),
     # "stable_angle": MemoryValue("CHR_CLASS_WARP", 0xBB4, 4, "<f"),
     # "stable_x": MemoryValue("CHR_CLASS_WARP", 0xBA0, 4, "<f"),
-    # "stable_y": MemoryValue("CHR_CLASS_WARP", 0xBA8, 4, "<f"),
-    # "stable_z": MemoryValue("CHR_CLASS_WARP", 0xBA4, 4, "<f"),
+    # "stable_y": MemoryValue("CHR_CLASS_WARP", 0xBA4, 4, "<f"),
+    # "stable_z": MemoryValue("CHR_CLASS_WARP", 0xBA8, 4, "<f"),
 }
 
 
