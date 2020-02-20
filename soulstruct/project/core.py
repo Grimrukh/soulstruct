@@ -244,12 +244,7 @@ class SoulstructProject(object):
             map_id = talkesdbnd.name.split(".talkesdbnd")[0]
             if map_id in ("m12_00_00_01", "m14_02_00_00"):
                 continue  # skipped
-            try:
-                map_name = get_map(map_id).name
-            except KeyError:
-                _LOGGER.warning(f"Ignoring unexpected `.talkesdbnd` file in Dark Souls files: {talkesdbnd.name}")
-                continue
-            TalkESDBND(talkesdbnd, game_version=game_version).write_all_esp(self.project_root / f"talk/{map_name}")
+            TalkESDBND(talkesdbnd, game_version=game_version).write_all_esp(self.project_root / f"talk/{map_id}")
 
     def export_data(self, data_type=None, export_directory=None):
         if data_type is None:
