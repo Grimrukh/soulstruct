@@ -3285,16 +3285,16 @@ GAME_PARAM_INFO = {
             'LightningDefenseMultiplier', True, float,
             "Multiplier applied to character's lightning defense."),
         'physicsDiffence': (
-            'PhysicalDefenseAddition', True, float,
+            'PhysicalDefenseAddition', True, int,
             "Value to add to or subtract from character's physical defense."),
         'magicDiffence': (
-            'MagicDefenseAddition', True, float,
+            'MagicDefenseAddition', True, int,
             "Value to add to or subtract from character's magic defense."),
         'fireDiffence': (
-            'FireDefenseAddition', True, float,
+            'FireDefenseAddition', True, int,
             "Value to add to or subtract from character's fire defense."),
         'thunderDiffence': (
-            'LightningDefenseAddition', True, float,
+            'LightningDefenseAddition', True, int,
             "Value to add to or subtract from character's lightning defense."),
         'NoGuardDamageRate': (
             'NoGuardIncomingDamageMultiplier', False, float,
