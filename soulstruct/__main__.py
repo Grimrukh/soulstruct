@@ -26,11 +26,12 @@ parser = argparse.ArgumentParser(prog='soulstruct', description="Launch Soulstru
 parser.add_argument(
     "source", nargs='?', default=DEFAULT_PROJECT_PATH,
     help=word_wrap(
-        "Source file or directory to read from. Use 'live' to use the LIVE_GAME_PATH, 'temp' to use the "
-        "TEMP_GAME_PATH, or 'default' (or no source) to use the DEFAULT_GAME_PATH. If no additional arguments are "
-        "given, the main Soulstruct GUI will launch (in which case, 'source' must be either the game executable or its "
-        "containing directory), or if '--console' is True, all possible structures will be loaded into an interactive "
-        "console."
+        "Source file or project directory to read from. Defaults to `DEFAULT_PROJECT_PATH` from `config.py`, which "
+        "will be auto-generated the first time you run Soulstruct. If your project path is relative, it will be "
+        "resolved relative to the executable directory (if running the frozen Soulstruct exe) or otherwise the working "
+        "directory. If no additional arguments are given, the main Soulstruct GUI will launch. Alternatively, if "
+        "`--console` is used, the `DarkSoulsProject` instance will be loaded into an interactive session (iPython "
+        "package required)."
     )
 )
 parser.add_argument(

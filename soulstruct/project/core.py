@@ -7,6 +7,7 @@ import os
 import pickle
 import shutil
 import subprocess
+import sys
 import threading
 from typing import TYPE_CHECKING
 from functools import wraps
@@ -61,9 +62,13 @@ class SoulstructProject(object):
 
     TODO:
         - Eventually have subclasses for different games, with shared methods here.
-        - Inspect PTDE directory for lack of UDSFM when imported.
     """
-    _DEFAULT_PROJECT_ROOT = '~/Documents/Soulstruct/'
+    # Default project root (for relative project paths) is in the current working directory for standard Python use
+    # or next to the frozen PyInstaller executable, if applicable.
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        _DEFAULT_PROJECT_ROOT = Path(sys.executable).parent
+    else:
+        _DEFAULT_PROJECT_ROOT = Path(os.getcwd())
 
     def __init__(self, project_path="", with_window: SoulstructProjectWindow = None):
 
