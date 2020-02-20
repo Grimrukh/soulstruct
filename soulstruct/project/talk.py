@@ -540,7 +540,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             return
         self.selected_map_id = self.map_choice_id
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id)
+            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("talk",))
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
