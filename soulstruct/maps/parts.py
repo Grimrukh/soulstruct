@@ -637,7 +637,7 @@ class MSBCollision(BaseMSBPart):
         self.reflect_plane_height = data.reflect_plane_height
         self.navmesh_groups = _flag_group_to_enabled_flags(data.navmesh_groups)
         self.vagrant_entity_ids = data.vagrant_entity_ids
-        self.area_name_id = abs(data.area_name_id) if data.area_name_id >= 0 else -1
+        self.area_name_id = abs(data.area_name_id) if data.area_name_id != -1 else -1
         self.__force_area_banner = data.area_name_id < 0  # Custom field.
         self.starts_disabled = data.starts_disabled
         self.attached_bonfire = data.attached_bonfire
