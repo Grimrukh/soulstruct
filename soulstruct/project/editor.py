@@ -6,7 +6,7 @@ from enum import IntEnum
 from functools import partial
 from typing import List, Optional, TYPE_CHECKING
 
-from soulstruct.project.utilities import ActionHistory, ViewHistory, bind_events
+from soulstruct.project.utilities import ActionHistory, ViewHistory, bind_events, EntryTextEditBox
 from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame, ToolTip
 
@@ -67,7 +67,6 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                     id_bindings = main_bindings.copy()
                     id_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
                         i, id_clicked=True)
-                    id_bindings['<Shift-Button-1>'] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
                 else:
                     id_bindings = main_bindings
                 bind_events(self.id_box, id_bindings)
@@ -559,28 +558,21 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                 forward=partial(self.linker.jump, self.TAB_NAME, category, entry_id)
             )
 
-    def popout_entry_id_edit(self, row_index):
-        entry_id = self.get_entry_id(row_index)
-        if not self._e_entry_text_edit and not self._e_entry_id_edit:
-            initial_text = str(entry_id)
-            popout_editor = TextEditBox(self, initial_text, allow_newlines=False, window_title="Editing Entry ID")
-            new_text = popout_editor.go()
-            if new_text is not None:
-                try:
-                    new_id = int(new_text)
-                    if new_id < 0:
-                        raise ValueError
-                except ValueError:
-                    self.CustomDialog("Invalid Entry ID", "Entry ID must be a non-negative integer.")
-                    return
-                self.change_entry_id(row_index, new_id)
-
     def popout_entry_text_edit(self, row_index):
+        """Can actually change both ID and text."""
         entry_id = self.get_entry_id(row_index)
         if not self._e_entry_text_edit and not self._e_entry_id_edit:
             initial_text = self.get_entry_text(entry_id, self.active_category)
-            popout_editor = EntryTextEditBox(self, self.active_category, entry_id, initial_text)
-            _, new_text = popout_editor.go()
+            popout_editor = EntryTextEditBox(self, self.active_category, category_data=self.get_category_data(),
+                                             entry_id=entry_id, initial_text=initial_text)
+            try:
+                new_id, new_text = popout_editor.go()
+            except Exception as e:
+                _LOGGER.error(e, exc_info=True)
+                return self.CustomDialog(
+                    "Entry ID/Text Error", f"Error occurred while setting entry ID/text:\n\n{e}")
+            if new_id is not None:
+                self.change_entry_id(row_index, new_id)
             if new_text is not None:
                 self.change_entry_text(row_index, new_text)
 
@@ -831,108 +823,6 @@ class SoulstructBaseEditor(SmartFrame, ABC):
         Never recorded as an action (the calling function should handle that).
         """
         raise NotImplementedError
-
-
-class TextEditBox(SmartFrame):
-    """Small pop-out widget that allows you to modify longer strings more freely, with newlines and all."""
-    WIDTH = 16  # characters
-    HEIGHT = 1  # lines
-
-    def __init__(self, master: SoulstructBaseEditor, initial_text='', allow_newlines=True, window_title="Editing Text"):
-        super().__init__(toplevel=True, master=master, window_title=window_title)
-        self.editor = master
-        self.initial_text = initial_text
-        self.output = None
-        self.allow_newlines = allow_newlines
-
-        self._text = None
-
-        self.build()
-
-    def build(self):
-        with self.set_master(auto_rows=0):
-            self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
-            self._text.insert('end', self.initial_text)
-            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
-                self.Button(
-                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS['YES'])
-                self.Button(
-                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS['NO'])
-
-        self.bind_all('<Escape>', lambda e: self.done(False))
-        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
-        self.resizable(width=False, height=False)
-        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
-
-    def go(self):
-        self.wait_visibility()
-        self.grab_set()
-        self.mainloop()
-        self.destroy()
-        return self.output
-
-    def done(self, confirm=True):
-        if confirm:
-            new_text = self._text.get('1.0', 'end' + '-1c')
-            if not self.allow_newlines and '\n' in new_text:
-                self.editor.CustomDialog("Text Error", "Entry cannot contain newlines.")
-                return
-            if new_text == self.initial_text:
-                self.output = None
-            else:
-                self.output = self._text.get('1.0', 'end' + '-1c')
-        self.quit()
-
-
-class EntryTextEditBox(TextEditBox):
-    WIDTH = 70  # characters
-    HEIGHT = 10  # lines
-
-    def __init__(self, master: SoulstructBaseEditor, category, entry_id, initial_text='', allow_newlines=True):
-        if entry_id is None:
-            window_title = f"Adding entry to {camel_case_to_spaces(category)}"
-        else:
-            window_title = f"Editing {camel_case_to_spaces(category)}[{entry_id}]"
-        self.category = category
-        self.entry_id = entry_id
-        self._id = None
-        super().__init__(master=master, initial_text=initial_text, allow_newlines=allow_newlines,
-                         window_title=window_title)
-
-        self.output = [None, None]
-
-    def build(self):
-        with self.set_master(auto_rows=0):
-            if self.entry_id is None:
-                self._id = self.Entry(label='New Entry ID:', label_position='left', width=10, integers_only=True,
-                                      padx=20, pady=20).var
-            else:
-                self._id = None
-            super().build()
-
-    def done(self, confirm=True):
-        if confirm:
-            if self._id:
-                if not self._id.get():
-                    self.editor.CustomDialog("ID Error", message="New entry ID must be set.")
-                    return
-                new_id = int(self._id.get())
-                if new_id in self.editor.get_category_data():
-                    self.editor.CustomDialog(
-                        "ID Error", message=f"Entry ID {new_id} already exists in category "
-                                            f"{camel_case_to_spaces(self.category)}.")
-                    return
-            else:
-                new_id = None
-            new_text = self._text.get('1.0', 'end' + '-1c')
-            if not self.allow_newlines and '\n' in new_text:
-                self.editor.CustomDialog("Text Error", "Entry cannot contain newlines.")
-                return
-            if new_text == self.initial_text:
-                self.output = [None, None]
-            else:
-                self.output = [new_id, self._text.get('1.0', 'end' + '-1c')]
-        self.quit()
 
 
 class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
@@ -1564,38 +1454,3 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
 
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
         raise NotImplementedError
-
-
-class NameSelectionBox(SmartFrame):
-    """Small pop-out widget that allows you to select a name from some list."""
-    WIDTH = 50  # characters
-    HEIGHT = 20  # lines
-
-    def __init__(self, master, names, list_name='List'):
-        super().__init__(toplevel=True, master=master, window_title=f"Select Entry from {list_name}")
-
-        self.output = None
-
-        with self.set_master(padx=20, pady=20):
-            self._names = self.Listbox(
-                values=names, width=self.WIDTH, height=self.HEIGHT, vertical_scrollbar=True, selectmode='single',
-                font=("Consolas", 14), padx=20, pady=20)
-
-        self._names.bind('<Double-Button-1>', lambda e: self.done(True))
-
-        self.bind_all('<Escape>', lambda e: self.done(False))
-        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
-        self.resizable(width=False, height=False)
-        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
-
-    def go(self):
-        self.wait_visibility()
-        self.grab_set()
-        self.mainloop()
-        self.destroy()
-        return self.output
-
-    def done(self, confirm=True):
-        if confirm:
-            self.output = self._names.get(self._names.curselection())
-        self.quit()

@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from soulstruct.params.enums import ITEMLOT_ITEMCATEGORY
-from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
+from soulstruct.project.editor import SoulstructBaseFieldEditor
+from soulstruct.project.utilities import NameSelectionBox
 
 if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters, ParamEntry
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
@@ -24,13 +28,15 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
 
         def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
             super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
-            self.linked_text = ''
+            self.linked_text = ""
 
         def update_entry(self, entry_id: int, entry_text: str):
-            """If 'linked_text' is an empty string, then text was expected, but not found (entry highlighted)."""
+            """Adds linked text from text data (if present and not already identical to param entry name)."""
             self.entry_id = entry_id
             text_links = self.master.linker.param_entry_text_link(self.entry_id)
-            self.linked_text = (f'    {{{text_links[0].name}}}' if text_links[0].name else '') if text_links else None
+            self.linked_text = ""
+            if text_links and text_links[0].name and text_links[0].name != entry_text:
+                self.linked_text = f"    {{{text_links[0].name}}}"
             self.entry_text = entry_text
             self._update_colors()
             self.build_entry_context_menu(text_links)
@@ -46,13 +52,17 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ''))
 
         def build_entry_context_menu(self, text_links=()):
-            # TODO: 'View uses': search things that link to this type of param for this ID.
             super().build_entry_context_menu()
             text_links = self.master.linker.param_entry_text_link(self.entry_id)
             if text_links:
                 self.context_menu.add_separator()
                 for text_link in text_links:
                     text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
+            if self.master.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}:
+                self.context_menu.add_separator()
+                self.context_menu.add_command(
+                    label="Edit All Text", foreground=self.STYLE_DEFAULTS['text_fg'],
+                    command=lambda: self.master.edit_all_item_text(self.entry_id))
             self.context_menu.add_separator()
             self.context_menu.add_command(
                 label="Find References in Params", foreground=self.STYLE_DEFAULTS['text_fg'],
@@ -210,3 +220,13 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         if valid_null_values is None:
             valid_null_values = {0: 'Default/None', -1: 'Default/None'}
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
+
+    def edit_all_item_text(self, item_id):
+        """Active category should already be a valid item type."""
+        try:
+            self.linker.edit_all_item_text(self.active_category.rstrip("s"), item_id)
+        except Exception as e:
+            _LOGGER.warning(e)
+            self.CustomDialog("Item Text Error", f"Could not edit item text. Error:\n\n{e}")
+        else:
+            self.refresh_entries()

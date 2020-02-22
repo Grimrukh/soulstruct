@@ -1462,11 +1462,14 @@ GAME_PARAM_INFO = {
     },
     'CHARACTER_INIT_PARAM': {
         'baseRec_mp': (
-            'BaseRecMP', False, int, "Unknown."),
+            'BaseRecMP', False, float,
+            "Unknown."),
         'baseRec_sp': (
-            'BaseRecSP', False, int, "Unknown."),
+            'BaseRecSP', False, float,
+            "Unknown."),
         'red_Falldam': (
-            'RedFallDamage', False, int, "Unknown."),
+            'RedFallDamage', False, float,
+            "Unknown."),
         'soul': (
             'SoulCount', True, int, "Starting soul count of character."),
         'equip_Wep_Right': (
@@ -2479,100 +2482,116 @@ GAME_PARAM_INFO = {
     'NPC_PARAM_ST': {
         'behaviorVariationId': (
             'BehaviorVariationID', True, int,
-            "DOC-TODO"),
+            "Multiplied by 10000 and added to behavior lookups (hitboxes, bullets) triggered by TAE."),
         'aiThinkId': (
             'AiThinkID', True, Params.AI,
-            "DOC-TODO"),
+            "Default AI ID. Overridden by AI ID field in Maps entry."),
         'nameId': (
             'NameID', True, Text.NPCNames,
-            "DOC-TODO"),
+            "Text ID for NPC name that appears attached to NPCs. Only works for invaders and summons."),
         'turnVellocity': (
             'TurnVelocity', True, float,
-            "DOC-TODO"),
+            "Turning velocity of NPC. (Exact effect needs testing.)"),
         'hitHeight': (
             'HitHeight', True, float,
-            "DOC-TODO"),
+            "Height of NPC hitbox for collision."),
         'hitRadius': (
             'HitRadius', True, float,
-            "DOC-TODO"),
+            "Radius of NPC hitbox for collision."),
         'weight': (
-            'Weight', True, int,
-            "DOC-TODO"),
+            'Weight', False, int,
+            "Weight of NPC. Probably has no effect (generall 100)."),
         'hitYOffset': (
             'HitYOffset', False, float,
-            "DOC-TODO"),
+            "Vertical offset of NPC hitbox for collision."),
         'hp': (
             'MaximumHP', True, int,
-            "DOC-TODO"),
+            "Maximum HP of NPC."),
         'mp': (
-            'MaximumMP', True, int,
-            "DOC-TODO"),
+            'MaximumMP', False, int,
+            "Maximum MP of NPC. Not used in Dark Souls (generally zero)."),
         'getSoul': (
             'SoulReward', True, int,
-            "DOC-TODO"),
+            "Amount of souls (before NG+ scaling) rewarded when NPC is killed."),
         'itemLotId_1': (
             'ItemLotID1', True, Params.ItemLots,
-            "DOC-TODO"),
+            "First item lot triggered when NPC dies (set to -1 for no item lot)."),
         'itemLotId_2': (
             'ItemLotID2', True, Params.ItemLots,
-            "DOC-TODO"),
+            "Second item lot triggered when NPC dies (set to -1 for no item lot)."),
         'itemLotId_3': (
             'ItemLotID3', True, Params.ItemLots,
-            "DOC-TODO"),
+            "Third item lot triggered when NPC dies (set to -1 for no item lot)."),
         'itemLotId_4': (
             'ItemLotID4', True, Params.ItemLots,
-            "DOC-TODO"),
+            "Fourth item lot triggered when NPC dies (set to -1 for no item lot)."),
         'itemLotId_5': (
             'ItemLotID5', True, Params.ItemLots,
-            "DOC-TODO"),
+            "Fifth item lot triggered when NPC dies (set to -1 for no item lot)."),
         'itemLotId_6': (
             'ItemLotID6', True, Params.ItemLots,
-            "DOC-TODO"),
+            "Sixth item lot triggered when NPC dies (set to -1 for no item lot)."),
         'humanityLotId': (
             'HumanityLotID', True, Flag,
-            "DOC-TODO"),
+            "Starting flag of counter for awarding random humanity (I think). Only used by a few enemies, such as "
+            "Hollows and Mass of Souls."),
         'spEffectID0': (
             'SpecialEffectID0', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "First passive special effect that is active on NPC.\n\nThis slot is generally reserved for effects in the "
+            "5300-5337 range, which modify enemy damage animations (e.g. so bosses stagger less)."),
         'spEffectID1': (
             'SpecialEffectID1', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Second passive special effect that is active on NPC.\n\nThis slot is generally reserved for effects in "
+            "the 5360-5364 range, which further modify enemy damage animations based on poise."),
         'spEffectID2': (
             'SpecialEffectID2', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Third passive special effect that is active on NPC.\n\nThis slot is generally reserved for effects in "
+            "the 90000-91111 range, which determine status effect immunities. From left to right, the four binary "
+            "digits represent poison, toxic, bleed, and curse. 0 means the NPC is immune to that status, and 1 means "
+            "they are not immune (though their resistance could be any value)."),
         'spEffectID3': (
             'SpecialEffectID3', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Fourth passive special effect that is active on NPC.\n\nThis slot is generally reserved for effects in "
+            "the 80000-81111 range, which determine immunities to effects that apparently never made it into the game "
+            "('remnant', 'absorption', 'fascination', and 'ineffective')."),
         'spEffectID4': (
             'SpecialEffectID4', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Fifth passive special effect that is active on NPC.\n\nThis slot is generally reserved for 'levelling' "
+            "effects in the 7000-7015 range, which scale enemy stats according to the map they are found in."),
         'spEffectID5': (
             'SpecialEffectID5', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Sixth passive special effect that is active on NPC.\n\nUsed for miscellaneous effects, such as elemental "
+            "resistance or immunity, animation offset effects, the black phantom effect (7100), etc."),
         'spEffectID6': (
             'SpecialEffectID6', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Seventh passive special effect that is active on NPC.\n\nUsed for miscellaneous effects, such as "
+            "elemental resistance or immunity, animation offset effects, the black phantom effect (7100), etc."),
         'spEffectID7': (
             'SpecialEffectID7', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Eighth passive special effect that is active on NPC.\n\nThis slot is generally reserved for effect "
+            "71100, 71110, or 71111. The fourth binary digit determines if the NPC uses the 'immortal system'; the "
+            "third binary digit is unknown. Darkwraiths, Hollows, Humanity Phantoms, and Armored Tusks are some "
+            "examples of the few NPCs that use 71111; most others use 71110, except bosses."),
         'GameClearSpEffectID': (
             'NewGamePlusSpecialEffect', True, Params.SpecialEffects,
-            "DOC-TODO"),
+            "Passive special effect that is only applied to the NPC in NG+ and beyond, which are taken from the range "
+            "7401-7415."),
         'physGuardCutRate': (
             'PhysicalGuardCutRate', True, float,
-            "DOC-TODO"),
+            "Percentage reduction in physical damage taken while NPC is guarding."),
         'magGuardCutRate': (
             'MagicGuardCutRate', True, float,
-            "DOC-TODO"),
+            "Percentage reduction in magic damage taken while NPC is guarding."),
         'fireGuardCutRate': (
             'FireGuardCutRate', True, float,
-            "DOC-TODO"),
+            "Percentage reduction in fire damage taken while NPC is guarding."),
         'thunGuardCutRate': (
             'LightningGuardCutRate', True, float,
-            "DOC-TODO"),
+            "Percentage reduction in lightning damage taken while NPC is guarding."),
         'animIdOffset': (
             'AnimationIDOffset', True, int,
-            "DOC-TODO"),
+            "Offset added to animation requests (e.g. from AI script or event script). If the offset animation is "
+            "missing, the original will be used."),
         'moveAnimId': (
             'MoveAnimationID', False, Animation,
             "DOC-TODO"),
@@ -2583,7 +2602,7 @@ GAME_PARAM_INFO = {
             'SpecialMoveAnimationID2', False, Animation,
             "DOC-TODO"),
         'networkWarpDist': (
-            'NetworkWarpDistance', False, int,
+            'NetworkWarpDistance', False, float,
             "DOC-TODO"),
         'dbgBehaviorR1': (
             'DebugBehaviorR1', False, Animation,
@@ -2625,44 +2644,44 @@ GAME_PARAM_INFO = {
             'AnimationIDOffset2', False, int,
             "DOC-TODO"),
         'partsDamageRate1': (
-            'Part1DamageRate', True, float,
-            "DOC-TODO"),
+            'Part1DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 1 of NPC model."),
         'partsDamageRate2': (
-            'Part2DamageRate', True, float,
-            "DOC-TODO"),
+            'Part2DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 2 of NPC model."),
         'partsDamageRate3': (
-            'Part3DamageRate', True, float,
-            "DOC-TODO"),
+            'Part3DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 3 of NPC model."),
         'partsDamageRate4': (
-            'Part4DamageRate', True, float,
-            "DOC-TODO"),
+            'Part4DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 4 of NPC model."),
         'partsDamageRate5': (
-            'Part5DamageRate', True, float,
-            "DOC-TODO"),
+            'Part5DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 5 of NPC model."),
         'partsDamageRate6': (
-            'Part6DamageRate', True, float,
-            "DOC-TODO"),
+            'Part6DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 6 of NPC model."),
         'partsDamageRate7': (
-            'Part7DamageRate', True, float,
-            "DOC-TODO"),
+            'Part7DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 7 of NPC model."),
         'partsDamageRate8': (
-            'Part8DamageRate', True, float,
-            "DOC-TODO"),
+            'Part8DamageMultiplier', True, float,
+            "Multiplier for damage taken by part 8 of NPC model."),
         'weakPartsDamageRate': (
-            'WeakPartsDamageRate', True, float,
-            "DOC-TODO"),
+            'WeakPartsDamageMultiplier', True, float,
+            "Multiplier for damage taken by weak parts of NPC model."),
         'superArmorRecoverCorrection': (
             'PoiseRecoveryCorrection', True, float,
-            "DOC-TODO"),
+            "Change to poise recovery rate. Only the Chained Prisoner uses a non-zero value in vanilla(-0.2)."),
         'superArmorBrakeKnockbackDist': (
             'StaggerKnockbackDistance', True, float,
-            "DOC-TODO"),
+            "Stagger knockback distance when NPC's poise is broken."),
         'stamina': (
             'MaxStamina', True, int,
-            "DOC-TODO"),
+            "Maximum stamina of NPC."),
         'staminaRecoverBaseVel': (
             'StaminaRecoveryBaseSpeed', True, int,
-            "DOC-TODO"),
+            "Base speed of NPC's stamina recovery."),
         'def_phys': (
             'PhysicalDefense', True, int,
             "Base defense applied to all physical attacks."),
@@ -2677,18 +2696,17 @@ GAME_PARAM_INFO = {
             "Base defense added against thrusting physical attacks."),
         'def_mag': (
             'MagicDefense', True, int,
-            "DOC-TODO"),
+            "Base defense added against magic attacks."),
         'def_fire': (
             'FireDefense', True, int,
-            "DOC-TODO"),
+            "Base defense added against fire attacks."),
         'def_thunder': (
             'LightningDefense', True, int,
-            "DOC-TODO"),
+            "Base defense added against lightning attacks."),
         'defFlickPower': (
             'DefenseRepelPower', False, int,
-            "Determines how badly an attacker is repelled when they fail to break this NPC's "
-            "poise. The Armored Tusk and Chained Prisoner have very high values (50-60), but most "
-            "NPCs have 0."),
+            "Determines how severely an attacker is repelled when they fail to break this NPC's poise. The Armored "
+            "Tusk and Chained Prisoner have very high values (50-60), but most NPCs have 0."),
         'resist_poison': (
             'PoisonResistance', True, int,
             "Base poison resistance."),
@@ -3119,7 +3137,7 @@ GAME_PARAM_INFO = {
             'FlagForAutomaticSuccess', True, Flag,
             "Action will always be successful if this flag is enabled."),
         'validDist': (
-            'MaxActionDistance', True, float,
+            'MaxActionDistance', True, int,
             "Maximum distance from action model point at which the object action will be prompted."),
         'playerAnimId': (
             'PlayerActionAnimation', True, Animation,
@@ -3316,7 +3334,7 @@ GAME_PARAM_INFO = {
             "Behavior ID to trigger (which can in turn trigger an Attack or Bullet) whenever special effect is "
             "applied. Set to -1 to use no behavior."),
         'changeHpRate': (
-            'HPReductionPercentage', True, int,
+            'HPReductionPercentage', True, float,
             "Percentage reduction of maximum HP (from 0 to 100). Negative values (to -100) will restore that "
             "percentage instead. Applied every time the special effect updates."),
         'changeHpPoint': (
@@ -3324,7 +3342,7 @@ GAME_PARAM_INFO = {
             "HP value to subtract (if positive) or add (if negative) to character's current HP on every update of the "
             "special effect."),
         'changeMpRate': (
-            'MPReductionPercentage', False, int,
+            'MPReductionPercentage', False, float,
             "Percentage reduction of maximum MP (from 0 to 100). Negative values (to -100) will restore that "
             "percentage instead. Applied every time the special effect updates. (Unused in Dark Souls 1.)"),
         'changeMpPoint': (
@@ -3335,7 +3353,7 @@ GAME_PARAM_INFO = {
             'MPRecoverySpeedChange', False, int,
             "Points added to or subtracted from MP recovery formula. (Unused in Dark Souls 1.)"),
         'changeStaminaRate': (
-            'StaminaReductionPercentage', True, int,
+            'StaminaReductionPercentage', True, float,
             "Percentage reduction of maximum stamina (from 0 to 100). Negative values (to -100) will restore that "
             "percentage instead. Applied every time the special effect updates."),
         'changeStaminaPoint': (
@@ -3436,7 +3454,7 @@ GAME_PARAM_INFO = {
             'SoulStealMultiplier', False, float,
             "Internal description says 'defense against HP when NPCs are robbed by soul steal'. Probably unused."),
         'lifeReductionRate': (
-            'EffectDurationMultiplier', False, int,
+            'EffectDurationMultiplier', False, float,
             "Multiplier applied to the duration of the effect specified in EffectDurationMultiplierType. Used only by "
             "Hawkeye Gough to reduce poison and toxic duration in vanilla game."),
         'hpRecoverRate': (
@@ -3494,8 +3512,8 @@ GAME_PARAM_INFO = {
             'RiposteDefenseAddition', True, int,
             "Value added to or subtracted from defense against riposte attacks."),
         'flickDamageCutRate': (
-            'FlickDamageMultiplier', True, float,
-            "Multiplier to use instead of usual multiplier on incoming (I assume) riposte attacks). Never used."),
+            'FlickDamageMultiplier', True, int,
+            "Multiplier to use instead of usual multiplier on incoming (I assume) riposte attacks. Never used."),
         'bloodDamageRate': (
             'IncomingBleedDamagePercentage', True, int,
             "Percentage of incoming bleed damage received (usually 100)."),
@@ -3695,9 +3713,9 @@ GAME_PARAM_INFO = {
             'FireImmunity', True, bool,
             "Immune to fire damage. Never enabled, and may not actually work. Needs testing."),
         'isExtendSpEffectLife:1': (
-            'AffectedByLingeringDragoncrestRing', True, bool,
-            "If True, this special effect will be affected by the Lingering Dragoncrest Ring special state (193) that "
-            "extends effect durations."),
+            'AffectedByEffectExtension', True, bool,
+            "If True, this special effect will be affected by special state (193), i.e. the effect used by the vanilla "
+            "Lingering Dragoncrest Ring, that extends effect durations."),
         'requestLeaveColiseumSession:1': (
             'RequestColiseumExit', False, bool,
             "Used only by Purple Coward's Crystal."),
@@ -4114,32 +4132,32 @@ GAME_PARAM_INFO = {
             'FramptSellValue', True, int,
             "Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold."),
         'correctStrength': (
-            'StrengthScaling', True, int,
+            'StrengthScaling', True, float,
             "Amount of attack power gained from strength. (I believe this is the percentage of the player's strength "
             "to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)"),
         'correctAgility': (
-            'DexterityScaling', True, int,
+            'DexterityScaling', True, float,
             "Amount of attack power gained from dexterity. (I believe this is the percentage of the player's "
             "dexterity to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)."),
         'correctMagic': (
-            'IntelligenceScaling', True, int,
+            'IntelligenceScaling', True, float,
             "Amount of attack power gained from intelligence. (I believe this is the percentage of the player's "
             "intelligence to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)"),
         'correctFaith': (
-            'FaithScaling', True, int,
+            'FaithScaling', True, float,
             "Amount of attack power gained from faith. (I believe this is the percentage of the player's faith "
             "to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)"),
         'physGuardCutRate': (
-            'PhysicalGuardPercentage', True, int,
+            'PhysicalGuardPercentage', True, float,
             "Percentage of physical damage prevented when guarding with this weapon."),
         'magGuardCutRate': (
-            'MagicGuardPercentage', True, int,
+            'MagicGuardPercentage', True, float,
             "Percentage of magic damage prevented when guarding with this weapon."),
         'fireGuardCutRate': (
-            'FireGuardPercentage', True, int,
+            'FireGuardPercentage', True, float,
             "Percentage of fire damage prevented when guarding with this weapon."),
         'thunGuardCutRate': (
-            'LightningGuardPercentage', True, int,
+            'LightningGuardPercentage', True, float,
             "Percentage of lightning damage prevented when guarding with this weapon."),
         'spEffectBehaviorId0': (
             'SpecialEffectOnHit0', True, Params.SpecialEffects,
@@ -4799,7 +4817,7 @@ GAME_PARAM_INFO = {
         'isSilence:1': (
             'IsSilent', True, bool,
             "Movement noises are silenced if enabled."),
-        'pad_1[6]': (
+        'pad_1:6': (
             'Pad1', False, '<Pad:6>',
             "Null padding."),
         'pad[16]': (

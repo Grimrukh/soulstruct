@@ -1,12 +1,16 @@
+from __future__ import annotations
 import logging
 import pickle
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+import typing as tp
 
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 from soulstruct.params.fields import PARAM_NICKNAMES
+
+if tp.TYPE_CHECKING:
+    from soulstruct.text import DarkSoulsText
 
 __all__ = ["DarkSoulsGameParameters", "DarkSoulsLightingParameters", "DRAW_PARAM_TABLES", "DRAW_PARAM_MAPS"]
 _LOGGER = logging.getLogger(__name__)
@@ -142,6 +146,28 @@ class DarkSoulsGameParameters(object):
         """Get a list of (id, entry) pairs from a certain range inside ID-sorted param dictionary."""
         return self[category].get_range(start, count)
 
+    def rename_entries_from_text(self, text: DarkSoulsText, param_table_name=None):
+        """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.
+
+        Args:
+            text (DarkSoulsText): text data structure to pull names from.
+            param_table_name (tp.Optional[str]): specific ParamTable name to rename, or None to rename all (default).
+                Valid names are "Weapons", "Armor", "Rings", "Goods", and "Spells" (or None).
+        """
+        if param_table_name:
+            param_table_name = param_table_name.lower().rstrip("s")
+            if param_table_name not in {"weapon", "armor", "ring", "good", "spell"}:
+                raise ValueError(f"Invalid item type: {param_table_name}. Must be 'Weapons', 'Armor', 'Rings', "
+                                 f"'Goods', or 'Spells'.")
+        for item_type_check, param_table, text_dict in zip(
+                ("weapon", "armor", "ring", "good", "spell"),
+                (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
+                (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames)):
+            if not param_table_name or param_table_name == item_type_check:
+                for param_id, param_entry in param_table.items():
+                    if param_id in text_dict:
+                        param_entry.name = text_dict[param_id]
+
 
 DRAW_PARAM_TABLES = ('Dof', 'EnvLightTex', 'Fog', 'LensFlare', 'LensFlareEx', 'AmbientLight', 'ScatteredLight',
                      'PointLight', 'Shadow', 'ToneCorrect', 'ToneMap', 's_AmbientLight')
@@ -149,23 +175,23 @@ DRAW_PARAM_TABLES = ('Dof', 'EnvLightTex', 'Fog', 'LensFlare', 'LensFlareEx', 'A
 
 class MapDrawParam(object):
 
-    DepthOfField: List[Optional[DrawParamTable]]
+    DepthOfField: tp.List[tp.Optional[DrawParamTable]]
     # EnvLightTex: List[Optional[DrawParamTable]]
-    Fog: List[Optional[DrawParamTable]]
-    LensFlares: List[Optional[DrawParamTable]]
-    LensFlareSources: List[Optional[DrawParamTable]]
-    AmbientLight: List[Optional[DrawParamTable]]
-    ScatteredLight: List[Optional[DrawParamTable]]
-    PointLights: List[Optional[DrawParamTable]]
-    Shadows: List[Optional[DrawParamTable]]
-    ToneCorrection: List[Optional[DrawParamTable]]
-    ToneMapping: List[Optional[DrawParamTable]]
+    Fog: tp.List[tp.Optional[DrawParamTable]]
+    LensFlares: tp.List[tp.Optional[DrawParamTable]]
+    LensFlareSources: tp.List[tp.Optional[DrawParamTable]]
+    AmbientLight: tp.List[tp.Optional[DrawParamTable]]
+    ScatteredLight: tp.List[tp.Optional[DrawParamTable]]
+    PointLights: tp.List[tp.Optional[DrawParamTable]]
+    Shadows: tp.List[tp.Optional[DrawParamTable]]
+    ToneCorrection: tp.List[tp.Optional[DrawParamTable]]
+    ToneMapping: tp.List[tp.Optional[DrawParamTable]]
     # DebugAmbientLight: List[Optional[DrawParamTable]]
 
     def __init__(self, draw_param_bnd):
         """Structure that manages double-slots and table nicknames for one DrawParam BND file (i.e. one map area)."""
-        self._data = {}  # type: Dict[str, List[Optional[DrawParamTable], Optional[DrawParamTable]]]
-        self._bnd_entry_paths = {}  # type: Dict[Tuple[str, int], str]
+        self._data = {}  # type: tp.Dict[str, tp.List[tp.Optional[DrawParamTable], tp.Optional[DrawParamTable]]]
+        self._bnd_entry_paths = {}  # type: tp.Dict[tp.Tuple[str, int], str]
         paramdef_bnd = PARAMDEF_BND('dsr' if bool(draw_param_bnd.dcx) else 'ptde')
 
         if not isinstance(draw_param_bnd, BaseBND):
@@ -369,3 +395,39 @@ class DarkSoulsLightingParameters(object):
         if not self._reload_warning_given:
             _LOGGER.info("Remember to reload your game to see changes.")
             self._reload_warning_given = True
+
+
+def _check_field_types():
+    from soulstruct import DSR_PATH
+    from soulstruct.params.paramdef import PARAMDEF_BASE_NAMES
+    g = DarkSoulsGameParameters(DSR_PATH + "/param/GameParam/GameParam.parambnd.dcx")
+    for table_name in g.param_names:
+        table = g[table_name]
+        try:
+            real_table_bnd_basename = [k.split("_")[0] for k, v in PARAM_NICKNAMES.items() if v == table_name][0]
+            if real_table_bnd_basename == "Bullet":
+                real_table_bnd_basename = "BulletParam"
+            elif real_table_bnd_basename == "SpEffectParam":
+                real_table_bnd_basename = "SpEffect"
+            elif real_table_bnd_basename == "Magic":
+                real_table_bnd_basename = "MagicParam"
+            elif real_table_bnd_basename == "MenuColorTableParam":
+                real_table_bnd_basename = "MenuParamColorTable"
+            elif real_table_bnd_basename == "SpEffectVfxParam":
+                real_table_bnd_basename = "SpEffectVfx"
+            print("\n", real_table_bnd_basename, "\n")
+            real_table_name = [k for k, v in PARAMDEF_BASE_NAMES.items() if v == real_table_bnd_basename][0]
+        except IndexError:
+            print("Could not get param table name:", table_name)
+            raise
+        field_info = table.get_field_info()
+        for field_name in table.field_names:
+            info = field_info[field_name]
+            if not callable(info):
+                internal_type = table.paramdef_bnd[real_table_name][field_name].internal_type
+                python_type = info[2]
+                print(field_name, internal_type, python_type)
+                if internal_type.startswith("f") and python_type == int:
+                    print("    ^ WARNING")
+                if (internal_type.startswith("s") or internal_type.startswith("u")) and python_type == float:
+                    print("    ^ WARNING")

@@ -253,7 +253,17 @@ class SoulstructProjectWindow(SmartFrame):
 
         top_menu.add_cascade(label="File", menu=file_menu)
 
+        params_menu = self.Menu(tearoff=0)
+        params_menu.add_command(label="Rename All Items/Equipment from Text", foreground="#FFF",
+                                command=self._rename_param_entries_from_text)
+        for param_table in ("Weapons", "Armor", "Rings", "Goods", "Spells"):
+            params_menu.add_command(label=f"Rename {param_table} from Text", foreground="#FFF",
+                                    command=lambda p=param_table: self._rename_param_entries_from_text(p))
+
         tools_menu = self.Menu(tearoff=0)
+        tools_menu.add_cascade(label="Params", foreground="#FFF", menu=params_menu)
+        # Menus for other data types go here (before or after Params).
+        tools_menu.add_separator()
         tools_menu.add_command(label="Create Game Backup", foreground='#FFF',
                                command=self._create_game_backup)
         tools_menu.add_command(label="Restore Game Backup", foreground='#FFF',
@@ -268,6 +278,7 @@ class SoulstructProjectWindow(SmartFrame):
                                command=self._unpack_bnd)
         tools_menu.add_command(label="Repack BND", foreground='#FFF',
                                command=self._repack_bnd)
+
         top_menu.add_cascade(label="Tools", menu=tools_menu)
 
         # TODO: edit commands
@@ -314,8 +325,9 @@ class SoulstructProjectWindow(SmartFrame):
         elif data_type == "runtime":
             pass
         else:
-            project_data = getattr(self.project, data_type_caps(data_type))
-            setattr(getattr(self, f'{data_type}_tab'), data_type_caps(data_type), project_data)
+            # TODO: Not sure why I ever thought this was necessary. They're already the same object.
+            # project_data = getattr(self.project, data_type_caps(data_type))
+            # setattr(getattr(self, f'{data_type}_tab'), data_type_caps(data_type), project_data)
             if data_type == "params":
                 self.params_tab.refresh_entries()
             elif data_type == "maps":
@@ -633,3 +645,10 @@ class SoulstructProjectWindow(SmartFrame):
             else:
                 self.save_tab_button.var.set(f"Save {data_name}")
                 self.export_tab_button.var.set(f"Export {data_name}")
+
+    def _rename_param_entries_from_text(self, param_table=None):
+        self.project.Params.rename_entries_from_text(self.project.Text, param_table_name=param_table)
+        if self.page_tabs.index(self.page_tabs.select()) == self.TAB_ORDER.index("params"):
+            if (not param_table and self.params_tab.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
+                    or param_table == self.params_tab.active_category):
+                self.params_tab.refresh_entries()

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import logging
 from io import BytesIO
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes, PACKAGE_PATH
@@ -43,7 +44,7 @@ class ParamDefBND(BND3):
                 continue
             self.paramdefs[param_name] = ParamDef(self.entries_by_basename[param_base_name + '.paramdef'])
 
-    def __getitem__(self, param_name):
+    def __getitem__(self, param_name) -> ParamDef:
         try:
             return self.paramdefs[param_name]
         except KeyError:
@@ -157,7 +158,7 @@ class ParamDef(object):
 
     def __getitem__(self, field_name):
         if self.fields_by_name is None:
-            return AttributeError("Cannot access ParamDef fields by name due to one or more repeated field name.\n"
+            return AttributeError("Cannot access ParamDef fields by name due to one or more repeated field names.\n"
                                   "This should NOT happen unless you've edited the ParamDef for some ungodly reason.")
         return self.fields_by_name[field_name]
 

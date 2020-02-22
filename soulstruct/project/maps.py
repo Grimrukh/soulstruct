@@ -12,8 +12,8 @@ from soulstruct.core import InvalidFieldValueError
 from soulstruct.maps import MAP_ENTRY_TYPES
 from soulstruct.maps.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
-from soulstruct.project.utilities import bind_events
-from soulstruct.project.editor import SoulstructBaseFieldEditor, NameSelectionBox
+from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox
+from soulstruct.project.editor import SoulstructBaseFieldEditor
 from soulstruct.utilities import camel_case_to_spaces, Vector
 from soulstruct.utilities.memory import MemoryHookError
 
@@ -561,6 +561,22 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_list.delete_entry(global_index)
         self.select_entry_row_index(None)
         self.refresh_entries()
+
+    def popout_entry_text_edit(self, row_index):
+        """Can actually change both ID and text."""
+        entry_id = self.get_entry_id(row_index)
+        if not self._e_entry_text_edit and not self._e_entry_id_edit:
+            initial_text = self.get_entry_text(entry_id, self.active_category)
+            popout_editor = EntryTextEditBox(self, self.active_category, category_data=self.get_category_data(),
+                                             entry_id=entry_id, initial_text=initial_text, edit_entry_id=False)
+            try:
+                _, new_text = popout_editor.go()
+            except Exception as e:
+                _LOGGER.error(e, exc_info=True)
+                return self.CustomDialog(
+                    "Entry Text Error", f"Error occurred while setting entry text:\n\n{e}")
+            if new_text is not None:
+                self.change_entry_text(row_index, new_text)
 
     def select_displayed_field_row(self, row_index, set_focus_to_value=True, edit_if_already_selected=True, coord=None):
         old_row_index = self.selected_field_row_index

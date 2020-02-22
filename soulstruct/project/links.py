@@ -7,6 +7,7 @@ from soulstruct.maps.models import MSB_MODEL_TYPE
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.core import SoulstructError
 from soulstruct.maps import MAP_ENTRY_TYPES
+from soulstruct.project.utilities import ItemTextEditBox
 
 if TYPE_CHECKING:
     from soulstruct.project import SoulstructProjectWindow
@@ -343,6 +344,32 @@ class WindowLinker(object):
     def get_game_value(self, value_name):
         """Try to retrieve given game value (e.g. 'player_x') from runtime memory hook."""
         return self.window.runtime_tab.get_game_value(value_name)
+
+    def edit_all_item_text(self, item_type, item_id):
+        """Edit name, summary, and description of item (weapon, armor, ring, good, or spell) simultaneously.
+
+        Name must be specified. If summary and/or description are left empty, they will NOT be modified or created.
+
+        Note that for new Armor entries, the default summary text is a single blank space rather than empty text. For
+        new Weapon entries, the default summary text is 'WeaponType', to remind you to specify it.
+        """
+        name = getattr(self.project.Text, item_type + "Names").get(item_id, "")
+        summary = getattr(self.project.Text, item_type + "Summaries").get(item_id, "")
+        if not summary:
+            if item_type == "Weapon":
+                summary = "WeaponType"  # reminder to specify weapon type as summary
+            elif item_type == "Armor":
+                summary = " "  # Armor summary defaults to a single blank space.
+        description = getattr(self.project.Text, item_type + "Descriptions").get(item_id, "")
+        name, summary, description = ItemTextEditBox(
+            self.window, name, summary, description, f"Editing {item_type}[{item_id}]").go()
+        if not name:
+            raise ValueError("Item name cannot be empty.")
+        getattr(self.project.Text, item_type + "Names")[item_id] = name
+        if summary:
+            getattr(self.project.Text, item_type + "Summaries")[item_id] = summary
+        if description:
+            getattr(self.project.Text, item_type + "Descriptions")[item_id] = description
 
 
 class BaseLink(object):

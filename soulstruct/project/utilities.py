@@ -1,3 +1,4 @@
+from __future__ import annotations
 import tkinter as tk
 import typing as tp
 from collections import namedtuple
@@ -8,9 +9,14 @@ from soulstruct.core import SoulstructError
 from soulstruct.maps import DarkSoulsMaps
 from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
 from soulstruct.text import DarkSoulsText
-from soulstruct.utilities import word_wrap
+from soulstruct.utilities import word_wrap, camel_case_to_spaces
+from soulstruct.utilities.window import SmartFrame
 
-__all__ = ["SoulstructProjectError", "RestoreBackupError", "error_as_dialog", "TagData", "TextEditor",
+if tp.TYPE_CHECKING:
+    from soulstruct.project.editor import SoulstructBaseEditor
+
+__all__ = ["SoulstructProjectError", "RestoreBackupError", "error_as_dialog", "TagData",
+           "TextEditor", "NameSelectionBox", "TextEditBox", "EntryTextEditBox", "ItemTextEditBox",
            "ActionHistory", "ViewHistory", "bind_events", "data_type_caps", "DATA_TYPES"]
 
 
@@ -271,3 +277,188 @@ DATA_TYPES = {
     'ai': DarkSoulsAIScripts,
     'talk': None,  # modified via ESP state machine script files
 }
+
+
+class NameSelectionBox(SmartFrame):
+    """Small pop-out widget that allows you to select a name from some list."""
+    WIDTH = 50  # characters
+    HEIGHT = 20  # lines
+
+    def __init__(self, master, names, list_name='List'):
+        super().__init__(toplevel=True, master=master, window_title=f"Select Entry from {list_name}")
+
+        self.output = None
+
+        with self.set_master(padx=20, pady=20, auto_rows=0):
+            self.Label(text="Double-click an entry to select it.")
+            self._names = self.Listbox(
+                values=names, width=self.WIDTH, height=self.HEIGHT, vertical_scrollbar=True, selectmode='single',
+                font=("Consolas", 14), padx=20, pady=20)
+
+        self._names.bind('<Double-Button-1>', lambda e: self.done(True))
+
+        self.bind_all('<Escape>', lambda e: self.done(False))
+        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            self.output = self._names.get(self._names.curselection())
+        self.quit()
+
+
+class TextEditBox(SmartFrame):
+    """Small pop-out widget that allows you to modify longer strings more freely, with newlines and all."""
+    WIDTH = 16  # characters
+    HEIGHT = 1  # lines
+
+    def __init__(self, master: SmartFrame, initial_text='', allow_newlines=True, window_title="Editing Text"):
+        super().__init__(toplevel=True, master=master, window_title=window_title)
+        self.editor = master
+        self.initial_text = initial_text
+        self.output = None
+        self.allow_newlines = allow_newlines
+
+        self._text = None
+
+        self.build()
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
+            self._text.insert('end', self.initial_text)
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
+                self.Button(
+                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS['YES'])
+                self.Button(
+                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS['NO'])
+
+        self.bind_all('<Escape>', lambda e: self.done(False))
+        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            new_text = self._text.get('1.0', 'end' + '-1c')
+            if not self.allow_newlines and '\n' in new_text:
+                self.editor.CustomDialog("Text Error", "Entry cannot contain newlines.")
+                return
+            if new_text == self.initial_text:
+                self.output = None
+            else:
+                self.output = new_text
+        self.quit()
+
+
+class EntryTextEditBox(TextEditBox):
+    WIDTH = 70  # characters
+    HEIGHT = 10  # lines
+
+    def __init__(self, master: SoulstructBaseEditor, category, category_data, entry_id, initial_text='',
+                 allow_newlines=True, edit_entry_id=True):
+        if entry_id is None and edit_entry_id:
+            window_title = f"Adding entry to {camel_case_to_spaces(category)}"
+        else:
+            window_title = f"Editing {camel_case_to_spaces(category)}[{entry_id}]"
+        self.category = category
+        self.category_data = category_data
+        self.entry_id = entry_id
+        self._edit_entry_id = edit_entry_id
+        self._id = None
+        super().__init__(master=master, initial_text=initial_text, allow_newlines=allow_newlines,
+                         window_title=window_title)
+
+        self.output = [None, None]
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            if self._edit_entry_id:
+                self._id = self.Entry(
+                    label='Entry ID:', label_position='left', width=10, integers_only=True,
+                    initial_text=self.entry_id if self.entry_id is not None else "", padx=20, pady=20).var
+            else:
+                self._id = None
+            super().build()
+
+    def done(self, confirm=True):
+        if confirm:
+            if self._id:
+                if not self._id.get():
+                    self.CustomDialog("ID Error", message="Entry ID must be set.")
+                    return
+                new_id = int(self._id.get())
+                if new_id == self.entry_id:
+                    new_id = None
+            else:
+                new_id = None
+            new_text = self._text.get('1.0', 'end' + '-1c')
+            if not self.allow_newlines and '\n' in new_text:
+                self.CustomDialog("Text Error", "Entry cannot contain newlines.")
+                return
+            if new_text == self.initial_text:
+                new_text = None
+            self.output = [new_id, new_text]
+        self.quit()
+
+
+class ItemTextEditBox(SmartFrame):
+    WIDTH = 70  # characters
+    DESCRIPTION_HEIGHT = 10  # lines
+
+    def __init__(self, master, initial_name, initial_summary="", initial_description="", title="Editing Item Text"):
+        super().__init__(master=master, window_title=title)
+        self.editor = master
+        self.output = [initial_name, initial_summary, initial_description]
+        self._name_entry = None
+        self._summary_entry = None
+        self._description_box = None
+
+        self.build()
+
+    def build(self):
+        with self.set_master(auto_rows=0, padx=20, grid_defaults={"pady": 10, "sticky": "e"}):
+            self._name_entry = self.Entry(initial_text=self.output[0], width=self.WIDTH, label="Name:")
+            self._summary_entry = self.Entry(initial_text=self.output[1], width=self.WIDTH, label="Summary:")
+            self._description_box = self.TextBox(
+                width=self.WIDTH, height=self.DESCRIPTION_HEIGHT, label="Description:", label_position="above")
+            self._description_box.insert('end', self.output[2])
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
+                self.Button(
+                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS['YES'])
+                self.Button(
+                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS['NO'])
+
+        self.bind_all('<Escape>', lambda e: self.done(False))
+        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            self.output[0] = self._name_entry.var.get()
+            self.output[1] = self._summary_entry.var.get()
+            self.output[2] = self._description_box.get('1.0', 'end' + '-1c')
+        self.quit()
