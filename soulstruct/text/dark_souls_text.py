@@ -185,7 +185,7 @@ class DarkSoulsText(object):
         self._data[item_fmg + 'Descriptions'][index] = ''
 
     def update_msgbnd_entry(self, msgbnd, fmg_name, fmg_entries: dict,
-                            word_wrap_limit=None, pipe_to_newline=False, use_original_names=False):
+                            word_wrap_limit=None, pipe_to_newline=False, use_original_names=True):
         fmg_patch_data = FMG(fmg_entries, version='ds1').pack(
             word_wrap_limit=word_wrap_limit, pipe_to_newline=pipe_to_newline)
         try:
@@ -197,7 +197,7 @@ class DarkSoulsText(object):
         if not use_original_names:
             bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + '.fmg')
 
-    def save(self, msg_directory=None, description_word_wrap_limit=None, separate_patch=False, use_original_names=False,
+    def save(self, msg_directory=None, description_word_wrap_limit=None, separate_patch=False, use_original_names=True,
              pipe_to_newline=True, dcx=None):
         """Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods."""
         new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
