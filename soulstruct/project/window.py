@@ -325,9 +325,8 @@ class SoulstructProjectWindow(SmartFrame):
         elif data_type == "runtime":
             pass
         else:
-            # TODO: Not sure why I ever thought this was necessary. They're already the same object.
-            # project_data = getattr(self.project, data_type_caps(data_type))
-            # setattr(getattr(self, f'{data_type}_tab'), data_type_caps(data_type), project_data)
+            project_data = getattr(self.project, data_type_caps(data_type))
+            setattr(getattr(self, f'{data_type}_tab'), data_type_caps(data_type), project_data)
             if data_type == "params":
                 self.params_tab.refresh_entries()
             elif data_type == "maps":

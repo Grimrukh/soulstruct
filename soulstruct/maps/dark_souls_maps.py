@@ -89,5 +89,6 @@ class DarkSoulsMaps(object):
             try:
                 msb.write_packed(msb_path)
             except Exception as e:
-                raise SoulstructError(f"Error encountered while writing MSB {msb_path.name}: {e}")
+                _LOGGER.error(e, exc_info=True)
+                raise SoulstructError(f"Error encountered while writing MSB {msb_path.name}:\n\n{e}")
         _LOGGER.info("Dark Souls map files (MSB) written successfully.")

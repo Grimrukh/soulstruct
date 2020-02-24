@@ -180,7 +180,7 @@ MemoryValue = namedtuple("CheatEntry", ("pointer", "jumps", "size", "fmt"))
 
 
 DSR_POINTER_TABLE = {
-    "WORLD_CHR_BASE": MemoryPointer(
+    "WORLD_CHR_BASE": MemoryPointer(  # 0x1407c0206
         br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
         lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
     # "CHR_CLASS_BASE": MemoryPointer(
@@ -225,7 +225,7 @@ class MemoryHook(object):
             pointer_address = self.scan(pointer_data.sequence)
             if pointer_address is None:
                 raise MemoryHookError(f"Could not locate memory pointer: {pointer_name}")
-            self.pointers[pointer_name] = self.read_int64(pointer_data.address_func(self, pointer_address))
+            self.pointers[pointer_name] = pointer_data.address_func(self, pointer_address)
 
     def _read(self, address, size, fmt=""):
         buffer = (c.c_char * size)()
@@ -294,6 +294,10 @@ class MemoryHook(object):
         if entry_data.pointer not in self.pointers:
             raise MemoryHookError(f"Pointer {repr(entry_data.pointer)} for {repr(value_name)} has not been registered.")
         address = self.pointers[entry_data.pointer]
+        address = self.read_int64(address)  # First jump has offset zero.
+        if address == 0:
+            raise MemoryHookError(f"Pointer {repr(entry_data.pointer)} for {repr(value_name)} is 0, which suggests it "
+                                  f"has not been loaded in-game (are you only in the main menu?).")
         for jump in entry_data.jumps[:-1]:
             address = self.read_int64(address + jump)
         buffer = (c.c_char * entry_data.size)()

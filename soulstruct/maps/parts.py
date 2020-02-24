@@ -1,3 +1,4 @@
+import math
 from io import BufferedReader, BytesIO
 from enum import IntEnum
 import struct
@@ -297,6 +298,19 @@ class BaseMSBPart(MSBEntryEntity):
             part_type = None
         msb_buffer.seek(old_offset)
         return MSB_PART_TYPE_CLASSES[part_type](msb_buffer)
+
+    def rotate_y_in_world(self, y_rot, pivot_x=0.0, pivot_z=0.0, radians=False):
+        y_rot_rad = math.radians(y_rot) if not radians else y_rot
+        y_rot_deg = math.degrees(y_rot) if radians else y_rot
+        print(self.name)
+        print("   ", self.rotate.y)
+        self.rotate.y += y_rot_deg
+        print("   ", self.rotate.y)
+        if self.translate != (pivot_x, 0, pivot_z):
+            radius = math.hypot(self.translate.x - pivot_x, self.translate.z - pivot_z)
+            rotation = math.atan2(-(self.translate.x - pivot_x), -(self.translate.z - pivot_z))
+            self.translate.x = radius * -math.sin(y_rot_rad + rotation) + pivot_x
+            self.translate.z = radius * -math.cos(y_rot_rad + rotation) + pivot_z
 
 
 class MSBMapPiece(BaseMSBPart):

@@ -5,13 +5,13 @@ import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
 
+from soulstruct.core import SoulstructError
 from soulstruct.maps.core import MSBEntry
 from soulstruct.maps.models import MSBModel, MSB_MODEL_TYPE
 from soulstruct.maps.events import MSBEvent, MSB_EVENT_TYPE, BaseMSBEvent
 from soulstruct.maps.regions import MSBRegion, MSB_REGION_TYPE, BaseMSBRegion
 from soulstruct.maps.parts import MSBPart, MSB_PART_TYPE, BaseMSBPart
-
-from soulstruct.utilities import BinaryStruct, BiDict, read_chars_from_buffer, create_bak
+from soulstruct.utilities import BinaryStruct, BiDict, read_chars_from_buffer, create_bak, Vector
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -342,9 +342,13 @@ class MSBModelList(MSBEntryList):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
         type_indices = {}
         for entry in self._entries:
-            entry.set_indices(model_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                              instance_count=part_instance_counts.get(entry.name, 0))
-            type_indices[entry.ENTRY_TYPE] += 1
+            try:
+                entry.set_indices(model_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                                  instance_count=part_instance_counts.get(entry.name, 0))
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} model {entry.name}: {e}")
+            else:
+                type_indices[entry.ENTRY_TYPE] += 1
 
     def __iter__(self) -> tp.Iterator[MSBModel]:
         """Iterate over all entries."""
@@ -380,9 +384,13 @@ class MSBEventList(MSBEntryList):
         """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
         type_indices = {}
         for i, entry in enumerate(self._entries):
-            entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                              region_indices=region_indices, part_indices=part_indices)
-            type_indices[entry.ENTRY_TYPE] += 1
+            try:
+                entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                                  region_indices=region_indices, part_indices=part_indices)
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} event {entry.name}: {e}")
+            else:
+                type_indices[entry.ENTRY_TYPE] += 1
 
     def __iter__(self) -> tp.Iterator[BaseMSBEvent]:
         """Iterate over all entries."""
@@ -406,7 +414,10 @@ class MSBRegionList(MSBEntryList):
     def set_indices(self):
         """Global region index only."""
         for i, entry in enumerate(self._entries):
-            entry.set_indices(region_index=i)
+            try:
+                entry.set_indices(region_index=i)
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} region {entry.name}: {e}")
 
     def __iter__(self) -> tp.Iterator[BaseMSBRegion]:
         """Iterate over all entries."""
@@ -430,6 +441,17 @@ class MSBPartList(MSBEntryList):
     UnusedCharacters: list
     MapConnections: list
 
+    def get_part_by_name(self, entry_name: str, entry_type=None):
+        parts = []
+        for part in self.get_entries(entry_type):
+            if part.name == entry_name:
+                parts.append(part)
+        if not parts:
+            raise KeyError(f"No MSB parts named: {entry_name}")
+        elif len(parts) >= 2:
+            raise KeyError(f"Multiple MSB parts named: {entry_name}. Please make them unique.")
+        return parts[0]
+
     def set_names(self, model_names, region_names, part_names, collision_names):
         for entry in self._entries:
             entry.set_names(model_names, region_names, part_names, collision_names)
@@ -447,10 +469,14 @@ class MSBPartList(MSBEntryList):
         """
         type_indices = {}
         for entry in self._entries:
-            entry.set_indices(part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                              model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
-                              local_collision_indices=local_collision_indices)
-            type_indices[entry.ENTRY_TYPE] += 1
+            try:
+                entry.set_indices(part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                                  model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
+                                  local_collision_indices=local_collision_indices)
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} part {entry.name}: {e}")
+            else:
+                type_indices[entry.ENTRY_TYPE] += 1
 
     def get_instance_counts(self):
         """Returns a dictionary mapping model names to part instance counts."""
@@ -576,7 +602,7 @@ class MSB(object):
             f.write(self.pack())
 
     def translate_all(self, translate):
-        """Offset translations of all regions and parts by given input.
+        """Offset translations of all regions and parts (including Map Pieces, Collisions, Navmeshes) by given XYZ.
 
         The input value can be anything that can be added to a Vector.
         """
@@ -585,28 +611,32 @@ class MSB(object):
         for r in self.regions:
             r.translate += translate
 
-    def rotate_all_y_in_world(self, y_rotation, pivot_x=0.0, pivot_y=0.0):
+    def rotate_all_y_in_world(self, y_rotation, pivot_x=0.0, pivot_z=0.0, radians=False):
         """Rotate around world origin by `y_rotation` degrees.
 
-        Map Pieces, Collisions, Navmeshes, and Map Connections rotate around the world origin by default, but other
-        parts and all regions do not, and require a simple local -> world translation correction.
+        If the part or region has an existing `translate` offset of its local axes in the MSB (Characters, Objects,
+        and all Regions do; Map Pieces, Collisions, and Navmeshes occasionally do), that `translate` will be rotated
+        around the world origin appropriately and changed.
         """
-        # TODO: Allow arbitrary (origin_x, origin_z).
-        y_rot_rad = math.radians(y_rotation)
-
         for p in self.parts:
-            p.rotate.y += y_rotation
-            if not p.WORLD_ROTATION:
-                radius = math.hypot(p.translate.x, p.translate.z)
-                rotation = math.atan2(-p.translate.x, -p.translate.z)
-                p.translate.x = radius * -math.sin(y_rot_rad + rotation)
-                p.translate.z = radius * -math.cos(y_rot_rad + rotation)
+            p.rotate_y_in_world(y_rotation, pivot_x=pivot_x, pivot_z=pivot_z, radians=radians)
         for r in self.regions:
-            r.rotate.y += y_rotation
-            radius = math.hypot(r.translate.x, r.translate.z)
-            rotation = math.atan2(-r.translate.x, -r.translate.z)
-            r.translate.x = radius * -math.sin(y_rot_rad + rotation)
-            r.translate.z = radius * -math.cos(y_rot_rad + rotation)
+            r.rotate_y_in_world(y_rotation, pivot_x=pivot_x, pivot_z=pivot_z, radians=radians)
+
+    def move_map(self, source_xyz, dest_xyz, source_angle, dest_angle):
+        """Move and rotate everything in map such that an entity at `source_xyz` facing `source_angle` would end up
+        at `dest_xyz` facing `dest_angle` (angles in degrees)."""
+        source_xyz = Vector(source_xyz)
+        dest_xyz = Vector(dest_xyz)
+        # Compute true post-world-rotation source_xyz for translation.
+        y_rotation = dest_angle - source_angle
+        radius = math.hypot(source_xyz.x, source_xyz.z)
+        angle = math.degrees(math.atan2(-source_xyz.x, -source_xyz.z))
+        source_xyz.x = radius * -math.sin(math.radians(angle + y_rotation))
+        source_xyz.z = radius * -math.cos(math.radians(angle + y_rotation))
+        translate_xyz = dest_xyz - source_xyz
+        self.rotate_all_y_in_world(y_rotation)
+        self.translate_all(translate_xyz)
 
     def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
         """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type.
