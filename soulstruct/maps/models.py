@@ -1,18 +1,11 @@
+import typing as tp
 from io import BufferedReader, BytesIO
-from enum import IntEnum
 
-from soulstruct.maps.core import MSBEntry
+from soulstruct.core import SoulstructError
+from soulstruct.maps.base import MSBEntryList, MSBEntry
+from soulstruct.maps.core import MSB_MODEL_TYPE
+
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
-
-
-class MSB_MODEL_TYPE(IntEnum):
-    MapPiece = 0
-    Object = 1
-    Character = 2
-    Unknown = 3
-    Player = 4
-    Collision = 5
-    Navmesh = 6
 
 
 class MSBModel(MSBEntry):
@@ -52,13 +45,8 @@ class MSBModel(MSBEntry):
             self.unpack(msb_model_source)
         elif msb_model_source is None and name is not None and entry_type is not None:
             self.name = name
-            if isinstance(entry_type, MSB_MODEL_TYPE):
-                self.ENTRY_TYPE = entry_type
-            elif isinstance(entry_type, int):
-                self.ENTRY_TYPE = MSB_MODEL_TYPE(entry_type)
-            elif isinstance(entry_type, str):
-                self.ENTRY_TYPE = MSB_MODEL_TYPE[entry_type]
-            else:
+            self.ENTRY_TYPE = MSBModelList.resolve_entry_type(entry_type)
+            if not isinstance(self.ENTRY_TYPE, MSB_MODEL_TYPE):
                 raise TypeError(f"`entry_type` must be a MSB_MODEL_TYPE (or a name/value inside it), not {entry_type}")
             if description is None or isinstance(description, str):
                 self.description = description
@@ -112,7 +100,7 @@ class MSBModel(MSBEntry):
             if len(sib_path) == 2:
                 sib_path = (sib_path[0], sib_path[1], 0, 0)
             sib_path = f"m{sib_path[0]:02d}_{sib_path[1]:02d}_{sib_path[2]:02d}_{sib_path[3]:02d}"
-            stem += f"\\map\\{sib_path}\\"
+            stem += f"map\\{sib_path}\\"
             if entry_type == MSB_MODEL_TYPE.MapPiece:
                 if not name.startswith("m"):
                     raise ValueError(f"MapPiece model name did not start with 'm': {name}")
@@ -137,3 +125,35 @@ class MSBModel(MSBEntry):
             raise ValueError("Cannot automatically determine model SIB path for 'Unknown' model type. (If you know "
                              "what this type is, please tell Grimrukh!)")
         raise ValueError(f"Invalid MSB model type: {entry_type}. Cannot determine SIB path.")
+
+
+class MSBModelList(MSBEntryList):
+
+    ENTRY_LIST_NAME = 'Models'
+    ENTRY_CLASS = staticmethod(MSBModel)
+    ENTRY_TYPE_ENUM = MSB_MODEL_TYPE
+
+    _entries: tp.List[MSBModel]
+
+    MapPieces: list
+    Objects: list
+    Characters: list
+    Players: list
+    Collisions: list
+    Navmeshes: list
+
+    def set_indices(self, part_instance_counts):
+        """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
+        type_indices = {}
+        for entry in self._entries:
+            try:
+                entry.set_indices(model_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                                  instance_count=part_instance_counts.get(entry.name, 0))
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} model {entry.name}: {e}")
+            else:
+                type_indices[entry.ENTRY_TYPE] += 1
+
+    def __iter__(self) -> tp.Iterator[MSBModel]:
+        """Iterate over all entries."""
+        return iter(self._entries)

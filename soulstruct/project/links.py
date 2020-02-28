@@ -3,7 +3,8 @@ import re
 from typing import TYPE_CHECKING
 
 from soulstruct.bnd.core import BND
-from soulstruct.maps.models import MSB_MODEL_TYPE
+from soulstruct.maps.models import MSBModelList
+from soulstruct.maps.core import MSB_MODEL_TYPE
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.core import SoulstructError
 from soulstruct.maps import MAP_ENTRY_TYPES
@@ -290,12 +291,7 @@ class WindowLinker(object):
 
         Note that Character and Object models don't actually need `map_id` to validate them.
         """
-        if isinstance(model_type, int):
-            model_type = MSB_MODEL_TYPE(model_type)
-        elif isinstance(model_type, str):
-            model_type = MSB_MODEL_TYPE[model_type]
-        if not isinstance(model_type, MSB_MODEL_TYPE):
-            raise TypeError(f"`model_type` must be a MSB_MODEL_TYPE, or a name/value within.")
+        model_type = MSBModelList.resolve_entry_type(model_type)
 
         dcx = ".dcx" if self.project.game_name == "Dark Souls Remastered" else ""
 
@@ -306,7 +302,7 @@ class WindowLinker(object):
             if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
                 return True
         elif model_type == MSB_MODEL_TYPE.MapPiece:
-            if (self.project.game_root / f"map/{map_id}/{name}A10.flver{dcx}").is_file():
+            if (self.project.game_root / f"map/{map_id}/{name}A{map_id[1:3]}.flver{dcx}").is_file():
                 return True
         elif model_type == MSB_MODEL_TYPE.Collision:
             # TODO: Rough BHD string scan until I have that file format.

@@ -1,22 +1,16 @@
-import math
+import typing as tp
 from io import BufferedReader, BytesIO
-from enum import IntEnum
 import logging
 import struct
 
-from soulstruct.maps.core import MSBEntryEntity
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, Vector
+from soulstruct.core import SoulstructError
+from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
+from soulstruct.maps.core import MSB_REGION_TYPE
+
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
+from soulstruct.utilities.maths import Vector3
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class MSB_REGION_TYPE(IntEnum):
-    Point = 0
-    Circle = 1
-    Sphere = 2
-    Cylinder = 3
-    Rect = 4
-    Box = 5
 
 
 def MSBRegion(msb_buffer):
@@ -25,7 +19,7 @@ def MSBRegion(msb_buffer):
     return BaseMSBRegion.auto_region_subclass(msb_buffer)
 
 
-class BaseMSBRegion(MSBEntryEntity):
+class BaseMSBRegion(MSBEntryEntityCoordinates):
 
     REGION_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
@@ -43,11 +37,11 @@ class BaseMSBRegion(MSBEntryEntity):
 
     FIELD_INFO = {
         'translate': (
-            'Translate', True, Vector,
+            'Translate', True, Vector3,
             "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
             "regions."),
         'rotate': (
-            'Rotate', True, Vector,
+            'Rotate', True, Vector3,
             "Euler angles for region rotation around its local X, Y, and Z axes."),
         'entity_id': (
             'Entity ID', True, int,
@@ -59,8 +53,6 @@ class BaseMSBRegion(MSBEntryEntity):
     def __init__(self, msb_region_source):
         super().__init__()
         self._region_index = None
-        self.translate = None
-        self.rotate = None
 
         if isinstance(msb_region_source, bytes):
             msb_region_source = BytesIO(msb_region_source)
@@ -75,8 +67,8 @@ class BaseMSBRegion(MSBEntryEntity):
         self.name = read_chars_from_buffer(
             msb_buffer, offset=region_offset + base_data.name_offset, encoding='shift-jis')
         self._region_index = base_data.region_index
-        self.translate = Vector(base_data.translate)
-        self.rotate = Vector(base_data.rotate)
+        self.translate = Vector3(base_data.translate)
+        self.rotate = Vector3(base_data.rotate)
         self.check_null_field(msb_buffer, region_offset + base_data.unknown_offset_1)
         self.check_null_field(msb_buffer, region_offset + base_data.unknown_offset_2)
 
@@ -142,16 +134,6 @@ class BaseMSBRegion(MSBEntryEntity):
             region_type = None
         msb_buffer.seek(old_offset)
         return REGION_TYPE_CLASSES[region_type](msb_buffer)
-
-    def rotate_y_in_world(self, y_rot, pivot_x=0.0, pivot_z=0.0, radians=False):
-        y_rot_rad = math.radians(y_rot) if not radians else y_rot
-        y_rot_deg = math.degrees(y_rot) if radians else y_rot
-        self.rotate.y += y_rot_deg
-        if self.translate != (pivot_x, 0, pivot_z):
-            radius = math.hypot(self.translate.x - pivot_x, self.translate.z - pivot_z)
-            rotation = math.atan2(-(self.translate.x - pivot_x), -(self.translate.z - pivot_z))
-            self.translate.x = radius * -math.sin(y_rot_rad + rotation) + pivot_x
-            self.translate.z = radius * -math.cos(y_rot_rad + rotation) + pivot_z
 
 
 class MSBRegionPoint(BaseMSBRegion):
@@ -345,3 +327,30 @@ REGION_TYPE_CLASSES = {
     MSB_REGION_TYPE.Rect: MSBRegionRect,
     MSB_REGION_TYPE.Box: MSBRegionBox,
 }
+
+
+class MSBRegionList(MSBEntryList):
+    ENTRY_LIST_NAME = 'Regions'
+    ENTRY_CLASS = staticmethod(MSBRegion)
+    ENTRY_TYPE_ENUM = MSB_REGION_TYPE
+
+    _entries: tp.List[MSBRegion]
+
+    Points: list
+    Circles: list
+    Spheres: list
+    Cylinders: list
+    Rectangles: list
+    Boxes: list
+
+    def set_indices(self):
+        """Global region index only."""
+        for i, entry in enumerate(self._entries):
+            try:
+                entry.set_indices(region_index=i)
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} region {entry.name}: {e}")
+
+    def __iter__(self) -> tp.Iterator[BaseMSBRegion]:
+        """Iterate over all entries."""
+        return iter(self._entries)

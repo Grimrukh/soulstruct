@@ -1,23 +1,13 @@
 import math
+import typing as tp
 from io import BufferedReader, BytesIO
-from enum import IntEnum
 import struct
 
-from soulstruct.core import InvalidFieldValueError
-from soulstruct.maps.core import MSBEntryEntity
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector
-
-
-class MSB_PART_TYPE(IntEnum):
-    MapPiece = 0
-    Object = 1
-    Character = 2
-    PlayerStarts = 4
-    Collision = 5
-    Navmesh = 8
-    UnusedObject = 9
-    UnusedCharacter = 10
-    MapConnection = 11
+from soulstruct.core import InvalidFieldValueError, SoulstructError
+from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
+from soulstruct.maps.core import MSB_PART_TYPE
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.maths import Vector3
 
 
 def MSBPart(msb_buffer):
@@ -25,7 +15,7 @@ def MSBPart(msb_buffer):
     return BaseMSBPart.auto_part_subclass(msb_buffer)
 
 
-class BaseMSBPart(MSBEntryEntity):
+class BaseMSBPart(MSBEntryEntityCoordinates):
     PART_HEADER_STRUCT = BinaryStruct(
         ('name_offset', 'i'),
         ('part_type', 'i'),
@@ -70,13 +60,13 @@ class BaseMSBPart(MSBEntryEntity):
             'Entity ID', True, int,
             "Entity ID used to refer to the part in other game files."),
         'translate': (
-            'Translate', True, Vector,
+            'Translate', True, Vector3,
             "3D coordinates of the part's position. Note that the anchor of the part is usually at its base."),
         'rotate': (
-            'Rotate', True, Vector,
+            'Rotate', True, Vector3,
             "Euler angles for part rotation around its local X, Y, and Z axes."),
         'scale': (
-            'Scale', True, Vector,
+            'Scale', True, Vector3,
             "Scale of part. Only relevant for objects and collisions."),
         'draw_groups': (
             'Draw Groups', True, list,
@@ -146,9 +136,7 @@ class BaseMSBPart(MSBEntryEntity):
         self._part_type_index = None  # TODO: investigate Wulf MSB Editor issue with global index misalignment
         self.model_name = None
         self._model_index = None
-        self.translate = Vector(1, 1, 1)
-        self.rotate = Vector(1, 1, 1)
-        self.scale = Vector(1, 1, 1)  # only relevant for MapPiece and Object
+        self.scale = Vector3(1, 1, 1)  # only relevant for MapPiece and Object
         self.draw_groups = list(range(128))  # [0, 1, 2, ..., 128]
         self.display_groups = list(range(128))  # [0, 1, 2, ..., 128]
 
@@ -192,7 +180,7 @@ class BaseMSBPart(MSBEntryEntity):
         self._model_index = header.model_index
         self._part_type_index = header.part_type_index
         for transform in ('translate', 'rotate', 'scale'):
-            setattr(self, transform, Vector(getattr(header, transform)))
+            setattr(self, transform, Vector3(getattr(header, transform)))
         self.draw_groups = _flag_group_to_enabled_flags(header.draw_groups)
         self.display_groups = _flag_group_to_enabled_flags(header.display_groups)
         self.name = read_chars_from_buffer(
@@ -298,19 +286,6 @@ class BaseMSBPart(MSBEntryEntity):
             part_type = None
         msb_buffer.seek(old_offset)
         return MSB_PART_TYPE_CLASSES[part_type](msb_buffer)
-
-    def rotate_y_in_world(self, y_rot, pivot_x=0.0, pivot_z=0.0, radians=False):
-        y_rot_rad = math.radians(y_rot) if not radians else y_rot
-        y_rot_deg = math.degrees(y_rot) if radians else y_rot
-        print(self.name)
-        print("   ", self.rotate.y)
-        self.rotate.y += y_rot_deg
-        print("   ", self.rotate.y)
-        if self.translate != (pivot_x, 0, pivot_z):
-            radius = math.hypot(self.translate.x - pivot_x, self.translate.z - pivot_z)
-            rotation = math.atan2(-(self.translate.x - pivot_x), -(self.translate.z - pivot_z))
-            self.translate.x = radius * -math.sin(y_rot_rad + rotation) + pivot_x
-            self.translate.z = radius * -math.cos(y_rot_rad + rotation) + pivot_z
 
 
 class MSBMapPiece(BaseMSBPart):
@@ -862,3 +837,70 @@ def _enabled_flags_to_flag_group(enabled_flags):
             raise ValueError(f"Invalid DrawGroups or DisplayGroups index {flag} (must be between 0 and 127).")
         flag_group[flag // 32] += 2 ** (flag % 32)
     return flag_group
+
+
+class MSBPartList(MSBEntryList):
+    ENTRY_LIST_NAME = 'Parts'
+    ENTRY_CLASS = staticmethod(MSBPart)
+    ENTRY_TYPE_ENUM = MSB_PART_TYPE
+
+    _entries: tp.List[BaseMSBPart]
+
+    MapPieces: list
+    Objects: list
+    Characters: list
+    PlayerStarts: list
+    Collisions: list
+    Navmeshes: list
+    UnusedObjects: list
+    UnusedCharacters: list
+    MapConnections: list
+
+    def get_part_by_name(self, entry_name: str, entry_type=None):
+        parts = []
+        for part in self.get_entries(entry_type):
+            if part.name == entry_name:
+                parts.append(part)
+        if not parts:
+            raise KeyError(f"No MSB parts named: {entry_name}")
+        elif len(parts) >= 2:
+            raise KeyError(f"Multiple MSB parts named: {entry_name}. Please make them unique.")
+        return parts[0]
+
+    def set_names(self, model_names, region_names, part_names, collision_names):
+        for entry in self._entries:
+            entry.set_names(model_names, region_names, part_names, collision_names)
+
+    def set_indices(self, model_indices, region_indices, part_indices, local_collision_indices):
+        """Local type-specific index only.
+
+        Events and other Parts may point to Parts by global entry index, but it seems the local index still matters, as
+        ObjAct Events seem to break when the local object index is changed. It's possible this was just an idiosyncrasy
+        of Wulf's MSB Editor. Either way, this method should ensure the global and local indices are consistent.
+
+        Note that cutscene files (remo) access Parts by index as well.
+
+        `local_collision_indices` are needed for Map Load Triggers. No other MSB entry type requires local indices.
+        """
+        type_indices = {}
+        for entry in self._entries:
+            try:
+                entry.set_indices(part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                                  model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
+                                  local_collision_indices=local_collision_indices)
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} part {entry.name}: {e}")
+            else:
+                type_indices[entry.ENTRY_TYPE] += 1
+
+    def get_instance_counts(self):
+        """Returns a dictionary mapping model names to part instance counts."""
+        instance_counts = {}
+        for entry in self._entries:
+            instance_counts.setdefault(entry.model_name, 0)
+            instance_counts[entry.model_name] += 1
+        return instance_counts
+
+    def __iter__(self) -> tp.Iterator[BaseMSBPart]:
+        """Iterate over all entries."""
+        return iter(self._entries)

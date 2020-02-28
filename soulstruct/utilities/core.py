@@ -1,8 +1,8 @@
+from __future__ import annotations
 import abc
 import ctypes
 import io
 import logging
-import math
 import os
 import re
 import string
@@ -11,6 +11,9 @@ import subprocess
 import sys
 import textwrap
 from pathlib import Path
+
+# TODO: Legacy import support for pickled project files. Remove in next major version.
+from .maths import Vector3 as Vector
 
 __all__ = [
     "PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
@@ -55,6 +58,7 @@ def create_bak(file_path):
         return True
     return False
 
+
 def word_wrap(text, line_limit=50):
     return '\n'.join(textwrap.wrap(text, line_limit))
 
@@ -96,94 +100,7 @@ def traverse_path_tree(tree, cur=()):
         raise ValueError(f"Invalid type encountered in path tree: {type(tree)}")
 
 
-class Vector(object):
-    """Simple [x, y, z] container."""
-    def __init__(self, x, y=None, z=None):
-        if y is None and z is None:
-            x, y, z = x
-        elif y is None or z is None:
-            raise ValueError("Vector must be initialized with [x, y, z] as a single list or three separate arguments.")
-        self.x, self.y, self.z = x, y, z
-
-    def __getitem__(self, index):
-        if index == 0:
-            return self.x
-        elif index == 1:
-            return self.y
-        elif index == 2:
-            return self.z
-        raise IndexError("Index of Vector must be between 0 and 2.")
-
-    def __setitem__(self, index, value):
-        if index == 0:
-            self.x = value
-        elif index == 1:
-            self.y = value
-        elif index == 2:
-            self.z = value
-        raise IndexError("Index of Vector must be between 0 and 2.")
-
-    def __eq__(self, other_vector):
-        return len(other_vector) == 3 and all(self[i] == other_vector[i] for i in range(3))
-
-    def __add__(self, other):
-        if isinstance(other, Vector):
-            return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
-        elif isinstance(other, (list, tuple)):
-            if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
-            return Vector(self.x + other[0], self.y + other[1], self.z + other[2])
-        elif isinstance(other, (int, float)):
-            return Vector(self.x + other, self.y + other, self.z + other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
-
-    def __sub__(self, other):
-        if isinstance(other, Vector):
-            return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
-        elif isinstance(other, (list, tuple)):
-            if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
-            return Vector(self.x - other[0], self.y - other[1], self.z - other[2])
-        elif isinstance(other, (int, float)):
-            return Vector(self.x - other, self.y - other, self.z - other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
-
-    def __mul__(self, other):
-        if isinstance(other, Vector):
-            return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
-        elif isinstance(other, (list, tuple)):
-            if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
-            return Vector(self.x * other[0], self.y * other[1], self.z * other[2])
-        elif isinstance(other, (int, float)):
-            return Vector(self.x * other, self.y * other, self.z * other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
-
-    def __truediv__(self, other):
-        if isinstance(other, Vector):
-            return Vector(self.x / other.x, self.y / other.y, self.z / other.z)
-        elif isinstance(other, (list, tuple)):
-            if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
-            return Vector(self.x / other[0], self.y / other[1], self.z / other[2])
-        elif isinstance(other, (int, float)):
-            return Vector(self.x / other, self.y / other, self.z / other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
-
-    def __len__(self):
-        return 3
-
-    def __iter__(self):
-        yield self.x
-        yield self.y
-        yield self.z
-
-    def __repr__(self):
-        return f'Vector({self.x}, {self.y}, {self.z})'
-
-
 class BinaryStruct(object):
-
     BYTE_ORDER_RE = re.compile(r'[<>@].*')
     PAD_RE = re.compile(r'([0-9]*)?x')
     JIS_FORMAT_RE = re.compile(r'([0-9]*)?j')
@@ -465,6 +382,7 @@ class BaseStruct(abc.ABC):
 
 class AttributeDict(dict):
     """Simple dict extension that allows you to access values as attributes using dot notation."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self.update(*args, **kwargs)
@@ -663,22 +581,6 @@ def pad_chars(text, encoding=None, null_terminate=True, pad_to_multiple_of=4):
     while len(encoded) % pad_to_multiple_of != 0:
         encoded += pad
     return encoded
-
-
-def shift_msb_coordinates(ry, distance, xyz=(0.0, 0.0, 0.0)):
-    """ Shift an MSB entity with given x, z, ry coordinates forward or back. """
-    ry_rad = math.radians(ry)
-    delta_x = -distance * math.sin(ry_rad)
-    delta_z = -distance * math.cos(ry_rad)
-    return xyz[0] + delta_x, xyz[1], xyz[2] + delta_z
-
-
-def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
-    rot_rad = math.radians(rotation)
-    r, th = math.hypot(rel_x, rel_z), math.atan2(rel_z, rel_x)
-    th += rot_rad
-    dx, dz = r * -math.sin(th), r * -math.cos(th)
-    return origin[0] + dx, origin[1] + dz
 
 
 def get_startupinfo():

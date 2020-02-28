@@ -16,8 +16,7 @@ from soulstruct.utilities import BiDict, word_wrap
 
 if TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps, MSB
-    from soulstruct.maps.core import MSBEntryEntity
-
+    from soulstruct.maps.base import MSBEntryEntity
 
 ENTRY_LIST_FG_COLORS = {
     'Parts': '#DDF',

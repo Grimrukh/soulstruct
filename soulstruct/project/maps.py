@@ -9,17 +9,18 @@ from typing import List, TYPE_CHECKING
 
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.core import InvalidFieldValueError
-from soulstruct.maps import MAP_ENTRY_TYPES
+from soulstruct.maps.core import MAP_ENTRY_TYPES, MSB_MODEL_TYPE
 from soulstruct.maps.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox
 from soulstruct.project.editor import SoulstructBaseFieldEditor
-from soulstruct.utilities import camel_case_to_spaces, Vector
+from soulstruct.utilities import camel_case_to_spaces
+from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.memory import MemoryHookError
 
 if TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps
-    from soulstruct.maps.core import MSBEntry
+    from soulstruct.maps.base import MSBEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -129,7 +130,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
 
-            elif field_type == Vector:
+            elif field_type == Vector3:
                 # No chance of a link here.
                 self.value_vector_x.var.set(f'x: {value.x:.3f}')
                 self.value_vector_y.var.set(f'y: {value.y:.3f}')
@@ -198,7 +199,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     self.context_menu.add_command(
                         label="Select model from complete list", foreground=fg,
                         command=self.choose_character_model)
-            if self.field_type == Vector:
+            if self.field_type == Vector3:
                 if self.field_name == "translate":
                     self.context_menu.add_command(
                         label="Copy current in-game player position", foreground=fg,
@@ -352,7 +353,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 self.build_field_context_menu()
                 return new_value
 
-            if self.field_type in (float, Vector):
+            if self.field_type in (float, Vector3):
                 if new_text == "-":
                     return None  # no change
                 new_value = float(new_text)
@@ -613,7 +614,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 numbers_only=field_type == float,
                 integers_only=field_type == int,
                 sticky='ew', width=5)
-        elif field_type == Vector:
+        elif field_type == Vector3:
             if self.e_coord is None:
                 return None  # Exact coordinate not clicked.
             return self.Entry(
@@ -634,9 +635,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.e_field_value_edit = None
             self.e_coord = None
 
-    def _confirm_field_value_edit(self, index):
+    def _confirm_field_value_edit(self, row_index):
         if self.e_field_value_edit:
-            row = self.field_rows[index]
+            row = self.field_rows[row_index]
             try:
                 true_value = row.confirm_edit(new_text=self.e_field_value_edit.var.get(), coord=self.e_coord)
             except ValueError as e:
@@ -671,6 +672,48 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.CustomDialog(title="Field Value Error", message=str(e))
             return False
         return True
+
+    def _field_press_up(self, _=None):
+        if self.selected_field_row_index is not None:
+            edit_new_row = self.e_field_value_edit is not None
+            new_coord = ""
+            if self.e_coord is not None:
+                if self.e_coord == "y":
+                    new_coord = "x"
+                    edit_new_row = False
+                elif self.e_coord == "z":
+                    new_coord = "y"
+                    edit_new_row = False
+            self._confirm_field_value_edit(self.selected_field_row_index)
+            if new_coord in {"x", "y"}:
+                self._start_field_value_edit(self.selected_field_row_index, coord=new_coord)
+            else:
+                self._shift_selected_field(-1)
+            if edit_new_row and self.field_rows[self.selected_field_row_index].editable:
+                self._start_field_value_edit(self.selected_field_row_index)
+            if self.field_canvas.yview()[1] != 1.0 or self.selected_field_row_index < self.displayed_field_count - 5:
+                self.field_canvas.yview_scroll(-1, 'units')
+
+    def _field_press_down(self, _=None):
+        if self.selected_field_row_index is not None:
+            edit_new_row = self.e_field_value_edit is not None or self.e_coord
+            new_coord = ""
+            if self.e_coord is not None:
+                if self.e_coord == "x":
+                    new_coord = "y"
+                    edit_new_row = False
+                elif self.e_coord == "y":
+                    new_coord = "z"
+                    edit_new_row = False
+            self._confirm_field_value_edit(self.selected_field_row_index)
+            if new_coord in {"y", "z"}:
+                self._start_field_value_edit(self.selected_field_row_index, coord=new_coord)
+            else:
+                self._shift_selected_field(+1)
+            if edit_new_row and self.field_rows[self.selected_field_row_index].editable:
+                self._start_field_value_edit(self.selected_field_row_index)
+            if self.field_canvas.yview()[0] != 0.0 or self.selected_field_row_index > 5:
+                self.field_canvas.yview_scroll(1, 'units')
 
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names and their subtypes, properly formatted."""
@@ -755,11 +798,12 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def add_models(self, model_link, model_name):
         if model_link == "<Maps:Models:Characters|Players>":
-            model_type = "Character"
+            model_type = "Characters"
         else:
             model_type = re.match(r"<Maps:Models:(\w+)>", model_link).group(1)
 
-        if self.linker.validate_model_type(model_type, model_name, map_id=self.map_choice_id):
+        map_id = self.map_choice_id
+        if self.linker.validate_model_type(model_type, model_name, map_id=map_id):
             if self.CustomDialog(
                     title=f"Add {model_type} Model",
                     message=f"Add {model_type} model {model_name} to map?",
@@ -767,7 +811,11 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     button_kwargs=("YES", "NO"),
                     return_output=0, default_output=0, cancel_output=1
             ) == 0:
-                new_model = MSBModel(name=model_name, entry_type=model_type)
+                if model_type in {"MapPieces", "Collisions", "Navmeshes"}:
+                    sib_path = (int(map_id[1:3]), int(map_id[4:6]))
+                else:
+                    sib_path = None  # fine for Objects, Characters, and Players
+                new_model = MSBModel(name=model_name, entry_type=model_type, sib_path=sib_path)
                 self.get_selected_msb().models.add_entry(new_model, append_to_entry_type=model_type)
                 return True
         else:
@@ -789,7 +837,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 player_x = self.linker.get_game_value("player_x")
                 player_y = self.linker.get_game_value("player_y") + y_offset
                 player_z = self.linker.get_game_value("player_z")
-                new_translate = Vector(player_x, player_y, player_z)
+                new_translate = Vector3(player_x, player_y, player_z)
             if rotate:
                 new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
         except ConnectionError:

@@ -1,26 +1,13 @@
+import typing as tp
 from io import BufferedReader, BytesIO
-from enum import IntEnum
 import struct
 
+from soulstruct.core import SoulstructError
 from soulstruct.enums.darksouls1 import SoundType
-from soulstruct.maps.core import MSBEntryEntity
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, Vector, pad_chars
-
-
-class MSB_EVENT_TYPE(IntEnum):
-    Light = 0
-    Sound = 1
-    FX = 2
-    Wind = 3
-    Treasure = 4
-    Spawner = 5
-    Message = 6
-    ObjAct = 7
-    SpawnPoint = 8
-    MapOffset = 9
-    Navigation = 10
-    Environment = 11
-    NPCInvasion = 12
+from soulstruct.maps.base import MSBEntryList, MSBEntryEntity
+from soulstruct.maps.core import MSB_EVENT_TYPE
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
+from soulstruct.utilities.maths import Vector3
 
 
 def MSBEvent(msb_buffer):
@@ -759,7 +746,7 @@ class MSBMapOffset(BaseMSBEvent):
 
     FIELD_INFO = {
         'translate': (
-            'Translate', True, Vector,
+            'Translate', True, Vector3,
             "Vector of (x, y, z) coordinates of map offset."),
         'rotate_y': (
             'Y Rotation', True, float,
@@ -775,7 +762,7 @@ class MSBMapOffset(BaseMSBEvent):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.EVENT_MAP_OFFSET_STRUCT).unpack(msb_buffer)
-        self.translate = Vector(data.translate)
+        self.translate = Vector3(data.translate)
         self.rotate_y = data.rotate_y
 
     def pack_type_data(self):
@@ -980,3 +967,45 @@ MSB_EVENT_TYPE_CLASSES = {
     MSB_EVENT_TYPE.Environment: MSBEnvironment,
     MSB_EVENT_TYPE.NPCInvasion: MSBNPCInvasion,
 }
+
+
+class MSBEventList(MSBEntryList):
+    ENTRY_LIST_NAME = 'Events'
+    ENTRY_CLASS = staticmethod(MSBEvent)
+    ENTRY_TYPE_ENUM = MSB_EVENT_TYPE
+
+    _entries: tp.List[MSBEvent]
+
+    Lights: list
+    Sounds: list
+    FX: list
+    Wind: list
+    Treasure: list
+    Spawners: list
+    Messages: list
+    ObjActs: list
+    SpawnPoints: list
+    MapOffsets: list
+    Navigation: list
+    Environment: list
+    NPCInvasions: list
+
+    def set_names(self, region_names, part_names):
+        for entry in self._entries:
+            entry.set_names(region_names, part_names)
+
+    def set_indices(self, region_indices, part_indices):
+        """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
+        type_indices = {}
+        for i, entry in enumerate(self._entries):
+            try:
+                entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                                  region_indices=region_indices, part_indices=part_indices)
+            except KeyError as e:
+                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} event {entry.name}: {e}")
+            else:
+                type_indices[entry.ENTRY_TYPE] += 1
+
+    def __iter__(self) -> tp.Iterator[BaseMSBEvent]:
+        """Iterate over all entries."""
+        return iter(self._entries)
