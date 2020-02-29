@@ -154,19 +154,19 @@ class MSB(object):
         with msb_path.open('wb') as f:
             f.write(self.pack())
 
-    def translate_all(self, translate: Vector3.typing(), selected_entry_names=None):
+    def translate_all(self, translate: Vector3.typing(), selected_entries=None):
         """Add given `translate` to `.translate` vectors of all Regions and Parts (including Map Pieces, Collisions, and
         Navmeshes) by given XYZ. Optionally, only apply it to `selected_entry_names`.
         """
         for p in self.parts:
-            if selected_entry_names is None or p.name in selected_entry_names:
+            if selected_entries is None or p in selected_entries:
                 p.translate += translate
         for r in self.regions:
-            if selected_entry_names is None or r.name in selected_entry_names:
+            if selected_entries is None or r in selected_entries:
                 r.translate += translate
 
     def rotate_all_in_world(self, rotation: tp.Union[Matrix3, Vector3.typing(), int, float],
-                            pivot_point=(0, 0, 0), radians=False, selected_entry_names=None):
+                            pivot_point=(0, 0, 0), radians=False, selected_entries=None):
         """Rotate every Part and Region in the map (or a selection given in `selected_entry_names`) around the given
         pivot by the given Euler angles coordinate system, modifying both `translate` and `rotate`.
 
@@ -180,10 +180,10 @@ class MSB(object):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
         pivot_point = Vector3(pivot_point)
         for p in self.parts:
-            if selected_entry_names is None or p.name in selected_entry_names:
+            if selected_entries is None or p in selected_entries:
                 p.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
         for r in self.regions:
-            if selected_entry_names is None or r.name in selected_entry_names:
+            if selected_entries is None or r in selected_entries:
                 r.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
 
     def move_map(self,
@@ -191,12 +191,19 @@ class MSB(object):
                  end_translate: Vector3.typing() = None,
                  start_rotate: tp.Union[Vector3.typing(), int, float, None] = None,
                  end_rotate: tp.Union[Vector3.typing(), int, float, None] = None,
-                 selected_entry_names=None):
+                 selected_entries=None):
         """Rotate and then translate entire map so that an entity with a translate of `start_translate` and rotate of
         `start_rotate` ends up with a translate of `end_translate` and a rotate of `end_rotate`.
 
         Optionally, move only a subset of entry names given in `selected_entry_names`.
         """
+        if selected_entries is not None:
+            for i, entry in enumerate(selected_entries):
+                if isinstance(entry, str):
+                    selected_entries[i] = self.parts.get_part_by_name(entry)
+                elif not isinstance(entry, MSBEntry):
+                    raise TypeError("`selected_entries` should contain only `MSBEntry` instances or Part names.")
+
         start_translate = Vector3(start_translate)
         end_translate = Vector3(end_translate)
         if start_rotate is None:
@@ -220,12 +227,8 @@ class MSB(object):
         # Apply global rotation to start point to determine required global translation.
         translation = end_translate - (m_world_rotate @ start_translate)  # type: Vector3
 
-        print(f"World Rotation Matrix:\n{m_world_rotate}")
-        print("  as Euler angles:", m_world_rotate.to_euler_angles())
-        print("World Translation:", translation)
-
-        self.rotate_all_in_world(m_world_rotate, selected_entry_names=selected_entry_names)
-        self.translate_all(translation, selected_entry_names=selected_entry_names)
+        self.rotate_all_in_world(m_world_rotate, selected_entries=selected_entries)
+        self.translate_all(translation, selected_entries=selected_entries)
 
     def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
         """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type.

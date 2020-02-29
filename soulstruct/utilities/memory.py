@@ -255,7 +255,7 @@ class MemoryHook(object):
     def read_double(self, address):
         return self._read(address, size=8, fmt="<d")
 
-    def scan(self, byte_sequence: bytes, chunk_size=100000):
+    def scan(self, byte_sequence: bytes, chunk_size=10000):
         """Find a given byte sequence in process memory (looking in the first `search_size` bytes)."""
         if len(byte_sequence) >= chunk_size:
             raise ValueError("Chunk size must be larger than byte sequence being searched.")
@@ -318,5 +318,15 @@ class MemoryHookError(SoulstructError):
 
 class DSRMemoryHook(MemoryHook):
 
-    def __init__(self, dsr_pid):
+    def __init__(self, dsr_pid=None):
+        if dsr_pid is None:
+            if psutil is None:
+                raise ModuleNotFoundError("`psutil` required for determining DSR PID.")
+            for p in psutil.process_iter():
+                if p.name() == "DarkSoulsRemastered.exe":
+                    dsr_pid = p.pid
+            if dsr_pid is None:
+                raise RuntimeError("Could not find `DarkSoulsRemastered.exe` process.")
+            print(f"Found Dark Souls Remastered process ID: {dsr_pid}")
+
         super().__init__(dsr_pid, DSR_POINTER_TABLE, DSR_VALUE_TABLE)
