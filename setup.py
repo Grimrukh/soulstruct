@@ -13,7 +13,7 @@ setup(
     description='Inspect and mod FromSoft games.',
     long_description=long_description,
     extras_require={'Interactive': ['IPython'], 'Runtime': ['psutil'], 'ConsoleColor': ['colorama'],
-                    "Hotkeys": ['keyboard']},
+                    "Hotkeys": ['keyboard'], "Graphs": ['numpy', 'matplotlib']},
     author='Scott Mooney',
     author_email='grimrukh@gmail.com',
     url="https://github.com/grimrukh/soulstruct",

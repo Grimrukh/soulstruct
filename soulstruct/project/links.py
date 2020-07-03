@@ -274,7 +274,7 @@ class WindowLinker(object):
         self.window.page_tabs.select(self.get_tab_index('text'))
         # TODO: Create entry if missing.
         self.window.text_tab.select_category(category)
-        self.window.text_tab.select_entry_id(text_id)
+        self.window.text_tab.select_entry_id(text_id, edit_if_already_selected=False)
         self.window.text_tab.update_idletasks()
 
     def maps_link(self, entry_list_name, entry_type_name, entry_local_index):

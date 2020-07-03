@@ -15,10 +15,6 @@ class Vector3(object):
         self.x, self.y, self.z = x, y, z
 
     @classmethod
-    def typing(cls):
-        return tp.Union[cls, list, tuple]
-
-    @classmethod
     def from_row_mat(cls, row_mat):
         return cls(row_mat[0][0], row_mat[0][1], row_mat[0][2])
 
@@ -115,7 +111,7 @@ class Vector3(object):
         yield self.z
 
     def __repr__(self):
-        return f'Vector({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f}, {self.z:.{self.PRECISION}f})'
+        return f'Vector3({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f}, {self.z:.{self.PRECISION}f})'
 
     @classmethod
     def zero(cls):

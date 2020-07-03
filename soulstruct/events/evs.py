@@ -1,5 +1,6 @@
 import ast
 import importlib
+import importlib.util
 import logging
 import re
 import sys
@@ -19,6 +20,23 @@ _LOGGER = logging.getLogger(__name__)
 # TODO: Support event function imports from '.common_func', including kwarg names.
 
 
+_RESTART_TYPES = {'NeverRestart': 0, 'RestartOnRest': 1, 'UnknownRestart': 2}
+_EVENT_DOCSTRING_RE = re.compile(r'(\w+ )?([0-9]+)(:\s*.*)?', re.DOTALL)
+_EVS_TYPES = ('B', 'b', 'H', 'h', 'I', 'i', 'f', 's')
+_PY_TYPES = {'uchar': 'B', 'char': 'b', 'ushort': 'H', 'short': 'h', 'uint': 'I', 'int': 'i', 'float': 'f', 'str': 's'}
+_BUILTIN_NAMES = {'Condition', 'EVENTS'}.union(_RESTART_TYPES)
+_AND_SLOTS = {
+        "darksouls1": [1, 2, 3, 4, 5, 6, 7],
+        "bloodborne": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "darksouls3": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    }
+_OR_SLOTS = {
+    "darksouls1": [-1, -2, -3, -4, -5, -6, -7],
+    "bloodborne": [-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15],
+    "darksouls3": [-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15],
+}
+
+
 class EvsParser(object):
 
     def __init__(self, evs_path_or_string, game_module=None, map_name=None, script_path=None):
@@ -31,9 +49,8 @@ class EvsParser(object):
             map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
         """
 
-        if script_path:
+        if script_path and str(script_path) not in sys.path:
             sys.path.append(str(script_path))
-
         if not game_module:
             raise ValueError("No game specified. Try importing this class from the appropriate game events subpackage.")
 
@@ -56,6 +73,7 @@ class EvsParser(object):
         # Global namespace with game-specific enums and constants. May be updated with user imports and definitions.
         self.globals = vars(game_module.enums)
         self.globals.update(vars(game_module.constants))
+        self.globals.update(vars(gt))
         # Note that there is no event-specific local namespace, except for this dictionary of 'for' loop variables:
         self.for_vars = {}
 
@@ -65,14 +83,10 @@ class EvsParser(object):
                       and (isinstance(attr, ConstantCondition) or getattr(attr, '__module__', '').endswith('tests'))}
         self.events = OrderedDict()  # Maps your event names to their IDs, so you can call them to initialize them.
 
-        if self.game_name == 'darksouls1':
-            self.conditions = [''] * 15  # Reset for every new event. Contains names of conditions.
-        elif self.game_name in {'bloodborne', 'darksouls3'}:
-            self.conditions = [''] * 31  # Reset for every new event. Contains names of conditions.
-        else:
-            raise ValueError(f"Invalid game name: {repr(self.game_name)}")
+        self._reset_conditions()
+
         self.held_conditions = []  # These conditions won't be re-allocated.
-        self.finished_conditions = []  # These conditions need to be accessed with 'finished' instruction versions.
+        self.finished_conditions = []  # These conditions need to be accessed with 'finished' instruction variants.
 
         self.script_event_flags = {}
         self.current_event = {}
@@ -81,6 +95,14 @@ class EvsParser(object):
         self.numeric_emevd = ''
 
         self._compile_evs()
+
+    def _reset_conditions(self):
+        if self.game_name == 'darksouls1':
+            self.conditions = [''] * 15  # Reset for every new event. Contains names of conditions.
+        elif self.game_name in {'bloodborne', 'darksouls3'}:
+            self.conditions = [''] * 31  # Reset for every new event. Contains names of conditions.
+        else:
+            raise ValueError(f"Invalid game name: {repr(self.game_name)}")
 
     # ~~~~~~~~~~~~~~~~~~~
     #  FIRST PASS METHODS: These scan the event functions and collect information about each script.
@@ -181,6 +203,8 @@ class EvsParser(object):
                 self._scan_event(node)
             elif isinstance(node, ast.Assign):
                 self._assign_name(node)
+            elif isinstance(node, ast.ClassDef):
+                continue  # Class definitions (e.g. enums) are collected from the real Python parser.
             else:
                 raise EvsSyntaxError(
                     node.lineno, f"Invalid content: {node.__class__}. The only valid global EVS lines are "
@@ -193,7 +217,7 @@ class EvsParser(object):
         for event_name, event_function in self.events.items():
             self.current_event = self.events[event_name]
             self.for_vars = {}
-            self.conditions = [''] * 15
+            self._reset_conditions()
             self.finished_conditions = []
             parsed_event = self._compile_event_function(event_function)  # numeric format
             self.event_function_strings.append('\n'.join(parsed_event))
@@ -289,7 +313,7 @@ class EvsParser(object):
 
         if kwargs:
             args = []
-            for arg_name in event_dict['arg_dict']:
+            for arg_name in event_dict['args']:
                 try:
                     args.append(kwargs.pop(arg_name))  # order event arguments correctly
                 except KeyError:
@@ -580,7 +604,7 @@ class EvsParser(object):
                 arg = self.current_event['args'][name]
             except KeyError:
                 raise NoSkipOrTerminateError
-            if negate:
+            if not negate:  # note inversion
                 return self.instructions['SkipLinesIfComparison'](
                     skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value)
             return self.instructions['SkipLinesIfComparison'](
@@ -659,7 +683,11 @@ class EvsParser(object):
                 test_func = partial(arg_class.__call__, arg)
                 if not callable(test_func):
                     raise EvsValueError(node.lineno, f"Event argument type {repr(arg_class)} is not testable.")
-                return test_func(negate=negate, condition=condition, skip_lines=skip_lines)
+                try:
+                    return test_func(negate=negate, condition=condition, skip_lines=skip_lines)
+                except AttributeError:
+                    raise EvsValueError(
+                        node.lineno, f"Cannot parse test function of '{node.id}'")
             raise EvsValueError(
                 node.lineno, f"Cannot use an event argument as a test condition unless it has a testable game type\n "
                              f"such as Flag (tests for enabled state), Region (tests if player is inside), etc.")
@@ -991,7 +1019,7 @@ class EvsParser(object):
         """ Check out next available OR condition register index. """
         if name != '_' and name in self.conditions:
             raise ConditionNameError(lineno, f"A condition named '{name}' already exists in this event.")
-        for i in _OR_SLOTS:
+        for i in _OR_SLOTS[self.game_name]:
             if self.conditions[i] == '':
                 self.conditions[i] = name
                 if hold:
@@ -999,7 +1027,7 @@ class EvsParser(object):
                 return i
 
         # Failed to find an empty condition, so get a non-held finished one. TODO: confirm this is safe in-game.
-        for i in _OR_SLOTS:
+        for i in _OR_SLOTS[self.game_name]:
             if i in self.finished_conditions and i not in self.held_conditions:
                 self.finished_conditions.remove(i)
                 self.conditions[i] = name
@@ -1013,7 +1041,7 @@ class EvsParser(object):
         """ Check out next available AND condition register index. """
         if name != '_' and name in self.conditions:
             raise ConditionNameError(lineno, f"A condition named '{name}' already exists in this event.")
-        for i in _AND_SLOTS:
+        for i in _AND_SLOTS[self.game_name]:
             if self.conditions[i] == '':
                 self.conditions[i] = name
                 if hold:
@@ -1021,7 +1049,7 @@ class EvsParser(object):
                 return i
 
         # Failed to find an empty condition, so get a non-held finished one. TODO: confirm this is safe in-game.
-        for i in _AND_SLOTS:
+        for i in _AND_SLOTS[self.game_name]:
             if i in self.finished_conditions and i not in self.held_conditions:
                 self.finished_conditions.remove(i)
                 self.conditions[i] = name
@@ -1039,11 +1067,11 @@ class EvsParser(object):
         one-test conditions from meaningful conditions containing multiple tests.
         """
         try:
-            highest_or = max([abs(c) for c in _OR_SLOTS if not self.conditions[c]])
+            highest_or = max([abs(c) for c in _OR_SLOTS[self.game_name] if not self.conditions[c]])
         except ValueError:
             highest_or = 0
         try:
-            highest_and = max([c for c in _AND_SLOTS if not self.conditions[c]])
+            highest_and = max([c for c in _AND_SLOTS[self.game_name] if not self.conditions[c]])
         except ValueError:
             highest_and = 0
 
@@ -1056,15 +1084,6 @@ class EvsParser(object):
         else:
             self.conditions[highest_and] = '_'
             return highest_and
-
-
-_AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
-_OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
-_RESTART_TYPES = {'NeverRestart': 0, 'RestartOnRest': 1, 'UnknownRestart': 2}
-_EVENT_DOCSTRING_RE = re.compile(r'(\w+ )?([0-9]+)(:\s*.*)?')
-_EVS_TYPES = ('B', 'b', 'H', 'h', 'I', 'i', 'f', 's')
-_PY_TYPES = {'uchar': 'B', 'char': 'b', 'ushort': 'H', 'short': 'h', 'uint': 'I', 'int': 'i', 'float': 'f', 'str': 's'}
-_BUILTIN_NAMES = {'Condition', 'EVENTS'}.union(_RESTART_TYPES)
 
 
 def _parse_event_arguments(event_node: ast.FunctionDef):
@@ -1081,8 +1100,11 @@ def _parse_event_arguments(event_node: ast.FunctionDef):
 
     for arg_node in event_node.args.args:
         arg_name = arg_node.arg
+        if arg_name == "_":
+            continue  # My personal protocol for the first 'slot' arg.
         if arg_name in {'slot', 'event_layers'}:
-            raise EvsSyntaxError(event_node.lineno, f"Event argument cannot be named 'slot' or 'event_layers'.")
+            continue  # Previously raised an error here, but now allowing them for IDE purposes (but they do nothing).
+            # raise EvsSyntaxError(event_node.lineno, f"Event argument cannot be named 'slot' or 'event_layers'.")
         arg_names.append(arg_name)
 
         arg_type_node = arg_node.annotation
@@ -1192,8 +1214,8 @@ def _import_from(node: ast.ImportFrom, namespace: dict):
         raise EvsImportError(node.lineno, node.module, str(e))
     for alias in node.names:
         name = alias.name
-        if 'soulstruct.events' in name:
-            return
+        if 'soulstruct.events.' in name:
+            return  # already imported
         if name == '*':
             if "__all__" in vars(module):
                 all_names = vars(module)["__all__"]
@@ -1254,7 +1276,8 @@ class EvsImportError(EvsError):
     """Raised when a module cannot be imported."""
 
     def __init__(self, lineno, module, msg):
-        super().__init__(lineno, f"Could not import {repr(module)}. Error: {msg}")
+        super().__init__(lineno, f"Could not import {repr(module)}. Note you need to specify `script_path` to use "
+                                 f"relative imports.\nError: {msg}")
 
 
 class EvsImportFromError(EvsError):

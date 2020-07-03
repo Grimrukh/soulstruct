@@ -94,7 +94,7 @@ class ATKPARAM_REP_DMGTYPE(SignedChar):
 class ATKPARAM_SPATTR_TYPE(UnsignedChar):
     """Determines weaknesses and visual effect upon damage."""
     NoType = 0
-    SpecialPhysical = 1  # used for parries, ripostes, guarding, falls, Force miracles
+    Physical = 1  # used for parries, ripostes, guarding, falls, Force miracles
     Fire = 2
     Magic = 3
     Poison = 4
@@ -573,6 +573,8 @@ class SP_EFFECT_SAVE_CATEGORY(SignedChar):
     Bleed = 1
     Toxic = 2
     Egg = 3
+    DragonHeadStone = 4
+    DragonTorsoStone = 5
 
 
 class SP_EFFECT_SPCATEGORY(UnsignedShort):
@@ -583,8 +585,14 @@ class SP_EFFECT_SPCATEGORY(UnsignedShort):
 
 
 class SP_EFFECT_THROW_CONDITION_TYPE(UnsignedChar):
+    """Field in SpEffect entries that changes all throws in some way (e.g. disables them / increases riposte damage)."""
     Default = 0
-    # TODO: more.
+    ThrowDisabled = 1
+    ParryCollapsed = 2  # used only by SpEffect 30 at an unknown time; unknown effect on throws
+    InCoffinOrNearQuelana = 3  # unknown effect on throws
+    Falling = 4  # unknown effect on throws
+    HornetRing = 5  # damage boost
+    HumanityDrain = 6  # lose soft humanity
 
 
 class SP_EFFECT_TYPE(UnsignedChar):
@@ -653,10 +661,17 @@ class SpecialStateInfo(UnsignedChar):
     EggParasiteHead = 114  # egg appears, eats half souls. Goes to 192.
     FlipDodge = 115  # Enables flip dodges (Dark Wood Grain Ring).
     CurseDamage = 116  # Petrification/crystal curse damage.
+    Petrification = 117  # Turn into a stone statue and die.
     PurgingStone = 118  # Purging stone.
     HumanityRecovery = 119  # "Humanity recovery", has no immediate effect. Also used for Darkwraith effect.
     AnimationPoiseChange = 120  # Animation superarmor changes.
+    ThornedHead = 123  # Armor deals damage on contact.
+    ThornedBody = 124  # Armor deals damage on contact.
+    ThornedArms = 125  # Armor deals damage on contact.
+    ThornedLegs = 126  # Armor deals damage on contact.
     MimicSleep = 127  # Lloyd's Talisman used on Mimic.
+    Crystallization = 136  # Turn into a crystal statue and die.
+    LavaDamage = 142  # Damaging effect of walking in lava.
     SkeletonImmortality = 143  # Immortal skeleton.
     SkeletonDisassembled = 144  # Skeleton disassembled?
     CastLight = 147  # Ball of light from Cast Light.
@@ -682,6 +697,7 @@ class SpecialStateInfo(UnsignedChar):
     AffectThrustCounterDamageOnly = 197  # Attack boosts only affect counter damage with thrusting-type attacks.
     EggVermifuge = 198  # Egg Vermifuge treatment.
     RingOfTheEvilEye = 199  # Triggers hard-coded special effect 2241 whenever an enemy is killed.
+    HalfSpellCasts = 203  # Manus Catalyst, Tin Crystallization Catalyst
     StrongMagicShield = 204  # Strong Magic Shield.
 
 
@@ -723,7 +739,7 @@ class WEAPON_CATEGORY(UnsignedChar):
     """Each category includes weapons of all sizes."""
     Dagger = 0
     StraightSword = 1  # includes whips
-    PiercingSword = 2
+    ThrustingSword = 2
     CurvedSword = 3  # includes katanas
     Axe = 4
     Hammer = 5
@@ -787,32 +803,133 @@ class WEP_CORRECT_TYPE(UnsignedChar):
     MiracleSpells = 12  # most talismans
     DarkmoonTalisman = 13  # not sure why this has its own category rather than Velka's Talisman
     SorcerySpells = 14  # most catalysts
-    OolacileOvryCatalyst = 15
+    OolacileIvoryCatalyst = 15
     IvorySunlightTalismans = 16
 
 
 class WEPMOTION_CATEGORY(UnsignedChar):
-    ArrowOrBolt = 0
-    Dagger = 20
-    StraightSword = 23
-    Greatsword = 25  # includes Curved Greatswords
-    UltraGreatsword = 26
-    Rapier = 27
-    CurvedSword = 28
-    Katana = 29
-    Axe = 30
-    Greataxe = 32
-    Hammer = 33
-    GreatHammer = 35
-    Spear = 36
-    Halberd = 38
-    SpellTool = 41
-    Fists = 42
-    Whip = 43
-    Bow = 44
-    Crossbow = 46
-    Greatshield = 47
-    Shield = 48  # includes both bucklers and medium shields
+    """Animation offset for player weapons. Used in TAE lookup (multiplied by 10000)."""
+    Default = 0  # includes default one-handed animations; no attack animations
+
+    # One-handed passive animations (if different from default)
+    OneHandedHeavy = 2  # carried on shoulder
+    OneHandedSpear = 3  # held out wide and low
+
+    # Two-handed passive animations (always set)
+    TwoHandedLight = 10  # holds weapon in front (swords, axes, etc.)
+    TwoHandedHeavy = 12  # holds weapon over shoulder (greatswords)
+    TwoHandedSpear = 13  # holds weapon as a spear (spears, halberds, scythes, etc.)
+    TwoHandedBow = 14
+    TwoHandedShield = 15
+    TwoHandedCrossbow = 16
+
+    # Class base attack animations
+    DaggerClass = 20
+    StraightSwordClass = 23
+    GreatswordClass = 25  # includes Curved Greatswords
+    UltraGreatswordClass = 26
+    RapierClass = 27
+    CurvedSwordClass = 28
+    KatanaClass = 29
+    AxeClass = 30
+    GreataxeClass = 32
+    HammerClass = 33
+    GreatHammerClass = 35
+    SpearClass = 36
+    HalberdClass = 38
+    SpellToolClass = 41
+    FistsClass = 42
+    WhipClass = 43
+    BowClass = 44
+    CrossbowClass = 46
+    GreatshieldClass = 47
+    ShieldClass = 48  # small and medium shields
+
+    # Weapon-specific animation overrides
+    GreatScythes = 50  # Great Scythe, Lifehunt Scythe
+    CurvedGreatswords = 51  # Server, Murakumo
+    Talisman = 52  # includes Pyromancy Flame
+    SwordSmash = 53  # Broadsword, Barbed Straight Sword, Straight Sword Hilt
+    BalderSideSword = 54
+    SilverKnightStraightSword = 55
+    QuelaagsFurysword = 56
+    Darksword = 57
+    DrakeSword = 58
+    HammerSmash = 59  # Mace, Morning Star, Blacksmith Hammer, Hammer of Vamos
+    Warpick = 60
+    Pickaxe = 61
+    Grant = 62
+    Partizan = 63
+    DemonsSpear = 64
+    ChannelersTrident = 65
+    SilverKnightSpear = 66
+    Pike = 67
+    DragonslayerSpear = 68
+    GreatClub = 69
+    SmoughsHammer = 70
+    ParryingDagger = 71
+    BanditKnife = 72
+    PriscillasDagger = 73
+    Claymore = 74
+    Flamberge = 75
+    StoneGreatsword = 77
+    GreatswordOfArtorias = 78
+    MoonlightGreatsword = 79
+    BlackKnightSword = 80
+    ShortBowSpecial = 81  # Short Bow, Composite Bow, Darkmoon Bow
+    BlackBowOfPharis = 82
+    GreatbowSpecial = 83  # Dragonslayer Greatbow, Gough's Greatbow
+    Avelyn = 84
+    SniperCrossbow = 85
+    Claw = 86
+    DragonBoneFist = 87
+    Iaito = 89
+    ChaosBlade = 90
+    BetterParry = 91  # Target Shield, Buckler
+    CrystalRingShield = 92
+    MediumShieldBash = 93  # Spiked Shield, Crystal Shield, Pierce Shield
+    HavelsGreatshield = 94
+    Greatsword = 95  # actual weapon named Greatsword, not class
+    DemonGreatMachete = 96
+    GreatLordGreatsword = 97
+    DragonGreatsword = 98
+    Shotel = 99
+    JaggedGhostBlade = 100
+    PaintingGuardianSword = 101
+    HandAxe = 102
+    ButcherKnife = 103
+    GolemAxe = 104
+    DemonsGreataxe = 105
+    DragonKingGreataxe = 106
+    BlackKnightGreataxe = 107
+    Halberd = 108
+    Lucerne = 109
+    GiantsHalberd = 110
+    TitaniteCatchPole = 111
+    BlackKnightHalberd = 112
+    Estoc = 113
+    VelkasRapier = 114
+    RicardsRapier = 115
+    GravelordSword = 116
+    Ryuken = 117  # Seems to be an unused Fists variant.
+    CrescentAxe = 118
+    MailBreaker = 119
+    GhostBlade = 120
+    SkullLantern = 121
+    DarkHand = 123
+    LargeClub = 124
+    GargoyleTailAxe = 125
+    BonewheelShield = 126
+    CatalystThrust = 127  # Tin Crystallization Catalyst, Demon's Catalyst
+    BlackKnightGreatsword = 128
+    HeavyCrossbow = 129
+    DarkSilverTracer = 130
+    AbyssGreatsword = 131
+    GoldTracer = 132
+    StoneGreataxe = 133
+    FourProngedPlow = 134
+    ObsidianGreatsword = 135
+    ManusCatalyst = 136
 
 
 class WEP_BASE_CHANGE_CATEGORY(UnsignedChar):

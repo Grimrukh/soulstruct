@@ -449,7 +449,7 @@ def Event3503():
     IfInsideMap(-1, game_map=RESEARCH_HALL)
     IfInsideMap(-1, game_map=FISHING_HAMLET)
     IfConditionTrue(0, input_condition=-1)
-    MovePlayerToRespawnPoint(2102961)
+    WarpPlayerToRespawnPoint(2102961)
 
 
 @RestartOnRest
@@ -1064,9 +1064,9 @@ def Event7200(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     CreateTemporaryFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
     Wait(3.0)
     SkipLinesIfFlagOff(2, 9401)
-    MovePlayerToRespawnPoint(arg_8_11)
+    WarpPlayerToRespawnPoint(arg_8_11)
     End()
-    MovePlayerToRespawnPoint(2102962)
+    WarpPlayerToRespawnPoint(2102962)
 
 
 def Event7300(arg_0_3: int, arg_4_7: int):

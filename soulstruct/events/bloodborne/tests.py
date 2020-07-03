@@ -36,7 +36,7 @@ __all__ = [
 
     # Bloodborne tests
     "HOST", "CLIENT", "SINGLEPLAYER", "MULTIPLAYER",
-    "IsAttackedWithDamageType", "WearingArmorTypeInRange",
+    "IsAttackedWithDamageType", "BossFogActivated", "WearingArmorTypeInRange",
     "CharacterDrawGroupActive", "CharacterDrawGroupInactive",
     "INSIGHT",
 ]
@@ -74,6 +74,11 @@ MULTIPLAYER = ConstantCondition(
 def IsAttackedWithDamageType(attacked_entity: AnimatedInt, attacking_character: CharacterInt,
                              damage_type: DamageType, condition: int):
     return instr.IfDamageType(condition, attacked_entity, attacking_character, damage_type)
+
+
+@no_skip_or_negate_or_terminate
+def BossFogActivated(boss_entity_id: CharacterInt, fog_object_id: ObjectInt, condition: int):
+    return instr.IfBossFogActivated(condition, boss_entity_id, fog_object_id)
 
 
 @no_skip_or_negate_or_terminate

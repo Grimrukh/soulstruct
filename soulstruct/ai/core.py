@@ -222,6 +222,15 @@ class LuaBND(object):
                     other = matching_scripts[0]
                     other.script = other_script
 
+    def write_all_compiled_scripts(self, directory, including_other=True):
+        directory = Path(directory)
+        directory.mkdir(parents=True, exist_ok=True)
+        for goal in self.goals:
+            goal.write_compiled(directory / goal.script_name)
+        if including_other:
+            for other in self.other:
+                other.write_compiled(directory / other.script_name)
+
     def write_all_decompiled_scripts(self, directory, including_other=True):
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
@@ -358,17 +367,25 @@ class LuaScriptBase(abc.ABC):
 
     def compile(self, output_path=None, x64=True):
         if not self.script:
-            raise LuaCompileError(f"No Lua script to compile.")
+            raise LuaCompileError(f"No Lua script to compile for {self.script_name}.")
         self.bytecode = compile_lua(self.script, script_name=self.script_name, output_path=output_path, x64=x64)
 
     def decompile(self, output_path=None):
         if not self.bytecode:
-            raise LuaDecompileError(f"No compiled Lua to decompile.")
+            raise LuaDecompileError(f"No compiled Lua to decompile for {self.script_name}.")
         self.script = decompile_lua(self.bytecode, script_name=self.script_name, output_path=output_path)
+
+    def write_compiled(self, lua_path):
+        if not self.bytecode:
+            raise LuaError(f"No compiled Lua bytecode to write for {self.script_name}.")
+        lua_path = Path(lua_path)
+        lua_path.parent.mkdir(parents=True, exist_ok=True)
+        with lua_path.open("wb") as f:
+            f.write(self.bytecode)
 
     def write_decompiled(self, lua_path):
         if not self.script:
-            raise LuaError(f"No decompiled Lua script to write.")
+            raise LuaError(f"No decompiled Lua script to write for {self.script_name}.")
         lua_path = Path(lua_path)
         lua_path.parent.mkdir(parents=True, exist_ok=True)
         with lua_path.open("w", encoding="shift-jis") as f:
@@ -383,6 +400,7 @@ class LuaScriptBase(abc.ABC):
     @abc.abstractmethod
     def script_name(self) -> str:
         raise NotImplementedError
+
 
 class LuaGoal(LuaScriptBase):
     """Goals can have type 'battle', 'logic', or 'neither'.

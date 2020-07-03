@@ -229,7 +229,7 @@ __all__ = [
     "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue", "SetDirectionDisplayState",
     "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
     "EnableMapHitGridCorrespondence", "DisableMapHitGridCorrespondence", "SetMapContentImageDisplayState",
-    "SetMapBoundariesDisplay", "SetAreaWind", "MovePlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
+    "SetMapBoundariesDisplay", "SetAreaWind", "WarpPlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
     "InitializeWarpObject", "MakeEnemyAppear", "SetCurrentMapCeremony", "SetMapCeremony", "DisplayEpitaphMessage",
     "SetNetworkConnectedFlagState", "SetNetworkConnectedFlagRangeState", "SetOmissionModeCounts",
     "ResetOmissionModeCountsToDefault", "InitializeCrowTrade", "InitializeCrowTradeRegion",

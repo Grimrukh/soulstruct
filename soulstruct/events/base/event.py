@@ -96,7 +96,11 @@ class BaseEvent(BaseStruct):
         event_arg_set = set()
         event_arg_types = {}
         for instruction in self.instructions:
-            instruction_arg_set, instruction_arg_types = instruction.apply_event_args()
+            try:
+                instruction_arg_set, instruction_arg_types = instruction.apply_event_args()
+            except ValueError:
+                raise ValueError(f"Error occurred while applying event args in instruction "
+                                 f"{self.instructions.index(instruction)} of event {self.event_id}.")
             event_arg_set = event_arg_set.union(instruction_arg_set)
             for arg, arg_types in instruction_arg_types.items():
                 event_arg_types[arg] = event_arg_types.setdefault(arg, set()).union(arg_types)
@@ -111,6 +115,8 @@ class BaseEvent(BaseStruct):
                                    evs_function_args_names]
         evs_function_args = [f'{arg_name}: {arg_type}'
                              for arg_name, arg_type in zip(evs_function_args_names, evs_function_args_types)]
+        if evs_function_args:
+            evs_function_args = ["_"] + evs_function_args  # add blank argument for slot (for intellisense)
         self.EVENT_ARG_TYPES[self.event_id] = ''.join(
             [next(iter(event_arg_types[arg])) for arg in evs_function_args_names])
         return ', '.join(evs_function_args)
@@ -123,7 +129,7 @@ class BaseEvent(BaseStruct):
         else:
             function_name = f"Event{self.event_id}"
         function_docstring = f'""" {self.event_id}: Event {self.event_id} """'
-        function_args = self.get_evs_function_args()  # Also creates 'arg_i_j' instruction arg names.
+        function_args = self.get_evs_function_args()  # Starts with an empty '_' slot arg, if any other args exist.
         restart_type_decorator = f"@{RestartType(self.restart_type).name}\n" if self.restart_type != 0 else ""
         function_def = indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"

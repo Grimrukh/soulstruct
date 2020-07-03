@@ -16,7 +16,7 @@ class Flag(GameObject, IntEnum):
     """ Condition upon a flag as a shortcut to condition upon it being enabled. """
 
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
-        value = self if isinstance(self, (int, float)) else self.value
+        value = self if isinstance(self, (int, float, tuple)) else self.value
         return get_value_test(
             value=value, negate=negate, condition=condition, skip_lines=skip_lines,
             end_event=end_event, restart_event=restart_event,

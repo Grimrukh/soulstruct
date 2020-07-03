@@ -7,6 +7,8 @@ python -m soulstruct [source]
     [-t / --text]
     [-p / --params]
     [-l / --lighting]
+    [--bndpack]
+    [--bndunpack]
     [--ai]
     [--consoleLogLevel]
     [--fileLogLevel]
@@ -57,6 +59,18 @@ parser.add_argument(
     "-l", "--lighting", action='store_true',
     help=word_wrap(
         "Open Soulstruct Lighting Editor with given source."
+    )
+)
+parser.add_argument(
+    "--bndpack", action='store',
+    help=word_wrap(
+        "Repack a BND from the given source path."
+    )
+)
+parser.add_argument(
+    "--bndunpack", action='store',
+    help=word_wrap(
+        "Unpack a BND from the given source path."
     )
 )
 parser.add_argument(
@@ -131,6 +145,18 @@ def soulstruct_main(ss_args):
         global Lighting
         Lighting = DarkSoulsLightingParameters(source)
         return ss_args.console
+
+    if ss_args.bndpack is not None:
+        from soulstruct.bnd import BND
+        bnd = BND(ss_args.bndpack)
+        bnd.write()
+        return
+
+    if ss_args.bndunpack is not None:
+        from soulstruct.bnd import BND
+        bnd = BND(ss_args.bndunpack)
+        bnd.write_unpacked_dir()
+        return
 
     if ss_args.ai:
         from soulstruct.ai import DarkSoulsAIScripts

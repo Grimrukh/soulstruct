@@ -88,6 +88,9 @@ class DarkSoulsAIScripts(object):
         game_map = get_map(map_source)
         return self._data[game_map.name]
 
+    def __iter__(self):
+        return iter(self._data)
+
     def save(self, script_directory=None):
         if script_directory is None:
             script_directory = self._directory

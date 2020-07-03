@@ -1,5 +1,4 @@
 import logging
-import math
 import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
@@ -22,7 +21,7 @@ MAP_ENTRY_ENTITY_TYPES = {
         ('MapPieces', MSB_PART_TYPE.MapPiece),
         ('Objects', MSB_PART_TYPE.Object),
         ('Characters', MSB_PART_TYPE.Character),
-        ('PlayerStarts', MSB_PART_TYPE.PlayerStarts),
+        ('PlayerStarts', MSB_PART_TYPE.PlayerStart),
         ('Collisions', MSB_PART_TYPE.Collision),
     ),
     'Events': BiDict(
@@ -153,8 +152,9 @@ class MSB(object):
         create_bak(msb_path)
         with msb_path.open('wb') as f:
             f.write(self.pack())
+        print(f"MSB saved: {str(msb_path)}")  # todo: remove
 
-    def translate_all(self, translate: Vector3.typing(), selected_entries=None):
+    def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=None):
         """Add given `translate` to `.translate` vectors of all Regions and Parts (including Map Pieces, Collisions, and
         Navmeshes) by given XYZ. Optionally, only apply it to `selected_entry_names`.
         """
@@ -165,7 +165,7 @@ class MSB(object):
             if selected_entries is None or r in selected_entries:
                 r.translate += translate
 
-    def rotate_all_in_world(self, rotation: tp.Union[Matrix3, Vector3.typing(), int, float],
+    def rotate_all_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
                             pivot_point=(0, 0, 0), radians=False, selected_entries=None):
         """Rotate every Part and Region in the map (or a selection given in `selected_entry_names`) around the given
         pivot by the given Euler angles coordinate system, modifying both `translate` and `rotate`.
@@ -187,10 +187,10 @@ class MSB(object):
                 r.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
 
     def move_map(self,
-                 start_translate: Vector3.typing() = None,
-                 end_translate: Vector3.typing() = None,
-                 start_rotate: tp.Union[Vector3.typing(), int, float, None] = None,
-                 end_rotate: tp.Union[Vector3.typing(), int, float, None] = None,
+                 start_translate: tp.Union[Vector3, list, tuple] = None,
+                 end_translate: tp.Union[Vector3, list, tuple] = None,
+                 start_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
+                 end_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
                  selected_entries=None):
         """Rotate and then translate entire map so that an entity with a translate of `start_translate` and rotate of
         `start_rotate` ends up with a translate of `end_translate` and a rotate of `end_rotate`.
@@ -198,14 +198,21 @@ class MSB(object):
         Optionally, move only a subset of entry names given in `selected_entry_names`.
         """
         if selected_entries is not None:
+            selected_entries = list(selected_entries)  # so strings can be replaced with part instances
             for i, entry in enumerate(selected_entries):
                 if isinstance(entry, str):
                     selected_entries[i] = self.parts.get_part_by_name(entry)
                 elif not isinstance(entry, MSBEntry):
                     raise TypeError("`selected_entries` should contain only `MSBEntry` instances or Part names.")
 
-        start_translate = Vector3(start_translate)
-        end_translate = Vector3(end_translate)
+        if start_translate is None:
+            start_translate = Vector3.zero()
+        elif not isinstance(start_translate, Vector3):
+            start_translate = Vector3(start_translate)
+        if end_translate is None:
+            end_translate = Vector3.zero()
+        elif not isinstance(end_translate, Vector3):
+            end_translate = Vector3(end_translate)
         if start_rotate is None:
             start_rotate = Vector3.zero()
         elif isinstance(start_rotate, (int, float)):
@@ -223,7 +230,6 @@ class MSB(object):
         m_start_rotate = Matrix3.from_euler_angles(start_rotate)
         m_end_rotate = Matrix3.from_euler_angles(end_rotate)
         m_world_rotate = m_end_rotate @ m_start_rotate.T
-
         # Apply global rotation to start point to determine required global translation.
         translation = end_translate - (m_world_rotate @ start_translate)  # type: Vector3
 

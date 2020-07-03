@@ -64,6 +64,10 @@ class BNDEntry(object):
     def path_with_forward_slashes(self):
         return self.path.replace('\\', '/')
 
+    @property
+    def directory_with_forward_slashes(self):
+        return str(Path(self.path).parent).replace('\\', '/')
+
     def __eq__(self, other_bnd_entry):
         return self.id == other_bnd_entry.id and self.path == other_bnd_entry.path and self.data == other_bnd_entry.data
 
@@ -202,7 +206,7 @@ class BaseBND(object):
         manifest_lines = []
 
         for entry in self.binary_entries:
-            entry_directory = entry.path_with_forward_slashes  # File uses forward slashes.
+            entry_directory = entry.directory_with_forward_slashes  # File uses forward slashes.
             if entry_directory != current_directory:
                 # Write new path group to file list.
                 manifest_lines.append(f" PATH: {entry_directory}")

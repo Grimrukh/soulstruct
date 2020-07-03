@@ -707,7 +707,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 49:
             respawn_point_id, = req_args
-            return f"MovePlayerToRespawnPoint(respawn_point_id={respawn_point_id})"
+            return f"WarpPlayerToRespawnPoint(respawn_point_id={respawn_point_id})"
 
         if instruction_index == 50:
             spawner_id, = req_args

@@ -619,8 +619,8 @@ GAME_PARAM_INFO = {
             'CurseResistance', True, int,
             "Curse resistance added by armor."),
         'reinforceTypeId': (
-            'UpgradeMaterials', True, Params.UpgradeMaterials,
-            "Upgrade materials required for reinforcement at each level."),
+            'ArmorUpgradeID', True, Params.ArmorUpgrades,
+            "Effects applied at consecutive upgrade reinforcement levels."),
         'trophySGradeId': (
             'AchievementContributionID', False, int,
             "Index of armor as it contributes to certain multi-item achievements."),
@@ -2482,7 +2482,7 @@ GAME_PARAM_INFO = {
     'NPC_PARAM_ST': {
         'behaviorVariationId': (
             'BehaviorVariationID', True, int,
-            "Multiplied by 10000 and added to behavior lookups (hitboxes, bullets) triggered by TAE."),
+            "Multiplied by 1000 and added to non-player behavior lookups (hitboxes, bullets) triggered by TAE."),
         'aiThinkId': (
             'AiThinkID', True, Params.AI,
             "Default AI ID. Overridden by AI ID field in Maps entry."),
@@ -3471,14 +3471,14 @@ GAME_PARAM_INFO = {
         'atkOccurrenceSpEffectId': (
             'SpecialEffectOnAttack', True, Params.SpecialEffects,
             "Special effect to apply to any target hit by an attack.\n\nWARNING: This will not trigger unless "
-            "SpecialStateIndex is set to 152 (PoisonedWeapon), and must therefore always be accompanied by the poison "
-            "weapon visual effect."),
+            "SpecialStateIndex is set to 152 (Rotten Pine Resin effect), which will in turn cause your weapon to glow "
+            "purple unless the visual effect is disabled."),
         'guardDefFlickPowerRate': (
             'GuardDefenseFlickPowerRate', False, float,
             "Unknown; never used."),
         'guardStaminaCutRate': (
             'GuardStaminaMultiplier', True, float,
-            "Multiplier applied to amount of stamina lost when an attack is blocked."),
+            "Values larger than 1 mean *less* stamina is used when blocking."),
         'rayCastPassedTime': (
             'RayCastPassingTime', False, int,
             "Internal description says 'Gaze passing: activation time (milliseconds).' Likely unused."),
@@ -3499,9 +3499,8 @@ GAME_PARAM_INFO = {
             'SaveCategory', True, SP_EFFECT_SAVE_CATEGORY,
             "Determines automatic game saving behavior (used for status ailments only). Set to -1 for no saving."),
         'changeMagicSlot': (
-            'AttunementSlotCountChange', False, int,
-            "Supposed to modify attunement slots, but does nothing. You can use special state 'Extra Attunement' to "
-            "get 50% extra attunment slots, if needed."),
+            'AttunementSlotCountChange', True, int,
+            "Increase (positive) or decrease (negative) number of attunement slots available."),
         'changeMiracleSlot': (
             'AttunementMiracleSlotCountChange', False, int,
             "Miracle slots are not even separate from other magic slots, so this is likely an abandoned field."),
@@ -3573,7 +3572,7 @@ GAME_PARAM_INFO = {
             "Type of effect whose duration is affected by EffectDurationMultiplier. Known values: 2 = poison, "
             "5 = toxic."),
         'throwCondition': (
-            'ThrowCondition', False, SP_EFFECT_THROW_CONDITION_TYPE,
+            'ThrowCondition', True, SP_EFFECT_THROW_CONDITION_TYPE,
             "Determines how throws are affected while special effect is active. Values still unknown (rarely used)."),
         'addBehaviorJudgeId_condition': (
             'AddBehaviorJudgeIDCondition', False, int,
@@ -4108,7 +4107,7 @@ GAME_PARAM_INFO = {
     'EQUIP_PARAM_WEAPON_ST': {
         'behaviorVariationId': (
             'BehaviorVariationID', True, int,
-            "Number attached to the front of behaviors triggered from TAE."),
+            "Multiplied by 1000 and added to player behavior lookups (hitboxes, bullets) triggered by TAE."),
         'sortId': (
             'SortIndex', True, int,
             "Index for automatic inventory sorting."),
@@ -4178,8 +4177,8 @@ GAME_PARAM_INFO = {
             'EquippedSpecialEffect2', True, Params.SpecialEffects,
             "Special effect granted to character with weapon equipped (slot 2)."),
         'materialSetId': (
-            'WeaponUpgradeID', True, Params.WeaponUpgrades,
-            "Weapon Upgrade parameter for weapon reinforcement."),
+            'UpgradeMaterialID', True, Params.UpgradeMaterials,
+            "Upgrade Material parameter that sets costs for weapon reinforcement."),
         'originEquipWep': (
             'UpgradeOrigin0', True, Params.Weapons,
             "Origin armor for level 0 of this weapon (i.e. what you receive when a blacksmith removes upgrades)."
@@ -4311,8 +4310,8 @@ GAME_PARAM_INFO = {
             'GuardStaminaDefense', True, int,
             "Defense against (i.e. value subtracted from) stamina attack damage while guarding."),
         'reinforceTypeId': (
-            'UpgradeMaterials', True, Params.UpgradeMaterials,
-            "Upgrade materials required for reinforcement at each level."),
+            'WeaponUpgradeID', True, Params.WeaponUpgrades,
+            "Weapon Upgrade parameter that specifies upgrade benefits."),
         'trophySGradeId': (
             'KnightHonorIndex', False, int,
             "Index of weapon as it contributes to the Knight's Honor achievement."),
@@ -4360,16 +4359,14 @@ GAME_PARAM_INFO = {
             "Element attached to hits with this weapon."),
         'spAtkcategory': (
             'SpecialAttackCategory', True, WEPMOTION_CATEGORY,
-            "Category of special attack (R2) performed with this weapon, from 50 to 199 (or 0 for none). This number "
-            "is multiplied by 10000 and used as an animation offset for R2 attacks, I believe."),
+            "Overrides AttackAnimationCategory for some attacks. Ranges from 50 to 199 (or 0 for none). Often used to "
+            "give weapons unique strong (R2) attacks, for example, but can override any attack animation."),
         'wepmotionOneHandId': (
             'OneHandedAnimationCategory', True, WEPMOTION_CATEGORY,
-            "Category for one-handed attacks.This number is multiplied by 10000 and used as an animation offset for "
-            "one-handed attacks, I believe. Not sure how it interacts with the base AttackAnimationCategory."),
+            "Animation category for one-handed non-attack animations (like walking)."),
         'wepmotionBothHandId': (
             'TwoHandedAnimationCategory', True, WEPMOTION_CATEGORY,
-            "Category for two-handed attacks. This number is multiplied by 10000 and used as an animation offset for "
-            "two-handed attacks, I believe. Not sure how it interacts with the base AttackAnimationCategory."),
+            "Animation category for two-handed non-attack animations (like walking)."),
         'properStrength': (
             'RequiredStrength', True, int,
             "Required strength to wield weapon properly. (Reduced by one third if held two-handed.)"),
@@ -4454,16 +4451,16 @@ GAME_PARAM_INFO = {
             "If True, the player can guard with this weapon by holding L1."),
         'enableParry:1': (
             'ParryEnabled', True, bool,
-            "If True, the player can parry with htis weapon by pressing L2."),
+            "If True, the player can parry with this weapon by pressing L2."),
         'enableMagic:1': (
-            'CanCastMagic', True, bool,
-            "If True, this weapon can be used to cast magic."),  # TODO: what magic?
+            'CanCastSorceries', True, bool,
+            "If True, this weapon can be used to cast sorceries."),
         'enableSorcery:1': (
-            'CanCastSorcery', True, bool,
-            ""),
+            'CanCastPyromancy', True, bool,
+            "If True, this weapon can be used to cast pyromancy."),
         'enableMiracle:1': (
             'CanCastMiracles', True, bool,
-            ""),
+            "If True, this weapon can be used to cast miracles."),
         'enableVowMagic:1': (
             'CanCastCovenantMagic', True, bool,
             ""),

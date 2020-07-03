@@ -162,7 +162,7 @@ __all__ = [
     "ArenaSetNametag3", "ArenaSetNametag4", "DisplayArenaDissolutionMessage", "ArenaSetNametag5", "ArenaSetNametag6",
     
     # Bloodborne extra instructions (tests mixed in)
-    "IfDamageType", "IfActionButtonInRegion", "IfPlayerArmorType",
+    "IfDamageType", "IfBossFogActivated", "IfPlayerArmorType",
     "IfPlayerInsightAmountComparison", "IfPlayerInsightAmountEqual", "IfPlayerInsightAmountNotEqual",
     "IfPlayerInsightAmountGreaterThan", "IfPlayerInsightAmountLessThan", "IfPlayerInsightAmountGreaterThanOrEqual",
     "IfPlayerInsightAmountLessThanOrEqual", "IfDialogChoice", "IfPlayGoState", "IfClientTypeCountComparison",
@@ -188,12 +188,13 @@ __all__ = [
     "EventValueOperation", "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue",
     "SetDirectionDisplayState", "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
     "EnableMapHitGridCorrespondence", "DisableMapHitGridCorrespondence", "SetMapContentImageDisplayState",
-    "SetMapBoundariesDisplay", "SetAreaWind", "MovePlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
+    "SetMapBoundariesDisplay", "SetAreaWind", "WarpPlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
     "InitializeWarpObject", "BossDefeat", "SendNPCSummonHome", "AddSpecialEffect", "RotateToFaceEntity",
     "ChangeCharacterCloth", "ChangePatrolBehavior", "SetDistanceLimitForConversationStateChanges",
     "Test_RequestRagdollRestraint", "ChangePlayerCharacterInitParam", "AdaptSpecialEffectHealthChangeToNPCPart",
     "SetGravityAndCollisionExcludingOwnWorld", "AddSpecialEffect_WithUnknownEffect",
-    "ActivateObjectWithSpecificCharacter", "SetObjectDamageShieldState", "RegisterHealingFountain", "SetBossMusicState",
+    "ActivateObjectWithSpecificCharacter", "SetObjectDamageShieldState", "RegisterHealingFountain",
+    "SetBossMusicState", "EnableBossMusic", "DisableBossMusic",
     "NotifyDoorEventSoundDampening", "SetCollisionResState", "CreatePlayLog", "StartPlayLogMeasurement",
     "StopPlayLogMeasurement", "PlayLogParameterOutput",
 ]
@@ -206,10 +207,10 @@ def IfDamageType(condition: int, attacked_entity: AnimatedInt, attacking_charact
     return to_numeric(instruction_info, condition, attacked_entity, attacking_character, damage_type)
 
 
-def IfActionButtonInRegion(condition: int, action_button_id: int, region: RegionInt):
-    """ Probably a simplified version of IfDialogPromptActivated. """
+def IfBossFogActivated(condition: int, boss_entity_id: CharacterInt, fog_object_id: ObjectInt):
+    """ Simplified version of IfDialogPromptActivated. """
     instruction_info = (3, 24, [0, -1, -1])
-    return to_numeric(instruction_info, condition, action_button_id, region)
+    return to_numeric(instruction_info, condition, boss_entity_id, fog_object_id)
 
 
 def IfPlayerArmorType(condition: int, armor_type: ArmorType, required_armor_range_first: ArmorInt,
@@ -648,6 +649,10 @@ def DisableBossHealthBar(character: CharacterInt, name: EventTextInt = 0, slot=0
 
 
 def HandleMinibossDefeat(miniboss_id: int):
+    """ Called instead of "KillBoss" for bosses that aren't the final boss of the area.
+
+    Note that outside of Chalice Dungeons, this is ONLY used when you have defeated Gehrman and are about to fight Moon
+    Presence. """
     instruction_info = (2003, 15, [0])
     return to_numeric(instruction_info, miniboss_id)
 
@@ -721,7 +726,7 @@ def SetAreaWind(region: RegionInt, state: bool, duration: float, wind_parameter_
     return to_numeric(instruction_info, region, state, duration, wind_parameter_id)
 
 
-def MovePlayerToRespawnPoint(respawn_point_id: int):
+def WarpPlayerToRespawnPoint(respawn_point_id: int):
     instruction_info = (2003, 49, [0])
     return to_numeric(instruction_info, respawn_point_id)
 
@@ -769,8 +774,8 @@ def RotateToFaceEntity(character: CharacterInt, target_entity: CoordEntityInt, a
     """ Rotate a character to face a target map entity of any type.
     WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at least.)
 
-    The Bloodborne version allows you to force an animation at the same time and optionally wait until that animation
-    is completed. (I assume a value of -1 avoids it.)
+    The Bloodborne version allows you to force an animation at the same time (post-rotation) and optionally wait until
+    that animation is completed. (I assume a value of -1 avoids it.)
     """
     instruction_info = (2004, 14, [0, 0, -1, 0])
     return to_numeric(instruction_info, character, target_entity, animation, wait_for_completion)
@@ -848,9 +853,22 @@ def RegisterHealingFountain(flag: FlagInt, obj: ObjectInt, reaction_distance: fl
 
 
 def SetBossMusicState(sound_id: int, state: bool):
-    """ Not sure how this differs from the standard map sound instructions. """
+    """ Not sure how this differs from the standard map sound instructions, but my guess is that it fades the music out
+    rather than abruptly stopping it.
+
+    TODO: Can probably be used to fade out ANY music. Not sure why it would only work for boss music.
+    TODO: Argument -1 is sometimes used. Fades out ALL music?
+    """
     instruction_info = (2010, 4, [0, 0])
     return to_numeric(instruction_info, sound_id, state)
+
+
+def EnableBossMusic(sound_id: int):
+    return SetBossMusicState(sound_id, True)
+
+
+def DisableBossMusic(sound_id: int):
+    return SetBossMusicState(sound_id, False)
 
 
 def NotifyDoorEventSoundDampening(entity_id: int, state: DoorState):

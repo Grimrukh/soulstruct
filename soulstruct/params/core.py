@@ -10,7 +10,7 @@ from soulstruct.core import SoulstructError
 from soulstruct.params import enums
 from soulstruct.params.fields import GAME_PARAM_INFO
 from soulstruct.params.paramdef import ParamDefBND
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 
 # TODO: GameParam BND indices of params tables are different in PTD/DSR. I'm guessing it may not actually matter, and
 #   that all the params tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
@@ -183,7 +183,10 @@ class ParamEntry(object):
                         # These fields are screwed up in m99 and default ToneMapBank.
                         field_value = 1.0
                     else:
-                        raise ValueError(f"Could not unpack data for field {field}. Error:\n{str(e)}")
+                        print(data, field_type)
+                        raise ValueError(f"Could not unpack data for field {field}.\n"
+                                         f"Field type: {field_type}; Raw bytes: {data}\n"
+                                         f"Error:\n{str(e)}")
 
             self.fields[field['name']] = field_value
 
@@ -339,18 +342,20 @@ class ParamTable(object):
         self.param_name = header.param_name
         self.__magic = [header.magic0, header.magic1, header.magic2]
         self.__unknown = header.unknown
-        entry_data_offset = header.entry_data_offset
+        # Entry data offset in header not used. (It's an unsigned short, yet doesn't limit entry count to 5461.)
         name_data_offset = header.name_data_offset  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
 
         # Load entry pointer data.
         entry_pointers = self.ENTRY_POINTER_STRUCT.unpack(param_buffer, count=header.entry_count)
+        entry_data_offset = param_buffer.tell()  # Reliable entry data offset.
 
         # Entry size is lazily determined. TODO: Unpack entry data in sequence and associate with names separately.
         if len(entry_pointers) == 0:
             return
         elif len(entry_pointers) == 1:
-            # NOTE: The only vanilla param in Dark Souls with one entry is LEVELSYNC_PARAM_ST (Remastered only).
-            # Otherwise, we can trust the repacked name_data_offset from Soulstruct.
+            # NOTE: The only vanilla param in Dark Souls with one entry is LEVELSYNC_PARAM_ST (Remastered only),
+            # for which the entry size is hard-coded here. Otherwise, we can trust the repacked offset from Soulstruct
+            # (and SoulsFormats, etc.).
             if self.param_name == 'LEVELSYNC_PARAM_ST':
                 entry_size = 220
             else:
@@ -358,34 +363,34 @@ class ParamTable(object):
         else:
             entry_size = entry_pointers[1].data_offset - entry_pointers[0].data_offset
 
-        # Store packed data blocks.
-        param_buffer.seek(entry_data_offset)
-        packed_entry_data = param_buffer.read(entry_size * header.entry_count)
-        name_data_offset = param_buffer.tell()  # Overrides untrustworthy value from header.
-        packed_name_data = param_buffer.read()
-
         # Note that we no longer need to track buffer offset.
         for entry_struct in entry_pointers:
-            relative_entry_offset = entry_struct.data_offset - entry_data_offset
-            entry_data = packed_entry_data[relative_entry_offset:relative_entry_offset + entry_size]
+            param_buffer.seek(entry_struct.data_offset)
+            entry_data = param_buffer.read(entry_size)
             if entry_struct.name_offset != 0:
-                relative_name_offset = entry_struct.name_offset - name_data_offset
                 try:
-                    name = read_chars_from_bytes(
-                        packed_name_data, offset=relative_name_offset, encoding='shift_jis_2004',
+                    name = read_chars_from_buffer(
+                        param_buffer, offset=entry_struct.name_offset, encoding='shift_jis_2004',
+                        reset_old_offset=False,  # no need to reset
                         ignore_encoding_error_for_these_chars=JUNK_ENTRY_NAMES)
                 except ValueError:
+                    param_buffer.seek(entry_struct.name_offset)
                     _LOGGER.error(
                         f"Could not find null termination for entry name string in {self.param_name}.\n"
                         f"    Header: {header}\n"
                         f"    Entry Struct: {entry_struct}\n"
-                        f"    Buffer: {packed_name_data}")
+                        f"    30 chrs of name data: {param_buffer.read(30)}")
                     raise
             else:
                 name = ''
             self.entries[entry_struct.id] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
 
     def pack(self, sort=True):
+        # if len(self.entries) > 5461:
+        #     raise SoulstructError(
+        #         f"ParamTable {self.param_name} has {len(self.entries)} entries, which is more than a "
+        #         f"DS1 Param can store (5461). Remove some entries before packing it.")
+
         sorted_entries = sorted(self.entries.items()) if sort else self.entries.items()
 
         current_name_offset = 0
@@ -423,7 +428,7 @@ class ParamTable(object):
         # Header.
         header = self.HEADER_STRUCT.pack(dict(
             name_data_offset=name_data_offset,
-            entry_data_offset=entry_data_offset,
+            entry_data_offset=min(entry_data_offset, 2 ** 16 - 1),  # This ushort field isn't actually used.
             magic0=self.__magic[0],
             magic1=self.__magic[1],
             entry_count=len(sorted_entries),

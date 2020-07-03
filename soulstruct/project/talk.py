@@ -423,9 +423,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         if mimic_click:
             self.mimic_click(self.reload_all_button)
 
-        if map_name is None:
-            map_name = get_map(self.selected_map_id).name
-        map_directory = self.esp_directory / f"{map_name}"
+        map_directory = self.esp_directory / f"{self.selected_map_id}"
 
         # Check for missing files.
         current_ids = self._get_category_name_range()
@@ -446,17 +444,17 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
                     return_output=0, cancel_output=1, default_output=0) == 1:
                 return
 
-        self.esp_file_paths = {}
-        self.esp_text = {}
+        self.esp_file_paths[self.selected_map_id] = {}
+        self.esp_text[self.selected_map_id] = {}
         for esp_path in map_directory.glob("*.esp.py"):
             talk_match = _TALK_ESP_MATCH.match(esp_path.name)
             if not talk_match:
                 _LOGGER.warning(f"Invalid ESP file found and ignored: {str(esp_path)}")
                 continue
             talk_id = int(talk_match.group(1))
-            self.esp_file_paths.setdefault(map_name, {})[talk_id] = esp_path
+            self.esp_file_paths.setdefault(self.selected_map_id, {})[talk_id] = esp_path
             with esp_path.open(mode="r", encoding="utf-8") as f:
-                self.esp_text.setdefault(map_name, {})[talk_id] = f.read()
+                self.esp_text.setdefault(self.selected_map_id, {})[talk_id] = f.read()
         self.refresh_entries()
         if self.active_row_index is not None:
             self.update_talk_text()

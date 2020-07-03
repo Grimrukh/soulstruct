@@ -913,7 +913,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
             if combobox_string.startswith('Unknown: '):
                 value = int(combobox_string[len('Unknown: '):])
             else:
-                value = getattr(self.field_type, self.value_combobox.var.get().replace(' ', '')).value
+                value = int(self.value_combobox.var.get().split(" ")[0])
             self.master.change_field_value(self.field_name, value)
 
         def _activate_value_widget(self, widget):
@@ -946,10 +946,10 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, ABC):
                 self.field_links = []
 
             if not isinstance(field_type, str) and issubclass(field_type, IntEnum):
-                self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
+                self.value_combobox['values'] = [f"{e.value} {camel_case_to_spaces(e.name)}" for e in field_type]
                 try:
                     # noinspection PyUnresolvedReferences
-                    enum_name = camel_case_to_spaces(field_type(value).name)
+                    enum_name = f"{value} {camel_case_to_spaces(field_type(value).name)}"
                 except ValueError:
                     enum_name = f'Unknown: {value}'
                 self.value_combobox.var.set(enum_name)

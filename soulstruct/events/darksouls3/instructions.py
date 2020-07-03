@@ -215,7 +215,7 @@ __all__ = [
     "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue", "SetDirectionDisplayState",
     "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
     "EnableMapHitGridCorrespondence", "DisableMapHitGridCorrespondence", "SetMapContentImageDisplayState",
-    "SetMapBoundariesDisplay", "SetAreaWind", "MovePlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
+    "SetMapBoundariesDisplay", "SetAreaWind", "WarpPlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
     "InitializeWarpObject", "MakeEnemyAppear", "SetCurrentMapCeremony", "SetMapCeremony", "DisplayEpitaphMessage",
     "SetNetworkConnectedFlagState", "SetNetworkConnectedFlagRangeState", "SetOmissionModeCounts",
     "ResetOmissionModeCountsToDefault", "InitializeCrowTrade", "InitializeCrowTradeRegion",
@@ -1405,7 +1405,7 @@ def SetAreaWind(region: RegionInt, state: bool, duration: float, wind_parameter_
     return to_numeric(instruction_info, region, state, duration, wind_parameter_id)
 
 
-def MovePlayerToRespawnPoint(respawn_point_id: int):
+def WarpPlayerToRespawnPoint(respawn_point_id: int):
     instruction_info = (2003, 49, [0])
     return to_numeric(instruction_info, respawn_point_id)
 

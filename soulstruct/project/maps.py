@@ -152,7 +152,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
             elif field_type == bool:
                 if value not in {0, 1}:
-                    raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
+                    raise ValueError(f"Field {self.field_name} with 'bool' type has non-boolean value: {value}")
                 self.value_checkbutton.var.set(value)
                 self.value_checkbutton.config(fg='#3F3' if value else '#F33', text='ON' if value else 'OFF')
                 self._activate_value_widget(self.value_checkbutton)

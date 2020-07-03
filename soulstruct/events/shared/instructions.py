@@ -1055,14 +1055,15 @@ def DisableSoapstoneMessage(message_id):
     return SetDeveloperMessageState(message_id, False)
 
 
-def DisplayDialog(text: EventTextInt, anchor_entity: CoordEntityInt, display_distance=3.0,
+def DisplayDialog(text: EventTextInt, anchor_entity: CoordEntityInt = -1, display_distance=3.0,
                   button_type: ButtonType = ButtonType.OK_or_Cancel,
                   number_buttons: NumberButtons = NumberButtons.NoButton):
     """ Display a dialog box at the bottom of the screen. You can't use this to get player input, but you can display
     short simple messages. It defaults to a box with no buttons (which is still dismissed when you press A).
 
-    The 'display_distance' argument specifies how far you can move away from the 'anchor_entity' (which is required)
-    before the message automatically disappears. """
+    The 'display_distance' argument specifies how far you can move away from the 'anchor_entity' before the message
+    automatically disappears. If `anchor_entity=-1` (default), some kind of default anchor is used (probably just the
+    position where the player was standing). """
     instruction_info = (2007, 1, [0, 0, 0, -1, 0])
     return to_numeric(instruction_info, text, button_type, number_buttons, anchor_entity, display_distance)
 
@@ -1331,6 +1332,7 @@ def Move(character: CharacterInt, destination: CoordEntityInt, model_point=None,
 
 def MoveToEntity(character: CharacterInt, destination: CoordEntityInt, model_point=None, destination_type=None):
     """ Basic move. I recommend you use the easier 'Move' wrapper above. """
+    from soulstruct.game_types import Region
     if model_point is None and not isinstance(destination, Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
@@ -1345,6 +1347,7 @@ def MoveToEntity(character: CharacterInt, destination: CoordEntityInt, model_poi
 
 def MoveAndSetDrawParent(character: CharacterInt, destination: CoordEntityInt, draw_parent: EntityInt,
                          model_point=None, destination_type=None):
+    from soulstruct.game_types import Region
     if model_point is None and not isinstance(destination, Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
@@ -1358,8 +1361,11 @@ def MoveAndSetDrawParent(character: CharacterInt, destination: CoordEntityInt, d
 
 
 def ShortMove(character: CharacterInt, destination: CoordEntityInt, model_point=None, destination_type=None):
+    from soulstruct.game_types import Region
     if model_point is None and not isinstance(destination, Region):
-        raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
+        # raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
+        # Now defaults to -1.
+        model_point = -1
     if destination_type is None:
         try:
             destination_type = destination.coord_entity_type
@@ -1372,6 +1378,7 @@ def ShortMove(character: CharacterInt, destination: CoordEntityInt, model_point=
 
 def MoveAndCopyDrawParent(character: CharacterInt, destination: CoordEntityInt, copy_draw_parent: AnimatedInt,
                           model_point=None, destination_type=None):
+    from soulstruct.game_types import Region
     if model_point is None and not isinstance(destination, Region):
         raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
@@ -2351,13 +2358,17 @@ def IfDialogPromptActivated(condition: int, prompt_text: EventTextInt, anchor_en
 
     if facing_angle is None:
         if anchor_type != CoordEntityType.Region:
-            raise ValueError("Facing angle must be greater than zero for Object and Character targets.")
+            # raise ValueError("Facing angle must be greater than zero for Object and Character targets.")
+            # Now defaulting to 180.0.
+            facing_angle = 180.0
         else:
             facing_angle = 0.0
 
     if max_distance is None:
         if anchor_type != CoordEntityType.Region:
-            raise ValueError("Max distance must be greater than zero for Object and Character targets.")
+            # raise ValueError("Max distance must be greater than zero for Object and Character targets.")
+            # Now defaulting to 2.0.
+            max_distance = 2.0
         else:
             max_distance = 0.0
 

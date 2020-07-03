@@ -1298,7 +1298,7 @@ def Event12100400():
 def Event12100410(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12100410: Event 12100410 """
     DisableNetworkSync()
-    IfActionButtonInRegion(-1, action_button_id=arg_0_3, region=arg_4_7)
+    IfBossFogActivated(-1, boss_entity_id=arg_0_3, fog_object_id=arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
     EndIfFlagOn(arg_8_11)
@@ -1652,7 +1652,7 @@ def Event12104810():
     DefineLabel(0)
     IfFlagOff(2, 12101800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2100800, region=2101800)
+    IfBossFogActivated(2, boss_entity_id=2100800, fog_object_id=2101800)
     IfFlagOn(3, 12101800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1679,7 +1679,7 @@ def Event12104811():
     IfFlagOn(1, 12101802)
     IfFlagOn(1, 12104800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2100800, region=2101800)
+    IfBossFogActivated(1, boss_entity_id=2100800, fog_object_id=2101800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2102800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1830,7 +1830,7 @@ def Event12101850():
     DefineLabel(0)
     IfCharacterDead(0, 2100810)
     EnableFlag(12104859)
-    DisplayBanner(BannerType.Draw)
+    DisplayBanner(BannerType.NightmareSlain)
     SetLockedCameraSlot(game_map=HUNTERS_DREAM, camera_slot=0)
     Wait(3.0)
     KillBoss(2100810)
@@ -1953,7 +1953,7 @@ def Event12104880():
     DefineLabel(0)
     IfFlagOff(2, 12101850)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2100800, region=2101800)
+    IfBossFogActivated(2, boss_entity_id=2100800, fog_object_id=2101800)
     IfFlagOn(3, 12101850)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1980,7 +1980,7 @@ def Event12104881():
     IfFlagOn(1, 12101852)
     IfFlagOn(1, 12104850)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2100800, region=2101800)
+    IfBossFogActivated(1, boss_entity_id=2100800, fog_object_id=2101800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2102800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -3657,7 +3657,7 @@ def Event12105064():
     WaitFrames(79)
     ForceAnimation(2100232, 7051, loop=True)
     IfCharacterHuman(4, PLAYER)
-    IfActionButtonInRegion(4, action_button_id=6025, region=2100232)
+    IfBossFogActivated(4, boss_entity_id=6025, fog_object_id=2100232)
     IfConditionTrue(0, input_condition=4)
     SkipLinesIfFlagOn(3, 6071)
     SkipLinesIfFlagOff(2, 6900)
@@ -3787,7 +3787,7 @@ def Event12107000(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(0, arg_0_3)
     RotateToFaceEntity(PLAYER, arg_4_7, animation=101164, wait_for_completion=False)
     Wait(4.0)
-    MovePlayerToRespawnPoint(arg_8_11)
+    WarpPlayerToRespawnPoint(arg_8_11)
 
 
 def Event12107100(arg_0_3: int, arg_4_7: int, arg_8_11: int):
@@ -3812,5 +3812,5 @@ def Event12107200(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12107200: Event 12107200 """
     IfFlagOn(0, arg_0_3)
     DisableFlag(arg_0_3)
-    MovePlayerToRespawnPoint(arg_4_7)
+    WarpPlayerToRespawnPoint(arg_4_7)
     EnableFlag(arg_8_11)

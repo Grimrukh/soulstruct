@@ -362,8 +362,8 @@ def Event13200020(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13200020: Event 13200020 """
     DisableNetworkSync()
     EndIfFlagOn(arg_12_15)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_8_11)
-    IfActionButtonInRegion(2, action_button_id=arg_4_7, region=arg_8_11)
+    IfBossFogActivated(1, boss_entity_id=arg_0_3, fog_object_id=arg_8_11)
+    IfBossFogActivated(2, boss_entity_id=arg_4_7, fog_object_id=arg_8_11)
     IfFlagOn(3, arg_12_15)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -379,7 +379,7 @@ def Event13200030(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13200030: Event 13200030 """
     DisableNetworkSync()
     IfFlagOn(1, arg_12_15)
-    IfActionButtonInRegion(1, action_button_id=arg_4_7, region=arg_0_3)
+    IfBossFogActivated(1, boss_entity_id=arg_4_7, fog_object_id=arg_0_3)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(arg_8_11, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
                   number_buttons=NumberButtons.OneButton)
@@ -404,7 +404,7 @@ def Event13200050(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13200050: Event 13200050 """
     DisableNetworkSync()
     EndIfFlagOn(arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
+    IfBossFogActivated(1, boss_entity_id=arg_0_3, fog_object_id=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -425,7 +425,7 @@ def Event13200055(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EndIfFlagOn(arg_8_11)
     IfFlagOff(1, 1420)
     IfConditionTrue(1, input_condition=-1)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
+    IfBossFogActivated(1, boss_entity_id=arg_0_3, fog_object_id=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
@@ -667,7 +667,7 @@ def Event13200310():
     IfObjectActivated(0, obj_act_id=13200124)
     CreateTemporaryFX(932201, anchor_entity=3202001, anchor_type=CoordEntityType.Region, model_point=-1)
     Wait(6.0)
-    MovePlayerToRespawnPoint(2602959)
+    WarpPlayerToRespawnPoint(2602959)
 
 
 def Event13200311():
@@ -675,7 +675,7 @@ def Event13200311():
     IfObjectActivated(0, obj_act_id=13200123)
     CreateTemporaryFX(932201, anchor_entity=3202000, anchor_type=CoordEntityType.Region, model_point=-1)
     Wait(6.0)
-    MovePlayerToRespawnPoint(3302959)
+    WarpPlayerToRespawnPoint(3302959)
 
 
 def Event13200400():
@@ -684,7 +684,7 @@ def Event13200400():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     CreateObjectFX(900201, obj=3201010, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=3200010, region=3201010)
+    IfBossFogActivated(0, boss_entity_id=3200010, fog_object_id=3201010)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3200810, host_only=False)
     DeleteObjectFX(3201010, erase_root=True)
@@ -841,7 +841,7 @@ def Event13201803():
     WaitFrames(1)
     DisableFlag(9180)
     EnableFlag(70002802)
-    MovePlayerToRespawnPoint(2802958)
+    WarpPlayerToRespawnPoint(2802958)
     End()
 
     # --- 2 --- #
@@ -896,7 +896,7 @@ def Event13204050(arg_0_3: int, arg_4_7: int):
 def Event13204100(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13204100: Event 13204100 """
     DisableNetworkSync()
-    IfActionButtonInRegion(0, action_button_id=arg_4_7, region=arg_0_3)
+    IfBossFogActivated(0, boss_entity_id=arg_4_7, fog_object_id=arg_0_3)
     DisplayDialog(arg_8_11, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
                   number_buttons=NumberButtons.OneButton)
     Restart()
@@ -928,7 +928,7 @@ def Event13204830():
     DefineLabel(0)
     IfFlagOff(2, 13201800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=3200800, region=3201800)
+    IfBossFogActivated(2, boss_entity_id=3200800, fog_object_id=3201800)
     IfFlagOn(3, 13201800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -953,7 +953,7 @@ def Event13204831():
     IfFlagOn(1, 13201802)
     IfFlagOn(1, 13204800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=3200800, region=3201800)
+    IfBossFogActivated(1, boss_entity_id=3200800, fog_object_id=3201800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3202800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1721,7 +1721,7 @@ def Event13204410(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     IfFlagOff(2, arg_16_19)
     IfFlagOn(2, arg_20_23)
     IfFlagOff(2, arg_24_27)
-    IfActionButtonInRegion(2, action_button_id=arg_28_31, region=arg_4_7)
+    IfBossFogActivated(2, boss_entity_id=arg_28_31, fog_object_id=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)

@@ -197,9 +197,9 @@ def InsideMap(game_map: MapOrSequence, condition=None, negate=False,
 
 
 @skip_and_negate_and_terminate
-def OutsideMap(game_map: MapOrSequence, sub_index=None, condition=None, negate=False, skip_lines=0,
+def OutsideMap(game_map: MapOrSequence, condition=None, negate=False, skip_lines=0,
                end_event=False, restart_event=False):
-    return InsideMap(game_map, sub_index, condition=condition, negate=not negate, skip_lines=skip_lines,
+    return InsideMap(game_map, condition=condition, negate=not negate, skip_lines=skip_lines,
                      end_event=end_event, restart_event=restart_event)
 
 

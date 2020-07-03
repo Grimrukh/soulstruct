@@ -7,7 +7,7 @@ class MSB_PART_TYPE(IntEnum):
     MapPiece = 0
     Object = 1
     Character = 2
-    PlayerStarts = 4
+    PlayerStart = 4
     Collision = 5
     Navmesh = 8
     UnusedObject = 9
@@ -55,7 +55,7 @@ MAP_ENTRY_TYPES = {
         ('MapPieces', MSB_PART_TYPE.MapPiece),
         ('Objects', MSB_PART_TYPE.Object),
         ('Characters', MSB_PART_TYPE.Character),
-        ('PlayerStarts', MSB_PART_TYPE.PlayerStarts),
+        ('PlayerStarts', MSB_PART_TYPE.PlayerStart),
         ('Collisions', MSB_PART_TYPE.Collision),
         ('Navmeshes', MSB_PART_TYPE.Navmesh),
         ('UnusedObjects', MSB_PART_TYPE.UnusedObject),

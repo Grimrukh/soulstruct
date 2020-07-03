@@ -449,7 +449,7 @@ def Event13304870():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
-    IfActionButtonInRegion(3, action_button_id=3300800, region=3301800)
+    IfBossFogActivated(3, boss_entity_id=3300800, fog_object_id=3301800)
     IfFlagOff(3, 13301800)
     IfFlagOn(4, 13301800)
     IfConditionTrue(-2, input_condition=3)
@@ -478,7 +478,7 @@ def Event13304871():
     IfFlagOn(1, 13301802)
     IfFlagOn(1, 13304800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=3300800, region=3301800)
+    IfBossFogActivated(1, boss_entity_id=3300800, fog_object_id=3301800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3302800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)

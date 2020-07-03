@@ -40,7 +40,7 @@ class BannerType(IntEnum):
     Congratulations = 12  # Not sure if this is still bugged from DS1.
     YouWin = 15
     YouLose = 16
-    Draw = 17
+    NightmareSlain = 17
 
 
 class CalculationType(IntEnum):

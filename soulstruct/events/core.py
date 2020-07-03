@@ -44,7 +44,7 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
         raise FileNotFoundError(f"Could not find EMEVD sources for: {missing}.")
     for name, source in emevd_sources.items():
         try:
-            emevd = emevd_class(source)
+            emevd = emevd_class(source, script_path=input_directory)
             output_path = output_directory / (name + output_ext)
             if output_type == "evs":
                 emevd.write_evs(output_path)

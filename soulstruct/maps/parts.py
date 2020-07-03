@@ -1,4 +1,3 @@
-import math
 import typing as tp
 from io import BufferedReader, BytesIO
 import struct
@@ -138,7 +137,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
         self._model_index = None
         self.scale = Vector3(1, 1, 1)  # only relevant for MapPiece and Object
         self.draw_groups = list(range(128))  # [0, 1, 2, ..., 128]
-        self.display_groups = list(range(128))  # [0, 1, 2, ..., 128]
+        self.display_groups = list(range(128))  # [0, 1, 2, ..., 128]  # TODO: these groups should be a `set()`
 
         # Lighting parameters
         self.ambient_light_id = None
@@ -273,7 +272,11 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
         self._model_index = model_indices[self.model_name] if self.model_name else -1
 
     def set_names(self, model_names, region_names, part_names, collision_names):
-        self.model_name = model_names[self._model_index]
+        try:
+            self.model_name = model_names[self._model_index]
+        except KeyError:
+            raise KeyError(f"Invalid model index for {self.ENTRY_TYPE} {self.name} (entity ID {self.entity_id}): "
+                           f"{self._model_index}")
 
     @staticmethod
     def auto_part_subclass(msb_buffer):
@@ -490,7 +493,9 @@ class MSBCharacter(BaseMSBPart):
 
 
 class MSBPlayer(BaseMSBPart):
-    """Starting point for a player character (e.g. a warp point). No additional data."""
+    """Starting point for a player character (e.g. a warp point). No additional data.
+    TODO: rename MSBPlayerStart.
+    """
 
     PLAYER_STRUCT = (
         '16x',
@@ -501,7 +506,7 @@ class MSBPlayer(BaseMSBPart):
         **BaseMSBPart.FIELD_INFO,
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.PlayerStarts
+    ENTRY_TYPE = MSB_PART_TYPE.PlayerStart
 
     def unpack_type_data(self, msb_buffer):
         BinaryStruct(*self.PLAYER_STRUCT).unpack(msb_buffer)  # Simply checks for the nulls.
@@ -610,7 +615,7 @@ class MSBCollision(BaseMSBPart):
         self.vagrant_entity_ids = None
         self.area_name_id = None
         self.__force_area_banner = None  # Custom field.
-        self.starts_disabled = None
+        self.starts_disabled = None  # TODO: almost always boolean, but very rarely 256 (e.g. Anor Londo gondola).
         self.attached_bonfire = None
         self.__play_region_id = None
         self.__stable_footing_flag = None
@@ -628,7 +633,7 @@ class MSBCollision(BaseMSBPart):
         self.vagrant_entity_ids = data.vagrant_entity_ids
         self.area_name_id = abs(data.area_name_id) if data.area_name_id != -1 else -1
         self.__force_area_banner = data.area_name_id < 0  # Custom field.
-        self.starts_disabled = data.starts_disabled
+        self.starts_disabled = 0 if data.starts_disabled == 256 else data.starts_disabled  # Map 256 to 0.
         self.attached_bonfire = data.attached_bonfire
         if data.play_region_id > -10:
             self.__play_region_id = data.play_region_id
@@ -804,7 +809,7 @@ MSB_PART_TYPE_CLASSES = {
     MSB_PART_TYPE.MapPiece: MSBMapPiece,
     MSB_PART_TYPE.Object: MSBObject,
     MSB_PART_TYPE.Character: MSBCharacter,
-    MSB_PART_TYPE.PlayerStarts: MSBPlayer,
+    MSB_PART_TYPE.PlayerStart: MSBPlayer,
     MSB_PART_TYPE.Collision: MSBCollision,
     MSB_PART_TYPE.Navmesh: MSBNavmesh,
     MSB_PART_TYPE.UnusedObject: MSBUnusedObject,
@@ -846,15 +851,15 @@ class MSBPartList(MSBEntryList):
 
     _entries: tp.List[BaseMSBPart]
 
-    MapPieces: list
-    Objects: list
-    Characters: list
-    PlayerStarts: list
-    Collisions: list
-    Navmeshes: list
-    UnusedObjects: list
-    UnusedCharacters: list
-    MapConnections: list
+    MapPieces: tp.Sequence[MSBMapPiece]
+    Objects: tp.Sequence[MSBObject]
+    Characters: tp.Sequence[MSBCharacter]
+    PlayerStarts: tp.Sequence[MSBPlayer]
+    Collisions: tp.Sequence[MSBCollision]
+    Navmeshes: tp.Sequence[MSBNavmesh]
+    UnusedObjects: tp.Sequence[MSBUnusedObject]
+    UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
+    MapConnections: tp.Sequence[MSBMapConnection]
 
     def get_part_by_name(self, entry_name: str, entry_type=None):
         parts = []

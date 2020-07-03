@@ -29,7 +29,7 @@ class Item(GameObject, IntEnum):
     """
 
     def __call__(self, negate=False, condition=None):
-        value = self if isinstance(self, (int, float)) else self.value
+        value = self if isinstance(self, (int, float, tuple)) else self.value
         return get_value_test(
             value=value, negate=negate, condition=condition,
             if_true_func=lambda c, i: getattr(instr, f'IfPlayerHas{self.item_type.name}')(c, i, False),

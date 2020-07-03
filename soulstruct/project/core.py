@@ -301,20 +301,26 @@ class SoulstructProject(object):
             talk = TalkESDBND(map_directory, game_version=game_version)
             talk.write(export_directory / bnd_file_name)
 
-    def restore_backup(self, target=None):
+    def restore_backup(self, target=None, delete_baks=False):
         """Restores '.bak' files, deleting whatever they would replace."""
         target = Path(target)
         if target.is_file():
             if target.suffix == ".bak":
                 if (target.with_suffix("")).is_file():
                     os.remove(str(target.with_suffix("")))
-                os.rename(str(target), str(target.with_suffix("")))
+                if delete_baks:
+                    os.rename(str(target), str(target.with_suffix("")))
+                else:
+                    shutil.copy2(str(target), str(target.with_suffix("")))
             elif not (target.with_suffix(".bak")).is_file():
                 raise RestoreBackupError(f"Could not find a file '{str(target.with_suffix('.bak'))} "
                                          f"to restore. No action taken.")
             else:
                 os.remove(str(target))
-                os.rename(str(target.with_suffix(".bak")), str(target))
+                if delete_baks:
+                    os.rename(str(target.with_suffix(".bak")), str(target))
+                else:
+                    shutil.copy2(str(target.with_suffix(".bak")), str(target))
         elif target.is_dir():
             count = 0
             for bak_file in target.glob("*.bak"):

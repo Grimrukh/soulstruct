@@ -179,7 +179,7 @@ __all__ = [
     "ArenaSetNametag3", "ArenaSetNametag4", "DisplayArenaDissolutionMessage", "ArenaSetNametag5", "ArenaSetNametag6",
 
     # Bloodborne extra instructions (tests mixed in)
-    "IfDamageType", "IfActionButtonInRegion", "IfPlayerArmorType",
+    "IfDamageType", "IfBossFogActivated", "IfPlayerArmorType",
     "IfPlayerInsightAmountComparison", "IfPlayerInsightAmountEqual", "IfPlayerInsightAmountNotEqual",
     "IfPlayerInsightAmountGreaterThan", "IfPlayerInsightAmountLessThan", "IfPlayerInsightAmountGreaterThanOrEqual",
     "IfPlayerInsightAmountLessThanOrEqual", "IfDialogChoice", "IfPlayGoState", "IfClientTypeCountComparison",
@@ -205,12 +205,13 @@ __all__ = [
     "EventValueOperation", "StoreItemAmountSpecifiedByFlagValue", "GivePlayerItemAmountSpecifiedByFlagValue",
     "SetDirectionDisplayState", "EnableDirectionDisplay", "DisableDirectionDisplay", "SetMapHitGridCorrespondence",
     "EnableMapHitGridCorrespondence", "DisableMapHitGridCorrespondence", "SetMapContentImageDisplayState",
-    "SetMapBoundariesDisplay", "SetAreaWind", "MovePlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
+    "SetMapBoundariesDisplay", "SetAreaWind", "WarpPlayerToRespawnPoint", "StartEnemySpawner", "SummonNPC",
     "InitializeWarpObject", "BossDefeat", "SendNPCSummonHome", "AddSpecialEffect", "RotateToFaceEntity",
     "ChangeCharacterCloth", "ChangePatrolBehavior", "SetDistanceLimitForConversationStateChanges",
     "Test_RequestRagdollRestraint", "ChangePlayerCharacterInitParam", "AdaptSpecialEffectHealthChangeToNPCPart",
     "SetGravityAndCollisionExcludingOwnWorld", "AddSpecialEffect_WithUnknownEffect",
-    "ActivateObjectWithSpecificCharacter", "SetObjectDamageShieldState", "RegisterHealingFountain", "SetBossMusicState",
+    "ActivateObjectWithSpecificCharacter", "SetObjectDamageShieldState", "RegisterHealingFountain",
+    "SetBossMusicState", "EnableBossMusic", "DisableBossMusic",
     "NotifyDoorEventSoundDampening", "SetCollisionResState", "CreatePlayLog", "StartPlayLogMeasurement",
     "StopPlayLogMeasurement", "PlayLogParameterOutput",
 
@@ -245,7 +246,7 @@ __all__ = [
 
     # Bloodborne tests
     "HOST", "CLIENT", "SINGLEPLAYER", "MULTIPLAYER",
-    "IsAttackedWithDamageType", "WearingArmorTypeInRange",
+    "IsAttackedWithDamageType", "BossFogActivated", "WearingArmorTypeInRange",
     "CharacterDrawGroupActive", "CharacterDrawGroupInactive",
     "INSIGHT",
 

@@ -307,7 +307,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 49:
             respawn_point_id, = req_args
-            return f"MovePlayerToRespawnPoint({respawn_point_id})"
+            return f"WarpPlayerToRespawnPoint({respawn_point_id})"
 
         if instruction_index == 50:
             spawner_id, = req_args
@@ -345,6 +345,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 14:
             character, target_entity, animation, wait_for_completion = req_args
             character = 'PLAYER' if character == 10000 else character
+            target_entity = 'PLAYER' if target_entity == 10000 else target_entity
             return (f"RotateToFaceEntity({character}, {target_entity}, animation={animation}, "
                     f"wait_for_completion={boolify(wait_for_completion)})")
 
@@ -413,6 +414,10 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 4:
             sound_id, state = req_args
+            if state == 1:
+                return f"EnableBossMusic({sound_id})"
+            if state == 0:
+                return f"DisableBossMusic({sound_id})"
             return f"SetBossMusicState({sound_id}, state={boolify(state)})"
 
         if instruction_index == 5:

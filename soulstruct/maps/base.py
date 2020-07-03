@@ -292,7 +292,7 @@ class MSBEntryEntityCoordinates(MSBEntryEntity):
         self.translate = Vector3.zero()
         self.rotate = Vector3.zero()
 
-    def rotate_in_world(self, rotation: tp.Union[Matrix3, Vector3.typing(), int, float],
+    def rotate_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
                         pivot_point=(0, 0, 0), radians=False):
         """Modify entity `translate` and `rotate` by rotating it around some pivot in world coordinates (defaults to
         the origin)."""

@@ -32,7 +32,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
                 # Category shortcuts.
                 separator_added = False
                 text_categories = ('Names', 'Summaries', 'Descriptions')
-                linked_id = ((text_id // 100) * 100) if item_type != 'Ring' else text_id
+                linked_id = ((text_id // 100) * 100) if item_type in {"Weapon", "Armor"} else text_id
                 for link_category in text_categories:
                     if text_type != link_category and linked_id in self.master.Text[item_type + link_category]:
                         if not separator_added:
