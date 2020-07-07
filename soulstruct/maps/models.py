@@ -36,7 +36,7 @@ class MSBModel(MSBEntry):
         super().__init__()
         self.ENTRY_TYPE = None
         self._model_type_index = None  # not sure if this matters.
-        self.sib_path = ''
+        self.sib_path = ""
         self._instance_count = None
 
         if isinstance(msb_model_source, bytes):

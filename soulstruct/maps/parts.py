@@ -861,7 +861,7 @@ class MSBPartList(MSBEntryList):
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
     MapConnections: tp.Sequence[MSBMapConnection]
 
-    def get_part_by_name(self, entry_name: str, entry_type=None):
+    def get_part_by_name(self, entry_name: str, entry_type=None) -> BaseMSBPart:
         parts = []
         for part in self.get_entries(entry_type):
             if part.name == entry_name:

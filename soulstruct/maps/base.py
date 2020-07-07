@@ -220,8 +220,11 @@ class MSBEntryList(object):
             raise TypeError(f"Invalid entry type for entry list {cls.ENTRY_LIST_NAME}: {entry_type}")
 
     def add_entry(self, entry, global_index=None, append_to_entry_type=None):
-        """Add entry at desired global index. If `global_index` is None, it defaults to the end of the given entry type,
-        which in turn defaults to None (end of global entry list)."""
+        """Add entry at desired global index.
+
+        If `global_index` is None, it defaults to the end of the given `append_to_entry_type` type, which in turn
+        defaults to None (end of global entry list).
+        """
         if global_index is None:
             if append_to_entry_type is not None:
                 entry_type = self.resolve_entry_type(append_to_entry_type)

@@ -973,6 +973,8 @@ class NavmeshGraph(object):
                 output += f" ({navmesh_name}):\n"
             else:
                 output += f":\n"
+            output += f"Box start: {room.box_start}"
+            output += f"Box end: {room.box_end}"
             for connected_room_index in room.connected_rooms:
                 output += f"    --> Room {connected_room_index}"
                 if self._navmeshes_valid:
@@ -982,7 +984,7 @@ class NavmeshGraph(object):
                     output += "\n"
 
         for i, node in enumerate(self.mcg.nodes):
-            output += f"Node {i}:\n"
+            output += f"Node {i} [{node.translate}]:\n"
             for j, connected_node_index in enumerate(node.connected_nodes):
                 edge = self.mcg.edges[node.connected_edges[j]]
                 used_rooms.add(edge.mcp_room_index)
