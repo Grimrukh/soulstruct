@@ -176,7 +176,7 @@ class MSBEntryList(object):
         return [entry.name for entry in self.get_entries(entry_type=entry_type)]
 
     def get_entry_type(self, entry_name_or_index):
-        """Returns type enum of given entry name or list-wide index."""
+        """Returns type enum of given entry name or list-wide global index."""
         return self[entry_name_or_index].ENTRY_TYPE
 
     def get_entry_type_index(self, entry_name_or_index):
@@ -238,15 +238,27 @@ class MSBEntryList(object):
         """Delete (and return) entry at desired global index."""
         return self._entries.pop(global_index)
 
-    def duplicate_entry(self, entry_type, local_index, insert_below_original=False):
+    def duplicate_entry(self, entry_type, entry_name_or_index, insert_below_original=False, **kwargs):
+        """Duplicate an entry of the given type and local index or name, optionally inserting it just below the original
+        instead of at the end of the MSB.
+
+        Any `kwargs` given will be set as attributes of the duplicated instance, which is also returned for further
+        modificaiton if desired.
+        """
+        local_index = self.get_entry_type_index(entry_name_or_index)
         source_entry = self.get_entries(entry_type)[local_index]
         duplicated = copy.deepcopy(source_entry)
-        duplicated.name += ' <1>'  # TODO: Not nice if the source entry already has a repeated name.
+        kwargs.setdefault("name", duplicated.name + " <1>")  # TODO: Preferable <2>, etc if already duplicated.
         if insert_below_original:
             global_index = self.get_entry_global_index(source_entry.name)
             self._entries.insert(global_index + 1, duplicated)
         else:
             self._entries.append(duplicated)
+        for prop, value in kwargs.items():
+            if not hasattr(duplicated, prop):
+                raise AttributeError(f"MSB entry type {duplicated.ENTRY_TYPE.name} has no property '{prop}'.")
+            setattr(duplicated, prop, value)
+        return duplicated
 
     def get_indices(self):
         """Returns a dictionary mapping entry names to their global indices for resolving named links before repacking.

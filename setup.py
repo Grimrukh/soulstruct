@@ -14,7 +14,7 @@ setup(
     long_description=long_description,
     extras_require={'Interactive': ['IPython'], 'Runtime': ['psutil'], 'ConsoleColor': ['colorama'],
                     "Hotkeys": ['keyboard'], "Graphs": ['numpy', 'matplotlib']},
-    author='Scott Mooney',
+    author='Scott Mooney (Grimrukh)',
     author_email='grimrukh@gmail.com',
     url="https://github.com/grimrukh/soulstruct",
-    )
+)

@@ -886,12 +886,12 @@ class NavmeshGraph(object):
 
     @property
     def msb(self):
-        """Read-only access to MSB."""
+        """You can't change the attached MSB instance."""
         return self._msb
 
     @property
     def navmeshes(self):
-        """Read-only access to navmeshes."""
+        """You can't change the attached MSB instance."""
         return self._navmeshes
 
     def check_navmeshes(self):
