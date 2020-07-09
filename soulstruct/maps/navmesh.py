@@ -174,7 +174,7 @@ class MCPRoom(object):
             (v[0], v[2], v[6], v[4]),  # bottom
         )
 
-    def draw(self, axes=None, show=False, room_color="cyan"):
+    def draw(self, axes=None, show=False, room_color="cyan", label_room=False):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
@@ -185,6 +185,8 @@ class MCPRoom(object):
             axes = fig.add_subplot(111, projection='3d')
         vertices = self.get_vertices(swap_yz=True)
         axes.scatter(*zip(*vertices), c="green", s=1, alpha=0.1)  # note y/z swapped
+        if label_room:
+            axes.text(self.volume_center[0], self.volume_center[2], self.volume_center[1], self.index, c="black")
         axes.add_collection3d(Poly3DCollection(
             self.get_faces(swap_yz=True), facecolors=room_color, linewidths=0.1, edgecolors="red", alpha=0.1))
         if show:
@@ -381,7 +383,7 @@ class MCP(object):
             if selected_room_indices is None or room.index in selected_room_indices:
                 room.translate(translate)
 
-    def draw(self, axes=None, show=True, room_color="cyan"):
+    def draw(self, axes=None, show=True, room_color="cyan", label_rooms=False):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
@@ -392,7 +394,7 @@ class MCP(object):
         else:
             fig = axes.figure
         for room in self.rooms:
-            room.draw(axes, room_color=room_color)
+            room.draw(axes, room_color=room_color, label_room=label_rooms)
             for connected_room in (self.get_room_index(i) for i in room.connected_rooms if i > room.index):
                 x, z, y = zip(room.volume_center, connected_room.volume_center)  # y, z swapped
                 axes.plot(x, y, z, color="red")
@@ -687,7 +689,7 @@ class MCG(object):
         """Return a list of all edge indices in the given MCP room."""
         return [i for i, edge in enumerate(self.edges) if edge.mcp_room_index == room_index]
 
-    def delete_edge_between_nodes(self, first_node_index, second_node_index, allow_missing=False):
+    def delete_edge_between_nodes(self, first_node_index, second_node_index, allow_missing=True):
         """Looks for and deletes the edge between the two nodes (in either direction). This is generally safer than
         calling `delete_edge` directly, since node indices are probably more stable while editing maps.
 
@@ -827,7 +829,7 @@ class MCG(object):
             if selected_node_indices is None or i in selected_node_indices:
                 node.translate += translate
 
-    def draw(self, axes=None, show=True):
+    def draw(self, axes=None, show=True, label_nodes=False):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
@@ -835,9 +837,11 @@ class MCG(object):
         if axes is None:
             fig = plt.figure()
             axes = fig.add_subplot(111, projection='3d')
-        for node in self.nodes:
+        for i, node in enumerate(self.nodes):
             axes.scatter(node.translate.x, node.translate.z, node.translate.y,
                          s=20, c="green", alpha=0.5)
+            if label_nodes:
+                axes.text(node.translate.x, node.translate.z, node.translate.y, i, c="green")
         for edge in self.edges:
             start_node = self.nodes[edge.start_node]
             end_node = self.nodes[edge.end_node]
@@ -973,8 +977,8 @@ class NavmeshGraph(object):
                 output += f" ({navmesh_name}):\n"
             else:
                 output += f":\n"
-            output += f"Box start: {room.box_start}"
-            output += f"Box end: {room.box_end}"
+            output += f"  Box start: {room.box_start}\n"
+            output += f"  Box end: {room.box_end}\n"
             for connected_room_index in room.connected_rooms:
                 output += f"    --> Room {connected_room_index}"
                 if self._navmeshes_valid:
@@ -999,13 +1003,13 @@ class NavmeshGraph(object):
                 output += f"NO EDGES: Room {room.index}\n"
         return output
 
-    def draw(self, axes=None, show=True, room_color="cyan"):
+    def draw(self, axes=None, show=True, room_color="cyan", label_rooms=False, label_nodes=False):
         import matplotlib.pyplot as plt
         if axes is None:
             fig = plt.figure(figsize=(8, 8))
             axes = fig.add_subplot(111, projection="3d")
-        self.mcp.draw(axes, show=False, room_color=room_color)
-        self.mcg.draw(axes, show=False)
+        self.mcp.draw(axes, show=False, room_color=room_color, label_rooms=label_rooms)
+        self.mcg.draw(axes, show=False, label_nodes=label_nodes)
         if show:
             plt.show()
 

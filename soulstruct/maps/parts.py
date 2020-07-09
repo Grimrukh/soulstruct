@@ -320,7 +320,7 @@ class MSBObject(BaseMSBPart):
 
     PART_OBJECT_STRUCT = (
         '4x',
-        ('collision_index', 'i'),
+        ('draw_parent_index', 'i'),
         ('unk_x08_x0c', 'i'),
         ('object_pose', 'h'),
         ('unk_x0e_x10', 'h'),
@@ -333,7 +333,7 @@ class MSBObject(BaseMSBPart):
             'Model Name', True, '<Maps:Models:Objects>',
             "Name of object model to use for this object."),
         **BaseMSBPart.FIELD_INFO,
-        'collision_name': (
+        'draw_parent_name': (
             'Draw Parent', True, '<Maps:Parts>',
             "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
         'unk_x08_x0c': (
@@ -353,8 +353,8 @@ class MSBObject(BaseMSBPart):
     ENTRY_TYPE = MSB_PART_TYPE.Object
 
     def __init__(self, msb_part_source):
-        self.collision_name = None
-        self._collision_index = None
+        self.draw_parent_name = None
+        self._draw_parent_index = None
         self.unk_x08_x0c = None
         self.object_pose = None
         self.unk_x0e_x10 = None
@@ -363,7 +363,7 @@ class MSBObject(BaseMSBPart):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_OBJECT_STRUCT).unpack(msb_buffer)
-        self._collision_index = data.collision_index
+        self._draw_parent_index = data.draw_parent_index
         self.unk_x08_x0c = data.unk_x08_x0c
         self.object_pose = data.object_pose
         self.unk_x0e_x10 = data.unk_x0e_x10
@@ -371,7 +371,7 @@ class MSBObject(BaseMSBPart):
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_OBJECT_STRUCT).pack(
-            collision_index=self._collision_index,
+            draw_parent_index=self._draw_parent_index,
             unk_x08_x0c=self.unk_x08_x0c,
             object_pose=self.object_pose,
             unk_x0e_x10=self.unk_x0e_x10,
@@ -380,11 +380,11 @@ class MSBObject(BaseMSBPart):
 
     def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
         super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
-        self._collision_index = part_indices[self.collision_name] if self.collision_name else -1
+        self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
 
     def set_names(self, model_names, region_names, part_names, collision_names):
         super().set_names(model_names, region_names, part_names, collision_names)
-        self.collision_name = part_names[self._collision_index] if self._collision_index != -1 else None
+        self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
 
 
 class MSBCharacter(BaseMSBPart):
@@ -397,7 +397,7 @@ class MSBCharacter(BaseMSBPart):
         ('talk_id', 'i'),
         ('unk_x14_x18', 'f'),
         ('chara_init_id', 'i'),
-        ('collision_index', 'i'),
+        ('draw_parent_index', 'i'),
         '8x',
         ('patrol_point_indices', '8h'),
         ('default_animation', 'i'),
@@ -426,7 +426,7 @@ class MSBCharacter(BaseMSBPart):
         'chara_init_id': (
             'Player ID', True, '<Params:Players>',
             "Contains information for 'player' (human) characters, such as their stats and equipment."),
-        'collision_name': (
+        'draw_parent_name': (
             'Draw Parent', True, '<Maps:Parts>',
             "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
         'patrol_point_names': (
@@ -448,8 +448,8 @@ class MSBCharacter(BaseMSBPart):
         self.talk_id = None
         self.unk_x14_x18 = None
         self.chara_init_id = None
-        self.collision_name = None
-        self._collision_index = None
+        self.draw_parent_name = None
+        self._draw_parent_index = None
         self.patrol_point_names = None
         self._patrol_point_indices = None
         self.default_animation = None
@@ -463,7 +463,7 @@ class MSBCharacter(BaseMSBPart):
         self.talk_id = data.talk_id
         self.unk_x14_x18 = data.unk_x14_x18
         self.chara_init_id = data.chara_init_id
-        self._collision_index = data.collision_index
+        self._draw_parent_index = data.draw_parent_index
         self._patrol_point_indices = data.patrol_point_indices
         self.default_animation = data.default_animation
         self.unk_x3c_x40 = data.unk_x3c_x40
@@ -475,7 +475,7 @@ class MSBCharacter(BaseMSBPart):
             talk_id=self.talk_id,
             unk_x14_x18=self.unk_x14_x18,
             chara_init_id=self.chara_init_id,
-            collision_index=self._collision_index,
+            draw_parent_index=self._draw_parent_index,
             patrol_point_indices=self._patrol_point_indices,
             default_animation=self.default_animation,
             unk_x3c_x40=self.unk_x3c_x40,
@@ -483,12 +483,12 @@ class MSBCharacter(BaseMSBPart):
 
     def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
         super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
-        self._collision_index = part_indices[self.collision_name] if self.collision_name else -1
+        self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
         self._patrol_point_indices = [region_indices[n] if n else -1 for n in self.patrol_point_names]
 
     def set_names(self, model_names, region_names, part_names, collision_names):
         super().set_names(model_names, region_names, part_names, collision_names)
-        self.collision_name = part_names[self._collision_index] if self._collision_index != -1 else None
+        self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
         self.patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
 
 
