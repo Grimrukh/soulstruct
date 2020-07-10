@@ -113,6 +113,9 @@ class Vector3(object):
     def __repr__(self):
         return f'Vector3({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f}, {self.z:.{self.PRECISION}f})'
 
+    def copy(self):
+        return Vector3(self)
+
     @classmethod
     def zero(cls):
         return cls(0, 0, 0)

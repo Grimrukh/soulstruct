@@ -190,8 +190,11 @@ class MSBEntryList(object):
         return self.get_entry_names(entry_type).index(entry_name_or_index)
 
     def get_entry_global_index(self, entry_name_or_local_index, entry_type=None):
-        """Get global index of entry with given name or index. If an index past the length of the given type sub-list
-        is given, `None` is returned, which should be handled appropriately."""
+        """Get global index of entry with given name or index. If a name is given, it must be unique.
+
+        If an index past the length of the given type sub-list is given, `None` is returned, which should be handled
+        appropriately.
+        """
         if isinstance(entry_name_or_local_index, int):
             if entry_type is None:
                 raise ValueError("Cannot get global entry index from local index without specifying `entry_type`.")
@@ -201,7 +204,13 @@ class MSBEntryList(object):
             entry_name = entry_type_names[entry_name_or_local_index]
         else:
             entry_name = entry_name_or_local_index
-        return self.get_entry_names().index(entry_name)
+        entry_names = self.get_entry_names()
+        if entry_names.count(entry_name) >= 2:
+            raise ValueError(f"Cannot get global index of non-unique entry name {repr(entry_name)} "
+                             f"({entry_names.count(entry_name)} instances).")
+        if entry_name not in entry_names:
+            raise ValueError(f"Cannot get global index of non-existent entry name {repr(entry_name)}.")
+        return entry_names.index(entry_name)
 
     @classmethod
     def resolve_entry_type(cls, entry_type):
@@ -229,14 +238,23 @@ class MSBEntryList(object):
             if append_to_entry_type is not None:
                 entry_type = self.resolve_entry_type(append_to_entry_type)
                 last_entry_local_index = len(self.get_entry_names(entry_type)) - 1
-                global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
+                if last_entry_local_index == -1:
+                    # No entries of given type exist. Fall back to global index.
+                    # TODO: Could also guess where new entry type should be inserted.
+                    global_index = len(self)
+                else:
+                    global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
             else:
                 global_index = len(self)
         self._entries.insert(global_index, entry)
 
-    def delete_entry(self, global_index):
-        """Delete (and return) entry at desired global index."""
-        return self._entries.pop(global_index)
+    def delete_entry(self, entry_name_or_index):
+        """Delete (and return) entry with given (unique) name or at desired global index."""
+        if isinstance(entry_name_or_index, str):
+            entry_name_or_index = self.get_entry_global_index(entry_name_or_index)
+        if isinstance(entry_name_or_index, int):
+            return self._entries.pop(entry_name_or_index)
+        raise TypeError("Argument to `delete_entry()` must be an entry name or global index in its MSB list.")
 
     def duplicate_entry(self, entry_type, entry_name_or_index, insert_below_original=False, **kwargs):
         """Duplicate an entry of the given type and local index or name, optionally inserting it just below the original
@@ -248,7 +266,7 @@ class MSBEntryList(object):
         local_index = self.get_entry_type_index(entry_name_or_index)
         source_entry = self.get_entries(entry_type)[local_index]
         duplicated = copy.deepcopy(source_entry)
-        kwargs.setdefault("name", duplicated.name + " <1>")  # TODO: Preferable <2>, etc if already duplicated.
+        kwargs.setdefault("name", duplicated.name + " <1>")  # TODO: Preferably <2>, etc if already duplicated.
         if insert_below_original:
             global_index = self.get_entry_global_index(source_entry.name)
             self._entries.insert(global_index + 1, duplicated)

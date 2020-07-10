@@ -129,15 +129,15 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
     ENTRY_TYPE = None
     WORLD_ROTATION = False
 
-    def __init__(self, msb_part_source):
+    def __init__(self, msb_part_source=None):
         super().__init__()
         self.sib_path = ''
         self._part_type_index = None  # TODO: investigate Wulf MSB Editor issue with global index misalignment
         self.model_name = None
         self._model_index = None
         self.scale = Vector3(1, 1, 1)  # only relevant for MapPiece and Object
-        self.draw_groups = list(range(128))  # [0, 1, 2, ..., 128]
-        self.display_groups = list(range(128))  # [0, 1, 2, ..., 128]  # TODO: these groups should be a `set()`
+        self.draw_groups = list(range(128))  # [0, 1, 2, ..., 127]
+        self.display_groups = list(range(128))  # [0, 1, 2, ..., 127]  # TODO: these groups should be a `set()`
 
         # Lighting parameters
         self.ambient_light_id = None
@@ -164,8 +164,8 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
             msb_part_source = BytesIO(msb_part_source)
         if isinstance(msb_part_source, BufferedReader):
             self.unpack(msb_part_source)
-        else:
-            raise TypeError("'msb_part_source' must be a buffer or bytes.")
+        elif msb_part_source is not None:
+            raise TypeError("'msb_part_source' must be a buffer, bytes, or None.")
 
     def unpack_type_data(self, msb_buffer):
         raise NotImplementedError
@@ -778,7 +778,7 @@ class MSBMapConnection(BaseMSBPart):
     ENTRY_TYPE = MSB_PART_TYPE.MapConnection
     WORLD_ROTATION = True
 
-    def __init__(self, msb_part_source):
+    def __init__(self, msb_part_source=None):
         self.collision_name = None
         self._collision_index = None
         self.map_id = None
@@ -871,6 +871,29 @@ class MSBPartList(MSBEntryList):
         elif len(parts) >= 2:
             raise KeyError(f"Multiple MSB parts named: {entry_name}. Please make them unique.")
         return parts[0]
+
+    def create_map_connection(self, base, name, map_id, collision_name, draw_groups=None, display_groups=None):
+        """Creates a new `MapConnection` that references and copies the transform of the given `collision_name`.
+
+        The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
+        `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
+
+        # TODO: Currently needs a real `base` MapConnection to start with, until I implement proper default instances.
+        """
+        collision = self.get_part_by_name(collision_name, "Collision")
+        new_connection = base.copy()  # TODO: MSBMapConnection()
+        new_connection.name = name
+        new_connection.map_id = map_id
+        new_connection.collision_name = collision_name
+        new_connection.translate = collision.translate.copy()
+        new_connection.rotate = collision.rotate.copy()
+        new_connection.scale = collision.scale.copy()  # for completion's sake
+        new_connection.model_name = collision.model_name
+        if draw_groups is not None:
+            new_connection.draw_groups = draw_groups
+        if display_groups is not None:
+            new_connection.display_groups = display_groups
+        self.add_entry(new_connection, append_to_entry_type="MapConnection")
 
     def set_names(self, model_names, region_names, part_names, collision_names):
         for entry in self._entries:
