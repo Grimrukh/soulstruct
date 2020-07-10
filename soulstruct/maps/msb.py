@@ -4,7 +4,7 @@ from io import BytesIO, BufferedReader
 from pathlib import Path
 
 from soulstruct.maps.core import MAP_ENTRY_TYPES
-from soulstruct.maps.base import MSBEntryList, MSBEntry
+from soulstruct.maps.base import MSBEntryList, MSBEntry, MSBEntryEntity
 from soulstruct.maps.models import MSBModelList
 from soulstruct.maps.events import MSBEventList
 from soulstruct.maps.core import MSB_EVENT_TYPE, MSB_PART_TYPE, MSB_REGION_TYPE
@@ -108,28 +108,43 @@ class MSB(object):
         self.parts = MSBPartList(msb_buffer)
 
         model_names = self.models.set_and_get_unique_names()
+        environment_names = self.events.get_entry_names(MSB_EVENT_TYPE.Environment)
         region_names = self.regions.set_and_get_unique_names()
         part_names = self.parts.set_and_get_unique_names()
         collision_names = self.parts.get_entry_names(MSB_PART_TYPE.Collision)
 
         self.events.set_names(region_names=region_names, part_names=part_names)
-        self.parts.set_names(model_names=model_names, region_names=region_names, part_names=part_names,
-                             collision_names=collision_names)
+        self.parts.set_names(
+            model_names=model_names,
+            environment_names=environment_names,
+            region_names=region_names,
+            part_names=part_names,
+            collision_names=collision_names,
+        )
 
     def pack(self):
         """Constructs {name: id} dictionaries, then passes them to pack() methods as required by each."""
         model_indices = self.models.get_indices()
+        local_environment_indices = {
+            name: i for i, name in enumerate(self.events.get_entry_names(MSB_EVENT_TYPE.Environment))
+        }
         region_indices = self.regions.get_indices()
         part_indices = self.parts.get_indices()
-        local_collision_indices = {name: i for i, name in enumerate(
-            self.parts.get_entry_names(MSB_PART_TYPE.Collision))}
+        local_collision_indices = {
+            name: i for i, name in enumerate(self.parts.get_entry_names(MSB_PART_TYPE.Collision))
+        }
 
         # Set entry indices (both self and linked) and other auto-detected fields.
         self.models.set_indices(part_instance_counts=self.parts.get_instance_counts())
         self.events.set_indices(region_indices=region_indices, part_indices=part_indices)
         self.regions.set_indices()
-        self.parts.set_indices(model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
-                               local_collision_indices=local_collision_indices)
+        self.parts.set_indices(
+            model_indices=model_indices,
+            local_environment_indices=local_environment_indices,
+            region_indices=region_indices,
+            part_indices=part_indices,
+            local_collision_indices=local_collision_indices,
+        )
 
         offset = 0
         packed_models = self.models.pack(start_offset=offset)
@@ -152,7 +167,6 @@ class MSB(object):
         create_bak(msb_path)
         with msb_path.open('wb') as f:
             f.write(self.pack())
-        print(f"MSB saved: {str(msb_path)}")  # todo: remove
 
     def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=None):
         """Add given `translate` to `.translate` vectors of all Regions and Parts (including Map Pieces, Collisions, and
@@ -260,22 +274,24 @@ class MSB(object):
                 entries_by_id[entry.entity_id] = entry.name if names_only else entry
         return entries_by_id
 
-    def get_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntry]:
-        """Search all entry types for the given ID and return that MSBEntry (or None if not found).
+    def get_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntryEntity]:
+        """Search all entry types for the given ID and return that `MSBEntry` (or `None` if not found).
 
         If multiple entries with the same (non-default) ID are found, an error will be raised.
         """
         if entity_id <= 0:
             raise ValueError(f"MSB entity ID cannot be less than zero ({entity_id}).")
-        results = []
-        for entry_list_name in ("parts", "events", "regions"):
-            results += [e for e in self[entry_list_name].get_entries() if e.entity_id == entity_id]
+        results = [e for e in self.parts.get_entries() if e.entity_id == entity_id]
+        results += [e for e in self.events.get_entries() if e.entity_id == entity_id]
+        results += [e for e in self.regions.get_entries() if e.entity_id == entity_id]
         if not results:
             return None
         elif len(results) > 1:
             if allow_multiple:
-                return results
-            raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
+                _LOGGER.warning(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen. "
+                                f"Returning first one only.")
+            else:
+                raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
         return results[0]
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:

@@ -12,7 +12,7 @@ __all__ = [
     "Entity", "EventEntity", "CoordEntity",
     "SoundEvent", "FXEvent", "SpawnerEvent", "MessageEvent", "ObjActEvent", "SpawnPointEvent", "NavmeshEvent",
     "Object", "Region", "Character",
-    "MapPiece", "Collision", "PlayerStart", "Navmesh", "MapConnection",
+    "MapPiece", "Collision", "PlayerStart", "Navmesh", "MapLoadTrigger",
     "EntityInt", "CoordEntityInt", "ObjectInt", "RegionInt", "CharacterInt", "AnimatedInt",
     "MapPieceInt", "CollisionInt", "NavmeshEventInt",
 ]
@@ -232,7 +232,7 @@ class Navmesh(Entity):
     pass
 
 
-class MapConnection(Entity):
+class MapLoadTrigger(Entity):
     """MapConnection added in MSB. No additional state."""
     pass
 

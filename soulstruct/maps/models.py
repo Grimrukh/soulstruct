@@ -11,11 +11,11 @@ from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 class MSBModel(MSBEntry):
 
     MODEL_STRUCT = BinaryStruct(
-        ('name_offset', 'i'),
-        ('model_type', 'i'),
-        ('model_type_index', 'i'),
-        ('sib_path_offset', 'i'),
-        ('instance_count', 'i'),
+        ('__name_offset', 'i'),
+        ('__model_type', 'i'),
+        ('_model_type_index', 'i'),
+        ('__sib_path_offset', 'i'),
+        ('_instance_count', 'i'),
         '12x',
     )
 
@@ -29,7 +29,7 @@ class MSBModel(MSBEntry):
         """Create an instance of an MSB model entry using packed data (`msb_model_source`) or keyword arguments.
 
         If `msb_model_source` is not given, then at least `name` and `entry_type` must be, with `description` optional
-        (defaults to None) and `sib_path` auto-generated using `name` and `entry_type`. For MapPiece, Collision, and
+        (defaults to `None`) and `sib_path` auto-generated using `name` and `entry_type`. For MapPiece, Collision, and
         Navmesh models, `sib_path` must be a full string or a sequence of map ID parts (e.g. (10, 2) or (10, 2, 0, 0)
         for map `m10_02_00_00.msb`), as the models for these MSB parts are map-specific.
         """
@@ -57,18 +57,18 @@ class MSBModel(MSBEntry):
             else:
                 self.sib_path = self.auto_sib_path(name=self.name, entry_type=self.ENTRY_TYPE, sib_path=sib_path)
         else:
-            raise TypeError(f"'msb_model_source' must be a buffer or bytes, not {type(msb_model_source)}")
+            raise TypeError(f"`msb_model_source` must be a buffer, `bytes`, or `None` (with `name` and `entry_type` "
+                            f"given), not {type(msb_model_source)}")
 
     def unpack(self, msb_buffer):
         model_offset = msb_buffer.tell()
         model_data = self.MODEL_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data.name_offset, encoding='shift-jis')
+            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding='shift-jis')
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data.sib_path_offset, encoding='shift-jis')
-        self.ENTRY_TYPE = MSB_MODEL_TYPE(model_data.model_type)
-        self._model_type_index = model_data.model_type_index
-        self._instance_count = model_data.instance_count
+            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding='shift-jis')
+        self.ENTRY_TYPE = MSB_MODEL_TYPE(model_data["__model_type"])
+        self.set(**model_data)
 
     def pack(self):
         name_offset = self.MODEL_STRUCT.size
@@ -78,11 +78,11 @@ class MSBModel(MSBEntry):
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b'\0'
         packed_model_data = self.MODEL_STRUCT.pack(
-            name_offset=name_offset,
-            model_type=MSB_MODEL_TYPE(self.ENTRY_TYPE).value,
-            model_type_index=self._model_type_index,
-            sib_path_offset=sib_path_offset,
-            instance_count=self._instance_count,
+            __name_offset=name_offset,
+            __model_type=MSB_MODEL_TYPE(self.ENTRY_TYPE).value,
+            _model_type_index=self._model_type_index,
+            __sib_path_offset=sib_path_offset,
+            _instance_count=self._instance_count,
         )
         return packed_model_data + packed_name + packed_sib_path
 
@@ -129,26 +129,28 @@ class MSBModel(MSBEntry):
 
 class MSBModelList(MSBEntryList):
 
-    ENTRY_LIST_NAME = 'Models'
+    ENTRY_LIST_NAME = "Models"
     ENTRY_CLASS = staticmethod(MSBModel)
     ENTRY_TYPE_ENUM = MSB_MODEL_TYPE
 
     _entries: tp.List[MSBModel]
 
-    MapPieces: list
-    Objects: list
-    Characters: list
-    Players: list
-    Collisions: list
-    Navmeshes: list
+    MapPieces: tp.List[MSBModel]
+    Objects: tp.List[MSBModel]
+    Characters: tp.List[MSBModel]
+    Players: tp.List[MSBModel]
+    Collisions: tp.List[MSBModel]
+    Navmeshes: tp.List[MSBModel]
 
     def set_indices(self, part_instance_counts):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
         type_indices = {}
         for entry in self._entries:
             try:
-                entry.set_indices(model_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                                  instance_count=part_instance_counts.get(entry.name, 0))
+                entry.set_indices(
+                    model_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                    instance_count=part_instance_counts.get(entry.name, 0),
+                )
             except KeyError as e:
                 raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} model {entry.name}: {e}")
             else:

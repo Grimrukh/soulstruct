@@ -1,3 +1,10 @@
+"""Mathematical classes and functions uses by Soulstruct."""
+
+__all__ = [
+    "Vector3", "Matrix3", "Matrix4",
+    "shift_msb_coordinates", "shift", "matrix_multiply", "resolve_rotation",
+]
+
 import abc
 import math
 import typing as tp
@@ -288,7 +295,7 @@ class Matrix4(_Matrix):
 
 
 def shift_msb_coordinates(ry, distance, xyz=(0.0, 0.0, 0.0)):
-    """ Shift an MSB entity with given x, z, ry coordinates forward or back. """
+    """Shift an MSB entity with given x, z, ry coordinates forward or back."""
     ry_rad = math.radians(ry)
     delta_x = -distance * math.sin(ry_rad)
     delta_z = -distance * math.cos(ry_rad)
@@ -313,3 +320,15 @@ def matrix_multiply(a, b, flat=False):
             m_flat.extend(row)
         return m_flat
     return m
+
+
+def resolve_rotation(rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], radians=False) -> Matrix3:
+    """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector)."""
+    if isinstance(rotation, (int, float)):
+        # Single rotation value is a shortcut for Y rotation.
+        return Matrix3.from_euler_angles(0.0, rotation, 0.0, radians=radians)
+    elif isinstance(rotation, (Vector3, list, tuple)):
+        return Matrix3.from_euler_angles(rotation, radians=radians)
+    elif isinstance(rotation, Matrix3):
+        return rotation
+    raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")

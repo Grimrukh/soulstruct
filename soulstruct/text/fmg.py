@@ -65,9 +65,9 @@ class FMG(object):
         self.version = None
         self.big_endian = False
 
-        self.header_struct = None
-        self.range_struct = None
-        self.string_offset_struct = None
+        self.header_struct = BinaryStruct()
+        self.range_struct = BinaryStruct()
+        self.string_offset_struct = BinaryStruct()
 
         self.fmg_path = None
         self.entries = {}
@@ -120,24 +120,24 @@ class FMG(object):
         except ValueError:
             raise ValueError("Could not read FMG header. Is the file/data correct?")
         try:
-            self._set_version(pre_header.version)
+            self._set_version(pre_header["version"])
         except ValueError:
-            raise ValueError(f"Unrecognized FMG version in file content: {pre_header.version}.")
+            raise ValueError(f"Unrecognized FMG version in file content: {pre_header['version']}.")
         header = self.header_struct.unpack(fmg_buffer)
 
         # Groups of contiguous text string IDs are defined by ranges (first ID, last ID) to save space.
-        ranges = self.range_struct.unpack(fmg_buffer, count=header.range_count)
-        if fmg_buffer.tell() != header.string_offsets_offset:
+        ranges = self.range_struct.unpack_count(fmg_buffer, count=header["range_count"])
+        if fmg_buffer.tell() != header["string_offsets_offset"]:
             _LOGGER.warning("Range data did not end at string data offset given in FMG header.")
-        string_offsets = self.string_offset_struct.unpack(fmg_buffer, count=header.string_count)
+        string_offsets = self.string_offset_struct.unpack_count(fmg_buffer, count=header["string_count"])
 
         # Text pointer table corresponds to all the IDs (joined together) of the above ranges, in order.
         for string_range in ranges:
-            i = string_range.first_index
-            for string_id in range(string_range.first_id, string_range.last_id + 1):
+            i = string_range["first_index"]
+            for string_id in range(string_range["first_id"], string_range["last_id"] + 1):
                 if string_id in self.entries:
                     raise ValueError(f"Malformed FMG: Entry index {string_id} appeared more than once.")
-                string_offset = string_offsets[i].offset
+                string_offset = string_offsets[i]["offset"]
                 if string_offset == 0:
                     if not remove_empty_entries:
                         # Empty text string. These will trigger in-game error messages, like ?PlaceName?.

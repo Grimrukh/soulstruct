@@ -112,14 +112,14 @@ class ParamDef(object):
     def unpack(self, paramdef_buffer):
         """Convert a paramdef file to a dictionary, indexed by ID."""
         header = self.HEADER_STRUCT.unpack(paramdef_buffer)
-        self.param_name = header.param_name
-        fields = self.FIELD_STRUCT.unpack(paramdef_buffer, count=header.field_count)
+        self.param_name = header["param_name"]
+        fields = self.FIELD_STRUCT.unpack_count(paramdef_buffer, count=header["field_count"])
         description_table_offset = paramdef_buffer.tell()
         packed_desc_data = paramdef_buffer.read()
 
         for field_index, field in enumerate(fields):
-            if field.description_offset != 0:
-                fdo = field.description_offset - description_table_offset
+            if field["description_offset"] != 0:
+                fdo = field["description_offset"] - description_table_offset
                 field.description = read_chars_from_bytes(packed_desc_data, offset=fdo, encoding='shift_jis_2004')
             else:
                 field.description = ''
@@ -127,34 +127,34 @@ class ParamDef(object):
             # print(f"{self.param_name} {field_index} | {field.internal_type} | {field.debug_type} | {field.name} | "
             #       f"{field.debug_name} | {field.description}")
 
-            is_bits = field.name.find(': ')
+            is_bits = field["name"].find(': ')
             if is_bits == -1:
-                is_bits = field.name.find(':')
+                is_bits = field["name"].find(':')
             if is_bits != -1:
                 try:
-                    bit_size = int(field.name[is_bits + 1])
+                    bit_size = int(field["name"][is_bits + 1])
                 except ValueError:
-                    bit_size = int(field.name[is_bits + 2])
-            elif field.internal_type == 'dummy8':
-                is_pad = field.name.find('[')
+                    bit_size = int(field["name"][is_bits + 2])
+            elif field["internal_type"] == 'dummy8':
+                is_pad = field["name"].find('[')
                 if is_pad != -1:
-                    bit_size = int(field.name[is_pad + 1]) * 8
+                    bit_size = int(field["name"][is_pad + 1]) * 8
                 else:
                     bit_size = 8
             else:
-                bit_size = field.size * 8
+                bit_size = field["size"] * 8
 
             field.index = field_index
             field.bit_size = bit_size
 
             self.fields.append(field)
             if self.fields_by_name is not None:
-                if field.name in self.fields_by_name:
+                if field["name"] in self.fields_by_name:
                     _LOGGER.warning(
-                        f"ParamDef field with name '{field.name}' was unpacked more than once, so you will not be able "
-                        f"to access fields by name. (Should NOT happen in any known files.)")
+                        f"ParamDef field with name '{field['name']}' was unpacked more than once, so you will not be "
+                        f"able to access fields by name. (Should NOT happen in any known files.)")
                 else:
-                    self.fields_by_name[field.name] = field
+                    self.fields_by_name[field["name"]] = field
 
     def __getitem__(self, field_name):
         if self.fields_by_name is None:

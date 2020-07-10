@@ -49,10 +49,10 @@ class LuaDecompileError(LuaError):
     pass
 
 
-class LuaBND(object):
+class LuaBND:
     """Automatically loads all scripts, LuaInfo, and LuaGNL objects."""
 
-    def __init__(self, luabnd_path, sort_goals=True):
+    def __init__(self, luabnd_path, sort_goals=True, require_luainfo=False, require_luagnl=False):
         self.bnd = BND(luabnd_path)  # path is remembered in BND
 
         self.goals = []  # type: List[LuaGoal]
@@ -67,14 +67,17 @@ class LuaBND(object):
         try:
             gnl_entry = self.bnd.entries_by_id[1000000]
         except KeyError:
-            raise LuaError(f"Could not find `.luagnl` file in LuaBND: {str(luabnd_path)}")
-        self.global_names = LuaGNL(gnl_entry.data).names
+            if require_luagnl:
+                raise LuaError(f"Could not find `.luagnl` file in LuaBND: {str(luabnd_path)}")
+        else:
+            self.global_names = LuaGNL(gnl_entry.data).names
 
         try:
             info_entry = self.bnd.entries_by_id[1000001]
         except KeyError:
-            # TODO: 'eventCommon.luabnd' has no '.luainfo' file. Not handling this yet.
-            raise LuaError(f"Could not find `.luainfo` file in LuaBND: {str(luabnd_path)}")
+            if require_luainfo:
+                # TODO: 'eventCommon.luabnd' has no '.luainfo' file. Not handling this yet.
+                raise LuaError(f"Could not find `.luainfo` file in LuaBND: {str(luabnd_path)}")
         else:
             self.goals = LuaInfo(info_entry.data).goals
             self.bnd_name = Path(info_entry.path).stem
@@ -240,9 +243,12 @@ class LuaBND(object):
             for other in self.other:
                 other.write_decompiled(directory / other.script_name)
 
-    def update_bnd(self, use_decompiled_goals=True, use_decompiled_other=False, compile_scripts=True):
-        self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
-        self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
+    def update_bnd(self, use_decompiled_goals=True, use_decompiled_other=False, compile_scripts=True,
+                   pack_luainfo=True, pack_luagnl=True):
+        if pack_luagnl:
+            self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
+        if pack_luainfo:
+            self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
         lua_list = []
         if use_decompiled_goals:
             lua_list += self.goals

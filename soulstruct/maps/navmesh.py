@@ -709,8 +709,8 @@ class MCG(object):
             raise ValueError(f"Multiple edges found that connect node {first_node_index} and node {second_node_index}. "
                              f"This should't happen!")
         edge_index = edge_index_matches[0]
-        print(f"# Deleting edge {edge_index} between nodes {self.edges[edge_index].start_node} and "
-              f"{self.edges[edge_index].end_node}.")  # todo
+        # print(f"# Deleting edge {edge_index} between nodes {self.edges[edge_index].start_node} and "
+        #       f"{self.edges[edge_index].end_node}.")  # todo
         self.delete_edge(edge_index)
 
     def add_edge_between_nodes(self, first_node_index, second_node_index, room_index, allow_repeat=False, map_id=None):

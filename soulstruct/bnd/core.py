@@ -28,7 +28,7 @@ class BNDEntry(object):
     def unpack(cls, bnd_buffer, entry_header_struct, path_encoding, count):
 
         entry_headers = []
-        entry_header_dicts = entry_header_struct.unpack(bnd_buffer, count=count)
+        entry_header_dicts = entry_header_struct.unpack_count(bnd_buffer, count=count)
 
         for d in entry_header_dicts:
             bnd_buffer.seek(d.data_offset)
@@ -415,13 +415,13 @@ class BND3(BaseBND):
 
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order='<')
         header = self.header_struct.unpack(bnd_buffer)
-        self.bnd_version = header.bnd_version
-        self.bnd_signature = header.bnd_signature
-        self.bnd_magic = header.bnd_magic
-        self.big_endian = header.big_endian or is_big_endian(self.bnd_magic)
+        self.bnd_version = header["bnd_version"]
+        self.bnd_signature = header["bnd_signature"]
+        self.bnd_magic = header["bnd_magic"]
+        self.big_endian = header["big_endian"] or is_big_endian(self.bnd_magic)
         byte_order = '>' if self.big_endian else '<'
         header.update(self.header_struct.unpack(bnd_buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
-        self.unknown = header.unknown
+        self.unknown = header["unknown"]
 
         self.entry_header_struct = BinaryStruct(*self.BND_ENTRY_HEADER, byte_order=byte_order)
         if has_id(self.bnd_magic):
@@ -432,7 +432,7 @@ class BND3(BaseBND):
             self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
 
         for entry in BNDEntry.unpack(
-                bnd_buffer, self.entry_header_struct, path_encoding='shift-jis', count=header.entry_count):
+                bnd_buffer, self.entry_header_struct, path_encoding='shift-jis', count=header["entry_count"]):
             self.add_entry(entry)
 
     def load_unpacked_dir(self, directory):
@@ -598,21 +598,21 @@ class BND4(BaseBND):
 
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order='<')
         header = self.header_struct.unpack(bnd_buffer)
-        self.bnd_flags = (header.flag_1, header.flag_2)
-        self.bnd_version = header.bnd_version
-        self.big_endian = header.big_endian == 0x00000100  # Magic not used to infer endianness here.
+        self.bnd_flags = (header["flag_1"], header["flag_2"])
+        self.bnd_version = header["bnd_version"]
+        self.big_endian = header["big_endian"] == 0x00000100  # Magic not used to infer endianness here.
         byte_order = '>' if self.big_endian else '<'
         header.update(self.header_struct.unpack(bnd_buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
-        self.bnd_signature = header.bnd_signature
-        self.bnd_magic = header.bnd_magic
-        self.utf16_paths = header.utf16_paths
-        self.hash_table_type = header.hash_table_type
-        self.hash_table_offset = header.hash_table_offset
+        self.bnd_signature = header["bnd_signature"]
+        self.bnd_magic = header["bnd_magic"]
+        self.utf16_paths = header["utf16_paths"]
+        self.hash_table_type = header["hash_table_type"]
+        self.hash_table_offset = header["hash_table_offset"]
         path_encoding = ('utf-16be' if self.big_endian else 'utf-16le') if self.utf16_paths else 'shift-jis'
 
-        if header.entry_header_size != header_size(self.bnd_magic):
+        if header["entry_header_size"] != header_size(self.bnd_magic):
             raise ValueError(f"Expected BND entry header size {header_size(self.bnd_magic)} based on magic\n"
-                             f"{hex(self.bnd_magic)}, but BND header says {header.entry_header_size}.")
+                             f"{hex(self.bnd_magic)}, but BND header says {header['entry_header_size']}.")
         if self.hash_table_type != 4 and self.hash_table_offset != 0:
             _LOGGER.warning(
                 f"Found non-zero hash table offset {self.hash_table_offset}, but header says this BND has no hash "
@@ -628,18 +628,18 @@ class BND4(BaseBND):
         if self.bnd_magic == 0x20:
             # Extra pad.
             self.entry_header_struct.add_fields('8x')
-        if header.entry_header_size != self.entry_header_struct.size:
+        if header["entry_header_size"] != self.entry_header_struct.size:
             _LOGGER.warning(
-                f"Entry header size given in BND header ({header.entry_header_size}) does not match actual entry "
+                f"Entry header size given in BND header ({header['entry_header_size']}) does not match actual entry "
                 f"header size ({self.entry_header_struct.size}).")
         for entry in BNDEntry.unpack(bnd_buffer, self.entry_header_struct,
-                                     path_encoding=path_encoding, count=header.entry_count):
+                                     path_encoding=path_encoding, count=header["entry_count"]):
             self.add_entry(entry)
 
         # Read hash table.
         if self.hash_table_type == 4:
             bnd_buffer.seek(self.hash_table_offset)
-            self._most_recent_hash_table = bnd_buffer.read(header.data_offset - self.hash_table_offset)
+            self._most_recent_hash_table = bnd_buffer.read(header["data_offset"] - self.hash_table_offset)
         self._most_recent_entry_count = len(self.binary_entries)
         self._most_recent_paths = [entry.path for entry in self.binary_entries]
 

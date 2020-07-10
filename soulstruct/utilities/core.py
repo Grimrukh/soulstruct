@@ -1,4 +1,13 @@
 from __future__ import annotations
+
+__all__ = [
+    "PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
+    "find_steam_common_paths", "traverse_path_tree",
+    "BinaryStruct", "BaseStruct", "AttributeDict", "BiDict",
+    "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
+    "get_startupinfo",
+]
+
 import abc
 import ctypes
 import io
@@ -10,18 +19,9 @@ import struct
 import subprocess
 import sys
 import textwrap
+import typing as tp
 from pathlib import Path
 
-# TODO: Legacy import support for pickled project files. Remove in next major version.
-from .maths import Vector3 as Vector
-
-__all__ = [
-    "PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
-    "find_steam_common_paths", "traverse_path_tree", "Vector",
-    "BinaryStruct", "BaseStruct", "AttributeDict", "BiDict",
-    "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
-    "get_startupinfo",
-]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -225,8 +225,8 @@ class BinaryStruct(object):
                     f"Field '{field['name']}' contained {value} instead of asserted value {field['asserted']}.")
         return value
 
-    def unpack(self, source, *fields, byte_order=None, count=None):
-        """Unpack one or more structs from source data.
+    def unpack(self, source, *fields, byte_order=None, include_asserted=True) -> AttributeDict:
+        """Unpack a single struct from source data.
 
         If any 'fields' are specified (same allowed formats as the constructor above), only those fields will be
         unpacked, and they will then be added to the BinaryStruct. This allows you to dynamically build the BinaryStruct
@@ -235,21 +235,15 @@ class BinaryStruct(object):
 
         Args:
             source: bytes or open buffer to unpack from.
-            fields: list of new fields to simultaneously add and unpack.
+            fields: optional list of new fields to simultaneously add and unpack (instead of full struct).
             byte_order: byte order of the new fields.
-            count: number of contiguous structs to unpack from source. If None (default), a single struct is returned.
-                   Otherwise, the contiguous structs (even if count == 1) are returned in a list. Cannot be used if
-                   'fields' is used.
+            include_asserted: include any asserted fields in the returned dictionary.
 
         Returns:
-            AttributeDict (or List[AttributeDict] if 'count' is not None) with unpacked fields.
+            AttributeDict
         """
-        outputs = []
-
         if fields:
             # Unpack just the given fields after adding them to the BinaryStruct.
-            if count is not None:
-                raise ValueError("Cannot use 'count' when dynamically adding/unpacking new fields.")
             struct_fields, struct_fmt = self.add_fields(*fields, byte_order=byte_order)
             size = struct.calcsize(struct_fmt)
             data = source if isinstance(source, bytes) else source.read(size)  # type: bytes
@@ -261,45 +255,48 @@ class BinaryStruct(object):
             output = AttributeDict()
             unpacked_index = 0
             for field in struct_fields:
-                if field['length'] > 0:
+                if field['length'] > 0 and (include_asserted or 'asserted' not in field):
                     output[field['name']] = self._unpack_field(unpacked, field, unpacked_index)
                 unpacked_index += field['length']
             return output
 
         offset = 0
-        unzip = False
-        if count is None:
-            count = 1
-            unzip = True
-        data = source if isinstance(source, bytes) else source.read(self.size * count)  # type: bytes
+        data = source if isinstance(source, bytes) else source.read(self.size)  # type: bytes
+        unpacked = []
+        for sub_fmt in self._struct_format:
+            size = struct.calcsize(sub_fmt)
+            try:
+                unpacked += struct.unpack(sub_fmt, data[offset:offset + size])
+            except struct.error:
+                _LOGGER.error(f"Failed to unpack data at offset {offset} with sub-format {sub_fmt}: "
+                              f"{data[offset:offset + size]}")
+                raise
+            offset += size
+        output = AttributeDict()
+        unpacked_index = 0
+        for field in self.fields:
+            if field['length'] > 0 and (include_asserted or 'asserted' not in field):
+                output[field['name']] = self._unpack_field(unpacked, field, unpacked_index)
+            unpacked_index += field['length']
+        return output
 
-        for i in range(count):
-            unpacked = []
-            for sub_fmt in self._struct_format:
-                size = struct.calcsize(sub_fmt)
-                try:
-                    unpacked += struct.unpack(sub_fmt, data[offset:offset + size])
-                except struct.error:
-                    _LOGGER.error(f"Failed to unpack data at offset {offset} with sub-format {sub_fmt}: "
-                                  f"{data[offset:offset + size]}")
-                    raise
-                offset += size
-            output = AttributeDict()
-            unpacked_index = 0
-            for field in self.fields:
-                if field['length'] > 0:
-                    output[field['name']] = self._unpack_field(unpacked, field, unpacked_index)
-                    unpacked_index += field['length']
-            outputs.append(output)
-        if unzip:
-            return outputs[0]
-        return outputs
+    def unpack_count(self, source, count, include_asserted=True) -> tp.List[AttributeDict]:
+        """Unpack `count` identical structs from `source`. See `unpack()` for more.
 
-    def pack(self, struct_dicts=None, **struct_kwargs):
+        Args:
+            source: bytes or open buffer to unpack from.
+            count: number of contiguous structs to unpack from source.
+
+        Returns:
+            list[AttributeDict]
+        """
+        return [self.unpack(source, include_asserted=include_asserted) for _ in range(count)]
+
+    def pack(self, struct_dicts=None, **struct_kwargs) -> bytes:
         if struct_dicts and struct_kwargs:
-            raise ValueError("You cannot use both the 'struct_dicts' var args and the single-struct kwargs.")
+            raise ValueError("You cannot use both the `struct_dicts` argument and the single-struct `**struct_kwargs`.")
         elif struct_kwargs:
-            # You can easily pass a single struct dictionary as keyword arguments.
+            # You can pass a single struct dictionary as keyword arguments.
             struct_dicts = (struct_kwargs,)
         if not isinstance(struct_dicts, (list, tuple)):
             struct_dicts = (struct_dicts,)
@@ -307,10 +304,7 @@ class BinaryStruct(object):
         for struct_dict_ in struct_dicts:
             struct_dict = struct_dict_.copy()  # Does not modify the input dictionary.
             to_pack = []
-            for field in self.fields:
-                if field['length'] == 0:
-                    # Padding.
-                    continue
+            for field in self.non_padding_fields:
                 name = field['name']
                 if 'asserted' in field:
                     # Asserted values are written automatically, but you are permitted to pass the asserted value too.
@@ -346,6 +340,23 @@ class BinaryStruct(object):
                     raise
         return output
 
+    def pack_from_object(self, obj) -> bytes:
+        """Attempts to build complete struct dictionary from attributes of given object `obj`.
+
+        All non-constant fields must be present as attributes, or an exception will be raised.
+        """
+        struct_dict = {}
+        for field in self.non_padding_fields:
+            if field["length"] == 0:
+                continue  # padding
+            try:
+                struct_dict[field["name"]] = getattr(obj, field["name"])
+            except AttributeError:
+                if "asserted" not in field:
+                    raise AttributeDict(
+                        f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack.")
+        return self.pack((struct_dict,))
+
     def copy(self):
         bs = BinaryStruct()
         bs.fields = self.fields
@@ -375,14 +386,18 @@ class BinaryStruct(object):
     def struct_format(self):
         return self._struct_format
 
+    @property
+    def non_padding_fields(self):
+        """Return only non-padding fields (including asserted fields)."""
+        return [field for field in self.fields if field["length"] != 0]
+
 
 class BaseStruct(abc.ABC):
     STRUCT: BinaryStruct = None
 
 
 class AttributeDict(dict):
-    """Simple dict extension that allows you to access values as attributes using dot notation."""
-
+    """Simple dict extension that redirects `__getattr__` to `__getitem__`, allowing dot notation field access."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self.update(*args, **kwargs)

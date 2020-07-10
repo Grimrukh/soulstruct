@@ -18,12 +18,12 @@ def MSBEvent(msb_buffer):
 
 class BaseMSBEvent(MSBEntryEntity):
     EVENT_HEADER_STRUCT = BinaryStruct(
-        ('name_offset', 'i'),
-        ('event_index', 'i'),
-        ('event_type', 'I'),
-        ('local_event_index', 'i'),
-        ('base_data_offset', 'i'),
-        ('type_data_offset', 'i'),
+        ('__name_offset', 'i'),
+        ('_event_index', 'i'),
+        ('__event_type', 'I'),
+        ('_local_event_index', 'i'),
+        ('__base_data_offset', 'i'),
+        ('__type_data_offset', 'i'),
         '4x',
     )
     # Name is stored next.
@@ -31,15 +31,17 @@ class BaseMSBEvent(MSBEntryEntity):
     # Type data is stored next.
 
     EVENT_BASE_DATA_STRUCT = BinaryStruct(
-        ('part_index', 'i'),
-        ('region_index', 'i'),
+        ('_base_part_index', 'i'),
+        ('_base_region_index', 'i'),
         ('entity_id', 'i'),
         '4x',
     )
 
+    EVENT_TYPE_DATA_STRUCT = ()
+
     ENTRY_TYPE = None
 
-    def __init__(self, msb_event_source):
+    def __init__(self, msb_event_source=None):
         super().__init__()
         self._event_index = None  # global index
         self._local_event_index = None  # local type index
@@ -52,24 +54,21 @@ class BaseMSBEvent(MSBEntryEntity):
             msb_event_source = BytesIO(msb_event_source)
         if isinstance(msb_event_source, BufferedReader):
             self.unpack(msb_event_source)
-        else:
-            raise TypeError("'msb_event_source' must be a buffer or bytes.")
+        elif msb_event_source is not None:
+            raise TypeError("`msb_event_source` must be a buffer, `bytes`, or `None`.")
 
     def unpack(self, msb_buffer):
         event_offset = msb_buffer.tell()
         header = self.EVENT_HEADER_STRUCT.unpack(msb_buffer)
-        if header.event_type != self.ENTRY_TYPE:
-            raise ValueError(f"Unexpected event type enum {header.event_type} for class {self.__class__.__name__}.")
-
-        msb_buffer.seek(event_offset + header.base_data_offset)
+        if header["__event_type"] != self.ENTRY_TYPE:
+            raise ValueError(f"Unexpected MSB event type value {header['__event_type']} for {self.__class__.__name__}.")
+        msb_buffer.seek(event_offset + header["__base_data_offset"])
         base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
-        self.name = read_chars_from_buffer(msb_buffer, offset=event_offset + header.name_offset, encoding='shift-jis')
-        self._event_index = header.event_index
-        self._local_event_index = header.local_event_index
-        self._base_part_index = base_data.part_index
-        self._base_region_index = base_data.region_index
-        self.entity_id = base_data.entity_id
-        msb_buffer.seek(event_offset + header.type_data_offset)
+        name_offset = event_offset + header["__name_offset"]
+        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding='shift-jis')
+        self.set(**header)
+        self.set(**base_data)
+        msb_buffer.seek(event_offset + header["__type_data_offset"])
         self.unpack_type_data(msb_buffer)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
@@ -82,32 +81,28 @@ class BaseMSBEvent(MSBEntryEntity):
         self.base_part_name = part_names[self._base_part_index] if self._base_part_index != -1 else None
         self.base_region_name = region_names[self._base_region_index] if self._base_region_index != -1 else None
 
-    def unpack_type_data(self, msb_buffer):
-        raise NotImplementedError
-
     def pack(self):
         name_offset = self.EVENT_HEADER_STRUCT.size
         packed_name = pad_chars(self.get_name_to_pack(), encoding='shift-jis', pad_to_multiple_of=4)
         base_data_offset = name_offset + len(packed_name)
-        packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack(
-            part_index=self._base_part_index,
-            region_index=self._base_region_index,
-            entity_id=self.entity_id,
-        )
+        packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)
         packed_type_data = self.pack_type_data()
         packed_header = self.EVENT_HEADER_STRUCT.pack(
-            name_offset=name_offset,
-            event_index=self._event_index,
-            event_type=self.ENTRY_TYPE,
-            local_event_index=self._local_event_index,
-            base_data_offset=base_data_offset,
-            type_data_offset=type_data_offset,
+            __name_offset=name_offset,
+            _event_index=self._event_index,
+            __event_type=self.ENTRY_TYPE,
+            _local_event_index=self._local_event_index,
+            __base_data_offset=base_data_offset,
+            __type_data_offset=type_data_offset,
         )
         return packed_header + packed_name + packed_base_data + packed_type_data
 
+    def unpack_type_data(self, msb_buffer):
+        self.set(**BinaryStruct(*self.EVENT_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False))
+
     def pack_type_data(self):
-        raise NotImplementedError
+        return BinaryStruct(*self.EVENT_TYPE_DATA_STRUCT).pack_from_object(self)
 
     @staticmethod
     def auto_event_subclass(msb_buffer):
@@ -123,7 +118,7 @@ class BaseMSBEvent(MSBEntryEntity):
 
 
 class MSBLight(BaseMSBEvent):
-    EVENT_LIGHT_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('point_light', 'i'),
     )
 
@@ -144,22 +139,14 @@ class MSBLight(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Light
 
-    def __init__(self, msb_event_source):
-        self.point_light = None
+    def __init__(self, msb_event_source=None, **kwargs):
+        self.point_light = 0
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_LIGHT_STRUCT).unpack(msb_buffer)
-        self.point_light = data.point_light
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_LIGHT_STRUCT).pack(
-            point_light=self.point_light,
-        )
+        self.set(**kwargs)
 
 
 class MSBSound(BaseMSBEvent):
-    EVENT_SOUND_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('sound_type', 'i'),
         ('sound_id', 'i'),
     )
@@ -184,25 +171,15 @@ class MSBSound(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Sound
 
-    def __init__(self, msb_event_source):
-        self.sound_type = None
-        self.sound_id = None
+    def __init__(self, msb_event_source=None, **kwargs):
+        self.sound_type = SoundType.m_Music
+        self.sound_id = -1
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_SOUND_STRUCT).unpack(msb_buffer)
-        self.sound_type = data.sound_type
-        self.sound_id = data.sound_id
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_SOUND_STRUCT).pack(
-            sound_type=self.sound_type,
-            sound_id=self.sound_id,
-        )
+        self.set(**kwargs)
 
 
 class MSBFX(BaseMSBEvent):
-    EVENT_FX_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('fx_id', 'i'),
     )
 
@@ -223,22 +200,14 @@ class MSBFX(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.FX
 
-    def __init__(self, msb_event_source):
-        self.fx_id = None
+    def __init__(self, msb_event_source=None, **kwargs):
+        self.fx_id = 0
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_FX_STRUCT).unpack(msb_buffer)
-        self.fx_id = data.fx_id
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_FX_STRUCT).pack(
-            fx_id=self.fx_id,
-        )
+        self.set(**kwargs)
 
 
 class MSBWind(BaseMSBEvent):
-    EVENT_WIND_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('unk_x00_x04', 'f'),
         ('unk_x04_x08', 'f'),
         ('unk_x08_x0c', 'f'),
@@ -258,6 +227,9 @@ class MSBWind(BaseMSBEvent):
     )
 
     FIELD_INFO = {
+        'entity_id': (
+            'Entity ID', False, int,
+            "Unused for Wind events."),
         **BaseMSBEvent.FIELD_INFO,
         'unk_x00_x04': (
             'Unknown [00-04]', True, int,
@@ -311,71 +283,33 @@ class MSBWind(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Wind
 
-    def __init__(self, msb_event_source):
+    def __init__(self, msb_event_source=None, **kwargs):
         """Data consists of 16 floats, which likely specify the transform parameters (e.g. position, direction) of wind
         effects in the map."""
-        self.unk_x00_x04 = None
-        self.unk_x04_x08 = None
-        self.unk_x08_x0c = None
-        self.unk_x0c_x10 = None
-        self.unk_x10_x14 = None
-        self.unk_x14_x18 = None
-        self.unk_x18_x1c = None
-        self.unk_x1c_x20 = None
-        self.unk_x20_x24 = None
-        self.unk_x24_x28 = None
-        self.unk_x28_x2c = None
-        self.unk_x2c_x30 = None
-        self.unk_x30_x34 = None
-        self.unk_x34_x38 = None
-        self.unk_x38_x3c = None
-        self.unk_x3c_x40 = None
+        self.unk_x00_x04 = 0.0
+        self.unk_x04_x08 = 0.0
+        self.unk_x08_x0c = 0.0
+        self.unk_x0c_x10 = 0.0
+        self.unk_x10_x14 = 0.0
+        self.unk_x14_x18 = 0.0
+        self.unk_x18_x1c = 0.0
+        self.unk_x1c_x20 = 0.0
+        self.unk_x20_x24 = 0.0
+        self.unk_x24_x28 = 0.0
+        self.unk_x28_x2c = 0.0
+        self.unk_x2c_x30 = 0.0
+        self.unk_x30_x34 = 0.0
+        self.unk_x34_x38 = 0.0
+        self.unk_x38_x3c = 0.0
+        self.unk_x3c_x40 = 0.0
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_WIND_STRUCT).unpack(msb_buffer)
-        self.unk_x00_x04 = data.unk_x00_x04
-        self.unk_x04_x08 = data.unk_x04_x08
-        self.unk_x08_x0c = data.unk_x08_x0c
-        self.unk_x0c_x10 = data.unk_x0c_x10
-        self.unk_x10_x14 = data.unk_x10_x14
-        self.unk_x14_x18 = data.unk_x14_x18
-        self.unk_x18_x1c = data.unk_x18_x1c
-        self.unk_x1c_x20 = data.unk_x1c_x20
-        self.unk_x20_x24 = data.unk_x20_x24
-        self.unk_x24_x28 = data.unk_x24_x28
-        self.unk_x28_x2c = data.unk_x28_x2c
-        self.unk_x2c_x30 = data.unk_x2c_x30
-        self.unk_x30_x34 = data.unk_x30_x34
-        self.unk_x34_x38 = data.unk_x34_x38
-        self.unk_x38_x3c = data.unk_x38_x3c
-        self.unk_x3c_x40 = data.unk_x3c_x40
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_WIND_STRUCT).pack(
-            unk_x00_x04=self.unk_x00_x04,
-            unk_x04_x08=self.unk_x04_x08,
-            unk_x08_x0c=self.unk_x08_x0c,
-            unk_x0c_x10=self.unk_x0c_x10,
-            unk_x10_x14=self.unk_x10_x14,
-            unk_x14_x18=self.unk_x14_x18,
-            unk_x18_x1c=self.unk_x18_x1c,
-            unk_x1c_x20=self.unk_x1c_x20,
-            unk_x20_x24=self.unk_x20_x24,
-            unk_x24_x28=self.unk_x24_x28,
-            unk_x28_x2c=self.unk_x28_x2c,
-            unk_x2c_x30=self.unk_x2c_x30,
-            unk_x30_x34=self.unk_x30_x34,
-            unk_x34_x38=self.unk_x34_x38,
-            unk_x38_x3c=self.unk_x38_x3c,
-            unk_x3c_x40=self.unk_x3c_x40,
-        )
+        self.set(**kwargs)
 
 
 class MSBTreasure(BaseMSBEvent):
-    EVENT_TREASURE_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         '4x',
-        ('treasure_part_index', 'i'),
+        ('_treasure_part_index', 'i'),
         ('item_lot_1', 'i'),
         ('minus_one_1', 'i', -1),
         ('item_lot_2', 'i'),
@@ -392,7 +326,10 @@ class MSBTreasure(BaseMSBEvent):
     )
 
     FIELD_INFO = {
-        # base_part, base_region, and entity_id are unused for Treasure.
+        # base_part, base_region, and entity_id are unused for Treasure.'
+        'entity_id': (
+            'Entity ID', False, int,
+            "Unused for Treasure events."),
         'treasure_part_name': (
             'Treasure Object', True, '<Maps:Parts:Objects>',
             "Object on which treasure will appear (usually a corpse or chest)."),
@@ -426,40 +363,18 @@ class MSBTreasure(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Treasure
 
-    def __init__(self, msb_event_source):
+    def __init__(self, msb_event_source=None, **kwargs):
         self.treasure_part_name = None
         self._treasure_part_index = None
-        self.item_lot_1 = None
-        self.item_lot_2 = None
-        self.item_lot_3 = None
-        self.item_lot_4 = None
-        self.item_lot_5 = None
-        self.in_chest = None
-        self.starts_disabled = None
+        self.item_lot_1 = -1
+        self.item_lot_2 = -1
+        self.item_lot_3 = -1
+        self.item_lot_4 = -1
+        self.item_lot_5 = -1
+        self.in_chest = False
+        self.starts_disabled = False
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_TREASURE_STRUCT).unpack(msb_buffer)
-        self._treasure_part_index = data.treasure_part_index
-        self.item_lot_1 = data.item_lot_1
-        self.item_lot_2 = data.item_lot_2
-        self.item_lot_3 = data.item_lot_3
-        self.item_lot_4 = data.item_lot_4
-        self.item_lot_5 = data.item_lot_5
-        self.in_chest = data.in_chest
-        self.starts_disabled = data.starts_disabled
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_TREASURE_STRUCT).pack(
-            treasure_part_index=self._treasure_part_index,
-            item_lot_1=self.item_lot_1,
-            item_lot_2=self.item_lot_2,
-            item_lot_3=self.item_lot_3,
-            item_lot_4=self.item_lot_4,
-            item_lot_5=self.item_lot_5,
-            in_chest=self.in_chest,
-            starts_disabled=self.starts_disabled,
-        )
+        self.set(**kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -471,7 +386,7 @@ class MSBTreasure(BaseMSBEvent):
 
 
 class MSBSpawner(BaseMSBEvent):
-    EVENT_SPAWNER_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('max_count', 'h'),
         ('limit_count', 'h'),
         ('min_spawner_count', 'h'),
@@ -480,8 +395,8 @@ class MSBSpawner(BaseMSBEvent):
         ('max_interval', 'f'),
         ('initial_spawn_count', 'i'),
         '28x',
-        ('spawn_region_indices', '4i'),
-        ('spawn_part_indices', '32i'),
+        ('_spawn_region_indices', '4i'),
+        ('_spawn_part_indices', '32i'),
         '64x',
     )
 
@@ -490,7 +405,6 @@ class MSBSpawner(BaseMSBEvent):
         'entity_id': (
             'Entity ID', True, int,
             "Entity ID used to refer to the Spawner in other game files."),
-        # TODO: investigate all these counts.
         'max_count': (
             'Max Count', True, int,
             "Unsure; I suspect this is the total number of entities this spawner can produce."),
@@ -522,44 +436,20 @@ class MSBSpawner(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Spawner
 
-    def __init__(self, msb_event_source):
-        self.max_count = None
-        self.limit_count = None
-        self.min_spawner_count = None
-        self.max_spawner_count = None
-        self.min_interval = None
-        self.max_interval = None
-        self.initial_spawn_count = None
+    def __init__(self, msb_event_source=None, **kwargs):
+        self.max_count = 255
+        self.limit_count = -1
+        self.min_spawner_count = 1
+        self.max_spawner_count = 1
+        self.min_interval = 1.0
+        self.max_interval = 1.0
+        self.initial_spawn_count = 1
         self.spawn_region_names = None
         self._spawn_region_indices = None
         self.spawn_part_names = None
         self._spawn_part_indices = None
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_SPAWNER_STRUCT).unpack(msb_buffer)
-        self.max_count = data.max_count
-        self.limit_count = data.limit_count
-        self.min_spawner_count = data.min_spawner_count
-        self.max_spawner_count = data.max_spawner_count
-        self.min_interval = data.min_interval
-        self.max_interval = data.max_interval
-        self.initial_spawn_count = data.initial_spawn_count
-        self._spawn_region_indices = data.spawn_region_indices
-        self._spawn_part_indices = data.spawn_part_indices
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_SPAWNER_STRUCT).pack(
-            max_count=self.max_count,
-            limit_count=self.limit_count,
-            min_spawner_count=self.min_spawner_count,
-            max_spawner_count=self.max_spawner_count,
-            min_interval=self.min_interval,
-            max_interval=self.max_interval,
-            initial_spawn_count=self.initial_spawn_count,
-            spawn_region_indices=self._spawn_region_indices,
-            spawn_part_indices=self._spawn_part_indices,
-        )
+        self.set(**kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -573,7 +463,7 @@ class MSBSpawner(BaseMSBEvent):
 
 
 class MSBMessage(BaseMSBEvent):
-    EVENT_MESSAGE_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('text_id', 'h'),
         ('unk_x02_x04', 'h'),
         ('starts_disabled', '?'),
@@ -595,38 +485,26 @@ class MSBMessage(BaseMSBEvent):
             "Text shown when soapstone message is examined."),
         'unk_x02_x04': (
             'Unknown [02-04]', True, int,
-            "Unknown."),  # TODO: investigate
+            "Unknown. Often set to 2."),
         'starts_disabled': (
             'Starts Disabled', True, bool,
-            "If True, the message starts disabled and must be manually enabled with an event script."),
+            "If True, the message must be manually enabled with an event script or by using Seek Guidance."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Message
 
-    def __init__(self, msb_event_source):
-        self.text_id = None
-        self.unk_x02_x04 = None
-        self.starts_disabled = None
+    def __init__(self, msb_event_source=None, **kwargs):
+        self.text_id = -1
+        self.unk_x02_x04 = 2
+        self.starts_disabled = False
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_MESSAGE_STRUCT).unpack(msb_buffer)
-        self.text_id = data.text_id
-        self.unk_x02_x04 = data.unk_x02_x04
-        self.starts_disabled = data.starts_disabled
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_MESSAGE_STRUCT).pack(
-            text_id=self.text_id,
-            unk_x02_x04=self.unk_x02_x04,
-            starts_disabled=self.starts_disabled,
-        )
+        self.set(**kwargs)
 
 
 class MSBObjAct(BaseMSBEvent):
-    EVENT_OBJ_ACT_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('obj_act_entity_id', 'i'),
-        ('obj_act_part_index', 'i'),
+        ('_obj_act_part_index', 'i'),
         ('obj_act_param_id', 'h'),
         ('unk_x0a_x0c', 'h'),
         ('obj_act_flag', 'i'),
@@ -634,6 +512,9 @@ class MSBObjAct(BaseMSBEvent):
 
     FIELD_INFO = {
         # base_part, base_region, and entity_id are unused in ObjActs.
+        'entity_id': (
+            'Entity ID', False, int,
+            "Unused for ObjAct events. Use ObjAct Entity ID instead."),
         'obj_act_entity_id': (
             'ObjAct Entity ID', True, int,
             "ID that identifies this object activation event in event scripts."),
@@ -653,31 +534,15 @@ class MSBObjAct(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.ObjAct
 
-    def __init__(self, msb_event_source):
-        self.obj_act_entity_id = None
+    def __init__(self, msb_event_source=None, **kwargs):
+        self.obj_act_entity_id = -1
         self.obj_act_part_name = None
         self._obj_act_part_index = None
-        self.obj_act_param_id = None
-        self.unk_x0a_x0c = None
-        self.obj_act_flag = None
+        self.obj_act_param_id = -1
+        self.unk_x0a_x0c = 0
+        self.obj_act_flag = 0
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_OBJ_ACT_STRUCT).unpack(msb_buffer)
-        self.obj_act_entity_id = data.obj_act_entity_id
-        self._obj_act_part_index = data.obj_act_part_index
-        self.obj_act_param_id = data.obj_act_param_id
-        self.unk_x0a_x0c = data.unk_x0a_x0c
-        self.obj_act_flag = data.obj_act_flag
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_OBJ_ACT_STRUCT).pack(
-            obj_act_entity_id=self.obj_act_entity_id,
-            obj_act_part_index=self._obj_act_part_index,
-            obj_act_param_id=self.obj_act_param_id,
-            unk_x0a_x0c=self.unk_x0a_x0c,
-            obj_act_flag=self.obj_act_flag,
-        )
+        self.set(**kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -689,8 +554,8 @@ class MSBObjAct(BaseMSBEvent):
 
 
 class MSBSpawnPoint(BaseMSBEvent):
-    EVENT_SPAWN_POINT_STRUCT = (
-        ('spawn_point_region_index', 'i'),
+    EVENT_TYPE_DATA_STRUCT = (
+        ('_spawn_point_region_index', 'i'),
         '12x',
     )
 
@@ -709,19 +574,11 @@ class MSBSpawnPoint(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.SpawnPoint
 
-    def __init__(self, msb_event_source):
+    def __init__(self, msb_event_source=None, **kwargs):
         self.spawn_point_region_name = None
         self._spawn_point_region_index = None
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_SPAWN_POINT_STRUCT).unpack(msb_buffer)
-        self._spawn_point_region_index = data.spawn_point_region_index
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_SPAWN_POINT_STRUCT).pack(
-            spawn_point_region_index=self._spawn_point_region_index,
-        )
+        self.set(**kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -739,12 +596,15 @@ class MSBSpawnPoint(BaseMSBEvent):
 
 
 class MSBMapOffset(BaseMSBEvent):
-    EVENT_MAP_OFFSET_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('translate', '3f'),
         ('rotate_y', 'f'),
     )
 
     FIELD_INFO = {
+        'entity_id': (
+            'Entity ID', False, int,
+            "Unused for MapOffset events."),
         'translate': (
             'Translate', True, Vector3,
             "Vector of (x, y, z) coordinates of map offset."),
@@ -755,26 +615,16 @@ class MSBMapOffset(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.MapOffset
 
-    def __init__(self, msb_event_source):
-        self.translate = None
-        self.rotate_y = None
+    def __init__(self, msb_event_source, **kwargs):
+        self.translate = [0, 0, 0]
+        self.rotate_y = 0
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_MAP_OFFSET_STRUCT).unpack(msb_buffer)
-        self.translate = Vector3(data.translate)
-        self.rotate_y = data.rotate_y
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_MAP_OFFSET_STRUCT).pack(
-            translate=list(self.translate),
-            rotate_y=self.rotate_y,
-        )
+        self.set(**kwargs)
 
 
 class MSBNavmesh(BaseMSBEvent):
-    EVENT_NAVMESH_STRUCT = (
-        ('navmesh_region_index', 'i'),
+    EVENT_TYPE_DATA_STRUCT = (
+        ('_navmesh_region_index', 'i'),
         '12x',
     )
 
@@ -789,19 +639,11 @@ class MSBNavmesh(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Navigation
 
-    def __init__(self, msb_event_source):
+    def __init__(self, msb_event_source, **kwargs):
         self.navmesh_region_name = None
         self._navmesh_region_index = None
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_NAVMESH_STRUCT).unpack(msb_buffer)
-        self._navmesh_region_index = data.navmesh_region_index
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_NAVMESH_STRUCT).pack(
-            navmesh_region_index=self._navmesh_region_index,
-        )
+        self.set(**kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -816,7 +658,7 @@ class MSBNavmesh(BaseMSBEvent):
 
 
 class MSBEnvironment(BaseMSBEvent):
-    EVENT_ENVIRONMENT_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('unk_x00_x04', 'i'),
         ('unk_x04_x08', 'f'),
         ('unk_x08_x0c', 'f'),
@@ -835,8 +677,8 @@ class MSBEnvironment(BaseMSBEvent):
             "Region (usually a Point) at which Environment appears (whatever that means)."),
         'entity_id': (
             'Environment ID', True, int,
-            "Unknown index. Note that this replaces the Entity ID field (unclear if it works as an Entity ID, as the "
-            "same value is used in separate maps)."),
+            "Unknown index. Note that this replaces the Entity ID field (unlikely that it works as an Entity ID, as "
+            "the same low-numbering values are used in multiple maps)."),
         'unk_x00_x04': (
             'Unknown [00-04]', True, int,
             "Unknown Environment parameter (integer)."),
@@ -859,40 +701,22 @@ class MSBEnvironment(BaseMSBEvent):
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Environment
 
-    def __init__(self, msb_event_source):
-        self.unk_x00_x04 = None
-        self.unk_x04_x08 = None
-        self.unk_x08_x0c = None
-        self.unk_x0c_x10 = None
-        self.unk_x10_x14 = None
-        self.unk_x14_x18 = None
+    def __init__(self, msb_event_source, **kwargs):
+        self.unk_x00_x04 = 0
+        self.unk_x04_x08 = 1.0
+        self.unk_x08_x0c = 1.0
+        self.unk_x0c_x10 = 1.0
+        self.unk_x10_x14 = 1.0
+        self.unk_x14_x18 = 1.0
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_ENVIRONMENT_STRUCT).unpack(msb_buffer)
-        self.unk_x00_x04 = data.unk_x00_x04
-        self.unk_x04_x08 = data.unk_x04_x08
-        self.unk_x08_x0c = data.unk_x08_x0c
-        self.unk_x0c_x10 = data.unk_x0c_x10
-        self.unk_x10_x14 = data.unk_x10_x14
-        self.unk_x14_x18 = data.unk_x14_x18
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_ENVIRONMENT_STRUCT).pack(
-            unk_x00_x04=self.unk_x00_x04,
-            unk_x04_x08=self.unk_x04_x08,
-            unk_x08_x0c=self.unk_x08_x0c,
-            unk_x0c_x10=self.unk_x0c_x10,
-            unk_x10_x14=self.unk_x10_x14,
-            unk_x14_x18=self.unk_x14_x18,
-        )
+        self.set(**kwargs)
 
 
 class MSBNPCInvasion(BaseMSBEvent):
-    EVENT_NPC_INVASION_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = (
         ('host_entity_id', 'i'),
         ('invasion_flag_id', 'i'),
-        ('spawn_point_region_index', 'i'),
+        ('_spawn_point_region_index', 'i'),
         '4x',
     )
 
@@ -918,24 +742,11 @@ class MSBNPCInvasion(BaseMSBEvent):
     ENTRY_TYPE = MSB_EVENT_TYPE.NPCInvasion
 
     def __init__(self, msb_event_source):
-        self.host_entity_id = None
-        self.invasion_flag_id = None
+        self.host_entity_id = -1
+        self.invasion_flag_id = -1
         self.spawn_point_region_name = None
         self._spawn_point_region_index = None
         super().__init__(msb_event_source)
-
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.EVENT_NPC_INVASION_STRUCT).unpack(msb_buffer)
-        self.host_entity_id = data.host_entity_id
-        self.invasion_flag_id = data.invasion_flag_id
-        self._spawn_point_region_index = data.spawn_point_region_index
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.EVENT_NPC_INVASION_STRUCT).pack(
-            host_entity_id=self.host_entity_id,
-            invasion_flag_id=self.invasion_flag_id,
-            spawn_point_region_index=self._spawn_point_region_index,
-        )
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -976,19 +787,25 @@ class MSBEventList(MSBEntryList):
 
     _entries: tp.List[MSBEvent]
 
-    Lights: list
-    Sounds: list
-    FX: list
-    Wind: list
-    Treasure: list
-    Spawners: list
-    Messages: list
-    ObjActs: list
-    SpawnPoints: list
-    MapOffsets: list
-    Navigation: list
-    Environment: list
-    NPCInvasions: list
+    Lights: tp.Sequence[MSBLight]
+    Sounds: tp.Sequence[MSBSound]
+    FX: tp.Sequence[MSBFX]
+    Wind: tp.Sequence[MSBWind]
+    Treasure: tp.Sequence[MSBTreasure]
+    Spawners: tp.Sequence[MSBSpawner]
+    Messages: tp.Sequence[MSBMessage]
+    ObjActs: tp.Sequence[MSBObjAct]
+    SpawnPoints: tp.Sequence[MSBSpawnPoint]
+    MapOffsets: tp.Sequence[MSBMapOffset]
+    Navigation: tp.Sequence[MSBNavmesh]
+    Environment: tp.Sequence[MSBEnvironment]
+    NPCInvasions: tp.Sequence[MSBNPCInvasion]
+
+    def get_entries(self, entry_type=None) -> tp.List[BaseMSBEvent]:
+        if entry_type is None:
+            return self._entries  # Full entry list, with types potentially intermingled.
+        entry_type = self.resolve_entry_type(entry_type)
+        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
 
     def set_names(self, region_names, part_names):
         for entry in self._entries:

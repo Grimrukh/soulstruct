@@ -9,7 +9,7 @@ from typing import List, TYPE_CHECKING
 
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.core import InvalidFieldValueError
-from soulstruct.maps.core import MAP_ENTRY_TYPES, MSB_MODEL_TYPE
+from soulstruct.maps.core import MAP_ENTRY_TYPES
 from soulstruct.maps.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox
@@ -158,7 +158,12 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 self._activate_value_widget(self.value_checkbutton)
 
             elif field_type == list:
-                value_text = repr(value)
+                # TODO: Need better display of draw groups (e.g. popout editor), as they fall off screen.
+                if isinstance(value, set):
+                    # Convert sets (e.g. draw/display/navmesh groups) to sorted lists so empty sets appear pretty.
+                    value_text = repr(sorted(value))
+                else:
+                    value_text = repr(value)
                 self.value_label.var.set(value_text)
                 self._activate_value_widget(self.value_label)
 
@@ -720,6 +725,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         categories = []
         for entry_list_name, entry_type_names in MAP_ENTRY_TYPES.items():
             for name in entry_type_names:
+                if name in {"Circles", "Rectangles"}:
+                    continue  # These useless region types are hidden.
                 categories.append(f'{entry_list_name}: {name}')
         return categories
 

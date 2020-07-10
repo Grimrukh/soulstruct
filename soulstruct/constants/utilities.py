@@ -9,6 +9,7 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()):
 
     Valid inputs:
         (area_id: int, block_id: int) (such as (10, 0))
+        (area_id: int, block_id: int, -1/0, -1/0)
         four_digit_id: int (such as 1000)
         file_stem: str (such as "m10_00_00_00"; file extensions don't matter, both EMEVD and MSB names will be checked)
         map_name: str (such as "UNDEAD_BURG" or "UndeadBurg"; case and underscores don't matter)
@@ -19,6 +20,8 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()):
     source_orig = source if block_id is None else (source, block_id)
 
     if isinstance(source, (list, tuple)):
+        if len(source) == 4 and source[2] in {-1, 0} and source[3] in {-1, 0}:
+            source = (source[0], source[1])  # drop redundant indices (only need area and block)
         try:
             area_id, block_id = source
         except ValueError:

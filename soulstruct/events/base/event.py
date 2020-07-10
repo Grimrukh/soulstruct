@@ -25,7 +25,7 @@ class BaseEventArg(BaseStruct):
     @classmethod
     def unpack(cls, file, count=1):
         event_args = []
-        struct_dicts = cls.STRUCT.unpack(file, count=count)
+        struct_dicts = cls.STRUCT.unpack_count(file, count=count)
         for d in struct_dicts:
             event_args.append(cls(**d))
         return event_args
@@ -56,7 +56,7 @@ class BaseEvent(BaseStruct):
                event_layers_table_offset, count=1):
 
         event_dict = OrderedDict()
-        struct_dicts = cls.STRUCT.unpack(file, count=count)
+        struct_dicts = cls.STRUCT.unpack_count(file, count=count)
 
         for d in struct_dicts:
             file.seek(instruction_table_offset + d['first_instruction_offset'])

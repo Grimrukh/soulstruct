@@ -39,31 +39,31 @@ class BaseInstruction(BaseStruct):
         """ Unpack some number of Instructions into a list, starting from the current file offset. """
 
         instructions = []
-        struct_dicts = cls.STRUCT.unpack(file, count=count)
+        struct_dicts = cls.STRUCT.unpack_count(file, count=count)
         for i, d in enumerate(struct_dicts):
 
             # Process arguments.
             try:
                 args_format, args_list = get_instruction_args(
-                    file, d.instruction_class, d.instruction_index,
-                    base_arg_data_offset + d.first_base_arg_offset, d.base_args_size,
+                    file, d["instruction_class"], d["instruction_index"],
+                    base_arg_data_offset + d["first_base_arg_offset"], d["base_args_size"],
                     cls.INSTRUCTION_ARG_TYPES)
             except KeyError:
-                args_size = struct_dicts[i + 1].first_base_arg_offset - d.first_base_arg_offset
-                file.seek(base_arg_data_offset + d.first_base_arg_offset)
+                args_size = struct_dicts[i + 1]["first_base_arg_offset"] - d["first_base_arg_offset"]
+                file.seek(base_arg_data_offset + d["first_base_arg_offset"])
                 raw_data = file.read(args_size)
                 _LOGGER.error(f"Error while processing instruction arguments. Raw arg data: {raw_data}")
                 raise
 
             # Process event layers.
-            if d.first_event_layers_offset > 0:
+            if d["first_event_layers_offset"] > 0:
                 event_layers = cls.EventLayers.unpack(
-                    file, event_layers_table_offset + d.first_event_layers_offset)
+                    file, event_layers_table_offset + d["first_event_layers_offset"])
             else:
                 event_layers = None
 
             instructions.append(cls(
-                d.instruction_class, d.instruction_index, args_format, args_list, event_layers))
+                d["instruction_class"], d["instruction_index"], args_format, args_list, event_layers))
 
         return instructions
 

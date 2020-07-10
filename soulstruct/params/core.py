@@ -339,14 +339,14 @@ class ParamTable(object):
 
     def unpack(self, param_buffer):
         header = self.HEADER_STRUCT.unpack(param_buffer)
-        self.param_name = header.param_name
-        self.__magic = [header.magic0, header.magic1, header.magic2]
-        self.__unknown = header.unknown
+        self.param_name = header["param_name"]
+        self.__magic = [header["magic0"], header["magic1"], header["magic2"]]
+        self.__unknown = header["unknown"]
         # Entry data offset in header not used. (It's an unsigned short, yet doesn't limit entry count to 5461.)
-        name_data_offset = header.name_data_offset  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
+        name_data_offset = header["name_data_offset"]  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
 
         # Load entry pointer data.
-        entry_pointers = self.ENTRY_POINTER_STRUCT.unpack(param_buffer, count=header.entry_count)
+        entry_pointers = self.ENTRY_POINTER_STRUCT.unpack_count(param_buffer, count=header["entry_count"])
         entry_data_offset = param_buffer.tell()  # Reliable entry data offset.
 
         # Entry size is lazily determined. TODO: Unpack entry data in sequence and associate with names separately.
@@ -361,20 +361,20 @@ class ParamTable(object):
             else:
                 entry_size = name_data_offset - entry_data_offset
         else:
-            entry_size = entry_pointers[1].data_offset - entry_pointers[0].data_offset
+            entry_size = entry_pointers[1]["data_offset"] - entry_pointers[0]["data_offset"]
 
         # Note that we no longer need to track buffer offset.
         for entry_struct in entry_pointers:
-            param_buffer.seek(entry_struct.data_offset)
+            param_buffer.seek(entry_struct["data_offset"])
             entry_data = param_buffer.read(entry_size)
-            if entry_struct.name_offset != 0:
+            if entry_struct["name_offset"] != 0:
                 try:
                     name = read_chars_from_buffer(
-                        param_buffer, offset=entry_struct.name_offset, encoding='shift_jis_2004',
+                        param_buffer, offset=entry_struct["name_offset"], encoding='shift_jis_2004',
                         reset_old_offset=False,  # no need to reset
                         ignore_encoding_error_for_these_chars=JUNK_ENTRY_NAMES)
                 except ValueError:
-                    param_buffer.seek(entry_struct.name_offset)
+                    param_buffer.seek(entry_struct["name_offset"])
                     _LOGGER.error(
                         f"Could not find null termination for entry name string in {self.param_name}.\n"
                         f"    Header: {header}\n"
@@ -383,7 +383,7 @@ class ParamTable(object):
                     raise
             else:
                 name = ''
-            self.entries[entry_struct.id] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
+            self.entries[entry_struct["id"]] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
 
     def pack(self, sort=True):
         # if len(self.entries) > 5461:

@@ -105,6 +105,7 @@ class Map(GameObject):
         self.msb_file_stem = base_id if msb_file_stem is None else msb_file_stem
         self.ai_file_stem = base_id if ai_file_stem is None else ai_file_stem
         self.esd_file_stem = base_id if esd_file_stem is None else esd_file_stem
+        self.map_load_tuple = (area_id, block_id, -1, -1)  # for `MSBMapLoadTrigger`
 
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name

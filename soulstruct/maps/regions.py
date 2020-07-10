@@ -1,12 +1,10 @@
 import typing as tp
-from io import BufferedReader, BytesIO
 import logging
 import struct
+from io import BufferedReader, BytesIO
 
-from soulstruct.core import SoulstructError
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.core import MSB_REGION_TYPE
-
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
 from soulstruct.utilities.maths import Vector3
 
@@ -50,38 +48,39 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
 
     ENTRY_TYPE = None
 
-    def __init__(self, msb_region_source):
+    def __init__(self, msb_region_source=None):
         super().__init__()
-        self._region_index = None
+        self._region_index = None  # Final automatic assignment done on `MSB.pack()`.
 
         if isinstance(msb_region_source, bytes):
             msb_region_source = BytesIO(msb_region_source)
         if isinstance(msb_region_source, BufferedReader):
             self.unpack(msb_region_source)
-        else:
-            raise TypeError("'msb_model_source' must be a buffer or bytes.")
+        elif msb_region_source is not None:
+            raise TypeError("`msb_model_source` must be a buffer, `bytes`, or `None`.")
 
     def unpack(self, msb_buffer):
         region_offset = msb_buffer.tell()
         base_data = self.REGION_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=region_offset + base_data.name_offset, encoding='shift-jis')
-        self._region_index = base_data.region_index
-        self.translate = Vector3(base_data.translate)
-        self.rotate = Vector3(base_data.rotate)
-        self.check_null_field(msb_buffer, region_offset + base_data.unknown_offset_1)
-        self.check_null_field(msb_buffer, region_offset + base_data.unknown_offset_2)
+            msb_buffer, offset=region_offset + base_data["name_offset"], encoding='shift-jis')
+        self._region_index = base_data["region_index"]
+        self.translate = Vector3(base_data["translate"])
+        self.rotate = Vector3(base_data["rotate"])
+        self.check_null_field(msb_buffer, region_offset + base_data["unknown_offset_1"])
+        self.check_null_field(msb_buffer, region_offset + base_data["unknown_offset_2"])
 
-        if base_data.type_data_offset != 0:
-            msb_buffer.seek(region_offset + base_data.type_data_offset)
+        if base_data["type_data_offset"] != 0:
+            msb_buffer.seek(region_offset + base_data["type_data_offset"])
             self.unpack_type_data(msb_buffer)
 
-        msb_buffer.seek(region_offset + base_data.entity_id_offset)
+        msb_buffer.seek(region_offset + base_data["entity_id_offset"])
         self.entity_id = struct.unpack('i', msb_buffer.read(4))[0]
 
-        return region_offset + base_data.entity_id_offset
+        return region_offset + base_data["entity_id_offset"]
 
     def unpack_type_data(self, msb_buffer):
+        # TODO: Use type struct.
         raise NotImplementedError
 
     def pack(self):
@@ -133,7 +132,7 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
         except (ValueError, TypeError):
             region_type = None
         msb_buffer.seek(old_offset)
-        return REGION_TYPE_CLASSES[region_type](msb_buffer)
+        return MSB_REGION_TYPE_CLASSES[region_type](msb_buffer)
 
 
 class MSBRegionPoint(BaseMSBRegion):
@@ -170,7 +169,7 @@ class MSBRegionCircle(BaseMSBRegion):
         super().__init__(msb_region_shape_source)
 
     def unpack_type_data(self, msb_buffer):
-        self.radius = BinaryStruct(*self.CIRCLE_STRUCT).unpack(msb_buffer).radius
+        self.radius = BinaryStruct(*self.CIRCLE_STRUCT).unpack(msb_buffer)["radius"]
 
     def pack_type_data(self):
         return BinaryStruct(*self.CIRCLE_STRUCT).pack(
@@ -198,7 +197,7 @@ class MSBRegionSphere(BaseMSBRegion):
         super().__init__(msb_region_shape_source)
 
     def unpack_type_data(self, msb_buffer):
-        self.radius = BinaryStruct(*self.SPHERE_STRUCT).unpack(msb_buffer).radius
+        self.radius = BinaryStruct(*self.SPHERE_STRUCT).unpack(msb_buffer)["radius"]
 
     def pack_type_data(self):
         return BinaryStruct(*self.SPHERE_STRUCT).pack(
@@ -231,8 +230,8 @@ class MSBRegionCylinder(BaseMSBRegion):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.CYLINDER_STRUCT).unpack(msb_buffer)
-        self.radius = data.radius
-        self.height = data.height
+        self.radius = data["radius"]
+        self.height = data["height"]
 
     def pack_type_data(self):
         return BinaryStruct(*self.CYLINDER_STRUCT).pack(
@@ -267,8 +266,8 @@ class MSBRegionRect(BaseMSBRegion):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.RECT_STRUCT).unpack(msb_buffer)
-        self.width = data.width
-        self.depth = data.depth
+        self.width = data["width"]
+        self.depth = data["depth"]
 
     def pack_type_data(self):
         return BinaryStruct(*self.RECT_STRUCT).pack(
@@ -307,9 +306,9 @@ class MSBRegionBox(BaseMSBRegion):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.BOX_STRUCT).unpack(msb_buffer)
-        self.width = data.width
-        self.depth = data.depth
-        self.height = data.height
+        self.width = data["width"]
+        self.depth = data["depth"]
+        self.height = data["height"]
 
     def pack_type_data(self):
         return BinaryStruct(*self.BOX_STRUCT).pack(
@@ -319,7 +318,7 @@ class MSBRegionBox(BaseMSBRegion):
         )
 
 
-REGION_TYPE_CLASSES = {
+MSB_REGION_TYPE_CLASSES = {
     MSB_REGION_TYPE.Point: MSBRegionPoint,
     MSB_REGION_TYPE.Circle: MSBRegionCircle,
     MSB_REGION_TYPE.Sphere: MSBRegionSphere,
@@ -334,22 +333,36 @@ class MSBRegionList(MSBEntryList):
     ENTRY_CLASS = staticmethod(MSBRegion)
     ENTRY_TYPE_ENUM = MSB_REGION_TYPE
 
-    _entries: tp.List[MSBRegion]
+    _entries: tp.List[BaseMSBRegion]
 
-    Points: list
-    Circles: list
-    Spheres: list
-    Cylinders: list
-    Rectangles: list
-    Boxes: list
+    Points: tp.Sequence[MSBRegionPoint]
+    Circles: tp.Sequence[MSBRegionCircle]
+    Spheres: tp.Sequence[MSBRegionSphere]
+    Cylinders: tp.Sequence[MSBRegionCylinder]
+    Rectangles: tp.Sequence[MSBRegionRect]
+    Boxes: tp.Sequence[MSBRegionBox]
+
+    def get_region_by_name(self, entry_name: str, entry_type=None) -> BaseMSBRegion:
+        regions = []
+        for region in self.get_entries(entry_type):
+            if region.name == entry_name:
+                regions.append(region)
+        if not regions:
+            raise KeyError(f"No MSB regions named: {entry_name}")
+        elif len(regions) >= 2:
+            raise KeyError(f"Multiple MSB regions named: {entry_name}. Please make them unique.")
+        return regions[0]
+
+    def get_entries(self, entry_type=None) -> tp.List[BaseMSBRegion]:
+        if entry_type is None:
+            return self._entries  # Full entry list, with types potentially intermingled.
+        entry_type = self.resolve_entry_type(entry_type)
+        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
 
     def set_indices(self):
         """Global region index only."""
         for i, entry in enumerate(self._entries):
-            try:
-                entry.set_indices(region_index=i)
-            except KeyError as e:
-                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} region {entry.name}: {e}")
+            entry.set_indices(region_index=i)
 
     def __iter__(self) -> tp.Iterator[BaseMSBRegion]:
         """Iterate over all entries."""

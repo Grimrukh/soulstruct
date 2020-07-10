@@ -42,7 +42,7 @@ class BaseESD(object):
 
         @classmethod
         def unpack(cls, esd_type, esd_buffer, state_machine_offset, count):
-            """ Unpack multiple states from the same state table.
+            """Unpack multiple states from the same state table.
 
             Returns a dictionary of states, because it's always possible (if yet unseen) that state indices are not
             contiguous. State 0 is not repeated, as it generally is in the packed table.
@@ -50,40 +50,40 @@ class BaseESD(object):
 
             state_dict = OrderedDict()
             esd_buffer.seek(state_machine_offset)
-            struct_dicts = cls.STRUCT.unpack(esd_buffer, count=count)
+            struct_dicts = cls.STRUCT.unpack_count(esd_buffer, count=count)
 
             for d in struct_dicts:
                 conditions = cls.Condition.unpack(
                     esd_type,
                     esd_buffer,
-                    d.condition_pointers_offset,
-                    count=d.condition_pointers_count,
+                    d["condition_pointers_offset"],
+                    count=d["condition_pointers_count"],
                 )
 
                 enter_commands = cls.Command.unpack(
                     esd_type,
                     esd_buffer,
-                    d.enter_commands_offset,
-                    count=d.enter_commands_count,
+                    d["enter_commands_offset"],
+                    count=d["enter_commands_count"],
                 )
 
                 exit_commands = cls.Command.unpack(
                     esd_type,
                     esd_buffer,
-                    d.exit_commands_offset,
-                    count=d.exit_commands_count,
+                    d["exit_commands_offset"],
+                    count=d["exit_commands_count"],
                 )
 
                 ongoing_commands = cls.Command.unpack(
                     esd_type,
                     esd_buffer,
-                    d.ongoing_commands_offset,
-                    count=d.ongoing_commands_offset,
+                    d["ongoing_commands_offset"],
+                    count=d["ongoing_commands_offset"],
                 )
 
                 # State 0 will be overwritten when repeated at the end of the table, rather than added.
-                state_dict[d.index] = cls(esd_type, d.index, conditions, enter_commands, exit_commands,
-                                          ongoing_commands)
+                state_dict[d["index"]] = cls(esd_type, d["index"], conditions, enter_commands, exit_commands,
+                                             ongoing_commands)
 
             return state_dict
 
@@ -188,29 +188,29 @@ class BaseESD(object):
             if condition_pointers_offset == -1:
                 return conditions
             esd_buffer.seek(condition_pointers_offset)
-            pointers = cls.POINTER_STRUCT.unpack(esd_buffer, count=count)
+            pointers = cls.POINTER_STRUCT.unpack_count(esd_buffer, count=count)
             for p in pointers:
-                esd_buffer.seek(p.condition_offset)
-                d = cls.STRUCT.unpack(esd_buffer, count=None)
+                esd_buffer.seek(p["condition_offset"])
+                d = cls.STRUCT.unpack(esd_buffer)
 
                 pass_commands = cls.Command.unpack(
                     esd_type,
                     esd_buffer,
-                    d.pass_commands_offset,
-                    count=d.pass_commands_count,
+                    d["pass_commands_offset"],
+                    count=d["pass_commands_count"],
                 )
 
                 subconditions = cls.unpack(
                     esd_type,
                     esd_buffer,
-                    d.subcondition_pointers_offset,
-                    count=d.subcondition_pointers_count,
+                    d["subcondition_pointers_offset"],
+                    count=d["subcondition_pointers_count"],
                 )
 
-                test_ezl = read_chars_from_buffer(esd_buffer, offset=d.test_ezl_offset, length=d.test_ezl_size)
+                test_ezl = read_chars_from_buffer(esd_buffer, offset=d["test_ezl_offset"], length=d["test_ezl_size"])
 
-                if d.next_state_offset > 0:
-                    esd_buffer.seek(d.next_state_offset)
+                if d["next_state_offset"] > 0:
+                    esd_buffer.seek(d["next_state_offset"])
                     next_state_index, = struct.unpack(
                         cls.STATE_ID_FORMAT, esd_buffer.read(struct.calcsize(cls.STATE_ID_FORMAT)))
                 else:
@@ -298,17 +298,17 @@ class BaseESD(object):
             if commands_offset == -1:
                 return commands
             esd_buffer.seek(commands_offset)
-            struct_dicts = cls.STRUCT.unpack(esd_buffer, count=count)
+            struct_dicts = cls.STRUCT.unpack_count(esd_buffer, count=count)
 
             for d in struct_dicts:
-                if d.args_offset > 0:
-                    esd_buffer.seek(d.args_offset)
-                    arg_structs = cls.ARG_STRUCT.unpack(esd_buffer, count=d.args_count)
-                    args = [read_chars_from_buffer(esd_buffer, offset=a.arg_ezl_offset, length=a.arg_ezl_size)
+                if d["args_offset"] > 0:
+                    esd_buffer.seek(d["args_offset"])
+                    arg_structs = cls.ARG_STRUCT.unpack_count(esd_buffer, count=d["args_count"])
+                    args = [read_chars_from_buffer(esd_buffer, offset=a["arg_ezl_offset"], length=a["arg_ezl_size"])
                             for a in arg_structs]
                 else:
                     args = []
-                commands.append(cls(esd_type, d.bank, d.index, args))
+                commands.append(cls(esd_type, d["bank"], d["index"], args))
 
             return commands
 
@@ -417,29 +417,31 @@ class BaseESD(object):
         esd_buffer = BytesIO(esd_buffer.read())
 
         internal_header = self.INTERNAL_HEADER_STRUCT.unpack(esd_buffer)
-        self.magic = internal_header.magic
-        state_machine_headers = self.STATE_MACHINE_HEADER_STRUCT.unpack(esd_buffer, count=header.state_machine_count)
+        self.magic = internal_header["magic"]
+        state_machine_headers = self.STATE_MACHINE_HEADER_STRUCT.unpack_count(
+            esd_buffer, count=header["state_machine_count"],
+        )
 
         for state_machine_header in state_machine_headers:
             states = self.State.unpack(
                 self.esd_type,
                 esd_buffer,
-                state_machine_header.state_machine_offset,
-                count=state_machine_header.state_count,
+                state_machine_header["state_machine_offset"],
+                count=state_machine_header["state_count"],
             )
-            self.state_machines[state_machine_header.state_machine_index] = states
+            self.state_machines[state_machine_header["state_machine_index"]] = states
 
-        if internal_header.esd_name_length > 0:
-            esd_name_offset = internal_header.esd_name_offset
-            esd_name_length = internal_header.esd_name_length
+        if internal_header["esd_name_length"] > 0:
+            esd_name_offset = internal_header["esd_name_offset"]
+            esd_name_length = internal_header["esd_name_length"]
             # Note the given length is the length of the final string. The actual UTF-16 encoded bytes are twice that.
             self.esd_name = read_chars_from_buffer(
                 esd_buffer, offset=esd_name_offset, length=2 * esd_name_length, encoding='utf-16le')
             esd_buffer.seek(esd_name_offset + 2 * esd_name_length)
             self.file_tail = esd_buffer.read()
         else:
-            self.esd_name = ''
-            esd_buffer.seek(header.unk_offset_1)  # after packed EZL
+            self.esd_name = ""
+            esd_buffer.seek(header["unk_offset_1"])  # after packed EZL
             self.file_tail = esd_buffer.read()
 
     def compile_from_esp_dir(self, esp_dir):

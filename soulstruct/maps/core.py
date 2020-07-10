@@ -7,12 +7,15 @@ class MSB_PART_TYPE(IntEnum):
     MapPiece = 0
     Object = 1
     Character = 2
+    # 3 is unused.
     PlayerStart = 4
     Collision = 5
+    # 6 is unused.
+    # 7 is unused.
     Navmesh = 8
     UnusedObject = 9
     UnusedCharacter = 10
-    MapConnection = 11
+    MapLoadTrigger = 11
 
 
 class MSB_EVENT_TYPE(IntEnum):
@@ -60,7 +63,7 @@ MAP_ENTRY_TYPES = {
         ('Navmeshes', MSB_PART_TYPE.Navmesh),
         ('UnusedObjects', MSB_PART_TYPE.UnusedObject),
         ('UnusedCharacters', MSB_PART_TYPE.UnusedCharacter),
-        ('MapConnections', MSB_PART_TYPE.MapConnection),
+        ('MapLoadTriggers', MSB_PART_TYPE.MapLoadTrigger),
     ),
     'Events': BiDict(
         ('Lights', MSB_EVENT_TYPE.Light),

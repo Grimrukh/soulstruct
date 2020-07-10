@@ -1,33 +1,43 @@
+from __future__ import annotations
+
+import abc
+import logging
 import typing as tp
-from io import BufferedReader, BytesIO
 import struct
+from io import BufferedReader, BytesIO
 
 from soulstruct.core import InvalidFieldValueError, SoulstructError
+from soulstruct.enums.darksouls1 import CollisionHitFilter
+from soulstruct.constants.darksouls1.maps import get_map
+from soulstruct.game_types import Map
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.core import MSB_PART_TYPE
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.maths import Vector3
 
 
-def MSBPart(msb_buffer):
-    """Detects the appropriate subclass of BaseMSBEvent to instantiate."""
+_LOGGER = logging.getLogger(__name__)
+
+
+def MSBPart(msb_buffer) -> BaseMSBPart:
+    """Detects the appropriate subclass of `BaseMSBPart` to instantiate from buffer data."""
     return BaseMSBPart.auto_part_subclass(msb_buffer)
 
 
-class BaseMSBPart(MSBEntryEntityCoordinates):
+class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
     PART_HEADER_STRUCT = BinaryStruct(
-        ('name_offset', 'i'),
-        ('part_type', 'i'),
-        ('part_type_index', 'i'),
-        ('model_index', 'I'),
-        ('sib_path_offset', 'i'),
+        ('__name_offset', 'i'),
+        ('__part_type', 'i'),
+        ('_part_type_index', 'i'),
+        ('_model_index', 'I'),
+        ('__sib_path_offset', 'i'),
         ('translate', '3f'),
         ('rotate', '3f'),
         ('scale', '3f'),
-        ('draw_groups', '4I'),
-        ('display_groups', '4I'),
-        ('base_data_offset', 'i'),
-        ('type_data_offset', 'i'),
+        ('__draw_groups', '4I'),
+        ('__display_groups', '4I'),
+        ('__base_data_offset', 'i'),
+        ('__type_data_offset', 'i'),
         '4x',
     )
 
@@ -42,7 +52,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
         ('tone_map_id', 'b'),
         ('tone_correct_id', 'b'),
         ('point_light_id', 'b'),
-        ('lod_param_id', 'b'),
+        ('lod_id', 'b'),
         'x',
         ('is_shadow_source', '?'),
         ('is_shadow_destination', '?'),
@@ -53,6 +63,8 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
         ('disable_point_light_effect', '?'),
         '2x',
     )
+
+    PART_TYPE_DATA_STRUCT = ()
 
     FIELD_INFO = {
         'entity_id': (
@@ -100,7 +112,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
         'tone_correct_id': (
             'Tone Correction ID', True, int,
             "ID of Tone Correction parameter to use in this map's lighting parameters (DrawParam)."),
-        'lod_param_id': (
+        'lod_id': (
             'LoD Param ID', False, int,
             "ID of Level of Detail (LoD) parameter to use in this map's lighting parameters (DrawParam)."),
         'is_shadow_source': (
@@ -127,94 +139,73 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
     }
 
     ENTRY_TYPE = None
-    WORLD_ROTATION = False
 
     def __init__(self, msb_part_source=None):
         super().__init__()
-        self.sib_path = ''
-        self._part_type_index = None  # TODO: investigate Wulf MSB Editor issue with global index misalignment
+        self.sib_path = ""
+        self._part_type_index = None
         self.model_name = None
         self._model_index = None
         self.scale = Vector3(1, 1, 1)  # only relevant for MapPiece and Object
-        self.draw_groups = list(range(128))  # [0, 1, 2, ..., 127]
-        self.display_groups = list(range(128))  # [0, 1, 2, ..., 127]  # TODO: these groups should be a `set()`
+        self._draw_groups = set(range(128))  # {0, 1, 2, ..., 127}
+        self._display_groups = set(range(128))  # {0, 1, 2, ..., 127}
 
         # Lighting parameters
-        self.ambient_light_id = None
-        self.fog_id = None
-        self.scattered_light_id = None
-        self.lens_flare_id = None
-        self.shadow_id = None
-        self.dof_id = None
-        self.tone_map_id = None
-        self.tone_correct_id = None
-        self.point_light_id = None
+        self.ambient_light_id = 0
+        self.fog_id = 0
+        self.scattered_light_id = 0
+        self.lens_flare_id = 0
+        self.shadow_id = 0
+        self.dof_id = 0
+        self.tone_map_id = 0
+        self.tone_correct_id = 0
+        self.point_light_id = 0
+        self.lod_id = 0
 
-        # Additional parameters (mostly unknown)
-        self.lod_param_id = None
-        self.is_shadow_source = None
-        self.is_shadow_destination = None
-        self.is_shadow_only = None
-        self.draw_by_reflect_cam = None
-        self.draw_only_reflect_cam = None
-        self.use_depth_bias_float = None
-        self.disable_point_light_effect = None
+        # Additional boolean parameters (exact effects may be unknown)
+        self.is_shadow_source = False
+        self.is_shadow_destination = False
+        self.is_shadow_only = False
+        self.draw_by_reflect_cam = False
+        self.draw_only_reflect_cam = False
+        self.use_depth_bias_float = False
+        self.disable_point_light_effect = False
 
         if isinstance(msb_part_source, bytes):
             msb_part_source = BytesIO(msb_part_source)
         if isinstance(msb_part_source, BufferedReader):
             self.unpack(msb_part_source)
         elif msb_part_source is not None:
-            raise TypeError("'msb_part_source' must be a buffer, bytes, or None.")
-
-    def unpack_type_data(self, msb_buffer):
-        raise NotImplementedError
+            raise TypeError("`msb_part_source` must be a buffer, `bytes`, or `None` (default).")
 
     def unpack(self, msb_buffer):
         part_offset = msb_buffer.tell()
 
         header = self.PART_HEADER_STRUCT.unpack(msb_buffer)
-        if header.part_type != self.ENTRY_TYPE:
-            raise ValueError(f"Unexpected part type enum {header.part_type} for class {self.__class__.__name__}.")
-        self._model_index = header.model_index
-        self._part_type_index = header.part_type_index
-        for transform in ('translate', 'rotate', 'scale'):
+        if header["__part_type"] != self.ENTRY_TYPE:
+            raise ValueError(f"Unexpected part type enum {header['part_type']} for class {self.__class__.__name__}.")
+        self._model_index = header["_model_index"]
+        self._part_type_index = header["_part_type_index"]
+        for transform in ("translate", "rotate", "scale"):
             setattr(self, transform, Vector3(getattr(header, transform)))
-        self.draw_groups = _flag_group_to_enabled_flags(header.draw_groups)
-        self.display_groups = _flag_group_to_enabled_flags(header.display_groups)
+        self._draw_groups = _flag_group_to_enabled_flag_set(header["__draw_groups"])
+        self._display_groups = _flag_group_to_enabled_flag_set(header["__display_groups"])
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header.name_offset, encoding='shift-jis')
+            msb_buffer, offset=part_offset + header["__name_offset"], encoding='shift-jis')
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header.sib_path_offset, encoding='shift-jis')
-
-        msb_buffer.seek(part_offset + header.base_data_offset)
+            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding='shift-jis')
+        msb_buffer.seek(part_offset + header["__base_data_offset"])
         base_data = self.PART_BASE_DATA_STRUCT.unpack(msb_buffer)
-
-        self.entity_id = base_data.entity_id
-        self.ambient_light_id = base_data.ambient_light_id
-        self.fog_id = base_data.fog_id
-        self.scattered_light_id = base_data.scattered_light_id
-        self.lens_flare_id = base_data.lens_flare_id
-        self.shadow_id = base_data.shadow_id
-        self.dof_id = base_data.dof_id
-        self.tone_map_id = base_data.tone_map_id
-        self.tone_correct_id = base_data.tone_correct_id
-        self.point_light_id = base_data.point_light_id
-        self.lod_param_id = base_data.lod_param_id
-        self.is_shadow_source = base_data.is_shadow_source
-        self.is_shadow_destination = base_data.is_shadow_destination
-        self.is_shadow_only = base_data.is_shadow_only
-        self.draw_by_reflect_cam = base_data.draw_by_reflect_cam
-        self.draw_only_reflect_cam = base_data.draw_only_reflect_cam
-        self.use_depth_bias_float = base_data.use_depth_bias_float
-        self.disable_point_light_effect = base_data.disable_point_light_effect
-
-        msb_buffer.seek(part_offset + header.type_data_offset)
+        self.set(**base_data)
+        msb_buffer.seek(part_offset + header["__type_data_offset"])
         self.unpack_type_data(msb_buffer)
 
     def pack(self):
-        draw_groups = _enabled_flags_to_flag_group(self.draw_groups)
-        display_groups = _enabled_flags_to_flag_group(self.display_groups)
+        """Pack to bytes, presumably as part of a full `MSB` pack."""
+
+        # Validate draw/display groups before doing any real work.
+        draw_groups = _enabled_flag_set_to_flag_group(self._draw_groups)
+        display_groups = _enabled_flag_set_to_flag_group(self._display_groups)
 
         name_offset = self.PART_HEADER_STRUCT.size
         packed_name = self.get_name_to_pack().encode('shift-jis') + b'\0'  # Name not padded on its own.
@@ -223,60 +214,92 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b'\0'
         base_data_offset = sib_path_offset + len(packed_sib_path)
-        packed_base_data = self.PART_BASE_DATA_STRUCT.pack(
-            entity_id=self.entity_id,
-            ambient_light_id=self.ambient_light_id,
-            fog_id=self.fog_id,
-            scattered_light_id=self.scattered_light_id,
-            lens_flare_id=self.lens_flare_id,
-            shadow_id=self.shadow_id,
-            dof_id=self.dof_id,
-            tone_map_id=self.tone_map_id,
-            tone_correct_id=self.tone_correct_id,
-            point_light_id=self.point_light_id,
-            lod_param_id=self.lod_param_id,
-            is_shadow_source=self.is_shadow_source,
-            is_shadow_destination=self.is_shadow_destination,
-            is_shadow_only=self.is_shadow_only,
-            draw_by_reflect_cam=self.draw_by_reflect_cam,
-            draw_only_reflect_cam=self.draw_only_reflect_cam,
-            use_depth_bias_float=self.use_depth_bias_float,
-            disable_point_light_effect=self.disable_point_light_effect,
-        )
-
+        packed_base_data = self.PART_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)
         packed_type_data = self.pack_type_data()
-
         packed_header = self.PART_HEADER_STRUCT.pack(
-            name_offset=name_offset,
-            part_type=self.ENTRY_TYPE,
-            part_type_index=self._part_type_index,
-            model_index=self._model_index,
-            sib_path_offset=sib_path_offset,
+            __name_offset=name_offset,
+            __part_type=self.ENTRY_TYPE,
+            _part_type_index=self._part_type_index,
+            _model_index=self._model_index,
+            __sib_path_offset=sib_path_offset,
             translate=list(self.translate),
             rotate=list(self.rotate),
             scale=list(self.scale),
-            draw_groups=draw_groups,
-            display_groups=display_groups,
-            base_data_offset=base_data_offset,
-            type_data_offset=type_data_offset,
+            __draw_groups=draw_groups,
+            __display_groups=display_groups,
+            __base_data_offset=base_data_offset,
+            __type_data_offset=type_data_offset,
         )
-
         return packed_header + packed_name + packed_sib_path + packed_base_data + packed_type_data
 
-    def pack_type_data(self):
-        raise NotImplementedError
+    def unpack_type_data(self, msb_buffer):
+        self.set(**BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False))
 
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
+    def pack_type_data(self):
+        return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack_from_object(self)
+
+    def set_indices(
+            self,
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+    ):
         self._part_type_index = part_type_index
         self._model_index = model_indices[self.model_name] if self.model_name else -1
 
-    def set_names(self, model_names, region_names, part_names, collision_names):
+    def set_names(
+            self,
+            model_names,
+            region_names,
+            environment_names,
+            part_names,
+            collision_names,
+    ):
         try:
             self.model_name = model_names[self._model_index]
         except KeyError:
             raise KeyError(f"Invalid model index for {self.ENTRY_TYPE} {self.name} (entity ID {self.entity_id}): "
                            f"{self._model_index}")
+
+    @property
+    def draw_groups(self):
+        return self._draw_groups
+
+    @draw_groups.setter
+    def draw_groups(self, value):
+        """Converts value to a `set()` (possibly empty) and validates index range."""
+        if value is None or isinstance(value, str) and value in {"None", ""}:
+            self._draw_groups = set()
+            return
+        if not isinstance(value, (list, tuple, set)):
+            raise TypeError("Draw groups must be a set, sequence, `None`, 'None', or ''. "
+                            "Or use `.draw_groups.add()`, etc.).")
+        for i in value:
+            if not 0 <= i <= 127:
+                raise ValueError(f"Invalid draw group: {i}. Must range from 0 to 127, inclusive.")
+        self._draw_groups = set(value)
+
+    @property
+    def display_groups(self):
+        return self._display_groups
+
+    @display_groups.setter
+    def display_groups(self, value):
+        """Converts value to a `set()` (possibly empty) and validates index range."""
+        if value is None or isinstance(value, str) and value in {"None", ""}:
+            self._display_groups = set()
+            return
+        if not isinstance(value, (list, tuple, set)):
+            raise TypeError("Display groups must be a set, sequence, `None`, 'None', or ''. "
+                            "Or use `.display_groups.add()`, etc.).")
+        for i in value:
+            if not 0 <= i <= 127:
+                raise ValueError(f"Invalid display group: {i}. Must range from 0 to 127, inclusive.")
+        self._display_groups = set(value)
 
     @staticmethod
     def auto_part_subclass(msb_buffer):
@@ -292,9 +315,9 @@ class BaseMSBPart(MSBEntryEntityCoordinates):
 
 
 class MSBMapPiece(BaseMSBPart):
-    """Visible map piece. Does not include collisions."""
+    """Just a textured, visible mesh asset. Does not include any collision."""
 
-    MAP_PIECE_STRUCT = (
+    PART_TYPE_DATA_STRUCT = (
         '8x',
     )
 
@@ -306,23 +329,18 @@ class MSBMapPiece(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.MapPiece
-    WORLD_ROTATION = True
-
-    def unpack_type_data(self, msb_buffer):
-        BinaryStruct(*self.MAP_PIECE_STRUCT).unpack(msb_buffer)  # Simply checks for the nulls.
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.MAP_PIECE_STRUCT).pack({})
 
 
 class MSBObject(BaseMSBPart):
-    """Physical object instance."""
+    """Instance of a physical object."""
 
-    PART_OBJECT_STRUCT = (
+    PART_TYPE_DATA_STRUCT = (
         '4x',
-        ('draw_parent_index', 'i'),
-        ('unk_x08_x0c', 'i'),
-        ('object_pose', 'h'),
+        ('_draw_parent_index', 'i'),
+        ('break_term', 'b'),
+        ('net_sync_type', 'b'),
+        '2x',
+        ('default_animation', 'h'),
         ('unk_x0e_x10', 'h'),
         ('unk_x10_x14', 'i'),
         '4x',
@@ -336,12 +354,15 @@ class MSBObject(BaseMSBPart):
         'draw_parent_name': (
             'Draw Parent', True, '<Maps:Parts>',
             "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
-        'unk_x08_x0c': (
-            'Unknown [08-0c]', False, int,
-            "Unknown."),
-        'object_pose': (
-            'Object Pose', True, int,
-            "ID of an object animation that determines its appearance, e.g. for different corpse poses."),
+        'break_term': (
+            'Break Term', True, int,
+            "Unknown. Related to object breakage."),
+        'net_sync_type': (
+            'Net Sync Type', True, int,
+            "Unknown. Related to online object synchronization."),
+        'default_animation': (
+            'Default Animation ID', True, int,
+            "Object animation ID to auto-play on map load, e.g. for different corpse poses."),
         'unk_x0e_x10': (
             'Unknown [0e-10]', False, int,
             "Unknown."),
@@ -352,56 +373,71 @@ class MSBObject(BaseMSBPart):
 
     ENTRY_TYPE = MSB_PART_TYPE.Object
 
-    def __init__(self, msb_part_source):
+    def __init__(self, msb_part_source=None, **kwargs):
         self.draw_parent_name = None
         self._draw_parent_index = None
-        self.unk_x08_x0c = None
-        self.object_pose = None
-        self.unk_x0e_x10 = None
-        self.unk_x10_x14 = None
+        self.break_term = 0
+        self.net_sync_type = 0
+        self.default_animation = 0
+        self.unk_x0e_x10 = 0
+        self.unk_x10_x14 = 0
         super().__init__(msb_part_source)
+        self.set(**kwargs)
 
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.PART_OBJECT_STRUCT).unpack(msb_buffer)
-        self._draw_parent_index = data.draw_parent_index
-        self.unk_x08_x0c = data.unk_x08_x0c
-        self.object_pose = data.object_pose
-        self.unk_x0e_x10 = data.unk_x0e_x10
-        self.unk_x10_x14 = data.unk_x10_x14
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.PART_OBJECT_STRUCT).pack(
-            draw_parent_index=self._draw_parent_index,
-            unk_x08_x0c=self.unk_x08_x0c,
-            object_pose=self.object_pose,
-            unk_x0e_x10=self.unk_x0e_x10,
-            unk_x10_x14=self.unk_x10_x14,
+    def set_indices(
+            self,
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+    ):
+        super().set_indices(
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
         )
-
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
-        super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
         self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
 
-    def set_names(self, model_names, region_names, part_names, collision_names):
-        super().set_names(model_names, region_names, part_names, collision_names)
+    def set_names(
+            self,
+            model_names,
+            region_names,
+            environment_names,
+            part_names,
+            collision_names,
+    ):
+        super().set_names(
+            model_names,
+            environment_names,
+            region_names,
+            part_names,
+            collision_names,
+        )
         self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
 
 
 class MSBCharacter(BaseMSBPart):
     """Physical character instance."""
 
-    PART_CHARACTER_STRUCT = (
+    PART_TYPE_DATA_STRUCT = (
         '8x',
-        ('think_param_id', 'i'),
-        ('npc_param_id', 'i'),
+        ('think_id', 'i'),
+        ('npc_id', 'i'),
         ('talk_id', 'i'),
-        ('unk_x14_x18', 'f'),
+        ('patrol_type', 'B'),
+        'x',
+        ('platoon_id', 'H'),
         ('chara_init_id', 'i'),
-        ('draw_parent_index', 'i'),
+        ('_draw_parent_index', 'i'),
         '8x',
-        ('patrol_point_indices', '8h'),
+        ('_patrol_point_indices', '8h'),
         ('default_animation', 'i'),
-        ('unk_x3c_x40', 'i'),
+        ('damage_animation', 'i'),
     )
 
     FIELD_INFO = {
@@ -409,10 +445,10 @@ class MSBCharacter(BaseMSBPart):
             'Model Name', True, '<Maps:Models:Characters|Players>',
             "Name of character model to use for this character."),
         **BaseMSBPart.FIELD_INFO,
-        'think_param_id': (
+        'think_id': (
             'AI ID', True, '<Params:AI>',
             "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used."),
-        'npc_param_id': (
+        'npc_id': (
             'NPC ID', True, '<Params:NonPlayers>',
             "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
             "unused."),
@@ -420,9 +456,12 @@ class MSBCharacter(BaseMSBPart):
             'Talk ID', True, int,  # TODO: '<Talk>'
             "EzState ID of character, which determines their interactions (conversations, shops, etc.). This is used "
             "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map."),
-        'unk_x14_x18': (
-            'Unknown [14-18]', False, float,
-            "Unknown floating-point number."),
+        'patrol_type': (
+            'Patrol Type', True, int,
+            "Patrol behavior type."),
+        'platoon_id': (
+            'Platoon ID', False, int,
+            "Unused 'platoon' ID value."),
         'chara_init_id': (
             'Player ID', True, '<Params:Players>',
             "Contains information for 'player' (human) characters, such as their stats and equipment."),
@@ -436,100 +475,117 @@ class MSBCharacter(BaseMSBPart):
         'default_animation': (
             'Default Animation', True, int,  # TODO: '<Animation>'
             "Default looping animation for character."),
-        'unk_x3c_x40': (
-            'Unknown [3c-40]', False, int,
-            "Unknown."),
+        'damage_animation': (
+            'Damage Animation', True, int,
+            "Default damage animation to use for character."),
     }
+
     ENTRY_TYPE = MSB_PART_TYPE.Character
 
-    def __init__(self, msb_part_source):
-        self.think_param_id = None
-        self.npc_param_id = None
-        self.talk_id = None
-        self.unk_x14_x18 = None
-        self.chara_init_id = None
+    def __init__(self, msb_part_source=None, **kwargs):
+        self.think_id = -1
+        self.npc_id = -1
+        self.talk_id = -1
+        self.patrol_type = 0
+        self.chara_init_id = -1
+        self.platoon_id = 0
         self.draw_parent_name = None
         self._draw_parent_index = None
-        self.patrol_point_names = None
-        self._patrol_point_indices = None
-        self.default_animation = None
-        self.unk_x3c_x40 = None
+        self._patrol_point_names = []
+        self._patrol_point_indices = []
+        self.default_animation = -1
+        self.damage_animation = -1
         super().__init__(msb_part_source)
+        self.set(**kwargs)
 
-    def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.PART_CHARACTER_STRUCT).unpack(msb_buffer)
-        self.think_param_id = data.think_param_id
-        self.npc_param_id = data.npc_param_id
-        self.talk_id = data.talk_id
-        self.unk_x14_x18 = data.unk_x14_x18
-        self.chara_init_id = data.chara_init_id
-        self._draw_parent_index = data.draw_parent_index
-        self._patrol_point_indices = data.patrol_point_indices
-        self.default_animation = data.default_animation
-        self.unk_x3c_x40 = data.unk_x3c_x40
+    @property
+    def patrol_point_names(self):
+        return self._patrol_point_names
 
-    def pack_type_data(self):
-        return BinaryStruct(*self.PART_CHARACTER_STRUCT).pack(
-            think_param_id=self.think_param_id,
-            npc_param_id=self.npc_param_id,
-            talk_id=self.talk_id,
-            unk_x14_x18=self.unk_x14_x18,
-            chara_init_id=self.chara_init_id,
-            draw_parent_index=self._draw_parent_index,
-            patrol_point_indices=self._patrol_point_indices,
-            default_animation=self.default_animation,
-            unk_x3c_x40=self.unk_x3c_x40,
+    @patrol_point_names.setter
+    def patrol_point_names(self, value):
+        """Pads out to eight names with `None`. Also replaces empty strings with `None`."""
+        names = []
+        for v in value:
+            if v is not None and not isinstance(v, str):
+                raise TypeError("Patrol point names must be strings or `None`.")
+            names.append(v if v else None)
+        while len(value) < 8:
+            value.append(None)
+        self._patrol_point_names = value
+
+    def set_indices(
+            self,
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+    ):
+        super().set_indices(
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
         )
-
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
-        super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
         self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
-        self._patrol_point_indices = [region_indices[n] if n else -1 for n in self.patrol_point_names]
+        self._patrol_point_indices = [region_indices[n] if n else -1 for n in self._patrol_point_names]
 
-    def set_names(self, model_names, region_names, part_names, collision_names):
-        super().set_names(model_names, region_names, part_names, collision_names)
+    def set_names(
+            self,
+            model_names,
+            region_names,
+            environment_names,
+            part_names,
+            collision_names,
+    ):
+        super().set_names(
+            model_names,
+            environment_names,
+            region_names,
+            part_names,
+            collision_names,
+        )
         self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
-        self.patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
+        self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
 
 
-class MSBPlayer(BaseMSBPart):
-    """Starting point for a player character (e.g. a warp point). No additional data.
-    TODO: rename MSBPlayerStart.
-    """
+class MSBPlayerStart(BaseMSBPart):
+    """Starting point for a player character (e.g. a warp point). No additional data."""
 
-    PLAYER_STRUCT = (
+    PART_TYPE_DATA_STRUCT = (
         '16x',
     )
 
     FIELD_INFO = {
-        # model_name not exposed; should always be 'c0000'.
+        'model_name': (
+            'Model Name', False, '<Maps:Models:Characters|Players>',
+            "Name of character model to use for this PlayerStart. This should always be c0000."),
         **BaseMSBPart.FIELD_INFO,
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.PlayerStart
 
-    def unpack_type_data(self, msb_buffer):
-        BinaryStruct(*self.PLAYER_STRUCT).unpack(msb_buffer)  # Simply checks for the nulls.
-
-    def pack_type_data(self):
-        return BinaryStruct(*self.PLAYER_STRUCT).pack({})
-
 
 class MSBCollision(BaseMSBPart):
     """Physical Collision geometry. Usually these are floor pieces."""
 
-    PART_COLLISION_STRUCT = (
+    PART_TYPE_DATA_STRUCT = (
         ('hit_filter_id', 'b'),
         ('sound_space_type', 'b'),
-        ('env_light_map_spot_index', 'h'),
+        ('_environment_event_index', 'h'),
         ('reflect_plane_height', 'f'),
-        ('navmesh_groups', '4I'),
+        ('__navmesh_groups', '4I'),
         ('vagrant_entity_ids', '3i'),
-        ('area_name_id', 'h'),
-        ('starts_disabled', 'h'),
+        ('__area_name_id', 'h'),
+        ('starts_disabled', '?'),
+        ('unk_x27_x28', 'B'),
         ('attached_bonfire', 'i'),
-        ('minus_ones', '3i', [-1, -1, -1]),  # Possibly more bonfires?
-        ('play_region_id', 'i'),
+        ('minus_ones', '3i', [-1, -1, -1]),  # Never used. Possibly more bonfires?
+        ('__play_region_id', 'i'),
         ('lock_cam_param_id_1', 'h'),
         ('lock_cam_param_id_2', 'h'),
         '16x',
@@ -546,9 +602,9 @@ class MSBCollision(BaseMSBPart):
         'sound_space_type': (
             'Sound Space Type', True, int,
             "Unknown."),
-        'env_light_map_spot_index': (
-            'Env. Lightmap Spot Index', True, int,
-            "Unknown."),
+        'environment_event_name': (
+            'Environment Event', True, int,
+            "Environment event in map that determines the point light source when standing on this collision."),
         'reflect_plane_height': (
             'Reflect Plane Height', True, float,
             "Unknown."),
@@ -577,6 +633,9 @@ class MSBCollision(BaseMSBPart):
         'starts_disabled': (
             'Starts Disabled', True, bool,
             "If True, this collision is disabled on map load and must be manually enabled with an event script."),
+        'unk_x27_x28': (
+            'Unknown [27-28]', False, int,
+            "Unknown. Almost always zero, but see e.g. Anor Londo gondola collision."),
         'attached_bonfire': (
             'Attached Bonfire', True, int,
             "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
@@ -604,49 +663,72 @@ class MSBCollision(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Collision
-    WORLD_ROTATION = True
 
-    def __init__(self, msb_part_source):
-        self.hit_filter_id = None
-        self.sound_space_type = None
-        self.env_light_map_spot_index = None
-        self.reflect_plane_height = None
-        self.navmesh_groups = None
-        self.vagrant_entity_ids = None
-        self.area_name_id = None
-        self.__force_area_banner = None  # Custom field.
-        self.starts_disabled = None  # TODO: almost always boolean, but very rarely 256 (e.g. Anor Londo gondola).
-        self.attached_bonfire = None
-        self.__play_region_id = None
-        self.__stable_footing_flag = None
-        self.lock_cam_param_id_1 = None
-        self.lock_cam_param_id_2 = None
+    def __init__(self, msb_part_source=None, **kwargs):
+        self.hit_filter_id = CollisionHitFilter.Normal
+        self.sound_space_type = 0
+        self._environment_event_index = None
+        self.environment_event_name = None
+        self.reflect_plane_height = 0.0
+        self._navmesh_groups = set(range(128))
+        self.vagrant_entity_ids = [-1, -1, -1]
+        self.area_name_id = -1
+        self._force_area_banner = False  # Custom field (see property).
+        self.starts_disabled = False
+        self.unk_x27_x28 = 0
+        self.attached_bonfire = -1
+        self._play_region_id = 0
+        self._stable_footing_flag = 0
+        self.lock_cam_param_id_1 = -1
+        self.lock_cam_param_id_2 = -1
         super().__init__(msb_part_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.PART_COLLISION_STRUCT).unpack(msb_buffer)
-        self.hit_filter_id = data.hit_filter_id
-        self.sound_space_type = data.sound_space_type
-        self.env_light_map_spot_index = data.env_light_map_spot_index
-        self.reflect_plane_height = data.reflect_plane_height
-        self.navmesh_groups = _flag_group_to_enabled_flags(data.navmesh_groups)
-        self.vagrant_entity_ids = data.vagrant_entity_ids
-        self.area_name_id = abs(data.area_name_id) if data.area_name_id != -1 else -1
-        self.__force_area_banner = data.area_name_id < 0  # Custom field.
-        self.starts_disabled = 0 if data.starts_disabled == 256 else data.starts_disabled  # Map 256 to 0.
-        self.attached_bonfire = data.attached_bonfire
-        if data.play_region_id > -10:
-            self.__play_region_id = data.play_region_id
-            self.__stable_footing_flag = 0
+        data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
+        self.set(**data)
+        self._navmesh_groups = _flag_group_to_enabled_flag_set(data["__navmesh_groups"])
+        self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
+        self._force_area_banner = data["__area_name_id"] < 0  # Custom field.
+        if data["__play_region_id"] > -10:
+            self._play_region_id = data["__play_region_id"]
+            self._stable_footing_flag = 0
         else:
-            self.__play_region_id = 0
-            self.__stable_footing_flag = -data.play_region_id - 10
-        self.lock_cam_param_id_1 = data.lock_cam_param_id_1
-        self.lock_cam_param_id_2 = data.lock_cam_param_id_2
+            self._play_region_id = 0
+            self._stable_footing_flag = -data["__play_region_id"] - 10
+
+    def pack_type_data(self):
+        """Pack to bytes, presumably as part of a full `MSB` pack."""
+
+        # Validate navmesh groups before doing any real work.
+        navmesh_groups = _enabled_flag_set_to_flag_group(self._navmesh_groups)
+
+        if self.area_name_id == -1 and not self._force_area_banner:
+            raise InvalidFieldValueError("`force_area_banner` must be enabled if `area_name_id == -1` (default).")
+        signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self._force_area_banner else 1)
+        if self._stable_footing_flag != 0:
+            play_region_id = -self._stable_footing_flag - 10
+        else:
+            play_region_id = self._play_region_id
+        return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
+            hit_filter_id=self.hit_filter_id,
+            sound_space_type=self.sound_space_type,
+            _environment_event_index=self._environment_event_index,
+            reflect_plane_height=self.reflect_plane_height,
+            __navmesh_groups=navmesh_groups,
+            vagrant_entity_ids=self.vagrant_entity_ids,
+            __area_name_id=signed_area_name_id,
+            starts_disabled=self.starts_disabled,
+            unk_x27_x28=self.unk_x27_x28,
+            attached_bonfire=self.attached_bonfire,
+            __play_region_id=play_region_id,
+            lock_cam_param_id_1=self.lock_cam_param_id_1,
+            lock_cam_param_id_2=self.lock_cam_param_id_2,
+        )
 
     @property
     def force_area_banner(self):
-        return self.__force_area_banner
+        return self._force_area_banner
 
     @force_area_banner.setter
     def force_area_banner(self, value: bool):
@@ -654,58 +736,99 @@ class MSBCollision(BaseMSBPart):
             raise InvalidFieldValueError(
                 "Banner must appear when area name is set to default (-1). You must specify the area name manually to "
                 "set this to False.")
-        self.__force_area_banner = bool(value)
+        self._force_area_banner = bool(value)
 
     @property
     def play_region_id(self):
-        return self.__play_region_id
+        return self._play_region_id
 
     @play_region_id.setter
     def play_region_id(self, value):
-        if self.__stable_footing_flag != 0:
+        if self._stable_footing_flag != 0:
             raise InvalidFieldValueError("Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' "
                                          "is non-zero.")
         if not isinstance(value, int) or value <= -10:
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")
-        self.__play_region_id = value
+        self._play_region_id = value
 
     @property
     def stable_footing_flag(self):
-        return self.__stable_footing_flag
+        return self._stable_footing_flag
 
     @stable_footing_flag.setter
     def stable_footing_flag(self, value):
-        if self.__play_region_id != 0:
+        if self._play_region_id != 0:
             raise InvalidFieldValueError("Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' "
                                          "is non-zero.")
         if not isinstance(value, int) or value < 0:
             raise InvalidFieldValueError("'stable_footing_flag' must be an integer greater than or equal to 0.")
-        self.__stable_footing_flag = value
+        self._stable_footing_flag = value
 
-    def pack_type_data(self):
-        navmesh_groups = _enabled_flags_to_flag_group(self.navmesh_groups)
+    @property
+    def navmesh_groups(self):
+        return self._navmesh_groups
 
-        if self.area_name_id == -1 and not self.__force_area_banner:
-            raise InvalidFieldValueError("'force_area_banner' must be enabled if 'area_name_id' is -1 (default).")
-        signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self.__force_area_banner else 1)
-        if self.__stable_footing_flag != 0:
-            play_region_id = -self.__stable_footing_flag - 10
-        else:
-            play_region_id = self.__play_region_id
-        return BinaryStruct(*self.PART_COLLISION_STRUCT).pack(
-            hit_filter_id=self.hit_filter_id,
-            sound_space_type=self.sound_space_type,
-            env_light_map_spot_index=self.env_light_map_spot_index,
-            reflect_plane_height=self.reflect_plane_height,
-            navmesh_groups=navmesh_groups,
-            vagrant_entity_ids=self.vagrant_entity_ids,
-            area_name_id=signed_area_name_id,
-            starts_disabled=self.starts_disabled,
-            attached_bonfire=self.attached_bonfire,
-            play_region_id=play_region_id,
-            lock_cam_param_id_1=self.lock_cam_param_id_1,
-            lock_cam_param_id_2=self.lock_cam_param_id_2,
+    @navmesh_groups.setter
+    def navmesh_groups(self, value):
+        """Converts value to a `set()` (possibly empty) and validates index range."""
+        if value is None or isinstance(value, str) and value in {"None", ""}:
+            self._navmesh_groups = set()
+            return
+        if not isinstance(value, (list, tuple, set)):
+            raise TypeError("Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
+                            "Or use `.navmesh_groups.add()`, etc.).")
+        for i in value:
+            if not 0 <= i <= 127:
+                raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
+        self._navmesh_groups = set(value)
+
+    def set_indices(
+            self,
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+    ):
+        super().set_indices(
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
         )
+        if self.environment_event_name:
+            self._environment_event_index = local_environment_indices[self.environment_event_name]
+        else:
+            self._environment_event_index = -1
+
+    def set_names(
+            self,
+            model_names,
+            region_names,
+            environment_names,
+            part_names,
+            collision_names,
+    ):
+        super().set_names(
+            model_names,
+            environment_names,
+            region_names,
+            part_names,
+            collision_names,
+        )
+        if self._environment_event_index != -1:
+            try:
+                self.environment_event_name = environment_names[self._environment_event_index]
+            except IndexError:
+                for i, env in enumerate(environment_names):
+                    print(i, env)
+                print(self._environment_event_index)
+                self.environment_event_name = f"BROKEN ({self._environment_event_index})"
+        else:
+            self.environment_event_name = None
 
 
 class MSBNavmesh(BaseMSBPart):
@@ -729,33 +852,58 @@ class MSBNavmesh(BaseMSBPart):
     ENTRY_TYPE = MSB_PART_TYPE.Navmesh
     WORLD_ROTATION = True
 
-    def __init__(self, msb_part_source):
-        self.navmesh_groups = None
+    def __init__(self, msb_part_source=None, **kwargs):
+        self._navmesh_groups = set(range(128))
         super().__init__(msb_part_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.PART_NAVMESH_STRUCT).unpack(msb_buffer)
-        self.navmesh_groups = _flag_group_to_enabled_flags(data.navmesh_groups)
+        data = BinaryStruct(*self.PART_NAVMESH_STRUCT).unpack(msb_buffer, include_asserted=False)
+        self._navmesh_groups = _flag_group_to_enabled_flag_set(data["navmesh_groups"])
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_NAVMESH_STRUCT).pack(
-            navmesh_groups=_enabled_flags_to_flag_group(self.navmesh_groups),
+            navmesh_groups=_enabled_flag_set_to_flag_group(self._navmesh_groups),
         )
+
+    @property
+    def navmesh_groups(self):
+        return self._navmesh_groups
+
+    @navmesh_groups.setter
+    def navmesh_groups(self, value):
+        """Converts value to a `set()` (possibly empty) and validates index range."""
+        if value is None or isinstance(value, str) and value in {"None", ""}:
+            self._navmesh_groups = set()
+            return
+        if not isinstance(value, (list, tuple, set)):
+            raise TypeError("Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
+                            "Or use `.navmesh_groups.add()`, etc.).")
+        for i in value:
+            if not 0 <= i <= 127:
+                raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
+        self._navmesh_groups = set(value)
 
 
 class MSBUnusedObject(MSBObject):
-    """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to standard MSBObject."""
+    """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
     ENTRY_TYPE = MSB_PART_TYPE.UnusedObject
 
 
 class MSBUnusedCharacter(MSBCharacter):
-    """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to standard MSBCharacter."""
+    """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
     ENTRY_TYPE = MSB_PART_TYPE.UnusedCharacter
 
 
-class MSBMapConnection(BaseMSBPart):
-    """Links to an MSBMapPiece entry and causes another map to load when the player stands on that collision."""
+class MSBMapLoadTrigger(BaseMSBPart):
+    """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
+    is itself in backread in the current map.
 
+    Note that sensible draw, display, and navmesh groups are still needed to advance the backread state of the
+    connected map's collisions to an interactive state (while map pieces don't care about navmesh groups).
+
+    Uses collision models, and almost always has the same model as the linked `MSBCollision`.
+    """
     PART_MAP_LOAD_TRIGGER_STRUCT = (
         ('collision_index', 'i'),
         ('map_id', '4b'),
@@ -770,38 +918,76 @@ class MSBMapConnection(BaseMSBPart):
         'collision_name': (
             'Collision Part Name', True, '<Maps:Parts:Collisions>',
             "Collision part that triggers this map load."),
-        'map_id': (
-            'Map ID', True, list,
-            "Four components of map ID this will trigger."),  # TODO: Combobox of maps.
+        'connected_map': (
+            'Map ID', True, str,
+            "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded."),
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.MapConnection
+    ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
     WORLD_ROTATION = True
 
-    def __init__(self, msb_part_source=None):
+    def __init__(self, msb_part_source=None, **kwargs):
         self.collision_name = None
         self._collision_index = None
-        self.map_id = None
+        self._connected_map = get_map(10, 0)  # defaults to m10_00_00_00 (Depths)
         super().__init__(msb_part_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).unpack(msb_buffer)
         self.collision_name = None
-        self._collision_index = data.collision_index
-        self.map_id = data.map_id  # TODO: Convert to a GameMap instance.
+        self._collision_index = data["collision_index"]
+        area_id, block_id, _, _ = data["map_id"]
+        self._connected_map = Map(area_id=area_id, block_id=block_id)
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).pack(
             collision_index=self._collision_index,
-            map_id=self.map_id,
+            map_id=self._connected_map.map_load_tuple,  # note use of EMEVD file stem
         )
 
-    def set_indices(self, part_type_index, model_indices, region_indices, part_indices, local_collision_indices):
-        super().set_indices(part_type_index, model_indices, region_indices, part_indices, local_collision_indices)
+    @property
+    def connected_map(self) -> Map:
+        return self._connected_map
+
+    @connected_map.setter
+    def connected_map(self, value):
+        self._connected_map = get_map(value)
+
+    def set_indices(
+            self,
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+    ):
+        super().set_indices(
+            part_type_index,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+        )
         self._collision_index = local_collision_indices[self.collision_name] if self.collision_name else -1
 
-    def set_names(self, model_names, region_names, part_names, collision_names):
-        super().set_names(model_names, region_names, part_names, collision_names)
+    def set_names(
+            self,
+            model_names,
+            region_names,
+            environment_names,
+            part_names,
+            collision_names,
+    ):
+        super().set_names(
+            model_names,
+            environment_names,
+            region_names,
+            part_names,
+            collision_names,
+        )
         self.collision_name = collision_names[self._collision_index] if self._collision_index != -1 else None
 
 
@@ -809,37 +995,44 @@ MSB_PART_TYPE_CLASSES = {
     MSB_PART_TYPE.MapPiece: MSBMapPiece,
     MSB_PART_TYPE.Object: MSBObject,
     MSB_PART_TYPE.Character: MSBCharacter,
-    MSB_PART_TYPE.PlayerStart: MSBPlayer,
+    MSB_PART_TYPE.PlayerStart: MSBPlayerStart,
     MSB_PART_TYPE.Collision: MSBCollision,
     MSB_PART_TYPE.Navmesh: MSBNavmesh,
     MSB_PART_TYPE.UnusedObject: MSBUnusedObject,
     MSB_PART_TYPE.UnusedCharacter: MSBUnusedCharacter,
-    MSB_PART_TYPE.MapConnection: MSBMapConnection,
+    MSB_PART_TYPE.MapLoadTrigger: MSBMapLoadTrigger,
 }
 
 
-def _flag_group_to_enabled_flags(flag_group):
+def _flag_group_to_enabled_flag_set(flag_group):
     """Get draw or display group 128-bit field <a, b, c, ...> where a, b, c, ... are the little-endian bit
     zero-based indices of the draw groups bit field (which is unpacked/packed internally as four 32-bit integers).
 
-    So draw groups [01001..110, 0, 000...001, 100...000] would be {1, 4, 29, 30, 95, 96}.
+    So draw groups `[01001..110, 0, 000...001, 100...000]` would return `{1, 4, 29, 30, 95, 96}`.
     """
-    enabled_flags = []
-    for i in range(4):
-        for j in range(32):
-            if (2 ** j) & flag_group[i]:
-                enabled_flags.append(32 * i + j)
-    return enabled_flags
+    if not isinstance(flag_group, (list, tuple)) or len(flag_group) != 4:
+        raise ValueError("Flag group must be a sequence of four integers.")
+    return set([
+        32 * i + j
+        for i in range(4)
+        for j in range(32)
+        if (2 ** j) & flag_group[i]
+    ])
 
 
-def _enabled_flags_to_flag_group(enabled_flags):
-    """Opposite of above method. Converts list of flag indices to four-integer bit field array for packing."""
+def _enabled_flag_set_to_flag_group(enabled_flags):
+    """Opposite of above method. Converts set (or sequence) of flags to a four-integer bit field array for packing."""
+    if not isinstance(enabled_flags, set):
+        enabled_flags_set = set(enabled_flags)
+        if len(enabled_flags_set) != len(enabled_flags):
+            _LOGGER.warning("Some flags values were present in flag set more than once. Ignoring repeats.")
+        enabled_flags = enabled_flags_set
     flag_group = [0, 0, 0, 0]
     for flag in enabled_flags:
         if not isinstance(flag, int):
-            raise ValueError(f"Non-integer value {flag} appeared in MSBPart.DrawGroups or MSBPart.DisplayGroups.")
+            raise ValueError(f"Non-integer value {flag} appeared in flag set (draw/display/navmesh/backread groups).")
         if not 0 <= flag <= 127:
-            raise ValueError(f"Invalid DrawGroups or DisplayGroups index {flag} (must be between 0 and 127).")
+            raise ValueError(f"Invalid draw/display/navmesh/backread index {flag} (must be between 0 and 127).")
         flag_group[flag // 32] += 2 ** (flag % 32)
     return flag_group
 
@@ -854,12 +1047,18 @@ class MSBPartList(MSBEntryList):
     MapPieces: tp.Sequence[MSBMapPiece]
     Objects: tp.Sequence[MSBObject]
     Characters: tp.Sequence[MSBCharacter]
-    PlayerStarts: tp.Sequence[MSBPlayer]
+    PlayerStarts: tp.Sequence[MSBPlayerStart]
     Collisions: tp.Sequence[MSBCollision]
     Navmeshes: tp.Sequence[MSBNavmesh]
     UnusedObjects: tp.Sequence[MSBUnusedObject]
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
-    MapConnections: tp.Sequence[MSBMapConnection]
+    MapLoadTriggers: tp.Sequence[MSBMapLoadTrigger]
+
+    def get_entries(self, entry_type=None) -> tp.List[BaseMSBPart]:
+        if entry_type is None:
+            return self._entries  # Full entry list, with types potentially intermingled.
+        entry_type = self.resolve_entry_type(entry_type)
+        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
 
     def get_part_by_name(self, entry_name: str, entry_type=None) -> BaseMSBPart:
         parts = []
@@ -872,34 +1071,37 @@ class MSBPartList(MSBEntryList):
             raise KeyError(f"Multiple MSB parts named: {entry_name}. Please make them unique.")
         return parts[0]
 
-    def create_map_connection(self, base, name, map_id, collision_name, draw_groups=None, display_groups=None):
-        """Creates a new `MapConnection` that references and copies the transform of the given `collision_name`.
+    def create_map_load_trigger(self, name, connected_map, collision, draw_groups=None, display_groups=None):
+        """Creates a new `MapLoadTrigger` that references and copies the transform of the given `collision`.
 
-        The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
+        The `name` and `map_id` of the new `MapLoadTrigger` must be given. You can also specify its `draw_groups` and
         `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
-
-        # TODO: Currently needs a real `base` MapConnection to start with, until I implement proper default instances.
         """
-        collision = self.get_part_by_name(collision_name, "Collision")
-        new_connection = base.copy()  # TODO: MSBMapConnection()
-        new_connection.name = name
-        new_connection.map_id = map_id
-        new_connection.collision_name = collision_name
-        new_connection.translate = collision.translate.copy()
-        new_connection.rotate = collision.rotate.copy()
-        new_connection.scale = collision.scale.copy()  # for completion's sake
-        new_connection.model_name = collision.model_name
+        if not isinstance(collision, MSBCollision):
+            collision = self.get_part_by_name(collision, "Collision")
+        map_load_trigger = MSBMapLoadTrigger(
+            name=name,
+            connected_map=connected_map,
+            collision_name=collision.name,
+            translate=collision.translate.copy(),
+            rotate=collision.rotate.copy(),
+            scale=collision.scale.copy(),  # for completion's sake
+            model_name=collision.model_name,
+        )
         if draw_groups is not None:
-            new_connection.draw_groups = draw_groups
+            map_load_trigger.draw_groups = draw_groups
         if display_groups is not None:
-            new_connection.display_groups = display_groups
-        self.add_entry(new_connection, append_to_entry_type="MapConnection")
+            map_load_trigger.display_groups = display_groups
+        self.add_entry(map_load_trigger, append_to_entry_type="MapLoadTrigger")
 
-    def set_names(self, model_names, region_names, part_names, collision_names):
-        for entry in self._entries:
-            entry.set_names(model_names, region_names, part_names, collision_names)
-
-    def set_indices(self, model_indices, region_indices, part_indices, local_collision_indices):
+    def set_indices(
+            self,
+            model_indices,
+            local_environment_indices,
+            region_indices,
+            part_indices,
+            local_collision_indices,
+    ):
         """Local type-specific index only.
 
         Events and other Parts may point to Parts by global entry index, but it seems the local index still matters, as
@@ -913,13 +1115,35 @@ class MSBPartList(MSBEntryList):
         type_indices = {}
         for entry in self._entries:
             try:
-                entry.set_indices(part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                                  model_indices=model_indices, region_indices=region_indices, part_indices=part_indices,
-                                  local_collision_indices=local_collision_indices)
+                entry.set_indices(
+                    part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                    model_indices=model_indices,
+                    local_environment_indices=local_environment_indices,
+                    region_indices=region_indices,
+                    part_indices=part_indices,
+                    local_collision_indices=local_collision_indices,
+                )
             except KeyError as e:
                 raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} part {entry.name}: {e}")
             else:
                 type_indices[entry.ENTRY_TYPE] += 1
+
+    def set_names(
+            self,
+            model_names,
+            environment_names,
+            region_names,
+            part_names,
+            collision_names,
+    ):
+        for entry in self._entries:
+            entry.set_names(
+                model_names,
+                region_names,
+                environment_names,
+                part_names,
+                collision_names,
+            )
 
     def get_instance_counts(self):
         """Returns a dictionary mapping model names to part instance counts."""
