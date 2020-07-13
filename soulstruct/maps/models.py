@@ -25,7 +25,7 @@ class MSBModel(MSBEntry):
             "Internal path to model placeholder SIB file. The path's base name should match the model name."),
     }
 
-    def __init__(self, msb_model_source=None, name=None, description=None, entry_type=None, sib_path=None):
+    def __init__(self, msb_model_source=None, name=None, description=None, model_type=None, sib_path=None):
         """Create an instance of an MSB model entry using packed data (`msb_model_source`) or keyword arguments.
 
         If `msb_model_source` is not given, then at least `name` and `entry_type` must be, with `description` optional
@@ -43,11 +43,11 @@ class MSBModel(MSBEntry):
             msb_model_source = BytesIO(msb_model_source)
         if isinstance(msb_model_source, BufferedReader):
             self.unpack(msb_model_source)
-        elif msb_model_source is None and name is not None and entry_type is not None:
+        elif msb_model_source is None and name is not None and model_type is not None:
             self.name = name
-            self.ENTRY_TYPE = MSBModelList.resolve_entry_type(entry_type)
+            self.ENTRY_TYPE = MSBModelList.resolve_entry_type(model_type)
             if not isinstance(self.ENTRY_TYPE, MSB_MODEL_TYPE):
-                raise TypeError(f"`entry_type` must be a MSB_MODEL_TYPE (or a name/value inside it), not {entry_type}")
+                raise TypeError(f"`model_type` must be a MSB_MODEL_TYPE (or a name/value inside it), not {model_type}")
             if description is None or isinstance(description, str):
                 self.description = description
             else:
@@ -89,6 +89,10 @@ class MSBModel(MSBEntry):
     def set_indices(self, model_type_index, instance_count):
         self._model_type_index = model_type_index
         self._instance_count = instance_count
+
+    def set_sib_path_from_map_id(self, map_id):
+        """Use given map ID sequence, e.g. (10, 2, 0, 0), to auto-set SIB path."""
+        self.sib_path = self.auto_sib_path(name=self.name, entry_type=self.ENTRY_TYPE, sib_path=map_id)
 
     @staticmethod
     def auto_sib_path(name, entry_type, sib_path):
@@ -141,6 +145,13 @@ class MSBModelList(MSBEntryList):
     Players: tp.List[MSBModel]
     Collisions: tp.List[MSBModel]
     Navmeshes: tp.List[MSBModel]
+
+    def add_model(self, model_type, model_name, sib_path, description=None):
+        """Add a new `MSBModel` instance of the given entry type and SIB path (or map sequence)."""
+        self.add_entry(
+            MSBModel(name=model_name, description=description, model_type=model_type, sib_path=sib_path),
+            append_to_entry_type=model_type,
+        )
 
     def set_indices(self, part_instance_counts):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""

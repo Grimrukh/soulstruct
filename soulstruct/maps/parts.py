@@ -1071,7 +1071,7 @@ class MSBPartList(MSBEntryList):
             raise KeyError(f"Multiple MSB parts named: {entry_name}. Please make them unique.")
         return parts[0]
 
-    def create_map_load_trigger(self, name, connected_map, collision, draw_groups=None, display_groups=None):
+    def create_map_load_trigger(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
         """Creates a new `MapLoadTrigger` that references and copies the transform of the given `collision`.
 
         The `name` and `map_id` of the new `MapLoadTrigger` must be given. You can also specify its `draw_groups` and
@@ -1079,6 +1079,11 @@ class MSBPartList(MSBEntryList):
         """
         if not isinstance(collision, MSBCollision):
             collision = self.get_part_by_name(collision, "Collision")
+        if name is None:
+            game_map = get_map(connected_map)
+            name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
+        if name in self.get_entry_names("MapLoadTrigger"):
+            raise ValueError(f"{repr(name)} is already the name of an existing MapLoadTrigger.")
         map_load_trigger = MSBMapLoadTrigger(
             name=name,
             connected_map=connected_map,

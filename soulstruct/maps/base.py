@@ -258,20 +258,19 @@ class MSBEntryList:
         """Add entry at desired global index.
 
         If `global_index` is None, it defaults to the end of the given `append_to_entry_type` type, which in turn
-        defaults to None (end of global entry list).
+        defaults to being the end of the global entry list.
         """
         if global_index is None:
-            if append_to_entry_type is not None:
-                entry_type = self.resolve_entry_type(append_to_entry_type)
-                last_entry_local_index = len(self.get_entry_names(entry_type)) - 1
-                if last_entry_local_index == -1:
-                    # No entries of given type exist. Fall back to global index.
-                    # TODO: Could also guess where new entry type should be inserted.
-                    global_index = len(self)
-                else:
-                    global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
-            else:
+            if append_to_entry_type is None:
+                raise ValueError("You must provide `global_index` or `append_to_entry_type` to `add_entry()`.")
+            entry_type = self.resolve_entry_type(append_to_entry_type)
+            last_entry_local_index = len(self.get_entry_names(entry_type)) - 1
+            if last_entry_local_index == -1:
+                # No entries of given type exist. Fall back to global index.
+                # TODO: Could also guess where new entry type should be inserted.
                 global_index = len(self)
+            else:
+                global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
         self._entries.insert(global_index, entry)
 
     def delete_entry(self, entry_name_or_index):
@@ -297,6 +296,8 @@ class MSBEntryList:
         local_index = self.get_entry_type_index(entry_name_or_index)
         source_entry = self.get_entries(entry_type)[local_index]
         duplicated = copy.deepcopy(source_entry)
+        if kwargs.get("name", "") == source_entry.name:
+            raise ValueError(f"Name of duplicated entry cannot be set to the source name: {source_entry.name})")
         if "name" not in kwargs:
             duplicate_tag_match = _DUPLICATE_TAG_MATCH.match(duplicated.name)
             existing_names = self.get_entry_names()

@@ -822,7 +822,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     sib_path = (int(map_id[1:3]), int(map_id[4:6]))
                 else:
                     sib_path = None  # fine for Objects, Characters, and Players
-                new_model = MSBModel(name=model_name, entry_type=model_type, sib_path=sib_path)
+                new_model = MSBModel(name=model_name, model_type=model_type, sib_path=sib_path)
                 self.get_selected_msb().models.add_entry(new_model, append_to_entry_type=model_type)
                 return True
         else:

@@ -92,14 +92,14 @@ class MCPRoom(object):
 
     def unpack(self, mcp_room_buffer):
         room_struct = self.STRUCT.unpack(mcp_room_buffer)
-        self.map_id = room_struct.map_id
-        self.index = room_struct.index
-        self.box_start = Vector3(room_struct.box_start)
-        self.box_end = Vector3(room_struct.box_end)
+        self.map_id = room_struct["map_id"]
+        self.index = room_struct["index"]
+        self.box_start = Vector3(room_struct["box_start"])
+        self.box_end = Vector3(room_struct["box_end"])
         old_offset = mcp_room_buffer.tell()
-        mcp_room_buffer.seek(room_struct.connected_rooms_offset)
+        mcp_room_buffer.seek(room_struct["connected_rooms_offset"])
         self.connected_rooms = []
-        for _ in range(room_struct.connected_rooms_count):
+        for _ in range(room_struct["connected_rooms_count"]):
             self.connected_rooms.append(struct.unpack("i", mcp_room_buffer.read(4))[0])
         mcp_room_buffer.seek(old_offset)
 
@@ -222,9 +222,9 @@ class MCP(object):
 
     def unpack(self, mcp_buffer):
         header = self.HEADER_STRUCT.unpack(mcp_buffer)
-        self.unknown = header.unknown
-        mcp_buffer.seek(header.rooms_offset)
-        self.rooms = [MCPRoom(mcp_buffer) for _ in range(header.rooms_count)]
+        self.unknown = header["unknown"]
+        mcp_buffer.seek(header["rooms_offset"])
+        self.rooms = [MCPRoom(mcp_buffer) for _ in range(header["rooms_count"])]
 
     def pack(self):
         offset = self.HEADER_STRUCT.size
@@ -440,18 +440,18 @@ class MCGNode(object):
 
     def unpack(self, mcg_node_buffer):
         node_struct = self.STRUCT.unpack(mcg_node_buffer)
-        self.translate = Vector3(node_struct.translate)
-        self.unknowns = (node_struct.unk0, node_struct.unk1)
+        self.translate = Vector3(node_struct["translate"])
+        self.unknowns = (node_struct["unk0"], node_struct["unk1"])
 
         old_offset = mcg_node_buffer.tell()
 
         self.connected_nodes = []
-        mcg_node_buffer.seek(node_struct.connected_nodes_offset)
-        for _ in range(node_struct.connection_count):
+        mcg_node_buffer.seek(node_struct["connected_nodes_offset"])
+        for _ in range(node_struct["connection_count"]):
             self.connected_nodes.append(struct.unpack("<i", mcg_node_buffer.read(4))[0])
         self.connected_edges = []
-        mcg_node_buffer.seek(node_struct.connected_edges_offset)
-        for _ in range(node_struct.connection_count):
+        mcg_node_buffer.seek(node_struct["connected_edges_offset"])
+        for _ in range(node_struct["connection_count"]):
             self.connected_edges.append(struct.unpack("<i", mcg_node_buffer.read(4))[0])
 
         mcg_node_buffer.seek(old_offset)
@@ -536,21 +536,21 @@ class MCGEdge(object):
 
     def unpack(self, mcg_edge_buffer):
         edge_struct = self.STRUCT.unpack(mcg_edge_buffer)
-        self.start_node = edge_struct.start_node
-        self.end_node = edge_struct.end_node
-        self.mcp_room_index = edge_struct.mcp_room_index
-        self.map_id = edge_struct.map_id
-        self.unk_float = edge_struct.unk_float
+        self.start_node = edge_struct["start_node"]
+        self.end_node = edge_struct["end_node"]
+        self.mcp_room_index = edge_struct["mcp_room_index"]
+        self.map_id = edge_struct["map_id"]
+        self.unk_float = edge_struct["unk_float"]
 
         old_offset = mcg_edge_buffer.tell()
 
         self.unk1_indices = []
-        mcg_edge_buffer.seek(edge_struct.unk1_offset)
-        for _ in range(edge_struct.unk1_count):
+        mcg_edge_buffer.seek(edge_struct["unk1_offset"])
+        for _ in range(edge_struct["unk1_count"]):
             self.unk1_indices.append(struct.unpack("<i", mcg_edge_buffer.read(4))[0])
         self.unk2_indices = []
-        mcg_edge_buffer.seek(edge_struct.unk2_offset)
-        for _ in range(edge_struct.unk2_count):
+        mcg_edge_buffer.seek(edge_struct["unk2_offset"])
+        for _ in range(edge_struct["unk2_count"]):
             self.unk2_indices.append(struct.unpack("<i", mcg_edge_buffer.read(4))[0])
 
         mcg_edge_buffer.seek(old_offset)
@@ -611,11 +611,11 @@ class MCG(object):
 
     def unpack(self, mcg_buffer):
         header = self.HEADER_STRUCT.unpack(mcg_buffer)
-        self.unknowns = (header.unk0, header.unk1, header.unk2)
-        mcg_buffer.seek(header.nodes_offset)
-        self.nodes = [MCGNode(mcg_buffer) for _ in range(header.nodes_count)]
-        mcg_buffer.seek(header.edges_offset)
-        self.edges = [MCGEdge(mcg_buffer) for _ in range(header.edges_count)]
+        self.unknowns = (header["unk0"], header["unk1"], header["unk2"])
+        mcg_buffer.seek(header["nodes_offset"])
+        self.nodes = [MCGNode(mcg_buffer) for _ in range(header["nodes_count"])]
+        mcg_buffer.seek(header["edges_offset"])
+        self.edges = [MCGEdge(mcg_buffer) for _ in range(header["edges_count"])]
 
     def pack(self):
         offset = self.HEADER_STRUCT.size
@@ -884,7 +884,6 @@ class NavmeshGraph(object):
             self._msb = MSB(self.msb_path)
         except FileNotFoundError:
             raise FileNotFoundError(f"Could not find MSB file: {str(self.msb_path)}")
-        self._navmeshes = self._msb.parts.get_entries("Navmesh")
         self._navmeshes_valid = True
         self.check_navmeshes()
 
@@ -895,16 +894,16 @@ class NavmeshGraph(object):
 
     @property
     def navmeshes(self):
-        """You can't change the attached MSB instance."""
-        return self._navmeshes
+        """Shortcut for getting list of Navmesh instances from MSB parts."""
+        return self._msb.parts.Navmeshes
 
     def check_navmeshes(self):
-        navmesh_count = len(self._navmeshes)
+        navmesh_count = len(self.navmeshes)
         room_count = len(self.mcp.rooms)
         max_room_index = self.mcp.max_index
         if navmesh_count < max_room_index + 1:
             # At least one room has an invalid index into the MSB navmeshes.
-            print(f"WARNING: Number of navmeshes in MSB ({len(self._navmeshes)}) is less than the maximum room index "
+            print(f"WARNING: Number of navmeshes in MSB ({len(self.navmeshes)}) is less than the maximum room index "
                   f"plus 1 ({max_room_index}) This should be fixed ASAP!")
             self._navmeshes_valid = False
         else:
@@ -918,7 +917,7 @@ class NavmeshGraph(object):
         if not self._navmeshes_valid:
             raise ValueError("Cannot reliably get room index from navmesh name if navmesh/room counts do not match.\n"
                              "(Call `.check_navmeshes()` after fixing this issue to re-validate.)")
-        navmesh_matches = [i for i, navmesh in enumerate(self._navmeshes) if navmesh.name == navmesh_name]
+        navmesh_matches = [i for i, navmesh in enumerate(self.navmeshes) if navmesh.name == navmesh_name]
         if not navmesh_matches:
             raise ValueError(f"No navmeshes in MSB with name {navmesh_name}.")
         elif len(navmesh_matches) > 1:
@@ -935,7 +934,7 @@ class NavmeshGraph(object):
             raise ValueError(f"No rooms in MCP with index {room_index}.")
         elif len(room_mcp_index_matches) > 1:
             raise ValueError(f"Multiple rooms in MCP with index {room_index}. This shouldn't happen!")
-        return self._navmeshes[room_mcp_index_matches[0]].name
+        return self.navmeshes[room_mcp_index_matches[0]].name
 
     def delete_room_and_edges_inside(self, room_index, update_room_indices=True):
         """Delete MCP rooms and any edges that pass through them. Updates room indices by default."""
@@ -1021,10 +1020,10 @@ class NavmeshGraph(object):
             mcg_path = Path(map_path / f"{self.map_id}.mcg")
         self.mcp.write_packed(mcp_path)
         self.mcg.write_packed(mcg_path)
-        print(f"# MCP and MCG files written for map {self.map_id}.")
+        # print(f"# MCP and MCG files written for map {self.map_id}.")
         if write_msb:
             self._msb.write_packed(msb_path)
-            print(f"# MSB file (from NavmeshGraph) written for map {self.map_id}.")
+            # print(f"# MSB file (from NavmeshGraph) written for map {self.map_id}.")
 
 
 def backup_all_mcp_msg(source_map, dest_map):
