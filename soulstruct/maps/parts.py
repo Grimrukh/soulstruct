@@ -1054,17 +1054,6 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
     MapLoadTriggers: tp.Sequence[MSBMapLoadTrigger]
 
-    def get_part_by_name(self, entry_name: str, entry_type=None) -> BaseMSBPart:
-        parts = []
-        for part in self.get_entries(entry_type):
-            if part.name == entry_name:
-                parts.append(part)
-        if not parts:
-            raise KeyError(f"No MSB parts named: {entry_name}")
-        elif len(parts) >= 2:
-            raise KeyError(f"Multiple MSB parts named: {entry_name}. Please make them unique.")
-        return parts[0]
-
     def create_map_load_trigger(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
         """Creates a new `MapLoadTrigger` that references and copies the transform of the given `collision`.
 
@@ -1072,7 +1061,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
         `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
         """
         if not isinstance(collision, MSBCollision):
-            collision = self.get_part_by_name(collision, "Collision")
+            collision = self.get_entry_by_name(collision, "Collision")
         if name is None:
             game_map = get_map(connected_map)
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"

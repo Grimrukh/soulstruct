@@ -42,6 +42,10 @@ Some notes about navmeshes:
     - The *draw groups* of collisions appear to be used for *children only*! Actual collision physics are determined
     solely by backread state, which is determined by navmesh rooms and groups.
 """
+from __future__ import annotations
+
+__all__ = ["MCP", "MCG", "NavmeshGraph"]
+
 import copy
 import shutil
 import struct
@@ -54,10 +58,8 @@ from soulstruct.maps.msb import MSB
 from soulstruct.utilities.core import BinaryStruct, create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
 
-__all__ = ["MCP", "MCG", "NavmeshGraph"]
 
-
-class MCPRoom(object):
+class MCPRoom:
 
     STRUCT = BinaryStruct(
         ("map_id", "4b"),
@@ -68,11 +70,11 @@ class MCPRoom(object):
         ("box_end", "3f"),
     )
 
-    def __init__(self, mcp_room_source):
+    def __init__(self, mcp_room_source=None, **kwargs):
         """Simple bounding box around a navmesh (indexed directly from MSB), with a list of other NavRoom indices that
         this one connects to.
 
-        NavRooms are referenced by NavGates in MCG files.
+        MCPRooms are also referenced by the MCGNodes in MCG files, which connect to one another through edges in rooms.
 
         More importantly, I believe that the navmesh distances used for backread purposes use simple raycasts into
         these volumes.
@@ -87,8 +89,15 @@ class MCPRoom(object):
             self.unpack(BytesIO(mcp_room_source))
         elif isinstance(mcp_room_source, (BytesIO, BufferedReader)):
             self.unpack(mcp_room_source)
-        else:
+        elif mcp_room_source is not None:
             raise TypeError("'mcp_room_source' must be a buffer or bytes.")
+        self.set(**kwargs)
+
+    def set(self, **kwargs):
+        for prop, value in kwargs.items():
+            if prop not in {"map_id", "index", "box_start", "box_end", "connected_rooms"}:
+                raise AttributeError(f"Invalid MCPRoom field: {prop}")
+            setattr(self, prop, value)
 
     def unpack(self, mcp_room_buffer):
         room_struct = self.STRUCT.unpack(mcp_room_buffer)
@@ -173,6 +182,10 @@ class MCPRoom(object):
             (v[1], v[3], v[7], v[5]),  # top
             (v[0], v[2], v[6], v[4]),  # bottom
         )
+
+    def copy(self) -> MCPRoom:
+        """Return a deep copy of this MCPRoom."""
+        return copy.deepcopy(self)
 
     def draw(self, axes=None, show=False, room_color="cyan", label_room=False):
         try:
@@ -271,7 +284,7 @@ class MCP(object):
     def max_index(self):
         return max(room.index for room in self.rooms)
 
-    def get_room_index(self, room_index):
+    def get_room_index(self, room_index) -> MCPRoom:
         """Return MCPRoom instance with given index. Raises an error if 0 or multiple rooms are found."""
         rooms = [room for room in self.rooms if room.index == room_index]
         if not rooms:
@@ -279,6 +292,27 @@ class MCP(object):
         elif len(rooms) > 1:
             raise IndexError(f"Multiple MCP rooms found with local index {room_index}.")
         return rooms[0]
+
+    def add_room(self, map_id, box_start, box_end, connected_rooms) -> MCPRoom:
+        """Add a new `MCPRoom` instance to the end of the MCP room list, connected to all given room indices, and
+        return it. The index is the maximum existing room index plus one."""
+        room = MCPRoom(
+            map_id=map_id,
+            index=self.max_index + 1,
+            box_start=box_start,
+            box_end=box_end,
+            connected_rooms=connected_rooms,
+        )
+        self.rooms.append(room)
+        return room
+
+    def duplicate_room(self, source_index, **kwargs):
+        """Duplicate given room index. By default, new index is maximum existing room index plus one."""
+        kwargs.setdefault("index", self.max_index + 1)
+        room = self.get_room_index(source_index).copy()
+        room.set(**kwargs)
+        self.rooms.append(room)
+        return room
 
     def delete_room(self, room_index, update_indices=True):
         """Delete room with given local index (NOT absolute index in MCP, which is never used) and remove that room from

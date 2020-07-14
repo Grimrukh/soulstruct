@@ -193,7 +193,7 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         """
         entries = [entry for entry in self.get_entries(entry_type) if entry.name == entry_name]
         if not entries:
-            raise ValueError(f"Entry name {entry_name} does not appear in {self.__class__.__name__}.")
+            raise KeyError(f"Entry name {entry_name} does not appear in {self.__class__.__name__}.")
         elif len(entries) >= 2:
             raise ValueError(f"Entry name {entry_name} appears more than once in "
                              f"{self.__class__.__name__}. You must access it by index.")
@@ -336,18 +336,17 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
 
     def get_next_global_index_of_type(self, entry_type) -> int:
         """Returns next global index of given `entry_type`, e.g. for inserting a new entry into the `MSBEntryList` at
-        the end of its local type.
+        the end of its local type. This is inferred by just finding the last existing instance of that type.
 
-        Note that Dark Souls will not read entries that do not appear in their contiguous local type lists, so this
-        method is necessary to find the correct place for a new entry.
+        Note that Dark Souls may not read entries that do not appear in their contiguous local type lists, so this
+        method is often necessary to find the correct place for a new entry.
+
+        # TODO: Need to infer where to insert global index if no entries of that type yet exist (default ordering).
         """
         entry_type = self.resolve_entry_type(entry_type)
-        global_index = 0
-        for entry_type_e in self.ENTRY_TYPE_ENUM:
-            global_index += len(self.get_entries(entry_type))
-            if entry_type_e is entry_type:
-                return global_index + 1
-        raise TypeError(f"Failed to detect next global index for unrecognized entry type: {entry_type}")
+        last_global_index = max(i for i, entry in enumerate(self._entries) if entry.ENTRY_TYPE == entry_type)
+        return last_global_index + 1
+        # raise TypeError(f"Failed to detect next global index for unrecognized entry type: {entry_type}")
 
     def get_indices(self):
         """Returns a dictionary mapping entry names to their global indices for resolving named links before repacking.

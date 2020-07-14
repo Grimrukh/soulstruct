@@ -215,7 +215,7 @@ class MSB(object):
             selected_entries = list(selected_entries)  # so strings can be replaced with part instances
             for i, entry in enumerate(selected_entries):
                 if isinstance(entry, str):
-                    selected_entries[i] = self.parts.get_part_by_name(entry)
+                    selected_entries[i] = self.parts.get_entry_by_name(entry)
                 elif not isinstance(entry, MSBEntry):
                     raise TypeError("`selected_entries` should contain only `MSBEntry` instances or Part names.")
 
