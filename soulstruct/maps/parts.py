@@ -1037,7 +1037,7 @@ def _enabled_flag_set_to_flag_group(enabled_flags):
     return flag_group
 
 
-class MSBPartList(MSBEntryList):
+class MSBPartList(MSBEntryList[BaseMSBPart]):
     ENTRY_LIST_NAME = 'Parts'
     ENTRY_CLASS = staticmethod(MSBPart)
     ENTRY_TYPE_ENUM = MSB_PART_TYPE
@@ -1053,12 +1053,6 @@ class MSBPartList(MSBEntryList):
     UnusedObjects: tp.Sequence[MSBUnusedObject]
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
     MapLoadTriggers: tp.Sequence[MSBMapLoadTrigger]
-
-    def get_entries(self, entry_type=None) -> tp.List[BaseMSBPart]:
-        if entry_type is None:
-            return self._entries  # Full entry list, with types potentially intermingled.
-        entry_type = self.resolve_entry_type(entry_type)
-        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
 
     def get_part_by_name(self, entry_name: str, entry_type=None) -> BaseMSBPart:
         parts = []
@@ -1098,6 +1092,7 @@ class MSBPartList(MSBEntryList):
         if display_groups is not None:
             map_load_trigger.display_groups = display_groups
         self.add_entry(map_load_trigger, append_to_entry_type="MapLoadTrigger")
+        return map_load_trigger
 
     def set_indices(
             self,
@@ -1157,7 +1152,3 @@ class MSBPartList(MSBEntryList):
             instance_counts.setdefault(entry.model_name, 0)
             instance_counts[entry.model_name] += 1
         return instance_counts
-
-    def __iter__(self) -> tp.Iterator[BaseMSBPart]:
-        """Iterate over all entries."""
-        return iter(self._entries)

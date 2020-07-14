@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+__all__ = ["MSBEntry", "MSBEntryList", "MSBEntryEntity", "MSBEntryEntityCoordinates"]
+
 import abc
 import copy
 import logging
@@ -12,6 +16,8 @@ from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 _DUPLICATE_TAG_MATCH = re.compile(r' <(\d+)>$')
 _LOGGER = logging.getLogger(__name__)
+
+EntryType = tp.TypeVar("EntryType", bound="MSBEntry")
 
 
 class MSBEntry(abc.ABC):
@@ -70,7 +76,7 @@ class MSBEntry(abc.ABC):
         return list(self.FIELD_INFO.keys())
 
 
-class MSBEntryList:
+class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
 
     MAP_ENTITY_LIST_HEADER = BinaryStruct(
         '4x',
@@ -162,7 +168,7 @@ class MSBEntryList:
 
         return packed_header + packed_name + packed_entries
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Iterator[EntryType]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -170,30 +176,36 @@ class MSBEntryList:
         """Count of all entries."""
         return len(self._entries)
 
-    def __getitem__(self, entry_name_or_index) -> MSBEntry:
+    def __getitem__(self, entry_name_or_index) -> EntryType:
         """You can access entries using their name (if unique) or local type index."""
         if isinstance(entry_name_or_index, int):
-            entry_index = entry_name_or_index
+            return self._entries[entry_name_or_index]
         elif isinstance(entry_name_or_index, str):
-            entry_names = self.get_entry_names()
-            entry_name_count = entry_names.count(entry_name_or_index)
-            if entry_name_count > 1:
-                raise ValueError(f"Entry name {entry_name_or_index} appears more than once in "
-                                 f"{self.__class__.__name__}. You must access it by index.")
-            elif entry_name_count == 0:
-                raise ValueError(f"Entry name {entry_name_or_index} does not appear in {self.__class__.__name__}.")
-            entry_index = entry_names.index(entry_name_or_index)
-        else:
-            raise TypeError(f"MSBEntryList key must be an entry index or entry name, not {entry_name_or_index}.")
-        return self.get_entries()[entry_index]
+            return self.get_entry_by_name(entry_name_or_index)
+        raise TypeError(f"`MSBEntryList` key must be an entry index or entry name, not {entry_name_or_index}.")
 
-    def get_entries(self, entry_type=None) -> tp.List[MSBEntry]:
+    def get_entry_by_name(self, entry_name: str, entry_type=None) -> EntryType:
+        """Try to retrieve entry of given name. You can optionally specify the type (e.g. as a promise to yourself).
+
+        Note that you can simply index the MSB entry list with a string (e.g. `msb.parts["h0000B0"]` as a shortcut to
+        calling this method. It will raise a KeyError if the given name is not found OR if multiple entries with the
+        given name (and type) are found.
+        """
+        entries = [entry for entry in self.get_entries(entry_type) if entry.name == entry_name]
+        if not entries:
+            raise ValueError(f"Entry name {entry_name} does not appear in {self.__class__.__name__}.")
+        elif len(entries) >= 2:
+            raise ValueError(f"Entry name {entry_name} appears more than once in "
+                             f"{self.__class__.__name__}. You must access it by index.")
+        return entries[0]
+
+    def get_entries(self, entry_type=None) -> tp.List[EntryType]:
         if entry_type is None:
             return self._entries  # Full entry list, with types potentially intermingled.
         entry_type = self.resolve_entry_type(entry_type)
         return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
 
-    def get_entry_names(self, entry_type=None):
+    def get_entry_names(self, entry_type=None) -> tp.List[str]:
         """Returns an ordered list of entry names (global or type-specific).
 
         Note that only the global index (`entry_type=None`) is valid for index links from other MSB entries, with the
@@ -273,7 +285,7 @@ class MSBEntryList:
                 global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
         self._entries.insert(global_index, entry)
 
-    def delete_entry(self, entry_name_or_index):
+    def delete_entry(self, entry_name_or_index) -> EntryType:
         """Delete (and return) entry at given global index or with given (unique) name."""
         if isinstance(entry_name_or_index, MSBEntry):
             entry_name_or_index = self.get_entry_global_index(entry_name_or_index.name)
@@ -283,7 +295,12 @@ class MSBEntryList:
             return self._entries.pop(entry_name_or_index)
         raise TypeError("Argument to `delete_entry()` must be an entry name or global index in its MSB list.")
 
-    def duplicate_entry(self, entry_type, entry_name_or_index, insert_below_original=True, **kwargs):
+    def delete_all_entries_of_type(self, entry_type):
+        """Delete all entries of the given type."""
+        for entry_name in self.get_entry_names(entry_type):
+            self.delete_entry(entry_name)
+
+    def duplicate_entry(self, entry_type, entry_name_or_index, insert_below_original=True, **kwargs) -> EntryType:
         """Duplicate an entry of the given type and local index or name.
 
         By default, the duplicated entry is inserted just below the source entry. If `insert_below_original=False`, it
@@ -317,7 +334,7 @@ class MSBEntryList:
         duplicated.set(**kwargs)
         return duplicated
 
-    def get_next_global_index_of_type(self, entry_type):
+    def get_next_global_index_of_type(self, entry_type) -> int:
         """Returns next global index of given `entry_type`, e.g. for inserting a new entry into the `MSBEntryList` at
         the end of its local type.
 
@@ -379,8 +396,8 @@ class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
         Inherited by both `MSBPart` and `MSBRegion`).
         """
         super().__init__()
-        self.translate = Vector3.zero()
-        self.rotate = Vector3.zero()
+        self._translate = Vector3.zero()
+        self._rotate = Vector3.zero()
 
     def rotate_in_world(
             self,
@@ -394,9 +411,25 @@ class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
         """
         rotation = resolve_rotation(rotation, radians)
         pivot_point = Vector3(pivot_point)
-        old_translate = self.translate
-        old_rotate = self.rotate
-        self.rotate = (rotation @ Matrix3.from_euler_angles(self.rotate)).to_euler_angles()
-        self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
+        # old_translate = self.translate
+        # old_rotate = self.rotate
+        self._rotate = (rotation @ Matrix3.from_euler_angles(self.rotate)).to_euler_angles()
+        self._translate = (rotation @ (self.translate - pivot_point)) + pivot_point
         # _LOGGER.debug(f"Rotating {self.name}: {old_rotate} -> {self.rotate}\n"
         #               f"    (Translate: {old_translate} -> {self.translate})")
+
+    @property
+    def translate(self):
+        return self._translate
+
+    @translate.setter
+    def translate(self, value):
+        self._translate = Vector3(value)
+
+    @property
+    def rotate(self):
+        return self._rotate
+
+    @rotate.setter
+    def rotate(self, value):
+        self._rotate = Vector3(value)

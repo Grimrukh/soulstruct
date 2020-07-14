@@ -161,7 +161,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 # TODO: Need better display of draw groups (e.g. popout editor), as they fall off screen.
                 if isinstance(value, set):
                     # Convert sets (e.g. draw/display/navmesh groups) to sorted lists so empty sets appear pretty.
-                    value_text = repr(sorted(value))
+                    value_text = repr(sorted(list(value)))
                 else:
                     value_text = repr(value)
                 self.value_label.var.set(value_text)

@@ -131,7 +131,7 @@ class MSBModel(MSBEntry):
         raise ValueError(f"Invalid MSB model type: {entry_type}. Cannot determine SIB path.")
 
 
-class MSBModelList(MSBEntryList):
+class MSBModelList(MSBEntryList[MSBModel]):
 
     ENTRY_LIST_NAME = "Models"
     ENTRY_CLASS = staticmethod(MSBModel)
@@ -166,7 +166,3 @@ class MSBModelList(MSBEntryList):
                 raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} model {entry.name}: {e}")
             else:
                 type_indices[entry.ENTRY_TYPE] += 1
-
-    def __iter__(self) -> tp.Iterator[MSBModel]:
-        """Iterate over all entries."""
-        return iter(self._entries)

@@ -238,7 +238,7 @@ class Matrix3(_Matrix):
         """Transpose of matrix."""
         return Matrix3.from_nested_lists([list(col) for col in zip(*self.data)])
 
-    def to_euler_angles(self, radians=False, order="xzy"):
+    def to_euler_angles(self, radians=False, order="xzy") -> Vector3:
         """Only supports order XZY for now (standard FromSoft usage)."""
         if order != "xzy":
             raise ValueError("Can only compute Eular matrix for XZY rotation, as used in DS1 at least.")

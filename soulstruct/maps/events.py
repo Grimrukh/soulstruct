@@ -780,7 +780,7 @@ MSB_EVENT_TYPE_CLASSES = {
 }
 
 
-class MSBEventList(MSBEntryList):
+class MSBEventList(MSBEntryList[BaseMSBEvent]):
     ENTRY_LIST_NAME = 'Events'
     ENTRY_CLASS = staticmethod(MSBEvent)
     ENTRY_TYPE_ENUM = MSB_EVENT_TYPE
@@ -801,12 +801,6 @@ class MSBEventList(MSBEntryList):
     Environment: tp.Sequence[MSBEnvironment]
     NPCInvasions: tp.Sequence[MSBNPCInvasion]
 
-    def get_entries(self, entry_type=None) -> tp.List[BaseMSBEvent]:
-        if entry_type is None:
-            return self._entries  # Full entry list, with types potentially intermingled.
-        entry_type = self.resolve_entry_type(entry_type)
-        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
-
     def set_names(self, region_names, part_names):
         for entry in self._entries:
             entry.set_names(region_names, part_names)
@@ -822,7 +816,3 @@ class MSBEventList(MSBEntryList):
                 raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} event {entry.name}: {e}")
             else:
                 type_indices[entry.ENTRY_TYPE] += 1
-
-    def __iter__(self) -> tp.Iterator[BaseMSBEvent]:
-        """Iterate over all entries."""
-        return iter(self._entries)

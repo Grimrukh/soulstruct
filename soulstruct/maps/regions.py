@@ -140,6 +140,10 @@ class MSBRegionPoint(BaseMSBRegion):
     player be facing when they spawn?)."""
     ENTRY_TYPE = MSB_REGION_TYPE.Point
 
+    def __init__(self, msb_region_shape_source=None, **kwargs):
+        super().__init__(msb_region_shape_source)
+        self.set(**kwargs)
+
     def unpack_type_data(self, msb_buffer):
         """No data to unpack."""
         pass
@@ -164,9 +168,10 @@ class MSBRegionCircle(BaseMSBRegion):
 
     ENTRY_TYPE = MSB_REGION_TYPE.Circle
 
-    def __init__(self, msb_region_shape_source):
+    def __init__(self, msb_region_shape_source=None, **kwargs):
         self.radius = None
         super().__init__(msb_region_shape_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         self.radius = BinaryStruct(*self.CIRCLE_STRUCT).unpack(msb_buffer)["radius"]
@@ -192,9 +197,10 @@ class MSBRegionSphere(BaseMSBRegion):
 
     ENTRY_TYPE = MSB_REGION_TYPE.Sphere
 
-    def __init__(self, msb_region_shape_source):
+    def __init__(self, msb_region_shape_source=None, **kwargs):
         self.radius = None
         super().__init__(msb_region_shape_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         self.radius = BinaryStruct(*self.SPHERE_STRUCT).unpack(msb_buffer)["radius"]
@@ -223,10 +229,11 @@ class MSBRegionCylinder(BaseMSBRegion):
 
     ENTRY_TYPE = MSB_REGION_TYPE.Cylinder
 
-    def __init__(self, msb_region_shape_source):
+    def __init__(self, msb_region_shape_source=None, **kwargs):
         self.radius = None
         self.height = None
         super().__init__(msb_region_shape_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.CYLINDER_STRUCT).unpack(msb_buffer)
@@ -259,10 +266,11 @@ class MSBRegionRect(BaseMSBRegion):
 
     ENTRY_TYPE = MSB_REGION_TYPE.Rect
 
-    def __init__(self, msb_region_shape_source):
+    def __init__(self, msb_region_shape_source=None, **kwargs):
         self.width = None
         self.depth = None
         super().__init__(msb_region_shape_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.RECT_STRUCT).unpack(msb_buffer)
@@ -298,11 +306,12 @@ class MSBRegionBox(BaseMSBRegion):
 
     ENTRY_TYPE = MSB_REGION_TYPE.Box
 
-    def __init__(self, msb_region_shape_source):
+    def __init__(self, msb_region_shape_source=None, **kwargs):
         self.width = None
         self.depth = None
         self.height = None
         super().__init__(msb_region_shape_source)
+        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.BOX_STRUCT).unpack(msb_buffer)
@@ -328,7 +337,7 @@ MSB_REGION_TYPE_CLASSES = {
 }
 
 
-class MSBRegionList(MSBEntryList):
+class MSBRegionList(MSBEntryList[BaseMSBRegion]):
     ENTRY_LIST_NAME = 'Regions'
     ENTRY_CLASS = staticmethod(MSBRegion)
     ENTRY_TYPE_ENUM = MSB_REGION_TYPE
@@ -342,28 +351,14 @@ class MSBRegionList(MSBEntryList):
     Rectangles: tp.Sequence[MSBRegionRect]
     Boxes: tp.Sequence[MSBRegionBox]
 
-    def get_region_by_name(self, entry_name: str, entry_type=None) -> BaseMSBRegion:
-        regions = []
-        for region in self.get_entries(entry_type):
-            if region.name == entry_name:
-                regions.append(region)
-        if not regions:
-            raise KeyError(f"No MSB regions named: {entry_name}")
-        elif len(regions) >= 2:
-            raise KeyError(f"Multiple MSB regions named: {entry_name}. Please make them unique.")
-        return regions[0]
-
-    def get_entries(self, entry_type=None) -> tp.List[BaseMSBRegion]:
-        if entry_type is None:
-            return self._entries  # Full entry list, with types potentially intermingled.
-        entry_type = self.resolve_entry_type(entry_type)
-        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
+    def add_region(self, region_type, **kwargs):
+        region_type = self.resolve_entry_type(region_type)
+        self.add_entry(
+            MSB_REGION_TYPE_CLASSES[region_type](**kwargs),
+            append_to_entry_type=region_type,
+        )
 
     def set_indices(self):
         """Global region index only."""
         for i, entry in enumerate(self._entries):
             entry.set_indices(region_index=i)
-
-    def __iter__(self) -> tp.Iterator[BaseMSBRegion]:
-        """Iterate over all entries."""
-        return iter(self._entries)
