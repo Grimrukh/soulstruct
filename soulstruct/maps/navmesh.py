@@ -267,6 +267,7 @@ class MCP(object):
                 raise ValueError("Cannot automatically set MCP path to write to.")
         else:
             mcp_path = Path(mcp_path)
+        mcp_path.parent.mkdir(parents=True, exist_ok=True)
         create_bak(mcp_path)
         with mcp_path.open("wb") as f:
             f.write(self.pack())
@@ -715,6 +716,7 @@ class MCG(object):
                 raise ValueError("Cannot automatically set MCG path to write to.")
         else:
             mcg_path = Path(mcg_path)
+        mcg_path.parent.mkdir(parents=True, exist_ok=True)
         create_bak(mcg_path)
         with mcg_path.open("wb") as f:
             f.write(self.pack())

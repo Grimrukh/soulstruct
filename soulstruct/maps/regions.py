@@ -351,8 +351,25 @@ class MSBRegionList(MSBEntryList[BaseMSBRegion]):
     Rectangles: tp.Sequence[MSBRegionRect]
     Boxes: tp.Sequence[MSBRegionBox]
 
-    def add_region(self, region_type, **kwargs):
+    def add_region(self, region_type, dimensions=None, **kwargs):
         region_type = self.resolve_entry_type(region_type)
+        if dimensions is not None:
+            if region_type == MSB_REGION_TYPE.Box:
+                if "width" in kwargs or "depth" in kwargs or "height" in kwargs:
+                    raise ValueError("Cannot use `dimensions` argument in addition to `width`, `depth`, or `height`.")
+                try:
+                    kwargs["width"], kwargs["depth"], kwargs["height"] = dimensions
+                except ValueError:
+                    raise ValueError(f"`dimensions` argument for Box must be (width, depth, height) sequence.")
+            elif region_type == MSB_REGION_TYPE.Cylinder:
+                if "radius" in kwargs or "height" in kwargs:
+                    raise ValueError("Cannot use `dimensions` argument in addition to `radius` or `height`.")
+                try:
+                    kwargs["radius"], kwargs["height"] = dimensions
+                except ValueError:
+                    raise ValueError(f"`dimensions` argument for Cylinder must be (radius, height) sequence.")
+            else:
+                raise ValueError("Can only use `dimensions` argument for Box or Cylinder region.")
         self.add_entry(
             MSB_REGION_TYPE_CLASSES[region_type](**kwargs),
             append_to_entry_type=region_type,

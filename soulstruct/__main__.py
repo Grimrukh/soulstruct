@@ -7,6 +7,7 @@ python -m soulstruct [source]
     [-t / --text]
     [-p / --params]
     [-l / --lighting]
+    [-m / --modmanager]
     [--bndpack]
     [--bndunpack]
     [--ai]
@@ -59,6 +60,12 @@ parser.add_argument(
     "-l", "--lighting", action='store_true',
     help=word_wrap(
         "Open Soulstruct Lighting Editor with given source."
+    )
+)
+parser.add_argument(
+    "-m", "--modmanager", action='store_true',
+    help=word_wrap(
+        "Open Soulstruct Mod Manager. No sources should be given."
     )
 )
 parser.add_argument(
@@ -121,6 +128,11 @@ def soulstruct_main(ss_args):
     FILE_HANDLER.setLevel(file_log_level)
 
     source = None if not ss_args.source else ss_args.source
+
+    if ss_args.modmanager:
+        from soulstruct.utilities.mod_manager import ModManagerWindow
+        ModManagerWindow().wait_window()
+        return ss_args.console
 
     if ss_args.text:
         from soulstruct.maps import DarkSoulsMaps

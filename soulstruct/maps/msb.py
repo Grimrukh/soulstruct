@@ -164,6 +164,7 @@ class MSB(object):
             msb_path = self.msb_path
         if isinstance(msb_path, str):
             msb_path = Path(msb_path)
+        msb_path.parent.mkdir(parents=True, exist_ok=True)
         create_bak(msb_path)
         with msb_path.open('wb') as f:
             f.write(self.pack())

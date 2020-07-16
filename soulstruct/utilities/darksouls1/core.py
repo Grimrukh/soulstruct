@@ -1,6 +1,6 @@
-from pathlib import Path
-
 __all__ = ["get_ds1_executable_and_version"]
+
+from pathlib import Path
 
 
 def get_ds1_executable_and_version(executable_path, dsr, debug=False):
