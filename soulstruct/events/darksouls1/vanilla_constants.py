@@ -24,9 +24,6 @@ class Depths:
     class Regions(Region):
         GapingDragonArena = 1002999
 
-    class Events:
-        GapingDragonBehavior = EventInfo(11005392)
-
 
 class FirelinkShrine:
     class Characters(Character):
@@ -233,7 +230,6 @@ class CharacterStoryFlagRanges:
 
 
 class CharacterStoryFlags:
-
     class MarvellousChester(Flag):
         Friendly = 1840
         Hostile = 1841

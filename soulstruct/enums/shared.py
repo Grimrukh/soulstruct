@@ -3,18 +3,50 @@ from enum import IntEnum
 __all__ = [
     # Basic
     "RestartType",
-    "uint", "short", "ushort", "char", "uchar",
-    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
-
+    "uint",
+    "short",
+    "ushort",
+    "char",
+    "uchar",
+    "PLAYER",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
     # Enums identical in all games
-    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
-    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
-    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
-    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
-    "WorldTendencyType", "UpdateAuthority",
-
+    "AIStatusType",
+    "BitOperation",
+    "ButtonType",
+    "CharacterType",
+    "CharacterUpdateRate",
+    "ClassType",
+    "ComparisonType",
+    "CutsceneType",
+    "DamageTargetType",
+    "EventEndType",
+    "FlagState",
+    "FlagType",
+    "InterpolationState",
+    "ItemType",
+    "RangeState",
+    "CoordEntityType",
+    "NavmeshType",
+    "NumberButtons",
+    "OnOffChange",
+    "RestartType",
+    "SoundType",
+    "StatueType",
+    "SummonSignType",
+    "TriggerAttribute",
+    "WorldTendencyType",
+    "UpdateAuthority",
     # Enums that exist in all games but require game-specific definition
-    "BannerType", "Covenant", "MultiplayerState", "NPCPartType", "TeamType",
+    "BannerType",
+    "Covenant",
+    "MultiplayerState",
+    "NPCPartType",
+    "TeamType",
 ]
 
 uint = "I"
@@ -157,6 +189,7 @@ class CoordEntityType(IntEnum):
 
 class NavmeshType(IntEnum):
     """Bit flags for Navmesh types."""
+
     Solid = 0b00000000000001
     Exit = 0b00000000000010
     Obstacle = 0b00000000000100
@@ -224,8 +257,11 @@ class TriggerAttribute(IntEnum):
     """Bit flags that determine which categories of player are able to use a given action button trigger.
 
     If you want multiple player types to be able to use it, simply add those enums together. The vanilla events almost
-    always use Human + Hollow (48), for which I have provided a shortcut enum.
+    always use Human + Hollow (48), for which I have provided a shortcut enum name, or All (255).
+
+    Fairly confident that these are shared by all games, but not completely confirmed.
     """
+
     Session = 0b00000001
     NoSession = 0b00000010
     Host = 0b00000100
@@ -278,6 +314,7 @@ class InfoMenuType(IntEnum):
 
 class TalkAttribute(IntEnum):
     """Bit flags with unknown purpose. Doc in Demon's Souls suggests they are "conversation setting relation" flags."""
+
     Repeat = 0b00000001
     Pad = 0b00000010
     Draw = 0b00000100
@@ -294,6 +331,7 @@ class PlayerDeathType(IntEnum):
     DEATH_STATE_RingNormalResurrection = 2
     DEATH_STATE_RingCurseResurrection = 3
     """
+
     Normal = 0
     MagicRevival = 1  # from unused 'Escape Death' miracle
     RingRevival = 2
@@ -335,6 +373,7 @@ class InvadeType(IntEnum):
 
 
 # Enums that are defined in multiple games and used in shared instructions/tests, but require game-specific definition.
+
 
 class BannerType(IntEnum):
     pass

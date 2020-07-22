@@ -32,10 +32,12 @@ def Constructor():
     RunCommonEvent(20005120, args=(3300210, 1110704128))
     RunCommonEvent(20005120, args=(3300211, 1109393408))
     RunCommonEvent(20005120, args=(3300212, 1108082688))
-    RunEvent(13305202, slot=0, args=(3300200, 3302270, 3302271, 13304200, 13304201, 13304200, 13304201), 
-             arg_types='iiiiiII')
-    RunEvent(13305202, slot=1, args=(3300201, 3302272, 3302273, 13304202, 13304203, 13304202, 13304203), 
-             arg_types='iiiiiII')
+    RunEvent(
+        13305202, slot=0, args=(3300200, 3302270, 3302271, 13304200, 13304201, 13304200, 13304201), arg_types="iiiiiII"
+    )
+    RunEvent(
+        13305202, slot=1, args=(3300201, 3302272, 3302273, 13304202, 13304203, 13304202, 13304203), arg_types="iiiiiII"
+    )
     RunCommonEvent(20005350, args=(3300200, 22700020, 53300990))
     RunCommonEvent(20005220, args=(3300230, 700, 1700))
     RunCommonEvent(20005210, args=(3300231, 700, 1700, 1065353216))
@@ -192,52 +194,382 @@ def Constructor():
     RunEvent(13305870, slot=13, args=(13304883, 3300850, 3302871, 13305880, 3302877, 3302875, 3302870))
     RunEvent(13305870, slot=14, args=(13304884, 3300850, 3302877, 13305880, 3302876, 3302875, 3302874))
     RunEvent(13305864, slot=0, args=(13305880, 3300850))
-    RunEvent(13305885, slot=0, args=(13304870, 3300850, 3300851, 3300852, 3300853, 3302876, 3302878, 3302879, 3302880, 
-             13305890, 3302875, 3302881, 3302872, 3302877, 3302873, 3302871, 3302870))
-    RunEvent(13305885, slot=1, args=(13304871, 3300850, 3300851, 3300852, 3300853, 3302871, 3302876, 3302880, 3302879, 
-             13305890, 3302870, 3302873, 3302872, 3302874, 3302875, 3302877, 3302878))
-    RunEvent(13305885, slot=2, args=(13304872, 3300850, 3300851, 3300852, 3300853, 3302874, 3302870, 3302876, 3302875, 
-             13305890, 3302881, 3302871, 3302872, 3302873, 3302877, 3302878, 3302879))
-    RunEvent(13305885, slot=3, args=(13304873, 3300850, 3300851, 3300852, 3300853, 3302874, 3302880, 3302878, 3302872, 
-             13305890, 3302879, 3302881, 3302870, 3302871, 3302873, 3302875, 3302876))
-    RunEvent(13305885, slot=4, args=(13304874, 3300850, 3300851, 3300852, 3300853, 3302873, 3302874, 3302880, 3302876, 
-             13305890, 3302878, 3302879, 3302881, 3302870, 3302871, 3302872, 3302875))
-    RunEvent(13305885, slot=5, args=(13304875, 3300850, 3300851, 3300852, 3300853, 3302877, 3302874, 3302871, 3302881, 
-             13305890, 3302876, 3302878, 3302879, 3302880, 3302870, 3302872, 3302873))
-    RunEvent(13305885, slot=6, args=(13304876, 3300850, 3300851, 3300852, 3300853, 3302872, 3302877, 3302879, 3302874, 
-             13305890, 3302875, 3302876, 3302878, 3302880, 3302881, 3302870, 3302871))
-    RunEvent(13305885, slot=7, args=(13304877, 3300850, 3300851, 3300852, 3300853, 3302875, 3302873, 3302880, 3302878, 
-             13305890, 3302872, 3302874, 3302876, 3302877, 3302879, 3302881, 3302870))
-    RunEvent(13305885, slot=8, args=(13304878, 3300850, 3300851, 3300852, 3300853, 3302873, 3302881, 3302872, 3302879, 
-             13305890, 3302871, 3302874, 3302875, 3302876, 3302877, 3302878, 3302880))
-    RunEvent(13305885, slot=9, args=(13304879, 3300850, 3300851, 3300852, 3300853, 3302870, 3302879, 3302878, 3302871, 
-             13305890, 3302872, 3302873, 3302874, 3302875, 3302876, 3302877, 3302880))
-    RunEvent(13305885, slot=10, args=(13304880, 3300850, 3300851, 3300852, 3300853, 3302875, 3302876, 3302872, 3302878, 
-             13305890, 3302881, 3302870, 3302871, 3302873, 3302874, 3302877, 3302879))
-    RunEvent(13305885, slot=11, args=(13304881, 3300850, 3300851, 3300852, 3300853, 3302876, 3302870, 3302879, 3302872, 
-             13305890, 3302880, 3302881, 3302871, 3302873, 3302874, 3302875, 3302877))
-    RunEvent(13305885, slot=12, args=(13304882, 3300850, 3300851, 3300852, 3300853, 3302872, 3302878, 3302880, 3302879, 
-             13305890, 3302876, 3302877, 3302881, 3302870, 3302871, 3302873, 3302874))
-    RunEvent(13305885, slot=13, args=(13304883, 3300850, 3300851, 3300852, 3300853, 3302871, 3302877, 3302875, 3302870, 
-             13305890, 3302878, 3302879, 3302880, 3302881, 3302872, 3302873, 3302874))
-    RunEvent(13305885, slot=14, args=(13304884, 3300850, 3300851, 3300852, 3300853, 3302877, 3302876, 3302875, 3302874, 
-             13305890, 3302873, 3302875, 3302878, 3302879, 3302880, 3302870, 3302871))
-    RunEvent(13305865, slot=0, args=(13305890, 3300850, 3300851, 3300852, 3300853, 13305891, 13305892, 13305893, 
-             13305894, 13305895, 13305896))
+    RunEvent(
+        13305885,
+        slot=0,
+        args=(
+            13304870,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302876,
+            3302878,
+            3302879,
+            3302880,
+            13305890,
+            3302875,
+            3302881,
+            3302872,
+            3302877,
+            3302873,
+            3302871,
+            3302870,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=1,
+        args=(
+            13304871,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302871,
+            3302876,
+            3302880,
+            3302879,
+            13305890,
+            3302870,
+            3302873,
+            3302872,
+            3302874,
+            3302875,
+            3302877,
+            3302878,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=2,
+        args=(
+            13304872,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302874,
+            3302870,
+            3302876,
+            3302875,
+            13305890,
+            3302881,
+            3302871,
+            3302872,
+            3302873,
+            3302877,
+            3302878,
+            3302879,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=3,
+        args=(
+            13304873,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302874,
+            3302880,
+            3302878,
+            3302872,
+            13305890,
+            3302879,
+            3302881,
+            3302870,
+            3302871,
+            3302873,
+            3302875,
+            3302876,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=4,
+        args=(
+            13304874,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302873,
+            3302874,
+            3302880,
+            3302876,
+            13305890,
+            3302878,
+            3302879,
+            3302881,
+            3302870,
+            3302871,
+            3302872,
+            3302875,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=5,
+        args=(
+            13304875,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302877,
+            3302874,
+            3302871,
+            3302881,
+            13305890,
+            3302876,
+            3302878,
+            3302879,
+            3302880,
+            3302870,
+            3302872,
+            3302873,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=6,
+        args=(
+            13304876,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302872,
+            3302877,
+            3302879,
+            3302874,
+            13305890,
+            3302875,
+            3302876,
+            3302878,
+            3302880,
+            3302881,
+            3302870,
+            3302871,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=7,
+        args=(
+            13304877,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302875,
+            3302873,
+            3302880,
+            3302878,
+            13305890,
+            3302872,
+            3302874,
+            3302876,
+            3302877,
+            3302879,
+            3302881,
+            3302870,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=8,
+        args=(
+            13304878,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302873,
+            3302881,
+            3302872,
+            3302879,
+            13305890,
+            3302871,
+            3302874,
+            3302875,
+            3302876,
+            3302877,
+            3302878,
+            3302880,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=9,
+        args=(
+            13304879,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302870,
+            3302879,
+            3302878,
+            3302871,
+            13305890,
+            3302872,
+            3302873,
+            3302874,
+            3302875,
+            3302876,
+            3302877,
+            3302880,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=10,
+        args=(
+            13304880,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302875,
+            3302876,
+            3302872,
+            3302878,
+            13305890,
+            3302881,
+            3302870,
+            3302871,
+            3302873,
+            3302874,
+            3302877,
+            3302879,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=11,
+        args=(
+            13304881,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302876,
+            3302870,
+            3302879,
+            3302872,
+            13305890,
+            3302880,
+            3302881,
+            3302871,
+            3302873,
+            3302874,
+            3302875,
+            3302877,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=12,
+        args=(
+            13304882,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302872,
+            3302878,
+            3302880,
+            3302879,
+            13305890,
+            3302876,
+            3302877,
+            3302881,
+            3302870,
+            3302871,
+            3302873,
+            3302874,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=13,
+        args=(
+            13304883,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302871,
+            3302877,
+            3302875,
+            3302870,
+            13305890,
+            3302878,
+            3302879,
+            3302880,
+            3302881,
+            3302872,
+            3302873,
+            3302874,
+        ),
+    )
+    RunEvent(
+        13305885,
+        slot=14,
+        args=(
+            13304884,
+            3300850,
+            3300851,
+            3300852,
+            3300853,
+            3302877,
+            3302876,
+            3302875,
+            3302874,
+            13305890,
+            3302873,
+            3302875,
+            3302878,
+            3302879,
+            3302880,
+            3302870,
+            3302871,
+        ),
+    )
+    RunEvent(
+        13305865,
+        slot=0,
+        args=(13305890, 3300850, 3300851, 3300852, 3300853, 13305891, 13305892, 13305893, 13305894, 13305895, 13305896),
+    )
     RunEvent(13305866, slot=0, args=(3300851, 3300850, 13305894, 13305891))
     RunEvent(13305866, slot=1, args=(3300852, 3300850, 13305895, 13305892))
     RunEvent(13305866, slot=2, args=(3300853, 3300850, 13305896, 13305893))
     RunCommonEvent(20005840, args=(3301850,))
     RunCommonEvent(20005841, args=(3301850,))
-    RunEvent(13305410, slot=0, args=(13300410, 9410, 3, 3301410), arg_types='iiIi')
-    RunEvent(13300412, slot=0, args=(13300410, 9412, 3301412, 3301416, 3303412, 3303416, 3303422, 33000020, 33000030, 
-             33000040, 0))
-    RunEvent(13300412, slot=1, args=(13300410, 9413, 3301413, 3301417, 3303413, 3303417, 3303423, 33000021, 33000031, 
-             33000041, 0))
-    RunEvent(13300412, slot=2, args=(13300410, 9414, 3301414, 3301418, 3303414, 3303418, 3303424, 33000022, 33000032, 
-             33000042, 0))
-    RunEvent(13300412, slot=3, args=(13300410, 9415, 3301415, 3301419, 3303415, 3303419, 3303425, 33000023, 33000033, 
-             33000043, 0))
+    RunEvent(13305410, slot=0, args=(13300410, 9410, 3, 3301410), arg_types="iiIi")
+    RunEvent(
+        13300412,
+        slot=0,
+        args=(13300410, 9412, 3301412, 3301416, 3303412, 3303416, 3303422, 33000020, 33000030, 33000040, 0),
+    )
+    RunEvent(
+        13300412,
+        slot=1,
+        args=(13300410, 9413, 3301413, 3301417, 3303413, 3303417, 3303423, 33000021, 33000031, 33000041, 0),
+    )
+    RunEvent(
+        13300412,
+        slot=2,
+        args=(13300410, 9414, 3301414, 3301418, 3303414, 3303418, 3303424, 33000022, 33000032, 33000042, 0),
+    )
+    RunEvent(
+        13300412,
+        slot=3,
+        args=(13300410, 9415, 3301415, 3301419, 3303415, 3303419, 3303425, 33000023, 33000033, 33000043, 0),
+    )
     RunEvent(13305421)
     RunCommonEvent(20005510, args=(13300580, 3301580, 61330000, 9400, 9401, 13305580))
     RunCommonEvent(20005510, args=(13300581, 3301581, 61330005, 9400, 9401, 13305581))
@@ -337,8 +669,9 @@ def Constructor():
     RunCommonEvent(20006001, args=(3300700, 1236, 1237, 73300130, 3))
     RunCommonEvent(20006002, args=(3300700, 1238, 1235, 1239))
     RunCommonEvent(20006003, args=(3300700, 73300131, 1235, 1220, 1221, 1220, 1234))
-    RunEvent(13305741, slot=0, args=(3300705, 3300710, 3300715, 73300180, 73300181, 0.6499999761581421), 
-             arg_types='iiiiif')
+    RunEvent(
+        13305741, slot=0, args=(3300705, 3300710, 3300715, 73300180, 73300181, 0.6499999761581421), arg_types="iiiiif"
+    )
     RunEvent(13300743, slot=0, args=(3300705, 3300710, 1356, 1357, 3300715, 1355, 1359, 1340))
     RunEvent(13305744, slot=0, args=(3300705, 3300710, 1357, 1340))
     RunEvent(13300747, slot=0, args=(3300705, 3300710, 3300715))
@@ -353,8 +686,9 @@ def Constructor():
     RunEvent(13300745, slot=0, args=(3300715, 1496, 1497, 3300705, 3300710, 1495, 1499, 1480))
     RunCommonEvent(20006001, args=(3300715, 1496, 1497, 73300181, 3))
     RunCommonEvent(20006002, args=(3300715, 1498, 1495, 1499))
-    RunCommonEvent(20005490, args=(3300579, 3300578, 3301579, 3301578, 90, 5430, 5431, 5432, 5433, 5434, 5435, 5436, 
-                   13305722))
+    RunCommonEvent(
+        20005490, args=(3300579, 3300578, 3301579, 3301578, 90, 5430, 5431, 5432, 5433, 5434, 5435, 5436, 13305722)
+    )
     RunCommonEvent(20005491, args=(3300579, 3300578, 3302579, 13305721))
     RunCommonEvent(20005493, args=(3300579, 3300578, 13300720))
     RunCommonEvent(20005494)
@@ -446,14 +780,26 @@ def Event13305171():
     EnableCharacter(3300191)
     Wait(1.5)
     CreateObjectFX(30041, obj=3301170, model_point=0)
-    Move(3300191, destination=3300170, destination_type=CoordEntityType.Character, model_point=236, 
-         copy_draw_parent=3300191)
+    Move(
+        3300191,
+        destination=3300170,
+        destination_type=CoordEntityType.Character,
+        model_point=236,
+        copy_draw_parent=3300191,
+    )
     IfPlayerInOwnWorld(2)
     IfActionButtonInRegion(2, action_button_id=9334, region=3301170)
     IfConditionTrue(0, input_condition=2)
-    DisplayDialogAndSetFlags(message=2120002, button_type=ButtonType.OK_or_Cancel, 
-                             number_buttons=NumberButtons.TwoButton, anchor_entity=3301170, display_distance=3.0, 
-                             left_flag=13304179, right_flag=13305179, cancel_flag=13305179)
+    DisplayDialogAndSetFlags(
+        message=2120002,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.TwoButton,
+        anchor_entity=3301170,
+        display_distance=3.0,
+        left_flag=13304179,
+        right_flag=13305179,
+        cancel_flag=13305179,
+    )
     RestartIfFlagOff(13304179)
     DisplayBattlefieldMessage(2300002, display_location_index=1)
     DeleteObjectFX(3301170, erase_root=True)
@@ -470,8 +816,9 @@ def Event13305172():
     IfFlagOn(1, 13305160)
     IfFlagOff(1, 13305161)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012100, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012120, display_location_index=1)
@@ -492,8 +839,9 @@ def Event13305173():
     IfFlagOn(1, 13305161)
     IfCharacterDead(1, 3300170)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012102, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012122, display_location_index=1)
@@ -534,8 +882,9 @@ def Event13305176():
     IfFlagOn(1, 13305161)
     IfFlagOn(1, 13305162)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012101, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012121, display_location_index=1)
@@ -560,8 +909,9 @@ def Event13305177():
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(3300170, 91030)
     Wait(1.0)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012103, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012123, display_location_index=1)
@@ -614,21 +964,24 @@ def Event13305201():
 
 
 @RestartOnRest
-def Event13305202(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: uint, 
-                  arg_24_27: uint):
+def Event13305202(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: uint, arg_24_27: uint
+):
     """ 13305202: Event 13305202 """
     DisableFlagRange((arg_12_15, arg_16_19))
     IfHasTAEEvent(0, character=arg_0_3, tae_event_id=10)
     EnableRandomFlagInRange((arg_20_23, arg_24_27))
     GotoIfFlagOn(Label.L0, arg_12_15)
-    Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_0_3)
+    Move(
+        arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=arg_0_3
+    )
     Goto(Label.L1)
 
     # --- 0 --- #
     DefineLabel(0)
-    Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_0_3)
+    Move(
+        arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=arg_0_3
+    )
 
     # --- 1 --- #
     DefineLabel(1)
@@ -683,7 +1036,7 @@ def Event13305210():
 
 
 @RestartOnRest
-def Event13305211(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event13305211(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 13305211: Event 13305211 """
     GotoIfThisEventSlotOn(Label.L0)
     IfHasAIStatus(-1, character=arg_0_3, ai_status=AIStatusType.Caution)
@@ -751,14 +1104,16 @@ def Event13305300():
 
     # --- 1 --- #
     DefineLabel(1)
-    Move(3300388, destination=3302363, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3300388)
+    Move(
+        3300388, destination=3302363, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3300388
+    )
     End()
 
     # --- 2 --- #
     DefineLabel(2)
-    Move(3300388, destination=3302363, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3300388)
+    Move(
+        3300388, destination=3302363, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3300388
+    )
     End()
 
 
@@ -777,7 +1132,7 @@ def Event13300310():
 
 
 @RestartOnRest
-def Event13305320(arg_0_3: int):
+def Event13305320(_, arg_0_3: int):
     """ 13305320: Event 13305320 """
     EndIfThisEventSlotOn()
     AddSpecialEffect(arg_0_3, 5000)
@@ -935,11 +1290,13 @@ def Event13305408():
 @RestartOnRest
 def Event13305409():
     """ 13305409: Event 13305409 """
-    RunCommonEvent(20005621, args=(13300405, 13301405, 3301405, 3301406, 3304406, 3301407, 3304407, 3302406, 3302407, 
-                   13301406, 13304405, 0))
+    RunCommonEvent(
+        20005621,
+        args=(13300405, 13301405, 3301405, 3301406, 3304406, 3301407, 3304407, 3302406, 3302407, 13301406, 13304405, 0),
+    )
 
 
-def Event13305410(arg_0_3: int, arg_4_7: int, arg_8_11: uint, arg_12_15: int):
+def Event13305410(_, arg_0_3: int, arg_4_7: int, arg_8_11: uint, arg_12_15: int):
     """ 13305410: Event 13305410 """
     IfEventValueComparison(0, arg_0_3, bit_count=2, comparison_type=ComparisonType.GreaterThanOrEqual, value=arg_8_11)
     EndOfAnimation(arg_12_15, 0)
@@ -947,8 +1304,20 @@ def Event13305410(arg_0_3: int, arg_4_7: int, arg_8_11: uint, arg_12_15: int):
     EnableFlag(arg_4_7)
 
 
-def Event13300412(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int, arg_40_43: int):
+def Event13300412(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+    arg_40_43: int,
+):
     """ 13300412: Event 13300412 """
     GotoIfThisEventSlotOff(Label.L0)
     DeleteFX(arg_16_19, erase_root_only=True)
@@ -985,8 +1354,9 @@ def Event13300412(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(arg_28_31, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(arg_28_31, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(arg_28_31, skippable=False, fade_out=False, player_id=PLAYER)
@@ -997,8 +1367,9 @@ def Event13300412(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(arg_32_35, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(arg_32_35, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(arg_32_35, skippable=False, fade_out=False, player_id=PLAYER)
@@ -1009,8 +1380,9 @@ def Event13300412(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(arg_36_39, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(arg_36_39, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(arg_36_39, skippable=False, fade_out=False, player_id=PLAYER)
@@ -1021,8 +1393,9 @@ def Event13300412(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(arg_40_43, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(arg_40_43, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(arg_40_43, skippable=False, fade_out=False, player_id=PLAYER)
@@ -1100,8 +1473,9 @@ def Event13305800():
 @RestartOnRest
 def Event13305810():
     """ 13305810: Event 13305810 """
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableFlag(13304810)
     GotoIfFlagOff(Label.L0, 13300800)
     DisableCharacter(3305800)
@@ -1126,16 +1500,18 @@ def Event13305810():
     IfFlagOn(1, 13305805)
     IfCharacterInsideRegion(1, PLAYER, region=3302800)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     BanishInvaders(unknown=0)
     GotoIfFlagOn(Label.L2, 13300801)
     DisableSoundEvent(3304805)
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(33000010, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(33000010, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(33000010, skippable=False, fade_out=False, player_id=PLAYER)
@@ -1249,14 +1625,16 @@ def Event13305814():
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(33000000, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(33000000, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(33000000, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
-    Move(3300801, destination=3302802, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3300801)
+    Move(
+        3300801, destination=3302802, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3300801
+    )
     SetAIParamID(3300801, 304010)
     AddSpecialEffect(3300801, 12240)
     AddSpecialEffect(3300801, 12241)
@@ -1269,8 +1647,9 @@ def Event13305814():
 
 
 @RestartOnRest
-def Event13305828(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int):
+def Event13305828(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
+):
     """ 13305828: Event 13305828 """
     DisableNetworkSync()
     DisableSoundEvent(arg_16_19)
@@ -1376,7 +1755,7 @@ def Event13305862():
 
 
 @RestartOnRest
-def Event13305863(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13305863(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13305863: Event 13305863 """
     IfHasTAEEvent(-1, character=arg_0_3, tae_event_id=10)
     IfHasTAEEvent(-2, character=arg_0_3, tae_event_id=20)
@@ -1433,7 +1812,7 @@ def Event13305863(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13305864(arg_0_3: int, arg_4_7: int):
+def Event13305864(_, arg_0_3: int, arg_4_7: int):
     """ 13305864: Event 13305864 """
     IfPlayerInOwnWorld(1)
     IfFlagOn(1, arg_0_3)
@@ -1446,8 +1825,20 @@ def Event13305864(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event13305865(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int, arg_40_43: int):
+def Event13305865(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+    arg_40_43: int,
+):
     """ 13305865: Event 13305865 """
     IfPlayerInOwnWorld(1)
     IfFlagOn(1, arg_0_3)
@@ -1482,7 +1873,7 @@ def Event13305865(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13305866(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13305866(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13305866: Event 13305866 """
     IfFlagOn(0, arg_8_11)
     IfDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
@@ -1509,30 +1900,70 @@ def Event13305866(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13305870(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int):
+def Event13305870(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
+):
     """ 13305870: Event 13305870 """
     IfFlagOn(1, arg_0_3)
     IfFlagOff(1, 13305851)
     IfConditionTrue(0, input_condition=1)
     DisableFlag(arg_0_3)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_16_19, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_20_23, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_24_27, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(5.0)
-    Move(arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_4_7)
+    Move(
+        arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=arg_4_7
+    )
     EnableFlag(arg_12_15)
     Restart()
 
 
 @RestartOnRest
-def Event13305885(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int, arg_40_43: int, arg_44_47: int, 
-                  arg_48_51: int, arg_52_55: int, arg_56_59: int, arg_60_63: int, arg_64_67: int):
+def Event13305885(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+    arg_40_43: int,
+    arg_44_47: int,
+    arg_48_51: int,
+    arg_52_55: int,
+    arg_56_59: int,
+    arg_60_63: int,
+    arg_64_67: int,
+):
     """ 13305885: Event 13305885 """
     EndIfFlagOn(13300850)
     IfFlagOn(1, arg_0_3)
@@ -1547,41 +1978,131 @@ def Event13305885(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
     # --- 0 --- #
     DefineLabel(0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_28_31, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_56_59, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_60_63, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_64_67, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_56_59,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_60_63,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_64_67,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
 
     # --- 1 --- #
     DefineLabel(1)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_24_27, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_52_55, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_52_55,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
 
     # --- 2 --- #
     DefineLabel(2)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_20_23, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_40_43, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_44_47, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_48_51, model_point=-1, behavior_id=213200010, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_40_43,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_44_47,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_4_7,
+        projectile_id=arg_48_51,
+        model_point=-1,
+        behavior_id=213200010,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(5.0)
-    Move(arg_4_7, destination=arg_20_23, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_4_7)
-    Move(arg_8_11, destination=arg_24_27, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_8_11)
-    Move(arg_12_15, destination=arg_28_31, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_12_15)
-    Move(arg_16_19, destination=arg_32_35, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_16_19)
+    Move(
+        arg_4_7,
+        destination=arg_20_23,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_4_7,
+    )
+    Move(
+        arg_8_11,
+        destination=arg_24_27,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_8_11,
+    )
+    Move(
+        arg_12_15,
+        destination=arg_28_31,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_12_15,
+    )
+    Move(
+        arg_16_19,
+        destination=arg_32_35,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_16_19,
+    )
     EnableFlag(arg_36_39)
     Restart()
 
@@ -1597,7 +2118,7 @@ def Event13305900():
     RunCommonEvent(20005810, args=(13300110, 3301850, 3302850, 10000))
 
 
-def Event13305700(arg_0_3: int, arg_4_7: int):
+def Event13305700(_, arg_0_3: int, arg_4_7: int):
     """ 13305700: Event 13305700 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1235, 1239))
@@ -1646,7 +2167,7 @@ def Event13305700(arg_0_3: int, arg_4_7: int):
     End()
 
 
-def Event13305720(arg_0_3: int):
+def Event13305720(_, arg_0_3: int):
     """ 13305720: Event 13305720 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1475, 1479))
@@ -1716,7 +2237,7 @@ def Event13305720(arg_0_3: int):
     End()
 
 
-def Event13305740(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event13305740(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 13305740: Event 13305740 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1355, 1359))
@@ -1824,7 +2345,7 @@ def Event13305740(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     End()
 
 
-def Event13305741(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float):
+def Event13305741(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float):
     """ 13305741: Event 13305741 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_12_15)
@@ -1869,8 +2390,18 @@ def Event13305741(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     ForceAnimation(arg_8_11, 0)
 
 
-def Event13305742(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int):
+def Event13305742(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: float,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+):
     """ 13305742: Event 13305742 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_12_15)
@@ -1895,8 +2426,17 @@ def Event13305742(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     ForceAnimation(arg_0_3, 0)
 
 
-def Event13300743(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event13300743(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 13300743: Event 13300743 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(1, arg_28_31)
@@ -1925,7 +2465,7 @@ def Event13300743(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     ForceAnimation(arg_4_7, 0)
 
 
-def Event13305744(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13305744(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13305744: Event 13305744 """
     EndIfPlayerNotInOwnWorld()
     IfCharacterHasSpecialEffect(-1, character=arg_0_3, special_effect=150)
@@ -1942,8 +2482,17 @@ def Event13305744(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Restart()
 
 
-def Event13300745(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event13300745(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 13300745: Event 13300745 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(1, arg_28_31)
@@ -1965,7 +2514,7 @@ def Event13300745(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     ForceAnimation(arg_0_3, 0)
 
 
-def Event13305746(arg_0_3: int, arg_4_7: int):
+def Event13305746(_, arg_0_3: int, arg_4_7: int):
     """ 13305746: Event 13305746 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1495, 1499))
@@ -2018,7 +2567,7 @@ def Event13305746(arg_0_3: int, arg_4_7: int):
     End()
 
 
-def Event13300747(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13300747(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13300747: Event 13300747 """
     EndIfThisEventOn()
     EndIfFlagRangeAnyOn((1341, 1354))
@@ -2030,8 +2579,9 @@ def Event13300747(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfCharacterBackreadDisabled(1, character=arg_0_3)
     IfCharacterBackreadDisabled(1, character=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(4, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        4, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagRangeState(flag_range=(1340, 1354), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1341, state=FlagState.On)
     SetNetworkConnectedFlagRangeState(flag_range=(1480, 1494), state=RangeState.AllOn)
@@ -2047,7 +2597,7 @@ def Event13300747(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event13300748(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13300748(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13300748: Event 13300748 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(1, arg_4_7)
@@ -2062,7 +2612,7 @@ def Event13300748(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Kill(arg_0_3, award_souls=True)
 
 
-def Event13305760(arg_0_3: int):
+def Event13305760(_, arg_0_3: int):
     """ 13305760: Event 13305760 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1115, 1119))
@@ -2109,7 +2659,7 @@ def Event13305760(arg_0_3: int):
 
 
 @RestartOnRest
-def Event13300761(arg_0_3: int):
+def Event13300761(_, arg_0_3: int):
     """ 13300761: Event 13300761 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(13300761)
@@ -2134,7 +2684,7 @@ def Event13305762():
 
 
 @RestartOnRest
-def Event13305763(arg_0_3: int):
+def Event13305763(_, arg_0_3: int):
     """ 13305763: Event 13305763 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOff(1104)

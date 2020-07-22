@@ -15,9 +15,22 @@ from soulstruct.utilities.window import SmartFrame
 if tp.TYPE_CHECKING:
     from soulstruct.project.editor import SoulstructBaseEditor
 
-__all__ = ["SoulstructProjectError", "RestoreBackupError", "error_as_dialog", "TagData",
-           "TextEditor", "NameSelectionBox", "TextEditBox", "EntryTextEditBox", "ItemTextEditBox",
-           "ActionHistory", "ViewHistory", "bind_events", "data_type_caps", "DATA_TYPES"]
+__all__ = [
+    "SoulstructProjectError",
+    "RestoreBackupError",
+    "error_as_dialog",
+    "TagData",
+    "TextEditor",
+    "NameSelectionBox",
+    "TextEditBox",
+    "EntryTextEditBox",
+    "ItemTextEditBox",
+    "ActionHistory",
+    "ViewHistory",
+    "bind_events",
+    "data_type_caps",
+    "DATA_TYPES",
+]
 
 
 class SoulstructProjectError(SoulstructError):
@@ -40,8 +53,7 @@ def error_as_dialog(window, func):
             func(*args, **kwargs)
         except SoulstructProjectError as e:
             window.CustomDialog(
-                title="Soulstruct Error",
-                message=word_wrap(str(e), 50),
+                title="Soulstruct Error", message=word_wrap(str(e), 50),
             )
         except Exception as e:
             window.CustomDialog(
@@ -52,11 +64,12 @@ def error_as_dialog(window, func):
     return window_method
 
 
-class ViewHistory(object):
+class ViewHistory:
     """Global window timeline of selected tab, category, entry, and (if applicable) field.
 
     Note that view changes that are caused by undo and redo functions are not treated differently here.
     """
+
     def __init__(self):
         self._back_stack = []
         self._forward_stack = []
@@ -86,9 +99,10 @@ class ViewHistory(object):
             return False
 
 
-class ActionHistory(object):
+class ActionHistory:
     """Each tab maintains a separate ActionHistory timeline of action/inverse-action data-modifying pairs for undo and
     redo."""
+
     def __init__(self):
         self._undo_stack = []
         self._redo_stack = []
@@ -136,7 +150,8 @@ class TextEditor(tk.Text):
         super().__init__(*args, **kwargs)
         self.callback = None
         private_callback = self.register(self._callback)
-        self.tk.eval("""
+        self.tk.eval(
+            """
             proc widget_proxy {actual_widget callback args} {
 
                 # this prevents recursion if the widget is called
@@ -164,16 +179,21 @@ class TextEditor(tk.Text):
                 # return the result from the real widget command
                 return $result
             }
-            """)
-        self.tk.eval("""
+            """
+        )
+        self.tk.eval(
+            """
             rename {widget} _{widget}
             interp alias {{}} ::{widget} {{}} widget_proxy _{widget} {callback}
-        """.format(widget=str(self), callback=private_callback))
+        """.format(
+                widget=str(self), callback=private_callback
+            )
+        )
 
         for tag_name, tag_data in self.TAGS.items():
             self.tag_configure(tag_name, foreground=tag_data.foreground)
-        self.tag_configure("found", background='#224433')
-        self.tag_configure("error", background='#443322')
+        self.tag_configure("found", background="#224433")
+        self.tag_configure("error", background="#443322")
 
         self.bind("<Tab>", self._tab_four_spaces)
         self.bind("<Home>", self._home_key)
@@ -191,8 +211,9 @@ class TextEditor(tk.Text):
         self.tag_remove(tag, "1.0", "end")
         self.tag_add(tag, f"{number}.0 linestart", f"{number}.0 lineend")
 
-    def highlight_pattern(self, pattern, tag, start="1.0", end="end", regexp=False, clear=True,
-                          start_offset=0, end_offset=0):
+    def highlight_pattern(
+        self, pattern, tag, start="1.0", end="end", regexp=False, clear=True, start_offset=0, end_offset=0
+    ):
         """Apply the given tag to all text that matches the given pattern. Clears tag first by default.
 
         If 'regexp' is set to True, pattern will be treated as a regular expression according to Tcl's regular
@@ -220,8 +241,16 @@ class TextEditor(tk.Text):
     def color_syntax(self, start="1.0", end="end"):
         for tag, tag_data in self.TAGS.items():
             if tag_data.offsets is not None:
-                self.highlight_pattern(tag_data.pattern, tag, regexp=True, clear=True, start=start, end=end,
-                                       start_offset=tag_data.offsets[0], end_offset=tag_data.offsets[1])
+                self.highlight_pattern(
+                    tag_data.pattern,
+                    tag,
+                    regexp=True,
+                    clear=True,
+                    start=start,
+                    end=end,
+                    start_offset=tag_data.offsets[0],
+                    end_offset=tag_data.offsets[1],
+                )
 
     def _tab_four_spaces(self, _):
         """Tab key inserts four spaces rather than a tab character."""
@@ -231,10 +260,10 @@ class TextEditor(tk.Text):
     def _home_key(self, _):
         """Home key ignores starting whitespace, unless there's only whitespace."""
         pre_text = self.get("insert linestart", "insert")
-        first_non_space_index = len(pre_text) - len(pre_text.lstrip(' '))
+        first_non_space_index = len(pre_text) - len(pre_text.lstrip(" "))
         if first_non_space_index != len(pre_text):
             # Something other than whitespace exists. Get first non-space character.
-            new_index = self.index("insert linestart").split('.')[0] + f".{first_non_space_index}"
+            new_index = self.index("insert linestart").split(".")[0] + f".{first_non_space_index}"
             self.mark_set("insert", new_index)
         else:
             # Only whitespace before cursor.
@@ -256,7 +285,7 @@ class TextEditor(tk.Text):
             self.color_syntax("insert linestart", "insert lineend")
         else:
             # Line is not commented. Add a hash before the first non-space character.
-            hash_index = self.index("insert linestart").split('.')[0] + f".{spaces_before_hash}"
+            hash_index = self.index("insert linestart").split(".")[0] + f".{spaces_before_hash}"
             self.insert(hash_index, "#")
             self.color_syntax("insert linestart", "insert lineend")
         return "break"
@@ -269,22 +298,23 @@ def data_type_caps(data_type):
 
 
 DATA_TYPES = {
-    'maps': DarkSoulsMaps,
-    'params': DarkSoulsGameParameters,
-    'lighting': DarkSoulsLightingParameters,
-    'text': DarkSoulsText,
-    'events': None,  # modified via EVS event script files
-    'ai': DarkSoulsAIScripts,
-    'talk': None,  # modified via ESP state machine script files
+    "maps": DarkSoulsMaps,
+    "params": DarkSoulsGameParameters,
+    "lighting": DarkSoulsLightingParameters,
+    "text": DarkSoulsText,
+    "events": None,  # modified via EVS event script files
+    "ai": DarkSoulsAIScripts,
+    "talk": None,  # modified via ESP state machine script files
 }
 
 
 class NameSelectionBox(SmartFrame):
     """Small pop-out widget that allows you to select a name from some list."""
+
     WIDTH = 50  # characters
     HEIGHT = 20  # lines
 
-    def __init__(self, master, names, list_name='List'):
+    def __init__(self, master, names, list_name="List"):
         super().__init__(toplevel=True, master=master, window_title=f"Select Entry from {list_name}")
 
         self.output = None
@@ -292,13 +322,20 @@ class NameSelectionBox(SmartFrame):
         with self.set_master(padx=20, pady=20, auto_rows=0):
             self.Label(text="Double-click an entry to select it.")
             self._names = self.Listbox(
-                values=names, width=self.WIDTH, height=self.HEIGHT, vertical_scrollbar=True, selectmode='single',
-                font=("Consolas", 14), padx=20, pady=20)
+                values=names,
+                width=self.WIDTH,
+                height=self.HEIGHT,
+                vertical_scrollbar=True,
+                selectmode="single",
+                font=("Consolas", 14),
+                padx=20,
+                pady=20,
+            )
 
-        self._names.bind('<Double-Button-1>', lambda e: self.done(True))
+        self._names.bind("<Double-Button-1>", lambda e: self.done(True))
 
-        self.bind_all('<Escape>', lambda e: self.done(False))
-        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
         self.resizable(width=False, height=False)
         self.set_geometry(relative_position=(0.5, 0.3), transient=True)
 
@@ -317,10 +354,11 @@ class NameSelectionBox(SmartFrame):
 
 class TextEditBox(SmartFrame):
     """Small pop-out widget that allows you to modify longer strings more freely, with newlines and all."""
+
     WIDTH = 16  # characters
     HEIGHT = 1  # lines
 
-    def __init__(self, master: SmartFrame, initial_text='', allow_newlines=True, window_title="Editing Text"):
+    def __init__(self, master: SmartFrame, initial_text="", allow_newlines=True, window_title="Editing Text"):
         super().__init__(toplevel=True, master=master, window_title=window_title)
         self.editor = master
         self.initial_text = initial_text
@@ -334,15 +372,17 @@ class TextEditBox(SmartFrame):
     def build(self):
         with self.set_master(auto_rows=0):
             self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
-            self._text.insert('end', self.initial_text)
-            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
+            self._text.insert("end", self.initial_text)
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
                 self.Button(
-                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS['YES'])
+                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
                 self.Button(
-                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS['NO'])
+                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
 
-        self.bind_all('<Escape>', lambda e: self.done(False))
-        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
         self.resizable(width=False, height=False)
         self.set_geometry(relative_position=(0.5, 0.3), transient=True)
 
@@ -355,8 +395,8 @@ class TextEditBox(SmartFrame):
 
     def done(self, confirm=True):
         if confirm:
-            new_text = self._text.get('1.0', 'end' + '-1c')
-            if not self.allow_newlines and '\n' in new_text:
+            new_text = self._text.get("1.0", "end" + "-1c")
+            if not self.allow_newlines and "\n" in new_text:
                 self.editor.CustomDialog("Text Error", "Entry cannot contain newlines.")
                 return
             if new_text == self.initial_text:
@@ -370,8 +410,16 @@ class EntryTextEditBox(TextEditBox):
     WIDTH = 70  # characters
     HEIGHT = 10  # lines
 
-    def __init__(self, master: SoulstructBaseEditor, category, category_data, entry_id, initial_text='',
-                 allow_newlines=True, edit_entry_id=True):
+    def __init__(
+        self,
+        master: SoulstructBaseEditor,
+        category,
+        category_data,
+        entry_id,
+        initial_text="",
+        allow_newlines=True,
+        edit_entry_id=True,
+    ):
         if entry_id is None and edit_entry_id:
             window_title = f"Adding entry to {camel_case_to_spaces(category)}"
         else:
@@ -381,8 +429,9 @@ class EntryTextEditBox(TextEditBox):
         self.entry_id = entry_id
         self._edit_entry_id = edit_entry_id
         self._id = None
-        super().__init__(master=master, initial_text=initial_text, allow_newlines=allow_newlines,
-                         window_title=window_title)
+        super().__init__(
+            master=master, initial_text=initial_text, allow_newlines=allow_newlines, window_title=window_title
+        )
 
         self.output = [None, None]
 
@@ -390,8 +439,14 @@ class EntryTextEditBox(TextEditBox):
         with self.set_master(auto_rows=0):
             if self._edit_entry_id:
                 self._id = self.Entry(
-                    label='Entry ID:', label_position='left', width=10, integers_only=True,
-                    initial_text=self.entry_id if self.entry_id is not None else "", padx=20, pady=20).var
+                    label="Entry ID:",
+                    label_position="left",
+                    width=10,
+                    integers_only=True,
+                    initial_text=self.entry_id if self.entry_id is not None else "",
+                    padx=20,
+                    pady=20,
+                ).var
             else:
                 self._id = None
             super().build()
@@ -407,8 +462,8 @@ class EntryTextEditBox(TextEditBox):
                     new_id = None
             else:
                 new_id = None
-            new_text = self._text.get('1.0', 'end' + '-1c')
-            if not self.allow_newlines and '\n' in new_text:
+            new_text = self._text.get("1.0", "end" + "-1c")
+            if not self.allow_newlines and "\n" in new_text:
                 self.CustomDialog("Text Error", "Entry cannot contain newlines.")
                 return
             if new_text == self.initial_text:
@@ -436,16 +491,19 @@ class ItemTextEditBox(SmartFrame):
             self._name_entry = self.Entry(initial_text=self.output[0], width=self.WIDTH, label="Name:")
             self._summary_entry = self.Entry(initial_text=self.output[1], width=self.WIDTH, label="Summary:")
             self._description_box = self.TextBox(
-                width=self.WIDTH, height=self.DESCRIPTION_HEIGHT, label="Description:", label_position="above")
-            self._description_box.insert('end', self.output[2])
-            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={'padx': 10}):
+                width=self.WIDTH, height=self.DESCRIPTION_HEIGHT, label="Description:", label_position="above"
+            )
+            self._description_box.insert("end", self.output[2])
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
                 self.Button(
-                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS['YES'])
+                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
                 self.Button(
-                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS['NO'])
+                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
 
-        self.bind_all('<Escape>', lambda e: self.done(False))
-        self.protocol('WM_DELETE_WINDOW', lambda: self.done(False))
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
         self.resizable(width=False, height=False)
         self.set_geometry(relative_position=(0.5, 0.3), transient=True)
 
@@ -460,5 +518,5 @@ class ItemTextEditBox(SmartFrame):
         if confirm:
             self.output[0] = self._name_entry.var.get()
             self.output[1] = self._summary_entry.var.get()
-            self.output[2] = self._description_box.get('1.0', 'end' + '-1c')
+            self.output[2] = self._description_box.get("1.0", "end" + "-1c")
         self.quit()

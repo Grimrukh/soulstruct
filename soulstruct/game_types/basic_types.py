@@ -4,12 +4,11 @@ from typing import Union
 from soulstruct.events.internal import get_value_test
 from soulstruct.events.shared import instructions as instr
 
-__all__ = ['GameObject', 'Flag', 'FlagInt', 'FlagRange', 'Map', 'FlagRangeOrSequence', 'MapOrSequence']
+__all__ = ["GameObject", "Flag", "FlagInt", "FlagRange", "Map", "FlagRangeOrSequence", "MapOrSequence"]
 
 
-class GameObject(object):
+class GameObject:
     """Base class for all game types."""
-    pass
 
 
 class Flag(GameObject, IntEnum):
@@ -18,12 +17,21 @@ class Flag(GameObject, IntEnum):
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         value = self if isinstance(self, (int, float, tuple)) else self.value
         return get_value_test(
-            value=value, negate=negate, condition=condition, skip_lines=skip_lines,
-            end_event=end_event, restart_event=restart_event,
-            skip_if_true_func=instr.SkipLinesIfFlagOn, skip_if_false_func=instr.SkipLinesIfFlagOff,
-            if_true_func=instr.IfFlagOn, if_false_func=instr.IfFlagOff,
-            end_if_true_func=instr.EndIfFlagOn, end_if_false_func=instr.EndIfFlagOff,
-            restart_if_true_func=instr.RestartIfFlagOn, restart_if_false_func=instr.RestartIfFlagOff)
+            value=value,
+            negate=negate,
+            condition=condition,
+            skip_lines=skip_lines,
+            end_event=end_event,
+            restart_event=restart_event,
+            skip_if_true_func=instr.SkipLinesIfFlagOn,
+            skip_if_false_func=instr.SkipLinesIfFlagOff,
+            if_true_func=instr.IfFlagOn,
+            if_false_func=instr.IfFlagOff,
+            end_if_true_func=instr.EndIfFlagOn,
+            end_if_false_func=instr.EndIfFlagOff,
+            restart_if_true_func=instr.RestartIfFlagOn,
+            restart_if_false_func=instr.RestartIfFlagOff,
+        )
 
 
 FlagInt = Union[Flag, int]
@@ -38,22 +46,38 @@ class FlagRange(GameObject):
 
     def any(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         return get_value_test(
-            value=self, negate=negate, condition=condition, skip_lines=skip_lines,
-            end_event=end_event, restart_event=restart_event,
-            skip_if_true_func=instr.SkipLinesIfFlagRangeAllOff, skip_if_false_func=instr.SkipLinesIfFlagRangeAnyOn,
-            if_true_func=instr.IfFlagRangeAnyOn, if_false_func=instr.IfFlagRangeAllOff,
-            end_if_true_func=instr.EndIfFlagRangeAnyOn, end_if_false_func=instr.EndIfFlagRangeAllOff,
-            restart_if_true_func=instr.RestartIfFlagRangeAnyOn, restart_if_false_func=instr.RestartIfFlagRangeAllOff,
+            value=self,
+            negate=negate,
+            condition=condition,
+            skip_lines=skip_lines,
+            end_event=end_event,
+            restart_event=restart_event,
+            skip_if_true_func=instr.SkipLinesIfFlagRangeAllOff,
+            skip_if_false_func=instr.SkipLinesIfFlagRangeAnyOn,
+            if_true_func=instr.IfFlagRangeAnyOn,
+            if_false_func=instr.IfFlagRangeAllOff,
+            end_if_true_func=instr.EndIfFlagRangeAnyOn,
+            end_if_false_func=instr.EndIfFlagRangeAllOff,
+            restart_if_true_func=instr.RestartIfFlagRangeAnyOn,
+            restart_if_false_func=instr.RestartIfFlagRangeAllOff,
         )
 
     def all(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         return get_value_test(
-            value=self, negate=negate, condition=condition, skip_lines=skip_lines,
-            end_event=end_event, restart_event=restart_event,
-            skip_if_true_func=instr.SkipLinesIfFlagRangeAnyOff, skip_if_false_func=instr.SkipLinesIfFlagRangeAllOn,
-            if_true_func=instr.IfFlagRangeAllOn, if_false_func=instr.IfFlagRangeAnyOff,
-            end_if_true_func=instr.EndIfFlagRangeAllOn, end_if_false_func=instr.EndIfFlagRangeAnyOff,
-            restart_if_true_func=instr.RestartIfFlagRangeAllOn, restart_if_false_func=instr.RestartIfFlagRangeAnyOff,
+            value=self,
+            negate=negate,
+            condition=condition,
+            skip_lines=skip_lines,
+            end_event=end_event,
+            restart_event=restart_event,
+            skip_if_true_func=instr.SkipLinesIfFlagRangeAnyOff,
+            skip_if_false_func=instr.SkipLinesIfFlagRangeAllOn,
+            if_true_func=instr.IfFlagRangeAllOn,
+            if_false_func=instr.IfFlagRangeAnyOff,
+            end_if_true_func=instr.EndIfFlagRangeAllOn,
+            end_if_false_func=instr.EndIfFlagRangeAnyOff,
+            restart_if_true_func=instr.RestartIfFlagRangeAllOn,
+            restart_if_false_func=instr.RestartIfFlagRangeAnyOff,
         )
 
     def __iter__(self):
@@ -62,9 +86,18 @@ class FlagRange(GameObject):
 
 
 class Map(GameObject):
-    def __init__(self, area_id, block_id, name=None,
-                 emevd_file_stem=None, msb_file_stem=None, ai_file_stem=None, esd_file_stem=None,
-                 variable_name=None, verbose_name=None):
+    def __init__(
+        self,
+        area_id,
+        block_id,
+        name=None,
+        emevd_file_stem=None,
+        msb_file_stem=None,
+        ai_file_stem=None,
+        esd_file_stem=None,
+        variable_name=None,
+        verbose_name=None,
+    ):
         """
         Create a game map instance with associated naming information. These instances can be used as arguments in EVS
         instructions.
@@ -98,7 +131,7 @@ class Map(GameObject):
         self.area_id = area_id
         self.block_id = block_id
 
-        base_id = f'm{area_id:02d}_{block_id:02d}_00_00' if area_id is not None and block_id is not None else None
+        base_id = f"m{area_id:02d}_{block_id:02d}_00_00" if area_id is not None and block_id is not None else None
         self.name = base_id if name is None else name
 
         self.emevd_file_stem = base_id if emevd_file_stem is None else emevd_file_stem

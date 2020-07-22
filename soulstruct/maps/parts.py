@@ -26,116 +26,145 @@ def MSBPart(msb_buffer) -> BaseMSBPart:
 
 class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
     PART_HEADER_STRUCT = BinaryStruct(
-        ('__name_offset', 'i'),
-        ('__part_type', 'i'),
-        ('_part_type_index', 'i'),
-        ('_model_index', 'I'),
-        ('__sib_path_offset', 'i'),
-        ('translate', '3f'),
-        ('rotate', '3f'),
-        ('scale', '3f'),
-        ('__draw_groups', '4I'),
-        ('__display_groups', '4I'),
-        ('__base_data_offset', 'i'),
-        ('__type_data_offset', 'i'),
-        '4x',
+        ("__name_offset", "i"),
+        ("__part_type", "i"),
+        ("_part_type_index", "i"),
+        ("_model_index", "I"),
+        ("__sib_path_offset", "i"),
+        ("translate", "3f"),
+        ("rotate", "3f"),
+        ("scale", "3f"),
+        ("__draw_groups", "4I"),
+        ("__display_groups", "4I"),
+        ("__base_data_offset", "i"),
+        ("__type_data_offset", "i"),
+        "4x",
     )
 
     PART_BASE_DATA_STRUCT = BinaryStruct(
-        ('entity_id', 'i'),
-        ('ambient_light_id', 'b'),
-        ('fog_id', 'b'),
-        ('scattered_light_id', 'b'),
-        ('lens_flare_id', 'b'),
-        ('shadow_id', 'b'),
-        ('dof_id', 'b'),
-        ('tone_map_id', 'b'),
-        ('tone_correct_id', 'b'),
-        ('point_light_id', 'b'),
-        ('lod_id', 'b'),
-        'x',
-        ('is_shadow_source', '?'),
-        ('is_shadow_destination', '?'),
-        ('is_shadow_only', '?'),
-        ('draw_by_reflect_cam', '?'),
-        ('draw_only_reflect_cam', '?'),
-        ('use_depth_bias_float', '?'),
-        ('disable_point_light_effect', '?'),
-        '2x',
+        ("entity_id", "i"),
+        ("ambient_light_id", "b"),
+        ("fog_id", "b"),
+        ("scattered_light_id", "b"),
+        ("lens_flare_id", "b"),
+        ("shadow_id", "b"),
+        ("dof_id", "b"),
+        ("tone_map_id", "b"),
+        ("tone_correct_id", "b"),
+        ("point_light_id", "b"),
+        ("lod_id", "b"),
+        "x",
+        ("is_shadow_source", "?"),
+        ("is_shadow_destination", "?"),
+        ("is_shadow_only", "?"),
+        ("draw_by_reflect_cam", "?"),
+        ("draw_only_reflect_cam", "?"),
+        ("use_depth_bias_float", "?"),
+        ("disable_point_light_effect", "?"),
+        "2x",
     )
 
     PART_TYPE_DATA_STRUCT = ()
 
     FIELD_INFO = {
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the part in other game files."),
-        'translate': (
-            'Translate', True, Vector3,
-            "3D coordinates of the part's position. Note that the anchor of the part is usually at its base."),
-        'rotate': (
-            'Rotate', True, Vector3,
-            "Euler angles for part rotation around its local X, Y, and Z axes."),
-        'scale': (
-            'Scale', True, Vector3,
-            "Scale of part. Only relevant for objects and collisions."),
-        'draw_groups': (
-            'Draw Groups', True, list,
-            "Draw groups of part. These are not yet fully understood, but they determine when the part appears."),
-        'display_groups': (
-            'Display Groups', True, list,
-            "Display groups of part. These are not yet fully understood, but they determine when the part appears."),
-        'ambient_light_id': (
-            'Ambient Light ID', True, int,  # TODO: Link to Lighting.
-            "ID of Ambient Light parameter to use in this map's lighting parameters (DrawParam)."),
-        'fog_id': (
-            'Fog ID', True, int,
-            "ID of Fog parameter to use in this map's lighting parameters (DrawParam)."),
-        'scattered_light_id': (
-            'Scattered Light ID', True, int,
-            "ID of Scattered Light parameter to use in this map's lighting parameters (DrawParam)."),
-        'lens_flare_id': (
-            'Lens Flare ID', True, int,
-            "ID of Lens Flare parameter (both types) to use in this map's lighting parameters (DrawParam)."),
-        'shadow_id': (
-            'Shadow ID', True, int,
-            "ID of Shadow parameter to use in this map's lighting parameters (DrawParam)."),
-        'dof_id': (
-            'DoF ID', True, int,
-            "ID of Depth of Field (DoF) ID parameter to use in this map's lighting parameters (DrawParam)."),
-        'tone_map_id': (
-            'Tone Map ID', True, int,
-            "ID of Tone Map parameter to use in this map's lighting parameters (DrawParam)."),
-        'point_light_id': (
-            'Point Light ID', True, int,
-            "ID of Point Light parameter to use in this map's lighting parameters (DrawParam)."),
-        'tone_correct_id': (
-            'Tone Correction ID', True, int,
-            "ID of Tone Correction parameter to use in this map's lighting parameters (DrawParam)."),
-        'lod_id': (
-            'LoD Param ID', False, int,
-            "ID of Level of Detail (LoD) parameter to use in this map's lighting parameters (DrawParam)."),
-        'is_shadow_source': (
-            'Can Cast Shadow', True, bool,
-            "If True, this entity will cast dynamic shadows."),
-        'is_shadow_destination': (
-            'Can Receive Shadow', True, bool,
-            "If True, this entity can have dynamic shadows cast onto it."),
-        'is_shadow_only': (
-            'Cast Shadow Only', True, bool,
-            "If True, this entity only casts shadows."),
-        'draw_by_reflect_cam': (
-            'Is Reflected', True, bool,
-            "If True, this entity will be reflected in water, etc."),
-        'draw_only_reflect_cam': (
-            'Is Only Reflected', True, bool,
-            "If True, this entity will only be drawn in reflections in water, etc."),
-        'use_depth_bias_float': (
-            'Use Depth Bias Float', True, bool,
-            "Unknown."),
-        'disable_point_light_effect': (
-            'Ignore Point Lights', True, bool,
-            "If True, this entity will not be illuminated by point lights (I think)."),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the part in other game files."),
+        "translate": (
+            "Translate",
+            True,
+            Vector3,
+            "3D coordinates of the part's position. Note that the anchor of the part is usually at its base.",
+        ),
+        "rotate": ("Rotate", True, Vector3, "Euler angles for part rotation around its local X, Y, and Z axes."),
+        "scale": ("Scale", True, Vector3, "Scale of part. Only relevant for objects and collisions."),
+        "draw_groups": (
+            "Draw Groups",
+            True,
+            list,
+            "Draw groups of part. These are not yet fully understood, but they determine when the part appears.",
+        ),
+        "display_groups": (
+            "Display Groups",
+            True,
+            list,
+            "Display groups of part. These are not yet fully understood, but they determine when the part appears.",
+        ),
+        "ambient_light_id": (
+            "Ambient Light ID",
+            True,
+            int,  # TODO: Link to Lighting.
+            "ID of Ambient Light parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "fog_id": ("Fog ID", True, int, "ID of Fog parameter to use in this map's lighting parameters (DrawParam)."),
+        "scattered_light_id": (
+            "Scattered Light ID",
+            True,
+            int,
+            "ID of Scattered Light parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "lens_flare_id": (
+            "Lens Flare ID",
+            True,
+            int,
+            "ID of Lens Flare parameter (both types) to use in this map's lighting parameters (DrawParam).",
+        ),
+        "shadow_id": (
+            "Shadow ID",
+            True,
+            int,
+            "ID of Shadow parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "dof_id": (
+            "DoF ID",
+            True,
+            int,
+            "ID of Depth of Field (DoF) ID parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "tone_map_id": (
+            "Tone Map ID",
+            True,
+            int,
+            "ID of Tone Map parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "point_light_id": (
+            "Point Light ID",
+            True,
+            int,
+            "ID of Point Light parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "tone_correct_id": (
+            "Tone Correction ID",
+            True,
+            int,
+            "ID of Tone Correction parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "lod_id": (
+            "LoD Param ID",
+            False,
+            int,
+            "ID of Level of Detail (LoD) parameter to use in this map's lighting parameters (DrawParam).",
+        ),
+        "is_shadow_source": ("Can Cast Shadow", True, bool, "If True, this entity will cast dynamic shadows."),
+        "is_shadow_destination": (
+            "Can Receive Shadow",
+            True,
+            bool,
+            "If True, this entity can have dynamic shadows cast onto it.",
+        ),
+        "is_shadow_only": ("Cast Shadow Only", True, bool, "If True, this entity only casts shadows."),
+        "draw_by_reflect_cam": ("Is Reflected", True, bool, "If True, this entity will be reflected in water, etc."),
+        "draw_only_reflect_cam": (
+            "Is Only Reflected",
+            True,
+            bool,
+            "If True, this entity will only be drawn in reflections in water, etc.",
+        ),
+        "use_depth_bias_float": ("Use Depth Bias Float", True, bool, "Unknown."),
+        "disable_point_light_effect": (
+            "Ignore Point Lights",
+            True,
+            bool,
+            "If True, this entity will not be illuminated by point lights (I think).",
+        ),
     }
 
     ENTRY_TYPE = None
@@ -191,9 +220,11 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         self._draw_groups = _flag_group_to_enabled_flag_set(header["__draw_groups"])
         self._display_groups = _flag_group_to_enabled_flag_set(header["__display_groups"])
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__name_offset"], encoding='shift-jis')
+            msb_buffer, offset=part_offset + header["__name_offset"], encoding="shift-jis"
+        )
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding='shift-jis')
+            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding="shift-jis"
+        )
         msb_buffer.seek(part_offset + header["__base_data_offset"])
         base_data = self.PART_BASE_DATA_STRUCT.unpack(msb_buffer)
         self.set(**base_data)
@@ -208,11 +239,11 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         display_groups = _enabled_flag_set_to_flag_group(self._display_groups)
 
         name_offset = self.PART_HEADER_STRUCT.size
-        packed_name = self.get_name_to_pack().encode('shift-jis') + b'\0'  # Name not padded on its own.
+        packed_name = self.get_name_to_pack().encode("shift-jis") + b"\0"  # Name not padded on its own.
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode('shift-jis') + b'\0' if self.sib_path else b'\0' * 6
+        packed_sib_path = self.sib_path.encode("shift-jis") + b"\0" if self.sib_path else b"\0" * 6
         while len(packed_name + packed_sib_path) % 4 != 0:
-            packed_sib_path += b'\0'
+            packed_sib_path += b"\0"
         base_data_offset = sib_path_offset + len(packed_sib_path)
         packed_base_data = self.PART_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)
@@ -240,30 +271,27 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack_from_object(self)
 
     def set_indices(
-            self,
-            part_type_index,
-            model_indices,
-            local_environment_indices,
-            region_indices,
-            part_indices,
-            local_collision_indices,
+        self,
+        part_type_index,
+        model_indices,
+        local_environment_indices,
+        region_indices,
+        part_indices,
+        local_collision_indices,
     ):
         self._part_type_index = part_type_index
         self._model_index = model_indices[self.model_name] if self.model_name else -1
 
     def set_names(
-            self,
-            model_names,
-            region_names,
-            environment_names,
-            part_names,
-            collision_names,
+        self, model_names, region_names, environment_names, part_names, collision_names,
     ):
         try:
             self.model_name = model_names[self._model_index]
         except KeyError:
-            raise KeyError(f"Invalid model index for {self.ENTRY_TYPE} {self.name} (entity ID {self.entity_id}): "
-                           f"{self._model_index}")
+            raise KeyError(
+                f"Invalid model index for {self.ENTRY_TYPE} {self.name} (entity ID {self.entity_id}): "
+                f"{self._model_index}"
+            )
 
     @property
     def draw_groups(self):
@@ -276,8 +304,9 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             self._draw_groups = set()
             return
         if not isinstance(value, (list, tuple, set)):
-            raise TypeError("Draw groups must be a set, sequence, `None`, 'None', or ''. "
-                            "Or use `.draw_groups.add()`, etc.).")
+            raise TypeError(
+                "Draw groups must be a set, sequence, `None`, 'None', or ''. " "Or use `.draw_groups.add()`, etc.)."
+            )
         for i in value:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid draw group: {i}. Must range from 0 to 127, inclusive.")
@@ -294,8 +323,10 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             self._display_groups = set()
             return
         if not isinstance(value, (list, tuple, set)):
-            raise TypeError("Display groups must be a set, sequence, `None`, 'None', or ''. "
-                            "Or use `.display_groups.add()`, etc.).")
+            raise TypeError(
+                "Display groups must be a set, sequence, `None`, 'None', or ''. "
+                "Or use `.display_groups.add()`, etc.)."
+            )
         for i in value:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid display group: {i}. Must range from 0 to 127, inclusive.")
@@ -306,7 +337,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         old_offset = msb_buffer.tell()
         msb_buffer.seek(old_offset + 4)
         try:
-            part_type_int = struct.unpack('i', msb_buffer.read(4))[0]
+            part_type_int = struct.unpack("i", msb_buffer.read(4))[0]
             part_type = MSB_PART_TYPE(part_type_int)
         except (ValueError, TypeError):
             part_type = None
@@ -317,14 +348,15 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
 class MSBMapPiece(BaseMSBPart):
     """Just a textured, visible mesh asset. Does not include any collision."""
 
-    PART_TYPE_DATA_STRUCT = (
-        '8x',
-    )
+    PART_TYPE_DATA_STRUCT = ("8x",)
 
     FIELD_INFO = {
-        'model_name': (
-            'Model Name', True, '<Maps:Models:MapPieces>',
-            "Name of map piece model to use for this map piece."),
+        "model_name": (
+            "Model Name",
+            True,
+            "<Maps:Models:MapPieces>",
+            "Name of map piece model to use for this map piece.",
+        ),
         **BaseMSBPart.FIELD_INFO,
     }
 
@@ -335,40 +367,36 @@ class MSBObject(BaseMSBPart):
     """Instance of a physical object."""
 
     PART_TYPE_DATA_STRUCT = (
-        '4x',
-        ('_draw_parent_index', 'i'),
-        ('break_term', 'b'),
-        ('net_sync_type', 'b'),
-        '2x',
-        ('default_animation', 'h'),
-        ('unk_x0e_x10', 'h'),
-        ('unk_x10_x14', 'i'),
-        '4x',
+        "4x",
+        ("_draw_parent_index", "i"),
+        ("break_term", "b"),
+        ("net_sync_type", "b"),
+        "2x",
+        ("default_animation", "h"),
+        ("unk_x0e_x10", "h"),
+        ("unk_x10_x14", "i"),
+        "4x",
     )
 
     FIELD_INFO = {
-        'model_name': (
-            'Model Name', True, '<Maps:Models:Objects>',
-            "Name of object model to use for this object."),
+        "model_name": ("Model Name", True, "<Maps:Models:Objects>", "Name of object model to use for this object."),
         **BaseMSBPart.FIELD_INFO,
-        'draw_parent_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
-        'break_term': (
-            'Break Term', True, int,
-            "Unknown. Related to object breakage."),
-        'net_sync_type': (
-            'Net Sync Type', True, int,
-            "Unknown. Related to online object synchronization."),
-        'default_animation': (
-            'Default Animation ID', True, int,
-            "Object animation ID to auto-play on map load, e.g. for different corpse poses."),
-        'unk_x0e_x10': (
-            'Unknown [0e-10]', False, int,
-            "Unknown."),
-        'unk_x10_x14': (
-            'Unknown [10-14]', False, int,
-            "Unknown."),
+        "draw_parent_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
+        ),
+        "break_term": ("Break Term", True, int, "Unknown. Related to object breakage."),
+        "net_sync_type": ("Net Sync Type", True, int, "Unknown. Related to online object synchronization."),
+        "default_animation": (
+            "Default Animation ID",
+            True,
+            int,
+            "Object animation ID to auto-play on map load, e.g. for different corpse poses.",
+        ),
+        "unk_x0e_x10": ("Unknown [0e-10]", False, int, "Unknown."),
+        "unk_x10_x14": ("Unknown [10-14]", False, int, "Unknown."),
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Object
@@ -385,13 +413,13 @@ class MSBObject(BaseMSBPart):
         self.set(**kwargs)
 
     def set_indices(
-            self,
-            part_type_index,
-            model_indices,
-            local_environment_indices,
-            region_indices,
-            part_indices,
-            local_collision_indices,
+        self,
+        part_type_index,
+        model_indices,
+        local_environment_indices,
+        region_indices,
+        part_indices,
+        local_collision_indices,
     ):
         super().set_indices(
             part_type_index,
@@ -404,19 +432,10 @@ class MSBObject(BaseMSBPart):
         self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
 
     def set_names(
-            self,
-            model_names,
-            region_names,
-            environment_names,
-            part_names,
-            collision_names,
+        self, model_names, region_names, environment_names, part_names, collision_names,
     ):
         super().set_names(
-            model_names,
-            environment_names,
-            region_names,
-            part_names,
-            collision_names,
+            model_names, environment_names, region_names, part_names, collision_names,
         )
         self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
 
@@ -425,59 +444,77 @@ class MSBCharacter(BaseMSBPart):
     """Physical character instance."""
 
     PART_TYPE_DATA_STRUCT = (
-        '8x',
-        ('think_id', 'i'),
-        ('npc_id', 'i'),
-        ('talk_id', 'i'),
-        ('patrol_type', 'B'),
-        'x',
-        ('platoon_id', 'H'),
-        ('chara_init_id', 'i'),
-        ('_draw_parent_index', 'i'),
-        '8x',
-        ('_patrol_point_indices', '8h'),
-        ('default_animation', 'i'),
-        ('damage_animation', 'i'),
+        "8x",
+        ("think_id", "i"),
+        ("npc_id", "i"),
+        ("talk_id", "i"),
+        ("patrol_type", "B"),
+        "x",
+        ("platoon_id", "H"),
+        ("chara_init_id", "i"),
+        ("_draw_parent_index", "i"),
+        "8x",
+        ("_patrol_point_indices", "8h"),
+        ("default_animation", "i"),
+        ("damage_animation", "i"),
     )
 
     FIELD_INFO = {
-        'model_name': (
-            'Model Name', True, '<Maps:Models:Characters|Players>',
-            "Name of character model to use for this character."),
+        "model_name": (
+            "Model Name",
+            True,
+            "<Maps:Models:Characters|Players>",
+            "Name of character model to use for this character.",
+        ),
         **BaseMSBPart.FIELD_INFO,
-        'think_id': (
-            'AI ID', True, '<Params:AI>',
-            "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used."),
-        'npc_id': (
-            'NPC ID', True, '<Params:NonPlayers>',
+        "think_id": (
+            "AI ID",
+            True,
+            "<Params:AI>",
+            "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used.",
+        ),
+        "npc_id": (
+            "NPC ID",
+            True,
+            "<Params:NonPlayers>",
             "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
-            "unused."),
-        'talk_id': (
-            'Talk ID', True, int,  # TODO: '<Talk>'
+            "unused.",
+        ),
+        "talk_id": (
+            "Talk ID",
+            True,
+            int,  # TODO: '<Talk>'
             "EzState ID of character, which determines their interactions (conversations, shops, etc.). This is used "
-            "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map."),
-        'patrol_type': (
-            'Patrol Type', True, int,
-            "Patrol behavior type."),
-        'platoon_id': (
-            'Platoon ID', False, int,
-            "Unused 'platoon' ID value."),
-        'chara_init_id': (
-            'Player ID', True, '<Params:Players>',
-            "Contains information for 'player' (human) characters, such as their stats and equipment."),
-        'draw_parent_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
-        'patrol_point_names': (
-            'Patrol Regions', True, '<MapsList:Regions>',
+            "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map.",
+        ),
+        "patrol_type": ("Patrol Type", True, int, "Patrol behavior type."),
+        "platoon_id": ("Platoon ID", False, int, "Unused 'platoon' ID value."),
+        "chara_init_id": (
+            "Player ID",
+            True,
+            "<Params:Players>",
+            "Contains information for 'player' (human) characters, such as their stats and equipment.",
+        ),
+        "draw_parent_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
+        ),
+        "patrol_point_names": (
+            "Patrol Regions",
+            True,
+            "<MapsList:Regions>",
             "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
-            "AI logic."),
-        'default_animation': (
-            'Default Animation', True, int,  # TODO: '<Animation>'
-            "Default looping animation for character."),
-        'damage_animation': (
-            'Damage Animation', True, int,
-            "Default damage animation to use for character."),
+            "AI logic.",
+        ),
+        "default_animation": (
+            "Default Animation",
+            True,
+            int,  # TODO: '<Animation>'
+            "Default looping animation for character.",
+        ),
+        "damage_animation": ("Damage Animation", True, int, "Default damage animation to use for character."),
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Character
@@ -515,13 +552,13 @@ class MSBCharacter(BaseMSBPart):
         self._patrol_point_names = value
 
     def set_indices(
-            self,
-            part_type_index,
-            model_indices,
-            local_environment_indices,
-            region_indices,
-            part_indices,
-            local_collision_indices,
+        self,
+        part_type_index,
+        model_indices,
+        local_environment_indices,
+        region_indices,
+        part_indices,
+        local_collision_indices,
     ):
         super().set_indices(
             part_type_index,
@@ -535,35 +572,34 @@ class MSBCharacter(BaseMSBPart):
         self._patrol_point_indices = [region_indices[n] if n else -1 for n in self._patrol_point_names]
 
     def set_names(
-            self,
-            model_names,
-            region_names,
-            environment_names,
-            part_names,
-            collision_names,
+        self, model_names, region_names, environment_names, part_names, collision_names,
     ):
         super().set_names(
-            model_names,
-            environment_names,
-            region_names,
-            part_names,
-            collision_names,
+            model_names, environment_names, region_names, part_names, collision_names,
         )
         self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
-        self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
+        # TODO: Handling malformed DoA MSB files.
+        try:
+            self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
+        except KeyError:
+            _LOGGER.warning(
+                f"Could not index into {len(region_names)} regions for patrol points: " f"{self._patrol_point_indices}"
+            )
+            self._patrol_point_names = [None] * len(self._patrol_point_indices)
 
 
 class MSBPlayerStart(BaseMSBPart):
     """Starting point for a player character (e.g. a warp point). No additional data."""
 
-    PART_TYPE_DATA_STRUCT = (
-        '16x',
-    )
+    PART_TYPE_DATA_STRUCT = ("16x",)
 
     FIELD_INFO = {
-        'model_name': (
-            'Model Name', False, '<Maps:Models:Characters|Players>',
-            "Name of character model to use for this PlayerStart. This should always be c0000."),
+        "model_name": (
+            "Model Name",
+            False,
+            "<Maps:Models:Characters|Players>",
+            "Name of character model to use for this PlayerStart. This should always be c0000.",
+        ),
         **BaseMSBPart.FIELD_INFO,
     }
 
@@ -574,53 +610,59 @@ class MSBCollision(BaseMSBPart):
     """Physical Collision geometry. Usually these are floor pieces."""
 
     PART_TYPE_DATA_STRUCT = (
-        ('hit_filter_id', 'b'),
-        ('sound_space_type', 'b'),
-        ('_environment_event_index', 'h'),
-        ('reflect_plane_height', 'f'),
-        ('__navmesh_groups', '4I'),
-        ('vagrant_entity_ids', '3i'),
-        ('__area_name_id', 'h'),
-        ('starts_disabled', '?'),
-        ('unk_x27_x28', 'B'),
-        ('attached_bonfire', 'i'),
-        ('minus_ones', '3i', [-1, -1, -1]),  # Never used. Possibly more bonfires?
-        ('__play_region_id', 'i'),
-        ('lock_cam_param_id_1', 'h'),
-        ('lock_cam_param_id_2', 'h'),
-        '16x',
+        ("hit_filter_id", "b"),
+        ("sound_space_type", "b"),
+        ("_environment_event_index", "h"),
+        ("reflect_plane_height", "f"),
+        ("__navmesh_groups", "4I"),
+        ("vagrant_entity_ids", "3i"),
+        ("__area_name_id", "h"),
+        ("starts_disabled", "?"),
+        ("unk_x27_x28", "B"),
+        ("attached_bonfire", "i"),
+        ("minus_ones", "3i", [-1, -1, -1]),  # Never used. Possibly more bonfires?
+        ("__play_region_id", "i"),
+        ("lock_cam_param_id_1", "h"),
+        ("lock_cam_param_id_2", "h"),
+        "16x",
     )
 
     FIELD_INFO = {
-        'model_name': (
-            'Model Name', True, '<Maps:Models:Collisions>',
-            "Name of collision model to use for this collision."),
+        "model_name": (
+            "Model Name",
+            True,
+            "<Maps:Models:Collisions>",
+            "Name of collision model to use for this collision.",
+        ),
         **BaseMSBPart.FIELD_INFO,
-        'hit_filter_id': (
-            'Hit Filter ID', True, int,
-            "Determines what happens when the player activates this collision."),
-        'sound_space_type': (
-            'Sound Space Type', True, int,
-            "Unknown."),
-        'environment_event_name': (
-            'Environment Event', True, int,
-            "Environment event in map that determines the point light source when standing on this collision."),
-        'reflect_plane_height': (
-            'Reflect Plane Height', True, float,
-            "Unknown."),
-        'navmesh_groups': (
-            'Navmesh Groups', True, list,
-            "Unknown."),
-        'vagrant_entity_ids': (
-            'Vagrant Entity IDs', True, list,
-            "Unknown."),
-        'area_name_id': (
-            'Area Name', True, '<Text:PlaceNames>',
+        "hit_filter_id": (
+            "Hit Filter ID",
+            True,
+            int,
+            "Determines what happens when the player activates this collision.",
+        ),
+        "sound_space_type": ("Sound Space Type", True, int, "Unknown."),
+        "environment_event_name": (
+            "Environment Event",
+            True,
+            int,
+            "Environment event in map that determines the point light source when standing on this collision.",
+        ),
+        "reflect_plane_height": ("Reflect Plane Height", True, float, "Unknown."),
+        "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
+        "vagrant_entity_ids": ("Vagrant Entity IDs", True, list, "Unknown."),
+        "area_name_id": (
+            "Area Name",
+            True,
+            "<Text:PlaceNames>",
             "Name of area that this collision is in, which determines the area banner that is shown when you step on "
             "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
-            "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY')."),
-        'force_area_banner': (
-            'Show Area Banner', True, bool,
+            "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY').",
+        ),
+        "force_area_banner": (
+            "Show Area Banner",
+            True,
+            bool,
             "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
             "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
             "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
@@ -629,37 +671,59 @@ class MSBCollision(BaseMSBPart):
             ""
             "Do NOT enable this for two adjacent collisions with different area names, or moving back and forth "
             "between those collisions will build up a huge queue of area banners to display, which can only be cleared "
-            "by restarting the game entirely."),
-        'starts_disabled': (
-            'Starts Disabled', True, bool,
-            "If True, this collision is disabled on map load and must be manually enabled with an event script."),
-        'unk_x27_x28': (
-            'Unknown [27-28]', False, int,
-            "Unknown. Almost always zero, but see e.g. Anor Londo gondola collision."),
-        'attached_bonfire': (
-            'Attached Bonfire', True, int,
+            "by restarting the game entirely.",
+        ),
+        "starts_disabled": (
+            "Starts Disabled",
+            True,
+            bool,
+            "If True, this collision is disabled on map load and must be manually enabled with an event script.",
+        ),
+        "unk_x27_x28": (
+            "Unknown [27-28]",
+            False,
+            int,
+            "Unknown. Almost always zero, but see e.g. Anor Londo gondola collision.",
+        ),
+        "attached_bonfire": (
+            "Attached Bonfire",
+            True,
+            int,
             "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
-            "on this collision. Note that this also checks for enemies that are disabled by events."),
-        'play_region_id': (
-            'Play Region ID', True, int,
+            "on this collision. Note that this also checks for enemies that are disabled by events.",
+        ),
+        "play_region_id": (
+            "Play Region ID",
+            True,
+            int,
             "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
             ""
             "NOTE: This field shares space with the stable footing flag, so only one of them can be set to a non-zero "
-            "value per collision."),
-        'stable_footing_flag': (
-            'Stable Footing Flag', True, int,
+            "value per collision.",
+        ),
+        "stable_footing_flag": (
+            "Stable Footing Flag",
+            True,
+            int,
             "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
             "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
             "defeated. If set to -1, the player's position will never be saved on this collision.\n\n"
             ""
             "NOTE: This field shares space with the play region ID, so only one of them can be set to a non-zero value "
-            "per collision."),
-        'lock_cam_param_id_1': (
-            'Camera Param ID 1', True, '<Params:Cameras>',
-            "First camera ID to use on this collision. Unsure how the two slots differ."),
-        'lock_cam_param_id_2': (
-            'Camera Param ID 2', True, '<Params:Cameras>',
-            "Second camera ID to use on this collision. Unsure how the two slots differ."),
+            "per collision.",
+        ),
+        "lock_cam_param_id_1": (
+            "Camera Param ID 1",
+            True,
+            "<Params:Cameras>",
+            "First camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+        "lock_cam_param_id_2": (
+            "Camera Param ID 2",
+            True,
+            "<Params:Cameras>",
+            "Second camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Collision
@@ -735,7 +799,8 @@ class MSBCollision(BaseMSBPart):
         if not value and self.area_name_id == -1:
             raise InvalidFieldValueError(
                 "Banner must appear when area name is set to default (-1). You must specify the area name manually to "
-                "set this to False.")
+                "set this to False."
+            )
         self._force_area_banner = bool(value)
 
     @property
@@ -745,8 +810,9 @@ class MSBCollision(BaseMSBPart):
     @play_region_id.setter
     def play_region_id(self, value):
         if self._stable_footing_flag != 0:
-            raise InvalidFieldValueError("Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' "
-                                         "is non-zero.")
+            raise InvalidFieldValueError(
+                "Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' " "is non-zero."
+            )
         if not isinstance(value, int) or value <= -10:
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")
         self._play_region_id = value
@@ -758,8 +824,9 @@ class MSBCollision(BaseMSBPart):
     @stable_footing_flag.setter
     def stable_footing_flag(self, value):
         if self._play_region_id != 0:
-            raise InvalidFieldValueError("Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' "
-                                         "is non-zero.")
+            raise InvalidFieldValueError(
+                "Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' " "is non-zero."
+            )
         if not isinstance(value, int) or value < 0:
             raise InvalidFieldValueError("'stable_footing_flag' must be an integer greater than or equal to 0.")
         self._stable_footing_flag = value
@@ -775,21 +842,23 @@ class MSBCollision(BaseMSBPart):
             self._navmesh_groups = set()
             return
         if not isinstance(value, (list, tuple, set)):
-            raise TypeError("Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
-                            "Or use `.navmesh_groups.add()`, etc.).")
+            raise TypeError(
+                "Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
+                "Or use `.navmesh_groups.add()`, etc.)."
+            )
         for i in value:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
         self._navmesh_groups = set(value)
 
     def set_indices(
-            self,
-            part_type_index,
-            model_indices,
-            local_environment_indices,
-            region_indices,
-            part_indices,
-            local_collision_indices,
+        self,
+        part_type_index,
+        model_indices,
+        local_environment_indices,
+        region_indices,
+        part_indices,
+        local_collision_indices,
     ):
         super().set_indices(
             part_type_index,
@@ -805,19 +874,10 @@ class MSBCollision(BaseMSBPart):
             self._environment_event_index = -1
 
     def set_names(
-            self,
-            model_names,
-            region_names,
-            environment_names,
-            part_names,
-            collision_names,
+        self, model_names, region_names, environment_names, part_names, collision_names,
     ):
         super().set_names(
-            model_names,
-            environment_names,
-            region_names,
-            part_names,
-            collision_names,
+            model_names, environment_names, region_names, part_names, collision_names,
         )
         if self._environment_event_index != -1:
             try:
@@ -835,18 +895,14 @@ class MSBNavmesh(BaseMSBPart):
     """AI navigation mesh ('navmesh'). Often called 'navimesh' in the game files."""
 
     PART_NAVMESH_STRUCT = (
-        ('navmesh_groups', '4I'),
-        '16x',
+        ("navmesh_groups", "4I"),
+        "16x",
     )
 
     FIELD_INFO = {
-        'model_name': (
-            'Model Name', True, '<Maps:Models:Navmeshes>',
-            "Name of navmesh model to use for this navmesh."),
+        "model_name": ("Model Name", True, "<Maps:Models:Navmeshes>", "Name of navmesh model to use for this navmesh."),
         **BaseMSBPart.FIELD_INFO,
-        'navmesh_groups': (
-            'Navmesh Groups', True, list,
-            "Unknown."),
+        "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.Navmesh
@@ -877,8 +933,10 @@ class MSBNavmesh(BaseMSBPart):
             self._navmesh_groups = set()
             return
         if not isinstance(value, (list, tuple, set)):
-            raise TypeError("Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
-                            "Or use `.navmesh_groups.add()`, etc.).")
+            raise TypeError(
+                "Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
+                "Or use `.navmesh_groups.add()`, etc.)."
+            )
         for i in value:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
@@ -887,11 +945,13 @@ class MSBNavmesh(BaseMSBPart):
 
 class MSBUnusedObject(MSBObject):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
+
     ENTRY_TYPE = MSB_PART_TYPE.UnusedObject
 
 
 class MSBUnusedCharacter(MSBCharacter):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
+
     ENTRY_TYPE = MSB_PART_TYPE.UnusedCharacter
 
 
@@ -904,23 +964,33 @@ class MSBMapLoadTrigger(BaseMSBPart):
 
     Uses collision models, and almost always has the same model as the linked `MSBCollision`.
     """
+
     PART_MAP_LOAD_TRIGGER_STRUCT = (
-        ('collision_index', 'i'),
-        ('map_id', '4b'),
-        '8x',
+        ("collision_index", "i"),
+        ("map_id", "4b"),
+        "8x",
     )
 
     FIELD_INFO = {
-        'model_name': (
-            'Collision Model Name', True, '<Maps:Models:Collisions>',
-            "Name of collision model to use for this map load trigger."),
+        "model_name": (
+            "Collision Model Name",
+            True,
+            "<Maps:Models:Collisions>",
+            "Name of collision model to use for this map load trigger.",
+        ),
         **BaseMSBPart.FIELD_INFO,
-        'collision_name': (
-            'Collision Part Name', True, '<Maps:Parts:Collisions>',
-            "Collision part that triggers this map load."),
-        'connected_map': (
-            'Map ID', True, str,
-            "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded."),
+        "collision_name": (
+            "Collision Part Name",
+            True,
+            "<Maps:Parts:Collisions>",
+            "Collision part that triggers this map load.",
+        ),
+        "connected_map": (
+            "Map ID",
+            True,
+            str,
+            "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
+        ),
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
@@ -955,13 +1025,13 @@ class MSBMapLoadTrigger(BaseMSBPart):
         self._connected_map = get_map(value)
 
     def set_indices(
-            self,
-            part_type_index,
-            model_indices,
-            local_environment_indices,
-            region_indices,
-            part_indices,
-            local_collision_indices,
+        self,
+        part_type_index,
+        model_indices,
+        local_environment_indices,
+        region_indices,
+        part_indices,
+        local_collision_indices,
     ):
         super().set_indices(
             part_type_index,
@@ -974,19 +1044,10 @@ class MSBMapLoadTrigger(BaseMSBPart):
         self._collision_index = local_collision_indices[self.collision_name] if self.collision_name else -1
 
     def set_names(
-            self,
-            model_names,
-            region_names,
-            environment_names,
-            part_names,
-            collision_names,
+        self, model_names, region_names, environment_names, part_names, collision_names,
     ):
         super().set_names(
-            model_names,
-            environment_names,
-            region_names,
-            part_names,
-            collision_names,
+            model_names, environment_names, region_names, part_names, collision_names,
         )
         self.collision_name = collision_names[self._collision_index] if self._collision_index != -1 else None
 
@@ -1012,12 +1073,7 @@ def _flag_group_to_enabled_flag_set(flag_group):
     """
     if not isinstance(flag_group, (list, tuple)) or len(flag_group) != 4:
         raise ValueError("Flag group must be a sequence of four integers.")
-    return set([
-        32 * i + j
-        for i in range(4)
-        for j in range(32)
-        if (2 ** j) & flag_group[i]
-    ])
+    return set([32 * i + j for i in range(4) for j in range(32) if (2 ** j) & flag_group[i]])
 
 
 def _enabled_flag_set_to_flag_group(enabled_flags):
@@ -1038,7 +1094,7 @@ def _enabled_flag_set_to_flag_group(enabled_flags):
 
 
 class MSBPartList(MSBEntryList[BaseMSBPart]):
-    ENTRY_LIST_NAME = 'Parts'
+    ENTRY_LIST_NAME = "Parts"
     ENTRY_CLASS = staticmethod(MSBPart)
     ENTRY_TYPE_ENUM = MSB_PART_TYPE
 
@@ -1084,12 +1140,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
         return map_load_trigger
 
     def set_indices(
-            self,
-            model_indices,
-            local_environment_indices,
-            region_indices,
-            part_indices,
-            local_collision_indices,
+        self, model_indices, local_environment_indices, region_indices, part_indices, local_collision_indices,
     ):
         """Local type-specific index only.
 
@@ -1118,20 +1169,11 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
                 type_indices[entry.ENTRY_TYPE] += 1
 
     def set_names(
-            self,
-            model_names,
-            environment_names,
-            region_names,
-            part_names,
-            collision_names,
+        self, model_names, environment_names, region_names, part_names, collision_names,
     ):
         for entry in self._entries:
             entry.set_names(
-                model_names,
-                region_names,
-                environment_names,
-                part_names,
-                collision_names,
+                model_names, region_names, environment_names, part_names, collision_names,
             )
 
     def get_instance_counts(self):

@@ -9,27 +9,51 @@ from soulstruct.enums.shared import CoordEntityType, NavmeshType
 from soulstruct.game_types.basic_types import GameObject
 
 __all__ = [
-    "Entity", "EventEntity", "CoordEntity",
-    "SoundEvent", "FXEvent", "SpawnerEvent", "MessageEvent", "ObjActEvent", "SpawnPointEvent", "NavmeshEvent",
-    "Object", "Region", "Character",
-    "MapPiece", "Collision", "PlayerStart", "Navmesh", "MapLoadTrigger",
-    "EntityInt", "CoordEntityInt", "ObjectInt", "RegionInt", "CharacterInt", "AnimatedInt",
-    "MapPieceInt", "CollisionInt", "NavmeshEventInt",
+    "Entity",
+    "EventEntity",
+    "CoordEntity",
+    "SoundEvent",
+    "FXEvent",
+    "SpawnerEvent",
+    "MessageEvent",
+    "ObjActEvent",
+    "SpawnPointEvent",
+    "NavmeshEvent",
+    "Object",
+    "Region",
+    "Character",
+    "MapPiece",
+    "Collision",
+    "PlayerStart",
+    "Navmesh",
+    "MapLoadTrigger",
+    "EntityInt",
+    "CoordEntityInt",
+    "ObjectInt",
+    "RegionInt",
+    "CharacterInt",
+    "AnimatedInt",
+    "MapPieceInt",
+    "CollisionInt",
+    "NavmeshEventInt",
 ]
 
 
 class Entity(GameObject, IntEnum):
     """Base class for anything that appears in the MSB."""
+
     pass
 
 
 class EventEntity(Entity):
     """Base class for things that appear in the 'events' section of the MSB, such as sounds, ObjActs, and FX."""
+
     pass
 
 
 class CoordEntity(Entity):
     """Base class for things with coordinates (transforms) in the MSB: Objects, Regions, and Characters."""
+
     def __call__(self, negate=False, condition=None, skip_lines=0):
         raise NotImplementedError
 
@@ -43,6 +67,7 @@ class SoundEvent(EventEntity):
 
     Note that these are enabled on map load, so you may want to disable it (e.g. boss music) in your constructor event.
     """
+
     def enable(self):
         return instr.EnableSoundEvent(self)
 
@@ -56,6 +81,7 @@ class FXEvent(EventEntity):
     Can be created or deleted. When deleted, the particles already emitted can be allowed to live out their remaining
     life (`erase_root_only=True` by default).
     """
+
     def create(self):
         return instr.CreateFX(self)
 
@@ -65,6 +91,7 @@ class FXEvent(EventEntity):
 
 class SpawnerEvent(EventEntity):
     """Spawner event (causes linked enemies to respawn) in MSB attached to a region. Can be enabled or disabled."""
+
     def enable(self):
         return instr.EnableSpawner(self)
 
@@ -74,6 +101,7 @@ class SpawnerEvent(EventEntity):
 
 class MessageEvent(EventEntity):
     """Message event in MSB that causes a "developer message" to appear in a region. Can be enabled or disabled."""
+
     def enable(self):
         return instr.EnableSoapstoneMessage(self)
 
@@ -86,14 +114,15 @@ class ObjActEvent(EventEntity):
 
     It can be used in conditions as a test for the ObjAct event being triggered.
     """
+
     def __call__(self, negate=False, condition=None, skip_lines=0):
         try:
             value = self.value
         except AttributeError:
             value = self
         return get_value_test(
-            value=value, negate=negate, condition=condition, skip_lines=skip_lines,
-            if_true_func=instr.IfObjectActivated)
+            value=value, negate=negate, condition=condition, skip_lines=skip_lines, if_true_func=instr.IfObjectActivated
+        )
 
     def enable(self, obj: Object, relative_index=None):
         return instr.EnableObjectActivation(obj=obj, obj_act_id=self, relative_index=relative_index)
@@ -104,6 +133,7 @@ class ObjActEvent(EventEntity):
 
 class SpawnPointEvent(Entity):
     """Spawn point attached to an MSB region."""
+
     def set_respawn(self):
         return instr.SetRespawnPoint(self)
 
@@ -111,6 +141,7 @@ class SpawnPointEvent(Entity):
 class NavmeshEvent(Entity):
     """Navmesh event attached to an MSB navmesh part. Enable/disable/toggle functions require you to specify a
     navigation type; only the flags for that type will be modified in the navmesh."""
+
     def enable(self, navmesh_type: NavmeshType):
         return instr.EnableNavmeshType(self, navmesh_type)
 
@@ -123,14 +154,19 @@ class NavmeshEvent(Entity):
 
 class Object(CoordEntity):
     """ Condition upon an object as a shortcut to condition upon it *not* being destroyed. """
+
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         try:
             value = self.value
         except AttributeError:
             value = self
         return get_value_test(
-            value=value, negate=negate, condition=condition, skip_lines=skip_lines,
-            end_event=end_event, restart_event=restart_event,
+            value=value,
+            negate=negate,
+            condition=condition,
+            skip_lines=skip_lines,
+            end_event=end_event,
+            restart_event=restart_event,
             skip_if_true_func=instr.SkipLinesIfObjectNotDestroyed,
             skip_if_false_func=instr.SkipLinesIfObjectDestroyed,
             if_true_func=instr.IfObjectNotDestroyed,
@@ -138,7 +174,8 @@ class Object(CoordEntity):
             end_if_true_func=instr.EndIfObjectNotDestroyed,
             end_if_false_func=instr.EndIfObjectDestroyed,
             restart_if_true_func=instr.RestartIfObjectNotDestroyed,
-            restart_if_false_func=instr.RestartIfObjectDestroyed)
+            restart_if_false_func=instr.RestartIfObjectDestroyed,
+        )
 
     @property
     def coord_entity_type(self):
@@ -156,14 +193,20 @@ class Object(CoordEntity):
 
 class Region(CoordEntity):
     """ Condition upon a region as a shortcut to condition upon the player being inside it (condition only). """
+
     def __call__(self, negate=False, condition=None, skip_lines=0):
         try:
             value = self.value
         except AttributeError:
             value = self
         return get_value_test(
-            value=value, negate=negate, condition=condition, skip_lines=skip_lines,
-            if_true_func=instr.IfPlayerInsideRegion, if_false_func=instr.IfPlayerOutsideRegion)
+            value=value,
+            negate=negate,
+            condition=condition,
+            skip_lines=skip_lines,
+            if_true_func=instr.IfPlayerInsideRegion,
+            if_false_func=instr.IfPlayerOutsideRegion,
+        )
 
     @property
     def coord_entity_type(self):
@@ -172,14 +215,20 @@ class Region(CoordEntity):
 
 class Character(CoordEntity):
     """ Condition upon a character as a shortcut to condition upon them being alive. """
+
     def __call__(self, negate=False, condition=None, skip_lines=0):
         try:
             value = self.value
         except AttributeError:
             value = self
         return get_value_test(
-            value=value, negate=negate, condition=condition, skip_lines=skip_lines,
-            if_true_func=instr.IfCharacterAlive, if_false_func=instr.IfCharacterDead)
+            value=value,
+            negate=negate,
+            condition=condition,
+            skip_lines=skip_lines,
+            if_true_func=instr.IfCharacterAlive,
+            if_false_func=instr.IfCharacterDead,
+        )
 
     @property
     def coord_entity_type(self):
@@ -200,6 +249,7 @@ class Character(CoordEntity):
 
 class MapPiece(Entity):
     """Map Piece added in MSB."""
+
     def enable(self):
         return instr.EnableMapPiece(self)
 
@@ -209,6 +259,7 @@ class MapPiece(Entity):
 
 class Collision(Entity):
     """Collision added in MSB."""
+
     def enable(self):
         return instr.EnableCollision(self)
 
@@ -224,16 +275,19 @@ class Collision(Entity):
 
 class PlayerStart(Entity):
     """PlayerStart added in MSB. Used as an argument in `Warp` instructions. No additional state."""
+
     pass
 
 
 class Navmesh(Entity):
     """Navmesh instance. NavmeshEvents are attached to it and manipulated with EMEVD."""
+
     pass
 
 
 class MapLoadTrigger(Entity):
     """MapConnection added in MSB. No additional state."""
+
     pass
 
 

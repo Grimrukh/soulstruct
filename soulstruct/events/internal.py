@@ -1,15 +1,31 @@
+"""Internal methods used in multiple `soulstruct.events` modules."""
+
+__all__ = [
+    "COMPARISON_NODES",
+    "NEG_COMPARISON_NODES",
+    "no_skip_or_negate_or_terminate",
+    "negate_only",
+    "skip_and_negate_and_terminate",
+    "NoSkipOrTerminateError",
+    "NoNegateError",
+    "InstructionNotFoundError",
+    "EnumStringError",
+    "ConstantCondition",
+    "get_value_test",
+    "get_enum_name",
+    "get_game_map_variable_name",
+    "boolify",
+    "get_write_offset",
+    "get_instruction_args",
+    "get_byte_offset_from_struct",
+    "format_event_layers",
+]
+
 import ast
 import logging
 import struct
 from functools import wraps
 
-__all__ = [
-    "COMPARISON_NODES", "NEG_COMPARISON_NODES",
-    "no_skip_or_negate_or_terminate", "negate_only", "skip_and_negate_and_terminate",
-    "NoSkipOrTerminateError", "NoNegateError", "InstructionNotFoundError", "EnumStringError",
-    "ConstantCondition", "get_value_test", "get_enum_name", "get_game_map_variable_name", "boolify",
-    "get_write_offset", "get_instruction_args", "get_byte_offset_from_struct",
-]
 _LOGGER = logging.getLogger(__name__)
 
 COMPARISON_NODES = {ast.Eq: 0, ast.NotEq: 1, ast.Gt: 2, ast.Lt: 3, ast.GtE: 4, ast.LtE: 5}
@@ -82,7 +98,6 @@ class NoSkipOrTerminateError(Exception):
     This is generally handled internally by constructing a condition (which all test types can do) and skipping or
     terminating based on that condition's truth value.
     """
-    pass
 
 
 class InstructionNotFoundError(Exception):
@@ -95,16 +110,22 @@ class NoNegateError(Exception):
     This is generally handled internally by constructing a condition (which all test types can do) and negating a test
     of that condition's truth value.
     """
-    pass
 
 
-class ConstantCondition(object):
+class ConstantCondition:
     """ Condition with no arguments. These conditions have 'hard-coded' methods in the EMEVD API. """
 
-    def __init__(self, if_true_func=None, if_false_func=None,
-                 skip_if_true_func=None, skip_if_false_func=None,
-                 end_if_true_func=None, end_if_false_func=None,
-                 restart_if_true_func=None, restart_if_false_func=None):
+    def __init__(
+        self,
+        if_true_func=None,
+        if_false_func=None,
+        skip_if_true_func=None,
+        skip_if_false_func=None,
+        end_if_true_func=None,
+        end_if_false_func=None,
+        restart_if_true_func=None,
+        restart_if_false_func=None,
+    ):
         self.if_true_func = if_true_func
         self.if_false_func = if_false_func
         self.skip_if_true_func = skip_if_true_func
@@ -163,11 +184,21 @@ class ConstantCondition(object):
 
 
 def get_value_test(
-        value, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False,
-        skip_if_true_func=None, skip_if_false_func=None,
-        if_true_func=None, if_false_func=None,
-        end_if_true_func=None, end_if_false_func=None,
-        restart_if_true_func=None, restart_if_false_func=None):
+    value,
+    negate=False,
+    condition=None,
+    skip_lines=0,
+    end_event=False,
+    restart_event=False,
+    skip_if_true_func=None,
+    skip_if_false_func=None,
+    if_true_func=None,
+    if_false_func=None,
+    end_if_true_func=None,
+    end_if_false_func=None,
+    restart_if_true_func=None,
+    restart_if_false_func=None,
+):
     if skip_lines > 0:
         if condition is not None or end_event or restart_event:
             raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
@@ -214,10 +245,10 @@ def get_value_test(
 
 
 def get_enum_name(enum, value, ignore_string_error=False):
-    """ Decompiles a full enum attribute string, a la 'BannerType.VictoryAchieved', from the enum value. Raises
-    a ValueError if the enum name is invalid (e.g. if it's a placeholder arg string). """
+    """Decompiles a full enum attribute string, a la 'BannerType.VictoryAchieved', from the enum value. Raises
+    a ValueError if the enum name is invalid (e.g. if it's a placeholder arg string)."""
     try:
-        return f'{enum.__name__}.{enum(value).name}'
+        return f"{enum.__name__}.{enum(value).name}"
     except ValueError:
         if isinstance(value, str):
             if ignore_string_error:
@@ -228,7 +259,6 @@ def get_enum_name(enum, value, ignore_string_error=False):
 
 class EnumStringError(Exception):
     """Indicates that a value expected to be found in an enum was a string, suggesting it is a placeholder arg."""
-    pass
 
 
 def get_byte_offset_from_struct(format_string):
@@ -241,7 +271,7 @@ def get_byte_offset_from_struct(format_string):
     format_string = format_string[1:]
     byte_offset_array = {}
     for i in range(0, len(format_string)):
-        offset = struct.calcsize(endian + format_string[:i + 1]) - struct.calcsize(endian + format_string[i])
+        offset = struct.calcsize(endian + format_string[: i + 1]) - struct.calcsize(endian + format_string[i])
         byte_offset_array[offset] = (i, format_string[i])
     return byte_offset_array
 
@@ -253,17 +283,19 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
     if event_args_size == 0:
         return "", []
     try:
-        args_format = '@' + format_dict[instruction_class][instruction_index]
+        args_format = "@" + format_dict[instruction_class][instruction_index]
     except KeyError:
         raise KeyError(f"Cannot find argument types for instruction {instruction_class}[{instruction_index}].")
 
     # 's' arguments are actually four-byte offsets into the packed string data, though we will keep the 's' symbol.
-    true_args_format = args_format.replace('s', 'I')
+    true_args_format = args_format.replace("s", "I")
     required_args_size = struct.calcsize(true_args_format)
     if required_args_size > event_args_size:
-        raise ValueError(f"Documented size of minimum required args for instruction {instruction_class}"
-                         f"[{instruction_index}] is {required_args_size}, but size of args specified in EMEVD file is "
-                         f"only {event_args_size}.")
+        raise ValueError(
+            f"Documented size of minimum required args for instruction {instruction_class}"
+            f"[{instruction_index}] is {required_args_size}, but size of args specified in EMEVD file is "
+            f"only {event_args_size}."
+        )
 
     file.seek(first_arg_offset)
     req_args = struct.unpack(true_args_format, file.read(required_args_size))
@@ -278,10 +310,12 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
         file.seek(previous_offset)
         return args_format[1:], list(req_args)
     elif extra_size % 4 != 0:
-        raise ValueError(f"Error interpreting instruction {instruction_class}[{instruction_index}]: optional argument "
-                         f"size is not a multiple of four bytes ({extra_size}).")
+        raise ValueError(
+            f"Error interpreting instruction {instruction_class}[{instruction_index}]: optional argument "
+            f"size is not a multiple of four bytes ({extra_size})."
+        )
 
-    opt_args = [struct.unpack('<I', file.read(4))[0] for _ in range(opt_arg_count)]
+    opt_args = [struct.unpack("<I", file.read(4))[0] for _ in range(opt_arg_count)]
     file.seek(previous_offset)
     return args_format[1:] + "|" + "I" * (extra_size // 4), list(req_args) + opt_args
 
@@ -290,21 +324,21 @@ def get_write_offset(event_format, arg_index):
     """Iterate over event format string to determine write offset of given argument index."""
     offset = 0
     for i, c in enumerate(event_format):
-        if c in 'Hh':
+        if c in "Hh":
             if (offset % 2) != 0:
                 # Fill in remainder of 2-byte chunk.
                 offset += 1
-        elif c in 'Iif':
+        elif c in "Iif":
             while (offset % 4) != 0:
                 # Fill in remainder of 4-byte chunk.
                 offset += 1
         if i == arg_index:
             return offset
-        if c in 'Bb':
+        if c in "Bb":
             offset += 1
-        elif c in 'Hh':
+        elif c in "Hh":
             offset += 2
-        elif c in 'Iif':
+        elif c in "Iif":
             offset += 4
 
 
@@ -325,3 +359,13 @@ def get_game_map_variable_name(area_id, block_id, game_module):
     except ValueError:
         # Event arg replacement(s) or unknown map. Write repr'd tuple instead.
         return f"({area_id}, {block_id})"
+
+
+def format_event_layers(event_layers):
+    if event_layers is None:
+        return ""
+    if isinstance(event_layers, int):
+        event_layers = [event_layers]
+    if not isinstance(event_layers, (list, tuple)):
+        raise TypeError
+    return f"<" + ", ".join(str(i) for i in event_layers) + ">"

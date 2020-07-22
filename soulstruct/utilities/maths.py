@@ -1,8 +1,13 @@
 """Mathematical classes and functions uses by Soulstruct."""
 
 __all__ = [
-    "Vector3", "Matrix3", "Matrix4",
-    "shift_msb_coordinates", "shift", "matrix_multiply", "resolve_rotation",
+    "Vector3",
+    "Matrix3",
+    "Matrix4",
+    "shift_msb_coordinates",
+    "shift",
+    "matrix_multiply",
+    "resolve_rotation",
 ]
 
 import abc
@@ -10,8 +15,9 @@ import math
 import typing as tp
 
 
-class Vector3(object):
+class Vector3:
     """Simple [x, y, z] container."""
+
     PRECISION = 3
 
     def __init__(self, x, y=None, z=None):
@@ -118,7 +124,7 @@ class Vector3(object):
         yield self.z
 
     def __repr__(self):
-        return f'Vector3({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f}, {self.z:.{self.PRECISION}f})'
+        return f"Vector3({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f}, {self.z:.{self.PRECISION}f})"
 
     def copy(self):
         return Vector3(self)
@@ -187,10 +193,7 @@ class _Matrix(abc.ABC):
 class Matrix3(_Matrix):
     SIZE = 3
 
-    def __init__(self,
-                 v00, v01, v02,
-                 v10, v11, v12,
-                 v20, v21, v22):
+    def __init__(self, v00, v01, v02, v10, v11, v12, v20, v21, v22):
         super().__init__()
         self.data = [
             [v00, v01, v02],
@@ -207,9 +210,7 @@ class Matrix3(_Matrix):
 
     @classmethod
     def identity(cls):
-        return cls(1, 0, 0,
-                   0, 1, 0,
-                   0, 0, 1)
+        return cls(1, 0, 0, 0, 1, 0, 0, 0, 1)
 
     @classmethod
     def from_euler_angles(cls, rx, ry=None, rz=None, radians=False, order="xzy"):
@@ -221,15 +222,9 @@ class Matrix3(_Matrix):
         sx, sy, sz = math.sin(rx), math.sin(ry), math.sin(rz)
         cx, cy, cz = math.cos(rx), math.cos(ry), math.cos(rz)
         m = {
-            "x": cls(1, 0, 0,
-                     0, cx, -sx,
-                     0, sx, cx),
-            "y": cls(cy, 0, sy,
-                     0, 1, 0,
-                     -sy, 0, cy),
-            "z": cls(cz, -sz, 0,
-                     sz, cz, 0,
-                     0, 0, 1)
+            "x": cls(1, 0, 0, 0, cx, -sx, 0, sx, cx),
+            "y": cls(cy, 0, sy, 0, 1, 0, -sy, 0, cy),
+            "z": cls(cz, -sz, 0, sz, cz, 0, 0, 0, 1),
         }
         return m[order[2]] @ m[order[1]] @ m[order[0]]
 
@@ -266,11 +261,7 @@ class Matrix3(_Matrix):
 class Matrix4(_Matrix):
     SIZE = 4
 
-    def __init__(self,
-                 v00, v01, v02, v03,
-                 v10, v11, v12, v13,
-                 v20, v21, v22, v23,
-                 v30, v31, v32, v33):
+    def __init__(self, v00, v01, v02, v03, v10, v11, v12, v13, v20, v21, v22, v23, v30, v31, v32, v33):
         super().__init__()
         self.data = [
             [v00, v01, v02, v03],
@@ -281,10 +272,7 @@ class Matrix4(_Matrix):
 
     @classmethod
     def identity(cls):
-        return cls(1, 0, 0, 0,
-                   0, 1, 0, 0,
-                   0, 0, 1, 0,
-                   0, 0, 0, 1)
+        return cls(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 
     def __matmul__(self, other):
         if isinstance(other, Matrix4):
@@ -312,8 +300,7 @@ def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
 
 def matrix_multiply(a, b, flat=False):
     zip_b = list(zip(*b))
-    m = [[sum(ele_a * ele_b for ele_a, ele_b in zip(row_a, col_b))
-          for col_b in zip_b] for row_a in a]
+    m = [[sum(ele_a * ele_b for ele_a, ele_b in zip(row_a, col_b)) for col_b in zip_b] for row_a in a]
     if flat:
         m_flat = []
         for row in m:

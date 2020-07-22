@@ -4,33 +4,67 @@ DO NOT IMPORT THIS FILE. Import the specific game package (e.g. "from soulstruct
 full set of instructions, enums, game types, etc. for that game.
 """
 from __future__ import annotations
+
+import logging
 from typing import Optional, Union
 
 from soulstruct.game_types import *
 from soulstruct.enums.shared import *
 from soulstruct.events.numeric import to_numeric
 
+_LOGGER = logging.getLogger(__name__)
+
 __all__ = [
     "RunEvent",
-    "Wait", "WaitFrames", "WaitRandomSeconds", "WaitRandomFrames", "WaitForNetworkApproval",
-    "SetCharacterState", "EnableCharacter", "DisableCharacter",
-    "SetAIState", "EnableAI", "DisableAI", "SetTeamType",
+    "Wait",
+    "WaitFrames",
+    "WaitRandomSeconds",
+    "WaitRandomFrames",
+    "WaitForNetworkApproval",
+    "SetCharacterState",
+    "EnableCharacter",
+    "DisableCharacter",
+    "SetAIState",
+    "EnableAI",
+    "DisableAI",
+    "SetTeamType",
     "Kill",
     "EzstateAIRequest",
     "CancelSpecialEffect",
-    "ResetStandbyAnimationSettings", "SetStandbyAnimationSettings",
-    "SetGravityState", "EnableGravity", "DisableGravity",
+    "ResetStandbyAnimationSettings",
+    "SetStandbyAnimationSettings",
+    "SetGravityState",
+    "EnableGravity",
+    "DisableGravity",
     "SetCharacterEventTarget",
-    "SetImmortalityState", "EnableImmortality", "DisableImmortality",
+    "SetImmortalityState",
+    "EnableImmortality",
+    "DisableImmortality",
     "SetNest",
-    "SetInvincibilityState", "EnableInvincibility", "DisableInvincibility",
-    "ClearTargetList", "AICommand", "SetEventPoint", "SetAIParamID", "ReplanAI",
-    "CreateNPCPart", "SetNPCPartHealth", "SetNPCPartEffects", "SetNPCPartBulletDamageScaling",
-    "SetDisplayMask", "SetCollisionMask",
-    "SetNetworkUpdateAuthority", "SetBackreadState",
-    "EnableBackread", "DisableBackread",
-    "SetHealthBarState", "EnableHealthBar", "DisableHealthBar",
-    "SetCharacterCollisionState", "EnableCharacterCollision", "DisableCharacterCollision",
+    "SetInvincibilityState",
+    "EnableInvincibility",
+    "DisableInvincibility",
+    "ClearTargetList",
+    "AICommand",
+    "SetEventPoint",
+    "SetAIParamID",
+    "ReplanAI",
+    "CreateNPCPart",
+    "SetNPCPartHealth",
+    "SetNPCPartEffects",
+    "SetNPCPartBulletDamageScaling",
+    "SetDisplayMask",
+    "SetCollisionMask",
+    "SetNetworkUpdateAuthority",
+    "SetBackreadState",
+    "EnableBackread",
+    "DisableBackread",
+    "SetHealthBarState",
+    "EnableHealthBar",
+    "DisableHealthBar",
+    "SetCharacterCollisionState",
+    "EnableCharacterCollision",
+    "DisableCharacterCollision",
     "AIEvent",
     "ReferDamageToEntity",
     "SetNetworkUpdateRate",
@@ -40,147 +74,418 @@ __all__ = [
     "HumanityRegistration",
     "ResetAnimation",
     "ActivateMultiplayerBuffs",
-    "SetObjectState", "EnableObject", "DisableObject",
-    "DestroyObject", "RestoreObject",
-    "SetTreasureState", "EnableTreasure", "DisableTreasure",
-    "ActivateObject", "SetObjectActivation", "SetObjectActivationWithIdx",
-    "EnableObjectActivation", "DisableObjectActivation",
+    "SetObjectState",
+    "EnableObject",
+    "DisableObject",
+    "DestroyObject",
+    "RestoreObject",
+    "SetTreasureState",
+    "EnableTreasure",
+    "DisableTreasure",
+    "ActivateObject",
+    "SetObjectActivation",
+    "SetObjectActivationWithIdx",
+    "EnableObjectActivation",
+    "DisableObjectActivation",
     "PostDestruction",
     "CreateHazard",
     "RegisterStatue",
     "RemoveObjectFlag",
-    "SetObjectInvulnerability", "EnableObjectInvulnerability", "DisableObjectInvulnerability",
+    "SetObjectInvulnerability",
+    "EnableObjectInvulnerability",
+    "DisableObjectInvulnerability",
     "EnableTreasureCollection",
-    "SetFlagState", "EnableFlag", "DisableFlag", "ToggleFlag",
-    "SetRandomFlagInRange", "EnableRandomFlagInRange", "DisableRandomFlagInRange", "ToggleRandomFlagInRange",
-    "SetFlagRangeState", "EnableFlagRange", "DisableFlagRange", "ChangeFlagRange",
-    "IncrementEventValue", "ClearEventValue",
-    "EnableThisFlag", "DisableThisFlag",
-    "SetEventState", "StopEvent", "RestartEvent",
-    "SetCollisionState", "EnableCollision", "DisableCollision",
-    "SetCollisionBackreadMaskState", "EnableCollisionBackreadMask", "DisableCollisionBackreadMask",
-    "AwardItemLot", "AwardItemLotToHostOnly",
-    "RemoveItemFromPlayer", "RemoveWeaponFromPlayer", "RemoveArmorFromPlayer", "RemoveRingFromPlayer",
+    "SetFlagState",
+    "EnableFlag",
+    "DisableFlag",
+    "ToggleFlag",
+    "SetRandomFlagInRange",
+    "EnableRandomFlagInRange",
+    "DisableRandomFlagInRange",
+    "ToggleRandomFlagInRange",
+    "SetFlagRangeState",
+    "EnableFlagRange",
+    "DisableFlagRange",
+    "ChangeFlagRange",
+    "IncrementEventValue",
+    "ClearEventValue",
+    "EnableThisFlag",
+    "DisableThisFlag",
+    "SetEventState",
+    "StopEvent",
+    "RestartEvent",
+    "SetCollisionState",
+    "EnableCollision",
+    "DisableCollision",
+    "SetCollisionBackreadMaskState",
+    "EnableCollisionBackreadMask",
+    "DisableCollisionBackreadMask",
+    "AwardItemLot",
+    "AwardItemLotToHostOnly",
+    "RemoveItemFromPlayer",
+    "RemoveWeaponFromPlayer",
+    "RemoveArmorFromPlayer",
+    "RemoveRingFromPlayer",
     "RemoveGoodFromPlayer",
-    "SnugglyItemDrop", "SetNextSnugglyTrade",
-    "RequestAnimation", "ForceAnimation",
-    "SetAnimationsState", "EnableAnimations", "DisableAnimations", "EndOfAnimation",
-    "CreateFX", "DeleteFX", "CreateTemporaryFX", "CreateObjectFX", "DeleteObjectFX",
+    "SnugglyItemDrop",
+    "SetNextSnugglyTrade",
+    "RequestAnimation",
+    "ForceAnimation",
+    "SetAnimationsState",
+    "EnableAnimations",
+    "DisableAnimations",
+    "EndOfAnimation",
+    "CreateFX",
+    "DeleteFX",
+    "CreateTemporaryFX",
+    "CreateObjectFX",
+    "DeleteObjectFX",
     "SetBackgroundMusic",
     "PlaySoundEffect",
-    "SetSoundEventState", "EnableSoundEvent", "DisableSoundEvent",
-    "RegisterLadder", "RegisterBonfire",
-    "SetMapPieceState", "DisableMapPiece", "EnableMapPiece",
+    "SetSoundEventState",
+    "EnableSoundEvent",
+    "DisableSoundEvent",
+    "RegisterLadder",
+    "RegisterBonfire",
+    "SetMapPieceState",
+    "DisableMapPiece",
+    "EnableMapPiece",
     "PlaceSummonSign",
-    "SetDeveloperMessageState", "EnableSoapstoneMessage", "DisableSoapstoneMessage",
-    "DisplayDialog", "DisplayBanner", "DisplayStatus", "DisplayBattlefieldMessage",
-    "PlayCutscene", "PlayCutsceneAndMovePlayer", "PlayCutsceneToPlayer", "PlayCutsceneAndMoveSpecificPlayer",
+    "SetDeveloperMessageState",
+    "EnableSoapstoneMessage",
+    "DisableSoapstoneMessage",
+    "DisplayDialog",
+    "DisplayBanner",
+    "DisplayStatus",
+    "DisplayBattlefieldMessage",
+    "PlayCutscene",
+    "PlayCutsceneAndMovePlayer",
+    "PlayCutsceneToPlayer",
+    "PlayCutsceneAndMoveSpecificPlayer",
     "PlayCutsceneAndRotatePlayer",
-    "SetNavmeshType", "EnableNavmeshType", "DisableNavmeshType", "ToggleNavmeshType",
-    "SetNetworkSync", "EnableNetworkSync", "DisableNetworkSync",
+    "SetNavmeshType",
+    "EnableNavmeshType",
+    "DisableNavmeshType",
+    "ToggleNavmeshType",
+    "SetNetworkSync",
+    "EnableNetworkSync",
+    "DisableNetworkSync",
     "ClearMainCondition",
     "IssuePrefetchRequest",
     "SaveRequest",
     "TriggerMultiplayerEvent",
-    "SetVagrantSpawning", "EnableVagrantSpawning", "DisableVagrantSpawning",
+    "SetVagrantSpawning",
+    "EnableVagrantSpawning",
+    "DisableVagrantSpawning",
     "IncrementPvPSin",
     "NotifyBossBattleStart",
-    "SetSpawnerState", "EnableSpawner", "DisableSpawner",
+    "SetSpawnerState",
+    "EnableSpawner",
+    "DisableSpawner",
     "ShootProjectile",
     "CreateProjectileOwner",
-    "WarpToMap", "MoveRemains", "Move", "MoveToEntity", "MoveAndSetDrawParent", "ShortMove",
-    "MoveAndCopyDrawParent", "MoveObjectToCharacter",
+    "WarpToMap",
+    "MoveRemains",
+    "Move",
+    "MoveToEntity",
+    "MoveAndSetDrawParent",
+    "ShortMove",
+    "MoveAndCopyDrawParent",
+    "MoveObjectToCharacter",
     "SetRespawnPoint",
     "KillBoss",
     "IncrementNewGameCycle",
     "AwardAchievement",
     "BetrayCurrentCovenant",
     "EqualRecovery",
-    "ChangeCamera", "SetCameraVibration", "SetLockedCameraSlot",
+    "ChangeCamera",
+    "SetCameraVibration",
+    "SetLockedCameraSlot",
     "HellkiteBreathControl",
     "SetMapDrawParamSlot",
-
     # Line-for-line control flow instructions (high-level Python blocks are recommended instead)
-    "SkipLines", "Terminate", "End", "Restart",
-    "IfValueComparison", "AwaitConditionState", "AwaitConditionTrue", "AwaitConditionFalse",
-    "SkipLinesIfConditionState", "SkipLinesIfConditionTrue", "SkipLinesIfConditionFalse",
-    "SkipLinesIfFinishedConditionState", "SkipLinesIfFinishedConditionTrue", "SkipLinesIfFinishedConditionFalse",
-    "TerminateIfConditionState", "EndIfConditionTrue", "EndIfConditionFalse", "RestartIfConditionTrue",
-    "RestartIfConditionFalse", "TerminateIfFinishedConditionState", "EndIfFinishedConditionTrue",
-    "EndIfFinishedConditionFalse", "RestartIfFinishedConditionTrue", "RestartIfFinishedConditionFalse",
-    "IfConditionState", "IfConditionTrue", "IfConditionFalse", "IfTimeElapsed", "IfFramesElapsed",
-    "IfRandomTimeElapsed", "IfRandomFramesElapsed", "SkipLinesIfMapPresenceState", "SkipLinesIfInsideMap",
-    "SkipLinesIfOutsideMap", "TerminateIfMapPresenceState", "EndIfInsideMap", "EndIfOutsideMap", "RestartIfInsideMap",
-    "RestartIfOutsideMap", "IfMapPresenceState", "IfInsideMap", "IfOutsideMap", "IfMultiplayerEvent", "AwaitFlagState",
-    "AwaitThisEventOn", "AwaitThisEventOff", "AwaitThisEventSlotOn", "AwaitThisEventSlotOff", "AwaitFlagOn",
-    "AwaitFlagOff", "AwaitFlagChange", "SkipLinesIfFlagState", "SkipLinesIfThisEventOn", "SkipLinesIfThisEventOff",
-    "SkipLinesIfThisEventSlotOn", "SkipLinesIfThisEventSlotOff", "SkipLinesIfFlagOn", "SkipLinesIfFlagOff",
-    "TerminateIfFlagState", "EndIfThisEventOn", "EndIfThisEventOff", "EndIfThisEventSlotOn", "EndIfThisEventSlotOff",
-    "EndIfFlagOn", "EndIfFlagOff", "RestartIfThisEventOn", "RestartIfThisEventOff", "RestartIfThisEventSlotOn",
-    "RestartIfThisEventSlotOff", "RestartIfFlagOn", "RestartIfFlagOff", "IfFlagState", "IfThisEventOn",
-    "IfThisEventOff", "IfThisEventSlotOn", "IfThisEventSlotOff", "IfFlagOn", "IfFlagOff", "IfFlagChange",
-    "SkipLinesIfFlagRangeState", "SkipLinesIfFlagRangeAllOn", "SkipLinesIfFlagRangeAllOff", "SkipLinesIfFlagRangeAnyOn",
-    "SkipLinesIfFlagRangeAnyOff", "TerminateIfFlagRangeState", "EndIfFlagRangeAllOn", "EndIfFlagRangeAllOff",
-    "EndIfFlagRangeAnyOn", "EndIfFlagRangeAnyOff", "RestartIfFlagRangeAllOn", "RestartIfFlagRangeAllOff",
-    "RestartIfFlagRangeAnyOn", "RestartIfFlagRangeAnyOff", "IfFlagRangeState", "IfFlagRangeAllOn", "IfFlagRangeAllOff",
-    "IfFlagRangeAnyOn", "IfFlagRangeAnyOff", "IfTrueFlagCountComparison", "IfTrueFlagCountEqual",
-    "IfTrueFlagCountNotEqual", "IfTrueFlagCountGreaterThan", "IfTrueFlagCountLessThan",
-    "IfTrueFlagCountGreaterThanOrEqual", "IfTrueFlagCountLessThanOrEqual", "IfEventValueComparison",
-    "IfEventValueEqual", "IfEventValueNotEqual", "IfEventValueGreaterThan", "IfEventValueLessThan",
-    "IfEventValueGreaterThanOrEqual", "IfEventValueLessThanOrEqual", "IfEventsComparison", "IfCharacterRegionState",
-    "IfCharacterInsideRegion", "IfCharacterOutsideRegion", "IfPlayerInsideRegion", "IfPlayerOutsideRegion",
-    "IfAllPlayersRegionState", "IfAllPlayersInsideRegion", "IfAllPlayersOutsideRegion", "IfEntityDistanceState",
-    "IfEntityWithinDistance", "IfEntityBeyondDistance", "IfPlayerWithinDistance", "IfPlayerBeyondDistance",
-    "IfPlayerItemStateNoBox", "IfPlayerItemStateBox", "IfPlayerItemState", "IfPlayerHasItem", "IfPlayerHasWeapon",
-    "IfPlayerHasArmor", "IfPlayerHasRing", "IfPlayerHasGood", "IfPlayerDoesNotHaveItem", "IfPlayerDoesNotHaveWeapon",
-    "IfPlayerDoesNotHaveArmor", "IfPlayerDoesNotHaveRing", "IfPlayerDoesNotHaveGood", "IfAnyItemDroppedInRegion",
-    "IfItemDropped", "AwaitObjectDestructionState", "AwaitObjectDestroyed", "AwaitObjectNotDestroyed",
-    "SkipLinesIfObjectDestructionState", "SkipLinesIfObjectDestroyed", "SkipLinesIfObjectNotDestroyed",
-    "TerminateIfObjectDestructionState", "EndIfObjectDestroyed", "EndIfObjectNotDestroyed", "RestartIfObjectDestroyed",
-    "RestartIfObjectNotDestroyed", "IfObjectDestructionState", "IfObjectDestroyed", "IfObjectNotDestroyed",
-    "IfObjectDamagedBy", "IfObjectActivated", "IfObjectHealthValueComparison", "IfMovingOnCollision",
+    "SkipLines",
+    "Terminate",
+    "End",
+    "Restart",
+    "IfValueComparison",
+    "AwaitConditionState",
+    "AwaitConditionTrue",
+    "AwaitConditionFalse",
+    "SkipLinesIfConditionState",
+    "SkipLinesIfConditionTrue",
+    "SkipLinesIfConditionFalse",
+    "SkipLinesIfFinishedConditionState",
+    "SkipLinesIfFinishedConditionTrue",
+    "SkipLinesIfFinishedConditionFalse",
+    "TerminateIfConditionState",
+    "EndIfConditionTrue",
+    "EndIfConditionFalse",
+    "RestartIfConditionTrue",
+    "RestartIfConditionFalse",
+    "TerminateIfFinishedConditionState",
+    "EndIfFinishedConditionTrue",
+    "EndIfFinishedConditionFalse",
+    "RestartIfFinishedConditionTrue",
+    "RestartIfFinishedConditionFalse",
+    "IfConditionState",
+    "IfConditionTrue",
+    "IfConditionFalse",
+    "IfTimeElapsed",
+    "IfFramesElapsed",
+    "IfRandomTimeElapsed",
+    "IfRandomFramesElapsed",
+    "SkipLinesIfMapPresenceState",
+    "SkipLinesIfInsideMap",
+    "SkipLinesIfOutsideMap",
+    "TerminateIfMapPresenceState",
+    "EndIfInsideMap",
+    "EndIfOutsideMap",
+    "RestartIfInsideMap",
+    "RestartIfOutsideMap",
+    "IfMapPresenceState",
+    "IfInsideMap",
+    "IfOutsideMap",
+    "IfMultiplayerEvent",
+    "AwaitFlagState",
+    "AwaitThisEventOn",
+    "AwaitThisEventOff",
+    "AwaitThisEventSlotOn",
+    "AwaitThisEventSlotOff",
+    "AwaitFlagOn",
+    "AwaitFlagOff",
+    "AwaitFlagChange",
+    "SkipLinesIfFlagState",
+    "SkipLinesIfThisEventOn",
+    "SkipLinesIfThisEventOff",
+    "SkipLinesIfThisEventSlotOn",
+    "SkipLinesIfThisEventSlotOff",
+    "SkipLinesIfFlagOn",
+    "SkipLinesIfFlagOff",
+    "TerminateIfFlagState",
+    "EndIfThisEventOn",
+    "EndIfThisEventOff",
+    "EndIfThisEventSlotOn",
+    "EndIfThisEventSlotOff",
+    "EndIfFlagOn",
+    "EndIfFlagOff",
+    "RestartIfThisEventOn",
+    "RestartIfThisEventOff",
+    "RestartIfThisEventSlotOn",
+    "RestartIfThisEventSlotOff",
+    "RestartIfFlagOn",
+    "RestartIfFlagOff",
+    "IfFlagState",
+    "IfThisEventOn",
+    "IfThisEventOff",
+    "IfThisEventSlotOn",
+    "IfThisEventSlotOff",
+    "IfFlagOn",
+    "IfFlagOff",
+    "IfFlagChange",
+    "SkipLinesIfFlagRangeState",
+    "SkipLinesIfFlagRangeAllOn",
+    "SkipLinesIfFlagRangeAllOff",
+    "SkipLinesIfFlagRangeAnyOn",
+    "SkipLinesIfFlagRangeAnyOff",
+    "TerminateIfFlagRangeState",
+    "EndIfFlagRangeAllOn",
+    "EndIfFlagRangeAllOff",
+    "EndIfFlagRangeAnyOn",
+    "EndIfFlagRangeAnyOff",
+    "RestartIfFlagRangeAllOn",
+    "RestartIfFlagRangeAllOff",
+    "RestartIfFlagRangeAnyOn",
+    "RestartIfFlagRangeAnyOff",
+    "IfFlagRangeState",
+    "IfFlagRangeAllOn",
+    "IfFlagRangeAllOff",
+    "IfFlagRangeAnyOn",
+    "IfFlagRangeAnyOff",
+    "IfTrueFlagCountComparison",
+    "IfTrueFlagCountEqual",
+    "IfTrueFlagCountNotEqual",
+    "IfTrueFlagCountGreaterThan",
+    "IfTrueFlagCountLessThan",
+    "IfTrueFlagCountGreaterThanOrEqual",
+    "IfTrueFlagCountLessThanOrEqual",
+    "IfEventValueComparison",
+    "IfEventValueEqual",
+    "IfEventValueNotEqual",
+    "IfEventValueGreaterThan",
+    "IfEventValueLessThan",
+    "IfEventValueGreaterThanOrEqual",
+    "IfEventValueLessThanOrEqual",
+    "IfEventsComparison",
+    "IfCharacterRegionState",
+    "IfCharacterInsideRegion",
+    "IfCharacterOutsideRegion",
+    "IfPlayerInsideRegion",
+    "IfPlayerOutsideRegion",
+    "IfAllPlayersRegionState",
+    "IfAllPlayersInsideRegion",
+    "IfAllPlayersOutsideRegion",
+    "IfEntityDistanceState",
+    "IfEntityWithinDistance",
+    "IfEntityBeyondDistance",
+    "IfPlayerWithinDistance",
+    "IfPlayerBeyondDistance",
+    "IfPlayerItemStateNoBox",
+    "IfPlayerItemStateBox",
+    "IfPlayerItemState",
+    "IfPlayerHasItem",
+    "IfPlayerHasWeapon",
+    "IfPlayerHasArmor",
+    "IfPlayerHasRing",
+    "IfPlayerHasGood",
+    "IfPlayerDoesNotHaveItem",
+    "IfPlayerDoesNotHaveWeapon",
+    "IfPlayerDoesNotHaveArmor",
+    "IfPlayerDoesNotHaveRing",
+    "IfPlayerDoesNotHaveGood",
+    "IfAnyItemDroppedInRegion",
+    "IfItemDropped",
+    "AwaitObjectDestructionState",
+    "AwaitObjectDestroyed",
+    "AwaitObjectNotDestroyed",
+    "SkipLinesIfObjectDestructionState",
+    "SkipLinesIfObjectDestroyed",
+    "SkipLinesIfObjectNotDestroyed",
+    "TerminateIfObjectDestructionState",
+    "EndIfObjectDestroyed",
+    "EndIfObjectNotDestroyed",
+    "RestartIfObjectDestroyed",
+    "RestartIfObjectNotDestroyed",
+    "IfObjectDestructionState",
+    "IfObjectDestroyed",
+    "IfObjectNotDestroyed",
+    "IfObjectDamagedBy",
+    "IfObjectActivated",
+    "IfObjectHealthValueComparison",
+    "IfMovingOnCollision",
     "IfRunningOnCollision",
-    "IfStandingOnCollision", "SkipLinesIfComparison", "SkipLinesIfEqual", "SkipLinesIfNotEqual",
+    "IfStandingOnCollision",
+    "SkipLinesIfComparison",
+    "SkipLinesIfEqual",
+    "SkipLinesIfNotEqual",
     "SkipLinesIfGreaterThan",
-    "SkipLinesIfLessThan", "SkipLinesIfGreaterThanOrEqual", "SkipLinesIfLessThanOrEqual", "TerminateIfComparison",
-    "EndIfEqual", "EndIfNotEqual", "EndIfGreaterThan", "EndIfLessThan", "EndIfGreaterThanOrEqual",
-    "EndIfLessThanOrEqual", "RestartIfEqual", "RestartIfNotEqual", "RestartIfGreaterThan", "RestartIfLessThan",
-    "RestartIfGreaterThanOrEqual", "RestartIfLessThanOrEqual", "IfDialogPromptActivated", "IfWorldTendencyComparison",
-    "IfWhiteWorldTendencyComparison", "IfBlackWorldTendencyComparison", "IfWhiteWorldTendencyGreaterThanOrEqual",
-    "IfBlackWorldTendencyGreaterThanOrEqual", "IfNewGameCycleComparison", "IfNewGameCycleEqual",
-    "IfNewGameCycleGreaterThanOrEqual", "IfDLCState", "IfDLCOwned", "IfDLCNotOwned", "IfOnlineState", "IfOnline",
-    "IfOffline", "IfCharacterDeathState", "IfCharacterDead", "IfCharacterAlive", "IfAttacked", "IfHealthComparison",
-    "IfHealthEqual", "IfHealthNotEqual", "IfHealthGreaterThan", "IfHealthLessThan", "IfHealthGreaterThanOrEqual",
-    "IfHealthLessThanOrEqual", "IfCharacterType", "IfCharacterHollow", "IfCharacterHuman", "IfCharacterTargetingState",
-    "IfCharacterTargeting", "IfCharacterNotTargeting", "IfCharacterSpecialEffectState", "IfCharacterHasSpecialEffect",
-    "IfCharacterDoesNotHaveSpecialEffect", "IfCharacterPartHealthComparison", "IfCharacterPartHealthLessThanOrEqual",
-    "IfCharacterBackreadState", "IfCharacterBackreadEnabled", "IfCharacterBackreadDisabled", "IfTAEEventState",
-    "IfHasTAEEvent", "IfDoesNotHaveTAEEvent", "IfHasAIStatus", "IfSkullLanternState", "IfSkullLanternActive",
-    "IfSkullLanternInactive", "IfPlayerClass", "IfPlayerCovenant", "IfPlayerSoulLevelComparison",
-    "IfPlayerSoulLevelGreaterThanOrEqual", "IfPlayerSoulLevelLessThanOrEqual", "IfHealthValueComparison",
-    "IfHealthValueEqual", "IfHealthValueNotEqual", "IfHealthValueGreaterThan", "IfHealthValueLessThan",
-    "IfHealthValueGreaterThanOrEqual", "IfHealthValueLessThanOrEqual", "ArenaRankingRequest1v1",
-    "ArenaRankingRequest2v2", "ArenaRankingRequestFFA", "ArenaExitRequest", "ArenaSetNametag1", "ArenaSetNametag2",
-    "ArenaSetNametag3", "ArenaSetNametag4", "DisplayArenaDissolutionMessage", "ArenaSetNametag5", "ArenaSetNametag6",
+    "SkipLinesIfLessThan",
+    "SkipLinesIfGreaterThanOrEqual",
+    "SkipLinesIfLessThanOrEqual",
+    "TerminateIfComparison",
+    "EndIfEqual",
+    "EndIfNotEqual",
+    "EndIfGreaterThan",
+    "EndIfLessThan",
+    "EndIfGreaterThanOrEqual",
+    "EndIfLessThanOrEqual",
+    "RestartIfEqual",
+    "RestartIfNotEqual",
+    "RestartIfGreaterThan",
+    "RestartIfLessThan",
+    "RestartIfGreaterThanOrEqual",
+    "RestartIfLessThanOrEqual",
+    "IfActionButton",
+    "IfWorldTendencyComparison",
+    "IfWhiteWorldTendencyComparison",
+    "IfBlackWorldTendencyComparison",
+    "IfWhiteWorldTendencyGreaterThanOrEqual",
+    "IfBlackWorldTendencyGreaterThanOrEqual",
+    "IfNewGameCycleComparison",
+    "IfNewGameCycleEqual",
+    "IfNewGameCycleGreaterThanOrEqual",
+    "IfDLCState",
+    "IfDLCOwned",
+    "IfDLCNotOwned",
+    "IfOnlineState",
+    "IfOnline",
+    "IfOffline",
+    "IfCharacterDeathState",
+    "IfCharacterDead",
+    "IfCharacterAlive",
+    "IfAttacked",
+    "IfHealthComparison",
+    "IfHealthEqual",
+    "IfHealthNotEqual",
+    "IfHealthGreaterThan",
+    "IfHealthLessThan",
+    "IfHealthGreaterThanOrEqual",
+    "IfHealthLessThanOrEqual",
+    "IfCharacterType",
+    "IfCharacterHollow",
+    "IfCharacterHuman",
+    "IfCharacterTargetingState",
+    "IfCharacterTargeting",
+    "IfCharacterNotTargeting",
+    "IfCharacterSpecialEffectState",
+    "IfCharacterHasSpecialEffect",
+    "IfCharacterDoesNotHaveSpecialEffect",
+    "IfCharacterPartHealthComparison",
+    "IfCharacterPartHealthLessThanOrEqual",
+    "IfCharacterBackreadState",
+    "IfCharacterBackreadEnabled",
+    "IfCharacterBackreadDisabled",
+    "IfTAEEventState",
+    "IfHasTAEEvent",
+    "IfDoesNotHaveTAEEvent",
+    "IfHasAIStatus",
+    "IfSkullLanternState",
+    "IfSkullLanternActive",
+    "IfSkullLanternInactive",
+    "IfPlayerClass",
+    "IfPlayerCovenant",
+    "IfPlayerSoulLevelComparison",
+    "IfPlayerSoulLevelGreaterThanOrEqual",
+    "IfPlayerSoulLevelLessThanOrEqual",
+    "IfHealthValueComparison",
+    "IfHealthValueEqual",
+    "IfHealthValueNotEqual",
+    "IfHealthValueGreaterThan",
+    "IfHealthValueLessThan",
+    "IfHealthValueGreaterThanOrEqual",
+    "IfHealthValueLessThanOrEqual",
+    "ArenaRankingRequest1v1",
+    "ArenaRankingRequest2v2",
+    "ArenaRankingRequestFFA",
+    "ArenaExitRequest",
+    "ArenaSetNametag1",
+    "ArenaSetNametag2",
+    "ArenaSetNametag3",
+    "ArenaSetNametag4",
+    "DisplayArenaDissolutionMessage",
+    "ArenaSetNametag5",
+    "ArenaSetNametag6",
 ]
 
 
 # RUN
 
-def RunEvent(event_id, slot=0, args=(0,), arg_types=None):
+
+def RunEvent(event_id, slot=0, args=(0,), arg_types=None, event_layers=None):
+    """Run the given `event_id`, which must be defined in the same script.
+
+    You can omit `arg_types` if all the arguments are unsigned integers (which is usually the case).
+
+    Note that you can also call the name of the event directly and pass in the given arguments normally.
+
+    Note that `event_layers` is supported as an argument here for intellisense purposes, as this is the instruction
+    it will most commonly be used with, but it can be used with any instruction. The EVS parser handles this keyword
+    argument separately, so it will never actually be passed to an instruction function like this one.
+    """
     instruction_info = [2000, 0]  # Mutable list for this instruction only, as it may required modification.
     if arg_types is None:
         # Assume all unsigned integers.
-        arg_types = 'I' * len(args)
+        arg_types = "I" * len(args)
     if len(args) != len(arg_types):
         raise ValueError("Number of event arguments does not match length of argument type string in RunEvent.")
-    format_string = 'iI' + str(arg_types[0])
+    format_string = "iI" + str(arg_types[0])
     if len(arg_types) > 1:
-        format_string += f'|{arg_types[1:]}'
-    return to_numeric(instruction_info, slot, event_id, *args, arg_types=format_string)
+        format_string += f"|{arg_types[1:]}"
+    return to_numeric(instruction_info, slot, event_id, *args, arg_types=format_string, event_layers=event_layers)
 
 
 # WAITING
+
 
 def Wait(seconds: float):
     """ Wait for some number of seconds. """
@@ -213,6 +518,7 @@ def WaitForNetworkApproval(max_seconds: float):
 
 
 # CHARACTERS
+
 
 def SetCharacterState(character: CharacterInt, state: bool):
     instruction_info = (2004, 5)
@@ -271,12 +577,25 @@ def ResetStandbyAnimationSettings(character: CharacterInt):
     return SetStandbyAnimationSettings(character)
 
 
-def SetStandbyAnimationSettings(character: CharacterInt, standby_animation=-1, damage_animation=-1,
-                                cancel_animation=-1, death_animation=-1, standby_exit_animation=-1):
+def SetStandbyAnimationSettings(
+    character: CharacterInt,
+    standby_animation=-1,
+    damage_animation=-1,
+    cancel_animation=-1,
+    death_animation=-1,
+    standby_exit_animation=-1,
+):
     """ Sets entity's default standby animations. -1 is default for each category. """
     instruction_info = (2004, 9, [0, -1, -1, -1, -1, -1, -1])
-    return to_numeric(instruction_info, character, standby_animation, damage_animation, cancel_animation,
-                      death_animation, standby_exit_animation)
+    return to_numeric(
+        instruction_info,
+        character,
+        standby_animation,
+        damage_animation,
+        cancel_animation,
+        death_animation,
+        standby_exit_animation,
+    )
 
 
 def SetGravityState(character: CharacterInt, state: bool):
@@ -368,14 +687,31 @@ def ReplanAI(character: CharacterInt):
     return to_numeric(instruction_info, character)
 
 
-def CreateNPCPart(character: CharacterInt, npc_part_id: int, part_index: Union[NPCPartType, int], part_health: int,
-                  damage_correction, body_damage_correction, is_invincible: bool, start_in_stop_state: bool):
+def CreateNPCPart(
+    character: CharacterInt,
+    npc_part_id: int,
+    part_index: Union[NPCPartType, int],
+    part_health: int,
+    damage_correction,
+    body_damage_correction,
+    is_invincible: bool,
+    start_in_stop_state: bool,
+):
     """ Complex. Sets specific damage parameters for part of an NPC model. Further changes to the specific part can be
     made using the events below. The part is specified using the NPCPartType slot. Look at usage in tail cut events to
     understand these more. """
     instruction_info = (2004, 22, [0, 0, 0, 0, 1.0, 1.0, 0, 0])
-    return to_numeric(instruction_info, character, npc_part_id, part_index, part_health, damage_correction,
-                      body_damage_correction, is_invincible, start_in_stop_state)
+    return to_numeric(
+        instruction_info,
+        character,
+        npc_part_id,
+        part_index,
+        part_health,
+        damage_correction,
+        body_damage_correction,
+        is_invincible,
+        start_in_stop_state,
+    )
 
 
 def SetNPCPartHealth(character: CharacterInt, npc_part_id: int, desired_hp: int, overwrite_max: bool):
@@ -384,8 +720,7 @@ def SetNPCPartHealth(character: CharacterInt, npc_part_id: int, desired_hp: int,
     return to_numeric(instruction_info, character, npc_part_id, desired_hp, overwrite_max)
 
 
-def SetNPCPartEffects(character: CharacterInt, npc_part_id: int, material_special_effect_id: int,
-                      material_fx_id: int):
+def SetNPCPartEffects(character: CharacterInt, npc_part_id: int, material_special_effect_id: int, material_fx_id: int):
     """ Attach material effects to an NPC part. """
     instruction_info = (2004, 24)
     return to_numeric(instruction_info, character, npc_part_id, material_special_effect_id, material_fx_id)
@@ -540,6 +875,7 @@ def ActivateMultiplayerBuffs(character: CharacterInt):
 
 # OBJECTS
 
+
 def SetObjectState(obj: ObjectInt, state: bool):
     instruction_info = (2005, 3)
     return to_numeric(instruction_info, obj, state)
@@ -629,8 +965,16 @@ def PostDestruction(obj: ObjectInt, slot: int):
     return to_numeric(instruction_info, obj, slot)
 
 
-def CreateHazard(obj_flag: FlagInt, obj: ObjectInt, model_point: int, behavior_param_id: int,
-                 target_type: DamageTargetType, radius: float, life: float, repetition_time: float):
+def CreateHazard(
+    obj_flag: FlagInt,
+    obj: ObjectInt,
+    model_point: int,
+    behavior_param_id: int,
+    target_type: DamageTargetType,
+    radius: float,
+    life: float,
+    repetition_time: float,
+):
     """ Turn an object into an environmental hazard. It deals damage when touched according to the NPC Behavior params
     you give it. The model_point determines which part of the object is hazardous (with the given radius and life,
     relative to the time this instruction occurs).
@@ -640,8 +984,9 @@ def CreateHazard(obj_flag: FlagInt, obj: ObjectInt, model_point: int, behavior_p
     'target_type' determines what the hazard can damage (Character and/or Map).
     """
     instruction_info = (2005, 9)
-    return to_numeric(instruction_info, obj_flag, obj, model_point, behavior_param_id, target_type, radius,
-                      life, repetition_time)
+    return to_numeric(
+        instruction_info, obj_flag, obj, model_point, behavior_param_id, target_type, radius, life, repetition_time
+    )
 
 
 def RegisterStatue(obj: ObjectInt, game_map: MapOrSequence, statue_type: StatueType):
@@ -680,6 +1025,7 @@ def EnableTreasureCollection(obj: ObjectInt):
 
 
 # FLAGS
+
 
 def SetFlagState(flag: FlagInt, state: FlagState):
     """ Enable, disable, or toggle (change) a binary flag. """
@@ -768,6 +1114,7 @@ def DisableThisFlag():
 
 # EVENTS
 
+
 def SetEventState(event_id, slot=0, end_type: EventEndType = None):
     """ Stop or restart a particular slot (default of 0) of the given event ID. Note that you cannot restart events that
     have already ended. """
@@ -789,6 +1136,7 @@ def RestartEvent(event_id, slot=0):
 
 
 # Collisions
+
 
 def SetCollisionState(collision: CollisionInt, state: bool):
     instruction_info = (2011, 1)
@@ -824,6 +1172,7 @@ def DisableCollisionBackreadMask(collision: CollisionInt):
 
 
 # ITEMS
+
 
 def AwardItemLot(item_lot_param_id, host_only: bool = True):
     """ Directly award an item lot to the player. By default, only the host receives the item. """
@@ -887,14 +1236,20 @@ def SetNextSnugglyTrade(flag: FlagInt):
 
 # ANIMATIONS
 
+
 def RequestAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False):
     """ Not used very often, in favor of ForceAnimation below. """
     instruction_info = (2003, 1)
     return to_numeric(instruction_info, entity, animation_id, loop, wait_for_completion)
 
 
-def ForceAnimation(entity: AnimatedInt, animation_id: int, loop: bool = False, wait_for_completion: bool = False,
-                   skip_transition: bool = False):
+def ForceAnimation(
+    entity: AnimatedInt,
+    animation_id: int,
+    loop: bool = False,
+    wait_for_completion: bool = False,
+    skip_transition: bool = False,
+):
     """ Used a lot. Standard way to make a Character or Object perform an animation. """
     instruction_info = (2003, 18, [0, -1, 0, 0, 0])
     return to_numeric(instruction_info, entity, animation_id, loop, wait_for_completion, skip_transition)
@@ -921,6 +1276,7 @@ def EndOfAnimation(obj: AnimatedInt, animation_id):
 
 
 # FX
+
 
 def CreateFX(fx_id: int):
     """ Create visual FX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints) """
@@ -960,14 +1316,25 @@ def DeleteObjectFX(obj: ObjectInt, erase_root: bool = True):
 
 # AUDIO
 
+
 def SetBackgroundMusic(state: bool, slot: int, entity: CoordEntityInt, sound_type: SoundType, sound_id: int):
     instruction_info = (2010, 1)
     return to_numeric(instruction_info, state, slot, entity, sound_type, sound_id)
 
 
-def PlaySoundEffect(anchor_entity: CoordEntityInt, sound_type: Union[SoundType, int], sound_id: int):
+def PlaySoundEffect(
+    anchor_entity: CoordEntityInt, sound_type: Union[None, SoundType, int] = None, sound_id: Union[Sound, int] = -1
+):
     """ Anchor entity determines the localization of the sound, and the sound type is used to look up the source. """
     instruction_info = (2010, 2)
+    if sound_id == -1:
+        # For legacy reasons, the keyword argument order here isn't optimal.
+        raise ValueError("A non-negative sound_id must be given.")
+    if sound_type is None:
+        try:
+            sound_type = sound_id.sound_type
+        except AttributeError:
+            raise ValueError(f"Cannot detect sound type from sound ID. Use `sound_type` or pass a `Sound` instance.")
     return to_numeric(instruction_info, anchor_entity, sound_type, sound_id)
 
 
@@ -989,6 +1356,7 @@ def DisableSoundEvent(sound_id: int):
 
 # MAP
 
+
 def RegisterLadder(start_climbing_flag: FlagInt, stop_climbing_flag: FlagInt, obj: ObjectInt):
     """ Don't mess with these flags, generally; you can just delay when this is called after map load to disable
     certain ladders (which is kind of weird anyway). """
@@ -996,8 +1364,9 @@ def RegisterLadder(start_climbing_flag: FlagInt, stop_climbing_flag: FlagInt, ob
     return to_numeric(instruction_info, start_climbing_flag, stop_climbing_flag, obj)
 
 
-def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0,
-                    reaction_angle=180.0, initial_kindle_level=0):
+def RegisterBonfire(
+    bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0
+):
     """ Register a bonfire, which creates the flame FX and allows you to interact with it (via the MSB entity with ID
     (obj + 1000).
 
@@ -1012,8 +1381,7 @@ def RegisterBonfire(bonfire_flag: FlagInt, obj: ObjectInt, reaction_distance=2.0
     kindle level. Beware of this, if you find that you can't interact with bonfires or get them to even register.
     """
     instruction_info = (2009, 3)
-    return to_numeric(instruction_info, bonfire_flag, obj, reaction_distance, reaction_angle,
-                      initial_kindle_level)
+    return to_numeric(instruction_info, bonfire_flag, obj, reaction_distance, reaction_angle, initial_kindle_level)
 
 
 def SetMapPieceState(map_part_id, state: bool):
@@ -1032,8 +1400,10 @@ def EnableMapPiece(map_part_id: MapPieceInt):
 
 # MESSAGES
 
-def PlaceSummonSign(sign_type, character: CharacterInt, region: RegionInt,
-                    summon_flag: FlagInt, dismissal_flag: FlagInt):
+
+def PlaceSummonSign(
+    sign_type, character: CharacterInt, region: RegionInt, summon_flag: FlagInt, dismissal_flag: FlagInt
+):
     """ If you set a black summon sign, the specified NPC will try to invade automatically. """
     instruction_info = (2003, 25)
     return to_numeric(instruction_info, sign_type, character, region, summon_flag, dismissal_flag)
@@ -1055,9 +1425,13 @@ def DisableSoapstoneMessage(message_id):
     return SetDeveloperMessageState(message_id, False)
 
 
-def DisplayDialog(text: EventTextInt, anchor_entity: CoordEntityInt = -1, display_distance=3.0,
-                  button_type: ButtonType = ButtonType.OK_or_Cancel,
-                  number_buttons: NumberButtons = NumberButtons.NoButton):
+def DisplayDialog(
+    text: EventTextInt,
+    anchor_entity: CoordEntityInt = -1,
+    display_distance=3.0,
+    button_type: ButtonType = ButtonType.OK_or_Cancel,
+    number_buttons: NumberButtons = NumberButtons.NoButton,
+):
     """ Display a dialog box at the bottom of the screen. You can't use this to get player input, but you can display
     short simple messages. It defaults to a box with no buttons (which is still dismissed when you press A).
 
@@ -1090,10 +1464,19 @@ def DisplayBattlefieldMessage(text: EventTextInt, display_location_index):
 
 # CUTSCENE
 
-def PlayCutscene(cutscene_id: int, skippable: bool = False, fade_out: bool = False, player_id: Optional[int] = None,
-                 move_to_map: Optional[MapOrSequence] = None, move_to_region: Optional[RegionInt] = None,
-                 rotation: int = 0, relative_rotation_axis_x: float = 0.0, relative_rotation_axis_z: float = 0.0,
-                 vertical_translation: float = 0.0):
+
+def PlayCutscene(
+    cutscene_id: int,
+    skippable: bool = False,
+    fade_out: bool = False,
+    player_id: Optional[int] = None,
+    move_to_map: Optional[MapOrSequence] = None,
+    move_to_region: Optional[RegionInt] = None,
+    rotation: int = 0,
+    relative_rotation_axis_x: float = 0.0,
+    relative_rotation_axis_z: float = 0.0,
+    vertical_translation: float = 0.0,
+):
     """ Unified instruction for playing cutscenes. You can specify a player (defaults to local player, 10000), control
     whether the cutscene is skippable (False by default) or fades out (False by default), and add extra move arguments
     or rotation arguments. (You can't supply both move and rotation arguments.)
@@ -1122,14 +1505,22 @@ def PlayCutscene(cutscene_id: int, skippable: bool = False, fade_out: bool = Fal
         player_id = 10000
 
     if rotation or relative_rotation_axis_x or relative_rotation_axis_z or vertical_translation:
-        return PlayCutsceneAndRotatePlayer(cutscene_id, cutscene_type, relative_rotation_axis_x,
-                                           relative_rotation_axis_z, rotation, vertical_translation, player_id)
+        return PlayCutsceneAndRotatePlayer(
+            cutscene_id,
+            cutscene_type,
+            relative_rotation_axis_x,
+            relative_rotation_axis_z,
+            rotation,
+            vertical_translation,
+            player_id,
+        )
 
     return PlayCutsceneToPlayer(cutscene_id, cutscene_type, player_id)
 
 
-def PlayCutsceneAndMovePlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt,
-                              game_map: MapOrSequence):
+def PlayCutsceneAndMovePlayer(
+    cutscene_id: int, playback_method: CutsceneType, region: RegionInt, game_map: MapOrSequence
+):
     """ I recommend you use the PlayCutscene() wrapper instead of this or the ones below. """
     instruction_info = (2002, 2)
     area_id, block_id = tuple(game_map)
@@ -1141,22 +1532,31 @@ def PlayCutsceneToPlayer(cutscene_id: int, playback_method: CutsceneType, player
     return to_numeric(instruction_info, cutscene_id, playback_method, player_id)
 
 
-def PlayCutsceneAndMoveSpecificPlayer(cutscene_id: int, playback_method: CutsceneType, region: RegionInt,
-                                      game_map: MapOrSequence, player_id: int):
+def PlayCutsceneAndMoveSpecificPlayer(
+    cutscene_id: int, playback_method: CutsceneType, region: RegionInt, game_map: MapOrSequence, player_id: int
+):
     instruction_info = (2002, 4)
     area_id, block_id = tuple(game_map)
     return to_numeric(instruction_info, cutscene_id, playback_method, region, area_id, block_id, player_id)
 
 
-def PlayCutsceneAndRotatePlayer(cutscene_id: int, playback_method: CutsceneType, axis_x: float = 0.0,
-                                axis_z: float = 0.0, rotation: float = 0.0, vertical_translation: float = 0.0,
-                                player_id: int = 10000):
+def PlayCutsceneAndRotatePlayer(
+    cutscene_id: int,
+    playback_method: CutsceneType,
+    axis_x: float = 0.0,
+    axis_z: float = 0.0,
+    rotation: float = 0.0,
+    vertical_translation: float = 0.0,
+    player_id: int = 10000,
+):
     instruction_info = (2002, 5)
-    return to_numeric(instruction_info, cutscene_id, playback_method, axis_x, axis_z, rotation,
-                      vertical_translation, player_id)
+    return to_numeric(
+        instruction_info, cutscene_id, playback_method, axis_x, axis_z, rotation, vertical_translation, player_id
+    )
 
 
 # NAVMESH
+
 
 def SetNavmeshType(navmesh_id: NavmeshEventInt, navmesh_type: NavmeshType, operation: BitOperation):
     """ Set given navmesh type. """
@@ -1181,6 +1581,7 @@ def ToggleNavmeshType(navmesh_id: NavmeshEventInt, navmesh_type: NavmeshType):
 
 
 # NETWORK
+
 
 def SetNetworkSync(state: bool):
     instruction_info = (2000, 2)
@@ -1250,6 +1651,7 @@ def NotifyBossBattleStart():
 
 # SPAWNER
 
+
 def SetSpawnerState(entity: CoordEntityInt, state: bool):
     """ e.g. the baby skeletons in Tomb of the Giants. """
     instruction_info = (2003, 3)
@@ -1264,14 +1666,29 @@ def DisableSpawner(entity: CoordEntityInt):
     return SetSpawnerState(entity, False)
 
 
-def ShootProjectile(owner_entity: CoordEntityInt, projectile_id, model_point, behavior_id,
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0):
+def ShootProjectile(
+    owner_entity: CoordEntityInt,
+    projectile_id,
+    model_point,
+    behavior_id,
+    launch_angle_x=0,
+    launch_angle_y=0,
+    launch_angle_z=0,
+):
     """ The owner entity sets the 'team' of the projectile (i.e. who it can hurt). You can use this to
     directly spawn bullets by setting the projectile_id to the owner_entity. Note that the angle arguments
     are all integers. """
     instruction_info = (2003, 5, [0, 0, -1, 0, 0, 0, 0])
-    return to_numeric(instruction_info, owner_entity, projectile_id, model_point, behavior_id,
-                      launch_angle_x, launch_angle_y, launch_angle_z)
+    return to_numeric(
+        instruction_info,
+        owner_entity,
+        projectile_id,
+        model_point,
+        behavior_id,
+        launch_angle_x,
+        launch_angle_y,
+        launch_angle_z,
+    )
 
 
 def CreateProjectileOwner(entity: CoordEntityInt):
@@ -1281,6 +1698,7 @@ def CreateProjectileOwner(entity: CoordEntityInt):
 
 
 # WARP
+
 
 def WarpToMap(game_map: MapOrSequence, destination_player_id=-1):
     """ Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
@@ -1298,9 +1716,15 @@ def MoveRemains(source_region: RegionInt, destination_region: RegionInt):
     return to_numeric(instruction_info, source_region, destination_region)
 
 
-def Move(character: CharacterInt, destination: CoordEntityInt, model_point=None,
-         copy_draw_parent: EntityInt = None, set_draw_parent: EntityInt = None,
-         short_move=False, destination_type=None):
+def Move(
+    character: CharacterInt,
+    destination: CoordEntityInt,
+    model_point=-1,
+    copy_draw_parent: EntityInt = None,
+    set_draw_parent: EntityInt = None,
+    short_move=False,
+    destination_type=None,
+):
     """Unified instruction for moving a character to some destination entity in the same map.
 
     Not sure what sort of optimizations 'short' makes, but it's used at various times by the game. I would guess you can
@@ -1315,8 +1739,9 @@ def Move(character: CharacterInt, destination: CoordEntityInt, model_point=None,
         try:
             destination_type = destination.coord_entity_type
         except AttributeError:
-            raise AttributeError("Warp destination has no category. Use 'destination_type' keyword or a "
-                                 "typed destination.")
+            raise AttributeError(
+                "Warp destination has no category. Use 'destination_type' keyword or a " "typed destination."
+            )
     if copy_draw_parent is not None and set_draw_parent is not None:
         raise ValueError("You cannot copy and set the draw parent at the same time.")
     if short_move:
@@ -1330,66 +1755,61 @@ def Move(character: CharacterInt, destination: CoordEntityInt, model_point=None,
     return MoveToEntity(character, destination, model_point, destination_type)
 
 
-def MoveToEntity(character: CharacterInt, destination: CoordEntityInt, model_point=None, destination_type=None):
+def MoveToEntity(character: CharacterInt, destination: CoordEntityInt, model_point=-1, destination_type=None):
     """ Basic move. I recommend you use the easier 'Move' wrapper above. """
-    from soulstruct.game_types import Region
-    if model_point is None and not isinstance(destination, Region):
-        raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
     if destination_type is None:
         try:
             destination_type = destination.coord_entity_type
         except AttributeError:
-            raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
-                                 "typed destination.")
+            raise AttributeError(
+                "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
+            )
     instruction_info = (2004, 3, [0, 0, 0, -1])
     return to_numeric(instruction_info, character, destination_type, destination, model_point)
 
 
-def MoveAndSetDrawParent(character: CharacterInt, destination: CoordEntityInt, draw_parent: EntityInt,
-                         model_point=None, destination_type=None):
-    from soulstruct.game_types import Region
-    if model_point is None and not isinstance(destination, Region):
-        raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
+def MoveAndSetDrawParent(
+    character: CharacterInt, destination: CoordEntityInt, draw_parent: EntityInt, model_point=-1, destination_type=None
+):
     if destination_type is None:
         try:
             destination_type = destination.coord_entity_type
         except AttributeError:
-            raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
-                                 "typed destination.")
+            raise AttributeError(
+                "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
+            )
     instruction_info = (2004, 40, [0, 0, 0, -1, 0])
     return to_numeric(instruction_info, character, destination_type, destination, model_point, draw_parent)
 
 
-def ShortMove(character: CharacterInt, destination: CoordEntityInt, model_point=None, destination_type=None):
-    from soulstruct.game_types import Region
-    if model_point is None and not isinstance(destination, Region):
-        # raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
-        # Now defaults to -1.
-        model_point = -1
+def ShortMove(character: CharacterInt, destination: CoordEntityInt, model_point=-1, destination_type=None):
     if destination_type is None:
         try:
             destination_type = destination.coord_entity_type
         except AttributeError:
-            raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
-                                 "typed destination.")
+            raise AttributeError(
+                "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
+            )
     instruction_info = (2004, 41, [0, 0, 0, -1])
     return to_numeric(instruction_info, character, destination_type, destination, model_point)
 
 
-def MoveAndCopyDrawParent(character: CharacterInt, destination: CoordEntityInt, copy_draw_parent: AnimatedInt,
-                          model_point=None, destination_type=None):
-    from soulstruct.game_types import Region
-    if model_point is None and not isinstance(destination, Region):
-        raise ValueError("Model point must be specified for non-Region or ambiguous destinations.")
+def MoveAndCopyDrawParent(
+    character: CharacterInt,
+    destination: CoordEntityInt,
+    copy_draw_parent: AnimatedInt,
+    model_point=-1,
+    destination_type=None,
+):
     if destination_type is None:
         try:
             destination_type = destination.coord_entity_type
         except AttributeError:
-            raise AttributeError("Move destination has no category. Use 'destination_type' keyword or a "
-                                 "typed destination.")
+            raise AttributeError(
+                "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
+            )
     instruction_info = (2004, 42, [0, 0, 0, -1, 0])
-    return to_numeric(instruction_info, character, destination_type, destination, model_point,
-                      copy_draw_parent)
+    return to_numeric(instruction_info, character, destination_type, destination, model_point, copy_draw_parent)
 
 
 def MoveObjectToCharacter(obj: ObjectInt, character: CharacterInt, model_point: int):
@@ -1405,6 +1825,7 @@ def SetRespawnPoint(respawn_point: int):
 
 
 # MISCELLANEOUS
+
 
 def KillBoss(game_area_param_id: int):
     """ The name is slightly misleading, as this doesn't actually kill any entity. Instead, it marks that you have
@@ -1455,14 +1876,26 @@ def ChangeCamera(normal_camera_id: int, locked_camera_id: int):
     return to_numeric(instruction_info, normal_camera_id, locked_camera_id)
 
 
-def SetCameraVibration(vibration_id: int, anchor_entity: CoordEntityInt, model_point: int,
-                       decay_start_distance: float, decay_end_distance: float,
-                       anchor_type: Optional[CoordEntityType] = None):
+def SetCameraVibration(
+    vibration_id: int,
+    anchor_entity: CoordEntityInt,
+    model_point: int,
+    decay_start_distance: float,
+    decay_end_distance: float,
+    anchor_type: Optional[CoordEntityType] = None,
+):
     instruction_info = (2008, 2)
     if anchor_type is None:
         anchor_type = anchor_entity.coord_entity_type
-    return to_numeric(instruction_info, vibration_id, anchor_type, anchor_entity, model_point,
-                      decay_start_distance, decay_end_distance)
+    return to_numeric(
+        instruction_info,
+        vibration_id,
+        anchor_type,
+        anchor_entity,
+        model_point,
+        decay_start_distance,
+        decay_end_distance,
+    )
 
 
 def SetLockedCameraSlot(game_map: MapOrSequence, camera_slot: int):
@@ -1485,8 +1918,10 @@ def SetMapDrawParamSlot(map_area_id: int, slot: int):
     in m15 in Dark Souls Remastered, presumably because the developers didn't want to bother modifying both slots when
     they re-did all the DrawParams. """
     if not isinstance(map_area_id, int):
-        raise ValueError("DrawParams can only be set for a whole map *area* (e.g. area 15 for Sen's Fortress and "
-                         "Anor Londo). I'm making you set the area ID alone so you don't forget this.")
+        raise ValueError(
+            "DrawParams can only be set for a whole map *area* (e.g. area 15 for Sen's Fortress and "
+            "Anor Londo). I'm making you set the area ID alone so you don't forget this."
+        )
     instruction_info = (2003, 19)
     return to_numeric(instruction_info, map_area_id, slot)
 
@@ -1499,6 +1934,7 @@ def SetMapDrawParamSlot(map_area_id: int, slot: int):
 
 
 # BASIC
+
 
 def SkipLines(line_count):
     """ Unconditional line skip. """
@@ -1526,6 +1962,7 @@ def IfValueComparison(condition: int, comparison_type: ComparisonType, left: int
 
 
 # CONDITIONS
+
 
 def AwaitConditionState(state: bool, condition: int):
     instruction_info = (1000, 0)
@@ -1627,6 +2064,7 @@ def IfConditionFalse(output_condition, input_condition):
 
 # TIME
 
+
 def IfTimeElapsed(output_condition: int, seconds: float):
     """ Time since event started. """
     instruction_info = (1, 0)
@@ -1652,6 +2090,7 @@ def IfRandomFramesElapsed(output_condition: int, min_frames: int, max_frames: in
 
 
 # MAP
+
 
 def SkipLinesIfMapPresenceState(line_count, state: bool, game_map: MapOrSequence):
     instruction_info = (1003, 7)
@@ -1712,6 +2151,7 @@ def IfMultiplayerEvent(condition: int, event_id: int):
 
 
 # FLAGS
+
 
 def AwaitFlagState(state: FlagState, flag_type: FlagType, flag: FlagInt):
     instruction_info = (1003, 0)
@@ -1888,8 +2328,9 @@ def SkipLinesIfFlagRangeAnyOff(line_count, flag_range: FlagRangeOrSequence):
     return SkipLinesIfFlagRangeState(line_count, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 
-def TerminateIfFlagRangeState(event_end_type: EventEndType, state: RangeState, flag_type: FlagType,
-                              flag_range: FlagRangeOrSequence):
+def TerminateIfFlagRangeState(
+    event_end_type: EventEndType, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence
+):
     instruction_info = (1003, 4)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, event_end_type, state, flag_type, first_flag, last_flag)
@@ -1949,8 +2390,13 @@ def IfFlagRangeAnyOff(condition: int, flag_range: FlagRangeOrSequence):
     return IfFlagRangeState(condition, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 
-def IfTrueFlagCountComparison(condition: int, value: int, flag_type: FlagType.Absolute, comparison_type: ComparisonType,
-                              flag_range: FlagRangeOrSequence):
+def IfTrueFlagCountComparison(
+    condition: int,
+    value: int,
+    flag_type: FlagType.Absolute,
+    comparison_type: ComparisonType,
+    flag_range: FlagRangeOrSequence,
+):
     instruction_info = (3, 10)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, condition, flag_type, first_flag, last_flag, comparison_type, value)
@@ -1980,8 +2426,7 @@ def IfTrueFlagCountLessThanOrEqual(condition: int, value: int, flag_range):
     return IfTrueFlagCountComparison(condition, value, FlagType.Absolute, ComparisonType.LessThanOrEqual, flag_range)
 
 
-def IfEventValueComparison(condition: int, flag: FlagInt, bit_count: int, comparison_type: ComparisonType,
-                           value: int):
+def IfEventValueComparison(condition: int, flag: FlagInt, bit_count: int, comparison_type: ComparisonType, value: int):
     instruction_info = (3, 12, [0, 0, 1, 0, 0])
     return to_numeric(instruction_info, condition, flag, bit_count, comparison_type, value)
 
@@ -2010,15 +2455,23 @@ def IfEventValueLessThanOrEqual(condition: int, flag: FlagInt, bit_count: int, v
     return IfEventValueComparison(condition, flag, bit_count, ComparisonType.LessThanOrEqual, value)
 
 
-def IfEventsComparison(condition: int, left_flag: FlagInt, left_bit_count: int, comparison_type: ComparisonType,
-                       right_flag: FlagInt, right_bit_count: int):
+def IfEventsComparison(
+    condition: int,
+    left_flag: FlagInt,
+    left_bit_count: int,
+    comparison_type: ComparisonType,
+    right_flag: FlagInt,
+    right_bit_count: int,
+):
     """ Check comparison of two event flag values. Haven't bothered adding shortcut functions for this. """
     instruction_info = (3, 20)
-    return to_numeric(instruction_info, condition, left_flag, left_bit_count, comparison_type,
-                      right_flag, right_bit_count)
+    return to_numeric(
+        instruction_info, condition, left_flag, left_bit_count, comparison_type, right_flag, right_bit_count
+    )
 
 
 # REGIONS / DISTANCE
+
 
 def IfCharacterRegionState(condition, entity: AnimatedInt, region: RegionInt, state: bool):
     """ Not sure if this works for objects. """
@@ -2055,8 +2508,9 @@ def IfAllPlayersOutsideRegion(condition: int, region: RegionInt):
     return IfAllPlayersRegionState(condition, region, False)
 
 
-def IfEntityDistanceState(condition: int, entity: CoordEntityInt, other_entity: CoordEntityInt, radius: float,
-                          state: bool):
+def IfEntityDistanceState(
+    condition: int, entity: CoordEntityInt, other_entity: CoordEntityInt, radius: float, state: bool
+):
     instruction_info = (3, 3)
     return to_numeric(instruction_info, condition, state, entity, other_entity, radius)
 
@@ -2079,6 +2533,7 @@ def IfPlayerBeyondDistance(condition: int, other_entity: CoordEntityInt, radius:
 
 # ITEMS
 
+
 def IfPlayerItemStateNoBox(condition: int, item_type: ItemType, item: ItemInt, state: bool):
     instruction_info = (3, 4)
     return to_numeric(instruction_info, condition, item_type, item, state)
@@ -2089,8 +2544,9 @@ def IfPlayerItemStateBox(condition: int, item_type: ItemType, item: ItemInt, sta
     return to_numeric(instruction_info, condition, item_type, item, state)
 
 
-def IfPlayerItemState(condition: int, state: bool, item: ItemInt, item_type: Optional[ItemType] = None,
-                      including_box: bool = True):
+def IfPlayerItemState(
+    condition: int, state: bool, item: ItemInt, item_type: Optional[ItemType] = None, including_box: bool = True
+):
     """ My wrapper for the two versions that do and do not include the Bottomless Box in the test. """
     if item_type is None:
         try:
@@ -2123,8 +2579,9 @@ def IfPlayerHasGood(condition: int, good: GoodInt, including_box: bool = True):
     return IfPlayerItemState(condition, True, good, ItemType.Good, including_box)
 
 
-def IfPlayerDoesNotHaveItem(condition: int, item: ItemInt, item_type: Optional[ItemType] = None,
-                            including_box: bool = True):
+def IfPlayerDoesNotHaveItem(
+    condition: int, item: ItemInt, item_type: Optional[ItemType] = None, including_box: bool = True
+):
     return IfPlayerItemState(condition, False, item, item_type, including_box)
 
 
@@ -2162,6 +2619,7 @@ def IfItemDropped(condition: int, item: ItemInt, item_type: Union[ItemType, int,
 
 
 # OBJECTS
+
 
 def AwaitObjectDestructionState(state: bool, obj: ObjectInt):
     instruction_info = (1005, 0)
@@ -2240,6 +2698,7 @@ def IfObjectHealthValueComparison(condition: int, obj: ObjectInt, comparison_typ
 
 # Collision
 
+
 def IfMovingOnCollision(condition: int, collision: CollisionInt):
     instruction_info = (11, 0)
     return to_numeric(instruction_info, condition, collision)
@@ -2256,6 +2715,7 @@ def IfStandingOnCollision(condition: int, collision: CollisionInt):
 
 
 # VALUE COMPARISONS
+
 
 def SkipLinesIfComparison(line_count, comparison_type: ComparisonType, left: int, right: int):
     instruction_info = (1000, 5, [1, 0, 0, 0])
@@ -2341,39 +2801,56 @@ def RestartIfLessThanOrEqual(left: int, right: int):
 
 # ACTION PROMPT
 
-def IfDialogPromptActivated(condition: int, prompt_text: EventTextInt, anchor_entity: CoordEntityInt,
-                            facing_angle=None, max_distance=None, model_point=-1, human_or_hollow_only=True, button=0,
-                            boss_version=False, line_intersects=None, anchor_type=None):
+
+def IfActionButton(
+    condition: int,
+    prompt_text: EventTextInt,
+    anchor_entity: CoordEntityInt,
+    anchor_type=None,
+    facing_angle=None,
+    max_distance=None,
+    model_point=-1,
+    trigger_attribute=TriggerAttribute.Human_or_Hollow,
+    button=0,
+    boss_version=False,
+    line_intersects=None,
+    human_or_hollow_only=None,  # DEPRECATED. Will be removed in a later release. Use `trigger_attribute` instead.
+):
     if anchor_type is None:
         try:
             anchor_type = anchor_entity.coord_entity_type
         except AttributeError:
-            raise ValueError("Anchor entity must be an Object, Region, or Character instance, or 'anchor_type' keyword "
-                             "must be given.")
-
-    if human_or_hollow_only:
-        reaction_attribute = TriggerAttribute.Human_or_Hollow
-    else:
-        reaction_attribute = TriggerAttribute.All
+            raise ValueError(
+                "The `anchor_type` keyword is needed if `anchor_entity` is not an `Object`, `Region`, or `Character`."
+            )
 
     if facing_angle is None:
-        if anchor_type != CoordEntityType.Region:
-            # raise ValueError("Facing angle must be greater than zero for Object and Character targets.")
-            # Now defaulting to 180.0.
-            facing_angle = 180.0
-        else:
-            facing_angle = 0.0
+        facing_angle = 0.0 if anchor_type == CoordEntityType.Region else 180.0
 
     if max_distance is None:
-        if anchor_type != CoordEntityType.Region:
-            # raise ValueError("Max distance must be greater than zero for Object and Character targets.")
-            # Now defaulting to 2.0.
-            max_distance = 2.0
-        else:
-            max_distance = 0.0
+        max_distance = 0.0 if anchor_type == CoordEntityType.Region else 2.0
 
-    args = [condition, anchor_type, anchor_entity, facing_angle, model_point, max_distance,
-            prompt_text, reaction_attribute, button]
+    if human_or_hollow_only is not None:
+        _LOGGER.warning(
+            "The `human_or_hollow_only` argument of `IfActionButton` is deprecated and will be removed soon. "
+            "Use `trigger_attribute` instead, or leave it as the defaults of `TriggerAttribute.Human_or_Hollow`."
+        )
+        if not human_or_hollow_only and trigger_attribute == TriggerAttribute.Human_or_Hollow:
+            raise ValueError(
+                "If deprecated argument `human_or_hollow_only` is False, desired `trigger_attribute` must be specified."
+            )
+
+    args = [
+        condition,
+        anchor_type,
+        anchor_entity,
+        facing_angle,
+        model_point,
+        max_distance,
+        prompt_text,
+        trigger_attribute,
+        button,
+    ]
 
     if boss_version:
         if line_intersects is None:
@@ -2393,8 +2870,10 @@ def IfDialogPromptActivated(condition: int, prompt_text: EventTextInt, anchor_en
 
 # WORLD TENDENCY
 
-def IfWorldTendencyComparison(condition: int, world_tendency_type: WorldTendencyType, comparison_type: ComparisonType,
-                              value: int):
+
+def IfWorldTendencyComparison(
+    condition: int, world_tendency_type: WorldTendencyType, comparison_type: ComparisonType, value: int
+):
     instruction_info = (3, 11)
     return to_numeric(instruction_info, condition, world_tendency_type, comparison_type, value)
 
@@ -2417,6 +2896,7 @@ def IfBlackWorldTendencyGreaterThanOrEqual(condition: int, value):
 
 # NEW GAME CYCLE
 
+
 def IfNewGameCycleComparison(condition: int, comparison_type: ComparisonType, completion_count: int):
     instruction_info = (3, 17)
     return to_numeric(instruction_info, condition, comparison_type, completion_count)
@@ -2431,6 +2911,7 @@ def IfNewGameCycleGreaterThanOrEqual(condition: int, completion_count):
 
 
 # SYSTEM
+
 
 def IfDLCState(condition: int, is_owned: bool):
     instruction_info = (3, 21)
@@ -2459,6 +2940,7 @@ def IfOffline(condition: int):
 
 
 # CHARACTER
+
 
 def IfCharacterDeathState(condition: int, character: CharacterInt, state: bool):
     instruction_info = (4, 0)
@@ -2520,19 +3002,18 @@ def IfCharacterHuman(condition: int, character: CharacterInt):
     return IfCharacterType(condition, character, CharacterType.Human)
 
 
-def IfCharacterTargetingState(condition: int, targeting_character: CharacterInt, targeted_character: CharacterInt,
-                              state: bool):
+def IfCharacterTargetingState(
+    condition: int, targeting_character: CharacterInt, targeted_character: CharacterInt, state: bool
+):
     instruction_info = (4, 4)
     return to_numeric(instruction_info, condition, targeting_character, targeted_character, state)
 
 
-def IfCharacterTargeting(condition: int, targeting_character: CharacterInt,
-                         targeted_character: CharacterInt):
+def IfCharacterTargeting(condition: int, targeting_character: CharacterInt, targeted_character: CharacterInt):
     return IfCharacterTargetingState(condition, targeting_character, targeted_character, True)
 
 
-def IfCharacterNotTargeting(condition: int, targeting_character: CharacterInt,
-                            targeted_character: CharacterInt):
+def IfCharacterNotTargeting(condition: int, targeting_character: CharacterInt, targeted_character: CharacterInt):
     return IfCharacterTargetingState(condition, targeting_character, targeted_character, False)
 
 
@@ -2549,8 +3030,9 @@ def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: CharacterInt,
     return IfCharacterSpecialEffectState(condition, character, special_effect, False)
 
 
-def IfCharacterPartHealthComparison(condition: int, character: CharacterInt, npc_part_id: int,
-                                    comparison_type: ComparisonType, value):
+def IfCharacterPartHealthComparison(
+    condition: int, character: CharacterInt, npc_part_id: int, comparison_type: ComparisonType, value
+):
     instruction_info = (4, 6)
     return to_numeric(instruction_info, condition, character, npc_part_id, value, comparison_type)
 
@@ -2656,6 +3138,7 @@ def IfHealthValueLessThanOrEqual(condition: int, character: CharacterInt, value)
 
 
 # BATTLE OF STOICISM (DO NOT USE)
+
 
 def ArenaRankingRequest1v1():
     instruction_info = (2003, 37)

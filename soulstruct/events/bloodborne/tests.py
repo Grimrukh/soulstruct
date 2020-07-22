@@ -6,38 +6,98 @@ from soulstruct.enums.bloodborne import *
 
 __all__ = [
     # Names processed directly by EVS parser
-    "NeverRestart", "RestartOnRest", "UnknownRestart", "EVENTS", "Condition", "END", "RESTART", "Await",
-
+    "NeverRestart",
+    "RestartOnRest",
+    "UnknownRestart",
+    "EVENTS",
+    "Condition",
+    "END",
+    "RESTART",
+    "Await",
     # Shared tests
-    "THIS_FLAG", "THIS_SLOT_FLAG",
-    "ONLINE", "OFFLINE", "DLC_OWNED", "SKULL_LANTERN_ACTIVE",
-    "WHITE_WORLD_TENDENCY", "BLACK_WORLD_TENDENCY", "NEW_GAME_CYCLE", "SOUL_LEVEL",
-    "FlagEnabled", "FlagDisabled",
-    "SecondsElapsed", "FramesElapsed",
-    "CharacterInsideRegion", "CharacterOutsideRegion",
-    "PlayerInsideRegion", "PlayerOutsideRegion", "AllPlayersInsideRegion", "AllPlayersOutsideRegion",
-    "InsideMap", "OutsideMap",
-    "EntityWithinDistance", "EntityBeyondDistance", "PlayerWithinDistance", "PlayerBeyondDistance",
-    "HasItem", "HasWeapon", "HasArmor", "HasRing", "HasGood",
-    "DialogPromptActivated",
-    "MultiplayerEvent", "TrueFlagCount", "EventValue", "EventFlagValue",
-    "AnyItemDroppedInRegion", "ItemDropped",
-    "OwnsItem", "OwnsWeapon", "OwnsArmor", "OwnsRing", "OwnsGood",
-    "IsAlive", "IsDead", "IsAttacked",
-    "HealthRatio", "HealthValue", "PartHealthValue",
-    "IsCharacterType", "IsHollow", "IsHuman", "IsInvader", "IsBlackPhantom", "IsWhitePhantom",
+    "THIS_FLAG",
+    "THIS_SLOT_FLAG",
+    "ONLINE",
+    "OFFLINE",
+    "DLC_OWNED",
+    "SKULL_LANTERN_ACTIVE",
+    "WHITE_WORLD_TENDENCY",
+    "BLACK_WORLD_TENDENCY",
+    "NEW_GAME_CYCLE",
+    "SOUL_LEVEL",
+    "FlagEnabled",
+    "FlagDisabled",
+    "SecondsElapsed",
+    "FramesElapsed",
+    "CharacterInsideRegion",
+    "CharacterOutsideRegion",
+    "PlayerInsideRegion",
+    "PlayerOutsideRegion",
+    "AllPlayersInsideRegion",
+    "AllPlayersOutsideRegion",
+    "InsideMap",
+    "OutsideMap",
+    "EntityWithinDistance",
+    "EntityBeyondDistance",
+    "PlayerWithinDistance",
+    "PlayerBeyondDistance",
+    "HasItem",
+    "HasWeapon",
+    "HasArmor",
+    "HasRing",
+    "HasGood",
+    "ActionButton",
+    "MultiplayerEvent",
+    "TrueFlagCount",
+    "EventValue",
+    "EventFlagValue",
+    "AnyItemDroppedInRegion",
+    "ItemDropped",
+    "OwnsItem",
+    "OwnsWeapon",
+    "OwnsArmor",
+    "OwnsRing",
+    "OwnsGood",
+    "IsAlive",
+    "IsDead",
+    "IsAttacked",
+    "HealthRatio",
+    "HealthValue",
+    "PartHealthValue",
+    "IsCharacterType",
+    "IsHollow",
+    "IsHuman",
+    "IsInvader",
+    "IsBlackPhantom",
+    "IsWhitePhantom",
     "HasSpecialEffect",
-    "BackreadEnabled", "BackreadDisabled",
+    "BackreadEnabled",
+    "BackreadDisabled",
     "HasTaeEvent",
-    "IsTargeting", "HasAiStatus", "AiStatusIsNormal", "AiStatusIsRecognition", "AiStatusIsAlert", "AiStatusIsBattle",
-    "PlayerIsClass", "PlayerInCovenant",
-    "IsDamaged", "IsDestroyed", "IsActivated",
-    "PlayerStandingOnCollision", "PlayerMovingOnCollision", "PlayerRunningOnCollision",
-
+    "IsTargeting",
+    "HasAiStatus",
+    "AiStatusIsNormal",
+    "AiStatusIsRecognition",
+    "AiStatusIsAlert",
+    "AiStatusIsBattle",
+    "PlayerIsClass",
+    "PlayerInCovenant",
+    "IsDamaged",
+    "IsDestroyed",
+    "IsActivated",
+    "PlayerStandingOnCollision",
+    "PlayerMovingOnCollision",
+    "PlayerRunningOnCollision",
     # Bloodborne tests
-    "HOST", "CLIENT", "SINGLEPLAYER", "MULTIPLAYER",
-    "IsAttackedWithDamageType", "BossFogActivated", "WearingArmorTypeInRange",
-    "CharacterDrawGroupActive", "CharacterDrawGroupInactive",
+    "HOST",
+    "CLIENT",
+    "SINGLEPLAYER",
+    "MULTIPLAYER",
+    "IsAttackedWithDamageType",
+    "ActionButtonInRegion",
+    "WearingArmorTypeInRange",
+    "CharacterDrawGroupActive",
+    "CharacterDrawGroupInactive",
     "INSIGHT",
 ]
 
@@ -71,19 +131,21 @@ MULTIPLAYER = ConstantCondition(
 
 
 @no_skip_or_negate_or_terminate
-def IsAttackedWithDamageType(attacked_entity: AnimatedInt, attacking_character: CharacterInt,
-                             damage_type: DamageType, condition: int):
+def IsAttackedWithDamageType(
+    attacked_entity: AnimatedInt, attacking_character: CharacterInt, damage_type: DamageType, condition: int
+):
     return instr.IfDamageType(condition, attacked_entity, attacking_character, damage_type)
 
 
 @no_skip_or_negate_or_terminate
-def BossFogActivated(boss_entity_id: CharacterInt, fog_object_id: ObjectInt, condition: int):
-    return instr.IfBossFogActivated(condition, boss_entity_id, fog_object_id)
+def ActionButtonInRegion(action_button_id: int, region: RegionInt, condition: int):
+    return instr.IfActionButtonInRegion(condition, action_button_id, region)
 
 
 @no_skip_or_negate_or_terminate
-def WearingArmorTypeInRange(armor_type: ArmorType, required_armor_range_first: int, required_armor_range_last: int,
-                            condition: int):
+def WearingArmorTypeInRange(
+    armor_type: ArmorType, required_armor_range_first: int, required_armor_range_last: int, condition: int
+):
     return instr.IfPlayerArmorType(condition, armor_type, required_armor_range_first, required_armor_range_last)
 
 

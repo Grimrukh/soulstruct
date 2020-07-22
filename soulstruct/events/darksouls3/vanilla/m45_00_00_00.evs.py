@@ -51,9 +51,9 @@ def Constructor():
     RunCommonEvent(20005360, args=(4500244, 10000, 13022))
     RunCommonEvent(20005360, args=(4500211, 10000, 13022))
     RunCommonEvent(20005221, args=(4500210, 701, 1701, 1106247680))
-    RunEvent(14505270, slot=0, args=(4500247, 700, 1700, 1.0, 4502236, 20000, 0.5, 4502235), arg_types='iiifiifi')
-    RunEvent(14505270, slot=1, args=(4500248, 700, 1700, 0.5, 4502236, 20000, 0.0, 4502235), arg_types='iiifiifi')
-    RunEvent(14505270, slot=2, args=(4500249, 700, 1700, 0.0, 4502236, 20000, 1.0, 4502235), arg_types='iiifiifi')
+    RunEvent(14505270, slot=0, args=(4500247, 700, 1700, 1.0, 4502236, 20000, 0.5, 4502235), arg_types="iiifiifi")
+    RunEvent(14505270, slot=1, args=(4500248, 700, 1700, 0.5, 4502236, 20000, 0.0, 4502235), arg_types="iiifiifi")
+    RunEvent(14505270, slot=2, args=(4500249, 700, 1700, 0.0, 4502236, 20000, 1.0, 4502235), arg_types="iiifiifi")
     RunCommonEvent(20005360, args=(4500247, 10000, 13022))
     RunCommonEvent(20005360, args=(4500248, 10000, 13022))
     RunCommonEvent(20005360, args=(4500249, 10000, 13022))
@@ -65,14 +65,16 @@ def Constructor():
     RunCommonEvent(20005219, args=(4500218, 701, 1701, 1073741824, 4502285, 1056964608))
     RunCommonEvent(20005219, args=(4500251, 700, 1700, 1073741824, 4502285, 1065353216))
     RunCommonEvent(20005219, args=(4500252, 700, 1700, 1073741824, 4502285, 0))
-    RunEvent(14505260, slot=0, args=(4500219, 30001, 20000, 0.5, 0.0, 3006), arg_types='iiiffi')
-    RunEvent(14505260, slot=1, args=(4500253, 30001, 20000, 1.2000000476837158, 15.0, 3006), arg_types='iiiffi')
-    RunEvent(14505260, slot=2, args=(4500254, 30001, 20000, 0.0, 21.5, 3009), arg_types='iiiffi')
-    RunEvent(14505260, slot=3, args=(4500255, 30001, 20000, 0.699999988079071, 20.899999618530273, 3009), 
-             arg_types='iiiffi')
-    RunEvent(14505260, slot=4, args=(4500256, 30001, 20000, 0.20000000298023224, 6.5, 3009), arg_types='iiiffi')
-    RunEvent(14505260, slot=5, args=(4500257, 30001, 20000, 1.2000000476837158, 5.900000095367432, 3009), 
-             arg_types='iiiffi')
+    RunEvent(14505260, slot=0, args=(4500219, 30001, 20000, 0.5, 0.0, 3006), arg_types="iiiffi")
+    RunEvent(14505260, slot=1, args=(4500253, 30001, 20000, 1.2000000476837158, 15.0, 3006), arg_types="iiiffi")
+    RunEvent(14505260, slot=2, args=(4500254, 30001, 20000, 0.0, 21.5, 3009), arg_types="iiiffi")
+    RunEvent(
+        14505260, slot=3, args=(4500255, 30001, 20000, 0.699999988079071, 20.899999618530273, 3009), arg_types="iiiffi"
+    )
+    RunEvent(14505260, slot=4, args=(4500256, 30001, 20000, 0.20000000298023224, 6.5, 3009), arg_types="iiiffi")
+    RunEvent(
+        14505260, slot=5, args=(4500257, 30001, 20000, 1.2000000476837158, 5.900000095367432, 3009), arg_types="iiiffi"
+    )
     RunCommonEvent(20006040, args=(4500219, 4502221, 5450))
     RunCommonEvent(20006040, args=(4500253, 4502222, 5450))
     RunCommonEvent(20006040, args=(4500254, 4502223, 5450))
@@ -116,17 +118,17 @@ def Constructor():
     RunCommonEvent(20005210, args=(4500344, 700, 1700, 1085066445))
     RunCommonEvent(20005212, args=(4500347, 700, 1700, 1086324736, 4502320))
     RunCommonEvent(20005212, args=(4500348, 700, 1700, 1086324736, 4502320))
-    RunEvent(14505300, slot=3, args=(4500350, 4500350, 8.0), arg_types='iif')
+    RunEvent(14505300, slot=3, args=(4500350, 4500350, 8.0), arg_types="iif")
     RunCommonEvent(20005221, args=(4500350, 701, 1701, 1086324736))
     RunCommonEvent(20005221, args=(4500351, 700, 1700, 1090519040))
     RunCommonEvent(20005221, args=(4500352, 700, 1700, 1090519040))
     RunCommonEvent(20005221, args=(4500353, 700, 1700, 1090519040))
     RunCommonEvent(20005221, args=(4500354, 700, 1700, 1098907648))
-    RunEvent(14505400, slot=1, args=(4500401, 30001, 20001, 4502401, 0.0), arg_types='iiiif')
+    RunEvent(14505400, slot=1, args=(4500401, 30001, 20001, 4502401, 0.0), arg_types="iiiif")
     RunCommonEvent(20005119, args=(4500403, 4502423, 4502424, 0, 0, 0, 0, 0))
     RunCommonEvent(20005132, args=(4500404, 1084227584, 4502405))
     RunCommonEvent(20005110, args=(4500405, 4502405))
-    RunEvent(14505400, slot=7, args=(4500407, 30001, 20001, 4502407, 0.0), arg_types='iiiif')
+    RunEvent(14505400, slot=7, args=(4500407, 30001, 20001, 4502407, 0.0), arg_types="iiiif")
     RunEvent(14505410)
     RunEvent(14505411)
     RunEvent(14505412)
@@ -184,10 +186,10 @@ def Constructor():
     RunCommonEvent(20005210, args=(4500475, 702, 1702, 1073741824))
     RunCommonEvent(20005221, args=(4500476, 701, 1701, 1077936128))
     RunCommonEvent(20005201, args=(4500482, 702, 1702, 4502403, 1073741824))
-    RunEvent(14505470, slot=0, args=(4500460, 708, 20000, 4502421, 0.5), arg_types='iiiif')
-    RunEvent(14505470, slot=2, args=(4500477, 708, 20000, 4502421, 3.0), arg_types='iiiif')
-    RunEvent(14505470, slot=3, args=(4500478, 708, 20000, 4502425, 0.0), arg_types='iiiif')
-    RunEvent(14505470, slot=4, args=(4500450, 708, 20000, 4502448, 0.0), arg_types='iiiif')
+    RunEvent(14505470, slot=0, args=(4500460, 708, 20000, 4502421, 0.5), arg_types="iiiif")
+    RunEvent(14505470, slot=2, args=(4500477, 708, 20000, 4502421, 3.0), arg_types="iiiif")
+    RunEvent(14505470, slot=3, args=(4500478, 708, 20000, 4502425, 0.0), arg_types="iiiif")
+    RunEvent(14505470, slot=4, args=(4500450, 708, 20000, 4502448, 0.0), arg_types="iiiif")
     RunCommonEvent(20005265, args=(4500470, 703, 1703, 4500472))
     RunCommonEvent(20006040, args=(4500470, 4502413, 5450))
     RunCommonEvent(20005265, args=(4500471, 702, 1702, 4500472))
@@ -289,7 +291,7 @@ def Constructor():
     RunCommonEvent(20005120, args=(4500573, 1108082688))
     RunCommonEvent(20005220, args=(4500574, 701, 1701))
     RunCommonEvent(20005213, args=(4500579, 700, 1700, 1084227584, 4502260))
-    RunEvent(14505370, slot=0, args=(4500576, 700, 1700, 5.0, 10.0), arg_types='iiiff')
+    RunEvent(14505370, slot=0, args=(4500576, 700, 1700, 5.0, 10.0), arg_types="iiiff")
     RunEvent(14505360)
     RunCommonEvent(20005210, args=(4500581, 700, 1700, 1106247680))
     RunCommonEvent(20005221, args=(4500585, 700, 1700, 1090519040))
@@ -395,19 +397,23 @@ def Constructor():
     RunEvent(14505520)
     RunEvent(14505525)
     RunEvent(14505580)
-    RunEvent(14505530, slot=0, args=(4501530, 4502530, 0.75, 4501260), arg_types='iifi')
-    RunEvent(14505530, slot=1, args=(4501531, 4502531, 0.25, 0), arg_types='iifi')
-    RunEvent(14505530, slot=2, args=(4501532, 4502532, 0.25, 0), arg_types='iifi')
+    RunEvent(14505530, slot=0, args=(4501530, 4502530, 0.75, 4501260), arg_types="iifi")
+    RunEvent(14505530, slot=1, args=(4501531, 4502531, 0.25, 0), arg_types="iifi")
+    RunEvent(14505530, slot=2, args=(4501532, 4502532, 0.25, 0), arg_types="iifi")
     RunEvent(14505533, slot=0, args=(14505530, 4502535))
     RunEvent(14505533, slot=1, args=(14505531, 4502536))
     RunEvent(14505533, slot=2, args=(14505532, 4502537))
     RunEvent(14505536, slot=0, args=(14505530, 4502535, 4501530, 450000020))
     RunEvent(14505536, slot=1, args=(14505531, 4502536, 4501531, 450000021))
     RunEvent(14505536, slot=2, args=(14505532, 4502537, 4501532, 450000021))
-    RunEvent(14505540, slot=0, args=(14500540, 4501540, 9370, 4503540, 4503541, 14504540, 14504541, 14504543, 14504544, 
-             0))
-    RunEvent(14505540, slot=1, args=(14500542, 4501542, 9370, 4503542, 4503543, 14504545, 14504546, 14504547, 14504548, 
-             14504549))
+    RunEvent(
+        14505540, slot=0, args=(14500540, 4501540, 9370, 4503540, 4503541, 14504540, 14504541, 14504543, 14504544, 0)
+    )
+    RunEvent(
+        14505540,
+        slot=1,
+        args=(14500542, 4501542, 9370, 4503542, 4503543, 14504545, 14504546, 14504547, 14504548, 14504549),
+    )
     RunEvent(14505544, slot=0, args=(14500540, 4502540))
     RunEvent(14505544, slot=1, args=(14500542, 4502542))
     RunCommonEvent(20005610, args=(14500550, 4502550, 4502551))
@@ -576,8 +582,9 @@ def Event14505182():
     IfFlagOn(1, 14505185)
     IfFlagOff(1, 14505186)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012700, display_location_index=1)
     SkipLines(5)
     IfCharacterType(1, character=PLAYER, character_type=CharacterType.BlackPhantom)
@@ -603,8 +610,9 @@ def Event14505183():
     IfCharacterDead(1, 4500176)
     IfConditionTrue(0, input_condition=1)
     DisplayBanner(BannerType.BlackPhantomDestroyed)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012701, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012701, display_location_index=1)
@@ -642,8 +650,9 @@ def Event14505200():
     IfHealthComparison(5, character=4500201, comparison_type=ComparisonType.LessThanOrEqual, value=0.6000000238418579)
     GotoIfConditionTrue(Label.L0, input_condition=5)
     AICommand(4500201, command_id=10, slot=0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=14505209, state=FlagState.On)
     End()
 
@@ -840,8 +849,9 @@ def Event14505210():
     IfHealthComparison(4, character=4500202, comparison_type=ComparisonType.LessThanOrEqual, value=0.6000000238418579)
     GotoIfConditionTrue(Label.L0, input_condition=4)
     AICommand(4500202, command_id=10, slot=0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=14505219, state=FlagState.On)
     End()
 
@@ -928,13 +938,13 @@ def Event14505213():
 
 
 @RestartOnRest
-def Event14505240(arg_0_3: int, arg_4_7: int):
+def Event14505240(_, arg_0_3: int, arg_4_7: int):
     """ 14505240: Event 14505240 """
     AddSpecialEffect(arg_0_3, arg_4_7)
 
 
 @RestartOnRest
-def Event14505245(arg_0_3: int, arg_4_7: int):
+def Event14505245(_, arg_0_3: int, arg_4_7: int):
     """ 14505245: Event 14505245 """
     IfHasAIStatus(0, character=arg_0_3, ai_status=AIStatusType.Battle)
     SetCharacterEventTarget(arg_0_3, arg_4_7)
@@ -948,7 +958,7 @@ def Event14505245(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event14505250(arg_0_3: int, arg_4_7: int):
+def Event14505250(_, arg_0_3: int, arg_4_7: int):
     """ 14505250: Event 14505250 """
     EndIfThisEventSlotOn()
     IfCharacterHasSpecialEffect(-1, character=arg_0_3, special_effect=13022)
@@ -975,7 +985,7 @@ def Event14505250(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event14505260(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: float, arg_20_23: int):
+def Event14505260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: float, arg_20_23: int):
     """ 14505260: Event 14505260 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -1028,8 +1038,17 @@ def Event14505260(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, a
 
 
 @RestartOnRest
-def Event14505270(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: float, arg_28_31: int):
+def Event14505270(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: float,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: float,
+    arg_28_31: int,
+):
     """ 14505270: Event 14505270 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -1131,7 +1150,7 @@ def Event14505281():
 
 
 @RestartOnRest
-def Event14505282(arg_0_3: int, arg_4_7: int):
+def Event14505282(_, arg_0_3: int, arg_4_7: int):
     """ 14505282: Event 14505282 """
     IfCharacterInsideRegion(1, arg_0_3, region=arg_4_7)
     IfCharacterHasSpecialEffect(1, character=arg_0_3, special_effect=13031)
@@ -1143,7 +1162,7 @@ def Event14505282(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event14505290(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event14505290(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 14505290: Event 14505290 """
     EndIfThisEventSlotOn()
     IfCharacterHasSpecialEffect(1, character=arg_0_3, special_effect=arg_8_11)
@@ -1171,7 +1190,7 @@ def Event14505298():
 
 
 @RestartOnRest
-def Event14505300(arg_0_3: int, arg_4_7: int, arg_8_11: float):
+def Event14505300(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 14505300: Event 14505300 """
     EndIfCharacterHasSpecialEffect(character=arg_0_3, special_effect=5404)
     IfCharacterType(1, character=PLAYER, character_type=CharacterType.BlackPhantom)
@@ -1192,7 +1211,7 @@ def Event14505300(arg_0_3: int, arg_4_7: int, arg_8_11: float):
 
 
 @RestartOnRest
-def Event14505310(arg_0_3: int):
+def Event14505310(_, arg_0_3: int):
     """ 14505310: Event 14505310 """
     EnableInvincibility(arg_0_3)
     DisableHealthBar(arg_0_3)
@@ -1201,7 +1220,7 @@ def Event14505310(arg_0_3: int):
 
 
 @RestartOnRest
-def Event14505350(arg_0_3: int):
+def Event14505350(_, arg_0_3: int):
     """ 14505350: Event 14505350 """
     DisableAnimations(arg_0_3)
     DisableAI(arg_0_3)
@@ -1218,7 +1237,7 @@ def Event14505360():
 
 
 @RestartOnRest
-def Event14505370(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: float):
+def Event14505370(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: float):
     """ 14505370: Event 14505370 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -1306,8 +1325,14 @@ def Event14505381():
     """ 14505381: Event 14505381 """
     DisableNetworkSync()
     IfCharacterHasSpecialEffect(0, character=PLAYER, special_effect=13067)
-    SetCameraVibration(vibration_id=50, anchor_entity=4502476, model_point=-1, decay_start_distance=999.0, 
-                       decay_end_distance=999.0, anchor_type=CoordEntityType.Region)
+    SetCameraVibration(
+        vibration_id=50,
+        anchor_entity=4502476,
+        model_point=-1,
+        decay_start_distance=999.0,
+        decay_end_distance=999.0,
+        anchor_type=CoordEntityType.Region,
+    )
     Wait(4.0)
     Restart()
 
@@ -1337,7 +1362,7 @@ def Event14505383():
 
 
 @RestartOnRest
-def Event14505400(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
+def Event14505400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
     """ 14505400: Event 14505400 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -1428,7 +1453,7 @@ def Event14505412():
 
 
 @RestartOnRest
-def Event14505420(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event14505420(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 14505420: Event 14505420 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -1461,7 +1486,7 @@ def Event14505420(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event14505430(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event14505430(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 14505430: Event 14505430 """
     IfCharacterDead(-1, arg_8_11, target_comparison_type=ComparisonType.GreaterThanOrEqual, target_count=1.0)
     IfHasAIStatus(-1, character=arg_12_15, ai_status=AIStatusType.Battle)
@@ -1471,7 +1496,7 @@ def Event14505430(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event14505450(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event14505450(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 14505450: Event 14505450 """
     IfHasAIStatus(-1, character=arg_8_11, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, character=arg_8_11, ai_status=AIStatusType.Battle)
@@ -1482,7 +1507,7 @@ def Event14505450(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event14505470(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
+def Event14505470(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
     """ 14505470: Event 14505470 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -1520,7 +1545,7 @@ def Event14505470(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event14505490(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event14505490(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 14505490: Event 14505490 """
     EndIfFlagOn(14505494)
     DisableGravity(arg_0_3)
@@ -1542,8 +1567,9 @@ def Event14505490(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfThisEventSlotOn(4)
     IfCharacterInsideRegion(4, PLAYER, region=4502491)
     GotoIfConditionTrue(Label.L1, input_condition=4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=14505493, state=FlagState.On)
     SkipLines(1)
     EnableFlag(14505493)
@@ -1558,8 +1584,9 @@ def Event14505490(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfCharacterOutsideRegion(5, PLAYER, region=4502491)
     IfCharacterBackreadEnabled(5, character=arg_0_3)
     IfConditionTrue(0, input_condition=5)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=14505493, state=FlagState.Off)
     SkipLines(1)
     DisableFlag(14505493)
@@ -1567,8 +1594,9 @@ def Event14505490(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
     # --- 1 --- #
     DefineLabel(1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=14505494, state=FlagState.On)
     EnableCharacterCollision(arg_0_3)
     ForceAnimation(arg_0_3, arg_8_11)
@@ -1659,8 +1687,10 @@ def Event14505501():
 
 def Event14505510():
     """ 14505510: Event 14505510 """
-    RunCommonEvent(20005621, args=(14500510, 14501510, 4501510, 4501511, 4504511, 4501512, 4504512, 4502511, 4502512, 
-                   14501511, 14504510, 0))
+    RunCommonEvent(
+        20005621,
+        args=(14500510, 14501510, 4501510, 4501511, 4504511, 4501512, 4504512, 4502511, 4502512, 14501511, 14504510, 0),
+    )
 
 
 @RestartOnRest
@@ -1748,7 +1778,7 @@ def Event14505525():
 
 
 @RestartOnRest
-def Event14505530(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
+def Event14505530(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 14505530: Event 14505530 """
     GotoIfThisEventSlotOn(Label.L0)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
@@ -1767,7 +1797,7 @@ def Event14505530(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
 
 
 @RestartOnRest
-def Event14505533(arg_0_3: int, arg_4_7: int):
+def Event14505533(_, arg_0_3: int, arg_4_7: int):
     """ 14505533: Event 14505533 """
     DisableNetworkSync()
     CancelSpecialEffect(PLAYER, 4070)
@@ -1784,7 +1814,7 @@ def Event14505533(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event14505536(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event14505536(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 14505536: Event 14505536 """
     DisableNetworkSync()
     IfObjectDestroyed(1, obj=arg_8_11)
@@ -1793,15 +1823,32 @@ def Event14505536(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagOn(0, arg_0_3)
     PlaySoundEffect(anchor_entity=arg_8_11, sound_type=SoundType.a_Ambient, sound_id=arg_12_15)
     EndIfCharacterOutsideRegion(character=PLAYER, region=arg_4_7)
-    SetCameraVibration(vibration_id=104, anchor_entity=arg_4_7, model_point=-1, decay_start_distance=999.0, 
-                       decay_end_distance=999.0, anchor_type=CoordEntityType.Region)
+    SetCameraVibration(
+        vibration_id=104,
+        anchor_entity=arg_4_7,
+        model_point=-1,
+        decay_start_distance=999.0,
+        decay_end_distance=999.0,
+        anchor_type=CoordEntityType.Region,
+    )
     Wait(5.0)
     End()
 
 
 @RestartOnRest
-def Event14505540(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int):
+def Event14505540(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+):
     """ 14505540: Event 14505540 """
     ActivateCollisionAndCreateNavmesh(collision=arg_12_15, state=False)
     ActivateCollisionAndCreateNavmesh(collision=arg_16_19, state=False)
@@ -1823,16 +1870,56 @@ def Event14505540(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     ForceAnimation(PLAYER, 60440)
     ForceAnimation(arg_4_7, 1)
     Wait(1.5)
-    CreateHazard(arg_20_23, arg_4_7, model_point=40, behavior_param_id=6210, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=1.2999999523162842, repetition_time=0.0)
-    CreateHazard(arg_24_27, arg_4_7, model_point=41, behavior_param_id=6210, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=1.2999999523162842, repetition_time=0.0)
-    CreateHazard(arg_28_31, arg_4_7, model_point=42, behavior_param_id=6210, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=1.2999999523162842, repetition_time=0.0)
-    CreateHazard(arg_32_35, arg_4_7, model_point=43, behavior_param_id=6210, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=1.2999999523162842, repetition_time=0.0)
-    CreateHazard(arg_36_39, arg_4_7, model_point=44, behavior_param_id=6210, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=1.2999999523162842, repetition_time=0.0)
+    CreateHazard(
+        arg_20_23,
+        arg_4_7,
+        model_point=40,
+        behavior_param_id=6210,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=1.2999999523162842,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_24_27,
+        arg_4_7,
+        model_point=41,
+        behavior_param_id=6210,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=1.2999999523162842,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_28_31,
+        arg_4_7,
+        model_point=42,
+        behavior_param_id=6210,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=1.2999999523162842,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_32_35,
+        arg_4_7,
+        model_point=43,
+        behavior_param_id=6210,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=1.2999999523162842,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_36_39,
+        arg_4_7,
+        model_point=44,
+        behavior_param_id=6210,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=1.2999999523162842,
+        repetition_time=0.0,
+    )
     Wait(1.2999999523162842)
     RemoveObjectFlag(arg_20_23)
     RemoveObjectFlag(arg_24_27)
@@ -1845,7 +1932,7 @@ def Event14505540(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event14505544(arg_0_3: int, arg_4_7: int):
+def Event14505544(_, arg_0_3: int, arg_4_7: int):
     """ 14505544: Event 14505544 """
     DisableNetworkSync()
     EndIfFlagOn(arg_0_3)
@@ -1853,8 +1940,14 @@ def Event14505544(arg_0_3: int, arg_4_7: int):
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
     EndIfConditionFalse(1)
     Wait(2.640000104904175)
-    SetCameraVibration(vibration_id=104, anchor_entity=4502476, model_point=-1, decay_start_distance=999.0, 
-                       decay_end_distance=999.0, anchor_type=CoordEntityType.Region)
+    SetCameraVibration(
+        vibration_id=104,
+        anchor_entity=4502476,
+        model_point=-1,
+        decay_start_distance=999.0,
+        decay_end_distance=999.0,
+        anchor_type=CoordEntityType.Region,
+    )
 
 
 @RestartOnRest
@@ -1914,9 +2007,16 @@ def Event14505610():
     DisableObjectActivation(4501611, obj_act_id=-1)
     Wait(4.0)
     ActivateCollisionAndCreateNavmesh(collision=4503611, state=False)
-    CreateHazard(14505611, 4501610, model_point=41, behavior_param_id=6200, 
-                 target_type=DamageTargetType.Character_and_Map, radius=2.0, life=3.299999952316284, 
-                 repetition_time=0.0)
+    CreateHazard(
+        14505611,
+        4501610,
+        model_point=41,
+        behavior_param_id=6200,
+        target_type=DamageTargetType.Character_and_Map,
+        radius=2.0,
+        life=3.299999952316284,
+        repetition_time=0.0,
+    )
     ForceAnimation(4501610, 1, loop=True, wait_for_completion=True)
     EnableCollision(4503610)
     ActivateCollisionAndCreateNavmesh(collision=4503612, state=True)
@@ -1931,8 +2031,13 @@ def Event14505611():
     IfObjectActivated(1, obj_act_id=4503611)
     IfConditionTrue(0, input_condition=1)
     WaitFrames(1)
-    DisplayDialog(10010884, anchor_entity=4501611, display_distance=3.0, button_type=ButtonType.Yes_or_No, 
-                  number_buttons=NumberButtons.NoButton)
+    DisplayDialog(
+        10010884,
+        anchor_entity=4501611,
+        display_distance=3.0,
+        button_type=ButtonType.Yes_or_No,
+        number_buttons=NumberButtons.NoButton,
+    )
 
 
 @RestartOnRest
@@ -1956,8 +2061,9 @@ def Event14505620():
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=14505621, state=FlagState.On)
     DisableObjectActivation(4501622, obj_act_id=-1)
     DisableSoundEvent(4504803)
@@ -1968,8 +2074,9 @@ def Event14505620():
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(45000030, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(45000030, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(45000030, skippable=False, fade_out=False, player_id=PLAYER)
@@ -1981,8 +2088,9 @@ def Event14505620():
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(45000031, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(45000031, skippable=False, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(45000031, skippable=False, fade_out=False, player_id=PLAYER)
@@ -2144,8 +2252,9 @@ def Event14505810():
     IfFlagOn(1, 74500300)
     IfActionButtonInRegion(1, action_button_id=9373, region=4500803)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     BanishInvaders(unknown=0)
     EnableFlag(14505521)
     WaitFrames(1)
@@ -2155,13 +2264,26 @@ def Event14505810():
     DeleteFX(4503828, erase_root_only=False)
     DeleteFX(4503829, erase_root_only=False)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutscene(45000000, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=4502810, 
-                 move_to_map=PAINTED_WORLD_OF_ARIANDEL)
+    PlayCutscene(
+        45000000,
+        skippable=True,
+        fade_out=False,
+        player_id=PLAYER,
+        move_to_region=4502810,
+        move_to_map=PAINTED_WORLD_OF_ARIANDEL,
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutscene(45000000, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=4502810, 
-                 move_to_map=PAINTED_WORLD_OF_ARIANDEL)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutscene(
+        45000000,
+        skippable=False,
+        fade_out=True,
+        player_id=PLAYER,
+        move_to_region=4502810,
+        move_to_map=PAINTED_WORLD_OF_ARIANDEL,
+    )
     SkipLines(1)
     PlayCutscene(45000000, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
@@ -2173,8 +2295,9 @@ def Event14505810():
     CreateFX(4503829)
     EnableCharacter(4500801)
     EnableAnimations(4500801)
-    Move(4500801, destination=4502811, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=4500801)
+    Move(
+        4500801, destination=4502811, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=4500801
+    )
     SetCharacterEventTarget(4500801, 10000)
     ForceAnimation(4500803, 30002, loop=True)
     Goto(Label.L2)
@@ -2185,8 +2308,9 @@ def Event14505810():
     IfFlagOn(1, 14505805)
     IfCharacterInsideRegion(1, PLAYER, region=4502800)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     BanishInvaders(unknown=0)
     Goto(Label.L2)
 
@@ -2214,13 +2338,26 @@ def Event14505811():
     EnableFlag(14505521)
     WaitFrames(1)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutscene(45000010, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=4502812, 
-                 move_to_map=PAINTED_WORLD_OF_ARIANDEL)
+    PlayCutscene(
+        45000010,
+        skippable=True,
+        fade_out=False,
+        player_id=PLAYER,
+        move_to_region=4502812,
+        move_to_map=PAINTED_WORLD_OF_ARIANDEL,
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutscene(45000010, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=4502812, 
-                 move_to_map=PAINTED_WORLD_OF_ARIANDEL)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutscene(
+        45000010,
+        skippable=False,
+        fade_out=True,
+        player_id=PLAYER,
+        move_to_region=4502812,
+        move_to_map=PAINTED_WORLD_OF_ARIANDEL,
+    )
     SkipLines(1)
     PlayCutscene(45000010, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
@@ -2437,8 +2574,9 @@ def Event14505831():
     IfConditionTrue(0, input_condition=1)
     EnableCharacter(4500171)
     Wait(1.5)
-    Move(4500171, destination=4502830, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=4500171)
+    Move(
+        4500171, destination=4502830, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=4500171
+    )
     CreateObjectFX(30001, obj=4501170, model_point=0)
     IfPlayerInOwnWorld(2)
     IfActionButtonInRegion(2, action_button_id=9334, region=4501170)
@@ -2452,9 +2590,16 @@ def Event14505831():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisplayDialogAndSetFlags(message=10012500, button_type=ButtonType.Yes_or_No, 
-                             number_buttons=NumberButtons.TwoButton, anchor_entity=4501170, display_distance=3.0, 
-                             left_flag=14505848, right_flag=14505849, cancel_flag=14505849)
+    DisplayDialogAndSetFlags(
+        message=10012500,
+        button_type=ButtonType.Yes_or_No,
+        number_buttons=NumberButtons.TwoButton,
+        anchor_entity=4501170,
+        display_distance=3.0,
+        left_flag=14505848,
+        right_flag=14505849,
+        cancel_flag=14505849,
+    )
     RestartIfFlagOff(14505848)
     DisplayBattlefieldMessage(10012520, display_location_index=1)
     Wait(5.0)
@@ -2471,8 +2616,9 @@ def Event14505832():
     IfFlagOff(1, 14505841)
     IfFlagOn(1, 14505802)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012600, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012610, display_location_index=1)
@@ -2495,8 +2641,9 @@ def Event14505833():
     IfFlagOn(1, 14505841)
     IfCharacterDead(1, 4500170)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisplayBattlefieldMessage(10012602, display_location_index=1)
     SkipLines(1)
     DisplayBattlefieldMessage(10012612, display_location_index=1)
@@ -2559,8 +2706,13 @@ def Event14505870():
     IfCharacterInsideRegion(9, PLAYER, region=4502860)
     IfConditionTrue(-1, input_condition=9)
     IfDamageType(-1, attacked_entity=4500860, attacking_character=-1, damage_type=DamageType.Unspecified)
-    IfHasAIStatus(-1, character=4505860, ai_status=AIStatusType.Battle, 
-                  target_comparison_type=ComparisonType.GreaterThanOrEqual, target_count=1.0)
+    IfHasAIStatus(
+        -1,
+        character=4505860,
+        ai_status=AIStatusType.Battle,
+        target_comparison_type=ComparisonType.GreaterThanOrEqual,
+        target_count=1.0,
+    )
     IfConditionTrue(0, input_condition=-1)
     Goto(Label.L2)
 
@@ -2573,8 +2725,9 @@ def Event14505870():
 
     # --- 2 --- #
     DefineLabel(2)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     BanishInvaders(unknown=0)
     EnableAI(4500860)
     ForceAnimation(4500860, 91090, wait_for_completion=True)
@@ -2697,7 +2850,7 @@ def Event14505890():
     EnableFlag(14500890)
 
 
-def Event14505700(arg_0_3: int, arg_4_7: int):
+def Event14505700(_, arg_0_3: int, arg_4_7: int):
     """ 14505700: Event 14505700 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1655, 1659))
@@ -2758,7 +2911,7 @@ def Event14505700(arg_0_3: int, arg_4_7: int):
     End()
 
 
-def Event14505701(arg_0_3: int):
+def Event14505701(_, arg_0_3: int):
     """ 14505701: Event 14505701 """
     GotoIfThisEventSlotOn(Label.L0)
     IfPlayerInOwnWorld(1)
@@ -2775,11 +2928,12 @@ def Event14505701(arg_0_3: int):
     DisableBackread(arg_0_3)
 
 
-def Event14500702(arg_0_3: int, arg_4_7: int):
+def Event14500702(_, arg_0_3: int, arg_4_7: int):
     """ 14500702: Event 14500702 """
     EndIfFlagOn(1658)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableFlag(14500702)
     EndIfThisEventSlotOn()
     DisableCharacter(arg_4_7)
@@ -2804,8 +2958,9 @@ def Event14500702(arg_0_3: int, arg_4_7: int):
     ForceAnimation(arg_4_7, 63010)
     ReplanAI(arg_4_7)
     IfFlagOn(0, 74500131)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     CancelSpecialEffect(arg_4_7, 5020)
 
 
@@ -2817,7 +2972,7 @@ def Event14505703():
     AwardItemLot(55200, host_only=False)
 
 
-def Event14505710(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event14505710(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 14505710: Event 14505710 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1675, 1679))
@@ -2945,7 +3100,7 @@ def Event14505711():
     EnableFlag(74500182)
 
 
-def Event14505712(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event14505712(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 14505712: Event 14505712 """
     EndIfFlagRangeAnyOn((1661, 1674))
     IfPlayerInOwnWorld(1)
@@ -2972,7 +3127,7 @@ def Event14505712(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableObjectInvulnerability(arg_12_15)
 
 
-def Event14505713(arg_0_3: int):
+def Event14505713(_, arg_0_3: int):
     """ 14505713: Event 14505713 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(74500183)
@@ -2990,7 +3145,7 @@ def Event14505713(arg_0_3: int):
     EnableFlag(74500183)
 
 
-def Event14505714(arg_0_3: int):
+def Event14505714(_, arg_0_3: int):
     """ 14505714: Event 14505714 """
     EndIfPlayerNotInOwnWorld()
     IfEntityWithinDistance(0, PLAYER, arg_0_3, radius=4.900000095367432)
@@ -3003,7 +3158,7 @@ def Event14505714(arg_0_3: int):
     Restart()
 
 
-def Event14505720(arg_0_3: int):
+def Event14505720(_, arg_0_3: int):
     """ 14505720: Event 14505720 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(9322)
@@ -3015,7 +3170,7 @@ def Event14505720(arg_0_3: int):
     ForceAnimation(arg_0_3, 30003)
 
 
-def Event14505721(arg_0_3: int, arg_4_7: int):
+def Event14505721(_, arg_0_3: int, arg_4_7: int):
     """ 14505721: Event 14505721 """
     EndIfFlagOn(1678)
     IfFlagOn(1, arg_4_7)
@@ -3025,7 +3180,7 @@ def Event14505721(arg_0_3: int, arg_4_7: int):
     DisableObjectInvulnerability(arg_0_3)
 
 
-def Event14505730(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event14505730(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 14505730: Event 14505730 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1695, 1699))
@@ -3091,7 +3246,7 @@ def Event14505730(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     End()
 
 
-def Event14505731(arg_0_3: int, arg_4_7: int):
+def Event14505731(_, arg_0_3: int, arg_4_7: int):
     """ 14505731: Event 14505731 """
     GotoIfFlagOn(Label.L0, 14500731)
     EndIfFlagOff(1680)
@@ -3121,7 +3276,7 @@ def Event14505731(arg_0_3: int, arg_4_7: int):
     EnableFlag(14500731)
 
 
-def Event14505732(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event14505732(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 14505732: Event 14505732 """
     EndIfFlagRangeAnyOn((1681, 1694))
     EndIfFlagOn(1698)
@@ -3130,8 +3285,9 @@ def Event14505732(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, 1680)
     IfFlagOn(1, 1695)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagRangeState(flag_range=(1680, 1694), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1681, state=FlagState.On)
     DisableCharacter(arg_0_3)
@@ -3153,7 +3309,7 @@ def Event14505733():
     SetNetworkConnectedFlagState(flag=14500733, state=FlagState.On)
 
 
-def Event14505740(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event14505740(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 14505740: Event 14505740 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1715, 1719))
@@ -3205,8 +3361,9 @@ def Event14505740(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableHealthBar(arg_0_3)
     RestoreObject(arg_12_15)
     EnableObjectInvulnerability(arg_12_15)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetCharacterTalkRange(arg_4_7, distance=100.0)
     SetCharacterTalkRange(arg_8_11, distance=100.0)
     End()
@@ -3216,8 +3373,9 @@ def Event14505740(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
     DropMandatoryTreasure(arg_0_3)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetCharacterTalkRange(arg_4_7, distance=100.0)
     SetCharacterTalkRange(arg_8_11, distance=100.0)
     End()
@@ -3230,7 +3388,7 @@ def Event14505740(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     End()
 
 
-def Event14505741(arg_0_3: int, arg_4_7: int):
+def Event14505741(_, arg_0_3: int, arg_4_7: int):
     """ 14505741: Event 14505741 """
     EndIfFlagOff(1700)
     IfFlagOn(1, 14500801)
@@ -3240,8 +3398,9 @@ def Event14505741(arg_0_3: int, arg_4_7: int):
     DisableBackread(arg_0_3)
     DropMandatoryTreasure(arg_0_3)
     DisableObjectInvulnerability(arg_4_7)
-    SkipLinesIfClientTypeCountComparison(4, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        4, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagRangeState(flag_range=(1700, 1714), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1701, state=FlagState.On)
     SetNetworkConnectedFlagRangeState(flag_range=(1715, 1719), state=RangeState.AllOn)
@@ -3257,7 +3416,7 @@ def Event14505742():
     EnableFlag(74500282)
 
 
-def Event14500743(arg_0_3: int, arg_4_7: int):
+def Event14500743(_, arg_0_3: int, arg_4_7: int):
     """ 14500743: Event 14500743 """
     GotoIfThisEventSlotOn(Label.L0)
     IfPlayerInOwnWorld(1)
@@ -3271,7 +3430,7 @@ def Event14500743(arg_0_3: int, arg_4_7: int):
     DisableObjectInvulnerability(arg_4_7)
 
 
-def Event14505750(arg_0_3: int, arg_4_7: int):
+def Event14505750(_, arg_0_3: int, arg_4_7: int):
     """ 14505750: Event 14505750 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1735, 1739))
@@ -3310,8 +3469,9 @@ def Event14505750(arg_0_3: int, arg_4_7: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetCharacterTalkRange(arg_0_3, distance=100.0)
     SetCharacterTalkRange(arg_4_7, distance=100.0)
     End()
@@ -3321,7 +3481,7 @@ def Event14505750(arg_0_3: int, arg_4_7: int):
     End()
 
 
-def Event14505770(arg_0_3: int):
+def Event14505770(_, arg_0_3: int):
     """ 14505770: Event 14505770 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1795, 1799))
@@ -3354,8 +3514,9 @@ def Event14505770(arg_0_3: int):
     GotoIfFlagOn(Label.L18, 1798)
     ForceAnimation(arg_0_3, 703)
     DisableHealthBar(arg_0_3)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetCharacterTalkRange(arg_0_3, distance=100.0)
     End()
 

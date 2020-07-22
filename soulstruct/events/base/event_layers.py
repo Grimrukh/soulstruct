@@ -7,6 +7,7 @@ class BaseEventLayers(BaseStruct):
     Each instruction will only run if the map's current event layer (e.g. set by a ceremony) is enabled in
     the bit field (or by default, all are enabled).
     """
+
     def __init__(self, event_layers: list):
         """The event layer is simply a 32-bit bit field (represented here as a list of enabled bit flags
         in little-endian order). The bit field is packed as a 32-bit uint surrounded by a few constants.
@@ -27,8 +28,8 @@ class BaseEventLayers(BaseStruct):
         d = cls.STRUCT.unpack(file)
         enabled_event_layers_list = []
         for i in range(32):
-            if (2 ** i) & d.event_layers:
-                enabled_event_layers_list.append(str(i))
+            if (2 ** i) & d["event_layers"]:
+                enabled_event_layers_list.append(i)  # TODO: Not sure why I was converting these to strings before.
         return cls(enabled_event_layers_list)
 
     def pack(self):

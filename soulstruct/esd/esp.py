@@ -12,18 +12,17 @@ if TYPE_CHECKING:
     from soulstruct.esd.core import BaseESD
 
 
-class ESPCompiler(object):
+class ESPCompiler:
+    """Builds a single state machine. """
 
     registers: List[Tuple]
-    _STATE_DOCSTRING_RE = re.compile(r'([0-9]+)(:\s*.*)?')
-    _COMMAND_DEFAULT_RE = re.compile(r'Command_(?:talk|chr)_(\d*)_(\d*)')
-    _TEST_DEFAULT_RE = re.compile(r'Test_(?:talk|chr)_(\d*)')
+    _STATE_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?")
+    _COMMAND_DEFAULT_RE = re.compile(r"Command_(?:talk|chr)_(\d*)_(\d*)")
+    _TEST_DEFAULT_RE = re.compile(r"Test_(?:talk|chr)_(\d*)")
 
     def __init__(self, esp_path, esd_object):
-        """ Builds a single state machine. """
-
         self.ESD = esd_object  # type: BaseESD
-        self.docstring = ''
+        self.docstring = ""
         self.state_machine_index = None
         self.state_info = {}
         self.states = {}
@@ -36,39 +35,44 @@ class ESPCompiler(object):
         self.written = {}  # maps function calls to register index 0-8
         self.current_to_write = []
 
-        with open(esp_path, encoding='utf-8') as script:
+        with open(esp_path, encoding="utf-8") as script:
             self.tree = ast.parse(script.read())
 
         self.compile_script()
 
     def compile_script(self):
-        """ Top-level node traversal. Only acceptable nodes at this top level are ImportFrom (for importing your
-        constants) and FunctionDef (for your event scripts). """
+        """Top-level node traversal.
 
+        The only acceptable nodes at this top level are ImportFrom (for importing your constants) and FunctionDef (for
+        your event scripts).
+        """
         self.docstring = ast.get_docstring(self.tree)
 
         for node in self.tree.body[1:]:
 
             if isinstance(node, ast.Import):
-                raise EsdSyntaxError(node.lineno,
-                                     "All imports should be of the form 'from your_constants import *' (other than "
-                                     "'from soulstruct.esd import *').")
+                raise EsdSyntaxError(
+                    node.lineno,
+                    "All imports should be of the form 'from your_constants import *' (other than "
+                    "'from soulstruct.esd import *').",
+                )
             elif isinstance(node, ast.ImportFrom):
                 # TODO: self.import_constants(node)
                 pass
             elif isinstance(node, ast.ClassDef):
                 self.scan_state(node)
             else:
-                raise EsdSyntaxError(node.lineno,
-                                     f"Invalid content: {node.__class__}. The only valid top-level EVS lines are "
-                                     f"from-imports and class definitions.")
+                raise EsdSyntaxError(
+                    node.lineno,
+                    f"Invalid content: {node.__class__}. The only valid top-level EVS lines are "
+                    f"from-imports and class definitions.",
+                )
 
         for state in self.state_info.values():
-            self.states[state['index']] = self.build_state(state['index'], state['nodes'])
+            self.states[state["index"]] = self.build_state(state["index"], state["nodes"])
 
     def build_state(self, index, nodes):
-        """ Nodes are the non-docstring nodes of the state class definition. """
-
+        """`nodes` is a sequence of the non-docstring nodes of the state class definition."""
         index = index
         conditions = []
         enter_commands = []
@@ -79,22 +83,22 @@ class ESPCompiler(object):
             if not isinstance(node, ast.FunctionDef):
                 raise EsdSyntaxError(node.lineno, "Non-function appeared in state class.")
 
-            if node.name == 'previous_states':
+            if node.name == "previous_states":
                 # Ignore informative method.
                 continue
-            elif node.name == 'test':
+            elif node.name == "test":
                 if conditions:
                     raise EsdSyntaxError(node.lineno, "test() method defined more than once.")
                 conditions = self.build_conditions(node.body)
-            elif node.name == 'enter':
+            elif node.name == "enter":
                 if enter_commands:
                     raise EsdSyntaxError(node.lineno, "enter() method defined more than once.")
                 enter_commands = [self.build_command(command_node) for command_node in node.body]
-            elif node.name == 'exit':
+            elif node.name == "exit":
                 if exit_commands:
                     raise EsdSyntaxError(node.lineno, "exit() method defined more than once.")
                 exit_commands = [self.build_command(command_node) for command_node in node.body]
-            elif node.name == 'ongoing':
+            elif node.name == "ongoing":
                 if ongoing_commands:
                     raise EsdSyntaxError(node.lineno, "ongoing() method defined more than once.")
                 ongoing_commands = [self.build_command(command_node) for command_node in node.body]
@@ -104,7 +108,7 @@ class ESPCompiler(object):
         return self.ESD.State(self.ESD.esd_type, index, conditions, enter_commands, exit_commands, ongoing_commands)
 
     def scan_state(self, node):
-        """ Get state name. """
+        """Get state name, description (from docstring), and node list."""
         state_name = node.name
         docstring = ast.get_docstring(node)
         if docstring is None:
@@ -114,13 +118,13 @@ class ESPCompiler(object):
         except AttributeError:
             raise EsdSyntaxError(node.lineno, f"Invalid docstring for event {state_name}.")
         self.state_info[state_name] = {
-            'index': int(state_index),
-            'description': description,
-            'nodes': node.body[1:],  # skip docstring
+            "index": int(state_index),
+            "description": description,
+            "nodes": node.body[1:],  # skip docstring
         }
 
     def build_command(self, node):
-        """ Pass in the body of a function def, or a list of nodes before 'return' in a test block. """
+        """Pass in the body of a function def, or a list of nodes before 'return' in a test block."""
         if self.is_state_machine_call(node):
             bank = 6  # TODO: True in every game/file?
             f_id = 0x80000000 - node.value.func.slice.value.n
@@ -139,7 +143,7 @@ class ESPCompiler(object):
             raise EsdSyntaxError(node.lineno, f"Expected only function calls, not node type {type(node)}.")
         # TODO: Check arg count against canonical function, once available, and order keyword args.
         args = node.value.args + [keyword.value for keyword in node.value.keywords]
-        command_args = [self.compile_ezl(arg) + b'\xa1' for arg in args]
+        command_args = [self.compile_ezl(arg) + b"\xa1" for arg in args]
         return self.ESD.Command(self.ESD.esd_type, bank, f_id, command_args)
 
     def reset_condition_registers(self):
@@ -151,7 +155,7 @@ class ESPCompiler(object):
         self.current_to_write = []
 
     def build_conditions(self, if_nodes):
-        """ Each node in the test() method should be an IF block containing:
+        """Each node in the test() method should be an IF block containing:
             - optional sequence of 'pass commands'
             - optional sequence of subcondition IF blocks
             - optional return statement specifying a state class name to change to
@@ -164,10 +168,13 @@ class ESPCompiler(object):
         """
         if len(if_nodes) == 1 and isinstance(if_nodes[0], ast.Return):
             if isinstance(if_nodes[0].value, ast.UnaryOp):
-                if (isinstance(if_nodes[0].value.op, ast.USub) and isinstance(if_nodes[0].value.operand, ast.Num)
-                        and if_nodes[0].value.operand.n == 1):
+                if (
+                    isinstance(if_nodes[0].value.op, ast.USub)
+                    and isinstance(if_nodes[0].value.operand, ast.Num)
+                    and if_nodes[0].value.operand.n == 1
+                ):
                     # Last state of callable state machine.
-                    return [self.ESD.Condition(self.ESD.esd_type, -1, b'\x41\xa1', [], [])]
+                    return [self.ESD.Condition(self.ESD.esd_type, -1, b"\x41\xa1", [], [])]
                 print(if_nodes[0].value.op, if_nodes[0].value.operand)
                 raise EsdSyntaxError(if_nodes[0].lineno, f"Next state must be a valid State class or -1.")
             if not isinstance(if_nodes[0].value, ast.Name):
@@ -175,8 +182,8 @@ class ESPCompiler(object):
                 raise EsdSyntaxError(if_nodes[0].lineno, "Condition IF block should return a state class name.")
             if if_nodes[0].value.id not in self.state_info:
                 raise EsdError(if_nodes[0].lineno, f"Could not find a state class named '{if_nodes[0].value.id}'.")
-            next_state_index = self.state_info[if_nodes[0].value.id]['index']
-            return [self.ESD.Condition(self.ESD.esd_type, next_state_index, b'\x41\xa1', [], [])]
+            next_state_index = self.state_info[if_nodes[0].value.id]["index"]
+            return [self.ESD.Condition(self.ESD.esd_type, next_state_index, b"\x41\xa1", [], [])]
 
         for i, node in enumerate(if_nodes):
             if not isinstance(node, ast.If):
@@ -192,7 +199,7 @@ class ESPCompiler(object):
         for if_node in if_nodes:
 
             self.current_to_write = self.to_write.get()  # type: list
-            test_ezl = self.compile_ezl(if_node.test) + b'\xa1'
+            test_ezl = self.compile_ezl(if_node.test) + b"\xa1"
 
             pass_commands = []
             subcondition_nodes = []
@@ -222,18 +229,19 @@ class ESPCompiler(object):
                             raise EsdSyntaxError(node.lineno, "Condition IF block should return a state class name.")
                         if node.value.id not in self.state_info:
                             raise EsdError(node.lineno, f"Could not find a state class named '{node.value.id}'.")
-                        next_state_index = self.state_info[node.value.id]['index']
+                        next_state_index = self.state_info[node.value.id]["index"]
 
             # Condition registers are *not* reset when scanning and building subconditions.
             subconditions = self.build_conditions(subcondition_nodes) if subcondition_nodes else ()
 
-            conditions.append(self.ESD.Condition(self.ESD.esd_type, next_state_index, test_ezl,
-                                                 pass_commands, subconditions))
+            conditions.append(
+                self.ESD.Condition(self.ESD.esd_type, next_state_index, test_ezl, pass_commands, subconditions)
+            )
 
         return conditions
 
     def plan_condition_registers(self, if_node_list):
-        """ Recursively scans conditions and any subconditions, determines the first eight repeated function calls that
+        """Recursively scans conditions and any subconditions, determines the first eight repeated function calls that
         will be saved in/loaded from registers during build, and records their conditions in a queue.
 
         I have no idea how the original ESD compiler determines which functions to store in registers, given their
@@ -290,7 +298,7 @@ class ESPCompiler(object):
             if not self.registers[i]:
                 self.registers[i] = call
                 self.current_to_write.remove(call)
-                return struct.pack('B', i + 167)
+                return struct.pack("B", i + 167)
 
     def compile_test_function(self, call_node: ast.Call, equals=None):
         if call_node.keywords:
@@ -307,18 +315,18 @@ class ESPCompiler(object):
 
         if call in self.registers:
             # Load from register.
-            return struct.pack('B', self.registers.index(call) + 175)
+            return struct.pack("B", self.registers.index(call) + 175)
 
-        compiled = self.compile_number(f_id) + b''.join(self.compile_ezl(arg) for arg in args)
+        compiled = self.compile_number(f_id) + b"".join(self.compile_ezl(arg) for arg in args)
         compiled += FUNCTION_ARG_BYTES_BY_COUNT[len(args)]
         if call in self.current_to_write:
             compiled += self.save_into_next_available_register(call)
             self.current_to_write.remove(call)
         if equals is not None:
             if equals == 0:
-                compiled += b'\x40\x95'
+                compiled += b"\x40\x95"
             elif equals == 1:
-                compiled += b'\x41\x95'
+                compiled += b"\x41\x95"
             else:
                 raise ValueError("Internal error: 'equals' arg should only be 0 or 1 (or None).")
         return compiled
@@ -348,20 +356,20 @@ class ESPCompiler(object):
                 raise EsdSyntaxError(node.lineno, "'not' keyword can only be applied to function calls.")
 
         if isinstance(node, ast.BoolOp):
-            compiled = b''
+            compiled = b""
             is_and = True if isinstance(node.op, ast.And) else False  # must be Or if false
             for i, value in enumerate(node.values):
                 compiled += self.compile_ezl(value)
                 if is_and and not self.current_to_write:
                     # There are no register writes remaining in this test, and no need to continue evaluation either.
                     # Append 'terminate if false' symbol for efficiency.
-                    compiled += b'\xb7'
+                    compiled += b"\xb7"
                 else:
                     # Append 'continue if false' symbol for some reason. TODO: Is this necessary? When?
-                    compiled += b'\xa6'
+                    compiled += b"\xa6"
                 if i > 0:
                     # Operator is added *per value*, as the chained comparison in Python is represented by one node.
-                    compiled += b'\x98' if is_and else b'\x99'
+                    compiled += b"\x98" if is_and else b"\x99"
             return compiled
 
         if isinstance(node, ast.BinOp):
@@ -375,52 +383,58 @@ class ESPCompiler(object):
                 raise EsdSyntaxError(node.lineno, "Comparison should compare exactly two values.")
             if type(node.ops[0]) not in OPERATORS_BY_NODE:
                 raise EsdSyntaxError(node.lineno, f"Invalid comparison operator: {type(node.ops[0])}")
-            return (self.compile_ezl(node.left) + self.compile_ezl(node.comparators[0])
-                    + OPERATORS_BY_NODE[type(node.ops[0])])
+            return (
+                self.compile_ezl(node.left)
+                + self.compile_ezl(node.comparators[0])
+                + OPERATORS_BY_NODE[type(node.ops[0])]
+            )
 
         if isinstance(node, ast.Call):
             return self.compile_test_function(node)
 
         if isinstance(node, ast.Name):
-            if node.id == 'MACHINE_CALL_STATUS':
-                return b'\xb9'
-            elif node.id == 'ONGOING':
-                return b'\xba'
+            if node.id == "MACHINE_CALL_STATUS":
+                return b"\xb9"
+            elif node.id == "ONGOING":
+                return b"\xba"
             raise EsdSyntaxError(node.lineno, "Only valid name symbols are MACHINE_CALL_STATUS and ONGOING.")
 
         if isinstance(node, ast.Subscript):
-            if (isinstance(node.value, ast.Name) and node.value.id == 'MACHINE_ARGS'
-                    and isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num)):
-                return self.compile_number(node.slice.value.n) + b'\xb8'
+            if (
+                isinstance(node.value, ast.Name)
+                and node.value.id == "MACHINE_ARGS"
+                and isinstance(node.slice, ast.Index)
+                and isinstance(node.slice.value, ast.Num)
+            ):
+                return self.compile_number(node.slice.value.n) + b"\xb8"
             raise EsdSyntaxError(node.lineno, "Only valid subscripted symbol is MACHINE_ARGS[i].")
 
-        raise TypeError(f"Invalid node type appeared in condition test: {type(node)}.\n"
-                        f"Conditions must be bools, boolean ops, comparisons, function calls, or a permitted name.")
+        raise TypeError(
+            f"Invalid node type appeared in condition test: {type(node)}.\n"
+            f"Conditions must be bools, boolean ops, comparisons, function calls, or a permitted name."
+        )
 
     @staticmethod
     def compile_number(n):
         if isinstance(n, int):
             if -64 <= n < 63:
-                return struct.pack('B', n + 64)
-            return b'\x82' + struct.pack('<i', n)
+                return struct.pack("B", n + 64)
+            return b"\x82" + struct.pack("<i", n)
         elif isinstance(n, float):
             # TODO: How can I determine if I should write a single or double?
-            #  I guess I could just always write a double.
-            #  Or, maybe certain resources only use singles OR doubles.
+            #  Maybe certain resources only use singles OR doubles.
+            #  For now, I'm just always writing a double.
             # return b'\x80' + struct.pack('<f', n)
-            return b'\x81' + struct.pack('<d', n)  # Always double for now.
+            return b"\x81" + struct.pack("<d", n)  # Always double for now.
         else:
             raise ValueError(f"Cannot compile number {n} of type {type(n)}.")
 
     @staticmethod
     def compile_string(s):
-        return b'\xa5' + s.encode('utf-16le') + b'\0\0'
+        return b"\xa5" + s.encode("utf-16le") + b"\0\0"
 
     def get_calls(self, node):
-        """ Returns a list of calls contained inside the given test node.
-
-        Returns a list of call tuples (f_id, arg1, arg2, ...).
-        """
+        """Returns a list of call tuples (f_id, arg1, arg2, ...) contained inside the given test node."""
         if self.is_bool(node) or isinstance(node, (ast.Name, ast.Num)):
             return []
 
@@ -449,8 +463,11 @@ class ESPCompiler(object):
             function_name = node.func.id
             return [(function_name, *self.parse_args(node.args))]
 
-        raise EsdSyntaxError(node.lineno, f"Invalid node type appeared in condition: {type(node)}\n"
-                                          f"Conditions must be bools, boolean ops, comparisons, or function calls.")
+        raise EsdSyntaxError(
+            node.lineno,
+            f"Invalid node type appeared in condition: {type(node)}\n"
+            f"Conditions must be bools, boolean ops, comparisons, or function calls.",
+        )
 
     @staticmethod
     def is_bool(node):
@@ -462,14 +479,19 @@ class ESPCompiler(object):
 
     @staticmethod
     def is_state_machine_call(node):
-        return (isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
-                and isinstance(node.value.func, ast.Subscript)
-                and isinstance(node.value.func.value, ast.Name) and node.value.func.value.id == 'CALL_STATE_MACHINE'
-                and isinstance(node.value.func.slice, ast.Index) and isinstance(node.value.func.slice.value, ast.Num))
+        return (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Subscript)
+            and isinstance(node.value.func.value, ast.Name)
+            and node.value.func.value.id == "CALL_STATE_MACHINE"
+            and isinstance(node.value.func.slice, ast.Index)
+            and isinstance(node.value.func.slice.value, ast.Num)
+        )
 
     @staticmethod
     def get_ast_sequence(node):
-        """ List/tuple can only contain literals. """
+        """List/tuple can only contain literals."""
         if isinstance(node, (ast.Tuple, ast.List)):
             t = []
             for e in node.elts:

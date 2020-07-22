@@ -35,7 +35,7 @@ try:
 except ImportError:
     psutil = None
 
-__all__ = ['SoulstructProject']
+__all__ = ["SoulstructProject"]
 _LOGGER = logging.getLogger(__name__)
 
 STEAM_APPIDS = {
@@ -53,7 +53,7 @@ def _with_config_write(func):
     return project_method
 
 
-class SoulstructProject(object):
+class SoulstructProject:
     """Manages a directory of easily-modded Soulstruct files that can imported and exported.
 
     It is recommended that you create one of these projects for each Soulstruct-based mod.
@@ -63,6 +63,7 @@ class SoulstructProject(object):
     TODO:
         - Eventually have subclasses for different games, with shared methods here.
     """
+
     # Default project root (for relative project paths) is in the current working directory for standard Python use
     # or next to the frozen PyInstaller executable, if applicable.
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -72,12 +73,12 @@ class SoulstructProject(object):
 
     def __init__(self, project_path="", with_window: SoulstructProjectWindow = None):
 
-        self.game_name = ''
+        self.game_name = ""
         self.game_root = Path()
         self.game_exe_path = Path()
         self.game_save_root = Path()
-        self.last_import_time = ''
-        self.last_export_time = ''
+        self.last_import_time = ""
+        self.last_export_time = ""
         self.text_font_size = 10
         # TODO: Record last edit time for each file/structure.
 
@@ -115,15 +116,22 @@ class SoulstructProject(object):
                         result = with_window.CustomDialog(
                             title="Project Error",
                             message=f"Could not find saved {data_type_caps(data_type)} data in project.\n"
-                                    f"Would you like to import it from the game directory now?",
+                            f"Would you like to import it from the game directory now?",
                             button_names=("Yes", "Yes to All", "No, quit now"),
-                            button_kwargs=('YES', 'YES', 'NO'),
-                            cancel_output=2, default_output=2,
+                            button_kwargs=("YES", "YES", "NO"),
+                            cancel_output=2,
+                            default_output=2,
                         )
                     else:
-                        result = 2 if input(
-                            f"Could not find saved {data_type_caps(data_type)} data in project.\n"
-                            f"Would you like to import it from the game directory now? [y]/n").lower() == 'n' else 0
+                        result = (
+                            2
+                            if input(
+                                f"Could not find saved {data_type_caps(data_type)} data in project.\n"
+                                f"Would you like to import it from the game directory now? [y]/n"
+                            ).lower()
+                            == "n"
+                            else 0
+                        )
                     if result in {0, 1}:
                         self.import_data_from_game(data_type)
                         self.save(data_type)
@@ -140,14 +148,22 @@ class SoulstructProject(object):
                     result = with_window.CustomDialog(
                         title="Project Error",
                         message=f"Could not find any event scripts in project.\n"
-                                f"Would you like to decompile and import them from the game directory now?",
+                        f"Would you like to decompile and import them from the game directory now?",
                         button_names=("Yes", "No, I'll handle events"),
-                        button_kwargs=('YES', 'NO'),
-                        cancel_output=1, default_output=1)
+                        button_kwargs=("YES", "NO"),
+                        cancel_output=1,
+                        default_output=1,
+                    )
                 else:
-                    result = 1 if input(
-                        f"Could not find any event scripts in project.\n"
-                        f"Would you like to import them from the game directory now? [y]/n").lower() == 'n' else 0
+                    result = (
+                        1
+                        if input(
+                            f"Could not find any event scripts in project.\n"
+                            f"Would you like to import them from the game directory now? [y]/n"
+                        ).lower()
+                        == "n"
+                        else 0
+                    )
                 if result == 0:
                     self.import_data_from_game("events")
 
@@ -159,14 +175,22 @@ class SoulstructProject(object):
                     result = with_window.CustomDialog(
                         title="Project Error",
                         message=f"Could not find any talk scripts in project.\n"
-                                f"Would you like to decompile and import them from the game directory now?",
+                        f"Would you like to decompile and import them from the game directory now?",
                         button_names=("Yes", "No, I'll handle talk"),
-                        button_kwargs=('YES', 'NO'),
-                        cancel_output=1, default_output=1)
+                        button_kwargs=("YES", "NO"),
+                        cancel_output=1,
+                        default_output=1,
+                    )
                 else:
-                    result = 1 if input(
-                        f"Could not find any talk scripts in project.\n"
-                        f"Would you like to import them from the game directory now? [y]/n").lower() == 'n' else 0
+                    result = (
+                        1
+                        if input(
+                            f"Could not find any talk scripts in project.\n"
+                            f"Would you like to import them from the game directory now? [y]/n"
+                        ).lower()
+                        == "n"
+                        else 0
+                    )
                 if result == 0:
                     self.import_data_from_game("talk")
 
@@ -195,11 +219,11 @@ class SoulstructProject(object):
         setattr(self, data_type_caps(data_type), self._load_project_data(data_type + ".d1s"))
 
     def _save_project_data(self, obj, pickled_path):
-        with (self.project_root / pickled_path).open('wb') as f:
+        with (self.project_root / pickled_path).open("wb") as f:
             pickle.dump(obj, f)
 
     def _load_project_data(self, pickled_path):
-        with (self.project_root / pickled_path).open('rb') as f:
+        with (self.project_root / pickled_path).open("rb") as f:
             return pickle.load(f)
 
     def import_data(self, data_type=None, import_directory=None):
@@ -229,9 +253,12 @@ class SoulstructProject(object):
 
     def _import_events(self, import_directory):
         """Converts binary EMEVD to EVS.PY in '[project]/events'."""
-        convert_events(output_type="evs.py", output_directory=self.project_root / 'events',
-                       input_type="emevd.dcx" if self.game_name == "Dark Souls Remastered" else "emevd",
-                       input_directory=import_directory)
+        convert_events(
+            output_type="evs.py",
+            output_directory=self.project_root / "events",
+            input_type="emevd.dcx" if self.game_name == "Dark Souls Remastered" else "emevd",
+            input_directory=import_directory,
+        )
 
     def _import_talk(self, import_directory):
         if self.game_name == "Dark Souls Prepare to Die Edition":
@@ -244,16 +271,13 @@ class SoulstructProject(object):
             map_id = talkesdbnd.name.split(".talkesdbnd")[0]
             if map_id in ("m12_00_00_01", "m14_02_00_00"):
                 continue  # skipped
+            print("# Talk map:", map_id)
             TalkESDBND(talkesdbnd, game_version=game_version).write_all_esp(self.project_root / f"talk/{map_id}")
 
     def export_data(self, data_type=None, export_directory=None):
         if data_type is None:
             for data_type in DATA_TYPES:
                 self.export_data(data_type, export_directory)
-            return
-        if data_type == "ai" and export_directory == self.game_root:
-            # TODO: Fix AI export and remove.
-            _LOGGER.error("AI export (to game) is glitched, and currently disabled until fixed.")
             return
         data_type = data_type.lower()
         if data_type not in DATA_TYPES:
@@ -275,15 +299,17 @@ class SoulstructProject(object):
         self.export_data(data_type=data_type, export_directory=self.game_root)
 
     def export_timestamped_backup(self, data_type=None):
-        timestamped = self.project_root / 'export' / self._get_timestamp(for_path=True)
+        timestamped = self.project_root / "export" / self._get_timestamp(for_path=True)
         self.export_data(data_type=data_type, export_directory=timestamped)
 
     def _export_events(self, export_directory):
         """Converts EVS.PY in '[project]/events' to binary EMEVD."""
-        convert_events(output_type="emevd.dcx" if self.game_name == "Dark Souls Remastered" else "emevd",
-                       output_directory=export_directory,
-                       input_type="evs.py",
-                       input_directory=self.project_root / "events")
+        convert_events(
+            output_type="emevd.dcx" if self.game_name == "Dark Souls Remastered" else "emevd",
+            output_directory=export_directory,
+            input_type="evs.py",
+            input_directory=self.project_root / "events",
+        )
         _LOGGER.info("Dark Souls event files (EMEVD) written successfully.")
 
     def _export_talk(self, export_directory):
@@ -313,8 +339,9 @@ class SoulstructProject(object):
                 else:
                     shutil.copy2(str(target), str(target.with_suffix("")))
             elif not (target.with_suffix(".bak")).is_file():
-                raise RestoreBackupError(f"Could not find a file '{str(target.with_suffix('.bak'))} "
-                                         f"to restore. No action taken.")
+                raise RestoreBackupError(
+                    f"Could not find a file '{str(target.with_suffix('.bak'))} " f"to restore. No action taken."
+                )
             else:
                 os.remove(str(target))
                 if delete_baks:
@@ -327,15 +354,17 @@ class SoulstructProject(object):
                 self.restore_backup(bak_file)
                 count += 1
             if count == 0:
-                raise RestoreBackupError(f"Could not find any '.bak' files to restore in directory '{str(target)}'. "
-                                         f"No action taken.")
+                raise RestoreBackupError(
+                    f"Could not find any '.bak' files to restore in directory '{str(target)}'. " f"No action taken."
+                )
             else:
                 return count
 
     def launch_game(self, try_force_quit_first=False, threaded=True, debug=False):
         if not psutil:
             raise ModuleNotFoundError(
-                "Python package `psutil` required for this method. Install it with `python -m pip install psutil`.")
+                "Python package `psutil` required for this method. Install it with `python -m pip install psutil`."
+            )
 
         if debug and not self.game_name == "Dark Souls Prepare to Die Edition":
             raise SoulstructProjectError(f"Can only launch debug version of Dark Souls PTDE, not {self.game_name}.")
@@ -401,10 +430,12 @@ class SoulstructProject(object):
             if len(steam_id_folders) > 1:
                 raise SoulstructProjectError(
                     f"Multiple Dark Souls Remastered save folders found in {str(self.game_save_root)}. Please move all "
-                    f"of them except your real one.")
+                    f"of them except your real one."
+                )
             elif not steam_id_folders:
                 raise SoulstructProjectError(
-                    f"No Dark Souls Remastered save folders found in {str(self.game_save_root)}.")
+                    f"No Dark Souls Remastered save folders found in {str(self.game_save_root)}."
+                )
             return steam_id_folders[0]
         elif self.game_name == "Dark Souls Prepare to Die Edition":
             return self.game_save_root
@@ -458,8 +489,7 @@ class SoulstructProject(object):
         for file_path_parts in traverse_path_tree(game_files):
             game_file_path = self.game_root / Path(*file_path_parts)
             if not game_file_path.is_file():
-                raise FileNotFoundError(f"Could not find file in game directory to back up: "
-                                        f"{str(game_file_path)}")
+                raise FileNotFoundError(f"Could not find file in game directory to back up: " f"{str(game_file_path)}")
             backup_file_path = Path(backup_path, *file_path_parts)
             backup_file_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(game_file_path), str(backup_file_path))
@@ -474,15 +504,14 @@ class SoulstructProject(object):
         for file_path_parts in traverse_path_tree(game_files):
             backup_file_path = backup_path / Path(*file_path_parts)
             if not backup_file_path.is_file():
-                raise FileNotFoundError(f"Could not find backup file to restore: "
-                                        f"{str(backup_file_path)}")
+                raise FileNotFoundError(f"Could not find backup file to restore: " f"{str(backup_file_path)}")
             game_file_path = Path(self.game_root, *file_path_parts)
             game_file_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(backup_file_path), str(game_file_path))
 
     def load_config(self, with_window: SoulstructProjectWindow = None):
         try:
-            with (self.project_root / 'config.json').open('r') as f:
+            with (self.project_root / "config.json").open("r") as f:
                 try:
                     config = json.load(f)
                 except json.JSONDecodeError:
@@ -492,13 +521,13 @@ class SoulstructProject(object):
                     )
                 else:
                     try:
-                        self.game_name = config['GameName']
-                        self.game_exe_path = Path(config['GameExecutable'])
-                        self.game_root = Path(config['GameDirectory'])
-                        self.game_save_root = Path(config['SaveDirectory'])
-                        self.last_import_time = config.get('LastImportTime', None)
-                        self.last_export_time = config['LastExportTime']
-                        self.text_font_size = config.get('TextFontSize', 10)
+                        self.game_name = config["GameName"]
+                        self.game_exe_path = Path(config["GameExecutable"])
+                        self.game_root = Path(config["GameDirectory"])
+                        self.game_save_root = Path(config["SaveDirectory"])
+                        self.last_import_time = config.get("LastImportTime", None)
+                        self.last_export_time = config["LastExportTime"]
+                        self.text_font_size = config.get("TextFontSize", 10)
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
@@ -520,13 +549,17 @@ class SoulstructProject(object):
                 result = with_window.CustomDialog(
                     title="Import Project Files",
                     message="Import game files now? This will override any project\n"
-                            "files that are already in this folder.",
+                    "files that are already in this folder.",
                     button_names=("Yes, import the files", "No, I'll do it later"),
-                    button_kwargs=('YES', 'NO'),
-                    cancel_output=None, default_output=0)
+                    button_kwargs=("YES", "NO"),
+                    cancel_output=None,
+                    default_output=0,
+                )
             else:
-                result = input("Import game files now? This will override any project files\n"
-                               "that are already in this folder. [y]/n")
+                result = input(
+                    "Import game files now? This will override any project files\n"
+                    "that are already in this folder. [y]/n"
+                )
                 if result.lower == "n":
                     result = 1
                 else:
@@ -535,50 +568,51 @@ class SoulstructProject(object):
                 self.initialize_project(force_import_from_game=True)
 
     def _check_ptde_unpacked(self):
-        if not (self.game_root / 'map').is_dir():
+        if not (self.game_root / "map").is_dir():
             raise SoulstructProjectError(
                 "Your Dark Souls: Prepare to Die Edition does not appear to be unpacked.\n"
                 "Please download and run 'UnpackDarkSoulsForModding' (UDSFM) from Nexus:\n"
-                "https://www.nexusmods.com/darksouls/mods/1304")
+                "https://www.nexusmods.com/darksouls/mods/1304"
+            )
 
     def _game_path(self, data_type, root=None):
         root = self.game_root if root is None else Path(root)
         data_type = data_type.lower()
-        if data_type == 'maps':
-            return root / 'map/MapStudio'
-        elif data_type == 'params':
-            return root / 'param/GameParam'
-        elif data_type == 'text':
-            return root / 'msg/ENGLISH'
-        elif data_type == 'lighting':
-            return root / 'param/DrawParam'
-        elif data_type == 'events':
-            return root / 'event'
-        elif data_type == 'ai':
-            return root / 'script'
+        if data_type == "maps":
+            return root / "map/MapStudio"
+        elif data_type == "params":
+            return root / "param/GameParam"
+        elif data_type == "text":
+            return root / "msg/ENGLISH"
+        elif data_type == "lighting":
+            return root / "param/DrawParam"
+        elif data_type == "events":
+            return root / "event"
+        elif data_type == "ai":
+            return root / "script"
         elif data_type == "talk":
-            return root / 'script/talk'
+            return root / "script/talk"
         else:
             raise ValueError(f"Invalid game data type: {data_type}")
 
     @staticmethod
     def _get_timestamp(for_path=False):
-        return datetime.datetime.now().strftime('%Y-%m-%d %H%M%S' if for_path else '%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.now().strftime("%Y-%m-%d %H%M%S" if for_path else "%Y-%m-%d %H:%M:%S")
 
     def _build_config_dict(self):
         return {
-            'GameName': self.game_name,
-            'GameExecutable': str(self.game_exe_path),
-            'GameDirectory': str(self.game_root),
-            'SaveDirectory': str(self.game_save_root),
-            'LastImportTime': self.last_import_time,
-            'LastExportTime': self.last_export_time,
-            'TextFontSize': self.text_font_size,
+            "GameName": self.game_name,
+            "GameExecutable": str(self.game_exe_path),
+            "GameDirectory": str(self.game_root),
+            "SaveDirectory": str(self.game_save_root),
+            "LastImportTime": self.last_import_time,
+            "LastExportTime": self.last_export_time,
+            "TextFontSize": self.text_font_size,
         }
 
     def _write_config(self):
         try:
-            with (self.project_root / 'config.json').open('w') as f:
+            with (self.project_root / "config.json").open("w") as f:
                 json.dump(self._build_config_dict(), f, indent=4)
         except PermissionError:
             raise SoulstructProjectError("No write access to 'config.json' in project directory.")
@@ -610,10 +644,12 @@ class SoulstructProject(object):
             initial_dir = None
 
         if with_window:
-            with_window.CustomDialog(title="Select game for project", message=None, font_size=10,
-                                     custom_dialog_subclass=GameRootDialog)
+            with_window.CustomDialog(
+                title="Select game for project", message=None, font_size=10, custom_dialog_subclass=GameRootDialog
+            )
             game_exe = with_window.FileDialog.askopenfilename(
-                title="Choose your game executable", initialdir=initial_dir, filetypes=[('Game executable', '.exe')])
+                title="Choose your game executable", initialdir=initial_dir, filetypes=[("Game executable", ".exe")]
+            )
             if not game_exe:
                 raise SoulstructProjectError("No game executable selected.")
             game_exe = Path(game_exe)
@@ -638,13 +674,15 @@ class SoulstructProject(object):
                 raise SoulstructProjectError(f"Invalid executable file path: {str(game_exe)}.")
 
         game_root = game_exe.parent
-        if (game_root / 'DarkSoulsRemastered.exe').is_file():
-            return game_root, game_exe, 'Dark Souls Remastered'
-        elif (game_root / 'DARKSOULS.exe').is_file():
-            return game_root, game_exe, 'Dark Souls Prepare to Die Edition'
+        if (game_root / "DarkSoulsRemastered.exe").is_file():
+            return game_root, game_exe, "Dark Souls Remastered"
+        elif (game_root / "DARKSOULS.exe").is_file():
+            return game_root, game_exe, "Dark Souls Prepare to Die Edition"
         else:
-            raise SoulstructProjectError("Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
-                                         "but your selected executable was not a version of Dark Souls.")
+            raise SoulstructProjectError(
+                "Soulstruct projects are only supported for Dark Souls 1 (either version),\n"
+                "but your selected executable was not a version of Dark Souls."
+            )
 
     @staticmethod
     def _check_steam_appid_file(game_root, game_name):
@@ -660,16 +698,27 @@ class SoulstructProject(object):
 
 
 class GameRootDialog(CustomDialog):
-
     def build(self, message, font_size, font_type, button_names, button_kwargs):
         with self.set_master(auto_rows=0, padx=20, pady=20):
-            self.Label(text="Navigate to the game executable for this project.\n"
-                            "In a standard Steam installation, this will be:", pady=10)
+            self.Label(
+                text="Navigate to the game executable for this project.\n"
+                "In a standard Steam installation, this will be:",
+                pady=10,
+            )
             self.Label(text="Dark Souls: Prepare to Die Edition", font_type="Consolas")
-            self.Label(text="C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/"
-                            "DATA/DARKSOULS.exe", font_size=8, font_type="Consolas", bg='#000')
+            self.Label(
+                text="C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/"
+                "DATA/DARKSOULS.exe",
+                font_size=8,
+                font_type="Consolas",
+                bg="#000",
+            )
             self.Label(text="Dark Souls Remastered", font_type="Consolas")
-            self.Label(text="C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/"
-                            "DarkSoulsRemastered.exe", font_size=8, font_type="Consolas", bg='#000')
+            self.Label(
+                text="C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/" "DarkSoulsRemastered.exe",
+                font_size=8,
+                font_type="Consolas",
+                bg="#000",
+            )
             self.Label(text="Steam can help you find your Steam installation.", pady=10)
             self.build_buttons(button_names, button_kwargs)

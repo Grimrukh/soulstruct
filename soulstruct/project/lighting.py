@@ -4,6 +4,7 @@ from typing import Union, TYPE_CHECKING
 
 from soulstruct.params.dark_souls_params import DRAW_PARAM_MAPS
 from soulstruct.project.editor import SoulstructBaseFieldEditor
+
 if TYPE_CHECKING:
     from soulstruct.params import DarkSoulsLightingParameters, ParamEntry, DrawParamTable
 
@@ -23,13 +24,13 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
 
         def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
             super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
-            self.linked_text = ''
+            self.linked_text = ""
 
         def update_entry(self, entry_id: int, entry_text: str):
             """If 'linked_text' is an empty string, then text was expected, but not found (entry highlighted)."""
             self.entry_id = entry_id
             text_links = self.master.linker.param_entry_text_link(self.entry_id)
-            self.linked_text = (f'    {{{text_links[0].name}}}' if text_links[0].name else '') if text_links else None
+            self.linked_text = (f"    {{{text_links[0].name}}}" if text_links[0].name else "") if text_links else None
             self.entry_text = entry_text
             self._update_colors()
             self.build_entry_context_menu(text_links)
@@ -42,7 +43,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         @entry_text.setter
         def entry_text(self, value):
             self._entry_text = value
-            self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ''))
+            self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ""))
 
         def build_entry_context_menu(self, text_links=()):
             super().build_entry_context_menu()
@@ -50,7 +51,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             if text_links:
                 self.context_menu.add_separator()
                 for text_link in text_links:
-                    text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
+                    text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
 
     def __init__(self, lighting: DarkSoulsLightingParameters, linker, master=None, toplevel=False):
         self.Lighting = lighting
@@ -61,30 +62,44 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         self._on_map_area_choice()  # Sets slot option correctly.
 
     def build(self):
-        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
+        with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):
-                map_display_names = [f'{k} [{v}]' for k, v in DRAW_PARAM_MAPS.items()]
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):
+                map_display_names = [f"{k} [{v}]" for k, v in DRAW_PARAM_MAPS.items()]
                 self.map_area_choice = self.Combobox(
-                    values=map_display_names, on_select_function=self._on_map_area_choice, width=40, padx=10,
-                    label='Map Area:', label_font_size=12, label_position='left', font=('Segoe UI', 12)).var
-                self.slot_choice_label = self.Label(text='Slot:', font_size=10, padx=(30, 0))
+                    values=map_display_names,
+                    on_select_function=self._on_map_area_choice,
+                    width=40,
+                    padx=10,
+                    label="Map Area:",
+                    label_font_size=12,
+                    label_position="left",
+                    font=("Segoe UI", 12),
+                ).var
+                self.slot_choice_label = self.Label(text="Slot:", font_size=10, padx=(30, 0))
                 self.slot_choice = self.Combobox(
-                    values=('0', '1'), font=('Segoe UI', 10), on_select_function=self._on_slot_choice, width=2, padx=10)
-                self.Button(text="Copy Slot 0 to Slot 1", bg="#622", width=20, font_size=10, padx=5,
-                            command=self.regenerate_slot_1)
+                    values=("0", "1"), font=("Segoe UI", 10), on_select_function=self._on_slot_choice, width=2, padx=10
+                )
+                self.Button(
+                    text="Copy Slot 0 to Slot 1",
+                    bg="#622",
+                    width=20,
+                    font_size=10,
+                    padx=5,
+                    command=self.regenerate_slot_1,
+                )
 
             super().build()
 
     def _on_map_area_choice(self, _=None):
         new_map_area = self._get_map_area_name()
-        if getattr(self.Lighting, new_map_area)['AmbientLight'][1] is None:  # random table to check slots
-            self.slot_choice.config(values=['0'])
-            if self.slot_choice.var.get() == '1':
+        if getattr(self.Lighting, new_map_area)["AmbientLight"][1] is None:  # random table to check slots
+            self.slot_choice.config(values=["0"])
+            if self.slot_choice.var.get() == "1":
                 self.flash_bg(self.slot_choice_label)
-            self.slot_choice.var.set('0')
+            self.slot_choice.var.set("0")
         else:
-            self.slot_choice.config(values=['0', '1'])
+            self.slot_choice.config(values=["0", "1"])
         self.select_entry_row_index(None)
         self.refresh_entries(reset_field_display=True)
 
@@ -95,20 +110,25 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     def regenerate_slot_1(self):
         map_area = self._get_map_area_name()
         map_draw_param = getattr(self.Lighting, map_area)
-        if map_draw_param['AmbientLight'][1] is not None:  # picking a random category to check slots
-            if self.CustomDialog(
+        if map_draw_param["AmbientLight"][1] is not None:  # picking a random category to check slots
+            if (
+                self.CustomDialog(
                     title="Overwrite Slot 1?",
                     message="Current map area already has data in slot 1. Overwrite it from slot 0?",
                     button_names=("Yes, overwrite it", "No, do nothing"),
-                    button_kwargs=('YES', 'NO'),
-                    cancel_output=1, default_output=1) == 1:
+                    button_kwargs=("YES", "NO"),
+                    cancel_output=1,
+                    default_output=1,
+                )
+                == 1
+            ):
                 return
         map_draw_param.copy_slot_0_to_slot_1()
-        self.slot_choice.config(values=['0', '1'])
+        self.slot_choice.config(values=["0", "1"])
         self.refresh_entries(reset_field_display=True)
 
     def _get_map_area_name(self):
-        return self.map_area_choice.get().split(' [')[0]
+        return self.map_area_choice.get().split(" [")[0]
 
     def _get_display_categories(self):
         return self.Lighting.param_names
@@ -127,8 +147,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 return []
-        return self.get_category_data(category).get_range(
-            start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
+        return self.get_category_data(category).get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Get index of entry in category. Ignores current display range."""
@@ -183,5 +202,5 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
 
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:
-            valid_null_values = {0: 'Default/None', -1: 'Default/None'}
+            valid_null_values = {0: "Default/None", -1: "Default/None"}
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)

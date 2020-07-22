@@ -169,8 +169,8 @@ def PullOutMeltedIronKey():
         # You can pass in positional arguments and/or keyword arguments to any instruction or test. I've used a mixture
         # of both here, and intentionally put the keywords out of order, so you can see that it works. This particular
         # test has a lot of optional arguments. You can see their default values in `tests.pyi`.
-        DialogPromptActivated(TEXT.Open, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
-                              model_point=100, max_distance=1.5)
+        ActionButton(TEXT.Open, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+                     model_point=100, max_distance=1.5)
     )
 
     # I've made the button-controlling arguments optional here, as I usually display dialogs with no buttons (they
@@ -182,8 +182,8 @@ def PullOutMeltedIronKey():
 
     # We can also equivalently use the built-in 'await' keyword, which I find helps these critical instruction stand out
     # from the rest. Again, note that the prompt won't appear until the previous conditions are true.
-    await DialogPromptActivated(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
-                                model_point=100, max_distance=1.5)
+    await ActionButton(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+                       model_point=100, max_distance=1.5)
 
     # This instruction defaults to 'host_only', which you can set to False to share the love with your summons.
     AwardItemLot(ITEMLOT.InDepthsDoor)

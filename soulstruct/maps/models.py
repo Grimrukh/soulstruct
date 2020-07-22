@@ -11,18 +11,21 @@ from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 class MSBModel(MSBEntry):
 
     MODEL_STRUCT = BinaryStruct(
-        ('__name_offset', 'i'),
-        ('__model_type', 'i'),
-        ('_model_type_index', 'i'),
-        ('__sib_path_offset', 'i'),
-        ('_instance_count', 'i'),
-        '12x',
+        ("__name_offset", "i"),
+        ("__model_type", "i"),
+        ("_model_type_index", "i"),
+        ("__sib_path_offset", "i"),
+        ("_instance_count", "i"),
+        "12x",
     )
 
     FIELD_INFO = {
-        'sib_path': (
-            'Placeholder Path', True, str,
-            "Internal path to model placeholder SIB file. The path's base name should match the model name."),
+        "sib_path": (
+            "Placeholder Path",
+            True,
+            str,
+            "Internal path to model placeholder SIB file. The path's base name should match the model name.",
+        ),
     }
 
     def __init__(self, msb_model_source=None, name=None, description=None, model_type=None, sib_path=None):
@@ -57,26 +60,30 @@ class MSBModel(MSBEntry):
             else:
                 self.sib_path = self.auto_sib_path(name=self.name, entry_type=self.ENTRY_TYPE, sib_path=sib_path)
         else:
-            raise TypeError(f"`msb_model_source` must be a buffer, `bytes`, or `None` (with `name` and `entry_type` "
-                            f"given), not {type(msb_model_source)}")
+            raise TypeError(
+                f"`msb_model_source` must be a buffer, `bytes`, or `None` (with `name` and `entry_type` "
+                f"given), not {type(msb_model_source)}"
+            )
 
     def unpack(self, msb_buffer):
         model_offset = msb_buffer.tell()
         model_data = self.MODEL_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding='shift-jis')
+            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding="shift-jis"
+        )
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding='shift-jis')
+            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding="shift-jis"
+        )
         self.ENTRY_TYPE = MSB_MODEL_TYPE(model_data["__model_type"])
         self.set(**model_data)
 
     def pack(self):
         name_offset = self.MODEL_STRUCT.size
-        packed_name = self.get_name_to_pack().encode('shift-jis') + b'\0'
+        packed_name = self.get_name_to_pack().encode("shift-jis") + b"\0"
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode('shift-jis') + b'\0' if self.sib_path else b'\0' * 6
+        packed_sib_path = self.sib_path.encode("shift-jis") + b"\0" if self.sib_path else b"\0" * 6
         while len(packed_name + packed_sib_path) % 4 != 0:
-            packed_sib_path += b'\0'
+            packed_sib_path += b"\0"
         packed_model_data = self.MODEL_STRUCT.pack(
             __name_offset=name_offset,
             __model_type=MSB_MODEL_TYPE(self.ENTRY_TYPE).value,
@@ -99,8 +106,10 @@ class MSBModel(MSBEntry):
         stem = f"N:\\FRPG\\data\\Model\\"
         if entry_type in (MSB_MODEL_TYPE.MapPiece, MSB_MODEL_TYPE.Collision, MSB_MODEL_TYPE.Navmesh):
             if not isinstance(sib_path, (list, tuple)) or len(sib_path) not in {2, 4}:
-                raise TypeError(f"`sib_path` for Map Pieces, Collisions, and Navmeshes must be a full string or a "
-                                f"sequence of map ID parts, e.g. (10, 2), not: {repr(sib_path)}")
+                raise TypeError(
+                    f"`sib_path` for Map Pieces, Collisions, and Navmeshes must be a full string or a "
+                    f"sequence of map ID parts, e.g. (10, 2), not: {repr(sib_path)}"
+                )
             if len(sib_path) == 2:
                 sib_path = (sib_path[0], sib_path[1], 0, 0)
             sib_path = f"m{sib_path[0]:02d}_{sib_path[1]:02d}_{sib_path[2]:02d}_{sib_path[3]:02d}"
@@ -126,8 +135,10 @@ class MSBModel(MSBEntry):
                 raise ValueError(f"Object model name did not start with 'o': {name}")
             return stem + f"obj\\{name}\\sib\\{name}.sib"
         elif entry_type == MSB_MODEL_TYPE.Unknown:
-            raise ValueError("Cannot automatically determine model SIB path for 'Unknown' model type. (If you know "
-                             "what this type is, please tell Grimrukh!)")
+            raise ValueError(
+                "Cannot automatically determine model SIB path for 'Unknown' model type. (If you know "
+                "what this type is, please tell Grimrukh!)"
+            )
         raise ValueError(f"Invalid MSB model type: {entry_type}. Cannot determine SIB path.")
 
 

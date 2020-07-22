@@ -144,7 +144,7 @@ except ImportError:
 _LOGGER = logging.getLogger(__name__)
 __all__ = ["MemoryHook", "MemoryHookError", "DSRMemoryHook"]
 
-kernel32 = c.WinDLL('kernel32', use_last_error=True)
+kernel32 = c.WinDLL("kernel32", use_last_error=True)
 ERROR_PARTIAL_COPY = 0x012B
 PROCESS_VM_READ = 0x0010
 SIZE_T = c.c_size_t
@@ -162,7 +162,8 @@ kernel32.OpenProcess.restype = w.HANDLE
 kernel32.OpenProcess.argtypes = (
     w.DWORD,  # _In_ dwDesiredAccess
     w.BOOL,  # _In_ bInheritHandle
-    w.DWORD)  # _In_ dwProcessId
+    w.DWORD,
+)  # _In_ dwProcessId
 
 kernel32.ReadProcessMemory.errcheck = _check_zero
 kernel32.ReadProcessMemory.argtypes = (
@@ -170,7 +171,8 @@ kernel32.ReadProcessMemory.argtypes = (
     w.LPCVOID,  # _In_  lpBaseAddress
     w.LPVOID,  # _Out_ lpBuffer
     SIZE_T,  # _In_  nSize
-    PSIZE_T)  # _Out_ lpNumberOfBytesRead
+    PSIZE_T,
+)  # _Out_ lpNumberOfBytesRead
 
 kernel32.CloseHandle.argtypes = (w.HANDLE,)
 
@@ -182,7 +184,8 @@ MemoryValue = namedtuple("CheatEntry", ("pointer", "jumps", "size", "fmt"))
 DSR_POINTER_TABLE = {
     "WORLD_CHR_BASE": MemoryPointer(  # 0x1407c0206
         br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
-        lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+        lambda hook, addr: addr + hook.read_int32(addr + 3) + 7,
+    ),
     # "CHR_CLASS_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x85\xC0..\xF3\x0F\x58\x80\xAC\x00\x00\x00",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
@@ -204,8 +207,9 @@ DSR_VALUE_TABLE = {
 }
 
 
-class MemoryHook(object):
+class MemoryHook:
     """Hooks into running game and edits values at given memory addresses (a la CheatEngine)."""
+
     BASE_ADDRESS = 0x400000  # memory of process starts here
 
     def __init__(self, game_pid, pointer_table, value_table):
@@ -231,11 +235,10 @@ class MemoryHook(object):
         buffer = (c.c_char * size)()
         bytes_read = SIZE_T()
         try:
-            kernel32.ReadProcessMemory(
-                self.process_handle, address, buffer, size, c.byref(bytes_read))
+            kernel32.ReadProcessMemory(self.process_handle, address, buffer, size, c.byref(bytes_read))
         except WindowsError as e:
             raise MemoryHookError(e)
-        value = bytes(buffer[:bytes_read.value])
+        value = bytes(buffer[: bytes_read.value])
         if fmt:
             values = struct.unpack(fmt, value)
             if len(values) == 1:
@@ -266,8 +269,9 @@ class MemoryHook(object):
         while 1:
             try:
                 i += 1
-                kernel32.ReadProcessMemory(self.process_handle, search_from_address, buffer,
-                                           chunk_size, c.byref(bytes_read))
+                kernel32.ReadProcessMemory(
+                    self.process_handle, search_from_address, buffer, chunk_size, c.byref(bytes_read)
+                )
             except WindowsError as e:
                 if search_from_address == self.BASE_ADDRESS:
                     _LOGGER.error(f"Could not read first {chunk_size} bytes of process {self.pid}.", exc_info=True)
@@ -279,7 +283,7 @@ class MemoryHook(object):
                     search_from_address += chunk_size - len(byte_sequence)
                     continue
             else:
-                data = bytes(buffer[:bytes_read.value])
+                data = bytes(buffer[: bytes_read.value])
                 match = re.search(byte_sequence, data, re.DOTALL)
                 if match:
                     address = search_from_address + match.start()
@@ -296,19 +300,22 @@ class MemoryHook(object):
         address = self.pointers[entry_data.pointer]
         address = self.read_int64(address)  # First jump has offset zero.
         if address == 0:
-            raise MemoryHookError(f"Pointer {repr(entry_data.pointer)} for {repr(value_name)} is 0, which suggests it "
-                                  f"has not been loaded in-game (are you only in the main menu?).")
+            raise MemoryHookError(
+                f"Pointer {repr(entry_data.pointer)} for {repr(value_name)} is 0, which suggests it "
+                f"has not been loaded in-game (are you only in the main menu?)."
+            )
         for jump in entry_data.jumps[:-1]:
             address = self.read_int64(address + jump)
         buffer = (c.c_char * entry_data.size)()
         bytes_read = SIZE_T()
         try:
             kernel32.ReadProcessMemory(
-                self.process_handle, address + entry_data.jumps[-1], buffer, entry_data.size, c.byref(bytes_read))
+                self.process_handle, address + entry_data.jumps[-1], buffer, entry_data.size, c.byref(bytes_read)
+            )
         except WindowsError as e:
             _LOGGER.error(f"Error reading value {repr(value_name)} from game.", exc_info=True)
             raise MemoryHookError(e)
-        value, = struct.unpack(entry_data.fmt, bytearray(buffer[:bytes_read.value]))
+        (value,) = struct.unpack(entry_data.fmt, bytearray(buffer[: bytes_read.value]))
         return value
 
 
@@ -317,7 +324,6 @@ class MemoryHookError(SoulstructError):
 
 
 class DSRMemoryHook(MemoryHook):
-
     def __init__(self, dsr_pid=None):
         if dsr_pid is None:
             if psutil is None:

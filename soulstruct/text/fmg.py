@@ -1,62 +1,69 @@
+__all__ = ["FMG"]
+
+import io
 import logging
-from io import BytesIO
 from textwrap import wrap
+
+from soulstruct.bnd import BNDEntry
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 
-__all__ = ['FMG']
 _LOGGER = logging.getLogger(__name__)
 
 
-class FMG(object):
+class FMG:
 
     PRE_HEADER_STRUCT = (  # Always little-endian
-        'x',
-        ('big_endian', '?'),  # Only DeS is big-endian
-        ('version', 'b'),  # 0 for DeS, 1 for DS1/DSR/DS2, 2 for BB/DS3
-        'x')
+        "x",
+        ("big_endian", "?"),  # Only DeS is big-endian
+        ("version", "b"),  # 0 for DeS, 1 for DS1/DSR/DS2, 2 for BB/DS3
+        "x",
+    )
 
     HEADER_STRUCTS = {
         0: (
-            ('file_size', 'i'),
-            ('one', 'b', 1),
-            ('version_magic', 'b', -1),
-            '2x',
-            ('range_count', 'i'),
-            ('string_count', 'i'),
-            ('string_offsets_offset', 'i'),
-            ('zero', 'i', 0)),
+            ("file_size", "i"),
+            ("one", "b", 1),
+            ("version_magic", "b", -1),
+            "2x",
+            ("range_count", "i"),
+            ("string_count", "i"),
+            ("string_offsets_offset", "i"),
+            ("zero", "i", 0),
+        ),
         1: (
-            ('file_size', 'i'),
-            ('one', 'b', 1),
-            ('version_magic', 'b', 0),
-            '2x',
-            ('range_count', 'i'),
-            ('string_count', 'i'),
-            ('string_offsets_offset', 'i'),
-            ('zero', 'i', 0)),
+            ("file_size", "i"),
+            ("one", "b", 1),
+            ("version_magic", "b", 0),
+            "2x",
+            ("range_count", "i"),
+            ("string_count", "i"),
+            ("string_offsets_offset", "i"),
+            ("zero", "i", 0),
+        ),
         2: (
-            ('file_size', 'i'),
-            ('one', 'b', 1),
-            ('version_magic', 'b', 0),
-            '2x',
-            ('range_count', 'i'),
-            ('string_count', 'i'),
-            ('version_3_extra', 'i', 255),
-            ('string_offsets_offset', 'q'),
-            ('zero', 'q', 0))
+            ("file_size", "i"),
+            ("one", "b", 1),
+            ("version_magic", "b", 0),
+            "2x",
+            ("range_count", "i"),
+            ("string_count", "i"),
+            ("version_3_extra", "i", 255),
+            ("string_offsets_offset", "q"),
+            ("zero", "q", 0),
+        ),
     }
 
-    RANGE_STRUCTS = {0: (('first_index', 'i'), ('first_id', 'i'), ('last_id', 'i'))}
+    RANGE_STRUCTS = {0: (("first_index", "i"), ("first_id", "i"), ("last_id", "i"))}
     RANGE_STRUCTS[1] = RANGE_STRUCTS[0]
-    RANGE_STRUCTS[2] = RANGE_STRUCTS[0] + ('4x',)
+    RANGE_STRUCTS[2] = RANGE_STRUCTS[0] + ("4x",)
 
-    STRING_OFFSET_STRUCTS = {0: (('offset', 'i'),), 1: (('offset', 'i'),), 2: (('offset', 'q'),)}
+    STRING_OFFSET_STRUCTS = {0: (("offset", "i"),), 1: (("offset", "i"),), 2: (("offset", "q"),)}
 
     LINE_LIMIT = {
-        'ds1': 11,
-        'ds2': 11,  # TODO
-        'bb': 11,  # TODO
-        'ds3': 11,  # TODO
+        "ds1": 11,
+        "ds2": 11,  # TODO
+        "bb": 11,  # TODO
+        "ds3": 11,  # TODO
     }
 
     def __init__(self, fmg_source, remove_empty_entries=True, version=None):
@@ -81,35 +88,39 @@ class FMG(object):
             return
 
         if version is not None:
-            raise ValueError("You cannot specify 'version' when loading an FMG from file content. The version will\n"
-                             "be automatically detected.")
+            raise ValueError(
+                "You cannot specify 'version' when loading an FMG from file content. The version will\n"
+                "be automatically detected."
+            )
 
         if isinstance(fmg_source, bytes):
-            self.unpack(BytesIO(fmg_source), remove_empty_entries)
+            self.unpack(io.BytesIO(fmg_source), remove_empty_entries)
 
         elif isinstance(fmg_source, str):
             self.fmg_path = fmg_source
-            with open(fmg_source, 'rb') as file:
+            with open(fmg_source, "rb") as file:
                 self.unpack(file, remove_empty_entries)
 
-        elif hasattr(fmg_source, 'data'):
-            # Try reading .data attribute (e.g. BNDEntry).
-            self.unpack(BytesIO(fmg_source.data), remove_empty_entries)
+        elif isinstance(fmg_source, BNDEntry):
+            self.unpack(io.BytesIO(fmg_source.data), remove_empty_entries)
+
+        else:
+            raise TypeError(f"Invalid `fmg_source` type: {type(fmg_source)}")
 
     def _set_version(self, version):
-        if str(version).lower() in {'des', '0'}:
+        if str(version).lower() in {"des", "0"}:
             self.version = v = 0
             self.big_endian = True
-        elif str(version).lower() in {'ds1', 'ptd', 'ptde', 'dsr', 'ds2', 'bb', '1'}:
+        elif str(version).lower() in {"ds1", "ptd", "ptde", "dsr", "ds2", "bb", "1"}:
             self.version = v = 1
             self.big_endian = False
-        elif str(version).lower() in {'ds3', '2'}:
+        elif str(version).lower() in {"ds3", "2"}:
             self.version = v = 2
             self.big_endian = False
         else:
             raise ValueError(f"Unrecognized FMG version: {version}. Try one in: ('ds1', 'ds2', 'bb', 'ds3').")
 
-        byte_order = '>' if self.big_endian else '<'
+        byte_order = ">" if self.big_endian else "<"
         self.header_struct = BinaryStruct(*self.HEADER_STRUCTS[v], byte_order=byte_order)
         self.range_struct = BinaryStruct(*self.RANGE_STRUCTS[v], byte_order=byte_order)
         self.string_offset_struct = BinaryStruct(*self.STRING_OFFSET_STRUCTS[v], byte_order=byte_order)
@@ -142,14 +153,14 @@ class FMG(object):
                     if not remove_empty_entries:
                         # Empty text string. These will trigger in-game error messages, like ?PlaceName?.
                         # Distinct from ' ', which is intentionally blank text data (e.g. the unused area subtitles).
-                        self.entries[string_id] = ''
+                        self.entries[string_id] = ""
                 else:
-                    string = read_chars_from_buffer(fmg_buffer, offset=string_offset, encoding='utf-16le')
+                    string = read_chars_from_buffer(fmg_buffer, offset=string_offset, encoding="utf-16le")
                     if string or not remove_empty_entries:
                         self.entries[string_id] = string
                 i += 1
 
-    def pack(self, remove_empty_entries=True, pipe_to_newline=True, word_wrap_limit=None, max_lines='ds1'):
+    def pack(self, remove_empty_entries=True, pipe_to_newline=True, word_wrap_limit=None, max_lines="ds1"):
         """Pack text dictionary to binary FMG file.
 
         Args:
@@ -172,7 +183,7 @@ class FMG(object):
 
         # Convert to sorted list (sorted by ID).
         if remove_empty_entries:
-            fmg_entries = sorted([(k, v) for k, v in self.entries.items() if v != ''], key=lambda x: x[0])
+            fmg_entries = sorted([(k, v) for k, v in self.entries.items() if v != ""], key=lambda x: x[0])
         else:
             fmg_entries = sorted([(k, v) for k, v in self.entries.items()], key=lambda x: x[0])
 
@@ -180,42 +191,44 @@ class FMG(object):
             # Optional: convert double spaces to double new lines.
             index, string = fmg_entries[i]
             if pipe_to_newline:
-                string = string.replace('|', '\n')
+                string = string.replace("|", "\n")
                 fmg_entries[i] = (index, string)
             # Optional: insert new lines to wrap automatically.
             if word_wrap_limit is not None:
-                lines = string.split('\n\n')
-                if lines != [' ']:
+                lines = string.split("\n\n")
+                if lines != [" "]:
                     # Wrap lines, and re-add manual newlines.
                     wrapped_lines = []
                     for line in lines:
-                        if '\n' in line:
+                        if "\n" in line:
                             # Don't touch lines with newlines already in them.
                             wrapped_lines.append(line)
                         else:
-                            wrapped_lines.append('\n'.join(wrap(line, word_wrap_limit)))
-                    wrapped_string = '\n\n'.join(wrapped_lines).rstrip('\n')
+                            wrapped_lines.append("\n".join(wrap(line, word_wrap_limit)))
+                    wrapped_string = "\n\n".join(wrapped_lines).rstrip("\n")
                     if isinstance(max_lines, str):
                         try:
                             max_lines = self.LINE_LIMIT[max_lines]
                         except KeyError:
-                            raise ValueError(f"Line limit for descriptions could not be "
-                                             f"determined from key {repr(max_lines)}.")
-                    if wrapped_string.count('\n') > max_lines - 1:
-                        line_count = wrapped_string.count('\n') + 1
-                        _LOGGER.warning(f"FMG index {index} has {line_count} lines (max is {max_lines}):\n"
-                                        f"{wrapped_string}")
+                            raise ValueError(
+                                f"Line limit for descriptions could not be " f"determined from key {repr(max_lines)}."
+                            )
+                    if wrapped_string.count("\n") > max_lines - 1:
+                        line_count = wrapped_string.count("\n") + 1
+                        _LOGGER.warning(
+                            f"FMG index {index} has {line_count} lines (max is {max_lines}):\n" f"{wrapped_string}"
+                        )
                     fmg_entries[i] = (index, wrapped_string)
 
         # Encode all text entries and pack them, and record the offsets (will be globally offset later).
         relative_string_offset = 0
-        packed_strings = b''
+        packed_strings = b""
         string_offset_list = []
 
         for string_id, string in fmg_entries:
-            if string == '':
+            if string == "":
                 string_offset_list.append(-1)  # changed to zero when offsets become absolute
-            null_terminated_text = string.encode('utf-16le') + b'\0\0'
+            null_terminated_text = string.encode("utf-16le") + b"\0\0"
             packed_strings += null_terminated_text
             string_offset_list.append(relative_string_offset)
             relative_string_offset += len(null_terminated_text)
@@ -235,8 +248,8 @@ class FMG(object):
                 range_stop += 1
             else:
                 # Terminate last range...
-                ranges.append(self.range_struct.pack(
-                    first_index=range_start_index, first_id=range_start, last_id=range_stop)
+                ranges.append(
+                    self.range_struct.pack(first_index=range_start_index, first_id=range_start, last_id=range_stop)
                 )
                 # ... then start new one at this string.
                 range_start_index = string_index
@@ -244,28 +257,25 @@ class FMG(object):
 
         if range_start is not None:
             # Terminate last range.
-            ranges.append(self.range_struct.pack(
-                first_index=range_start_index, first_id=range_start, last_id=range_stop)
+            ranges.append(
+                self.range_struct.pack(first_index=range_start_index, first_id=range_start, last_id=range_stop)
             )
 
-        packed_ranges = b''.join(ranges)
+        packed_ranges = b"".join(ranges)
 
         # Compute table offsets.
         ranges_offset = self.pre_header_struct.size + self.header_struct.size
         string_offsets_offset = ranges_offset + len(packed_ranges)
         packed_strings_offset = string_offsets_offset + self.string_offset_struct.size * len(string_offset_list)
         file_size = packed_strings_offset + len(packed_strings)
-        packed_string_offsets = b''
+        packed_string_offsets = b""
         for string_offset in string_offset_list:
             if string_offset == -1:
                 packed_string_offsets += self.string_offset_struct.pack(offset=0)
             else:
                 packed_string_offsets += self.string_offset_struct.pack(offset=packed_strings_offset + string_offset)
 
-        packed_pre_header = self.pre_header_struct.pack(
-            big_endian=self.big_endian,
-            version=self.version,
-        )
+        packed_pre_header = self.pre_header_struct.pack(big_endian=self.big_endian, version=self.version,)
 
         packed_header = self.header_struct.pack(
             file_size=file_size,
@@ -276,8 +286,9 @@ class FMG(object):
 
         return packed_pre_header + packed_header + packed_ranges + packed_string_offsets + packed_strings
 
-    def write_packed(self, fmg_path=None, remove_empty_entries=True, pipe_to_newline=True,
-                     word_wrap_limit=None, max_lines='ds1'):
+    def write_packed(
+        self, fmg_path=None, remove_empty_entries=True, pipe_to_newline=True, word_wrap_limit=None, max_lines="ds1"
+    ):
         """Write binary FMG to given path.
 
         See `pack` for descriptions of the other arguments.
@@ -287,9 +298,15 @@ class FMG(object):
                 fmg_path = self.fmg_path
             else:
                 raise ValueError("FMG path could not be determined automatically (must be specified).")
-        with open(fmg_path, 'wb') as output:
-            output.write(self.pack(remove_empty_entries=remove_empty_entries, pipe_to_newline=pipe_to_newline,
-                                   word_wrap_limit=word_wrap_limit, max_lines=max_lines))
+        with open(fmg_path, "wb") as output:
+            output.write(
+                self.pack(
+                    remove_empty_entries=remove_empty_entries,
+                    pipe_to_newline=pipe_to_newline,
+                    word_wrap_limit=word_wrap_limit,
+                    max_lines=max_lines,
+                )
+            )
 
     def __getitem__(self, index: int):
         return self.entries[index]
@@ -337,5 +354,5 @@ class FMG(object):
     def __repr__(self):
         s = f"FMG Path: {str(self.fmg_path) if self.fmg_path is not None else '<None>'}"
         for index, text in self.entries.items():
-            s += f'\n    {index}: {text}'
+            s += f"\n    {index}: {text}"
         return s

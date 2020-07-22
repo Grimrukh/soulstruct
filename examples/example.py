@@ -25,12 +25,12 @@ def PullOutMeltedIronKey():
     if THIS_FLAG:
         return
     DisableObjectActivation(OBJECTS.DepthsDoor, -1)
-    Await(DialogPromptActivated(TEXT.Open, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
-                                model_point=100, max_distance=1.5))
+    Await(ActionButton(TEXT.Open, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+                       model_point=100, max_distance=1.5))
     DisplayDialog(TEXT.SomethingInDoor, anchor_entity=OBJECTS.DepthsDoor)
     Wait(1.0)
-    await DialogPromptActivated(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
-                                model_point=100, max_distance=1.5)
+    await ActionButton(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+                       model_point=100, max_distance=1.5)
     AwardItemLot(ITEMLOT.InDepthsDoor)
     Wait(DOOR_INACTIVE_DELAY)
     EnableObjectActivation(OBJECTS.DepthsDoor, -1)

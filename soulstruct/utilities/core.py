@@ -1,10 +1,21 @@
 from __future__ import annotations
 
 __all__ = [
-    "PACKAGE_PATH", "find_dcx", "create_bak", "word_wrap", "camel_case_to_spaces",
-    "find_steam_common_paths", "traverse_path_tree",
-    "BinaryStruct", "BaseStruct", "AttributeDict", "BiDict",
-    "read_chars_from_bytes", "read_chars_from_buffer", "pad_chars",
+    "PACKAGE_PATH",
+    "find_dcx",
+    "create_bak",
+    "word_wrap",
+    "camel_case_to_spaces",
+    "floatify",
+    "find_steam_common_paths",
+    "traverse_path_tree",
+    "BinaryStruct",
+    "BaseStruct",
+    "AttributeDict",
+    "BiDict",
+    "read_chars_from_bytes",
+    "read_chars_from_buffer",
+    "pad_chars",
     "get_startupinfo",
 ]
 
@@ -38,10 +49,10 @@ def find_dcx(file_path):
     It doesn't matter if the file path already ends with '.dcx'. If neither file exists, FileNotFoundError is raised.
     """
     file_path = Path(file_path)
-    if file_path.suffix == '.dcx':
+    if file_path.suffix == ".dcx":
         no_dcx, dcx = (file_path.parent / file_path.stem, file_path)
     else:
-        no_dcx, dcx = (file_path, file_path.with_suffix(file_path.suffix + '.dcx'))
+        no_dcx, dcx = (file_path, file_path.with_suffix(file_path.suffix + ".dcx"))
     if Path(dcx).is_file():
         return dcx
     elif Path(no_dcx).is_file():
@@ -51,8 +62,8 @@ def find_dcx(file_path):
 
 def create_bak(file_path):
     file_path = Path(file_path)
-    if file_path.is_file() and not file_path.with_suffix(file_path.suffix + '.bak').is_file():
-        backup_path = str(file_path.with_suffix(file_path.suffix + '.bak'))
+    if file_path.is_file() and not file_path.with_suffix(file_path.suffix + ".bak").is_file():
+        backup_path = str(file_path.with_suffix(file_path.suffix + ".bak"))
         os.rename(str(file_path), backup_path)
         _LOGGER.info(f"Created {repr(backup_path)} backup file.")
         return True
@@ -60,10 +71,10 @@ def create_bak(file_path):
 
 
 def word_wrap(text, line_limit=50):
-    return '\n'.join(textwrap.wrap(text, line_limit))
+    return "\n".join(textwrap.wrap(text, line_limit))
 
 
-def camel_case_to_spaces(camel_string):
+def camel_case_to_spaces(camel_string: str) -> str:
     """Preserves consecutive capitals (e.g. JSONFileName -> JSON File Name) and non-alphabetical symbols.
 
     Needs two passes to handle cases of singular capital letters and numbers/symbols (which need spaces on both sides).
@@ -73,12 +84,21 @@ def camel_case_to_spaces(camel_string):
     return camel_string
 
 
+def floatify(int32: int, signed=False) -> float:
+    """Utility function that re-interprets a 32-bit unsigned (default) or signed integer as a single float.
+
+    This could be useful if you have any old EMEVD scripts that incorrectly represent float event arguments as integers.
+    """
+    pack_fmt = "<i" if signed else "<I"
+    return struct.unpack("<f", struct.pack(pack_fmt, int32))[0]
+
+
 def find_steam_common_paths():
     """Not using anymore. Seems to cause 'WinError 87' OSErrors for some people for some drives."""
     steam_common_paths = []
     for drive in _get_drives():
-        for arch in {'', ' (x86)'}:
-            common_path = Path(drive, f'Program Files{arch}/Steam/steamapps/common/')
+        for arch in {"", " (x86)"}:
+            common_path = Path(drive, f"Program Files{arch}/Steam/steamapps/common/")
             if common_path.is_dir():
                 steam_common_paths.append(common_path)
     return steam_common_paths
@@ -100,14 +120,14 @@ def traverse_path_tree(tree, cur=()):
         raise ValueError(f"Invalid type encountered in path tree: {type(tree)}")
 
 
-class BinaryStruct(object):
-    BYTE_ORDER_RE = re.compile(r'[<>@].*')
-    PAD_RE = re.compile(r'([0-9]*)?x')
-    JIS_FORMAT_RE = re.compile(r'([0-9]*)?j')
-    CHARS_FORMAT_RE = re.compile(r'([0-9]*)?s')
-    OTHER_FORMAT_RE = re.compile(r'([0-9]*)?(?!s)')
+class BinaryStruct:
+    BYTE_ORDER_RE = re.compile(r"[<>@].*")
+    PAD_RE = re.compile(r"([0-9]*)?x")
+    JIS_FORMAT_RE = re.compile(r"([0-9]*)?j")
+    CHARS_FORMAT_RE = re.compile(r"([0-9]*)?s")
+    OTHER_FORMAT_RE = re.compile(r"([0-9]*)?(?!s)")
 
-    def __init__(self, *fields, byte_order='<'):
+    def __init__(self, *fields, byte_order="<"):
         """Flexible binary unpacker/repacker."""
         self.fields = []  # field dictionaries
         self._struct_format = []  # Format chunks with different byte order are stored in sub-format strings.
@@ -133,17 +153,17 @@ class BinaryStruct(object):
                 byte_order = self._struct_format[-1][0]
                 new_fmt = False
             else:
-                byte_order = '<'  # default
+                byte_order = "<"  # default
                 new_fmt = True
         elif not self._struct_format or byte_order != self._struct_format[-1][0]:
-            if byte_order not in {'<', '>', '@'}:
+            if byte_order not in {"<", ">", "@"}:
                 raise ValueError("byte_order must be '<', '>', or '@'.")
             new_fmt = True
         else:
             # Append to most recent sub-format (same byte order).
             new_fmt = False
 
-        sub_fmt = ''
+        sub_fmt = ""
         sub_fmt_length = 0
         new_fields = []
 
@@ -151,7 +171,7 @@ class BinaryStruct(object):
             if isinstance(field, str):
                 # Pad string.
                 if self.PAD_RE.match(field):
-                    new_fields.append({'fmt': field, 'length': 0})
+                    new_fields.append({"fmt": field, "length": 0})
                     sub_fmt += field
                     continue
                 else:
@@ -166,19 +186,21 @@ class BinaryStruct(object):
                     asserted = field[2]
                     if isinstance(asserted, tuple):
                         asserted = list(asserted)
-                    d['asserted'] = asserted
+                    d["asserted"] = asserted
                 except IndexError:
                     pass
             else:
-                raise TypeError("Each field should be a single pad '#x' format string, a (name, format) "
-                                "pair, or a (name, format, asserted) triplet.")
+                raise TypeError(
+                    "Each field should be a single pad '#x' format string, a (name, format) "
+                    "pair, or a (name, format, asserted) triplet."
+                )
 
             if self.BYTE_ORDER_RE.match(fmt):
                 raise ValueError("Individual field format should not have its own byte order. Pass as a keyword arg.")
             if self.JIS_FORMAT_RE.match(fmt):
                 jis_size = int(fmt[:-1]) if fmt[:-1] else 1
-                fmt = str(jis_size) + 's'
-                d['jis_size'] = jis_size
+                fmt = str(jis_size) + "s"
+                d["jis_size"] = jis_size
                 length = 1  # This is not the struct byte size, but rather the number of values that will be unpacked.
             elif self.CHARS_FORMAT_RE.match(fmt):
                 length = 1
@@ -206,23 +228,24 @@ class BinaryStruct(object):
 
     @staticmethod
     def _unpack_field(unpacked_values, field, index):
-        if field['length'] == 0:
+        if field["length"] == 0:
             # Ignore.
             return
-        value = unpacked_values[index:index + field['length']]
-        if field['length'] == 1:
+        value = unpacked_values[index : index + field["length"]]
+        if field["length"] == 1:
             # Unzip single values.
             value = value[0]
         else:
             # Convert tuples to lists.
             value = list(value)
-        if 'jis_size' in field:
-            value = read_chars_from_bytes(value, length=len(value), encoding='shift_jis_2004')
-            value = value.rstrip('\0')
-        if 'asserted' in field:
-            if value != field['asserted']:
+        if "jis_size" in field:
+            value = read_chars_from_bytes(value, length=len(value), encoding="shift_jis_2004")
+            value = value.rstrip("\0")
+        if "asserted" in field:
+            if value != field["asserted"]:
                 raise ValueError(
-                    f"Field '{field['name']}' contained {value} instead of asserted value {field['asserted']}.")
+                    f"Field '{field['name']}' contained {value} instead of asserted value {field['asserted']}."
+                )
         return value
 
     def unpack(self, source, *fields, byte_order=None, include_asserted=True) -> AttributeDict:
@@ -250,14 +273,14 @@ class BinaryStruct(object):
             try:
                 unpacked = struct.unpack(struct_fmt, data)
             except struct.error:
-                _LOGGER.error(f'Failed to unpack data:', data)
+                _LOGGER.error(f"Failed to unpack data:", data)
                 raise
             output = AttributeDict()
             unpacked_index = 0
             for field in struct_fields:
-                if field['length'] > 0 and (include_asserted or 'asserted' not in field):
-                    output[field['name']] = self._unpack_field(unpacked, field, unpacked_index)
-                unpacked_index += field['length']
+                if field["length"] > 0 and (include_asserted or "asserted" not in field):
+                    output[field["name"]] = self._unpack_field(unpacked, field, unpacked_index)
+                unpacked_index += field["length"]
             return output
 
         offset = 0
@@ -266,18 +289,20 @@ class BinaryStruct(object):
         for sub_fmt in self._struct_format:
             size = struct.calcsize(sub_fmt)
             try:
-                unpacked += struct.unpack(sub_fmt, data[offset:offset + size])
+                unpacked += struct.unpack(sub_fmt, data[offset : offset + size])
             except struct.error:
-                _LOGGER.error(f"Failed to unpack data at offset {offset} with sub-format {sub_fmt}: "
-                              f"{data[offset:offset + size]}")
+                _LOGGER.error(
+                    f"Failed to unpack data at offset {offset} with sub-format {sub_fmt}: "
+                    f"{data[offset:offset + size]}"
+                )
                 raise
             offset += size
         output = AttributeDict()
         unpacked_index = 0
         for field in self.fields:
-            if field['length'] > 0 and (include_asserted or 'asserted' not in field):
-                output[field['name']] = self._unpack_field(unpacked, field, unpacked_index)
-            unpacked_index += field['length']
+            if field["length"] > 0 and (include_asserted or "asserted" not in field):
+                output[field["name"]] = self._unpack_field(unpacked, field, unpacked_index)
+            unpacked_index += field["length"]
         return output
 
     def unpack_count(self, source, count, include_asserted=True) -> tp.List[AttributeDict]:
@@ -286,6 +311,7 @@ class BinaryStruct(object):
         Args:
             source: bytes or open buffer to unpack from.
             count: number of contiguous structs to unpack from source.
+            include_asserted: include asserted fields in the output dictionary. (Default: True)
 
         Returns:
             list[AttributeDict]
@@ -300,28 +326,30 @@ class BinaryStruct(object):
             struct_dicts = (struct_kwargs,)
         if not isinstance(struct_dicts, (list, tuple)):
             struct_dicts = (struct_dicts,)
-        output = b''
+        output = b""
         for struct_dict_ in struct_dicts:
             struct_dict = struct_dict_.copy()  # Does not modify the input dictionary.
             to_pack = []
             for field in self.non_padding_fields:
-                name = field['name']
-                if 'asserted' in field:
+                name = field["name"]
+                if "asserted" in field:
                     # Asserted values are written automatically, but you are permitted to pass the asserted value too.
-                    if name in struct_dict and struct_dict[name] != field['asserted']:
-                        raise ValueError(f"Field '{name}' has value {struct_dict[name]} instead of "
-                                         f"asserted value {field['asserted']}.")
-                    value = field['asserted']
+                    if name in struct_dict and struct_dict[name] != field["asserted"]:
+                        raise ValueError(
+                            f"Field '{name}' has value {struct_dict[name]} instead of "
+                            f"asserted value {field['asserted']}."
+                        )
+                    value = field["asserted"]
                 else:
                     try:
                         value = struct_dict.pop(name)
                     except KeyError:
                         raise KeyError(f"Field '{name}' missing from struct dictionary.")
-                if 'jis_size' in field:
+                if "jis_size" in field:
                     if not isinstance(value, str):
                         raise TypeError(f"Expected a string in JIS field '{name}', but received: {value}.")
-                    jis_bytes = value.encode('shift_jis_2004')
-                    jis_bytes += b'\0' * (field['jis_size'] - len(jis_bytes))  # pad string back to original size
+                    jis_bytes = value.encode("shift_jis_2004")
+                    jis_bytes += b"\0" * (field["jis_size"] - len(jis_bytes))  # pad string back to original size
                     value = [jis_bytes]
                 elif isinstance(value, (list, tuple)):
                     value = list(value)
@@ -333,10 +361,12 @@ class BinaryStruct(object):
             pack_index = 0
             for sub_fmt, sub_fmt_length in zip(self._struct_format, self._struct_length):
                 try:
-                    output += struct.pack(sub_fmt, *to_pack[pack_index:pack_index + sub_fmt_length])
+                    output += struct.pack(sub_fmt, *to_pack[pack_index : pack_index + sub_fmt_length])
                 except struct.error:
-                    _LOGGER.error(f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
-                                  f"{sub_fmt_length}: {to_pack[pack_index:pack_index + sub_fmt_length]}")
+                    _LOGGER.error(
+                        f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
+                        f"{sub_fmt_length}: {to_pack[pack_index:pack_index + sub_fmt_length]}"
+                    )
                     raise
         return output
 
@@ -354,7 +384,8 @@ class BinaryStruct(object):
             except AttributeError:
                 if "asserted" not in field:
                     raise AttributeDict(
-                        f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack.")
+                        f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack."
+                    )
         return self.pack((struct_dict,))
 
     def copy(self):
@@ -376,10 +407,10 @@ class BinaryStruct(object):
         s = f"BinaryStruct: {' '.join(self._struct_format)}\n"
         for i, field in enumerate(self.fields):
             s += f"    {field.get('name', 'x')} :: {field['fmt']}"
-            if 'asserted' in field:
+            if "asserted" in field:
                 s += f" (== {field['asserted']})\n"
             else:
-                s += '\n'
+                s += "\n"
         return s
 
     @property
@@ -398,6 +429,7 @@ class BaseStruct(abc.ABC):
 
 class AttributeDict(dict):
     """Simple dict extension that redirects `__getattr__` to `__getitem__`, allowing dot notation field access."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self.update(*args, **kwargs)
@@ -409,7 +441,6 @@ class AttributeDict(dict):
 
 
 class BiDict(dict):
-
     def __init__(self, *args):
         """Initialized with pairs of values to be connected."""
         super().__init__()
@@ -478,7 +509,7 @@ def _get_drives():
     bit_mask = ctypes.windll.kernel32.GetLogicalDrives()
     for letter in string.ascii_uppercase:
         if bit_mask & 1:
-            drives.append(letter + ':/')
+            drives.append(letter + ":/")
         bit_mask >>= 1
     return drives
 
@@ -493,18 +524,20 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None, ignore_enc
     if 'utf-16-le' is specified as the encoding with no length, a double-null termination of b'\0\0' is required to
     terminate the string (as single nulls can appear in the two-byte characters).
     """
-    bytes_per_char = 2 if encoding is not None and encoding.replace('-', '') == 'utf16le' else 1
+    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "") == "utf16le" else 1
     if length is not None:
-        stripped_array = data[offset:offset + length].rstrip().rstrip(b'\0' * bytes_per_char)  # remove spaces and nulls
+        stripped_array = (
+            data[offset : offset + length].rstrip().rstrip(b"\0" * bytes_per_char)
+        )  # remove spaces and nulls
         if encoding is not None:
             return stripped_array.decode(encoding)
         return stripped_array
     else:
         # Find null termination.
-        null_termination = data[offset:].find(b'\0' * bytes_per_char)
+        null_termination = data[offset:].find(b"\0" * bytes_per_char)
         if null_termination == -1:
             raise ValueError("No null termination found for characters.")
-        array = data[offset:offset + null_termination]
+        array = data[offset : offset + null_termination]
         if encoding is not None:
             try:
                 return array.decode(encoding)
@@ -515,8 +548,9 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None, ignore_enc
         return array
 
 
-def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=True, encoding=None,
-                           ignore_encoding_error_for_these_chars=()):
+def read_chars_from_buffer(
+    buffer, offset=None, length=None, reset_old_offset=True, encoding=None, ignore_encoding_error_for_these_chars=()
+):
     """Read characters from a buffer (type IOBase). Use 'read_chars_from_bytes' if your data is already in bytes format.
 
     Args:
@@ -542,13 +576,13 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
     if length == 0:
         if not reset_old_offset and not isinstance(buffer, bytes):
             buffer.seek(offset)
-        return '' if encoding is not None else b''
+        return "" if encoding is not None else b""
 
     if isinstance(buffer, bytes):
         buffer = io.BytesIO(buffer)
     chars = []
     old_offset = None
-    bytes_per_char = 2 if encoding is not None and encoding.replace('-', '') == 'utf16le' else 1
+    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "") == "utf16le" else 1
 
     if offset is not None:
         old_offset = buffer.tell()
@@ -558,9 +592,9 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
         c = buffer.read(bytes_per_char)
         if not c and length is None:
             raise ValueError("Ran out of bytes to read before null termination was found.")
-        if length is None and c == b'\x00' * bytes_per_char:
+        if length is None and c == b"\x00" * bytes_per_char:
             # Null termination.
-            array = b''.join(chars)
+            array = b"".join(chars)
             if reset_old_offset and old_offset is not None:
                 buffer.seek(old_offset)
             if encoding is not None:
@@ -574,9 +608,9 @@ def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=Tr
         elif len(chars) == length:
             if reset_old_offset and old_offset is not None:
                 buffer.seek(old_offset)
-            stripped_array = b''.join(chars)  # used to strip spaces as well, but not anymore
+            stripped_array = b"".join(chars)  # used to strip spaces as well, but not anymore
             stripped_array.rstrip()  # remove spaces
-            stripped_array.rstrip(b'\0' * bytes_per_char)  # remove null characters
+            stripped_array.rstrip(b"\0" * bytes_per_char)  # remove null characters
             if encoding is not None:
                 return stripped_array.decode(encoding)
             return stripped_array
@@ -589,21 +623,21 @@ def pad_chars(text, encoding=None, null_terminate=True, pad_to_multiple_of=4):
     if pad_to_multiple_of < 0 or not isinstance(pad_to_multiple_of, int):
         raise ValueError("pad must be an integer greater than zero.")
     if encoding is not None:
-        encoded = text.encode(encoding) + (b'\0' if null_terminate else b'')
+        encoded = text.encode(encoding) + (b"\0" if null_terminate else b"")
     else:
-        encoded = text + ('\0' if null_terminate else '')
-    pad = b'\0' if encoding is not None else '\0'
+        encoded = text + ("\0" if null_terminate else "")
+    pad = b"\0" if encoding is not None else "\0"
     while len(encoded) % pad_to_multiple_of != 0:
         encoded += pad
     return encoded
 
 
 def get_startupinfo():
-    """Disables command window for PyInstaller `--noconsole`` option.
+    """Disables command window for PyInstaller `--noconsole` option.
 
     See `https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess`
     """
-    if hasattr(subprocess, 'STARTUPINFO'):
+    if hasattr(subprocess, "STARTUPINFO"):
         si = subprocess.STARTUPINFO()
         si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     else:

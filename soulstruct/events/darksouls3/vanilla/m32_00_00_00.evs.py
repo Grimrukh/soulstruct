@@ -80,21 +80,29 @@ def Constructor():
     RunCommonEvent(20005120, args=(3200263, 1099956224))
     RunCommonEvent(20005120, args=(3200266, 1099956224))
     RunCommonEvent(20005120, args=(3200267, 1099956224))
-    RunEvent(13205260, slot=0, args=(3200260, 3200269, 1.0), arg_types='iif')
-    RunEvent(13205260, slot=1, args=(3200261, 3200269, 50.0), arg_types='iif')
-    RunEvent(13205260, slot=2, args=(3200262, 3200269, 55.0), arg_types='iif')
-    RunEvent(13205260, slot=3, args=(3200263, 3200269, 16.0), arg_types='iif')
-    RunEvent(13205260, slot=4, args=(3200266, 3200269, 18.0), arg_types='iif')
-    RunEvent(13205260, slot=5, args=(3200267, 3200269, 22.0), arg_types='iif')
+    RunEvent(13205260, slot=0, args=(3200260, 3200269, 1.0), arg_types="iif")
+    RunEvent(13205260, slot=1, args=(3200261, 3200269, 50.0), arg_types="iif")
+    RunEvent(13205260, slot=2, args=(3200262, 3200269, 55.0), arg_types="iif")
+    RunEvent(13205260, slot=3, args=(3200263, 3200269, 16.0), arg_types="iif")
+    RunEvent(13205260, slot=4, args=(3200266, 3200269, 18.0), arg_types="iif")
+    RunEvent(13205260, slot=5, args=(3200267, 3200269, 22.0), arg_types="iif")
     RunEvent(13205290)
     RunCommonEvent(20005119, args=(3200235, 3202230, 3202234, 0, 0, 0, 0, 0))
     RunCommonEvent(20005132, args=(3200255, 1084227584, 3202251))
     RunEvent(13205350, slot=0, args=(3200235, 13204350, 13204360, 13204361))
     RunEvent(13205350, slot=1, args=(3200255, 13204355, 13204365, 13204366))
-    RunEvent(13205360, slot=0, args=(13204350, 13204360, 13204361, 13205500, 13205509, 13205500, 13205509), 
-             arg_types='iiiiiII')
-    RunEvent(13205360, slot=1, args=(13204355, 13204365, 13204366, 13205510, 13205519, 13205510, 13205519), 
-             arg_types='iiiiiII')
+    RunEvent(
+        13205360,
+        slot=0,
+        args=(13204350, 13204360, 13204361, 13205500, 13205509, 13205500, 13205509),
+        arg_types="iiiiiII",
+    )
+    RunEvent(
+        13205360,
+        slot=1,
+        args=(13204355, 13204365, 13204366, 13205510, 13205519, 13205510, 13205519),
+        arg_types="iiiiiII",
+    )
     RunEvent(13205370, slot=0, args=(3200290, 13204360, 13204365, 3202291, 3202290, 3202234, 3200235, 3204290))
     RunEvent(13205370, slot=1, args=(3200291, 13204361, 0, 3202291, 3202290, 3202234, 3200235, 3204291))
     RunEvent(13205375, slot=0, args=(3200295, 13204365, 13204360, 3202295, 3200255, 3204295))
@@ -132,8 +140,8 @@ def Constructor():
     RunEvent(13205441)
     RunEvent(13205442)
     RunEvent(13205450)
-    RunEvent(13205470, slot=0, args=(1, 321000001), arg_types='Ii')
-    RunEvent(13205470, slot=1, args=(2, 321000002), arg_types='Ii')
+    RunEvent(13205470, slot=0, args=(1, 321000001), arg_types="Ii")
+    RunEvent(13205470, slot=1, args=(2, 321000002), arg_types="Ii")
     RunCommonEvent(20005523, args=(3201460, 1))
     RunCommonEvent(20005523, args=(3201461, 2))
     RunCommonEvent(20005520, args=(13201470, 3201470, 3204470))
@@ -158,7 +166,7 @@ def Event13205100():
 
 
 @RestartOnRest
-def Event13205260(arg_0_3: int, arg_4_7: int, arg_8_11: float):
+def Event13205260(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 13205260: Event 13205260 """
     GotoIfThisEventSlotOn(Label.L0)
     DisableAI(arg_0_3)
@@ -187,8 +195,9 @@ def Event13205300():
     GotoIfFlagOn(Label.L0, 13200300)
     SetBackreadStateAlternate(3200300, state=True)
     SetNetworkUpdateRate(3200300, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkUpdateAuthority(3200300, UpdateAuthority.Forced)
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     IfCharacterDead(0, 3200300)
@@ -217,8 +226,9 @@ def Event13205310():
     EnableCharacter(3200300)
     DisableAI(3200300)
     DisableGravity(3200300)
-    Move(3200300, destination=3202310, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3200300)
+    Move(
+        3200300, destination=3202310, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3200300
+    )
     ForceAnimation(3200300, 30000, loop=True)
     SetNetworkConnectedFlagState(flag=13205301, state=FlagState.On)
     IfCharacterType(-1, character=PLAYER, character_type=CharacterType.Human)
@@ -242,8 +252,9 @@ def Event13205310():
     EndIfFlagOn(13205399)
     GotoIfFinishedConditionTrue(Label.L9, input_condition=-4)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=-5)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     SkipLinesIfFinishedConditionTrue(1, 2)
     Wait(1.0)
@@ -251,8 +262,9 @@ def Event13205310():
     IfCharacterInsideRegion(-6, PLAYER, region=3202300)
     GotoIfConditionTrue(Label.L1, input_condition=-6)
     Wait(3.0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     Restart()
 
@@ -263,16 +275,19 @@ def Event13205310():
     SkipLinesIfFlagOn(8, 13205311)
     SetNetworkConnectedFlagState(flag=13205301, state=FlagState.Off)
     SetNetworkConnectedFlagState(flag=13205311, state=FlagState.On)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     ForceAnimation(3200300, 20010, wait_for_completion=True, skip_transition=True)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     SkipLines(1)
-    Move(3200300, destination=3202312, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3200300)
+    Move(
+        3200300, destination=3202312, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3200300
+    )
     End()
 
     # --- 9 --- #
@@ -328,17 +343,20 @@ def Event13205320():
     SetNetworkConnectedFlagState(flag=13205311, state=FlagState.Off)
     SetNetworkConnectedFlagState(flag=13205321, state=FlagState.On)
     SetNetworkConnectedFlagState(flag=13205322, state=FlagState.On)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     ForceAnimation(3200300, 20011, wait_for_completion=True, skip_transition=True)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     SkipLines(1)
     ForceAnimation(3200300, 30001, loop=True, skip_transition=True)
-    Move(3200300, destination=3202311, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3200300)
+    Move(
+        3200300, destination=3202311, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3200300
+    )
     IfFlagOff(4, 13205321)
     IfFlagOn(-7, 13205311)
     IfFlagOn(-7, 13205312)
@@ -399,16 +417,19 @@ def Event13205330():
     SkipLinesIfFlagOn(8, 13205312)
     SetNetworkConnectedFlagState(flag=13205321, state=FlagState.Off)
     SetNetworkConnectedFlagState(flag=13205312, state=FlagState.On)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     ForceAnimation(3200300, 20012, wait_for_completion=True, skip_transition=True)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     SkipLines(1)
-    Move(3200300, destination=3202313, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3200300)
+    Move(
+        3200300, destination=3202313, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3200300
+    )
     End()
 
     # --- 1 --- #
@@ -416,17 +437,20 @@ def Event13205330():
     SkipLinesIfFlagOn(8, 13205331)
     SetNetworkConnectedFlagState(flag=13205321, state=FlagState.Off)
     SetNetworkConnectedFlagState(flag=13205331, state=FlagState.On)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     ForceAnimation(3200300, 20016, wait_for_completion=True, skip_transition=True)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     SkipLines(1)
     ForceAnimation(3200300, 30000, loop=True, skip_transition=True)
-    Move(3200300, destination=3202310, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3200300)
+    Move(
+        3200300, destination=3202310, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3200300
+    )
     End()
 
     # --- 9 --- #
@@ -473,15 +497,17 @@ def Event13205340():
     GotoIfFinishedConditionTrue(Label.L9, input_condition=-4)
     GotoIfFinishedConditionTrue(Label.L9, input_condition=-5)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     ForceAnimation(3200300, 20004, wait_for_completion=True, skip_transition=True)
     IfCharacterInsideRegion(-6, PLAYER, region=3202304)
     SkipLinesIfConditionTrue(1, -6)
     Wait(3.0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     Restart()
 
@@ -492,12 +518,14 @@ def Event13205340():
     SkipLinesIfFlagOn(7, 13205311)
     SetNetworkConnectedFlagState(flag=13205331, state=FlagState.Off)
     SetNetworkConnectedFlagState(flag=13205311, state=FlagState.On)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.On)
     ForceAnimation(3200300, 20010, wait_for_completion=True, skip_transition=True)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagState.Off)
     End()
 
@@ -517,7 +545,7 @@ def Event13205340():
 
 
 @RestartOnRest
-def Event13205350(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13205350(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13205350: Event 13205350 """
     GotoIfFlagOn(Label.L0, arg_4_7)
     SetNetworkConnectedFlagState(flag=arg_4_7, state=FlagState.Off)
@@ -537,8 +565,9 @@ def Event13205350(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13205360(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: uint, 
-                  arg_24_27: uint):
+def Event13205360(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: uint, arg_24_27: uint
+):
     """ 13205360: Event 13205360 """
     DisableNetworkSync()
     EndIfPlayerNotInOwnWorld()
@@ -560,11 +589,21 @@ def Event13205360(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13205370(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event13205370(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 13205370: Event 13205370 """
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=arg_4_7, state=FlagState.Off)
     IfPlayerInOwnWorld(1)
     IfFlagOn(1, arg_4_7)
@@ -585,8 +624,13 @@ def Event13205370(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     GotoIfConditionTrue(Label.L1, input_condition=2)
     ForceAnimation(arg_0_3, 63010)
     CreateTemporaryFX(30300, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, model_point=-1)
-    Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_24_27)
+    Move(
+        arg_0_3,
+        destination=arg_12_15,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_24_27,
+    )
     AddSpecialEffect(arg_24_27, 11292)
     Goto(Label.L2)
 
@@ -594,8 +638,13 @@ def Event13205370(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     DefineLabel(1)
     ForceAnimation(arg_0_3, 63010)
     CreateTemporaryFX(30300, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Region, model_point=-1)
-    Move(arg_0_3, destination=arg_16_19, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_24_27)
+    Move(
+        arg_0_3,
+        destination=arg_16_19,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_24_27,
+    )
     AddSpecialEffect(arg_24_27, 11292)
 
     # --- 2 --- #
@@ -611,10 +660,11 @@ def Event13205370(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13205375(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event13205375(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13205375: Event 13205375 """
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=arg_4_7, state=FlagState.Off)
     IfPlayerInOwnWorld(1)
     IfFlagOn(1, arg_4_7)
@@ -632,8 +682,13 @@ def Event13205375(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     Wait(1.100000023841858)
     ForceAnimation(arg_0_3, 63010)
     CreateTemporaryFX(30300, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, model_point=-1)
-    Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_16_19)
+    Move(
+        arg_0_3,
+        destination=arg_12_15,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_16_19,
+    )
     AddSpecialEffect(arg_16_19, 11292)
     IfCharacterDead(-1, arg_0_3)
     IfFlagOff(-1, arg_4_7)
@@ -676,8 +731,23 @@ def Event13205390():
 @RestartOnRest
 def Event13205401():
     """ 13205401: Event 13205401 """
-    RunCommonEvent(20005621, args=(13200400, 13200405, 3201400, 3201401, 3204401, 3201402, 3204402, 3202401, 3202402, 
-                   13201400, 13204400, 13200401))
+    RunCommonEvent(
+        20005621,
+        args=(
+            13200400,
+            13200405,
+            3201400,
+            3201401,
+            3204401,
+            3201402,
+            3204402,
+            3202401,
+            3202402,
+            13201400,
+            13204400,
+            13200401,
+        ),
+    )
 
 
 @RestartOnRest
@@ -781,19 +851,24 @@ def Event13205441():
     IfFlagOn(1, 13200445)
     IfConditionTrue(0, input_condition=1)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutsceneAndSetMapCeremony(cutscene=32000000, cutscene_type=CutsceneType.SkippableFadeOut, ceremony_id=10, 
-                                  unknown=1, player_id=10000)
+    PlayCutsceneAndSetMapCeremony(
+        cutscene=32000000, cutscene_type=CutsceneType.SkippableFadeOut, ceremony_id=10, unknown=1, player_id=10000
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutsceneAndSetMapCeremony(cutscene=32000000, cutscene_type=CutsceneType.UnskippableFadeOut, ceremony_id=10, 
-                                  unknown=1, player_id=10000)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutsceneAndSetMapCeremony(
+        cutscene=32000000, cutscene_type=CutsceneType.UnskippableFadeOut, ceremony_id=10, unknown=1, player_id=10000
+    )
     SkipLines(1)
-    PlayCutsceneAndSetMapCeremony(cutscene=32000000, cutscene_type=CutsceneType.Unskippable, ceremony_id=10, unknown=1, 
-                                  player_id=10000)
+    PlayCutsceneAndSetMapCeremony(
+        cutscene=32000000, cutscene_type=CutsceneType.Unskippable, ceremony_id=10, unknown=1, player_id=10000
+    )
     WaitFrames(1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     TriggerMultiplayerEvent(1)
 
     # --- 0 --- #
@@ -833,7 +908,7 @@ def Event13205450():
 
 
 @RestartOnRest
-def Event13205470(arg_0_3: uint, arg_4_7: int):
+def Event13205470(_, arg_0_3: uint, arg_4_7: int):
     """ 13205470: Event 13205470 """
     DisableNetworkSync()
     DisableFlag(13205479)
@@ -852,7 +927,7 @@ def Event13205470(arg_0_3: uint, arg_4_7: int):
 
 
 @RestartOnRest
-def Event13205490(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13205490(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13205490: Event 13205490 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
@@ -885,8 +960,9 @@ def Event13205810():
     DefineLabel(0)
     DisableCharacter(3200800)
     DisableAI(3200800)
-    Move(3200800, destination=3202802, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3200800)
+    Move(
+        3200800, destination=3202802, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3200800
+    )
     IfFlagOn(1, 13205805)
     IfCharacterInsideRegion(1, PLAYER, region=3202801)
     IfConditionTrue(0, input_condition=1)
@@ -913,8 +989,9 @@ def Event13200811():
     EnableFlag(6305)
     EndIfPlayerNotInOwnWorld()
     Wait(5.0)
-    PlayCutscene(32000030, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3202809, 
-                 move_to_map=ARCHDRAGON_PEAK)
+    PlayCutscene(
+        32000030, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3202809, move_to_map=ARCHDRAGON_PEAK
+    )
     SetRespawnPoint(3202953)
     SaveRequest()
     WaitFrames(1)
@@ -983,13 +1060,16 @@ def Event13205861():
     DisableBossMusic(-1)
     WaitFrames(1)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutscene(32000010, skippable=True, fade_out=True, player_id=PLAYER, move_to_region=3202858, 
-                 move_to_map=ARCHDRAGON_PEAK)
+    PlayCutscene(
+        32000010, skippable=True, fade_out=True, player_id=PLAYER, move_to_region=3202858, move_to_map=ARCHDRAGON_PEAK
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutscene(32000010, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=3202858, 
-                 move_to_map=ARCHDRAGON_PEAK)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutscene(
+        32000010, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=3202858, move_to_map=ARCHDRAGON_PEAK
+    )
     SkipLines(1)
     PlayCutscene(32000010, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
@@ -1000,8 +1080,9 @@ def Event13205861():
     SetNetworkUpdateRate(3200850, is_fixed=True, update_rate=CharacterUpdateRate.Never)
     DisableBossHealthBar(3200850, name=905030)
     EnableCharacter(3200851)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkUpdateAuthority(3200851, UpdateAuthority.Forced)
     EnableAnimations(3200851)
     EnableAI(3200851)
@@ -1038,19 +1119,42 @@ def Event13200862():
     # --- 2 --- #
     DefineLabel(2)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutsceneAndMovePlayerAndSetMapCeremony(32000020, cutscene_type=CutsceneType.SkippableFadeOut, ceremony_id=0, 
-                                               unknown=0, region=3202859, game_map=ARCHDRAGON_PEAK, player_id=10000)
+    PlayCutsceneAndMovePlayerAndSetMapCeremony(
+        32000020,
+        cutscene_type=CutsceneType.SkippableFadeOut,
+        ceremony_id=0,
+        unknown=0,
+        region=3202859,
+        game_map=ARCHDRAGON_PEAK,
+        player_id=10000,
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutsceneAndMovePlayerAndSetMapCeremony(32000020, cutscene_type=CutsceneType.UnskippableFadeOut, ceremony_id=0, 
-                                               unknown=0, region=3202859, game_map=ARCHDRAGON_PEAK, player_id=10000)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutsceneAndMovePlayerAndSetMapCeremony(
+        32000020,
+        cutscene_type=CutsceneType.UnskippableFadeOut,
+        ceremony_id=0,
+        unknown=0,
+        region=3202859,
+        game_map=ARCHDRAGON_PEAK,
+        player_id=10000,
+    )
     SkipLines(1)
-    PlayCutsceneAndMovePlayerAndSetMapCeremony(32000020, cutscene_type=CutsceneType.Unskippable, ceremony_id=0, 
-                                               unknown=0, region=3202857, game_map=ARCHDRAGON_PEAK, player_id=10000)
+    PlayCutsceneAndMovePlayerAndSetMapCeremony(
+        32000020,
+        cutscene_type=CutsceneType.Unskippable,
+        ceremony_id=0,
+        unknown=0,
+        region=3202857,
+        game_map=ARCHDRAGON_PEAK,
+        player_id=10000,
+    )
     WaitFrames(1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     TriggerMultiplayerEvent(2)
 
 
@@ -1068,8 +1172,9 @@ def Event13205864():
     DisableNetworkSync()
     ChangeCamera(normal_camera_id=-1, locked_camera_id=-1)
     EndIfFlagOn(13200850)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     IfFlagOn(0, 13205855)
     SkipLines(1)
     IfFlagOn(0, 13205856)
@@ -1099,15 +1204,23 @@ def Event13205870():
 def Event13205880():
     """ 13205880: Event 13205880 """
     EndIfFlagOn(13200850)
-    CreateNPCPart(3200850, npc_part_id=1, part_index=NPCPartType.Part1, part_health=350, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3200850,
+        npc_part_id=1,
+        part_index=NPCPartType.Part1,
+        part_health=350,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IfCharacterPartHealthLessThanOrEqual(0, 3200850, npc_part_id=1, value=0)
     ForceAnimation(3200850, 20000, wait_for_completion=True, skip_transition=True)
     Restart()
 
 
 @RestartOnRest
-def Event13205910(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13205910(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13205910: Event 13205910 """
     DisableNetworkSync()
     EndIfFlagOn(arg_0_3)

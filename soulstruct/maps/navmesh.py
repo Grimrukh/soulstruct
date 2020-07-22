@@ -136,8 +136,13 @@ class MCPRoom:
         self.box_start += translate
         self.box_end += translate
 
-    def rotate_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-                        pivot_point=(0, 0, 0), radians=False, enclose_original=True):
+    def rotate_in_world(
+        self,
+        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
+        pivot_point=(0, 0, 0),
+        radians=False,
+        enclose_original=True,
+    ):
         """Modify entity `box_start` and `box_end` by rotating it around some pivot in world coordinates (defaults to
         the world origin). A single rotation value is a shortcut for Y rotation only.
 
@@ -193,15 +198,19 @@ class MCPRoom:
         except ImportError:
             raise ModuleNotFoundError("Optional `matplotlib` module is needed to draw MCG graphs.")
         from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
         if axes is None:
             fig = plt.figure()
-            axes = fig.add_subplot(111, projection='3d')
+            axes = fig.add_subplot(111, projection="3d")
         vertices = self.get_vertices(swap_yz=True)
         axes.scatter(*zip(*vertices), c="green", s=1, alpha=0.1)  # note y/z swapped
         if label_room:
             axes.text(self.volume_center[0], self.volume_center[2], self.volume_center[1], self.index, c="black")
-        axes.add_collection3d(Poly3DCollection(
-            self.get_faces(swap_yz=True), facecolors=room_color, linewidths=0.1, edgecolors="red", alpha=0.1))
+        axes.add_collection3d(
+            Poly3DCollection(
+                self.get_faces(swap_yz=True), facecolors=room_color, linewidths=0.1, edgecolors="red", alpha=0.1
+            )
+        )
         if show:
             plt.show()
 
@@ -249,11 +258,7 @@ class MCP(object):
             all_connected_rooms += connected_rooms
             offset += len(connected_rooms)
 
-        packed = self.HEADER_STRUCT.pack(
-            unknown=self.unknown,
-            rooms_count=len(self.rooms),
-            rooms_offset=offset,
-        )
+        packed = self.HEADER_STRUCT.pack(unknown=self.unknown, rooms_count=len(self.rooms), rooms_offset=offset,)
         packed += all_connected_rooms
         for i, room in enumerate(self.rooms):
             packed += room.pack(connected_rooms_offsets[i])
@@ -348,12 +353,15 @@ class MCP(object):
                 for index_to_remove in first_group:
                     room.remove_connected_room(index_to_remove)
 
-    def move_in_world(self,
-                      start_translate: tp.Union[Vector3, list, tuple] = None,
-                      end_translate: tp.Union[Vector3, list, tuple] = None,
-                      start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
-                      end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
-                      enclose_original=True, selected_room_indices=None):
+    def move_in_world(
+        self,
+        start_translate: tp.Union[Vector3, list, tuple] = None,
+        end_translate: tp.Union[Vector3, list, tuple] = None,
+        start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
+        end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
+        enclose_original=True,
+        selected_room_indices=None,
+    ):
         """Rotate and then translate all NavRooms in MCP in world coordinates, so that an entity with a translate of
         `start_translate` and rotate of `start_rotate` ends up with a translate of `end_translate` and a rotate of
         `end_rotate`.
@@ -389,13 +397,19 @@ class MCP(object):
         # Apply global rotation to start point to determine required global translation.
         translation = end_translate - (m_world_rotate @ start_translate)  # type: Vector3
 
-        self.rotate_all_rooms_in_world(m_world_rotate, enclose_original=enclose_original,
-                                       selected_room_indices=selected_room_indices)
+        self.rotate_all_rooms_in_world(
+            m_world_rotate, enclose_original=enclose_original, selected_room_indices=selected_room_indices
+        )
         self.translate_all(translation, selected_room_indices=selected_room_indices)
 
-    def rotate_all_rooms_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-                                  pivot_point=(0, 0, 0), radians=False, enclose_original=True,
-                                  selected_room_indices=None):
+    def rotate_all_rooms_in_world(
+        self,
+        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
+        pivot_point=(0, 0, 0),
+        radians=False,
+        enclose_original=True,
+        selected_room_indices=None,
+    ):
         """Rotate every NavRoom in the map around the given pivot by the given Euler angles coordinate system.
 
         The pivot defaults to the world origin.
@@ -409,8 +423,9 @@ class MCP(object):
         pivot_point = Vector3(pivot_point)
         for room in self.rooms:
             if selected_room_indices is None or room.index in selected_room_indices:
-                room.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians,
-                                     enclose_original=enclose_original)
+                room.rotate_in_world(
+                    rotation, pivot_point=pivot_point, radians=radians, enclose_original=enclose_original
+                )
 
     def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_room_indices=None):
         """Translate every NavRoom in the map by the given vector."""
@@ -425,7 +440,7 @@ class MCP(object):
             raise ModuleNotFoundError("Optional `matplotlib` module is needed to draw MCG graphs.")
         if axes is None:
             fig = plt.figure(figsize=(8, 8))
-            axes = fig.add_subplot(111, projection='3d')
+            axes = fig.add_subplot(111, projection="3d")
         else:
             fig = axes.figure
         for room in self.rooms:
@@ -519,12 +534,14 @@ class MCGNode(object):
         self.validate()
         if isinstance(node_indices, int):
             node_indices = (node_indices,)
-        self.connected_edges = [edge for edge, node in zip(self.connected_edges, self.connected_nodes)
-                                if node not in node_indices]
+        self.connected_edges = [
+            edge for edge, node in zip(self.connected_edges, self.connected_nodes) if node not in node_indices
+        ]
         self.connected_nodes = [node for node in self.connected_nodes if node not in node_indices]
 
-    def rotate_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-                        pivot_point=(0, 0, 0), radians=False):
+    def rotate_in_world(
+        self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], pivot_point=(0, 0, 0), radians=False
+    ):
         """Modify node `translate` by rotating it around some pivot in world coordinates (defaults to the world
         origin)."""
         if isinstance(rotation, (int, float)):
@@ -734,16 +751,19 @@ class MCG(object):
         """
         edge_index_matches = []
         for i, edge in enumerate(self.edges):
-            if ((edge.start_node == first_node_index and edge.end_node == second_node_index)
-                    or (edge.start_node == second_node_index and edge.end_node == first_node_index)):
+            if (edge.start_node == first_node_index and edge.end_node == second_node_index) or (
+                edge.start_node == second_node_index and edge.end_node == first_node_index
+            ):
                 edge_index_matches.append(i)
         if not edge_index_matches:
             if allow_missing:
                 return  # do nothing, don't complain
             raise ValueError(f"No edges found that connect node {first_node_index} and node {second_node_index}.")
         elif len(edge_index_matches) > 1:
-            raise ValueError(f"Multiple edges found that connect node {first_node_index} and node {second_node_index}. "
-                             f"This should't happen!")
+            raise ValueError(
+                f"Multiple edges found that connect node {first_node_index} and node {second_node_index}. "
+                f"This should't happen!"
+            )
         edge_index = edge_index_matches[0]
         # print(f"# Deleting edge {edge_index} between nodes {self.edges[edge_index].start_node} and "
         #       f"{self.edges[edge_index].end_node}.")  # todo
@@ -755,12 +775,15 @@ class MCG(object):
             # Check edge doesn't already exist.
             edge_index_matches = []
             for i, edge in enumerate(self.edges):
-                if ((edge.start_node == first_node_index and edge.end_node == second_node_index)
-                        or (edge.start_node == second_node_index and edge.end_node == first_node_index)):
+                if (edge.start_node == first_node_index and edge.end_node == second_node_index) or (
+                    edge.start_node == second_node_index and edge.end_node == first_node_index
+                ):
                     edge_index_matches.append(i)
             if edge_index_matches:
-                raise ValueError(f"Nodes {first_node_index} and {second_node_index} already connected by edge "
-                                 f"{edge_index_matches}.")
+                raise ValueError(
+                    f"Nodes {first_node_index} and {second_node_index} already connected by edge "
+                    f"{edge_index_matches}."
+                )
         new_edge_index = len(self.edges)
         new_edge = copy.deepcopy(self.edges[-1])
         new_edge.start_node = first_node_index
@@ -797,13 +820,14 @@ class MCG(object):
             # Renumber (subtract one from) all edges greater than deleted index.
             node.connected_edges = [(i - 1 if i > edge_index else i) for i in node.connected_edges]
 
-    def move_in_world(self,
-                      start_translate: tp.Union[Vector3, list, tuple] = None,
-                      end_translate: tp.Union[Vector3, list, tuple] = None,
-                      start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
-                      end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
-                      selected_node_indices=None,
-                      ):
+    def move_in_world(
+        self,
+        start_translate: tp.Union[Vector3, list, tuple] = None,
+        end_translate: tp.Union[Vector3, list, tuple] = None,
+        start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
+        end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
+        selected_node_indices=None,
+    ):
         """Rotate and then translate all nodes in MCG in world coordinates, so that an entity with a translate of
         `start_translate` and rotate of `start_rotate` ends up with a translate of `end_translate` and a rotate of
         `end_rotate`.
@@ -842,8 +866,13 @@ class MCG(object):
         self.rotate_all_nodes_in_world(m_world_rotate, selected_node_indices=selected_node_indices)
         self.translate_all(translation, selected_node_indices=selected_node_indices)
 
-    def rotate_all_nodes_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-                                  pivot_point=(0, 0, 0), radians=False, selected_node_indices=None):
+    def rotate_all_nodes_in_world(
+        self,
+        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
+        pivot_point=(0, 0, 0),
+        radians=False,
+        selected_node_indices=None,
+    ):
         """Rotate every node in the MCG around the given pivot by the given Euler angles coordinate system.
 
         The pivot defaults to the world origin.
@@ -872,10 +901,9 @@ class MCG(object):
             raise ModuleNotFoundError("Optional `matplotlib` module is needed to draw MCG graphs.")
         if axes is None:
             fig = plt.figure()
-            axes = fig.add_subplot(111, projection='3d')
+            axes = fig.add_subplot(111, projection="3d")
         for i, node in enumerate(self.nodes):
-            axes.scatter(node.translate.x, node.translate.z, node.translate.y,
-                         s=20, c="green", alpha=0.5)
+            axes.scatter(node.translate.x, node.translate.z, node.translate.y, s=20, c="green", alpha=0.5)
             if label_nodes:
                 axes.text(node.translate.x, node.translate.z, node.translate.y, i, c="green")
         for edge in self.edges:
@@ -888,7 +916,6 @@ class MCG(object):
 
 
 class NavmeshGraph(object):
-
     def __init__(self, map_path: tp.Union[str, Path], msb_path=None):
         """Simple container for both MCP and MCG, which will generally be edited together.
 
@@ -939,8 +966,10 @@ class NavmeshGraph(object):
         max_room_index = self.mcp.max_index
         if navmesh_count < max_room_index + 1:
             # At least one room has an invalid index into the MSB navmeshes.
-            print(f"WARNING: Number of navmeshes in MSB ({len(self.navmeshes)}) is less than the maximum room index "
-                  f"plus 1 ({max_room_index}) This should be fixed ASAP!")
+            print(
+                f"WARNING: Number of navmeshes in MSB ({len(self.navmeshes)}) is less than the maximum room index "
+                f"plus 1 ({max_room_index}) This should be fixed ASAP!"
+            )
             self._navmeshes_valid = False
         else:
             if navmesh_count > max_room_index + 1:
@@ -951,8 +980,10 @@ class NavmeshGraph(object):
 
     def get_room_from_navmesh_name(self, navmesh_name):
         if not self._navmeshes_valid:
-            raise ValueError("Cannot reliably get room index from navmesh name if navmesh/room counts do not match.\n"
-                             "(Call `.check_navmeshes()` after fixing this issue to re-validate.)")
+            raise ValueError(
+                "Cannot reliably get room index from navmesh name if navmesh/room counts do not match.\n"
+                "(Call `.check_navmeshes()` after fixing this issue to re-validate.)"
+            )
         navmesh_matches = [i for i, navmesh in enumerate(self.navmeshes) if navmesh.name == navmesh_name]
         if not navmesh_matches:
             raise ValueError(f"No navmeshes in MSB with name {navmesh_name}.")
@@ -963,8 +994,10 @@ class NavmeshGraph(object):
 
     def get_navmesh_name_from_room_index(self, room_index):
         if not self._navmeshes_valid:
-            raise ValueError("Cannot reliably get navmesh name from room index if navmesh/room counts do not match.\n"
-                             "(Call `.check_navmeshes()` after fixing this issue to re-validate.)")
+            raise ValueError(
+                "Cannot reliably get navmesh name from room index if navmesh/room counts do not match.\n"
+                "(Call `.check_navmeshes()` after fixing this issue to re-validate.)"
+            )
         room_mcp_index_matches = [room.index for room in self.mcp.rooms if room.index == room_index]
         if not room_mcp_index_matches:
             raise ValueError(f"No rooms in MCP with index {room_index}.")
@@ -984,21 +1017,31 @@ class NavmeshGraph(object):
                 if edge.mcp_room_index > room_index:
                     edge.mcp_room_index -= 1
 
-    def move_in_world(self,
-                      start_translate: tp.Union[Vector3, list, tuple] = None,
-                      end_translate: tp.Union[Vector3, list, tuple] = None,
-                      start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
-                      end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
-                      enclose_original=True, selected_room_indices=None,
-                      selected_node_indices=None):
+    def move_in_world(
+        self,
+        start_translate: tp.Union[Vector3, list, tuple] = None,
+        end_translate: tp.Union[Vector3, list, tuple] = None,
+        start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
+        end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
+        enclose_original=True,
+        selected_room_indices=None,
+        selected_node_indices=None,
+    ):
         """Rotate and then translate all rooms in MCP (enclosing original rooms by default) and all nodes in MCG in
         world coordinates, so that an entity with a translate of `start_translate` and rotate of `start_rotate` ends up
         with a translate of `end_translate` and a rotate of `end_rotate`.
         """
-        self.mcp.move_in_world(start_translate, end_translate, start_rotate, end_rotate,
-                               enclose_original=enclose_original, selected_room_indices=selected_room_indices)
-        self.mcg.move_in_world(start_translate, end_translate, start_rotate, end_rotate,
-                               selected_node_indices=selected_node_indices)
+        self.mcp.move_in_world(
+            start_translate,
+            end_translate,
+            start_rotate,
+            end_rotate,
+            enclose_original=enclose_original,
+            selected_room_indices=selected_room_indices,
+        )
+        self.mcg.move_in_world(
+            start_translate, end_translate, start_rotate, end_rotate, selected_node_indices=selected_node_indices
+        )
 
     def to_string(self):
         """Print out a list of MCG nodes, their connections, and the rooms those connective edges go through."""
@@ -1040,6 +1083,7 @@ class NavmeshGraph(object):
 
     def draw(self, axes=None, show=True, room_color="cyan", label_rooms=False, label_nodes=False):
         import matplotlib.pyplot as plt
+
         if axes is None:
             fig = plt.figure(figsize=(8, 8))
             axes = fig.add_subplot(111, projection="3d")
@@ -1079,10 +1123,10 @@ TEST_MAP = "m12_00_00_01"
 
 def test_mcp(axes=None, show=False):
     from soulstruct import DSR_PATH
+
     test = MCP(DSR_PATH + f"/map/{TEST_MAP}/{TEST_MAP}.mcp")
     for i, room in enumerate(test.rooms):
-        print(f"Room {i}:\n"
-              f"    Box: {room.get_vertices()}\n")
+        print(f"Room {i}:\n" f"    Box: {room.get_vertices()}\n")
 
     test.draw(axes, show)
     return test
@@ -1090,11 +1134,10 @@ def test_mcp(axes=None, show=False):
 
 def test_mcg(axes=None, show=False):
     from soulstruct import DSR_PATH
+
     test = MCG(DSR_PATH + f"/map/{TEST_MAP}/{TEST_MAP}.mcg")
     for i, node in enumerate(test.nodes):
-        print(f"Node {i}:\n"
-              f"     -> nodes: {node.connected_nodes}\n"
-              f"    via edges: {node.connected_edges}")
+        print(f"Node {i}:\n" f"     -> nodes: {node.connected_nodes}\n" f"    via edges: {node.connected_edges}")
 
     test.draw(axes, show)
     return test
@@ -1102,6 +1145,7 @@ def test_mcg(axes=None, show=False):
 
 def test_draw_mcp_mcg():
     import matplotlib.pyplot as plt
+
     fig = plt.figure(figsize=(8, 8))
     axes = fig.add_subplot(111, projection="3d")
     test_mcp(axes)
@@ -1112,11 +1156,12 @@ def test_draw_mcp_mcg():
 def test_move():
     import matplotlib.pyplot as plt
     from soulstruct import DSR_PATH
+
     mcg = MCG(DSR_PATH + f"/map/{TEST_MAP}/{TEST_MAP}.mcg")
     mcp = MCP(DSR_PATH + f"/map/{TEST_MAP}/{TEST_MAP}.mcp")
 
     fig = plt.figure(figsize=(16, 8))
-    fig.canvas.set_window_title('Moved')
+    fig.canvas.set_window_title("Moved")
     axes_orig = fig.add_subplot(121, projection="3d")
     axes = fig.add_subplot(122, projection="3d")
 
@@ -1133,6 +1178,7 @@ def test_move():
 def draw_multiple_maps(map_ids):
     import matplotlib.pyplot as plt
     from soulstruct import DSR_PATH
+
     fig = plt.figure(figsize=(8, 8))
     axes = fig.add_subplot(111, projection="3d")
     colors = ("cyan", "blue", "green", "pink")
@@ -1142,5 +1188,5 @@ def draw_multiple_maps(map_ids):
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     draw_multiple_maps(("m12_00_00_01", "m13_01_00_00"))

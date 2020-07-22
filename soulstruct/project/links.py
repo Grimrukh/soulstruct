@@ -20,9 +20,10 @@ class InvalidMapPartNameError(SoulstructError):
     pass
 
 
-class WindowLinker(object):
+class WindowLinker:
     """Interface that generates links (go-to commands) between arbitrary parts of the Soulstruct unified window."""
-    _MATCH_LINK = re.compile(r'<(.*)>')
+
+    _MATCH_LINK = re.compile(r"<(.*)>")
 
     def __init__(self, window: SoulstructProjectWindow):
         self.window = window
@@ -57,16 +58,16 @@ class WindowLinker(object):
         if not match_link:
             raise ValueError(f"Invalid link: {field_type}")
 
-        name_extension = ''
+        name_extension = ""
         link_text = match_link.group(1)
 
-        if ':' not in link_text:
+        if ":" not in link_text:
             return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
 
-        link_pieces = link_text.split(':')
+        link_pieces = link_text.split(":")
         table_type = link_pieces[0]
 
-        if table_type == 'MapsList':
+        if table_type == "MapsList":
             links = []
             field_type = f'<Maps:{":".join(link_pieces[1:])}>'
             for entry_name in field_value:
@@ -76,7 +77,7 @@ class WindowLinker(object):
                 links += link if link else [BaseLink()]
             return links
 
-        if table_type == 'Maps':
+        if table_type == "Maps":
             entry_name = field_value
             if not entry_name:  # No link expected (None or empty string)
                 return [BaseLink(self, name="None")]
@@ -92,16 +93,23 @@ class WindowLinker(object):
                     # Technically, map links only care about entry list type (except for the collision field of Map
                     # Connections) but I'm sometimes adding some additional subtype enforcement.
                     # e.g. parts.characters[i].model_index links to models.characters only.
-                    entry_types = [MAP_ENTRY_TYPES[entry_list_name][entry_type].name
-                                   for entry_type in link_pieces[2].split('|')]
+                    entry_types = [
+                        MAP_ENTRY_TYPES[entry_list_name][entry_type].name for entry_type in link_pieces[2].split("|")
+                    ]
                     if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
                         raise ValueError("Type of entry name in field does not match enforced type of field.")
                 # Need plural form of entry type.
                 entry_type_name = MAP_ENTRY_TYPES[entry_list_name][entry_list[entry_name].ENTRY_TYPE]
-                return [MapsLink(
-                    self, name=field_value, entry_list_name=entry_list_name, entry_type_name=entry_type_name,
-                    entry_local_index=entry_local_index)]
-            except ValueError:
+                return [
+                    MapsLink(
+                        self,
+                        name=field_value,
+                        entry_list_name=entry_list_name,
+                        entry_type_name=entry_type_name,
+                        entry_local_index=entry_local_index,
+                    )
+                ]
+            except (KeyError, ValueError):
                 # Entry name is missing (or is not of the enforced entry type).
                 return [BaseLink()]
 
@@ -110,47 +118,58 @@ class WindowLinker(object):
 
         category = link_pieces[1]
 
-        if table_type == 'Text':
+        if table_type == "Text":
             text_table = self.project.Text[category]
             if field_value not in text_table:
                 return [BaseLink()]
             return [TextLink(self, category=category, text_id=field_value, name=text_table[field_value])]
 
-        if table_type == 'Params':
-            if category in {'Attacks', 'Behaviors'}:
+        if table_type == "Params":
+            if category in {"Attacks", "Behaviors"}:
                 # Try to determine Player vs. Non Player table.
-                if category == 'Attacks':
-                    if self.window.params_tab.active_category == 'PlayerBehaviors':
-                        category = 'PlayerAttacks'
-                    elif self.window.params_tab.active_category == 'NonPlayerBehaviors':
-                        category = 'NonPlayerAttacks'
-                elif category == 'Behaviors':
-                    if self.window.params_tab.active_category == 'Players':
-                        category = 'PlayerBehaviors'
-                if category in {'Attacks', 'Behaviors'}:
+                if category == "Attacks":
+                    if self.window.params_tab.active_category == "PlayerBehaviors":
+                        category = "PlayerAttacks"
+                    elif self.window.params_tab.active_category == "NonPlayerBehaviors":
+                        category = "NonPlayerAttacks"
+                elif category == "Behaviors":
+                    if self.window.params_tab.active_category == "Players":
+                        category = "PlayerBehaviors"
+                if category in {"Attacks", "Behaviors"}:
                     # Could be Player or Non Player. Provide both links.
-                    player_table = self.project.Params['Player' + category]
-                    non_player_table = self.project.Params['NonPlayer' + category]
+                    player_table = self.project.Params["Player" + category]
+                    non_player_table = self.project.Params["NonPlayer" + category]
                     links = []
                     if field_value in player_table:
-                        links.append(ParamsLink(
-                            self, category='Player' + category, param_entry_id=field_value,
-                            name=player_table[field_value].name))
+                        links.append(
+                            ParamsLink(
+                                self,
+                                category="Player" + category,
+                                param_entry_id=field_value,
+                                name=player_table[field_value].name,
+                            )
+                        )
                     if field_value in non_player_table:
-                        links.append(ParamsLink(
-                            self, category='NonPlayer' + category, param_entry_id=field_value,
-                            name=non_player_table[field_value].name))
+                        links.append(
+                            ParamsLink(
+                                self,
+                                category="NonPlayer" + category,
+                                param_entry_id=field_value,
+                                name=non_player_table[field_value].name,
+                            )
+                        )
                     if links:
                         return links
                     return [BaseLink()]
 
-            if category in {'Armor', 'Weapons'}:
-                true_param_id = (self.check_armor_id(field_value) if category == 'Armor'
-                                 else self.check_weapon_id(field_value))
+            if category in {"Armor", "Weapons"}:
+                true_param_id = (
+                    self.check_armor_id(field_value) if category == "Armor" else self.check_weapon_id(field_value)
+                )
                 if true_param_id is None:
                     return [BaseLink()]  # Invalid weapon/armor ID, even considering reinforcement.
                 if field_value != true_param_id:
-                    name_extension = '+' + str(field_value - true_param_id)
+                    name_extension = "+" + str(field_value - true_param_id)
                 field_value = true_param_id
 
             param_table = self.project.Params[category]
@@ -171,13 +190,13 @@ class WindowLinker(object):
 
         link_text = match_link.group(1)
 
-        if ':' not in link_text:
+        if ":" not in link_text:
             return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
 
-        link_pieces = link_text.split(':')
+        link_pieces = link_text.split(":")
         table_type = link_pieces[0]
 
-        if table_type == 'Maps':
+        if table_type == "Maps":
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
             entry_list_name = link_pieces[1]
             if entry_list_name not in MAP_ENTRY_TYPES:
@@ -188,7 +207,7 @@ class WindowLinker(object):
                 # Technically, map links only care about entry list type, but I'm sometimes adding some additional
                 # enforcement (like parts.characters[i].model_index linking to models.characters only).
                 names = []
-                for entry_type in link_pieces[2].split('|'):
+                for entry_type in link_pieces[2].split("|"):
                     entry_type_names = entry_list.get_entry_names(entry_type=entry_type)
                     if entry_list_name == "Models" and entry_type in {"Characters", "Players"}:
                         # Add name as suffix.
@@ -207,30 +226,35 @@ class WindowLinker(object):
         found.
         """
         param_category = self.window.params_tab.active_category
-        if param_category not in {'Weapons', 'Armor', 'Rings', 'Goods', 'Spells'}:
+        if param_category not in {"Weapons", "Armor", "Rings", "Goods", "Spells"}:
             return []
-        text_ids = {'Names': entry_id, 'Summaries': entry_id, 'Descriptions': entry_id}
+        text_ids = {"Names": entry_id, "Summaries": entry_id, "Descriptions": entry_id}
         links = []
 
-        prefix = param_category.rstrip('s')
+        prefix = param_category.rstrip("s")
 
-        if param_category == 'Weapons':
+        if param_category == "Weapons":
             base_weapon_id = self.check_weapon_id(entry_id)
             if base_weapon_id is not None:
-                text_ids['Summaries'] = base_weapon_id
-                text_ids['Descriptions'] = base_weapon_id
-        elif param_category == 'Armor':
+                text_ids["Summaries"] = base_weapon_id
+                text_ids["Descriptions"] = base_weapon_id
+        elif param_category == "Armor":
             base_armor_id = self.check_armor_id(entry_id)
             if base_armor_id is not None:
-                text_ids['Summaries'] = base_armor_id
-                text_ids['Descriptions'] = base_armor_id
+                text_ids["Summaries"] = base_armor_id
+                text_ids["Descriptions"] = base_armor_id
         for text_category, text_id in text_ids.items():
             if text_ids[text_category] not in self.project.Text[prefix + text_category]:
                 links.append(BaseLink())
             else:
-                links.append(TextLink(
-                    self, category=prefix + text_category, text_id=text_id,
-                    name=self.project.Text[prefix + text_category][text_id]))
+                links.append(
+                    TextLink(
+                        self,
+                        category=prefix + text_category,
+                        text_id=text_id,
+                        name=self.project.Text[prefix + text_category][text_id],
+                    )
+                )
 
         return links
 
@@ -243,9 +267,9 @@ class WindowLinker(object):
         if level == 0:
             return armor_id
         base_armor = armor_id - level
-        origin_field = 'originEquipPro' + ('' if level == 0 else str(level))
+        origin_field = "originEquipPro" + ("" if level == 0 else str(level))
         try:
-            origin = self.project.Params['Armor'][base_armor][origin_field]
+            origin = self.project.Params["Armor"][base_armor][origin_field]
         except KeyError:
             return None
         if origin == -1:
@@ -261,9 +285,9 @@ class WindowLinker(object):
         if level == 0:
             return weapon_id
         base_weapon = weapon_id - level
-        origin_field = 'originEquipWep' + ('' if level == 0 else str(level))
+        origin_field = "originEquipWep" + ("" if level == 0 else str(level))
         try:
-            origin = self.project.Params['Weapons'][base_weapon][origin_field]
+            origin = self.project.Params["Weapons"][base_weapon][origin_field]
         except KeyError:
             return None
         if origin == -1:
@@ -271,7 +295,7 @@ class WindowLinker(object):
         return base_weapon
 
     def text_link(self, category, text_id):
-        self.window.page_tabs.select(self.get_tab_index('text'))
+        self.window.page_tabs.select(self.get_tab_index("text"))
         # TODO: Create entry if missing.
         self.window.text_tab.select_category(category)
         self.window.text_tab.select_entry_id(text_id, edit_if_already_selected=False)
@@ -279,9 +303,9 @@ class WindowLinker(object):
 
     def maps_link(self, entry_list_name, entry_type_name, entry_local_index):
         self.window.maps_tab.select_displayed_field_row(None)
-        self.window.page_tabs.select(self.get_tab_index('maps'))
+        self.window.page_tabs.select(self.get_tab_index("maps"))
         self.window.maps_tab.refresh_categories()  # TODO: why do I need to call this?
-        category = f'{entry_list_name}: {entry_type_name}'
+        category = f"{entry_list_name}: {entry_type_name}"
         self.window.maps_tab.select_category(category, auto_scroll=True)
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
@@ -324,10 +348,10 @@ class WindowLinker(object):
         # TODO: Create if missing.
         if param_entry_id not in self.window.params_tab.get_category_data(category):
             self.window.CustomDialog(
-                title="Param ID Missing",
-                message=f"Param ID {param_entry_id} is missing from Params.{category}.")
+                title="Param ID Missing", message=f"Param ID {param_entry_id} is missing from Params.{category}."
+            )
             return
-        self.window.page_tabs.select(self.get_tab_index('params'))
+        self.window.page_tabs.select(self.get_tab_index("params"))
         self.window.params_tab.select_category(category)
         self.window.params_tab.select_entry_id(param_entry_id)
         if field_name is not None:
@@ -358,7 +382,8 @@ class WindowLinker(object):
                 summary = " "  # Armor summary defaults to a single blank space.
         description = getattr(self.project.Text, item_type + "Descriptions").get(item_id, "")
         name, summary, description = ItemTextEditBox(
-            self.window, name, summary, description, f"Editing {item_type}[{item_id}]").go()
+            self.window, name, summary, description, f"Editing {item_type}[{item_id}]"
+        ).go()
         if not name:
             raise ValueError("Item name cannot be empty.")
         getattr(self.project.Text, item_type + "Names")[item_id] = name
@@ -368,7 +393,7 @@ class WindowLinker(object):
             getattr(self.project.Text, item_type + "Descriptions")[item_id] = description
 
 
-class BaseLink(object):
+class BaseLink:
     def __init__(self, linker: WindowLinker = None, name=None, menu_text=None):
         """Bundles right-click context menu text with a GUI-jumping link callback, with an optional name.
 
@@ -392,8 +417,9 @@ class BaseLink(object):
 class NullLink(BaseLink):
     """Dummy link for a normally-linked field has a null value, usually 0 or -1, which means the field is unused or set
     to a default. Simply displays '{None/Default}' next to name."""
+
     def __init__(self, linker: WindowLinker):
-        super().__init__(linker, name='None/Default', menu_text='')
+        super().__init__(linker, name="None/Default", menu_text="")
 
     def __call__(self):
         raise AttributeError("Null link cannot be called.")
@@ -402,8 +428,10 @@ class NullLink(BaseLink):
 class ParamsLink(BaseLink):
     def __init__(self, linker, category, param_entry_id, name=None):
         super().__init__(
-            linker, name=name,
-            menu_text=f"Go to Params.{category}[{param_entry_id}]" + f"  {{{name}}}" if name is not None else "")
+            linker,
+            name=name,
+            menu_text=f"Go to Params.{category}[{param_entry_id}]" + f"  {{{name}}}" if name is not None else "",
+        )
         self.category = category
         self.param_entry_id = param_entry_id
 
@@ -424,10 +452,12 @@ class TextLink(BaseLink):
 class MapsLink(BaseLink):
     def __init__(self, linker, entry_list_name, entry_local_index, entry_type_name, name=None):
         super().__init__(
-            linker, name=name,
+            linker,
+            name=name,
             menu_text=f"Go to Maps.{entry_list_name}"
-                      f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
-                      f" {{{name}}}")
+            f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
+            f" {{{name}}}",
+        )
         self.entry_list_name = entry_list_name
         self.entry_type_name = entry_type_name
         self.entry_local_index = entry_local_index

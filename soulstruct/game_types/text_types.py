@@ -6,7 +6,7 @@ from soulstruct.enums.shared import ButtonType, NumberButtons, PLAYER
 from soulstruct.game_types.basic_types import GameObject
 from soulstruct.game_types.msb_types import CoordEntityInt
 
-__all__ = ['Text', 'EventText', 'StringOffset', 'EventTextInt', 'StringOffsetInt']
+__all__ = ["Text", "EventText", "StringOffset", "EventTextInt", "StringOffsetInt"]
 
 
 class Text(GameObject, IntEnum):
@@ -14,6 +14,7 @@ class Text(GameObject, IntEnum):
 
     Note that only the EventText subclass can be used in any EMEVD instructions.
     """
+
     pass
 
 
@@ -23,12 +24,21 @@ class EventText(Text):
     Call the 'as_dialog' or 'as_status' methods in EMEVD to display this text in-game.
     """
 
-    def as_dialog(self, anchor_entity: CoordEntityInt = PLAYER, display_distance: float = 3.0,
-                  button_type: ButtonType = ButtonType.OK_or_Cancel,
-                  number_buttons: NumberButtons = NumberButtons.NoButton):
+    def as_dialog(
+        self,
+        anchor_entity: CoordEntityInt = PLAYER,
+        display_distance: float = 3.0,
+        button_type: ButtonType = ButtonType.OK_or_Cancel,
+        number_buttons: NumberButtons = NumberButtons.NoButton,
+    ):
         """Display single line of text in a small dialog box at the bottom of the game window."""
-        instr.DisplayDialog(self.value, anchor_entity=anchor_entity, display_distance=display_distance,
-                            button_type=button_type, number_buttons=number_buttons)
+        instr.DisplayDialog(
+            self.value,
+            anchor_entity=anchor_entity,
+            display_distance=display_distance,
+            button_type=button_type,
+            number_buttons=number_buttons,
+        )
 
     def as_status(self, pad_enabled: bool = True):
         """Display text in a large status message that appears at the top of the screen.
@@ -50,6 +60,7 @@ class StringOffset(GameObject, IntEnum):
 
     You are very unlikely to use those instructions, and hence this type.
     """
+
     pass
 
 

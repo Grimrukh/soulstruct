@@ -30,11 +30,12 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
     input_directory = Path(input_directory)
     emevd_sources = {m.emevd_file_stem: None for m in maps}
-    all_exts = EVENT_EXTENSIONS["evs"].union(EVENT_EXTENSIONS["emevd"].union(
-        EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"])))
+    all_exts = EVENT_EXTENSIONS["evs"].union(
+        EVENT_EXTENSIONS["emevd"].union(EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"]))
+    )
     for available in input_directory.glob("*"):
         parts = available.name.split(".")
-        name, ext = parts[0], '.' + '.'.join(parts[1:])
+        name, ext = parts[0], "." + ".".join(parts[1:])
         if name in emevd_sources and (ext == input_ext or (input_ext is None and ext in all_exts)):
             if emevd_sources[name] is not None:
                 raise FileExistsError(f"Found multiple files named {repr(name)} with different extensions.")
@@ -47,6 +48,7 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
             emevd = emevd_class(source, script_path=input_directory)
             output_path = output_directory / (name + output_ext)
             if output_type == "evs":
+                print(Path(output_path).absolute())
                 emevd.write_evs(output_path)
             elif output_type == "emevd":
                 emevd.write_emevd(output_path, dcx=False)

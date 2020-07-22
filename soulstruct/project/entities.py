@@ -19,9 +19,9 @@ if TYPE_CHECKING:
     from soulstruct.maps.base import MSBEntryEntity
 
 ENTRY_LIST_FG_COLORS = {
-    'Parts': '#DDF',
-    'Regions': '#FDD',
-    'Events': '#DFD',
+    "Parts": "#DDF",
+    "Regions": "#FDD",
+    "Events": "#DFD",
 }
 
 ENTRY_GAME_TYPES = {
@@ -83,6 +83,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     class EntryRow(SoulstructBaseEditor.EntryRow):
         """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
+
         master: SoulstructEntityEditor
 
         ENTRY_ID_WIDTH = 15
@@ -105,39 +106,65 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
             self.row_box = editor.Frame(
                 width=self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH + self.ENTRY_DESCRIPTION_WIDTH,
-                height=self.ENTRY_ROW_HEIGHT, bg=bg_color,
-                row=row_index, columnspan=2, sticky='nsew')
+                height=self.ENTRY_ROW_HEIGHT,
+                bg=bg_color,
+                row=row_index,
+                columnspan=2,
+                sticky="nsew",
+            )
             bind_events(self.row_box, main_bindings)
 
-            self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky='ew')
+            self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky="ew")
             self.id_label = editor.Label(
-                self.id_box, text='', width=self.ENTRY_ID_WIDTH, bg=bg_color, fg=self.ENTRY_ID_FG, font_size=11,
-                sticky='e')
+                self.id_box,
+                text="",
+                width=self.ENTRY_ID_WIDTH,
+                bg=bg_color,
+                fg=self.ENTRY_ID_FG,
+                font_size=11,
+                sticky="e",
+            )
             if self.EDIT_ENTRY_ID:
                 id_bindings = main_bindings.copy()
-                id_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
-                    i, id_clicked=True)
-                id_bindings['<Shift-Button-1>'] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+                id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
+                    i, id_clicked=True
+                )
+                id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
             else:
                 id_bindings = main_bindings
             bind_events(self.id_box, id_bindings)
             bind_events(self.id_label, id_bindings)
 
-            self.text_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky='ew')
+            self.text_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
             self.text_label = editor.Label(
-                self.text_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w', font_size=11,
-                justify='left', width=self.ENTRY_TEXT_WIDTH)
+                self.text_box,
+                text="",
+                bg=bg_color,
+                fg=self.ENTRY_TEXT_FG,
+                anchor="w",
+                font_size=11,
+                justify="left",
+                width=self.ENTRY_TEXT_WIDTH,
+            )
             bind_events(self.text_box, main_bindings)
             bind_events(self.text_label, main_bindings)
 
-            self.description_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky='nsew')
+            self.description_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky="nsew")
             self.description_label = editor.Label(
-                self.description_box, text='', bg=bg_color, fg=self.ENTRY_TEXT_FG, anchor='w', font_size=11,
-                justify='left', width=self.ENTRY_DESCRIPTION_WIDTH)
+                self.description_box,
+                text="",
+                bg=bg_color,
+                fg=self.ENTRY_TEXT_FG,
+                anchor="w",
+                font_size=11,
+                justify="left",
+                width=self.ENTRY_DESCRIPTION_WIDTH,
+            )
             desc_bindings = main_bindings.copy()
-            desc_bindings.pop('<Shift-Button-1', None)
-            desc_bindings['<Button-1>'] = lambda _, i=row_index: self.master.select_entry_row_index(
-                i, description_clicked=True)
+            desc_bindings.pop("<Shift-Button-1", None)
+            desc_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
+                i, description_clicked=True
+            )
             bind_events(self.description_box, desc_bindings)
             bind_events(self.description_label, desc_bindings)
 
@@ -154,10 +181,12 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             self.unhide()
 
         def build_entry_context_menu(self):
-            self.context_menu.delete(0, 'end')
+            self.context_menu.delete(0, "end")
             self.context_menu.add_command(
-                label="Edit in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.popout_entry_text_edit(self.row_index))
+                label="Edit in Floating Box (Shift + Click)",
+                foreground=self.STYLE_DEFAULTS["text_fg"],
+                command=lambda: self.master.popout_entry_text_edit(self.row_index),
+            )
 
         def hide(self):
             """Called when this row has no entry to display."""
@@ -182,9 +211,16 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
         def _update_colors(self):
             bg_color = self._get_color()
-            for widget in (self.row_box, self.id_box, self.id_label, self.text_box, self.text_label,
-                           self.description_box, self.description_label):
-                widget['bg'] = bg_color
+            for widget in (
+                self.row_box,
+                self.id_box,
+                self.id_label,
+                self.text_box,
+                self.text_label,
+                self.description_box,
+                self.description_label,
+            ):
+                widget["bg"] = bg_color
 
     entry_rows: List[SoulstructEntityEditor.EntryRow]
 
@@ -197,40 +233,77 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
     def build(self):
-        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
+        with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1, 1, 1, 1], auto_columns=0):
-                map_display_names = [f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
-                                     for game_map in ALL_MAPS if game_map.msb_file_stem]
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1, 1], auto_columns=0):
+                map_display_names = [
+                    f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
+                    for game_map in ALL_MAPS
+                    if game_map.msb_file_stem
+                ]
                 self.map_choice = self.Combobox(
-                    values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self.on_map_choice, sticky='w', padx=10)
-                self.Button(text="Import Entities", font_size=10, width=15, padx=10,
-                            command=self._import_entities_module,
-                            tooltip_text="Import all entity ID names and descriptions from an existing Python module "
-                                         "in the format generated by this tab (in {project}/events).")
-                self.Button(text="Write Entities", font_size=10, width=15, padx=10,
-                            command=self._write_entities_module,
-                            tooltip_text="Create or replace the Python entities module that can be imported into "
-                                         "this map's EVS script. If you have changed any existing names and want to "
-                                         "update the names in the EVS script, make sure to restore the IDs before "
-                                         "regenerating this file.")
-                self.Button(text="Event IDs to Names", font_size=10, width=18, padx=10,
-                            command=self._replace_evs_ids,
-                            tooltip_text="Go through this map's EVS script and replace any entity IDs with their names "
-                                         "imported from the map's entities module, if present.")
-                self.Button(text="Event Names to IDs", font_size=10, width=18, padx=10,
-                            command=self._restore_evs_ids,
-                            tooltip_text="Go through this map's EVS script and replace any names imported from the "
-                                         "map's entities module with their original entity IDs, if present.")
+                    values=map_display_names,
+                    label="Map:",
+                    label_font_size=12,
+                    label_position="left",
+                    width=35,
+                    font=("Segoe UI", 12),
+                    on_select_function=self.on_map_choice,
+                    sticky="w",
+                    padx=10,
+                )
+                self.Button(
+                    text="Import Entities",
+                    font_size=10,
+                    width=15,
+                    padx=10,
+                    command=self._import_entities_module,
+                    tooltip_text="Import all entity ID names and descriptions from an existing Python module "
+                    "in the format generated by this tab (in {project}/events).",
+                )
+                self.Button(
+                    text="Write Entities",
+                    font_size=10,
+                    width=15,
+                    padx=10,
+                    command=self._write_entities_module,
+                    tooltip_text="Create or replace the Python entities module that can be imported into "
+                    "this map's EVS script. If you have changed any existing names and want to "
+                    "update the names in the EVS script, make sure to restore the IDs before "
+                    "regenerating this file.",
+                )
+                self.Button(
+                    text="Event IDs to Names",
+                    font_size=10,
+                    width=18,
+                    padx=10,
+                    command=self._replace_evs_ids,
+                    tooltip_text="Go through this map's EVS script and replace any entity IDs with their names "
+                    "imported from the map's entities module, if present.",
+                )
+                self.Button(
+                    text="Event Names to IDs",
+                    font_size=10,
+                    width=18,
+                    padx=10,
+                    command=self._restore_evs_ids,
+                    tooltip_text="Go through this map's EVS script and replace any names imported from the "
+                    "map's entities module with their original entity IDs, if present.",
+                )
 
-            with self.set_master(sticky='nsew', row_weights=[1], column_weights=[0, 1], auto_columns=0):
+            with self.set_master(sticky="nsew", row_weights=[1], column_weights=[0, 1], auto_columns=0):
                 self.build_category_canvas()
-                with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1], auto_rows=0):
+                with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1], auto_rows=0):
                     self.build_entry_frame()
 
-    def select_entry_row_index(self, row_index, set_focus_to_text=True, edit_if_already_selected=True,
-                               id_clicked=False, description_clicked=False):
+    def select_entry_row_index(
+        self,
+        row_index,
+        set_focus_to_text=True,
+        edit_if_already_selected=True,
+        id_clicked=False,
+        description_clicked=False,
+    ):
         """Select entry from row index, based on currently displayed category and ID range."""
         old_row_index = self.active_row_index
 
@@ -270,16 +343,21 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             except IndexError:
                 # Create new rows as needed.
                 with self.set_master(self.entry_i_frame):
-                    self.entry_rows.append(self.EntryRow(
-                        self, row_index=row, main_bindings={
-                            '<Button-1>': lambda _, i=row: self.select_entry_row_index(i),
-                            '<Shift-Button-1>': lambda e, i=row: self.popout_entry_text_edit(i),
-                            '<Button-3>': lambda e, i=row: self._right_click_entry(e, i),
-                            '<Up>': self._entry_press_up,
-                            '<Down>': self._entry_press_down,
-                            '<Prior>': lambda e: self._go_to_previous_entry_range(),
-                            '<Next>': lambda e: self._go_to_next_entry_range(),
-                        }))
+                    self.entry_rows.append(
+                        self.EntryRow(
+                            self,
+                            row_index=row,
+                            main_bindings={
+                                "<Button-1>": lambda _, i=row: self.select_entry_row_index(i),
+                                "<Shift-Button-1>": lambda e, i=row: self.popout_entry_text_edit(i),
+                                "<Button-3>": lambda e, i=row: self._right_click_entry(e, i),
+                                "<Up>": self._entry_press_up,
+                                "<Down>": self._entry_press_down,
+                                "<Prior>": lambda e: self._go_to_previous_entry_range(),
+                                "<Next>": lambda e: self._go_to_next_entry_range(),
+                            },
+                        )
+                    )
                 self.entry_rows[row].update_entry(entry_id, entry.name, entry.description)
             self.entry_rows[row].unhide()
             row += 1
@@ -299,17 +377,19 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             entry_id = self.get_entry_id(row_index)
             initial_desc = self.get_entry_description(entry_id)
             self._e_entry_description_edit = self.Entry(
-                self.entry_rows[row_index].description_box, initial_text=initial_desc, sticky='ew',
-                width=5)
+                self.entry_rows[row_index].description_box, initial_text=initial_desc, sticky="ew", width=5
+            )
             self._e_entry_description_edit.bind(
-                '<Return>', lambda e, i=row_index: self._confirm_entry_description_edit(i))
-            self._e_entry_description_edit.bind('<Up>', self._entry_press_up)  # confirms edit
-            self._e_entry_description_edit.bind('<Down>', self._entry_press_down)  # confirms edit
+                "<Return>", lambda e, i=row_index: self._confirm_entry_description_edit(i)
+            )
+            self._e_entry_description_edit.bind("<Up>", self._entry_press_up)  # confirms edit
+            self._e_entry_description_edit.bind("<Down>", self._entry_press_down)  # confirms edit
             self._e_entry_description_edit.bind(
-                '<FocusOut>', lambda e, i=row_index: self._confirm_entry_description_edit(i))
-            self._e_entry_description_edit.bind('<Escape>', lambda e: self._cancel_entry_description_edit())
+                "<FocusOut>", lambda e, i=row_index: self._confirm_entry_description_edit(i)
+            )
+            self._e_entry_description_edit.bind("<Escape>", lambda e: self._cancel_entry_description_edit())
             self._e_entry_description_edit.focus_set()
-            self._e_entry_description_edit.select_range(0, 'end')
+            self._e_entry_description_edit.select_range(0, "end")
 
     def _cancel_entry_description_edit(self):
         if self._e_entry_description_edit:
@@ -349,7 +429,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             elif edit_new_description:
                 self._start_entry_description_edit(self.active_row_index)
             if self.entry_canvas.yview()[1] != 1.0 or self.active_row_index < self.displayed_entry_count - 5:
-                self.entry_canvas.yview_scroll(-1, 'units')
+                self.entry_canvas.yview_scroll(-1, "units")
 
     def _entry_press_down(self, _=None):
         if self.active_row_index is not None:
@@ -367,7 +447,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             elif edit_new_description:
                 self._start_entry_description_edit(self.active_row_index)
             if self.entry_canvas.yview()[0] != 0.0 or self.active_row_index > 5:
-                self.entry_canvas.yview_scroll(1, 'units')
+                self.entry_canvas.yview_scroll(1, "units")
 
     def on_map_choice(self, event=None):
         if self.global_map_choice_func and event is not None:
@@ -401,8 +481,11 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         entries_by_entity_enum = {}
         not_found = []
         skipped = set()  # will also skip description
-        for attr_name, attr in [m[0:2] for m in inspect.getmembers(entity_module, inspect.isclass)
-                                if m[1].__module__ == entity_module.__name__]:
+        for attr_name, attr in [
+            m[0:2]
+            for m in inspect.getmembers(entity_module, inspect.isclass)
+            if m[1].__module__ == entity_module.__name__
+        ]:
             entry_list_name, entry_type_name = MODULE_CLASS_NAMES[attr_name].split(": ")
             entry_type = MAP_ENTRY_ENTITY_TYPES[entry_list_name][entry_type_name]
             for entity_enum in attr:
@@ -414,11 +497,13 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                     choice = self.CustomDialog(
                         title="Multiple Entries with Same ID",
                         message=f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' appears "
-                                f"multiple times in MSB. This will rename only the first one found (type "
-                                f"{entry[0].ENTRY_TYPE.name}). Is this OK?",
+                        f"multiple times in MSB. This will rename only the first one found (type "
+                        f"{entry[0].ENTRY_TYPE.name}). Is this OK?",
                         button_kwargs=("YES", "NO", "NO"),
                         button_names=("Yes, change it", "No, skip it", "No, abort import"),
-                        default_output=2, cancel_output=2)
+                        default_output=2,
+                        cancel_output=2,
+                    )
                     if choice == 2:
                         return
                     elif choice == 1:
@@ -430,11 +515,13 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                     choice = self.CustomDialog(
                         title="Entry Type Mismatch",
                         message=f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' has type "
-                                f"'{attr_name}', but has different type '{entry_list_name}.{entry_type_name} in MSB. "
-                                f"Change name anyway?",
+                        f"'{attr_name}', but has different type '{entry_list_name}.{entry_type_name} in MSB. "
+                        f"Change name anyway?",
                         button_kwargs=("YES", "NO", "NO"),
                         button_names=("Yes, change it", "No, skip it", "No, abort import"),
-                        default_output=2, cancel_output=2)
+                        default_output=2,
+                        cancel_output=2,
+                    )
                     if choice == 2:
                         return
                     elif choice == 1:
@@ -442,19 +529,22 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                         continue
                 entries_by_entity_enum[entity_enum] = entry
         if not entries_by_entity_enum:
-            return self.CustomDialog("No IDs to Update",
-                                     "No IDs in the Python entities module are present in the MSB.")
+            return self.CustomDialog("No IDs to Update", "No IDs in the Python entities module are present in the MSB.")
         if not_found:
             not_found_string = word_wrap(", ".join(not_found), 50)
-            if self.CustomDialog(
-                title="Allow Missing IDs?",
-                message=f"These entity IDs in the Python module could not be found in the MSB:"
-                        f"\n\n{not_found_string}"
-                        f"\n\nContinue updating {len(entries_by_entity_enum)} other IDs?",
-                button_kwargs=("YES", "NO"),
-                button_names=("Yes, continue", "No, abort import"),
-                default_output=0, cancel_output=1,
-            ) == 1:
+            if (
+                self.CustomDialog(
+                    title="Allow Missing IDs?",
+                    message=f"These entity IDs in the Python module could not be found in the MSB:"
+                    f"\n\n{not_found_string}"
+                    f"\n\nContinue updating {len(entries_by_entity_enum)} other IDs?",
+                    button_kwargs=("YES", "NO"),
+                    button_names=("Yes, continue", "No, abort import"),
+                    default_output=0,
+                    cancel_output=1,
+                )
+                == 1
+            ):
                 return
 
         # Find descriptions with regular expressions.
@@ -502,9 +592,9 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             class_text = ""
             requires_pass = True
             for entity_id, msb_entry in self.get_category_data(category).items():
-                name = msb_entry.name.replace(' ', '')
+                name = msb_entry.name.replace(" ", "")
                 try:
-                    name = name.encode('utf-8').decode('ascii')
+                    name = name.encode("utf-8").decode("ascii")
                 except UnicodeDecodeError:
                     class_text += f"    # {name} = {entity_id}"
                 else:
@@ -519,11 +609,12 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                     class_text += "    pass\n"
                 module_text += class_text
 
-        with module_path.open('w', encoding='utf-8') as f:
+        with module_path.open("w", encoding="utf-8") as f:
             f.write(module_text)
 
-        self.CustomDialog("Write Successful", f"'{{project}}/events/{module_path.name}'\n"
-                                              f"created or overwritten successfully.")
+        self.CustomDialog(
+            "Write Successful", f"'{{project}}/events/{module_path.name}'\n" f"created or overwritten successfully."
+        )
 
     def _replace_evs_ids(self):
         game_map = self._get_map()
@@ -539,17 +630,22 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             entity_module = import_module(module_path.stem)
         except Exception as e:
             return self.CustomDialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(e)}")
-        with evs_path.open('r', encoding='utf-8') as f:
+        with evs_path.open("r", encoding="utf-8") as f:
             evs = f.read()
-        for attr_name, attr in [m[0:2] for m in inspect.getmembers(entity_module, inspect.isclass)
-                                if m[1].__module__ == entity_module.__name__]:
+        for attr_name, attr in [
+            m[0:2]
+            for m in inspect.getmembers(entity_module, inspect.isclass)
+            if m[1].__module__ == entity_module.__name__
+        ]:
             for entity in attr:
                 evs = re.sub(fr"([ ,(=]){entity.value}([,)])", fr"\1{attr_name}.{entity.name}\2", evs)
 
         if f"from {module_path.stem} import *" not in evs:
-            evs = evs.replace("from soulstruct.events.darksouls1 import *\n",
-                              f"from soulstruct.events.darksouls1 import *\nfrom {module_path.stem} import *\n")
-        with evs_path.open('w', encoding='utf-8') as f:
+            evs = evs.replace(
+                "from soulstruct.events.darksouls1 import *\n",
+                f"from soulstruct.events.darksouls1 import *\nfrom {module_path.stem} import *\n",
+            )
+        with evs_path.open("w", encoding="utf-8") as f:
             f.write(evs)
 
     def _restore_evs_ids(self):
@@ -566,28 +662,31 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             entity_module = import_module(module_path.stem)
         except Exception as e:
             return self.CustomDialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(e)}")
-        with evs_path.open('r', encoding='utf-8') as f:
+        with evs_path.open("r", encoding="utf-8") as f:
             evs = f.read()
-        for attr_name, attr in [m[0:2] for m in inspect.getmembers(entity_module, inspect.isclass)
-                                if m[1].__module__ == entity_module.__name__]:
+        for attr_name, attr in [
+            m[0:2]
+            for m in inspect.getmembers(entity_module, inspect.isclass)
+            if m[1].__module__ == entity_module.__name__
+        ]:
             for entity in attr:
                 evs = re.sub(fr"([ ,(=]){attr_name}.{entity.name}([,)])", fr"\1{entity.value}\2", evs)
 
-        with evs_path.open('w', encoding='utf-8') as f:
+        with evs_path.open("w", encoding="utf-8") as f:
             f.write(evs)
 
     @staticmethod
     def _get_category_text_fg(category: str):
-        return ENTRY_LIST_FG_COLORS.get(category.split(':')[0], '#FFF')
+        return ENTRY_LIST_FG_COLORS.get(category.split(":")[0], "#FFF")
 
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names (except Model) and their subtypes, properly formatted."""
         categories = []
         for entry_list_name, entry_type_names in MAP_ENTRY_ENTITY_TYPES.items():
-            if entry_list_name == 'Models':
+            if entry_list_name == "Models":
                 continue
             for name in entry_type_names:
-                categories.append(f'{entry_list_name}: {name}')
+                categories.append(f"{entry_list_name}: {name}")
         return categories
 
     def get_selected_msb(self) -> MSB:
@@ -606,7 +705,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 return {}
         selected_msb = self.get_selected_msb()
         try:
-            entry_list, entry_type = category.split(': ')
+            entry_list, entry_type = category.split(": ")
         except ValueError:
             raise ValueError(f"Category name was not in [List: Type] format: {category}")
         return selected_msb.get_entity_id_dict(entry_list, entry_type)
@@ -644,7 +743,8 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         entry_list[entry_index].description = description  # Will update Maps tab tooltip as well.
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(
-                entry_index, self.entry_rows[update_row_index].entry_text, description)
+                entry_index, self.entry_rows[update_row_index].entry_text, description
+            )
 
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
         """Changes 'entity_id' field of MSB entry."""

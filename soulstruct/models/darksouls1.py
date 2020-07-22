@@ -1,172 +1,170 @@
-
 CHARACTER_MODELS = {
-    0: 'Player Character',
-    1000: 'Empty Character',  # e.g. bonfires
-    1200: 'Large Rat',
-    1201: 'Small Rat',
-    1202: 'Giant Rat',
-    1203: 'Snow Rat',
-    2060: 'Infested Ghoul',
-    2230: 'Stray Demon',
-    2231: 'Demon Firesage',
-    2232: 'Asylum Demon',
-    2240: 'Capra Demon',
-    2250: 'Taurus Demon',
-    2260: 'Batwing Demon',
-    2270: 'Mushroom Parent',
-    2280: 'Mushroom Child',
+    0: "Player Character",
+    1000: "Empty Character",  # e.g. bonfires
+    1200: "Large Rat",
+    1201: "Small Rat",
+    1202: "Giant Rat",
+    1203: "Snow Rat",
+    2060: "Infested Ghoul",
+    2230: "Stray Demon",
+    2231: "Demon Firesage",
+    2232: "Asylum Demon",
+    2240: "Capra Demon",
+    2250: "Taurus Demon",
+    2260: "Batwing Demon",
+    2270: "Mushroom Parent",
+    2280: "Mushroom Child",
     # 2290: 'Chained Prisoner (unused)',
-    2300: 'Titanite Demon',
-    2310: 'Crow Demon',
-    2320: 'Iron Golem',
-    2330: 'Demonic Foliage',
-    2360: 'Executioner Smough',  # both versions
-    2370: 'Channeler',
-    2380: 'Stone Knight',
-    2390: 'Darkwraith',
-    2400: 'Painting Guardian',
-    2410: 'Silver Knight',
-    2430: 'Demonic Statue',
-    2500: 'Hollow',
-    2510: 'Undead Merchant',  # both genders
-    2520: 'Hollow Assassin',
-    2530: 'Blowdart Sniper',
-    2540: 'Hollow Warrior',
-    2550: 'Hollow Soldier',
-    2560: 'Balder Knight',
-    2570: 'Berenike Knight',
+    2300: "Titanite Demon",
+    2310: "Crow Demon",
+    2320: "Iron Golem",
+    2330: "Demonic Foliage",
+    2360: "Executioner Smough",  # both versions
+    2370: "Channeler",
+    2380: "Stone Knight",
+    2390: "Darkwraith",
+    2400: "Painting Guardian",
+    2410: "Silver Knight",
+    2430: "Demonic Statue",
+    2500: "Hollow",
+    2510: "Undead Merchant",  # both genders
+    2520: "Hollow Assassin",
+    2530: "Blowdart Sniper",
+    2540: "Hollow Warrior",
+    2550: "Hollow Soldier",
+    2560: "Balder Knight",
+    2570: "Berenike Knight",
     # 2590: 'Marvelous Chester (unused 1)',
     # 2591: 'Marvelous Chester (unused 2)',
     # 2600: 'Young Witch Beatrice (unused)',
-    2640: 'Andre',
-    2650: 'Necromancer',
-    2660: 'Butcher',
-    2670: 'Ghost (Male)',
-    2680: 'Ghost (Female)',
-    2690: 'Serpent Soldier',
-    2700: 'Serpent Mage',
-    2710: 'Crystal Golem',
-    2711: 'Golden Crystal Golem',
-    2730: 'Crossbreed Priscilla',
-    2731: 'Crossbreed Priscilla (tail)',
-    2750: 'Anastacia',
-    2780: 'Mimic',
-    2790: 'Black Knight',
-    2800: 'Undead Crystal Soldier',
-    2810: 'Infested Barbarian (club)',
-    2811: 'Infested Barbarian (boulder)',
+    2640: "Andre",
+    2650: "Necromancer",
+    2660: "Butcher",
+    2670: "Ghost (Male)",
+    2680: "Ghost (Female)",
+    2690: "Serpent Soldier",
+    2700: "Serpent Mage",
+    2710: "Crystal Golem",
+    2711: "Golden Crystal Golem",
+    2730: "Crossbreed Priscilla",
+    2731: "Crossbreed Priscilla (tail)",
+    2750: "Anastacia",
+    2780: "Mimic",
+    2790: "Black Knight",
+    2800: "Undead Crystal Soldier",
+    2810: "Infested Barbarian (club)",
+    2811: "Infested Barbarian (boulder)",
     # 2820: 'Spider Hollow (unused)',
-    2830: 'Phalanx',
-    2840: 'Engorged Hollow',
-    2860: 'Giant',
-    2870: 'Sentinel',  # includes Royal Sentinel
-    2900: 'Skeleton',
-    2910: 'Giant Skeleton',
-    2920: 'Vamos',
-    2930: 'Bonewheel Skeleton',
-    2940: 'Skeleton Baby',
-    2950: 'Skeleton Beast',
-    2960: 'Bone Tower',
-    3090: 'Giant Mosquito',
+    2830: "Phalanx",
+    2840: "Engorged Hollow",
+    2860: "Giant",
+    2870: "Sentinel",  # includes Royal Sentinel
+    2900: "Skeleton",
+    2910: "Giant Skeleton",
+    2920: "Vamos",
+    2930: "Bonewheel Skeleton",
+    2940: "Skeleton Baby",
+    2950: "Skeleton Beast",
+    2960: "Bone Tower",
+    3090: "Giant Mosquito",
     # 3110: 'Crystal Lizard (unused)',  # from Demon's Souls
-    3200: 'Slime',
-    3210: 'Egg Carrier',
-    3220: 'Vile Maggot',
-    3230: 'Moonlight Butterfly',
-    3240: 'Chaos Eater',
-    3250: 'Man-Eater Shell',
-    3270: 'Basilisk',
+    3200: "Slime",
+    3210: "Egg Carrier",
+    3220: "Vile Maggot",
+    3230: "Moonlight Butterfly",
+    3240: "Chaos Eater",
+    3250: "Man-Eater Shell",
+    3270: "Basilisk",
     # 3290: 'Brain Bug (unused)',
-    3300: 'Crystal Lizard',
-    3320: 'Pinwheel',
-    3330: 'Pisaca',
-    3340: 'Attack Dog',
-    3341: 'Flaming Attack Dog',
-    3350: 'Possessed Tree',
-    3370: 'Tree Lizard',
-    3380: 'Giant Leech',
-    3390: 'Burrowing Rockworm',
-    3400: 'Cragspider',
-    3410: 'Frog-Ray',
-    3420: 'Undead Dragon',
-    3421: 'Bounding Demon',  # Undead Dragon legs
-    3422: 'Undead Dragon (wing)',
-    3430: 'Hellkite Dragon',
-    3431: 'Hellkite Dragon (tail)',
+    3300: "Crystal Lizard",
+    3320: "Pinwheel",
+    3330: "Pisaca",
+    3340: "Attack Dog",
+    3341: "Flaming Attack Dog",
+    3350: "Possessed Tree",
+    3370: "Tree Lizard",
+    3380: "Giant Leech",
+    3390: "Burrowing Rockworm",
+    3400: "Cragspider",
+    3410: "Frog-Ray",
+    3420: "Undead Dragon",
+    3421: "Bounding Demon",  # Undead Dragon legs
+    3422: "Undead Dragon (wing)",
+    3430: "Hellkite Dragon",
+    3431: "Hellkite Dragon (tail)",
     # 3440: 'Kalameet (unused)',
-    3450: 'Everlasting Dragon',
-    3451: 'Everlasting Dragon (tail)',
-    3460: 'Armored Tusk',
-    3461: 'Armored Tusk (rear guard)',
+    3450: "Everlasting Dragon",
+    3451: "Everlasting Dragon (tail)",
+    3460: "Armored Tusk",
+    3461: "Armored Tusk (rear guard)",
     # 3470: 'Sanctuary Guardian (unused)',
-    3471: 'Sanctuary Guardian',
+    3471: "Sanctuary Guardian",
     # 3472: 'Sanctuary Guardian (unused 2)',
-    3480: 'Chaos Bug',
-    3490: 'Good Vagrant',
-    3491: 'Evil Vagrant',
-    3500: 'Mass of Souls',
-    3501: 'Wisp',
-    3510: 'Giant Crow',
-    3511: 'Giant Crow (cutscene)',
-    3520: 'Drake',
-    3530: 'Hydra',
-    3531: 'Hydra (head)',
-    4090: 'Marvelous Chester',
+    3480: "Chaos Bug",
+    3490: "Good Vagrant",
+    3491: "Evil Vagrant",
+    3500: "Mass of Souls",
+    3501: "Wisp",
+    3510: "Giant Crow",
+    3511: "Giant Crow (cutscene)",
+    3520: "Drake",
+    3530: "Hydra",
+    3531: "Hydra (head)",
+    4090: "Marvelous Chester",
     # 4091: 'Marvelous Chester (unused 3)',
     # 4095: 'Marvelous Chester (unused 4)',
-    4100: 'Artorias',
-    4110: 'Hawkeye Gough',
-    4120: 'Stone Guardian',
-    4130: 'Scarecrow',
-    4140: 'Elizabeth',
-    4150: 'Bloathead',
-    4160: 'Bloathead Sorcerer',
-    4170: 'Humanity Phantom (small)',
-    4171: 'Humanity Phantom (medium)',
-    4172: 'Humanity Phantom (large)',
-    4180: 'Chained Prisoner',
-    4190: 'Abyss Attack Dog',
-    4500: 'Manus',
-    4510: 'Black Dragon Kalameet',
-    4511: 'Black Dragon Kalameet (tail)',
-    4520: 'Young Sif',
+    4100: "Artorias",
+    4110: "Hawkeye Gough",
+    4120: "Stone Guardian",
+    4130: "Scarecrow",
+    4140: "Elizabeth",
+    4150: "Bloathead",
+    4160: "Bloathead Sorcerer",
+    4170: "Humanity Phantom (small)",
+    4171: "Humanity Phantom (medium)",
+    4172: "Humanity Phantom (large)",
+    4180: "Chained Prisoner",
+    4190: "Abyss Attack Dog",
+    4500: "Manus",
+    4510: "Black Dragon Kalameet",
+    4511: "Black Dragon Kalameet (tail)",
+    4520: "Young Sif",
     # 4530: 'Young Alvina (unused)',
-    4531: 'Young Alvina',
-    5200: 'Centipede Demon',
-    5201: 'Centipede Demon (arm)',
-    5202: 'Centipede Demon (tail)',
-    5210: 'Sif',
-    5220: 'Gravelord Nito',
-    5230: 'Bed of Chaos',
+    4531: "Young Alvina",
+    5200: "Centipede Demon",
+    5201: "Centipede Demon (arm)",
+    5202: "Centipede Demon (tail)",
+    5210: "Sif",
+    5220: "Gravelord Nito",
+    5230: "Bed of Chaos",
     # 5231: 'Bed of Chaos (unused)',  # incomplete mobile version
-    5240: 'Parasitic Wall Hugger',
-    5250: 'Ceaseless Discharge',
-    5260: 'Gaping Dragon',
-    5261: 'Gaping Dragon (tail)',
-    5270: 'Ornstein',
-    5271: 'Giant Ornstein',
-    5280: 'Quelaag',
-    5290: 'Seath the Scaleless',
+    5240: "Parasitic Wall Hugger",
+    5250: "Ceaseless Discharge",
+    5260: "Gaping Dragon",
+    5261: "Gaping Dragon (tail)",
+    5270: "Ornstein",
+    5271: "Giant Ornstein",
+    5280: "Quelaag",
+    5290: "Seath the Scaleless",
     # 5300: 'Undead King Jareel',  # incomplete New Londo Ruins boss
-    5310: 'Gwynevere',
-    5320: 'Gwyndolin',
-    5330: 'Primordial Serpent',  # Frampt / Kaathe
-    5340: 'Fair Lady',  # aka Daughter of Chaos, aka Quelaag's Sister
-    5350: 'Bell Gargoyle',
-    5351: 'Lightning Gargoyle',
-    5352: 'Bell Gargoyle (tail)',
-    5353: 'Lightning Gargoyle (tail)',
-    5360: 'Great Feline',
-    5361: 'Alvina',
+    5310: "Gwynevere",
+    5320: "Gwyndolin",
+    5330: "Primordial Serpent",  # Frampt / Kaathe
+    5340: "Fair Lady",  # aka Daughter of Chaos, aka Quelaag's Sister
+    5350: "Bell Gargoyle",
+    5351: "Lightning Gargoyle",
+    5352: "Bell Gargoyle (tail)",
+    5353: "Lightning Gargoyle (tail)",
+    5360: "Great Feline",
+    5361: "Alvina",
     # 5362: 'Alvina (unused)',
-    5370: 'Gwyn',
-    5390: 'Four Kings',
-    5400: 'Bed of Chaos (spirit)',
-    5401: 'Bed of Chaos (bug)',
+    5370: "Gwyn",
+    5390: "Four Kings",
+    5400: "Bed of Chaos (spirit)",
+    5401: "Bed of Chaos (bug)",
 }
 
 WEAPON_MODELS = {
-
     # Daggers (9)
     100: "Dagger",
     101: "Bandit's Knife",
@@ -174,7 +172,6 @@ WEAPON_MODELS = {
     104: "Priscilla's Dagger",
     107: "Parrying Dagger",
     111: "Dark Silver Tracer",
-
     # Straight Swords (14)
     200: "Broken Straight Sword",
     201: "Longsword",
@@ -190,7 +187,6 @@ WEAPON_MODELS = {
     271: "Astora's Straight Sword",
     272: "Straight Sword Hilt",
     291: "Drake Sword",
-
     # Greatswords (12)
     206: "Bastard Sword",
     210: "Man-serpent Greatsword",
@@ -204,26 +200,22 @@ WEAPON_MODELS = {
     268: "Great Lord Greatsword",
     269: "Greatsword of Artorias (Cursed)",
     274: "Abyss Greatsword",
-
     # Ultra Greatswords (5)
     208: "Zweihander",
     221: "Black Knight Greatsword",
     251: "Greatsword",
     270: "Demon Great Machete",
     281: "Dragon Greatsword",
-
     # Curved Greatswords (2)
     280: "Server",
     282: "Gravelord Sword",
     284: "Murakumo",
-
     # Thrusting Swords (5)
     106: "Mail Breaker",
     230: "Velka's Rapier",
     300: "Rapier",
     301: "Estoc",
     302: "Ricard's Rapier",
-
     # Curved Swords (7)
     102: "Jagged Ghost Blade",
     110: "Gold Tracer",
@@ -232,13 +224,11 @@ WEAPON_MODELS = {
     401: "Falchion",
     403: "Shotel",
     406: "Painting Guardian Sword",
-
     # Katanas (4)
     402: "Uchigatana",
     450: "Washing Pole",
     451: "Chaos Blade",
     452: "Iaito",
-
     # Axes (6)
     252: "Butcher Knife",
     502: "Hand Axe",
@@ -246,14 +236,12 @@ WEAPON_MODELS = {
     505: "Battle Axe",
     508: "Golem Axe",
     509: "Gargoyle Tail Axe",
-
     # Greataxes (5)
     504: "Greataxe",
     506: "Dragon King Greataxe",
     507: "Black Knight Greataxe",
     510: "Stone Greataxe",
     651: "Demon's Greataxe",
-
     # Hammers (9)
     600: "Club",
     602: "Reinforced Club",
@@ -264,7 +252,6 @@ WEAPON_MODELS = {
     656: "Blacksmith Hammer",
     657: "Blacksmith Giant Hammer",
     658: "Hammer of Vamos",
-
     # Great Hammers (6)
     607: "Great Club",
     608: "Grant",
@@ -272,7 +259,6 @@ WEAPON_MODELS = {
     654: "Demon's Great Hammer",
     655: "Dragon Tooth",
     659: "Large Club",
-
     # Spears (10)
     700: "Spear",
     702: "Winged Spear",
@@ -284,7 +270,6 @@ WEAPON_MODELS = {
     1101: "Silver Knight Spear",
     1102: "Dragonslayer Spear",
     1103: "Moonlight Butterfly Horn",
-
     # Halberds / Scythes (7)
     730: "Titanite Catch Pole",
     731: "Black Knight Halberd",
@@ -295,7 +280,6 @@ WEAPON_MODELS = {
     805: "Giant's Halberd",
     810: "Lifehunt Scythe",
     811: "Gargoyle's Halberd",
-
     # Catalysts (12)
     653: "Demon's Catalyst",
     721: "Tin Banishment Catalyst",
@@ -309,7 +293,6 @@ WEAPON_MODELS = {
     916: "Izalith Catalyst",
     920: "Oolacile Catalyst",
     921: "Manus Catalyst",
-
     # Talismans (7)
     902: "Talisman",
     903: "Canvas Talisman",
@@ -318,37 +301,31 @@ WEAPON_MODELS = {
     907: "Sunlight Talisman",
     908: "Darkmoon Talisman",
     909: "Velka's Talisman",
-
     # Fists (5)
     1000: "Caestus",
     1002: "Claw",
     1003: "Dragon Bone Fist",
     1004: "Dark Hand",
     1005: "Fists",
-
     # Whips (3)
     1200: "Whip",
     1201: "Notched Whip",
     1210: "Guardian Tail",
-
     # Bows (5)
     1300: "Short Bow",
     1301: "Longbow",
     1302: "Composite Bow",
     1304: "Black Bow of Pharis",
     1305: "Darkmoon Bow",
-
     # Greatbows (2)
     1360: "Dragonslayer Greatbow",
     1361: "Gough's Greatbow",
     1399: "Gough's Great Arrow",
-
     # Crossbows (4)
     1401: "Light Crossbow",
     1402: "Heavy Crossbow",
     1404: "Sniper Crossbow",
     1405: "Avelyn",
-
     # Shields (43)
     1501: "Target Shield",
     1502: "Hollow Soldier Shield",
@@ -393,7 +370,6 @@ WEAPON_MODELS = {
     1544: "Bloodshield",
     1545: "Black Iron Greatshield",
     1550: "Cleansing Greatshield",
-
     # Ammo / Special
     1700: "Lightning Bolt",
     1801: "Skull Lantern",
@@ -641,12 +617,13 @@ def print_hitbox_info(params):
                         print(f"         {i}. Dmy = ({start_point}, {end_point})")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # TODO: remove
     from soulstruct import DSR_PATH
     from soulstruct.params import DarkSoulsGameParameters
     from soulstruct.params.enums import WEAPON_CATEGORY
     from soulstruct.text import DarkSoulsText
+
     p = DarkSoulsGameParameters(DSR_PATH + "/param/GameParam/GameParam.parambnd.dcx")
     t = DarkSoulsText(DSR_PATH + "/msg/ENGLISH")
     # print_hitbox_info(p)
@@ -680,8 +657,10 @@ if __name__ == '__main__':
         one_hand_motion = weapon_param["wepmotionOneHandId"]
         two_hand_motion = weapon_param["wepmotionBothHandId"]
         weapon_var_name = weapon_name.replace(" ", "").replace("'", "").replace(".", "").replace("-", "")
-        print(f'public static WeaponStats {weapon_var_name} = new WeaponStats("Melee", "{category_name}", '
-              f'{weapon_param_id}, {model_id}, {beh_var_id}, {one_hand_motion}, {two_hand_motion}, {base_motion}, '
-              f'{special_motion});')
+        print(
+            f'public static WeaponStats {weapon_var_name} = new WeaponStats("Melee", "{category_name}", '
+            f"{weapon_param_id}, {model_id}, {beh_var_id}, {one_hand_motion}, {two_hand_motion}, {base_motion}, "
+            f"{special_motion});"
+        )
 
     pass

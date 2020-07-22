@@ -14,8 +14,9 @@ def get_ds1_executable_and_version(executable_path, dsr, debug=False):
         elif "DarkSoulsRemastered.exe" in executables:
             executable_path = executable_path / "DarkSoulsRemastered.exe"
         else:
-            raise FileNotFoundError(f"Neither the PTDE or DSR Dark Souls 1 executable were found in directory "
-                                    f"{str(executable_path)}.")
+            raise FileNotFoundError(
+                f"Neither the PTDE or DSR Dark Souls 1 executable were found in directory " f"{str(executable_path)}."
+            )
 
     if executable_path.is_file():
         if executable_path.name == "DARKSOULS.exe":
@@ -26,8 +27,10 @@ def get_ds1_executable_and_version(executable_path, dsr, debug=False):
                 dsr = True
         else:
             if dsr is None:
-                raise ValueError("Could not guess if this executable is Dark Souls Remastered from its name. You must "
-                                 "specify `dsr=True` or `dsr=False`.")
+                raise ValueError(
+                    "Could not guess if this executable is Dark Souls Remastered from its name. You must "
+                    "specify `dsr=True` or `dsr=False`."
+                )
     else:
         raise FileNotFoundError(f"Dark Souls 1 executable not found: {str(executable_path)}")
 

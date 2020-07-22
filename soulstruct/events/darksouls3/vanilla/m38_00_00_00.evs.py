@@ -143,8 +143,8 @@ def Constructor():
     RunCommonEvent(20005110, args=(3800366, 3802360))
     RunCommonEvent(20005220, args=(3800367, 701, 1701))
     RunEvent(13805370)
-    RunEvent(13805340, slot=0, args=(3800352, 701, 1701, 5.0, 3802330, 1.0), arg_types='iiifif')
-    RunEvent(13805340, slot=1, args=(3800353, 701, 1701, 5.0, 3802330, 0.0), arg_types='iiifif')
+    RunEvent(13805340, slot=0, args=(3800352, 701, 1701, 5.0, 3802330, 1.0), arg_types="iiifif")
+    RunEvent(13805340, slot=1, args=(3800353, 701, 1701, 5.0, 3802330, 0.0), arg_types="iiifif")
     RunCommonEvent(20005120, args=(3800392, 1077936128))
     RunCommonEvent(20005110, args=(3800395, 3802360))
     RunCommonEvent(20005202, args=(3800400, 700, 1700, 3802300))
@@ -221,7 +221,7 @@ def Constructor():
     RunEvent(13805813, slot=0, args=(40, 0, 50, 0, 13805812, 12251, 20001, 20002, 20003))
     RunEvent(13805813, slot=1, args=(20, 0, 30, 0, 13805812, 12253, 20004, 20005, 20006))
     RunEvent(13805813, slot=2, args=(21, 0, 31, 0, 13804814, 12255, 20007, 20008, 20009))
-    RunEvent(13804814, slot=0, args=(21, 634, 31, 282, 13805814), arg_types='hihii')
+    RunEvent(13804814, slot=0, args=(21, 634, 31, 282, 13805814), arg_types="hihii")
     RunEvent(13805820)
     RunEvent(13804815, slot=0, args=(3800810, 3802820, 40))
     RunEvent(13804815, slot=1, args=(3800811, 3802820, 41))
@@ -342,8 +342,26 @@ def Constructor():
     RunEvent(13805372)
     RunEvent(13805595)
     RunEvent(13800702, slot=0, args=(3800710, 3804713))
-    RunEvent(13805703, slot=0, args=(3800700, 3800705, 3800701, 3800706, 3800702, 3800707, 90760, 1900, 3800710, 
-             3804711, 3804700, 3804701, 3804710, 3804712))
+    RunEvent(
+        13805703,
+        slot=0,
+        args=(
+            3800700,
+            3800705,
+            3800701,
+            3800706,
+            3800702,
+            3800707,
+            90760,
+            1900,
+            3800710,
+            3804711,
+            3804700,
+            3804701,
+            3804710,
+            3804712,
+        ),
+    )
     RunCommonEvent(20006001, args=(3800700, 1356, 1357, 73800130, 3))
     RunCommonEvent(20006000, args=(3800700, 1356, 1357, 73800130, 1059481190, 1355, 1359, 0))
     RunCommonEvent(20006002, args=(3800700, 1358, 1355, 1359))
@@ -368,8 +386,11 @@ def Preconstructor():
     """ 50: Event 50 """
     RunEvent(13801200)
     RunEvent(13805580)
-    RunEvent(13805700, slot=0, args=(3800700, 3800705, 3800701, 3800706, 3800702, 3800707, 3800703, 3800708, 90760, 
-             1900, 3804700, 3804701))
+    RunEvent(
+        13805700,
+        slot=0,
+        args=(3800700, 3800705, 3800701, 3800706, 3800702, 3800707, 3800703, 3800708, 90760, 1900, 3804700, 3804701),
+    )
     RunEvent(13805706, slot=0, args=(3800710, 3804711, 3804710, 3804712))
     RunEvent(13805707)
     DisableSoundEvent(3804801)
@@ -462,18 +483,24 @@ def Event13805206():
 
 
 @RestartOnRest
-def Event13805207(arg_0_3: int, arg_4_7: int):
+def Event13805207(_, arg_0_3: int, arg_4_7: int):
     """ 13805207: Event 13805207 """
     DisableNetworkSync()
     IfCharacterHasSpecialEffect(0, character=PLAYER, special_effect=11213)
-    SetCameraVibration(vibration_id=arg_0_3, anchor_entity=arg_4_7, model_point=-1, decay_start_distance=999.0, 
-                       decay_end_distance=999.0, anchor_type=CoordEntityType.Region)
+    SetCameraVibration(
+        vibration_id=arg_0_3,
+        anchor_entity=arg_4_7,
+        model_point=-1,
+        decay_start_distance=999.0,
+        decay_end_distance=999.0,
+        anchor_type=CoordEntityType.Region,
+    )
     Wait(1.0)
     Restart()
 
 
 @RestartOnRest
-def Event13805240(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13805240(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13805240: Event 13805240 """
     GotoIfThisEventSlotOn(Label.L0)
     IfHasAIStatus(0, character=arg_4_7, ai_status=AIStatusType.Battle)
@@ -484,7 +511,7 @@ def Event13805240(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event13805245(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13805245(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13805245: Event 13805245 """
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_4_7)
     IfCharacterHasSpecialEffect(0, character=arg_0_3, special_effect=4650)
@@ -495,7 +522,7 @@ def Event13805245(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event13805270(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13805270(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13805270: Event 13805270 """
     IfHasAIStatus(3, character=arg_0_3, ai_status=AIStatusType.Battle)
     SkipLinesIfConditionTrue(1, 3)
@@ -513,7 +540,7 @@ def Event13805270(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event13805272(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event13805272(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13805272: Event 13805272 """
     GotoIfThisEventSlotOn(Label.L0)
     DisableAI(arg_0_3)
@@ -564,7 +591,7 @@ def Event13805280():
 
 
 @RestartOnRest
-def Event13805300(arg_0_3: int, arg_4_7: int):
+def Event13805300(_, arg_0_3: int, arg_4_7: int):
     """ 13805300: Event 13805300 """
     EndIfThisEventSlotOn()
     IfCharacterInsideRegion(0, arg_0_3, region=arg_4_7)
@@ -572,7 +599,7 @@ def Event13805300(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event13805340(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: int, arg_20_23: float):
+def Event13805340(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: int, arg_20_23: float):
     """ 13805340: Event 13805340 """
     EndIfThisEventSlotOn()
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -602,7 +629,7 @@ def Event13805340(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, a
 
 
 @RestartOnRest
-def Event13805350(arg_0_3: int):
+def Event13805350(_, arg_0_3: int):
     """ 13805350: Event 13805350 """
     IfCharacterHasSpecialEffect(0, character=arg_0_3, special_effect=4021)
     Wait(0.10000000149011612)
@@ -643,7 +670,7 @@ def Event13805365():
 
 
 @RestartOnRest
-def Event13805366(arg_0_3: int, arg_4_7: int):
+def Event13805366(_, arg_0_3: int, arg_4_7: int):
     """ 13805366: Event 13805366 """
     DisableGravity(arg_4_7)
     GotoIfThisEventSlotOn(Label.L0)
@@ -713,17 +740,31 @@ def Event13805402():
 
 
 @RestartOnRest
-def Event13805420(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event13805420(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 13805420: Event 13805420 """
     CreateProjectileOwner(arg_0_3)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
     ForceAnimation(arg_8_11, 0, wait_for_completion=True)
     Wait(1.0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=arg_16_19, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=arg_16_19,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(0.5)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=arg_16_19, 
-                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=arg_16_19,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(4.0)
     IfAllPlayersOutsideRegion(0, region=arg_4_7)
     ForceAnimation(arg_8_11, 1, wait_for_completion=True)
@@ -731,111 +772,405 @@ def Event13805420(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13805430(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event13805430(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13805430: Event 13805430 """
     CreateProjectileOwner(arg_0_3)
     IfCharacterInsideRegion(0, PLAYER, region=arg_8_11)
     ForceAnimation(arg_4_7, 0, wait_for_completion=True)
     Wait(0.5)
     SkipLinesIfFlagOff(3, 50)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 51)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 52)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 53)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 54)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 55)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 56)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(1.0)
     SkipLinesIfFlagOff(3, 50)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 51)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 52)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 53)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 54)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 55)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 56)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_12_15, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_16_19, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_12_15,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_16_19,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(3.0)
     IfAllPlayersOutsideRegion(0, region=arg_8_11)
     ForceAnimation(arg_4_7, 1, wait_for_completion=True)
@@ -843,8 +1178,17 @@ def Event13805430(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13805440(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event13805440(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 13805440: Event 13805440 """
     CreateProjectileOwner(arg_0_3)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_12_15)
@@ -864,104 +1208,398 @@ def Event13805440(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     DefineLabel(1)
     Wait(0.20000000298023224)
     SkipLinesIfFlagOff(3, 50)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 51)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 52)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 53)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 54)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 55)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 56)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(0.5)
     SkipLinesIfFlagOff(3, 50)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5810, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5810,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 51)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5811, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5811,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 52)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5812, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5812,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 53)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5813, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5813,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 54)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5814, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5814,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 55)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5815, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5815,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 56)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_20_23, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_24_27, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=arg_0_3, projectile_id=arg_28_31, model_point=-1, behavior_id=5816, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_20_23,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_24_27,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=arg_0_3,
+        projectile_id=arg_28_31,
+        model_point=-1,
+        behavior_id=5816,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(3.0)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=-2)
     IfAllPlayersOutsideRegion(0, region=arg_12_15)
@@ -989,238 +1627,973 @@ def Event13805450():
     ForceAnimation(3801217, 0, wait_for_completion=True)
     Wait(0.20000000298023224)
     SkipLinesIfFlagOff(3, 50)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 51)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 52)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 53)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 54)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 55)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 56)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(0.5)
     SkipLinesIfFlagOff(3, 50)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 51)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 52)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 53)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 54)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 55)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(3, 56)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(1.0)
     SkipLinesIfFlagOff(9, 50)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5820, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5820,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(9, 51)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5821, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5821,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(9, 52)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5822, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5822,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(9, 53)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5823, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5823,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(9, 54)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5824, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5824,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(9, 55)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5825, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5825,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(9, 56)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802431, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802432, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802433, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802434, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802435, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802436, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802437, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802438, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
-    ShootProjectile(owner_entity=3800560, projectile_id=3802439, model_point=-1, behavior_id=5826, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802431,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802432,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802433,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802434,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802435,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802436,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802437,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802438,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=3800560,
+        projectile_id=3802439,
+        model_point=-1,
+        behavior_id=5826,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     Wait(2.0)
     IfAllPlayersOutsideRegion(0, region=3802430)
     ForceAnimation(3801217, 1, wait_for_completion=True)
@@ -1299,7 +2672,7 @@ def Event13805540():
 
 
 @RestartOnRest
-def Event13800548(arg_0_3: int):
+def Event13800548(_, arg_0_3: int):
     """ 13800548: Event 13800548 """
     GotoIfThisEventSlotOff(Label.L0)
     DisableObject(arg_0_3)
@@ -1321,7 +2694,7 @@ def Event13804550():
 
 
 @RestartOnRest
-def Event13805550(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13805550(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13805550: Event 13805550 """
     EndIfThisEventSlotOn()
     IfObjectBackreadEnabled(1, obj=arg_0_3)
@@ -1342,26 +2715,82 @@ def Event13805552():
     IfCharacterInsideRegion(-1, PLAYER, region=3802520)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFlagOff(1, 50)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5830, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5830,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 51)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5831, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5831,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 52)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5832, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5832,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 53)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5833, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5833,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 54)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5834, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5834,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 55)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5835, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5835,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 56)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5836, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5836,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     ForceAnimation(3801240, 10)
     Wait(9.300000190734863)
     SetAutogeneratedEventSpecificFlag_2(unknown1=2, unknown2=1)
@@ -1373,8 +2802,9 @@ def Event13805553():
     DisableObject(3801390)
     DisableTreasure(3801390)
     GotoIfObjectDestroyed(Label.L9, obj=3801240)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13805554, state=FlagState.Off)
     IfFlagOn(1, 13805552)
     IfFlagOff(1, 13805554)
@@ -1384,28 +2814,85 @@ def Event13805553():
     SkipLinesIfThisEventSlotOff(1)
     Wait(1.0)
     SkipLinesIfFlagOff(1, 50)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5830, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5830,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 51)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5831, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5831,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 52)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5832, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5832,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 53)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5833, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5833,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 54)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5834, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5834,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 55)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5835, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5835,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 56)
-    CreateHazard(13800550, 3801240, model_point=1, behavior_param_id=5836, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    CreateHazard(
+        13800550,
+        3801240,
+        model_point=1,
+        behavior_param_id=5836,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13805554, state=FlagState.On)
     ForceAnimation(3801240, 11)
     Wait(19.0)
@@ -1439,26 +2926,82 @@ def Event13805556():
     IfCharacterInsideRegion(-1, PLAYER, region=3802525)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFlagOff(1, 50)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5830, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5830,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 51)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5831, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5831,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 52)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5832, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5832,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 53)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5833, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5833,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 54)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5834, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5834,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 55)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5835, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5835,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 56)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5836, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5836,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     ForceAnimation(3801241, 21)
     Wait(12.5)
     SetAutogeneratedEventSpecificFlag_2(unknown1=2, unknown2=1)
@@ -1472,8 +3015,9 @@ def Event13805557():
     DisableCharacter(3800498)
     DisableAnimations(3800498)
     GotoIfObjectDestroyed(Label.L9, obj=3801241)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13805558, state=FlagState.Off)
     IfFlagOn(1, 13805556)
     IfFlagOff(1, 13805558)
@@ -1483,28 +3027,85 @@ def Event13805557():
     SkipLinesIfThisEventSlotOff(1)
     Wait(0.5)
     SkipLinesIfFlagOff(1, 50)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5830, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5830,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 51)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5831, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5831,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 52)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5832, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5832,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 53)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5833, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5833,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 54)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5834, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5834,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 55)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5835, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5835,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
     SkipLinesIfFlagOff(1, 56)
-    CreateHazard(13800551, 3801241, model_point=1, behavior_param_id=5836, target_type=DamageTargetType.Character, 
-                 radius=1.7000000476837158, life=20.0, repetition_time=10.0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    CreateHazard(
+        13800551,
+        3801241,
+        model_point=1,
+        behavior_param_id=5836,
+        target_type=DamageTargetType.Character,
+        radius=1.7000000476837158,
+        life=20.0,
+        repetition_time=10.0,
+    )
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=13805558, state=FlagState.On)
     ForceAnimation(3801241, 22)
     Wait(15.800000190734863)
@@ -1529,32 +3130,81 @@ def Event13805557():
 
 
 @RestartOnRest
-def Event13805560(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13805560(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13805560: Event 13805560 """
     EndIfObjectDestroyed(arg_0_3)
     IfObjectDestroyed(0, obj=arg_0_3)
     CreateTemporaryFX(610707, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
     SkipLinesIfFlagOff(1, 50)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5840, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5840,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(1, 51)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5841, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5841,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(1, 52)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5842, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5842,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(1, 53)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5843, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5843,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(1, 54)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5844, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5844,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(1, 55)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5845, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5845,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
     SkipLinesIfFlagOff(1, 56)
-    ShootProjectile(owner_entity=arg_8_11, projectile_id=arg_4_7, model_point=10, behavior_id=5846, launch_angle_x=0, 
-                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(
+        owner_entity=arg_8_11,
+        projectile_id=arg_4_7,
+        model_point=10,
+        behavior_id=5846,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
 
 
 @RestartOnRest
@@ -1567,7 +3217,7 @@ def Event13805580():
 
 
 @RestartOnRest
-def Event13805590(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13805590(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13805590: Event 13805590 """
     GotoIfFlagOn(Label.L1, arg_8_11)
     GotoIfFlagOn(Label.L0, arg_4_7)
@@ -1631,16 +3281,35 @@ def Event13800800():
     IfCharacterInsideRegion(9, PLAYER, region=3802806)
     GotoIfConditionFalse(Label.L2, input_condition=9)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutscene(38000020, skippable=True, fade_out=True, player_id=PLAYER, move_to_region=3802804, 
-                 move_to_map=CATACOMBS_OF_CARTHUS)
+    PlayCutscene(
+        38000020,
+        skippable=True,
+        fade_out=True,
+        player_id=PLAYER,
+        move_to_region=3802804,
+        move_to_map=CATACOMBS_OF_CARTHUS,
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutscene(38000020, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=3802804, 
-                 move_to_map=CATACOMBS_OF_CARTHUS)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutscene(
+        38000020,
+        skippable=False,
+        fade_out=True,
+        player_id=PLAYER,
+        move_to_region=3802804,
+        move_to_map=CATACOMBS_OF_CARTHUS,
+    )
     SkipLines(1)
-    PlayCutscene(38000020, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=3802807, 
-                 move_to_map=CATACOMBS_OF_CARTHUS)
+    PlayCutscene(
+        38000020,
+        skippable=False,
+        fade_out=False,
+        player_id=PLAYER,
+        move_to_region=3802807,
+        move_to_map=CATACOMBS_OF_CARTHUS,
+    )
     WaitFrames(1)
 
     # --- 2 --- #
@@ -1677,23 +3346,43 @@ def Event13805809():
     IfFlagOff(1, 13800800)
     IfActionButtonInRegion(1, action_button_id=9322, region=3801810)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     BanishInvaders(unknown=0)
 
     # --- 1 --- #
     DefineLabel(1)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutscene(38000000, skippable=True, fade_out=True, player_id=PLAYER, move_to_region=3802802, 
-                 move_to_map=CATACOMBS_OF_CARTHUS)
+    PlayCutscene(
+        38000000,
+        skippable=True,
+        fade_out=True,
+        player_id=PLAYER,
+        move_to_region=3802802,
+        move_to_map=CATACOMBS_OF_CARTHUS,
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutscene(38000000, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=3802802, 
-                 move_to_map=CATACOMBS_OF_CARTHUS)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutscene(
+        38000000,
+        skippable=False,
+        fade_out=True,
+        player_id=PLAYER,
+        move_to_region=3802802,
+        move_to_map=CATACOMBS_OF_CARTHUS,
+    )
     SkipLines(1)
-    PlayCutscene(38000000, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=3802803, 
-                 move_to_map=CATACOMBS_OF_CARTHUS)
+    PlayCutscene(
+        38000000,
+        skippable=False,
+        fade_out=False,
+        player_id=PLAYER,
+        move_to_region=3802803,
+        move_to_map=CATACOMBS_OF_CARTHUS,
+    )
     WaitFrames(1)
     DeleteObjectFX(3801360, erase_root=False)
     DeleteObjectFX(3801361, erase_root=False)
@@ -1756,8 +3445,9 @@ def Event13805810():
     """ 13805810: Event 13805810 """
     EndIfFlagOn(13800800)
     EndIfFlagOn(13800801)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableCollision(3804810)
     IfDamageType(-1, attacked_entity=3800800, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfEntityWithinDistance(-1, PLAYER, 3800800, radius=27.0)
@@ -1813,24 +3503,66 @@ def Event13805812():
     IfCharacterBackreadEnabled(1, character=3800800)
     IfConditionTrue(0, input_condition=1)
     SkipLinesIfFlagOn(3, 13805814)
-    CreateNPCPart(3800800, npc_part_id=20, part_index=NPCPartType.Part2, part_health=634, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    CreateNPCPart(3800800, npc_part_id=30, part_index=NPCPartType.Part3, part_health=282, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3800800,
+        npc_part_id=20,
+        part_index=NPCPartType.Part2,
+        part_health=634,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
+    CreateNPCPart(
+        3800800,
+        npc_part_id=30,
+        part_index=NPCPartType.Part3,
+        part_health=282,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IncrementCharacterNewGameCycle(3800800)
     SkipLinesIfFlagOn(3, 13805813)
-    CreateNPCPart(3800800, npc_part_id=40, part_index=NPCPartType.Part4, part_health=423, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    CreateNPCPart(3800800, npc_part_id=50, part_index=NPCPartType.Part5, part_health=211, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3800800,
+        npc_part_id=40,
+        part_index=NPCPartType.Part4,
+        part_health=423,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
+    CreateNPCPart(
+        3800800,
+        npc_part_id=50,
+        part_index=NPCPartType.Part5,
+        part_health=211,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IncrementCharacterNewGameCycle(3800800)
     WaitFrames(1)
     End()
 
 
 @RestartOnRest
-def Event13805813(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int):
+def Event13805813(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+):
     """ 13805813: Event 13805813 """
     EndIfFlagOn(13800800)
     WaitFrames(1)
@@ -1876,15 +3608,31 @@ def Event13805813(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     AddSpecialEffect(3800800, arg_20_23)
 
 
-def Event13804814(arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int):
+def Event13804814(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int):
     """ 13804814: Event 13804814 """
     EndIfFlagOn(13800800)
     EndIfThisEventSlotOn()
     IfFlagOn(0, arg_16_19)
-    CreateNPCPart(3800800, npc_part_id=arg_0_1, part_index=NPCPartType.Part2, part_health=arg_4_7, 
-                  damage_correction=1.0, body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    CreateNPCPart(3800800, npc_part_id=arg_8_9, part_index=NPCPartType.Part3, part_health=arg_12_15, 
-                  damage_correction=1.0, body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3800800,
+        npc_part_id=arg_0_1,
+        part_index=NPCPartType.Part2,
+        part_health=arg_4_7,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
+    CreateNPCPart(
+        3800800,
+        npc_part_id=arg_8_9,
+        part_index=NPCPartType.Part3,
+        part_health=arg_12_15,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IncrementCharacterNewGameCycle(3800800)
     WaitFrames(1)
     End()
@@ -1927,7 +3675,7 @@ def Event13805820():
 
 
 @RestartOnRest
-def Event13804815(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13804815(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13804815: Event 13804815 """
     EndIfFlagOn(13800800)
     GotoIfThisEventSlotOn(Label.L0)
@@ -1944,8 +3692,13 @@ def Event13804815(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     DisableInvincibility(arg_0_3)
     EnableGravity(arg_0_3)
     EnableHealthBar(arg_0_3)
-    Move(arg_0_3, destination=3800800, destination_type=CoordEntityType.Character, model_point=arg_8_11, 
-         copy_draw_parent=arg_0_3)
+    Move(
+        arg_0_3,
+        destination=3800800,
+        destination_type=CoordEntityType.Character,
+        model_point=arg_8_11,
+        copy_draw_parent=arg_0_3,
+    )
     ActivateMultiplayerBuffs(arg_0_3)
     Restart()
 
@@ -1970,7 +3723,7 @@ def Event13805824():
     Restart()
 
 
-def Event13805828(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13805828(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13805828: Event 13805828 """
     DisableNetworkSync()
     EndIfFlagOn(arg_0_3)
@@ -1983,7 +3736,7 @@ def Event13805828(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Restart()
 
 
-def Event13804829(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13804829(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13804829: Event 13804829 """
     DisableNetworkSync()
     DisableObject(arg_4_7)
@@ -2101,8 +3854,16 @@ def Event13805843():
 def Event13805844():
     """ 13805844: Event 13805844 """
     EndIfFlagOn(13805830)
-    CreateNPCPart(3800830, npc_part_id=10, part_index=NPCPartType.Part1, part_health=282, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3800830,
+        npc_part_id=10,
+        part_index=NPCPartType.Part1,
+        part_health=282,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IfCharacterPartHealthLessThanOrEqual(1, 3800830, npc_part_id=10, value=0)
     IfCharacterDoesNotHaveSpecialEffect(1, character=3800830, special_effect=5404)
     IfConditionTrue(0, input_condition=1)
@@ -2112,7 +3873,7 @@ def Event13805844():
 
 
 @RestartOnRest
-def Event13805857(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event13805857(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13805857: Event 13805857 """
     EndIfFlagOn(arg_0_3)
     SkipLinesIfFlagOff(1, arg_12_15)
@@ -2181,8 +3942,21 @@ def Event13805570():
     End()
 
 
-def Event13805700(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int, arg_40_43: int, arg_44_47: int):
+def Event13805700(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+    arg_40_43: int,
+    arg_44_47: int,
+):
     """ 13805700: Event 13805700 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1355, 1359))
@@ -2509,7 +4283,7 @@ def Event13805700(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     End()
 
 
-def Event13805701(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13805701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13805701: Event 13805701 """
     EndIfThisEventSlotOn()
     IfFlagOn(1, 1343)
@@ -2550,7 +4324,7 @@ def Event13805701(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     SaveRequest()
 
 
-def Event13800702(arg_0_3: int, arg_4_7: int):
+def Event13800702(_, arg_0_3: int, arg_4_7: int):
     """ 13800702: Event 13800702 """
     EndIfPlayerNotInOwnWorld()
     EndIfThisEventSlotOn()
@@ -2565,9 +4339,23 @@ def Event13800702(arg_0_3: int, arg_4_7: int):
     EnableFlag(73800134)
 
 
-def Event13805703(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int, arg_40_43: int, arg_44_47: int, 
-                  arg_48_51: int, arg_52_55: int):
+def Event13805703(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+    arg_40_43: int,
+    arg_44_47: int,
+    arg_48_51: int,
+    arg_52_55: int,
+):
     """ 13805703: Event 13805703 """
     DisableFlag(13800703)
     DisableNetworkSync()
@@ -2729,7 +4517,7 @@ def Event13805703(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     End()
 
 
-def Event13805704(arg_0_3: int):
+def Event13805704(_, arg_0_3: int):
     """ 13805704: Event 13805704 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(1, 1353)
@@ -2742,7 +4530,7 @@ def Event13805704(arg_0_3: int):
     ReplanAI(arg_0_3)
 
 
-def Event13805706(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13805706(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13805706: Event 13805706 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1495, 1499))

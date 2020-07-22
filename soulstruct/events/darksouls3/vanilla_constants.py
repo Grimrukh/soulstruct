@@ -24,9 +24,7 @@ EVENT_NAMES = {
     13415830: "StartTwinPrincesBossFight",
     13415841: "MoveLothricToLorian",
     13410832: "TwinPrincesDeath",
-
     # Common functions. These event IDs are generally contiguous, so I assume they don't use flags.
-
     # Numerous variants of AI triggers. All of them trigger AI, and all of them trigger if the character in question is
     # attacked. The variants allow you to trigger them based on a radius from the player and/or when the player enters a
     # region, with an optional animation, with or without the addition of a gravity trigger (e.g. for falling slimes) or
@@ -48,14 +46,10 @@ EVENT_NAMES = {
     20005134: "TriggerAIWithinDistanceOrRegionWithAnimationInRegionOnly",
     20005140: "TriggerAIWithinRegionOrIfCharacterIsFighting",
     20005150: "TriggerAIOnAttackOnly",
-
     20005192: "RemoveSpEffect99006WithinRegion",
     20005190: "RemoveSpEffect99006WithinDistance",
     20005191: "RemoveSpEffect99006OnAttackOnly",
-
     20005200: "InterruptAnimationWithinRegion",
-
-
     20005350: "AwardItemLotOnCharacterDeath",
     20005530: "BurnObject",
     20005611: "EnableFlagWhenObjectActivated",

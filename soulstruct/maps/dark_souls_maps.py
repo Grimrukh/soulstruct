@@ -8,7 +8,7 @@ from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 _LOGGER = logging.getLogger(__name__)
 
 
-class DarkSoulsMaps(object):
+class DarkSoulsMaps:
 
     Depths: MSB
     UndeadBurg: MSB  # and Undead Parish
@@ -67,13 +67,14 @@ class DarkSoulsMaps(object):
         for game_map in ALL_MAPS:
             if game_map.msb_file_stem is None:
                 continue
-            msb_path = self._directory / (game_map.msb_file_stem + '.msb')
+            msb_path = self._directory / (game_map.msb_file_stem + ".msb")
             try:
                 self._data[game_map.name] = MSB(msb_path)
                 setattr(self, game_map.name, self._data[game_map.name])
             except FileNotFoundError:
-                raise FileNotFoundError(f"Could not find MSB file {repr(game_map.msb_file_stem)} "
-                                        f"({game_map.name}) in given directory.")
+                raise FileNotFoundError(
+                    f"Could not find MSB file {repr(game_map.msb_file_stem)} " f"({game_map.name}) in given directory."
+                )
 
     def __getitem__(self, map_source):
         game_map = get_map(map_source)

@@ -9,7 +9,7 @@ __all__ = ["DarkSoulsAIScripts"]
 _LOGGER = logging.getLogger(__name__)
 
 
-class DarkSoulsAIScripts(object):
+class DarkSoulsAIScripts:
 
     Common: LuaBND  # scripts loaded in all maps; also contains internal functions that should not be edited
     Event: LuaBND  # internal functions; never processed automatically
@@ -70,13 +70,14 @@ class DarkSoulsAIScripts(object):
             raise ValueError("DarkSoulsAIScripts should be initialized with the directory containing LuaBND files.")
 
         for game_map in ALL_MAPS:
-            luabnd_path = self._directory / (game_map.ai_file_stem + '.luabnd')
+            luabnd_path = self._directory / (game_map.ai_file_stem + ".luabnd")
             try:
                 self._data[game_map.name] = LuaBND(luabnd_path)
                 setattr(self, game_map.name, self._data[game_map.name])
             except FileNotFoundError:
                 raise FileNotFoundError(
-                    f"Could not find LuaBND file {repr(game_map.ai_file_stem)} ({game_map.name}) in given directory.")
+                    f"Could not find LuaBND file {repr(game_map.ai_file_stem)} ({game_map.name}) in given directory."
+                )
 
         event_path = self._directory / "eventCommon.luabnd"
         try:

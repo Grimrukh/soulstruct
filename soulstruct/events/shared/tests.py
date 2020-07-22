@@ -3,53 +3,118 @@
 DO NOT IMPORT THIS FILE. Import the specific game package (e.g. "from soulstruct.events.darksouls1 import *") to get the
 full set of instructions, enums, game types, etc. for that game.
 """
+__all__ = [
+    # Names processed directly by EVS parser
+    "NeverRestart",
+    "RestartOnRest",
+    "UnknownRestart",
+    "EVENTS",
+    "Condition",
+    "END",
+    "RESTART",
+    "Await",
+    "THIS_FLAG",
+    "THIS_SLOT_FLAG",
+    "ONLINE",
+    "OFFLINE",
+    "DLC_OWNED",
+    "SKULL_LANTERN_ACTIVE",
+    "WHITE_WORLD_TENDENCY",
+    "BLACK_WORLD_TENDENCY",
+    "NEW_GAME_CYCLE",
+    "SOUL_LEVEL",
+    "FlagEnabled",
+    "FlagDisabled",
+    "SecondsElapsed",
+    "FramesElapsed",
+    "CharacterInsideRegion",
+    "CharacterOutsideRegion",
+    "PlayerInsideRegion",
+    "PlayerOutsideRegion",
+    "AllPlayersInsideRegion",
+    "AllPlayersOutsideRegion",
+    "InsideMap",
+    "OutsideMap",
+    "EntityWithinDistance",
+    "EntityBeyondDistance",
+    "PlayerWithinDistance",
+    "PlayerBeyondDistance",
+    "HasItem",
+    "HasWeapon",
+    "HasArmor",
+    "HasRing",
+    "HasGood",
+    "ActionButton",
+    "MultiplayerEvent",
+    "TrueFlagCount",
+    "EventValue",
+    "EventFlagValue",
+    "AnyItemDroppedInRegion",
+    "ItemDropped",
+    "OwnsItem",
+    "OwnsWeapon",
+    "OwnsArmor",
+    "OwnsRing",
+    "OwnsGood",
+    "IsAlive",
+    "IsDead",
+    "IsAttacked",
+    "HealthRatio",
+    "HealthValue",
+    "PartHealthValue",
+    "IsCharacterType",
+    "IsHollow",
+    "IsHuman",
+    "IsInvader",
+    "IsBlackPhantom",
+    "IsWhitePhantom",
+    "HasSpecialEffect",
+    "BackreadEnabled",
+    "BackreadDisabled",
+    "HasTaeEvent",
+    "IsTargeting",
+    "HasAiStatus",
+    "AiStatusIsNormal",
+    "AiStatusIsRecognition",
+    "AiStatusIsAlert",
+    "AiStatusIsBattle",
+    "PlayerIsClass",
+    "PlayerInCovenant",
+    "IsDamaged",
+    "IsDestroyed",
+    "IsActivated",
+    "PlayerStandingOnCollision",
+    "PlayerMovingOnCollision",
+    "PlayerRunningOnCollision",
+]
 
 import soulstruct.events.shared.instructions as instr
 from soulstruct.game_types import *
 from soulstruct.events.internal import *
 from soulstruct.enums.shared import *
 
-__all__ = [
-    # Names processed directly by EVS parser
-    "NeverRestart", "RestartOnRest", "UnknownRestart", "EVENTS", "Condition", "END", "RESTART", "Await",
-
-    "THIS_FLAG", "THIS_SLOT_FLAG",
-    "ONLINE", "OFFLINE", "DLC_OWNED", "SKULL_LANTERN_ACTIVE",
-    "WHITE_WORLD_TENDENCY", "BLACK_WORLD_TENDENCY", "NEW_GAME_CYCLE", "SOUL_LEVEL",
-    "FlagEnabled", "FlagDisabled",
-    "SecondsElapsed", "FramesElapsed",
-    "CharacterInsideRegion", "CharacterOutsideRegion",
-    "PlayerInsideRegion", "PlayerOutsideRegion", "AllPlayersInsideRegion", "AllPlayersOutsideRegion",
-    "InsideMap", "OutsideMap",
-    "EntityWithinDistance", "EntityBeyondDistance", "PlayerWithinDistance", "PlayerBeyondDistance",
-    "HasItem", "HasWeapon", "HasArmor", "HasRing", "HasGood",
-    "DialogPromptActivated",
-    "MultiplayerEvent", "TrueFlagCount", "EventValue", "EventFlagValue",
-    "AnyItemDroppedInRegion", "ItemDropped",
-    "OwnsItem", "OwnsWeapon", "OwnsArmor", "OwnsRing", "OwnsGood",
-    "IsAlive", "IsDead", "IsAttacked",
-    "HealthRatio", "HealthValue", "PartHealthValue",
-    "IsCharacterType", "IsHollow", "IsHuman", "IsInvader", "IsBlackPhantom", "IsWhitePhantom",
-    "HasSpecialEffect",
-    "BackreadEnabled", "BackreadDisabled",
-    "HasTaeEvent",
-    "IsTargeting", "HasAiStatus", "AiStatusIsNormal", "AiStatusIsRecognition", "AiStatusIsAlert", "AiStatusIsBattle",
-    "PlayerIsClass", "PlayerInCovenant",
-    "IsDamaged", "IsDestroyed", "IsActivated",
-    "PlayerStandingOnCollision", "PlayerMovingOnCollision", "PlayerRunningOnCollision",
-]
 
 # Dummy names parsed directly in EvsParser (correct signatures given in `tests.pyi` stubs).
 def NeverRestart(_):
     pass
+
+
 def RestartOnRest(_):
     pass
+
+
 def UnknownRestart(_):
     pass
+
+
 class EVENTS:
     pass
+
+
 class Condition:
     pass
+
+
 def Await(_):
     pass
 
@@ -81,17 +146,15 @@ THIS_SLOT_FLAG = ConstantCondition(
     restart_if_false_func=instr.RestartIfThisEventSlotOff,
 )
 
-ONLINE = ConstantCondition(if_true_func=instr.IfOnline,
-                           if_false_func=instr.IfOffline)
+ONLINE = ConstantCondition(if_true_func=instr.IfOnline, if_false_func=instr.IfOffline)
 
-OFFLINE = ConstantCondition(if_true_func=instr.IfOffline,
-                            if_false_func=instr.IfOnline)
+OFFLINE = ConstantCondition(if_true_func=instr.IfOffline, if_false_func=instr.IfOnline)
 
-DLC_OWNED = ConstantCondition(if_true_func=instr.IfDLCOwned,
-                              if_false_func=instr.IfDLCNotOwned)
+DLC_OWNED = ConstantCondition(if_true_func=instr.IfDLCOwned, if_false_func=instr.IfDLCNotOwned)
 
-SKULL_LANTERN_ACTIVE = ConstantCondition(if_true_func=instr.IfSkullLanternActive,
-                                         if_false_func=instr.IfSkullLanternInactive)
+SKULL_LANTERN_ACTIVE = ConstantCondition(
+    if_true_func=instr.IfSkullLanternActive, if_false_func=instr.IfSkullLanternInactive
+)
 
 
 @negate_only
@@ -140,8 +203,22 @@ def FlagEnabled(flag: Flag, condition=None, negate=False, skip_lines=0, end_even
 
 @skip_and_negate_and_terminate
 def FlagDisabled(flag: Flag, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False):
-    return FlagEnabled(flag=flag, condition=condition, negate=not negate, skip_lines=skip_lines,
-                       end_event=end_event, restart_event=restart_event)
+    if condition is not None:
+        if not negate:
+            return instr.IfFlagOff(condition, flag)
+        return instr.IfFlagOn(condition, flag)
+    if skip_lines > 0:
+        if not negate:
+            return instr.SkipLinesIfFlagOn(skip_lines, flag)
+        return instr.SkipLinesIfFlagOff(skip_lines, flag)
+    if end_event:
+        if not negate:
+            return instr.EndIfFlagOff(flag)
+        return instr.EndIfFlagOn(flag)
+    if restart_event:
+        if not negate:
+            return instr.RestartIfFlagOff(flag)
+        return instr.RestartIfFlagOn(flag)
 
 
 @no_skip_or_negate_or_terminate
@@ -185,8 +262,9 @@ def AllPlayersOutsideRegion(region: Region, condition, negate=False):
 
 
 @skip_and_negate_and_terminate
-def InsideMap(game_map: MapOrSequence, condition=None, negate=False,
-              skip_lines=0, end_event=False, restart_event=False):
+def InsideMap(
+    game_map: MapOrSequence, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False
+):
     if skip_lines > 0:
         return instr.SkipLinesIfMapPresenceState(skip_lines, negate, game_map)
     if end_event:
@@ -197,21 +275,25 @@ def InsideMap(game_map: MapOrSequence, condition=None, negate=False,
 
 
 @skip_and_negate_and_terminate
-def OutsideMap(game_map: MapOrSequence, condition=None, negate=False, skip_lines=0,
-               end_event=False, restart_event=False):
-    return InsideMap(game_map, condition=condition, negate=not negate, skip_lines=skip_lines,
-                     end_event=end_event, restart_event=restart_event)
+def OutsideMap(
+    game_map: MapOrSequence, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False
+):
+    if skip_lines > 0:
+        return instr.SkipLinesIfMapPresenceState(skip_lines, not negate, game_map)
+    if end_event:
+        return instr.TerminateIfMapPresenceState(EventEndType.End, negate, game_map)
+    if restart_event:
+        return instr.SkipLinesIfMapPresenceState(EventEndType.Restart, negate, game_map)
+    return instr.IfMapPresenceState(condition, negate, game_map)
 
 
 @negate_only
-def EntityWithinDistance(first_entity: CoordEntity, second_entity: CoordEntity, max_distance, condition,
-                         negate=False):
+def EntityWithinDistance(first_entity: CoordEntity, second_entity: CoordEntity, max_distance, condition, negate=False):
     return instr.IfEntityDistanceState(condition, first_entity, second_entity, max_distance, not negate)
 
 
 @negate_only
-def EntityBeyondDistance(first_entity: CoordEntity, second_entity: CoordEntity, min_distance, condition,
-                         negate=False):
+def EntityBeyondDistance(first_entity: CoordEntity, second_entity: CoordEntity, min_distance, condition, negate=False):
     return instr.IfEntityDistanceState(condition, first_entity, second_entity, min_distance, negate)
 
 
@@ -255,12 +337,32 @@ def HasGood(good: Good, condition, negate=False):
 
 
 @no_skip_or_negate_or_terminate
-def DialogPromptActivated(prompt_text, anchor_entity: CoordEntity, facing_angle=None, max_distance=None,
-                          model_point=-1, human_or_hollow_only=True, button=0, boss_version=False,
-                          line_intersects=None, anchor_type=None, condition=None):
-    return instr.IfDialogPromptActivated(condition, prompt_text, anchor_entity, facing_angle, max_distance,
-                                         model_point, human_or_hollow_only, button, boss_version, line_intersects,
-                                         anchor_type)
+def ActionButton(
+    prompt_text,
+    anchor_entity: CoordEntity,
+    anchor_type=None,
+    facing_angle=None,
+    max_distance=None,
+    model_point=-1,
+    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    button=0,
+    boss_version=False,
+    line_intersects=None,
+    condition=None,
+):
+    return instr.IfActionButton(
+        condition,
+        prompt_text=prompt_text,
+        anchor_entity=anchor_entity,
+        anchor_type=anchor_type,
+        facing_angle=facing_angle,
+        max_distance=max_distance,
+        model_point=model_point,
+        trigger_attribute=trigger_attribute,
+        button=button,
+        boss_version=boss_version,
+        line_intersects=line_intersects,
+    )
 
 
 @no_skip_or_negate_or_terminate
@@ -271,8 +373,7 @@ def MultiplayerEvent(multiplayer_event, condition):
 @negate_only
 def TrueFlagCount(op_node, comparison_value, flag_range: FlagRangeOrSequence, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return instr.IfTrueFlagCountComparison(condition, comparison_value, FlagType.Absolute,
-                                           comparison_type, flag_range)
+    return instr.IfTrueFlagCountComparison(condition, comparison_value, FlagType.Absolute, comparison_type, flag_range)
 
 
 @negate_only
@@ -284,11 +385,13 @@ def EventValue(op_node, comparison_value, start_flag, bit_count, condition, nega
 # TODO: The EVS syntax for this will involve comparing two flags, which I haven't implemented yet.
 #  Until then, you will need to use line-for-line-style 'IfEventFlagValue...()' directly.
 @negate_only
-def EventFlagValue(op_node, left_start_flag, left_bit_count, right_start_flag, right_bit_count,
-                   condition, negate=False):
+def EventFlagValue(
+    op_node, left_start_flag, left_bit_count, right_start_flag, right_bit_count, condition, negate=False
+):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return instr.IfEventsComparison(condition, left_start_flag, left_bit_count, comparison_type,
-                                    right_start_flag, right_bit_count)
+    return instr.IfEventsComparison(
+        condition, left_start_flag, left_bit_count, comparison_type, right_start_flag, right_bit_count
+    )
 
 
 @no_skip_or_negate_or_terminate

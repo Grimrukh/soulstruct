@@ -42,19 +42,19 @@ def Constructor():
     RunEvent(11320100)
     RunEvent(11325100)
     RunEvent(11320101)
-    RunEvent(11325150, slot=0, args=(1320100, 15.0), arg_types='if')
-    RunEvent(11325150, slot=1, args=(1320101, 15.0), arg_types='if')
-    RunEvent(11325150, slot=2, args=(1320102, 10.0), arg_types='if')
-    RunEvent(11320300, slot=1, args=(1320201, 11325203, 11325205, 11325203), arg_types='iIIi')
-    RunEvent(11320300, slot=2, args=(1320202, 11325206, 11325208, 11325206), arg_types='iIIi')
-    RunEvent(11320300, slot=3, args=(1320203, 11325209, 11325211, 11325209), arg_types='iIIi')
-    RunEvent(11320300, slot=4, args=(1320204, 11325212, 11325214, 11325212), arg_types='iIIi')
-    RunEvent(11320300, slot=5, args=(1320205, 11325215, 11325217, 11325215), arg_types='iIIi')
-    RunEvent(11320300, slot=6, args=(1320206, 11325218, 11325220, 11325218), arg_types='iIIi')
-    RunEvent(11320300, slot=7, args=(1320207, 11325221, 11325223, 11325221), arg_types='iIIi')
-    RunEvent(11320300, slot=8, args=(1320208, 11325224, 11325226, 11325224), arg_types='iIIi')
-    RunEvent(11320300, slot=9, args=(1320209, 11325227, 11325229, 11325227), arg_types='iIIi')
-    RunEvent(11320300, slot=10, args=(1320210, 11325230, 11325232, 11325230), arg_types='iIIi')
+    RunEvent(11325150, slot=0, args=(1320100, 15.0), arg_types="if")
+    RunEvent(11325150, slot=1, args=(1320101, 15.0), arg_types="if")
+    RunEvent(11325150, slot=2, args=(1320102, 10.0), arg_types="if")
+    RunEvent(11320300, slot=1, args=(1320201, 11325203, 11325205, 11325203), arg_types="iIIi")
+    RunEvent(11320300, slot=2, args=(1320202, 11325206, 11325208, 11325206), arg_types="iIIi")
+    RunEvent(11320300, slot=3, args=(1320203, 11325209, 11325211, 11325209), arg_types="iIIi")
+    RunEvent(11320300, slot=4, args=(1320204, 11325212, 11325214, 11325212), arg_types="iIIi")
+    RunEvent(11320300, slot=5, args=(1320205, 11325215, 11325217, 11325215), arg_types="iIIi")
+    RunEvent(11320300, slot=6, args=(1320206, 11325218, 11325220, 11325218), arg_types="iIIi")
+    RunEvent(11320300, slot=7, args=(1320207, 11325221, 11325223, 11325221), arg_types="iIIi")
+    RunEvent(11320300, slot=8, args=(1320208, 11325224, 11325226, 11325224), arg_types="iIIi")
+    RunEvent(11320300, slot=9, args=(1320209, 11325227, 11325229, 11325227), arg_types="iIIi")
+    RunEvent(11320300, slot=10, args=(1320210, 11325230, 11325232, 11325230), arg_types="iIIi")
     RunEvent(11320600, slot=0, args=(1321650, 11320600))
 
 
@@ -76,18 +76,28 @@ def Preconstructor():
     EnableImmortality(1320800)
 
 
-def Event11320090(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11320090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320090: Event 11320090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
     DeleteFX(arg_4_7, erase_root_only=True)
     End()
-    IfDialogPromptActivated(1, prompt_text=10010403, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Region, 
-                            facing_angle=0.0, max_distance=0.0, model_point=0, human_or_hollow_only=True, 
-                            line_intersects=arg_0_3)
-    IfDialogPromptActivated(2, prompt_text=10010407, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, 
-                            facing_angle=0.0, max_distance=0.0, model_point=0, human_or_hollow_only=True, 
-                            line_intersects=arg_0_3)
+    IfActionButton(
+        1,
+        prompt_text=10010403,
+        anchor_entity=arg_8_11,
+        anchor_type=CoordEntityType.Region,
+        model_point=0,
+        line_intersects=arg_0_3,
+    )
+    IfActionButton(
+        2,
+        prompt_text=10010407,
+        anchor_entity=arg_12_15,
+        anchor_type=CoordEntityType.Region,
+        model_point=0,
+        line_intersects=arg_0_3,
+    )
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -127,13 +137,13 @@ def Event11320110():
     DisableCharacter(1320707)
     EndIfFlagOn(11320100)
     RunEvent(11325121)
-    RunEvent(11325110, slot=0, args=(1, 3530, 3530, 1320701, 91, 0, 1, 5430), arg_types='hhiiiBBi')
-    RunEvent(11325110, slot=1, args=(2, 3531, 3531, 1320702, 92, 1, 2, 5431), arg_types='hhiiiBBi')
-    RunEvent(11325110, slot=2, args=(3, 3532, 3532, 1320703, 93, 2, 3, 5432), arg_types='hhiiiBBi')
-    RunEvent(11325110, slot=3, args=(4, 3533, 3533, 1320704, 94, 3, 4, 5433), arg_types='hhiiiBBi')
-    RunEvent(11325110, slot=4, args=(5, 3534, 3534, 1320705, 95, 4, 5, 5434), arg_types='hhiiiBBi')
-    RunEvent(11325110, slot=5, args=(6, 3535, 3535, 1320706, 96, 5, 6, 5435), arg_types='hhiiiBBi')
-    RunEvent(11325110, slot=6, args=(8, 3536, 3536, 1320707, 97, 6, 7, 5436), arg_types='hhiiiBBi')
+    RunEvent(11325110, slot=0, args=(1, 3530, 3530, 1320701, 91, 0, 1, 5430), arg_types="hhiiiBBi")
+    RunEvent(11325110, slot=1, args=(2, 3531, 3531, 1320702, 92, 1, 2, 5431), arg_types="hhiiiBBi")
+    RunEvent(11325110, slot=2, args=(3, 3532, 3532, 1320703, 93, 2, 3, 5432), arg_types="hhiiiBBi")
+    RunEvent(11325110, slot=3, args=(4, 3533, 3533, 1320704, 94, 3, 4, 5433), arg_types="hhiiiBBi")
+    RunEvent(11325110, slot=4, args=(5, 3534, 3534, 1320705, 95, 4, 5, 5434), arg_types="hhiiiBBi")
+    RunEvent(11325110, slot=5, args=(6, 3535, 3535, 1320706, 96, 5, 6, 5435), arg_types="hhiiiBBi")
+    RunEvent(11325110, slot=6, args=(8, 3536, 3536, 1320707, 97, 6, 7, 5436), arg_types="hhiiiBBi")
 
 
 @RestartOnRest
@@ -162,8 +172,17 @@ def Event11325100():
 
 
 @UnknownRestart
-def Event11325110(arg_0_1: short, arg_2_3: short, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, 
-                  arg_17_17: uchar, arg_20_23: int):
+def Event11325110(
+    _,
+    arg_0_1: short,
+    arg_2_3: short,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_16: uchar,
+    arg_17_17: uchar,
+    arg_20_23: int,
+):
     """ 11325110: Event 11325110 """
     SkipLinesIfThisEventSlotOff(4)
     SetDisplayMask(1320700, bit_index=arg_16_16, switch_type=OnOffChange.On)
@@ -171,8 +190,16 @@ def Event11325110(arg_0_1: short, arg_2_3: short, arg_4_7: int, arg_8_11: int, a
     AddSpecialEffect(1320700, arg_20_23)
     End()
     IfCharacterBackreadEnabled(0, 1320700)
-    CreateNPCPart(1320700, npc_part_id=arg_2_3, part_index=arg_0_1, part_health=270, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        1320700,
+        npc_part_id=arg_2_3,
+        part_index=arg_0_1,
+        part_health=270,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IfCharacterPartHealthLessThanOrEqual(1, 1320700, npc_part_id=arg_4_7, value=0)
     IfFlagOff(1, 11325120)
     IfAttacked(1, 1320700, attacking_character=PLAYER)
@@ -182,8 +209,13 @@ def Event11325110(arg_0_1: short, arg_2_3: short, arg_4_7: int, arg_8_11: int, a
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(2)
     ResetAnimation(1320700, disable_interpolation=False)
-    Move(arg_8_11, destination=1320700, destination_type=CoordEntityType.Character, model_point=arg_12_15, 
-         copy_draw_parent=1320700)
+    Move(
+        arg_8_11,
+        destination=1320700,
+        destination_type=CoordEntityType.Character,
+        model_point=arg_12_15,
+        copy_draw_parent=1320700,
+    )
     EnableCharacter(arg_8_11)
     ForceAnimation(arg_8_11, 8100)
     ForceAnimation(1320700, 8000)
@@ -234,7 +266,7 @@ def Event11320101():
 
 
 @RestartOnRest
-def Event11325150(arg_0_3: int, arg_4_7: float):
+def Event11325150(_, arg_0_3: int, arg_4_7: float):
     """ 11325150: Event 11325150 """
     EndIfThisEventSlotOn()
     SetStandbyAnimationSettings(arg_0_3, standby_animation=9000)
@@ -274,8 +306,16 @@ def Event11325001():
     AICommand(1320800, command_id=20, slot=0)
     End()
     IfCharacterBackreadEnabled(0, 1320800)
-    CreateNPCPart(1320800, npc_part_id=3451, part_index=NPCPartType.Part1, part_health=200, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        1320800,
+        npc_part_id=3451,
+        part_index=NPCPartType.Part1,
+        part_health=200,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IfCharacterPartHealthLessThanOrEqual(1, 1320800, npc_part_id=3451, value=0)
     IfHealthLessThanOrEqual(2, 1320800, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -285,8 +325,13 @@ def Event11325001():
     ForceAnimation(1320800, 8000)
     IfHasTAEEvent(0, 1320800, tae_event_id=400)
     EnableCharacter(1320801)
-    Move(1320801, destination=1320800, destination_type=CoordEntityType.Character, model_point=19, 
-         copy_draw_parent=1320800)
+    Move(
+        1320801,
+        destination=1320800,
+        destination_type=CoordEntityType.Character,
+        model_point=19,
+        copy_draw_parent=1320800,
+    )
     ForceAnimation(1320801, 8100)
     SetDisplayMask(1320800, bit_index=0, switch_type=OnOffChange.On)
     SetCollisionMask(1320800, bit_index=1, switch_type=OnOffChange.Off)
@@ -298,7 +343,7 @@ def Event11325001():
     AwardItemLot(34510000, host_only=True)
 
 
-def Event11320200(arg_0_3: int, arg_4_7: int):
+def Event11320200(_, arg_0_3: int, arg_4_7: int):
     """ 11320200: Event 11320200 """
     SkipLinesIfThisEventSlotOff(2)
     DisableObject(arg_0_3)
@@ -308,7 +353,7 @@ def Event11320200(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event11320300(arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
+def Event11320300(_, arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
     """ 11320300: Event 11320300 """
     DisableCharacter(arg_0_3)
     EndIfThisEventSlotOn()
@@ -324,7 +369,7 @@ def Event11320300(arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
     End()
 
 
-def Event11320600(arg_0_3: int, arg_4_7: int):
+def Event11320600(_, arg_0_3: int, arg_4_7: int):
     """ 11320600: Event 11320600 """
     SkipLinesIfThisEventSlotOff(4)
     EndOfAnimation(arg_0_3, 0)
@@ -336,7 +381,7 @@ def Event11320600(arg_0_3: int, arg_4_7: int):
     EnableTreasure(arg_0_3)
 
 
-def Event11320510(arg_0_3: int, arg_4_7: int):
+def Event11320510(_, arg_0_3: int, arg_4_7: int):
     """ 11320510: Event 11320510 """
     IfHealthLessThanOrEqual(1, arg_0_3, 0.8999999761581421)
     IfHealthGreaterThan(1, arg_0_3, 0.0)
@@ -357,7 +402,7 @@ def Event11320510(arg_0_3: int, arg_4_7: int):
     SaveRequest()
 
 
-def Event11320520(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11320520(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320520: Event 11320520 """
     SkipLinesIfThisEventSlotOff(2)
     DropMandatoryTreasure(arg_0_3)
@@ -367,7 +412,7 @@ def Event11320520(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableFlag(arg_12_15)
 
 
-def Event11320534(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11320534(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320534: Event 11320534 """
     IfFlagOff(1, 1512)
     IfFlagOff(1, 1547)
@@ -381,7 +426,7 @@ def Event11320534(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableCharacter(arg_0_3)
 
 
-def Event11320535(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11320535(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320535: Event 11320535 """
     IfFlagOff(1, 1512)
     IfFlagOff(1, 1547)
@@ -396,7 +441,7 @@ def Event11320535(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableCharacter(arg_0_3)
 
 
-def Event11320540(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11320540(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320540: Event 11320540 """
     IfFlagOff(1, 1547)
     IfFlagOn(1, 1545)
@@ -408,7 +453,7 @@ def Event11320540(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableCharacter(arg_0_3)
 
 
-def Event11320541(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11320541(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320541: Event 11320541 """
     IfFlagOff(1, 1547)
     IfFlagOn(1, 1546)

@@ -39,26 +39,32 @@ class SoulstructProjectWindow(SmartFrame):
     talk_tab: Optional[SoulstructTalkEditor]
     runtime_tab: Optional[SoulstructRuntimeManager]
 
-    TAB_ORDER = ['maps', 'entities', 'params', 'lighting', 'text', 'events', 'ai', 'talk', 'runtime']
+    TAB_ORDER = ["maps", "entities", "params", "lighting", "text", "events", "ai", "talk", "runtime"]
 
     def __init__(self, project_path=None, master=None):
         """
         TODO:
             - Auto-save scheduled Tk functions that operate at ten minute intervals.
         """
-        super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON,
-                         window_title="Soulstruct Project Editor")
+        super().__init__(
+            master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct Project Editor"
+        )
         self.withdraw()
         self._THREAD_EXCEPTION = None
 
         if not project_path:
             self.CustomDialog(
                 title="Choose Soulstruct project directory",
-                message="Navigate to your Soulstruct project directory.\n\n" + word_wrap(
+                message="Navigate to your Soulstruct project directory.\n\n"
+                + word_wrap(
                     "If you want to create a new project, create an empty directory and select it. "
-                    "The name of the directory will be the name of the project.", 50))
+                    "The name of the directory will be the name of the project.",
+                    50,
+                ),
+            )
             project_path = self.FileDialog.askdirectory(
-                title="Choose Soulstruct project directory", initialdir=str(Path('~/Documents').expanduser()))
+                title="Choose Soulstruct project directory", initialdir=str(Path("~/Documents").expanduser())
+            )
             if not project_path:
                 self.CustomDialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.")
                 raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
@@ -70,24 +76,28 @@ class SoulstructProjectWindow(SmartFrame):
             _LOGGER.info(f"Opened project: {project_path}")
         except SoulstructProjectError as e:
             self.deiconify()
-            msg = (f"Fatal Soulstruct project error encountered (see log for full traceback):\n\n"
-                   f"{word_wrap(str(e), 50)}\n\nAborting startup.")
+            msg = (
+                f"Fatal Soulstruct project error encountered (see log for full traceback):\n\n"
+                f"{word_wrap(str(e), 50)}\n\nAborting startup."
+            )
             _LOGGER.exception("Fatal Soulstruct project error encountered. Aborting startup.")
             self.CustomDialog(title="Project Error", message=msg)
             raise
         except Exception as e:
             self.deiconify()
             _LOGGER.exception("Fatal internal error encountered. Aborting startup.")
-            msg = (f"Fatal internal error encountered (see log for full traceback):"
-                   f"\n\n{word_wrap(str(e), 50)}\n\nAborting startup.")
+            msg = (
+                f"Fatal internal error encountered (see log for full traceback):"
+                f"\n\n{word_wrap(str(e), 50)}\n\nAborting startup."
+            )
             self.CustomDialog(title="Internal Error", message=msg)
             raise
 
         self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
 
-        with self.set_master(column_weights=[1], row_weights=[0, 1], auto_rows=0, sticky='nsew'):
+        with self.set_master(column_weights=[1], row_weights=[0, 1], auto_rows=0, sticky="nsew"):
             self.global_ribbon = self.Frame(row_weights=[1], column_weights=[1, 1, 1, 1], pady=(10, 5))
-            self.page_tabs = self.Notebook(name="project_notebook", sticky='nsew')
+            self.page_tabs = self.Notebook(name="project_notebook", sticky="nsew")
 
         self.maps_tab = None
         self.entities_tab = None
@@ -114,86 +124,133 @@ class SoulstructProjectWindow(SmartFrame):
     def build(self):
         self.build_top_menu()
 
-        with self.set_master(self.global_ribbon, auto_columns=0, grid_defaults={'padx': 5}):
+        with self.set_master(self.global_ribbon, auto_columns=0, grid_defaults={"padx": 5}):
             self.save_all_button = self.Button(
-                text="Save Entire Project", width=20, bg="#622",
+                text="Save Entire Project",
+                width=20,
+                bg="#622",
                 tooltip_text="Saves all project data types to local project files. (Ctrl + Shift + S)",
-                command=self._save_data)
+                command=self._save_data,
+            )
             self.save_tab_button = self.Button(
-                text="Save Tab Data", width=20,
+                text="Save Tab Data",
+                width=20,
                 tooltip_text="Saves just the indicated data type to local project files. (Ctrl + S)",
-                command=lambda: self._save_data(self.current_data_type))
+                command=lambda: self._save_data(self.current_data_type),
+            )
             self.export_tab_button = self.Button(
-                text="Export Tab Data", width=20,
+                text="Export Tab Data",
+                width=20,
                 tooltip_text="Saves and exports just the indicated data type to the game directory. (Ctrl + E)",
-                command=lambda: self._export_data(self.current_data_type, self.project.game_root))
+                command=lambda: self._export_data(self.current_data_type, self.project.game_root),
+            )
             self.export_all_button = self.Button(
-                text="Export Entire Project", width=20, bg="#622",
+                text="Export Entire Project",
+                width=20,
+                bg="#622",
                 tooltip_text="Saves and exports all project data types to the game directory. (Ctrl + Shift + E)",
-                command=lambda: self._export_data(export_directory=self.project.game_root))
+                command=lambda: self._export_data(export_directory=self.project.game_root),
+            )
 
-        tab_frames = {tab_name: self.Frame(frame=self.page_tabs, sticky='nsew', row_weights=[1], column_weights=[1])
-                      for tab_name in self.TAB_ORDER}
+        tab_frames = {
+            tab_name: self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
+            for tab_name in self.TAB_ORDER
+        }
 
         self.maps_tab = self.SmartFrame(
-            frame=tab_frames['maps'], smart_frame_class=SoulstructMapEditor,
-            maps=self.project.Maps, global_map_choice_func=self.set_global_map_choice,
-            linker=self.linker, sticky='nsew')
+            frame=tab_frames["maps"],
+            smart_frame_class=SoulstructMapEditor,
+            maps=self.project.Maps,
+            global_map_choice_func=self.set_global_map_choice,
+            linker=self.linker,
+            sticky="nsew",
+        )
         self.maps_tab.bind("<Visibility>", self._update_banner)
 
         self.entities_tab = self.SmartFrame(
-            frame=tab_frames['entities'], smart_frame_class=SoulstructEntityEditor,
-            maps=self.project.Maps, evs_directory=self.project.project_root / "events",
+            frame=tab_frames["entities"],
+            smart_frame_class=SoulstructEntityEditor,
+            maps=self.project.Maps,
+            evs_directory=self.project.project_root / "events",
             global_map_choice_func=self.set_global_map_choice,
-            linker=self.linker, sticky='nsew')
+            linker=self.linker,
+            sticky="nsew",
+        )
         self.entities_tab.bind("<Visibility>", self._update_banner)
 
         self.params_tab = self.SmartFrame(
-            frame=tab_frames['params'], smart_frame_class=SoulstructParamsEditor,
-            params=self.project.Params, linker=self.linker, sticky='nsew')
+            frame=tab_frames["params"],
+            smart_frame_class=SoulstructParamsEditor,
+            params=self.project.Params,
+            linker=self.linker,
+            sticky="nsew",
+        )
         self.params_tab.bind("<Visibility>", self._update_banner)
 
         self.lighting_tab = self.SmartFrame(
-            frame=tab_frames['lighting'], smart_frame_class=SoulstructLightingEditor,
-            lighting=self.project.Lighting, linker=self.linker, sticky='nsew')
+            frame=tab_frames["lighting"],
+            smart_frame_class=SoulstructLightingEditor,
+            lighting=self.project.Lighting,
+            linker=self.linker,
+            sticky="nsew",
+        )
         self.lighting_tab.bind("<Visibility>", self._update_banner)
 
         self.text_tab = self.SmartFrame(
-            frame=tab_frames['text'], smart_frame_class=SoulstructTextEditor,
-            text=self.project.Text, linker=self.linker, sticky='nsew')
+            frame=tab_frames["text"],
+            smart_frame_class=SoulstructTextEditor,
+            text=self.project.Text,
+            linker=self.linker,
+            sticky="nsew",
+        )
         self.text_tab.bind("<Visibility>", self._update_banner)
 
         self.events_tab = self.SmartFrame(
-            frame=tab_frames['events'], smart_frame_class=SoulstructEventEditor,
-            evs_directory=self.project.project_root / "events", game_root=self.project.game_root,
-            global_map_choice_func=self.set_global_map_choice, text_font_size=self.project.text_font_size,
-            dcx=self.project.game_name == "Dark Souls Remastered", sticky='nsew')
+            frame=tab_frames["events"],
+            smart_frame_class=SoulstructEventEditor,
+            evs_directory=self.project.project_root / "events",
+            game_root=self.project.game_root,
+            global_map_choice_func=self.set_global_map_choice,
+            text_font_size=self.project.text_font_size,
+            dcx=self.project.game_name == "Dark Souls Remastered",
+            sticky="nsew",
+        )
         self.events_tab.bind("<Visibility>", self._update_banner)
 
         self.ai_tab = self.SmartFrame(
-            frame=tab_frames['ai'], smart_frame_class=SoulstructAIEditor,
-            ai=self.project.AI, script_directory=self.project.project_root / "ai_scripts",
-            game_root=self.project.game_root, allow_decompile=self.project.game_name == "Dark Souls Remastered",
-            global_map_choice_func=self.set_global_map_choice, text_font_size=self.project.text_font_size,
-            linker=self.linker, sticky='nsew')
+            frame=tab_frames["ai"],
+            smart_frame_class=SoulstructAIEditor,
+            ai=self.project.AI,
+            script_directory=self.project.project_root / "ai_scripts",
+            game_root=self.project.game_root,
+            allow_decompile=self.project.game_name == "Dark Souls Remastered",
+            global_map_choice_func=self.set_global_map_choice,
+            text_font_size=self.project.text_font_size,
+            linker=self.linker,
+            sticky="nsew",
+        )
         self.ai_tab.bind("<Visibility>", self._update_banner)
 
         self.talk_tab = self.SmartFrame(
-            frame=tab_frames['talk'], smart_frame_class=SoulstructTalkEditor,
-            esp_directory=self.project.project_root / "talk", game_root=self.project.game_root,
+            frame=tab_frames["talk"],
+            smart_frame_class=SoulstructTalkEditor,
+            esp_directory=self.project.project_root / "talk",
+            game_root=self.project.game_root,
             game_name=self.project.game_name,
-            global_map_choice_func=self.set_global_map_choice, text_font_size=self.project.text_font_size,
-            linker=self.linker, sticky='nsew'
+            global_map_choice_func=self.set_global_map_choice,
+            text_font_size=self.project.text_font_size,
+            linker=self.linker,
+            sticky="nsew",
         )
         self.talk_tab.bind("<Visibility>", self._update_banner)
 
         self.runtime_tab = self.SmartFrame(
-            frame=tab_frames['runtime'], smart_frame_class=SoulstructRuntimeManager,
-            project=self.project, sticky='nsew')
+            frame=tab_frames["runtime"], smart_frame_class=SoulstructRuntimeManager, project=self.project, sticky="nsew"
+        )
         self.runtime_tab.bind("<Visibility>", self._update_banner)
 
         for tab_name, tab_frame in tab_frames.items():
-            self.page_tabs.add(tab_frame, text=f'  {data_type_caps(tab_name)}  ')
+            self.page_tabs.add(tab_frame, text=f"  {data_type_caps(tab_name)}  ")
 
         self.create_key_bindings()
 
@@ -204,80 +261,92 @@ class SoulstructProjectWindow(SmartFrame):
 
         file_menu = self.Menu(tearoff=0)
         save_menu = self.Menu(tearoff=0)
-        save_menu.add_command(
-            label=f"Save Entire Project", foreground='#FFF',
-            command=self._save_data)
+        save_menu.add_command(label=f"Save Entire Project", foreground="#FFF", command=self._save_data)
         save_menu.add_separator()
         for data_type in DATA_TYPES:
             save_menu.add_command(
-                label=f"Save {data_type_caps(data_type)}", foreground='#FFF',
-                command=lambda d=data_type: self._save_data(d))
-        file_menu.add_cascade(label=f"Save", foreground='#FFF', menu=save_menu)
+                label=f"Save {data_type_caps(data_type)}",
+                foreground="#FFF",
+                command=lambda d=data_type: self._save_data(d),
+            )
+        file_menu.add_cascade(label=f"Save", foreground="#FFF", menu=save_menu)
         file_menu.add_separator()
         for import_dir in (self.project.game_root, None):
             import_menu = self.Menu(tearoff=0)
             import_menu.add_command(
-                label=f"Import Everything", foreground='#FFF',
-                command=lambda i=import_dir: self._import_data(import_directory=i))
+                label=f"Import Everything",
+                foreground="#FFF",
+                command=lambda i=import_dir: self._import_data(import_directory=i),
+            )
             import_menu.add_separator()
             for data_type in DATA_TYPES:
                 import_menu.add_command(
-                    label=f"Import {data_type_caps(data_type)}", foreground='#FFF',
-                    command=lambda d=data_type, i=import_dir: self._import_data(d, import_directory=i))
-            file_menu.add_cascade(label=f"Import from{' Game' if import_dir else '...'}",
-                                  foreground='#FFF', menu=import_menu)
+                    label=f"Import {data_type_caps(data_type)}",
+                    foreground="#FFF",
+                    command=lambda d=data_type, i=import_dir: self._import_data(d, import_directory=i),
+                )
+            file_menu.add_cascade(
+                label=f"Import from{' Game' if import_dir else '...'}", foreground="#FFF", menu=import_menu
+            )
         file_menu.add_separator()
         for export_dir in (self.project.game_root, None):
             export_menu = self.Menu(tearoff=0)
             export_menu.add_command(
-                label=f"Export Everything", foreground='#FFF',
-                command=lambda e=export_dir: self._export_data(export_directory=e))
+                label=f"Export Everything",
+                foreground="#FFF",
+                command=lambda e=export_dir: self._export_data(export_directory=e),
+            )
             export_menu.add_separator()
             for data_type in DATA_TYPES:
                 export_menu.add_command(
-                    label=f"Export {data_type_caps(data_type)}", foreground='#FFF',
-                    command=lambda d=data_type, e=export_dir: self._export_data(d, export_directory=e))
-            file_menu.add_cascade(label=f"Export to{' Game' if export_dir else '...'}",
-                                  foreground='#FFF', menu=export_menu)
+                    label=f"Export {data_type_caps(data_type)}",
+                    foreground="#FFF",
+                    command=lambda d=data_type, e=export_dir: self._export_data(d, export_directory=e),
+                )
+            file_menu.add_cascade(
+                label=f"Export to{' Game' if export_dir else '...'}", foreground="#FFF", menu=export_menu
+            )
 
         file_menu.add_separator()
 
-        file_menu.add_command(label="Set as Default Project", foreground='#FFF',
-                              command=self._set_as_default_project)
-        file_menu.add_command(label="Clear Default Project", foreground='#FFF',
-                              command=self._clear_default_project)
+        file_menu.add_command(label="Set as Default Project", foreground="#FFF", command=self._set_as_default_project)
+        file_menu.add_command(label="Clear Default Project", foreground="#FFF", command=self._clear_default_project)
 
         file_menu.add_separator()
 
-        file_menu.add_command(label="Quit", foreground='#FFF', command=self.confirm_quit)
+        file_menu.add_command(label="Quit", foreground="#FFF", command=self.confirm_quit)
 
         top_menu.add_cascade(label="File", menu=file_menu)
 
         params_menu = self.Menu(tearoff=0)
-        params_menu.add_command(label="Rename All Items/Equipment from Text", foreground="#FFF",
-                                command=self._rename_param_entries_from_text)
+        params_menu.add_command(
+            label="Rename All Items/Equipment from Text",
+            foreground="#FFF",
+            command=self._rename_param_entries_from_text,
+        )
         for param_table in ("Weapons", "Armor", "Rings", "Goods", "Spells"):
-            params_menu.add_command(label=f"Rename {param_table} from Text", foreground="#FFF",
-                                    command=lambda p=param_table: self._rename_param_entries_from_text(p))
+            params_menu.add_command(
+                label=f"Rename {param_table} from Text",
+                foreground="#FFF",
+                command=lambda p=param_table: self._rename_param_entries_from_text(p),
+            )
 
         tools_menu = self.Menu(tearoff=0)
         tools_menu.add_cascade(label="Params", foreground="#FFF", menu=params_menu)
         # Menus for other data types go here (before or after Params).
         tools_menu.add_separator()
-        tools_menu.add_command(label="Create Game Backup", foreground='#FFF',
-                               command=self._create_game_backup)
-        tools_menu.add_command(label="Restore Game Backup", foreground='#FFF',
-                               command=self._restore_game_backup)
+        tools_menu.add_command(label="Create Game Backup", foreground="#FFF", command=self._create_game_backup)
+        tools_menu.add_command(label="Restore Game Backup", foreground="#FFF", command=self._restore_game_backup)
         tools_menu.add_separator()
-        tools_menu.add_command(label="Restore .bak File", foreground='#FFF',
-                               command=lambda: self._restore_backup(full_folder=False))
-        tools_menu.add_command(label="Restore .bak Files", foreground='#FFF',
-                               command=lambda: self._restore_backup(full_folder=True))
+        tools_menu.add_command(
+            label="Restore .bak File", foreground="#FFF", command=lambda: self._restore_backup(full_folder=False)
+        )
+        tools_menu.add_command(
+            label="Restore .bak Files", foreground="#FFF", command=lambda: self._restore_backup(full_folder=True)
+        )
         tools_menu.add_separator()
-        tools_menu.add_command(label="Unpack BND", foreground='#FFF',
-                               command=self._unpack_bnd)
-        tools_menu.add_command(label="Repack BND", foreground='#FFF',
-                               command=self._repack_bnd)
+        tools_menu.add_command(label="Unpack BND", foreground="#FFF", command=self._unpack_bnd)
+        tools_menu.add_command(label="Repack BND", foreground="#FFF", command=self._repack_bnd)
 
         top_menu.add_cascade(label="Tools", menu=tools_menu)
 
@@ -294,17 +363,22 @@ class SoulstructProjectWindow(SmartFrame):
 
     def alphanumeric_word_boundaries(self):
         """See: http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19"""
-        self.tk.call('tcl_wordBreakAfter', '', 0)
-        self.tk.call('set', 'tcl_wordchars', '[a-zA-Z0-9_.]')
-        self.tk.call('set', 'tcl_nonwordchars', '[^a-zA-Z0-9_.]')
+        self.tk.call("tcl_wordBreakAfter", "", 0)
+        self.tk.call("set", "tcl_wordchars", "[a-zA-Z0-9_.]")
+        self.tk.call("set", "tcl_nonwordchars", "[^a-zA-Z0-9_.]")
 
     def create_key_bindings(self):
         self.bind_all("<Control-s>", lambda _: self._save_data(self.current_data_type, mimic_click=True))
         self.bind_all("<Control-S>", lambda _: self._save_data(mimic_click=True))
-        self.bind_all("<Control-e>", lambda _: self._export_data(
-            self.current_data_type, export_directory=self.project.game_root, mimic_click=True))
-        self.bind_all("<Control-E>", lambda _: self._export_data(
-            export_directory=self.project.game_root, mimic_click=True))
+        self.bind_all(
+            "<Control-e>",
+            lambda _: self._export_data(
+                self.current_data_type, export_directory=self.project.game_root, mimic_click=True
+            ),
+        )
+        self.bind_all(
+            "<Control-E>", lambda _: self._export_data(export_directory=self.project.game_root, mimic_click=True)
+        )
 
     def refresh_tab_data(self, data_type=None):
         if data_type is None:
@@ -326,7 +400,7 @@ class SoulstructProjectWindow(SmartFrame):
             pass
         else:
             project_data = getattr(self.project, data_type_caps(data_type))
-            setattr(getattr(self, f'{data_type}_tab'), data_type_caps(data_type), project_data)
+            setattr(getattr(self, f"{data_type}_tab"), data_type_caps(data_type), project_data)
             if data_type == "params":
                 self.params_tab.refresh_entries()
             elif data_type == "maps":
@@ -337,11 +411,17 @@ class SoulstructProjectWindow(SmartFrame):
                 self.text_tab.refresh_entries()
 
     def confirm_quit(self):
-        if self.CustomDialog(title="Quit Soulstruct?",
-                             message="Quit Soulstruct? Any unsaved changes will be lost.",
-                             button_names=("Yes, quit", "No, go back"),
-                             button_kwargs=('YES', 'NO'),
-                             cancel_output=1, default_output=1) == 0:
+        if (
+            self.CustomDialog(
+                title="Quit Soulstruct?",
+                message="Quit Soulstruct? Any unsaved changes will be lost.",
+                button_names=("Yes, quit", "No, go back"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1,
+                default_output=1,
+            )
+            == 0
+        ):
             self.destroy()
 
     def destroy(self):
@@ -360,28 +440,23 @@ class SoulstructProjectWindow(SmartFrame):
         game_map = get_map(map_id)
         if "maps" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
-                self.maps_tab.map_choice.var.set(
-                    f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
+                self.maps_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
         if "entities" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
-                self.entities_tab.map_choice.var.set(
-                    f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
+                self.entities_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.entities_tab.on_map_choice()
         if "events" not in ignore_tabs:
             if game_map.emevd_file_stem is not None:
-                self.events_tab.map_choice.var.set(
-                    f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
+                self.events_tab.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
                 self.events_tab.on_map_choice()
         if "ai" not in ignore_tabs:
             if game_map.ai_file_stem is not None:
-                self.ai_tab.map_choice.var.set(
-                    f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
+                self.ai_tab.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
                 self.ai_tab.on_map_choice()
         if "talk" not in ignore_tabs:
             if game_map.esd_file_stem is not None:
-                self.talk_tab.map_choice.var.set(
-                    f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
+                self.talk_tab.map_choice.var.set(f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
                 self.talk_tab.on_map_choice()
 
     def _import_data(self, data_type=None, import_directory=None):
@@ -398,8 +473,10 @@ class SoulstructProjectWindow(SmartFrame):
                 raise
 
         loading = self.LoadingDialog(
-            title="Importing...", message=f"Importing {data_type if data_type is not None else 'all files'}...",
-            maximum=20)
+            title="Importing...",
+            message=f"Importing {data_type if data_type is not None else 'all files'}...",
+            maximum=20,
+        )
         import_thread = threading.Thread(target=_threaded_import)
         import_thread.start()
         loading.update()
@@ -411,8 +488,10 @@ class SoulstructProjectWindow(SmartFrame):
         loading.destroy()
 
         if self._THREAD_EXCEPTION:
-            message = (f"Error occurred while importing data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
-                       f"Import operation may have only partially completed.")
+            message = (
+                f"Error occurred while importing data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                f"Import operation may have only partially completed."
+            )
             self._THREAD_EXCEPTION = None
             return self.CustomDialog(title="Import Error", message=message)
 
@@ -449,10 +528,6 @@ class SoulstructProjectWindow(SmartFrame):
             export_directory = self._choose_directory()
             if not export_directory:
                 return  # Abort export.
-        if data_type == "ai" and export_directory == self.project.game_root:
-            # TODO: Fix and remove. (For now, allowing exports to non-game-root for debugging.)
-            self.CustomDialog("AI Export Disabled", "AI exporting (to game) is currently broken and disabled. Sorry!")
-            return
         if data_type == "events":
             # Specifying 'events' here means the selected script only.
             self.events_tab.save_selected_evs()
@@ -485,8 +560,10 @@ class SoulstructProjectWindow(SmartFrame):
                 raise
 
         loading = self.LoadingDialog(
-            title="Exporting...", message=f"Exporting {data_type if data_type is not None else 'all files'}...",
-            maximum=20)
+            title="Exporting...",
+            message=f"Exporting {data_type if data_type is not None else 'all files'}...",
+            maximum=20,
+        )
         export_thread = threading.Thread(target=_threaded_export)
         export_thread.start()
         loading.update()
@@ -498,9 +575,11 @@ class SoulstructProjectWindow(SmartFrame):
         loading.destroy()
 
         if self._THREAD_EXCEPTION:
-            caps = data_type_caps(data_type)
-            message = (f"Error occurred while exporting {caps} data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
-                       f"Export operation may have only partially completed.")
+            caps = data_type_caps(data_type) if data_type is not None else "all"
+            message = (
+                f"Error occurred while exporting {caps} data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                f"Export operation may have only partially completed."
+            )
             if " object has no attribute " in str(self._THREAD_EXCEPTION):
                 message += (
                     f"\n\nThis error may have occurred because of a change in Soulstruct's internal data.\n"
@@ -509,7 +588,8 @@ class SoulstructProjectWindow(SmartFrame):
                     f"exported game files into this new version of Soulstruct (File > Import from... >\n"
                     f"Import {caps}).\n\n"
                     f"These format-changing updates will only happen while we are\n"
-                    f"discovering the correct data types for the handful of remaining unknown variables.")
+                    f"discovering the correct data types for the handful of remaining unknown variables."
+                )
             self._THREAD_EXCEPTION = None
             return self.CustomDialog(title="Export Error", message=message)
 
@@ -517,11 +597,14 @@ class SoulstructProjectWindow(SmartFrame):
         if target is None:
             if full_folder:
                 target = self.FileDialog.askdirectory(
-                    title="Choose Folder to Restore Backups", initialdir=str(self.project.game_root))
+                    title="Choose Folder to Restore Backups", initialdir=str(self.project.game_root)
+                )
             else:
                 target = self.FileDialog.askopenfilename(
-                    title="Choose File to Restore Backup", initialdir=str(self.project.game_root),
-                    filetypes=[("Bak file", ".bak")])
+                    title="Choose File to Restore Backup",
+                    initialdir=str(self.project.game_root),
+                    filetypes=[("Bak file", ".bak")],
+                )
             if not target:
                 return
         try:
@@ -530,58 +613,71 @@ class SoulstructProjectWindow(SmartFrame):
             return self.CustomDialog(title="Restore Backup Error", message=str(e))
         if count:
             return self.CustomDialog(
-                title="Restore Successful",
-                message=f"{count} '.bak' files restored in folder\n'{str(target)}'.")
+                title="Restore Successful", message=f"{count} '.bak' files restored in folder\n'{str(target)}'."
+            )
         return self.CustomDialog("Restore Successful", f"Backup file '{str(target)}' restored.")
 
     def _unpack_bnd(self):
         target = self.FileDialog.askopenfilename(
-            title="Choose BND File to Unpack", initialdir=str(self.project.game_root))
+            title="Choose BND File to Unpack", initialdir=str(self.project.game_root)
+        )
         if target is None:
             return
         if not re.match(r".*\.[a-z]*bnd(\.dcx)?$", target):
             return self.CustomDialog(
-                title="Invalid BND File",
-                message=f"A valid BND file (with or without DCX) must be selected.")
+                title="Invalid BND File", message=f"A valid BND file (with or without DCX) must be selected."
+            )
         BND(target).write_unpacked_dir()
 
     def _repack_bnd(self):
         target = self.FileDialog.askdirectory(
-            title="Choose Unpacked BND Directory to Repack", initialdir=str(self.project.game_root))
+            title="Choose Unpacked BND Directory to Repack", initialdir=str(self.project.game_root)
+        )
         if target is None:
             return
         if not re.match(r".*\.[a-z]*bnd", target):
             return self.CustomDialog(
                 title="Invalid Directory",
-                message=f"A valid unpacked BND directory (with a 'bnd_manifest.txt' file) must be selected.")
+                message=f"A valid unpacked BND directory (with a 'bnd_manifest.txt' file) must be selected.",
+            )
         BND(target).write()
 
     def _set_as_default_project(self):
         """Set this project directory as the Soulstruct default in `config.py`."""
         from soulstruct._config import SET_CONFIG
+
         SET_CONFIG(default_project_path=str(self.project.project_root))
 
     @staticmethod
     def _clear_default_project():
         from soulstruct._config import SET_CONFIG
-        SET_CONFIG(default_project_path='')
+
+        SET_CONFIG(default_project_path="")
 
     def _create_game_backup(self):
         backup_path = self.project.game_root / "soulstruct-backup"
         if backup_path.is_dir():
-            if self.CustomDialog(
+            if (
+                self.CustomDialog(
                     title="Confirm Backup Overwrite",
                     message="Backup directory `soulstruct-backup` in game directory already exists. Overwrite?",
                     button_names=("Yes, overwrite", "No, go back"),
-                    button_kwargs=('YES', 'NO'),
-                    cancel_output=1, default_output=1) == 1:
+                    button_kwargs=("YES", "NO"),
+                    cancel_output=1,
+                    default_output=1,
+                )
+                == 1
+            ):
                 return
         try:
             self.project.create_game_backup(backup_path)
         except Exception as e:
-            self.CustomDialog("Backup Error", f"Error while creating game file backup:\n\n"
-                                              f"{e}\n\n"
-                                              f"Backup may have only been partially completed.")
+            self.CustomDialog(
+                "Backup Error",
+                f"Error while creating game file backup:\n\n"
+                f"{e}\n\n"
+                f"Backup may have only been partially completed.",
+            )
             _LOGGER.error(f"Error while creating game file backup: {e}", exc_info=True)
         else:
             self.CustomDialog("Backup Creation Successful", "Backup files created successfully.")
@@ -589,22 +685,31 @@ class SoulstructProjectWindow(SmartFrame):
     def _restore_game_backup(self):
         backup_path = self.project.game_root / "soulstruct-backup"
         if not backup_path.is_dir():
-            self.CustomDialog("No Backup Created",
-                              "Backup folder `soulstruct-backup` has not yet been created in game directory.")
+            self.CustomDialog(
+                "No Backup Created", "Backup folder `soulstruct-backup` has not yet been created in game directory."
+            )
             return
-        if self.CustomDialog(
+        if (
+            self.CustomDialog(
                 title="Confirm Backup Restore",
                 message="Are you sure you want to restore backup Dark Souls files?",
                 button_names=("Yes, continue", "No, go back"),
-                button_kwargs=('YES', 'NO'),
-                cancel_output=1, default_output=1) == 1:
+                button_kwargs=("YES", "NO"),
+                cancel_output=1,
+                default_output=1,
+            )
+            == 1
+        ):
             return
         try:
             self.project.restore_game_backup(backup_path)
         except Exception as e:
-            self.CustomDialog("Backup Error", f"Error while restoring game file backup:\n\n"
-                                              f"{e}\n\n"
-                                              f"Backup files may have been only partially restored.")
+            self.CustomDialog(
+                "Backup Error",
+                f"Error while restoring game file backup:\n\n"
+                f"{e}\n\n"
+                f"Backup files may have been only partially restored.",
+            )
             _LOGGER.error(f"Error while restoring game file backup: {e}", exc_info=True)
         else:
             self.CustomDialog("Backup Restore Successful", "All backup files restored successfully.")
@@ -648,6 +753,9 @@ class SoulstructProjectWindow(SmartFrame):
     def _rename_param_entries_from_text(self, param_table=None):
         self.project.Params.rename_entries_from_text(self.project.Text, param_table_name=param_table)
         if self.page_tabs.index(self.page_tabs.select()) == self.TAB_ORDER.index("params"):
-            if (not param_table and self.params_tab.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
-                    or param_table == self.params_tab.active_category):
+            if (
+                not param_table
+                and self.params_tab.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
+                or param_table == self.params_tab.active_category
+            ):
                 self.params_tab.refresh_entries()

@@ -72,9 +72,16 @@ def Event14100100():
     IfLeavingSession(2)
     IfActionButtonInRegion(2, action_button_id=9341, region=4101100)
     IfConditionTrue(0, input_condition=2)
-    DisplayDialogAndSetFlags(message=10012020, button_type=ButtonType.Yes_or_No, 
-                             number_buttons=NumberButtons.TwoButton, anchor_entity=4101100, display_distance=3.0, 
-                             left_flag=100, right_flag=14105100, cancel_flag=14105100)
+    DisplayDialogAndSetFlags(
+        message=10012020,
+        button_type=ButtonType.Yes_or_No,
+        number_buttons=NumberButtons.TwoButton,
+        anchor_entity=4101100,
+        display_distance=3.0,
+        left_flag=100,
+        right_flag=14105100,
+        cancel_flag=14105100,
+    )
     RestartIfFlagOff(100)
     EnableFlag(100)
     DisableFlag(101)
@@ -86,8 +93,15 @@ def Event14100100():
     DisableCollision(4104100)
     EnableCollision(4104103)
     WaitFrames(1)
-    PlayCutsceneAndMovePlayer_WithUnknowns(cutscene=41000060, cutscene_type=CutsceneType.Skippable, region=4102110, 
-                                           game_map=KILN_OF_THE_FIRST_FLAME, player_id=10000, unknown1=0, unknown2=0)
+    PlayCutsceneAndMovePlayer_WithUnknowns(
+        cutscene=41000060,
+        cutscene_type=CutsceneType.Skippable,
+        region=4102110,
+        game_map=KILN_OF_THE_FIRST_FLAME,
+        player_id=10000,
+        unknown1=0,
+        unknown2=0,
+    )
     WaitFrames(1)
     EnableCharacter(4100100)
     EnableAnimations(4100100)
@@ -148,9 +162,16 @@ def Event14100101():
     IfLeavingSession(2)
     IfActionButtonInRegion(2, action_button_id=9342, region=4101952)
     IfConditionTrue(0, input_condition=2)
-    DisplayDialogAndSetFlags(message=10012021, button_type=ButtonType.Yes_or_No, 
-                             number_buttons=NumberButtons.TwoButton, anchor_entity=4101952, display_distance=3.0, 
-                             left_flag=101, right_flag=14105101, cancel_flag=14105101)
+    DisplayDialogAndSetFlags(
+        message=10012021,
+        button_type=ButtonType.Yes_or_No,
+        number_buttons=NumberButtons.TwoButton,
+        anchor_entity=4101952,
+        display_distance=3.0,
+        left_flag=101,
+        right_flag=14105101,
+        cancel_flag=14105101,
+    )
     RestartIfFlagOff(101)
     EnableFlag(101)
     DisableFlag(100)
@@ -185,12 +206,17 @@ def Event14100101():
     End()
 
 
-def Event14105520(arg_0_3: int, arg_4_7: int):
+def Event14105520(_, arg_0_3: int, arg_4_7: int):
     """ 14105520: Event 14105520 """
     DisableNetworkSync()
     IfActionButtonInRegion(0, action_button_id=9356, region=arg_4_7)
-    DisplayDialog(arg_0_3, anchor_entity=arg_4_7, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        arg_0_3,
+        anchor_entity=arg_4_7,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Wait(3.0)
     Restart()
 
@@ -314,8 +340,9 @@ def Event14105812():
 
 
 @RestartOnRest
-def Event14105813(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int):
+def Event14105813(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
+):
     """ 14105813: Event 14105813 """
     DisableNetworkSync()
     DisableSoundEvent(arg_16_19)
@@ -345,8 +372,9 @@ def Event14005829():
     """ 14005829: Event 14005829 """
     RunCommonEvent(20005800, args=(14100800, 4101800, 4102800, 14105805, 4101800, 4100800, 14100801, 0))
     RunCommonEvent(20005801, args=(14100800, 4101800, 4102800, 14105805, 4101800, 14105806))
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     RunCommonEvent(20001836, args=(14100800, 14105805, 14105806, 14105807, 4104800, 4104801, 14105802))
     SkipLines(1)
     RunCommonEvent(20005831, args=(14100800, 14105805, 14105806, 4102800, 4104800, 4104801, 14105802))

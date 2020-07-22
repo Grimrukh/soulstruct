@@ -1,5 +1,10 @@
-from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
-    get_game_map_variable_name
+from soulstruct.events.internal import (
+    InstructionNotFoundError,
+    get_enum_name,
+    EnumStringError,
+    boolify,
+    get_game_map_variable_name,
+)
 from soulstruct.enums.bloodborne import *
 
 
@@ -12,11 +17,13 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 23:
             condition, attacked_entity, attacking_character, damage_type = req_args
             if attacked_entity == 10000:
-                attacked_entity = 'PLAYER'
+                attacked_entity = "PLAYER"
             if attacking_character == 10000:
-                attacking_character = 'PLAYER'
-            return (f"IfDamageType({condition}, attacked_entity={attacked_entity}, "
-                    f"attacking_character={attacking_character}, damage_type={get_enum_name(DamageType, damage_type)})")
+                attacking_character = "PLAYER"
+            return (
+                f"IfDamageType({condition}, attacked_entity={attacked_entity}, "
+                f"attacking_character={attacking_character}, damage_type={get_enum_name(DamageType, damage_type)})"
+            )
 
         if instruction_index == 24:
             condition, action_button_id, region = req_args
@@ -24,8 +31,10 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 25:
             condition, armor_type, first, last = req_args
-            return (f"IfPlayerArmorType({condition}, armor_type={get_enum_name(ArmorType, armor_type)}, "
-                    f"required_armor_range_first={first}, required_armor_range_last={last})")
+            return (
+                f"IfPlayerArmorType({condition}, armor_type={get_enum_name(ArmorType, armor_type)}, "
+                f"required_armor_range_first={first}, required_armor_range_last={last})"
+            )
 
         if instruction_index == 26:
             condition, value, comp_type = req_args
@@ -34,7 +43,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             except EnumStringError:
                 return f"IfPlayerInsightAmountComparison({condition}, {value}, comparison_type={comp_type})"
             else:
-                comp_type = comp_type.split('.')[-1]
+                comp_type = comp_type.split(".")[-1]
                 return f"IfPlayerInsightAmount{comp_type}({condition}, {value})"
 
         if instruction_index == 27:
@@ -60,7 +69,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 15:
             condition, character, state = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             if state == 1:
                 return f"IfCharacterDrawGroupActive({condition}, {character})"
             if state == 0:
@@ -79,7 +88,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"GotoIfConditionState({label}, state={boolify(state)}, input_condition={condition})"
 
         if instruction_index == 103:
-            label, = req_args
+            (label,) = req_args
             label = get_enum_name(Label, label, True)
             return f"Goto({label})"
 
@@ -192,7 +201,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             label, state = req_args
             label = get_enum_name(Label, label, True)
             try:
-                state_name = get_enum_name(MultiplayerState, state).split('.')[-1]
+                state_name = get_enum_name(MultiplayerState, state).split(".")[-1]
             except EnumStringError:
                 return f"GotoIfMultiplayerState({label}, state={state})"
             else:
@@ -238,8 +247,10 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             cutscene, cutscene_type, region, area_id, block_id, player_id, time_period_id = req_args
             game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
-            return (f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
-                    f"{game_map}, player_id={player_id}, time_period_id={time_period_id})")
+            return (
+                f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
+                f"{game_map}, player_id={player_id}, time_period_id={time_period_id})"
+            )
 
         if instruction_index == 7:
             cutscene, cutscene_type, player_id, time_period_id = req_args
@@ -254,18 +265,20 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     if instruction_class == 2003:
 
         if instruction_index == 15:
-            miniboss_id, = req_args
+            (miniboss_id,) = req_args
             return f"HandleMinibossDefeat({miniboss_id})"
 
         if instruction_index == 27:
-            arg1, = req_args
+            (arg1,) = req_args
             return f"Unknown_2003_27({arg1})"
 
         if instruction_index == 41:
             source_flag, source_flag_bit_count, operand, target_flag, target_flag_bit_count, calculation_type = req_args
             calculation_type = get_enum_name(CalculationType, calculation_type, True)
-            return (f"EventValueOperation({source_flag}, {source_flag_bit_count}, {operand}, {target_flag}, "
-                    f"{target_flag_bit_count}, {calculation_type})")
+            return (
+                f"EventValueOperation({source_flag}, {source_flag_bit_count}, {operand}, {target_flag}, "
+                f"{target_flag_bit_count}, {calculation_type})"
+            )
 
         if instruction_index == 42:
             item_type, item, flag, bit_count = req_args
@@ -278,7 +291,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"GivePlayerItemAmountSpecifiedByFlagValue({item_type}, {item}, {flag}, {bit_count})"
 
         if instruction_index == 44:
-            state, = req_args
+            (state,) = req_args
             if state == 1:
                 return "EnableDirectionDisplay()"
             if state == 0:
@@ -306,22 +319,24 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetAreaWind({region}, state={boolify(state)}, duration={duration}, wind_parameter_id={wind_id})"
 
         if instruction_index == 49:
-            respawn_point_id, = req_args
+            (respawn_point_id,) = req_args
             return f"WarpPlayerToRespawnPoint({respawn_point_id})"
 
         if instruction_index == 50:
-            spawner_id, = req_args
+            (spawner_id,) = req_args
             return f"StartEnemySpawner({spawner_id})"
 
         if instruction_index == 51:
             sign_type, character, region, summon_flag, dismissal_flag = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             sign_type = get_enum_name(SingleplayerSummonSignType, sign_type, True)
-            return (f"SummonNPC({sign_type}, {character}, {region}, summon_flag={summon_flag}, "
-                    f"dismissal_flag={dismissal_flag})")
+            return (
+                f"SummonNPC({sign_type}, {character}, {region}, summon_flag={summon_flag}, "
+                f"dismissal_flag={dismissal_flag})"
+            )
 
         if instruction_index == 52:
-            warp_object_id, = req_args
+            (warp_object_id,) = req_args
             return f"InitializeWarpObject({warp_object_id})"
 
         if instruction_index == 53:
@@ -330,74 +345,90 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"BossDefeat({boss_id}, {banner_type})"
 
         if instruction_index == 54:
-            character, = req_args
-            character = 'PLAYER' if character == 10000 else character
+            (character,) = req_args
+            character = "PLAYER" if character == 10000 else character
             return f"SendNPCSummonHome({character})"
 
     if instruction_class == 2004:
 
         if instruction_index == 8:
             character, special_effect_id, affect_npc_part_hp = req_args
-            character = 'PLAYER' if character == 10000 else character
-            return (f"AddSpecialEffect({character}, {special_effect_id}, "
-                    f"affect_npc_part_hp={boolify(affect_npc_part_hp)})")
+            character = "PLAYER" if character == 10000 else character
+            return (
+                f"AddSpecialEffect({character}, {special_effect_id}, "
+                f"affect_npc_part_hp={boolify(affect_npc_part_hp)})"
+            )
 
         if instruction_index == 14:
             character, target_entity, animation, wait_for_completion = req_args
-            character = 'PLAYER' if character == 10000 else character
-            target_entity = 'PLAYER' if target_entity == 10000 else target_entity
-            return (f"RotateToFaceEntity({character}, {target_entity}, animation={animation}, "
-                    f"wait_for_completion={boolify(wait_for_completion)})")
+            character = "PLAYER" if character == 10000 else character
+            target_entity = "PLAYER" if target_entity == 10000 else target_entity
+            return (
+                f"RotateToFaceEntity({character}, {target_entity}, animation={animation}, "
+                f"wait_for_completion={boolify(wait_for_completion)})"
+            )
 
         if instruction_index == 48:
             character, bit_count, state_id = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"ChangeCharacterCloth({character}, {bit_count}, state_id={state_id})"
 
         if instruction_index == 49:
             character, patrol_information_id = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"ChangePatrolBehavior({character}, patrol_information_id={patrol_information_id})"
 
         if instruction_index == 50:
             character, distance = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"SetDistanceLimitForConversationStateChanges({character}, distance={distance})"
 
         if instruction_index == 51:
-            recipient_character, recipient_target_rigid_index, recipient_model_point, attachment_character, \
-                attachment_target_rigid_index, attachment_model_point = req_args
-            return (f"Test_RequestRagdollRestraint({recipient_character}, {recipient_target_rigid_index}, "
-                    f"{recipient_model_point}, {attachment_character}, {attachment_target_rigid_index}, "
-                    f"{attachment_model_point})")
+            (
+                recipient_character,
+                recipient_target_rigid_index,
+                recipient_model_point,
+                attachment_character,
+                attachment_target_rigid_index,
+                attachment_model_point,
+            ) = req_args
+            return (
+                f"Test_RequestRagdollRestraint({recipient_character}, {recipient_target_rigid_index}, "
+                f"{recipient_model_point}, {attachment_character}, {attachment_target_rigid_index}, "
+                f"{attachment_model_point})"
+            )
 
         if instruction_index == 52:
-            character_init_param, = req_args
+            (character_init_param,) = req_args
             return f"ChangePlayerCharacterInitParam({character_init_param})"
 
         if instruction_index == 53:
-            character, = req_args
-            character = 'PLAYER' if character == 10000 else character
+            (character,) = req_args
+            character = "PLAYER" if character == 10000 else character
             return f"AdaptSpecialEffectHealthChangeToNPCPart({character})"
 
         if instruction_index == 54:
             character, state = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"SetGravityAndCollisionExcludingOwnWorld({character}, {boolify(state)})"
 
         if instruction_index == 55:
             character, speffect, affect_parts = req_args
-            character = 'PLAYER' if character == 10000 else character
-            return (f"AddSpecialEffect_WithUnknownEffect({character}, {speffect}, "
-                    f"affect_npc_parts_hp={boolify(affect_parts)})")
+            character = "PLAYER" if character == 10000 else character
+            return (
+                f"AddSpecialEffect_WithUnknownEffect({character}, {speffect}, "
+                f"affect_npc_parts_hp={boolify(affect_parts)})"
+            )
 
     if instruction_class == 2005:
 
         if instruction_index == 16:
             obj, objact_id, relative_index, character = req_args
-            character = 'PLAYER' if character == 10000 else character
-            return (f"ActivateObjectWithSpecificCharacter({obj}, objact_id={objact_id}, "
-                    f"relative_index={relative_index}, character={character})")
+            character = "PLAYER" if character == 10000 else character
+            return (
+                f"ActivateObjectWithSpecificCharacter({obj}, objact_id={objact_id}, "
+                f"relative_index={relative_index}, character={character})"
+            )
 
         if instruction_index == 17:
             obj, state = req_args
@@ -407,8 +438,10 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 5:
             flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level = req_args
-            return (f"RegisterHealingFountain({flag}, {obj}, {reaction_distance}, reaction_angle={reaction_angle}, "
-                    f"initial_sword_number={initial_sword_number}, sword_level={sword_level})")
+            return (
+                f"RegisterHealingFountain({flag}, {obj}, {reaction_distance}, reaction_angle={reaction_angle}, "
+                f"initial_sword_number={initial_sword_number}, sword_level={sword_level})"
+            )
 
     if instruction_class == 2010:
 
@@ -434,7 +467,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     if instruction_class == 2013:
 
         if instruction_index == 1:
-            name_string, = req_args
+            (name_string,) = req_args
             return f"CreatePlayLog({name_string})"
 
         if instruction_index == 2:
@@ -442,7 +475,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"StartPlayLogMeasurement({measurement_id}, {name_string}, overwrite={boolify(overwrite)})"
 
         if instruction_index == 3:
-            measurement_id, = req_args
+            (measurement_id,) = req_args
             return f"StopPlayLogMeasurement({measurement_id})"
 
         if instruction_index == 4:

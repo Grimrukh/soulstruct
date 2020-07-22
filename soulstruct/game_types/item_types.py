@@ -6,8 +6,22 @@ from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import ItemType
 from soulstruct.game_types.basic_types import GameObject
 
-__all__ = ['Item', 'Weapon', 'Armor', 'Ring', 'Rune', 'Good', 'ItemLot',
-           'ItemInt', 'WeaponInt', 'ArmorInt', 'RingInt', 'RuneInt', 'GoodInt', 'ItemLotInt']
+__all__ = [
+    "Item",
+    "Weapon",
+    "Armor",
+    "Ring",
+    "Rune",
+    "Good",
+    "ItemLot",
+    "ItemInt",
+    "WeaponInt",
+    "ArmorInt",
+    "RingInt",
+    "RuneInt",
+    "GoodInt",
+    "ItemLotInt",
+]
 
 
 class Item(GameObject, IntEnum):
@@ -31,9 +45,12 @@ class Item(GameObject, IntEnum):
     def __call__(self, negate=False, condition=None):
         value = self if isinstance(self, (int, float, tuple)) else self.value
         return get_value_test(
-            value=value, negate=negate, condition=condition,
-            if_true_func=lambda c, i: getattr(instr, f'IfPlayerHas{self.item_type.name}')(c, i, False),
-            if_false_func=lambda c, i: getattr(instr, f'IfPlayerDoesNotHave{self.item_type.name}')(c, i, False))
+            value=value,
+            negate=negate,
+            condition=condition,
+            if_true_func=lambda c, i: getattr(instr, f"IfPlayerHas{self.item_type.name}")(c, i, False),
+            if_false_func=lambda c, i: getattr(instr, f"IfPlayerDoesNotHave{self.item_type.name}")(c, i, False),
+        )
 
     @property
     def item_type(self) -> ItemType:
@@ -69,6 +86,7 @@ class Good(Item):
 
 class ItemLot(GameObject, IntEnum):
     """No additional functionality (yet)."""
+
     pass
 
 

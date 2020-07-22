@@ -20,30 +20,29 @@ def MSBRegion(msb_buffer):
 class BaseMSBRegion(MSBEntryEntityCoordinates):
 
     REGION_STRUCT = BinaryStruct(
-        ('name_offset', 'i'),
-        '4x',
-        ('region_index', 'i'),
-        ('region_type', 'i'),
-        ('translate', '3f'),
-        ('rotate', '3f'),  # These are Euler angle rotations (and can therefore be gimbal-locked).
-        ('unknown_offset_1', 'i'),
-        ('unknown_offset_2', 'i'),
-        ('type_data_offset', 'i'),
-        ('entity_id_offset', 'i'),
-        '4x',
+        ("name_offset", "i"),
+        "4x",
+        ("region_index", "i"),
+        ("region_type", "i"),
+        ("translate", "3f"),
+        ("rotate", "3f"),  # These are Euler angle rotations (and can therefore be gimbal-locked).
+        ("unknown_offset_1", "i"),
+        ("unknown_offset_2", "i"),
+        ("type_data_offset", "i"),
+        ("entity_id_offset", "i"),
+        "4x",
     )
 
     FIELD_INFO = {
-        'translate': (
-            'Translate', True, Vector3,
+        "translate": (
+            "Translate",
+            True,
+            Vector3,
             "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
-            "regions."),
-        'rotate': (
-            'Rotate', True, Vector3,
-            "Euler angles for region rotation around its local X, Y, and Z axes."),
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the region in other game files."),
+            "regions.",
+        ),
+        "rotate": ("Rotate", True, Vector3, "Euler angles for region rotation around its local X, Y, and Z axes."),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the region in other game files."),
     }
 
     ENTRY_TYPE = None
@@ -63,7 +62,8 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
         region_offset = msb_buffer.tell()
         base_data = self.REGION_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=region_offset + base_data["name_offset"], encoding='shift-jis')
+            msb_buffer, offset=region_offset + base_data["name_offset"], encoding="shift-jis"
+        )
         self._region_index = base_data["region_index"]
         self.translate = Vector3(base_data["translate"])
         self.rotate = Vector3(base_data["rotate"])
@@ -75,7 +75,7 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
             self.unpack_type_data(msb_buffer)
 
         msb_buffer.seek(region_offset + base_data["entity_id_offset"])
-        self.entity_id = struct.unpack('i', msb_buffer.read(4))[0]
+        self.entity_id = struct.unpack("i", msb_buffer.read(4))[0]
 
         return region_offset + base_data["entity_id_offset"]
 
@@ -85,7 +85,7 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
 
     def pack(self):
         name_offset = self.REGION_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding='shift-jis', pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift-jis", pad_to_multiple_of=4)
         unknown_offset_1 = name_offset + len(packed_name)
         unknown_offset_2 = unknown_offset_1 + 4
         packed_type_data = self.pack_type_data()
@@ -106,8 +106,8 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
             type_data_offset=type_data_offset,
             entity_id_offset=entity_id_offset,
         )
-        packed_entity_id = struct.pack('i', self.entity_id)
-        return packed_base_data + packed_name + b'\0\0\0\0' * 2 + packed_type_data + packed_entity_id
+        packed_entity_id = struct.pack("i", self.entity_id)
+        return packed_base_data + packed_name + b"\0\0\0\0" * 2 + packed_type_data + packed_entity_id
 
     def pack_type_data(self):
         raise NotImplementedError
@@ -119,7 +119,7 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
     def check_null_field(msb_buffer, offset_to_null):
         msb_buffer.seek(offset_to_null)
         zero = msb_buffer.read(4)
-        if zero != b'\0\0\0\0':
+        if zero != b"\0\0\0\0":
             _LOGGER.warning(f"Null data entry in MSB region was not zero: {zero}.")
 
     @staticmethod
@@ -127,7 +127,7 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
         old_offset = msb_buffer.tell()
         msb_buffer.seek(old_offset + 12)
         try:
-            region_type_int = struct.unpack('i', msb_buffer.read(4))[0]
+            region_type_int = struct.unpack("i", msb_buffer.read(4))[0]
             region_type = MSB_REGION_TYPE(region_type_int)
         except (ValueError, TypeError):
             region_type = None
@@ -138,6 +138,7 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
 class MSBRegionPoint(BaseMSBRegion):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
     player be facing when they spawn?)."""
+
     ENTRY_TYPE = MSB_REGION_TYPE.Point
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
@@ -149,21 +150,17 @@ class MSBRegionPoint(BaseMSBRegion):
         pass
 
     def pack_type_data(self):
-        return b''
+        return b""
 
 
 class MSBRegionCircle(BaseMSBRegion):
     """Almost never used (no volume)."""
-    CIRCLE_STRUCT = (
-        ('radius', 'f'),
-    )
+
+    CIRCLE_STRUCT = (("radius", "f"),)
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        'radius': (
-            'Radius', True, float,
-            "Radius (in xy-plane) of circular region.",
-        )
+        "radius": ("Radius", True, float, "Radius (in xy-plane) of circular region.",),
     }
 
     ENTRY_TYPE = MSB_REGION_TYPE.Circle
@@ -177,23 +174,13 @@ class MSBRegionCircle(BaseMSBRegion):
         self.radius = BinaryStruct(*self.CIRCLE_STRUCT).unpack(msb_buffer)["radius"]
 
     def pack_type_data(self):
-        return BinaryStruct(*self.CIRCLE_STRUCT).pack(
-            radius=self.radius,
-        )
+        return BinaryStruct(*self.CIRCLE_STRUCT).pack(radius=self.radius,)
 
 
 class MSBRegionSphere(BaseMSBRegion):
-    SPHERE_STRUCT = (
-        ('radius', 'f'),
-    )
+    SPHERE_STRUCT = (("radius", "f"),)
 
-    FIELD_INFO = {
-        **BaseMSBRegion.FIELD_INFO,
-        'radius': (
-            'Radius', True, float,
-            "Radius of sphere-shaped region.",
-        )
-    }
+    FIELD_INFO = {**BaseMSBRegion.FIELD_INFO, "radius": ("Radius", True, float, "Radius of sphere-shaped region.",)}
 
     ENTRY_TYPE = MSB_REGION_TYPE.Sphere
 
@@ -206,25 +193,19 @@ class MSBRegionSphere(BaseMSBRegion):
         self.radius = BinaryStruct(*self.SPHERE_STRUCT).unpack(msb_buffer)["radius"]
 
     def pack_type_data(self):
-        return BinaryStruct(*self.SPHERE_STRUCT).pack(
-            radius=self.radius,
-        )
+        return BinaryStruct(*self.SPHERE_STRUCT).pack(radius=self.radius,)
 
 
 class MSBRegionCylinder(BaseMSBRegion):
     CYLINDER_STRUCT = (
-        ('radius', 'f'),
-        ('height', 'f'),
+        ("radius", "f"),
+        ("height", "f"),
     )
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        'radius': (
-            'Radius', True, float,
-            "Radius (in xz-plane) of cylinder-shaped region."),
-        'height': (
-            'Height', True, float,
-            "Height (along y-axis) of cylinder-shaped region.")
+        "radius": ("Radius", True, float, "Radius (in xz-plane) of cylinder-shaped region."),
+        "height": ("Height", True, float, "Height (along y-axis) of cylinder-shaped region."),
     }
 
     ENTRY_TYPE = MSB_REGION_TYPE.Cylinder
@@ -241,27 +222,21 @@ class MSBRegionCylinder(BaseMSBRegion):
         self.height = data["height"]
 
     def pack_type_data(self):
-        return BinaryStruct(*self.CYLINDER_STRUCT).pack(
-            radius=self.radius,
-            height=self.height,
-        )
+        return BinaryStruct(*self.CYLINDER_STRUCT).pack(radius=self.radius, height=self.height,)
 
 
 class MSBRegionRect(BaseMSBRegion):
     """Almost never used (no volume)."""
+
     RECT_STRUCT = (
-        ('width', 'f'),
-        ('depth', 'f'),
+        ("width", "f"),
+        ("depth", "f"),
     )
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        'width': (
-            'Width', True, float,
-            "Width (along x-axis) of rectangle-shaped region."),
-        'height': (
-            'Height', True, float,
-            "Height (along y-axis) of rectangle-shaped region."),
+        "width": ("Width", True, float, "Width (along x-axis) of rectangle-shaped region."),
+        "height": ("Height", True, float, "Height (along y-axis) of rectangle-shaped region."),
     }
 
     ENTRY_TYPE = MSB_REGION_TYPE.Rect
@@ -278,30 +253,21 @@ class MSBRegionRect(BaseMSBRegion):
         self.depth = data["depth"]
 
     def pack_type_data(self):
-        return BinaryStruct(*self.RECT_STRUCT).pack(
-            width=self.width,
-            depth=self.depth,
-        )
+        return BinaryStruct(*self.RECT_STRUCT).pack(width=self.width, depth=self.depth,)
 
 
 class MSBRegionBox(BaseMSBRegion):
     BOX_STRUCT = (
-        ('width', 'f'),
-        ('depth', 'f'),
-        ('height', 'f'),
+        ("width", "f"),
+        ("depth", "f"),
+        ("height", "f"),
     )
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        'width': (
-            'Width', True, float,
-            "Width (along x-axis) of box-shaped region."),
-        'depth': (
-            'Depth', True, float,
-            "Depth (along z-axis) of box-shaped region."),
-        'height': (
-            'Height', True, float,
-            "Height (along y-axis) of box-shaped region."),
+        "width": ("Width", True, float, "Width (along x-axis) of box-shaped region."),
+        "depth": ("Depth", True, float, "Depth (along z-axis) of box-shaped region."),
+        "height": ("Height", True, float, "Height (along y-axis) of box-shaped region."),
     }
 
     ENTRY_TYPE = MSB_REGION_TYPE.Box
@@ -320,11 +286,7 @@ class MSBRegionBox(BaseMSBRegion):
         self.height = data["height"]
 
     def pack_type_data(self):
-        return BinaryStruct(*self.BOX_STRUCT).pack(
-            width=self.width,
-            depth=self.depth,
-            height=self.height,
-        )
+        return BinaryStruct(*self.BOX_STRUCT).pack(width=self.width, depth=self.depth, height=self.height,)
 
 
 MSB_REGION_TYPE_CLASSES = {
@@ -338,7 +300,7 @@ MSB_REGION_TYPE_CLASSES = {
 
 
 class MSBRegionList(MSBEntryList[BaseMSBRegion]):
-    ENTRY_LIST_NAME = 'Regions'
+    ENTRY_LIST_NAME = "Regions"
     ENTRY_CLASS = staticmethod(MSBRegion)
     ENTRY_TYPE_ENUM = MSB_REGION_TYPE
 
@@ -371,8 +333,7 @@ class MSBRegionList(MSBEntryList[BaseMSBRegion]):
             else:
                 raise ValueError("Can only use `dimensions` argument for Box or Cylinder region.")
         self.add_entry(
-            MSB_REGION_TYPE_CLASSES[region_type](**kwargs),
-            append_to_entry_type=region_type,
+            MSB_REGION_TYPE_CLASSES[region_type](**kwargs), append_to_entry_type=region_type,
         )
 
     def set_indices(self):

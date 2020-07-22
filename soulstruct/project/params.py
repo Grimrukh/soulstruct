@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from soulstruct.params.enums import ITEMLOT_ITEMCATEGORY
+from soulstruct.params.enums import ITEMLOT_ITEMCATEGORY, SHOP_LINEUP_EQUIPTYPE
 from soulstruct.project.editor import SoulstructBaseFieldEditor
 from soulstruct.project.utilities import NameSelectionBox
 
@@ -49,7 +49,7 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         @entry_text.setter
         def entry_text(self, value):
             self._entry_text = value
-            self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ''))
+            self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ""))
 
         def build_entry_context_menu(self, text_links=()):
             super().build_entry_context_menu()
@@ -57,16 +57,20 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             if text_links:
                 self.context_menu.add_separator()
                 for text_link in text_links:
-                    text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS['text_fg'])
+                    text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
             if self.master.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}:
                 self.context_menu.add_separator()
                 self.context_menu.add_command(
-                    label="Edit All Text", foreground=self.STYLE_DEFAULTS['text_fg'],
-                    command=lambda: self.master.edit_all_item_text(self.entry_id))
+                    label="Edit All Text",
+                    foreground=self.STYLE_DEFAULTS["text_fg"],
+                    command=lambda: self.master.edit_all_item_text(self.entry_id),
+                )
             self.context_menu.add_separator()
             self.context_menu.add_command(
-                label="Find References in Params", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.find_all_param_references(self.master.active_category, self.entry_id))
+                label="Find References in Params",
+                foreground=self.STYLE_DEFAULTS["text_fg"],
+                command=lambda: self.master.find_all_param_references(self.master.active_category, self.entry_id),
+            )
 
     def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
         self.Params = params
@@ -75,12 +79,13 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
 
     def build(self):
-        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
+        with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 self.go_to_param_id_entry = self.Entry(
-                    label="Go to Param ID:", label_position='left', integers_only=True, width=30, padx=10)
-                self.go_to_param_id_entry.bind('<Return>', self.go_to_param_id)
+                    label="Go to Param ID:", label_position="left", integers_only=True, width=30, padx=10
+                )
+                self.go_to_param_id_entry.bind("<Return>", self.go_to_param_id)
                 self.search_result = self.Label(font_size=10, fg="#CCF").var
 
             super().build()
@@ -115,6 +120,18 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             info = param_table.get_field_info()
             for field_name, field_info in info.items():
                 if callable(field_info):
+                    if (
+                        param_name == "ItemLots"
+                        and field_name.startswith("lotItemId")
+                        and category in {"Weapons", "Armor", "Rings", "Goods"}
+                    ):
+                        linking_fields.append((param_name, field_name))
+                    elif (
+                        param_name == "Shops"
+                        and field_name == "equipId"
+                        and category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
+                    ):
+                        linking_fields.append((param_name, field_name))
                     continue  # can't possibly call with every single entry
                 _, _, field_type, _ = field_info
                 if isinstance(field_type, str) and field_type == param_link:
@@ -122,23 +139,39 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
 
         for param_name, field_name in linking_fields:
             for entry_id, field_dict in self.Params[param_name].items():
-                if field_dict[field_name] == param_id:
+                if param_name == "ItemLots" and field_name.startswith("lotItemId"):
+                    lot_id = int(field_name[-2:])
+                    lot_category = ITEMLOT_ITEMCATEGORY(field_dict[f"lotItemCategory{lot_id:02d}"])
+                    category_match = (
+                        category == "Weapons"
+                        and lot_category == ITEMLOT_ITEMCATEGORY.Weapon
+                        or category == "Armor"
+                        and lot_category == ITEMLOT_ITEMCATEGORY.Armor
+                        or category == "Rings"
+                        and lot_category == ITEMLOT_ITEMCATEGORY.Ring
+                        or category == "Goods"
+                        and lot_category == ITEMLOT_ITEMCATEGORY.Good
+                    )
+                    if field_dict[field_name] == param_id and category_match:
+                        links.append(f"{param_name} : {entry_id} : {field_name}")
+                elif param_name == "Shops" and field_name == "equipId":
+                    lot_category = SHOP_LINEUP_EQUIPTYPE(field_dict[f"equipType"])
+                    category_match = (
+                        category == "Weapons"
+                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Weapon
+                        or category == "Armor"
+                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Armor
+                        or category == "Rings"
+                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Ring
+                        or category == "Goods"
+                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Good
+                        or category == "Spells"
+                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Spell
+                    )
+                    if field_dict[field_name] == param_id and category_match:
+                        links.append(f"{param_name} : {entry_id} : {field_name}")
+                elif field_dict[field_name] == param_id:
                     links.append(f"{param_name} : {entry_id} : {field_name}")
-
-        # Check ItemLots manually, as they're particularly helpful/commonly used.
-        item_categories = ("Weapons", "Armor", "Rings", "Goods")
-        if category in item_categories:
-            enum_categories = (
-                ITEMLOT_ITEMCATEGORY.Weapon, ITEMLOT_ITEMCATEGORY.Armor,
-                ITEMLOT_ITEMCATEGORY.Ring, ITEMLOT_ITEMCATEGORY.Good)
-            for entry_id, field_dict in self.Params.ItemLots.items():
-                for i in range(1, 9):
-                    lot_category = field_dict[f"lotItemCategory0{i}"]
-                    item_id = field_dict[f"lotItemId0{i}"]
-                    if param_id == item_id:
-                        for enum_category, param_name in zip(enum_categories, item_categories):
-                            if lot_category == enum_category and category == param_name:
-                                links.append(f"ItemLots : {entry_id} : {f'lotItemId0{i}'}")
 
         name_box = NameSelectionBox(self.master, names=links, list_name=f"Param References to {category}[{param_id}]")
         selected_name = name_box.go()
@@ -218,7 +251,7 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
 
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:
-            valid_null_values = {0: 'Default/None', -1: 'Default/None'}
+            valid_null_values = {0: "Default/None", -1: "Default/None"}
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
 
     def edit_all_item_text(self, item_id):

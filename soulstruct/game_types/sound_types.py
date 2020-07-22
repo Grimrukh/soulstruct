@@ -5,7 +5,7 @@ from soulstruct.enums.shared import SoundType
 from soulstruct.game_types.basic_types import GameObject
 from soulstruct.game_types.msb_types import CoordEntityInt, SoundEvent
 
-__all__ = ['Sound', 'SFXSound', 'ObjectSound', 'VoiceSound', 'CharacterMotionSound', 'SoundEvent']
+__all__ = ["Sound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSound", "SoundEvent"]
 
 
 class Sound(GameObject, IntEnum):

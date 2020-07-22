@@ -29,10 +29,10 @@ def Constructor():
     RunEvent(7600, slot=50, args=(2701999, 2703999))
     RunEvent(7600, slot=51, args=(2701998, 2703998))
     RunEvent(9200, slot=7, args=(2703900,))
-    RunEvent(9220, slot=6, args=(2700710, 12704220, 12704221, 2700, 27, 0), arg_types='iiiiBB')
-    RunEvent(9240, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27, 0), arg_types='iiiiBB')
-    RunEvent(9260, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27, 0), arg_types='iiiiBB')
-    RunEvent(9280, slot=6, args=(2700710, 12704220, 12704221, 2700, 12704800, 27, 0), arg_types='iiiiiBB')
+    RunEvent(9220, slot=6, args=(2700710, 12704220, 12704221, 2700, 27, 0), arg_types="iiiiBB")
+    RunEvent(9240, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27, 0), arg_types="iiiiBB")
+    RunEvent(9260, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27, 0), arg_types="iiiiBB")
+    RunEvent(9280, slot=6, args=(2700710, 12704220, 12704221, 2700, 12704800, 27, 0), arg_types="iiiiiBB")
     DeleteFX(2703910, erase_root_only=False)
     DeleteFX(2703911, erase_root_only=False)
     DeleteFX(2703912, erase_root_only=False)
@@ -47,34 +47,146 @@ def Constructor():
     RegisterLadder(start_climbing_flag=12700602, stop_climbing_flag=12700603, obj=2701071)
     RegisterLadder(start_climbing_flag=12700604, stop_climbing_flag=12700605, obj=2701072)
     RegisterLadder(start_climbing_flag=12700606, stop_climbing_flag=12700607, obj=2701073)
-    CreateHazard(12700050, 2701080, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12700050, 2701081, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12700050, 2701082, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12700050, 2701083, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12700050, 2701084, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12700050, 2701085, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12700050, 2701086, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=0.0, repetition_time=1.0)
-    CreateHazard(12701100, 2701300, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
-    CreateHazard(12701101, 2701301, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
-    CreateHazard(12701102, 2701302, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
-    CreateHazard(12701103, 2701303, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
-    CreateHazard(12701104, 2701304, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
-    CreateHazard(12701105, 2701305, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
-    CreateHazard(12701106, 2701306, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
-                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
+    CreateHazard(
+        12700050,
+        2701080,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12700050,
+        2701081,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12700050,
+        2701082,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12700050,
+        2701083,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12700050,
+        2701084,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12700050,
+        2701085,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12700050,
+        2701086,
+        model_point=100,
+        behavior_param_id=6010,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701100,
+        2701300,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701101,
+        2701301,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701102,
+        2701302,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701103,
+        2701303,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701104,
+        2701304,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701105,
+        2701305,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
+    CreateHazard(
+        12701106,
+        2701306,
+        model_point=200,
+        behavior_param_id=6110,
+        target_type=DamageTargetType.Character,
+        radius=0.699999988079071,
+        life=0.0,
+        repetition_time=1.0,
+    )
     StartPlayLogMeasurement(2700000, 0, overwrite=False)
     StartPlayLogMeasurement(2700001, 18, overwrite=True)
     IfCharacterHuman(15, PLAYER)
@@ -225,51 +337,51 @@ def Constructor():
     RunEvent(12705552)
     RunEvent(12700710)
     RunEvent(12705175)
-    RunEvent(12705000, slot=0, args=(2700655, 2702020, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=1, args=(2700103, 2702022, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=2, args=(2700104, 2702022, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=3, args=(2700653, 2702022, 15.0), arg_types='iif')
-    RunEvent(12705000, slot=4, args=(2700110, 2702023, 10.0), arg_types='iif')
-    RunEvent(12705000, slot=5, args=(2700111, 2702023, 10.0), arg_types='iif')
-    RunEvent(12705000, slot=6, args=(2700651, 2702024, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=7, args=(2700320, 2702025, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=8, args=(2700321, 2702025, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=9, args=(2700513, 2702027, 10.0), arg_types='iif')
-    RunEvent(12705000, slot=10, args=(2700500, 2702028, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=11, args=(2700700, 2702030, 10.0), arg_types='iif')
-    RunEvent(12705000, slot=12, args=(2700435, 2702030, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=13, args=(2700401, 2702030, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=14, args=(2700352, 2702031, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=15, args=(2700904, 2702032, 15.0), arg_types='iif')
-    RunEvent(12705000, slot=16, args=(2700915, 2702033, 15.0), arg_types='iif')
-    RunEvent(12705000, slot=17, args=(2700450, 2702034, 15.0), arg_types='iif')
-    RunEvent(12705000, slot=18, args=(2700451, 2702035, 15.0), arg_types='iif')
-    RunEvent(12705000, slot=19, args=(2700555, 2702036, 10.0), arg_types='iif')
-    RunEvent(12705000, slot=20, args=(2700131, 2702037, 12.0), arg_types='iif')
-    RunEvent(12705000, slot=21, args=(2700652, 2702038, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=22, args=(2700134, 2702039, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=23, args=(2700100, 2702042, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=24, args=(2700146, 2702043, 7.0), arg_types='iif')
-    RunEvent(12705000, slot=25, args=(2700660, 2702044, 7.0), arg_types='iif')
-    RunEvent(12705000, slot=26, args=(2700659, 2702044, 7.0), arg_types='iif')
-    RunEvent(12705000, slot=28, args=(2700440, 2702212, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=29, args=(2700441, 2702212, 5.0), arg_types='iif')
-    RunEvent(12705000, slot=30, args=(2700113, 2702231, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=31, args=(2700611, 2702237, 6.0), arg_types='iif')
-    RunEvent(12705000, slot=32, args=(2700620, 2702237, 6.0), arg_types='iif')
-    RunEvent(12705000, slot=33, args=(2700616, 2702237, 6.0), arg_types='iif')
-    RunEvent(12705000, slot=34, args=(2700618, 2702237, 6.0), arg_types='iif')
-    RunEvent(12705000, slot=35, args=(2700625, 2702238, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=36, args=(2700621, 2702238, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=37, args=(2700613, 2702238, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=38, args=(2700614, 2702238, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=39, args=(2700615, 2702238, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=40, args=(2700751, 2702240, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=41, args=(2700752, 2702240, 8.0), arg_types='iif')
-    RunEvent(12705000, slot=42, args=(2700705, 2702241, 6.0), arg_types='iif')
-    RunEvent(12705000, slot=43, args=(2700515, 2702243, 8.0), arg_types='iif')
-    RunEvent(12705090, slot=0, args=(2701000, 12705060, 12705061, 12705062, 2702050, 9.0), arg_types='iiiiif')
-    RunEvent(12705090, slot=1, args=(2701001, 12705063, 12705064, 12705065, 2702051, 5.0), arg_types='iiiiif')
+    RunEvent(12705000, slot=0, args=(2700655, 2702020, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=1, args=(2700103, 2702022, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=2, args=(2700104, 2702022, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=3, args=(2700653, 2702022, 15.0), arg_types="iif")
+    RunEvent(12705000, slot=4, args=(2700110, 2702023, 10.0), arg_types="iif")
+    RunEvent(12705000, slot=5, args=(2700111, 2702023, 10.0), arg_types="iif")
+    RunEvent(12705000, slot=6, args=(2700651, 2702024, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=7, args=(2700320, 2702025, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=8, args=(2700321, 2702025, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=9, args=(2700513, 2702027, 10.0), arg_types="iif")
+    RunEvent(12705000, slot=10, args=(2700500, 2702028, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=11, args=(2700700, 2702030, 10.0), arg_types="iif")
+    RunEvent(12705000, slot=12, args=(2700435, 2702030, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=13, args=(2700401, 2702030, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=14, args=(2700352, 2702031, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=15, args=(2700904, 2702032, 15.0), arg_types="iif")
+    RunEvent(12705000, slot=16, args=(2700915, 2702033, 15.0), arg_types="iif")
+    RunEvent(12705000, slot=17, args=(2700450, 2702034, 15.0), arg_types="iif")
+    RunEvent(12705000, slot=18, args=(2700451, 2702035, 15.0), arg_types="iif")
+    RunEvent(12705000, slot=19, args=(2700555, 2702036, 10.0), arg_types="iif")
+    RunEvent(12705000, slot=20, args=(2700131, 2702037, 12.0), arg_types="iif")
+    RunEvent(12705000, slot=21, args=(2700652, 2702038, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=22, args=(2700134, 2702039, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=23, args=(2700100, 2702042, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=24, args=(2700146, 2702043, 7.0), arg_types="iif")
+    RunEvent(12705000, slot=25, args=(2700660, 2702044, 7.0), arg_types="iif")
+    RunEvent(12705000, slot=26, args=(2700659, 2702044, 7.0), arg_types="iif")
+    RunEvent(12705000, slot=28, args=(2700440, 2702212, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=29, args=(2700441, 2702212, 5.0), arg_types="iif")
+    RunEvent(12705000, slot=30, args=(2700113, 2702231, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=31, args=(2700611, 2702237, 6.0), arg_types="iif")
+    RunEvent(12705000, slot=32, args=(2700620, 2702237, 6.0), arg_types="iif")
+    RunEvent(12705000, slot=33, args=(2700616, 2702237, 6.0), arg_types="iif")
+    RunEvent(12705000, slot=34, args=(2700618, 2702237, 6.0), arg_types="iif")
+    RunEvent(12705000, slot=35, args=(2700625, 2702238, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=36, args=(2700621, 2702238, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=37, args=(2700613, 2702238, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=38, args=(2700614, 2702238, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=39, args=(2700615, 2702238, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=40, args=(2700751, 2702240, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=41, args=(2700752, 2702240, 8.0), arg_types="iif")
+    RunEvent(12705000, slot=42, args=(2700705, 2702241, 6.0), arg_types="iif")
+    RunEvent(12705000, slot=43, args=(2700515, 2702243, 8.0), arg_types="iif")
+    RunEvent(12705090, slot=0, args=(2701000, 12705060, 12705061, 12705062, 2702050, 9.0), arg_types="iiiiif")
+    RunEvent(12705090, slot=1, args=(2701001, 12705063, 12705064, 12705065, 2702051, 5.0), arg_types="iiiiif")
     RunEvent(12705070, slot=0, args=(2701000, 2702050, 2701100, 1, 2))
     RunEvent(12705070, slot=1, args=(2701001, 2702051, 2701101, 3, 4))
     RunEvent(12705080, slot=0, args=(12705070, 12705060, 12705061, 12705062))
@@ -278,8 +390,8 @@ def Constructor():
     RunEvent(12701191, slot=0, args=(2702131, 2701051))
     RunEvent(12705200)
     RunEvent(12705201)
-    RunEvent(12705290, slot=0, args=(2700137, 2702142, 2.0, 7012, 7013, 263098, 263052), arg_types='iifiiii')
-    RunEvent(12705290, slot=1, args=(2700138, 2702142, 2.0, 7014, 7015, 263098, 263052), arg_types='iifiiii')
+    RunEvent(12705290, slot=0, args=(2700137, 2702142, 2.0, 7012, 7013, 263098, 263052), arg_types="iifiiii")
+    RunEvent(12705290, slot=1, args=(2700138, 2702142, 2.0, 7014, 7015, 263098, 263052), arg_types="iifiiii")
     RunEvent(12705098)
     RunEvent(12705099)
     RunEvent(12705100, slot=0, args=(2700750, 2700751))
@@ -305,29 +417,29 @@ def Constructor():
     RunEvent(12705100, slot=20, args=(2700750, 2700629))
     RunEvent(12705100, slot=21, args=(2700750, 2700630))
     RunEvent(12705300, slot=0, args=(12705095, 2700900, 2701200))
-    RunEvent(12705301, slot=0, args=(2700139, 2701200, 5.0, 2702244), arg_types='iifi')
-    RunEvent(12705320, slot=0, args=(2700427, 2702161, 0.5, 7000), arg_types='iifi')
+    RunEvent(12705301, slot=0, args=(2700139, 2701200, 5.0, 2702244), arg_types="iifi")
+    RunEvent(12705320, slot=0, args=(2700427, 2702161, 0.5, 7000), arg_types="iifi")
     RunEvent(12705350)
     RunEvent(12705360)
-    RunEvent(12705370, slot=0, args=(2700400, 0.0, 2700501, 2700907), arg_types='ifii')
-    RunEvent(12705370, slot=1, args=(2700403, 0.30000001192092896, 2700501, 2700908), arg_types='ifii')
-    RunEvent(12705370, slot=2, args=(2700406, 0.20000000298023224, 2700501, 2700909), arg_types='ifii')
-    RunEvent(12705370, slot=3, args=(2700413, 0.6000000238418579, 2700501, 2700910), arg_types='ifii')
-    RunEvent(12705370, slot=4, args=(2700414, 0.30000001192092896, 2700502, 2700916), arg_types='ifii')
-    RunEvent(12705370, slot=5, args=(2700415, 1.0, 2700502, 2700917), arg_types='ifii')
-    RunEvent(12705370, slot=6, args=(2700424, 0.5, 2700502, 2700918), arg_types='ifii')
-    RunEvent(12705370, slot=7, args=(2700431, 0.6000000238418579, 2700502, 2700919), arg_types='ifii')
+    RunEvent(12705370, slot=0, args=(2700400, 0.0, 2700501, 2700907), arg_types="ifii")
+    RunEvent(12705370, slot=1, args=(2700403, 0.30000001192092896, 2700501, 2700908), arg_types="ifii")
+    RunEvent(12705370, slot=2, args=(2700406, 0.20000000298023224, 2700501, 2700909), arg_types="ifii")
+    RunEvent(12705370, slot=3, args=(2700413, 0.6000000238418579, 2700501, 2700910), arg_types="ifii")
+    RunEvent(12705370, slot=4, args=(2700414, 0.30000001192092896, 2700502, 2700916), arg_types="ifii")
+    RunEvent(12705370, slot=5, args=(2700415, 1.0, 2700502, 2700917), arg_types="ifii")
+    RunEvent(12705370, slot=6, args=(2700424, 0.5, 2700502, 2700918), arg_types="ifii")
+    RunEvent(12705370, slot=7, args=(2700431, 0.6000000238418579, 2700502, 2700919), arg_types="ifii")
     RunEvent(12705400)
-    RunEvent(12705440, slot=0, args=(2700116, 2702230, 5.0, 7004, 7005), arg_types='iifii')
-    RunEvent(12705440, slot=1, args=(2700117, 2702231, 5.0, 7005, 7006), arg_types='iifii')
+    RunEvent(12705440, slot=0, args=(2700116, 2702230, 5.0, 7004, 7005), arg_types="iifii")
+    RunEvent(12705440, slot=1, args=(2700117, 2702231, 5.0, 7005, 7006), arg_types="iifii")
     RunEvent(12705460, slot=0, args=(2700513,))
     RunEvent(12705460, slot=1, args=(2700515,))
-    RunEvent(12705480, slot=0, args=(2700301, 3021, 125, 2702250, 4.0), arg_types='iiiif')
-    RunEvent(12705480, slot=1, args=(2700302, 3021, 150, 2702251, 10.0), arg_types='iiiif')
-    RunEvent(12705480, slot=2, args=(2700303, 3021, 100, 2702252, 10.0), arg_types='iiiif')
-    RunEvent(12705480, slot=3, args=(2700308, 3021, 175, 2702253, 10.0), arg_types='iiiif')
-    RunEvent(12705480, slot=4, args=(2700309, 3021, 200, 2702254, 10.0), arg_types='iiiif')
-    RunEvent(12705480, slot=5, args=(2700310, 3021, 225, 2702255, 10.0), arg_types='iiiif')
+    RunEvent(12705480, slot=0, args=(2700301, 3021, 125, 2702250, 4.0), arg_types="iiiif")
+    RunEvent(12705480, slot=1, args=(2700302, 3021, 150, 2702251, 10.0), arg_types="iiiif")
+    RunEvent(12705480, slot=2, args=(2700303, 3021, 100, 2702252, 10.0), arg_types="iiiif")
+    RunEvent(12705480, slot=3, args=(2700308, 3021, 175, 2702253, 10.0), arg_types="iiiif")
+    RunEvent(12705480, slot=4, args=(2700309, 3021, 200, 2702254, 10.0), arg_types="iiiif")
+    RunEvent(12705480, slot=5, args=(2700310, 3021, 225, 2702255, 10.0), arg_types="iiiif")
     RunEvent(12705490)
     RunEvent(12705491)
     RunEvent(12705500, slot=0, args=(12705480, 2700301, 0, 2701110))
@@ -346,24 +458,24 @@ def Constructor():
     RunEvent(12705540, slot=1, args=(2700302, 12705501))
     RunEvent(12705540, slot=3, args=(2700308, 12705503))
     RunEvent(12705540, slot=4, args=(2700309, 12705504))
-    RunEvent(12705600, slot=0, args=(2790, 2790, 8, 7000, 5907, 12705700, 12705760, 2700750), arg_types='hihiiiii')
-    RunEvent(12705600, slot=1, args=(2791, 2791, 9, 7022, 5907, 12705700, 12705760, 2700750), arg_types='hihiiiii')
-    RunEvent(12705600, slot=2, args=(2792, 2792, 10, 7023, 5907, 12705700, 12705760, 2700750), arg_types='hihiiiii')
-    RunEvent(12705600, slot=3, args=(2790, 2790, 8, 7000, 5907, 12705701, 12705761, 2700751), arg_types='hihiiiii')
-    RunEvent(12705600, slot=4, args=(2791, 2791, 9, 7022, 5907, 12705701, 12705761, 2700751), arg_types='hihiiiii')
-    RunEvent(12705600, slot=5, args=(2792, 2792, 10, 7023, 5907, 12705701, 12705761, 2700751), arg_types='hihiiiii')
-    RunEvent(12705630, slot=0, args=(2790, 2790, 8, 40, 12705700, 2700750), arg_types='hihiii')
-    RunEvent(12705630, slot=1, args=(2791, 2791, 9, 40, 12705700, 2700750), arg_types='hihiii')
-    RunEvent(12705630, slot=2, args=(2792, 2792, 10, 40, 12705700, 2700750), arg_types='hihiii')
-    RunEvent(12705630, slot=3, args=(2790, 2790, 8, 40, 12705701, 2700751), arg_types='hihiii')
-    RunEvent(12705630, slot=4, args=(2791, 2791, 9, 40, 12705701, 2700751), arg_types='hihiii')
-    RunEvent(12705630, slot=5, args=(2792, 2792, 10, 40, 12705701, 2700751), arg_types='hihiii')
-    RunEvent(12705660, slot=0, args=(30, 40, 12705760, 2700750, 1, 11), arg_types='iiiiBB')
-    RunEvent(12705660, slot=1, args=(50, 40, 12705760, 2700750, 2, 12), arg_types='iiiiBB')
-    RunEvent(12705660, slot=2, args=(60, 40, 12705760, 2700750, 3, 13), arg_types='iiiiBB')
-    RunEvent(12705660, slot=3, args=(30, 40, 12705761, 2700751, 1, 11), arg_types='iiiiBB')
-    RunEvent(12705660, slot=4, args=(50, 40, 12705761, 2700751, 2, 12), arg_types='iiiiBB')
-    RunEvent(12705660, slot=5, args=(60, 40, 12705761, 2700751, 3, 13), arg_types='iiiiBB')
+    RunEvent(12705600, slot=0, args=(2790, 2790, 8, 7000, 5907, 12705700, 12705760, 2700750), arg_types="hihiiiii")
+    RunEvent(12705600, slot=1, args=(2791, 2791, 9, 7022, 5907, 12705700, 12705760, 2700750), arg_types="hihiiiii")
+    RunEvent(12705600, slot=2, args=(2792, 2792, 10, 7023, 5907, 12705700, 12705760, 2700750), arg_types="hihiiiii")
+    RunEvent(12705600, slot=3, args=(2790, 2790, 8, 7000, 5907, 12705701, 12705761, 2700751), arg_types="hihiiiii")
+    RunEvent(12705600, slot=4, args=(2791, 2791, 9, 7022, 5907, 12705701, 12705761, 2700751), arg_types="hihiiiii")
+    RunEvent(12705600, slot=5, args=(2792, 2792, 10, 7023, 5907, 12705701, 12705761, 2700751), arg_types="hihiiiii")
+    RunEvent(12705630, slot=0, args=(2790, 2790, 8, 40, 12705700, 2700750), arg_types="hihiii")
+    RunEvent(12705630, slot=1, args=(2791, 2791, 9, 40, 12705700, 2700750), arg_types="hihiii")
+    RunEvent(12705630, slot=2, args=(2792, 2792, 10, 40, 12705700, 2700750), arg_types="hihiii")
+    RunEvent(12705630, slot=3, args=(2790, 2790, 8, 40, 12705701, 2700751), arg_types="hihiii")
+    RunEvent(12705630, slot=4, args=(2791, 2791, 9, 40, 12705701, 2700751), arg_types="hihiii")
+    RunEvent(12705630, slot=5, args=(2792, 2792, 10, 40, 12705701, 2700751), arg_types="hihiii")
+    RunEvent(12705660, slot=0, args=(30, 40, 12705760, 2700750, 1, 11), arg_types="iiiiBB")
+    RunEvent(12705660, slot=1, args=(50, 40, 12705760, 2700750, 2, 12), arg_types="iiiiBB")
+    RunEvent(12705660, slot=2, args=(60, 40, 12705760, 2700750, 3, 13), arg_types="iiiiBB")
+    RunEvent(12705660, slot=3, args=(30, 40, 12705761, 2700751, 1, 11), arg_types="iiiiBB")
+    RunEvent(12705660, slot=4, args=(50, 40, 12705761, 2700751, 2, 12), arg_types="iiiiBB")
+    RunEvent(12705660, slot=5, args=(60, 40, 12705761, 2700751, 3, 13), arg_types="iiiiBB")
     RunEvent(12700500)
     RunEvent(1270501)
     RunEvent(12701000)
@@ -531,7 +643,7 @@ def Event12704840():
     DefineLabel(0)
     IfFlagOff(2, 12701800)
     IfCharacterHuman(2, PLAYER)
-    IfBossFogActivated(2, boss_entity_id=2700004, fog_object_id=2701800)
+    IfActionButtonInRegion(2, action_button_id=2700004, region=2701800)
     IfFlagOn(3, 12701800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -558,7 +670,7 @@ def Event12704841():
     IfFlagOn(1, 12701802)
     IfFlagOn(1, 12704800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfBossFogActivated(1, boss_entity_id=2700004, fog_object_id=2701800)
+    IfActionButtonInRegion(1, action_button_id=2700004, region=2701800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2702800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -681,7 +793,7 @@ def Event12704803():
     IfFlagOn(1, 12704801)
     IfCharacterInsideRegion(1, PLAYER, region=2702802)
     IfConditionTrue(0, input_condition=1)
-    SetBossMusicState(2703802, state=True)
+    EnableBossMusic(2703802)
     IfFlagOn(2, 12704808)
 
     # --- 0 --- #
@@ -692,9 +804,9 @@ def Event12704803():
     IfFlagOn(2, 12704801)
     IfCharacterInsideRegion(2, PLAYER, region=2702802)
     IfConditionTrue(0, input_condition=2)
-    SetBossMusicState(2703802, state=False)
+    DisableBossMusic(2703802)
     WaitFrames(0)
-    SetBossMusicState(2703803, state=True)
+    EnableBossMusic(2703803)
 
 
 def Event12704804():
@@ -718,9 +830,9 @@ def Event12704805():
     # --- 0 --- #
     DefineLabel(0)
     IfFlagOn(0, 12701800)
-    SetBossMusicState(2703802, state=False)
-    SetBossMusicState(2703803, state=False)
-    SetBossMusicState(-1, state=False)
+    DisableBossMusic(2703802)
+    DisableBossMusic(2703803)
+    DisableBossMusic(-1)
 
 
 @RestartOnRest
@@ -764,7 +876,7 @@ def Event12704806():
 
 
 @RestartOnRest
-def Event12704807(arg_0_3: int, arg_4_7: int):
+def Event12704807(_, arg_0_3: int, arg_4_7: int):
     """ 12704807: Event 12704807 """
     SkipLinesIfThisEventSlotOn(3)
     DisableSpawner(arg_4_7)
@@ -857,7 +969,7 @@ def Event12704811():
 
 
 @RestartOnRest
-def Event12704812(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12704812(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12704812: Event 12704812 """
     IfHealthLessThanOrEqual(1, arg_0_3, 0.5)
     IfHealthLessThanOrEqual(1, arg_4_7, 0.5)
@@ -888,7 +1000,7 @@ def Event12704812(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event12704815(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12704815(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12704815: Event 12704815 """
     SkipLinesIfThisEventSlotOn(4)
     IfCharacterBackreadEnabled(0, arg_0_3)
@@ -899,15 +1011,20 @@ def Event12704815(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     SkipLinesIfConditionFalse(1, 1)
     Kill(arg_0_3, award_souls=False)
     EnableCharacter(arg_0_3)
-    Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Character, model_point=arg_8_11, 
-         set_draw_parent=arg_4_7)
+    Move(
+        arg_0_3,
+        destination=arg_4_7,
+        destination_type=CoordEntityType.Character,
+        model_point=arg_8_11,
+        set_draw_parent=arg_4_7,
+    )
     SkipLinesIfThisEventSlotOn(1)
     ForceAnimation(arg_0_3, 7000)
     Restart()
 
 
 @RestartOnRest
-def Event12704825(arg_0_3: int, arg_4_7: int):
+def Event12704825(_, arg_0_3: int, arg_4_7: int):
     """ 12704825: Event 12704825 """
     IfHasTAEEvent(0, arg_0_3, tae_event_id=40)
     CancelSpecialEffect(arg_0_3, arg_4_7)
@@ -919,7 +1036,7 @@ def Event12704825(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12704830(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12704830(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12704830: Event 12704830 """
     IfHealthLessThanOrEqual(1, 2700800, 0.0)
     IfHealthLessThanOrEqual(1, 2700801, 0.0)
@@ -940,7 +1057,7 @@ def Event12704830(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event12700000(arg_0_3: int, arg_4_7: int):
+def Event12700000(_, arg_0_3: int, arg_4_7: int):
     """ 12700000: Event 12700000 """
     GotoIfThisEventSlotOff(Label.L0)
     DisableCharacter(arg_0_3)
@@ -955,18 +1072,23 @@ def Event12700000(arg_0_3: int, arg_4_7: int):
     Wait(0.0)
 
 
-def Event12700100(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12700100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12700100: Event 12700100 """
     DisableNetworkSync()
     EndIfFlagOn(arg_8_11)
-    IfBossFogActivated(1, boss_entity_id=arg_0_3, fog_object_id=arg_4_7)
+    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(10010161, anchor_entity=arg_4_7, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010161,
+        anchor_entity=arg_4_7,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Wait(1.0)
     Restart()
 
@@ -976,7 +1098,7 @@ def Event12700100(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Restart()
 
 
-def Event12700110(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event12700110(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12700110: Event 12700110 """
     GotoIfThisEventSlotOff(Label.L0)
     EndOfAnimation(arg_0_3, arg_8_11)
@@ -1088,10 +1210,15 @@ def Event12700133():
     IfFlagOn(-1, 12700135)
     IfFlagOff(-1, 12700137)
     IfConditionTrue(1, input_condition=-1)
-    IfBossFogActivated(1, boss_entity_id=7100, fog_object_id=2701030)
+    IfActionButtonInRegion(1, action_button_id=7100, region=2701030)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010172,
+        anchor_entity=-1,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Restart()
 
 
@@ -1103,10 +1230,15 @@ def Event12700136():
     IfFlagOn(-1, 12700135)
     IfFlagOff(-1, 12700137)
     IfConditionTrue(1, input_condition=-1)
-    IfBossFogActivated(1, boss_entity_id=7100, fog_object_id=2701031)
+    IfActionButtonInRegion(1, action_button_id=7100, region=2701031)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010172,
+        anchor_entity=-1,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Restart()
 
 
@@ -1215,10 +1347,15 @@ def Event12700143():
     IfFlagOn(-1, 12700145)
     IfFlagOff(-1, 12700147)
     IfConditionTrue(1, input_condition=-1)
-    IfBossFogActivated(1, boss_entity_id=7100, fog_object_id=2701040)
+    IfActionButtonInRegion(1, action_button_id=7100, region=2701040)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010172,
+        anchor_entity=-1,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Restart()
 
 
@@ -1229,10 +1366,15 @@ def Event12700146():
     IfFlagOn(-1, 12700145)
     IfFlagOff(-1, 12700147)
     IfConditionTrue(1, input_condition=-1)
-    IfBossFogActivated(1, boss_entity_id=7100, fog_object_id=2701041)
+    IfActionButtonInRegion(1, action_button_id=7100, region=2701041)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010172,
+        anchor_entity=-1,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Restart()
 
 
@@ -1339,14 +1481,19 @@ def Event12700176():
     """ 12700176: Event 12700176 """
     DisableNetworkSync()
     IfFlagOn(1, 12700174)
-    IfBossFogActivated(1, boss_entity_id=7100, fog_object_id=2701090)
+    IfActionButtonInRegion(1, action_button_id=7100, region=2701090)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010172,
+        anchor_entity=-1,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     Restart()
 
 
-def Event12700180(arg_0_3: int, arg_4_7: int):
+def Event12700180(_, arg_0_3: int, arg_4_7: int):
     """ 12700180: Event 12700180 """
     DisableNetworkSync()
     IfCharacterAlive(1, arg_0_3)
@@ -1357,7 +1504,7 @@ def Event12700180(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12700190(arg_0_3: int, arg_4_7: int):
+def Event12700190(_, arg_0_3: int, arg_4_7: int):
     """ 12700190: Event 12700190 """
     IfHealthLessThanOrEqual(0, arg_0_3, 0.0)
     Wait(1.0)
@@ -1365,7 +1512,7 @@ def Event12700190(arg_0_3: int, arg_4_7: int):
     DisableCharacter(arg_4_7)
 
 
-def Event12700200(arg_0_3: int, arg_4_7: int):
+def Event12700200(_, arg_0_3: int, arg_4_7: int):
     """ 12700200: Event 12700200 """
     AddSpecialEffect(arg_0_3, 5609, affect_npc_part_hp=False)
     DisableGravity(arg_4_7)
@@ -1625,7 +1772,7 @@ def Event12700723():
     EnableFlag(12705551)
 
 
-def Event12700901(arg_0_3: int, arg_4_7: int):
+def Event12700901(_, arg_0_3: int, arg_4_7: int):
     """ 12700901: Event 12700901 """
     IfCharacterHuman(-1, PLAYER)
     GotoIfConditionFalse(Label.L9, input_condition=-1)
@@ -1706,13 +1853,13 @@ def Event12700901(arg_0_3: int, arg_4_7: int):
     End()
 
 
-def Event12700902(arg_0_3: int):
+def Event12700902(_, arg_0_3: int):
     """ 12700902: Event 12700902 """
     IfCharacterHuman(-15, PLAYER)
     EndIfConditionFalse(-15)
     EndIfFlagOn(12700902)
     IfFlagOn(1, 1791)
-    IfBossFogActivated(1, boss_entity_id=2700005, fog_object_id=arg_0_3)
+    IfActionButtonInRegion(1, action_button_id=2700005, region=arg_0_3)
     IfConditionTrue(0, input_condition=1)
     AwardItemLot(43100, host_only=False)
     EnableFlag(6813)
@@ -1720,7 +1867,7 @@ def Event12700902(arg_0_3: int):
     DeleteObjectFX(arg_0_3, erase_root=True)
 
 
-def Event12700903(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event12700903(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12700903: Event 12700903 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
@@ -1733,7 +1880,7 @@ def Event12700903(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     SaveRequest()
 
 
-def Event12700904(arg_0_3: int, arg_4_7: int):
+def Event12700904(_, arg_0_3: int, arg_4_7: int):
     """ 12700904: Event 12700904 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
@@ -1746,7 +1893,7 @@ def Event12700904(arg_0_3: int, arg_4_7: int):
     EnableFlag(arg_4_7)
 
 
-def Event12700905(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event12700905(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12700905: Event 12700905 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
@@ -1762,7 +1909,7 @@ def Event12700905(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     SaveRequest()
 
 
-def Event12700906(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12700906(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12700906: Event 12700906 """
     EndIfFlagOn(arg_8_11)
     IfCharacterHuman(15, PLAYER)
@@ -1795,7 +1942,7 @@ def Event12700910():
     ChangePatrolBehavior(2700930, patrol_information_id=2703920)
 
 
-def Event12700908(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12700908(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12700908: Event 12700908 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
@@ -1879,7 +2026,7 @@ def Event12701002():
 
 
 @RestartOnRest
-def Event12705000(arg_0_3: int, arg_4_7: int, arg_8_11: float):
+def Event12705000(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 12705000: Event 12705000 """
     GotoIfThisEventSlotOn(Label.L0)
     AICommand(arg_0_3, command_id=30, slot=0)
@@ -1919,7 +2066,7 @@ def Event12705099():
 
 
 @RestartOnRest
-def Event12705100(arg_0_3: int, arg_4_7: int):
+def Event12705100(_, arg_0_3: int, arg_4_7: int):
     """ 12705100: Event 12705100 """
     ForceAnimation(arg_0_3, 7010, loop=True)
     SetAIParamID(arg_0_3, 273420)
@@ -1934,7 +2081,7 @@ def Event12705100(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12705070(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event12705070(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12705070: Event 12705070 """
     EndIfThisEventSlotOn()
     ForceAnimation(arg_0_3, 0, loop=True)
@@ -1950,7 +2097,7 @@ def Event12705070(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event12705080(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event12705080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12705080: Event 12705080 """
     GotoIfThisEventSlotOn(Label.L0)
     IfFlagOn(0, arg_0_3)
@@ -1963,7 +2110,7 @@ def Event12705080(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event12705090(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float):
+def Event12705090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float):
     """ 12705090: Event 12705090 """
     GotoIfThisEventSlotOn(Label.L0)
     IfCharacterHuman(-1, PLAYER)
@@ -1975,12 +2122,36 @@ def Event12705090(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     # --- 0 --- #
     DefineLabel(0)
     WaitFrames(0)
-    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=arg_20_23, repetition_time=0.0)
-    CreateHazard(arg_8_11, arg_0_3, model_point=102, behavior_param_id=6100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=arg_20_23, repetition_time=0.0)
-    CreateHazard(arg_12_15, arg_0_3, model_point=103, behavior_param_id=6100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=arg_20_23, repetition_time=0.0)
+    CreateHazard(
+        arg_4_7,
+        arg_0_3,
+        model_point=101,
+        behavior_param_id=6100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=arg_20_23,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_8_11,
+        arg_0_3,
+        model_point=102,
+        behavior_param_id=6100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=arg_20_23,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_12_15,
+        arg_0_3,
+        model_point=103,
+        behavior_param_id=6100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=arg_20_23,
+        repetition_time=0.0,
+    )
 
 
 @RestartOnRest
@@ -1993,7 +2164,7 @@ def Event12705175():
 
 
 @RestartOnRest
-def Event12701190(arg_0_3: int, arg_4_7: int):
+def Event12701190(_, arg_0_3: int, arg_4_7: int):
     """ 12701190: Event 12701190 """
     GotoIfThisEventSlotOff(Label.L0)
     PostDestruction(arg_4_7, slot=1)
@@ -2009,7 +2180,7 @@ def Event12701190(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12701191(arg_0_3: int, arg_4_7: int):
+def Event12701191(_, arg_0_3: int, arg_4_7: int):
     """ 12701191: Event 12701191 """
     SkipLinesIfThisEventSlotOff(2)
     PostDestruction(arg_4_7, slot=1)
@@ -2053,8 +2224,9 @@ def Event12705201():
 
 
 @RestartOnRest
-def Event12705290(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int):
+def Event12705290(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
+):
     """ 12705290: Event 12705290 """
     GotoIfThisEventSlotOn(Label.L0)
     ForceAnimation(arg_0_3, arg_12_15, loop=True)
@@ -2077,7 +2249,7 @@ def Event12705290(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, a
     ReplanAI(arg_0_3)
 
 
-def Event12705300(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event12705300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12705300: Event 12705300 """
     IfObjectActivated(0, obj_act_id=arg_0_3)
     Wait(2.299999952316284)
@@ -2091,7 +2263,7 @@ def Event12705300(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Restart()
 
 
-def Event12705301(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
+def Event12705301(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 12705301: Event 12705301 """
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
@@ -2118,7 +2290,7 @@ def Event12705301(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
 
 
 @RestartOnRest
-def Event12705320(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
+def Event12705320(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 12705320: Event 12705320 """
     GotoIfThisEventSlotOn(Label.L0)
     DisableGravity(arg_0_3)
@@ -2173,7 +2345,7 @@ def Event12705360():
     IfDamageType(-1, attacked_entity=2700514, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionFalse(Label.L0, input_condition=1)
-    RotateToFaceEntity(2700514, 10000, animation=3008, wait_for_completion=False)
+    RotateToFaceEntity(2700514, PLAYER, animation=3008, wait_for_completion=False)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2182,7 +2354,7 @@ def Event12705360():
 
 
 @RestartOnRest
-def Event12705370(arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int):
+def Event12705370(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int):
     """ 12705370: Event 12705370 """
     GotoIfThisEventSlotOff(Label.L0)
     EnableAI(arg_0_3)
@@ -2198,8 +2370,13 @@ def Event12705370(arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(arg_8_11, 3014)
     Wait(arg_4_7)
-    Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Character, model_point=21, 
-         copy_draw_parent=arg_12_15)
+    Move(
+        arg_0_3,
+        destination=arg_12_15,
+        destination_type=CoordEntityType.Character,
+        model_point=21,
+        copy_draw_parent=arg_12_15,
+    )
     WaitFrames(75)
     ForceAnimation(arg_0_3, 6200)
     EnableCharacter(arg_0_3)
@@ -2222,7 +2399,7 @@ def Event12705400():
 
 
 @RestartOnRest
-def Event12705440(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: int):
+def Event12705440(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: int):
     """ 12705440: Event 12705440 """
     EndIfThisEventSlotOn()
     ForceAnimation(arg_0_3, arg_12_15, loop=True)
@@ -2243,7 +2420,7 @@ def Event12705440(arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, a
 
 
 @RestartOnRest
-def Event12705460(arg_0_3: int):
+def Event12705460(_, arg_0_3: int):
     """ 12705460: Event 12705460 """
     SetCollisionMask(arg_0_3, bit_index=6, switch_type=OnOffChange.Off)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=10)
@@ -2251,7 +2428,7 @@ def Event12705460(arg_0_3: int):
 
 
 @RestartOnRest
-def Event12705480(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
+def Event12705480(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
     """ 12705480: Event 12705480 """
     SkipLinesIfThisEventSlotOn(1)
     ForceAnimation(arg_0_3, 7000, loop=True)
@@ -2302,7 +2479,7 @@ def Event12705490():
     EnableFlag(12700174)
     WaitFrames(55)
     EnableFlag(12705495)
-    RotateToFaceEntity(2700145, 10000, animation=3009, wait_for_completion=False)
+    RotateToFaceEntity(2700145, PLAYER, animation=3009, wait_for_completion=False)
     WaitFrames(45)
     DisableFlag(12700174)
 
@@ -2334,7 +2511,7 @@ def Event12705491():
 
 
 @RestartOnRest
-def Event12705500(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event12705500(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12705500: Event 12705500 """
     EndIfFlagOn(12700175)
     EndIfFlagOn(12705495)
@@ -2365,7 +2542,7 @@ def Event12705500(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event12705510(arg_0_3: int, arg_4_7: int):
+def Event12705510(_, arg_0_3: int, arg_4_7: int):
     """ 12705510: Event 12705510 """
     GotoIfThisEventSlotOn(Label.L0)
     IfCharacterHuman(-2, PLAYER)
@@ -2388,7 +2565,7 @@ def Event12705510(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12705520(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event12705520(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12705520: Event 12705520 """
     EndIfFlagOff(12700175)
     StopEvent(12705480, slot=arg_12_15)
@@ -2397,7 +2574,7 @@ def Event12705520(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event12705530(arg_0_3: int, arg_4_7: int):
+def Event12705530(_, arg_0_3: int, arg_4_7: int):
     """ 12705530: Event 12705530 """
     EndIfFlagOff(12700175)
     Kill(arg_0_3, award_souls=False)
@@ -2407,7 +2584,7 @@ def Event12705530(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12705540(arg_0_3: int, arg_4_7: int):
+def Event12705540(_, arg_0_3: int, arg_4_7: int):
     """ 12705540: Event 12705540 """
     EndIfFlagOn(12700175)
     IfFlagOff(1, arg_4_7)
@@ -2436,8 +2613,13 @@ def Event12705550():
     DefineLabel(1)
     ForceAnimation(2700755, 103073, wait_for_completion=True)
     DisableCharacter(2700755)
-    Move(2700756, destination=2700755, destination_type=CoordEntityType.Character, model_point=245, 
-         copy_draw_parent=2700755)
+    Move(
+        2700756,
+        destination=2700755,
+        destination_type=CoordEntityType.Character,
+        model_point=245,
+        copy_draw_parent=2700755,
+    )
     EnableGravity(2700756)
     EnableAI(2700756)
     ForceAnimation(2700756, 3030)
@@ -2452,8 +2634,17 @@ def Event12705552():
     WaitFrames(0)
 
 
-def Event12705600(arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event12705600(
+    _,
+    arg_0_1: short,
+    arg_4_7: int,
+    arg_8_9: short,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 12705600: Event 12705600 """
     IfFlagOn(0, arg_20_23)
     IfCharacterPartHealthLessThanOrEqual(1, arg_28_31, npc_part_id=arg_4_7, value=0)
@@ -2468,8 +2659,16 @@ def Event12705600(arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, 
     SkipLinesIfFlagOn(2, arg_20_23)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_hp=1, overwrite_max=False)
     Restart()
-    CreateNPCPart(arg_28_31, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=999999, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        arg_28_31,
+        npc_part_id=arg_0_1,
+        part_index=arg_8_9,
+        part_health=999999,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
     ResetAnimation(arg_28_31, disable_interpolation=False)
     ForceAnimation(arg_28_31, arg_12_15)
@@ -2486,17 +2685,25 @@ def Event12705600(arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, 
     Restart()
 
 
-def Event12705630(arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event12705630(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 12705630: Event 12705630 """
     IfEntityWithinDistance(1, arg_20_23, PLAYER, radius=10.0)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(arg_20_23, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        arg_20_23,
+        npc_part_id=arg_0_1,
+        part_index=arg_8_9,
+        part_health=arg_12_15,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
     EnableFlag(arg_16_19)
 
 
-def Event12705660(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
+def Event12705660(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
     """ 12705660: Event 12705660 """
     SetCollisionMask(arg_12_15, bit_index=arg_16_16, switch_type=OnOffChange.On)
     SetCollisionMask(arg_12_15, bit_index=arg_17_17, switch_type=OnOffChange.Off)
@@ -2520,7 +2727,7 @@ def Event12700990():
 
 
 @RestartOnRest
-def Event12704450(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event12704450(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12704450: Event 12704450 """
     EndIfThisEventSlotOn()
     EndIfClient()
@@ -2534,7 +2741,7 @@ def Event12704450(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event12704400(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event12704400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 12704400: Event 12704400 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
@@ -2577,7 +2784,7 @@ def Event12704400(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event12704401(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event12704401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 12704401: Event 12704401 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
@@ -2616,8 +2823,17 @@ def Event12704401(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event12704410(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event12704410(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 12704410: Event 12704410 """
     SkipLinesIfFlagOn(1, arg_12_15)
     DisableCharacter(arg_4_7)
@@ -2635,7 +2851,7 @@ def Event12704410(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     IfFlagOff(2, arg_16_19)
     IfFlagOn(2, arg_20_23)
     IfFlagOff(2, arg_24_27)
-    IfBossFogActivated(2, boss_entity_id=arg_28_31, fog_object_id=arg_4_7)
+    IfActionButtonInRegion(2, action_button_id=arg_28_31, region=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -2647,8 +2863,9 @@ def Event12704410(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event12704460(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int):
+def Event12704460(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
+):
     """ 12704460: Event 12704460 """
     EndIfClient()
     IfFlagOn(1, arg_20_23)

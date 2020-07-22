@@ -1,19 +1,52 @@
 __all__ = [
     # Basic enums/types
     "RestartType",
-    "uint", "short", "ushort", "char", "uchar",
-    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
-
+    "uint",
+    "short",
+    "ushort",
+    "char",
+    "uchar",
+    "PLAYER",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
     # Enums identical in all games
-    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
-    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
-    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
-    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
-    "WorldTendencyType", "UpdateAuthority",
-
+    "AIStatusType",
+    "BitOperation",
+    "ButtonType",
+    "CharacterType",
+    "CharacterUpdateRate",
+    "ClassType",
+    "ComparisonType",
+    "CutsceneType",
+    "DamageTargetType",
+    "EventEndType",
+    "FlagState",
+    "FlagType",
+    "InterpolationState",
+    "ItemType",
+    "RangeState",
+    "CoordEntityType",
+    "NavmeshType",
+    "NumberButtons",
+    "OnOffChange",
+    "RestartType",
+    "SoundType",
+    "StatueType",
+    "SummonSignType",
+    "TriggerAttribute",
+    "WorldTendencyType",
+    "UpdateAuthority",
     # Enums in Dark Souls 1 (both PTD and DSR) only
-    "CalculationType", "ConditionGroup", "Covenant", "TeamType", "BannerType", "MultiplayerState", "NPCPartType",
-
+    "CalculationType",
+    "ConditionGroup",
+    "Covenant",
+    "TeamType",
+    "BannerType",
+    "MultiplayerState",
+    "NPCPartType",
     # Non-event enums
     "CollisionHitFilter",
 ]
@@ -126,6 +159,7 @@ class NPCPartType(IntEnum):
 
 class CollisionHitFilter(IntEnum):
     """Defines behavior of `MSBCollision` instances in maps. Courtesy of horkrux."""
+
     NoHiHitNoFeetIK = 0  # solid
     NoHiHit_1 = 1  # solid
     NoHiHit_2 = 2  # solid

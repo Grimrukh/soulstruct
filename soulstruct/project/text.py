@@ -19,7 +19,9 @@ class SoulstructTextEditor(SoulstructBaseEditor):
     ENTRY_RANGE_SIZE = 100
 
     class EntryRow(SoulstructBaseEditor.EntryRow):
-        _MATCH_ITEM = re.compile(r'^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$')
+        _MATCH_ITEM = re.compile(r"^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$")
+
+        master: SoulstructTextEditor
 
         def build_entry_context_menu(self):
             super().build_entry_context_menu()
@@ -31,7 +33,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
 
                 # Category shortcuts.
                 separator_added = False
-                text_categories = ('Names', 'Summaries', 'Descriptions')
+                text_categories = ("Names", "Summaries", "Descriptions")
                 linked_id = ((text_id // 100) * 100) if item_type in {"Weapon", "Armor"} else text_id
                 for link_category in text_categories:
                     if text_type != link_category and linked_id in self.master.Text[item_type + link_category]:
@@ -40,31 +42,38 @@ class SoulstructTextEditor(SoulstructBaseEditor):
                             separator_added = True
                         self.context_menu.add_command(
                             label=f"Go to Text.{item_type}{link_category}[{linked_id}]",
-                            foreground=self.STYLE_DEFAULTS['text_fg'],
+                            foreground=self.STYLE_DEFAULTS["text_fg"],
                             command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.text_link(
-                                it + lc, i))
+                                it + lc, i
+                            ),
+                        )
 
                 # Param shortcut.
                 self.context_menu.add_separator()
-                param_category = item_type + ('s' if item_type != 'Armor' else '')
+                param_category = item_type + ("s" if item_type != "Armor" else "")
                 self.context_menu.add_command(
                     label=f"Go to Params.{param_category}[{linked_id}]",
-                    foreground=self.STYLE_DEFAULTS['text_fg'],
-                    command=lambda c=param_category, i=linked_id: self.master.linker.params_link(c, i))
+                    foreground=self.STYLE_DEFAULTS["text_fg"],
+                    command=lambda c=param_category, i=linked_id: self.master.linker.params_link(c, i),
+                )
 
                 # Automatic upgrade text generation.
-                if item_type == 'Weapon' and text_type == 'Names' and text_id % 100 == 0:
+                if item_type == "Weapon" and text_type == "Names" and text_id % 100 == 0:
                     self.context_menu.add_separator()
                     for count in (5, 10, 15):
                         self.context_menu.add_command(
-                            label=f"Create weapon upgrade names (+{count})", foreground=self.STYLE_DEFAULTS['text_fg'],
-                            command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count))
-                elif item_type == 'Armor' and text_type == 'Names' and text_id % 100 == 0:
+                            label=f"Create weapon upgrade names (+{count})",
+                            foreground=self.STYLE_DEFAULTS["text_fg"],
+                            command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count),
+                        )
+                elif item_type == "Armor" and text_type == "Names" and text_id % 100 == 0:
                     self.context_menu.add_separator()
                     for count in (5, 10):
                         self.context_menu.add_command(
-                            label=f"Create armor upgrade names (+{count})", foreground=self.STYLE_DEFAULTS['text_fg'],
-                            command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count))
+                            label=f"Create armor upgrade names (+{count})",
+                            foreground=self.STYLE_DEFAULTS["text_fg"],
+                            command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count),
+                        )
 
     def __init__(self, text: DarkSoulsText, linker, master=None, toplevel=False):
         self.Text = text
@@ -75,24 +84,25 @@ class SoulstructTextEditor(SoulstructBaseEditor):
         super().__init__(linker, master, toplevel, window_title="Soulstruct Text Editor")
 
     def build(self):
-        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
+        with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[0, 1, 1, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[0, 1, 1, 1], auto_columns=0):
 
                 self.show_all_categories = self.Checkbutton(
-                    label='Show internal categories ', initial_state=False, command=self.refresh_categories,
-                    padx=10).var
+                    label="Show internal categories ", initial_state=False, command=self.refresh_categories, padx=10
+                ).var
 
-                self.find_text_id_entry = self.Entry(
-                    label="Find ID:", label_position='left', width=10, padx=10)
+                self.find_text_id_entry = self.Entry(label="Find ID:", label_position="left", width=10, padx=10)
                 self.current_frame.columnconfigure(1, minsize=150)
-                self.find_text_id_entry.bind('<Return>', self.find_text_id)
+                self.find_text_id_entry.bind("<Return>", self.find_text_id)
                 self.find_text_string_entry = self.Entry(
-                    label="Find Text:", label_position='left', width=18, padx=10, sticky='e')
-                self.find_text_string_entry.bind('<Return>', lambda e: self.find_text_string())
+                    label="Find Text:", label_position="left", width=18, padx=10, sticky="e"
+                )
+                self.find_text_string_entry.bind("<Return>", lambda e: self.find_text_string())
                 self.replace_text_string_entry = self.Entry(
-                    label="Replace With:", label_position='left', width=18, padx=10, sticky='e')
-                self.replace_text_string_entry.bind('<Return>', lambda e: self.find_text_string(replace=True))
+                    label="Replace With:", label_position="left", width=18, padx=10, sticky="e"
+                )
+                self.replace_text_string_entry.bind("<Return>", lambda e: self.find_text_string(replace=True))
 
             super().build()
 
@@ -104,29 +114,35 @@ class SoulstructTextEditor(SoulstructBaseEditor):
         if base_text_id % 100 != 0:
             self.CustomDialog(
                 title="Invalid Base ID for Upgrades",
-                message=f"The base text ID for weapons or armor should be a multiple of 100.")
+                message=f"The base text ID for weapons or armor should be a multiple of 100.",
+            )
             return
         if any(base_text_id + i in text_dict for i in range(1, count + 1)):
-            if self.CustomDialog(
+            if (
+                self.CustomDialog(
                     title="Upgrade IDs already exist",
                     message=f"Overwrite all existing entries in ID range "
-                            f"{base_text_id + 1} to {base_text_id + count}?",
-                    button_names=('Yes, overwrite them', 'No, go back'),
-                    button_kwargs=('YES', 'NO'),
-                    cancel_output=1, default_output=1) == 1:
+                    f"{base_text_id + 1} to {base_text_id + count}?",
+                    button_names=("Yes, overwrite them", "No, go back"),
+                    button_kwargs=("YES", "NO"),
+                    cancel_output=1,
+                    default_output=1,
+                )
+                == 1
+            ):
                 return
         base_text = text_dict[base_text_id]
         undo_bulk = []
         redo_bulk = []
         for i in range(1, count + 1):
-            new_text = f'{base_text}+{i}'
+            new_text = f"{base_text}+{i}"
             if base_text_id + i in text_dict:
                 old_text = text_dict[base_text_id + i]
-                undo_bulk.append((category, base_text_id + i, old_text, 'change'))
-                redo_bulk.append((category, base_text_id + i, new_text, 'change'))
+                undo_bulk.append((category, base_text_id + i, old_text, "change"))
+                redo_bulk.append((category, base_text_id + i, new_text, "change"))
             else:
-                undo_bulk.append((category, base_text_id + i, None, 'delete'))
-                redo_bulk.append((category, base_text_id + i, new_text, 'add'))
+                undo_bulk.append((category, base_text_id + i, None, "delete"))
+                redo_bulk.append((category, base_text_id + i, new_text, "add"))
             text_dict[base_text_id + i] = new_text
 
         # TODO: History action manager. Will need linker access.
@@ -146,7 +162,8 @@ class SoulstructTextEditor(SoulstructBaseEditor):
             self.CustomDialog(
                 title="Value Error",
                 message=f"Invalid text ID: {self.find_text_id_entry.var.get()}.\n\n"
-                        f"The ID must be an integer (zero or greater).")
+                f"The ID must be an integer (zero or greater).",
+            )
             return
         if self.active_category and id_to_find in self.Text[self.active_category]:
             row_index = self._update_first_entry_display_index(self.get_entry_index(id_to_find))

@@ -14,7 +14,7 @@ from soulstruct.maps.core import MAP_ENTRY_TYPES
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
-_DUPLICATE_TAG_MATCH = re.compile(r' <(\d+)>$')
+_DUPLICATE_TAG_MATCH = re.compile(r" <(\d+)>$")
 _LOGGER = logging.getLogger(__name__)
 
 EntryType = tp.TypeVar("EntryType", bound="MSBEntry")
@@ -39,7 +39,7 @@ class MSBEntry(abc.ABC):
 
     def get_name_to_pack(self):
         """Remove duplicate tags '<i>' from end of name."""
-        return _DUPLICATE_TAG_MATCH.sub('', self.name)
+        return _DUPLICATE_TAG_MATCH.sub("", self.name)
 
     def __getitem__(self, field_name):
         if field_name in self.FIELD_INFO:
@@ -78,17 +78,9 @@ class MSBEntry(abc.ABC):
 
 class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
 
-    MAP_ENTITY_LIST_HEADER = BinaryStruct(
-        '4x',
-        ('name_offset', 'i'),
-        ('entry_offset_count', 'i'),
-    )
-    MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(
-        ('entry_offset', 'i'),
-    )
-    MAP_ENTITY_LIST_TAIL = BinaryStruct(
-        ('next_entry_list_offset', 'i'),
-    )
+    MAP_ENTITY_LIST_HEADER = BinaryStruct("4x", ("name_offset", "i"), ("entry_offset_count", "i"),)
+    MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(("entry_offset", "i"),)
+    MAP_ENTITY_LIST_TAIL = BinaryStruct(("next_entry_list_offset", "i"),)
 
     ENTRY_LIST_NAME = None
     ENTRY_CLASS = None
@@ -104,9 +96,11 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         if isinstance(msb_entry_list_source, (list, tuple, dict)):
             if not name:
                 raise ValueError("Name of MSB entry list must be given if created manually.")
-            if name not in {'POINT_PARAM_ST', 'EVENT_PARAM_ST', 'PARTS_PARAM_ST', 'MODEL_PARAM_ST'}:
-                raise ValueError("Name of MSB entry list must be MODEL_PARAM_ST, EVENT_PARAM_ST, POINT_PARAM_ST, "
-                                 "or PARTS_PARAM_ST.")
+            if name not in {"POINT_PARAM_ST", "EVENT_PARAM_ST", "PARTS_PARAM_ST", "MODEL_PARAM_ST"}:
+                raise ValueError(
+                    "Name of MSB entry list must be MODEL_PARAM_ST, EVENT_PARAM_ST, POINT_PARAM_ST, "
+                    "or PARTS_PARAM_ST."
+                )
             if isinstance(msb_entry_list_source, dict):
                 msb_entry_list_source = [msb_entry_list_source[k] for k in sorted(msb_entry_list_source)]
             if isinstance(msb_entry_list_source, (list, tuple)):
@@ -125,10 +119,12 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
 
     def unpack(self, msb_buffer):
         header = self.MAP_ENTITY_LIST_HEADER.unpack(msb_buffer)
-        entry_offsets = [self.MAP_ENTITY_ENTRY_OFFSET.unpack(msb_buffer)["entry_offset"]
-                         for _ in range(header["entry_offset_count"] - 1)]
+        entry_offsets = [
+            self.MAP_ENTITY_ENTRY_OFFSET.unpack(msb_buffer)["entry_offset"]
+            for _ in range(header["entry_offset_count"] - 1)
+        ]
         next_entry_list_offset = self.MAP_ENTITY_LIST_TAIL.unpack(msb_buffer)["next_entry_list_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, header["name_offset"], encoding='utf-8')
+        self.name = read_chars_from_buffer(msb_buffer, header["name_offset"], encoding="utf-8")
 
         self._entries = []
 
@@ -142,14 +138,16 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
     def pack(self, start_offset=0, is_last_table=False):
         entries = self.get_entries()
         entry_offsets = []
-        packed_entries = b''
-        offset = start_offset + (self.MAP_ENTITY_LIST_HEADER.size
-                                 + self.MAP_ENTITY_ENTRY_OFFSET.size * len(entries)
-                                 + self.MAP_ENTITY_LIST_TAIL.size)
-        packed_name = self.name.encode('utf-8')
+        packed_entries = b""
+        offset = start_offset + (
+            self.MAP_ENTITY_LIST_HEADER.size
+            + self.MAP_ENTITY_ENTRY_OFFSET.size * len(entries)
+            + self.MAP_ENTITY_LIST_TAIL.size
+        )
+        packed_name = self.name.encode("utf-8")
         name_offset = offset
         while len(packed_name) % 4 != 0:
-            packed_name += b'\0'
+            packed_name += b"\0"
         offset += len(packed_name)
         for entry in entries:
             entry_offsets.append(offset)
@@ -159,11 +157,8 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
 
         next_entry_list_offset = offset if not is_last_table else 0
 
-        packed_header = self.MAP_ENTITY_LIST_HEADER.pack(
-            name_offset=name_offset,
-            entry_offset_count=len(entries) + 1,
-        )
-        packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack([{'entry_offset': o} for o in entry_offsets])
+        packed_header = self.MAP_ENTITY_LIST_HEADER.pack(name_offset=name_offset, entry_offset_count=len(entries) + 1,)
+        packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack([{"entry_offset": o} for o in entry_offsets])
         packed_header += self.MAP_ENTITY_LIST_TAIL.pack(next_entry_list_offset=next_entry_list_offset)
 
         return packed_header + packed_name + packed_entries
@@ -195,8 +190,10 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         if not entries:
             raise KeyError(f"Entry name {entry_name} does not appear in {self.__class__.__name__}.")
         elif len(entries) >= 2:
-            raise ValueError(f"Entry name {entry_name} appears more than once in "
-                             f"{self.__class__.__name__}. You must access it by index.")
+            raise ValueError(
+                f"Entry name {entry_name} appears more than once in "
+                f"{self.__class__.__name__}. You must access it by index."
+            )
         return entries[0]
 
     def get_entries(self, entry_type=None) -> tp.List[EntryType]:
@@ -244,8 +241,10 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
             entry_name = entry_name_or_local_index
         entry_names = self.get_entry_names()
         if entry_names.count(entry_name) >= 2:
-            raise ValueError(f"Cannot get global index of non-unique entry name {repr(entry_name)} "
-                             f"({entry_names.count(entry_name)} instances).")
+            raise ValueError(
+                f"Cannot get global index of non-unique entry name {repr(entry_name)} "
+                f"({entry_names.count(entry_name)} instances)."
+            )
         if entry_name not in entry_names:
             raise ValueError(f"Cannot get global index of non-existent entry name {repr(entry_name)}.")
         return entry_names.index(entry_name)
@@ -357,8 +356,10 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         entry_indices = {}
         for i, entry in enumerate(self._entries):
             if entry.name in entry_indices:
-                raise NameError(f"Name {repr(entry.name)} (type {entry.ENTRY_TYPE.name}) appears more than once in "
-                                f"MSB. Please ensure all map entries have unique names.")
+                raise NameError(
+                    f"Name {repr(entry.name)} (type {entry.ENTRY_TYPE.name}) appears more than once in "
+                    f"MSB. Please ensure all map entries have unique names."
+                )
             entry_indices[entry.name] = i
         return entry_indices
 
@@ -374,13 +375,12 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
             if entry.name in unique_names.values():
                 repeat_count.setdefault(entry.name, 0)
                 repeat_count[entry.name] += 1
-                entry.name += f' <{repeat_count[entry.name]}>'
+                entry.name += f" <{repeat_count[entry.name]}>"
             unique_names[i] = entry.name
         return unique_names
 
 
 class MSBEntryEntity(MSBEntry, abc.ABC):
-
     def __init__(self):
         """Subclass of MSBEntry with 'entity_id' field (everything except Models). Useful for type checking."""
         super().__init__()
@@ -388,7 +388,6 @@ class MSBEntryEntity(MSBEntry, abc.ABC):
 
 
 class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
-
     def __init__(self):
         """Subclass of MSBEntryEntity with `translate` and `rotate` fields, and `rotate_in_world` method.
 
@@ -399,10 +398,7 @@ class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
         self._rotate = Vector3.zero()
 
     def rotate_in_world(
-            self,
-            rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-            pivot_point=(0, 0, 0),
-            radians=False,
+        self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], pivot_point=(0, 0, 0), radians=False,
     ):
         """Modify entity `translate` and `rotate` by rotating it around some `pivot_point` in world coordinates.
 

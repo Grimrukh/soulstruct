@@ -172,7 +172,7 @@ def Constructor():
     RunEvent(13015812)
     RunEvent(13015820)
     RunEvent(13015815)
-    RunEvent(13015830, slot=0, args=(3010812, 1.2000000476837158), arg_types='if')
+    RunEvent(13015830, slot=0, args=(3010812, 1.2000000476837158), arg_types="if")
     RunCommonEvent(20006010, args=(73010952, 69003))
     RunCommonEvent(20006031, args=(73010953, 3012750))
 
@@ -202,16 +202,32 @@ def Event13014242():
 @RestartOnRest
 def Event13014522():
     """ 13014522: Event 13014522 """
-    RunCommonEvent(20005623, args=(13010450, 13010452, 3011400, 3011401, 3014401, 3011402, 3014402, 3012401, 3012402, 
-                   13011450, 13014450, 13010451))
+    RunCommonEvent(
+        20005623,
+        args=(
+            13010450,
+            13010452,
+            3011400,
+            3011401,
+            3014401,
+            3011402,
+            3014402,
+            3012401,
+            3012402,
+            13011450,
+            13014450,
+            13010451,
+        ),
+    )
     RunEvent(13015220, slot=0, args=(13010460, 3011410, 3011411, 3014411, 3011413, 3014413, 3011412, 3014412))
 
 
 @RestartOnRest
-def Event13015200(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13015200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13015200: Event 13015200 """
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableFlag(arg_12_15)
     GotoIfFlagOn(Label.L0, arg_0_3)
     ForceAnimation(arg_8_11, 0, skip_transition=True)
@@ -226,8 +242,17 @@ def Event13015200(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13015201(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event13015201(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 13015201: Event 13015201 """
     IfFlagOn(13, arg_0_3)
     IfFlagOn(13, arg_4_7)
@@ -239,19 +264,22 @@ def Event13015201(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     IfFlagOn(15, arg_20_23)
     GotoIfConditionTrue(Label.L9, input_condition=15)
     GotoIfFlagOn(Label.L2, arg_4_7)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     EnableObjectActivation(arg_12_15, obj_act_id=304874)
     IfObjectActivated(-1, obj_act_id=arg_16_19)
     IfFlagOn(-2, arg_0_3)
     IfConditionTrue(-3, input_condition=-1)
     IfConditionTrue(-3, input_condition=-2)
     IfConditionTrue(0, input_condition=-3)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableObjectActivation(arg_12_15, obj_act_id=-1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=arg_20_23, state=FlagState.On)
     SetNetworkConnectedFlagState(flag=arg_0_3, state=FlagState.On)
     EnableFlag(arg_4_7)
@@ -272,26 +300,30 @@ def Event13015201(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     DefineLabel(1)
     IfObjectBackreadEnabled(1, obj=arg_8_11)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=arg_20_23, state=FlagState.Off)
     Restart()
 
     # --- 2 --- #
     DefineLabel(2)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     EnableObjectActivation(arg_12_15, obj_act_id=304874)
     IfObjectActivated(-5, obj_act_id=arg_16_19)
     IfFlagOff(-6, arg_0_3)
     IfConditionTrue(-7, input_condition=-5)
     IfConditionTrue(-7, input_condition=-6)
     IfConditionTrue(0, input_condition=-7)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableObjectActivation(arg_12_15, obj_act_id=-1)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=arg_20_23, state=FlagState.On)
     SetNetworkConnectedFlagState(flag=arg_0_3, state=FlagState.Off)
     DisableFlag(arg_4_7)
@@ -315,8 +347,9 @@ def Event13015201(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     IfObjectBackreadEnabled(2, obj=arg_8_11)
     IfConditionTrue(0, input_condition=2)
     DisableFlag(arg_28_31)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkConnectedFlagState(flag=arg_20_23, state=FlagState.Off)
     Restart()
 
@@ -333,28 +366,92 @@ def Event13015202():
 
 
 @RestartOnRest
-def Event13015210(arg_0_3: int, arg_4_7: int):
+def Event13015210(_, arg_0_3: int, arg_4_7: int):
     """ 13015210: Event 13015210 """
     IfFlagChange(0, arg_0_3)
     WaitFrames(2)
     GotoIfFlagOff(Label.L0, arg_0_3)
     Wait(1.2999999523162842)
-    CreateHazard(13015211, arg_4_7, model_point=40, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015212, arg_4_7, model_point=41, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015213, arg_4_7, model_point=42, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015214, arg_4_7, model_point=43, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015215, arg_4_7, model_point=44, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015216, arg_4_7, model_point=45, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015217, arg_4_7, model_point=46, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
-    CreateHazard(13015218, arg_4_7, model_point=47, behavior_param_id=5300, target_type=DamageTargetType.Character, 
-                 radius=0.800000011920929, life=0.5, repetition_time=0.0)
+    CreateHazard(
+        13015211,
+        arg_4_7,
+        model_point=40,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015212,
+        arg_4_7,
+        model_point=41,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015213,
+        arg_4_7,
+        model_point=42,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015214,
+        arg_4_7,
+        model_point=43,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015215,
+        arg_4_7,
+        model_point=44,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015216,
+        arg_4_7,
+        model_point=45,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015217,
+        arg_4_7,
+        model_point=46,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        13015218,
+        arg_4_7,
+        model_point=47,
+        behavior_param_id=5300,
+        target_type=DamageTargetType.Character,
+        radius=0.800000011920929,
+        life=0.5,
+        repetition_time=0.0,
+    )
     Restart()
 
     # --- 0 --- #
@@ -364,8 +461,17 @@ def Event13015210(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event13015220(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int):
+def Event13015220(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+):
     """ 13015220: Event 13015220 """
     IfFlagOn(0, 13010461)
     GotoIfFlagOn(Label.L3, arg_0_3)
@@ -473,8 +579,13 @@ def Event13015225():
     IfCharacterInsideRegion(1, PLAYER, region=3012412)
     IfFlagOff(1, 13010461)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(10010170, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        10010170,
+        anchor_entity=-1,
+        display_distance=3.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     IfCharacterOutsideRegion(0, PLAYER, region=3012412)
     Wait(1.0)
     Restart()
@@ -505,7 +616,7 @@ def Event13015230():
 
 
 @RestartOnRest
-def Event13015310(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13015310(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13015310: Event 13015310 """
     EndIfThisEventSlotOn()
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -601,7 +712,7 @@ def Event13015475():
 
 
 @RestartOnRest
-def Event13015550(arg_0_3: int):
+def Event13015550(_, arg_0_3: int):
     """ 13015550: Event 13015550 """
     DisableAI(arg_0_3)
     DisableCharacter(arg_0_3)
@@ -640,7 +751,7 @@ def Event13015550(arg_0_3: int):
 
 
 @RestartOnRest
-def Event13015551(arg_0_3: int):
+def Event13015551(_, arg_0_3: int):
     """ 13015551: Event 13015551 """
     DisableAI(arg_0_3)
     DisableCharacter(arg_0_3)
@@ -688,30 +799,50 @@ def Event13015551(arg_0_3: int):
 def Event13015555():
     """ 13015555: Event 13015555 """
     EndIfFlagOn(13010890)
-    CreateNPCPart(3010831, npc_part_id=10, part_index=NPCPartType.Part3, part_health=100, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3010831,
+        npc_part_id=10,
+        part_index=NPCPartType.Part3,
+        part_health=100,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IfFlagOn(1, 13015550)
     IfFlagOn(1, 13015551)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(3010830, npc_part_id=10, part_index=NPCPartType.Part3, part_health=100, damage_correction=1.0, 
-                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
+    CreateNPCPart(
+        3010830,
+        npc_part_id=10,
+        part_index=NPCPartType.Part3,
+        part_health=100,
+        damage_correction=1.0,
+        body_damage_correction=1.0,
+        is_invincible=False,
+        start_in_stop_state=False,
+    )
     IfCharacterPartHealthLessThanOrEqual(-1, 3010830, npc_part_id=10, value=1)
     IfCharacterPartHealthLessThanOrEqual(-1, 3010831, npc_part_id=10, value=1)
-    IfHealthComparison(-1, character=3010830, comparison_type=ComparisonType.LessThanOrEqual, 
-                       value=0.0010000000474974513)
-    IfHealthComparison(-1, character=3010831, comparison_type=ComparisonType.LessThanOrEqual, 
-                       value=0.0010000000474974513)
+    IfHealthComparison(
+        -1, character=3010830, comparison_type=ComparisonType.LessThanOrEqual, value=0.0010000000474974513
+    )
+    IfHealthComparison(
+        -1, character=3010831, comparison_type=ComparisonType.LessThanOrEqual, value=0.0010000000474974513
+    )
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(13010890)
     IfCharacterPartHealthLessThanOrEqual(1, 3010830, npc_part_id=10, value=0)
     GotoIfConditionTrue(Label.L0, input_condition=1)
     IfCharacterPartHealthLessThanOrEqual(2, 3010831, npc_part_id=10, value=0)
     GotoIfConditionTrue(Label.L1, input_condition=2)
-    IfHealthComparison(3, character=3010830, comparison_type=ComparisonType.LessThanOrEqual, 
-                       value=0.0010000000474974513)
+    IfHealthComparison(
+        3, character=3010830, comparison_type=ComparisonType.LessThanOrEqual, value=0.0010000000474974513
+    )
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfHealthComparison(4, character=3010831, comparison_type=ComparisonType.LessThanOrEqual, 
-                       value=0.0010000000474974513)
+    IfHealthComparison(
+        4, character=3010831, comparison_type=ComparisonType.LessThanOrEqual, value=0.0010000000474974513
+    )
     GotoIfConditionTrue(Label.L1, input_condition=4)
 
     # --- 0 --- #
@@ -746,7 +877,7 @@ def Event13015555():
 
 
 @RestartOnRest
-def Event13015556(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13015556(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13015556: Event 13015556 """
     DisableCharacter(arg_0_3)
     DisableAnimations(arg_0_3)
@@ -790,7 +921,7 @@ def Event13015556(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13015557(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13015557(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13015557: Event 13015557 """
     DisableCharacter(arg_0_3)
     DisableAnimations(arg_0_3)
@@ -838,7 +969,7 @@ def Event13015557(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event13015558(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13015558(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13015558: Event 13015558 """
     EndIfFlagOn(arg_8_11)
     IfCharacterBackreadEnabled(0, character=arg_0_3)
@@ -852,7 +983,7 @@ def Event13015558(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13015559(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13015559(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13015559: Event 13015559 """
     EndIfFlagOn(arg_8_11)
     IfCharacterBackreadEnabled(0, character=arg_0_3)
@@ -922,7 +1053,7 @@ def Event13015585():
 
 
 @RestartOnRest
-def Event13015590(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13015590(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13015590: Event 13015590 """
     EndIfFlagOn(arg_0_3)
     IfHasTAEEvent(0, character=arg_4_7, tae_event_id=arg_8_11)
@@ -969,8 +1100,9 @@ def Event13015810():
     ActivateMultiplayerBuffs(3010800)
     ActivateMultiplayerBuffs(3010801)
     ActivateMultiplayerBuffs(3010802)
-    SkipLinesIfClientTypeCountComparison(3, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        3, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkUpdateAuthority(3010800, UpdateAuthority.Forced)
     SetNetworkUpdateAuthority(3010801, UpdateAuthority.Forced)
     SetNetworkUpdateAuthority(3010802, UpdateAuthority.Forced)
@@ -1030,7 +1162,7 @@ def Event13015815():
 
 
 @RestartOnRest
-def Event13015830(arg_0_3: int, arg_4_7: float):
+def Event13015830(_, arg_0_3: int, arg_4_7: float):
     """ 13015830: Event 13015830 """
     DisableAI(arg_0_3)
     DisableCharacter(arg_0_3)

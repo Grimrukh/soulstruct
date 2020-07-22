@@ -404,7 +404,7 @@ def Preconstructor():
     DefineLabel(1)
 
 
-def Event3500(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event3500(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 3500: Event 3500 """
     DisableNetworkSync()
     IfCharacterHuman(15, PLAYER)
@@ -460,7 +460,7 @@ def Event6002():
 
 
 @RestartOnRest
-def Event5500(arg_0_3: int):
+def Event5500(_, arg_0_3: int):
     """ 5500: Event 5500 """
     DisableNetworkSync()
     IfCharacterHuman(1, PLAYER)
@@ -1018,7 +1018,7 @@ def Event6816():
     Restart()
 
 
-def Event7000(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event7000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 7000: Event 7000 """
     DisableNetworkSync()
     DisableCharacter(arg_0_3)
@@ -1039,7 +1039,7 @@ def Event7000(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     RegisterHealingFountain(arg_12_15, arg_4_7, 0.0, reaction_angle=0.0, initial_sword_number=0, sword_level=0)
 
 
-def Event7100(arg_0_3: int, arg_4_7: int):
+def Event7100(_, arg_0_3: int, arg_4_7: int):
     """ 7100: Event 7100 """
     EndIfFlagOn(arg_0_3)
     IfFlagOn(0, arg_0_3)
@@ -1054,7 +1054,7 @@ def Event7100(arg_0_3: int, arg_4_7: int):
     EnableFlag(6715)
 
 
-def Event7200(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event7200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 7200: Event 7200 """
     EndIfClient()
     IfFlagOn(0, arg_0_3)
@@ -1069,7 +1069,7 @@ def Event7200(arg_0_3: int, arg_4_7: int, arg_8_11: int):
     WarpPlayerToRespawnPoint(2102962)
 
 
-def Event7300(arg_0_3: int, arg_4_7: int):
+def Event7300(_, arg_0_3: int, arg_4_7: int):
     """ 7300: Event 7300 """
     EndIfClient()
     IfFlagOn(0, arg_0_3)
@@ -1079,7 +1079,7 @@ def Event7300(arg_0_3: int, arg_4_7: int):
     DisableFlag(arg_0_3)
 
 
-def Event7600(arg_0_3: int, arg_4_7: int):
+def Event7600(_, arg_0_3: int, arg_4_7: int):
     """ 7600: Event 7600 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
@@ -1095,7 +1095,7 @@ def Event7600(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9030(arg_0_3: int, arg_4_7: int):
+def Event9030(_, arg_0_3: int, arg_4_7: int):
     """ 9030: Event 9030 """
     DisableNetworkSync()
     IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)
@@ -1105,7 +1105,7 @@ def Event9030(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9035(arg_0_3: int, arg_4_7: int):
+def Event9035(_, arg_0_3: int, arg_4_7: int):
     """ 9035: Event 9035 """
     DisableNetworkSync()
     IfCharacterHasSpecialEffect(1, PLAYER, arg_0_3)
@@ -1119,7 +1119,7 @@ def Event9035(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9040(arg_0_3: int, arg_4_7: int):
+def Event9040(_, arg_0_3: int, arg_4_7: int):
     """ 9040: Event 9040 """
     EndIfFlagOn(arg_0_3)
     IfCharacterHuman(15, PLAYER)
@@ -1128,7 +1128,7 @@ def Event9040(arg_0_3: int, arg_4_7: int):
     AwardItemLot(arg_4_7, host_only=False)
 
 
-def Event9100(arg_0_3: int, arg_4_7: int):
+def Event9100(_, arg_0_3: int, arg_4_7: int):
     """ 9100: Event 9100 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
@@ -1138,7 +1138,7 @@ def Event9100(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9110(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event9110(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 9110: Event 9110 """
     EndIfFlagOn(arg_0_3)
     EndIfClient()
@@ -1286,7 +1286,7 @@ def Event9198():
     Restart()
 
 
-def Event9200(arg_0_3: int):
+def Event9200(_, arg_0_3: int):
     """ 9200: Event 9200 """
     DisableNetworkSync()
     DisableSoundEvent(arg_0_3)
@@ -1325,7 +1325,7 @@ def Event9215():
 
 
 @RestartOnRest
-def Event9220(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
+def Event9220(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
     """ 9220: Event 9220 """
     GotoIfFlagOff(Label.L0, arg_8_11)
     DisableAI(arg_0_3)
@@ -1359,7 +1359,7 @@ def Event9220(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_
 
 
 @RestartOnRest
-def Event9240(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
+def Event9240(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
     """ 9240: Event 9240 """
     EndIfFlagOn(arg_8_11)
     IfFlagOn(1, arg_4_7)
@@ -1380,7 +1380,7 @@ def Event9240(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_
 
 
 @RestartOnRest
-def Event9260(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
+def Event9260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
     """ 9260: Event 9260 """
     EndIfFlagOn(arg_8_11)
     IfFlagOn(1, arg_4_7)
@@ -1398,8 +1398,9 @@ def Event9260(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_
     Restart()
 
 
-def Event9280(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_20: uchar, 
-              arg_21_21: uchar):
+def Event9280(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_20: uchar, arg_21_21: uchar
+):
     """ 9280: Event 9280 """
     IfFlagOn(-15, arg_8_11)
     IfFlagOn(-15, arg_12_15)
@@ -1427,7 +1428,7 @@ def Event9280(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_
     ForceAnimation(arg_0_3, 7010)
 
 
-def Event9350(arg_0_3: int):
+def Event9350(_, arg_0_3: int):
     """ 9350: Event 9350 """
     EndIfClient()
     GotoIfValueComparison(Label.L1, ComparisonType.Equal, left=arg_0_3, right=1)
@@ -1487,7 +1488,7 @@ def Event9350(arg_0_3: int):
     WaitFrames(10)
 
 
-def Event9360(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event9360(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 9360: Event 9360 """
     EndIfThisEventSlotOn()
     EndIfFlagOn(arg_0_3)
@@ -1568,7 +1569,7 @@ def Event9422():
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
 
 
-def Event9440(arg_0_3: int, arg_4_7: int):
+def Event9440(_, arg_0_3: int, arg_4_7: int):
     """ 9440: Event 9440 """
     DisableNetworkSync()
     EndIfThisEventSlotOn()
@@ -1577,7 +1578,7 @@ def Event9440(arg_0_3: int, arg_4_7: int):
     AwardItemLot(arg_4_7, host_only=False)
 
 
-def Event9480(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event9480(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 9480: Event 9480 """
     EndIfThisEventSlotOn()
     EndIfFlagOn(arg_0_3)
@@ -1601,7 +1602,7 @@ def Event9480(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_
     AwardItemLot(5520, host_only=True)
 
 
-def Event9500(arg_0_3: int, arg_4_7: int):
+def Event9500(_, arg_0_3: int, arg_4_7: int):
     """ 9500: Event 9500 """
     DisableNetworkSync()
     IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)
@@ -1610,7 +1611,7 @@ def Event9500(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9700(arg_0_3: int, arg_4_7: int):
+def Event9700(_, arg_0_3: int, arg_4_7: int):
     """ 9700: Event 9700 """
     IfFlagOn(1, 1021)
     IfFlagOn(1, 72100121)
@@ -1620,7 +1621,7 @@ def Event9700(arg_0_3: int, arg_4_7: int):
     EnableFlag(1022)
 
 
-def Event9701(arg_0_3: int, arg_4_7: int):
+def Event9701(_, arg_0_3: int, arg_4_7: int):
     """ 9701: Event 9701 """
     IfFlagOn(1, 1023)
     IfFlagOn(1, 72100123)
@@ -1630,7 +1631,7 @@ def Event9701(arg_0_3: int, arg_4_7: int):
     EnableFlag(1024)
 
 
-def Event9702(arg_0_3: int, arg_4_7: int):
+def Event9702(_, arg_0_3: int, arg_4_7: int):
     """ 9702: Event 9702 """
     IfFlagOn(1, 1025)
     IfFlagOn(1, 72100125)
@@ -1640,7 +1641,7 @@ def Event9702(arg_0_3: int, arg_4_7: int):
     EnableFlag(1026)
 
 
-def Event9703(arg_0_3: int, arg_4_7: int):
+def Event9703(_, arg_0_3: int, arg_4_7: int):
     """ 9703: Event 9703 """
     IfFlagOn(1, 1026)
     IfFlagOn(1, 9802)
@@ -1651,7 +1652,7 @@ def Event9703(arg_0_3: int, arg_4_7: int):
     EnableFlag(1027)
 
 
-def Event9710(arg_0_3: int, arg_4_7: int):
+def Event9710(_, arg_0_3: int, arg_4_7: int):
     """ 9710: Event 9710 """
     IfFlagOn(1, 1000)
     IfFlagOn(1, 72100110)
@@ -1827,7 +1828,7 @@ def Event9909():
     EnableFlag(9900)
 
 
-def Event9905(arg_0_3: int):
+def Event9905(_, arg_0_3: int):
     """ 9905: Event 9905 """
     EndIfThisEventSlotOn()
     IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)

@@ -46,7 +46,7 @@ class _SignedBase(IntEnum):
 
     @classmethod
     def minimum(cls):
-        return -2 ** (cls.bit_size() - 1)
+        return -(2 ** (cls.bit_size() - 1))
 
     @classmethod
     def maximum(cls):
@@ -60,7 +60,7 @@ class UnsignedChar(_UnsignedBase):
 
     @staticmethod
     def format():
-        return '<B'
+        return "<B"
 
 
 class SignedChar(_SignedBase):
@@ -70,7 +70,7 @@ class SignedChar(_SignedBase):
 
     @staticmethod
     def format():
-        return '<b'
+        return "<b"
 
 
 class UnsignedShort(_UnsignedBase):
@@ -80,7 +80,7 @@ class UnsignedShort(_UnsignedBase):
 
     @staticmethod
     def format():
-        return '<H'
+        return "<H"
 
 
 class SignedShort(_SignedBase):
@@ -90,7 +90,7 @@ class SignedShort(_SignedBase):
 
     @staticmethod
     def format():
-        return '<h'
+        return "<h"
 
 
 class UnsignedInt(_UnsignedBase):
@@ -100,7 +100,7 @@ class UnsignedInt(_UnsignedBase):
 
     @staticmethod
     def format():
-        return '<I'
+        return "<I"
 
 
 class SignedInt(_SignedBase):
@@ -110,10 +110,10 @@ class SignedInt(_SignedBase):
 
     @staticmethod
     def format():
-        return '<i'
+        return "<i"
 
 
-class Single(object):
+class Single:
     @staticmethod
     def size():
         return 4
@@ -124,7 +124,7 @@ class Single(object):
 
     @staticmethod
     def format():
-        return '<f'
+        return "<f"
 
     @staticmethod
     def python_type():
@@ -132,14 +132,14 @@ class Single(object):
 
     @staticmethod
     def minimum():
-        return -float('inf')
+        return -float("inf")
 
     @staticmethod
     def maximum():
-        return float('inf')
+        return float("inf")
 
 
-class Double(object):
+class Double:
     @staticmethod
     def size():
         return 8
@@ -150,7 +150,7 @@ class Double(object):
 
     @staticmethod
     def format():
-        return '<d'
+        return "<d"
 
     @staticmethod
     def python_type():
@@ -158,11 +158,11 @@ class Double(object):
 
     @staticmethod
     def minimum():
-        return -float('inf')
+        return -float("inf")
 
     @staticmethod
     def maximum():
-        return float('inf')
+        return float("inf")
 
 
 u8 = UnsignedChar

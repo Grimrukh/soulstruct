@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 _PARAM_FILE_NAME_RE = re.compile(r"(/[ms]\d\d)(_[\w]+\.DrawParam\.parambnd)")
 
 
-class DarkSoulsGameParameters(object):
+class DarkSoulsGameParameters:
 
     AI: ParamTable
     Armor: ParamTable
@@ -53,14 +53,37 @@ class DarkSoulsGameParameters(object):
     GrowthCurves: ParamTable
 
     param_names = [
-        'Players', 'PlayerBehaviors', 'PlayerAttacks',
-        'NonPlayers', 'NonPlayerBehaviors', 'NonPlayerAttacks',
-        'AI', 'Bullets', 'Throws', 'SpecialEffects',
-        'Weapons', 'Armor', 'Rings', 'Goods',
-        'WeaponUpgrades', 'ArmorUpgrades', 'UpgradeMaterials',
-        'ItemLots', 'Bosses', 'Shops', 'Spells', 'Objects', 'ObjectActivations',
-        'Movement', 'Cameras', 'Terrains', 'Faces', 'Dialogue',
-        'MenuColors', 'SpecialEffectVisuals', 'GrowthCurves',
+        "Players",
+        "PlayerBehaviors",
+        "PlayerAttacks",
+        "NonPlayers",
+        "NonPlayerBehaviors",
+        "NonPlayerAttacks",
+        "AI",
+        "Bullets",
+        "Throws",
+        "SpecialEffects",
+        "Weapons",
+        "Armor",
+        "Rings",
+        "Goods",
+        "WeaponUpgrades",
+        "ArmorUpgrades",
+        "UpgradeMaterials",
+        "ItemLots",
+        "Bosses",
+        "Shops",
+        "Spells",
+        "Objects",
+        "ObjectActivations",
+        "Movement",
+        "Cameras",
+        "Terrains",
+        "Faces",
+        "Dialogue",
+        "MenuColors",
+        "SpecialEffectVisuals",
+        "GrowthCurves",
     ]
 
     def __init__(self, game_param_bnd_source=None):
@@ -86,21 +109,21 @@ class DarkSoulsGameParameters(object):
             if isinstance(game_param_bnd_source, (str, Path)):
                 game_param_bnd_source = Path(game_param_bnd_source)
                 if game_param_bnd_source.is_dir():
-                    if (game_param_bnd_source / 'GameParam.parambnd').is_file():
-                        game_param_bnd_source = game_param_bnd_source / 'GameParam.parambnd'
-                    elif (game_param_bnd_source / 'GameParam.parambnd.dcx').is_file():
-                        game_param_bnd_source = game_param_bnd_source / 'GameParam.parambnd.dcx'
+                    if (game_param_bnd_source / "GameParam.parambnd").is_file():
+                        game_param_bnd_source = game_param_bnd_source / "GameParam.parambnd"
+                    elif (game_param_bnd_source / "GameParam.parambnd.dcx").is_file():
+                        game_param_bnd_source = game_param_bnd_source / "GameParam.parambnd.dcx"
             try:
                 self._game_param_bnd = BND(game_param_bnd_source)
             except TypeError:
                 raise TypeError("Could not load DarkSoulsGameParameters from given source.")
-        self.paramdef_bnd = PARAMDEF_BND('dsr' if self._game_param_bnd.dcx else 'ptde')
+        self.paramdef_bnd = PARAMDEF_BND("dsr" if self._game_param_bnd.dcx else "ptde")
 
         for entry in self._game_param_bnd:
             p = self._data[entry.path] = ParamTable(entry.data, self.paramdef_bnd)
             try:
                 # Nickname assigned here (ParamTable isn't aware of its own basename).
-                param_nickname = PARAM_NICKNAMES[entry.name[:-len('.param')]]
+                param_nickname = PARAM_NICKNAMES[entry.name[: -len(".param")]]
             except KeyError:
                 # ParamTables without nicknames (i.e. useless params) are excluded from this structure.
                 pass
@@ -119,7 +142,7 @@ class DarkSoulsGameParameters(object):
         if auto_pickle:
             self.pickle()
         if game_param_bnd_path is not None and Path(game_param_bnd_path).is_dir():
-            game_param_bnd_path = Path(game_param_bnd_path) / 'GameParam.parambnd'
+            game_param_bnd_path = Path(game_param_bnd_path) / "GameParam.parambnd"
         self._game_param_bnd.write(game_param_bnd_path)
         _LOGGER.info("Dark Souls game parameters (GameParam) written successfully.")
         if not self._reload_warning:
@@ -132,11 +155,11 @@ class DarkSoulsGameParameters(object):
             game_param_pickle_path = self._game_param_bnd.bnd_path
             if game_param_pickle_path is None:
                 raise ValueError("Could not automatically determine path to pickle DarkSoulsGameParameters.")
-            while game_param_pickle_path.suffix in {'.dcx', '.parambnd'}:
+            while game_param_pickle_path.suffix in {".dcx", ".parambnd"}:
                 game_param_pickle_path = game_param_pickle_path.parent / game_param_pickle_path.stem
-            if not game_param_pickle_path.suffix != '.pickle':
-                game_param_pickle_path = game_param_pickle_path.with_suffix(game_param_pickle_path.suffix + '.pickle')
-        with Path(game_param_pickle_path).open('wb') as f:
+            if not game_param_pickle_path.suffix != ".pickle":
+                game_param_pickle_path = game_param_pickle_path.with_suffix(game_param_pickle_path.suffix + ".pickle")
+        with Path(game_param_pickle_path).open("wb") as f:
             pickle.dump(self, f)
 
     def __getitem__(self, category) -> ParamTable:
@@ -157,23 +180,38 @@ class DarkSoulsGameParameters(object):
         if param_table_name:
             param_table_name = param_table_name.lower().rstrip("s")
             if param_table_name not in {"weapon", "armor", "ring", "good", "spell"}:
-                raise ValueError(f"Invalid item type: {param_table_name}. Must be 'Weapons', 'Armor', 'Rings', "
-                                 f"'Goods', or 'Spells'.")
+                raise ValueError(
+                    f"Invalid item type: {param_table_name}. Must be 'Weapons', 'Armor', 'Rings', "
+                    f"'Goods', or 'Spells'."
+                )
         for item_type_check, param_table, text_dict in zip(
-                ("weapon", "armor", "ring", "good", "spell"),
-                (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
-                (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames)):
+            ("weapon", "armor", "ring", "good", "spell"),
+            (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
+            (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames),
+        ):
             if not param_table_name or param_table_name == item_type_check:
                 for param_id, param_entry in param_table.items():
                     if param_id in text_dict:
                         param_entry.name = text_dict[param_id]
 
 
-DRAW_PARAM_TABLES = ('Dof', 'EnvLightTex', 'Fog', 'LensFlare', 'LensFlareEx', 'AmbientLight', 'ScatteredLight',
-                     'PointLight', 'Shadow', 'ToneCorrect', 'ToneMap', 's_AmbientLight')
+DRAW_PARAM_TABLES = (
+    "Dof",
+    "EnvLightTex",
+    "Fog",
+    "LensFlare",
+    "LensFlareEx",
+    "AmbientLight",
+    "ScatteredLight",
+    "PointLight",
+    "Shadow",
+    "ToneCorrect",
+    "ToneMap",
+    "s_AmbientLight",
+)
 
 
-class MapDrawParam(object):
+class MapDrawParam:
 
     DepthOfField: tp.List[tp.Optional[DrawParamTable]]
     # EnvLightTex: List[Optional[DrawParamTable]]
@@ -192,7 +230,7 @@ class MapDrawParam(object):
         """Structure that manages double-slots and table nicknames for one DrawParam BND file (i.e. one map area)."""
         self._data = {}  # type: tp.Dict[str, tp.List[tp.Optional[DrawParamTable], tp.Optional[DrawParamTable]]]
         self._bnd_entry_paths = {}  # type: tp.Dict[tp.Tuple[str, int], str]
-        paramdef_bnd = PARAMDEF_BND('dsr' if bool(draw_param_bnd.dcx) else 'ptde')
+        paramdef_bnd = PARAMDEF_BND("dsr" if bool(draw_param_bnd.dcx) else "ptde")
 
         if not isinstance(draw_param_bnd, BaseBND):
             draw_param_bnd = BND(draw_param_bnd)
@@ -200,20 +238,21 @@ class MapDrawParam(object):
         self._draw_param_bnd = draw_param_bnd
 
         for entry in draw_param_bnd:
-            parts = entry.name[:-len('.param')].split('_')
+            parts = entry.name[: -len(".param")].split("_")
             if len(parts) == 2:
                 slot = 0
                 param_name = parts[1]
             elif len(parts) == 3:
-                if parts[1] != '1':
-                    raise ValueError("Only slot 0 (no slot number in path) and slot 1 ('_1_' in path) are valid in "
-                                     "DrawParam.")
+                if parts[1] != "1":
+                    raise ValueError(
+                        "Only slot 0 (no slot number in path) and slot 1 ('_1_' in path) are valid in " "DrawParam."
+                    )
                 slot = 1
                 param_name = parts[2]
             else:
                 raise ValueError(f"Malformed ParamTable name: '{entry.name}'")
-            if parts[0].startswith('s'):
-                param_name = 's_' + param_name
+            if parts[0].startswith("s"):
+                param_name = "s_" + param_name
 
             self._data.setdefault(param_name, [None, None])[slot] = DrawParamTable(entry.data, paramdef_bnd)
             self._bnd_entry_paths[param_name, slot] = entry.path
@@ -225,7 +264,7 @@ class MapDrawParam(object):
                 setattr(self, param_nickname, self._data[param_name])
 
     def __getitem__(self, category):
-        if not category.startswith('_'):
+        if not category.startswith("_"):
             try:
                 return getattr(self, category)
             except AttributeError:
@@ -294,22 +333,22 @@ class MapDrawParam(object):
 
 
 DRAW_PARAM_MAPS = {
-    'm10': 'Depths, Undead Burg/Parish, Firelink Shrine',
-    'm11': 'Painted World',
-    'm12': 'Darkroot, Oolacile',
-    'm13': 'Catacombs, Tomb of the Giants, Great Hollow, Ash Lake',
-    'm14': "Blighttown, Quelaag's Domain, Demon Ruins, Lost Izalith",
-    'm15': "Sen's Fortress, Anor Londo",
-    'm16': 'New Londo Ruins, Valley of Drakes',
-    'm17': "Duke's Archives",
-    'm18': 'Kiln of the First Flame, Undead Asylum',
-    'default': 'Menus',
+    "m10": "Depths, Undead Burg/Parish, Firelink Shrine",
+    "m11": "Painted World",
+    "m12": "Darkroot, Oolacile",
+    "m13": "Catacombs, Tomb of the Giants, Great Hollow, Ash Lake",
+    "m14": "Blighttown, Quelaag's Domain, Demon Ruins, Lost Izalith",
+    "m15": "Sen's Fortress, Anor Londo",
+    "m16": "New Londo Ruins, Valley of Drakes",
+    "m17": "Duke's Archives",
+    "m18": "Kiln of the First Flame, Undead Asylum",
+    "default": "Menus",
 }
 
 
-class DarkSoulsLightingParameters(object):
+class DarkSoulsLightingParameters:
 
-    _MAP_IDS = (10, 11, 12, 13, 14, 15, 16, 17, 18, 99, 'default')
+    _MAP_IDS = (10, 11, 12, 13, 14, 15, 16, 17, 18, 99, "default")
 
     m10: MapDrawParam
     m11: MapDrawParam
@@ -325,9 +364,16 @@ class DarkSoulsLightingParameters(object):
 
     # Lod (default only), EnvLightTex (useless) and DebugAmbientLight (useless) are left out.
     param_names = [
-        'DepthOfField', 'Fog', 'LensFlares', 'LensFlareSources',
-        'AmbientLight', 'ScatteredLight', 'PointLights',
-        'Shadows', 'ToneCorrection', 'ToneMapping',
+        "DepthOfField",
+        "Fog",
+        "LensFlares",
+        "LensFlareSources",
+        "AmbientLight",
+        "ScatteredLight",
+        "PointLights",
+        "Shadows",
+        "ToneCorrection",
+        "ToneMapping",
     ]
 
     def __init__(self, draw_param_directory=None):
@@ -352,21 +398,22 @@ class DarkSoulsLightingParameters(object):
 
         for area_id in self._MAP_IDS:
             if isinstance(area_id, int):
-                file_map_name = f'a{area_id}'
-                map_name = f'm{area_id}'
+                file_map_name = f"a{area_id}"
+                map_name = f"m{area_id}"
             else:
                 file_map_name = map_name = area_id
-            file_map_name += '_DrawParam.parambnd'
+            file_map_name += "_DrawParam.parambnd"
 
             try:
-                draw_param_bnd = BND(self._draw_param_directory / f'{file_map_name}.dcx', optional_dcx=False)
-                file_map_name += '.dcx'
+                draw_param_bnd = BND(self._draw_param_directory / f"{file_map_name}.dcx", optional_dcx=False)
+                file_map_name += ".dcx"
             except FileNotFoundError:
                 try:
                     draw_param_bnd = BND(self._draw_param_directory / file_map_name, optional_dcx=False)
                 except FileNotFoundError:
-                    raise FileNotFoundError(f"Could not find '{file_map_name}[.dcx]' in directory "
-                                            f"'{self._draw_param_directory}'.")
+                    raise FileNotFoundError(
+                        f"Could not find '{file_map_name}[.dcx]' in directory " f"'{self._draw_param_directory}'."
+                    )
             self._data[map_name] = MapDrawParam(draw_param_bnd)
             self._bnd_file_names[map_name] = file_map_name
             setattr(self, map_name, self._data[map_name])
@@ -381,7 +428,7 @@ class DarkSoulsLightingParameters(object):
 
     def pickle(self, lighting_param_pickle_path):
         """Save the entire `DarkSoulsLightingParameters` instance to a pickled file, which will be faster to load."""
-        with Path(lighting_param_pickle_path).open('wb') as f:
+        with Path(lighting_param_pickle_path).open("wb") as f:
             pickle.dump(self, f)
 
     def save(self, draw_param_directory=None):
@@ -400,6 +447,7 @@ class DarkSoulsLightingParameters(object):
 def _check_field_types():
     from soulstruct import DSR_PATH
     from soulstruct.params.paramdef import PARAMDEF_BASE_NAMES
+
     g = DarkSoulsGameParameters(DSR_PATH + "/param/GameParam/GameParam.parambnd.dcx")
     for table_name in g.param_names:
         table = g[table_name]

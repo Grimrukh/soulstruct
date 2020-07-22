@@ -13,13 +13,10 @@ _LOGGER = logging.getLogger(__name__)
 class ModManagerWindow(SmartFrame):
     """Simple GUI for managing mod installations and easily recording/restoring vanilla files.
 
-    Currently for Dark Souls Remastered only.
-
-    TODO:
-        -
+    Currently for Dark Souls: Remastered only.
     """
+
     def __init__(self, game_path=None):
-        # TODO: Load mod manager config file from game directory.
         super().__init__(toplevel=True, window_title="Dark Souls Mod Manager")
         if not game_path:
             game_path = Path(DSR_PATH)
@@ -53,13 +50,12 @@ class ModManagerWindow(SmartFrame):
                         self.Button(text="Browse to Mod Root", width=20, command=self._browse_to_mod)
                         self.Button(text="Add to Mod List", width=20, command=self._add_mod)
 
-                    self.Button(
-                        text="Install Mod", width=40, command=self._install_mod, pady=20, bg="#622")
+                    self.Button(text="Install Mod", width=40, command=self._install_mod, pady=20, bg="#622")
 
+                    self.Button(text="Create Vanilla Backup", width=40, command=self._create_vanilla_backup)
                     self.Button(
-                        text="Create Vanilla Backup", width=40, command=self._create_vanilla_backup)
-                    self.Button(
-                        text="Restore Vanilla Backup", width=40, command=self._restore_vanilla_backup, bg="#226")
+                        text="Restore Vanilla Backup", width=40, command=self._restore_vanilla_backup, bg="#226"
+                    )
 
         for mod_info in self.mods:
             self.mod_list.insert("end", mod_info["nickname"])
@@ -76,14 +72,13 @@ class ModManagerWindow(SmartFrame):
         mod_path = self.mod_path.var.get()
         if mod_nickname and mod_path:
             if not Path(mod_path).is_dir():
-                self.CustomDialog(
-                    "Invalid Mod Directory",
-                    f"Directory {mod_path} does not exist.")
+                self.CustomDialog("Invalid Mod Directory", f"Directory {mod_path} does not exist.")
                 return
             mod_info = {"nickname": mod_nickname, "root_path": mod_path}
             if any(info == mod_info for info in self.mods):
                 self.CustomDialog(
-                    "Mod Already Added", f"A mod named {mod_nickname} with that path is already in the list.")
+                    "Mod Already Added", f"A mod named {mod_nickname} with that path is already in the list."
+                )
                 return
             self.mod_list.insert("end", mod_nickname)
             self.mods.append({"nickname": mod_nickname, "root_path": mod_path})
@@ -129,9 +124,8 @@ class ModManagerWindow(SmartFrame):
                 file_str = "\n".join(unrecognized_files)
                 confirm = self.yesno_dialog(
                     "Ignore Unrecognized Files?",
-                    "Mod folder contains non-game files:\n\n"
-                    + file_str + "\n\n"
-                    "Continue with installation anyway?")
+                    "Mod folder contains non-game files:\n\n" + file_str + "\n\n" "Continue with installation anyway?",
+                )
                 if not confirm:
                     return
         file_count = 0
@@ -154,7 +148,8 @@ class ModManagerWindow(SmartFrame):
             "may take several minutes.\n\n"
             "The backup will be created in 'vanilla-backup' in your game directory. "
             "Existing backup files will only be replaced if they have a different size or "
-            "last-modified time.")
+            "last-modified time.",
+        )
         if not confirm:
             return
         backup_count = 0
@@ -165,8 +160,8 @@ class ModManagerWindow(SmartFrame):
                 source_path_stat = source_path.stat()
                 dest_path_stat = dest_path.stat()
                 if (
-                        source_path_stat.st_mtime == dest_path_stat.st_mtime
-                        and source_path_stat.st_size == dest_path_stat.st_size
+                    source_path_stat.st_mtime == dest_path_stat.st_mtime
+                    and source_path_stat.st_size == dest_path_stat.st_size
                 ):
                     continue  # vanilla file with same size and modified time already exists
             elif not dest_path.is_file():
@@ -184,7 +179,8 @@ class ModManagerWindow(SmartFrame):
                 "Are you sure you want to restore vanilla game files? Note that this is "
                 "also done automatically before installing any mod.\n\n"
                 "Files will only be restored if their size or last-modified time "
-                "have changed from the file in 'vanilla-backup'.")
+                "have changed from the file in 'vanilla-backup'.",
+            )
             if not confirm:
                 return
         restore_count = 0
@@ -195,8 +191,8 @@ class ModManagerWindow(SmartFrame):
                 source_path_stat = source_path.stat()
                 dest_path_stat = dest_path.stat()
                 if (
-                        source_path_stat.st_mtime == dest_path_stat.st_mtime
-                        and source_path_stat.st_size == dest_path_stat.st_size
+                    source_path_stat.st_mtime == dest_path_stat.st_mtime
+                    and source_path_stat.st_size == dest_path_stat.st_size
                 ):
                     continue  # vanilla file with same size and modified time already exists
             elif not dest_path.is_file():
@@ -232,5 +228,5 @@ class ModManagerWindow(SmartFrame):
         return Path(directory)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ModManagerWindow().wait_window()

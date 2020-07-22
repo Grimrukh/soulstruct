@@ -4,32 +4,87 @@ from soulstruct.enums.shared import *
 
 __all__ = [
     # Names processed directly by EVS parser
-    "NeverRestart", "RestartOnRest", "UnknownRestart", "EVENTS", "Condition", "END", "RESTART", "Await",
-
-    "THIS_FLAG", "THIS_SLOT_FLAG",
-    "ONLINE", "OFFLINE", "DLC_OWNED", "SKULL_LANTERN_ACTIVE",
-    "WHITE_WORLD_TENDENCY", "BLACK_WORLD_TENDENCY", "NEW_GAME_CYCLE", "SOUL_LEVEL",
-    "FlagEnabled", "FlagDisabled",
-    "SecondsElapsed", "FramesElapsed",
-    "CharacterInsideRegion", "CharacterOutsideRegion",
-    "PlayerInsideRegion", "PlayerOutsideRegion", "AllPlayersInsideRegion", "AllPlayersOutsideRegion",
-    "InsideMap", "OutsideMap",
-    "EntityWithinDistance", "EntityBeyondDistance", "PlayerWithinDistance", "PlayerBeyondDistance",
-    "HasItem", "HasWeapon", "HasArmor", "HasRing", "HasGood",
-    "DialogPromptActivated",
-    "MultiplayerEvent", "TrueFlagCount", "EventValue", "EventFlagValue",
-    "AnyItemDroppedInRegion", "ItemDropped",
-    "OwnsItem", "OwnsWeapon", "OwnsArmor", "OwnsRing", "OwnsGood",
-    "IsAlive", "IsDead", "IsAttacked",
-    "HealthRatio", "HealthValue", "PartHealthValue",
-    "IsCharacterType", "IsHollow", "IsHuman", "IsInvader", "IsBlackPhantom", "IsWhitePhantom",
+    "NeverRestart",
+    "RestartOnRest",
+    "UnknownRestart",
+    "EVENTS",
+    "Condition",
+    "END",
+    "RESTART",
+    "Await",
+    "THIS_FLAG",
+    "THIS_SLOT_FLAG",
+    "ONLINE",
+    "OFFLINE",
+    "DLC_OWNED",
+    "SKULL_LANTERN_ACTIVE",
+    "WHITE_WORLD_TENDENCY",
+    "BLACK_WORLD_TENDENCY",
+    "NEW_GAME_CYCLE",
+    "SOUL_LEVEL",
+    "FlagEnabled",
+    "FlagDisabled",
+    "SecondsElapsed",
+    "FramesElapsed",
+    "CharacterInsideRegion",
+    "CharacterOutsideRegion",
+    "PlayerInsideRegion",
+    "PlayerOutsideRegion",
+    "AllPlayersInsideRegion",
+    "AllPlayersOutsideRegion",
+    "InsideMap",
+    "OutsideMap",
+    "EntityWithinDistance",
+    "EntityBeyondDistance",
+    "PlayerWithinDistance",
+    "PlayerBeyondDistance",
+    "HasItem",
+    "HasWeapon",
+    "HasArmor",
+    "HasRing",
+    "HasGood",
+    "ActionButton",
+    "MultiplayerEvent",
+    "TrueFlagCount",
+    "EventValue",
+    "EventFlagValue",
+    "AnyItemDroppedInRegion",
+    "ItemDropped",
+    "OwnsItem",
+    "OwnsWeapon",
+    "OwnsArmor",
+    "OwnsRing",
+    "OwnsGood",
+    "IsAlive",
+    "IsDead",
+    "IsAttacked",
+    "HealthRatio",
+    "HealthValue",
+    "PartHealthValue",
+    "IsCharacterType",
+    "IsHollow",
+    "IsHuman",
+    "IsInvader",
+    "IsBlackPhantom",
+    "IsWhitePhantom",
     "HasSpecialEffect",
-    "BackreadEnabled", "BackreadDisabled",
+    "BackreadEnabled",
+    "BackreadDisabled",
     "HasTaeEvent",
-    "IsTargeting", "HasAiStatus", "AiStatusIsNormal", "AiStatusIsRecognition", "AiStatusIsAlert", "AiStatusIsBattle",
-    "PlayerIsClass", "PlayerInCovenant",
-    "IsDamaged", "IsDestroyed", "IsActivated",
-    "PlayerStandingOnCollision", "PlayerMovingOnCollision", "PlayerRunningOnCollision",
+    "IsTargeting",
+    "HasAiStatus",
+    "AiStatusIsNormal",
+    "AiStatusIsRecognition",
+    "AiStatusIsAlert",
+    "AiStatusIsBattle",
+    "PlayerIsClass",
+    "PlayerInCovenant",
+    "IsDamaged",
+    "IsDestroyed",
+    "IsActivated",
+    "PlayerStandingOnCollision",
+    "PlayerMovingOnCollision",
+    "PlayerRunningOnCollision",
 ]
 
 # Restart decorators.
@@ -37,22 +92,19 @@ def NeverRestart(func: Callable): ...
 def RestartOnRest(func: Callable): ...
 def UnknownRestart(func: Callable): ...
 
-
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...
-# Dummy class for creating conditions.
-class Condition(object):
-    def __init__(self, condition, hold: bool = False): ...
 
+# Dummy class for creating conditions.
+class Condition:
+    def __init__(self, condition, hold: bool = False): ...
 
 # Terminators.
 END = ...
 RESTART = ...
 
-
 # The Await function. Equivalent to using the 'await' built-in Python keyword.
 def Await(condition): ...
-
 
 # Boolean constants.
 THIS_FLAG = ...
@@ -70,20 +122,16 @@ SOUL_LEVEL = ...
 
 def FlagEnabled(flag: FlagInt): ...
 def FlagDisabled(flag: FlagInt): ...
-
 def SecondsElapsed(elapsed_seconds): ...
 def FramesElapsed(elapsed_frames): ...
-
 def CharacterInsideRegion(entity: AnimatedInt, region: RegionInt): ...
 def CharacterOutsideRegion(entity: AnimatedInt, region: RegionInt): ...
 def PlayerInsideRegion(region: RegionInt): ...
 def PlayerOutsideRegion(region: RegionInt): ...
 def AllPlayersInsideRegion(region: RegionInt): ...
 def AllPlayersOutsideRegion(region: RegionInt): ...
-
 def InsideMap(game_map: MapOrSequence): ...
 def OutsideMap(game_map: MapOrSequence): ...
-
 def EntityWithinDistance(first_entity: CoordEntityInt, second_entity: CoordEntityInt, max_distance): ...
 def EntityBeyondDistance(first_entity: CoordEntityInt, second_entity: CoordEntityInt, min_distance): ...
 def PlayerWithinDistance(entity: CoordEntityInt, max_distance): ...
@@ -96,7 +144,7 @@ def HasArmor(armor: ArmorInt): ...
 def HasRing(ring: RingInt): ...
 def HasGood(good: GoodInt): ...
 
-# These include the Bottomless Box. (Not sure if that include general storage in other games.)
+# These DO include the Bottomless Box. (Probably includes equivalent storage mechanics in other games.)
 def OwnsItem(item: ItemInt): ...  # Can be used with any subclass of Item.
 def OwnsWeapon(weapon: WeaponInt): ...
 def OwnsArmor(armor: ArmorInt): ...
@@ -105,20 +153,24 @@ def OwnsGood(good: GoodInt): ...
 
 # This test creates a dialog prompt, and returns True when the prompt is activated (with A).
 # Should only be used with Await().
-def DialogPromptActivated(prompt_text: EventTextInt, anchor_entity: CoordEntityInt, facing_angle: float=None,
-                          max_distance: float = None, model_point: int=None, human_or_hollow_only=True, button=0,
-                          anchor_type=None, boss_version=False, line_intersects: Optional[CoordEntityInt] = None): ...
-
+def ActionButton(
+    prompt_text: EventTextInt,
+    anchor_entity: CoordEntityInt,
+    anchor_type=None,
+    facing_angle: float = None,
+    max_distance: float = None,
+    model_point: int = None,
+    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    button=0,
+    boss_version=False,
+    line_intersects: Optional[CoordEntityInt] = None,
+): ...
 def MultiplayerEvent(multiplayer_event): ...
-
 def EventFlagValue(left_start_flag, left_bit_count, right_start_flag, right_bit_count): ...  # Compare two flags.
-
 def AnyItemDroppedInRegion(region: RegionInt): ...
 def ItemDropped(item: Item): ...
-
 def IsAlive(character: CharacterInt): ...
 def IsDead(character: CharacterInt): ...
-
 def IsAttacked(attacked_entity: AnimatedInt, attacking_character: CharacterInt): ...
 
 # The values returned by these should be compared with a number literal.
@@ -135,20 +187,16 @@ def IsHuman(character: CharacterInt): ...
 def IsInvader(character: CharacterInt): ...
 def IsBlackPhantom(character: CharacterInt): ...
 def IsWhitePhantom(character: CharacterInt): ...
-
 def PlayerIsClass(class_type: ClassType): ...
 def PlayerInCovenant(covenant_type: Covenant): ...
-
 def IsTargeting(targeting_chr: CharacterInt, targeted_chr: CharacterInt): ...
 def HasAiStatus(character: CharacterInt, ai_status): ...
 def AiStatusIsNormal(character: CharacterInt): ...
 def AiStatusIsRecognition(character: CharacterInt): ...
 def AiStatusIsAlert(character: CharacterInt): ...
 def AiStatusIsBattle(character: CharacterInt): ...
-
 def HasTaeEvent(character: CharacterInt, tae_event_id): ...
 def HasSpecialEffect(character: CharacterInt, special_effect): ...
-
 def BackreadEnabled(character: CharacterInt): ...
 def BackreadDisabled(character: CharacterInt): ...
 

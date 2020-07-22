@@ -2,10 +2,10 @@ import re
 
 from soulstruct.utilities import PACKAGE_PATH
 
-__all__ = ['COMMANDS', 'TEST_FUNCTIONS']
+__all__ = ["COMMANDS", "TEST_FUNCTIONS"]
 
-COMMANDS = {'chr': {}, 'talk': {}}
-TEST_FUNCTIONS = {'chr': {}, 'talk': {}}
+COMMANDS = {"chr": {}, "talk": {}}
+TEST_FUNCTIONS = {"chr": {}, "talk": {}}
 
 # Construct command/function tables.
 
@@ -19,8 +19,8 @@ def _parse_function_def(i_: int, line: str):
     if function_def_match_ is None:
         raise ValueError(f"functions.pyi LINE {i_}: Expected a function definition after '# COMMAND/TEST...' line.")
     name_ = function_def_match_.group(1)
-    args_with_type_hints = [arg.strip() for arg in function_def_match_.group(2).split(',')]
-    if '*args' in args_with_type_hints:
+    args_with_type_hints = [arg.strip() for arg in function_def_match_.group(2).split(",")]
+    if "*args" in args_with_type_hints:
         # No argument names or types.
         return name_, (), ()
     args_ = []
@@ -28,8 +28,8 @@ def _parse_function_def(i_: int, line: str):
     for arg_hint in args_with_type_hints:
         if not arg_hint:
             continue
-        if ':' in arg_hint:
-            arg, type_hint = [a.strip() for a in arg_hint.split(':')]
+        if ":" in arg_hint:
+            arg, type_hint = [a.strip() for a in arg_hint.split(":")]
             args_.append(arg)
             type_hints_.append(type_hint)
         else:
@@ -78,60 +78,60 @@ for esd_type, commands in TEST_FUNCTIONS.items():
 
 
 ATTACK_REQUEST_TYPE = {
-    0: 'R1',
-    1: 'L1',
-    2: 'Catalyst / Talisman / Pyromancy Flame R1',
-    3: 'Catalyst / Talisman / Pyromancy Flame L1',
-    10: 'Backstep',
-    14: 'Use Goods',
-    15: 'Roll Forward',
-    16: 'Roll Backward',
-    17: 'Roll Left',
-    18: 'Roll Right',
-    22: 'AttackArm_Gesture0 (Beckon)',
-    23: 'AttackArm_Gesture1 (Point Forward)',
-    24: 'AttackArm_Gesture2 (Hurrah!)',
-    25: 'AttackArm_Gesture3 (Bow)',
-    26: 'AttackArm_Gesture4 (Joy)',
-    27: 'AttackArm_Gesture5 (Shrug)',
-    28: 'AttackArm_Gesture6 (Wave)',
-    29: 'AttackArm_Gesture7 (Praise the Sun)',
-    30: 'AttackArm_Gesture8 (Point Up)',
-    31: 'AttackArm_Gesture9 (Point Down)',
-    32: 'AttackArm_Gesture10 (Look Skyward)',
-    33: 'AttackArm_Gesture11 (Well! What is it!)',
-    34: 'AttackArm_Gesture12 (Prostration)',
-    35: 'AttackArm_Gesture13 (Proper Bow)',
-    36: 'AttackArm_Gesture14 (Prayer)',
-    37: 'AttackArm_Gesture15 (Unused)',  # Has Prayer animation as placeholder
-    38: 'AttackArm_Gesture16 (Unused)',  # Has carving toss animation as placeholder
-    39: 'AttackArm_Gesture17 (Unused)',  # Has lever pull animation as placeholder
-    40: 'AttackArm_Gesture18 (Unused)',  # Has turn crank animation as placeholder
-    41: 'AttackArm_Gesture19 (Unused)',  # Has turn rotunda animation as placeholder
-    42: 'Jump',
-    52: 'Left Hand Crossbow Ammo Swap',
+    0: "R1",
+    1: "L1",
+    2: "Catalyst / Talisman / Pyromancy Flame R1",
+    3: "Catalyst / Talisman / Pyromancy Flame L1",
+    10: "Backstep",
+    14: "Use Goods",
+    15: "Roll Forward",
+    16: "Roll Backward",
+    17: "Roll Left",
+    18: "Roll Right",
+    22: "AttackArm_Gesture0 (Beckon)",
+    23: "AttackArm_Gesture1 (Point Forward)",
+    24: "AttackArm_Gesture2 (Hurrah!)",
+    25: "AttackArm_Gesture3 (Bow)",
+    26: "AttackArm_Gesture4 (Joy)",
+    27: "AttackArm_Gesture5 (Shrug)",
+    28: "AttackArm_Gesture6 (Wave)",
+    29: "AttackArm_Gesture7 (Praise the Sun)",
+    30: "AttackArm_Gesture8 (Point Up)",
+    31: "AttackArm_Gesture9 (Point Down)",
+    32: "AttackArm_Gesture10 (Look Skyward)",
+    33: "AttackArm_Gesture11 (Well! What is it!)",
+    34: "AttackArm_Gesture12 (Prostration)",
+    35: "AttackArm_Gesture13 (Proper Bow)",
+    36: "AttackArm_Gesture14 (Prayer)",
+    37: "AttackArm_Gesture15 (Unused)",  # Has Prayer animation as placeholder
+    38: "AttackArm_Gesture16 (Unused)",  # Has carving toss animation as placeholder
+    39: "AttackArm_Gesture17 (Unused)",  # Has lever pull animation as placeholder
+    40: "AttackArm_Gesture18 (Unused)",  # Has turn crank animation as placeholder
+    41: "AttackArm_Gesture19 (Unused)",  # Has turn rotunda animation as placeholder
+    42: "Jump",
+    52: "Left Hand Crossbow Ammo Swap",
 }
 
 ANIM_CATEGORY = {
-    0: 'Based on Left Hand Motion Category',
-    1: 'Based on Right Hand Motion Category',
-    2: 'Based on current Move Param',
-    3: 'Absolute Animation ID',
+    0: "Based on Left Hand Motion Category",
+    1: "Based on Right Hand Motion Category",
+    2: "Based on current Move Param",
+    3: "Absolute Animation ID",
 }
 
 
 ANIM_LAYER_INDEX = {
-    0: 'Wait',
-    1: 'SpWait',
-    2: 'WalkLR',
-    3: 'WalkFB',
-    4: 'Guard',
-    5: 'Attack',
-    6: 'SpecialAttack',
-    7: 'Action',
-    8: 'Damage S',
-    9: 'Damage L',
-    10: 'Event',
-    11: 'ExtraAnim',
-    12: 'TaeExtraAnim',
+    0: "Wait",
+    1: "SpWait",
+    2: "WalkLR",
+    3: "WalkFB",
+    4: "Guard",
+    5: "Attack",
+    6: "SpecialAttack",
+    7: "Action",
+    8: "Damage S",
+    9: "Damage L",
+    10: "Event",
+    11: "ExtraAnim",
+    12: "TaeExtraAnim",
 }

@@ -4,21 +4,67 @@ from .shared import *
 __all__ = [
     # Basic enums
     "RestartType",
-    "uint", "short", "ushort", "char", "uchar",
-    "PLAYER", "CLIENT_PLAYER_1", "CLIENT_PLAYER_2", "CLIENT_PLAYER_3", "CLIENT_PLAYER_4", "CLIENT_PLAYER_5",
-
+    "uint",
+    "short",
+    "ushort",
+    "char",
+    "uchar",
+    "PLAYER",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
     # Enums identical in all games
-    "AIStatusType", "BitOperation", "ButtonType", "CharacterType", "CharacterUpdateRate", "ClassType",
-    "ComparisonType", "CutsceneType", "DamageTargetType", "EventEndType", "FlagState", "FlagType",
-    "InterpolationState", "ItemType", "RangeState", "CoordEntityType", "NavmeshType", "NumberButtons",
-    "OnOffChange", "RestartType", "SoundType", "StatueType", "SummonSignType", "TriggerAttribute",
-    "WorldTendencyType", "UpdateAuthority",
-
+    "AIStatusType",
+    "BitOperation",
+    "ButtonType",
+    "CharacterType",
+    "CharacterUpdateRate",
+    "ClassType",
+    "ComparisonType",
+    "CutsceneType",
+    "DamageTargetType",
+    "EventEndType",
+    "FlagState",
+    "FlagType",
+    "InterpolationState",
+    "ItemType",
+    "RangeState",
+    "CoordEntityType",
+    "NavmeshType",
+    "NumberButtons",
+    "OnOffChange",
+    "RestartType",
+    "SoundType",
+    "StatueType",
+    "SummonSignType",
+    "TriggerAttribute",
+    "WorldTendencyType",
+    "UpdateAuthority",
     # Enums in Dark Souls 3 only
-    "ArmorType", "BannerType", "CalculationType", "ClientType", "ConditionGroup", "Covenant", "DamageType",
-    "DeleteOrAdd", "DialogResult", "DisplayState", "DoorState", "Gender", "Label", "MultiplayerState", "NPCPartType",
-    "PlayGoState", "PlayLogMultiplayerType", "PlayerPlayLogParameter", "SingleplayerSummonSignType", "TeamType",
-    "HollowArenaMatchType", "HollowArenaResult",
+    "ArmorType",
+    "BannerType",
+    "CalculationType",
+    "ClientType",
+    "ConditionGroup",
+    "Covenant",
+    "DamageType",
+    "DeleteOrAdd",
+    "DialogResult",
+    "DisplayState",
+    "DoorState",
+    "Gender",
+    "Label",
+    "MultiplayerState",
+    "NPCPartType",
+    "PlayGoState",
+    "PlayLogMultiplayerType",
+    "PlayerPlayLogParameter",
+    "SingleplayerSummonSignType",
+    "TeamType",
+    "HollowArenaMatchType",
+    "HollowArenaResult",
 ]
 
 
@@ -178,6 +224,7 @@ class MultiplayerState(IntEnum):
 
 class NPCPartType(IntEnum):
     """Used to define different behavior for different parts of NPC models."""
+
     Part1 = 1
     Part2 = 2
     Part3 = 3

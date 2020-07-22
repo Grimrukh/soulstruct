@@ -19,23 +19,23 @@ _LOGGER = logging.getLogger(__name__)
 class EvsTextEditor(TextEditor):
 
     TAGS = {
-        "restart_type": TagData('#FFFFAA', r"^@[\w_]+", (0, 0)),
+        "restart_type": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
-            '#FF7F50', r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)),
-        "true_false": TagData(
-            '#FF7F50', r"[ =](True|False)(\n| |:|\))", (1, 1)),
-        "event_def": TagData('#FF6980', r"^def [\w\d_]+", (4, 0)),
-        "import": TagData('#FFAAAA', r"^(from|import) [\w\d_ .*]+", (0, 0)),
-        "instruction_or_high_level_test": TagData('#E6C975', r"[ \(][\w\d_]+(?=\()", (1, 0)),
-        "low_level_test": TagData('#AAAAFF', r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "main_condition": TagData('#FF3355', r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
-        "await_statement": TagData('#FF3355', r" await ", (0, 0)),
-        "named_arg": TagData('#AAFFFF', r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
-        "func_arg_name": TagData('#FFCCAA', r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
-        "event_arg_name": TagData('#FFAAFF', r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
-        "number_literal": TagData('#AADDFF', r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
-        "comment": TagData('#777777', r"#.*$", (0, 0)),
-        "docstring": TagData('#00ABA9', r"^[ ]+\"\"\"[\w\d :.]+\"\"\"", (0, 0)),
+            "#FF7F50", r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
+        ),
+        "true_false": TagData("#FF7F50", r"[ =](True|False)(\n| |:|\))", (1, 1)),
+        "event_def": TagData("#FF6980", r"^def [\w\d_]+", (4, 0)),
+        "import": TagData("#FFAAAA", r"^(from|import) [\w\d_ .*]+", (0, 0)),
+        "instruction_or_high_level_test": TagData("#E6C975", r"[ \(][\w\d_]+(?=\()", (1, 0)),
+        "low_level_test": TagData("#AAAAFF", r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
+        "main_condition": TagData("#FF3355", r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
+        "await_statement": TagData("#FF3355", r" await ", (0, 0)),
+        "named_arg": TagData("#AAFFFF", r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
+        "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+        "event_arg_name": TagData("#FFAAFF", r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
+        "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
+        "comment": TagData("#777777", r"#.*$", (0, 0)),
+        "docstring": TagData("#00ABA9", r"^[ ]+\"\"\"[\w\d\n :.]+\"\"\"", (0, 0)),
     }
 
     def color_syntax(self, start="1.0", end="end"):
@@ -51,31 +51,33 @@ class EvsTextEditor(TextEditor):
             if not def_index:
                 break
             next_def_index = self.search(r"^def [\w\d_]+\(", f"{def_index} lineend", regexp=True)
-            if int(next_def_index.split('.')[0]) <= int(def_index.split('.')[0]):
+            if int(next_def_index.split(".")[0]) <= int(def_index.split(".")[0]):
                 break  # finished searching
             event_text = self.get(def_index, next_def_index)
             event_args_match = re.match(self.TAGS["event_arg_name"].pattern, event_text, flags=re.MULTILINE)
             if event_args_match:
-                event_args = event_args_match.group(1).replace('\n', '').replace(' ', '')
-                for event_arg in event_args.split(','):
-                    parts = event_arg.split(':')
+                event_args = event_args_match.group(1).replace("\n", "").replace(" ", "")
+                for event_arg in event_args.split(","):
+                    parts = event_arg.split(":")
                     if len(parts) == 2:
                         arg_name, arg_type = parts
                     else:
                         arg_name, arg_type = parts[0], None
                     self.highlight_pattern(
-                        arg_name, tag="event_arg_name", start=def_index, end=next_def_index, clear=False)
+                        arg_name, tag="event_arg_name", start=def_index, end=next_def_index, clear=False
+                    )
             start_index = next_def_index
 
 
 class SoulstructEventEditor(SmartFrame):
     DATA_NAME = "Events"
     TAB_NAME = "events"
-    TEXT_BG = '#232323'
+    TEXT_BG = "#232323"
     TEXT_BOX_WIDTH = 300
 
-    def __init__(self, evs_directory, game_root, global_map_choice_func, dcx, text_font_size=10,
-                 master=None, toplevel=False):
+    def __init__(
+        self, evs_directory, game_root, global_map_choice_func, dcx, text_font_size=10, master=None, toplevel=False
+    ):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct EMEVD Manager")
         self.evs_directory = Path(evs_directory)
         self.game_root = Path(game_root)
@@ -97,7 +99,7 @@ class SoulstructEventEditor(SmartFrame):
 
         self.scan_evs_files()
 
-        with self.set_master(sticky='nsew', row_weights=[0, 1, 0, 0], column_weights=[1], auto_rows=0):
+        with self.set_master(sticky="nsew", row_weights=[0, 1, 0, 0], column_weights=[1], auto_rows=0):
             self.build()
 
         self.bind_to_all_children("<Control-C>", lambda _: self._compile_selected(mimic_click=True))
@@ -107,60 +109,99 @@ class SoulstructEventEditor(SmartFrame):
 
     def build(self):
 
-        with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
+        with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
             self.map_choice = self.Combobox(
-                values=(), initial_value="", width=35,
-                on_select_function=self.on_map_choice, sticky='w',
-                label='Map:', label_font_size=12, label_position='left', font=('Segoe UI', 12), padx=10, pady=10)
-            self.line_number = self.Label(
-                text="Line: None", padx=10, width=10, fg='#CCF', anchor='w', sticky='w').var
-            self.go_to_line = self.Entry(label="Go to Line:", padx=5, width=6, sticky='w')
+                values=(),
+                initial_value="",
+                width=35,
+                on_select_function=self.on_map_choice,
+                sticky="w",
+                label="Map:",
+                label_font_size=12,
+                label_position="left",
+                font=("Segoe UI", 12),
+                padx=10,
+                pady=10,
+            )
+            self.line_number = self.Label(text="Line: None", padx=10, width=10, fg="#CCF", anchor="w", sticky="w").var
+            self.go_to_line = self.Entry(label="Go to Line:", padx=5, width=6, sticky="w")
             self.go_to_line.bind("<Return>", self._go_to_line)
-            self.string_to_find = self.Entry(label="Find Text:", padx=5, width=20, sticky='w')
+            self.string_to_find = self.Entry(label="Find Text:", padx=5, width=20, sticky="w")
             self.string_to_find.bind("<Return>", self._find_string)
 
-        with self.set_master(sticky='nsew', row_weights=[1], column_weights=[1, 0], padx=50, pady=10):
+        with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1, 0], padx=50, pady=10):
             self.evs_editor_canvas = self.Canvas(
-                horizontal_scrollbar=True, sticky='nsew', bg='#232323',
-                borderwidth=0, highlightthickness=0, column=0, row_weights=[1], column_weights=[1])
-            editor_i_frame = self.Frame(self.evs_editor_canvas, sticky='nsew', row_weights=[1], column_weights=[1])
-            self.evs_editor_canvas.create_window(0, 0, window=editor_i_frame, anchor='nw')
+                horizontal_scrollbar=True,
+                sticky="nsew",
+                bg="#232323",
+                borderwidth=0,
+                highlightthickness=0,
+                column=0,
+                row_weights=[1],
+                column_weights=[1],
+            )
+            editor_i_frame = self.Frame(self.evs_editor_canvas, sticky="nsew", row_weights=[1], column_weights=[1])
+            self.evs_editor_canvas.create_window(0, 0, window=editor_i_frame, anchor="nw")
             editor_i_frame.bind("<Configure>", lambda e, c=self.evs_editor_canvas: self.reset_canvas_scroll_region(c))
 
             self.text_editor = self.CustomWidget(
-                editor_i_frame, custom_widget_class=EvsTextEditor, set_style_defaults=('text', 'cursor'),
-                width=300, height=50, wrap='word', bg='#232323', font=("Consolas", self.text_font_size))
+                editor_i_frame,
+                custom_widget_class=EvsTextEditor,
+                set_style_defaults=("text", "cursor"),
+                width=300,
+                height=50,
+                wrap="word",
+                bg="#232323",
+                font=("Consolas", self.text_font_size),
+            )
             vertical_scrollbar_w = self.Scrollbar(
-                orient='vertical', command=self.text_editor.yview, column=1, sticky='ns')
+                orient="vertical", command=self.text_editor.yview, column=1, sticky="ns"
+            )
             self.text_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
             self.link_to_scrollable(self.text_editor, editor_i_frame)
 
             def _update_textbox_height(e):
-                font_size = int(self.text_editor['font'].split()[1])
-                self.text_editor['height'] = e.height // (font_size * 1.5)  # 1.5 line spacing
+                font_size = int(self.text_editor["font"].split()[1])
+                self.text_editor["height"] = e.height // (font_size * 1.5)  # 1.5 line spacing
 
             self.evs_editor_canvas.bind("<Configure>", lambda e: _update_textbox_height(e))
 
             self.text_editor.bind("<<CursorChange>>", self._update_line_number)
             self.text_editor.bind("<Control-f>", self._control_f_search)
 
-        with self.set_master(auto_columns=0, pady=10, column_weights=[1, 1, 1], sticky='n'):
+        with self.set_master(auto_columns=0, pady=10, column_weights=[1, 1, 1], sticky="n"):
             self.compile_button = self.Button(
-                text="Save & Compile", font_size=10, width=15, padx=5, command=self._compile_selected,
+                text="Save & Compile",
+                font_size=10,
+                width=15,
+                padx=5,
+                command=self._compile_selected,
                 tooltip_text="Save script, then compile it to test syntax. Text will flash blue if test is successful. "
-                             "(Ctrl + Shift + C)")
+                "(Ctrl + Shift + C)",
+            )
             self.reload_button = self.Button(
-                text="Reload Script", font_size=10, width=15, padx=5, command=self.reload_selected,
-                tooltip_text="Reload script from project. Unsaved changes to current script will be lost. (Ctrl + R)")
+                text="Reload Script",
+                font_size=10,
+                width=15,
+                padx=5,
+                command=self.reload_selected,
+                tooltip_text="Reload script from project. Unsaved changes to current script will be lost. (Ctrl + R)",
+            )
             self.Button(
-                text="Reload & Export", font_size=10, width=15, padx=5, bg='#822', command=self.reload_and_export,
-                tooltip_text="Reload script from project, then immediately export it to game.")
+                text="Reload & Export",
+                font_size=10,
+                width=15,
+                padx=5,
+                bg="#822",
+                command=self.reload_and_export,
+                tooltip_text="Reload script from project, then immediately export it to game.",
+            )
 
     def scan_evs_files(self):
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
-            evs_name = evs_file_path.name.split('.')[0]
+            evs_name = evs_file_path.name.split(".")[0]
             self.evs_file_paths[evs_name] = evs_file_path
-            with evs_file_path.open('r', encoding='utf-8') as f:
+            with evs_file_path.open("r", encoding="utf-8") as f:
                 self.evs_text[evs_name] = f.read()
 
     def refresh(self):
@@ -169,22 +210,22 @@ class SoulstructEventEditor(SmartFrame):
         self.map_choice["values"] = map_options
         if map_options:
             self.map_choice.var.set(map_options[0])
-            self.selected_map_id = self.map_choice.get().split(' [')[0]
+            self.selected_map_id = self.map_choice.get().split(" [")[0]
             self.text_editor.delete(1.0, "end")
             self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
 
     def _update_line_number(self, _):
-        current_line = self.text_editor.index('insert').split('.')[0]
+        current_line = self.text_editor.index("insert").split(".")[0]
         self.line_number.set(f"Line: {current_line}")
 
     def _control_f_search(self, _):
         if self.selected_map_id:
             highlighted = self.text_editor.selection_get()
             self.string_to_find.var.set(highlighted)
-            self.string_to_find.select_range(0, 'end')
-            self.string_to_find.icursor('end')
+            self.string_to_find.select_range(0, "end")
+            self.string_to_find.icursor("end")
             self.string_to_find.focus_force()
 
     def _go_to_line(self, _):
@@ -192,7 +233,7 @@ class SoulstructEventEditor(SmartFrame):
         if not number:
             return
         number = int(number)
-        if not self.selected_map_id or number < 1 or int(self.text_editor.index('end-1c').split('.')[0]) < number:
+        if not self.selected_map_id or number < 1 or int(self.text_editor.index("end-1c").split(".")[0]) < number:
             self.flash_bg(self.go_to_line)
             return
         self.text_editor.mark_set("insert", f"{number}.0")
@@ -203,14 +244,14 @@ class SoulstructEventEditor(SmartFrame):
         string = self.string_to_find.var.get()
         if not string or not self.selected_map_id:
             return
-        start_line, start_char = self.text_editor.index("insert").split('.')
+        start_line, start_char = self.text_editor.index("insert").split(".")
         index = self.text_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
 
         if index:
             self.clear_bg_tags()
             self.text_editor.mark_set("insert", index)
             self.text_editor.see(index)
-            index_line, index_char = index.split('.')
+            index_line, index_char = index.split(".")
             self.text_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
         else:
             self.flash_bg(self.string_to_find)
@@ -221,12 +262,17 @@ class SoulstructEventEditor(SmartFrame):
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.evs_text[self.selected_map_id]:
-            if self.CustomDialog(
+            if (
+                self.CustomDialog(
                     title="Lose Unsaved Changes?",
                     message="Current text has changed but not been saved. Lose changes?",
                     button_names=("Yes, lose changes", "No, stay here"),
-                    button_kwargs=('YES', 'NO'),
-                    cancel_output=1, default_output=1) == 1:
+                    button_kwargs=("YES", "NO"),
+                    cancel_output=1,
+                    default_output=1,
+                )
+                == 1
+            ):
                 return False
         return True
 
@@ -236,10 +282,10 @@ class SoulstructEventEditor(SmartFrame):
             game_map = get_map(self.selected_map_id)
             self.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name}]")
             return
-        self.selected_map_id = self.map_choice.var.get().split(' [')[0]
+        self.selected_map_id = self.map_choice.var.get().split(" [")[0]
         if self.global_map_choice_func and event is not None:
             self.global_map_choice_func(self.selected_map_id, ignore_tabs=("events",))
-        self.text_editor.delete(1.0, 'end')
+        self.text_editor.delete(1.0, "end")
         self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
         self.text_editor.mark_set("insert", "1.0")
         self.text_editor.color_syntax()
@@ -249,7 +295,7 @@ class SoulstructEventEditor(SmartFrame):
             self.text_editor.color_syntax()
             current_text = self._get_current_text()
             self.evs_text[self.selected_map_id] = current_text
-            with self.evs_file_paths[self.selected_map_id].open('w', encoding='utf-8') as f:
+            with self.evs_file_paths[self.selected_map_id].open("w", encoding="utf-8") as f:
                 f.write(current_text)
 
     def save_all_evs(self):
@@ -259,7 +305,7 @@ class SoulstructEventEditor(SmartFrame):
             self.evs_text[self.selected_map_id] = current_text
         for evs_name, text in self.evs_text.items():
             evs_file_path = self.evs_file_paths[evs_name]
-            with evs_file_path.open('w', encoding='utf-8') as f:
+            with evs_file_path.open("w", encoding="utf-8") as f:
                 f.write(text)
 
     def _raise_error(self, lineno=None, message=None):
@@ -270,8 +316,8 @@ class SoulstructEventEditor(SmartFrame):
         if message:
             self.error_dialog(
                 "EVS Error",
-                f"Error encountered when trying to parse EVS script (see console for full traceback):\n\n"
-                f"{message}")
+                f"Error encountered when trying to parse EVS script (see console for full traceback):\n\n" f"{message}",
+            )
 
     def _compile_selected(self, mimic_click=False, flash_bg=True):
         if not self.selected_map_id:
@@ -307,10 +353,13 @@ class SoulstructEventEditor(SmartFrame):
             emevd = EMEVD(self.evs_file_paths[self.selected_map_id])
         except Exception as e:
             return self.error_dialog(
-                "EVS Error", f"Could not interpret current EVS file in project.\n"
-                             f"Fix this error and try again (see console for full traceback):\n\n{str(e)}")
+                "EVS Error",
+                f"Could not interpret current EVS file in project.\n"
+                f"Fix this error and try again (see console for full traceback):\n\n{str(e)}",
+            )
         emevd.write_emevd(
-            export_directory / f"event/{self.selected_map_id}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx)
+            export_directory / f"event/{self.selected_map_id}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx
+        )
 
     def reload_selected(self, mimic_click=False, flash_bg=True):
         if not self.selected_map_id:
@@ -319,9 +368,9 @@ class SoulstructEventEditor(SmartFrame):
             self.mimic_click(self.reload_button)
         if self._ignored_unsaved():
             evs_path = self.evs_file_paths[self.selected_map_id]
-            with evs_path.open('r', encoding='utf-8') as f:
+            with evs_path.open("r", encoding="utf-8") as f:
                 self.evs_text[self.selected_map_id] = f.read()
-            self.text_editor.delete(1.0, 'end')
+            self.text_editor.delete(1.0, "end")
             self.text_editor.insert(1.0, self.evs_text[self.selected_map_id])
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
@@ -338,4 +387,4 @@ class SoulstructEventEditor(SmartFrame):
 
     def _get_current_text(self):
         """Get all current text from TextBox, minus final newline (added by Tk)."""
-        return self.text_editor.get(1.0, 'end')[:-1]
+        return self.text_editor.get(1.0, "end")[:-1]

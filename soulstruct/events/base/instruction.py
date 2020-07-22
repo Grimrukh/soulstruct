@@ -14,15 +14,17 @@ class BaseInstruction(BaseStruct):
 
     INSTRUCTION_ARG_TYPES = {}
 
-    def __init__(self, instruction_class, instruction_index, args_format='', args_list=None, event_layers=None):
-        if len(args_format.replace('|', '')) != len(args_list):
-            raise ValueError(f"Length of argument list ({len(args_list)}) in Instruction {instruction_class}"
-                             f"[{instruction_index}] does not match length of format string '{args_format}' "
-                             f"({len(args_format.replace('|', ''))}).")
+    def __init__(self, instruction_class, instruction_index, args_format="", args_list=None, event_layers=None):
+        if len(args_format.replace("|", "")) != len(args_list):
+            raise ValueError(
+                f"Length of argument list ({len(args_list)}) in Instruction {instruction_class}"
+                f"[{instruction_index}] does not match length of format string '{args_format}' "
+                f"({len(args_format.replace('|', ''))})."
+            )
         self.instruction_class = instruction_class
         self.instruction_index = instruction_index
         self.visible_args_format = args_format  # preserves 's' for printing output
-        self.args_format = args_format.replace('s', 'I')
+        self.args_format = args_format.replace("s", "I")
         self.args_list = args_list if args_list else []
         self.event_args = []  # Added after construction.
         self.verbose_args_list = []  # So we don't modify 'args_list'.
@@ -45,9 +47,13 @@ class BaseInstruction(BaseStruct):
             # Process arguments.
             try:
                 args_format, args_list = get_instruction_args(
-                    file, d["instruction_class"], d["instruction_index"],
-                    base_arg_data_offset + d["first_base_arg_offset"], d["base_args_size"],
-                    cls.INSTRUCTION_ARG_TYPES)
+                    file,
+                    d["instruction_class"],
+                    d["instruction_index"],
+                    base_arg_data_offset + d["first_base_arg_offset"],
+                    d["base_args_size"],
+                    cls.INSTRUCTION_ARG_TYPES,
+                )
             except KeyError:
                 args_size = struct_dicts[i + 1]["first_base_arg_offset"] - d["first_base_arg_offset"]
                 file.seek(base_arg_data_offset + d["first_base_arg_offset"])
@@ -57,27 +63,29 @@ class BaseInstruction(BaseStruct):
 
             # Process event layers.
             if d["first_event_layers_offset"] > 0:
-                event_layers = cls.EventLayers.unpack(
-                    file, event_layers_table_offset + d["first_event_layers_offset"])
+                event_layers = cls.EventLayers.unpack(file, event_layers_table_offset + d["first_event_layers_offset"])
             else:
                 event_layers = None
 
-            instructions.append(cls(
-                d["instruction_class"], d["instruction_index"], args_format, args_list, event_layers))
+            instructions.append(
+                cls(d["instruction_class"], d["instruction_index"], args_format, args_list, event_layers)
+            )
 
         return instructions
 
     @property
     def args_size(self):
-        return struct.calcsize("@" + self.args_format.replace('|', '') + '0i')
+        return struct.calcsize("@" + self.args_format.replace("|", "") + "0i")
 
     @property
     def event_arg_count(self):
         return len(self.event_args)
 
     def to_numeric(self):
-        numeric = [f"{self.instruction_class: 5d}[{self.instruction_index:02d}] "
-                   f"({self.visible_args_format})" + repr(self.args_list)]
+        numeric = [
+            f"{self.instruction_class: 5d}[{self.instruction_index:02d}] "
+            f"({self.visible_args_format})" + repr(self.args_list)
+        ]
         if self.event_layers:
             numeric[-1] += self.event_layers.to_numeric()
         for replacement in self.event_args:
@@ -87,17 +95,22 @@ class BaseInstruction(BaseStruct):
     def to_evs(self, game_module, event_arg_types):
         req_args, opt_args = self.get_required_and_optional_args()
         opt_arg_types = None
-        if (self.instruction_class == 2000 and self.instruction_index == 0
-                and opt_args and req_args[1] in event_arg_types):
+        if (
+            self.instruction_class == 2000
+            and self.instruction_index == 0
+            and opt_args
+            and req_args[1] in event_arg_types
+        ):
             opt_arg_types = event_arg_types[req_args[1]]
         instruction = decompile_instruction(
-            game_module, self.instruction_class, self.instruction_index, req_args, opt_args, opt_arg_types)
+            game_module, self.instruction_class, self.instruction_index, req_args, opt_args, opt_arg_types
+        )
         if self.event_layers:
             instruction = instruction[:-1] + self.event_layers.to_evs()
         return instruction
 
     def get_required_and_optional_args(self):
-        split_point = self.visible_args_format.find('|')
+        split_point = self.visible_args_format.find("|")
         if split_point == -1:
             required_args = self.verbose_args_list
             optional_args = []
@@ -116,7 +129,7 @@ class BaseInstruction(BaseStruct):
         """
 
         permitted = [0, 0.0, -1, 1, 10]  # Strings are permitted to overwrite anything.
-        arg_offset_dict = get_byte_offset_from_struct("@" + self.visible_args_format.replace('|', ''))
+        arg_offset_dict = get_byte_offset_from_struct("@" + self.visible_args_format.replace("|", ""))
 
         instruction_arg_set = set()
         instruction_arg_types = {}
@@ -129,24 +142,31 @@ class BaseInstruction(BaseStruct):
             except KeyError:
                 raise ValueError(
                     f"No argument in '{self.event_args}' begins at byte {arg_r.write_from_byte}. "
-                    f"Your replacement commands are misaligned.")
+                    f"Your replacement commands are misaligned."
+                )
 
-            if (not (argument_byte_type == 's' and arg_r.bytes_to_write == 4)
-                    and struct.calcsize(argument_byte_type) < arg_r.bytes_to_write):
+            if (
+                not (argument_byte_type == "s" and arg_r.bytes_to_write == 4)
+                and struct.calcsize(argument_byte_type) < arg_r.bytes_to_write
+            ):
                 # Byte type 's' is actually a four-byte offset into the packed strings.
-                raise ValueError(f"You cannot write {arg_r.bytes_to_write} bytes over an argument of type "
-                                 f"{argument_byte_type} (it's too small).")
+                raise ValueError(
+                    f"You cannot write {arg_r.bytes_to_write} bytes over an argument of type "
+                    f"{argument_byte_type} (it's too small)."
+                )
             value_to_overwrite = self.args_list[argument_index]
             arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
 
-            if (value_to_overwrite not in permitted and value_to_overwrite != arg_name
-                    and argument_byte_type != 's'):
+            if value_to_overwrite not in permitted and value_to_overwrite != arg_name and argument_byte_type != "s":
                 _LOGGER.error(
                     f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
                     f"(position {argument_index}) in instruction {self.instruction_class}[{self.instruction_index}] "
-                    f"with args {self.args_list} (format {self.args_format})")
-                raise ValueError(f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
-                                 f"(position {argument_index}).")
+                    f"with args {self.args_list} (format {self.args_format})"
+                )
+                raise ValueError(
+                    f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
+                    f"(position {argument_index})."
+                )
 
             self.verbose_args_list[argument_index] = arg_name
 
@@ -160,22 +180,22 @@ class BaseInstruction(BaseStruct):
 
     def args_list_to_binary(self):
         if self.args_list:
-            format_string = "@" + self.args_format.replace('|', '') + '0i'
+            format_string = "@" + self.args_format.replace("|", "") + "0i"
             return struct.pack(format_string, *self.args_list)
         else:
-            return b''
+            return b""
 
     def event_event_args_to_binary(self):
-        return b''.join([arg_replacement.to_binary() for arg_replacement in self.event_args])
+        return b"".join([arg_replacement.to_binary() for arg_replacement in self.event_args])
 
     def to_binary(self, first_base_arg_offset):
         if self.event_layers_offset is None:
             raise ValueError("Instruction event layer offset not set. (Only use EMEVD.pack() to pack events.)")
         struct_dict = {
-            'instruction_class': self.instruction_class,
-            'instruction_index': self.instruction_index,
-            'base_args_size': self.args_size,
-            'first_base_arg_offset': first_base_arg_offset,
-            'first_event_layers_offset': self.event_layers_offset,
+            "instruction_class": self.instruction_class,
+            "instruction_index": self.instruction_index,
+            "base_args_size": self.args_size,
+            "first_base_arg_offset": first_base_arg_offset,
+            "first_event_layers_offset": self.event_layers_offset,
         }
         return self.STRUCT.pack(struct_dict)

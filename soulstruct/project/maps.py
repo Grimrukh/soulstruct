@@ -31,10 +31,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 ENTRY_LIST_FG_COLORS = {
-    'Parts': '#DDF',
-    'Regions': '#FDD',
-    'Events': '#DFD',
-    'Models': '#FFC',
+    "Parts": "#DDF",
+    "Regions": "#FDD",
+    "Events": "#DFD",
+    "Models": "#FFC",
 }
 
 
@@ -62,23 +62,28 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             bg_color = self._get_color()
 
             self.value_vector_frame = editor.Frame(
-                self.value_box, bg=bg_color, width=editor.FIELD_VALUE_WIDTH, height=editor.FIELD_ROW_HEIGHT,
-                no_grid=True)
+                self.value_box,
+                bg=bg_color,
+                width=editor.FIELD_VALUE_WIDTH,
+                height=editor.FIELD_ROW_HEIGHT,
+                no_grid=True,
+            )
             bind_events(self.value_vector_frame, main_bindings)
             self.value_vector_x = editor.Label(
-                self.value_vector_frame, text='', bg=bg_color, width=editor.FIELD_VALUE_WIDTH // 6,
-                column=0, anchor='w')
+                self.value_vector_frame, text="", bg=bg_color, width=editor.FIELD_VALUE_WIDTH // 6, column=0, anchor="w"
+            )
             self.value_vector_y = editor.Label(
-                self.value_vector_frame, text='', bg=bg_color, width=editor.FIELD_VALUE_WIDTH // 6,
-                column=1, anchor='w')
+                self.value_vector_frame, text="", bg=bg_color, width=editor.FIELD_VALUE_WIDTH // 6, column=1, anchor="w"
+            )
             self.value_vector_z = editor.Label(
-                self.value_vector_frame, text='', bg=bg_color, width=editor.FIELD_VALUE_WIDTH // 6,
-                column=2, anchor='w')
+                self.value_vector_frame, text="", bg=bg_color, width=editor.FIELD_VALUE_WIDTH // 6, column=2, anchor="w"
+            )
 
-            for coord, label in zip('xyz', (self.value_vector_x, self.value_vector_y, self.value_vector_z)):
+            for coord, label in zip("xyz", (self.value_vector_x, self.value_vector_y, self.value_vector_z)):
                 vector_bindings = main_bindings.copy()
-                vector_bindings.update({
-                    '<Button-1>': lambda _, c=coord: editor.select_displayed_field_row(row_index, coord=c)})
+                vector_bindings.update(
+                    {"<Button-1>": lambda _, c=coord: editor.select_displayed_field_row(row_index, coord=c)}
+                )
                 bind_events(label, vector_bindings)
 
             self.unhide()
@@ -97,14 +102,14 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 # Link could be an internal map entry name (will be converted to index on pack) or a param/text ID.
                 # Note that the *argument* 'field_type' is used below, not attribute self.field_type.
                 self.field_links = self.master.get_field_links(self.field_type, value)
-                if not self.field_type.startswith('<Maps'):  # <Maps: or <MapsList:
+                if not self.field_type.startswith("<Maps"):  # <Maps: or <MapsList:
                     field_type = int  # otherwise, leave as link string for first condition below
             else:
                 self.field_links = []
 
             # Type checking order: [link_string, Vector, float/int/str, bool, list, IntEnum]
             if isinstance(field_type, str):
-                if field_type.startswith('<MapsList:'):
+                if field_type.startswith("<MapsList:"):
                     value_text = "(select to edit)"
                     if self.field_links:
                         if len(self.field_links) > 1:
@@ -132,13 +137,13 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
             elif field_type == Vector3:
                 # No chance of a link here.
-                self.value_vector_x.var.set(f'x: {value.x:.3f}')
-                self.value_vector_y.var.set(f'y: {value.y:.3f}')
-                self.value_vector_z.var.set(f'z: {value.z:.3f}')
+                self.value_vector_x.var.set(f"x: {value.x:.3f}")
+                self.value_vector_y.var.set(f"y: {value.y:.3f}")
+                self.value_vector_z.var.set(f"z: {value.z:.3f}")
                 self._activate_value_widget(self.value_vector_frame)
 
             elif field_type in {float, int, str}:
-                value_text = f'{value:.3f}' if field_type == float else str(value)
+                value_text = f"{value:.3f}" if field_type == float else str(value)
                 if self.field_links:
                     if len(self.field_links) > 1:
                         value_text += "  {AMBIGUOUS}"
@@ -154,7 +159,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 if value not in {0, 1}:
                     raise ValueError(f"Field {self.field_name} with 'bool' type has non-boolean value: {value}")
                 self.value_checkbutton.var.set(value)
-                self.value_checkbutton.config(fg='#3F3' if value else '#F33', text='ON' if value else 'OFF')
+                self.value_checkbutton.config(fg="#3F3" if value else "#F33", text="ON" if value else "OFF")
                 self._activate_value_widget(self.value_checkbutton)
 
             elif field_type == list:
@@ -168,7 +173,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 self._activate_value_widget(self.value_label)
 
             elif issubclass(field_type, IntEnum):
-                self.value_combobox['values'] = [camel_case_to_spaces(e.name) for e in field_type]
+                self.value_combobox["values"] = [camel_case_to_spaces(e.name) for e in field_type]
                 try:
                     # noinspection PyUnresolvedReferences
                     enum_name = camel_case_to_spaces(field_type(value).name)
@@ -191,42 +196,54 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         def build_field_context_menu(self):
             """For linked fields, adds an option to select an entry name from the linked table."""
-            self.context_menu.delete(0, 'end')
-            fg = self.STYLE_DEFAULTS['text_fg']
+            self.context_menu.delete(0, "end")
+            fg = self.STYLE_DEFAULTS["text_fg"]
             if isinstance(self.field_type, str):
                 for field_link in self.field_links:
                     field_link.add_to_context_menu(self.context_menu, foreground=fg)
                 if self.field_type.startswith("<Maps:"):
                     self.context_menu.add_command(
-                        label="Select linked entry name from list", foreground=fg,
-                        command=self.choose_linked_map_entry)
+                        label="Select linked entry name from list", foreground=fg, command=self.choose_linked_map_entry
+                    )
                 if self.field_type.startswith("<Maps:Models:Characters"):
                     self.context_menu.add_command(
-                        label="Select model from complete list", foreground=fg,
-                        command=self.choose_character_model)
+                        label="Select model from complete list", foreground=fg, command=self.choose_character_model
+                    )
             if self.field_type == Vector3:
                 if self.field_name == "translate":
                     self.context_menu.add_command(
-                        label="Copy current in-game player position", foreground=fg,
-                        command=lambda: self.master.copy_player_position(translate=True, rotate=False))
+                        label="Copy current in-game player position",
+                        foreground=fg,
+                        command=lambda: self.master.copy_player_position(translate=True, rotate=False),
+                    )
                     if self.master.active_category.startswith("Regions:"):
                         self.context_menu.add_command(
-                            label="Copy current in-game player position (-0.1 Y)", foreground=fg,
+                            label="Copy current in-game player position (-0.1 Y)",
+                            foreground=fg,
                             command=lambda: self.master.copy_player_position(
-                                translate=True, rotate=False, y_offset=-0.1))
+                                translate=True, rotate=False, y_offset=-0.1
+                            ),
+                        )
                 elif self.field_name == "rotate":
                     self.context_menu.add_command(
-                        label="Copy current in-game player rotation", foreground=fg,
-                        command=lambda: self.master.copy_player_position(translate=False, rotate=True))
+                        label="Copy current in-game player rotation",
+                        foreground=fg,
+                        command=lambda: self.master.copy_player_position(translate=False, rotate=True),
+                    )
                 if self.field_name in {"translate", "rotate"}:
                     self.context_menu.add_command(
-                        label="Copy current in-game player position + rotation", foreground=fg,
-                        command=lambda: self.master.copy_player_position(translate=True, rotate=True))
+                        label="Copy current in-game player position + rotation",
+                        foreground=fg,
+                        command=lambda: self.master.copy_player_position(translate=True, rotate=True),
+                    )
                     if self.master.active_category.startswith("Regions:"):
                         self.context_menu.add_command(
-                            label="Copy current in-game player position (-0.1 Y) + rotation", foreground=fg,
+                            label="Copy current in-game player position (-0.1 Y) + rotation",
+                            foreground=fg,
                             command=lambda: self.master.copy_player_position(
-                                translate=True, rotate=True, y_offset=-0.1))
+                                translate=True, rotate=True, y_offset=-0.1
+                            ),
+                        )
 
         def choose_linked_map_entry(self):
             if not self.field_type.startswith("<Maps:"):
@@ -244,7 +261,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     self.master.CustomDialog(
                         title="Map Link Error",
                         message="Map link was broken after selecting map entry from list. This should not happen; "
-                                "please try restarting Soulstruct, and inform Grimrukh if the problem persists."
+                        "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
                     )
                 else:
                     if self.field_type == "<Maps:Models:Characters|Players>":
@@ -315,7 +332,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     except (SyntaxError, ValueError):
                         raise ValueError(
                             f"Value of field {self.field_nickname} must be a list of map entry name strings: "
-                            f"['Region1', 'Region2', ... ]")
+                            f"['Region1', 'Region2', ... ]"
+                        )
                     new_text = "(select to edit)"
                 elif self.field_type.startswith("<Maps:"):
                     new_value = new_text  # map entry name
@@ -326,7 +344,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
                 if self.field_type.startswith("<MapsList:"):
                     if any(not link.name for link in self.field_links):  # at least one link is broken
-                        new_text += '  {BROKEN LINK}'
+                        new_text += "  {BROKEN LINK}"
                         if not self.link_missing:
                             self.link_missing = True
                             self._update_colors()
@@ -336,21 +354,21 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                             self.link_missing = False
                             self._update_colors()
                 elif len(self.field_links) > 1:
-                    new_text += '  {AMBIGUOUS}'
+                    new_text += "  {AMBIGUOUS}"
                 elif not self.field_links[0].name:
-                    new_text += '  {BROKEN LINK}'
+                    new_text += "  {BROKEN LINK}"
                     if not self.link_missing:
                         self.link_missing = True
                         self._update_colors()
                 else:
-                    if not self.field_type.startswith('<Maps:'):
-                        new_text += f'  {{{self.field_links[0].name}}}'
-                    if self.field_type == '<Maps:Models:Characters|Players>':
-                        model_id = int(new_text.lstrip('c'))
+                    if not self.field_type.startswith("<Maps:"):
+                        new_text += f"  {{{self.field_links[0].name}}}"
+                    if self.field_type == "<Maps:Models:Characters|Players>":
+                        model_id = int(new_text.lstrip("c"))
                         try:
-                            new_text += f'  {{{CHARACTER_MODELS[model_id]}}}'
+                            new_text += f"  {{{CHARACTER_MODELS[model_id]}}}"
                         except KeyError:
-                            new_text += '  {UNKNOWN}'
+                            new_text += "  {UNKNOWN}"
                     if self.link_missing:
                         self.link_missing = False
                         self._update_colors()
@@ -364,7 +382,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 new_value = float(new_text)
                 new_text = f"{new_value:.3f}"
                 if coord is not None:
-                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                    getattr(self, f"value_vector_{coord}").var.set(f"{coord}: {new_text}")
                 else:
                     self.value_label.var.set(new_text)
                 return new_value
@@ -373,13 +391,13 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                     return None  # no change
                 new_value = int(new_text)
                 if coord is not None:
-                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                    getattr(self, f"value_vector_{coord}").var.set(f"{coord}: {new_text}")
                 else:
                     self.value_label.var.set(new_text)
                 return new_value
             elif self.field_type == str:
                 if coord is not None:
-                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                    getattr(self, f"value_vector_{coord}").var.set(f"{coord}: {new_text}")
                 else:
                     self.value_label.var.set(new_text)
                 return new_text
@@ -395,7 +413,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 except (SyntaxError, ValueError):
                     raise ValueError(f"Value of field {self.field_nickname} must be a list of integers: [1, 2, 3, ...]")
                 if coord is not None:
-                    getattr(self, f'value_vector_{coord}').var.set(f'{coord}: {new_text}')
+                    getattr(self, f"value_vector_{coord}").var.set(f"{coord}: {new_text}")
                 else:
                     self.value_label.var.set(new_text)
                 return true_value
@@ -404,16 +422,26 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         def _update_colors(self):
             bg_color = self._get_color()
-            for widget in (self.row_box, self.field_name_box, self.field_name_label, self.value_box, self.value_label,
-                           self.value_vector_frame, self.value_vector_x, self.value_vector_y, self.value_vector_z,
-                           self.value_checkbutton):
-                widget['bg'] = bg_color
+            for widget in (
+                self.row_box,
+                self.field_name_box,
+                self.field_name_label,
+                self.value_box,
+                self.value_label,
+                self.value_vector_frame,
+                self.value_vector_x,
+                self.value_vector_y,
+                self.value_vector_z,
+                self.value_checkbutton,
+            ):
+                widget["bg"] = bg_color
 
     class EntryRow(SoulstructBaseFieldEditor.EntryRow):
         """Entry rows for Maps have no ID (`entry_id` is a list index in that MSB category).
 
         They also display their Entity ID field if they have a non-default value.
         """
+
         master: SoulstructMapEditor
 
         ENTRY_ID_WIDTH = 5
@@ -429,7 +457,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 text_tail = f"  {{ID: {entry_data.entity_id}}}" if entry_data.entity_id not in {-1, 0} else ""
             elif isinstance(entry_data, MSBModel) and entry_data.ENTRY_TYPE.name in {"Character", "Player"}:
                 try:
-                    model_id = int(entry_text.lstrip('c'))
+                    model_id = int(entry_text.lstrip("c"))
                 except ValueError:
                     text_tail = ""
                 else:
@@ -447,16 +475,22 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.unhide()
 
         def build_entry_context_menu(self):
-            self.context_menu.delete(0, 'end')
+            self.context_menu.delete(0, "end")
             self.context_menu.add_command(
-                label="Edit in Floating Box (Shift + Click)", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.popout_entry_text_edit(self.row_index))
+                label="Edit in Floating Box (Shift + Click)",
+                foreground=self.STYLE_DEFAULTS["text_fg"],
+                command=lambda: self.master.popout_entry_text_edit(self.row_index),
+            )
             self.context_menu.add_command(
-                label="Duplicate Entry to Next Index", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.add_relative_entry(self.entry_id))
+                label="Duplicate Entry to Next Index",
+                foreground=self.STYLE_DEFAULTS["text_fg"],
+                command=lambda: self.master.add_relative_entry(self.entry_id),
+            )
             self.context_menu.add_command(
-                label="Delete Entry", foreground=self.STYLE_DEFAULTS['text_fg'],
-                command=lambda: self.master.delete_entry(self.row_index))
+                label="Delete Entry",
+                foreground=self.STYLE_DEFAULTS["text_fg"],
+                command=lambda: self.master.delete_entry(self.row_index),
+            )
 
     entry_rows: List[SoulstructMapEditor.EntryRow]
     field_rows: List[SoulstructMapEditor.FieldRow]
@@ -469,13 +503,24 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
     def build(self):
-        with self.set_master(sticky='nsew', row_weights=[0, 1], column_weights=[1], auto_rows=0):
-            with self.set_master(pady=10, sticky='w', row_weights=[1], column_weights=[1], auto_columns=0):
-                map_display_names = [f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
-                                     for game_map in ALL_MAPS if game_map.msb_file_stem]
+        with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1], auto_columns=0):
+                map_display_names = [
+                    f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
+                    for game_map in ALL_MAPS
+                    if game_map.msb_file_stem
+                ]
                 self.map_choice = self.Combobox(
-                    values=map_display_names, label='Map:', label_font_size=12, label_position='left', width=35,
-                    font=('Segoe UI', 12), on_select_function=self.on_map_choice, sticky='w', padx=10)
+                    values=map_display_names,
+                    label="Map:",
+                    label_font_size=12,
+                    label_position="left",
+                    width=35,
+                    font=("Segoe UI", 12),
+                    on_select_function=self.on_map_choice,
+                    sticky="w",
+                    padx=10,
+                )
 
             super().build()
 
@@ -484,14 +529,14 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         self._cancel_entry_text_edit()
 
         entries_to_display = self._get_category_name_range(
-            first_index=self.first_display_index,
-            last_index=self.first_display_index + self.ENTRY_RANGE_SIZE,
+            first_index=self.first_display_index, last_index=self.first_display_index + self.ENTRY_RANGE_SIZE,
         )
 
         row = 0
         for entry_id, _ in entries_to_display:
-            self.entry_rows[row].update_entry(entry_id, self.get_entry_text(entry_id),
-                                              self.get_entry_description(entry_id))
+            self.entry_rows[row].update_entry(
+                entry_id, self.get_entry_text(entry_id), self.get_entry_description(entry_id)
+            )
             self.entry_rows[row].unhide()
             row += 1
 
@@ -515,7 +560,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     @staticmethod
     def _get_category_text_fg(category: str):
-        return ENTRY_LIST_FG_COLORS.get(category.split(':')[0], '#FFF')
+        return ENTRY_LIST_FG_COLORS.get(category.split(":")[0], "#FFF")
 
     def _add_entry(self, entry_type_index: int, text: str, category=None, new_field_dict: MSBEntry = None):
         """Active category is required."""
@@ -523,7 +568,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
-        entry_list_name, entry_type_name = category.split(': ')
+        entry_list_name, entry_type_name = category.split(": ")
         entry_list = self.get_selected_msb()[entry_list_name]
         global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
         if global_index is None:
@@ -531,8 +576,8 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         if not 0 <= global_index <= len(entry_list):
             self.CustomDialog(
-                title="Entry Index Error",
-                message=f"Entry index must be between zero and the current list length.")
+                title="Entry Index Error", message=f"Entry index must be between zero and the current list length."
+            )
             return False
 
         self._cancel_entry_text_edit()
@@ -559,7 +604,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         self._cancel_entry_text_edit()
         entry_type_index = self.get_entry_id(row_index)
 
-        entry_list_name, entry_type_name = category.split(': ')
+        entry_list_name, entry_type_name = category.split(": ")
         entry_list = self.get_selected_msb()[entry_list_name]
         global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
         if global_index is None:
@@ -573,14 +618,19 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_id = self.get_entry_id(row_index)
         if not self._e_entry_text_edit and not self._e_entry_id_edit:
             initial_text = self.get_entry_text(entry_id, self.active_category)
-            popout_editor = EntryTextEditBox(self, self.active_category, category_data=self.get_category_data(),
-                                             entry_id=entry_id, initial_text=initial_text, edit_entry_id=False)
+            popout_editor = EntryTextEditBox(
+                self,
+                self.active_category,
+                category_data=self.get_category_data(),
+                entry_id=entry_id,
+                initial_text=initial_text,
+                edit_entry_id=False,
+            )
             try:
                 _, new_text = popout_editor.go()
             except Exception as e:
                 _LOGGER.error(e, exc_info=True)
-                return self.CustomDialog(
-                    "Entry Text Error", f"Error occurred while setting entry text:\n\n{e}")
+                return self.CustomDialog("Entry Text Error", f"Error occurred while setting entry text:\n\n{e}")
             if new_text is not None:
                 self.change_entry_text(row_index, new_text)
 
@@ -618,13 +668,20 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 initial_text=str(field_value),
                 numbers_only=field_type == float,
                 integers_only=field_type == int,
-                sticky='ew', width=5)
+                sticky="ew",
+                width=5,
+            )
         elif field_type == Vector3:
             if self.e_coord is None:
                 return None  # Exact coordinate not clicked.
             return self.Entry(
-                field_row.value_vector_frame, initial_text=getattr(field_value, self.e_coord),
-                numbers_only=True, sticky='ew', width=5, column='xyz'.index(self.e_coord))
+                field_row.value_vector_frame,
+                initial_text=getattr(field_value, self.e_coord),
+                numbers_only=True,
+                sticky="ew",
+                width=5,
+                column="xyz".index(self.e_coord),
+            )
         raise TypeError(f"Could not determine editing box from type {field_type}.")
 
     def _start_field_value_edit(self, row_index, coord=None):
@@ -654,8 +711,11 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.change_field_value(row.field_name, true_value)
             self._cancel_field_value_edit()
 
-            if (isinstance(row.field_type, str) and row.field_type.startswith("<Maps:Models:")
-                    and row.field_links[0].name is None):
+            if (
+                isinstance(row.field_type, str)
+                and row.field_type.startswith("<Maps:Models:")
+                and row.field_links[0].name is None
+            ):
                 # Offer to create models (after checking if they're valid).
                 if self.add_models(row.field_type, true_value):
                     row.confirm_edit(true_value)  # Refresh links.
@@ -697,7 +757,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if edit_new_row and self.field_rows[self.selected_field_row_index].editable:
                 self._start_field_value_edit(self.selected_field_row_index)
             if self.field_canvas.yview()[1] != 1.0 or self.selected_field_row_index < self.displayed_field_count - 5:
-                self.field_canvas.yview_scroll(-1, 'units')
+                self.field_canvas.yview_scroll(-1, "units")
 
     def _field_press_down(self, _=None):
         if self.selected_field_row_index is not None:
@@ -718,7 +778,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if edit_new_row and self.field_rows[self.selected_field_row_index].editable:
                 self._start_field_value_edit(self.selected_field_row_index)
             if self.field_canvas.yview()[0] != 0.0 or self.selected_field_row_index > 5:
-                self.field_canvas.yview_scroll(1, 'units')
+                self.field_canvas.yview_scroll(1, "units")
 
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names and their subtypes, properly formatted."""
@@ -727,7 +787,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             for name in entry_type_names:
                 if name in {"Circles", "Rectangles"}:
                     continue  # These useless region types are hidden.
-                categories.append(f'{entry_list_name}: {name}')
+                categories.append(f"{entry_list_name}: {name}")
         return categories
 
     def get_selected_msb(self):
@@ -746,7 +806,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 return []
         selected_msb = self.get_selected_msb()
         try:
-            entry_list, entry_type = category.split(': ')
+            entry_list, entry_type = category.split(": ")
         except ValueError:
             raise ValueError(f"Category name was not in [List: Type] format: {category}")
         return selected_msb[entry_list].get_entries(entry_type)
@@ -797,10 +857,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
         if valid_null_values is None:
-            if field_type == '<Text:PlaceNames>':
-                valid_null_values = {-1: 'Default Map Name + Force Banner'}
+            if field_type == "<Text:PlaceNames>":
+                valid_null_values = {-1: "Default Map Name + Force Banner"}
             else:
-                valid_null_values = {0: 'Default/None', -1: 'Default/None'}
+                valid_null_values = {0: "Default/None", -1: "Default/None"}
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
 
     def add_models(self, model_link, model_name):
@@ -811,13 +871,18 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         map_id = self.map_choice_id
         if self.linker.validate_model_type(model_type, model_name, map_id=map_id):
-            if self.CustomDialog(
+            if (
+                self.CustomDialog(
                     title=f"Add {model_type} Model",
                     message=f"Add {model_type} model {model_name} to map?",
                     button_names=("Yes, add it", "No, leave as missing"),
                     button_kwargs=("YES", "NO"),
-                    return_output=0, default_output=0, cancel_output=1
-            ) == 0:
+                    return_output=0,
+                    default_output=0,
+                    cancel_output=1,
+                )
+                == 0
+            ):
                 if model_type in {"MapPieces", "Collisions", "Navmeshes"}:
                     sib_path = (int(map_id[1:3]), int(map_id[4:6]))
                 else:
@@ -829,7 +894,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.CustomDialog(
                 title=f"Invalid {model_type} Model",
                 message=f"{model_type} model {model_name} does not have any data in the game files.\n"
-                        f"This will likely cause severe problems in your game!",
+                f"This will likely cause severe problems in your game!",
             )
 
         return False
@@ -848,13 +913,18 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if rotate:
                 new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
         except ConnectionError:
-            if self.CustomDialog(
+            if (
+                self.CustomDialog(
                     title="Cannot Read Memory",
                     message="Runtime hooks are not available. Would you like to try hooking into the game now?",
-                    default_output=0, cancel_output=1, return_output=0,
+                    default_output=0,
+                    cancel_output=1,
+                    return_output=0,
                     button_names=("Yes, hook in", "No, forget it"),
                     button_kwargs=("YES", "NO"),
-            ) == 1:
+                )
+                == 1
+            ):
                 return
             if self.linker.runtime_hook():
                 return self.copy_player_position(translate=translate, rotate=rotate, y_offset=y_offset)
@@ -864,9 +934,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             self.CustomDialog(
                 title="Cannot Read Memory",
                 message=f"An error occurred when trying to copy player position (see log for full traceback):\n\n"
-                        f"{str(e)}\n\n"
-                        f"If this error doesn't seem like it can be solved (e.g. did you close the game after\n"
-                        f"hooking into it?) please inform Grimrukh.")
+                f"{str(e)}\n\n"
+                f"If this error doesn't seem like it can be solved (e.g. did you close the game after\n"
+                f"hooking into it?) please inform Grimrukh.",
+            )
             return
         field_dict = self.get_selected_field_dict()
         if translate:

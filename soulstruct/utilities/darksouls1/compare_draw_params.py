@@ -2,12 +2,13 @@
 from soulstruct.params.dark_souls_params import DRAW_PARAM_TABLES, DRAW_PARAM_MAPS
 
 
-def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_matches=True, ignore_tables=(),
-                        float_diff=0.01):
+def compare_draw_params(
+    draw_params_one, draw_params_two, names=None, ignore_matches=True, ignore_tables=(), float_diff=0.01
+):
     """ View all values that differ between the two given DarkSoulsDrawParameters instances. """
 
     if names is None:
-        names = ('DrawParams1', 'DrawParams2')
+        names = ("DrawParams1", "DrawParams2")
 
     for map_name in DRAW_PARAM_MAPS.keys():
         draw_blocks = [draw_params_one[map_name], draw_params_two[map_name]]
@@ -26,8 +27,9 @@ def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_mat
                 slots = []
                 if all(dt[slot] is None for dt in draw_tables):
                     if slot == 0:
-                        raise ValueError(f"At least one DrawParam is missing slot 0 of table {table_name} "
-                                         f"in map {map_name}.")
+                        raise ValueError(
+                            f"At least one DrawParam is missing slot 0 of table {table_name} " f"in map {map_name}."
+                        )
                     # Otherwise, this means all DrawParams only have one slot for this table.
                     continue
                 for dt in draw_tables:
@@ -73,21 +75,25 @@ def compare_draw_params(draw_params_one, draw_params_two, names=None, ignore_mat
                     for fields in zip(*entries):
                         if not all(f[0] == fields[0][0] for f in fields[1:]):
                             print(fields)
-                            raise ValueError(f"Field names in entry {i} of table {table_name} (slot {slots[0]} vs. "
-                                             f"{slots[1]}) of map {map_name} do not match: {[f[0] for f in fields]}")
+                            raise ValueError(
+                                f"Field names in entry {i} of table {table_name} (slot {slots[0]} vs. "
+                                f"{slots[1]}) of map {map_name} do not match: {[f[0] for f in fields]}"
+                            )
                         if any(f[1] != fields[0][1] for f in fields[1:]):
 
                             if ignore_matches and fields[1][1] == fields[0][1]:
                                 continue
 
                             if all(isinstance(f[1], float) for f in fields):
-                                if all(abs(fields[j][1] - fields[j+1][1]) < float_diff for j in range(len(fields) - 1)):
+                                if all(
+                                    abs(fields[j][1] - fields[j + 1][1]) < float_diff for j in range(len(fields) - 1)
+                                ):
                                     # Ignore float imprecision differences.
                                     continue
                             if all(isinstance(f[1], float) for f in fields):
-                                values = '   '.join([f"{f[1]:.3f}" for f in fields])
+                                values = "   ".join([f"{f[1]:.3f}" for f in fields])
                             else:
-                                values = '   '.join([f"{f[1]}" + ' ' * (4 - len(str(f[1]))) for f in fields])
+                                values = "   ".join([f"{f[1]}" + " " * (4 - len(str(f[1]))) for f in fields])
 
                             if not map_printed:
                                 print(f"\n\n{map_name}:")

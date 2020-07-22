@@ -17,37 +17,40 @@ _LOGGER = logging.getLogger(__name__)
 
 # Subset of the above, only for entry types with entity IDs.
 MAP_ENTRY_ENTITY_TYPES = {
-    'Parts': BiDict(
-        ('MapPieces', MSB_PART_TYPE.MapPiece),
-        ('Objects', MSB_PART_TYPE.Object),
-        ('Characters', MSB_PART_TYPE.Character),
-        ('PlayerStarts', MSB_PART_TYPE.PlayerStart),
-        ('Collisions', MSB_PART_TYPE.Collision),
+    "Parts": BiDict(
+        ("MapPieces", MSB_PART_TYPE.MapPiece),
+        ("Objects", MSB_PART_TYPE.Object),
+        ("Characters", MSB_PART_TYPE.Character),
+        ("PlayerStarts", MSB_PART_TYPE.PlayerStart),
+        ("Collisions", MSB_PART_TYPE.Collision),
     ),
-    'Events': BiDict(
-        ('Sounds', MSB_EVENT_TYPE.Sound),
-        ('FX', MSB_EVENT_TYPE.FX),
-        ('Spawners', MSB_EVENT_TYPE.Spawner),
-        ('Messages', MSB_EVENT_TYPE.Message),
-        ('ObjActs', MSB_EVENT_TYPE.ObjAct),
-        ('SpawnPoints', MSB_EVENT_TYPE.SpawnPoint),
-        ('Navigation', MSB_EVENT_TYPE.Navigation),
+    "Events": BiDict(
+        ("Sounds", MSB_EVENT_TYPE.Sound),
+        ("FX", MSB_EVENT_TYPE.FX),
+        ("Spawners", MSB_EVENT_TYPE.Spawner),
+        ("Messages", MSB_EVENT_TYPE.Message),
+        ("ObjActs", MSB_EVENT_TYPE.ObjAct),
+        ("SpawnPoints", MSB_EVENT_TYPE.SpawnPoint),
+        ("Navigation", MSB_EVENT_TYPE.Navigation),
     ),
-    'Regions': BiDict(
-        ('Points', MSB_REGION_TYPE.Point),
-        ('Circles', MSB_REGION_TYPE.Circle),
-        ('Spheres', MSB_REGION_TYPE.Sphere),
-        ('Cylinders', MSB_REGION_TYPE.Cylinder),
-        ('Rectangles', MSB_REGION_TYPE.Rect),
-        ('Boxes', MSB_REGION_TYPE.Box),
+    "Regions": BiDict(
+        ("Points", MSB_REGION_TYPE.Point),
+        ("Circles", MSB_REGION_TYPE.Circle),
+        ("Spheres", MSB_REGION_TYPE.Sphere),
+        ("Cylinders", MSB_REGION_TYPE.Cylinder),
+        ("Rectangles", MSB_REGION_TYPE.Rect),
+        ("Boxes", MSB_REGION_TYPE.Box),
     ),
 }
 
 # Set up shortcut attributes to sorted entry type lists (e.g. `MSBPartList.Characters`).
 for cls in (MSBModelList, MSBEventList, MSBRegionList, MSBPartList):
     for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[cls.ENTRY_LIST_NAME].items():
-        setattr(cls, entry_type_name, property(
-            lambda self, enum=entry_type_enum: [e for e in self._entries if e.ENTRY_TYPE == enum]))
+        setattr(
+            cls,
+            entry_type_name,
+            property(lambda self, enum=entry_type_enum: [e for e in self._entries if e.ENTRY_TYPE == enum]),
+        )
 
 
 class MSB(object):
@@ -91,15 +94,16 @@ class MSB(object):
         elif isinstance(msb_source, (str, Path)):
             # File path.
             self.msb_path = Path(msb_source)
-            with self.msb_path.open('rb') as msb_buffer:
+            with self.msb_path.open("rb") as msb_buffer:
                 self.unpack(msb_buffer)
         elif isinstance(msb_source, bytes):
             self.unpack(BytesIO(msb_source))
         elif isinstance(msb_source, BufferedReader):
             self.unpack(msb_source)
         else:
-            raise TypeError(f"Invalid MSB source type: {type(msb_source)}. "
-                            f"Must be string (file path), bytes, or buffer.")
+            raise TypeError(
+                f"Invalid MSB source type: {type(msb_source)}. " f"Must be string (file path), bytes, or buffer."
+            )
 
     def unpack(self, msb_buffer):
         self.models = MSBModelList(msb_buffer)
@@ -166,7 +170,7 @@ class MSB(object):
             msb_path = Path(msb_path)
         msb_path.parent.mkdir(parents=True, exist_ok=True)
         create_bak(msb_path)
-        with msb_path.open('wb') as f:
+        with msb_path.open("wb") as f:
             f.write(self.pack())
 
     def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=None):
@@ -180,8 +184,13 @@ class MSB(object):
             if selected_entries is None or r in selected_entries:
                 r.translate += translate
 
-    def rotate_all_in_world(self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-                            pivot_point=(0, 0, 0), radians=False, selected_entries=None):
+    def rotate_all_in_world(
+        self,
+        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
+        pivot_point=(0, 0, 0),
+        radians=False,
+        selected_entries=None,
+    ):
         """Rotate every Part and Region in the map (or a selection given in `selected_entry_names`) around the given
         pivot by the given Euler angles coordinate system, modifying both `translate` and `rotate`.
 
@@ -201,12 +210,14 @@ class MSB(object):
             if selected_entries is None or r in selected_entries:
                 r.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
 
-    def move_map(self,
-                 start_translate: tp.Union[Vector3, list, tuple] = None,
-                 end_translate: tp.Union[Vector3, list, tuple] = None,
-                 start_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
-                 end_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
-                 selected_entries=None):
+    def move_map(
+        self,
+        start_translate: tp.Union[Vector3, list, tuple] = None,
+        end_translate: tp.Union[Vector3, list, tuple] = None,
+        start_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
+        end_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
+        selected_entries=None,
+    ):
         """Rotate and then translate entire map so that an entity with a translate of `start_translate` and rotate of
         `start_rotate` ends up with a translate of `end_translate` and a rotate of `end_rotate`.
 
@@ -259,11 +270,11 @@ class MSB(object):
         If multiple MSBEntry instances are found for a given ID, only the *first* one found is used.
         """
         entry_list_name = entry_list_name.lower()
-        if entry_list_name == 'parts':
+        if entry_list_name == "parts":
             entries = self.parts.get_entries(entry_type)
-        elif entry_list_name == 'events':
+        elif entry_list_name == "events":
             entries = self.events.get_entries(entry_type)
-        elif entry_list_name == 'regions':
+        elif entry_list_name == "regions":
             entries = self.regions.get_entries(entry_type)
         else:
             raise ValueError("Can only get entity IDs for parts, events, and regions.")
@@ -289,14 +300,16 @@ class MSB(object):
             return None
         elif len(results) > 1:
             if allow_multiple:
-                _LOGGER.warning(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen. "
-                                f"Returning first one only.")
+                _LOGGER.warning(
+                    f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen. "
+                    f"Returning first one only."
+                )
             else:
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
         return results[0]
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:
-        if entry_list_name.lower() not in {'models', 'events', 'regions', 'parts'}:
+        if entry_list_name.lower() not in {"models", "events", "regions", "parts"}:
             raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
         return getattr(self, entry_list_name.lower())
 
@@ -304,6 +317,7 @@ class MSB(object):
         return iter((self.models, self.events, self.regions, self.parts))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from soulstruct import PTDE_PATH
+
     depths = MSB(PTDE_PATH + "/map/MapStudio/m10_00_00_00.msb")

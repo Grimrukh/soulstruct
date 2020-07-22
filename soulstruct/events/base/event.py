@@ -7,12 +7,18 @@ from .instruction import BaseInstruction
 
 
 EVS_ARG_TYPES = {
-    'i': 'int', 'I': 'uint', 'f': 'float', 'h': 'short', 'H': 'ushort', 'b': 'char', 'B': 'uchar', 's': 'int',
+    "i": "int",
+    "I": "uint",
+    "f": "float",
+    "h": "short",
+    "H": "ushort",
+    "b": "char",
+    "B": "uchar",
+    "s": "int",
 }
 
 
 class BaseEventArg(BaseStruct):
-
     def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, zero=0):
         """Overrides argument data in a particular instruction using from dynamic args attached to the event."""
         self.line = instruction_line
@@ -34,8 +40,12 @@ class BaseEventArg(BaseStruct):
         return f"({self.write_from_byte} <- {self.read_from_byte}, {self.bytes_to_write})"
 
     def to_binary(self):
-        return self.STRUCT.pack(instruction_line=self.line, write_from_byte=self.write_from_byte,
-                                read_from_byte=self.read_from_byte, bytes_to_write=self.bytes_to_write)
+        return self.STRUCT.pack(
+            instruction_line=self.line,
+            write_from_byte=self.write_from_byte,
+            read_from_byte=self.read_from_byte,
+            bytes_to_write=self.bytes_to_write,
+        )
 
 
 class BaseEvent(BaseStruct):
@@ -52,25 +62,33 @@ class BaseEvent(BaseStruct):
         self.instructions = instructions if instructions else []
 
     @classmethod
-    def unpack(cls, file, instruction_table_offset, base_arg_data_offset, event_arg_table_offset,
-               event_layers_table_offset, count=1):
+    def unpack(
+        cls,
+        file,
+        instruction_table_offset,
+        base_arg_data_offset,
+        event_arg_table_offset,
+        event_layers_table_offset,
+        count=1,
+    ):
 
         event_dict = OrderedDict()
         struct_dicts = cls.STRUCT.unpack_count(file, count=count)
 
         for d in struct_dicts:
-            file.seek(instruction_table_offset + d['first_instruction_offset'])
-            instruction_list = cls.Instruction.unpack(file, base_arg_data_offset, event_layers_table_offset,
-                                                      count=d['instruction_count'])
+            file.seek(instruction_table_offset + d["first_instruction_offset"])
+            instruction_list = cls.Instruction.unpack(
+                file, base_arg_data_offset, event_layers_table_offset, count=d["instruction_count"]
+            )
 
-            file.seek(event_arg_table_offset + d['first_event_arg_offset'])
-            event_args = cls.EventArg.unpack(file, count=d['event_arg_count'])
+            file.seek(event_arg_table_offset + d["first_event_arg_offset"])
+            event_args = cls.EventArg.unpack(file, count=d["event_arg_count"])
 
             for arg_r in event_args:
                 # Attach event arg replacements to their instruction line.
                 instruction_list[arg_r.line].event_args.append(arg_r)
 
-            event_dict[d['event_id']] = cls(d['event_id'], d['restart_type'], instruction_list)
+            event_dict[d["event_id"]] = cls(d["event_id"], d["restart_type"], instruction_list)
 
         return event_dict
 
@@ -99,8 +117,10 @@ class BaseEvent(BaseStruct):
             try:
                 instruction_arg_set, instruction_arg_types = instruction.apply_event_args()
             except ValueError:
-                raise ValueError(f"Error occurred while applying event args in instruction "
-                                 f"{self.instructions.index(instruction)} of event {self.event_id}.")
+                raise ValueError(
+                    f"Error occurred while applying event args in instruction "
+                    f"{self.instructions.index(instruction)} of event {self.event_id}."
+                )
             event_arg_set = event_arg_set.union(instruction_arg_set)
             for arg, arg_types in instruction_arg_types.items():
                 event_arg_types[arg] = event_arg_types.setdefault(arg, set()).union(arg_types)
@@ -110,16 +130,17 @@ class BaseEvent(BaseStruct):
         # TODO: 'next(iter(set))' is a hack to get a random type hint, in case multiple types are suggested.
         #  Usually the set will only have one element in it.
         sorted_parameter_list, event_arg_types = self.guess_parameter_types()
-        evs_function_args_names = [f'arg_{i}_{j}' for i, j in sorted_parameter_list]
-        evs_function_args_types = [EVS_ARG_TYPES[next(iter(event_arg_types[arg]))] for arg in
-                                   evs_function_args_names]
-        evs_function_args = [f'{arg_name}: {arg_type}'
-                             for arg_name, arg_type in zip(evs_function_args_names, evs_function_args_types)]
+        evs_function_args_names = [f"arg_{i}_{j}" for i, j in sorted_parameter_list]
+        evs_function_args_types = [EVS_ARG_TYPES[next(iter(event_arg_types[arg]))] for arg in evs_function_args_names]
+        evs_function_args = [
+            f"{arg_name}: {arg_type}" for arg_name, arg_type in zip(evs_function_args_names, evs_function_args_types)
+        ]
         if evs_function_args:
             evs_function_args = ["_"] + evs_function_args  # add blank argument for slot (for intellisense)
-        self.EVENT_ARG_TYPES[self.event_id] = ''.join(
-            [next(iter(event_arg_types[arg])) for arg in evs_function_args_names])
-        return ', '.join(evs_function_args)
+        self.EVENT_ARG_TYPES[self.event_id] = "".join(
+            [next(iter(event_arg_types[arg])) for arg in evs_function_args_names]
+        )
+        return ", ".join(evs_function_args)
 
     def to_evs(self, game_module):
         if self.event_id == 0:
@@ -137,7 +158,7 @@ class BaseEvent(BaseStruct):
         for i, instr in enumerate(self.instructions):
             instruction = instr.to_evs(game_module, self.EVENT_ARG_TYPES)
             if instruction.startswith("DefineLabel("):
-                label = instruction.split(")")[0][len("DefineLabel("):]
+                label = instruction.split(")")[0][len("DefineLabel(") :]
             else:
                 label = None
             if label is not None:
@@ -164,8 +185,8 @@ class BaseEvent(BaseStruct):
 
         base_arg_offset = first_base_arg_offset
 
-        instructions_binary = b''
-        args_binary = b''
+        instructions_binary = b""
+        args_binary = b""
         event_args_list = []
         for instruction in self.instructions:
             instructions_binary += instruction.to_binary(base_arg_offset)
@@ -178,7 +199,7 @@ class BaseEvent(BaseStruct):
 
         # Collect and sort arg replacements to better match actual EMEVD resources. (Should be purely cosmetic.)
         sorted_event_args = sorted(event_args_list, key=lambda arg_r: (arg_r.read_from_byte, arg_r.line))
-        event_args_binary = b''.join([arg_r.to_binary() for arg_r in sorted_event_args])
+        event_args_binary = b"".join([arg_r.to_binary() for arg_r in sorted_event_args])
 
         return event_binary, instructions_binary, args_binary, event_args_binary
 

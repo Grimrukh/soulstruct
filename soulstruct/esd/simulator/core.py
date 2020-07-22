@@ -21,13 +21,16 @@ from soulstruct.utilities.window import SmartFrame
 _LOGGER = logging.getLogger(__name__)
 
 
-class BaseState(object):
+class BaseState:
     name = ""
 
     def _create_button(self, window: SmartFrame, field, verbose, is_boolean=True):
         button = window.Button(
-            text=f"{verbose}: {getattr(self, field)}", fg="#8F8" if getattr(self, field) else "#F88",
-            width=20, command=lambda: self._toggle_button(window, field))
+            text=f"{verbose}: {getattr(self, field)}",
+            fg="#8F8" if getattr(self, field) else "#F88",
+            width=20,
+            command=lambda: self._toggle_button(window, field),
+        )
         button.verbose_fmt = verbose
         button.is_boolean = is_boolean
         return button
@@ -45,14 +48,17 @@ class BaseState(object):
     def _create_combobox(self, window, field, verbose, enum):
         values = [camel_case_to_spaces(e.name) for e in enum]
         combobox = window.Combobox(
-            label=verbose, values=values, initial_value=camel_case_to_spaces(getattr(self, field).name),
-            on_select_function=lambda e: self._set_combobox(e, field))
+            label=verbose,
+            values=values,
+            initial_value=camel_case_to_spaces(getattr(self, field).name),
+            on_select_function=lambda e: self._set_combobox(e, field),
+        )
         combobox.enum = enum
         return combobox
 
     def _set_combobox(self, event, field):
         combobox = event.widget
-        enum = getattr(combobox.enum, combobox.var.get().replace(' ', ''))
+        enum = getattr(combobox.enum, combobox.var.get().replace(" ", ""))
         setattr(self, field, enum)
 
     def _create_entry(self, window, field, verbose):
@@ -105,7 +111,8 @@ class GameState(BaseState):
             "talk_list": window.Listbox(label="Menu Options:", label_position="above"),
             "conversation": window.Label(label="Conversation:", label_position="above", text="<None>"),
             "disable_talk_period_elapsed": window.Label(
-                label="Talk Disabled Period Elapsed:", label_position="above", text="True")
+                label="Talk Disabled Period Elapsed:", label_position="above", text="True"
+            ),
         }
         self._window = window
 
@@ -117,7 +124,7 @@ class GameState(BaseState):
     def one_line_help_message(self, text):
         self._one_line_help_message = text
         if self._window:
-            self._window.game["one_line_help_message"].var.set('<None>' if text is None else text)
+            self._window.game["one_line_help_message"].var.set("<None>" if text is None else text)
 
     def set_talk_list(self, talk_list):
         self._talk_list = talk_list
@@ -145,7 +152,7 @@ class GameState(BaseState):
     def conversation(self, text):
         self._conversation = text
         if self._window:
-            self._window.conversation.var.set('<None>' if text is None else text)
+            self._window.conversation.var.set("<None>" if text is None else text)
 
     @property
     def disable_talk_period_elapsed(self):
@@ -178,7 +185,8 @@ class EntityState(BaseState):
             "hp_percent": self._create_entry(window, "hp_percent", "HP Percent"),
             "update_distance": self._create_entry(window, "update_distance", "Update Distance"),
             "bonfire_level": self._create_entry(window, "bonfire_level", "Bonfire Level (0)"),
-            "bonfire_state": self._create_button(window, "bonfire_state", "Bonfire State", is_boolean=False)}
+            "bonfire_state": self._create_button(window, "bonfire_state", "Bonfire State", is_boolean=False),
+        }
 
 
 class PlayerState(BaseState):
@@ -209,7 +217,7 @@ class PlayerState(BaseState):
         }
 
 
-class InputEvents(object):
+class InputEvents:
     def __init__(self):
         self.press_action_button = None
         self.selected_talk_list_entry = None
@@ -222,7 +230,6 @@ class InputEvents(object):
 
 
 class TalkSimulatorWindow(SmartFrame):
-
     def __init__(self, esd_source, game_version, text_source):
         super().__init__(window_title="DS1 Talk Simulator")
 
@@ -233,13 +240,22 @@ class TalkSimulatorWindow(SmartFrame):
 
                 self.current_state = self.Label(text="State: None", font_size=20, pady=10)
 
-                self.current_conditions = self.Listbox(label="Conditions:", label_position="above", label_bg="#111",
-                                                       font=("Consolas", 8),
-                                                       width=100, height=10, padx=10, pady=10, bg="#333")
+                self.current_conditions = self.Listbox(
+                    label="Conditions:",
+                    label_position="above",
+                    label_bg="#111",
+                    font=("Consolas", 8),
+                    width=100,
+                    height=10,
+                    padx=10,
+                    pady=10,
+                    bg="#333",
+                )
 
                 # Log  # TODO: in canvas
-                self.output_log = self.TextBox(width=50, height=10, vertical_scrollbar=True, padx=15, pady=15,
-                                               bg="#333")
+                self.output_log = self.TextBox(
+                    width=50, height=10, vertical_scrollbar=True, padx=15, pady=15, bg="#333"
+                )
 
                 # Buttons
                 with self.set_master(auto_columns=0):
@@ -272,8 +288,7 @@ class TalkSimulatorWindow(SmartFrame):
             self.output_log.insert("end", "\n" + command)
 
 
-class TalkSimulator(object):
-
+class TalkSimulator:
     def __init__(self, esd_source, game_version, text_source):
         self.game_version = game_version
         if self.game_version == "ptde":
@@ -285,7 +300,7 @@ class TalkSimulator(object):
 
         try:
             self.text = DarkSoulsText(text_source)
-        except:
+        except Exception:
             _LOGGER.error("Invalid text source for TalkSimulator. Should be 'msg/ENGLISH' directory.")
             raise
 
@@ -366,13 +381,14 @@ class TalkSimulator(object):
             except KeyError:
                 if command.bank == 6:
                     raise ValueError("Child state machines cannot yet be simulated.")
-                command_name = f'Command_{command.esd_type}_{command.bank}_{command.index}'
+                command_name = f"Command_{command.esd_type}_{command.bank}_{command.index}"
                 arg_names = ()
             if len(arg_names) != len(command.args):
-                arguments = ', '.join([f'{decompile(arg, command.esd_type)}' for arg in command.args])
+                arguments = ", ".join([f"{decompile(arg, command.esd_type)}" for arg in command.args])
             else:
-                arguments = ', '.join([f'{arg_name}={decompile(arg, command.esd_type)}'
-                                       for arg_name, arg in zip(arg_names, command.args)])
+                arguments = ", ".join(
+                    [f"{arg_name}={decompile(arg, command.esd_type)}" for arg_name, arg in zip(arg_names, command.args)]
+                )
             command_string = f"{command_name}({arguments})"
             print("Command String: self." + command_string)
             try:
@@ -433,10 +449,14 @@ class TalkSimulator(object):
         return self.entity_state.bonfire_state == required_state
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from soulstruct import DSR_PATH
-    ts = TalkSimulatorWindow(DSR_PATH + "/script/talk/m10_00_00_00.talkesdbnd.dcx.unpacked/t100000.esd",
-                             game_version="dsr", text_source=DSR_PATH + "/msg/ENGLISH")
+
+    ts = TalkSimulatorWindow(
+        DSR_PATH + "/script/talk/m10_00_00_00.talkesdbnd.dcx.unpacked/t100000.esd",
+        game_version="dsr",
+        text_source=DSR_PATH + "/msg/ENGLISH",
+    )
     # while input("Press any key to update SM. Press Q to exit.").lower() != "q":
     #     ts.update()
 

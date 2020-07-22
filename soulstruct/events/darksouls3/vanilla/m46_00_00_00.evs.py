@@ -60,17 +60,19 @@ def Constructor():
     RunCommonEvent(20005940, args=(14605300,))
 
 
-def Event14605200(arg_0_3: float, arg_4_7: float, arg_8_11: float):
+def Event14605200(_, arg_0_3: float, arg_4_7: float, arg_8_11: float):
     """ 14605200: Event 14605200 """
     IfPlayerInOwnWorld(1)
     IfHollowArenaMatchReadyState(1, is_ready=True)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     Wait(arg_0_3)
     IfPlayerInOwnWorld(0)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     Wait(arg_4_7)
     IfPlayerInOwnWorld(0)
     Wait(arg_8_11)

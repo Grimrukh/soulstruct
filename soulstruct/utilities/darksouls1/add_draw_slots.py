@@ -48,7 +48,7 @@ def add_draw_slot_1_to_drawparam(parambnd_path):
         return
 
     try:
-        area_id = parambnd_path.name.split('_')[0][1:]
+        area_id = parambnd_path.name.split("_")[0][1:]
     except IndexError:
         raise ValueError(f"Could not determine map area ID from DrawParam file name: {parambnd_path.name}")
 
@@ -58,11 +58,11 @@ def add_draw_slot_1_to_drawparam(parambnd_path):
     for i in range(11):
         slot_0 = draw_param[i].copy()
         slot_0.id += 11
-        draw_param[i].path = draw_param[i].path.replace(f'm{area_id}_', f'm{area_id}_1_')
+        draw_param[i].path = draw_param[i].path.replace(f"m{area_id}_", f"m{area_id}_1_")
         draw_param.add_entry(slot_0)
     s_ambient_0 = s_ambient.copy()
     s_ambient_0.id = 23
-    s_ambient.path = s_ambient.path.replace(f's{area_id}_', f's{area_id}_1_')
+    s_ambient.path = s_ambient.path.replace(f"s{area_id}_", f"s{area_id}_1_")
     s_ambient.id = 22
     draw_param.add_entry(s_ambient)
     draw_param.add_entry(s_ambient_0)

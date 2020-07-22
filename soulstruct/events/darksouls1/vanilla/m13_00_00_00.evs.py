@@ -12,6 +12,7 @@ def Constructor():
     """ 0: Event 0 """
     RegisterBonfire(11300992, obj=1301960, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
     RegisterBonfire(11300984, obj=1301961, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
+    RegisterBonfire(11300976, obj=1301962, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
     RegisterLadder(start_climbing_flag=11300010, stop_climbing_flag=11300011, obj=1301140)
     RegisterLadder(start_climbing_flag=11300012, stop_climbing_flag=11300013, obj=1301141)
     RegisterLadder(start_climbing_flag=11300014, stop_climbing_flag=11300015, obj=1301142)
@@ -52,6 +53,18 @@ def Constructor():
     RunEvent(11300420, slot=3, args=(10003,))
     RunEvent(11300420, slot=4, args=(10004,))
     RunEvent(11300420, slot=5, args=(10005,))
+    RunEvent(11300420, slot=6, args=(10006,))
+    RunEvent(11300420, slot=7, args=(10007,))
+    RunEvent(11300420, slot=8, args=(10008,))
+    RunEvent(11300420, slot=9, args=(10009,))
+    RunEvent(11300420, slot=10, args=(10010,))
+    RunEvent(11300420, slot=11, args=(10011,))
+    RunEvent(11300420, slot=12, args=(10012,))
+    RunEvent(11300420, slot=13, args=(10013,))
+    RunEvent(11300420, slot=14, args=(10014,))
+    RunEvent(11300420, slot=15, args=(10015,))
+    RunEvent(11300420, slot=16, args=(10016,))
+    RunEvent(11300420, slot=17, args=(10017,))
     RunEvent(11300210)
     RunEvent(11305060)
     RunEvent(11300200)
@@ -133,13 +146,17 @@ def Constructor():
     RunEvent(11300850, slot=7, args=(1300501, 33003000))
     RunEvent(11300850, slot=8, args=(1300300, 0))
     RunEvent(11300850, slot=9, args=(1300400, 27902000))
+    RunEvent(11305846, slot=0, args=(6, 1301990, 1301991))
+    RunEvent(11305843, slot=0, args=(6, 1301990, 1302998, 1302997))
 
 
 def Preconstructor():
     """ 50: Event 50 """
     HumanityRegistration(6550, 8948)
     RunEvent(11305025)
+    RunEvent(11305029)
     RunEvent(11305027)
+    RunEvent(11305990, slot=0, args=(11305026, 6550))
     RunEvent(11300510, slot=0, args=(6200, 1341))
     RunEvent(11300520, slot=0, args=(6200, 1340, 1343, 1342))
     RunEvent(11305061, slot=0, args=(6200,))
@@ -155,18 +172,28 @@ def Preconstructor():
     RunEvent(11300593)
 
 
-def Event11300090(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11300090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300090: Event 11300090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
     DeleteFX(arg_4_7, erase_root_only=False)
     End()
-    IfDialogPromptActivated(1, prompt_text=10010403, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Region, 
-                            facing_angle=0.0, max_distance=0.0, model_point=0, human_or_hollow_only=True, 
-                            line_intersects=arg_0_3)
-    IfDialogPromptActivated(2, prompt_text=10010407, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, 
-                            facing_angle=0.0, max_distance=0.0, model_point=0, human_or_hollow_only=True, 
-                            line_intersects=arg_0_3)
+    IfActionButton(
+        1,
+        prompt_text=10010403,
+        anchor_entity=arg_8_11,
+        anchor_type=CoordEntityType.Region,
+        model_point=0,
+        line_intersects=arg_0_3,
+    )
+    IfActionButton(
+        2,
+        prompt_text=10010407,
+        anchor_entity=arg_12_15,
+        anchor_type=CoordEntityType.Region,
+        model_point=0,
+        line_intersects=arg_0_3,
+    )
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -286,9 +313,14 @@ def Event11305390():
     """ 11305390: Event 11305390 """
     IfFlagOff(1, 6)
     IfCharacterAlive(1, 1300800)
-    IfDialogPromptActivated(1, prompt_text=10010403, anchor_entity=1302998, anchor_type=CoordEntityType.Region, 
-                            facing_angle=0.0, max_distance=0.0, human_or_hollow_only=True, line_intersects=1301990, 
-                            boss_version=True)
+    IfActionButton(
+        1,
+        prompt_text=10010403,
+        anchor_entity=1302998,
+        anchor_type=CoordEntityType.Region,
+        line_intersects=1301990,
+        boss_version=True,
+    )
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 1302997)
     ForceAnimation(PLAYER, 7410)
@@ -300,8 +332,14 @@ def Event11305391():
     IfFlagOff(1, 6)
     IfFlagOn(1, 11305393)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfDialogPromptActivated(1, prompt_text=10010403, anchor_entity=1302998, anchor_type=CoordEntityType.Region, 
-                            facing_angle=0.0, max_distance=0.0, human_or_hollow_only=False, line_intersects=1301990)
+    IfActionButton(
+        1,
+        prompt_text=10010403,
+        anchor_entity=1302998,
+        anchor_type=CoordEntityType.Region,
+        trigger_attribute=255,
+        line_intersects=1301990,
+    )
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 1302997)
     ForceAnimation(PLAYER, 7410)
@@ -529,7 +567,7 @@ def Event11305398():
     RunEvent(11305350, slot=13, args=(11305257, 11305258, 1300807, 1300808, 1302609, 1302612, 11305303))
 
 
-def Event11305330(arg_0_3: int, arg_4_7: int):
+def Event11305330(_, arg_0_3: int, arg_4_7: int):
     """ 11305330: Event 11305330 """
     AICommand(arg_0_3, command_id=1, slot=1)
     ReplanAI(arg_0_3)
@@ -538,8 +576,9 @@ def Event11305330(arg_0_3: int, arg_4_7: int):
     ReplanAI(arg_0_3)
 
 
-def Event11305350(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int):
+def Event11305350(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
+):
     """ 11305350: Event 11305350 """
     SkipLinesIfFlagOn(5, 11305399)
     IfHost(1)
@@ -565,7 +604,7 @@ def Event11305350(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     Restart()
 
 
-def Event11305370(arg_0_3: int, arg_4_7: int):
+def Event11305370(_, arg_0_3: int, arg_4_7: int):
     """ 11305370: Event 11305370 """
     IfFlagOn(1, arg_4_7)
     IfHasTAEEvent(1, arg_0_3, tae_event_id=710)
@@ -687,15 +726,39 @@ def Event11300880():
     Kill(1300814, award_souls=False)
 
 
-def Event11300700(arg_0_3: int, arg_4_7: int):
+def Event11300700(_, arg_0_3: int, arg_4_7: int):
     """ 11300700: Event 11300700 """
     IfEntityWithinDistance(0, arg_0_3, PLAYER, radius=1.5)
-    CreateHazard(arg_4_7, arg_0_3, model_point=100, behavior_param_id=5120, target_type=DamageTargetType.Character, 
-                 radius=0.10000000149011612, life=1.0, repetition_time=0.0)
-    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=5120, target_type=DamageTargetType.Character, 
-                 radius=0.10000000149011612, life=1.0, repetition_time=0.0)
-    CreateHazard(arg_4_7, arg_0_3, model_point=102, behavior_param_id=5120, target_type=DamageTargetType.Character, 
-                 radius=0.10000000149011612, life=1.0, repetition_time=0.0)
+    CreateHazard(
+        arg_4_7,
+        arg_0_3,
+        model_point=100,
+        behavior_param_id=5120,
+        target_type=DamageTargetType.Character,
+        radius=0.10000000149011612,
+        life=1.0,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_4_7,
+        arg_0_3,
+        model_point=101,
+        behavior_param_id=5120,
+        target_type=DamageTargetType.Character,
+        radius=0.10000000149011612,
+        life=1.0,
+        repetition_time=0.0,
+    )
+    CreateHazard(
+        arg_4_7,
+        arg_0_3,
+        model_point=102,
+        behavior_param_id=5120,
+        target_type=DamageTargetType.Character,
+        radius=0.10000000149011612,
+        life=1.0,
+        repetition_time=0.0,
+    )
     ForceAnimation(arg_0_3, 0, wait_for_completion=True)
     Restart()
 
@@ -703,22 +766,86 @@ def Event11300700(arg_0_3: int, arg_4_7: int):
 def Event11300300():
     """ 11300300: Event 11300300 """
     IfFlagOff(0, 11300402)
-    CreateHazard(11300301, 1301102, model_point=2, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=10.0, repetition_time=5.0)
-    CreateHazard(11300302, 1301102, model_point=4, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300303, 1301102, model_point=6, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300304, 1301102, model_point=8, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300305, 1301102, model_point=10, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300306, 1301102, model_point=12, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300307, 1301102, model_point=14, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300308, 1301102, model_point=15, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=10.0, repetition_time=5.0)
+    CreateHazard(
+        11300301,
+        1301102,
+        model_point=2,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300302,
+        1301102,
+        model_point=4,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300303,
+        1301102,
+        model_point=6,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300304,
+        1301102,
+        model_point=8,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300305,
+        1301102,
+        model_point=10,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300306,
+        1301102,
+        model_point=12,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300307,
+        1301102,
+        model_point=14,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300308,
+        1301102,
+        model_point=15,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=10.0,
+        repetition_time=5.0,
+    )
     IfFlagOn(0, 11300402)
     RemoveObjectFlag(11300301)
     RemoveObjectFlag(11300302)
@@ -734,28 +861,116 @@ def Event11300300():
 def Event11300350():
     """ 11300350: Event 11300350 """
     IfFlagOff(0, 11300403)
-    CreateHazard(11300351, 1301103, model_point=2, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=10.0, repetition_time=5.0)
-    CreateHazard(11300352, 1301103, model_point=4, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300353, 1301103, model_point=6, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300354, 1301103, model_point=8, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300355, 1301103, model_point=10, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300356, 1301103, model_point=12, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300357, 1301103, model_point=14, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300358, 1301103, model_point=33, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300359, 1301103, model_point=35, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300360, 1301103, model_point=37, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=1.0, life=10.0, repetition_time=5.0)
-    CreateHazard(11300361, 1301103, model_point=39, behavior_param_id=5100, target_type=DamageTargetType.Character, 
-                 radius=0.5, life=10.0, repetition_time=5.0)
+    CreateHazard(
+        11300351,
+        1301103,
+        model_point=2,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300352,
+        1301103,
+        model_point=4,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300353,
+        1301103,
+        model_point=6,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300354,
+        1301103,
+        model_point=8,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300355,
+        1301103,
+        model_point=10,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300356,
+        1301103,
+        model_point=12,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300357,
+        1301103,
+        model_point=14,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300358,
+        1301103,
+        model_point=33,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300359,
+        1301103,
+        model_point=35,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300360,
+        1301103,
+        model_point=37,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=1.0,
+        life=10.0,
+        repetition_time=5.0,
+    )
+    CreateHazard(
+        11300361,
+        1301103,
+        model_point=39,
+        behavior_param_id=5100,
+        target_type=DamageTargetType.Character,
+        radius=0.5,
+        life=10.0,
+        repetition_time=5.0,
+    )
     IfFlagOn(0, 11300403)
     RemoveObjectFlag(11300351)
     RemoveObjectFlag(11300352)
@@ -771,7 +986,7 @@ def Event11300350():
     Restart()
 
 
-def Event11300900(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11300900(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300900: Event 11300900 """
     SkipLinesIfThisEventSlotOff(4)
     EndOfAnimation(arg_8_11, 2)
@@ -784,7 +999,7 @@ def Event11300900(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableNavmeshType(arg_12_15, NavmeshType.Solid)
 
 
-def Event11305030(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event11305030(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 11305030: Event 11305030 """
     SkipLinesIfFlagOff(4, arg_0_3)
     DisableObjectActivation(arg_12_15, obj_act_id=3011)
@@ -815,7 +1030,7 @@ def Event11305030(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     Restart()
 
 
-def Event11305032(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11305032(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11305032: Event 11305032 """
     IfObjectActivated(1, obj_act_id=arg_0_3)
     IfObjectActivated(2, obj_act_id=arg_4_7)
@@ -845,8 +1060,9 @@ def Event11305000():
     IfHealthLessThanOrEqual(7, PLAYER, 0.0)
     RestartIfConditionTrue(7)
     EnableFlag(11310050)
-    PlayCutscene(130020, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=1312110, 
-                 move_to_map=TOMB_OF_THE_GIANTS)
+    PlayCutscene(
+        130020, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=1312110, move_to_map=TOMB_OF_THE_GIANTS
+    )
     PlayCutscene(130120, skippable=True, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
     EnableObjectActivation(1311300, obj_act_id=-1)
@@ -914,7 +1130,7 @@ def Event11305009():
     Restart()
 
 
-def Event11300420(arg_0_3: int):
+def Event11300420(_, arg_0_3: int):
     """ 11300420: Event 11300420 """
     DisableNetworkSync()
     WaitFrames(1)
@@ -929,7 +1145,7 @@ def Event11300420(arg_0_3: int):
     Restart()
 
 
-def Event11300100(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11300100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300100: Event 11300100 """
     SkipLinesIfThisEventSlotOff(2)
     DisableObject(arg_8_11)
@@ -981,13 +1197,15 @@ def Event11300210():
     IfCharacterInsideRegion(1, PLAYER, region=1302030)
     IfConditionTrue(0, input_condition=1)
     SkipLinesIfMultiplayer(3)
-    PlayCutscene(130010, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=1302030, 
-                 move_to_map=CATACOMBS)
+    PlayCutscene(
+        130010, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=1302030, move_to_map=CATACOMBS
+    )
     WaitFrames(1)
     SkipLines(5)
     SkipLinesIfFlagOff(2, 11305060)
-    PlayCutscene(130010, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=1302030, 
-                 move_to_map=CATACOMBS)
+    PlayCutscene(
+        130010, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=1302030, move_to_map=CATACOMBS
+    )
     SkipLines(1)
     PlayCutscene(130010, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
@@ -1011,10 +1229,10 @@ def Event11300800():
     """ 11300800: Event 11300800 """
     EnableFlag(11305200)
     EnableFlag(11305040)
-    RunEvent(11305050, slot=1, args=(11305040, 1300100, 1302202, 10.0), arg_types='iiif')
-    RunEvent(11305050, slot=2, args=(11305051, 1300100, 1302203, 10.0), arg_types='iiif')
-    RunEvent(11305050, slot=3, args=(11305052, 1300100, 1302204, 10.0), arg_types='iiif')
-    RunEvent(11305050, slot=4, args=(11305053, 1300100, 1302205, 10.0), arg_types='iiif')
+    RunEvent(11305050, slot=1, args=(11305040, 1300100, 1302202, 10.0), arg_types="iiif")
+    RunEvent(11305050, slot=2, args=(11305051, 1300100, 1302203, 10.0), arg_types="iiif")
+    RunEvent(11305050, slot=3, args=(11305052, 1300100, 1302204, 10.0), arg_types="iiif")
+    RunEvent(11305050, slot=4, args=(11305053, 1300100, 1302205, 10.0), arg_types="iiif")
     RunEvent(11300801, slot=0, args=(1300100,))
     RunEvent(11300801, slot=1, args=(1300120,))
     RunEvent(11300801, slot=2, args=(1300140,))
@@ -1070,23 +1288,23 @@ def Event11300800():
     RunEvent(11305100, slot=48, args=(1300200, 1300205))
     RunEvent(11305100, slot=49, args=(1300200, 1300206))
     RunEvent(11305100, slot=50, args=(1300200, 1300207))
-    RunEvent(11305070, slot=0, args=(1300107, 5.0), arg_types='if')
-    RunEvent(11305070, slot=1, args=(1300109, 5.0), arg_types='if')
-    RunEvent(11305070, slot=2, args=(1300110, 5.0), arg_types='if')
-    RunEvent(11305070, slot=3, args=(1300113, 5.0), arg_types='if')
-    RunEvent(11305070, slot=4, args=(1300121, 5.0), arg_types='if')
-    RunEvent(11305070, slot=5, args=(1300122, 5.0), arg_types='if')
-    RunEvent(11305070, slot=6, args=(1300123, 5.0), arg_types='if')
-    RunEvent(11305070, slot=7, args=(1300124, 5.0), arg_types='if')
-    RunEvent(11305070, slot=8, args=(1300125, 5.0), arg_types='if')
-    RunEvent(11305070, slot=9, args=(1300147, 5.0), arg_types='if')
-    RunEvent(11305070, slot=10, args=(1300181, 5.0), arg_types='if')
-    RunEvent(11305070, slot=11, args=(1300182, 5.0), arg_types='if')
-    RunEvent(11305070, slot=12, args=(1300000, 5.0), arg_types='if')
-    RunEvent(11305070, slot=13, args=(1300001, 5.0), arg_types='if')
-    RunEvent(11305070, slot=16, args=(1300163, 5.0), arg_types='if')
-    RunEvent(11305070, slot=17, args=(1300164, 5.0), arg_types='if')
-    RunEvent(11305070, slot=18, args=(1300020, 5.0), arg_types='if')
+    RunEvent(11305070, slot=0, args=(1300107, 5.0), arg_types="if")
+    RunEvent(11305070, slot=1, args=(1300109, 5.0), arg_types="if")
+    RunEvent(11305070, slot=2, args=(1300110, 5.0), arg_types="if")
+    RunEvent(11305070, slot=3, args=(1300113, 5.0), arg_types="if")
+    RunEvent(11305070, slot=4, args=(1300121, 5.0), arg_types="if")
+    RunEvent(11305070, slot=5, args=(1300122, 5.0), arg_types="if")
+    RunEvent(11305070, slot=6, args=(1300123, 5.0), arg_types="if")
+    RunEvent(11305070, slot=7, args=(1300124, 5.0), arg_types="if")
+    RunEvent(11305070, slot=8, args=(1300125, 5.0), arg_types="if")
+    RunEvent(11305070, slot=9, args=(1300147, 5.0), arg_types="if")
+    RunEvent(11305070, slot=10, args=(1300181, 5.0), arg_types="if")
+    RunEvent(11305070, slot=11, args=(1300182, 5.0), arg_types="if")
+    RunEvent(11305070, slot=12, args=(1300000, 5.0), arg_types="if")
+    RunEvent(11305070, slot=13, args=(1300001, 5.0), arg_types="if")
+    RunEvent(11305070, slot=16, args=(1300163, 5.0), arg_types="if")
+    RunEvent(11305070, slot=17, args=(1300164, 5.0), arg_types="if")
+    RunEvent(11305070, slot=18, args=(1300020, 5.0), arg_types="if")
     RunEvent(11305210, slot=0, args=(1300350,))
     RunEvent(11305210, slot=1, args=(1300351,))
     RunEvent(11305210, slot=2, args=(1300352,))
@@ -1102,7 +1320,7 @@ def Event11300800():
 
 
 @UnknownRestart
-def Event11305050(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float):
+def Event11305050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float):
     """ 11305050: Event 11305050 """
     EndIfThisEventSlotOn()
     IfFlagOn(1, arg_0_3)
@@ -1119,7 +1337,7 @@ def Event11305050(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float):
 
 
 @RestartOnRest
-def Event11300801(arg_0_3: int):
+def Event11300801(_, arg_0_3: int):
     """ 11300801: Event 11300801 """
     SkipLinesIfThisEventSlotOff(3)
     DisableCharacter(arg_0_3)
@@ -1130,7 +1348,7 @@ def Event11300801(arg_0_3: int):
 
 
 @UnknownRestart
-def Event11305070(arg_0_3: int, arg_4_7: float):
+def Event11305070(_, arg_0_3: int, arg_4_7: float):
     """ 11305070: Event 11305070 """
     SkipLinesIfThisEventSlotOff(2)
     ResetStandbyAnimationSettings(arg_0_3)
@@ -1140,7 +1358,7 @@ def Event11305070(arg_0_3: int, arg_4_7: float):
 
 
 @UnknownRestart
-def Event11305100(arg_0_3: int, arg_4_7: int):
+def Event11305100(_, arg_0_3: int, arg_4_7: int):
     """ 11305100: Event 11305100 """
     SkipLinesIfThisEventSlotOff(2)
     CancelSpecialEffect(arg_4_7, 5451)
@@ -1152,7 +1370,7 @@ def Event11305100(arg_0_3: int, arg_4_7: int):
 
 
 @UnknownRestart
-def Event11305210(arg_0_3: int):
+def Event11305210(_, arg_0_3: int):
     """ 11305210: Event 11305210 """
     SkipLinesIfThisEventSlotOn(1)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=400)
@@ -1173,7 +1391,7 @@ def Event11305045():
 
 
 @RestartOnRest
-def Event11300850(arg_0_3: int, arg_4_7: int):
+def Event11300850(_, arg_0_3: int, arg_4_7: int):
     """ 11300850: Event 11300850 """
     SkipLinesIfThisEventSlotOff(3)
     DisableCharacter(arg_0_3)
@@ -1187,7 +1405,7 @@ def Event11300850(arg_0_3: int, arg_4_7: int):
     AwardItemLot(arg_4_7, host_only=True)
 
 
-def Event11300510(arg_0_3: int, arg_4_7: int):
+def Event11300510(_, arg_0_3: int, arg_4_7: int):
     """ 11300510: Event 11300510 """
     IfHealthLessThanOrEqual(1, arg_0_3, 0.8999999761581421)
     IfHealthGreaterThan(1, arg_0_3, 0.0)
@@ -1208,7 +1426,7 @@ def Event11300510(arg_0_3: int, arg_4_7: int):
     SaveRequest()
 
 
-def Event11300520(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11300520(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300520: Event 11300520 """
     SkipLinesIfThisEventSlotOff(2)
     DropMandatoryTreasure(arg_0_3)
@@ -1218,7 +1436,7 @@ def Event11300520(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableFlag(arg_12_15)
 
 
-def Event11300530(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11300530(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300530: Event 11300530 """
     IfFlagOff(1, 1622)
     IfFlagOff(1, 1625)
@@ -1232,7 +1450,7 @@ def Event11300530(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableFlag(arg_12_15)
 
 
-def Event11300531(arg_0_3: int, arg_4_7: int):
+def Event11300531(_, arg_0_3: int, arg_4_7: int):
     """ 11300531: Event 11300531 """
     IfFlagOn(1, 1620)
     IfHealthLessThanOrEqual(1, arg_0_3, 0.0)
@@ -1250,7 +1468,7 @@ def Event11300531(arg_0_3: int, arg_4_7: int):
     DropMandatoryTreasure(arg_0_3)
 
 
-def Event11300533(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event11300533(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300533: Event 11300533 """
     IfFlagOff(1, 1627)
     IfFlagOff(1, 1628)
@@ -1288,6 +1506,37 @@ def Event11305025():
     SetNest(6550, 1302051)
 
 
+def Event11305990(_, arg_0_3: int, arg_4_7: int):
+    """ 11305990: Event 11305990 """
+    IfFlagOn(0, arg_0_3)
+    EraseNPCSummonSign(summoned_character=arg_4_7)
+    IfFlagOff(0, arg_0_3)
+    Restart()
+
+
+def Event11305029():
+    """ 11305029: Event 11305029 """
+    SkipLinesIfClient(1)
+    SetNetworkUpdateAuthority(6550, UpdateAuthority.Forced)
+    SkipLinesIfFlagOn(3, 11305028)
+    IfClient(2)
+    IfFlagOn(2, 11305026)
+    SkipLinesIfConditionTrue(1, 2)
+    DisableCharacter(6550)
+    EndIfFlagOn(6)
+    IfMultiplayerCount(condition=1, arg1=4, arg2=3)
+    IfHost(1)
+    IfFlagOff(1, 11305026)
+    IfFlagOff(1, 11305028)
+    IfCharacterHuman(1, PLAYER)
+    IfCharacterBackreadEnabled(1, 6550)
+    IfCharacterHasSpecialEffect(1, PLAYER, 28)
+    IfConditionTrue(0, input_condition=1)
+    PlaceSummonSign(SummonSignType.BlueEyeSign, 6550, region=1302050, summon_flag=11305026, dismissal_flag=11305028)
+    IfFlagOn(0, 11305026)
+    SetNest(6550, 1302051)
+
+
 def Event11305027():
     """ 11305027: Event 11305027 """
     EndIfThisEventOn()
@@ -1304,7 +1553,7 @@ def Event11305027():
 
 
 @RestartOnRest
-def Event11305061(arg_0_3: int):
+def Event11305061(_, arg_0_3: int):
     """ 11305061: Event 11305061 """
     EndIfThisEventOn()
     DisableCharacterCollision(arg_0_3)
@@ -1335,3 +1584,41 @@ def Event11300593():
     IfConditionTrue(0, input_condition=1)
     EnableFlag(11300593)
     ActivateObject(1301003, obj_act_id=3012, relative_index=-1)
+
+
+def Event11305843(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+    """ 11305843: Event 11305843 """
+    IfHost(1)
+    IfMultiplayer(1)
+    IfFlagOn(1, arg_0_3)
+    IfActionButton(
+        1,
+        prompt_text=10010403,
+        anchor_entity=arg_8_11,
+        anchor_type=CoordEntityType.Region,
+        line_intersects=arg_4_7,
+        boss_version=True,
+    )
+    IfConditionTrue(0, input_condition=1)
+    RotateToFaceEntity(PLAYER, arg_12_15)
+    ForceAnimation(PLAYER, 7410, wait_for_completion=True)
+    Unknown_2003_47()
+    Restart()
+
+
+def Event11305846(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
+    """ 11305846: Event 11305846 """
+    IfMultiplayer(-1)
+    IfUnknownPlayerType5(-1)
+    IfConditionTrue(1, input_condition=-1)
+    IfFlagOn(1, arg_0_3)
+    IfConditionTrue(0, input_condition=1)
+    EnableObject(arg_4_7)
+    CreateFX(arg_8_11)
+    IfUnknownPlayerType5(3)
+    IfConditionFalse(2, input_condition=3)
+    IfSingleplayer(2)
+    IfConditionTrue(0, input_condition=2)
+    DisableObject(arg_4_7)
+    DeleteFX(arg_8_11, erase_root_only=True)
+    Restart()

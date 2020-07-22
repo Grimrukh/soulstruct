@@ -18,23 +18,20 @@ def MSBEvent(msb_buffer):
 
 class BaseMSBEvent(MSBEntryEntity):
     EVENT_HEADER_STRUCT = BinaryStruct(
-        ('__name_offset', 'i'),
-        ('_event_index', 'i'),
-        ('__event_type', 'I'),
-        ('_local_event_index', 'i'),
-        ('__base_data_offset', 'i'),
-        ('__type_data_offset', 'i'),
-        '4x',
+        ("__name_offset", "i"),
+        ("_event_index", "i"),
+        ("__event_type", "I"),
+        ("_local_event_index", "i"),
+        ("__base_data_offset", "i"),
+        ("__type_data_offset", "i"),
+        "4x",
     )
     # Name is stored next.
     # Base data is stored next.
     # Type data is stored next.
 
     EVENT_BASE_DATA_STRUCT = BinaryStruct(
-        ('_base_part_index', 'i'),
-        ('_base_region_index', 'i'),
-        ('entity_id', 'i'),
-        '4x',
+        ("_base_part_index", "i"), ("_base_region_index", "i"), ("entity_id", "i"), "4x",
     )
 
     EVENT_TYPE_DATA_STRUCT = ()
@@ -65,7 +62,7 @@ class BaseMSBEvent(MSBEntryEntity):
         msb_buffer.seek(event_offset + header["__base_data_offset"])
         base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
         name_offset = event_offset + header["__name_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding='shift-jis')
+        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding="shift-jis")
         self.set(**header)
         self.set(**base_data)
         msb_buffer.seek(event_offset + header["__type_data_offset"])
@@ -83,7 +80,7 @@ class BaseMSBEvent(MSBEntryEntity):
 
     def pack(self):
         name_offset = self.EVENT_HEADER_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding='shift-jis', pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift-jis", pad_to_multiple_of=4)
         base_data_offset = name_offset + len(packed_name)
         packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)
@@ -109,7 +106,7 @@ class BaseMSBEvent(MSBEntryEntity):
         old_offset = msb_buffer.tell()
         msb_buffer.seek(old_offset + 8)
         try:
-            event_type_int = struct.unpack('i', msb_buffer.read(4))[0]
+            event_type_int = struct.unpack("i", msb_buffer.read(4))[0]
             event_type = MSB_EVENT_TYPE(event_type_int)
         except (ValueError, TypeError):
             event_type = None
@@ -118,23 +115,33 @@ class BaseMSBEvent(MSBEntryEntity):
 
 
 class MSBLight(BaseMSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
-        ('point_light', 'i'),
-    )
+    EVENT_TYPE_DATA_STRUCT = (("point_light", "i"),)
 
     FIELD_INFO = {
-        'base_part_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Light will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
-        'base_region_name': (
-            'Light Region', True, '<Maps:Regions>',
-            "Region (usually a Point) at which Light appears."),
-        'entity_id': (
-            'Entity ID', False, int,
-            "Entity ID used to refer to the event in other game files. (Unused for Lights.)"),
-        'point_light': (
-            'Point Light', True, int,  # TODO: Link to Lighting.
-            "Point Light lighting parameter ID to use for this light."),
+        "base_part_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Light will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
+        ),
+        "base_region_name": (
+            "Light Region",
+            True,
+            "<Maps:Regions>",
+            "Region (usually a Point) at which Light appears.",
+        ),
+        "entity_id": (
+            "Entity ID",
+            False,
+            int,
+            "Entity ID used to refer to the event in other game files. (Unused for Lights.)",
+        ),
+        "point_light": (
+            "Point Light",
+            True,
+            int,  # TODO: Link to Lighting.
+            "Point Light lighting parameter ID to use for this light.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Light
@@ -147,26 +154,31 @@ class MSBLight(BaseMSBEvent):
 
 class MSBSound(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('sound_type', 'i'),
-        ('sound_id', 'i'),
+        ("sound_type", "i"),
+        ("sound_id", "i"),
     )
 
     FIELD_INFO = {
-        'base_part_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Sound is connected to this part (usually a Collision or Map Piece part), but this has an unknown effect."),
-        'base_region_name': (
-            'Sound Volume', True, '<Maps:Regions>',
-            "Region in which Sound can be heard, if it's enabled."),
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the Sound in other game files."),
-        'sound_type': (
-            'Sound Type', True, SoundType,
-            "Type of sound, which is used to find the sound data (sound name prefix letter)."),
-        'sound_id': (
-            'Sound ID', True, '<Sound>',
-            "Sound data ID, which refers to an ID in loaded sound events."),
+        "base_part_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Sound is connected to this part (usually a Collision or Map Piece part), but this has an unknown effect.",
+        ),
+        "base_region_name": (
+            "Sound Volume",
+            True,
+            "<Maps:Regions>",
+            "Region in which Sound can be heard, if it's enabled.",
+        ),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Sound in other game files."),
+        "sound_type": (
+            "Sound Type",
+            True,
+            SoundType,
+            "Type of sound, which is used to find the sound data (sound name prefix letter).",
+        ),
+        "sound_id": ("Sound ID", True, "<Sound>", "Sound data ID, which refers to an ID in loaded sound events."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Sound
@@ -179,23 +191,18 @@ class MSBSound(BaseMSBEvent):
 
 
 class MSBFX(BaseMSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
-        ('fx_id', 'i'),
-    )
+    EVENT_TYPE_DATA_STRUCT = (("fx_id", "i"),)
 
     FIELD_INFO = {
-        'base_part_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "FX will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
-        'base_region_name': (
-            'FX Region', True, '<Maps:Regions>',
-            "Region (usually a Point) at which FX appears."),
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the FX in other game files."),
-        'fx_id': (
-            'FX ID', True, int,
-            "Visual effect ID, which refers to a loaded FX file."),
+        "base_part_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "FX will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
+        ),
+        "base_region_name": ("FX Region", True, "<Maps:Regions>", "Region (usually a Point) at which FX appears."),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the FX in other game files."),
+        "fx_id": ("FX ID", True, int, "Visual effect ID, which refers to a loaded FX file."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.FX
@@ -208,77 +215,43 @@ class MSBFX(BaseMSBEvent):
 
 class MSBWind(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('unk_x00_x04', 'f'),
-        ('unk_x04_x08', 'f'),
-        ('unk_x08_x0c', 'f'),
-        ('unk_x0c_x10', 'f'),
-        ('unk_x10_x14', 'f'),
-        ('unk_x14_x18', 'f'),
-        ('unk_x18_x1c', 'f'),
-        ('unk_x1c_x20', 'f'),
-        ('unk_x20_x24', 'f'),
-        ('unk_x24_x28', 'f'),
-        ('unk_x28_x2c', 'f'),
-        ('unk_x2c_x30', 'f'),
-        ('unk_x30_x34', 'f'),
-        ('unk_x34_x38', 'f'),
-        ('unk_x38_x3c', 'f'),
-        ('unk_x3c_x40', 'f'),
+        ("unk_x00_x04", "f"),
+        ("unk_x04_x08", "f"),
+        ("unk_x08_x0c", "f"),
+        ("unk_x0c_x10", "f"),
+        ("unk_x10_x14", "f"),
+        ("unk_x14_x18", "f"),
+        ("unk_x18_x1c", "f"),
+        ("unk_x1c_x20", "f"),
+        ("unk_x20_x24", "f"),
+        ("unk_x24_x28", "f"),
+        ("unk_x28_x2c", "f"),
+        ("unk_x2c_x30", "f"),
+        ("unk_x30_x34", "f"),
+        ("unk_x34_x38", "f"),
+        ("unk_x38_x3c", "f"),
+        ("unk_x3c_x40", "f"),
     )
 
     FIELD_INFO = {
-        'entity_id': (
-            'Entity ID', False, int,
-            "Unused for Wind events."),
+        "entity_id": ("Entity ID", False, int, "Unused for Wind events."),
         **BaseMSBEvent.FIELD_INFO,
-        'unk_x00_x04': (
-            'Unknown [00-04]', True, int,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x04_x08': (
-            'Unknown [04-08]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x08_x0c': (
-            'Unknown [08-0c]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x0c_x10': (
-            'Unknown [0c-10]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x10_x14': (
-            'Unknown [10-14]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x14_x18': (
-            'Unknown [14-18]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x18_x1c': (
-            'Unknown [18-1c]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x1c_x20': (
-            'Unknown [1c-20]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x20_x24': (
-            'Unknown [20-24]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x24_x28': (
-            'Unknown [24-28]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x28_x2c': (
-            'Unknown [28-2c]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x2c_x30': (
-            'Unknown [2c-30]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x30_x34': (
-            'Unknown [30-34]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x34_x38': (
-            'Unknown [34-38]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x38_x3c': (
-            'Unknown [38-3c]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
-        'unk_x3c_x40': (
-            'Unknown [3c-40]', True, float,
-            "Unknown Wind parameter (floating-point number)."),
+        "unk_x00_x04": ("Unknown [00-04]", True, int, "Unknown Wind parameter (floating-point number)."),
+        "unk_x04_x08": ("Unknown [04-08]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x08_x0c": ("Unknown [08-0c]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x0c_x10": ("Unknown [0c-10]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x10_x14": ("Unknown [10-14]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x14_x18": ("Unknown [14-18]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x18_x1c": ("Unknown [18-1c]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x1c_x20": ("Unknown [1c-20]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x20_x24": ("Unknown [20-24]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x24_x28": ("Unknown [24-28]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x28_x2c": ("Unknown [28-2c]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x2c_x30": ("Unknown [2c-30]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x30_x34": ("Unknown [30-34]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x34_x38": ("Unknown [34-38]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x38_x3c": ("Unknown [38-3c]", True, float, "Unknown Wind parameter (floating-point number)."),
+        "unk_x3c_x40": ("Unknown [3c-40]", True, float, "Unknown Wind parameter (floating-point number)."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Wind
@@ -308,57 +281,79 @@ class MSBWind(BaseMSBEvent):
 
 class MSBTreasure(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        '4x',
-        ('_treasure_part_index', 'i'),
-        ('item_lot_1', 'i'),
-        ('minus_one_1', 'i', -1),
-        ('item_lot_2', 'i'),
-        ('minus_one_2', 'i', -1),
-        ('item_lot_3', 'i'),
-        ('minus_one_3', 'i', -1),
-        ('item_lot_4', 'i'),
-        ('minus_one_4', 'i', -1),
-        ('item_lot_5', 'i'),
-        ('minus_one_5', 'i', -1),
-        ('in_chest', '?'),
-        ('starts_disabled', '?'),
-        '2x',
+        "4x",
+        ("_treasure_part_index", "i"),
+        ("item_lot_1", "i"),
+        ("minus_one_1", "i", -1),
+        ("item_lot_2", "i"),
+        ("minus_one_2", "i", -1),
+        ("item_lot_3", "i"),
+        ("minus_one_3", "i", -1),
+        ("item_lot_4", "i"),
+        ("minus_one_4", "i", -1),
+        ("item_lot_5", "i"),
+        ("minus_one_5", "i", -1),
+        ("in_chest", "?"),
+        ("starts_disabled", "?"),
+        "2x",
     )
 
     FIELD_INFO = {
         # base_part, base_region, and entity_id are unused for Treasure.'
-        'entity_id': (
-            'Entity ID', False, int,
-            "Unused for Treasure events."),
-        'treasure_part_name': (
-            'Treasure Object', True, '<Maps:Parts:Objects>',
-            "Object on which treasure will appear (usually a corpse or chest)."),
-        'item_lot_1': (
-            'Item Lot 1', True, '<Params:ItemLots>',
+        "entity_id": ("Entity ID", False, int, "Unused for Treasure events."),
+        "treasure_part_name": (
+            "Treasure Object",
+            True,
+            "<Maps:Parts:Objects>",
+            "Object on which treasure will appear (usually a corpse or chest).",
+        ),
+        "item_lot_1": (
+            "Item Lot 1",
+            True,
+            "<Params:ItemLots>",
             "First item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
-            "awarded.)"),
-        'item_lot_2': (
-            'Item Lot 2', True, '<Params:ItemLots>',
+            "awarded.)",
+        ),
+        "item_lot_2": (
+            "Item Lot 2",
+            True,
+            "<Params:ItemLots>",
             "Second item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
-            "awarded.)"),
-        'item_lot_3': (
-            'Item Lot 3', True, '<Params:ItemLots>',
+            "awarded.)",
+        ),
+        "item_lot_3": (
+            "Item Lot 3",
+            True,
+            "<Params:ItemLots>",
             "Third item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
-            "awarded.)"),
-        'item_lot_4': (
-            'Item Lot 4', True, '<Params:ItemLots>',
+            "awarded.)",
+        ),
+        "item_lot_4": (
+            "Item Lot 4",
+            True,
+            "<Params:ItemLots>",
             "Fourth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
-            "awarded.)"),
-        'item_lot_5': (
-            'Item Lot 5', True, '<Params:ItemLots>',
+            "awarded.)",
+        ),
+        "item_lot_5": (
+            "Item Lot 5",
+            True,
+            "<Params:ItemLots>",
             "Fifth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
-            "awarded.)"),
-        'in_chest': (
-            'Is In Chest', True, bool,
-            "Indicates if this treasure is inside a chest (affects appearance)."),  # TODO: effect?
-        'starts_disabled': (
-            'Starts Disabled', True, bool,
-            "If True, this treasure will start disabled and will need to be enabled manually with an event script."),
+            "awarded.)",
+        ),
+        "in_chest": (
+            "Is In Chest",
+            True,
+            bool,
+            "Indicates if this treasure is inside a chest (affects appearance).",
+        ),  # TODO: effect?
+        "starts_disabled": (
+            "Starts Disabled",
+            True,
+            bool,
+            "If True, this treasure will start disabled and will need to be enabled manually with an event script.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Treasure
@@ -387,51 +382,56 @@ class MSBTreasure(BaseMSBEvent):
 
 class MSBSpawner(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('max_count', 'h'),
-        ('limit_count', 'h'),
-        ('min_spawner_count', 'h'),
-        ('max_spawner_count', 'h'),
-        ('min_interval', 'f'),
-        ('max_interval', 'f'),
-        ('initial_spawn_count', 'i'),
-        '28x',
-        ('_spawn_region_indices', '4i'),
-        ('_spawn_part_indices', '32i'),
-        '64x',
+        ("max_count", "h"),
+        ("limit_count", "h"),
+        ("min_spawner_count", "h"),
+        ("max_spawner_count", "h"),
+        ("min_interval", "f"),
+        ("max_interval", "f"),
+        ("initial_spawn_count", "i"),
+        "28x",
+        ("_spawn_region_indices", "4i"),
+        ("_spawn_part_indices", "32i"),
+        "64x",
     )
 
     FIELD_INFO = {
         # base_part and base_region are unused for Spawners.
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the Spawner in other game files."),
-        'max_count': (
-            'Max Count', True, int,
-            "Unsure; I suspect this is the total number of entities this spawner can produce."),
-        'limit_count': (
-            'Limit Count', True, int,
-            "Unsure; I suspect this is the number of spawned entities that can be alive at once."),
-        'min_spawner_count': (
-            'Min Spawner Count', True, int,
-            "Unsure."),
-        'max_spawner_count': (
-            'Max Spawner Count', True, int,
-            "Unsure."),
-        'min_interval': (
-            'Min Interval', True, float,
-            "Minimum number of seconds between spawns."),
-        'max_interval': (
-            'Max Interval', True, float,
-            "Maximum number of seconds between spawns."),
-        'initial_spawn_count': (
-            'Initial Spawn Count', True, int,
-            'Unsure; I suspect this is the number of entities spawned immediately on map load.'),
-        'spawn_region_names': (
-            'Spawn Regions', True, '<MapsList:Regions>',  # TODO: need a special pop-out window of entries for this.
-            "Regions where entities will be spawned."),
-        'spawn_part_names': (
-            'Spawn Characters', True, '<MapsList:Parts:Characters>',  # TODO: ditto
-            "Entities that will be spawned at given regions."),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Spawner in other game files."),
+        "max_count": (
+            "Max Count",
+            True,
+            int,
+            "Unsure; I suspect this is the total number of entities this spawner can produce.",
+        ),
+        "limit_count": (
+            "Limit Count",
+            True,
+            int,
+            "Unsure; I suspect this is the number of spawned entities that can be alive at once.",
+        ),
+        "min_spawner_count": ("Min Spawner Count", True, int, "Unsure."),
+        "max_spawner_count": ("Max Spawner Count", True, int, "Unsure."),
+        "min_interval": ("Min Interval", True, float, "Minimum number of seconds between spawns."),
+        "max_interval": ("Max Interval", True, float, "Maximum number of seconds between spawns."),
+        "initial_spawn_count": (
+            "Initial Spawn Count",
+            True,
+            int,
+            "Unsure; I suspect this is the number of entities spawned immediately on map load.",
+        ),
+        "spawn_region_names": (
+            "Spawn Regions",
+            True,
+            "<MapsList:Regions>",  # TODO: need a special pop-out window of entries for this.
+            "Regions where entities will be spawned.",
+        ),
+        "spawn_part_names": (
+            "Spawn Characters",
+            True,
+            "<MapsList:Parts:Characters>",  # TODO: ditto
+            "Entities that will be spawned at given regions.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Spawner
@@ -464,31 +464,34 @@ class MSBSpawner(BaseMSBEvent):
 
 class MSBMessage(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('text_id', 'h'),
-        ('unk_x02_x04', 'h'),
-        ('starts_disabled', '?'),
-        '3x',
+        ("text_id", "h"),
+        ("unk_x02_x04", "h"),
+        ("starts_disabled", "?"),
+        "3x",
     )
 
     FIELD_INFO = {
-        'base_part_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Message will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn."),
-        'base_region_name': (
-            'Message Region', True, '<Maps:Regions>',
-            "Region (usually a Point) at which Message appears."),
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the Message in other game files."),
-        'text_id': (
-            'Message Text', True, '<Text:SoapstoneMessages>',
-            "Text shown when soapstone message is examined."),
-        'unk_x02_x04': (
-            'Unknown [02-04]', True, int,
-            "Unknown. Often set to 2."),
-        'starts_disabled': (
-            'Starts Disabled', True, bool,
-            "If True, the message must be manually enabled with an event script or by using Seek Guidance."),
+        "base_part_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Message will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
+        ),
+        "base_region_name": (
+            "Message Region",
+            True,
+            "<Maps:Regions>",
+            "Region (usually a Point) at which Message appears.",
+        ),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Message in other game files."),
+        "text_id": ("Message Text", True, "<Text:SoapstoneMessages>", "Text shown when soapstone message is examined."),
+        "unk_x02_x04": ("Unknown [02-04]", True, int, "Unknown. Often set to 2."),
+        "starts_disabled": (
+            "Starts Disabled",
+            True,
+            bool,
+            "If True, the message must be manually enabled with an event script or by using Seek Guidance.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Message
@@ -503,33 +506,41 @@ class MSBMessage(BaseMSBEvent):
 
 class MSBObjAct(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('obj_act_entity_id', 'i'),
-        ('_obj_act_part_index', 'i'),
-        ('obj_act_param_id', 'h'),
-        ('unk_x0a_x0c', 'h'),
-        ('obj_act_flag', 'i'),
+        ("obj_act_entity_id", "i"),
+        ("_obj_act_part_index", "i"),
+        ("obj_act_param_id", "h"),
+        ("unk_x0a_x0c", "h"),
+        ("obj_act_flag", "i"),
     )
 
     FIELD_INFO = {
         # base_part, base_region, and entity_id are unused in ObjActs.
-        'entity_id': (
-            'Entity ID', False, int,
-            "Unused for ObjAct events. Use ObjAct Entity ID instead."),
-        'obj_act_entity_id': (
-            'ObjAct Entity ID', True, int,
-            "ID that identifies this object activation event in event scripts."),
-        'obj_act_part_name': (
-            'Object', True, '<Maps:Parts:Objects>',
-            "Object to which this object activation event is attached."),
-        'obj_act_param_id': (
-            'ObjAct Param', True, '<Params:ObjectActivations>',
-            "Param entry containing information about this object activation event."),
-        'unk_x0a_x0c': (
-            'Unknown [0a-0c]', True, int,
-            "Unknown."),  # TODO: investigate
-        'obj_act_flag': (
-            'ObjAct Flag', True, '<Flag>',
-            "Flag that stores the persistent state (e.g. open/closed) of this object activation."),
+        "entity_id": ("Entity ID", False, int, "Unused for ObjAct events. Use ObjAct Entity ID instead."),
+        "obj_act_entity_id": (
+            "ObjAct Entity ID",
+            True,
+            int,
+            "ID that identifies this object activation event in event scripts.",
+        ),
+        "obj_act_part_name": (
+            "Object",
+            True,
+            "<Maps:Parts:Objects>",
+            "Object to which this object activation event is attached.",
+        ),
+        "obj_act_param_id": (
+            "ObjAct Param",
+            True,
+            "<Params:ObjectActivations>",
+            "Param entry containing information about this object activation event.",
+        ),
+        "unk_x0a_x0c": ("Unknown [0a-0c]", True, int, "Unknown."),  # TODO: investigate
+        "obj_act_flag": (
+            "ObjAct Flag",
+            True,
+            "<Flag>",
+            "Flag that stores the persistent state (e.g. open/closed) of this object activation.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.ObjAct
@@ -555,21 +566,25 @@ class MSBObjAct(BaseMSBEvent):
 
 class MSBSpawnPoint(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('_spawn_point_region_index', 'i'),
-        '12x',
+        ("_spawn_point_region_index", "i"),
+        "12x",
     )
 
     FIELD_INFO = {
         # base_region is unused in Spawn Points.
-        'base_part_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Some Spawn Points use this; unclear what it does, but it is presumably the Collision of the Spawn Point."),
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the Spawn Point in other game files."),
-        'spawn_point_region_name': (
-            'Spawn Point Region', True, '<Maps:Regions>',
-            "Region where player will spawn when registered to this spawn point."),
+        "base_part_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Some Spawn Points use this; unclear what it does, but it is presumably the Collision of the Spawn Point.",
+        ),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Spawn Point in other game files."),
+        "spawn_point_region_name": (
+            "Spawn Point Region",
+            True,
+            "<Maps:Regions>",
+            "Region where player will spawn when registered to this spawn point.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.SpawnPoint
@@ -597,20 +612,14 @@ class MSBSpawnPoint(BaseMSBEvent):
 
 class MSBMapOffset(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('translate', '3f'),
-        ('rotate_y', 'f'),
+        ("translate", "3f"),
+        ("rotate_y", "f"),
     )
 
     FIELD_INFO = {
-        'entity_id': (
-            'Entity ID', False, int,
-            "Unused for MapOffset events."),
-        'translate': (
-            'Translate', True, Vector3,
-            "Vector of (x, y, z) coordinates of map offset."),
-        'rotate_y': (
-            'Y Rotation', True, float,
-            "Euler angle of rotation around the Y (vertical) axis."),
+        "entity_id": ("Entity ID", False, int, "Unused for MapOffset events."),
+        "translate": ("Translate", True, Vector3, "Vector of (x, y, z) coordinates of map offset."),
+        "rotate_y": ("Y Rotation", True, float, "Euler angle of rotation around the Y (vertical) axis."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.MapOffset
@@ -624,17 +633,13 @@ class MSBMapOffset(BaseMSBEvent):
 
 class MSBNavmesh(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('_navmesh_region_index', 'i'),
-        '12x',
+        ("_navmesh_region_index", "i"),
+        "12x",
     )
 
     FIELD_INFO = {
-        'entity_id': (
-            'Entity ID', True, int,
-            "Entity ID used to refer to the Navmesh in other game files."),
-        'navmesh_region_name': (
-            'Navmesh Region', True, '<Maps:Regions>',
-            "Region to which navmesh event is attached."),
+        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Navmesh in other game files."),
+        "navmesh_region_name": ("Navmesh Region", True, "<Maps:Regions>", "Region to which navmesh event is attached."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Navigation
@@ -659,44 +664,41 @@ class MSBNavmesh(BaseMSBEvent):
 
 class MSBEnvironment(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('unk_x00_x04', 'i'),
-        ('unk_x04_x08', 'f'),
-        ('unk_x08_x0c', 'f'),
-        ('unk_x0c_x10', 'f'),
-        ('unk_x10_x14', 'f'),
-        ('unk_x14_x18', 'f'),
-        '8x',
+        ("unk_x00_x04", "i"),
+        ("unk_x04_x08", "f"),
+        ("unk_x08_x0c", "f"),
+        ("unk_x0c_x10", "f"),
+        ("unk_x10_x14", "f"),
+        ("unk_x14_x18", "f"),
+        "8x",
     )
 
     FIELD_INFO = {
-        'base_part_name': (
-            'Draw Parent', True, '<Maps:Parts>',
-            "Environment (or 'map spot') will be drawn whenever its parent is drawn."),
-        'base_region_name': (
-            'Environment Region', True, '<Maps:Regions>',
-            "Region (usually a Point) at which Environment appears (whatever that means)."),
-        'entity_id': (
-            'Environment ID', True, int,
+        "base_part_name": (
+            "Draw Parent",
+            True,
+            "<Maps:Parts>",
+            "Environment (or 'map spot') will be drawn whenever its parent is drawn.",
+        ),
+        "base_region_name": (
+            "Environment Region",
+            True,
+            "<Maps:Regions>",
+            "Region (usually a Point) at which Environment appears (whatever that means).",
+        ),
+        "entity_id": (
+            "Environment ID",
+            True,
+            int,
             "Unknown index. Note that this replaces the Entity ID field (unlikely that it works as an Entity ID, as "
-            "the same low-numbering values are used in multiple maps)."),
-        'unk_x00_x04': (
-            'Unknown [00-04]', True, int,
-            "Unknown Environment parameter (integer)."),
-        'unk_x04_x08': (
-            'Unknown [04-08]', True, float,
-            "Unknown Environment parameter (floating-point number)."),
-        'unk_x08_x0c': (
-            'Unknown [08-0c]', True, float,
-            "Unknown Environment parameter (floating-point number)."),
-        'unk_x0c_x10': (
-            'Unknown [0c-10]', True, float,
-            "Unknown Environment parameter (floating-point number)."),
-        'unk_x10_x14': (
-            'Unknown [10-14]', True, float,
-            "Unknown Environment parameter (floating-point number)."),
-        'unk_x14_x18': (
-            'Unknown [14-18]', True, float,
-            "Unknown Environment parameter (floating-point number)."),
+            "the same low-numbering values are used in multiple maps).",
+        ),
+        "unk_x00_x04": ("Unknown [00-04]", True, int, "Unknown Environment parameter (integer)."),
+        "unk_x04_x08": ("Unknown [04-08]", True, float, "Unknown Environment parameter (floating-point number)."),
+        "unk_x08_x0c": ("Unknown [08-0c]", True, float, "Unknown Environment parameter (floating-point number)."),
+        "unk_x0c_x10": ("Unknown [0c-10]", True, float, "Unknown Environment parameter (floating-point number)."),
+        "unk_x10_x14": ("Unknown [10-14]", True, float, "Unknown Environment parameter (floating-point number)."),
+        "unk_x14_x18": ("Unknown [14-18]", True, float, "Unknown Environment parameter (floating-point number)."),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.Environment
@@ -714,29 +716,39 @@ class MSBEnvironment(BaseMSBEvent):
 
 class MSBNPCInvasion(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ('host_entity_id', 'i'),
-        ('invasion_flag_id', 'i'),
-        ('_spawn_point_region_index', 'i'),
-        '4x',
+        ("host_entity_id", "i"),
+        ("invasion_flag_id", "i"),
+        ("_spawn_point_region_index", "i"),
+        "4x",
     )
 
     FIELD_INFO = {
         # base_part is unused for NPC Invasions.
-        'base_region_name': (
-            'Invasion Region', True, '<Maps:Regions>',
-            "Region (a volume) in which NPC Invasion can be triggered (e.g. with Black Eye Orb)."),
-        'entity_id': (
-            'Entity ID', False, int,
-            "Entity ID used to refer to the NPC Invasion in other game files (unused)."),
-        'host_entity_id': (
-            'Host Entity ID', True, int,
-            "Entity ID of NPC character to be invaded."),
-        'invasion_flag_id': (
-            'Invasion Flag', True, '<Flag>',
-            "Flag that is enabled while the invasion is active, which should trigger changes to the world."),
-        'spawn_point_region_name': (
-            'Spawn Point Region', True, '<Maps:Regions>',
-            "Region where player will spawn during invasion event."),
+        "base_region_name": (
+            "Invasion Region",
+            True,
+            "<Maps:Regions>",
+            "Region (a volume) in which NPC Invasion can be triggered (e.g. with Black Eye Orb).",
+        ),
+        "entity_id": (
+            "Entity ID",
+            False,
+            int,
+            "Entity ID used to refer to the NPC Invasion in other game files (unused).",
+        ),
+        "host_entity_id": ("Host Entity ID", True, int, "Entity ID of NPC character to be invaded."),
+        "invasion_flag_id": (
+            "Invasion Flag",
+            True,
+            "<Flag>",
+            "Flag that is enabled while the invasion is active, which should trigger changes to the world.",
+        ),
+        "spawn_point_region_name": (
+            "Spawn Point Region",
+            True,
+            "<Maps:Regions>",
+            "Region where player will spawn during invasion event.",
+        ),
     }
 
     ENTRY_TYPE = MSB_EVENT_TYPE.NPCInvasion
@@ -781,7 +793,7 @@ MSB_EVENT_TYPE_CLASSES = {
 
 
 class MSBEventList(MSBEntryList[BaseMSBEvent]):
-    ENTRY_LIST_NAME = 'Events'
+    ENTRY_LIST_NAME = "Events"
     ENTRY_CLASS = staticmethod(MSBEvent)
     ENTRY_TYPE_ENUM = MSB_EVENT_TYPE
 
@@ -810,8 +822,12 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
         type_indices = {}
         for i, entry in enumerate(self._entries):
             try:
-                entry.set_indices(event_index=i, local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
-                                  region_indices=region_indices, part_indices=part_indices)
+                entry.set_indices(
+                    event_index=i,
+                    local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                    region_indices=region_indices,
+                    part_indices=part_indices,
+                )
             except KeyError as e:
                 raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} event {entry.name}: {e}")
             else:

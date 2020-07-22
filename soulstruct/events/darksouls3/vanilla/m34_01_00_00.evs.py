@@ -57,9 +57,9 @@ def Constructor():
     RunCommonEvent(20005110, args=(3410421, 3412490))
     RunCommonEvent(20005110, args=(3410422, 3412490))
     RunCommonEvent(20005114, args=(3410423, 3412491, 1077936128))
-    RunEvent(13415450, slot=0, args=(3410500, 3020, 0.5), arg_types='iif')
-    RunEvent(13415450, slot=1, args=(3410501, 3020, 0.800000011920929), arg_types='iif')
-    RunEvent(13415450, slot=2, args=(3410502, 3026, 0.0), arg_types='iif')
+    RunEvent(13415450, slot=0, args=(3410500, 3020, 0.5), arg_types="iif")
+    RunEvent(13415450, slot=1, args=(3410501, 3020, 0.800000011920929), arg_types="iif")
+    RunEvent(13415450, slot=2, args=(3410502, 3026, 0.0), arg_types="iif")
     RunEvent(13410300)
     RunCommonEvent(20005111, args=(3410550, 3000, 3412650))
     RunCommonEvent(20005111, args=(3410551, 3000, 3412651))
@@ -75,8 +75,11 @@ def Constructor():
     RunCommonEvent(20005110, args=(3410601, 3412480))
     RunCommonEvent(20005110, args=(3410603, 3412480))
     RunEvent(13415350, slot=0, args=(3410200,))
-    RunEvent(13415351, slot=0, args=(3410200, 3412780, 3412781, 3412782, 3412783, 3412784, 3412790, 3412791, 3412792, 
-             3412793))
+    RunEvent(
+        13415351,
+        slot=0,
+        args=(3410200, 3412780, 3412781, 3412782, 3412783, 3412784, 3412790, 3412791, 3412792, 3412793),
+    )
     RunEvent(13415355, slot=0, args=(3410200,))
     RunCommonEvent(20005341, args=(13410200, 3410200, 13210000))
     RunCommonEvent(20005341, args=(13410201, 3410210, 13101000))
@@ -132,142 +135,142 @@ def Constructor():
     RunCommonEvent(20005640, args=(13410520, 3411435, 13415160, 13415161))
     RunCommonEvent(20005640, args=(13410521, 3411436, 13415162, 13415163))
     RunEvent(13415430)
-    RunEvent(13417500, slot=0, args=(3411650, 3411500, 0, 1, 2, 3, 3.0, 13417300, 13416300), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=1, args=(3411650, 3411501, 10, 11, 12, 13, 3.0, 13417301, 13416301), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=28, args=(3411650, 3411528, 0, 1, 2, 3, 3.0, 13417328, 13416328), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=29, args=(3411650, 3411529, 10, 11, 12, 13, 3.0, 13417329, 13416329), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=30, args=(3411650, 3411530, 0, 1, 2, 3, 3.0, 13417330, 13416330), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=31, args=(3411650, 3411531, 10, 11, 12, 13, 3.0, 13417331, 13416331), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=32, args=(3411650, 3411532, 0, 1, 2, 3, 3.0, 13417332, 13416332), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=33, args=(3411650, 3411533, 10, 11, 12, 13, 3.5, 13417333, 13416333), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=34, args=(3411650, 3411534, 0, 1, 2, 3, 3.0, 13417334, 13416334), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=35, args=(3411650, 3411535, 10, 11, 12, 13, 3.0, 13417335, 13416335), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=36, args=(3411650, 3411536, 0, 1, 2, 3, 3.0, 13417336, 13416336), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=37, args=(3411650, 3411537, 10, 11, 12, 13, 3.0, 13417337, 13416337), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=38, args=(3411650, 3411538, 10, 11, 12, 13, 3.0, 13417338, 13416338), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=39, args=(3411650, 3411539, 0, 1, 2, 3, 3.0, 13417339, 13416339), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=40, args=(3411650, 3411540, 10, 11, 12, 13, 3.0, 13417340, 13416340), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=41, args=(3411650, 3411541, 0, 1, 2, 3, 3.0, 13417341, 13416341), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=42, args=(3411650, 3411542, 10, 11, 12, 13, 3.5, 13417342, 13416342), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=43, args=(3411650, 3411543, 0, 1, 2, 3, 3.5, 13417343, 13416343), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=44, args=(3411650, 3411544, 10, 11, 12, 13, 3.0, 13417344, 13416344), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=27, args=(3411650, 3411625, 0, 1, 2, 3, 3.0, 13417427, 13416427), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=28, args=(3411650, 3411626, 10, 11, 12, 13, 3.0, 13417428, 13416428), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=29, args=(3411650, 3411627, 0, 1, 2, 3, 3.0, 13417429, 13416429), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=30, args=(3411650, 3411628, 10, 11, 12, 13, 3.0, 13417430, 13416430), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=31, args=(3411650, 3411629, 0, 1, 2, 3, 3.0, 13417431, 13416431), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=32, args=(3411650, 3411630, 10, 11, 12, 13, 3.0, 13417432, 13416432), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=33, args=(3411650, 3411631, 0, 1, 2, 3, 3.0, 13417433, 13416433), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=34, args=(3411650, 3411632, 10, 11, 12, 13, 3.0, 13417434, 13416434), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=6, args=(3411652, 3411506, 0, 1, 2, 3, 4.5, 13417306, 13416306), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=10, args=(3411652, 3411510, 0, 1, 2, 3, 4.5, 13417310, 13416310), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=46, args=(3411652, 3411546, 0, 1, 2, 3, 4.5, 13417346, 13416346), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=47, args=(3411652, 3411547, 20, 21, 22, 23, 1.5, 13417347, 13416347), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=48, args=(3411652, 3411548, 0, 1, 2, 3, 4.5, 13417348, 13416348), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=51, args=(3411652, 3411551, 20, 21, 22, 23, 1.5, 13417351, 13416351), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=52, args=(3411652, 3411552, 0, 1, 2, 3, 4.5, 13417352, 13416352), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=53, args=(3411652, 3411553, 0, 1, 2, 3, 4.5, 13417353, 13416353), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=54, args=(3411652, 3411554, 0, 1, 2, 3, 4.5, 13417354, 13416354), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=55, args=(3411652, 3411555, 20, 21, 22, 23, 1.5, 13417355, 13416355), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=12, args=(3411653, 3411512, 0, 1, 2, 3, 4.5, 13417312, 13416312), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=13, args=(3411653, 3411513, 10, 11, 12, 13, 4.5, 13417313, 13416313), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=14, args=(3411653, 3411514, 20, 21, 22, 23, 1.5, 13417314, 13416314), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=15, args=(3411653, 3411515, 0, 1, 2, 3, 4.5, 13417315, 13416315), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=16, args=(3411653, 3411516, 10, 11, 12, 13, 4.5, 13417316, 13416316), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=17, args=(3411653, 3411517, 20, 21, 22, 23, 1.5, 13417317, 13416317), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=18, args=(3411653, 3411518, 0, 1, 2, 3, 4.5, 13417318, 13416318), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=19, args=(3411653, 3411519, 10, 11, 12, 13, 4.5, 13417319, 13416319), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=20, args=(3411653, 3411520, 20, 21, 22, 23, 1.5, 13417320, 13416320), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=21, args=(3411653, 3411521, 0, 1, 2, 3, 4.5, 13417321, 13416321), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=22, args=(3411653, 3411522, 10, 11, 12, 13, 4.5, 13417322, 13416322), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=23, args=(3411653, 3411523, 20, 21, 22, 23, 1.5, 13417323, 13416323), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=56, args=(3411653, 3411556, 0, 1, 2, 3, 4.5, 13417356, 13416356), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=57, args=(3411653, 3411557, 10, 11, 12, 13, 4.5, 13417357, 13416357), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=58, args=(3411653, 3411558, 0, 1, 2, 3, 4.5, 13417358, 13416358), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=59, args=(3411653, 3411559, 10, 11, 12, 13, 4.5, 13417359, 13416359), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=60, args=(3411653, 3411560, 0, 1, 2, 3, 4.5, 13417360, 13416360), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=61, args=(3411653, 3411561, 10, 11, 12, 13, 4.5, 13417361, 13416361), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=62, args=(3411653, 3411562, 0, 1, 2, 3, 4.5, 13417362, 13416362), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=63, args=(3411653, 3411563, 10, 11, 12, 13, 4.5, 13417363, 13416363), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=64, args=(3411653, 3411564, 0, 1, 2, 3, 4.5, 13417364, 13416364), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=65, args=(3411653, 3411565, 10, 11, 12, 13, 4.5, 13417365, 13416365), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=66, args=(3411653, 3411566, 20, 21, 22, 23, 1.5, 13417366, 13416366), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=67, args=(3411653, 3411567, 20, 21, 22, 23, 1.5, 13417367, 13416367), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=12, args=(3411653, 3411610, 0, 1, 2, 3, 4.5, 13417412, 13416412), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=13, args=(3411653, 3411611, 10, 11, 12, 13, 4.5, 13417413, 13416413), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=14, args=(3411653, 3411612, 0, 1, 2, 3, 4.5, 13417414, 13416414), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=15, args=(3411653, 3411613, 10, 11, 12, 13, 4.5, 13417415, 13416415), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=16, args=(3411653, 3411614, 0, 1, 2, 3, 4.5, 13417416, 13416416), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=17, args=(3411653, 3411615, 10, 11, 12, 13, 4.5, 13417417, 13416417), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=18, args=(3411653, 3411616, 0, 1, 2, 3, 4.5, 13417418, 13416418), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=19, args=(3411653, 3411617, 10, 11, 12, 13, 4.5, 13417419, 13416419), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=20, args=(3411653, 3411618, 0, 1, 2, 3, 4.5, 13417420, 13416420), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=21, args=(3411653, 3411619, 20, 21, 22, 23, 1.5, 13417421, 13416421), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=22, args=(3411653, 3411620, 0, 1, 2, 3, 4.5, 13417422, 13416422), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=23, args=(3411653, 3411621, 10, 11, 12, 13, 4.5, 13417423, 13416423), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=24, args=(3411653, 3411622, 20, 21, 22, 23, 1.5, 13417424, 13416424), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=25, args=(3411653, 3411623, 20, 21, 22, 23, 1.5, 13417425, 13416425), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=26, args=(3411653, 3411624, 20, 21, 22, 23, 1.5, 13417426, 13416426), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=2, args=(3411651, 3411502, 0, 1, 2, 3, 4.5, 13417302, 13416302), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=3, args=(3411651, 3411503, 10, 11, 12, 13, 4.5, 13417303, 13416303), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=4, args=(3411651, 3411504, 0, 1, 2, 3, 4.5, 13417304, 13416304), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=5, args=(3411651, 3411505, 10, 11, 12, 13, 4.5, 13417305, 13416305), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=24, args=(3411651, 3411524, 0, 1, 2, 3, 4.5, 13417324, 13416324), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=25, args=(3411651, 3411525, 10, 11, 12, 13, 4.5, 13417325, 13416325), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=26, args=(3411651, 3411526, 0, 1, 2, 3, 4.5, 13417326, 13416326), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=27, args=(3411651, 3411527, 10, 11, 12, 13, 4.5, 13417327, 13416327), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=68, args=(3411651, 3411568, 0, 1, 2, 3, 4.5, 13417368, 13416368), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=69, args=(3411651, 3411569, 10, 11, 12, 13, 4.5, 13417369, 13416369), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=70, args=(3411651, 3411570, 0, 1, 2, 3, 4.5, 13417370, 13416370), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=71, args=(3411651, 3411571, 0, 1, 2, 3, 4.5, 13417371, 13416371), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=72, args=(3411651, 3411572, 20, 21, 22, 23, 1.5, 13417372, 13416372), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=73, args=(3411651, 3411573, 0, 1, 2, 3, 4.5, 13417373, 13416373), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=74, args=(3411651, 3411574, 10, 11, 12, 13, 4.5, 13417374, 13416374), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=75, args=(3411651, 3411575, 0, 1, 2, 3, 4.5, 13417375, 13416375), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=76, args=(3411651, 3411576, 10, 11, 12, 13, 4.5, 13417376, 13416376), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=77, args=(3411651, 3411577, 0, 1, 2, 3, 4.5, 13417377, 13416377), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=78, args=(3411651, 3411578, 10, 11, 12, 13, 4.5, 13417378, 13416378), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=79, args=(3411651, 3411579, 20, 21, 22, 23, 1.5, 13417379, 13416379), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=80, args=(3411651, 3411580, 20, 21, 22, 23, 1.5, 13417380, 13416380), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=81, args=(3411651, 3411581, 20, 21, 22, 23, 1.5, 13417381, 13416381), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=82, args=(3411651, 3411582, 20, 21, 22, 23, 1.5, 13417382, 13416382), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=7, args=(3411651, 3411507, 20, 21, 22, 23, 1.5, 13417307, 13416307), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=8, args=(3411651, 3411508, 20, 21, 22, 23, 1.5, 13417308, 13416308), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=9, args=(3411651, 3411509, 20, 21, 22, 23, 1.5, 13417309, 13416309), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=35, args=(3411651, 3411633, 20, 21, 22, 23, 1.5, 13417435, 13416435), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=36, args=(3411651, 3411634, 20, 21, 22, 23, 1.5, 13417436, 13416436), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=37, args=(3411651, 3411635, 20, 21, 22, 23, 1.5, 13417437, 13416437), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=38, args=(3411651, 3411636, 20, 21, 22, 23, 1.5, 13417438, 13416438), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=39, args=(3411651, 3411637, 20, 21, 22, 23, 1.5, 13417439, 13416439), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=83, args=(3411654, 3411583, 0, 1, 2, 3, 4.5, 13417383, 13416383), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=84, args=(3411654, 3411584, 10, 11, 12, 13, 4.5, 13417384, 13416384), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=85, args=(3411654, 3411585, 0, 1, 2, 3, 4.5, 13417385, 13416385), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=86, args=(3411654, 3411586, 10, 11, 12, 13, 4.5, 13417386, 13416386), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=87, args=(3411654, 3411587, 0, 1, 2, 3, 4.5, 13417387, 13416387), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=88, args=(3411654, 3411588, 10, 11, 12, 13, 4.5, 13417388, 13416388), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=89, args=(3411654, 3411589, 0, 1, 2, 3, 4.5, 13417389, 13416389), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=90, args=(3411654, 3411590, 10, 11, 12, 13, 4.5, 13417390, 13416390), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=91, args=(3411654, 3411591, 20, 21, 22, 23, 1.5, 13417391, 13416391), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=92, args=(3411654, 3411592, 20, 21, 22, 23, 1.5, 13417392, 13416392), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=93, args=(3411654, 3411593, 20, 21, 22, 23, 1.5, 13417393, 13416393), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=94, args=(3411654, 3411594, 20, 21, 22, 23, 1.5, 13417394, 13416394), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=95, args=(3411654, 3411595, 20, 21, 22, 23, 1.5, 13417395, 13416395), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=96, args=(3411654, 3411596, 20, 21, 22, 23, 1.5, 13417396, 13416396), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=97, args=(3411654, 3411597, 20, 21, 22, 23, 1.5, 13417397, 13416397), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=98, args=(3411654, 3411598, 20, 21, 22, 23, 1.5, 13417398, 13416398), arg_types='iiiiiifii')
-    RunEvent(13417500, slot=99, args=(3411654, 3411599, 20, 21, 22, 23, 1.5, 13417399, 13416399), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=0, args=(3411654, 3411600, 20, 21, 22, 23, 1.5, 13417400, 13416400), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=1, args=(3411654, 3411601, 20, 21, 22, 23, 1.5, 13417401, 13416401), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=2, args=(3411654, 3411602, 20, 21, 22, 23, 1.5, 13417402, 13416402), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=3, args=(3411654, 3411603, 20, 21, 22, 23, 1.5, 13417403, 13416403), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=4, args=(3411654, 3411604, 20, 21, 22, 23, 1.5, 13417404, 13416404), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=5, args=(3411654, 3411605, 20, 21, 22, 23, 1.5, 13417405, 13416405), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=6, args=(3411654, 3411606, 20, 21, 22, 23, 1.5, 13417406, 13416406), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=7, args=(3411654, 3411607, 20, 21, 22, 23, 1.5, 13417407, 13416407), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=8, args=(3411654, 3411608, 10, 11, 12, 13, 4.5, 13417408, 13416408), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=9, args=(3411654, 3411609, 0, 1, 2, 3, 4.5, 13417409, 13416409), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=10, args=(3411654, 3411610, 10, 11, 12, 13, 4.5, 13417410, 13416410), arg_types='iiiiiifii')
-    RunEvent(13417600, slot=11, args=(3411654, 3411611, 0, 1, 2, 3, 4.5, 13417411, 13416411), arg_types='iiiiiifii')
+    RunEvent(13417500, slot=0, args=(3411650, 3411500, 0, 1, 2, 3, 3.0, 13417300, 13416300), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=1, args=(3411650, 3411501, 10, 11, 12, 13, 3.0, 13417301, 13416301), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=28, args=(3411650, 3411528, 0, 1, 2, 3, 3.0, 13417328, 13416328), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=29, args=(3411650, 3411529, 10, 11, 12, 13, 3.0, 13417329, 13416329), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=30, args=(3411650, 3411530, 0, 1, 2, 3, 3.0, 13417330, 13416330), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=31, args=(3411650, 3411531, 10, 11, 12, 13, 3.0, 13417331, 13416331), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=32, args=(3411650, 3411532, 0, 1, 2, 3, 3.0, 13417332, 13416332), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=33, args=(3411650, 3411533, 10, 11, 12, 13, 3.5, 13417333, 13416333), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=34, args=(3411650, 3411534, 0, 1, 2, 3, 3.0, 13417334, 13416334), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=35, args=(3411650, 3411535, 10, 11, 12, 13, 3.0, 13417335, 13416335), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=36, args=(3411650, 3411536, 0, 1, 2, 3, 3.0, 13417336, 13416336), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=37, args=(3411650, 3411537, 10, 11, 12, 13, 3.0, 13417337, 13416337), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=38, args=(3411650, 3411538, 10, 11, 12, 13, 3.0, 13417338, 13416338), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=39, args=(3411650, 3411539, 0, 1, 2, 3, 3.0, 13417339, 13416339), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=40, args=(3411650, 3411540, 10, 11, 12, 13, 3.0, 13417340, 13416340), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=41, args=(3411650, 3411541, 0, 1, 2, 3, 3.0, 13417341, 13416341), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=42, args=(3411650, 3411542, 10, 11, 12, 13, 3.5, 13417342, 13416342), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=43, args=(3411650, 3411543, 0, 1, 2, 3, 3.5, 13417343, 13416343), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=44, args=(3411650, 3411544, 10, 11, 12, 13, 3.0, 13417344, 13416344), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=27, args=(3411650, 3411625, 0, 1, 2, 3, 3.0, 13417427, 13416427), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=28, args=(3411650, 3411626, 10, 11, 12, 13, 3.0, 13417428, 13416428), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=29, args=(3411650, 3411627, 0, 1, 2, 3, 3.0, 13417429, 13416429), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=30, args=(3411650, 3411628, 10, 11, 12, 13, 3.0, 13417430, 13416430), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=31, args=(3411650, 3411629, 0, 1, 2, 3, 3.0, 13417431, 13416431), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=32, args=(3411650, 3411630, 10, 11, 12, 13, 3.0, 13417432, 13416432), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=33, args=(3411650, 3411631, 0, 1, 2, 3, 3.0, 13417433, 13416433), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=34, args=(3411650, 3411632, 10, 11, 12, 13, 3.0, 13417434, 13416434), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=6, args=(3411652, 3411506, 0, 1, 2, 3, 4.5, 13417306, 13416306), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=10, args=(3411652, 3411510, 0, 1, 2, 3, 4.5, 13417310, 13416310), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=46, args=(3411652, 3411546, 0, 1, 2, 3, 4.5, 13417346, 13416346), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=47, args=(3411652, 3411547, 20, 21, 22, 23, 1.5, 13417347, 13416347), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=48, args=(3411652, 3411548, 0, 1, 2, 3, 4.5, 13417348, 13416348), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=51, args=(3411652, 3411551, 20, 21, 22, 23, 1.5, 13417351, 13416351), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=52, args=(3411652, 3411552, 0, 1, 2, 3, 4.5, 13417352, 13416352), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=53, args=(3411652, 3411553, 0, 1, 2, 3, 4.5, 13417353, 13416353), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=54, args=(3411652, 3411554, 0, 1, 2, 3, 4.5, 13417354, 13416354), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=55, args=(3411652, 3411555, 20, 21, 22, 23, 1.5, 13417355, 13416355), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=12, args=(3411653, 3411512, 0, 1, 2, 3, 4.5, 13417312, 13416312), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=13, args=(3411653, 3411513, 10, 11, 12, 13, 4.5, 13417313, 13416313), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=14, args=(3411653, 3411514, 20, 21, 22, 23, 1.5, 13417314, 13416314), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=15, args=(3411653, 3411515, 0, 1, 2, 3, 4.5, 13417315, 13416315), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=16, args=(3411653, 3411516, 10, 11, 12, 13, 4.5, 13417316, 13416316), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=17, args=(3411653, 3411517, 20, 21, 22, 23, 1.5, 13417317, 13416317), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=18, args=(3411653, 3411518, 0, 1, 2, 3, 4.5, 13417318, 13416318), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=19, args=(3411653, 3411519, 10, 11, 12, 13, 4.5, 13417319, 13416319), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=20, args=(3411653, 3411520, 20, 21, 22, 23, 1.5, 13417320, 13416320), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=21, args=(3411653, 3411521, 0, 1, 2, 3, 4.5, 13417321, 13416321), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=22, args=(3411653, 3411522, 10, 11, 12, 13, 4.5, 13417322, 13416322), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=23, args=(3411653, 3411523, 20, 21, 22, 23, 1.5, 13417323, 13416323), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=56, args=(3411653, 3411556, 0, 1, 2, 3, 4.5, 13417356, 13416356), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=57, args=(3411653, 3411557, 10, 11, 12, 13, 4.5, 13417357, 13416357), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=58, args=(3411653, 3411558, 0, 1, 2, 3, 4.5, 13417358, 13416358), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=59, args=(3411653, 3411559, 10, 11, 12, 13, 4.5, 13417359, 13416359), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=60, args=(3411653, 3411560, 0, 1, 2, 3, 4.5, 13417360, 13416360), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=61, args=(3411653, 3411561, 10, 11, 12, 13, 4.5, 13417361, 13416361), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=62, args=(3411653, 3411562, 0, 1, 2, 3, 4.5, 13417362, 13416362), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=63, args=(3411653, 3411563, 10, 11, 12, 13, 4.5, 13417363, 13416363), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=64, args=(3411653, 3411564, 0, 1, 2, 3, 4.5, 13417364, 13416364), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=65, args=(3411653, 3411565, 10, 11, 12, 13, 4.5, 13417365, 13416365), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=66, args=(3411653, 3411566, 20, 21, 22, 23, 1.5, 13417366, 13416366), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=67, args=(3411653, 3411567, 20, 21, 22, 23, 1.5, 13417367, 13416367), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=12, args=(3411653, 3411610, 0, 1, 2, 3, 4.5, 13417412, 13416412), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=13, args=(3411653, 3411611, 10, 11, 12, 13, 4.5, 13417413, 13416413), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=14, args=(3411653, 3411612, 0, 1, 2, 3, 4.5, 13417414, 13416414), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=15, args=(3411653, 3411613, 10, 11, 12, 13, 4.5, 13417415, 13416415), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=16, args=(3411653, 3411614, 0, 1, 2, 3, 4.5, 13417416, 13416416), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=17, args=(3411653, 3411615, 10, 11, 12, 13, 4.5, 13417417, 13416417), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=18, args=(3411653, 3411616, 0, 1, 2, 3, 4.5, 13417418, 13416418), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=19, args=(3411653, 3411617, 10, 11, 12, 13, 4.5, 13417419, 13416419), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=20, args=(3411653, 3411618, 0, 1, 2, 3, 4.5, 13417420, 13416420), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=21, args=(3411653, 3411619, 20, 21, 22, 23, 1.5, 13417421, 13416421), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=22, args=(3411653, 3411620, 0, 1, 2, 3, 4.5, 13417422, 13416422), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=23, args=(3411653, 3411621, 10, 11, 12, 13, 4.5, 13417423, 13416423), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=24, args=(3411653, 3411622, 20, 21, 22, 23, 1.5, 13417424, 13416424), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=25, args=(3411653, 3411623, 20, 21, 22, 23, 1.5, 13417425, 13416425), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=26, args=(3411653, 3411624, 20, 21, 22, 23, 1.5, 13417426, 13416426), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=2, args=(3411651, 3411502, 0, 1, 2, 3, 4.5, 13417302, 13416302), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=3, args=(3411651, 3411503, 10, 11, 12, 13, 4.5, 13417303, 13416303), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=4, args=(3411651, 3411504, 0, 1, 2, 3, 4.5, 13417304, 13416304), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=5, args=(3411651, 3411505, 10, 11, 12, 13, 4.5, 13417305, 13416305), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=24, args=(3411651, 3411524, 0, 1, 2, 3, 4.5, 13417324, 13416324), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=25, args=(3411651, 3411525, 10, 11, 12, 13, 4.5, 13417325, 13416325), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=26, args=(3411651, 3411526, 0, 1, 2, 3, 4.5, 13417326, 13416326), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=27, args=(3411651, 3411527, 10, 11, 12, 13, 4.5, 13417327, 13416327), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=68, args=(3411651, 3411568, 0, 1, 2, 3, 4.5, 13417368, 13416368), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=69, args=(3411651, 3411569, 10, 11, 12, 13, 4.5, 13417369, 13416369), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=70, args=(3411651, 3411570, 0, 1, 2, 3, 4.5, 13417370, 13416370), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=71, args=(3411651, 3411571, 0, 1, 2, 3, 4.5, 13417371, 13416371), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=72, args=(3411651, 3411572, 20, 21, 22, 23, 1.5, 13417372, 13416372), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=73, args=(3411651, 3411573, 0, 1, 2, 3, 4.5, 13417373, 13416373), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=74, args=(3411651, 3411574, 10, 11, 12, 13, 4.5, 13417374, 13416374), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=75, args=(3411651, 3411575, 0, 1, 2, 3, 4.5, 13417375, 13416375), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=76, args=(3411651, 3411576, 10, 11, 12, 13, 4.5, 13417376, 13416376), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=77, args=(3411651, 3411577, 0, 1, 2, 3, 4.5, 13417377, 13416377), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=78, args=(3411651, 3411578, 10, 11, 12, 13, 4.5, 13417378, 13416378), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=79, args=(3411651, 3411579, 20, 21, 22, 23, 1.5, 13417379, 13416379), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=80, args=(3411651, 3411580, 20, 21, 22, 23, 1.5, 13417380, 13416380), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=81, args=(3411651, 3411581, 20, 21, 22, 23, 1.5, 13417381, 13416381), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=82, args=(3411651, 3411582, 20, 21, 22, 23, 1.5, 13417382, 13416382), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=7, args=(3411651, 3411507, 20, 21, 22, 23, 1.5, 13417307, 13416307), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=8, args=(3411651, 3411508, 20, 21, 22, 23, 1.5, 13417308, 13416308), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=9, args=(3411651, 3411509, 20, 21, 22, 23, 1.5, 13417309, 13416309), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=35, args=(3411651, 3411633, 20, 21, 22, 23, 1.5, 13417435, 13416435), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=36, args=(3411651, 3411634, 20, 21, 22, 23, 1.5, 13417436, 13416436), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=37, args=(3411651, 3411635, 20, 21, 22, 23, 1.5, 13417437, 13416437), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=38, args=(3411651, 3411636, 20, 21, 22, 23, 1.5, 13417438, 13416438), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=39, args=(3411651, 3411637, 20, 21, 22, 23, 1.5, 13417439, 13416439), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=83, args=(3411654, 3411583, 0, 1, 2, 3, 4.5, 13417383, 13416383), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=84, args=(3411654, 3411584, 10, 11, 12, 13, 4.5, 13417384, 13416384), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=85, args=(3411654, 3411585, 0, 1, 2, 3, 4.5, 13417385, 13416385), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=86, args=(3411654, 3411586, 10, 11, 12, 13, 4.5, 13417386, 13416386), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=87, args=(3411654, 3411587, 0, 1, 2, 3, 4.5, 13417387, 13416387), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=88, args=(3411654, 3411588, 10, 11, 12, 13, 4.5, 13417388, 13416388), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=89, args=(3411654, 3411589, 0, 1, 2, 3, 4.5, 13417389, 13416389), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=90, args=(3411654, 3411590, 10, 11, 12, 13, 4.5, 13417390, 13416390), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=91, args=(3411654, 3411591, 20, 21, 22, 23, 1.5, 13417391, 13416391), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=92, args=(3411654, 3411592, 20, 21, 22, 23, 1.5, 13417392, 13416392), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=93, args=(3411654, 3411593, 20, 21, 22, 23, 1.5, 13417393, 13416393), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=94, args=(3411654, 3411594, 20, 21, 22, 23, 1.5, 13417394, 13416394), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=95, args=(3411654, 3411595, 20, 21, 22, 23, 1.5, 13417395, 13416395), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=96, args=(3411654, 3411596, 20, 21, 22, 23, 1.5, 13417396, 13416396), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=97, args=(3411654, 3411597, 20, 21, 22, 23, 1.5, 13417397, 13416397), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=98, args=(3411654, 3411598, 20, 21, 22, 23, 1.5, 13417398, 13416398), arg_types="iiiiiifii")
+    RunEvent(13417500, slot=99, args=(3411654, 3411599, 20, 21, 22, 23, 1.5, 13417399, 13416399), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=0, args=(3411654, 3411600, 20, 21, 22, 23, 1.5, 13417400, 13416400), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=1, args=(3411654, 3411601, 20, 21, 22, 23, 1.5, 13417401, 13416401), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=2, args=(3411654, 3411602, 20, 21, 22, 23, 1.5, 13417402, 13416402), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=3, args=(3411654, 3411603, 20, 21, 22, 23, 1.5, 13417403, 13416403), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=4, args=(3411654, 3411604, 20, 21, 22, 23, 1.5, 13417404, 13416404), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=5, args=(3411654, 3411605, 20, 21, 22, 23, 1.5, 13417405, 13416405), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=6, args=(3411654, 3411606, 20, 21, 22, 23, 1.5, 13417406, 13416406), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=7, args=(3411654, 3411607, 20, 21, 22, 23, 1.5, 13417407, 13416407), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=8, args=(3411654, 3411608, 10, 11, 12, 13, 4.5, 13417408, 13416408), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=9, args=(3411654, 3411609, 0, 1, 2, 3, 4.5, 13417409, 13416409), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=10, args=(3411654, 3411610, 10, 11, 12, 13, 4.5, 13417410, 13416410), arg_types="iiiiiifii")
+    RunEvent(13417600, slot=11, args=(3411654, 3411611, 0, 1, 2, 3, 4.5, 13417411, 13416411), arg_types="iiiiiifii")
     RunEvent(13415420, slot=0, args=(3411390, 341020, 3414390))
     RunEvent(13415420, slot=1, args=(3411391, 342100, 3414470))
     RunEvent(13415420, slot=2, args=(3411392, 342100, 3414471))
@@ -297,7 +300,7 @@ def Event13410300():
 
 
 @RestartOnRest
-def Event13415250(arg_0_3: int, arg_4_7: int):
+def Event13415250(_, arg_0_3: int, arg_4_7: int):
     """ 13415250: Event 13415250 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     ForceAnimation(arg_4_7, 1, loop=True)
@@ -309,7 +312,7 @@ def Event13415250(arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event13415270(arg_0_3: int):
+def Event13415270(_, arg_0_3: int):
     """ 13415270: Event 13415270 """
     GotoIfThisEventSlotOn(Label.L0)
     CancelSpecialEffect(arg_0_3, 11970)
@@ -325,7 +328,7 @@ def Event13415270(arg_0_3: int):
 
 
 @RestartOnRest
-def Event13415350(arg_0_3: int):
+def Event13415350(_, arg_0_3: int):
     """ 13415350: Event 13415350 """
     DisableAI(arg_0_3)
     DisableCharacter(arg_0_3)
@@ -357,8 +360,19 @@ def Event13415350(arg_0_3: int):
 
 
 @RestartOnRest
-def Event13415351(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: int, arg_28_31: int, arg_32_35: int, arg_36_39: int):
+def Event13415351(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: int,
+    arg_28_31: int,
+    arg_32_35: int,
+    arg_36_39: int,
+):
     """ 13415351: Event 13415351 """
     EndIfFlagOn(13410200)
     GotoIfFlagOn(Label.L12, 13415434)
@@ -442,29 +456,49 @@ def Event13415351(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
     # --- 0 --- #
     DefineLabel(0)
-    Move(arg_0_3, destination=arg_24_27, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_24_27)
+    Move(
+        arg_0_3,
+        destination=arg_24_27,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_24_27,
+    )
     SetAIParamID(arg_0_3, 132051)
     Goto(Label.L4)
 
     # --- 1 --- #
     DefineLabel(1)
-    Move(arg_0_3, destination=arg_32_35, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_32_35)
+    Move(
+        arg_0_3,
+        destination=arg_32_35,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_32_35,
+    )
     SetAIParamID(arg_0_3, 132052)
     Goto(Label.L4)
 
     # --- 2 --- #
     DefineLabel(2)
-    Move(arg_0_3, destination=arg_28_31, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_28_31)
+    Move(
+        arg_0_3,
+        destination=arg_28_31,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_28_31,
+    )
     SetAIParamID(arg_0_3, 132052)
     Goto(Label.L4)
 
     # --- 3 --- #
     DefineLabel(3)
-    Move(arg_0_3, destination=arg_36_39, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=arg_36_39)
+    Move(
+        arg_0_3,
+        destination=arg_36_39,
+        destination_type=CoordEntityType.Region,
+        model_point=-1,
+        copy_draw_parent=arg_36_39,
+    )
     SetAIParamID(arg_0_3, 132052)
     Goto(Label.L4)
 
@@ -479,7 +513,7 @@ def Event13415351(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13415355(arg_0_3: int):
+def Event13415355(_, arg_0_3: int):
     """ 13415355: Event 13415355 """
     EndIfFlagOn(13410200)
     DisableNetworkSync()
@@ -495,19 +529,36 @@ def Event13415355(arg_0_3: int):
 @RestartOnRest
 def Event13415400():
     """ 13415400: Event 13415400 """
-    RunCommonEvent(20005625, args=(13410450, 13410452, 3411450, 3411451, 3414451, 3411452, 3414452, 3412451, 3412452, 
-                   13411450, 13414450, 13410451))
+    RunCommonEvent(
+        20005625,
+        args=(
+            13410450,
+            13410452,
+            3411450,
+            3411451,
+            3414451,
+            3411452,
+            3414452,
+            3412451,
+            3412452,
+            13411450,
+            13414450,
+            13410451,
+        ),
+    )
 
 
 @RestartOnRest
 def Event13415410():
     """ 13415410: Event 13415410 """
-    RunCommonEvent(20005623, args=(13410460, 13410462, 3411460, 3411461, 3414461, 3411462, 3414462, 3412461, 3412462, 
-                   13411460, 13414460, 0))
+    RunCommonEvent(
+        20005623,
+        args=(13410460, 13410462, 3411460, 3411461, 3414461, 3411462, 3414462, 3412461, 3412462, 13411460, 13414460, 0),
+    )
 
 
 @RestartOnRest
-def Event13415420(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event13415420(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13415420: Event 13415420 """
     DisableNetworkSync()
     IfObjectActivated(0, obj_act_id=arg_8_11)
@@ -553,7 +604,7 @@ def Event13415440():
 
 
 @RestartOnRest
-def Event13415450(arg_0_3: int, arg_4_7: int, arg_8_11: float):
+def Event13415450(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 13415450: Event 13415450 """
     EndIfThisEventSlotOn()
     DisableGravity(arg_0_3)
@@ -583,8 +634,18 @@ def Event13415450(arg_0_3: int, arg_4_7: int, arg_8_11: float):
 
 
 @RestartOnRest
-def Event13417500(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: float, arg_28_31: int, arg_32_35: int):
+def Event13417500(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: float,
+    arg_28_31: int,
+    arg_32_35: int,
+):
     """ 13417500: Event 13417500 """
     ForceAnimation(arg_4_7, arg_8_11, loop=True)
     GotoIfObjectDestroyed(Label.L1, obj=arg_0_3)
@@ -603,8 +664,16 @@ def Event13417500(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     GotoIfObjectDestroyed(Label.L1, obj=arg_0_3)
     ForceAnimation(arg_4_7, arg_12_15)
     Wait(0.800000011920929)
-    CreateHazard(arg_28_31, arg_4_7, model_point=210, behavior_param_id=5210, target_type=DamageTargetType.Character, 
-                 radius=1.5, life=0.0, repetition_time=1.0)
+    CreateHazard(
+        arg_28_31,
+        arg_4_7,
+        model_point=210,
+        behavior_param_id=5210,
+        target_type=DamageTargetType.Character,
+        radius=1.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
     EnableFlag(arg_32_35)
     Wait(1.2000000476837158)
 
@@ -630,8 +699,18 @@ def Event13417500(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13417600(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
-                  arg_24_27: float, arg_28_31: int, arg_32_35: int):
+def Event13417600(
+    _,
+    arg_0_3: int,
+    arg_4_7: int,
+    arg_8_11: int,
+    arg_12_15: int,
+    arg_16_19: int,
+    arg_20_23: int,
+    arg_24_27: float,
+    arg_28_31: int,
+    arg_32_35: int,
+):
     """ 13417600: Event 13417600 """
     ForceAnimation(arg_4_7, arg_8_11, loop=True)
     GotoIfObjectDestroyed(Label.L1, obj=arg_0_3)
@@ -650,8 +729,16 @@ def Event13417600(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
     GotoIfObjectDestroyed(Label.L1, obj=arg_0_3)
     ForceAnimation(arg_4_7, arg_12_15)
     Wait(0.800000011920929)
-    CreateHazard(arg_28_31, arg_4_7, model_point=210, behavior_param_id=5210, target_type=DamageTargetType.Character, 
-                 radius=1.5, life=0.0, repetition_time=1.0)
+    CreateHazard(
+        arg_28_31,
+        arg_4_7,
+        model_point=210,
+        behavior_param_id=5210,
+        target_type=DamageTargetType.Character,
+        radius=1.5,
+        life=0.0,
+        repetition_time=1.0,
+    )
     EnableFlag(arg_32_35)
     Wait(1.2000000476837158)
 
@@ -677,7 +764,7 @@ def Event13417600(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13415490(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event13415490(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 13415490: Event 13415490 """
     GotoIfFlagOff(Label.L0, arg_0_3)
     ForceAnimation(arg_4_7, 2)
@@ -697,7 +784,7 @@ def Event13415490(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg
 
 
 @RestartOnRest
-def Event13415495(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
+def Event13415495(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13415495: Event 13415495 """
     GotoIfFlagOff(Label.L0, arg_0_3)
     ForceAnimation(arg_4_7, 2)
@@ -752,16 +839,18 @@ def Event13415830():
     EnableObject(3411810)
     EnableCharacter(3410832)
     EnableAnimations(3410832)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     DisableFlag(13415830)
     GotoIfThisEventSlotOn(Label.L1)
     GotoIfFlagOn(Label.L0, 13410831)
     DisableCharacter(3410832)
     DisableAnimations(3410832)
     IfCharacterInsideRegion(0, PLAYER, region=3412846)
-    SkipLinesIfClientTypeCountComparison(1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     NotifyBossBattleStart()
     IfCharacterInvadeType(-15, character=PLAYER, invade_type=4)
     IfCharacterInvadeType(-15, character=PLAYER, invade_type=7)
@@ -770,20 +859,24 @@ def Event13415830():
     EndIfConditionTrue(-15)
     SkipLinesIfFlagOn(7, 13410831)
     SkipLinesIfTryingToCreateSession(2)
-    PlayCutscene(34010010, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3412840, 
-                 move_to_map=GRAND_ARCHIVES)
+    PlayCutscene(
+        34010010, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3412840, move_to_map=GRAND_ARCHIVES
+    )
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
-    PlayCutscene(34010010, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=3412840, 
-                 move_to_map=GRAND_ARCHIVES)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
+    PlayCutscene(
+        34010010, skippable=False, fade_out=True, player_id=PLAYER, move_to_region=3412840, move_to_map=GRAND_ARCHIVES
+    )
     SkipLines(1)
     PlayCutscene(34010010, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
     EnableCharacter(3410832)
     EnableAnimations(3410832)
-    Move(3410832, destination=3412841, destination_type=CoordEntityType.Region, model_point=-1, 
-         copy_draw_parent=3412841)
+    Move(
+        3410832, destination=3412841, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3412841
+    )
     Goto(Label.L1)
 
     # --- 0 --- #
@@ -798,8 +891,9 @@ def Event13415830():
     SetNetworkConnectedFlagState(flag=13410831, state=FlagState.On)
     ActivateMultiplayerBuffs(3410832)
     ActivateMultiplayerBuffs(3410831)
-    SkipLinesIfClientTypeCountComparison(3, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        3, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     SetNetworkUpdateAuthority(3410830, UpdateAuthority.Forced)
     SetNetworkUpdateAuthority(3410831, UpdateAuthority.Forced)
     SetNetworkUpdateAuthority(3410832, UpdateAuthority.Forced)
@@ -818,14 +912,20 @@ def Event13415831():
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(34010000, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(4)
-    SkipLinesIfClientTypeCountComparison(2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, 
-                                         value=0)
+    SkipLinesIfClientTypeCountComparison(
+        2, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
+    )
     PlayCutscene(34010000, skippable=True, fade_out=True, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(34010000, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
-    Move(3410830, destination=3410832, destination_type=CoordEntityType.Character, model_point=-1, 
-         copy_draw_parent=3410832)
+    Move(
+        3410830,
+        destination=3410832,
+        destination_type=CoordEntityType.Character,
+        model_point=-1,
+        copy_draw_parent=3410832,
+    )
     DisableCharacter(3410832)
     DisableAnimations(3410832)
     DisableAI(3410832)
@@ -908,8 +1008,13 @@ def Event13415840():
 def Event13415841():
     """ 13415841: Event 13415841 """
     IfFlagOn(0, 13415842)
-    Move(3410831, destination=3410830, destination_type=CoordEntityType.Character, model_point=50, 
-         copy_draw_parent=3410830)
+    Move(
+        3410831,
+        destination=3410830,
+        destination_type=CoordEntityType.Character,
+        model_point=50,
+        copy_draw_parent=3410830,
+    )
     Restart()
 
 
@@ -968,7 +1073,7 @@ def Event13415600():
     End()
 
 
-def Event13415620(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event13415620(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13415620: Event 13415620 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1235, 1239))
@@ -1014,7 +1119,7 @@ def Event13415620(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     End()
 
 
-def Event13415640(arg_0_3: int):
+def Event13415640(_, arg_0_3: int):
     """ 13415640: Event 13415640 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
     SkipLinesIfFlagRangeAnyOn(2, (1215, 1219))

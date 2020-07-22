@@ -16,26 +16,26 @@ def Constructor():
     RunEvent(9570, slot=1, args=(4510, 3750))
     EndIfClient()
     EndIfFlagOn(2052)
-    RunEvent(130, slot=0, args=(40, 0, 4004110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=1, args=(30, 0, 3004110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=2, args=(31, 0, 3104110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=3, args=(33, 0, 3304110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=4, args=(35, 0, 3504110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=5, args=(33, 0, 3304111, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=6, args=(38, 0, 3804110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=7, args=(38, 0, 3804111, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=8, args=(37, 0, 3704110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=9, args=(37, 0, 3704111, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=10, args=(39, 0, 3904110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=11, args=(32, 0, 3204110, 0, 26), arg_types='BBiHi')
-    RunEvent(130, slot=12, args=(30, 0, 3004111, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=13, args=(34, 1, 3414110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=14, args=(40, 0, 4004111, 10, 25), arg_types='BBiHi')
-    RunEvent(130, slot=15, args=(41, 0, 4104110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=16, args=(45, 0, 4504110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=17, args=(50, 0, 5004110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=18, args=(51, 0, 5104110, 0, -1), arg_types='BBiHi')
-    RunEvent(130, slot=19, args=(51, 1, 5114110, 0, -1), arg_types='BBiHi')
+    RunEvent(130, slot=0, args=(40, 0, 4004110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=1, args=(30, 0, 3004110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=2, args=(31, 0, 3104110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=3, args=(33, 0, 3304110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=4, args=(35, 0, 3504110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=5, args=(33, 0, 3304111, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=6, args=(38, 0, 3804110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=7, args=(38, 0, 3804111, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=8, args=(37, 0, 3704110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=9, args=(37, 0, 3704111, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=10, args=(39, 0, 3904110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=11, args=(32, 0, 3204110, 0, 26), arg_types="BBiHi")
+    RunEvent(130, slot=12, args=(30, 0, 3004111, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=13, args=(34, 1, 3414110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=14, args=(40, 0, 4004111, 10, 25), arg_types="BBiHi")
+    RunEvent(130, slot=15, args=(41, 0, 4104110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=16, args=(45, 0, 4504110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=17, args=(50, 0, 5004110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=18, args=(51, 0, 5104110, 0, -1), arg_types="BBiHi")
+    RunEvent(130, slot=19, args=(51, 1, 5114110, 0, -1), arg_types="BBiHi")
     RunEvent(9004, slot=0, args=(9007,))
     RunEvent(9005, slot=0, args=(9008,))
     RunEvent(9006, slot=0, args=(9009,))
@@ -68,32 +68,32 @@ def Constructor():
     RunEvent(970, slot=24, args=(15100800, 2340, 0, 0))
     RunEvent(970, slot=25, args=(15100850, 2350, 0, 0))
     RunEvent(970, slot=26, args=(15110800, 2360, 0, 0))
-    RunEvent(250, slot=10, args=(17, 6700, 0.0), arg_types='iif')
-    RunEvent(250, slot=11, args=(18, 6770, 0.0), arg_types='iif')
-    RunEvent(250, slot=12, args=(19, 6740, 0.0), arg_types='iif')
-    RunEvent(250, slot=13, args=(20, 6750, 0.0), arg_types='iif')
-    RunEvent(250, slot=14, args=(21, 6760, 0.0), arg_types='iif')
-    RunEvent(250, slot=15, args=(22, 6710, 0.0), arg_types='iif')
-    RunEvent(250, slot=16, args=(23, 6720, 0.0), arg_types='iif')
-    RunEvent(250, slot=17, args=(24, 6730, 0.0), arg_types='iif')
-    RunEvent(250, slot=20, args=(4, 13300800, 0.0), arg_types='iif')
-    RunEvent(250, slot=21, args=(5, 13900800, 0.0), arg_types='iif')
-    RunEvent(250, slot=22, args=(6, 13700800, 0.0), arg_types='iif')
-    RunEvent(250, slot=23, args=(7, 13410830, 0.0), arg_types='iif')
-    RunEvent(250, slot=24, args=(27, 14000800, 0.0), arg_types='iif')
-    RunEvent(250, slot=25, args=(28, 13000800, 0.0), arg_types='iif')
-    RunEvent(250, slot=26, args=(29, 13100800, 0.0), arg_types='iif')
-    RunEvent(250, slot=27, args=(30, 13300850, 0.0), arg_types='iif')
-    RunEvent(250, slot=28, args=(31, 13500800, 0.0), arg_types='iif')
-    RunEvent(250, slot=29, args=(32, 13800800, 0.0), arg_types='iif')
-    RunEvent(250, slot=30, args=(33, 13700850, 0.0), arg_types='iif')
-    RunEvent(250, slot=31, args=(34, 13000890, 0.0), arg_types='iif')
-    RunEvent(250, slot=32, args=(35, 13010800, 0.0), arg_types='iif')
-    RunEvent(250, slot=33, args=(36, 13800830, 0.0), arg_types='iif')
-    RunEvent(250, slot=34, args=(37, 13000830, 0.0), arg_types='iif')
-    RunEvent(250, slot=35, args=(38, 14000830, 0.0), arg_types='iif')
-    RunEvent(250, slot=36, args=(39, 13200800, 0.0), arg_types='iif')
-    RunEvent(250, slot=37, args=(40, 13200850, 0.0), arg_types='iif')
+    RunEvent(250, slot=10, args=(17, 6700, 0.0), arg_types="iif")
+    RunEvent(250, slot=11, args=(18, 6770, 0.0), arg_types="iif")
+    RunEvent(250, slot=12, args=(19, 6740, 0.0), arg_types="iif")
+    RunEvent(250, slot=13, args=(20, 6750, 0.0), arg_types="iif")
+    RunEvent(250, slot=14, args=(21, 6760, 0.0), arg_types="iif")
+    RunEvent(250, slot=15, args=(22, 6710, 0.0), arg_types="iif")
+    RunEvent(250, slot=16, args=(23, 6720, 0.0), arg_types="iif")
+    RunEvent(250, slot=17, args=(24, 6730, 0.0), arg_types="iif")
+    RunEvent(250, slot=20, args=(4, 13300800, 0.0), arg_types="iif")
+    RunEvent(250, slot=21, args=(5, 13900800, 0.0), arg_types="iif")
+    RunEvent(250, slot=22, args=(6, 13700800, 0.0), arg_types="iif")
+    RunEvent(250, slot=23, args=(7, 13410830, 0.0), arg_types="iif")
+    RunEvent(250, slot=24, args=(27, 14000800, 0.0), arg_types="iif")
+    RunEvent(250, slot=25, args=(28, 13000800, 0.0), arg_types="iif")
+    RunEvent(250, slot=26, args=(29, 13100800, 0.0), arg_types="iif")
+    RunEvent(250, slot=27, args=(30, 13300850, 0.0), arg_types="iif")
+    RunEvent(250, slot=28, args=(31, 13500800, 0.0), arg_types="iif")
+    RunEvent(250, slot=29, args=(32, 13800800, 0.0), arg_types="iif")
+    RunEvent(250, slot=30, args=(33, 13700850, 0.0), arg_types="iif")
+    RunEvent(250, slot=31, args=(34, 13000890, 0.0), arg_types="iif")
+    RunEvent(250, slot=32, args=(35, 13010800, 0.0), arg_types="iif")
+    RunEvent(250, slot=33, args=(36, 13800830, 0.0), arg_types="iif")
+    RunEvent(250, slot=34, args=(37, 13000830, 0.0), arg_types="iif")
+    RunEvent(250, slot=35, args=(38, 14000830, 0.0), arg_types="iif")
+    RunEvent(250, slot=36, args=(39, 13200800, 0.0), arg_types="iif")
+    RunEvent(250, slot=37, args=(40, 13200850, 0.0), arg_types="iif")
     RunEvent(6099)
     RunEvent(6100, slot=0, args=(6100, 13300800))
     RunEvent(6100, slot=1, args=(6101, 13900800))
@@ -113,10 +113,10 @@ def Constructor():
     RunEvent(9510)
     RunEvent(9511)
     RunEvent(9512)
-    RunEvent(9520, slot=0, args=(4410, 8, 9013, 6058), arg_types='iHii')
-    RunEvent(9525, slot=0, args=(4430, 4, 9005, 6054), arg_types='iHii')
-    RunEvent(9530, slot=0, args=(4420, 18, 9020, 6068), arg_types='iHii')
-    RunEvent(9540, slot=0, args=(15, 9017, 6065), arg_types='Hii')
+    RunEvent(9520, slot=0, args=(4410, 8, 9013, 6058), arg_types="iHii")
+    RunEvent(9525, slot=0, args=(4430, 4, 9005, 6054), arg_types="iHii")
+    RunEvent(9530, slot=0, args=(4420, 18, 9020, 6068), arg_types="iHii")
+    RunEvent(9540, slot=0, args=(15, 9017, 6065), arg_types="Hii")
     RunEvent(9100, slot=0, args=(70000007,))
     RunEvent(9101, slot=0, args=(70000008,))
     RunEvent(9102, slot=0, args=(70000012,))
@@ -132,14 +132,14 @@ def Constructor():
     RunEvent(9112, slot=0, args=(70000005,))
     RunEvent(9113, slot=0, args=(70000030,))
     RunEvent(9114, slot=0, args=(70000031,))
-    RunEvent(9120, slot=0, args=(74000756, 74000760, 74000760, 1, 1, 1, 0), arg_types='iiiIBIi')
-    RunEvent(9120, slot=1, args=(74000591, 74000552, 74000592, 3, 3, 3, 0), arg_types='iiiIBIi')
-    RunEvent(9120, slot=2, args=(74000552, 74000553, 74000592, 3, 3, 6, 0), arg_types='iiiIBIi')
-    RunEvent(9120, slot=3, args=(74000303, 74000316, 74000316, 1, 1, 1, 1), arg_types='iiiIBIi')
-    RunEvent(9120, slot=4, args=(74000306, 74000318, 74000318, 1, 1, 1, 1), arg_types='iiiIBIi')
-    RunEvent(9120, slot=5, args=(74000921, 74000925, 74000925, 1, 1, 1, 1), arg_types='iiiIBIi')
-    RunEvent(9120, slot=6, args=(74000916, 74000913, 74000913, 1, 1, 1, 1), arg_types='iiiIBIi')
-    RunEvent(9120, slot=7, args=(73500265, 73500264, 73500264, 1, 1, 1, 0), arg_types='iiiIBIi')
+    RunEvent(9120, slot=0, args=(74000756, 74000760, 74000760, 1, 1, 1, 0), arg_types="iiiIBIi")
+    RunEvent(9120, slot=1, args=(74000591, 74000552, 74000592, 3, 3, 3, 0), arg_types="iiiIBIi")
+    RunEvent(9120, slot=2, args=(74000552, 74000553, 74000592, 3, 3, 6, 0), arg_types="iiiIBIi")
+    RunEvent(9120, slot=3, args=(74000303, 74000316, 74000316, 1, 1, 1, 1), arg_types="iiiIBIi")
+    RunEvent(9120, slot=4, args=(74000306, 74000318, 74000318, 1, 1, 1, 1), arg_types="iiiIBIi")
+    RunEvent(9120, slot=5, args=(74000921, 74000925, 74000925, 1, 1, 1, 1), arg_types="iiiIBIi")
+    RunEvent(9120, slot=6, args=(74000916, 74000913, 74000913, 1, 1, 1, 1), arg_types="iiiIBIi")
+    RunEvent(9120, slot=7, args=(73500265, 73500264, 73500264, 1, 1, 1, 0), arg_types="iiiIBIi")
     RunEvent(9016)
     RunEvent(9011, slot=0, args=(74000132,))
     RunEvent(9014)
@@ -147,9 +147,9 @@ def Constructor():
     RunEvent(9019, slot=0, args=(74000669,))
     RunEvent(9015)
     RunEvent(6900)
-    RunEvent(9020, slot=0, args=(73500300, 1621, 1634, 6951, 35, 0), arg_types='iiiiBB')
-    RunEvent(9020, slot=1, args=(14100511, 14100512, 14100512, 6952, 41, 0), arg_types='iiiiBB')
-    RunEvent(9020, slot=2, args=(14500161, 14500162, 14500162, 6952, 45, 0), arg_types='iiiiBB')
+    RunEvent(9020, slot=0, args=(73500300, 1621, 1634, 6951, 35, 0), arg_types="iiiiBB")
+    RunEvent(9020, slot=1, args=(14100511, 14100512, 14100512, 6952, 41, 0), arg_types="iiiiBB")
+    RunEvent(9020, slot=2, args=(14500161, 14500162, 14500162, 6952, 45, 0), arg_types="iiiiBB")
 
 
 def Preconstructor():
@@ -161,23 +161,23 @@ def Preconstructor():
     RunEvent(9012)
     RunEvent(741)
     RunEvent(740)
-    RunEvent(9080, slot=0, args=(2, 10040, 6700), arg_types='Bii')
-    RunEvent(9080, slot=1, args=(2, 10050, 6710), arg_types='Bii')
-    RunEvent(9080, slot=2, args=(2, 10020, 6720), arg_types='Bii')
-    RunEvent(9080, slot=3, args=(2, 10030, 6730), arg_types='Bii')
-    RunEvent(9080, slot=4, args=(2, 10070, 6740), arg_types='Bii')
-    RunEvent(9080, slot=5, args=(2, 10000, 6750), arg_types='Bii')
-    RunEvent(9080, slot=6, args=(2, 10080, 6760), arg_types='Bii')
-    RunEvent(9080, slot=7, args=(2, 10060, 6770), arg_types='Bii')
-    RunEvent(9080, slot=10, args=(3, 520, 6790), arg_types='Bii')
-    RunEvent(9080, slot=11, args=(3, 521, 6791), arg_types='Bii')
-    RunEvent(9080, slot=12, args=(3, 522, 6792), arg_types='Bii')
-    RunEvent(9080, slot=13, args=(3, 523, 6793), arg_types='Bii')
-    RunEvent(9080, slot=14, args=(3, 524, 6794), arg_types='Bii')
-    RunEvent(9080, slot=15, args=(3, 102, 6780), arg_types='Bii')
-    RunEvent(9080, slot=16, args=(3, 101, 6781), arg_types='Bii')
-    RunEvent(9080, slot=17, args=(3, 108, 6782), arg_types='Bii')
-    RunEvent(9080, slot=18, args=(2, 10090, 6830), arg_types='Bii')
+    RunEvent(9080, slot=0, args=(2, 10040, 6700), arg_types="Bii")
+    RunEvent(9080, slot=1, args=(2, 10050, 6710), arg_types="Bii")
+    RunEvent(9080, slot=2, args=(2, 10020, 6720), arg_types="Bii")
+    RunEvent(9080, slot=3, args=(2, 10030, 6730), arg_types="Bii")
+    RunEvent(9080, slot=4, args=(2, 10070, 6740), arg_types="Bii")
+    RunEvent(9080, slot=5, args=(2, 10000, 6750), arg_types="Bii")
+    RunEvent(9080, slot=6, args=(2, 10080, 6760), arg_types="Bii")
+    RunEvent(9080, slot=7, args=(2, 10060, 6770), arg_types="Bii")
+    RunEvent(9080, slot=10, args=(3, 520, 6790), arg_types="Bii")
+    RunEvent(9080, slot=11, args=(3, 521, 6791), arg_types="Bii")
+    RunEvent(9080, slot=12, args=(3, 522, 6792), arg_types="Bii")
+    RunEvent(9080, slot=13, args=(3, 523, 6793), arg_types="Bii")
+    RunEvent(9080, slot=14, args=(3, 524, 6794), arg_types="Bii")
+    RunEvent(9080, slot=15, args=(3, 102, 6780), arg_types="Bii")
+    RunEvent(9080, slot=16, args=(3, 101, 6781), arg_types="Bii")
+    RunEvent(9080, slot=17, args=(3, 108, 6782), arg_types="Bii")
+    RunEvent(9080, slot=18, args=(2, 10090, 6830), arg_types="Bii")
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(2052)
     IfFlagOn(1, 6400)
@@ -256,7 +256,7 @@ def Preconstructor():
     DefineLabel(0)
 
 
-def Event130(arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int, arg_8_9: ushort, arg_12_15: int):
+def Event130(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int, arg_8_9: ushort, arg_12_15: int):
     """ 130: Event 130 """
     EndIfThisEventSlotOn()
     IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
@@ -342,7 +342,7 @@ def Event232():
     Restart()
 
 
-def Event250(arg_0_3: int, arg_4_7: int, arg_8_11: float):
+def Event250(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 250: Event 250 """
     EndIfThisEventSlotOn()
     IfFlagOn(1, arg_4_7)
@@ -352,7 +352,7 @@ def Event250(arg_0_3: int, arg_4_7: int, arg_8_11: float):
     AwardAchievement(arg_0_3)
 
 
-def Event6100(arg_0_3: int, arg_4_7: int):
+def Event6100(_, arg_0_3: int, arg_4_7: int):
     """ 6100: Event 6100 """
     EndIfThisEventSlotOn()
     IfFlagOn(1, arg_4_7)
@@ -455,11 +455,23 @@ def Event710():
     IfFlagOn(8, 13000896)
     IfFlagOff(8, 13000890)
     SkipLinesIfConditionTrue(2, 8)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(cutscene=37000030, cutscene_type=CutsceneType.Skippable, region=3002100, 
-                                               game_map=HIGH_WALL_OF_LOTHRIC, player_id=10000, other_region=3002890)
+    PlayCutsceneAndMovePlayer_WithSecondRegion(
+        cutscene=37000030,
+        cutscene_type=CutsceneType.Skippable,
+        region=3002100,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
+        other_region=3002890,
+    )
     SkipLines(1)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(cutscene=37000030, cutscene_type=CutsceneType.Skippable, region=3002890, 
-                                               game_map=HIGH_WALL_OF_LOTHRIC, player_id=10000, other_region=3002890)
+    PlayCutsceneAndMovePlayer_WithSecondRegion(
+        cutscene=37000030,
+        cutscene_type=CutsceneType.Skippable,
+        region=3002890,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
+        other_region=3002890,
+    )
     Goto(Label.L2)
 
     # --- 1 --- #
@@ -482,11 +494,23 @@ def Event710():
     IfFlagOn(9, 13000896)
     IfFlagOff(9, 13000890)
     SkipLinesIfConditionTrue(2, 9)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(cutscene=39000030, cutscene_type=CutsceneType.Skippable, region=3002100, 
-                                               game_map=HIGH_WALL_OF_LOTHRIC, player_id=10000, other_region=3002890)
+    PlayCutsceneAndMovePlayer_WithSecondRegion(
+        cutscene=39000030,
+        cutscene_type=CutsceneType.Skippable,
+        region=3002100,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
+        other_region=3002890,
+    )
     SkipLines(1)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(cutscene=39000030, cutscene_type=CutsceneType.Skippable, region=3002890, 
-                                               game_map=HIGH_WALL_OF_LOTHRIC, player_id=10000, other_region=3002890)
+    PlayCutsceneAndMovePlayer_WithSecondRegion(
+        cutscene=39000030,
+        cutscene_type=CutsceneType.Skippable,
+        region=3002890,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
+        other_region=3002890,
+    )
     Goto(Label.L2)
 
     # --- 2 --- #
@@ -575,7 +599,7 @@ def Event750():
     RemoveGoodFromPlayer(10230, quantity=99)
 
 
-def Event970(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event970(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 970: Event 970 """
     EndIfFlagOn(arg_0_3)
     IfFlagOn(0, arg_0_3)
@@ -664,7 +688,7 @@ def Event9512():
 
 
 @RestartOnRest
-def Event9520(arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
+def Event9520(_, arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
     """ 9520: Event 9520 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(0, 13304194)
@@ -679,7 +703,7 @@ def Event9520(arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event9525(arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
+def Event9525(_, arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
     """ 9525: Event 9525 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(-1, 13304195)
@@ -714,7 +738,7 @@ def Event9525(arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event9530(arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
+def Event9530(_, arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
     """ 9530: Event 9530 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(-1, 13304913)
@@ -741,7 +765,7 @@ def Event9530(arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event9540(arg_0_1: ushort, arg_4_7: int, arg_8_11: int):
+def Event9540(_, arg_0_1: ushort, arg_4_7: int, arg_8_11: int):
     """ 9540: Event 9540 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(1, 13804196)
@@ -775,7 +799,7 @@ def Event9540(arg_0_1: ushort, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event9570(arg_0_3: int, arg_4_7: int):
+def Event9570(_, arg_0_3: int, arg_4_7: int):
     """ 9570: Event 9570 """
     DisableNetworkSync()
     IfCharacterHasSpecialEffect(0, character=PLAYER, special_effect=arg_4_7)
@@ -784,7 +808,7 @@ def Event9570(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9000(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event9000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 9000: Event 9000 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -800,7 +824,7 @@ def Event9000(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Restart()
 
 
-def Event9002(arg_0_3: int):
+def Event9002(_, arg_0_3: int):
     """ 9002: Event 9002 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -860,7 +884,7 @@ def Event9002(arg_0_3: int):
     Restart()
 
 
-def Event9004(arg_0_3: int):
+def Event9004(_, arg_0_3: int):
     """ 9004: Event 9004 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -962,7 +986,7 @@ def Event9004(arg_0_3: int):
     Restart()
 
 
-def Event9005(arg_0_3: int):
+def Event9005(_, arg_0_3: int):
     """ 9005: Event 9005 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1064,7 +1088,7 @@ def Event9005(arg_0_3: int):
     Restart()
 
 
-def Event9006(arg_0_3: int):
+def Event9006(_, arg_0_3: int):
     """ 9006: Event 9006 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1113,7 +1137,7 @@ def Event9010():
     Restart()
 
 
-def Event9011(arg_0_3: int):
+def Event9011(_, arg_0_3: int):
     """ 9011: Event 9011 """
     EndIfPlayerNotInOwnWorld()
     IfFlagOn(1, 700)
@@ -1169,8 +1193,13 @@ def Event9014():
     EndIfPlayerNotInOwnWorld()
     GotoIfFlagOn(Label.L0, 9014)
     GotoIfFlagOff(Label.L0, 13300761)
-    DisplayDialog(13007000, anchor_entity=10000, display_distance=0.0, button_type=ButtonType.OK_or_Cancel, 
-                  number_buttons=NumberButtons.OneButton)
+    DisplayDialog(
+        13007000,
+        anchor_entity=10000,
+        display_distance=0.0,
+        button_type=ButtonType.OK_or_Cancel,
+        number_buttons=NumberButtons.OneButton,
+    )
     End()
 
     # --- 0 --- #
@@ -1216,7 +1245,7 @@ def Event9018():
 
 
 @RestartOnRest
-def Event9019(arg_0_3: int):
+def Event9019(_, arg_0_3: int):
     """ 9019: Event 9019 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(arg_0_3)
@@ -1226,7 +1255,7 @@ def Event9019(arg_0_3: int):
     EnableFlag(arg_0_3)
 
 
-def Event9020(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
+def Event9020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
     """ 9020: Event 9020 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagRangeAnyOn((arg_4_7, arg_8_11))
@@ -1245,7 +1274,7 @@ def Event9020(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_
     Restart()
 
 
-def Event9080(arg_0_0: uchar, arg_4_7: int, arg_8_11: int):
+def Event9080(_, arg_0_0: uchar, arg_4_7: int, arg_8_11: int):
     """ 9080: Event 9080 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(2052)
@@ -1255,7 +1284,7 @@ def Event9080(arg_0_0: uchar, arg_4_7: int, arg_8_11: int):
     DisableFlag(arg_8_11)
 
 
-def Event9100(arg_0_3: int):
+def Event9100(_, arg_0_3: int):
     """ 9100: Event 9100 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1265,7 +1294,7 @@ def Event9100(arg_0_3: int):
     Restart()
 
 
-def Event9101(arg_0_3: int):
+def Event9101(_, arg_0_3: int):
     """ 9101: Event 9101 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1324,7 +1353,7 @@ def Event9101(arg_0_3: int):
     Restart()
 
 
-def Event9102(arg_0_3: int):
+def Event9102(_, arg_0_3: int):
     """ 9102: Event 9102 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1349,7 +1378,7 @@ def Event9102(arg_0_3: int):
     Restart()
 
 
-def Event9103(arg_0_3: int):
+def Event9103(_, arg_0_3: int):
     """ 9103: Event 9103 """
     RestartIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1359,7 +1388,7 @@ def Event9103(arg_0_3: int):
     Restart()
 
 
-def Event9104(arg_0_3: int):
+def Event9104(_, arg_0_3: int):
     """ 9104: Event 9104 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1387,7 +1416,7 @@ def Event9104(arg_0_3: int):
     Restart()
 
 
-def Event9105(arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event9105(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 9105: Event 9105 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1415,7 +1444,7 @@ def Event9105(arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event9106(arg_0_3: int):
+def Event9106(_, arg_0_3: int):
     """ 9106: Event 9106 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1429,7 +1458,7 @@ def Event9106(arg_0_3: int):
     Restart()
 
 
-def Event9107(arg_0_3: int):
+def Event9107(_, arg_0_3: int):
     """ 9107: Event 9107 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1443,7 +1472,7 @@ def Event9107(arg_0_3: int):
     Restart()
 
 
-def Event9108(arg_0_3: int):
+def Event9108(_, arg_0_3: int):
     """ 9108: Event 9108 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1457,7 +1486,7 @@ def Event9108(arg_0_3: int):
     Restart()
 
 
-def Event9109(arg_0_3: int):
+def Event9109(_, arg_0_3: int):
     """ 9109: Event 9109 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1471,7 +1500,7 @@ def Event9109(arg_0_3: int):
     Restart()
 
 
-def Event9110(arg_0_3: int):
+def Event9110(_, arg_0_3: int):
     """ 9110: Event 9110 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1493,7 +1522,7 @@ def Event9110(arg_0_3: int):
     Restart()
 
 
-def Event9111(arg_0_3: int, arg_4_7: int):
+def Event9111(_, arg_0_3: int, arg_4_7: int):
     """ 9111: Event 9111 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1520,7 +1549,7 @@ def Event9111(arg_0_3: int, arg_4_7: int):
     Restart()
 
 
-def Event9112(arg_0_3: int):
+def Event9112(_, arg_0_3: int):
     """ 9112: Event 9112 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1530,7 +1559,7 @@ def Event9112(arg_0_3: int):
     Restart()
 
 
-def Event9113(arg_0_3: int):
+def Event9113(_, arg_0_3: int):
     """ 9113: Event 9113 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1558,7 +1587,7 @@ def Event9113(arg_0_3: int):
     Restart()
 
 
-def Event9114(arg_0_3: int):
+def Event9114(_, arg_0_3: int):
     """ 9114: Event 9114 """
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
@@ -1569,8 +1598,9 @@ def Event9114(arg_0_3: int):
 
 
 @RestartOnRest
-def Event9120(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: uint, arg_16_16: uchar, arg_20_23: uint, 
-              arg_24_27: int):
+def Event9120(
+    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: uint, arg_16_16: uchar, arg_20_23: uint, arg_24_27: int
+):
     """ 9120: Event 9120 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(arg_4_7)
@@ -1649,7 +1679,7 @@ def Event9120(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: uint, arg_16
     EnableFlag(arg_4_7)
 
 
-def Event690(arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
+def Event690(_, arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
     """ 690: Event 690 """
     SkipLinesIfThisEventSlotOn(1)
     IfFlagOn(0, arg_12_15)
@@ -1686,7 +1716,7 @@ def Event690(arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
     Restart()
 
 
-def Event840(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event840(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 840: Event 840 """
     DisableFlag(arg_0_3)
     IfFlagOn(0, arg_0_3)
@@ -1702,7 +1732,7 @@ def Event840(arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Restart()
 
 
-def Event870(arg_0_0: uchar, arg_4_7: int):
+def Event870(_, arg_0_0: uchar, arg_4_7: int):
     """ 870: Event 870 """
     IfPlayerCovenant(0, arg_0_0)
     EnableFlag(arg_4_7)

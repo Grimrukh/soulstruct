@@ -17,7 +17,7 @@ _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
 _TALK_ESP_RE = re.compile(r"t(\d+)\.esp(\.py)$")
 
 
-class TalkESDBND(object):
+class TalkESDBND:
     """Automatically loads all talk ESDs contained inside given path, or constructs BND from scratch using dictionary
     mapping talk IDs to valid ESD instance sources.
 
@@ -25,6 +25,7 @@ class TalkESDBND(object):
 
     Currently only supported for DS1, hence its placement in this module.
     """
+
     DSR_DCX_MAGIC = (36, 44)
     DS1_BND_PATH_FMT = "N:\\FRPG\\data\\INTERROOT_{version}\\script\\talk\\t{talk_id}.esd"
 
@@ -49,8 +50,10 @@ class TalkESDBND(object):
                 # Directory of individual ESP files/folders.
                 self.bnd_name = "<from ESP>"
                 if not self.game_version:
-                    raise ValueError("`game_version` must be specified ('ptde' or 'dsr') when loading TalkESDBND from "
-                                     "ESP files/folders.")
+                    raise ValueError(
+                        "`game_version` must be specified ('ptde' or 'dsr') when loading TalkESDBND from "
+                        "ESP files/folders."
+                    )
                 self.bnd = self.get_empty_talkesdbnd()
                 self.bnd_name = talkesdbnd_source.name
                 self.bnd.dcx = self.DSR_DCX_MAGIC if self.game_version == "dsr" else ()
@@ -61,8 +64,9 @@ class TalkESDBND(object):
             # Note that `bnd_name` cannot be detected and must be passed to `write()` manually.
             self.bnd_name = "<from dict>"
             if not self.game_version:
-                raise ValueError("`game_version` must be specified ('ptde' or 'dsr') when loading TalkESDBND from "
-                                 "dictionary.")
+                raise ValueError(
+                    "`game_version` must be specified ('ptde' or 'dsr') when loading TalkESDBND from " "dictionary."
+                )
             self.bnd = self.get_empty_talkesdbnd()
             self.bnd.dcx = self.DSR_DCX_MAGIC if self.game_version == "dsr" else ()
             self.unpack_from_dict(talkesdbnd_source)
@@ -101,7 +105,8 @@ class TalkESDBND(object):
                 _LOGGER.error(f"Could not interpret ESD source with talk ID {talk_id}. Error: {str(e)}")
                 raise
             bnd_path = self.DS1_BND_PATH_FMT.format(
-                version="x64" if self.game_version == "dsr" else "win32", talk_id=talk_id)
+                version="x64" if self.game_version == "dsr" else "win32", talk_id=talk_id
+            )
             self.talk[talk_id] = esd
             self.bnd.add_entry(BNDEntry(data=esd.pack(), entry_id=i, path=bnd_path))
             i += 1
@@ -130,7 +135,8 @@ class TalkESDBND(object):
                 if not allow_new and talk_id not in self.talk:
                     _LOGGER.warning(
                         f"# WARNING: `allow_new=False` and no talk ID found for ESP source: {esp_source.name}. "
-                        f"Ignoring it.")
+                        f"Ignoring it."
+                    )
                     continue
                 try:
                     self.talk[talk_id] = self.esd_class(esp_source)
@@ -141,7 +147,8 @@ class TalkESDBND(object):
     def update_bnd(self):
         for talk_id, talk_entry in self.talk.items():
             bnd_path = self.DS1_BND_PATH_FMT.format(
-                    version="x64" if self.game_version == "dsr" else "win32", talk_id=talk_id)
+                version="x64" if self.game_version == "dsr" else "win32", talk_id=talk_id
+            )
             if bnd_path in self.bnd.entries_by_path:
                 self.bnd.entries_by_path[bnd_path].data = talk_entry.pack()
             else:
@@ -167,7 +174,7 @@ class TalkESDBND(object):
             return pickle.load(f)
 
 
-class DarkSoulsTalk(object):
+class DarkSoulsTalk:
     """Not actually used by SoulstructProject, but could still be useful for CLI editing."""
 
     Depths: TalkESDBND
@@ -205,14 +212,15 @@ class DarkSoulsTalk(object):
             raise ValueError("DarkSoulsTalk should be initialized with the directory containing TalkESDBND files.")
 
         for game_map in ALL_MAPS:
-            talkesdbnd_path = self._directory / (game_map.esd_file_stem + '.talkesdbnd')
+            talkesdbnd_path = self._directory / (game_map.esd_file_stem + ".talkesdbnd")
             try:
                 self._data[game_map.name] = TalkESDBND(talkesdbnd_path)
                 setattr(self, game_map.name, self._data[game_map.name])
             except FileNotFoundError:
                 raise FileNotFoundError(
                     f"Could not find TalkESDBND file {repr(game_map.esd_file_stem)} "
-                    f"({game_map.name}) in given directory.")
+                    f"({game_map.name}) in given directory."
+                )
 
     def __getitem__(self, talkesdbnd_name):
         return self._data[talkesdbnd_name]

@@ -1,5 +1,10 @@
-from soulstruct.events.internal import InstructionNotFoundError, get_enum_name, EnumStringError, boolify, \
-    get_game_map_variable_name
+from soulstruct.events.internal import (
+    InstructionNotFoundError,
+    get_enum_name,
+    EnumStringError,
+    boolify,
+    get_game_map_variable_name,
+)
 from soulstruct.enums.darksouls3 import *
 
 
@@ -7,8 +12,8 @@ def get_target_args(target_comparison_type, target_count):
     """ Determine the arg string for the fairly useless extra DS3 arguments. """
     if target_comparison_type != 0 or target_count != 1:
         target_comparison_type = get_enum_name(ComparisonType, target_comparison_type, True)
-        return f', target_comparison_type={target_comparison_type}, target_count={target_count}'
-    return ''
+        return f", target_comparison_type={target_comparison_type}, target_count={target_count}"
+    return ""
 
 
 def decompile_instruction(instruction_class, instruction_index, req_args, game_module):
@@ -22,8 +27,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 2:
             condition, state, character, region, min_target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
-            min_target_arg = f', min_target_count={min_target_count}' if min_target_count != 1 else ''
+            character = "PLAYER" if character == 10000 else character
+            min_target_arg = f", min_target_count={min_target_count}" if min_target_count != 1 else ""
             if state == 1:
                 return f"IfCharacterInsideRegion({condition}, {character}, region={region}{min_target_arg})"
             elif state == 0:
@@ -32,9 +37,9 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 3:
             condition, state, entity, other_entity, radius, min_target_count = req_args
-            min_target_arg = f', min_target_count={min_target_count}' if min_target_count != 1 else ''
-            entity = 'PLAYER' if entity == 10000 else entity
-            other_entity = 'PLAYER' if other_entity == 10000 else other_entity
+            min_target_arg = f", min_target_count={min_target_count}" if min_target_count != 1 else ""
+            entity = "PLAYER" if entity == 10000 else entity
+            other_entity = "PLAYER" if other_entity == 10000 else other_entity
             if state == 1:
                 return f"IfEntityWithinDistance({condition}, {entity}, {other_entity}, radius={radius}{min_target_arg})"
             elif state == 0:
@@ -44,11 +49,13 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 23:
             condition, attacked_entity, attacking_character, damage_type = req_args
             if attacked_entity == 10000:
-                attacked_entity = 'PLAYER'
+                attacked_entity = "PLAYER"
             if attacking_character == 10000:
-                attacking_character = 'PLAYER'
-            return (f"IfDamageType({condition}, attacked_entity={attacked_entity}, "
-                    f"attacking_character={attacking_character}, damage_type={get_enum_name(DamageType, damage_type)})")
+                attacking_character = "PLAYER"
+            return (
+                f"IfDamageType({condition}, attacked_entity={attacked_entity}, "
+                f"attacking_character={attacking_character}, damage_type={get_enum_name(DamageType, damage_type)})"
+            )
 
         if instruction_index == 24:
             condition, action_button_id, region = req_args
@@ -72,7 +79,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"IfMapCeremonyState({condition}, state={state}, game_map={game_map}, ceremony_id={ceremony})"
 
         if instruction_index == 29:
-            condition, = req_args
+            (condition,) = req_args
             return f"IfMultiplayerNetworkPenalized({condition})"
 
         if instruction_index == 30:
@@ -110,24 +117,26 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 39:
             condition, comparison_state, comparison_type, value = req_args
             comparison_type = get_enum_name(ComparisonType, comparison_type, True)
-            return (f"IfAllyPhantomCountComparison({condition}, comparison_state={boolify(comparison_state)}, "
-                    f"comparison_type={comparison_type}, value={value})")
+            return (
+                f"IfAllyPhantomCountComparison({condition}, comparison_state={boolify(comparison_state)}, "
+                f"comparison_type={comparison_type}, value={value})"
+            )
 
     if instruction_class == 4:
 
         if instruction_index == 0:
             condition, character, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
                 return f"IfCharacterDead({condition}, {character}{target_args})"
             elif state == 0:
                 return f"IfCharacterAlive({condition}, {character}{target_args})"
             return f"IfCharacterDeathState({condition}, character={character}, state={state}{target_args})"
-                
+
         if instruction_index == 2:
             condition, character, comparison_type, value, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             comparison_type = get_enum_name(ComparisonType, comparison_type, True)
             target_args = get_target_args(target_comparison_type, target_count)
             if comparison_type == ComparisonType.Equal:
@@ -146,14 +155,14 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 3:
             condition, character, character_type, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             character_type = get_enum_name(CharacterType, character_type, True)
             target_args = get_target_args(target_comparison_type, target_count)
             return f"IfCharacterType({condition}, character={character}, character_type={character_type}{target_args})"
 
         if instruction_index == 5:
             condition, character, special_effect, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
                 return f"IfCharacterHasSpecialEffect({condition}, character={character}, special_effect={special_effect}{target_args})"
@@ -163,7 +172,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 7:
             condition, character, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
                 return f"IfCharacterBackreadEnabled({condition}, character={character}{target_args})"
@@ -173,7 +182,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 8:
             condition, character, tae_event_id, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
                 return f"IfHasTAEEvent({condition}, character={character}, tae_event_id={tae_event_id}{target_args})"
@@ -189,7 +198,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 14:
             condition, character, comparison_type, value, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if comparison_type == ComparisonType.Equal:
                 return f"IfHealthValueEqual({condition}, character={character}, value={value}{target_args})"
@@ -200,14 +209,16 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             elif comparison_type == ComparisonType.LessThan:
                 return f"IfHealthValueLessThan({condition}, character={character}, value={value}{target_args})"
             elif comparison_type == ComparisonType.GreaterThanOrEqual:
-                return f"IfHealthValueGreaterThanOrEqual({condition}, character={character}, value={value}{target_args})"
+                return (
+                    f"IfHealthValueGreaterThanOrEqual({condition}, character={character}, value={value}{target_args})"
+                )
             elif comparison_type == ComparisonType.LessThanOrEqual:
                 return f"IfHealthValueLessThanOrEqual({condition}, character={character}, value={value}{target_args})"
             return f"IfHealthValueComparison({condition}, character={character}, comparison_type={comparison_type}, value={value}{target_args})"
 
         if instruction_index == 15:
             condition, character, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
                 return f"IfCharacterDrawGroupActive({condition}, {character}{target_args})"
@@ -218,17 +229,19 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 26:
             condition, comparison_type, value = req_args
             comparison_type = get_enum_name(ComparisonType, comparison_type, True)
-            return f"IfPlayerRemainingYoelLevelComparison({condition}, comparison_type={comparison_type}, value={value})"
+            return (
+                f"IfPlayerRemainingYoelLevelComparison({condition}, comparison_type={comparison_type}, value={value})"
+            )
 
         if instruction_index == 27:
             condition, character, invade_type, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             return f"IfCharacterInvadeType({condition}, character={character}, invade_type={invade_type}{target_args})"
 
         if instruction_index == 28:
             condition, character, chameleon_fx_id, is_transformed = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"IfCharacterChameleonState({condition}, character={character}, chameleon_fx_id={chameleon_fx_id}, is_transformed={boolify(is_transformed)})"
 
     if instruction_class == 5:
@@ -278,7 +291,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"GotoIfConditionState({label}, state={boolify(state)}, input_condition={condition})"
 
         if instruction_index == 103:
-            label, = req_args
+            (label,) = req_args
             label = get_enum_name(Label, label, True)
             return f"Goto({label})"
 
@@ -308,7 +321,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 5:
             line_count, state = req_args
             try:
-                state_name = get_enum_name(MultiplayerState, state).split('.')[-1]
+                state_name = get_enum_name(MultiplayerState, state).split(".")[-1]
             except EnumStringError:
                 return f"SkipLinesIfMultiplayerState({line_count}, state={state})"
             else:
@@ -318,14 +331,14 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             event_end_type, state = req_args
             if event_end_type == EventEndType.End:
                 try:
-                    state_name = get_enum_name(MultiplayerState, state).split('.')[-1]
+                    state_name = get_enum_name(MultiplayerState, state).split(".")[-1]
                 except EnumStringError:
                     pass
                 else:
                     return f"EndIf{state_name}()"
             elif event_end_type == EventEndType.Restart:
                 try:
-                    state_name = get_enum_name(MultiplayerState, state).split('.')[-1]
+                    state_name = get_enum_name(MultiplayerState, state).split(".")[-1]
                 except EnumStringError:
                     pass
                 else:
@@ -347,7 +360,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 11:
             label, character, special_effect, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             label = get_enum_name(Label, label, True)
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
@@ -442,7 +455,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             label, state = req_args
             label = get_enum_name(Label, label, True)
             try:
-                state_name = get_enum_name(MultiplayerState, state).split('.')[-1]
+                state_name = get_enum_name(MultiplayerState, state).split(".")[-1]
             except EnumStringError:
                 return f"GotoIfMultiplayerState({label}, state={state})"
             else:
@@ -466,7 +479,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 111:
             event_end_type, character, special_effect, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if event_end_type == EventEndType.End:
                 if state == 1:
@@ -482,7 +495,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 112:
             line_count, character, special_effect, state, target_comparison_type, target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
                 return f"SkipLinesIfCharacterHasSpecialEffect({line_count}, character={character}, special_effect={special_effect}{target_args})"
@@ -492,9 +505,9 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 200:
             label, state, character, region, min_target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             label = get_enum_name(Label, label, True)
-            min_target_arg = f', min_target_count={min_target_count}' if min_target_count != 1 else ''
+            min_target_arg = f", min_target_count={min_target_count}" if min_target_count != 1 else ""
             if state == 1:
                 return f"GotoIfCharacterInsideRegion({label}, character={character}, region={region}{min_target_arg})"
             elif state == 0:
@@ -503,8 +516,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 201:
             event_end_type, state, character, region, min_target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
-            min_target_arg = f', min_target_count={min_target_count}' if min_target_count != 1 else ''
+            character = "PLAYER" if character == 10000 else character
+            min_target_arg = f", min_target_count={min_target_count}" if min_target_count != 1 else ""
             if event_end_type == EventEndType.End:
                 if state == 1:
                     return f"EndIfCharacterInsideRegion(character={character}, region={region}{min_target_arg})"
@@ -521,8 +534,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 202:
             line_count, state, character, region, min_target_count = req_args
-            character = 'PLAYER' if character == 10000 else character
-            min_target_arg = f', min_target_count={min_target_count}' if min_target_count != 1 else ''
+            character = "PLAYER" if character == 10000 else character
+            min_target_arg = f", min_target_count={min_target_count}" if min_target_count != 1 else ""
             if state == 1:
                 return f"SkipLinesIfCharacterInsideRegion({line_count}, character={character}, region={region}{min_target_arg})"
             elif state == 0:
@@ -584,8 +597,10 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             cutscene, cutscene_type, region, area_id, block_id, player_id, time_period_id = req_args
             game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
-            return (f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
-                    f"{game_map}, player_id={player_id}, time_period_id={time_period_id})")
+            return (
+                f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {region}, "
+                f"{game_map}, player_id={player_id}, time_period_id={time_period_id})"
+            )
 
         if instruction_index == 7:
             cutscene, cutscene_type, player_id, time_period_id = req_args
@@ -601,9 +616,11 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             cutscene, cutscene_type, ceremony_id, unknown, region, area_id, block_id, player_id = req_args
             game_map = get_game_map_variable_name(area_id, block_id, game_module)
             cutscene_type = get_enum_name(CutsceneType, cutscene_type, True)
-            return (f"PlayCutsceneAndMovePlayerAndSetMapCeremony({cutscene}, cutscene_type={cutscene_type}, "
-                    f"ceremony_id={ceremony_id}, unknown={unknown}, region={region}, game_map={game_map}, "
-                    f"player_id={player_id})")
+            return (
+                f"PlayCutsceneAndMovePlayerAndSetMapCeremony({cutscene}, cutscene_type={cutscene_type}, "
+                f"ceremony_id={ceremony_id}, unknown={unknown}, region={region}, game_map={game_map}, "
+                f"player_id={player_id})"
+            )
 
         if instruction_index == 10:
             cutscene, cutscene_type, ceremony_id, unknown, player_id = req_args
@@ -626,8 +643,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 11:
             state, character, slot, name = req_args
-            character = 'PLAYER' if character == 10000 else character
-            slot_arg = f', slot={slot}' if slot != 0 else ''
+            character = "PLAYER" if character == 10000 else character
+            slot_arg = f", slot={slot}" if slot != 0 else ""
             if state == 1:
                 return f"EnableBossHealthBar({character}, name={name}{slot_arg})"
             elif state == 0:
@@ -635,37 +652,39 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetBossHealthBarState({character}, name={name}, slot={slot}, state={state})"
 
         if instruction_index == 15:
-            miniboss_id, = req_args
+            (miniboss_id,) = req_args
             return f"HandleMinibossDefeat(miniboss_id={miniboss_id})"
 
         if instruction_index == 18:
             entity, animation_id, loop, wait, skip_transition, unknown1, unknown2 = req_args
-            entity_id = 'PLAYER' if entity == 10000 else entity
+            entity_id = "PLAYER" if entity == 10000 else entity
             keyword_args = []
             if loop != 0:
-                keyword_args.append(f'loop={boolify(loop)}')
+                keyword_args.append(f"loop={boolify(loop)}")
             if wait != 0:
-                keyword_args.append(f'wait_for_completion={boolify(wait)}')
+                keyword_args.append(f"wait_for_completion={boolify(wait)}")
             if skip_transition != 0:
-                keyword_args.append(f'skip_transition={boolify(skip_transition)}')
+                keyword_args.append(f"skip_transition={boolify(skip_transition)}")
             if unknown1 != 0:
-                keyword_args.append(f'unknown1={unknown1}')
+                keyword_args.append(f"unknown1={unknown1}")
             if unknown2 != 1.0:
-                keyword_args.append(f'unknown2={unknown2}')
-            keyword_args = ', '.join(keyword_args)
+                keyword_args.append(f"unknown2={unknown2}")
+            keyword_args = ", ".join(keyword_args)
             if keyword_args:
                 return f"ForceAnimation({entity_id}, {animation_id}, {keyword_args})"
             return f"ForceAnimation({entity_id}, {animation_id})"
 
         if instruction_index == 27:
-            arg1, = req_args
+            (arg1,) = req_args
             return f"Unknown_2003_27(arg1={arg1})"
 
         if instruction_index == 41:
             source_flag, source_flag_bit_count, operand, target_flag, target_flag_bit_count, calculation_type = req_args
             calculation_type = get_enum_name(CalculationType, calculation_type, True)
-            return (f"EventValueOperation({source_flag}, {source_flag_bit_count}, {operand}, {target_flag}, "
-                    f"{target_flag_bit_count}, {calculation_type})")
+            return (
+                f"EventValueOperation({source_flag}, {source_flag_bit_count}, {operand}, {target_flag}, "
+                f"{target_flag_bit_count}, {calculation_type})"
+            )
 
         if instruction_index == 42:
             item_type, item, flag, bit_count = req_args
@@ -678,7 +697,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"GivePlayerItemAmountSpecifiedByFlagValue({item_type}, {item}, {flag}, {bit_count})"
 
         if instruction_index == 44:
-            state, = req_args
+            (state,) = req_args
             if state == 1:
                 return "EnableDirectionDisplay()"
             if state == 0:
@@ -706,29 +725,31 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetAreaWind(region={region}, state={state}, duration={duration}, wind_parameter_id={wind_parameter_id})"
 
         if instruction_index == 49:
-            respawn_point_id, = req_args
+            (respawn_point_id,) = req_args
             return f"WarpPlayerToRespawnPoint(respawn_point_id={respawn_point_id})"
 
         if instruction_index == 50:
-            spawner_id, = req_args
+            (spawner_id,) = req_args
             return f"StartEnemySpawner(spawner_id={spawner_id})"
 
         if instruction_index == 51:
             sign_type, character, region, summon_flag, dismissal_flag = req_args
             sign_type = get_enum_name(SingleplayerSummonSignType, sign_type, True)
-            return (f"SummonNPC({sign_type}, {character}, {region}, summon_flag={summon_flag}, "
-                    f"dismissal_flag={dismissal_flag})")
+            return (
+                f"SummonNPC({sign_type}, {character}, {region}, summon_flag={summon_flag}, "
+                f"dismissal_flag={dismissal_flag})"
+            )
 
         if instruction_index == 52:
-            warp_object_id, = req_args
+            (warp_object_id,) = req_args
             return f"InitializeWarpObject(warp_object_id={warp_object_id})"
 
         if instruction_index == 54:
-            character, = req_args
+            (character,) = req_args
             return f"MakeEnemyAppear({character})"
 
         if instruction_index == 57:
-            ceremony_id, = req_args
+            (ceremony_id,) = req_args
             return f"SetCurrentMapCeremony(ceremony_id={ceremony_id})"
 
         if instruction_index == 59:
@@ -737,7 +758,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetMapCeremony(game_map={game_map}, ceremony_id={ceremony_id})"
 
         if instruction_index == 61:
-            message, = req_args
+            (message,) = req_args
             return f"DisplayEpitaphMessage(message={message})"
 
         if instruction_index == 62:
@@ -763,15 +784,15 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"InitializeCrowTrade(item_type={item_type}, item_id={item_id}, item_lot_id={item_lot_id}, trade_completed_flag={trade_completed_flag}, crow_response_flag={crow_response_flag})"
 
         if instruction_index == 67:
-            region, = req_args
+            (region,) = req_args
             return f"InitializeCrowTradeRegion(region={region})"
 
         if instruction_index == 70:
-            state, = req_args
+            (state,) = req_args
             return f"SetNetworkInteractionState(state={boolify(state)})"
 
         if instruction_index == 71:
-            is_invisible, = req_args
+            (is_invisible,) = req_args
             if is_invisible == 1:
                 return f"DisableHUDVisibility()"
             elif is_invisible == 0:
@@ -800,7 +821,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetAutogeneratedEventSpecificFlag_2(unknown1={unknown1}, unknown2={unknown2})"
 
         if instruction_index == 76:
-            tips_disabled, = req_args
+            (tips_disabled,) = req_args
             if tips_disabled == 1:
                 return "DisableLoadingScreenTips()"
             elif tips_disabled == 0:
@@ -813,11 +834,11 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"AwardGestureItem(gesture_id={gesture_id}, item_type={item_type}, item_id={item_id})"
 
         if instruction_index == 78:
-            character, = req_args
+            (character,) = req_args
             return f"SendNPCSummonHome({character})"
 
         if instruction_index == 79:
-            unknown1, = req_args
+            (unknown1,) = req_args
             return f"Unknown_2003_79(unknown1={unknown1})"
 
         if instruction_index == 80:
@@ -837,19 +858,21 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 8:
             character, special_effect_id = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"AddSpecialEffect({character}, {special_effect_id})"
 
         if instruction_index == 14:
             character, target_entity, animation, wait_for_completion = req_args
-            character = 'PLAYER' if character == 10000 else character
-            target_entity = 'PLAYER' if target_entity == 10000 else target_entity
-            return (f"RotateToFaceEntity({character}, {target_entity}, animation={animation}, "
-                    f"wait_for_completion={boolify(wait_for_completion)})")
+            character = "PLAYER" if character == 10000 else character
+            target_entity = "PLAYER" if target_entity == 10000 else target_entity
+            return (
+                f"RotateToFaceEntity({character}, {target_entity}, animation={animation}, "
+                f"wait_for_completion={boolify(wait_for_completion)})"
+            )
 
         if instruction_index == 48:
             character, bit_count, state_id = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"ChangeCharacterCloth({character}, bit_count={bit_count}, state_id={state_id})"
 
         if instruction_index == 49:
@@ -858,24 +881,31 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 50:
             character, lock_on_model_point, state = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"SetLockOnPoint({character}, lock_on_model_point={lock_on_model_point}, state={boolify(state)})"
 
         if instruction_index == 51:
-            recipient_character, recipient_target_rigid_index, recipient_model_point, attachment_character, attachment_target_rigid_index, attachment_model_point = req_args
+            (
+                recipient_character,
+                recipient_target_rigid_index,
+                recipient_model_point,
+                attachment_character,
+                attachment_target_rigid_index,
+                attachment_model_point,
+            ) = req_args
             return f"Test_RequestRagdollRestraint(recipient_character={recipient_character}, recipient_target_rigid_index={recipient_target_rigid_index}, recipient_model_point={recipient_model_point}, attachment_character={attachment_character}, attachment_target_rigid_index={attachment_target_rigid_index}, attachment_model_point={attachment_model_point})"
 
         if instruction_index == 52:
-            character_init_param, = req_args
+            (character_init_param,) = req_args
             return f"ChangePlayerCharacterInitParam(character_init_param={character_init_param})"
 
         if instruction_index == 53:
-            character, = req_args
+            (character,) = req_args
             return f"AdaptSpecialEffectHealthChangeToNPCPart({character})"
 
         if instruction_index == 54:
             character, state = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"ImmediateActivate({character}, state={boolify(state)})"
 
         if instruction_index == 55:
@@ -883,8 +913,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetCharacterTalkRange({character}, distance={distance})"
 
         if instruction_index == 57:
-            character, = req_args
-            character = 'PLAYER' if character == 10000 else character
+            (character,) = req_args
+            character = "PLAYER" if character == 10000 else character
             return f"IncrementCharacterNewGameCycle({character})"
 
         if instruction_index == 58:
@@ -893,11 +923,11 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 59:
             character, state = req_args
-            character = 'PLAYER' if character == 10000 else character
+            character = "PLAYER" if character == 10000 else character
             return f"Unknown_2004_59({character}, state={boolify(state)})"
-        
+
         if instruction_index == 60:
-            level_count, = req_args
+            (level_count,) = req_args
             return f"SetPlayerRemainingYoelLevels(level_count={level_count})"
 
     if instruction_class == 2005:
@@ -910,24 +940,35 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"ShowObjectByMapCeremony(obj={obj}, ceremony_id={ceremony_id}, unknown={unknown})"
 
         if instruction_index == 19:
-            obj, = req_args
+            (obj,) = req_args
             return f"DestroyObject_NoSlot(obj={obj})"
 
     if instruction_class == 2007:
 
         if instruction_index == 10:
-            message, button_type, number_buttons, anchor_entity, display_distance, left_flag, right_flag, cancel_flag = req_args
+            (
+                message,
+                button_type,
+                number_buttons,
+                anchor_entity,
+                display_distance,
+                left_flag,
+                right_flag,
+                cancel_flag,
+            ) = req_args
             button_type = get_enum_name(ButtonType, button_type, True)
             number_buttons = get_enum_name(NumberButtons, number_buttons, True)
             return f"DisplayDialogAndSetFlags(message={message}, button_type={button_type}, number_buttons={number_buttons}, anchor_entity={anchor_entity}, display_distance={display_distance}, left_flag={left_flag}, right_flag={right_flag}, cancel_flag={cancel_flag})"
 
         if instruction_index == 11:
-            message, = req_args
+            (message,) = req_args
             return f"DisplayAreaWelcomeMessage(message={message})"
 
         if instruction_index == 12:
             message, unknown, pad_enabled = req_args
-            return f"DisplayHollowArenaMessage(message={message}, unknown={unknown}, pad_enabled={boolify(pad_enabled)})"
+            return (
+                f"DisplayHollowArenaMessage(message={message}, unknown={unknown}, pad_enabled={boolify(pad_enabled)})"
+            )
 
     if instruction_class == 2009:
 
@@ -936,15 +977,15 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"RegisterHealingFountain(flag={flag}, obj={obj}, reaction_distance={reaction_distance}, reaction_angle={reaction_angle}, initial_sword_number={initial_sword_number}, sword_level={sword_level})"
 
         if instruction_index == 8:
-            unknown, = req_args
+            (unknown,) = req_args
             return f"BanishInvaders(unknown={unknown})"
 
         if instruction_index == 10:
-            unknown, = req_args
+            (unknown,) = req_args
             return f"BanishPhantomsAndUpdateServerPvPStats(unknown={unknown})"
 
         if instruction_index == 11:
-            unknown, = req_args
+            (unknown,) = req_args
             return f"BanishPhantoms(unknown={unknown})"
 
     if instruction_class == 2010:
@@ -971,14 +1012,14 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"SetMapSoundWithFade(sound_id={sound_id}, state={state}, fade_duration={fade_duration})"
 
         if instruction_index == 7:
-            entity, = req_args
+            (entity,) = req_args
             return f"Unknown_2010_07(entity={entity})"
 
     if instruction_class == 2011:
 
         if instruction_index == 3:
             collision, state = req_args
-            return f"SetCollisionResStatecollisionsn={collision}, state={boolify(state)})"
+            return f"SetCollisionResState(collision={collision}, state={boolify(state)})"
 
         if instruction_index == 4:
             collision, state = req_args
@@ -987,7 +1028,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     if instruction_class == 2012:
 
         if instruction_index == 8:
-            state, = req_args
+            (state,) = req_args
             if state == 1:
                 return "EnableAreaWelcomeMessage()"
             elif state == 0:
@@ -997,7 +1038,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
     if instruction_class == 2013:
 
         if instruction_index == 1:
-            name, = req_args
+            (name,) = req_args
             return f"CreatePlayLog(name={name})"
 
         if instruction_index == 2:
@@ -1005,7 +1046,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"StartPlayLogMeasurement(measurement_id={measurement_id}, name={name}, overwrite={overwrite})"
 
         if instruction_index == 3:
-            measurement_id, = req_args
+            (measurement_id,) = req_args
             return f"StopPlayLogMeasurement(measurement_id={measurement_id})"
 
         if instruction_index == 4:

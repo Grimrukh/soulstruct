@@ -56,25 +56,25 @@ DSR_VANILLA_EXE_DATA = PTDE_VANILLA_EXE_DATA + [
 # event script when it detects that you have sat at that bonfire.
 MODDED_EXE_DATA = [
     # (required_flag, bonfire_entity, location_name_text)
-    (200, 1021960, 2000),       # Firelink Shrine
+    (200, 1021960, 2000),  # Firelink Shrine
     (11012045, 1011961, 2001),  # Parish Turret
-    (215, 1011964, 2002),       # Abandoned Church
+    (215, 1011964, 2002),  # Abandoned Church
     (11302045, 1301961, 2003),  # Bone Chimney
     (11202045, 1201961, 2004),  # Moonlight Grove
     (11402045, 1401961, 2005),  # Fetid Slagmire
     (11002045, 1001960, 2006),  # The Sluiceworks
-    (203, 1511960, 2007),       # Anor Londo
+    (203, 1511960, 2007),  # Anor Londo
     (11512045, 1511950, 2008),  # Sun Chamber
     (11512046, 1511962, 2009),  # Gwyn's Altar
     (11312045, 1311960, 2010),  # The Undercrypt
-    (202, 1401960, 2011),       # The Nursery
+    (202, 1401960, 2011),  # The Nursery
     (11412085, 1411964, 2012),  # Sanctum of Chaos
     (11602045, 1601950, 2013),  # The Abyss
     (11702045, 1701960, 2014),  # The Duke's Archives
     (11102045, 1101960, 2015),  # Cloister of Exiles
-    (201, 1321960, 2016),       # Ash Lake
+    (201, 1321960, 2016),  # Ash Lake
     (11212085, 1211962, 2017),  # Royal Hippodrome
-    (213, 1211964, 2018),       # Chasm Cell
+    (213, 1211964, 2018),  # Chasm Cell
     (11812045, 1811960, 2019),  # Undead Asylum
 ]
 
@@ -87,7 +87,7 @@ def restore_bonfire_warp_data(executable_path, dsr=None, debug=False):
 
 def get_executable_bonfire_warp_data(executable_path, dsr=None, debug=False):
     executable_path, dsr, debug = get_ds1_executable_and_version(executable_path, dsr, debug)
-    with executable_path.open('r+b') as f:
+    with executable_path.open("r+b") as f:
         if dsr:
             f.seek(DSR_WARP_LIST_OFFSET)
             bonfire_count = len(DSR_VANILLA_EXE_DATA)
@@ -99,7 +99,7 @@ def get_executable_bonfire_warp_data(executable_path, dsr=None, debug=False):
             bonfire_count = len(PTDE_VANILLA_EXE_DATA)
         bonfire_warp_data = []
         for _ in range(bonfire_count):
-            bonfire_warp_data.append(struct.unpack('3i', f.read(12)))
+            bonfire_warp_data.append(struct.unpack("3i", f.read(12)))
     return bonfire_warp_data
 
 
@@ -114,9 +114,9 @@ def edit_executable_bonfire_warp_data(executable_path, bonfire_warp_data, dsr=No
     elif not dsr and len(bonfire_warp_data) != 20:
         raise ValueError("A list of 20 bonfire (flag, entity, text) triplets must be given for PTDE.")
 
-    new_warp_list_bytes = b''.join([struct.pack('3i', *bonfire) for bonfire in bonfire_warp_data])
+    new_warp_list_bytes = b"".join([struct.pack("3i", *bonfire) for bonfire in bonfire_warp_data])
 
-    with executable_path.open('r+b') as f:
+    with executable_path.open("r+b") as f:
         if dsr:
             f.seek(DSR_WARP_LIST_OFFSET)
         else:
@@ -128,7 +128,8 @@ def edit_executable_bonfire_warp_data(executable_path, bonfire_warp_data, dsr=No
     _LOGGER.info(f"Bonfire warp list in DS1 executable {str(executable_path)} modified successfully.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from soulstruct import PTDE_PATH
+
     bd = get_executable_bonfire_warp_data(PTDE_PATH)
     print(bd)
