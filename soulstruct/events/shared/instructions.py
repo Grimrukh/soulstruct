@@ -889,7 +889,7 @@ def DisableObject(obj: ObjectInt):
     return SetObjectState(obj, False)
 
 
-def DestroyObject(obj: ObjectInt, slot=0):
+def DestroyObject(obj: ObjectInt, slot: int = 0):
     """ Technically 'requests' the object's destruction. No idea what the slot number does. """
     instruction_info = (2005, 1)
     return to_numeric(instruction_info, obj, slot)
@@ -1194,7 +1194,8 @@ def RemoveItemFromPlayer(item: ItemInt, item_type=None, quantity=0):
     always have to remove *all* instances of the item. (Strangely, the similar command used in EzState doesn't seem to
     have this bug.)
 
-    WARNING: don't confuse 'Item' with the specific item type 'Good'. """
+    WARNING: don't confuse 'Item' with the specific item type 'Good'.
+    """
     instruction_info = (2003, 24)
     if item_type is None:
         item_type = item.item_type

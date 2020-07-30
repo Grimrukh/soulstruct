@@ -665,6 +665,9 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
 
     def delete_entry(self, row_index, category=None):
         """Deletes talk script file in project. Cannot be undone."""
+        if row_index is None:
+            self.bell()
+            return
         self._cancel_entry_id_edit()
         talk_id = self.get_entry_id(row_index)
         if (

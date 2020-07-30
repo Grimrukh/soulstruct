@@ -307,6 +307,7 @@ class SoulstructBaseEditor(SmartFrame, ABC):
                             "<Button-3>": lambda e, i=row: self._right_click_entry(e, i),
                             "<Up>": self._entry_press_up,
                             "<Down>": self._entry_press_down,
+                            "<Delete>": lambda e, i=row: self.delete_entry(i),
                             "<Prior>": lambda e: self._go_to_previous_entry_range(),
                             "<Next>": lambda e: self._go_to_next_entry_range(),
                         },
@@ -690,6 +691,9 @@ class SoulstructBaseEditor(SmartFrame, ABC):
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
+        if row_index is None:
+            self.bell()
+            return
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         entry_id = self.get_entry_id(row_index)

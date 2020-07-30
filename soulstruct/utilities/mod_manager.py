@@ -42,13 +42,15 @@ class ModManagerWindow(SmartFrame):
                     self.mod_list = self.Listbox(font=16, height=10, width=20, sticky="ew")
                     with self.set_master(auto_columns=0, pady=5, grid_defaults={"padx": 5}):
                         self.Button(text="Forget Mod", width=20, command=self._delete_mod)
-                        self.Button(text="Show Mod Path", width=20, command=self._show_selected_path)
+                        self.Button(text="Show Mod Path", width=20, command=self._show_selected_paths)
                 with self.set_master(auto_rows=0, grid_defaults={"pady": 5}):
                     self.mod_nickname = self.Entry(width=40, label="Mod Nickname:", sticky="e")
                     self.mod_path = self.Entry(width=40, label="Mod Root Directory:", sticky="e")
                     with self.set_master(auto_columns=0, pady=10, grid_defaults={"padx": 5}):
                         self.Button(text="Browse to Mod Root", width=20, command=self._browse_to_mod)
                         self.Button(text="Add to Mod List", width=20, command=self._add_mod)
+
+                    self.Button(text="Add Root to Selected Mod", width=30, command=self._add_root_to_selected)
 
                     self.Button(text="Install Mod", width=40, command=self._install_mod, pady=20, bg="#622")
 
@@ -74,14 +76,14 @@ class ModManagerWindow(SmartFrame):
             if not Path(mod_path).is_dir():
                 self.CustomDialog("Invalid Mod Directory", f"Directory {mod_path} does not exist.")
                 return
-            mod_info = {"nickname": mod_nickname, "root_path": mod_path}
+            mod_info = {"nickname": mod_nickname, "root_paths": [mod_path]}
             if any(info == mod_info for info in self.mods):
                 self.CustomDialog(
                     "Mod Already Added", f"A mod named {mod_nickname} with that path is already in the list."
                 )
                 return
             self.mod_list.insert("end", mod_nickname)
-            self.mods.append({"nickname": mod_nickname, "root_path": mod_path})
+            self.mods.append(mod_info)
             self._write_manager_json()
         else:
             if not mod_nickname:
@@ -99,6 +101,25 @@ class ModManagerWindow(SmartFrame):
         self.mod_list.delete(selected)
         self._write_manager_json()
 
+    def _add_root_to_selected(self):
+        try:
+            selected = self.mod_list.curselection()[0]
+        except IndexError:
+            self.CustomDialog("No Mod Selected", "You must select a mod to add the root to.")
+            return
+        mod_path = self.mod_path.var.get()
+        if not mod_path:
+            self.CustomDialog("No Mod Path", "No mod path was given.")
+        if not Path(mod_path).is_dir():
+            self.CustomDialog("Invalid Mod Directory", f"Directory {mod_path} does not exist.")
+            return
+        if self.mod_nickname.var.get():
+            self.CustomDialog("Nickname Given", "The nickname box must be empty to add the root to the selected mod.")
+            return
+        mod_info = self.mods[selected]
+        mod_info["root_paths"].append(mod_path)
+        self._write_manager_json()
+
     def _install_mod(self, ignore_unrecognized=False):
         try:
             selected = self.mod_list.curselection()[0]
@@ -107,36 +128,42 @@ class ModManagerWindow(SmartFrame):
             return
         mod_info = self.mods[selected]
         self._restore_vanilla_backup(get_confirmation=False)
-        mod_root_path = Path(mod_info["root_path"])
-        if not mod_root_path.is_dir():
-            self.CustomDialog("Mod Path Error", f"Could not find mod root path: {mod_root_path}.")
-            return
-        if not ignore_unrecognized:
-            unrecognized_files = []
+        mod_root_paths = [Path(p) for p in mod_info["root_paths"]]
+
+        # Validate mod paths.
+        for mod_root_path in mod_root_paths:
+            if not mod_root_path.is_dir():
+                self.CustomDialog("Mod Path Error", f"Could not find mod root path: {mod_root_path}.")
+                return
+            if not ignore_unrecognized:
+                unrecognized_files = []
+                for mod_file in mod_root_path.rglob("*"):
+                    if mod_file.is_file():
+                        relative_mod_file = str(mod_file.relative_to(mod_root_path).as_posix())  # with forward slashes
+                        if relative_mod_file not in DSR_FILE_LIST:
+                            unrecognized_files.append(relative_mod_file)
+                if unrecognized_files:
+                    if len(unrecognized_files) > 10:
+                        unrecognized_files = unrecognized_files[:9] + [f"...{len(unrecognized_files) - 10} more files"]
+                    file_str = "\n".join(unrecognized_files)
+                    confirm = self.yesno_dialog(
+                        "Ignore Unrecognized Files?",
+                        "Mod folder contains non-game files:\n\n" + file_str + "\n\n" "Continue with installation anyway?",
+                    )
+                    if not confirm:
+                        return
+
+        # Install
+        file_count = 0
+        for mod_root_path in mod_root_paths:
             for mod_file in mod_root_path.rglob("*"):
                 if mod_file.is_file():
                     relative_mod_file = str(mod_file.relative_to(mod_root_path).as_posix())  # with forward slashes
                     if relative_mod_file not in DSR_FILE_LIST:
-                        unrecognized_files.append(relative_mod_file)
-            if unrecognized_files:
-                if len(unrecognized_files) > 10:
-                    unrecognized_files = unrecognized_files[:9] + [f"...{len(unrecognized_files) - 10} more files"]
-                file_str = "\n".join(unrecognized_files)
-                confirm = self.yesno_dialog(
-                    "Ignore Unrecognized Files?",
-                    "Mod folder contains non-game files:\n\n" + file_str + "\n\n" "Continue with installation anyway?",
-                )
-                if not confirm:
-                    return
-        file_count = 0
-        for mod_file in mod_root_path.rglob("*"):
-            if mod_file.is_file():
-                relative_mod_file = str(mod_file.relative_to(mod_root_path).as_posix())  # with forward slashes
-                if relative_mod_file not in DSR_FILE_LIST:
-                    continue
-                dest_file = str(Path(DSR_PATH) / relative_mod_file)
-                shutil.copy2(str(mod_file), dest_file)
-                file_count += 1
+                        continue
+                    dest_file = str(Path(DSR_PATH) / relative_mod_file)
+                    shutil.copy2(str(mod_file), dest_file)
+                    file_count += 1
 
         _LOGGER.info(f"Installed {mod_info['nickname']} successfully ({file_count} files).")
         self.CustomDialog("Success", "Mod installed successfully.")
@@ -203,17 +230,17 @@ class ModManagerWindow(SmartFrame):
         if get_confirmation:
             self.CustomDialog("Success", "Vanilla files restored successfully.")
 
-    def _show_selected_path(self):
+    def _show_selected_paths(self):
         try:
             selected = self.mod_list.curselection()[0]
         except IndexError:
-            self.CustomDialog("Mod Root Path", "No mod selected.")
+            self.CustomDialog("Mod Root Paths", "No mod selected.")
         else:
-            self.CustomDialog("Mod Root Path", self.mods[selected]["root_path"], font_type="Consolas")
+            self.CustomDialog("Mod Root Paths", "\n".join(self.mods[selected]["root_paths"]), font_type="Consolas")
 
     def _write_manager_json(self):
         with self._manager_json_path.open("w") as f:
-            json.dump(self.mods, f)
+            json.dump(self.mods, f, indent=4)
 
     @property
     def _manager_json_path(self):

@@ -597,6 +597,10 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
+        if row_index is None:
+            self.bell()
+            return
+
         if category is None:
             category = self.active_category
             if category is None:
@@ -608,7 +612,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         entry_list = self.get_selected_msb()[entry_list_name]
         global_index = entry_list.get_entry_global_index(entry_type_index, entry_type=entry_type_name)
         if global_index is None:
-            raise IndexError(f"Cannot delete entry with global index {global_index} (list length is {len(entry_list)}.")
+            raise IndexError(f"Cannot delete entry with global index {global_index} (only {len(entry_list)} entries).")
         entry_list.delete_entry(global_index)
         self.select_entry_row_index(None)
         self.refresh_entries()

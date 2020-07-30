@@ -994,6 +994,10 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
+        if row_index is None:
+            self.bell()
+            return
+
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
         goal = self.get_goal(row_index)
