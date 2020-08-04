@@ -286,7 +286,9 @@ class MSBRegionBox(BaseMSBRegion):
         self.height = data["height"]
 
     def pack_type_data(self):
-        return BinaryStruct(*self.BOX_STRUCT).pack(width=self.width, depth=self.depth, height=self.height,)
+        return BinaryStruct(*self.BOX_STRUCT).pack(
+            width=float(self.width), depth=float(self.depth), height=float(self.height)
+        )
 
 
 MSB_REGION_TYPE_CLASSES = {

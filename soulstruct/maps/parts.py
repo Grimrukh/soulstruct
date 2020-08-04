@@ -248,27 +248,33 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         packed_base_data = self.PART_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)
         packed_type_data = self.pack_type_data()
-        packed_header = self.PART_HEADER_STRUCT.pack(
-            __name_offset=name_offset,
-            __part_type=self.ENTRY_TYPE,
-            _part_type_index=self._part_type_index,
-            _model_index=self._model_index,
-            __sib_path_offset=sib_path_offset,
-            translate=list(self.translate),
-            rotate=list(self.rotate),
-            scale=list(self.scale),
-            __draw_groups=draw_groups,
-            __display_groups=display_groups,
-            __base_data_offset=base_data_offset,
-            __type_data_offset=type_data_offset,
-        )
+        try:
+            packed_header = self.PART_HEADER_STRUCT.pack(
+                __name_offset=name_offset,
+                __part_type=self.ENTRY_TYPE,
+                _part_type_index=self._part_type_index,
+                _model_index=self._model_index,
+                __sib_path_offset=sib_path_offset,
+                translate=list(self.translate),
+                rotate=list(self.rotate),
+                scale=list(self.scale),
+                __draw_groups=draw_groups,
+                __display_groups=display_groups,
+                __base_data_offset=base_data_offset,
+                __type_data_offset=type_data_offset,
+            )
+        except struct.error:
+            raise SoulstructError(f"Could not pack header data of MSB part '{self.name}'. See traceback.")
         return packed_header + packed_name + packed_sib_path + packed_base_data + packed_type_data
 
     def unpack_type_data(self, msb_buffer):
         self.set(**BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False))
 
     def pack_type_data(self):
-        return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack_from_object(self)
+        try:
+            return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack_from_object(self)
+        except struct.error:
+            raise SoulstructError(f"Could not pack type data of MSB part '{self.name}'. See traceback.")
 
     def set_indices(
         self,
@@ -570,6 +576,8 @@ class MSBCharacter(BaseMSBPart):
         )
         self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
         self._patrol_point_indices = [region_indices[n] if n else -1 for n in self._patrol_point_names]
+        while len(self._patrol_point_indices) < 8:
+            self._patrol_point_indices.append(-1)
 
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
@@ -578,14 +586,7 @@ class MSBCharacter(BaseMSBPart):
             model_names, environment_names, region_names, part_names, collision_names,
         )
         self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
-        # TODO: Handling malformed DoA MSB files.
-        try:
-            self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
-        except KeyError:
-            _LOGGER.warning(
-                f"Could not index into {len(region_names)} regions for patrol points: " f"{self._patrol_point_indices}"
-            )
-            self._patrol_point_names = [None] * len(self._patrol_point_indices)
+        self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
 
 
 class MSBPlayerStart(BaseMSBPart):
@@ -604,6 +605,12 @@ class MSBPlayerStart(BaseMSBPart):
     }
 
     ENTRY_TYPE = MSB_PART_TYPE.PlayerStart
+
+    def __init__(self, msb_part_source=None, **kwargs):
+        super().__init__(msb_part_source)
+        if self.model_name is None:
+            self.model_name = "c0000"
+        self.set(**kwargs)
 
 
 class MSBCollision(BaseMSBPart):
@@ -1138,6 +1145,28 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             map_load_trigger.display_groups = display_groups
         self.add_entry(map_load_trigger, append_to_entry_type="MapLoadTrigger")
         return map_load_trigger
+
+    def create_c1000(self, name, translate, rotate, **kwargs) -> MSBCharacter:
+        """Useful to create basic c1000 instances as debug warp points."""
+        character = MSBCharacter(
+            name=name,
+            translate=translate,
+            rotate=rotate,
+            model_name="c1000",
+            **kwargs,
+        )
+        self.add_entry(character, append_to_entry_type="Character")
+        return character
+
+    def create_player_start(self, name, translate, rotate, **kwargs) -> MSBPlayerStart:
+        player_start = MSBPlayerStart(
+            name=name,
+            translate=translate,
+            rotate=rotate,
+            **kwargs,
+        )
+        self.add_entry(player_start, append_to_entry_type="PlayerStart")
+        return player_start
 
     def set_indices(
         self, model_indices, local_environment_indices, region_indices, part_indices, local_collision_indices,

@@ -427,4 +427,7 @@ class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
 
     @rotate.setter
     def rotate(self, value):
-        self._rotate = Vector3(value)
+        if isinstance(value, (int, float)):
+            self._rotate = Vector3(0, value, 0)
+        else:
+            self._rotate = Vector3(value)

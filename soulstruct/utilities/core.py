@@ -365,7 +365,7 @@ class BinaryStruct:
                 except struct.error:
                     _LOGGER.error(
                         f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
-                        f"{sub_fmt_length}: {to_pack[pack_index:pack_index + sub_fmt_length]}"
+                        f"{sub_fmt_length}:\n{to_pack[pack_index:pack_index + sub_fmt_length]}"
                     )
                     raise
         return output
@@ -386,7 +386,11 @@ class BinaryStruct:
                     raise AttributeDict(
                         f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack."
                     )
-        return self.pack((struct_dict,))
+        try:
+            return self.pack((struct_dict,))
+        except struct.error:
+            _LOGGER.error(f"Failed to pack BinaryStruct from object. Dictionary:\n{struct_dict}")
+            raise
 
     def copy(self):
         bs = BinaryStruct()
