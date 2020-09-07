@@ -1,12 +1,66 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
+import typing as tp
 
-from soulstruct.project.editor import SoulstructBaseEditor
+from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 
-if TYPE_CHECKING:
+if tp.TYPE_CHECKING:
     from soulstruct.text import DarkSoulsText
+
+
+class TextEntryRow(EntryRow):
+    _MATCH_ITEM = re.compile(r"^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$")
+
+    master: SoulstructTextEditor
+
+    def build_entry_context_menu(self):
+        super().build_entry_context_menu()
+        text_id = self.entry_id
+
+        item_match = self._MATCH_ITEM.match(self.master.active_category)
+        if item_match:
+            item_type, text_type = item_match.group(1, 2)
+
+            # Category shortcuts.
+            separator_added = False
+            text_categories = ("Names", "Summaries", "Descriptions")
+            linked_id = ((text_id // 100) * 100) if item_type in {"Weapon", "Armor"} else text_id
+            for link_category in text_categories:
+                if text_type != link_category and linked_id in self.master.Text[item_type + link_category]:
+                    if not separator_added:
+                        self.context_menu.add_separator()
+                        separator_added = True
+                    self.context_menu.add_command(
+                        label=f"Go to Text.{item_type}{link_category}[{linked_id}]",
+                        command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.text_link(
+                            it + lc, i
+                        ),
+                    )
+
+            # Param shortcut.
+            self.context_menu.add_separator()
+            param_category = item_type + ("s" if item_type != "Armor" else "")
+            self.context_menu.add_command(
+                label=f"Go to Params.{param_category}[{linked_id}]",
+                command=lambda c=param_category, i=linked_id: self.master.linker.params_link(c, i),
+            )
+
+            # Automatic upgrade text generation.
+            if item_type == "Weapon" and text_type == "Names" and text_id % 100 == 0:
+                self.context_menu.add_separator()
+                for count in (5, 10, 15):
+                    self.context_menu.add_command(
+                        label=f"Create weapon upgrade names (+{count})",
+                        command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count),
+                    )
+            elif item_type == "Armor" and text_type == "Names" and text_id % 100 == 0:
+                self.context_menu.add_separator()
+                for count in (5, 10):
+                    self.context_menu.add_command(
+                        label=f"Create armor upgrade names (+{count})",
+                        command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count),
+                    )
 
 
 class SoulstructTextEditor(SoulstructBaseEditor):
@@ -18,62 +72,8 @@ class SoulstructTextEditor(SoulstructBaseEditor):
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100
 
-    class EntryRow(SoulstructBaseEditor.EntryRow):
-        _MATCH_ITEM = re.compile(r"^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$")
-
-        master: SoulstructTextEditor
-
-        def build_entry_context_menu(self):
-            super().build_entry_context_menu()
-            text_id = self.entry_id
-
-            item_match = self._MATCH_ITEM.match(self.master.active_category)
-            if item_match:
-                item_type, text_type = item_match.group(1, 2)
-
-                # Category shortcuts.
-                separator_added = False
-                text_categories = ("Names", "Summaries", "Descriptions")
-                linked_id = ((text_id // 100) * 100) if item_type in {"Weapon", "Armor"} else text_id
-                for link_category in text_categories:
-                    if text_type != link_category and linked_id in self.master.Text[item_type + link_category]:
-                        if not separator_added:
-                            self.context_menu.add_separator()
-                            separator_added = True
-                        self.context_menu.add_command(
-                            label=f"Go to Text.{item_type}{link_category}[{linked_id}]",
-                            foreground=self.STYLE_DEFAULTS["text_fg"],
-                            command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.text_link(
-                                it + lc, i
-                            ),
-                        )
-
-                # Param shortcut.
-                self.context_menu.add_separator()
-                param_category = item_type + ("s" if item_type != "Armor" else "")
-                self.context_menu.add_command(
-                    label=f"Go to Params.{param_category}[{linked_id}]",
-                    foreground=self.STYLE_DEFAULTS["text_fg"],
-                    command=lambda c=param_category, i=linked_id: self.master.linker.params_link(c, i),
-                )
-
-                # Automatic upgrade text generation.
-                if item_type == "Weapon" and text_type == "Names" and text_id % 100 == 0:
-                    self.context_menu.add_separator()
-                    for count in (5, 10, 15):
-                        self.context_menu.add_command(
-                            label=f"Create weapon upgrade names (+{count})",
-                            foreground=self.STYLE_DEFAULTS["text_fg"],
-                            command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count),
-                        )
-                elif item_type == "Armor" and text_type == "Names" and text_id % 100 == 0:
-                    self.context_menu.add_separator()
-                    for count in (5, 10):
-                        self.context_menu.add_command(
-                            label=f"Create armor upgrade names (+{count})",
-                            foreground=self.STYLE_DEFAULTS["text_fg"],
-                            command=lambda i=text_id: self.master.create_upgrade_entries(i, count=count),
-                        )
+    ENTRY_ROW_CLASS = TextEntryRow
+    entry_rows: tp.List[TextEntryRow]
 
     def __init__(self, text: DarkSoulsText, linker, master=None, toplevel=False):
         self.Text = text

@@ -25,8 +25,7 @@ __all__ = [
 ]
 
 from soulstruct.constants.utilities import get_map as _get_map_base
-from soulstruct.game_types import Map
-
+from soulstruct.game_types.msb_types import Map
 
 COMMON = Map(
     None,

@@ -4,9 +4,35 @@ from typing import Union
 from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import ButtonType, NumberButtons, PLAYER
 from soulstruct.game_types.basic_types import GameObject
-from soulstruct.game_types.msb_types import CoordEntityInt
+from soulstruct.game_types.msb_types import CoordEntityTyping
 
-__all__ = ["Text", "EventText", "StringOffset", "EventTextInt", "StringOffsetInt"]
+__all__ = [
+    "Text",
+    "NPCName",
+    "PlaceName",
+    "EventText",
+    "SoapstoneMessage",
+    "WeaponName",
+    "WeaponSummary",
+    "WeaponDescription",
+    "ArmorName",
+    "ArmorSummary",
+    "ArmorDescription",
+    "RingName",
+    "RingSummary",
+    "RingDescription",
+    "GoodName",
+    "GoodSummary",
+    "GoodDescription",
+    "SpellName",
+    "SpellSummary",
+    "SpellDescription",
+    "Subtitle",
+    "StringOffset",
+    "EventTextTyping",
+    "SubtitleTyping",
+    "StringOffsetTyping",
+]
 
 
 class Text(GameObject, IntEnum):
@@ -14,8 +40,23 @@ class Text(GameObject, IntEnum):
 
     Note that only the EventText subclass can be used in any EMEVD instructions.
     """
+    @classmethod
+    def get_text_category(cls):
+        raise NotImplementedError
 
-    pass
+
+class NPCName(Text):
+    """NPC name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "NPCNames"
+
+
+class PlaceName(Text):
+    """Place name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "PlaceNames"
 
 
 class EventText(Text):
@@ -23,10 +64,9 @@ class EventText(Text):
 
     Call the 'as_dialog' or 'as_status' methods in EMEVD to display this text in-game.
     """
-
     def as_dialog(
         self,
-        anchor_entity: CoordEntityInt = PLAYER,
+        anchor_entity: CoordEntityTyping = PLAYER,
         display_distance: float = 3.0,
         button_type: ButtonType = ButtonType.OK_or_Cancel,
         number_buttons: NumberButtons = NumberButtons.NoButton,
@@ -51,8 +91,131 @@ class EventText(Text):
         """
         instr.DisplayStatus(self.value, pad_enabled=pad_enabled)
 
+    @classmethod
+    def get_text_category(cls):
+        return "EventText"
 
-# I haven't yet bothered with classes for other text types, as they will have no methods (relevant to EMEVD at least).
+
+class SoapstoneMessage(Text):
+    """Soapstone message ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "SoapstoneMessages"
+
+
+class WeaponName(Text):
+    """Weapon name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "WeaponNames"
+
+
+class WeaponSummary(Text):
+    """Weapon summary ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "WeaponSummaries"
+
+
+class WeaponDescription(Text):
+    """Weapon description ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "WeaponDescriptions"
+
+
+class ArmorName(Text):
+    """Armor name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "ArmorNames"
+
+
+class ArmorSummary(Text):
+    """Armor summary ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "ArmorSummaries"
+
+
+class ArmorDescription(Text):
+    """Armor description ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "ArmorDescriptions"
+
+
+class RingName(Text):
+    """Ring name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "RingNames"
+
+
+class RingSummary(Text):
+    """Ring summary ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "RingSummaries"
+
+
+class RingDescription(Text):
+    """Ring description ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "RingDescriptions"
+
+
+class GoodName(Text):
+    """Good name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "GoodNames"
+
+
+class GoodSummary(Text):
+    """Good summary ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "GoodSummaries"
+
+
+class GoodDescription(Text):
+    """Good description ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "GoodDescriptions"
+
+
+class SpellName(Text):
+    """Spell name ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "SpellNames"
+
+
+class SpellSummary(Text):
+    """Spell summary ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "SpellSummaries"
+
+
+class SpellDescription(Text):
+    """Spell description ID."""
+    @classmethod
+    def get_text_category(cls):
+        return "SpellDescriptions"
+
+
+class Subtitle(Text):
+    """Text ID from the Subtitles FMG, which contains dialogue subtitles."""
+    @classmethod
+    def get_text_category(cls):
+        return "Subtitles"
+
+
+# TODO: I haven't yet bothered with classes for internal text types.
 
 
 class StringOffset(GameObject, IntEnum):
@@ -61,9 +224,8 @@ class StringOffset(GameObject, IntEnum):
     You are very unlikely to use those instructions, and hence this type.
     """
 
-    pass
 
-
-TextInt = Union[Text, int]
-EventTextInt = Union[EventText, int]
-StringOffsetInt = Union[StringOffset, int]
+TextTyping = Union[Text, int]
+EventTextTyping = Union[EventText, int]
+SubtitleTyping = Union[Subtitle, int]
+StringOffsetTyping = Union[StringOffset, int]

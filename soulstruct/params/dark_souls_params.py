@@ -7,7 +7,6 @@ import typing as tp
 
 from soulstruct.bnd.core import BND, BaseBND
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
-from soulstruct.params.fields import PARAM_NICKNAMES
 
 if tp.TYPE_CHECKING:
     from soulstruct.text import DarkSoulsText
@@ -17,6 +16,12 @@ _LOGGER = logging.getLogger(__name__)
 
 _PARAM_FILE_NAME_RE = re.compile(r"(/[ms]\d\d)(_[\w]+\.DrawParam\.parambnd)")
 
+_AMBIGUOUS_NICKNAMES = {
+    "AtkParam_Npc.param": "NonPlayerAttacks",
+    "AtkParam_Pc.param": "PlayerAttacks",
+    "BehaviorParam.param": "NonPlayerBehaviors",
+    "BehaviorParam_PC.param": "PlayerBehaviors",
+}
 
 class DarkSoulsGameParameters:
 
@@ -26,6 +31,7 @@ class DarkSoulsGameParameters:
     Bosses: ParamTable
     Bullets: ParamTable
     Cameras: ParamTable
+    Characters: ParamTable
     Dialogue: ParamTable
     Faces: ParamTable
     Goods: ParamTable
@@ -33,7 +39,6 @@ class DarkSoulsGameParameters:
     PlayerAttacks: ParamTable
     PlayerBehaviors: ParamTable
     ItemLots: ParamTable
-    NonPlayers: ParamTable
     NonPlayerAttacks: ParamTable
     NonPlayerBehaviors: ParamTable
     MenuColors: ParamTable
@@ -54,9 +59,9 @@ class DarkSoulsGameParameters:
 
     param_names = [
         "Players",
+        "Characters",
         "PlayerBehaviors",
         "PlayerAttacks",
-        "NonPlayers",
         "NonPlayerBehaviors",
         "NonPlayerAttacks",
         "AI",
@@ -121,15 +126,11 @@ class DarkSoulsGameParameters:
 
         for entry in self._game_param_bnd:
             p = self._data[entry.path] = ParamTable(entry.data, self.paramdef_bnd)
-            try:
-                # Nickname assigned here (ParamTable isn't aware of its own basename).
-                param_nickname = PARAM_NICKNAMES[entry.name[: -len(".param")]]
-            except KeyError:
-                # ParamTables without nicknames (i.e. useless params) are excluded from this structure.
-                pass
-            else:
-                setattr(self, param_nickname, p)  # NOTE: Reference to dictionary in self._data[entry.path].
-                p.nickname = param_nickname
+            if p.param_info is not None:
+                if p.nickname is None:
+                    setattr(self, _AMBIGUOUS_NICKNAMES[entry.name], p)
+                else:
+                    setattr(self, p.nickname, p)  # shortcut attribute
 
     def update_bnd(self):
         """Update the internal BND by packing the current ParamTables. Called automatically by `save()`."""
@@ -162,26 +163,26 @@ class DarkSoulsGameParameters:
         with Path(game_param_pickle_path).open("wb") as f:
             pickle.dump(self, f)
 
-    def __getitem__(self, category) -> ParamTable:
-        return getattr(self, category)
+    def __getitem__(self, param_nickname) -> ParamTable:
+        return getattr(self, param_nickname)
 
     def get_range(self, category, start, count):
         """Get a list of (id, entry) pairs from a certain range inside ID-sorted param dictionary."""
         return self[category].get_range(start, count)
 
-    def rename_entries_from_text(self, text: DarkSoulsText, param_table_name=None):
+    def rename_entries_from_text(self, text: DarkSoulsText, param_nickname=None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.
 
         Args:
             text (DarkSoulsText): text data structure to pull names from.
-            param_table_name (tp.Optional[str]): specific ParamTable name to rename, or None to rename all (default).
+            param_nickname (str or None): specific ParamTable name to rename, or None to rename all (default).
                 Valid names are "Weapons", "Armor", "Rings", "Goods", and "Spells" (or None).
         """
-        if param_table_name:
-            param_table_name = param_table_name.lower().rstrip("s")
-            if param_table_name not in {"weapon", "armor", "ring", "good", "spell"}:
+        if param_nickname:
+            param_nickname = param_nickname.lower().rstrip("s")
+            if param_nickname not in {"weapon", "armor", "ring", "good", "spell"}:
                 raise ValueError(
-                    f"Invalid item type: {param_table_name}. Must be 'Weapons', 'Armor', 'Rings', "
+                    f"Invalid item type: {param_nickname}. Must be 'Weapons', 'Armor', 'Rings', "
                     f"'Goods', or 'Spells'."
                 )
         for item_type_check, param_table, text_dict in zip(
@@ -189,7 +190,7 @@ class DarkSoulsGameParameters:
             (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
             (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames),
         ):
-            if not param_table_name or param_table_name == item_type_check:
+            if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_entry in param_table.items():
                     if param_id in text_dict:
                         param_entry.name = text_dict[param_id]
@@ -254,14 +255,10 @@ class MapDrawParam:
             if parts[0].startswith("s"):
                 param_name = "s_" + param_name
 
-            self._data.setdefault(param_name, [None, None])[slot] = DrawParamTable(entry.data, paramdef_bnd)
+            self._data.setdefault(param_name, [None, None])[slot] = p = DrawParamTable(entry.data, paramdef_bnd)
             self._bnd_entry_paths[param_name, slot] = entry.path
-            try:
-                param_nickname = PARAM_NICKNAMES[param_name]
-            except KeyError:
-                raise KeyError(f"Could not find nickname for DrawParam table: {param_name}")
-            else:
-                setattr(self, param_nickname, self._data[param_name])
+            if p.param_info is not None:
+                setattr(self, p.nickname, self._data[param_name])
 
     def __getitem__(self, category):
         if not category.startswith("_"):
@@ -442,40 +439,3 @@ class DarkSoulsLightingParameters:
         if not self._reload_warning_given:
             _LOGGER.info("Remember to reload your game to see changes.")
             self._reload_warning_given = True
-
-
-def _check_field_types():
-    from soulstruct import DSR_PATH
-    from soulstruct.params.paramdef import PARAMDEF_BASE_NAMES
-
-    g = DarkSoulsGameParameters(DSR_PATH + "/param/GameParam/GameParam.parambnd.dcx")
-    for table_name in g.param_names:
-        table = g[table_name]
-        try:
-            real_table_bnd_basename = [k.split("_")[0] for k, v in PARAM_NICKNAMES.items() if v == table_name][0]
-            if real_table_bnd_basename == "Bullet":
-                real_table_bnd_basename = "BulletParam"
-            elif real_table_bnd_basename == "SpEffectParam":
-                real_table_bnd_basename = "SpEffect"
-            elif real_table_bnd_basename == "Magic":
-                real_table_bnd_basename = "MagicParam"
-            elif real_table_bnd_basename == "MenuColorTableParam":
-                real_table_bnd_basename = "MenuParamColorTable"
-            elif real_table_bnd_basename == "SpEffectVfxParam":
-                real_table_bnd_basename = "SpEffectVfx"
-            print("\n", real_table_bnd_basename, "\n")
-            real_table_name = [k for k, v in PARAMDEF_BASE_NAMES.items() if v == real_table_bnd_basename][0]
-        except IndexError:
-            print("Could not get param table name:", table_name)
-            raise
-        field_info = table.get_field_info()
-        for field_name in table.field_names:
-            info = field_info[field_name]
-            if not callable(info):
-                internal_type = table.paramdef_bnd[real_table_name][field_name].internal_type
-                python_type = info[2]
-                print(field_name, internal_type, python_type)
-                if internal_type.startswith("f") and python_type == int:
-                    print("    ^ WARNING")
-                if (internal_type.startswith("s") or internal_type.startswith("u")) and python_type == float:
-                    print("    ^ WARNING")

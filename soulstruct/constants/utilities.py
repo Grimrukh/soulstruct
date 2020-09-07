@@ -1,11 +1,11 @@
 import typing as tp
 from pathlib import Path
 
-from soulstruct.game_types import Map
+from soulstruct.game_types.msb_types import Map
 
 
-def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()):
-    """Flexible-input function for retrieving map constants.
+def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
+    """Flexible-input function for retrieving valid `Map` object instances for a particular FromSoft game.
 
     Valid inputs:
         (area_id: int, block_id: int) (such as (10, 0))

@@ -3,15 +3,15 @@ from __future__ import annotations
 import logging
 import os
 import re
+import typing as tp
 from pathlib import Path
-from typing import List, Optional, Dict
 
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.esd.errors import EsdError
-from soulstruct.project.editor import SoulstructBaseEditor
+from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TagData, TextEditor
 
 
@@ -40,6 +40,88 @@ class ESPTextEditor(TextEditor):
     }
 
 
+class TalkEntryRow(EntryRow):
+    """Container/manager for widgets of a single entry row in the Editor."""
+
+    ENTRY_ANCHOR = "center"
+    ENTRY_ROW_HEIGHT = 30
+    EDIT_ENTRY_ID = True
+    ENTRY_ID_WIDTH = 15
+    ENTRY_ID_FG = "#CDF"
+
+    def __init__(self, editor: SoulstructTalkEditor, row_index: int, main_bindings: dict = None):
+        self.master = editor
+        self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
+
+        self.row_index = row_index
+        self._entry_id = None
+        self._entry_text = None  # never changes
+        self._active = False
+
+        bg_color = self._get_color()
+
+        self.row_box = editor.Frame(
+            width=self.ENTRY_ID_WIDTH,
+            height=self.ENTRY_ROW_HEIGHT,
+            bg=bg_color,
+            row=row_index,
+            columnspan=3,
+            sticky="nsew",
+        )
+        bind_events(self.row_box, main_bindings)
+
+        self.id_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
+        self.id_label = editor.Label(
+            self.id_box,
+            text="",
+            width=self.ENTRY_ID_WIDTH,
+            bg=bg_color,
+            fg=self.ENTRY_ID_FG,
+            font_size=11,
+            sticky="e",
+        )
+        id_bindings = main_bindings.copy()
+        id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(i, id_clicked=True)
+        id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+        bind_events(self.id_box, id_bindings)
+        bind_events(self.id_label, id_bindings)
+
+        self.context_menu = editor.Menu(self.row_box)
+
+        self.tool_tip = None
+
+    def update_entry(self, entry_id: int, entry_text=None):
+        self.entry_id = entry_id
+        self._update_colors()
+        self.build_entry_context_menu()
+
+    def hide(self):
+        """Called when this row has no entry to display."""
+        self.row_box.grid_remove()
+        self.id_box.grid_remove()
+        self.id_label.grid_remove()
+
+    def unhide(self):
+        self.row_box.grid()
+        self.id_box.grid()
+        self.id_label.grid()
+
+    def build_entry_context_menu(self):
+        self.context_menu.delete(0, "end")
+        self.context_menu.add_command(
+            label="Duplicate Entry to Next ID",
+            command=lambda: self.master.add_relative_entry(self.entry_id, offset=1),
+        )
+        self.context_menu.add_command(
+            label="Delete Entry",
+            command=lambda: self.master.delete_entry(self.row_index),
+        )
+
+    @property
+    def _colored_widgets(self):
+        return self.row_box, self.id_box, self.id_label
+
+
 class SoulstructTalkEditor(SoulstructBaseEditor):
     DATA_NAME = "Talk"
     TAB_NAME = "talk"
@@ -48,91 +130,8 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 200
 
-    class EntryRow(SoulstructBaseEditor.EntryRow):
-        """Container/manager for widgets of a single entry row in the Editor."""
-
-        ENTRY_ANCHOR = "center"
-        ENTRY_ROW_HEIGHT = 30
-        EDIT_ENTRY_ID = True
-        ENTRY_ID_WIDTH = 15
-        ENTRY_ID_FG = "#CDF"
-
-        def __init__(self, editor: SoulstructTalkEditor, row_index: int, main_bindings: dict = None):
-            self.master = editor
-            self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
-
-            self.row_index = row_index
-            self._entry_id = None
-            self._entry_text = None  # never changes
-            self._active = False
-
-            bg_color = self._get_color()
-
-            self.row_box = editor.Frame(
-                width=self.ENTRY_ID_WIDTH,
-                height=self.ENTRY_ROW_HEIGHT,
-                bg=bg_color,
-                row=row_index,
-                columnspan=3,
-                sticky="nsew",
-            )
-            bind_events(self.row_box, main_bindings)
-
-            self.id_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
-            self.id_label = editor.Label(
-                self.id_box,
-                text="",
-                width=self.ENTRY_ID_WIDTH,
-                bg=bg_color,
-                fg=self.ENTRY_ID_FG,
-                font_size=11,
-                sticky="e",
-            )
-            id_bindings = main_bindings.copy()
-            id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(i, id_clicked=True)
-            id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
-            bind_events(self.id_box, id_bindings)
-            bind_events(self.id_label, id_bindings)
-
-            self.context_menu = editor.Menu(self.row_box)
-
-            self.tool_tip = None
-
-        def update_entry(self, entry_id: int, entry_text=None):
-            self.entry_id = entry_id
-            self._update_colors()
-            self.build_entry_context_menu()
-
-        def hide(self):
-            """Called when this row has no entry to display."""
-            self.row_box.grid_remove()
-            self.id_box.grid_remove()
-            self.id_label.grid_remove()
-
-        def unhide(self):
-            self.row_box.grid()
-            self.id_box.grid()
-            self.id_label.grid()
-
-        def build_entry_context_menu(self):
-            self.context_menu.delete(0, "end")
-            self.context_menu.add_command(
-                label="Duplicate Entry to Next ID",
-                foreground=self.STYLE_DEFAULTS["text_fg"],
-                command=lambda: self.master.add_relative_entry(self.entry_id, offset=1),
-            )
-            self.context_menu.add_command(
-                label="Delete Entry",
-                foreground=self.STYLE_DEFAULTS["text_fg"],
-                command=lambda: self.master.delete_entry(self.row_index),
-            )
-
-        def _update_colors(self):
-            bg_color = self._get_color()
-            for widget in (self.row_box, self.id_box, self.id_label):
-                widget["bg"] = bg_color
-
-    entry_rows: List[SoulstructTalkEditor.EntryRow]
+    ENTRY_ROW_CLASS = TalkEntryRow
+    entry_rows: tp.List[TalkEntryRow]
 
     def __init__(
         self,
@@ -168,7 +167,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.string_to_find = None
         self.state_to_find = None
         self.esp_editor_canvas = None
-        self.esp_editor = None  # type: Optional[ESPTextEditor]
+        self.esp_editor = None  # type: tp.Optional[ESPTextEditor]
         self.compile_button = None
         self.reload_button = None
 
@@ -498,7 +497,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             else:
                 self.update_talk_text()
 
-    def reload_all_in_map(self, map_name=None, mimic_click=False):
+    def reload_all_in_map(self, mimic_click=False):
         if (
             self.CustomDialog(
                 title="Confirm Reload",
@@ -690,7 +689,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
 
-    def get_category_data(self, category=None) -> Dict[int, str]:
+    def get_category_data(self, category=None) -> tp.Dict[int, str]:
         """Gets list of talk IDs and their paths. Category argument does nothing."""
         return self.esp_file_paths[self.selected_map_id]
 

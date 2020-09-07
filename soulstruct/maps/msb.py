@@ -3,53 +3,25 @@ import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
 
-from soulstruct.maps.core import MAP_ENTRY_TYPES
 from soulstruct.maps.base import MSBEntryList, MSBEntry, MSBEntryEntity
-from soulstruct.maps.models import MSBModelList
+from soulstruct.maps.enums import *
 from soulstruct.maps.events import MSBEventList
-from soulstruct.maps.core import MSB_EVENT_TYPE, MSB_PART_TYPE, MSB_REGION_TYPE
-from soulstruct.maps.regions import MSBRegionList
+from soulstruct.maps.models import MSBModelList
 from soulstruct.maps.parts import MSBPartList
-from soulstruct.utilities.core import BiDict, create_bak
+from soulstruct.maps.regions import MSBRegionList
+from soulstruct.utilities.core import create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 _LOGGER = logging.getLogger(__name__)
 
-# Subset of the above, only for entry types with entity IDs.
-MAP_ENTRY_ENTITY_TYPES = {
-    "Parts": BiDict(
-        ("MapPieces", MSB_PART_TYPE.MapPiece),
-        ("Objects", MSB_PART_TYPE.Object),
-        ("Characters", MSB_PART_TYPE.Character),
-        ("PlayerStarts", MSB_PART_TYPE.PlayerStart),
-        ("Collisions", MSB_PART_TYPE.Collision),
-    ),
-    "Events": BiDict(
-        ("Sounds", MSB_EVENT_TYPE.Sound),
-        ("FX", MSB_EVENT_TYPE.FX),
-        ("Spawners", MSB_EVENT_TYPE.Spawner),
-        ("Messages", MSB_EVENT_TYPE.Message),
-        ("ObjActs", MSB_EVENT_TYPE.ObjAct),
-        ("SpawnPoints", MSB_EVENT_TYPE.SpawnPoint),
-        ("Navigation", MSB_EVENT_TYPE.Navigation),
-    ),
-    "Regions": BiDict(
-        ("Points", MSB_REGION_TYPE.Point),
-        ("Circles", MSB_REGION_TYPE.Circle),
-        ("Spheres", MSB_REGION_TYPE.Sphere),
-        ("Cylinders", MSB_REGION_TYPE.Cylinder),
-        ("Rectangles", MSB_REGION_TYPE.Rect),
-        ("Boxes", MSB_REGION_TYPE.Box),
-    ),
-}
 
 # Set up shortcut attributes to sorted entry type lists (e.g. `MSBPartList.Characters`).
 for cls in (MSBModelList, MSBEventList, MSBRegionList, MSBPartList):
-    for entry_type_name, entry_type_enum in MAP_ENTRY_TYPES[cls.ENTRY_LIST_NAME].items():
+    for _entry_subtype in cls.ENTRY_SUBTYPE_ENUM:
         setattr(
             cls,
-            entry_type_name,
-            property(lambda self, enum=entry_type_enum: [e for e in self._entries if e.ENTRY_TYPE == enum]),
+            _entry_subtype.pluralized_name,
+            property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
         )
 
 
@@ -112,10 +84,10 @@ class MSB(object):
         self.parts = MSBPartList(msb_buffer)
 
         model_names = self.models.set_and_get_unique_names()
-        environment_names = self.events.get_entry_names(MSB_EVENT_TYPE.Environment)
+        environment_names = self.events.get_entry_names(MSBEventSubtype.Environment)
         region_names = self.regions.set_and_get_unique_names()
         part_names = self.parts.set_and_get_unique_names()
-        collision_names = self.parts.get_entry_names(MSB_PART_TYPE.Collision)
+        collision_names = self.parts.get_entry_names(MSBPartSubtype.Collision)
 
         self.events.set_names(region_names=region_names, part_names=part_names)
         self.parts.set_names(
@@ -130,12 +102,12 @@ class MSB(object):
         """Constructs {name: id} dictionaries, then passes them to pack() methods as required by each."""
         model_indices = self.models.get_indices()
         local_environment_indices = {
-            name: i for i, name in enumerate(self.events.get_entry_names(MSB_EVENT_TYPE.Environment))
+            name: i for i, name in enumerate(self.events.get_entry_names(MSBEventSubtype.Environment))
         }
         region_indices = self.regions.get_indices()
         part_indices = self.parts.get_indices()
         local_collision_indices = {
-            name: i for i, name in enumerate(self.parts.get_entry_names(MSB_PART_TYPE.Collision))
+            name: i for i, name in enumerate(self.parts.get_entry_names(MSBPartSubtype.Collision))
         }
 
         # Set entry indices (both self and linked) and other auto-detected fields.
@@ -262,31 +234,32 @@ class MSB(object):
         self.rotate_all_in_world(m_world_rotate, selected_entries=selected_entries)
         self.translate_all(translation, selected_entries=selected_entries)
 
-    def get_entity_id_dict(self, entry_list_name, entry_type, names_only=False):
-        """Get a dictionary mapping entity IDs to MSBEntry instances for the given list and type.
+    def get_entity_id_dict(self, entry_type, entry_subtype, names_only=False):
+        """Get a dictionary mapping entity IDs to `MSBEntry` instances for the given type and subtype.
 
-        Optionally returns dictionary mapping ID to MSBEntry `name` only.
+        Optionally returns dictionary mapping ID to `MSBEntry.name` only.
 
-        If multiple MSBEntry instances are found for a given ID, only the *first* one found is used.
+        If multiple `MSBEntry` instances are found for a given ID, a warning is logged, and only the *first* one found
+        is used (which matches game engine behavior).
         """
-        entry_list_name = entry_list_name.lower()
-        if entry_list_name == "parts":
-            entries = self.parts.get_entries(entry_type)
-        elif entry_list_name == "events":
-            entries = self.events.get_entries(entry_type)
-        elif entry_list_name == "regions":
-            entries = self.regions.get_entries(entry_type)
+        entry_type = entry_type.lower()
+        if entry_type == "parts":
+            entries = self.parts.get_entries(entry_subtype)
+        elif entry_type == "events":
+            entries = self.events.get_entries(entry_subtype)
+        elif entry_type == "regions":
+            entries = self.regions.get_entries(entry_subtype)
         else:
             raise ValueError("Can only get entity IDs for parts, events, and regions.")
         entries_by_id = {}
         for entry in [e for e in entries if e.entity_id > 0]:
             if entry.entity_id in entries_by_id:
-                _LOGGER.debug(f"Found multiple entries for entity ID {entry.entity_id}. Only using first.")
+                _LOGGER.warning(f"Found multiple entries for entity ID {entry.entity_id}. Only using first.")
             else:
                 entries_by_id[entry.entity_id] = entry.name if names_only else entry
         return entries_by_id
 
-    def get_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntryEntity]:
+    def get_entry_with_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntryEntity]:
         """Search all entry types for the given ID and return that `MSBEntry` (or `None` if not found).
 
         If multiple entries with the same (non-default) ID are found, an error will be raised.

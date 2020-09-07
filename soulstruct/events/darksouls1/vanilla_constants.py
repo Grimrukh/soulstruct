@@ -254,7 +254,7 @@ class COMMON_TEXT(Text):
     LordvesselWarpTip = 10010620
 
 
-class COMMON_GOODS(Good):
+class COMMON_GOODS(GoodParam):
     GravelordNitoLordSoul = 2500
     BedOfChaosLordSoul = 2501
     FourKingsLordSoul = 2502
@@ -263,7 +263,7 @@ class COMMON_GOODS(Good):
     Lordvessel = 2510
 
 
-class COMMON_ITEM_LOTS(ItemLot):
+class COMMON_ITEM_LOTS(ItemLotParam):
     GapingDragonReward = 2500
     CapraDemonReward = 2510
     CrossbreedPriscillaReward = 2520

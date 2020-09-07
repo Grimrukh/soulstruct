@@ -16,7 +16,7 @@ class DarkSoulsText:
     ArmorNames: dict
     ArmorSummaries: dict
     ContextualHelp: dict
-    Conversations: dict
+    Subtitles: dict
     DebugTags_Win32: dict
     EventText: dict
     FeatureDescriptions: dict
@@ -48,7 +48,7 @@ class DarkSoulsText:
     WeaponSummaries: dict
 
     # These are text categories you are likely to want to change in mod projects.
-    main_categories = main_fmg_names = [
+    main_categories = [
         "NPCNames",
         "PlaceNames",
         "EventText",
@@ -68,12 +68,12 @@ class DarkSoulsText:
         "SpellNames",
         "SpellSummaries",
         "SpellDescriptions",
-        "Conversations",
+        "Subtitles",
     ]
 
     # These are text categories you are unlikely to change, whether it's for pragmatic
-    # reasons (like Conversations) or because they contain low-level menu/system text.
-    internal_categories = internal_fmg_names = [
+    # reasons or because they contain low-level menu/system text.
+    internal_categories = [
         "ContextualHelp",
         "DebugTags_Win32",
         "FeatureNames",

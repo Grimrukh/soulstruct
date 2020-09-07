@@ -4,8 +4,9 @@ import struct
 
 from soulstruct.core import SoulstructError
 from soulstruct.enums.darksouls1 import SoundType
+from soulstruct.game_types import *
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntity
-from soulstruct.maps.core import MSB_EVENT_TYPE
+from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
 from soulstruct.utilities.maths import Vector3
 
@@ -36,7 +37,7 @@ class BaseMSBEvent(MSBEntryEntity):
 
     EVENT_TYPE_DATA_STRUCT = ()
 
-    ENTRY_TYPE = None
+    ENTRY_SUBTYPE = None  # type: MSBEventSubtype
 
     def __init__(self, msb_event_source=None):
         super().__init__()
@@ -57,7 +58,7 @@ class BaseMSBEvent(MSBEntryEntity):
     def unpack(self, msb_buffer):
         event_offset = msb_buffer.tell()
         header = self.EVENT_HEADER_STRUCT.unpack(msb_buffer)
-        if header["__event_type"] != self.ENTRY_TYPE:
+        if header["__event_type"] != self.ENTRY_SUBTYPE:
             raise ValueError(f"Unexpected MSB event type value {header['__event_type']} for {self.__class__.__name__}.")
         msb_buffer.seek(event_offset + header["__base_data_offset"])
         base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
@@ -88,7 +89,7 @@ class BaseMSBEvent(MSBEntryEntity):
         packed_header = self.EVENT_HEADER_STRUCT.pack(
             __name_offset=name_offset,
             _event_index=self._event_index,
-            __event_type=self.ENTRY_TYPE,
+            __event_type=self.ENTRY_SUBTYPE,
             _local_event_index=self._local_event_index,
             __base_data_offset=base_data_offset,
             __type_data_offset=type_data_offset,
@@ -107,11 +108,11 @@ class BaseMSBEvent(MSBEntryEntity):
         msb_buffer.seek(old_offset + 8)
         try:
             event_type_int = struct.unpack("i", msb_buffer.read(4))[0]
-            event_type = MSB_EVENT_TYPE(event_type_int)
+            event_type = MSBEventSubtype(event_type_int)
         except (ValueError, TypeError):
             event_type = None
         msb_buffer.seek(old_offset)
-        return MSB_EVENT_TYPE_CLASSES[event_type](msb_buffer)
+        return MSB_MODEL_TYPE_CLASSES[event_type](msb_buffer)
 
 
 class MSBLight(BaseMSBEvent):
@@ -121,13 +122,13 @@ class MSBLight(BaseMSBEvent):
         "base_part_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Light will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
         "base_region_name": (
             "Light Region",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region (usually a Point) at which Light appears.",
         ),
         "entity_id": (
@@ -139,12 +140,12 @@ class MSBLight(BaseMSBEvent):
         "point_light": (
             "Point Light",
             True,
-            int,  # TODO: Link to Lighting.
+            PointLightParam,
             "Point Light lighting parameter ID to use for this light.",
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Light
+    ENTRY_SUBTYPE = MSBEventSubtype.Light
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.point_light = 0
@@ -162,13 +163,13 @@ class MSBSound(BaseMSBEvent):
         "base_part_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Sound is connected to this part (usually a Collision or Map Piece part), but this has an unknown effect.",
         ),
         "base_region_name": (
             "Sound Volume",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region in which Sound can be heard, if it's enabled.",
         ),
         "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Sound in other game files."),
@@ -178,10 +179,10 @@ class MSBSound(BaseMSBEvent):
             SoundType,
             "Type of sound, which is used to find the sound data (sound name prefix letter).",
         ),
-        "sound_id": ("Sound ID", True, "<Sound>", "Sound data ID, which refers to an ID in loaded sound events."),
+        "sound_id": ("Sound ID", True, Sound, "Sound data ID, which refers to an ID in loaded sound events."),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Sound
+    ENTRY_SUBTYPE = MSBEventSubtype.Sound
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.sound_type = SoundType.m_Music
@@ -197,15 +198,15 @@ class MSBFX(BaseMSBEvent):
         "base_part_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "FX will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
-        "base_region_name": ("FX Region", True, "<Maps:Regions>", "Region (usually a Point) at which FX appears."),
+        "base_region_name": ("FX Region", True, Region, "Region (usually a Point) at which FX appears."),
         "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the FX in other game files."),
         "fx_id": ("FX ID", True, int, "Visual effect ID, which refers to a loaded FX file."),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.FX
+    ENTRY_SUBTYPE = MSBEventSubtype.FX
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.fx_id = 0
@@ -254,7 +255,7 @@ class MSBWind(BaseMSBEvent):
         "unk_x3c_x40": ("Unknown [3c-40]", True, float, "Unknown Wind parameter (floating-point number)."),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Wind
+    ENTRY_SUBTYPE = MSBEventSubtype.Wind
 
     def __init__(self, msb_event_source=None, **kwargs):
         """Data consists of 16 floats, which likely specify the transform parameters (e.g. position, direction) of wind
@@ -304,41 +305,41 @@ class MSBTreasure(BaseMSBEvent):
         "treasure_part_name": (
             "Treasure Object",
             True,
-            "<Maps:Parts:Objects>",
+            Object,
             "Object on which treasure will appear (usually a corpse or chest).",
         ),
         "item_lot_1": (
             "Item Lot 1",
             True,
-            "<Params:ItemLots>",
+            ItemLotParam,
             "First item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
         "item_lot_2": (
             "Item Lot 2",
             True,
-            "<Params:ItemLots>",
+            ItemLotParam,
             "Second item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
         "item_lot_3": (
             "Item Lot 3",
             True,
-            "<Params:ItemLots>",
+            ItemLotParam,
             "Third item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
         "item_lot_4": (
             "Item Lot 4",
             True,
-            "<Params:ItemLots>",
+            ItemLotParam,
             "Fourth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
         "item_lot_5": (
             "Item Lot 5",
             True,
-            "<Params:ItemLots>",
+            ItemLotParam,
             "Fifth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
@@ -356,7 +357,7 @@ class MSBTreasure(BaseMSBEvent):
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Treasure
+    ENTRY_SUBTYPE = MSBEventSubtype.Treasure
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.treasure_part_name = None
@@ -423,18 +424,18 @@ class MSBSpawner(BaseMSBEvent):
         "spawn_region_names": (
             "Spawn Regions",
             True,
-            "<MapsList:Regions>",  # TODO: need a special pop-out window of entries for this.
+            GameObjectSequence((Region, 8)),  # TODO: need a special pop-out window of entries for this.
             "Regions where entities will be spawned.",
         ),
         "spawn_part_names": (
             "Spawn Characters",
             True,
-            "<MapsList:Parts:Characters>",  # TODO: ditto
+            GameObjectSequence((Character, 8)),  # TODO: ditto
             "Entities that will be spawned at given regions.",
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Spawner
+    ENTRY_SUBTYPE = MSBEventSubtype.Spawner
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.max_count = 255
@@ -474,17 +475,17 @@ class MSBMessage(BaseMSBEvent):
         "base_part_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Message will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
         "base_region_name": (
             "Message Region",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region (usually a Point) at which Message appears.",
         ),
         "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Message in other game files."),
-        "text_id": ("Message Text", True, "<Text:SoapstoneMessages>", "Text shown when soapstone message is examined."),
+        "text_id": ("Message Text", True, SoapstoneMessage, "Text shown when soapstone message is examined."),
         "unk_x02_x04": ("Unknown [02-04]", True, int, "Unknown. Often set to 2."),
         "starts_disabled": (
             "Starts Disabled",
@@ -494,7 +495,7 @@ class MSBMessage(BaseMSBEvent):
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Message
+    ENTRY_SUBTYPE = MSBEventSubtype.Message
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.text_id = -1
@@ -525,25 +526,25 @@ class MSBObjAct(BaseMSBEvent):
         "obj_act_part_name": (
             "Object",
             True,
-            "<Maps:Parts:Objects>",
+            Object,
             "Object to which this object activation event is attached.",
         ),
         "obj_act_param_id": (
             "ObjAct Param",
             True,
-            "<Params:ObjectActivations>",
+            ObjActParam,
             "Param entry containing information about this object activation event.",
         ),
         "unk_x0a_x0c": ("Unknown [0a-0c]", True, int, "Unknown."),  # TODO: investigate
         "obj_act_flag": (
             "ObjAct Flag",
             True,
-            "<Flag>",
+            Flag,
             "Flag that stores the persistent state (e.g. open/closed) of this object activation.",
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.ObjAct
+    ENTRY_SUBTYPE = MSBEventSubtype.ObjAct
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.obj_act_entity_id = -1
@@ -575,19 +576,19 @@ class MSBSpawnPoint(BaseMSBEvent):
         "base_part_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Some Spawn Points use this; unclear what it does, but it is presumably the Collision of the Spawn Point.",
         ),
         "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Spawn Point in other game files."),
         "spawn_point_region_name": (
             "Spawn Point Region",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region where player will spawn when registered to this spawn point.",
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.SpawnPoint
+    ENTRY_SUBTYPE = MSBEventSubtype.SpawnPoint
 
     def __init__(self, msb_event_source=None, **kwargs):
         self.spawn_point_region_name = None
@@ -622,7 +623,7 @@ class MSBMapOffset(BaseMSBEvent):
         "rotate_y": ("Y Rotation", True, float, "Euler angle of rotation around the Y (vertical) axis."),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.MapOffset
+    ENTRY_SUBTYPE = MSBEventSubtype.MapOffset
 
     def __init__(self, msb_event_source, **kwargs):
         self.translate = [0, 0, 0]
@@ -639,10 +640,10 @@ class MSBNavmesh(BaseMSBEvent):
 
     FIELD_INFO = {
         "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the Navmesh in other game files."),
-        "navmesh_region_name": ("Navmesh Region", True, "<Maps:Regions>", "Region to which navmesh event is attached."),
+        "navmesh_region_name": ("Navmesh Region", True, Region, "Region to which navmesh event is attached."),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Navigation
+    ENTRY_SUBTYPE = MSBEventSubtype.Navigation
 
     def __init__(self, msb_event_source, **kwargs):
         self.navmesh_region_name = None
@@ -677,13 +678,13 @@ class MSBEnvironment(BaseMSBEvent):
         "base_part_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Environment (or 'map spot') will be drawn whenever its parent is drawn.",
         ),
         "base_region_name": (
             "Environment Region",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region (usually a Point) at which Environment appears (whatever that means).",
         ),
         "entity_id": (
@@ -701,7 +702,7 @@ class MSBEnvironment(BaseMSBEvent):
         "unk_x14_x18": ("Unknown [14-18]", True, float, "Unknown Environment parameter (floating-point number)."),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.Environment
+    ENTRY_SUBTYPE = MSBEventSubtype.Environment
 
     def __init__(self, msb_event_source, **kwargs):
         self.unk_x00_x04 = 0
@@ -727,7 +728,7 @@ class MSBNPCInvasion(BaseMSBEvent):
         "base_region_name": (
             "Invasion Region",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region (a volume) in which NPC Invasion can be triggered (e.g. with Black Eye Orb).",
         ),
         "entity_id": (
@@ -740,18 +741,18 @@ class MSBNPCInvasion(BaseMSBEvent):
         "invasion_flag_id": (
             "Invasion Flag",
             True,
-            "<Flag>",
+            Flag,
             "Flag that is enabled while the invasion is active, which should trigger changes to the world.",
         ),
         "spawn_point_region_name": (
             "Spawn Point Region",
             True,
-            "<Maps:Regions>",
+            Region,
             "Region where player will spawn during invasion event.",
         ),
     }
 
-    ENTRY_TYPE = MSB_EVENT_TYPE.NPCInvasion
+    ENTRY_SUBTYPE = MSBEventSubtype.NPCInvasion
 
     def __init__(self, msb_event_source):
         self.host_entity_id = -1
@@ -775,27 +776,27 @@ class MSBNPCInvasion(BaseMSBEvent):
             self.spawn_point_region_name = None
 
 
-MSB_EVENT_TYPE_CLASSES = {
-    MSB_EVENT_TYPE.Light: MSBLight,
-    MSB_EVENT_TYPE.Sound: MSBSound,
-    MSB_EVENT_TYPE.FX: MSBFX,
-    MSB_EVENT_TYPE.Wind: MSBWind,
-    MSB_EVENT_TYPE.Treasure: MSBTreasure,
-    MSB_EVENT_TYPE.Spawner: MSBSpawner,
-    MSB_EVENT_TYPE.Message: MSBMessage,
-    MSB_EVENT_TYPE.ObjAct: MSBObjAct,
-    MSB_EVENT_TYPE.SpawnPoint: MSBSpawnPoint,
-    MSB_EVENT_TYPE.MapOffset: MSBMapOffset,
-    MSB_EVENT_TYPE.Navigation: MSBNavmesh,
-    MSB_EVENT_TYPE.Environment: MSBEnvironment,
-    MSB_EVENT_TYPE.NPCInvasion: MSBNPCInvasion,
+MSB_MODEL_TYPE_CLASSES = {
+    MSBEventSubtype.Light: MSBLight,
+    MSBEventSubtype.Sound: MSBSound,
+    MSBEventSubtype.FX: MSBFX,
+    MSBEventSubtype.Wind: MSBWind,
+    MSBEventSubtype.Treasure: MSBTreasure,
+    MSBEventSubtype.Spawner: MSBSpawner,
+    MSBEventSubtype.Message: MSBMessage,
+    MSBEventSubtype.ObjAct: MSBObjAct,
+    MSBEventSubtype.SpawnPoint: MSBSpawnPoint,
+    MSBEventSubtype.MapOffset: MSBMapOffset,
+    MSBEventSubtype.Navigation: MSBNavmesh,
+    MSBEventSubtype.Environment: MSBEnvironment,
+    MSBEventSubtype.NPCInvasion: MSBNPCInvasion,
 }
 
 
 class MSBEventList(MSBEntryList[BaseMSBEvent]):
     ENTRY_LIST_NAME = "Events"
     ENTRY_CLASS = staticmethod(MSBEvent)
-    ENTRY_TYPE_ENUM = MSB_EVENT_TYPE
+    ENTRY_SUBTYPE_ENUM = MSBEventSubtype
 
     _entries: tp.List[MSBEvent]
 
@@ -818,17 +819,19 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
             entry.set_names(region_names, part_names)
 
     def set_indices(self, region_indices, part_indices):
-        """Global and type-specific indices both set. (Unclear if either of them do anything.)"""
-        type_indices = {}
+        """Global and subtype-specific indices both set. (Unclear if either of them do anything.)"""
+        subtype_indices = {}
         for i, entry in enumerate(self._entries):
             try:
                 entry.set_indices(
                     event_index=i,
-                    local_event_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                    local_event_index=subtype_indices.setdefault(entry.ENTRY_SUBTYPE, 0),
                     region_indices=region_indices,
                     part_indices=part_indices,
                 )
             except KeyError as e:
-                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} event {entry.name}: {e}")
+                raise SoulstructError(
+                    f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} event {entry.name}: {e}"
+                )
             else:
-                type_indices[entry.ENTRY_TYPE] += 1
+                subtype_indices[entry.ENTRY_SUBTYPE] += 1

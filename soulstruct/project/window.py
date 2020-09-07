@@ -751,7 +751,7 @@ class SoulstructProjectWindow(SmartFrame):
                 self.export_tab_button.var.set(f"Export {data_name}")
 
     def _rename_param_entries_from_text(self, param_table=None):
-        self.project.Params.rename_entries_from_text(self.project.Text, param_table_name=param_table)
+        self.project.Params.rename_entries_from_text(self.project.Text, param_nickname=param_table)
         if self.page_tabs.index(self.page_tabs.select()) == self.TAB_ORDER.index("params"):
             if (
                 not param_table

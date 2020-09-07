@@ -1,17 +1,21 @@
+from __future__ import annotations
+
 import copy
 import io
 import logging
 import struct
 import typing as tp
 from collections import OrderedDict
-from copy import deepcopy
 
 from soulstruct.bnd import BNDEntry
 from soulstruct.core import SoulstructError
 from soulstruct.params import enums
-from soulstruct.params.fields import GAME_PARAM_INFO
 from soulstruct.params.paramdef import ParamDefBND
 from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
+
+if tp.TYPE_CHECKING:
+    from soulstruct.params.paramdef import ParamDef, ParamDefField
+    from soulstruct.params.display_info.base import FieldDisplayInfo
 
 # TODO: GameParam BND indices of params tables are different in PTD/DSR. I'm guessing it may not actually matter, and
 #   that all the params tables are loaded and accessed by their names (e.g. 'OBJ_ACT_PARAM_ST').
@@ -91,7 +95,7 @@ class BitField:
 class ParamEntry:
     def __init__(self, entry_source, paramdef, name=None):
         self.fields = OrderedDict()
-        self.paramdef = paramdef
+        self.paramdef = paramdef  # type: ParamDef
         self.bit_field = BitField()
 
         if isinstance(entry_source, OrderedDict):
@@ -145,13 +149,22 @@ class ParamEntry:
 
     @property
     def field_names(self):
-        return list(self.fields.keys())
+        if self.paramdef.param_info:
+            return [field.name for field in self.paramdef.param_info["fields"]]
+        else:
+            return list(self.fields.keys())
+
+    def get_paramdef_field(self, field_name: str) -> ParamDefField:
+        return self.paramdef[field_name]
+
+    def get_paramdef_field_display_info(self, field_name: str) -> FieldDisplayInfo:
+        return self.paramdef[field_name].get_display_info(self)
 
     def __repr__(self):
         return f"\nName: {self.name}" + "".join([f"\n    {key} = {value}" for key, value in self.fields.items()])
 
     def copy(self):
-        return deepcopy(self)
+        return copy.deepcopy(self)
 
     def unpack(self, entry_buffer, name: str):
         if isinstance(entry_buffer, bytes):
@@ -159,12 +172,12 @@ class ParamEntry:
 
         for field in self.paramdef.fields:
 
-            if field["bit_size"] < 8:
-                field_value = self.bit_field.unpack(entry_buffer, field["bit_size"])
-            elif field["internal_type"] == "dummy8":
+            if field.bit_size < 8:
+                field_value = self.bit_field.unpack(entry_buffer, field.bit_size)
+            elif field.internal_type == "dummy8":
                 self.bit_field.clear()
-                field_value = entry_buffer.read(field["size"])
-                if not field_value == b"\0" * field["size"]:
+                field_value = entry_buffer.read(field.size)
+                if not field_value == b"\0" * field.size:
                     raise ValueError(
                         f"Pad value of field {field} in entry {self.name} of ParamTable "
                         f"{self.paramdef.param_name} is not null: {field_value}."
@@ -172,20 +185,20 @@ class ParamEntry:
             else:
                 self.bit_field.clear()
                 try:
-                    field_type = getattr(enums, field["internal_type"])
+                    field_type = getattr(enums, field.internal_type)
                 except AttributeError:
-                    if field["name"] == "sfxMultiplier":
+                    if field.name == "sfxMultiplier":
                         field_type = enums.f32
                     else:
                         raise KeyError(
-                            f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
-                            f"internal type {field['internal_type']} (debug type = {field['debug_type']})."
+                            f"Field {field.name} in ParamTable {self.paramdef.param_name} has unknown "
+                            f"internal type {field.internal_type} (debug type = {field.debug_type})."
                         )
                 data = entry_buffer.read(field_type.size())
                 try:
                     (field_value,) = struct.unpack(field_type.format(), data)
                 except struct.error as e:
-                    if field["debug_name"] in {"inverseToneMapMul", "sfxMultiplier"}:
+                    if field.debug_name in {"inverseToneMapMul", "sfxMultiplier"}:
                         # These fields are screwed up in m99 and default ToneMapBank.
                         field_value = 1.0
                     else:
@@ -196,56 +209,50 @@ class ParamEntry:
                             f"Error:\n{str(e)}"
                         )
 
-            self.fields[field["name"]] = field_value
+            self.fields[field.name] = field_value
 
         self.name = name
 
     def pack(self):
         packed_entry = b""
         for field_name, field_value in self.fields.items():  # These are ordered correctly already.
-
             field = self.paramdef[field_name]
-
-            if field["bit_size"] < 8:
+            if field.bit_size < 8:
                 # Add bits.
-                completed_byte = self.bit_field.pack(field_value, field["bit_size"])
+                completed_byte = self.bit_field.pack(field_value, field.bit_size)
                 if completed_byte is not None:
                     packed_entry += struct.pack("<B", completed_byte)
                 continue
-
             completed_byte = self.bit_field.pad()
             if completed_byte is not None:
                 packed_entry += struct.pack("<B", completed_byte)
-
-            if field["internal_type"] == "dummy8":
+            if field.internal_type == "dummy8":
                 # Write nulls.
-                packed_entry += b"\x00" * field["size"]
+                packed_entry += b"\x00" * field.size
                 continue
-
             try:
-                field_type = getattr(enums, field["internal_type"])
+                field_type = getattr(enums, field.internal_type)
             except AttributeError:
-                if field["name"] == "sfxMultiplier":
+                if field.name == "sfxMultiplier":
                     field_type = enums.f32
                 else:
                     raise ParamError(
-                        f"Field {field['name']} in ParamTable {self.paramdef.param_name} has unknown "
-                        f"internal type {field['internal_type']} (debug type = {field['debug_type']})."
+                        f"Field {field.name} in ParamTable {self.paramdef.param_name} has unknown "
+                        f"internal type {field.internal_type} (debug type = {field.debug_type})."
                     )
-            if not isinstance(self[field["name"]], field_type.python_type()):
+            if not isinstance(self[field.name], field_type.python_type()):
                 raise ParamError(
-                    f"Bad type: field {field['name']} in entry {repr(self.name)} of table "
-                    f"{self.paramdef.param_name} has value {self[field['name']]} with type "
-                    f"{type(self[field['name']])}, but should have type {field_type.python_type()}."
+                    f"Bad type: field {field.name} in entry {repr(self.name)} of table "
+                    f"{self.paramdef.param_name} has value {self[field.name]} with type "
+                    f"{type(self[field.name])}, but should have type {field_type.python_type()}."
                 )
-            if not field_type.minimum() <= self[field["name"]] <= field_type.maximum():
+            if not field_type.minimum() <= self[field.name] <= field_type.maximum():
                 _LOGGER.error(f"Error in field. Field data: {field}")
                 raise ParamError(
-                    f"Invalid: field {field['name']} in entry {repr(self.name)} of table "
-                    f"{self.paramdef.param_name} has out-of-range value {self[field['name']]} "
+                    f"Invalid: field {field.name} in entry {repr(self.name)} of table "
+                    f"{self.paramdef.param_name} has out-of-range value {self[field.name]} "
                     f"(range is {field_type.minimum()} to {field_type.maximum()})."
                 )
-
             packed_entry += struct.pack(field_type.format(), field_value)
 
         return packed_entry
@@ -276,14 +283,13 @@ class ParamTable:
     entries: tp.Dict[int, ParamEntry]
 
     def __init__(self, param_source, paramdef_bnd):
-        # TODO: Need to specify params type somewhere.
         self.param_path = ""
         self.param_name = ""  # internal name (shift-jis) with capitals and underscores
-        self.paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
+        self._paramdef_bnd = PARAMDEF_BND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.entries = {}
         self.__magic = []
         self.__unknown = None
-        self.nickname = ""
+        self._nickname = ""
 
         if isinstance(param_source, dict):
             self.entries = param_source
@@ -311,7 +317,7 @@ class ParamTable:
         if isinstance(entry, dict):
             if "name" not in entry:
                 raise ValueError("New entry must have a 'name' field.")
-            entry = ParamEntry(entry, self.paramdef_bnd[self.param_name])
+            entry = ParamEntry(entry, self._paramdef_bnd[self.param_name])
         if isinstance(entry, ParamEntry):
             self.entries[entry_index] = entry
         else:
@@ -332,21 +338,28 @@ class ParamTable:
     def __len__(self):
         return len(self.entries)
 
+    def pop(self, entry_id):
+        return self.entries.pop(entry_id)
+
+    @property
+    def paramdef(self):
+        return self._paramdef_bnd[self.param_name]
+
+    @property
+    def param_info(self):
+        return self.paramdef.param_info
+
     @property
     def field_names(self):
-        # TODO: hack job. get nice field names and structure from fields.py.
-        return self.entries[list(self.entries)[0]].field_names
+        if self.paramdef.param_info:
+            return [field.name for field in self.paramdef.param_info["fields"]]
+        else:
+            return list(self.entries[0].fields.keys())
 
-    def get_field_info(self, param_entry: ParamEntry = None, field_name: str = None):
-        param_info = GAME_PARAM_INFO.get(self.param_name, None)
-        if param_info is None:
-            raise KeyError(f"No field info available for param table {self.param_name}.")
-        if field_name is None:
-            return param_info
-        field_info = param_info.get(field_name, (field_name, True, None, "DOC-TODO"))
-        if callable(field_info):
-            field_info = field_info(param_entry)
-        return field_info
+    @property
+    def nickname(self):
+        """Could return None for ambiguous tables like 'PlayerBehaviors'. Handled separately."""
+        return self.paramdef.param_info["nickname"]
 
     # TODO: __repr__ method returns basic information about ParamTable (but not entire entry list).
 
@@ -400,7 +413,7 @@ class ParamTable:
                     raise
             else:
                 name = ""
-            self.entries[entry_struct["id"]] = ParamEntry(entry_data, self.paramdef_bnd[self.param_name], name=name)
+            self.entries[entry_struct["id"]] = ParamEntry(entry_data, self.paramdef, name=name)
 
     def pack(self, sort=True):
         # if len(self.entries) > 5461:
@@ -480,9 +493,8 @@ class ParamTable:
     def get_range(self, start, count):
         return [(param_id, self[param_id]) for param_id in sorted(self.entries)[start : start + count]]
 
-    def pop(self, entry_id):
-        """Useful for changing entry ID, for example."""
-        return self.entries.pop(entry_id)
+    def copy(self):
+        return copy.deepcopy(self)
 
 
 class DrawParamTable(ParamTable):
@@ -498,7 +510,3 @@ class DrawParamTable(ParamTable):
             for index, entry in self.entries.items()
             if entry.name and not entry.name.startswith("0") and not entry.name.lower().startswith("polyg")
         }
-
-    def copy(self):
-        """Useful for copying slot 0 into slot 1."""
-        return copy.deepcopy(self)

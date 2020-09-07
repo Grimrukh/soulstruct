@@ -586,23 +586,26 @@ __all__ = [
     "PlayLogParameterOutput",
 ]
 
+from soulstruct.game_types import ItemTyping, ArmorTyping
+
 
 def IfDamageType(
-    condition: int, attacked_entity: AnimatedInt, attacking_character: CharacterInt, damage_type: DamageType
+    condition: int, attacked_entity: AnimatedTyping, attacking_character: CharacterTyping, damage_type: DamageType
 ):
     """Similar to IsAttackedBy, but requires a certain damage type."""
     instruction_info = (3, 23, [0, 0, -1, 0])
     return to_numeric(instruction_info, condition, attacked_entity, attacking_character, damage_type)
 
 
-def IfActionButtonInRegion(condition: int, action_button_id: int, region: RegionInt):
+def IfActionButtonInRegion(condition: int, action_button_id: int, region: RegionTyping):
     """Probably a simplified version of `IfActionButton`. Used with boss fog."""
     instruction_info = (3, 24, [0, -1, -1])
     return to_numeric(instruction_info, condition, action_button_id, region)
 
 
 def IfPlayerArmorType(
-    condition: int, armor_type: ArmorType, required_armor_range_first: ArmorInt, required_armor_range_last: ArmorInt
+    condition: int, armor_type: ArmorTyping, required_armor_range_first: ArmorTyping,
+    required_armor_range_last: ArmorTyping,
 ):
     instruction_info = (3, 25, [0])
     return to_numeric(instruction_info, condition, armor_type, required_armor_range_first, required_armor_range_last)
@@ -655,17 +658,17 @@ def IfClientTypeCountComparison(condition: int, client_type: ClientType, compari
     return to_numeric(instruction_info, condition, client_type, comparison_type, value)
 
 
-def IfCharacterDrawGroupState(condition: int, character: CharacterInt, state: bool):
+def IfCharacterDrawGroupState(condition: int, character: CharacterTyping, state: bool):
     """Tests if character's draw group is currently active or inactive."""
     instruction_info = (4, 15, [0, 0, 0])
     return to_numeric(instruction_info, condition, character, state)
 
 
-def IfCharacterDrawGroupActive(condition: int, character: CharacterInt):
+def IfCharacterDrawGroupActive(condition: int, character: CharacterTyping):
     return IfCharacterDrawGroupState(condition, character, True)
 
 
-def IfCharacterDrawGroupInactive(condition: int, character: CharacterInt):
+def IfCharacterDrawGroupInactive(condition: int, character: CharacterTyping):
     return IfCharacterDrawGroupState(condition, character, False)
 
 
@@ -810,25 +813,25 @@ def GotoIfFlagOff(label: Label, flag: FlagInt):
     return GotoIfFlagState(label, False, FlagType.Absolute, flag)
 
 
-def GotoIfFlagRangeState(label: Label, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeState(label: Label, state: RangeState, flag_type: FlagType, flag_range: FlagRangeTyping):
     instruction_info = (1003, 103)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, label, state, flag_type, first_flag, last_flag)
 
 
-def GotoIfFlagRangeAllOn(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAllOn(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AllOn, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAllOff(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAllOff(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AllOff, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAnyOn(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAnyOn(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAnyOff(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAnyOff(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 
@@ -857,17 +860,17 @@ def GotoIfSingleplayer(label: Label):
     return GotoIfMultiplayerState(label, MultiplayerState.Singleplayer)
 
 
-def GotoIfMapPresenceState(label: Label, game_map: MapOrSequence, state: bool):
+def GotoIfMapPresenceState(label: Label, game_map: MapTyping, state: bool):
     instruction_info = (1003, 107, [0, 0, 0, 0])
     area_id, block_id = tuple(game_map)
     return to_numeric(instruction_info, label, state, area_id, block_id)
 
 
-def GotoIfInsideMap(label: Label, game_map: MapOrSequence):
+def GotoIfInsideMap(label: Label, game_map: MapTyping):
     return GotoIfMapPresenceState(label, game_map, True)
 
 
-def GotoIfOutsideMap(label: Label, game_map: MapOrSequence):
+def GotoIfOutsideMap(label: Label, game_map: MapTyping):
     return GotoIfMapPresenceState(label, game_map, False)
 
 
@@ -876,17 +879,17 @@ def GotoIfCoopClientCountComparison(label: Label, comparison_type: ComparisonTyp
     return to_numeric(instruction_info, label, comparison_type, value)
 
 
-def GotoIfObjectDestructionState(label: Label, obj: ObjectInt, state: bool):
+def GotoIfObjectDestructionState(label: Label, obj: ObjectTyping, state: bool):
     """Note change in argument order."""
     instruction_info = (1005, 101, [0, 0, -1])
     return to_numeric(instruction_info, label, state, obj)
 
 
-def GotoIfObjectDestroyed(label: Label, obj: ObjectInt):
+def GotoIfObjectDestroyed(label: Label, obj: ObjectTyping):
     return GotoIfObjectDestructionState(label, obj, True)
 
 
-def GotoIfObjectNotDestroyed(label: Label, obj: ObjectInt):
+def GotoIfObjectNotDestroyed(label: Label, obj: ObjectTyping):
     return GotoIfObjectDestructionState(label, obj, False)
 
 
@@ -990,8 +993,8 @@ def DefineLabel(label: Union[Label, int]):
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
     cutscene_type: CutsceneType,
-    region: RegionInt,
-    game_map: MapOrSequence,
+    region: RegionTyping,
+    game_map: MapTyping,
     player_id: int,
     time_period_id: int,
 ):
@@ -1012,14 +1015,14 @@ def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, pla
     return to_numeric(instruction_info, cutscene, cutscene_type, player_id, time_period_id)
 
 
-def PlayCutsceneAndMovePlayer_Dummy(region: RegionInt, game_map: MapOrSequence):
+def PlayCutsceneAndMovePlayer_Dummy(region: RegionTyping, game_map: MapTyping):
     """Likely not used, doesn't even take a cutscene ID argument."""
     instruction_info = (2002, 8, [0, 0, 0])
     area_id, block_id = tuple(game_map)
     return to_numeric(instruction_info, region, area_id, block_id)
 
 
-def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, state: bool):
+def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slot, state: bool):
     """Note: slot number can be 0-2 in Bloodborne."""
     instruction_info = (2003, 11)
     if isinstance(slot, int) and slot not in (0, 1, 2):
@@ -1027,12 +1030,12 @@ def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, sta
     return to_numeric(instruction_info, state, character, slot, name)
 
 
-def EnableBossHealthBar(character: CharacterInt, name: EventTextInt, slot=0):
+def EnableBossHealthBar(character: CharacterTyping, name: EventTextTyping, slot=0):
     """The character's health bar will appear at the bottom of the screen, with a name."""
     return SetBossHealthBarState(character, name, slot, True)
 
 
-def DisableBossHealthBar(character: CharacterInt, name: EventTextInt = 0, slot=0):
+def DisableBossHealthBar(character: CharacterTyping, name: EventTextTyping = 0, slot=0):
     """The character's health bar will disappear from the bottom of the screen.
 
     WARNING: Disabling either boss health will disable both of them, and the name_id doesn't matter, so only the
@@ -1077,13 +1080,13 @@ def EventValueOperation(
     )
 
 
-def StoreItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemInt, flag: FlagInt, bit_count: int):
+def StoreItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemTyping, flag: FlagInt, bit_count: int):
     """Stores some amount of items read from a flag array."""
     instruction_info = (2003, 42)
     return to_numeric(instruction_info, item_type, item, flag, bit_count)
 
 
-def GivePlayerItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemInt, flag: FlagInt, bit_count: int):
+def GivePlayerItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemTyping, flag: FlagInt, bit_count: int):
     """Gives player some amount of items read from a flag array. Probably used when taking items out of storage
     (i.e. the reverse of the above instruction)."""
     instruction_info = (2003, 43)
@@ -1104,16 +1107,16 @@ def DisableDirectionDisplay():
     return SetDirectionDisplayState(False)
 
 
-def SetMapHitGridCorrespondence(collision: CollisionInt, level: int, grid_coord_x: int, grid_coord_y: int, state: bool):
+def SetMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int, state: bool):
     instruction_info = (2003, 45)
     return to_numeric(instruction_info, collision, level, grid_coord_x, grid_coord_y, state)
 
 
-def EnableMapHitGridCorrespondence(collision: CollisionInt, level: int, grid_coord_x: int, grid_coord_y: int):
+def EnableMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int):
     return SetMapHitGridCorrespondence(collision, level, grid_coord_x, grid_coord_y, True)
 
 
-def DisableMapHitGridCorrespondence(collision: CollisionInt, level: int, grid_coord_x: int, grid_coord_y: int):
+def DisableMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int):
     return SetMapHitGridCorrespondence(collision, level, grid_coord_x, grid_coord_y, False)
 
 
@@ -1127,7 +1130,7 @@ def SetMapBoundariesDisplay(hierarchy: int, grid_coord_x: int, grid_coord_y: int
     return to_numeric(instruction_info, hierarchy, grid_coord_x, grid_coord_y, state)
 
 
-def SetAreaWind(region: RegionInt, state: bool, duration: float, wind_parameter_id: int):
+def SetAreaWind(region: RegionTyping, state: bool, duration: float, wind_parameter_id: int):
     instruction_info = (2003, 48)
     return to_numeric(instruction_info, region, state, duration, wind_parameter_id)
 
@@ -1144,8 +1147,8 @@ def StartEnemySpawner(spawner_id: int):
 
 def SummonNPC(
     sign_type: Union[SingleplayerSummonSignType, int],
-    character: CharacterInt,
-    region: RegionInt,
+    character: CharacterTyping,
+    region: RegionTyping,
     summon_flag: FlagInt,
     dismissal_flag: FlagInt,
 ):
@@ -1164,12 +1167,12 @@ def BossDefeat(boss_id: int, banner_type: BannerType):
     return to_numeric(instruction_info, boss_id, banner_type)
 
 
-def SendNPCSummonHome(character: CharacterInt):
+def SendNPCSummonHome(character: CharacterTyping):
     instruction_info = (2003, 54, [-1])
     return to_numeric(instruction_info, character)
 
 
-def AddSpecialEffect(character: CharacterInt, special_effect_id: int, affect_npc_part_hp: bool):
+def AddSpecialEffect(character: CharacterTyping, special_effect_id: int, affect_npc_part_hp: bool):
     """'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
     nothing if the character already has the special effect active (i.e. they do not stack or even reset timers).
 
@@ -1181,7 +1184,7 @@ def AddSpecialEffect(character: CharacterInt, special_effect_id: int, affect_npc
 
 
 def RotateToFaceEntity(
-    character: CharacterInt, target_entity: CoordEntityInt, animation: int, wait_for_completion: bool = False
+    character: CharacterTyping, target_entity: CoordEntityTyping, animation: int, wait_for_completion: bool = False
 ):
     """Rotate a character to face a target map entity of any type.
     WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at least.)
@@ -1193,27 +1196,27 @@ def RotateToFaceEntity(
     return to_numeric(instruction_info, character, target_entity, animation, wait_for_completion)
 
 
-def ChangeCharacterCloth(character: CharacterInt, bit_count: int, state_id: int):
+def ChangeCharacterCloth(character: CharacterTyping, bit_count: int, state_id: int):
     instruction_info = (2004, 48, [0, 0, 0])
     return to_numeric(instruction_info, character, bit_count, state_id)
 
 
-def ChangePatrolBehavior(character: CharacterInt, patrol_information_id: int):
+def ChangePatrolBehavior(character: CharacterTyping, patrol_information_id: int):
     """I don't know what a 'patrol_information_id' actually is."""
     instruction_info = (2004, 49, [0, -1])
     return to_numeric(instruction_info, character, patrol_information_id)
 
 
-def SetDistanceLimitForConversationStateChanges(character: CharacterInt, distance: float):
+def SetDistanceLimitForConversationStateChanges(character: CharacterTyping, distance: float):
     instruction_info = (2004, 50)
     return to_numeric(instruction_info, character, distance)
 
 
 def Test_RequestRagdollRestraint(
-    recipient_character: CharacterInt,
+    recipient_character: CharacterTyping,
     recipient_target_rigid_index: int,
     recipient_model_point: int,
-    attachment_character: CharacterInt,
+    attachment_character: CharacterTyping,
     attachment_target_rigid_index: int,
     attachment_model_point: int,
 ):
@@ -1235,24 +1238,24 @@ def ChangePlayerCharacterInitParam(character_init_param: int):
     return to_numeric(instruction_info, character_init_param)
 
 
-def AdaptSpecialEffectHealthChangeToNPCPart(character: CharacterInt):
+def AdaptSpecialEffectHealthChangeToNPCPart(character: CharacterTyping):
     instruction_info = (2004, 53, [-1])
     return to_numeric(instruction_info, character)
 
 
-def SetGravityAndCollisionExcludingOwnWorld(character: CharacterInt, state: bool):
+def SetGravityAndCollisionExcludingOwnWorld(character: CharacterTyping, state: bool):
     """I assume "own world" refers to the world you're hosting."""
     instruction_info = (2004, 54, [-1, 0])
     return to_numeric(instruction_info, character, state)
 
 
-def AddSpecialEffect_WithUnknownEffect(character: CharacterInt, special_effect: int, affect_npc_parts_hp: bool):
+def AddSpecialEffect_WithUnknownEffect(character: CharacterTyping, special_effect: int, affect_npc_parts_hp: bool):
     """Unknown additional affect from the standard instruction, presumably."""
     instruction_info = (2004, 55)
     return to_numeric(instruction_info, character, special_effect, affect_npc_parts_hp)
 
 
-def ActivateObjectWithSpecificCharacter(obj: ObjectInt, objact_id: int, relative_index: int, character: CharacterInt):
+def ActivateObjectWithSpecificCharacter(obj: ObjectTyping, objact_id: int, relative_index: int, character: CharacterTyping):
     """The standard version of this 'grabs' the nearest character and uses them in the ObjAct (e.g. Patches pulling the
     lever in the Catacombs in DS1). I presume this version lets you specify which character should be involved in the
     ObjAct."""
@@ -1260,7 +1263,7 @@ def ActivateObjectWithSpecificCharacter(obj: ObjectInt, objact_id: int, relative
     return to_numeric(instruction_info, obj, objact_id, relative_index, character)
 
 
-def SetObjectDamageShieldState(obj: ObjectInt, state: bool):
+def SetObjectDamageShieldState(obj: ObjectTyping, state: bool):
     """Not sure how this differs from object invulnerability."""
     instruction_info = (2005, 17, [-1, 0])
     return to_numeric(instruction_info, obj, state)
@@ -1268,7 +1271,7 @@ def SetObjectDamageShieldState(obj: ObjectInt, state: bool):
 
 def RegisterHealingFountain(
     flag: FlagInt,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     reaction_distance: float,
     reaction_angle: float,
     initial_sword_number: int,
@@ -1304,18 +1307,18 @@ def NotifyDoorEventSoundDampening(entity_id: int, state: DoorState):
     return to_numeric(instruction_info, entity_id, state)
 
 
-def SetCollisionResState(collision: CollisionInt, state: bool):
+def SetCollisionResState(collision: CollisionTyping, state: bool):
     """No idea what this is."""
     instruction_info = (2011, 3, [-1, 0])
     return to_numeric(instruction_info, collision, state)
 
 
-def CreatePlayLog(name: StringOffsetInt):
+def CreatePlayLog(name: StringOffsetTyping):
     instruction_info = (2013, 1, [0])
     return to_numeric(instruction_info, name)
 
 
-def StartPlayLogMeasurement(measurement_id: int, name: StringOffsetInt, overwrite: bool):
+def StartPlayLogMeasurement(measurement_id: int, name: StringOffsetTyping, overwrite: bool):
     instruction_info = (2013, 2, [0, 0, 0])
     return to_numeric(instruction_info, measurement_id, name, overwrite)
 
@@ -1326,7 +1329,7 @@ def StopPlayLogMeasurement(measurement_id: int):
 
 
 def PlayLogParameterOutput(
-    category: PlayerPlayLogParameter, name: StringOffsetInt, output_multiplayer_state: PlayLogMultiplayerType
+    category: PlayerPlayLogParameter, name: StringOffsetTyping, output_multiplayer_state: PlayLogMultiplayerType
 ):
     instruction_info = (2013, 4, [0, 0, 0])
     return to_numeric(instruction_info, category, name, output_multiplayer_state)

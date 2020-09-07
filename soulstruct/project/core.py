@@ -271,7 +271,6 @@ class SoulstructProject:
             map_id = talkesdbnd.name.split(".talkesdbnd")[0]
             if map_id in ("m12_00_00_01", "m14_02_00_00"):
                 continue  # skipped
-            print("# Talk map:", map_id)
             TalkESDBND(talkesdbnd, game_version=game_version).write_all_esp(self.project_root / f"talk/{map_id}")
 
     def export_data(self, data_type=None, export_directory=None):

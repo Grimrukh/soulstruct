@@ -1,12 +1,51 @@
 from __future__ import annotations
 
-from typing import Union, TYPE_CHECKING
+import typing as tp
 
 from soulstruct.params.dark_souls_params import DRAW_PARAM_MAPS
-from soulstruct.project.editor import SoulstructBaseFieldEditor
+from soulstruct.project.base.base_editor import EntryRow
+from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
 
-if TYPE_CHECKING:
+if tp.TYPE_CHECKING:
     from soulstruct.params import DarkSoulsLightingParameters, ParamEntry, DrawParamTable
+
+
+class LightingEntryRow(EntryRow):
+
+    master: SoulstructLightingEditor
+
+    ENTRY_ID_WIDTH = 10
+
+    def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
+        super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
+        self.linked_text = ""
+
+    def update_entry(self, entry_id: int, entry_text: str):
+        """If 'linked_text' is an empty string, then text was expected, but not found (entry highlighted)."""
+        self.entry_id = entry_id
+        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        self.linked_text = (f"    {{{text_links[0].name}}}" if text_links[0].name else "") if text_links else None
+        self.entry_text = entry_text
+        self._update_colors()
+        self.build_entry_context_menu(text_links)
+        self.tool_tip.text = text_links[2].name if text_links and text_links[2].name else None
+
+    @property
+    def entry_text(self):
+        return self._entry_text
+
+    @entry_text.setter
+    def entry_text(self, value):
+        self._entry_text = value
+        self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ""))
+
+    def build_entry_context_menu(self, text_links=()):
+        super().build_entry_context_menu()
+        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        if text_links:
+            self.context_menu.add_separator()
+            for text_link in text_links:
+                text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
 
 
 class SoulstructLightingEditor(SoulstructBaseFieldEditor):
@@ -19,39 +58,8 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     FIELD_BOX_HEIGHT = 400
     FIELD_ROW_COUNT = 45  # highest count (AmbientLight)
 
-    class EntryRow(SoulstructBaseFieldEditor.EntryRow):
-        ENTRY_ID_WIDTH = 10
-
-        def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
-            super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
-            self.linked_text = ""
-
-        def update_entry(self, entry_id: int, entry_text: str):
-            """If 'linked_text' is an empty string, then text was expected, but not found (entry highlighted)."""
-            self.entry_id = entry_id
-            text_links = self.master.linker.param_entry_text_link(self.entry_id)
-            self.linked_text = (f"    {{{text_links[0].name}}}" if text_links[0].name else "") if text_links else None
-            self.entry_text = entry_text
-            self._update_colors()
-            self.build_entry_context_menu(text_links)
-            self.tool_tip.text = text_links[2].name if text_links and text_links[2].name else None
-
-        @property
-        def entry_text(self):
-            return self._entry_text
-
-        @entry_text.setter
-        def entry_text(self, value):
-            self._entry_text = value
-            self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ""))
-
-        def build_entry_context_menu(self, text_links=()):
-            super().build_entry_context_menu()
-            text_links = self.master.linker.param_entry_text_link(self.entry_id)
-            if text_links:
-                self.context_menu.add_separator()
-                for text_link in text_links:
-                    text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
+    ENTRY_ROW_CLASS = LightingEntryRow
+    entries: tp.List[LightingEntryRow]
 
     def __init__(self, lighting: DarkSoulsLightingParameters, linker, master=None, toplevel=False):
         self.Lighting = lighting
@@ -92,14 +100,8 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             super().build()
 
     def _on_map_area_choice(self, _=None):
-        new_map_area = self._get_map_area_name()
-        if getattr(self.Lighting, new_map_area)["AmbientLight"][1] is None:  # random table to check slots
-            self.slot_choice.config(values=["0"])
-            if self.slot_choice.var.get() == "1":
-                self.flash_bg(self.slot_choice_label)
-            self.slot_choice.var.set("0")
-        else:
-            self.slot_choice.config(values=["0", "1"])
+        new_map_area = self.get_map_area_name()
+        self._set_valid_slot_values(new_map_area)
         self.select_entry_row_index(None)
         self.refresh_entries(reset_field_display=True)
 
@@ -107,8 +109,26 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         self.select_entry_row_index(None)
         self.refresh_entries(reset_field_display=True)
 
+    def _set_valid_slot_values(self, map_area):
+        if getattr(self.Lighting, map_area)["AmbientLight"][1] is None:  # random table to check slots
+            self.slot_choice.config(values=["0"])
+            if self.slot_choice.var.get() == "1":
+                self.flash_bg(self.slot_choice_label)
+            self.slot_choice.var.set("0")
+        else:
+            self.slot_choice.config(values=["0", "1"])
+
+    def go_to_area_and_slot(self, area_name, slot):
+        if area_name not in DRAW_PARAM_MAPS:
+            raise KeyError(f"Invalid area name linked: {area_name}")
+        full_area_name = f"{area_name} [{DRAW_PARAM_MAPS[area_name]}]"
+        self.map_area_choice.set(full_area_name)
+        self._set_valid_slot_values(area_name)
+        self.slot_choice.var.set(str(slot))
+        self.refresh_entries(reset_field_display=True)
+
     def regenerate_slot_1(self):
-        map_area = self._get_map_area_name()
+        map_area = self.get_map_area_name()
         map_draw_param = getattr(self.Lighting, map_area)
         if map_draw_param["AmbientLight"][1] is not None:  # picking a random category to check slots
             if (
@@ -127,18 +147,18 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         self.slot_choice.config(values=["0", "1"])
         self.refresh_entries(reset_field_display=True)
 
-    def _get_map_area_name(self):
+    def get_map_area_name(self):
         return self.map_area_choice.get().split(" [")[0]
 
     def _get_display_categories(self):
         return self.Lighting.param_names
 
-    def get_category_data(self, category=None) -> Union[DrawParamTable, dict]:
+    def get_category_data(self, category=None) -> tp.Union[DrawParamTable, dict]:
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        map_area_choice = self._get_map_area_name()
+        map_area_choice = self.get_map_area_name()
         slot_choice = int(self.slot_choice.var.get())
         return self.Lighting[map_area_choice][category][slot_choice]
 
@@ -189,13 +209,9 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
                 raise ValueError("No params category selected.")
         return self.get_category_data(category)[entry_id]
 
-    def get_field_info(self, field_dict, field_name=None, category=None):
-        """This method should return the full field information dictionary if field_name is None."""
-        if field_dict is None:
-            return {}
-        if category is None:
-            category = self.active_category
-        return self.get_category_data(category).get_field_info(field_dict, field_name=field_name)
+    def get_field_display_info(self, field_dict, field_name):
+        display_info = field_dict.get_paramdef_field_display_info(field_name)
+        return display_info.nickname, display_info.is_enabled, display_info.field_type, display_info.description
 
     def get_field_names(self, field_dict):
         return field_dict.field_names if field_dict else []

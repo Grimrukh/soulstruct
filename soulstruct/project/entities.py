@@ -3,18 +3,17 @@ from __future__ import annotations
 import inspect
 import re
 import sys
+import typing as tp
 from importlib import import_module
 from pathlib import Path
-from typing import Dict, List, TYPE_CHECKING
 
-import soulstruct.game_types as gt
+from soulstruct.game_types.msb_types import *
 from soulstruct.constants.darksouls1.maps import get_map, ALL_MAPS
-from soulstruct.maps.msb import MAP_ENTRY_ENTITY_TYPES
-from soulstruct.project.editor import SoulstructBaseEditor
+from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events
-from soulstruct.utilities import BiDict, word_wrap
+from soulstruct.utilities import word_wrap
 
-if TYPE_CHECKING:
+if tp.TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps, MSB
     from soulstruct.maps.base import MSBEntryEntity
 
@@ -24,53 +23,173 @@ ENTRY_LIST_FG_COLORS = {
     "Events": "#DFD",
 }
 
-ENTRY_GAME_TYPES = {
-    "Parts: MapPieces": gt.MapPiece,
-    "Parts: Objects": gt.Object,
-    "Parts: Characters": gt.Character,
-    "Parts: PlayerStarts": gt.PlayerStart,
-    "Parts: Collisions": gt.Collision,
-    "Parts: Navmeshes": gt.Navmesh,
-    "Events: Sounds": gt.SoundEvent,
-    "Events: FX": gt.FXEvent,
-    "Events: Spawners": gt.SpawnerEvent,
-    "Events: Messages": gt.MessageEvent,
-    "Events: ObjActs": gt.ObjActEvent,
-    "Events: SpawnPoints": gt.SpawnPointEvent,
-    "Events: Navigation": gt.NavmeshEvent,
-    "Regions: Points": gt.Region,
-    "Regions: Circles": gt.Region,
-    "Regions: Spheres": gt.Region,
-    "Regions: Cylinders": gt.Region,
-    "Regions: Rectangles": gt.Region,
-    "Regions: Boxes": gt.Region,
-}
-
-MODULE_CLASS_NAMES = BiDict(
-    ("Parts: MapPieces", "MapPieces"),
-    ("Parts: Objects", "Objects"),
-    ("Parts: Characters", "Characters"),
-    ("Parts: PlayerStarts", "PlayerStarts"),
-    ("Parts: Collisions", "Collisions"),
-    ("Parts: Navmeshes", "Navmeshes"),
-    ("Events: Sounds", "SoundEvents"),
-    ("Events: FX", "FXEvents"),
-    ("Events: Spawners", "SpawnerEvents"),
-    ("Events: Messages", "MessageEvents"),
-    ("Events: ObjActs", "ObjActEvents"),
-    ("Events: SpawnPoints", "SpawnPointEvents"),
-    ("Events: Navigation", "NavmeshEvents"),
-    ("Regions: Points", "Points"),
-    ("Regions: Circles", "Circles"),
-    ("Regions: Spheres", "Spheres"),
-    ("Regions: Cylinders", "Cylinders"),
-    ("Regions: Rectangles", "Rectangles"),
-    ("Regions: Boxes", "Boxes"),
+ENTITY_GAME_TYPES = (
+    MapPiece,
+    Object,
+    Character,
+    PlayerStart,
+    Collision,
+    Navmesh,
+    SoundEvent,
+    FXEvent,
+    SpawnerEvent,
+    MessageEvent,
+    ObjActEvent,  # TODO: normal Entity ID is not used.
+    SpawnPointEvent,
+    NavigationEvent,
+    PointRegion,
+    SphereRegion,
+    CylinderRegion,
+    BoxRegion,
 )
-
 
 _RE_ENTITIES_ENUM_CLASS = re.compile(r"^class (\w+)\(\w+\): *$")
 _RE_ENTITIES_ENUM_MEMBER = re.compile(r"^ +([\w\d_]+) *= *(\d+) *#(.*)$")
+
+
+class EntityEntryRow(EntryRow):
+    """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
+
+    master: SoulstructEntityEditor
+
+    ENTRY_ID_WIDTH = 15
+    SHOW_ENTRY_ID = True
+    EDIT_ENTRY_ID = True
+    ENTRY_TEXT_WIDTH = 30
+    ENTRY_DESCRIPTION_WIDTH = 120
+
+    def __init__(self, editor: SoulstructEntityEditor, row_index: int, main_bindings: dict = None):
+        self.master = editor
+        self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
+
+        self.row_index = row_index
+        self._entry_id = None
+        self._entry_text = None
+        self._entry_description = None
+        self._active = False
+        self.maps_link = None
+
+        bg_color = self._get_color()
+
+        self.row_box = editor.Frame(
+            width=self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH + self.ENTRY_DESCRIPTION_WIDTH,
+            height=self.ENTRY_ROW_HEIGHT,
+            bg=bg_color,
+            row=row_index,
+            columnspan=2,
+            sticky="nsew",
+        )
+        bind_events(self.row_box, main_bindings)
+
+        self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky="ew")
+        self.id_label = editor.Label(
+            self.id_box,
+            text="",
+            width=self.ENTRY_ID_WIDTH,
+            bg=bg_color,
+            fg=self.ENTRY_ID_FG,
+            font_size=11,
+            sticky="e",
+        )
+        if self.EDIT_ENTRY_ID:
+            id_bindings = main_bindings.copy()
+            id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
+                i, id_clicked=True
+            )
+            id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+        else:
+            id_bindings = main_bindings
+        bind_events(self.id_box, id_bindings)
+        bind_events(self.id_label, id_bindings)
+
+        self.text_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
+        self.text_label = editor.Label(
+            self.text_box,
+            text="",
+            bg=bg_color,
+            fg=self.ENTRY_TEXT_FG,
+            anchor="w",
+            font_size=11,
+            justify="left",
+            width=self.ENTRY_TEXT_WIDTH,
+        )
+        bind_events(self.text_box, main_bindings)
+        bind_events(self.text_label, main_bindings)
+
+        self.description_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky="nsew")
+        self.description_label = editor.Label(
+            self.description_box,
+            text="",
+            bg=bg_color,
+            fg=self.ENTRY_TEXT_FG,
+            anchor="w",
+            font_size=11,
+            justify="left",
+            width=self.ENTRY_DESCRIPTION_WIDTH,
+        )
+        desc_bindings = main_bindings.copy()
+        desc_bindings.pop("<Shift-Button-1", None)
+        desc_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
+            i, description_clicked=True
+        )
+        bind_events(self.description_box, desc_bindings)
+        bind_events(self.description_label, desc_bindings)
+
+        self.context_menu = editor.Menu(self.row_box)
+
+        self.tool_tip = None
+
+    def update_entry(self, entry_id: int, entry_text: str, entry_description: str = ""):
+        self.entry_id = entry_id
+        self._entry_text = entry_text
+        self.text_label.var.set(entry_text)
+        self.description_label.var.set(entry_description if entry_description else "<No Description>")
+
+        for game_type in ENTITY_GAME_TYPES:
+            entry_type, entry_subtype = game_type.get_msb_entry_type_subtype(pluralized_subtype=True)
+            if f"{entry_type}: {entry_subtype}" == self.master.active_category:
+                self.maps_link = self.master.linker.soulstruct_link(game_type, entry_text)[0]
+                break
+
+        self.build_entry_context_menu()
+        self.unhide()
+
+    def build_entry_context_menu(self):
+        self.context_menu.delete(0, "end")
+        if self.maps_link:
+            self.maps_link.add_to_context_menu(self.context_menu)
+        self.context_menu.add_command(
+            label="Edit in Floating Box (Shift + Click)",
+            command=lambda: self.master.popout_entry_text_edit(self.row_index),
+        )
+
+    def hide(self):
+        """Called when this row has no entry to display."""
+        self.row_box.grid_remove()
+        if self.SHOW_ENTRY_ID:
+            self.id_box.grid_remove()
+            self.id_label.grid_remove()
+        self.text_box.grid_remove()
+        self.text_label.grid_remove()
+        self.description_box.grid_remove()
+        self.description_label.grid_remove()
+
+    def unhide(self):
+        self.row_box.grid()
+        if self.SHOW_ENTRY_ID:
+            self.id_box.grid()
+            self.id_label.grid()
+        self.text_box.grid()
+        self.text_label.grid()
+        self.description_box.grid()
+        self.description_label.grid()
+
+    @property
+    def _colored_widgets(self):
+        return (
+            self.row_box, self.id_box, self.id_label, self.text_box, self.text_label,
+            self.description_box, self.description_label
+        )
 
 
 class SoulstructEntityEditor(SoulstructBaseEditor):
@@ -81,148 +200,8 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100  # More are added dynamically as needed.
 
-    class EntryRow(SoulstructBaseEditor.EntryRow):
-        """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
-
-        master: SoulstructEntityEditor
-
-        ENTRY_ID_WIDTH = 15
-        SHOW_ENTRY_ID = True
-        EDIT_ENTRY_ID = True
-        ENTRY_TEXT_WIDTH = 30
-        ENTRY_DESCRIPTION_WIDTH = 120
-
-        def __init__(self, editor: SoulstructEntityEditor, row_index: int, main_bindings: dict = None):
-            self.master = editor
-            self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
-
-            self.row_index = row_index
-            self._entry_id = None
-            self._entry_text = None
-            self._entry_description = None
-            self._active = False
-
-            bg_color = self._get_color()
-
-            self.row_box = editor.Frame(
-                width=self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH + self.ENTRY_DESCRIPTION_WIDTH,
-                height=self.ENTRY_ROW_HEIGHT,
-                bg=bg_color,
-                row=row_index,
-                columnspan=2,
-                sticky="nsew",
-            )
-            bind_events(self.row_box, main_bindings)
-
-            self.id_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky="ew")
-            self.id_label = editor.Label(
-                self.id_box,
-                text="",
-                width=self.ENTRY_ID_WIDTH,
-                bg=bg_color,
-                fg=self.ENTRY_ID_FG,
-                font_size=11,
-                sticky="e",
-            )
-            if self.EDIT_ENTRY_ID:
-                id_bindings = main_bindings.copy()
-                id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
-                    i, id_clicked=True
-                )
-                id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
-            else:
-                id_bindings = main_bindings
-            bind_events(self.id_box, id_bindings)
-            bind_events(self.id_label, id_bindings)
-
-            self.text_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
-            self.text_label = editor.Label(
-                self.text_box,
-                text="",
-                bg=bg_color,
-                fg=self.ENTRY_TEXT_FG,
-                anchor="w",
-                font_size=11,
-                justify="left",
-                width=self.ENTRY_TEXT_WIDTH,
-            )
-            bind_events(self.text_box, main_bindings)
-            bind_events(self.text_label, main_bindings)
-
-            self.description_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky="nsew")
-            self.description_label = editor.Label(
-                self.description_box,
-                text="",
-                bg=bg_color,
-                fg=self.ENTRY_TEXT_FG,
-                anchor="w",
-                font_size=11,
-                justify="left",
-                width=self.ENTRY_DESCRIPTION_WIDTH,
-            )
-            desc_bindings = main_bindings.copy()
-            desc_bindings.pop("<Shift-Button-1", None)
-            desc_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
-                i, description_clicked=True
-            )
-            bind_events(self.description_box, desc_bindings)
-            bind_events(self.description_label, desc_bindings)
-
-            self.context_menu = editor.Menu(self.row_box)
-
-            self.tool_tip = None
-
-        def update_entry(self, entry_id: int, entry_text: str, entry_description: str = ""):
-            self.entry_id = entry_id
-            self._entry_text = entry_text
-            self.text_label.var.set(entry_text)
-            self.description_label.var.set(entry_description if entry_description else "<No Description>")
-            self.build_entry_context_menu()
-            self.unhide()
-
-        def build_entry_context_menu(self):
-            self.context_menu.delete(0, "end")
-            self.context_menu.add_command(
-                label="Edit in Floating Box (Shift + Click)",
-                foreground=self.STYLE_DEFAULTS["text_fg"],
-                command=lambda: self.master.popout_entry_text_edit(self.row_index),
-            )
-
-        def hide(self):
-            """Called when this row has no entry to display."""
-            self.row_box.grid_remove()
-            if self.SHOW_ENTRY_ID:
-                self.id_box.grid_remove()
-                self.id_label.grid_remove()
-            self.text_box.grid_remove()
-            self.text_label.grid_remove()
-            self.description_box.grid_remove()
-            self.description_label.grid_remove()
-
-        def unhide(self):
-            self.row_box.grid()
-            if self.SHOW_ENTRY_ID:
-                self.id_box.grid()
-                self.id_label.grid()
-            self.text_box.grid()
-            self.text_label.grid()
-            self.description_box.grid()
-            self.description_label.grid()
-
-        def _update_colors(self):
-            bg_color = self._get_color()
-            for widget in (
-                self.row_box,
-                self.id_box,
-                self.id_label,
-                self.text_box,
-                self.text_label,
-                self.description_box,
-                self.description_label,
-            ):
-                widget["bg"] = bg_color
-
-    entry_rows: List[SoulstructEntityEditor.EntryRow]
+    ENTRY_ROW_CLASS = EntityEntryRow
+    entry_rows: tp.List[EntityEntryRow]
 
     def __init__(self, maps: DarkSoulsMaps, evs_directory, global_map_choice_func, linker, master=None, toplevel=False):
         self.Maps = maps
@@ -344,7 +323,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 # Create new rows as needed.
                 with self.set_master(self.entry_i_frame):
                     self.entry_rows.append(
-                        self.EntryRow(
+                        self.ENTRY_ROW_CLASS(
                             self,
                             row_index=row,
                             main_bindings={
@@ -479,6 +458,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         except Exception as e:
             return self.error_dialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(e)}")
         entries_by_entity_enum = {}
+        found_map_entry_class_names = []
         not_found = []
         skipped = set()  # will also skip description
         for attr_name, attr in [
@@ -486,10 +466,14 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             for m in inspect.getmembers(entity_module, inspect.isclass)
             if m[1].__module__ == entity_module.__name__
         ]:
-            entry_list_name, entry_type_name = MODULE_CLASS_NAMES[attr_name].split(": ")
-            entry_type = MAP_ENTRY_ENTITY_TYPES[entry_list_name][entry_type_name]
+            for entry_game_type in ENTITY_GAME_TYPES:
+                if entry_game_type in attr.__bases__:
+                    break
+            else:
+                continue  # ignore this class
+            found_map_entry_class_names.append(attr_name)
             for entity_enum in attr:
-                entry = msb.get_entity_id(entity_enum.value, allow_multiple=True)
+                entry = msb.get_entry_with_entity_id(entity_enum.value, allow_multiple=True)
                 if entry is None:
                     not_found.append(entity_enum.value)
                     continue
@@ -498,7 +482,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                         title="Multiple Entries with Same ID",
                         message=f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' appears "
                         f"multiple times in MSB. This will rename only the first one found (type "
-                        f"{entry[0].ENTRY_TYPE.name}). Is this OK?",
+                        f"{entry[0].ENTRY_SUBTYPE.name}). Is this OK?",
                         button_kwargs=("YES", "NO", "NO"),
                         button_names=("Yes, change it", "No, skip it", "No, abort import"),
                         default_output=2,
@@ -511,11 +495,13 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                         continue
                     else:
                         entry = entry[0]
-                if entry.ENTRY_TYPE != entry_type:
+                entry_type_name = entry.ENTRY_SUBTYPE.get_pluralized_type_name()
+                entry_subtype_name = entry.ENTRY_SUBTYPE.name
+                if entry_game_type.get_msb_entry_type_subtype() != (entry_type_name, entry_subtype_name):
                     choice = self.CustomDialog(
                         title="Entry Type Mismatch",
                         message=f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' has type "
-                        f"'{attr_name}', but has different type '{entry_list_name}.{entry_type_name} in MSB. "
+                        f"'{attr_name}', but has different type '{entry_type_name}.{entry_subtype_name} in MSB. "
                         f"Change name anyway?",
                         button_kwargs=("YES", "NO", "NO"),
                         button_names=("Yes, change it", "No, skip it", "No, abort import"),
@@ -556,7 +542,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 class_match = _RE_ENTITIES_ENUM_CLASS.match(line)
                 if class_match:
                     attr_name = class_match.group(1)
-                    if attr_name in MODULE_CLASS_NAMES.values():
+                    if attr_name in found_map_entry_class_names:
                         current_attr_name = attr_name
                     continue
                 if current_attr_name:
@@ -570,7 +556,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             entry.name = entity_enum.name
         for (attr_name, entity_id), description in descriptions_by_attr_and_id.items():
             # attr_name not actually used, as entity ID uniqueness should have already been resolved
-            entry = msb.get_entity_id(entity_id, allow_multiple=True)
+            entry = msb.get_entry_with_entity_id(entity_id, allow_multiple=True)
             if not entry:
                 continue  # shouldn't happen (as missing entity ID should be skipped) but just in case
             if isinstance(entry, list):
@@ -586,9 +572,9 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         game_map = self._get_map()
         module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
         module_text = "from soulstruct.game_types import *\n"
-        for category in self._get_display_categories():
-            game_type = ENTRY_GAME_TYPES[category]
-            class_name = MODULE_CLASS_NAMES[category]
+        for game_type in ENTITY_GAME_TYPES:
+            category = "{}: {}".format(*game_type.get_msb_entry_type_subtype(pluralized_subtype=True))
+            class_name = "{}{}".format(*reversed(game_type.get_msb_entry_type_subtype()))
             class_text = ""
             requires_pass = True
             for entity_id, msb_entry in self.get_category_data(category).items():
@@ -682,22 +668,19 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names (except Model) and their subtypes, properly formatted."""
         categories = []
-        for entry_list_name, entry_type_names in MAP_ENTRY_ENTITY_TYPES.items():
-            if entry_list_name == "Models":
-                continue
-            for name in entry_type_names:
-                categories.append(f"{entry_list_name}: {name}")
+        for map_entry_type in ENTITY_GAME_TYPES:
+            entry_type_name, entry_subtype_name = map_entry_type.get_msb_entry_type_subtype(pluralized_subtype=True)
+            categories.append(f"{entry_type_name}: {entry_subtype_name}")
         return categories
 
     def get_selected_msb(self) -> MSB:
         map_name = get_map(self.map_choice_id).name
         return self.Maps[map_name]
 
-    def get_category_data(self, category=None) -> Dict[int, MSBEntryEntity]:
+    def get_category_data(self, category=None) -> tp.Dict[int, MSBEntryEntity]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
-        Entity dictionary is generated from `MSB.get_entity_id_dict()` every time, and is definitively *not* sorted by
-        ID; entity IDs will appear in the order their entries appear in the MSB.
+        Entity dictionary is generated from `MSB.get_entity_id_dict()` every time and is sorted by entity ID.
         """
         if category is None:
             category = self.active_category
@@ -705,10 +688,11 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
                 return {}
         selected_msb = self.get_selected_msb()
         try:
-            entry_list, entry_type = category.split(": ")
+            entry_type, entry_subtype = category.split(": ")
         except ValueError:
-            raise ValueError(f"Category name was not in [List: Type] format: {category}")
-        return selected_msb.get_entity_id_dict(entry_list, entry_type)
+            raise ValueError(f"Category name was not in [Type: Subtype] format: {category}")
+        entries = selected_msb.get_entity_id_dict(entry_type, entry_subtype)
+        return {k: entries[k] for k in sorted(entries)}
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns entire dictionary (no previous/next range buttons here)."""

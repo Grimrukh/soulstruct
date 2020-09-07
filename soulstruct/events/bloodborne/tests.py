@@ -132,13 +132,13 @@ MULTIPLAYER = ConstantCondition(
 
 @no_skip_or_negate_or_terminate
 def IsAttackedWithDamageType(
-    attacked_entity: AnimatedInt, attacking_character: CharacterInt, damage_type: DamageType, condition: int
+    attacked_entity: AnimatedTyping, attacking_character: CharacterTyping, damage_type: DamageType, condition: int
 ):
     return instr.IfDamageType(condition, attacked_entity, attacking_character, damage_type)
 
 
 @no_skip_or_negate_or_terminate
-def ActionButtonInRegion(action_button_id: int, region: RegionInt, condition: int):
+def ActionButtonInRegion(action_button_id: int, region: RegionTyping, condition: int):
     return instr.IfActionButtonInRegion(condition, action_button_id, region)
 
 
@@ -150,12 +150,12 @@ def WearingArmorTypeInRange(
 
 
 @no_skip_or_negate_or_terminate
-def CharacterDrawGroupActive(character: CharacterInt, condition: int):
+def CharacterDrawGroupActive(character: CharacterTyping, condition: int):
     return instr.IfCharacterDrawGroupActive(condition, character)
 
 
 @no_skip_or_negate_or_terminate
-def CharacterDrawGroupInactive(character: CharacterInt, condition: int):
+def CharacterDrawGroupInactive(character: CharacterTyping, condition: int):
     return instr.IfCharacterDrawGroupInactive(condition, character)
 
 

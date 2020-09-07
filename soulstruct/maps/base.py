@@ -10,20 +10,18 @@ import typing as tp
 from copy import deepcopy
 from io import BytesIO, BufferedReader
 
-from soulstruct.maps.core import MAP_ENTRY_TYPES
+from soulstruct.maps.enums import MSBSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 _DUPLICATE_TAG_MATCH = re.compile(r" <(\d+)>$")
 _LOGGER = logging.getLogger(__name__)
 
-EntryType = tp.TypeVar("EntryType", bound="MSBEntry")
-
 
 class MSBEntry(abc.ABC):
 
-    ENTRY_TYPE = None
-    FIELD_INFO = {}
+    ENTRY_SUBTYPE = None  # type: MSBSubtype
+    FIELD_INFO = {}  # type: dict
 
     def __init__(self):
         self.name = None
@@ -76,15 +74,26 @@ class MSBEntry(abc.ABC):
         return list(self.FIELD_INFO.keys())
 
 
-class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
+MSBEntrySubtype = tp.TypeVar("MSBEntrySubtype", bound=MSBEntry)
 
-    MAP_ENTITY_LIST_HEADER = BinaryStruct("4x", ("name_offset", "i"), ("entry_offset_count", "i"),)
-    MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(("entry_offset", "i"),)
-    MAP_ENTITY_LIST_TAIL = BinaryStruct(("next_entry_list_offset", "i"),)
 
-    ENTRY_LIST_NAME = None
-    ENTRY_CLASS = None
-    ENTRY_TYPE_ENUM = None
+class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
+
+    MAP_ENTITY_LIST_HEADER = BinaryStruct(
+        "4x",
+        ("name_offset", "i"),
+        ("entry_offset_count", "i"),
+    )
+    MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(
+        ("entry_offset", "i"),
+    )
+    MAP_ENTITY_LIST_TAIL = BinaryStruct(
+        ("next_entry_list_offset", "i"),
+    )
+
+    PLURALIZED_NAME = ""  # type: str
+    ENTRY_SUBTYPE_ENUM = None  # type: tp.Union[type, tp.Iterable]
+    ENTRY_CLASS = None  # type: type
 
     def __init__(self, msb_entry_list_source=None, name=""):
         self.name = ""
@@ -163,7 +172,7 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
 
         return packed_header + packed_name + packed_entries
 
-    def __iter__(self) -> tp.Iterator[EntryType]:
+    def __iter__(self) -> tp.Iterator[MSBEntrySubtype]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -171,7 +180,7 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         """Count of all entries."""
         return len(self._entries)
 
-    def __getitem__(self, entry_name_or_index) -> EntryType:
+    def __getitem__(self, entry_name_or_index) -> MSBEntrySubtype:
         """You can access entries using their name (if unique) or local type index."""
         if isinstance(entry_name_or_index, int):
             return self._entries[entry_name_or_index]
@@ -179,14 +188,17 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
             return self.get_entry_by_name(entry_name_or_index)
         raise TypeError(f"`MSBEntryList` key must be an entry index or entry name, not {entry_name_or_index}.")
 
-    def get_entry_by_name(self, entry_name: str, entry_type=None) -> EntryType:
-        """Try to retrieve entry of given name. You can optionally specify the type (e.g. as a promise to yourself).
+    def get_entry_by_name(self, entry_name: str, entry_subtype=None) -> MSBEntrySubtype:
+        """Try to retrieve entry of given name.
+
+        You can optionally specify the subtype. Names shouldn't be shared across subtypes, but if they are (or as a
+        promise) this can be useful.
 
         Note that you can simply index the MSB entry list with a string (e.g. `msb.parts["h0000B0"]` as a shortcut to
         calling this method. It will raise a KeyError if the given name is not found OR if multiple entries with the
         given name (and type) are found.
         """
-        entries = [entry for entry in self.get_entries(entry_type) if entry.name == entry_name]
+        entries = [entry for entry in self.get_entries(entry_subtype) if entry.name == entry_name]
         if not entries:
             raise KeyError(f"Entry name {entry_name} does not appear in {self.__class__.__name__}.")
         elif len(entries) >= 2:
@@ -196,47 +208,49 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
             )
         return entries[0]
 
-    def get_entries(self, entry_type=None) -> tp.List[EntryType]:
-        if entry_type is None:
+    def get_entries(self, entry_subtype=None) -> tp.List[MSBEntrySubtype]:
+        if entry_subtype is None:
             return self._entries  # Full entry list, with types potentially intermingled.
-        entry_type = self.resolve_entry_type(entry_type)
-        return [e for e in self._entries if e.ENTRY_TYPE == entry_type]
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
+        return [e for e in self._entries if e.ENTRY_SUBTYPE == entry_subtype]
 
-    def get_entry_names(self, entry_type=None) -> tp.List[str]:
+    def get_entry_names(self, entry_subtype=None) -> tp.List[str]:
         """Returns an ordered list of entry names (global or type-specific).
 
-        Note that only the global index (`entry_type=None`) is valid for index links from other MSB entries, with the
+        Note that only the global index (`entry_subtype=None`) is valid for index links from other MSB entries, with the
         sole exception of the `MSBCollision` entry linked to by a `MapLoadTrigger` entry.
         """
-        return [entry.name for entry in self.get_entries(entry_type=entry_type)]
+        return [entry.name for entry in self.get_entries(entry_subtype=entry_subtype)]
 
-    def get_entry_type(self, entry_name_or_index):
-        """Returns type enum of given entry name or list-wide global index."""
-        return self[entry_name_or_index].ENTRY_TYPE
+    def get_entry_subtype(self, entry_name_or_index):
+        """Returns subtype enum of given entry name or list-wide global index."""
+        return self[entry_name_or_index].ENTRY_SUBTYPE
 
-    def get_entry_type_index(self, entry_name_or_index):
-        """Get index of entry name or global index, local to its type.
+    def get_entry_subtype_index(self, entry_name_or_index):
+        """Get index of entry name or global index, local to its subtype.
 
-        Useful for obtaining the type-sorted display index for the GUI.
+        Useful for obtaining the subtype-sorted display index for the GUI.
         """
         if isinstance(entry_name_or_index, int):  # Convert to name.
             entry_name_or_index = self[entry_name_or_index].name
-        entry_type = self.get_entry_type(entry_name_or_index)
-        return self.get_entry_names(entry_type).index(entry_name_or_index)
+        entry_subtype = self.get_entry_subtype(entry_name_or_index)
+        return self.get_entry_names(entry_subtype).index(entry_name_or_index)
 
-    def get_entry_global_index(self, entry_name_or_local_index, entry_type=None):
-        """Get global index of entry with given name or local entry type index. If a name is given, it must be unique.
+    def get_entry_global_index(self, entry_name_or_local_index, entry_subtype=None):
+        """Get global index of entry with given name or local entry subtype index.
 
-        If a local index past the length of the given type sub-list is given, `None` is returned, which should be
+        If a name is given, it must be unique.
+
+        If a local index past the length of the given subtype list is given, `None` is returned, which should be
         handled appropriately by the caller.
         """
         if isinstance(entry_name_or_local_index, int):
-            if entry_type is None:
-                raise ValueError("Cannot get global entry index from local index without specifying `entry_type`.")
-            entry_type_names = self.get_entry_names(entry_type)
-            if entry_name_or_local_index >= len(entry_type_names):
+            if entry_subtype is None:
+                raise ValueError("Cannot get global entry index from local index without specifying `entry_subtype`.")
+            entry_subtype_names = self.get_entry_names(entry_subtype)
+            if entry_name_or_local_index >= len(entry_subtype_names):
                 return None
-            entry_name = entry_type_names[entry_name_or_local_index]
+            entry_name = entry_subtype_names[entry_name_or_local_index]
         else:
             entry_name = entry_name_or_local_index
         entry_names = self.get_entry_names()
@@ -250,41 +264,43 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         return entry_names.index(entry_name)
 
     @classmethod
-    def resolve_entry_type(cls, entry_type):
-        """Converts any valid entry type specification into the proper type enum."""
-        if isinstance(entry_type, cls.ENTRY_TYPE_ENUM):
-            return entry_type
+    def resolve_entry_subtype(cls, entry_subtype):
+        """Converts any valid entry subtype specification into the proper subtype enum."""
+        if isinstance(entry_subtype, cls.ENTRY_SUBTYPE_ENUM):
+            return entry_subtype
         try:
-            if isinstance(entry_type, str):
-                if entry_type in MAP_ENTRY_TYPES[cls.ENTRY_LIST_NAME]:
-                    return MAP_ENTRY_TYPES[cls.ENTRY_LIST_NAME][entry_type]
-                return getattr(cls.ENTRY_TYPE_ENUM, entry_type)
-            elif isinstance(entry_type, int):
-                return cls.ENTRY_TYPE_ENUM(entry_type)
+            if hasattr(entry_subtype, "get_msb_entry_type_subtype"):  # `MapEntry` subclass
+                entry_subtype = entry_subtype.get_msb_entry_type_subtype()[1]
+            if isinstance(entry_subtype, str):
+                for e in cls.ENTRY_SUBTYPE_ENUM:
+                    if entry_subtype in (e.name, e.pluralized_name):
+                        return e
+            elif isinstance(entry_subtype, int):
+                return cls.ENTRY_SUBTYPE_ENUM(entry_subtype)
             raise ValueError
-        except ValueError:
-            raise TypeError(f"Invalid entry type for entry list {cls.ENTRY_LIST_NAME}: {entry_type}")
+        except (TypeError, ValueError):
+            raise TypeError(f"Invalid entry subtype for entry list {cls.PLURALIZED_NAME}: {entry_subtype}")
 
-    def add_entry(self, entry, global_index=None, append_to_entry_type=None):
+    def add_entry(self, entry, global_index=None, append_to_entry_subtype=None):
         """Add entry at desired global index.
 
-        If `global_index` is None, it defaults to the end of the given `append_to_entry_type` type, which in turn
+        If `global_index` is None, it defaults to the end of the given `append_to_entry_subtype` subtype, which in turn
         defaults to being the end of the global entry list.
         """
         if global_index is None:
-            if append_to_entry_type is None:
-                raise ValueError("You must provide `global_index` or `append_to_entry_type` to `add_entry()`.")
-            entry_type = self.resolve_entry_type(append_to_entry_type)
-            last_entry_local_index = len(self.get_entry_names(entry_type)) - 1
+            if append_to_entry_subtype is None:
+                raise ValueError("You must provide `global_index` or `append_to_entry_subtype` to `add_entry()`.")
+            entry_subtype = self.resolve_entry_subtype(append_to_entry_subtype)
+            last_entry_local_index = len(self.get_entry_names(entry_subtype)) - 1
             if last_entry_local_index == -1:
-                # No entries of given type exist. Fall back to global index.
-                # TODO: Could also guess where new entry type should be inserted.
+                # No entries of given subtype exist. Fall back to global index.
+                # TODO: Could also guess where new entry subtype should be inserted.
                 global_index = len(self)
             else:
-                global_index = self.get_entry_global_index(last_entry_local_index, entry_type) + 1
+                global_index = self.get_entry_global_index(last_entry_local_index, entry_subtype) + 1
         self._entries.insert(global_index, entry)
 
-    def delete_entry(self, entry_name_or_index) -> EntryType:
+    def delete_entry(self, entry_name_or_index) -> MSBEntrySubtype:
         """Delete (and return) entry at given global index or with given (unique) name."""
         if isinstance(entry_name_or_index, MSBEntry):
             entry_name_or_index = self.get_entry_global_index(entry_name_or_index.name)
@@ -294,23 +310,25 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
             return self._entries.pop(entry_name_or_index)
         raise TypeError("Argument to `delete_entry()` must be an entry name or global index in its MSB list.")
 
-    def delete_all_entries_of_type(self, entry_type):
-        """Delete all entries of the given type."""
-        for entry_name in self.get_entry_names(entry_type):
+    def delete_all_entries_of_subtype(self, entry_subtype):
+        """Delete all entries of the given subtype."""
+        for entry_name in self.get_entry_names(entry_subtype):
             self.delete_entry(entry_name)
 
-    def duplicate_entry(self, entry_type, entry_name_or_index, insert_below_original=True, **kwargs) -> EntryType:
-        """Duplicate an entry of the given type and local index or name.
+    def duplicate_entry(
+        self, entry_subtype, entry_name_or_index, insert_below_original=True, **kwargs
+    ) -> MSBEntrySubtype:
+        """Duplicate an entry of the given subtype and local index or name.
 
         By default, the duplicated entry is inserted just below the source entry. If `insert_below_original=False`, it
-        will instead be inserted at the end of its entry type (not global type).
+        will instead be inserted at the end of its entry subtype (not global subtype).
 
         Any `kwargs` given will be passed to the `set()` method of the duplicated entry (which is then also returned for
         further modification if desired). Unless otherwise specified, the `name` of the new entry will also be given a
         unique '<i>' duplicate tag suffix to retain name uniqueness (which will be removed upon final pack).
         """
-        local_index = self.get_entry_type_index(entry_name_or_index)
-        source_entry = self.get_entries(entry_type)[local_index]
+        local_index = self.get_entry_subtype_index(entry_name_or_index)
+        source_entry = self.get_entries(entry_subtype)[local_index]
         duplicated = copy.deepcopy(source_entry)
         if kwargs.get("name", "") == source_entry.name:
             raise ValueError(f"Name of duplicated entry cannot be set to the source name: {source_entry.name})")
@@ -328,24 +346,24 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         if insert_below_original:
             global_index = self.get_entry_global_index(source_entry.name) + 1
         else:
-            global_index = self.get_next_global_index_of_type(entry_type)
+            global_index = self.get_next_global_index_of_subtype(entry_subtype)
         self._entries.insert(global_index, duplicated)
         duplicated.set(**kwargs)
         return duplicated
 
-    def get_next_global_index_of_type(self, entry_type) -> int:
-        """Returns next global index of given `entry_type`, e.g. for inserting a new entry into the `MSBEntryList` at
-        the end of its local type. This is inferred by just finding the last existing instance of that type.
+    def get_next_global_index_of_subtype(self, entry_subtype) -> int:
+        """Returns next global index of given `entry_subtype`, e.g. for inserting a new entry into the `MSBEntryList` at
+        the end of its local subtype. This is inferred by just finding the last existing instance of that subtype.
 
-        Note that Dark Souls may not read entries that do not appear in their contiguous local type lists, so this
+        Note that Dark Souls may not read entries that do not appear in their contiguous local subtype lists, so this
         method is often necessary to find the correct place for a new entry.
 
-        # TODO: Need to infer where to insert global index if no entries of that type yet exist (default ordering).
+        # TODO: Need to infer where to insert global index if no entries of that subtype yet exist (default ordering).
         """
-        entry_type = self.resolve_entry_type(entry_type)
-        last_global_index = max(i for i, entry in enumerate(self._entries) if entry.ENTRY_TYPE == entry_type)
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
+        last_global_index = max(i for i, entry in enumerate(self._entries) if entry.ENTRY_SUBTYPE == entry_subtype)
         return last_global_index + 1
-        # raise TypeError(f"Failed to detect next global index for unrecognized entry type: {entry_type}")
+        # raise TypeError(f"Failed to detect next global index for unrecognized entry subtype: {entry_subtype}")
 
     def get_indices(self):
         """Returns a dictionary mapping entry names to their global indices for resolving named links before repacking.
@@ -357,7 +375,7 @@ class MSBEntryList(abc.ABC, tp.Generic[EntryType]):
         for i, entry in enumerate(self._entries):
             if entry.name in entry_indices:
                 raise NameError(
-                    f"Name {repr(entry.name)} (type {entry.ENTRY_TYPE.name}) appears more than once in "
+                    f"Name {repr(entry.name)} (type {entry.ENTRY_SUBTYPE.name}) appears more than once in "
                     f"MSB. Please ensure all map entries have unique names."
                 )
             entry_indices[entry.name] = i

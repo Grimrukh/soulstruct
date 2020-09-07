@@ -50,7 +50,12 @@ CHARACTER_MODELS = {
     2731: "Crossbreed Priscilla (tail)",
     2750: "Anastacia",
     2780: "Mimic",
-    2790: "Black Knight",
+    2790: "Black Knight",  # contains all four weapon models and animation sets
+    2791: "Black Knight (Ghost)",  # textured all white
+    2792: "Black Knight (Sword)",
+    2793: "Black Knight (Greatsword)",
+    2794: "Black Knight (Greataxe)",
+    2795: "Black Knight (Halberd)",
     2800: "Undead Crystal Soldier",
     2810: "Infested Barbarian (club)",
     2811: "Infested Barbarian (boulder)",

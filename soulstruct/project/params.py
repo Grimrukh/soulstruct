@@ -1,16 +1,68 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+import typing as tp
 
 from soulstruct.params.enums import ITEMLOT_ITEMCATEGORY, SHOP_LINEUP_EQUIPTYPE
-from soulstruct.project.editor import SoulstructBaseFieldEditor
+from soulstruct.project.base.base_editor import EntryRow
+from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
 from soulstruct.project.utilities import NameSelectionBox
 
-if TYPE_CHECKING:
+if tp.TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters, ParamEntry
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class ParamEntryRow(EntryRow):
+
+    master: SoulstructParamsEditor
+
+    ENTRY_ID_WIDTH = 10
+
+    def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
+        super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
+        self.linked_text = ""
+
+    def update_entry(self, entry_id: int, entry_text: str):
+        """Adds linked text from text data (if present and not already identical to param entry name)."""
+        self.entry_id = entry_id
+        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        self.linked_text = ""
+        if text_links and text_links[0].name and text_links[0].name != entry_text:
+            self.linked_text = f"    {{{text_links[0].name}}}"
+        self.entry_text = entry_text
+        self._update_colors()
+        self.build_entry_context_menu(text_links)
+        self.tool_tip.text = text_links[2].name if text_links and text_links[2].name else None
+
+    @property
+    def entry_text(self):
+        return self._entry_text
+
+    @entry_text.setter
+    def entry_text(self, value):
+        self._entry_text = value
+        self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ""))
+
+    def build_entry_context_menu(self, text_links=()):
+        super().build_entry_context_menu()
+        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        if text_links:
+            self.context_menu.add_separator()
+            for text_link in text_links:
+                text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
+        if self.master.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}:
+            self.context_menu.add_separator()
+            self.context_menu.add_command(
+                label="Edit All Text",
+                command=lambda: self.master.edit_all_item_text(self.entry_id),
+            )
+        self.context_menu.add_separator()
+        self.context_menu.add_command(
+            label="Find References in Params",
+            command=lambda: self.master.find_all_param_references(self.master.active_category, self.entry_id),
+        )
 
 
 class SoulstructParamsEditor(SoulstructBaseFieldEditor):
@@ -18,59 +70,12 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     TAB_NAME = "params"
     CATEGORY_BOX_WIDTH = 165
     ENTRY_BOX_WIDTH = 350
-    ENTRY_RANGE_SIZE = 200
+    ENTRY_RANGE_SIZE = 300
     FIELD_BOX_WIDTH = 500
     FIELD_ROW_COUNT = 173  # highest count (Params[SpecialEffects])
 
-    class EntryRow(SoulstructBaseFieldEditor.EntryRow):
-        ENTRY_ID_WIDTH = 10
-        master: SoulstructParamsEditor
-
-        def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
-            super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
-            self.linked_text = ""
-
-        def update_entry(self, entry_id: int, entry_text: str):
-            """Adds linked text from text data (if present and not already identical to param entry name)."""
-            self.entry_id = entry_id
-            text_links = self.master.linker.param_entry_text_link(self.entry_id)
-            self.linked_text = ""
-            if text_links and text_links[0].name and text_links[0].name != entry_text:
-                self.linked_text = f"    {{{text_links[0].name}}}"
-            self.entry_text = entry_text
-            self._update_colors()
-            self.build_entry_context_menu(text_links)
-            self.tool_tip.text = text_links[2].name if text_links and text_links[2].name else None
-
-        @property
-        def entry_text(self):
-            return self._entry_text
-
-        @entry_text.setter
-        def entry_text(self, value):
-            self._entry_text = value
-            self.text_label.var.set(self._entry_text + (self.linked_text if self.linked_text is not None else ""))
-
-        def build_entry_context_menu(self, text_links=()):
-            super().build_entry_context_menu()
-            text_links = self.master.linker.param_entry_text_link(self.entry_id)
-            if text_links:
-                self.context_menu.add_separator()
-                for text_link in text_links:
-                    text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
-            if self.master.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}:
-                self.context_menu.add_separator()
-                self.context_menu.add_command(
-                    label="Edit All Text",
-                    foreground=self.STYLE_DEFAULTS["text_fg"],
-                    command=lambda: self.master.edit_all_item_text(self.entry_id),
-                )
-            self.context_menu.add_separator()
-            self.context_menu.add_command(
-                label="Find References in Params",
-                foreground=self.STYLE_DEFAULTS["text_fg"],
-                command=lambda: self.master.find_all_param_references(self.master.active_category, self.entry_id),
-            )
+    ENTRY_ROW_CLASS = ParamEntryRow
+    entry_rows: tp.List[ParamEntryRow]
 
     def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
         self.Params = params
@@ -117,25 +122,23 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
         # Find all (category, field) pairs that could possibly reference this category.
         for param_name in self.Params.param_names:
             param_table = self.Params[param_name]
-            info = param_table.get_field_info()
-            for field_name, field_info in info.items():
-                if callable(field_info):
-                    if (
-                        param_name == "ItemLots"
-                        and field_name.startswith("lotItemId")
-                        and category in {"Weapons", "Armor", "Rings", "Goods"}
-                    ):
-                        linking_fields.append((param_name, field_name))
-                    elif (
-                        param_name == "Shops"
-                        and field_name == "equipId"
-                        and category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
-                    ):
-                        linking_fields.append((param_name, field_name))
-                    continue  # can't possibly call with every single entry
-                _, _, field_type, _ = field_info
-                if isinstance(field_type, str) and field_type == param_link:
-                    linking_fields.append((param_name, field_name))
+            for paramdef_field in param_table.param_info["fields"]:
+                if (
+                    param_name == "ItemLots"
+                    and paramdef_field.name.startswith("lotItemId")
+                    and category in {"Weapons", "Armor", "Rings", "Goods"}
+                ):
+                    linking_fields.append((param_name, paramdef_field.name))
+                elif (
+                    param_name == "Shops"
+                    and paramdef_field.name == "equipId"
+                    and category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
+                ):
+                    linking_fields.append((param_name, paramdef_field.name))
+                else:
+                    field_type = paramdef_field.field_type
+                    if isinstance(field_type, str) and field_type == param_link:
+                        linking_fields.append((param_name, paramdef_field.name))
 
         for param_name, field_name in linking_fields:
             for entry_id, field_dict in self.Params[param_name].items():
@@ -238,13 +241,9 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
                 raise ValueError("No params category selected.")
         return self.Params[category][entry_id]
 
-    def get_field_info(self, field_dict, field_name=None, category=None):
-        """This method should return the full field information dictionary if field_name is None."""
-        if field_dict is None:
-            return {}
-        if category is None:
-            category = self.active_category
-        return self.Params[category].get_field_info(field_dict, field_name=field_name)
+    def get_field_display_info(self, field_dict, field_name):
+        display_info = field_dict.get_paramdef_field_display_info(field_name)
+        return display_info.nickname, display_info.is_enabled, display_info.field_type, display_info.description
 
     def get_field_names(self, field_dict):
         return field_dict.field_names if field_dict else []

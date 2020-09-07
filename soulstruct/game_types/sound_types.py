@@ -3,7 +3,7 @@ from enum import IntEnum
 from soulstruct.events.shared import instructions as instr
 from soulstruct.enums.shared import SoundType
 from soulstruct.game_types.basic_types import GameObject
-from soulstruct.game_types.msb_types import CoordEntityInt, SoundEvent
+from soulstruct.game_types.msb_types import CoordEntityTyping, SoundEvent
 
 __all__ = ["Sound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSound", "SoundEvent"]
 
@@ -11,7 +11,7 @@ __all__ = ["Sound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSou
 class Sound(GameObject, IntEnum):
     """Base class for a sound event that can be played transiently at a given anchor entity."""
 
-    def play(self, anchor_entity: CoordEntityInt):
+    def play(self, anchor_entity: CoordEntityTyping):
         return instr.PlaySoundEffect(anchor_entity, self.sound_type, self.value)
 
     @property
@@ -51,4 +51,4 @@ class CharacterMotionSound(Sound):
         return SoundType.c_CharacterMotion
 
 
-# I haven't bothered implementing the other sound types (MenuEffect, Cutscene, Armor/FloorMaterialDependent, Ghost.
+# I haven't bothered implementing the other sound types (MenuEffect, Cutscene, Armor/FloorMaterialDependent, Ghost).

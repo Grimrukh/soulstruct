@@ -512,24 +512,24 @@ __all__ = [
 ]
 
 
-def IfCharacterRegionState(condition, entity: AnimatedInt, region: RegionInt, state: bool):
+def IfCharacterRegionState(condition, entity: AnimatedTyping, region: RegionTyping, state: bool):
     instruction_info = (3, 2)
     return to_numeric(instruction_info, condition, state, entity, region)
 
 
-def IfCharacterInsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+def IfCharacterInsideRegion(condition: int, entity: AnimatedTyping, region: RegionTyping):
     return IfCharacterRegionState(condition, entity, region, True)
 
 
-def IfCharacterOutsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+def IfCharacterOutsideRegion(condition: int, entity: AnimatedTyping, region: RegionTyping):
     return IfCharacterRegionState(condition, entity, region, False)
 
 
-def IfPlayerInsideRegion(condition: int, region: RegionInt):
+def IfPlayerInsideRegion(condition: int, region: RegionTyping):
     return IfCharacterRegionState(condition, PLAYER, region, True)
 
 
-def IfPlayerOutsideRegion(condition: int, region: RegionInt):
+def IfPlayerOutsideRegion(condition: int, region: RegionTyping):
     return IfCharacterRegionState(condition, PLAYER, region, False)
 
 
@@ -658,7 +658,7 @@ def IfUnknownPlayerType5(condition: int):
 # BOSS
 
 
-def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, state: bool):
+def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slot, state: bool):
     """ Note: slot number can be 0-1 in DS1. """
     instruction_info = (2003, 11)
     if isinstance(slot, int) and slot not in (0, 1):
@@ -666,12 +666,12 @@ def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, sta
     return to_numeric(instruction_info, state, character, slot, name)
 
 
-def EnableBossHealthBar(character: CharacterInt, name: EventTextInt, slot=0):
+def EnableBossHealthBar(character: CharacterTyping, name: EventTextTyping, slot=0):
     """ The character's health bar will appear at the bottom of the screen, with a name. """
     return SetBossHealthBarState(character, name, slot, True)
 
 
-def DisableBossHealthBar(character: CharacterInt, name: EventTextInt = 0, slot=0):
+def DisableBossHealthBar(character: CharacterTyping, name: EventTextTyping = 0, slot=0):
     """ The character's health bar will disappear from the bottom of the screen.
 
     WARNING: Disabling either boss health will disable both of them, and the name_id doesn't matter, so only the
@@ -683,20 +683,20 @@ def DisableBossHealthBar(character: CharacterInt, name: EventTextInt = 0, slot=0
 # MISC.
 
 
-def ActivateKillplaneForModel(game_map: MapOrSequence, y_threshold, target_model_id):
+def ActivateKillplaneForModel(game_map: MapTyping, y_threshold, target_model_id):
     """ Not used much. Activates a horizontal killplane that only affects a particular model ID. """
     instruction_info = (2003, 41)
     return to_numeric(instruction_info, game_map.area_id, game_map.block_id, y_threshold, target_model_id)
 
 
-def AddSpecialEffect(character: CharacterInt, special_effect_id: int):
+def AddSpecialEffect(character: CharacterTyping, special_effect_id: int):
     """ 'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
     nothing if the character already has the special effect active (i.e. they do not stack or even reset timers). """
     instruction_info = (2004, 8)
     return to_numeric(instruction_info, character, special_effect_id)
 
 
-def RotateToFaceEntity(character: CharacterInt, target_entity: CoordEntityInt):
+def RotateToFaceEntity(character: CharacterTyping, target_entity: CoordEntityTyping):
     """ Rotate a character to face a target map entity of any type.
     WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at least.)
     """
@@ -704,7 +704,7 @@ def RotateToFaceEntity(character: CharacterInt, target_entity: CoordEntityInt):
     return to_numeric(instruction_info, character, target_entity)
 
 
-def RegisterHealingFountain(flag: FlagInt, obj: ObjectInt):
+def RegisterHealingFountain(flag: FlagInt, obj: ObjectTyping):
     """ No idea what this is. Clearly unused. The Bloodborne version has more arguments. """
     instruction_info = (2009, 5)
     return to_numeric(instruction_info, flag, obj)
@@ -752,9 +752,9 @@ def Unknown_2000_06(arg1: int):
 def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(
     condition: int,
     playback_method: CutsceneType,
-    first_region: RegionInt,
-    last_region: RegionInt,
-    game_map: MapOrSequence,
+    first_region: RegionTyping,
+    last_region: RegionTyping,
+    game_map: MapTyping,
 ):
     instruction_info = (2002, 6)
     area_id, block_id = tuple(game_map)
@@ -765,9 +765,9 @@ def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(
 def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2(
     condition: int,
     playback_method: CutsceneType,
-    first_region: RegionInt,
-    last_region: RegionInt,
-    game_map: MapOrSequence,
+    first_region: RegionTyping,
+    last_region: RegionTyping,
+    game_map: MapTyping,
 ):
     instruction_info = (2002, 7)
     area_id, block_id = tuple(game_map)
@@ -788,7 +788,7 @@ def Unknown_2003_43(flag: FlagInt, bit_count: int, arg1: int, arg2: int):
 
 # REMASTERED ONLY
 def ForceAnimation_WithUnknownEffect1(
-    entity: AnimatedInt, animation: int, loop: bool, wait_for_completion: bool, skip_transition: bool, arg1: int
+    entity: AnimatedTyping, animation: int, loop: bool, wait_for_completion: bool, skip_transition: bool, arg1: int
 ):
     instruction_info = (2003, 44)
     return to_numeric(instruction_info, entity, animation, loop, wait_for_completion, skip_transition, arg1)
@@ -796,7 +796,7 @@ def ForceAnimation_WithUnknownEffect1(
 
 # REMASTERED ONLY
 def ForceAnimation_WithUnknownEffect2(
-    entity: AnimatedInt, animation: int, loop: bool, wait_for_completion: bool, skip_transition: bool, arg1: float
+    entity: AnimatedTyping, animation: int, loop: bool, wait_for_completion: bool, skip_transition: bool, arg1: float
 ):
     instruction_info = (2003, 46)
     return to_numeric(instruction_info, entity, animation, loop, wait_for_completion, skip_transition, arg1)
@@ -810,7 +810,7 @@ def Unknown_2003_47():
 
 # REMASTERED ONLY
 def Unknown_2003_48(
-    entity: AnimatedInt,
+    entity: AnimatedTyping,
     arg1: int,
     model_point: int,
     magic_id: int,
@@ -825,19 +825,19 @@ def Unknown_2003_48(
 
 
 # REMASTERED ONLY
-def EraseNPCSummonSign(summoned_character: CharacterInt):
+def EraseNPCSummonSign(summoned_character: CharacterTyping):
     instruction_info = (2003, 49)
     return to_numeric(instruction_info, summoned_character)
 
 
 # REMASTERED ONLY
-def FadeOutCharacter(character: CharacterInt, duration: float):
+def FadeOutCharacter(character: CharacterTyping, duration: float):
     instruction_info = (2004, 48)
     return to_numeric(instruction_info, character, duration)
 
 
 # REMASTERED ONLY
-def FadeInCharacter(character: CharacterInt, duration: float):
+def FadeInCharacter(character: CharacterTyping, duration: float):
     instruction_info = (2004, 49)
     return to_numeric(instruction_info, character, duration)
 

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 from soulstruct.ai.core import LuaError
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
-from soulstruct.project.editor import SoulstructBaseEditor
+from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
@@ -106,6 +106,162 @@ class AIScriptTextEditor(TextEditor):
                 start_index = next_function_index
 
 
+class AIEntryRow(EntryRow):
+    """Container/manager for widgets of a single entry row in the Editor."""
+
+    master: SoulstructAIEditor
+
+    ENTRY_ANCHOR = "center"
+    ENTRY_ROW_HEIGHT = 30
+    EDIT_ENTRY_ID = True
+    ENTRY_TYPE_WIDTH = 5
+    ENTRY_TYPE_FG = "#FFA"
+    ENTRY_ID_WIDTH = 12
+    ENTRY_ID_FG = "#CDF"
+    ENTRY_TEXT_WIDTH = 40
+    ENTRY_TEXT_FG = "#FFF"
+
+    def __init__(self, editor: SoulstructAIEditor, row_index: int, main_bindings: dict = None):
+        self.master = editor
+        self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
+
+        self.row_index = row_index
+        self._entry_id = None
+        self._entry_text = None
+        self._active = False
+        self._goal_type = "battle"
+
+        bg_color = self._get_color()
+
+        self.row_box = editor.Frame(
+            width=self.ENTRY_TYPE_WIDTH + self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH,
+            height=self.ENTRY_ROW_HEIGHT,
+            bg=bg_color,
+            row=row_index,
+            columnspan=3,
+            sticky="nsew",
+        )
+        bind_events(self.row_box, main_bindings)
+
+        self.type_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky="ew")
+        self.type_label = editor.Label(
+            self.type_box,
+            text="B",
+            width=self.ENTRY_TYPE_WIDTH,
+            bg=bg_color,
+            fg="#F33",
+            font_size=11,
+            sticky="ew",
+            tooltip_text="Type of goal: battle (B), logic (L), or neither (N). Left or right click to cycle "
+            "between types.",
+        )
+        type_bindings = main_bindings.copy()
+        type_bindings["<Button-1>"] = lambda _, i=row_index: self.master.set_goal_type(i)
+        type_bindings["<Button-3>"] = lambda _, i=row_index: self.master.set_goal_type(i, reverse=True)
+        bind_events(self.type_box, type_bindings)
+        bind_events(self.type_label, type_bindings)
+
+        self.id_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
+        self.id_label = editor.Label(
+            self.id_box,
+            text="",
+            width=self.ENTRY_ID_WIDTH,
+            bg=bg_color,
+            fg=self.ENTRY_ID_FG,
+            font_size=11,
+            sticky="e",
+        )
+        id_bindings = main_bindings.copy()
+        id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(i, id_clicked=True)
+        id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+        bind_events(self.id_box, id_bindings)
+        bind_events(self.id_label, id_bindings)
+
+        self.text_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky="ew")
+        bind_events(self.text_box, main_bindings)
+
+        self.text_label = editor.Label(
+            self.text_box,
+            text="",
+            bg=bg_color,
+            fg=self.ENTRY_TEXT_FG,
+            anchor="w",
+            font_size=11,
+            justify="left",
+            width=self.ENTRY_TEXT_WIDTH,
+        )
+        bind_events(self.text_label, main_bindings)
+
+        self.context_menu = editor.Menu(self.row_box)
+
+        self.tool_tip = None
+
+    def update_entry(self, entry_id: int, entry_text: str, goal_type=None):
+        self.entry_id = entry_id
+        self.entry_text = entry_text
+        if goal_type is None:
+            raise ValueError("Logic state cannot be None (suggests design problem).")
+        self.goal_type = goal_type
+        self._update_colors()
+        self.build_entry_context_menu()
+
+    def hide(self):
+        """Called when this row has no entry to display."""
+        self.row_box.grid_remove()
+        self.type_box.grid_remove()
+        self.type_label.grid_remove()
+        self.id_box.grid_remove()
+        self.id_label.grid_remove()
+        self.text_box.grid_remove()
+        self.text_label.grid_remove()
+
+    def unhide(self):
+        self.row_box.grid()
+        self.type_box.grid()
+        self.type_label.grid()
+        self.id_box.grid()
+        self.id_label.grid()
+        self.text_box.grid()
+        self.text_label.grid()
+
+    def build_entry_context_menu(self):
+        self.context_menu.delete(0, "end")
+        self.context_menu.add_command(
+            label="Duplicate Entry to Next ID",
+            command=lambda: self.master.add_relative_entry(self.entry_id, goal_type=self.goal_type, offset=1),
+        )
+        self.context_menu.add_command(
+            label="Delete Entry",
+            command=lambda: self.master.delete_entry(self.row_index),
+        )
+
+    @property
+    def _colored_widgets(self):
+        return (
+            self.row_box, self.id_box, self.id_label, self.text_box, self.text_label, self.type_box, self.type_label
+        )
+
+    @property
+    def goal_type(self):
+        return self._goal_type
+
+    @goal_type.setter
+    def goal_type(self, goal_type: str):
+        if goal_type != self._goal_type:
+            if goal_type == "battle":
+                self.type_label.var.set("B")
+                self.type_label["fg"] = "#F33"
+            elif goal_type == "logic":
+                self.type_label.var.set("L")
+                self.type_label["fg"] = "#3F3"
+            elif goal_type == "neither":
+                self.type_label.var.set("N")
+                self.type_label["fg"] = "#FFF"
+            else:
+                raise ValueError(f"Invalid goal type: {goal_type}")
+            self._goal_type = goal_type
+
+
 class SoulstructAIEditor(SoulstructBaseEditor):
     DATA_NAME = "AI"
     TAB_NAME = "ai"
@@ -116,169 +272,8 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     _LUA_COMPILE_ERROR_RE = re.compile(r".*\\temp:(\d+): (.*)", flags=re.DOTALL)
 
-    class EntryRow(SoulstructBaseEditor.EntryRow):
-        """Container/manager for widgets of a single entry row in the Editor."""
-
-        ENTRY_ANCHOR = "center"
-        ENTRY_ROW_HEIGHT = 30
-        EDIT_ENTRY_ID = True
-        ENTRY_TYPE_WIDTH = 5
-        ENTRY_TYPE_FG = "#FFA"
-        ENTRY_ID_WIDTH = 12
-        ENTRY_ID_FG = "#CDF"
-        ENTRY_TEXT_WIDTH = 40
-        ENTRY_TEXT_FG = "#FFF"
-
-        def __init__(self, editor: SoulstructAIEditor, row_index: int, main_bindings: dict = None):
-            self.master = editor
-            self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
-
-            self.row_index = row_index
-            self._entry_id = None
-            self._entry_text = None
-            self._active = False
-            self._goal_type = "battle"
-
-            bg_color = self._get_color()
-
-            self.row_box = editor.Frame(
-                width=self.ENTRY_TYPE_WIDTH + self.ENTRY_ID_WIDTH + self.ENTRY_TEXT_WIDTH,
-                height=self.ENTRY_ROW_HEIGHT,
-                bg=bg_color,
-                row=row_index,
-                columnspan=3,
-                sticky="nsew",
-            )
-            bind_events(self.row_box, main_bindings)
-
-            self.type_box = editor.Frame(row=row_index, column=0, bg=bg_color, sticky="ew")
-            self.type_label = editor.Label(
-                self.type_box,
-                text="B",
-                width=self.ENTRY_TYPE_WIDTH,
-                bg=bg_color,
-                fg="#F33",
-                font_size=11,
-                sticky="ew",
-                tooltip_text="Type of goal: battle (B), logic (L), or neither (N). Left or right click to cycle "
-                "between types.",
-            )
-            type_bindings = main_bindings.copy()
-            type_bindings["<Button-1>"] = lambda _, i=row_index: self.master.set_goal_type(i)
-            type_bindings["<Button-3>"] = lambda _, i=row_index: self.master.set_goal_type(i, reverse=True)
-            bind_events(self.type_box, type_bindings)
-            bind_events(self.type_label, type_bindings)
-
-            self.id_box = editor.Frame(row=row_index, column=1, bg=bg_color, sticky="ew")
-            self.id_label = editor.Label(
-                self.id_box,
-                text="",
-                width=self.ENTRY_ID_WIDTH,
-                bg=bg_color,
-                fg=self.ENTRY_ID_FG,
-                font_size=11,
-                sticky="e",
-            )
-            id_bindings = main_bindings.copy()
-            id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(i, id_clicked=True)
-            id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
-            bind_events(self.id_box, id_bindings)
-            bind_events(self.id_label, id_bindings)
-
-            self.text_box = editor.Frame(row=row_index, column=2, bg=bg_color, sticky="ew")
-            bind_events(self.text_box, main_bindings)
-
-            self.text_label = editor.Label(
-                self.text_box,
-                text="",
-                bg=bg_color,
-                fg=self.ENTRY_TEXT_FG,
-                anchor="w",
-                font_size=11,
-                justify="left",
-                width=self.ENTRY_TEXT_WIDTH,
-            )
-            bind_events(self.text_label, main_bindings)
-
-            self.context_menu = editor.Menu(self.row_box)
-
-            self.tool_tip = None
-
-        def update_entry(self, entry_id: int, entry_text: str, goal_type=None):
-            self.entry_id = entry_id
-            self.entry_text = entry_text
-            if goal_type is None:
-                raise ValueError("Logic state cannot be None (suggests design problem).")
-            self.goal_type = goal_type
-            self._update_colors()
-            self.build_entry_context_menu()
-
-        def hide(self):
-            """Called when this row has no entry to display."""
-            self.row_box.grid_remove()
-            self.type_box.grid_remove()
-            self.type_label.grid_remove()
-            self.id_box.grid_remove()
-            self.id_label.grid_remove()
-            self.text_box.grid_remove()
-            self.text_label.grid_remove()
-
-        def unhide(self):
-            self.row_box.grid()
-            self.type_box.grid()
-            self.type_label.grid()
-            self.id_box.grid()
-            self.id_label.grid()
-            self.text_box.grid()
-            self.text_label.grid()
-
-        def build_entry_context_menu(self):
-            self.context_menu.delete(0, "end")
-            self.context_menu.add_command(
-                label="Duplicate Entry to Next ID",
-                foreground=self.STYLE_DEFAULTS["text_fg"],
-                command=lambda: self.master.add_relative_entry(self.entry_id, goal_type=self.goal_type, offset=1),
-            )
-            self.context_menu.add_command(
-                label="Delete Entry",
-                foreground=self.STYLE_DEFAULTS["text_fg"],
-                command=lambda: self.master.delete_entry(self.row_index),
-            )
-
-        def _update_colors(self):
-            bg_color = self._get_color()
-            for widget in (
-                self.row_box,
-                self.id_box,
-                self.id_label,
-                self.text_box,
-                self.text_label,
-                self.type_box,
-                self.type_label,
-            ):
-                widget["bg"] = bg_color
-
-        @property
-        def goal_type(self):
-            return self._goal_type
-
-        @goal_type.setter
-        def goal_type(self, goal_type: str):
-            if goal_type != self._goal_type:
-                if goal_type == "battle":
-                    self.type_label.var.set("B")
-                    self.type_label["fg"] = "#F33"
-                elif goal_type == "logic":
-                    self.type_label.var.set("L")
-                    self.type_label["fg"] = "#3F3"
-                elif goal_type == "neither":
-                    self.type_label.var.set("N")
-                    self.type_label["fg"] = "#FFF"
-                else:
-                    raise ValueError(f"Invalid goal type: {goal_type}")
-                self._goal_type = goal_type
-
-    entry_rows: List[SoulstructAIEditor.EntryRow]
+    ENTRY_ROW_CLASS = AIEntryRow
+    entry_rows: List[AIEntryRow]
 
     def __init__(
         self,

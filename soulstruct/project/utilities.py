@@ -13,7 +13,7 @@ from soulstruct.utilities import word_wrap, camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
 if tp.TYPE_CHECKING:
-    from soulstruct.project.editor import SoulstructBaseEditor
+    from soulstruct.project.base.base_editor import SoulstructBaseEditor
 
 __all__ = [
     "SoulstructProjectError",

@@ -181,7 +181,7 @@ class RangeState(IntEnum):
 
 
 class CoordEntityType(IntEnum):
-    # Originally "Category", which was ambiguous. Used often to identify the type of an MSB entity.
+    # Originally "Category", which was ambiguous. Used often to identify the type of an MSB part.
     Object = 0
     Region = 1
     Character = 2

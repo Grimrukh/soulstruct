@@ -47,11 +47,13 @@ __all__ = [
     "BannerType",
     "MultiplayerState",
     "NPCPartType",
+
     # Non-event enums
     "CollisionHitFilter",
 ]
 
 from enum import IntEnum
+
 from .shared import *
 
 
@@ -144,8 +146,8 @@ class MultiplayerState(IntEnum):
 
 
 class NPCPartType(IntEnum):
-    # Used in definining different behavior for parts of NPC models, e.g. tails that can be cut or Smough's invincible
-    # hammer.
+    """Used in definining different behavior for parts of NPC models, e.g. tails that can be cut or Smough's invincible
+    hammer."""
     Part1 = 1
     Part2 = 2
     Part3 = 3
@@ -159,7 +161,6 @@ class NPCPartType(IntEnum):
 
 class CollisionHitFilter(IntEnum):
     """Defines behavior of `MSBCollision` instances in maps. Courtesy of horkrux."""
-
     NoHiHitNoFeetIK = 0  # solid
     NoHiHit_1 = 1  # solid
     NoHiHit_2 = 2  # solid

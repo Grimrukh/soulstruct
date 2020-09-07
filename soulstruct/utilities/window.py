@@ -546,7 +546,9 @@ class SmartFrame(tk.Frame):
         if frame is None:
             frame = self.current_frame
         self.set_style_defaults(kwargs)
-        menu = tk.Menu(frame, tearoff=tearoff, **kwargs)
+        if "command_text_fg" not in kwargs and "text_fg" in self.STYLE_DEFAULTS:
+            kwargs["command_text_fg"] = self.STYLE_DEFAULTS["text_fg"]
+        menu = SmartMenu(frame, tearoff=tearoff, **kwargs)
         return menu
 
     @_embed_component
@@ -863,7 +865,7 @@ class SmartFrame(tk.Frame):
             return None
         elif isinstance(button_kwargs, str):
             try:
-                return (self.DEFAULT_BUTTON_KWARGS[button_kwargs],)  # note tuple
+                return self.DEFAULT_BUTTON_KWARGS[button_kwargs],  # note tuple
             except KeyError:
                 raise KeyError(f"Invalid `SmartFrame.DEFAULT_BUTTON_KWARGS` key: {button_kwargs}")
         elif isinstance(button_kwargs, (tuple, list)):
@@ -887,6 +889,18 @@ class SmartFrame(tk.Frame):
                 f"`SmartFrame.DEFAULT_BUTTON_KWARGS`, not {type(button_kwargs)}."
             )
         return button_kwargs
+
+
+class SmartMenu(tk.Menu):
+    """Menu subclass that automatically applies style defaults to `.add_command()`."""
+    def __init__(self, *args, **kwargs):
+        self._command_text_fg = kwargs.pop("command_text_fg", None)
+        super().__init__(*args, **kwargs)
+
+    def add_command(self, *args, **kwargs):
+        if "foreground" not in kwargs and self._command_text_fg is not None:
+            kwargs["foreground"] = self._command_text_fg
+        super().add_command(*args, **kwargs)
 
 
 class LoadingDialog(SmartFrame):

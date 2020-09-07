@@ -705,6 +705,7 @@ __all__ = [
 
 
 # 2000: SYSTEM
+from soulstruct.game_types.param_types import ItemLotTyping, ItemTyping
 
 
 def RunCommonEvent(event_id: int, args=(0,), arg_types=None, event_layers=None):
@@ -729,32 +730,32 @@ def RunCommonEvent(event_id: int, args=(0,), arg_types=None, event_layers=None):
 # 3: CONDITIONS (EVENT)
 
 
-def IfCharacterRegionState(condition, entity: AnimatedInt, region: RegionInt, state: bool, min_target_count: int = 1):
+def IfCharacterRegionState(condition, entity: AnimatedTyping, region: RegionTyping, state: bool, min_target_count: int = 1):
     """New argument with unknown purpose. Always 1 in vanilla resources. Probably for debug."""
     instruction_info = (3, 2)
     return to_numeric(instruction_info, condition, state, entity, region, min_target_count)
 
 
-def IfCharacterInsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+def IfCharacterInsideRegion(condition: int, entity: AnimatedTyping, region: RegionTyping):
     return IfCharacterRegionState(condition, entity, region, True)
 
 
-def IfCharacterOutsideRegion(condition: int, entity: AnimatedInt, region: RegionInt):
+def IfCharacterOutsideRegion(condition: int, entity: AnimatedTyping, region: RegionTyping):
     return IfCharacterRegionState(condition, entity, region, False)
 
 
-def IfPlayerInsideRegion(condition: int, region: RegionInt):
+def IfPlayerInsideRegion(condition: int, region: RegionTyping):
     return IfCharacterRegionState(condition, PLAYER, region, True)
 
 
-def IfPlayerOutsideRegion(condition: int, region: RegionInt):
+def IfPlayerOutsideRegion(condition: int, region: RegionTyping):
     return IfCharacterRegionState(condition, PLAYER, region, False)
 
 
 def IfEntityDistanceState(
     condition: int,
-    entity: CoordEntityInt,
-    other_entity: CoordEntityInt,
+    entity: CoordEntityTyping,
+    other_entity: CoordEntityTyping,
     radius: float,
     state: bool,
     min_target_count: int = 1,
@@ -765,22 +766,22 @@ def IfEntityDistanceState(
 
 
 def IfEntityWithinDistance(
-    condition: int, entity: CoordEntityInt, other_entity: CoordEntityInt, radius: float, min_target_count: int = 1
+    condition: int, entity: CoordEntityTyping, other_entity: CoordEntityTyping, radius: float, min_target_count: int = 1
 ):
     return IfEntityDistanceState(condition, entity, other_entity, radius, True, min_target_count)
 
 
 def IfEntityBeyondDistance(
-    condition: int, entity: CoordEntityInt, other_entity: CoordEntityInt, radius: float, min_target_count: int = 1
+    condition: int, entity: CoordEntityTyping, other_entity: CoordEntityTyping, radius: float, min_target_count: int = 1
 ):
     return IfEntityDistanceState(condition, entity, other_entity, radius, False, min_target_count)
 
 
-def IfPlayerWithinDistance(condition: int, other_entity: CoordEntityInt, radius: float, min_target_count: int = 1):
+def IfPlayerWithinDistance(condition: int, other_entity: CoordEntityTyping, radius: float, min_target_count: int = 1):
     return IfEntityDistanceState(condition, PLAYER, other_entity, radius, True, min_target_count)
 
 
-def IfPlayerBeyondDistance(condition: int, other_entity: CoordEntityInt, radius: float, min_target_count: int = 1):
+def IfPlayerBeyondDistance(condition: int, other_entity: CoordEntityTyping, radius: float, min_target_count: int = 1):
     return IfEntityDistanceState(condition, PLAYER, other_entity, radius, False, min_target_count)
 
 
@@ -814,14 +815,14 @@ def IfFailedToCreateSession(condition: int):
 
 
 def IfDamageType(
-    condition: int, attacked_entity: AnimatedInt, attacking_character: CharacterInt, damage_type: DamageType
+    condition: int, attacked_entity: AnimatedTyping, attacking_character: CharacterTyping, damage_type: DamageType
 ):
     """Similar to IsAttackedBy, but requires a certain damage type."""
     instruction_info = (3, 23, [0, 0, -1, 0])
     return to_numeric(instruction_info, condition, attacked_entity, attacking_character, damage_type)
 
 
-def IfActionButtonInRegion(condition: int, action_button_id: int, region: RegionInt):
+def IfActionButtonInRegion(condition: int, action_button_id: int, region: RegionTyping):
     """Probably a simplified version of `IfActionButton`. Used with boss fog."""
     instruction_info = (3, 24, [0, -1, -1])
     return to_numeric(instruction_info, condition, action_button_id, region)
@@ -841,18 +842,18 @@ def IfPlayerNotInOwnWorld(condition: int):
     return IfPlayerOwnWorldState(condition, True)
 
 
-def IfMapCeremonyState(condition: int, state: bool, game_map: MapOrSequence, ceremony_id: int):
+def IfMapCeremonyState(condition: int, state: bool, game_map: MapTyping, ceremony_id: int):
     """Ceremony states are unused (except for Untended Graves, I believe)."""
     instruction_info = (3, 28)
     area_id, block_id = tuple(game_map)
     return to_numeric(instruction_info, condition, state, area_id, block_id, ceremony_id)
 
 
-def IfMapInCeremony(condition: int, game_map: MapOrSequence, ceremony_id: int):
+def IfMapInCeremony(condition: int, game_map: MapTyping, ceremony_id: int):
     return IfMapCeremonyState(condition, True, game_map, ceremony_id)
 
 
-def IfMapNotInCeremony(condition: int, game_map: MapOrSequence, ceremony_id: int):
+def IfMapNotInCeremony(condition: int, game_map: MapTyping, ceremony_id: int):
     return IfMapCeremonyState(condition, False, game_map, ceremony_id)
 
 
@@ -911,7 +912,7 @@ def IfAllyPhantomCountComparison(condition: int, comparison_state: bool, compari
 
 def IfCharacterDeathState(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -922,7 +923,7 @@ def IfCharacterDeathState(
 
 def IfCharacterDead(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
 ):
@@ -931,7 +932,7 @@ def IfCharacterDead(
 
 def IfCharacterAlive(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
 ):
@@ -940,7 +941,7 @@ def IfCharacterAlive(
 
 def IfHealthComparison(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     comparison_type: ComparisonType,
     value,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -952,33 +953,33 @@ def IfHealthComparison(
     )
 
 
-def IfHealthEqual(condition: int, character: CharacterInt, value):
+def IfHealthEqual(condition: int, character: CharacterTyping, value):
     return IfHealthComparison(condition, character, ComparisonType.Equal, value)
 
 
-def IfHealthNotEqual(condition: int, character: CharacterInt, value):
+def IfHealthNotEqual(condition: int, character: CharacterTyping, value):
     return IfHealthComparison(condition, character, ComparisonType.NotEqual, value)
 
 
-def IfHealthGreaterThan(condition: int, character: CharacterInt, value):
+def IfHealthGreaterThan(condition: int, character: CharacterTyping, value):
     return IfHealthComparison(condition, character, ComparisonType.GreaterThan, value)
 
 
-def IfHealthLessThan(condition: int, character: CharacterInt, value):
+def IfHealthLessThan(condition: int, character: CharacterTyping, value):
     return IfHealthComparison(condition, character, ComparisonType.LessThan, value)
 
 
-def IfHealthGreaterThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthGreaterThanOrEqual(condition: int, character: CharacterTyping, value):
     return IfHealthComparison(condition, character, ComparisonType.GreaterThanOrEqual, value)
 
 
-def IfHealthLessThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthLessThanOrEqual(condition: int, character: CharacterTyping, value):
     return IfHealthComparison(condition, character, ComparisonType.LessThanOrEqual, value)
 
 
 def IfCharacterType(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     character_type: CharacterType,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -987,17 +988,17 @@ def IfCharacterType(
     return to_numeric(instruction_info, condition, character, character_type, target_comparison_type, target_count)
 
 
-def IfCharacterHollow(condition: int, character: CharacterInt):
+def IfCharacterHollow(condition: int, character: CharacterTyping):
     return IfCharacterType(condition, character, CharacterType.Hollow)
 
 
-def IfCharacterHuman(condition: int, character: CharacterInt):
+def IfCharacterHuman(condition: int, character: CharacterTyping):
     return IfCharacterType(condition, character, CharacterType.Human)
 
 
 def IfCharacterSpecialEffectState(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     special_effect: int,
     state,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1009,11 +1010,11 @@ def IfCharacterSpecialEffectState(
     )
 
 
-def IfCharacterHasSpecialEffect(condition: int, character: CharacterInt, special_effect):
+def IfCharacterHasSpecialEffect(condition: int, character: CharacterTyping, special_effect):
     return IfCharacterSpecialEffectState(condition, character, special_effect, True)
 
 
-def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: CharacterInt, special_effect):
+def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: CharacterTyping, special_effect):
     return IfCharacterSpecialEffectState(condition, character, special_effect, False)
 
 
@@ -1027,7 +1028,7 @@ def IfPlayerDoesNotHaveSpecialEffect(condition: int, special_effect):
 
 def IfCharacterBackreadState(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1036,17 +1037,17 @@ def IfCharacterBackreadState(
     return to_numeric(instruction_info, condition, character, state, target_comparison_type, target_count)
 
 
-def IfCharacterBackreadEnabled(condition: int, character: CharacterInt):
+def IfCharacterBackreadEnabled(condition: int, character: CharacterTyping):
     return IfCharacterBackreadState(condition, character, True)
 
 
-def IfCharacterBackreadDisabled(condition: int, character: CharacterInt):
+def IfCharacterBackreadDisabled(condition: int, character: CharacterTyping):
     return IfCharacterBackreadState(condition, character, False)
 
 
 def IfTAEEventState(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     tae_event_id: int,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1056,17 +1057,17 @@ def IfTAEEventState(
     return to_numeric(instruction_info, condition, character, tae_event_id, state, target_comparison_type, target_count)
 
 
-def IfHasTAEEvent(condition: int, character: CharacterInt, tae_event_id: int):
+def IfHasTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, True)
 
 
-def IfDoesNotHaveTAEEvent(condition: int, character: CharacterInt, tae_event_id: int):
+def IfDoesNotHaveTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, False)
 
 
 def IfHasAIStatus(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     ai_status: AIStatusType,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1077,7 +1078,7 @@ def IfHasAIStatus(
 
 def IfHealthValueComparison(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     comparison_type: ComparisonType,
     value,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1089,33 +1090,33 @@ def IfHealthValueComparison(
     )
 
 
-def IfHealthValueEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueEqual(condition: int, character: CharacterTyping, value):
     return IfHealthValueComparison(condition, character, ComparisonType.Equal, value)
 
 
-def IfHealthValueNotEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueNotEqual(condition: int, character: CharacterTyping, value):
     return IfHealthValueComparison(condition, character, ComparisonType.NotEqual, value)
 
 
-def IfHealthValueGreaterThan(condition: int, character: CharacterInt, value):
+def IfHealthValueGreaterThan(condition: int, character: CharacterTyping, value):
     return IfHealthValueComparison(condition, character, ComparisonType.GreaterThan, value)
 
 
-def IfHealthValueLessThan(condition: int, character: CharacterInt, value):
+def IfHealthValueLessThan(condition: int, character: CharacterTyping, value):
     return IfHealthValueComparison(condition, character, ComparisonType.LessThan, value)
 
 
-def IfHealthValueGreaterThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueGreaterThanOrEqual(condition: int, character: CharacterTyping, value):
     return IfHealthValueComparison(condition, character, ComparisonType.GreaterThanOrEqual, value)
 
 
-def IfHealthValueLessThanOrEqual(condition: int, character: CharacterInt, value):
+def IfHealthValueLessThanOrEqual(condition: int, character: CharacterTyping, value):
     return IfHealthValueComparison(condition, character, ComparisonType.LessThanOrEqual, value)
 
 
 def IfCharacterDrawGroupState(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1125,11 +1126,11 @@ def IfCharacterDrawGroupState(
     return to_numeric(instruction_info, condition, character, state, target_comparison_type, target_count)
 
 
-def IfCharacterDrawGroupActive(condition: int, character: CharacterInt):
+def IfCharacterDrawGroupActive(condition: int, character: CharacterTyping):
     return IfCharacterDrawGroupState(condition, character, True)
 
 
-def IfCharacterDrawGroupInactive(condition: int, character: CharacterInt):
+def IfCharacterDrawGroupInactive(condition: int, character: CharacterTyping):
     return IfCharacterDrawGroupState(condition, character, False)
 
 
@@ -1141,7 +1142,7 @@ def IfPlayerRemainingYoelLevelComparison(condition: int, comparison_type: Compar
 
 def IfCharacterInvadeType(
     condition: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     invade_type: int,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1151,7 +1152,7 @@ def IfCharacterInvadeType(
     return to_numeric(instruction_info, condition, character, invade_type, target_comparison_type, target_count)
 
 
-def IfCharacterChameleonState(condition: int, character: CharacterInt, chameleon_fx_id: int, is_transformed: bool):
+def IfCharacterChameleonState(condition: int, character: CharacterTyping, chameleon_fx_id: int, is_transformed: bool):
     instruction_info = (4, 28)
     return to_numeric(instruction_info, condition, character, chameleon_fx_id, is_transformed)
 
@@ -1162,7 +1163,7 @@ def IfCharacterChameleonState(condition: int, character: CharacterInt, chameleon
 
 def IfObjectDestructionState(
     condition: int,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1171,17 +1172,17 @@ def IfObjectDestructionState(
     return to_numeric(instruction_info, condition, state, obj, target_comparison_type, target_count)
 
 
-def IfObjectDestroyed(condition: int, obj: ObjectInt):
+def IfObjectDestroyed(condition: int, obj: ObjectTyping):
     return IfObjectDestructionState(condition, obj, True)
 
 
-def IfObjectNotDestroyed(condition: int, obj: ObjectInt):
+def IfObjectNotDestroyed(condition: int, obj: ObjectTyping):
     return IfObjectDestructionState(condition, obj, False)
 
 
 def IfObjectBurnState(
     condition: int,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     comparison_type: ComparisonType,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1197,7 +1198,7 @@ def IfObjectBurnState(
 
 def IfObjectBackreadState(
     condition: int,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1206,17 +1207,17 @@ def IfObjectBackreadState(
     return to_numeric(instruction_info, condition, obj, state, target_comparison_type, target_count)
 
 
-def IfObjectBackreadEnabled(condition: int, obj: ObjectInt):
+def IfObjectBackreadEnabled(condition: int, obj: ObjectTyping):
     return IfObjectBackreadState(condition, obj, True)
 
 
-def IfObjectBackreadDisabled(condition: int, obj: ObjectInt):
+def IfObjectBackreadDisabled(condition: int, obj: ObjectTyping):
     return IfObjectBackreadState(condition, obj, False)
 
 
 def IfObjectBackreadState_Alternate(
     condition: int,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1227,11 +1228,11 @@ def IfObjectBackreadState_Alternate(
     return to_numeric(instruction_info, condition, obj, state, target_comparison_type, target_count)
 
 
-def IfObjectBackreadEnabled_Alternate(condition: int, obj: ObjectInt):
+def IfObjectBackreadEnabled_Alternate(condition: int, obj: ObjectTyping):
     return IfObjectBackreadState_Alternate(condition, obj, True)
 
 
-def IfObjectBackreadDisabled_Alternate(condition: int, obj: ObjectInt):
+def IfObjectBackreadDisabled_Alternate(condition: int, obj: ObjectTyping):
     return IfObjectBackreadState_Alternate(condition, obj, False)
 
 
@@ -1391,7 +1392,7 @@ def RestartIfCoopClientCountComparison(comparison_type: ComparisonType, value: i
 
 def GotoIfCharacterSpecialEffectState(
     label: Label,
-    character: CharacterInt,
+    character: CharacterTyping,
     special_effect: int,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1404,7 +1405,7 @@ def GotoIfCharacterSpecialEffectState(
 
 def GotoIfCharacterHasSpecialEffect(
     label: Label,
-    character: CharacterInt,
+    character: CharacterTyping,
     special_effect: int,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: int = 1,
@@ -1416,7 +1417,7 @@ def GotoIfCharacterHasSpecialEffect(
 
 def GotoIfCharacterDoesNotHaveSpecialEffect(
     label: Label,
-    character: CharacterInt,
+    character: CharacterTyping,
     special_effect: int,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: int = 1,
@@ -1529,25 +1530,25 @@ def GotoIfFlagOff(label: Label, flag: FlagInt):
     return GotoIfFlagState(label, False, FlagType.Absolute, flag)
 
 
-def GotoIfFlagRangeState(label: Label, state: RangeState, flag_type: FlagType, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeState(label: Label, state: RangeState, flag_type: FlagType, flag_range: FlagRangeTyping):
     instruction_info = (1003, 103)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, label, state, flag_type, first_flag, last_flag)
 
 
-def GotoIfFlagRangeAllOn(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAllOn(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AllOn, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAllOff(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAllOff(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AllOff, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAnyOn(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAnyOn(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAnyOff(label: Label, flag_range: FlagRangeOrSequence):
+def GotoIfFlagRangeAnyOff(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 
@@ -1580,17 +1581,17 @@ def GotoIfFailedToCreateSession(label: Label):
     return GotoIfMultiplayerState(label, MultiplayerState.FailedToCreateSession)
 
 
-def GotoIfMapPresenceState(label: Label, game_map: MapOrSequence, state: bool):
+def GotoIfMapPresenceState(label: Label, game_map: MapTyping, state: bool):
     instruction_info = (1003, 107, [0, 0, 0, 0])
     area_id, block_id = tuple(game_map)
     return to_numeric(instruction_info, label, state, area_id, block_id)
 
 
-def GotoIfInsideMap(label: Label, game_map: MapOrSequence):
+def GotoIfInsideMap(label: Label, game_map: MapTyping):
     return GotoIfMapPresenceState(label, game_map, True)
 
 
-def GotoIfOutsideMap(label: Label, game_map: MapOrSequence):
+def GotoIfOutsideMap(label: Label, game_map: MapTyping):
     return GotoIfMapPresenceState(label, game_map, False)
 
 
@@ -1601,7 +1602,7 @@ def GotoIfCoopClientCountComparison(label: Label, comparison_type: ComparisonTyp
 
 def TerminateIfCharacterSpecialEffectState(
     event_end_type: EventEndType,
-    character: CharacterInt,
+    character: CharacterTyping,
     special_effect: int,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1613,27 +1614,27 @@ def TerminateIfCharacterSpecialEffectState(
     )
 
 
-def EndIfCharacterSpecialEffectState(character: CharacterInt, special_effect: int, state: bool):
+def EndIfCharacterSpecialEffectState(character: CharacterTyping, special_effect: int, state: bool):
     return TerminateIfCharacterSpecialEffectState(EventEndType.End, character, special_effect, state)
 
 
-def EndIfCharacterHasSpecialEffect(character: CharacterInt, special_effect: int):
+def EndIfCharacterHasSpecialEffect(character: CharacterTyping, special_effect: int):
     return TerminateIfCharacterSpecialEffectState(EventEndType.End, character, special_effect, True)
 
 
-def EndIfCharacterDoesNotHaveSpecialEffect(character: CharacterInt, special_effect: int):
+def EndIfCharacterDoesNotHaveSpecialEffect(character: CharacterTyping, special_effect: int):
     return TerminateIfCharacterSpecialEffectState(EventEndType.End, character, special_effect, False)
 
 
-def RestartIfCharacterSpecialEffectState(character: CharacterInt, special_effect: int, state: bool):
+def RestartIfCharacterSpecialEffectState(character: CharacterTyping, special_effect: int, state: bool):
     return TerminateIfCharacterSpecialEffectState(EventEndType.Restart, character, special_effect, state)
 
 
-def RestartIfCharacterHasSpecialEffect(character: CharacterInt, special_effect: int):
+def RestartIfCharacterHasSpecialEffect(character: CharacterTyping, special_effect: int):
     return TerminateIfCharacterSpecialEffectState(EventEndType.Restart, character, special_effect, True)
 
 
-def RestartIfCharacterDoesNotHaveSpecialEffect(character: CharacterInt, special_effect: int):
+def RestartIfCharacterDoesNotHaveSpecialEffect(character: CharacterTyping, special_effect: int):
     return TerminateIfCharacterSpecialEffectState(EventEndType.Restart, character, special_effect, False)
 
 
@@ -1655,7 +1656,7 @@ def RestartIfPlayerDoesNotHaveSpecialEffect(special_effect: int):
 
 def SkipLinesIfCharacterSpecialEffectState(
     line_count: int,
-    character: CharacterInt,
+    character: CharacterTyping,
     special_effect: int,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
@@ -1667,11 +1668,11 @@ def SkipLinesIfCharacterSpecialEffectState(
     )
 
 
-def SkipLinesIfCharacterHasSpecialEffect(line_count: int, character: CharacterInt, special_effect: int):
+def SkipLinesIfCharacterHasSpecialEffect(line_count: int, character: CharacterTyping, special_effect: int):
     return SkipLinesIfCharacterSpecialEffectState(line_count, character, special_effect, True)
 
 
-def SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count: int, character: CharacterInt, special_effect: int):
+def SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count: int, character: CharacterTyping, special_effect: int):
     return SkipLinesIfCharacterSpecialEffectState(line_count, character, special_effect, False)
 
 
@@ -1684,64 +1685,64 @@ def SkipLinesIfPlayerDoesNotHaveSpecialEffect(line_count: int, special_effect: i
 
 
 def GotoIfCharacterRegionState(
-    label: Label, state: bool, character: CharacterInt, region: RegionInt, min_target_count: int = 1
+    label: Label, state: bool, character: CharacterTyping, region: RegionTyping, min_target_count: int = 1
 ):
     """EMEDF does not have the final new argument listed (it's the same as the other region/distance checks)."""
     instruction_info = (1003, 200)
     return to_numeric(instruction_info, label, state, character, region, min_target_count)
 
 
-def GotoIfCharacterInsideRegion(label: Label, character: CharacterInt, region: RegionInt):
+def GotoIfCharacterInsideRegion(label: Label, character: CharacterTyping, region: RegionTyping):
     return GotoIfCharacterRegionState(label, True, character, region)
 
 
-def GotoIfCharacterOutsideRegion(label: Label, character: CharacterInt, region: RegionInt):
+def GotoIfCharacterOutsideRegion(label: Label, character: CharacterTyping, region: RegionTyping):
     return GotoIfCharacterRegionState(label, False, character, region)
 
 
 def TerminateIfCharacterRegionState(
-    event_end_type: EventEndType, state: bool, character: CharacterInt, region: RegionInt, min_target_count: int = 1
+    event_end_type: EventEndType, state: bool, character: CharacterTyping, region: RegionTyping, min_target_count: int = 1
 ):
     instruction_info = (1003, 201)
     return to_numeric(instruction_info, event_end_type, state, character, region, min_target_count)
 
 
-def EndIfCharacterRegionState(state: bool, character: CharacterInt, region: RegionInt):
+def EndIfCharacterRegionState(state: bool, character: CharacterTyping, region: RegionTyping):
     return TerminateIfCharacterRegionState(EventEndType.End, state, character, region)
 
 
-def EndIfCharacterInsideRegion(character: CharacterInt, region: RegionInt):
+def EndIfCharacterInsideRegion(character: CharacterTyping, region: RegionTyping):
     return TerminateIfCharacterRegionState(EventEndType.End, True, character, region)
 
 
-def EndIfCharacterOutsideRegion(character: CharacterInt, region: RegionInt):
+def EndIfCharacterOutsideRegion(character: CharacterTyping, region: RegionTyping):
     return TerminateIfCharacterRegionState(EventEndType.End, False, character, region)
 
 
-def RestartIfCharacterRegionState(state: bool, character: CharacterInt, region: RegionInt):
+def RestartIfCharacterRegionState(state: bool, character: CharacterTyping, region: RegionTyping):
     return TerminateIfCharacterRegionState(EventEndType.Restart, state, character, region)
 
 
-def RestartIfCharacterInsideRegion(character: CharacterInt, region: RegionInt):
+def RestartIfCharacterInsideRegion(character: CharacterTyping, region: RegionTyping):
     return TerminateIfCharacterRegionState(EventEndType.Restart, True, character, region)
 
 
-def RestartIfCharacterOutsideRegion(character: CharacterInt, region: RegionInt):
+def RestartIfCharacterOutsideRegion(character: CharacterTyping, region: RegionTyping):
     return TerminateIfCharacterRegionState(EventEndType.Restart, False, character, region)
 
 
 def SkipLinesIfCharacterRegionState(
-    line_count: int, state: bool, character: CharacterInt, region: RegionInt, min_target_count: int = 1
+    line_count: int, state: bool, character: CharacterTyping, region: RegionTyping, min_target_count: int = 1
 ):
     instruction_info = (1003, 202)
     return to_numeric(instruction_info, line_count, state, character, region, min_target_count)
 
 
-def SkipLinesIfCharacterInsideRegion(line_count: int, character: CharacterInt, region: RegionInt):
+def SkipLinesIfCharacterInsideRegion(line_count: int, character: CharacterTyping, region: RegionTyping):
     return SkipLinesIfCharacterRegionState(line_count, True, character, region)
 
 
-def SkipLinesIfCharacterOutsideRegion(line_count: int, character: CharacterInt, region: RegionInt):
+def SkipLinesIfCharacterOutsideRegion(line_count: int, character: CharacterTyping, region: RegionTyping):
     return SkipLinesIfCharacterRegionState(line_count, False, character, region)
 
 
@@ -1756,7 +1757,7 @@ def GotoIfHollowArenaMatchType(label: Label, match_type: HollowArenaMatchType):
 
 def SkipLinesIfObjectDestructionState(
     line_count,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1766,17 +1767,17 @@ def SkipLinesIfObjectDestructionState(
     return to_numeric(instruction_info, line_count, state, obj, target_comparison_type, target_count)
 
 
-def SkipLinesIfObjectDestroyed(line_count, obj: ObjectInt):
+def SkipLinesIfObjectDestroyed(line_count, obj: ObjectTyping):
     return SkipLinesIfObjectDestructionState(line_count, obj, True)
 
 
-def SkipLinesIfObjectNotDestroyed(line_count, obj: ObjectInt):
+def SkipLinesIfObjectNotDestroyed(line_count, obj: ObjectTyping):
     return SkipLinesIfObjectDestructionState(line_count, obj, False)
 
 
 def TerminateIfObjectDestructionState(
     event_end_type: EventEndType,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1785,25 +1786,25 @@ def TerminateIfObjectDestructionState(
     return to_numeric(instruction_info, event_end_type, state, obj, target_comparison_type, target_count)
 
 
-def EndIfObjectDestroyed(obj: ObjectInt):
+def EndIfObjectDestroyed(obj: ObjectTyping):
     return TerminateIfObjectDestructionState(EventEndType.End, obj, True)
 
 
-def EndIfObjectNotDestroyed(obj: ObjectInt):
+def EndIfObjectNotDestroyed(obj: ObjectTyping):
     return TerminateIfObjectDestructionState(EventEndType.End, obj, False)
 
 
-def RestartIfObjectDestroyed(obj: ObjectInt):
+def RestartIfObjectDestroyed(obj: ObjectTyping):
     return TerminateIfObjectDestructionState(EventEndType.Restart, obj, True)
 
 
-def RestartIfObjectNotDestroyed(obj: ObjectInt):
+def RestartIfObjectNotDestroyed(obj: ObjectTyping):
     return TerminateIfObjectDestructionState(EventEndType.Restart, obj, False)
 
 
 def GotoIfObjectDestructionState(
     label: Label,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     state: bool,
     target_comparison_type: ComparisonType = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -1813,11 +1814,11 @@ def GotoIfObjectDestructionState(
     return to_numeric(instruction_info, label, state, obj, target_comparison_type, target_count)
 
 
-def GotoIfObjectDestroyed(label: Label, obj: ObjectInt):
+def GotoIfObjectDestroyed(label: Label, obj: ObjectTyping):
     return GotoIfObjectDestructionState(label, obj, True)
 
 
-def GotoIfObjectNotDestroyed(label: Label, obj: ObjectInt):
+def GotoIfObjectNotDestroyed(label: Label, obj: ObjectTyping):
     return GotoIfObjectDestructionState(label, obj, False)
 
 
@@ -1838,8 +1839,8 @@ def DefineLabel(label: Union[Label, int]):
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
     cutscene_type: CutsceneType,
-    region: RegionInt,
-    game_map: MapOrSequence,
+    region: RegionTyping,
+    game_map: MapTyping,
     player_id: int,
     time_period_id: int,
 ):
@@ -1860,7 +1861,7 @@ def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, pla
     return to_numeric(instruction_info, cutscene, cutscene_type, player_id, time_period_id)
 
 
-def PlayCutsceneAndMovePlayer_Dummy(region: RegionInt, game_map: MapOrSequence):
+def PlayCutsceneAndMovePlayer_Dummy(region: RegionTyping, game_map: MapTyping):
     """Likely not used, doesn't even take a cutscene ID argument."""
     instruction_info = (2002, 8, [0, 0, 0])
     area_id, block_id = tuple(game_map)
@@ -1872,8 +1873,8 @@ def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     cutscene_type: CutsceneType,
     ceremony_id: int,
     unknown: int,
-    region: RegionInt,
-    game_map: MapOrSequence,
+    region: RegionTyping,
+    game_map: MapTyping,
     player_id: int,
 ):
     """I assume that this must be a map that is already loaded, like in DS1, but possibly not.
@@ -1897,8 +1898,8 @@ def PlayCutsceneAndSetMapCeremony(
 def PlayCutsceneAndMovePlayer_WithUnknowns(
     cutscene: int,
     cutscene_type: CutsceneType,
-    region: RegionInt,
-    game_map: MapOrSequence,
+    region: RegionTyping,
+    game_map: MapTyping,
     player_id: int,
     unknown1: int,
     unknown2: int,
@@ -1914,10 +1915,10 @@ def PlayCutsceneAndMovePlayer_WithUnknowns(
 def PlayCutsceneAndMovePlayer_WithSecondRegion(
     cutscene: int,
     cutscene_type: CutsceneType,
-    region: RegionInt,
-    game_map: MapOrSequence,
+    region: RegionTyping,
+    game_map: MapTyping,
     player_id: int,
-    other_region: RegionInt,
+    other_region: RegionTyping,
 ):
     """Takes a second Region argument with unknown purpose."""
     instruction_info = (2002, 12, [0, 0, 0, 0, 0, 0, 0])
@@ -1928,7 +1929,7 @@ def PlayCutsceneAndMovePlayer_WithSecondRegion(
 # 2003: EVENT
 
 
-def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, state: bool):
+def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slot, state: bool):
     """Argument order changed.
 
     Note: slot number can be 0-2 in DS3.
@@ -1939,12 +1940,12 @@ def SetBossHealthBarState(character: CharacterInt, name: EventTextInt, slot, sta
     return to_numeric(instruction_info, state, character, slot, name)
 
 
-def EnableBossHealthBar(character: CharacterInt, name: EventTextInt, slot=0):
+def EnableBossHealthBar(character: CharacterTyping, name: EventTextTyping, slot=0):
     """The character's health bar will appear at the bottom of the screen, with a name."""
     return SetBossHealthBarState(character, name, slot, True)
 
 
-def DisableBossHealthBar(character: CharacterInt, name: EventTextInt = 0, slot=0):
+def DisableBossHealthBar(character: CharacterTyping, name: EventTextTyping = 0, slot=0):
     """The character's health bar will disappear from the bottom of the screen.
 
     TODO: Confirm the below is still true in DS3 (disabling one disables all).
@@ -1960,7 +1961,7 @@ def HandleMinibossDefeat(miniboss_id: int):
 
 
 def ForceAnimation(
-    entity: AnimatedInt,
+    entity: AnimatedTyping,
     animation_id: int,
     loop: bool = False,
     wait_for_completion: bool = False,
@@ -2002,13 +2003,13 @@ def EventValueOperation(
     )
 
 
-def StoreItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemInt, flag: FlagInt, bit_count: int):
+def StoreItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemTyping, flag: FlagInt, bit_count: int):
     """Stores some amount of items read from a flag array."""
     instruction_info = (2003, 42)
     return to_numeric(instruction_info, item_type, item, flag, bit_count)
 
 
-def GivePlayerItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemInt, flag: FlagInt, bit_count: int):
+def GivePlayerItemAmountSpecifiedByFlagValue(item_type: ItemType, item: ItemTyping, flag: FlagInt, bit_count: int):
     """Gives player some amount of items read from a flag array. Probably used when taking items out of storage
     (i.e. the reverse of the above instruction)."""
     instruction_info = (2003, 43)
@@ -2029,16 +2030,16 @@ def DisableDirectionDisplay():
     return SetDirectionDisplayState(False)
 
 
-def SetMapHitGridCorrespondence(collision: CollisionInt, level: int, grid_coord_x: int, grid_coord_y: int, state: bool):
+def SetMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int, state: bool):
     instruction_info = (2003, 45)
     return to_numeric(instruction_info, collision, level, grid_coord_x, grid_coord_y, state)
 
 
-def EnableMapHitGridCorrespondence(collision: CollisionInt, level: int, grid_coord_x: int, grid_coord_y: int):
+def EnableMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int):
     return SetMapHitGridCorrespondence(collision, level, grid_coord_x, grid_coord_y, True)
 
 
-def DisableMapHitGridCorrespondence(collision: CollisionInt, level: int, grid_coord_x: int, grid_coord_y: int):
+def DisableMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int):
     return SetMapHitGridCorrespondence(collision, level, grid_coord_x, grid_coord_y, False)
 
 
@@ -2052,7 +2053,7 @@ def SetMapBoundariesDisplay(hierarchy: int, grid_coord_x: int, grid_coord_y: int
     return to_numeric(instruction_info, hierarchy, grid_coord_x, grid_coord_y, state)
 
 
-def SetAreaWind(region: RegionInt, state: bool, duration: float, wind_parameter_id: int):
+def SetAreaWind(region: RegionTyping, state: bool, duration: float, wind_parameter_id: int):
     instruction_info = (2003, 48)
     return to_numeric(instruction_info, region, state, duration, wind_parameter_id)
 
@@ -2069,8 +2070,8 @@ def StartEnemySpawner(spawner_id: int):
 
 def SummonNPC(
     sign_type: Union[SingleplayerSummonSignType, int],
-    character: CharacterInt,
-    region: RegionInt,
+    character: CharacterTyping,
+    region: RegionTyping,
     summon_flag: FlagInt,
     dismissal_flag: FlagInt,
 ):
@@ -2083,7 +2084,7 @@ def InitializeWarpObject(warp_object_id: int):
     return to_numeric(instruction_info, warp_object_id)
 
 
-def MakeEnemyAppear(character: CharacterInt):
+def MakeEnemyAppear(character: CharacterTyping):
     instruction_info = (2003, 54)
     return to_numeric(instruction_info, character)
 
@@ -2093,13 +2094,13 @@ def SetCurrentMapCeremony(ceremony_id: int):
     return to_numeric(instruction_info, ceremony_id)
 
 
-def SetMapCeremony(game_map: MapOrSequence, ceremony_id: int):
+def SetMapCeremony(game_map: MapTyping, ceremony_id: int):
     instruction_info = (2003, 59)
     area_id, block_id = tuple(game_map)
     return to_numeric(instruction_info, area_id, block_id, ceremony_id)
 
 
-def DisplayEpitaphMessage(message: EventTextInt):
+def DisplayEpitaphMessage(message: EventTextTyping):
     instruction_info = (2003, 61)
     return to_numeric(instruction_info, message)
 
@@ -2109,7 +2110,7 @@ def SetNetworkConnectedFlagState(flag: FlagInt, state: FlagState):
     return to_numeric(instruction_info, flag, state)
 
 
-def SetNetworkConnectedFlagRangeState(flag_range: FlagRangeOrSequence, state: RangeState):
+def SetNetworkConnectedFlagRangeState(flag_range: FlagRangeTyping, state: RangeState):
     instruction_info = (2003, 63)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, first_flag, last_flag, state)
@@ -2127,8 +2128,8 @@ def ResetOmissionModeCountsToDefault():
 
 def InitializeCrowTrade(
     item_type: ItemType,
-    item_id: ItemInt,
-    item_lot_id: ItemLotInt,
+    item_id: ItemTyping,
+    item_lot_id: ItemLotTyping,
     trade_completed_flag: FlagInt,
     crow_response_flag: FlagInt,
 ):
@@ -2136,7 +2137,7 @@ def InitializeCrowTrade(
     return to_numeric(instruction_info, item_type, item_id, item_lot_id, trade_completed_flag, crow_response_flag)
 
 
-def InitializeCrowTradeRegion(region: RegionInt):
+def InitializeCrowTradeRegion(region: RegionTyping):
     instruction_info = (2003, 67)
     return to_numeric(instruction_info, region)
 
@@ -2159,17 +2160,17 @@ def DisableHUDVisibility():
     return SetHUDVisibility(True)
 
 
-def SetBonfireWarpingState(bonfire: ObjectInt, animation: int, state: bool):
+def SetBonfireWarpingState(bonfire: ObjectTyping, animation: int, state: bool):
     """I assume the bonfire entity should be the object."""
     instruction_info = (2003, 72)
     return to_numeric(instruction_info, bonfire, animation, state)
 
 
-def EnableBonfireWarping(bonfire: ObjectInt, animation: int):
+def EnableBonfireWarping(bonfire: ObjectTyping, animation: int):
     return SetBonfireWarpingState(bonfire, animation, True)
 
 
-def DisableBonfireWarping(bonfire: ObjectInt, animation: int):
+def DisableBonfireWarping(bonfire: ObjectTyping, animation: int):
     return SetBonfireWarpingState(bonfire, animation, False)
 
 
@@ -2211,7 +2212,7 @@ def AwardGestureItem(gesture_id: int, item_type: ItemType, item_id: int):
     return to_numeric(instruction_info, gesture_id, item_type, item_id)
 
 
-def SendNPCSummonHome(character: CharacterInt):
+def SendNPCSummonHome(character: CharacterTyping):
     """Identical to Bloodborne version, but with different index."""
     instruction_info = (2003, 78, [-1])
     return to_numeric(instruction_info, character)
@@ -2223,7 +2224,7 @@ def Unknown_2003_79(unknown1: int):
 
 
 def SetDecoratedBossHealthBarState(
-    state: bool, character: CharacterInt, slot: int, name: EventTextInt, decoration: int
+    state: bool, character: CharacterTyping, slot: int, name: EventTextTyping, decoration: int
 ):
     """Pretty cool; not sure when this is used in the vanilla game or what decorations are available (apparently 255).
     As in Bloodborne, slot must be from 0 to 2."""
@@ -2233,16 +2234,16 @@ def SetDecoratedBossHealthBarState(
     return to_numeric(instruction_info, state, character, slot, name, decoration)
 
 
-def EnableDecoratedBossHealthBar(character: CharacterInt, slot: int, name: EventTextInt, decoration: int):
+def EnableDecoratedBossHealthBar(character: CharacterTyping, slot: int, name: EventTextTyping, decoration: int):
     return SetDecoratedBossHealthBarState(True, character, slot, name, decoration)
 
 
-def DisableDecoratedBossHealthBar(character: CharacterInt, slot: int, name: EventTextInt, decoration: int):
+def DisableDecoratedBossHealthBar(character: CharacterTyping, slot: int, name: EventTextTyping, decoration: int):
     return SetDecoratedBossHealthBarState(False, character, slot, name, decoration)
 
 
 def PlaceNPCSummonSign_WithoutEmber(
-    sign_type: SummonSignType, character: CharacterInt, region: RegionInt, summon_flag: FlagInt, dismissal_flag: FlagInt
+    sign_type: SummonSignType, character: CharacterTyping, region: RegionTyping, summon_flag: FlagInt, dismissal_flag: FlagInt
 ):
     instruction_info = (2003, 81)
     return to_numeric(instruction_info, sign_type, character, region, summon_flag, dismissal_flag)
@@ -2251,7 +2252,7 @@ def PlaceNPCSummonSign_WithoutEmber(
 # 2004: CHARACTER
 
 
-def AddSpecialEffect(character: CharacterInt, special_effect_id: int):
+def AddSpecialEffect(character: CharacterTyping, special_effect_id: int):
     """'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
     nothing if the character already has the special effect active (i.e. they do not stack or even reset timers).
 
@@ -2262,7 +2263,7 @@ def AddSpecialEffect(character: CharacterInt, special_effect_id: int):
 
 
 def RotateToFaceEntity(
-    character: CharacterInt, target_entity: CoordEntityInt, animation: int, wait_for_completion: bool = False
+    character: CharacterTyping, target_entity: CoordEntityTyping, animation: int, wait_for_completion: bool = False
 ):
     """Rotate a character to face a target map entity of any type.
     WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at least.)
@@ -2274,28 +2275,28 @@ def RotateToFaceEntity(
     return to_numeric(instruction_info, character, target_entity, animation, wait_for_completion)
 
 
-def ChangeCharacterCloth(character: CharacterInt, bit_count: int, state_id: int):
+def ChangeCharacterCloth(character: CharacterTyping, bit_count: int, state_id: int):
     instruction_info = (2004, 48, [0, 0, 0])
     return to_numeric(instruction_info, character, bit_count, state_id)
 
 
-def ChangePatrolBehavior(character: CharacterInt, patrol_information_id: int):
+def ChangePatrolBehavior(character: CharacterTyping, patrol_information_id: int):
     """I don't know what a 'patrol_information_id' actually is."""
     instruction_info = (2004, 49, [0, 0])
     return to_numeric(instruction_info, character, patrol_information_id)
 
 
-def SetLockOnPoint(character: CharacterInt, lock_on_model_point: int, state: bool):
+def SetLockOnPoint(character: CharacterTyping, lock_on_model_point: int, state: bool):
     """Presumably changes the point that is locked on to by the player."""
     instruction_info = (2004, 50)
     return to_numeric(instruction_info, character, lock_on_model_point, state)
 
 
 def Test_RequestRagdollRestraint(
-    recipient_character: CharacterInt,
+    recipient_character: CharacterTyping,
     recipient_target_rigid_index: int,
     recipient_model_point: int,
-    attachment_character: CharacterInt,
+    attachment_character: CharacterTyping,
     attachment_target_rigid_index: int,
     attachment_model_point: int,
 ):
@@ -2317,35 +2318,35 @@ def ChangePlayerCharacterInitParam(character_init_param: int):
     return to_numeric(instruction_info, character_init_param)
 
 
-def AdaptSpecialEffectHealthChangeToNPCPart(character: CharacterInt):
+def AdaptSpecialEffectHealthChangeToNPCPart(character: CharacterTyping):
     instruction_info = (2004, 53, [-1])
     return to_numeric(instruction_info, character)
 
 
-def ImmediateActivate(character: CharacterInt, state: bool):
+def ImmediateActivate(character: CharacterTyping, state: bool):
     """Not sure. Sets draw state *really* quickly?"""
     instruction_info = (2004, 54)
     return to_numeric(instruction_info, character, state)
 
 
-def SetCharacterTalkRange(character: CharacterInt, distance: float):
+def SetCharacterTalkRange(character: CharacterTyping, distance: float):
     instruction_info = (2004, 55)
     return to_numeric(instruction_info, character, distance)
 
 
-def IncrementCharacterNewGameCycle(character: CharacterInt):
+def IncrementCharacterNewGameCycle(character: CharacterTyping):
     """Interesting - apparently you can increase the NG+ level of a specific character. (No reset function, but it
     would probably reset on map reload.)"""
     instruction_info = (2004, 57)
     return to_numeric(instruction_info, character)
 
 
-def SetMultiplayerBuffs_NonBoss(character: CharacterInt, state: bool):
+def SetMultiplayerBuffs_NonBoss(character: CharacterTyping, state: bool):
     instruction_info = (2004, 58)
     return to_numeric(instruction_info, character, state)
 
 
-def Unknown_2004_59(character: CharacterInt, state: bool):
+def Unknown_2004_59(character: CharacterTyping, state: bool):
     """Examine usage."""
     instruction_info = (2004, 59)
     return to_numeric(instruction_info, character, state)
@@ -2364,12 +2365,12 @@ def ExtinguishBurningObjects():
     return to_numeric(instruction_info)
 
 
-def ShowObjectByMapCeremony(obj: ObjectInt, ceremony_id: int, unknown: int):
+def ShowObjectByMapCeremony(obj: ObjectTyping, ceremony_id: int, unknown: int):
     instruction_info = (2005, 17)
     return to_numeric(instruction_info, obj, ceremony_id, unknown)
 
 
-def DestroyObject_NoSlot(obj: ObjectInt):
+def DestroyObject_NoSlot(obj: ObjectTyping):
     """No 'slot' argument here."""
     instruction_info = (2005, 19)
     return to_numeric(instruction_info, obj)
@@ -2379,10 +2380,10 @@ def DestroyObject_NoSlot(obj: ObjectInt):
 
 
 def DisplayDialogAndSetFlags(
-    message: EventTextInt,
+    message: EventTextTyping,
     button_type: ButtonType,
     number_buttons: NumberButtons,
-    anchor_entity: CoordEntityInt,
+    anchor_entity: CoordEntityTyping,
     display_distance: float,
     left_flag: FlagInt,
     right_flag: FlagInt,
@@ -2403,13 +2404,13 @@ def DisplayDialogAndSetFlags(
     )
 
 
-def DisplayAreaWelcomeMessage(message: EventTextInt):
+def DisplayAreaWelcomeMessage(message: EventTextTyping):
     """Not sure what this looks like exactly."""
     instruction_info = (2007, 11)
     return to_numeric(instruction_info, message)
 
 
-def DisplayHollowArenaMessage(message: EventTextInt, unknown: int, pad_enabled: bool):
+def DisplayHollowArenaMessage(message: EventTextTyping, unknown: int, pad_enabled: bool):
     instruction_info = (2007, 12)
     return to_numeric(instruction_info, message, unknown, pad_enabled)
 
@@ -2419,7 +2420,7 @@ def DisplayHollowArenaMessage(message: EventTextInt, unknown: int, pad_enabled: 
 
 def RegisterHealingFountain(
     flag: FlagInt,
-    obj: ObjectInt,
+    obj: ObjectTyping,
     reaction_distance: float,
     reaction_angle: float,
     initial_sword_number: int,
@@ -2489,13 +2490,13 @@ def Unknown_2010_07(entity: int):
 # 2011: Collision
 
 
-def SetCollisionResState(collision: CollisionInt, state: bool):
+def SetCollisionResState(collision: CollisionTyping, state: bool):
     """No idea what this is."""
     instruction_info = (2011, 3, [-1, 0])
     return to_numeric(instruction_info, collision, state)
 
 
-def ActivateCollisionAndCreateNavmesh(collision: CollisionInt, state: bool):
+def ActivateCollisionAndCreateNavmesh(collision: CollisionTyping, state: bool):
     instruction_info = (2011, 4)
     return to_numeric(instruction_info, collision, state)
 
@@ -2521,12 +2522,12 @@ def DisableAreaWelcomeMessage():
 # 2013: PLAY LOG
 
 
-def CreatePlayLog(name: StringOffsetInt):
+def CreatePlayLog(name: StringOffsetTyping):
     instruction_info = (2013, 1, [0])
     return to_numeric(instruction_info, name)
 
 
-def StartPlayLogMeasurement(measurement_id: int, name: StringOffsetInt, overwrite: bool):
+def StartPlayLogMeasurement(measurement_id: int, name: StringOffsetTyping, overwrite: bool):
     instruction_info = (2013, 2, [0, 0, 0])
     return to_numeric(instruction_info, measurement_id, name, overwrite)
 
@@ -2537,7 +2538,7 @@ def StopPlayLogMeasurement(measurement_id: int):
 
 
 def PlayLogParameterOutput(
-    category: PlayerPlayLogParameter, name: StringOffsetInt, output_multiplayer_state: PlayLogMultiplayerType
+    category: PlayerPlayLogParameter, name: StringOffsetTyping, output_multiplayer_state: PlayLogMultiplayerType
 ):
     instruction_info = (2013, 4, [0, 0, 0])
     return to_numeric(instruction_info, category, name, output_multiplayer_state)

@@ -7,13 +7,16 @@ import struct
 from io import BufferedReader, BytesIO
 
 from soulstruct.core import InvalidFieldValueError, SoulstructError
-from soulstruct.enums.darksouls1 import CollisionHitFilter
 from soulstruct.constants.darksouls1.maps import get_map
-from soulstruct.game_types import Map
+from soulstruct.game_types import *
+from soulstruct.enums.darksouls1 import CollisionHitFilter
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
-from soulstruct.maps.core import MSB_PART_TYPE
+from soulstruct.maps.enums import MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.maths import Vector3
+
+if tp.TYPE_CHECKING:
+    from soulstruct.game_types.msb_types import Map
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -80,68 +83,74 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             "Draw Groups",
             True,
             list,
-            "Draw groups of part. These are not yet fully understood, but they determine when the part appears.",
+            "Draw groups of part. This part will be drawn when the corresponding display group is active.",
         ),
         "display_groups": (
             "Display Groups",
             True,
             list,
-            "Display groups of part. These are not yet fully understood, but they determine when the part appears.",
+            "Display groups of part. Only functions for Collisions. These display groups will be active when the "
+            "player is standing on this Collision, which will draw any parts with an overlapping draw group.",
         ),
         "ambient_light_id": (
             "Ambient Light ID",
             True,
-            int,  # TODO: Link to Lighting.
-            "ID of Ambient Light parameter to use in this map's lighting parameters (DrawParam).",
+            AmbientLightParam,
+            "ID of Ambient Light parameter to use from this map's lighting parameters (DrawParam).",
         ),
-        "fog_id": ("Fog ID", True, int, "ID of Fog parameter to use in this map's lighting parameters (DrawParam)."),
+        "fog_id": (
+            "Fog ID",
+            True,
+            FogParam,
+            "ID of Fog parameter to use from this map's lighting parameters (DrawParam).",
+        ),
         "scattered_light_id": (
             "Scattered Light ID",
             True,
-            int,
-            "ID of Scattered Light parameter to use in this map's lighting parameters (DrawParam).",
+            ScatteredLightParam,
+            "ID of Scattered Light parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "lens_flare_id": (
             "Lens Flare ID",
             True,
-            int,
-            "ID of Lens Flare parameter (both types) to use in this map's lighting parameters (DrawParam).",
+            LensFlareParam,
+            "ID of Lens Flare parameter (both types) to use from this map's lighting parameters (DrawParam).",
         ),
         "shadow_id": (
             "Shadow ID",
             True,
-            int,
-            "ID of Shadow parameter to use in this map's lighting parameters (DrawParam).",
+            ShadowParam,
+            "ID of Shadow parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "dof_id": (
-            "DoF ID",
+            "Depth of Field ID",
             True,
-            int,
-            "ID of Depth of Field (DoF) ID parameter to use in this map's lighting parameters (DrawParam).",
+            DepthOfFieldParam,
+            "ID of Depth Of Field ID parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "tone_map_id": (
             "Tone Map ID",
             True,
-            int,
-            "ID of Tone Map parameter to use in this map's lighting parameters (DrawParam).",
+            ToneMappingParam,
+            "ID of Tone Map parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "point_light_id": (
             "Point Light ID",
             True,
-            int,
-            "ID of Point Light parameter to use in this map's lighting parameters (DrawParam).",
+            PointLightParam,
+            "ID of Point Light parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "tone_correct_id": (
             "Tone Correction ID",
             True,
-            int,
-            "ID of Tone Correction parameter to use in this map's lighting parameters (DrawParam).",
+            ToneCorrectionParam,
+            "ID of Tone Correction parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "lod_id": (
-            "LoD Param ID",
+            "LoD ID",
             False,
             int,
-            "ID of Level of Detail (LoD) parameter to use in this map's lighting parameters (DrawParam).",
+            "ID of Level of Detail (LoD) parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "is_shadow_source": ("Can Cast Shadow", True, bool, "If True, this entity will cast dynamic shadows."),
         "is_shadow_destination": (
@@ -167,7 +176,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         ),
     }
 
-    ENTRY_TYPE = None
+    ENTRY_SUBTYPE = None  # type: MSBPartSubtype
 
     def __init__(self, msb_part_source=None):
         super().__init__()
@@ -211,7 +220,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         part_offset = msb_buffer.tell()
 
         header = self.PART_HEADER_STRUCT.unpack(msb_buffer)
-        if header["__part_type"] != self.ENTRY_TYPE:
+        if header["__part_type"] != self.ENTRY_SUBTYPE:
             raise ValueError(f"Unexpected part type enum {header['part_type']} for class {self.__class__.__name__}.")
         self._model_index = header["_model_index"]
         self._part_type_index = header["_part_type_index"]
@@ -251,7 +260,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         try:
             packed_header = self.PART_HEADER_STRUCT.pack(
                 __name_offset=name_offset,
-                __part_type=self.ENTRY_TYPE,
+                __part_type=self.ENTRY_SUBTYPE,
                 _part_type_index=self._part_type_index,
                 _model_index=self._model_index,
                 __sib_path_offset=sib_path_offset,
@@ -295,7 +304,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             self.model_name = model_names[self._model_index]
         except KeyError:
             raise KeyError(
-                f"Invalid model index for {self.ENTRY_TYPE} {self.name} (entity ID {self.entity_id}): "
+                f"Invalid model index for {self.ENTRY_SUBTYPE} {self.name} (entity ID {self.entity_id}): "
                 f"{self._model_index}"
             )
 
@@ -315,7 +324,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             )
         for i in value:
             if not 0 <= i <= 127:
-                raise ValueError(f"Invalid draw group: {i}. Must range from 0 to 127, inclusive.")
+                raise InvalidFieldValueError(f"Invalid draw group: {i}. Must range from 0 to 127, inclusive.")
         self._draw_groups = set(value)
 
     @property
@@ -343,10 +352,9 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         old_offset = msb_buffer.tell()
         msb_buffer.seek(old_offset + 4)
         try:
-            part_type_int = struct.unpack("i", msb_buffer.read(4))[0]
-            part_type = MSB_PART_TYPE(part_type_int)
+            part_type = MSBPartSubtype(struct.unpack("i", msb_buffer.read(4))[0])
         except (ValueError, TypeError):
-            part_type = None
+            raise ValueError("Could not detect part subtype from MSB data.")
         msb_buffer.seek(old_offset)
         return MSB_PART_TYPE_CLASSES[part_type](msb_buffer)
 
@@ -360,13 +368,13 @@ class MSBMapPiece(BaseMSBPart):
         "model_name": (
             "Model Name",
             True,
-            "<Maps:Models:MapPieces>",
+            MapPiece,
             "Name of map piece model to use for this map piece.",
         ),
         **BaseMSBPart.FIELD_INFO,
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.MapPiece
+    ENTRY_SUBTYPE = MSBPartSubtype.MapPiece
 
 
 class MSBObject(BaseMSBPart):
@@ -385,12 +393,12 @@ class MSBObject(BaseMSBPart):
     )
 
     FIELD_INFO = {
-        "model_name": ("Model Name", True, "<Maps:Models:Objects>", "Name of object model to use for this object."),
+        "model_name": ("Model Name", True, ObjectModel, "Name of object model to use for this object."),
         **BaseMSBPart.FIELD_INFO,
         "draw_parent_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
         "break_term": ("Break Term", True, int, "Unknown. Related to object breakage."),
@@ -398,14 +406,14 @@ class MSBObject(BaseMSBPart):
         "default_animation": (
             "Default Animation ID",
             True,
-            int,
+            int,  # TODO: Animation
             "Object animation ID to auto-play on map load, e.g. for different corpse poses.",
         ),
         "unk_x0e_x10": ("Unknown [0e-10]", False, int, "Unknown."),
         "unk_x10_x14": ("Unknown [10-14]", False, int, "Unknown."),
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.Object
+    ENTRY_SUBTYPE = MSBPartSubtype.Object
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.draw_parent_name = None
@@ -469,27 +477,27 @@ class MSBCharacter(BaseMSBPart):
         "model_name": (
             "Model Name",
             True,
-            "<Maps:Models:Characters|Players>",
+            CharacterModel,
             "Name of character model to use for this character.",
         ),
         **BaseMSBPart.FIELD_INFO,
         "think_id": (
             "AI ID",
             True,
-            "<Params:AI>",
+            AIParam,
             "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used.",
         ),
         "npc_id": (
             "NPC ID",
             True,
-            "<Params:NonPlayers>",
+            CharacterParam,
             "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
             "unused.",
         ),
         "talk_id": (
             "Talk ID",
             True,
-            int,  # TODO: '<Talk>'
+            TalkScript,
             "EzState ID of character, which determines their interactions (conversations, shops, etc.). This is used "
             "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map.",
         ),
@@ -498,32 +506,32 @@ class MSBCharacter(BaseMSBPart):
         "chara_init_id": (
             "Player ID",
             True,
-            "<Params:Players>",
+            PlayerParam,
             "Contains information for 'player' (human) characters, such as their stats and equipment.",
         ),
         "draw_parent_name": (
             "Draw Parent",
             True,
-            "<Maps:Parts>",
+            MapPart,
             "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
         "patrol_point_names": (
             "Patrol Regions",
             True,
-            "<MapsList:Regions>",
+            GameObjectSequence((Region, 8)),
             "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
             "AI logic.",
         ),
         "default_animation": (
             "Default Animation",
             True,
-            int,  # TODO: '<Animation>'
+            int,  # TODO: Animation
             "Default looping animation for character.",
         ),
         "damage_animation": ("Damage Animation", True, int, "Default damage animation to use for character."),
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.Character
+    ENTRY_SUBTYPE = MSBPartSubtype.Character
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.think_id = -1
@@ -598,13 +606,13 @@ class MSBPlayerStart(BaseMSBPart):
         "model_name": (
             "Model Name",
             False,
-            "<Maps:Models:Characters|Players>",
+            Character,
             "Name of character model to use for this PlayerStart. This should always be c0000.",
         ),
         **BaseMSBPart.FIELD_INFO,
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.PlayerStart
+    ENTRY_SUBTYPE = MSBPartSubtype.PlayerStart
 
     def __init__(self, msb_part_source=None, **kwargs):
         super().__init__(msb_part_source)
@@ -619,7 +627,7 @@ class MSBCollision(BaseMSBPart):
     PART_TYPE_DATA_STRUCT = (
         ("hit_filter_id", "b"),
         ("sound_space_type", "b"),
-        ("_environment_event_index", "h"),
+        ("_light_event_index", "h"),
         ("reflect_plane_height", "f"),
         ("__navmesh_groups", "4I"),
         ("vagrant_entity_ids", "3i"),
@@ -638,22 +646,22 @@ class MSBCollision(BaseMSBPart):
         "model_name": (
             "Model Name",
             True,
-            "<Maps:Models:Collisions>",
+            Collision,
             "Name of collision model to use for this collision.",
         ),
         **BaseMSBPart.FIELD_INFO,
         "hit_filter_id": (
             "Hit Filter ID",
             True,
-            int,
+            CollisionHitFilter,
             "Determines what happens when the player activates this collision.",
         ),
         "sound_space_type": ("Sound Space Type", True, int, "Unknown."),
-        "environment_event_name": (
-            "Environment Event",
+        "light_event_name": (
+            "Linked Light Event",
             True,
-            int,
-            "Environment event in map that determines the point light source when standing on this collision.",
+            LightEvent,
+            "Light event in map that determines the point light source when standing on this collision.",
         ),
         "reflect_plane_height": ("Reflect Plane Height", True, float, "Unknown."),
         "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
@@ -661,7 +669,7 @@ class MSBCollision(BaseMSBPart):
         "area_name_id": (
             "Area Name",
             True,
-            "<Text:PlaceNames>",
+            PlaceName,
             "Name of area that this collision is in, which determines the area banner that is shown when you step on "
             "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
             "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY').",
@@ -722,24 +730,24 @@ class MSBCollision(BaseMSBPart):
         "lock_cam_param_id_1": (
             "Camera Param ID 1",
             True,
-            "<Params:Cameras>",
+            CameraParam,
             "First camera ID to use on this collision. Unsure how the two slots differ.",
         ),
         "lock_cam_param_id_2": (
             "Camera Param ID 2",
             True,
-            "<Params:Cameras>",
+            CameraParam,
             "Second camera ID to use on this collision. Unsure how the two slots differ.",
         ),
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.Collision
+    ENTRY_SUBTYPE = MSBPartSubtype.Collision
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.hit_filter_id = CollisionHitFilter.Normal
         self.sound_space_type = 0
-        self._environment_event_index = None
-        self.environment_event_name = None
+        self._light_event_index = None
+        self.light_event_name = None
         self.reflect_plane_height = 0.0
         self._navmesh_groups = set(range(128))
         self.vagrant_entity_ids = [-1, -1, -1]
@@ -784,7 +792,7 @@ class MSBCollision(BaseMSBPart):
         return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
             hit_filter_id=self.hit_filter_id,
             sound_space_type=self.sound_space_type,
-            _environment_event_index=self._environment_event_index,
+            _light_event_index=self._light_event_index,
             reflect_plane_height=self.reflect_plane_height,
             __navmesh_groups=navmesh_groups,
             vagrant_entity_ids=self.vagrant_entity_ids,
@@ -875,10 +883,10 @@ class MSBCollision(BaseMSBPart):
             part_indices,
             local_collision_indices,
         )
-        if self.environment_event_name:
-            self._environment_event_index = local_environment_indices[self.environment_event_name]
+        if self.light_event_name:
+            self._light_event_index = local_environment_indices[self.light_event_name]
         else:
-            self._environment_event_index = -1
+            self._light_event_index = -1
 
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
@@ -886,16 +894,16 @@ class MSBCollision(BaseMSBPart):
         super().set_names(
             model_names, environment_names, region_names, part_names, collision_names,
         )
-        if self._environment_event_index != -1:
+        if self._light_event_index != -1:
             try:
-                self.environment_event_name = environment_names[self._environment_event_index]
+                self.light_event_name = environment_names[self._light_event_index]
             except IndexError:
                 for i, env in enumerate(environment_names):
                     print(i, env)
-                print(self._environment_event_index)
-                self.environment_event_name = f"BROKEN ({self._environment_event_index})"
+                print(self._light_event_index)
+                self.light_event_name = f"BROKEN ({self._light_event_index})"
         else:
-            self.environment_event_name = None
+            self.light_event_name = None
 
 
 class MSBNavmesh(BaseMSBPart):
@@ -907,13 +915,12 @@ class MSBNavmesh(BaseMSBPart):
     )
 
     FIELD_INFO = {
-        "model_name": ("Model Name", True, "<Maps:Models:Navmeshes>", "Name of navmesh model to use for this navmesh."),
+        "model_name": ("Model Name", True, NavmeshModel, "Name of navmesh model to use for this navmesh."),
         **BaseMSBPart.FIELD_INFO,
         "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.Navmesh
-    WORLD_ROTATION = True
+    ENTRY_SUBTYPE = MSBPartSubtype.Navmesh
 
     def __init__(self, msb_part_source=None, **kwargs):
         self._navmesh_groups = set(range(128))
@@ -952,14 +959,12 @@ class MSBNavmesh(BaseMSBPart):
 
 class MSBUnusedObject(MSBObject):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
-
-    ENTRY_TYPE = MSB_PART_TYPE.UnusedObject
+    ENTRY_SUBTYPE = MSBPartSubtype.UnusedObject
 
 
 class MSBUnusedCharacter(MSBCharacter):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
-
-    ENTRY_TYPE = MSB_PART_TYPE.UnusedCharacter
+    ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
 
 
 class MSBMapLoadTrigger(BaseMSBPart):
@@ -982,26 +987,25 @@ class MSBMapLoadTrigger(BaseMSBPart):
         "model_name": (
             "Collision Model Name",
             True,
-            "<Maps:Models:Collisions>",
+            CollisionModel,
             "Name of collision model to use for this map load trigger.",
         ),
         **BaseMSBPart.FIELD_INFO,
         "collision_name": (
             "Collision Part Name",
             True,
-            "<Maps:Parts:Collisions>",
+            Collision,
             "Collision part that triggers this map load.",
         ),
         "connected_map": (
             "Map ID",
             True,
-            str,
+            Map,
             "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
         ),
     }
 
-    ENTRY_TYPE = MSB_PART_TYPE.MapLoadTrigger
-    WORLD_ROTATION = True
+    ENTRY_SUBTYPE = MSBPartSubtype.MapLoadTrigger
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.collision_name = None
@@ -1015,7 +1019,7 @@ class MSBMapLoadTrigger(BaseMSBPart):
         self.collision_name = None
         self._collision_index = data["collision_index"]
         area_id, block_id, _, _ = data["map_id"]
-        self._connected_map = Map(area_id=area_id, block_id=block_id)
+        self._connected_map = get_map(area_id, block_id)
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_MAP_LOAD_TRIGGER_STRUCT).pack(
@@ -1060,15 +1064,15 @@ class MSBMapLoadTrigger(BaseMSBPart):
 
 
 MSB_PART_TYPE_CLASSES = {
-    MSB_PART_TYPE.MapPiece: MSBMapPiece,
-    MSB_PART_TYPE.Object: MSBObject,
-    MSB_PART_TYPE.Character: MSBCharacter,
-    MSB_PART_TYPE.PlayerStart: MSBPlayerStart,
-    MSB_PART_TYPE.Collision: MSBCollision,
-    MSB_PART_TYPE.Navmesh: MSBNavmesh,
-    MSB_PART_TYPE.UnusedObject: MSBUnusedObject,
-    MSB_PART_TYPE.UnusedCharacter: MSBUnusedCharacter,
-    MSB_PART_TYPE.MapLoadTrigger: MSBMapLoadTrigger,
+    MSBPartSubtype.MapPiece: MSBMapPiece,
+    MSBPartSubtype.Object: MSBObject,
+    MSBPartSubtype.Character: MSBCharacter,
+    MSBPartSubtype.PlayerStart: MSBPlayerStart,
+    MSBPartSubtype.Collision: MSBCollision,
+    MSBPartSubtype.Navmesh: MSBNavmesh,
+    MSBPartSubtype.UnusedObject: MSBUnusedObject,
+    MSBPartSubtype.UnusedCharacter: MSBUnusedCharacter,
+    MSBPartSubtype.MapLoadTrigger: MSBMapLoadTrigger,
 }
 
 
@@ -1103,7 +1107,7 @@ def _enabled_flag_set_to_flag_group(enabled_flags):
 class MSBPartList(MSBEntryList[BaseMSBPart]):
     ENTRY_LIST_NAME = "Parts"
     ENTRY_CLASS = staticmethod(MSBPart)
-    ENTRY_TYPE_ENUM = MSB_PART_TYPE
+    ENTRY_SUBTYPE_ENUM = MSBPartSubtype
 
     _entries: tp.List[BaseMSBPart]
 
@@ -1143,7 +1147,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             map_load_trigger.draw_groups = draw_groups
         if display_groups is not None:
             map_load_trigger.display_groups = display_groups
-        self.add_entry(map_load_trigger, append_to_entry_type="MapLoadTrigger")
+        self.add_entry(map_load_trigger, append_to_entry_subtype="MapLoadTrigger")
         return map_load_trigger
 
     def create_c1000(self, name, translate, rotate, **kwargs) -> MSBCharacter:
@@ -1155,7 +1159,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             model_name="c1000",
             **kwargs,
         )
-        self.add_entry(character, append_to_entry_type="Character")
+        self.add_entry(character, append_to_entry_subtype="Character")
         return character
 
     def create_player_start(self, name, translate, rotate, **kwargs) -> MSBPlayerStart:
@@ -1165,7 +1169,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             rotate=rotate,
             **kwargs,
         )
-        self.add_entry(player_start, append_to_entry_type="PlayerStart")
+        self.add_entry(player_start, append_to_entry_subtype="PlayerStart")
         return player_start
 
     def set_indices(
@@ -1177,15 +1181,17 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
         ObjAct Events seem to break when the local object index is changed. It's possible this was just an idiosyncrasy
         of Wulf's MSB Editor. Either way, this method should ensure the global and local indices are consistent.
 
-        Note that cutscene files (remo) access Parts by index as well.
+        Remember that Navmesh indices are hard-coded into MCP and MCG files. Also note that cutscene files (remo) access
+        MSB parts by index as well, which is why map mods tend to break them so often.
 
-        `local_collision_indices` are needed for Map Load Triggers. No other MSB entry type requires local indices.
+        `local_environment_indices` are needed for Collisions and `local_collision_indices` are needed for Map Load
+        Triggers. No other MSB entry type requires local subtype indices.
         """
         type_indices = {}
         for entry in self._entries:
             try:
                 entry.set_indices(
-                    part_type_index=type_indices.setdefault(entry.ENTRY_TYPE, 0),
+                    part_type_index=type_indices.setdefault(entry.ENTRY_SUBTYPE, 0),
                     model_indices=model_indices,
                     local_environment_indices=local_environment_indices,
                     region_indices=region_indices,
@@ -1193,9 +1199,11 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
                     local_collision_indices=local_collision_indices,
                 )
             except KeyError as e:
-                raise SoulstructError(f"Invalid map component name for {entry.ENTRY_TYPE.name} part {entry.name}: {e}")
+                raise SoulstructError(
+                    f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} part {entry.name}: {e}"
+                )
             else:
-                type_indices[entry.ENTRY_TYPE] += 1
+                type_indices[entry.ENTRY_SUBTYPE] += 1
 
     def set_names(
         self, model_names, environment_names, region_names, part_names, collision_names,

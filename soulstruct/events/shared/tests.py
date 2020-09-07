@@ -232,12 +232,12 @@ def FramesElapsed(elapsed_frames, condition):
 
 
 @negate_only
-def CharacterInsideRegion(entity: AnimatedInt, region: Region, condition, negate=False):
+def CharacterInsideRegion(entity: AnimatedTyping, region: Region, condition, negate=False):
     return instr.IfCharacterRegionState(condition, entity, region, not negate)
 
 
 @negate_only
-def CharacterOutsideRegion(entity: AnimatedInt, region: Region, condition, negate=False):
+def CharacterOutsideRegion(entity: AnimatedTyping, region: Region, condition, negate=False):
     return instr.IfCharacterRegionState(condition, entity, region, negate)
 
 
@@ -263,7 +263,7 @@ def AllPlayersOutsideRegion(region: Region, condition, negate=False):
 
 @skip_and_negate_and_terminate
 def InsideMap(
-    game_map: MapOrSequence, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False
+    game_map: MapTyping, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False
 ):
     if skip_lines > 0:
         return instr.SkipLinesIfMapPresenceState(skip_lines, negate, game_map)
@@ -276,7 +276,7 @@ def InsideMap(
 
 @skip_and_negate_and_terminate
 def OutsideMap(
-    game_map: MapOrSequence, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False
+    game_map: MapTyping, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False
 ):
     if skip_lines > 0:
         return instr.SkipLinesIfMapPresenceState(skip_lines, not negate, game_map)
@@ -288,58 +288,70 @@ def OutsideMap(
 
 
 @negate_only
-def EntityWithinDistance(first_entity: CoordEntity, second_entity: CoordEntity, max_distance, condition, negate=False):
+def EntityWithinDistance(
+    first_entity: CoordEntityTyping,
+    second_entity: CoordEntityTyping,
+    max_distance,
+    condition,
+    negate=False,
+):
     return instr.IfEntityDistanceState(condition, first_entity, second_entity, max_distance, not negate)
 
 
 @negate_only
-def EntityBeyondDistance(first_entity: CoordEntity, second_entity: CoordEntity, min_distance, condition, negate=False):
+def EntityBeyondDistance(
+    first_entity: CoordEntityTyping,
+    second_entity: CoordEntityTyping,
+    min_distance,
+    condition,
+    negate=False,
+):
     return instr.IfEntityDistanceState(condition, first_entity, second_entity, min_distance, negate)
 
 
 @negate_only
-def PlayerWithinDistance(entity: CoordEntity, max_distance, condition, negate=False):
+def PlayerWithinDistance(entity: CoordEntityTyping, max_distance, condition, negate=False):
     return instr.IfEntityDistanceState(condition, PLAYER, entity, max_distance, not negate)
 
 
 @negate_only
-def PlayerBeyondDistance(entity: CoordEntity, min_distance, condition, negate=False):
+def PlayerBeyondDistance(entity: CoordEntityTyping, min_distance, condition, negate=False):
     return instr.IfEntityDistanceState(condition, PLAYER, entity, min_distance, negate)
 
 
 @negate_only
-def HasItem(item: Item, condition, negate=False):
+def HasItem(item: ItemTyping, condition, negate=False):
     try:
-        item_type = item.item_type
+        item_type = item.item_enum
     except AttributeError:
         raise ValueError("Can only use auto-detecting HasItem() on declared item types (Weapon, Armor, Ring, Good).")
     return instr.IfPlayerItemStateNoBox(condition, item_type, item, not negate)
 
 
 @negate_only
-def HasWeapon(weapon: Weapon, condition, negate=False):
+def HasWeapon(weapon: WeaponParam, condition, negate=False):
     return instr.IfPlayerItemStateNoBox(condition, ItemType.Weapon, weapon, not negate)
 
 
 @negate_only
-def HasArmor(armor: Armor, condition, negate=False):
+def HasArmor(armor: ArmorParam, condition, negate=False):
     return instr.IfPlayerItemStateNoBox(condition, ItemType.Armor, armor, not negate)
 
 
 @negate_only
-def HasRing(ring: Ring, condition, negate=False):
+def HasRing(ring: RingParam, condition, negate=False):
     return instr.IfPlayerItemStateNoBox(condition, ItemType.Ring, ring, not negate)
 
 
 @negate_only
-def HasGood(good: Good, condition, negate=False):
+def HasGood(good: GoodParam, condition, negate=False):
     return instr.IfPlayerItemStateNoBox(condition, ItemType.Good, good, not negate)
 
 
 @no_skip_or_negate_or_terminate
 def ActionButton(
     prompt_text,
-    anchor_entity: CoordEntity,
+    anchor_entity: CoordEntityTyping,
     anchor_type=None,
     facing_angle=None,
     max_distance=None,
@@ -371,7 +383,7 @@ def MultiplayerEvent(multiplayer_event, condition):
 
 
 @negate_only
-def TrueFlagCount(op_node, comparison_value, flag_range: FlagRangeOrSequence, condition, negate=False):
+def TrueFlagCount(op_node, comparison_value, flag_range: FlagRangeTyping, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
     return instr.IfTrueFlagCountComparison(condition, comparison_value, FlagType.Absolute, comparison_type, flag_range)
 
@@ -400,16 +412,16 @@ def AnyItemDroppedInRegion(region: Region, condition):
 
 
 @no_skip_or_negate_or_terminate
-def ItemDropped(item: Item, condition):
+def ItemDropped(item: ItemTyping, condition):
     try:
-        item_type = item.item_type
+        item_type = item.item_enum
     except AttributeError:
         raise ValueError("Can only use HasItem() on declared item types (Weapon, Armor, Ring, Good).")
     return instr.IfItemDropped(condition, item, item_type)
 
 
 @negate_only
-def OwnsItem(item: Item, condition, negate=False):
+def OwnsItem(item: ItemTyping, condition, negate=False):
     try:
         item_type = item.type
     except AttributeError:
@@ -418,22 +430,22 @@ def OwnsItem(item: Item, condition, negate=False):
 
 
 @negate_only
-def OwnsWeapon(weapon: Weapon, condition, negate=False):
+def OwnsWeapon(weapon: WeaponParam, condition, negate=False):
     return instr.IfPlayerItemStateBox(condition, ItemType.Weapon, weapon, not negate)
 
 
 @negate_only
-def OwnsArmor(armor: Armor, condition, negate=False):
+def OwnsArmor(armor: ArmorParam, condition, negate=False):
     return instr.IfPlayerItemStateBox(condition, ItemType.Armor, armor, not negate)
 
 
 @negate_only
-def OwnsRing(ring: Ring, condition, negate=False):
+def OwnsRing(ring: RingParam, condition, negate=False):
     return instr.IfPlayerItemStateBox(condition, ItemType.Ring, ring, not negate)
 
 
 @negate_only
-def OwnsGood(good: Good, condition, negate=False):
+def OwnsGood(good: GoodParam, condition, negate=False):
     return instr.IfPlayerItemStateBox(condition, ItemType.Good, good, not negate)
 
 

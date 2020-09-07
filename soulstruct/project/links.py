@@ -1,29 +1,29 @@
 from __future__ import annotations
-import re
-from typing import TYPE_CHECKING
+
+__all__ = ["WindowLinker", "LinkError"]
+
+import typing as tp
 
 from soulstruct.bnd.core import BND
+from soulstruct.game_types import *
+from soulstruct.maps.enums import MSBModelSubtype
 from soulstruct.maps.models import MSBModelList
-from soulstruct.maps.core import MSB_MODEL_TYPE
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.core import SoulstructError
-from soulstruct.maps import MAP_ENTRY_TYPES
 from soulstruct.project.utilities import ItemTextEditBox
 
-if TYPE_CHECKING:
+if tp.TYPE_CHECKING:
     from soulstruct.project import SoulstructProjectWindow
-    from soulstruct.project.editor import SoulstructBaseFieldEditor
+    from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
     from soulstruct.maps import MSB
 
 
-class InvalidMapPartNameError(SoulstructError):
+class LinkError(SoulstructError):
     pass
 
 
 class WindowLinker:
     """Interface that generates links (go-to commands) between arbitrary parts of the Soulstruct unified window."""
-
-    _MATCH_LINK = re.compile(r"<(.*)>")
 
     def __init__(self, window: SoulstructProjectWindow):
         self.window = window
@@ -46,66 +46,46 @@ class WindowLinker:
             return False  # Jump failed.
         return True  # Jump succeeded.
 
-    def soulstruct_link(self, field_type, field_value, valid_null_values: dict = None):
-        """Some field values are IDs to look up from other parameters or other types of game files (texture IDs,
-        animation IDs, AI script IDs, etc.). These are coded as tags in the field information dictionary, and
-        resolved here."""
+    def soulstruct_link(self, field_type, field_value, valid_null_values: dict = None) -> tp.List[BaseLink]:
+        """Some field types are `GameObject` subclasses, which means that the field values are IDs to look up.
+
+        Currently, only `MapEntry`, `Text`, and `BaseParam` field types are supported here. In the future, `Texture`,
+        `Animation`, `AIScriptBase` etc. will also be supported.
+        """
 
         if valid_null_values is None:
             valid_null_values = {}
 
-        match_link = self._MATCH_LINK.match(field_type)
-        if not match_link:
-            raise ValueError(f"Invalid link: {field_type}")
-
         name_extension = ""
-        link_text = match_link.group(1)
 
-        if ":" not in link_text:
-            return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
-
-        link_pieces = link_text.split(":")
-        table_type = link_pieces[0]
-
-        if table_type == "MapsList":
-            links = []
-            field_type = f'<Maps:{":".join(link_pieces[1:])}>'
-            for entry_name in field_value:
-                if not entry_name:
-                    continue
-                link = self.soulstruct_link(field_type, entry_name)
-                links += link if link else [BaseLink()]
-            return links
-
-        if table_type == "Maps":
+        if issubclass(field_type, MapEntry):
             entry_name = field_value
             if not entry_name:  # No link expected (None or empty string)
                 return [BaseLink(self, name="None")]
+            entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-            entry_list_name = link_pieces[1]
-            if entry_list_name not in MAP_ENTRY_TYPES:
-                raise ValueError(f"Invalid map entry list: {entry_list_name}")
-            entry_list = active_msb[entry_list_name]
-
+            entry_list = active_msb[entry_type_name]
+            if entry_subtype_name is not None:
+                # Technically, map links only care about entry list type (except for the collision field of Map
+                # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
+                print(entry_type_name, entry_subtype_name, entry_name)
+                if entry_list[entry_name].ENTRY_SUBTYPE.name != entry_subtype_name:
+                    raise ValueError("Type of entry name in field does not match enforced type of field.")
             try:
-                entry_local_index = entry_list.get_entry_type_index(entry_name)
-                if len(link_pieces) == 3:
-                    # Technically, map links only care about entry list type (except for the collision field of Map
-                    # Connections) but I'm sometimes adding some additional subtype enforcement.
-                    # e.g. parts.characters[i].model_index links to models.characters only.
-                    entry_types = [
-                        MAP_ENTRY_TYPES[entry_list_name][entry_type].name for entry_type in link_pieces[2].split("|")
-                    ]
-                    if entry_list[entry_name].ENTRY_TYPE.name not in entry_types:
-                        raise ValueError("Type of entry name in field does not match enforced type of field.")
-                # Need plural form of entry type.
-                entry_type_name = MAP_ENTRY_TYPES[entry_list_name][entry_list[entry_name].ENTRY_TYPE]
+                entry_local_index = entry_list.get_entry_subtype_index(entry_name)
+                entry_subtype = entry_list[entry_name].ENTRY_SUBTYPE
+                pluralized_name = entry_subtype.pluralized_name
+                if pluralized_name == "Characters" and field_value == "c0000":
+                    if not [model for model in getattr(entry_list, "Characters") if model.name == "c0000"]:
+                        if not [model for model in getattr(entry_list, "Players") if model.name == "c0000"]:
+                            raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
+                        pluralized_name = "Players"  # redirect c0000 to 'Player' models
                 return [
                     MapsLink(
                         self,
                         name=field_value,
-                        entry_list_name=entry_list_name,
                         entry_type_name=entry_type_name,
+                        entry_subtype_name=pluralized_name,
                         entry_local_index=entry_local_index,
                     )
                 ]
@@ -116,35 +96,37 @@ class WindowLinker:
         if field_value in valid_null_values:
             return [BaseLink(self, name=valid_null_values[field_value])]
 
-        category = link_pieces[1]
-
-        if table_type == "Text":
-            text_table = self.project.Text[category]
+        if issubclass(field_type, Text):
+            text_category_name = field_type.get_text_category()
+            text_table = self.project.Text[text_category_name]
+            text = text_table[field_value]
             if field_value not in text_table:
                 return [BaseLink()]
-            return [TextLink(self, category=category, text_id=field_value, name=text_table[field_value])]
+            return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
 
-        if table_type == "Params":
-            if category in {"Attacks", "Behaviors"}:
+        if issubclass(field_type, BaseGameParam):
+            if field_type in {AttackParam, BehaviorParam}:
                 # Try to determine Player vs. Non Player table.
-                if category == "Attacks":
+                param_nickname = ""
+                if field_type == AttackParam:
                     if self.window.params_tab.active_category == "PlayerBehaviors":
-                        category = "PlayerAttacks"
+                        param_nickname = "PlayerAttacks"
                     elif self.window.params_tab.active_category == "NonPlayerBehaviors":
-                        category = "NonPlayerAttacks"
-                elif category == "Behaviors":
+                        param_nickname = "NonPlayerAttacks"
+                elif field_type == BehaviorParam:
                     if self.window.params_tab.active_category == "Players":
-                        category = "PlayerBehaviors"
-                if category in {"Attacks", "Behaviors"}:
+                        param_nickname = "PlayerBehaviors"
+                if not param_nickname:
                     # Could be Player or Non Player. Provide both links.
-                    player_table = self.project.Params["Player" + category]
-                    non_player_table = self.project.Params["NonPlayer" + category]
+                    param_nickname = "Attacks" if field_type == AttackParam else "Behaviors"
+                    player_table = self.project.Params[f"Player{param_nickname}"]
+                    non_player_table = self.project.Params[f"NonPlayer{param_nickname}"]
                     links = []
                     if field_value in player_table:
                         links.append(
                             ParamsLink(
                                 self,
-                                category="Player" + category,
+                                param_name=f"Player{param_nickname}",
                                 param_entry_id=field_value,
                                 name=player_table[field_value].name,
                             )
@@ -153,7 +135,7 @@ class WindowLinker:
                         links.append(
                             ParamsLink(
                                 self,
-                                category="NonPlayer" + category,
+                                param_name=f"NonPlayer{param_nickname}",
                                 param_entry_id=field_value,
                                 name=non_player_table[field_value].name,
                             )
@@ -162,9 +144,10 @@ class WindowLinker:
                         return links
                     return [BaseLink()]
 
-            if category in {"Armor", "Weapons"}:
+            elif field_type in {ArmorParam, WeaponParam}:
+                param_nickname = field_type.get_param_nickname()
                 true_param_id = (
-                    self.check_armor_id(field_value) if category == "Armor" else self.check_weapon_id(field_value)
+                    self.check_armor_id(field_value) if field_type == ArmorParam else self.check_weapon_id(field_value)
                 )
                 if true_param_id is None:
                     return [BaseLink()]  # Invalid weapon/armor ID, even considering reinforcement.
@@ -172,49 +155,57 @@ class WindowLinker:
                     name_extension = "+" + str(field_value - true_param_id)
                 field_value = true_param_id
 
-            param_table = self.project.Params[category]
+            else:
+                param_nickname = field_type.get_param_nickname()
+
+            param_table = self.project.Params[param_nickname]
             try:
                 name = param_table[field_value].name + name_extension
             except KeyError:
                 return [BaseLink()]
             else:
-                return [ParamsLink(self, category=category, param_entry_id=field_value, name=name)]
+                return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
-        return []  # No other table types supported yet.
+        if issubclass(field_type, BaseLightingParam):
+            # Always uses slot 0. You can easily jump to other slots from there (entry names should be the same).
+            # Looks up map from Maps tab, since nothing else links there right now.
+            param_nickname = field_type.get_param_nickname()
+            map_area_name = f"m{self.window.maps_tab.get_map().area_id}"
+            param_table = self.project.Lighting[map_area_name][param_nickname][0]
+            try:
+                name = param_table[field_value].name + name_extension
+            except KeyError:
+                return [BaseLink()]
+            else:
+                return [LightingLink(
+                    self,
+                    param_name=param_nickname,
+                    map_area_name=map_area_name,
+                    param_entry_id=field_value,
+                    slot=0,
+                    name=name,
+                )]
 
-    def get_map_entry_type_names(self, field_type):
-        """Retrieves a list of names of the given entry type, sometimes with hint suffixes."""
-        match_link = self._MATCH_LINK.match(field_type)
-        if not match_link:
-            raise ValueError(f"Invalid link: {field_type}")
+        return []  # No other data types (Flag, Texture, Animation, etc.) supported yet.
 
-        link_text = match_link.group(1)
+    def get_map_entry_type_names(self, field_type: type):
+        """Retrieves a list of names of the given type, sometimes with hint suffixes.
 
-        if ":" not in link_text:
-            return []  # TODO: haven't supported certain simple IDs yet (e.g. Flag, Animation, ...)
-
-        link_pieces = link_text.split(":")
-        table_type = link_pieces[0]
-
-        if table_type == "Maps":
+        Currently only supports `MapEntry` fields.
+        """
+        if issubclass(field_type, MapEntry):
+            entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-            entry_list_name = link_pieces[1]
-            if entry_list_name not in MAP_ENTRY_TYPES:
-                raise ValueError(f"Invalid map entry list: {entry_list_name}")
-            entry_list = active_msb[entry_list_name]
-
-            if len(link_pieces) == 3:
-                # Technically, map links only care about entry list type, but I'm sometimes adding some additional
-                # enforcement (like parts.characters[i].model_index linking to models.characters only).
-                names = []
-                for entry_type in link_pieces[2].split("|"):
-                    entry_type_names = entry_list.get_entry_names(entry_type=entry_type)
-                    if entry_list_name == "Models" and entry_type in {"Characters", "Players"}:
-                        # Add name as suffix.
-                        for i, name in enumerate(entry_type_names):
-                            model_id = int(name.lstrip("c"))
-                            entry_type_names[i] += f"  {{{CHARACTER_MODELS.get(model_id, 'UNKNOWN')}}}"
-                    names += entry_type_names
+            entry_list = active_msb[entry_type_name]
+            if entry_subtype_name is not None:
+                # Technically, map links only care about entry list type (except for the collision field of Map
+                # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
+                names = entry_list.get_entry_names(entry_subtype=entry_subtype_name)
+                if entry_type_name == "Models" and entry_subtype_name in {"Character", "Player"}:
+                    # Add model names as suffixes.
+                    for i, name in enumerate(names):
+                        model_id = int(name.lstrip("c"))
+                        names[i] += f"  {{{CHARACTER_MODELS.get(model_id, 'UNKNOWN')}}}"
                 return names
             else:
                 return entry_list.get_entry_names()
@@ -250,7 +241,7 @@ class WindowLinker:
                 links.append(
                     TextLink(
                         self,
-                        category=prefix + text_category,
+                        text_type_name=prefix + text_category,
                         text_id=text_id,
                         name=self.project.Text[prefix + text_category][text_id],
                     )
@@ -294,10 +285,10 @@ class WindowLinker:
             return None
         return base_weapon
 
-    def text_link(self, category, text_id):
+    def text_link(self, text_type_name, text_id):
         self.window.page_tabs.select(self.get_tab_index("text"))
         # TODO: Create entry if missing.
-        self.window.text_tab.select_category(category)
+        self.window.text_tab.select_category(text_type_name)
         self.window.text_tab.select_entry_id(text_id, edit_if_already_selected=False)
         self.window.text_tab.update_idletasks()
 
@@ -310,32 +301,32 @@ class WindowLinker:
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
-    def validate_model_type(self, model_type, name, map_id):
+    def validate_model_subtype(self, model_subtype, name, map_id):
         """Check appropriate game model files to confirm the given model name is valid.
 
         Note that Character and Object models don't actually need `map_id` to validate them.
         """
-        model_type = MSBModelList.resolve_entry_type(model_type)
+        model_subtype = MSBModelList.resolve_entry_subtype(model_subtype)
 
         dcx = ".dcx" if self.project.game_name == "Dark Souls Remastered" else ""
 
-        if model_type == MSB_MODEL_TYPE.Character:
+        if model_subtype == MSBModelSubtype.Character:
             if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
                 return True
-        elif model_type == MSB_MODEL_TYPE.Object:
+        elif model_subtype == MSBModelSubtype.Object:
             if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
                 return True
-        elif model_type == MSB_MODEL_TYPE.MapPiece:
+        elif model_subtype == MSBModelSubtype.MapPiece:
             if (self.project.game_root / f"map/{map_id}/{name}A{map_id[1:3]}.flver{dcx}").is_file():
                 return True
-        elif model_type == MSB_MODEL_TYPE.Collision:
+        elif model_subtype == MSBModelSubtype.Collision:
             # TODO: Rough BHD string scan until I have that file format.
             hkxbhd_path = self.project.game_root / f"map/{map_id}/h{map_id}.hkxbhd"
             if hkxbhd_path.is_file():
                 with hkxbhd_path.open("r") as f:
                     if name + "A10.hkx" in f.read():
                         return True
-        elif model_type == MSB_MODEL_TYPE.Navmesh:
+        elif model_subtype == MSBModelSubtype.Navmesh:
             nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
             if nvmbnd_path.is_file():
                 navmesh_bnd = BND(nvmbnd_path)
@@ -344,19 +335,35 @@ class WindowLinker:
 
         return False
 
-    def params_link(self, category, param_entry_id, field_name=None):
+    def params_link(self, param_name, param_entry_id, field_name=None):
         # TODO: Create if missing.
-        if param_entry_id not in self.window.params_tab.get_category_data(category):
+        if param_entry_id not in self.window.params_tab.get_category_data(param_name):
             self.window.CustomDialog(
-                title="Param ID Missing", message=f"Param ID {param_entry_id} is missing from Params.{category}."
+                title="Param ID Missing", message=f"Param ID {param_entry_id} is missing from Params.{param_name}."
             )
             return
         self.window.page_tabs.select(self.get_tab_index("params"))
-        self.window.params_tab.select_category(category)
+        self.window.params_tab.select_category(param_name)
         self.window.params_tab.select_entry_id(param_entry_id)
         if field_name is not None:
             self.window.params_tab.select_field_name(field_name)
         self.window.params_tab.update_idletasks()
+
+    def lighting_link(self, param_name, map_area_name, param_entry_id, lighting_slot=0, field_name=None):
+        # TODO: Create if missing.
+        if param_entry_id not in self.window.lighting_tab.get_category_data(param_name):
+            self.window.CustomDialog(
+                title="Lighting ID Missing",
+                message=f"Lighting ID {param_entry_id} is missing from Lighting.{param_name}.",
+            )
+            return
+        self.window.page_tabs.select(self.get_tab_index("lighting"))
+        self.window.lighting_tab.select_category(param_name)
+        self.window.lighting_tab.go_to_area_and_slot(map_area_name, lighting_slot)
+        self.window.lighting_tab.select_entry_id(param_entry_id)
+        if field_name is not None:
+            self.window.lighting_tab.select_field_name(field_name)
+        self.window.lighting_tab.update_idletasks()
 
     def runtime_hook(self):
         return self.window.runtime_tab.hook_into_game()
@@ -425,42 +432,58 @@ class NullLink(BaseLink):
         raise AttributeError("Null link cannot be called.")
 
 
-class ParamsLink(BaseLink):
-    def __init__(self, linker, category, param_entry_id, name=None):
-        super().__init__(
-            linker,
-            name=name,
-            menu_text=f"Go to Params.{category}[{param_entry_id}]" + f"  {{{name}}}" if name is not None else "",
-        )
-        self.category = category
-        self.param_entry_id = param_entry_id
-
-    def __call__(self):
-        self.linker.params_link(self.category, self.param_entry_id)
-
-
-class TextLink(BaseLink):
-    def __init__(self, linker, category, text_id, name=None):
-        super().__init__(linker, name=name, menu_text=f"Go to Text.{category}[{text_id}]")
-        self.category = category
-        self.text_id = text_id
-
-    def __call__(self):
-        self.linker.text_link(self.category, self.text_id)
-
-
 class MapsLink(BaseLink):
-    def __init__(self, linker, entry_list_name, entry_local_index, entry_type_name, name=None):
+    def __init__(self, linker, entry_type_name, entry_local_index, entry_subtype_name, name=None):
         super().__init__(
             linker,
             name=name,
-            menu_text=f"Go to Maps.{entry_list_name}"
-            f"{'.' + entry_type_name if entry_type_name is not None else ''}[{entry_local_index}]"
+            menu_text=f"Go to Maps.{entry_type_name}"
+            f"{'.' + entry_subtype_name if entry_subtype_name is not None else ''}[{entry_local_index}]"
             f" {{{name}}}",
         )
-        self.entry_list_name = entry_list_name
-        self.entry_type_name = entry_type_name
+        self.entry_list_name = entry_type_name
+        self.entry_type_name = entry_subtype_name
         self.entry_local_index = entry_local_index
 
     def __call__(self):
         self.linker.maps_link(self.entry_list_name, self.entry_type_name, self.entry_local_index)
+
+
+class ParamsLink(BaseLink):
+    def __init__(self, linker, param_name, param_entry_id, name=None):
+        super().__init__(
+            linker,
+            name=name,
+            menu_text=f"Go to Params.{param_name}[{param_entry_id}]" + f"  {{{name}}}" if name is not None else "",
+        )
+        self.param_name = param_name
+        self.param_entry_id = param_entry_id
+
+    def __call__(self):
+        self.linker.params_link(self.param_name, self.param_entry_id)
+
+
+class TextLink(BaseLink):
+    def __init__(self, linker, text_type_name, text_id, name=None):
+        super().__init__(linker, name=name, menu_text=f"Go to Text.{text_type_name}[{text_id}]")
+        self.text_type_name = text_type_name
+        self.text_id = text_id
+
+    def __call__(self):
+        self.linker.text_link(self.text_type_name, self.text_id)
+
+
+class LightingLink(BaseLink):
+    def __init__(self, linker, param_name, map_area_name, param_entry_id, slot=0, name=None):
+        super().__init__(
+            linker,
+            name=name,
+            menu_text=f"Go to Lighting.{param_name}[{param_entry_id}]" + f"  {{{name}}}" if name is not None else "",
+        )
+        self.param_name = param_name
+        self.map_area_name = map_area_name
+        self.param_entry_id = param_entry_id
+        self.lighting_slot = slot
+
+    def __call__(self):
+        self.linker.lighting_link(self.param_name, self.map_area_name, self.param_entry_id, self.lighting_slot)
