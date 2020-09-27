@@ -719,7 +719,9 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         if valid_null_values is None:
             if field_type == PlaceName:
                 valid_null_values = {-1: "Default Map Name + Force Banner"}
-            elif not issubclass(field_type, BaseLightingParam):
+            elif issubclass(field_type, BaseLightingParam):
+                valid_null_values = {-1: "Default/None"}
+            else:
                 valid_null_values = {0: "Default/None", -1: "Default/None"}
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
 

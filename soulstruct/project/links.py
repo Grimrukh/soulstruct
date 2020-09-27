@@ -68,7 +68,6 @@ class WindowLinker:
             if entry_subtype_name is not None:
                 # Technically, map links only care about entry list type (except for the collision field of Map
                 # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
-                print(entry_type_name, entry_subtype_name, entry_name)
                 if entry_list[entry_name].ENTRY_SUBTYPE.name != entry_subtype_name:
                     raise ValueError("Type of entry name in field does not match enforced type of field.")
             try:

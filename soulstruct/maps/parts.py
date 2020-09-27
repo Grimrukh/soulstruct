@@ -627,7 +627,7 @@ class MSBCollision(BaseMSBPart):
     PART_TYPE_DATA_STRUCT = (
         ("hit_filter_id", "b"),
         ("sound_space_type", "b"),
-        ("_light_event_index", "h"),
+        ("_environment_event_index", "h"),
         ("reflect_plane_height", "f"),
         ("__navmesh_groups", "4I"),
         ("vagrant_entity_ids", "3i"),
@@ -657,11 +657,11 @@ class MSBCollision(BaseMSBPart):
             "Determines what happens when the player activates this collision.",
         ),
         "sound_space_type": ("Sound Space Type", True, int, "Unknown."),
-        "light_event_name": (
-            "Linked Light Event",
+        "environment_event_name": (
+            "Environment Event",
             True,
-            LightEvent,
-            "Light event in map that determines the point light source when standing on this collision.",
+            EnvironmentEvent,
+            "Environment event in map that determines ambience when standing on this collision.",
         ),
         "reflect_plane_height": ("Reflect Plane Height", True, float, "Unknown."),
         "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
@@ -746,8 +746,8 @@ class MSBCollision(BaseMSBPart):
     def __init__(self, msb_part_source=None, **kwargs):
         self.hit_filter_id = CollisionHitFilter.Normal
         self.sound_space_type = 0
-        self._light_event_index = None
-        self.light_event_name = None
+        self._environment_event_index = None
+        self.environment_event_name = None
         self.reflect_plane_height = 0.0
         self._navmesh_groups = set(range(128))
         self.vagrant_entity_ids = [-1, -1, -1]
@@ -792,7 +792,7 @@ class MSBCollision(BaseMSBPart):
         return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
             hit_filter_id=self.hit_filter_id,
             sound_space_type=self.sound_space_type,
-            _light_event_index=self._light_event_index,
+            _environment_event_index=self._environment_event_index,
             reflect_plane_height=self.reflect_plane_height,
             __navmesh_groups=navmesh_groups,
             vagrant_entity_ids=self.vagrant_entity_ids,
@@ -883,10 +883,10 @@ class MSBCollision(BaseMSBPart):
             part_indices,
             local_collision_indices,
         )
-        if self.light_event_name:
-            self._light_event_index = local_environment_indices[self.light_event_name]
+        if self.environment_event_name:
+            self._environment_event_index = local_environment_indices[self.environment_event_name]
         else:
-            self._light_event_index = -1
+            self._environment_event_index = -1
 
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
@@ -894,16 +894,16 @@ class MSBCollision(BaseMSBPart):
         super().set_names(
             model_names, environment_names, region_names, part_names, collision_names,
         )
-        if self._light_event_index != -1:
+        if self._environment_event_index != -1:
             try:
-                self.light_event_name = environment_names[self._light_event_index]
+                self.environment_event_name = environment_names[self._environment_event_index]
             except IndexError:
                 for i, env in enumerate(environment_names):
                     print(i, env)
-                print(self._light_event_index)
-                self.light_event_name = f"BROKEN ({self._light_event_index})"
+                print(self._environment_event_index)
+                self.environment_event_name = f"BROKEN ({self._environment_event_index})"
         else:
-            self.light_event_name = None
+            self.environment_event_name = None
 
 
 class MSBNavmesh(BaseMSBPart):
