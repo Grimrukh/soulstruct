@@ -316,9 +316,11 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
             self.delete_entry(entry_name)
 
     def duplicate_entry(
-        self, entry_subtype, entry_name_or_index, insert_below_original=True, **kwargs
-    ) -> MSBEntrySubtype:
+        self, entry_subtype, entry_name_or_index: tp.Union[str, int, None] = None, insert_below_original=True, **kwargs,
+    ):
         """Duplicate an entry of the given subtype and local index or name.
+
+        Public type-specific overloads of this are given in the various MSB type lists.
 
         By default, the duplicated entry is inserted just below the source entry. If `insert_below_original=False`, it
         will instead be inserted at the end of its entry subtype (not global subtype).
@@ -327,8 +329,19 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         further modification if desired). Unless otherwise specified, the `name` of the new entry will also be given a
         unique '<i>' duplicate tag suffix to retain name uniqueness (which will be removed upon final pack).
         """
-        local_index = self.get_entry_subtype_index(entry_name_or_index)
-        source_entry = self.get_entries(entry_subtype)[local_index]
+        if entry_name_or_index is None:
+            if isinstance(entry_subtype, MSBEntry):
+                source_entry = entry_subtype
+                entry_subtype = entry_subtype.ENTRY_SUBTYPE
+            else:
+                raise TypeError(
+                    f"First argument of `duplicate_entry` must be an `MSBEntry` if `entry_name_or_index` is left as"
+                    f"None."
+                )
+        else:
+            local_index = self.get_entry_subtype_index(entry_name_or_index)
+            source_entry = self.get_entries(entry_subtype)[local_index]
+
         duplicated = copy.deepcopy(source_entry)
         if kwargs.get("name", "") == source_entry.name:
             raise ValueError(f"Name of duplicated entry cannot be set to the source name: {source_entry.name})")

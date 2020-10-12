@@ -224,7 +224,17 @@ class SoulstructProject:
 
     def _load_project_data(self, pickled_path):
         with (self.project_root / pickled_path).open("rb") as f:
-            return pickle.load(f)
+            try:
+                return pickle.load(f)
+            except Exception as ex:
+                raise SoulstructProjectError(
+                    f"Could not open project file: {self.project_root / pickled_path}.\n\n"
+                    f"If you are seeing this after downloading a new version of Soulstruct, there may have been a "
+                    f"non-backwards-compatible change in the internal structure of the program. Please export your "
+                    f"project files from the last working version, delete the problematic file(s) after backing them "
+                    f"up somewhere else, then re-import them into this new version.\n\n"
+                    f"Specific error:\n{ex}"
+                )
 
     def import_data(self, data_type=None, import_directory=None):
         """Import data sub-structure from binary game files.

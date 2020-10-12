@@ -17,6 +17,9 @@ from soulstruct.utilities.maths import Vector3
 
 if tp.TYPE_CHECKING:
     from soulstruct.game_types.msb_types import Map
+    from soulstruct.maps.events import MSBEnvironment
+    from soulstruct.maps.msb import MSB
+    from soulstruct.maps.regions import BaseMSBRegion
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -318,14 +321,16 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         if value is None or isinstance(value, str) and value in {"None", ""}:
             self._draw_groups = set()
             return
-        if not isinstance(value, (list, tuple, set)):
+        try:
+            draw_groups = set(value)
+        except (TypeError, ValueError):
             raise TypeError(
                 "Draw groups must be a set, sequence, `None`, 'None', or ''. " "Or use `.draw_groups.add()`, etc.)."
             )
-        for i in value:
+        for i in draw_groups:
             if not 0 <= i <= 127:
                 raise InvalidFieldValueError(f"Invalid draw group: {i}. Must range from 0 to 127, inclusive.")
-        self._draw_groups = set(value)
+        self._draw_groups = draw_groups
 
     @property
     def display_groups(self):
@@ -337,15 +342,17 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         if value is None or isinstance(value, str) and value in {"None", ""}:
             self._display_groups = set()
             return
-        if not isinstance(value, (list, tuple, set)):
+        try:
+            display_groups = set(value)
+        except (TypeError, ValueError):
             raise TypeError(
                 "Display groups must be a set, sequence, `None`, 'None', or ''. "
                 "Or use `.display_groups.add()`, etc.)."
             )
-        for i in value:
+        for i in display_groups:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid display group: {i}. Must range from 0 to 127, inclusive.")
-        self._display_groups = set(value)
+        self._display_groups = display_groups
 
     @staticmethod
     def auto_part_subclass(msb_buffer):
@@ -368,7 +375,7 @@ class MSBMapPiece(BaseMSBPart):
         "model_name": (
             "Model Name",
             True,
-            MapPiece,
+            MapPieceModel,
             "Name of map piece model to use for this map piece.",
         ),
         **BaseMSBPart.FIELD_INFO,
@@ -606,7 +613,7 @@ class MSBPlayerStart(BaseMSBPart):
         "model_name": (
             "Model Name",
             False,
-            Character,
+            CharacterModel,
             "Name of character model to use for this PlayerStart. This should always be c0000.",
         ),
         **BaseMSBPart.FIELD_INFO,
@@ -646,7 +653,7 @@ class MSBCollision(BaseMSBPart):
         "model_name": (
             "Model Name",
             True,
-            Collision,
+            CollisionModel,
             "Name of collision model to use for this collision.",
         ),
         **BaseMSBPart.FIELD_INFO,
@@ -856,15 +863,17 @@ class MSBCollision(BaseMSBPart):
         if value is None or isinstance(value, str) and value in {"None", ""}:
             self._navmesh_groups = set()
             return
-        if not isinstance(value, (list, tuple, set)):
+        try:
+            navmesh_groups = set(value)
+        except (TypeError, ValueError):
             raise TypeError(
                 "Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
                 "Or use `.navmesh_groups.add()`, etc.)."
             )
-        for i in value:
+        for i in navmesh_groups:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
-        self._navmesh_groups = set(value)
+        self._navmesh_groups = navmesh_groups
 
     def set_indices(
         self,
@@ -946,15 +955,17 @@ class MSBNavmesh(BaseMSBPart):
         if value is None or isinstance(value, str) and value in {"None", ""}:
             self._navmesh_groups = set()
             return
-        if not isinstance(value, (list, tuple, set)):
+        try:
+            navmesh_groups = set(value)
+        except (TypeError, ValueError):
             raise TypeError(
                 "Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
                 "Or use `.navmesh_groups.add()`, etc.)."
             )
-        for i in value:
+        for i in navmesh_groups:
             if not 0 <= i <= 127:
                 raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
-        self._navmesh_groups = set(value)
+        self._navmesh_groups = navmesh_groups
 
 
 class MSBUnusedObject(MSBObject):
@@ -1220,3 +1231,83 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             instance_counts.setdefault(entry.model_name, 0)
             instance_counts[entry.model_name] += 1
         return instance_counts
+
+    def duplicate_map_piece(
+        self, map_piece_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBMapPiece:
+        return self.duplicate_entry(MSBPartSubtype.MapPiece, map_piece_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_object(
+        self, object_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBObject:
+        return self.duplicate_entry(MSBPartSubtype.Object, object_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_character(
+        self, character_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBObject:
+        return self.duplicate_entry(MSBPartSubtype.Character, character_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_player_start(
+        self, player_start_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBPlayerStart:
+        return self.duplicate_entry(
+            MSBPartSubtype.PlayerStart, player_start_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_collision(
+        self, collision_name_or_index, duplicate_env_event_from_msb: MSB = None, insert_below_original=True, **kwargs,
+    ) -> MSBCollision:
+        """Duplicate a Collision and optionally (if able) duplicate the attached `MSBEnvironment` instance and its
+        region."""
+        new_collision = self.duplicate_entry(
+            MSBPartSubtype.Collision, collision_name_or_index, insert_below_original=insert_below_original, **kwargs,
+        )  # type: MSBCollision
+        if duplicate_env_event_from_msb and new_collision.environment_event_name:
+            if "name" not in kwargs:
+                raise ValueError(f"Must pass `name` to duplication call to duplicate attached environment event.")
+            msb = duplicate_env_event_from_msb
+            try:
+                environment_event = msb.events.get_entry_by_name(
+                    new_collision.environment_event_name, "Environment",
+                )  # type: MSBEnvironment
+            except KeyError:
+                raise KeyError(f"Could not find environment event '{new_collision.environment_event_name}' in MSB.")
+            if not environment_event.base_region_name:
+                raise AttributeError(f"Environment event '{environment_event.name}' has no anchor Region.")
+            try:
+                environment_region = msb.regions.get_entry_by_name(
+                    environment_event.base_region_name,
+                )  # type: BaseMSBRegion
+            except KeyError:
+                raise KeyError(f"Could not find environment region '{environment_event.base_region_name}' in MSB.")
+            new_region = msb.regions.duplicate_entry(environment_region, name=f"GI Region ({kwargs['name']})")
+            new_event = msb.events.duplicate_entry(environment_event, name=f"GI Event ({kwargs['name']})")
+            new_event.base_region_name = new_region.name
+            new_collision.environment_event_name = new_event.name
+        return new_collision
+
+    def duplicate_navmesh(
+        self, navmesh_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBNavmesh:
+        return self.duplicate_entry(MSBPartSubtype.Navmesh, navmesh_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_unused_object(
+            self, object_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBUnusedObject:
+        return self.duplicate_entry(
+            MSBPartSubtype.UnusedObject, object_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_unused_character(
+        self, character_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBUnusedCharacter:
+        return self.duplicate_entry(
+            MSBPartSubtype.UnusedCharacter, character_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_map_load_trigger(
+            self, trigger_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBMapLoadTrigger:
+        return self.duplicate_entry(
+            MSBPartSubtype.MapLoadTrigger, trigger_name_or_index, insert_below_original, **kwargs,
+        )

@@ -632,7 +632,7 @@ class MSBMapOffset(BaseMSBEvent):
         self.set(**kwargs)
 
 
-class MSBNavmesh(BaseMSBEvent):
+class MSBNavigation(BaseMSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("_navmesh_region_index", "i"),
         "12x",
@@ -787,7 +787,7 @@ MSB_MODEL_TYPE_CLASSES = {
     MSBEventSubtype.ObjAct: MSBObjAct,
     MSBEventSubtype.SpawnPoint: MSBSpawnPoint,
     MSBEventSubtype.MapOffset: MSBMapOffset,
-    MSBEventSubtype.Navigation: MSBNavmesh,
+    MSBEventSubtype.Navigation: MSBNavigation,
     MSBEventSubtype.Environment: MSBEnvironment,
     MSBEventSubtype.NPCInvasion: MSBNPCInvasion,
 }
@@ -810,7 +810,7 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
     ObjActs: tp.Sequence[MSBObjAct]
     SpawnPoints: tp.Sequence[MSBSpawnPoint]
     MapOffsets: tp.Sequence[MSBMapOffset]
-    Navigation: tp.Sequence[MSBNavmesh]
+    Navigation: tp.Sequence[MSBNavigation]
     Environment: tp.Sequence[MSBEnvironment]
     NPCInvasions: tp.Sequence[MSBNPCInvasion]
 
@@ -835,3 +835,78 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
                 )
             else:
                 subtype_indices[entry.ENTRY_SUBTYPE] += 1
+
+    def duplicate_light(
+        self, light_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBLight:
+        return self.duplicate_entry(MSBEventSubtype.Light, light_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_sound(
+        self, sound_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBSound:
+        return self.duplicate_entry(MSBEventSubtype.Sound, sound_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_fx(
+        self, fx_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBFX:
+        return self.duplicate_entry(MSBEventSubtype.FX, fx_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_wind(
+        self, wind_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBWind:
+        return self.duplicate_entry(MSBEventSubtype.Wind, wind_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_treasure(
+        self, treasure_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBTreasure:
+        return self.duplicate_entry(MSBEventSubtype.Treasure, treasure_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_spawner(
+        self, spawner_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBSpawner:
+        return self.duplicate_entry(MSBEventSubtype.Spawner, spawner_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_message(
+        self, message_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBMessage:
+        return self.duplicate_entry(MSBEventSubtype.Message, message_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_objact(
+        self, objact_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBObjAct:
+        return self.duplicate_entry(MSBEventSubtype.ObjAct, objact_name_or_index, insert_below_original, **kwargs)
+
+    def duplicate_spawn_point(
+        self, spawn_point_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBSpawnPoint:
+        return self.duplicate_entry(
+            MSBEventSubtype.SpawnPoint, spawn_point_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_map_offset(
+        self, map_offset_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBMapOffset:
+        return self.duplicate_entry(
+            MSBEventSubtype.MapOffset, map_offset_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_navigation(
+        self, navigation_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBNavigation:
+        return self.duplicate_entry(
+            MSBEventSubtype.Navigation, navigation_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_environment(
+        self, environment_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBEnvironment:
+        return self.duplicate_entry(
+            MSBEventSubtype.Environment, environment_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def duplicate_npc_invasion(
+        self, npc_invasion_name_or_index, insert_below_original=True, **kwargs,
+    ) -> MSBNPCInvasion:
+        return self.duplicate_entry(
+            MSBEventSubtype.NPCInvasion, npc_invasion_name_or_index, insert_below_original, **kwargs,
+        )

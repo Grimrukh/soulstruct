@@ -199,7 +199,24 @@ class MSB(object):
             selected_entries = list(selected_entries)  # so strings can be replaced with part instances
             for i, entry in enumerate(selected_entries):
                 if isinstance(entry, str):
-                    selected_entries[i] = self.parts.get_entry_by_name(entry)
+                    try:
+                        selected_part = self.parts.get_entry_by_name(entry)
+                    except KeyError:
+                        selected_part = None
+                    try:
+                        selected_region = self.regions.get_entry_by_name(entry)
+                    except KeyError:
+                        selected_region = None
+                    if selected_part and selected_region:
+                        raise ValueError(
+                            f"Found both a Part and Region with name '{entry}'. You must pass the desired entry "
+                            f"instance directly.")
+                    elif selected_part:
+                        selected_entries[i] = selected_part
+                    elif selected_region:
+                        selected_entries[i] = selected_region
+                    else:
+                        raise ValueError(f"Could not find a Part or Region named '{entry}' in MSB.")
                 elif not isinstance(entry, MSBEntry):
                     raise TypeError("`selected_entries` should contain only `MSBEntry` instances or Part names.")
 
