@@ -15372,7 +15372,7 @@ def Event12907000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    RegisterHealingFountain(arg_12_15, arg_4_7, 0.0, reaction_angle=0.0, initial_sword_number=0, sword_level=0)
+    RegisterLantern(arg_12_15, arg_4_7, 0.0, reaction_angle=0.0, initial_sword_number=0, sword_level=0)
 
 
 def Event12907010(_, arg_0_3: int, arg_4_7: int):

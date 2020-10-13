@@ -574,7 +574,7 @@ __all__ = [
     "AddSpecialEffect_WithUnknownEffect",
     "ActivateObjectWithSpecificCharacter",
     "SetObjectDamageShieldState",
-    "RegisterHealingFountain",
+    "RegisterLantern",
     "SetBossMusicState",
     "EnableBossMusic",
     "DisableBossMusic",
@@ -1107,7 +1107,13 @@ def DisableDirectionDisplay():
     return SetDirectionDisplayState(False)
 
 
-def SetMapHitGridCorrespondence(collision: CollisionTyping, level: int, grid_coord_x: int, grid_coord_y: int, state: bool):
+def SetMapHitGridCorrespondence(
+    collision: CollisionTyping,
+    level: int,
+    grid_coord_x: int,
+    grid_coord_y: int,
+    state: bool,
+):
     instruction_info = (2003, 45)
     return to_numeric(instruction_info, collision, level, grid_coord_x, grid_coord_y, state)
 
@@ -1255,7 +1261,12 @@ def AddSpecialEffect_WithUnknownEffect(character: CharacterTyping, special_effec
     return to_numeric(instruction_info, character, special_effect, affect_npc_parts_hp)
 
 
-def ActivateObjectWithSpecificCharacter(obj: ObjectTyping, objact_id: int, relative_index: int, character: CharacterTyping):
+def ActivateObjectWithSpecificCharacter(
+    obj: ObjectTyping,
+    objact_id: int,
+    relative_index: int,
+    character: CharacterTyping,
+):
     """The standard version of this 'grabs' the nearest character and uses them in the ObjAct (e.g. Patches pulling the
     lever in the Catacombs in DS1). I presume this version lets you specify which character should be involved in the
     ObjAct."""
@@ -1269,15 +1280,18 @@ def SetObjectDamageShieldState(obj: ObjectTyping, state: bool):
     return to_numeric(instruction_info, obj, state)
 
 
-def RegisterHealingFountain(
+def RegisterLantern(
     flag: FlagInt,
     obj: ObjectTyping,
     reaction_distance: float,
     reaction_angle: float,
-    initial_sword_number: int,
-    sword_level: int,
+    initial_sword_number: int = 0,
+    sword_level: int = 0,
 ):
-    """No idea what this is. Apparently DS1 also has a version of this with less arguments."""
+    """Register a Lantern. Used instead of the bonfire registration.
+
+    No idea what the 'sword' arguments do, but they default to zero.
+    """
     instruction_info = (2009, 5)
     return to_numeric(instruction_info, flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level)
 

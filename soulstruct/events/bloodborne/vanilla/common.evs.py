@@ -1036,7 +1036,7 @@ def Event7000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DefineLabel(0)
     EnableObject(arg_4_7)
     EnableCharacter(arg_0_3)
-    RegisterHealingFountain(arg_12_15, arg_4_7, 0.0, reaction_angle=0.0, initial_sword_number=0, sword_level=0)
+    RegisterLantern(arg_12_15, arg_4_7, 0.0, reaction_angle=0.0, initial_sword_number=0, sword_level=0)
 
 
 def Event7100(_, arg_0_3: int, arg_4_7: int):

@@ -383,6 +383,10 @@ class MSBMapPiece(BaseMSBPart):
 
     ENTRY_SUBTYPE = MSBPartSubtype.MapPiece
 
+    def __init__(self, msb_part_source=None, **kwargs):
+        super().__init__(msb_part_source)
+        self.set(**kwargs)
+
 
 class MSBObject(BaseMSBPart):
     """Instance of a physical object."""
@@ -1132,57 +1136,6 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
     MapLoadTriggers: tp.Sequence[MSBMapLoadTrigger]
 
-    def create_map_load_trigger(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
-        """Creates a new `MapLoadTrigger` that references and copies the transform of the given `collision`.
-
-        The `name` and `map_id` of the new `MapLoadTrigger` must be given. You can also specify its `draw_groups` and
-        `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
-        """
-        if not isinstance(collision, MSBCollision):
-            collision = self.get_entry_by_name(collision, "Collision")
-        if name is None:
-            game_map = get_map(connected_map)
-            name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
-        if name in self.get_entry_names("MapLoadTrigger"):
-            raise ValueError(f"{repr(name)} is already the name of an existing MapLoadTrigger.")
-        map_load_trigger = MSBMapLoadTrigger(
-            name=name,
-            connected_map=connected_map,
-            collision_name=collision.name,
-            translate=collision.translate.copy(),
-            rotate=collision.rotate.copy(),
-            scale=collision.scale.copy(),  # for completion's sake
-            model_name=collision.model_name,
-        )
-        if draw_groups is not None:
-            map_load_trigger.draw_groups = draw_groups
-        if display_groups is not None:
-            map_load_trigger.display_groups = display_groups
-        self.add_entry(map_load_trigger, append_to_entry_subtype="MapLoadTrigger")
-        return map_load_trigger
-
-    def create_c1000(self, name, translate, rotate, **kwargs) -> MSBCharacter:
-        """Useful to create basic c1000 instances as debug warp points."""
-        character = MSBCharacter(
-            name=name,
-            translate=translate,
-            rotate=rotate,
-            model_name="c1000",
-            **kwargs,
-        )
-        self.add_entry(character, append_to_entry_subtype="Character")
-        return character
-
-    def create_player_start(self, name, translate, rotate, **kwargs) -> MSBPlayerStart:
-        player_start = MSBPlayerStart(
-            name=name,
-            translate=translate,
-            rotate=rotate,
-            **kwargs,
-        )
-        self.add_entry(player_start, append_to_entry_subtype="PlayerStart")
-        return player_start
-
     def set_indices(
         self, model_indices, local_environment_indices, region_indices, part_indices, local_collision_indices,
     ):
@@ -1237,15 +1190,27 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
     ) -> MSBMapPiece:
         return self.duplicate_entry(MSBPartSubtype.MapPiece, map_piece_name_or_index, insert_below_original, **kwargs)
 
+    def add_map_piece(self, **kwargs):
+        map_piece = MSBMapPiece(msb_part_source=None, **kwargs)
+        return self.add_entry(map_piece, append_to_entry_subtype=MSBPartSubtype.MapPiece)
+
     def duplicate_object(
         self, object_name_or_index, insert_below_original=True, **kwargs,
     ) -> MSBObject:
         return self.duplicate_entry(MSBPartSubtype.Object, object_name_or_index, insert_below_original, **kwargs)
 
+    def add_object(self, **kwargs):
+        obj = MSBObject(msb_part_source=None, **kwargs)
+        return self.add_entry(obj, append_to_entry_subtype=MSBPartSubtype.Object)
+
     def duplicate_character(
         self, character_name_or_index, insert_below_original=True, **kwargs,
     ) -> MSBObject:
         return self.duplicate_entry(MSBPartSubtype.Character, character_name_or_index, insert_below_original, **kwargs)
+
+    def add_character(self, **kwargs):
+        character = MSBCharacter(msb_part_source=None, **kwargs)
+        return self.add_entry(character, append_to_entry_subtype=MSBPartSubtype.Character)
 
     def duplicate_player_start(
         self, player_start_name_or_index, insert_below_original=True, **kwargs,
@@ -1253,6 +1218,10 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
         return self.duplicate_entry(
             MSBPartSubtype.PlayerStart, player_start_name_or_index, insert_below_original, **kwargs,
         )
+
+    def add_player_start(self, **kwargs):
+        player_start = MSBPlayerStart(msb_part_source=None, **kwargs)
+        return self.add_entry(player_start, append_to_entry_subtype=MSBPartSubtype.PlayerStart)
 
     def duplicate_collision(
         self, collision_name_or_index, duplicate_env_event_from_msb: MSB = None, insert_below_original=True, **kwargs,
@@ -1286,10 +1255,18 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             new_collision.environment_event_name = new_event.name
         return new_collision
 
+    def add_collision(self, **kwargs):
+        collision = MSBCollision(msb_part_source=None, **kwargs)
+        return self.add_entry(collision, append_to_entry_subtype=MSBPartSubtype.Collision)
+
     def duplicate_navmesh(
         self, navmesh_name_or_index, insert_below_original=True, **kwargs,
     ) -> MSBNavmesh:
         return self.duplicate_entry(MSBPartSubtype.Navmesh, navmesh_name_or_index, insert_below_original, **kwargs)
+
+    def add_navmesh(self, **kwargs):
+        navmesh = MSBNavmesh(msb_part_source=None, **kwargs)
+        return self.add_entry(navmesh, append_to_entry_subtype=MSBPartSubtype.Navmesh)
 
     def duplicate_unused_object(
             self, object_name_or_index, insert_below_original=True, **kwargs,
@@ -1310,4 +1287,41 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
     ) -> MSBMapLoadTrigger:
         return self.duplicate_entry(
             MSBPartSubtype.MapLoadTrigger, trigger_name_or_index, insert_below_original, **kwargs,
+        )
+
+    def create_map_load_trigger(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
+        """Creates a new `MapLoadTrigger` that references and copies the transform of the given `collision`.
+
+        The `name` and `map_id` of the new `MapLoadTrigger` must be given. You can also specify its `draw_groups` and
+        `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
+        """
+        if not isinstance(collision, MSBCollision):
+            collision = self.get_entry_by_name(collision, "Collision")
+        if name is None:
+            game_map = get_map(connected_map)
+            name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
+        if name in self.get_entry_names("MapLoadTrigger"):
+            raise ValueError(f"{repr(name)} is already the name of an existing MapLoadTrigger.")
+        map_load_trigger = MSBMapLoadTrigger(
+            name=name,
+            connected_map=connected_map,
+            collision_name=collision.name,
+            translate=collision.translate.copy(),
+            rotate=collision.rotate.copy(),
+            scale=collision.scale.copy(),  # for completion's sake
+            model_name=collision.model_name,
+        )
+        if draw_groups is not None:
+            map_load_trigger.draw_groups = draw_groups
+        if display_groups is not None:
+            map_load_trigger.display_groups = display_groups
+        self.add_entry(map_load_trigger, append_to_entry_subtype="MapLoadTrigger")
+        return map_load_trigger
+
+    def add_c1000(self, name, **kwargs) -> MSBCharacter:
+        """Useful to create basic c1000 instances as debug warp points."""
+        return self.add_character(
+            name=name,
+            model_name="c1000",
+            **kwargs,
         )

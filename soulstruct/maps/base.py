@@ -286,6 +286,8 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
 
         If `global_index` is None, it defaults to the end of the given `append_to_entry_subtype` subtype, which in turn
         defaults to being the end of the global entry list.
+
+        Returns the same entry.
         """
         if global_index is None:
             if append_to_entry_subtype is None:
@@ -299,6 +301,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
             else:
                 global_index = self.get_entry_global_index(last_entry_local_index, entry_subtype) + 1
         self._entries.insert(global_index, entry)
+        return entry
 
     def delete_entry(self, entry_name_or_index) -> MSBEntrySubtype:
         """Delete (and return) entry at given global index or with given (unique) name."""

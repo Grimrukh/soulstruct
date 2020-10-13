@@ -2,7 +2,6 @@ import typing as tp
 from io import BufferedReader, BytesIO
 
 from soulstruct.core import SoulstructError
-from soulstruct.game_types.msb_types import *
 from soulstruct.maps.base import MSBEntryList, MSBEntry
 from soulstruct.maps.enums import MSBModelSubtype
 
@@ -156,12 +155,16 @@ class MSBModelList(MSBEntryList[MSBModel]):
     Collisions: tp.List[MSBModel]
     Navmeshes: tp.List[MSBModel]
 
-    def add_model(self, model_type, model_name, sib_path, description=None):
+    def add_model(self, model_type, model_name, sib_path=None, description=None) -> MSBModel:
         """Add a new `MSBModel` instance of the given entry type and SIB path (or map sequence)."""
-        self.add_entry(
-            MSBModel(name=model_name, description=description, model_subtype=model_type, sib_path=sib_path),
-            append_to_entry_subtype=model_type,
+        model = MSBModel(
+            name=model_name,
+            description=description,
+            model_subtype=model_type,
+            sib_path=sib_path,
         )
+        self.add_entry(model, append_to_entry_subtype=model_type)
+        return model
 
     def set_indices(self, part_instance_counts):
         """Local type-specific index only. (Note that global entry index is still used by Parts.)"""

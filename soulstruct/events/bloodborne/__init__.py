@@ -607,7 +607,7 @@ __all__ = [
     "AddSpecialEffect_WithUnknownEffect",
     "ActivateObjectWithSpecificCharacter",
     "SetObjectDamageShieldState",
-    "RegisterHealingFountain",
+    "RegisterLantern",
     "SetBossMusicState",
     "EnableBossMusic",
     "DisableBossMusic",
