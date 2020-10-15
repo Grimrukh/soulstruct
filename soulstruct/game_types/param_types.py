@@ -364,13 +364,13 @@ class ToneMappingParam(BaseLightingParam):
 class ShadowParam(BaseLightingParam):
     @classmethod
     def get_param_nickname(cls):
-        return "ToneCorrection"
+        return "Shadows"
 
 
 class ToneCorrectionParam(BaseLightingParam):
     @classmethod
     def get_param_nickname(cls):
-        return "Shadows"
+        return "ToneCorrection"
 
 
 AITyping = Union[AIParam, int]

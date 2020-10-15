@@ -200,6 +200,7 @@ class EvsParser:
                 elif group.startswith("strings:"):
                     for offset_with_string in group[9:].split("\n"):
                         self.strings_with_offsets.append(offset_with_string)
+                # Otherwise ignore (you can add anything else to the docstring, provided you leave blank lines between).
 
         for node in self.tree.body[1:]:
             if isinstance(node, ast.Import):
