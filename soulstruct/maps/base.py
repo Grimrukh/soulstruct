@@ -342,8 +342,11 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
                     f"None."
                 )
         else:
+            entry_subtype = self.resolve_entry_subtype(entry_subtype)
             local_index = self.get_entry_subtype_index(entry_name_or_index)
             source_entry = self.get_entries(entry_subtype)[local_index]
+            if isinstance(entry_name_or_index, str) and source_entry.name != entry_name_or_index:
+                raise TypeError(f"Specified entry {entry_name_or_index} is not of specified type {entry_subtype.name}.")
 
         duplicated = copy.deepcopy(source_entry)
         if kwargs.get("name", "") == source_entry.name:

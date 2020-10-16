@@ -298,7 +298,13 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         local_collision_indices,
     ):
         self._part_type_index = part_type_index
-        self._model_index = model_indices[self.model_name] if self.model_name else -1
+        try:
+            self._model_index = model_indices[self.model_name] if self.model_name else -1
+        except KeyError:
+            raise KeyError(
+                f"Invalid model name for {self.ENTRY_SUBTYPE.name} {self.name} (entity ID {self.entity_id}): "
+                f"{self.model_name}"
+            )
 
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
@@ -307,7 +313,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             self.model_name = model_names[self._model_index]
         except KeyError:
             raise KeyError(
-                f"Invalid model index for {self.ENTRY_SUBTYPE} {self.name} (entity ID {self.entity_id}): "
+                f"Invalid model index for {self.ENTRY_SUBTYPE.name} {self.name} (entity ID {self.entity_id}): "
                 f"{self._model_index}"
             )
 
@@ -1163,9 +1169,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
                     local_collision_indices=local_collision_indices,
                 )
             except KeyError as e:
-                raise SoulstructError(
-                    f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} part {entry.name}: {e}"
-                )
+                raise SoulstructError(str(e))
             else:
                 type_indices[entry.ENTRY_SUBTYPE] += 1
 
