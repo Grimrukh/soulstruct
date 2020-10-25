@@ -8,6 +8,7 @@ _LOGGER = logging.getLogger(__name__)
 _DEFAULT_STEAM_PATH = "C:\\\\Program Files (x86)\\\\Steam\\\\steamapps\\\\common\\\\"
 _CONFIG_DEFAULTS = {
     "DEFAULT_PROJECT_PATH": '""',
+    "DEFAULT_TEXT_EDITOR_FONT_SIZE": "10",
     "STEAM_PATH": f'"{_DEFAULT_STEAM_PATH}"',
     "PTDE_PATH": 'STEAM_PATH + "Dark Souls Prepare to Die Edition\\\\DATA"',
     "DSR_PATH": 'STEAM_PATH + "DARK SOULS REMASTERED"',
@@ -16,7 +17,6 @@ _CONFIG_DEFAULTS = {
     "DS3_PATH": 'STEAM_PATH + "DARK SOULS III\\\\Game"',
     "SEKIRO_PATH": 'STEAM_PATH + "Sekiro"',
     "ELDEN_RING_PATH": 'STEAM_PATH + "Elden Ring"',
-    "TEXT_EDITOR_FONT_SIZE": "10",
 }
 
 
@@ -56,12 +56,11 @@ def SET_CONFIG(**kwargs):
         else:
             config[k] = default_value
             use_quotes[k] = False
-    config_string = "\n".join(f'{k} = "{v}"' if use_quotes[k] else f"{k} = {v}" for k, v in config.items())
+    config_string = "\n".join(f"{k} = \"{v}\"" if use_quotes[k] else f"{k} = {v}" for k, v in config.items())
     this_path = sys.executable if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS") else __file__
     config_path = Path(this_path).parent / "config.py"
     with config_path.open("w") as f:
         f.write(config_string + "\n")
-    return config
 
 
 try:
@@ -77,9 +76,11 @@ except (ImportError, FileNotFoundError, ModuleNotFoundError):
             f"Creating default `config.py` file in `soulstruct` package: {str(Path(__file__).parent)}.\n"
             f"Set your game directories and other Soulstruct settings in here."
         )
-    __config = SET_CONFIG()
+    SET_CONFIG()
+    __config = GET_CONFIG()
+
 DEFAULT_PROJECT_PATH = __config.get("DEFAULT_PROJECT_PATH")
-TEXT_EDITOR_FONT_SIZE = __config.get("TEXT_EDITOR_FONT_SIZE")
+DEFAULT_TEXT_EDITOR_FONT_SIZE = __config.get("DEFAULT_TEXT_EDITOR_FONT_SIZE")
 STEAM_PATH = __config.get("STEAM_PATH")
 PTDE_PATH = __config.get("PTDE_PATH")
 DSR_PATH = __config.get("DSR_PATH")
