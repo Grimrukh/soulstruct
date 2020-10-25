@@ -251,7 +251,10 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:
             valid_null_values = {0: "Default/None", -1: "Default/None"}
-        return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
+        try:
+            return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
+        except IndexError:
+            raise ValueError(f"Invalid link: type = {field_type}, value = {field_value}")
 
     def edit_all_item_text(self, item_id):
         """Active category should already be a valid item type."""

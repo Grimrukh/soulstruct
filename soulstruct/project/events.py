@@ -350,7 +350,10 @@ class SoulstructEventEditor(SmartFrame):
                 return
         export_directory = Path(export_directory)
         try:
-            emevd = EMEVD(self.evs_file_paths[self.selected_map_id])
+            emevd = EMEVD(
+                self.evs_file_paths[self.selected_map_id],
+                script_path=str(self.evs_file_paths[self.selected_map_id].parent),
+            )
         except Exception as e:
             return self.error_dialog(
                 "EVS Error",

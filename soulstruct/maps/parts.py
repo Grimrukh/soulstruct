@@ -391,6 +391,10 @@ class MSBMapPiece(BaseMSBPart):
 
     def __init__(self, msb_part_source=None, **kwargs):
         super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
 
@@ -441,6 +445,11 @@ class MSBObject(BaseMSBPart):
         self.unk_x0e_x10 = 0
         self.unk_x10_x14 = 0
         super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
     def set_indices(
@@ -559,11 +568,16 @@ class MSBCharacter(BaseMSBPart):
         self.platoon_id = 0
         self.draw_parent_name = None
         self._draw_parent_index = None
-        self._patrol_point_names = []
-        self._patrol_point_indices = []
+        self._patrol_point_names = [None] * 8
+        self._patrol_point_indices = [-1] * 8
         self.default_animation = -1
         self.damage_animation = -1
         super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
     @property
@@ -635,6 +649,11 @@ class MSBPlayerStart(BaseMSBPart):
         super().__init__(msb_part_source)
         if self.model_name is None:
             self.model_name = "c0000"
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
 
@@ -778,6 +797,11 @@ class MSBCollision(BaseMSBPart):
         self.lock_cam_param_id_1 = -1
         self.lock_cam_param_id_2 = -1
         super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
@@ -944,6 +968,11 @@ class MSBNavmesh(BaseMSBPart):
     def __init__(self, msb_part_source=None, **kwargs):
         self._navmesh_groups = set(range(128))
         super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
@@ -1033,6 +1062,11 @@ class MSBMapLoadTrigger(BaseMSBPart):
         self._collision_index = None
         self._connected_map = get_map(10, 0)  # defaults to m10_00_00_00 (Depths)
         super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
@@ -1329,3 +1363,8 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             model_name="c1000",
             **kwargs,
         )
+
+    def get_subtype_instance(self, entry_subtype, **kwargs):
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
+        entry_class = MSB_PART_TYPE_CLASSES[entry_subtype]
+        return entry_class(msb_part_source=None, **kwargs)

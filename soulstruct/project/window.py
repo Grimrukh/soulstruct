@@ -211,7 +211,7 @@ class SoulstructProjectWindow(SmartFrame):
             evs_directory=self.project.project_root / "events",
             game_root=self.project.game_root,
             global_map_choice_func=self.set_global_map_choice,
-            text_font_size=self.project.text_font_size,
+            text_font_size=self.project.text_editor_font_size,
             dcx=self.project.game_name == "Dark Souls Remastered",
             sticky="nsew",
         )
@@ -225,7 +225,7 @@ class SoulstructProjectWindow(SmartFrame):
             game_root=self.project.game_root,
             allow_decompile=self.project.game_name == "Dark Souls Remastered",
             global_map_choice_func=self.set_global_map_choice,
-            text_font_size=self.project.text_font_size,
+            text_font_size=self.project.text_editor_font_size,
             linker=self.linker,
             sticky="nsew",
         )
@@ -238,7 +238,7 @@ class SoulstructProjectWindow(SmartFrame):
             game_root=self.project.game_root,
             game_name=self.project.game_name,
             global_map_choice_func=self.set_global_map_choice,
-            text_font_size=self.project.text_font_size,
+            text_font_size=self.project.text_editor_font_size,
             linker=self.linker,
             sticky="nsew",
         )

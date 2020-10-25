@@ -253,15 +253,15 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
             entry_name = entry_subtype_names[entry_name_or_local_index]
         else:
             entry_name = entry_name_or_local_index
-        entry_names = self.get_entry_names()
-        if entry_names.count(entry_name) >= 2:
+        all_entry_names = self.get_entry_names()
+        if all_entry_names.count(entry_name) >= 2:
             raise ValueError(
                 f"Cannot get global index of non-unique entry name {repr(entry_name)} "
-                f"({entry_names.count(entry_name)} instances)."
+                f"({all_entry_names.count(entry_name)} instances). Rename them first."
             )
-        if entry_name not in entry_names:
+        if entry_name not in all_entry_names:
             raise ValueError(f"Cannot get global index of non-existent entry name {repr(entry_name)}.")
-        return entry_names.index(entry_name)
+        return all_entry_names.index(entry_name)
 
     @classmethod
     def resolve_entry_subtype(cls, entry_subtype):
@@ -304,9 +304,10 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         return entry
 
     def delete_entry(self, entry_name_or_index) -> MSBEntrySubtype:
-        """Delete (and return) entry at given global index or with given (unique) name."""
+        """Delete (and return) entry at given global index, with given (unique) name, or just the instance itself."""
         if isinstance(entry_name_or_index, MSBEntry):
-            entry_name_or_index = self.get_entry_global_index(entry_name_or_index.name)
+            self._entries.remove(entry_name_or_index)
+            return entry_name_or_index
         elif isinstance(entry_name_or_index, str):
             entry_name_or_index = self.get_entry_global_index(entry_name_or_index)
         if isinstance(entry_name_or_index, int):
@@ -369,6 +370,10 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         self._entries.insert(global_index, duplicated)
         duplicated.set(**kwargs)
         return duplicated
+
+    @abc.abstractmethod
+    def get_subtype_instance(self, entry_subtype, **kwargs):
+        ...
 
     def get_next_global_index_of_subtype(self, entry_subtype) -> int:
         """Returns next global index of given `entry_subtype`, e.g. for inserting a new entry into the `MSBEntryList` at

@@ -65,14 +65,28 @@ class WindowLinker:
             entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
             entry_list = active_msb[entry_type_name]
+            try:
+                entry = entry_list[entry_name]
+            except KeyError:
+                # Entry name is missing.
+                return [BaseLink()]
             if entry_subtype_name is not None:
                 # Technically, map links only care about entry list type (except for the collision field of Map
                 # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
-                if entry_list[entry_name].ENTRY_SUBTYPE.name != entry_subtype_name:
-                    raise ValueError("Type of entry name in field does not match enforced type of field.")
+                if (
+                    entry.ENTRY_SUBTYPE.name == "Player" and entry_subtype_name == "Character"
+                    and entry_name == "c0000"
+                ):
+                    # c0000 model happens to be in "Player" category for this map.
+                    pass
+                elif entry.ENTRY_SUBTYPE.name != entry_subtype_name:
+                    raise ValueError(
+                        f"Type of entry name in field ({entry.ENTRY_SUBTYPE.name}) "
+                        f"does not match enforced type of field ({entry_subtype_name})."
+                    )
             try:
                 entry_local_index = entry_list.get_entry_subtype_index(entry_name)
-                entry_subtype = entry_list[entry_name].ENTRY_SUBTYPE
+                entry_subtype = entry.ENTRY_SUBTYPE
                 pluralized_name = entry_subtype.pluralized_name
                 if pluralized_name == "Characters" and field_value == "c0000":
                     if not [model for model in getattr(entry_list, "Characters") if model.name == "c0000"]:
@@ -92,15 +106,16 @@ class WindowLinker:
                 # Entry name is missing (or is not of the enforced entry type).
                 return [BaseLink()]
 
+        # This is the right time to check for null values.
         if field_value in valid_null_values:
             return [BaseLink(self, name=valid_null_values[field_value])]
 
         if issubclass(field_type, Text):
             text_category_name = field_type.get_text_category()
             text_table = self.project.Text[text_category_name]
-            text = text_table[field_value]
             if field_value not in text_table:
                 return [BaseLink()]
+            text = text_table[field_value]
             return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
 
         if issubclass(field_type, BaseGameParam):
@@ -185,7 +200,7 @@ class WindowLinker:
                     name=name,
                 )]
 
-        return []  # No other data types (Flag, Texture, Animation, etc.) supported yet.
+        return []  # No other data types (Flag, Texture, Map, Animation, etc.) supported yet.
 
     def get_map_entry_type_names(self, field_type: type):
         """Retrieves a list of names of the given type, sometimes with hint suffixes.

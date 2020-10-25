@@ -383,7 +383,7 @@ EQUIP_PARAM_PROTECTOR_ST = {
             "Maximum scale permitted for Z dimension of female faces when worn.",
         ),
         FieldDisplayInfo("qwcId", "QWCID", False, int, "Unused world tendency remnant."),
-        FieldDisplayInfo("equipModelId", "EquipmentModel", True, MapModel, "Model ID of armor."),
+        FieldDisplayInfo("equipModelId", "EquipmentModel", True, int, "Model ID of armor."),
         FieldDisplayInfo("iconIdM", "MaleIcon", True, Texture, "Icon of male variant of armor in inventory."),
         FieldDisplayInfo("iconIdF", "FemaleIcon", True, Texture, "Icon of female variant of armor in inventory."),
         FieldDisplayInfo(
@@ -741,7 +741,7 @@ EQUIP_PARAM_ACCESSORY_ST = {
         FieldDisplayInfo("sortId", "SortIndex", True, int, "Index for automatic inventory sorting."),
         FieldDisplayInfo("qwcId", "QWCID", False, int, "Unused world tendency remnant."),
         FieldDisplayInfo(
-            "equipModelId", "EquipmentModel", False, MapModel, "Always zero. (Rings have no model, presumably.)"
+            "equipModelId", "EquipmentModel", False, int, "Always zero. (Rings have no model, presumably.)"
         ),
         FieldDisplayInfo("iconId", "MenuIcon", True, Texture, "Icon ID of ring in menu."),
         FieldDisplayInfo(
@@ -861,7 +861,7 @@ EQUIP_PARAM_GOODS_ST = {
             "Spell unlocked in attunement menu by possession of this good. (Usually matches the good ID.)",
         ),
         FieldDisplayInfo("iconId", "GoodIcon", True, Texture, "Good icon texture ID."),
-        FieldDisplayInfo("modelId", "ModelID", False, MapModel, "Model of good. Never used."),
+        FieldDisplayInfo("modelId", "ModelID", False, int, "Model of good. Never used."),
         FieldDisplayInfo(
             "shopLv",
             "ShopLevel",
@@ -1879,7 +1879,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"
         ),
         FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"),
-        FieldDisplayInfo("equipModelId", "WeaponModel", True, MapModel, "Weapon model ID."),
+        FieldDisplayInfo("equipModelId", "WeaponModel", True, int, "Weapon model ID."),
         FieldDisplayInfo("iconId", "WeaponIcon", True, Texture, "Weapon icon texture ID."),
         FieldDisplayInfo(
             "durability",
@@ -2243,7 +2243,6 @@ EQUIP_PARAM_WEAPON_ST = {
             bool,
             "If True, this weapon can be stored in the Bottomless Box. Always True for rings.",
         ),
-        FieldDisplayInfo("pad_1[8]", "Pad1", False, pad_field(8), "Null padding."),
         FieldDisplayInfo(
             "disableMultiDropShare:1",
             "DisableMultiplayerShare",

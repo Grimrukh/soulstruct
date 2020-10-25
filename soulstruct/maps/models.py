@@ -155,15 +155,15 @@ class MSBModelList(MSBEntryList[MSBModel]):
     Collisions: tp.List[MSBModel]
     Navmeshes: tp.List[MSBModel]
 
-    def add_model(self, model_type, model_name, sib_path=None, description=None) -> MSBModel:
-        """Add a new `MSBModel` instance of the given entry type and SIB path (or map sequence)."""
+    def add_model(self, model_subtype, model_name, sib_path=None, description=None) -> MSBModel:
+        """Add a new `MSBModel` instance of the given entry subtype and SIB path (or map sequence)."""
         model = MSBModel(
             name=model_name,
             description=description,
-            model_subtype=model_type,
+            model_subtype=model_subtype,
             sib_path=sib_path,
         )
-        self.add_entry(model, append_to_entry_subtype=model_type)
+        self.add_entry(model, append_to_entry_subtype=model_subtype)
         return model
 
     def set_indices(self, part_instance_counts):
@@ -181,3 +181,6 @@ class MSBModelList(MSBEntryList[MSBModel]):
                 )
             else:
                 type_indices[entry.ENTRY_SUBTYPE] += 1
+
+    def get_subtype_instance(self, entry_subtype, **kwargs):
+        return MSBModel(msb_model_source=None, **kwargs)

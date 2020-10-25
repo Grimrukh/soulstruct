@@ -14,7 +14,6 @@ _LOGGER = logging.getLogger(__name__)
 
 _GRID_KEYWORDS = {"column", "columnspan", "in", "ipadx", "ipady", "padx", "pady", "row", "rowspan", "sticky"}
 
-
 # TODO: Fixes blurry text at 4K, but widgets are too small.
 SET_DPI_AWARENESS = False
 if SET_DPI_AWARENESS:
@@ -568,10 +567,10 @@ class SmartFrame(tk.Frame):
         if integers_only:
             if numbers_only:
                 raise ValueError("Use `integers_only` or `numbers_only`, but not both.")
-            v_cmd = (self.master.register(self._validate_entry_integers), "%P", "%S")
+            v_cmd = (self.master.register(self._validate_entry_integers), "%P")
             entry.config(validate="key", validatecommand=v_cmd)
         elif numbers_only:
-            v_cmd = (self.master.register(self._validate_entry_numbers), "%P", "%S")
+            v_cmd = (self.master.register(self._validate_entry_numbers), "%P")
             entry.config(validate="key", validatecommand=v_cmd)
         return entry
 
@@ -827,16 +826,13 @@ class SmartFrame(tk.Frame):
     # INTERNAL METHODS
 
     @staticmethod
-    def _validate_entry_integers(new_value, new_input):
+    def _validate_entry_integers(new_value):
         """Callback invoked whenever the Entry contents change.
 
-        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
-        interpreted as an int.
+        Returns True if the value of the Entry ('%P') can be interpreted as an `int` (or is empty or a minus sign).
         """
         if new_value in {"", "-"}:
-            return True
-        if new_input not in "0123456789-":
-            return False
+            return True  # Empty strings and minus sign only is permitted (minus sign must be handled by caller).
         try:
             int(new_value)
         except ValueError:
@@ -844,16 +840,13 @@ class SmartFrame(tk.Frame):
         return True
 
     @staticmethod
-    def _validate_entry_numbers(new_value, new_input):
-        """ Callback invoked whenever the Entry contents change.
+    def _validate_entry_numbers(new_value):
+        """Callback invoked whenever the Entry contents change.
 
-        Checks the new input ('%S') is an allowed symbol and ensures the new value of the Entry ('%P') can be
-        interpreted as a float.
+        Returns True if the value of the Entry ('%P') can be interpreted as a `float` (or is empty or a minus sign).
         """
         if new_value in {"", "-"}:
-            return True
-        if new_input not in "0123456789.+-":
-            return False
+            return True  # Empty strings and minus sign only is permitted (minus sign must be handled by caller).
         try:
             float(new_value)
         except ValueError:

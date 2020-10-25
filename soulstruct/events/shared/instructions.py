@@ -1630,12 +1630,12 @@ def SetVagrantSpawning(spawning_disabled: bool):
 
 def EnableVagrantSpawning():
     """ Allows Vagrants to spawn at all. """
-    return SetVagrantSpawning(False)
+    return SetVagrantSpawning(spawning_disabled=False)
 
 
 def DisableVagrantSpawning():
     """ Prevents Vagrants from spawning at all. """
-    return SetVagrantSpawning(True)
+    return SetVagrantSpawning(spawning_disabled=True)
 
 
 def IncrementPvPSin():

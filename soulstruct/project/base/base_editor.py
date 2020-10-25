@@ -325,11 +325,11 @@ class SoulstructBaseEditor(SmartFrame, abc.ABC):
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[1], column_weights=[0, 1], auto_columns=0):
             self.build_category_canvas()
-            with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1], auto_rows=0):
-                # self.build_previous_range_button()
+            with self.set_master(sticky="nsew", row_weights=[0, 1, 0], column_weights=[1], auto_rows=0):
+                self.build_previous_range_button()
                 with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1]):
                     self.build_entry_frame()
-                # self.build_next_range_button()
+                self.build_next_range_button()
 
     def undo(self, _=None):
         if not self.action_history.undo():

@@ -1,6 +1,7 @@
 __all__ = [
     "GAME_AREA_PARAM_ST",
     "LOCK_CAM_PARAM_ST",
+    "TALK_PARAM_ST",
     "FACE_PARAM_ST",
     "MENU_PARAM_COLOR_TABLE_ST",
     "MOVE_PARAM_ST",
@@ -163,7 +164,7 @@ LOCK_CAM_PARAM_ST = {
     ],
 }
 
-Dialogue = {
+TALK_PARAM_ST = {
     "paramdef_name": "TALK_PARAM_ST",
     "file_name": "TalkParam",
     "nickname": "Dialogue",
@@ -207,11 +208,11 @@ Dialogue = {
             True,
             bool,
             "If True, specified TalkingAnimation will loop while dialogue is being spoken. Always True for any "
-            "entry that has a non-zero TalkingAnimation.",
+            "entry that has a non-default TalkingAnimation (e.g. Andre).",
         ),
         FieldDisplayInfo("pad0[7]", "Pad", False, pad_field(7), "Null padding."),
     ],
-},
+}
 
 FACE_PARAM_ST = {
     "paramdef_name": "FACE_PARAM_ST",

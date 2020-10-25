@@ -48,7 +48,6 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
             emevd = emevd_class(source, script_path=input_directory)
             output_path = output_directory / (name + output_ext)
             if output_type == "evs":
-                print(Path(output_path).absolute())
                 emevd.write_evs(output_path)
             elif output_type == "emevd":
                 emevd.write_emevd(output_path, dcx=False)

@@ -16,19 +16,22 @@ _CONFIG_DEFAULTS = {
     "DS3_PATH": 'STEAM_PATH + "DARK SOULS III\\\\Game"',
     "SEKIRO_PATH": 'STEAM_PATH + "Sekiro"',
     "ELDEN_RING_PATH": 'STEAM_PATH + "Elden Ring"',
+    "TEXT_EDITOR_FONT_SIZE": "10",
 }
 
 
 def GET_CONFIG():
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        # Look for `config.py` next to PyInstaller executable. Will raise `FileNotFoundError` if file does not exist.
         spec = importlib.util.spec_from_file_location("config", str(Path(sys.executable).parent / "config.py"))
         config = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(config)
     else:
+        # Try to import from `soulstruct` package.
         try:
             from . import config
         except ImportError:
-            raise ImportError("`config.py` module not found in Soulstruct package.")
+            raise ModuleNotFoundError("`config.py` module not found in Soulstruct package.")
     return {k: getattr(config, k) for k in dir(config) if k[:2] != "__"}
 
 
@@ -72,10 +75,11 @@ except (ImportError, FileNotFoundError, ModuleNotFoundError):
     else:
         _LOGGER.info(
             f"Creating default `config.py` file in `soulstruct` package: {str(Path(__file__).parent)}.\n"
-            f"Set your game directories in here for ease of use, including a default project path if desired."
+            f"Set your game directories and other Soulstruct settings in here."
         )
     __config = SET_CONFIG()
 DEFAULT_PROJECT_PATH = __config.get("DEFAULT_PROJECT_PATH")
+TEXT_EDITOR_FONT_SIZE = __config.get("TEXT_EDITOR_FONT_SIZE")
 STEAM_PATH = __config.get("STEAM_PATH")
 PTDE_PATH = __config.get("PTDE_PATH")
 DSR_PATH = __config.get("DSR_PATH")

@@ -324,14 +324,14 @@ class DarkSoulsText:
             search_string: Text to find. The text can appear anywhere inside an entry to return a result.
             replace_with: String to replace the given text with in any results. (Default: None)
             text_category: Name of text category (FMG) to search. If no category is given, all categories will be
-                searched (except perhaps Conversations; see below). (Default: None)
-            exclude_conversations: If True, the Conversations text category will not be searched when all categories are
+                searched (except perhaps Subtitles; see below). (Default: None)
+            exclude_conversations: If True, the Subtitles text category will not be searched when all categories are
                 searched. (This category contains a lot of text, and you are unlikely to want to modify it, given how it
                 lines up with the audio.) (Default: True)
         """
         if text_category is None:
             dicts_to_search = (
-                [(fmg_name, fmg_dict) for fmg_name, fmg_dict in self._data.items() if fmg_name != "Conversations"]
+                [(fmg_name, fmg_dict) for fmg_name, fmg_dict in self._data.items() if fmg_name != "Subtitles"]
                 if exclude_conversations
                 else self._data.items()
             )
@@ -406,7 +406,7 @@ _DO_NOT_MERGE_PATCH = {
     "EventText",
     "MenuDialogs",
     "SystemMessages_Win32",
-    "Conversations",
+    "Subtitles",
     "SoapstoneMessages",
     "MenuHelpSnippets",
     "KeyGuide",
@@ -416,7 +416,7 @@ _DO_NOT_MERGE_PATCH = {
 
 
 _MSGBND_INDEX_to_SS_NAME_ = BiDict(
-    (1, "Conversations"),
+    (1, "Subtitles"),
     (2, "SoapstoneMessages"),
     (3, "OpeningSubtitles"),
     (10, "GoodNames"),
@@ -455,7 +455,7 @@ _MSGBND_INDEX_to_SS_NAME_ = BiDict(
     (101, "EventTextPatch"),
     (102, "MenuDialogsPatch"),
     (103, "SystemMessages_Win32Patch"),
-    (104, "ConversationsPatch"),
+    (104, "SubtitlesPatch"),
     (105, "SpellDescriptionsPatch"),
     (106, "WeaponDescriptionsPatch"),
     (107, "SoapstoneMessagesPatch"),
@@ -504,7 +504,7 @@ _DSR_TO_SS = {
     "Weapon_description_.fmg": "WeaponSummaries",
     # menu.msgbnd
     "Blood_writing_.fmg": "SoapstoneMessages",
-    "Conversation_.fmg": "Conversations",
+    "Conversation_.fmg": "Subtitles",
     "Dialogue_.fmg": "MenuDialogs",
     "Event_text_.fmg": "EventText",
     "Ingame_menu.fmg": "IngameMenus",
@@ -561,8 +561,8 @@ _PTD_TO_SS = {
     "武器説明パッチ.fmg": "WeaponSummariesPatch",
     # menu.msgbnd
     "項目ヘルプ.fmg": "ContextualHelp",
-    "会話.fmg": "Conversations",
-    "会話パッチ.fmg": "ConversationsPatch",
+    "会話.fmg": "Subtitles",
+    "会話パッチ.fmg": "SubtitlesPatch",
     "機種別タグ_win32.fmg": "DebugTags_Win32",
     "イベントテキスト.fmg": "EventText",
     "イベントテキストパッチ.fmg": "EventTextPatch",

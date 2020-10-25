@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import shutil
 from pathlib import Path
 
@@ -58,6 +59,7 @@ class ModManagerWindow(SmartFrame):
                     self.Button(
                         text="Restore Vanilla Backup", width=40, command=self._restore_vanilla_backup, bg="#226"
                     )
+                    self.Button(text="Delete Bak Files", width=40, command=self._delete_bak_files, bg="#226")
 
         for mod_info in self.mods:
             self.mod_list.insert("end", mod_info["nickname"])
@@ -229,6 +231,23 @@ class ModManagerWindow(SmartFrame):
         _LOGGER.info(f"Restored vanilla files with Mod Manager ({restore_count} files).")
         if get_confirmation:
             self.CustomDialog("Success", "Vanilla files restored successfully.")
+
+    def _delete_bak_files(self, get_confirmation=True):
+        """Delete all files with a suffix ending in 'bak' (e.g. '.bak', '.smbak')."""
+        if get_confirmation:
+            confirm = self.yesno_dialog(
+                "Confirm Bak Deletion",
+                "Are you sure you want to delete all files whose name ends in 'bak'?",
+            )
+            if not confirm:
+                return
+        deletion_count = 0
+        for bak_path in self._game_path.glob("**/*bak"):
+            os.remove(bak_path)
+            deletion_count += 1
+        _LOGGER.info(f"Deleted {deletion_count} 'bak' files with Mod Manager.")
+        if get_confirmation:
+            self.CustomDialog("Success", f"All 'bak' files were deleted successfully ({deletion_count} files).")
 
     def _show_selected_paths(self):
         try:

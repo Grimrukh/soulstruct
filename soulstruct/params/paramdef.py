@@ -222,6 +222,7 @@ class ParamDef:
                 "This should NOT happen unless you've edited the ParamDef for some ungodly reason."
             )
         elif not hits:
+            print([f.name for f in self.fields])
             raise AttributeError(f"Field {field_name} does not exist in ParamDef.")
         return hits[0]
 

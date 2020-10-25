@@ -87,11 +87,11 @@ class MapEntryRow(EntryRow):
         )
         self.context_menu.add_command(
             label="Create New Entry at Next Index",
-            command=lambda: self.master.add_relative_entry(self.entry_id),
+            command=lambda: self.master.add_new_default_entry(self.entry_id + 1),
         )
         self.context_menu.add_command(
             label="Create New Entry at Last Index",
-            command=lambda: self.master.add_relative_entry(self.entry_id),
+            command=lambda: self.master.add_new_default_entry(),
         )
         self.context_menu.add_command(
             label="Delete Entry",
@@ -141,7 +141,12 @@ class MapFieldRow(FieldRow):
             # A single coordinate is being edited.
             self._set_linked_value_label(f"{self.master.e_coord}: {new_value:.3f}")
         else:
-            self.field_update_method(new_value)
+            try:
+                self.field_update_method(new_value)
+            except TypeError:
+                raise TypeError(
+                    f"Could not update field {self.field_name} (type {self.field_type}) with value {new_value}."
+                )
         self._set_field_fg(new_value)
         self.link_missing = self.field_links and not any(link.name for link in self.field_links)
         self.build_field_context_menu()
@@ -163,6 +168,7 @@ class MapFieldRow(FieldRow):
                     except KeyError:
                         msb_entry_name += "  {UNKNOWN}"
             self.value_label.var.set(msb_entry_name)
+            self._activate_value_widget(self.value_label)
         else:
             self._update_field_int(value)
 
@@ -363,6 +369,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         self.global_map_choice_func = global_map_choice_func
         self.e_coord = None
         self.map_choice = None
+        self.entry_canvas_context_menu = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
     def build(self):
@@ -386,6 +393,14 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 )
 
             super().build()
+
+        self.entry_canvas_context_menu = self.Menu(self.entry_canvas)
+        self.entry_canvas_context_menu.add_command(label="Create New Entry", command=self.add_new_default_entry)
+        self.entry_canvas.bind("<Button-3>", self.right_click_entry_canvas)
+
+    def right_click_entry_canvas(self, event):
+        if self.active_category is not None:
+            self.entry_canvas_context_menu.tk_popup(event.x_root, event.y_root)
 
     def refresh_entries(self, reset_field_display=False):
         self._cancel_entry_id_edit()
@@ -425,7 +440,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
     def _get_category_text_fg(category: str):
         return ENTRY_LIST_FG_COLORS.get(category.split(":")[0], "#FFF")
 
-    def _add_entry(self, entry_type_index: int, text: str, category=None, new_field_dict: MSBEntry = None):
+    def _add_entry(self, entry_subtype_index: int, text: str, category=None, new_field_dict: MSBEntry = None):
         """Active category is required."""
         if category is None:
             category = self.active_category
@@ -433,7 +448,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         entry_type_name, entry_subtype_name = category.split(": ")
         entry_list = self.get_selected_msb()[entry_type_name]
-        global_index = entry_list.get_entry_global_index(entry_type_index, entry_subtype=entry_subtype_name)
+        global_index = entry_list.get_entry_global_index(entry_subtype_index, entry_subtype=entry_subtype_name)
         if global_index is None:
             global_index = len(entry_list)  # appending to end locally -> appending to end globally
 
@@ -458,6 +473,19 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         new_field_dict = self.get_category_data()[entry_index].copy()
         return self._add_entry(entry_index + offset, text, new_field_dict=new_field_dict)
 
+    def add_new_default_entry(self, entry_index=None):
+        """Add a new `MSBEntry` instance of the appropriate subtype to the end of the list, with all default values."""
+        try:
+            entry_type, entry_subtype = self.active_category.split(": ")
+        except ValueError:
+            raise ValueError(f"Category name was not in [List: Type] format: {self.active_category}")
+        entry_list = self.get_selected_msb()[entry_type]
+        entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
+        if entry_index is None:
+            entry_index = len(entry_list.get_entry_names(entry_subtype))  # index after last index
+        msb_entry = entry_list.get_subtype_instance(entry_subtype)
+        return self._add_entry(entry_index, text=f"New {entry_subtype.name}", new_field_dict=msb_entry)
+
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         if row_index is None:
@@ -469,14 +497,12 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if category is None:
                 raise ValueError("Cannot delete entry without specifying category if 'active_category' is None.")
         self._cancel_entry_text_edit()
-        entry_type_index = self.get_entry_id(row_index)
+        entry_subtype_index = self.get_entry_id(row_index)
 
-        entry_list_name, entry_type_name = category.split(": ")
-        entry_list = self.get_selected_msb()[entry_list_name]
-        global_index = entry_list.get_entry_global_index(entry_type_index, entry_subtype=entry_type_name)
-        if global_index is None:
-            raise IndexError(f"Cannot delete entry with global index {global_index} (only {len(entry_list)} entries).")
-        entry_list.delete_entry(global_index)
+        entry_type, entry_subtype = category.split(": ")
+        entry_list = self.get_selected_msb()[entry_type]
+        entry_to_delete = entry_list.get_entries(entry_subtype)[entry_subtype_index]
+        entry_list.delete_entry(entry_to_delete)
         self.select_entry_row_index(None)
         self.refresh_entries()
 
@@ -726,28 +752,20 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
 
     def add_models(self, model_subtype: tp.Type[MapModel], model_name):
-        # TODO: Seems to be some corrupting issue here.
         map_id = self.map_choice_id
-        model_subtype_name = model_subtype.get_msb_entry_type_subtype()[1]
+        _, model_subtype_name = model_subtype.get_msb_entry_type_subtype()
         if self.linker.validate_model_subtype(model_subtype_name, model_name, map_id=map_id):
-            if (
-                self.CustomDialog(
-                    title=f"Add {model_subtype_name} Model",
-                    message=f"Add {model_subtype_name} model {model_name} to map?",
-                    button_names=("Yes, add it", "No, leave as missing"),
-                    button_kwargs=("YES", "NO"),
-                    return_output=0,
-                    default_output=0,
-                    cancel_output=1,
-                )
-                == 0
-            ):
-                if model_subtype in {"MapPieces", "Collisions", "Navmeshes"}:
-                    sib_path = (int(map_id[1:3]), int(map_id[4:6]))
-                else:
-                    sib_path = None  # fine for Objects, Characters, and Players
-                new_model = MSBModel(name=model_name, model_subtype=model_subtype_name, sib_path=sib_path)
-                self.get_selected_msb().models.add_entry(new_model, append_to_entry_subtype=model_subtype)
+            result = self.CustomDialog(
+                title=f"Add {model_subtype_name} Model",
+                message=f"Add {model_subtype_name} model {model_name} to map?",
+                button_names=("Yes, add it", "No, leave as missing"),
+                button_kwargs=("YES", "NO"),
+                return_output=0,
+                default_output=0,
+                cancel_output=1,
+            )
+            if result == 0:
+                self.get_selected_msb().models.add_model(model_subtype_name, model_name)
                 return True
         else:
             self.CustomDialog(

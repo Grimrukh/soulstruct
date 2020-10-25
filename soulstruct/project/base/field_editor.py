@@ -216,23 +216,28 @@ class FieldRow:
     @property
     def field_update_method(self) -> tp.Callable:
         """Returns the appropriate update method for the current field type."""
+
+        # First, look for a method defined for this specific type.
+        try:
+            field_type_name = self.field_type.__name__
+        except AttributeError:
+            raise AttributeError(f"Could not detect name of field type {self.field_type}.")
+        try:
+            return getattr(self, f"_update_field_{field_type_name}")
+        except AttributeError:
+            pass
+
+        # Try a super-type method.
         if issubclass(self.field_type, str):
             return self._set_linked_value_label
         if issubclass(self.field_type, GameObjectSequence):
             return self._update_field_GameObjectSequence
         if issubclass(self.field_type, GameObject):
             return self._update_field_GameObject
-        elif issubclass(self.field_type, IntEnum):
+        if issubclass(self.field_type, IntEnum):
             return self._update_field_IntEnum
-        else:
-            try:
-                field_type_name = self.field_type.__name__
-            except AttributeError:
-                raise AttributeError(f"Could not detect name of field type {self.field_type}.")
-            try:
-                return getattr(self, f"_update_field_{field_type_name}")
-            except AttributeError:
-                raise AttributeError(f"Could not find field update method '_update_field_{field_type_name}'.")
+
+        raise AttributeError(f"Could not find field update method '_update_field_{field_type_name}' or a superclass.")
 
     def _set_linked_value_label(self, value_text, multiple_hint="{AMBIGUOUS}"):
         if self.field_links:
@@ -346,24 +351,29 @@ class FieldRow:
     @property
     def string_conversion_method(self) -> tp.Callable:
         """Returns the appropriate update method for the current field type."""
+
+        # First, look for a method defined for this specific type.
+        try:
+            field_type_name = self.field_type.__name__
+        except AttributeError:
+            raise AttributeError(f"Could not detect name of field type {self.field_type}.")
+        try:
+            return getattr(self, f"_string_to_{field_type_name}")
+        except AttributeError:
+            pass
+
+        # Try a super-type method.
         if issubclass(self.field_type, str):
             return lambda value: value
         if issubclass(self.field_type, GameObjectSequence):
             return self._string_to_GameObjectSequence
         if issubclass(self.field_type, GameObject):
             return self._string_to_GameObject
-        elif issubclass(self.field_type, IntEnum):
+        if issubclass(self.field_type, IntEnum):
             # TODO: Allow option of right-click integer input for IntEnum combo-boxes.
             raise NotImplementedError
-        else:
-            try:
-                field_type_name = self.field_type.__name__
-            except AttributeError:
-                raise AttributeError(f"Could not detect name of field type {self.field_type}.")
-            try:
-                return getattr(self, f"_string_to_{field_type_name}")
-            except AttributeError:
-                raise AttributeError(f"Could not find field update method '_string_to_{field_type_name}'.")
+
+        raise AttributeError(f"Could not find field update method '_string_to_{field_type_name}' or a superclass.")
 
     def update_field_value_display(self, new_value):
         """Updates field value and display/option properties related to it."""
@@ -630,7 +640,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, abc.ABC):
             self.update_idletasks()
             self.field_canvas.yview_moveto(0)
 
-    def _add_entry(self, entry_id, text, category=None, new_field_dict=None):
+    def _add_entry(self, entry_id: int, text: str, category=None, new_field_dict=None):
         """Requires additional field_dict argument."""
         if category is None:
             category = self.active_category

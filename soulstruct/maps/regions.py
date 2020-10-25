@@ -164,7 +164,7 @@ class MSBRegionCircle(BaseMSBRegion):
     ENTRY_SUBTYPE = MSBRegionSubtype.Circle
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.radius = None
+        self.radius = 1.0
         super().__init__(msb_region_shape_source)
         self.set(**kwargs)
 
@@ -183,7 +183,7 @@ class MSBRegionSphere(BaseMSBRegion):
     ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.radius = None
+        self.radius = 1.0
         super().__init__(msb_region_shape_source)
         self.set(**kwargs)
 
@@ -209,8 +209,8 @@ class MSBRegionCylinder(BaseMSBRegion):
     ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.radius = None
-        self.height = None
+        self.radius = 1.0
+        self.height = 1.0
         super().__init__(msb_region_shape_source)
         self.set(**kwargs)
 
@@ -240,8 +240,8 @@ class MSBRegionRect(BaseMSBRegion):
     ENTRY_SUBTYPE = MSBRegionSubtype.Rect
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.width = None
-        self.depth = None
+        self.width = 1.0
+        self.depth = 1.0
         super().__init__(msb_region_shape_source)
         self.set(**kwargs)
 
@@ -271,9 +271,9 @@ class MSBRegionBox(BaseMSBRegion):
     ENTRY_SUBTYPE = MSBRegionSubtype.Box
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.width = None
-        self.depth = None
-        self.height = None
+        self.width = 1.0
+        self.depth = 1.0
+        self.height = 1.0
         super().__init__(msb_region_shape_source)
         self.set(**kwargs)
 
@@ -335,6 +335,11 @@ class MSBRegionList(MSBEntryList[BaseMSBRegion]):
         self.add_entry(
             MSB_REGION_TYPE_CLASSES[region_type](**kwargs), append_to_entry_subtype=region_type,
         )
+
+    def get_subtype_instance(self, entry_subtype, **kwargs):
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
+        entry_class = MSB_REGION_TYPE_CLASSES[entry_subtype]
+        return entry_class(msb_region_shape_source=None, **kwargs)
 
     def set_indices(self):
         """Global region index only."""

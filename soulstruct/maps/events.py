@@ -112,7 +112,7 @@ class BaseMSBEvent(MSBEntryEntity):
         except (ValueError, TypeError):
             event_type = None
         msb_buffer.seek(old_offset)
-        return MSB_MODEL_TYPE_CLASSES[event_type](msb_buffer)
+        return MSB_EVENT_TYPE_CLASSES[event_type](msb_buffer)
 
 
 class MSBLight(BaseMSBEvent):
@@ -424,13 +424,13 @@ class MSBSpawner(BaseMSBEvent):
         "spawn_region_names": (
             "Spawn Regions",
             True,
-            GameObjectSequence((Region, 8)),  # TODO: need a special pop-out window of entries for this.
+            GameObjectSequence((Region, 4)),  # TODO: need a special pop-out window of entries for this.
             "Regions where entities will be spawned.",
         ),
         "spawn_part_names": (
             "Spawn Characters",
             True,
-            GameObjectSequence((Character, 8)),  # TODO: ditto
+            GameObjectSequence((Character, 32)),  # TODO: ditto
             "Entities that will be spawned at given regions.",
         ),
     }
@@ -445,22 +445,30 @@ class MSBSpawner(BaseMSBEvent):
         self.min_interval = 1.0
         self.max_interval = 1.0
         self.initial_spawn_count = 1
-        self.spawn_region_names = None
-        self._spawn_region_indices = None
-        self.spawn_part_names = None
-        self._spawn_part_indices = None
+        self.spawn_region_names = [None] * 4
+        self._spawn_region_indices = [-1] * 4
+        self.spawn_part_names = [None] * 32
+        self._spawn_part_indices = [-1] * 32
         super().__init__(msb_event_source)
         self.set(**kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
-        self._spawn_part_indices = [part_indices[n] if n else -1 for n in self.spawn_part_names]
         self._spawn_region_indices = [region_indices[n] if n else -1 for n in self.spawn_region_names]
+        while len(self._spawn_region_indices) < 4:
+            self._spawn_part_indices.append(-1)
+        self._spawn_part_indices = [part_indices[n] if n else -1 for n in self.spawn_part_names]
+        while len(self._spawn_part_indices) < 32:
+            self._spawn_part_indices.append(-1)
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
-        self.spawn_part_names = [part_names[i] if i != -1 else None for i in self._spawn_part_indices]
         self.spawn_region_names = [region_names[i] if i != -1 else None for i in self._spawn_region_indices]
+        while len(self.spawn_region_names) < 4:
+            self.spawn_region_names.append(None)
+        self.spawn_part_names = [part_names[i] if i != -1 else None for i in self._spawn_part_indices]
+        while len(self.spawn_part_names) < 32:
+            self.spawn_part_names.append(None)
 
 
 class MSBMessage(BaseMSBEvent):
@@ -776,7 +784,7 @@ class MSBNPCInvasion(BaseMSBEvent):
             self.spawn_point_region_name = None
 
 
-MSB_MODEL_TYPE_CLASSES = {
+MSB_EVENT_TYPE_CLASSES = {
     MSBEventSubtype.Light: MSBLight,
     MSBEventSubtype.Sound: MSBSound,
     MSBEventSubtype.FX: MSBFX,
@@ -910,3 +918,8 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
         return self.duplicate_entry(
             MSBEventSubtype.NPCInvasion, npc_invasion_name_or_index, insert_below_original, **kwargs,
         )
+
+    def get_subtype_instance(self, entry_subtype, **kwargs):
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
+        entry_class = MSB_EVENT_TYPE_CLASSES[entry_subtype]
+        return entry_class(msb_event_source=None, **kwargs)

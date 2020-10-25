@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from functools import wraps
 from pathlib import Path
 
-from soulstruct._config import PTDE_PATH, DSR_PATH
+from soulstruct._config import PTDE_PATH, DSR_PATH, TEXT_EDITOR_FONT_SIZE
 from soulstruct.ai import DarkSoulsAIScripts
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.esd.dark_souls_talk import TalkESDBND
@@ -79,7 +79,7 @@ class SoulstructProject:
         self.game_save_root = Path()
         self.last_import_time = ""
         self.last_export_time = ""
-        self.text_font_size = 10
+        self.text_editor_font_size = TEXT_EDITOR_FONT_SIZE
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
@@ -536,7 +536,7 @@ class SoulstructProject:
                         self.game_save_root = Path(config["SaveDirectory"])
                         self.last_import_time = config.get("LastImportTime", None)
                         self.last_export_time = config["LastExportTime"]
-                        self.text_font_size = config.get("TextFontSize", 10)
+                        self.text_editor_font_size = config.get("TextEditorFontSize", TEXT_EDITOR_FONT_SIZE)
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
@@ -616,7 +616,7 @@ class SoulstructProject:
             "SaveDirectory": str(self.game_save_root),
             "LastImportTime": self.last_import_time,
             "LastExportTime": self.last_export_time,
-            "TextFontSize": self.text_font_size,
+            "TextEditorFontSize": TEXT_EDITOR_FONT_SIZE,
         }
 
     def _write_config(self):
