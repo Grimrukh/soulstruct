@@ -24,7 +24,6 @@ class MSBModel(MSBEntry):
     FIELD_INFO = {
         "sib_path": (
             "Placeholder Path",
-            True,
             str,
             "Internal path to model placeholder SIB file. The path's base name should match the model name.",
         ),

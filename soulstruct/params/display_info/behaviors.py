@@ -6,11 +6,26 @@ from soulstruct.params.enums import BEHAVIOR_CATEGORY, BEHAVIOR_REF_TYPE
 
 
 class DynamicBehaviorRef(DynamicFieldDisplayInfo):
-    def __call__(self, entry):
+
+    POSSIBLE_TYPES = {AttackParam, BulletParam, SpecialEffectParam}
+
+    def __call__(self, entry) -> FieldDisplayInfo:
         if entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Default:
-            return FieldDisplayInfo(self.name, "Attack", True, AttackParam, "Attack ID triggered by behavior.")
+            return FieldDisplayInfo(
+                self.name,
+                "Attack",
+                True,
+                AttackParam,
+                "Attack ID triggered by behavior.",
+            )
         elif entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Bullet:
-            return FieldDisplayInfo(self.name, "Bullet", True, BulletParam, "Bullet ID triggered by behavior.")
+            return FieldDisplayInfo(
+                self.name,
+                "Bullet",
+                True,
+                BulletParam,
+                "Bullet ID triggered by behavior.",
+            )
         elif entry[self.type_field_name] == BEHAVIOR_REF_TYPE.SpecialEffect:
             return FieldDisplayInfo(
                 self.name,

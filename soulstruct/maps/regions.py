@@ -35,13 +35,20 @@ class BaseMSBRegion(MSBEntryEntityCoordinates):
     FIELD_INFO = {
         "translate": (
             "Translate",
-            True,
             Vector3,
             "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
             "regions.",
         ),
-        "rotate": ("Rotate", True, Vector3, "Euler angles for region rotation around its local X, Y, and Z axes."),
-        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the region in other game files."),
+        "rotate": (
+            "Rotate",
+            Vector3,
+            "Euler angles for region rotation around its local X, Y, and Z axes.",
+        ),
+        "entity_id": (
+            "Entity ID",
+            int,
+            "Entity ID used to refer to the region in other game files.",
+        ),
     }
 
     ENTRY_SUBTYPE = None  # type: MSBRegionSubtype
@@ -137,6 +144,12 @@ class MSBRegionPoint(BaseMSBRegion):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
     player be facing when they spawn?)."""
 
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+    )
+
     ENTRY_SUBTYPE = MSBRegionSubtype.Point
 
     def __init__(self, msb_region_shape_source=None, **kwargs):
@@ -158,8 +171,19 @@ class MSBRegionCircle(BaseMSBRegion):
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        "radius": ("Radius", True, float, "Radius (in xy-plane) of circular region.",),
+        "radius": (
+            "Radius",
+            float,
+            "Radius (in xy-plane) of circular region.",
+        ),
     }
+
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+        "radius",
+    )
 
     ENTRY_SUBTYPE = MSBRegionSubtype.Circle
 
@@ -178,7 +202,21 @@ class MSBRegionCircle(BaseMSBRegion):
 class MSBRegionSphere(BaseMSBRegion):
     SPHERE_STRUCT = (("radius", "f"),)
 
-    FIELD_INFO = {**BaseMSBRegion.FIELD_INFO, "radius": ("Radius", True, float, "Radius of sphere-shaped region.",)}
+    FIELD_INFO = {
+        **BaseMSBRegion.FIELD_INFO,
+        "radius": (
+            "Radius",
+            float,
+            "Radius of sphere-shaped region.",
+        ),
+    }
+
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+        "radius",
+    )
 
     ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
 
@@ -202,9 +240,25 @@ class MSBRegionCylinder(BaseMSBRegion):
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        "radius": ("Radius", True, float, "Radius (in xz-plane) of cylinder-shaped region."),
-        "height": ("Height", True, float, "Height (along y-axis) of cylinder-shaped region."),
+        "radius": (
+            "Radius",
+            float,
+            "Radius (in xz-plane) of cylinder-shaped region.",
+        ),
+        "height": (
+            "Height",
+            float,
+            "Height (along y-axis) of cylinder-shaped region.",
+        ),
     }
+
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+        "radius",
+        "height",
+    )
 
     ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
 
@@ -233,9 +287,25 @@ class MSBRegionRect(BaseMSBRegion):
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        "width": ("Width", True, float, "Width (along x-axis) of rectangle-shaped region."),
-        "height": ("Height", True, float, "Height (along y-axis) of rectangle-shaped region."),
+        "width": (
+            "Width",
+            float,
+            "Width (along x-axis) of rectangle-shaped region.",
+        ),
+        "height": (
+            "Height",
+            float,
+            "Height (along y-axis) of rectangle-shaped region.",
+        ),
     }
+
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+        "width",
+        "height",
+    )
 
     ENTRY_SUBTYPE = MSBRegionSubtype.Rect
 
@@ -263,10 +333,31 @@ class MSBRegionBox(BaseMSBRegion):
 
     FIELD_INFO = {
         **BaseMSBRegion.FIELD_INFO,
-        "width": ("Width", True, float, "Width (along x-axis) of box-shaped region."),
-        "depth": ("Depth", True, float, "Depth (along z-axis) of box-shaped region."),
-        "height": ("Height", True, float, "Height (along y-axis) of box-shaped region."),
+        "width": (
+            "Width",
+            float,
+            "Width (along x-axis) of box-shaped region.",
+        ),
+        "depth": (
+            "Depth",
+            float,
+            "Depth (along z-axis) of box-shaped region.",
+        ),
+        "height": (
+            "Height",
+            float,
+            "Height (along y-axis) of box-shaped region.",
+        ),
     }
+
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+        "width",
+        "depth",
+        "height",
+    )
 
     ENTRY_SUBTYPE = MSBRegionSubtype.Box
 

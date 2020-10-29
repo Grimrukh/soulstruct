@@ -6,7 +6,10 @@ from .base import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
 
 
 class DynamicShopRef(DynamicFieldDisplayInfo):
-    def __call__(self, entry):
+
+    POSSIBLE_TYPES = {WeaponParam, ArmorParam, RingParam, GoodParam, SpellParam}
+
+    def __call__(self, entry) -> FieldDisplayInfo:
         item_type = entry[self.type_field_name]
         if item_type == SHOP_LINEUP_EQUIPTYPE.Weapon:
             return FieldDisplayInfo(self.name, f"Weapon", True, WeaponParam, f"Weapon to be listed in shop menu.")

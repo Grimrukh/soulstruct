@@ -23,6 +23,7 @@ class MSBEntry(abc.ABC):
     ENTRY_SUBTYPE = None  # type: MSBSubtype
     FIELD_INFO = {}
     FIELD_NAMES = ()  # If given, fields will be displayed in this order. Otherwise uses order of `FIELD_INFO` keys.
+    HIDDEN_FIELDS = ()
 
     def __init__(self):
         self.name = None
@@ -221,7 +222,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         """Returns an ordered list of entry names (global or type-specific).
 
         Note that only the global index (`entry_subtype=None`) is valid for index links from other MSB entries, with the
-        sole exception of the `MSBCollision` entry linked to by a `MapLoadTrigger` entry.
+        sole exception of the `MSBCollision` entry linked to by a `MapConnection` entry.
         """
         return [entry.name for entry in self.get_entries(entry_subtype=entry_subtype)]
 

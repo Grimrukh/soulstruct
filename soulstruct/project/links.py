@@ -79,6 +79,10 @@ class WindowLinker:
                 ):
                     # c0000 model happens to be in "Player" category for this map.
                     pass
+                elif entry.ENTRY_SUBTYPE.name == "UnusedObject" and entry_subtype_name == "Object":
+                    pass
+                elif entry.ENTRY_SUBTYPE.name == "UnusedCharacter" and entry_subtype_name == "Character":
+                    pass
                 elif entry.ENTRY_SUBTYPE.name != entry_subtype_name:
                     raise ValueError(
                         f"Type of entry name in field ({entry.ENTRY_SUBTYPE.name}) "

@@ -13,7 +13,6 @@ from soulstruct.utilities.core import BinaryStruct, read_chars_from_bytes, PACKA
 
 if tp.TYPE_CHECKING:
     from soulstruct.params.core import ParamEntry
-    from soulstruct.params.display_info.base import FieldDisplayInfo
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -88,13 +87,13 @@ class ParamDefField:
         ("id", "i"),  # TODO: what is this?
     )
 
-    def __init__(self, field_struct: dict, index: int, description: str, field_info: FieldDisplayInfo = None):
+    def __init__(self, field_struct: dict, index: int, description: str, param_name: str):
         self.field_index = index
         self.name = field_struct["name"]
         self.description = description
         self.size = field_struct["size"]
         self.internal_type = field_struct["internal_type"]
-        self._display_info = field_info
+        self.param_name = param_name
 
         self.debug_name = field_struct["debug_name"]
         self.debug_type = field_struct["debug_type"]
@@ -111,9 +110,11 @@ class ParamDefField:
         self.bit_size = self.get_bit_size(self.name, self.internal_type, self.size)
 
     def get_display_info(self, entry: ParamEntry):
-        if not self._display_info:
+        try:
+            field_info = get_param_info_field(self.param_name, self.name)
+        except ValueError:
             raise ValueError(f"No display information given for field '{self.name}'.")
-        return self._display_info(entry)
+        return field_info(entry)
 
     @classmethod
     def unpack_fields(cls, param_name: str, paramdef_buffer: io.BytesIO, field_count: int):
@@ -131,12 +132,7 @@ class ParamDefField:
                 )
             else:
                 field_description = ""
-            try:
-                field_info = get_param_info_field(param_name, field_struct["name"])
-            except KeyError:
-                # No information given for this field.
-                field_info = None
-            fields.append(cls(field_struct, field_index, field_description, field_info))
+            fields.append(cls(field_struct, field_index, field_description, param_name))
         return fields
 
     @staticmethod

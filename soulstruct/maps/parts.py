@@ -74,110 +74,155 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
     PART_TYPE_DATA_STRUCT = ()
 
     FIELD_INFO = {
-        "entity_id": ("Entity ID", True, int, "Entity ID used to refer to the part in other game files."),
+        "entity_id": (
+            "Entity ID",
+            int,
+            "Entity ID used to refer to the part in other game files.",
+        ),
         "translate": (
             "Translate",
-            True,
             Vector3,
             "3D coordinates of the part's position. Note that the anchor of the part is usually at its base.",
         ),
-        "rotate": ("Rotate", True, Vector3, "Euler angles for part rotation around its local X, Y, and Z axes."),
-        "scale": ("Scale", False, Vector3, "Scale of part. Only works for map pieces."),
+        "rotate": (
+            "Rotate",
+            Vector3,
+            "Euler angles for part rotation around its local X, Y, and Z axes.",
+        ),
+        "scale": (
+            "Scale",
+            Vector3,
+            "Scale of part. Only works for map pieces.",
+        ),
         "draw_groups": (
             "Draw Groups",
-            True,
             list,
             "Draw groups of part. This part will be drawn when the corresponding display group is active.",
         ),
         "display_groups": (
             "Display Groups",
-            False,
             list,
             "Display groups are present in all MSB Parts, but only function for collisions.",
         ),
         "ambient_light_id": (
             "Ambient Light ID",
-            True,
             AmbientLightParam,
             "ID of Ambient Light parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "fog_id": (
             "Fog ID",
-            True,
             FogParam,
             "ID of Fog parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "scattered_light_id": (
             "Scattered Light ID",
-            True,
             ScatteredLightParam,
             "ID of Scattered Light parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "lens_flare_id": (
             "Lens Flare ID",
-            True,
             LensFlareParam,
             "ID of Lens Flare parameter (both types) to use from this map's lighting parameters (DrawParam).",
         ),
         "shadow_id": (
             "Shadow ID",
-            True,
             ShadowParam,
             "ID of Shadow parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "dof_id": (
             "Depth of Field ID",
-            True,
             DepthOfFieldParam,
             "ID of Depth Of Field ID parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "tone_map_id": (
             "Tone Map ID",
-            True,
             ToneMappingParam,
             "ID of Tone Map parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "point_light_id": (
             "Point Light ID",
-            True,
             PointLightParam,
             "ID of Point Light parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "tone_correct_id": (
             "Tone Correction ID",
-            True,
             ToneCorrectionParam,
             "ID of Tone Correction parameter to use from this map's lighting parameters (DrawParam).",
         ),
         "lod_id": (
-            "LoD ID",
-            False,
+            "Level of Detail ID",
             int,
-            "ID of Level of Detail (LoD) parameter to use from this map's lighting parameters (DrawParam).",
+            "Level of Detail (LoD) parameter. Always -1 or 0, probably unused.",
         ),
-        "is_shadow_source": ("Can Cast Shadow", True, bool, "If True, this entity will cast dynamic shadows."),
+        "is_shadow_source": (
+            "Casts Shadow",
+            bool,
+            "If True, this entity will cast dynamic shadows.",
+        ),
         "is_shadow_destination": (
-            "Can Receive Shadow",
-            True,
+            "Receives Shadow",
             bool,
             "If True, this entity can have dynamic shadows cast onto it.",
         ),
-        "is_shadow_only": ("Cast Shadow Only", True, bool, "If True, this entity only casts shadows."),
-        "draw_by_reflect_cam": ("Is Reflected", True, bool, "If True, this entity will be reflected in water, etc."),
+        "is_shadow_only": (
+            "Only Casts Shadow",
+            bool,
+            "If True, this entity only casts shadows.",
+        ),
+        "draw_by_reflect_cam": (
+            "Is Reflected",
+            bool,
+            "If True, this entity will be reflected in water, etc.",
+        ),
         "draw_only_reflect_cam": (
             "Is Only Reflected",
-            True,
             bool,
             "If True, this entity will only be drawn in reflections in water, etc.",
         ),
-        "use_depth_bias_float": ("Use Depth Bias Float", True, bool, "Unknown."),
+        "use_depth_bias_float": (
+            "Use Depth Bias Float",
+            bool,
+            "Unknown.",
+        ),
         "disable_point_light_effect": (
             "Ignore Point Lights",
-            True,
             bool,
             "If True, this entity will not be illuminated by point lights (I think).",
         ),
     }
+
+    # This base list will always be overridden by concrete subclasses, but it's here for reference.
+    FIELD_NAMES = (
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    # Default hidden fields for MSB Parts.
+    HIDDEN_FIELDS = (
+        "lod_id",
+        "use_depth_bias_float",
+    )
 
     ENTRY_SUBTYPE = None  # type: MSBPartSubtype
 
@@ -201,7 +246,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         self.tone_map_id = 0
         self.tone_correct_id = 0
         self.point_light_id = 0
-        self.lod_id = 0
+        self.lod_id = -1  # only ever 0 or -1, seemingly at random
 
         # Additional boolean parameters (exact effects may be unknown)
         self.is_shadow_source = False
@@ -380,12 +425,10 @@ class MSBMapPiece(BaseMSBPart):
     FIELD_INFO = {
         "model_name": (
             "Model Name",
-            True,
             MapPieceModel,
             "Name of map piece model to use for this map piece.",
         ),
         **BaseMSBPart.FIELD_INFO,
-        "scale": ("Scale", True, Vector3, "Size scaling of map piece in each dimension."),
     }
 
     FIELD_NAMES = (
@@ -407,6 +450,19 @@ class MSBMapPiece(BaseMSBPart):
         "tone_correct_id",
         "lod_id",
         "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "display_groups",
+        "lod_id",
+        "is_shadow_source",
         "is_shadow_only",
         "use_depth_bias_float",
         "disable_point_light_effect",
@@ -416,10 +472,7 @@ class MSBMapPiece(BaseMSBPart):
 
     def __init__(self, msb_part_source=None, **kwargs):
         super().__init__(msb_part_source)
-        if msb_part_source is None:
-            # Set some defaults.
-            kwargs.setdefault("is_shadow_destination", True)
-            kwargs.setdefault("draw_by_reflect_cam", True)
+        # Existing defaults are fine (all bools are False).
         self.set(**kwargs)
 
 
@@ -439,24 +492,42 @@ class MSBObject(BaseMSBPart):
     )
 
     FIELD_INFO = {
-        "model_name": ("Model Name", True, ObjectModel, "Name of object model to use for this object."),
+        "model_name": (
+            "Model Name",
+            ObjectModel,
+            "Name of object model to use for this object.",
+        ),
         **BaseMSBPart.FIELD_INFO,
         "draw_parent_name": (
             "Draw Parent",
-            True,
             MapPart,
             "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
-        "break_term": ("Break Term", True, int, "Unknown. Related to object breakage."),
-        "net_sync_type": ("Net Sync Type", True, int, "Unknown. Related to online object synchronization."),
+        "break_term": (
+            "Break Term",
+            int,
+            "Unknown. Related to object breakage.",
+        ),
+        "net_sync_type": (
+            "Net Sync Type",
+            int,
+            "Unknown. Related to online object synchronization.",
+        ),
         "default_animation": (
             "Default Animation",
-            True,
             int,  # TODO: Animation
             "Object animation ID to auto-play on map load, e.g. for different corpse poses.",
         ),
-        "unk_x0e_x10": ("Unknown [0e-10]", False, int, "Unknown."),
-        "unk_x10_x14": ("Unknown [10-14]", False, int, "Unknown."),
+        "unk_x0e_x10": (
+            "Unknown [0e-10]",
+            int,
+            "Unknown.",
+        ),
+        "unk_x10_x14": (
+            "Unknown [10-14]",
+            int,
+            "Unknown.",
+        ),
     }
 
     FIELD_NAMES = (
@@ -484,9 +555,21 @@ class MSBObject(BaseMSBPart):
         "tone_correct_id",
         "lod_id",
         "is_shadow_source",
+        "is_shadow_destination",
         "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
         "use_depth_bias_float",
         "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "display_groups",
+        "lod_id",
+        "unk_x0e_x10",
+        "unk_x10_x14",
+        "use_depth_bias_float",
     )
 
     ENTRY_SUBTYPE = MSBPartSubtype.Object
@@ -557,59 +640,63 @@ class MSBCharacter(BaseMSBPart):
     FIELD_INFO = {
         "model_name": (
             "Model Name",
-            True,
             CharacterModel,
             "Name of character model to use for this character.",
         ),
         **BaseMSBPart.FIELD_INFO,
         "think_id": (
             "AI ID",
-            True,
             AIParam,
             "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used.",
         ),
         "npc_id": (
             "NPC ID",
-            True,
             CharacterParam,
             "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
             "unused.",
         ),
         "talk_id": (
             "Talk ID",
-            True,
             TalkScript,
             "EzState ID of character, which determines their interactions (conversations, shops, etc.). This is used "
             "to look up the corresponding 'tXXXXXX.esd' file inside the 'talkesdbnd' archive for this map.",
         ),
-        "patrol_type": ("Patrol Type", True, int, "Patrol behavior type."),
-        "platoon_id": ("Platoon ID", False, int, "Unused 'platoon' ID value."),
+        "patrol_type": (
+            "Patrol Type",
+            int,
+            "Patrol behavior type. (Effects unknown.)",
+        ),
+        "platoon_id": (
+            "Platoon ID",
+            int,
+            "Unused 'platoon' ID value.",
+        ),
         "chara_init_id": (
             "Player ID",
-            True,
             PlayerParam,
             "Contains information for 'player' (human) characters, such as their stats and equipment.",
         ),
         "draw_parent_name": (
             "Draw Parent",
-            True,
             MapPart,
             "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
         "patrol_point_names": (
             "Patrol Regions",
-            True,
             GameObjectSequence((Region, 8)),
             "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
             "AI logic.",
         ),
         "default_animation": (
             "Default Animation",
-            True,
             int,  # TODO: Animation
             "Default looping animation for character.",
         ),
-        "damage_animation": ("Damage Animation", True, int, "Default damage animation to use for character."),
+        "damage_animation": (
+            "Damage Animation",
+            int,
+            "Default damage animation to use for character.",
+        ),
     }
 
     FIELD_NAMES = (
@@ -641,9 +728,20 @@ class MSBCharacter(BaseMSBPart):
         "tone_correct_id",
         "lod_id",
         "is_shadow_source",
+        "is_shadow_destination",
         "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
         "use_depth_bias_float",
         "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "display_groups",
+        "platoon_id",
+        "lod_id",
+        "use_depth_bias_float",
     )
 
     ENTRY_SUBTYPE = MSBPartSubtype.Character
@@ -725,12 +823,61 @@ class MSBPlayerStart(BaseMSBPart):
     FIELD_INFO = {
         "model_name": (
             "Model Name",
-            False,
             CharacterModel,
             "Name of character model to use for this PlayerStart. This should always be c0000.",
         ),
         **BaseMSBPart.FIELD_INFO,
     }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
 
     ENTRY_SUBTYPE = MSBPartSubtype.PlayerStart
 
@@ -770,37 +917,48 @@ class MSBCollision(BaseMSBPart):
     FIELD_INFO = {
         "model_name": (
             "Model Name",
-            True,
             CollisionModel,
             "Name of collision model to use for this collision.",
         ),
         **BaseMSBPart.FIELD_INFO,
         "display_groups": (
             "Display Groups",
-            True,
             list,
             "Display groups of collision. These display groups will be active when the player is standing on this "
             "Collision, which will draw any parts with an overlapping draw group.",
         ),
         "hit_filter_id": (
             "Hit Filter ID",
-            True,
             CollisionHitFilter,
             "Determines what happens when the player activates this collision.",
         ),
-        "sound_space_type": ("Sound Space Type", True, int, "Unknown."),
+        "sound_space_type": (
+            "Sound Space Type",
+            int,
+            "Unknown.",
+        ),
         "environment_event_name": (
             "Environment Event",
-            True,
             EnvironmentEvent,
             "Environment event in map that determines ambience when standing on this collision.",
         ),
-        "reflect_plane_height": ("Reflect Plane Height", True, float, "Unknown."),
-        "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
-        "vagrant_entity_ids": ("Vagrant Entity IDs", True, list, "Unknown."),
+        "reflect_plane_height": (
+            "Reflect Plane Height",
+            float,
+            "Vertical height of the reflect plane for this collision.",
+        ),
+        "navmesh_groups": (
+            "Navmesh Groups",
+            list,
+            "Controls collision backread.",
+        ),
+        "vagrant_entity_ids": (
+            "Vagrant Entity IDs",
+            list,
+            "Unknown.",
+        ),
         "area_name_id": (
             "Area Name",
-            True,
             PlaceName,
             "Name of area that this collision is in, which determines the area banner that is shown when you step on "
             "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
@@ -808,7 +966,6 @@ class MSBCollision(BaseMSBPart):
         ),
         "force_area_banner": (
             "Show Area Banner",
-            True,
             bool,
             "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
             "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
@@ -822,26 +979,22 @@ class MSBCollision(BaseMSBPart):
         ),
         "starts_disabled": (
             "Starts Disabled",
-            True,
             bool,
             "If True, this collision is disabled on map load and must be manually enabled with an event script.",
         ),
         "unk_x27_x28": (
             "Unknown [27-28]",
-            False,
             int,
             "Unknown. Almost always zero, but see e.g. Anor Londo gondola collision.",
         ),
         "attached_bonfire": (
             "Attached Bonfire",
-            True,
             int,
             "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
             "on this collision. Note that this also checks for enemies that are disabled by events.",
         ),
         "play_region_id": (
             "Play Region ID",
-            True,
             int,
             "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
             ""
@@ -850,7 +1003,6 @@ class MSBCollision(BaseMSBPart):
         ),
         "stable_footing_flag": (
             "Stable Footing Flag",
-            True,
             int,
             "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
             "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
@@ -861,13 +1013,11 @@ class MSBCollision(BaseMSBPart):
         ),
         "lock_cam_param_id_1": (
             "Camera Param ID 1",
-            True,
             CameraParam,
             "First camera ID to use on this collision. Unsure how the two slots differ.",
         ),
         "lock_cam_param_id_2": (
             "Camera Param ID 2",
-            True,
             CameraParam,
             "Second camera ID to use on this collision. Unsure how the two slots differ.",
         ),
@@ -907,9 +1057,19 @@ class MSBCollision(BaseMSBPart):
         "tone_correct_id",
         "lod_id",
         "is_shadow_source",
+        "is_shadow_destination",
         "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
         "use_depth_bias_float",
         "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "lod_id",
+        "unk_x27_x28",
+        "use_depth_bias_float",
     )
 
     ENTRY_SUBTYPE = MSBPartSubtype.Collision
@@ -1093,10 +1253,18 @@ class MSBNavmesh(BaseMSBPart):
     )
 
     FIELD_INFO = {
-        "model_name": ("Model Name", True, NavmeshModel, "Name of navmesh model to use for this navmesh."),
+        "model_name": (
+            "Model Name",
+            NavmeshModel,
+            "Name of navmesh model to use for this navmesh.",
+        ),
         **BaseMSBPart.FIELD_INFO,
-        "draw_groups": ("Draw Groups", False, list, "No draw groups for navmeshes."),
-        "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
+        "navmesh_groups": (
+            "Navmesh Groups",
+            list,
+            "Enables backread of collisions with overlapping navmesh groups, if the nodes are also close enough in "
+            "the MCG/MCP network.",
+        ),
     }
 
     FIELD_NAMES = (
@@ -1119,7 +1287,35 @@ class MSBNavmesh(BaseMSBPart):
         "tone_correct_id",
         "lod_id",
         "is_shadow_source",
+        "is_shadow_destination",
         "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "lod_id",
+        "use_depth_bias_float",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
         "use_depth_bias_float",
         "disable_point_light_effect",
     )
@@ -1132,8 +1328,6 @@ class MSBNavmesh(BaseMSBPart):
         if msb_part_source is None:
             # Set some defaults.
             kwargs.setdefault("is_shadow_source", True)
-            kwargs.setdefault("is_shadow_destination", True)
-            kwargs.setdefault("draw_by_reflect_cam", True)
         self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
@@ -1178,7 +1372,7 @@ class MSBUnusedCharacter(MSBCharacter):
     ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
 
 
-class MSBMapLoadTrigger(BaseMSBPart):
+class MSBMapConnection(BaseMSBPart):
     """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
     is itself in backread in the current map.
 
@@ -1197,20 +1391,17 @@ class MSBMapLoadTrigger(BaseMSBPart):
     FIELD_INFO = {
         "model_name": (
             "Collision Model Name",
-            True,
             CollisionModel,
             "Name of collision model to use for this map load trigger.",
         ),
         **BaseMSBPart.FIELD_INFO,
         "collision_name": (
             "Collision Part Name",
-            True,
             Collision,
             "Collision part that triggers this map load.",
         ),
         "connected_map": (
             "Map ID",
-            True,
             Map,
             "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
         ),
@@ -1221,6 +1412,7 @@ class MSBMapLoadTrigger(BaseMSBPart):
         "entity_id",
         "translate",
         "rotate",
+        "scale",
         "draw_groups",
         "display_groups",
         "collision_name",
@@ -1236,12 +1428,26 @@ class MSBMapLoadTrigger(BaseMSBPart):
         "tone_correct_id",
         "lod_id",
         "is_shadow_source",
+        "is_shadow_destination",
         "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
         "use_depth_bias_float",
         "disable_point_light_effect",
     )
 
-    ENTRY_SUBTYPE = MSBPartSubtype.MapLoadTrigger
+    HIDDEN_FIELDS = (
+        "scale",
+        "lod_id",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    ENTRY_SUBTYPE = MSBPartSubtype.MapConnection
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.collision_name = None
@@ -1313,7 +1519,7 @@ MSB_PART_TYPE_CLASSES = {
     MSBPartSubtype.Navmesh: MSBNavmesh,
     MSBPartSubtype.UnusedObject: MSBUnusedObject,
     MSBPartSubtype.UnusedCharacter: MSBUnusedCharacter,
-    MSBPartSubtype.MapLoadTrigger: MSBMapLoadTrigger,
+    MSBPartSubtype.MapConnection: MSBMapConnection,
 }
 
 
@@ -1332,7 +1538,7 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
     Navmeshes: tp.Sequence[MSBNavmesh]
     UnusedObjects: tp.Sequence[MSBUnusedObject]
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
-    MapLoadTriggers: tp.Sequence[MSBMapLoadTrigger]
+    MapConnections: tp.Sequence[MSBMapConnection]
 
     def set_indices(
         self, model_indices, local_environment_indices, region_indices, part_indices, local_collision_indices,
@@ -1478,17 +1684,17 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             MSBPartSubtype.UnusedCharacter, character_name_or_index, insert_below_original, **kwargs,
         )
 
-    def duplicate_map_load_trigger(
+    def duplicate_map_connection(
             self, trigger_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBMapLoadTrigger:
+    ) -> MSBMapConnection:
         return self.duplicate_entry(
-            MSBPartSubtype.MapLoadTrigger, trigger_name_or_index, insert_below_original, **kwargs,
+            MSBPartSubtype.MapConnection, trigger_name_or_index, insert_below_original, **kwargs,
         )
 
-    def create_map_load_trigger(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
-        """Creates a new `MapLoadTrigger` that references and copies the transform of the given `collision`.
+    def create_map_connection(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
+        """Creates a new `MapConnection` that references and copies the transform of the given `collision`.
 
-        The `name` and `map_id` of the new `MapLoadTrigger` must be given. You can also specify its `draw_groups` and
+        The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
         `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
         """
         if not isinstance(collision, MSBCollision):
@@ -1496,9 +1702,9 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
         if name is None:
             game_map = get_map(connected_map)
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
-        if name in self.get_entry_names("MapLoadTrigger"):
-            raise ValueError(f"{repr(name)} is already the name of an existing MapLoadTrigger.")
-        map_load_trigger = MSBMapLoadTrigger(
+        if name in self.get_entry_names("MapConnection"):
+            raise ValueError(f"{repr(name)} is already the name of an existing MapConnection.")
+        map_connection = MSBMapConnection(
             name=name,
             connected_map=connected_map,
             collision_name=collision.name,
@@ -1508,11 +1714,11 @@ class MSBPartList(MSBEntryList[BaseMSBPart]):
             model_name=collision.model_name,
         )
         if draw_groups is not None:
-            map_load_trigger.draw_groups = draw_groups
+            map_connection.draw_groups = draw_groups
         if display_groups is not None:
-            map_load_trigger.display_groups = display_groups
-        self.add_entry(map_load_trigger, append_to_entry_subtype="MapLoadTrigger")
-        return map_load_trigger
+            map_connection.display_groups = display_groups
+        self.add_entry(map_connection, append_to_entry_subtype="MapConnection")
+        return map_connection
 
     def add_c1000(self, name, **kwargs) -> MSBCharacter:
         """Useful to create basic c1000 instances as debug warp points."""

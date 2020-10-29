@@ -18,12 +18,15 @@ class FieldDisplayInfo:
 
 class DynamicFieldDisplayInfo(abc.ABC):
     """Called with a `ParamEntry` instance, in which `type_field_name` is checked before returning `FieldInfo`."""
+
+    POSSIBLE_TYPES = set()
+
     def __init__(self, name, type_field_name):
         self.name = name
         self.type_field_name = type_field_name
 
     @abc.abstractmethod
-    def __call__(self, entry):
+    def __call__(self, entry) -> FieldDisplayInfo:
         ...
 
 

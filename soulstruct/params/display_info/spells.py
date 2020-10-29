@@ -9,9 +9,18 @@ SP_EFFECT_SPCATEGORY = int
 
 
 class DynamicSpellRef(DynamicFieldDisplayInfo):
-    def __call__(self, entry):
+
+    POSSIBLE_TYPES = {BulletParam, SpecialEffectParam}
+
+    def __call__(self, entry) -> FieldDisplayInfo:
         if entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Default:
-            return "NoReference", True, int, "This value should be -1 when 'Default' reference type is selected."
+            return FieldDisplayInfo(
+                self.name,
+                "NoReference",
+                True,
+                int,
+                "This value should be -1 when 'Default' reference type is selected.",
+            )
         elif entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Bullet:
             return FieldDisplayInfo(
                 self.name,

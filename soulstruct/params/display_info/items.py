@@ -18,7 +18,10 @@ SP_EFFECT_SPCATEGORY = int
 
 
 class DynamicGoodRef(DynamicFieldDisplayInfo):
-    def __call__(self, entry):
+
+    POSSIBLE_TYPES = {BulletParam, SpecialEffectParam}
+
+    def __call__(self, entry) -> FieldDisplayInfo:
         if entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Default:
             return FieldDisplayInfo(
                 self.name,
@@ -44,7 +47,7 @@ class DynamicGoodRef(DynamicFieldDisplayInfo):
                 "Special effect triggered (on self) by using good.",
             )
         else:
-            return (
+            return FieldDisplayInfo(
                 self.name,
                 "UnknownReferenceID",
                 True,
@@ -54,7 +57,10 @@ class DynamicGoodRef(DynamicFieldDisplayInfo):
 
 
 class DynamicItemLotRef(DynamicFieldDisplayInfo):
-    def __call__(self, entry):
+
+    POSSIBLE_TYPES = {WeaponParam, ArmorParam, RingParam, GoodParam}
+
+    def __call__(self, entry) -> FieldDisplayInfo:
         item_type = entry[self.type_field_name]
         item_lot_slot = int(self.type_field_name[-1])
         if item_type == ITEMLOT_ITEMCATEGORY.Weapon:
@@ -2571,7 +2577,6 @@ REINFORCE_PARAM_WEAPON_ST = {
             int,
             "Value to be added to Upgrade Materials field in base weapon parameters.",
         ),
-        FieldDisplayInfo("pad[9]", "Pad1", False, pad_field(9), "Null padding."),
         FieldDisplayInfo(
             "reinforcementLevel",
             "ReinforcementLevel",

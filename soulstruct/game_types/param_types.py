@@ -11,21 +11,29 @@ __all__ = [
     "ArmorUpgradeParam",
     "AttackParam",
     "BehaviorParam",
+    "BossParam",
     "BulletParam",
     "CameraParam",
     "CharacterParam",
     "DialogueParam",
     "FaceParam",
     "GoodParam",
+    "GrowthCurveParam",
     "ItemLotParam",
-    "ObjActParam",
     "KnockbackParam",
+    "MenuColorsParam",
+    "MovementParam",
+    "ObjActParam",
+    "ObjectParam",
     "PlayerParam",
     "RingParam",
     "RuneParam",
+    "ShopParam",
     "SpecialEffectParam",
+    "SpecialEffectVisualParam",
     "SpellParam",
     "TerrainParam",
+    "ThrowParam",
     "UpgradeMaterialParam",
     "WeaponParam",
     "WeaponUpgradeParam",
@@ -81,7 +89,7 @@ class BaseParam(GameObject, IntEnum):
         raise NotImplementedError
 
 
-class BaseGameParam(GameObject, IntEnum):
+class BaseGameParam(BaseParam):
     """Base class for IDs of GameParam entries."""
 
     @classmethod
@@ -172,6 +180,13 @@ class BehaviorParam(BaseGameParam):
         raise ValueError("Param name for `Behavior` could be 'PlayerBehaviors' or 'NonPlayerBehaviors'.")
 
 
+class BossParam(BaseGameParam):
+    """Boss (or 'GameArea') param entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Bosses"
+
+
 class BulletParam(BaseGameParam):
     """Bullet entry."""
     @classmethod
@@ -218,11 +233,11 @@ class GoodParam(BaseItemParam):
         return "Goods"
 
 
-class KnockbackParam(BaseGameParam):
-    """Knockback entry."""
+class GrowthCurveParam(BaseGameParam):
+    """Growth curve entry."""
     @classmethod
     def get_param_nickname(cls):
-        return "Knockback"
+        return "GrowthCurves"
 
 
 class ItemLotParam(BaseGameParam):
@@ -232,11 +247,39 @@ class ItemLotParam(BaseGameParam):
         return "ItemLots"
 
 
+class KnockbackParam(BaseGameParam):
+    """Knockback entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Knockback"
+
+
+class MenuColorsParam(BaseGameParam):
+    """MenuColors entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "MenuColors"
+
+
+class MovementParam(BaseGameParam):
+    """Movement entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Movement"
+
+
 class ObjActParam(BaseGameParam):
     """ObjAct entry."""
     @classmethod
     def get_param_nickname(cls):
-        return "ItemLots"
+        return "ObjectActivations"
+
+
+class ObjectParam(BaseGameParam):
+    """Object param. Not to be confused with `ObjActParam`."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Objects"
 
 
 class PlayerParam(BaseGameParam):
@@ -258,6 +301,13 @@ class RingParam(BaseItemParam):
 
 
 RuneParam = RingParam
+
+
+class ShopParam(BaseGameParam):
+    """Shop entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Shops"
 
 
 class SpecialEffectParam(BaseGameParam):
@@ -285,7 +335,14 @@ class TerrainParam(BaseGameParam):
     """Terrain entry."""
     @classmethod
     def get_param_nickname(cls):
-        return "Terrain"
+        return "Terrains"
+
+
+class ThrowParam(BaseGameParam):
+    """Throw entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Throws"
 
 
 class UpgradeMaterialParam(BaseGameParam):

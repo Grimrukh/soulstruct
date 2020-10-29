@@ -198,7 +198,7 @@ NPC_PARAM_ST = {
             "Multiplied by 1000 and added to non-player behavior lookups (hitboxes, bullets) triggered by TAE.",
         ),
         FieldDisplayInfo(
-            "aiThinkId", "AiThinkID", True, AIParam, "Default AI ID. Overridden by AI ID field in Maps entry."
+            "aiThinkId", "DefaultAI", True, AIParam, "Default AI ID. Overridden by AI ID field in Maps entry."
         ),
         FieldDisplayInfo(
             "nameId",
@@ -762,35 +762,35 @@ CACL_CORRECT_GRAPH_ST = {
         FieldDisplayInfo("stageMaxGrowVal4", "StageMaxSlope4", True, float, "Slope in equation of 'stage max' line 4."),
         FieldDisplayInfo(
             "adjPt_maxGrowVal0",
-            "AdustmentMaxSlope0",
+            "AdjustmentMaxSlope0",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 0.",
         ),
         FieldDisplayInfo(
             "adjPt_maxGrowVal1",
-            "AdustmentMaxSlope1",
+            "AdjustmentMaxSlope1",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 1.",
         ),
         FieldDisplayInfo(
             "adjPt_maxGrowVal2",
-            "AdustmentMaxSlope2",
+            "AdjustmentMaxSlope2",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 2.",
         ),
         FieldDisplayInfo(
             "adjPt_maxGrowVal3",
-            "AdustmentMaxSlope3",
+            "AdjustmentMaxSlope3",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 3.",
         ),
         FieldDisplayInfo(
             "adjPt_maxGrowVal4",
-            "AdustmentMaxSlope4",
+            "AdjustmentMaxSlope4",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 4.",
@@ -810,14 +810,14 @@ CACL_CORRECT_GRAPH_ST = {
             "'Early' adjustment value of equation determining levelling costs (α2).",
         ),
         FieldDisplayInfo(
-            "boundry_inclination_soul",
+            "boundry_inclination_soul",  # (sic)
             "LateLevellingCostSlope",
             True,
             float,
             "Slope of equation determining required levelling souls after 'LateLevellingCostThreshold' value (α3).",
         ),
         FieldDisplayInfo(
-            "boundry_value",
+            "boundry_value",  # (sic)
             "LateLevellingCostThreshold",
             True,
             float,

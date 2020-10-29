@@ -3,15 +3,34 @@ from __future__ import annotations
 import logging
 import typing as tp
 
-from soulstruct.params.enums import ITEMLOT_ITEMCATEGORY, SHOP_LINEUP_EQUIPTYPE
+from soulstruct.game_types import BaseParam, Flag
+from soulstruct.params.display_info.base import DynamicFieldDisplayInfo
 from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
+from soulstruct.project.base.field_editor import FieldRow, SoulstructBaseFieldEditor
 from soulstruct.project.utilities import NameSelectionBox
 
 if tp.TYPE_CHECKING:
     from soulstruct.params import DarkSoulsGameParameters, ParamEntry
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class ParamFieldRow(FieldRow):
+
+    def _is_default(self, field_type, value, field_nickname=""):
+        # TODO: Each field should specify its default value(s).
+        if field_type == int or issubclass(field_type, (BaseParam, Flag)):
+            if value in (-1, 0, 1):
+                # TODO: Will have some false positives.
+                return True
+        elif field_type == float:
+            if field_nickname.endswith("Multiplier"):
+                if value == 1.0:
+                    return True
+            else:
+                if value in (0.0, 1.0):
+                    return True
+        return False
 
 
 class ParamEntryRow(EntryRow):
@@ -61,7 +80,7 @@ class ParamEntryRow(EntryRow):
         self.context_menu.add_separator()
         self.context_menu.add_command(
             label="Find References in Params",
-            command=lambda: self.master.find_all_param_references(self.master.active_category, self.entry_id),
+            command=lambda: self.master.find_all_param_references(self.entry_id),
         )
 
 
@@ -74,6 +93,8 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     FIELD_BOX_WIDTH = 500
     FIELD_ROW_COUNT = 173  # highest count (Params[SpecialEffects])
 
+    FIELD_ROW_CLASS = ParamFieldRow
+    field_rows: tp.List[ParamFieldRow]
     ENTRY_ROW_CLASS = ParamEntryRow
     entry_rows: tp.List[ParamEntryRow]
 
@@ -113,79 +134,56 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             self.after(2000, lambda: self.search_result.set(""))
         self.select_entry_id(param_id, set_focus_to_text=False, edit_if_already_selected=False)
 
-    def find_all_param_references(self, category, param_id):
+    def find_all_param_references(self, param_id):
         """Iterates over all ParamTables to find references to this param ID, and presents them in a floating list."""
-        param_link = f"<Params:{category}>"
+        category = self.active_category
+        param_type = self.Params.PARAM_TABLES[category]
         linking_fields = []
-        links = []
+        links = {}
 
-        # Find all (category, field) pairs that could possibly reference this category.
-        for param_name in self.Params.param_names:
+        # Find all (param_name, field) pairs that could possibly reference this category.
+        for param_name in self.Params.PARAM_TABLES:
             param_table = self.Params[param_name]
-            for paramdef_field in param_table.param_info["fields"]:
-                if (
-                    param_name == "ItemLots"
-                    and paramdef_field.name.startswith("lotItemId")
-                    and category in {"Weapons", "Armor", "Rings", "Goods"}
-                ):
-                    linking_fields.append((param_name, paramdef_field.name))
-                elif (
-                    param_name == "Shops"
-                    and paramdef_field.name == "equipId"
-                    and category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
-                ):
-                    linking_fields.append((param_name, paramdef_field.name))
-                else:
-                    field_type = paramdef_field.field_type
-                    if isinstance(field_type, str) and field_type == param_link:
-                        linking_fields.append((param_name, paramdef_field.name))
+            for field_info in param_table.param_info["fields"]:
+                if isinstance(field_info, DynamicFieldDisplayInfo):
+                    # Field type will be checked below (per entry).
+                    if param_type in field_info.POSSIBLE_TYPES:
+                        linking_fields.append((param_name, field_info))
+                elif field_info.field_type == param_type:
+                    linking_fields.append((param_name, field_info))
 
-        for param_name, field_name in linking_fields:
-            for entry_id, field_dict in self.Params[param_name].items():
-                if param_name == "ItemLots" and field_name.startswith("lotItemId"):
-                    lot_id = int(field_name[-2:])
-                    lot_category = ITEMLOT_ITEMCATEGORY(field_dict[f"lotItemCategory{lot_id:02d}"])
-                    category_match = (
-                        category == "Weapons"
-                        and lot_category == ITEMLOT_ITEMCATEGORY.Weapon
-                        or category == "Armor"
-                        and lot_category == ITEMLOT_ITEMCATEGORY.Armor
-                        or category == "Rings"
-                        and lot_category == ITEMLOT_ITEMCATEGORY.Ring
-                        or category == "Goods"
-                        and lot_category == ITEMLOT_ITEMCATEGORY.Good
-                    )
-                    if field_dict[field_name] == param_id and category_match:
-                        links.append(f"{param_name} : {entry_id} : {field_name}")
-                elif param_name == "Shops" and field_name == "equipId":
-                    lot_category = SHOP_LINEUP_EQUIPTYPE(field_dict[f"equipType"])
-                    category_match = (
-                        category == "Weapons"
-                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Weapon
-                        or category == "Armor"
-                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Armor
-                        or category == "Rings"
-                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Ring
-                        or category == "Goods"
-                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Good
-                        or category == "Spells"
-                        and lot_category == SHOP_LINEUP_EQUIPTYPE.Spell
-                    )
-                    if field_dict[field_name] == param_id and category_match:
-                        links.append(f"{param_name} : {entry_id} : {field_name}")
-                elif field_dict[field_name] == param_id:
-                    links.append(f"{param_name} : {entry_id} : {field_name}")
+        if not linking_fields:
+            self.CustomDialog(
+                "No References",
+                "Could not find any fields in any Params that could possibly reference this entry type.\n"
+                "There may still be references elsewhere (e.g. maps, events, animation TAE).",
+            )
+            return
+
+        for param_name, field_info in linking_fields:
+            for entry_id, entry in self.Params[param_name].items():
+                entry_field_info = field_info(entry)
+                if entry_field_info.field_type == param_type and entry[entry_field_info.name] == param_id:
+                    link_text = f"{param_name}[{entry_id}] {entry_field_info.nickname}"
+                    links[link_text] = (param_name, entry_id, entry_field_info.name)
+
+        if not links:
+            self.CustomDialog(
+                "No References",
+                "Could not find any references to this entry in Params.\nThere may still be references elsewhere.",
+            )
+            return
 
         name_box = NameSelectionBox(self.master, names=links, list_name=f"Param References to {category}[{param_id}]")
-        selected_name = name_box.go()
-        if selected_name is not None:
-            param_name, entry_id, field_name = selected_name.split(" : ")
+        selected_link = name_box.go()
+        if selected_link is not None:
+            param_name, entry_id, field_name = links[selected_link]
             self.select_category(param_name, auto_scroll=True)
-            self.select_entry_id(int(entry_id), edit_if_already_selected=False)
+            self.select_entry_id(entry_id, edit_if_already_selected=False)
             self.select_field_name(field_name)
 
     def _get_display_categories(self):
-        return self.Params.param_names
+        return self.Params.PARAM_TABLES
 
     def get_category_data(self, category=None):
         if category is None:
@@ -251,6 +249,8 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:
             valid_null_values = {0: "Default/None", -1: "Default/None"}
+        else:
+            print(field_type, field_value, valid_null_values)
         try:
             return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
         except IndexError:

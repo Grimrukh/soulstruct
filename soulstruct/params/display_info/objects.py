@@ -6,7 +6,10 @@ from .base import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
 
 
 class DynamicObjActRef(DynamicFieldDisplayInfo):
-    def __call__(self, entry):
+
+    POSSIBLE_TYPES = {GoodParam, SpecialEffectParam}
+
+    def __call__(self, entry) -> FieldDisplayInfo:
         n = "2" if self.type_field_name.endswith("2") else "1"
         if entry[self.type_field_name] == OBJACT_SP_QUALIFIED_TYPE.NoCondition:
             return FieldDisplayInfo(
@@ -17,7 +20,8 @@ class DynamicObjActRef(DynamicFieldDisplayInfo):
                 f"No condition type selected.",
             )
         elif entry[self.type_field_name] == OBJACT_SP_QUALIFIED_TYPE.HasGood:
-            return (
+            return FieldDisplayInfo(
+                self.name,
                 f"RequiredGood{n}",
                 True,
                 GoodParam,

@@ -76,7 +76,7 @@ class MSBPartSubtype(MSBSubtype):
     Navmesh = 8
     UnusedObject = 9
     UnusedCharacter = 10
-    MapLoadTrigger = 11
+    MapConnection = 11
 
     @classmethod
     def get_pluralized_type_name(cls):

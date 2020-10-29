@@ -6,6 +6,7 @@ from pathlib import Path
 import typing as tp
 
 from soulstruct.bnd.core import BND, BaseBND
+from soulstruct.game_types.param_types import *
 from soulstruct.params import ParamTable, DrawParamTable, PARAMDEF_BND
 
 if tp.TYPE_CHECKING:
@@ -22,6 +23,7 @@ _AMBIGUOUS_NICKNAMES = {
     "BehaviorParam.param": "NonPlayerBehaviors",
     "BehaviorParam_PC.param": "PlayerBehaviors",
 }
+
 
 class DarkSoulsGameParameters:
 
@@ -57,39 +59,40 @@ class DarkSoulsGameParameters:
     SpecialEffectVisuals: ParamTable
     GrowthCurves: ParamTable
 
-    param_names = [
-        "Players",
-        "Characters",
-        "PlayerBehaviors",
-        "PlayerAttacks",
-        "NonPlayerBehaviors",
-        "NonPlayerAttacks",
-        "AI",
-        "Bullets",
-        "Throws",
-        "SpecialEffects",
-        "Weapons",
-        "Armor",
-        "Rings",
-        "Goods",
-        "WeaponUpgrades",
-        "ArmorUpgrades",
-        "UpgradeMaterials",
-        "ItemLots",
-        "Bosses",
-        "Shops",
-        "Spells",
-        "Objects",
-        "ObjectActivations",
-        "Movement",
-        "Cameras",
-        "Terrains",
-        "Faces",
-        "Dialogue",
-        "MenuColors",
-        "SpecialEffectVisuals",
-        "GrowthCurves",
-    ]
+    # Defines display order as well.
+    PARAM_TABLES = {
+        "Players": PlayerParam,
+        "Characters": CharacterParam,
+        "PlayerBehaviors": BehaviorParam,
+        "PlayerAttacks": AttackParam,
+        "NonPlayerBehaviors": BehaviorParam,
+        "NonPlayerAttacks": AttackParam,
+        "AI": AIParam,
+        "Bullets": BulletParam,
+        "Throws": ThrowParam,
+        "SpecialEffects": SpecialEffectParam,
+        "Weapons": WeaponParam,
+        "Armor": ArmorParam,
+        "Rings": RingParam,
+        "Goods": GoodParam,
+        "WeaponUpgrades": WeaponUpgradeParam,
+        "ArmorUpgrades": ArmorUpgradeParam,
+        "UpgradeMaterials": UpgradeMaterialParam,
+        "ItemLots": ItemLotParam,
+        "Bosses": BossParam,
+        "Shops": ShopParam,
+        "Spells": SpellParam,
+        "Objects": ObjectParam,
+        "ObjectActivations": ObjActParam,
+        "Movement": MovementParam,
+        "Cameras": CameraParam,
+        "Terrains": TerrainParam,
+        "Faces": FaceParam,
+        "Dialogue": DialogueParam,
+        "MenuColors": MenuColorsParam,
+        "SpecialEffectVisuals": SpecialEffectVisualParam,
+        "GrowthCurves": GrowthCurveParam,
+    }
 
     def __init__(self, game_param_bnd_source=None):
         """Unpack DS1 GameParams into a single modifiable structure.

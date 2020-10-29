@@ -45,7 +45,7 @@ __all__ = [
     "Navmesh",
     "UnusedObject",
     "UnusedCharacter",
-    "MapLoadTrigger",
+    "MapConnection",
 
     "Region",
     "PointRegion",
@@ -120,7 +120,7 @@ class Map(GameObject):
         self.msb_file_stem = base_id if msb_file_stem is None else msb_file_stem
         self.ai_file_stem = base_id if ai_file_stem is None else ai_file_stem
         self.esd_file_stem = base_id if esd_file_stem is None else esd_file_stem
-        self.map_load_tuple = (area_id, block_id, -1, -1)  # for `MSBMapLoadTrigger`
+        self.map_load_tuple = (area_id, block_id, -1, -1)  # for `MSBMapConnection`
 
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name
@@ -575,11 +575,11 @@ class UnusedCharacter(MapPart):
         return ("Parts", "UnusedCharacters") if pluralized_subtype else ("Parts", "UnusedCharacter")
 
 
-class MapLoadTrigger(MapPart):
+class MapConnection(MapPart):
     """MapConnection added in MSB. No additional state."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "MapLoadTriggers") if pluralized_subtype else ("Parts", "MapLoadTrigger")
+        return ("Parts", "MapConnections") if pluralized_subtype else ("Parts", "MapConnection")
 
 
 MapTyping = tp.Union[Map, tuple, list]

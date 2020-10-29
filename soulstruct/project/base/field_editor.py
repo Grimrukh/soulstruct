@@ -12,7 +12,7 @@ from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import GameObject, GameObjectSequence, MapEntry, BaseParam
 from soulstruct.project.base.base_editor import SoulstructBaseEditor
 from soulstruct.project.links import WindowLinker
-from soulstruct.project.utilities import bind_events
+from soulstruct.project.utilities import bind_events, NumberEditBox
 from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import ToolTip
 
@@ -143,7 +143,7 @@ class FieldRow:
         nickname,
         value: tp.Any,
         field_type: type,
-        docstring: str = "DOC-TODO",
+        docstring="",
     ):
         """Update widgets with given field information.
 
@@ -152,7 +152,7 @@ class FieldRow:
         self.field_name = name
         self.field_type = field_type
         self.field_nickname = camel_case_to_spaces(nickname)
-        self.field_docstring = docstring
+        self.field_docstring = docstring if docstring else "DOC-TODO"
         self.field_links = []
 
         if self.field_name_label.var.get() != self.field_nickname:
@@ -179,7 +179,6 @@ class FieldRow:
         self._update_field_int(value)
 
     def _update_field_IntEnum(self, value):
-        # TODO: Give users a way to enter arbitrary integers for IntEnum fields (e.g. right-click to get edit box).
         self.value_combobox["values"] = [f"{e.value} {camel_case_to_spaces(e.name)}" for e in self.field_type]
         try:
             enum_name = getattr(self.field_type(value), "name")
@@ -204,10 +203,7 @@ class FieldRow:
         self._activate_value_widget(self.value_checkbutton)
 
     def _update_field_list(self, value):
-        """Actual list of values (e.g. draw groups).
-
-        TODO: Need better display of draw groups (e.g. popout editor), as they fall off screen easily.
-        """
+        """Actual list of values (e.g. draw groups)."""
         # Convert sets (e.g. draw/display/navmesh groups) to sorted lists so empty sets appear pretty.
         value_text = repr(sorted(value)) if not isinstance(value, list) else repr(value)
         self.value_label.var.set(value_text)
@@ -276,11 +272,15 @@ class FieldRow:
         self.active_value_widget.grid()
 
     def build_field_context_menu(self):
-        # TODO: other stuff? Pop out a scroll box to select an entry, for linked fields?
         self.context_menu.delete(0, "end")
+
         if self.field_links:
             for field_link in self.field_links:
                 field_link.add_to_context_menu(self.context_menu)
+
+        # Users can enter their own custom integer values for IntEnums.
+        if issubclass(self.field_type, IntEnum):
+            self.context_menu.add_command(label="Set custom integer value", command=self._set_custom_intenum_value)
 
     @property
     def editable(self):
@@ -370,7 +370,6 @@ class FieldRow:
         if issubclass(self.field_type, GameObject):
             return self._string_to_GameObject
         if issubclass(self.field_type, IntEnum):
-            # TODO: Allow option of right-click integer input for IntEnum combo-boxes.
             raise NotImplementedError
 
         raise AttributeError(f"Could not find field update method '_string_to_{field_type_name}' or a superclass.")
@@ -434,20 +433,17 @@ class FieldRow:
             base_bg += 111
         return f"#{base_bg}"
 
+    def _set_custom_intenum_value(self):
+        new_value = NumberEditBox(
+            self.master, window_title=f"New value for {self.field_nickname}", integers_only=True,
+        ).go()
+        if new_value is None:
+            return
+        field_changed = self.master.change_field_value(self.field_name, new_value)
+        if field_changed:
+            self.update_field_value_display(new_value)
+
     def _is_default(self, field_type, value, field_nickname=""):
-        # TODO: Specify default values in field display info.
-        if self.master.TAB_NAME == "params":
-            if field_type == int or issubclass(field_type, BaseParam):
-                if value in (-1, 0, 1):
-                    # TODO: Will have some false positives.
-                    return True
-            elif field_type == float:
-                if field_nickname.endswith("Multiplier"):
-                    if value == 1.0:
-                        return True
-                else:
-                    if value in (0.0, 1.0):
-                        return True
         return False
 
 

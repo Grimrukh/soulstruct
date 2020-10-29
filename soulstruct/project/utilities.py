@@ -22,9 +22,11 @@ __all__ = [
     "TagData",
     "TextEditor",
     "NameSelectionBox",
+    "NumberEditBox",
     "TextEditBox",
     "EntryTextEditBox",
     "ItemTextEditBox",
+    "BitGroupEditBox",
     "ActionHistory",
     "ViewHistory",
     "bind_events",
@@ -136,6 +138,39 @@ class ActionHistory:
 TagData = namedtuple("TagData", ("foreground", "pattern", "offsets"))
 
 
+_TEXT_EDITOR_TK_SETUP = """
+proc widget_proxy {actual_widget callback args} {
+
+    # This prevents recursion if the widget is called during the callback.
+    set flag ::dont_recurse(actual_widget)
+
+    # Call the real Tk widget with the real args.
+    set result [uplevel [linsert $args 0 $actual_widget]]
+
+    # Call the callback and ignore errors, but only do so on inserts, deletes, and changes in the 
+    # mark. Otherwise we'll call the callback way too often.
+    if {! [info exists $flag]} {
+        if {([lindex $args 0] in {insert replace delete}) ||
+            ([lrange $args 0 2] == {mark set insert})} {
+            # the flag makes sure that whatever happens in the
+            # callback doesn't cause the callbacks to be called again.
+            set $flag 1
+            catch {$callback $result {*}$args } callback_result
+            unset -nocomplain $flag
+        }
+    }
+
+    # Return the result from the real widget command.
+    return $result
+}
+"""
+
+_TEXT_EDITOR_TK_ALIAS = """
+rename {widget} _{widget}
+interp alias {{}} ::{widget} {{}} widget_proxy _{widget} {callback}
+"""
+
+
 class TextEditor(tk.Text):
     TAGS = {}  # type: tp.Dict[str, TagData]
 
@@ -150,45 +185,10 @@ class TextEditor(tk.Text):
         super().__init__(*args, **kwargs)
         self.callback = None
         private_callback = self.register(self._callback)
-        self.tk.eval(
-            """
-            proc widget_proxy {actual_widget callback args} {
-
-                # this prevents recursion if the widget is called
-                # during the callback
-                set flag ::dont_recurse(actual_widget)
-
-                # call the real tk widget with the real args
-                set result [uplevel [linsert $args 0 $actual_widget]]
-
-                # call the callback and ignore errors, but only
-                # do so on inserts, deletes, and changes in the 
-                # mark. Otherwise we'll call the callback way too 
-                # often.
-                if {! [info exists $flag]} {
-                    if {([lindex $args 0] in {insert replace delete}) ||
-                        ([lrange $args 0 2] == {mark set insert})} {
-                        # the flag makes sure that whatever happens in the
-                        # callback doesn't cause the callbacks to be called again.
-                        set $flag 1
-                        catch {$callback $result {*}$args } callback_result
-                        unset -nocomplain $flag
-                    }
-                }
-
-                # return the result from the real widget command
-                return $result
-            }
-            """
-        )
-        self.tk.eval(
-            """
-            rename {widget} _{widget}
-            interp alias {{}} ::{widget} {{}} widget_proxy _{widget} {callback}
-        """.format(
-                widget=str(self), callback=private_callback
-            )
-        )
+        self.tk.eval(_TEXT_EDITOR_TK_SETUP)
+        self.tk.eval(_TEXT_EDITOR_TK_ALIAS.format(
+            widget=str(self), callback=private_callback,
+        ))
 
         for tag_name, tag_data in self.TAGS.items():
             self.tag_configure(tag_name, foreground=tag_data.foreground)
@@ -352,18 +352,92 @@ class NameSelectionBox(SmartFrame):
         self.quit()
 
 
+class NumberEditBox(SmartFrame):
+    """Small pop-out widget that allows you to enter a number."""
+
+    def __init__(
+        self,
+        master: SmartFrame,
+        initial_value=None,
+        window_title="Editing Number",
+        integers_only=False,
+        width=16,  # characters
+    ):
+        super().__init__(toplevel=True, master=master, window_title=window_title)
+        self.editor = master
+        self.initial_text = "" if initial_value is None else str(initial_value)
+        self.output = None
+        self._width = width
+        self._integers_only = integers_only
+
+        self._entry = None
+
+        self.build()
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            self._entry = self.Entry(
+                initial_text=self.initial_text,
+                padx=20,
+                pady=20,
+                width=self._width,
+                integers_only=self._integers_only,
+                numbers_only=not self._integers_only,
+            )
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
+                self.Button(
+                    text="Confirm", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
+                self.Button(
+                    text="Cancel", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
+
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self) -> tp.Union[None, int, float]:
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            new_text = self._entry.var.get()
+            if new_text == self.initial_text:
+                self.output = None
+            else:
+                try:
+                    new_value = int(new_text)
+                except ValueError:
+                    self.CustomDialog("Invalid value", "Value must be an integer.")
+                else:
+                    self.output = new_value
+        self.quit()
+
+
 class TextEditBox(SmartFrame):
     """Small pop-out widget that allows you to modify longer strings more freely, with newlines and all."""
 
-    WIDTH = 16  # characters
-    HEIGHT = 1  # lines
-
-    def __init__(self, master: SmartFrame, initial_text="", allow_newlines=True, window_title="Editing Text"):
+    def __init__(
+        self,
+        master: SmartFrame,
+        initial_text="",
+        allow_newlines=True,
+        window_title="Editing Text",
+        width=16,  # characters
+        height=1,  # lines
+    ):
         super().__init__(toplevel=True, master=master, window_title=window_title)
         self.editor = master
         self.initial_text = initial_text
         self.output = None
         self.allow_newlines = allow_newlines
+        self._width = width
+        self._height = height
 
         self._text = None
 
@@ -371,7 +445,7 @@ class TextEditBox(SmartFrame):
 
     def build(self):
         with self.set_master(auto_rows=0):
-            self._text = self.TextBox(padx=20, pady=20, width=self.WIDTH, height=self.HEIGHT)
+            self._text = self.TextBox(padx=20, pady=20, width=self._width, height=self._height)
             self._text.insert("end", self.initial_text)
             with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
                 self.Button(
@@ -407,8 +481,6 @@ class TextEditBox(SmartFrame):
 
 
 class EntryTextEditBox(TextEditBox):
-    WIDTH = 70  # characters
-    HEIGHT = 10  # lines
 
     def __init__(
         self,
@@ -419,6 +491,8 @@ class EntryTextEditBox(TextEditBox):
         initial_text="",
         allow_newlines=True,
         edit_entry_id=True,
+        width=70,
+        height=10,
     ):
         if entry_id is None and edit_entry_id:
             window_title = f"Adding entry to {camel_case_to_spaces(category)}"
@@ -430,9 +504,13 @@ class EntryTextEditBox(TextEditBox):
         self._edit_entry_id = edit_entry_id
         self._id = None
         super().__init__(
-            master=master, initial_text=initial_text, allow_newlines=allow_newlines, window_title=window_title
+            master=master,
+            initial_text=initial_text,
+            allow_newlines=allow_newlines,
+            window_title=window_title,
+            width=width,
+            height=height,
         )
-
         self.output = [None, None]
 
     def build(self):
@@ -520,3 +598,76 @@ class ItemTextEditBox(SmartFrame):
             self.output[1] = self._summary_entry.var.get()
             self.output[2] = self._description_box.get("1.0", "end" + "-1c")
         self.quit()
+
+
+class BitGroupEditBox(SmartFrame):
+    """Displays 128 checkbuttons to toggle for e.g. draw groups, display groups, navmesh groups."""
+
+    def __init__(
+        self,
+        master: SmartFrame,
+        initial_bit_set=None,
+        window_title="Editing Bit Groups",
+    ):
+        super().__init__(toplevel=True, master=master, window_title=window_title)
+        self.editor = master
+        self.initial_bit_set = initial_bit_set
+        self.output = None
+        self._checkbuttons = []
+
+        self.build()
+
+    def build(self):
+        with self.set_master(auto_rows=0):
+            with self.set_master(padx=10, pady=10):  # 4 rows x 8 columns
+                for row in range(8):
+                    for col in range(16):
+                        i = row * 16 + col
+                        self._checkbuttons.append(
+                            self.Checkbutton(
+                                initial_state=i in self.initial_bit_set,
+                                text=str(i),
+                                row=row,
+                                column=col,
+                                selectcolor="#000",
+                                command=lambda i_=i: self._checkbutton_toggle(i_),
+                                sticky="W",
+                            )
+                        )
+                        self._checkbutton_toggle(i)
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
+                self.Button(
+                    text="Confirm", command=lambda: self.done(True),
+                    **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
+                self.Button(
+                    text="Cancel", command=lambda: self.done(False),
+                    **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
+
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self) -> tp.Optional[tp.Set[int]]:
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            output_bit_set = {i for i, checkbutton in enumerate(self._checkbuttons) if checkbutton.var.get()}
+            if output_bit_set == self.initial_bit_set:
+                self.output = None
+            else:
+                self.output = output_bit_set
+        self.quit()
+
+    def _checkbutton_toggle(self, i):
+        """Modify appearance of Checkbutton when toggled."""
+        checkbutton = self._checkbuttons[i]
+        value = checkbutton.var.get()
+        checkbutton.config(fg="#FFF" if value else "#555")

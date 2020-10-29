@@ -6,12 +6,12 @@ import typing as tp
 
 from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.core import InvalidFieldValueError
-from soulstruct.game_types import GameObject, PlaceName, BaseLightingParam
+from soulstruct.game_types import GameObject, PlaceName, BaseLightingParam, ObjActParam
 from soulstruct.game_types.msb_types import *
 from soulstruct.maps.enums import *
 from soulstruct.maps.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
-from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox
+from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox, BitGroupEditBox
 from soulstruct.project.base.base_editor import EntryRow
 from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor, FieldRow
 from soulstruct.utilities.conversion import int_group_to_bit_set
@@ -237,6 +237,11 @@ class MapFieldRow(FieldRow):
                 self.context_menu.add_command(
                     label="Select model from complete list", command=self.choose_character_model
                 )
+
+        # Users can open a dialog of checkbuttons.
+        if self.field_type == list and self.field_name.endswith("_groups"):
+            self.context_menu.add_command(label="Show checkbuttons", command=self._set_group_checkbuttons)
+
         category = self.master.active_category
         if category.startswith("Regions:") or category.endswith("Objects") or category.endswith("Characters"):
             copy_fields = ("translate", "rotate")
@@ -244,16 +249,17 @@ class MapFieldRow(FieldRow):
                 copy_fields += ("draw_parent_name",)
             if self.field_name in copy_fields:
                 copy_menu = self.master.Menu(tearoff=0)
-                # Triple option.
-                kwargs = {f: True for f in copy_fields}
-                self._add_copy_option(copy_menu, **kwargs)
-                if self.master.active_category.startswith("Regions:"):
-                    self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
+                if len(copy_fields) == 3:
+                    # Triple option.
+                    kwargs = {f: True for f in copy_fields}
+                    self._add_copy_option(copy_menu, **kwargs)
+                    if self.master.active_category.endswith("Boxes"):
+                        self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
                 # Double/single options.
                 for copy_field in copy_fields:
                     kwargs = {f: f in {self.field_name, copy_field} for f in copy_fields}
                     self._add_copy_option(copy_menu, **kwargs)
-                    if self.master.active_category.startswith("Regions:"):
+                    if self.master.active_category.endswith("Boxes"):
                         self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
                 self.context_menu.add_cascade(label="Copy from hook...", foreground="#FFF", menu=copy_menu)
 
@@ -317,6 +323,18 @@ class MapFieldRow(FieldRow):
             self.master.change_field_value(self.field_name, selected_name)
             self.value_label.var.set(display_name)
             self.build_field_context_menu()
+
+    def _set_group_checkbuttons(self):
+        new_bit_set = BitGroupEditBox(
+            self.master,
+            initial_bit_set=self.master.get_selected_field_dict()[self.field_name],
+            window_title=f"Modify {self.field_nickname}",
+        ).go()
+        if new_bit_set is None:
+            return
+        field_changed = self.master.change_field_value(self.field_name, new_bit_set)
+        if field_changed:
+            self.update_field_value_display(new_bit_set)
 
     @property
     def editable(self):
@@ -742,12 +760,18 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         return self.get_category_data(category)[entry_index]
 
     def get_field_display_info(self, field_dict, field_name):
-        return field_dict.FIELD_INFO[field_name]
+        field_nickname, field_type, field_doc = field_dict.FIELD_INFO[field_name]
+        return field_nickname, field_name not in field_dict.HIDDEN_FIELDS, field_type, field_doc
 
     def get_field_names(self, field_dict):
         return field_dict.field_names if field_dict else []
 
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
+        if field_type == ObjActParam and field_value == -1:
+            # Link to ObjActParam with the object's model ID.
+            obj_act_part_name = self.get_selected_field_dict()["obj_act_part_name"]
+            obj_act_part = self.get_selected_msb().parts[obj_act_part_name]
+            field_value = int(obj_act_part.model_name[1:5])
         if valid_null_values is None:
             if field_type == PlaceName:
                 valid_null_values = {-1: "Default Map Name + Force Banner"}
