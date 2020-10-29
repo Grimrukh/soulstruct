@@ -1,5 +1,7 @@
 import subprocess
 import sys
+import threading
+import time
 import typing as tp
 
 from soulstruct.project.utilities import SoulstructProjectError
@@ -16,6 +18,7 @@ except ImportError:
 
 class SoulstructRuntimeManager(SmartFrame):
     DATA_NAME = None
+    _THREADED_HOOK = False
 
     def __init__(self, project, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Runtime Manager")
@@ -24,6 +27,7 @@ class SoulstructRuntimeManager(SmartFrame):
         self.game_save_list = None
         self.install_psutil_button = None
         self._hook = None  # type: tp.Optional[DSRMemoryHook]
+        self._THREAD_EXCEPTION = None
 
         self.build()
 
@@ -197,7 +201,12 @@ class SoulstructRuntimeManager(SmartFrame):
         else:
             self.CustomDialog("Game Not Running", "Could not find running game application to hook into.")
             return False
-        self._hook = DSRMemoryHook(pid)
+
+        if self._THREADED_HOOK:
+            self._do_threaded_hook(pid)
+        else:
+            self._hook = DSRMemoryHook(pid)
+
         self.CustomDialog(
             title="Hook Successful",
             message="Hooked into Dark Souls Remastered successfully.\n\n"
@@ -206,10 +215,50 @@ class SoulstructRuntimeManager(SmartFrame):
         )
         return True
 
+    def _do_threaded_hook(self, pid):
+        """Hooks in a separate thread while displaying a loading dialogue.
+
+        Only needed if hooking takes forever because of the need to scan for base pointers.
+        """
+
+        def _threaded_hook():
+            try:
+                self._hook = DSRMemoryHook(pid)
+            except Exception as e:
+                self._THREAD_EXCEPTION = e
+                raise
+
+        loading = self.LoadingDialog(
+            title="Hooking game...",
+            message=f"Hooking into Dark Souls Remastered...",
+            maximum=20,
+        )
+        hook_thread = threading.Thread(target=_threaded_hook)
+        hook_thread.start()
+        loading.update()
+        loading.progress.start()
+        while hook_thread.is_alive():
+            loading.update()
+            time.sleep(1 / 60)
+        loading.progress.stop()
+        loading.destroy()
+
+        if self._THREAD_EXCEPTION:
+            message = (
+                f"Error occurred while hooking into game:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                f"Import operation may have only partially completed."
+            )
+            self._THREAD_EXCEPTION = None
+            return self.CustomDialog(title="Import Error", message=message)
+
     def get_game_value(self, value_name):
         if self._hook is None:
             raise ConnectionError("Memory hook has not been created.")
         return self._hook.get(value_name)
+
+    @property
+    def is_hooked(self):
+        return self._hook is not None
 
     def _install_psutil(self):
         self.install_psutil_button.var.set("Installing...")

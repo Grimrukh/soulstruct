@@ -509,7 +509,7 @@ NPC_PARAM_ST = {
             "ghostModelId",
             "GhostModelID",
             False,
-            MapModel,
+            int,
             "Model to be used when this quest-related NPC appears as a ghost to other players. Defaults to -1 for "
             "almost all standard enemies, which means they do not appear as a ghost to others.",
         ),

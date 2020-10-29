@@ -21,7 +21,8 @@ _LOGGER = logging.getLogger(__name__)
 class MSBEntry(abc.ABC):
 
     ENTRY_SUBTYPE = None  # type: MSBSubtype
-    FIELD_INFO = {}  # type: dict
+    FIELD_INFO = {}
+    FIELD_NAMES = ()  # If given, fields will be displayed in this order. Otherwise uses order of `FIELD_INFO` keys.
 
     def __init__(self):
         self.name = None
@@ -71,7 +72,9 @@ class MSBEntry(abc.ABC):
 
     @property
     def field_names(self):
-        return list(self.FIELD_INFO.keys())
+        if self.FIELD_NAMES:
+            return self.FIELD_NAMES
+        return tuple(self.FIELD_INFO.keys())
 
 
 MSBEntrySubtype = tp.TypeVar("MSBEntrySubtype", bound=MSBEntry)

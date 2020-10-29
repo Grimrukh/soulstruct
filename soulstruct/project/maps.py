@@ -14,6 +14,7 @@ from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox
 from soulstruct.project.base.base_editor import EntryRow
 from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor, FieldRow
+from soulstruct.utilities.conversion import int_group_to_bit_set
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.memory import MemoryHookError
 
@@ -206,6 +207,22 @@ class MapFieldRow(FieldRow):
             self.value_label.var.set(value_text)  # TODO: probably redundant in terms of update efficiency
         self._activate_value_widget(self.value_label)
 
+    def _add_copy_option(self, menu, translate=False, rotate=False, draw_parent_name=False, y_offset=0.0):
+        text = []
+        if translate:
+            text.append(f"translate ({y_offset} Y)" if y_offset != 0.0 else "translate")
+        if rotate:
+            text.append("rotate")
+        if draw_parent_name:
+            text.append("draw parent")
+        label = f"Copy player {' + '.join(text)}"
+        menu.add_command(
+            label=label,
+            command=lambda: self.master.copy_player_position(
+                translate=translate, rotate=rotate, draw_parent_name=draw_parent_name, y_offset=y_offset,
+            )
+        )
+
     def build_field_context_menu(self):
         """For linked fields, adds an option to select an entry name from the linked table."""
         self.context_menu.delete(0, "end")
@@ -220,36 +237,25 @@ class MapFieldRow(FieldRow):
                 self.context_menu.add_command(
                     label="Select model from complete list", command=self.choose_character_model
                 )
-        if self.field_type == Vector3:
-            if self.field_name == "translate":
-                self.context_menu.add_command(
-                    label="Copy current in-game player position",
-                    command=lambda: self.master.copy_player_position(translate=True, rotate=False),
-                )
+        category = self.master.active_category
+        if category.startswith("Regions:") or category.endswith("Objects") or category.endswith("Characters"):
+            copy_fields = ("translate", "rotate")
+            if category.endswith("Objects") or category.endswith("Characters"):
+                copy_fields += ("draw_parent_name",)
+            if self.field_name in copy_fields:
+                copy_menu = self.master.Menu(tearoff=0)
+                # Triple option.
+                kwargs = {f: True for f in copy_fields}
+                self._add_copy_option(copy_menu, **kwargs)
                 if self.master.active_category.startswith("Regions:"):
-                    self.context_menu.add_command(
-                        label="Copy current in-game player position (-0.1 Y)",
-                        command=lambda: self.master.copy_player_position(
-                            translate=True, rotate=False, y_offset=-0.1
-                        ),
-                    )
-            elif self.field_name == "rotate":
-                self.context_menu.add_command(
-                    label="Copy current in-game player rotation",
-                    command=lambda: self.master.copy_player_position(translate=False, rotate=True),
-                )
-            if self.field_name in {"translate", "rotate"}:
-                self.context_menu.add_command(
-                    label="Copy current in-game player position + rotation",
-                    command=lambda: self.master.copy_player_position(translate=True, rotate=True),
-                )
-                if self.master.active_category.startswith("Regions:"):
-                    self.context_menu.add_command(
-                        label="Copy current in-game player position (-0.1 Y) + rotation",
-                        command=lambda: self.master.copy_player_position(
-                            translate=True, rotate=True, y_offset=-0.1
-                        ),
-                    )
+                    self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
+                # Double/single options.
+                for copy_field in copy_fields:
+                    kwargs = {f: f in {self.field_name, copy_field} for f in copy_fields}
+                    self._add_copy_option(copy_menu, **kwargs)
+                    if self.master.active_category.startswith("Regions:"):
+                        self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
+                self.context_menu.add_cascade(label="Copy from hook...", foreground="#FFF", menu=copy_menu)
 
     def choose_linked_map_entry(self):
         if not issubclass(self.field_type, MapEntry):
@@ -776,24 +782,17 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
 
         return False
 
-    def copy_player_position(self, translate=False, rotate=False, y_offset=0.0):
-        if not translate and not rotate:
-            raise ValueError("At least one of `translate` and `rotate` should be True.")
+    def copy_player_position(self, translate=False, rotate=False, draw_parent_name=False, y_offset=0.0):
+        if not translate and not rotate and not draw_parent_name:
+            raise ValueError("At least one of `translate`, `rotate`, and `draw_parent_name` should be True.")
         new_translate = None
         new_rotate_y = None
-        try:
-            if translate:
-                player_x = self.linker.get_game_value("player_x")
-                player_y = self.linker.get_game_value("player_y") + y_offset
-                player_z = self.linker.get_game_value("player_z")
-                new_translate = Vector3(player_x, player_y, player_z)
-            if rotate:
-                new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
-        except ConnectionError:
+        new_collision = None
+        if not self.linker.is_hooked:
             if (
                 self.CustomDialog(
                     title="Cannot Read Memory",
-                    message="Runtime hooks are not available. Would you like to try hooking into the game now?",
+                    message="Game has not been hooked. Would you like to try hooking into the game now?",
                     default_output=0,
                     cancel_output=1,
                     return_output=0,
@@ -804,8 +803,38 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             ):
                 return
             if self.linker.runtime_hook():
-                return self.copy_player_position(translate=translate, rotate=rotate, y_offset=y_offset)
+                # Call this function again.
+                return self.copy_player_position(
+                    translate=translate, rotate=rotate, draw_parent_name=draw_parent_name, y_offset=y_offset,
+                )
             return
+        try:
+            if translate:
+                player_x = self.linker.get_game_value("player_x")
+                player_y = self.linker.get_game_value("player_y") + y_offset
+                player_z = self.linker.get_game_value("player_z")
+                new_translate = Vector3(player_x, player_y, player_z)
+            if rotate:
+                new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
+            if draw_parent_name:
+                display_group_ints = self.linker.get_game_value("active_display_groups")
+                display_groups = int_group_to_bit_set(display_group_ints)
+                search = [
+                    col for col in self.get_selected_msb().parts.Collisions
+                    if col.display_groups == display_groups
+                ]
+                if len(search) > 1:
+                    # Find lowest-index collision.
+                    new_collision = min(search, key=lambda c: int(c.model_name[1:5]))
+                elif search:
+                    new_collision = search[0]
+                else:
+                    self.CustomDialog(
+                        title="No Collision Found",
+                        message=f"Could not find any collisions that match current player display groups: "
+                                f"{display_groups}. No changes made.",
+                    )
+                    return
         except MemoryHookError as e:
             _LOGGER.error(str(e), exc_info=True)
             self.CustomDialog(
@@ -821,4 +850,6 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             field_dict["translate"] = new_translate
         if rotate:
             field_dict["rotate"].y = new_rotate_y
+        if draw_parent_name:
+            field_dict["draw_parent_name"] = new_collision.name
         self.refresh_fields()

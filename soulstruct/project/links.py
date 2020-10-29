@@ -382,6 +382,10 @@ class WindowLinker:
     def runtime_hook(self):
         return self.window.runtime_tab.hook_into_game()
 
+    @property
+    def is_hooked(self):
+        return self.window.runtime_tab.is_hooked
+
     def get_game_value(self, value_name):
         """Try to retrieve given game value (e.g. 'player_x') from runtime memory hook."""
         return self.window.runtime_tab.get_game_value(value_name)

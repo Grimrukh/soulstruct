@@ -13,6 +13,7 @@ from soulstruct.enums.darksouls1 import CollisionHitFilter
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.enums import MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 
 if tp.TYPE_CHECKING:
@@ -81,7 +82,7 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
             "3D coordinates of the part's position. Note that the anchor of the part is usually at its base.",
         ),
         "rotate": ("Rotate", True, Vector3, "Euler angles for part rotation around its local X, Y, and Z axes."),
-        "scale": ("Scale", True, Vector3, "Scale of part. Only relevant for objects and collisions."),
+        "scale": ("Scale", False, Vector3, "Scale of part. Only works for map pieces."),
         "draw_groups": (
             "Draw Groups",
             True,
@@ -90,10 +91,9 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         ),
         "display_groups": (
             "Display Groups",
-            True,
+            False,
             list,
-            "Display groups of part. Only functions for Collisions. These display groups will be active when the "
-            "player is standing on this Collision, which will draw any parts with an overlapping draw group.",
+            "Display groups are present in all MSB Parts, but only function for collisions.",
         ),
         "ambient_light_id": (
             "Ambient Light ID",
@@ -229,8 +229,8 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         self._part_type_index = header["_part_type_index"]
         for transform in ("translate", "rotate", "scale"):
             setattr(self, transform, Vector3(getattr(header, transform)))
-        self._draw_groups = _flag_group_to_enabled_flag_set(header["__draw_groups"])
-        self._display_groups = _flag_group_to_enabled_flag_set(header["__display_groups"])
+        self._draw_groups = int_group_to_bit_set(header["__draw_groups"])
+        self._display_groups = int_group_to_bit_set(header["__display_groups"])
         self.name = read_chars_from_buffer(
             msb_buffer, offset=part_offset + header["__name_offset"], encoding="shift-jis"
         )
@@ -247,8 +247,8 @@ class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
         """Pack to bytes, presumably as part of a full `MSB` pack."""
 
         # Validate draw/display groups before doing any real work.
-        draw_groups = _enabled_flag_set_to_flag_group(self._draw_groups)
-        display_groups = _enabled_flag_set_to_flag_group(self._display_groups)
+        draw_groups = bit_set_to_int_group(self._draw_groups)
+        display_groups = bit_set_to_int_group(self._display_groups)
 
         name_offset = self.PART_HEADER_STRUCT.size
         packed_name = self.get_name_to_pack().encode("shift-jis") + b"\0"  # Name not padded on its own.
@@ -385,7 +385,32 @@ class MSBMapPiece(BaseMSBPart):
             "Name of map piece model to use for this map piece.",
         ),
         **BaseMSBPart.FIELD_INFO,
+        "scale": ("Scale", True, Vector3, "Size scaling of map piece in each dimension."),
     }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_only",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
 
     ENTRY_SUBTYPE = MSBPartSubtype.MapPiece
 
@@ -425,7 +450,7 @@ class MSBObject(BaseMSBPart):
         "break_term": ("Break Term", True, int, "Unknown. Related to object breakage."),
         "net_sync_type": ("Net Sync Type", True, int, "Unknown. Related to online object synchronization."),
         "default_animation": (
-            "Default Animation ID",
+            "Default Animation",
             True,
             int,  # TODO: Animation
             "Object animation ID to auto-play on map load, e.g. for different corpse poses.",
@@ -433,6 +458,36 @@ class MSBObject(BaseMSBPart):
         "unk_x0e_x10": ("Unknown [0e-10]", False, int, "Unknown."),
         "unk_x10_x14": ("Unknown [10-14]", False, int, "Unknown."),
     }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_parent_name",
+        "draw_groups",
+        "display_groups",
+        "break_term",
+        "net_sync_type",
+        "default_animation",
+        "unk_x0e_x10",
+        "unk_x10_x14",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_only",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
 
     ENTRY_SUBTYPE = MSBPartSubtype.Object
 
@@ -557,12 +612,46 @@ class MSBCharacter(BaseMSBPart):
         "damage_animation": ("Damage Animation", True, int, "Default damage animation to use for character."),
     }
 
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_parent_name",
+        "draw_groups",
+        "display_groups",
+        "chara_init_id",
+        "npc_id",
+        "think_id",
+        "talk_id",
+        "patrol_type",
+        "patrol_point_names",
+        "platoon_id",
+        "default_animation",
+        "damage_animation",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_only",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
     ENTRY_SUBTYPE = MSBPartSubtype.Character
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.think_id = -1
         self.npc_id = -1
-        self.talk_id = -1
+        self.talk_id = 0
         self.patrol_type = 0
         self.chara_init_id = -1
         self.platoon_id = 0
@@ -686,6 +775,13 @@ class MSBCollision(BaseMSBPart):
             "Name of collision model to use for this collision.",
         ),
         **BaseMSBPart.FIELD_INFO,
+        "display_groups": (
+            "Display Groups",
+            True,
+            list,
+            "Display groups of collision. These display groups will be active when the player is standing on this "
+            "Collision, which will draw any parts with an overlapping draw group.",
+        ),
         "hit_filter_id": (
             "Hit Filter ID",
             True,
@@ -777,6 +873,45 @@ class MSBCollision(BaseMSBPart):
         ),
     }
 
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "navmesh_groups",
+        "hit_filter_id",
+        "sound_space_type",
+        "environment_event_name",
+        "reflect_plane_height",
+        "vagrant_entity_ids",
+        "area_name_id",
+        "force_area_banner",
+        "starts_disabled",
+        "unk_x27_x28",
+        "attached_bonfire",
+        "play_region_id",
+        "stable_footing_flag",
+        "lock_cam_param_id_1",
+        "lock_cam_param_id_2",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_only",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
     ENTRY_SUBTYPE = MSBPartSubtype.Collision
 
     def __init__(self, msb_part_source=None, **kwargs):
@@ -807,7 +942,7 @@ class MSBCollision(BaseMSBPart):
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
         self.set(**data)
-        self._navmesh_groups = _flag_group_to_enabled_flag_set(data["__navmesh_groups"])
+        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"])
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
         self._force_area_banner = data["__area_name_id"] < 0  # Custom field.
         if data["__play_region_id"] > -10:
@@ -821,7 +956,7 @@ class MSBCollision(BaseMSBPart):
         """Pack to bytes, presumably as part of a full `MSB` pack."""
 
         # Validate navmesh groups before doing any real work.
-        navmesh_groups = _enabled_flag_set_to_flag_group(self._navmesh_groups)
+        navmesh_groups = bit_set_to_int_group(self._navmesh_groups)
 
         if self.area_name_id == -1 and not self._force_area_banner:
             raise InvalidFieldValueError("`force_area_banner` must be enabled if `area_name_id == -1` (default).")
@@ -960,8 +1095,34 @@ class MSBNavmesh(BaseMSBPart):
     FIELD_INFO = {
         "model_name": ("Model Name", True, NavmeshModel, "Name of navmesh model to use for this navmesh."),
         **BaseMSBPart.FIELD_INFO,
+        "draw_groups": ("Draw Groups", False, list, "No draw groups for navmeshes."),
         "navmesh_groups": ("Navmesh Groups", True, list, "Unknown."),
     }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "navmesh_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_only",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
 
     ENTRY_SUBTYPE = MSBPartSubtype.Navmesh
 
@@ -977,11 +1138,11 @@ class MSBNavmesh(BaseMSBPart):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_NAVMESH_STRUCT).unpack(msb_buffer, include_asserted=False)
-        self._navmesh_groups = _flag_group_to_enabled_flag_set(data["navmesh_groups"])
+        self._navmesh_groups = int_group_to_bit_set(data["navmesh_groups"])
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_NAVMESH_STRUCT).pack(
-            navmesh_groups=_enabled_flag_set_to_flag_group(self._navmesh_groups),
+            navmesh_groups=bit_set_to_int_group(self._navmesh_groups),
         )
 
     @property
@@ -1054,6 +1215,31 @@ class MSBMapLoadTrigger(BaseMSBPart):
             "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
         ),
     }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "draw_groups",
+        "display_groups",
+        "collision_name",
+        "connected_map",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_only",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
 
     ENTRY_SUBTYPE = MSBPartSubtype.MapLoadTrigger
 
@@ -1129,34 +1315,6 @@ MSB_PART_TYPE_CLASSES = {
     MSBPartSubtype.UnusedCharacter: MSBUnusedCharacter,
     MSBPartSubtype.MapLoadTrigger: MSBMapLoadTrigger,
 }
-
-
-def _flag_group_to_enabled_flag_set(flag_group):
-    """Get draw or display group 128-bit field <a, b, c, ...> where a, b, c, ... are the little-endian bit
-    zero-based indices of the draw groups bit field (which is unpacked/packed internally as four 32-bit integers).
-
-    So draw groups `[01001..110, 0, 000...001, 100...000]` would return `{1, 4, 29, 30, 95, 96}`.
-    """
-    if not isinstance(flag_group, (list, tuple)) or len(flag_group) != 4:
-        raise ValueError("Flag group must be a sequence of four integers.")
-    return set([32 * i + j for i in range(4) for j in range(32) if (2 ** j) & flag_group[i]])
-
-
-def _enabled_flag_set_to_flag_group(enabled_flags):
-    """Opposite of above method. Converts set (or sequence) of flags to a four-integer bit field array for packing."""
-    if not isinstance(enabled_flags, set):
-        enabled_flags_set = set(enabled_flags)
-        if len(enabled_flags_set) != len(enabled_flags):
-            _LOGGER.warning("Some flags values were present in flag set more than once. Ignoring repeats.")
-        enabled_flags = enabled_flags_set
-    flag_group = [0, 0, 0, 0]
-    for flag in enabled_flags:
-        if not isinstance(flag, int):
-            raise ValueError(f"Non-integer value {flag} appeared in flag set (draw/display/navmesh/backread groups).")
-        if not 0 <= flag <= 127:
-            raise ValueError(f"Invalid draw/display/navmesh/backread index {flag} (must be between 0 and 127).")
-        flag_group[flag // 32] += 2 ** (flag % 32)
-    return flag_group
 
 
 class MSBPartList(MSBEntryList[BaseMSBPart]):

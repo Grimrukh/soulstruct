@@ -4,8 +4,6 @@ from .base import FieldDisplayInfo, pad_field
 from soulstruct.game_types import *
 from soulstruct.params.enums import *
 
-# Overrides for basic enum.
-from ...game_types.msb_types import MapModel
 
 ATK_PARAM_HIT_SOURCE = int
 
@@ -458,8 +456,8 @@ THROW_INFO_BANK = {
     "file_name": "ThrowParam",
     "nickname": "Throws",
     "fields": [
-        FieldDisplayInfo("AtkChrId", "AttackingCharacterModel", True, MapModel, "Model ID of attacking character."),
-        FieldDisplayInfo("DefChrId", "DefendingCharacterModel", True, MapModel, "Model ID of defending character."),
+        FieldDisplayInfo("AtkChrId", "AttackingCharacterModel", True, int, "Model ID of attacking character."),
+        FieldDisplayInfo("DefChrId", "DefendingCharacterModel", True, int, "Model ID of defending character."),
         FieldDisplayInfo("Dist", "MaxDistance", True, float, "Maximum distance at which throw can be triggered."),
         FieldDisplayInfo(
             "DiffAngMin",

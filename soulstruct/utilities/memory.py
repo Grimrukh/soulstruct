@@ -1,59 +1,5 @@
 """
 autoAssemble([[
-aobscanmodule(findit,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 48 8B 48 68 48 85 C9 0F 84 ? ? ? ? 48 39 5E 10 0F 84 ? ? ? ? 48)
-registersymbol(findit)
-]])
-local addr = getAddress("findit")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("WorldChrBase")
-registerSymbol("WorldChrBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit1,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 48 85 C0 ? ? F3 0F 58 80 AC 00 00 00)
-registersymbol(findit1)
-]])
-local addr = getAddress("findit1")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("ChrClassBase")
-registerSymbol("ChrClassBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit2,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 66 0F 7F 80 A0 0B 00 00 0F 28 02 66 0F 7F 80 B0 0B 00 00 C6 80)
-registersymbol(findit2)
-]])
-local addr = getAddress("findit2")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("ChrClassWarp")
-registerSymbol("ChrClassWarp", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit3,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 48 63 D1 48 8B 44 D0 08 C3)
-registersymbol(findit3)
-]])
-local addr = getAddress("findit3")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("CamManBase")
-registerSymbol("CamManBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit4,DarkSoulsRemastered.exe,48 8B 0D ? ? ? ? 89 99 ? ? ? ? 4C 89 6D 58)
-registersymbol(findit4)
-]])
-local addr = getAddress("findit4")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("LockTGTBase")
-registerSymbol("LockTGTBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit5,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 89 88 28 08 00 00 85 C9)
-registersymbol(findit5)
-]])
-local addr = getAddress("findit5")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("MenuManBase")
-registerSymbol("MenuManBase", addr, true)
-
-autoAssemble([[
 aobscanmodule(findit6,DarkSoulsRemastered.exe,4C 8B 05 ? ? ? ? 48 63 C9 48 8D 04 C9 41 3B 54 C0 10)
 registersymbol(findit6)
 ]])
@@ -61,15 +7,6 @@ local addr = getAddress("findit6")
 addr = addr + readInteger(addr + 3) + 7
 unregisterSymbol("Param")
 registerSymbol("Param", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit7,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 48 8B 80 F0 00 00 00 48 85 C0)
-registersymbol(findit7)
-]])
-local addr = getAddress("findit7")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("WorldChrDbgBase")
-registerSymbol("WorldChrDbgBase", addr, true)
 
 autoAssemble([[
 aobscanmodule(findit8,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 44 38 80 ? ? ? ? ? ? 44 38 41 49 0F 84 ? ? ? ? 66 0F 6E 41 38 48 8B 41 10 0F 28 0D ? ? ? ? 48 89 BC 24 ? ? ? ? 0F 5B C0 4C 89 A4 24)
@@ -106,15 +43,6 @@ local addr = getAddress("findit11")
 addr = addr + readInteger(addr + 3) + 7
 unregisterSymbol("FRPGNETBase")
 registerSymbol("FRPGNETBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit12,DarkSoulsRemastered.exe,48 89 05 ? ? ? ? 48 89 5C 24 38 48 85 DB ? ? 48 8B 03)
-registersymbol(findit12)
-]])
-local addr = getAddress("findit12")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("WorldChrBase_P")
-registerSymbol("WorldChrBase_P", addr, true)
 
 autoAssemble([[
 aobscanmodule(findit13,DarkSoulsRemastered.exe,48 89 05 ? ? ? ? 48 83 3D ? ? ? ? 00 ? ? 4C 8B 05 ? ? ? ? 4C 89 44 24 48 BA 08 00 00 00 B9 58 60 00 00)
@@ -162,8 +90,8 @@ kernel32.OpenProcess.restype = w.HANDLE
 kernel32.OpenProcess.argtypes = (
     w.DWORD,  # _In_ dwDesiredAccess
     w.BOOL,  # _In_ bInheritHandle
-    w.DWORD,
-)  # _In_ dwProcessId
+    w.DWORD,  # _In_ dwProcessId
+)
 
 kernel32.ReadProcessMemory.errcheck = _check_zero
 kernel32.ReadProcessMemory.argtypes = (
@@ -171,8 +99,8 @@ kernel32.ReadProcessMemory.argtypes = (
     w.LPCVOID,  # _In_  lpBaseAddress
     w.LPVOID,  # _Out_ lpBuffer
     SIZE_T,  # _In_  nSize
-    PSIZE_T,
-)  # _Out_ lpNumberOfBytesRead
+    PSIZE_T,  # _Out_ lpNumberOfBytesRead
+)
 
 kernel32.CloseHandle.argtypes = (w.HANDLE,)
 
@@ -182,15 +110,31 @@ MemoryValue = namedtuple("CheatEntry", ("pointer", "jumps", "size", "fmt"))
 
 
 DSR_POINTER_TABLE = {
-    "WORLD_CHR_BASE": MemoryPointer(  # 0x1407c0206
-        br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
-        lambda hook, addr: addr + hook.read_int32(addr + 3) + 7,
-    ),
+    "WORLD_CHR_BASE": 0x141d151b0,  # Scanning just takes too long.
+    # "WORLD_CHR_BASE": MemoryPointer(
+    #     br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    "DISPLAY_GROUP_BASE": 0x141D1E500,  # This is a pointer base I discovered, so I don't know what to call it.
     # "CHR_CLASS_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x85\xC0..\xF3\x0F\x58\x80\xAC\x00\x00\x00",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
     # "CHR_CLASS_WARP": MemoryPointer(
     #     br"\x48\x8B\x05....\x66\x0F\x7F\x80\xA0\x0B\x00\x00\x0F\x28\x02\x66\x0F\x7F\x80\xB0\x0B\x00\x00\xC6\x80",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "CAM_MAN_BASE": MemoryPointer(
+    #     br"\x48\x8B\x05....\x48\x63\xD1\x48\x8B\x44\xD0\x08\xC3",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "LOCK_TGT_BASE": MemoryPointer(
+    #     br"\x48\x8B\x0D....\x89\x99....\x4C\x89\x6D\x58",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "MENU_MAN_BASE": MemoryPointer(
+    #     br"\x48\x8B\x05....\x89\x88\x28\x08\x00\x00\x85\xC9",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "WORLD_CHR_DBG_BASE": MemoryPointer(
+    #     br"\x48\x8B\x05....\x48\x8B\x80\xF0\x00\x00\x00\x48\x85\xC0",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "WORLD_CHR_BASE_P": MemoryPointer(
+    #     br"\x48\x89\x05....\x48\x89\x5C\x24\x38\x48\x85\xDB..\x48\x8B\x03",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
 }
 
@@ -200,6 +144,8 @@ DSR_VALUE_TABLE = {
     "player_x": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x10), 4, "<f"),
     "player_y": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x14), 4, "<f"),
     "player_z": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x18), 4, "<f"),
+    "active_display_groups": MemoryValue("DISPLAY_GROUP_BASE", (0x178, 0xC0, 0x8, 0x348, 0x88, 0x40, 0x10, 0xA8),
+                                         16, "<IIII"),
     # "stable_angle": MemoryValue("CHR_CLASS_WARP", 0xBB4, 4, "<f"),
     # "stable_x": MemoryValue("CHR_CLASS_WARP", 0xBA0, 4, "<f"),
     # "stable_y": MemoryValue("CHR_CLASS_WARP", 0xBA4, 4, "<f"),
@@ -226,10 +172,16 @@ class MemoryHook:
 
     def _load_pointer_table(self):
         for pointer_name, pointer_data in self.pointer_table.items():
-            pointer_address = self.scan(pointer_data.sequence)
-            if pointer_address is None:
-                raise MemoryHookError(f"Could not locate memory pointer: {pointer_name}")
-            self.pointers[pointer_name] = pointer_data.address_func(self, pointer_address)
+            _LOGGER.info(f"Scanning game memory for {pointer_name}...")
+            if isinstance(pointer_data, MemoryPointer):
+                pointer_address = self.scan(pointer_data.sequence)
+                if pointer_address is None:
+                    raise MemoryHookError(f"Could not locate memory pointer: {pointer_name}")
+                self.pointers[pointer_name] = pointer_data.address_func(self, pointer_address)
+            elif isinstance(pointer_data, int):
+                self.pointers[pointer_name] = pointer_data
+            else:
+                raise TypeError(f"Pointer value must be a `MemoryPointer` or raw int address.")
 
     def _read(self, address, size, fmt=""):
         buffer = (c.c_char * size)()
@@ -315,8 +267,10 @@ class MemoryHook:
         except WindowsError as e:
             _LOGGER.error(f"Error reading value {repr(value_name)} from game.", exc_info=True)
             raise MemoryHookError(e)
-        (value,) = struct.unpack(entry_data.fmt, bytearray(buffer[: bytes_read.value]))
-        return value
+        values = struct.unpack(entry_data.fmt, bytearray(buffer[: bytes_read.value]))
+        if len(values) == 1:
+            return values[0]
+        return values
 
 
 class MemoryHookError(SoulstructError):
@@ -336,3 +290,18 @@ class DSRMemoryHook(MemoryHook):
             print(f"Found Dark Souls Remastered process ID: {dsr_pid}")
 
         super().__init__(dsr_pid, DSR_POINTER_TABLE, DSR_VALUE_TABLE)
+
+
+def test_dsr_hook():
+    hook = DSRMemoryHook()
+    for pointer_base, pointer_value in hook.pointers.items():
+        print(f"{pointer_base}: {hex(pointer_value)}")
+    print(hook.get("player_angle"))
+    print(hook.get("player_x"))
+    print(hook.get("player_y"))
+    print(hook.get("player_z"))
+    print(hook.get("active_display_groups"))
+
+
+if __name__ == '__main__':
+    test_dsr_hook()
