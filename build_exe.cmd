@@ -1,0 +1,1 @@
+venv-exe\Scripts\pyinstaller SoulstructProjectEditor.spec

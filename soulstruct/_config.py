@@ -80,7 +80,7 @@ except (ImportError, FileNotFoundError, ModuleNotFoundError):
     __config = GET_CONFIG()
 
 DEFAULT_PROJECT_PATH = __config.get("DEFAULT_PROJECT_PATH")
-DEFAULT_TEXT_EDITOR_FONT_SIZE = __config.get("DEFAULT_TEXT_EDITOR_FONT_SIZE")
+DEFAULT_TEXT_EDITOR_FONT_SIZE = __config.get("DEFAULT_TEXT_EDITOR_FONT_SIZE", 10)
 STEAM_PATH = __config.get("STEAM_PATH")
 PTDE_PATH = __config.get("PTDE_PATH")
 DSR_PATH = __config.get("DSR_PATH")
