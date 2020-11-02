@@ -841,8 +841,16 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if rotate:
                 new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
             if draw_parent_name:
-                display_group_ints = self.linker.get_game_value("active_display_groups")
+                map_prefix = self.map_choice_id[:6]  # e.g. "m10_02"
+                display_group_ints = self.linker.get_game_value(f"{map_prefix}_display_groups")
                 display_groups = int_group_to_bit_set(display_group_ints)
+                if not display_groups:
+                    self.CustomDialog(
+                        title="No Collision Found",
+                        message=f"No display groups in {self.map_choice_id} are currently active.\n"
+                                f"Are you sure the player is currently standing in this map? (No changes made.)",
+                    )
+                    return
                 search = [
                     col for col in self.get_selected_msb().parts.Collisions
                     if col.display_groups == display_groups

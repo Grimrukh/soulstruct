@@ -1,59 +1,5 @@
-"""
-autoAssemble([[
-aobscanmodule(findit6,DarkSoulsRemastered.exe,4C 8B 05 ? ? ? ? 48 63 C9 48 8D 04 C9 41 3B 54 C0 10)
-registersymbol(findit6)
-]])
-local addr = getAddress("findit6")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("Param")
-registerSymbol("Param", addr, true)
+__all__ = ["MemoryHook", "DSRMemoryHook"]
 
-autoAssemble([[
-aobscanmodule(findit8,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 44 38 80 ? ? ? ? ? ? 44 38 41 49 0F 84 ? ? ? ? 66 0F 6E 41 38 48 8B 41 10 0F 28 0D ? ? ? ? 48 89 BC 24 ? ? ? ? 0F 5B C0 4C 89 A4 24)
-registersymbol(findit8)
-]])
-local addr = getAddress("findit8")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("DbgEventBase")
-registerSymbol("DbgEventBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit9,DarkSoulsRemastered.exe,48 8B 05 ? ? ? ? 48 8B 40 08 48 8B 40 38 0F B7 50 0A 3B CA ? ? 8B C9 48 83 C1 04 48 8D 0C 49 8B 04 88)
-registersymbol(findit9)
-]])
-local addr = getAddress("findit9")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("ThrowParam")
-registerSymbol("ThrowParam", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit10,DarkSoulsRemastered.exe,48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B 4E 68)
-registersymbol(findit10)
-]])
-local addr = getAddress("findit10")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("ChrFollowCam")
-registerSymbol("ChrFollowCam", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit11,DarkSoulsRemastered.exe,48 8B 1D ? ? ? ? 48 8D 94 24 ? ? ? ? 4C 8B F1 0F 29 7C 24 40)
-registersymbol(findit11)
-]])
-local addr = getAddress("findit11")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("FRPGNETBase")
-registerSymbol("FRPGNETBase", addr, true)
-
-autoAssemble([[
-aobscanmodule(findit13,DarkSoulsRemastered.exe,48 89 05 ? ? ? ? 48 83 3D ? ? ? ? 00 ? ? 4C 8B 05 ? ? ? ? 4C 89 44 24 48 BA 08 00 00 00 B9 58 60 00 00)
-registersymbol(findit13)
-]])
-local addr = getAddress("findit13")
-addr = addr + readInteger(addr + 3) + 7
-unregisterSymbol("NetworkProp")
-registerSymbol("NetworkProp", addr, true)
-
-"""
 import ctypes as c
 import logging
 import re
@@ -104,17 +50,14 @@ kernel32.ReadProcessMemory.argtypes = (
 
 kernel32.CloseHandle.argtypes = (w.HANDLE,)
 
-
 MemoryPointer = namedtuple("MemoryPointer", ("sequence", "address_func"))
 MemoryValue = namedtuple("CheatEntry", ("pointer", "jumps", "size", "fmt"))
 
-
 DSR_POINTER_TABLE = {
-    "WORLD_CHR_BASE": 0x141d151b0,  # Scanning just takes too long.
     # "WORLD_CHR_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
-    "DISPLAY_GROUP_BASE": 0x141D1E500,  # This is a pointer base I discovered, so I don't know what to call it.
+    "WORLD_CHR_BASE": 0x141d151b0,  # Scanning just takes too long.
     # "CHR_CLASS_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x85\xC0..\xF3\x0F\x58\x80\xAC\x00\x00\x00",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
@@ -123,6 +66,9 @@ DSR_POINTER_TABLE = {
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
     # "CAM_MAN_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x63\xD1\x48\x8B\x44\xD0\x08\xC3",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "CHR_FOLLOW_CAM": MemoryPointer(
+    #     br"\x48\x8B\x0D....\xE8....\x48\x8B\x4E\x68",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
     # "LOCK_TGT_BASE": MemoryPointer(
     #     br"\x48\x8B\x0D....\x89\x99....\x4C\x89\x6D\x58",
@@ -133,23 +79,60 @@ DSR_POINTER_TABLE = {
     # "WORLD_CHR_DBG_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x8B\x80\xF0\x00\x00\x00\x48\x85\xC0",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "PARAM": MemoryPointer(
+    #     br"\x4C\x8B\x05....\x48\x63\xC9\x48\x8D\x04\xC9\x41\x3B\x54\xC0\x10",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "THROW_PARAM": MemoryPointer(
+    #     br"\x48\x8B\x05....\x48\x8B\x40\x08\x48\x8B\x40\x38\x0F\xB7\x50\x0A\x3B\xCA..\x8B\xC9\x48\x83\xC1\x04\x48\x8D"
+    #     br"\x0C\x49\x8B\x04\x88",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "DBG_EVENT_BASE": MemoryPointer(
+    #     br"\x48\x8B\x05....\x44\x38\x80......\x44\x38\x41\x49\x0F\x84....\x66\x0F\x6E\x41\x38\x48\x8B\x41\x10\x0F\x28"
+    #     br"\x0D....\x48\x89\xBC\x24....\x0F\x5B\xC0\x4C\x89\xA4\x24",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "FRPG_NET_BASE": MemoryPointer(
+    #     br"\x48\x8B\x1D....\x48\x8D\x94\x24....\x4C\x8B\xF1\x0F\x29\x7C\x24\x40",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "NETWORK_PROP": MemoryPointer(
+    #     br"\x48\x89\x05....\x48\x83\x3D....\x00..\x4C\x8B\x05....\x4C\x89\x44\x24\x48\xBA\x08\x00\x00\x00\xB9\x58\x60"
+    #     br"\x00\x00",
+    #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
     # "WORLD_CHR_BASE_P": MemoryPointer(
     #     br"\x48\x89\x05....\x48\x89\x5C\x24\x38\x48\x85\xDB..\x48\x8B\x03",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
+    # "WORLD_CHR_BASE_P": 0x141acd758,
 }
 
+_PLAYER_TRANSFORM_PTRS = (0x68, 0x68, 0x28)
+_DISPLAY_GROUP_PTRS = (0x20, 0x58, 0x498, 0x58, 0x2C0, 0x4E8)  # WORLD_CHR_BASE
+_DISP_GROUP_DEBUG_PTRS = (0x4C0, 0x68, 0xA8)
 
 DSR_VALUE_TABLE = {
-    "player_angle": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x4), 4, "<f"),
-    "player_x": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x10), 4, "<f"),
-    "player_y": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x14), 4, "<f"),
-    "player_z": MemoryValue("WORLD_CHR_BASE", (0x68, 0x68, 0x28, 0x18), 4, "<f"),
-    "active_display_groups": MemoryValue("DISPLAY_GROUP_BASE", (0x178, 0xC0, 0x8, 0x348, 0x88, 0x40, 0x10, 0xA8),
-                                         16, "<IIII"),
-    # "stable_angle": MemoryValue("CHR_CLASS_WARP", 0xBB4, 4, "<f"),
-    # "stable_x": MemoryValue("CHR_CLASS_WARP", 0xBA0, 4, "<f"),
-    # "stable_y": MemoryValue("CHR_CLASS_WARP", 0xBA4, 4, "<f"),
-    # "stable_z": MemoryValue("CHR_CLASS_WARP", 0xBA8, 4, "<f"),
+    "player_angle": MemoryValue("WORLD_CHR_BASE", _PLAYER_TRANSFORM_PTRS + (0x4,), 4, "<f"),
+    "player_x": MemoryValue("WORLD_CHR_BASE", _PLAYER_TRANSFORM_PTRS + (0x10,), 4, "<f"),
+    "player_y": MemoryValue("WORLD_CHR_BASE", _PLAYER_TRANSFORM_PTRS + (0x14,), 4, "<f"),
+    "player_z": MemoryValue("WORLD_CHR_BASE", _PLAYER_TRANSFORM_PTRS + (0x18,), 4, "<f"),
+    "m10_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x850,), 16, "<IIII"),
+    "m10_01_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0xAC0,), 16, "<IIII"),
+    "m10_02_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0xD30,), 16, "<IIII"),
+    "m11_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0xFA0,), 16, "<IIII"),
+    "m12_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x1210,), 16, "<IIII"),
+    "m12_01_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x1480,), 16, "<IIII"),
+    "m13_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x16F0,), 16, "<IIII"),
+    "m13_01_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x1960,), 16, "<IIII"),
+    "m13_02_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x1BD0,), 16, "<IIII"),
+    "m14_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x1E40,), 16, "<IIII"),
+    "m14_01_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x20B0,), 16, "<IIII"),
+    "m15_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x2320,), 16, "<IIII"),
+    "m15_01_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x2590,), 16, "<IIII"),
+    "m16_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x2800,), 16, "<IIII"),
+    "m17_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x2A70,), 16, "<IIII"),
+    "m18_00_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x2CE0,), 16, "<IIII"),
+    "m18_01_display_groups": MemoryValue("WORLD_CHR_BASE", _DISPLAY_GROUP_PTRS + (0x2F50,), 16, "<IIII"),
+    # "stable_angle": MemoryValue("CHR_CLASS_WARP", (0xBB4,), 4, "<f"),
+    # "stable_x": MemoryValue("CHR_CLASS_WARP", (0xBA0,), 4, "<f"),
+    # "stable_y": MemoryValue("CHR_CLASS_WARP", (0xBA4,), 4, "<f"),
+    # "stable_z": MemoryValue("CHR_CLASS_WARP", (0xBA8,), 4, "<f"),
 }
 
 
@@ -168,7 +151,10 @@ class MemoryHook:
         self._load_pointer_table()
 
     def __del__(self):
-        kernel32.CloseHandle(self.process_handle)
+        try:
+            kernel32.CloseHandle(self.process_handle)
+        except AttributeError:
+            pass
 
     def _load_pointer_table(self):
         for pointer_name, pointer_data in self.pointer_table.items():
@@ -257,7 +243,10 @@ class MemoryHook:
                 f"has not been loaded in-game (are you only in the main menu?)."
             )
         for jump in entry_data.jumps[:-1]:
-            address = self.read_int64(address + jump)
+            try:
+                address = self.read_int64(address + jump)
+            except MemoryHookError as ex:
+                MemoryHookError(f"Memory hook error encountered while reading field {value_name}: {ex}")
         buffer = (c.c_char * entry_data.size)()
         bytes_read = SIZE_T()
         try:
@@ -296,11 +285,11 @@ def test_dsr_hook():
     hook = DSRMemoryHook()
     for pointer_base, pointer_value in hook.pointers.items():
         print(f"{pointer_base}: {hex(pointer_value)}")
-    print(hook.get("player_angle"))
-    print(hook.get("player_x"))
-    print(hook.get("player_y"))
-    print(hook.get("player_z"))
-    print(hook.get("active_display_groups"))
+    for field in DSR_VALUE_TABLE:
+        try:
+            print(f"{field} = {hook.get(field)}")
+        except MemoryHookError:
+            pass
 
 
 if __name__ == '__main__':
