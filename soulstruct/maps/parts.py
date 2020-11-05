@@ -650,7 +650,7 @@ class MSBCharacter(BaseMSBPart):
             "Character's AI. If set to -1, the default AI ID set in the NPC ID (below) will be used.",
         ),
         "npc_id": (
-            "NPC ID",
+            "Character ID",
             CharacterParam,
             "Basic character information. For 'player' (human) characters, most of the fields in this param entry are "
             "unused.",

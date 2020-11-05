@@ -170,17 +170,17 @@ OBJ_ACT_PARAM_ST = {
     "fields": [
         FieldDisplayInfo(
             "actionEnableMsgId",
-            "SuccessMessage",
+            "PromptMessage",
             True,
             EventText,
-            "Message displayed in dialog box upon successful action (e.g. 'Door opened').",
+            "Message displayed in dialog box that prompts action (e.g. 'Open').",
         ),
         FieldDisplayInfo(
             "actionFailedMsgId",
             "FailureMessage",
             True,
             EventText,
-            "Message displayed in dialog box upon failed action (e.g. 'Door locked').",
+            "Message displayed in dialog box upon failed action (e.g. 'It's locked').",
         ),
         FieldDisplayInfo(
             "spQualifiedPassEventFlag",
