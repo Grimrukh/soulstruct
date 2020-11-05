@@ -22,7 +22,7 @@ from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
 from soulstruct.utilities import word_wrap
 
 LOG_LEVELS = {"debug", "info", "warning", "error", "fatal", "critical"}
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 parser = argparse.ArgumentParser(prog="soulstruct", description="Launch Soulstruct programs or adjust settings.")
