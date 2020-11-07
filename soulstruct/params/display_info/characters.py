@@ -548,8 +548,9 @@ NPC_PARAM_ST = {
             "knockbackParamId",
             "KnockbackID",
             True,
-            KnockbackParam,
-            "Knockback parameters were abandoned after Demons' Souls.",
+            int,
+            "Knockback parameters were abandoned after Demons' Souls. A param table for Knockback is still present "
+            "but is not accessible in the GUI.",
         ),
         FieldDisplayInfo("fallDamageDump", "FallDamageReduction", True, int, "Percentage of fall damage to ignore."),
         FieldDisplayInfo(

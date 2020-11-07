@@ -46,7 +46,9 @@ class WindowLinker:
             return False  # Jump failed.
         return True  # Jump succeeded.
 
-    def soulstruct_link(self, field_type, field_value, valid_null_values: dict = None) -> tp.List[BaseLink]:
+    def soulstruct_link(
+        self, field_type, field_value, valid_null_values: dict = None, map_override=None,
+    ) -> tp.List[BaseLink]:
         """Some field types are `GameObject` subclasses, which means that the field values are IDs to look up.
 
         Currently, only `MapEntry`, `Text`, and `BaseParam` field types are supported here. In the future, `Texture`,
@@ -188,7 +190,7 @@ class WindowLinker:
             # Always uses slot 0. You can easily jump to other slots from there (entry names should be the same).
             # Looks up map from Maps tab, since nothing else links there right now.
             param_nickname = field_type.get_param_nickname()
-            map_area_name = f"m{self.window.maps_tab.get_map().area_id}"
+            map_area_name = map_override[:3] if map_override else f"m{self.window.maps_tab.get_map().area_id}"
             param_table = self.project.Lighting[map_area_name][param_nickname][0]
             try:
                 name = param_table[field_value].name + name_extension

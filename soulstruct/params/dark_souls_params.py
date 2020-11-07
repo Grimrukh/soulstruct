@@ -37,9 +37,7 @@ class DarkSoulsGameParameters:
     Dialogue: ParamTable
     Faces: ParamTable
     Goods: ParamTable
-    Players: ParamTable
-    PlayerAttacks: ParamTable
-    PlayerBehaviors: ParamTable
+    GrowthCurves: ParamTable
     ItemLots: ParamTable
     NonPlayerAttacks: ParamTable
     NonPlayerBehaviors: ParamTable
@@ -47,17 +45,19 @@ class DarkSoulsGameParameters:
     Movement: ParamTable
     Objects: ParamTable
     ObjectActivations: ParamTable
+    Players: ParamTable
+    PlayerAttacks: ParamTable
+    PlayerBehaviors: ParamTable
     Rings: ParamTable
     Shops: ParamTable
     SpecialEffects: ParamTable
+    SpecialEffectVisuals: ParamTable
     Spells: ParamTable
     Terrains: ParamTable
     Throws: ParamTable
     UpgradeMaterials: ParamTable
     Weapons: ParamTable
     WeaponUpgrades: ParamTable
-    SpecialEffectVisuals: ParamTable
-    GrowthCurves: ParamTable
 
     # Defines display order as well.
     PARAM_TABLES = {

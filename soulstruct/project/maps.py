@@ -27,7 +27,6 @@ _LOGGER = logging.getLogger(__name__)
 # TODO: Models are handled automatically. Model entries are auto-generated from all used model names.
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
 #  - Validation/SIB path depends on game version.
-#  - Right-click pop-out selection list is available for characters (and eventually, some objects).
 
 
 ENTRY_LIST_FG_COLORS = {
@@ -779,7 +778,13 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
                 valid_null_values = {-1: "Default/None"}
             else:
                 valid_null_values = {0: "Default/None", -1: "Default/None"}
-        return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
+        if issubclass(field_type, BaseLightingParam) and self.active_category.endswith("MapConnections"):
+            map_override = self.get_selected_field_dict().connected_map.emevd_file_stem
+        else:
+            map_override = None
+        return self.linker.soulstruct_link(
+            field_type, field_value, valid_null_values=valid_null_values, map_override=map_override,
+        )
 
     def add_models(self, model_subtype: tp.Type[MapModel], model_name):
         map_id = self.map_choice_id
