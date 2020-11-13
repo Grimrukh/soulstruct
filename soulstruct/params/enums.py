@@ -187,8 +187,8 @@ class BULLET_LAUNCH_CONDITION_TYPE(UnsignedChar):
 
 
 class CHARACTER_INIT_SEX(UnsignedChar):
-    Male = 0
-    Female = 1
+    Female = 0
+    Male = 1
 
 
 class CHRINIT_VOW_TYPE(UnsignedChar):

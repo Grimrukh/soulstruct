@@ -40,6 +40,7 @@ kernel32.OpenProcess.argtypes = (
 )
 
 kernel32.ReadProcessMemory.errcheck = _check_zero
+kernel32.ReadProcessMemory.restype = bool
 kernel32.ReadProcessMemory.argtypes = (
     w.HANDLE,  # _In_  hProcess
     w.LPCVOID,  # _In_  lpBaseAddress
@@ -48,16 +49,27 @@ kernel32.ReadProcessMemory.argtypes = (
     PSIZE_T,  # _Out_ lpNumberOfBytesRead
 )
 
+kernel32.WriteProcessMemory.errcheck = _check_zero
+kernel32.WriteProcessMemory.restype = bool
+kernel32.WriteProcessMemory.argtypes = (
+    w.HANDLE,  # _In_  hProcess
+    w.LPCVOID,  # _In_ lpBaseAddress
+    w.LPVOID,  # _In_ lpBuffer
+    SIZE_T,  # _In_  nSize
+    c.POINTER(SIZE_T),  # _Out_ lpNumberOfBytesWritten
+)
+
 kernel32.CloseHandle.argtypes = (w.HANDLE,)
 
 MemoryPointer = namedtuple("MemoryPointer", ("sequence", "address_func"))
 MemoryValue = namedtuple("CheatEntry", ("pointer", "jumps", "size", "fmt"))
 
+# Scanning just takes too long, so useful bases have their addresses hard-coded.
 DSR_POINTER_TABLE = {
     # "WORLD_CHR_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
-    "WORLD_CHR_BASE": 0x141d151b0,  # Scanning just takes too long.
+    "WORLD_CHR_BASE": 0x141D151B0,
     # "CHR_CLASS_BASE": MemoryPointer(
     #     br"\x48\x8B\x05....\x48\x85\xC0..\xF3\x0F\x58\x80\xAC\x00\x00\x00",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
@@ -184,6 +196,22 @@ class MemoryHook:
             return values
         return value
 
+    def _write(self, address, data, fmt=""):
+        if fmt:
+            data = struct.pack(fmt, *data)
+        elif not isinstance(data, bytes):
+            raise TypeError("Data to write to memory must be bytes, or 'fmt' must be given to convert a sequence.")
+        size = len(data)
+        buffer = c.create_string_buffer(data)
+        bytes_written = SIZE_T(0)
+        try:
+            kernel32.WriteProcessMemory(self.process_handle, address, buffer, size, c.byref(bytes_written))
+        except WindowsError as e:
+            raise MemoryHookError(e)
+
+    def read_int16(self, address):
+        return self._read(address, size=2, fmt="<h")
+
     def read_int32(self, address):
         return self._read(address, size=4, fmt="<i")
 
@@ -195,6 +223,21 @@ class MemoryHook:
 
     def read_double(self, address):
         return self._read(address, size=8, fmt="<d")
+
+    def write_int16(self, address, value):
+        return self._write(address, data=(value,), fmt="<h")
+
+    def write_int32(self, address, value):
+        return self._write(address, data=(value,), fmt="<i")
+
+    def write_int64(self, address, value):
+        return self._write(address, data=(value,), fmt="<q")
+
+    def write_float(self, address, value):
+        return self._write(address, data=(value,), fmt="<f")
+
+    def write_double(self, address, value):
+        return self._write(address, data=(value,), fmt="<d")
 
     def scan(self, byte_sequence: bytes, chunk_size=10000):
         """Find a given byte sequence in process memory (looking in the first `search_size` bytes)."""

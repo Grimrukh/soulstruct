@@ -249,7 +249,7 @@ class MapDrawParam:
             elif len(parts) == 3:
                 if parts[1] != "1":
                     raise ValueError(
-                        "Only slot 0 (no slot number in path) and slot 1 ('_1_' in path) are valid in " "DrawParam."
+                        "Only slot 0 (no slot number in path) and slot 1 ('_1_' in path) are valid in DrawParam."
                     )
                 slot = 1
                 param_name = parts[2]
@@ -260,7 +260,8 @@ class MapDrawParam:
 
             self._data.setdefault(param_name, [None, None])[slot] = p = DrawParamTable(entry.data, paramdef_bnd)
             self._bnd_entry_paths[param_name, slot] = entry.path
-            if p.param_info is not None:
+            if not parts[0].startswith("s") and p.param_info is not None:
+                # sXX_LightBank does not have attribute access.
                 setattr(self, p.nickname, self._data[param_name])
 
     def __getitem__(self, category):

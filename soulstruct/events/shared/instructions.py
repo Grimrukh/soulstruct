@@ -720,7 +720,8 @@ def SetNPCPartHealth(character: CharacterTyping, npc_part_id: int, desired_hp: i
     return to_numeric(instruction_info, character, npc_part_id, desired_hp, overwrite_max)
 
 
-def SetNPCPartEffects(character: CharacterTyping, npc_part_id: int, material_special_effect_id: int, material_fx_id: int):
+def SetNPCPartEffects(character: CharacterTyping, npc_part_id: int, material_special_effect_id: int,
+                      material_fx_id: int):
     """ Attach material effects to an NPC part. """
     instruction_info = (2004, 24)
     return to_numeric(instruction_info, character, npc_part_id, material_special_effect_id, material_fx_id)
@@ -733,10 +734,11 @@ def SetNPCPartBulletDamageScaling(character: CharacterTyping, npc_part_id: int, 
 
 
 def SetDisplayMask(character: CharacterTyping, bit_index, switch_type):
-    """ Different bits correspond to different parts of the character model. You can see the initial values for these
+    """Different bits correspond to different parts of the character model. You can see the initial values for these
     in the NPC params. This is generally used to disable tails when they are cut off.
 
-    'switch_type' can be 0 (off), 1 (on), or 2 (change). """
+    `switch_type` can be 0 (off), 1 (on), or 2 (change).
+    """
     instruction_info = (2004, 26)
     return to_numeric(instruction_info, character, bit_index, switch_type)
 
@@ -1017,9 +1019,11 @@ def DisableObjectInvulnerability(obj: ObjectTyping):
 
 
 def EnableTreasureCollection(obj: ObjectTyping):
-    """ Forces an object to spawn its treasure, even if the treasure's ItemLot flag is already enabled. Useful if
-    you want some treasure to reappear (after, say, taking it from the player and disabling the ItemLot flag) without
-    the player needing to reload the map. """
+    """Forces an object to spawn its treasure, even if the treasure's ItemLot flag is already enabled.
+
+    Useful if you want some treasure to reappear (after, say, taking it from the player and disabling the ItemLot flag)
+    without the player needing to reload the map.
+    """
     instruction_info = (2005, 15)
     return to_numeric(instruction_info, obj)
 
@@ -1028,7 +1032,7 @@ def EnableTreasureCollection(obj: ObjectTyping):
 
 
 def SetFlagState(flag: FlagInt, state: FlagState):
-    """ Enable, disable, or toggle (change) a binary flag. """
+    """Enable, disable, or toggle (change) a binary flag."""
     instruction_info = (2003, 2)
     return to_numeric(instruction_info, flag, state)
 
@@ -1046,7 +1050,7 @@ def ToggleFlag(flag: FlagInt):
 
 
 def SetRandomFlagInRange(flag_range: FlagRangeTyping, state: FlagState):
-    """ Set the state of a random flag from a given range (inclusive). """
+    """Set the state of a random flag from a given range (inclusive)."""
     instruction_info = (2003, 17)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, first_flag, last_flag, state)
@@ -1065,7 +1069,7 @@ def ToggleRandomFlagInRange(flag_range: FlagRangeTyping):
 
 
 def SetFlagRangeState(flag_range: FlagRangeTyping, state: FlagState):
-    """ Set the state of an entire flag range (inclusive). """
+    """Set the state of an entire flag range (inclusive)."""
     instruction_info = (2003, 22)
     first_flag, last_flag = tuple(flag_range)
     return to_numeric(instruction_info, first_flag, last_flag, state)
@@ -1084,10 +1088,13 @@ def ChangeFlagRange(flag_range: FlagRangeTyping):
 
 
 def IncrementEventValue(flag: FlagInt, bit_count: int, max_value: int):
-    """ You can use a contiguous array of flags as a single value. Use this to increment that value. The array begins
-    at 'flag' and extends for 'bit_count'. (For example, a 'bit_count' of 4 gives you a theoretical maximum of 256. You
-    can set a 'max_value' less than that to limit the value. (I'm not sure if it ticks over back to zero if max_value is
-    greater than the possible value given the bit count.)
+    """You can use a contiguous array of flags as a single value. Use this to increment that value by 1.
+
+    The array begins at `flag` and extends for `bit_count`. For example, a 'bit_count' of 8 gives you a theoretical
+    maximum of 256. You can set a 'max_value' less than that to limit the value. (I'm not sure if it ticks over back to
+    zero if `max_value` is greater than the possible value given the bit count.)
+
+    The most significant bit is represented at `flag`, and the least significant bit at `flag + bit_count - 1`.
 
     This is used for counters in the vanilla game, such as the number of bosses killed while Rhea is at Undead Parish.
     """
@@ -1096,19 +1103,18 @@ def IncrementEventValue(flag: FlagInt, bit_count: int, max_value: int):
 
 
 def ClearEventValue(flag: FlagInt, bit_count: int):
-    """ Clears the given multi-flag. This is basically like disabling 'bit_count' flags in a row, starting at
-    'flag'. """
+    """Clears the given multi-flag. This is basically like disabling `bit_count` flags in a row, starting at `flag`. """
     instruction_info = (2003, 32)
     return to_numeric(instruction_info, flag, bit_count)
 
 
 def EnableThisFlag():
-    """ Handled directly by the compiler, which calls EnableFlag() with the current event ID as its argument. """
+    """Handled directly by the compiler, which calls `EnableFlag()` with the current event ID as its argument."""
     pass
 
 
 def DisableThisFlag():
-    """ Handled directly by the compiler, which calls DisableFlag() with the current event ID as its argument. """
+    """Handled directly by the compiler, which calls `DisableFlag()` with the current event ID as its argument."""
     pass
 
 

@@ -80,6 +80,12 @@ class DarkSoulsMaps:
         game_map = get_map(map_source)
         return self._data[game_map.name]
 
+    def __iter__(self):
+        return iter(self._data)
+
+    def items(self):
+        return self._data.items()
+
     def save(self, msb_directory=None):
         if msb_directory is None:
             msb_directory = self._directory

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import logging
 import re
 import sys
 import typing as tp
@@ -16,6 +17,8 @@ from soulstruct.utilities import word_wrap
 if tp.TYPE_CHECKING:
     from soulstruct.maps import DarkSoulsMaps, MSB
     from soulstruct.maps.base import MSBEntryEntity
+
+_LOGGER = logging.getLogger(__name__)
 
 ENTRY_LIST_FG_COLORS = {
     "Parts": "#DDF",

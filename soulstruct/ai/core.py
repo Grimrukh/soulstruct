@@ -97,17 +97,45 @@ class LuaBND:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
                 try:
+                    script = entry.data.decode("shift-jis")
+                    bytecode = b""
+                except UnicodeDecodeError:
+                    script = ""
+                    bytecode = entry.data
+                try:
                     goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
-                    _LOGGER.warning(
-                        f"Lua file {entry_path.name} has no corresponding goal and will not be loaded.\n"
-                        f"(Future versions of Soulstruct may guess the goal name.)"
+                    scan_script = script if script else decompile_lua(bytecode, script_name=entry_path.name)
+                    # Scan file for goal name.
+                    battle_func_name = rf"^function ([\w\d_]+){goal_id}Battle_Activate\("
+                    goal_name_match = re.match(battle_func_name, scan_script)
+                    if not goal_name_match:
+                        if goal_id == 6000:
+                            print(battle_func_name)
+                            print(scan_script)
+                        _LOGGER.warning(
+                            f"Lua file {entry_path.name} in {luabnd_path} has no corresponding goal and its goal name "
+                            f"could not be auto-detected from its script, so it will not be loaded."
+                        )
+                        continue
+                    goal_name = f"{goal_name_match.group(1)}{goal_id}"
+                    if goal_type == LuaGoal.BATTLE_TYPE:
+                        goal_name += "Battle"
+                    elif goal_type == LuaGoal.LOGIC_TYPE:
+                        goal_name += "_Logic"
+                    goal = LuaGoal(
+                        goal_id=goal_id,
+                        goal_name=goal_name,
+                        goal_type=goal_type,
+                        script_name=entry_path.name,
+                        bytecode=bytecode,
+                        script=script,
                     )
-                    continue
-                try:
-                    goal.script = entry.data.decode("shift-jis")
-                except UnicodeDecodeError:
-                    goal.bytecode = entry.data
+                    self.goals.append(goal)
+                else:
+                    goal.script = script
+                    goal.bytecode = bytecode
+
                 if self._bnd_path_parent is None:
                     self._bnd_path_parent = str(Path(entry.path).parent)
                     self.is_lua_64 = "INTERROOT_x64" in self._bnd_path_parent
@@ -380,7 +408,7 @@ def compile_lua(script: str, script_name="<unknown script>", output_path=None, x
         return bytecode
 
 
-def decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=None):
+def  decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=None):
     if output_path:
         output_path = Path(output_path).resolve()  # resolve before changing to temp working dir
     with _temp_lua_path(bytecode, as_bytes=True, set_cwd=True) as temp:

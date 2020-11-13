@@ -421,6 +421,28 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
         self.entry_canvas_context_menu.add_command(label="Create New Entry", command=self.add_new_default_entry)
         self.entry_canvas.bind("<Button-3>", self.right_click_entry_canvas)
 
+    def check_for_repeated_entity_ids(self):
+        # Check for duplicate entity IDs.
+        repeat_warning = ""
+        for map_name, msb in self.Maps.items():
+            repeats = msb.get_repeated_entity_ids()
+            if repeats["Regions"]:
+                regions = "\n".join(f"{e.entity_id}: {e.name}" for e in repeats["Regions"])
+                region_ids = ", ".join(str(e.entity_id) for e in repeats["Regions"])
+                repeat_warning += f"{map_name}:\n{regions}\n"
+                _LOGGER.warning(f"Found repeated region entity IDs in {map_name}: {region_ids}")
+        if repeat_warning:
+            self.CustomDialog(
+                "Repeated Region Entity IDs Found",
+                "Found repeated region entity IDs in map files.\n"
+                "Any regions that appear after these in the map\n"
+                "will not function properly in event scripts.\n"
+                "(If you're seeing four IDs in the Duke's Archives,\n"
+                "this is indeed a vanilla bug - you can just delete\n"
+                "the offending four repeated regions, as they are\n"
+                "not used.)\n\n" + repeat_warning,
+            )
+
     def right_click_entry_canvas(self, event):
         if self.active_category is not None:
             self.entry_canvas_context_menu.tk_popup(event.x_root, event.y_root)

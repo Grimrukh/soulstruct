@@ -426,7 +426,7 @@ class BoxRegion(Region):
     """3D box region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Boxs") if pluralized_subtype else ("Events", "Box")
+        return ("Regions", "Boxes") if pluralized_subtype else ("Events", "Box")
 
 
 class MapPart(MapEntry):

@@ -589,8 +589,8 @@ def IsDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=Fa
 
 
 @no_skip_or_negate_or_terminate
-def IsActivated(obj: Object, condition):
-    return instr.IfObjectActivated(condition, obj)
+def IsActivated(obj_act_flag: Flag, condition):
+    return instr.IfObjectActivated(condition, obj_act_flag)
 
 
 @no_skip_or_negate_or_terminate

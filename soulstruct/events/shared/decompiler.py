@@ -843,6 +843,7 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
         if instruction_index == 3:
             anchor_type, anchor_entity_id, model_point, fx_id = req_args
             anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
+            anchor_entity_id = "PLAYER" if anchor_entity_id == 10000 else anchor_entity_id
             return (
                 f"CreateTemporaryFX({fx_id}, anchor_entity={anchor_entity_id}, "
                 f"anchor_type={anchor_type}, model_point={model_point})"

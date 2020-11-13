@@ -121,6 +121,8 @@ class SoulstructProjectWindow(SmartFrame):
         self.build()
         self.deiconify()
 
+        self.maps_tab.check_for_repeated_entity_ids()
+
     def build(self):
         self.build_top_menu()
 
@@ -405,6 +407,7 @@ class SoulstructProjectWindow(SmartFrame):
                 self.params_tab.refresh_entries()
             elif data_type == "maps":
                 self.maps_tab.refresh_entries()
+                self.maps_tab.check_for_repeated_entity_ids()
             elif data_type == "lighting":
                 self.lighting_tab.refresh_entries()
             elif data_type == "text":

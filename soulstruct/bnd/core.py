@@ -150,7 +150,7 @@ class BaseBND:
         directory = Path(directory)
         current_directory = None
         for line in file_buffer:
-            line = line.strip(b" \r\n")
+            line = line.strip(b" \r\n\t")
             if not line:
                 # Skip blank lines.
                 continue
@@ -161,7 +161,8 @@ class BaseBND:
                     try:
                         entry_magic, entry_id, entry_basename = self.UNPACKED_ID_PATH_RE.match(line).group(1, 2, 3)
                     except (AttributeError, ValueError):
-                        raise ValueError("Expected '(magic) ID: path' format for entry, based on magic.")
+                        raise ValueError(f"Expected '(magic) ID: path' format for entry, based on magic. Received:\n"
+                                         f"    {line}")
                     entry_magic, entry_id = int(entry_magic), int(entry_id)
                 else:
                     if b": " in line:

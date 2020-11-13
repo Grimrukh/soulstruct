@@ -289,7 +289,6 @@ class ParamTable:
         self.entries = {}
         self.__magic = []
         self.__unknown = None
-        self._nickname = ""
 
         if isinstance(param_source, dict):
             self.entries = param_source

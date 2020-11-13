@@ -251,6 +251,20 @@ class MSB(object):
         self.rotate_all_in_world(m_world_rotate, selected_entries=selected_entries)
         self.translate_all(translation, selected_entries=selected_entries)
 
+    def get_repeated_entity_ids(self):
+        repeats = {}
+        for entry_type in ("Parts", "Regions", "Events"):
+            entries = getattr(self, entry_type.lower())
+            entity_ids = set()
+            repeated_entries = []
+            for entry in [e for e in entries if e.entity_id > 0]:
+                if entry.entity_id in entity_ids:
+                    repeated_entries.append(entry)
+                else:
+                    entity_ids.add(entry.entity_id)
+            repeats[entry_type] = repeated_entries
+        return repeats
+
     def get_entity_id_dict(self, entry_type, entry_subtype, names_only=False):
         """Get a dictionary mapping entity IDs to `MSBEntry` instances for the given type and subtype.
 

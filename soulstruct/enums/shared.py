@@ -194,7 +194,7 @@ class NavmeshType(IntEnum):
     Exit = 0b00000000000010
     Obstacle = 0b00000000000100
     Wall = 0b00000000001000
-    # Note enum 16 is missing.
+    # Note enum 16 (fifth bit) is missing.
     WallTouchingFloor = 0b00000000100000
     LandingPoint = 0b00000001000000
     Event = 0b00000010000000
