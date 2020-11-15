@@ -1,3 +1,16 @@
+__all__ = [
+    "CHARACTER_MODELS",
+    "UNUSED_CHARACTERS",
+    "CHARACTER_FFX_SOURCES",
+    "WEAPON_MODELS",
+    "BEHAVIOR_SUB_ID",
+    "PLAYER_WEAPON_BEHAVIOR_VARIATIONS",
+    "HAS_ONE_HANDED_SPECIAL_ATTACK",
+    "HAS_TWO_HANDED_SPECIAL_ATTACK",
+    "SPECIAL_EFFECT_RANGES",
+]
+
+
 CHARACTER_MODELS = {
     0: "Player Character",
     1000: "Empty Character",  # e.g. bonfires
@@ -14,7 +27,7 @@ CHARACTER_MODELS = {
     2260: "Batwing Demon",
     2270: "Mushroom Parent",
     2280: "Mushroom Child",
-    # 2290: 'Chained Prisoner (unused)',
+    2290: "Chained Prisoner (unused)",
     2300: "Titanite Demon",
     2310: "Crow Demon",
     2320: "Iron Golem",
@@ -34,9 +47,9 @@ CHARACTER_MODELS = {
     2550: "Hollow Soldier",
     2560: "Balder Knight",
     2570: "Berenike Knight",
-    # 2590: 'Marvelous Chester (unused 1)',
-    # 2591: 'Marvelous Chester (unused 2)',
-    # 2600: 'Young Witch Beatrice (unused)',
+    2590: "Marvelous Chester (unused 1)",
+    2591: "Marvelous Chester (unused 2)",
+    2600: "Young Witch Beatrice (unused)",
     2640: "Andre",
     2650: "Necromancer",
     2660: "Butcher",
@@ -59,7 +72,7 @@ CHARACTER_MODELS = {
     2800: "Undead Crystal Soldier",
     2810: "Infested Barbarian (club)",
     2811: "Infested Barbarian (boulder)",
-    # 2820: 'Spider Hollow (unused)',
+    2820: "Spider Hollow (unused)",
     2830: "Phalanx",
     2840: "Engorged Hollow",
     2860: "Giant",
@@ -72,7 +85,7 @@ CHARACTER_MODELS = {
     2950: "Skeleton Beast",
     2960: "Bone Tower",
     3090: "Giant Mosquito",
-    # 3110: 'Crystal Lizard (unused)',  # from Demon's Souls
+    3110: "Crystal Lizard (unused)",  # from Demon's Souls
     3200: "Slime",
     3210: "Egg Carrier",
     3220: "Vile Maggot",
@@ -80,7 +93,7 @@ CHARACTER_MODELS = {
     3240: "Chaos Eater",
     3250: "Man-Eater Shell",
     3270: "Basilisk",
-    # 3290: 'Brain Bug (unused)',
+    3290: "Brain Bug (unused)",
     3300: "Crystal Lizard",
     3320: "Pinwheel",
     3330: "Pisaca",
@@ -97,14 +110,14 @@ CHARACTER_MODELS = {
     3422: "Undead Dragon (wing)",
     3430: "Hellkite Dragon",
     3431: "Hellkite Dragon (tail)",
-    # 3440: 'Kalameet (unused)',
+    3440: "Kalameet (unused)",
     3450: "Everlasting Dragon",
     3451: "Everlasting Dragon (tail)",
     3460: "Armored Tusk",
     3461: "Armored Tusk (rear guard)",
-    # 3470: 'Sanctuary Guardian (unused)',
+    3470: "Sanctuary Guardian (unused)",
     3471: "Sanctuary Guardian",
-    # 3472: 'Sanctuary Guardian (unused 2)',
+    3472: "Sanctuary Guardian (unused 2)",
     3480: "Chaos Bug",
     3490: "Good Vagrant",
     3491: "Evil Vagrant",
@@ -116,8 +129,8 @@ CHARACTER_MODELS = {
     3530: "Hydra",
     3531: "Hydra (head)",
     4090: "Marvelous Chester",
-    # 4091: 'Marvelous Chester (unused 3)',
-    # 4095: 'Marvelous Chester (unused 4)',
+    4091: "Marvelous Chester (unused 3)",
+    4095: "Marvelous Chester (unused 4)",
     4100: "Artorias",
     4110: "Hawkeye Gough",
     4120: "Stone Guardian",
@@ -125,16 +138,16 @@ CHARACTER_MODELS = {
     4140: "Elizabeth",
     4150: "Bloathead",
     4160: "Bloathead Sorcerer",
-    4170: "Humanity Phantom (small)",
+    4170: "Humanity Phantom (large)",
     4171: "Humanity Phantom (medium)",
-    4172: "Humanity Phantom (large)",
+    4172: "Humanity Phantom (small)",
     4180: "Chained Prisoner",
     4190: "Abyss Attack Dog",
     4500: "Manus",
     4510: "Black Dragon Kalameet",
     4511: "Black Dragon Kalameet (tail)",
     4520: "Young Sif",
-    # 4530: 'Young Alvina (unused)',
+    4530: "Young Alvina (unused)",
     4531: "Young Alvina",
     5200: "Centipede Demon",
     5201: "Centipede Demon (arm)",
@@ -142,7 +155,7 @@ CHARACTER_MODELS = {
     5210: "Sif",
     5220: "Gravelord Nito",
     5230: "Bed of Chaos",
-    # 5231: 'Bed of Chaos (unused)',  # incomplete mobile version
+    5231: "Bed of Chaos (unused)",  # incomplete mobile version
     5240: "Parasitic Wall Hugger",
     5250: "Ceaseless Discharge",
     5260: "Gaping Dragon",
@@ -151,7 +164,7 @@ CHARACTER_MODELS = {
     5271: "Giant Ornstein",
     5280: "Quelaag",
     5290: "Seath the Scaleless",
-    # 5300: 'Undead King Jareel',  # incomplete New Londo Ruins boss
+    5300: "Undead King Jareel",  # incomplete New Londo Ruins boss
     5310: "Gwynevere",
     5320: "Gwyndolin",
     5330: "Primordial Serpent",  # Frampt / Kaathe
@@ -162,11 +175,856 @@ CHARACTER_MODELS = {
     5353: "Lightning Gargoyle (tail)",
     5360: "Great Feline",
     5361: "Alvina",
-    # 5362: 'Alvina (unused)',
+    5362: "Alvina (unused)",
     5370: "Gwyn",
     5390: "Four Kings",
     5400: "Bed of Chaos (spirit)",
     5401: "Bed of Chaos (bug)",
+}
+
+UNUSED_CHARACTERS = (
+    2590,  # Marvelous Chester (1)
+    2591,  # Marvelous Chester (2)
+    2600,  # Young Witch Beatrice
+    2290,  # Chained Prisoner prototype
+    3110,  # Crystal Lizard prototype
+    3290,  # Brain Bug
+    3440,  # Kalameet prototype
+    3470,  # Sanctuary Guardian prototype
+    3472,  # Sanctuary Guardian prototype (2)
+    4091,  # Marvelous Chester prototype (3)
+    4095,  # Marvelous Chester prototype (4)
+    4530,  # Young Alvina
+    5231,  # Bed of Chaos (mobile)
+    5300,  # Jar Eel
+    5362,  # Alvina prototype
+)
+
+# Maps required (in vanilla) FFX files for each character model to the FFXBND they can be found in.
+CHARACTER_FFX_SOURCES = {
+    0: {},
+    1000: {},
+    1200: {},
+    1201: {},
+    1202: {
+        1212000: "FRPG_SfxBnd_m10_00",
+    },
+    1203: {
+        1120400: "FRPG_SfxBnd_m11",
+        1120300: "FRPG_SfxBnd_m11",
+        1120500: "FRPG_SfxBnd_m11",
+        1120401: "FRPG_SfxBnd_m11",
+    },
+    2060: {
+        12061: "FRPG_SfxBnd_m14",
+    },
+    2210: {},
+    2230: {
+        12239: "FRPG_SfxBnd_m18_01",
+        12232: "FRPG_SfxBnd_m18_01",
+        12234: "FRPG_SfxBnd_m18_01",
+        12237: "FRPG_SfxBnd_m18_01",
+        12235: "FRPG_SfxBnd_m18_01",
+        12238: "FRPG_SfxBnd_m18_01",
+        12230: "FRPG_SfxBnd_m18_01",
+        12231: "FRPG_SfxBnd_m18_01",
+    },
+    2231: {
+        11035: "FRPG_SfxBnd_m14_01",
+        11030: "FRPG_SfxBnd_m14_01",
+        11031: "FRPG_SfxBnd_m14_01",
+        11032: "FRPG_SfxBnd_m14_01",
+        12239: "FRPG_SfxBnd_m18_01",
+        12232: "FRPG_SfxBnd_m18_01",
+        12237: "FRPG_SfxBnd_m18_01",
+        11036: "FRPG_SfxBnd_m14_01",
+        12235: "FRPG_SfxBnd_m18_01",
+        12230: "FRPG_SfxBnd_m18_01",
+        12238: "FRPG_SfxBnd_m18_01",
+        12231: "FRPG_SfxBnd_m18_01",
+    },
+    2232: {
+        12239: "FRPG_SfxBnd_m18_01",
+        12232: "FRPG_SfxBnd_m18_01",
+        12237: "FRPG_SfxBnd_m18_01",
+        12238: "FRPG_SfxBnd_m18_01",
+    },
+    2240: {
+        12242: "FRPG_SfxBnd_m14_01",
+        12241: "FRPG_SfxBnd_m14_01",
+        12240: "FRPG_SfxBnd_m14_01",
+    },
+    2250: {
+        12258: "FRPG_SfxBnd_m18_00",
+        1225000: "FRPG_SfxBnd_m18_00",
+        12250: "FRPG_SfxBnd_m18_00",
+    },
+    2260: {
+        12262: "FRPG_SfxBnd_m15",
+        12261: "FRPG_SfxBnd_m15",
+        12260: "FRPG_SfxBnd_m15",
+    },
+    2270: {},
+    2280: {},
+    2290: {},
+    2300: {
+        1223500: "FRPG_SfxBnd_m15",
+        1223000: "FRPG_SfxBnd_m15",
+        1223600: "FRPG_SfxBnd_m15",
+        1223100: "FRPG_SfxBnd_m15",
+        12304: "FRPG_SfxBnd_m15",
+        12303: "FRPG_SfxBnd_m15",
+        12305: "FRPG_SfxBnd_m15",
+        12306: "FRPG_SfxBnd_m15",
+    },
+    2310: {
+        1223200: "FRPG_SfxBnd_m11",
+        1223300: "FRPG_SfxBnd_m11",
+    },
+    2320: {
+        1222000: "FRPG_SfxBnd_m15_00",
+        12320: "FRPG_SfxBnd_m15_00",
+        12322: "FRPG_SfxBnd_m15_00",
+        12325: "FRPG_SfxBnd_m15_00",
+        12324: "FRPG_SfxBnd_m15_00",
+        12321: "FRPG_SfxBnd_m15_00",
+    },
+    2330: {
+        12330: "FRPG_SfxBnd_m12",
+    },
+    2360: {
+        12364: "FRPG_SfxBnd_m15_01",
+        12365: "FRPG_SfxBnd_m15_01",
+        12360: "FRPG_SfxBnd_m15_01",
+        12362: "FRPG_SfxBnd_m15_01",
+        12363: "FRPG_SfxBnd_m15_01",
+    },
+    2370: {
+        12373: "FRPG_SfxBnd_m17",
+        12371: "FRPG_SfxBnd_m17",
+        12370: "FRPG_SfxBnd_m17",
+        12374: "FRPG_SfxBnd_m17",
+        12372: "FRPG_SfxBnd_m17",
+        12375: "FRPG_SfxBnd_m17",
+        12376: "FRPG_SfxBnd_m17",
+    },
+    2380: {
+        12383: "FRPG_SfxBnd_m12",
+        12382: "FRPG_SfxBnd_m12",
+        12380: "FRPG_SfxBnd_m12",
+    },
+    2390: {
+        12390: "FRPG_SfxBnd_m18",
+        12391: "FRPG_SfxBnd_m18",
+        12392: "FRPG_SfxBnd_m18",
+    },
+    2400: {
+        12522: "FRPG_SfxBnd_m15_01",
+        12521: "FRPG_SfxBnd_m15_01",
+        12520: "FRPG_SfxBnd_m15_01",
+    },
+    2410: {
+        12411: "FRPG_SfxBnd_m15_01",
+        12410: "FRPG_SfxBnd_m15_01",
+    },
+    2430: {
+        12430: "FRPG_SfxBnd_m14_01",
+    },
+    2500: {
+        12500: "FRPG_SfxBnd_m18_01",
+    },
+    2510: {},
+    2520: {
+        12522: "FRPG_SfxBnd_m15_01",
+        12521: "FRPG_SfxBnd_m15_01",
+        12520: "FRPG_SfxBnd_m15_01",
+        12523: "FRPG_SfxBnd_m10_01",
+    },
+    2530: {
+        12532: "FRPG_SfxBnd_m14",
+        12531: "FRPG_SfxBnd_m14",
+        12530: "FRPG_SfxBnd_m14",
+    },
+    2540: {
+        12540: "FRPG_SfxBnd_m11",
+    },
+    2550: {},
+    2560: {},
+    2570: {},
+    2590: {},
+    2591: {},
+    2600: {},
+    2640: {
+        12865: "FRPG_SfxBnd_m15_01",
+    },
+    2650: {
+        12653: "FRPG_SfxBnd_m13",
+        12651: "FRPG_SfxBnd_m13",
+        12650: "FRPG_SfxBnd_m13",
+        12654: "FRPG_SfxBnd_m13",
+        12652: "FRPG_SfxBnd_m13",
+    },
+    2660: {
+        12660: "FRPG_SfxBnd_m10_00",
+        12661: "FRPG_SfxBnd_m10_00",
+    },
+    2670: {
+        12672: "FRPG_SfxBnd_m16",
+        12673: "FRPG_SfxBnd_m16",
+        12671: "FRPG_SfxBnd_m16",
+        12670: "FRPG_SfxBnd_m16",
+        12674: "FRPG_SfxBnd_m16",
+    },
+    2680: {
+        12672: "FRPG_SfxBnd_m16",
+        12673: "FRPG_SfxBnd_m16",
+        12681: "FRPG_SfxBnd_m16",
+        12680: "FRPG_SfxBnd_m16",
+        12682: "FRPG_SfxBnd_m16",
+    },
+    2690: {},
+    2700: {
+        12701: "FRPG_SfxBnd_m17",
+        12700: "FRPG_SfxBnd_m17",
+        12703: "FRPG_SfxBnd_m17",
+        12702: "FRPG_SfxBnd_m17",
+        12704: "FRPG_SfxBnd_m17",
+    },
+    2710: {
+        12714: "FRPG_SfxBnd_m17",
+        12713: "FRPG_SfxBnd_m17",
+    },
+    2711: {
+        12711: "FRPG_SfxBnd_m17",
+        12710: "FRPG_SfxBnd_m17",
+        12712: "FRPG_SfxBnd_m17",
+    },
+    2730: {
+        1273000: "FRPG_SfxBnd_m11",
+        1273100: "FRPG_SfxBnd_m11",
+        12730: "FRPG_SfxBnd_m11",
+        12733: "FRPG_SfxBnd_m11",
+        12732: "FRPG_SfxBnd_m11",
+    },
+    2731: {},
+    2750: {
+        12750: "FRPG_SfxBnd_m10_02",
+    },
+    2780: {
+        12780: "FRPG_SfxBnd_m17",
+    },
+    2790: {},
+    2791: {
+        12790: "FRPG_SfxBnd_m18_00",
+    },
+    2792: {},
+    2793: {},
+    2794: {},
+    2795: {},
+    2800: {},
+    2810: {},
+    2811: {
+        12812: "FRPG_SfxBnd_m14",
+        12811: "FRPG_SfxBnd_m14",
+        12810: "FRPG_SfxBnd_m14",
+    },
+    2820: {
+    },
+    2830: {
+        12832: "FRPG_SfxBnd_m11",
+        12831: "FRPG_SfxBnd_m11",
+        12830: "FRPG_SfxBnd_m11",
+    },
+    2840: {
+        12500: "FRPG_SfxBnd_m18_01",
+        12849: "FRPG_SfxBnd_m11",
+        12846: "FRPG_SfxBnd_m11",
+        12841: "FRPG_SfxBnd_m11",
+        12840: "FRPG_SfxBnd_m11",
+        12843: "FRPG_SfxBnd_m11",
+        12842: "FRPG_SfxBnd_m11",
+        12844: "FRPG_SfxBnd_m11",
+        12847: "FRPG_SfxBnd_m11",
+    },
+    2860: {
+        12859: "FRPG_SfxBnd_m15_00",
+        12865: "FRPG_SfxBnd_m15_01",
+        12864: "FRPG_SfxBnd_m15_01",
+    },
+    2870: {
+        12870: "FRPG_SfxBnd_m15_01",
+        12872: "FRPG_SfxBnd_m15_01",
+        12876: "FRPG_SfxBnd_m15_01",
+        12873: "FRPG_SfxBnd_m15_01",
+        12874: "FRPG_SfxBnd_m15_01",
+        12875: "FRPG_SfxBnd_m15_01",
+    },
+    2900: {
+        12900: "FRPG_SfxBnd_m13",
+        4600: "FRPG_SfxBnd_m13",
+        12901: "FRPG_SfxBnd_m13",
+    },
+    2910: {
+        12914: "FRPG_SfxBnd_m13",
+        12901: "FRPG_SfxBnd_m13",
+        12911: "FRPG_SfxBnd_m13",
+        12910: "FRPG_SfxBnd_m13",
+    },
+    2920: {
+        12865: "FRPG_SfxBnd_m15_01",
+    },
+    2930: {},
+    2940: {},
+    2950: {},
+    2960: {
+        12960: "FRPG_SfxBnd_m13",
+    },
+    3090: {
+        13090: "FRPG_SfxBnd_m14",
+    },
+    3110: {
+        13110: "FRPG_SfxBnd_m17",
+    },
+    3200: {
+        13200: "FRPG_SfxBnd_m10_00",
+        13202: "FRPG_SfxBnd_m10_00",
+        13201: "FRPG_SfxBnd_m10_00",
+    },
+    3210: {
+        13211: "FRPG_SfxBnd_m14",
+    },
+    3220: {
+        13090: "FRPG_SfxBnd_m14",
+    },
+    3230: {
+        13232: "FRPG_SfxBnd_m17",
+        13237: "FRPG_SfxBnd_m17",
+        13235: "FRPG_SfxBnd_m17",
+        13233: "FRPG_SfxBnd_m17",
+        13234: "FRPG_SfxBnd_m17",
+        13236: "FRPG_SfxBnd_m17",
+        13238: "FRPG_SfxBnd_m17",
+        13239: "FRPG_SfxBnd_m17",
+        13228: "FRPG_SfxBnd_m17",
+        13226: "FRPG_SfxBnd_m17",
+        13227: "FRPG_SfxBnd_m17",
+        13229: "FRPG_SfxBnd_m17",
+    },
+    3240: {
+        13240: "FRPG_SfxBnd_m14_01",
+        13242: "FRPG_SfxBnd_m14_01",
+        13243: "FRPG_SfxBnd_m14_01",
+    },
+    3250: {
+        13250: "FRPG_SfxBnd_m17",
+    },
+    3270: {
+        13270: "FRPG_SfxBnd_m13_02",
+        13271: "FRPG_SfxBnd_m13_02",
+        13272: "FRPG_SfxBnd_m13_02",
+    },
+    3290: {
+        1329000: "FRPG_SfxBnd_m14_00",
+        13290: "FRPG_SfxBnd_m14_00",
+        13292: "FRPG_SfxBnd_m14_00",
+        13291: "FRPG_SfxBnd_m14_00",
+    },
+    3300: {
+        13110: "FRPG_SfxBnd_m17",
+    },
+    3320: {
+        13320: "FRPG_SfxBnd_m13_01",
+        13325: "FRPG_SfxBnd_m13_01",
+        13322: "FRPG_SfxBnd_m13_01",
+        13321: "FRPG_SfxBnd_m13_01",
+        13318: "FRPG_SfxBnd_m13_01",
+        13326: "FRPG_SfxBnd_m13_01",
+        13323: "FRPG_SfxBnd_m13_01",
+        13319: "FRPG_SfxBnd_m13_01",
+        13327: "FRPG_SfxBnd_m13_01",
+        13314: "FRPG_SfxBnd_m13_01",
+        13315: "FRPG_SfxBnd_m13_01",
+        13328: "FRPG_SfxBnd_m13_01",
+        13317: "FRPG_SfxBnd_m13_01",
+        13316: "FRPG_SfxBnd_m13_01",
+        13329: "FRPG_SfxBnd_m13_01",
+    },
+    3330: {
+        13331: "FRPG_SfxBnd_m17",
+        13330: "FRPG_SfxBnd_m17",
+        13332: "FRPG_SfxBnd_m17",
+    },
+    3340: {},
+    3341: {
+        13341: "FRPG_SfxBnd_m14",
+        13340: "FRPG_SfxBnd_m14",
+    },
+    3350: {},
+    3370: {},
+    3380: {
+        13380: "FRPG_SfxBnd_m14",
+    },
+    3390: {
+        13391: "FRPG_SfxBnd_m14",
+        13390: "FRPG_SfxBnd_m14",
+        13397: "FRPG_SfxBnd_m14",
+        13396: "FRPG_SfxBnd_m14",
+        13392: "FRPG_SfxBnd_m14",
+        13395: "FRPG_SfxBnd_m14",
+        13398: "FRPG_SfxBnd_m14",
+        13399: "FRPG_SfxBnd_m14",
+    },
+    3400: {
+        13400: "FRPG_SfxBnd_m14",
+        13401: "FRPG_SfxBnd_m14",
+        13402: "FRPG_SfxBnd_m14",
+    },
+    3410: {
+        13411: "FRPG_SfxBnd_m12",
+        1341100: "FRPG_SfxBnd_m12",
+        1341200: "FRPG_SfxBnd_m12",
+        13410: "FRPG_SfxBnd_m12",
+    },
+    3420: {
+        13422: "FRPG_SfxBnd_m11",
+        13423: "FRPG_SfxBnd_m11",
+        16005: "FRPG_SfxBnd_m11",
+        13421: "FRPG_SfxBnd_m16",
+        13426: "FRPG_SfxBnd_m11",
+        13427: "FRPG_SfxBnd_m11",
+        13420: "FRPG_SfxBnd_m16",
+        13428: "FRPG_SfxBnd_m11",
+        13429: "FRPG_SfxBnd_m16",
+        16006: "FRPG_SfxBnd_m16",
+        16007: "FRPG_SfxBnd_m16",
+        13424: "FRPG_SfxBnd_m11",
+        16009: "FRPG_SfxBnd_m16",
+        16013: "FRPG_SfxBnd_m16",
+        16010: "FRPG_SfxBnd_m16",
+        16011: "FRPG_SfxBnd_m16",
+        16012: "FRPG_SfxBnd_m16",
+    },
+    3421: {
+        1342000: "FRPG_SfxBnd_m14",
+    },
+    3422: {},
+    3430: {
+        15130: "FRPG_SfxBnd_m10_01",
+        15131: "FRPG_SfxBnd_m10_01",
+        15136: "FRPG_SfxBnd_m10_01",
+        15135: "FRPG_SfxBnd_m10_01",
+        15138: "FRPG_SfxBnd_m10_01",
+        15143: "FRPG_SfxBnd_m10_01",
+        15140: "FRPG_SfxBnd_m10_01",
+        15141: "FRPG_SfxBnd_m10_01",
+        15142: "FRPG_SfxBnd_m10_01",
+        15151: "FRPG_SfxBnd_m10_01",
+        15155: "FRPG_SfxBnd_m10_01",
+        15163: "FRPG_SfxBnd_m10_01",
+        15164: "FRPG_SfxBnd_m10_01",
+        15167: "FRPG_SfxBnd_m10_01",
+        15166: "FRPG_SfxBnd_m10_01",
+        15170: "FRPG_SfxBnd_m10_01",
+        15171: "FRPG_SfxBnd_m10_01",
+        15174: "FRPG_SfxBnd_m10_01",
+        15175: "FRPG_SfxBnd_m10_01",
+        15148: "FRPG_SfxBnd_m10_01",
+        15149: "FRPG_SfxBnd_m10_01",
+        15147: "FRPG_SfxBnd_m10_01",
+        15177: "FRPG_SfxBnd_m10_01",
+        15176: "FRPG_SfxBnd_m13_02",
+    },
+    3431: {
+        15176: "FRPG_SfxBnd_m13_02",
+    },
+    3440: {},
+    3450: {
+        13452: "FRPG_SfxBnd_m13_02",
+        13453: "FRPG_SfxBnd_m13_02",
+        13450: "FRPG_SfxBnd_m13_02",
+        13451: "FRPG_SfxBnd_m13_02",
+        15176: "FRPG_SfxBnd_m13_02",
+    },
+    3451: {},
+    3460: {
+        13461: "FRPG_SfxBnd_m17",
+        13466: "FRPG_SfxBnd_m17",
+        13462: "FRPG_SfxBnd_m17",
+        13463: "FRPG_SfxBnd_m17",
+        13460: "FRPG_SfxBnd_m17",
+        13467: "FRPG_SfxBnd_m17",
+        13464: "FRPG_SfxBnd_m17",
+        13465: "FRPG_SfxBnd_m17",
+        13468: "FRPG_SfxBnd_m17",
+    },
+    3461: {
+        13461: "FRPG_SfxBnd_m17",
+        13466: "FRPG_SfxBnd_m17",
+        13462: "FRPG_SfxBnd_m17",
+        13463: "FRPG_SfxBnd_m17",
+        13460: "FRPG_SfxBnd_m17",
+        13467: "FRPG_SfxBnd_m17",
+        13464: "FRPG_SfxBnd_m17",
+        13465: "FRPG_SfxBnd_m17",
+        13468: "FRPG_SfxBnd_m17",
+    },
+    3470: {
+        12304: "FRPG_SfxBnd_m15",
+        12303: "FRPG_SfxBnd_m15",
+    },
+    3471: {},
+    3472: {},
+    3480: {
+        13480: "FRPG_SfxBnd_m14_01",
+        13481: "FRPG_SfxBnd_m14_01",
+    },
+    3490: {},
+    3491: {},
+    3500: {
+        13501: "FRPG_SfxBnd_m16",
+        13503: "FRPG_SfxBnd_m16",
+        13500: "FRPG_SfxBnd_m16",
+    },
+    3501: {
+        13507: "FRPG_SfxBnd_m16",
+        13506: "FRPG_SfxBnd_m16",
+        13509: "FRPG_SfxBnd_m16",
+    },
+    3510: {},
+    3520: {
+        13522: "FRPG_SfxBnd_m16",
+        13520: "FRPG_SfxBnd_m16",
+        13521: "FRPG_SfxBnd_m16",
+        13523: "FRPG_SfxBnd_m16",
+    },
+    3530: {
+        13540: "FRPG_SfxBnd_m13_02",
+        13537: "FRPG_SfxBnd_m13_02",
+        13530: "FRPG_SfxBnd_m13_02",
+        13533: "FRPG_SfxBnd_m13_02",
+        13539: "FRPG_SfxBnd_m13_02",
+        13536: "FRPG_SfxBnd_m13_02",
+    },
+    3531: {
+        13541: "FRPG_SfxBnd_m13_02",
+        13534: "FRPG_SfxBnd_m13_02",
+    },
+    4090: {
+        14292: "FRPG_SfxBnd_m12_01",
+        14291: "FRPG_SfxBnd_m12_01",
+        14290: "FRPG_SfxBnd_m12_01",
+    },
+    4100: {},
+    4110: {
+        14110: "FRPG_SfxBnd_m12_01",
+        14111: "FRPG_SfxBnd_m12_01",
+        14112: "FRPG_SfxBnd_m12_01",
+        14113: "FRPG_SfxBnd_m12_01",
+        14114: "FRPG_SfxBnd_m12_01",
+        14115: "FRPG_SfxBnd_m12_01",
+    },
+    4120: {
+        1412100: "FRPG_SfxBnd_m12_01",
+        1412000: "FRPG_SfxBnd_m12_01",
+        12385: "FRPG_SfxBnd_m12_01",
+        12384: "FRPG_SfxBnd_m12_01",
+    },
+    4130: {
+        14230: "FRPG_SfxBnd_m12_01",
+        14231: "FRPG_SfxBnd_m12_01",
+        14232: "FRPG_SfxBnd_m12_01",
+    },
+    4140: {},
+    4150: {
+        14150: "FRPG_SfxBnd_m12_01",
+    },
+    4160: {
+        14255: "FRPG_SfxBnd_m12_01",
+        14251: "FRPG_SfxBnd_m12_01",
+        14250: "FRPG_SfxBnd_m12_01",
+        14256: "FRPG_SfxBnd_m12_01",
+        14254: "FRPG_SfxBnd_m12_01",
+        14252: "FRPG_SfxBnd_m12_01",
+        14150: "FRPG_SfxBnd_m12_01",
+    },
+    4170: {
+        14260: "FRPG_SfxBnd_m12_01",
+        14261: "FRPG_SfxBnd_m12_01",
+        14267: "FRPG_SfxBnd_m12_01",
+        14278: "FRPG_SfxBnd_m12_01",
+    },
+    4171: {
+        14270: "FRPG_SfxBnd_m12_01",
+        14271: "FRPG_SfxBnd_m12_01",
+        14268: "FRPG_SfxBnd_m12_01",
+        14277: "FRPG_SfxBnd_m12_01",
+    },
+    4172: {
+        14280: "FRPG_SfxBnd_m12_01",
+        14281: "FRPG_SfxBnd_m12_01",
+        14269: "FRPG_SfxBnd_m12_01",
+        14277: "FRPG_SfxBnd_m12_01",
+    },
+    4180: {
+        1412000: "FRPG_SfxBnd_m12_01",
+        14181: "FRPG_SfxBnd_m12_01",
+    },
+    4190: {
+        14190: "FRPG_SfxBnd_m12_01",
+    },
+    4500: {},
+    4510: {
+        14430: "FRPG_SfxBnd_m12_01",
+        14412: "FRPG_SfxBnd_m12_01",
+        14411: "FRPG_SfxBnd_m12_01",
+        14410: "FRPG_SfxBnd_m12_01",
+    },
+    4511: {},
+    4520: {
+        14521: "FRPG_SfxBnd_m12_01",
+        14522: "FRPG_SfxBnd_m12_01",
+        14520: "FRPG_SfxBnd_m12_01",
+    },
+    4531: {
+        15365: "FRPG_SfxBnd_m12_01",
+        15364: "FRPG_SfxBnd_m12_01",
+        15363: "FRPG_SfxBnd_m12",
+    },
+    5200: {
+        15204: "FRPG_SfxBnd_m14_01",
+        15208: "FRPG_SfxBnd_m14",
+        15207: "FRPG_SfxBnd_m14",
+        1520000: "FRPG_SfxBnd_m14",
+        1520100: "FRPG_SfxBnd_m14",
+        15205: "FRPG_SfxBnd_m14",
+        15209: "FRPG_SfxBnd_m14",
+        15203: "FRPG_SfxBnd_m14",
+        15300: "FRPG_SfxBnd_m14",
+        15202: "FRPG_SfxBnd_m14",
+        15201: "FRPG_SfxBnd_m14",
+        15200: "FRPG_SfxBnd_m14",
+        15303: "FRPG_SfxBnd_m14",
+        15302: "FRPG_SfxBnd_m14",
+        15301: "FRPG_SfxBnd_m14",
+        15304: "FRPG_SfxBnd_m14",
+        15306: "FRPG_SfxBnd_m14",
+        15307: "FRPG_SfxBnd_m14",
+    },
+    5201: {
+        1520000: "FRPG_SfxBnd_m14",
+        1520100: "FRPG_SfxBnd_m14",
+        15306: "FRPG_SfxBnd_m14",
+        15300: "FRPG_SfxBnd_m14",
+    },
+    5202: {
+        1520000: "FRPG_SfxBnd_m14",
+        1520100: "FRPG_SfxBnd_m14",
+        15306: "FRPG_SfxBnd_m14",
+    },
+    5210: {
+        15211: "FRPG_SfxBnd_m12",
+        1521100: "FRPG_SfxBnd_m12",
+        1521000: "FRPG_SfxBnd_m12",
+        1521200: "FRPG_SfxBnd_m12",
+        15210: "FRPG_SfxBnd_m12",
+    },
+    5220: {
+        15220: "FRPG_SfxBnd_m13",
+        15221: "FRPG_SfxBnd_m13",
+        15225: "FRPG_SfxBnd_m13",
+        15223: "FRPG_SfxBnd_m13",
+        15228: "FRPG_SfxBnd_m13",
+        15229: "FRPG_SfxBnd_m13",
+        15227: "FRPG_SfxBnd_m13",
+        17222: "FRPG_SfxBnd_m13",
+        17220: "FRPG_SfxBnd_m13",
+        17225: "FRPG_SfxBnd_m13",
+        17221: "FRPG_SfxBnd_m13",
+        17223: "FRPG_SfxBnd_m13",
+        17224: "FRPG_SfxBnd_m13",
+        17226: "FRPG_SfxBnd_m13",
+        15226: "FRPG_SfxBnd_m13",
+    },
+    5230: {
+        15233: "FRPG_SfxBnd_m14",
+        15236: "FRPG_SfxBnd_m14_01",
+        15234: "FRPG_SfxBnd_m14_01",
+        15232: "FRPG_SfxBnd_m14_01",
+    },
+    5231: {
+        15233: "FRPG_SfxBnd_m14",
+        15234: "FRPG_SfxBnd_m14_01",
+    },
+    5240: {},
+    5250: {
+        15252: "FRPG_SfxBnd_m14_01",
+        15248: "FRPG_SfxBnd_m14_01",
+        1525000: "FRPG_SfxBnd_m14_01",
+        15258: "FRPG_SfxBnd_m14_01",
+        15257: "FRPG_SfxBnd_m14_01",
+        15250: "FRPG_SfxBnd_m14_01",
+        15254: "FRPG_SfxBnd_m14_01",
+        15249: "FRPG_SfxBnd_m14_01",
+        15242: "FRPG_SfxBnd_m14_01",
+        15247: "FRPG_SfxBnd_m14_01",
+        15246: "FRPG_SfxBnd_m14_01",
+        15256: "FRPG_SfxBnd_m14_01",
+        15259: "FRPG_SfxBnd_m14_01",
+    },
+    5260: {
+        1526000: "FRPG_SfxBnd_m10_00",
+        1526100: "FRPG_SfxBnd_m10_00",
+        15262: "FRPG_SfxBnd_m10_00",
+        15263: "FRPG_SfxBnd_m10_00",
+        15264: "FRPG_SfxBnd_m10_00",
+        15260: "FRPG_SfxBnd_m10_00",
+        15261: "FRPG_SfxBnd_m10_00",
+        15510: "FRPG_SfxBnd_m10_00",
+    },
+    5261: {
+        15510: "FRPG_SfxBnd_m10_00",
+    },
+    5270: {
+        15276: "FRPG_SfxBnd_m15_01",
+        15273: "FRPG_SfxBnd_m15_01",
+        15244: "FRPG_SfxBnd_m15_01",
+        15243: "FRPG_SfxBnd_m15_01",
+        15270: "FRPG_SfxBnd_m15_01",
+    },
+    5271: {
+        15274: "FRPG_SfxBnd_m15_01",
+        15275: "FRPG_SfxBnd_m15_01",
+        15276: "FRPG_SfxBnd_m15_01",
+        15279: "FRPG_SfxBnd_m15_01",
+        15278: "FRPG_SfxBnd_m15_01",
+        15272: "FRPG_SfxBnd_m15_01",
+        15271: "FRPG_SfxBnd_m15_01",
+        15277: "FRPG_SfxBnd_m15_01",
+        15269: "FRPG_SfxBnd_m15_01",
+        15267: "FRPG_SfxBnd_m15_01",
+        15268: "FRPG_SfxBnd_m15_01",
+        15245: "FRPG_SfxBnd_m15_01",
+    },
+    5280: {
+        15286: "FRPG_SfxBnd_m14_00",
+        15287: "FRPG_SfxBnd_m14_00",
+        16001: "FRPG_SfxBnd_m14_00",
+        15280: "FRPG_SfxBnd_m14_00",
+        16000: "FRPG_SfxBnd_m14_00",
+        15281: "FRPG_SfxBnd_m14_00",
+        15282: "FRPG_SfxBnd_m14_00",
+        15289: "FRPG_SfxBnd_m14_00",
+        15283: "FRPG_SfxBnd_m14_00",
+        16003: "FRPG_SfxBnd_m14_00",
+        15288: "FRPG_SfxBnd_m14_00",
+        15285: "FRPG_SfxBnd_m14_00",
+        15284: "FRPG_SfxBnd_m14_00",
+    },
+    5290: {
+        15299: "FRPG_SfxBnd_m17",
+        15290: "FRPG_SfxBnd_m17",
+        15294: "FRPG_SfxBnd_m17",
+        15297: "FRPG_SfxBnd_m17",
+        15904: "FRPG_SfxBnd_m17",
+        15293: "FRPG_SfxBnd_m17",
+        15298: "FRPG_SfxBnd_m17",
+        15903: "FRPG_SfxBnd_m17",
+        15905: "FRPG_SfxBnd_m17",
+    },
+    5291: {
+        15903: "FRPG_SfxBnd_m17",
+    },
+    5300: {
+        15308: "FRPG_SfxBnd_m18",
+        15309: "FRPG_SfxBnd_m18",
+    },
+    5310: {
+        15310: "FRPG_SfxBnd_m15_01",
+        15311: "FRPG_SfxBnd_m15_01",
+    },
+    5320: {
+        15321: "FRPG_SfxBnd_m15_01",
+        15320: "FRPG_SfxBnd_m15_01",
+        15322: "FRPG_SfxBnd_m15_01",
+        15326: "FRPG_SfxBnd_m15_01",
+        15325: "FRPG_SfxBnd_m15_01",
+        15324: "FRPG_SfxBnd_m15_01",
+        15327: "FRPG_SfxBnd_m15_01",
+        15329: "FRPG_SfxBnd_m15_01",
+        15328: "FRPG_SfxBnd_m15_01",
+    },
+    5330: {},
+    5340: {},
+    5350: {
+        15369: "FRPG_SfxBnd_m15_01",
+        15351: "FRPG_SfxBnd_m15_01",
+        15350: "FRPG_SfxBnd_m15_01",
+        15358: "FRPG_SfxBnd_m15_01",
+        15354: "FRPG_SfxBnd_m15_01",
+        15359: "FRPG_SfxBnd_m15_01",
+        15355: "FRPG_SfxBnd_m15_01",
+        15353: "FRPG_SfxBnd_m15_01",
+        41100: "FRPG_SfxBnd_m10_01",
+        15368: "FRPG_SfxBnd_m15_01",
+    },
+    5351: {
+        15369: "FRPG_SfxBnd_m15_01",
+        15351: "FRPG_SfxBnd_m15_01",
+        15348: "FRPG_SfxBnd_m15_01",
+        15347: "FRPG_SfxBnd_m15_01",
+        15355: "FRPG_SfxBnd_m15_01",
+        15368: "FRPG_SfxBnd_m15_01",
+    },
+    5352: {
+        15368: "FRPG_SfxBnd_m15_01",
+    },
+    5353: {
+        15368: "FRPG_SfxBnd_m15_01",
+    },
+    5360: {
+        15360: "FRPG_SfxBnd_m12",
+        15361: "FRPG_SfxBnd_m12",
+    },
+    5361: {
+        15363: "FRPG_SfxBnd_m12",
+    },
+    5370: {
+        15371: "FRPG_SfxBnd_m18_00",
+        15373: "FRPG_SfxBnd_m18_00",
+        15375: "FRPG_SfxBnd_m18_00",
+        15374: "FRPG_SfxBnd_m18_00",
+    },
+    5390: {
+        15403: "FRPG_SfxBnd_m16",
+        15388: "FRPG_SfxBnd_m16",
+        15389: "FRPG_SfxBnd_m16",
+        15398: "FRPG_SfxBnd_m16",
+        15395: "FRPG_SfxBnd_m16",
+        15391: "FRPG_SfxBnd_m16",
+        15390: "FRPG_SfxBnd_m16",
+        15401: "FRPG_SfxBnd_m16",
+        15400: "FRPG_SfxBnd_m16",
+        15402: "FRPG_SfxBnd_m16",
+        15404: "FRPG_SfxBnd_m16",
+    },
+    5400: {
+        15410: "FRPG_SfxBnd_m14_01",
+        15419: "FRPG_SfxBnd_m14_01",
+        15417: "FRPG_SfxBnd_m14_01",
+        15418: "FRPG_SfxBnd_m14_01",
+        15421: "FRPG_SfxBnd_m14_01",
+        15422: "FRPG_SfxBnd_m14_01",
+        15412: "FRPG_SfxBnd_m14_01",
+        15411: "FRPG_SfxBnd_m14_01",
+        15414: "FRPG_SfxBnd_m14_01",
+        15423: "FRPG_SfxBnd_m14_01",
+        15416: "FRPG_SfxBnd_m14_01",
+        15415: "FRPG_SfxBnd_m14_01",
+    },
+    5401: {
+        15425: "FRPG_SfxBnd_m14_01",
+        15424: "FRPG_SfxBnd_m14_01",
+    },
 }
 
 WEAPON_MODELS = {
@@ -594,78 +1452,3 @@ SPECIAL_EFFECT_RANGES = {
     (80000, 81111): "Special Flags",  # four bits toggling "remnant", "soul-sucking", "fascination", and something else
     (90000, 91111): "Status Flags",  # four bits toggling poison, bleed, toxic, and curse vulnerability
 }
-
-
-def print_hitbox_info(params):
-    current_var_id = None
-    for b_id, b_entry in params.PlayerBehaviors.items():
-        if b_id > 100000:
-            if current_var_id != b_entry["variationId"]:
-                current_var_id = b_entry["variationId"]
-                print(f"{PLAYER_WEAPON_BEHAVIOR_VARIATIONS[current_var_id]} ({current_var_id})")
-            sub_id = b_entry["behaviorJudgeId"]
-            sub_name = BEHAVIOR_SUB_ID.get(sub_id, "UNKNOWN")
-            if b_entry["refType"] == 0:
-                attack_id = b_entry["refId"]
-                try:
-                    attack_param = params.PlayerAttacks[b_entry["refId"]]
-                except KeyError:
-                    print(f"    {sub_id}: {sub_name} -> Attack {attack_id} (DOES NOT EXIST!)")
-                    continue
-                print(f"    {sub_id}: {sub_name} -> Attack {attack_id}")
-                for i in range(4):
-                    start_point = attack_param[f"hit{i}_DmyPoly1"]
-                    if start_point != -1:
-                        end_point = attack_param[f"hit{i}_DmyPoly2"]
-                        radius = attack_param[f"hit{i}_Radius"]
-                        print(f"         {i}. R = {radius:.3f}")
-                        print(f"         {i}. Dmy = ({start_point}, {end_point})")
-
-
-if __name__ == "__main__":
-    # TODO: remove
-    from soulstruct import DSR_PATH
-    from soulstruct.params import DarkSoulsGameParameters
-    from soulstruct.params.enums import WEAPON_CATEGORY
-    from soulstruct.text import DarkSoulsText
-
-    p = DarkSoulsGameParameters(DSR_PATH + "/param/GameParam/GameParam.parambnd.dcx")
-    t = DarkSoulsText(DSR_PATH + "/msg/ENGLISH")
-    # print_hitbox_info(p)
-
-    for model_id, weapon_name in WEAPON_MODELS.items():
-        if weapon_name == "Greatsword of Artorias (Cursed)":
-            weapon_param_id = 311000
-        elif weapon_name == "Greatsword of Artorias":  # true
-            weapon_param_id = 307000
-        elif weapon_name == "Great Lord Greatsword":
-            weapon_param_id = 314000
-        elif weapon_name == "Lucerne":
-            weapon_param_id = 1106000  # space in text name
-        else:
-            weapon_param_id = None
-            for k, v in t.WeaponNames.items():
-                if v == weapon_name:
-                    weapon_param_id = k
-                    break
-            else:
-                raise KeyError(f"Could not find weapon {weapon_name} param ID from text.")
-        try:
-            weapon_param = p.Weapons[weapon_param_id]
-        except KeyError:
-            raise KeyError(f"Could not find {weapon_param_id} ({weapon_name}) in Weapon params.")
-        beh_var_id = weapon_param["behaviorVariationId"]
-        weapon_category = weapon_param["weaponCategory"]
-        category_name = WEAPON_CATEGORY(weapon_category).name
-        base_motion = weapon_param["wepmotionCategory"]
-        special_motion = weapon_param["spAtkcategory"]
-        one_hand_motion = weapon_param["wepmotionOneHandId"]
-        two_hand_motion = weapon_param["wepmotionBothHandId"]
-        weapon_var_name = weapon_name.replace(" ", "").replace("'", "").replace(".", "").replace("-", "")
-        print(
-            f'public static WeaponStats {weapon_var_name} = new WeaponStats("Melee", "{category_name}", '
-            f"{weapon_param_id}, {model_id}, {beh_var_id}, {one_hand_motion}, {two_hand_motion}, {base_motion}, "
-            f"{special_motion});"
-        )
-
-    pass

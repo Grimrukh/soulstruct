@@ -2,10 +2,10 @@ import copy
 import logging
 import re
 import zlib
+import typing as tp
 from ast import literal_eval
 from io import BytesIO, IOBase
 from pathlib import Path
-from typing import Optional, List, Iterator
 
 from soulstruct.bnd.magic import *
 from soulstruct.dcx import DCX
@@ -19,7 +19,7 @@ class BNDEntry:
 
     # Header struct is computed in BND, as it is constant across entries in the same BND.
 
-    def __init__(self, data: bytes, entry_id: Optional[int] = None, path: Optional[str] = None, magic=0x40):
+    def __init__(self, data: bytes, entry_id: int = None, path: str = None, magic=0x40):
         self.data = data  # Packed binary data, identical to what the unpacked file would look like.
         self.id = entry_id  # Index used by the game engine to access the packed data (in most cases).
         self.path = path  # Full internal 'path' (in most cases). Encoded in shift-jis with escaped backslashes.
@@ -84,7 +84,7 @@ class BaseBND:
     UNPACKED_PATH_RE = re.compile(rb"\((\d*)\) (.*)")
     UNPACKED_ID_PATH_RE = re.compile(rb"\((\d*)\) (\d*): (.*)")
 
-    binary_entries: List[BNDEntry]
+    binary_entries: tp.List[BNDEntry]
 
     def __init__(self, bnd_source=None, entry_class=None):
         """Load a BND.
@@ -260,12 +260,12 @@ class BaseBND:
         raise NotImplementedError
 
     @property
-    def entries(self):
+    def entries(self) -> tp.List[BNDEntry]:
         """Returns an ordered list of BND entries, unpacked with the `entry_class` given to the constructor."""
         return self._entries
 
     @property
-    def entries_by_id(self):
+    def entries_by_id(self) -> tp.Dict[int, BNDEntry]:
         """Dictionary mapping entry IDs to entries.
 
         If there are multiple entries with the same ID in the BND, this will raise a `ValueError`. This should never
@@ -279,7 +279,7 @@ class BaseBND:
         return entries
 
     @property
-    def entries_by_path(self):
+    def entries_by_path(self) -> tp.Dict[str, BNDEntry]:
         """Dictionary mapping entry paths to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -293,7 +293,7 @@ class BaseBND:
         return entries
 
     @property
-    def entries_by_basename(self):
+    def entries_by_basename(self) -> tp.Dict[str, BNDEntry]:
         """Dictionary mapping entry basenames to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -308,7 +308,7 @@ class BaseBND:
         return entries
 
     @property
-    def entry_count(self):
+    def entry_count(self) -> int:
         return len(self._entries)
 
     def __getitem__(self, id_or_path_or_basename) -> BNDEntry:
@@ -327,7 +327,7 @@ class BaseBND:
         else:
             raise TypeError("Key should be an entry ID (int) or path/basename (str).")
 
-    def __iter__(self) -> Iterator[BNDEntry]:
+    def __iter__(self) -> tp.Iterator[BNDEntry]:
         return iter(self._entries)
 
     def __len__(self):
