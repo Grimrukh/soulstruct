@@ -445,6 +445,7 @@ class NPC_DRAW_TYPE(UnsignedChar):
     Normal = 0
     WhitePhantom = 1
     RedPhantom = 2
+    Hollow = 4
 
 
 class NPC_HITSTOP_TYPE(UnsignedChar):

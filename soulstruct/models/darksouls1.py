@@ -691,6 +691,7 @@ CHARACTER_FFX_SOURCES = {
         13509: "FRPG_SfxBnd_m16",
     },
     3510: {},
+    3511: {},
     3520: {
         13522: "FRPG_SfxBnd_m16",
         13520: "FRPG_SfxBnd_m16",

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import typing as tp
 from pathlib import Path
 
@@ -11,6 +12,8 @@ if tp.TYPE_CHECKING:
     from soulstruct.maps.msb import MSB
 
 _LOGGER = logging.getLogger(__name__)
+
+_BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d).ffxbnd(.dcx)?")
 
 
 def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = None):
@@ -32,13 +35,24 @@ def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = No
     except FileNotFoundError:
         raise FileNotFoundError(f"Could not find FFXBND file to modify: {ffxbnd_path}")
     open_sources = {}  # type: tp.Dict[str, BND3]
-    existing_ffx_files = [entry.name for entry in ffxbnd.entries]
+    existing_ffx_files = {entry.name for entry in ffxbnd.entries}
     next_id = max(i for i in ffxbnd.entries_by_id if i < 100000) + 1
+
+    match = _BLOCK_FFXBND_RE.match(str(ffxbnd_path))
+    if match:
+        area_ffxbnd_path = ffxbnd_path.parent / f"FRPG_SfxBnd_m{match.group(1)}.ffxbnd.dcx{match.group(2)}"
+        try:
+            area_ffxbnd = BND3(area_ffxbnd_path)
+        except FileNotFoundError:
+            _LOGGER.warning(f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for "
+                            f"existing FFX files.")
+        else:
+            existing_ffx_files |= {entry.name for entry in area_ffxbnd.entries}
 
     for chr_model in msb.models.Characters:
         model_id = int(chr_model.name[1:])
         if model_id not in CHARACTER_FFX_SOURCES:
-            _LOGGER.warning(f"FFX sources for character model {chr_model} are not known.")
+            _LOGGER.warning(f"FFX sources for character model {chr_model.name} are not known.")
             continue  # model not handled
         for ffx_id, source_path in CHARACTER_FFX_SOURCES[model_id].items():
             ffx_file_name = f"f{ffx_id:07d}.ffx"
@@ -62,6 +76,6 @@ def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = No
             source_entry.id = next_id
             next_id += 1
             ffxbnd.add_entry(source_entry)
-            existing_ffx_files.append(ffx_file_name)
+            existing_ffx_files.add(ffx_file_name)
 
     ffxbnd.write()

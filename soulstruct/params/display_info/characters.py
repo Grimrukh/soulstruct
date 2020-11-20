@@ -176,7 +176,7 @@ CHARACTER_INIT_PARAM = {
         FieldDisplayInfo("gestureId4", "Gesture5", True, int, "Fifth equipped gesture."),
         FieldDisplayInfo("gestureId5", "Gesture6", True, int, "Sixth equipped gesture."),
         FieldDisplayInfo("gestureId6", "Gesture7", True, int, "Seventh equipped gesture."),
-        FieldDisplayInfo("npcPlayerType", "NPCType", True, NPC_TYPE, "Type of human NPC."),
+        FieldDisplayInfo("npcPlayerType", "CharacterType", True, NPC_TYPE, "Type of human NPC."),
         FieldDisplayInfo("npcPlayerDrawType", "DrawType", True, NPC_DRAW_TYPE, "Draw type of human NPC."),
         FieldDisplayInfo("npcPlayerSex", "Sex", True, CHARACTER_INIT_SEX, "Character sex."),
         FieldDisplayInfo("vowType:4", "Covenant", True, CHRINIT_VOW_TYPE, "Character covenant."),
@@ -589,7 +589,7 @@ NPC_PARAM_ST = {
             "defaultLodParamId", "DefaultLightingParamID", False, int, "Default lighting (Lod) parameter entry ID."
         ),
         FieldDisplayInfo("drawType", "DrawType", True, NPC_DRAW_TYPE, "DOC-TODO"),
-        FieldDisplayInfo("npcType", "NPCType", True, NPC_TYPE, "DOC-TODO"),
+        FieldDisplayInfo("npcType", "CharacterType", True, NPC_TYPE, "DOC-TODO"),
         FieldDisplayInfo(
             "teamType", "TeamType", True, NPC_TEMA_TYPE, "0: enemy, 1: boss, 2: ally, 6: unused, 7: white phantom"
         ),

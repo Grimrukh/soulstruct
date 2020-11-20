@@ -38,102 +38,102 @@ LIGHT_BANK = {
         FieldDisplayInfo(
             "degRotX_0",
             "AmbientLight0RotationX",
-            False,
+            True,
             int,
             "Rotation (X-axis) of ambient (parallel) light source 0.",
         ),
         FieldDisplayInfo(
             "degRotY_0",
             "AmbientLight0RotationY",
-            False,
+            True,
             int,
             "Rotation (Y-axis) of ambient (parallel) light source 0.",
         ),
         FieldDisplayInfo(
-            "colR_0", "AmbientLight0Red", False, int, "Red channel (0-255) of ambient (parallel) light source 0."
+            "colR_0", "AmbientLight0Red", True, int, "Red channel (0-255) of ambient (parallel) light source 0."
         ),
         FieldDisplayInfo(
             "colG_0",
             "AmbientLight0Green",
-            False,
+            True,
             int,
             "Green channel (0-255) of ambient (parallel) light source 0.",
         ),
         FieldDisplayInfo(
-            "colB_0", "AmbientLight0Blue", False, int, "Blue channel (0-255) of ambient (parallel) light source 0."
+            "colB_0", "AmbientLight0Blue", True, int, "Blue channel (0-255) of ambient (parallel) light source 0."
         ),
         FieldDisplayInfo(
             "colA_0",
             "AmbientLight0Alpha",
-            False,
+            True,
             int,
             "Alpha channel (0-255) of ambient (parallel) light source 0.",
         ),
         FieldDisplayInfo(
             "degRotX_1",
             "AmbientLight1RotationX",
-            False,
+            True,
             int,
             "Rotation (X-axis) of ambient (parallel) light source 1.",
         ),
         FieldDisplayInfo(
             "degRotY_1",
             "AmbientLight1RotationY",
-            False,
+            True,
             int,
             "Rotation (Y-axis) of ambient (parallel) light source 1.",
         ),
         FieldDisplayInfo(
-            "colR_1", "AmbientLight1Red", False, int, "Red channel (0-255) of ambient (parallel) light source 1."
+            "colR_1", "AmbientLight1Red", True, int, "Red channel (0-255) of ambient (parallel) light source 1."
         ),
         FieldDisplayInfo(
             "colG_1",
             "AmbientLight1Green",
-            False,
+            True,
             int,
             "Green channel (0-255) of ambient (parallel) light source 1.",
         ),
         FieldDisplayInfo(
-            "colB_1", "AmbientLight1Blue", False, int, "Blue channel (0-255) of ambient (parallel) light source 1."
+            "colB_1", "AmbientLight1Blue", True, int, "Blue channel (0-255) of ambient (parallel) light source 1."
         ),
         FieldDisplayInfo(
             "colA_1",
             "AmbientLight1Alpha",
-            False,
+            True,
             int,
             "Alpha channel (0-255) of ambient (parallel) light source 1.",
         ),
         FieldDisplayInfo(
             "degRotX_2",
             "AmbientLight2RotationX",
-            False,
+            True,
             int,
             "Rotation (X-axis) of ambient (parallel) light source 2.",
         ),
         FieldDisplayInfo(
             "degRotY_2",
             "AmbientLight2RotationY",
-            False,
+            True,
             int,
             "Rotation (Y-axis) of ambient (parallel) light source 2.",
         ),
         FieldDisplayInfo(
-            "colR_2", "AmbientLight2Red", False, int, "Red channel (0-255) of ambient (parallel) light source 2."
+            "colR_2", "AmbientLight2Red", True, int, "Red channel (0-255) of ambient (parallel) light source 2."
         ),
         FieldDisplayInfo(
             "colG_2",
             "AmbientLight2Green",
-            False,
+            True,
             int,
             "Green channel (0-255) of ambient (parallel) light source 2.",
         ),
         FieldDisplayInfo(
-            "colB_2", "AmbientLight2Blue", False, int, "Blue channel (0-255) of ambient (parallel) light source 2."
+            "colB_2", "AmbientLight2Blue", True, int, "Blue channel (0-255) of ambient (parallel) light source 2."
         ),
         FieldDisplayInfo(
             "colA_2",
             "AmbientLight2Alpha",
-            False,
+            True,
             int,
             "Alpha channel (0-255) of ambient (parallel) light source 2.",
         ),
