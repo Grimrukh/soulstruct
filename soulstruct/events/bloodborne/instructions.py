@@ -6,7 +6,7 @@ from typing import Union
 from soulstruct.game_types import *
 from soulstruct.events.numeric import to_numeric
 from soulstruct.events.shared.instructions import *
-from soulstruct.enums.bloodborne import *
+from soulstruct.events.bloodborne.enums import *
 
 __all__ = [
     # Shared instructions
@@ -451,8 +451,8 @@ __all__ = [
     "ArenaSetNametag5",
     "ArenaSetNametag6",
     # Bloodborne extra instructions (tests mixed in)
-    "IfDamageType",
-    "IfActionButtonInRegion",
+    "IfAttackedWithDamageType",
+    "IfActionButtonParam",
     "IfPlayerArmorType",
     "IfPlayerInsightAmountComparison",
     "IfPlayerInsightAmountEqual",
@@ -589,18 +589,23 @@ __all__ = [
 from soulstruct.game_types import ItemTyping, ArmorTyping
 
 
-def IfDamageType(
-    condition: int, attacked_entity: AnimatedTyping, attacking_character: CharacterTyping, damage_type: DamageType
+def IfAttackedWithDamageType(
+    condition: int, attacked_entity: AnimatedTyping, attacking_character: CharacterTyping,
+    damage_type: DamageType = DamageType.Unspecified,
 ):
-    """Similar to IsAttackedBy, but requires a certain damage type."""
+    """Similar to `IfAttacked` (which is still used sometimes), but optionally can require a certain `DamageType`."""
     instruction_info = (3, 23, [0, 0, -1, 0])
     return to_numeric(instruction_info, condition, attacked_entity, attacking_character, damage_type)
 
 
-def IfActionButtonInRegion(condition: int, action_button_id: int, region: RegionTyping):
-    """Probably a simplified version of `IfActionButton`. Used with boss fog."""
+def IfActionButtonParam(condition: int, action_button_id: int, entity: CoordEntityTyping):
+    """Streamlined version of `IfActionButton` that uses information from an `ActionButtonParam` entry.
+
+    Note that the original `IfActionButton` is NEVER used in Bloodborne in favor of this param system. I'm not sure if
+    the original instruction works, but it probably does.
+    """
     instruction_info = (3, 24, [0, -1, -1])
-    return to_numeric(instruction_info, condition, action_button_id, region)
+    return to_numeric(instruction_info, condition, action_button_id, entity)
 
 
 def IfPlayerArmorType(
@@ -1001,8 +1006,9 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     """Warp a particular player to a region and set the time period. I assume that this must be a map that is
     already loaded, like in DS1, but possibly not.
 
-    It's probably used to warp to Bergenwerth after Rom, so either that map is already loaded when you defeat Rom, or
-    this event *is* capable of warping to an entirely new map.
+    It's used only twice: to play the cutscene when you first reach Cathedral Ward (time period 1) and when you examine
+    Laurence's skull after defeating Vicar Amelia (time period 2). It's NOT used after you defeat Rom, when the blood
+    moon begins. The time period ID may in fact be unused.
     """
     instruction_info = (2002, 6)
     area_id, block_id = tuple(game_map)
@@ -1038,17 +1044,18 @@ def EnableBossHealthBar(character: CharacterTyping, name: EventTextTyping, slot=
 def DisableBossHealthBar(character: CharacterTyping, name: EventTextTyping = 0, slot=0):
     """The character's health bar will disappear from the bottom of the screen.
 
-    WARNING: Disabling either boss health will disable both of them, and the name_id doesn't matter, so only the
-    first argument actually does anything. You're welcome to specify the name for clarity anyway (and vanilla events
-    will show it when decompiled)."""
+    WARNING: In Dark Souls, disabling either boss health will disable both of them, and the name_id doesn't matter. Yet
+    to be confirmed if this is also true for Bloodborne, which presumably has three slots available.
+    """
     return SetBossHealthBarState(character, name, slot, False)
 
 
 def HandleMinibossDefeat(miniboss_id: int):
-    """Called instead of "KillBoss" for bosses that aren't the final boss of the area.
+    """Called instead of `KillBoss` for bosses that aren't the final boss of the area.
 
     Note that outside of Chalice Dungeons, this is ONLY used when you have defeated Gehrman and are about to fight Moon
-    Presence."""
+    Presence.
+    """
     instruction_info = (2003, 15, [0])
     return to_numeric(instruction_info, miniboss_id)
 
@@ -1142,6 +1149,7 @@ def SetAreaWind(region: RegionTyping, state: bool, duration: float, wind_paramet
 
 
 def WarpPlayerToRespawnPoint(respawn_point_id: int):
+    """Not sure exactly """
     instruction_info = (2003, 49, [0])
     return to_numeric(instruction_info, respawn_point_id)
 
@@ -1290,7 +1298,7 @@ def RegisterLantern(
 ):
     """Register a Lantern. Used instead of the bonfire registration.
 
-    No idea what the 'sword' arguments do, but they default to zero.
+    No idea what the 'sword' arguments do, but they default to zero and are always zero when this is called.
     """
     instruction_info = (2009, 5)
     return to_numeric(instruction_info, flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level)

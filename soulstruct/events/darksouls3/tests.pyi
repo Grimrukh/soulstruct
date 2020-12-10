@@ -1,6 +1,5 @@
 from soulstruct.events.shared.tests import *
-from soulstruct.enums.darksouls3 import *
-from soulstruct.game_types import *
+from soulstruct.events.darksouls3.enums import *
 
 __all__ = [
     # Names processed directly by EVS parser

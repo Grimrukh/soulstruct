@@ -170,14 +170,14 @@ class AttackParam(BaseGameParam):
     """Attack entry."""
     @classmethod
     def get_param_nickname(cls):
-        raise ValueError("Param name for `Attack` could be 'PlayerAttacks' or 'NonPlayerAttacks'.")
+        raise ValueError("Param nickname for `Attack` could be 'PlayerAttacks' or 'NonPlayerAttacks'.")
 
 
 class BehaviorParam(BaseGameParam):
     """Behavior entry."""
     @classmethod
     def get_param_nickname(cls):
-        raise ValueError("Param name for `Behavior` could be 'PlayerBehaviors' or 'NonPlayerBehaviors'.")
+        raise ValueError("Param nickname for `Behavior` could be 'PlayerBehaviors' or 'NonPlayerBehaviors'.")
 
 
 class BossParam(BaseGameParam):

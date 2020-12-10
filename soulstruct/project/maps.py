@@ -464,7 +464,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             row += 1
 
         self.displayed_entry_count = row
-        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+        for remaining_row in range(row, len(self.entry_rows)):
             self.entry_rows[remaining_row].hide()
 
         self.entry_i_frame.columnconfigure(0, weight=1)

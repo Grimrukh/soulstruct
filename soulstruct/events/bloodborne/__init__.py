@@ -5,8 +5,9 @@ from . import instructions
 from .instructions import *
 from . import tests
 from .tests import *
-import soulstruct.enums.bloodborne as enums
-from soulstruct.enums.bloodborne import *
+from . import enums
+from .enums import *
+from soulstruct.events.bloodborne.enums import *
 from . import decompiler
 
 name = "bloodborne"
@@ -484,8 +485,8 @@ __all__ = [
     "ArenaSetNametag5",
     "ArenaSetNametag6",
     # Bloodborne extra instructions (tests mixed in)
-    "IfDamageType",
-    "IfActionButtonInRegion",
+    "IfAttackedWithDamageType",
+    "IfActionButtonParam",
     "IfPlayerArmorType",
     "IfPlayerInsightAmountComparison",
     "IfPlayerInsightAmountEqual",

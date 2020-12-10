@@ -1398,9 +1398,8 @@ def Event9260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_
     Restart()
 
 
-def Event9280(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_20: uchar, arg_21_21: uchar
-):
+def Event9280(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_20: uchar, 
+              arg_21_21: uchar):
     """ 9280: Event 9280 """
     IfFlagOn(-15, arg_8_11)
     IfFlagOn(-15, arg_12_15)

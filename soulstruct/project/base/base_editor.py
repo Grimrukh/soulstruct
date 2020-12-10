@@ -215,7 +215,7 @@ class SoulstructBaseEditor(SmartFrame, abc.ABC):
         self.linker = linker
         self.action_history = ActionHistory()
         self.view_history = ViewHistory()
-        self.category_selected_entry_id = {}  # maps categories to their currently selected entry IDs
+        self.remembered_ids = {}  # maps `(map, category)` or just `category` to last selected entry ID
         self.unsaved_changes = set()  # set of changed (category, param_id, action_type) pairs to highlight
 
         self.map_choice = None  # Combobox used by most tabs.
@@ -367,7 +367,7 @@ class SoulstructBaseEditor(SmartFrame, abc.ABC):
 
         if old_category is not None:
             selected_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
-            self.category_selected_entry_id[old_category] = selected_entry_id
+            self._update_remembered_id(old_category, selected_entry_id)
 
         if selected_category != self.active_category:
             self.active_category = selected_category
@@ -386,9 +386,9 @@ class SoulstructBaseEditor(SmartFrame, abc.ABC):
         self.first_display_index = first_display_index
         self.select_entry_row_index(None, edit_if_already_selected=False)
         self.refresh_entries()
-        last_selected_entry_id = self.category_selected_entry_id.get(self.active_category, None)
-        if last_selected_entry_id is not None:
-            self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+        memory_entry_id = self.get_remembered_id(self.active_category)
+        if memory_entry_id is not None:
+            self.select_entry_id(memory_entry_id, edit_if_already_selected=False)
         else:
             # Leave no entry selected.
             self.entry_canvas.yview_moveto(0)
@@ -568,7 +568,7 @@ class SoulstructBaseEditor(SmartFrame, abc.ABC):
             row += 1
 
         self.displayed_entry_count = row
-        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+        for remaining_row in range(row, len(self.entry_rows)):
             self.entry_rows[remaining_row].hide()
 
         if self.displayed_entry_count == 0:
@@ -878,6 +878,14 @@ class SoulstructBaseEditor(SmartFrame, abc.ABC):
                 self.next_range_button["state"] = "disabled"
             else:
                 self.next_range_button["state"] = "normal"
+
+    def get_remembered_id(self, category) -> tp.Optional[int]:
+        key = (self.map_choice_id, category) if self.map_choice is not None else category
+        return self.remembered_ids.get(key, None)
+
+    def _update_remembered_id(self, category, selected_id):
+        key = (self.map_choice_id, category) if self.map_choice is not None else category
+        self.remembered_ids[key] = selected_id
 
     # -------------------- #
     #   ABSTRACT METHODS   #  These methods MUST be overridden in child classes.

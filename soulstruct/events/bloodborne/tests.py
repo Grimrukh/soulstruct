@@ -2,7 +2,7 @@ import soulstruct.events.bloodborne.instructions as instr
 from soulstruct.game_types import *
 from soulstruct.events.internal import *
 from soulstruct.events.shared.tests import *
-from soulstruct.enums.bloodborne import *
+from soulstruct.events.bloodborne.enums import *
 
 __all__ = [
     # Names processed directly by EVS parser
@@ -134,12 +134,12 @@ MULTIPLAYER = ConstantCondition(
 def IsAttackedWithDamageType(
     attacked_entity: AnimatedTyping, attacking_character: CharacterTyping, damage_type: DamageType, condition: int
 ):
-    return instr.IfDamageType(condition, attacked_entity, attacking_character, damage_type)
+    return instr.IfAttackedWithDamageType(condition, attacked_entity, attacking_character, damage_type)
 
 
 @no_skip_or_negate_or_terminate
 def ActionButtonInRegion(action_button_id: int, region: RegionTyping, condition: int):
-    return instr.IfActionButtonInRegion(condition, action_button_id, region)
+    return instr.IfActionButtonParam(condition, action_button_id, region)
 
 
 @no_skip_or_negate_or_terminate

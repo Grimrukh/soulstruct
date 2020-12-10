@@ -4,13 +4,13 @@ import logging
 import typing as tp
 
 from soulstruct.game_types import BaseParam, Flag
-from soulstruct.params.display_info.base import DynamicFieldDisplayInfo
+from soulstruct.params.core import DynamicFieldDisplayInfo
 from soulstruct.project.base.base_editor import EntryRow
 from soulstruct.project.base.field_editor import FieldRow, SoulstructBaseFieldEditor
 from soulstruct.project.utilities import NameSelectionBox
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params import DarkSoulsGameParameters, ParamEntry
+    from soulstruct.params.darksouls1.core import GameParamBND, ParamRow
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     ENTRY_ROW_CLASS = ParamEntryRow
     entry_rows: tp.List[ParamEntryRow]
 
-    def __init__(self, params: DarkSoulsGameParameters, linker, master=None, toplevel=False):
+    def __init__(self, params: GameParamBND, linker, master=None, toplevel=False):
         self.Params = params
         self.go_to_param_id_entry = None
         self.search_result = None
@@ -137,12 +137,12 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
     def find_all_param_references(self, param_id):
         """Iterates over all ParamTables to find references to this param ID, and presents them in a floating list."""
         category = self.active_category
-        param_type = self.Params.PARAM_TABLES[category]
+        param_type = self.Params.PARAM_TYPES[category]
         linking_fields = []
         links = {}
 
         # Find all (param_name, field) pairs that could possibly reference this category.
-        for param_name in self.Params.PARAM_TABLES:
+        for param_name in self.Params.PARAM_TYPES:
             param_table = self.Params[param_name]
             for field_info in param_table.param_info["fields"]:
                 if isinstance(field_info, DynamicFieldDisplayInfo):
@@ -183,14 +183,14 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             self.select_field_name(field_name)
 
     def _get_display_categories(self):
-        return self.Params.PARAM_TABLES
+        return self.Params.PARAM_TYPES
 
     def get_category_data(self, category=None):
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        return self.Params[category].entries
+        return self.Params[category].rows
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:
@@ -205,9 +205,9 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No param category selected.")
-        if entry_id not in self.Params[category].entries:
+        if entry_id not in self.Params[category].rows:
             raise ValueError(f"Param ID {entry_id} does not appear in category {category}.")
-        return sorted(self.Params[category].entries).index(entry_id)
+        return sorted(self.Params[category].rows).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
         if category is None:
@@ -232,7 +232,7 @@ class SoulstructParamsEditor(SoulstructBaseFieldEditor):
             self.entry_rows[update_row_index].update_entry(new_id, entry_data.name)
         return True
 
-    def get_field_dict(self, entry_id: int, category=None) -> ParamEntry:
+    def get_field_dict(self, entry_id: int, category=None) -> ParamRow:
         if category is None:
             category = self.active_category
             if category is None:

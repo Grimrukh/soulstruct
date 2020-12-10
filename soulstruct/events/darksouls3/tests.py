@@ -95,7 +95,7 @@ __all__ = [
 import soulstruct.events.darksouls3.instructions as instr
 from soulstruct.events.internal import no_skip_or_negate_or_terminate, ConstantCondition
 from soulstruct.events.shared.tests import *
-from soulstruct.enums.darksouls3 import *
+from soulstruct.events.darksouls3.enums import *
 from soulstruct.game_types import *
 
 

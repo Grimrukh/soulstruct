@@ -3969,7 +3969,7 @@ def Event11210777(_, arg_0_3: int, arg_4_7: int):
     IfFramesElapsed(2, 120)
     IfConditionTrue(0, input_condition=2)
     SkipLinesIfFlagOn(2, arg_0_3)
-    CreateTemporaryFX(20176, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryFX(20176, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     SkipLines(1)
     Unknown_2003_48(
         entity=10000, arg1=0, model_point=220, magic_id=5310, shoot_angle_x=0, shoot_angle_y=0, shoot_angle_z=0

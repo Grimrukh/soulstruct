@@ -1044,7 +1044,7 @@ def Event15105315(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     SetCharacterEventTarget(arg_4_7, arg_0_3)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     Move(
-        arg_4_7, destination=10000, destination_type=CoordEntityType.Character, model_point=260, copy_draw_parent=PLAYER
+        arg_4_7, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=260, copy_draw_parent=PLAYER
     )
     Wait(0.800000011920929)
     Restart()

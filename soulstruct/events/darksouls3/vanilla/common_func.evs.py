@@ -5798,7 +5798,7 @@ def Event20006011(_, arg_0_3: int, arg_4_7: int):
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
     IfFlagOn(0, arg_0_3)
-    CreateTemporaryFX(arg_4_7, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=200)
+    CreateTemporaryFX(arg_4_7, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
 

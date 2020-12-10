@@ -5,7 +5,7 @@ from soulstruct.events.internal import (
     boolify,
     get_game_map_variable_name,
 )
-from soulstruct.enums.bloodborne import *
+from soulstruct.events.bloodborne.enums import *
 
 
 def decompile_instruction(instruction_class, instruction_index, req_args, game_module):
@@ -20,14 +20,20 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
                 attacked_entity = "PLAYER"
             if attacking_character == 10000:
                 attacking_character = "PLAYER"
+            if damage_type == "DamageType.Unspecified":
+                # Damage type is "unspecified" by default, so leave out this verbose keyword argument.
+                return (
+                    f"IfAttackedWithDamageType({condition}, attacked_entity={attacked_entity}, "
+                    f"attacking_character={attacking_character})"
+                )
             return (
-                f"IfDamageType({condition}, attacked_entity={attacked_entity}, "
+                f"IfAttackedWithDamageType({condition}, attacked_entity={attacked_entity}, "
                 f"attacking_character={attacking_character}, damage_type={get_enum_name(DamageType, damage_type)})"
             )
 
         if instruction_index == 24:
-            condition, action_button_id, region = req_args
-            return f"IfActionButtonInRegion({condition}, action_button_id={action_button_id}, region={region})"
+            condition, action_button_id, entity = req_args
+            return f"IfActionButtonParam({condition}, action_button_id={action_button_id}, entity={entity})"
 
         if instruction_index == 25:
             condition, armor_type, first, last = req_args
@@ -439,7 +445,7 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
         if instruction_index == 5:
             flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level = req_args
             return (
-                f"RegisterHealingFountain({flag}, {obj}, {reaction_distance}, reaction_angle={reaction_angle}, "
+                f"RegisterLantern({flag}, {obj}, {reaction_distance}, reaction_angle={reaction_angle}, "
                 f"initial_sword_number={initial_sword_number}, sword_level={sword_level})"
             )
 

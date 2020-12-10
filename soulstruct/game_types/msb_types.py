@@ -147,7 +147,7 @@ class MapEntry(GameObject, IntEnum):
         raise NotImplementedError
 
 
-class MapModel(MapEntry, IntEnum):
+class MapModel(MapEntry):
     """3D model ID of something."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -391,42 +391,42 @@ class PointRegion(Region):
     """Single point region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Points") if pluralized_subtype else ("Events", "Point")
+        return ("Regions", "Points") if pluralized_subtype else ("Regions", "Point")
 
 
 class CircleRegion(Region):
     """2D circle region. Never used."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Circles") if pluralized_subtype else ("Events", "Circle")
+        return ("Regions", "Circles") if pluralized_subtype else ("Regions", "Circle")
 
 
 class SphereRegion(Region):
     """3D spherical region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Spheres") if pluralized_subtype else ("Events", "Sphere")
+        return ("Regions", "Spheres") if pluralized_subtype else ("Regions", "Sphere")
 
 
 class CylinderRegion(Region):
     """3D cylindrical region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Cylinders") if pluralized_subtype else ("Events", "Cylinder")
+        return ("Regions", "Cylinders") if pluralized_subtype else ("Regions", "Cylinder")
 
 
 class RectRegion(Region):
     """2D rectangular region. Never used."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Rects") if pluralized_subtype else ("Events", "Rect")
+        return ("Regions", "Rects") if pluralized_subtype else ("Regions", "Rect")
 
 
 class BoxRegion(Region):
     """3D box region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Boxes") if pluralized_subtype else ("Events", "Box")
+        return ("Regions", "Boxes") if pluralized_subtype else ("Regions", "Box")
 
 
 class MapPart(MapEntry):

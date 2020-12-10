@@ -362,21 +362,16 @@ def Event13200020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13200020: Event 13200020 """
     DisableNetworkSync()
     EndIfFlagOn(arg_12_15)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_8_11)
-    IfActionButtonInRegion(2, action_button_id=arg_4_7, region=arg_8_11)
+    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_8_11)
+    IfActionButtonParam(2, action_button_id=arg_4_7, entity=arg_8_11)
     IfFlagOn(3, arg_12_15)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    DisplayDialog(
-        10010160,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010160, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -384,15 +379,10 @@ def Event13200030(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13200030: Event 13200030 """
     DisableNetworkSync()
     IfFlagOn(1, arg_12_15)
-    IfActionButtonInRegion(1, action_button_id=arg_4_7, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=arg_4_7, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        arg_8_11,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(arg_8_11, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -414,19 +404,14 @@ def Event13200050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13200050: Event 13200050 """
     DisableNetworkSync()
     EndIfFlagOn(arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(
-        10010161,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010161, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
     # --- 0 --- #
@@ -440,19 +425,14 @@ def Event13200055(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EndIfFlagOn(arg_8_11)
     IfFlagOff(1, 1420)
     IfConditionTrue(1, input_condition=-1)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(
-        10010161,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010161, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -554,7 +534,7 @@ def Event13200103():
     DisableFlag(73200327)
     IfFlagOn(1, 1420)
     IfFlagOn(1, 73200327)
-    IfDamageType(2, attacked_entity=3200101, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=3200101, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -704,7 +684,7 @@ def Event13200400():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     CreateObjectFX(900201, obj=3201010, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=3200010, region=3201010)
+    IfActionButtonParam(0, action_button_id=3200010, entity=3201010)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3200810, host_only=False)
     DeleteObjectFX(3201010, erase_root=True)
@@ -800,7 +780,7 @@ def Event13201802():
     EndIfThisEventOn()
     IfFlagOff(1, 13201800)
     IfThisEventOff(1)
-    IfDamageType(1, attacked_entity=3200800, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=3200800, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13204800)
     EndIfFlagOn(9303)
@@ -916,14 +896,9 @@ def Event13204050(_, arg_0_3: int, arg_4_7: int):
 def Event13204100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13204100: Event 13204100 """
     DisableNetworkSync()
-    IfActionButtonInRegion(0, action_button_id=arg_4_7, region=arg_0_3)
-    DisplayDialog(
-        arg_8_11,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=arg_4_7, entity=arg_0_3)
+    DisplayDialog(arg_8_11, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -953,7 +928,7 @@ def Event13204830():
     DefineLabel(0)
     IfFlagOff(2, 13201800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=3200800, region=3201800)
+    IfActionButtonParam(2, action_button_id=3200800, entity=3201800)
     IfFlagOn(3, 13201800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -978,7 +953,7 @@ def Event13204831():
     IfFlagOn(1, 13201802)
     IfFlagOn(1, 13204800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=3200800, region=3201800)
+    IfActionButtonParam(1, action_button_id=3200800, entity=3201800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3202800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1157,16 +1132,8 @@ def Event13204807():
 def Event13204808():
     """ 13204808: Event 13204808 """
     EndIfFlagOn(13201800)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3201,
-        part_index=NPCPartType.Part2,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3200800, npc_part_id=3201, part_index=NPCPartType.Part2, part_health=100, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3200800, npc_part_id=3201, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, 3200800, npc_part_id=3201, value=0)
     IfHealthLessThanOrEqual(2, 3200800, 0.0)
@@ -1203,16 +1170,8 @@ def Event13204808():
     GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
     ResetAnimation(3200800, disable_interpolation=False)
     ForceAnimation(3200800, 7002)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3201,
-        part_index=NPCPartType.Part2,
-        part_health=9999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3200800, npc_part_id=3201, part_index=NPCPartType.Part2, part_health=9999, damage_correction=1.0, 
+                  body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3200800, npc_part_id=3201, material_special_effect_id=60, material_fx_id=60)
     ReplanAI(3200800)
     IfTimeElapsed(0, 30.0)
@@ -1228,16 +1187,8 @@ def Event13204808():
 def Event13204809():
     """ 13204809: Event 13204809 """
     EndIfFlagOn(13201800)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3202,
-        part_index=NPCPartType.Part3,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3200800, npc_part_id=3202, part_index=NPCPartType.Part3, part_health=100, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3200800, npc_part_id=3202, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, 3200800, npc_part_id=3202, value=0)
     IfHealthLessThanOrEqual(2, 3200800, 0.0)
@@ -1274,16 +1225,8 @@ def Event13204809():
     GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
     ResetAnimation(3200800, disable_interpolation=False)
     ForceAnimation(3200800, 7007)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3202,
-        part_index=NPCPartType.Part3,
-        part_health=9999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3200800, npc_part_id=3202, part_index=NPCPartType.Part3, part_health=9999, damage_correction=1.0, 
+                  body_damage_correction=1.2999999523162842, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3200800, npc_part_id=3202, material_special_effect_id=60, material_fx_id=60)
     ReplanAI(3200800)
     IfTimeElapsed(0, 30.0)
@@ -1299,16 +1242,8 @@ def Event13204809():
 def Event13204810():
     """ 13204810: Event 13204810 """
     EndIfFlagOn(13201800)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3200,
-        part_index=NPCPartType.Part1,
-        part_health=50,
-        damage_correction=0.5,
-        body_damage_correction=0.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3200800, npc_part_id=3200, part_index=NPCPartType.Part1, part_health=50, damage_correction=0.5, 
+                  body_damage_correction=0.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3200800, npc_part_id=3200, material_special_effect_id=61, material_fx_id=61)
     IfCharacterPartHealthLessThanOrEqual(0, 3200800, npc_part_id=3200, value=0)
     Restart()
@@ -1321,7 +1256,7 @@ def Event13204820():
     IfConditionTrue(0, input_condition=1)
     GotoIfClient(Label.L0)
     EnableInvincibility(PLAYER)
-    CreateTemporaryFX(932210, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=246)
+    CreateTemporaryFX(932210, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=246)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1339,7 +1274,7 @@ def Event13204821():
     IfCharacterInsideRegion(1, PLAYER, region=3202800)
     IfConditionTrue(0, input_condition=1)
     EnableInvincibility(PLAYER)
-    CreateTemporaryFX(932210, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=246)
+    CreateTemporaryFX(932210, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=246)
     Wait(5.0)
     DisableInvincibility(PLAYER)
     EnableFlag(13204801)
@@ -1358,7 +1293,7 @@ def Event13205000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float
     IfCharacterInsideRegion(-2, PLAYER, region=arg_8_11)
     IfEntityWithinDistance(-2, PLAYER, arg_0_3, radius=arg_12_15)
     IfConditionTrue(1, input_condition=-2)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
@@ -1380,7 +1315,7 @@ def Event13205040(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     IfCharacterInsideRegion(-2, PLAYER, region=arg_4_7)
     IfEntityWithinDistance(-2, PLAYER, arg_0_3, radius=arg_8_11)
     IfConditionTrue(1, input_condition=-2)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
@@ -1420,7 +1355,8 @@ def Event13205060(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13205060: Event 13205060 """
     IfCharacterInsideRegion(-1, arg_0_3, region=arg_4_7)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_8_11)
 
@@ -1439,7 +1375,7 @@ def Event13205080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
     SkipLinesIfEqual(1, left=arg_16_19, right=0)
     IfFlagOn(1, arg_20_23)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
@@ -1478,7 +1414,7 @@ def Event13205140(_, arg_0_3: int, arg_4_7: int):
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-2)
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=-1)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
@@ -1496,13 +1432,8 @@ def Event13205200():
     IfHealthEqual(1, 3200620, 0.0)
     IfHasTAEEvent(1, 3200620, tae_event_id=10)
     IfConditionTrue(0, input_condition=1)
-    Move(
-        3200621,
-        destination=3200620,
-        destination_type=CoordEntityType.Character,
-        model_point=90,
-        copy_draw_parent=3200620,
-    )
+    Move(3200621, destination=3200620, destination_type=CoordEntityType.Character, model_point=90, 
+         copy_draw_parent=3200620)
     EnableCharacter(3200621)
 
     # --- 0 --- #
@@ -1514,16 +1445,8 @@ def Event13205200():
 def Event13205300(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 13205300: Event 13205300 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=30,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=30, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=61, material_fx_id=61)
     IfCharacterPartHealthLessThanOrEqual(0, arg_0_3, npc_part_id=arg_8_11, value=0)
     ResetAnimation(arg_0_3, disable_interpolation=True)
@@ -1532,17 +1455,8 @@ def Event13205300(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     Restart()
 
 
-def Event13205600(
-    _,
-    arg_0_1: short,
-    arg_4_7: int,
-    arg_8_9: short,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event13205600(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 13205600: Event 13205600 """
     IfFlagOn(0, arg_20_23)
     IfCharacterPartHealthLessThanOrEqual(1, arg_28_31, npc_part_id=arg_4_7, value=0)
@@ -1557,16 +1471,8 @@ def Event13205600(
     SkipLinesIfFlagOn(2, arg_20_23)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_hp=1, overwrite_max=False)
     Restart()
-    CreateNPCPart(
-        arg_28_31,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=999999,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_28_31, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=999999, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
     ResetAnimation(arg_28_31, disable_interpolation=False)
     ForceAnimation(arg_28_31, arg_12_15)
@@ -1587,16 +1493,8 @@ def Event13205630(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     """ 13205630: Event 13205630 """
     IfEntityWithinDistance(1, arg_20_23, PLAYER, radius=10.0)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_20_23,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_12_15,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_20_23, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
     EnableFlag(arg_16_19)
 
@@ -1803,17 +1701,8 @@ def Event13204402(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event13204410(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event13204410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 13204410: Event 13204410 """
     SetBackreadStateAlternate(arg_4_7, state=True)
     SetNetworkUpdateRate(arg_4_7, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -1833,7 +1722,7 @@ def Event13204410(
     IfFlagOff(2, arg_16_19)
     IfFlagOn(2, arg_20_23)
     IfFlagOff(2, arg_24_27)
-    IfActionButtonInRegion(2, action_button_id=arg_28_31, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -1845,9 +1734,8 @@ def Event13204410(
 
 
 @RestartOnRest
-def Event13204460(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event13204460(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 13204460: Event 13204460 """
     EndIfClient()
     IfFlagOn(1, arg_20_23)

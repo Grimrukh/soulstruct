@@ -2,6 +2,7 @@ __all__ = ["FMG"]
 
 import io
 import logging
+from pathlib import Path
 from textwrap import wrap
 
 from soulstruct.bnd import BNDEntry
@@ -96,9 +97,9 @@ class FMG:
         if isinstance(fmg_source, bytes):
             self.unpack(io.BytesIO(fmg_source), remove_empty_entries)
 
-        elif isinstance(fmg_source, str):
-            self.fmg_path = fmg_source
-            with open(fmg_source, "rb") as file:
+        elif isinstance(fmg_source, (str, Path)):
+            self.fmg_path = Path(fmg_source)
+            with self.fmg_path.open("rb") as file:
                 self.unpack(file, remove_empty_entries)
 
         elif isinstance(fmg_source, BNDEntry):
@@ -298,7 +299,9 @@ class FMG:
                 fmg_path = self.fmg_path
             else:
                 raise ValueError("FMG path could not be determined automatically (must be specified).")
-        with open(fmg_path, "wb") as output:
+        else:
+            fmg_path = Path(fmg_path)
+        with fmg_path.open("wb") as output:
             output.write(
                 self.pack(
                     remove_empty_entries=remove_empty_entries,

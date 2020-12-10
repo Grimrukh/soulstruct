@@ -9,7 +9,7 @@ from io import BufferedReader, BytesIO
 from soulstruct.core import InvalidFieldValueError, SoulstructError
 from soulstruct.constants.darksouls1.maps import get_map
 from soulstruct.game_types import *
-from soulstruct.enums.darksouls1 import CollisionHitFilter
+from soulstruct.events.darksouls1.enums import CollisionHitFilter
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.enums import MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer

@@ -9,7 +9,7 @@ Currently works only for DS1 'talk' ESD files (both PTDE and DSR).
 import logging
 from queue import Queue
 
-import soulstruct.enums.darksouls1 as enums
+import soulstruct.events.darksouls1.enums as enums
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.esd.ezl_parser import decompile

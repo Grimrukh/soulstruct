@@ -830,7 +830,7 @@ def SetNetworkUpdateRate(character: CharacterTyping, is_fixed: bool, update_rate
 
 def SetBackreadStateAlternate(character: CharacterTyping, state):
     """ I have no idea how this differs from the standard backread function above. """
-    # TODO: Check and compare usage. If it's even used.
+    # TODO: Check and compare usage.
     instruction_info = (2004, 35)
     return to_numeric(instruction_info, character, state)
 
@@ -838,7 +838,6 @@ def SetBackreadStateAlternate(character: CharacterTyping, state):
 def DropMandatoryTreasure(character: CharacterTyping):
     """ This will disable the character and spawn any treasure they would drop. It's possible that it only spawns
     treasure that has a 100% drop rate, hence the name, but I haven't confirmed this. """
-    # TODO: Confirm it actually disables the character.
     instruction_info = (2004, 37)
     return to_numeric(instruction_info, character)
 
@@ -1303,10 +1302,13 @@ def CreateTemporaryFX(fx_id: int, anchor_entity: CoordEntityTyping, model_point:
     Entity category. The FX, of course, must be current loaded (or in common effects). """
     instruction_info = (2006, 3, [0, 0, -1, 0])
     if anchor_type is None:
-        try:
-            anchor_type = anchor_entity.coord_entity_type
-        except AttributeError:
-            raise AttributeError("anchor_type not detected. Use the keyword 'anchor_type' or a typed anchor_entity.")
+        if anchor_entity == PLAYER:
+            anchor_type = CoordEntityType.Character
+        else:
+            try:
+                anchor_type = anchor_entity.coord_entity_type
+            except AttributeError:
+                raise AttributeError("`anchor_type` not detected. Specify `anchor_type` or use typed `anchor_entity`.")
     return to_numeric(instruction_info, anchor_type, anchor_entity, model_point, fx_id)
 
 
@@ -1682,9 +1684,12 @@ def ShootProjectile(
     launch_angle_y=0,
     launch_angle_z=0,
 ):
-    """ The owner entity sets the 'team' of the projectile (i.e. who it can hurt). You can use this to
-    directly spawn bullets by setting the projectile_id to the owner_entity. Note that the angle arguments
-    are all integers. """
+    """The owner entity sets the 'team' of the projectile (i.e. who it can hurt).
+
+    You can use this to directly spawn bullets by setting `projectile_id` to `owner_entity`.
+
+    Note that the angle arguments are all integers.
+    """
     instruction_info = (2003, 5, [0, 0, -1, 0, 0, 0, 0])
     return to_numeric(
         instruction_info,
@@ -1743,12 +1748,15 @@ def Move(
     of when they see the term 'warp'.
     """
     if destination_type is None:
-        try:
-            destination_type = destination.coord_entity_type
-        except AttributeError:
-            raise AttributeError(
-                "Warp destination has no category. Use 'destination_type' keyword or a " "typed destination."
-            )
+        if destination == PLAYER:
+            destination_type = CoordEntityType.Character
+        else:
+            try:
+                destination_type = destination.coord_entity_type
+            except AttributeError:
+                raise AttributeError(
+                    "Warp destination has no category. Use 'destination_type' keyword or a " "typed destination."
+                )
     if copy_draw_parent is not None and set_draw_parent is not None:
         raise ValueError("You cannot copy and set the draw parent at the same time.")
     if short_move:
@@ -2828,6 +2836,7 @@ def IfActionButton(
     human_or_hollow_only=None,  # DEPRECATED. Will be removed in a later release. Use `trigger_attribute` instead.
 ):
     if anchor_type is None:
+        # Anchor type will never be PLAYER here.
         try:
             anchor_type = anchor_entity.coord_entity_type
         except AttributeError:
@@ -3071,10 +3080,12 @@ def IfTAEEventState(condition: int, character: CharacterTyping, tae_event_id: in
 
 
 def IfHasTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
+    """The TAE event checked is specifically called `SendEzStateRequest(event_id)` in Meowmaritus's DS Anim Studio."""
     return IfTAEEventState(condition, character, tae_event_id, True)
 
 
 def IfDoesNotHaveTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
+    """The TAE event checked is specifically called `SendEzStateRequest(event_id)` in Meowmaritus's DS Anim Studio."""
     return IfTAEEventState(condition, character, tae_event_id, False)
 
 

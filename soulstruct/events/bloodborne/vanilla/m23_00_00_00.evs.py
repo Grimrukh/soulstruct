@@ -92,236 +92,52 @@ def Constructor():
     CreateProjectileOwner(2300270)
     CreateProjectileOwner(2300271)
     CreateProjectileOwner(2300272)
-    CreateHazard(
-        12300300,
-        2301400,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300301,
-        2301401,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300302,
-        2301402,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300303,
-        2301403,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300304,
-        2301404,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300305,
-        2301405,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300306,
-        2301406,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300307,
-        2301407,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300308,
-        2301408,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300309,
-        2301409,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300310,
-        2301410,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300311,
-        2301411,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300312,
-        2301412,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300313,
-        2301413,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300314,
-        2301414,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300315,
-        2301415,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300316,
-        2301416,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300317,
-        2301417,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300318,
-        2301418,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300319,
-        2301419,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300320,
-        2301420,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300321,
-        2301421,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300322,
-        2301422,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(12300300, 2301400, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300301, 2301401, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300302, 2301402, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300303, 2301403, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300304, 2301404, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300305, 2301405, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300306, 2301406, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300307, 2301407, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300308, 2301408, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300309, 2301409, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300310, 2301410, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300311, 2301411, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300312, 2301412, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300313, 2301413, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300314, 2301414, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300315, 2301415, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300316, 2301416, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300317, 2301417, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300318, 2301418, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300319, 2301419, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300320, 2301420, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300321, 2301421, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300322, 2301422, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     RunEvent(12304812)
     RunEvent(12304813)
     RunEvent(12301800)
@@ -817,7 +633,7 @@ def Event12304810():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2300800, region=2301800)
+    IfActionButtonParam(2, action_button_id=2300800, entity=2301800)
     IfFlagOff(2, 12301800)
     IfFlagOn(3, 12301800)
     IfConditionTrue(-1, input_condition=2)
@@ -845,7 +661,7 @@ def Event12304811():
     IfFlagOn(1, 12301802)
     IfFlagOn(1, 12304800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2300800, region=2301800)
+    IfActionButtonParam(1, action_button_id=2300800, entity=2301800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2302800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1125,7 +941,7 @@ def Event12304730():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2300800, region=2301810)
+    IfActionButtonParam(2, action_button_id=2300800, entity=2301810)
     IfFlagOff(2, 12301700)
     IfFlagOn(3, 12301700)
     IfConditionTrue(-1, input_condition=2)
@@ -1155,7 +971,7 @@ def Event12304731():
     IfFlagOn(1, 12301702)
     IfFlagOn(1, 12304700)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2300800, region=2301810)
+    IfActionButtonParam(1, action_button_id=2300800, entity=2301810)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2302810, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1308,21 +1124,12 @@ def Event12304707():
 
 
 @RestartOnRest
-def Event12304715(
-    _, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12304715(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12304715: Event 12304715 """
     EndIfFlagOn(12301700)
-    CreateNPCPart(
-        2300810,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_24_27,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(2300810, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_24_27, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(2300810, npc_part_id=arg_4_7, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, 2300810, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(3, 2300810, 0.0)
@@ -1331,16 +1138,8 @@ def Event12304715(
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(2300810, 10, state_id=2)
-    CreateNPCPart(
-        2300810,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(2300810, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(2300810, npc_part_id=arg_4_7, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(2300810, disable_interpolation=False)
@@ -1490,17 +1289,8 @@ def Event12304402(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event12304410(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12304410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12304410: Event 12304410 """
     SkipLinesIfFlagOn(1, arg_12_15)
     DisableCharacter(arg_4_7)
@@ -1518,7 +1308,7 @@ def Event12304410(
     IfFlagOff(2, arg_16_19)
     IfFlagOn(2, arg_20_23)
     IfFlagOff(2, arg_24_27)
-    IfActionButtonInRegion(2, action_button_id=arg_28_31, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -1530,9 +1320,8 @@ def Event12304410(
 
 
 @RestartOnRest
-def Event12304460(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12304460(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12304460: Event 12304460 """
     EndIfClient()
     IfFlagOn(1, arg_20_23)
@@ -1724,7 +1513,7 @@ def Event12300100():
     IfEntityWithinDistance(-2, PLAYER, 2300204, radius=7.0)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(-3, input_condition=1)
-    IfDamageType(-3, attacked_entity=2300204, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=2300204, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
     ForceAnimation(2300204, 7015)
     EnableGravity(2300204)
@@ -1737,19 +1526,14 @@ def Event12300110(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12300110: Event 12300110 """
     DisableNetworkSync()
     EndIfFlagOn(arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(
-        10010161,
-        anchor_entity=arg_4_7,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010161, anchor_entity=arg_4_7, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(0.0)
     Restart()
 
@@ -1779,7 +1563,7 @@ def Event12300130():
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
     CreateObjectFX(900201, obj=2301500, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=2300000, region=2301500)
+    IfActionButtonParam(0, action_button_id=2300000, entity=2301500)
     AwardItemLot(2300170, host_only=False)
     DeleteObjectFX(2301500, erase_root=True)
 
@@ -1832,17 +1616,12 @@ def Event12300190():
     """ 12300190: Event 12300190 """
     EndIfThisEventOn()
     IfCharacterHuman(1, PLAYER)
-    IfActionButtonInRegion(1, action_button_id=2300020, region=2301020)
+    IfActionButtonParam(1, action_button_id=2300020, entity=2301020)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(2, PLAYER)
     EndIfConditionFalse(2)
-    DisplayDialog(
-        10010165,
-        anchor_entity=2301020,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010165, anchor_entity=2301020, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
 
 
 @RestartOnRest
@@ -1932,96 +1711,24 @@ def Event12300240():
 def Event12300250():
     """ 12300250: Event 12300250 """
     IfFlagOn(0, 12300240)
-    CreateHazard(
-        12300251,
-        2301450,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=4.5,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300252,
-        2301451,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300253,
-        2301452,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=1.5,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300254,
-        2301453,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.699999988079071,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300255,
-        2301454,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=1.2000000476837158,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300256,
-        2301455,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.5,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300257,
-        2301456,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300258,
-        2301457,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=1.5,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12300259,
-        2301458,
-        model_point=200,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=1.0,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(12300251, 2301450, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=4.5, life=0.0, repetition_time=1.0)
+    CreateHazard(12300252, 2301451, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12300253, 2301452, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=1.5, life=0.0, repetition_time=1.0)
+    CreateHazard(12300254, 2301453, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.699999988079071, life=0.0, repetition_time=1.0)
+    CreateHazard(12300255, 2301454, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=1.2000000476837158, life=0.0, repetition_time=1.0)
+    CreateHazard(12300256, 2301455, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.5, life=0.0, repetition_time=1.0)
+    CreateHazard(12300257, 2301456, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=0.0, repetition_time=1.0)
+    CreateHazard(12300258, 2301457, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=1.5, life=0.0, repetition_time=1.0)
+    CreateHazard(12300259, 2301458, model_point=200, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=1.0, life=0.0, repetition_time=1.0)
 
 
 def Event12300300():
@@ -2090,7 +1797,7 @@ def Event12305000():
     IfConditionTrue(1, input_condition=-1)
     IfEntityWithinDistance(1, 2300250, PLAYER, radius=10.0)
     IfConditionTrue(-2, input_condition=1)
-    IfDamageType(-2, attacked_entity=2300250, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-2, attacked_entity=2300250, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-2)
 
     # --- 0 --- #
@@ -2144,15 +1851,8 @@ def Event12305010(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(0, input_condition=-1)
     Wait(3.0)
     SetAIParamID(arg_0_3, arg_12_15)
-    ShootProjectile(
-        owner_entity=2300900,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6031,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2300900, projectile_id=arg_0_3, model_point=90, behavior_id=6031, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     ForceAnimation(arg_0_3, arg_4_7)
     StopEvent(12305140, slot=arg_8_11)
     StopEvent(12305160, slot=arg_8_11)
@@ -2235,53 +1935,32 @@ def Event12305030(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12305040(_, arg_0_3: int, arg_4_7: int):
     """ 12305040: Event 12305040 """
     EndIfThisEventSlotOn()
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Fire)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.NoType)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Fire)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.NoType)
     IfConditionTrue(1, input_condition=-1)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Magic)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Lightning)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Blunt)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Slash)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Thrust)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Magic)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Lightning)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Blunt)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Slash)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Thrust)
     IfConditionTrue(2, input_condition=-2)
     IfObjectHealthValueComparison(2, arg_0_3, ComparisonType.LessThanOrEqual, 999)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
-    ShootProjectile(
-        owner_entity=arg_4_7,
-        projectile_id=arg_0_3,
-        model_point=-1,
-        behavior_id=6051,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_0_3, model_point=-1, behavior_id=6051, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     DestroyObject(arg_0_3, slot=1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    ShootProjectile(
-        owner_entity=arg_4_7,
-        projectile_id=arg_0_3,
-        model_point=-1,
-        behavior_id=6055,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=arg_4_7,
-        projectile_id=arg_0_3,
-        model_point=-1,
-        behavior_id=6071,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_0_3, model_point=-1, behavior_id=6055, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
+    ShootProjectile(owner_entity=arg_4_7, projectile_id=arg_0_3, model_point=-1, behavior_id=6071, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     DestroyObject(arg_0_3, slot=1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
 
@@ -2306,7 +1985,7 @@ def Event12305070():
     IfEntityWithinDistance(-2, PLAYER, 2300601, radius=3.0)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(-3, input_condition=1)
-    IfDamageType(-3, attacked_entity=2300520, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=2300520, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
     ForceAnimation(2300601, 7014)
     EnableAI(2300601)
@@ -2333,15 +2012,8 @@ def Event12305075(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterHasSpecialEffect(-1, arg_0_3, 4670)
     IfConditionTrue(0, input_condition=-1)
     SetAIParamID(arg_0_3, arg_12_15)
-    ShootProjectile(
-        owner_entity=2300900,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6031,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2300900, projectile_id=arg_0_3, model_point=90, behavior_id=6031, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     ForceAnimation(arg_0_3, arg_4_7)
     StopEvent(12305140, slot=arg_8_11)
     StopEvent(12305160, slot=arg_8_11)
@@ -2361,7 +2033,7 @@ def Event12305080():
     IfFlagRangeAnyOn(2, (12305081, 12305082))
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
-    IfDamageType(-3, attacked_entity=2300314, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=2300314, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
     EndIfFinishedConditionTrue(2)
 
@@ -2405,15 +2077,8 @@ def Event12305090(_, arg_0_3: int, arg_4_7: int):
     EndIfFlagOn(12300240)
     IfFlagOn(0, 12300240)
     WaitFrames(arg_0_3)
-    ShootProjectile(
-        owner_entity=2300900,
-        projectile_id=arg_4_7,
-        model_point=101,
-        behavior_id=6070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2300900, projectile_id=arg_4_7, model_point=101, behavior_id=6070, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
 
 
 @RestartOnRest
@@ -2474,15 +2139,8 @@ def Event12305121(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterHasSpecialEffect(-1, arg_0_3, 4670)
     IfConditionTrue(0, input_condition=-1)
     SetAIParamID(arg_0_3, arg_12_15)
-    ShootProjectile(
-        owner_entity=2300900,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6031,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2300900, projectile_id=arg_0_3, model_point=90, behavior_id=6031, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     ForceAnimation(arg_0_3, arg_4_7)
     StopEvent(12305140, slot=arg_8_11)
     StopEvent(12305160, slot=arg_8_11)
@@ -2511,7 +2169,7 @@ def Event12305130():
     IfEntityWithinDistance(-2, PLAYER, 2300203, radius=5.0)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(-3, input_condition=1)
-    IfDamageType(-3, attacked_entity=2300203, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=2300203, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
     ForceAnimation(2300203, 7017)
     EnableGravity(2300203)
@@ -2541,15 +2199,8 @@ def Event12305135(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterHasSpecialEffect(-2, arg_0_3, 4670)
     IfConditionTrue(0, input_condition=-2)
     SetAIParamID(arg_0_3, arg_12_15)
-    ShootProjectile(
-        owner_entity=2300900,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6031,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2300900, projectile_id=arg_0_3, model_point=90, behavior_id=6031, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     ForceAnimation(arg_0_3, arg_4_7)
     StopEvent(12305140, slot=arg_8_11)
     StopEvent(12305160, slot=arg_8_11)
@@ -2585,15 +2236,8 @@ def Event12305160(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     StopEvent(12305140, slot=arg_8_11)
     WaitFrames(1)
     SetAIParamID(arg_0_3, arg_12_15)
-    ShootProjectile(
-        owner_entity=2300900,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6031,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2300900, projectile_id=arg_0_3, model_point=90, behavior_id=6031, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     ForceAnimation(arg_0_3, arg_4_7)
 
 
@@ -2676,7 +2320,7 @@ def Event12305480():
     IfEntityWithinDistance(2, 2300406, PLAYER, radius=3.0)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
-    IfDamageType(-3, attacked_entity=2300406, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=2300406, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
     EndIfFinishedConditionTrue(2)
 
@@ -2697,7 +2341,7 @@ def Event12305481():
     IfEntityWithinDistance(1, 2300406, PLAYER, radius=3.0)
     IfConditionTrue(-2, input_condition=1)
     IfCharacterInsideRegion(-2, 2300406, region=2302410)
-    IfDamageType(-2, attacked_entity=2300406, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-2, attacked_entity=2300406, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-2)
 
     # --- 0 --- #
@@ -2735,7 +2379,7 @@ def Event12305490(_, arg_0_3: int, arg_4_7: int):
     IfHasTAEEvent(-2, 2300604, tae_event_id=10)
     IfHasTAEEvent(-2, 2300605, tae_event_id=10)
     IfConditionTrue(-3, input_condition=-2)
-    IfDamageType(-3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
 
     # --- 0 --- #
@@ -2862,10 +2506,10 @@ def Event12300703():
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfFlagOn(1, 1320)
-    IfDamageType(1, attacked_entity=2300710, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=2300710, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(2, input_condition=-1)
     IfFlagOn(2, 1325)
-    IfDamageType(2, attacked_entity=2300710, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=2300710, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfFlagOn(3, 1325)
     IfFlagRangeAnyOn(3, (12300710, 12300739))
     IfFlagOn(4, 72300307)
@@ -2984,7 +2628,7 @@ def Event12300710(_, arg_0_3: int):
     """ 12300710: Event 12300710 """
     GotoIfFlagRangeState(Label.L0, RangeState.AnyOn, FlagType.Absolute, (12300710, 12300739))
     IfFlagOn(1, 1325)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
 
     # --- 0 --- #

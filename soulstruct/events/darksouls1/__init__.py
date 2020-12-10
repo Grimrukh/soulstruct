@@ -5,8 +5,8 @@ from . import instructions
 from .instructions import *
 from . import tests
 from .tests import *
-import soulstruct.enums.darksouls1 as enums
-from soulstruct.enums.darksouls1 import *
+from . import enums
+from .enums import *
 from . import decompiler
 
 name = "darksouls1"

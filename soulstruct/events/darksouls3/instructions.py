@@ -8,7 +8,7 @@ from typing import Union
 
 from soulstruct.events.numeric import to_numeric
 from soulstruct.game_types import *
-from soulstruct.enums.darksouls3 import *
+from soulstruct.events.darksouls3.enums import *
 from soulstruct.events.shared.instructions import *
 
 __all__ = [

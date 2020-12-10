@@ -49,6 +49,7 @@ class TalkEntryRow(EntryRow):
     ENTRY_ID_WIDTH = 15
     ENTRY_ID_FG = "#CDF"
 
+    # noinspection PyMissingConstructor
     def __init__(self, editor: SoulstructTalkEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
@@ -82,7 +83,7 @@ class TalkEntryRow(EntryRow):
         )
         id_bindings = main_bindings.copy()
         id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(i, id_clicked=True)
-        id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+        # id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
         bind_events(self.id_box, id_bindings)
         bind_events(self.id_label, id_bindings)
 
@@ -573,7 +574,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             row += 1
 
         self.displayed_entry_count = row
-        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+        for remaining_row in range(row, len(self.entry_rows)):
             self.entry_rows[remaining_row].hide()
 
         if self.displayed_entry_count == 0:

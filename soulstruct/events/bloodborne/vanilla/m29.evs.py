@@ -161,55 +161,20 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     EndIfThisEventSlotOn()
     IfFlagOn(0, arg_4_7)
     CreatePlayLog(0)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6051,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=90, behavior_id=6051, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     Wait(2.0)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6053,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=90, behavior_id=6053, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     Wait(2.0)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6055,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=90, behavior_id=6055, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     Wait(2.0)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6055,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=90, behavior_id=6055, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     Wait(2.0)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=90,
-        behavior_id=6055,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=90, behavior_id=6055, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
 
 
 def Event12900089(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
@@ -251,7 +216,7 @@ def Event12900174(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     # --- 0 --- #
     DefineLabel(0)
     DisableNetworkSync()
-    IfActionButtonInRegion(1, action_button_id=7011, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7011, entity=arg_0_3)
     IfObjectActivated(2, obj_act_id=arg_4_7)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -261,13 +226,8 @@ def Event12900174(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
     # --- 1 --- #
     DefineLabel(1)
-    DisplayDialog(
-        10010161,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010161, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -290,21 +250,16 @@ def Event12900186(_, arg_0_3: int, arg_4_7: int):
     """ 12900186: Event 12900186 """
     DisableNetworkSync()
     EndIfFlagOn(arg_4_7)
-    IfActionButtonInRegion(1, action_button_id=7010, region=arg_0_3)
-    IfActionButtonInRegion(2, action_button_id=7011, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7010, entity=arg_0_3)
+    IfActionButtonParam(2, action_button_id=7011, entity=arg_0_3)
     IfFlagOn(3, arg_4_7)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    DisplayDialog(
-        10010160,
-        anchor_entity=arg_0_3,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010160, anchor_entity=arg_0_3, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -313,15 +268,10 @@ def Event12900187(_, arg_0_3: int, arg_4_7: int):
     """ 12900187: Event 12900187 """
     DisableNetworkSync()
     IfFlagOn(1, arg_4_7)
-    IfActionButtonInRegion(1, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7100, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010170,
-        anchor_entity=arg_0_3,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010170, anchor_entity=arg_0_3, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -364,15 +314,10 @@ def Event12900190(_, arg_0_3: int, arg_4_7: int):
     DisableNetworkSync()
     EndIfFlagOn(arg_4_7)
     IfFlagOff(1, arg_4_7)
-    IfActionButtonInRegion(1, action_button_id=7010, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7010, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010160,
-        anchor_entity=arg_0_3,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010160, anchor_entity=arg_0_3, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -381,15 +326,10 @@ def Event12900191(_, arg_0_3: int, arg_4_7: int):
     """ 12900191: Event 12900191 """
     DisableNetworkSync()
     IfFlagOn(1, arg_4_7)
-    IfActionButtonInRegion(1, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7100, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010170,
-        anchor_entity=arg_0_3,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010170, anchor_entity=arg_0_3, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -432,15 +372,10 @@ def Event12900202(_, arg_0_3: int, arg_4_7: int):
     DisableNetworkSync()
     EndIfFlagOn(arg_4_7)
     IfFlagOff(1, arg_4_7)
-    IfActionButtonInRegion(1, action_button_id=7010, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7010, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010167,
-        anchor_entity=arg_0_3,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010167, anchor_entity=arg_0_3, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -450,14 +385,9 @@ def Event12900207(_, arg_0_3: int, arg_4_7: int):
     DisableNetworkSync()
     IfFlagOn(0, arg_4_7)
     Wait(3.0)
-    IfActionButtonInRegion(0, action_button_id=7100, region=arg_0_3)
-    DisplayDialog(
-        10010170,
-        anchor_entity=arg_0_3,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=7100, entity=arg_0_3)
+    DisplayDialog(10010170, anchor_entity=arg_0_3, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -495,13 +425,8 @@ def Event12900234(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     End()
     IfObjectActivated(0, obj_act_id=arg_0_3)
     SkipLinesIfClient(2)
-    DisplayDialog(
-        arg_8_11,
-        anchor_entity=10000,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(arg_8_11, anchor_entity=10000, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     RemoveGoodFromPlayer(arg_4_7)
     DisableObjectActivation(arg_12_15, obj_act_id=arg_16_19)
     DisableObjectActivation(arg_12_15, obj_act_id=arg_20_23)
@@ -515,13 +440,8 @@ def Event12900235(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     End()
     IfObjectActivated(0, obj_act_id=arg_0_3)
     SkipLinesIfClient(1)
-    DisplayDialog(
-        arg_4_7,
-        anchor_entity=10000,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(arg_4_7, anchor_entity=10000, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     DisableObjectActivation(arg_8_11, obj_act_id=arg_12_15)
     DisableObjectActivation(arg_8_11, obj_act_id=arg_16_19)
 
@@ -568,15 +488,8 @@ def Event12900239(_, arg_0_3: int, arg_4_7: int):
     IfFlagOn(0, arg_4_7)
     CreatePlayLog(76)
     Wait(1.5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=120,
-        behavior_id=6020,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=120, behavior_id=6020, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
 
 
 def Event12900240(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
@@ -598,17 +511,8 @@ def Event12900240(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableFlag(arg_16_19)
 
 
-def Event12900245(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900245(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900245: Event 12900245 """
     IfFlagOn(1, arg_24_27)
     IfFlagOff(1, arg_28_31)
@@ -629,17 +533,8 @@ def Event12900245(
     Restart()
 
 
-def Event12900250(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900250(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900250: Event 12900250 """
     IfFlagOff(1, arg_24_27)
     IfFlagOff(1, arg_28_31)
@@ -665,26 +560,21 @@ def Event12900255(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableNetworkSync()
     IfFlagOn(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
-    IfActionButtonInRegion(1, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7100, entity=arg_0_3)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
-    IfActionButtonInRegion(2, action_button_id=7100, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=7100, entity=arg_4_7)
     IfFlagOn(3, arg_12_15)
-    IfActionButtonInRegion(3, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(3, action_button_id=7100, entity=arg_0_3)
     IfFlagOn(4, arg_12_15)
-    IfActionButtonInRegion(4, action_button_id=7100, region=arg_4_7)
+    IfActionButtonParam(4, action_button_id=7100, entity=arg_4_7)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
@@ -777,17 +667,8 @@ def Event12900315(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableFlag(arg_20_23)
 
 
-def Event12900323(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900323(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900323: Event 12900323 """
     IfFlagOn(1, arg_0_3)
     IfFlagOff(1, arg_4_7)
@@ -813,17 +694,8 @@ def Event12900323(
     Restart()
 
 
-def Event12900331(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900331(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900331: Event 12900331 """
     IfFlagOff(1, arg_0_3)
     IfFlagOff(1, arg_4_7)
@@ -854,32 +726,26 @@ def Event12900339(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableNetworkSync()
     IfFlagOff(1, arg_0_3)
     IfFlagOff(1, arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=7100, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=7100, entity=arg_4_7)
     IfFlagOff(2, arg_0_3)
     IfFlagOn(2, arg_8_11)
-    IfActionButtonInRegion(2, action_button_id=7100, region=arg_12_15)
+    IfActionButtonParam(2, action_button_id=7100, entity=arg_12_15)
     IfFlagOn(3, arg_0_3)
-    IfActionButtonInRegion(3, action_button_id=7100, region=arg_12_15)
+    IfActionButtonParam(3, action_button_id=7100, entity=arg_12_15)
     IfFlagOn(4, arg_0_3)
-    IfActionButtonInRegion(4, action_button_id=7100, region=arg_4_7)
+    IfActionButtonParam(4, action_button_id=7100, entity=arg_4_7)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
-def Event12900347(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12900347(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12900347: Event 12900347 """
     GotoIfFlagOn(Label.L0, arg_12_15)
     EndOfAnimation(arg_0_3, arg_20_23)
@@ -898,17 +764,8 @@ def Event12900347(
     DisableFlag(arg_16_19)
 
 
-def Event12900351(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900351(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900351: Event 12900351 """
     IfFlagOn(1, arg_24_27)
     IfFlagOff(1, arg_28_31)
@@ -932,17 +789,8 @@ def Event12900351(
     Restart()
 
 
-def Event12900353(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900353(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900353: Event 12900353 """
     IfFlagOn(1, arg_24_27)
     IfFlagOff(1, arg_28_31)
@@ -966,17 +814,8 @@ def Event12900353(
     Restart()
 
 
-def Event12900354(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900354(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900354: Event 12900354 """
     IfFlagOff(1, arg_24_27)
     IfFlagOff(1, arg_28_31)
@@ -1000,17 +839,8 @@ def Event12900354(
     Restart()
 
 
-def Event12900356(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900356(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900356: Event 12900356 """
     IfFlagOff(1, arg_24_27)
     IfFlagOff(1, arg_28_31)
@@ -1039,33 +869,27 @@ def Event12900357(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableNetworkSync()
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
-    IfActionButtonInRegion(1, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7100, entity=arg_0_3)
     IfFlagOn(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
-    IfActionButtonInRegion(2, action_button_id=7100, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=7100, entity=arg_4_7)
     IfFlagOn(3, arg_12_15)
-    IfActionButtonInRegion(3, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(3, action_button_id=7100, entity=arg_0_3)
     IfFlagOn(4, arg_12_15)
-    IfActionButtonInRegion(4, action_button_id=7100, region=arg_4_7)
+    IfActionButtonParam(4, action_button_id=7100, entity=arg_4_7)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
 
-def Event12900361(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12900361(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12900361: Event 12900361 """
     EnableFlag(arg_0_3)
     EnableFlag(arg_4_7)
@@ -1102,17 +926,8 @@ def Event12900363(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     End()
 
 
-def Event12900365(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900365(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900365: Event 12900365 """
     Wait(0.5)
     IfFlagOff(2, arg_0_3)
@@ -1153,17 +968,8 @@ def Event12900365(
     Restart()
 
 
-def Event12900367(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900367(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900367: Event 12900367 """
     Wait(0.5)
     IfFlagOn(2, arg_0_3)
@@ -1204,9 +1010,8 @@ def Event12900367(
     Restart()
 
 
-def Event12900369(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12900369(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12900369: Event 12900369 """
     EnableFlag(arg_0_3)
     EnableFlag(arg_4_7)
@@ -1243,17 +1048,8 @@ def Event12900371(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     End()
 
 
-def Event12900373(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900373(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900373: Event 12900373 """
     Wait(0.5)
     IfFlagOff(2, arg_0_3)
@@ -1292,17 +1088,8 @@ def Event12900373(
     Restart()
 
 
-def Event12900375(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12900375(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12900375: Event 12900375 """
     Wait(0.5)
     IfFlagOn(2, arg_0_3)
@@ -1354,114 +1141,50 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6130,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6130, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6131,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6131, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 2 --- #
     DefineLabel(2)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6132,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6132, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 3 --- #
     DefineLabel(3)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6133,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6133, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 4 --- #
     DefineLabel(4)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6134,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6134, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 5 --- #
     DefineLabel(5)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6135,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6135, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 6 --- #
     DefineLabel(6)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6136,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6136, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
     End()
 
     # --- 7 --- #
     DefineLabel(7)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6137,
-        target_type=DamageTargetType.Character,
-        radius=0.30000001192092896,
-        life=0.0,
-        repetition_time=2.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6137, target_type=DamageTargetType.Character, 
+                 radius=0.30000001192092896, life=0.0, repetition_time=2.0)
 
 
 def Event12900395(_, arg_0_3: int, arg_4_7: int):
@@ -1478,114 +1201,50 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6160,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6160, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6161,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6161, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 2 --- #
     DefineLabel(2)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6162,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6162, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 3 --- #
     DefineLabel(3)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6163,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6163, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 4 --- #
     DefineLabel(4)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6164,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6164, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 5 --- #
     DefineLabel(5)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6165,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6165, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 6 --- #
     DefineLabel(6)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6166,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6166, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     End()
 
     # --- 7 --- #
     DefineLabel(7)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=704,
-        behavior_param_id=6167,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=704, behavior_param_id=6167, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
 
 
 def Event12900423(_, arg_0_3: int, arg_4_7: int):
@@ -1626,13 +1285,8 @@ def Event12901200(_, arg_0_3: int, arg_4_7: int):
     """ 12901200: Event 12901200 """
     DisableNetworkSync()
     IfHasTAEEvent(0, arg_4_7, tae_event_id=100)
-    Move(
-        arg_4_7,
-        destination=arg_0_3,
-        destination_type=CoordEntityType.Character,
-        model_point=30,
-        copy_draw_parent=arg_0_3,
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=30, 
+         copy_draw_parent=arg_0_3)
     IfDoesNotHaveTAEEvent(0, arg_4_7, tae_event_id=100)
     IfCharacterDead(0, arg_4_7)
     AddSpecialEffect_WithUnknownEffect(arg_4_7, 5751, affect_npc_parts_hp=False)
@@ -1700,346 +1354,122 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6200,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6200, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6210,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6210, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6220,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6220, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6230,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6230, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(77)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6201,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6201, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6211,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6211, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6221,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6221, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6231,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6231, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(66)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6202,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6202, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6212,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6212, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6222,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6222, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6232,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6232, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(55)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6203,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6203, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6213,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6213, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6223,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6223, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6233,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6233, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(44)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6204,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6204, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6214,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6214, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6224,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6224, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6234,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6234, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(33)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6205,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6205, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6215,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6215, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6225,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6225, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6235,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6235, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(22)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6206,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6206, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6216,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6216, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6226,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6226, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6236,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6236, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(11)
     SkipLinesIfFlagOn(8, 92905310)
     SkipLinesIfFlagOn(5, 92905204)
     SkipLinesIfFlagOn(2, 92905202)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6207,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6207, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6217,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6217, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(3)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6227,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6227, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(1)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6237,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6237, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     SkipLines(0)
     Wait(0.699999988079071)
     IfFlagOff(0, arg_4_7)
@@ -2163,9 +1593,8 @@ def Event12901588(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableFlag(arg_12_15)
 
 
-def Event12901589(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12901589(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12901589: Event 12901589 """
     SkipLinesIfThisEventSlotOff(7)
     DisableCharacter(arg_0_3)
@@ -2237,17 +1666,8 @@ def Event12901590(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableFlag(arg_12_15)
 
 
-def Event12901591(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901591(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901591: Event 12901591 """
     SkipLinesIfThisEventSlotOff(7)
     DisableCharacter(arg_0_3)
@@ -2318,17 +1738,8 @@ def Event12901593(_, arg_0_3: int, arg_4_7: int):
     DisableObject(arg_4_7)
 
 
-def Event12901594(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901594(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901594: Event 12901594 """
     EndIfFlagOn(arg_0_3)
     DisableNetworkSync()
@@ -2365,17 +1776,8 @@ def Event12901594(
     End()
 
 
-def Event12901595(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901595(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901595: Event 12901595 """
     EndIfFlagOn(arg_0_3)
     DisableNetworkSync()
@@ -2717,9 +2119,8 @@ def Event12901692(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableFlag(arg_20_23)
 
 
-def Event12901693(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12901693(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12901693: Event 12901693 """
     DisableNetworkSync()
     EndIfFlagOn(arg_0_3)
@@ -2826,17 +2227,8 @@ def Event12901693(
     End()
 
 
-def Event12901697(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901697(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901697: Event 12901697 """
     EndIfFlagOn(arg_16_19)
     EndIfFlagOn(arg_24_27)
@@ -2875,17 +2267,8 @@ def Event12901701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableCharacter(arg_0_3)
 
 
-def Event12901705(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901705(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901705: Event 12901705 """
     EndIfFlagOn(arg_16_19)
     EndIfFlagOn(arg_24_27)
@@ -2923,17 +2306,8 @@ def Event12901706(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableCharacter(arg_0_3)
 
 
-def Event12901707(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901707(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901707: Event 12901707 """
     EndIfFlagOn(arg_8_11)
     EndIfFlagOn(arg_16_19)
@@ -3278,9 +2652,8 @@ def Event12901722(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EnableFlag(arg_8_11)
 
 
-def Event12901723(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12901723(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12901723: Event 12901723 """
     GotoIfThisEventSlotOff(Label.L0)
     DisableCharacter(arg_0_3)
@@ -3348,17 +2721,8 @@ def Event12901723(
     EnableFlag(arg_12_15)
 
 
-def Event12901725(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12901725(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12901725: Event 12901725 """
     GotoIfThisEventSlotOff(Label.L0)
     DisableCharacter(arg_0_3)
@@ -3603,9 +2967,8 @@ def Event12904029(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     Restart()
 
 
-def Event12904030(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12904030(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12904030: Event 12904030 """
     EndIfClient()
     EndIfFlagOn(arg_24_27)
@@ -3653,17 +3016,8 @@ def Event12904030(
     Restart()
 
 
-def Event12904033(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904033(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904033: Event 12904033 """
     EndIfFlagOn(arg_28_31)
     IfFlagOn(1, arg_4_7)
@@ -3703,17 +3057,8 @@ def Event12904033(
     Restart()
 
 
-def Event12904036(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904036(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904036: Event 12904036 """
     EndIfFlagOn(arg_28_31)
     IfFlagOn(1, arg_4_7)
@@ -3753,17 +3098,8 @@ def Event12904036(
     Restart()
 
 
-def Event12904039(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904039(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904039: Event 12904039 """
     EndIfFlagOn(arg_28_31)
     IfHasTAEEvent(1, arg_24_27, tae_event_id=90)
@@ -3822,9 +3158,8 @@ def Event12904041(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfConditionFalse(2, 1)
     DisableBackread(arg_4_7)
     End()
-    Move(
-        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=6, set_draw_parent=arg_0_3
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=6, 
+         set_draw_parent=arg_0_3)
     Restart()
 
 
@@ -3869,13 +3204,8 @@ def Event12904070(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     DisableCharacter(arg_4_7)
     GotoIfFlagOn(Label.L0, arg_8_11)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=70)
-    Move(
-        arg_4_7,
-        destination=arg_0_3,
-        destination_type=CoordEntityType.Character,
-        model_point=230,
-        copy_draw_parent=arg_0_3,
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=230, 
+         copy_draw_parent=arg_0_3)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -3891,13 +3221,8 @@ def Event12904156(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12904156: Event 12904156 """
     DisableNetworkSync()
     IfHasTAEEvent(0, arg_0_3, tae_event_id=100)
-    Move(
-        arg_0_3,
-        destination=arg_4_7,
-        destination_type=CoordEntityType.Character,
-        model_point=arg_8_11,
-        copy_draw_parent=arg_4_7,
-    )
+    Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Character, model_point=arg_8_11, 
+         copy_draw_parent=arg_4_7)
     IfDoesNotHaveTAEEvent(0, arg_0_3, tae_event_id=100)
     IfCharacterDead(0, arg_0_3)
     AddSpecialEffect_WithUnknownEffect(arg_0_3, 5751, affect_npc_parts_hp=False)
@@ -4074,7 +3399,8 @@ def Event12904338(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     WaitFrames(2)
     ForceAnimation(arg_8_11, 3020)
     IfFramesElapsed(-1, 40)
-    IfDamageType(-1, attacked_entity=arg_8_11, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_8_11, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
     EnableAI(arg_8_11)
 
@@ -4089,100 +3415,36 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     WaitFrames(10)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -4192,16 +3454,8 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     Wait(8.5)
     RemoveObjectFlag(arg_4_7)
     DisableObject(arg_0_3)
@@ -4212,100 +3466,36 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     WaitFrames(1)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -4315,16 +3505,8 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     Wait(2.5)
     RemoveObjectFlag(arg_12_15)
     DisableObject(arg_8_11)
@@ -4361,16 +3543,8 @@ def Event12904361(_, arg_0_3: int, arg_4_7: int):
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=10,
-        part_index=NPCPartType.Part1,
-        part_health=30,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=10, part_index=NPCPartType.Part1, part_health=30, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=10, material_special_effect_id=59, material_fx_id=59)
     DisableCharacter(arg_4_7)
     IfCharacterPartHealthLessThanOrEqual(-1, arg_0_3, npc_part_id=10, value=0)
@@ -4378,13 +3552,8 @@ def Event12904361(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(0, input_condition=-1)
     SetAIParamID(arg_0_3, 121001)
     DisableGravity(arg_4_7)
-    Move(
-        arg_4_7,
-        destination=arg_0_3,
-        destination_type=CoordEntityType.Character,
-        model_point=40,
-        copy_draw_parent=arg_0_3,
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=40, 
+         copy_draw_parent=arg_0_3)
     EnableCharacter(arg_4_7)
     SetDisplayMask(arg_0_3, bit_index=0, switch_type=OnOffChange.On)
     ForceAnimation(arg_4_7, 8100, wait_for_completion=True)
@@ -4474,9 +3643,8 @@ def Event12904382(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
 
 
 @RestartOnRest
-def Event12904390(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12904390(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12904390: Event 12904390 """
     ForceAnimation(arg_0_3, 0)
     ForceAnimation(arg_4_7, 0)
@@ -4514,253 +3682,61 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12904398: Event 12904398 """
     AwaitFlagOn(arg_4_7)
     SkipLinesIfFlagOff(3, 92905100)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6250,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6250,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6250,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6250, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6250, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6250, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905101)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6251,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6251,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6251,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6251, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6251, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6251, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905102)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6252,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6252,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6252,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6252, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6252, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6252, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905103)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6253,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6253,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6253,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6253, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6253, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6253, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905104)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6254,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6254,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6254,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6254, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6254, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6254, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905105)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6255,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6255,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6255,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6255, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6255, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6255, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905106)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6256,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6256,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6256,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6256, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6256, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6256, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     SkipLinesIfFlagOff(3, 92905107)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6257,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6257,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=6257,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=6257, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=6257, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=6257, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -4770,36 +3746,12 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(3, -1)
-    CreateHazard(
-        arg_8_11,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=5041,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_12_15,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=5041,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
-    CreateHazard(
-        arg_16_19,
-        arg_0_3,
-        model_point=102,
-        behavior_param_id=5041,
-        target_type=DamageTargetType.Character,
-        radius=0.800000011920929,
-        life=1.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_8_11, arg_0_3, model_point=100, behavior_param_id=5041, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_12_15, arg_0_3, model_point=101, behavior_param_id=5041, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
+    CreateHazard(arg_16_19, arg_0_3, model_point=102, behavior_param_id=5041, target_type=DamageTargetType.Character, 
+                 radius=0.800000011920929, life=1.0, repetition_time=0.0)
     AwaitFlagOff(arg_4_7)
     Restart()
 
@@ -4919,29 +3871,12 @@ def Event12904501(_, arg_0_3: int, arg_4_7: int):
     ForceAnimation(arg_0_3, arg_4_7)
 
 
-def Event12904506(
-    _,
-    arg_0_3: int,
-    arg_4_5: short,
-    arg_8_11: int,
-    arg_12_13: short,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904506(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_13: short, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904506: Event 12904506 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_12_13,
-        part_index=arg_4_5,
-        part_health=arg_16_19,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_12_13, part_index=arg_4_5, part_health=arg_16_19, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -4949,16 +3884,8 @@ def Event12904506(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_12_13,
-        part_index=arg_4_5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_12_13, part_index=arg_4_5, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_20_23)
@@ -4978,29 +3905,12 @@ def Event12904506(
     Restart()
 
 
-def Event12904540(
-    _,
-    arg_0_3: int,
-    arg_4_5: short,
-    arg_8_11: int,
-    arg_12_13: short,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_24: uchar,
-    arg_25_25: uchar,
-):
+def Event12904540(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_13: short, arg_16_19: int, arg_20_23: int, 
+                  arg_24_24: uchar, arg_25_25: uchar):
     """ 12904540: Event 12904540 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_12_13,
-        part_index=arg_4_5,
-        part_health=arg_16_19,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_12_13, part_index=arg_4_5, part_health=arg_16_19, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -5133,7 +4043,7 @@ def Event12904595(_, arg_0_3: int, arg_4_7: int):
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     IfEntityWithinDistance(2, PLAYER, arg_0_3, radius=3.0)
-    IfDamageType(3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-2, input_condition=3)
@@ -5191,9 +4101,8 @@ def Event12904597(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event12904634(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, arg_24_27: float
-):
+def Event12904634(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, 
+                  arg_24_27: float):
     """ 12904634: Event 12904634 """
     SetBackreadStateAlternate(arg_0_3, state=False)
     DisableCharacter(arg_0_3)
@@ -5236,38 +4145,17 @@ def Event12904643(_, arg_0_3: int):
     SkipLinesIfConditionTrue(9, 6)
     ForceAnimation(arg_0_3, 3010)
     WaitFrames(40)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6064,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6064, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     IfHealthNotEqual(7, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(5, 7)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=205,
-        behavior_id=6051,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=205, behavior_id=6051, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     WaitFrames(60)
     IfHealthNotEqual(8, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(1, 8)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=205,
-        behavior_id=6053,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=205, behavior_id=6053, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Normal)
     Restart()
 
@@ -5290,10 +4178,10 @@ def Event12904733(_, arg_0_3: int, arg_4_7: int):
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     AddSpecialEffect(PLAYER, 71, affect_npc_part_hp=False)
-    CreateTemporaryFX(850, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=7)
+    CreateTemporaryFX(850, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=7)
     IfObjectDestroyed(0, arg_4_7)
     CancelSpecialEffect(PLAYER, 71)
-    CreateTemporaryFX(851, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=200)
+    CreateTemporaryFX(851, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
 
 
 @RestartOnRest
@@ -5325,51 +4213,23 @@ def Event12904736(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
 def Event12904737(_, arg_0_3: int):
     """ 12904737: Event 12904737 """
     EnableObjectInvulnerability(arg_0_3)
-    IfActionButtonInRegion(-1, action_button_id=2400900, region=arg_0_3)
+    IfActionButtonParam(-1, action_button_id=2400900, entity=arg_0_3)
     IfObjectDamagedBy(-1, arg_0_3, attacker=10000)
     IfConditionTrue(0, input_condition=-1)
     CreatePlayLog(1132)
     ForceAnimation(arg_0_3, 1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.a_Ambient, sound_id=24011006)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6063,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6063, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     WaitFrames(10)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6055,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6055, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     WaitFrames(90)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6059,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6059, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     WaitFrames(80)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=101,
-        behavior_id=6062,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=101, behavior_id=6062, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     Restart()
 
 
@@ -5448,7 +4308,7 @@ def Event12904772(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event12904773(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12904773: Event 12904773 """
     IfFlagOff(1, arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
@@ -5470,23 +4330,14 @@ def Event12904775(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagOff(1, arg_12_15)
     IfFlagOn(1, arg_8_11)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
-def Event12904776(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904776(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904776: Event 12904776 """
     DeleteFX(arg_8_11, erase_root_only=True)
     DisableCharacter(arg_0_3)
@@ -5566,13 +4417,8 @@ def Event12904852(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     DisableCharacter(arg_4_7)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=100)
     WaitFrames(5)
-    Move(
-        arg_4_7,
-        destination=arg_0_3,
-        destination_type=CoordEntityType.Character,
-        model_point=30,
-        copy_draw_parent=arg_0_3,
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=30, 
+         copy_draw_parent=arg_0_3)
     EnableCharacter(arg_4_7)
     ForceAnimation(arg_4_7, 7000)
     ReplanAI(arg_8_11)
@@ -5634,9 +4480,8 @@ def Event12904862(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Kill(arg_8_11, award_souls=False)
 
 
-def Event12904863(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12904863(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12904863: Event 12904863 """
     DisableAI(arg_8_11)
     DisableGravity(arg_8_11)
@@ -5665,17 +4510,8 @@ def Event12904863(
     EnableFlag(arg_16_19)
 
 
-def Event12904864(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904864(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904864: Event 12904864 """
     DisableObject(arg_4_7)
     DeleteFX(arg_8_11, erase_root_only=True)
@@ -5752,16 +4588,8 @@ def Event12904868(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12904869(_, arg_0_3: int):
     """ 12904869: Event 12904869 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=2,
-        part_index=NPCPartType.Part2,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=2, part_index=NPCPartType.Part2, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=2, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
@@ -5798,16 +4626,8 @@ def Event12904869(_, arg_0_3: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7002)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=2,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=2, part_index=NPCPartType.Part2, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=60, material_fx_id=60)
     ReplanAI(arg_0_3)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=20)
@@ -5823,16 +4643,8 @@ def Event12904869(_, arg_0_3: int):
 def Event12904870(_, arg_0_3: int):
     """ 12904870: Event 12904870 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=3,
-        part_index=NPCPartType.Part3,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=3, part_index=NPCPartType.Part3, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=3, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
@@ -5869,16 +4681,8 @@ def Event12904870(_, arg_0_3: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7007)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=3,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=3, part_index=NPCPartType.Part3, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.2999999523162842, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=60, material_fx_id=60)
     ReplanAI(arg_0_3)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=20)
@@ -5894,16 +4698,8 @@ def Event12904870(_, arg_0_3: int):
 def Event12904871(_, arg_0_3: int):
     """ 12904871: Event 12904871 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=1,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=0.5,
-        body_damage_correction=0.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=1, part_index=NPCPartType.Part1, part_health=9999999, damage_correction=0.5, 
+                  body_damage_correction=0.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=1, material_special_effect_id=61, material_fx_id=61)
 
 
@@ -5919,17 +4715,8 @@ def Event12904872(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EnableCharacter(arg_0_3)
 
 
-def Event12904877(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904877(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904877: Event 12904877 """
     DisableAI(arg_0_3)
     DisableAI(arg_12_15)
@@ -5992,7 +4779,7 @@ def Event12904878(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904878: Event 12904878 """
     AwaitFlagOn(arg_12_15)
     IfFlagOff(1, arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
@@ -6014,15 +4801,14 @@ def Event12904880(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagOff(1, arg_12_15)
     IfFlagOn(1, arg_8_11)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
-def Event12904881(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12904881(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12904881: Event 12904881 """
     DisableAI(arg_0_3)
     DisableObject(arg_24_27)
@@ -6139,17 +4925,8 @@ def Event12904888(_, arg_0_3: int):
     AICommand(arg_0_3, command_id=-1, slot=1)
 
 
-def Event12904890(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904890(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904890: Event 12904890 """
     DisableObject(arg_28_31)
     DeleteFX(arg_8_11, erase_root_only=True)
@@ -6171,17 +4948,8 @@ def Event12904890(
     EnableFlag(arg_16_19)
 
 
-def Event12904891(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904891(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904891: Event 12904891 """
     DisableObject(arg_28_31)
     DeleteFX(arg_8_11, erase_root_only=True)
@@ -6238,32 +5006,15 @@ def Event12904895(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     CreateFX(arg_8_11)
 
 
-def Event12904896(
-    _,
-    arg_0_3: int,
-    arg_4_5: short,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_21: short,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904896(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_21: short, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904896: Event 12904896 """
     EndIfFlagOn(arg_28_31)
     IfFlagOn(1, arg_24_27)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_20_21,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_20_21, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfCharacterHasSpecialEffect(2, arg_0_3, 5021)
@@ -6276,31 +5027,15 @@ def Event12904896(
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
     EndIfFinishedConditionTrue(4)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_20_21,
-        part_health=50,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_20_21, part_health=50, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
     Restart()
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_20_21,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_20_21, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
     AddSpecialEffect(arg_0_3, 5021, affect_npc_part_hp=True)
     AddSpecialEffect(arg_0_3, arg_12_15, affect_npc_part_hp=True)
@@ -6318,32 +5053,15 @@ def Event12904896(
     Restart()
 
 
-def Event12904897(
-    _,
-    arg_0_3: int,
-    arg_4_5: short,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_21: short,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904897(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_21: short, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904897: Event 12904897 """
     EndIfFlagOn(arg_28_31)
     IfFlagOn(1, arg_24_27)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_20_21,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_20_21, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfCharacterHasSpecialEffect(2, arg_0_3, 5021)
@@ -6356,31 +5074,15 @@ def Event12904897(
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
     EndIfFinishedConditionTrue(4)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_20_21,
-        part_health=50,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_20_21, part_health=50, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
     Restart()
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_20_21,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_20_21, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
     AddSpecialEffect(arg_0_3, 5021, affect_npc_part_hp=True)
     AddSpecialEffect(arg_0_3, arg_12_15, affect_npc_part_hp=True)
@@ -6398,31 +5100,14 @@ def Event12904897(
     Restart()
 
 
-def Event12904898(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904898(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904898: Event 12904898 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6430,16 +5115,8 @@ def Event12904898(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -6469,16 +5146,8 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfFlagOn(1, arg_16_19)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=130,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=130, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6487,16 +5156,8 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6517,31 +5178,14 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     Restart()
 
 
-def Event12904900(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904900(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904900: Event 12904900 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6549,16 +5193,8 @@ def Event12904900(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -6582,31 +5218,14 @@ def Event12904900(
     Restart()
 
 
-def Event12904901(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904901(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904901: Event 12904901 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6614,16 +5233,8 @@ def Event12904901(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -6653,16 +5264,8 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfFlagOn(1, arg_16_19)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6671,16 +5274,8 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6701,31 +5296,14 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     Restart()
 
 
-def Event12904903(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904903(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904903: Event 12904903 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6733,16 +5311,8 @@ def Event12904903(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -6766,31 +5336,14 @@ def Event12904903(
     Restart()
 
 
-def Event12904904(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904904(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904904: Event 12904904 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6798,16 +5351,8 @@ def Event12904904(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -6837,16 +5382,8 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfFlagOn(1, arg_16_19)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6855,16 +5392,8 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6885,31 +5414,14 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     Restart()
 
 
-def Event12904906(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904906(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904906: Event 12904906 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6917,16 +5429,8 @@ def Event12904906(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -6950,31 +5454,14 @@ def Event12904906(
     Restart()
 
 
-def Event12904907(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904907(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904907: Event 12904907 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -6982,16 +5469,8 @@ def Event12904907(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -7021,16 +5500,8 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfFlagOn(1, arg_16_19)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -7039,16 +5510,8 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -7069,31 +5532,14 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     Restart()
 
 
-def Event12904909(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904909(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904909: Event 12904909 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -7101,16 +5547,8 @@ def Event12904909(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -7134,31 +5572,14 @@ def Event12904909(
     Restart()
 
 
-def Event12904910(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904910(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904910: Event 12904910 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -7166,16 +5587,8 @@ def Event12904910(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -7205,16 +5618,8 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfFlagOn(1, arg_16_19)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -7223,16 +5628,8 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -7253,31 +5650,14 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     Restart()
 
 
-def Event12904911(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12904911(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12904911: Event 12904911 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -7285,16 +5665,8 @@ def Event12904911(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -7377,16 +5749,8 @@ def Event12904917(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     IfFlagOn(1, arg_16_19)
     IfCharacterBackreadEnabled(1, arg_20_23)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_20_23,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=1,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_20_23, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=1, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     IfHealthLessThanOrEqual(2, arg_20_23, 0.0)
     IfCharacterPartHealthLessThanOrEqual(3, arg_20_23, npc_part_id=arg_4_7, value=0)
     IfConditionTrue(-1, input_condition=2)
@@ -7409,9 +5773,8 @@ def Event12904918(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterPartHealthLessThanOrEqual(1, arg_16_19, npc_part_id=arg_8_11, value=0)
     IfCharacterHasSpecialEffect(2, arg_16_19, arg_0_3)
     IfCharacterHasSpecialEffect(2, arg_16_19, 421)
-    IfCharacterPartHealthComparison(
-        2, arg_16_19, npc_part_id=arg_8_11, comparison_type=ComparisonType.GreaterThan, value=0
-    )
+    IfCharacterPartHealthComparison(2, arg_16_19, npc_part_id=arg_8_11, comparison_type=ComparisonType.GreaterThan, 
+                                    value=0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -7423,17 +5786,8 @@ def Event12904918(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event12904919(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904919(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904919: Event 12904919 """
     IfFlagOn(-1, 92905320)
     IfFlagOn(-1, 92905324)
@@ -7461,17 +5815,8 @@ def Event12904919(
 
 
 @RestartOnRest
-def Event12904979(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12904979(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12904979: Event 12904979 """
     IfFlagOn(-1, 92905321)
     IfFlagOn(-1, 92905327)
@@ -7498,17 +5843,8 @@ def Event12904979(
 
 
 @RestartOnRest
-def Event12905000(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905000: Event 12905000 """
     IfFlagOn(-1, 92905322)
     IfFlagOn(-1, 92905329)
@@ -7534,17 +5870,8 @@ def Event12905000(
 
 
 @RestartOnRest
-def Event12905013(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905013(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905013: Event 12905013 """
     IfFlagOn(-1, 92905323)
     EndIfConditionTrue(-1)
@@ -7569,17 +5896,8 @@ def Event12905013(
 
 
 @RestartOnRest
-def Event12905026(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905026(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905026: Event 12905026 """
     EndIfFlagRangeAllOff((92905320, 92905329))
     DisableCharacter(arg_0_3)
@@ -7603,17 +5921,8 @@ def Event12905026(
 
 
 @RestartOnRest
-def Event12905042(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905042(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905042: Event 12905042 """
     IfFlagOn(-1, 92905320)
     EndIfConditionTrue(-1)
@@ -7638,17 +5947,8 @@ def Event12905042(
 
 
 @RestartOnRest
-def Event12905097(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905097(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905097: Event 12905097 """
     IfFlagOn(-1, 92905321)
     IfFlagOn(-1, 92905324)
@@ -7674,17 +5974,8 @@ def Event12905097(
 
 
 @RestartOnRest
-def Event12905108(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905108(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905108: Event 12905108 """
     IfFlagOn(-1, 92905322)
     IfFlagOn(-1, 92905325)
@@ -7711,17 +6002,8 @@ def Event12905108(
 
 
 @RestartOnRest
-def Event12905119(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905119(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905119: Event 12905119 """
     IfFlagOn(-1, 92905323)
     IfFlagOn(-1, 92905326)
@@ -7749,17 +6031,8 @@ def Event12905119(
 
 
 @RestartOnRest
-def Event12905130(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905130(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905130: Event 12905130 """
     EndIfFlagRangeAllOff((92905320, 92905329))
     DisableCharacter(arg_0_3)
@@ -7796,17 +6069,8 @@ def Event12905147(_, arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12905178(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905178(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905178: Event 12905178 """
     IfCharacterBackreadEnabled(-1, arg_0_3)
     IfCharacterBackreadEnabled(-1, arg_4_7)
@@ -7880,17 +6144,8 @@ def Event12905178(
 
 
 @RestartOnRest
-def Event12905188(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905188(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905188: Event 12905188 """
     IfFlagOn(-1, 92905330)
     IfFlagOn(-1, 92905332)
@@ -7957,17 +6212,8 @@ def Event12905188(
 
 
 @RestartOnRest
-def Event12905190(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905190(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905190: Event 12905190 """
     IfFlagOn(-1, 92905331)
     EndIfConditionTrue(-1)
@@ -7995,17 +6241,8 @@ def Event12905190(
 
 
 @RestartOnRest
-def Event12905192(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905192(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905192: Event 12905192 """
     SkipLinesIfFlagRangeAnyOn(1, (92905385, 92905389))
     EndIfFlagRangeAllOff((92905330, 92905334))
@@ -8039,17 +6276,8 @@ def Event12905195():
 
 
 @RestartOnRest
-def Event12905198(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905198(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905198: Event 12905198 """
     IfFlagOn(-1, 92905331)
     IfFlagOn(-1, 92905333)
@@ -8079,17 +6307,8 @@ def Event12905198(
 
 
 @RestartOnRest
-def Event12905201(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905201(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905201: Event 12905201 """
     IfFlagOff(1, 92905331)
     IfFlagOff(1, 92905333)
@@ -8119,17 +6338,8 @@ def Event12905201(
 
 
 @RestartOnRest
-def Event12905209(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905209(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905209: Event 12905209 """
     IfFlagOn(1, 92905340)
     IfOnline(1)
@@ -8156,17 +6366,8 @@ def Event12905209(
 
 
 @RestartOnRest
-def Event12905210(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905210(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905210: Event 12905210 """
     IfFlagOff(1, 92905340)
     IfOnline(1)
@@ -8193,17 +6394,8 @@ def Event12905210(
 
 
 @RestartOnRest
-def Event12905211(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905211(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905211: Event 12905211 """
     DisableCharacter(arg_0_3)
     DisableCharacter(arg_4_7)
@@ -8227,17 +6419,8 @@ def Event12905211(
 
 
 @RestartOnRest
-def Event12905212(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905212(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905212: Event 12905212 """
     IfFlagOn(1, 92905340)
     IfOnline(1)
@@ -8264,17 +6447,8 @@ def Event12905212(
 
 
 @RestartOnRest
-def Event12905221(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905221(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905221: Event 12905221 """
     DisableCharacter(arg_0_3)
     DisableCharacter(arg_4_7)
@@ -8298,17 +6472,8 @@ def Event12905221(
 
 
 @RestartOnRest
-def Event12905226(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12905226(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12905226: Event 12905226 """
     IfFlagOff(-1, 92905340)
     EndIfConditionTrue(-1)
@@ -8476,9 +6641,8 @@ def Event12905337(_, arg_0_3: int, arg_4_7: int):
     DisableAI(arg_4_7)
     ForceAnimation(arg_4_7, 3002, wait_for_completion=True)
     End()
-    Move(
-        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=6, set_draw_parent=arg_0_3
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=6, 
+         set_draw_parent=arg_0_3)
     Restart()
 
 
@@ -8531,7 +6695,7 @@ def Event12905387(_, arg_0_3: int):
     SkipLinesIfThisEventSlotOff(1)
     End()
     ForceAnimation(arg_0_3, 7000, loop=True)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfEntityWithinDistance(-1, arg_0_3, PLAYER, radius=2.0)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
@@ -8548,7 +6712,7 @@ def Event12905396(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7000, loop=True)
     SetAIParamID(arg_0_3, 218085)
     AddSpecialEffect(arg_0_3, 5629, affect_npc_part_hp=False)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfEntityWithinDistance(-1, arg_0_3, PLAYER, radius=2.0)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
@@ -8620,8 +6784,8 @@ def Event12905407(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event12906400(_, arg_0_3: int):
     """ 12906400: Event 12906400 """
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Fire)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.NoType)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Fire)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.NoType)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-1, input_condition=1)
@@ -8632,115 +6796,45 @@ def Event12906400(_, arg_0_3: int):
     DestroyObject(arg_0_3, slot=1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
     WaitFrames(10)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6051,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6051, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     WaitFrames(45)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6053,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6053, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     End()
     CreatePlayLog(1462)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6150,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6150, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6151,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6151, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6152,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6152, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6153,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6153, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6154,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6154, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6155,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6155, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6156,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6156, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6157,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6157, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     IfFlagOn(-2, 92905100)
     IfFlagOn(-2, 92905101)
     IfFlagOn(-2, 92905102)
@@ -8750,24 +6844,10 @@ def Event12906400(_, arg_0_3: int):
     IfFlagOn(-2, 92905106)
     IfFlagOn(-2, 92905107)
     SkipLinesIfConditionTrue(1, -2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6000,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=6055,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6000, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=200, behavior_id=6055, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     DestroyObject(arg_0_3, slot=1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
 
@@ -8781,9 +6861,8 @@ def Event12906500(_, arg_0_3: int, arg_4_7: int):
     Kill(arg_0_3, award_souls=True)
 
 
-def Event12906534(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906534(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906534: Event 12906534 """
     DisableObject(arg_8_11)
     DisableObject(arg_16_19)
@@ -8794,100 +6873,36 @@ def Event12906534(
     WaitFrames(5)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -8897,16 +6912,8 @@ def Event12906534(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     WaitFrames(45)
     RemoveObjectFlag(arg_4_7)
     DisableObject(arg_0_3)
@@ -8917,100 +6924,36 @@ def Event12906534(
     WaitFrames(10)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9020,16 +6963,8 @@ def Event12906534(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=5.599999904632568,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=5.599999904632568, repetition_time=0.0)
     Wait(5.599999904632568)
     RemoveObjectFlag(arg_12_15)
     DisableObject(arg_8_11)
@@ -9040,100 +6975,36 @@ def Event12906534(
     WaitFrames(5)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9143,25 +7014,16 @@ def Event12906534(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     Wait(2.5)
     RemoveObjectFlag(arg_20_23)
     DisableObject(arg_16_19)
     Restart()
 
 
-def Event12906537(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906537(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906537: Event 12906537 """
     DisableObject(arg_8_11)
     DisableObject(arg_16_19)
@@ -9172,100 +7034,36 @@ def Event12906537(
     WaitFrames(5)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9275,16 +7073,8 @@ def Event12906537(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     WaitFrames(45)
     RemoveObjectFlag(arg_4_7)
     DisableObject(arg_0_3)
@@ -9295,100 +7085,36 @@ def Event12906537(
     WaitFrames(10)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9398,16 +7124,8 @@ def Event12906537(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=6.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=6.0, repetition_time=0.0)
     Wait(6.0)
     RemoveObjectFlag(arg_12_15)
     DisableObject(arg_8_11)
@@ -9418,100 +7136,36 @@ def Event12906537(
     WaitFrames(5)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9521,33 +7175,16 @@ def Event12906537(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     Wait(2.5)
     RemoveObjectFlag(arg_20_23)
     DisableObject(arg_16_19)
     Restart()
 
 
-def Event12906540(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906540(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906540: Event 12906540 """
     DisableObject(arg_8_11)
     DisableObject(arg_16_19)
@@ -9559,100 +7196,36 @@ def Event12906540(
     WaitFrames(5)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9662,16 +7235,8 @@ def Event12906540(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_4_7,
-        arg_0_3,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_4_7, arg_0_3, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     WaitFrames(45)
     RemoveObjectFlag(arg_4_7)
     DisableObject(arg_0_3)
@@ -9682,100 +7247,36 @@ def Event12906540(
     WaitFrames(10)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9785,16 +7286,8 @@ def Event12906540(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_12_15,
-        arg_8_11,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=4.300000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_12_15, arg_8_11, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=4.300000190734863, repetition_time=0.0)
     Wait(12.0)
     RemoveObjectFlag(arg_12_15)
     DisableObject(arg_8_11)
@@ -9805,100 +7298,36 @@ def Event12906540(
     WaitFrames(5)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     IfFlagOn(-1, 92905100)
     IfFlagOn(-1, 92905101)
     IfFlagOn(-1, 92905102)
@@ -9908,33 +7337,16 @@ def Event12906540(
     IfFlagOn(-1, 92905106)
     IfFlagOn(-1, 92905107)
     SkipLinesIfConditionTrue(1, -1)
-    CreateHazard(
-        arg_20_23,
-        arg_16_19,
-        model_point=101,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=2.5,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_20_23, arg_16_19, model_point=101, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=2.5, repetition_time=0.0)
     Wait(2.5)
     RemoveObjectFlag(arg_20_23)
     DisableObject(arg_16_19)
     End()
 
 
-def Event12906541(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906541(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906541: Event 12906541 """
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
@@ -9954,100 +7366,36 @@ def Event12906541(
     WaitFrames(30)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     IfFlagOn(-4, 92905100)
     IfFlagOn(-4, 92905101)
     IfFlagOn(-4, 92905102)
@@ -10057,16 +7405,8 @@ def Event12906541(
     IfFlagOn(-4, 92905106)
     IfFlagOn(-4, 92905107)
     SkipLinesIfConditionTrue(1, -4)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=14.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=14.800000190734863, repetition_time=0.0)
     WaitFrames(370)
     RemoveObjectFlag(arg_28_31)
     DeleteObjectFX(arg_4_7, erase_root=True)
@@ -10076,17 +7416,8 @@ def Event12906541(
     DisableObject(arg_4_7)
 
 
-def Event12906543(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906543(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906543: Event 12906543 """
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
@@ -10106,100 +7437,36 @@ def Event12906543(
     WaitFrames(30)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     IfFlagOn(-4, 92905100)
     IfFlagOn(-4, 92905101)
     IfFlagOn(-4, 92905102)
@@ -10209,16 +7476,8 @@ def Event12906543(
     IfFlagOn(-4, 92905106)
     IfFlagOn(-4, 92905107)
     SkipLinesIfConditionTrue(1, -4)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=13.699999809265137,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=13.699999809265137, repetition_time=0.0)
     WaitFrames(270)
     RemoveObjectFlag(arg_28_31)
     DeleteObjectFX(arg_4_7, erase_root=True)
@@ -10228,17 +7487,8 @@ def Event12906543(
     DisableObject(arg_4_7)
 
 
-def Event12906545(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906545(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906545: Event 12906545 """
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
@@ -10258,100 +7508,36 @@ def Event12906545(
     WaitFrames(30)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6140,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6140, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905101)
     IfFlagOn(0, 92905101)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6141,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6141, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905102)
     IfFlagOn(0, 92905102)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6142,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6142, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905103)
     IfFlagOn(0, 92905103)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6143,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6143, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905104)
     IfFlagOn(0, 92905104)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6144,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6144, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905105)
     IfFlagOn(0, 92905105)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6145,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6145, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905106)
     IfFlagOn(0, 92905106)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6146,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6146, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     SkipLinesIfFlagOff(2, 92905107)
     IfFlagOn(0, 92905107)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=6147,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=6147, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     IfFlagOn(-4, 92905100)
     IfFlagOn(-4, 92905101)
     IfFlagOn(-4, 92905102)
@@ -10361,16 +7547,8 @@ def Event12906545(
     IfFlagOn(-4, 92905106)
     IfFlagOn(-4, 92905107)
     SkipLinesIfConditionTrue(1, -4)
-    CreateHazard(
-        arg_28_31,
-        arg_4_7,
-        model_point=100,
-        behavior_param_id=5110,
-        target_type=DamageTargetType.Character,
-        radius=2.0999999046325684,
-        life=12.800000190734863,
-        repetition_time=0.0,
-    )
+    CreateHazard(arg_28_31, arg_4_7, model_point=100, behavior_param_id=5110, target_type=DamageTargetType.Character, 
+                 radius=2.0999999046325684, life=12.800000190734863, repetition_time=0.0)
     WaitFrames(270)
     RemoveObjectFlag(arg_28_31)
     DeleteObjectFX(arg_4_7, erase_root=True)
@@ -10405,9 +7583,8 @@ def Event12906567(_, arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event12906586(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906586(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906586: Event 12906586 """
     IfCharacterBackreadEnabled(0, arg_0_3)
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -10416,7 +7593,7 @@ def Event12906586(
     IfHasAIStatus(2, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(3, arg_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHasSpecialEffect(4, arg_0_3, 4740)
-    IfDamageType(5, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(5, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -10435,7 +7612,8 @@ def Event12906586(
     IfHasAIStatus(7, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(8, arg_0_3, ai_status=AIStatusType.Battle)
     IfCharacterHasSpecialEffect(9, arg_0_3, 4740)
-    IfDamageType(10, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(10, attacked_entity=arg_0_3, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=6)
     IfConditionTrue(-3, input_condition=7)
     IfConditionTrue(-3, input_condition=8)
@@ -10488,28 +7666,14 @@ def Event12906654(_, arg_0_3: int, arg_4_7: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ReplanAI(arg_0_3)
     Wait(3.0)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=32,
-        behavior_id=210200599,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=32, behavior_id=210200599, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.a_Ambient, sound_id=225000000)
     IfCharacterInsideRegion(0, arg_0_3, region=arg_4_7)
     ForceAnimation(arg_0_3, 3010, wait_for_completion=True)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.a_Ambient, sound_id=225000000)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=32,
-        behavior_id=210200599,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=32, behavior_id=210200599, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     ForceAnimation(arg_0_3, 7004, wait_for_completion=True)
     AICommand(arg_0_3, command_id=-1, slot=0)
     ReplanAI(arg_0_3)
@@ -10538,84 +7702,37 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(0, input_condition=2)
     IfEntityWithinDistance(3, arg_0_3, PLAYER, radius=5.0)
     SkipLinesIfConditionTrue(23, 3)
-    Move(
-        arg_8_11,
-        destination=10000,
-        destination_type=CoordEntityType.Character,
-        model_point=236,
-        copy_draw_parent=PLAYER,
-    )
+    Move(arg_8_11, destination=10000, destination_type=CoordEntityType.Character, model_point=236, 
+         copy_draw_parent=PLAYER)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.c_CharacterMotion, sound_id=arg_4_7)
     ForceAnimation(arg_0_3, 3020)
     WaitFrames(40)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_8_11,
-        model_point=101,
-        behavior_id=6064,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_8_11, model_point=101, behavior_id=6064, 
+                    launch_angle_x=270, launch_angle_y=0, launch_angle_z=0)
     IfHealthNotEqual(4, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(17, 4)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_8_11,
-        model_point=101,
-        behavior_id=6051,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_8_11, model_point=101, behavior_id=6051, 
+                    launch_angle_x=270, launch_angle_y=0, launch_angle_z=0)
     WaitFrames(90)
     IfHealthNotEqual(5, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(13, 5)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_8_11,
-        model_point=101,
-        behavior_id=6054,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_8_11, model_point=101, behavior_id=6054, 
+                    launch_angle_x=270, launch_angle_y=0, launch_angle_z=0)
     WaitFrames(90)
     IfHealthNotEqual(6, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(9, 6)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_8_11,
-        model_point=101,
-        behavior_id=6056,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_8_11, model_point=101, behavior_id=6056, 
+                    launch_angle_x=270, launch_angle_y=0, launch_angle_z=0)
     WaitFrames(60)
     IfHealthNotEqual(7, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(5, 7)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_8_11,
-        model_point=101,
-        behavior_id=6056,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_8_11, model_point=101, behavior_id=6056, 
+                    launch_angle_x=270, launch_angle_y=0, launch_angle_z=0)
     WaitFrames(60)
     IfHealthNotEqual(8, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(1, 8)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_8_11,
-        model_point=101,
-        behavior_id=6056,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_8_11, model_point=101, behavior_id=6056, 
+                    launch_angle_x=270, launch_angle_y=0, launch_angle_z=0)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Normal)
     Restart()
 
@@ -10633,15 +7750,8 @@ def Event12906660(_, arg_0_3: int):
     DefineLabel(0)
     SkipLinesIfThisEventSlotOn(1)
     CreateObjectFX(929305, obj=arg_0_3, model_point=600)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6090,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6090, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
 
     # --- 1 --- #
@@ -10656,85 +7766,29 @@ def Event12906660(_, arg_0_3: int):
     SkipLinesIfFlagOn(6, 92905102)
     SkipLinesIfFlagOn(3, 92905101)
     SkipLinesIfFlagOn(0, 92905100)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6120,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6120, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6121,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6121, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6122,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6122, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6123,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6123, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6124,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6124, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6125,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6125, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6126,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6126, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     Goto(Label.L2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=100,
-        behavior_id=6127,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=100, behavior_id=6127, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
 
     # --- 2 --- #
     DefineLabel(2)
@@ -10839,37 +7893,19 @@ def Event12906750(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfCharacterAlive(1, arg_0_3)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    Move(
-        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=arg_8_11, short_move=True
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=arg_8_11, 
+         short_move=True)
     Restart()
 
 
 @RestartOnRest
-def Event12906764(
-    _,
-    arg_0_3: int,
-    arg_4_5: short,
-    arg_8_11: int,
-    arg_12_13: short,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906764(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_13: short, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906764: Event 12906764 """
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_12_13,
-        part_health=arg_16_19,
-        damage_correction=1.0,
-        body_damage_correction=2.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_12_13, part_health=arg_16_19, damage_correction=1.0, 
+                  body_damage_correction=2.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -10877,16 +7913,8 @@ def Event12906764(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_12_13,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=2.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_12_13, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=2.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_28_31)
@@ -10904,30 +7932,13 @@ def Event12906764(
 
 
 @RestartOnRest
-def Event12906765(
-    _,
-    arg_0_3: int,
-    arg_4_5: short,
-    arg_8_11: int,
-    arg_12_13: short,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906765(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_13: short, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906765: Event 12906765 """
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_12_13,
-        part_health=arg_16_19,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_12_13, part_health=arg_16_19, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -10935,16 +7946,8 @@ def Event12906765(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_12_13,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_12_13, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_28_31)
@@ -10993,9 +7996,8 @@ def Event12906767(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event12906768(
-    _, arg_0_3: int, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_17: short, arg_18_18: uchar, arg_19_19: uchar
-):
+def Event12906768(_, arg_0_3: int, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_17: short, arg_18_18: uchar, 
+                  arg_19_19: uchar):
     """ 12906768: Event 12906768 """
     EndIfFlagOn(arg_4_7)
     GotoIfThisEventSlotOn(Label.L0)
@@ -11006,44 +8008,19 @@ def Event12906768(
     IfCharacterHasSpecialEffect(0, arg_0_3, 5402)
     SetCollisionMask(arg_0_3, bit_index=arg_18_18, switch_type=OnOffChange.Off)
     SetCollisionMask(arg_0_3, bit_index=arg_19_19, switch_type=OnOffChange.On)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_8_9,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=0.0,
-        body_damage_correction=0.0,
-        is_invincible=True,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_8_9, part_index=arg_16_17, part_health=9999999, damage_correction=0.0, 
+                  body_damage_correction=0.0, is_invincible=True, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_12_15, material_special_effect_id=74, material_fx_id=74)
 
 
-def Event12906769(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906769(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906769: Event 12906769 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11051,16 +8028,8 @@ def Event12906769(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11084,31 +8053,14 @@ def Event12906769(
     Restart()
 
 
-def Event12906770(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906770(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906770: Event 12906770 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11116,16 +8068,8 @@ def Event12906770(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11149,31 +8093,14 @@ def Event12906770(
     Restart()
 
 
-def Event12906771(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906771(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906771: Event 12906771 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11181,16 +8108,8 @@ def Event12906771(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11214,31 +8133,14 @@ def Event12906771(
     Restart()
 
 
-def Event12906772(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906772(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906772: Event 12906772 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11246,16 +8148,8 @@ def Event12906772(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11279,31 +8173,14 @@ def Event12906772(
     Restart()
 
 
-def Event12906773(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906773(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906773: Event 12906773 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11311,16 +8188,8 @@ def Event12906773(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11344,31 +8213,14 @@ def Event12906773(
     Restart()
 
 
-def Event12906774(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906774(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906774: Event 12906774 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11376,16 +8228,8 @@ def Event12906774(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11409,31 +8253,14 @@ def Event12906774(
     Restart()
 
 
-def Event12906775(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906775(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906775: Event 12906775 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11441,16 +8268,8 @@ def Event12906775(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11474,31 +8293,14 @@ def Event12906775(
     Restart()
 
 
-def Event12906776(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906776(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906776: Event 12906776 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11506,16 +8308,8 @@ def Event12906776(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11539,31 +8333,14 @@ def Event12906776(
     Restart()
 
 
-def Event12906777(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906777(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906777: Event 12906777 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11571,16 +8348,8 @@ def Event12906777(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11604,31 +8373,14 @@ def Event12906777(
     Restart()
 
 
-def Event12906778(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906778(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906778: Event 12906778 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11636,16 +8388,8 @@ def Event12906778(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11669,31 +8413,14 @@ def Event12906778(
     Restart()
 
 
-def Event12906779(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906779(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906779: Event 12906779 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11701,16 +8428,8 @@ def Event12906779(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11734,31 +8453,14 @@ def Event12906779(
     Restart()
 
 
-def Event12906780(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906780(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906780: Event 12906780 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11766,16 +8468,8 @@ def Event12906780(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11799,31 +8493,14 @@ def Event12906780(
     Restart()
 
 
-def Event12906781(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906781(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906781: Event 12906781 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11831,16 +8508,8 @@ def Event12906781(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11864,31 +8533,14 @@ def Event12906781(
     Restart()
 
 
-def Event12906782(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906782(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906782: Event 12906782 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11896,16 +8548,8 @@ def Event12906782(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11929,31 +8573,14 @@ def Event12906782(
     Restart()
 
 
-def Event12906783(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906783(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906783: Event 12906783 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -11961,16 +8588,8 @@ def Event12906783(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -11994,31 +8613,14 @@ def Event12906783(
     Restart()
 
 
-def Event12906784(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906784(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906784: Event 12906784 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -12026,16 +8628,8 @@ def Event12906784(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -12059,31 +8653,14 @@ def Event12906784(
     Restart()
 
 
-def Event12906785(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906785(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906785: Event 12906785 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -12091,16 +8668,8 @@ def Event12906785(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -12124,31 +8693,14 @@ def Event12906785(
     Restart()
 
 
-def Event12906786(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906786(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906786: Event 12906786 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -12156,16 +8708,8 @@ def Event12906786(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -12189,31 +8733,14 @@ def Event12906786(
     Restart()
 
 
-def Event12906787(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906787(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906787: Event 12906787 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -12221,16 +8748,8 @@ def Event12906787(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -12254,31 +8773,14 @@ def Event12906787(
     Restart()
 
 
-def Event12906788(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_17: short,
-    arg_20_23: int,
-    arg_24_25: short,
-    arg_28_31: int,
-):
+def Event12906788(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_17: short, arg_20_23: int, 
+                  arg_24_25: short, arg_28_31: int):
     """ 12906788: Event 12906788 """
     IfFlagOn(1, arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=arg_28_31,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=arg_28_31, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -12286,16 +8788,8 @@ def Event12906788(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_24_25,
-        part_index=arg_16_17,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_24_25, part_index=arg_16_17, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
@@ -12321,16 +8815,8 @@ def Event12906788(
 
 def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12906827: Event 12906827 """
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_6_7,
-        part_index=arg_4_5,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_6_7, part_index=arg_4_5, part_health=100, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -12338,16 +8824,8 @@ def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_6_7,
-        part_index=arg_4_5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_6_7, part_index=arg_4_5, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_12_15)
@@ -12359,9 +8837,8 @@ def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int
     Restart()
 
 
-def Event12906828(
-    _, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar
-):
+def Event12906828(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, 
+                  arg_17_17: uchar):
     """ 12906828: Event 12906828 """
     GotoIfThisEventSlotOn(Label.L0)
     SetCollisionMask(arg_0_3, bit_index=1, switch_type=OnOffChange.Off)
@@ -12374,16 +8851,8 @@ def Event12906828(
     SetDisplayMask(arg_0_3, bit_index=12, switch_type=OnOffChange.On)
     SetCollisionMask(arg_0_3, bit_index=arg_16_16, switch_type=OnOffChange.On)
     SetDisplayMask(arg_0_3, bit_index=arg_17_17, switch_type=OnOffChange.Off)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_6_7,
-        part_index=arg_4_5,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_6_7, part_index=arg_4_5, part_health=100, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
@@ -12402,17 +8871,8 @@ def Event12906828(
     SetDisplayMask(arg_0_3, bit_index=arg_17_17, switch_type=OnOffChange.On)
 
 
-def Event12906789(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906789(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906789: Event 12906789 """
     EndIfFlagOn(arg_20_23)
     GotoIfFlagOn(Label.L0, arg_24_27)
@@ -12433,7 +8893,7 @@ def Event12906789(
     DefineLabel(0)
     IfFlagOff(2, arg_20_23)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=2900010, entity=arg_4_7)
     IfFlagOn(3, arg_20_23)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -12465,7 +8925,7 @@ def Event12906790(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(1, arg_12_15)
     IfFlagOn(1, arg_16_19)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -12535,9 +8995,8 @@ def Event12906791(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     StartPlayLogMeasurement(2900013, 1424, overwrite=True)
 
 
-def Event12906792(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906792(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906792: Event 12906792 """
     DisableNetworkSync()
     DisableSoundEvent(arg_8_11)
@@ -12581,9 +9040,8 @@ def Event12906794(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     Restart()
 
 
-def Event12906795(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906795(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906795: Event 12906795 """
     EndIfFlagOn(arg_8_11)
     DisableAI(arg_0_3)
@@ -12652,17 +9110,8 @@ def Event12906795(
     StartPlayLogMeasurement(2900013, 1424, overwrite=True)
 
 
-def Event12906796(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906796(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906796: Event 12906796 """
     EndIfFlagOn(arg_20_23)
     GotoIfFlagOn(Label.L0, arg_24_27)
@@ -12683,7 +9132,7 @@ def Event12906796(
     DefineLabel(0)
     IfFlagOff(2, arg_20_23)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=2900010, entity=arg_4_7)
     IfFlagOn(3, arg_20_23)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -12724,7 +9173,7 @@ def Event12906800(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DefineLabel(0)
     IfFlagOff(2, arg_12_15)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=2900010, entity=arg_4_7)
     IfFlagOn(3, arg_12_15)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -12756,7 +9205,7 @@ def Event12906802(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(1, arg_12_15)
     IfFlagOn(1, arg_16_19)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2900010, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -12828,9 +9277,8 @@ def Event12906806(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     StartPlayLogMeasurement(2900013, 1424, overwrite=True)
 
 
-def Event12906810(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906810(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906810: Event 12906810 """
     DisableNetworkSync()
     DisableSoundEvent(arg_8_11)
@@ -12859,9 +9307,8 @@ def Event12906810(
     EnableBossMusic(arg_12_15)
 
 
-def Event12906978(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906978(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906978: Event 12906978 """
     DisableNetworkSync()
     DisableSoundEvent(arg_8_11)
@@ -12965,17 +9412,8 @@ def Event12906824(_, arg_0_3: int, arg_4_7: int):
     EnableFlag(arg_4_7)
 
 
-def Event12906825(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: float,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906825(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906825: Event 12906825 """
     GotoIfFlagOff(Label.L0, arg_28_31)
     DisableBackread(arg_0_3)
@@ -13001,16 +9439,8 @@ def Event12906825(
 def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906841: Event 12906841 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=400,
-        damage_correction=1.0,
-        body_damage_correction=0.75,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=400, damage_correction=1.0, 
+                  body_damage_correction=0.75, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13018,16 +9448,8 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=2.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=2.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
@@ -13050,16 +9472,8 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906843: Event 12906843 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=80,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=80, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13067,16 +9481,8 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
@@ -13099,16 +9505,8 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906845: Event 12906845 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=80,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=80, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13116,16 +9514,8 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
@@ -13148,16 +9538,8 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906847: Event 12906847 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=280,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=280, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13165,16 +9547,9 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.149999976158142,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.149999976158142, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
@@ -13197,16 +9572,8 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906849: Event 12906849 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=280,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=280, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13214,16 +9581,9 @@ def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.149999976158142,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.149999976158142, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
@@ -13258,16 +9618,8 @@ def Event12906851(_, arg_0_3: int, arg_4_7: int):
 def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906853: Event 12906853 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=100, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13275,16 +9627,8 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
@@ -13307,16 +9651,8 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906855: Event 12906855 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13324,16 +9660,9 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2000000476837158,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.2000000476837158, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
@@ -13356,16 +9685,8 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906857: Event 12906857 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13373,16 +9694,9 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2000000476837158,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.2000000476837158, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
@@ -13405,16 +9719,8 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906859: Event 12906859 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13422,16 +9728,9 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.149999976158142,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.149999976158142, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
@@ -13454,16 +9753,8 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906861: Event 12906861 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13471,16 +9762,9 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.149999976158142,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.149999976158142, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
@@ -13503,16 +9787,8 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906831: Event 12906831 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13520,16 +9796,8 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
@@ -13552,16 +9820,8 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906833: Event 12906833 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13569,16 +9829,8 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
@@ -13601,16 +9853,8 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906835: Event 12906835 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13618,16 +9862,8 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
@@ -13650,16 +9886,8 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906837: Event 12906837 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13667,16 +9895,8 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
@@ -13699,16 +9919,8 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
 def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     """ 12906839: Event 12906839 """
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13716,16 +9928,8 @@ def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
@@ -13817,16 +10021,8 @@ def Event12906865(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_13: sho
     DefineLabel(0)
     SetCollisionMask(arg_0_3, bit_index=arg_14_14, switch_type=OnOffChange.Off)
     SetCollisionMask(arg_0_3, bit_index=arg_15_15, switch_type=OnOffChange.On)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=arg_12_13,
-        part_health=9999999,
-        damage_correction=0.0,
-        body_damage_correction=0.0,
-        is_invincible=True,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=arg_12_13, part_health=9999999, damage_correction=0.0, 
+                  body_damage_correction=0.0, is_invincible=True, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
 
 
@@ -13836,16 +10032,8 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.399999976158142,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.399999976158142, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13853,16 +10041,9 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=2.0999999046325684,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=2.0999999046325684, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
@@ -13888,16 +10069,8 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=400,
-        damage_correction=1.0,
-        body_damage_correction=0.20000000298023224,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=400, damage_correction=1.0, 
+                  body_damage_correction=0.20000000298023224, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13905,16 +10078,9 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=0.30000001192092896,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=0.30000001192092896, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 488, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 498)
@@ -13940,16 +10106,8 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -13957,16 +10115,8 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 485, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 495)
@@ -13992,16 +10142,8 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=230,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=230, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14009,16 +10151,8 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
@@ -14044,16 +10178,8 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part6,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part6, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14061,16 +10187,8 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part6,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part6, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 486, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 496)
@@ -14096,16 +10214,8 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part7,
-        part_health=170,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part7, part_health=170, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14113,16 +10223,8 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part7,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part7, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
@@ -14148,16 +10250,8 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part8,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part8, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14165,16 +10259,8 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part8,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part8, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 487, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 497)
@@ -14200,16 +10286,8 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part9,
-        part_health=170,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part9, part_health=170, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14217,16 +10295,8 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part9, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
@@ -14252,16 +10322,8 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part10,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part10, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14269,16 +10331,8 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part10,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part10, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
@@ -14304,16 +10358,8 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part11,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=0.20000000298023224,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part11, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=0.20000000298023224, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14321,16 +10367,9 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part11,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=0.30000001192092896,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part11, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=0.30000001192092896, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 488, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 498)
@@ -14356,16 +10395,8 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part12,
-        part_health=150,
-        damage_correction=1.0,
-        body_damage_correction=0.20000000298023224,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part12, part_health=150, damage_correction=1.0, 
+                  body_damage_correction=0.20000000298023224, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14373,16 +10404,9 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part12,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=0.30000001192092896,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part12, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=0.30000001192092896, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 488, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 498)
@@ -14429,16 +10453,8 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=180,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=180, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14447,16 +10463,8 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -14484,16 +10492,8 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14502,16 +10502,9 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.2999999523162842, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -14539,16 +10532,8 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=200,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=200, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14557,16 +10542,9 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.2999999523162842, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -14594,16 +10572,8 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=250,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=250, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14612,16 +10582,9 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.2999999523162842, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -14649,16 +10612,8 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=250,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=250, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -14667,16 +10622,9 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.2999999523162842, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -14777,16 +10725,8 @@ def Event12906912(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 def Event12906864(_, arg_0_3: int):
     """ 12906864: Event 12906864 """
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=2,
-        part_index=NPCPartType.Part2,
-        part_health=250,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=2, part_index=NPCPartType.Part2, part_health=250, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=2, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
@@ -14823,16 +10763,8 @@ def Event12906864(_, arg_0_3: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7002)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=2,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=2, part_index=NPCPartType.Part2, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=60, material_fx_id=60)
     ReplanAI(arg_0_3)
     IfTimeElapsed(0, 30.0)
@@ -14847,16 +10779,8 @@ def Event12906864(_, arg_0_3: int):
 
 def Event12906867(_, arg_0_3: int):
     """ 12906867: Event 12906867 """
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=3,
-        part_index=NPCPartType.Part3,
-        part_health=250,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=3, part_index=NPCPartType.Part3, part_health=250, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=3, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
@@ -14893,16 +10817,8 @@ def Event12906867(_, arg_0_3: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7007)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=3,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=3, part_index=NPCPartType.Part3, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.2999999523162842, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=60, material_fx_id=60)
     ReplanAI(arg_0_3)
     IfTimeElapsed(0, 30.0)
@@ -14919,16 +10835,8 @@ def Event12906867(_, arg_0_3: int):
 def Event12906868(_, arg_0_3: int):
     """ 12906868: Event 12906868 """
     EndIfFlagOn(13201800)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=1,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=0.5,
-        body_damage_correction=0.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=1, part_index=NPCPartType.Part1, part_health=9999999, damage_correction=0.5, 
+                  body_damage_correction=0.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=1, material_special_effect_id=61, material_fx_id=61)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=1, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
@@ -14949,13 +10857,8 @@ def Event12906829(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    Move(
-        arg_4_7,
-        destination=arg_0_3,
-        destination_type=CoordEntityType.Character,
-        model_point=arg_8_11,
-        copy_draw_parent=arg_0_3,
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=arg_8_11, 
+         copy_draw_parent=arg_0_3)
     Restart()
 
 
@@ -15013,15 +10916,8 @@ def Event12904734(_, arg_0_3: int):
     IfCharacterHasSpecialEffect(2, arg_0_3, 5650)
     IfHealthValueLessThan(2, arg_0_3, 0)
     IfConditionTrue(0, input_condition=2)
-    ShootProjectile(
-        owner_entity=2900000,
-        projectile_id=arg_0_3,
-        model_point=6,
-        behavior_id=225100310,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2900000, projectile_id=arg_0_3, model_point=6, behavior_id=225100310, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     Wait(0.5)
     Restart()
 
@@ -15046,16 +10942,8 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=400,
-        damage_correction=1.0,
-        body_damage_correction=2.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=400, damage_correction=1.0, 
+                  body_damage_correction=2.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -15063,16 +10951,8 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part5,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=2.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part5, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=2.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
@@ -15099,16 +10979,8 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=250,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=250, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -15116,16 +10988,8 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part1, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
@@ -15152,16 +11016,8 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=250,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=250, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -15169,16 +11025,8 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part2,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part2, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
@@ -15205,16 +11053,8 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -15222,16 +11062,8 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part3,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part3, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
@@ -15258,16 +11090,8 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     IfHasAIStatus(0, arg_0_3, ai_status=AIStatusType.Battle)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=300,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=300, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
@@ -15275,16 +11099,8 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part4,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_0_3, npc_part_id=arg_4_5, part_index=NPCPartType.Part4, part_health=9999999, 
+                  damage_correction=1.0, body_damage_correction=1.25, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
@@ -15513,9 +11329,8 @@ def Event12907401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableFlag(12907230)
 
 
-def Event12907405(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12907405(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12907405: Event 12907405 """
     GotoIfFlagOff(Label.L1, arg_8_11)
     DisableAI(arg_0_3)
@@ -15732,17 +11547,8 @@ def Event12906962(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event12906966(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12906966(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12906966: Event 12906966 """
     SkipLinesIfFlagOn(1, arg_12_15)
     DisableCharacter(arg_4_7)
@@ -15760,7 +11566,7 @@ def Event12906966(
     IfFlagOff(2, arg_16_19)
     IfFlagState(2, state=FlagState.On, flag_type=FlagType.RelativeToThisEventSlot, flag=14)
     IfFlagOff(2, arg_24_27)
-    IfActionButtonInRegion(2, action_button_id=arg_20_23, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=arg_20_23, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -15787,9 +11593,8 @@ def Event12906970(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event12906974(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12906974(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12906974: Event 12906974 """
     EndIfClient()
     EnableGravity(arg_0_3)

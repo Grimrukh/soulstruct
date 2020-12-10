@@ -3,7 +3,7 @@ from io import BufferedReader, BytesIO
 import struct
 
 from soulstruct.core import SoulstructError
-from soulstruct.enums.darksouls1 import SoundType
+from soulstruct.events.darksouls1.enums import SoundType
 from soulstruct.game_types import *
 from soulstruct.maps.base import MSBEntryList, MSBEntryEntity
 from soulstruct.maps.enums import MSBEventSubtype

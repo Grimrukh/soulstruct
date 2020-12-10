@@ -32,12 +32,10 @@ ENTITY_GAME_TYPES = (
     Character,
     PlayerStart,
     Collision,
-    Navmesh,
     SoundEvent,
     FXEvent,
     SpawnerEvent,
     MessageEvent,
-    ObjActEvent,  # TODO: normal Entity ID is not used.
     SpawnPointEvent,
     NavigationEvent,
     PointRegion,
@@ -61,6 +59,7 @@ class EntityEntryRow(EntryRow):
     ENTRY_TEXT_WIDTH = 30
     ENTRY_DESCRIPTION_WIDTH = 120
 
+    # noinspection PyMissingConstructor
     def __init__(self, editor: SoulstructEntityEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
@@ -99,7 +98,7 @@ class EntityEntryRow(EntryRow):
             id_bindings["<Button-1>"] = lambda _, i=row_index: self.master.select_entry_row_index(
                 i, id_clicked=True
             )
-            id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
+            # id_bindings["<Shift-Button-1>"] = lambda _, i=row_index: self.master.popout_entry_id_edit(i)
         else:
             id_bindings = main_bindings
         bind_events(self.id_box, id_bindings)
@@ -345,7 +344,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
             row += 1
 
         self.displayed_entry_count = row
-        for remaining_row in range(row, self.ENTRY_RANGE_SIZE):
+        for remaining_row in range(row, len(self.entry_rows)):
             self.entry_rows[remaining_row].hide()
 
         self.entry_i_frame.columnconfigure(0, weight=1)

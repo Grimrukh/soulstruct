@@ -997,7 +997,7 @@ def Event13200811():
     WaitFrames(1)
     ForceAnimation(PLAYER, 63010)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=138008020)
-    CreateTemporaryFX(30300, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(30300, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
 
 
 @RestartOnRest

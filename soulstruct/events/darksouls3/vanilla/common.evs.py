@@ -1195,7 +1195,7 @@ def Event9014():
     GotoIfFlagOff(Label.L0, 13300761)
     DisplayDialog(
         13007000,
-        anchor_entity=10000,
+        anchor_entity=PLAYER,
         display_distance=0.0,
         button_type=ButtonType.OK_or_Cancel,
         number_buttons=NumberButtons.OneButton,

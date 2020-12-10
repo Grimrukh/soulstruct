@@ -5,7 +5,7 @@ from soulstruct.enums.shared import SoundType
 from soulstruct.game_types.basic_types import GameObject
 from soulstruct.game_types.msb_types import CoordEntityTyping, SoundEvent
 
-__all__ = ["Sound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSound", "SoundEvent"]
+__all__ = ["Sound", "MusicSound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSound", "SoundEvent"]
 
 
 class Sound(GameObject, IntEnum):
@@ -17,6 +17,14 @@ class Sound(GameObject, IntEnum):
     @property
     def sound_type(self):
         raise NotImplementedError("You must use a subclass of Sound.")
+
+
+class MusicSound(Sound):
+    """Music-type sound effect."""
+
+    @property
+    def sound_type(self):
+        return SoundType.m_Music
 
 
 class SFXSound(Sound):

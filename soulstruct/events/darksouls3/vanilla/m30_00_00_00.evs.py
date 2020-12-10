@@ -426,7 +426,7 @@ def Event13000360():
     EndIfThisEventSlotOn()
     IfFlagOn(0, 711)
     ForceAnimation(PLAYER, 63010)
-    CreateTemporaryFX(30300, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=245)
+    CreateTemporaryFX(30300, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=245)
     CreateObjectFX(830095, obj=3001705, model_point=90)
     EnableFlag(13000360)
     Wait(10.0)

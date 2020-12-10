@@ -5,7 +5,7 @@ from soulstruct.events.internal import (
     boolify,
     get_game_map_variable_name,
 )
-from soulstruct.enums.darksouls3 import *
+from soulstruct.events.darksouls3.enums import *
 
 
 def get_target_args(target_comparison_type, target_count):
@@ -52,8 +52,15 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
                 attacked_entity = "PLAYER"
             if attacking_character == 10000:
                 attacking_character = "PLAYER"
+            damage_type = get_enum_name(DamageType, damage_type)
+            if damage_type == "DamageType.Unspecified":
+                # Damage type is "unspecified" by default, so leave out this verbose keyword argument.
+                return (
+                    f"IfAttackedWithDamageType({condition}, attacked_entity={attacked_entity}, "
+                    f"attacking_character={attacking_character})"
+                )
             return (
-                f"IfDamageType({condition}, attacked_entity={attacked_entity}, "
+                f"IfAttackedWithDamageType({condition}, attacked_entity={attacked_entity}, "
                 f"attacking_character={attacking_character}, damage_type={get_enum_name(DamageType, damage_type)})"
             )
 
@@ -974,7 +981,11 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
 
         if instruction_index == 5:
             flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level = req_args
-            return f"RegisterHealingFountain(flag={flag}, obj={obj}, reaction_distance={reaction_distance}, reaction_angle={reaction_angle}, initial_sword_number={initial_sword_number}, sword_level={sword_level})"
+            return (
+                f"RegisterLantern(flag={flag}, obj={obj}, reaction_distance={reaction_distance}, "
+                f"reaction_angle={reaction_angle}, initial_sword_number={initial_sword_number}, "
+                f"sword_level={sword_level})"
+            )
 
         if instruction_index == 8:
             (unknown,) = req_args

@@ -1430,7 +1430,7 @@ def Event13705520(_, arg_0_3: int, arg_4_7: int):
     IfActionButtonInRegion(0, action_button_id=9600, region=arg_4_7)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
-    CreateTemporaryFX(301002, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=999999988)
     AddSpecialEffect(PLAYER, 2005)
     DeleteObjectFX(arg_0_3, erase_root=True)
@@ -3078,7 +3078,7 @@ def Event13700664():
     IfFlagOn(0, 73700204)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
-    CreateTemporaryFX(301002, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=999999988)
     AddSpecialEffect(PLAYER, 2005)
 

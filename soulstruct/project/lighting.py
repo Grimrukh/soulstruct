@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import typing as tp
 
-from soulstruct.params.dark_souls_params import DRAW_PARAM_MAPS
+from soulstruct.params.darksouls1.draw_param import DRAW_PARAM_MAPS
 from soulstruct.project.base.base_editor import EntryRow
 from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params import DarkSoulsLightingParameters, ParamEntry, DrawParamTable
+    from soulstruct.params import DarkSoulsLightingParameters, ParamEntry
+    from soulstruct.params.base.draw_param import DrawParam
 
 
 class LightingEntryRow(EntryRow):
@@ -151,9 +152,9 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
         return self.map_area_choice.get().split(" [")[0]
 
     def _get_display_categories(self):
-        return self.Lighting.param_names
+        return self.Lighting.PARAM_NAMES
 
-    def get_category_data(self, category=None) -> tp.Union[DrawParamTable, dict]:
+    def get_category_data(self, category=None) -> tp.Union[DrawParam, dict]:
         if category is None:
             category = self.active_category
             if category is None:
@@ -175,9 +176,9 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No param category selected.")
-        if entry_id not in self.get_category_data(category).entries:
+        if entry_id not in self.get_category_data(category).rows:
             raise ValueError(f"Param ID {entry_id} does not appear in category {category}.")
-        return sorted(self.get_category_data(category).entries).index(entry_id)
+        return sorted(self.get_category_data(category).rows).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
         if category is None:

@@ -710,17 +710,8 @@ def Event13404720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 
 @RestartOnRest
-def Event13404730(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event13404730(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 13404730: Event 13404730 """
     IfFlagOn(-15, arg_8_11)
     IfFlagOn(-15, arg_12_15)
@@ -1022,7 +1013,7 @@ def Event13404800():
     DefineLabel(0)
     IfFlagOff(2, 13401800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=3400800, region=3401800)
+    IfActionButtonParam(2, action_button_id=3400800, entity=3401800)
     IfFlagOn(3, 13401800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1049,7 +1040,7 @@ def Event13404801():
     IfFlagOn(1, 13401801)
     IfFlagOn(1, 13404808)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=3400800, region=3401800)
+    IfActionButtonParam(1, action_button_id=3400800, entity=3401800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3402800, animation=101130, wait_for_completion=True)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1316,24 +1307,12 @@ def Event13404825():
     IfFlagOn(1, 13404824)
     IfConditionTrue(0, input_condition=1)
     SkipLinesIfMultiplayer(2)
-    PlayCutscene(
-        34000030,
-        skippable=True,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3402807,
-        move_to_map=HUNTERS_NIGHTMARE,
-    )
+    PlayCutscene(34000030, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3402807, 
+                 move_to_map=HUNTERS_NIGHTMARE)
     SkipLines(4)
     SkipLinesIfClient(2)
-    PlayCutscene(
-        34000030,
-        skippable=False,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3402807,
-        move_to_map=HUNTERS_NIGHTMARE,
-    )
+    PlayCutscene(34000030, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=3402807, 
+                 move_to_map=HUNTERS_NIGHTMARE)
     SkipLines(1)
     PlayCutscene(34000030, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
@@ -1343,9 +1322,8 @@ def Event13404825():
     SetNetworkUpdateRate(3400801, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     SetNetworkUpdateRate(3400800, is_fixed=True, update_rate=CharacterUpdateRate.Never)
     Move(3400800, destination=3402900, model_point=-1, destination_type=CoordEntityType.Region)
-    Move(
-        3400801, destination=3402806, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=3400800
-    )
+    Move(3400801, destination=3402806, destination_type=CoordEntityType.Region, model_point=-1, 
+         copy_draw_parent=3400800)
     EnableGravity(3400801)
     EnableAnimations(3400801)
     ForceAnimation(3400801, 7000)
@@ -1356,21 +1334,12 @@ def Event13404825():
     EnableBossHealthBar(3400801, name=451005, slot=0)
 
 
-def Event13404830(
-    _, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event13404830(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 13404830: Event 13404830 """
     EndIfFlagOn(9471)
-    CreateNPCPart(
-        3400800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_12_15,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3400800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3400800, npc_part_id=arg_4_7, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, 3400800, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(-1, 3400800, 0.0)
@@ -1379,16 +1348,8 @@ def Event13404830(
     IfConditionTrue(-2, input_condition=-1)
     IfConditionTrue(0, input_condition=-2)
     EndIfFinishedConditionTrue(-1)
-    CreateNPCPart(
-        3400800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.5,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3400800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.5, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3400800, npc_part_id=arg_4_7, material_special_effect_id=73, material_fx_id=73)
     ForceAnimation(3400800, arg_20_23)
     AddSpecialEffect(3400800, arg_16_19, affect_npc_part_hp=False)
@@ -1444,32 +1405,32 @@ def Event13404840():
     """ 13404840: Event 13404840 """
     EndIfFlagOn(9471)
     IfHasTAEEvent(0, 3400800, tae_event_id=100)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.5)
     DisableCharacter(3400800)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(0.10000000149011612)
-    CreateTemporaryFX(645114, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryFX(645114, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
     Wait(1.2000000476837158)
     EnableCharacter(3400800)
     Move(3400800, destination=10000, destination_type=CoordEntityType.Character, model_point=236, short_move=True)
@@ -1576,24 +1537,12 @@ def Event13401851():
     IfCharacterInsideRegion(2, PLAYER, region=3402855)
     IfConditionTrue(0, input_condition=2)
     SkipLinesIfMultiplayer(2)
-    PlayCutscene(
-        34000010,
-        skippable=True,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3402856,
-        move_to_map=HUNTERS_NIGHTMARE,
-    )
+    PlayCutscene(34000010, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3402856, 
+                 move_to_map=HUNTERS_NIGHTMARE)
     SkipLines(4)
     SkipLinesIfClient(2)
-    PlayCutscene(
-        34000010,
-        skippable=False,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3402856,
-        move_to_map=HUNTERS_NIGHTMARE,
-    )
+    PlayCutscene(34000010, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=3402856, 
+                 move_to_map=HUNTERS_NIGHTMARE)
     SkipLines(1)
     PlayCutscene(34000010, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
@@ -1645,7 +1594,7 @@ def Event13404850():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
-    IfActionButtonInRegion(3, action_button_id=3400850, region=3401850)
+    IfActionButtonParam(3, action_button_id=3400850, entity=3401850)
     IfFlagOff(3, 13401850)
     IfFlagOn(4, 13401850)
     IfConditionTrue(-2, input_condition=3)
@@ -1673,7 +1622,7 @@ def Event13404851():
     IfFlagOn(1, 13401851)
     IfFlagOn(1, 13404858)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=3400850, region=3401850)
+    IfActionButtonParam(1, action_button_id=3400850, entity=3401850)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3402850, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1811,21 +1760,12 @@ def Event13404857():
 
 
 @RestartOnRest
-def Event13404870(
-    _, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event13404870(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 13404870: Event 13404870 """
     EndIfFlagOn(13401850)
-    CreateNPCPart(
-        3400850,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_20_23,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3400850, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_20_23, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3400850, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
     IfCharacterPartHealthLessThanOrEqual(1, 3400850, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(2, 3400850, 0.0)
@@ -1836,16 +1776,8 @@ def Event13404870(
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(2)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        3400850,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3400850, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3400850, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
     ForceAnimation(3400850, arg_24_27)
     AddSpecialEffect(3400850, arg_12_15, affect_npc_part_hp=False)
@@ -1891,19 +1823,14 @@ def Event13401200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13401200: Event 13401200 """
     DisableNetworkSync()
     EndIfFlagOn(arg_8_11)
-    IfActionButtonInRegion(1, action_button_id=arg_0_3, region=arg_4_7)
+    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagOn(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(
-        10010161,
-        anchor_entity=arg_4_7,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010161, anchor_entity=arg_4_7, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Wait(0.0)
     Restart()
 
@@ -1995,7 +1922,7 @@ def Event13400320():
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
     CreateObjectFX(900201, obj=3401500, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=3400100, region=3401500)
+    IfActionButtonParam(0, action_button_id=3400100, entity=3401500)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3401810, host_only=False)
     DeleteObjectFX(3401500, erase_root=True)
@@ -2061,16 +1988,8 @@ def Event13405100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     # --- 2 --- #
     DefineLabel(2)
     CreateObjectFX(900260, obj=arg_0_3, model_point=100)
-    CreateHazard(
-        13405101,
-        arg_0_3,
-        model_point=100,
-        behavior_param_id=6291,
-        target_type=DamageTargetType.Character,
-        radius=1.600000023841858,
-        life=9999.0,
-        repetition_time=0.0,
-    )
+    CreateHazard(13405101, arg_0_3, model_point=100, behavior_param_id=6291, target_type=DamageTargetType.Character, 
+                 radius=1.600000023841858, life=9999.0, repetition_time=0.0)
     PlaySoundEffect(anchor_entity=3402531, sound_type=SoundType.a_Ambient, sound_id=411005001)
     WaitFrames(30)
     ForceAnimation(arg_0_3, 1, wait_for_completion=True)
@@ -2111,7 +2030,7 @@ def Event13405103():
     IfEntityWithinDistance(-2, PLAYER, 3400551, radius=7.0)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(-3, input_condition=1)
-    IfDamageType(-3, attacked_entity=3400551, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=3400551, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-3)
     PlaySoundEffect(anchor_entity=3402300, sound_type=SoundType.a_Ambient, sound_id=340000000)
     ForceAnimation(3400551, 7015)
@@ -2130,55 +2049,20 @@ def Event13405105(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     ForceAnimation(arg_4_7, 1, wait_for_completion=True)
     IfObjectNotDestroyed(0, arg_8_11)
     ForceAnimation(arg_8_11, 1)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_8_11,
-        model_point=200,
-        behavior_id=6280,
-        launch_angle_x=arg_12_15,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=arg_20_23,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_8_11, model_point=200, behavior_id=6280, 
+                    launch_angle_x=arg_12_15, launch_angle_y=arg_16_19, launch_angle_z=arg_20_23)
     WaitFrames(2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_8_11,
-        model_point=200,
-        behavior_id=6281,
-        launch_angle_x=arg_12_15,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=arg_20_23,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_8_11, model_point=200, behavior_id=6281, 
+                    launch_angle_x=arg_12_15, launch_angle_y=arg_16_19, launch_angle_z=arg_20_23)
     WaitFrames(2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_8_11,
-        model_point=200,
-        behavior_id=6282,
-        launch_angle_x=arg_12_15,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=arg_20_23,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_8_11, model_point=200, behavior_id=6282, 
+                    launch_angle_x=arg_12_15, launch_angle_y=arg_16_19, launch_angle_z=arg_20_23)
     WaitFrames(2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_8_11,
-        model_point=200,
-        behavior_id=6283,
-        launch_angle_x=arg_12_15,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=arg_20_23,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_8_11, model_point=200, behavior_id=6283, 
+                    launch_angle_x=arg_12_15, launch_angle_y=arg_16_19, launch_angle_z=arg_20_23)
     WaitFrames(2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_8_11,
-        model_point=200,
-        behavior_id=6280,
-        launch_angle_x=arg_12_15,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=arg_20_23,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_8_11, model_point=200, behavior_id=6280, 
+                    launch_angle_x=arg_12_15, launch_angle_y=arg_16_19, launch_angle_z=arg_20_23)
     WaitFrames(60)
     IfAllPlayersOutsideRegion(0, region=arg_0_3)
     ForceAnimation(arg_4_7, 0, loop=True)
@@ -2221,158 +2105,63 @@ def Event13405112():
     DefineLabel(0)
     IfCharacterInsideRegion(0, PLAYER, region=3402533)
     ForceAnimation(3401352, 1, wait_for_completion=True)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=3401320,
-        model_point=10,
-        behavior_id=6290,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=3401320, model_point=10, behavior_id=6290, launch_angle_x=0, 
+                    launch_angle_y=0, launch_angle_z=0)
     WaitFrames(80)
     DisableObject(3401320)
 
 
 @RestartOnRest
-def Event13405113(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event13405113(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 13405113: Event 13405113 """
     IfFlagOn(1, arg_4_7)
     IfObjectNotDestroyed(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     IfFramesElapsed(0, arg_8_11)
     ForceAnimation(arg_0_3, 1)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_16_19,
-        launch_angle_x=340,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_16_19, 
+                    launch_angle_x=340, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_20_23,
-        launch_angle_x=340,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_20_23, 
+                    launch_angle_x=340, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_24_27,
-        launch_angle_x=340,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_24_27, 
+                    launch_angle_x=340, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_28_31,
-        launch_angle_x=340,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_28_31, 
+                    launch_angle_x=340, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_16_19,
-        launch_angle_x=340,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_16_19, 
+                    launch_angle_x=340, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
     IfFramesElapsed(0, arg_12_15)
     Restart()
 
 
 @RestartOnRest
-def Event13405115(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event13405115(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 13405115: Event 13405115 """
     IfFlagOn(1, arg_4_7)
     IfObjectNotDestroyed(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     IfFramesElapsed(0, arg_8_11)
     ForceAnimation(arg_0_3, 1)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_16_19,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_16_19, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_20_23,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_20_23, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_24_27,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_24_27, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_28_31,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_28_31, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=200,
-        behavior_id=arg_16_19,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=200, behavior_id=arg_16_19, 
+                    launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     IfFramesElapsed(0, 2)
     IfFramesElapsed(0, arg_12_15)
     Restart()
@@ -2436,44 +2225,30 @@ def Event13405155(_, arg_0_3: int):
 def Event13405160(_, arg_0_3: int):
     """ 13405160: Event 13405160 """
     EndIfThisEventSlotOn()
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Fire)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.NoType)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Fire)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.NoType)
     IfConditionTrue(1, input_condition=-1)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Magic)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Lightning)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Blunt)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Slash)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Thrust)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Magic)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Lightning)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Blunt)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Slash)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Thrust)
     IfConditionTrue(2, input_condition=-2)
     IfObjectHealthValueComparison(2, arg_0_3, ComparisonType.LessThanOrEqual, 999)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=-1,
-        behavior_id=6051,
-        launch_angle_x=270,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=-1, behavior_id=6051, launch_angle_x=270, 
+                    launch_angle_y=0, launch_angle_z=0)
     DestroyObject(arg_0_3, slot=1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    ShootProjectile(
-        owner_entity=3400799,
-        projectile_id=arg_0_3,
-        model_point=-1,
-        behavior_id=6292,
-        launch_angle_x=0,
-        launch_angle_y=90,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=3400799, projectile_id=arg_0_3, model_point=-1, behavior_id=6292, launch_angle_x=0, 
+                    launch_angle_y=90, launch_angle_z=0)
     DestroyObject(arg_0_3, slot=1)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
 
@@ -2553,17 +2328,8 @@ def Event13405218():
 
 
 @RestartOnRest
-def Event13405220(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: float,
-    arg_28_31: float,
-):
+def Event13405220(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: float, arg_28_31: float):
     """ 13405220: Event 13405220 """
     GotoIfThisEventSlotOn(Label.L0)
     WaitRandomFrames(min_frames=0, max_frames=180)
@@ -2575,7 +2341,7 @@ def Event13405220(
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-2)
     IfCharacterInsideRegion(1, PLAYER, region=arg_20_23)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=-1)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
@@ -2599,7 +2365,7 @@ def Event13405300(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     IfConditionTrue(1, input_condition=-1)
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
     IfEntityWithinDistance(-2, PLAYER, arg_0_3, radius=arg_8_11)
-    IfDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-2, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(2, input_condition=-2)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
@@ -2647,7 +2413,7 @@ def Event13405480(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-2, input_condition=3)
     IfConditionTrue(1, input_condition=-2)
-    IfDamageType(4, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(4, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(0, input_condition=-3)
@@ -2696,9 +2462,8 @@ def Event13405540(_, arg_0_3: int, arg_4_7: int, arg_8_11: uint, arg_12_15: int,
 
 
 @RestartOnRest
-def Event13405550(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, arg_24_27: float
-):
+def Event13405550(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, 
+                  arg_24_27: float):
     """ 13405550: Event 13405550 """
     GotoIfThisEventSlotOn(Label.L0)
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -2754,9 +2519,8 @@ def Event13405630(_, arg_0_3: int, arg_4_7: int):
 
 
 @RestartOnRest
-def Event13405640(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, arg_24_27: float
-):
+def Event13405640(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, 
+                  arg_24_27: float):
     """ 13405640: Event 13405640 """
     GotoIfThisEventSlotOn(Label.L0)
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -2772,9 +2536,8 @@ def Event13405640(
 
 
 @RestartOnRest
-def Event13405650(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, arg_24_27: float
-):
+def Event13405650(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, 
+                  arg_24_27: float):
     """ 13405650: Event 13405650 """
     GotoIfThisEventSlotOn(Label.L0)
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -3012,7 +2775,7 @@ def Event13400943(_, arg_0_3: int):
     """ 13400943: Event 13400943 """
     IfFlagOn(-1, 1681)
     IfConditionTrue(1, input_condition=-1)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
     DisableFlagRange((1670, 1689))
     EnableFlag(1670)
@@ -3064,11 +2827,11 @@ def Event13400910(_, arg_0_3: int, arg_4_7: int):
     """ 13400910: Event 13400910 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     WaitFrames(1)
-    IfDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     WaitFrames(1)
-    IfDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     WaitFrames(1)
     EnableFlag(arg_4_7)
 
@@ -3093,7 +2856,8 @@ def Event13400930():
     """ 13400930: Event 13400930 """
     DisableAI(3400910)
     IfCharacterInsideRegion(-1, PLAYER, region=3402949)
-    IfDamageType(-1, attacked_entity=3400910, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=3400910, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
     EnableAI(3400910)
 
@@ -3544,17 +3308,8 @@ def Event13404406(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event13404410(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event13404410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 13404410: Event 13404410 """
     SkipLinesIfFlagOn(1, arg_12_15)
     DisableCharacter(arg_4_7)
@@ -3572,7 +3327,7 @@ def Event13404410(
     IfFlagOff(2, arg_16_19)
     IfFlagOn(2, arg_20_23)
     IfFlagOff(2, arg_24_27)
-    IfActionButtonInRegion(2, action_button_id=arg_28_31, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -3584,9 +3339,8 @@ def Event13404410(
 
 
 @RestartOnRest
-def Event13404460(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event13404460(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 13404460: Event 13404460 """
     EndIfClient()
     IfFlagOn(1, arg_20_23)

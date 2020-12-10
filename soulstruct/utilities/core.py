@@ -13,6 +13,7 @@ __all__ = [
     "BaseStruct",
     "AttributeDict",
     "BiDict",
+    "unpack_from_buffer",
     "read_chars_from_bytes",
     "read_chars_from_buffer",
     "pad_chars",
@@ -124,15 +125,17 @@ class BinaryStruct:
     BYTE_ORDER_RE = re.compile(r"[<>@].*")
     PAD_RE = re.compile(r"([0-9]*)?x")
     JIS_FORMAT_RE = re.compile(r"([0-9]*)?j")
+    UTF16_FORMAT_RE = re.compile(r"([0-9]*)?u")
     CHARS_FORMAT_RE = re.compile(r"([0-9]*)?s")
     OTHER_FORMAT_RE = re.compile(r"([0-9]*)?(?!s)")
 
-    def __init__(self, *fields, byte_order="<"):
+    def __init__(self, *fields, byte_order="<", junk_encoded_bytes=()):
         """Flexible binary unpacker/repacker."""
         self.fields = []  # field dictionaries
         self._struct_format = []  # Format chunks with different byte order are stored in sub-format strings.
         self._struct_length = []  # Number of values to be packed using each sub-format string.
         self.size = 0
+        self._junk_encoded_bytes = junk_encoded_bytes
         self.add_fields(*fields, byte_order=byte_order)
 
     def add_fields(self, *fields, byte_order=None):
@@ -202,6 +205,11 @@ class BinaryStruct:
                 fmt = str(jis_size) + "s"
                 d["jis_size"] = jis_size
                 length = 1  # This is not the struct byte size, but rather the number of values that will be unpacked.
+            elif self.UTF16_FORMAT_RE.match(fmt):
+                byte_count = int(fmt[:-1]) if fmt[:-1] else 1
+                fmt = str(byte_count) + "s"
+                d["is_utf16"] = True
+                length = 1  # This is not the struct byte size, but rather the number of values that will be unpacked.
             elif self.CHARS_FORMAT_RE.match(fmt):
                 length = 1
             else:
@@ -226,21 +234,29 @@ class BinaryStruct:
 
         return new_fields, byte_order + sub_fmt
 
-    @staticmethod
-    def _unpack_field(unpacked_values, field, index):
+    def _unpack_field(self, unpacked_values, field, index, byte_order="<"):
         if field["length"] == 0:
             # Ignore.
             return
         value = unpacked_values[index : index + field["length"]]
         if field["length"] == 1:
-            # Unzip single values.
+            # Unpack single values.
             value = value[0]
         else:
             # Convert tuples to lists.
             value = list(value)
         if "jis_size" in field:
-            value = read_chars_from_bytes(value, length=len(value), encoding="shift_jis_2004")
-            value = value.rstrip("\0")
+            value = read_chars_from_bytes(
+                value, length=len(value), encoding="shift_jis_2004", junk_encoded_bytes=self._junk_encoded_bytes,
+            )
+            value = value.rstrip("\0" if isinstance(value, str) else b"\0")
+        if "is_utf16" in field:
+            # NOTE: If length is odd, last character will be ignored.
+            encoding = "utf-16-" + ("be" if byte_order == ">" else "le")
+            value = read_chars_from_bytes(
+                value, length=len(value) // 2, encoding=encoding, junk_encoded_bytes=self._junk_encoded_bytes,
+            )
+            value = value.rstrip("\0" if isinstance(value, str) else b"\0")
         if "asserted" in field:
             if value != field["asserted"]:
                 raise ValueError(
@@ -279,7 +295,7 @@ class BinaryStruct:
             unpacked_index = 0
             for field in struct_fields:
                 if field["length"] > 0 and (include_asserted or "asserted" not in field):
-                    output[field["name"]] = self._unpack_field(unpacked, field, unpacked_index)
+                    output[field["name"]] = self._unpack_field(unpacked, field, unpacked_index, byte_order)
                 unpacked_index += field["length"]
             return output
 
@@ -301,7 +317,7 @@ class BinaryStruct:
         unpacked_index = 0
         for field in self.fields:
             if field["length"] > 0 and (include_asserted or "asserted" not in field):
-                output[field["name"]] = self._unpack_field(unpacked, field, unpacked_index)
+                output[field["name"]] = self._unpack_field(unpacked, field, unpacked_index, byte_order)
             unpacked_index += field["length"]
         return output
 
@@ -426,6 +442,11 @@ class BinaryStruct:
         """Return only non-padding fields (including asserted fields)."""
         return [field for field in self.fields if field["length"] != 0]
 
+    @property
+    def field_names(self):
+        """Excludes padding fields and includes asserted fields."""
+        return [field["name"] for field in self.non_padding_fields]
+
 
 class BaseStruct(abc.ABC):
     STRUCT: BinaryStruct = None
@@ -518,23 +539,47 @@ def _get_drives():
     return drives
 
 
-def read_chars_from_bytes(data, offset=0, length=None, encoding=None, ignore_encoding_error_for_these_chars=()):
+def unpack_from_buffer(buffer, fmt, offset=None):
+    """Unpack appropriate number of bytes from `buffer` using `fmt` string from the given (or current) `offset`.
+
+    Data is always returned as a tuple, just like `struct.unpack()`.
+
+    If `offset` is given, the original offset is restored before returning.
+    """
+    old_offset = buffer.tell() if offset is not None else None
+    if offset is not None:
+        buffer.seek(offset)
+    data = struct.unpack(fmt, buffer.read(struct.calcsize(fmt)))
+    if old_offset is not None:
+        buffer.seek(old_offset)
+    return data
+
+
+def read_chars_from_bytes(data, offset=0, length=None, encoding=None, junk_encoded_bytes=()):
     """Read characters from a bytes object (an encoded string). Use 'read_chars_from_buffer' if you are using a buffer.
 
     If 'length=None' (default), characters will be read until null termination from the given offset. Otherwise,
     'length' bytes will be read and all null padding bytes will be stripped from the right side.
 
     Use 'encoding' to automatically decode the bytes into a string before returning (e.g. 'shift_jis_2004'). Note that
-    if 'utf-16-le' is specified as the encoding with no length, a double-null termination of b'\0\0' is required to
+    if 'utf-16-*' is specified as the encoding with no length, a double-null termination of b'\0\0' is required to
     terminate the string (as single nulls can appear in the two-byte characters).
     """
-    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "") == "utf16le" else 1
+    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16") else 1
     if length is not None:
-        stripped_array = (
-            data[offset : offset + length].rstrip().rstrip(b"\0" * bytes_per_char)
-        )  # remove spaces and nulls
+        stripped_array = data[offset : offset + length].rstrip()  # remove trailing spaces
+        while stripped_array.endswith(b"\0\0" if bytes_per_char == 2 else b"\0"):
+            stripped_array = stripped_array[:-bytes_per_char]  # remove (pairs of) nulls
         if encoding is not None:
-            return stripped_array.decode(encoding)
+            try:
+                return stripped_array.decode(encoding)
+            except UnicodeDecodeError:
+                if stripped_array in junk_encoded_bytes:
+                    return stripped_array
+                _LOGGER.error(
+                    f"Could not decode: {stripped_array}\n"
+                    f"Unstripped (length {length}): {data[offset : offset + length]})")
+                raise
         return stripped_array
     else:
         # Find null termination.
@@ -546,21 +591,21 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None, ignore_enc
             try:
                 return array.decode(encoding)
             except UnicodeDecodeError:
-                if array in ignore_encoding_error_for_these_chars:
+                if array in junk_encoded_bytes:
                     return array
                 raise
         return array
 
 
 def read_chars_from_buffer(
-    buffer, offset=None, length=None, reset_old_offset=True, encoding=None, ignore_encoding_error_for_these_chars=()
+    buffer, offset=None, length=None, reset_old_offset=True, encoding=None, junk_encoded_bytes=()
 ):
     """Read characters from a buffer (type IOBase). Use 'read_chars_from_bytes' if your data is already in bytes format.
 
     Args:
         buffer: byte-format data stream to read from.
 
-        offset: offset to seek() in buffer before starting to read characters. Defaults to current offset.
+        offset: offset to `seek()` in buffer before starting to read characters. Defaults to current offset (None).
 
         reset_old_offset: if True, and 'offset' is not None, the buffer offset will be restored to its original position
             (at function call time) before returning. (Default: True)
@@ -569,13 +614,13 @@ def read_chars_from_buffer(
             will be read until a null termination is encountered. Otherwise, if a length is specified, any spaces at
             the end of the string will be stripped, then any nulls at the end will be stripped.
 
-        encoding: attempt to decode characters in this encoding before returning. If 'utf-16-le' is specified, this
+        encoding: attempt to decode characters in this encoding before returning. If 'utf-16-*' is specified, this
             function will infer that characters are two bytes long (and null terminations will be two bytes). Otherwise,
             it assumes they are one byte long. You can decode the characters yourself if you want to use another
             multiple-bytes-per-character encoding.
 
-        ignore_encoding_error_for_these_chars: if a decoding error occurs for any character (bytes) in this sequence,
-            the encoded bytes will be returned instead of raising a UnicodeDecodeError.
+        junk_encoded_bytes: if a decoding error occurs for any character (bytes) in this sequence, the encoded bytes
+            will be returned instead of raising a UnicodeDecodeError.
     """
     if length == 0:
         if not reset_old_offset and not isinstance(buffer, bytes):
@@ -586,7 +631,7 @@ def read_chars_from_buffer(
         buffer = io.BytesIO(buffer)
     chars = []
     old_offset = None
-    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "") == "utf16le" else 1
+    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16le") else 1
 
     if offset is not None:
         old_offset = buffer.tell()
@@ -605,7 +650,7 @@ def read_chars_from_buffer(
                 try:
                     return array.decode(encoding)
                 except UnicodeDecodeError:
-                    if array in ignore_encoding_error_for_these_chars:
+                    if array in junk_encoded_bytes:
                         return array
                     raise
             return array
@@ -614,7 +659,8 @@ def read_chars_from_buffer(
                 buffer.seek(old_offset)
             stripped_array = b"".join(chars)  # used to strip spaces as well, but not anymore
             stripped_array.rstrip()  # remove spaces
-            stripped_array.rstrip(b"\0" * bytes_per_char)  # remove null characters
+            while stripped_array.endswith(b"\0\0" if bytes_per_char == 2 else b"\0"):
+                stripped_array = stripped_array[:-bytes_per_char]  # remove (pairs of) null characters
             if encoding is not None:
                 return stripped_array.decode(encoding)
             return stripped_array

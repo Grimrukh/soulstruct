@@ -39,14 +39,9 @@ def Preconstructor():
 def Event12110100():
     """ 12110100: Event 12110100 """
     DisableNetworkSync()
-    IfActionButtonInRegion(0, action_button_id=2110000, region=2110700)
-    DisplayDialog(
-        10010190,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=2110000, entity=2110700)
+    DisplayDialog(10010190, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -70,7 +65,7 @@ def Event12110300():
     EndIfThisEventOn()
     EndIfClient()
     CreateObjectFX(900201, obj=2111100, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=2110010, region=2111100)
+    IfActionButtonParam(0, action_button_id=2110010, entity=2111100)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110800, host_only=False)
     DeleteObjectFX(2111100, erase_root=True)
@@ -81,7 +76,7 @@ def Event12110301():
     EndIfThisEventOn()
     EndIfClient()
     CreateObjectFX(900201, obj=2111101, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=2110011, region=2111101)
+    IfActionButtonParam(0, action_button_id=2110011, entity=2111101)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110810, host_only=False)
     DeleteObjectFX(2111101, erase_root=True)
@@ -92,7 +87,7 @@ def Event12110302():
     EndIfThisEventOn()
     EndIfClient()
     CreateObjectFX(900201, obj=2111102, model_point=200)
-    IfActionButtonInRegion(0, action_button_id=2110012, region=2111102)
+    IfActionButtonParam(0, action_button_id=2110012, entity=2111102)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110000, host_only=False)
     DeleteObjectFX(2111102, erase_root=True)

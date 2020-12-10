@@ -1,33 +1,25 @@
-__all__ = ["print_hitbox_info"]
+__all__ = ["GET_BUNDLED_PARAMDEFBND"]
 
-import typing as tp
-from soulstruct.models.darksouls1 import PLAYER_WEAPON_BEHAVIOR_VARIATIONS, BEHAVIOR_SUB_ID
-
-if tp.TYPE_CHECKING:
-    from soulstruct.params.dark_souls_params import DarkSoulsGameParameters
+from soulstruct.params.paramdef import ParamDefBND
 
 
-def print_hitbox_info(params: DarkSoulsGameParameters):
-    current_var_id = None
-    for b_id, b_entry in params.PlayerBehaviors.items():
-        if b_id > 100000:
-            if current_var_id != b_entry["variationId"]:
-                current_var_id = b_entry["variationId"]
-                print(f"{PLAYER_WEAPON_BEHAVIOR_VARIATIONS[current_var_id]} ({current_var_id})")
-            sub_id = b_entry["behaviorJudgeId"]
-            sub_name = BEHAVIOR_SUB_ID.get(sub_id, "UNKNOWN")
-            if b_entry["refType"] == 0:
-                attack_id = b_entry["refId"]
-                try:
-                    attack_param = params.PlayerAttacks[b_entry["refId"]]
-                except KeyError:
-                    print(f"    {sub_id}: {sub_name} -> Attack {attack_id} (DOES NOT EXIST!)")
-                    continue
-                print(f"    {sub_id}: {sub_name} -> Attack {attack_id}")
-                for i in range(4):
-                    start_point = attack_param[f"hit{i}_DmyPoly1"]
-                    if start_point != -1:
-                        end_point = attack_param[f"hit{i}_DmyPoly2"]
-                        radius = attack_param[f"hit{i}_Radius"]
-                        print(f"         {i}. R = {radius:.3f}")
-                        print(f"         {i}. Dmy = ({start_point}, {end_point})")
+_PARAMDEF_BND_PTDE = None
+_PARAMDEF_BND_DSR = None
+_PARAMDEF_BND_BB = None
+
+
+def GET_BUNDLED_PARAMDEFBND(game_name):
+    global _PARAMDEF_BND_PTDE, _PARAMDEF_BND_DSR, _PARAMDEF_BND_BB
+    if game_name.lower() == "ptde":
+        if _PARAMDEF_BND_PTDE is None:
+            _PARAMDEF_BND_PTDE = ParamDefBND("ptde")
+        return _PARAMDEF_BND_PTDE
+    elif game_name.lower() == "dsr":
+        if _PARAMDEF_BND_DSR is None:
+            _PARAMDEF_BND_DSR = ParamDefBND("dsr")
+        return _PARAMDEF_BND_DSR
+    elif game_name.lower() == "bb":
+        if _PARAMDEF_BND_BB is None:
+            _PARAMDEF_BND_BB = ParamDefBND("bb")
+        return _PARAMDEF_BND_BB
+    raise ValueError(f"Could not find bundled ParamDef in Soulstruct for game {repr(game_name)}.")

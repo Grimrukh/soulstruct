@@ -133,17 +133,17 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     if ss_args.params:
-        from soulstruct.params import DarkSoulsGameParameters
+        from soulstruct.params.darksouls1 import GameParamBND
 
         global Params
-        Params = DarkSoulsGameParameters(source)
+        Params = GameParamBND(source)
         return ss_args.console
 
     if ss_args.lighting:
-        from soulstruct.params import DarkSoulsLightingParameters
+        from soulstruct.params.darksouls1 import DrawParamDirectory
 
         global Lighting
-        Lighting = DarkSoulsLightingParameters(source)
+        Lighting = DrawParamDirectory(source)
         return ss_args.console
 
     if ss_args.bndpack is not None:

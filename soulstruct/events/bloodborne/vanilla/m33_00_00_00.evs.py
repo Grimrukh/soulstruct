@@ -66,24 +66,12 @@ def Constructor():
     RunEvent(13304830, slot=4, args=(3305, 3305, 7, 481, 150, 8010, 1.0, 1.5), arg_types="hihiiiff")
     RunEvent(13304830, slot=5, args=(3306, 3306, 9, 481, 120, 8010, 1.0, 1.5), arg_types="hihiiiff")
     RunEvent(13304830, slot=6, args=(3307, 3307, 10, 481, 120, 8010, 1.0, 1.5), arg_types="hihiiiff")
-    RunEvent(
-        13304830,
-        slot=7,
-        args=(3308, 3308, 3, 483, 200, 8030, 0.20000000298023224, 0.30000001192092896),
-        arg_types="hihiiiff",
-    )
-    RunEvent(
-        13304830,
-        slot=8,
-        args=(3309, 3309, 11, 484, 100, 8040, 0.20000000298023224, 0.30000001192092896),
-        arg_types="hihiiiff",
-    )
-    RunEvent(
-        13304830,
-        slot=9,
-        args=(3310, 3310, 12, 483, 100, 8030, 0.20000000298023224, 0.30000001192092896),
-        arg_types="hihiiiff",
-    )
+    RunEvent(13304830, slot=7, args=(3308, 3308, 3, 483, 200, 8030, 0.20000000298023224, 0.30000001192092896), 
+             arg_types="hihiiiff")
+    RunEvent(13304830, slot=8, args=(3309, 3309, 11, 484, 100, 8040, 0.20000000298023224, 0.30000001192092896), 
+             arg_types="hihiiiff")
+    RunEvent(13304830, slot=9, args=(3310, 3310, 12, 483, 100, 8030, 0.20000000298023224, 0.30000001192092896), 
+             arg_types="hihiiiff")
     RunEvent(13304840)
     RunEvent(13300100)
     RunEvent(13300110)
@@ -461,7 +449,7 @@ def Event13304870():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
-    IfActionButtonInRegion(3, action_button_id=3300800, region=3301800)
+    IfActionButtonParam(3, action_button_id=3300800, entity=3301800)
     IfFlagOff(3, 13301800)
     IfFlagOn(4, 13301800)
     IfConditionTrue(-2, input_condition=3)
@@ -490,7 +478,7 @@ def Event13304871():
     IfFlagOn(1, 13301802)
     IfFlagOn(1, 13304800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=3300800, region=3301800)
+    IfActionButtonParam(1, action_button_id=3300800, entity=3301800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3302800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -665,43 +653,18 @@ def Event13304820(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_10_10: uc
     IfCharacterHasSpecialEffect(0, 3300800, 5402)
     SetCollisionMask(3300800, bit_index=arg_10_10, switch_type=OnOffChange.Off)
     SetCollisionMask(3300800, bit_index=arg_11_11, switch_type=OnOffChange.On)
-    CreateNPCPart(
-        3300800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=0.0,
-        body_damage_correction=0.0,
-        is_invincible=True,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3300800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=0.0, 
+                  body_damage_correction=0.0, is_invincible=True, start_in_stop_state=False)
     SetNPCPartEffects(3300800, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
 
 
 @RestartOnRest
-def Event13304830(
-    _,
-    arg_0_1: short,
-    arg_4_7: int,
-    arg_8_9: short,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: float,
-    arg_28_31: float,
-):
+def Event13304830(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: float, arg_28_31: float):
     """ 13304830: Event 13304830 """
     EndIfFlagOn(13301800)
-    CreateNPCPart(
-        3300800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_16_19,
-        damage_correction=arg_24_27,
-        body_damage_correction=arg_24_27,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3300800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_16_19, damage_correction=arg_24_27, 
+                  body_damage_correction=arg_24_27, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3300800, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, 3300800, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(3, 3300800, 0.0)
@@ -709,16 +672,8 @@ def Event13304830(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        3300800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=arg_28_31,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3300800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=arg_28_31, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3300800, npc_part_id=arg_4_7, material_special_effect_id=60, material_fx_id=60)
     WaitFrames(1)
     ResetAnimation(3300800, disable_interpolation=False)
@@ -741,16 +696,9 @@ def Event13304830(
 def Event13304840():
     """ 13304840: Event 13304840 """
     EndIfFlagOn(13301800)
-    CreateNPCPart(
-        3300800,
-        npc_part_id=3300,
-        part_index=NPCPartType.Part1,
-        part_health=300,
-        damage_correction=1.399999976158142,
-        body_damage_correction=1.399999976158142,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3300800, npc_part_id=3300, part_index=NPCPartType.Part1, part_health=300, 
+                  damage_correction=1.399999976158142, body_damage_correction=1.399999976158142, is_invincible=False, 
+                  start_in_stop_state=False)
     SetNPCPartEffects(3300800, npc_part_id=3300, material_special_effect_id=60, material_fx_id=60)
     IfCharacterPartHealthLessThanOrEqual(2, 3300800, npc_part_id=3300, value=0)
     IfHealthLessThanOrEqual(3, 3300800, 0.0)
@@ -758,16 +706,8 @@ def Event13304840():
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        3300800,
-        npc_part_id=3300,
-        part_index=NPCPartType.Part1,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=2.0999999046325684,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(3300800, npc_part_id=3300, part_index=NPCPartType.Part1, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=2.0999999046325684, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(3300800, npc_part_id=3300, material_special_effect_id=60, material_fx_id=60)
     WaitFrames(1)
     ResetAnimation(3300800, disable_interpolation=False)
@@ -941,52 +881,28 @@ def Event13300200():
     IfConditionTrue(0, input_condition=1)
     EnableFlag(9180)
     GotoIfMultiplayer(Label.L0)
-    SkipLinesIfPlayerGender(2, Gender.Female)
-    PlayCutscene(
-        33000000,
-        skippable=True,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3302171,
-        move_to_map=NIGHTMARE_FRONTIER,
-    )
+    SkipLinesIfPlayerGender(2, Gender.Male)
+    PlayCutscene(33000000, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3302171, 
+                 move_to_map=NIGHTMARE_FRONTIER)
     SkipLines(1)
-    PlayCutscene(
-        33001000,
-        skippable=True,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3302171,
-        move_to_map=NIGHTMARE_FRONTIER,
-    )
+    PlayCutscene(33001000, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=3302171, 
+                 move_to_map=NIGHTMARE_FRONTIER)
     Goto(Label.L1)
 
     # --- 0 --- #
     DefineLabel(0)
     GotoIfClient(Label.L2)
-    SkipLinesIfPlayerGender(2, Gender.Female)
-    PlayCutscene(
-        33000000,
-        skippable=False,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3302171,
-        move_to_map=NIGHTMARE_FRONTIER,
-    )
+    SkipLinesIfPlayerGender(2, Gender.Male)
+    PlayCutscene(33000000, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=3302171, 
+                 move_to_map=NIGHTMARE_FRONTIER)
     SkipLines(1)
-    PlayCutscene(
-        33001000,
-        skippable=False,
-        fade_out=False,
-        player_id=PLAYER,
-        move_to_region=3302171,
-        move_to_map=NIGHTMARE_FRONTIER,
-    )
+    PlayCutscene(33001000, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=3302171, 
+                 move_to_map=NIGHTMARE_FRONTIER)
     Goto(Label.L1)
 
     # --- 2 --- #
     DefineLabel(2)
-    SkipLinesIfPlayerGender(2, Gender.Female)
+    SkipLinesIfPlayerGender(2, Gender.Male)
     PlayCutscene(33000000, skippable=False, fade_out=False, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(33001000, skippable=False, fade_out=False, player_id=PLAYER)
@@ -1036,7 +952,7 @@ def Event13305150(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
     IfCharacterInsideRegion(-2, PLAYER, region=arg_4_7)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(1, input_condition=-2)
-    IfDamageType(3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=3)
     IfConditionTrue(0, input_condition=-3)
@@ -1061,13 +977,8 @@ def Event13305030(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfConditionFalse(2, 1)
     DisableBackread(arg_4_7)
     End()
-    Move(
-        arg_4_7,
-        destination=arg_0_3,
-        destination_type=CoordEntityType.Character,
-        model_point=100,
-        set_draw_parent=arg_0_3,
-    )
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=100, 
+         set_draw_parent=arg_0_3)
     Restart()
 
 
@@ -1131,7 +1042,7 @@ def Event13305210(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int
     IfConditionTrue(1, input_condition=-1)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=arg_4_7)
     IfConditionTrue(-3, input_condition=1)
-    IfDamageType(-3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-3, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfHasAIStatus(-3, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-3, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-3, arg_0_3, ai_status=AIStatusType.Battle)
@@ -1217,7 +1128,7 @@ def Event13300700():
     EnableImmortality(3300710)
     WaitFrames(1)
     ForceAnimation(3300710, 9002, loop=True)
-    IfDamageType(0, attacked_entity=3300710, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=3300710, attacking_character=-1, damage_type=DamageType.Unspecified)
     ForceAnimation(3300710, 7006)
     WaitFrames(45)
     Move(3300710, destination=3302160, destination_type=CoordEntityType.Region, model_point=-1, copy_draw_parent=0)

@@ -541,7 +541,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, abc.ABC):
 
         if old_category is not None:
             selected_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None
-            self.category_selected_entry_id[old_category] = selected_entry_id
+            self.remembered_ids[old_category] = selected_entry_id
 
         if selected_category != self.active_category:
             self.active_category = selected_category
@@ -561,7 +561,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, abc.ABC):
         self.first_display_index = first_display_index
         self.select_entry_row_index(None, edit_if_already_selected=False)
         self.refresh_entries(reset_field_display=True)  # TODO: this argument is the only difference. Better way?
-        last_selected_entry_id = self.category_selected_entry_id.get(self.active_category, None)
+        last_selected_entry_id = self.remembered_ids.get(self.active_category, None)
         if last_selected_entry_id is not None:
             self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
         else:
@@ -626,7 +626,7 @@ class SoulstructBaseFieldEditor(SoulstructBaseEditor, abc.ABC):
 
         self.displayed_field_count = row
 
-        for remaining_row in range(row, self.FIELD_ROW_COUNT):
+        for remaining_row in range(row, len(self.field_rows)):
             self.field_rows[remaining_row].hide()
 
         self.field_i_frame.grid_columnconfigure(1, weight=1)

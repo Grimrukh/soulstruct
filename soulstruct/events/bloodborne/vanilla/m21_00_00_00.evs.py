@@ -518,7 +518,7 @@ def Event12100002():
     DeleteFX(2103505, erase_root_only=True)
     DeleteFX(2103506, erase_root_only=True)
     DeleteFX(2103507, erase_root_only=True)
-    GotoIfPlayerGender(Label.L0, Gender.Female)
+    GotoIfPlayerGender(Label.L0, Gender.Male)
     PlayCutscene(21000030, skippable=True, fade_out=False, player_id=PLAYER)
     Goto(Label.L1)
 
@@ -815,7 +815,7 @@ def Event12100114():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     IfFlagOn(0, 7500)
-    CreateTemporaryFX(178, anchor_entity=10000, anchor_type=CoordEntityType.Character, model_point=1)
+    CreateTemporaryFX(178, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=1)
     DisableFlag(7500)
     Restart()
 
@@ -1167,7 +1167,7 @@ def Event12100180():
     DeleteFX(2103506, erase_root_only=True)
     DeleteFX(2103507, erase_root_only=True)
     IncrementNewGameCycle(1)
-    GotoIfPlayerGender(Label.L0, Gender.Female)
+    GotoIfPlayerGender(Label.L0, Gender.Male)
     PlayCutscene(21000010, skippable=True, fade_out=False, player_id=PLAYER)
     Goto(Label.L1)
 
@@ -1298,17 +1298,12 @@ def Event12100400():
 def Event12100410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12100410: Event 12100410 """
     DisableNetworkSync()
-    IfActionButtonInRegion(-1, action_button_id=arg_0_3, region=arg_4_7)
+    IfActionButtonParam(-1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
     EndIfFlagOn(arg_8_11)
-    DisplayDialog(
-        arg_12_15,
-        anchor_entity=arg_4_7,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(arg_12_15, anchor_entity=arg_4_7, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -1618,9 +1613,8 @@ def Event12101802():
     IfFlagOn(0, 72100131)
     EnableFlag(9180)
     WaitFrames(1)
-    PlayCutscene(
-        21000040, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=2102808, move_to_map=HUNTERS_DREAM
-    )
+    PlayCutscene(21000040, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=2102808, 
+                 move_to_map=HUNTERS_DREAM)
     WaitFrames(1)
     DisableFlag(9180)
     EnableCharacter(2100800)
@@ -1658,7 +1652,7 @@ def Event12104810():
     DefineLabel(0)
     IfFlagOff(2, 12101800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2100800, region=2101800)
+    IfActionButtonParam(2, action_button_id=2100800, entity=2101800)
     IfFlagOn(3, 12101800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1685,7 +1679,7 @@ def Event12104811():
     IfFlagOn(1, 12101802)
     IfFlagOn(1, 12104800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2100800, region=2101800)
+    IfActionButtonParam(1, action_button_id=2100800, entity=2101800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2102800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1901,13 +1895,11 @@ def Event12101852():
     DeleteFX(2103519, erase_root_only=True)
     DeleteFX(2103520, erase_root_only=True)
     SkipLinesIfMultiplayer(2)
-    PlayCutscene(
-        21000050, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=2102809, move_to_map=HUNTERS_DREAM
-    )
+    PlayCutscene(21000050, skippable=True, fade_out=False, player_id=PLAYER, move_to_region=2102809, 
+                 move_to_map=HUNTERS_DREAM)
     SkipLines(1)
-    PlayCutscene(
-        21000050, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=2102809, move_to_map=HUNTERS_DREAM
-    )
+    PlayCutscene(21000050, skippable=False, fade_out=False, player_id=PLAYER, move_to_region=2102809, 
+                 move_to_map=HUNTERS_DREAM)
     WaitFrames(1)
     DisableFlag(9180)
     CreateFX(2103510)
@@ -1961,7 +1953,7 @@ def Event12104880():
     DefineLabel(0)
     IfFlagOff(2, 12101850)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2100800, region=2101800)
+    IfActionButtonParam(2, action_button_id=2100800, entity=2101800)
     IfFlagOn(3, 12101850)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1988,7 +1980,7 @@ def Event12104881():
     IfFlagOn(1, 12101852)
     IfFlagOn(1, 12104850)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2100800, region=2101800)
+    IfActionButtonParam(1, action_button_id=2100800, entity=2101800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2102800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -2102,21 +2094,12 @@ def Event12104855():
     DisableBossMusic(-1)
 
 
-def Event12104860(
-    _, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12104860(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12104860: Event 12104860 """
     EndIfFlagOn(12101850)
-    CreateNPCPart(
-        2100810,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_12_15,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(2100810, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(2100810, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, 2100810, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(3, 2100810, 0.0)
@@ -2124,16 +2107,8 @@ def Event12104860(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        2100810,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(2100810, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(2100810, npc_part_id=arg_4_7, material_special_effect_id=60, material_fx_id=60)
     ResetAnimation(2100810, disable_interpolation=False)
     ForceAnimation(2100810, arg_24_27)
@@ -2163,7 +2138,8 @@ def Event12104870():
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(5)
     DisableImmortality(PLAYER)
-    IfDamageType(-1, attacked_entity=PLAYER, attacking_character=2100810, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=PLAYER, attacking_character=2100810, 
+                             damage_type=DamageType.Unspecified)
     IfTimeElapsed(-1, 10.0)
     IfConditionTrue(0, input_condition=-1)
     CancelSpecialEffect(PLAYER, 5572)
@@ -3682,7 +3658,7 @@ def Event12105064():
     WaitFrames(79)
     ForceAnimation(2100232, 7051, loop=True)
     IfCharacterHuman(4, PLAYER)
-    IfActionButtonInRegion(4, action_button_id=6025, region=2100232)
+    IfActionButtonParam(4, action_button_id=6025, entity=2100232)
     IfConditionTrue(0, input_condition=4)
     SkipLinesIfFlagOn(3, 6071)
     SkipLinesIfFlagOff(2, 6900)

@@ -83,26 +83,10 @@ def Constructor():
     CreateProjectileOwner(2402072)
     DisableGravity(2400899)
     DisableCharacterCollision(2400899)
-    CreateHazard(
-        12400190,
-        2401017,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
-    CreateHazard(
-        12400191,
-        2401018,
-        model_point=100,
-        behavior_param_id=6110,
-        target_type=DamageTargetType.Character,
-        radius=0.6000000238418579,
-        life=0.0,
-        repetition_time=1.0,
-    )
+    CreateHazard(12400190, 2401017, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
+    CreateHazard(12400191, 2401018, model_point=100, behavior_param_id=6110, target_type=DamageTargetType.Character, 
+                 radius=0.6000000238418579, life=0.0, repetition_time=1.0)
     IfCharacterHuman(15, PLAYER)
     SkipLinesIfConditionFalse(2, 15)
     SkipLinesIfFlagOff(1, 6646)
@@ -633,14 +617,9 @@ def Event12404000():
 def Event12404100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12404100: Event 12404100 """
     DisableNetworkSync()
-    IfActionButtonInRegion(0, action_button_id=arg_4_7, region=arg_0_3)
-    DisplayDialog(
-        arg_8_11,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=arg_4_7, entity=arg_0_3)
+    DisplayDialog(arg_8_11, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -664,33 +643,23 @@ def Event12400080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
-    IfActionButtonInRegion(2, action_button_id=arg_12_15, region=arg_0_3)
+    IfActionButtonParam(2, action_button_id=arg_12_15, entity=arg_0_3)
     IfFlagChange(3, arg_4_7)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-2, input_condition=3)
     IfConditionTrue(0, input_condition=-2)
     SkipLinesIfFinishedConditionTrue(1, 3)
-    DisplayDialog(
-        10010160,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010160, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
 def Event12400095(_, arg_0_3: int):
     """ 12400095: Event 12400095 """
     DisableNetworkSync()
-    IfActionButtonInRegion(0, action_button_id=2400040, region=arg_0_3)
-    DisplayDialog(
-        10010171,
-        anchor_entity=10000,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=2400040, entity=arg_0_3)
+    DisplayDialog(10010171, anchor_entity=10000, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -746,15 +715,10 @@ def Event12400127():
     """ 12400127: Event 12400127 """
     DisableNetworkSync()
     IfFlagOn(1, 12400178)
-    IfActionButtonInRegion(1, action_button_id=7100, region=2401006)
+    IfActionButtonParam(1, action_button_id=7100, entity=2401006)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -861,25 +825,20 @@ def Event12400149():
     """ 12400149: Event 12400149 """
     DisableNetworkSync()
     IfFlagOn(1, 12400150)
-    IfActionButtonInRegion(1, action_button_id=7100, region=2401003)
+    IfActionButtonParam(1, action_button_id=7100, entity=2401003)
     IfFlagOff(2, 12400150)
-    IfActionButtonInRegion(2, action_button_id=7100, region=2401004)
+    IfActionButtonParam(2, action_button_id=7100, entity=2401004)
     IfFlagOn(3, 12400151)
-    IfActionButtonInRegion(3, action_button_id=7100, region=2401003)
+    IfActionButtonParam(3, action_button_id=7100, entity=2401003)
     IfFlagOn(4, 12400151)
-    IfActionButtonInRegion(4, action_button_id=7100, region=2401004)
+    IfActionButtonParam(4, action_button_id=7100, entity=2401004)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -927,15 +886,10 @@ def Event12400158():
     """ 12400158: Event 12400158 """
     DisableNetworkSync()
     IfFlagOn(1, 12405179)
-    IfActionButtonInRegion(1, action_button_id=7100, region=2401008)
+    IfActionButtonParam(1, action_button_id=7100, entity=2401008)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -965,9 +919,9 @@ def Event12400760():
     DefineLabel(0)
     ForceAnimation(2400650, 7022, loop=True)
     IfPlayerDoesNotHaveGood(1, 4011, including_box=False)
-    IfActionButtonInRegion(1, action_button_id=2400030, region=2401220)
+    IfActionButtonParam(1, action_button_id=2400030, entity=2401220)
     IfPlayerHasGood(2, 4011, including_box=False)
-    IfActionButtonInRegion(2, action_button_id=2400030, region=2401220)
+    IfActionButtonParam(2, action_button_id=2400030, entity=2401220)
     IfObjectActivated(3, obj_act_id=12400170)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1006,13 +960,8 @@ def Event12400760():
     WaitFrames(6)
     CreateObjectFX(920204, obj=2401220, model_point=200)
     CreateObjectFX(920205, obj=2401220, model_point=201)
-    DisplayDialog(
-        10010174,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010174, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     EnableFlag(12400160)
     EndIfFlagOn(12401800)
     DisableFlag(2400)
@@ -1023,13 +972,8 @@ def Event12400760():
 
     # --- 1 --- #
     DefineLabel(1)
-    DisplayDialog(
-        10010173,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010173, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -1038,15 +982,10 @@ def Event12400161():
     """ 12400161: Event 12400161 """
     DisableNetworkSync()
     IfFlagOn(1, 12400160)
-    IfActionButtonInRegion(1, action_button_id=7100, region=2401014)
+    IfActionButtonParam(1, action_button_id=7100, entity=2401014)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -1114,15 +1053,10 @@ def Event12400179(_, arg_0_3: int):
     """ 12400179: Event 12400179 """
     DisableNetworkSync()
     IfFlagOn(1, 12405175)
-    IfActionButtonInRegion(1, action_button_id=7100, region=arg_0_3)
+    IfActionButtonParam(1, action_button_id=7100, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=0.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=0.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -1158,13 +1092,8 @@ def Event12400250(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12400250: Event 12400250 """
     EndIfThisEventSlotOn()
     IfObjectActivated(0, obj_act_id=arg_0_3)
-    DisplayDialog(
-        arg_4_7,
-        anchor_entity=arg_8_11,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(arg_4_7, anchor_entity=arg_8_11, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
 
 
 def Event12400300():
@@ -1330,12 +1259,11 @@ def Event12400750():
     """ 12400750: Event 12400750 """
     DisableSoundEvent(2406832)
     GotoIfThisEventOn(Label.L0)
-    IfActionButtonInRegion(0, action_button_id=7030, region=2401210)
+    IfActionButtonParam(0, action_button_id=7030, entity=2401210)
     EnableFlag(9180)
     WaitFrames(1)
-    PlayCutsceneAndMovePlayerAndSetTimePeriod(
-        24000020, CutsceneType.Skippable, 2402200, CATHEDRAL_WARD, player_id=10000, time_period_id=1
-    )
+    PlayCutsceneAndMovePlayerAndSetTimePeriod(24000020, CutsceneType.Skippable, 2402200, CATHEDRAL_WARD, 
+                                              player_id=10000, time_period_id=1)
     WaitFrames(1)
     DisableFlag(9180)
     EnableSoundEvent(2406832)
@@ -1465,40 +1393,26 @@ def Event12400826():
     """ 12400826: Event 12400826 """
     DisableNetworkSync()
     IfFlagOn(1, 12400827)
-    IfActionButtonInRegion(1, action_button_id=7100, region=2401104)
+    IfActionButtonParam(1, action_button_id=7100, entity=2401104)
     IfFlagOff(2, 12400827)
-    IfActionButtonInRegion(2, action_button_id=7100, region=2401103)
+    IfActionButtonParam(2, action_button_id=7100, entity=2401103)
     IfFlagOn(3, 12400828)
-    IfActionButtonInRegion(3, action_button_id=7100, region=2401104)
+    IfActionButtonParam(3, action_button_id=7100, entity=2401104)
     IfFlagOn(4, 12400828)
-    IfActionButtonInRegion(4, action_button_id=7100, region=2401103)
+    IfActionButtonParam(4, action_button_id=7100, entity=2401103)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    DisplayDialog(
-        10010172,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(10010172, anchor_entity=-1, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
 @RestartOnRest
-def Event12400850(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: float,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12400850(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12400850: Event 12400850 """
     DeleteFX(arg_0_3, erase_root_only=False)
     DeleteFX(arg_4_7, erase_root_only=False)
@@ -1642,9 +1556,8 @@ def Event12405100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 
 @RestartOnRest
-def Event12405110(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12405110(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12405110: Event 12405110 """
     IfObjectNotDestroyed(0, arg_12_15)
     DisableFlag(arg_20_23)
@@ -1670,39 +1583,18 @@ def Event12405110(
     EndIfFinishedConditionTrue(2)
     Wait(0.20000000298023224)
     CreatePlayLog(arg_24_27)
-    ShootProjectile(
-        owner_entity=2400000,
-        projectile_id=arg_12_15,
-        model_point=101,
-        behavior_id=5071,
-        launch_angle_x=0,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2400000, projectile_id=arg_12_15, model_point=101, behavior_id=5071, launch_angle_x=0, 
+                    launch_angle_y=arg_16_19, launch_angle_z=0)
     PlaySoundEffect(anchor_entity=arg_12_15, sound_type=SoundType.a_Ambient, sound_id=243007000)
     CreateTemporaryFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(0.699999988079071)
-    ShootProjectile(
-        owner_entity=2400000,
-        projectile_id=arg_12_15,
-        model_point=101,
-        behavior_id=5071,
-        launch_angle_x=0,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2400000, projectile_id=arg_12_15, model_point=101, behavior_id=5071, launch_angle_x=0, 
+                    launch_angle_y=arg_16_19, launch_angle_z=0)
     PlaySoundEffect(anchor_entity=arg_12_15, sound_type=SoundType.a_Ambient, sound_id=243007000)
     CreateTemporaryFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(0.699999988079071)
-    ShootProjectile(
-        owner_entity=2400000,
-        projectile_id=arg_12_15,
-        model_point=101,
-        behavior_id=5071,
-        launch_angle_x=0,
-        launch_angle_y=arg_16_19,
-        launch_angle_z=0,
-    )
+    ShootProjectile(owner_entity=2400000, projectile_id=arg_12_15, model_point=101, behavior_id=5071, launch_angle_x=0, 
+                    launch_angle_y=arg_16_19, launch_angle_z=0)
     PlaySoundEffect(anchor_entity=arg_12_15, sound_type=SoundType.a_Ambient, sound_id=243007000)
     CreateTemporaryFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(3.0)
@@ -1746,7 +1638,7 @@ def Event12405140():
     IfCharacterBackreadEnabled(0, 2400111)
     DisableAI(2400111)
     IfFlagOn(1, 12405681)
-    IfDamageType(2, attacked_entity=2400111, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=2400111, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(3, input_condition=-1)
@@ -1759,7 +1651,8 @@ def Event12405140():
     EndIfFinishedConditionFalse(1)
     SetAIParamID(2400111, 263380)
     IfCharacterInsideRegion(-2, 2400111, region=2402046)
-    IfDamageType(-2, attacked_entity=2400111, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-2, attacked_entity=2400111, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfEntityWithinDistance(-2, PLAYER, 2400111, radius=5.0)
     IfConditionTrue(0, input_condition=-2)
     SetAIParamID(2400111, 263381)
@@ -2127,7 +2020,7 @@ def Event12405330(_, arg_0_3: int):
     IfConditionTrue(1, input_condition=-2)
     IfEntityWithinDistance(1, arg_0_3, PLAYER, radius=4.0)
     IfConditionTrue(-1, input_condition=1)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(arg_0_3, 7001)
     ReplanAI(arg_0_3)
@@ -2238,17 +2131,8 @@ def Event12400865(_, arg_0_3: int):
 
 
 @RestartOnRest
-def Event12405400(
-    _,
-    arg_0_1: short,
-    arg_4_7: int,
-    arg_8_9: short,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12405400(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12405400: Event 12405400 """
     IfFlagOn(0, arg_20_23)
     IfCharacterPartHealthLessThanOrEqual(1, arg_28_31, npc_part_id=arg_4_7, value=0)
@@ -2263,16 +2147,8 @@ def Event12405400(
     SkipLinesIfFlagOn(2, arg_20_23)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_hp=1, overwrite_max=False)
     Restart()
-    CreateNPCPart(
-        arg_28_31,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_28_31, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
     ResetAnimation(arg_28_31, disable_interpolation=False)
     ForceAnimation(arg_28_31, arg_12_15)
@@ -2294,16 +2170,8 @@ def Event12405430(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     """ 12405430: Event 12405430 """
     IfEntityWithinDistance(1, arg_20_23, PLAYER, radius=10.0)
     IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_20_23,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_12_15,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(arg_20_23, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
     EnableFlag(arg_16_19)
 
@@ -2589,7 +2457,8 @@ def Event12405686(_, arg_0_3: int):
     IfConditionTrue(1, input_condition=-2)
     IfEntityWithinDistance(1, arg_0_3, PLAYER, radius=2.0)
     IfConditionTrue(-1, input_condition=1)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
@@ -2778,7 +2647,7 @@ def Event12400507():
     """ 12400507: Event 12400507 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(1, attacked_entity=2400730, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=2400730, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfHealthNotEqual(1, 2400730, 0.0)
     IfConditionTrue(0, input_condition=1)
     GotoIfFlagOn(Label.L0, 1185)
@@ -2858,27 +2727,17 @@ def Event12400514():
 
     # --- 0 --- #
     DefineLabel(0)
-    IfActionButtonInRegion(0, action_button_id=2400020, region=2400731)
-    DisplayDialog(
-        14001000,
-        anchor_entity=2400731,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=2400020, entity=2400731)
+    DisplayDialog(14001000, anchor_entity=2400731, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     EnableFlag(72400919)
     Restart()
 
     # --- 1 --- #
     DefineLabel(1)
-    IfActionButtonInRegion(0, action_button_id=2400020, region=2400731)
-    DisplayDialog(
-        14001001,
-        anchor_entity=2400731,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=2400020, entity=2400731)
+    DisplayDialog(14001001, anchor_entity=2400731, display_distance=3.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -3368,7 +3227,7 @@ def Event12400570():
     """ 12400570: Event 12400570 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(1, attacked_entity=2400765, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=2400765, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfHealthNotEqual(1, 2400765, 0.0)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(2400765, 103052)
@@ -3564,11 +3423,11 @@ def Event12400592(_, arg_0_3: int, arg_4_7: int):
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     DisableFlag(arg_4_7)
-    IfDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     WaitFrames(1)
-    IfDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     WaitFrames(1)
-    IfDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     WaitFrames(1)
     EnableFlag(arg_4_7)
 
@@ -3712,7 +3571,7 @@ def Event12400616(_, arg_0_3: int):
     """ 12400616: Event 12400616 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthNotEqual(1, arg_0_3, 0.0)
     IfHealthGreaterThan(1, arg_0_3, 0.5)
     IfConditionTrue(0, input_condition=1)
@@ -3831,7 +3690,8 @@ def Event12400625(_, arg_0_3: int, arg_4_7: int):
     EndIfConditionFalse(15)
     EndIfFlagOff(1207)
     WaitFrames(30)
-    IfDamageType(-1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfCharacterInsideRegion(-1, PLAYER, region=2404383)
     IfConditionTrue(1, input_condition=-1)
     IfFlagOn(1, 1207)
@@ -3845,13 +3705,13 @@ def Event12400627(_, arg_0_3: int, arg_4_7: int):
     """ 12400627: Event 12400627 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
     WaitFrames(1)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=2)
     WaitFrames(1)
-    IfDamageType(3, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(3, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthNotEqual(3, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=3)
     EnableFlag(arg_4_7)
@@ -3950,7 +3810,7 @@ def Event12400630(_, arg_0_3: int):
     IfCharacterHuman(15, PLAYER)
     GotoIfConditionFalse(Label.L0, input_condition=15)
     IfHealthEqual(1, arg_0_3, 0.0)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
     IfCharacterDead(0, arg_0_3)
     EnableFlag(9432)
@@ -4277,7 +4137,7 @@ def Event12400663():
     IfFlagOn(-1, 1370)
     IfFlagOn(-1, 1371)
     IfConditionTrue(1, input_condition=-1)
-    IfDamageType(1, attacked_entity=2400903, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=2400903, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(2400903, 103032)
     Kill(2400903, award_souls=True)
@@ -4612,7 +4472,7 @@ def Event12400731():
 @RestartOnRest
 def Event12400732():
     """ 12400732: Event 12400732 """
-    IfDamageType(1, attacked_entity=2400700, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=2400700, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfFlagOn(1, 72400981)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(1109)
@@ -4880,7 +4740,7 @@ def Event12400904():
     IfFlagOn(1, 1308)
     IfCharacterInsideRegion(1, PLAYER, region=2404380)
     IfConditionTrue(-1, input_condition=1)
-    IfDamageType(-1, attacked_entity=2400775, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(-1, attacked_entity=2400775, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(72400397)
     EnableAI(2400775)
@@ -4890,7 +4750,7 @@ def Event12400910(_, arg_0_3: int):
     """ 12400910: Event 12400910 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfHealthNotEqual(1, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHasSpecialEffect(2, arg_0_3, 151)
@@ -5075,23 +4935,24 @@ def Event12400800():
     """ 12400800: Event 12400800 """
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfDamageType(1, attacked_entity=2400765, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=2400765, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(1, 2400765, 0.0)
-    IfDamageType(2, attacked_entity=2400730, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=2400730, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(2, 2400730, 0.0)
-    IfDamageType(3, attacked_entity=2400750, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(3, attacked_entity=2400750, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(3, 2400750, 0.0)
-    IfDamageType(4, attacked_entity=2400754, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(4, attacked_entity=2400754, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(4, 2400754, 0.0)
-    IfDamageType(5, attacked_entity=2400757, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(5, attacked_entity=2400757, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(5, 2400757, 0.0)
-    IfDamageType(7, attacked_entity=2400770, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(7, attacked_entity=2400770, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(7, 2400770, 0.0)
-    IfDamageType(8, attacked_entity=2400772, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(8, attacked_entity=2400772, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(8, 2400772, 0.0)
-    IfDamageType(9, attacked_entity=2400774, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(9, attacked_entity=2400774, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfHealthEqual(9, 2400774, 0.0)
-    IfDamageType(13, attacked_entity=2400700, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(13, attacked_entity=2400700, attacking_character=PLAYER, 
+                             damage_type=DamageType.Unspecified)
     IfHealthEqual(13, 2400700, 0.0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -5187,7 +5048,7 @@ def Event12400810(_, arg_0_3: int, arg_4_7: int):
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     IfHealthNotEqual(1, arg_0_3, 0.0)
-    IfDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacking_character=-1, damage_type=DamageType.Unspecified)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(arg_0_3, arg_4_7)
     Restart()
@@ -5208,7 +5069,7 @@ def Event12400840(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EndIfConditionFalse(15)
     DisableFlag(arg_0_3)
     IfFlagOff(1, arg_0_3)
-    IfActionButtonInRegion(1, action_button_id=arg_4_7, region=arg_8_11)
+    IfActionButtonParam(1, action_button_id=arg_4_7, entity=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
@@ -5297,14 +5158,9 @@ def Event12405710():
     # --- 0 --- #
     DefineLabel(0)
     DisableNetworkSync()
-    IfActionButtonInRegion(0, action_button_id=7000, region=2401202)
-    DisplayDialog(
-        10010171,
-        anchor_entity=2401202,
-        display_distance=5.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    IfActionButtonParam(0, action_button_id=7000, entity=2401202)
+    DisplayDialog(10010171, anchor_entity=2401202, display_distance=5.0, button_type=ButtonType.OK_or_Cancel, 
+                  number_buttons=NumberButtons.OneButton)
     Restart()
 
 
@@ -5313,7 +5169,7 @@ def Event12405750(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 12405750: Event 12405750 """
     EndIfThisEventSlotOn()
     IfEntityWithinDistance(1, arg_0_3, PLAYER, radius=arg_8_11)
-    IfDamageType(2, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
+    IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacking_character=PLAYER, damage_type=DamageType.Unspecified)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
@@ -5433,14 +5289,13 @@ def Event12401803():
     CreateFX(2403413)
     EndIfClient()
     IfCharacterHuman(1, PLAYER)
-    IfActionButtonInRegion(1, action_button_id=2400010, region=2401801)
+    IfActionButtonParam(1, action_button_id=2400010, entity=2401801)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(9180)
     WaitFrames(1)
     DeleteFX(2403413, erase_root_only=True)
-    PlayCutsceneAndMovePlayerAndSetTimePeriod(
-        24000030, CutsceneType.Skippable, -1, CATHEDRAL_WARD, player_id=10000, time_period_id=2
-    )
+    PlayCutsceneAndMovePlayerAndSetTimePeriod(24000030, CutsceneType.Skippable, -1, CATHEDRAL_WARD, player_id=10000, 
+                                              time_period_id=2)
     WaitFrames(1)
     DisableFlag(9180)
 
@@ -5473,7 +5328,7 @@ def Event12404840():
     DefineLabel(0)
     IfFlagOff(2, 12401800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonInRegion(2, action_button_id=2400800, region=2401800)
+    IfActionButtonParam(2, action_button_id=2400800, entity=2401800)
     IfFlagOn(3, 12401800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -5500,7 +5355,7 @@ def Event12404841():
     IfFlagOn(1, 12401802)
     IfFlagOn(1, 12404800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonInRegion(1, action_button_id=2400800, region=2401800)
+    IfActionButtonParam(1, action_button_id=2400800, entity=2401800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2402800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -5660,21 +5515,12 @@ def Event12404808():
 
 
 @RestartOnRest
-def Event12404810(
-    _, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12404810(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12404810: Event 12404810 """
     EndIfFlagOn(12401800)
-    CreateNPCPart(
-        2400800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_12_15,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(2400800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
+                  body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(2400800, npc_part_id=arg_4_7, material_special_effect_id=72, material_fx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, 2400800, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(3, 2400800, 0.0)
@@ -5682,16 +5528,8 @@ def Event12404810(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(3)
-    CreateNPCPart(
-        2400800,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=9999999,
-        damage_correction=1.0,
-        body_damage_correction=1.5,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+    CreateNPCPart(2400800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
+                  body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
     SetNPCPartEffects(2400800, npc_part_id=arg_4_7, material_special_effect_id=73, material_fx_id=73)
     WaitFrames(1)
     ResetAnimation(2400800, disable_interpolation=False)
@@ -5892,17 +5730,8 @@ def Event12404400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 
 @RestartOnRest
-def Event12404410(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
-):
+def Event12404410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int, arg_28_31: int):
     """ 12404410: Event 12404410 """
     SkipLinesIfFlagOn(1, arg_12_15)
     DisableCharacter(arg_4_7)
@@ -5920,7 +5749,7 @@ def Event12404410(
     IfFlagOff(2, arg_16_19)
     IfFlagOn(2, arg_20_23)
     IfFlagOff(2, arg_24_27)
-    IfActionButtonInRegion(2, action_button_id=arg_28_31, region=arg_4_7)
+    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -5933,9 +5762,8 @@ def Event12404410(
 
 
 @RestartOnRest
-def Event12404460(
-    _, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, arg_24_27: int
-):
+def Event12404460(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int, 
+                  arg_24_27: int):
     """ 12404460: Event 12404460 """
     EndIfClient()
     IfFlagOn(1, arg_20_23)

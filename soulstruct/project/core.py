@@ -19,7 +19,7 @@ from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps import DarkSoulsMaps
-from soulstruct.params import DarkSoulsGameParameters, DarkSoulsLightingParameters
+from soulstruct.params.darksouls1 import GameParamBND, DrawParamDirectory
 from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import PACKAGE_PATH, traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
@@ -84,8 +84,8 @@ class SoulstructProject:
 
         # Initialize with empty structures.
         self.Text = DarkSoulsText()
-        self.Params = DarkSoulsGameParameters()
-        self.Lighting = DarkSoulsLightingParameters()
+        self.Params = GameParamBND()
+        self.Lighting = DrawParamDirectory()
         self.Maps = DarkSoulsMaps()
         self.AI = DarkSoulsAIScripts()
         # No structures for Events or Talk (scripts stored as plain-text EVS and ESP files).

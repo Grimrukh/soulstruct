@@ -65,6 +65,10 @@ class BNDEntry:
         return Path(self.path).name
 
     @property
+    def stem(self):
+        return Path(self.path).stem
+
+    @property
     def path_with_forward_slashes(self):
         return self.path.replace("\\", "/")
 

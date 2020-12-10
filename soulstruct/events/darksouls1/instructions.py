@@ -4,7 +4,7 @@ I haven't yet put any restrictions on using the new DSR instructions in PTD, so 
 """
 from soulstruct.events.numeric import to_numeric
 from soulstruct.game_types import *
-from soulstruct.enums.darksouls1 import *
+from soulstruct.events.darksouls1.enums import *
 from soulstruct.events.shared.instructions import *
 
 __all__ = [
