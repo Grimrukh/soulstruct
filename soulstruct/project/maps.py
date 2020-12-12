@@ -9,7 +9,7 @@ from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import GameObject, PlaceName, BaseLightingParam, ObjActParam
 from soulstruct.game_types.msb_types import *
 from soulstruct.maps.enums import *
-from soulstruct.maps.models import MSBModel
+from soulstruct.maps.base.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox, BitGroupEditBox
 from soulstruct.project.base.base_editor import EntryRow

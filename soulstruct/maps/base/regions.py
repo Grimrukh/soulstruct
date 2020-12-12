@@ -4,7 +4,7 @@ import struct
 from io import BufferedReader, BytesIO
 
 from soulstruct.maps.enums import MSBRegionSubtype
-from soulstruct.maps.base import MSBEntryList, MSBEntryEntityCoordinates
+from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
 from soulstruct.utilities.maths import Vector3
 
@@ -436,3 +436,11 @@ class MSBRegionList(MSBEntryList[BaseMSBRegion]):
         """Global region index only."""
         for i, entry in enumerate(self._entries):
             entry.set_indices(region_index=i)
+
+
+for _entry_subtype in MSBRegionList.ENTRY_SUBTYPE_ENUM:
+    setattr(
+        MSBRegionList,
+        _entry_subtype.pluralized_name,
+        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
+    )

@@ -1,6 +1,8 @@
 """Basic information structures for all FromSoftware games used across Soulstruct."""
 from __future__ import annotations
 
+import typing as tp
+
 from soulstruct.utilities import PACKAGE_PATH
 
 __all__ = [
@@ -114,8 +116,10 @@ GAMES = (
 )
 
 
-def get_game(game_name: str):
+def get_game(game_name: tp.Union[str, Game]):
     """Spaces, case, apostrophes, and colons in aliases don't matter."""
+    if isinstance(game_name, Game):
+        return game_name
     game_name = game_name.lower()
     for old, new in ((" ", ""), ("'", ""), (":", ""), ("iii", "3"), ("ii", "2")):
         game_name.replace(old, new)

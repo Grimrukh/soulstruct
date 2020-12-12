@@ -54,7 +54,7 @@ from io import BufferedReader, BytesIO
 from itertools import product
 from pathlib import Path
 
-from soulstruct.maps.msb import MSB
+from soulstruct.maps.base.msb import MSB
 from soulstruct.utilities.core import BinaryStruct, create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
 

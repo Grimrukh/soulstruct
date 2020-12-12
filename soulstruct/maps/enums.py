@@ -1,4 +1,11 @@
-__all__ = ["MSBSubtype", "MSBModelSubtype", "MSBEventSubtype", "MSBRegionSubtype", "MSBPartSubtype"]
+__all__ = [
+    "MSBSubtype",
+    "MSBModelSubtype",
+    "MSBEventSubtype",
+    "MSBRegionSubtype",
+    "MSBPartSubtype",
+    "CollisionHitFilter",
+]
 
 from enum import IntEnum
 
@@ -21,7 +28,7 @@ class MSBModelSubtype(MSBSubtype):
     MapPiece = 0
     Object = 1
     Character = 2
-    Unknown = 3
+    Item = 3
     Player = 4
     Collision = 5
     Navmesh = 6
@@ -44,7 +51,14 @@ class MSBEventSubtype(MSBSubtype):
     MapOffset = 9
     Navigation = 10
     Environment = 11
-    NPCInvasion = 12
+    PseudoMultiplayer = 12
+    # Bloodborne only:
+    WindFX = 13
+    PatrolRoute = 14
+    DarkLock = 15
+    Platoon = 16
+    MultiSummon = 17
+    Other = 0xFFFFFFFF
 
     @classmethod
     def get_pluralized_type_name(cls):
@@ -81,3 +95,31 @@ class MSBPartSubtype(MSBSubtype):
     @classmethod
     def get_pluralized_type_name(cls):
         return "Parts"
+
+
+class CollisionHitFilter(IntEnum):
+    """Defines behavior of `MSBCollision` instances in maps. Courtesy of horkrux."""
+    NoHiHitNoFeetIK = 0  # solid
+    NoHiHit_1 = 1  # solid
+    NoHiHit_2 = 2  # solid
+    NoHiHit_3 = 3  # solid
+    NoHiHit_4 = 4  # solid
+    NoHiHit_5 = 5  # solid
+    NoHiHit_6 = 6  # solid
+    NoHiHit_7 = 7  # solid
+    Normal = 8  # solid
+    Water_A = 9  # blue
+    Unknown_10 = 10
+    Solid_ForNPCsOnly_A = 11  # blue
+    Unknown_12 = 12
+    DeathCam = 13  # white
+    LethalFall = 14  # red
+    DeathPlane = 15  # black
+    Water_B = 16  # dark blue
+    GroupSwitch = 17  # turquoise; in elevator shafts
+    Unknown_18 = 18
+    Solid_ForNPCsOnly_B = 19  # turquoise
+    LevelExit_A = 20  # purple
+    Slide = 21  # yellow
+    FallProtection = 22  # permeable for projectiles
+    LevelExit_B = 23  # glowing turquoise

@@ -1,28 +1,23 @@
 import logging
+import struct
 import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
 
-from soulstruct.maps.base import MSBEntryList, MSBEntry, MSBEntryEntity
-from soulstruct.maps.enums import *
-from soulstruct.maps.events import MSBEventList
-from soulstruct.maps.models import MSBModelList
-from soulstruct.maps.parts import MSBPartList
-from soulstruct.maps.regions import MSBRegionList
-from soulstruct.utilities.core import create_bak
+from soulstruct.maps.enums import MSBEventSubtype, MSBPartSubtype
+from soulstruct.utilities import BinaryStruct, create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
 
+from .msb_entry import MSBEntry
+from .parts import MSBPartList
+from .regions import MSBRegionList
+from .events import MSBEventList
+from .models import MSBModelList
+
+if tp.TYPE_CHECKING:
+    from .msb_entry import MSBEntryList, MSBEntryEntity
+
 _LOGGER = logging.getLogger(__name__)
-
-
-# Set up shortcut attributes to sorted entry type lists (e.g. `MSBPartList.Characters`).
-for cls in (MSBModelList, MSBEventList, MSBRegionList, MSBPartList):
-    for _entry_subtype in cls.ENTRY_SUBTYPE_ENUM:
-        setattr(
-            cls,
-            _entry_subtype.pluralized_name,
-            property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-        )
 
 
 class MSB(object):
@@ -321,7 +316,7 @@ class MSB(object):
         return iter((self.models, self.events, self.regions, self.parts))
 
 
-if __name__ == "__main__":
-    from soulstruct import PTDE_PATH
+class BloodborneMSB(MSB):
 
-    depths = MSB(PTDE_PATH + "/map/MapStudio/m10_00_00_00.msb")
+    # Constant pre-packed header for multiple MSB implementations.
+    HEADER = struct.pack("4sII??bb", "MSB ", 1, 16, False, False, 1, 255)

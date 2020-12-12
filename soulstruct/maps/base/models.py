@@ -2,7 +2,7 @@ import typing as tp
 from io import BufferedReader, BytesIO
 
 from soulstruct.core import SoulstructError
-from soulstruct.maps.base import MSBEntryList, MSBEntry
+from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntry
 from soulstruct.maps.enums import MSBModelSubtype
 
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
@@ -10,16 +10,20 @@ from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
 class MSBModel(MSBEntry):
 
-    # ENTRY_SUBTYPE is spoofed as an instance variable, since all Models have near-identical structs.
+    # ENTRY_SUBTYPE is spoofed as an instance variable, since all Models have identical binary formats.
 
     MODEL_STRUCT = BinaryStruct(
         ("__name_offset", "i"),
-        ("__model_type", "i"),
+        ("__model_type", "I"),
         ("_model_type_index", "i"),
         ("__sib_path_offset", "i"),
         ("_instance_count", "i"),
         "12x",
     )
+
+    ENCODING = "shift-jis"
+    NULL = b"\0"
+    EMPTY_SIB_PATH = b"\0" * 6
 
     FIELD_INFO = {
         "sib_path": (
@@ -68,10 +72,10 @@ class MSBModel(MSBEntry):
         model_offset = msb_buffer.tell()
         model_data = self.MODEL_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding="shift-jis"
+            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding=self.ENCODING,
         )
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding="shift-jis"
+            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding=self.ENCODING,
         )
         try:
             self.ENTRY_SUBTYPE = MSBModelSubtype(model_data["__model_type"])
@@ -81,9 +85,9 @@ class MSBModel(MSBEntry):
 
     def pack(self):
         name_offset = self.MODEL_STRUCT.size
-        packed_name = self.get_name_to_pack().encode("shift-jis") + b"\0"
+        packed_name = self.get_name_to_pack().encode(self.ENCODING) + self.NULL
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode("shift-jis") + b"\0" if self.sib_path else b"\0" * 6
+        packed_sib_path = self.sib_path.encode(self.ENCODING) + self.NULL if self.sib_path else self.EMPTY_SIB_PATH
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
         packed_model_data = self.MODEL_STRUCT.pack(
@@ -150,6 +154,7 @@ class MSBModelList(MSBEntryList[MSBModel]):
     MapPieces: tp.List[MSBModel]
     Objects: tp.List[MSBModel]
     Characters: tp.List[MSBModel]
+    Items: tp.List[MSBModel]
     Players: tp.List[MSBModel]
     Collisions: tp.List[MSBModel]
     Navmeshes: tp.List[MSBModel]
@@ -183,3 +188,11 @@ class MSBModelList(MSBEntryList[MSBModel]):
 
     def get_subtype_instance(self, entry_subtype, **kwargs):
         return MSBModel(msb_model_source=None, **kwargs)
+
+
+for _entry_subtype in MSBModelList.ENTRY_SUBTYPE_ENUM:
+    setattr(
+        MSBModelList,
+        _entry_subtype.pluralized_name,
+        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
+    )

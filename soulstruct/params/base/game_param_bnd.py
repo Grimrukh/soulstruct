@@ -4,7 +4,6 @@ from pathlib import Path
 
 from soulstruct.bnd import BaseBND, BND
 from soulstruct.params.paramdef import ParamDefBND
-from soulstruct.params.utilities import GET_BUNDLED_PARAMDEFBND
 
 from .param import Param
 
@@ -50,12 +49,11 @@ class GameParamBND:
                 self._bnd = BND(game_param_bnd_source)
             except TypeError:
                 raise TypeError("Could not load GameParamBND from given source.")
-        if isinstance(paramdef_bnd, str):
-            self.paramdef_bnd = GET_BUNDLED_PARAMDEFBND(paramdef_bnd)
-        elif isinstance(paramdef_bnd, ParamDefBND):
+
+        if isinstance(paramdef_bnd, ParamDefBND):
             self.paramdef_bnd = paramdef_bnd
         else:
-            raise TypeError(f"`paramdef_bnd` must be a `ParamDefBND` instance or a game name: 'dsr', 'ptde', 'bb'")
+            self.paramdef_bnd = ParamDefBND(paramdef_bnd)
 
         for entry in self._bnd:
             p = self._data[entry.path] = self.Param(entry.data, self.paramdef_bnd)

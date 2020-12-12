@@ -127,7 +127,7 @@ class ParamRow:
                         )
             elif field.internal_type == "fixstr":
                 self.bit_field.clear()
-                field_value = row_buffer.read(field.size).decode("shift_jis_2004")
+                field_value = row_buffer.read(field.size).decode("shift-jis")
             elif field.internal_type == "fixstrW":
                 self.bit_field.clear()
                 field_value = row_buffer.read(field.size).decode("utf-16-le")
@@ -507,4 +507,4 @@ class Param:
         if self.flags2.UnicodeRowNames:
             return "utf-16-be" if self.byte_order == ">" else "utf-16-le"
         else:
-            return "shift_jis_2004"
+            return "shift-jis"

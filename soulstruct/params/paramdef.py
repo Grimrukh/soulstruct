@@ -94,7 +94,7 @@ class ParamDefField:
                 field_description = read_chars_from_buffer(
                     paramdef_buffer,
                     offset=field_struct["description_offset"],
-                    encoding="utf-16-le" if unicode else "shift_jis_2004",
+                    encoding="utf-16-le" if unicode else "shift-jis",
                 )
             else:
                 field_description = ""
@@ -210,7 +210,7 @@ class ParamDef:
             self.param_type = header["param_name"]
         except KeyError:
             self.param_type = read_chars_from_buffer(
-                paramdef_buffer, offset=header["param_name_offset"], encoding="shift_jis_2004",
+                paramdef_buffer, offset=header["param_name_offset"], encoding="shift-jis",
             )
         self.data_version = header["data_version"]
         self.unicode = header["unicode"]

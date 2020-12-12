@@ -7,7 +7,7 @@ import typing as tp
 from soulstruct.bnd.core import BND
 from soulstruct.game_types import *
 from soulstruct.maps.enums import MSBModelSubtype
-from soulstruct.maps.models import MSBModelList
+from soulstruct.maps.base.models import MSBModelList
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.core import SoulstructError
 from soulstruct.project.utilities import ItemTextEditBox

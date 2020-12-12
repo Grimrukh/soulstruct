@@ -34,7 +34,7 @@ __all__ = [
     "MapOffsetEvent",
     "NavigationEvent",
     "EnvironmentEvent",
-    "NPCInvasionEvent",
+    "PseudoMultiplayerEvent",
 
     "MapPart",
     "MapPiece",
@@ -355,11 +355,11 @@ class EnvironmentEvent(MapEvent):
         return ("Events", "Environments") if pluralized_subtype else ("Events", "Environment")
 
 
-class NPCInvasionEvent(MapEvent):
+class PseudoMultiplayerEvent(MapEvent):
     """Event describing invasion of NPC's world (e.g. Lautrec) in MSB."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Events", "NPCInvasions") if pluralized_subtype else ("Events", "NPCInvasion")
+        return ("Events", "PseudoMultiplayer") if pluralized_subtype else ("Events", "PseudoMultiplayer")
 
 
 class Region(MapEntry):
@@ -430,7 +430,7 @@ class BoxRegion(Region):
 
 
 class MapPart(MapEntry):
-    """Base class for anything that appears in the Parts of the MSB."""
+    """Base class for anything that appears in the Parts section of the MSB."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Parts", None

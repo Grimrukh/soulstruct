@@ -1,39 +1,26 @@
+import abc
 import typing as tp
 from io import BufferedReader, BytesIO
-import struct
 
-from soulstruct.core import SoulstructError
 from soulstruct.events.darksouls1.enums import SoundType
 from soulstruct.game_types import *
-from soulstruct.maps.base import MSBEntryList, MSBEntryEntity
+from soulstruct.maps.core import MapError
 from soulstruct.maps.enums import MSBEventSubtype
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars
+from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, unpack_from_buffer
 from soulstruct.utilities.maths import Vector3
 
-
-def MSBEvent(msb_buffer):
-    """Detects the appropriate subclass of BaseMSBEvent to instantiate."""
-    # TODO: support more types?
-    return BaseMSBEvent.auto_event_subclass(msb_buffer)
+from .msb_entry import MSBEntryList, MSBEntryEntity
 
 
-class BaseMSBEvent(MSBEntryEntity):
-    EVENT_HEADER_STRUCT = BinaryStruct(
-        ("__name_offset", "i"),
-        ("_event_index", "i"),
-        ("__event_type", "I"),
-        ("_local_event_index", "i"),
-        ("__base_data_offset", "i"),
-        ("__type_data_offset", "i"),
-        "4x",
-    )
+class MSBEvent(MSBEntryEntity, abc.ABC):
+    """Parent class for MSB events, which describe various things that occur in maps (often attached to Regions)."""
+
+    EVENT_HEADER_STRUCT = None  # type: BinaryStruct
     # Name is stored next.
     # Base data is stored next.
     # Type data is stored next.
 
-    EVENT_BASE_DATA_STRUCT = BinaryStruct(
-        ("_base_part_index", "i"), ("_base_region_index", "i"), ("entity_id", "i"), "4x",
-    )
+    EVENT_BASE_DATA_STRUCT = None  # type: BinaryStruct
 
     EVENT_TYPE_DATA_STRUCT = ()
 
@@ -102,21 +89,11 @@ class BaseMSBEvent(MSBEntryEntity):
     def pack_type_data(self):
         return BinaryStruct(*self.EVENT_TYPE_DATA_STRUCT).pack_from_object(self)
 
-    @staticmethod
-    def auto_event_subclass(msb_buffer):
-        old_offset = msb_buffer.tell()
-        msb_buffer.seek(old_offset + 8)
-        try:
-            event_type_int = struct.unpack("i", msb_buffer.read(4))[0]
-            event_type = MSBEventSubtype(event_type_int)
-        except (ValueError, TypeError):
-            event_type = None
-        msb_buffer.seek(old_offset)
-        return MSB_EVENT_TYPE_CLASSES[event_type](msb_buffer)
 
-
-class MSBLight(BaseMSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (("point_light", "i"),)
+class MSBLightEvent(MSBEvent):
+    EVENT_TYPE_DATA_STRUCT = (
+        ("point_light", "i"),
+    )
 
     FIELD_INFO = {
         "base_part_name": (
@@ -141,6 +118,12 @@ class MSBLight(BaseMSBEvent):
         ),
     }
 
+    FIELD_NAMES = (
+        "base_part_name",
+        "base_region_name",
+        "point_light",
+    )
+
     HIDDEN_FIELDS = (
         "entity_id",
     )
@@ -153,7 +136,7 @@ class MSBLight(BaseMSBEvent):
         self.set(**kwargs)
 
 
-class MSBSound(BaseMSBEvent):
+class MSBSoundEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("sound_type", "i"),
         ("sound_id", "i"),
@@ -204,8 +187,10 @@ class MSBSound(BaseMSBEvent):
         self.set(**kwargs)
 
 
-class MSBFX(BaseMSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (("fx_id", "i"),)
+class MSBFXEvent(MSBEvent):
+    EVENT_TYPE_DATA_STRUCT = (
+        ("fx_id", "i"),
+    )
 
     FIELD_INFO = {
         "base_part_name": (
@@ -245,24 +230,14 @@ class MSBFX(BaseMSBEvent):
         self.set(**kwargs)
 
 
-class MSBWind(BaseMSBEvent):
+class MSBWindEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ("unk_x00_x04", "f"),
+        ("wind_vector_min", "f"),
         ("unk_x04_x08", "f"),
-        ("unk_x08_x0c", "f"),
+        ("wind_vector_max", "f"),
         ("unk_x0c_x10", "f"),
-        ("unk_x10_x14", "f"),
-        ("unk_x14_x18", "f"),
-        ("unk_x18_x1c", "f"),
-        ("unk_x1c_x20", "f"),
-        ("unk_x20_x24", "f"),
-        ("unk_x24_x28", "f"),
-        ("unk_x28_x2c", "f"),
-        ("unk_x2c_x30", "f"),
-        ("unk_x30_x34", "f"),
-        ("unk_x34_x38", "f"),
-        ("unk_x38_x3c", "f"),
-        ("unk_x3c_x40", "f"),
+        ("_wind_swing_cycles", "ffff"),
+        ("_wind_swing_powers", "ffff"),
     )
 
     FIELD_INFO = {
@@ -271,23 +246,37 @@ class MSBWind(BaseMSBEvent):
             int,
             "Unused for Wind events.",
         ),
-        **BaseMSBEvent.FIELD_INFO,
-        "unk_x00_x04": ("Unknown [00-04]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x04_x08": ("Unknown [04-08]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x08_x0c": ("Unknown [08-0c]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x0c_x10": ("Unknown [0c-10]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x10_x14": ("Unknown [10-14]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x14_x18": ("Unknown [14-18]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x18_x1c": ("Unknown [18-1c]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x1c_x20": ("Unknown [1c-20]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x20_x24": ("Unknown [20-24]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x24_x28": ("Unknown [24-28]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x28_x2c": ("Unknown [28-2c]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x2c_x30": ("Unknown [2c-30]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x30_x34": ("Unknown [30-34]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x34_x38": ("Unknown [34-38]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x38_x3c": ("Unknown [38-3c]", float, "Unknown Wind parameter (floating-point number)."),
-        "unk_x3c_x40": ("Unknown [3c-40]", float, "Unknown Wind parameter (floating-point number)."),
+        **MSBEvent.FIELD_INFO,
+        "wind_vector_min": (
+            "Wind Vector Min",
+            float,
+            "Wind vector minimum.",
+        ),
+        "unk_x04_x08": (
+            "Unknown [04-08]",
+            float,
+            "Unknown Wind parameter (floating-point number).",
+        ),
+        "wind_vector_max": (
+            "Wind Vector Max",
+            float,
+            "Wind vector maximum.",
+        ),
+        "unk_x0c_x10": (
+            "Unknown [0c-10]",
+            float,
+            "Unknown Wind parameter (floating-point number).",
+        ),
+        "_wind_swing_cycles": (
+            "Wind Swing Cycles",
+            list,
+            "Wind swing cycles (four values).",
+        ),
+        "_wind_swing_powers": (
+            "Wind Swing Powers",
+            list,
+            "Wind swing powers (four values).",
+        ),
     }
 
     HIDDEN_FIELDS = (
@@ -299,27 +288,25 @@ class MSBWind(BaseMSBEvent):
     def __init__(self, msb_event_source=None, **kwargs):
         """Data consists of 16 floats, which likely specify the transform parameters (e.g. position, direction) of wind
         effects in the map."""
-        self.unk_x00_x04 = 0.0
+        self.wind_vector_min = 0.0
         self.unk_x04_x08 = 0.0
-        self.unk_x08_x0c = 0.0
+        self.wind_vector_max = 0.0
         self.unk_x0c_x10 = 0.0
-        self.unk_x10_x14 = 0.0
-        self.unk_x14_x18 = 0.0
-        self.unk_x18_x1c = 0.0
-        self.unk_x1c_x20 = 0.0
-        self.unk_x20_x24 = 0.0
-        self.unk_x24_x28 = 0.0
-        self.unk_x28_x2c = 0.0
-        self.unk_x2c_x30 = 0.0
-        self.unk_x30_x34 = 0.0
-        self.unk_x34_x38 = 0.0
-        self.unk_x38_x3c = 0.0
-        self.unk_x3c_x40 = 0.0
+        self._wind_swing_cycles = [0.0, 0.0, 0.0, 0.0]
+        self._wind_swing_powers = [0.0, 0.0, 0.0, 0.0]
         super().__init__(msb_event_source)
         self.set(**kwargs)
 
+    @property
+    def wind_swing_cycles(self):
+        return self._wind_swing_cycles
 
-class MSBTreasure(BaseMSBEvent):
+    @property
+    def wind_swing_powers(self):
+        return self._wind_swing_powers
+
+
+class MSBTreasureEvent(MSBEvent, abc.ABC):
     EVENT_TYPE_DATA_STRUCT = (
         "4x",
         ("_treasure_part_index", "i"),
@@ -334,12 +321,12 @@ class MSBTreasure(BaseMSBEvent):
         ("item_lot_5", "i"),
         ("minus_one_5", "i", -1),
         ("in_chest", "?"),
-        ("starts_disabled", "?"),
+        ("is_hidden", "?"),
         "2x",
     )
 
     FIELD_INFO = {
-        # base_part, base_region, and entity_id are unused for Treasure.'
+        # base_part, base_region, and entity_id are unused for Treasure.
         "entity_id": (
             "Entity ID",
             int,
@@ -383,10 +370,10 @@ class MSBTreasure(BaseMSBEvent):
         "in_chest": (
             "Is In Chest",
             bool,
-            "Indicates if this treasure is inside a chest (affects appearance).",
-        ),  # TODO: effect?
-        "starts_disabled": (
-            "Starts Disabled",
+            "Indicates if this treasure is inside a chest (affects appearance).",  # TODO: effect?
+        ),
+        "is_hidden": (
+            "Is Hidden",
             bool,
             "If True, this treasure will start disabled and will need to be enabled manually with an event script.",
         ),
@@ -404,10 +391,8 @@ class MSBTreasure(BaseMSBEvent):
         self.item_lot_1 = -1
         self.item_lot_2 = -1
         self.item_lot_3 = -1
-        self.item_lot_4 = -1
-        self.item_lot_5 = -1
         self.in_chest = False
-        self.starts_disabled = False
+        self.is_hidden = False
         super().__init__(msb_event_source)
         self.set(**kwargs)
 
@@ -420,9 +405,10 @@ class MSBTreasure(BaseMSBEvent):
         self.treasure_part_name = part_names[self._treasure_part_index] if self._treasure_part_index != -1 else None
 
 
-class MSBSpawner(BaseMSBEvent):
+class MSBSpawnerEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ("max_count", "h"),
+        ("max_count", "B"),
+        ("spawner_type", "b"),
         ("limit_count", "h"),
         ("min_spawner_count", "h"),
         ("max_spawner_count", "h"),
@@ -435,6 +421,8 @@ class MSBSpawner(BaseMSBEvent):
         "64x",
     )
 
+    SPAWN_REGION_COUNT = 4
+
     FIELD_INFO = {
         # base_part and base_region are unused for Spawners.
         "entity_id": (
@@ -446,6 +434,11 @@ class MSBSpawner(BaseMSBEvent):
             "Max Count",
             int,
             "Unsure; I suspect this is the total number of entities this spawner can produce.",
+        ),
+        "spawner_type": (
+            "Spawner Type",
+            int,
+            "Unsure what this enumeration is.",
         ),
         "limit_count": (
             "Limit Count",
@@ -499,8 +492,8 @@ class MSBSpawner(BaseMSBEvent):
         self.min_interval = 1.0
         self.max_interval = 1.0
         self.initial_spawn_count = 1
-        self.spawn_region_names = [None] * 4
-        self._spawn_region_indices = [-1] * 4
+        self.spawn_region_names = [None] * self.SPAWN_REGION_COUNT
+        self._spawn_region_indices = [-1] * self.SPAWN_REGION_COUNT
         self.spawn_part_names = [None] * 32
         self._spawn_part_indices = [-1] * 32
         super().__init__(msb_event_source)
@@ -509,7 +502,7 @@ class MSBSpawner(BaseMSBEvent):
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
         self._spawn_region_indices = [region_indices[n] if n else -1 for n in self.spawn_region_names]
-        while len(self._spawn_region_indices) < 4:
+        while len(self._spawn_region_indices) < self.SPAWN_REGION_COUNT:
             self._spawn_part_indices.append(-1)
         self._spawn_part_indices = [part_indices[n] if n else -1 for n in self.spawn_part_names]
         while len(self._spawn_part_indices) < 32:
@@ -518,18 +511,18 @@ class MSBSpawner(BaseMSBEvent):
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
         self.spawn_region_names = [region_names[i] if i != -1 else None for i in self._spawn_region_indices]
-        while len(self.spawn_region_names) < 4:
+        while len(self.spawn_region_names) < self.SPAWN_REGION_COUNT:
             self.spawn_region_names.append(None)
         self.spawn_part_names = [part_names[i] if i != -1 else None for i in self._spawn_part_indices]
         while len(self.spawn_part_names) < 32:
             self.spawn_part_names.append(None)
 
 
-class MSBMessage(BaseMSBEvent):
+class MSBMessageEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("text_id", "h"),
         ("unk_x02_x04", "h"),
-        ("starts_disabled", "?"),
+        ("is_hidden", "?"),
         "3x",
     )
 
@@ -559,8 +552,8 @@ class MSBMessage(BaseMSBEvent):
             int,
             "Unknown. Often set to 2.",
         ),
-        "starts_disabled": (
-            "Starts Disabled",
+        "is_hidden": (
+            "Is Hidden",
             bool,
             "If True, the message must be manually enabled with an event script or by using Seek Guidance.",
         ),
@@ -571,17 +564,18 @@ class MSBMessage(BaseMSBEvent):
     def __init__(self, msb_event_source=None, **kwargs):
         self.text_id = -1
         self.unk_x02_x04 = 2
-        self.starts_disabled = False
+        self.is_hidden = False
         super().__init__(msb_event_source)
         self.set(**kwargs)
 
 
-class MSBObjAct(BaseMSBEvent):
+class MSBObjActEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("obj_act_entity_id", "i"),
         ("_obj_act_part_index", "i"),
         ("obj_act_param_id", "h"),
-        ("unk_x0a_x0c", "h"),
+        ("obj_act_state", "B"),
+        "x",
         ("obj_act_flag", "i"),
     )
 
@@ -607,11 +601,11 @@ class MSBObjAct(BaseMSBEvent):
             "Param entry containing information about this object activation event. If it is -1, it will "
             "default to the model ID of the object it is attached to.",
         ),
-        "unk_x0a_x0c": (
-            "Unknown [0a-0c]",
+        "obj_act_state": (
+            "ObjAct State",
             int,
-            "Unknown.",
-        ),  # TODO: investigate
+            "State of object activation. Known values include Default (0), Door (1), and Loop (2).",
+        ),
         "obj_act_flag": (
             "ObjAct Flag",
             Flag,
@@ -630,7 +624,7 @@ class MSBObjAct(BaseMSBEvent):
         self.obj_act_part_name = None
         self._obj_act_part_index = None
         self.obj_act_param_id = -1
-        self.unk_x0a_x0c = 0
+        self.obj_act_state = 0
         self.obj_act_flag = 0
         super().__init__(msb_event_source)
         self.set(**kwargs)
@@ -644,7 +638,7 @@ class MSBObjAct(BaseMSBEvent):
         self.obj_act_part_name = part_names[self._obj_act_part_index] if self._obj_act_part_index != -1 else None
 
 
-class MSBSpawnPoint(BaseMSBEvent):
+class MSBSpawnPointEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("_spawn_point_region_index", "i"),
         "12x",
@@ -692,7 +686,7 @@ class MSBSpawnPoint(BaseMSBEvent):
             self.spawn_point_region_name = None
 
 
-class MSBMapOffset(BaseMSBEvent):
+class MSBMapOffsetEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("translate", "3f"),
         ("rotate_y", "f"),
@@ -729,7 +723,7 @@ class MSBMapOffset(BaseMSBEvent):
         self.set(**kwargs)
 
 
-class MSBNavigation(BaseMSBEvent):
+class MSBNavigationEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("_navmesh_region_index", "i"),
         "12x",
@@ -768,7 +762,7 @@ class MSBNavigation(BaseMSBEvent):
             self.navmesh_region_name = None
 
 
-class MSBEnvironment(BaseMSBEvent):
+class MSBEnvironmentEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("unk_x00_x04", "i"),
         ("unk_x04_x08", "f"),
@@ -817,7 +811,7 @@ class MSBEnvironment(BaseMSBEvent):
         self.set(**kwargs)
 
 
-class MSBNPCInvasion(BaseMSBEvent):
+class MSBPseudoMultiplayerEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("host_entity_id", "i"),
         ("invasion_flag_id", "i"),
@@ -858,7 +852,7 @@ class MSBNPCInvasion(BaseMSBEvent):
         "entity_id",
     )
 
-    ENTRY_SUBTYPE = MSBEventSubtype.NPCInvasion
+    ENTRY_SUBTYPE = MSBEventSubtype.PseudoMultiplayer
 
     def __init__(self, msb_event_source):
         self.host_entity_id = -1
@@ -882,43 +876,29 @@ class MSBNPCInvasion(BaseMSBEvent):
             self.spawn_point_region_name = None
 
 
-MSB_EVENT_TYPE_CLASSES = {
-    MSBEventSubtype.Light: MSBLight,
-    MSBEventSubtype.Sound: MSBSound,
-    MSBEventSubtype.FX: MSBFX,
-    MSBEventSubtype.Wind: MSBWind,
-    MSBEventSubtype.Treasure: MSBTreasure,
-    MSBEventSubtype.Spawner: MSBSpawner,
-    MSBEventSubtype.Message: MSBMessage,
-    MSBEventSubtype.ObjAct: MSBObjAct,
-    MSBEventSubtype.SpawnPoint: MSBSpawnPoint,
-    MSBEventSubtype.MapOffset: MSBMapOffset,
-    MSBEventSubtype.Navigation: MSBNavigation,
-    MSBEventSubtype.Environment: MSBEnvironment,
-    MSBEventSubtype.NPCInvasion: MSBNPCInvasion,
-}
-
-
-class MSBEventList(MSBEntryList[BaseMSBEvent]):
+class MSBEventList(MSBEntryList[MSBEvent]):
     ENTRY_LIST_NAME = "Events"
     ENTRY_CLASS = staticmethod(MSBEvent)
     ENTRY_SUBTYPE_ENUM = MSBEventSubtype
 
+    EVENT_SUBTYPE_CLASSES = {}  # type: dict[MSBEventSubtype, type]
+    EVENT_SUBTYPE_OFFSET = None  # type: int
+
     _entries: tp.List[MSBEvent]
 
-    Lights: tp.Sequence[MSBLight]
-    Sounds: tp.Sequence[MSBSound]
-    FX: tp.Sequence[MSBFX]
-    Wind: tp.Sequence[MSBWind]
-    Treasure: tp.Sequence[MSBTreasure]
-    Spawners: tp.Sequence[MSBSpawner]
-    Messages: tp.Sequence[MSBMessage]
-    ObjActs: tp.Sequence[MSBObjAct]
-    SpawnPoints: tp.Sequence[MSBSpawnPoint]
-    MapOffsets: tp.Sequence[MSBMapOffset]
-    Navigation: tp.Sequence[MSBNavigation]
-    Environment: tp.Sequence[MSBEnvironment]
-    NPCInvasions: tp.Sequence[MSBNPCInvasion]
+    Lights: tp.Sequence[MSBLightEvent]
+    Sounds: tp.Sequence[MSBSoundEvent]
+    FX: tp.Sequence[MSBFXEvent]
+    Wind: tp.Sequence[MSBWindEvent]
+    Treasure: tp.Sequence[MSBTreasureEvent]
+    Spawners: tp.Sequence[MSBSpawnerEvent]
+    Messages: tp.Sequence[MSBMessageEvent]
+    ObjActs: tp.Sequence[MSBObjActEvent]
+    SpawnPoints: tp.Sequence[MSBSpawnPointEvent]
+    MapOffsets: tp.Sequence[MSBMapOffsetEvent]
+    Navigation: tp.Sequence[MSBNavigationEvent]
+    Environment: tp.Sequence[MSBEnvironmentEvent]
+    NPCInvasions: tp.Sequence[MSBPseudoMultiplayerEvent]
 
     def set_names(self, region_names, part_names):
         for entry in self._entries:
@@ -936,7 +916,7 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
                     part_indices=part_indices,
                 )
             except KeyError as e:
-                raise SoulstructError(
+                raise MapError(
                     f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} event {entry.name}: {e}"
                 )
             else:
@@ -944,80 +924,95 @@ class MSBEventList(MSBEntryList[BaseMSBEvent]):
 
     def duplicate_light(
         self, light_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBLight:
+    ) -> MSBLightEvent:
         return self.duplicate_entry(MSBEventSubtype.Light, light_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_sound(
         self, sound_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBSound:
+    ) -> MSBSoundEvent:
         return self.duplicate_entry(MSBEventSubtype.Sound, sound_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_fx(
         self, fx_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBFX:
+    ) -> MSBFXEvent:
         return self.duplicate_entry(MSBEventSubtype.FX, fx_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_wind(
         self, wind_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBWind:
+    ) -> MSBWindEvent:
         return self.duplicate_entry(MSBEventSubtype.Wind, wind_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_treasure(
         self, treasure_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBTreasure:
+    ) -> MSBTreasureEvent:
         return self.duplicate_entry(MSBEventSubtype.Treasure, treasure_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_spawner(
         self, spawner_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBSpawner:
+    ) -> MSBSpawnerEvent:
         return self.duplicate_entry(MSBEventSubtype.Spawner, spawner_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_message(
         self, message_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBMessage:
+    ) -> MSBMessageEvent:
         return self.duplicate_entry(MSBEventSubtype.Message, message_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_objact(
         self, objact_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBObjAct:
+    ) -> MSBObjActEvent:
         return self.duplicate_entry(MSBEventSubtype.ObjAct, objact_name_or_index, insert_below_original, **kwargs)
 
     def duplicate_spawn_point(
         self, spawn_point_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBSpawnPoint:
+    ) -> MSBSpawnPointEvent:
         return self.duplicate_entry(
             MSBEventSubtype.SpawnPoint, spawn_point_name_or_index, insert_below_original, **kwargs,
         )
 
     def duplicate_map_offset(
         self, map_offset_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBMapOffset:
+    ) -> MSBMapOffsetEvent:
         return self.duplicate_entry(
             MSBEventSubtype.MapOffset, map_offset_name_or_index, insert_below_original, **kwargs,
         )
 
     def duplicate_navigation(
         self, navigation_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBNavigation:
+    ) -> MSBNavigationEvent:
         return self.duplicate_entry(
             MSBEventSubtype.Navigation, navigation_name_or_index, insert_below_original, **kwargs,
         )
 
     def duplicate_environment(
         self, environment_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBEnvironment:
+    ) -> MSBEnvironmentEvent:
         return self.duplicate_entry(
             MSBEventSubtype.Environment, environment_name_or_index, insert_below_original, **kwargs,
         )
 
     def duplicate_npc_invasion(
         self, npc_invasion_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBNPCInvasion:
+    ) -> MSBPseudoMultiplayerEvent:
         return self.duplicate_entry(
-            MSBEventSubtype.NPCInvasion, npc_invasion_name_or_index, insert_below_original, **kwargs,
+            MSBEventSubtype.PseudoMultiplayer, npc_invasion_name_or_index, insert_below_original, **kwargs,
         )
 
     def get_subtype_instance(self, entry_subtype, **kwargs):
         entry_subtype = self.resolve_entry_subtype(entry_subtype)
-        entry_class = MSB_EVENT_TYPE_CLASSES[entry_subtype]
+        entry_class = self.EVENT_SUBTYPE_CLASSES[entry_subtype]
         return entry_class(msb_event_source=None, **kwargs)
+
+    @classmethod
+    def MSBEvent(cls, msb_buffer):
+        """Detects the appropriate subclass of `MSBEvent` to instantiate, and does so."""
+        event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.EVENT_SUBTYPE_OFFSET, relative_offset=True)
+        event_type = MSBEventSubtype(event_type_int)
+        return cls.EVENT_SUBTYPE_CLASSES[event_type](msb_buffer)
+
+
+for _entry_subtype in MSBEventList.ENTRY_SUBTYPE_ENUM:
+    setattr(
+        MSBEventList,
+        _entry_subtype.pluralized_name,
+        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
+    )

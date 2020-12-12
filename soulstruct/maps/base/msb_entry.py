@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-__all__ = ["MSBEntry", "MSBEntryList", "MSBEntryEntity", "MSBEntryEntityCoordinates"]
+"""TODO: Dictionary read/write for all classes."""
 
 import abc
 import copy
@@ -10,12 +8,15 @@ import typing as tp
 from copy import deepcopy
 from io import BytesIO, BufferedReader
 
-from soulstruct.maps.enums import MSBSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
-_DUPLICATE_TAG_MATCH = re.compile(r" <(\d+)>$")
+if tp.TYPE_CHECKING:
+    from soulstruct.maps.enums import MSBSubtype
+
 _LOGGER = logging.getLogger(__name__)
+
+_DUPLICATE_TAG_MATCH = re.compile(r" <(\d+)>$")
 
 
 class MSBEntry(abc.ABC):
@@ -27,7 +28,7 @@ class MSBEntry(abc.ABC):
 
     def __init__(self):
         self.name = None
-        self.description = None  # Used for convenience in Soulstruct projects.
+        self.description = None  # Attribute supported by Soulstruct classes even when game lacks it.
 
     @abc.abstractmethod
     def pack(self):
