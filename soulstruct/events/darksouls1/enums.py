@@ -47,9 +47,6 @@ __all__ = [
     "BannerType",
     "MultiplayerState",
     "NPCPartType",
-
-    # Non-event enums
-    "CollisionHitFilter",
 ]
 
 from enum import IntEnum

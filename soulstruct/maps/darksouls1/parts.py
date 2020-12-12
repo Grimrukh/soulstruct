@@ -1,24 +1,25 @@
 import struct
 
+from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import *
 from soulstruct.maps import MapError
 from soulstruct.maps.base.parts import (
     MSBPart as BaseMSBPart,
     MSBPartList as BaseMSBPartList,
-    MSBPartSubtype,
     MSBMapPiece as BaseMSBMapPiece,
     MSBObject as BaseMSBObject,
     MSBCharacter as BaseMSBCharacter,
-    MSBPlayerStart,
-    MSBCollision,
-    MSBNavmesh,
-    MSBUnusedObject,
-    MSBUnusedCharacter,
-    MSBMapConnection,
+    MSBPlayerStart as BaseMSBPlayerStart,
+    MSBCollision as BaseMSBCollision,
+    MSBNavmesh as BaseMSBNavmesh,
+    MSBMapConnection as BaseMSBMapConnection,
 )
+from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
+
+from .maps import get_map
 
 
 class MSBPart(BaseMSBPart):
@@ -596,7 +597,537 @@ class MSBCharacter(BaseMSBCharacter, MSBPart):
         self.set(**kwargs)
 
 
+class MSBPlayerStart(BaseMSBPlayerStart, MSBPart):
+
+    FIELD_INFO = {
+        "model_name": (
+            "Model Name",
+            CharacterModel,
+            "Name of character model to use for this PlayerStart. This should always be c0000.",
+        ),
+        **MSBPart.FIELD_INFO,
+    }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    def __init__(self, msb_part_source=None, **kwargs):
+        super().__init__(msb_part_source, **kwargs)
+        if msb_part_source is None:
+            if "is_shadow_source" not in kwargs:
+                self.is_shadow_source = True
+            if "is_shadow_destination" not in kwargs:
+                self.is_shadow_destination = True
+            if "draw_by_reflect_cam" not in kwargs:
+                self.draw_by_reflect_cam = True
+
+
+class MSBCollision(BaseMSBCollision, MSBPart):
+    """Dark Souls collision includes navmesh groups and Vagrants."""
+
+    PART_TYPE_DATA_STRUCT = (
+        ("hit_filter_id", "B"),
+        ("sound_space_type", "B"),
+        ("_environment_event_index", "h"),
+        ("reflect_plane_height", "f"),
+        ("__navmesh_groups", "4I"),
+        ("vagrant_entity_ids", "3i"),
+        ("__area_name_id", "h"),
+        ("starts_disabled", "?"),
+        ("unk_x27_x28", "B"),
+        ("attached_bonfire", "i"),
+        ("minus_ones", "3i", [-1, -1, -1]),  # Never used. Possibly more bonfires?
+        ("__play_region_id", "i"),
+        ("lock_cam_param_id_1", "h"),
+        ("lock_cam_param_id_2", "h"),
+        "16x",
+    )
+
+    FIELD_INFO = {
+        "model_name": (
+            "Model Name",
+            CollisionModel,
+            "Name of collision model to use for this collision.",
+        ),
+        **MSBPart.FIELD_INFO,
+        "display_groups": (  # TODO: it's fine that "display_groups" is already a key in MSBPart.FIELD_INFO?
+            "Display Groups",
+            list,
+            "Display groups of collision. These display groups will be active when the player is standing on this "
+            "Collision, which will draw any parts with an overlapping draw group.",
+        ),
+        "hit_filter_id": (
+            "Hit Filter ID",
+            CollisionHitFilter,
+            "Determines what happens when the player activates this collision.",
+        ),
+        "sound_space_type": (
+            "Sound Space Type",
+            int,
+            "Unknown.",
+        ),
+        "environment_event_name": (
+            "Environment Event",
+            EnvironmentEvent,
+            "Environment event in map that determines ambience when standing on this collision.",
+        ),
+        "reflect_plane_height": (
+            "Reflect Plane Height",
+            float,
+            "Vertical height of the reflect plane for this collision.",
+        ),
+        "navmesh_groups": (
+            "Navmesh Groups",
+            list,
+            "Controls collision backread.",
+        ),
+        "vagrant_entity_ids": (
+            "Vagrant Entity IDs",
+            list,
+            "Unknown.",
+        ),
+        "area_name_id": (
+            "Area Name",
+            PlaceName,
+            "Name of area that this collision is in, which determines the area banner that is shown when you step on "
+            "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
+            "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY').",
+        ),
+        "force_area_banner": (
+            "Show Area Banner",
+            bool,
+            "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
+            "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
+            "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
+            "different area (a 'silent area transition') and have it enabled for collisions that are further away, "
+            "which produces a 'delayed area banner' effect.\n\n"
+            ""
+            "Do NOT enable this for two adjacent collisions with different area names, or moving back and forth "
+            "between those collisions will build up a huge queue of area banners to display, which can only be cleared "
+            "by restarting the game entirely.",
+        ),
+        "starts_disabled": (
+            "Starts Disabled",
+            bool,
+            "If True, this collision is disabled on map load and must be manually enabled with an event script.",
+        ),
+        "unk_x27_x28": (
+            "Unknown [27-28]",
+            int,
+            "Unknown. Almost always zero, but see e.g. Anor Londo gondola collision.",
+        ),
+        "attached_bonfire": (
+            "Attached Bonfire",
+            int,
+            "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
+            "on this collision. Note that this also checks for enemies that are disabled by events.",
+        ),
+        "play_region_id": (
+            "Play Region ID",
+            int,
+            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
+            ""
+            "NOTE: This field shares space with the stable footing flag, so only one of them can be set to a non-zero "
+            "value per collision.",
+        ),
+        "stable_footing_flag": (
+            "Stable Footing Flag",
+            int,
+            "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
+            "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
+            "defeated. If set to -1, the player's position will never be saved on this collision.\n\n"
+            ""
+            "NOTE: This field shares space with the play region ID, so only one of them can be set to a non-zero value "
+            "per collision.",
+        ),
+        "lock_cam_param_id_1": (
+            "Camera Param ID 1",
+            CameraParam,
+            "First camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+        "lock_cam_param_id_2": (
+            "Camera Param ID 2",
+            CameraParam,
+            "Second camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+    }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "navmesh_groups",
+        "hit_filter_id",
+        "sound_space_type",
+        "environment_event_name",
+        "reflect_plane_height",
+        "vagrant_entity_ids",
+        "area_name_id",
+        "force_area_banner",
+        "starts_disabled",
+        "unk_x27_x28",
+        "attached_bonfire",
+        "play_region_id",
+        "stable_footing_flag",
+        "lock_cam_param_id_1",
+        "lock_cam_param_id_2",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "lod_id",
+        "unk_x27_x28",
+        "use_depth_bias_float",
+    )
+
+    def __init__(self, msb_part_source=None, **kwargs):
+        self._navmesh_groups = set(range(128))
+        self.vagrant_entity_ids = [-1, -1, -1]
+        self.unk_x27_x28 = 0
+        super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
+        self.set(**kwargs)
+
+    def unpack_type_data(self, msb_buffer):
+        data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
+        self.set(**data)
+        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"])
+        self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
+        self._force_area_banner = data["__area_name_id"] < 0  # Custom field.
+        if data["__play_region_id"] > -10:
+            self._play_region_id = data["__play_region_id"]
+            self._stable_footing_flag = 0
+        else:
+            self._play_region_id = 0
+            self._stable_footing_flag = -data["__play_region_id"] - 10
+
+    def pack_type_data(self):
+        """Pack to bytes, presumably as part of a full `MSB` pack."""
+
+        # Validate navmesh groups before doing any real work.
+        navmesh_groups = bit_set_to_int_group(self._navmesh_groups)
+
+        if self.area_name_id == -1 and not self._force_area_banner:
+            raise InvalidFieldValueError("`force_area_banner` must be enabled if `area_name_id == -1` (default).")
+        signed_area_name_id = self.area_name_id * (-1 if self.area_name_id >= 0 and self._force_area_banner else 1)
+        if self._stable_footing_flag != 0:
+            play_region_id = -self._stable_footing_flag - 10
+        else:
+            play_region_id = self._play_region_id
+        return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
+            hit_filter_id=self.hit_filter_id,
+            sound_space_type=self.sound_space_type,
+            _environment_event_index=self._environment_event_index,
+            reflect_plane_height=self.reflect_plane_height,
+            __navmesh_groups=navmesh_groups,
+            vagrant_entity_ids=self.vagrant_entity_ids,
+            __area_name_id=signed_area_name_id,
+            starts_disabled=self.starts_disabled,
+            unk_x27_x28=self.unk_x27_x28,
+            attached_bonfire=self.attached_bonfire,
+            __play_region_id=play_region_id,
+            lock_cam_param_id_1=self.lock_cam_param_id_1,
+            lock_cam_param_id_2=self.lock_cam_param_id_2,
+        )
+
+    @property
+    def navmesh_groups(self):
+        return self._navmesh_groups
+
+    @navmesh_groups.setter
+    def navmesh_groups(self, value):
+        """Converts value to a `set()` (possibly empty) and validates index range."""
+        if value is None or isinstance(value, str) and value in {"None", ""}:
+            self._navmesh_groups = set()
+            return
+        try:
+            navmesh_groups = set(value)
+        except (TypeError, ValueError):
+            raise TypeError(
+                "Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
+                "Or use `.navmesh_groups.add()`, etc.)."
+            )
+        for i in navmesh_groups:
+            if not 0 <= i <= 127:
+                raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
+        self._navmesh_groups = navmesh_groups
+
+
+class MSBNavmesh(BaseMSBNavmesh, MSBPart):
+    PART_NAVMESH_STRUCT = (
+        ("navmesh_groups", "4I"),
+        "16x",
+    )
+
+    FIELD_INFO = {
+        "model_name": (
+            "Model Name",
+            NavmeshModel,
+            "Name of navmesh model to use for this navmesh.",
+        ),
+        **MSBPart.FIELD_INFO,
+        "navmesh_groups": (
+            "Navmesh Groups",
+            list,
+            "Enables backread of collisions with overlapping navmesh groups, if the nodes are also close enough in "
+            "the MCG/MCP network.",
+        ),
+    }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "navmesh_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "lod_id",
+        "use_depth_bias_float",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    def __init__(self, msb_part_source=None, **kwargs):
+        self._navmesh_groups = set(range(128))
+        super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+        self.set(**kwargs)
+
+    def unpack_type_data(self, msb_buffer):
+        data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
+        self._navmesh_groups = int_group_to_bit_set(data["navmesh_groups"])
+
+    def pack_type_data(self):
+        return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
+            navmesh_groups=bit_set_to_int_group(self._navmesh_groups),
+        )
+
+    @property
+    def navmesh_groups(self):
+        return self._navmesh_groups
+
+    @navmesh_groups.setter
+    def navmesh_groups(self, value):
+        """Converts value to a `set()` (possibly empty) and validates index range."""
+        if value is None or isinstance(value, str) and value in {"None", ""}:
+            self._navmesh_groups = set()
+            return
+        try:
+            navmesh_groups = set(value)
+        except (TypeError, ValueError):
+            raise TypeError(
+                "Navmesh groups must be a set, sequence, `None`, 'None', or ''. "
+                "Or use `.navmesh_groups.add()`, etc.)."
+            )
+        for i in navmesh_groups:
+            if not 0 <= i <= 127:
+                raise ValueError(f"Invalid navmesh group: {i}. Must range from 0 to 127, inclusive.")
+        self._navmesh_groups = navmesh_groups
+
+
+class MSBUnusedObject(MSBObject):
+    """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
+    ENTRY_SUBTYPE = MSBPartSubtype.UnusedObject
+
+
+class MSBUnusedCharacter(MSBCharacter):
+    """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
+    ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
+
+
+class MSBMapConnection(BaseMSBMapConnection, MSBPart):
+
+    FIELD_INFO = {
+        "model_name": (
+            "Collision Model Name",
+            CollisionModel,
+            "Name of collision model to use for this map load trigger.",
+        ),
+        **MSBPart.FIELD_INFO,
+        "collision_name": (
+            "Collision Part Name",
+            Collision,
+            "Collision part that triggers this map load.",
+        ),
+        "connected_map": (
+            "Map ID",
+            Map,
+            "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
+        ),
+    }
+
+    FIELD_NAMES = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+        "collision_name",
+        "connected_map",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correct_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    HIDDEN_FIELDS = (
+        "scale",
+        "lod_id",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
+    )
+
+    GET_MAP = get_map
+    DEFAULT_MAP = (10, 0, 0, 0)  # Depths
+
+    def __init__(self, msb_part_source=None, **kwargs):
+        self.collision_name = None
+        self._collision_index = None
+        self._connected_map = self.GET_MAP(*self.DEFAULT_MAP)
+        super().__init__(msb_part_source)
+        if msb_part_source is None:
+            # Set some defaults.
+            kwargs.setdefault("is_shadow_source", True)
+            kwargs.setdefault("is_shadow_destination", True)
+            kwargs.setdefault("draw_by_reflect_cam", True)
+        self.set(**kwargs)
+
+
 class MSBPartList(BaseMSBPartList):
+
     PART_SUBTYPE_CLASSES = {
         MSBPartSubtype.MapPiece: MSBMapPiece,
         MSBPartSubtype.Object: MSBObject,
@@ -609,3 +1140,12 @@ class MSBPartList(BaseMSBPartList):
         MSBPartSubtype.MapConnection: MSBMapConnection,
     }
     PART_SUBTYPE_OFFSET = 4
+    GET_MAP = get_map
+
+
+for _entry_subtype in MSBPartSubtype:
+    setattr(
+        MSBPartList,
+        _entry_subtype.pluralized_name,
+        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
+    )

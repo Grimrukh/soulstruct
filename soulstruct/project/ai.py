@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from soulstruct.ai.core import LuaError
-from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TextEditor, TagData
 

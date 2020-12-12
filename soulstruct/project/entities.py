@@ -9,14 +9,14 @@ from importlib import import_module
 from pathlib import Path
 
 from soulstruct.game_types.msb_types import *
-from soulstruct.constants.darksouls1.maps import get_map, ALL_MAPS
+from soulstruct.maps.darksouls1.maps import get_map, ALL_MAPS
 from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events
 from soulstruct.utilities import word_wrap
 
 if tp.TYPE_CHECKING:
-    from soulstruct.maps import DarkSoulsMaps, MSB
-    from soulstruct.maps.base import MSBEntryEntity
+    from soulstruct.maps.darksouls1 import MapStudioDirectory, MSB
+    from soulstruct.maps.base.msb_entry import MSBEntryEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -205,7 +205,15 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
     ENTRY_ROW_CLASS = EntityEntryRow
     entry_rows: tp.List[EntityEntryRow]
 
-    def __init__(self, maps: DarkSoulsMaps, evs_directory, global_map_choice_func, linker, master=None, toplevel=False):
+    def __init__(
+        self,
+        maps: MapStudioDirectory,
+        evs_directory,
+        global_map_choice_func,
+        linker,
+        master=None,
+        toplevel=False,
+    ):
         self.Maps = maps
         self.map_choice = None
         self.global_map_choice_func = global_map_choice_func

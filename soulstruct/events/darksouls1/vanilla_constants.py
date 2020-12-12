@@ -248,7 +248,7 @@ class CharacterStoryFlags:
         Dead = 1872
 
 
-class COMMON_TEXT(Text):
+class COMMON_TEXT(EventText):
     ArrivalInLordran = 10010600
     RiteOfKindlingTip = 10010610
     LordvesselWarpTip = 10010620

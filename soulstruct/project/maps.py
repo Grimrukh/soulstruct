@@ -4,7 +4,7 @@ import logging
 import math
 import typing as tp
 
-from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import GameObject, PlaceName, BaseLightingParam, ObjActParam
 from soulstruct.game_types.msb_types import *
@@ -19,8 +19,8 @@ from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.memory import MemoryHookError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.maps import DarkSoulsMaps
-    from soulstruct.maps.base import MSBEntry
+    from soulstruct.maps.darksouls1 import MapStudioDirectory
+    from soulstruct.maps.base.msb_entry import MSBEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -387,7 +387,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
     entry_rows: tp.List[MapEntryRow]
     field_rows: tp.List[MapFieldRow]
 
-    def __init__(self, maps: DarkSoulsMaps, global_map_choice_func, linker, master=None, toplevel=False):
+    def __init__(self, maps: MapStudioDirectory, global_map_choice_func, linker, master=None, toplevel=False):
         self.Maps = maps
         self.global_map_choice_func = global_map_choice_func
         self.e_coord = None

@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 from soulstruct.events.base import *
-from soulstruct.constants.darksouls1.maps import ALL_MAPS
+from soulstruct.maps.darksouls1.maps import ALL_MAPS
 from soulstruct.events.core import convert_events as convert_events_base
 from soulstruct.utilities.core import BinaryStruct
 

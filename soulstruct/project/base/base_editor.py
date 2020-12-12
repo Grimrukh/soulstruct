@@ -7,7 +7,7 @@ import logging
 import typing as tp
 from functools import partial
 
-from soulstruct.constants.darksouls1.maps import get_map
+from soulstruct.maps.darksouls1.maps import get_map
 from soulstruct.project.utilities import ActionHistory, ViewHistory, bind_events, EntryTextEditBox
 from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame, ToolTip

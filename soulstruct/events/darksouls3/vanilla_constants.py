@@ -11,7 +11,7 @@ class CHR(Character):
     PrinceLothric = 3410831
 
 
-class TEXT(Text):
+class TEXT(EventText):
     PrinceLorianName = 905250
     PrinceLothicName = 905251
 

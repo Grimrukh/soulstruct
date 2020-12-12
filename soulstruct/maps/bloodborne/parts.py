@@ -5,20 +5,20 @@ from soulstruct.maps import MapError
 from soulstruct.maps.base.parts import (
     MSBPart as BaseMSBPart,
     MSBPartList as BaseMSBPartList,
-    MSBPartSubtype,
     MSBMapPiece as BaseMSBMapPiece,
     MSBObject as BaseMSBObject,
     MSBCharacter as BaseMSBCharacter,
-    MSBPlayerStart,
-    MSBCollision,
-    MSBNavmesh,
-    MSBUnusedObject,
-    MSBUnusedCharacter,
-    MSBMapConnection,
+    MSBPlayerStart as BaseMSBPlayerStart,
+    MSBCollision as BaseMSBCollision,
+    MSBNavmesh as BaseMSBNavmesh,
+    MSBMapConnection as BaseMSBMapConnection,
 )
+from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
+
+from .maps import get_map
 
 
 class MSBPart(BaseMSBPart):
@@ -363,10 +363,16 @@ class MSBPartSceneGParam(MSBPartGParam):
 
 
 class MSBMapPiece(BaseMSBMapPiece, MSBPartGParam):
-    """No further modifications.
+    """No further modifications."""
 
-    TODO: Confirm FIELD_INFO and FIELD_NAMES are fine. May want some HIDDEN_FIELDS.
-    """
+    FIELD_INFO = {
+        "model_name": (
+            "Model Name",
+            MapPieceModel,
+            "Name of map piece model to use for this map piece.",
+        ),
+        **MSBPart.FIELD_INFO,
+    }
 
 
 class MSBObject(BaseMSBObject, MSBPartGParam):
@@ -485,7 +491,184 @@ class MSBCharacter(BaseMSBCharacter, MSBPartGParam):
         self.set(**kwargs)
 
 
-# TODO: I'm up to here. PlayerStart next.
+class MSBPlayerStart(BaseMSBPlayerStart, MSBPart):
+    """TODO: FIELD stuff."""
+
+
+class MSBCollision(BaseMSBCollision, MSBPartSceneGParam):
+    PART_TYPE_DATA_STRUCT = (
+        ("hit_filter_id", "B"),
+        ("sound_space_type", "B"),
+        ("_environment_event_index", "h"),
+        ("reflect_plane_height", "f"),
+        ("__area_name_id", "h"),
+        ("starts_disabled", "?"),
+        ("unk_x0b_x0c", "B"),
+        ("attached_bonfire", "i"),
+        ("__play_region_id", "i"),
+        ("lock_cam_param_id_1", "h"),
+        ("lock_cam_param_id_2", "h"),
+    )
+
+    FIELD_INFO = {
+        "model_name": (
+            "Model Name",
+            CollisionModel,
+            "Name of collision model to use for this collision.",
+        ),
+        **MSBPart.FIELD_INFO,
+        "display_groups": (
+            "Display Groups",
+            list,
+            "Display groups of collision. These display groups will be active when the player is standing on this "
+            "Collision, which will draw any parts with an overlapping draw group.",
+        ),
+        "hit_filter_id": (
+            "Hit Filter ID",
+            CollisionHitFilter,
+            "Determines what happens when the player activates this collision.",
+        ),
+        "sound_space_type": (
+            "Sound Space Type",
+            int,
+            "Unknown.",
+        ),
+        "environment_event_name": (
+            "Environment Event",
+            EnvironmentEvent,
+            "Environment event in map that determines ambience when standing on this collision.",
+        ),
+        "reflect_plane_height": (
+            "Reflect Plane Height",
+            float,
+            "Vertical height of the reflect plane for this collision.",
+        ),
+        # TODO: Confirm Bloodborne uses the same signed system for Area Name.
+        "area_name_id": (
+            "Area Name",
+            PlaceName,
+            "Name of area that this collision is in, which determines the area banner that is shown when you step on "
+            "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
+            "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY').",
+        ),
+        "force_area_banner": (
+            "Show Area Banner",
+            bool,
+            "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
+            "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
+            "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
+            "different area (a 'silent area transition') and have it enabled for collisions that are further away, "
+            "which produces a 'delayed area banner' effect.\n\n"
+            ""
+            "Do NOT enable this for two adjacent collisions with different area names, or moving back and forth "
+            "between those collisions will build up a huge queue of area banners to display, which can only be cleared "
+            "by restarting the game entirely.",
+        ),
+        "starts_disabled": (
+            "Starts Disabled",
+            bool,
+            "If True, this collision is disabled on map load and must be manually enabled with an event script.",
+        ),
+        "unk_x0b_x0c": (
+            "Unknown [0b-0c]",
+            int,
+            "Unknown. Almost always zero (in DS1 at least).",
+        ),
+        "attached_bonfire": (
+            "Attached Bonfire",
+            int,
+            "If this is set to a bonfire entity ID, that bonfire will be disabled if any living enemy characters are "
+            "on this collision. Note that this also checks for enemies that are disabled by events.",
+        ),
+        # TODO: Confirm Bloodborne uses the same signed system for Stable Footing Flag.
+        "play_region_id": (
+            "Play Region ID",
+            int,
+            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of.\n\n"
+            ""
+            "NOTE: This field shares space with the stable footing flag, so only one of them can be set to a non-zero "
+            "value per collision.",
+        ),
+        "stable_footing_flag": (
+            "Stable Footing Flag",
+            int,
+            "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
+            "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
+            "defeated. If set to -1, the player's position will never be saved on this collision.\n\n"
+            ""
+            "NOTE: This field shares space with the play region ID, so only one of them can be set to a non-zero value "
+            "per collision.",
+        ),
+        "lock_cam_param_id_1": (
+            "Camera Param ID 1",
+            CameraParam,
+            "First camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+        "lock_cam_param_id_2": (
+            "Camera Param ID 2",
+            CameraParam,
+            "Second camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+    }
+
+    # TODO: FIELD_NAMES and HIDDEN_FIELDS.
+
+
+class MSBNavmesh(BaseMSBNavmesh, MSBPart):
+    PART_TYPE_DATA_STRUCT = (
+        "8x",
+    )
+
+    FIELD_INFO = {
+        "model_name": (
+            "Model Name",
+            NavmeshModel,
+            "Name of navmesh model to use for this navmesh.",
+        ),
+        **MSBPart.FIELD_INFO,
+    }
+
+
+class MSBUnusedObject(MSBObject):
+    """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
+    ENTRY_SUBTYPE = MSBPartSubtype.UnusedObject
+
+
+class MSBUnusedCharacter(MSBCharacter):
+    """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
+    ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
+
+
+class MSBMapConnection(BaseMSBMapConnection, MSBPart):
+
+    FIELD_INFO = {
+        "model_name": (
+            "Collision Model Name",
+            CollisionModel,
+            "Name of collision model to use for this map load trigger.",
+        ),
+        **MSBPart.FIELD_INFO,
+        "collision_name": (
+            "Collision Part Name",
+            Collision,
+            "Collision part that triggers this map load.",
+        ),
+        "connected_map": (
+            "Map ID",
+            Map,
+            "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
+        ),
+    }
+
+    GET_MAP = get_map
+    DEFAULT_MAP = (21, 0, 0, 0)  # Hunter's Dream
+
+    def __init__(self, msb_part_source=None, **kwargs):
+        self.collision_name = None
+        self._collision_index = None
+        self._connected_map = self.GET_MAP(*self.DEFAULT_MAP)
+        super().__init__(msb_part_source)
+        self.set(**kwargs)
 
 
 class MSBPartList(BaseMSBPartList):
@@ -500,4 +683,13 @@ class MSBPartList(BaseMSBPartList):
         MSBPartSubtype.UnusedCharacter: MSBUnusedCharacter,
         MSBPartSubtype.MapConnection: MSBMapConnection,
     }
-    PART_SUBTYPE_OFFSET = 4
+    PART_SUBTYPE_OFFSET = 20
+    GET_MAP = get_map
+
+
+for _entry_subtype in MSBPartSubtype:
+    setattr(
+        MSBPartList,
+        _entry_subtype.pluralized_name,
+        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
+    )

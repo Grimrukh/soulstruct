@@ -7,8 +7,8 @@ from soulstruct.project.base.base_editor import EntryRow
 from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params import DarkSoulsLightingParameters, ParamEntry
-    from soulstruct.params.base.draw_param import DrawParam
+    from soulstruct.params.darksouls1.core import ParamRow
+    from soulstruct.params.darksouls1.draw_param import DrawParamDirectory, DrawParam
 
 
 class LightingEntryRow(EntryRow):
@@ -62,7 +62,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
     ENTRY_ROW_CLASS = LightingEntryRow
     entries: tp.List[LightingEntryRow]
 
-    def __init__(self, lighting: DarkSoulsLightingParameters, linker, master=None, toplevel=False):
+    def __init__(self, lighting: DrawParamDirectory, linker, master=None, toplevel=False):
         self.Lighting = lighting
         self.map_area_choice = None
         self.slot_choice_label = None
@@ -203,7 +203,7 @@ class SoulstructLightingEditor(SoulstructBaseFieldEditor):
             self.entry_rows[update_row_index].update_entry(new_id, entry_data.name)
         return True
 
-    def get_field_dict(self, entry_id: int, category=None) -> ParamEntry:
+    def get_field_dict(self, entry_id: int, category=None) -> ParamRow:
         if category is None:
             category = self.active_category
             if category is None:

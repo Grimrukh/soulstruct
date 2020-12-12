@@ -5,7 +5,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 from soulstruct.bnd import BND, BNDEntry, BaseBND
-from soulstruct.constants.darksouls1.maps import ALL_MAPS
+from soulstruct.maps.darksouls1.maps import ALL_MAPS
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.utilities import PACKAGE_PATH

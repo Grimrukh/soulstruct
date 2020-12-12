@@ -79,10 +79,10 @@ class MSBEntry(abc.ABC):
         return tuple(self.FIELD_INFO.keys())
 
 
-MSBEntrySubtype = tp.TypeVar("MSBEntrySubtype", bound=MSBEntry)
+MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 
 
-class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
+class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
     MAP_ENTITY_LIST_HEADER = BinaryStruct(
         "4x",
@@ -163,9 +163,9 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         while len(packed_name) % 4 != 0:
             packed_name += b"\0"
         offset += len(packed_name)
-        for entry in entries:
+        for i, entry in enumerate(entries):
             entry_offsets.append(offset)
-            packed_entry = entry.pack()
+            packed_entry = self.pack_entry(i, entry)
             packed_entries += packed_entry
             offset += len(packed_entry)
 
@@ -177,7 +177,11 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
 
         return packed_header + packed_name + packed_entries
 
-    def __iter__(self) -> tp.Iterator[MSBEntrySubtype]:
+    @abc.abstractmethod
+    def pack_entry(self, index: int, entry: MSBEntryType):
+        """Pack entry (some entry types may use `index`)."""
+
+    def __iter__(self) -> tp.Iterator[MSBEntryType]:
         """Iterate over all entries."""
         return iter(self._entries)
 
@@ -185,7 +189,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         """Count of all entries."""
         return len(self._entries)
 
-    def __getitem__(self, entry_name_or_index) -> MSBEntrySubtype:
+    def __getitem__(self, entry_name_or_index) -> MSBEntryType:
         """You can access entries using their name (if unique) or local type index."""
         if isinstance(entry_name_or_index, int):
             return self._entries[entry_name_or_index]
@@ -193,7 +197,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
             return self.get_entry_by_name(entry_name_or_index)
         raise TypeError(f"`MSBEntryList` key must be an entry index or entry name, not {entry_name_or_index}.")
 
-    def get_entry_by_name(self, entry_name: str, entry_subtype=None) -> MSBEntrySubtype:
+    def get_entry_by_name(self, entry_name: str, entry_subtype=None) -> MSBEntryType:
         """Try to retrieve entry of given name.
 
         You can optionally specify the subtype. Names shouldn't be shared across subtypes, but if they are (or as a
@@ -213,7 +217,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
             )
         return entries[0]
 
-    def get_entries(self, entry_subtype=None) -> tp.List[MSBEntrySubtype]:
+    def get_entries(self, entry_subtype=None) -> tp.List[MSBEntryType]:
         if entry_subtype is None:
             return self._entries  # Full entry list, with types potentially intermingled.
         entry_subtype = self.resolve_entry_subtype(entry_subtype)
@@ -308,7 +312,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntrySubtype]):
         self._entries.insert(global_index, entry)
         return entry
 
-    def delete_entry(self, entry_name_or_index) -> MSBEntrySubtype:
+    def delete_entry(self, entry_name_or_index) -> MSBEntryType:
         """Delete (and return) entry at given global index, with given (unique) name, or just the instance itself."""
         if isinstance(entry_name_or_index, MSBEntry):
             self._entries.remove(entry_name_or_index)

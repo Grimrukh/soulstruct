@@ -1,6 +1,6 @@
 from .core import EMEVD, convert_events
-import soulstruct.constants.bloodborne.maps as constants
-from soulstruct.constants.bloodborne.maps import *
+import soulstruct.maps.bloodborne.maps as constants
+from soulstruct.maps.bloodborne.maps import *
 from . import instructions
 from .instructions import *
 from . import tests

@@ -3,9 +3,10 @@ import typing as tp
 from soulstruct.maps.base.map_studio_directory import MapStudioDirectory as BaseMapStudioDirectory
 
 from .maps import ALL_MAPS
+from .msb import MSB
 
 if tp.TYPE_CHECKING:
-    from soulstruct.maps.base.msb import MSB
+    from .msb import MSB
 
 
 class MapStudioDirectory(BaseMapStudioDirectory):
@@ -21,6 +22,7 @@ class MapStudioDirectory(BaseMapStudioDirectory):
     is still used for Darkroot's event scripts, however.
     """
 
+    MSB_CLASS = MSB
     MAPS = ALL_MAPS
 
     Depths: MSB

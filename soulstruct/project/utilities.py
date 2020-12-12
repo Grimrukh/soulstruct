@@ -6,7 +6,7 @@ from functools import wraps
 
 from soulstruct.ai import DarkSoulsAIScripts
 from soulstruct.core import SoulstructError
-from soulstruct.maps import DarkSoulsMaps
+from soulstruct.maps.darksouls1 import MapStudioDirectory
 from soulstruct.params.darksouls1 import GameParamBND, DrawParamDirectory
 from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import word_wrap, camel_case_to_spaces
@@ -298,7 +298,7 @@ def data_type_caps(data_type):
 
 
 DATA_TYPES = {
-    "maps": DarkSoulsMaps,
+    "maps": MapStudioDirectory,
     "params": GameParamBND,
     "lighting": DrawParamDirectory,
     "text": DarkSoulsText,

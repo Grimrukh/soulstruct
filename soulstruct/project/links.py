@@ -15,7 +15,7 @@ from soulstruct.project.utilities import ItemTextEditBox
 if tp.TYPE_CHECKING:
     from soulstruct.project import SoulstructProjectWindow
     from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
-    from soulstruct.maps import MSB
+    from soulstruct.maps.darksouls1 import MSB
 
 
 class LinkError(SoulstructError):

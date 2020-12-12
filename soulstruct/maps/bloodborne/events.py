@@ -15,6 +15,7 @@ __all__ = [
     "MSBDarkLockEvent",
     "MSBPlatoonEvent",
     "MSBMultiSummonEvent",
+    "MSBEventList",
 ]
 
 import typing as tp

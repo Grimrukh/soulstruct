@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from soulstruct.constants.bloodborne.maps import ALL_MAPS
+from soulstruct.maps.bloodborne.maps import ALL_MAPS
 from soulstruct.events.base import BaseEMEVD, BaseEvent, BaseEventArg, BaseInstruction, BaseEventLayers
 from soulstruct.events.core import convert_events as convert_events_base
 from soulstruct.utilities.core import BinaryStruct

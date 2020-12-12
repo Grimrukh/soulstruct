@@ -119,10 +119,11 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     if ss_args.text:
-        from soulstruct.maps import DarkSoulsMaps
+        # TODO: Support other games (Bloodborne).
+        from soulstruct.maps.darksouls1 import MapStudioDirectory
 
         global Maps
-        Maps = DarkSoulsMaps(source)
+        Maps = MapStudioDirectory(source)
         return ss_args.console
 
     if ss_args.text:

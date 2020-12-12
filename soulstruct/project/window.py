@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 from soulstruct.bnd import BND
-from soulstruct.constants.darksouls1.maps import get_map
+from soulstruct.maps.darksouls1.maps import get_map
 from soulstruct.utilities import word_wrap
 from soulstruct.utilities.window import SmartFrame
 

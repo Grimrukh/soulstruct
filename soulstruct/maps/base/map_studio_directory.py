@@ -1,18 +1,21 @@
+import abc
+import logging
 import typing as tp
 from pathlib import Path
 
-from soulstruct.constants.darksouls1.maps import get_map
 from soulstruct.maps.core import MapError
-from soulstruct.maps import MSB
-from soulstruct.maps.dark_souls_maps import _LOGGER
 
 if tp.TYPE_CHECKING:
     from soulstruct.game_types.msb_types import Map
 
+_LOGGER = logging.getLogger(__name__)
 
-class MapStudioDirectory:
 
-    MAPS = None  # type: list[Map]
+class MapStudioDirectory(abc.ABC):
+
+    MSB_CLASS = NotImplemented  # type: type
+    MAPS = NotImplemented  # type: list[Map]
+    GET_MAP = NotImplemented  # type: tp.Callable
 
     def __init__(self, map_studio_directory=None, maps=None):
         """Unpack MSB map data files from a `MapStudio` directory into one single modifiable structure.
@@ -59,7 +62,7 @@ class MapStudioDirectory:
                 continue
             msb_path = self._directory / (game_map.msb_file_stem + ".msb")
             try:
-                self.msbs[game_map.name] = MSB(msb_path)
+                self.msbs[game_map.name] = self.MSB_CLASS(msb_path)
                 setattr(self, game_map.name, self.msbs[game_map.name])
             except FileNotFoundError:
                 raise FileNotFoundError(
@@ -69,12 +72,12 @@ class MapStudioDirectory:
     def _load_all_msbs(self):
         """Load all MSB files in directory, with keys/attribute names matching the MSB stem."""
         for msb_path in self._directory.glob("*.msb"):
-            self.msbs[msb_path.stem] = MSB(msb_path)
+            self.msbs[msb_path.stem] = self.MSB_CLASS(msb_path)
             setattr(self, msb_path.stem, self.msbs[msb_path.stem])
 
     def __getitem__(self, map_source):
         """Look up the MSB corresponding to `map_source` specifier. See `get_map()`."""
-        game_map = get_map(map_source)
+        game_map = self.GET_MAP(map_source)
         return self.msbs[game_map.name]
 
     def __iter__(self):

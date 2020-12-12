@@ -12,7 +12,7 @@ from soulstruct.models.darksouls1 import CHARACTER_FFX_SOURCES
 
 if tp.TYPE_CHECKING:
     from soulstruct.game_types.msb_types import Map
-    from soulstruct.maps import MSB
+    from soulstruct.maps.darksouls1 import MSB
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
         map_name: str (such as "UNDEAD_BURG" or "UndeadBurg"; case and underscores don't matter)
     """
     if game_maps is None:
-        raise ImportError("No game maps given. (You should import `get_maps` from `soulstruct.constants.{game}.maps`.)")
+        raise ImportError("No game maps given. (You should import `get_maps` from `soulstruct.maps.{game}.maps`.)")
 
     source_orig = source if block_id is None else (source, block_id)
 

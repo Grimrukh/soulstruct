@@ -6,7 +6,7 @@ import re
 import typing as tp
 from pathlib import Path
 
-from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR

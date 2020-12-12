@@ -3,7 +3,7 @@ from pathlib import Path
 
 from soulstruct.bnd import BND
 from soulstruct.ai.core import LuaBND
-from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 
 __all__ = ["DarkSoulsAIScripts"]
 _LOGGER = logging.getLogger(__name__)

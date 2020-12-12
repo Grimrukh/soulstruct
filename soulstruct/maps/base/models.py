@@ -4,7 +4,6 @@ from io import BufferedReader, BytesIO
 from soulstruct.core import SoulstructError
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntry
 from soulstruct.maps.enums import MSBModelSubtype
-
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
 
@@ -12,18 +11,11 @@ class MSBModel(MSBEntry):
 
     # ENTRY_SUBTYPE is spoofed as an instance variable, since all Models have identical binary formats.
 
-    MODEL_STRUCT = BinaryStruct(
-        ("__name_offset", "i"),
-        ("__model_type", "I"),
-        ("_model_type_index", "i"),
-        ("__sib_path_offset", "i"),
-        ("_instance_count", "i"),
-        "12x",
-    )
+    MODEL_STRUCT = NotImplemented  # type: BinaryStruct
 
-    ENCODING = "shift-jis"
-    NULL = b"\0"
-    EMPTY_SIB_PATH = b"\0" * 6
+    ENCODING = NotImplemented  # type: str
+    NULL = NotImplemented  # type: bytes
+    EMPTY_SIB_PATH = NotImplemented  # type: bytes
 
     FIELD_INFO = {
         "sib_path": (
@@ -107,6 +99,7 @@ class MSBModel(MSBEntry):
         """Use given map ID sequence, e.g. (10, 2, 0, 0), to auto-set SIB path."""
         self.sib_path = self.auto_sib_path(name=self.name, entry_type=self.ENTRY_SUBTYPE, sib_path=map_id)
 
+    # TODO: May only work for Dark Souls 1.
     @staticmethod
     def auto_sib_path(name, entry_type, sib_path):
         stem = f"N:\\FRPG\\data\\Model\\"
@@ -147,7 +140,8 @@ class MSBModelList(MSBEntryList[MSBModel]):
 
     PLURALIZED_NAME = "Models"
     ENTRY_SUBTYPE_ENUM = MSBModelSubtype
-    ENTRY_CLASS = staticmethod(MSBModel)
+
+    ENTRY_CLASS = NotImplemented  # type: tp.Type[MSBModel]
 
     _entries: tp.List[MSBModel]
 
@@ -159,9 +153,12 @@ class MSBModelList(MSBEntryList[MSBModel]):
     Collisions: tp.List[MSBModel]
     Navmeshes: tp.List[MSBModel]
 
+    def pack_entry(self, index: int, entry: MSBModel):
+        return entry.pack()
+
     def add_model(self, model_subtype, model_name, sib_path=None, description=None) -> MSBModel:
         """Add a new `MSBModel` instance of the given entry subtype and SIB path (or map sequence)."""
-        model = MSBModel(
+        model = self.ENTRY_CLASS(
             name=model_name,
             description=description,
             model_subtype=model_subtype,
@@ -187,10 +184,15 @@ class MSBModelList(MSBEntryList[MSBModel]):
                 type_indices[entry.ENTRY_SUBTYPE] += 1
 
     def get_subtype_instance(self, entry_subtype, **kwargs):
-        return MSBModel(msb_model_source=None, **kwargs)
+        return self.ENTRY_CLASS(msb_model_source=None, model_subtype=entry_subtype, **kwargs)
+
+    @classmethod
+    def MSBModel(cls, msb_buffer):
+        """All models share the same class."""
+        return cls.ENTRY_CLASS(msb_buffer)
 
 
-for _entry_subtype in MSBModelList.ENTRY_SUBTYPE_ENUM:
+for _entry_subtype in MSBModelSubtype:
     setattr(
         MSBModelList,
         _entry_subtype.pluralized_name,

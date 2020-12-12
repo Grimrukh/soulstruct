@@ -15,10 +15,10 @@ from pathlib import Path
 
 from soulstruct._config import PTDE_PATH, DSR_PATH, DEFAULT_TEXT_EDITOR_FONT_SIZE
 from soulstruct.ai import DarkSoulsAIScripts
-from soulstruct.constants.darksouls1.maps import ALL_MAPS, get_map
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.events.darksouls1.core import convert_events
-from soulstruct.maps import DarkSoulsMaps
+from soulstruct.maps.darksouls1 import MapStudioDirectory
 from soulstruct.params.darksouls1 import GameParamBND, DrawParamDirectory
 from soulstruct.text import DarkSoulsText
 from soulstruct.utilities import PACKAGE_PATH, traverse_path_tree
@@ -86,7 +86,7 @@ class SoulstructProject:
         self.Text = DarkSoulsText()
         self.Params = GameParamBND()
         self.Lighting = DrawParamDirectory()
-        self.Maps = DarkSoulsMaps()
+        self.Maps = MapStudioDirectory()
         self.AI = DarkSoulsAIScripts()
         # No structures for Events or Talk (scripts stored as plain-text EVS and ESP files).
 

@@ -187,7 +187,7 @@ class DrawParamDirectory:
     default: DrawParamBND
 
     # Lod (default only), EnvLightTex (useless) and DebugAmbientLight (useless) are left out.
-    param_names = [
+    PARAM_NAMES = [
         "DepthOfField",
         "Fog",
         "LensFlares",

@@ -1,3 +1,4 @@
+import abc
 import logging
 import struct
 import typing as tp
@@ -5,23 +6,23 @@ from io import BytesIO, BufferedReader
 from pathlib import Path
 
 from soulstruct.maps.enums import MSBEventSubtype, MSBPartSubtype
-from soulstruct.utilities import BinaryStruct, create_bak
+from soulstruct.utilities import create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 from .msb_entry import MSBEntry
-from .parts import MSBPartList
-from .regions import MSBRegionList
-from .events import MSBEventList
-from .models import MSBModelList
 
 if tp.TYPE_CHECKING:
     from .msb_entry import MSBEntryList, MSBEntryEntity
+    from .models import MSBModelList
+    from .events import MSBEventList
+    from .regions import MSBRegionList
+    from .parts import MSBPartList
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSB(object):
-    """Handles MSB ('MapStudio') data for Dark Souls 1.
+class MSB(abc.ABC):
+    """Handles MSB ('MapStudio') data. Subclassed by each game.
 
     Only DS1 (either version) is supported. PTDE and DSR have identical MSB formats (but a few changes in content).
 
@@ -48,11 +49,16 @@ class MSB(object):
             to be carefully managed internally.
     """
 
+    MODEL_LIST_CLASS = NotImplemented  # type: tp.Type[MSBModelList]
+    EVENT_LIST_CLASS = NotImplemented  # type: tp.Type[MSBEventList]
+    REGION_LIST_CLASS = NotImplemented  # type: tp.Type[MSBRegionList]
+    PART_LIST_CLASS = NotImplemented  # type: tp.Type[MSBPartList]
+
     def __init__(self, msb_source=None):
-        self.models = MSBModelList()
-        self.events = MSBEventList()
-        self.regions = MSBRegionList()
-        self.parts = MSBPartList()
+        self.models = self.MODEL_LIST_CLASS()
+        self.events = self.EVENT_LIST_CLASS()
+        self.regions = self.REGION_LIST_CLASS()
+        self.parts = self.PART_LIST_CLASS()
 
         self.msb_path = None
 
@@ -73,10 +79,10 @@ class MSB(object):
             )
 
     def unpack(self, msb_buffer):
-        self.models = MSBModelList(msb_buffer)
-        self.events = MSBEventList(msb_buffer)
-        self.regions = MSBRegionList(msb_buffer)
-        self.parts = MSBPartList(msb_buffer)
+        self.models = self.MODEL_LIST_CLASS(msb_buffer)
+        self.events = self.EVENT_LIST_CLASS(msb_buffer)
+        self.regions = self.REGION_LIST_CLASS(msb_buffer)
+        self.parts = self.PART_LIST_CLASS(msb_buffer)
 
         model_names = self.models.set_and_get_unique_names()
         environment_names = self.events.get_entry_names(MSBEventSubtype.Environment)

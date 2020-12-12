@@ -878,7 +878,6 @@ class MSBPseudoMultiplayerEvent(MSBEvent):
 
 class MSBEventList(MSBEntryList[MSBEvent]):
     ENTRY_LIST_NAME = "Events"
-    ENTRY_CLASS = staticmethod(MSBEvent)
     ENTRY_SUBTYPE_ENUM = MSBEventSubtype
 
     EVENT_SUBTYPE_CLASSES = {}  # type: dict[MSBEventSubtype, type]
@@ -899,6 +898,9 @@ class MSBEventList(MSBEntryList[MSBEvent]):
     Navigation: tp.Sequence[MSBNavigationEvent]
     Environment: tp.Sequence[MSBEnvironmentEvent]
     NPCInvasions: tp.Sequence[MSBPseudoMultiplayerEvent]
+
+    def pack_entry(self, index: int, entry: MSBEvent):
+        return entry.pack()
 
     def set_names(self, region_names, part_names):
         for entry in self._entries:
@@ -1008,6 +1010,8 @@ class MSBEventList(MSBEntryList[MSBEvent]):
         event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.EVENT_SUBTYPE_OFFSET, relative_offset=True)
         event_type = MSBEventSubtype(event_type_int)
         return cls.EVENT_SUBTYPE_CLASSES[event_type](msb_buffer)
+
+    ENTRY_CLASS = MSBEvent
 
 
 for _entry_subtype in MSBEventList.ENTRY_SUBTYPE_ENUM:

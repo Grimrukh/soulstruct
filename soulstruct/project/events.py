@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 from soulstruct.events.darksouls1 import EMEVD
-from soulstruct.constants.darksouls1.maps import get_map
+from soulstruct.maps.darksouls1.maps import get_map
 from soulstruct.events.evs import EvsError
 from soulstruct.utilities.window import SmartFrame
 from soulstruct.project.utilities import TagData, TextEditor
