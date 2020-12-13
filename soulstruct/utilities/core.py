@@ -247,7 +247,7 @@ class BinaryStruct:
             value = list(value)
         if "jis_size" in field:
             value = read_chars_from_bytes(
-                value, length=len(value), encoding="shift-jis", junk_encoded_bytes=self._junk_encoded_bytes,
+                value, length=len(value), encoding="shift_jis_2004", junk_encoded_bytes=self._junk_encoded_bytes,
             )
             value = value.rstrip("\0" if isinstance(value, str) else b"\0")
         if "is_utf16" in field:
@@ -364,7 +364,7 @@ class BinaryStruct:
                 if "jis_size" in field:
                     if not isinstance(value, str):
                         raise TypeError(f"Expected a string in JIS field '{name}', but received: {value}.")
-                    jis_bytes = value.encode("shift-jis")
+                    jis_bytes = value.encode("shift_jis_2004")
                     jis_bytes += b"\0" * (field["jis_size"] - len(jis_bytes))  # pad string back to original size
                     value = [jis_bytes]
                 elif isinstance(value, (list, tuple)):

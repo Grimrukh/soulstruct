@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import abc
 import logging
-import struct
 import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
@@ -48,6 +49,7 @@ class MSB(abc.ABC):
             when they are actually visible in the game. Some MSB Events reference Parts by index, so their order needs
             to be carefully managed internally.
     """
+    HEADER = b""
 
     MODEL_LIST_CLASS = NotImplemented  # type: tp.Type[MSBModelList]
     EVENT_LIST_CLASS = NotImplemented  # type: tp.Type[MSBEventList]
@@ -79,6 +81,12 @@ class MSB(abc.ABC):
             )
 
     def unpack(self, msb_buffer):
+        """Unpack an MSB from the given buffer."""
+
+        # Read (and ignore) constant header, if applicable.
+        if self.HEADER:
+            msb_buffer.seek(msb_buffer.tell() + len(self.HEADER))
+
         self.models = self.MODEL_LIST_CLASS(msb_buffer)
         self.events = self.EVENT_LIST_CLASS(msb_buffer)
         self.regions = self.REGION_LIST_CLASS(msb_buffer)
@@ -132,7 +140,7 @@ class MSB(abc.ABC):
         offset += len(packed_regions)
         packed_parts = self.parts.pack(start_offset=offset, is_last_table=True)
 
-        return packed_models + packed_events + packed_regions + packed_parts
+        return self.HEADER + packed_models + packed_events + packed_regions + packed_parts
 
     def write_packed(self, msb_path=None):
         if msb_path is None:
@@ -320,9 +328,3 @@ class MSB(abc.ABC):
 
     def __iter__(self):
         return iter((self.models, self.events, self.regions, self.parts))
-
-
-class BloodborneMSB(MSB):
-
-    # Constant pre-packed header for multiple MSB implementations.
-    HEADER = struct.pack("4sII??bb", "MSB ", 1, 16, False, False, 1, 255)

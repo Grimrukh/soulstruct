@@ -7,8 +7,8 @@ from .sound_types import *
 from .text_types import *
 
 
-# TODO: May need expansion, or may be renamed "EMEVD_GAME_TYPES".
-GAME_TYPES = {
+# Game type names that can appear as EMEVD instruction arguments.
+EMEVD_GAME_TYPES = {
     "Character",
     "Region",
     "Object",
@@ -20,7 +20,7 @@ GAME_TYPES = {
     "RingParam",
     "GoodParam",
     "Collision",
-    "Text",
+    "Text",  # TODO: are text types other than EventText and NPCName actually ever used?
     "EventText",
     "NPCName",
 }

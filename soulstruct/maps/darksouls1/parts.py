@@ -1,18 +1,32 @@
+__all__ = [
+    "MSBPart",
+    "MSBMapPiece",
+    "MSBObject",
+    "MSBCharacter",
+    "MSBPlayerStart",
+    "MSBCollision",
+    "MSBUnusedObject",
+    "MSBUnusedCharacter",
+    "MSBNavmesh",
+    "MSBMapConnection",
+    "MSBPartList",
+]
+
 import struct
 
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import *
 from soulstruct.maps import MapError
 from soulstruct.maps.base.parts import (
-    MSBPart as BaseMSBPart,
-    MSBPartList as BaseMSBPartList,
-    MSBMapPiece as BaseMSBMapPiece,
-    MSBObject as BaseMSBObject,
-    MSBCharacter as BaseMSBCharacter,
-    MSBPlayerStart as BaseMSBPlayerStart,
-    MSBCollision as BaseMSBCollision,
-    MSBNavmesh as BaseMSBNavmesh,
-    MSBMapConnection as BaseMSBMapConnection,
+    MSBPart as _BaseMSBPart,
+    MSBPartList as _BaseMSBPartList,
+    MSBMapPiece as _BaseMSBMapPiece,
+    MSBObject as _BaseMSBObject,
+    MSBCharacter as _BaseMSBCharacter,
+    MSBPlayerStart as _BaseMSBPlayerStart,
+    MSBCollision as _BaseMSBCollision,
+    MSBNavmesh as _BaseMSBNavmesh,
+    MSBMapConnection as _BaseMSBMapConnection,
 )
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
@@ -22,7 +36,7 @@ from soulstruct.utilities.maths import Vector3
 from .maps import get_map
 
 
-class MSBPart(BaseMSBPart):
+class MSBPart(_BaseMSBPart):
     PART_HEADER_STRUCT = BinaryStruct(
         ("__name_offset", "i"),
         ("__part_type", "i"),
@@ -253,10 +267,10 @@ class MSBPart(BaseMSBPart):
         self._draw_groups = int_group_to_bit_set(header["__draw_groups"])
         self._display_groups = int_group_to_bit_set(header["__display_groups"])
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__name_offset"], encoding="shift-jis"
+            msb_buffer, offset=part_offset + header["__name_offset"], encoding="shift_jis_2004"
         )
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding="shift-jis"
+            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding="shift_jis_2004"
         )
         msb_buffer.seek(part_offset + header["__base_data_offset"])
         base_data = self.PART_BASE_DATA_STRUCT.unpack(msb_buffer)
@@ -272,9 +286,9 @@ class MSBPart(BaseMSBPart):
         display_groups = bit_set_to_int_group(self._display_groups)
 
         name_offset = self.PART_HEADER_STRUCT.size
-        packed_name = self.get_name_to_pack().encode("shift-jis") + b"\0"  # Name not padded on its own.
+        packed_name = self.get_name_to_pack().encode("shift_jis_2004") + b"\0"  # Name not padded on its own.
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode("shift-jis") + b"\0" if self.sib_path else b"\0" * 6
+        packed_sib_path = self.sib_path.encode("shift_jis_2004") + b"\0" if self.sib_path else b"\0" * 6
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
         base_data_offset = sib_path_offset + len(packed_sib_path)
@@ -301,7 +315,7 @@ class MSBPart(BaseMSBPart):
         return packed_header + packed_name + packed_sib_path + packed_base_data + packed_type_data
 
 
-class MSBMapPiece(BaseMSBMapPiece, MSBPart):
+class MSBMapPiece(_BaseMSBMapPiece, MSBPart):
     """Struct is common (and empty)."""
 
     FIELD_INFO = {
@@ -351,7 +365,7 @@ class MSBMapPiece(BaseMSBMapPiece, MSBPart):
     )
 
 
-class MSBObject(BaseMSBObject, MSBPart):
+class MSBObject(_BaseMSBObject, MSBPart):
     PART_TYPE_DATA_STRUCT = (
         "4x",
         ("_draw_parent_index", "i"),
@@ -460,7 +474,7 @@ class MSBObject(BaseMSBObject, MSBPart):
         self.set(**kwargs)
 
 
-class MSBCharacter(BaseMSBCharacter, MSBPart):
+class MSBCharacter(_BaseMSBCharacter, MSBPart):
 
     PART_TYPE_DATA_STRUCT = (
         "8x",
@@ -597,7 +611,7 @@ class MSBCharacter(BaseMSBCharacter, MSBPart):
         self.set(**kwargs)
 
 
-class MSBPlayerStart(BaseMSBPlayerStart, MSBPart):
+class MSBPlayerStart(_BaseMSBPlayerStart, MSBPart):
 
     FIELD_INFO = {
         "model_name": (
@@ -669,7 +683,7 @@ class MSBPlayerStart(BaseMSBPlayerStart, MSBPart):
                 self.draw_by_reflect_cam = True
 
 
-class MSBCollision(BaseMSBCollision, MSBPart):
+class MSBCollision(_BaseMSBCollision, MSBPart):
     """Dark Souls collision includes navmesh groups and Vagrants."""
 
     PART_TYPE_DATA_STRUCT = (
@@ -925,9 +939,9 @@ class MSBCollision(BaseMSBCollision, MSBPart):
         self._navmesh_groups = navmesh_groups
 
 
-class MSBNavmesh(BaseMSBNavmesh, MSBPart):
-    PART_NAVMESH_STRUCT = (
-        ("navmesh_groups", "4I"),
+class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
+    PART_TYPE_DATA_STRUCT = (
+        ("__navmesh_groups", "4I"),
         "16x",
     )
 
@@ -1009,11 +1023,11 @@ class MSBNavmesh(BaseMSBNavmesh, MSBPart):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
-        self._navmesh_groups = int_group_to_bit_set(data["navmesh_groups"])
+        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"])
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
-            navmesh_groups=bit_set_to_int_group(self._navmesh_groups),
+            __navmesh_groups=bit_set_to_int_group(self._navmesh_groups),
         )
 
     @property
@@ -1049,7 +1063,7 @@ class MSBUnusedCharacter(MSBCharacter):
     ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
 
 
-class MSBMapConnection(BaseMSBMapConnection, MSBPart):
+class MSBMapConnection(_BaseMSBMapConnection, MSBPart):
 
     FIELD_INFO = {
         "model_name": (
@@ -1110,13 +1124,13 @@ class MSBMapConnection(BaseMSBMapConnection, MSBPart):
         "disable_point_light_effect",
     )
 
-    GET_MAP = get_map
+    GET_MAP = staticmethod(get_map)
     DEFAULT_MAP = (10, 0, 0, 0)  # Depths
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.collision_name = None
         self._collision_index = None
-        self._connected_map = self.GET_MAP(*self.DEFAULT_MAP)
+        self._connected_map = self.GET_MAP(self.DEFAULT_MAP)
         super().__init__(msb_part_source)
         if msb_part_source is None:
             # Set some defaults.
@@ -1126,7 +1140,7 @@ class MSBMapConnection(BaseMSBMapConnection, MSBPart):
         self.set(**kwargs)
 
 
-class MSBPartList(BaseMSBPartList):
+class MSBPartList(_BaseMSBPartList):
 
     PART_SUBTYPE_CLASSES = {
         MSBPartSubtype.MapPiece: MSBMapPiece,
@@ -1140,7 +1154,7 @@ class MSBPartList(BaseMSBPartList):
         MSBPartSubtype.MapConnection: MSBMapConnection,
     }
     PART_SUBTYPE_OFFSET = 4
-    GET_MAP = get_map
+    GET_MAP = staticmethod(get_map)
 
 
 for _entry_subtype in MSBPartSubtype:

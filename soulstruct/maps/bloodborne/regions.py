@@ -1,19 +1,31 @@
+__all__ = [
+    "MSBRegion",
+    "MSBRegionPoint",
+    "MSBRegionCircle",
+    "MSBRegionSphere",
+    "MSBRegionCylinder",
+    "MSBRegionRect",
+    "MSBRegionBox",
+    "MSBRegionList",
+]
+
 import abc
+
 from soulstruct.maps.base.regions import (
-    MSBRegion as BaseMSBRegion,
-    MSBRegionPoint as BaseMSBRegionPoint,
-    MSBRegionCircle as BaseMSBRegionCircle,
-    MSBRegionSphere as BaseMSBRegionSphere,
-    MSBRegionCylinder as BaseMSBRegionCylinder,
-    MSBRegionRect as BaseMSBRegionRect,
-    MSBRegionBox as BaseMSBRegionBox,
-    MSBRegionList as BaseMSBRegionList,
+    MSBRegion as _BaseMSBRegion,
+    MSBRegionPoint as _BaseMSBRegionPoint,
+    MSBRegionCircle as _BaseMSBRegionCircle,
+    MSBRegionSphere as _BaseMSBRegionSphere,
+    MSBRegionCylinder as _BaseMSBRegionCylinder,
+    MSBRegionRect as _BaseMSBRegionRect,
+    MSBRegionBox as _BaseMSBRegionBox,
+    MSBRegionList as _BaseMSBRegionList,
 )
 from soulstruct.maps.enums import MSBRegionSubtype
 from soulstruct.utilities import BinaryStruct
 
 
-class MSBRegion(BaseMSBRegion, abc.ABC):
+class MSBRegion(_BaseMSBRegion, abc.ABC):
 
     REGION_STRUCT = BinaryStruct(
         ("name_offset", "q"),
@@ -33,31 +45,31 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
     UNKNOWN_DATA_SIZE = 2
 
 
-class MSBRegionPoint(BaseMSBRegionPoint, MSBRegion):
+class MSBRegionPoint(_BaseMSBRegionPoint, MSBRegion):
     pass
 
 
-class MSBRegionCircle(BaseMSBRegionCircle, MSBRegion):
+class MSBRegionCircle(_BaseMSBRegionCircle, MSBRegion):
     pass
 
 
-class MSBRegionSphere(BaseMSBRegionSphere, MSBRegion):
+class MSBRegionSphere(_BaseMSBRegionSphere, MSBRegion):
     pass
 
 
-class MSBRegionCylinder(BaseMSBRegionCylinder, MSBRegion):
+class MSBRegionCylinder(_BaseMSBRegionCylinder, MSBRegion):
     pass
 
 
-class MSBRegionRect(BaseMSBRegionRect, MSBRegion):
+class MSBRegionRect(_BaseMSBRegionRect, MSBRegion):
     pass
 
 
-class MSBRegionBox(BaseMSBRegionBox, MSBRegion):
+class MSBRegionBox(_BaseMSBRegionBox, MSBRegion):
     pass
 
 
-class MSBRegionList(BaseMSBRegionList):
+class MSBRegionList(_BaseMSBRegionList):
     REGION_SUBTYPE_CLASSES = {
         MSBRegionSubtype.Point: MSBRegionPoint,
         MSBRegionSubtype.Circle: MSBRegionCircle,

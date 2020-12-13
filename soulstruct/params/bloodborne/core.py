@@ -5,21 +5,22 @@ __all__ = ["ParamRow", "Param", "GameParamBND"]
 from soulstruct.games import BLOODBORNE
 from soulstruct.game_types import *
 from soulstruct.params.base.param import ParamRow as BaseParamRow, Param as BaseParam
-from soulstruct.params.base.game_param_bnd import GameParamBND as GameParamBNDBase
+from soulstruct.params.base.game_param_bnd import GameParamBND as BaseGameParamBND
 
 from . import enums
 
 
 class ParamRow(BaseParamRow):
-    ENUMS = enums
+    def get_field_type(self, field_type_name: str):
+        """Look for field type in game-specific appropriate `enums` module."""
+        return getattr(enums, field_type_name)
 
 
 class Param(BaseParam):
     ParamRow = ParamRow
 
 
-class GameParamBND(GameParamBNDBase):
-
+class GameParamBND(BaseGameParamBND):
     Param = Param
 
     PARAM_NICKNAMES = {

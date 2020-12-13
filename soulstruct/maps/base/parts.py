@@ -689,7 +689,7 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
     @classmethod
     def MSBPart(cls, msb_buffer):
         """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
-        part_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.PART_SUBTYPE_OFFSET, relative_offset=True)
+        part_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.PART_SUBTYPE_OFFSET, relative_offset=True)[0]
         part_type = MSBPartSubtype(part_type_int)
         return cls.PART_SUBTYPE_CLASSES[part_type](msb_buffer)
 

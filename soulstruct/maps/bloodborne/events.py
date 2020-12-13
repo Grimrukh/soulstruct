@@ -24,16 +24,16 @@ from soulstruct.game_types import *
 from soulstruct.maps.base.events import (
     MSBEvent as _BaseMSBEvent,
     MSBEventList as _BaseMSBEventList,
-    MSBSoundEvent,  # no change
+    MSBSoundEvent as _BaseMSBSoundEvent,
     MSBFXEvent as _BaseMSBFXEvent,
-    MSBMessageEvent,  # no change
+    MSBMessageEvent as _BaseMSBMessageEvent,
     MSBTreasureEvent as _BaseMSBTreasureEvent,
     MSBSpawnerEvent as _BaseMSBSpawnerEvent,
     MSBObjActEvent as _BaseMSBObjActEvent,
-    MSBSpawnPointEvent,  # no change
-    MSBMapOffsetEvent,  # no change
-    MSBNavigationEvent,  # no change
-    MSBEnvironmentEvent,  # no change
+    MSBSpawnPointEvent as _BaseMSBSpawnPointEvent,
+    MSBMapOffsetEvent as _BaseMSBMapOffsetEvent,
+    MSBNavigationEvent as _BaseMSBNavigationEvent,
+    MSBEnvironmentEvent as _BaseMSBEnvironmentEvent,
 )
 from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities import BinaryStruct
@@ -65,7 +65,9 @@ class MSBEvent(_BaseMSBEvent):
         self.unknowns = [0, 0, 0, 0]
         super().__init__(msb_event_source)
 
-    # TODO: Unpack needs to set `unknowns`.
+
+class MSBSoundEvent(_BaseMSBSoundEvent, MSBEvent):
+    pass
 
 
 class MSBFXEvent(_BaseMSBFXEvent, MSBEvent):
@@ -233,6 +235,10 @@ class MSBSpawnerEvent(_BaseMSBSpawnerEvent, MSBEvent):
     )
 
     SPAWN_REGION_COUNT = 8
+
+
+class MSBMessageEvent(_BaseMSBMessageEvent, MSBEvent):
+    pass
 
 
 class MSBObjActEvent(_BaseMSBObjActEvent, MSBEvent):
@@ -542,6 +548,22 @@ class MSBMultiSummonEvent(MSBEvent):
         self.unk_x0a_x0c = 1.0
         super().__init__(msb_event_source)
         self.set(**kwargs)
+
+
+class MSBSpawnPointEvent(_BaseMSBSpawnPointEvent, MSBEvent):
+    pass
+
+
+class MSBMapOffsetEvent(_BaseMSBMapOffsetEvent, MSBEvent):
+    pass
+
+
+class MSBNavigationEvent(_BaseMSBNavigationEvent, MSBEvent):
+    pass
+
+
+class MSBEnvironmentEvent(_BaseMSBEnvironmentEvent, MSBEvent):
+    pass
 
 
 # TODO: Might need to add empty "Other" event (subtype enum 0xFFFFFFFF), if it actually appears in a Bloodborne MSB.

@@ -1,4 +1,4 @@
-import typing as tp
+import struct
 
 from soulstruct.maps.base.msb import MSB as BaseMSB
 
@@ -7,15 +7,11 @@ from .events import MSBEventList
 from .regions import MSBRegionList
 from .parts import MSBPartList
 
-if tp.TYPE_CHECKING:
-    from .models import MSBModel
-    from .events import MSBEvent
-    from .regions import MSBRegion
-    from .parts import MSBPart
-
 
 class MSB(BaseMSB):
     """Handles MSB ('MapStudio') data for Dark Souls. Both versions of the game have identical formats."""
+
+    HEADER = struct.pack("4sII??bb", b"MSB ", 1, 16, False, False, 1, 255)
 
     MODEL_LIST_CLASS = MSBModelList
     EVENT_LIST_CLASS = MSBEventList

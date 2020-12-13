@@ -97,7 +97,7 @@ class LuaBND:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
                 try:
-                    script = entry.data.decode("shift-jis")
+                    script = entry.data.decode("shift_jis_2004")
                     bytecode = b""
                 except UnicodeDecodeError:
                     script = ""
@@ -230,14 +230,14 @@ class LuaBND:
             lua_file.compile(x64=x64)
         bnd_path = self._bnd_path_parent + f"\\{lua_file.script_name}"
         if bnd_path in self.bnd.entries_by_path:
-            self.bnd.entries_by_path[bnd_path].data = lua_file.script.encode("shift-jis")
+            self.bnd.entries_by_path[bnd_path].data = lua_file.script.encode("shift_jis_2004")
         else:
             try:
                 # Get next ID below 1000000 (GNL).
                 bnd_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
             except ValueError:
                 bnd_id = 1000  # first ID
-            new_entry = BNDEntry(data=lua_file.script.encode("shift-jis"), entry_id=bnd_id, path=bnd_path)
+            new_entry = BNDEntry(data=lua_file.script.encode("shift_jis_2004"), entry_id=bnd_id, path=bnd_path)
             self.bnd.add_entry(new_entry)
             _LOGGER.debug(f"New decompiled script added to LuaBND[{bnd_id}]: {lua_file.script_name}")
 
@@ -259,7 +259,7 @@ class LuaBND:
                     )
                     continue
                 try:
-                    with lua_script.open("r", encoding="shift-jis") as f:
+                    with lua_script.open("r", encoding="shift_jis_2004") as f:
                         goal.script = f.read()
                 except UnicodeDecodeError:
                     raise LuaError(f"Could not read Lua script '{lua_script.name}'. Are you sure it's not compiled?")
@@ -268,7 +268,7 @@ class LuaBND:
                 if not lua_match:
                     continue
                 try:
-                    with lua_script.open("r", encoding="shift-jis") as f:
+                    with lua_script.open("r", encoding="shift_jis_2004") as f:
                         other_script = f.read()
                 except UnicodeDecodeError:
                     raise LuaError(f"Could not read Lua script '{lua_script.name}'. Are you sure it's not compiled?")
@@ -385,7 +385,7 @@ def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
 
 
 def compile_lua(script: str, script_name="<unknown script>", output_path=None, x64=True):
-    with _temp_lua_path(script, as_bytes=False, set_cwd=True, encoding="shift-jis") as temp:
+    with _temp_lua_path(script, as_bytes=False, set_cwd=True, encoding="shift_jis_2004") as temp:
         compiler_path = COMPILER_x64 if x64 else COMPILER_x86
         result = subprocess.run(
             [compiler_path, "-o", "temp.lua", temp],
@@ -424,13 +424,13 @@ def  decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=
             _LOGGER.warning(f"Lua Decompiler Warning for script {script_name}: {result.stdout.strip()}")
         if result.returncode != 0:
             raise LuaDecompileError(f"Script {script_name}: {result.stderr.strip()}")
-        with Path("temp.dec.lua").open("r", encoding="shift-jis") as f:
+        with Path("temp.dec.lua").open("r", encoding="shift_jis_2004") as f:
             script_string = f.read()
         os.remove("temp.dec.lua")
         if output_path:
             output_path = Path(output_path)
             output_path.parent.mkdir(exist_ok=True, parents=True)
-            with Path(output_path).open("w", encoding="shift-jis") as o:
+            with Path(output_path).open("w", encoding="shift_jis_2004") as o:
                 o.write(script_string)
                 _LOGGER.info(f"Decompiled Lua file written: {str(output_path)}")
         return script_string
@@ -464,12 +464,12 @@ class LuaScriptBase(abc.ABC):
             raise LuaError(f"No decompiled Lua script to write for {self.script_name}.")
         lua_path = Path(lua_path)
         lua_path.parent.mkdir(parents=True, exist_ok=True)
-        with lua_path.open("w", encoding="shift-jis") as f:
+        with lua_path.open("w", encoding="shift_jis_2004") as f:
             f.write(self.script)
 
     def load_decompiled(self, lua_path):
         lua_path = Path(lua_path)
-        with lua_path.open("r", encoding="shift-jis") as f:
+        with lua_path.open("r", encoding="shift_jis_2004") as f:
             self.script = f.read()
 
     @property
@@ -700,12 +700,12 @@ class LuaInfo:
         packed_strings_offset = len(header) + len(self.goals) * goal_struct.size
         for goal in self.goals:
             name_offset = packed_strings_offset + len(packed_strings)
-            packed_strings += goal.goal_name.encode(encoding="shift-jis") + b"\0"
+            packed_strings += goal.goal_name.encode(encoding="shift_jis_2004") + b"\0"
             goal_kwargs = goal.get_interrupt_details()
             logic_interrupt_name = goal_kwargs.pop("logic_interrupt_name")
             if logic_interrupt_name:
                 logic_interrupt_name_offset = packed_strings_offset + len(packed_strings)
-                packed_strings += logic_interrupt_name.encode(encoding="shift-jis") + b"\0"
+                packed_strings += logic_interrupt_name.encode(encoding="shift_jis_2004") + b"\0"
             else:
                 logic_interrupt_name_offset = 0
             packed_goals += goal_struct.pack(
@@ -729,10 +729,10 @@ class LuaInfo:
     @staticmethod
     def unpack_goal(info_buffer, goal_struct):
         goal = goal_struct.unpack(info_buffer)
-        name = read_chars_from_buffer(info_buffer, offset=goal.name_offset, encoding="shift-jis")
+        name = read_chars_from_buffer(info_buffer, offset=goal.name_offset, encoding="shift_jis_2004")
         if goal.logic_interrupt_name_offset > 0:
             logic_interrupt_name = read_chars_from_buffer(
-                info_buffer, offset=goal.logic_interrupt_name_offset, encoding="shift-jis"
+                info_buffer, offset=goal.logic_interrupt_name_offset, encoding="shift_jis_2004"
             )
         else:
             logic_interrupt_name = ""
@@ -783,7 +783,7 @@ class LuaGNL:
 
     def unpack(self, gnl_buffer):
         self.big_endian, self.use_struct_64 = self._check_big_endian_and_struct_64(gnl_buffer)
-        encoding = ("utf-16" + ("-be" if self.big_endian else "-le")) if self.use_struct_64 else "shift-jis"
+        encoding = ("utf-16" + ("-be" if self.big_endian else "-le")) if self.use_struct_64 else "shift_jis_2004"
         byte_order = ">" if self.big_endian else "<"
         fmt = byte_order + ("q" if self.use_struct_64 else "i")
         read_size = struct.calcsize(fmt)
@@ -800,7 +800,7 @@ class LuaGNL:
         byte_order = ">" if self.big_endian else "<"
         fmt = byte_order + ("q" if self.use_struct_64 else "i")
         packed_names_offset = (len(self.names) + 1) * struct.calcsize(fmt)
-        encoding = ("utf-16" + ("-be" if self.big_endian else "-le")) if self.use_struct_64 else "shift-jis"
+        encoding = ("utf-16" + ("-be" if self.big_endian else "-le")) if self.use_struct_64 else "shift_jis_2004"
         for name in self.names:
             name_offset = packed_names_offset + len(packed_names)
             packed_offsets += struct.pack(byte_order + ("q" if self.use_struct_64 else "i"), name_offset)

@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
     REGION_STRUCT = NotImplemented  # type: BinaryStruct
-    REGION_TYPE_STRUCT = NotImplemented  # type: tuple
+    REGION_TYPE_DATA_STRUCT = ()
 
     ENCODING = NotImplemented  # type: str
     UNKNOWN_DATA_SIZE = NotImplemented  # type: int
@@ -75,7 +75,7 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
     def pack(self, region_index=0):
         name_offset = self.REGION_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift-jis", pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift_jis_2004", pad_to_multiple_of=4)
         unknown_offset_1 = name_offset + len(packed_name)
         unknown_offset_2 = unknown_offset_1 + 4
         packed_type_data = self.pack_type_data()
@@ -100,11 +100,11 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         return packed_base_data + packed_name + b"\0\0\0\0" * 2 + packed_type_data + packed_entity_id
 
     def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.REGION_TYPE_STRUCT).unpack(msb_buffer)
+        data = BinaryStruct(*self.REGION_TYPE_DATA_STRUCT).unpack(msb_buffer)
         self.set(**data)
 
     def pack_type_data(self):
-        return BinaryStruct(*self.REGION_TYPE_STRUCT).pack_from_object(self)
+        return BinaryStruct(*self.REGION_TYPE_DATA_STRUCT).pack_from_object(self)
 
     def set_indices(self, region_index):
         self._region_index = region_index
@@ -121,7 +121,7 @@ class MSBRegionPoint(MSBRegion, abc.ABC):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
     player be facing when they spawn?)."""
 
-    REGION_TYPE_STRUCT = ()
+    REGION_TYPE_DATA_STRUCT = ()
 
     FIELD_NAMES = (
         "entity_id",
@@ -145,7 +145,7 @@ class MSBRegionPoint(MSBRegion, abc.ABC):
 class MSBRegionCircle(MSBRegion, abc.ABC):
     """Almost never used (no volume)."""
 
-    REGION_TYPE_STRUCT = (
+    REGION_TYPE_DATA_STRUCT = (
         ("radius", "f"),
     )
 
@@ -174,7 +174,7 @@ class MSBRegionCircle(MSBRegion, abc.ABC):
 
 
 class MSBRegionSphere(MSBRegion, abc.ABC):
-    REGION_TYPE_STRUCT = (
+    REGION_TYPE_DATA_STRUCT = (
         ("radius", "f"),
     )
 
@@ -378,7 +378,7 @@ class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
     @classmethod
     def MSBRegion(cls, msb_buffer):
         """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
-        event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.REGION_SUBTYPE_OFFSET, relative_offset=True)
+        event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.REGION_SUBTYPE_OFFSET, relative_offset=True)[0]
         event_type = MSBRegionSubtype(event_type_int)
         return cls.REGION_SUBTYPE_CLASSES[event_type](msb_buffer)
 

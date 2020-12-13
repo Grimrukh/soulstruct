@@ -50,7 +50,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         msb_buffer.seek(event_offset + header["__base_data_offset"])
         base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
         name_offset = event_offset + header["__name_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding="shift-jis")
+        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding="shift_jis_2004")
         self.set(**header)
         self.set(**base_data)
         msb_buffer.seek(event_offset + header["__type_data_offset"])
@@ -68,7 +68,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
 
     def pack(self):
         name_offset = self.EVENT_HEADER_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift-jis", pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift_jis_2004", pad_to_multiple_of=4)
         base_data_offset = name_offset + len(packed_name)
         packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)
@@ -1007,7 +1007,7 @@ class MSBEventList(MSBEntryList[MSBEvent]):
     @classmethod
     def MSBEvent(cls, msb_buffer):
         """Detects the appropriate subclass of `MSBEvent` to instantiate, and does so."""
-        event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.EVENT_SUBTYPE_OFFSET, relative_offset=True)
+        event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.EVENT_SUBTYPE_OFFSET, relative_offset=True)[0]
         event_type = MSBEventSubtype(event_type_int)
         return cls.EVENT_SUBTYPE_CLASSES[event_type](msb_buffer)
 

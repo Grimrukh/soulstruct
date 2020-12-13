@@ -637,7 +637,7 @@ class BaseESD:
 
         html = (
             "<html><head></head><body>"
-            '<meta charset="shift-jis"><br>'
+            '<meta charset="shift_jis_2004"><br>'
             "NOTES:<br>"
             "  <b>&</b>: this expression has been evaluated in a previous condition of this state, and loaded<br>"
             "  here from one of eight registers. (We currently believe this is only used for function calls,<br>"
@@ -662,7 +662,7 @@ class BaseESD:
             html_path = self.auto_path.with_suffix(self.auto_path.suffix + ".html")
         else:
             html_path = Path(html_path)
-        with html_path.open(mode="w", encoding="shift-jis") as output_file:
+        with html_path.open(mode="w", encoding="shift_jis_2004") as output_file:
             output_file.write(self.to_html())
 
 

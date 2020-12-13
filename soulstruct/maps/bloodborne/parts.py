@@ -1,17 +1,31 @@
+__all__ = [
+    "MSBPart",
+    "MSBMapPiece",
+    "MSBObject",
+    "MSBCharacter",
+    "MSBPlayerStart",
+    "MSBCollision",
+    "MSBUnusedObject",
+    "MSBUnusedCharacter",
+    "MSBNavmesh",
+    "MSBMapConnection",
+    "MSBPartList",
+]
+
 import struct
 
 from soulstruct.game_types import *
 from soulstruct.maps import MapError
 from soulstruct.maps.base.parts import (
-    MSBPart as BaseMSBPart,
-    MSBPartList as BaseMSBPartList,
-    MSBMapPiece as BaseMSBMapPiece,
-    MSBObject as BaseMSBObject,
-    MSBCharacter as BaseMSBCharacter,
-    MSBPlayerStart as BaseMSBPlayerStart,
-    MSBCollision as BaseMSBCollision,
-    MSBNavmesh as BaseMSBNavmesh,
-    MSBMapConnection as BaseMSBMapConnection,
+    MSBPart as _BaseMSBPart,
+    MSBPartList as _BaseMSBPartList,
+    MSBMapPiece as _BaseMSBMapPiece,
+    MSBObject as _BaseMSBObject,
+    MSBCharacter as _BaseMSBCharacter,
+    MSBPlayerStart as _BaseMSBPlayerStart,
+    MSBCollision as _BaseMSBCollision,
+    MSBNavmesh as _BaseMSBNavmesh,
+    MSBMapConnection as _BaseMSBMapConnection,
 )
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
@@ -21,7 +35,7 @@ from soulstruct.utilities.maths import Vector3
 from .maps import get_map
 
 
-class MSBPart(BaseMSBPart):
+class MSBPart(_BaseMSBPart):
     PART_HEADER_STRUCT = BinaryStruct(
         ("__description_offset", "q"),
         ("__name_offset", "q"),
@@ -362,7 +376,7 @@ class MSBPartSceneGParam(MSBPartGParam):
         super().__init__(msb_part_source)
 
 
-class MSBMapPiece(BaseMSBMapPiece, MSBPartGParam):
+class MSBMapPiece(_BaseMSBMapPiece, MSBPartGParam):
     """No further modifications."""
 
     FIELD_INFO = {
@@ -375,7 +389,7 @@ class MSBMapPiece(BaseMSBMapPiece, MSBPartGParam):
     }
 
 
-class MSBObject(BaseMSBObject, MSBPartGParam):
+class MSBObject(_BaseMSBObject, MSBPartGParam):
     """Interactable object. Note that Bloodborne has six-digit model IDs for Objects."""
 
     PART_TYPE_DATA_STRUCT = (
@@ -404,7 +418,7 @@ class MSBObject(BaseMSBObject, MSBPartGParam):
         self.set(**kwargs)
 
 
-class MSBCharacter(BaseMSBCharacter, MSBPartGParam):
+class MSBCharacter(_BaseMSBCharacter, MSBPartGParam):
     PART_TYPE_DATA_STRUCT = (
         "8x",
         ("think_id", "i"),
@@ -491,11 +505,11 @@ class MSBCharacter(BaseMSBCharacter, MSBPartGParam):
         self.set(**kwargs)
 
 
-class MSBPlayerStart(BaseMSBPlayerStart, MSBPart):
+class MSBPlayerStart(_BaseMSBPlayerStart, MSBPart):
     """TODO: FIELD stuff."""
 
 
-class MSBCollision(BaseMSBCollision, MSBPartSceneGParam):
+class MSBCollision(_BaseMSBCollision, MSBPartSceneGParam):
     PART_TYPE_DATA_STRUCT = (
         ("hit_filter_id", "B"),
         ("sound_space_type", "B"),
@@ -614,7 +628,7 @@ class MSBCollision(BaseMSBCollision, MSBPartSceneGParam):
     # TODO: FIELD_NAMES and HIDDEN_FIELDS.
 
 
-class MSBNavmesh(BaseMSBNavmesh, MSBPart):
+class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
     PART_TYPE_DATA_STRUCT = (
         "8x",
     )
@@ -639,7 +653,7 @@ class MSBUnusedCharacter(MSBCharacter):
     ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
 
 
-class MSBMapConnection(BaseMSBMapConnection, MSBPart):
+class MSBMapConnection(_BaseMSBMapConnection, MSBPart):
 
     FIELD_INFO = {
         "model_name": (
@@ -660,18 +674,18 @@ class MSBMapConnection(BaseMSBMapConnection, MSBPart):
         ),
     }
 
-    GET_MAP = get_map
+    GET_MAP = staticmethod(get_map)
     DEFAULT_MAP = (21, 0, 0, 0)  # Hunter's Dream
 
     def __init__(self, msb_part_source=None, **kwargs):
         self.collision_name = None
         self._collision_index = None
-        self._connected_map = self.GET_MAP(*self.DEFAULT_MAP)
+        self._connected_map = self.GET_MAP(self.DEFAULT_MAP)
         super().__init__(msb_part_source)
         self.set(**kwargs)
 
 
-class MSBPartList(BaseMSBPartList):
+class MSBPartList(_BaseMSBPartList):
     PART_SUBTYPE_CLASSES = {
         MSBPartSubtype.MapPiece: MSBMapPiece,
         MSBPartSubtype.Object: MSBObject,
@@ -684,7 +698,7 @@ class MSBPartList(BaseMSBPartList):
         MSBPartSubtype.MapConnection: MSBMapConnection,
     }
     PART_SUBTYPE_OFFSET = 20
-    GET_MAP = get_map
+    GET_MAP = staticmethod(get_map)
 
 
 for _entry_subtype in MSBPartSubtype:

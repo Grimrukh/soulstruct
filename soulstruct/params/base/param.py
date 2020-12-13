@@ -1,9 +1,9 @@
+import abc
 import copy
 import io
 import logging
 import struct
 import typing as tp
-from types import ModuleType
 
 from soulstruct.bnd import BNDEntry
 from soulstruct.params import field_types
@@ -18,20 +18,12 @@ from .flags import ParamFlags1, ParamFlags2
 _LOGGER = logging.getLogger(__name__)
 
 
-class ParamRow:
+class ParamRow(abc.ABC):
 
-    ENUMS = None  # type: tp.Optional[ModuleType]
-
-    def __init__(self, row_source, paramdef: ParamDef, name=None, enums: ModuleType = None):
+    def __init__(self, row_source, paramdef: ParamDef, name=None):
         self.fields = {}
         self.paramdef = paramdef
         self.bit_field = BitField()
-        if enums is None and self.ENUMS is None:
-            raise ValueError(
-                f"`enums` module must be passed to `ParamRow` constructor (or import `ParamRow` from a specific game)."
-            )
-        elif enums is not None:
-            self.ENUMS = enums  # overrides class attribute
 
         if isinstance(row_source, dict):
             if name is None:
@@ -39,7 +31,7 @@ class ParamRow:
                     raise ValueError("Name must be specified in arguments or source dictionary.")
                 self.name = row_source["name"]
             elif isinstance(name, str):
-                # TODO: Name needs to be converted to shift-jis?
+                # TODO: Name needs to be converted to shift_jis_2004?
                 if "name" not in row_source:
                     _LOGGER.warning(
                         f"Name in source dictionary of ParamRow '{row_source['name']}' will be overridden with "
@@ -87,6 +79,11 @@ class ParamRow:
         else:
             return list(self.fields.keys())
 
+    @abc.abstractmethod
+    def get_field_type(self, field_type_name: str):
+        """Look for field type in game-specific appropriate `enums` module."""
+        raise NotImplementedError
+
     def get_paramdef_field(self, field_name: str) -> ParamDefField:
         return self.paramdef[field_name]
 
@@ -127,14 +124,14 @@ class ParamRow:
                         )
             elif field.internal_type == "fixstr":
                 self.bit_field.clear()
-                field_value = row_buffer.read(field.size).decode("shift-jis")
+                field_value = row_buffer.read(field.size).decode("shift_jis_2004")
             elif field.internal_type == "fixstrW":
                 self.bit_field.clear()
                 field_value = row_buffer.read(field.size).decode("utf-16-le")
             else:
                 self.bit_field.clear()
                 try:
-                    field_type = getattr(self.ENUMS, field.internal_type)
+                    field_type = self.get_field_type(field.internal_type)
                 except AttributeError:
                     if field.name == "sfxMultiplier":
                         field_type = field_types.f32
@@ -180,7 +177,7 @@ class ParamRow:
                 packed_row += b"\x00" * field.size
                 continue
             try:
-                field_type = getattr(self.ENUMS, field.internal_type)
+                field_type = self.get_field_type(field.internal_type)
             except AttributeError:
                 if field.name == "sfxMultiplier":
                     field_type = field_types.f32
@@ -268,7 +265,7 @@ class Param:
 
     def __init__(self, param_source, paramdef_bnd, undecodable_row_names: tuple[bytes, ...] = ()):
         self.param_path = ""
-        self.param_type = ""  # internal name (shift-jis) with capitals and underscores
+        self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
         self._paramdef_bnd = GET_BUNDLED_PARAMDEFBND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
         self.rows = {}
         self.byte_order = "<"
@@ -507,4 +504,4 @@ class Param:
         if self.flags2.UnicodeRowNames:
             return "utf-16-be" if self.byte_order == ">" else "utf-16-le"
         else:
-            return "shift-jis"
+            return "shift_jis_2004"

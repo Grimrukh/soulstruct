@@ -26,7 +26,7 @@ class GameParamBND:
                 the DCX compression of the BND.
         """
         self._reload_warning_given = True
-        self._data = {}
+        self.params = {}
 
         if game_param_bnd_source is None:
             self._bnd = None
@@ -56,14 +56,14 @@ class GameParamBND:
             self.paramdef_bnd = ParamDefBND(paramdef_bnd)
 
         for entry in self._bnd:
-            p = self._data[entry.path] = self.Param(entry.data, self.paramdef_bnd)
-            # Preferential nickname source order: `_PARAM_NICKNAMES` attribute, `p.nickname`, `BNDEntry` path stem
+            p = self.params[entry.path] = self.Param(entry.data, self.paramdef_bnd)
+            # Preferential nickname source order: `PARAM_NICKNAMES` attribute, `p.nickname`, `BNDEntry` path stem
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
             setattr(self, nickname, p)
 
     def update_bnd(self):
         """Update the internal BND by packing the current ParamTables. Called automatically by `save()`."""
-        for param_table_entry_path, param_table in self._data.items():
+        for param_table_entry_path, param_table in self.params.items():
             self._bnd.entries_by_path[param_table_entry_path].data = param_table.pack()
 
     def save(self, game_param_bnd_path=None, auto_pickle=False):

@@ -1191,14 +1191,14 @@ def _parse_event_arguments(event_node: ast.FunctionDef):
                 arg_type = _PY_TYPES[arg_type_node.id]
             except KeyError:
                 class_name = arg_type_node.id
-                if class_name in gt.GAME_TYPES:
+                if class_name in gt.EMEVD_GAME_TYPES:
                     arg_classes[arg_name] = getattr(gt, class_name)
                     arg_type = "I"
                 else:
                     raise EvsSyntaxError(
                         event_node.lineno,
                         f"{repr(class_name)} is not a valid game type for argument hinting.\n"
-                        f"The available types are: {gt.GAME_TYPES}",
+                        f"The available types are: {gt.EMEVD_GAME_TYPES}",
                     )
         else:
             raise EvsSyntaxError(

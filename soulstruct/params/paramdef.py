@@ -94,7 +94,7 @@ class ParamDefField:
                 field_description = read_chars_from_buffer(
                     paramdef_buffer,
                     offset=field_struct["description_offset"],
-                    encoding="utf-16-le" if unicode else "shift-jis",
+                    encoding="utf-16-le" if unicode else "shift_jis_2004",
                 )
             else:
                 field_description = ""
@@ -169,7 +169,6 @@ class ParamDef:
         self.param_type = None
         self.paramdef_path = None
         self.fields = []
-        self.param_info = {}
         self.byte_order = "<"
         self.data_version = 0
         self.format_version = 104  # defaults to Dark Souls 1
@@ -195,12 +194,6 @@ class ParamDef:
         else:
             raise TypeError(f"Invalid `paramdef_source` type: {type(paramdef_source)}")
 
-        try:
-            self.param_info = get_param_info(self.param_type)
-        except KeyError:
-            # This param has no extra information.
-            self.param_info = None
-
     def unpack(self, paramdef_buffer):
         """Convert a paramdef file to a dictionary, indexed by ID."""
         self.byte_order = ">" if unpack_from_buffer(paramdef_buffer, "B", self.BYTE_ORDER_OFFSET)[0] == 255 else "<"
@@ -210,7 +203,7 @@ class ParamDef:
             self.param_type = header["param_name"]
         except KeyError:
             self.param_type = read_chars_from_buffer(
-                paramdef_buffer, offset=header["param_name_offset"], encoding="shift-jis",
+                paramdef_buffer, offset=header["param_name_offset"], encoding="shift_jis_2004",
             )
         self.data_version = header["data_version"]
         self.unicode = header["unicode"]
@@ -234,6 +227,14 @@ class ParamDef:
         return f"ParamDef {self.param_type}:\n  " + "\n  ".join(
             [f"{field.field_index:>3d} | {field.debug_name} | {field.description}" for field in self.fields]
         )
+
+    @property
+    def param_info(self) -> tp.Optional[dict]:
+        try:
+            return get_param_info(self.param_type)
+        except KeyError:
+            # This param has no extra information.
+            return None
 
 
 class ParamDefBND:

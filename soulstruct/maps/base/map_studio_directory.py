@@ -6,6 +6,7 @@ from pathlib import Path
 from soulstruct.maps.core import MapError
 
 if tp.TYPE_CHECKING:
+    from soulstruct.maps.base.msb import MSB
     from soulstruct.game_types.msb_types import Map
 
 _LOGGER = logging.getLogger(__name__)
@@ -13,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class MapStudioDirectory(abc.ABC):
 
-    MSB_CLASS = NotImplemented  # type: type
+    MSB_CLASS = NotImplemented  # type: tp.Type[MSB]
     MAPS = NotImplemented  # type: list[Map]
     GET_MAP = NotImplemented  # type: tp.Callable
 

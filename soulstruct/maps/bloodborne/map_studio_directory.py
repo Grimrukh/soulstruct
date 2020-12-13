@@ -1,12 +1,7 @@
-import typing as tp
-
 from soulstruct.maps.base.map_studio_directory import MapStudioDirectory as BaseMapStudioDirectory
 
-from .maps import ALL_MAPS_NO_CHALICE
+from .maps import ALL_MAPS_NO_CHALICE, get_map
 from .msb import MSB
-
-if tp.TYPE_CHECKING:
-    from .msb import MSB
 
 
 class MapStudioDirectory(BaseMapStudioDirectory):
@@ -31,6 +26,7 @@ class MapStudioDirectory(BaseMapStudioDirectory):
 
     MSB_CLASS = MSB
     MAPS = ALL_MAPS_NO_CHALICE
+    GET_MAP = staticmethod(get_map)
 
     HuntersDream: MSB
     AbandonedOldWorkshop: MSB

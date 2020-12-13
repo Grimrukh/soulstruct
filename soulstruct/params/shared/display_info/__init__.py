@@ -25,7 +25,7 @@ def get_param_info(param_name: str) -> dict:
     try:
         return globals()[param_name]
     except KeyError:
-        raise KeyError(f"Could not find param info for {param_name}.")
+        raise KeyError(f"Could not find Param info for {param_name}.")
 
 
 def get_param_info_field(param_name: str, field_name: str) -> FieldDisplayInfo:

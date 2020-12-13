@@ -1,17 +1,9 @@
-import typing as tp
-
 from soulstruct.maps.base.msb import MSB as BaseMSB
 
 from .models import MSBModelList
 from .events import MSBEventList
 from .regions import MSBRegionList
 from .parts import MSBPartList
-
-if tp.TYPE_CHECKING:
-    from .models import MSBModel
-    from .events import MSBEvent
-    from .regions import MSBRegion
-    from .parts import MSBPart
 
 
 class MSB(BaseMSB):

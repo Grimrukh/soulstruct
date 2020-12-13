@@ -20,7 +20,7 @@ class MSBModel(BaseMSBModel):
         "12x",
     )
 
-    ENCODING = "shift-jis"
+    ENCODING = "shift_jis_2004"
     NULL = b"\0"
     EMPTY_SIB_PATH = b"\0" * 6
 

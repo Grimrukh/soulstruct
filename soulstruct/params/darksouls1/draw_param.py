@@ -7,12 +7,13 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.bnd import BaseBND, BND
-from soulstruct.params.base.param import Param
 from soulstruct.params.utilities import GET_BUNDLED_PARAMDEFBND
+
+from .core import Param
 
 _LOGGER = logging.getLogger(__name__)
 
-_DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d)(_\d)?(_[\w]+\.param)")  # e.g. `m12_1_LightScatteringBank.param`
+_DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_[\w]+\.param)")
 _DRAW_PARAM_BND_FILE_NAME_RE = re.compile(r"(a\d\d|default)(_[\w]+\.DrawParam\.parambnd)(\.dcx)?")
 
 
@@ -82,7 +83,7 @@ class DrawParamBND:
         for entry in draw_param_bnd_source:
 
             if not (match := _DRAW_PARAM_FILE_NAME_RE.match(entry.name)):
-                raise ValueError(f"Malformed ParamTable name: '{entry.name}'")
+                raise ValueError(f"Malformed Param name: '{entry.name}'")
             slot = int(match.group(2)[1]) if match.group(2) else 0
             if slot not in {0, 1}:
                 raise ValueError(

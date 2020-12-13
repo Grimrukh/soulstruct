@@ -17,7 +17,9 @@ if tp.TYPE_CHECKING:
 
 
 class ParamRow(BaseParamRow):
-    ENUMS = enums
+    def get_field_type(self, field_type_name: str):
+        """Look for field type in game-specific appropriate `enums` module."""
+        return getattr(enums, field_type_name)
 
 
 class Param(BaseParam):
@@ -25,7 +27,6 @@ class Param(BaseParam):
 
 
 class GameParamBND(BaseGameParamBND):
-
     Param = Param
 
     PARAM_NICKNAMES = {

@@ -20,19 +20,19 @@ from soulstruct.game_types import *
 from soulstruct.maps.base.events import (
     MSBEvent as _BaseMSBEvent,
     MSBEventList as _BaseMSBEventList,
-    MSBLightEvent,  # no change
-    MSBSoundEvent,  # no change
-    MSBFXEvent,  # no change
-    MSBWindEvent,  # no change
+    MSBLightEvent as _BaseMSBLightEvent,
+    MSBSoundEvent as _BaseMSBSoundEvent,
+    MSBFXEvent as _BaseMSBFXEvent,
+    MSBWindEvent as _BaseMSBWindEvent,
     MSBTreasureEvent as _BaseMSBTreasureEvent,
-    MSBSpawnerEvent,  # no change
-    MSBMessageEvent,  # no change
-    MSBObjActEvent,  # no change
-    MSBSpawnPointEvent,  # no change
-    MSBMapOffsetEvent,  # no change
-    MSBNavigationEvent,  # no change
-    MSBEnvironmentEvent,  # no change
-    MSBPseudoMultiplayerEvent,  # no change
+    MSBSpawnerEvent as _BaseMSBSpawnerEvent,
+    MSBMessageEvent as _BaseMSBMessageEvent,
+    MSBObjActEvent as _BaseMSBObjActEvent,
+    MSBSpawnPointEvent as _BaseMSBSpawnPointEvent,
+    MSBMapOffsetEvent as _BaseMSBMapOffsetEvent,
+    MSBNavigationEvent as _BaseMSBNavigationEvent,
+    MSBEnvironmentEvent as _BaseMSBEnvironmentEvent,
+    MSBPseudoMultiplayerEvent as _BaseMSBPseudoMultiplayerEvent,
 )
 from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities import BinaryStruct
@@ -59,6 +59,22 @@ class MSBEvent(_BaseMSBEvent):
         ("entity_id", "i"),
         "4x",
     )
+
+
+class MSBLightEvent(_BaseMSBLightEvent, MSBEvent):
+    pass
+
+
+class MSBSoundEvent(_BaseMSBSoundEvent, MSBEvent):
+    pass
+
+
+class MSBFXEvent(_BaseMSBFXEvent, MSBEvent):
+    pass
+
+
+class MSBWindEvent(_BaseMSBWindEvent, MSBEvent):
+    pass
 
 
 class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
@@ -107,6 +123,38 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         self.item_lot_4 = -1
         self.item_lot_5 = -1
         super().__init__(msb_event_source, **kwargs)
+
+
+class MSBSpawnerEvent(_BaseMSBSpawnerEvent, MSBEvent):
+    pass
+
+
+class MSBMessageEvent(_BaseMSBMessageEvent, MSBEvent):
+    pass
+
+
+class MSBObjActEvent(_BaseMSBObjActEvent, MSBEvent):
+    pass
+
+
+class MSBSpawnPointEvent(_BaseMSBSpawnPointEvent, MSBEvent):
+    pass
+
+
+class MSBMapOffsetEvent(_BaseMSBMapOffsetEvent, MSBEvent):
+    pass
+
+
+class MSBNavigationEvent(_BaseMSBNavigationEvent, MSBEvent):
+    pass
+
+
+class MSBEnvironmentEvent(_BaseMSBEnvironmentEvent, MSBEvent):
+    pass
+
+
+class MSBPseudoMultiplayerEvent(_BaseMSBPseudoMultiplayerEvent, MSBEvent):
+    pass
 
 
 class MSBEventList(_BaseMSBEventList):
