@@ -23,7 +23,7 @@ class BNDEntry:
     def __init__(self, data: bytes, entry_id: int = None, path: str = None, magic=0x40):
         self.data = data  # Packed binary data, identical to what the unpacked file would look like.
         self.id = entry_id  # Index used by the game engine to access the packed data (in most cases).
-        self.path = path  # Full internal 'path' (in most cases). Encoded in shift_jis_2004 with escaped backslashes.
+        self.path = path  # Full internal 'path' (in most cases). Encoded in shift-jis with escaped backslashes.
         self.magic = magic  # Defaults to 0x40, which seems to be used in DS1/DS3 at least.
 
     @classmethod
@@ -47,18 +47,17 @@ class BNDEntry:
         return entry_headers
 
     def get_data_for_pack(self):
-        """ Compresses data first if appropriate. Returns (data, is_compressed). """
+        """Compresses data first if appropriate. Returns `(data, is_compressed)`."""
         if is_entry_compressed(self.magic):
             return zlib.compress(self.data, level=7), True
-        else:
-            return self.data, False
+        return self.data, False
 
     @property
     def data_size(self):
         return len(self.data)
 
     def get_packed_path(self, encoding):
-        """ Encodes path in Japanese and null-terminates. """
+        """Encodes path in Japanese and null-terminates."""
         return self.path.encode(encoding) + b"\x00"
 
     @property
@@ -154,7 +153,7 @@ class BaseBND(abc.ABC):
     def load_unpacked_dir(self, directory):
         ...
 
-    def add_entries_from_manifest_paths(self, file_buffer, directory):
+    def add_entries_from_manifest_paths(self, file_buffer, directory, use_id_prefix: bool):
         directory = Path(directory)
         current_directory = None
         for line in file_buffer:
@@ -163,7 +162,7 @@ class BaseBND(abc.ABC):
                 # Skip blank lines.
                 continue
             if line.startswith(b"PATH:"):
-                current_directory = line[5:].strip().replace(b"/", b"\\").decode("shift_jis_2004").strip("\r\n")
+                current_directory = line[5:].strip().replace(b"/", b"\\").decode("shift-jis").strip("\r\n")
             else:
                 if has_id(self.bnd_magic):
                     try:
@@ -178,9 +177,10 @@ class BaseBND(abc.ABC):
                     entry_id = None
                     entry_magic, entry_basename = self.UNPACKED_PATH_RE.match(line).group(1, 2)
                     entry_magic = int(entry_magic)
-                entry_basename_jis = entry_basename.decode("shift_jis_2004").strip("\r\n")
-                entry_path = "\\".join((current_directory, entry_basename_jis))
-
+                entry_basename_jis = entry_basename.decode("shift-jis").strip("\r\n")
+                entry_path = "\\".join((current_directory, entry_basename_jis))  # no prefix
+                if use_id_prefix:
+                    entry_basename_jis = f"__{entry_id}__{entry_basename_jis}"
                 with (directory / entry_basename_jis).open("rb") as entry_file:
                     entry_data = entry_file.read()
 
@@ -217,6 +217,7 @@ class BaseBND(abc.ABC):
 
         current_directory = ""
         manifest_lines = []
+        use_index_prefix = self.has_repeated_entry_names
 
         for entry in self.binary_entries:
             entry_directory = entry.directory_with_forward_slashes  # File uses forward slashes.
@@ -229,12 +230,13 @@ class BaseBND(abc.ABC):
             else:
                 manifest_lines.append(f"    ({entry.magic}) {entry.name}")
             directory.mkdir(parents=True, exist_ok=True)
-            with (directory / entry.name).open("wb") as f:
+            unpacked_entry_name = f"__{entry.id}__{entry.name}" if use_index_prefix else entry.name
+            with (directory / unpacked_entry_name).open("wb") as f:
                 packed_entry, _ = entry.get_data_for_pack()
                 f.write(packed_entry)
 
-        # NOTE: BND manifest is always encoded in shift_jis_2004.
-        with (directory / "bnd_manifest.txt").open("w", encoding="shift_jis_2004") as f:
+        # NOTE: BND manifest is always encoded in shift-JIS.
+        with (directory / "bnd_manifest.txt").open("w", encoding="shift-jis") as f:
             f.write(self.bnd_manifest_header)
             f.write("\n".join(manifest_lines))
 
@@ -318,6 +320,11 @@ class BaseBND(abc.ABC):
     @property
     def entry_count(self) -> int:
         return len(self._entries)
+
+    @property
+    def has_repeated_entry_names(self):
+        entry_names = [e.name for e in self.entries]
+        return len(set(entry_names)) < len(entry_names)
 
     def __getitem__(self, id_or_path_or_basename) -> BNDEntry:
         """ Shortcut for access by ID (int) or path (str) or basename (str).
@@ -467,9 +474,10 @@ class BND3(BaseBND):
             self.bnd_magic = self.read_bnd_setting(f.readline(), "bnd_magic", assert_type=int)
             self.big_endian = self.read_bnd_setting(f.readline(), "big_endian", assert_type=bool)
             self.unknown = self.read_bnd_setting(f.readline(), "unknown", assert_type=bool)
+            use_id_prefix = self.read_bnd_setting(f.readline(), "use_id_prefix", assert_type=bool)
             self.dcx = self.read_bnd_setting(f.readline(), "dcx", assert_type=tuple)
 
-            self.add_entries_from_manifest_paths(f, directory)
+            self.add_entries_from_manifest_paths(f, directory, use_id_prefix)
 
         # Create header structs.
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
@@ -514,7 +522,7 @@ class BND3(BaseBND):
             if has_path(self.bnd_magic):
                 entry_header_dict["path_offset"] = len(packed_entry_paths)
                 relative_entry_path_offsets.append(len(packed_entry_paths))  # Relative to start of packed entry paths.
-                packed_entry_paths += entry.get_packed_path("shift_jis_2004")
+                packed_entry_paths += entry.get_packed_path("shift-jis")
             if has_uncompressed_size(self.bnd_magic):
                 entry_header_dict["uncompressed_data_size"] = entry.data_size
 
@@ -559,6 +567,7 @@ class BND3(BaseBND):
             f"bnd_magic = {self.bnd_magic}\n"
             f"big_endian = {self.big_endian}\n"
             f"unknown = {self.unknown}\n"
+            f"use_id_prefix = {self.has_repeated_entry_names}\n"
             f"dcx = {repr(self.dcx)}\n"
             f"\n"
         )
@@ -621,7 +630,7 @@ class BND4(BaseBND):
         self.utf16_paths = header["utf16_paths"]
         self.hash_table_type = header["hash_table_type"]
         self.hash_table_offset = header["hash_table_offset"]
-        path_encoding = ("utf-16be" if self.big_endian else "utf-16le") if self.utf16_paths else "shift_jis_2004"
+        path_encoding = ("utf-16be" if self.big_endian else "utf-16le") if self.utf16_paths else "shift-jis"
 
         if header["entry_header_size"] != header_size(self.bnd_magic):
             raise ValueError(
@@ -673,9 +682,10 @@ class BND4(BaseBND):
             self.utf16_paths = self.read_bnd_setting(f.readline(), "utf16_paths", assert_type=bool)
             self.hash_table_type = self.read_bnd_setting(f.readline(), "hash_table_type", assert_type=int)
             self.bnd_flags = self.read_bnd_setting(f.readline(), "unknown_flags", assert_type=tuple)
+            use_id_prefix = self.read_bnd_setting(f.readline(), "use_id_prefix", assert_type=bool)
             self.dcx = self.read_bnd_setting(f.readline(), "dcx", assert_type=tuple)
 
-            self.add_entries_from_manifest_paths(f, directory)
+            self.add_entries_from_manifest_paths(f, directory, use_id_prefix)
 
             self._most_recent_hash_table = b""  # Hash table will need to be built on first pack.
             self._most_recent_entry_count = len(self.binary_entries)
@@ -689,7 +699,7 @@ class BND4(BaseBND):
         packed_entry_data = b""
         relative_entry_data_offsets = []
         rebuild_hash_table = not self._most_recent_hash_table
-        path_encoding = ("utf-16be" if self.big_endian else "utf-16le") if self.utf16_paths else "shift_jis_2004"
+        path_encoding = ("utf-16be" if self.big_endian else "utf-16le") if self.utf16_paths else "shift-jis"
 
         if len(self.binary_entries) != len(self._entries):
             raise ValueError(
@@ -785,6 +795,7 @@ class BND4(BaseBND):
             f"utf16_paths = {self.utf16_paths}\n"
             f"hash_table_type = {self.hash_table_type}\n"
             f"unknown_flags = {repr(self.bnd_flags)}\n"
+            f"use_id_prefix = {self.has_repeated_entry_names}\n"
             f"dcx = {repr(self.dcx)}\n"
             f"\n"
         )
