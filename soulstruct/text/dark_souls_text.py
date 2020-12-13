@@ -246,6 +246,8 @@ class DarkSoulsText:
 
         if not separate_patch:
             # Select Patch indices will be merged into non-Patch FMG, so remove those Patch entries from the BND now.
+            # Note that not all categories (FMGs) can safely be merged. Any edited indices will be kept in the version
+            # (base or patch) from which they originated. (Adding new IDs to these categories is generally impossible.)
             for patch_fmg_name in _CAN_MERGE_PATCH:
                 if patch_fmg_name in self._is_menu:
                     bnd_index = _MSGBND_INDEX_to_SS_NAME_[patch_fmg_name]
@@ -258,23 +260,25 @@ class DarkSoulsText:
             fmg_entries_main = fmg_entries.copy()
             fmg_entries_patch = {}
 
-            if separate_patch:
-                # Separate Patch indices out into Patch dictionary.
+            if separate_patch or fmg_name in _CANNOT_MERGE_PATCH:
+                # Separate Patch indices out into Patch dictionary. Some categories do this regardless of whether
+                # `separate_patch=True`. (These are all internal categories where new IDs are meaningless anyway.)
                 for index in fmg_entries.keys():
                     if (fmg_name, index) in self._is_patch:
                         patch_text = fmg_entries_main.pop(index)
                         if patch_text:
                             fmg_entries_patch[index] = patch_text  # Don't bother adding if empty.
-                if fmg_entries_patch:
-                    patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + "Patch"] else new_item_msgbnd
-                    self.update_msgbnd_entry(
-                        patch_msgbnd,
-                        fmg_name + "Patch",
-                        fmg_entries_patch,
-                        word_wrap_limit=word_wrap,
-                        pipe_to_newline=pipe_to_newline,
-                        use_original_names=use_original_names,
-                    )
+
+            if fmg_entries_patch:
+                patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + "Patch"] else new_item_msgbnd
+                self.update_msgbnd_entry(
+                    patch_msgbnd,
+                    fmg_name + "Patch",
+                    fmg_entries_patch,
+                    word_wrap_limit=word_wrap,
+                    pipe_to_newline=pipe_to_newline,
+                    use_original_names=use_original_names,
+                )
 
             main_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
             self.update_msgbnd_entry(
@@ -294,7 +298,7 @@ class DarkSoulsText:
         self.item_msgbnd = new_item_msgbnd
         self.menu_msgbnd = new_menu_msgbnd
 
-        _LOGGER.info("Dark Souls text files (MsgBND) written successfully.")
+        _LOGGER.info("Dark Souls text files (MSGBND) written successfully.")
 
     def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:
@@ -402,11 +406,9 @@ _CAN_MERGE_PATCH = {
     "NPCNamesPatch",
     "PlaceNamesPatch",
 }
-_DO_NOT_MERGE_PATCH = {
+_CANNOT_MERGE_PATCH = {
     "EventText",
     "MenuDialogs",
-    "SystemMessages_Win32",
-    "Subtitles",
     "SoapstoneMessages",
     "MenuHelpSnippets",
     "KeyGuide",
