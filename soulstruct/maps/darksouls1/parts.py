@@ -34,6 +34,7 @@ from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int
 from soulstruct.utilities.maths import Vector3
 
 from .maps import get_map
+from .msb_entry import MSBEntryList
 
 
 class MSBPart(_BaseMSBPart):
@@ -75,6 +76,8 @@ class MSBPart(_BaseMSBPart):
         ("disable_point_light_effect", "?"),
         "2x",
     )
+
+    NAME_ENCODING = "shift_jis_2004"
 
     FIELD_INFO = {
         "entity_id": (
@@ -264,13 +267,13 @@ class MSBPart(_BaseMSBPart):
         self._part_type_index = header["_part_type_index"]
         for transform in ("translate", "rotate", "scale"):
             setattr(self, transform, Vector3(getattr(header, transform)))
-        self._draw_groups = int_group_to_bit_set(header["__draw_groups"])
-        self._display_groups = int_group_to_bit_set(header["__display_groups"])
+        self._draw_groups = int_group_to_bit_set(header["__draw_groups"], assert_size=4)
+        self._display_groups = int_group_to_bit_set(header["__display_groups"], assert_size=4)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__name_offset"], encoding="shift_jis_2004"
+            msb_buffer, offset=part_offset + header["__name_offset"], encoding=self.NAME_ENCODING
         )
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding="shift_jis_2004"
+            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding=self.NAME_ENCODING
         )
         msb_buffer.seek(part_offset + header["__base_data_offset"])
         base_data = self.PART_BASE_DATA_STRUCT.unpack(msb_buffer)
@@ -282,13 +285,13 @@ class MSBPart(_BaseMSBPart):
         """Pack to bytes, presumably as part of a full `MSB` pack."""
 
         # Validate draw/display groups before doing any real work.
-        draw_groups = bit_set_to_int_group(self._draw_groups)
-        display_groups = bit_set_to_int_group(self._display_groups)
+        draw_groups = bit_set_to_int_group(self._draw_groups, group_size=4)
+        display_groups = bit_set_to_int_group(self._display_groups, group_size=4)
 
         name_offset = self.PART_HEADER_STRUCT.size
-        packed_name = self.get_name_to_pack().encode("shift_jis_2004") + b"\0"  # Name not padded on its own.
+        packed_name = self.get_name_to_pack().encode(self.NAME_ENCODING) + b"\0"  # Name not padded on its own.
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode("shift_jis_2004") + b"\0" if self.sib_path else b"\0" * 6
+        packed_sib_path = self.sib_path.encode(self.NAME_ENCODING) + b"\0" if self.sib_path else b"\0" * 6
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
         base_data_offset = sib_path_offset + len(packed_sib_path)
@@ -487,7 +490,7 @@ class MSBCharacter(_BaseMSBCharacter, MSBPart):
         ("chara_init_id", "i"),
         ("_draw_parent_index", "i"),
         "8x",
-        ("_patrol_point_indices", "8h"),
+        ("_patrol_region_indices", "8h"),
         ("default_animation", "i"),
         ("damage_animation", "i"),
     )
@@ -536,7 +539,7 @@ class MSBCharacter(_BaseMSBCharacter, MSBPart):
             MapPart,
             "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn.",
         ),
-        "patrol_point_names": (
+        "patrol_region_names": (
             "Patrol Regions",
             GameObjectSequence((Region, 8)),
             "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
@@ -568,7 +571,7 @@ class MSBCharacter(_BaseMSBCharacter, MSBPart):
         "think_id",
         "talk_id",
         "patrol_type",
-        "patrol_point_names",
+        "patrol_region_names",
         "platoon_id",
         "default_animation",
         "damage_animation",
@@ -877,7 +880,7 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
         self.set(**data)
-        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"])
+        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"], assert_size=4)
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
         self._force_area_banner = data["__area_name_id"] < 0  # Custom field.
         if data["__play_region_id"] > -10:
@@ -891,7 +894,7 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
         """Pack to bytes, presumably as part of a full `MSB` pack."""
 
         # Validate navmesh groups before doing any real work.
-        navmesh_groups = bit_set_to_int_group(self._navmesh_groups)
+        navmesh_groups = bit_set_to_int_group(self._navmesh_groups, group_size=4)
 
         if self.area_name_id == -1 and not self._force_area_banner:
             raise InvalidFieldValueError("`force_area_banner` must be enabled if `area_name_id == -1` (default).")
@@ -1023,11 +1026,11 @@ class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
 
     def unpack_type_data(self, msb_buffer):
         data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
-        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"])
+        self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"], assert_size=4)
 
     def pack_type_data(self):
         return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
-            __navmesh_groups=bit_set_to_int_group(self._navmesh_groups),
+            __navmesh_groups=bit_set_to_int_group(self._navmesh_groups, group_size=4),
         )
 
     @property
@@ -1140,7 +1143,7 @@ class MSBMapConnection(_BaseMSBMapConnection, MSBPart):
         self.set(**kwargs)
 
 
-class MSBPartList(_BaseMSBPartList):
+class MSBPartList(_BaseMSBPartList, MSBEntryList):
 
     PART_SUBTYPE_CLASSES = {
         MSBPartSubtype.MapPiece: MSBMapPiece,

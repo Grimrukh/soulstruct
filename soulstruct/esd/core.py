@@ -3,6 +3,7 @@ import copy
 import logging
 import re
 import struct
+import typing as tp
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
@@ -29,8 +30,8 @@ class BaseESD:
     class State:
 
         STRUCT = None  # type: BinaryStruct
-        Condition = None
-        Command = None
+        Condition = None  # type: tp.Type[Condition]
+        Command = None  # type: tp.Type[Command]
 
         def __init__(self, esd_type, index, conditions, enter_commands, exit_commands, ongoing_commands):
             self.index = index
@@ -66,7 +67,7 @@ class BaseESD:
                 )
 
                 ongoing_commands = cls.Command.unpack(
-                    esd_type, esd_buffer, d["ongoing_commands_offset"], count=d["ongoing_commands_offset"],
+                    esd_type, esd_buffer, d["ongoing_commands_offset"], count=d["ongoing_commands_count"],
                 )
 
                 # State 0 will be overwritten when repeated at the end of the table, rather than added.

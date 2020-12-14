@@ -1,31 +1,32 @@
 __all__ = ["MSBModel", "MSBModelList"]
 
 from soulstruct.maps.base.models import (
-    MSBModel as BaseMSBModel,
-    MSBModelList as BaseMSBModelList,
+    MSBModel as _BaseMSBModel,
+    MSBModelList as _BaseMSBModelList,
 )
 from soulstruct.maps.enums import MSBModelSubtype
 from soulstruct.utilities import BinaryStruct
 
+from .msb_entry import MSBEntryList
 
-class MSBModel(BaseMSBModel):
+
+class MSBModel(_BaseMSBModel):
     """MSB model entry in Dark Souls."""
 
     MODEL_STRUCT = BinaryStruct(
         ("__name_offset", "i"),
-        ("__model_type", "I"),
+        ("__model_type", "i"),
         ("_model_type_index", "i"),
         ("__sib_path_offset", "i"),
         ("_instance_count", "i"),
         "12x",
     )
-
-    ENCODING = "shift_jis_2004"
+    NAME_ENCODING = "shift_jis_2004"
     NULL = b"\0"
     EMPTY_SIB_PATH = b"\0" * 6
 
 
-class MSBModelList(BaseMSBModelList):
+class MSBModelList(_BaseMSBModelList, MSBEntryList):
 
     ENTRY_CLASS = MSBModel
 

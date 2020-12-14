@@ -14,11 +14,11 @@ _LOGGER = logging.getLogger(__name__)
 
 class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
-    REGION_STRUCT = NotImplemented  # type: BinaryStruct
-    REGION_TYPE_DATA_STRUCT = ()
+    REGION_STRUCT = None  # type: BinaryStruct
+    NAME_ENCODING = ""  # type: str
+    UNKNOWN_DATA_SIZE = -1  # type: int
 
-    ENCODING = NotImplemented  # type: str
-    UNKNOWN_DATA_SIZE = NotImplemented  # type: int
+    REGION_TYPE_DATA_STRUCT = ()
 
     FIELD_INFO = {
         "translate": (
@@ -47,7 +47,7 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
         if isinstance(msb_region_source, bytes):
             msb_region_source = BytesIO(msb_region_source)
-        if isinstance(msb_region_source, BufferedReader):
+        if isinstance(msb_region_source, (BufferedReader, BytesIO)):
             self.unpack(msb_region_source)
         elif msb_region_source is not None:
             raise TypeError("`msb_model_source` must be a buffer, `bytes`, or `None`.")
@@ -56,7 +56,7 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         region_offset = msb_buffer.tell()
         base_data = self.REGION_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=region_offset + base_data["name_offset"], encoding=self.ENCODING,
+            msb_buffer, offset=region_offset + base_data["name_offset"], encoding=self.NAME_ENCODING,
         )
         self._region_index = base_data["__region_index"]
         self.translate = Vector3(base_data["translate"])
@@ -75,7 +75,7 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
     def pack(self, region_index=0):
         name_offset = self.REGION_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift_jis_2004", pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding=self.NAME_ENCODING, pad_to_multiple_of=4)
         unknown_offset_1 = name_offset + len(packed_name)
         unknown_offset_2 = unknown_offset_1 + 4
         packed_type_data = self.pack_type_data()
@@ -113,7 +113,7 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
     def check_null_field(cls, msb_buffer, offset_to_null):
         msb_buffer.seek(offset_to_null)
         zero = msb_buffer.read(cls.UNKNOWN_DATA_SIZE)
-        if zero != b"\0\0\0\0":
+        if zero != b"\0" * cls.UNKNOWN_DATA_SIZE:
             _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
 
 
@@ -327,8 +327,8 @@ class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
     ENTRY_LIST_NAME = "Regions"
     ENTRY_SUBTYPE_ENUM = MSBRegionSubtype
 
-    REGION_SUBTYPE_CLASSES = NotImplemented  # type: dict[MSBRegionSubtype, type]
-    REGION_SUBTYPE_OFFSET = NotImplemented  # type: int
+    REGION_SUBTYPE_CLASSES = {}  # type: dict[MSBRegionSubtype, type]
+    REGION_SUBTYPE_OFFSET = -1  # type: int
 
     _entries: tp.List[MSBRegion]
 

@@ -1,10 +1,10 @@
-from soulstruct.maps.base.map_studio_directory import MapStudioDirectory as BaseMapStudioDirectory
+from soulstruct.maps.base.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
 
 from .maps import ALL_MAPS_NO_CHALICE, get_map
 from .msb import MSB
 
 
-class MapStudioDirectory(BaseMapStudioDirectory):
+class MapStudioDirectory(_BaseMapStudioDirectory):
     """Bloodborne `MapStudio` directory.
 
     TODO: Chalice dungeons (m29) are currently not supported.
@@ -27,6 +27,7 @@ class MapStudioDirectory(BaseMapStudioDirectory):
     MSB_CLASS = MSB
     MAPS = ALL_MAPS_NO_CHALICE
     GET_MAP = staticmethod(get_map)
+    IS_DCX = True
 
     HuntersDream: MSB
     AbandonedOldWorkshop: MSB

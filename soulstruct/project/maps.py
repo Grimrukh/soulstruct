@@ -870,7 +870,7 @@ class SoulstructMapEditor(SoulstructBaseFieldEditor):
             if draw_parent_name:
                 map_prefix = self.map_choice_id[:6]  # e.g. "m10_02"
                 display_group_ints = self.linker.get_game_value(f"{map_prefix}_display_groups")
-                display_groups = int_group_to_bit_set(display_group_ints)
+                display_groups = int_group_to_bit_set(display_group_ints, assert_size=4)  # TODO: Other game sizes.
                 if not display_groups:
                     self.CustomDialog(
                         title="No Collision Found",

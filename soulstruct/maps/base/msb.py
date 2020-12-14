@@ -6,6 +6,7 @@ import typing as tp
 from io import BytesIO, BufferedReader
 from pathlib import Path
 
+from soulstruct.dcx import DCX
 from soulstruct.maps.enums import MSBEventSubtype, MSBPartSubtype
 from soulstruct.utilities import create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
@@ -51,10 +52,10 @@ class MSB(abc.ABC):
     """
     HEADER = b""
 
-    MODEL_LIST_CLASS = NotImplemented  # type: tp.Type[MSBModelList]
-    EVENT_LIST_CLASS = NotImplemented  # type: tp.Type[MSBEventList]
-    REGION_LIST_CLASS = NotImplemented  # type: tp.Type[MSBRegionList]
-    PART_LIST_CLASS = NotImplemented  # type: tp.Type[MSBPartList]
+    MODEL_LIST_CLASS = None  # type: tp.Type[MSBModelList]
+    EVENT_LIST_CLASS = None  # type: tp.Type[MSBEventList]
+    REGION_LIST_CLASS = None  # type: tp.Type[MSBRegionList]
+    PART_LIST_CLASS = None  # type: tp.Type[MSBPartList]
 
     def __init__(self, msb_source=None):
         self.models = self.MODEL_LIST_CLASS()
@@ -62,6 +63,7 @@ class MSB(abc.ABC):
         self.regions = self.REGION_LIST_CLASS()
         self.parts = self.PART_LIST_CLASS()
 
+        self.dcx_magic = ()
         self.msb_path = None
 
         if msb_source is None:
@@ -69,8 +71,13 @@ class MSB(abc.ABC):
         elif isinstance(msb_source, (str, Path)):
             # File path.
             self.msb_path = Path(msb_source)
-            with self.msb_path.open("rb") as msb_buffer:
-                self.unpack(msb_buffer)
+            if self.msb_path.suffix == ".dcx":
+                msb_dcx = DCX(self.msb_path)
+                self.dcx_magic = msb_dcx.magic
+                self.unpack(BytesIO(msb_dcx.data))
+            else:
+                with self.msb_path.open("rb") as msb_buffer:
+                    self.unpack(msb_buffer)
         elif isinstance(msb_source, bytes):
             self.unpack(BytesIO(msb_source))
         elif isinstance(msb_source, BufferedReader):
@@ -142,17 +149,22 @@ class MSB(abc.ABC):
 
         return self.HEADER + packed_models + packed_events + packed_regions + packed_parts
 
-    def write_packed(self, msb_path=None):
+    def write_packed(self, msb_path=None, dcx_magic=()):
+        if not dcx_magic:
+            dcx_magic = self.dcx_magic
         if msb_path is None:
             if self.msb_path is None:
                 raise ValueError("MSB path cannot be automatically determined from instance source.")
             msb_path = self.msb_path
+            if dcx_magic and not msb_path.suffix == ".dcx":
+                msb_path = msb_path.with_suffix(msb_path.suffix + ".dcx")
         if isinstance(msb_path, str):
             msb_path = Path(msb_path)
         msb_path.parent.mkdir(parents=True, exist_ok=True)
         create_bak(msb_path)
+        packed = DCX(self.pack(), magic=dcx_magic).pack() if dcx_magic else self.pack()
         with msb_path.open("wb") as f:
-            f.write(self.pack())
+            f.write(packed)
 
     def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=None):
         """Add given `translate` to `.translate` vectors of all Regions and Parts (including Map Pieces, Collisions, and

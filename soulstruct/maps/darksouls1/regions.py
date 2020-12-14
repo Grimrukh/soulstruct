@@ -12,6 +12,8 @@ from soulstruct.maps.base.regions import (
 from soulstruct.maps.enums import MSBRegionSubtype
 from soulstruct.utilities import BinaryStruct
 
+from .msb_entry import MSBEntryList
+
 
 class MSBRegion(_BaseMSBRegion, abc.ABC):
 
@@ -29,7 +31,7 @@ class MSBRegion(_BaseMSBRegion, abc.ABC):
         "4x",
     )
 
-    ENCODING = "shift_jis_2004"
+    NAME_ENCODING = "shift_jis_2004"
     UNKNOWN_DATA_SIZE = 4
 
 
@@ -57,7 +59,7 @@ class MSBRegionBox(_BaseMSBRegionBox, MSBRegion):
     pass
 
 
-class MSBRegionList(_BaseMSBRegionList):
+class MSBRegionList(_BaseMSBRegionList, MSBEntryList):
     REGION_SUBTYPE_CLASSES = {
         MSBRegionSubtype.Point: MSBRegionPoint,
         MSBRegionSubtype.Circle: MSBRegionCircle,

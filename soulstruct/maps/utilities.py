@@ -106,6 +106,8 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
             area_id, block_id = source
         except ValueError:
             raise ValueError(f"Sequence source for map-finding should be two values (area_id, block_id), not {source}.")
+        if block_id == -1:
+            block_id = 0
         matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
     elif isinstance(source, int):
         if block_id is not None:
@@ -114,12 +116,16 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
                 block_id = int(block_id)
             except ValueError:
                 raise ValueError(f"Invalid map-finding source: ({source}, {block_id})")
+            if block_id == -1:
+                block_id = 0
             matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
         else:
             source = str(int)
             if len(source) != 4:
                 raise ValueError("Abbreviated map ID should be exactly four digits (100 * area_id + block_id).")
             area_id, block_id = source[:2], source[2:]
+            if block_id == -1:
+                block_id = 0
             matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
     elif isinstance(source, str):
         if (source.startswith("m") and "_" in source) or source == "aiCommon":

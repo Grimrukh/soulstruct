@@ -32,6 +32,7 @@ class MSBModelSubtype(MSBSubtype):
     Player = 4
     Collision = 5
     Navmesh = 6
+    Other = -1
 
     @classmethod
     def get_pluralized_type_name(cls):
@@ -58,7 +59,7 @@ class MSBEventSubtype(MSBSubtype):
     DarkLock = 15
     Platoon = 16
     MultiSummon = 17
-    Other = 0xFFFFFFFF
+    Other = -1
 
     @classmethod
     def get_pluralized_type_name(cls):
@@ -91,6 +92,7 @@ class MSBPartSubtype(MSBSubtype):
     UnusedObject = 9
     UnusedCharacter = 10
     MapConnection = 11
+    Other = -1
 
     @classmethod
     def get_pluralized_type_name(cls):

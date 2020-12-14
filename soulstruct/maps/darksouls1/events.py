@@ -37,21 +37,20 @@ from soulstruct.maps.base.events import (
 from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities import BinaryStruct
 
+from .msb_entry import MSBEntryList
+
 
 class MSBEvent(_BaseMSBEvent):
 
     EVENT_HEADER_STRUCT = BinaryStruct(
         ("__name_offset", "i"),
         ("_event_index", "i"),
-        ("__event_type", "I"),
+        ("__event_type", "i"),
         ("_local_event_index", "i"),
         ("__base_data_offset", "i"),
         ("__type_data_offset", "i"),
         "4x",
     )
-    # Name is stored next.
-    # Base data is stored next.
-    # Type data is stored next.
 
     EVENT_BASE_DATA_STRUCT = BinaryStruct(
         ("_base_part_index", "i"),
@@ -59,6 +58,8 @@ class MSBEvent(_BaseMSBEvent):
         ("entity_id", "i"),
         "4x",
     )
+
+    NAME_ENCODING = "shift_jis_2004"
 
 
 class MSBLightEvent(_BaseMSBLightEvent, MSBEvent):
@@ -157,7 +158,7 @@ class MSBPseudoMultiplayerEvent(_BaseMSBPseudoMultiplayerEvent, MSBEvent):
     pass
 
 
-class MSBEventList(_BaseMSBEventList):
+class MSBEventList(_BaseMSBEventList, MSBEntryList):
     EVENT_SUBTYPE_CLASSES = {
         MSBEventSubtype.Light: MSBLightEvent,
         MSBEventSubtype.Sound: MSBSoundEvent,

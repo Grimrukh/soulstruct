@@ -38,6 +38,8 @@ from soulstruct.maps.base.events import (
 from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities import BinaryStruct
 
+from .msb_entry import MSBEntryList
+
 
 class MSBEvent(_BaseMSBEvent):
     """MSB event entry in Bloodborne."""
@@ -45,7 +47,7 @@ class MSBEvent(_BaseMSBEvent):
     EVENT_HEADER_STRUCT = BinaryStruct(
         ("__name_offset", "q"),
         ("_event_index", "i"),
-        ("__event_type", "I"),
+        ("__event_type", "i"),
         ("_local_event_index", "i"),
         "4x",
         ("__base_data_offset", "q"),
@@ -58,11 +60,13 @@ class MSBEvent(_BaseMSBEvent):
         ("_base_part_index", "i"),
         ("_base_region_index", "i"),
         ("entity_id", "i"),
-        ("unknowns", "4b"),
+        ("_unknowns", "4b"),
     )
 
+    NAME_ENCODING = "utf-16-le"
+
     def __init__(self, msb_event_source=None):
-        self.unknowns = [0, 0, 0, 0]
+        self._unknowns = [0, 0, 0, 0]
         super().__init__(msb_event_source)
 
 
@@ -258,7 +262,7 @@ class MSBObjActEvent(_BaseMSBObjActEvent, MSBEvent):
 class MSBWindFXEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
         ("fx_id", "i"),
-        ("_wind_region_index", "f"),
+        ("_wind_region_index", "i"),
         ("unk_x08_x0c", "f"),
         "4x",
     )
@@ -356,38 +360,38 @@ class MSBPatrolRouteEvent(MSBEvent):
 
     def __init__(self, msb_event_source, **kwargs):
         self.unk_x00_x04 = 1.0
-        self._patrol_point_names = [None] * 32
-        self._patrol_point_indices = [-1] * 32
+        self._patrol_region_names = [None] * 32
+        self._patrol_region_indices = [-1] * 32
         super().__init__(msb_event_source)
         self.set(**kwargs)
 
     @property
-    def patrol_point_names(self):
-        return self._patrol_point_names
+    def patrol_region_names(self):
+        return self._patrol_region_names
 
-    @patrol_point_names.setter
-    def patrol_point_names(self, value):
+    @patrol_region_names.setter
+    def patrol_region_names(self, value):
         """Pads out to 32 names with `None`. Also replaces empty strings with `None`."""
         names = []
         for v in value:
             if v is not None and not isinstance(v, str):
                 raise TypeError("Patrol point names must be strings or `None`.")
             names.append(v if v else None)
-        self._patrol_point_names = value
-        while len(self._patrol_point_names) < 32:
-            self._patrol_point_names.append(None)
+        self._patrol_region_names = value
+        while len(self._patrol_region_names) < 32:
+            self._patrol_region_names.append(None)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
-        self._patrol_point_indices = [region_indices[n] if n else -1 for n in self._patrol_point_names]
-        while len(self._patrol_point_indices) < 32:
-            self._patrol_point_indices.append(-1)
+        self._patrol_region_indices = [region_indices[n] if n else -1 for n in self._patrol_region_names]
+        while len(self._patrol_region_indices) < 32:
+            self._patrol_region_indices.append(-1)
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
-        self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
-        while len(self._patrol_point_names) < 32:
-            self._patrol_point_names.append(None)
+        self._patrol_region_names = [region_names[i] if i != -1 else None for i in self._patrol_region_indices]
+        while len(self._patrol_region_names) < 32:
+            self._patrol_region_names.append(None)
 
 
 class MSBDarkLockEvent(MSBEvent):
@@ -566,10 +570,11 @@ class MSBEnvironmentEvent(_BaseMSBEnvironmentEvent, MSBEvent):
     pass
 
 
-# TODO: Might need to add empty "Other" event (subtype enum 0xFFFFFFFF), if it actually appears in a Bloodborne MSB.
+class MSBOtherEvent(MSBEvent):
+    ENTRY_SUBTYPE = MSBEventSubtype.Other
 
 
-class MSBEventList(_BaseMSBEventList):
+class MSBEventList(_BaseMSBEventList, MSBEntryList):
     EVENT_SUBTYPE_CLASSES = {
         # MSBEventSubtype.Light: MSBLightEvent,
         MSBEventSubtype.Sound: MSBSoundEvent,
@@ -589,5 +594,6 @@ class MSBEventList(_BaseMSBEventList):
         MSBEventSubtype.DarkLock: MSBDarkLockEvent,
         MSBEventSubtype.Platoon: MSBPlatoonEvent,
         MSBEventSubtype.MultiSummon: MSBMultiSummonEvent,
+        MSBEventSubtype.Other: MSBOtherEvent,
     }
     EVENT_SUBTYPE_OFFSET = 12

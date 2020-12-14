@@ -652,6 +652,7 @@ def read_chars_from_buffer(
                 except UnicodeDecodeError:
                     if array in junk_encoded_bytes:
                         return array
+                    _LOGGER.error(f"Cannot decode bytes: {array}")
                     raise
             return array
         elif len(chars) == length:

@@ -14,9 +14,10 @@ _LOGGER = logging.getLogger(__name__)
 
 class MapStudioDirectory(abc.ABC):
 
-    MSB_CLASS = NotImplemented  # type: tp.Type[MSB]
-    MAPS = NotImplemented  # type: list[Map]
-    GET_MAP = NotImplemented  # type: tp.Callable
+    MSB_CLASS = None  # type: tp.Type[MSB]
+    MAPS = []  # type: list[Map]
+    GET_MAP = None  # type: tp.Callable
+    IS_DCX = False
 
     def __init__(self, map_studio_directory=None, maps=None):
         """Unpack MSB map data files from a `MapStudio` directory into one single modifiable structure.
@@ -62,7 +63,10 @@ class MapStudioDirectory(abc.ABC):
             if game_map.msb_file_stem is None:
                 continue
             msb_path = self._directory / (game_map.msb_file_stem + ".msb")
+            if self.IS_DCX:
+                msb_path = msb_path.with_suffix(msb_path.suffix + ".dcx")
             try:
+                print(game_map.name)
                 self.msbs[game_map.name] = self.MSB_CLASS(msb_path)
                 setattr(self, game_map.name, self.msbs[game_map.name])
             except FileNotFoundError:

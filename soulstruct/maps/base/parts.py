@@ -8,6 +8,7 @@ from io import BufferedReader, BytesIO
 
 from soulstruct.core import InvalidFieldValueError, SoulstructError
 from soulstruct.game_types import *
+from soulstruct.maps import MapError
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
 from soulstruct.utilities import BinaryStruct, unpack_from_buffer
@@ -24,6 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
     PART_HEADER_STRUCT = None  # type: BinaryStruct
     PART_BASE_DATA_STRUCT = None  # type: BinaryStruct
+    NAME_ENCODING = ""  # type: str
 
     PART_TYPE_DATA_STRUCT = ()
 
@@ -39,7 +41,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
 
         if isinstance(msb_part_source, bytes):
             msb_part_source = BytesIO(msb_part_source)
-        if isinstance(msb_part_source, BufferedReader):
+        if isinstance(msb_part_source, (BufferedReader, BytesIO)):
             self.unpack(msb_part_source)
         elif msb_part_source is not None:
             raise TypeError("`msb_part_source` must be a buffer, `bytes`, or `None` (default).")
@@ -85,13 +87,16 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
     ):
-        try:
-            self.model_name = model_names[self._model_index]
-        except KeyError:
-            raise KeyError(
-                f"Invalid model index for {self.ENTRY_SUBTYPE.name} {self.name} (entity ID {self.entity_id}): "
-                f"{self._model_index}"
-            )
+        if self._model_index != -1:
+            try:
+                self.model_name = model_names[self._model_index]
+            except KeyError:
+                raise KeyError(
+                    f"Invalid model index for {self.ENTRY_SUBTYPE.name} {self.name} (entity ID {self.entity_id}): "
+                    f"{self._model_index}"
+                )
+        else:
+            self.model_name = None
 
     @property
     def draw_groups(self):
@@ -201,27 +206,27 @@ class MSBCharacter(MSBPart, abc.ABC):
         self.chara_init_id = -1
         self.draw_parent_name = None
         self._draw_parent_index = None
-        self._patrol_point_names = [None] * 8
-        self._patrol_point_indices = [-1] * 8
+        self._patrol_region_names = [None] * 8
+        self._patrol_region_indices = [-1] * 8
         self.default_animation = -1
         self.damage_animation = -1
         super().__init__(msb_part_source, **kwargs)
 
     @property
-    def patrol_point_names(self):
-        return self._patrol_point_names
+    def patrol_region_names(self):
+        return self._patrol_region_names
 
-    @patrol_point_names.setter
-    def patrol_point_names(self, value):
+    @patrol_region_names.setter
+    def patrol_region_names(self, value):
         """Pads out to eight names with `None`. Also replaces empty strings with `None`."""
         names = []
         for v in value:
             if v is not None and not isinstance(v, str):
                 raise TypeError("Patrol point names must be strings or `None`.")
             names.append(v if v else None)
-        self._patrol_point_names = value
-        while len(self._patrol_point_names) < 8:
-            self._patrol_point_names.append(None)
+        self._patrol_region_names = value
+        while len(self._patrol_region_names) < 8:
+            self._patrol_region_names.append(None)
 
     def set_indices(
         self,
@@ -241,9 +246,9 @@ class MSBCharacter(MSBPart, abc.ABC):
             local_collision_indices,
         )
         self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
-        self._patrol_point_indices = [region_indices[n] if n else -1 for n in self._patrol_point_names]
-        while len(self._patrol_point_indices) < 8:
-            self._patrol_point_indices.append(-1)
+        self._patrol_region_indices = [region_indices[n] if n else -1 for n in self._patrol_region_names]
+        while len(self._patrol_region_indices) < 8:
+            self._patrol_region_indices.append(-1)
 
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
@@ -252,7 +257,7 @@ class MSBCharacter(MSBPart, abc.ABC):
             model_names, environment_names, region_names, part_names, collision_names,
         )
         self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
-        self._patrol_point_names = [region_names[i] if i != -1 else None for i in self._patrol_point_indices]
+        self._patrol_region_names = [region_names[i] if i != -1 else None for i in self._patrol_region_indices]
 
 
 class MSBPlayerStart(MSBPart, abc.ABC):
@@ -474,9 +479,9 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
     ENTRY_LIST_NAME = "Parts"
     ENTRY_SUBTYPE_ENUM = MSBPartSubtype
 
-    PART_SUBTYPE_CLASSES = NotImplemented  # type: dict[MSBPartSubtype, tp.Type[MSBPart]]
-    PART_SUBTYPE_OFFSET = NotImplemented  # type: int
-    GET_MAP = NotImplemented  # type: tp.Callable
+    PART_SUBTYPE_CLASSES = {}  # type: dict[MSBPartSubtype, tp.Type[MSBPart]]
+    PART_SUBTYPE_OFFSET = -1  # type: int
+    GET_MAP = None  # type: tp.Callable
 
     _entries: tp.List[MSBPart]
 
@@ -690,7 +695,10 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
     def MSBPart(cls, msb_buffer):
         """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
         part_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.PART_SUBTYPE_OFFSET, relative_offset=True)[0]
-        part_type = MSBPartSubtype(part_type_int)
+        try:
+            part_type = MSBPartSubtype(part_type_int)
+        except ValueError:
+            raise MapError(f"Part has invalid subtype: {part_type_int}")
         return cls.PART_SUBTYPE_CLASSES[part_type](msb_buffer)
 
     ENTRY_CLASS = MSBPart

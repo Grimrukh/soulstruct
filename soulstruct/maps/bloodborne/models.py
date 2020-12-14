@@ -1,31 +1,33 @@
 __all__ = ["MSBModel", "MSBModelList"]
 
 from soulstruct.maps.base.models import (
-    MSBModel as BaseMSBModel,
-    MSBModelList as BaseMSBModelList,
+    MSBModel as _BaseMSBModel,
+    MSBModelList as _BaseMSBModelList,
 )
 from soulstruct.maps.enums import MSBModelSubtype
 from soulstruct.utilities import BinaryStruct
 
+from .msb_entry import MSBEntryList
 
-class MSBModel(BaseMSBModel):
+
+class MSBModel(_BaseMSBModel):
     """MSB model entry in Bloodborne."""
 
     MODEL_STRUCT = BinaryStruct(
         ("__name_offset", "q"),
-        ("__model_type", "I"),
+        ("__model_type", "i"),
         ("_model_type_index", "i"),
         ("__sib_path_offset", "q"),
         ("_instance_count", "i"),
         "12x",
     )
 
-    ENCODING = "utf-16-le"
+    NAME_ENCODING = "utf-16-le"
     NULL = b"\0\0"
     # TODO: Empty sib path different? b"\0\0" * 6 maybe?
 
 
-class MSBModelList(BaseMSBModelList):
+class MSBModelList(_BaseMSBModelList, MSBEntryList):
     ENTRY_CLASS = MSBModel
 
 

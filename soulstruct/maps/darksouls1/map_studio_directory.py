@@ -1,10 +1,10 @@
-from soulstruct.maps.base.map_studio_directory import MapStudioDirectory as BaseMapStudioDirectory
+from soulstruct.maps.base.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
 
 from .maps import ALL_MAPS, get_map
 from .msb import MSB
 
 
-class MapStudioDirectory(BaseMapStudioDirectory):
+class MapStudioDirectory(_BaseMapStudioDirectory):
     """Dark Souls (either version) `MapStudio` directory.
 
     The format of these files is exactly the same in PTD and DSR. The vanilla DSR files have a few new additions (the

@@ -16,11 +16,8 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
     """Parent class for MSB events, which describe various things that occur in maps (often attached to Regions)."""
 
     EVENT_HEADER_STRUCT = None  # type: BinaryStruct
-    # Name is stored next.
-    # Base data is stored next.
-    # Type data is stored next.
-
     EVENT_BASE_DATA_STRUCT = None  # type: BinaryStruct
+    NAME_ENCODING = ""  # type: str
 
     EVENT_TYPE_DATA_STRUCT = ()
 
@@ -37,7 +34,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
 
         if isinstance(msb_event_source, bytes):
             msb_event_source = BytesIO(msb_event_source)
-        if isinstance(msb_event_source, BufferedReader):
+        if isinstance(msb_event_source, (BufferedReader, BytesIO)):
             self.unpack(msb_event_source)
         elif msb_event_source is not None:
             raise TypeError("`msb_event_source` must be a buffer, `bytes`, or `None`.")
@@ -50,7 +47,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         msb_buffer.seek(event_offset + header["__base_data_offset"])
         base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
         name_offset = event_offset + header["__name_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding="shift_jis_2004")
+        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding=self.NAME_ENCODING)
         self.set(**header)
         self.set(**base_data)
         msb_buffer.seek(event_offset + header["__type_data_offset"])
@@ -68,7 +65,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
 
     def pack(self):
         name_offset = self.EVENT_HEADER_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding="shift_jis_2004", pad_to_multiple_of=4)
+        packed_name = pad_chars(self.get_name_to_pack(), encoding=self.NAME_ENCODING, pad_to_multiple_of=4)
         base_data_offset = name_offset + len(packed_name)
         packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack_from_object(self)
         type_data_offset = base_data_offset + len(packed_base_data)

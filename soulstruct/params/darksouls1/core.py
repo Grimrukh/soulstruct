@@ -7,8 +7,8 @@ import typing as tp
 from soulstruct.games import DARK_SOULS_DSR
 from soulstruct.game_types import *
 from soulstruct.models.darksouls1 import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
-from soulstruct.params.base.param import ParamRow as BaseParamRow, Param as BaseParam
-from soulstruct.params.base.game_param_bnd import GameParamBND as BaseGameParamBND
+from soulstruct.params.base.param import ParamRow as _BaseParamRow, Param as _BaseParam
+from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParamBND
 
 from . import enums
 
@@ -16,17 +16,17 @@ if tp.TYPE_CHECKING:
     from soulstruct.text import DarkSoulsText
 
 
-class ParamRow(BaseParamRow):
+class ParamRow(_BaseParamRow):
     def get_field_type(self, field_type_name: str):
         """Look for field type in game-specific appropriate `enums` module."""
         return getattr(enums, field_type_name)
 
 
-class Param(BaseParam):
+class Param(_BaseParam):
     ParamRow = ParamRow
 
 
-class GameParamBND(BaseGameParamBND):
+class GameParamBND(_BaseGameParamBND):
     Param = Param
 
     PARAM_NICKNAMES = {

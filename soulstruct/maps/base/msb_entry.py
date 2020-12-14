@@ -57,7 +57,10 @@ class MSBEntry(abc.ABC):
         elif field_name in {"name", "description"} or field_name in self.FIELD_INFO:
             setattr(self, field_name, value)
         else:
-            raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
+            # TODO: Haven't finished FIELD_INFO class attributes yet, so allowing existing attributes.
+            if not hasattr(self, field_name):
+                raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
+            setattr(self, field_name, value)
 
     def set(self, **kwargs):
         """Update any attribute fields with keyword arguments.
@@ -87,7 +90,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
     MAP_ENTITY_LIST_HEADER = BinaryStruct(
         "4x",
         ("name_offset", "i"),
-        ("entry_offset_count", "i"),
+        ("entry_offset_count", "i"),  # includes final offset to next entry list
     )
     MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(
         ("entry_offset", "i"),
@@ -99,6 +102,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
     PLURALIZED_NAME = ""  # type: str
     ENTRY_SUBTYPE_ENUM = None  # type: tp.Union[type, tp.Iterable]
     ENTRY_CLASS = None  # type: type
+    NAME_ENCODING = ""  # type: str
 
     def __init__(self, msb_entry_list_source=None, name=""):
         self.name = ""
@@ -126,7 +130,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             return
         if isinstance(msb_entry_list_source, bytes):
             msb_entry_list_source = BytesIO(msb_entry_list_source)
-        if isinstance(msb_entry_list_source, BufferedReader):
+        if isinstance(msb_entry_list_source, (BufferedReader, BytesIO)):
             self.unpack(msb_entry_list_source)
         else:
             raise TypeError(f"Invalid MSB entry list source: {msb_entry_list_source}")
@@ -138,7 +142,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             for _ in range(header["entry_offset_count"] - 1)
         ]
         next_entry_list_offset = self.MAP_ENTITY_LIST_TAIL.unpack(msb_buffer)["next_entry_list_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, header["name_offset"], encoding="utf-8")
+        self.name = read_chars_from_buffer(msb_buffer, header["name_offset"], encoding=self.NAME_ENCODING)
 
         self._entries = []
 

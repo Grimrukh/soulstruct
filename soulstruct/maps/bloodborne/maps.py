@@ -12,6 +12,7 @@ __all__ = [
     "FORBIDDEN_WOODS",
     "YAHARGUL",
     "CHALICE_DUNGEON",
+    "UNKNOWN_MAP_30",  # referenced by some unused `MSBMapConnection` instances
     "BYRGENWERTH",
     "NIGHTMARE_FRONTIER",
     "HUNTERS_NIGHTMARE",
@@ -122,6 +123,14 @@ CHALICE_DUNGEON = Map(
     variable_name="CHALICE_DUNGEON",
     verbose_name="Chalice Dungeon",
 )
+UNKNOWN_MAP_30 = Map(  # Referenced by one vanilla (cut) MapConnection at the start of Castle Cainhurst.
+    30,
+    0,
+    emevd_file_stem=None,
+    name="UnknownMap30",
+    variable_name="UNKNOWN_MAP_30",
+    verbose_name="Unknown Map (30, 0)",
+)
 BYRGENWERTH = Map(
     32,
     0,
@@ -203,4 +212,7 @@ ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 
 
 def get_map(source, block_id=None):
+    if source in {30, (30, 0), (30, 1)}:
+        # Reference to missing map m30_00_00_00 in Castle Cainhurst (m25_00_00_00).
+        return UNKNOWN_MAP_30
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)

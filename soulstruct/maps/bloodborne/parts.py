@@ -33,6 +33,7 @@ from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int
 from soulstruct.utilities.maths import Vector3
 
 from .maps import get_map
+from .msb_entry import MSBEntryList
 
 
 class MSBPart(_BaseMSBPart):
@@ -53,8 +54,8 @@ class MSBPart(_BaseMSBPart):
         "4x",
         ("__base_data_offset", "q"),
         ("__type_data_offset", "q"),
-        ("__gparam_offset", "q"),
-        ("__scene_gparam_offset", "q"),
+        ("__gparam_data_offset", "q"),
+        ("__scene_gparam_data_offset", "q"),
     )
 
     PART_BASE_DATA_STRUCT = BinaryStruct(
@@ -72,6 +73,8 @@ class MSBPart(_BaseMSBPart):
 
     PART_GPARAM_STRUCT = None  # type: BinaryStruct
     PART_SCENE_GPARAM_STRUCT = None  # type: BinaryStruct
+
+    NAME_ENCODING = "utf-16-le"
 
     FIELD_INFO = {
         "entity_id": (
@@ -151,9 +154,9 @@ class MSBPart(_BaseMSBPart):
         self._part_type_index = header["_part_type_index"]
         for transform in ("translate", "rotate", "scale"):
             setattr(self, transform, Vector3(header[transform]))
-        self._draw_groups = int_group_to_bit_set(header["__draw_groups"])
-        self._display_groups = int_group_to_bit_set(header["__display_groups"])
-        self._backread_groups = int_group_to_bit_set(header["__backread_groups"])
+        self._draw_groups = int_group_to_bit_set(header["__draw_groups"], assert_size=8)
+        self._display_groups = int_group_to_bit_set(header["__display_groups"], assert_size=8)
+        self._backread_groups = int_group_to_bit_set(header["__backread_groups"], assert_size=8)
         self.description = read_chars_from_buffer(
             msb_buffer, offset=part_offset + header["__description_offset"], encoding="utf-16-le",
         )
@@ -193,9 +196,9 @@ class MSBPart(_BaseMSBPart):
         """Pack to bytes, presumably as part of a full `MSB` pack."""
 
         # Validate draw/display/backread groups before doing any real work.
-        draw_groups = bit_set_to_int_group(self._draw_groups)
-        display_groups = bit_set_to_int_group(self._display_groups)
-        backread_groups = bit_set_to_int_group(self._backread_groups)
+        draw_groups = bit_set_to_int_group(self._draw_groups, group_size=8)
+        display_groups = bit_set_to_int_group(self._display_groups, group_size=8)
+        backread_groups = bit_set_to_int_group(self._backread_groups, group_size=8)
 
         description_offset = self.PART_HEADER_STRUCT.size
         packed_description = self.description.encode("utf-16-le") + b"\0\0"
@@ -429,7 +432,7 @@ class MSBCharacter(_BaseMSBCharacter, MSBPartGParam):
         ("_draw_parent_index", "i"),
         ("chr_unk_x20_x22", "h"),
         "6x",
-        ("_patrol_point_indices", "8h"),
+        ("_patrol_region_indices", "8h"),
         ("default_animation", "i"),
         ("damage_animation", "i"),
     )
@@ -478,7 +481,7 @@ class MSBCharacter(_BaseMSBCharacter, MSBPartGParam):
             int,
             "Unknown 16-bit integer.",
         ),
-        "patrol_point_names": (
+        "patrol_region_names": (
             "Patrol Regions",
             GameObjectSequence((Region, 8)),
             "List of regions that this character will patrol between, in a looping sequence, if they have the standard "
@@ -680,12 +683,19 @@ class MSBMapConnection(_BaseMSBMapConnection, MSBPart):
     def __init__(self, msb_part_source=None, **kwargs):
         self.collision_name = None
         self._collision_index = None
-        self._connected_map = self.GET_MAP(self.DEFAULT_MAP)
+        self._connected_map = self.GET_MAP(self.DEFAULT_MAP)  # type: Map
         super().__init__(msb_part_source)
         self.set(**kwargs)
+        if self._connected_map.area_id == 30:
+            print(self.name)
 
 
-class MSBPartList(_BaseMSBPartList):
+class MSBOtherPart(MSBPart):
+    """Unknown part (enum -1). No data."""
+    ENTRY_SUBTYPE = MSBPartSubtype.Other
+
+
+class MSBPartList(_BaseMSBPartList, MSBEntryList):
     PART_SUBTYPE_CLASSES = {
         MSBPartSubtype.MapPiece: MSBMapPiece,
         MSBPartSubtype.Object: MSBObject,
@@ -696,6 +706,7 @@ class MSBPartList(_BaseMSBPartList):
         MSBPartSubtype.UnusedObject: MSBUnusedObject,
         MSBPartSubtype.UnusedCharacter: MSBUnusedCharacter,
         MSBPartSubtype.MapConnection: MSBMapConnection,
+        MSBPartSubtype.Other: MSBOtherPart,
     }
     PART_SUBTYPE_OFFSET = 20
     GET_MAP = staticmethod(get_map)

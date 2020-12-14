@@ -8,14 +8,12 @@ from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
 
 
 class MSBModel(MSBEntry):
+    """`ENTRY_SUBTYPE` is spoofed as an instance variable, since all Models have identical binary formats."""
 
-    # ENTRY_SUBTYPE is spoofed as an instance variable, since all Models have identical binary formats.
-
-    MODEL_STRUCT = NotImplemented  # type: BinaryStruct
-
-    ENCODING = NotImplemented  # type: str
-    NULL = NotImplemented  # type: bytes
-    EMPTY_SIB_PATH = NotImplemented  # type: bytes
+    MODEL_STRUCT = None  # type: BinaryStruct
+    NAME_ENCODING = ""  # type: str
+    NULL = b"\0"  # type: bytes
+    EMPTY_SIB_PATH = b"\0"  # type: bytes
 
     FIELD_INFO = {
         "sib_path": (
@@ -41,7 +39,7 @@ class MSBModel(MSBEntry):
 
         if isinstance(msb_model_source, bytes):
             msb_model_source = BytesIO(msb_model_source)
-        if isinstance(msb_model_source, BufferedReader):
+        if isinstance(msb_model_source, (BufferedReader, BytesIO)):
             self.unpack(msb_model_source)
         elif msb_model_source is None and name is not None and model_subtype is not None:
             self.name = name
@@ -64,10 +62,10 @@ class MSBModel(MSBEntry):
         model_offset = msb_buffer.tell()
         model_data = self.MODEL_STRUCT.unpack(msb_buffer)
         self.name = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding=self.ENCODING,
+            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding=self.NAME_ENCODING,
         )
         self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding=self.ENCODING,
+            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding=self.NAME_ENCODING,
         )
         try:
             self.ENTRY_SUBTYPE = MSBModelSubtype(model_data["__model_type"])
@@ -77,9 +75,9 @@ class MSBModel(MSBEntry):
 
     def pack(self):
         name_offset = self.MODEL_STRUCT.size
-        packed_name = self.get_name_to_pack().encode(self.ENCODING) + self.NULL
+        packed_name = self.get_name_to_pack().encode(self.NAME_ENCODING) + self.NULL
         sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode(self.ENCODING) + self.NULL if self.sib_path else self.EMPTY_SIB_PATH
+        packed_sib_path = self.sib_path.encode(self.NAME_ENCODING) + self.NULL if self.sib_path else self.EMPTY_SIB_PATH
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
         packed_model_data = self.MODEL_STRUCT.pack(
@@ -141,7 +139,7 @@ class MSBModelList(MSBEntryList[MSBModel]):
     PLURALIZED_NAME = "Models"
     ENTRY_SUBTYPE_ENUM = MSBModelSubtype
 
-    ENTRY_CLASS = NotImplemented  # type: tp.Type[MSBModel]
+    ENTRY_CLASS = None  # type: tp.Type[MSBModel]
 
     _entries: tp.List[MSBModel]
 
