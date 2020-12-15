@@ -66,7 +66,6 @@ class MapStudioDirectory(abc.ABC):
             if self.IS_DCX:
                 msb_path = msb_path.with_suffix(msb_path.suffix + ".dcx")
             try:
-                print(game_map.name)
                 self.msbs[game_map.name] = self.MSB_CLASS(msb_path)
                 setattr(self, game_map.name, self.msbs[game_map.name])
             except FileNotFoundError:

@@ -82,7 +82,7 @@ class GameParamBND:
     def pickle(self, game_param_pickle_path=None):
         """Save the entire `GameParamBND` to a pickled file, which will be faster to load in future."""
         if game_param_pickle_path is None:
-            game_param_pickle_path = self._bnd.bnd_path
+            game_param_pickle_path = self._bnd.path
             if game_param_pickle_path is None:
                 raise ValueError("Could not automatically determine path to pickle GameParamBND.")
             while game_param_pickle_path.suffix in {".dcx", ".parambnd"}:

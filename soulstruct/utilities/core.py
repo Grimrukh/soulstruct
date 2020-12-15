@@ -539,13 +539,25 @@ def _get_drives():
     return drives
 
 
-def unpack_from_buffer(buffer, fmt, offset=None, relative_offset=False):
+def unpack_from_buffer(buffer: tp.Union[str, Path, bytes, io.BufferedIOBase], fmt, offset=None, relative_offset=False):
     """Unpack appropriate number of bytes from `buffer` using `fmt` string from the given (or current) `offset`.
 
-    Data is always returned as a tuple, just like `struct.unpack()`.
+    Args:
+        buffer (str, Path, bytes, io.BufferedIOBase): source to read from.
+        fmt (str): format string for `struct.unpack()`.
+        offset (int): optional offset to seek to before reading. Old offset will be restored afterward.
+        relative_offset (bool): indicates that `offset` is relative to current position.
 
-    If `offset` is given, the original offset is restored before returning.
+    Returns:
+        (tuple) Output of `struct.unpack()`.
     """
+    if isinstance(buffer, (str, Path)):
+        with buffer.open("rb") as f:
+            if offset is not None:
+                f.seek(offset)
+            return struct.unpack(fmt, f.read(struct.calcsize(fmt)))
+    elif isinstance(buffer, bytes):
+        buffer = io.BytesIO(buffer)
     old_offset = buffer.tell() if offset is not None else None
     if offset is not None:
         buffer.seek(old_offset + offset if relative_offset else offset)

@@ -686,8 +686,6 @@ class MSBMapConnection(_BaseMSBMapConnection, MSBPart):
         self._connected_map = self.GET_MAP(self.DEFAULT_MAP)  # type: Map
         super().__init__(msb_part_source)
         self.set(**kwargs)
-        if self._connected_map.area_id == 30:
-            print(self.name)
 
 
 class MSBOtherPart(MSBPart):

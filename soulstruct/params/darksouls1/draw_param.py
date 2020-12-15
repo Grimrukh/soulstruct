@@ -73,7 +73,7 @@ class DrawParamBND:
         """Structure that manages double-slots and table nicknames for one DrawParamBND file (i.e. one map "area")."""
         self.params = {}  # type: dict[str, list[tp.Optional[DrawParam], tp.Optional[DrawParam]]]
         self._bnd_entry_paths = {}  # type: dict[tuple[str, int], str]
-        paramdef_bnd = GET_BUNDLED_PARAMDEFBND("dsr" if bool(draw_param_bnd_source.dcx) else "ptde")
+        paramdef_bnd = GET_BUNDLED_PARAMDEFBND("dsr" if bool(draw_param_bnd_source.dcx_magic) else "ptde")
 
         if not isinstance(draw_param_bnd_source, BaseBND):
             draw_param_bnd_source = BND(draw_param_bnd_source)

@@ -97,9 +97,9 @@ class DarkSoulsAIScripts:
             script_directory = self._directory
         script_directory = Path(script_directory)
         for luabnd in self._data.values():
-            luabnd_path = script_directory / luabnd.bnd.bnd_path.name
+            luabnd_path = script_directory / luabnd.bnd.path.name
             luabnd.write(luabnd_path)
-        event_common_path = script_directory / self.event_common_bnd.bnd_path.name
+        event_common_path = script_directory / self.event_common_bnd.path.name
         self.event_common_bnd.write(event_common_path)
         _LOGGER.info("Dark Souls AI script files (LuaBND) written successfully.")
 

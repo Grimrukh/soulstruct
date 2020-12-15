@@ -56,7 +56,7 @@ class TalkESDBND:
                     )
                 self.bnd = self.get_empty_talkesdbnd()
                 self.bnd_name = talkesdbnd_source.name
-                self.bnd.dcx = self.DSR_DCX_MAGIC if self.game_version == "dsr" else ()
+                self.bnd.dcx_magic = self.DSR_DCX_MAGIC if self.game_version == "dsr" else ()
                 self.reload_all_esp(talkesdbnd_source, allow_new=True)
                 self.update_bnd()
 
@@ -68,7 +68,7 @@ class TalkESDBND:
                     "`game_version` must be specified ('ptde' or 'dsr') when loading TalkESDBND from " "dictionary."
                 )
             self.bnd = self.get_empty_talkesdbnd()
-            self.bnd.dcx = self.DSR_DCX_MAGIC if self.game_version == "dsr" else ()
+            self.bnd.dcx_magic = self.DSR_DCX_MAGIC if self.game_version == "dsr" else ()
             self.unpack_from_dict(talkesdbnd_source)
 
     def unpack_from_bnd(self):
@@ -233,6 +233,6 @@ class DarkSoulsTalk:
             talk_directory = self._directory
         talk_directory = Path(talk_directory)
         for talkesdbnd in self._data.values():
-            talkesdbnd_path = talk_directory / talkesdbnd.bnd.bnd_path.name
+            talkesdbnd_path = talk_directory / talkesdbnd.bnd.path.name
             talkesdbnd.write(talkesdbnd_path)
         _LOGGER.info("Dark Souls talk ESD files (TalkESDBND) written successfully.")

@@ -34,7 +34,13 @@ class DCX:
 
         self.dcx_path = None
         self.data = b""
-        self.magic = magic
+        try:
+            # Pair of DCX magic values, or empty tuple to not use DCX.
+            self.magic = tuple(magic) if magic is not None else ()
+            if len(self.magic) != 2 or not all(isinstance(m, int) for m in self.magic):
+                raise ValueError
+        except (ValueError, TypeError):
+            raise ValueError(f"`magic` should be empty (or None) or a sequence of two values.")
 
         if isinstance(dcx_source, (str, Path)):
             self.dcx_path = Path(dcx_source)
@@ -45,7 +51,7 @@ class DCX:
 
     def unpack(self, dcx_buffer):
         if self.magic:
-            raise ValueError("DCX magic bytes were set manually before unpack.")
+            raise ValueError("`DCX.magic` cannot be set manually before unpack.")
         header = self.HEADER_STRUCT.unpack(dcx_buffer)
         if header["magic1"] not in {36, 68}:
             raise ValueError(f"Expected 36 or 68 at offset 0x16 but found {header['magic1']}.")
@@ -93,3 +99,8 @@ class DCX:
             data_path = Path(data_path)
         with data_path.open("wb") as file:
             file.write(self.data)
+
+    @classmethod
+    def get_data_and_magic(cls, dcx_source):
+        dcx = cls(dcx_source)
+        return dcx.data, dcx.magic

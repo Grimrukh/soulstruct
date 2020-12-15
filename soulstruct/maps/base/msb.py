@@ -3,12 +3,11 @@ from __future__ import annotations
 import abc
 import logging
 import typing as tp
-from io import BytesIO, BufferedReader
+import io
 from pathlib import Path
 
-from soulstruct.dcx import DCX
+from soulstruct.game_file import GameFile
 from soulstruct.maps.enums import MSBEventSubtype, MSBPartSubtype
-from soulstruct.utilities import create_bak
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 from .msb_entry import MSBEntry
@@ -23,10 +22,8 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSB(abc.ABC):
+class MSB(GameFile, abc.ABC):
     """Handles MSB ('MapStudio') data. Subclassed by each game.
-
-    Only DS1 (either version) is supported. PTDE and DSR have identical MSB formats (but a few changes in content).
 
     The MSB contains four types of data entries:
 
@@ -57,35 +54,18 @@ class MSB(abc.ABC):
     REGION_LIST_CLASS = None  # type: tp.Type[MSBRegionList]
     PART_LIST_CLASS = None  # type: tp.Type[MSBPartList]
 
-    def __init__(self, msb_source=None):
+    def __init__(
+        self,
+        msb_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase] = None,
+        dcx_magic: tuple[int, int] = None,
+    ):
         self.models = self.MODEL_LIST_CLASS()
         self.events = self.EVENT_LIST_CLASS()
         self.regions = self.REGION_LIST_CLASS()
         self.parts = self.PART_LIST_CLASS()
-
         self.dcx_magic = ()
         self.msb_path = None
-
-        if msb_source is None:
-            return
-        elif isinstance(msb_source, (str, Path)):
-            # File path.
-            self.msb_path = Path(msb_source)
-            if self.msb_path.suffix == ".dcx":
-                msb_dcx = DCX(self.msb_path)
-                self.dcx_magic = msb_dcx.magic
-                self.unpack(BytesIO(msb_dcx.data))
-            else:
-                with self.msb_path.open("rb") as msb_buffer:
-                    self.unpack(msb_buffer)
-        elif isinstance(msb_source, bytes):
-            self.unpack(BytesIO(msb_source))
-        elif isinstance(msb_source, BufferedReader):
-            self.unpack(msb_source)
-        else:
-            raise TypeError(
-                f"Invalid MSB source type: {type(msb_source)}. " f"Must be string (file path), bytes, or buffer."
-            )
+        super().__init__(msb_source, dcx_magic=dcx_magic)
 
     def unpack(self, msb_buffer):
         """Unpack an MSB from the given buffer."""
@@ -148,23 +128,6 @@ class MSB(abc.ABC):
         packed_parts = self.parts.pack(start_offset=offset, is_last_table=True)
 
         return self.HEADER + packed_models + packed_events + packed_regions + packed_parts
-
-    def write_packed(self, msb_path=None, dcx_magic=()):
-        if not dcx_magic:
-            dcx_magic = self.dcx_magic
-        if msb_path is None:
-            if self.msb_path is None:
-                raise ValueError("MSB path cannot be automatically determined from instance source.")
-            msb_path = self.msb_path
-            if dcx_magic and not msb_path.suffix == ".dcx":
-                msb_path = msb_path.with_suffix(msb_path.suffix + ".dcx")
-        if isinstance(msb_path, str):
-            msb_path = Path(msb_path)
-        msb_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(msb_path)
-        packed = DCX(self.pack(), magic=dcx_magic).pack() if dcx_magic else self.pack()
-        with msb_path.open("wb") as f:
-            f.write(packed)
 
     def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=None):
         """Add given `translate` to `.translate` vectors of all Regions and Parts (including Map Pieces, Collisions, and

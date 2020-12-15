@@ -1,16 +1,17 @@
 import abc
 import copy
+import io
 import logging
 import re
 import zlib
 import typing as tp
 from ast import literal_eval
-from io import BytesIO, IOBase
 from pathlib import Path
 
 from soulstruct.bnd.magic import *
 from soulstruct.dcx import DCX
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, find_dcx, create_bak
+from soulstruct.game_file import GameFile
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer
 
 __all__ = ["BND", "BND3", "BND4", "BaseBND", "BNDEntry"]
 _LOGGER = logging.getLogger(__name__)
@@ -83,14 +84,14 @@ class BNDEntry:
         return BNDEntry(self.data, self.id, self.path)
 
 
-class BaseBND(abc.ABC):
+class BaseBND(GameFile, abc.ABC):
 
     UNPACKED_PATH_RE = re.compile(rb"\((\d*)\) (.*)")
     UNPACKED_ID_PATH_RE = re.compile(rb"\((\d*)\) (\d*): (.*)")
 
     binary_entries: tp.List[BNDEntry]
 
-    def __init__(self, bnd_source=None, entry_class=None):
+    def __init__(self, bnd_source=None, dcx_magic=(), entry_class=None):
         """Load a BND.
 
         Source can be a .*bnd file, an unpacked BND directory (or the 'bnd_manifest.txt' file inside it), raw bytes,
@@ -101,16 +102,11 @@ class BaseBND(abc.ABC):
         with packed versions of the classed entry instances when the BND is packed. (Until then, any edited entry
         instances will diverge from the original binary entry data.)
         """
-        self.header_struct = None
-        self.entry_header_struct = None
-
-        self.bnd_path = Path()  # Always a '.bnd' file Path after the BND is loaded.
-        self.bnd_version = b""
-        self.bnd_signature = b""
-        self.bnd_magic = None  # Can't guess this; you'll need to specify it based on your BND type.
+        self.path = Path()  # Always a '.bnd' file Path after the BND is loaded.
+        self.version = b""
+        self.signature = b""
+        self.magic = None  # Can't guess this; you'll need to specify it based on your BND type.
         self.big_endian = False
-        self.dcx = ()  # Pair of DCX magic values, or empty tuple to not use DCX.
-
         self._entry_class = entry_class
         self._most_recent_hash_table = b""
         self._most_recent_entry_count = 0
@@ -119,39 +115,26 @@ class BaseBND(abc.ABC):
         self.binary_entries = []  # Always stores binary (unpacked) entries. Only updated when pack() is called.
         self._entries = []  # List of entries, instantiated with given entry class (or left as binary).
 
+        # In addition to the usual `GameFile` sources (a `*bnd[.dcx]` file), a BND can be loaded from a
+        # `bnd_manifest.txt` file or a directory containing such a file.
         if isinstance(bnd_source, (str, Path)):
+            super().__init__(file_source=None, dcx_magic=dcx_magic)
             bnd_path = Path(bnd_source)
             if bnd_path.is_file() and bnd_path.name == "bnd_manifest.txt":
                 bnd_path = bnd_path.parent
             if bnd_path.is_dir():
-                if bnd_path.suffix == ".unpacked":
-                    self.bnd_path = bnd_path.parent.absolute() / bnd_path.stem
+                if bnd_path.suffix == ".unpacked":  # remove this suffix
+                    self.path = bnd_path.parent.absolute() / bnd_path.stem
                 else:
-                    self.bnd_path = Path(bnd_path).absolute()
+                    self.path = Path(bnd_path).absolute()  # will conflict with unpacked folder name in same directory
                 self.load_unpacked_dir(bnd_path)
-            else:
-                self.bnd_path = bnd_path.absolute()
-                if bnd_path.suffix == ".dcx":
-                    bnd_dcx = DCX(bnd_path)
-                    self.unpack(bnd_dcx.data)
-                    self.dcx = bnd_dcx.magic
-                else:
-                    with open(bnd_path, "rb") as file:
-                        self.unpack(file)
-        elif bnd_source is not None:
-            self.unpack(bnd_source)
+            return
 
-    @abc.abstractmethod
-    def unpack(self, bnd_buffer):
-        ...
-
-    @abc.abstractmethod
-    def pack(self):
-        ...
+        super().__init__(bnd_source, dcx_magic=dcx_magic)
 
     @abc.abstractmethod
     def load_unpacked_dir(self, directory):
-        ...
+        """Load BND from a Soulstruct-unpacked BND directory with a `bnd_manifest.txt` file."""
 
     def add_entries_from_manifest_paths(self, file_buffer, directory, use_id_prefix: bool):
         directory = Path(directory)
@@ -164,7 +147,7 @@ class BaseBND(abc.ABC):
             if line.startswith(b"PATH:"):
                 current_directory = line[5:].strip().replace(b"/", b"\\").decode("shift-jis").strip("\r\n")
             else:
-                if has_id(self.bnd_magic):
+                if has_id(self.magic):
                     try:
                         entry_magic, entry_id, entry_basename = self.UNPACKED_ID_PATH_RE.match(line).group(1, 2, 3)
                     except (AttributeError, ValueError):
@@ -186,34 +169,16 @@ class BaseBND(abc.ABC):
 
                 self.add_entry(BNDEntry(entry_id=entry_id, path=entry_path, data=entry_data, magic=entry_magic))
 
-    def write(self, bnd_path=None):
-        if bnd_path is None:
-            bnd_path = self.bnd_path
-        else:
-            bnd_path = Path(bnd_path)
-            if self.dcx and bnd_path.suffix != ".dcx":
-                bnd_path = bnd_path.with_suffix(bnd_path.suffix + ".dcx")
-        bnd_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(bnd_path)
-        packed = self.pack()
-
-        if self.dcx:
-            # Apply DCX compression.
-            packed = DCX(packed, magic=self.dcx).pack()
-
-        with bnd_path.open("wb") as f:
-            f.write(packed)
-
     def write_unpacked_dir(self, directory=None):
-        if not has_path(self.bnd_magic):
+        if not has_path(self.magic):
             raise TypeError("Writing unpacked BND directories is only supported when BND entries have path strings.")
         if directory is None:
-            if self.bnd_path:
-                directory = self.bnd_path.with_suffix(self.bnd_path.suffix + ".unpacked")
+            if self.path:
+                directory = self.path.with_suffix(self.path.suffix + ".unpacked")
             else:
                 raise ValueError("Cannot set automatic unpacked BND directory name.")
         else:
-            directory = Path(directory, self.bnd_path.name + ".unpacked")
+            directory = Path(directory, self.path.name + ".unpacked")
 
         current_directory = ""
         manifest_lines = []
@@ -225,7 +190,7 @@ class BaseBND(abc.ABC):
                 # Write new path group to file list.
                 manifest_lines.append(f" PATH: {entry_directory}")
                 current_directory = entry_directory
-            if has_id(self.bnd_magic):
+            if has_id(self.magic):
                 manifest_lines.append(f"    ({entry.magic}) {entry.id}: {entry.name}")
             else:
                 manifest_lines.append(f"    ({entry.magic}) {entry.name}")
@@ -329,8 +294,8 @@ class BaseBND(abc.ABC):
     def __getitem__(self, id_or_path_or_basename) -> BNDEntry:
         """ Shortcut for access by ID (int) or path (str) or basename (str).
 
-        If one entry's path is the basename of another's, the former will be given precedence here, but this should
-        never happen!
+        If the path of one entry is the basename of another entry, the former will be given precedence here, but this
+        should never happen!
         """
         if isinstance(id_or_path_or_basename, int):
             return self.entries_by_id[id_or_path_or_basename]
@@ -377,7 +342,7 @@ class BaseBND(abc.ABC):
 
     @classmethod
     def detect(cls, bnd_source):
-        """ Returns True iff BND source appears to be a BND of this type. Does not support DCX sources. """
+        """Returns True if `bnd_source` appears to be this subclass of `BaseBND`. Does not support DCX sources."""
         if isinstance(bnd_source, (str, Path)):
             bnd_path = Path(bnd_source)
             if bnd_path.is_file() and bnd_path.name == "bnd_manifest.txt":
@@ -398,8 +363,8 @@ class BaseBND(abc.ABC):
                     return version == cls.__name__
             return False
         elif isinstance(bnd_source, bytes):
-            bnd_source = BytesIO(bnd_source)
-        if isinstance(bnd_source, IOBase):
+            bnd_source = io.BytesIO(bnd_source)
+        if isinstance(bnd_source, io.BufferedIOBase):
             old_offset = bnd_source.tell()
             bnd_source.seek(0)
             try:
@@ -414,53 +379,55 @@ class BaseBND(abc.ABC):
 class BND3(BaseBND):
 
     HEADER_STRUCT_START = (
-        ("bnd_version", "4s", b"BND3"),
-        ("bnd_signature", "8s"),  # Real signature may be shorter, but packing will pad it out.
-        ("bnd_magic", "b"),
+        ("version", "4s", b"BND3"),
+        ("signature", "8s"),  # Real signature may be shorter, but packing will pad it out.
+        ("magic", "b"),
         ("big_endian", "?"),
     )
     HEADER_STRUCT_ENDIAN = (
-        ("unknown", "?"),  # usually zero
+        ("unknown", "?"),  # usually False
         ("zero", "B", 0),
         ("entry_count", "i"),
         ("file_size", "i"),
         "8x",
     )
 
-    BND_ENTRY_HEADER = (("entry_magic", "B"), "3x", ("compressed_data_size", "i"), ("data_offset", "i"))
+    BND_ENTRY_HEADER = (
+        ("entry_magic", "B"),
+        "3x",
+        ("compressed_data_size", "i"),
+        ("data_offset", "i"),
+    )
     ENTRY_ID = ("entry_id", "i")
     NAME_OFFSET = ("path_offset", "i")
     UNCOMPRESSED_DATA_SIZE = ("uncompressed_data_size", "i")
 
-    def __init__(self, bnd_source=None, entry_class=None):
+    def __init__(self, bnd_source=None, entry_class=None, dcx_magic=()):
         self.unknown = False
-        super().__init__(bnd_source, entry_class)
+        super().__init__(bnd_source, entry_class, dcx_magic)
 
-    def unpack(self, bnd_buffer):
-        if isinstance(bnd_buffer, bytes):
-            bnd_buffer = BytesIO(bnd_buffer)
-
+    def unpack(self, buffer, **kwargs):
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
-        header = self.header_struct.unpack(bnd_buffer)
-        self.bnd_version = header["bnd_version"]
-        self.bnd_signature = header["bnd_signature"]
-        self.bnd_magic = header["bnd_magic"]
-        self.big_endian = header["big_endian"] or is_big_endian(self.bnd_magic)
+        header = self.header_struct.unpack(buffer)
+        self.version = header["version"]
+        self.signature = header["signature"]
+        self.magic = header["magic"]
+        self.big_endian = header["big_endian"] or is_big_endian(self.magic)
         byte_order = ">" if self.big_endian else "<"
-        header.update(self.header_struct.unpack(bnd_buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
+        header.update(self.header_struct.unpack(buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
         self.unknown = header["unknown"]
 
         self.entry_header_struct = BinaryStruct(*self.BND_ENTRY_HEADER, byte_order=byte_order)
-        if has_id(self.bnd_magic):
+        if has_id(self.magic):
             self.entry_header_struct.add_fields(self.ENTRY_ID, byte_order=byte_order)
-        if has_path(self.bnd_magic):
+        if has_path(self.magic):
             self.entry_header_struct.add_fields(self.NAME_OFFSET, byte_order=byte_order)
-        if has_uncompressed_size(self.bnd_magic):
+        if has_uncompressed_size(self.magic):
             self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
 
-        # NOTE: BND paths are *not* encoded in `shift_jis_2004`, unlike most other internal strings!
+        # NOTE: BND paths are *not* encoded in `shift_jis_2004`, unlike most other strings! They are `shift-jis`.
         for entry in BNDEntry.unpack(
-            bnd_buffer, self.entry_header_struct, path_encoding="shift-jis", count=header["entry_count"]
+            buffer, self.entry_header_struct, path_encoding="shift-jis", count=header["entry_count"]
         ):
             self.add_entry(entry)
 
@@ -469,13 +436,13 @@ class BND3(BaseBND):
         if not directory.is_dir():
             raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
         with (directory / "bnd_manifest.txt").open("rb") as f:
-            self.bnd_version = self.read_bnd_setting(f.readline(), "version")
-            self.bnd_signature = self.read_bnd_setting(f.readline(), "bnd_signature")
-            self.bnd_magic = self.read_bnd_setting(f.readline(), "bnd_magic", assert_type=int)
+            self.version = self.read_bnd_setting(f.readline(), "version")
+            self.signature = self.read_bnd_setting(f.readline(), "signature")
+            self.magic = self.read_bnd_setting(f.readline(), "magic", assert_type=int)
             self.big_endian = self.read_bnd_setting(f.readline(), "big_endian", assert_type=bool)
             self.unknown = self.read_bnd_setting(f.readline(), "unknown", assert_type=bool)
             use_id_prefix = self.read_bnd_setting(f.readline(), "use_id_prefix", assert_type=bool)
-            self.dcx = self.read_bnd_setting(f.readline(), "dcx", assert_type=tuple)
+            self.dcx_magic = self.read_bnd_setting(f.readline(), "dcx_magic", assert_type=tuple)
 
             self.add_entries_from_manifest_paths(f, directory, use_id_prefix)
 
@@ -484,11 +451,11 @@ class BND3(BaseBND):
         byte_order = ">" if self.big_endian else "<"
         self.header_struct.add_fields(*self.HEADER_STRUCT_ENDIAN, byte_order=byte_order)
         self.entry_header_struct = BinaryStruct(*self.BND_ENTRY_HEADER, byte_order=byte_order)
-        if has_id(self.bnd_magic):
+        if has_id(self.magic):
             self.entry_header_struct.add_fields(self.ENTRY_ID, byte_order=byte_order)
-        if has_path(self.bnd_magic):
+        if has_path(self.magic):
             self.entry_header_struct.add_fields(self.NAME_OFFSET, byte_order=byte_order)
-        if has_uncompressed_size(self.bnd_magic):
+        if has_uncompressed_size(self.magic):
             self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
 
     def pack(self):
@@ -508,7 +475,7 @@ class BND3(BaseBND):
         for i, entry in enumerate(self._entries):
             if not isinstance(entry, BNDEntry):
                 if not hasattr(entry, "pack"):
-                    raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no pack() method.")
+                    raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no `pack()` method.")
                 self.binary_entries[i].data = entry.pack()
 
         for entry in sorted(self.binary_entries, key=lambda e: e.id):
@@ -517,13 +484,13 @@ class BND3(BaseBND):
                 "compressed_data_size": entry.data_size,
                 "data_offset": len(packed_entry_data),
             }
-            if has_id(self.bnd_magic):
+            if has_id(self.magic):
                 entry_header_dict["entry_id"] = entry.id
-            if has_path(self.bnd_magic):
+            if has_path(self.magic):
                 entry_header_dict["path_offset"] = len(packed_entry_paths)
                 relative_entry_path_offsets.append(len(packed_entry_paths))  # Relative to start of packed entry paths.
                 packed_entry_paths += entry.get_packed_path("shift-jis")
-            if has_uncompressed_size(self.bnd_magic):
+            if has_uncompressed_size(self.magic):
                 entry_header_dict["uncompressed_data_size"] = entry.data_size
 
             relative_entry_data_offsets.append(len(packed_entry_data))
@@ -541,8 +508,8 @@ class BND3(BaseBND):
 
         # Pack BND header.
         packed_header = self.header_struct.pack(
-            bnd_signature=self.bnd_signature,
-            bnd_magic=self.bnd_magic,
+            signature=self.signature,
+            magic=self.magic,
             big_endian=self.big_endian,
             unknown=self.unknown,
             entry_count=len(self._entries),
@@ -552,7 +519,7 @@ class BND3(BaseBND):
         # Convert relative offsets to absolute and pack entry headers.
         for entry_header_dict in entry_header_dicts:
             entry_header_dict["data_offset"] += entry_packed_data_offset
-            if has_path(self.bnd_magic):
+            if has_path(self.magic):
                 entry_header_dict["path_offset"] += entry_path_table_offset
             packed_entry_headers += self.entry_header_struct.pack(entry_header_dict)
 
@@ -560,15 +527,15 @@ class BND3(BaseBND):
 
     @property
     def bnd_manifest_header(self):
-        bnd_signature = self.bnd_signature.rstrip(b"\0").decode()
+        signature = self.signature.rstrip(b"\0").decode()
         return (
             f"version = BND3\n"
-            f"bnd_signature = {bnd_signature}\n"
-            f"bnd_magic = {self.bnd_magic}\n"
+            f"signature = {signature}\n"
+            f"magic = {self.magic}\n"
             f"big_endian = {self.big_endian}\n"
             f"unknown = {self.unknown}\n"
             f"use_id_prefix = {self.has_repeated_entry_names}\n"
-            f"dcx = {repr(self.dcx)}\n"
+            f"dcx_magic = {repr(self.dcx_magic)}\n"
             f"\n"
         )
 
@@ -576,7 +543,7 @@ class BND3(BaseBND):
 class BND4(BaseBND):
 
     HEADER_STRUCT_START = (
-        ("bnd_version", "4s", b"BND4"),
+        ("version", "4s", b"BND4"),
         ("flag_1", "?"),
         ("flag_2", "?"),
         "2x",
@@ -585,11 +552,11 @@ class BND4(BaseBND):
     HEADER_STRUCT_ENDIAN = (
         ("entry_count", "i"),
         ("header_size", "q", 64),
-        ("bnd_signature", "8s"),  # Real signature may be shorter, but packing will pad it out.
+        ("signature", "8s"),  # Real signature may be shorter, but packing will pad it out.
         ("entry_header_size", "q"),
         ("data_offset", "q"),
         ("utf16_paths", "?"),
-        ("bnd_magic", "b"),
+        ("magic", "b"),
         ("hash_table_type", "B"),  # 0, 1, 4, or 128
         "5x",
         ("hash_table_offset", "q"),  # only non-zero if hash_table_type == 4
@@ -607,35 +574,32 @@ class BND4(BaseBND):
     PATH_HASH_STRUCT = BinaryStruct(("hashed_value", "I"), ("entry_index", "i"),)
     HASH_GROUP_STRUCT = BinaryStruct(("length", "i"), ("index", "i"),)
 
-    def __init__(self, bnd_source=None, entry_class=None):
+    def __init__(self, bnd_source=None, dcx_magic=(), entry_class=None):
         self.bnd_flags = (False, False)  # Two unknown bools.
         self.utf16_paths = False  # If False, paths are written in Shift-JIS.
         self.hash_table_type = 0
         self.hash_table_offset = 0
-        super().__init__(bnd_source, entry_class)
+        super().__init__(bnd_source, dcx_magic, entry_class)
 
-    def unpack(self, bnd_buffer):
-        if isinstance(bnd_buffer, bytes):
-            bnd_buffer = BytesIO(bnd_buffer)
-
+    def unpack(self, bnd_buffer, **kwargs):
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         header = self.header_struct.unpack(bnd_buffer)
         self.bnd_flags = (header["flag_1"], header["flag_2"])
-        self.bnd_version = header["bnd_version"]
+        self.version = header["version"]
         self.big_endian = header["big_endian"] == 0x00000100  # Magic not used to infer endianness here.
         byte_order = ">" if self.big_endian else "<"
         header.update(self.header_struct.unpack(bnd_buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
-        self.bnd_signature = header["bnd_signature"]
-        self.bnd_magic = header["bnd_magic"]
+        self.signature = header["signature"]
+        self.magic = header["magic"]
         self.utf16_paths = header["utf16_paths"]
         self.hash_table_type = header["hash_table_type"]
         self.hash_table_offset = header["hash_table_offset"]
         path_encoding = ("utf-16be" if self.big_endian else "utf-16le") if self.utf16_paths else "shift-jis"
 
-        if header["entry_header_size"] != header_size(self.bnd_magic):
+        if header["entry_header_size"] != header_size(self.magic):
             raise ValueError(
-                f"Expected BND entry header size {header_size(self.bnd_magic)} based on magic\n"
-                f"{hex(self.bnd_magic)}, but BND header says {header['entry_header_size']}."
+                f"Expected BND entry header size {header_size(self.magic)} based on magic\n"
+                f"{hex(self.magic)}, but BND header says {header['entry_header_size']}."
             )
         if self.hash_table_type != 4 and self.hash_table_offset != 0:
             _LOGGER.warning(
@@ -643,14 +607,14 @@ class BND4(BaseBND):
                 f"table."
             )
         self.entry_header_struct = BinaryStruct(*self.BND_ENTRY_HEADER, byte_order=byte_order)
-        if has_uncompressed_size(self.bnd_magic):
+        if has_uncompressed_size(self.magic):
             self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
         self.entry_header_struct.add_fields(self.DATA_OFFSET, byte_order=byte_order)
-        if has_id(self.bnd_magic):
+        if has_id(self.magic):
             self.entry_header_struct.add_fields(self.ENTRY_ID, byte_order=byte_order)
-        if has_path(self.bnd_magic):
+        if has_path(self.magic):
             self.entry_header_struct.add_fields(self.NAME_OFFSET, byte_order=byte_order)
-        if self.bnd_magic == 0x20:
+        if self.magic == 0x20:
             # Extra pad.
             self.entry_header_struct.add_fields("8x")
         if header["entry_header_size"] != self.entry_header_struct.size:
@@ -675,15 +639,15 @@ class BND4(BaseBND):
         if not directory.is_dir():
             raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
         with (directory / "bnd_manifest.txt").open("rb") as f:
-            self.bnd_version = self.read_bnd_setting(f.readline(), "version", assert_values=[b"BND4"])
-            self.bnd_signature = self.read_bnd_setting(f.readline(), "bnd_signature")
-            self.bnd_magic = self.read_bnd_setting(f.readline(), "bnd_magic", assert_type=int)
+            self.version = self.read_bnd_setting(f.readline(), "version", assert_values=[b"BND4"])
+            self.signature = self.read_bnd_setting(f.readline(), "signature")
+            self.magic = self.read_bnd_setting(f.readline(), "magic", assert_type=int)
             self.big_endian = self.read_bnd_setting(f.readline(), "big_endian", assert_type=bool)
             self.utf16_paths = self.read_bnd_setting(f.readline(), "utf16_paths", assert_type=bool)
             self.hash_table_type = self.read_bnd_setting(f.readline(), "hash_table_type", assert_type=int)
             self.bnd_flags = self.read_bnd_setting(f.readline(), "unknown_flags", assert_type=tuple)
             use_id_prefix = self.read_bnd_setting(f.readline(), "use_id_prefix", assert_type=bool)
-            self.dcx = self.read_bnd_setting(f.readline(), "dcx", assert_type=tuple)
+            self.dcx_magic = self.read_bnd_setting(f.readline(), "dcx_magic", assert_type=tuple)
 
             self.add_entries_from_manifest_paths(f, directory, use_id_prefix)
 
@@ -712,7 +676,7 @@ class BND4(BaseBND):
         for i, entry in enumerate(self._entries):
             if not isinstance(entry, BNDEntry):
                 if not hasattr(entry, "pack"):
-                    raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no pack() method.")
+                    raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no `pack()` method.")
                 self.binary_entries[i].data = entry.pack()
                 entry = self.binary_entries[i]
             if not rebuild_hash_table and entry.path != self._most_recent_paths[i]:
@@ -730,13 +694,13 @@ class BND4(BaseBND):
                 "compressed_data_size": entry.data_size,
                 "data_offset": len(packed_entry_data),
             }
-            if has_id(self.bnd_magic):
+            if has_id(self.magic):
                 entry_header_dict["entry_id"] = entry.id
-            if has_path(self.bnd_magic):
+            if has_path(self.magic):
                 entry_header_dict["path_offset"] = len(packed_entry_paths)
                 relative_entry_path_offsets.append(len(packed_entry_paths))  # Relative to start of packed entry paths.
                 packed_entry_paths += entry.get_packed_path(path_encoding)
-            if has_uncompressed_size(self.bnd_magic):
+            if has_uncompressed_size(self.magic):
                 entry_header_dict["uncompressed_data_size"] = entry.data_size
 
             relative_entry_data_offsets.append(len(packed_entry_data))
@@ -766,11 +730,11 @@ class BND4(BaseBND):
             flag_2=self.bnd_flags[1],
             big_endian=self.big_endian,
             entry_count=len(self._entries),
-            bnd_signature=self.bnd_signature,
+            signature=self.signature,
             entry_header_size=self.entry_header_struct.size,
             data_offset=entry_packed_data_offset,
             utf16_paths=self.utf16_paths,
-            bnd_magic=self.bnd_magic,
+            magic=self.magic,
             hash_table_type=self.hash_table_type,
             hash_table_offset=hash_table_offset,
         )
@@ -778,7 +742,7 @@ class BND4(BaseBND):
         # Convert relative offsets to absolute and pack entry headers.
         for entry_header_dict in entry_header_dicts:
             entry_header_dict["data_offset"] += entry_packed_data_offset
-            if has_path(self.bnd_magic):
+            if has_path(self.magic):
                 entry_header_dict["path_offset"] += entry_path_table_offset
             packed_entry_headers += self.entry_header_struct.pack(entry_header_dict)
 
@@ -786,17 +750,17 @@ class BND4(BaseBND):
 
     @property
     def bnd_manifest_header(self):
-        bnd_signature = self.bnd_signature.rstrip(b"\0").decode()
+        signature = self.signature.rstrip(b"\0").decode()
         return (
             f"version = BND4\n"
-            f"bnd_signature = {bnd_signature}\n"
-            f"bnd_magic = {repr(self.bnd_magic)}\n"
+            f"signature = {signature}\n"
+            f"magic = {repr(self.magic)}\n"
             f"big_endian = {self.big_endian}\n"
             f"utf16_paths = {self.utf16_paths}\n"
             f"hash_table_type = {self.hash_table_type}\n"
             f"unknown_flags = {repr(self.bnd_flags)}\n"
             f"use_id_prefix = {self.has_repeated_entry_names}\n"
-            f"dcx = {repr(self.dcx)}\n"
+            f"dcx_magic = {repr(self.dcx_magic)}\n"
             f"\n"
         )
 
@@ -870,44 +834,33 @@ class BND4(BaseBND):
         return h
 
 
-def BND(bnd_source=None, entry_class=None, optional_dcx=True) -> BaseBND:
-    """Auto-detects BND version (BND3 or BND4) to use when opening the source, if appropriate.
+def BND(bnd_source=None, entry_class=None) -> BaseBND:
+    """Auto-detects BND version (`BND3` or `BND4`) to use when opening the source, if appropriate.
 
     Args:
         bnd_source: path to BND file or BND file content. The BND version will be automatically detected from the data.
-            If None, this function will return an empty BND4 container. (Default: None)
+            If None, this function will return an empty `BND4` container. (Default: None)
         entry_class: optional class to load data from each BND entry into after the BND is unpacked, which is convenient
             for any BNDs that contain file types handled by Soulstruct. (Default: None)
-        optional_dcx: if 'bnd_source' is a file path and this is True, both DCX (preferred) and non-DCX versions of that
-            BND path will be checked. (It doesn't matter if 'bnd_source' ends in '.dcx' already.) Set this to False to
-            search only for the exact path given. (Default: True)
     """
-    dcx = False
+    dcx_magic = ()
     bnd_path = None
     if isinstance(bnd_source, (str, Path)):
         if not Path(bnd_source).is_dir():
             bnd_path = Path(bnd_source).absolute()
-            if optional_dcx:
-                bnd_path = find_dcx(bnd_path)
-            elif not bnd_path.is_file():
+            if not bnd_path.is_file():
                 raise FileNotFoundError(f"Could not find BND file: {bnd_path}")
             if bnd_path.suffix == ".dcx":
                 # Must unpack DCX archive before detecting BND type.
-                bnd_dcx = DCX(bnd_path)
-                bnd_source = bnd_dcx.data
-                dcx = bnd_dcx.magic
+                bnd_source, dcx_magic = DCX.get_data_and_magic(bnd_path)
             else:
                 bnd_source = bnd_path
     if BND3.detect(bnd_source):
-        bnd = BND3(bnd_source, entry_class=entry_class)
-        if dcx:
-            bnd.dcx = dcx
+        bnd = BND3(bnd_source, dcx_magic=dcx_magic, entry_class=entry_class)
     elif BND4.detect(bnd_source):
-        bnd = BND4(bnd_source, entry_class=entry_class)
-        if dcx:
-            bnd.dcx = dcx
+        bnd = BND4(bnd_source, dcx_magic=dcx_magic, entry_class=entry_class)
     else:
         raise TypeError("Data bytes could not be interpreted as BND3 or BND4.")
     if bnd_path is not None:
-        bnd.bnd_path = bnd_path
+        bnd.path = bnd_path
     return bnd
