@@ -14,7 +14,7 @@ from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
 from soulstruct.esd.ds1r import ESD as ESD_DSR
 from soulstruct.esd.ezl_parser import decompile
 from soulstruct.esd.functions import COMMANDS
-from soulstruct.text import DarkSoulsText
+from soulstruct.text.darksouls1 import MSGDirectory
 from soulstruct.utilities.core import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
@@ -299,7 +299,7 @@ class TalkSimulator:
             raise ValueError(f"`game_version` must be 'ptde' or 'dsr', not '{game_version}'.")
 
         try:
-            self.text = DarkSoulsText(text_source)
+            self.text = MSGDirectory(text_source)
         except Exception:
             _LOGGER.error("Invalid text source for TalkSimulator. Should be 'msg/ENGLISH' directory.")
             raise

@@ -9,7 +9,7 @@ import logging
 from typing import Union, Optional
 
 from soulstruct.game_types import *
-from soulstruct.enums.shared import *
+from soulstruct.events.base.enums import *
 from soulstruct.events.numeric import to_numeric
 
 _LOGGER = logging.getLogger(__name__)

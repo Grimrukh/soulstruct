@@ -1,16 +1,20 @@
 import logging
 import struct
+import typing as tp
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities import BinaryStruct
 
 from soulstruct.events.internal import get_byte_offset_from_struct, get_instruction_args
 from soulstruct.events.shared.decompiler import decompile_instruction
-from soulstruct.utilities import BaseStruct
-from .event_layers import BaseEventLayers
+from .event_layers import EventLayers
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class BaseInstruction(BaseStruct):
-    EventLayers = BaseEventLayers
+class Instruction:
+    STRUCT: BinaryStruct = None
+    EventLayers = EventLayers
 
     INSTRUCTION_ARG_TYPES = {}
 

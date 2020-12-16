@@ -74,6 +74,7 @@ class SoulstructEventEditor(SmartFrame):
     TAB_NAME = "events"
     TEXT_BG = "#232323"
     TEXT_BOX_WIDTH = 300
+    DCX_MAGIC = (36, 44)  # DS1 EMEVD DCX
 
     def __init__(
         self, evs_directory, game_root, global_map_choice_func, dcx, text_font_size=10, master=None, toplevel=False
@@ -83,7 +84,7 @@ class SoulstructEventEditor(SmartFrame):
         self.game_root = Path(game_root)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
-        self.dcx = dcx
+        self.use_dcx = dcx
         self.evs_file_paths = {}
         self.evs_text = {}
         self.selected_map_id = None
@@ -352,6 +353,7 @@ class SoulstructEventEditor(SmartFrame):
         try:
             emevd = EMEVD(
                 self.evs_file_paths[self.selected_map_id],
+                dcx_magic=self.DCX_MAGIC if self.use_dcx else (),
                 script_path=str(self.evs_file_paths[self.selected_map_id].parent),
             )
         except Exception as e:
@@ -360,9 +362,7 @@ class SoulstructEventEditor(SmartFrame):
                 f"Could not interpret current EVS file in project.\n"
                 f"Fix this error and try again (see console for full traceback):\n\n{str(e)}",
             )
-        emevd.write_emevd(
-            export_directory / f"event/{self.selected_map_id}.emevd{'.dcx' if self.dcx else ''}", dcx=self.dcx
-        )
+        emevd.write(export_directory / f"event/{self.selected_map_id}.emevd{'.dcx' if self.use_dcx else ''}")
 
     def reload_selected(self, mimic_click=False, flash_bg=True):
         if not self.selected_map_id:

@@ -1,5 +1,5 @@
 from soulstruct.bnd import BND
-from soulstruct.text import DarkSoulsText
+from soulstruct.text.darksouls1 import MSGDirectory
 
 
 def test_dsr():
@@ -15,7 +15,7 @@ def test_dsr():
     for entry_id, entry in menu_msgbnd.entries_by_id.items():
         print(f'    {entry_id}: {entry.path}')
 
-    dsr_text = DarkSoulsText(DSR_PATH / 'msg' / 'ENGLISH')
+    dsr_text = MSGDirectory(DSR_PATH / 'msg' / 'ENGLISH')
     print(dsr_text.WeaponNames[9014000])
     print(('WeaponNames', 9014000) in dsr_text._is_patch)
 
@@ -31,7 +31,7 @@ def test_dsr():
     for entry_id, entry in menu_msgbnd.entries_by_id.items():
         print(f'    {entry_id}: {entry.path}')
 
-    new_text = DarkSoulsText('test_dsr_text')
+    new_text = MSGDirectory('test_dsr_text')
     print(new_text.WeaponNames[9014000])
     print(('WeaponNames', 9014000) in new_text._is_patch)
     print(new_text._is_patch)

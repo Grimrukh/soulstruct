@@ -13,7 +13,7 @@ from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParam
 from . import enums
 
 if tp.TYPE_CHECKING:
-    from soulstruct.text import DarkSoulsText
+    from soulstruct.text.darksouls1 import MSGDirectory
 
 
 class ParamRow(_BaseParamRow):
@@ -106,11 +106,11 @@ class GameParamBND(_BaseGameParamBND):
     def __init__(self, game_param_bnd_source=None, paramdef_bnd=None):
         super().__init__(game_param_bnd_source, paramdef_bnd=DARK_SOULS_DSR if paramdef_bnd is None else paramdef_bnd)
 
-    def rename_entries_from_text(self, text: DarkSoulsText, param_nickname=None):
+    def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.
 
         Args:
-            text (DarkSoulsText): text data structure to pull names from.
+            text (MSGDirectory): text data structure to pull names from.
             param_nickname (str or None): specific ParamTable name to rename, or None to rename all (default).
                 Valid names are "Weapons", "Armor", "Rings", "Goods", and "Spells" (or None).
         """

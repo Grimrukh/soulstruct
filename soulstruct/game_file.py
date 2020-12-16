@@ -1,4 +1,4 @@
-__all__ = ["GameFile"]
+__all__ = ["GameFile", "InvalidGameFileTypeError"]
 
 import abc
 import io
@@ -6,8 +6,13 @@ import json
 import typing as tp
 from pathlib import Path
 
+from soulstruct.core import SoulstructError
 from soulstruct.dcx import DCX
 from soulstruct.utilities import create_bak
+
+
+class InvalidGameFileTypeError(SoulstructError):
+    """Exception raised from an unhandled `file_source` type passed to `GameFile` constructor."""
 
 
 class GameFile(abc.ABC):
@@ -32,36 +37,36 @@ class GameFile(abc.ABC):
                 reason, set `.dcx_magic` directly after the instance is created.)
             kwargs: keyword arguments to pass on to `unpack` or `load_dict`, depending on the source type.
         """
-        try:
-            # Pair of DCX magic values, or empty tuple to not use DCX.
-            self.dcx_magic = tuple(dcx_magic) if dcx_magic is not None else ()
-            if len(self.dcx_magic) != 2 or not all(isinstance(m, int) for m in self.dcx_magic):
-                raise ValueError
-        except (ValueError, TypeError):
-            raise ValueError(f"`dcx_magic` should be empty (or None) or a sequence of two values.")
+        self._dcx_magic = ()
+        self.dcx_magic = dcx_magic
 
         self.path = None  # type: tp.Optional[Path]
 
         if file_source is None:
             return
 
-        if isinstance(file_source, dict):
-            self.load_dict(file_source)
-            return
-        if isinstance(file_source, (str, Path)):
-            self.path = Path(file_source)
-            if self.path.suffix == ".json":
-                with self.path.open(self.path, "r") as j:
-                    self.load_dict(json.load(j))
-                    return
+        try:
+            buffer = self._handle_other_source_types(file_source, **kwargs)
+            if buffer is None:
+                return
+        except InvalidGameFileTypeError:
+            if isinstance(file_source, dict):
+                self.load_dict(file_source.copy())
+                return
+            if isinstance(file_source, (str, Path)):
+                self.path = Path(file_source)
+                if self.path.suffix == ".json":
+                    with self.path.open(self.path, "r") as j:
+                        self.load_dict(json.load(j))
+                        return
+                else:
+                    buffer = self.path.open("rb")
+            elif isinstance(file_source, bytes):
+                buffer = io.BytesIO(file_source)
+            elif isinstance(file_source, io.BufferedIOBase):
+                buffer = file_source
             else:
-                buffer = self.path.open("rb")
-        elif isinstance(file_source, bytes):
-            buffer = io.BytesIO(file_source)
-        elif isinstance(file_source, io.BufferedIOBase):
-            buffer = file_source
-        else:
-            raise TypeError(f"Invalid `GameFile` source type: {type(file_source)}")
+                raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
 
         if self._is_dcx(buffer):
             if self.dcx_magic:
@@ -70,6 +75,15 @@ class GameFile(abc.ABC):
             buffer = io.BytesIO(data)
 
         self.unpack(buffer, **kwargs)
+
+    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[io.BufferedIOBase]:
+        """Override this to initialize `GameFile` subclass from other types of `file_source`. This function will be
+        called before the standard `GameFile.Types` are checked.
+
+        If a `io.BufferedIOBase` object is returned, the constructor will continue with unpacking from that buffer.
+        Otherwise, it will return without calling `.unpack()`.
+        """
+        raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
 
     @abc.abstractmethod
     def unpack(self, buffer: io.BufferedIOBase, **kwargs):
@@ -83,11 +97,11 @@ class GameFile(abc.ABC):
     def pack(self, **kwargs) -> bytes:
         """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
 
-    def as_dict(self) -> dict:
+    def to_dict(self) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
         raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary data.")
 
-    def write(self, file_path: tp.Union[None, str, Path], make_dirs=True, **pack_kwargs):
+    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -118,7 +132,7 @@ class GameFile(abc.ABC):
 
         The file path will have the `.json` suffix added automatically.
         """
-        json_dict = self.as_dict()
+        json_dict = self.to_dict()
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
@@ -149,3 +163,23 @@ class GameFile(abc.ABC):
         is_dcx = buffer.read(4) == b"DCX\0"
         buffer.seek(offset)
         return is_dcx
+
+    @property
+    def dcx_magic(self):
+        return self._dcx_magic
+
+    @dcx_magic.setter
+    def dcx_magic(self, value: tp.Optional[tuple[int, int]]):
+        try:
+            # Pair of DCX magic values, or empty tuple to not use DCX.
+            value = tuple(value) if value is not None else ()
+            if value:
+                if len(value) != 2:
+                    raise ValueError(f"Expected DXC `dcx_magic` to be a sequence of two integers.")
+                if value[0] not in {36, 68}:
+                    raise ValueError(f"Expected `dcx_magic[0]` (header offset 0x16) to be 36 or 68, not {value[0]}.")
+                if value[1] not in {44, 76}:
+                    raise ValueError(f"Expected `dcx_magic[1]` (header offset 0x1a) to be 44 or 76, not {value[1]}.")
+        except (ValueError, TypeError):
+            raise ValueError(f"`dcx_magic` should be empty (or None) or a sequence of two integers, not {value}.")
+        self._dcx_magic = value

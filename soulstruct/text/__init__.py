@@ -1,2 +1,2 @@
-from .fmg import *
-from .dark_souls_text import DarkSoulsText
+from . import darksouls1
+from . import bloodborne

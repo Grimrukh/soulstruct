@@ -1,4 +1,4 @@
-from soulstruct.text import DarkSoulsText
+from soulstruct.text.darksouls1 import MSGDirectory
 
 PTD_VANILLA_DIR = 'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/pre-doa-backup/msg/ENGLISH'
 PTD_DOA_DIR = 'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/PTD_DOA_DATA/msg/ENGLISH'
@@ -10,16 +10,16 @@ ELEMENTS = ('Crystal ', 'Voltaic ', 'Raw ', 'Magic ', 'Runic ', 'Blessed ', 'Pro
 
 def doa_dsr_merge():
     """ Overwrites vanilla DSR text entries with DOA text entries. """
-    ptd_doa = DarkSoulsText(PTD_DOA_DIR)
-    dsr_vanilla = DarkSoulsText(DSR_VANILLA_DIR)
+    ptd_doa = MSGDirectory(PTD_DOA_DIR)
+    dsr_vanilla = MSGDirectory(DSR_VANILLA_DIR)
     for fmg_name, fmg in dsr_vanilla:
         fmg.update(ptd_doa[fmg_name])
-    dsr_vanilla.save(msg_directory=DSR_LIVE_DIR, separate_patch=False, dcx=True)
+    dsr_vanilla.save(msg_directory=DSR_LIVE_DIR, separate_patch=False)
 
 
 def get_doa_changed_text(original_strings_only=True):
-    ptd_vanilla = DarkSoulsText(PTD_VANILLA_DIR)
-    ptd_doa = DarkSoulsText(PTD_DOA_DIR)
+    ptd_vanilla = MSGDirectory(PTD_VANILLA_DIR)
+    ptd_doa = MSGDirectory(PTD_DOA_DIR)
     changed = {}  # {fmg_name: text}
 
     for fmg_name, fmg_dict in ptd_doa:

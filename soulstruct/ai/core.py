@@ -18,7 +18,8 @@ from typing import List
 
 from soulstruct.core import SoulstructError
 from soulstruct.bnd import BND, BNDEntry
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo
+from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo, \
+    unpack_from_buffer
 
 __all__ = [
     "LuaBND",
@@ -70,7 +71,7 @@ class LuaBND:
         self.gnl = LuaGNL()
         self.bnd_name = ""
         self._bnd_path_parent = None
-        self.is_lua_64 = False
+        self.is_lua_32 = False  # as opposed to 64-bit (can't decompile 32-bit at present)
 
         try:
             gnl_entry = self.bnd.entries_by_id[1000000]
@@ -138,7 +139,7 @@ class LuaBND:
 
                 if self._bnd_path_parent is None:
                     self._bnd_path_parent = str(Path(entry.path).parent)
-                    self.is_lua_64 = "INTERROOT_x64" in self._bnd_path_parent
+                    self.is_lua_32 = "INTERROOT_x32" in self._bnd_path_parent
             elif entry.id not in {1000000, 1000001}:
                 lua_match = _LUA_SCRIPT_RE.match(entry_path.name)
                 if not lua_match:
@@ -197,7 +198,7 @@ class LuaBND:
 
         Any files that produce errors will be reported, but will not halt the function.
         """
-        if not self.is_lua_64:
+        if self.is_lua_32:
             raise ValueError(
                 "Cannot decompile PTDE Lua scripts. Decompile the DSR scripts, then copy those "
                 "into your PTDE Soulstruct project's 'ai' folder or call `.load_decompiled()`."
@@ -298,7 +299,11 @@ class LuaBND:
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
         for goal in self.goals:
-            goal.write_decompiled(directory / goal.script_name)
+            try:
+                goal.write_decompiled(directory / goal.script_name)
+            except LuaError as ex:
+                _LOGGER.error(ex)
+                pass
         if including_other:
             for other in self.other:
                 other.write_decompiled(directory / other.script_name)
@@ -322,7 +327,7 @@ class LuaBND:
             for lua_entry in lua_list:
                 if use_decompiled and lua_entry.script:
                     try:
-                        self.update_bnd_from_decompiled(lua_entry, compile_script=compile_scripts, x64=self.is_lua_64)
+                        self.update_bnd_from_decompiled(lua_entry, compile_scripts, x64=not self.is_lua_32)
                     except LuaCompileError:
                         if lua_entry.bytecode:
                             _LOGGER.error(f"Could not compile script {lua_entry.script_name}. Using existing bytecode.")
@@ -363,6 +368,9 @@ class LuaBND:
 
     def get_goal_dict(self):
         return {(g.goal_id, g.goal_type): g for g in self.goals}
+
+    def __repr__(self):
+        return f"{self.bnd_name}:\n  " + "\n  ".join(str(g) for g in self.goals)
 
 
 @contextmanager
@@ -408,7 +416,7 @@ def compile_lua(script: str, script_name="<unknown script>", output_path=None, x
         return bytecode
 
 
-def  decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=None):
+def decompile_lua(bytecode: bytes, script_name="<unknown script>", output_path=None):
     if output_path:
         output_path = Path(output_path).resolve()  # resolve before changing to temp working dir
     with _temp_lua_path(bytecode, as_bytes=True, set_cwd=True) as temp:
@@ -672,7 +680,7 @@ class LuaInfo:
         self.big_endian = self._check_big_endian(info_buffer)
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
         header = self.header_struct.unpack(info_buffer)
-        # TODO: auto-detect `use_struct_64` for 64-bit offsets (PTDE and DSR both use 32-bit).
+        self.use_struct_64 = self._check_use_struct_64(info_buffer, header["goal_count"])
         goal_struct = BinaryStruct(
             *(self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32),
             byte_order=">" if self.big_endian else "<",
@@ -698,14 +706,16 @@ class LuaInfo:
             byte_order=">" if self.big_endian else "<",
         )
         packed_strings_offset = len(header) + len(self.goals) * goal_struct.size
+        encoding = self.encoding
+        z_term = b"\0\0" if self.use_struct_64 else b"\0"
         for goal in self.goals:
             name_offset = packed_strings_offset + len(packed_strings)
-            packed_strings += goal.goal_name.encode(encoding="shift_jis_2004") + b"\0"
+            packed_strings += goal.goal_name.encode(encoding=encoding) + z_term
             goal_kwargs = goal.get_interrupt_details()
             logic_interrupt_name = goal_kwargs.pop("logic_interrupt_name")
             if logic_interrupt_name:
                 logic_interrupt_name_offset = packed_strings_offset + len(packed_strings)
-                packed_strings += logic_interrupt_name.encode(encoding="shift_jis_2004") + b"\0"
+                packed_strings += logic_interrupt_name.encode(encoding=encoding) + z_term
             else:
                 logic_interrupt_name_offset = 0
             packed_goals += goal_struct.pack(
@@ -726,13 +736,12 @@ class LuaInfo:
         with luainfo_path.open("wb") as f:
             f.write(self.pack())
 
-    @staticmethod
-    def unpack_goal(info_buffer, goal_struct):
+    def unpack_goal(self, info_buffer, goal_struct) -> LuaGoal:
         goal = goal_struct.unpack(info_buffer)
-        name = read_chars_from_buffer(info_buffer, offset=goal.name_offset, encoding="shift_jis_2004")
+        name = read_chars_from_buffer(info_buffer, offset=goal.name_offset, encoding=self.encoding)
         if goal.logic_interrupt_name_offset > 0:
             logic_interrupt_name = read_chars_from_buffer(
-                info_buffer, offset=goal.logic_interrupt_name_offset, encoding="shift_jis_2004"
+                info_buffer, offset=goal.logic_interrupt_name_offset, encoding=self.encoding
             )
         else:
             logic_interrupt_name = ""
@@ -744,6 +753,12 @@ class LuaInfo:
             logic_interrupt_name=logic_interrupt_name,
         )
 
+    @property
+    def encoding(self):
+        if self.use_struct_64:
+            return f"utf-16-{'be' if self.big_endian else 'le'}"
+        return "shift_jis_2004"
+
     @staticmethod
     def _check_big_endian(info_buffer):
         info_buffer.seek(4)
@@ -754,6 +769,20 @@ class LuaInfo:
         elif endian == 0x1:
             return False
         raise ValueError(f"Invalid marker for LuaInfo byte order: {hex(endian)}")
+
+    @staticmethod
+    def _check_use_struct_64(info_buffer, goal_count):
+        if goal_count == 0:
+            raise LuaError(f"Cannot detect `LuaInfo` version if no goals are present.")
+        elif goal_count >= 2:
+            return unpack_from_buffer(info_buffer, "i", offset=0x24)[0] == 0
+        else:
+            # Hacky check if there's only one goal.
+            if unpack_from_buffer(info_buffer, "i", offset=0x18)[0] == 0x28:
+                return True
+            if unpack_from_buffer(info_buffer, "i", offset=0x14)[0] == 0x20:
+                return False
+            raise ValueError(f"Found unexpected data while trying to detect `LuaInfo` version from single goal.")
 
 
 class LuaGNL:
@@ -783,28 +812,26 @@ class LuaGNL:
 
     def unpack(self, gnl_buffer):
         self.big_endian, self.use_struct_64 = self._check_big_endian_and_struct_64(gnl_buffer)
-        encoding = ("utf-16" + ("-be" if self.big_endian else "-le")) if self.use_struct_64 else "shift_jis_2004"
-        byte_order = ">" if self.big_endian else "<"
-        fmt = byte_order + ("q" if self.use_struct_64 else "i")
+        fmt = f"{'>' if self.big_endian else '<'}{'q' if self.use_struct_64 else 'i'}"
         read_size = struct.calcsize(fmt)
         self.names = []
         offset = None
         while offset != 0:
             (offset,) = struct.unpack(fmt, gnl_buffer.read(read_size))
             if offset != 0:
-                self.names.append(read_chars_from_buffer(gnl_buffer, offset=offset, encoding=encoding))
+                self.names.append(read_chars_from_buffer(gnl_buffer, offset=offset, encoding=self.encoding))
 
     def pack(self):
         packed_offsets = b""
         packed_names = b""
-        byte_order = ">" if self.big_endian else "<"
-        fmt = byte_order + ("q" if self.use_struct_64 else "i")
+        fmt = f"{'>' if self.big_endian else '<'}{'q' if self.use_struct_64 else 'i'}"
         packed_names_offset = (len(self.names) + 1) * struct.calcsize(fmt)
-        encoding = ("utf-16" + ("-be" if self.big_endian else "-le")) if self.use_struct_64 else "shift_jis_2004"
+        encoding = self.encoding
+        z_term = b"\0\0" if self.use_struct_64 else b"\0"
         for name in self.names:
             name_offset = packed_names_offset + len(packed_names)
-            packed_offsets += struct.pack(byte_order + ("q" if self.use_struct_64 else "i"), name_offset)
-            packed_names += name.encode(encoding=encoding) + b"\0"
+            packed_offsets += struct.pack(fmt, name_offset)
+            packed_names += name.encode(encoding=encoding) + z_term
         packed_offsets += struct.pack(fmt, 0)
         packed_names += b"\0" * 16
         return packed_offsets + packed_names
@@ -816,6 +843,12 @@ class LuaGNL:
         create_bak(luagnl_path)
         with luagnl_path.open("wb") as f:
             f.write(self.pack())
+
+    @property
+    def encoding(self):
+        if self.use_struct_64:
+            return f"utf-16-{'be' if self.big_endian else 'le'}"
+        return "shift_jis_2004"
 
     @staticmethod
     def _check_big_endian_and_struct_64(gnl_buffer):

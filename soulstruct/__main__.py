@@ -127,10 +127,10 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     if ss_args.text:
-        from soulstruct.text import DarkSoulsText
+        from soulstruct.text.darksouls1 import MSGDirectory
 
         global Text
-        Text = DarkSoulsText(source)
+        Text = MSGDirectory(source)
         return ss_args.console
 
     if ss_args.params:
@@ -162,10 +162,10 @@ def soulstruct_main(ss_args):
         return
 
     if ss_args.ai:
-        from soulstruct.ai import DarkSoulsAIScripts
+        from soulstruct.ai.darksouls1 import AIDirectory
 
         global AI
-        AI = DarkSoulsAIScripts(source)
+        AI = AIDirectory(source)
         return ss_args.console
 
     # No specific type. Open entire Soulstruct Project.
@@ -187,6 +187,7 @@ try:
 except Exception as e:
     _LOGGER.exception(f"Error occurred in soulstruct.__main__: {e}")
     launch_interactive = False
+    input("Press any key to exit.")
 
 
 if launch_interactive:

@@ -11,7 +11,8 @@ from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
-    from soulstruct.ai import DarkSoulsAIScripts, LuaBND, LuaGoal
+    from soulstruct.ai import LuaBND, LuaGoal
+    from soulstruct.ai.base import AIDirectory
 
 
 class AIScriptTextEditor(TextEditor):
@@ -277,7 +278,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
 
     def __init__(
         self,
-        ai: DarkSoulsAIScripts,
+        ai: AIDirectory,
         script_directory,
         game_root,
         allow_decompile,
@@ -767,7 +768,7 @@ class SoulstructAIEditor(SoulstructBaseEditor):
             goal = self.get_goal()
             goal.script = self._get_current_text()
             try:
-                goal.compile(x64=self.get_selected_bnd().is_lua_64)
+                goal.compile(x64=not self.get_selected_bnd().is_lua_32)
                 if self.allow_decompile:
                     self.decompile_button["state"] = "normal"
                 self.script_editor.tag_remove("error", "1.0", "end")

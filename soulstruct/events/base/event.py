@@ -1,9 +1,14 @@
+from __future__ import annotations
+
+import typing as tp
 from collections import OrderedDict
 
-from soulstruct.enums.shared import RestartType
-from soulstruct.utilities import BaseStruct
+from soulstruct.events.base.enums import RestartType
 
-from .instruction import BaseInstruction
+from .instruction import Instruction
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities import BinaryStruct
 
 
 EVS_ARG_TYPES = {
@@ -18,7 +23,9 @@ EVS_ARG_TYPES = {
 }
 
 
-class BaseEventArg(BaseStruct):
+class EventArg:
+    STRUCT: BinaryStruct = None
+
     def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, zero=0):
         """Overrides argument data in a particular instruction using from dynamic args attached to the event."""
         self.line = instruction_line
@@ -48,9 +55,10 @@ class BaseEventArg(BaseStruct):
         )
 
 
-class BaseEvent(BaseStruct):
-    Instruction = BaseInstruction
-    EventArg = BaseEventArg
+class Event:
+    STRUCT: BinaryStruct = None
+    Instruction = Instruction
+    EventArg = EventArg
     EVENT_ARG_TYPES = {}  # Set before each EVS write.
     WRAP_LIMIT = 120  # PyCharm default line length.
 

@@ -1,4 +1,10 @@
+import typing as tp
 from pathlib import Path
+
+from soulstruct.core import SoulstructError
+
+if tp.TYPE_CHECKING:
+    from .base.core import EMEVD
 
 EVENT_EXTENSIONS = {
     "evs": {".evs", ".evs.py", ".py", ".emevd.py"},
@@ -8,7 +14,11 @@ EVENT_EXTENSIONS = {
 }
 
 
-def convert_events(output_type, output_directory, input_directory, maps, emevd_class, input_type=None):
+class EMEVDError(SoulstructError):
+    """Error that occurs while loading `EMEVD` class."""
+
+
+def convert_events(output_type, output_directory, input_directory, maps, emevd_class: tp.Type[EMEVD], input_type=None):
     """Convert all events from one format to another.
 
     The possible formats are 'evs' (or 'py'), 'emevd', 'emevd.dcx', and 'numeric' (or 'txt'). By default, the input
@@ -44,16 +54,41 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
     if missing:
         raise FileNotFoundError(f"Could not find EMEVD sources for: {missing}.")
     for name, source in emevd_sources.items():
+        dcx_magic = emevd_class.DCX_MAGIC if output_type == "emevd.dcx" else ()
+        output_path = output_directory / (name + output_ext)
         try:
-            emevd = emevd_class(source, script_path=input_directory)
-            output_path = output_directory / (name + output_ext)
+            emevd = emevd_class(source, dcx_magic=dcx_magic, script_path=input_directory)
+        except Exception as ex:
+            raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}: {str(ex)}")
+        try:
             if output_type == "evs":
                 emevd.write_evs(output_path)
             elif output_type == "emevd":
-                emevd.write_emevd(output_path, dcx=False)
+                emevd.write(output_path)
             elif output_type == "emevd.dcx":
-                emevd.write_emevd(output_path, dcx=True)
+                emevd.write(output_path)
             elif output_type == "numeric":
                 emevd.write_numeric(output_path)
-        except Exception as e:
-            raise ValueError(f"Encountered an error while attempting to compile {name + output_ext}: {str(e)}")
+        except Exception as ex:
+            raise EMEVDError(f"Encountered an error while attempting to write {name + output_ext}: {str(ex)}")
+
+
+def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True):
+    """Converts both `EMEVD` sources to raw, decompiled EVS (if `use_evs=True`) or numeric form.
+
+    Returns the first line that differs between them.
+    """
+    if use_evs:
+        string_1 = emevd_class(source_1).to_evs()
+        string_2 = emevd_class(source_2).to_evs()
+    else:
+        string_1 = emevd_class(source_1).to_numeric()
+        string_2 = emevd_class(source_2).to_numeric()
+    for i, (line_1, line_2) in zip(string_1.split("\n"), string_2.split("\n")):
+        if line_1 != line_2:
+            print(
+                f"Sources disagree on line {i + 1}.\n"
+                f"  Source 1: {line_1}\n"
+                f"  Source 2: {line_2}"
+            )
+            return

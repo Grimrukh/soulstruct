@@ -1,4 +1,4 @@
-from .core import EMEVD, convert_events
+from .core import EMEVD, convert_events, compare_events
 import soulstruct.maps.bloodborne.maps as constants
 from soulstruct.maps.bloodborne.maps import *
 from . import instructions
@@ -22,8 +22,9 @@ __all__ = [
     "enums",
     "name",
     "decompiler",
-    # Batch file conversion utility
+    # File utilities
     "convert_events",
+    "compare_events",
     # Bloodborne map constants
     "COMMON",
     "HUNTERS_DREAM",

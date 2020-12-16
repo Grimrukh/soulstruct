@@ -89,7 +89,7 @@ class BaseFMG(GameFile, abc.ABC):
                         self.entries[string_id] = string
                 i += 1
 
-    def as_dict(self):
+    def to_dict(self):
         return {
             "dcx_magic": self.dcx_magic,
             "version": self.VERSION,

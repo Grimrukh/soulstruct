@@ -1,12 +1,18 @@
-from soulstruct.utilities import BaseStruct
+__all__ = ["EventLayers"]
+
+import typing as tp
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities import BinaryStruct
 
 
-class BaseEventLayers(BaseStruct):
+class EventLayers:
     """Only DS3 uses this (and rarely at that), though the infrastructure *may* be there for other games.
 
     Each instruction will only run if the map's current event layer (e.g. set by a ceremony) is enabled in
     the bit field (or by default, all are enabled).
     """
+    STRUCT: BinaryStruct = None
 
     def __init__(self, event_layers: list):
         """The event layer is simply a 32-bit bit field (represented here as a list of enabled bit flags

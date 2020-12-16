@@ -1,6 +1,6 @@
-from .core import BaseEMEVD
-from .event import BaseEvent, BaseEventArg
-from .instruction import BaseInstruction
-from .event_layers import BaseEventLayers
+from .core import EMEVD
+from .event import Event, EventArg
+from .instruction import Instruction
+from .event_layers import EventLayers
 
-__all__ = ["BaseEMEVD", "BaseEvent", "BaseEventArg", "BaseInstruction", "BaseEventLayers"]
+__all__ = ["EMEVD", "Event", "EventArg", "Instruction", "EventLayers"]

@@ -1,4 +1,4 @@
-from .core import EMEVD, convert_events
+from .core import EMEVD, convert_events, compare_events
 import soulstruct.maps.darksouls3.maps as constants
 from soulstruct.maps.darksouls3.maps import *
 from . import instructions
@@ -21,8 +21,9 @@ __all__ = [
     "enums",
     "name",
     "decompiler",
-    # Batch file conversion utility
+    # File utilities
     "convert_events",
+    "compare_events",
     # Dark Souls 3 map constants
     "COMMON",
     "COMMON_FUNC",

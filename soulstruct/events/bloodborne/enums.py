@@ -1,5 +1,6 @@
 from enum import IntEnum
-from soulstruct.enums.shared import *
+
+from soulstruct.events.base.enums import *
 
 __all__ = [
     # Basic enums

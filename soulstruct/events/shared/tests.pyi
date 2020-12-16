@@ -1,6 +1,6 @@
 from typing import Callable, Optional
 from soulstruct.game_types import *
-from soulstruct.enums.shared import *
+from soulstruct.events.base.enums import *
 
 __all__ = [
     # Names processed directly by EVS parser

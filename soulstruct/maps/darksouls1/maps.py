@@ -154,7 +154,7 @@ UNDEAD_ASYLUM = Map(
     verbose_name="Undead Asylum",
 )
 
-ALL_MAPS = [
+ALL_MAPS = (
     COMMON,
     DEPTHS,
     UNDEAD_BURG,
@@ -173,7 +173,7 @@ ALL_MAPS = [
     DUKES_ARCHIVES,
     KILN_OF_THE_FIRST_FLAME,
     UNDEAD_ASYLUM,
-]
+)
 
 
 def get_map(source, block_id=None):

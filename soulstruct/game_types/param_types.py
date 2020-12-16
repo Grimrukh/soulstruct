@@ -75,7 +75,7 @@ __all__ = [
 from enum import IntEnum
 from typing import Union
 
-from soulstruct.enums.shared import ItemType
+from soulstruct.events.base.enums import ItemType
 from soulstruct.events.internal import get_value_test
 from soulstruct.events.shared import instructions as instr
 from soulstruct.game_types.basic_types import GameObject

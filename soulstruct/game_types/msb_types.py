@@ -5,7 +5,7 @@ from enum import IntEnum
 
 from soulstruct.events.internal import get_value_test
 from soulstruct.events.shared import instructions as instr
-from soulstruct.enums.shared import CoordEntityType, NavmeshType
+from soulstruct.events.base.enums import CoordEntityType, NavmeshType
 from soulstruct.game_types.basic_types import GameObject
 
 __all__ = [
@@ -126,7 +126,11 @@ class Map(GameObject):
         self.verbose_name = self.name if verbose_name is None else verbose_name
 
     def stem_set(self):
-        return {self.emevd_file_stem, self.msb_file_stem, self.ai_file_stem, self.esd_file_stem}
+        return {
+            stem
+            for stem in (self.emevd_file_stem, self.msb_file_stem, self.ai_file_stem, self.esd_file_stem)
+            if stem
+        }
 
     def __eq__(self, other_map):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id

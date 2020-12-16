@@ -2,7 +2,7 @@ from enum import IntEnum
 from typing import Union
 
 from soulstruct.events.shared import instructions as instr
-from soulstruct.enums.shared import ButtonType, NumberButtons, PLAYER
+from soulstruct.events.base.enums import ButtonType, NumberButtons, PLAYER
 from soulstruct.game_types.basic_types import GameObject
 from soulstruct.game_types.msb_types import CoordEntityTyping
 

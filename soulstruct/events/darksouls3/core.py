@@ -1,13 +1,21 @@
+__all__ = ["EMEVD", "convert_events", "compare_events"]
+
 import sys
 from pathlib import Path
 
+from soulstruct.events.base import (
+    EMEVD as _BaseEMEVD,
+    Event as _BaseEvent,
+    EventArg as _BaseEventArg,
+    Instruction as _BaseInstruction,
+    EventLayers as _BaseEventLayers,
+)
+from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
 from soulstruct.maps.darksouls3.maps import ALL_MAPS
-from soulstruct.events.base import BaseEMEVD, BaseEvent, BaseEventArg, BaseInstruction, BaseEventLayers
-from soulstruct.events.core import convert_events as convert_events_base
 from soulstruct.utilities.core import BinaryStruct
 
 
-class EventLayers(BaseEventLayers):
+class EventLayers(_BaseEventLayers):
     STRUCT = BinaryStruct(
         ("two", "I", 2),
         ("event_layers", "I"),  # 32-bit bit field
@@ -17,13 +25,13 @@ class EventLayers(BaseEventLayers):
     )
 
 
-class EventArg(BaseEventArg):
+class EventArg(_BaseEventArg):
     STRUCT = BinaryStruct(
         ("instruction_line", "Q"), ("write_from_byte", "Q"), ("read_from_byte", "Q"), ("bytes_to_write", "Q"),
     )
 
 
-class Instruction(BaseInstruction):
+class Instruction(_BaseInstruction):
     EventLayers = EventLayers
     INSTRUCTION_ARG_TYPES = {
         2000: {0: "iII", 1: "iI", 2: "B", 3: "B", 4: "I", 5: "B", 6: "II"},
@@ -366,7 +374,7 @@ class Instruction(BaseInstruction):
     )
 
 
-class Event(BaseEvent):
+class Event(_BaseEvent):
     EVENT_ARG_TYPES = {}
     Instruction = Instruction
     EventArg = EventArg
@@ -381,7 +389,7 @@ class Event(BaseEvent):
     )
 
 
-class EMEVD(BaseEMEVD):
+class EMEVD(_BaseEMEVD):
     Event = Event
     GAME_MODULE = sys.modules["soulstruct.events.darksouls3"]
     STRING_ENCODING = "utf-16le"
@@ -434,3 +442,7 @@ def convert_events(output_type, output_directory, input_type=None, input_directo
         emevd_class=EMEVD,
         input_type=input_type,
     )
+
+
+def compare_events(source_1, source_2, use_evs=True):
+    return compare_events_base(source_1, source_2, emevd_class=EMEVD, use_evs=use_evs)

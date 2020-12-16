@@ -112,6 +112,43 @@ class MSGDirectory(_BaseMSGDirectory):
         "TextTagPlaceholders",
     )
 
+    ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
+
+    ArmorDescriptions: dict
+    ArmorNames: dict
+    ArmorSummaries: dict
+    ContextualHelp: dict
+    Subtitles: dict
+    DebugTags_Win32: dict
+    EventText: dict
+    FeatureDescriptions: dict
+    FeatureNames: dict
+    FeatureSummaries: dict
+    IngameMenus: dict
+    GoodDescriptions: dict
+    GoodNames: dict
+    GoodSummaries: dict
+    KeyGuide: dict
+    SpellDescriptions: dict
+    SpellNames: dict
+    SpellSummaries: dict
+    MenuDialogs: dict
+    MenuHelpSnippets: dict
+    MenuText_Common: dict
+    MenuText_Other: dict
+    NPCNames: dict
+    OpeningSubtitles: dict
+    PlaceNames: dict
+    RingDescriptions: dict
+    RingNames: dict
+    RingSummaries: dict
+    SoapstoneMessages: dict
+    SystemMessages_Win32: dict
+    TextTagPlaceholders: dict
+    WeaponDescriptions: dict
+    WeaponNames: dict
+    WeaponSummaries: dict
+
 
 # Unused; using BND index instead.
 _DSR_TO_SS = {

@@ -26,7 +26,7 @@ def compile_evs():
     # And pack it to final EMEVD binary, ready to be moved to your Dark Souls 'event' folder. You can pass a specific
     # EMEVD file path to this method, but by default it will use your original EVS script path with the extension
     # changed to '.emevd'.
-    example_emevd.write_emevd()
+    example_emevd.write()
 
     # We can also decompile our script again to get a readable version back. If you see a bug, and suspect it's my
     # fault, this is a good way to check if the line-for-line instructions decompiled here are what you'd expect based

@@ -91,7 +91,7 @@ __all__ = [
 import soulstruct.events.shared.instructions as instr
 from soulstruct.game_types import *
 from soulstruct.events.internal import *
-from soulstruct.enums.shared import *
+from soulstruct.events.base.enums import *
 
 
 # Dummy names parsed directly in EvsParser (correct signatures given in `tests.pyi` stubs).

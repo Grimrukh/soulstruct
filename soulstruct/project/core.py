@@ -14,13 +14,13 @@ from functools import wraps
 from pathlib import Path
 
 from soulstruct._config import PTDE_PATH, DSR_PATH, DEFAULT_TEXT_EDITOR_FONT_SIZE
-from soulstruct.ai import DarkSoulsAIScripts
+from soulstruct.ai.darksouls1 import AIDirectory
 from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.esd.dark_souls_talk import TalkESDBND
 from soulstruct.events.darksouls1.core import convert_events
 from soulstruct.maps.darksouls1 import MapStudioDirectory
 from soulstruct.params.darksouls1 import GameParamBND, DrawParamDirectory
-from soulstruct.text import DarkSoulsText
+from soulstruct.text.darksouls1 import MSGDirectory
 from soulstruct.utilities import PACKAGE_PATH, traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
 
@@ -83,11 +83,11 @@ class SoulstructProject:
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
-        self.Text = DarkSoulsText()
+        self.Text = MSGDirectory()
         self.Params = GameParamBND()
         self.Lighting = DrawParamDirectory()
         self.Maps = MapStudioDirectory()
-        self.AI = DarkSoulsAIScripts()
+        self.AI = AIDirectory()
         # No structures for Events or Talk (scripts stored as plain-text EVS and ESP files).
 
         self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)

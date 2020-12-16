@@ -33,7 +33,7 @@ COMMON = Map(
     name="Common",
     emevd_file_stem="common",
     msb_file_stem=None,
-    ai_file_stem="aiCommon",  # TODO: May not be correct.
+    ai_file_stem="aicommon",  # note all lower case
     esd_file_stem=None,
     variable_name="COMMON",
     verbose_name="Common",
@@ -51,6 +51,7 @@ ABANDONED_OLD_WORKSHOP = Map(
     name="AbandonedOldWorkshop",
     variable_name="ABANDONED_OLD_WORKSHOP",
     verbose_name="Abandoned Old Workshop",
+    ai_file_stem="",  # no enemies in map
 )
 HEMWICK_CHARNEL_LANE = Map(
     22,

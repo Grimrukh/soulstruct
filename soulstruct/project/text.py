@@ -6,7 +6,7 @@ import typing as tp
 from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
 
 if tp.TYPE_CHECKING:
-    from soulstruct.text import DarkSoulsText
+    from soulstruct.text.darksouls1 import MSGDirectory
 
 
 class TextEntryRow(EntryRow):
@@ -75,7 +75,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
     ENTRY_ROW_CLASS = TextEntryRow
     entry_rows: tp.List[TextEntryRow]
 
-    def __init__(self, text: DarkSoulsText, linker, master=None, toplevel=False):
+    def __init__(self, text: MSGDirectory, linker, master=None, toplevel=False):
         self.Text = text
         self.show_all_categories = None
         self.find_text_id_entry = None
@@ -205,7 +205,7 @@ class SoulstructTextEditor(SoulstructBaseEditor):
             self.flash_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
 
     def _get_display_categories(self):
-        return self.Text.all_categories if self.show_all_categories.get() else self.Text.main_categories
+        return self.Text.ALL_CATEGORIES if self.show_all_categories.get() else self.Text.MAIN_CATEGORIES
 
     def get_category_data(self, category=None) -> dict:
         if category is None:

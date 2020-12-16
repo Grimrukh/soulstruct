@@ -1,119 +1,105 @@
 import abc
 import logging
 import struct
-from collections import OrderedDict
+import typing as tp
 from io import BytesIO
 from pathlib import Path
+from types import ModuleType
 
-from soulstruct.dcx import DCX
+from soulstruct.events.core import EMEVDError
+from soulstruct.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.events.evs import EvsParser
 from soulstruct.events.numeric import build_numeric
-from soulstruct.utilities import BaseStruct, read_chars_from_buffer, create_bak
+from soulstruct.utilities import read_chars_from_buffer
 
-from .event import BaseEvent
+from .event import Event
+
+if tp.TYPE_CHECKING:
+    import io
+    from soulstruct.utilities import BinaryStruct
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class BaseEMEVD(BaseStruct):
-    Event = BaseEvent
-    GAME_MODULE = None
+class EMEVD(GameFile, abc.ABC):
+    Event = Event
+    GAME_MODULE = None  # type: ModuleType
     STRING_ENCODING = None
-    DCX_MAGIC = None
+    DCX_MAGIC = ()  # type: tuple[int, int]
+    STRUCT: BinaryStruct = None
 
-    def __init__(self, emevd_source, script_path=None):
+    def __init__(self, emevd_source, dcx_magic=(), script_path=None):
+        """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
 
-        if not self.GAME_MODULE:
-            raise NotImplementedError(
-                "You cannot instantiate BaseEMEVD. Use a game-specific child, e.g. "
-                "`from soulstruct.events.darksoul1 import EMEVD`."
-            )
+        Event scripts 50 and 0 are run automatically, in that order. All other scripts are called from them, sometimes
+        with a certain slot and set of arguments. Scripts are executed asynchronously and frequently wait for certain
+        groups of conditions to be true before continuing. Entities in map MSBs are referenced by their entity ID; param
+        IDs and other IDs are also frequently referencved.
 
-        self.events = OrderedDict()
+        Whenever a script finishes (or restarts), the flag with the same ID as that script (plus any slot offset) is
+        enabled. Event IDs are therefore almost always in dedicated ranges for that map, with the format:
+            `1AABXYYY`
+        where the map ID is `mAA_0B_00_00`, X is 0-5, and Y is anything. Flags of this format where X is 4 or 5 are
+        automatically disabled each time the game loads; flags where X is 0-3 are persistent and are saved to your game
+        file.
+
+        If your `emevd_source` is a Python-like EVS script that uses any relative imports, you must pass `script_path`
+        to this class so those relative imports can be resolved.
+        """
+
+        self.events = {}
         self.packed_strings = b""
         self.linked_file_offsets = []  # Offsets into packed strings.
-        self.dcx = False
+        self.map_name = ""
+        super().__init__(emevd_source, dcx_magic=dcx_magic, script_path=script_path)
+        if not self.map_name and self.path:
+            self.map_name = self.path.name.split(".")[0]
 
-        if isinstance(emevd_source, EvsParser):
-            self.map_name = emevd_source.map_name
-            events, linked_file_offsets, packed_strings = build_numeric(emevd_source.numeric_emevd, self.Event)
+    def _handle_other_source_types(self, file_source, script_path=None) -> tp.Optional[io.BufferedIOBase]:
+        if isinstance(file_source, EvsParser):
+            # Copy data from existing `EvsParser` instance.
+            self.map_name = file_source.map_name
+            events, linked_file_offsets, packed_strings = build_numeric(file_source.numeric_emevd, self.Event)
             self.events.update(events)
             self.linked_file_offsets = linked_file_offsets
             self.packed_strings = packed_strings
+            return None
 
-        elif isinstance(emevd_source, dict):
-            self.map_name = None
-            try:
-                self.linked_file_offsets = emevd_source.pop("linked")
-            except KeyError:
-                _LOGGER.warning("No linked file offsets found in EMEVD source.")
-            try:
-                self.packed_strings = emevd_source.pop("strings")
-            except KeyError:
-                _LOGGER.warning("No strings found in EMEVD source.")
-            self.events.update(OrderedDict(emevd_source))
-
-        elif isinstance(emevd_source, str) and "\n" in emevd_source:
-            parsed = EvsParser(emevd_source, game_module=self.GAME_MODULE, script_path=script_path)
+        elif isinstance(file_source, str) and "\n" in file_source:
+            # Parse EVS or numeric string format.
+            parsed = EvsParser(file_source, game_module=self.GAME_MODULE, script_path=script_path)
             self.map_name = parsed.map_name
             events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
             self.events.update(events)
+            return None
 
-        elif isinstance(emevd_source, Path) or (isinstance(emevd_source, str) and "\n" not in emevd_source):
-            emevd_path = Path(emevd_source)
-            self.map_name = emevd_path.stem
+        elif isinstance(file_source, Path) or (isinstance(file_source, str) and "\n" not in file_source):
+            emevd_path = Path(file_source)
+            self.map_name = emevd_path.name.split(".")[0]
 
             if emevd_path.suffix in {".evs", ".py"}:
                 parsed = EvsParser(emevd_path, game_module=self.GAME_MODULE, script_path=script_path)
                 self.map_name = parsed.map_name
                 events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
                 self.events.update(events)
+                return None
 
             elif emevd_path.suffix == ".txt":
                 try:
                     self.build_from_numeric_path(emevd_path)
                 except Exception:
-                    raise IOError(
+                    raise EMEVDError(
                         f"Could not interpret file '{str(emevd_path)}' as numeric-style EMEVD.\n"
                         f"(Note that you cannot use verbose-style text files as EMEVD input.)\n"
                         f"If your file is an EVS script, change the extension to '.py' or '.evs'."
                     )
+                return None
 
-            elif emevd_path.name.endswith(".emevd.dcx"):
-                emevd_data = DCX(emevd_path).data
-                self.dcx = True  # DCX magic of EMEVD is applied automatically at pack.
-                self.map_name = emevd_path.name.split(".")[0]  # Strip all extensions.
-                try:
-                    self.unpack(BytesIO(emevd_data))
-                except Exception:
-                    raise IOError(
-                        f"Could not interpret file '{str(emevd_path)}' as binary EMEVD data.\n"
-                        f"You should only use the '.emevd[.dcx]' extension for actual game-ready\n"
-                        f"EMEVD, which you can create with the `pack()` method of this class."
-                    )
+        raise InvalidGameFileTypeError(
+            "`emevd_source` is not an `EvsParser`, EVS or numeric string, or .evs/.py/.txt file."
+        )
 
-            elif emevd_path.suffix == ".emevd":
-                try:
-                    with emevd_path.open("rb") as f:
-                        self.unpack(f)
-                except Exception:
-                    raise IOError(
-                        f"Could not interpret file '{str(emevd_source)}' as binary EMEVD data.\n"
-                        f"You should only use the '.emevd' extension for actual game-ready\n"
-                        f"EMEVD, which you can create with the `pack()` method of this class."
-                    )
-
-            else:
-                raise TypeError(f"Cannot open EMEVD from source {emevd_source} with type {type(emevd_source)}.")
-
-        elif isinstance(emevd_source, bytes):
-            self.map_name = None
-            self.unpack(BytesIO(emevd_source))
-
-        else:
-            raise TypeError(f"Cannot open EMEVD from source type: {type(emevd_source)}")
-
-    def unpack(self, emevd_buffer):
+    def unpack(self, emevd_buffer, **kwargs):
         header = self.STRUCT.unpack(emevd_buffer)
 
         emevd_buffer.seek(header["event_table_offset"])
@@ -137,6 +123,18 @@ class BaseEMEVD(BaseStruct):
             # These are relative offsets into the packed string data.
             for _ in range(header["linked_files_count"]):
                 self.linked_file_offsets.append(struct.unpack("<Q", emevd_buffer.read(8))[0])
+
+    def load_dict(self, data: dict):
+        self.map_name = None
+        try:
+            self.linked_file_offsets = data.pop("linked")
+        except KeyError:
+            _LOGGER.warning("No linked file offsets found in EMEVD source.")
+        try:
+            self.packed_strings = data.pop("strings")
+        except KeyError:
+            _LOGGER.warning("No strings found in EMEVD source.")
+        self.events.update(data)
 
     def build_from_numeric_path(self, numeric_path):
         numeric_path = Path(numeric_path)
@@ -245,6 +243,13 @@ class BaseEMEVD(BaseStruct):
             strings.append((str(offset), string))  # repr to include double backslash
         return strings
 
+    def to_dict(self) -> dict:
+        return {
+            "linked": self.linked_file_offsets,
+            "strings": self.packed_strings,
+            **self.events,
+        }
+
     def to_numeric(self):
         numeric_output = "\n\n".join([event.to_numeric() for event in self.events.values()])
         numeric_output += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_file_offsets)
@@ -267,11 +272,7 @@ class BaseEMEVD(BaseStruct):
         evs_events = [event.to_evs(self.GAME_MODULE) for event in self.events.values()]
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
-    def pack(self, dcx=None):
-        if dcx is None:
-            # Auto-detect DCX compression from source file (if applicable).
-            dcx = self.dcx
-
+    def pack(self):
         event_table_binary = b""
         instr_table_binary = b""
         argument_data_binary = b""
@@ -366,26 +367,7 @@ class BaseEMEVD(BaseStruct):
                 f"{offsets['end_of_file'] - len(emevd_binary)}."
             )
         emevd_binary += self.packed_strings
-
-        if dcx:
-            return DCX(emevd_binary, magic=self.DCX_MAGIC).pack()
         return emevd_binary
-
-    def write_emevd(self, emevd_path=None, dcx=None):
-        if dcx is None:
-            dcx = self.dcx
-        if not emevd_path:
-            emevd_path = self.map_name
-            if dcx and not emevd_path.endswith(".emevd.dcx"):
-                emevd_path += ".emevd.dcx"
-            elif not emevd_path.endswith(".emevd"):
-                emevd_path += ".emevd"
-        emevd_path = Path(emevd_path)
-        if emevd_path.parent:
-            emevd_path.parent.mkdir(exist_ok=True, parents=True)
-        create_bak(emevd_path)
-        with emevd_path.open("wb") as f:
-            f.write(self.pack(dcx))
 
     def write_numeric(self, numeric_path=None):
         if not numeric_path:

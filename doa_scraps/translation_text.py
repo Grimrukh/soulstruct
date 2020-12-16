@@ -1,4 +1,4 @@
-from soulstruct.text import DarkSoulsText
+from soulstruct.text.darksouls1 import MSGDirectory
 
 lang = 'JAPANESE'
 version = 'DSR'
@@ -36,7 +36,7 @@ def get_translations():
 
 
 def main():
-    foreign_text = DarkSoulsText(foreign_msg_paths[version])
+    foreign_text = MSGDirectory(foreign_msg_paths[version])
     r, e = get_translations()
     for fmg, text_id in r.keys():
         # print(fmg, text_id, r[fmg, text_id])

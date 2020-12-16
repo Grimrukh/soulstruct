@@ -448,10 +448,6 @@ class BinaryStruct:
         return [field["name"] for field in self.non_padding_fields]
 
 
-class BaseStruct(abc.ABC):
-    STRUCT: BinaryStruct = None
-
-
 class AttributeDict(dict):
     """Simple dict extension that redirects `__getattr__` to `__getitem__`, allowing dot notation field access."""
 

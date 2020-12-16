@@ -51,7 +51,7 @@ __all__ = [
 
 from enum import IntEnum
 
-from soulstruct.enums.shared import *
+from soulstruct.events.base.enums import *
 
 
 class CalculationType(IntEnum):
