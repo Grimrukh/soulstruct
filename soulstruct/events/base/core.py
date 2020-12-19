@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+__all__ = ["EMEVD", "EMEVDDirectory"]
+
 import abc
 import logging
 import struct
@@ -8,7 +12,7 @@ from types import ModuleType
 
 from soulstruct.events.core import EMEVDError
 from soulstruct.game_file import GameFile, InvalidGameFileTypeError
-from soulstruct.events.evs import EvsParser
+from soulstruct.events.evs import EVSParser
 from soulstruct.events.numeric import build_numeric
 from soulstruct.utilities import read_chars_from_buffer
 
@@ -16,7 +20,8 @@ from .event import Event
 
 if tp.TYPE_CHECKING:
     import io
-    from soulstruct.utilities import BinaryStruct
+    from soulstruct.game_types import Map
+    from soulstruct.utilities.binary_struct import BinaryStruct
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,7 +61,7 @@ class EMEVD(GameFile, abc.ABC):
             self.map_name = self.path.name.split(".")[0]
 
     def _handle_other_source_types(self, file_source, script_path=None) -> tp.Optional[io.BufferedIOBase]:
-        if isinstance(file_source, EvsParser):
+        if isinstance(file_source, EVSParser):
             # Copy data from existing `EvsParser` instance.
             self.map_name = file_source.map_name
             events, linked_file_offsets, packed_strings = build_numeric(file_source.numeric_emevd, self.Event)
@@ -67,7 +72,7 @@ class EMEVD(GameFile, abc.ABC):
 
         elif isinstance(file_source, str) and "\n" in file_source:
             # Parse EVS or numeric string format.
-            parsed = EvsParser(file_source, game_module=self.GAME_MODULE, script_path=script_path)
+            parsed = EVSParser(file_source, game_module=self.GAME_MODULE, script_path=script_path)
             self.map_name = parsed.map_name
             events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
             self.events.update(events)
@@ -78,7 +83,7 @@ class EMEVD(GameFile, abc.ABC):
             self.map_name = emevd_path.name.split(".")[0]
 
             if emevd_path.suffix in {".evs", ".py"}:
-                parsed = EvsParser(emevd_path, game_module=self.GAME_MODULE, script_path=script_path)
+                parsed = EVSParser(emevd_path, game_module=self.GAME_MODULE, script_path=script_path)
                 self.map_name = parsed.map_name
                 events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
                 self.events.update(events)
@@ -390,3 +395,49 @@ class EMEVD(GameFile, abc.ABC):
             evs_path.parent.mkdir(exist_ok=True, parents=True)
         with evs_path.open("w", encoding="utf-8") as f:
             f.write(self.to_evs())
+
+
+class EMEVDDirectory(abc.ABC):
+    """Not actually used by `GameDirectoryProject`, but could still be useful for CLI editing."""
+
+    ALL_MAPS: tuple[Map] = None
+    IS_DCX: bool = None
+    EMEVD_CLASS: tp.Type[EMEVD] = None
+
+    def __init__(self, emevd_directory=None):
+        """Unpack all EMEVD event scripts into one single modifiable structure.
+
+        Args:
+            emevd_directory: Directory where all the `.emevd[.dcx]` files are stored. This will be inside 'event' in
+                your game directory.
+        """
+        self._directory = None
+        self.emevds = {}  # type: dict[str, EMEVD]
+
+        if emevd_directory is None:
+            return
+        self._directory = Path(emevd_directory)
+        if not self._directory.is_dir():
+            raise ValueError("`EMEVDDirectory` should be initialized with the directory containing '.emevd' files.")
+
+        for game_map in [m for m in self.ALL_MAPS if m.emevd_file_stem]:
+            emevd_path = self._directory / f"{game_map.emevd_file_stem}.emevd{'.dcx' if self.IS_DCX else ''}"
+            try:
+                self.emevds[game_map.name] = self.EMEVD_CLASS(emevd_path)
+                setattr(self, game_map.name, self.emevds[game_map.name])
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Could not find EMEVD file {emevd_path} ({game_map.name}) in given directory.")
+
+    def __getitem__(self, map_name):
+        return self.emevds[map_name]
+
+    def __repr__(self):
+        return f"EMEVDDirectory({repr(str(self._directory))})"
+
+    def write(self, emevd_directory=None):
+        if emevd_directory is None:
+            emevd_directory = self._directory
+        emevd_directory = Path(emevd_directory)
+        for emevd in self.emevds.values():
+            emevd.write(emevd_directory / emevd.path.name)
+        _LOGGER.info("All EMEVD files written successfully.")

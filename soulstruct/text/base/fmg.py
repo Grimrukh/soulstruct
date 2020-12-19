@@ -7,7 +7,8 @@ import logging
 from textwrap import wrap
 
 from soulstruct.game_file import GameFile
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, unpack_from_buffer
+from soulstruct.utilities.core import read_chars_from_buffer, unpack_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,9 +42,9 @@ class BaseFMG(GameFile, abc.ABC):
     Since Demon's Souls, only the `version` field differs between games, with slight header structure changes.
     """
 
-    HEADER_STRUCT = None  # type: BinaryStruct
-    RANGE_STRUCT = None  # type: BinaryStruct
-    STRING_OFFSET_STRUCT = None  # type: BinaryStruct
+    HEADER_STRUCT: BinaryStruct = None
+    RANGE_STRUCT: BinaryStruct = None
+    STRING_OFFSET_STRUCT: BinaryStruct = None
     BIG_ENDIAN = False
     VERSION = None  # type: int
 
@@ -321,7 +322,7 @@ class FMG1(BaseFMG):
     HEADER_STRUCT = BinaryStruct(
         "x",
         ("big_endian", "?", False),
-        ("version", "1"),
+        ("version", "b", 1),
         "x",
         ("file_size", "i"),
         ("one", "b", 1),

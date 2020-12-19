@@ -1,10 +1,11 @@
-__all__ = ["EMEVD", "convert_events", "compare_events"]
+__all__ = ["EMEVD", "EMEVDDirectoryPTDE", "EMEVDDirectoryDSR", "convert_events", "compare_events"]
 
 import sys
 from pathlib import Path
 
 from soulstruct.events.base import (
     EMEVD as _BaseEMEVD,
+    EMEVDDirectory as _BaseEMEVDDirectory,
     Event as _BaseEvent,
     EventArg as _BaseEventArg,
     Instruction as _BaseInstruction,
@@ -12,7 +13,7 @@ from soulstruct.events.base import (
 )
 from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
 from soulstruct.maps.darksouls1.maps import ALL_MAPS
-from soulstruct.utilities.core import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class EventLayers(_BaseEventLayers):
@@ -325,6 +326,56 @@ class EMEVD(_BaseEMEVD):
 
     def pad_after_base_args(self, emevd_binary_after_base_args):
         return emevd_binary_after_base_args + b"\x00\x00\x00\x00"  # terminate with z4
+
+
+class EMEVDDirectoryPTDE(_BaseEMEVDDirectory):
+    ALL_MAPS = ALL_MAPS
+    IS_DCX = False
+    EMEVD_CLASS = EMEVD
+
+    Common: EMEVD
+    Depths: EMEVD
+    UndeadBurg: EMEVD  # and Undead Parish
+    FirelinkShrine: EMEVD
+    PaintedWorld: EMEVD
+    DarkrootGarden: EMEVD  # and Darkroot Basin
+    Oolacile: EMEVD  # and all DLC
+    Catacombs: EMEVD
+    TombOfTheGiants: EMEVD
+    AshLake: EMEVD  # and Great Hollow
+    Blighttown: EMEVD
+    LostIzalith: EMEVD  # and Demon Ruins
+    SensFortress: EMEVD
+    AnorLondo: EMEVD
+    NewLondoRuins: EMEVD  # and Valley of Drakes
+    DukesArchives: EMEVD
+    KilnOfTheFirstFlame: EMEVD
+    UndeadAsylum: EMEVD
+
+
+class EMEVDDirectoryDSR(_BaseEMEVDDirectory):
+    ALL_MAPS = ALL_MAPS
+    IS_DCX = True
+    EMEVD_CLASS = EMEVD
+
+    Common: EMEVD
+    Depths: EMEVD
+    UndeadBurg: EMEVD  # and Undead Parish
+    FirelinkShrine: EMEVD
+    PaintedWorld: EMEVD
+    DarkrootGarden: EMEVD  # and Darkroot Basin
+    Oolacile: EMEVD  # and all DLC
+    Catacombs: EMEVD
+    TombOfTheGiants: EMEVD
+    AshLake: EMEVD  # and Great Hollow
+    Blighttown: EMEVD
+    LostIzalith: EMEVD  # and Demon Ruins
+    SensFortress: EMEVD
+    AnorLondo: EMEVD
+    NewLondoRuins: EMEVD  # and Valley of Drakes
+    DukesArchives: EMEVD
+    KilnOfTheFirstFlame: EMEVD
+    UndeadAsylum: EMEVD
 
 
 def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):

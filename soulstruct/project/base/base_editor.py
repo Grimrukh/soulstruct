@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["SoulstructBaseEditor", "EntryRow"]
+__all__ = ["BaseEditor", "EntryRow"]
 
 import abc
 import logging
@@ -30,7 +30,7 @@ class EntryRow:
     ENTRY_TEXT_WIDTH = 150
     ENTRY_TEXT_FG = "#FFF"
 
-    def __init__(self, editor: SoulstructBaseEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: BaseEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
@@ -191,7 +191,7 @@ class EntryRow:
         return f"#{base_bg}"
 
 
-class SoulstructBaseEditor(SmartFrame, abc.ABC):
+class BaseEditor(SmartFrame, abc.ABC):
     """Base class for a two-part window that edits entry IDs and names within specific categories."""
     DATA_NAME = ""
     TAB_NAME = ""

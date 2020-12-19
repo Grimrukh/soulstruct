@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import typing as tp
 
-from soulstruct.params.darksouls1.draw_param import DRAW_PARAM_MAPS
+from soulstruct.params.darksouls1r.draw_param import DRAW_PARAM_MAPS
 from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
+from soulstruct.project.base.field_editor import BaseFieldEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params.darksouls1.core import ParamRow
-    from soulstruct.params.darksouls1.draw_param import DrawParamDirectory, DrawParam
+    from soulstruct.params.darksouls1r.core import ParamRow
+    from soulstruct.params.darksouls1r.draw_param import DrawParamDirectory, DrawParam
 
 
 class LightingEntryRow(EntryRow):
@@ -17,7 +17,7 @@ class LightingEntryRow(EntryRow):
 
     ENTRY_ID_WIDTH = 10
 
-    def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: BaseFieldEditor, row_index: int, main_bindings: dict = None):
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
         self.linked_text = ""
 
@@ -49,7 +49,7 @@ class LightingEntryRow(EntryRow):
                 text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
 
 
-class SoulstructLightingEditor(SoulstructBaseFieldEditor):
+class SoulstructLightingEditor(BaseFieldEditor):
     DATA_NAME = "Lighting"
     TAB_NAME = "lighting"
     CATEGORY_BOX_WIDTH = 165

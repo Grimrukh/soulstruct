@@ -4,20 +4,14 @@ import typing as tp
 from collections import namedtuple
 from functools import wraps
 
-from soulstruct.ai.darksouls1 import AIDirectory
-from soulstruct.core import SoulstructError
-from soulstruct.maps.darksouls1 import MapStudioDirectory
-from soulstruct.params.darksouls1 import GameParamBND, DrawParamDirectory
-from soulstruct.text.darksouls1 import MSGDirectory
+from soulstruct.project.core import SoulstructProjectError
 from soulstruct.utilities import word_wrap, camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
 if tp.TYPE_CHECKING:
-    from soulstruct.project.base.base_editor import SoulstructBaseEditor
+    from soulstruct.project.base.base_editor import BaseEditor
 
 __all__ = [
-    "SoulstructProjectError",
-    "RestoreBackupError",
     "error_as_dialog",
     "TagData",
     "TextEditor",
@@ -30,17 +24,7 @@ __all__ = [
     "ActionHistory",
     "ViewHistory",
     "bind_events",
-    "data_type_caps",
-    "DATA_TYPES",
 ]
-
-
-class SoulstructProjectError(SoulstructError):
-    pass
-
-
-class RestoreBackupError(SoulstructError):
-    pass
 
 
 def bind_events(widget, bindings: dict):
@@ -291,23 +275,6 @@ class TextEditor(tk.Text):
         return "break"
 
 
-def data_type_caps(data_type):
-    if data_type.lower() == "ai":
-        return "AI"
-    return data_type.capitalize()
-
-
-DATA_TYPES = {
-    "maps": MapStudioDirectory,
-    "params": GameParamBND,
-    "lighting": DrawParamDirectory,
-    "text": MSGDirectory,
-    "events": None,  # modified via EVS event script files
-    "ai": AIDirectory,
-    "talk": None,  # modified via ESP state machine script files
-}
-
-
 class NameSelectionBox(SmartFrame):
     """Small pop-out widget that allows you to select a name from some list."""
 
@@ -484,7 +451,7 @@ class EntryTextEditBox(TextEditBox):
 
     def __init__(
         self,
-        master: SoulstructBaseEditor,
+        master: BaseEditor,
         category,
         category_data,
         entry_id,

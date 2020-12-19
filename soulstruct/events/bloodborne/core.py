@@ -5,6 +5,7 @@ from pathlib import Path
 
 from soulstruct.events.base import (
     EMEVD as _BaseEMEVD,
+    EMEVDDirectory as _BaseEMEVDDirectory,
     Event as _BaseEvent,
     EventArg as _BaseEventArg,
     Instruction as _BaseInstruction,
@@ -12,7 +13,7 @@ from soulstruct.events.base import (
 )
 from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
 from soulstruct.maps.bloodborne.maps import ALL_MAPS
-from soulstruct.utilities.core import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class EventLayers(_BaseEventLayers):
@@ -341,6 +342,31 @@ class EMEVD(_BaseEMEVD):
         while len(emevd_binary_after_base_args) % 16 != 0:
             emevd_binary_after_base_args += b"\0"  # pad to multiple of 16
         return emevd_binary_after_base_args
+
+
+class EMEVDDirectory(_BaseEMEVDDirectory):
+    ALL_MAPS = ALL_MAPS
+    IS_DCX = True
+    EMEVD_CLASS = EMEVD
+
+    Common: EMEVD
+    HuntersDream: EMEVD
+    AbandonedOldWorkshop: EMEVD
+    HemwickCharnelLane: EMEVD
+    OldYharnam: EMEVD
+    CathedralWard: EMEVD
+    CentralYharnam: EMEVD
+    UpperCathedralWard: EMEVD  # and Altar of Despair
+    CastleCainhurst: EMEVD
+    NightmareOfMensis: EMEVD
+    ForbiddenWoods: EMEVD
+    Yahargul: EMEVD
+    # ChaliceDungeon: EMEVD
+    Byrgenwerth: EMEVD  # and Lecture Building
+    NightmareFrontier: EMEVD
+    HuntersNightmare: EMEVD
+    ResearchHall: EMEVD
+    FishingHamlet: EMEVD
 
 
 def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):

@@ -5,7 +5,7 @@ from soulstruct.maps.base.models import (
     MSBModelList as _BaseMSBModelList,
 )
 from soulstruct.maps.enums import MSBModelSubtype
-from soulstruct.utilities import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .msb_entry import MSBEntryList
 

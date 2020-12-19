@@ -1,7 +1,7 @@
 __all__ = ["SHOP_LINEUP_PARAM"]
 
 from soulstruct.game_types import *
-from soulstruct.params.darksouls1.enums import *
+from soulstruct.params.darksouls1r.enums import *
 from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
 
 

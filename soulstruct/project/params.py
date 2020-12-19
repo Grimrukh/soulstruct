@@ -6,11 +6,11 @@ import typing as tp
 from soulstruct.game_types import BaseParam, Flag
 from soulstruct.params.core import DynamicFieldDisplayInfo
 from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import FieldRow, SoulstructBaseFieldEditor
+from soulstruct.project.base.field_editor import FieldRow, BaseFieldEditor
 from soulstruct.project.utilities import NameSelectionBox
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params.darksouls1.core import GameParamBND, ParamRow
+    from soulstruct.params.darksouls1r.core import GameParamBND, ParamRow
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class ParamEntryRow(EntryRow):
 
     ENTRY_ID_WIDTH = 10
 
-    def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: BaseFieldEditor, row_index: int, main_bindings: dict = None):
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
         self.linked_text = ""
 
@@ -84,7 +84,7 @@ class ParamEntryRow(EntryRow):
         )
 
 
-class SoulstructParamsEditor(SoulstructBaseFieldEditor):
+class SoulstructParamsEditor(BaseFieldEditor):
     DATA_NAME = "Params"
     TAB_NAME = "params"
     CATEGORY_BOX_WIDTH = 165

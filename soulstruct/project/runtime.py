@@ -4,7 +4,7 @@ import threading
 import time
 import typing as tp
 
-from soulstruct.project.utilities import SoulstructProjectError
+from .core import SoulstructProjectError
 from soulstruct.utilities.memory import DSRMemoryHook
 from soulstruct.utilities.window import SmartFrame
 
@@ -109,7 +109,7 @@ class SoulstructRuntimeManager(SmartFrame):
                 except SoulstructProjectError:
                     self.Label(
                         text="Could not find game saves.\n\nTry setting 'SaveDirectory' to your save directory "
-                        "manually in 'config.json' in your project folder, then restart Soulstruct.",
+                        "manually in 'project_config.json' in your project folder, then restart Soulstruct.",
                         row=0,
                         column=0,
                     )

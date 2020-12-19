@@ -6,7 +6,8 @@ from soulstruct.events.darksouls1.enums import SoundType
 from soulstruct.game_types import *
 from soulstruct.maps.core import MapError
 from soulstruct.maps.enums import MSBEventSubtype
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, unpack_from_buffer
+from soulstruct.utilities import read_chars_from_buffer, pad_chars, unpack_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
 from .msb_entry import MSBEntryList, MSBEntryEntity
@@ -15,8 +16,8 @@ from .msb_entry import MSBEntryList, MSBEntryEntity
 class MSBEvent(MSBEntryEntity, abc.ABC):
     """Parent class for MSB events, which describe various things that occur in maps (often attached to Regions)."""
 
-    EVENT_HEADER_STRUCT = None  # type: BinaryStruct
-    EVENT_BASE_DATA_STRUCT = None  # type: BinaryStruct
+    EVENT_HEADER_STRUCT: BinaryStruct = None
+    EVENT_BASE_DATA_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""  # type: str
 
     EVENT_TYPE_DATA_STRUCT = ()

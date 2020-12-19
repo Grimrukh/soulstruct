@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 __all__ = ["EventLayers"]
 
 import typing as tp
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities import BinaryStruct
+    from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class EventLayers:

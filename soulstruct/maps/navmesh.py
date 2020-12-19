@@ -55,7 +55,8 @@ from itertools import product
 from pathlib import Path
 
 from soulstruct.maps.base.msb import MSB
-from soulstruct.utilities.core import BinaryStruct, create_bak
+from soulstruct.utilities.core import create_bak
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 

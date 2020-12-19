@@ -12,7 +12,7 @@ from soulstruct.events.base import (
 )
 from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
 from soulstruct.maps.darksouls3.maps import ALL_MAPS
-from soulstruct.utilities.core import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class EventLayers(_BaseEventLayers):

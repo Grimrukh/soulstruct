@@ -13,8 +13,8 @@ from soulstruct.core import SoulstructError
 from soulstruct.project.utilities import ItemTextEditBox
 
 if tp.TYPE_CHECKING:
-    from soulstruct.project import SoulstructProjectWindow
-    from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor
+    from soulstruct.project import ProjectWindow
+    from soulstruct.project.base.field_editor import BaseFieldEditor
     from soulstruct.maps.darksouls1 import MSB
 
 
@@ -25,7 +25,7 @@ class LinkError(SoulstructError):
 class WindowLinker:
     """Interface that generates links (go-to commands) between arbitrary parts of the Soulstruct unified window."""
 
-    def __init__(self, window: SoulstructProjectWindow):
+    def __init__(self, window: ProjectWindow):
         self.window = window
         self.project = window.project
 
@@ -33,7 +33,7 @@ class WindowLinker:
         return self.window.TAB_ORDER.index(tab_name.lower())
 
     def jump(self, tab_name, category, entry_id, field_name=None, choice_func=None):
-        data_tab = getattr(self.window, f"{tab_name}_tab")  # type: SoulstructBaseFieldEditor
+        data_tab = getattr(self.window, f"{tab_name}_tab")  # type: BaseFieldEditor
         self.window.page_tabs.select(self.get_tab_index(tab_name))
         try:
             if choice_func is not None:

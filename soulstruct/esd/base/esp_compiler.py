@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 import ast
 import re
 import struct
 from queue import Queue
 from typing import List, Tuple, TYPE_CHECKING
 
-from soulstruct.esd.errors import EsdError, EsdSyntaxError, EsdValueError
+from soulstruct.esd import ESDError, ESDSyntaxError, ESDValueError
 from soulstruct.esd.ezl_parser import FUNCTION_ARG_BYTES_BY_COUNT, OPERATORS_BY_NODE
 from soulstruct.esd.functions import COMMANDS_BANK_ID_BY_TYPE_NAME, TEST_FUNCTIONS_ID_BY_TYPE_NAME
 
 if TYPE_CHECKING:
-    from soulstruct.esd.core import BaseESD
+    from soulstruct.esd.base.esd import ESD
 
 
 class ESPCompiler:
@@ -20,8 +22,8 @@ class ESPCompiler:
     _COMMAND_DEFAULT_RE = re.compile(r"Command_(?:talk|chr)_(\d*)_(\d*)")
     _TEST_DEFAULT_RE = re.compile(r"Test_(?:talk|chr)_(\d*)")
 
-    def __init__(self, esp_path, esd_object):
-        self.ESD = esd_object  # type: BaseESD
+    def __init__(self, esp_path, esd: ESD):
+        self.esd = esd  # type: ESD
         self.docstring = ""
         self.state_machine_index = None
         self.state_info = {}
@@ -51,7 +53,7 @@ class ESPCompiler:
         for node in self.tree.body[1:]:
 
             if isinstance(node, ast.Import):
-                raise EsdSyntaxError(
+                raise ESDSyntaxError(
                     node.lineno,
                     "All imports should be of the form 'from your_constants import *' (other than "
                     "'from soulstruct.esd import *').",
@@ -62,7 +64,7 @@ class ESPCompiler:
             elif isinstance(node, ast.ClassDef):
                 self.scan_state(node)
             else:
-                raise EsdSyntaxError(
+                raise ESDSyntaxError(
                     node.lineno,
                     f"Invalid content: {node.__class__}. The only valid top-level EVS lines are "
                     f"from-imports and class definitions.",
@@ -81,42 +83,42 @@ class ESPCompiler:
 
         for node in nodes:
             if not isinstance(node, ast.FunctionDef):
-                raise EsdSyntaxError(node.lineno, "Non-function appeared in state class.")
+                raise ESDSyntaxError(node.lineno, "Non-function appeared in state class.")
 
             if node.name == "previous_states":
                 # Ignore informative method.
                 continue
             elif node.name == "test":
                 if conditions:
-                    raise EsdSyntaxError(node.lineno, "test() method defined more than once.")
+                    raise ESDSyntaxError(node.lineno, "test() method defined more than once.")
                 conditions = self.build_conditions(node.body)
             elif node.name == "enter":
                 if enter_commands:
-                    raise EsdSyntaxError(node.lineno, "enter() method defined more than once.")
+                    raise ESDSyntaxError(node.lineno, "enter() method defined more than once.")
                 enter_commands = [self.build_command(command_node) for command_node in node.body]
             elif node.name == "exit":
                 if exit_commands:
-                    raise EsdSyntaxError(node.lineno, "exit() method defined more than once.")
+                    raise ESDSyntaxError(node.lineno, "exit() method defined more than once.")
                 exit_commands = [self.build_command(command_node) for command_node in node.body]
             elif node.name == "ongoing":
                 if ongoing_commands:
-                    raise EsdSyntaxError(node.lineno, "ongoing() method defined more than once.")
+                    raise ESDSyntaxError(node.lineno, "ongoing() method defined more than once.")
                 ongoing_commands = [self.build_command(command_node) for command_node in node.body]
             else:
-                raise EsdSyntaxError(node.lineno, f"Unexpected state function: '{node.name.id}'.")
+                raise ESDSyntaxError(node.lineno, f"Unexpected state function: '{node.name.id}'.")
 
-        return self.ESD.State(self.ESD.esd_type, index, conditions, enter_commands, exit_commands, ongoing_commands)
+        return self.State(index, conditions, enter_commands, exit_commands, ongoing_commands)
 
     def scan_state(self, node):
         """Get state name, description (from docstring), and node list."""
         state_name = node.name
         docstring = ast.get_docstring(node)
         if docstring is None:
-            raise EsdSyntaxError(node.lineno, f"No docstring given for state {state_name}.")
+            raise ESDSyntaxError(node.lineno, f"No docstring given for state {state_name}.")
         try:
             state_index, description = self._STATE_DOCSTRING_RE.match(docstring).group(1, 2)
         except AttributeError:
-            raise EsdSyntaxError(node.lineno, f"Invalid docstring for event {state_name}.")
+            raise ESDSyntaxError(node.lineno, f"Invalid docstring for event {state_name}.")
         self.state_info[state_name] = {
             "index": int(state_index),
             "description": description,
@@ -129,22 +131,22 @@ class ESPCompiler:
             bank = 6  # TODO: True in every game/file?
             f_id = 0x80000000 - node.value.func.slice.value.n
             if not isinstance(f_id, int):
-                raise EsdValueError(node.lineno, "State machine call must have an integer index.")
+                raise ESDValueError(node.lineno, "State machine call must have an integer index.")
         elif self.is_call(node):
             try:
-                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.ESD.esd_type, node.value.func.id]
+                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.esd.ESD_TYPE, node.value.func.id]
             except KeyError:
                 command_match = self._COMMAND_DEFAULT_RE.match(node.value.func.id)
                 if not command_match:
-                    raise EsdError(node.lineno, f"Invalid enter/exit/ongoing command: {node.value.func.id}")
+                    raise ESDError(node.lineno, f"Invalid enter/exit/ongoing command: {node.value.func.id}")
                 bank, f_id = command_match.group(1, 2)
                 bank, f_id = int(bank), int(f_id)
         else:
-            raise EsdSyntaxError(node.lineno, f"Expected only function calls, not node type {type(node)}.")
+            raise ESDSyntaxError(node.lineno, f"Expected only function calls, not node type {type(node)}.")
         # TODO: Check arg count against canonical function, once available, and order keyword args.
         args = node.value.args + [keyword.value for keyword in node.value.keywords]
         command_args = [self.compile_ezl(arg) + b"\xa1" for arg in args]
-        return self.ESD.Command(self.ESD.esd_type, bank, f_id, command_args)
+        return self.Command(bank, f_id, command_args)
 
     def reset_condition_registers(self):
         self.registers = [()] * 8
@@ -170,28 +172,34 @@ class ESPCompiler:
             if isinstance(if_nodes[0].value, ast.UnaryOp):
                 if (
                     isinstance(if_nodes[0].value.op, ast.USub)
-                    and isinstance(if_nodes[0].value.operand, ast.Num)
-                    and if_nodes[0].value.operand.n == 1
+                    and isinstance(if_nodes[0].value.operand, ast.Constant)
+                    and if_nodes[0].value.operand.value == 1
                 ):
                     # Last state of callable state machine.
-                    return [self.ESD.Condition(self.ESD.esd_type, -1, b"\x41\xa1", [], [])]
+                    return [self.Condition(-1, b"\x41\xa1", [], [])]
                 print(if_nodes[0].value.op, if_nodes[0].value.operand)
-                raise EsdSyntaxError(if_nodes[0].lineno, f"Next state must be a valid State class or -1.")
+                raise ESDSyntaxError(if_nodes[0].lineno, f"Next state must be a valid State class or -1.")
             if not isinstance(if_nodes[0].value, ast.Name):
                 print("Node:", if_nodes[0].value)
-                raise EsdSyntaxError(if_nodes[0].lineno, "Condition IF block should return a state class name.")
+                raise ESDSyntaxError(if_nodes[0].lineno, "Condition IF block should return a state class name.")
             if if_nodes[0].value.id not in self.state_info:
-                raise EsdError(if_nodes[0].lineno, f"Could not find a state class named '{if_nodes[0].value.id}'.")
+                raise ESDError(if_nodes[0].lineno, f"Could not find a state class named '{if_nodes[0].value.id}'.")
             next_state_index = self.state_info[if_nodes[0].value.id]["index"]
-            return [self.ESD.Condition(self.ESD.esd_type, next_state_index, b"\x41\xa1", [], [])]
+            return [self.Condition(next_state_index, b"\x41\xa1", [], [])]
 
         for i, node in enumerate(if_nodes):
             if not isinstance(node, ast.If):
-                raise EsdSyntaxError(node.lineno, "test() method must contain only IF blocks.")
+                raise ESDSyntaxError(node.lineno, "test() method must contain only IF blocks.")
             if node.orelse:
                 if i != len(if_nodes) - 1:
-                    raise EsdSyntaxError(node.lineno, "'else' block should only appear at the end of the tests.")
-                if_nodes.append(ast.If(test=ast.Num(n=1), body=node.orelse, orelse=[]))
+                    raise ESDSyntaxError(node.lineno, "'else' block should only appear at the end of the tests.")
+                if_nodes.append(
+                    ast.If(
+                        test=ast.Constant(value=1),
+                        body=node.orelse,
+                        orelse=[],
+                    )
+                )
 
         conditions = []
         self.plan_condition_registers(if_nodes)  # Determines upcoming register saves/loads.
@@ -211,31 +219,31 @@ class ESPCompiler:
             for j, node in enumerate(if_node.body):
                 if self.is_call(node):
                     if not pass_commands_allowed:
-                        raise EsdSyntaxError(node.lineno, "Encountered a pass command out of order in IF block.")
+                        raise ESDSyntaxError(node.lineno, "Encountered a pass command out of order in IF block.")
                     pass_commands.append(self.build_command(node))
                 elif isinstance(node, ast.If):
                     if not subconditions_allowed:
-                        raise EsdSyntaxError(node.lineno, "Encountered a subcondition out of order in IF block.")
+                        raise ESDSyntaxError(node.lineno, "Encountered a subcondition out of order in IF block.")
                     pass_commands_allowed = False
                     subcondition_nodes.append(node)
                 elif isinstance(node, ast.Return):
                     if j != len(if_node.body) - 1:
-                        raise EsdSyntaxError(node.lineno, "'return NextState' should be last statement in IF block.")
-                    if isinstance(node.value, ast.Num) and node.value.n == -1:
+                        raise ESDSyntaxError(node.lineno, "'return NextState' should be last statement in IF block.")
+                    if isinstance(node.value, ast.Constant) and node.value.n == -1:
                         # Last state of callable state machine.
                         next_state_index = -1
                     else:
                         if not isinstance(node.value, ast.Name):
-                            raise EsdSyntaxError(node.lineno, "Condition IF block should return a state class name.")
+                            raise ESDSyntaxError(node.lineno, "Condition IF block should return a state class name.")
                         if node.value.id not in self.state_info:
-                            raise EsdError(node.lineno, f"Could not find a state class named '{node.value.id}'.")
+                            raise ESDError(node.lineno, f"Could not find a state class named '{node.value.id}'.")
                         next_state_index = self.state_info[node.value.id]["index"]
 
             # Condition registers are *not* reset when scanning and building subconditions.
             subconditions = self.build_conditions(subcondition_nodes) if subcondition_nodes else ()
 
             conditions.append(
-                self.ESD.Condition(self.ESD.esd_type, next_state_index, test_ezl, pass_commands, subconditions)
+                self.Condition(next_state_index, test_ezl, pass_commands, subconditions)
             )
 
         return conditions
@@ -252,7 +260,7 @@ class ESPCompiler:
         """
         for i, if_node in enumerate(if_node_list):
             if not isinstance(if_node, ast.If):
-                raise EsdSyntaxError(if_node.lineno, "test() method must contain only IF blocks.")
+                raise ESDSyntaxError(if_node.lineno, "test() method must contain only IF blocks.")
 
             # Process test nodes.
             first_time_calls = []
@@ -275,7 +283,7 @@ class ESPCompiler:
                     subconditions_allowed = False
                 elif isinstance(body_node, ast.If):
                     if not subconditions_allowed:
-                        raise EsdSyntaxError(body_node.lineno, "Encountered a subcondition out of order in IF block.")
+                        raise ESDSyntaxError(body_node.lineno, "Encountered a subcondition out of order in IF block.")
                     subcondition_nodes.append(body_node)
             self.plan_condition_registers(subcondition_nodes)
 
@@ -290,7 +298,7 @@ class ESPCompiler:
             elif isinstance(node, (ast.Subscript, ast.Name)):
                 args.append(node)
             else:
-                raise EsdValueError(node.lineno, "Function arguments must be numeric literals.")
+                raise ESDValueError(node.lineno, "Function arguments must be numeric literals.")
         return tuple(args)
 
     def save_into_next_available_register(self, call):
@@ -302,14 +310,14 @@ class ESPCompiler:
 
     def compile_test_function(self, call_node: ast.Call, equals=None):
         if call_node.keywords:
-            raise EsdSyntaxError(call_node.lineno, "You cannot use keyword arguments in test functions (yet).")
+            raise ESDSyntaxError(call_node.lineno, "You cannot use keyword arguments in test functions (yet).")
         try:
-            f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.ESD.esd_type, call_node.func.id]
+            f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.esd.ESD_TYPE, call_node.func.id]
         except KeyError:
             try:
                 f_id = int(self._TEST_DEFAULT_RE.match(call_node.func.id).group(1))
             except AttributeError:
-                raise EsdValueError(call_node.lineno, f"Invalid ESD function name: '{call_node.func.id}'.")
+                raise ESDValueError(call_node.lineno, f"Invalid ESD function name: '{call_node.func.id}'.")
         args = self.parse_args(call_node.args)
         call = (f_id, *args)
 
@@ -349,11 +357,11 @@ class ESPCompiler:
             if isinstance(node.op, ast.USub):
                 if isinstance(node.operand, ast.Num):
                     return self.compile_number(-node.operand.n)
-                raise EsdSyntaxError(node.lineno, "Tried to negate a non-numeric value. (TODO: Implement Negate op.)")
+                raise ESDSyntaxError(node.lineno, "Tried to negate a non-numeric value. (TODO: Implement Negate op.)")
             elif isinstance(node.op, ast.Not):
                 if self.is_call(node.operand):
                     return self.compile_test_function(node.operand, equals=1)
-                raise EsdSyntaxError(node.lineno, "'not' keyword can only be applied to function calls.")
+                raise ESDSyntaxError(node.lineno, "'not' keyword can only be applied to function calls.")
 
         if isinstance(node, ast.BoolOp):
             compiled = b""
@@ -374,15 +382,15 @@ class ESPCompiler:
 
         if isinstance(node, ast.BinOp):
             if type(node.op) not in OPERATORS_BY_NODE:
-                raise EsdSyntaxError(node.lineno, f"Invalid binary operator: {type(node.op)}")
+                raise ESDSyntaxError(node.lineno, f"Invalid binary operator: {type(node.op)}")
             return self.compile_ezl(node.left) + self.compile_ezl(node.right) + OPERATORS_BY_NODE[type(node.op)]
 
         if isinstance(node, ast.Compare):
             if len(node.comparators) != 1 or len(node.ops) != 1:
                 # TODO: Redundant after scan. Have to figure out which errors are checked where.
-                raise EsdSyntaxError(node.lineno, "Comparison should compare exactly two values.")
+                raise ESDSyntaxError(node.lineno, "Comparison should compare exactly two values.")
             if type(node.ops[0]) not in OPERATORS_BY_NODE:
-                raise EsdSyntaxError(node.lineno, f"Invalid comparison operator: {type(node.ops[0])}")
+                raise ESDSyntaxError(node.lineno, f"Invalid comparison operator: {type(node.ops[0])}")
             return (
                 self.compile_ezl(node.left)
                 + self.compile_ezl(node.comparators[0])
@@ -397,7 +405,7 @@ class ESPCompiler:
                 return b"\xb9"
             elif node.id == "ONGOING":
                 return b"\xba"
-            raise EsdSyntaxError(node.lineno, "Only valid name symbols are MACHINE_CALL_STATUS and ONGOING.")
+            raise ESDSyntaxError(node.lineno, "Only valid name symbols are MACHINE_CALL_STATUS and ONGOING.")
 
         if isinstance(node, ast.Subscript):
             if (
@@ -407,12 +415,24 @@ class ESPCompiler:
                 and isinstance(node.slice.value, ast.Num)
             ):
                 return self.compile_number(node.slice.value.n) + b"\xb8"
-            raise EsdSyntaxError(node.lineno, "Only valid subscripted symbol is MACHINE_ARGS[i].")
+            raise ESDSyntaxError(node.lineno, "Only valid subscripted symbol is MACHINE_ARGS[i].")
 
         raise TypeError(
             f"Invalid node type appeared in condition test: {type(node)}.\n"
             f"Conditions must be bools, boolean ops, comparisons, function calls, or a permitted name."
         )
+
+    @property
+    def State(self):
+        return self.esd.State
+
+    @property
+    def Condition(self):
+        return self.esd.State.Condition
+
+    @property
+    def Command(self):
+        return self.esd.State.Command
 
     @staticmethod
     def compile_number(n):
@@ -442,7 +462,7 @@ class ESPCompiler:
             if not isinstance(node.op, (ast.Not, ast.USub)):
                 # TODO: The only other unary operator is UAdd, which is harmless.
                 # TODO: Not true, there's also Invert, which shouldn't be allowed.
-                raise EsdSyntaxError(node.lineno, f"Only unary operators allowed are 'not' and '-', not {type(node)}.")
+                raise ESDSyntaxError(node.lineno, f"Only unary operators allowed are 'not' and '-', not {type(node)}.")
             return self.get_calls(node.operand)
 
         elif isinstance(node, ast.BoolOp):
@@ -456,14 +476,14 @@ class ESPCompiler:
 
         elif isinstance(node, ast.Compare):
             if len(node.comparators) != 1:
-                raise EsdSyntaxError(node.lineno, "Comparison should compare exactly two values.")
+                raise ESDSyntaxError(node.lineno, "Comparison should compare exactly two values.")
             return self.get_calls(node.left) + self.get_calls(node.comparators[0])
 
         elif isinstance(node, ast.Call):
             function_name = node.func.id
             return [(function_name, *self.parse_args(node.args))]
 
-        raise EsdSyntaxError(
+        raise ESDSyntaxError(
             node.lineno,
             f"Invalid node type appeared in condition: {type(node)}\n"
             f"Conditions must be bools, boolean ops, comparisons, or function calls.",
@@ -479,6 +499,10 @@ class ESPCompiler:
 
     @staticmethod
     def is_state_machine_call(node):
+        """For example:
+
+        CALL_STATE_MACHINE[0x79999998](arg1, arg2)
+        """
         return (
             isinstance(node, ast.Expr)
             and isinstance(node.value, ast.Call)
@@ -500,6 +524,6 @@ class ESPCompiler:
                 elif isinstance(e, ast.Str):
                     t.append(e.s)
                 else:
-                    raise EsdValueError(node.lineno, f"Sequences must contain only numeric/string literals.")
+                    raise ESDValueError(node.lineno, f"Sequences must contain only numeric/string literals.")
             return t
-        raise EsdSyntaxError(node.lineno, f"Expected a list or tuple node, but found: {type(node)}")
+        raise ESDSyntaxError(node.lineno, f"Expected a list or tuple node, but found: {type(node)}")

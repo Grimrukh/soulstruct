@@ -35,7 +35,7 @@ from soulstruct.maps.base.events import (
     MSBPseudoMultiplayerEvent as _BaseMSBPseudoMultiplayerEvent,
 )
 from soulstruct.maps.enums import MSBEventSubtype
-from soulstruct.utilities import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .msb_entry import MSBEntryList
 

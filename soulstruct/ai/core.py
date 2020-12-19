@@ -18,8 +18,9 @@ from typing import List
 
 from soulstruct.core import SoulstructError
 from soulstruct.bnd import BND, BNDEntry
-from soulstruct.utilities.core import BinaryStruct, read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo, \
+from soulstruct.utilities.core import read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo, \
     unpack_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 __all__ = [
     "LuaBND",

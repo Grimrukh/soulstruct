@@ -11,7 +11,8 @@ from soulstruct.game_types import *
 from soulstruct.maps import MapError
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
-from soulstruct.utilities import BinaryStruct, unpack_from_buffer
+from soulstruct.utilities import unpack_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
 if tp.TYPE_CHECKING:
@@ -23,8 +24,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
-    PART_HEADER_STRUCT = None  # type: BinaryStruct
-    PART_BASE_DATA_STRUCT = None  # type: BinaryStruct
+    PART_HEADER_STRUCT: BinaryStruct = None
+    PART_BASE_DATA_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""  # type: str
 
     PART_TYPE_DATA_STRUCT = ()

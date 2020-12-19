@@ -3,7 +3,7 @@ __all__ = ["MSBEntryList"]
 import abc
 
 from soulstruct.maps.base.msb_entry import MSBEntryList as _BaseMSBEntryList
-from soulstruct.utilities import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class MSBEntryList(_BaseMSBEntryList, abc.ABC):

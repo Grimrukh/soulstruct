@@ -28,7 +28,8 @@ from soulstruct.maps.base.parts import (
     MSBMapConnection as _BaseMSBMapConnection,
 )
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities import read_chars_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 
@@ -71,8 +72,8 @@ class MSBPart(_BaseMSBPart):
         ("base_unk_x0f_x10", "b"),
     )
 
-    PART_GPARAM_STRUCT = None  # type: BinaryStruct
-    PART_SCENE_GPARAM_STRUCT = None  # type: BinaryStruct
+    PART_GPARAM_STRUCT: BinaryStruct = None
+    PART_SCENE_GPARAM_STRUCT: BinaryStruct = None
 
     NAME_ENCODING = "utf-16-le"
 

@@ -2,15 +2,17 @@ from __future__ import annotations
 
 __all__ = ["ParamDefField", "ParamDef", "ParamDefBND"]
 
+import abc
 import io
 import logging
 import typing as tp
-from pathlib import Path
 
 from soulstruct.bnd import BND, BNDEntry
+from soulstruct.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.games import *
 from soulstruct.params.shared.display_info import get_param_info, get_param_info_field
-from soulstruct.utilities import BinaryStruct, unpack_from_buffer, read_chars_from_buffer, PACKAGE_PATH
+from soulstruct.utilities import read_chars_from_buffer, PACKAGE_PATH
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 if tp.TYPE_CHECKING:
     from soulstruct.params.base.param import ParamRow
@@ -18,8 +20,10 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ParamDefField:
+class ParamDefField(abc.ABC):
     """Information about a single field in a ParamTable."""
+
+    STRUCT: BinaryStruct = None
 
     @staticmethod
     def GET_FIELD_STRUCT(format_version, unicode, byte_order="<"):
@@ -45,7 +49,7 @@ class ParamDefField:
             fields.append("28x")
         return BinaryStruct(*fields, byte_order=byte_order)
 
-    def __init__(self, field_struct: dict, index: int, description: str, param_name: str):
+    def __init__(self, field_struct: dict, index: int, description: str, param_name: str, debug_name: str = None):
         self.field_index = index
         self.name = field_struct["name"]
         self.description = description
@@ -53,7 +57,7 @@ class ParamDefField:
         self.internal_type = field_struct["internal_type"]
         self.param_name = param_name
 
-        self.debug_name = field_struct["debug_name"]
+        self.debug_name = field_struct["debug_name"] if debug_name is None else debug_name
         self.debug_type = field_struct["debug_type"]
         self.debug_format = field_struct["debug_format"]
 
@@ -98,7 +102,15 @@ class ParamDefField:
                 )
             else:
                 field_description = ""
-            fields.append(cls(field_struct, field_index, field_description, param_name))
+            if "debug_name_offset" in field_struct:
+                debug_name = read_chars_from_buffer(
+                    paramdef_buffer,
+                    offset=field_struct["debug_name_offset"],
+                    encoding="utf-16-le",
+                )
+            else:
+                debug_name = field_struct["debug_name"]
+            fields.append(cls(field_struct, field_index, field_description, param_name, debug_name=debug_name))
         return fields
 
     @staticmethod
@@ -121,45 +133,13 @@ class ParamDefField:
             return size * 8
 
 
-class ParamDef:
-    BYTE_ORDER_OFFSET = 44
-    FORMAT_VERSION_OFFSET = 46
-    FIELD_SIZES = {  # maps format version to (asserted) field size
-        101: 140,
-        102: 172,
-        103: 108,  # NOTE: asserted value is incorrect
-        104: 176,
-        201: 208,
-        202: 104,
-    }
+class ParamDef(GameFile, abc.ABC):
 
-    @classmethod
-    def GET_HEADER_STRUCT(cls, format_version, byte_order="<"):
-        fields = [
-            ("size", "i"),
-            ("header_size", "H", 255 if format_version >= 200 else 48),
-            ("data_version", "H"),
-            ("field_count", "H"),
-            ("field_size", "H", cls.FIELD_SIZES[format_version]),
-        ]
-        if format_version >= 202:
-            fields += [
-                "4x",
-                ("param_name_offset", "q"),
-                "20x",
-            ]
-        else:
-            fields.append(("param_name", "32j"))
-        fields += [
-            ("big_endian", "B"),
-            ("unicode", "?"),
-            ("format_version", "h", format_version),
-        ]
-        if format_version >= 200:
-            fields.append(("unk1", "q", 56))
-        return BinaryStruct(*fields, byte_order=byte_order)
+    STRUCT: BinaryStruct = None
+    BYTE_ORDER: str = None
+    FIELD_CLASS: tp.Type[ParamDefField] = None
 
-    def __init__(self, paramdef_source, param_type=None):
+    def __init__(self, paramdef_source, dcx_magic=(), param_type=None):
         """Defines the row fields in a particular type of `Param`.
 
         No pack/write methods; these are essentially hard-coded definitions for each game, and therefore read-only. If
@@ -173,43 +153,39 @@ class ParamDef:
         self.data_version = 0
         self.format_version = 104  # defaults to Dark Souls 1
         self.unicode = False  # `ParamEntry` description encoding
+        super().__init__(paramdef_source, dcx_magic, param_type=param_type)
 
-        if isinstance(paramdef_source, list) and all(isinstance(p, ParamDefField) for p in paramdef_source):
+    def _handle_other_source_types(self, file_source, param_type=None) -> tp.Optional[io.BufferedIOBase]:
+
+        if isinstance(file_source, (tuple, list)) and all(isinstance(p, self.FIELD_CLASS) for p in file_source):
             if param_type is None:
                 raise ValueError("`param_type` must be given to `ParamDef` if a list of `ParamDefField`s is passed.")
             self.param_type = param_type
-            self.fields = paramdef_source
+            self.fields = file_source
+            return
 
-        elif isinstance(paramdef_source, bytes):
-            self.unpack(io.BytesIO(paramdef_source))
+        if isinstance(file_source, BNDEntry):
+            return io.BytesIO(file_source.data)
 
-        elif isinstance(paramdef_source, str):
-            self.paramdef_path = Path(paramdef_source)
-            with self.paramdef_path.open("rb") as file:
-                self.unpack(file)
+        raise InvalidGameFileTypeError("`paramdef_source` is not a list of `ParamDefField`s or a `BNDEntry`.")
 
-        elif isinstance(paramdef_source, BNDEntry):
-            self.unpack(io.BytesIO(paramdef_source.data))
-
-        else:
-            raise TypeError(f"Invalid `paramdef_source` type: {type(paramdef_source)}")
-
-    def unpack(self, paramdef_buffer):
+    def unpack(self, paramdef_buffer, **kwargs):
         """Convert a paramdef file to a dictionary, indexed by ID."""
-        self.byte_order = ">" if unpack_from_buffer(paramdef_buffer, "B", self.BYTE_ORDER_OFFSET)[0] == 255 else "<"
-        self.format_version = unpack_from_buffer(paramdef_buffer, f"{self.byte_order}h", self.FORMAT_VERSION_OFFSET)[0]
-        header = self.GET_HEADER_STRUCT(self.format_version, self.byte_order).unpack(paramdef_buffer)
-        try:
+        header = self.STRUCT.unpack(paramdef_buffer)
+        if "param_name" in header:
             self.param_type = header["param_name"]
-        except KeyError:
+        else:
             self.param_type = read_chars_from_buffer(
-                paramdef_buffer, offset=header["param_name_offset"], encoding="shift_jis_2004",
+                paramdef_buffer, offset=header["param_name_offset"], encoding="shift_jis_2004",  # never unicode
             )
         self.data_version = header["data_version"]
         self.unicode = header["unicode"]
-        self.fields = ParamDefField.unpack_fields(
+        self.fields = self.FIELD_CLASS.unpack_fields(
             self.param_type, paramdef_buffer, header["field_count"], self.format_version, self.unicode, self.byte_order,
         )
+
+    def pack(self):
+        raise AttributeError("Cannot pack `ParamDef`.")
 
     def __getitem__(self, field_name) -> ParamDefField:
         hits = [field for field in self.fields if field.name == field_name]
@@ -237,8 +213,12 @@ class ParamDef:
             return None
 
 
-class ParamDefBND:
-    def __init__(self, paramdef_bnd_source):
+class ParamDefBND(abc.ABC):
+
+    PARAMDEF_CLASS: tp.Type[ParamDef] = None
+    GAME: Game = None
+
+    def __init__(self, paramdef_bnd_source=None):
         """BND container with all the `ParamDef` definitions for a given game.
 
         The latest versions of these files are included with Soulstruct for some games, and can be loaded simply by
@@ -248,14 +228,14 @@ class ParamDefBND:
         If you want to modify a `ParamDefBND`, you are far too powerful a modder for Soulstruct, and I cannot make that
         journey with you at this time.
         """
-
-        if isinstance(paramdef_bnd_source, str):
+        if paramdef_bnd_source is None:
+            paramdef_bnd_source = self.GAME
+        elif isinstance(paramdef_bnd_source, str):
             try:
                 paramdef_bnd_source = get_game(paramdef_bnd_source)
             except ValueError:
                 # Will try to use as a path.
                 pass
-
         if isinstance(paramdef_bnd_source, Game):
             # Load vanilla ParamDefBND bundled with Soulstruct (easiest).
             if not paramdef_bnd_source.bundled_paramdef_path:
@@ -271,10 +251,10 @@ class ParamDefBND:
 
         self._bnd = BND(paramdef_bnd_source)
 
-        self.paramdefs = {}
+        self.paramdefs = {}  # type: dict[str, ParamDef]
         for entry in self.bnd.entries:
             try:
-                paramdef = ParamDef(entry)
+                paramdef = self.PARAMDEF_CLASS(entry)
             except Exception as ex:
                 raise ValueError(f"Could not load ParamDefBND entry {entry.name}. Error: {ex}")
             if paramdef.param_type in self.paramdefs:

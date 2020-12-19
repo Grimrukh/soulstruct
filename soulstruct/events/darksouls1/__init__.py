@@ -1,4 +1,4 @@
-from .core import EMEVD, convert_events, compare_events
+from .core import EMEVD, EMEVDDirectoryPTDE, EMEVDDirectoryDSR, convert_events, compare_events
 import soulstruct.maps.darksouls1.maps as constants
 from soulstruct.maps.darksouls1.maps import *
 from . import instructions
@@ -12,8 +12,10 @@ from . import decompiler
 name = "darksouls1"
 
 __all__ = [
-    # EMEVD class
+    # EMEVD and EMEVDDirectory classes
     "EMEVD",
+    "EMEVDDirectoryPTDE",
+    "EMEVDDirectoryDSR",
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
     "instructions",

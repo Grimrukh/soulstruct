@@ -7,15 +7,15 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
-from soulstruct.esd.dark_souls_talk import TalkESDBND
-from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
-from soulstruct.esd.ds1r import ESD as ESD_DSR
-from soulstruct.esd.errors import EsdError
-from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
+# from soulstruct.esd.base.dark_souls_talk import TalkESDBND  # TODO
+from soulstruct.esd.darksouls1ptde import TalkESD as TalkESDPTDE
+from soulstruct.esd.darksouls1r import TalkESD as TalkESDDSR
+from soulstruct.esd import ESDError
+from soulstruct.project.base.base_editor import BaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TagData, TextEditor
 
 
-__all__ = ["SoulstructTalkEditor"]
+__all__ = ["TalkEditor"]
 _LOGGER = logging.getLogger(__name__)
 _TALK_ESP_MATCH = re.compile(r"^t(\d+)\.esp\.py$")
 
@@ -50,7 +50,7 @@ class TalkEntryRow(EntryRow):
     ENTRY_ID_FG = "#CDF"
 
     # noinspection PyMissingConstructor
-    def __init__(self, editor: SoulstructTalkEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: TalkEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
@@ -123,7 +123,7 @@ class TalkEntryRow(EntryRow):
         return self.row_box, self.id_box, self.id_label
 
 
-class SoulstructTalkEditor(SoulstructBaseEditor):
+class TalkEditor(BaseEditor):
     DATA_NAME = "Talk"
     TAB_NAME = "talk"
     CATEGORY_BOX_WIDTH = 0
@@ -153,10 +153,10 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
         self.esp_file_paths = {}
         self.esp_text = {}  # updated at the same time as files; used to check for unsaved changes
         if game_name == "Dark Souls Prepare to Die Edition":
-            self.esd_class = ESD_PTDE
+            self.esd_class = TalkESDPTDE
             self.game_version = "ptde"
         elif game_name == "Dark Souls Remastered":
-            self.esd_class = ESD_DSR
+            self.esd_class = TalkESDDSR
             self.game_version = "dsr"
         else:
             raise ValueError(f"Invalid DS1 game version name: {game_name}")
@@ -462,7 +462,7 @@ class SoulstructTalkEditor(SoulstructBaseEditor):
             talk_id = self.get_entry_id()
             try:
                 self.esd_class(self.esp_file_paths[self.selected_map_id][talk_id])
-            except EsdError as e:
+            except ESDError as e:
                 _LOGGER.error(
                     f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_id}. "
                     f"Error: {str(e)}."

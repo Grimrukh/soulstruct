@@ -13,7 +13,7 @@ from soulstruct.maps.base.models import MSBModel
 from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox, BitGroupEditBox
 from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import SoulstructBaseFieldEditor, FieldRow
+from soulstruct.project.base.field_editor import BaseFieldEditor, FieldRow
 from soulstruct.utilities.conversion import int_group_to_bit_set
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.memory import MemoryHookError
@@ -368,7 +368,7 @@ class MapFieldRow(FieldRow):
             widget["bg"] = bg_color
 
 
-class SoulstructMapEditor(SoulstructBaseFieldEditor):
+class SoulstructMapEditor(BaseFieldEditor):
     DATA_NAME = "Maps"
     TAB_NAME = "maps"
     CATEGORY_BOX_WIDTH = 165

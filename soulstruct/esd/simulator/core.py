@@ -10,8 +10,9 @@ import logging
 from queue import Queue
 
 import soulstruct.events.darksouls1.enums as enums
-from soulstruct.esd.ds1ptde import ESD as ESD_PTDE
-from soulstruct.esd.ds1r import ESD as ESD_DSR
+from soulstruct.esd import ESDType
+from soulstruct.esd.darksouls1ptde import TalkESD as TalkESDPTDE
+from soulstruct.esd.darksouls1r import TalkESD as TalkESDDSR
 from soulstruct.esd.ezl_parser import decompile
 from soulstruct.esd.functions import COMMANDS
 from soulstruct.text.darksouls1 import MSGDirectory
@@ -280,7 +281,7 @@ class TalkSimulatorWindow(SmartFrame):
         self.current_state.var.set(f"State: {self.sim.current_state}")
         self.current_conditions.delete(0, "end")
         for condition in self.sim.get_state_object().conditions:
-            test_string = decompile(condition.test_ezl, condition.esd_type)
+            test_string = decompile(condition.test_ezl, ESDType.TALK)
             condition_string = f"{self.sim.current_state} -> {condition.next_state_index}: {test_string}"
             self.current_conditions.insert("end", condition_string)
         while not self.sim.unprocessed_commands.empty():
@@ -292,9 +293,9 @@ class TalkSimulator:
     def __init__(self, esd_source, game_version, text_source):
         self.game_version = game_version
         if self.game_version == "ptde":
-            self.esd_class = ESD_PTDE
+            self.esd_class = TalkESDPTDE
         if self.game_version == "dsr":
-            self.esd_class = ESD_DSR
+            self.esd_class = TalkESDDSR
         else:
             raise ValueError(f"`game_version` must be 'ptde' or 'dsr', not '{game_version}'.")
 
@@ -304,10 +305,10 @@ class TalkSimulator:
             _LOGGER.error("Invalid text source for TalkSimulator. Should be 'msg/ENGLISH' directory.")
             raise
 
-        if isinstance(esd_source, (ESD_PTDE, ESD_DSR)):
+        if isinstance(esd_source, (TalkESDPTDE, TalkESDDSR)):
             self.esd = esd_source
         else:
-            self.esd = self.esd_class(esd_source, "talk")
+            self.esd = self.esd_class(esd_source)
         self.sm = 1  # only supported SM at the moment
         self.current_state = None
 
@@ -343,7 +344,7 @@ class TalkSimulator:
         # TODO: call ongoing commands (before or after tests?)
         conditions = self.esd.state_machines[self.sm][self.current_state].conditions
         for condition in conditions:
-            test_string = decompile(condition.test_ezl, condition.esd_type, func_prefix="self.")
+            test_string = decompile(condition.test_ezl, ESDType.TALK, func_prefix="self.")
             try:
                 test_result = eval(test_string, {"self": self})
             except AttributeError as e:
@@ -377,17 +378,17 @@ class TalkSimulator:
 
         for command in commands:
             try:
-                command_name, arg_names, arg_types = COMMANDS[command.esd_type][command.bank][command.index]
+                command_name, arg_names, arg_types = COMMANDS[ESDType.TALK][command.bank][command.index]
             except KeyError:
                 if command.bank == 6:
                     raise ValueError("Child state machines cannot yet be simulated.")
-                command_name = f"Command_{command.esd_type}_{command.bank}_{command.index}"
+                command_name = f"Command_{ESDType.TALK.name}_{command.bank}_{command.index}"
                 arg_names = ()
             if len(arg_names) != len(command.args):
-                arguments = ", ".join([f"{decompile(arg, command.esd_type)}" for arg in command.args])
+                arguments = ", ".join([f"{decompile(arg, ESDType.TALK)}" for arg in command.args])
             else:
                 arguments = ", ".join(
-                    [f"{arg_name}={decompile(arg, command.esd_type)}" for arg_name, arg in zip(arg_names, command.args)]
+                    [f"{arg_name}={decompile(arg, ESDType.TALK)}" for arg_name, arg in zip(arg_names, command.args)]
                 )
             command_string = f"{command_name}({arguments})"
             print("Command String: self." + command_string)

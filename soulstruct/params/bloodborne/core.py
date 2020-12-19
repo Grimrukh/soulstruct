@@ -2,12 +2,14 @@ from __future__ import annotations
 
 __all__ = ["ParamRow", "Param", "GameParamBND"]
 
+from soulstruct.bnd import BND4
 from soulstruct.games import BLOODBORNE
 from soulstruct.game_types import *
 from soulstruct.params.base.param import ParamRow as _BaseParamRow, Param as _BaseParam
 from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParamBND
 
 from . import enums
+from .paramdef import ParamDefBND
 
 
 class ParamRow(_BaseParamRow):
@@ -20,8 +22,9 @@ class Param(_BaseParam):
     ParamRow = ParamRow
 
 
-class GameParamBND(_BaseGameParamBND):
+class GameParamBND(_BaseGameParamBND, BND4):
     Param = Param
+    ParamDefBND = ParamDefBND
 
     PARAM_NICKNAMES = {
         "AtkParam_Npc": "NonPlayerAttacks",

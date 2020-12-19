@@ -17,7 +17,7 @@ python -m soulstruct [source]
 import argparse
 import logging
 
-from soulstruct._config import DEFAULT_PROJECT_PATH
+from soulstruct.config import DEFAULT_PROJECT_PATH
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
 from soulstruct.utilities import word_wrap
 
@@ -170,14 +170,14 @@ def soulstruct_main(ss_args):
 
     # No specific type. Open entire Soulstruct Project.
     if ss_args.console:
-        from soulstruct.project import SoulstructProject
+        from soulstruct.project.darksouls1r import GameDirectoryProject
 
         global Project
-        Project = SoulstructProject(source)
+        Project = GameDirectoryProject(source)
     else:
-        from soulstruct.project import SoulstructProjectWindow
+        from soulstruct.project import ProjectWindow
 
-        window = SoulstructProjectWindow(source)
+        window = ProjectWindow(source)
         window.wait_window()  # MAIN LOOP
     return ss_args.console
 

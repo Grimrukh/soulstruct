@@ -1,15 +1,17 @@
 __all__ = ["DrawParam", "DrawParamBND", "DrawParamDirectory", "DRAW_PARAM_TABLES", "DRAW_PARAM_MAPS"]
 
+import abc
 import logging
 import pickle
 import re
 import typing as tp
 from pathlib import Path
 
-from soulstruct.bnd import BaseBND, BND
-from soulstruct.params.utilities import GET_BUNDLED_PARAMDEFBND
+from soulstruct.bnd import BaseBND, BND3
+from soulstruct.games import DARK_SOULS_DSR
 
 from .core import Param
+from .paramdef import ParamDefBND, GET_BUNDLED
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,6 +54,8 @@ DRAW_PARAM_TABLES = (
 
 class DrawParamBND:
 
+    GAME = DARK_SOULS_DSR
+
     DepthOfField: list[DrawParam]
     # EnvLightTex: list[DrawParam]
     Fog: list[DrawParam]
@@ -69,14 +73,19 @@ class DrawParamBND:
         "LIGHT_BANK": (b"\x80\x1e", b"\xfe\x1e"),
     }
 
-    def __init__(self, draw_param_bnd_source):
+    def __init__(self, draw_param_bnd_source, paramdef_bnd=None):
         """Structure that manages double-slots and table nicknames for one DrawParamBND file (i.e. one map "area")."""
         self.params = {}  # type: dict[str, list[tp.Optional[DrawParam], tp.Optional[DrawParam]]]
         self._bnd_entry_paths = {}  # type: dict[tuple[str, int], str]
-        paramdef_bnd = GET_BUNDLED_PARAMDEFBND("dsr" if bool(draw_param_bnd_source.dcx_magic) else "ptde")
+        if paramdef_bnd is None:
+            paramdef_bnd = GET_BUNDLED()
+        elif not isinstance(paramdef_bnd, ParamDefBND):
+            raise TypeError(
+                f"`paramdef_bnd` must be None or an existing `ParamDefBND`, not {type(paramdef_bnd)}."
+            )
 
         if not isinstance(draw_param_bnd_source, BaseBND):
-            draw_param_bnd_source = BND(draw_param_bnd_source)
+            draw_param_bnd_source = BND3(draw_param_bnd_source)
 
         self._bnd = draw_param_bnd_source
 
@@ -171,7 +180,7 @@ class DrawParamBND:
         self._bnd.write(draw_param_bnd_path)
 
 
-class DrawParamDirectory:
+class DrawParamDirectory(abc.ABC):
 
     _MAP_IDS = (10, 11, 12, 13, 14, 15, 16, 17, 18, 99, "default")
 
@@ -203,7 +212,7 @@ class DrawParamDirectory:
 
     JUNK_ENCODED_BYTES = (b"\x80\x1e", b"\xfe\x1e")  # These appear as `ParamEntry` Shift-JIS names in LIGHT_BANK.
 
-    def __init__(self, draw_param_directory=None):
+    def __init__(self, draw_param_directory=None, paramdef_bnd=None):
         """Unpack DS1 DrawParams into a single modifiable structure.
 
         Opens all DrawParam BNDs simultaneously for editing and repacking. The appropriate bundled ParamDef file will be
@@ -232,16 +241,16 @@ class DrawParamDirectory:
             file_map_name += "_DrawParam.parambnd"
 
             try:
-                draw_param_bnd = BND(self._draw_param_directory / f"{file_map_name}.dcx", optional_dcx=False)
+                draw_param_bnd = BND3(self._draw_param_directory / f"{file_map_name}.dcx")
                 file_map_name += ".dcx"
             except FileNotFoundError:
                 try:
-                    draw_param_bnd = BND(self._draw_param_directory / file_map_name, optional_dcx=False)
+                    draw_param_bnd = BND3(self._draw_param_directory / file_map_name)
                 except FileNotFoundError:
                     raise FileNotFoundError(
                         f"Could not find '{file_map_name}[.dcx]' in directory " f"'{self._draw_param_directory}'."
                     )
-            self._data[map_name] = DrawParamBND(draw_param_bnd)
+            self._data[map_name] = DrawParamBND(draw_param_bnd, paramdef_bnd)
             self._bnd_file_names[map_name] = file_map_name
             setattr(self, map_name, self._data[map_name])
 

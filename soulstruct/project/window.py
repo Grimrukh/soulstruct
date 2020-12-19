@@ -1,19 +1,21 @@
+import abc
 import logging
 import re
 import sys
 import threading
 import time
+import typing as tp
 from pathlib import Path
-from typing import Optional
 
 from soulstruct.bnd import BND
 from soulstruct.maps.darksouls1.maps import get_map
 from soulstruct.utilities import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
-from .core import SoulstructProject
-from .ai import SoulstructAIEditor
-from .entities import SoulstructEntityEditor
+from .base import GameDirectoryProject
+from .core import SoulstructProjectError, RestoreBackupError
+from .ai import AIEditor
+from .entities import EntityEditor
 from .events import SoulstructEventEditor
 from .icon import SOULSTRUCT_ICON
 from .lighting import SoulstructLightingEditor
@@ -21,23 +23,25 @@ from .links import WindowLinker
 from .maps import SoulstructMapEditor
 from .params import SoulstructParamsEditor
 from .runtime import SoulstructRuntimeManager
-from .talk import SoulstructTalkEditor
-from .text import SoulstructTextEditor
-from .utilities import SoulstructProjectError, data_type_caps, RestoreBackupError, DATA_TYPES
+from .talk import TalkEditor
+from .text import TextEditor
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class SoulstructProjectWindow(SmartFrame):
-    maps_tab: Optional[SoulstructMapEditor]
-    entities_tab: Optional[SoulstructEntityEditor]
-    params_tab: Optional[SoulstructParamsEditor]
-    lighting_tab: Optional[SoulstructLightingEditor]
-    text_tab: Optional[SoulstructTextEditor]
-    events_tab: Optional[SoulstructEventEditor]
-    ai_tab: Optional[SoulstructAIEditor]
-    talk_tab: Optional[SoulstructTalkEditor]
-    runtime_tab: Optional[SoulstructRuntimeManager]
+class ProjectWindow(SmartFrame, abc.ABC):
+
+    PROJECT_CLASS: tp.Type[GameDirectoryProject] = None
+
+    maps_tab: tp.Optional[SoulstructMapEditor]
+    entities_tab: tp.Optional[EntityEditor]
+    params_tab: tp.Optional[SoulstructParamsEditor]
+    lighting_tab: tp.Optional[SoulstructLightingEditor]
+    text_tab: tp.Optional[TextEditor]
+    events_tab: tp.Optional[SoulstructEventEditor]
+    ai_tab: tp.Optional[AIEditor]
+    talk_tab: tp.Optional[TalkEditor]
+    runtime_tab: tp.Optional[SoulstructRuntimeManager]
 
     TAB_ORDER = ["maps", "entities", "params", "lighting", "text", "events", "ai", "talk", "runtime"]
 
@@ -72,7 +76,7 @@ class SoulstructProjectWindow(SmartFrame):
         self.toplevel.title("Soulstruct Project Editor: " + str(Path(project_path)))
 
         try:
-            self.project = SoulstructProject(project_path, with_window=self)
+            self.project = GameDirectoryProject(project_path, with_window=self)
             _LOGGER.info(f"Opened project: {project_path}")
         except SoulstructProjectError as e:
             self.deiconify()
@@ -162,7 +166,7 @@ class SoulstructProjectWindow(SmartFrame):
         self.maps_tab = self.SmartFrame(
             frame=tab_frames["maps"],
             smart_frame_class=SoulstructMapEditor,
-            maps=self.project.Maps,
+            maps=self.project.maps,
             global_map_choice_func=self.set_global_map_choice,
             linker=self.linker,
             sticky="nsew",
@@ -171,8 +175,8 @@ class SoulstructProjectWindow(SmartFrame):
 
         self.entities_tab = self.SmartFrame(
             frame=tab_frames["entities"],
-            smart_frame_class=SoulstructEntityEditor,
-            maps=self.project.Maps,
+            smart_frame_class=EntityEditor,
+            maps=self.project.maps,
             evs_directory=self.project.project_root / "events",
             global_map_choice_func=self.set_global_map_choice,
             linker=self.linker,
@@ -183,7 +187,7 @@ class SoulstructProjectWindow(SmartFrame):
         self.params_tab = self.SmartFrame(
             frame=tab_frames["params"],
             smart_frame_class=SoulstructParamsEditor,
-            params=self.project.Params,
+            params=self.project.params,
             linker=self.linker,
             sticky="nsew",
         )
@@ -192,7 +196,7 @@ class SoulstructProjectWindow(SmartFrame):
         self.lighting_tab = self.SmartFrame(
             frame=tab_frames["lighting"],
             smart_frame_class=SoulstructLightingEditor,
-            lighting=self.project.Lighting,
+            lighting=self.project.lighting,
             linker=self.linker,
             sticky="nsew",
         )
@@ -200,8 +204,8 @@ class SoulstructProjectWindow(SmartFrame):
 
         self.text_tab = self.SmartFrame(
             frame=tab_frames["text"],
-            smart_frame_class=SoulstructTextEditor,
-            text=self.project.Text,
+            smart_frame_class=TextEditor,
+            text=self.project.text,
             linker=self.linker,
             sticky="nsew",
         )
@@ -214,18 +218,18 @@ class SoulstructProjectWindow(SmartFrame):
             game_root=self.project.game_root,
             global_map_choice_func=self.set_global_map_choice,
             text_font_size=self.project.text_editor_font_size,
-            dcx=self.project.game_name == "Dark Souls Remastered",
+            dcx=self.project.GAME.uses_dcx,
             sticky="nsew",
         )
         self.events_tab.bind("<Visibility>", self._update_banner)
 
         self.ai_tab = self.SmartFrame(
             frame=tab_frames["ai"],
-            smart_frame_class=SoulstructAIEditor,
-            ai=self.project.AI,
+            smart_frame_class=AIEditor,
+            ai=self.project.ai,
             script_directory=self.project.project_root / "ai_scripts",
             game_root=self.project.game_root,
-            allow_decompile=self.project.game_name == "Dark Souls Remastered",
+            allow_decompile=self.project.GAME.name == "Dark Souls Remastered",
             global_map_choice_func=self.set_global_map_choice,
             text_font_size=self.project.text_editor_font_size,
             linker=self.linker,
@@ -235,10 +239,10 @@ class SoulstructProjectWindow(SmartFrame):
 
         self.talk_tab = self.SmartFrame(
             frame=tab_frames["talk"],
-            smart_frame_class=SoulstructTalkEditor,
+            smart_frame_class=TalkEditor,
             esp_directory=self.project.project_root / "talk",
             game_root=self.project.game_root,
-            game_name=self.project.game_name,
+            game_name=self.project.GAME.name,
             global_map_choice_func=self.set_global_map_choice,
             text_font_size=self.project.text_editor_font_size,
             linker=self.linker,
@@ -265,7 +269,7 @@ class SoulstructProjectWindow(SmartFrame):
         save_menu = self.Menu(tearoff=0)
         save_menu.add_command(label=f"Save Entire Project", foreground="#FFF", command=self._save_data)
         save_menu.add_separator()
-        for data_type in DATA_TYPES:
+        for data_type in self.PROJECT_CLASS.DATA_TYPES:
             save_menu.add_command(
                 label=f"Save {data_type_caps(data_type)}",
                 foreground="#FFF",
@@ -281,7 +285,7 @@ class SoulstructProjectWindow(SmartFrame):
                 command=lambda i=import_dir: self._import_data(import_directory=i),
             )
             import_menu.add_separator()
-            for data_type in DATA_TYPES:
+            for data_type in self.PROJECT_CLASS.DATA_TYPES:
                 import_menu.add_command(
                     label=f"Import {data_type_caps(data_type)}",
                     foreground="#FFF",
@@ -299,7 +303,7 @@ class SoulstructProjectWindow(SmartFrame):
                 command=lambda e=export_dir: self._export_data(export_directory=e),
             )
             export_menu.add_separator()
-            for data_type in DATA_TYPES:
+            for data_type in self.PROJECT_CLASS.DATA_TYPES:
                 export_menu.add_command(
                     label=f"Export {data_type_caps(data_type)}",
                     foreground="#FFF",
@@ -396,7 +400,7 @@ class SoulstructProjectWindow(SmartFrame):
         elif data_type == "talk":
             self.talk_tab.refresh()
         elif data_type == "entities":
-            self.entities_tab.Maps = self.project.Maps
+            self.entities_tab.maps = self.project.maps
             self.entities_tab.refresh_entries()
         elif data_type == "runtime":
             pass
@@ -521,7 +525,7 @@ class SoulstructProjectWindow(SmartFrame):
                 self.mimic_click(self.save_all_button)
             else:
                 self.mimic_click(self.save_tab_button)
-        self.project.save(data_type)  # doesn't save events
+        self.project.write(data_type)  # doesn't save events
         if data_type is None:
             self.events_tab.save_all_evs()  # saves EVS files to project subdirectory
         self.flash_bg(self)
@@ -641,19 +645,19 @@ class SoulstructProjectWindow(SmartFrame):
         if not re.match(r".*\.[a-z]*bnd", target):
             return self.CustomDialog(
                 title="Invalid Directory",
-                message=f"A valid unpacked BND directory (with a 'bnd_manifest.txt' file) must be selected.",
+                message=f"A valid unpacked BND directory (with a 'bnd_manifest.json' file) must be selected.",
             )
         BND(target).write()
 
     def _set_as_default_project(self):
         """Set this project directory as the Soulstruct default in `config.py`."""
-        from soulstruct._config import SET_CONFIG
+        from soulstruct.config import SET_CONFIG
 
         SET_CONFIG(default_project_path=str(self.project.project_root))
 
     @staticmethod
     def _clear_default_project():
-        from soulstruct._config import SET_CONFIG
+        from soulstruct.config import SET_CONFIG
 
         SET_CONFIG(default_project_path="")
 
@@ -754,7 +758,8 @@ class SoulstructProjectWindow(SmartFrame):
                 self.export_tab_button.var.set(f"Export {data_name}")
 
     def _rename_param_entries_from_text(self, param_table=None):
-        self.project.Params.rename_entries_from_text(self.project.Text, param_nickname=param_table)
+        # TODO: Add `rename_entries_from_text` method to supported games (or base class, even).
+        self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_table)
         if self.page_tabs.index(self.page_tabs.select()) == self.TAB_ORDER.index("params"):
             if (
                 not param_table
@@ -762,3 +767,7 @@ class SoulstructProjectWindow(SmartFrame):
                 or param_table == self.params_tab.active_category
             ):
                 self.params_tab.refresh_entries()
+
+
+def data_type_caps(data_type: str):
+    return "AI" if data_type.lower == "ai" else data_type.capitalize()

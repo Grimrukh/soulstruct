@@ -1,4 +1,5 @@
-soulstruct/config.py
+project_config.json
+soulstruct_config.json
 venv*
 
 # Byte-compiled / optimized / DLL resources

@@ -1,16 +1,20 @@
-import re
-
-from soulstruct.utilities import PACKAGE_PATH
+"""Constructs functions dynamically from their stub definition in `functions.pyi`, which should not be edited."""
 
 __all__ = ["COMMANDS", "TEST_FUNCTIONS"]
 
-COMMANDS = {"chr": {}, "talk": {}}
-TEST_FUNCTIONS = {"chr": {}, "talk": {}}
+import re
+
+from soulstruct.esd.core import ESDType
+from soulstruct.utilities import PACKAGE_PATH
+
+
+COMMANDS = {ESDType.CHR: {}, ESDType.TALK: {}}
+TEST_FUNCTIONS = {ESDType.CHR: {}, ESDType.TALK: {}}
 
 # Construct command/function tables.
 
-_COMMAND_RE = re.compile(r"# command (chr|talk)\[(\d*)\]\[(\d*)\]")
-_TEST_RE = re.compile(r"# test (chr|talk)\[(\d*)\]")
+_COMMAND_RE = re.compile(r"# command (chr|talk)\[(\d*)]\[(\d*)]")
+_TEST_RE = re.compile(r"# test (chr|talk)\[(\d*)]")
 _FUNCTION_DEF_RE = re.compile(r"def ([\w\d_]*)\(([\w\d :_,*]*)\)")
 
 
@@ -47,14 +51,14 @@ while i < len(_stub_lines) - 1:
     if command_match is not None:
         esd_type, bank, f_id = command_match.group(1, 2, 3)
         i += 1
-        COMMANDS[esd_type].setdefault(int(bank), {})[int(f_id)] = _parse_function_def(i, _stub_lines[i])
+        COMMANDS[ESDType(esd_type)].setdefault(int(bank), {})[int(f_id)] = _parse_function_def(i, _stub_lines[i])
         i += 1
         continue
     test_match = re.match(_TEST_RE, _stub_lines[i])
     if test_match is not None:
         esd_type, f_id = test_match.group(1, 2)
         i += 1
-        TEST_FUNCTIONS[esd_type][int(f_id)] = _parse_function_def(i, _stub_lines[i])
+        TEST_FUNCTIONS[ESDType(esd_type)][int(f_id)] = _parse_function_def(i, _stub_lines[i])
         i += 1
         continue
     function_def_match = re.match(_FUNCTION_DEF_RE, _stub_lines[i])

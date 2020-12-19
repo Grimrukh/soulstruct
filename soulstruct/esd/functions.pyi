@@ -1,17 +1,20 @@
-from typing import Any, Dict, Tuple, Callable
+import typing as tp
 
-COMMANDS: Dict[str, Dict[int, Dict[int, Tuple]]]
-COMMANDS_BANK_ID_BY_TYPE_NAME: Dict[Tuple[str, str], Tuple[int, int]]
-TEST_FUNCTIONS: Dict[str, Dict[int, Tuple]]
-TEST_FUNCTIONS_ID_BY_TYPE_NAME: Dict[Tuple[str, str], int]
-ATTACK_REQUEST_TYPE: Dict[int, str]
+from soulstruct.esd.core import ESDType
+
+
+COMMANDS: dict[ESDType, dict[int, dict[int, tuple]]]
+COMMANDS_BANK_ID_BY_TYPE_NAME: dict[tuple[ESDType, str], tuple[int, int]]
+TEST_FUNCTIONS: dict[ESDType, dict[int, tuple]]
+TEST_FUNCTIONS_ID_BY_TYPE_NAME: dict[tuple[ESDType, str], int]
+ATTACK_REQUEST_TYPE: dict[int, str]
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~ CONSTANTS ~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-CALL_STATE_MACHINE: Dict[int, Callable]
-MACHINE_ARGS: Dict[int, Any]
+CALL_STATE_MACHINE: dict[int, tp.Callable]
+MACHINE_ARGS: dict[int, tp.Any]
 MACHINE_CALL_STATUS = ...
 ONGOING = ...
 

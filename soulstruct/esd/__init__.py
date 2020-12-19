@@ -1,5 +1,5 @@
 from .core import *
-from .dark_souls_talk import DarkSoulsTalk
+# from .soulstruct.esd.base.dark_souls_talk import DarkSoulsTalk  # TODO
 
 
 class State:

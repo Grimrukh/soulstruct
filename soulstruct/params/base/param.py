@@ -6,11 +6,12 @@ import struct
 import typing as tp
 
 from soulstruct.bnd import BNDEntry
+from soulstruct.games import Game
 from soulstruct.params import field_types
 from soulstruct.params.core import BitField, FieldDisplayInfo, ParamError
-from soulstruct.params.paramdef import ParamDef, ParamDefField
-from soulstruct.params.utilities import GET_BUNDLED_PARAMDEFBND
-from soulstruct.utilities import BinaryStruct, unpack_from_buffer, read_chars_from_buffer
+from soulstruct.params.base.paramdef import ParamDef, ParamDefField, ParamDefBND
+from soulstruct.utilities import unpack_from_buffer, read_chars_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .flags import ParamFlags1, ParamFlags2
 
@@ -208,6 +209,7 @@ class Param:
     """This base class supports all binary versions, but lacks information about enums, etc. that is game-specific."""
 
     ParamRow = ParamRow
+    GET_BUNDLED_PARAMDEF: tp.Callable = None
 
     @staticmethod
     def GET_HEADER_STRUCT(flags1: ParamFlags1, byte_order) -> BinaryStruct:
@@ -266,7 +268,12 @@ class Param:
     def __init__(self, param_source, paramdef_bnd, undecodable_row_names: tuple[bytes, ...] = ()):
         self.param_path = ""
         self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
-        self._paramdef_bnd = GET_BUNDLED_PARAMDEFBND(paramdef_bnd) if isinstance(paramdef_bnd, str) else paramdef_bnd
+        if isinstance(paramdef_bnd, (str, Game)):
+            self._paramdef_bnd = self.GET_BUNDLED_PARAMDEF(paramdef_bnd)
+        elif isinstance(paramdef_bnd, ParamDefBND):
+            self._paramdef_bnd = paramdef_bnd
+        else:
+            raise TypeError(f"`paramdef_bnd` must be a game identifer or existing `ParamDefBND` instance.")
         self.rows = {}
         self.byte_order = "<"
         self.unknown = 0
@@ -398,8 +405,17 @@ class Param:
                         offset=row_struct["name_offset"],
                         encoding=name_encoding,
                         reset_old_offset=False,  # no need to reset
-                        junk_encoded_bytes=self.undecodable_row_names,
                     )
+                except UnicodeDecodeError as ex:
+                    if ex.object in self.undecodable_row_names:
+                        name = read_chars_from_buffer(
+                            param_buffer,
+                            offset=row_struct["name_offset"],
+                            encoding=None,
+                            reset_old_offset=False,  # no need to reset
+                        )
+                    else:
+                        raise
                 except ValueError:
                     param_buffer.seek(row_struct["name_offset"])
                     _LOGGER.error(

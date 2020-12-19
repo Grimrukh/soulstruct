@@ -1,6 +1,7 @@
-__all__ = ["GameFile", "InvalidGameFileTypeError"]
+__all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]
 
 import abc
+import copy
 import io
 import json
 import typing as tp
@@ -16,6 +17,7 @@ class InvalidGameFileTypeError(SoulstructError):
 
 
 class GameFile(abc.ABC):
+    """Python structure for a file in a FromSoftware game installation."""
 
     EXT = ""  # if given, this file extension will be enforced (before DCX is checked) when calling `.write()`
     Typing = tp.Union[str, Path, bytes, io.BufferedIOBase]  # all valid `GameFile` source types
@@ -24,7 +26,7 @@ class GameFile(abc.ABC):
     def __init__(
         self,
         file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase] = None,
-        dcx_magic: tuple[int, int] = None,
+        dcx_magic: tuple[int, int] = (),
         **kwargs,
     ):
         """Base class for a game file, with key methods and automatic DCX detection.
@@ -70,11 +72,18 @@ class GameFile(abc.ABC):
 
         if self._is_dcx(buffer):
             if self.dcx_magic:
+                buffer.close()
                 raise ValueError("Cannot manually set `dcx_magic` before reading a DCX file source.")
-            data, self.dcx_magic = DCX.get_data_and_magic(buffer)
+            try:
+                data, self.dcx_magic = DCX.get_data_and_magic(buffer)
+            finally:
+                buffer.close()
             buffer = io.BytesIO(data)
 
-        self.unpack(buffer, **kwargs)
+        try:
+            self.unpack(buffer, **kwargs)
+        finally:
+            buffer.close()
 
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[io.BufferedIOBase]:
         """Override this to initialize `GameFile` subclass from other types of `file_source`. This function will be
@@ -143,6 +152,9 @@ class GameFile(abc.ABC):
         with file_path.open("w") as j:
             json.dump(json_dict, j, indent=4)
 
+    def copy(self):
+        return copy.deepcopy(self)
+
     def _get_file_path(self, file_path: tp.Union[None, str, Path]) -> Path:
         if file_path is None:
             if self.path is None:
@@ -183,3 +195,7 @@ class GameFile(abc.ABC):
         except (ValueError, TypeError):
             raise ValueError(f"`dcx_magic` should be empty (or None) or a sequence of two integers, not {value}.")
         self._dcx_magic = value
+
+
+class GameFolder(abc.ABC):
+    """Python structure for a folder of files in a FromSoftware installation. Implementation is much more flexible."""

@@ -29,7 +29,8 @@ from soulstruct.maps.base.parts import (
     MSBMapConnection as _BaseMSBMapConnection,
 )
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities import read_chars_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 

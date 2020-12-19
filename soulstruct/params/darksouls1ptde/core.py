@@ -4,13 +4,15 @@ __all__ = ["ParamRow", "Param", "GameParamBND"]
 
 import typing as tp
 
-from soulstruct.games import DARK_SOULS_DSR
+from soulstruct.bnd import BND3
+from soulstruct.games import DARK_SOULS_PTDE
 from soulstruct.game_types import *
 from soulstruct.models.darksouls1 import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
 from soulstruct.params.base.param import ParamRow as _BaseParamRow, Param as _BaseParam
 from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParamBND
 
 from . import enums
+from .paramdef import ParamDefBND
 
 if tp.TYPE_CHECKING:
     from soulstruct.text.darksouls1 import MSGDirectory
@@ -26,8 +28,10 @@ class Param(_BaseParam):
     ParamRow = ParamRow
 
 
-class GameParamBND(_BaseGameParamBND):
+class GameParamBND(_BaseGameParamBND, BND3):
     Param = Param
+    GAME = DARK_SOULS_PTDE
+    ParamDefBND = ParamDefBND
 
     PARAM_NICKNAMES = {
         "AtkParam_Npc": "NonPlayerAttacks",
@@ -102,9 +106,6 @@ class GameParamBND(_BaseGameParamBND):
         "SpecialEffectVisuals": SpecialEffectVisualParam,
         "GrowthCurves": GrowthCurveParam,
     }
-
-    def __init__(self, game_param_bnd_source=None, paramdef_bnd=None):
-        super().__init__(game_param_bnd_source, paramdef_bnd=DARK_SOULS_DSR if paramdef_bnd is None else paramdef_bnd)
 
     def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.

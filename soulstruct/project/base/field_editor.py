@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["SoulstructBaseFieldEditor", "FieldRow"]
+__all__ = ["BaseFieldEditor", "FieldRow"]
 
 import abc
 import logging
@@ -10,7 +10,7 @@ from enum import IntEnum
 
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import GameObject, GameObjectSequence, MapEntry, BaseParam
-from soulstruct.project.base.base_editor import SoulstructBaseEditor
+from soulstruct.project.base.base_editor import BaseEditor
 from soulstruct.project.links import WindowLinker
 from soulstruct.project.utilities import bind_events, NumberEditBox
 from soulstruct.utilities import camel_case_to_spaces
@@ -29,7 +29,7 @@ class FieldRow:
     selected.
     """
 
-    def __init__(self, editor: SoulstructBaseFieldEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: BaseFieldEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
@@ -447,7 +447,7 @@ class FieldRow:
         return False
 
 
-class SoulstructBaseFieldEditor(SoulstructBaseEditor, abc.ABC):
+class BaseFieldEditor(BaseEditor, abc.ABC):
     FIELD_CANVAS_BG = "#1d1d1d"
     FIELD_BOX_WIDTH = 450
     FIELD_BOX_HEIGHT = 400

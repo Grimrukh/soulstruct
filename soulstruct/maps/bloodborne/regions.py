@@ -22,7 +22,7 @@ from soulstruct.maps.base.regions import (
     MSBRegionList as _BaseMSBRegionList,
 )
 from soulstruct.maps.enums import MSBRegionSubtype
-from soulstruct.utilities import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .msb_entry import MSBEntryList
 

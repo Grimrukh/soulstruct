@@ -8,8 +8,7 @@ from soulstruct.events.base.enums import RestartType
 from .instruction import Instruction
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities import BinaryStruct
-
+    from soulstruct.utilities.binary_struct import BinaryStruct
 
 EVS_ARG_TYPES = {
     "i": "int",

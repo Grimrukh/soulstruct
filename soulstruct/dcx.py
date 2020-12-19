@@ -1,9 +1,10 @@
+import io
 import logging
 import zlib
 import typing as tp
 from pathlib import Path
 
-from soulstruct.utilities import BinaryStruct
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ class DCX:
         byte_order=">",
     )
 
-    def __init__(self, dcx_source, magic=()):
+    def __init__(self, dcx_source=None, magic=()):
         """Open a ".dcx" file, which is a compressed version of any FromSoftware file type (e.g. a BND).
 
         Use `.data` to get the `bytes` of the uncompressed file within. The `.magic` attribute specifies information
@@ -44,7 +45,9 @@ class DCX:
         self._magic = ()
         self.magic = magic
 
-        if isinstance(dcx_source, (str, Path)):
+        if dcx_source is None:
+            return
+        elif isinstance(dcx_source, (str, Path)):
             self.dcx_path = Path(dcx_source)
             with self.dcx_path.open("rb") as file:
                 self.unpack(file)
@@ -52,6 +55,10 @@ class DCX:
             if not self.magic:
                 raise ValueError(f"If `dcx_source` is a `bytes` object, DCX `magic` must be given.")
             self.data = dcx_source
+        elif isinstance(dcx_source, io.BufferedIOBase):
+            self.unpack(dcx_source)
+        else:
+            raise TypeError(f"Invalid DCX source type: {type(dcx_source)}")
 
     def unpack(self, dcx_buffer):
         if self.magic:

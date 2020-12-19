@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import logging
 import struct
 import typing as tp
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities import BinaryStruct
+    from soulstruct.utilities.binary_struct import BinaryStruct
 
 from soulstruct.events.internal import get_byte_offset_from_struct, get_instruction_args
 from soulstruct.events.shared.decompiler import decompile_instruction

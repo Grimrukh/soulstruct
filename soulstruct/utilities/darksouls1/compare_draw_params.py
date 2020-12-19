@@ -1,5 +1,5 @@
 """Script that compares an arbitrary number of DrawParam parameters."""
-from soulstruct.params.darksouls1.draw_param import DRAW_PARAM_TABLES, DRAW_PARAM_MAPS
+from soulstruct.params.darksouls1r.draw_param import DRAW_PARAM_TABLES, DRAW_PARAM_MAPS
 
 
 def compare_draw_params(

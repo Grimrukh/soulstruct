@@ -8,7 +8,8 @@ import typing as tp
 from copy import deepcopy
 from io import BytesIO, BufferedReader
 
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities import read_chars_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 if tp.TYPE_CHECKING:

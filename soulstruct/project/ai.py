@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 from soulstruct.ai.core import LuaError
 from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
-from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
+from soulstruct.project.base.base_editor import BaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
@@ -110,7 +110,7 @@ class AIScriptTextEditor(TextEditor):
 class AIEntryRow(EntryRow):
     """Container/manager for widgets of a single entry row in the Editor."""
 
-    master: SoulstructAIEditor
+    master: AIEditor
 
     ENTRY_ANCHOR = "center"
     ENTRY_ROW_HEIGHT = 30
@@ -122,7 +122,7 @@ class AIEntryRow(EntryRow):
     ENTRY_TEXT_WIDTH = 40
     ENTRY_TEXT_FG = "#FFF"
 
-    def __init__(self, editor: SoulstructAIEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: AIEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
@@ -263,7 +263,7 @@ class AIEntryRow(EntryRow):
             self._goal_type = goal_type
 
 
-class SoulstructAIEditor(SoulstructBaseEditor):
+class AIEditor(BaseEditor):
     DATA_NAME = "AI"
     TAB_NAME = "ai"
     CATEGORY_BOX_WIDTH = 0

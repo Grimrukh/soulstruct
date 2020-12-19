@@ -6,7 +6,8 @@ from io import BufferedReader, BytesIO
 
 from soulstruct.maps.enums import MSBRegionSubtype
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer, pad_chars, unpack_from_buffer
+from soulstruct.utilities import read_chars_from_buffer, pad_chars, unpack_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
 _LOGGER = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
-    REGION_STRUCT = None  # type: BinaryStruct
+    REGION_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""  # type: str
     UNKNOWN_DATA_SIZE = -1  # type: int
 

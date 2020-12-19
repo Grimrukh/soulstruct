@@ -10,7 +10,7 @@ from pathlib import Path
 
 from soulstruct.game_types.msb_types import *
 from soulstruct.maps.darksouls1.maps import get_map, ALL_MAPS
-from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
+from soulstruct.project.base.base_editor import BaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events
 from soulstruct.utilities import word_wrap
 
@@ -51,7 +51,7 @@ _RE_ENTITIES_ENUM_MEMBER = re.compile(r"^ +([\w\d_]+) *= *(\d+) *#(.*)$")
 class EntityEntryRow(EntryRow):
     """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
 
-    master: SoulstructEntityEditor
+    master: EntityEditor
 
     ENTRY_ID_WIDTH = 15
     SHOW_ENTRY_ID = True
@@ -60,7 +60,7 @@ class EntityEntryRow(EntryRow):
     ENTRY_DESCRIPTION_WIDTH = 120
 
     # noinspection PyMissingConstructor
-    def __init__(self, editor: SoulstructEntityEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: EntityEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
@@ -194,7 +194,7 @@ class EntityEntryRow(EntryRow):
         )
 
 
-class SoulstructEntityEditor(SoulstructBaseEditor):
+class EntityEditor(BaseEditor):
     DATA_NAME = "Maps"
     TAB_NAME = "entities"
     CATEGORY_BOX_WIDTH = 165
@@ -214,7 +214,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
         master=None,
         toplevel=False,
     ):
-        self.Maps = maps
+        self.maps = maps
         self.map_choice = None
         self.global_map_choice_func = global_map_choice_func
         self.evs_directory = Path(evs_directory)
@@ -685,7 +685,7 @@ class SoulstructEntityEditor(SoulstructBaseEditor):
 
     def get_selected_msb(self) -> MSB:
         map_name = get_map(self.map_choice_id).name
-        return self.Maps[map_name]
+        return self.maps[map_name]
 
     def get_category_data(self, category=None) -> tp.Dict[int, MSBEntryEntity]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).

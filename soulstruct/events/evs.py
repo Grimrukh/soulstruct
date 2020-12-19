@@ -12,7 +12,7 @@ import soulstruct.game_types as gt
 from soulstruct.events.numeric import SET_INSTRUCTION_ARG_TYPES
 from soulstruct.events.internal import *
 
-__all__ = ["EvsParser", "EvsError"]
+__all__ = ["EVSParser", "EvsError"]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -37,7 +37,7 @@ _OR_SLOTS = {
 }
 
 
-class EvsParser:
+class EVSParser:
     def __init__(self, evs_path_or_string, game_module=None, map_name=None, script_path=None):
         """Converts Python-like EVS code to numeric EMEVD (in `.numeric_emevd`), which can be fed to an `EMEVD` class.
 
@@ -1235,7 +1235,7 @@ def _parse_decorator(event_node: ast.FunctionDef):
                 f"Invalid event function decorator: {decorators[0].id}\n"
                 f"Must be one of: {', '.join([d.id for d in decorators])}",
             )
-    return 0
+    return _RESTART_TYPES["NeverRestart"]
 
 
 def _validate_comparison_node(node):

@@ -4,13 +4,14 @@ from io import BufferedReader, BytesIO
 from soulstruct.core import SoulstructError
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntry
 from soulstruct.maps.enums import MSBModelSubtype
-from soulstruct.utilities import BinaryStruct, read_chars_from_buffer
+from soulstruct.utilities import read_chars_from_buffer
+from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class MSBModel(MSBEntry):
     """`ENTRY_SUBTYPE` is spoofed as an instance variable, since all Models have identical binary formats."""
 
-    MODEL_STRUCT = None  # type: BinaryStruct
+    MODEL_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""  # type: str
     NULL = b"\0"  # type: bytes
     EMPTY_SIB_PATH = b"\0"  # type: bytes

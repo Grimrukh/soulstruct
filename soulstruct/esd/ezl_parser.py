@@ -1,13 +1,17 @@
+from __future__ import annotations
+
+__all__ = ["decompile", "FUNCTION_ARG_BYTES_BY_COUNT", "OPERATORS_BY_NODE", "CLEAR_REGISTERS", "SET_INTERNAL_SYMBOLS"]
+
 import ast
 import logging
 import struct
 from binascii import hexlify
 
+from soulstruct.esd import ESDType
 from soulstruct.utilities.core import read_chars_from_buffer
 
-from .functions import TEST_FUNCTIONS
+from soulstruct.esd.functions import TEST_FUNCTIONS
 
-__all__ = ["decompile", "FUNCTION_ARG_BYTES_BY_COUNT", "OPERATORS_BY_NODE", "CLEAR_REGISTERS", "SET_INTERNAL_SYMBOLS"]
 _LOGGER = logging.getLogger(__name__)
 
 _REGISTERS = [""] * 8
@@ -83,7 +87,7 @@ def pop_multiple(sequence: list, count: int):
     return [sequence.pop() for _ in range(count)]
 
 
-def format_function(sequence: list, arg_count_key: bytes, esd_type: str, func_prefix=""):
+def format_function(sequence: list, arg_count_key: bytes, esd_type: ESDType, func_prefix=""):
     arg_count = FUNCTION_ARG_COUNTS_BY_BYTE[arg_count_key]
     if arg_count == 0:
         f_id = sequence.pop()
@@ -109,11 +113,9 @@ def format_binary_operator(sequence: list, operator_key: bytes):
     return f"{left} {operator} {right}"
 
 
-def decompile(byte_sequence, esd_type, func_prefix=""):
-    """ Input should be a sequence of bytes. """
-
-    if esd_type not in {"chr", "talk"}:
-        raise ValueError("esd_type must be 'chr' or 'talk'.")
+def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
+    """Decompile `byte_sequence`."""
+    esd_type = ESDType(esd_type)
 
     # _LOGGER.debug(f"Unparsed: {nice_hex_bytes(byte_sequence)}")
 

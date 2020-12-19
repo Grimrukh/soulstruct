@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import typing as tp
 
-from soulstruct.project.base.base_editor import SoulstructBaseEditor, EntryRow
+from soulstruct.project.base.base_editor import BaseEditor, EntryRow
 
 if tp.TYPE_CHECKING:
     from soulstruct.text.darksouls1 import MSGDirectory
@@ -12,7 +12,7 @@ if tp.TYPE_CHECKING:
 class TextEntryRow(EntryRow):
     _MATCH_ITEM = re.compile(r"^(Weapon|Armor|Ring|Good|Spell)(Names|Summaries|Descriptions)$")
 
-    master: SoulstructTextEditor
+    master: TextEditor
 
     def build_entry_context_menu(self):
         super().build_entry_context_menu()
@@ -63,7 +63,7 @@ class TextEntryRow(EntryRow):
                     )
 
 
-class SoulstructTextEditor(SoulstructBaseEditor):
+class TextEditor(BaseEditor):
     DATA_NAME = "Text"
     TAB_NAME = "text"
     CATEGORY_BOX_WIDTH = 165
