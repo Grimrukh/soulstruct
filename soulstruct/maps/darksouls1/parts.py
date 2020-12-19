@@ -677,7 +677,7 @@ class MSBPlayerStart(_BaseMSBPlayerStart, MSBPart):
     )
 
     def __init__(self, msb_part_source=None, **kwargs):
-        super().__init__(msb_part_source, **kwargs)
+        super().__init__(msb_part_source)
         if msb_part_source is None:
             if "is_shadow_source" not in kwargs:
                 self.is_shadow_source = True
@@ -685,6 +685,7 @@ class MSBPlayerStart(_BaseMSBPlayerStart, MSBPart):
                 self.is_shadow_destination = True
             if "draw_by_reflect_cam" not in kwargs:
                 self.draw_by_reflect_cam = True
+        self.set(**kwargs)
 
 
 class MSBCollision(_BaseMSBCollision, MSBPart):

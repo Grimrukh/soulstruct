@@ -663,7 +663,7 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
         if name in self.get_entry_names("MapConnection"):
             raise ValueError(f"{repr(name)} is already the name of an existing MapConnection.")
-        map_connection = MSBMapConnection(
+        map_connection = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.MapConnection](
             name=name,
             connected_map=connected_map,
             collision_name=collision.name,

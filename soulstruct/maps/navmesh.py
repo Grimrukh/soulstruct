@@ -54,7 +54,8 @@ from io import BufferedReader, BytesIO
 from itertools import product
 from pathlib import Path
 
-from soulstruct.maps.base.msb import MSB
+# TODO: Currently only works for DS1.
+from soulstruct.maps.darksouls1.msb import MSB
 from soulstruct.utilities.core import create_bak
 from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3, Matrix3
@@ -1103,7 +1104,7 @@ class NavmeshGraph(object):
         self.mcg.write_packed(mcg_path)
         # print(f"# MCP and MCG files written for map {self.map_id}.")
         if write_msb:
-            self._msb.write_packed(msb_path)
+            self._msb.write(msb_path)
             # print(f"# MSB file (from NavmeshGraph) written for map {self.map_id}.")
 
 

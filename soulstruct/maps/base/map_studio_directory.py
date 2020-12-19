@@ -95,7 +95,7 @@ class MapStudioDirectory(abc.ABC):
         for msb in self.msbs.values():
             msb_path = msb_directory / msb.msb_path.name
             try:
-                msb.write_packed(msb_path)
+                msb.write(msb_path)
             except Exception as e:
                 _LOGGER.error(e, exc_info=True)
                 raise MapError(f"Error encountered while writing MSB {msb_path.name}:\n\n{e}")

@@ -234,8 +234,8 @@ class MSBWindEvent(MSBEvent):
         ("unk_x04_x08", "f"),
         ("wind_vector_max", "f"),
         ("unk_x0c_x10", "f"),
-        ("_wind_swing_cycles", "ffff"),
-        ("_wind_swing_powers", "ffff"),
+        ("_wind_swing_cycles", "4f"),
+        ("_wind_swing_powers", "4f"),
     )
 
     FIELD_INFO = {

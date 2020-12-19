@@ -498,18 +498,6 @@ class Param:
         header = header_struct.pack(header_fields)
         return header + row_pointer_data + packed_data + packed_names
 
-    def write_packed(self, param_path=None):
-        if param_path is None:
-            if self.param_path:
-                param_path = self.param_path
-            else:
-                raise ValueError("Param path could not be determined automatically (must be specified).")
-        if not param_path.endswith(".param"):
-            param_path += ".param"
-
-        with open(param_path, "wb") as output:
-            output.write(self.pack())
-
     def get_range(self, start, count):
         return [(param_id, self[param_id]) for param_id in sorted(self.rows)[start: start + count]]
 
