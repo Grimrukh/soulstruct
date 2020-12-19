@@ -172,6 +172,8 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             entry_offsets.append(offset)
             packed_entry = self.pack_entry(i, entry)
             packed_entries += packed_entry
+            # print(hex(offset), self.__class__.__name__, type(entry), len(packed_entry), entry.name)  # TODO
+            # print("  ", packed_entry)
             offset += len(packed_entry)
 
         next_entry_list_offset = offset if not is_last_table else 0

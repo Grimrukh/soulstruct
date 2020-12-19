@@ -67,7 +67,7 @@ class MSB(GameFile, abc.ABC):
         self.msb_path = None
         super().__init__(msb_source, dcx_magic=dcx_magic)
 
-    def unpack(self, msb_buffer):
+    def unpack(self, msb_buffer, **kwargs):
         """Unpack an MSB from the given buffer."""
 
         # Read (and ignore) constant header, if applicable.

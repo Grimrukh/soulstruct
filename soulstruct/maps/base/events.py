@@ -230,9 +230,9 @@ class MSBFXEvent(MSBEvent):
 
 class MSBWindEvent(MSBEvent):
     EVENT_TYPE_DATA_STRUCT = (
-        ("wind_vector_min", "f"),
+        ("_wind_vector_min", "3f"),
         ("unk_x04_x08", "f"),
-        ("wind_vector_max", "f"),
+        ("_wind_vector_max", "3f"),
         ("unk_x0c_x10", "f"),
         ("_wind_swing_cycles", "4f"),
         ("_wind_swing_powers", "4f"),
@@ -247,7 +247,7 @@ class MSBWindEvent(MSBEvent):
         **MSBEvent.FIELD_INFO,
         "wind_vector_min": (
             "Wind Vector Min",
-            float,
+            Vector3,
             "Wind vector minimum.",
         ),
         "unk_x04_x08": (
@@ -257,7 +257,7 @@ class MSBWindEvent(MSBEvent):
         ),
         "wind_vector_max": (
             "Wind Vector Max",
-            float,
+            Vector3,
             "Wind vector maximum.",
         ),
         "unk_x0c_x10": (
@@ -286,14 +286,22 @@ class MSBWindEvent(MSBEvent):
     def __init__(self, msb_event_source=None, **kwargs):
         """Data consists of 16 floats, which likely specify the transform parameters (e.g. position, direction) of wind
         effects in the map."""
-        self.wind_vector_min = 0.0
+        self._wind_vector_min = [0.0, 0.0, 0.0]
         self.unk_x04_x08 = 0.0
-        self.wind_vector_max = 0.0
+        self._wind_vector_max = [0.0, 0.0, 0.0]
         self.unk_x0c_x10 = 0.0
         self._wind_swing_cycles = [0.0, 0.0, 0.0, 0.0]
         self._wind_swing_powers = [0.0, 0.0, 0.0, 0.0]
         super().__init__(msb_event_source)
         self.set(**kwargs)
+
+    @property
+    def wind_vector_min(self):
+        return self._wind_vector_min
+
+    @property
+    def wind_vector_max(self):
+        return self._wind_vector_max
 
     @property
     def wind_swing_cycles(self):

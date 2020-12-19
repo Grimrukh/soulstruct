@@ -204,7 +204,7 @@ class MSBRegionSphere(MSBRegion, abc.ABC):
 
 
 class MSBRegionCylinder(MSBRegion, abc.ABC):
-    CYLINDER_STRUCT = (
+    REGION_TYPE_DATA_STRUCT = (
         ("radius", "f"),
         ("height", "f"),
     )
@@ -243,7 +243,7 @@ class MSBRegionCylinder(MSBRegion, abc.ABC):
 class MSBRegionRect(MSBRegion, abc.ABC):
     """Almost never used (no volume)."""
 
-    RECT_STRUCT = (
+    REGION_TYPE_DATA_STRUCT = (
         ("width", "f"),
         ("depth", "f"),
     )
@@ -280,7 +280,7 @@ class MSBRegionRect(MSBRegion, abc.ABC):
 
 
 class MSBRegionBox(MSBRegion, abc.ABC):
-    BOX_STRUCT = (
+    REGION_TYPE_DATA_STRUCT = (
         ("width", "f"),
         ("depth", "f"),
         ("height", "f"),

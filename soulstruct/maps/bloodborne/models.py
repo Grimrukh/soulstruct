@@ -21,7 +21,6 @@ class MSBModel(_BaseMSBModel):
         ("_instance_count", "i"),
         "12x",
     )
-
     NAME_ENCODING = "utf-16-le"
     NULL = b"\0\0"
     # TODO: Empty sib path different? b"\0\0" * 6 maybe?
