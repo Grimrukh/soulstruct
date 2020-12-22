@@ -1,1 +1,1 @@
-from .window import ProjectWindow
+from soulstruct.project.base.window import ProjectWindow

@@ -5,12 +5,13 @@ import typing as tp
 
 from soulstruct.game_types import BaseParam, Flag
 from soulstruct.params.core import DynamicFieldDisplayInfo
-from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import FieldRow, BaseFieldEditor
+from soulstruct.project.base.editors.base_editor import EntryRow
+from soulstruct.project.base.editors.field_editor import FieldRow, BaseFieldEditor
 from soulstruct.project.utilities import NameSelectionBox
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params.darksouls1r.core import GameParamBND, ParamRow
+    from soulstruct.params.base.param import ParamRow
+    from soulstruct.params.base.game_param_bnd import GameParamBND
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,8 +35,7 @@ class ParamFieldRow(FieldRow):
 
 
 class ParamEntryRow(EntryRow):
-
-    master: SoulstructParamsEditor
+    master: ParamsEditor
 
     ENTRY_ID_WIDTH = 10
 
@@ -84,7 +84,7 @@ class ParamEntryRow(EntryRow):
         )
 
 
-class SoulstructParamsEditor(BaseFieldEditor):
+class ParamsEditor(BaseFieldEditor):
     DATA_NAME = "Params"
     TAB_NAME = "params"
     CATEGORY_BOX_WIDTH = 165
@@ -99,14 +99,13 @@ class SoulstructParamsEditor(BaseFieldEditor):
     entry_rows: tp.List[ParamEntryRow]
 
     def __init__(self, params: GameParamBND, linker, master=None, toplevel=False):
-        self.Params = params
+        self.params = params
         self.go_to_param_id_entry = None
         self.search_result = None
         super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
-
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 self.go_to_param_id_entry = self.Entry(
                     label="Go to Param ID:", label_position="left", integers_only=True, width=30, padx=10
@@ -137,14 +136,14 @@ class SoulstructParamsEditor(BaseFieldEditor):
     def find_all_param_references(self, param_id):
         """Iterates over all ParamTables to find references to this param ID, and presents them in a floating list."""
         category = self.active_category
-        param_type = self.Params.PARAM_TYPES[category]
+        param_type = self.params.PARAM_TYPES[category]
         linking_fields = []
         links = {}
 
         # Find all (param_name, field) pairs that could possibly reference this category.
-        for param_name in self.Params.PARAM_TYPES:
-            param_table = self.Params[param_name]
-            for field_info in param_table.param_info["fields"]:
+        for param_name in self.params.PARAM_TYPES:
+            param = self.params.get_param(param_name)
+            for field_info in param.param_info["fields"]:
                 if isinstance(field_info, DynamicFieldDisplayInfo):
                     # Field type will be checked below (per entry).
                     if param_type in field_info.POSSIBLE_TYPES:
@@ -161,43 +160,43 @@ class SoulstructParamsEditor(BaseFieldEditor):
             return
 
         for param_name, field_info in linking_fields:
-            for entry_id, entry in self.Params[param_name].items():
-                entry_field_info = field_info(entry)
-                if entry_field_info.field_type == param_type and entry[entry_field_info.name] == param_id:
-                    link_text = f"{param_name}[{entry_id}] {entry_field_info.nickname}"
-                    links[link_text] = (param_name, entry_id, entry_field_info.name)
+            for row_id, row in self.params.get_param(param_name).items():
+                row_field_info = field_info(row)
+                if row_field_info.field_type == param_type and row[row_field_info.name] == param_id:
+                    link_text = f"{param_name}[{row_id}] {row_field_info.nickname}"
+                    links[link_text] = (param_name, row_id, row_field_info.name)
 
         if not links:
             self.CustomDialog(
                 "No References",
-                "Could not find any references to this entry in Params.\nThere may still be references elsewhere.",
+                "Could not find any references to this row in Params.\nThere may still be references elsewhere.",
             )
             return
 
         name_box = NameSelectionBox(self.master, names=links, list_name=f"Param References to {category}[{param_id}]")
         selected_link = name_box.go()
         if selected_link is not None:
-            param_name, entry_id, field_name = links[selected_link]
+            param_name, row_id, field_name = links[selected_link]
             self.select_category(param_name, auto_scroll=True)
-            self.select_entry_id(entry_id, edit_if_already_selected=False)
+            self.select_entry_id(row_id, edit_if_already_selected=False)
             self.select_field_name(field_name)
 
     def _get_display_categories(self):
-        return self.Params.PARAM_TYPES
+        return self.params.PARAM_TYPES
 
     def get_category_data(self, category=None):
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        return self.Params[category].rows
+        return self.params.get_param(category).rows
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:
             category = self.active_category
             if category is None:
                 return []
-        return self.Params[category].get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
+        return self.params.get_param(category).get_range(start=self.first_display_index, count=self.ENTRY_RANGE_SIZE)
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Get index of entry in category. Ignores current display range."""
@@ -205,29 +204,29 @@ class SoulstructParamsEditor(BaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No param category selected.")
-        if entry_id not in self.Params[category].rows:
+        if entry_id not in self.params.get_param(category).rows:
             raise ValueError(f"Param ID {entry_id} does not appear in category {category}.")
-        return sorted(self.Params[category].rows).index(entry_id)
+        return sorted(self.params.get_param(category).rows).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.Params[category][entry_id].name
+        return self.params.get_param(category)[entry_id].name
 
     def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        self.Params[category][entry_id].name = text
+        self.params.get_param(category)[entry_id].name = text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text)
 
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
-        entry_data = self.Params[category].pop(entry_id)
-        self.Params[category][new_id] = entry_data
+        entry_data = self.params.get_param(category).pop(entry_id)
+        self.params.get_param(category)[new_id] = entry_data
         if category == self.active_category and update_row_index:
             self.entry_rows[update_row_index].update_entry(new_id, entry_data.name)
         return True
@@ -237,7 +236,7 @@ class SoulstructParamsEditor(BaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.Params[category][entry_id]
+        return self.params.get_param(category)[entry_id]
 
     def get_field_display_info(self, field_dict, field_name):
         display_info = field_dict.get_paramdef_field_display_info(field_name)

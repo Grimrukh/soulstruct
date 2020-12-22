@@ -12,7 +12,7 @@ from soulstruct.params.base.param import ParamRow as _BaseParamRow, Param as _Ba
 from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParamBND
 
 from . import enums
-from .paramdef import ParamDefBND
+from .paramdef import ParamDefBND, GET_BUNDLED
 
 if tp.TYPE_CHECKING:
     from soulstruct.text.darksouls1 import MSGDirectory
@@ -26,6 +26,7 @@ class ParamRow(_BaseParamRow):
 
 class Param(_BaseParam):
     ParamRow = ParamRow
+    GET_BUNDLED = staticmethod(GET_BUNDLED)
 
 
 class GameParamBND(_BaseGameParamBND, BND3):

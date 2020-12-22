@@ -6,13 +6,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from soulstruct.ai.core import LuaError
-from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
-from soulstruct.project.base.base_editor import BaseEditor, EntryRow
+from soulstruct.project.base.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
-    from soulstruct.ai import LuaBND, LuaGoal
-    from soulstruct.ai.base import AIDirectory
+    from soulstruct.ai.core import LuaBND, LuaGoal
+    from soulstruct.ai.base.ai_directory import AIDirectory
 
 
 class AIScriptTextEditor(TextEditor):
@@ -288,7 +287,7 @@ class AIEditor(BaseEditor):
         master=None,
         toplevel=False,
     ):
-        self.AI = ai
+        self.ai = ai
         self.script_directory = Path(script_directory)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
@@ -317,7 +316,7 @@ class AIEditor(BaseEditor):
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
-                map_names = [f"{game_map.ai_file_stem} [{game_map.verbose_name}]" for game_map in ALL_MAPS]
+                map_names = [f"{game_map.ai_file_stem} [{game_map.verbose_name}]" for game_map in self.ai.ALL_MAPS]
                 self.map_choice = self.Combobox(
                     values=map_names,
                     label="Map:",
@@ -947,7 +946,7 @@ class AIEditor(BaseEditor):
 
     def on_map_choice(self, event=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
-            game_map = get_map(self.selected_map_id)
+            game_map = self.ai.GET_MAP(self.selected_map_id)
             self.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
             return
         self.selected_map_id = self.map_choice_id
@@ -1002,7 +1001,7 @@ class AIEditor(BaseEditor):
         self.refresh_entries()
 
     def get_selected_bnd(self) -> LuaBND:
-        return self.AI[self.selected_map_id]
+        return self.ai[self.selected_map_id]
 
     def get_category_data(self, category=None) -> Dict[(int, bool), LuaGoal]:
         """Gets dictionary of goals in LuaInfo from LuaBND. Category does nothing."""
@@ -1053,7 +1052,7 @@ class AIEditor(BaseEditor):
         else:
             # Also jump to given entry and record view change.
             # TODO: Need to record CURRENT view, which could be a different tab entirely.
-            current_map = get_map(self.selected_map_id)
+            current_map = self.ai.GET_MAP(self.selected_map_id)
             map_choice_string = f"{current_map.ai_file_stem} [{current_map.verbose_name}]"
             current_category = self.active_category
             current_entry_id = self.get_entry_id(self.active_row_index) if self.active_row_index else None

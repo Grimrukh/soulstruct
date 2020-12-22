@@ -16,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class AIDirectory(_BaseAIDirectory):
     ALL_MAPS = ALL_MAPS
-    GET_MAP = get_map
+    GET_MAP = staticmethod(get_map)
     EVENT_COMMON_NAME = "eventCommon"
 
     Common: LuaBND  # scripts loaded in all maps; also contains internal functions that should not be edited

@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 class MapStudioDirectory(abc.ABC):
 
     MSB_CLASS = None  # type: tp.Type[MSB]
-    MAPS = []  # type: list[Map]
+    ALL_MAPS = []  # type: list[Map]
     GET_MAP = None  # type: tp.Callable
     IS_DCX = False
 
@@ -41,7 +41,7 @@ class MapStudioDirectory(abc.ABC):
             return
 
         if maps is not None:
-            self.MAPS = maps  # instance attribute to override class attribute
+            self.ALL_MAPS = maps  # instance attribute to override class attribute
 
         map_studio_directory = Path(map_studio_directory)
 
@@ -52,14 +52,14 @@ class MapStudioDirectory(abc.ABC):
 
         self._directory = map_studio_directory
 
-        if self.MAPS is not None:
+        if self.ALL_MAPS is not None:
             self._load_given_msbs()
         else:
             self._load_all_msbs()
 
     def _load_given_msbs(self):
         """Load requested maps."""
-        for game_map in self.MAPS:
+        for game_map in self.ALL_MAPS:
             if game_map.msb_file_stem is None:
                 continue
             msb_path = self._directory / (game_map.msb_file_stem + ".msb")

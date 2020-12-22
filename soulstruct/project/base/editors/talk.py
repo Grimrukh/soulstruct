@@ -6,13 +6,12 @@ import re
 import typing as tp
 from pathlib import Path
 
-from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
-# from soulstruct.esd.base.dark_souls_talk import TalkESDBND  # TODO
-from soulstruct.esd.darksouls1ptde import TalkESD as TalkESDPTDE
-from soulstruct.esd.darksouls1r import TalkESD as TalkESDDSR
 from soulstruct.esd import ESDError
-from soulstruct.project.base.base_editor import BaseEditor, EntryRow
+from soulstruct.project.base.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events, TagData, TextEditor
+
+if tp.TYPE_CHECKING:
+    from soulstruct.esd.base.talk_esd_bnd import TalkDirectory
 
 
 __all__ = ["TalkEditor"]
@@ -136,30 +135,21 @@ class TalkEditor(BaseEditor):
 
     def __init__(
         self,
-        esp_directory,
-        game_root,
-        game_name: str,
-        global_map_choice_func,
+        talk_directory: TalkDirectory,
+        esp_directory: tp.Union[str, Path],
+        global_map_choice_func: tp.Callable,
         text_font_size=10,
         linker=None,
         master=None,
         toplevel=False,
     ):
+        self.talk = talk_directory
         self.esp_directory = Path(esp_directory)
-        self.game_root = Path(game_root)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
         self.selected_map_id = ""
         self.esp_file_paths = {}
         self.esp_text = {}  # updated at the same time as files; used to check for unsaved changes
-        if game_name == "Dark Souls Prepare to Die Edition":
-            self.esd_class = TalkESDPTDE
-            self.game_version = "ptde"
-        elif game_name == "Dark Souls Remastered":
-            self.esd_class = TalkESDDSR
-            self.game_version = "dsr"
-        else:
-            raise ValueError(f"Invalid DS1 game version name: {game_name}")
 
         self.map_choice = None
         self.reload_all_button = None
@@ -182,7 +172,7 @@ class TalkEditor(BaseEditor):
         self.esp_text = {}
         for map_directory in self.esp_directory.glob("*"):
             try:
-                game_map = get_map(map_directory.name)
+                game_map = self.talk.GET_MAP(map_directory.name)
             except ValueError:
                 _LOGGER.warning(
                     f"Unexpected folder found in project '/talk' directory and ignored: " f"{map_directory.name}"
@@ -206,7 +196,7 @@ class TalkEditor(BaseEditor):
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 map_display_strings = [
                     f"{game_map.esd_file_stem} [{game_map.verbose_name}]"
-                    for game_map in ALL_MAPS
+                    for game_map in self.talk.ALL_MAPS
                     if game_map.esd_file_stem
                 ]
                 self.map_choice = self.Combobox(
@@ -434,13 +424,12 @@ class TalkEditor(BaseEditor):
             if export_directory is None:
                 return
         export_directory = Path(export_directory)
-        bnd_name = self.selected_map_id
+        bnd_name = f"script/talk/{self.selected_map_id}.talkesdbnd{'.dcx' if self.talk.IS_DCX else ''}"
         try:
-            TalkESDBND.write_from_dict(
+            self.talk.TALKESDBND_CLASS.write_from_dict(
                 talk_dict=self.esp_file_paths[self.selected_map_id],
-                game_version=self.game_version,
-                talkesdbnd_path=export_directory / f"script/talk/{bnd_name}.talkesdbnd",
-            )  # DCX from `game_version`
+                talkesdbnd_path=export_directory / bnd_name,
+            )
         except Exception as e:
             _LOGGER.exception("Error encountered while trying to export ESP scripts.")
             self.CustomDialog(
@@ -461,7 +450,7 @@ class TalkEditor(BaseEditor):
                 self.mimic_click(self.compile_button)
             talk_id = self.get_entry_id()
             try:
-                self.esd_class(self.esp_file_paths[self.selected_map_id][talk_id])
+                self.talk.TALKESDBND_CLASS.TALK_ESD_CLASS(self.esp_file_paths[self.selected_map_id][talk_id])
             except ESDError as e:
                 _LOGGER.error(
                     f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_id}. "
@@ -636,7 +625,7 @@ class TalkEditor(BaseEditor):
     def on_map_choice(self, event=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
             # Keep currently selected map.
-            self.map_choice.var.set(f"{self.selected_map_id} [{get_map(self.selected_map_id).name}]")
+            self.map_choice.var.set(f"{self.selected_map_id} [{self.talk.GET_MAP(self.selected_map_id).name}]")
             return
         self.selected_map_id = self.map_choice_id
         if self.global_map_choice_func and event is not None:

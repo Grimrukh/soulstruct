@@ -2,18 +2,17 @@ from __future__ import annotations
 
 import typing as tp
 
-from soulstruct.params.darksouls1r.draw_param import DRAW_PARAM_MAPS
-from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import BaseFieldEditor
+from soulstruct.project.base.editors.base_editor import EntryRow
+from soulstruct.project.base.editors.field_editor import BaseFieldEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.params.darksouls1r.core import ParamRow
-    from soulstruct.params.darksouls1r.draw_param import DrawParamDirectory, DrawParam
+    from soulstruct.params.base.param import Param, ParamRow
+    from soulstruct.params.base.draw_param import DrawParamDirectory
 
 
 class LightingEntryRow(EntryRow):
 
-    master: SoulstructLightingEditor
+    master: LightingEditor
 
     ENTRY_ID_WIDTH = 10
 
@@ -49,7 +48,7 @@ class LightingEntryRow(EntryRow):
                 text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
 
 
-class SoulstructLightingEditor(BaseFieldEditor):
+class LightingEditor(BaseFieldEditor):
     DATA_NAME = "Lighting"
     TAB_NAME = "lighting"
     CATEGORY_BOX_WIDTH = 165
@@ -63,7 +62,7 @@ class SoulstructLightingEditor(BaseFieldEditor):
     entries: tp.List[LightingEntryRow]
 
     def __init__(self, lighting: DrawParamDirectory, linker, master=None, toplevel=False):
-        self.Lighting = lighting
+        self.lighting = lighting
         self.map_area_choice = None
         self.slot_choice_label = None
         self.slot_choice = None
@@ -74,7 +73,7 @@ class SoulstructLightingEditor(BaseFieldEditor):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):
-                map_display_names = [f"{k} [{v}]" for k, v in DRAW_PARAM_MAPS.items()]
+                map_display_names = [f"{k} [{v}]" for k, v in self.lighting.DRAW_PARAM_MAPS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names,
                     on_select_function=self._on_map_area_choice,
@@ -111,7 +110,7 @@ class SoulstructLightingEditor(BaseFieldEditor):
         self.refresh_entries(reset_field_display=True)
 
     def _set_valid_slot_values(self, map_area):
-        if getattr(self.Lighting, map_area)["AmbientLight"][1] is None:  # random table to check slots
+        if getattr(self.lighting, map_area).AmbientLight[1] is None:  # random table to check slots
             self.slot_choice.config(values=["0"])
             if self.slot_choice.var.get() == "1":
                 self.flash_bg(self.slot_choice_label)
@@ -120,9 +119,9 @@ class SoulstructLightingEditor(BaseFieldEditor):
             self.slot_choice.config(values=["0", "1"])
 
     def go_to_area_and_slot(self, area_name, slot):
-        if area_name not in DRAW_PARAM_MAPS:
+        if area_name not in self.lighting.DRAW_PARAM_MAPS:
             raise KeyError(f"Invalid area name linked: {area_name}")
-        full_area_name = f"{area_name} [{DRAW_PARAM_MAPS[area_name]}]"
+        full_area_name = f"{area_name} [{self.lighting.DRAW_PARAM_MAPS[area_name]}]"
         self.map_area_choice.set(full_area_name)
         self._set_valid_slot_values(area_name)
         self.slot_choice.var.set(str(slot))
@@ -130,7 +129,7 @@ class SoulstructLightingEditor(BaseFieldEditor):
 
     def regenerate_slot_1(self):
         map_area = self.get_map_area_name()
-        map_draw_param = getattr(self.Lighting, map_area)
+        map_draw_param = getattr(self.lighting, map_area)
         if map_draw_param["AmbientLight"][1] is not None:  # picking a random category to check slots
             if (
                 self.CustomDialog(
@@ -152,16 +151,16 @@ class SoulstructLightingEditor(BaseFieldEditor):
         return self.map_area_choice.get().split(" [")[0]
 
     def _get_display_categories(self):
-        return self.Lighting.PARAM_NAMES
+        return self.lighting.PARAM_NAMES
 
-    def get_category_data(self, category=None) -> tp.Union[DrawParam, dict]:
+    def get_category_data(self, category=None) -> tp.Union[Param, dict]:
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
         map_area_choice = self.get_map_area_name()
         slot_choice = int(self.slot_choice.var.get())
-        return self.Lighting[map_area_choice][category][slot_choice]
+        return self.lighting.get_draw_param_bnd(map_area_choice).get_param(category)[slot_choice]
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:

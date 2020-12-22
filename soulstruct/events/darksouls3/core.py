@@ -1,17 +1,18 @@
-__all__ = ["EMEVD", "convert_events", "compare_events"]
+__all__ = ["EMEVD", "EMEVDDirectory", "convert_events", "compare_events"]
 
 import sys
 from pathlib import Path
 
 from soulstruct.events.base import (
     EMEVD as _BaseEMEVD,
+    EMEVDDirectory as _BaseEMEVDDirectory,
     Event as _BaseEvent,
     EventArg as _BaseEventArg,
     Instruction as _BaseInstruction,
     EventLayers as _BaseEventLayers,
 )
 from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
-from soulstruct.maps.darksouls3.maps import ALL_MAPS
+from soulstruct.maps.darksouls3.maps import ALL_MAPS, get_map
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 
@@ -428,6 +429,34 @@ class EMEVD(_BaseEMEVD):
         while len(emevd_binary_after_base_args) % 16 != 0:
             emevd_binary_after_base_args += b"\0"  # pad to multiple of 16
         return emevd_binary_after_base_args
+
+
+class EMEVDDirectory(_BaseEMEVDDirectory):
+    ALL_MAPS = ALL_MAPS
+    GET_MAP = staticmethod(get_map)
+    IS_DCX = True
+    EMEVD_CLASS = EMEVD
+
+    Common: EMEVD
+    HighWallOfLothric: EMEVD
+    LothricCastle: EMEVD
+    UndeadSettlement: EMEVD
+    ArchdragonPeak: EMEVD
+    FarronKeep: EMEVD  # and Road of Sacrifices
+    GrandArchives: EMEVD
+    CathedralOfTheDeep: EMEVD
+    Irithyll: EMEVD
+    CatacombsOfCarthus: EMEVD
+    ProfanedCapital: EMEVD  # and Irithyll Dungeon
+    FirelinkShrine: EMEVD
+    KilnOfTheFirstFlame: EMEVD
+    PaintedWorldOfAriandel: EMEVD
+    DregHeap: EMEVD
+    RingedCity: EMEVD
+    ArenaGrandRoof: EMEVD
+    ArenaKilnOfFlame: EMEVD
+    ArenaDragonRuins: EMEVD
+    ArenaRoundPlaza: EMEVD
 
 
 def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):

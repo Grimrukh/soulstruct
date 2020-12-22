@@ -18,7 +18,7 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     """
 
     MSB_CLASS = MSB
-    MAPS = ALL_MAPS
+    ALL_MAPS = ALL_MAPS
     GET_MAP = staticmethod(get_map)
 
     Depths: MSB

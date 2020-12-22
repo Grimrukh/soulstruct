@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["AIDirectory"]
 
 import logging
@@ -7,12 +9,15 @@ from pathlib import Path
 from soulstruct.bnd import BND
 from soulstruct.ai.core import LuaBND
 
+if tp.TYPE_CHECKING:
+    from soulstruct.game_types import Map
+
 _LOGGER = logging.getLogger(__name__)
 
 
 class AIDirectory:
 
-    MAPS = ()
+    ALL_MAPS: tuple[Map] = ()
     GET_MAP = None  # type: tp.Callable
     EVENT_COMMON_NAME = ""
 
@@ -56,7 +61,7 @@ class AIDirectory:
         if not self._directory.is_dir():
             raise ValueError("`AIDirectory` should be initialized with the directory containing `LuaBND` files.")
 
-        for game_map in self.MAPS:
+        for game_map in self.ALL_MAPS:
             if not game_map.ai_file_stem:
                 continue  # no AI script for this map
             luabnd_path = self._directory / (game_map.ai_file_stem + f".luabnd.dcx")

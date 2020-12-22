@@ -10,7 +10,7 @@ from enum import IntEnum
 
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import GameObject, GameObjectSequence, MapEntry, BaseParam
-from soulstruct.project.base.base_editor import BaseEditor
+from soulstruct.project.base.editors.base_editor import BaseEditor
 from soulstruct.project.links import WindowLinker
 from soulstruct.project.utilities import bind_events, NumberEditBox
 from soulstruct.utilities import camel_case_to_spaces

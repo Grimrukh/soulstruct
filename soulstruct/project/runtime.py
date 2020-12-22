@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import subprocess
 import sys
 import threading
@@ -15,12 +17,15 @@ try:
 except ImportError:
     psutil = None
 
+if tp.TYPE_CHECKING:
+    from soulstruct.project.base import GameDirectoryProject
 
-class SoulstructRuntimeManager(SmartFrame):
+
+class RuntimeManager(SmartFrame):
     DATA_NAME = None
     _THREADED_HOOK = False
 
-    def __init__(self, project, master=None, toplevel=False):
+    def __init__(self, project: GameDirectoryProject, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Runtime Manager")
         self.project = project
         self.game_save_entry = None
@@ -66,12 +71,12 @@ class SoulstructRuntimeManager(SmartFrame):
                     )
                     debug_launch = self.Button(
                         text="Launch Game (Debug)",
-                        command=self._error_as_dialog(lambda: self.project.launch_game(debug=True)),
+                        command=self._error_as_dialog(self.project.launch_game),
                         bg="#222",
                         tooltip_text="Launch 'DARKSOULS_DEBUG.exe' if it exists next to the game executable.",
                         **button_kwargs,
                     )
-                    if self.project.game_name != "Dark Souls Prepare to Die Edition":
+                    if self.project.GAME.name != "Dark Souls Prepare to Die Edition":
                         debug_launch["state"] = "disabled"
                         debug_launch.var.set("No Debug for DSR")
                         gadget_tooltip = "Launch 'DSR-Gadget.exe' if it exists next to your game executable."
@@ -94,11 +99,7 @@ class SoulstructRuntimeManager(SmartFrame):
                     self.Button(
                         text="Close Game",
                         bg="#422",
-                        command=self._error_as_dialog(
-                            lambda: self.project.force_quit_game(
-                                including_debug=self.project.game_name == "Dark Souls Prepare to Die Edition"
-                            )
-                        ),
+                        command=self._error_as_dialog(self.project.force_quit_game),
                         tooltip_text="Force quit Dark Souls if it's running.",
                         **button_kwargs,
                     )
@@ -191,11 +192,11 @@ class SoulstructRuntimeManager(SmartFrame):
     def hook_into_game(self):
         """Returns True if hook was successful, and False if not."""
         # TODO: Doesn't work for PTDE yet.
-        if self.project.game_name != "Dark Souls Remastered":
+        if self.project.GAME.name != "Dark Souls Remastered":
             self.CustomDialog("Remastered Only", "Can currently only hook into Dark Souls Remastered.")
             return False
         for p in psutil.process_iter():
-            if p.name() == self.project.game_exe_path.name:
+            if p.name() == self.project.GAME.executable_name:
                 pid = p.pid
                 break
         else:

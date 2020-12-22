@@ -10,6 +10,7 @@ from soulstruct.params.base.paramdef import ParamDefBND
 from soulstruct.bnd import BaseBND
 
 if tp.TYPE_CHECKING:
+    from soulstruct.game_types import BaseGameParam
     from soulstruct.games import Game
     from .param import Param
 
@@ -23,7 +24,8 @@ class GameParamBND(BaseBND, abc.ABC):
     GAME: Game = None
     ParamDefBND: tp.Type[ParamDefBND] = None
 
-    PARAM_NICKNAMES = {}  # type: dict[str, str]
+    PARAM_NICKNAMES: dict[str, str] = {}
+    PARAM_TYPES: dict[str, BaseGameParam] = {}
 
     def __init__(self, game_param_bnd_source=None, dcx_magic=(), paramdef_bnd=None):
         """Unpack a `GameParam.gameparambnd[.dcx]` file binder into a single modifiable structure.
@@ -79,6 +81,11 @@ class GameParamBND(BaseBND, abc.ABC):
                 game_param_pickle_path = game_param_pickle_path.with_suffix(f"{game_param_pickle_path.suffix}.pickle")
         with Path(game_param_pickle_path).open("wb") as f:
             pickle.dump(self, f)
+
+    def get_param(self, param_nickname) -> Param:
+        if param_nickname not in self.PARAM_TYPES:
+            raise ValueError(f"Invalid param nickname: {param_nickname}")
+        return getattr(self, param_nickname)
 
     # TODO: Inherit from some abstract `ProjectData` class that provides this interface.
     def get_range(self, param_nickname, start, count):

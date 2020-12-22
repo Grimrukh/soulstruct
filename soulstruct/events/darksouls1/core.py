@@ -12,7 +12,7 @@ from soulstruct.events.base import (
     EventLayers as _BaseEventLayers,
 )
 from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
-from soulstruct.maps.darksouls1.maps import ALL_MAPS
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 
@@ -355,6 +355,7 @@ class EMEVDDirectoryPTDE(_BaseEMEVDDirectory):
 
 class EMEVDDirectoryDSR(_BaseEMEVDDirectory):
     ALL_MAPS = ALL_MAPS
+    GET_MAP = staticmethod(get_map)
     IS_DCX = True
     EMEVD_CLASS = EMEVD
 

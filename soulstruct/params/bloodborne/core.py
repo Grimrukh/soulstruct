@@ -62,6 +62,41 @@ class GameParamBND(_BaseGameParamBND, BND4):
         "WindParam": "Wind",
     }
 
+    # Maps attribute names to game types. Also defines display order.
+    PARAM_TYPES = {
+        "Players": PlayerParam,
+        "Characters": CharacterParam,
+        "PlayerBehaviors": BehaviorParam,
+        "PlayerAttacks": AttackParam,
+        "NonPlayerBehaviors": BehaviorParam,
+        "NonPlayerAttacks": AttackParam,
+        "AI": AIParam,
+        "Bullets": BulletParam,
+        "Throws": ThrowParam,
+        "SpecialEffects": SpecialEffectParam,
+        "Weapons": WeaponParam,
+        "Armor": ArmorParam,
+        "Rings": RingParam,
+        "Goods": GoodParam,
+        "WeaponUpgrades": WeaponUpgradeParam,
+        "ArmorUpgrades": ArmorUpgradeParam,
+        "UpgradeMaterials": UpgradeMaterialParam,
+        "ItemLots": ItemLotParam,
+        "Bosses": BossParam,
+        "Shops": ShopParam,
+        "Spells": SpellParam,
+        "Objects": ObjectParam,
+        "ObjectActivations": ObjActParam,
+        "Movement": MovementParam,
+        "Cameras": CameraParam,
+        "Terrains": TerrainParam,
+        "Faces": FaceParam,
+        "Dialogue": DialogueParam,
+        "MenuColors": MenuColorsParam,
+        "SpecialEffectVisuals": SpecialEffectVisualParam,
+        "GrowthCurves": GrowthCurveParam,
+    }
+
     # TODO: Some of these may be Dark Souls junk (like Rings).
     ActionButtons: Param
     AI: Param
@@ -106,7 +141,7 @@ class GameParamBND(_BaseGameParamBND, BND4):
     PlayerBehaviors: Param
     ResidentFX: Param  # TODO: possibly `PlayerFX`
     ReturnPoints: Param  # TODO: ?
-    # Rings: ParamTable
+    # Rings: Param
     RitualChalices: Param
     RitualMaterials: Param
     Shops: Param
@@ -120,41 +155,6 @@ class GameParamBND(_BaseGameParamBND, BND4):
     WeaponGenerators: Param
     WeaponUpgrades: Param
     Wind: Param
-
-    # Maps attribute names to game types. Also defines display order.
-    PARAM_TYPES = {
-        "Players": PlayerParam,
-        "Characters": CharacterParam,
-        "PlayerBehaviors": BehaviorParam,
-        "PlayerAttacks": AttackParam,
-        "NonPlayerBehaviors": BehaviorParam,
-        "NonPlayerAttacks": AttackParam,
-        "AI": AIParam,
-        "Bullets": BulletParam,
-        "Throws": ThrowParam,
-        "SpecialEffects": SpecialEffectParam,
-        "Weapons": WeaponParam,
-        "Armor": ArmorParam,
-        "Rings": RingParam,
-        "Goods": GoodParam,
-        "WeaponUpgrades": WeaponUpgradeParam,
-        "ArmorUpgrades": ArmorUpgradeParam,
-        "UpgradeMaterials": UpgradeMaterialParam,
-        "ItemLots": ItemLotParam,
-        "Bosses": BossParam,
-        "Shops": ShopParam,
-        "Spells": SpellParam,
-        "Objects": ObjectParam,
-        "ObjectActivations": ObjActParam,
-        "Movement": MovementParam,
-        "Cameras": CameraParam,
-        "Terrains": TerrainParam,
-        "Faces": FaceParam,
-        "Dialogue": DialogueParam,
-        "MenuColors": MenuColorsParam,
-        "SpecialEffectVisuals": SpecialEffectVisualParam,
-        "GrowthCurves": GrowthCurveParam,
-    }
 
     def __init__(self, game_param_bnd_source=None, paramdef_bnd=None):
         super().__init__(game_param_bnd_source, paramdef_bnd=BLOODBORNE if paramdef_bnd is None else paramdef_bnd)

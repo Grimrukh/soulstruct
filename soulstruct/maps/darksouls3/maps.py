@@ -22,6 +22,7 @@ __all__ = [
     "ARENA_ROUND_PLAZA",
     "ALL_MAPS",
     "ALL_MSB_FILE_NAMES",
+    "get_map",
 ]
 
 from soulstruct.maps.utilities import get_map as _get_map_base

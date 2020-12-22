@@ -24,12 +24,13 @@ from soulstruct.utilities.window import CustomDialog
 
 if tp.TYPE_CHECKING:
     from soulstruct.ai.base.ai_directory import AIDirectory
-    from soulstruct.esd.base.talk_esd_bnd import TalkESDBND
+    from soulstruct.events.base import EMEVDDirectory
+    from soulstruct.esd.base.talk_esd_bnd import TalkDirectory
     from soulstruct.game_types import Map
     from soulstruct.maps.base.map_studio_directory import MapStudioDirectory
     from soulstruct.params.base.game_param_bnd import GameParamBND
     from soulstruct.params.darksouls1r.draw_param import DrawParamDirectory
-    from soulstruct.project.window import ProjectWindow
+    from soulstruct.project.base.window import ProjectWindow
     from soulstruct.text.base.msg_directory import MSGDirectory
 
 try:
@@ -81,9 +82,6 @@ class GameDirectoryProject(abc.ABC):
 
     GAME: Game = None
     DATA_TYPES = {}  # type: dict[str, type]
-    CONVERT_EVENTS: tp.Callable = None
-    TALKESD_BND: tp.Type[TalkESDBND] = None
-    IGNORE_TALK_FILES: tuple[str] = ()
     ALL_MAPS: list[Map] = None
     GET_MAP: tp.Callable = None
 
@@ -98,10 +96,11 @@ class GameDirectoryProject(abc.ABC):
         # Initialize with empty structures.
         self.ai_directory = self.DATA_TYPES["ai"]()  # type: AIDirectory
         self.draw_param_directory = self.DATA_TYPES["lighting"]()  # type: DrawParamDirectory
-        self.map_studio_directory = self.DATA_TYPES["maps"]()  # type: MapStudioDirectory
+        self.emevd_directory = self.DATA_TYPES["events"]()  # type: EMEVDDirectory
         self.game_param_bnd = self.DATA_TYPES["params"]()  # type: GameParamBND
+        self.map_studio_directory = self.DATA_TYPES["maps"]()  # type: MapStudioDirectory
         self.msg_directory = self.DATA_TYPES["text"]()  # type: MSGDirectory
-        # No structures for Events or Talk (scripts stored as plain-text EVS and ESP files).
+        self.talk_directory = self.DATA_TYPES["talk"]()  # type: TalkDirectory
 
         self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
         self.load_config(with_window=with_window)
@@ -114,6 +113,14 @@ class GameDirectoryProject(abc.ABC):
     @ai.setter
     def ai(self, value: AIDirectory):
         self.ai_directory = value
+
+    @property
+    def events(self) -> EMEVDDirectory:
+        return self.emevd_directory
+
+    @events.setter
+    def events(self, value: EMEVDDirectory):
+        self.emevd_directory = value
 
     @property
     def lighting(self) -> DrawParamDirectory:
@@ -140,6 +147,14 @@ class GameDirectoryProject(abc.ABC):
         self.game_param_bnd = value
 
     @property
+    def talk(self):
+        return self.talk_directory
+
+    @talk.setter
+    def talk(self, value: TalkDirectory):
+        self.talk_directory = value
+
+    @property
     def text(self) -> MSGDirectory:
         return self.msg_directory
 
@@ -153,7 +168,7 @@ class GameDirectoryProject(abc.ABC):
         yes_to_all = force_import_from_game
         for data_type in self.DATA_TYPES:
             if data_type in ("events", "talk"):
-                continue  # Events and Talk are not saved and loaded, just imported and exported.
+                continue  # Events and Talk are not saved and loaded as pickles, just imported and exported.
             try:
                 if force_import_from_game:
                     raise FileNotFoundError  # don't bother looking for existing file
@@ -161,7 +176,7 @@ class GameDirectoryProject(abc.ABC):
             except FileNotFoundError:
                 if yes_to_all:
                     self.import_data_from_game(data_type)
-                    self.write(data_type)
+                    self.save(data_type)
                 else:
                     if with_window:
                         result = with_window.CustomDialog(
@@ -174,18 +189,15 @@ class GameDirectoryProject(abc.ABC):
                             default_output=2,
                         )
                     else:
-                        result = (
-                            2
-                            if input(
+                        result = 2 if (
+                            input(
                                 f"Could not find saved '{data_type}' data in project.\n"
-                                f"Would you like to import it from the game directory now? [y]/n"
-                            ).lower()
-                            == "n"
-                            else 0
-                        )
+                                f"Would you like to import it from the game directory now? [y]/n "
+                            ).lower() == "n"
+                        ) else 0
                     if result in {0, 1}:
                         self.import_data_from_game(data_type)
-                        self.write(data_type)
+                        self.save(data_type)
                         if result == 1:
                             yes_to_all = True
                     else:
@@ -206,15 +218,12 @@ class GameDirectoryProject(abc.ABC):
                         default_output=1,
                     )
                 else:
-                    result = (
-                        1
-                        if input(
+                    result = 1 if (
+                        input(
                             f"Could not find any event scripts in project.\n"
-                            f"Would you like to import them from the game directory now? [y]/n"
-                        ).lower()
-                        == "n"
-                        else 0
-                    )
+                            f"Would you like to import them from the game directory now? [y]/n "
+                        ).lower() == "n"
+                    ) else 0
                 if result == 0:
                     self.import_data_from_game("events")
 
@@ -233,37 +242,34 @@ class GameDirectoryProject(abc.ABC):
                         default_output=1,
                     )
                 else:
-                    result = (
-                        1
-                        if input(
+                    result = 1 if (
+                        input(
                             f"Could not find any talk scripts in project.\n"
-                            f"Would you like to import them from the game directory now? [y]/n"
-                        ).lower()
-                        == "n"
-                        else 0
-                    )
+                            f"Would you like to import them from the game directory now? [y]/n "
+                        ).lower() == "n"
+                    ) else 0
                 if result == 0:
                     self.import_data_from_game("talk")
 
     @_data_type_action
-    def write(self, data_type=None):
-        """Save given data type ('maps', 'text', etc.) as pickled project file."""
-        if data_type in {"events", "talk"}:
-            # TODO: Save all scripts to text files.
-            pass
-        else:
-            self._write_project_data(getattr(self, data_type), data_type + ".d1s")
+    def save(self, data_type=None):
+        """Save given data type ('maps', 'text', etc.) as pickled project file.
+
+        Events and Talk scripts have no additional data to save beyond the project's text script files.
+        """
+        if data_type not in {"events", "talk"}:
+            self._save_project_data(getattr(self, data_type), data_type + ".d1s")
 
     @_data_type_action
     def load(self, data_type=None):
-        """Load give data type ('maps', 'text', etc.) from pickled project file."""
-        if data_type in {"events", "talk"}:
-            # TODO: Load all scripts from text files.
-            pass
-        else:
+        """Load give data type ('maps', 'text', etc.) from pickled project file.
+
+        Events and Talk scripts have no additional data to load beyond the project's text script files.
+        """
+        if data_type not in {"events", "talk"}:
             setattr(self, data_type, self._load_project_data(data_type + ".d1s"))
 
-    def _write_project_data(self, obj, pickled_path):
+    def _save_project_data(self, obj, pickled_path):
         with (self.project_root / pickled_path).open("wb") as f:
             pickle.dump(obj, f)
 
@@ -290,48 +296,29 @@ class GameDirectoryProject(abc.ABC):
         """
         import_directory = Path(import_directory)
         data_import_path = self._game_path(data_type, root=import_directory)
-        if data_type == "events":
-            self._import_events(data_import_path)
-        elif data_type == "talk":
-            self._import_talk(data_import_path)
-        else:
-            data_instance = self.DATA_TYPES[data_type](data_import_path)
-            print(self, data_type, data_instance)
-            setattr(self, data_type, data_instance)
+        data_instance = self.DATA_TYPES[data_type](data_import_path)
+        setattr(self, data_type, data_instance)
+        if data_type == "events":  # data in `EMEVDDirectory` is only read upon import and modified upon export
+            self.events.write_evs(self.project_root / "events")
+        if data_type == "talk":  # data in `TalkDirectory` is only read upon import and modified upon export
+            self.talk.write_esp(self.project_root / "talk")
 
     def import_data_from_game(self, data_type=None):
         """Reads data substructures in game formats from the live game directory."""
         self.import_data(data_type=data_type, import_directory=self.game_root)
-
-    def _import_events(self, import_directory):
-        """Converts binary EMEVD to EVS.PY in '[project]/events'."""
-        self.CONVERT_EVENTS(
-            output_type="evs.py",
-            output_directory=self.project_root / "events",
-            input_type=self.GAME.dcxify("emevd"),
-            input_directory=import_directory,
-        )
-
-    def _import_talk(self, import_directory):
-        """Write all Talk ESD files in given directory into project as ESP files sorted by map folders."""
-        for talkesdbnd in import_directory.glob(f"*.talkesdbnd" + (".dcx" if self.GAME.uses_dcx else "")):
-            map_id = talkesdbnd.name.split(".talkesdbnd")[0]
-            if map_id not in self.IGNORE_TALK_FILES:
-                self.TALKESD_BND(talkesdbnd).write_all_esp(self.project_root / f"talk/{map_id}")
 
     @_data_type_action
     def export_data(self, data_type=None, export_directory=None):
         export_directory = Path(export_directory)
         data_export_path = self._game_path(data_type, root=export_directory)
         data_export_path.mkdir(parents=True, exist_ok=True)
-        if data_type == "events":
-            # Never called from window ("Export Events" exports selected script only).
-            self._export_events(data_export_path)
-        elif data_type == "talk":
-            # Never called from window ("Export Talk" exports all talk in selected map only).
-            self._export_talk(data_export_path)
-        else:
-            getattr(self, data_type).save(data_export_path)
+        # TODO: Differentiate between exporting single EMEVD/Talk or entire directory.
+        #  - Annoying to export every script individually.
+        #  - Also annoying to update the 'last modified' time of every file when only one is updated.
+        data = getattr(self, data_type)
+        if data_type in {"events", "talk"}:
+            data.load(self.project_root / data_type)  # load text files into managed `Directory` structure for export
+        data.write(data_export_path)
 
     def export_data_to_game(self, data_type=None):
         """Writes data substructures in game formats in the live game directory, ready for play."""
@@ -340,26 +327,6 @@ class GameDirectoryProject(abc.ABC):
     def export_timestamped_backup(self, data_type=None):
         timestamped = self.project_root / "export" / self._get_timestamp(for_path=True)
         self.export_data(data_type=data_type, export_directory=timestamped)
-
-    def _export_events(self, export_directory):
-        """Converts EVS.PY in '[project]/events' to binary EMEVD."""
-        # TODO: File menu export option may only export current EMEVD? Should export all by calling this.
-        self.CONVERT_EVENTS(
-            output_type=self.GAME.dcxify("emevd"),
-            output_directory=export_directory,
-            input_type="evs.py",
-            input_directory=self.project_root / "events",
-        )
-        _LOGGER.info("Event files (EMEVD) written successfully.")
-
-    def _export_talk(self, export_directory):
-        """Exports all TalkESDBND files to game from individual map folders in '[project]/talk'."""
-        for map_directory in (self.project_root / "talk").glob("*"):
-            if map_directory.name not in [g.name for g in self.ALL_MAPS]:
-                continue  # unexpected folder
-            bnd_file_name = self.GAME.dcxify(self.GET_MAP(map_directory.name).esd_file_stem + ".talkesdbnd")
-            talk = self.TALKESD_BND(map_directory)
-            talk.write(export_directory / bnd_file_name)
 
     def restore_backup(self, target=None, delete_baks=False):
         """Restores '.bak' files, deleting whatever they would replace."""
@@ -579,7 +546,7 @@ class GameDirectoryProject(abc.ABC):
             else:
                 result = input(
                     "Import game files now? This will override any project files\n"
-                    "that are already in this folder. [y]/n"
+                    "that are already in this folder. [y]/n "
                 )
                 if result.lower == "n":
                     result = 1

@@ -14,7 +14,7 @@ from soulstruct.project.utilities import ItemTextEditBox
 
 if tp.TYPE_CHECKING:
     from soulstruct.project import ProjectWindow
-    from soulstruct.project.base.field_editor import BaseFieldEditor
+    from soulstruct.project.base.editors.field_editor import BaseFieldEditor
     from soulstruct.maps.darksouls1 import MSB
 
 
@@ -30,7 +30,7 @@ class WindowLinker:
         self.project = window.project
 
     def get_tab_index(self, tab_name):
-        return self.window.TAB_ORDER.index(tab_name.lower())
+        return list(self.window.TAB_EDITORS).index(tab_name.lower())
 
     def jump(self, tab_name, category, entry_id, field_name=None, choice_func=None):
         data_tab = getattr(self.window, f"{tab_name}_tab")  # type: BaseFieldEditor
@@ -118,7 +118,7 @@ class WindowLinker:
 
         if issubclass(field_type, Text):
             text_category_name = field_type.get_text_category()
-            text_table = self.project.Text[text_category_name]
+            text_table = self.project.text[text_category_name]
             if field_value not in text_table:
                 return [BaseLink()]
             text = text_table[field_value]
@@ -139,8 +139,8 @@ class WindowLinker:
                 if not param_nickname:
                     # Could be Player or Non Player. Provide both links.
                     param_nickname = "Attacks" if field_type == AttackParam else "Behaviors"
-                    player_table = self.project.Params[f"Player{param_nickname}"]
-                    non_player_table = self.project.Params[f"NonPlayer{param_nickname}"]
+                    player_table = self.project.params.get_param(f"Player{param_nickname}")
+                    non_player_table = self.project.params.get_param(f"NonPlayer{param_nickname}")
                     links = []
                     if field_value in player_table:
                         links.append(
@@ -178,7 +178,7 @@ class WindowLinker:
             else:
                 param_nickname = field_type.get_param_nickname()
 
-            param_table = self.project.Params[param_nickname]
+            param_table = self.project.params.get_param(param_nickname)
             try:
                 name = param_table[field_value].name + name_extension
             except KeyError:
@@ -191,7 +191,7 @@ class WindowLinker:
             # Looks up map from Maps tab, since nothing else links there right now.
             param_nickname = field_type.get_param_nickname()
             map_area_name = map_override[:3] if map_override else f"m{self.window.maps_tab.get_map().area_id}"
-            param_table = self.project.Lighting[map_area_name][param_nickname][0]
+            param_table = self.project.lighting.get_draw_param_bnd(map_area_name).get_param(param_nickname)[0]
             try:
                 name = param_table[field_value].name + name_extension
             except KeyError:
@@ -255,7 +255,7 @@ class WindowLinker:
                 text_ids["Summaries"] = base_armor_id
                 text_ids["Descriptions"] = base_armor_id
         for text_category, text_id in text_ids.items():
-            if text_ids[text_category] not in self.project.Text[prefix + text_category]:
+            if text_ids[text_category] not in self.project.text[prefix + text_category]:
                 links.append(BaseLink())
             else:
                 links.append(
@@ -263,7 +263,7 @@ class WindowLinker:
                         self,
                         text_type_name=prefix + text_category,
                         text_id=text_id,
-                        name=self.project.Text[prefix + text_category][text_id],
+                        name=self.project.text[prefix + text_category][text_id],
                     )
                 )
 
@@ -280,7 +280,7 @@ class WindowLinker:
         base_armor = armor_id - level
         origin_field = "originEquipPro" + ("" if level == 0 else str(level))
         try:
-            origin = self.project.Params["Armor"][base_armor][origin_field]
+            origin = self.project.params.get_param("Armor")[base_armor][origin_field]
         except KeyError:
             return None
         if origin == -1:
@@ -298,7 +298,7 @@ class WindowLinker:
         base_weapon = weapon_id - level
         origin_field = "originEquipWep" + ("" if level == 0 else str(level))
         try:
-            origin = self.project.Params["Weapons"][base_weapon][origin_field]
+            origin = self.project.params.get_param("Weapons")[base_weapon][origin_field]
         except KeyError:
             return None
         if origin == -1:
@@ -328,7 +328,7 @@ class WindowLinker:
         """
         model_subtype = MSBModelList.resolve_entry_subtype(model_subtype)
 
-        dcx = ".dcx" if self.project.game_name == "Dark Souls Remastered" else ""
+        dcx = ".dcx" if self.project.GAME.uses_dcx else ""
 
         if model_subtype == MSBModelSubtype.Character:
             if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
@@ -404,24 +404,24 @@ class WindowLinker:
         Note that for new Armor entries, the default summary text is a single blank space rather than empty text. For
         new Weapon entries, the default summary text is 'WeaponType', to remind you to specify it.
         """
-        name = getattr(self.project.Text, item_type + "Names").get(item_id, "")
-        summary = getattr(self.project.Text, item_type + "Summaries").get(item_id, "")
+        name = getattr(self.project.text, item_type + "Names").get(item_id, "")
+        summary = getattr(self.project.text, item_type + "Summaries").get(item_id, "")
         if not summary:
             if item_type == "Weapon":
                 summary = "WeaponType"  # reminder to specify weapon type as summary
             elif item_type == "Armor":
                 summary = " "  # Armor summary defaults to a single blank space.
-        description = getattr(self.project.Text, item_type + "Descriptions").get(item_id, "")
+        description = getattr(self.project.text, item_type + "Descriptions").get(item_id, "")
         name, summary, description = ItemTextEditBox(
             self.window, name, summary, description, f"Editing {item_type}[{item_id}]"
         ).go()
         if not name:
             raise ValueError("Item name cannot be empty.")
-        getattr(self.project.Text, item_type + "Names")[item_id] = name
+        getattr(self.project.text, item_type + "Names")[item_id] = name
         if summary:
-            getattr(self.project.Text, item_type + "Summaries")[item_id] = summary
+            getattr(self.project.text, item_type + "Summaries")[item_id] = summary
         if description:
-            getattr(self.project.Text, item_type + "Descriptions")[item_id] = description
+            getattr(self.project.text, item_type + "Descriptions")[item_id] = description
 
 
 class BaseLink:

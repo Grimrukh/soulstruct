@@ -1,25 +1,25 @@
 from __future__ import annotations
 
+__all__ = ["MapsEditor"]
+
 import logging
 import math
 import typing as tp
 
-from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.core import InvalidFieldValueError
 from soulstruct.game_types import GameObject, PlaceName, BaseLightingParam, ObjActParam
 from soulstruct.game_types.msb_types import *
 from soulstruct.maps.enums import *
 from soulstruct.maps.base.models import MSBModel
-from soulstruct.models.darksouls1 import CHARACTER_MODELS
 from soulstruct.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox, BitGroupEditBox
-from soulstruct.project.base.base_editor import EntryRow
-from soulstruct.project.base.field_editor import BaseFieldEditor, FieldRow
+from soulstruct.project.base.editors.base_editor import EntryRow
+from soulstruct.project.base.editors.field_editor import BaseFieldEditor, FieldRow
 from soulstruct.utilities.conversion import int_group_to_bit_set
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.memory import MemoryHookError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.maps.darksouls1 import MapStudioDirectory
+    from soulstruct.maps.base.map_studio_directory import MapStudioDirectory
     from soulstruct.maps.base.msb_entry import MSBEntry
 
 _LOGGER = logging.getLogger(__name__)
@@ -43,12 +43,12 @@ class MapEntryRow(EntryRow):
     They also display their Entity ID field if they have a non-default value.
     """
 
-    master: SoulstructMapEditor
+    master: MapsEditor
 
     ENTRY_ID_WIDTH = 5
     EDIT_ENTRY_ID = False
 
-    def __init__(self, editor: SoulstructMapEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: MapsEditor, row_index: int, main_bindings: dict = None):
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
     def update_entry(self, entry_index: int, entry_text: str, entry_description: str = ""):
@@ -62,7 +62,7 @@ class MapEntryRow(EntryRow):
             except ValueError:
                 text_tail = ""
             else:
-                text_tail = f"  {{{CHARACTER_MODELS[model_id]}}}"
+                text_tail = f"  {{{self.master.character_models[model_id]}}}"
         else:
             text_tail = ""
 
@@ -101,9 +101,9 @@ class MapEntryRow(EntryRow):
 
 class MapFieldRow(FieldRow):
 
-    master: SoulstructMapEditor
+    master: MapsEditor
 
-    def __init__(self, editor: SoulstructMapEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: MapsEditor, row_index: int, main_bindings: dict = None):
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
         bg_color = self._get_color()
@@ -164,7 +164,7 @@ class MapFieldRow(FieldRow):
                 else:
                     model_id = int(msb_entry_name[1:])  # ignore 'c' prefix
                     try:
-                        msb_entry_name += f"  {{{CHARACTER_MODELS[model_id]}}}"
+                        msb_entry_name += f"  {{{self.master.character_models[model_id]}}}"
                     except KeyError:
                         msb_entry_name += "  {UNKNOWN}"
             self.value_label.var.set(msb_entry_name)
@@ -282,7 +282,7 @@ class MapFieldRow(FieldRow):
                 if self.field_type in (CharacterModel, PlayerModel):
                     model_id = int(selected_name[1:])  # ignore 'c' prefix
                     try:
-                        display_name = selected_name + f"  {{{CHARACTER_MODELS[model_id]}}}"
+                        display_name = selected_name + f"  {{{self.master.character_models[model_id]}}}"
                     except KeyError:
                         display_name = selected_name + "  {UNKNOWN}"
                 else:
@@ -296,7 +296,7 @@ class MapFieldRow(FieldRow):
     def choose_character_model(self):
         if not issubclass(self.field_type, CharacterModel):
             return  # option shouldn't even appear
-        names = [f"c{model_id:04d}  {{{model_name}}}" for model_id, model_name in CHARACTER_MODELS.items()]
+        names = [f"c{model_id:04d}  {{{model_name}}}" for model_id, model_name in self.master.character_models.items()]
         selected_name = NameSelectionBox(self.master, names).go()
         if selected_name is not None:
             selected_name = selected_name.split("  {")[0]  # remove suffix
@@ -307,7 +307,7 @@ class MapFieldRow(FieldRow):
             if self.field_links[0].name:
                 model_id = int(selected_name[1:])  # ignore 'c' prefix
                 try:
-                    display_name = selected_name + f"  {{{CHARACTER_MODELS[model_id]}}}"
+                    display_name = selected_name + f"  {{{self.master.character_models[model_id]}}}"
                 except KeyError:
                     display_name = selected_name + "  {UNKNOWN}"
                 if self.link_missing:
@@ -344,7 +344,7 @@ class MapFieldRow(FieldRow):
 
     def _string_to_Map(self, string):
         try:
-            return get_map(string)
+            return self.master.maps.GET_MAP(string)
         except (KeyError, ValueError):
             raise InvalidFieldValueError(
                 f"Could not interpret input as a Map specifier for field {self.field_nickname}. Try a string like "
@@ -368,7 +368,7 @@ class MapFieldRow(FieldRow):
             widget["bg"] = bg_color
 
 
-class SoulstructMapEditor(BaseFieldEditor):
+class MapsEditor(BaseFieldEditor):
     DATA_NAME = "Maps"
     TAB_NAME = "maps"
     CATEGORY_BOX_WIDTH = 165
@@ -384,12 +384,22 @@ class SoulstructMapEditor(BaseFieldEditor):
 
     ENTRY_ROW_CLASS = MapEntryRow
     FIELD_ROW_CLASS = MapFieldRow
+
     entry_rows: tp.List[MapEntryRow]
     field_rows: tp.List[MapFieldRow]
 
-    def __init__(self, maps: MapStudioDirectory, global_map_choice_func, linker, master=None, toplevel=False):
-        self.Maps = maps
+    def __init__(
+        self,
+        maps: MapStudioDirectory,
+        global_map_choice_func,
+        linker,
+        master=None,
+        toplevel=False,
+        character_models: dict[int, str] = None,
+    ):
+        self.maps = maps
         self.global_map_choice_func = global_map_choice_func
+        self.character_models = {} if character_models is None else character_models
         self.e_coord = None
         self.map_choice = None
         self.entry_canvas_context_menu = None
@@ -400,7 +410,7 @@ class SoulstructMapEditor(BaseFieldEditor):
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1], auto_columns=0):
                 map_display_names = [
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
-                    for game_map in ALL_MAPS
+                    for game_map in self.maps.ALL_MAPS
                     if game_map.msb_file_stem
                 ]
                 self.map_choice = self.Combobox(
@@ -424,7 +434,7 @@ class SoulstructMapEditor(BaseFieldEditor):
     def check_for_repeated_entity_ids(self):
         # Check for duplicate entity IDs.
         repeat_warning = ""
-        for map_name, msb in self.Maps.items():
+        for map_name, msb in self.maps.items():
             repeats = msb.get_repeated_entity_ids()
             if repeats["Regions"]:
                 regions = "\n".join(f"{e.entity_id}: {e.name}" for e in repeats["Regions"])
@@ -726,8 +736,8 @@ class SoulstructMapEditor(BaseFieldEditor):
         return categories
 
     def get_selected_msb(self):
-        map_name = get_map(self.map_choice_id).name
-        return self.Maps[map_name]
+        map_name = self.maps.GET_MAP(self.map_choice_id).name
+        return self.maps[map_name]
 
     def get_category_data(self, category=None) -> tp.List[MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).

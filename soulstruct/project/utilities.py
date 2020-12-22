@@ -9,7 +9,7 @@ from soulstruct.utilities import word_wrap, camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
 if tp.TYPE_CHECKING:
-    from soulstruct.project.base.base_editor import BaseEditor
+    from soulstruct.project.base.editors.base_editor import BaseEditor
 
 __all__ = [
     "error_as_dialog",

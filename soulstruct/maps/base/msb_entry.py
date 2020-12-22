@@ -91,7 +91,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
     MAP_ENTITY_LIST_HEADER = BinaryStruct(
         "4x",
         ("name_offset", "i"),
-        ("entry_offset_count", "i"),  # includes final offset to next entry list
+        ("entry_offset_count", "i"),  # includes final offset to next entry list (actual entry count is this minus 1)
     )
     MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(
         ("entry_offset", "i"),
@@ -100,10 +100,10 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         ("next_entry_list_offset", "i"),
     )
 
-    PLURALIZED_NAME = ""  # type: str
-    ENTRY_SUBTYPE_ENUM = None  # type: tp.Union[type, tp.Iterable]
-    ENTRY_CLASS = None  # type: type
-    NAME_ENCODING = ""  # type: str
+    PLURALIZED_NAME = ""
+    ENTRY_SUBTYPE_ENUM: tp.Union[type, tp.Iterable] = None
+    ENTRY_CLASS: type = None
+    NAME_ENCODING = ""
 
     def __init__(self, msb_entry_list_source=None, name=""):
         self.name = ""
@@ -172,8 +172,6 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             entry_offsets.append(offset)
             packed_entry = self.pack_entry(i, entry)
             packed_entries += packed_entry
-            # print(hex(offset), self.__class__.__name__, type(entry), len(packed_entry), entry.name)  # TODO
-            # print("  ", packed_entry)
             offset += len(packed_entry)
 
         next_entry_list_offset = offset if not is_last_table else 0

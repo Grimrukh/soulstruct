@@ -12,7 +12,7 @@ from soulstruct.params.darksouls1ptde import ParamRow as _BaseParamRow, Param as
 from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParamBND
 
 from . import enums
-from .paramdef import ParamDefBND
+from .paramdef import ParamDefBND, GET_BUNDLED
 
 if tp.TYPE_CHECKING:
     from soulstruct.text.darksouls1 import MSGDirectory
@@ -26,6 +26,7 @@ class ParamRow(_BaseParamRow):
 
 class Param(_BaseParam):
     ParamRow = ParamRow
+    GET_BUNDLED = staticmethod(GET_BUNDLED)
 
 
 class GameParamBND(_BaseGameParamBND, BND3):
@@ -39,38 +40,6 @@ class GameParamBND(_BaseGameParamBND, BND3):
         "BehaviorParam": "NonPlayerBehaviors",
         "BehaviorParam_PC": "PlayerBehaviors",
     }
-
-    AI: Param
-    Armor: Param
-    ArmorUpgrades: Param
-    Bosses: Param
-    Bullets: Param
-    Cameras: Param
-    Characters: Param
-    Dialogue: Param
-    Faces: Param
-    Goods: Param
-    GrowthCurves: Param
-    ItemLots: Param
-    NonPlayerAttacks: Param
-    NonPlayerBehaviors: Param
-    MenuColors: Param
-    Movement: Param
-    Objects: Param
-    ObjectActivations: Param
-    Players: Param
-    PlayerAttacks: Param
-    PlayerBehaviors: Param
-    Rings: Param
-    Shops: Param
-    SpecialEffects: Param
-    SpecialEffectVisuals: Param
-    Spells: Param
-    Terrains: Param
-    Throws: Param
-    UpgradeMaterials: Param
-    Weapons: Param
-    WeaponUpgrades: Param
 
     # Also defines display order.
     PARAM_TYPES = {
@@ -106,6 +75,38 @@ class GameParamBND(_BaseGameParamBND, BND3):
         "SpecialEffectVisuals": SpecialEffectVisualParam,
         "GrowthCurves": GrowthCurveParam,
     }
+
+    AI: Param
+    Armor: Param
+    ArmorUpgrades: Param
+    Bosses: Param
+    Bullets: Param
+    Cameras: Param
+    Characters: Param
+    Dialogue: Param
+    Faces: Param
+    Goods: Param
+    GrowthCurves: Param
+    ItemLots: Param
+    NonPlayerAttacks: Param
+    NonPlayerBehaviors: Param
+    MenuColors: Param
+    Movement: Param
+    Objects: Param
+    ObjectActivations: Param
+    Players: Param
+    PlayerAttacks: Param
+    PlayerBehaviors: Param
+    Rings: Param
+    Shops: Param
+    SpecialEffects: Param
+    SpecialEffectVisuals: Param
+    Spells: Param
+    Terrains: Param
+    Throws: Param
+    UpgradeMaterials: Param
+    Weapons: Param
+    WeaponUpgrades: Param
 
     def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.

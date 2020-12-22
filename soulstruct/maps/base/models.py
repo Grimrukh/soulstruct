@@ -140,7 +140,7 @@ class MSBModelList(MSBEntryList[MSBModel]):
     PLURALIZED_NAME = "Models"
     ENTRY_SUBTYPE_ENUM = MSBModelSubtype
 
-    ENTRY_CLASS = None  # type: tp.Type[MSBModel]
+    ENTRY_CLASS: tp.Type[MSBModel] = None
 
     _entries: tp.List[MSBModel]
 

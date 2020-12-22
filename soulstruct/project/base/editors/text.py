@@ -3,10 +3,10 @@ from __future__ import annotations
 import re
 import typing as tp
 
-from soulstruct.project.base.base_editor import BaseEditor, EntryRow
+from soulstruct.project.base.editors.base_editor import BaseEditor, EntryRow
 
 if tp.TYPE_CHECKING:
-    from soulstruct.text.darksouls1 import MSGDirectory
+    from soulstruct.text.base.msg_directory import MSGDirectory
 
 
 class TextEntryRow(EntryRow):

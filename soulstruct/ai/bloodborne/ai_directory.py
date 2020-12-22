@@ -16,8 +16,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class AIDirectory(_BaseAIDirectory):
     """TODO: Chalice Dungeons (m29) are currently not supported."""
-    MAPS = ALL_MAPS_NO_CHALICE
-    GET_MAP = get_map
+    ALL_MAPS = ALL_MAPS_NO_CHALICE
+    GET_MAP = staticmethod(get_map)
     EVENT_COMMON_NAME = "eventcommon"
 
     Common: LuaBND  # scripts loaded in all maps; also contains internal functions that should not be edited

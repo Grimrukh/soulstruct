@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import abc
 import logging
 import re
@@ -12,19 +14,23 @@ from soulstruct.maps.darksouls1.maps import get_map
 from soulstruct.utilities import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
-from .base import GameDirectoryProject
-from .core import SoulstructProjectError, RestoreBackupError
-from .ai import AIEditor
-from .entities import EntityEditor
-from .events import SoulstructEventEditor
-from .icon import SOULSTRUCT_ICON
-from .lighting import SoulstructLightingEditor
-from .links import WindowLinker
-from .maps import SoulstructMapEditor
-from .params import SoulstructParamsEditor
-from .runtime import SoulstructRuntimeManager
-from .talk import TalkEditor
-from .text import TextEditor
+from soulstruct.project.core import SoulstructProjectError, RestoreBackupError
+from soulstruct.project.icon import SOULSTRUCT_ICON
+from soulstruct.project.links import WindowLinker  # TODO: Move to base, with game subclasses
+
+from soulstruct.project.runtime import RuntimeManager  # TODO: Move to base, with game subclasses
+
+from .editors.ai import AIEditor
+from .editors.entities import EntityEditor
+from .editors.events import EventEditor
+from .editors.lighting import LightingEditor
+from .editors.maps import MapsEditor
+from .editors.params import ParamsEditor
+from .editors.talk import TalkEditor
+from .editors.text import TextEditor
+
+if tp.TYPE_CHECKING:
+    from soulstruct.project.base import GameDirectoryProject
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,26 +38,34 @@ _LOGGER = logging.getLogger(__name__)
 class ProjectWindow(SmartFrame, abc.ABC):
 
     PROJECT_CLASS: tp.Type[GameDirectoryProject] = None
+    TAB_EDITORS = {
+        "maps": MapsEditor,
+        "entities": EntityEditor,
+        "params": ParamsEditor,
+        "lighting": LightingEditor,
+        "text": TextEditor,
+        "events": EventEditor,
+        "ai": AIEditor,
+        "talk": TalkEditor,
+        "runtime": RuntimeManager,  # TODO: Assigned by game.
+    }  # also specifies tab order
 
-    maps_tab: tp.Optional[SoulstructMapEditor]
+    maps_tab: tp.Optional[MapsEditor]
     entities_tab: tp.Optional[EntityEditor]
-    params_tab: tp.Optional[SoulstructParamsEditor]
-    lighting_tab: tp.Optional[SoulstructLightingEditor]
+    params_tab: tp.Optional[ParamsEditor]
+    lighting_tab: tp.Optional[LightingEditor]
     text_tab: tp.Optional[TextEditor]
-    events_tab: tp.Optional[SoulstructEventEditor]
+    events_tab: tp.Optional[EventEditor]
     ai_tab: tp.Optional[AIEditor]
     talk_tab: tp.Optional[TalkEditor]
-    runtime_tab: tp.Optional[SoulstructRuntimeManager]
-
-    TAB_ORDER = ["maps", "entities", "params", "lighting", "text", "events", "ai", "talk", "runtime"]
+    runtime_tab: tp.Optional[RuntimeManager]
 
     def __init__(self, project_path=None, master=None):
-        """
-        TODO:
-            - Auto-save scheduled Tk functions that operate at ten minute intervals.
-        """
         super().__init__(
-            master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Soulstruct Project Editor"
+            master=master,
+            toplevel=True,
+            icon_data=SOULSTRUCT_ICON,
+            window_title=f"{self.PROJECT_CLASS.GAME.name} Project Editor",
         )
         self.withdraw()
         self._THREAD_EXCEPTION = None
@@ -73,10 +87,10 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.CustomDialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.")
                 raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
 
-        self.toplevel.title("Soulstruct Project Editor: " + str(Path(project_path)))
+        self.toplevel.title(f"{self.PROJECT_CLASS.GAME.name} Project Editor: {Path(project_path)}")
 
         try:
-            self.project = GameDirectoryProject(project_path, with_window=self)
+            self.project = self.PROJECT_CLASS(project_path, with_window=self)
             _LOGGER.info(f"Opened project: {project_path}")
         except SoulstructProjectError as e:
             self.deiconify()
@@ -160,12 +174,12 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         tab_frames = {
             tab_name: self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
-            for tab_name in self.TAB_ORDER
+            for tab_name in self.TAB_EDITORS
         }
 
         self.maps_tab = self.SmartFrame(
             frame=tab_frames["maps"],
-            smart_frame_class=SoulstructMapEditor,
+            smart_frame_class=MapsEditor,
             maps=self.project.maps,
             global_map_choice_func=self.set_global_map_choice,
             linker=self.linker,
@@ -186,7 +200,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         self.params_tab = self.SmartFrame(
             frame=tab_frames["params"],
-            smart_frame_class=SoulstructParamsEditor,
+            smart_frame_class=ParamsEditor,
             params=self.project.params,
             linker=self.linker,
             sticky="nsew",
@@ -195,7 +209,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         self.lighting_tab = self.SmartFrame(
             frame=tab_frames["lighting"],
-            smart_frame_class=SoulstructLightingEditor,
+            smart_frame_class=LightingEditor,
             lighting=self.project.lighting,
             linker=self.linker,
             sticky="nsew",
@@ -213,12 +227,12 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         self.events_tab = self.SmartFrame(
             frame=tab_frames["events"],
-            smart_frame_class=SoulstructEventEditor,
+            smart_frame_class=EventEditor,
+            emevd_directory=self.project.emevd_directory,
             evs_directory=self.project.project_root / "events",
             game_root=self.project.game_root,
             global_map_choice_func=self.set_global_map_choice,
             text_font_size=self.project.text_editor_font_size,
-            dcx=self.project.GAME.uses_dcx,
             sticky="nsew",
         )
         self.events_tab.bind("<Visibility>", self._update_banner)
@@ -240,9 +254,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.talk_tab = self.SmartFrame(
             frame=tab_frames["talk"],
             smart_frame_class=TalkEditor,
+            talk_directory=self.project.talk_directory,
             esp_directory=self.project.project_root / "talk",
-            game_root=self.project.game_root,
-            game_name=self.project.GAME.name,
             global_map_choice_func=self.set_global_map_choice,
             text_font_size=self.project.text_editor_font_size,
             linker=self.linker,
@@ -251,7 +264,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.talk_tab.bind("<Visibility>", self._update_banner)
 
         self.runtime_tab = self.SmartFrame(
-            frame=tab_frames["runtime"], smart_frame_class=SoulstructRuntimeManager, project=self.project, sticky="nsew"
+            frame=tab_frames["runtime"], smart_frame_class=RuntimeManager, project=self.project, sticky="nsew"
         )
         self.runtime_tab.bind("<Visibility>", self._update_banner)
 
@@ -388,10 +401,10 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     def refresh_tab_data(self, data_type=None):
         if data_type is None:
-            for data_type in self.TAB_ORDER:
+            for data_type in self.TAB_EDITORS:
                 self.refresh_tab_data(data_type)
         data_type = data_type.lower()
-        if data_type not in self.TAB_ORDER:
+        if data_type not in self.TAB_EDITORS:
             raise ValueError(f"Invalid data type name: {data_type}")
 
         if data_type == "events":
@@ -438,7 +451,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     @property
     def current_data_type(self):
-        data_type = self.TAB_ORDER[self.page_tabs.index(self.page_tabs.select())]
+        data_type = list(self.TAB_EDITORS)[self.page_tabs.index(self.page_tabs.select())]
         if data_type == "entities":
             return "maps"
         return data_type
@@ -508,7 +521,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if data_type == "runtime":
             return  # nothing to save
         elif data_type == "events":
-            self.events_tab.save_selected_evs()
+            self.events_tab.save_selected_evs()  # TODO: File menu should save all events.
             if mimic_click:
                 self.mimic_click(self.save_tab_button)
             return
@@ -520,13 +533,13 @@ class ProjectWindow(SmartFrame, abc.ABC):
         elif data_type == "ai" and self.ai_tab.confirm_button["state"] == "normal":
             self.ai_tab.confirm_selected(mimic_click=mimic_click)
             # doesn't return here
+
         if mimic_click:
-            if data_type is None:
-                self.mimic_click(self.save_all_button)
-            else:
-                self.mimic_click(self.save_tab_button)
-        self.project.write(data_type)  # doesn't save events
+            self.mimic_click(self.save_all_button if data_type is None else self.save_tab_button)
+
+        self.project.save(data_type)
         if data_type is None:
+            # TODO: Decide how to save one vs. all EVS files.
             self.events_tab.save_all_evs()  # saves EVS files to project subdirectory
         self.flash_bg(self)
 
@@ -554,10 +567,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             return
 
         if mimic_click:
-            if data_type is None:
-                self.mimic_click(self.export_all_button)
-            else:
-                self.mimic_click(self.export_tab_button)
+            self.mimic_click(self.export_all_button if data_type is None else self.export_tab_button)
 
         def _threaded_export():
             try:
@@ -760,7 +770,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     def _rename_param_entries_from_text(self, param_table=None):
         # TODO: Add `rename_entries_from_text` method to supported games (or base class, even).
         self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_table)
-        if self.page_tabs.index(self.page_tabs.select()) == self.TAB_ORDER.index("params"):
+        if self.page_tabs.index(self.page_tabs.select()) == list(self.TAB_EDITORS).index("params"):
             if (
                 not param_table
                 and self.params_tab.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}

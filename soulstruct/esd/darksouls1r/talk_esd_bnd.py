@@ -1,6 +1,6 @@
 from soulstruct.bnd import BND3
 from soulstruct.esd.base.talk_esd_bnd import TalkESDBND as _BaseTalkESDBND, TalkDirectory as _BaseTalkDirectory
-from soulstruct.maps.darksouls1.maps import ALL_MAPS
+from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 
 from .esd import TalkESD
 
@@ -20,6 +20,7 @@ class TalkESDBND(_BaseTalkESDBND, BND3):
 
 class TalkDirectory(_BaseTalkDirectory):
     ALL_MAPS = ALL_MAPS
+    GET_MAP = staticmethod(get_map)
     IS_DCX = True
     TALKESDBND_CLASS = TalkESDBND
 

@@ -9,13 +9,13 @@ from importlib import import_module
 from pathlib import Path
 
 from soulstruct.game_types.msb_types import *
-from soulstruct.maps.darksouls1.maps import get_map, ALL_MAPS
-from soulstruct.project.base.base_editor import BaseEditor, EntryRow
+from soulstruct.project.base.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.project.utilities import bind_events
 from soulstruct.utilities import word_wrap
 
 if tp.TYPE_CHECKING:
-    from soulstruct.maps.darksouls1 import MapStudioDirectory, MSB
+    from soulstruct.maps.base.map_studio_directory import MapStudioDirectory
+    from soulstruct.maps.base.msb import MSB, MSBEntryEntity
     from soulstruct.maps.base.msb_entry import MSBEntryEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -227,7 +227,7 @@ class EntityEditor(BaseEditor):
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1, 1], auto_columns=0):
                 map_display_names = [
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
-                    for game_map in ALL_MAPS
+                    for game_map in self.maps.ALL_MAPS
                     if game_map.msb_file_stem
                 ]
                 self.map_choice = self.Combobox(
@@ -445,7 +445,7 @@ class EntityEditor(BaseEditor):
         self.refresh_entries()
 
     def _get_map(self):
-        return get_map(self.map_choice_id)
+        return self.maps.GET_MAP(self.map_choice_id)
 
     def _import_entities_module(self):
         """Reads '{map_id}_entities.py' file and loads names from it into map data.
@@ -453,7 +453,7 @@ class EntityEditor(BaseEditor):
         Also tries to read descriptions from inline comments with regex. (Messing too much with the formatting in the
         module file may interfere with this.)
         """
-        game_map = get_map(self.map_choice_id)
+        game_map = self.maps.GET_MAP(self.map_choice_id)
         msb = self.get_selected_msb()
         module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
         if not module_path.is_file():
@@ -684,7 +684,7 @@ class EntityEditor(BaseEditor):
         return categories
 
     def get_selected_msb(self) -> MSB:
-        map_name = get_map(self.map_choice_id).name
+        map_name = self.maps.GET_MAP(self.map_choice_id).name
         return self.maps[map_name]
 
     def get_category_data(self, category=None) -> tp.Dict[int, MSBEntryEntity]:

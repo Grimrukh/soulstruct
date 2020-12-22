@@ -89,11 +89,11 @@ class TalkESDBND(BaseBND, abc.ABC):
                 )
             )
 
-    def write_all_esp(self, directory):
-        directory = Path(directory)
-        directory.mkdir(parents=True, exist_ok=True)
+    def write_esp(self, talk_directory):
+        talk_directory = Path(talk_directory)
+        talk_directory.mkdir(parents=True, exist_ok=True)
         for talk_id, talk_esd in self.talk.items():
-            talk_esd.write_esp(directory / f"t{talk_id}.esp")
+            talk_esd.write_esp(talk_directory / f"t{talk_id}.esp")
 
     def reload_all_esp(self, directory, allow_new=True):
         directory = Path(directory)
@@ -150,6 +150,7 @@ class TalkDirectory(abc.ABC):
     """Not actually used by `GameDirectoryProject`, but could still be useful for CLI editing."""
 
     ALL_MAPS: tuple[Map] = None
+    GET_MAP: tp.Callable = None
     IS_DCX: bool = None
     TALKESDBND_CLASS: tp.Type[TalkESDBND] = None
 
@@ -168,16 +169,7 @@ class TalkDirectory(abc.ABC):
         self._directory = Path(talk_directory)
         if not self._directory.is_dir():
             raise ValueError("`TalkDirectory` should be initialized with the directory containing '.talkesdbnd' files.")
-
-        for game_map in [m for m in self.ALL_MAPS if m.esd_file_stem]:
-            talkesdbnd_path = self._directory / f"{game_map.esd_file_stem}.talkesdbnd{'.dcx' if self.IS_DCX else ''}"
-            try:
-                self.bnds[game_map.name] = self.TALKESDBND_CLASS(talkesdbnd_path)
-                setattr(self, game_map.name, self.bnds[game_map.name])
-            except FileNotFoundError:
-                raise FileNotFoundError(
-                    f"Could not find TalkESDBND file {talkesdbnd_path} ({game_map.name}) in given directory."
-                )
+        self.load()
 
     def __getitem__(self, map_name):
         return self.bnds[map_name]
@@ -191,4 +183,28 @@ class TalkDirectory(abc.ABC):
         talk_directory = Path(talk_directory)
         for talkesdbnd in self.bnds.values():
             talkesdbnd.write(talk_directory / talkesdbnd.path.name)
-        _LOGGER.info("All ESD files (TalkESDBND) written successfully.")
+        _LOGGER.info("All TalkESDBND files (TalkESDBND) written successfully.")
+
+    def write_esp(self, talk_directory=None):
+        if talk_directory is None:
+            talk_directory = self._directory
+        talk_directory = Path(talk_directory)
+        for game_map in [m for m in self.ALL_MAPS if m.esd_file_stem]:
+            talkesdbnd = self.bnds[game_map.name]
+            talkesdbnd.write_esp(talk_directory=talk_directory / f"{game_map.esd_file_stem}")
+
+    def load(self, talk_directory=None):
+        if talk_directory is None:
+            talk_directory = self._directory
+        talk_directory = Path(talk_directory)
+        if self._directory is None:
+            self._directory = talk_directory
+        for game_map in [m for m in self.ALL_MAPS if m.esd_file_stem]:
+            talkesdbnd_path = talk_directory / f"{game_map.esd_file_stem}.talkesdbnd{'.dcx' if self.IS_DCX else ''}"
+            try:
+                self.bnds[game_map.name] = self.TALKESDBND_CLASS(talkesdbnd_path)
+                setattr(self, game_map.name, self.bnds[game_map.name])
+            except FileNotFoundError:
+                raise FileNotFoundError(
+                    f"Could not find TalkESDBND file {talkesdbnd_path} ({game_map.name}) in given directory."
+                )

@@ -209,7 +209,7 @@ class Param:
     """This base class supports all binary versions, but lacks information about enums, etc. that is game-specific."""
 
     ParamRow = ParamRow
-    GET_BUNDLED_PARAMDEF: tp.Callable = None
+    GET_BUNDLED: tp.Callable = None
 
     @staticmethod
     def GET_HEADER_STRUCT(flags1: ParamFlags1, byte_order) -> BinaryStruct:
@@ -265,15 +265,17 @@ class Param:
 
     rows: dict[int, ParamRow]
 
-    def __init__(self, param_source, paramdef_bnd, undecodable_row_names: tuple[bytes, ...] = ()):
+    def __init__(self, param_source, paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
         self.param_path = ""
         self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
-        if isinstance(paramdef_bnd, (str, Game)):
-            self._paramdef_bnd = self.GET_BUNDLED_PARAMDEF(paramdef_bnd)
+        if paramdef_bnd is None:
+            self._paramdef_bnd = self.GET_BUNDLED()
         elif isinstance(paramdef_bnd, ParamDefBND):
             self._paramdef_bnd = paramdef_bnd
         else:
-            raise TypeError(f"`paramdef_bnd` must be a game identifer or existing `ParamDefBND` instance.")
+            raise TypeError(
+                f"`paramdef_bnd` must be None or an existing `ParamDefBND` instance, not {type(paramdef_bnd)}."
+            )
         self.rows = {}
         self.byte_order = "<"
         self.unknown = 0
@@ -319,7 +321,7 @@ class Param:
     def values(self):
         return self.rows.values()
 
-    def items(self):
+    def items(self) -> tp.ItemsView[int, ParamRow]:
         return self.rows.items()
 
     def __iter__(self):

@@ -1,4 +1,4 @@
-__all__ = ["EMEVD", "convert_events", "compare_events"]
+__all__ = ["EMEVD", "EMEVDDirectory", "convert_events", "compare_events"]
 
 import sys
 from pathlib import Path
@@ -12,7 +12,7 @@ from soulstruct.events.base import (
     EventLayers as _BaseEventLayers,
 )
 from soulstruct.events.core import convert_events as convert_events_base, compare_events as compare_events_base
-from soulstruct.maps.bloodborne.maps import ALL_MAPS
+from soulstruct.maps.bloodborne.maps import ALL_MAPS_NO_CHALICE, get_map
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 
@@ -345,7 +345,8 @@ class EMEVD(_BaseEMEVD):
 
 
 class EMEVDDirectory(_BaseEMEVDDirectory):
-    ALL_MAPS = ALL_MAPS
+    ALL_MAPS = ALL_MAPS_NO_CHALICE
+    GET_MAP = staticmethod(get_map)
     IS_DCX = True
     EMEVD_CLASS = EMEVD
 
@@ -372,7 +373,7 @@ class EMEVDDirectory(_BaseEMEVDDirectory):
 def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):
     input_directory = Path(input_directory) if input_directory is not None else Path(__file__.parent) / "vanilla"
     if not maps:
-        maps = ALL_MAPS
+        maps = ALL_MAPS_NO_CHALICE
     return convert_events_base(
         output_type=output_type,
         output_directory=output_directory,

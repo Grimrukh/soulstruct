@@ -1,6 +1,6 @@
 from soulstruct.bnd import BND4
 from soulstruct.esd.base.talk_esd_bnd import TalkESDBND as _BaseTalkESDBND, TalkDirectory as _BaseTalkDirectory
-from soulstruct.maps.bloodborne.maps import ALL_MAPS_NO_CHALICE
+from soulstruct.maps.bloodborne.maps import ALL_MAPS_NO_CHALICE, get_map
 
 from .esd import TalkESD
 
@@ -23,6 +23,7 @@ class TalkESDBND(_BaseTalkESDBND, BND4):
 class TalkDirectory(_BaseTalkDirectory):
     """Does not include Chalice Dungeons."""
     ALL_MAPS = ALL_MAPS_NO_CHALICE
+    GET_MAP = staticmethod(get_map)
     IS_DCX = True
     TALKESDBND_CLASS = TalkESDBND
 
