@@ -78,7 +78,7 @@ class MSBPart(_BaseMSBPart):
         "2x",
     )
 
-    NAME_ENCODING = "shift_jis_2004"
+    NAME_ENCODING = "shift-jis"
 
     FIELD_INFO = {
         "entity_id": (

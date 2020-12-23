@@ -156,7 +156,7 @@ class MSGDirectory:
         if not use_original_names:
             bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
 
-    def save(
+    def write(
         self,
         msg_directory=None,
         description_word_wrap_limit=None,

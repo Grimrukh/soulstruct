@@ -134,14 +134,14 @@ def soulstruct_main(ss_args):
         return ss_args.console
 
     if ss_args.params:
-        from soulstruct.params.darksouls1 import GameParamBND
+        from soulstruct.params.darksouls1r import GameParamBND
 
         global Params
         Params = GameParamBND(source)
         return ss_args.console
 
     if ss_args.lighting:
-        from soulstruct.params.darksouls1 import DrawParamDirectory
+        from soulstruct.params.darksouls1r import DrawParamDirectory
 
         global Lighting
         Lighting = DrawParamDirectory(source)
@@ -175,7 +175,7 @@ def soulstruct_main(ss_args):
         global Project
         Project = GameDirectoryProject(source)
     else:
-        from soulstruct.project import ProjectWindow
+        from soulstruct.project.darksouls1r import ProjectWindow
 
         window = ProjectWindow(source)
         window.wait_window()  # MAIN LOOP

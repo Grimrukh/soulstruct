@@ -90,7 +90,7 @@ class MapStudioDirectory(abc.ABC):
     def items(self):
         return self.msbs.items()
 
-    def save(self, msb_directory=None):
+    def write(self, msb_directory=None):
         msb_directory = self._directory if msb_directory is None else Path(msb_directory)
         for msb in self.msbs.values():
             msb_path = msb_directory / msb.msb_path.name

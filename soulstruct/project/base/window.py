@@ -418,8 +418,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         elif data_type == "runtime":
             pass
         else:
-            project_data = getattr(self.project, data_type_caps(data_type))
-            setattr(getattr(self, f"{data_type}_tab"), data_type_caps(data_type), project_data)
+            project_data = getattr(self.project, data_type)
+            setattr(getattr(self, f"{data_type}_tab"), data_type, project_data)
             if data_type == "params":
                 self.params_tab.refresh_entries()
             elif data_type == "maps":
@@ -780,4 +780,4 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
 
 def data_type_caps(data_type: str):
-    return "AI" if data_type.lower == "ai" else data_type.capitalize()
+    return "AI" if data_type.lower() == "ai" else data_type.capitalize()

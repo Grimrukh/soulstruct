@@ -92,7 +92,7 @@ class AIDirectory:
     def __iter__(self):
         return iter(self.luabnds)
 
-    def save(self, script_directory=None):
+    def write(self, script_directory=None):
         if script_directory is None:
             script_directory = self._directory
         script_directory = Path(script_directory)

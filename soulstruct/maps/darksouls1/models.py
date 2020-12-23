@@ -21,7 +21,7 @@ class MSBModel(_BaseMSBModel):
         ("_instance_count", "i"),
         "12x",
     )
-    NAME_ENCODING = "shift_jis_2004"
+    NAME_ENCODING = "shift-jis"
     NULL = b"\0"
     EMPTY_SIB_PATH = b"\0" * 6
 
