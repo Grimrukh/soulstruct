@@ -49,6 +49,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         "talk": TalkEditor,
         "runtime": RuntimeManager,  # TODO: Assigned by game.
     }  # also specifies tab order
+    CHARACTER_MODELS = {}
 
     maps_tab: tp.Optional[MapsEditor]
     entities_tab: tp.Optional[EntityEditor]
@@ -181,6 +182,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             frame=tab_frames["maps"],
             smart_frame_class=MapsEditor,
             maps=self.project.maps,
+            character_models=self.CHARACTER_MODELS,
             global_map_choice_func=self.set_global_map_choice,
             linker=self.linker,
             sticky="nsew",

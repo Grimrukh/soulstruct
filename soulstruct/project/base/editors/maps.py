@@ -20,6 +20,7 @@ from soulstruct.utilities.memory import MemoryHookError
 
 if tp.TYPE_CHECKING:
     from soulstruct.maps.base.map_studio_directory import MapStudioDirectory
+    from soulstruct.maps.base.msb import MSB
     from soulstruct.maps.base.msb_entry import MSBEntry
 
 _LOGGER = logging.getLogger(__name__)
@@ -62,7 +63,10 @@ class MapEntryRow(EntryRow):
             except ValueError:
                 text_tail = ""
             else:
-                text_tail = f"  {{{self.master.character_models[model_id]}}}"
+                try:
+                    text_tail = f"  {{{self.master.character_models[model_id]}}}"
+                except KeyError:
+                    text_tail = "  {UNKNOWN}"
         else:
             text_tail = ""
 
@@ -96,6 +100,12 @@ class MapEntryRow(EntryRow):
         self.context_menu.add_command(
             label="Delete Entry",
             command=lambda: self.master.delete_entry(self.row_index),
+        )
+
+        # For converting to Python scripting.
+        self.context_menu.add_command(
+            label="Copy as Python Instance",
+            command=lambda: self.master.copy_python_instance_text(self.row_index),
         )
 
 
@@ -550,7 +560,7 @@ class MapsEditor(BaseFieldEditor):
         if category is None:
             category = self.active_category
             if category is None:
-                raise ValueError("Cannot delete entry without specifying category if 'active_category' is None.")
+                raise ValueError("Cannot delete entry without specifying category if `active_category` is None.")
         self._cancel_entry_text_edit()
         entry_subtype_index = self.get_entry_id(row_index)
 
@@ -560,6 +570,21 @@ class MapsEditor(BaseFieldEditor):
         entry_list.delete_entry(entry_to_delete)
         self.select_entry_row_index(None)
         self.refresh_entries()
+
+    def copy_python_instance_text(self, row_index, category=None):
+        """Copies valid string representation of given entry to clipboard."""
+        if row_index is None:
+            self.bell()
+            return
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("Cannot copy entry Python text to clipboard without known category.")
+        entry_type, entry_subtype = category.split(": ")
+        entry = self.get_selected_msb()[entry_type].get_entries(entry_subtype)[row_index]
+        self.clipboard_clear()
+        self.clipboard_append(repr(entry))
+        self.update()
 
     def popout_entry_text_edit(self, row_index):
         """Can actually change both ID and text."""
@@ -735,7 +760,7 @@ class MapsEditor(BaseFieldEditor):
                 )
         return categories
 
-    def get_selected_msb(self):
+    def get_selected_msb(self) -> MSB:
         map_name = self.maps.GET_MAP(self.map_choice_id).name
         return self.maps[map_name]
 

@@ -134,6 +134,27 @@ class MSBModel(MSBEntry):
             return stem + f"obj\\{name}\\sib\\{name}.sib"
         raise ValueError(f"Invalid MSB model type: {repr(entry_type)}. Cannot determine SIB path.")
 
+    def __repr__(self):
+        field_names = self.FIELD_NAMES if self.FIELD_NAMES else self.FIELD_INFO.keys()
+        kwargs = {}
+        default = self.__class__(name=self.name, model_subtype=self.ENTRY_SUBTYPE)
+        for name in (s for s in field_names if s not in self.HIDDEN_FIELDS):
+            value = getattr(self, name)
+            default_value = getattr(default, name)
+            if value == default_value:
+                continue  # ignore default values
+            kwargs[name] = value
+        if kwargs:
+            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in kwargs.items())
+            return (
+                f"{self.__class__.__name__}(\n"
+                f"    name={repr(self.name)},\n"
+                f"    model_subtype={repr(self.ENTRY_SUBTYPE.name)},\n"
+                f"    {fields}\n"
+                f")"
+            )
+        return f"{self.__class__.__name__}(name={repr(self.name)}, model_subtype={repr(self.ENTRY_SUBTYPE.name)})"
+
 
 class MSBModelList(MSBEntryList[MSBModel]):
 

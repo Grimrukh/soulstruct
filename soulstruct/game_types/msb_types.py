@@ -48,12 +48,12 @@ __all__ = [
     "MapConnection",
 
     "Region",
-    "PointRegion",
-    "CircleRegion",
-    "SphereRegion",
-    "CylinderRegion",
-    "RectRegion",
-    "BoxRegion",
+    "RegionPoint",
+    "RegionCircle",
+    "RegionSphere",
+    "RegionCylinder",
+    "RegionRect",
+    "RegionBox",
 
     "MapPartTyping",
     "CoordEntityTyping",
@@ -150,12 +150,26 @@ class MapEntry(GameObject, IntEnum):
         (e.g. "Character")."""
         raise NotImplementedError
 
+    @classmethod
+    def get_msb_class_name(cls) -> str:
+        """Returns the name of the Soulstruct MSB class (e.g. "MSBRegionBox").
+
+        By default, this is done by simply prefixing "MSB" to the class name."""
+        if cls.__name__ == "MapEntry":
+            raise NotImplementedError("MapEntry base class has no corresponding non-abstract MSB class.")
+        return f"MSB{cls.__name__}"
+
 
 class MapModel(MapEntry):
     """3D model ID of something."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Models", None
+
+    @classmethod
+    def get_msb_class_name(cls) -> str:
+        """All MSB models use the same class."""
+        return "MSBModel"
 
 
 class MapPieceModel(MapModel):
@@ -391,42 +405,42 @@ class Region(MapEntry):
         return "Regions", None
 
 
-class PointRegion(Region):
+class RegionPoint(Region):
     """Single point region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Points") if pluralized_subtype else ("Regions", "Point")
 
 
-class CircleRegion(Region):
+class RegionCircle(Region):
     """2D circle region. Never used."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Circles") if pluralized_subtype else ("Regions", "Circle")
 
 
-class SphereRegion(Region):
+class RegionSphere(Region):
     """3D spherical region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Spheres") if pluralized_subtype else ("Regions", "Sphere")
 
 
-class CylinderRegion(Region):
+class RegionCylinder(Region):
     """3D cylindrical region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Cylinders") if pluralized_subtype else ("Regions", "Cylinder")
 
 
-class RectRegion(Region):
+class RegionRect(Region):
     """2D rectangular region. Never used."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Rects") if pluralized_subtype else ("Regions", "Rect")
 
 
-class BoxRegion(Region):
+class RegionBox(Region):
     """3D box region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):

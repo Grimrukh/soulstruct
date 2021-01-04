@@ -38,10 +38,10 @@ ENTITY_GAME_TYPES = (
     MessageEvent,
     SpawnPointEvent,
     NavigationEvent,
-    PointRegion,
-    SphereRegion,
-    CylinderRegion,
-    BoxRegion,
+    RegionPoint,
+    RegionSphere,
+    RegionCylinder,
+    RegionBox,
 )
 
 _RE_ENTITIES_ENUM_CLASS = re.compile(r"^class (\w+)\(\w+\): *$")

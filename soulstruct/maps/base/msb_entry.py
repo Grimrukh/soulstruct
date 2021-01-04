@@ -82,6 +82,21 @@ class MSBEntry(abc.ABC):
             return self.FIELD_NAMES
         return tuple(self.FIELD_INFO.keys())
 
+    def __repr__(self):
+        field_names = self.FIELD_NAMES if self.FIELD_NAMES else self.FIELD_INFO.keys()
+        kwargs = {}
+        default = self.__class__()
+        for name in (s for s in field_names if s not in self.HIDDEN_FIELDS):
+            value = getattr(self, name)
+            default_value = getattr(default, name)
+            if value == default_value:
+                continue  # ignore default values
+            kwargs[name] = value
+        if kwargs:
+            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in kwargs.items())
+            return f"{self.__class__.__name__}(\n    name={repr(self.name)},\n    {fields}\n)"
+        return f"{self.__class__.__name__}(name={repr(self.name)})"
+
 
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 
