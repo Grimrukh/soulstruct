@@ -378,7 +378,7 @@ class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
 
     @classmethod
     def MSBRegion(cls, msb_buffer):
-        """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
+        """Detects the appropriate subclass of `MSBRegion` to instantiate, and does so."""
         event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.REGION_SUBTYPE_OFFSET, relative_offset=True)[0]
         event_type = MSBRegionSubtype(event_type_int)
         return cls.REGION_SUBTYPE_CLASSES[event_type](msb_buffer)

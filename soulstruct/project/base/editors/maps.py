@@ -749,15 +749,13 @@ class MapsEditor(BaseFieldEditor):
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names and their subtypes, properly formatted."""
         categories = []
-        for entry_subtype_enum in (MSBPartSubtype, MSBRegionSubtype, MSBEventSubtype, MSBModelSubtype):
-            for entry_subtype in entry_subtype_enum:
-                if entry_subtype_enum == MSBRegionSubtype and entry_subtype.name in {"Circle", "Rect"}:
+        for msb_type, subtypes in self.maps.MSB_CLASS.get_subtype_dict().items():
+            for msb_subtype in subtypes:
+                if isinstance(msb_subtype, MSBRegionSubtype) and msb_subtype.name in {"Circle", "Rect"}:
                     continue  # These useless 2D region types are hidden.
-                if entry_subtype_enum == MSBModelSubtype and entry_subtype.name == "Unknown":
-                    continue  # Unknown model type hidden.
-                categories.append(
-                    f"{entry_subtype_enum.get_pluralized_type_name()}: {entry_subtype.pluralized_name}"
-                )
+                if isinstance(msb_subtype, MSBModelSubtype) and msb_subtype in {"Items"}:
+                    continue  # Unused 'item' model type hidden.
+                categories.append(f"{msb_type}: {msb_subtype.pluralized_name}")
         return categories
 
     def get_selected_msb(self) -> MSB:

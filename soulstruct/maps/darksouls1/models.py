@@ -1,5 +1,7 @@
 __all__ = ["MSBModel", "MSBModelList"]
 
+from functools import partial
+
 from soulstruct.maps.base.models import (
     MSBModel as _BaseMSBModel,
     MSBModelList as _BaseMSBModelList,
@@ -29,6 +31,14 @@ class MSBModel(_BaseMSBModel):
 class MSBModelList(_BaseMSBModelList, MSBEntryList):
 
     ENTRY_CLASS = MSBModel
+    MODEL_SUBTYPE_CLASSES = {
+        MSBModelSubtype.MapPiece: partial(MSBModel, model_subtype="MapPiece"),
+        MSBModelSubtype.Object: partial(MSBModel, model_subtype="Object"),
+        MSBModelSubtype.Character: partial(MSBModel, model_subtype="Character"),
+        MSBModelSubtype.Player: partial(MSBModel, model_subtype="Player"),
+        MSBModelSubtype.Collision: partial(MSBModel, model_subtype="Collision"),
+        MSBModelSubtype.Navmesh: partial(MSBModel, model_subtype="Navmesh"),
+    }
 
 
 for _entry_subtype in MSBModelSubtype:

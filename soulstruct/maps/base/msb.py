@@ -7,7 +7,7 @@ import io
 from pathlib import Path
 
 from soulstruct.game_file import GameFile
-from soulstruct.maps.enums import MSBEventSubtype, MSBPartSubtype
+from soulstruct.maps.enums import MSBSubtype, MSBEventSubtype, MSBPartSubtype
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 from .msb_entry import MSBEntry
@@ -295,6 +295,16 @@ class MSB(GameFile, abc.ABC):
             else:
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
         return results[0]
+
+    @classmethod
+    def get_subtype_dict(cls) -> dict[str, tuple[MSBSubtype]]:
+        """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
+        return {
+            "Parts": tuple(cls.PART_LIST_CLASS.PART_SUBTYPE_CLASSES),
+            "Regions": tuple(cls.REGION_LIST_CLASS.REGION_SUBTYPE_CLASSES),
+            "Events": tuple(cls.EVENT_LIST_CLASS.EVENT_SUBTYPE_CLASSES),
+            "Models": tuple(cls.MODEL_LIST_CLASS.MODEL_SUBTYPE_CLASSES),
+        }
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:
         if entry_list_name.lower() not in {"models", "events", "regions", "parts"}:

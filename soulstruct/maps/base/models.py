@@ -160,6 +160,7 @@ class MSBModelList(MSBEntryList[MSBModel]):
 
     PLURALIZED_NAME = "Models"
     ENTRY_SUBTYPE_ENUM = MSBModelSubtype
+    MODEL_SUBTYPE_CLASSES = {}  # type: dict[MSBModelSubtype, tp.Callable]
 
     ENTRY_CLASS: tp.Type[MSBModel] = None
 

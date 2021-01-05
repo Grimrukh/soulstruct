@@ -15,7 +15,7 @@ class MSBSubtype(IntEnum):
     def pluralized_name(self):
         if self.name in ("Box", "Navmesh"):
             return self.name + "es"
-        elif self.name in ("FX", "Wind", "Treasure", "Navigation"):
+        elif self.name in ("FX", "Wind", "Treasure", "Navigation", "PseudoMultiplayer", "WindFX", "Other"):
             return self.name
         return self.name + "s"
 
