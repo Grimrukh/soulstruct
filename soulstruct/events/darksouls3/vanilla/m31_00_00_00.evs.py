@@ -524,7 +524,7 @@ def Event13105172():
     SkipLines(1)
     DisplayBattlefieldMessage(10012230, display_location_index=1)
     WaitFrames(1)
-    CreateTemporaryFX(30310, anchor_entity=3100190, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryVFX(30310, anchor_entity=3100190, anchor_type=CoordEntityType.Character, model_point=236)
     EnableCharacter(3100190)
     EnableAnimations(3100190)
     SetBackreadStateAlternate(3100190, state=True)
@@ -773,15 +773,15 @@ def Event13105930(_, arg_0_3: int, arg_4_7: int):
     EndIfPlayerNotInOwnWorld()
     DisableNetworkSync()
     EndIfThisEventSlotOn()
-    CreateObjectFX(831023, obj=arg_0_3, model_point=200)
-    CreateObjectFX(60, obj=arg_0_3, model_point=200)
+    CreateObjectVFX(831023, obj=arg_0_3, model_point=200)
+    CreateObjectVFX(60, obj=arg_0_3, model_point=200)
     IfActionButtonInRegion(0, action_button_id=9600, region=arg_4_7)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
-    CreateTemporaryFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryVFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=999999988)
     AddSpecialEffect(PLAYER, 2005)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
 
 
 @RestartOnRest
@@ -1307,12 +1307,12 @@ def Event13105420(_, arg_0_3: int, arg_4_7: int):
     """ 13105420: Event 13105420 """
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(arg_0_3)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     DisableTreasure(arg_4_7)
-    CreateObjectFX(60, obj=arg_4_7, model_point=90)
+    CreateObjectVFX(60, obj=arg_4_7, model_point=90)
     IfObjectDestroyed(0, obj=arg_4_7)
     EnableTreasure(arg_4_7)
-    DeleteObjectFX(arg_4_7, erase_root=False)
+    DeleteObjectVFX(arg_4_7, erase_root=False)
 
 
 @RestartOnRest
@@ -1591,7 +1591,7 @@ def Event13105814():
     DisableObject(3101802)
     IfHasTAEEvent(0, character=3100800, tae_event_id=100)
     EnableCollision(3104801)
-    CreateTemporaryFX(831110, anchor_entity=3101820, anchor_type=CoordEntityType.Object, model_point=200)
+    CreateTemporaryVFX(831110, anchor_entity=3101820, anchor_type=CoordEntityType.Object, model_point=200)
     EnableFlag(13100820)
     WaitFrames(50)
     DisableObject(3101801)
@@ -1660,7 +1660,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=3, material_special_effect_id=110, material_fx_id=110)
+    SetNPCPartEffects(3100800, npc_part_id=3, material_sfx_id=110, material_vfx_id=110)
     CreateNPCPart(
         3100800,
         npc_part_id=15,
@@ -1671,7 +1671,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=15, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=15, material_sfx_id=105, material_vfx_id=105)
     CreateNPCPart(
         3100800,
         npc_part_id=4,
@@ -1682,7 +1682,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=4, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=4, material_sfx_id=105, material_vfx_id=105)
     CreateNPCPart(
         3100800,
         npc_part_id=5,
@@ -1693,7 +1693,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=5, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=5, material_sfx_id=105, material_vfx_id=105)
     CreateNPCPart(
         3100800,
         npc_part_id=6,
@@ -1704,7 +1704,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=6, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=6, material_sfx_id=105, material_vfx_id=105)
     CreateNPCPart(
         3100800,
         npc_part_id=7,
@@ -1715,7 +1715,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=7, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=7, material_sfx_id=105, material_vfx_id=105)
     CreateNPCPart(
         3100800,
         npc_part_id=8,
@@ -1726,7 +1726,7 @@ def Event13105815():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=8, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=8, material_sfx_id=105, material_vfx_id=105)
     SetDisplayMask(3100800, bit_index=1, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=2, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=3, switch_type=OnOffChange.Off)
@@ -1779,14 +1779,14 @@ def Event13105825(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_12_15, material_special_effect_id=110, material_fx_id=110)
+    SetNPCPartEffects(3100800, npc_part_id=arg_12_15, material_sfx_id=110, material_vfx_id=110)
     GotoIfThisEventSlotOn(Label.L2)
     IfCharacterPartHealthLessThanOrEqual(0, 3100800, npc_part_id=arg_12_15, value=0)
     SetCollisionMask(3100800, bit_index=arg_36_36, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=arg_16_16, switch_type=OnOffChange.On)
     SetDisplayMask(3100800, bit_index=arg_17_17, switch_type=OnOffChange.Off)
     AddSpecialEffect(3100800, arg_20_23)
-    CreateTemporaryFX(651850, anchor_entity=3100800, anchor_type=CoordEntityType.Character, model_point=arg_24_27)
+    CreateTemporaryVFX(651850, anchor_entity=3100800, anchor_type=CoordEntityType.Character, model_point=arg_24_27)
     IfCharacterDoesNotHaveSpecialEffect(1, character=3100800, special_effect=11451)
     IfConditionTrue(-1, input_condition=1)
     IfCharacterHasSpecialEffect(-1, character=3100800, special_effect=11451)
@@ -1811,7 +1811,7 @@ def Event13105825(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=105, material_vfx_id=105)
     End()
 
     # --- 2 --- #
@@ -1829,7 +1829,7 @@ def Event13105825(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=105, material_vfx_id=105)
 
 
 @RestartOnRest
@@ -1864,14 +1864,14 @@ def Event13105830(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_12_15, material_special_effect_id=110, material_fx_id=110)
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=139, material_fx_id=139)
+    SetNPCPartEffects(3100800, npc_part_id=arg_12_15, material_sfx_id=110, material_vfx_id=110)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=139, material_vfx_id=139)
     IfCharacterPartHealthLessThanOrEqual(0, 3100800, npc_part_id=arg_12_15, value=0)
     SetCollisionMask(3100800, bit_index=arg_36_36, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=arg_16_16, switch_type=OnOffChange.On)
     SetDisplayMask(3100800, bit_index=arg_17_17, switch_type=OnOffChange.Off)
     AddSpecialEffect(3100800, arg_20_23)
-    CreateTemporaryFX(651850, anchor_entity=3100800, anchor_type=CoordEntityType.Character, model_point=arg_24_27)
+    CreateTemporaryVFX(651850, anchor_entity=3100800, anchor_type=CoordEntityType.Character, model_point=arg_24_27)
     IfCharacterDoesNotHaveSpecialEffect(1, character=3100800, special_effect=11451)
     IfConditionTrue(-1, input_condition=1)
     IfCharacterHasSpecialEffect(-1, character=3100800, special_effect=11451)
@@ -1896,7 +1896,7 @@ def Event13105830(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=105, material_vfx_id=105)
     End()
 
     # --- 2 --- #
@@ -1914,7 +1914,7 @@ def Event13105830(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=105, material_vfx_id=105)
 
 
 @RestartOnRest
@@ -1946,14 +1946,14 @@ def Event13105835(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_12_15, material_special_effect_id=110, material_fx_id=110)
+    SetNPCPartEffects(3100800, npc_part_id=arg_12_15, material_sfx_id=110, material_vfx_id=110)
     GotoIfThisEventSlotOn(Label.L2)
     IfCharacterPartHealthLessThanOrEqual(0, 3100800, npc_part_id=arg_12_15, value=0)
     SetCollisionMask(3100800, bit_index=arg_36_36, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=arg_16_16, switch_type=OnOffChange.On)
     SetDisplayMask(3100800, bit_index=arg_17_17, switch_type=OnOffChange.Off)
     AddSpecialEffect(3100800, arg_20_23)
-    CreateTemporaryFX(651850, anchor_entity=3100800, anchor_type=CoordEntityType.Character, model_point=arg_24_27)
+    CreateTemporaryVFX(651850, anchor_entity=3100800, anchor_type=CoordEntityType.Character, model_point=arg_24_27)
     IfCharacterDoesNotHaveSpecialEffect(1, character=3100800, special_effect=11451)
     IfConditionTrue(-1, input_condition=1)
     IfCharacterHasSpecialEffect(-1, character=3100800, special_effect=11451)
@@ -1979,7 +1979,7 @@ def Event13105835(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=105, material_vfx_id=105)
     IfCharacterHasSpecialEffect(0, character=3100800, special_effect=11453)
     AddSpecialEffect(3100800, 5840)
     IfCharacterHasSpecialEffect(0, character=3100800, special_effect=5404)
@@ -2002,7 +2002,7 @@ def Event13105835(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_special_effect_id=105, material_fx_id=105)
+    SetNPCPartEffects(3100800, npc_part_id=arg_32_35, material_sfx_id=105, material_vfx_id=105)
 
 
 @RestartOnRest

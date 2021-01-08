@@ -1031,7 +1031,7 @@ def ToggleLantern(_, lantern_chr: int, lantern_obj: int, required_flag: int, lan
     IfFlagOn(0, required_flag)
     EnableObject(lantern_obj)
     EnableCharacter(lantern_chr)
-    CreateTemporaryFX(100330, anchor_entity=lantern_obj, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100330, anchor_entity=lantern_obj, anchor_type=CoordEntityType.Object, model_point=100)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1062,7 +1062,7 @@ def ReturnToHuntersDream(_, warp_request_flag: int, lantern_obj: int, respawn_po
     DisableFlag(warp_request_flag)
     RotateToFaceEntity(PLAYER, lantern_obj, animation=101160, wait_for_completion=False)
     Wait(1.0)
-    CreateTemporaryFX(100320, anchor_entity=lantern_obj, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100320, anchor_entity=lantern_obj, anchor_type=CoordEntityType.Object, model_point=100)
     Wait(3.0)
     SkipLinesIfFlagOff(2, CommonFlags.HuntersDreamVisited)
     WarpPlayerToRespawnPoint(respawn_point)
@@ -1075,7 +1075,7 @@ def ArriveAtLantern(_, trigger_flag: int, lantern_obj: int):
     EndIfClient()
     IfFlagOn(0, trigger_flag)
     WaitFrames(1)
-    CreateTemporaryFX(100321, anchor_entity=lantern_obj, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100321, anchor_entity=lantern_obj, anchor_type=CoordEntityType.Object, model_point=100)
     InitializeWarpObject(lantern_obj)
     DisableFlag(trigger_flag)
 
@@ -1084,12 +1084,12 @@ def Event7600(_, arg_0_3: int, arg_4_7: int):
     """ 7600: Event 7600 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfConnectingMultiplayer(-1)
     IfMultiplayer(-1)
     IfConditionTrue(0, input_condition=-1)
     EnableObject(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfConnectingMultiplayer(-2)
     IfMultiplayer(-2)
     IfConditionFalse(0, input_condition=-2)

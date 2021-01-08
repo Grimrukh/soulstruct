@@ -5,16 +5,13 @@ import logging
 import struct
 import typing as tp
 
-from soulstruct.bnd import BNDEntry
-from soulstruct.games import Game
-from soulstruct.params import field_types
+from soulstruct.game_file import GameFile
 from soulstruct.params.core import BitField, FieldDisplayInfo, ParamError
 from soulstruct.params.base.paramdef import ParamDef, ParamDefField, ParamDefBND
 from soulstruct.utilities import unpack_from_buffer, read_chars_from_buffer
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .flags import ParamFlags1, ParamFlags2
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,27 +22,30 @@ class ParamRow(abc.ABC):
         self.fields = {}
         self.paramdef = paramdef
         self.bit_field = BitField()
+        self.name = ""
 
         if isinstance(row_source, dict):
             if name is None:
                 if "name" not in row_source:
-                    raise ValueError("Name must be specified in arguments or source dictionary.")
+                    raise ValueError("Name must be specified with `name` argument or in `ParamRow` source dictionary.")
                 self.name = row_source["name"]
             elif isinstance(name, str):
-                # TODO: Name needs to be converted to shift_jis_2004?
-                if "name" not in row_source:
+                if "name" in row_source:
                     _LOGGER.warning(
-                        f"Name in source dictionary of ParamRow '{row_source['name']}' will be overridden with "
-                        f"argument value ('{name}')."
+                        f"Name '{row_source['name']}' in source dictionary of ParamRow will be overridden with `name` "
+                        f"argument value '{name}'."
                     )
-                self.name = row_source["name"] = name
+                self.name = name
             else:
-                raise ValueError("Name must be a string.")
-        elif isinstance(row_source, bytes):
+                raise ValueError("`name` must be a string if given.")
+            self.load_dict(row_source)
+        elif isinstance(row_source, (bytes, io.BufferedIOBase)):
             if name is None:
-                raise ValueError("`name` argument must be given explictly alongside raw row data.")
+                raise ValueError("`name` argument must be given explictly alongside raw `ParamRow` data.")
             self.name = name
-            self.unpack(row_source, name)
+            self.unpack(row_source)
+        else:
+            raise TypeError(f"Cannot load `ParamRow` from source type: `{type(row_source)}`")
 
     def __iter__(self):
         return iter(self.fields.items())
@@ -81,7 +81,7 @@ class ParamRow(abc.ABC):
             return list(self.fields.keys())
 
     @abc.abstractmethod
-    def get_field_type(self, field_type_name: str):
+    def get_field_type(self, field):
         """Look for field type in game-specific appropriate `enums` module."""
         raise NotImplementedError
 
@@ -97,7 +97,7 @@ class ParamRow(abc.ABC):
     def copy(self):
         return copy.deepcopy(self)
 
-    def unpack(self, row_buffer, name: str):
+    def unpack(self, row_buffer):
         if isinstance(row_buffer, bytes):
             row_buffer = io.BytesIO(row_buffer)
 
@@ -105,6 +105,7 @@ class ParamRow(abc.ABC):
 
             if field.bit_size < 8:
                 field_value = self.bit_field.unpack(row_buffer, field.bit_size)
+                self.fields[field.name] = bool(field_value) if field.bit_size == 1 else field_value
             elif field.internal_type == "dummy8":
                 self.bit_field.clear()
                 field_value = row_buffer.read(field.size)
@@ -123,24 +124,22 @@ class ParamRow(abc.ABC):
                             f"Pad value of field {field.name} in row {self.name} of Param {self.paramdef.param_type} "
                             f"is not null: {field_value}."
                         )
+                self.fields[field.name] = field_value
             elif field.internal_type == "fixstr":
                 self.bit_field.clear()
-                field_value = row_buffer.read(field.size).decode("shift_jis_2004")
+                self.fields[field.name] = row_buffer.read(field.size).decode("shift_jis_2004")
             elif field.internal_type == "fixstrW":
                 self.bit_field.clear()
-                field_value = row_buffer.read(field.size).decode("utf-16-le")
+                self.fields[field.name] = row_buffer.read(field.size).decode("utf-16-le")
             else:
                 self.bit_field.clear()
                 try:
-                    field_type = self.get_field_type(field.internal_type)
+                    field_type = self.get_field_type(field)
                 except AttributeError:
-                    if field.name == "sfxMultiplier":
-                        field_type = field_types.f32
-                    else:
-                        raise KeyError(
-                            f"Field {field.name} in ParamTable {self.paramdef.param_type} has unknown "
-                            f"internal type {field.internal_type} (debug type = {field.debug_type})."
-                        )
+                    raise KeyError(
+                        f"Field {field.name} in Param {self.paramdef.param_type} has unknown "
+                        f"internal type {field.internal_type} (debug type = {field.debug_type})."
+                    )
                 data = row_buffer.read(field_type.size())
                 try:
                     (field_value,) = struct.unpack(field_type.format(), data)
@@ -155,10 +154,18 @@ class ParamRow(abc.ABC):
                             f"Field type: {field_type}; Raw bytes: {data}\n"
                             f"Error:\n{str(e)}"
                         )
+                self.fields[field.name] = bool(field_value) if field.bit_size == 1 else field_value
 
-            self.fields[field.name] = field_value
-
-        self.name = name
+    def load_dict(self, data: dict):
+        for field in self.paramdef.fields:
+            if field.bit_size < 8:
+                self.fields[field.name] = data.get(field.name, field.new_default)
+            elif field.internal_type == "dummy8":  # null bytes
+                # TODO: The exceptions identified in `unpack()` will be overridden with nulls. Probably fine.
+                data.pop(field.name, None)
+                self.fields[field.name] = b"\0" * field.size
+            else:
+                self.fields[field.name] = data.get(field.name, field.new_default)
 
     def pack(self):
         packed_row = b""
@@ -178,15 +185,12 @@ class ParamRow(abc.ABC):
                 packed_row += b"\x00" * field.size
                 continue
             try:
-                field_type = self.get_field_type(field.internal_type)
+                field_type = self.get_field_type(field)
             except AttributeError:
-                if field.name == "sfxMultiplier":
-                    field_type = field_types.f32
-                else:
-                    raise ParamError(
-                        f"Field {field.name} in ParamTable {self.paramdef.param_type} has unknown "
-                        f"internal type {field.internal_type} (debug type = {field.debug_type})."
-                    )
+                raise ParamError(
+                    f"Field {field.name} in ParamTable {self.paramdef.param_type} has unknown "
+                    f"internal type {field.internal_type} (debug type = {field.debug_type})."
+                )
             if not isinstance(self[field.name], field_type.python_type()):
                 raise ParamError(
                     f"Bad type: field {field.name} in row {repr(self.name)} of table "
@@ -204,9 +208,19 @@ class ParamRow(abc.ABC):
 
         return packed_row
 
+    def to_dict(self) -> dict[str, tp.Any]:
+        data = {"name": self.name}
+        for field in self.paramdef.fields:
+            if field.internal_type == "dummy8":
+                continue  # pad bytes not written
+            if self.fields[field.name] == field.new_default:
+                continue  # default values not written
+            data[field.name] = self.fields[field.name]
+        return data
 
-class Param:
-    """This base class supports all binary versions, but lacks information about enums, etc. that is game-specific."""
+
+class Param(GameFile, abc.ABC):
+    """This base class supports all binary versions, but lacks information about game-specific enums, etc."""
 
     ParamRow = ParamRow
     GET_BUNDLED: tp.Callable = None
@@ -265,9 +279,7 @@ class Param:
 
     rows: dict[int, ParamRow]
 
-    def __init__(self, param_source, paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
-        self.param_path = ""
-        self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
+    def __init__(self, param_source, dcx_magic=(), paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
         if paramdef_bnd is None:
             self._paramdef_bnd = self.GET_BUNDLED()
         elif isinstance(paramdef_bnd, ParamDefBND):
@@ -276,29 +288,50 @@ class Param:
             raise TypeError(
                 f"`paramdef_bnd` must be None or an existing `ParamDefBND` instance, not {type(paramdef_bnd)}."
             )
-        self.rows = {}
+        self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
         self.byte_order = "<"
         self.unknown = 0
-        self.paramdef_data_version = 1  # Not sure about this default.
-        self.paramdef_format_version = 104  # Dark Souls 1
+        self.paramdef_data_version = 0
+        self.paramdef_format_version = 0
         self.undecodable_row_names = undecodable_row_names
 
-        if isinstance(param_source, dict):
-            self.rows = param_source
+        self.rows = {}
 
-        elif isinstance(param_source, bytes):
-            self.unpack(io.BytesIO(param_source))
+        super().__init__(param_source, dcx_magic=dcx_magic)
 
-        elif isinstance(param_source, str):
-            self.param_path = param_source
-            with open(param_source, "rb") as data:
-                self.unpack(data)
+    def load_dict(self, data: dict):
+        if "rows" not in data:
+            raise KeyError(f"Field `rows` not specified in `Param` dict.")
+        try:
+            self.byte_order = ">" if data.pop("big_endian") else "<"
+        except KeyError:
+            raise KeyError(f"Field `big_endian` not specified in `Param` dict.")
+        for field in (
+            "param_type",
+            "unknown",
+            "paramdef_data_version",
+            "paramdef_format_version",
+            "undecodable_row_names",
+        ):
+            try:
+                value = data.pop(field)
+            except KeyError:
+                raise KeyError(f"Field `{field}` not specified in `Param` dict.")
+            setattr(self, field, value)
 
-        elif isinstance(param_source, BNDEntry):
-            self.unpack(io.BytesIO(param_source.data))
-
-        else:
-            raise TypeError(f"Invalid `param_source` type: {type(param_source)}")
+        self.rows = {}
+        for i, row in data["rows"].items():
+            try:
+                i = int(i)
+            except (ValueError, TypeError):
+                raise KeyError(f"All keys of `Param` dict must be integers, not {i}.")
+            if isinstance(row, self.ParamRow):
+                self.rows[i] = row
+            else:
+                try:
+                    self.rows[i] = self.ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
+                except Exception as ex:
+                    raise ValueError(f"Could not interpret value of `rows[{i}]` as a `ParamRow`. Error: {ex}")
 
     def __getitem__(self, row_id):
         if row_id in self.rows:
@@ -357,18 +390,18 @@ class Param:
 
     # TODO: __repr__ method returns basic information about Param (but not entire row list).
 
-    def unpack(self, param_buffer):
-        self.byte_order = ">" if unpack_from_buffer(param_buffer, "B", 44)[0] == 255 else "<"
-        version_info = unpack_from_buffer(param_buffer, f"{self.byte_order}bbb", 45)
+    def unpack(self, buffer, **kwargs):
+        self.byte_order = ">" if unpack_from_buffer(buffer, "B", 44)[0] == 255 else "<"
+        version_info = unpack_from_buffer(buffer, f"{self.byte_order}bbb", 45)
         self.flags1 = ParamFlags1(version_info[0])
         self.flags2 = ParamFlags2(version_info[1])
         self.paramdef_format_version = version_info[2]
         header_struct = self.GET_HEADER_STRUCT(self.flags1, self.byte_order)
-        header = header_struct.unpack(param_buffer)
+        header = header_struct.unpack(buffer)
         try:
             self.param_type = header["param_type"]
         except KeyError:
-            self.param_type = read_chars_from_buffer(param_buffer, offset=header["param_type_offset"], encoding="utf-8")
+            self.param_type = read_chars_from_buffer(buffer, offset=header["param_type_offset"], encoding="utf-8")
         self.paramdef_data_version = header["paramdef_data_version"]
         self.unknown = header["unknown"]
         # Row data offset in header not used. (It's an unsigned short, yet doesn't limit row count to 5461.)
@@ -376,10 +409,10 @@ class Param:
 
         # Load row pointer data.
         if self.flags1.LongDataOffset:
-            row_pointers = self.ROW_STRUCT_64.unpack_count(param_buffer, count=header["row_count"])
+            row_pointers = self.ROW_STRUCT_64.unpack_count(buffer, count=header["row_count"])
         else:
-            row_pointers = self.ROW_STRUCT_32.unpack_count(param_buffer, count=header["row_count"])
-        row_data_offset = param_buffer.tell()  # Reliable row data offset.
+            row_pointers = self.ROW_STRUCT_32.unpack_count(buffer, count=header["row_count"])
+        row_data_offset = buffer.tell()  # Reliable row data offset.
 
         # Row size is lazily determined. TODO: Unpack row data in sequence and associate with names separately.
         if len(row_pointers) == 0:
@@ -398,12 +431,12 @@ class Param:
         # Note that we no longer need to track buffer offset.
         name_encoding = self.get_name_encoding()
         for row_struct in row_pointers:
-            param_buffer.seek(row_struct["data_offset"])
-            row_data = param_buffer.read(row_size)
+            buffer.seek(row_struct["data_offset"])
+            row_data = buffer.read(row_size)
             if row_struct["name_offset"] != 0:
                 try:
                     name = read_chars_from_buffer(
-                        param_buffer,
+                        buffer,
                         offset=row_struct["name_offset"],
                         encoding=name_encoding,
                         reset_old_offset=False,  # no need to reset
@@ -411,7 +444,7 @@ class Param:
                 except UnicodeDecodeError as ex:
                     if ex.object in self.undecodable_row_names:
                         name = read_chars_from_buffer(
-                            param_buffer,
+                            buffer,
                             offset=row_struct["name_offset"],
                             encoding=None,
                             reset_old_offset=False,  # no need to reset
@@ -419,12 +452,12 @@ class Param:
                     else:
                         raise
                 except ValueError:
-                    param_buffer.seek(row_struct["name_offset"])
+                    buffer.seek(row_struct["name_offset"])
                     _LOGGER.error(
                         f"Error encountered while parsing row name string in {self.param_type}.\n"
                         f"    Header: {header}\n"
                         f"    Row Struct: {row_struct}\n"
-                        f"    30 chrs of name data: {' '.join(f'{{:02x}}'.format(x) for x in param_buffer.read(30))}"
+                        f"    30 chrs of name data: {' '.join(f'{{:02x}}'.format(x) for x in buffer.read(30))}"
                     )
                     raise
             else:
@@ -500,11 +533,22 @@ class Param:
         header = header_struct.pack(header_fields)
         return header + row_pointer_data + packed_data + packed_names
 
+    def to_dict(self):
+        data = {
+            "param_type": self.param_type,
+            "big_endian": True if self.byte_order == ">" else False,
+            "unknown": self.unknown,
+            "paramdef_data_version": self.paramdef_data_version,
+            "paramdef_format_version": self.paramdef_format_version,
+            "undecodable_row_names": self.undecodable_row_names,
+            "rows": {},
+        }
+        for i, row in self.rows.items():
+            data["rows"][i] = row.to_dict()
+        return data
+
     def get_range(self, start, count):
         return [(param_id, self[param_id]) for param_id in sorted(self.rows)[start: start + count]]
-
-    def copy(self):
-        return copy.deepcopy(self)
 
     def get_name_encoding(self):
         if self.flags2.UnicodeRowNames:

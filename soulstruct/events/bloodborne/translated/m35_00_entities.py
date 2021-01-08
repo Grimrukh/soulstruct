@@ -38,7 +38,7 @@ class Objects(Object):
     LivingFailuresFog = 3501810
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     LadyMariaFog = 3503800
     LivingFailuresFog = 3503810
 

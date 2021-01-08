@@ -1030,7 +1030,7 @@ def Event7000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagOn(0, arg_8_11)
     EnableObject(arg_4_7)
     EnableCharacter(arg_0_3)
-    CreateTemporaryFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1061,7 +1061,7 @@ def Event7200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     DisableFlag(arg_0_3)
     RotateToFaceEntity(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
     Wait(1.0)
-    CreateTemporaryFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
     Wait(3.0)
     SkipLinesIfFlagOff(2, 9401)
     WarpPlayerToRespawnPoint(arg_8_11)
@@ -1074,7 +1074,7 @@ def Event7300(_, arg_0_3: int, arg_4_7: int):
     EndIfClient()
     IfFlagOn(0, arg_0_3)
     WaitFrames(1)
-    CreateTemporaryFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
     InitializeWarpObject(arg_4_7)
     DisableFlag(arg_0_3)
 
@@ -1083,12 +1083,12 @@ def Event7600(_, arg_0_3: int, arg_4_7: int):
     """ 7600: Event 7600 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfConnectingMultiplayer(-1)
     IfMultiplayer(-1)
     IfConditionTrue(0, input_condition=-1)
     EnableObject(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfConnectingMultiplayer(-2)
     IfMultiplayer(-2)
     IfConditionFalse(0, input_condition=-2)

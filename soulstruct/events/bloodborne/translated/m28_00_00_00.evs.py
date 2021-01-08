@@ -67,7 +67,7 @@ def Constructor():
     Event12800401()
     Event12800402()
     Event12800403()
-    CreateObjectFX(900130, obj=2801010, model_point=200)
+    CreateObjectVFX(900130, obj=2801010, model_point=200)
     StartPlayLogMeasurement(2800000, 0, overwrite=True)
     StartPlayLogMeasurement(2800001, 18, overwrite=True)
     Event12800990()
@@ -122,8 +122,8 @@ def Constructor():
     Event12800908()
     Event12800909()
     Event12800910()
-    DeleteFX(2803920, erase_root_only=False)
-    DeleteFX(2803921, erase_root_only=False)
+    DeleteVFX(2803920, erase_root_only=False)
+    DeleteVFX(2803921, erase_root_only=False)
     RunEvent(12804400, slot=0, args=(12804440, 2803920, 12804420, 12804430, Flags.OneRebornDead, 12804421))
     RunEvent(12804401, slot=0, args=(12804441, 2803921, 12804421, 12804431, Flags.OneRebornDead, 12804420))
     RunEvent(12804410, slot=0, args=(5, 2800910, 2802910, 12804420, 12804430, 12804440, Flags.OneRebornDead, 10564))
@@ -790,7 +790,7 @@ def Event12805470(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=65, material_vfx_id=65)
     ResetAnimation(arg_28_31, disable_interpolation=False)
     ForceAnimation(arg_28_31, arg_12_15)
     IfHasTAEEvent(0, arg_28_31, tae_event_id=400)
@@ -798,7 +798,7 @@ def Event12805470(
     DisableFlag(arg_24_27)
     IfHasTAEEvent(0, arg_28_31, tae_event_id=300)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_hp=80, overwrite_max=True)
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
     CancelSpecialEffect(arg_28_31, arg_16_19)
     AICommand(arg_28_31, command_id=-1, slot=0)
     ReplanAI(arg_28_31)
@@ -822,7 +822,7 @@ def Event12805480(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
     EnableFlag(arg_16_19)
 
 
@@ -1073,13 +1073,13 @@ def Event12805918():
 def Event12805920(_, arg_0_3: int, arg_4_7: int):
     """ 12805920: Event 12805920 """
     GotoIfFlagOff(Label.L0, arg_4_7)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     SkipLinesIfThisEventSlotOn(1)
-    CreateObjectFX(928020, obj=arg_0_3, model_point=100)
+    CreateObjectVFX(928020, obj=arg_0_3, model_point=100)
     ShootProjectile(
         owner_entity=2800560,
         projectile_id=arg_0_3,
@@ -1220,8 +1220,8 @@ def Event12800400():
     DisableMapPiece(2804001)
     DisableMapPiece(2804002)
     DisableObject(2801000)
-    DeleteFX(2803910, erase_root_only=False)
-    DeleteFX(2803911, erase_root_only=False)
+    DeleteVFX(2803910, erase_root_only=False)
+    DeleteVFX(2803911, erase_root_only=False)
     Goto(Label.L4)
 
     # --- 1 --- #
@@ -1229,7 +1229,7 @@ def Event12800400():
     DisableMapPiece(2804000)
     EnableMapPiece(2804001)
     DisableMapPiece(2804002)
-    DeleteFX(2803911, erase_root_only=False)
+    DeleteVFX(2803911, erase_root_only=False)
 
     # --- 4 --- #
     DefineLabel(4)
@@ -1341,7 +1341,7 @@ def Event12800400():
     DisableMapPiece(2804001)
     EnableMapPiece(2804002)
     EnableObject(2801000)
-    DeleteFX(2803910, erase_root_only=False)
+    DeleteVFX(2803910, erase_root_only=False)
     EnableObject(2801052)
     DisableObject(2801952)
     DisableCharacter(2800952)
@@ -1862,8 +1862,8 @@ def OneRebornDies():
     DisableBackread(Characters.OneRebornMaiden6)
     DisableObject(Objects.OneRebornFog1)
     DisableObject(Objects.OneRebornFog2)
-    DeleteFX(FX.OneRebornFog1, erase_root_only=False)
-    DeleteFX(FX.OneRebornFog2, erase_root_only=False)
+    DeleteVFX(VFX.OneRebornFog1, erase_root_only=False)
+    DeleteVFX(VFX.OneRebornFog2, erase_root_only=False)
     End()
 
     # --- 0 --- #
@@ -1883,8 +1883,8 @@ def OneRebornDies():
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(Objects.OneRebornFog1)
     DisableObject(Objects.OneRebornFog2)
-    DeleteFX(FX.OneRebornFog1, erase_root_only=True)
-    DeleteFX(FX.OneRebornFog2, erase_root_only=True)
+    DeleteVFX(VFX.OneRebornFog1, erase_root_only=True)
+    DeleteVFX(VFX.OneRebornFog2, erase_root_only=True)
     SetLockedCameraSlot(game_map=YAHARGUL, camera_slot=0)
     Wait(3.0)
     KillBoss(Characters.OneRebornHealthPool)
@@ -1944,14 +1944,14 @@ def OneRebornFirstTime():
     EndIfConditionTrue(2)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
-    DeleteFX(2803911, erase_root_only=False)
+    DeleteVFX(2803911, erase_root_only=False)
     SkipLinesIfMultiplayer(2)
     PlayCutscene(Cutscenes.OneRebornAppears, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(Cutscenes.OneRebornAppears, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
     DisableFlag(CommonFlags.CutsceneActive)
-    CreateFX(2803911)
+    CreateVFX(2803911)
     EnableFlag(Flags.OneRebornFogEntered)
     EnableCharacter(Characters.OneRebornMain)
     EnableCharacter(Characters.OneRebornHumanPart)
@@ -1978,16 +1978,16 @@ def EnterOneRebornFog():
     GotoIfFlagOn(Label.L0, Flags.OneRebornFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.OneRebornFog1)
-    DeleteFX(FX.OneRebornFog1, erase_root_only=False)
+    DeleteVFX(VFX.OneRebornFog1, erase_root_only=False)
     DisableObject(Objects.OneRebornFog2)
-    DeleteFX(FX.OneRebornFog2, erase_root_only=False)
+    DeleteVFX(VFX.OneRebornFog2, erase_root_only=False)
     IfFlagOff(1, Flags.OneRebornDead)
     IfFlagOn(1, Flags.OneRebornFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.OneRebornFog1)
-    CreateFX(FX.OneRebornFog1)
+    CreateVFX(VFX.OneRebornFog1)
     EnableObject(Objects.OneRebornFog2)
-    CreateFX(FX.OneRebornFog2)
+    CreateVFX(VFX.OneRebornFog2)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2247,7 +2247,7 @@ def OneRebornLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.OneRebornMain, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(Characters.OneRebornMain, npc_part_id=arg_4_7, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, Characters.OneRebornMain, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(2, Characters.OneRebornMain, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -2267,7 +2267,7 @@ def OneRebornLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.OneRebornMain, npc_part_id=arg_4_7, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(Characters.OneRebornMain, npc_part_id=arg_4_7, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(Characters.OneRebornMain, disable_interpolation=False)
     ResetAnimation(Characters.OneRebornHumanPart, disable_interpolation=False)
     ForceAnimation(Characters.OneRebornMain, arg_24_27)
@@ -2292,7 +2292,7 @@ def OneRebornLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.OneRebornMain, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(Characters.OneRebornMain, npc_part_id=arg_4_7, material_sfx_id=59, material_vfx_id=59)
     AddSpecialEffect(Characters.OneRebornMain, arg_20_23, affect_npc_part_hp=True)
     CancelSpecialEffect(Characters.OneRebornMain, arg_16_19)
     IfCharacterHasSpecialEffect(5, Characters.OneRebornMain, Effects.OneRebornStunned)
@@ -2768,11 +2768,11 @@ def Event12800920(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(-1, arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
-    CreateObjectFX(900201, obj=arg_12_15, model_point=200)
+    CreateObjectVFX(900201, obj=arg_12_15, model_point=200)
     IfActionButtonParam(0, action_button_id=7500, entity=arg_12_15)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(arg_16_19, host_only=False)
-    DeleteObjectFX(arg_12_15, erase_root=True)
+    DeleteObjectVFX(arg_12_15, erase_root=True)
 
 
 @RestartOnRest
@@ -2794,7 +2794,7 @@ def Event12804400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12804400: Event 12804400 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -2811,7 +2811,7 @@ def Event12804400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -2826,7 +2826,7 @@ def Event12804400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 
@@ -2835,7 +2835,7 @@ def Event12804401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12804401: Event 12804401 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -2850,7 +2850,7 @@ def Event12804401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -2863,7 +2863,7 @@ def Event12804401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 

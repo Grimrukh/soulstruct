@@ -20,6 +20,6 @@ class Objects(Object):
     AmygdalaFog2 = 3301801
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     AmygdalaFog1 = 3303800
     AmygdalaFog2 = 3303801

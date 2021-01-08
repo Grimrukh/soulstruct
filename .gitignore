@@ -1,6 +1,7 @@
 project_config.json
 soulstruct_config.json
-venv*
+build_exe_*.cmd
+venv*/
 
 # Byte-compiled / optimized / DLL resources
 __pycache__/

@@ -38,7 +38,7 @@ class RespawnPoints(IntEnum):
     FirstAwakening = 2412959
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     ClericBeastFog = 2413800
 
 

@@ -131,7 +131,7 @@ class TalkEditor(BaseEditor):
     ENTRY_RANGE_SIZE = 200
 
     ENTRY_ROW_CLASS = TalkEntryRow
-    entry_rows: tp.List[TalkEntryRow]
+    entry_rows: list[TalkEntryRow]
 
     def __init__(
         self,

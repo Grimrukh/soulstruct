@@ -2032,10 +2032,10 @@ def Event20005415(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_8_11, npc_part_id=10, material_special_effect_id=148, material_fx_id=148)
-    SetNPCPartEffects(arg_8_11, npc_part_id=20, material_special_effect_id=148, material_fx_id=148)
-    SetNPCPartEffects(arg_8_11, npc_part_id=30, material_special_effect_id=148, material_fx_id=148)
-    SetNPCPartEffects(arg_8_11, npc_part_id=40, material_special_effect_id=148, material_fx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=10, material_sfx_id=148, material_vfx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=20, material_sfx_id=148, material_vfx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=30, material_sfx_id=148, material_vfx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=40, material_sfx_id=148, material_vfx_id=148)
     DisableCharacter(arg_8_11)
     DisableAnimations(arg_8_11)
     DisableGravity(arg_8_11)
@@ -2192,10 +2192,10 @@ def Event20005417(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_8_11, npc_part_id=10, material_special_effect_id=148, material_fx_id=148)
-    SetNPCPartEffects(arg_8_11, npc_part_id=20, material_special_effect_id=148, material_fx_id=148)
-    SetNPCPartEffects(arg_8_11, npc_part_id=30, material_special_effect_id=148, material_fx_id=148)
-    SetNPCPartEffects(arg_8_11, npc_part_id=40, material_special_effect_id=148, material_fx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=10, material_sfx_id=148, material_vfx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=20, material_sfx_id=148, material_vfx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=30, material_sfx_id=148, material_vfx_id=148)
+    SetNPCPartEffects(arg_8_11, npc_part_id=40, material_sfx_id=148, material_vfx_id=148)
     DisableCharacter(arg_8_11)
     DisableAnimations(arg_8_11)
     DisableGravity(arg_8_11)
@@ -2827,7 +2827,7 @@ def Event20005500(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableCharacter(arg_8_11)
     Wait(1.0)
     IfFlagOn(0, arg_0_3)
-    CreateTemporaryFX(1060, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=200)
+    CreateTemporaryVFX(1060, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=200)
     Wait(0.5)
     EnableObject(arg_12_15)
     EnableCharacter(arg_8_11)
@@ -2841,11 +2841,11 @@ def Event20005500(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event20005510(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 20005510: Event 20005510 """
     GotoIfFlagOn(Label.L0, arg_20_23)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     SkipLinesIfFlagOn(2, arg_0_3)
-    CreateObjectFX(82, obj=arg_4_7, model_point=10)
+    CreateObjectVFX(82, obj=arg_4_7, model_point=10)
     SkipLines(1)
-    CreateObjectFX(83, obj=arg_4_7, model_point=10)
+    CreateObjectVFX(83, obj=arg_4_7, model_point=10)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2862,9 +2862,9 @@ def Event20005510(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     )
     RotateToFaceEntity(PLAYER, arg_4_7, animation=60800, wait_for_completion=False)
     Wait(2.0999999046325684)
-    DeleteObjectFX(arg_4_7, erase_root=True)
-    CreateTemporaryFX(84, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
-    CreateObjectFX(83, obj=arg_4_7, model_point=10)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
+    CreateTemporaryVFX(84, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
+    CreateObjectVFX(83, obj=arg_4_7, model_point=10)
     EnableFlag(arg_0_3)
 
     # --- 1 --- #
@@ -2892,11 +2892,11 @@ def Event20005511(
 ):
     """ 20005511: Event 20005511 """
     GotoIfFlagOn(Label.L0, arg_20_23)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     SkipLinesIfFlagOn(2, arg_0_3)
-    CreateObjectFX(arg_24_27, obj=arg_4_7, model_point=10)
+    CreateObjectVFX(arg_24_27, obj=arg_4_7, model_point=10)
     SkipLines(1)
-    CreateObjectFX(arg_28_31, obj=arg_4_7, model_point=10)
+    CreateObjectVFX(arg_28_31, obj=arg_4_7, model_point=10)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2913,9 +2913,9 @@ def Event20005511(
     )
     RotateToFaceEntity(PLAYER, arg_4_7, animation=60800, wait_for_completion=False)
     Wait(2.0999999046325684)
-    DeleteObjectFX(arg_4_7, erase_root=True)
-    CreateTemporaryFX(arg_32_35, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
-    CreateObjectFX(arg_28_31, obj=arg_4_7, model_point=10)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
+    CreateTemporaryVFX(arg_32_35, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
+    CreateObjectVFX(arg_28_31, obj=arg_4_7, model_point=10)
     EnableFlag(arg_0_3)
 
     # --- 1 --- #
@@ -2956,11 +2956,11 @@ def Event20005521(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableNetworkSync()
     EndIfFlagOn(arg_0_3)
     EndIfPlayerNotInOwnWorld()
-    CreateObjectFX(60, obj=arg_12_15, model_point=90)
+    CreateObjectVFX(60, obj=arg_12_15, model_point=90)
     IfActionButtonInRegion(0, action_button_id=4200, region=arg_12_15)
     ForceAnimation(PLAYER, 60070)
     AwardItemLot(arg_16_19, host_only=False)
-    DeleteObjectFX(arg_12_15, erase_root=True)
+    DeleteObjectVFX(arg_12_15, erase_root=True)
     EnableFlag(arg_0_3)
     End()
 
@@ -3022,10 +3022,10 @@ def Event20005525(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableNetworkSync()
     EndIfPlayerNotInOwnWorld()
     EndIfFlagOn(arg_0_3)
-    CreateObjectFX(arg_12_15, obj=arg_8_11, model_point=90)
+    CreateObjectVFX(arg_12_15, obj=arg_8_11, model_point=90)
     IfActionButtonInRegion(0, action_button_id=9700, region=arg_8_11)
     ForceAnimation(PLAYER, 60070)
-    DeleteObjectFX(arg_8_11, erase_root=True)
+    DeleteObjectVFX(arg_8_11, erase_root=True)
     AwardItemLot(arg_4_7, host_only=False)
 
 
@@ -3041,10 +3041,10 @@ def Event20005526(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableObject(arg_4_7)
-    CreateObjectFX(arg_12_15, obj=arg_8_11, model_point=90)
+    CreateObjectVFX(arg_12_15, obj=arg_8_11, model_point=90)
     IfActionButtonInRegion(0, action_button_id=9700, region=arg_8_11)
     ForceAnimation(PLAYER, 60070)
-    DeleteObjectFX(arg_8_11, erase_root=True)
+    DeleteObjectVFX(arg_8_11, erase_root=True)
     AwardItemLot(arg_4_7, host_only=False)
 
 
@@ -3059,17 +3059,17 @@ def Event20005527(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateObjectFX(60, obj=arg_8_11, model_point=90)
+    CreateObjectVFX(60, obj=arg_8_11, model_point=90)
     Goto(Label.L9)
 
     # --- 1 --- #
     DefineLabel(1)
-    CreateObjectFX(61, obj=arg_8_11, model_point=90)
+    CreateObjectVFX(61, obj=arg_8_11, model_point=90)
     Goto(Label.L9)
 
     # --- 2 --- #
     DefineLabel(2)
-    CreateObjectFX(62, obj=arg_8_11, model_point=90)
+    CreateObjectVFX(62, obj=arg_8_11, model_point=90)
     Goto(Label.L9)
 
     # --- 9 --- #
@@ -3078,7 +3078,7 @@ def Event20005527(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfActionButtonInRegion(1, action_button_id=arg_16_19, region=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(PLAYER, 60070)
-    DeleteObjectFX(arg_8_11, erase_root=True)
+    DeleteObjectVFX(arg_8_11, erase_root=True)
     AwardItemLot(arg_4_7, host_only=False)
 
 
@@ -3091,7 +3091,7 @@ def Event20005530(_, arg_0_3: int, arg_4_7: int):
     IfDamageType(-1, attacked_entity=arg_4_7, attacking_character=PLAYER, damage_type=DamageType.Fire)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(1)
-    CreateTemporaryFX(810010, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
+    CreateTemporaryVFX(810010, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=10)
     SkipLinesIfFlagOff(1, 50)
     CreateHazard(
         arg_0_3,
@@ -3188,7 +3188,7 @@ def Event20005531(
     EndIfObjectDestroyed(arg_4_7)
     IfObjectDestroyed(0, obj=arg_4_7)
     WaitFrames(1)
-    CreateTemporaryFX(arg_16_19, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=arg_8_11)
+    CreateTemporaryVFX(arg_16_19, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=arg_8_11)
     CreateHazard(
         arg_0_3,
         arg_4_7,
@@ -3233,8 +3233,8 @@ def Event20005541(
     arg_32_35: int,
 ):
     """ 20005541: Event 20005541 """
-    DeleteObjectFX(arg_4_7, erase_root=True)
-    CreateObjectFX(arg_28_31, obj=arg_4_7, model_point=arg_32_35)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
+    CreateObjectVFX(arg_28_31, obj=arg_4_7, model_point=arg_32_35)
     RemoveObjectFlag(arg_0_3)
     CreateHazard(
         arg_0_3,
@@ -4061,7 +4061,7 @@ def Event20005670(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int):
     IfFlagOn(1, 9412)
     IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
     IfConditionTrue(0, input_condition=1)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
 
 
 @RestartOnRest
@@ -4070,7 +4070,7 @@ def Event20005671(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int):
     IfFlagOn(1, 9413)
     IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
     IfConditionTrue(0, input_condition=1)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
 
 
 @RestartOnRest
@@ -4079,7 +4079,7 @@ def Event20005672(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int):
     IfFlagOn(1, 9414)
     IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
     IfConditionTrue(0, input_condition=1)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
 
 
 @RestartOnRest
@@ -4088,7 +4088,7 @@ def Event20005673(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int):
     IfFlagOn(1, 9415)
     IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
     IfConditionTrue(0, input_condition=1)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
 
 
 def Event20005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
@@ -4518,12 +4518,12 @@ def Event20005780(_, arg_0_3: int, arg_4_7: int):
     """ 20005780: Event 20005780 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     IfTryingToJoinSession(-1)
     IfTryingToCreateSession(-1)
     IfConditionTrue(0, input_condition=-1)
     EnableObject(arg_0_3)
-    CreateObjectFX(arg_4_7, obj=arg_0_3, model_point=101)
+    CreateObjectVFX(arg_4_7, obj=arg_0_3, model_point=101)
     IfTryingToJoinSession(-2)
     IfTryingToCreateSession(-2)
     IfConditionFalse(0, input_condition=-2)
@@ -4535,13 +4535,13 @@ def Event20005781(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 20005781: Event 20005781 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     IfTryingToJoinSession(-1)
     IfTryingToCreateSession(-1)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
     EnableObject(arg_0_3)
-    CreateObjectFX(arg_4_7, obj=arg_0_3, model_point=101)
+    CreateObjectVFX(arg_4_7, obj=arg_0_3, model_point=101)
     IfFlagOff(1, arg_8_11)
     IfTryingToJoinSession(-2)
     IfTryingToCreateSession(-2)
@@ -4684,7 +4684,7 @@ def Event20005820(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 20005820: Event 20005820 """
     DisableNetworkSync()
     DisableObject(arg_4_7)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     IfPlayerNotInOwnWorld(-1)
     IfFlagOn(-2, arg_12_15)
     IfValueComparison(-2, ComparisonType.Equal, left=arg_12_15, right=0)
@@ -4699,8 +4699,8 @@ def Event20005820(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(-4, input_condition=2)
     IfConditionTrue(0, input_condition=-4)
     EnableObject(arg_4_7)
-    DeleteObjectFX(arg_4_7, erase_root=True)
-    CreateObjectFX(arg_8_11, obj=arg_4_7, model_point=101)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
+    CreateObjectVFX(arg_8_11, obj=arg_4_7, model_point=101)
     IfPlayerNotInOwnWorld(-5)
     IfFlagOn(-6, arg_12_15)
     IfValueComparison(-6, ComparisonType.Equal, left=arg_12_15, right=0)
@@ -4722,7 +4722,7 @@ def Event20005825(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 20005825: Event 20005825 """
     DisableNetworkSync()
     DisableObject(arg_4_7)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     IfPlayerNotInOwnWorld(-1)
     IfFlagOn(-2, arg_12_15)
     IfValueComparison(-2, ComparisonType.Equal, left=arg_12_15, right=0)
@@ -4737,8 +4737,8 @@ def Event20005825(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-4, input_condition=2)
     IfConditionTrue(0, input_condition=-4)
     EnableObject(arg_4_7)
-    DeleteObjectFX(arg_4_7, erase_root=True)
-    CreateObjectFX(arg_8_11, obj=arg_4_7, model_point=arg_16_19)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
+    CreateObjectVFX(arg_8_11, obj=arg_4_7, model_point=arg_16_19)
     IfPlayerNotInOwnWorld(-5)
     IfFlagOn(-6, arg_12_15)
     IfValueComparison(-6, ComparisonType.Equal, left=arg_12_15, right=0)
@@ -5189,7 +5189,7 @@ def Event20005060(
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_4_7)
     DisableFlag(arg_12_15)
-    DeleteObjectFX(arg_28_31, erase_root=True)
+    DeleteObjectVFX(arg_28_31, erase_root=True)
     EndIfFlagOn(arg_0_3)
     IfFlagOn(1, arg_8_11)
     IfPlayerInOwnWorld(1)
@@ -5197,7 +5197,7 @@ def Event20005060(
     IfTryingToCreateSession(-1)
     IfConditionFalse(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
-    CreateObjectFX(arg_32_35, obj=arg_28_31, model_point=0)
+    CreateObjectVFX(arg_32_35, obj=arg_28_31, model_point=0)
     IfTryingToJoinSession(-2)
     IfTryingToCreateSession(-2)
     IfConditionTrue(-3, input_condition=-2)
@@ -5798,7 +5798,7 @@ def Event20006011(_, arg_0_3: int, arg_4_7: int):
     EndIfPlayerNotInOwnWorld()
     DisableFlag(arg_0_3)
     IfFlagOn(0, arg_0_3)
-    CreateTemporaryFX(arg_4_7, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
+    CreateTemporaryVFX(arg_4_7, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
 
@@ -5822,24 +5822,24 @@ def Event20006030(
     IfConditionTrue(0, input_condition=1)
     GotoIfValueComparison(Label.L1, ComparisonType.Equal, left=1, right=arg_8_11)
     GotoIfValueComparison(Label.L2, ComparisonType.Equal, left=2, right=arg_8_11)
-    CreateObjectFX(60, obj=arg_0_3, model_point=90)
+    CreateObjectVFX(60, obj=arg_0_3, model_point=90)
     Goto(Label.L20)
 
     # --- 1 --- #
     DefineLabel(1)
-    CreateObjectFX(61, obj=arg_0_3, model_point=90)
+    CreateObjectVFX(61, obj=arg_0_3, model_point=90)
     Goto(Label.L20)
 
     # --- 2 --- #
     DefineLabel(2)
-    CreateObjectFX(62, obj=arg_0_3, model_point=90)
+    CreateObjectVFX(62, obj=arg_0_3, model_point=90)
 
     # --- 20 --- #
     DefineLabel(20)
     IfActionButtonInRegion(0, action_button_id=arg_4_7, region=arg_0_3)
     ForceAnimation(PLAYER, 60070)
     AwardItemLot(arg_12_15, host_only=False)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
 
 
 def Event20006031(_, arg_0_3: int, arg_4_7: int):
@@ -5873,11 +5873,11 @@ def Event20006032(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(1, input_condition=-1)
     IfFlagOn(1, 50006202)
     IfConditionTrue(0, input_condition=1)
-    CreateObjectFX(61, obj=arg_4_7, model_point=90)
+    CreateObjectVFX(61, obj=arg_4_7, model_point=90)
     IfActionButtonInRegion(0, action_button_id=4000, region=arg_4_7)
     ForceAnimation(PLAYER, 60070)
     AwardItemLot(52020, host_only=False)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
 
 
 def Event20006040(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):

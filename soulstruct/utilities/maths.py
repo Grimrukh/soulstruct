@@ -141,7 +141,7 @@ class Vector3:
 class _Matrix(abc.ABC):
     SIZE = None
     PRECISION = 3
-    data: tp.List[tp.List[tp.Union[int, float]]]
+    data: list[list[tp.Union[int, float]]]
 
     @abc.abstractmethod
     def __init__(self):

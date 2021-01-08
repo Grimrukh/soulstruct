@@ -1,9 +1,7 @@
 import abc
-import copy
 import io
 import json
 import logging
-import re
 import zlib
 import typing as tp
 from ast import literal_eval
@@ -79,20 +77,17 @@ class BNDEntry:
     def directory_with_forward_slashes(self):
         return str(Path(self.path).parent).replace("\\", "/")
 
-    def __eq__(self, other_bnd_entry):
-        return self.id == other_bnd_entry.id and self.path == other_bnd_entry.path and self.data == other_bnd_entry.data
-
     def copy(self):
-        return BNDEntry(self.data, self.id, self.path)
+        return BNDEntry(data=self.data, entry_id=self.id, path=self.path, magic=self.magic)
+
+    def __eq__(self, other_bnd_entry):
+        return all(getattr(self, field) == getattr(other_bnd_entry, field) for field in ("id", "path", "magic", "data"))
 
 
 class BaseBND(GameFile, abc.ABC):
 
-    # TODO: Can remove after JSON conversion.
-    UNPACKED_PATH_RE = re.compile(rb"\((\d*)\) (.*)")
-    UNPACKED_ID_PATH_RE = re.compile(rb"\((\d*)\) (\d*): (.*)")
-
-    binary_entries: tp.List[BNDEntry]
+    BNDEntry = BNDEntry
+    binary_entries: list[BNDEntry]
 
     def __init__(self, bnd_source=None, dcx_magic=(), entry_class=None):
         """Load a BND binder file.
@@ -137,9 +132,20 @@ class BaseBND(GameFile, abc.ABC):
 
         raise InvalidGameFileTypeError(f"`bnd_source` is not a `bnd_manifest.json` file or directory containing one.")
 
-    @abc.abstractmethod
     def load_unpacked_dir(self, directory):
         """Load BND from a Soulstruct-unpacked BND directory with a `bnd_manifest.json` file."""
+        directory = Path(directory)
+        if not directory.is_dir():
+            raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
+        with (directory / "bnd_manifest.json").open("r", encoding="shift-jis") as f:
+            manifest = json.load(f)
+        self.load_manifest_header(manifest)  # abstract
+        self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
+        self.create_header_structs()  # abstract
+
+    @abc.abstractmethod
+    def load_manifest_header(self, manifest: dict):
+        """Called by `load_unpacked_dir` to set fields from manifest dict. May also be used by subclass `load_dict()."""
 
     def add_entries_from_manifest(self, entries: dict, directory, use_id_prefix: bool):
         directory = Path(directory)
@@ -152,6 +158,10 @@ class BaseBND(GameFile, abc.ABC):
                 unsorted_entries[entry['id']] = (f"{root}\\{entry['name']}", entry_data, entry['magic'])
         for entry_id, (path, data, magic) in sorted(unsorted_entries.items()):
             self.add_entry(BNDEntry(entry_id=entry_id, path=path, data=data, magic=magic))
+
+    @abc.abstractmethod
+    def create_header_structs(self):
+        """Called by `load_unpacked_dir` to create instance structs from manifest fields."""
 
     def write_unpacked_dir(self, directory=None):
         if not has_path(self.magic):
@@ -213,7 +223,7 @@ class BaseBND(GameFile, abc.ABC):
         raise NotImplementedError
 
     @property
-    def entries(self) -> tp.List[BNDEntry]:
+    def entries(self) -> list[BNDEntry]:
         """Returns an ordered list of BND entries, unpacked with the `entry_class` given to the constructor."""
         return self._entries
 
@@ -290,9 +300,6 @@ class BaseBND(GameFile, abc.ABC):
 
     def __len__(self):
         return len(self._entries)
-
-    def copy(self):
-        return copy.deepcopy(self)
 
     @staticmethod
     def read_bnd_setting(line: bytes, setting_name: str, assert_type=None, assert_values=None):
@@ -404,24 +411,18 @@ class BND3(BaseBND):
             self.entry_header_struct.add_fields(self.UNCOMPRESSED_DATA_SIZE, byte_order=byte_order)
 
         # NOTE: BND paths are *not* encoded in `shift_jis_2004`, unlike most other strings! They are `shift-jis`.
+        #  The main annoyance here is that escaped backslashes are encoded as the yen symbol in `shift_jis_2004`.
         for entry in BNDEntry.unpack(
             buffer, self.entry_header_struct, path_encoding="shift-jis", count=header["entry_count"]
         ):
             self.add_entry(entry)
 
-    def load_unpacked_dir(self, directory):
-        directory = Path(directory)
-        if not directory.is_dir():
-            raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
-        with (directory / "bnd_manifest.json").open("r", encoding="shift-jis") as f:
-            manifest = json.load(f)
-
+    def load_manifest_header(self, manifest: dict):
         for field in ("version", "signature", "magic", "big_endian", "unknown"):
             setattr(self, field, manifest[field])
         self.dcx_magic = tuple(manifest["dcx_magic"])
-        self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
 
-        # Create header structs.
+    def create_header_structs(self):
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         byte_order = ">" if self.big_endian else "<"
         self.header_struct.add_fields(*self.HEADER_STRUCT_ENDIAN, byte_order=byte_order)
@@ -449,6 +450,8 @@ class BND3(BaseBND):
 
         for i, entry in enumerate(self._entries):
             if not isinstance(entry, BNDEntry):
+                if not isinstance(entry, self._entry_class):
+                    raise TypeError(f"Cannot pack BND from invalid entry class {entry.__class__.__name__}.")
                 if not hasattr(entry, "pack"):
                     raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no `pack()` method.")
                 self.binary_entries[i].data = entry.pack()
@@ -606,24 +609,11 @@ class BND4(BaseBND):
         self._most_recent_entry_count = len(self.binary_entries)
         self._most_recent_paths = [entry.path for entry in self.binary_entries]
 
-    def load_unpacked_dir(self, directory):
-        directory = Path(directory)
-        if not directory.is_dir():
-            raise ValueError(f"Could not find unpacked BND directory {repr(directory)}.")
-        with (directory / "bnd_manifest.json").open("r", encoding="shift-jis") as f:
-            manifest = json.load(f)
-
-        for field in ("version", "signature", "magic", "big_endian", "utf16_paths", "hash_table_type"):
-            setattr(self, field, manifest[field])
-        self.flags = tuple(manifest["flags"])
-        self.dcx_magic = tuple(manifest["dcx_magic"])
-        self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
-
+    def create_header_structs(self):
         self._most_recent_hash_table = b""  # Hash table will need to be built on first pack.
         self._most_recent_entry_count = len(self.binary_entries)
         self._most_recent_paths = [entry.path for entry in self.binary_entries]
 
-        # Create header structs.
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         byte_order = ">" if self.big_endian else "<"
         self.header_struct.add_fields(*self.HEADER_STRUCT_ENDIAN, byte_order=byte_order)
@@ -638,6 +628,12 @@ class BND4(BaseBND):
         if self.magic == 0x20:
             # Extra pad.
             self.entry_header_struct.add_fields("8x")
+
+    def load_manifest_header(self, manifest: dict):
+        for field in ("version", "signature", "magic", "big_endian", "utf16_paths", "hash_table_type"):
+            setattr(self, field, manifest[field])
+        self.flags = tuple(manifest["flags"])
+        self.dcx_magic = tuple(manifest["dcx_magic"])
 
     def pack(self):
         entry_header_dicts = []
@@ -659,6 +655,8 @@ class BND4(BaseBND):
             rebuild_hash_table = True
         for i, entry in enumerate(self._entries):
             if not isinstance(entry, BNDEntry):
+                if not isinstance(entry, self._entry_class):
+                    raise TypeError(f"Cannot pack BND from invalid entry class {entry.__class__.__name__}.")
                 if not hasattr(entry, "pack"):
                     raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no `pack()` method.")
                 self.binary_entries[i].data = entry.pack()

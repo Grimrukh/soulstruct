@@ -19,11 +19,11 @@ BULLET_PARAM_ST = {
             "directed to either PlayerAttacks table or NonPlayerAttacks table, depending on the bullet's owner. "
             "Set to 0 if bullet has no attack data (no damage).",
         ),
-        FieldDisplayInfo("sfxId_Bullet", "ProjectileFX", True, int, "Visual effect ID for bullet projectile."),
-        FieldDisplayInfo("sfxId_Hit", "ImpactFX", True, int, "Visual effect ID for bullet impact."),
+        FieldDisplayInfo("sfxId_Bullet", "ProjectileVFX", True, int, "Visual effect ID for bullet projectile."),
+        FieldDisplayInfo("sfxId_Hit", "ImpactVFX", True, int, "Visual effect ID for bullet impact."),
         FieldDisplayInfo(
             "sfxId_Flick",
-            "FlickFX",
+            "FlickVFX",
             True,
             int,
             "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and throwing "
@@ -356,10 +356,10 @@ BULLET_PARAM_ST = {
         ),
         FieldDisplayInfo(
             "isIgnoreSfxIfHitWater:1",
-            "IgnoreFXOnWaterHit",
+            "IgnoreVFXOnWaterHit",
             True,
             bool,
-            "If True, hit FX are not produced if the bullet impacts water.",
+            "If True, hit VFX are not produced if the bullet impacts water.",
         ),
         FieldDisplayInfo(
             "isIgnoreMoveStateIfHitWater:1",

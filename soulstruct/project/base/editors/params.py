@@ -94,9 +94,9 @@ class ParamsEditor(BaseFieldEditor):
     FIELD_ROW_COUNT = 173  # highest count (Params[SpecialEffects])
 
     FIELD_ROW_CLASS = ParamFieldRow
-    field_rows: tp.List[ParamFieldRow]
+    field_rows: list[ParamFieldRow]
     ENTRY_ROW_CLASS = ParamEntryRow
-    entry_rows: tp.List[ParamEntryRow]
+    entry_rows: list[ParamEntryRow]
 
     def __init__(self, params: GameParamBND, linker, master=None, toplevel=False):
         self.params = params

@@ -15,7 +15,7 @@ class MSBSubtype(IntEnum):
     def pluralized_name(self):
         if self.name in ("Box", "Navmesh"):
             return self.name + "es"
-        elif self.name in ("FX", "Wind", "Treasure", "Navigation", "PseudoMultiplayer", "WindFX", "Other"):
+        elif self.name in ("VFX", "Wind", "Treasure", "Navigation", "NPCInvasion", "WindVFX", "Other"):
             return self.name
         return self.name + "s"
 
@@ -42,7 +42,7 @@ class MSBModelSubtype(MSBSubtype):
 class MSBEventSubtype(MSBSubtype):
     Light = 0
     Sound = 1
-    FX = 2
+    VFX = 2
     Wind = 3
     Treasure = 4
     Spawner = 5
@@ -52,9 +52,9 @@ class MSBEventSubtype(MSBSubtype):
     MapOffset = 9
     Navigation = 10
     Environment = 11
-    PseudoMultiplayer = 12
+    NPCInvasion = 12
     # Bloodborne only:
-    WindFX = 13
+    WindVFX = 13
     PatrolRoute = 14
     DarkLock = 15
     Platoon = 16

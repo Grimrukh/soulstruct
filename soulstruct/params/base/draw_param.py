@@ -75,7 +75,9 @@ class DrawParamBND(BND3, abc.ABC):
                 param_name = "s_" + param_name
 
             undecodable_row_names = self.UNDECODABLE_ROW_NAMES.get(param_name, ())
-            p = self.DRAW_PARAM_CLASS(entry.data, self.paramdef_bnd, undecodable_row_names=undecodable_row_names)
+            p = self.DRAW_PARAM_CLASS(
+                entry.data, paramdef_bnd=self.paramdef_bnd, undecodable_row_names=undecodable_row_names,
+            )
             self.params.setdefault(param_name, [None, None])[slot] = p
             self._slot_entry_paths[param_name, slot] = entry.path
             if not match.group(1).startswith("s") and p.param_info is not None:

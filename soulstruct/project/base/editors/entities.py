@@ -33,7 +33,7 @@ ENTITY_GAME_TYPES = (
     PlayerStart,
     Collision,
     SoundEvent,
-    FXEvent,
+    VFXEvent,
     SpawnerEvent,
     MessageEvent,
     SpawnPointEvent,
@@ -203,7 +203,7 @@ class EntityEditor(BaseEditor):
     ENTRY_RANGE_SIZE = 100  # More are added dynamically as needed.
 
     ENTRY_ROW_CLASS = EntityEntryRow
-    entry_rows: tp.List[EntityEntryRow]
+    entry_rows: list[EntityEntryRow]
 
     def __init__(
         self,

@@ -18,8 +18,6 @@ from soulstruct.project.core import SoulstructProjectError, RestoreBackupError
 from soulstruct.project.icon import SOULSTRUCT_ICON
 from soulstruct.project.links import WindowLinker  # TODO: Move to base, with game subclasses
 
-from soulstruct.project.runtime import RuntimeManager  # TODO: Move to base, with game subclasses
-
 from .editors.ai import AIEditor
 from .editors.entities import EntityEditor
 from .editors.events import EventEditor
@@ -31,6 +29,7 @@ from .editors.text import TextEditor
 
 if tp.TYPE_CHECKING:
     from soulstruct.project.base import GameDirectoryProject
+    from .runtime import RuntimeManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,8 +46,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         "events": EventEditor,
         "ai": AIEditor,
         "talk": TalkEditor,
-        "runtime": RuntimeManager,  # TODO: Assigned by game.
-    }  # also specifies tab order
+    }  # also specifies tab order ('runtime' comes last)
+    RUNTIME_MANAGER_CLASS = None  # type: tp.Type[RuntimeManager]
     CHARACTER_MODELS = {}
 
     maps_tab: tp.Optional[MapsEditor]
@@ -175,7 +174,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         tab_frames = {
             tab_name: self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
-            for tab_name in self.TAB_EDITORS
+            for tab_name in self.ordered_tabs
         }
 
         self.maps_tab = self.SmartFrame(
@@ -265,10 +264,14 @@ class ProjectWindow(SmartFrame, abc.ABC):
         )
         self.talk_tab.bind("<Visibility>", self._update_banner)
 
-        self.runtime_tab = self.SmartFrame(
-            frame=tab_frames["runtime"], smart_frame_class=RuntimeManager, project=self.project, sticky="nsew"
-        )
-        self.runtime_tab.bind("<Visibility>", self._update_banner)
+        if self.RUNTIME_MANAGER_CLASS:
+            self.runtime_tab = self.SmartFrame(
+                frame=tab_frames["runtime"],
+                smart_frame_class=self.RUNTIME_MANAGER_CLASS,
+                project=self.project,
+                sticky="nsew",
+            )
+            self.runtime_tab.bind("<Visibility>", self._update_banner)
 
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f"  {data_type_caps(tab_name)}  ")
@@ -417,8 +420,6 @@ class ProjectWindow(SmartFrame, abc.ABC):
         elif data_type == "entities":
             self.entities_tab.maps = self.project.maps
             self.entities_tab.refresh_entries()
-        elif data_type == "runtime":
-            pass
         else:
             project_data = getattr(self.project, data_type)
             setattr(getattr(self, f"{data_type}_tab"), data_type, project_data)
@@ -453,7 +454,9 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     @property
     def current_data_type(self):
-        data_type = list(self.TAB_EDITORS)[self.page_tabs.index(self.page_tabs.select())]
+        """Return name of current tab's data type. Could be 'runtime'."""
+        tab_index = self.page_tabs.index(self.page_tabs.select())
+        data_type = self.ordered_tabs[tab_index]
         if data_type == "entities":
             return "maps"
         return data_type
@@ -779,6 +782,13 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 or param_table == self.params_tab.active_category
             ):
                 self.params_tab.refresh_entries()
+
+    @property
+    def ordered_tabs(self):
+        editor_tabs = list(self.TAB_EDITORS.keys())
+        if self.RUNTIME_MANAGER_CLASS:
+            return editor_tabs + ["runtime"]
+        return editor_tabs
 
 
 def data_type_caps(data_type: str):

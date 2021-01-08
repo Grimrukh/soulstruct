@@ -643,8 +643,8 @@ def Event13700156():
 
 def Event13705157():
     """ 13705157: Event 13705157 """
-    CreateObjectFX(3, obj=3701156, model_point=101)
-    CreateObjectFX(2, obj=3701157, model_point=101)
+    CreateObjectVFX(3, obj=3701156, model_point=101)
+    CreateObjectVFX(2, obj=3701157, model_point=101)
 
 
 @RestartOnRest
@@ -665,7 +665,7 @@ def Event13700163():
 
 def Event13700165():
     """ 13700165: Event 13700165 """
-    CreateObjectFX(837061, obj=3701540, model_point=101)
+    CreateObjectVFX(837061, obj=3701540, model_point=101)
 
 
 def Event13700172():
@@ -1079,14 +1079,14 @@ def Event13705350(_, arg_0_3: int):
 def Event13705351(_, arg_0_3: int, arg_4_7: int):
     """ 13705351: Event 13705351 """
     DisableNetworkSync()
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     IfTryingToJoinSession(-1)
     IfTryingToCreateSession(-1)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=7.0)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(2, input_condition=1)
     IfConditionTrue(0, input_condition=2)
-    CreateObjectFX(arg_4_7, obj=arg_0_3, model_point=101)
+    CreateObjectVFX(arg_4_7, obj=arg_0_3, model_point=101)
     IfTryingToCreateSession(-3)
     IfTryingToJoinSession(-3)
     IfEntityWithinDistance(3, PLAYER, arg_0_3, radius=7.0)
@@ -1425,15 +1425,15 @@ def Event13705520(_, arg_0_3: int, arg_4_7: int):
     EndIfPlayerNotInOwnWorld()
     DisableNetworkSync()
     EndIfThisEventSlotOn()
-    CreateObjectFX(831023, obj=arg_0_3, model_point=200)
-    CreateObjectFX(60, obj=arg_0_3, model_point=200)
+    CreateObjectVFX(831023, obj=arg_0_3, model_point=200)
+    CreateObjectVFX(60, obj=arg_0_3, model_point=200)
     IfActionButtonInRegion(0, action_button_id=9600, region=arg_4_7)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
-    CreateTemporaryFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryVFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=999999988)
     AddSpecialEffect(PLAYER, 2005)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
 
 
 def Event13705532():
@@ -1510,7 +1510,7 @@ def Event13705542():
     )
     IfFlagOn(1, 13700540)
     IfConditionTrue(0, input_condition=1)
-    CreateTemporaryFX(837060, anchor_entity=3701540, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(837060, anchor_entity=3701540, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(1.0)
     Restart()
 
@@ -1518,11 +1518,11 @@ def Event13705542():
 def Event13705543():
     """ 13705543: Event 13705543 """
     DisableNetworkSync()
-    DeleteObjectFX(3701540, erase_root=True)
+    DeleteObjectVFX(3701540, erase_root=True)
     IfEntityWithinDistance(1, 3701540, PLAYER, radius=15.0)
-    CreateObjectFX(837061, obj=3701540, model_point=101)
+    CreateObjectVFX(837061, obj=3701540, model_point=101)
     IfEntityBeyondDistance(0, 3701540, PLAYER, radius=18.0)
-    DeleteObjectFX(3701540, erase_root=True)
+    DeleteObjectVFX(3701540, erase_root=True)
     Restart()
 
 
@@ -1932,7 +1932,7 @@ def Event13705950(
     EndIfObjectDestroyed(arg_4_7)
     IfObjectDestroyed(0, obj=arg_4_7)
     WaitFrames(1)
-    CreateTemporaryFX(arg_16_19, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=arg_8_11)
+    CreateTemporaryVFX(arg_16_19, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=arg_8_11)
     CreateHazard(
         arg_0_3,
         arg_4_7,
@@ -2130,14 +2130,14 @@ def Event13705640(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableBackread(arg_0_3)
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
-    DeleteFX(arg_12_15, erase_root_only=False)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     End()
 
     # --- 6 --- #
     DefineLabel(6)
-    DeleteFX(arg_12_15, erase_root_only=False)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     SkipLinesIfFlagOff(5, 13700651)
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
@@ -2199,8 +2199,8 @@ def Event13705640(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableBackread(arg_0_3)
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
-    DeleteFX(arg_12_15, erase_root_only=False)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     GotoIfFlagOff(Label.L20, 9013)
     End()
 
@@ -2214,8 +2214,8 @@ def Event13705640(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableBackread(arg_0_3)
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
-    DeleteFX(arg_12_15, erase_root_only=False)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     GotoIfFlagOff(Label.L20, 9013)
     End()
 
@@ -2230,12 +2230,12 @@ def Event13705640(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
     GotoIfFlagOff(Label.L20, 9013)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     End()
 
     # --- 20 --- #
     DefineLabel(20)
-    DeleteFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
     End()
 
 
@@ -2306,12 +2306,12 @@ def Event13705641(
     # --- 2 --- #
     DefineLabel(2)
     GotoIfFlagOff(Label.L20, 9013)
-    CreateFX(arg_36_39)
+    CreateVFX(arg_36_39)
     Goto(Label.L15)
 
     # --- 20 --- #
     DefineLabel(20)
-    CreateFX(arg_40_43)
+    CreateVFX(arg_40_43)
     Goto(Label.L15)
 
     # --- 15 --- #
@@ -2480,12 +2480,12 @@ def Event13700643(
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
     GotoIfFlagOff(Label.L10, 9013)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     Goto(Label.L20)
 
     # --- 10 --- #
     DefineLabel(10)
-    CreateFX(arg_12_15)
+    CreateVFX(arg_12_15)
     Goto(Label.L20)
 
     # --- 20 --- #
@@ -2801,7 +2801,7 @@ def Event13705646(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfHasTAEEvent(-1, character=arg_0_3, tae_event_id=10)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
-    CreateTemporaryFX(435012, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryVFX(435012, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=220)
     EnableCharacter(arg_0_3)
     DisableImmortality(arg_0_3)
     DisableObject(arg_4_7)
@@ -3078,7 +3078,7 @@ def Event13700664():
     IfFlagOn(0, 73700204)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
-    CreateTemporaryFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryVFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=999999988)
     AddSpecialEffect(PLAYER, 2005)
 

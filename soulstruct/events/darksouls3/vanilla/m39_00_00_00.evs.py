@@ -651,13 +651,13 @@ def Event13900900():
     DisableNetworkSync()
     EndIfPlayerNotInOwnWorld()
     EndIfThisEventSlotOn()
-    CreateObjectFX(61, obj=3901250, model_point=90)
+    CreateObjectVFX(61, obj=3901250, model_point=90)
     IfActionButtonInRegion(0, action_button_id=4200, region=3901250)
     ForceAnimation(PLAYER, 60070, skip_transition=True)
     SkipLinesIfFlagOn(1, 6073)
     AwardGestureItem(gesture_id=23, item_type=ItemType.Good, item_id=9024)
     AwardItemLot(3900900, host_only=False)
-    DeleteObjectFX(3901250, erase_root=True)
+    DeleteObjectVFX(3901250, erase_root=True)
     EnableFlag(6073)
 
 
@@ -780,8 +780,8 @@ def Event13900465():
 @RestartOnRest
 def Event13905470():
     """ 13905470: Event 13905470 """
-    DeleteObjectFX(3901470, erase_root=False)
-    CreateObjectFX(839020, obj=3901470, model_point=200)
+    DeleteObjectVFX(3901470, erase_root=False)
+    CreateObjectVFX(839020, obj=3901470, model_point=200)
     SkipLinesIfClientTypeCountComparison(
         1, client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0
     )
@@ -816,7 +816,7 @@ def Event13905471():
     SetNetworkConnectedFlagState(flag=13900472, state=FlagState.On)
     DisableFlag(13900472)
     GotoIfFlagOn(Label.L0, 13905479)
-    CreateTemporaryFX(524112, anchor_entity=3902470, anchor_type=CoordEntityType.Region, model_point=-1)
+    CreateTemporaryVFX(524112, anchor_entity=3902470, anchor_type=CoordEntityType.Region, model_point=-1)
     SkipLinesIfFlagOff(1, 50)
     ShootProjectile(
         owner_entity=3900470,
@@ -1369,12 +1369,12 @@ def Event13905815():
 @RestartOnRest
 def Event13905816():
     """ 13905816: Event 13905816 """
-    DeleteFX(3904810, erase_root_only=False)
+    DeleteVFX(3904810, erase_root_only=False)
     EndIfFlagOn(13900800)
     IfFlagOn(0, 13905815)
-    CreateFX(3904810)
+    CreateVFX(3904810)
     IfFlagOn(0, 13900800)
-    DeleteFX(3904810, erase_root_only=True)
+    DeleteVFX(3904810, erase_root_only=True)
 
 
 @RestartOnRest

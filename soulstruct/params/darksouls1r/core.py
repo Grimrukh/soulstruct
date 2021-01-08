@@ -19,9 +19,11 @@ if tp.TYPE_CHECKING:
 
 
 class ParamRow(_BaseParamRow):
-    def get_field_type(self, field_type_name: str):
+    def get_field_type(self, field):
         """Look for field type in game-specific appropriate `enums` module."""
-        return getattr(enums, field_type_name)
+        if field.name == "sfxMultiplier":
+            return enums.f32
+        return getattr(enums, field.internal_type)
 
 
 class Param(_BaseParam):

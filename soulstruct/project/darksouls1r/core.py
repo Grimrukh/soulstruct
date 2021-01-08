@@ -5,7 +5,6 @@ from soulstruct.esd.darksouls1r import TalkDirectory
 from soulstruct.events.darksouls1 import EMEVDDirectoryDSR
 from soulstruct.games import DARK_SOULS_DSR
 from soulstruct.maps.darksouls1 import MapStudioDirectory
-from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.params.darksouls1r.core import GameParamBND
 from soulstruct.params.darksouls1r.draw_param import DrawParamDirectory
 from soulstruct.project.base.core import GameDirectoryProject as _BaseGameDirectoryProject
@@ -21,8 +20,6 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         "lighting": DrawParamDirectory,
         "maps": MapStudioDirectory,
         "params": GameParamBND,
-        "talk": TalkDirectory,  # class not used; modified via ESP state machine script files
+        "talk": TalkDirectory,  # modified via ESP state machine script files
         "text": MSGDirectory,
     }
-    ALL_MAPS = ALL_MAPS
-    GET_MAP = staticmethod(get_map)

@@ -115,7 +115,7 @@ def Constructor():
     SkipLinesIfFlagOff(7, 16)
     RunEvent(11815392)
     DisableObject(1811990)
-    DeleteFX(1811991, erase_root_only=False)
+    DeleteVFX(1811991, erase_root_only=False)
     EndOfAnimation(1811115, 1)
     EndOfAnimation(1811111, 1)
     DisableObjectActivation(1811111, obj_act_id=-1)
@@ -127,7 +127,7 @@ def Constructor():
     RunEvent(11815394)
     RunEvent(11815395)
     DisableObject(1811890)
-    DeleteFX(1811891, erase_root_only=False)
+    DeleteVFX(1811891, erase_root_only=False)
     DisableSoundEvent(1813801)
     EndIfFlagOff(11810000)
     SkipLinesIfFlagOff(2, 11810900)
@@ -170,7 +170,7 @@ def Event11810090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11810090: Event 11810090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1, prompt_text=10010403, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Region, line_intersects=arg_0_3
@@ -187,7 +187,7 @@ def Event11810090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -261,7 +261,7 @@ def Event11810001():
     EnableFlag(16)
     KillBoss(1810800)
     DisableObject(1811990)
-    DeleteFX(1811991, erase_root_only=True)
+    DeleteVFX(1811991, erase_root_only=True)
     ForceAnimation(1811111, 1)
     SkipLinesIfFlagOff(1, 11810312)
     ForceAnimation(1811115, 1)
@@ -308,7 +308,7 @@ def Event11810310():
     EndIfThisEventOn()
     EndIfFlagOn(16)
     DisableObject(1811990)
-    DeleteFX(1811991, erase_root_only=False)
+    DeleteVFX(1811991, erase_root_only=False)
     DisableHealthBar(1810800)
     DisableAI(1810800)
     SetStandbyAnimationSettings(1810800, standby_animation=9000)
@@ -321,7 +321,7 @@ def Event11810310():
     CancelSpecialEffect(1810800, 4160)
     SetNest(1810800, 1812300)
     EnableObject(1811990)
-    CreateFX(1811991)
+    CreateVFX(1811991)
 
 
 def Event11810311():
@@ -415,7 +415,7 @@ def Event11815382():
     DisableInvincibility(1810810)
     EnableBossHealthBar(1810810, name=2231, slot=0)
     EnableObject(1811890)
-    CreateFX(1811891)
+    CreateVFX(1811891)
 
 
 def Event11810900():
@@ -423,7 +423,7 @@ def Event11810900():
     IfCharacterDead(0, 1810810)
     KillBoss(1810810)
     DisableObject(1811890)
-    DeleteFX(1811891, erase_root_only=True)
+    DeleteVFX(1811891, erase_root_only=True)
     RegisterLadder(start_climbing_flag=11810012, stop_climbing_flag=11810013, obj=1811141)
 
 
@@ -716,7 +716,7 @@ def Event11810220():
     DestroyObject(1811201, slot=1)
     DisableObject(1811202)
     PlaySoundEffect(anchor_entity=1811200, sound_type=SoundType.o_Object, sound_id=851000000)
-    CreateTemporaryFX(180100, anchor_entity=1811200, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(180100, anchor_entity=1811200, anchor_type=CoordEntityType.Object, model_point=-1)
 
 
 def Event11810320():

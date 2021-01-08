@@ -31,5 +31,5 @@ class Regions(Region):
     BloodStarvedBeastFirstTimeTrigger = 2302805
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     BossFog = 2303800

@@ -28,7 +28,7 @@ class Objects(Object):
     OneRebornFog2 = 2801801
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     OneRebornFog1 = 2803800
     OneRebornFog2 = 2803801
 

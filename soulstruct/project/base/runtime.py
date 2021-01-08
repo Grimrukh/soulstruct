@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+__all__ = ["RuntimeManager"]
+
+import abc
 import subprocess
 import sys
 import threading
 import time
 import typing as tp
 
-from .core import SoulstructProjectError
-from soulstruct.utilities.memory import DSRMemoryHook
+from soulstruct.project.core import SoulstructProjectError
+from soulstruct.project.utilities import error_as_dialog
 from soulstruct.utilities.window import SmartFrame
 
-from .utilities import error_as_dialog
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.memory import MemoryHook
+
 
 try:
     import psutil
@@ -21,9 +26,11 @@ if tp.TYPE_CHECKING:
     from soulstruct.project.base import GameDirectoryProject
 
 
-class RuntimeManager(SmartFrame):
+class RuntimeManager(SmartFrame, abc.ABC):
     DATA_NAME = None
     _THREADED_HOOK = False
+
+    HOOK_CLASS = None
 
     def __init__(self, project: GameDirectoryProject, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Runtime Manager")
@@ -31,7 +38,7 @@ class RuntimeManager(SmartFrame):
         self.game_save_entry = None
         self.game_save_list = None
         self.install_psutil_button = None
-        self._hook = None  # type: tp.Optional[DSRMemoryHook]
+        self._hook = None  # type: tp.Optional[MemoryHook]
         self._THREAD_EXCEPTION = None
 
         self.build()
@@ -69,24 +76,13 @@ class RuntimeManager(SmartFrame):
                         bg="#222",
                         **button_kwargs,
                     )
-                    debug_launch = self.Button(
-                        text="Launch Game (Debug)",
-                        command=self._error_as_dialog(self.project.launch_game),
-                        bg="#222",
-                        tooltip_text="Launch 'DARKSOULS_DEBUG.exe' if it exists next to the game executable.",
-                        **button_kwargs,
-                    )
-                    if self.project.GAME.name != "Dark Souls Prepare to Die Edition":
-                        debug_launch["state"] = "disabled"
-                        debug_launch.var.set("No Debug for DSR")
-                        gadget_tooltip = "Launch 'DSR-Gadget.exe' if it exists next to your game executable."
-                    else:
-                        gadget_tooltip = "Launch 'DS Gadget.exe' if it exists next to your game executable."
+                    gadget = self.project.GAME.gadget_name
                     self.Button(
-                        text="Launch DS Gadget",
+                        text=f"Run {gadget[:-4]}" if gadget else "No Gadget",
                         bg="#222",
                         command=self._error_as_dialog(self.project.launch_gadget),
-                        tooltip_text=gadget_tooltip,
+                        tooltip_text=f"Launch '{gadget}' if it exists next to the game executable." if gadget else None,
+                        state="normal" if gadget else "disabled",
                         **button_kwargs,
                     )
                     self.Button(
@@ -94,13 +90,14 @@ class RuntimeManager(SmartFrame):
                         bg="#222",
                         command=self.hook_into_game,
                         tooltip_text="Hook into running game memory to unlock more features.",
+                        state="normal" if self.HOOK_CLASS else "disabled",
                         **button_kwargs,
                     )
                     self.Button(
                         text="Close Game",
                         bg="#422",
                         command=self._error_as_dialog(self.project.force_quit_game),
-                        tooltip_text="Force quit Dark Souls if it's running.",
+                        tooltip_text="Force quit game if it is running.",
                         **button_kwargs,
                     )
 
@@ -191,10 +188,6 @@ class RuntimeManager(SmartFrame):
 
     def hook_into_game(self):
         """Returns True if hook was successful, and False if not."""
-        # TODO: Doesn't work for PTDE yet.
-        if self.project.GAME.name != "Dark Souls Remastered":
-            self.CustomDialog("Remastered Only", "Can currently only hook into Dark Souls Remastered.")
-            return False
         for p in psutil.process_iter():
             if p.name() == self.project.GAME.executable_name:
                 pid = p.pid
@@ -206,13 +199,14 @@ class RuntimeManager(SmartFrame):
         if self._THREADED_HOOK:
             self._do_threaded_hook(pid)
         else:
-            self._hook = DSRMemoryHook(pid)
+            # Window will not respond while the hook loads.
+            self._hook = self.HOOK_CLASS(pid)
 
         self.CustomDialog(
             title="Hook Successful",
-            message="Hooked into Dark Souls Remastered successfully.\n\n"
+            message=f"Hooked into {self.project.GAME.name} successfully.\n\n"
             "You may now use features such as assigning current player coordinates to map entities.\n\n"
-            "For more advanced runtime features, use DSR Gadget by TKGP.",
+            "For more useful runtime features, use DS/DSR Gadget by TKGP.",
         )
         return True
 
@@ -224,14 +218,14 @@ class RuntimeManager(SmartFrame):
 
         def _threaded_hook():
             try:
-                self._hook = DSRMemoryHook(pid)
+                self._hook = self.HOOK_CLASS(pid)
             except Exception as e:
                 self._THREAD_EXCEPTION = e
                 raise
 
         loading = self.LoadingDialog(
             title="Hooking game...",
-            message=f"Hooking into Dark Souls Remastered...",
+            message=f"Hooking into {self.project.GAME.name}...",
             maximum=20,
         )
         hook_thread = threading.Thread(target=_threaded_hook)
@@ -270,7 +264,7 @@ class RuntimeManager(SmartFrame):
         self.update_idletasks()
         self.bell()
         self.CustomDialog(
-            title="Installation complete", message="psutil installed successfully.\n\nPlease restart Soulstruct."
+            title="Installation complete", message="`psutil` installed successfully.\n\nPlease restart Soulstruct."
         )
 
     def _error_as_dialog(self, func):

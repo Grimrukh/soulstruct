@@ -67,7 +67,7 @@ def Event14100100():
     IfFlagOn(1, 14101100)
     IfConditionTrue(0, input_condition=1)
     SkipLinesIfFlagOn(1, 14105100)
-    CreateObjectFX(30001, obj=4101100, model_point=0)
+    CreateObjectVFX(30001, obj=4101100, model_point=0)
     IfFlagOff(2, 101)
     IfLeavingSession(2)
     IfActionButtonInRegion(2, action_button_id=9341, region=4101100)
@@ -89,7 +89,7 @@ def Event14100100():
     AddSpecialEffect(PLAYER, 4901)
     EnableImmortality(PLAYER)
     EnableImmortality(4100100)
-    DeleteObjectFX(4101100, erase_root=True)
+    DeleteObjectVFX(4101100, erase_root=True)
     DisableCollision(4104100)
     EnableCollision(4104103)
     WaitFrames(1)
@@ -268,7 +268,7 @@ def Event14100800():
     EnableFlag(14101100)
     EnableFlag(9321)
     EnableFlag(6321)
-    CreateTemporaryFX(1060, anchor_entity=4101952, anchor_type=CoordEntityType.Object, model_point=200)
+    CreateTemporaryVFX(1060, anchor_entity=4101952, anchor_type=CoordEntityType.Object, model_point=200)
 
 
 @RestartOnRest

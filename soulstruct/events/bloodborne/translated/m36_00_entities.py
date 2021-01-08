@@ -24,7 +24,7 @@ class Objects(Object):
     MoonOrphanDead = 3601811  # entire skybox actually
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     OrphanFog1 = 3603800
     OrphanFog2 = 3603801
 

@@ -208,7 +208,7 @@ class BaseEditor(SmartFrame, abc.ABC):
     ENTRY_RANGE_SIZE = 500
 
     ENTRY_ROW_CLASS = EntryRow
-    entry_rows: tp.List[EntryRow]
+    entry_rows: list[EntryRow]
 
     def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
         super().__init__(master=master, toplevel=toplevel, window_title=window_title)

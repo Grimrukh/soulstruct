@@ -30,7 +30,7 @@ def Constructor():
     IfInsideMap(1, game_map=TOMB_OF_THE_GIANTS)
     SkipLinesIfConditionTrue(2, 1)
     DisableObject(1311994)
-    DeleteFX(1311995, erase_root_only=False)
+    DeleteVFX(1311995, erase_root_only=False)
     SkipLinesIfFlagOn(2, 11310810)
     DisableTreasure(1311600)
     DisableObject(1311600)
@@ -66,7 +66,7 @@ def Constructor():
     SkipLinesIfFlagOff(4, 7)
     RunEvent(11315392)
     DisableObject(1311990)
-    DeleteFX(1311991, erase_root_only=False)
+    DeleteVFX(1311991, erase_root_only=False)
     SkipLines(13)
     RunEvent(11315390)
     RunEvent(11315391)
@@ -127,7 +127,7 @@ def Event11310090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11310090: Event 11310090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1,
@@ -154,7 +154,7 @@ def Event11310090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -262,12 +262,12 @@ def Event11310095():
     SkipLinesIfFlagOff(5, 11800100)
     EnableFlag(11310096)
     DisableObject(1311710)
-    DeleteFX(1311711, erase_root_only=False)
+    DeleteVFX(1311711, erase_root_only=False)
     DisableFlag(401)
     End()
     SkipLinesIfFlagOff(3, 11310096)
     DisableObject(1311710)
-    DeleteFX(1311711, erase_root_only=False)
+    DeleteVFX(1311711, erase_root_only=False)
     End()
     EndIfClient()
     IfActionButton(
@@ -407,9 +407,9 @@ def Event11310001():
     SkipLinesIfClient(1)
     AwardAchievement(35)
     DisableObject(1311990)
-    DeleteFX(1311991, erase_root_only=True)
+    DeleteVFX(1311991, erase_root_only=True)
     Kill(1310810, award_souls=False)
-    CreateTemporaryFX(90014, anchor_entity=1311950, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(90014, anchor_entity=1311950, anchor_type=CoordEntityType.Object, model_point=-1)
     Wait(2.0)
     EnableObject(1311950)
     RegisterBonfire(11310920, obj=1311950, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
@@ -520,7 +520,7 @@ def Event11314398():
         life=0.30000001192092896,
         repetition_time=0.0,
     )
-    CreateTemporaryFX(15224, anchor_entity=1311250, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(15224, anchor_entity=1311250, anchor_type=CoordEntityType.Object, model_point=-1)
     DisableFlag(11313399)
     Restart()
 
@@ -669,14 +669,14 @@ def Event11315150(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 11315150: Event 11315150 """
     DisableNetworkSync()
     SkipLinesIfFlagOn(4, 11315090)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     IfFlagOn(1, 11315090)
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     EnableFlag(arg_8_11)
     IfFlagOff(0, 11315090)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     DisableFlag(arg_8_11)
     Restart()
 
@@ -1237,11 +1237,11 @@ def Event11315846(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     IfUnknownPlayerType5(3)
     IfConditionFalse(2, input_condition=3)
     IfSingleplayer(2)
     IfConditionTrue(0, input_condition=2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Restart()

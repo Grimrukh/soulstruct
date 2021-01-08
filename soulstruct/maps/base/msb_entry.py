@@ -1,14 +1,16 @@
 """TODO: Dictionary read/write for all classes."""
+from __future__ import annotations
 
 import abc
-import copy
+import io
 import logging
 import re
 import typing as tp
 from copy import deepcopy
-from io import BytesIO, BufferedReader
+from functools import wraps
 
-from soulstruct.utilities import read_chars_from_buffer
+from soulstruct.maps.core import MapFieldInfo, MapError
+from soulstruct.utilities import read_chars_from_buffer, unpack_from_buffer
 from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
@@ -17,19 +19,58 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_DUPLICATE_TAG_MATCH = re.compile(r" <(\d+)>$")
+_DUPLICATE_TAG_MATCH = re.compile(r"(.*)<(\d+)>$")
 
 
 class MSBEntry(abc.ABC):
 
     ENTRY_SUBTYPE = None  # type: MSBSubtype
-    FIELD_INFO = {}
-    FIELD_NAMES = ()  # If given, fields will be displayed in this order. Otherwise uses order of `FIELD_INFO` keys.
-    HIDDEN_FIELDS = ()
+    FIELD_INFO = {}  # type: dict[str, MapFieldInfo]
+    FIELD_ORDER = ()  # If given, fields will be displayed in this order. Otherwise uses order of `FIELD_INFO` keys.
 
-    def __init__(self):
-        self.name = None
-        self.description = None  # Attribute supported by Soulstruct classes even when game lacks it.
+    def __init__(self, source=None, **kwargs):
+        """Base class for entries of any type and subtype that appear in an `MSB` (under one of the four entry lists).
+
+        If `source` is given, it must be binary data (`bytes` or a byte buffer). You are unlikely to ever do this
+        yourself; it is typically only done when a complete `MSB` is unpacked. No keyword arguments may be given in this
+        case other than `description`, which will override an unpacked `description` for games that have that field.
+
+        If `source` is not given, any keyword arguments may be given that are valid attributes for the instantiated
+        subclass. In this case, `name` is compulsory; all other unspecified values will be set to their defaults.
+        """
+        self.name = ""
+        self.description = ""  # supported by Soulstruct even when game lacks it
+
+        if isinstance(source, bytes):
+            source = io.BytesIO(source)
+        if isinstance(source, io.BufferedIOBase):
+            description = kwargs.pop("description", None)
+            if kwargs:
+                raise ValueError("Cannot instantiate MSB entry using `kwargs` if binary `source` is given.")
+            self.set_defaults()
+            self.unpack(source)
+            if self.description and description is not None:
+                _LOGGER.warning(f"`description` arg will override unpacked description for MSB entry '{self.name}'.")
+                self.description = description
+        elif source is None:
+            try:
+                self.name = kwargs.pop("name")
+            except KeyError:
+                raise ValueError(f"`name` must be given to `{self.__class__.__name__}` if no binary `source` is given.")
+            self.description = kwargs.pop("description", "")
+            for field_name, field_info in self.FIELD_INFO.items():
+                try:
+                    value = kwargs.pop(field_name)
+                except KeyError:
+                    try:
+                        value = field_info.default.copy()  # mutable default
+                    except AttributeError:
+                        value = field_info.default  # immutable default
+                setattr(self, field_name, value)
+            if kwargs:
+                raise ValueError(f"Invalid arguments for MSB entry class `{self.__class__.__name__}`: {tuple(kwargs)}")
+        else:
+            raise TypeError(f"`{self.__class__.__name__}` source must be a buffer, `bytes`, or `None` (default).")
 
     @abc.abstractmethod
     def pack(self):
@@ -58,8 +99,7 @@ class MSBEntry(abc.ABC):
         elif field_name in {"name", "description"} or field_name in self.FIELD_INFO:
             setattr(self, field_name, value)
         else:
-            # TODO: Haven't finished FIELD_INFO class attributes yet, so allowing existing attributes.
-            if not hasattr(self, field_name):
+            if field_name not in self.FIELD_INFO:
                 raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
             setattr(self, field_name, value)
 
@@ -73,20 +113,37 @@ class MSBEntry(abc.ABC):
             if not field_name.startswith("__"):
                 self[field_name] = value
 
+    def set_defaults(self):
+        for field_name, field_info in self.FIELD_INFO.items():
+            try:
+                setattr(self, field_name, field_info.default)
+            except AttributeError as ex:
+                raise AttributeError(
+                    f"Could not set attribute '{field_name}' in class `{self.__class__.__name__}`.\n"
+                    f"Error: {ex}")
+
     def copy(self):
         return deepcopy(self)
 
     @property
     def field_names(self):
-        if self.FIELD_NAMES:
-            return self.FIELD_NAMES
+        if self.FIELD_ORDER:
+            return self.FIELD_ORDER
         return tuple(self.FIELD_INFO.keys())
 
+    @property
+    def all_field_names(self):
+        """Includes hidden field names absent from `FIELD_ORDER`, which appear after all non-hidden fields."""
+        if not self.FIELD_ORDER:
+            return self.field_names  # no hidden fields or desired display order
+        field_names = self.field_names
+        hidden_fields = [field for field in self.FIELD_INFO.keys() if field not in field_names]
+        return self.FIELD_ORDER + tuple(hidden_fields)
+
     def __repr__(self):
-        field_names = self.FIELD_NAMES if self.FIELD_NAMES else self.FIELD_INFO.keys()
         kwargs = {}
-        default = self.__class__()
-        for name in (s for s in field_names if s not in self.HIDDEN_FIELDS):
+        default = self.__class__(name="__DEFAULT__")
+        for name in self.field_names:
             value = getattr(self, name)
             default_value = getattr(default, name)
             if value == default_value:
@@ -99,26 +156,36 @@ class MSBEntry(abc.ABC):
 
 
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
+EntrySpecType = tp.Union[MSBEntry, int, str]  # valid entry specifications: entry instance, local index, or name
+
+
+def _entry_lookup(func):
+    @wraps(func)
+    def wrapped(self: MSBEntryList, entry: EntrySpecType, entry_subtype: MSBSubtype = None, *args, **kwargs):
+        if isinstance(entry, int):
+            entry = self.get_entries(entry_subtype)[entry]
+        elif isinstance(entry, str):
+            entry = self.get_entry_by_name(entry_name=entry, entry_subtype=entry_subtype)
+        elif isinstance(entry, MSBEntry):
+            if entry_subtype is not None and entry_subtype != entry.ENTRY_SUBTYPE:
+                raise TypeError(f"Specified entry {entry} is not of specified subtype {entry_subtype.name}.")
+        else:
+            raise TypeError(f"`entry` must be an `MSBEntry`, local/global entry index, or unique entry name.")
+        return func(self, entry, *args, **kwargs)
+
+    return wrapped
 
 
 class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
-    MAP_ENTITY_LIST_HEADER = BinaryStruct(
-        "4x",
-        ("name_offset", "i"),
-        ("entry_offset_count", "i"),  # includes final offset to next entry list (actual entry count is this minus 1)
-    )
-    MAP_ENTITY_ENTRY_OFFSET = BinaryStruct(
-        ("entry_offset", "i"),
-    )
-    MAP_ENTITY_LIST_TAIL = BinaryStruct(
-        ("next_entry_list_offset", "i"),
-    )
-
+    MAP_ENTITY_LIST_HEADER: BinaryStruct = None
+    MAP_ENTITY_ENTRY_OFFSET: BinaryStruct = None
+    MAP_ENTITY_LIST_TAIL: BinaryStruct = None
+    NAME_ENCODING = ""
     PLURALIZED_NAME = ""
     ENTRY_SUBTYPE_ENUM: tp.Union[type, tp.Iterable] = None
-    ENTRY_CLASS: type = None
-    NAME_ENCODING = ""
+    SUBTYPE_CLASSES: dict[MSBSubtype, tp.Type[MSBEntry]] = None
+    SUBTYPE_OFFSET: int = None  # binary `MSBEntry` offset where subtype integer can be read from
 
     def __init__(self, msb_entry_list_source=None, name=""):
         self.name = ""
@@ -145,8 +212,8 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
                         raise TypeError("Non-MSBEntry found in source sequence for MSB.")
             return
         if isinstance(msb_entry_list_source, bytes):
-            msb_entry_list_source = BytesIO(msb_entry_list_source)
-        if isinstance(msb_entry_list_source, (BufferedReader, BytesIO)):
+            msb_entry_list_source = io.BytesIO(msb_entry_list_source)
+        if isinstance(msb_entry_list_source, io.BufferedIOBase):
             self.unpack(msb_entry_list_source)
         else:
             raise TypeError(f"Invalid MSB entry list source: {msb_entry_list_source}")
@@ -155,7 +222,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         header = self.MAP_ENTITY_LIST_HEADER.unpack(msb_buffer)
         entry_offsets = [
             self.MAP_ENTITY_ENTRY_OFFSET.unpack(msb_buffer)["entry_offset"]
-            for _ in range(header["entry_offset_count"] - 1)
+            for _ in range(header["entry_offset_count"] - 1)  # 'entry_offset_count' includes tail offset
         ]
         next_entry_list_offset = self.MAP_ENTITY_LIST_TAIL.unpack(msb_buffer)["next_entry_list_offset"]
         self.name = read_chars_from_buffer(msb_buffer, header["name_offset"], encoding=self.NAME_ENCODING)
@@ -180,7 +247,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         )
         packed_name = self.name.encode("utf-8")
         name_offset = offset
-        while len(packed_name) % 4 != 0:
+        while len(packed_name) < 32:
             packed_name += b"\0"
         offset += len(packed_name)
         for i, entry in enumerate(entries):
@@ -197,6 +264,16 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
         return packed_header + packed_name + packed_entries
 
+    @classmethod
+    def ENTRY_CLASS(cls, msb_buffer):
+        """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
+        entry_subtype_int = unpack_from_buffer(msb_buffer, "i", offset=cls.SUBTYPE_OFFSET, relative_offset=True)[0]
+        try:
+            entry_subtype = cls.ENTRY_SUBTYPE_ENUM(entry_subtype_int)
+        except ValueError:
+            raise MapError(f"Entry of type {cls.ENTRY_SUBTYPE_ENUM} has invalid subtype enum: {entry_subtype_int}")
+        return cls.SUBTYPE_CLASSES[entry_subtype](msb_buffer)
+
     @abc.abstractmethod
     def pack_entry(self, index: int, entry: MSBEntryType):
         """Pack entry (some entry types may use `index`)."""
@@ -208,89 +285,6 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
     def __len__(self):
         """Count of all entries."""
         return len(self._entries)
-
-    def __getitem__(self, entry_name_or_index) -> MSBEntryType:
-        """You can access entries using their name (if unique) or local type index."""
-        if isinstance(entry_name_or_index, int):
-            return self._entries[entry_name_or_index]
-        elif isinstance(entry_name_or_index, str):
-            return self.get_entry_by_name(entry_name_or_index)
-        raise TypeError(f"`MSBEntryList` key must be an entry index or entry name, not {entry_name_or_index}.")
-
-    def get_entry_by_name(self, entry_name: str, entry_subtype=None) -> MSBEntryType:
-        """Try to retrieve entry of given name.
-
-        You can optionally specify the subtype. Names shouldn't be shared across subtypes, but if they are (or as a
-        promise) this can be useful.
-
-        Note that you can simply index the MSB entry list with a string (e.g. `msb.parts["h0000B0"]` as a shortcut to
-        calling this method. It will raise a KeyError if the given name is not found OR if multiple entries with the
-        given name (and type) are found.
-        """
-        entries = [entry for entry in self.get_entries(entry_subtype) if entry.name == entry_name]
-        if not entries:
-            raise KeyError(f"Entry name {entry_name} does not appear in {self.__class__.__name__}.")
-        elif len(entries) >= 2:
-            raise ValueError(
-                f"Entry name {entry_name} appears more than once in "
-                f"{self.__class__.__name__}. You must access it by index."
-            )
-        return entries[0]
-
-    def get_entries(self, entry_subtype=None) -> tp.List[MSBEntryType]:
-        if entry_subtype is None:
-            return self._entries  # Full entry list, with types potentially intermingled.
-        entry_subtype = self.resolve_entry_subtype(entry_subtype)
-        return [e for e in self._entries if e.ENTRY_SUBTYPE == entry_subtype]
-
-    def get_entry_names(self, entry_subtype=None) -> tp.List[str]:
-        """Returns an ordered list of entry names (global or type-specific).
-
-        Note that only the global index (`entry_subtype=None`) is valid for index links from other MSB entries, with the
-        sole exception of the `MSBCollision` entry linked to by a `MapConnection` entry.
-        """
-        return [entry.name for entry in self.get_entries(entry_subtype=entry_subtype)]
-
-    def get_entry_subtype(self, entry_name_or_index):
-        """Returns subtype enum of given entry name or list-wide global index."""
-        return self[entry_name_or_index].ENTRY_SUBTYPE
-
-    def get_entry_subtype_index(self, entry_name_or_index):
-        """Get index of entry name or global index, local to its subtype.
-
-        Useful for obtaining the subtype-sorted display index for the GUI.
-        """
-        if isinstance(entry_name_or_index, int):  # Convert to name.
-            entry_name_or_index = self[entry_name_or_index].name
-        entry_subtype = self.get_entry_subtype(entry_name_or_index)
-        return self.get_entry_names(entry_subtype).index(entry_name_or_index)
-
-    def get_entry_global_index(self, entry_name_or_local_index, entry_subtype=None):
-        """Get global index of entry with given name or local entry subtype index.
-
-        If a name is given, it must be unique.
-
-        If a local index past the length of the given subtype list is given, `None` is returned, which should be
-        handled appropriately by the caller.
-        """
-        if isinstance(entry_name_or_local_index, int):
-            if entry_subtype is None:
-                raise ValueError("Cannot get global entry index from local index without specifying `entry_subtype`.")
-            entry_subtype_names = self.get_entry_names(entry_subtype)
-            if entry_name_or_local_index >= len(entry_subtype_names):
-                return None
-            entry_name = entry_subtype_names[entry_name_or_local_index]
-        else:
-            entry_name = entry_name_or_local_index
-        all_entry_names = self.get_entry_names()
-        if all_entry_names.count(entry_name) >= 2:
-            raise ValueError(
-                f"Cannot get global index of non-unique entry name {repr(entry_name)} "
-                f"({all_entry_names.count(entry_name)} instances). Rename them first."
-            )
-        if entry_name not in all_entry_names:
-            raise ValueError(f"Cannot get global index of non-existent entry name {repr(entry_name)}.")
-        return all_entry_names.index(entry_name)
 
     @classmethod
     def resolve_entry_subtype(cls, entry_subtype):
@@ -310,50 +304,109 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         except (TypeError, ValueError):
             raise TypeError(f"Invalid entry subtype for entry list {cls.PLURALIZED_NAME}: {entry_subtype}")
 
-    def add_entry(self, entry, global_index=None, append_to_entry_subtype=None):
-        """Add entry at desired global index.
+    def __getitem__(self, entry: tp.Union[int, str]) -> MSBEntryType:
+        """You can access entries using their global index or (if unique) name."""
+        if isinstance(entry, int):
+            return self.get_entries()[entry]
+        elif isinstance(entry, str):
+            return self.get_entry_by_name(entry_name=entry, entry_subtype=None)
+        raise TypeError(f"`MSBEntryList` key must be a global entry index or unique entry name, not {entry}.")
 
-        If `global_index` is None, it defaults to the end of the given `append_to_entry_subtype` subtype, which in turn
-        defaults to being the end of the global entry list.
+    def get_entries(self, entry_subtype=None) -> list[MSBEntryType]:
+        """Return a list of entries of the given subtype, or all entries in global order if no subtype is given.
 
-        Returns the same entry.
+        Note that only the global index (`entry_subtype=None`) is valid for index links from other MSB entries, with the
+        sole exceptions of:
+            - the `MSBCollision` entry linked to by an `MSBMapConnection` entry
+            - the `MSBEnvironmentEvent` entry linked to by an `MSBCollision` entry
+        """
+        if entry_subtype is None:
+            return self._entries  # Full entry list, with types potentially intermingled.
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
+        return [e for e in self._entries if e.ENTRY_SUBTYPE == entry_subtype]
+
+    def get_entry_names(self, entry_subtype=None) -> list[str]:
+        """Returns a list of entry names (global or `entry_subtype`-specific)."""
+        return [entry.name for entry in self.get_entries(entry_subtype=entry_subtype)]
+
+    def get_entry_by_name(self, entry_name: str, entry_subtype=None) -> MSBEntryType:
+        """Try to retrieve entry with given name.
+
+        You can optionally specify the subtype. Names shouldn't be shared across subtypes, but if they are (or as an
+        assertion) this can be useful.
+
+        Note that you can simply index the MSB entry list with a string (e.g. `msb.parts["h0000B0"]` as a shortcut to
+        calling this method. It will raise a KeyError if the given name is not found OR if multiple entries with the
+        given name (and subtype) are found.
+        """
+        entries = [entry for entry in self.get_entries(entry_subtype) if entry.name == entry_name]
+        if not entries:
+            raise KeyError(f"Entry name '{entry_name}' does not appear in {self.__class__.__name__}.")
+        elif len(entries) >= 2:
+            raise ValueError(
+                f"Entry name '{entry_name}' appears more than once in {self.__class__.__name__}. You must access it by "
+                f"global index or local subtype-specific index."
+            )
+        return entries[0]
+
+    @_entry_lookup
+    def get_entry_subtype(self, entry: EntrySpecType):
+        """Returns subtype enum of given `entry`."""
+        return entry.ENTRY_SUBTYPE
+
+    @_entry_lookup
+    def get_entry_subtype_index(self, entry: EntrySpecType):
+        """Get local index of specified `entry` among entries with the same subtype."""
+        return self.get_entries(entry.ENTRY_SUBTYPE).index(entry)
+
+    @_entry_lookup
+    def get_entry_global_index(self, entry: EntrySpecType):
+        """Get global index of specified `entry` among all entries with this list type."""
+        return self._entries.index(entry)
+
+    def new(
+        self,
+        entry_subtype: MSBSubtype,
+        copy_entry: MSBEntryType = None,
+        insert_below_original=True,
+        auto_add=True,
+        **kwargs,
+    ):
+        """Create a new `MSBEntry` of the given type (or duplicate from `copy_entry=entry`), apply any `kwargs` to it,
+        add it to this `MSBEntryList` if `auto_add=True` (default), then return it.
+
+        Use the `new_{subtype}()` shortcut methods to avoid specifying `entry_subtype` and use return type hinting.
+        """
+        if copy_entry is not None:
+            return self.duplicate_entry(
+                entry=copy_entry,
+                entry_subtype=entry_subtype,
+                auto_add=auto_add,
+                insert_below_original=insert_below_original,
+                **kwargs,
+            )
+        if "name" not in kwargs or kwargs["name"] is None:
+            kwargs["name"] = self._get_duplicate_tagged_name(f"New {entry_subtype.name}")
+        entry = self.SUBTYPE_CLASSES[entry_subtype](source=None, **kwargs)
+        if auto_add:
+            self.add_entry(entry)
+        return entry
+
+    def add_entry(self, entry: MSBEntryType, global_index=None):
+        """Add existing `entry` at desired `global_index`.
+
+        If `global_index` is None, it defaults to the end of the `entry`'s subtype.
         """
         if global_index is None:
-            if append_to_entry_subtype is None:
-                raise ValueError("You must provide `global_index` or `append_to_entry_subtype` to `add_entry()`.")
-            entry_subtype = self.resolve_entry_subtype(append_to_entry_subtype)
-            last_entry_local_index = len(self.get_entry_names(entry_subtype)) - 1
-            if last_entry_local_index == -1:
-                # No entries of given subtype exist. Fall back to global index.
-                # TODO: Could also guess where new entry subtype should be inserted.
-                global_index = len(self)
-            else:
-                global_index = self.get_entry_global_index(last_entry_local_index, entry_subtype) + 1
+            global_index = self.get_subtype_next_global_index(entry.ENTRY_SUBTYPE)
         self._entries.insert(global_index, entry)
         return entry
 
-    def delete_entry(self, entry_name_or_index) -> MSBEntryType:
-        """Delete (and return) entry at given global index, with given (unique) name, or just the instance itself."""
-        if isinstance(entry_name_or_index, MSBEntry):
-            self._entries.remove(entry_name_or_index)
-            return entry_name_or_index
-        elif isinstance(entry_name_or_index, str):
-            entry_name_or_index = self.get_entry_global_index(entry_name_or_index)
-        if isinstance(entry_name_or_index, int):
-            return self._entries.pop(entry_name_or_index)
-        raise TypeError("Argument to `delete_entry()` must be an entry name or global index in its MSB list.")
-
-    def delete_all_entries_of_subtype(self, entry_subtype):
-        """Delete all entries of the given subtype."""
-        for entry_name in self.get_entry_names(entry_subtype):
-            self.delete_entry(entry_name)
-
+    @_entry_lookup
     def duplicate_entry(
-        self, entry_subtype, entry_name_or_index: tp.Union[str, int, None] = None, insert_below_original=True, **kwargs,
+        self, entry: EntrySpecType, auto_add=True, insert_below_original=True, **kwargs,
     ):
-        """Duplicate an entry of the given subtype and local index or name.
-
-        Public type-specific overloads of this are given in the various MSB type lists.
+        """Duplicate the specified `entry`.
 
         By default, the duplicated entry is inserted just below the source entry. If `insert_below_original=False`, it
         will instead be inserted at the end of its entry subtype (not global subtype).
@@ -361,68 +414,81 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         Any `kwargs` given will be passed to the `set()` method of the duplicated entry (which is then also returned for
         further modification if desired). Unless otherwise specified, the `name` of the new entry will also be given a
         unique '<i>' duplicate tag suffix to retain name uniqueness (which will be removed upon final pack).
-        """
-        if entry_name_or_index is None:
-            if isinstance(entry_subtype, MSBEntry):
-                source_entry = entry_subtype
-                entry_subtype = entry_subtype.ENTRY_SUBTYPE
-            else:
-                raise TypeError(
-                    f"First argument of `duplicate_entry` must be an `MSBEntry` if `entry_name_or_index` is left as"
-                    f"None."
-                )
-        else:
-            entry_subtype = self.resolve_entry_subtype(entry_subtype)
-            local_index = self.get_entry_subtype_index(entry_name_or_index)
-            source_entry = self.get_entries(entry_subtype)[local_index]
-            if isinstance(entry_name_or_index, str) and source_entry.name != entry_name_or_index:
-                raise TypeError(f"Specified entry {entry_name_or_index} is not of specified type {entry_subtype.name}.")
 
-        duplicated = copy.deepcopy(source_entry)
-        if kwargs.get("name", "") == source_entry.name:
-            raise ValueError(f"Name of duplicated entry cannot be set to the source name: {source_entry.name})")
-        if "name" not in kwargs:
-            duplicate_tag_match = _DUPLICATE_TAG_MATCH.match(duplicated.name)
-            existing_names = self.get_entry_names()
-            if not duplicate_tag_match:
-                new_duplicate_tag = 1
-            else:
-                # Find next available duplicate tag number.
-                new_duplicate_tag = int(duplicate_tag_match.group(1)) + 1
-                while f"{duplicated.name} <{new_duplicate_tag}>" in existing_names:
-                    new_duplicate_tag += 1
-            kwargs["name"] = f"{duplicated.name} <{new_duplicate_tag}>"
-        if insert_below_original:
-            global_index = self.get_entry_global_index(source_entry.name) + 1
-        else:
-            global_index = self.get_next_global_index_of_subtype(entry_subtype)
-        self._entries.insert(global_index, duplicated)
+        You can also call this with `add_{subtype}(copy_entry=entry, insert_below_original=True, **kwargs)`.
+        """
+        duplicated = entry.copy()
+
+        if kwargs.get("name", "") == entry.name:
+            raise ValueError(f"Name of duplicated entry cannot be set to the source entry's name: {entry.name}")
+        if "name" not in kwargs or kwargs["name"] is None:
+            kwargs["name"] = self._get_duplicate_tagged_name(duplicated.name)
         duplicated.set(**kwargs)
+
+        if auto_add:
+            if insert_below_original:
+                global_index = self._entries.index(entry) + 1
+            else:
+                global_index = self.get_subtype_next_global_index(entry.ENTRY_SUBTYPE)
+            self._entries.insert(global_index, duplicated)
+
         return duplicated
 
-    @abc.abstractmethod
-    def get_subtype_instance(self, entry_subtype, **kwargs):
-        ...
+    @_entry_lookup
+    def delete_entry(self, entry: EntrySpecType) -> MSBEntryType:
+        """Delete (and return) specified `entry`."""
+        self._entries.remove(entry)
+        return entry
 
-    def get_next_global_index_of_subtype(self, entry_subtype) -> int:
+    def delete_all_entries_of_subtype(self, entry_subtype):
+        """Delete all entries of the given `entry_subtype`."""
+        for entry in self.get_entries(entry_subtype):
+            self._entries.remove(entry)
+
+    def get_subtype_next_global_index(self, entry_subtype: MSBSubtype) -> int:
         """Returns next global index of given `entry_subtype`, e.g. for inserting a new entry into the `MSBEntryList` at
         the end of its local subtype. This is inferred by just finding the last existing instance of that subtype.
 
-        Note that Dark Souls may not read entries that do not appear in their contiguous local subtype lists, so this
-        method is often necessary to find the correct place for a new entry.
-
-        # TODO: Need to infer where to insert global index if no entries of that subtype yet exist (default ordering).
+        Note that the game may not read entries that do not appear in their contiguous local subtype lists, so this
+        method is often necessary to find the correct place for a new entry. (This has been confirmed for
+        `MSBTreasureEvent`, for example.)
         """
         entry_subtype = self.resolve_entry_subtype(entry_subtype)
-        last_global_index = max(i for i, entry in enumerate(self._entries) if entry.ENTRY_SUBTYPE == entry_subtype)
+        try:
+            last_global_index = max(i for i, entry in enumerate(self._entries) if entry.ENTRY_SUBTYPE == entry_subtype)
+        except ValueError:  # no entries of given subtype exist yet
+            # Iterate over entries in enum order to find correct global index.
+            last_global_index = 0
+            for subtype in self.ENTRY_SUBTYPE_ENUM:
+                if subtype == entry_subtype:
+                    break
+                last_global_index += len(self.get_entries(subtype))
         return last_global_index + 1
-        # raise TypeError(f"Failed to detect next global index for unrecognized entry subtype: {entry_subtype}")
+
+    def _get_duplicate_tagged_name(self, name: str):
+        """Add a duplicate tag, e.g. "<1>", to the end of the given name if 1+ entries with that name already exist.
+
+        These tags will be removed on write to support byte-for-byte vanilla repacking, so make sure to set them
+        yourself if you want to keep the names unique (highly recommended).
+        """
+        existing_names = self.get_entry_names()
+        if name not in existing_names:
+            return name  # no tag needed
+        duplicate_tag_match = _DUPLICATE_TAG_MATCH.match(name)
+        if not duplicate_tag_match:
+            return f"{name} <1>"
+        # Find next available duplicate tag number.
+        name = duplicate_tag_match.group(1).rstrip()
+        new_duplicate_tag = int(duplicate_tag_match.group(2)) + 1
+        while f"{name} <{new_duplicate_tag}>" in existing_names:
+            new_duplicate_tag += 1
+        return f"{name} <{new_duplicate_tag}>"
 
     def get_indices(self):
         """Returns a dictionary mapping entry names to their global indices for resolving named links before repacking.
 
         Raises a NameError if the same name appears more than once in the entry list, which can only happen if you
-        explicitly copy a name.
+        explicitly copy a name (except for `MSBEvent`s, which don't use this method).
         """
         entry_indices = {}
         for i, entry in enumerate(self._entries):
@@ -452,37 +518,60 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
 
 class MSBEntryEntity(MSBEntry, abc.ABC):
-    def __init__(self):
-        """Subclass of MSBEntry with 'entity_id' field (everything except Models). Useful for type checking."""
-        super().__init__()
-        self.entity_id = -1
+    """Subclass of MSBEntry with 'entity_id' field (everything except Models). Useful for type checking."""
+
+    FIELD_INFO = MSBEntry.FIELD_INFO | {
+        "entity_id": MapFieldInfo(
+            "Entity ID",
+            int,
+            -1,
+            "Entity ID used to refer to this entry in other game files.",
+        ),
+    }
+
+    entity_id: int
 
 
 class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
-    def __init__(self):
-        """Subclass of MSBEntryEntity with `translate` and `rotate` fields, and `rotate_in_world` method.
+    """Subclass of MSBEntryEntity with `translate` and `rotate` fields, and `rotate_in_world` method.
 
-        Inherited by both `MSBPart` and `MSBRegion`).
-        """
-        super().__init__()
+    Inherited by both `MSBPart` and `MSBRegion`).
+    """
+
+    FIELD_INFO = MSBEntryEntity.FIELD_INFO | {
+        "translate": MapFieldInfo(
+            "Translate",
+            Vector3,
+            Vector3.zero(),
+            "3D coordinates of the part's position. Note that the anchor of the part is usually at its base.",
+        ),
+        "rotate": MapFieldInfo(
+            "Rotate",
+            Vector3,
+            Vector3.zero(),
+            "Euler angles for part rotation around its local X, Y, and Z axes.",
+        ),
+    }
+
+    translate: Vector3
+    rotate: Vector3
+
+    def __init__(self, source=None, **kwargs):
         self._translate = Vector3.zero()
         self._rotate = Vector3.zero()
+        super().__init__(source=source, **kwargs)
 
-    def rotate_in_world(
+    def apply_rotation(
         self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], pivot_point=(0, 0, 0), radians=False,
     ):
-        """Modify entity `translate` and `rotate` by rotating it around some `pivot_point` in world coordinates.
+        """Modify entity `translate` and `rotate` by rotating entity around some `pivot_point` in world coordinates.
 
-        Default `pivot_point` is the world origin (0, 0, 0).
+        Default `pivot_point` is the world origin (0, 0, 0). Default rotation units are degrees.
         """
         rotation = resolve_rotation(rotation, radians)
         pivot_point = Vector3(pivot_point)
-        # old_translate = self.translate
-        # old_rotate = self.rotate
         self._rotate = (rotation @ Matrix3.from_euler_angles(self.rotate)).to_euler_angles()
         self._translate = (rotation @ (self.translate - pivot_point)) + pivot_point
-        # _LOGGER.debug(f"Rotating {self.name}: {old_rotate} -> {self.rotate}\n"
-        #               f"    (Translate: {old_translate} -> {self.translate})")
 
     @property
     def translate(self):

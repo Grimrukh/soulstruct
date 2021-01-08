@@ -25,5 +25,5 @@ class Regions(Region):
     RomThirdPoint = 3202807
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     RomFog = 3203800

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 __all__ = [
     "MSBEvent",
     "MSBSoundEvent",
-    "MSBFXEvent",
+    "MSBVFXEvent",
     "MSBTreasureEvent",
     "MSBSpawnerEvent",
     "MSBMessageEvent",
@@ -10,7 +12,7 @@ __all__ = [
     "MSBMapOffsetEvent",
     "MSBNavigationEvent",
     "MSBEnvironmentEvent",
-    "MSBWindFXEvent",
+    "MSBWindVFXEvent",
     "MSBPatrolRouteEvent",
     "MSBDarkLockEvent",
     "MSBPlatoonEvent",
@@ -25,7 +27,7 @@ from soulstruct.maps.base.events import (
     MSBEvent as _BaseMSBEvent,
     MSBEventList as _BaseMSBEventList,
     MSBSoundEvent as _BaseMSBSoundEvent,
-    MSBFXEvent as _BaseMSBFXEvent,
+    MSBVFXEvent as _BaseMSBVFXEvent,
     MSBMessageEvent as _BaseMSBMessageEvent,
     MSBTreasureEvent as _BaseMSBTreasureEvent,
     MSBSpawnerEvent as _BaseMSBSpawnerEvent,
@@ -35,10 +37,12 @@ from soulstruct.maps.base.events import (
     MSBNavigationEvent as _BaseMSBNavigationEvent,
     MSBEnvironmentEvent as _BaseMSBEnvironmentEvent,
 )
+from soulstruct.maps.core import MapFieldInfo
 from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .msb_entry import MSBEntryList
+from ...utilities import partialmethod
 
 
 class MSBEvent(_BaseMSBEvent):
@@ -53,63 +57,50 @@ class MSBEvent(_BaseMSBEvent):
         ("__base_data_offset", "q"),
         ("__type_data_offset", "q"),
     )
-
     EVENT_TYPE_OFFSET = 12
-
     EVENT_BASE_DATA_STRUCT = BinaryStruct(
         ("_base_part_index", "i"),
         ("_base_region_index", "i"),
         ("entity_id", "i"),
         ("_unknowns", "4b"),
     )
-
     NAME_ENCODING = "utf-16-le"
 
-    def __init__(self, msb_event_source=None):
+    def __init__(self, source=None, **kwargs):
         self._unknowns = [0, 0, 0, 0]
-        super().__init__(msb_event_source)
+        super().__init__(source=source, **kwargs)
 
 
 class MSBSoundEvent(_BaseMSBSoundEvent, MSBEvent):
     pass
 
 
-class MSBFXEvent(_BaseMSBFXEvent, MSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
-        ("fx_id", "i"),
-        ("_starts_disabled", "i"),  # 32-bit bool
+class MSBVFXEvent(_BaseMSBVFXEvent, MSBEvent):
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
+        ("vfx_id", "i"),
+        ("starts_disabled", "i"),  # 32-bit bool
     )
 
-    FIELD_INFO = _BaseMSBFXEvent.FIELD_INFO | {
-        "starts_disabled": (
+    FIELD_INFO = _BaseMSBVFXEvent.FIELD_INFO | {
+        "starts_disabled": MapFieldInfo(
             "Starts Disabled",
             bool,
-            "FX will not be automatically created on map load (requires event script).",
+            False,
+            "VFX will not be automatically created on map load (requires event script).",
         )
     }
 
-    FIELD_NAMES = _BaseMSBFXEvent.FIELD_NAMES + (
+    FIELD_ORDER = (
+        "entity_id",
+        "base_part_name",
+        "base_region_name",
+        "vfx_id",
         "starts_disabled",
     )
 
-    def __init__(self, msb_event_source=None, **kwargs):
-        self._starts_disabled = 0
-        super().__init__(msb_event_source, **kwargs)
-
-    @property
-    def starts_disabled(self) -> bool:
-        return bool(self._starts_disabled)
-
-    @starts_disabled.setter
-    def starts_disabled(self, value: tp.Union[bool, int]):
-        if value in {True, False, 0, 1}:
-            self._starts_disabled = int(value)
-        else:
-            raise ValueError(f"`MSBFX.starts_disabled` is boolean and cannot be set to {value}.")
-
 
 class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         "8x",
         ("_treasure_part_index", "i"),
         "4x",
@@ -125,7 +116,7 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         ("unknown_x34_x38", "i"),
         ("unknown_x38_x3c", "i"),
         ("unknown_x3c_x40", "i"),
-        ("in_chest", "?"),
+        ("is_in_chest", "?"),
         ("is_hidden", "?"),
         ("unknown_x42_x44", "h"),
         ("unknown_x44_x48", "i"),
@@ -133,97 +124,120 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         "4x",
     )
 
-    FIELD_INFO = {
-        # base_part, base_region, and entity_id are unused for Treasure.
-        "entity_id": _BaseMSBTreasureEvent.FIELD_INFO["entity_id"],
-        "treasure_part_name": _BaseMSBTreasureEvent.FIELD_INFO["treasure_part_name"],
-        "item_lot_1": _BaseMSBTreasureEvent.FIELD_INFO["item_lot_1"],
-        "item_lot_2": _BaseMSBTreasureEvent.FIELD_INFO["item_lot_2"],
-        "item_lot_3": _BaseMSBTreasureEvent.FIELD_INFO["item_lot_3"],
-        "unknown_x1c_x20": (
+    FIELD_INFO = _BaseMSBTreasureEvent.FIELD_INFO | {
+        "unknown_x1c_x20": MapFieldInfo(
             "Unknown [1c-20]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x20_x24": (
+        "unknown_x20_x24": MapFieldInfo(
             "Unknown [20-24]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x24_x28": (
+        "unknown_x24_x28": MapFieldInfo(
             "Unknown [24-28]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x28_x2c": (
+        "unknown_x28_x2c": MapFieldInfo(
             "Unknown [28-2c]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x2c_x30": (
+        "unknown_x2c_x30": MapFieldInfo(
             "Unknown [2c-30]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x30_x34": (
+        "unknown_x30_x34": MapFieldInfo(
             "Unknown [30-34]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x34_x38": (
+        "unknown_x34_x38": MapFieldInfo(
             "Unknown [34-38]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x38_x3c": (
+        "unknown_x38_x3c": MapFieldInfo(
             "Unknown [38-3c]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x3c_x40": (
+        "unknown_x3c_x40": MapFieldInfo(
             "Unknown [3c-40]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "in_chest": _BaseMSBTreasureEvent.FIELD_INFO["in_chest"],
-        "is_hidden": _BaseMSBTreasureEvent.FIELD_INFO["is_hidden"],
-        "unknown_x42_x44": (
+        "unknown_x42_x44": MapFieldInfo(
             "Unknown [42-44]",
             int,
+            0,
             "Unknown short.",
         ),
-        "unknown_x44_x48": (
+        "unknown_x44_x48": MapFieldInfo(
             "Unknown [44-48]",
             int,
+            0,
             "Unknown integer.",
         ),
-        "unknown_x48_x4c": (
+        "unknown_x48_x4c": MapFieldInfo(
             "Unknown [48-4c]",
             int,
+            0,
             "Unknown integer.",
         ),
     }
 
-    def __init__(self, msb_event_source=None, **kwargs):
-        self.unknown_x1c_x20 = 0
-        self.unknown_x20_x24 = 0
-        self.unknown_x24_x28 = 0
-        self.unknown_x28_x2c = 0
-        self.unknown_x2c_x30 = 0
-        self.unknown_x30_x34 = 0
-        self.unknown_x34_x38 = 0
-        self.unknown_x38_x3c = 0
-        self.unknown_x3c_x40 = 0
-        self.unknown_x42_x44 = 0
-        self.unknown_x44_x48 = 0
-        self.unknown_x48_x4c = 0
-        super().__init__(msb_event_source, **kwargs)
+    FIELD_ORDER = (
+        "treasure_part_name",
+        "item_lot_1",
+        "item_lot_2",
+        "item_lot_3",
+        "is_in_chest",
+        "is_hidden",
+        "unknown_x1c_x20",
+        "unknown_x20_x24",
+        "unknown_x24_x28",
+        "unknown_x28_x2c",
+        "unknown_x2c_x30",
+        "unknown_x30_x34",
+        "unknown_x34_x38",
+        "unknown_x38_x3c",
+        "unknown_x3c_x40",
+        "unknown_x42_x44",
+        "unknown_x44_x48",
+        "unknown_x48_x4c",
+    )
+
+    unknown_x1c_x20: int
+    unknown_x20_x24: int
+    unknown_x24_x28: int
+    unknown_x28_x2c: int
+    unknown_x2c_x30: int
+    unknown_x30_x34: int
+    unknown_x34_x38: int
+    unknown_x38_x3c: int
+    unknown_x3c_x40: int
+    unknown_x42_x44: int
+    unknown_x44_x48: int
+    unknown_x48_x4c: int
 
 
 class MSBSpawnerEvent(_BaseMSBSpawnerEvent, MSBEvent):
     """Attributes are identical to base event, except there are eight spawn region slots."""
 
-    EVENT_TYPE_DATA_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         ("max_count", "B"),
         ("spawner_type", "b"),
         ("limit_count", "h"),
@@ -237,8 +251,16 @@ class MSBSpawnerEvent(_BaseMSBSpawnerEvent, MSBEvent):
         ("_spawn_part_indices", "32i"),
         "64x",
     )
-
     SPAWN_REGION_COUNT = 8
+
+    FIELD_INFO = _BaseMSBSpawnerEvent.FIELD_INFO | {
+        "spawn_region_names": MapFieldInfo(
+            "Spawn Regions",
+            GameObjectSequence((Region, SPAWN_REGION_COUNT)),
+            [None] * SPAWN_REGION_COUNT,
+            "Regions where entities will be spawned.",
+        ),
+    }
 
 
 class MSBMessageEvent(_BaseMSBMessageEvent, MSBEvent):
@@ -248,7 +270,7 @@ class MSBMessageEvent(_BaseMSBMessageEvent, MSBEvent):
 class MSBObjActEvent(_BaseMSBObjActEvent, MSBEvent):
     """Attributes are identical to base event, except the param ID is 32-bit rather than 16-bit."""
 
-    EVENT_TYPE_DATA_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         ("obj_act_entity_id", "i"),
         ("_obj_act_part_index", "i"),
         ("obj_act_param_id", "i"),
@@ -259,56 +281,69 @@ class MSBObjActEvent(_BaseMSBObjActEvent, MSBEvent):
     )
 
 
-class MSBWindFXEvent(MSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
-        ("fx_id", "i"),
+class MSBWindVFXEvent(MSBEvent):
+    ENTRY_SUBTYPE = MSBEventSubtype.WindVFX
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
+        ("vfx_id", "i"),
         ("_wind_region_index", "i"),
         ("unk_x08_x0c", "f"),
         "4x",
     )
 
-    FIELD_INFO = {
-        "base_part_name": (
+    FIELD_INFO = MSBEvent.FIELD_INFO | {
+        "base_part_name": MapFieldInfo(
             "Draw Parent",
             MapPart,
-            "FX will be drawn if this parent (usually a Collision or Map Piece part) is drawn. Possibly unused.",
+            None,
+            "VFX will be drawn if this parent (usually a Collision or Map Piece part) is drawn. Possibly unused.",
         ),
-        "base_region_name": (
+        "base_region_name": MapFieldInfo(
             "Base Region",
             Region,
-            "Base event region. Possibly unused with WindFX (see Wind Region Name instead).",
+            None,
+            "Base event region. Probably unused with WindVFX (see Wind Region Name instead).",
         ),
-        "wind_region_name": (
-            "FX Region",
-            str,
-            "Region at or in which wind FX appears.",
+        "wind_region_name": MapFieldInfo(
+            "VFX Region",
+            Region,
+            None,
+            "Region at or in which WindVFX appears.",
         ),
-        "entity_id": (
+        "entity_id": MapFieldInfo(
             "Entity ID",
             int,
-            "Entity ID used to refer to this FX in other game files. Possibly unused with WindFX.",
+            -1,
+            "Entity ID used to refer to this VFX in other game files. Possibly unused with WindVFX.",
         ),
-        "fx_id": (
-            "FX ID",
+        "vfx_id": MapFieldInfo(
+            "VFX ID",
             int,
-            "Visual effect ID, which refers to a loaded FX file.",
+            -1,
+            "Visual effect ID, which refers to a loaded VFX file.",
         ),
-        "unk_x08_x0c": (
+        "unk_x08_x0c": MapFieldInfo(
             "Unknown [08-0c]",
             float,
+            1.0,
             "Unknown floating-point number.",
-        )
+        ),
     }
 
-    ENTRY_SUBTYPE = MSBEventSubtype.WindFX
+    FIELD_ORDER = (
+        "entity_id",
+        "base_part_name",
+        "base_region_name",
+        "vfx_id",
+        "unk_x08_x0c",
+    )
 
-    def __init__(self, msb_event_source, **kwargs):
+    wind_region_name: tp.Optional[str]
+    vfx_id: int
+    unk_x08_x0c: float
+
+    def __init__(self, source, **kwargs):
         self._wind_region_index = None
-        self.wind_region_name = None
-        self.fx_id = -1
-        self.unk_x08_x0c = 1.0
-        super().__init__(msb_event_source)
-        self.set(**kwargs)
+        super().__init__(source=source, **kwargs)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
@@ -322,48 +357,60 @@ class MSBWindFXEvent(MSBEvent):
 class MSBPatrolRouteEvent(MSBEvent):
     """Defines a patrol route through a sequence of up to 32 regions."""
 
-    EVENT_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBEventSubtype.PatrolRoute
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         ("unk_x00_x04", "i"),
         "12x",
         ("_patrol_region_indices", "32h"),
     )
 
-    FIELD_INFO = {
-        "base_part_name": (
+    FIELD_INFO = MSBEvent.FIELD_INFO | {
+        "base_part_name": MapFieldInfo(
             "Draw Parent",
             MapPart,
+            None,
             "Probably unused for Patrol Route.",
         ),
-        "base_region_name": (
+        "base_region_name": MapFieldInfo(
             "Base Region",
             Region,
+            None,
             "Probably unused for Patrol Route.",
         ),
-        "unk_x00_x04": (
-            "Unknown [00-04]",
-            int,
-            "Unknown integer.",
-        ),
-        "entity_id": (
+        "entity_id": MapFieldInfo(
             "Entity ID",
             int,
+            -1,
             "Probably unused for Patrol Route.",
         ),
-        "patrol_region_names": (
+        "unk_x00_x04": MapFieldInfo(
+            "Unknown [00-04]",
+            int,
+            1,
+            "Unknown integer.",
+        ),
+        "patrol_region_names": MapFieldInfo(
             "Patrol Regions",
             GameObjectSequence((Region, 32)),
+            [None] * 32,
             "List of regions that define this Patrol Route."
-        )
+        ),
     }
 
-    ENTRY_SUBTYPE = MSBEventSubtype.PatrolRoute
+    FIELD_ORDER = (
+        "entity_id",
+        "base_part_name",
+        "base_region_name",
+        "unk_x00_x04",
+        "patrol_region_names",
+    )
 
-    def __init__(self, msb_event_source, **kwargs):
-        self.unk_x00_x04 = 1.0
+    unk_x00_x04: int
+
+    def __init__(self, source, **kwargs):
         self._patrol_region_names = [None] * 32
         self._patrol_region_indices = [-1] * 32
-        super().__init__(msb_event_source)
-        self.set(**kwargs)
+        super().__init__(source=source, **kwargs)
 
     @property
     def patrol_region_names(self):
@@ -397,68 +444,88 @@ class MSBPatrolRouteEvent(MSBEvent):
 class MSBDarkLockEvent(MSBEvent):
     """Unknown purpose. Has no event-specific data."""
 
-    EVENT_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBEventSubtype.DarkLock
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         "32x",  # no data
     )
 
-    FIELD_INFO = {
-        "base_part_name": (
+    FIELD_INFO = MSBEvent.FIELD_INFO | {
+        "base_part_name": MapFieldInfo(
             "Draw Parent",
             MapPart,
+            None,
             "Probably unused for Dark Lock.",
         ),
-        "base_region_name": (
+        "base_region_name": MapFieldInfo(
             "Base Region",
             Region,
+            None,
             "Probably unused for Dark Lock.",
         ),
-        "entity_id": (
+        "entity_id": MapFieldInfo(
             "Entity ID",
             int,
+            -1,
             "Probably unused for Dark Lock.",
         ),
     }
 
-    ENTRY_SUBTYPE = MSBEventSubtype.DarkLock
+    FIELD_ORDER = (
+        "entity_id",
+        "base_part_name",
+        "base_region_name",
+    )
 
 
 class MSBPlatoonEvent(MSBEvent):
     """Defines a group (platoon) of enemies."""
 
-    EVENT_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBEventSubtype.Platoon
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         ("platoon_id_script_active", "i"),
         ("state", "i"),
         "16x",
         ("_platoon_part_indices", "32i"),
     )
 
-    FIELD_INFO = {
-        "base_part_name": (
+    FIELD_INFO = MSBEvent.FIELD_INFO | {
+        "base_part_name": MapFieldInfo(
             "Draw Parent",
             MapPart,
-            "Probably unused for Dark Lock.",
+            None,
+            "Probably unused for Platoon.",
         ),
-        "base_region_name": (
+        "base_region_name": MapFieldInfo(
             "Base Region",
             Region,
-            "Probably unused for Dark Lock.",
+            None,
+            "Probably unused for Platoon.",
         ),
-        "entity_id": (
+        "entity_id": MapFieldInfo(
             "Entity ID",
             int,
-            "Probably unused for Dark Lock.",
+            -1,
+            "Probably unused for Platoon.",
+        ),
+        "platoon_part_names": MapFieldInfo(
+            "Platoon Characters Names",
+            GameObjectSequence((Character, 32)),
+            [None] * 32,
+            "Characters who are in this Platoon.",
         ),
     }
 
-    ENTRY_SUBTYPE = MSBEventSubtype.Platoon
+    FIELD_ORDER = (
+        "entity_id",
+        "base_part_name",
+        "base_region_name",
+        "platoon_part_names",
+    )
 
-    def __init__(self, msb_event_source, **kwargs):
-        self.platoon_id_script_active = 0
-        self.state = 0
+    def __init__(self, source, **kwargs):
         self._platoon_part_names = [None] * 32
         self._platoon_part_indices = [-1] * 32
-        super().__init__(msb_event_source)
-        self.set(**kwargs)
+        super().__init__(source=source, **kwargs)
 
     @property
     def platoon_part_names(self):
@@ -490,7 +557,8 @@ class MSBPlatoonEvent(MSBEvent):
 
 
 class MSBMultiSummonEvent(MSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBEventSubtype.MultiSummon
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         ("unk_x00_x04", "i"),
         ("unk_x04_x06", "h"),
         ("unk_x06_x08", "h"),
@@ -499,59 +567,73 @@ class MSBMultiSummonEvent(MSBEvent):
         "4x",
     )
 
-    FIELD_INFO = {
-        "base_part_name": (
+    FIELD_INFO = MSBEvent.FIELD_INFO | {
+        "base_part_name": MapFieldInfo(
             "Draw Parent",
             MapPart,
-            "Probably unused for Dark Lock.",
+            None,
+            "Probably unused for Multi Summon.",
         ),
-        "base_region_name": (
+        "base_region_name": MapFieldInfo(
             "Base Region",
             Region,
-            "Probably unused for Dark Lock.",
+            None,
+            "Probably unused for Multi Summon.",
         ),
-        "entity_id": (
+        "entity_id": MapFieldInfo(
             "Entity ID",
             int,
-            "Probably unused for Dark Lock.",
+            -1,
+            "Probably unused for Multi Summon.",
         ),
-        "unk_x00_x04": (
+        "unk_x00_x04": MapFieldInfo(
             "Unknown [00-04]",
             int,
-            "Unknown floating-point number.",
+            1,
+            "Unknown integer.",
         ),
-        "unk_x04_x06": (
+        "unk_x04_x06": MapFieldInfo(
             "Unknown [04-06]",
             int,
-            "Unknown floating-point number.",
+            1,
+            "Unknown 16-bit integer.",
         ),
-        "unk_x06_x08": (
+        "unk_x06_x08": MapFieldInfo(
             "Unknown [06-08]",
             int,
-            "Unknown floating-point number.",
+            1,
+            "Unknown 16-bit integer.",
         ),
-        "unk_x08_x0a": (
+        "unk_x08_x0a": MapFieldInfo(
             "Unknown [08-0a]",
             int,
-            "Unknown floating-point number.",
+            1,
+            "Unknown 16-bit integer.",
         ),
-        "unk_x0a_x0c": (
+        "unk_x0a_x0c": MapFieldInfo(
             "Unknown [0a-0c]",
             int,
-            "Unknown floating-point number.",
+            1,
+            "Unknown 16-bit integer.",
         ),
     }
 
-    ENTRY_SUBTYPE = MSBEventSubtype.MultiSummon
+    FIELD_ORDER = (
+        "entity_id",
+        "base_part_name",
+        "base_region_name",
+        "unk_x00_x04",
+        "unk_x04_x06",
+        "unk_x06_x08",
+        "unk_x08_x0a",
+        "unk_x0a_x0c",
+    )
 
-    def __init__(self, msb_event_source, **kwargs):
-        self.unk_x00_x04 = 1.0
-        self.unk_x04_x06 = 1.0
-        self.unk_x06_x08 = 1.0
-        self.unk_x08_x0a = 1.0
-        self.unk_x0a_x0c = 1.0
-        super().__init__(msb_event_source)
-        self.set(**kwargs)
+    unk_x00_x04: int
+    unk_x04_x06: int
+    unk_x06_x08: int
+    unk_x08_x0a: int
+    unk_x0a_x0c: int
 
 
 class MSBSpawnPointEvent(_BaseMSBSpawnPointEvent, MSBEvent):
@@ -575,10 +657,10 @@ class MSBOtherEvent(MSBEvent):
 
 
 class MSBEventList(_BaseMSBEventList, MSBEntryList):
-    EVENT_SUBTYPE_CLASSES = {
+    SUBTYPE_CLASSES = {
         # MSBEventSubtype.Light: MSBLightEvent,
         MSBEventSubtype.Sound: MSBSoundEvent,
-        MSBEventSubtype.FX: MSBFXEvent,
+        MSBEventSubtype.VFX: MSBVFXEvent,
         # MSBEventSubtype.Wind: MSBWindEvent,
         MSBEventSubtype.Treasure: MSBTreasureEvent,
         MSBEventSubtype.Spawner: MSBSpawnerEvent,
@@ -588,12 +670,45 @@ class MSBEventList(_BaseMSBEventList, MSBEntryList):
         MSBEventSubtype.MapOffset: MSBMapOffsetEvent,
         MSBEventSubtype.Navigation: MSBNavigationEvent,
         MSBEventSubtype.Environment: MSBEnvironmentEvent,
-        # MSBEventSubtype.PseudoMultiplayer: MSBPseudoMultiplayerEvent,
-        MSBEventSubtype.WindFX: MSBWindFXEvent,
+        # MSBEventSubtype.NPCInvasion: MSBNPCInvasionEvent,
+        MSBEventSubtype.WindVFX: MSBWindVFXEvent,
         MSBEventSubtype.PatrolRoute: MSBPatrolRouteEvent,
         MSBEventSubtype.DarkLock: MSBDarkLockEvent,
         MSBEventSubtype.Platoon: MSBPlatoonEvent,
         MSBEventSubtype.MultiSummon: MSBMultiSummonEvent,
         MSBEventSubtype.Other: MSBOtherEvent,
     }
-    EVENT_SUBTYPE_OFFSET = 12
+    SUBTYPE_OFFSET = 12
+
+    Sounds: tp.Sequence[MSBSoundEvent]
+    VFX: tp.Sequence[MSBVFXEvent]
+    Treasure: tp.Sequence[MSBTreasureEvent]
+    Spawners: tp.Sequence[MSBSpawnerEvent]
+    Messages: tp.Sequence[MSBMessageEvent]
+    ObjActs: tp.Sequence[MSBObjActEvent]
+    SpawnPoints: tp.Sequence[MSBSpawnPointEvent]
+    MapOffsets: tp.Sequence[MSBMapOffsetEvent]
+    Navigation: tp.Sequence[MSBNavigationEvent]
+    Environment: tp.Sequence[MSBEnvironmentEvent]
+    WindVFX: tp.Sequence[MSBWindVFXEvent]
+    PatrolRoutes: tp.Sequence[MSBPatrolRouteEvent]
+    DarkLocks: tp.Sequence[MSBDarkLockEvent]
+    MultiSummons: tp.Sequence[MSBMultiSummonEvent]
+    Other: tp.Sequence[MSBOtherEvent]
+
+    new = _BaseMSBEventList.new
+    new_sound: tp.Callable[..., MSBSoundEvent]
+    new_vfx: tp.Callable[..., MSBVFXEvent]
+    new_treasure: tp.Callable[..., MSBTreasureEvent]
+    new_spawner: tp.Callable[..., MSBSpawnerEvent]
+    new_message: tp.Callable[..., MSBMessageEvent]
+    new_obj_act: tp.Callable[..., MSBObjActEvent]
+    new_spawn_point: tp.Callable[..., MSBSpawnPointEvent]
+    new_map_offset: tp.Callable[..., MSBMapOffsetEvent]
+    new_navigation: tp.Callable[..., MSBNavigationEvent]
+    new_environment: tp.Callable[..., MSBEnvironmentEvent]
+    new_wind_vfx: tp.Callable[..., MSBWindVFXEvent] = partialmethod(new, MSBEventSubtype.WindVFX)
+    new_patrol_route: tp.Callable[..., MSBPatrolRouteEvent] = partialmethod(new, MSBEventSubtype.PatrolRoute)
+    new_dark_lock: tp.Callable[..., MSBDarkLockEvent] = partialmethod(new, MSBEventSubtype.DarkLock)
+    new_multi_summon: tp.Callable[..., MSBMultiSummonEvent] = partialmethod(new, MSBEventSubtype.MultiSummon)
+    new_other: tp.Callable[..., MSBOtherEvent] = partialmethod(new, MSBEventSubtype.Other)

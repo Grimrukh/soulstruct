@@ -19,5 +19,4 @@ class MSBEntryList(_BaseMSBEntryList, abc.ABC):
     MAP_ENTITY_LIST_TAIL = BinaryStruct(
         ("next_entry_list_offset", "i"),
     )
-
     NAME_ENCODING = "utf-8"

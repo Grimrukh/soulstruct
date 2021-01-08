@@ -67,14 +67,14 @@ def Constructor():
     DisableFlag(2406)
     EnableFlag(2402)
     DisableFlag(2407)
-    DeleteFX(2403910, erase_root_only=False)
+    DeleteVFX(2403910, erase_root_only=False)
     RunEvent(12404400, slot=0, args=(12404440, 2403910, 12404420, 12404430, Flags.VicarAmeliaDead, 6001))
     RunEvent(12404410, slot=0, args=(0, 2400910, 2402910, 12404420, 12404430, 12404440, Flags.VicarAmeliaDead, 10567))
     RunEvent(12404450, slot=0, args=(2400910, 2402911, 12404420, 12404430, Flags.VicarAmeliaFogEntered))
     RunEvent(12404460, slot=0, args=(2400910, 2402911, 2402800, 2402801, 101130, 12404450, 2402801))
     Event12404490()
-    CreateObjectFX(900130, obj=2401900, model_point=200)
-    CreateObjectFX(900130, obj=2401901, model_point=200)
+    CreateObjectVFX(900130, obj=2401900, model_point=200)
+    CreateObjectVFX(900130, obj=2401901, model_point=200)
     RegisterLadder(start_climbing_flag=12400600, stop_climbing_flag=12400601, obj=2401020)
     RegisterLadder(start_climbing_flag=12400602, stop_climbing_flag=12400603, obj=2401021)
     RegisterLadder(start_climbing_flag=12400604, stop_climbing_flag=12400605, obj=2401022)
@@ -720,8 +720,8 @@ def Event12400125():
     EnableFlag(12400178)
     ForceAnimation(2401207, 1)
     Wait(1.0)
-    CreateObjectFX(920204, obj=2401207, model_point=200)
-    CreateObjectFX(920205, obj=2401207, model_point=201)
+    CreateObjectVFX(920204, obj=2401207, model_point=200)
+    CreateObjectVFX(920205, obj=2401207, model_point=201)
     Wait(3.0)
     DisableFlag(12400178)
     EnableObjectActivation(2401006, obj_act_id=2400000)
@@ -740,8 +740,8 @@ def Event12400126():
     EnableFlag(12400178)
     ForceAnimation(2401207, 2)
     Wait(1.0)
-    CreateObjectFX(920204, obj=2401207, model_point=200)
-    CreateObjectFX(920205, obj=2401207, model_point=201)
+    CreateObjectVFX(920204, obj=2401207, model_point=200)
+    CreateObjectVFX(920205, obj=2401207, model_point=201)
     Wait(3.0)
     DisableFlag(12400178)
     EnableObjectActivation(2401006, obj_act_id=2400000)
@@ -901,8 +901,8 @@ def Event12400155():
     EnableFlag(12405179)
     ForceAnimation(2401208, 1)
     Wait(1.0)
-    CreateObjectFX(920204, obj=2401208, model_point=200)
-    CreateObjectFX(920205, obj=2401208, model_point=201)
+    CreateObjectVFX(920204, obj=2401208, model_point=200)
+    CreateObjectVFX(920205, obj=2401208, model_point=201)
     Wait(3.0)
     DisableFlag(12405179)
     EnableObjectActivation(2401008, obj_act_id=2400000)
@@ -921,8 +921,8 @@ def Event12400156():
     EnableFlag(12405179)
     ForceAnimation(2401208, 2)
     Wait(1.0)
-    CreateObjectFX(920204, obj=2401208, model_point=200)
-    CreateObjectFX(920205, obj=2401208, model_point=201)
+    CreateObjectVFX(920204, obj=2401208, model_point=200)
+    CreateObjectVFX(920205, obj=2401208, model_point=201)
     Wait(3.0)
     DisableFlag(12405179)
     EnableObjectActivation(2401008, obj_act_id=2400000)
@@ -988,8 +988,8 @@ def Event12400760():
     WaitFrames(31)
     ForceAnimation(2401220, 1)
     WaitFrames(30)
-    CreateObjectFX(920204, obj=2401220, model_point=200)
-    CreateObjectFX(920205, obj=2401220, model_point=201)
+    CreateObjectVFX(920204, obj=2401220, model_point=200)
+    CreateObjectVFX(920205, obj=2401220, model_point=201)
     EnableFlag(12400160)
     EndIfFlagOn(Flags.VicarAmeliaDead)
     DisableFlag(2400)
@@ -1010,8 +1010,8 @@ def Event12400760():
     WaitFrames(24)
     ForceAnimation(2400650, 7022, loop=True)
     WaitFrames(6)
-    CreateObjectFX(920204, obj=2401220, model_point=200)
-    CreateObjectFX(920205, obj=2401220, model_point=201)
+    CreateObjectVFX(920204, obj=2401220, model_point=200)
+    CreateObjectVFX(920205, obj=2401220, model_point=201)
     DisplayDialog(
         10010174,
         anchor_entity=-1,
@@ -1086,8 +1086,8 @@ def Event12400175():
     DisableObjectActivation(2401016, obj_act_id=2400000)
     ForceAnimation(2401209, 2)
     Wait(1.0)
-    CreateObjectFX(920204, obj=2401209, model_point=200)
-    CreateObjectFX(920205, obj=2401209, model_point=201)
+    CreateObjectVFX(920204, obj=2401209, model_point=200)
+    CreateObjectVFX(920205, obj=2401209, model_point=201)
     Wait(3.0)
     DisableFlag(12405175)
     EnableObjectActivation(2401015, obj_act_id=2400000)
@@ -1105,8 +1105,8 @@ def Event12400175():
     DisableObjectActivation(2401016, obj_act_id=2400000)
     ForceAnimation(2401209, 1)
     Wait(1.0)
-    CreateObjectFX(920204, obj=2401209, model_point=200)
-    CreateObjectFX(920205, obj=2401209, model_point=201)
+    CreateObjectVFX(920204, obj=2401209, model_point=200)
+    CreateObjectVFX(920205, obj=2401209, model_point=201)
     Wait(3.0)
     DisableFlag(12400169)
     DisableFlag(12405175)
@@ -1205,19 +1205,19 @@ def Event12400300():
     DisableBackread(2400125)
     DisableMapPiece(2404700)
     DisableMapPiece(2404701)
-    DeleteFX(2403400, erase_root_only=False)
-    DeleteFX(2403401, erase_root_only=False)
-    DeleteFX(2403402, erase_root_only=False)
-    DeleteFX(2403403, erase_root_only=False)
-    DeleteFX(2403404, erase_root_only=False)
-    DeleteFX(2403405, erase_root_only=False)
-    DeleteFX(2403406, erase_root_only=False)
-    DeleteFX(2403407, erase_root_only=False)
-    DeleteFX(2403408, erase_root_only=False)
-    DeleteFX(2403409, erase_root_only=False)
-    DeleteFX(2403410, erase_root_only=False)
-    DeleteFX(2403411, erase_root_only=False)
-    DeleteFX(2403412, erase_root_only=False)
+    DeleteVFX(2403400, erase_root_only=False)
+    DeleteVFX(2403401, erase_root_only=False)
+    DeleteVFX(2403402, erase_root_only=False)
+    DeleteVFX(2403403, erase_root_only=False)
+    DeleteVFX(2403404, erase_root_only=False)
+    DeleteVFX(2403405, erase_root_only=False)
+    DeleteVFX(2403406, erase_root_only=False)
+    DeleteVFX(2403407, erase_root_only=False)
+    DeleteVFX(2403408, erase_root_only=False)
+    DeleteVFX(2403409, erase_root_only=False)
+    DeleteVFX(2403410, erase_root_only=False)
+    DeleteVFX(2403411, erase_root_only=False)
+    DeleteVFX(2403412, erase_root_only=False)
     Goto(Label.L3)
 
     # --- 2 --- #
@@ -1507,40 +1507,40 @@ def Event12400850(
     arg_28_31: int,
 ):
     """ 12400850: Event 12400850 """
-    DeleteFX(arg_0_3, erase_root_only=False)
-    DeleteFX(arg_4_7, erase_root_only=False)
-    DeleteFX(arg_8_11, erase_root_only=False)
+    DeleteVFX(arg_0_3, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_8_11, erase_root_only=False)
     SkipLinesIfFlagOff(3, arg_12_15)
-    CreateFX(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_4_7)
+    CreateVFX(arg_8_11)
     End()
     IfObjectActivated(0, obj_act_id=arg_16_19)
     Wait(arg_20_23)
-    CreateFX(arg_0_3)
-    CreateTemporaryFX(arg_28_31, anchor_entity=arg_24_27, anchor_type=CoordEntityType.Region, model_point=-1)
+    CreateVFX(arg_0_3)
+    CreateTemporaryVFX(arg_28_31, anchor_entity=arg_24_27, anchor_type=CoordEntityType.Region, model_point=-1)
     Wait(4.0)
-    CreateFX(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_4_7)
+    CreateVFX(arg_8_11)
 
 
 @RestartOnRest
 def Event12400854():
     """ 12400854: Event 12400854 """
-    DeleteFX(2406711, erase_root_only=False)
-    DeleteFX(2406712, erase_root_only=False)
-    DeleteFX(2406713, erase_root_only=False)
+    DeleteVFX(2406711, erase_root_only=False)
+    DeleteVFX(2406712, erase_root_only=False)
+    DeleteVFX(2406713, erase_root_only=False)
     SkipLinesIfFlagOff(3, 12400133)
-    CreateFX(2406712)
-    CreateFX(2406713)
+    CreateVFX(2406712)
+    CreateVFX(2406713)
     End()
     IfObjectActivated(0, obj_act_id=12400112)
     Wait(6.0)
-    CreateFX(2406711)
-    CreateTemporaryFX(920206, anchor_entity=2401204, anchor_type=CoordEntityType.Object, model_point=200)
-    CreateTemporaryFX(920207, anchor_entity=2401204, anchor_type=CoordEntityType.Object, model_point=201)
+    CreateVFX(2406711)
+    CreateTemporaryVFX(920206, anchor_entity=2401204, anchor_type=CoordEntityType.Object, model_point=200)
+    CreateTemporaryVFX(920207, anchor_entity=2401204, anchor_type=CoordEntityType.Object, model_point=201)
     Wait(4.0)
-    CreateFX(2406712)
-    CreateFX(2406713)
+    CreateVFX(2406712)
+    CreateVFX(2406713)
 
 
 @RestartOnRest
@@ -1672,8 +1672,8 @@ def Event12405110(
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_4_7, 0, wait_for_completion=True)
     EnableFlag(arg_20_23)
-    CreateTemporaryFX(150005, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=101)
-    DeleteFX(arg_8_11, erase_root_only=False)
+    CreateTemporaryVFX(150005, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=101)
+    DeleteVFX(arg_8_11, erase_root_only=False)
     EndIfFinishedConditionTrue(2)
     Wait(0.20000000298023224)
     CreatePlayLog(arg_24_27)
@@ -1687,7 +1687,7 @@ def Event12405110(
         launch_angle_z=0,
     )
     PlaySoundEffect(anchor_entity=arg_12_15, sound_type=SoundType.a_Ambient, sound_id=243007000)
-    CreateTemporaryFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(0.699999988079071)
     ShootProjectile(
         owner_entity=2400000,
@@ -1699,7 +1699,7 @@ def Event12405110(
         launch_angle_z=0,
     )
     PlaySoundEffect(anchor_entity=arg_12_15, sound_type=SoundType.a_Ambient, sound_id=243007000)
-    CreateTemporaryFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(0.699999988079071)
     ShootProjectile(
         owner_entity=2400000,
@@ -1711,7 +1711,7 @@ def Event12405110(
         launch_angle_z=0,
     )
     PlaySoundEffect(anchor_entity=arg_12_15, sound_type=SoundType.a_Ambient, sound_id=243007000)
-    CreateTemporaryFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(929208, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(3.0)
     IfCharacterOutsideRegion(3, PLAYER, region=arg_0_3)
     IfObjectNotDestroyed(3, arg_12_15)
@@ -2280,7 +2280,7 @@ def Event12405400(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=65, material_vfx_id=65)
     ResetAnimation(arg_28_31, disable_interpolation=False)
     ForceAnimation(arg_28_31, arg_12_15)
     IfHasTAEEvent(0, arg_28_31, tae_event_id=400)
@@ -2288,7 +2288,7 @@ def Event12405400(
     DisableFlag(arg_24_27)
     IfHasTAEEvent(0, arg_28_31, tae_event_id=300)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_hp=80, overwrite_max=True)
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
     CancelSpecialEffect(arg_28_31, arg_16_19)
     AICommand(arg_28_31, command_id=-1, slot=0)
     ReplanAI(arg_28_31)
@@ -2311,7 +2311,7 @@ def Event12405430(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
     EnableFlag(arg_16_19)
 
 
@@ -2332,9 +2332,9 @@ def Event12405460(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event12405790(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12405790: Event 12405790 """
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     EndIfFlagOn(arg_4_7)
-    CreateObjectFX(arg_8_11, obj=arg_0_3, model_point=200)
+    CreateObjectVFX(arg_8_11, obj=arg_0_3, model_point=200)
 
 
 @RestartOnRest
@@ -5337,7 +5337,7 @@ def VicarAmeliaDies():
     DisableObject(2400801)
     Kill(2400800, award_souls=False)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=False)
+    DeleteVFX(VFX.BossFog, erase_root_only=False)
     End()
 
     # --- 0 --- #
@@ -5345,7 +5345,7 @@ def VicarAmeliaDies():
     IfCharacterDead(0, 2400800)
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=True)
+    DeleteVFX(VFX.BossFog, erase_root_only=True)
     SetLockedCameraSlot(game_map=CATHEDRAL_WARD, camera_slot=0)
     Wait(3.0)
     KillBoss(2400800)
@@ -5430,21 +5430,21 @@ def VicarAmeliaFirstTime():
 
 def PlayMasterWillemCutscene():
     """ 12401803: Play cutscene between Laurence and Master Willem at skull after Vicar Amelia is killed. """
-    DeleteFX(FX.LaurenceSkull, erase_root_only=False)
+    DeleteVFX(VFX.LaurenceSkull, erase_root_only=False)
     EndIfThisEventOn()
     GotoIfFlagOn(Label.L0, Flags.VicarAmeliaDead)
     IfFlagOn(0, Flags.VicarAmeliaDead)
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateFX(FX.LaurenceSkull)
+    CreateVFX(VFX.LaurenceSkull)
     EndIfClient()
     IfCharacterHuman(1, PLAYER)
     IfActionButtonParam(1, action_button_id=2400010, entity=2401801)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
-    DeleteFX(FX.LaurenceSkull, erase_root_only=True)
+    DeleteVFX(VFX.LaurenceSkull, erase_root_only=True)
     PlayCutsceneAndMovePlayerAndSetTimePeriod(
         Cutscenes.LaurenceFlashback, CutsceneType.Skippable, -1, CATHEDRAL_WARD, player_id=10000, time_period_id=2
     )
@@ -5469,12 +5469,12 @@ def EnterVicarAmeliaBossFog():
     GotoIfFlagOn(Label.L0, Flags.VicarAmeliaFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=False)
+    DeleteVFX(VFX.BossFog, erase_root_only=False)
     IfFlagOff(1, Flags.VicarAmeliaDead)
     IfFlagOn(1, Flags.VicarAmeliaFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossFog)
-    CreateFX(FX.BossFog)
+    CreateVFX(VFX.BossFog)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -5683,7 +5683,7 @@ def VicarAmeliaLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.VicarAmelia, npc_part_id=vulnerable_npc_part_id, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(Characters.VicarAmelia, npc_part_id=vulnerable_npc_part_id, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, Characters.VicarAmelia, npc_part_id=vulnerable_npc_part_id, value=0)
     IfHealthLessThanOrEqual(3, Characters.VicarAmelia, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -5700,7 +5700,7 @@ def VicarAmeliaLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.VicarAmelia, npc_part_id=vulnerable_npc_part_id, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(Characters.VicarAmelia, npc_part_id=vulnerable_npc_part_id, material_sfx_id=73, material_vfx_id=73)
     WaitFrames(1)
     ResetAnimation(Characters.VicarAmelia, disable_interpolation=False)
     ForceAnimation(Characters.VicarAmelia, wounded_animation)
@@ -5867,7 +5867,7 @@ def Event12404400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12404400: Event 12404400 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -5883,7 +5883,7 @@ def Event12404400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -5897,7 +5897,7 @@ def Event12404400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 

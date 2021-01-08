@@ -27,7 +27,7 @@ def Constructor():
     RegisterStatue(1321907, game_map=ASH_LAKE, statue_type=StatueType.Stone)
     SkipLinesIfClient(2)
     DisableObject(1321994)
-    DeleteFX(1321995, erase_root_only=False)
+    DeleteVFX(1321995, erase_root_only=False)
     RunEvent(11320090, slot=0, args=(1321700, 1321701, 1322600, 1322601))
     RunEvent(11325000)
     RunEvent(11320800)
@@ -80,7 +80,7 @@ def Event11320090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11320090: Event 11320090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     End()
     IfActionButton(
         1,
@@ -107,7 +107,7 @@ def Event11320090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest

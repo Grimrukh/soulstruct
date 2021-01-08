@@ -18,5 +18,5 @@ class Objects(Object):
     BossFog = 2501800
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     BossFog = 2503800

@@ -20,7 +20,7 @@ class Objects(Object):
     BossFog = 2401800
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     LaurenceSkull = 2403413  # enabled after fight and before cutscene
     BossFog = 2403800
 

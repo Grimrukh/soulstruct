@@ -778,7 +778,7 @@ def Event15105237():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(5100850, npc_part_id=10, material_special_effect_id=110, material_fx_id=110)
+    SetNPCPartEffects(5100850, npc_part_id=10, material_sfx_id=110, material_vfx_id=110)
 
 
 @RestartOnRest
@@ -1408,10 +1408,10 @@ def Event15105505():
     EndIfPlayerNotInOwnWorld()
     Wait(0.5)
     EnableObject(5101850)
-    CreateObjectFX(2, obj=5101850, model_point=101)
+    CreateObjectVFX(2, obj=5101850, model_point=101)
     IfFlagOn(0, 15100200)
     DisableObject(5101850)
-    DeleteObjectFX(5101850, erase_root=True)
+    DeleteObjectVFX(5101850, erase_root=True)
 
 
 @RestartOnRest
@@ -1486,7 +1486,7 @@ def Event15105520(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DefineLabel(0)
     IfPlayerInOwnWorld(1)
     IfCharacterInsideRegion(1, PLAYER, region=arg_20_23)
-    IfCharacterChameleonState(1, character=PLAYER, chameleon_fx_id=arg_16_19, is_transformed=True)
+    IfCharacterChameleonState(1, character=PLAYER, chameleon_vfx_id=arg_16_19, is_transformed=True)
     IfConditionTrue(0, input_condition=1)
     SetNetworkConnectedFlagState(flag=arg_0_3, state=FlagState.On)
     ForceAnimation(arg_4_7, 1, wait_for_completion=True)
@@ -1635,7 +1635,7 @@ def Event15105811():
     IfConditionTrue(0, input_condition=1)
     EnableCharacter(5100801)
     EnableAnimations(5100801)
-    CreateTemporaryFX(30340, anchor_entity=5100801, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryVFX(30340, anchor_entity=5100801, anchor_type=CoordEntityType.Character, model_point=236)
     ForceAnimation(5100801, 63010)
     EnableAI(5100801)
 
@@ -1675,7 +1675,7 @@ def Event15105812():
     )
     SetNetworkUpdateAuthority(5100800, UpdateAuthority.Forced)
     Wait(1.0)
-    CreateTemporaryFX(30340, anchor_entity=5100800, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryVFX(30340, anchor_entity=5100800, anchor_type=CoordEntityType.Character, model_point=236)
     EnableCharacter(5100800)
     EnableAnimations(5100800)
     SetNetworkUpdateRate(5100800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -1809,7 +1809,7 @@ def Event15105814():
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(15105802)
     Wait(2.4000000953674316)
-    CreateTemporaryFX(30340, anchor_entity=5100803, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryVFX(30340, anchor_entity=5100803, anchor_type=CoordEntityType.Character, model_point=236)
     EnableCharacter(5100803)
     EnableAnimations(5100803)
     ForceAnimation(5100803, 63010)
@@ -2299,7 +2299,7 @@ def Event15105862():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(5100850, npc_part_id=10, material_special_effect_id=110, material_fx_id=110)
+    SetNPCPartEffects(5100850, npc_part_id=10, material_sfx_id=110, material_vfx_id=110)
     IfCharacterPartHealthLessThanOrEqual(-1, 5100850, npc_part_id=10, value=0)
     IfConditionTrue(2, input_condition=-1)
     IfCharacterDoesNotHaveSpecialEffect(2, character=5100850, special_effect=16583)

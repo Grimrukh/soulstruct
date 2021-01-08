@@ -135,11 +135,11 @@ __all__ = [
     "EnableAnimations",
     "DisableAnimations",
     "EndOfAnimation",
-    "CreateFX",
-    "DeleteFX",
-    "CreateTemporaryFX",
-    "CreateObjectFX",
-    "DeleteObjectFX",
+    "CreateVFX",
+    "DeleteVFX",
+    "CreateTemporaryVFX",
+    "CreateObjectVFX",
+    "DeleteObjectVFX",
     "SetBackgroundMusic",
     "PlaySoundEffect",
     "SetSoundEventState",
@@ -720,11 +720,10 @@ def SetNPCPartHealth(character: CharacterTyping, npc_part_id: int, desired_hp: i
     return to_numeric(instruction_info, character, npc_part_id, desired_hp, overwrite_max)
 
 
-def SetNPCPartEffects(character: CharacterTyping, npc_part_id: int, material_special_effect_id: int,
-                      material_fx_id: int):
+def SetNPCPartEffects(character: CharacterTyping, npc_part_id: int, material_sfx_id: int, material_vfx_id: int):
     """ Attach material effects to an NPC part. """
     instruction_info = (2004, 24)
-    return to_numeric(instruction_info, character, npc_part_id, material_special_effect_id, material_fx_id)
+    return to_numeric(instruction_info, character, npc_part_id, material_sfx_id, material_vfx_id)
 
 
 def SetNPCPartBulletDamageScaling(character: CharacterTyping, npc_part_id: int, desired_scaling):
@@ -1281,25 +1280,25 @@ def EndOfAnimation(obj: AnimatedTyping, animation_id):
     return to_numeric(instruction_info, obj, animation_id)
 
 
-# FX
+# VFX
 
 
-def CreateFX(fx_id: int):
-    """ Create visual FX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints) """
+def CreateVFX(vfx_id: int):
+    """Create visual VFX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints)."""
     instruction_info = (2006, 2)
-    return to_numeric(instruction_info, fx_id)
+    return to_numeric(instruction_info, vfx_id)
 
 
-def DeleteFX(fx_id: int, erase_root_only: bool = True):
-    """ Delete visual FX. If 'erase_root_only' is True (default), effect particles already emitted will live out the
-    rest of their lifetimes (e.g. making a fog gate disappear organically). The ID is given in the MSB. """
+def DeleteVFX(vfx_id: int, erase_root_only: bool = True):
+    """Delete visual VFX. If 'erase_root_only' is True (default), effect particles already emitted will live out the
+    rest of their lifetimes (e.g. making a fog gate disappear organically). The ID is given in the MSB."""
     instruction_info = (2006, 1)
-    return to_numeric(instruction_info, fx_id, erase_root_only)
+    return to_numeric(instruction_info, vfx_id, erase_root_only)
 
 
-def CreateTemporaryFX(fx_id: int, anchor_entity: CoordEntityTyping, model_point: int, anchor_type=None):
-    """ Create one-off visual FX attached to the given 'anchor_entity'. The FX type argument is determined from the
-    Entity category. The FX, of course, must be current loaded (or in common effects). """
+def CreateTemporaryVFX(vfx_id: int, anchor_entity: CoordEntityTyping, model_point: int, anchor_type=None):
+    """ Create one-off visual VFX attached to the given 'anchor_entity'. The VFX type argument is determined from the
+    Entity category. The VFX, of course, must be current loaded (or in common effects). """
     instruction_info = (2006, 3, [0, 0, -1, 0])
     if anchor_type is None:
         if anchor_entity == PLAYER:
@@ -1309,15 +1308,15 @@ def CreateTemporaryFX(fx_id: int, anchor_entity: CoordEntityTyping, model_point:
                 anchor_type = anchor_entity.coord_entity_type
             except AttributeError:
                 raise AttributeError("`anchor_type` not detected. Specify `anchor_type` or use typed `anchor_entity`.")
-    return to_numeric(instruction_info, anchor_type, anchor_entity, model_point, fx_id)
+    return to_numeric(instruction_info, anchor_type, anchor_entity, model_point, vfx_id)
 
 
-def CreateObjectFX(fx_id: int, obj: ObjectTyping, model_point: int):
+def CreateObjectVFX(vfx_id: int, obj: ObjectTyping, model_point: int):
     instruction_info = (2006, 4)
-    return to_numeric(instruction_info, obj, model_point, fx_id)
+    return to_numeric(instruction_info, obj, model_point, vfx_id)
 
 
-def DeleteObjectFX(obj: ObjectTyping, erase_root: bool = True):
+def DeleteObjectVFX(obj: ObjectTyping, erase_root: bool = True):
     """ Note `erase_root` vs. `erase_root_only` for map SFX. """
     instruction_info = (2006, 5)
     return to_numeric(instruction_info, obj, erase_root)
@@ -1376,7 +1375,7 @@ def RegisterLadder(start_climbing_flag: FlagInt, stop_climbing_flag: FlagInt, ob
 def RegisterBonfire(
     bonfire_flag: FlagInt, obj: ObjectTyping, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0
 ):
-    """ Register a bonfire, which creates the flame FX and allows you to interact with it (via the MSB entity with ID
+    """ Register a bonfire, which creates the flame VFX and allows you to interact with it (via the MSB entity with ID
     (obj + 1000).
 
     I believe the bonfire flag tells the game where to keep track of its kindle level, or something like that. I
@@ -1922,7 +1921,7 @@ def SetLockedCameraSlot(game_map: MapTyping, camera_slot: int):
 
 
 def HellkiteBreathControl(character: CharacterTyping, obj: ObjectTyping, animation_id):
-    """ I don't recommend you mess with this. It seems to be used to create the fire FX and damaging effect when the
+    """ I don't recommend you mess with this. It seems to be used to create the fire VFX and damaging effect when the
     Hellkite breathes fire on the bridge. It may simply trigger a certain behavior params ID.
 
     Unclear whether the animation applies to the character or object (which is probably an invisible "burning" plane).

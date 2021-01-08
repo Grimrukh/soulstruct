@@ -1,12 +1,25 @@
+from __future__ import annotations
+
+__all__ = [
+    "MSBRegion",
+    "MSBRegionPoint",
+    "MSBRegionCircle",
+    "MSBRegionCylinder",
+    "MSBRegionSphere",
+    "MSBRegionRect",
+    "MSBRegionBox",
+    "MSBRegionList",
+]
+
 import abc
 import typing as tp
 import logging
 import struct
-from io import BufferedReader, BytesIO
 
+from soulstruct.maps.core import MapFieldInfo
 from soulstruct.maps.enums import MSBRegionSubtype
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
-from soulstruct.utilities import read_chars_from_buffer, pad_chars, unpack_from_buffer
+from soulstruct.utilities import read_chars_from_buffer, pad_chars, unpack_from_buffer, partialmethod
 from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
@@ -15,43 +28,34 @@ _LOGGER = logging.getLogger(__name__)
 
 class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
 
+    ENTRY_SUBTYPE: MSBRegionSubtype = None
     REGION_STRUCT: BinaryStruct = None
-    NAME_ENCODING = ""  # type: str
-    UNKNOWN_DATA_SIZE = -1  # type: int
+    REGION_TYPE_DATA_STRUCT: BinaryStruct = None
+    NAME_ENCODING = ""
+    UNKNOWN_DATA_SIZE = -1
 
-    REGION_TYPE_DATA_STRUCT = ()
-
-    FIELD_INFO = {
-        "translate": (
+    FIELD_INFO = MSBEntryEntityCoordinates.FIELD_INFO | {
+        "translate": MapFieldInfo(
             "Translate",
             Vector3,
+            Vector3.zero(),
             "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
             "regions.",
         ),
-        "rotate": (
+        "rotate": MapFieldInfo(
             "Rotate",
             Vector3,
+            Vector3.zero(),
             "Euler angles for region rotation around its local X, Y, and Z axes.",
-        ),
-        "entity_id": (
-            "Entity ID",
-            int,
-            "Entity ID used to refer to the region in other game files.",
         ),
     }
 
-    ENTRY_SUBTYPE = None  # type: MSBRegionSubtype
+    translate: Vector3
+    rotate: Vector3
 
-    def __init__(self, msb_region_source=None):
-        super().__init__()
+    def __init__(self, source=None, **kwargs):
         self._region_index = None  # Final automatic assignment done on `MSB.pack()`.
-
-        if isinstance(msb_region_source, bytes):
-            msb_region_source = BytesIO(msb_region_source)
-        if isinstance(msb_region_source, (BufferedReader, BytesIO)):
-            self.unpack(msb_region_source)
-        elif msb_region_source is not None:
-            raise TypeError("`msb_model_source` must be a buffer, `bytes`, or `None`.")
+        super().__init__(source=source, **kwargs)
 
     def unpack(self, msb_buffer):
         region_offset = msb_buffer.tell()
@@ -101,11 +105,10 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         return packed_base_data + packed_name + b"\0\0\0\0" * 2 + packed_type_data + packed_entity_id
 
     def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.REGION_TYPE_DATA_STRUCT).unpack(msb_buffer)
-        self.set(**data)
+        self.set(**self.REGION_TYPE_DATA_STRUCT.unpack(msb_buffer))
 
     def pack_type_data(self):
-        return BinaryStruct(*self.REGION_TYPE_DATA_STRUCT).pack_from_object(self)
+        return self.REGION_TYPE_DATA_STRUCT.pack_from_object(self)
 
     def set_indices(self, region_index):
         self._region_index = region_index
@@ -122,19 +125,14 @@ class MSBRegionPoint(MSBRegion, abc.ABC):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
     player be facing when they spawn?)."""
 
-    REGION_TYPE_DATA_STRUCT = ()
+    ENTRY_SUBTYPE = MSBRegionSubtype.Point
+    REGION_TYPE_DATA_STRUCT = None
 
-    FIELD_NAMES = (
+    FIELD_ORDER = (
         "entity_id",
         "translate",
         "rotate",
     )
-
-    ENTRY_SUBTYPE = MSBRegionSubtype.Point
-
-    def __init__(self, msb_region_shape_source=None, **kwargs):
-        super().__init__(msb_region_shape_source)
-        self.set(**kwargs)
 
     def unpack_type_data(self, msb_buffer):
         pass
@@ -146,84 +144,78 @@ class MSBRegionPoint(MSBRegion, abc.ABC):
 class MSBRegionCircle(MSBRegion, abc.ABC):
     """Almost never used (no volume)."""
 
-    REGION_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBRegionSubtype.Circle
+    REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("radius", "f"),
     )
 
-    FIELD_INFO = {
-        **MSBRegion.FIELD_INFO,
-        "radius": (
+    FIELD_INFO = MSBRegion.FIELD_INFO | {
+        "radius": MapFieldInfo(
             "Radius",
             float,
+            1.0,
             "Radius (in xy-plane) of circular region.",
         ),
     }
 
-    FIELD_NAMES = (
+    FIELD_ORDER = (
         "entity_id",
         "translate",
         "rotate",
         "radius",
     )
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Circle
-
-    def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.radius = 1.0
-        super().__init__(msb_region_shape_source)
-        self.set(**kwargs)
+    radius: float
 
 
 class MSBRegionSphere(MSBRegion, abc.ABC):
-    REGION_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
+    REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("radius", "f"),
     )
 
-    FIELD_INFO = {
-        **MSBRegion.FIELD_INFO,
-        "radius": (
+    FIELD_INFO = MSBRegion.FIELD_INFO | {
+        "radius": MapFieldInfo(
             "Radius",
             float,
+            1.0,
             "Radius of sphere-shaped region.",
         ),
     }
 
-    FIELD_NAMES = (
+    FIELD_ORDER = (
         "entity_id",
         "translate",
         "rotate",
         "radius",
     )
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
-
-    def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.radius = 1.0
-        super().__init__(msb_region_shape_source)
-        self.set(**kwargs)
+    radius: float
 
 
 class MSBRegionCylinder(MSBRegion, abc.ABC):
-    REGION_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
+    REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("radius", "f"),
         ("height", "f"),
     )
 
-    FIELD_INFO = {
-        **MSBRegion.FIELD_INFO,
-        "radius": (
+    FIELD_INFO = MSBRegion.FIELD_INFO | {
+        "radius": MapFieldInfo(
             "Radius",
             float,
+            1.0,
             "Radius (in xz-plane) of cylinder-shaped region.",
         ),
-        "height": (
+        "height": MapFieldInfo(
             "Height",
             float,
+            1.0,
             "Height (along y-axis) of cylinder-shaped region.",
         ),
     }
 
-    FIELD_NAMES = (
+    FIELD_ORDER = (
         "entity_id",
         "translate",
         "rotate",
@@ -231,38 +223,35 @@ class MSBRegionCylinder(MSBRegion, abc.ABC):
         "height",
     )
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
-
-    def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.radius = 1.0
-        self.height = 1.0
-        super().__init__(msb_region_shape_source)
-        self.set(**kwargs)
+    radius: float
+    height: float
 
 
 class MSBRegionRect(MSBRegion, abc.ABC):
     """Almost never used (no volume)."""
 
-    REGION_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBRegionSubtype.Rect
+    REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("width", "f"),
         ("depth", "f"),
     )
 
-    FIELD_INFO = {
-        **MSBRegion.FIELD_INFO,
-        "width": (
+    FIELD_INFO = MSBRegion.FIELD_INFO | {
+        "width": MapFieldInfo(
             "Width",
             float,
+            1.0,
             "Width (along x-axis) of rectangle-shaped region.",
         ),
-        "height": (
+        "height": MapFieldInfo(
             "Height",
             float,
+            1.0,
             "Height (along y-axis) of rectangle-shaped region.",
         ),
     }
 
-    FIELD_NAMES = (
+    FIELD_ORDER = (
         "entity_id",
         "translate",
         "rotate",
@@ -270,42 +259,40 @@ class MSBRegionRect(MSBRegion, abc.ABC):
         "height",
     )
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Rect
-
-    def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.width = 1.0
-        self.depth = 1.0
-        super().__init__(msb_region_shape_source)
-        self.set(**kwargs)
+    width: float
+    height: float
 
 
 class MSBRegionBox(MSBRegion, abc.ABC):
-    REGION_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBRegionSubtype.Box
+    REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("width", "f"),
         ("depth", "f"),
         ("height", "f"),
     )
 
-    FIELD_INFO = {
-        **MSBRegion.FIELD_INFO,
-        "width": (
+    FIELD_INFO = MSBRegion.FIELD_INFO | {
+        "width": MapFieldInfo(
             "Width",
             float,
+            1.0,
             "Width (along x-axis) of box-shaped region.",
         ),
-        "depth": (
+        "depth": MapFieldInfo(
             "Depth",
             float,
+            1.0,
             "Depth (along z-axis) of box-shaped region.",
         ),
-        "height": (
+        "height": MapFieldInfo(
             "Height",
             float,
+            1.0,
             "Height (along y-axis) of box-shaped region.",
         ),
     }
 
-    FIELD_NAMES = (
+    FIELD_ORDER = (
         "entity_id",
         "translate",
         "rotate",
@@ -314,24 +301,18 @@ class MSBRegionBox(MSBRegion, abc.ABC):
         "height",
     )
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Box
-
-    def __init__(self, msb_region_shape_source=None, **kwargs):
-        self.width = 1.0
-        self.depth = 1.0
-        self.height = 1.0
-        super().__init__(msb_region_shape_source)
-        self.set(**kwargs)
+    width: float
+    depth: float
+    height: float
 
 
 class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
     ENTRY_LIST_NAME = "Regions"
     ENTRY_SUBTYPE_ENUM = MSBRegionSubtype
+    SUBTYPE_CLASSES = {}  # type: dict[MSBRegionSubtype, tp.Type[MSBRegion]]
+    SUBTYPE_OFFSET = -1  # type: int
 
-    REGION_SUBTYPE_CLASSES = {}  # type: dict[MSBRegionSubtype, type]
-    REGION_SUBTYPE_OFFSET = -1  # type: int
-
-    _entries: tp.List[MSBRegion]
+    _entries: list[MSBRegion]
 
     Points: tp.Sequence[MSBRegionPoint]
     Circles: tp.Sequence[MSBRegionCircle]
@@ -340,50 +321,20 @@ class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
     Rectangles: tp.Sequence[MSBRegionRect]
     Boxes: tp.Sequence[MSBRegionBox]
 
+    new_point: tp.Callable[..., MSBRegionPoint] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Point)
+    new_circle: tp.Callable[..., MSBRegionCircle] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Circle)
+    new_sphere: tp.Callable[..., MSBRegionSphere] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Sphere)
+    new_cylinder: tp.Callable[..., MSBRegionCylinder] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Cylinder)
+    new_rect: tp.Callable[..., MSBRegionRect] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Rect)
+    new_box: tp.Callable[..., MSBRegionBox] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Box)
+
     def pack_entry(self, index: int, entry: MSBRegion):
         return entry.pack(index)
-
-    def add_region(self, region_type, dimensions=None, **kwargs):
-        region_type = self.resolve_entry_subtype(region_type)
-        if dimensions is not None:
-            if region_type == MSBRegionSubtype.Box:
-                if "width" in kwargs or "depth" in kwargs or "height" in kwargs:
-                    raise ValueError("Cannot use `dimensions` argument in addition to `width`, `depth`, or `height`.")
-                try:
-                    kwargs["width"], kwargs["depth"], kwargs["height"] = dimensions
-                except ValueError:
-                    raise ValueError(f"`dimensions` argument for Box must be (width, depth, height) sequence.")
-            elif region_type == MSBRegionSubtype.Cylinder:
-                if "radius" in kwargs or "height" in kwargs:
-                    raise ValueError("Cannot use `dimensions` argument in addition to `radius` or `height`.")
-                try:
-                    kwargs["radius"], kwargs["height"] = dimensions
-                except ValueError:
-                    raise ValueError(f"`dimensions` argument for Cylinder must be (radius, height) sequence.")
-            else:
-                raise ValueError("Can only use `dimensions` argument for Box or Cylinder region.")
-        self.add_entry(
-            self.REGION_SUBTYPE_CLASSES[region_type](**kwargs), append_to_entry_subtype=region_type,
-        )
-
-    def get_subtype_instance(self, entry_subtype, **kwargs):
-        entry_subtype = self.resolve_entry_subtype(entry_subtype)
-        entry_class = self.REGION_SUBTYPE_CLASSES[entry_subtype]
-        return entry_class(msb_region_shape_source=None, **kwargs)
 
     def set_indices(self):
         """Global region index only."""
         for i, entry in enumerate(self._entries):
             entry.set_indices(region_index=i)
-
-    @classmethod
-    def MSBRegion(cls, msb_buffer):
-        """Detects the appropriate subclass of `MSBRegion` to instantiate, and does so."""
-        event_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.REGION_SUBTYPE_OFFSET, relative_offset=True)[0]
-        event_type = MSBRegionSubtype(event_type_int)
-        return cls.REGION_SUBTYPE_CLASSES[event_type](msb_buffer)
-
-    ENTRY_CLASS = MSBRegion
 
 
 for _entry_subtype in MSBRegionList.ENTRY_SUBTYPE_ENUM:

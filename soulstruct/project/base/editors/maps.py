@@ -395,8 +395,8 @@ class MapsEditor(BaseFieldEditor):
     ENTRY_ROW_CLASS = MapEntryRow
     FIELD_ROW_CLASS = MapFieldRow
 
-    entry_rows: tp.List[MapEntryRow]
-    field_rows: tp.List[MapFieldRow]
+    entry_rows: list[MapEntryRow]
+    field_rows: list[MapFieldRow]
 
     def __init__(
         self,
@@ -533,10 +533,14 @@ class MapsEditor(BaseFieldEditor):
 
     def add_relative_entry(self, entry_index, offset=1, text=None):
         """Uses entry index instead of dictionary ID."""
-        if text is None:
-            text = self.get_entry_text(entry_index)  # Copies name of origin entry by default.
-        new_field_dict = self.get_category_data()[entry_index].copy()
-        return self._add_entry(entry_index + offset, text, new_field_dict=new_field_dict)
+        try:
+            entry_type, entry_subtype = self.active_category.split(": ")
+        except ValueError:
+            raise ValueError(f"Category name was not in [List: Type] format: {self.active_category}")
+        entry_list = self.get_selected_msb()[entry_type]
+        entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
+        msb_entry = entry_list.duplicate_entry(entry_index, entry_subtype=entry_subtype, auto_add=False, name=text)
+        return self._add_entry(entry_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
 
     def add_new_default_entry(self, entry_index=None):
         """Add a new `MSBEntry` instance of the appropriate subtype to the end of the list, with all default values."""
@@ -548,8 +552,8 @@ class MapsEditor(BaseFieldEditor):
         entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
         if entry_index is None:
             entry_index = len(entry_list.get_entry_names(entry_subtype))  # index after last index
-        msb_entry = entry_list.get_subtype_instance(entry_subtype)
-        return self._add_entry(entry_index, text=f"New {entry_subtype.name}", new_field_dict=msb_entry)
+        msb_entry = entry_list.new(entry_subtype, auto_add=False)
+        return self._add_entry(entry_index, text=msb_entry.name, new_field_dict=msb_entry)
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
@@ -562,14 +566,13 @@ class MapsEditor(BaseFieldEditor):
             if category is None:
                 raise ValueError("Cannot delete entry without specifying category if `active_category` is None.")
         self._cancel_entry_text_edit()
-        entry_subtype_index = self.get_entry_id(row_index)
-
+        entry_subtype_index = self.get_entry_id(row_index)  # row_index == entry_id for Maps, but being consistent
         entry_type, entry_subtype = category.split(": ")
         entry_list = self.get_selected_msb()[entry_type]
-        entry_to_delete = entry_list.get_entries(entry_subtype)[entry_subtype_index]
-        entry_list.delete_entry(entry_to_delete)
+        deleted_entry = entry_list.delete_entry(entry_subtype_index, entry_subtype=entry_subtype)
         self.select_entry_row_index(None)
         self.refresh_entries()
+        return deleted_entry
 
     def copy_python_instance_text(self, row_index, category=None):
         """Copies valid string representation of given entry to clipboard."""
@@ -753,7 +756,7 @@ class MapsEditor(BaseFieldEditor):
             for msb_subtype in subtypes:
                 if isinstance(msb_subtype, MSBRegionSubtype) and msb_subtype.name in {"Circle", "Rect"}:
                     continue  # These useless 2D region types are hidden.
-                if isinstance(msb_subtype, MSBModelSubtype) and msb_subtype in {"Items"}:
+                if isinstance(msb_subtype, MSBModelSubtype) and msb_subtype.name in {"Items"}:
                     continue  # Unused 'item' model type hidden.
                 categories.append(f"{msb_type}: {msb_subtype.pluralized_name}")
         return categories
@@ -762,7 +765,7 @@ class MapsEditor(BaseFieldEditor):
         map_name = self.maps.GET_MAP(self.map_choice_id).name
         return self.maps[map_name]
 
-    def get_category_data(self, category=None) -> tp.List[MSBEntry]:
+    def get_category_data(self, category=None) -> list[MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
         For Maps, this actually returns a *list*, not a dict. Entry IDs are equivalent to entry indexes in this list, so
@@ -814,11 +817,11 @@ class MapsEditor(BaseFieldEditor):
         return self.get_category_data(category)[entry_index]
 
     def get_field_display_info(self, field_dict, field_name):
-        field_nickname, field_type, field_doc = field_dict.FIELD_INFO[field_name]
-        return field_nickname, field_name not in field_dict.HIDDEN_FIELDS, field_type, field_doc
+        field = field_dict.FIELD_INFO[field_name]
+        return field.nickname, field_name in field_dict.field_names, field.display_type, field.description
 
     def get_field_names(self, field_dict):
-        return field_dict.field_names if field_dict else []
+        return field_dict.all_field_names if field_dict else []
 
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
         if field_type == ObjActParam and field_value == -1:
@@ -855,7 +858,7 @@ class MapsEditor(BaseFieldEditor):
                 cancel_output=1,
             )
             if result == 0:
-                self.get_selected_msb().models.add_model(model_subtype_name, model_name)
+                self.get_selected_msb().models.new_model(model_subtype_name, model_name)
                 return True
         else:
             self.CustomDialog(

@@ -16,9 +16,11 @@ __all__ = [
     "read_chars_from_buffer",
     "pad_chars",
     "get_startupinfo",
+    "partialmethod",
 ]
 
 import ctypes
+import functools
 import io
 import logging
 import os
@@ -344,3 +346,9 @@ def get_startupinfo():
     else:
         si = None
     return si
+
+
+class partialmethod(functools.partialmethod):
+    """Wrapper for `partialmethod` that adds a `__call__` attribute to stop PyCharm from complaining."""
+
+    __call__ = None

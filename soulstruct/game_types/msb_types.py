@@ -24,7 +24,7 @@ __all__ = [
     "MapEvent",
     "LightEvent",
     "SoundEvent",
-    "FXEvent",
+    "VFXEvent",
     "WindEvent",
     "TreasureEvent",
     "SpawnerEvent",
@@ -34,7 +34,7 @@ __all__ = [
     "MapOffsetEvent",
     "NavigationEvent",
     "EnvironmentEvent",
-    "PseudoMultiplayerEvent",
+    "NPCInvasionEvent",
 
     "MapPart",
     "MapPiece",
@@ -218,7 +218,7 @@ class NavmeshModel(MapModel):
 
 
 class MapEvent(MapEntry):
-    """Base class for things that appear in the 'events' section of the MSB, such as sounds, ObjActs, and FX."""
+    """Base class for things that appear in the 'events' section of the MSB, such as sounds, ObjActs, and VFX."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Events", None
@@ -247,21 +247,21 @@ class SoundEvent(MapEvent):
         return ("Events", "Sounds") if pluralized_subtype else ("Events", "Sound")
 
 
-class FXEvent(MapEvent):
-    """FX event (visual effect, e.g. fog gate) in MSB attached to a region.
+class VFXEvent(MapEvent):
+    """VFX event (visual effect, e.g. fog gate) in MSB attached to a region.
 
     Can be created or deleted. When deleted, the particles already emitted can be allowed to live out their remaining
     life (`erase_root_only=True` by default).
     """
     def create(self):
-        return instr.CreateFX(self)
+        return instr.CreateVFX(self)
 
     def delete(self, erase_root_only=True):
-        return instr.DeleteFX(self, erase_root_only=erase_root_only)
+        return instr.DeleteVFX(self, erase_root_only=erase_root_only)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Events", "FX") if pluralized_subtype else ("Events", "FX")
+        return ("Events", "VFX") if pluralized_subtype else ("Events", "VFX")
 
 
 class WindEvent(MapEvent):
@@ -373,11 +373,11 @@ class EnvironmentEvent(MapEvent):
         return ("Events", "Environments") if pluralized_subtype else ("Events", "Environment")
 
 
-class PseudoMultiplayerEvent(MapEvent):
+class NPCInvasionEvent(MapEvent):
     """Event describing invasion of NPC's world (e.g. Lautrec) in MSB."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Events", "PseudoMultiplayer") if pluralized_subtype else ("Events", "PseudoMultiplayer")
+        return ("Events", "NPCInvasion") if pluralized_subtype else ("Events", "NPCInvasion")
 
 
 class Region(MapEntry):

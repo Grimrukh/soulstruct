@@ -30,9 +30,9 @@ def Constructor():
     SkipLinesIfClient(5)
     EnableFlag(405)
     DisableObject(1701994)
-    DeleteFX(1701995, erase_root_only=False)
+    DeleteVFX(1701995, erase_root_only=False)
     DisableObject(1701996)
-    DeleteFX(1701997, erase_root_only=False)
+    DeleteVFX(1701997, erase_root_only=False)
     SkipLinesIfFlagOff(1, 11700140)
     DisableFlag(405)
     SkipLinesIfClient(9)
@@ -100,7 +100,7 @@ def Constructor():
     RunEvent(11705392)
     DisableObject(1701800)
     DisableObject(1701990)
-    DeleteFX(1701991, erase_root_only=False)
+    DeleteVFX(1701991, erase_root_only=False)
     SkipLines(10)
     RunEvent(11700000)
     RunEvent(11705390)
@@ -226,7 +226,7 @@ def Event11700080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11700080: Event 11700080 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1,
@@ -257,14 +257,14 @@ def Event11700080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 def Event11700083(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11700083: Event 11700083 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1,
@@ -291,7 +291,7 @@ def Event11700083(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -399,11 +399,11 @@ def Event11700085():
     SkipLinesIfFlagOff(4, 11800100)
     EnableFlag(11700086)
     DisableObject(1701710)
-    DeleteFX(1701711, erase_root_only=False)
+    DeleteVFX(1701711, erase_root_only=False)
     End()
     SkipLinesIfFlagOff(3, 11700086)
     DisableObject(1701710)
-    DeleteFX(1701711, erase_root_only=False)
+    DeleteVFX(1701711, erase_root_only=False)
     End()
     EndIfClient()
     IfActionButton(
@@ -423,7 +423,7 @@ def Event11700000():
     """ 11700000: Event 11700000 """
     EndIfThisEventOn()
     DisableObject(1701990)
-    DeleteFX(1701991, erase_root_only=False)
+    DeleteVFX(1701991, erase_root_only=False)
     DisableCharacter(1700800)
     EnableObjectInvulnerability(1701800)
     IfThisEventOff(1)
@@ -453,7 +453,7 @@ def Event11700000():
     WaitFrames(1)
     DisableObjectInvulnerability(1701800)
     EnableObject(1701990)
-    CreateFX(1701991)
+    CreateVFX(1701991)
     Move(1700800, destination=1702800, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     EnableCharacter(1700800)
 
@@ -564,7 +564,7 @@ def Event11705385():
     DisableCharacter(1700700)
     DisableObject(1701050)
     DisableObject(1701890)
-    DeleteFX(1701891, erase_root_only=True)
+    DeleteVFX(1701891, erase_root_only=True)
 
 
 def Event11705390():
@@ -650,8 +650,8 @@ def Event11700001():
     SkipLinesIfClient(1)
     AwardAchievement(38)
     DisableObject(1701990)
-    DeleteFX(1701991, erase_root_only=True)
-    CreateTemporaryFX(90014, anchor_entity=1701950, anchor_type=CoordEntityType.Object, model_point=-1)
+    DeleteVFX(1701991, erase_root_only=True)
+    CreateTemporaryVFX(90014, anchor_entity=1701950, anchor_type=CoordEntityType.Object, model_point=-1)
     Wait(2.0)
     EnableObject(1701950)
     RegisterBonfire(11700920, obj=1701950, reaction_distance=2.0, reaction_angle=180.0, initial_kindle_level=0)
@@ -686,9 +686,9 @@ def Event11705396():
     AddSpecialEffect(1700800, 5442)
     AddSpecialEffect(1700800, 5443)
     EnableImmortality(1700800)
-    CreateObjectFX(170004, obj=1701800, model_point=100)
+    CreateObjectVFX(170004, obj=1701800, model_point=100)
     IfObjectDestroyed(0, 1701800)
-    DeleteObjectFX(1703100, erase_root=True)
+    DeleteObjectVFX(1703100, erase_root=True)
     ForceAnimation(1700800, 7000)
     IfHasTAEEvent(0, 1700800, tae_event_id=500)
     CancelSpecialEffect(1700800, 5440)
@@ -1746,11 +1746,11 @@ def Event11705846(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     IfUnknownPlayerType5(3)
     IfConditionFalse(2, input_condition=3)
     IfSingleplayer(2)
     IfConditionTrue(0, input_condition=2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Restart()

@@ -35,7 +35,7 @@ class Objects(Object):
     CelestialEmissaryExitFog = 2421701
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     EbrietasFog = 2423800
     CelestialEmissaryEntranceFog = 2423810
     CelestialEmissaryExitFog = 2423811

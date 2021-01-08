@@ -38,9 +38,9 @@ def Constructor():
     RunEvent(9240, slot=0, args=(2200710, 12204220, 12204221, 12204222, 22, 0), arg_types="iiiiBB")
     RunEvent(9260, slot=0, args=(2200710, 12204220, 12204221, 12204222, 22, 0), arg_types="iiiiBB")
     RunEvent(9280, slot=0, args=(2200710, 12204220, 12204221, 2200, 12204800, 22, 0), arg_types="iiiiiBB")
-    CreateObjectFX(900110, obj=2201000, model_point=750)
-    CreateObjectFX(900110, obj=2201003, model_point=750)
-    CreateObjectFX(900110, obj=2201004, model_point=750)
+    CreateObjectVFX(900110, obj=2201000, model_point=750)
+    CreateObjectVFX(900110, obj=2201003, model_point=750)
+    CreateObjectVFX(900110, obj=2201004, model_point=750)
     CreateHazard(12200050, 2201000, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
                  radius=0.5, life=0.0, repetition_time=1.0)
     CreateHazard(12200051, 2201003, model_point=100, behavior_param_id=6010, target_type=DamageTargetType.Character, 
@@ -334,8 +334,8 @@ def Event12201800():
     Kill(2200801, award_souls=False)
     DisableObject(2201800)
     DisableObject(2201801)
-    DeleteFX(2203800, erase_root_only=True)
-    DeleteFX(2203801, erase_root_only=True)
+    DeleteVFX(2203800, erase_root_only=True)
+    DeleteVFX(2203801, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -346,8 +346,8 @@ def Event12201800():
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(2201800)
     DisableObject(2201801)
-    DeleteFX(2203800, erase_root_only=True)
-    DeleteFX(2203801, erase_root_only=True)
+    DeleteVFX(2203800, erase_root_only=True)
+    DeleteVFX(2203801, erase_root_only=True)
     SetLockedCameraSlot(game_map=HEMWICK_CHARNEL_LANE, camera_slot=0)
     Wait(3.0)
     KillBoss(2200800)
@@ -452,16 +452,16 @@ def Event12204890():
     GotoIfFlagOn(Label.L0, 12201802)
     SkipLinesIfClient(2)
     DisableObject(2201800)
-    DeleteFX(2203800, erase_root_only=False)
+    DeleteVFX(2203800, erase_root_only=False)
     DisableObject(2201801)
-    DeleteFX(2203801, erase_root_only=False)
+    DeleteVFX(2203801, erase_root_only=False)
     IfFlagOff(1, 12201800)
     IfFlagOn(1, 12201802)
     IfConditionTrue(0, input_condition=1)
     EnableObject(2201800)
     EnableObject(2201801)
-    CreateFX(2203800)
-    CreateFX(2203801)
+    CreateVFX(2203800)
+    CreateVFX(2203801)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2303,9 +2303,9 @@ def Event12205270(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 def Event12205300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12205300: Event 12205300 """
     DisableSoundEvent(arg_0_3)
-    DeleteFX(2203040, erase_root_only=False)
+    DeleteVFX(2203040, erase_root_only=False)
     EndIfFlagOn(arg_12_15)
-    CreateFX(2203040)
+    CreateVFX(2203040)
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)

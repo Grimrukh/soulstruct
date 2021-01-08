@@ -85,7 +85,7 @@ class MCPRoom:
         self.index = -1  # separate (but generally equal) to indexing in MCP
         self.box_start = Vector3(0, 0, 0)
         self.box_end = Vector3(1, 1, 1)
-        self.connected_rooms = []  # type: tp.List[int]  # `.index` of connected MCPRooms
+        self.connected_rooms = []  # type: list[int]  # `.index` of connected MCPRooms
 
         if isinstance(mcp_room_source, bytes):
             self.unpack(BytesIO(mcp_room_source))
@@ -228,7 +228,7 @@ class MCP(object):
 
     def __init__(self, mcp_source=None):
         self.unknown = -1
-        self.rooms = []  # type: tp.List[MCPRoom]
+        self.rooms = []  # type: list[MCPRoom]
         self.mcp_path = None
 
         if mcp_source is None:
@@ -646,8 +646,8 @@ class MCG(object):
 
     def __init__(self, mcg_source):
         self.unknowns = (-1, -1, -1)
-        self.nodes = []  # type: tp.List[MCGNode]
-        self.edges = []  # type: tp.List[MCGEdge]
+        self.nodes = []  # type: list[MCGNode]
+        self.edges = []  # type: list[MCGEdge]
         self.mcg_path = None
 
         if mcg_source is None:

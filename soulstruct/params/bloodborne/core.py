@@ -13,9 +13,9 @@ from .paramdef import ParamDefBND
 
 
 class ParamRow(_BaseParamRow):
-    def get_field_type(self, field_type_name: str):
+    def get_field_type(self, field):
         """Look for field type in game-specific appropriate `enums` module."""
-        return getattr(enums, field_type_name)
+        return getattr(enums, field.internal_type)
 
 
 class Param(_BaseParam):
@@ -55,7 +55,7 @@ class GameParamBND(_BaseGameParamBND, BND4):
         "MenuPropertySpecParam": "MenuPropertySpecs",
         "MenuValueTableSpecParam": "MenuValueTableSpecs",
         "ProtectorGenParam": "ArmorGenerators",
-        "ResidentFxParam": "ResidentFX",
+        "ResidentVFXParam": "ResidentVFX",
         "ReturnPointParam": "ReturnPoints",
         "RitualRequiredMatParam": "RitualMaterials",
         "WeaponGenParam": "WeaponGenerators",
@@ -139,7 +139,7 @@ class GameParamBND(_BaseGameParamBND, BND4):
     Players: Param
     PlayerAttacks: Param
     PlayerBehaviors: Param
-    ResidentFX: Param  # TODO: possibly `PlayerFX`
+    ResidentVFX: Param  # TODO: possibly `PlayerVFX`
     ReturnPoints: Param  # TODO: ?
     # Rings: Param
     RitualChalices: Param

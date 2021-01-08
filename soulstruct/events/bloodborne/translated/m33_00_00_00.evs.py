@@ -36,11 +36,11 @@ def Constructor():
     StartPlayLogMeasurement(3300000, 0, overwrite=False)
     StartPlayLogMeasurement(3300001, 18, overwrite=True)
     Event13300990()
-    CreateObjectFX(8028, obj=3301020, model_point=100)
-    CreateObjectFX(8028, obj=3301022, model_point=100)
-    CreateObjectFX(8028, obj=3301023, model_point=100)
-    CreateObjectFX(8028, obj=3301024, model_point=100)
-    CreateObjectFX(8028, obj=3301025, model_point=100)
+    CreateObjectVFX(8028, obj=3301020, model_point=100)
+    CreateObjectVFX(8028, obj=3301022, model_point=100)
+    CreateObjectVFX(8028, obj=3301023, model_point=100)
+    CreateObjectVFX(8028, obj=3301024, model_point=100)
+    CreateObjectVFX(8028, obj=3301025, model_point=100)
     ForceAnimation(3301020, 200, loop=True)
     ForceAnimation(3301022, 200, loop=True)
     ForceAnimation(3301023, 200, loop=True)
@@ -344,8 +344,8 @@ def AmygdalaDies():
     Kill(Characters.Amygdala, award_souls=True)
     DisableObject(Objects.AmygdalaFog1)
     DisableObject(Objects.AmygdalaFog2)
-    DeleteFX(FX.AmygdalaFog1, erase_root_only=True)
-    DeleteFX(FX.AmygdalaFog2, erase_root_only=True)
+    DeleteVFX(VFX.AmygdalaFog1, erase_root_only=True)
+    DeleteVFX(VFX.AmygdalaFog2, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -354,8 +354,8 @@ def AmygdalaDies():
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(Objects.AmygdalaFog1)
     DisableObject(Objects.AmygdalaFog2)
-    DeleteFX(FX.AmygdalaFog1, erase_root_only=True)
-    DeleteFX(FX.AmygdalaFog2, erase_root_only=True)
+    DeleteVFX(VFX.AmygdalaFog1, erase_root_only=True)
+    DeleteVFX(VFX.AmygdalaFog2, erase_root_only=True)
     SetLockedCameraSlot(game_map=NIGHTMARE_FRONTIER, camera_slot=0)
     Wait(3.0)
     KillBoss(Characters.Amygdala)
@@ -434,9 +434,9 @@ def EnterAmygdalaFog():
     GotoIfFlagOn(Label.L0, Flags.AmygdalaFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.AmygdalaFog1)
-    DeleteFX(FX.AmygdalaFog1, erase_root_only=False)
+    DeleteVFX(VFX.AmygdalaFog1, erase_root_only=False)
     DisableObject(Objects.AmygdalaFog2)
-    DeleteFX(FX.AmygdalaFog2, erase_root_only=False)
+    DeleteVFX(VFX.AmygdalaFog2, erase_root_only=False)
     IfFlagOff(1, Flags.AmygdalaDead)
     IfFlagOn(1, Flags.AmygdalaFirstTimeDone)
     IfConditionTrue(-1, input_condition=1)
@@ -446,8 +446,8 @@ def EnterAmygdalaFog():
     IfConditionTrue(0, input_condition=-1)
     EnableObject(Objects.AmygdalaFog1)
     EnableObject(Objects.AmygdalaFog2)
-    CreateFX(FX.AmygdalaFog1)
-    CreateFX(FX.AmygdalaFog2)
+    CreateVFX(VFX.AmygdalaFog1)
+    CreateVFX(VFX.AmygdalaFog2)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -666,7 +666,7 @@ def AmygdalaHoldingOwnArm(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_1
         is_invincible=True,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.Amygdala, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(Characters.Amygdala, npc_part_id=arg_4_7, material_sfx_id=59, material_vfx_id=59)
 
 
 @RestartOnRest
@@ -693,7 +693,7 @@ def AmygdalaLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.Amygdala, npc_part_id=effect_part_id, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(Characters.Amygdala, npc_part_id=effect_part_id, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, Characters.Amygdala, npc_part_id=effect_part_id, value=0)
     IfHealthLessThanOrEqual(3, Characters.Amygdala, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -710,7 +710,7 @@ def AmygdalaLimbDamage(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.Amygdala, npc_part_id=effect_part_id, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(Characters.Amygdala, npc_part_id=effect_part_id, material_sfx_id=60, material_vfx_id=60)
     WaitFrames(1)
     ResetAnimation(Characters.Amygdala, disable_interpolation=False)
     ForceAnimation(Characters.Amygdala, wounded_animation)
@@ -742,7 +742,7 @@ def AmygdalaHeadDamage():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.Amygdala, npc_part_id=3300, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(Characters.Amygdala, npc_part_id=3300, material_sfx_id=60, material_vfx_id=60)
     IfCharacterPartHealthLessThanOrEqual(2, Characters.Amygdala, npc_part_id=3300, value=0)
     IfHealthLessThanOrEqual(3, Characters.Amygdala, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -759,7 +759,7 @@ def AmygdalaHeadDamage():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(Characters.Amygdala, npc_part_id=3300, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(Characters.Amygdala, npc_part_id=3300, material_sfx_id=60, material_vfx_id=60)
     WaitFrames(1)
     ResetAnimation(Characters.Amygdala, disable_interpolation=False)
     ForceAnimation(Characters.Amygdala, 8000)
@@ -898,13 +898,13 @@ def Event13300113():
 def Event13300120():
     """ 13300120: Event 13300120 """
     GotoIfThisEventOn(Label.L0)
-    DeleteFX(3303002, erase_root_only=True)
+    DeleteVFX(3303002, erase_root_only=True)
     EndIfThisEventSlotOn()
     IfCharacterInsideRegion(0, PLAYER, region=3303000)
-    DeleteFX(3303010, erase_root_only=True)
-    CreateFX(3303002)
+    DeleteVFX(3303010, erase_root_only=True)
+    CreateVFX(3303002)
     Wait(4.0)
-    CreateFX(3303010)
+    CreateVFX(3303010)
 
 
 @RestartOnRest
@@ -997,7 +997,7 @@ def Event13300210():
     # --- 0 --- #
     DefineLabel(0)
     DisableSoapstoneMessage(3304020)
-    DeleteFX(3303020, erase_root_only=True)
+    DeleteVFX(3303020, erase_root_only=True)
 
 
 @RestartOnRest

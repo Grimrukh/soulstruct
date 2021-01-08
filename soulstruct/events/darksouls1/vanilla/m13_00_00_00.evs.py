@@ -27,7 +27,7 @@ def Constructor():
     SkipLinesIfClient(3)
     DisableFlag(11300000)
     DisableObject(1301994)
-    DeleteFX(1301995, erase_root_only=False)
+    DeleteVFX(1301995, erase_root_only=False)
     RunEvent(11300090, slot=0, args=(1301700, 1301701, 1302650, 1302651))
     RunEvent(11305065)
     RunEvent(11305066)
@@ -100,7 +100,7 @@ def Constructor():
     DisableSoundEvent(1303800)
     SkipLinesIfFlagOff(4, 6)
     DisableObject(1301990)
-    DeleteFX(1301991, erase_root_only=False)
+    DeleteVFX(1301991, erase_root_only=False)
     RunEvent(11305392)
     SkipLines(32)
     RunEvent(11305390)
@@ -176,7 +176,7 @@ def Event11300090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11300090: Event 11300090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1,
@@ -203,7 +203,7 @@ def Event11300090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -396,7 +396,7 @@ def Event11300001():
     EnableFlag(6)
     KillBoss(1300800)
     DisableObject(1301990)
-    DeleteFX(1301991, erase_root_only=True)
+    DeleteVFX(1301991, erase_root_only=True)
     RegisterLadder(start_climbing_flag=11300016, stop_climbing_flag=11300017, obj=1301143)
     RunEvent(11300880)
 
@@ -1154,7 +1154,7 @@ def Event11300100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     DestroyObject(arg_8_11, slot=1)
-    CreateTemporaryFX(130000, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(130000, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
     PlaySoundEffect(anchor_entity=arg_8_11, sound_type=SoundType.o_Object, sound_id=arg_12_15)
 
 
@@ -1614,11 +1614,11 @@ def Event11305846(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     IfUnknownPlayerType5(3)
     IfConditionFalse(2, input_condition=3)
     IfSingleplayer(2)
     IfConditionTrue(0, input_condition=2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Restart()

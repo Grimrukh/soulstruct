@@ -43,9 +43,9 @@ def Constructor():
     RunEvent(9260, slot=0, args=(2200710, 12204220, 12204221, 12204222, 22, 0), arg_types="iiiiBB")
     RunEvent(9280, slot=0,
              args=(2200710, 12204220, 12204221, 2200, Flags.WitchesOfHemwickFogEntered, 22, 0), arg_types="iiiiiBB")
-    CreateObjectFX(900110, obj=2201000, model_point=750)
-    CreateObjectFX(900110, obj=2201003, model_point=750)
-    CreateObjectFX(900110, obj=2201004, model_point=750)
+    CreateObjectVFX(900110, obj=2201000, model_point=750)
+    CreateObjectVFX(900110, obj=2201003, model_point=750)
+    CreateObjectVFX(900110, obj=2201004, model_point=750)
     CreateHazard(
         12200050,
         2201000,
@@ -368,8 +368,8 @@ def WitchesOfHemwickDie():
     Kill(Characters.SecondWitchOfHemwick, award_souls=False)
     DisableObject(Objects.BossEntryFogGate)
     DisableObject(Objects.BossExitFogGate)
-    DeleteFX(FX.BossEntryFog, erase_root_only=True)
-    DeleteFX(FX.BossExitFog, erase_root_only=True)
+    DeleteVFX(VFX.BossEntryFog, erase_root_only=True)
+    DeleteVFX(VFX.BossExitFog, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -380,8 +380,8 @@ def WitchesOfHemwickDie():
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(Objects.BossEntryFogGate)
     DisableObject(Objects.BossExitFogGate)
-    DeleteFX(FX.BossEntryFog, erase_root_only=True)
-    DeleteFX(FX.BossExitFog, erase_root_only=True)
+    DeleteVFX(VFX.BossEntryFog, erase_root_only=True)
+    DeleteVFX(VFX.BossExitFog, erase_root_only=True)
     SetLockedCameraSlot(game_map=HEMWICK_CHARNEL_LANE, camera_slot=0)
     Wait(3.0)
     KillBoss(Characters.FirstWitchOfHemwick)
@@ -489,16 +489,16 @@ def EnterWitchesOfHemwickBossFog():
     GotoIfFlagOn(Label.L0, Flags.WitchesOfHemwickFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossEntryFogGate)
-    DeleteFX(FX.BossEntryFog, erase_root_only=False)
+    DeleteVFX(VFX.BossEntryFog, erase_root_only=False)
     DisableObject(Objects.BossExitFogGate)
-    DeleteFX(FX.BossExitFog, erase_root_only=False)
+    DeleteVFX(VFX.BossExitFog, erase_root_only=False)
     IfFlagOff(1, Flags.WitchesOfHemwickDead)
     IfFlagOn(1, Flags.WitchesOfHemwickFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossEntryFogGate)
     EnableObject(Objects.BossExitFogGate)
-    CreateFX(FX.BossEntryFog)
-    CreateFX(FX.BossExitFog)
+    CreateVFX(VFX.BossEntryFog)
+    CreateVFX(VFX.BossExitFog)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2418,9 +2418,9 @@ def Event12205270(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 def Event12205300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12205300: Event 12205300 """
     DisableSoundEvent(arg_0_3)
-    DeleteFX(2203040, erase_root_only=False)
+    DeleteVFX(2203040, erase_root_only=False)
     EndIfFlagOn(arg_12_15)
-    CreateFX(2203040)
+    CreateVFX(2203040)
     IfFlagOff(1, arg_4_7)
     IfFlagOff(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)

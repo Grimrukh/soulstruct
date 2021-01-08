@@ -35,7 +35,7 @@ class Regions(Region):
     LudwigTheAccursedRetires = 3402900
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     LudwigFog = 3403800
     LaurenceFog = 3403850
 

@@ -48,7 +48,7 @@ class WindowLinker:
 
     def soulstruct_link(
         self, field_type, field_value, valid_null_values: dict = None, map_override=None,
-    ) -> tp.List[BaseLink]:
+    ) -> list[BaseLink]:
         """Some field types are `GameObject` subclasses, which means that the field values are IDs to look up.
 
         Currently, only `MapEntry`, `Text`, and `BaseParam` field types are supported here. In the future, `Texture`,

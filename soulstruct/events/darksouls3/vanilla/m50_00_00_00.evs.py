@@ -1033,8 +1033,8 @@ def Event15005500():
     DisableObject(5001502)
     DisableObject(5001503)
     EnableObject(5001504)
-    CreateFX(5003500)
-    CreateFX(5003501)
+    CreateVFX(5003500)
+    CreateVFX(5003501)
     ActivateCollisionAndCreateNavmesh(collision=5001506, state=True)
     End()
 
@@ -1077,8 +1077,8 @@ def Event15005500():
     DestroyObject_NoSlot(obj=5001502)
     DestroyObject_NoSlot(obj=5001503)
     EnableObject(5001504)
-    CreateFX(5003500)
-    CreateFX(5003501)
+    CreateVFX(5003500)
+    CreateVFX(5003501)
     Wait(0.5)
     RemoveObjectFlag(15005500)
     RemoveObjectFlag(15005501)
@@ -1618,7 +1618,7 @@ def Event15005835():
 def Event15005850(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 15005850: Event 15005850 """
     EndIfFlagOn(15000800)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     SkipLinesIfEqual(3, left=1, right=arg_12_15)
     IfCharacterInsideRegion(-1, 5000801, region=arg_0_3)
     IfCharacterInsideRegion(-1, 5000802, region=arg_0_3)
@@ -1629,7 +1629,7 @@ def Event15005850(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
     IfFlagOn(1, 15005802)
     IfConditionTrue(0, input_condition=1)
     Wait(arg_8_11)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
 
 
 @RestartOnRest

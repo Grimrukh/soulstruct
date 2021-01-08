@@ -510,26 +510,26 @@ def HonoringWishesEnding():
     IfFlagOff(1, CommonFlags.ThreeCordsConsumed)
     IfConditionTrue(0, input_condition=1)
     Wait(3.0)
-    DeleteFX(2103300, erase_root_only=True)
-    DeleteFX(2103500, erase_root_only=True)
-    DeleteFX(2103501, erase_root_only=True)
-    DeleteFX(2103502, erase_root_only=True)
-    DeleteFX(2103503, erase_root_only=True)
-    DeleteFX(2103504, erase_root_only=True)
-    DeleteFX(2103505, erase_root_only=True)
-    DeleteFX(2103506, erase_root_only=True)
-    DeleteFX(2103507, erase_root_only=True)
-    DeleteFX(2103510, erase_root_only=True)
-    DeleteFX(2103511, erase_root_only=True)
-    DeleteFX(2103512, erase_root_only=True)
-    DeleteFX(2103513, erase_root_only=True)
-    DeleteFX(2103514, erase_root_only=True)
-    DeleteFX(2103515, erase_root_only=True)
-    DeleteFX(2103516, erase_root_only=True)
-    DeleteFX(2103517, erase_root_only=True)
-    DeleteFX(2103518, erase_root_only=True)
-    DeleteFX(2103519, erase_root_only=True)
-    DeleteFX(2103520, erase_root_only=True)
+    DeleteVFX(2103300, erase_root_only=True)
+    DeleteVFX(2103500, erase_root_only=True)
+    DeleteVFX(2103501, erase_root_only=True)
+    DeleteVFX(2103502, erase_root_only=True)
+    DeleteVFX(2103503, erase_root_only=True)
+    DeleteVFX(2103504, erase_root_only=True)
+    DeleteVFX(2103505, erase_root_only=True)
+    DeleteVFX(2103506, erase_root_only=True)
+    DeleteVFX(2103507, erase_root_only=True)
+    DeleteVFX(2103510, erase_root_only=True)
+    DeleteVFX(2103511, erase_root_only=True)
+    DeleteVFX(2103512, erase_root_only=True)
+    DeleteVFX(2103513, erase_root_only=True)
+    DeleteVFX(2103514, erase_root_only=True)
+    DeleteVFX(2103515, erase_root_only=True)
+    DeleteVFX(2103516, erase_root_only=True)
+    DeleteVFX(2103517, erase_root_only=True)
+    DeleteVFX(2103518, erase_root_only=True)
+    DeleteVFX(2103519, erase_root_only=True)
+    DeleteVFX(2103520, erase_root_only=True)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
     PlayCutscene(Cutscenes.HonoringWishesEnding, skippable=True, fade_out=False, player_id=PLAYER)
@@ -562,15 +562,15 @@ def ChildhoodsBeginningEnding():
     Wait(5.0)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
-    DeleteFX(2103300, erase_root_only=True)  # burning workshop FX
-    DeleteFX(2103500, erase_root_only=True)
-    DeleteFX(2103501, erase_root_only=True)
-    DeleteFX(2103502, erase_root_only=True)
-    DeleteFX(2103503, erase_root_only=True)
-    DeleteFX(2103504, erase_root_only=True)
-    DeleteFX(2103505, erase_root_only=True)
-    DeleteFX(2103506, erase_root_only=True)
-    DeleteFX(2103507, erase_root_only=True)
+    DeleteVFX(2103300, erase_root_only=True)  # burning workshop VFX
+    DeleteVFX(2103500, erase_root_only=True)
+    DeleteVFX(2103501, erase_root_only=True)
+    DeleteVFX(2103502, erase_root_only=True)
+    DeleteVFX(2103503, erase_root_only=True)
+    DeleteVFX(2103504, erase_root_only=True)
+    DeleteVFX(2103505, erase_root_only=True)
+    DeleteVFX(2103506, erase_root_only=True)
+    DeleteVFX(2103507, erase_root_only=True)
     GotoIfPlayerGender(Label.L0, Gender.Male)
     PlayCutscene(Cutscenes.ChildhoodsBeginningEndingFemale, skippable=True, fade_out=False, player_id=PLAYER)
     Goto(Label.L1)
@@ -869,7 +869,7 @@ def Event12100114():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     IfFlagOn(0, 7500)
-    CreateTemporaryFX(178, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=1)
+    CreateTemporaryVFX(178, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=1)
     DisableFlag(7500)
     Restart()
 
@@ -1211,15 +1211,15 @@ def YharnamSunriseEnding():
     IfFlagOn(0, Flags.GehrmanOfferAccepted)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
-    DeleteFX(2103300, erase_root_only=True)
-    DeleteFX(2103500, erase_root_only=True)
-    DeleteFX(2103501, erase_root_only=True)
-    DeleteFX(2103502, erase_root_only=True)
-    DeleteFX(2103503, erase_root_only=True)
-    DeleteFX(2103504, erase_root_only=True)
-    DeleteFX(2103505, erase_root_only=True)
-    DeleteFX(2103506, erase_root_only=True)
-    DeleteFX(2103507, erase_root_only=True)
+    DeleteVFX(2103300, erase_root_only=True)
+    DeleteVFX(2103500, erase_root_only=True)
+    DeleteVFX(2103501, erase_root_only=True)
+    DeleteVFX(2103502, erase_root_only=True)
+    DeleteVFX(2103503, erase_root_only=True)
+    DeleteVFX(2103504, erase_root_only=True)
+    DeleteVFX(2103505, erase_root_only=True)
+    DeleteVFX(2103506, erase_root_only=True)
+    DeleteVFX(2103507, erase_root_only=True)
     IncrementNewGameCycle(1)
     GotoIfPlayerGender(Label.L0, Gender.Male)
     PlayCutscene(Cutscenes.YharnamSunriseEndingFemale, skippable=True, fade_out=False, player_id=PLAYER)
@@ -1269,15 +1269,15 @@ def InitializeWorkshopAppearance():
     DisableObject(Objects.BloodMoonSky)
     EnableObject(Objects.NormalMoon)
     DisableObject(Objects.BloodMoon)
-    DeleteFX(2103300, erase_root_only=False)  # Workshop fire FX.
-    DeleteFX(2103500, erase_root_only=False)
-    DeleteFX(2103501, erase_root_only=False)
-    DeleteFX(2103502, erase_root_only=False)
-    DeleteFX(2103503, erase_root_only=False)
-    DeleteFX(2103504, erase_root_only=False)
-    DeleteFX(2103505, erase_root_only=False)
-    DeleteFX(2103506, erase_root_only=False)
-    DeleteFX(2103507, erase_root_only=False)
+    DeleteVFX(2103300, erase_root_only=False)  # Workshop fire VFX.
+    DeleteVFX(2103500, erase_root_only=False)
+    DeleteVFX(2103501, erase_root_only=False)
+    DeleteVFX(2103502, erase_root_only=False)
+    DeleteVFX(2103503, erase_root_only=False)
+    DeleteVFX(2103504, erase_root_only=False)
+    DeleteVFX(2103505, erase_root_only=False)
+    DeleteVFX(2103506, erase_root_only=False)
+    DeleteVFX(2103507, erase_root_only=False)
     End()
 
     # --- 4 --- #
@@ -1576,7 +1576,7 @@ def InitializeBossArena():
     DisableCharacter(Characters.GehrmanBoss)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=False)
+    DeleteVFX(VFX.BossFog, erase_root_only=False)
     End()
 
     # --- 0 --- #
@@ -1592,7 +1592,7 @@ def InitializeBossArena():
     DisableCharacter(Characters.GehrmanBoss)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=False)
+    DeleteVFX(VFX.BossFog, erase_root_only=False)
     End()
 
     # --- 2 --- # Gehrman is waiting to be fought.
@@ -1607,7 +1607,7 @@ def InitializeBossArena():
     DisableCharacter(Characters.GehrmanBoss)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=False)
+    DeleteVFX(VFX.BossFog, erase_root_only=False)
 
 
 def GehrmanDies():
@@ -1714,7 +1714,7 @@ def EnterGehrmanBossFog():
     IfFlagOn(1, Flags.GehrmanRefusalCutsceneDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossFog)
-    CreateFX(FX.BossFog)
+    CreateVFX(VFX.BossFog)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1953,17 +1953,17 @@ def MoonPresenceBattleCutscene():
     Wait(3.0)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
-    DeleteFX(2103510, erase_root_only=True)
-    DeleteFX(2103511, erase_root_only=True)
-    DeleteFX(2103512, erase_root_only=True)
-    DeleteFX(2103513, erase_root_only=True)
-    DeleteFX(2103514, erase_root_only=True)
-    DeleteFX(2103515, erase_root_only=True)
-    DeleteFX(2103516, erase_root_only=True)
-    DeleteFX(2103517, erase_root_only=True)
-    DeleteFX(2103518, erase_root_only=True)
-    DeleteFX(2103519, erase_root_only=True)
-    DeleteFX(2103520, erase_root_only=True)
+    DeleteVFX(2103510, erase_root_only=True)
+    DeleteVFX(2103511, erase_root_only=True)
+    DeleteVFX(2103512, erase_root_only=True)
+    DeleteVFX(2103513, erase_root_only=True)
+    DeleteVFX(2103514, erase_root_only=True)
+    DeleteVFX(2103515, erase_root_only=True)
+    DeleteVFX(2103516, erase_root_only=True)
+    DeleteVFX(2103517, erase_root_only=True)
+    DeleteVFX(2103518, erase_root_only=True)
+    DeleteVFX(2103519, erase_root_only=True)
+    DeleteVFX(2103520, erase_root_only=True)
     SkipLinesIfMultiplayer(2)
     PlayCutscene(
         Cutscenes.MoonPresenceBattleStarts, skippable=True, fade_out=False, player_id=PLAYER,
@@ -1978,17 +1978,17 @@ def MoonPresenceBattleCutscene():
     )
     WaitFrames(1)
     DisableFlag(CommonFlags.CutsceneActive)
-    CreateFX(2103510)
-    CreateFX(2103511)
-    CreateFX(2103512)
-    CreateFX(2103513)
-    CreateFX(2103514)
-    CreateFX(2103515)
-    CreateFX(2103516)
-    CreateFX(2103517)
-    CreateFX(2103518)
-    CreateFX(2103519)
-    CreateFX(2103520)
+    CreateVFX(2103510)
+    CreateVFX(2103511)
+    CreateVFX(2103512)
+    CreateVFX(2103513)
+    CreateVFX(2103514)
+    CreateVFX(2103515)
+    CreateVFX(2103516)
+    CreateVFX(2103517)
+    CreateVFX(2103518)
+    CreateVFX(2103519)
+    CreateVFX(2103520)
     DisableObject(Objects.NormalMoonSky)
     EnableObject(Objects.BloodMoonSky)
     DisableObject(Objects.NormalMoon)
@@ -2023,7 +2023,7 @@ def EnterMoonPresenceBossFog():
     IfFlagOn(1, Flags.MoonPresenceBattleCutsceneDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossFog)
-    CreateFX(FX.BossFog)
+    CreateVFX(VFX.BossFog)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2188,7 +2188,7 @@ def ControlMoonPresenceTail(
         start_in_stop_state=False,
     )
     SetNPCPartEffects(
-        Characters.MoonPresence, npc_part_id=monitor_part_id, material_special_effect_id=59, material_fx_id=59
+        Characters.MoonPresence, npc_part_id=monitor_part_id, material_sfx_id=59, material_vfx_id=59
     )
 
     IfCharacterPartHealthLessThanOrEqual(2, Characters.MoonPresence, npc_part_id=monitor_part_id, value=0)
@@ -2210,7 +2210,7 @@ def ControlMoonPresenceTail(
         start_in_stop_state=False,
     )
     SetNPCPartEffects(
-        Characters.MoonPresence, npc_part_id=monitor_part_id, material_special_effect_id=60, material_fx_id=60
+        Characters.MoonPresence, npc_part_id=monitor_part_id, material_sfx_id=60, material_vfx_id=60
     )
     ResetAnimation(Characters.MoonPresence, disable_interpolation=False)
     ForceAnimation(Characters.MoonPresence, wounded_animation)
@@ -2337,7 +2337,7 @@ def InitializeMakeshiftAltar():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.MakeshiftAltar, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -2404,7 +2404,7 @@ def InitializeMakeshiftAltar():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.MakeshiftAltar, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
@@ -2459,7 +2459,7 @@ def InitializeChaliceAltar1():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.ChaliceAltar1, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -2544,7 +2544,7 @@ def InitializeChaliceAltar1():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.ChaliceAltar1, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
@@ -2599,7 +2599,7 @@ def InitializeChaliceAltar2():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.ChaliceAltar2, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -2684,7 +2684,7 @@ def InitializeChaliceAltar2():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.ChaliceAltar2, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
@@ -2739,7 +2739,7 @@ def InitializeChaliceAltar3():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.ChaliceAltar3, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -2824,7 +2824,7 @@ def InitializeChaliceAltar3():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.ChaliceAltar3, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
@@ -2879,7 +2879,7 @@ def InitializeChaliceAltar4():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.ChaliceAltar4, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -2964,7 +2964,7 @@ def InitializeChaliceAltar4():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.ChaliceAltar4, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
@@ -3019,7 +3019,7 @@ def InitializeChaliceAltar5():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.ChaliceAltar5, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -3104,7 +3104,7 @@ def InitializeChaliceAltar5():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.ChaliceAltar5, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 
@@ -3159,7 +3159,7 @@ def InitializeChaliceAltar6():
     IfConditionTrue(-1, input_condition=9)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(31)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         350, anchor_entity=Characters.ChaliceAltar6, anchor_type=CoordEntityType.Character, model_point=200)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
@@ -3244,7 +3244,7 @@ def InitializeChaliceAltar6():
 
     # --- 9 --- #
     DefineLabel(9)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         351, anchor_entity=Characters.ChaliceAltar6, anchor_type=CoordEntityType.Character, model_point=200)
     Restart()
 

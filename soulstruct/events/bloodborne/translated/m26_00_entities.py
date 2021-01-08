@@ -38,7 +38,7 @@ class Regions(Region):
     MicolashFinalRoom = 2602066
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     MergosWetNurseFog = 2603800
     MicolashFog1 = 2603850
     MicolashFog2 = 2603851

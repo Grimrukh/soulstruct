@@ -26,7 +26,6 @@ if tp.TYPE_CHECKING:
     from soulstruct.ai.base.ai_directory import AIDirectory
     from soulstruct.events.base import EMEVDDirectory
     from soulstruct.esd.base.talk_esd_bnd import TalkDirectory
-    from soulstruct.game_types import Map
     from soulstruct.maps.base.map_studio_directory import MapStudioDirectory
     from soulstruct.params.base.game_param_bnd import GameParamBND
     from soulstruct.params.darksouls1r.draw_param import DrawParamDirectory
@@ -82,8 +81,6 @@ class GameDirectoryProject(abc.ABC):
 
     GAME: Game = None
     DATA_TYPES = {}  # type: dict[str, type]
-    ALL_MAPS: list[Map] = None
-    GET_MAP: tp.Callable = None
 
     def __init__(self, project_path="", with_window: ProjectWindow = None):
 

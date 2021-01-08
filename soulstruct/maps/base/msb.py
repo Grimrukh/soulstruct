@@ -64,7 +64,6 @@ class MSB(GameFile, abc.ABC):
         self.regions = self.REGION_LIST_CLASS()
         self.parts = self.PART_LIST_CLASS()
         self.dcx_magic = ()
-        self.msb_path = None
         super().__init__(msb_source, dcx_magic=dcx_magic)
 
     def unpack(self, msb_buffer, **kwargs):
@@ -118,7 +117,7 @@ class MSB(GameFile, abc.ABC):
             local_collision_indices=local_collision_indices,
         )
 
-        offset = 0
+        offset = len(self.HEADER)
         packed_models = self.models.pack(start_offset=offset)
         offset += len(packed_models)
         packed_events = self.events.pack(start_offset=offset)
@@ -161,10 +160,10 @@ class MSB(GameFile, abc.ABC):
         pivot_point = Vector3(pivot_point)
         for p in self.parts:
             if selected_entries is None or p in selected_entries:
-                p.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
+                p.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
         for r in self.regions:
             if selected_entries is None or r in selected_entries:
-                r.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
+                r.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
 
     def move_map(
         self,
@@ -300,10 +299,10 @@ class MSB(GameFile, abc.ABC):
     def get_subtype_dict(cls) -> dict[str, tuple[MSBSubtype]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
         return {
-            "Parts": tuple(cls.PART_LIST_CLASS.PART_SUBTYPE_CLASSES),
-            "Regions": tuple(cls.REGION_LIST_CLASS.REGION_SUBTYPE_CLASSES),
-            "Events": tuple(cls.EVENT_LIST_CLASS.EVENT_SUBTYPE_CLASSES),
-            "Models": tuple(cls.MODEL_LIST_CLASS.MODEL_SUBTYPE_CLASSES),
+            "Parts": tuple(cls.PART_LIST_CLASS.SUBTYPE_CLASSES),
+            "Regions": tuple(cls.REGION_LIST_CLASS.SUBTYPE_CLASSES),
+            "Events": tuple(cls.EVENT_LIST_CLASS.SUBTYPE_CLASSES),
+            "Models": tuple(cls.MODEL_LIST_CLASS.SUBTYPE_CLASSES),
         }
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:

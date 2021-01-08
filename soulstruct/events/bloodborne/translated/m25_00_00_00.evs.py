@@ -1318,14 +1318,14 @@ def PlayerDiscoversVilebloodQueenChamber():
     DisableCollision(2506037)
     DisableCollision(2506038)
     DisableCharacter(2500600)
-    DeleteFX(2503300, erase_root_only=False)
-    DeleteFX(2503301, erase_root_only=False)
-    DeleteFX(2503302, erase_root_only=False)
-    DeleteFX(2503303, erase_root_only=False)
-    DeleteFX(2503304, erase_root_only=False)
-    DeleteFX(2503305, erase_root_only=False)
-    DeleteFX(2503306, erase_root_only=False)
-    DeleteFX(2503307, erase_root_only=False)
+    DeleteVFX(2503300, erase_root_only=False)
+    DeleteVFX(2503301, erase_root_only=False)
+    DeleteVFX(2503302, erase_root_only=False)
+    DeleteVFX(2503303, erase_root_only=False)
+    DeleteVFX(2503304, erase_root_only=False)
+    DeleteVFX(2503305, erase_root_only=False)
+    DeleteVFX(2503306, erase_root_only=False)
+    DeleteVFX(2503307, erase_root_only=False)
     IfCharacterHuman(1, PLAYER)
     IfFlagOn(1, Flags.MartyrLogariusDead)
     IfCharacterInsideRegion(1, PLAYER, region=2502806)
@@ -1412,14 +1412,14 @@ def PlayerDiscoversVilebloodQueenChamber():
     EnableCollision(2506038)
     EnableCharacter(2500600)
     DisableObject(2501810)
-    CreateFX(2503300)
-    CreateFX(2503301)
-    CreateFX(2503302)
-    CreateFX(2503303)
-    CreateFX(2503304)
-    CreateFX(2503305)
-    CreateFX(2503306)
-    CreateFX(2503307)
+    CreateVFX(2503300)
+    CreateVFX(2503301)
+    CreateVFX(2503302)
+    CreateVFX(2503303)
+    CreateVFX(2503304)
+    CreateVFX(2503305)
+    CreateVFX(2503306)
+    CreateVFX(2503307)
 
 
 def MartyrLogariusDies():
@@ -1434,7 +1434,7 @@ def MartyrLogariusDies():
     Kill(Characters.MartyrLogariusSword, award_souls=False)
     Kill(Characters.MartyrLogariusBulletOwner, award_souls=False)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=True)
+    DeleteVFX(VFX.BossFog, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -1442,7 +1442,7 @@ def MartyrLogariusDies():
     IfCharacterDead(0, Characters.MartyrLogarius)
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=True)
+    DeleteVFX(VFX.BossFog, erase_root_only=True)
     SetLockedCameraSlot(game_map=CASTLE_CAINHURST, camera_slot=0)
     Wait(3.0)
     KillBoss(Characters.MartyrLogarius)
@@ -1517,11 +1517,11 @@ def GiftCrownOfIllusions():
     EndIfClient()
     EndIfThisEventOn()
     IfFlagOn(0, Flags.MartyrLogariusDead)
-    CreateObjectFX(900201, obj=2500850, model_point=200)
+    CreateObjectVFX(900201, obj=2500850, model_point=200)
     IfActionButtonParam(0, action_button_id=2500030, entity=2500850)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2502000, host_only=False)
-    DeleteObjectFX(2500850, erase_root=True)
+    DeleteObjectVFX(2500850, erase_root=True)
 
 
 def SummonStartMartyrLogariusBattle():
@@ -1539,11 +1539,11 @@ def Event12500600():
     EndIfClient()
     EndIfThisEventOn()
     IfFlagOn(0, 12500810)
-    CreateObjectFX(900201, obj=2500851, model_point=200)
+    CreateObjectVFX(900201, obj=2500851, model_point=200)
     IfActionButtonParam(0, action_button_id=2500040, entity=2500851)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2500910, host_only=False)
-    DeleteObjectFX(2500851, erase_root=True)
+    DeleteObjectVFX(2500851, erase_root=True)
 
 
 def EnterMartyrLogariusFog():
@@ -1552,12 +1552,12 @@ def EnterMartyrLogariusFog():
     GotoIfFlagOn(Label.L0, Flags.MartyrLogariusFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossFog)
-    DeleteFX(FX.BossFog, erase_root_only=False)
+    DeleteVFX(VFX.BossFog, erase_root_only=False)
     IfFlagOff(1, Flags.MartyrLogariusDead)
     IfFlagOn(1, Flags.MartyrLogariusFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossFog)
-    CreateFX(FX.BossFog)
+    CreateVFX(VFX.BossFog)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1762,7 +1762,7 @@ def CreateMartyrLogariusSword():
     AICommand(Characters.MartyrLogarius, command_id=-1, slot=0)
     ReplanAI(Characters.MartyrLogarius)
     StopPlayLogMeasurement(2501000)
-    CreateTemporaryFX(
+    CreateTemporaryVFX(
         623206, anchor_entity=Characters.MartyrLogariusSword, anchor_type=CoordEntityType.Character, model_point=100)
     AddSpecialEffect(Characters.MartyrLogariusSword, 5610, affect_npc_part_hp=False)
     DisableCharacter(Characters.MartyrLogariusSword)
@@ -1804,15 +1804,15 @@ def CancelMartyrLogariusCharge():
 def Event12500896(_, arg_0_3: int):
     """ 12500896: Event 12500896 """
     GotoIfThisEventOff(Label.L0)
-    DeleteFX(2503200, erase_root_only=False)
-    DeleteFX(2503201, erase_root_only=False)
+    DeleteVFX(2503200, erase_root_only=False)
+    DeleteVFX(2503201, erase_root_only=False)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
-    DeleteFX(2503200, erase_root_only=True)
-    DeleteFX(2503201, erase_root_only=True)
+    DeleteVFX(2503200, erase_root_only=True)
+    DeleteVFX(2503201, erase_root_only=True)
     WaitFrames(10)
 
 

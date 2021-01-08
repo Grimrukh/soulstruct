@@ -64,7 +64,7 @@ def Constructor():
     RunEvent(12800401)
     RunEvent(12800402)
     RunEvent(12800403)
-    CreateObjectFX(900130, obj=2801010, model_point=200)
+    CreateObjectVFX(900130, obj=2801010, model_point=200)
     StartPlayLogMeasurement(2800000, 0, overwrite=True)
     StartPlayLogMeasurement(2800001, 18, overwrite=True)
     RunEvent(12800990)
@@ -119,8 +119,8 @@ def Constructor():
     RunEvent(12800908)
     RunEvent(12800909)
     RunEvent(12800910)
-    DeleteFX(2803920, erase_root_only=False)
-    DeleteFX(2803921, erase_root_only=False)
+    DeleteVFX(2803920, erase_root_only=False)
+    DeleteVFX(2803921, erase_root_only=False)
     RunEvent(12804400, slot=0, args=(12804440, 2803920, 12804420, 12804430, 12801800, 12804421))
     RunEvent(12804401, slot=0, args=(12804441, 2803921, 12804421, 12804431, 12801800, 12804420))
     RunEvent(12804410, slot=0, args=(5, 2800910, 2802910, 12804420, 12804430, 12804440, 12801800, 10564))
@@ -766,7 +766,7 @@ def Event12805470(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     Restart()
     CreateNPCPart(arg_28_31, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=999999, damage_correction=1.0, 
                   body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=65, material_vfx_id=65)
     ResetAnimation(arg_28_31, disable_interpolation=False)
     ForceAnimation(arg_28_31, arg_12_15)
     IfHasTAEEvent(0, arg_28_31, tae_event_id=400)
@@ -774,7 +774,7 @@ def Event12805470(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     DisableFlag(arg_24_27)
     IfHasTAEEvent(0, arg_28_31, tae_event_id=300)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_hp=80, overwrite_max=True)
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
     CancelSpecialEffect(arg_28_31, arg_16_19)
     AICommand(arg_28_31, command_id=-1, slot=0)
     ReplanAI(arg_28_31)
@@ -790,7 +790,7 @@ def Event12805480(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     IfConditionTrue(0, input_condition=1)
     CreateNPCPart(arg_20_23, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
                   body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
     EnableFlag(arg_16_19)
 
 
@@ -1032,13 +1032,13 @@ def Event12805918():
 def Event12805920(_, arg_0_3: int, arg_4_7: int):
     """ 12805920: Event 12805920 """
     GotoIfFlagOff(Label.L0, arg_4_7)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     SkipLinesIfThisEventSlotOn(1)
-    CreateObjectFX(928020, obj=arg_0_3, model_point=100)
+    CreateObjectVFX(928020, obj=arg_0_3, model_point=100)
     ShootProjectile(owner_entity=2800560, projectile_id=arg_0_3, model_point=100, behavior_id=6032, launch_angle_x=0, 
                     launch_angle_y=0, launch_angle_z=0)
     Wait(2.0)
@@ -1162,8 +1162,8 @@ def Event12800400():
     DisableMapPiece(2804001)
     DisableMapPiece(2804002)
     DisableObject(2801000)
-    DeleteFX(2803910, erase_root_only=False)
-    DeleteFX(2803911, erase_root_only=False)
+    DeleteVFX(2803910, erase_root_only=False)
+    DeleteVFX(2803911, erase_root_only=False)
     Goto(Label.L4)
 
     # --- 1 --- #
@@ -1171,7 +1171,7 @@ def Event12800400():
     DisableMapPiece(2804000)
     EnableMapPiece(2804001)
     DisableMapPiece(2804002)
-    DeleteFX(2803911, erase_root_only=False)
+    DeleteVFX(2803911, erase_root_only=False)
 
     # --- 4 --- #
     DefineLabel(4)
@@ -1283,7 +1283,7 @@ def Event12800400():
     DisableMapPiece(2804001)
     EnableMapPiece(2804002)
     EnableObject(2801000)
-    DeleteFX(2803910, erase_root_only=False)
+    DeleteVFX(2803910, erase_root_only=False)
     EnableObject(2801052)
     DisableObject(2801952)
     DisableCharacter(2800952)
@@ -1778,8 +1778,8 @@ def Event12801800():
     DisableBackread(2800529)
     DisableObject(2801800)
     DisableObject(2801801)
-    DeleteFX(2803800, erase_root_only=False)
-    DeleteFX(2803801, erase_root_only=False)
+    DeleteVFX(2803800, erase_root_only=False)
+    DeleteVFX(2803801, erase_root_only=False)
     End()
 
     # --- 0 --- #
@@ -1799,8 +1799,8 @@ def Event12801800():
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(2801800)
     DisableObject(2801801)
-    DeleteFX(2803800, erase_root_only=True)
-    DeleteFX(2803801, erase_root_only=True)
+    DeleteVFX(2803800, erase_root_only=True)
+    DeleteVFX(2803801, erase_root_only=True)
     SetLockedCameraSlot(game_map=YAHARGUL, camera_slot=0)
     Wait(3.0)
     KillBoss(2800803)
@@ -1860,14 +1860,14 @@ def Event12801802():
     EndIfConditionTrue(2)
     EnableFlag(9180)
     WaitFrames(1)
-    DeleteFX(2803911, erase_root_only=False)
+    DeleteVFX(2803911, erase_root_only=False)
     SkipLinesIfMultiplayer(2)
     PlayCutscene(28000000, skippable=True, fade_out=False, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(28000000, skippable=False, fade_out=False, player_id=PLAYER)
     WaitFrames(1)
     DisableFlag(9180)
-    CreateFX(2803911)
+    CreateVFX(2803911)
     EnableFlag(12804800)
     EnableCharacter(2800800)
     EnableCharacter(2800801)
@@ -1894,16 +1894,16 @@ def Event12804880():
     GotoIfFlagOn(Label.L0, 12801802)
     SkipLinesIfClient(2)
     DisableObject(2801800)
-    DeleteFX(2803800, erase_root_only=False)
+    DeleteVFX(2803800, erase_root_only=False)
     DisableObject(2801801)
-    DeleteFX(2803801, erase_root_only=False)
+    DeleteVFX(2803801, erase_root_only=False)
     IfFlagOff(1, 12801800)
     IfFlagOn(1, 12801802)
     IfConditionTrue(0, input_condition=1)
     EnableObject(2801800)
-    CreateFX(2803800)
+    CreateVFX(2803800)
     EnableObject(2801801)
-    CreateFX(2803801)
+    CreateVFX(2803801)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -2149,7 +2149,7 @@ def Event12804820(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     EndIfFlagOn(12801800)
     CreateNPCPart(2800800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
                   body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    SetNPCPartEffects(2800800, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(2800800, npc_part_id=arg_4_7, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, 2800800, npc_part_id=arg_4_7, value=0)
     IfHealthLessThanOrEqual(2, 2800800, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -2161,7 +2161,7 @@ def Event12804820(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     Restart()
     CreateNPCPart(2800800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=9999999, damage_correction=1.0, 
                   body_damage_correction=1.5, is_invincible=False, start_in_stop_state=False)
-    SetNPCPartEffects(2800800, npc_part_id=arg_4_7, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(2800800, npc_part_id=arg_4_7, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(2800800, disable_interpolation=False)
     ResetAnimation(2800801, disable_interpolation=False)
     ForceAnimation(2800800, arg_24_27)
@@ -2178,7 +2178,7 @@ def Event12804820(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     IfHasTAEEvent(0, 2800800, tae_event_id=300)
     CreateNPCPart(2800800, npc_part_id=arg_0_1, part_index=arg_8_9, part_health=arg_12_15, damage_correction=1.0, 
                   body_damage_correction=1.0, is_invincible=False, start_in_stop_state=False)
-    SetNPCPartEffects(2800800, npc_part_id=arg_4_7, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(2800800, npc_part_id=arg_4_7, material_sfx_id=59, material_vfx_id=59)
     AddSpecialEffect(2800800, arg_20_23, affect_npc_part_hp=True)
     CancelSpecialEffect(2800800, arg_16_19)
     IfCharacterHasSpecialEffect(5, 2800800, 489)
@@ -2654,11 +2654,11 @@ def Event12800920(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagOn(-1, arg_4_7)
     IfFlagOn(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
-    CreateObjectFX(900201, obj=arg_12_15, model_point=200)
+    CreateObjectVFX(900201, obj=arg_12_15, model_point=200)
     IfActionButtonParam(0, action_button_id=7500, entity=arg_12_15)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(arg_16_19, host_only=False)
-    DeleteObjectFX(arg_12_15, erase_root=True)
+    DeleteObjectVFX(arg_12_15, erase_root=True)
 
 
 @RestartOnRest
@@ -2680,7 +2680,7 @@ def Event12804400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12804400: Event 12804400 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -2697,7 +2697,7 @@ def Event12804400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -2712,7 +2712,7 @@ def Event12804400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 
@@ -2721,7 +2721,7 @@ def Event12804401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12804401: Event 12804401 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -2736,7 +2736,7 @@ def Event12804401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -2749,7 +2749,7 @@ def Event12804401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 

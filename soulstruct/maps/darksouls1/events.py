@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 __all__ = [
     "MSBEvent",
     "MSBEventList",
     "MSBLightEvent",
     "MSBSoundEvent",
-    "MSBFXEvent",
+    "MSBVFXEvent",
     "MSBWindEvent",
     "MSBMessageEvent",
     "MSBTreasureEvent",
@@ -13,8 +15,10 @@ __all__ = [
     "MSBMapOffsetEvent",
     "MSBNavigationEvent",
     "MSBEnvironmentEvent",
-    "MSBPseudoMultiplayerEvent",
+    "MSBNPCInvasionEvent",
 ]
+
+import typing as tp
 
 from soulstruct.game_types import *
 from soulstruct.maps.base.events import (
@@ -22,7 +26,7 @@ from soulstruct.maps.base.events import (
     MSBEventList as _BaseMSBEventList,
     MSBLightEvent as _BaseMSBLightEvent,
     MSBSoundEvent as _BaseMSBSoundEvent,
-    MSBFXEvent as _BaseMSBFXEvent,
+    MSBVFXEvent as _BaseMSBVFXEvent,
     MSBWindEvent as _BaseMSBWindEvent,
     MSBTreasureEvent as _BaseMSBTreasureEvent,
     MSBSpawnerEvent as _BaseMSBSpawnerEvent,
@@ -32,12 +36,14 @@ from soulstruct.maps.base.events import (
     MSBMapOffsetEvent as _BaseMSBMapOffsetEvent,
     MSBNavigationEvent as _BaseMSBNavigationEvent,
     MSBEnvironmentEvent as _BaseMSBEnvironmentEvent,
-    MSBPseudoMultiplayerEvent as _BaseMSBPseudoMultiplayerEvent,
+    MSBNPCInvasionEvent as _BaseMSBNPCInvasionEvent,
 )
+from soulstruct.maps.core import MapFieldInfo
 from soulstruct.maps.enums import MSBEventSubtype
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .msb_entry import MSBEntryList
+from ...utilities import partialmethod
 
 
 class MSBEvent(_BaseMSBEvent):
@@ -51,14 +57,12 @@ class MSBEvent(_BaseMSBEvent):
         ("__type_data_offset", "i"),
         "4x",
     )
-
     EVENT_BASE_DATA_STRUCT = BinaryStruct(
         ("_base_part_index", "i"),
         ("_base_region_index", "i"),
         ("entity_id", "i"),
         "4x",
     )
-
     NAME_ENCODING = "shift_jis_2004"
 
 
@@ -70,7 +74,7 @@ class MSBSoundEvent(_BaseMSBSoundEvent, MSBEvent):
     pass
 
 
-class MSBFXEvent(_BaseMSBFXEvent, MSBEvent):
+class MSBVFXEvent(_BaseMSBVFXEvent, MSBEvent):
     pass
 
 
@@ -79,7 +83,7 @@ class MSBWindEvent(_BaseMSBWindEvent, MSBEvent):
 
 
 class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
-    EVENT_TYPE_DATA_STRUCT = (
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct(
         "4x",
         ("_treasure_part_index", "i"),
         ("item_lot_1", "i"),
@@ -92,42 +96,57 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         ("minus_one_4", "i", -1),
         ("item_lot_5", "i"),
         ("minus_one_5", "i", -1),
-        ("in_chest", "?"),
+        ("is_in_chest", "?"),
         ("is_hidden", "?"),
         "2x",
     )
 
-    FIELD_INFO = {
+    FIELD_INFO = _BaseMSBTreasureEvent.FIELD_INFO | MSBEvent.FIELD_INFO | {
         # base_part, base_region, and entity_id are unused for Treasure.
-        "entity_id": _BaseMSBTreasureEvent.FIELD_INFO["entity_id"],
-        "treasure_part_name": _BaseMSBTreasureEvent.FIELD_INFO["treasure_part_name"],
-        "item_lot_1": _BaseMSBTreasureEvent.FIELD_INFO["item_lot_1"],
-        "item_lot_2": _BaseMSBTreasureEvent.FIELD_INFO["item_lot_2"],
-        "item_lot_3": _BaseMSBTreasureEvent.FIELD_INFO["item_lot_3"],
-        "item_lot_4": (
+        "item_lot_4": MapFieldInfo(
             "Item Lot 4",
             ItemLotParam,
+            -1,
             "Fourth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
-        "item_lot_5": (
+        "item_lot_5": MapFieldInfo(
             "Item Lot 5",
             ItemLotParam,
+            -1,
             "Fifth item lot of treasure. (Note that the item lots that are +1 to +5 from this ID will also be "
             "awarded.)",
         ),
-        "in_chest": _BaseMSBTreasureEvent.FIELD_INFO["in_chest"],
-        "is_hidden": _BaseMSBTreasureEvent.FIELD_INFO["is_hidden"],
     }
 
-    def __init__(self, msb_event_source=None, **kwargs):
+    FIELD_ORDER = (
+        "treasure_part_name",
+        "item_lot_1",
+        "item_lot_2",
+        "item_lot_3",
+        "item_lot_4",
+        "item_lot_5",
+        "is_in_chest",
+        "is_hidden",
+    )
+
+    def __init__(self, source=None, **kwargs):
         self.item_lot_4 = -1
         self.item_lot_5 = -1
-        super().__init__(msb_event_source, **kwargs)
+        super().__init__(source, **kwargs)
 
 
 class MSBSpawnerEvent(_BaseMSBSpawnerEvent, MSBEvent):
-    pass
+    SPAWN_REGION_COUNT = 4
+
+    FIELD_INFO = _BaseMSBSpawnerEvent.FIELD_INFO | {
+        "spawn_region_names": MapFieldInfo(
+            "Spawn Regions",
+            GameObjectSequence((Region, SPAWN_REGION_COUNT)),
+            [None] * SPAWN_REGION_COUNT,
+            "Regions where entities will be spawned.",
+        ),
+    }
 
 
 class MSBMessageEvent(_BaseMSBMessageEvent, MSBEvent):
@@ -154,15 +173,15 @@ class MSBEnvironmentEvent(_BaseMSBEnvironmentEvent, MSBEvent):
     pass
 
 
-class MSBPseudoMultiplayerEvent(_BaseMSBPseudoMultiplayerEvent, MSBEvent):
+class MSBNPCInvasionEvent(_BaseMSBNPCInvasionEvent, MSBEvent):
     pass
 
 
 class MSBEventList(_BaseMSBEventList, MSBEntryList):
-    EVENT_SUBTYPE_CLASSES = {
+    SUBTYPE_CLASSES = {
         MSBEventSubtype.Light: MSBLightEvent,
         MSBEventSubtype.Sound: MSBSoundEvent,
-        MSBEventSubtype.FX: MSBFXEvent,
+        MSBEventSubtype.VFX: MSBVFXEvent,
         MSBEventSubtype.Wind: MSBWindEvent,
         MSBEventSubtype.Treasure: MSBTreasureEvent,
         MSBEventSubtype.Spawner: MSBSpawnerEvent,
@@ -172,6 +191,25 @@ class MSBEventList(_BaseMSBEventList, MSBEntryList):
         MSBEventSubtype.MapOffset: MSBMapOffsetEvent,
         MSBEventSubtype.Navigation: MSBNavigationEvent,
         MSBEventSubtype.Environment: MSBEnvironmentEvent,
-        MSBEventSubtype.PseudoMultiplayer: MSBPseudoMultiplayerEvent,
+        MSBEventSubtype.NPCInvasion: MSBNPCInvasionEvent,
     }
-    EVENT_SUBTYPE_OFFSET = 8
+    SUBTYPE_OFFSET = 8
+
+    Lights: tp.Sequence[MSBLightEvent]
+    Sounds: tp.Sequence[MSBSoundEvent]
+    VFX: tp.Sequence[MSBVFXEvent]
+    Wind: tp.Sequence[MSBWindEvent]
+    Treasure: tp.Sequence[MSBTreasureEvent]
+    Spawners: tp.Sequence[MSBSpawnerEvent]
+    Messages: tp.Sequence[MSBMessageEvent]
+    ObjActs: tp.Sequence[MSBObjActEvent]
+    SpawnPoints: tp.Sequence[MSBSpawnPointEvent]
+    MapOffsets: tp.Sequence[MSBMapOffsetEvent]
+    Navigation: tp.Sequence[MSBNavigationEvent]
+    Environment: tp.Sequence[MSBEnvironmentEvent]
+    NPCInvasion: tp.Sequence[MSBNPCInvasionEvent]
+
+    new = _BaseMSBEventList.new
+    new_light: tp.Callable[..., MSBLightEvent] = partialmethod(new, MSBEventSubtype.Light)
+    new_wind: tp.Callable[..., MSBWindEvent] = partialmethod(new, MSBEventSubtype.Wind)
+    new_npc_invasion: tp.Callable[..., MSBNPCInvasionEvent] = partialmethod(new, MSBEventSubtype.NPCInvasion)

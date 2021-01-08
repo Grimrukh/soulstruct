@@ -66,10 +66,12 @@ class ParamDefField(abc.ABC):
         self.maximum = field_struct["maximum"]
         self.increment = field_struct["increment"]
 
-        self.debug_display = field_struct["debug_display"]
+        self.debug_display = bool(field_struct["debug_display"])
         self.sort_id = field_struct["sort_id"]
 
         self.bit_size = self.get_bit_size(self.name, self.internal_type, self.size)
+
+        self.new_default = self.get_default_value()
 
     def get_display_info(self, entry: ParamRow):
         try:
@@ -77,6 +79,14 @@ class ParamDefField(abc.ABC):
         except ValueError:
             raise ValueError(f"No display information given for field '{self.name}'.")
         return field_info(entry)
+
+    def get_default_value(self):
+        """Get default value from game-specific `defaults` module, if specified."""
+        if self.bit_size == 1 and self.internal_type != "dummy8":
+            return bool(self.default)
+        elif self.internal_type not in {"f32", "f64"}:
+            return int(self.default)
+        return self.default  # float
 
     @classmethod
     def unpack_fields(
@@ -202,6 +212,28 @@ class ParamDef(GameFile, abc.ABC):
     def __repr__(self):
         return f"ParamDef {self.param_type}:\n  " + "\n  ".join(
             [f"{field.field_index:>3d} | {field.debug_name} | {field.description}" for field in self.fields]
+        )
+
+    def verbose(self):
+        return f"ParamDef {self.param_type}:\n  " + "\n  ".join(
+            [f"{field.field_index:>3d} | {field.debug_name} | {field.description}\n"
+             f"      field_index = {field.field_index}\n"
+             f"      name = {field.name}\n"
+             f"      description = {field.description}\n"
+             f"      size = {field.size}\n"
+             f"      internal_type = {field.internal_type}\n"
+             f"      param_name = {field.param_name}\n"
+             f"      debug_name = {field.debug_name}\n"
+             f"      debug_type = {field.debug_type}\n"
+             f"      debug_format = {field.debug_format}\n"
+             f"      default = {field.new_default}\n"
+             f"      minimum = {field.minimum}\n"
+             f"      maximum = {field.maximum}\n"
+             f"      increment = {field.increment}\n"
+             f"      debug_display = {field.debug_display}\n"
+             f"      sort_id = {field.sort_id}\n"
+             f"      bit_size = {field.bit_size}\n"
+             for field in self.fields]
         )
 
     @property

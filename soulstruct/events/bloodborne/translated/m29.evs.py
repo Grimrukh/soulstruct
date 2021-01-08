@@ -399,14 +399,14 @@ def Event12900192(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12900192: Event 12900192 """
     SkipLinesIfFlagOff(3, arg_4_7)
     DisableObjectActivation(arg_8_11, obj_act_id=2902000)
-    CreateObjectFX(929136, obj=arg_8_11, model_point=703)
+    CreateObjectVFX(929136, obj=arg_8_11, model_point=703)
     End()
-    CreateObjectFX(929134, obj=arg_8_11, model_point=703)
+    CreateObjectVFX(929134, obj=arg_8_11, model_point=703)
     IfObjectActivated(0, obj_act_id=arg_0_3)
     WaitFrames(56)
     EnableFlag(arg_4_7)
-    DeleteObjectFX(arg_8_11, erase_root=True)
-    CreateObjectFX(929136, obj=arg_8_11, model_point=703)
+    DeleteObjectVFX(arg_8_11, erase_root=True)
+    CreateObjectVFX(929136, obj=arg_8_11, model_point=703)
     DisplayBanner(BannerType.YouWin)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.v_Voice, sound_id=888880000)
     WaitFrames(44)
@@ -467,23 +467,23 @@ def Event12900229(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12900229: Event 12900229 """
     WaitFrames(2)
     SkipLinesIfFlagOff(2, arg_8_11)
-    CreateObjectFX(929136, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929136, obj=arg_0_3, model_point=703)
     End()
     GotoIfThisEventSlotOff(Label.L0)
     EndOfAnimation(arg_0_3, 1)
-    CreateObjectFX(929136, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929136, obj=arg_0_3, model_point=703)
     EnableObjectActivation(arg_0_3, obj_act_id=2900100)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     DisableObjectActivation(arg_0_3, obj_act_id=2900100)
-    CreateObjectFX(929134, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929134, obj=arg_0_3, model_point=703)
     IfFlagOn(0, arg_4_7)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     ForceAnimation(arg_0_3, 1)
     Wait(2.5)
-    CreateObjectFX(929136, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929136, obj=arg_0_3, model_point=703)
     EnableObjectActivation(arg_0_3, obj_act_id=2900100)
     Wait(0.5)
 
@@ -735,19 +735,19 @@ def Event12900304(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12901732(_, arg_0_3: int, arg_4_7: int):
     """ 12901732: Event 12901732 """
     GotoIfThisEventSlotOff(Label.L0)
-    CreateObjectFX(929102, obj=arg_4_7, model_point=700)
-    CreateObjectFX(929102, obj=arg_4_7, model_point=702)
+    CreateObjectVFX(929102, obj=arg_4_7, model_point=700)
+    CreateObjectVFX(929102, obj=arg_4_7, model_point=702)
 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagOn(0, arg_0_3)
     GotoIfThisEventSlotOn(Label.L1)
-    CreateObjectFX(929102, obj=arg_4_7, model_point=700)
-    CreateObjectFX(929102, obj=arg_4_7, model_point=702)
+    CreateObjectVFX(929102, obj=arg_4_7, model_point=700)
+    CreateObjectVFX(929102, obj=arg_4_7, model_point=702)
 
     # --- 1 --- #
     DefineLabel(1)
-    CreateTemporaryFX(929213, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=200)
+    CreateTemporaryVFX(929213, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=200)
     DisableFlag(arg_0_3)
     Restart()
 
@@ -755,7 +755,7 @@ def Event12901732(_, arg_0_3: int, arg_4_7: int):
 def Event12901743(_, arg_0_3: int, arg_4_7: int):
     """ 12901743: Event 12901743 """
     IfFlagOn(0, arg_0_3)
-    CreateTemporaryFX(929215, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929215, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
     DisableFlag(arg_0_3)
     Restart()
 
@@ -1467,7 +1467,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
 
 def Event12900395(_, arg_0_3: int, arg_4_7: int):
     """ 12900395: Event 12900395 """
-    CreateObjectFX(900110, obj=arg_0_3, model_point=704)
+    CreateObjectVFX(900110, obj=arg_0_3, model_point=704)
     GotoIfFlagOn(Label.L7, 92905107)
     GotoIfFlagOn(Label.L6, 92905106)
     GotoIfFlagOn(Label.L5, 92905105)
@@ -1599,7 +1599,7 @@ def Event12900423(_, arg_0_3: int, arg_4_7: int):
     DefineLabel(0)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     CreatePlayLog(152)
-    CreateTemporaryFX(929209, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929209, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=997400000)
     DestroyObject(arg_4_7, slot=1)
 
@@ -1688,7 +1688,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(0, input_condition=3)
     EndIfFinishedConditionFalse(1)
     CreatePlayLog(188)
-    CreateTemporaryFX(150005, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(150005, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, model_point=101)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=990100001)
     SkipLinesIfFlagOn(84, 92905107)
     SkipLinesIfFlagOn(72, 92905106)
@@ -2122,15 +2122,15 @@ def Event12901588(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     End()
     IfCharacterDead(0, arg_0_3)
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
     IfCharacterHuman(0, PLAYER)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
@@ -2173,8 +2173,8 @@ def Event12901589(
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     End()
     IfCharacterDead(1, arg_0_3)
     IfCharacterDead(1, arg_24_27)
@@ -2182,8 +2182,8 @@ def Event12901589(
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
     IfCharacterHuman(0, PLAYER)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
@@ -2224,8 +2224,8 @@ def Event12901590(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     End()
     IfCharacterDead(0, arg_0_3)
     CreatePlayLog(262)
@@ -2233,8 +2233,8 @@ def Event12901590(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     KillBoss(arg_0_3)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     EnableFlag(arg_12_15)
 
 
@@ -2255,8 +2255,8 @@ def Event12901591(
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     End()
     IfCharacterDead(1, arg_0_3)
     IfCharacterDead(1, arg_24_27)
@@ -2265,8 +2265,8 @@ def Event12901591(
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
     IfCharacterHuman(0, PLAYER)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
@@ -2464,7 +2464,7 @@ def Event12901600(_, arg_0_3: int, arg_4_7: int):
     IfCharacterBackreadEnabled(0, arg_0_3)
     DisableCharacter(arg_0_3)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
-    CreateTemporaryFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
 
@@ -2476,12 +2476,12 @@ def Event12901601(_, arg_0_3: int):
 
 def Event12901602(_, arg_0_3: int, arg_4_7: int):
     """ 12901602: Event 12901602 """
-    CreateObjectFX(8020, obj=arg_4_7, model_point=200)
+    CreateObjectVFX(8020, obj=arg_4_7, model_point=200)
     ForceAnimation(arg_4_7, 200, loop=True, wait_for_completion=True)
     SkipLinesIfThisEventSlotOn(1)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     ForceAnimation(arg_4_7, 1000000, wait_for_completion=True)
-    CreateObjectFX(8023, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(8023, obj=arg_4_7, model_point=100)
     ForceAnimation(arg_4_7, 1000100, loop=True, wait_for_completion=True)
 
 
@@ -2536,8 +2536,8 @@ def Event12901686(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
-    DeleteFX(arg_12_15, erase_root_only=True)
-    DeleteFX(arg_16_19, erase_root_only=True)
+    DeleteVFX(arg_12_15, erase_root_only=True)
+    DeleteVFX(arg_16_19, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -2551,8 +2551,8 @@ def Event12901686(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
-    DeleteFX(arg_12_15, erase_root_only=True)
-    DeleteFX(arg_16_19, erase_root_only=True)
+    DeleteVFX(arg_12_15, erase_root_only=True)
+    DeleteVFX(arg_16_19, erase_root_only=True)
     Wait(3.0)
     KillBoss(arg_0_3)
     DisableNetworkSync()
@@ -2600,7 +2600,7 @@ def Event12901690(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     DisableCharacter(arg_0_3)
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -2613,7 +2613,7 @@ def Event12901690(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(0, input_condition=-2)
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Wait(3.0)
     KillBoss(arg_0_3)
     SetNetworkUpdateRate(arg_0_3, is_fixed=False, update_rate=CharacterUpdateRate.EveryTwoFrames)
@@ -2663,8 +2663,8 @@ def Event12901692(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
-    DeleteFX(arg_12_15, erase_root_only=True)
-    DeleteFX(arg_16_19, erase_root_only=True)
+    DeleteVFX(arg_12_15, erase_root_only=True)
+    DeleteVFX(arg_16_19, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -2678,8 +2678,8 @@ def Event12901692(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_8_11)
-    DeleteFX(arg_12_15, erase_root_only=True)
-    DeleteFX(arg_16_19, erase_root_only=True)
+    DeleteVFX(arg_12_15, erase_root_only=True)
+    DeleteVFX(arg_16_19, erase_root_only=True)
     Wait(3.0)
     HandleMinibossDefeat(arg_0_3)
     DisableNetworkSync()
@@ -2871,7 +2871,7 @@ def Event12901701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_12_15)
     EnableFlag(arg_16_19)
-    CreateTemporaryFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
     WaitFrames(15)
     EnableCharacter(arg_0_3)
 
@@ -2919,7 +2919,7 @@ def Event12901706(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_12_15)
     EnableFlag(arg_16_19)
-    CreateTemporaryFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
     WaitFrames(15)
     EnableCharacter(arg_0_3)
 
@@ -2951,15 +2951,15 @@ def Event12901707(
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_12_15)
     EnableFlag(arg_16_19)
-    CreateTemporaryFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
     WaitFrames(15)
     EnableCharacter(arg_0_3)
     WaitFrames(15)
-    CreateTemporaryFX(929227, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Character, model_point=6)
     WaitFrames(15)
     EnableCharacter(arg_20_23)
     WaitFrames(15)
-    CreateTemporaryFX(929227, anchor_entity=arg_24_27, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_24_27, anchor_type=CoordEntityType.Character, model_point=6)
     WaitFrames(15)
     EnableCharacter(arg_24_27)
 
@@ -3288,8 +3288,8 @@ def Event12901723(
     Kill(arg_0_3, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -3309,8 +3309,8 @@ def Event12901723(
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
     KillBoss(arg_0_3)
     DisableNetworkSync()
@@ -3370,8 +3370,8 @@ def Event12901725(
     Kill(arg_28_31, award_souls=False)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -3395,8 +3395,8 @@ def Event12901725(
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(arg_4_7)
     DisableObject(arg_16_19)
-    DeleteFX(arg_8_11, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
     KillBoss(arg_0_3)
     DisableNetworkSync()
@@ -4058,7 +4058,7 @@ def Event12904337(_, arg_0_3: int, arg_4_7: int):
 def Event12904338(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904338: Event 12904338 """
     EndIfFlagOn(arg_12_15)
-    CreateTemporaryFX(0, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(0, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, model_point=-1)
     IfCharacterBackreadEnabled(0, arg_8_11)
     DisableAI(arg_8_11)
     DisableCharacter(arg_8_11)
@@ -4372,7 +4372,7 @@ def Event12904361(_, arg_0_3: int, arg_4_7: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=10, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=10, material_sfx_id=59, material_vfx_id=59)
     DisableCharacter(arg_4_7)
     IfCharacterPartHealthLessThanOrEqual(-1, arg_0_3, npc_part_id=10, value=0)
     IfHealthLessThanOrEqual(-1, arg_0_3, 0.0)
@@ -4402,11 +4402,11 @@ def Event12904369(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateObjectFX(900201, obj=arg_4_7, model_point=90)
+    CreateObjectVFX(900201, obj=arg_4_7, model_point=90)
     ForceAnimation(arg_4_7, arg_16_19)
     IfObjectDestroyed(0, arg_0_3)
     ForceAnimation(arg_4_7, arg_20_23, wait_for_completion=True)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     EnableTreasure(arg_4_7)
     EnableFlag(arg_8_11)
 
@@ -4487,10 +4487,10 @@ def Event12904390(
     CreatePlayLog(844)
     PlaySoundEffect(anchor_entity=arg_16_19, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_16_19, 0)
-    CreateTemporaryFX(150005, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(150005, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Object, model_point=101)
     PlaySoundEffect(anchor_entity=arg_20_23, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_20_23, 0)
-    CreateTemporaryFX(150005, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(150005, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Object, model_point=101)
     Wait(0.10000000149011612)
     EnableFlag(arg_24_27)
     ForceAnimation(arg_4_7, 1)
@@ -4943,7 +4943,7 @@ def Event12904506(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -4960,7 +4960,7 @@ def Event12904506(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_20_23)
     AddSpecialEffect(arg_0_3, arg_24_27, affect_npc_part_hp=True)
@@ -5002,7 +5002,7 @@ def Event12904540(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -5041,7 +5041,7 @@ def Event12904568(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfConditionFalse(1, 1)
     CreatePlayLog(970)
     DestroyObject(arg_4_7, slot=1)
-    CreateTemporaryFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.a_Ambient, sound_id=124005001)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
@@ -5069,7 +5069,7 @@ def Event12904579(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLinesIfConditionFalse(1, 1)
     CreatePlayLog(970)
     DestroyObject(arg_4_7, slot=1)
-    CreateTemporaryFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.a_Ambient, sound_id=124005001)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
@@ -5096,7 +5096,7 @@ def Event12904584(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLinesIfConditionFalse(1, 1)
     CreatePlayLog(1008)
     DestroyObject(arg_4_7, slot=1)
-    CreateTemporaryFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.a_Ambient, sound_id=124005001)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
@@ -5186,9 +5186,9 @@ def Event12904597(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     CreatePlayLog(1052)
     PlaySoundEffect(anchor_entity=arg_8_11, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_8_11, 0, wait_for_completion=True)
-    CreateTemporaryFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
     EnableCharacter(arg_0_3)
-    CreateTemporaryFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
+    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
 
 
 @RestartOnRest
@@ -5291,10 +5291,10 @@ def Event12904733(_, arg_0_3: int, arg_4_7: int):
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     AddSpecialEffect(PLAYER, 71, affect_npc_part_hp=False)
-    CreateTemporaryFX(850, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=7)
+    CreateTemporaryVFX(850, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=7)
     IfObjectDestroyed(0, arg_4_7)
     CancelSpecialEffect(PLAYER, 71)
-    CreateTemporaryFX(851, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
+    CreateTemporaryVFX(851, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
 
 
 @RestartOnRest
@@ -5398,9 +5398,9 @@ def Event12904755(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreatePlayLog(1170)
     PlaySoundEffect(anchor_entity=arg_8_11, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_8_11, 0, wait_for_completion=True)
-    CreateTemporaryFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
     EnableCharacter(arg_0_3)
-    CreateTemporaryFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
+    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
     Wait(1.0)
     AICommand(arg_0_3, command_id=10, slot=0)
     SetNest(arg_0_3, arg_16_19)
@@ -5489,7 +5489,7 @@ def Event12904776(
     arg_28_31: int,
 ):
     """ 12904776: Event 12904776 """
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     DisableCharacter(arg_0_3)
     SkipLinesIfFlagOff(1, arg_20_23)
     End()
@@ -5497,9 +5497,9 @@ def Event12904776(
     CreatePlayLog(1260)
     StartPlayLogMeasurement(2900020, 1276, overwrite=True)
     EnableObject(arg_28_31)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     Wait(2.5)
-    CreateTemporaryFX(arg_24_27, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(arg_24_27, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
     ActivateMultiplayerBuffs(arg_0_3)
@@ -5679,14 +5679,14 @@ def Event12904864(
 ):
     """ 12904864: Event 12904864 """
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     DisableCharacter(arg_12_15)
     IfFlagOn(0, arg_0_3)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     DisableFlag(arg_0_3)
     Wait(2.5)
-    CreateTemporaryFX(arg_24_27, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(arg_24_27, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Character, model_point=205)
     WaitFrames(10)
     EnableCharacter(arg_12_15)
     ActivateMultiplayerBuffs(arg_12_15)
@@ -5763,7 +5763,7 @@ def Event12904869(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=2, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
     IfHasTAEEvent(3, arg_0_3, tae_event_id=20)
@@ -5809,7 +5809,7 @@ def Event12904869(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_sfx_id=60, material_vfx_id=60)
     ReplanAI(arg_0_3)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=20)
 
@@ -5834,7 +5834,7 @@ def Event12904870(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=3, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
     IfHasTAEEvent(3, arg_0_3, tae_event_id=20)
@@ -5880,7 +5880,7 @@ def Event12904870(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_sfx_id=60, material_vfx_id=60)
     ReplanAI(arg_0_3)
     IfHasTAEEvent(0, arg_0_3, tae_event_id=20)
 
@@ -5905,7 +5905,7 @@ def Event12904871(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=1, material_special_effect_id=61, material_fx_id=61)
+    SetNPCPartEffects(arg_0_3, npc_part_id=1, material_sfx_id=61, material_vfx_id=61)
 
 
 def Event12904872(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
@@ -5915,7 +5915,7 @@ def Event12904872(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_8_11)
     Wait(2.5999999046325684)
-    CreateTemporaryFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
 
@@ -5936,10 +5936,10 @@ def Event12904877(
     DisableAI(arg_12_15)
     DisableAI(arg_28_31)
     DisableObject(arg_24_27)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     SkipLinesIfFlagOff(2, arg_16_19)
     EnableObject(arg_24_27)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     SkipLinesIfFlagOff(4, arg_20_23)
     DisableCharacter(arg_0_3)
     DisableCharacter(arg_12_15)
@@ -5957,7 +5957,7 @@ def Event12904877(
     StartPlayLogMeasurement(2900013, 1424, overwrite=True)
     SkipLinesIfFlagOn(2, arg_16_19)
     EnableObject(arg_24_27)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     GotoIfCoopClientCountComparison(Label.L1, ComparisonType.Equal, 0)
     GotoIfCoopClientCountComparison(Label.L2, ComparisonType.Equal, 1)
     GotoIfCoopClientCountComparison(Label.L3, ComparisonType.Equal, 2)
@@ -6027,10 +6027,10 @@ def Event12904881(
     """ 12904881: Event 12904881 """
     DisableAI(arg_0_3)
     DisableObject(arg_24_27)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     SkipLinesIfFlagOff(2, arg_16_19)
     EnableObject(arg_24_27)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     SkipLinesIfFlagOff(2, arg_20_23)
     DisableCharacter(arg_0_3)
     End()
@@ -6049,7 +6049,7 @@ def Event12904881(
     StartPlayLogMeasurement(2900013, 1424, overwrite=True)
     SkipLinesIfFlagOn(2, arg_16_19)
     EnableObject(arg_24_27)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     RotateToFaceEntity(arg_0_3, PLAYER, animation=7021, wait_for_completion=False)
     GotoIfCoopClientCountComparison(Label.L1, ComparisonType.Equal, 0)
     GotoIfCoopClientCountComparison(Label.L2, ComparisonType.Equal, 1)
@@ -6128,7 +6128,7 @@ def Event12904887(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     EnableCharacter(arg_0_3)
     EnableBossHealthBar(arg_0_3, name=arg_16_19, slot=1)
-    CreateTemporaryFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
+    CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
 
 
 @RestartOnRest
@@ -6153,14 +6153,14 @@ def Event12904890(
 ):
     """ 12904890: Event 12904890 """
     DisableObject(arg_28_31)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     DisableCharacter(arg_0_3)
     SkipLinesIfFlagOff(1, arg_20_23)
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
     EnableObject(arg_28_31)
-    CreateFX(arg_8_11)
-    CreateTemporaryFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateVFX(arg_8_11)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
     IfValueComparison(0, ComparisonType.Equal, left=arg_24_27, right=arg_24_27)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
@@ -6185,15 +6185,15 @@ def Event12904891(
 ):
     """ 12904891: Event 12904891 """
     DisableObject(arg_28_31)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     DisableCharacter(arg_0_3)
     SkipLinesIfFlagOff(1, arg_20_23)
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
     EnableObject(arg_28_31)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     Wait(2.5)
-    CreateTemporaryFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
     IfValueComparison(0, ComparisonType.Equal, left=arg_24_27, right=arg_24_27)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
@@ -6230,13 +6230,13 @@ def Event12904894(_, arg_0_3: int, arg_4_7: int):
 
 def Event12904895(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904895: Event 12904895 """
-    DeleteFX(arg_0_3, erase_root_only=False)
-    DeleteFX(arg_4_7, erase_root_only=False)
-    DeleteFX(arg_8_11, erase_root_only=False)
+    DeleteVFX(arg_0_3, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_8_11, erase_root_only=False)
     IfCharacterInsideRegion(0, PLAYER, region=arg_12_15)
-    CreateFX(arg_0_3)
-    CreateFX(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_0_3)
+    CreateVFX(arg_4_7)
+    CreateVFX(arg_8_11)
 
 
 def Event12904896(
@@ -6265,7 +6265,7 @@ def Event12904896(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=66, material_vfx_id=66)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfCharacterHasSpecialEffect(2, arg_0_3, 5021)
     IfCharacterPartHealthLessThanOrEqual(3, arg_0_3, npc_part_id=arg_8_11, value=0)
@@ -6287,7 +6287,7 @@ def Event12904896(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=66, material_vfx_id=66)
     Restart()
 
     # --- 0 --- #
@@ -6302,7 +6302,7 @@ def Event12904896(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=66, material_vfx_id=66)
     AddSpecialEffect(arg_0_3, 5021, affect_npc_part_hp=True)
     AddSpecialEffect(arg_0_3, arg_12_15, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, arg_16_19)
@@ -6345,7 +6345,7 @@ def Event12904897(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=66, material_vfx_id=66)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfCharacterHasSpecialEffect(2, arg_0_3, 5021)
     IfCharacterPartHealthLessThanOrEqual(3, arg_0_3, npc_part_id=arg_8_11, value=0)
@@ -6367,7 +6367,7 @@ def Event12904897(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=66, material_vfx_id=66)
     Restart()
 
     # --- 0 --- #
@@ -6382,7 +6382,7 @@ def Event12904897(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=66, material_fx_id=66)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=66, material_vfx_id=66)
     AddSpecialEffect(arg_0_3, 5021, affect_npc_part_hp=True)
     AddSpecialEffect(arg_0_3, arg_12_15, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, arg_16_19)
@@ -6424,7 +6424,7 @@ def Event12904898(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6441,7 +6441,7 @@ def Event12904898(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6480,7 +6480,7 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6498,7 +6498,7 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000)
@@ -6543,7 +6543,7 @@ def Event12904900(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6560,7 +6560,7 @@ def Event12904900(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=65, material_vfx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6608,7 +6608,7 @@ def Event12904901(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6625,7 +6625,7 @@ def Event12904901(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6664,7 +6664,7 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6682,7 +6682,7 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010)
@@ -6727,7 +6727,7 @@ def Event12904903(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6744,7 +6744,7 @@ def Event12904903(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=65, material_vfx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6792,7 +6792,7 @@ def Event12904904(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6809,7 +6809,7 @@ def Event12904904(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6848,7 +6848,7 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6866,7 +6866,7 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030)
@@ -6911,7 +6911,7 @@ def Event12904906(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6928,7 +6928,7 @@ def Event12904906(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=65, material_vfx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -6976,7 +6976,7 @@ def Event12904907(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -6993,7 +6993,7 @@ def Event12904907(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -7032,7 +7032,7 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -7050,7 +7050,7 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020)
@@ -7095,7 +7095,7 @@ def Event12904909(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -7112,7 +7112,7 @@ def Event12904909(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=65, material_vfx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -7160,7 +7160,7 @@ def Event12904910(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -7177,7 +7177,7 @@ def Event12904910(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -7216,7 +7216,7 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -7234,7 +7234,7 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040)
@@ -7279,7 +7279,7 @@ def Event12904911(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -7296,7 +7296,7 @@ def Event12904911(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=65, material_vfx_id=65)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -9951,7 +9951,7 @@ def Event12906541(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 20)
-    CreateObjectFX(900260, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(900260, obj=arg_4_7, model_point=100)
     WaitFrames(30)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
@@ -10070,7 +10070,7 @@ def Event12906541(
     )
     WaitFrames(370)
     RemoveObjectFlag(arg_28_31)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     EnableObject(arg_8_11)
     ForceAnimation(arg_8_11, 100)
     DestroyObject(arg_8_11, slot=1)
@@ -10103,7 +10103,7 @@ def Event12906543(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 30)
-    CreateObjectFX(900260, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(900260, obj=arg_4_7, model_point=100)
     WaitFrames(30)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
@@ -10222,7 +10222,7 @@ def Event12906543(
     )
     WaitFrames(270)
     RemoveObjectFlag(arg_28_31)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     EnableObject(arg_8_11)
     ForceAnimation(arg_8_11, 100)
     DestroyObject(arg_8_11, slot=1)
@@ -10255,7 +10255,7 @@ def Event12906545(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 40)
-    CreateObjectFX(900260, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(900260, obj=arg_4_7, model_point=100)
     WaitFrames(30)
     SkipLinesIfFlagOff(2, 92905100)
     IfFlagOn(0, 92905100)
@@ -10374,7 +10374,7 @@ def Event12906545(
     )
     WaitFrames(270)
     RemoveObjectFlag(arg_28_31)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     EnableObject(arg_8_11)
     ForceAnimation(arg_8_11, 100)
     DestroyObject(arg_8_11, slot=1)
@@ -10626,14 +10626,14 @@ def Event12906660(_, arg_0_3: int):
     EndIfObjectDestroyed(arg_0_3)
     GotoIfFlagOn(Label.L1, 92905310)
     GotoIfFlagOn(Label.L0, 92905301)
-    CreateObjectFX(929302, obj=arg_0_3, model_point=600)
+    CreateObjectVFX(929302, obj=arg_0_3, model_point=600)
     IfObjectDamagedBy(0, arg_0_3, attacker=-1)
     Goto(Label.L3)
 
     # --- 0 --- #
     DefineLabel(0)
     SkipLinesIfThisEventSlotOn(1)
-    CreateObjectFX(929305, obj=arg_0_3, model_point=600)
+    CreateObjectVFX(929305, obj=arg_0_3, model_point=600)
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
@@ -10648,7 +10648,7 @@ def Event12906660(_, arg_0_3: int):
     # --- 1 --- #
     DefineLabel(1)
     SkipLinesIfThisEventSlotOn(1)
-    CreateObjectFX(929304, obj=arg_0_3, model_point=600)
+    CreateObjectVFX(929304, obj=arg_0_3, model_point=600)
     SkipLinesIfFlagOn(21, 92905107)
     SkipLinesIfFlagOn(18, 92905106)
     SkipLinesIfFlagOn(15, 92905105)
@@ -10748,7 +10748,7 @@ def Event12906660(_, arg_0_3: int):
 
     # --- 3 --- #
     DefineLabel(3)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     IfFramesElapsed(0, 1)
     DestroyObject(arg_0_3, slot=1)
 
@@ -10871,7 +10871,7 @@ def Event12906764(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -10888,7 +10888,7 @@ def Event12906764(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_28_31)
     AddSpecialEffect(arg_0_3, arg_20_23, affect_npc_part_hp=True)
@@ -10929,7 +10929,7 @@ def Event12906765(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -10946,7 +10946,7 @@ def Event12906765(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_28_31)
     AddSpecialEffect(arg_0_3, arg_20_23, affect_npc_part_hp=True)
@@ -11017,7 +11017,7 @@ def Event12906768(
         is_invincible=True,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_12_15, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_12_15, material_sfx_id=74, material_vfx_id=74)
 
 
 def Event12906769(
@@ -11045,7 +11045,7 @@ def Event12906769(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11062,7 +11062,7 @@ def Event12906769(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11110,7 +11110,7 @@ def Event12906770(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11127,7 +11127,7 @@ def Event12906770(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11175,7 +11175,7 @@ def Event12906771(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11192,7 +11192,7 @@ def Event12906771(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11240,7 +11240,7 @@ def Event12906772(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11257,7 +11257,7 @@ def Event12906772(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11305,7 +11305,7 @@ def Event12906773(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11322,7 +11322,7 @@ def Event12906773(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11370,7 +11370,7 @@ def Event12906774(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11387,7 +11387,7 @@ def Event12906774(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11435,7 +11435,7 @@ def Event12906775(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11452,7 +11452,7 @@ def Event12906775(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11500,7 +11500,7 @@ def Event12906776(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11517,7 +11517,7 @@ def Event12906776(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11565,7 +11565,7 @@ def Event12906777(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11582,7 +11582,7 @@ def Event12906777(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11630,7 +11630,7 @@ def Event12906778(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11647,7 +11647,7 @@ def Event12906778(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11695,7 +11695,7 @@ def Event12906779(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11712,7 +11712,7 @@ def Event12906779(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11760,7 +11760,7 @@ def Event12906780(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11777,7 +11777,7 @@ def Event12906780(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11825,7 +11825,7 @@ def Event12906781(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11842,7 +11842,7 @@ def Event12906781(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11890,7 +11890,7 @@ def Event12906782(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11907,7 +11907,7 @@ def Event12906782(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -11955,7 +11955,7 @@ def Event12906783(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -11972,7 +11972,7 @@ def Event12906783(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -12020,7 +12020,7 @@ def Event12906784(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -12037,7 +12037,7 @@ def Event12906784(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -12085,7 +12085,7 @@ def Event12906785(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -12102,7 +12102,7 @@ def Event12906785(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -12150,7 +12150,7 @@ def Event12906786(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -12167,7 +12167,7 @@ def Event12906786(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -12215,7 +12215,7 @@ def Event12906787(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -12232,7 +12232,7 @@ def Event12906787(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -12280,7 +12280,7 @@ def Event12906788(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -12297,7 +12297,7 @@ def Event12906788(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=73, material_vfx_id=73)
     EventValueOperation(arg_4_7, 10, 3, 0, 1, CalculationType.Add)
     EnableFlag(arg_8_11)
     ResetAnimation(arg_0_3, disable_interpolation=False)
@@ -12332,7 +12332,7 @@ def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -12349,7 +12349,7 @@ def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_12_15)
     AddSpecialEffect(arg_0_3, arg_16_19, affect_npc_part_hp=False)
@@ -12385,7 +12385,7 @@ def Event12906828(
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -12419,16 +12419,16 @@ def Event12906789(
     GotoIfFlagOn(Label.L0, arg_24_27)
     SkipLinesIfClient(2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
     DisableObject(arg_8_11)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     IfFlagOff(1, arg_20_23)
     IfFlagOn(1, arg_24_27)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
     EnableObject(arg_8_11)
-    CreateFX(arg_12_15)
-    CreateFX(arg_16_19)
+    CreateVFX(arg_12_15)
+    CreateVFX(arg_16_19)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -12669,16 +12669,16 @@ def Event12906796(
     GotoIfFlagOn(Label.L0, arg_24_27)
     SkipLinesIfClient(2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_12_15, erase_root_only=False)
+    DeleteVFX(arg_12_15, erase_root_only=False)
     DisableObject(arg_8_11)
-    DeleteFX(arg_16_19, erase_root_only=False)
+    DeleteVFX(arg_16_19, erase_root_only=False)
     IfFlagOff(1, arg_20_23)
     IfFlagOn(1, arg_24_27)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
     EnableObject(arg_8_11)
-    CreateFX(arg_12_15)
-    CreateFX(arg_16_19)
+    CreateVFX(arg_12_15)
+    CreateVFX(arg_16_19)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -12714,12 +12714,12 @@ def Event12906800(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     GotoIfFlagOn(Label.L0, arg_16_19)
     SkipLinesIfClient(2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=False)
+    DeleteVFX(arg_8_11, erase_root_only=False)
     IfFlagOff(1, arg_12_15)
     IfFlagOn(1, arg_16_19)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -12991,7 +12991,7 @@ def Event12906825(
     IfConditionTrue(0, input_condition=1)
     Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     EnableCharacter(arg_0_3)
-    CreateTemporaryFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
 
     # --- 1 --- #
     DefineLabel(1)
@@ -13012,7 +13012,7 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13029,7 +13029,7 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
@@ -13061,7 +13061,7 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13078,7 +13078,7 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
@@ -13110,7 +13110,7 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13127,7 +13127,7 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
@@ -13159,7 +13159,7 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13176,7 +13176,7 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
@@ -13208,7 +13208,7 @@ def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=64, material_fx_id=64)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13225,7 +13225,7 @@ def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=65, material_fx_id=65)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
@@ -13269,7 +13269,7 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13286,7 +13286,7 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
@@ -13318,7 +13318,7 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13335,7 +13335,7 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
@@ -13367,7 +13367,7 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13384,7 +13384,7 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
@@ -13416,7 +13416,7 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13433,7 +13433,7 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
@@ -13465,7 +13465,7 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=72, material_fx_id=72)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13482,7 +13482,7 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=73, material_fx_id=73)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
@@ -13514,7 +13514,7 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13531,7 +13531,7 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
@@ -13563,7 +13563,7 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13580,7 +13580,7 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
@@ -13612,7 +13612,7 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13629,7 +13629,7 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
@@ -13661,7 +13661,7 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13678,7 +13678,7 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
@@ -13710,7 +13710,7 @@ def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13727,7 +13727,7 @@ def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
@@ -13828,7 +13828,7 @@ def Event12906865(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_13: sho
         is_invincible=True,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
 
 
 def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
@@ -13847,7 +13847,7 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13864,7 +13864,7 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
@@ -13899,7 +13899,7 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13916,7 +13916,7 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 488, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 498)
     ReplanAI(arg_0_3)
@@ -13951,7 +13951,7 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -13968,7 +13968,7 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 485, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 495)
     ReplanAI(arg_0_3)
@@ -14003,7 +14003,7 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14020,7 +14020,7 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
@@ -14055,7 +14055,7 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14072,7 +14072,7 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 486, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 496)
     ReplanAI(arg_0_3)
@@ -14107,7 +14107,7 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14124,7 +14124,7 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
@@ -14159,7 +14159,7 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14176,7 +14176,7 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 487, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 497)
     ReplanAI(arg_0_3)
@@ -14211,7 +14211,7 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14228,7 +14228,7 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
@@ -14263,7 +14263,7 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14280,7 +14280,7 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
@@ -14315,7 +14315,7 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14332,7 +14332,7 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 488, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 498)
     ReplanAI(arg_0_3)
@@ -14367,7 +14367,7 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14384,7 +14384,7 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 488, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 498)
     ReplanAI(arg_0_3)
@@ -14440,7 +14440,7 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14458,7 +14458,7 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000)
@@ -14495,7 +14495,7 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14513,7 +14513,7 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010)
@@ -14550,7 +14550,7 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14568,7 +14568,7 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030)
@@ -14605,7 +14605,7 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14623,7 +14623,7 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020)
@@ -14660,7 +14660,7 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -14678,7 +14678,7 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=77, material_fx_id=77)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     WaitFrames(1)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040)
@@ -14788,7 +14788,7 @@ def Event12906864(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=2, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
     IfHasTAEEvent(3, arg_0_3, tae_event_id=20)
@@ -14834,7 +14834,7 @@ def Event12906864(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=2, material_sfx_id=60, material_vfx_id=60)
     ReplanAI(arg_0_3)
     IfTimeElapsed(0, 30.0)
 
@@ -14858,7 +14858,7 @@ def Event12906867(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=59, material_fx_id=59)
+    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=3, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
     IfHasTAEEvent(3, arg_0_3, tae_event_id=20)
@@ -14904,7 +14904,7 @@ def Event12906867(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(arg_0_3, npc_part_id=3, material_sfx_id=60, material_vfx_id=60)
     ReplanAI(arg_0_3)
     IfTimeElapsed(0, 30.0)
 
@@ -14930,7 +14930,7 @@ def Event12906868(_, arg_0_3: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=1, material_special_effect_id=61, material_fx_id=61)
+    SetNPCPartEffects(arg_0_3, npc_part_id=1, material_sfx_id=61, material_vfx_id=61)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=1, value=0)
     IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -15057,7 +15057,7 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -15074,7 +15074,7 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 480, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
@@ -15110,7 +15110,7 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -15127,7 +15127,7 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 481, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
@@ -15163,7 +15163,7 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -15180,7 +15180,7 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 482, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
@@ -15216,7 +15216,7 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -15233,7 +15233,7 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 483, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
@@ -15269,7 +15269,7 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=74, material_fx_id=74)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
     IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
@@ -15286,7 +15286,7 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_special_effect_id=75, material_fx_id=75)
+    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(arg_0_3, 484, affect_npc_part_hp=True)
     CancelSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
@@ -15369,7 +15369,7 @@ def Event12907000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagOn(0, arg_8_11)
     EnableObject(arg_4_7)
     EnableCharacter(arg_0_3)
-    CreateTemporaryFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -15392,7 +15392,7 @@ def Event12907020(_, arg_0_3: int, arg_4_7: int):
     DisableFlag(arg_0_3)
     RotateToFaceEntity(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
     Wait(1.0)
-    CreateTemporaryFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
     Wait(3.0)
     SkipLinesIfFlagOff(2, 9020)
     WarpPlayerToRespawnPoint(2102954)
@@ -15423,7 +15423,7 @@ def Event12907030(_, arg_0_3: int, arg_4_7: int):
     EndIfClient()
     IfFlagOn(0, arg_0_3)
     WaitFrames(1)
-    CreateTemporaryFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
     InitializeWarpObject(arg_4_7)
     DisableFlag(arg_0_3)
 
@@ -15659,12 +15659,12 @@ def Event12907600(_, arg_0_3: int, arg_4_7: int):
     """ 12907600: Event 12907600 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfConnectingMultiplayer(-1)
     IfMultiplayer(-1)
     IfConditionTrue(0, input_condition=-1)
     EnableObject(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfConnectingMultiplayer(-2)
     IfMultiplayer(-2)
     IfConditionFalse(0, input_condition=-2)
@@ -15676,7 +15676,7 @@ def Event12906962(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12906962: Event 12906962 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -15703,7 +15703,7 @@ def Event12906962(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -15728,7 +15728,7 @@ def Event12906962(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 

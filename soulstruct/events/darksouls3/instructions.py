@@ -133,11 +133,11 @@ __all__ = [
     "EnableAnimations",
     "DisableAnimations",
     "EndOfAnimation",
-    "CreateFX",
-    "DeleteFX",
-    "CreateTemporaryFX",
-    "CreateObjectFX",
-    "DeleteObjectFX",
+    "CreateVFX",
+    "DeleteVFX",
+    "CreateTemporaryVFX",
+    "CreateObjectVFX",
+    "DeleteObjectVFX",
     "SetBackgroundMusic",
     "PlaySoundEffect",
     "SetSoundEventState",
@@ -1152,9 +1152,9 @@ def IfCharacterInvadeType(
     return to_numeric(instruction_info, condition, character, invade_type, target_comparison_type, target_count)
 
 
-def IfCharacterChameleonState(condition: int, character: CharacterTyping, chameleon_fx_id: int, is_transformed: bool):
+def IfCharacterChameleonState(condition: int, character: CharacterTyping, chameleon_vfx_id: int, is_transformed: bool):
     instruction_info = (4, 28)
-    return to_numeric(instruction_info, condition, character, chameleon_fx_id, is_transformed)
+    return to_numeric(instruction_info, condition, character, chameleon_vfx_id, is_transformed)
 
 
 # 5: CONDITIONS (OBJECT)

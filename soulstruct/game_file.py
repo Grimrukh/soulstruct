@@ -58,7 +58,7 @@ class GameFile(abc.ABC):
             if isinstance(file_source, (str, Path)):
                 self.path = Path(file_source)
                 if self.path.suffix == ".json":
-                    with self.path.open(self.path, "r") as j:
+                    with self.path.open("r") as j:
                         self.load_dict(json.load(j))
                         return
                 else:
@@ -99,8 +99,8 @@ class GameFile(abc.ABC):
         """Unpack game file from given buffer, using various `BinaryStruct`s defined in the class."""
 
     def load_dict(self, data: dict):
-        """Load game file from given `data` dictionary. Not supported by default."""
-        raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary data.")
+        """Load game file from given `data` dictionary (which is a copy of the source). Not supported by default."""
+        raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary input.")
 
     @abc.abstractmethod
     def pack(self, **kwargs) -> bytes:
@@ -108,7 +108,7 @@ class GameFile(abc.ABC):
 
     def to_dict(self) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
-        raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary data.")
+        raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
     def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
@@ -136,7 +136,7 @@ class GameFile(abc.ABC):
         with file_path.open("wb") as f:
             f.write(packed)
 
-    def write_json(self, file_path: tp.Union[None, str, Path]):
+    def write_json(self, file_path: tp.Union[None, str, Path], encoding="utf-8", indent=4, **kwargs):
         """Create a dictionary from `GameFile` instance. Requires `.as_dict()` to be supported.
 
         The file path will have the `.json` suffix added automatically.
@@ -149,8 +149,8 @@ class GameFile(abc.ABC):
         file_path = Path(file_path)
         if file_path.suffix != ".json":
             file_path = file_path.with_suffix(file_path.suffix + ".json")
-        with file_path.open("w") as j:
-            json.dump(json_dict, j, indent=4)
+        with file_path.open("w", encoding=encoding) as j:
+            json.dump(json_dict, j, indent=indent, **kwargs)
 
     def copy(self):
         return copy.deepcopy(self)

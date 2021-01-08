@@ -23,9 +23,9 @@ def Constructor():
     SkipLinesIfClient(5)
     DisableFlag(11000000)
     DisableObject(1001994)
-    DeleteFX(1001995, erase_root_only=False)
+    DeleteVFX(1001995, erase_root_only=False)
     DisableObject(1001996)
-    DeleteFX(1001997, erase_root_only=False)
+    DeleteVFX(1001997, erase_root_only=False)
     SkipLinesIfFlagOff(1, 11000100)
     EndOfAnimation(1001319, 0)
     RunEvent(11000090, slot=0, args=(1001700, 1001701, 1002600, 1002601))
@@ -47,7 +47,7 @@ def Constructor():
     SkipLinesIfFlagOff(4, 2)
     RunEvent(11005392)
     DisableObject(1001990)
-    DeleteFX(1001991, erase_root_only=False)
+    DeleteVFX(1001991, erase_root_only=False)
     SkipLines(10)
     RunEvent(11005390)
     RunEvent(11005391)
@@ -136,7 +136,7 @@ def Event11000090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11000090: Event 11000090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1, prompt_text=10010403, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Region, line_intersects=arg_0_3
@@ -153,7 +153,7 @@ def Event11000090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -354,7 +354,7 @@ def Event11000001():
     Kill(1000801, award_souls=False)
     KillBoss(1000800)
     DisableObject(1001990)
-    DeleteFX(1001991, erase_root_only=True)
+    DeleteVFX(1001991, erase_root_only=True)
 
 
 def Event11005394():
@@ -429,7 +429,7 @@ def Event11005397():
         is_invincible=False,
         start_in_stop_state=False,
     )
-    SetNPCPartEffects(1000800, npc_part_id=5261, material_special_effect_id=60, material_fx_id=60)
+    SetNPCPartEffects(1000800, npc_part_id=5261, material_sfx_id=60, material_vfx_id=60)
 
 
 @RestartOnRest
@@ -649,9 +649,9 @@ def Event11005050():
 def Event11005060():
     """ 11005060: Event 11005060 """
     EndIfThisEventOn()
-    CreateObjectFX(100013, obj=1001400, model_point=10)
+    CreateObjectVFX(100013, obj=1001400, model_point=10)
     IfObjectDestroyed(0, 1001400)
-    DeleteObjectFX(1001400, erase_root=True)
+    DeleteObjectVFX(1001400, erase_root=True)
 
 
 @RestartOnRest
@@ -1060,11 +1060,11 @@ def Event11005844(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     IfUnknownPlayerType5(3)
     IfConditionFalse(2, input_condition=3)
     IfSingleplayer(2)
     IfConditionTrue(0, input_condition=2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Restart()

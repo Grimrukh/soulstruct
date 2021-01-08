@@ -623,7 +623,7 @@ def Event13205370(
     IfAllPlayersOutsideRegion(2, region=arg_20_23)
     GotoIfConditionTrue(Label.L1, input_condition=2)
     ForceAnimation(arg_0_3, 63010)
-    CreateTemporaryFX(30300, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, model_point=-1)
+    CreateTemporaryVFX(30300, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, model_point=-1)
     Move(
         arg_0_3,
         destination=arg_12_15,
@@ -637,7 +637,7 @@ def Event13205370(
     # --- 1 --- #
     DefineLabel(1)
     ForceAnimation(arg_0_3, 63010)
-    CreateTemporaryFX(30300, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Region, model_point=-1)
+    CreateTemporaryVFX(30300, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Region, model_point=-1)
     Move(
         arg_0_3,
         destination=arg_16_19,
@@ -681,7 +681,7 @@ def Event13205375(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     MakeEnemyAppear(arg_20_23)
     Wait(1.100000023841858)
     ForceAnimation(arg_0_3, 63010)
-    CreateTemporaryFX(30300, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, model_point=-1)
+    CreateTemporaryVFX(30300, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Region, model_point=-1)
     Move(
         arg_0_3,
         destination=arg_12_15,
@@ -931,13 +931,13 @@ def Event13205490(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13205490: Event 13205490 """
     DisableNetworkSync()
     DisableObject(arg_0_3)
-    DeleteObjectFX(arg_0_3, erase_root=True)
+    DeleteObjectVFX(arg_0_3, erase_root=True)
     IfTryingToJoinSession(-1)
     IfTryingToCreateSession(-1)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFlagOff(Label.L0, arg_8_11)
     EnableObject(arg_0_3)
-    CreateObjectFX(arg_4_7, obj=arg_0_3, model_point=101)
+    CreateObjectVFX(arg_4_7, obj=arg_0_3, model_point=101)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -997,7 +997,7 @@ def Event13200811():
     WaitFrames(1)
     ForceAnimation(PLAYER, 63010)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=138008020)
-    CreateTemporaryFX(30300, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryVFX(30300, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=236)
 
 
 @RestartOnRest

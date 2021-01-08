@@ -1,6 +1,7 @@
 __all__ = ["MSBModel", "MSBModelList"]
 
-from functools import partial
+import typing as tp
+from functools import partial, partialmethod
 
 from soulstruct.maps.base.models import (
     MSBModel as _BaseMSBModel,
@@ -26,12 +27,12 @@ class MSBModel(_BaseMSBModel):
     NAME_ENCODING = "utf-16-le"
     NULL = b"\0\0"
     # TODO: Empty sib path different? b"\0\0" * 6 maybe?
+    SIB_PATH_STEM = "N:\\SPRJ\\data\\Model\\"  # TODO: guessing at SPRJ
 
 
 class MSBModelList(_BaseMSBModelList, MSBEntryList):
 
-    ENTRY_CLASS = MSBModel
-    MODEL_SUBTYPE_CLASSES = {
+    SUBTYPE_CLASSES = {
         MSBModelSubtype.MapPiece: partial(MSBModel, model_subtype="MapPiece"),
         MSBModelSubtype.Object: partial(MSBModel, model_subtype="Object"),
         MSBModelSubtype.Character: partial(MSBModel, model_subtype="Character"),
@@ -40,11 +41,22 @@ class MSBModelList(_BaseMSBModelList, MSBEntryList):
         MSBModelSubtype.Navmesh: partial(MSBModel, model_subtype="Navmesh"),
         MSBModelSubtype.Other: partial(MSBModel, model_subtype="Other"),
     }
+    ENTRY_CLASS = MSBModel
 
+    MapPieces: list[MSBModel]
+    Objects: list[MSBModel]
+    Characters: list[MSBModel]
+    Items: list[MSBModel]
+    Players: list[MSBModel]
+    Collisions: list[MSBModel]
+    Navmeshes: list[MSBModel]
+    Other: list[MSBModel]
 
-for _entry_subtype in MSBModelSubtype:
-    setattr(
-        MSBModelList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    new_map_piece_model: tp.Callable[..., MSBModel]
+    new_object_model: tp.Callable[..., MSBModel]
+    new_character_model: tp.Callable[..., MSBModel]
+    new_item_model: tp.Callable[..., MSBModel]
+    new_player_model: tp.Callable[..., MSBModel]
+    new_collision_model: tp.Callable[..., MSBModel]
+    new_navmesh_model: tp.Callable[..., MSBModel]
+    new_other_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Other)

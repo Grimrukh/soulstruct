@@ -1,69 +1,84 @@
 from __future__ import annotations
 
+__all__ = [
+    "MSBPart",
+    "MSBMapPiece",
+    "MSBObject",
+    "MSBCharacter",
+    "MSBPlayerStart",
+    "MSBCollision",
+    "MSBNavmesh",
+    "MSBUnusedObject",
+    "MSBUnusedCharacter",
+    "MSBMapConnection",
+    "MSBPartList",
+]
+
 import abc
 import logging
 import typing as tp
 import struct
-from io import BufferedReader, BytesIO
 
 from soulstruct.core import InvalidFieldValueError, SoulstructError
 from soulstruct.game_types import *
-from soulstruct.maps import MapError
+from soulstruct.maps.core import MapError, MapFieldInfo
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
-from soulstruct.utilities import unpack_from_buffer
+from soulstruct.utilities.core import partialmethod, unpack_from_buffer
 from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
 if tp.TYPE_CHECKING:
-    from soulstruct.maps.base.regions import MSBRegion
+    from soulstruct.maps.base.msb import MSB
     from soulstruct.maps.base.events import MSBEnvironmentEvent
-
+    from soulstruct.maps.base.regions import MSBRegion
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
+
+    ENTRY_SUBTYPE: MSBPartSubtype = None
     PART_HEADER_STRUCT: BinaryStruct = None
     PART_BASE_DATA_STRUCT: BinaryStruct = None
-    NAME_ENCODING = ""  # type: str
+    PART_TYPE_DATA_STRUCT: BinaryStruct = None
+    NAME_ENCODING = ""
+    FLAG_SET_SIZE = 128
 
-    PART_TYPE_DATA_STRUCT = ()
+    FIELD_INFO = MSBEntryEntityCoordinates.FIELD_INFO | {
+        "sib_path": MapFieldInfo(
+            "SIB Path",
+            str,
+            "",
+            "Internal path to SIB placeholder file for part.",
+        ),
+        "scale": MapFieldInfo(
+            "Scale",
+            Vector3,
+            Vector3.ones(),
+            "Scale of part. Only works for Map Pieces.",  # TODO: and maybe Objects?
+        ),
+        # Every concrete subclass defines 'model_name', 'draw_groups', and 'display_groups'.
+    }
 
-    ENTRY_SUBTYPE: MSBPartSubtype
+    sib_path: str
+    scale: Vector3
+    model_name: tp.Optional[str]
 
-    def __init__(self, msb_part_source=None, **kwargs):
-        super().__init__()
-        self.sib_path = ""
+    def __init__(self, source=None, **kwargs):
         self._part_type_index = -1
-        self.model_name = None
         self._model_index = -1
-        self.scale = Vector3(1, 1, 1)  # only relevant for MapPiece and Object
-
-        if isinstance(msb_part_source, bytes):
-            msb_part_source = BytesIO(msb_part_source)
-        if isinstance(msb_part_source, (BufferedReader, BytesIO)):
-            self.unpack(msb_part_source)
-        elif msb_part_source is not None:
-            raise TypeError("`msb_part_source` must be a buffer, `bytes`, or `None` (default).")
-
-        self.set(**kwargs)
-
-    @abc.abstractmethod
-    def unpack(self, msb_buffer):
-        """Unpack MSBPart from buffer. Fully defined by each game's MSBPart subclass."""
-
-    @abc.abstractmethod
-    def pack(self) -> bytes:
-        """Pack MSBPart into bytes, presumably as part of a full MSB pack. Fully defined by each game's subclass."""
+        self._draw_groups = set()
+        self._display_groups = set()
+        super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_buffer):
         """This unpacks simple attributes by default, but some Parts need to process these values more."""
-        self.set(**BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False))
+        self.set(**self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False))
 
     def pack_type_data(self):
         try:
-            return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack_from_object(self)
+            return self.PART_TYPE_DATA_STRUCT.pack_from_object(self)
         except struct.error:
             raise SoulstructError(f"Could not pack type data of MSB part '{self.name}'. See traceback.")
 
@@ -113,11 +128,11 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             draw_groups = set(value)
         except (TypeError, ValueError):
             raise TypeError(
-                "Draw groups must be a set, sequence, `None`, 'None', or ''. " "Or use `.draw_groups.add()`, etc.)."
+                "Draw groups must be a set, sequence, `None`, 'None', or ''. Or use `set` methods like `.add()`."
             )
         for i in draw_groups:
-            if not 0 <= i <= 127:
-                raise InvalidFieldValueError(f"Invalid draw group: {i}. Must range from 0 to 127, inclusive.")
+            if not isinstance(i, int) and 0 <= i < self.FLAG_SET_SIZE:
+                raise InvalidFieldValueError(f"Invalid draw group: {i}. Must be 0 <= i < {self.FLAG_SET_SIZE}.")
         self._draw_groups = draw_groups
 
     @property
@@ -134,36 +149,80 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             display_groups = set(value)
         except (TypeError, ValueError):
             raise TypeError(
-                "Display groups must be a set, sequence, `None`, 'None', or ''. "
-                "Or use `.display_groups.add()`, etc.)."
+                "Display groups must be a set, sequence, `None`, 'None', or ''. Or use `set` methods like `.add()`."
             )
         for i in display_groups:
-            if not 0 <= i <= 127:
-                raise ValueError(f"Invalid display group: {i}. Must range from 0 to 127, inclusive.")
+            if not isinstance(i, int) and 0 <= i < self.FLAG_SET_SIZE:
+                raise ValueError(f"Invalid display group: {i}. Must be 0 <= i < {self.FLAG_SET_SIZE}.")
         self._display_groups = display_groups
 
 
 class MSBMapPiece(MSBPart, abc.ABC):
     """Just a textured, visible mesh asset. Does not include any collision."""
 
-    PART_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBPartSubtype.MapPiece
+    PART_TYPE_DATA_STRUCT = BinaryStruct(
         "8x",
     )
 
-    ENTRY_SUBTYPE = MSBPartSubtype.MapPiece
+    FIELD_INFO = {
+        "model_name": MapFieldInfo(
+            "Model Name",
+            MapPieceModel,
+            None,
+            "Name of map piece model to use for this map piece.",
+        ),
+    }
+
+    FIELD_ORDER = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "scale",
+        "draw_groups",
+        "display_groups",
+    )
 
 
 class MSBObject(MSBPart, abc.ABC):
     """Instance of a physical object."""
 
-    PART_TYPE_DATA_STRUCT = ()  # Differs per game.
-
     ENTRY_SUBTYPE = MSBPartSubtype.Object
+    PART_TYPE_DATA_STRUCT: BinaryStruct = None  # Differs per game.
 
-    def __init__(self, msb_part_source=None, **kwargs):
-        self.draw_parent_name = None
-        self._draw_parent_index = None
-        super().__init__(msb_part_source, **kwargs)
+    FIELD_INFO = {
+        "model_name": MapFieldInfo(
+            "Model Name",
+            ObjectModel,
+            None,
+            "Name of object model to use for this object.",
+        ),
+        "draw_parent_name": MapFieldInfo(
+            "Draw Parent",
+            MapPart,
+            None,
+            "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn. Used as "
+            "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set).",
+        ),
+    }
+
+    FIELD_ORDER = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        # "scale",
+        "draw_parent_name",
+        "draw_groups",
+        # "display_groups",
+    )
+
+    draw_parent_name: tp.Optional[str]
+
+    def __init__(self, source=None, **kwargs):
+        self._draw_parent_index = -1
+        super().__init__(source, **kwargs)
 
     def set_indices(
         self,
@@ -196,22 +255,102 @@ class MSBObject(MSBPart, abc.ABC):
 class MSBCharacter(MSBPart, abc.ABC):
     """Physical character instance."""
 
-    PART_TYPE_DATA_STRUCT = ()  # Differs for each game (slightly).
-
     ENTRY_SUBTYPE = MSBPartSubtype.Character
+    PART_TYPE_DATA_STRUCT: BinaryStruct = None  # Differs for each game (slightly).
 
-    def __init__(self, msb_part_source=None, **kwargs):
-        self.think_id = -1
-        self.npc_id = -1
-        self.talk_id = 0
-        self.chara_init_id = -1
-        self.draw_parent_name = None
-        self._draw_parent_index = None
+    FIELD_INFO = {
+        "model_name": MapFieldInfo(
+            "Model Name",
+            CharacterModel,
+            None,
+            "Name of character model to use for this character.",
+        ),
+        "ai_id": MapFieldInfo(
+            "AI ID",
+            AIParam,
+            -1,
+            "Character's AI param ID. If set to -1, the default AI ID from the Character param (below) will be used.",
+        ),
+        "character_id": MapFieldInfo(
+            "Character ID",
+            CharacterParam,
+            -1,
+            "Character's main Character param ID, which contains basic character information. For 'player' characters "
+            "who use model c0000, most of the fields in this param are unused (e.g. health is determined by their "
+            "Vitality stat rather than the HP field in this param).",
+        ),
+        "talk_id": MapFieldInfo(
+            "Talk ID",
+            TalkScript,
+            0,
+            "Talk ID of character, which determines their interactions (conversations, shops, etc.). This is used "
+            "to look up the corresponding 't{talk_id}.esd' file inside the 'talkesdbnd' file for this map.",
+        ),
+        "player_id": MapFieldInfo(
+            "Player ID",
+            PlayerParam,
+            -1,
+            "Player ID of character, which is used to initialize the stats, appearance, equipment, etc. of 'player' "
+            "characters ('NPCs') who use model c0000. Unused (-1) for all other character models.",
+        ),
+        "draw_parent_name": MapFieldInfo(
+            "Draw Parent",
+            MapPart,
+            None,
+            "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn. Used as "
+            "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set).",
+        ),
+        "patrol_region_names": MapFieldInfo(
+            "Patrol Regions",
+            GameObjectSequence((Region, 8)),  # all supported games so far have eight slots
+            [None] * 8,
+            "List of region names that this character will patrol between (if they have standard AI logic).",
+        ),
+        "default_animation": MapFieldInfo(
+            "Default Animation",
+            int,  # TODO: Animation
+            -1,
+            "Default standby animation to loop for character (e.g. sitting, leaning, clutching head in hands).",
+        ),
+        "damage_animation": MapFieldInfo(
+            "Damage Animation",
+            int,  # TODO: Animation
+            -1,
+            "Default damage animation to use for character.",
+        ),
+    }
+
+    FIELD_ORDER = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        # "scale",
+        "draw_parent_name",
+        "draw_groups",
+        # "display_groups",
+        "player_id",
+        "character_id",
+        "ai_id",
+        "talk_id",
+        "patrol_region_names",
+        "default_animation",
+        "damage_animation",
+    )
+
+    ai_id: int
+    character_id: int
+    talk_id: int
+    player_id: int
+    draw_parent_name: tp.Optional[str]
+    default_animation: int
+    damage_animation: int
+
+    def __init__(self, source=None, **kwargs):
+        self._draw_parent_index = -1
         self._patrol_region_names = [None] * 8
         self._patrol_region_indices = [-1] * 8
-        self.default_animation = -1
-        self.damage_animation = -1
-        super().__init__(msb_part_source, **kwargs)
+        super().__init__(source=source, **kwargs)
 
     @property
     def patrol_region_names(self):
@@ -262,18 +401,39 @@ class MSBCharacter(MSBPart, abc.ABC):
 
 
 class MSBPlayerStart(MSBPart, abc.ABC):
-    """Starting point for a player character (e.g. a warp point). No additional data."""
+    """Starting point for the player character (e.g. a warp point). No additional data.
 
-    PART_TYPE_DATA_STRUCT = (
+    Note that these are distinct from Spawn Point events, which are used much more often (e.g. bonfires).
+
+    If the player's position within a given map is lost by the game, they will respawn at the Player Start with entity
+    ID -1.
+    """
+
+    ENTRY_SUBTYPE = MSBPartSubtype.PlayerStart
+    PART_TYPE_DATA_STRUCT = BinaryStruct(
         "16x",
     )
 
-    ENTRY_SUBTYPE = MSBPartSubtype.PlayerStart
+    FIELD_INFO = {
+        "model_name": MapFieldInfo(
+            "Model Name",
+            CharacterModel,
+            "c0000",
+            "Name of character model to use for this PlayerStart. This should always be c0000.",
+        ),
+    }
 
-    def __init__(self, msb_part_source=None, **kwargs):
-        super().__init__(msb_part_source, **kwargs)
-        if self.model_name is None:
-            self.model_name = "c0000"
+    FIELD_ORDER = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+    )
+
+    def __init__(self, source=None, **kwargs):
+        if source is None:
+            kwargs.setdefault("model_name", "c0000")
+        super().__init__(source=source, **kwargs)
 
 
 class MSBCollision(MSBPart, abc.ABC):
@@ -281,24 +441,134 @@ class MSBCollision(MSBPart, abc.ABC):
 
     ENTRY_SUBTYPE = MSBPartSubtype.Collision
 
-    def __init__(self, msb_part_source=None):
-        self.hit_filter_id = CollisionHitFilter.Normal
-        self.sound_space_type = 0
-        self._environment_event_index = None
-        self.environment_event_name = None
-        self.reflect_plane_height = 0.0
-        self.area_name_id = -1
+    FIELD_INFO = {
+        "display_groups": MapFieldInfo(  # overwrites `MSBPart` definition
+            "Display Groups",
+            list,
+            set(range(MSBPart.FLAG_SET_SIZE)),
+            "Display groups of collision. These display groups will be active when the player is standing on this "
+            "Collision, which will draw any parts with an overlapping draw group.",
+        ),
+        "model_name": MapFieldInfo(
+            "Model Name",
+            CollisionModel,
+            None,
+            "Name of collision model to use for this collision.",
+        ),
+        "hit_filter_id": MapFieldInfo(
+            "Hit Filter ID",
+            CollisionHitFilter,
+            CollisionHitFilter.Normal,
+            "Determines what happens when the player activates this collision (normal physics, killplane, etc.).",
+        ),
+        "sound_space_type": MapFieldInfo(
+            "Sound Space Type",
+            int,  # TODO: document enum
+            0,
+            "Determines how sounds are filtered when player is standing on this collision.",
+        ),
+        "environment_event_name": MapFieldInfo(
+            "Environment Event",
+            EnvironmentEvent,
+            None,
+            "Environment event name in map that determines ambience when standing on this collision.",
+        ),
+        "reflect_plane_height": MapFieldInfo(
+            "Reflect Plane Height",
+            float,
+            0.0,
+            "Vertical height of the reflect plane for this collision.",
+        ),
+        "area_name_id": MapFieldInfo(
+            "Area Name",
+            PlaceName,
+            -1,
+            "Name of area that this collision is in, which determines the area banner that is shown when you step on "
+            "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
+            "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY').",
+        ),
+        "force_area_banner": MapFieldInfo(
+            "Show Area Banner",
+            bool,
+            True,  # necessary because `area_name_id` defaults to -1
+            "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
+            "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
+            "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
+            "different area (a 'silent area transition') and have it enabled for collisions that are further away, "
+            "which produces a 'delayed area banner' effect.\n\n"
+            ""
+            "Do NOT enable this for two adjacent collisions with different area names, or moving back and forth "
+            "between those collisions will build up a huge queue of area banners to display, which can only be cleared "
+            "by restarting the game entirely.",
+        ),
+        "starts_disabled": MapFieldInfo(
+            "Starts Disabled",
+            bool,
+            False,
+            "If True, this collision is disabled on map load and must be manually enabled with an event script.",
+        ),
+        "attached_bonfire": MapFieldInfo(
+            "Attached Bonfire",
+            int,
+            -1,
+            "If this is set to a bonfire entity ID, that bonfire will be unusable if any living enemy characters are "
+            "on this collision. Note that this also checks for enemies that are disabled by events.",
+        ),
+        "play_region_id": MapFieldInfo(
+            "Play Region ID",
+            int,
+            0,
+            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of. If set to 0 (default), no "
+            "multiplayer activity can occur while the player is on this collision.\n\n"
+            ""
+            "NOTE: This field shares space with Stable Footing Flag, so only one of them can be set to a non-zero "
+            "value per collision.",
+        ),
+        "stable_footing_flag": MapFieldInfo(
+            "Stable Footing Flag",
+            int,
+            0,
+            "This flag must be enabled for the player's stable footing (i.e. last saved position) to be updated while "
+            "standing on this collision. This is used to prevent players loading inside boss arenas before the boss is "
+            "defeated. If set to 0 (default), stable footing is ALWAYS updated here. If set to -1, stable footing is "
+            "NEVER updated here.\n\n"
+            ""
+            "NOTE: This field shares space with Play Region ID, so only one of them can be set to a non-zero value "
+            "per collision.",
+        ),
+        "camera_1_id": MapFieldInfo(
+            "Camera Param ID 1",
+            CameraParam,
+            -1,
+            "First camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+        "camera_2_id": MapFieldInfo(
+            "Camera Param ID 2",
+            CameraParam,
+            -1,
+            "Second camera ID to use on this collision. Unsure how the two slots differ.",
+        ),
+    }
+
+    hit_filter_id: CollisionHitFilter
+    sound_space_type: int
+    environment_event_name: tp.Optional[str]
+    reflect_plane_height: float
+    area_name_id: int
+    starts_disabled: bool
+    attached_bonfire: int
+    camera_1_id: int
+    camera_2_id: int
+
+    def __init__(self, source=None, **kwargs):
+        self._environment_event_index = -1
         self._force_area_banner = False  # Custom field (see property).
-        self.starts_disabled = False
-        self.attached_bonfire = -1
         self._play_region_id = 0
         self._stable_footing_flag = 0
-        self.lock_cam_param_id_1 = -1
-        self.lock_cam_param_id_2 = -1
-        super().__init__(msb_part_source)
+        super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer, include_asserted=False)
+        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False)
         self.set(**data)
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
         self._force_area_banner = data["__area_name_id"] < 0  # Custom field.
@@ -391,18 +661,40 @@ class MSBCollision(MSBPart, abc.ABC):
 
 
 class MSBNavmesh(MSBPart, abc.ABC):
-    """AI navigation mesh ('navmesh'). Often called 'navimesh' in the game files."""
+    """AI navigation mesh ('navmesh'). Often called 'navimesh' in the game files.
+
+    Note that these are distinct from 'Navigation' events, which define regions that highlight part of these physical
+    navmeshes that can have their state controlled in EMEVD.
+    """
 
     ENTRY_SUBTYPE = MSBPartSubtype.Navmesh
+
+    FIELD_INFO = {
+        "model_name": MapFieldInfo(
+            "Model Name",
+            NavmeshModel,
+            None,
+            "Name of navmesh model to use for this navmesh.",
+        ),
+    }
+
+    FIELD_ORDER = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+    )
 
 
 class MSBUnusedObject(MSBObject, abc.ABC):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
+
     ENTRY_SUBTYPE = MSBPartSubtype.UnusedObject
 
 
 class MSBUnusedCharacter(MSBCharacter, abc.ABC):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
+
     ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
 
 
@@ -416,26 +708,56 @@ class MSBMapConnection(MSBPart, abc.ABC):
     Uses collision models, and almost always has the same model as the linked `MSBCollision`.
     """
 
-    PART_TYPE_DATA_STRUCT = (
+    ENTRY_SUBTYPE = MSBPartSubtype.MapConnection
+    PART_TYPE_DATA_STRUCT = BinaryStruct(
         ("collision_index", "i"),
         ("map_id", "4b"),
         "8x",
     )
+    GET_MAP: tp.Callable[..., Map] = None
 
-    GET_MAP = None  # type: tp.Callable
-    DEFAULT_MAP = (0, 0, 0, 0)
+    FIELD_INFO = {
+        "model_name": MapFieldInfo(
+            "Collision Model Name",
+            CollisionModel,
+            None,
+            "Name of collision model to use for this map load trigger.",
+        ),
+        "collision_name": MapFieldInfo(
+            "Collision Part Name",
+            Collision,
+            None,
+            "Collision part that triggers this map load.",
+        ),
+        # 'connected_map' field is defined in subclass so proper default map can be specified.
+    }
 
-    ENTRY_SUBTYPE = MSBPartSubtype.MapConnection
+    FIELD_ORDER = (
+        "model_name",
+        "entity_id",
+        "translate",
+        "rotate",
+        "draw_groups",
+        "display_groups",
+        "collision_name",
+        "connected_map",
+    )
+
+    collision_name: tp.Optional[str]
+
+    def __init__(self, source=None, **kwargs):
+        self._collision_index = -1
+        self._connected_map = None
+        super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = BinaryStruct(*self.PART_TYPE_DATA_STRUCT).unpack(msb_buffer)
-        self.collision_name = None
+        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer)
         self._collision_index = data["collision_index"]
         area_id, block_id, _, _ = data["map_id"]
         self._connected_map = self.GET_MAP(area_id, block_id)
 
     def pack_type_data(self):
-        return BinaryStruct(*self.PART_TYPE_DATA_STRUCT).pack(
+        return self.PART_TYPE_DATA_STRUCT.pack(
             collision_index=self._collision_index,
             map_id=self._connected_map.map_load_tuple,  # note use of EMEVD file stem
         )
@@ -479,12 +801,11 @@ class MSBMapConnection(MSBPart, abc.ABC):
 class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
     ENTRY_LIST_NAME = "Parts"
     ENTRY_SUBTYPE_ENUM = MSBPartSubtype
-
-    PART_SUBTYPE_CLASSES = {}  # type: dict[MSBPartSubtype, tp.Type[MSBPart]]
-    PART_SUBTYPE_OFFSET = -1  # type: int
+    SUBTYPE_CLASSES: dict[MSBPartSubtype, tp.Type[MSBPart]] = {}
+    SUBTYPE_OFFSET = -1  # type: int
     GET_MAP = None  # type: tp.Callable
 
-    _entries: tp.List[MSBPart]
+    _entries: list[MSBPart]
 
     MapPieces: tp.Sequence[MSBMapPiece]
     Objects: tp.Sequence[MSBObject]
@@ -495,6 +816,17 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
     UnusedObjects: tp.Sequence[MSBUnusedObject]
     UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
     MapConnections: tp.Sequence[MSBMapConnection]
+
+    new = MSBEntryList.new
+    new_map_piece: tp.Callable[..., MSBMapPiece] = partialmethod(new, MSBPartSubtype.MapPiece)
+    new_object: tp.Callable[..., MSBObject] = partialmethod(new, MSBPartSubtype.Object)
+    new_character: tp.Callable[..., MSBCharacter] = partialmethod(new, MSBPartSubtype.Character)
+    new_player_start: tp.Callable[..., MSBPlayerStart] = partialmethod(new, MSBPartSubtype.PlayerStart)
+    new_collision: tp.Callable[..., MSBCollision] = partialmethod(new, MSBPartSubtype.Collision)
+    new_navmesh: tp.Callable[..., MSBNavmesh] = partialmethod(new, MSBPartSubtype.Navmesh)
+    new_unused_object: tp.Callable[..., MSBUnusedObject] = partialmethod(new, MSBPartSubtype.UnusedObject)
+    new_unused_character: tp.Callable[..., MSBUnusedCharacter] = partialmethod(new, MSBPartSubtype.UnusedCharacter)
+    new_map_connection: tp.Callable[..., MSBMapConnection] = partialmethod(new, MSBPartSubtype.MapConnection)
 
     def pack_entry(self, index: int, entry: MSBPart):
         return entry.pack()
@@ -546,111 +878,43 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
             instance_counts[entry.model_name] += 1
         return instance_counts
 
-    def duplicate_map_piece(
-        self, map_piece_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBMapPiece:
-        return self.duplicate_entry(MSBPartSubtype.MapPiece, map_piece_name_or_index, insert_below_original, **kwargs)
+    # ------------------------------------- #
+    # Additional special creation functions #
+    # ------------------------------------- #
 
-    def add_map_piece(self, **kwargs):
-        map_piece = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.MapPiece](msb_part_source=None, **kwargs)
-        return self.add_entry(map_piece, append_to_entry_subtype=MSBPartSubtype.MapPiece)
-
-    def duplicate_object(
-        self, object_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBObject:
-        return self.duplicate_entry(MSBPartSubtype.Object, object_name_or_index, insert_below_original, **kwargs)
-
-    def add_object(self, **kwargs):
-        obj = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.Object](msb_part_source=None, **kwargs)
-        return self.add_entry(obj, append_to_entry_subtype=MSBPartSubtype.Object)
-
-    def duplicate_character(
-        self, character_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBObject:
-        return self.duplicate_entry(MSBPartSubtype.Character, character_name_or_index, insert_below_original, **kwargs)
-
-    def add_character(self, **kwargs):
-        character = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.Character](msb_part_source=None, **kwargs)
-        return self.add_entry(character, append_to_entry_subtype=MSBPartSubtype.Character)
-
-    def duplicate_player_start(
-        self, player_start_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBPlayerStart:
-        return self.duplicate_entry(
-            MSBPartSubtype.PlayerStart, player_start_name_or_index, insert_below_original, **kwargs,
-        )
-
-    def add_player_start(self, **kwargs):
-        player_start = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.PlayerStart](msb_part_source=None, **kwargs)
-        return self.add_entry(player_start, append_to_entry_subtype=MSBPartSubtype.PlayerStart)
-
-    def duplicate_collision(
-        self, collision_name_or_index, duplicate_env_event_from_msb=None, insert_below_original=True, **kwargs,
+    def duplicate_collision_with_environment_event(
+        self, collision, msb: MSB, insert_below_original=True, **kwargs,
     ) -> MSBCollision:
-        """Duplicate a Collision and optionally (if able) duplicate the attached `MSBEnvironment` instance and its
-        region."""
-        new_collision = self.duplicate_entry(
-            MSBPartSubtype.Collision, collision_name_or_index, insert_below_original=insert_below_original, **kwargs,
-        )  # type: MSBCollision
-        if duplicate_env_event_from_msb and new_collision.environment_event_name:
-            if "name" not in kwargs:
-                raise ValueError(f"Must pass `name` to duplication call to duplicate attached environment event.")
-            msb = duplicate_env_event_from_msb
-            try:
-                environment_event = msb.events.get_entry_by_name(
-                    new_collision.environment_event_name, "Environment",
-                )  # type: MSBEnvironmentEvent
-            except KeyError:
-                raise KeyError(f"Could not find environment event '{new_collision.environment_event_name}' in MSB.")
-            if not environment_event.base_region_name:
-                raise AttributeError(f"Environment event '{environment_event.name}' has no anchor Region.")
-            try:
-                environment_region = msb.regions.get_entry_by_name(
-                    environment_event.base_region_name,
-                )  # type: MSBRegion
-            except KeyError:
-                raise KeyError(f"Could not find environment region '{environment_event.base_region_name}' in MSB.")
-            new_region = msb.regions.duplicate_entry(environment_region, name=f"GI Region ({kwargs['name']})")
-            new_event = msb.events.duplicate_entry(environment_event, name=f"GI Event ({kwargs['name']})")
-            new_event.base_region_name = new_region.name
-            new_collision.environment_event_name = new_event.name
+        """Duplicate a Collision and any attached `MSBEnvironment` instance and its region."""
+        if "name" not in kwargs:
+            raise ValueError(f"Must pass `name` to Collision duplication call to duplicate attached environment event.")
+        new_collision = self.new_collision(
+            copy_from=collision, insert_below_original=insert_below_original, **kwargs,
+        )
+        if new_collision.environment_event_name is None:
+            return new_collision
+
+        try:
+            environment_event: MSBEnvironmentEvent = msb.events.get_entry_by_name(
+                new_collision.environment_event_name, "Environment",
+            )
+        except KeyError:
+            raise KeyError(f"Could not find environment event '{new_collision.environment_event_name}' in MSB.")
+        if not environment_event.base_region_name:
+            raise AttributeError(f"Environment event '{environment_event.name}' has no anchor Region.")
+        try:
+            environment_region: MSBRegion = msb.regions.get_entry_by_name(environment_event.base_region_name)
+        except KeyError:
+            raise KeyError(f"Could not find environment region '{environment_event.base_region_name}' in MSB.")
+        new_region = msb.regions.duplicate_entry(environment_region, name=f"GI Region ({kwargs['name']})")
+        new_event = msb.events.duplicate_entry(environment_event, name=f"GI Event ({kwargs['name']})")
+        new_event.base_region_name = new_region.name
+        new_collision.environment_event_name = new_event.name
         return new_collision
 
-    def add_collision(self, **kwargs):
-        collision = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.Collision](msb_part_source=None, **kwargs)
-        return self.add_entry(collision, append_to_entry_subtype=MSBPartSubtype.Collision)
-
-    def duplicate_navmesh(
-        self, navmesh_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBNavmesh:
-        return self.duplicate_entry(MSBPartSubtype.Navmesh, navmesh_name_or_index, insert_below_original, **kwargs)
-
-    def add_navmesh(self, **kwargs):
-        navmesh = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.Navmesh](msb_part_source=None, **kwargs)
-        return self.add_entry(navmesh, append_to_entry_subtype=MSBPartSubtype.Navmesh)
-
-    def duplicate_unused_object(
-            self, object_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBUnusedObject:
-        return self.duplicate_entry(
-            MSBPartSubtype.UnusedObject, object_name_or_index, insert_below_original, **kwargs,
-        )
-
-    def duplicate_unused_character(
-        self, character_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBUnusedCharacter:
-        return self.duplicate_entry(
-            MSBPartSubtype.UnusedCharacter, character_name_or_index, insert_below_original, **kwargs,
-        )
-
-    def duplicate_map_connection(
-            self, trigger_name_or_index, insert_below_original=True, **kwargs,
-    ) -> MSBMapConnection:
-        return self.duplicate_entry(
-            MSBPartSubtype.MapConnection, trigger_name_or_index, insert_below_original, **kwargs,
-        )
-
-    def create_map_connection(self, collision, connected_map, name=None, draw_groups=None, display_groups=None):
+    def create_map_connection_from_collision(
+        self, collision, connected_map, name=None, draw_groups=None, display_groups=None
+    ):
         """Creates a new `MapConnection` that references and copies the transform of the given `collision`.
 
         The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
@@ -663,7 +927,7 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
         if name in self.get_entry_names("MapConnection"):
             raise ValueError(f"{repr(name)} is already the name of an existing MapConnection.")
-        map_connection = self.PART_SUBTYPE_CLASSES[MSBPartSubtype.MapConnection](
+        map_connection = self.SUBTYPE_CLASSES[MSBPartSubtype.MapConnection](
             name=name,
             connected_map=connected_map,
             collision_name=collision.name,
@@ -672,37 +936,16 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
             scale=collision.scale.copy(),  # for completion's sake
             model_name=collision.model_name,
         )
-        if draw_groups is not None:
+        if draw_groups is not None:  # otherwise keep same draw groups
             map_connection.draw_groups = draw_groups
-        if display_groups is not None:
+        if display_groups is not None:  # otherwise keep same display groups
             map_connection.display_groups = display_groups
-        self.add_entry(map_connection, append_to_entry_subtype="MapConnection")
+        self.add_entry(map_connection)
         return map_connection
 
-    def add_c1000(self, name, **kwargs) -> MSBCharacter:
+    def new_c1000(self, name, **kwargs) -> MSBCharacter:
         """Useful to create basic c1000 instances as debug warp points."""
-        return self.add_character(
-            name=name,
-            model_name="c1000",
-            **kwargs,
-        )
-
-    def get_subtype_instance(self, entry_subtype, **kwargs):
-        entry_subtype = self.resolve_entry_subtype(entry_subtype)
-        entry_class = self.PART_SUBTYPE_CLASSES[entry_subtype]
-        return entry_class(msb_part_source=None, **kwargs)
-
-    @classmethod
-    def MSBPart(cls, msb_buffer):
-        """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
-        part_type_int = unpack_from_buffer(msb_buffer, "i", offset=cls.PART_SUBTYPE_OFFSET, relative_offset=True)[0]
-        try:
-            part_type = MSBPartSubtype(part_type_int)
-        except ValueError:
-            raise MapError(f"Part has invalid subtype: {part_type_int}")
-        return cls.PART_SUBTYPE_CLASSES[part_type](msb_buffer)
-
-    ENTRY_CLASS = MSBPart
+        return self.new_character(name=name, model_name="c1000", **kwargs)
 
 
 for _entry_subtype in MSBPartSubtype:

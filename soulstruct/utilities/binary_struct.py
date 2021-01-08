@@ -5,6 +5,7 @@ import struct
 import typing as tp
 
 from soulstruct.utilities import read_chars_from_bytes, AttributeDict
+from soulstruct.utilities.maths import Vector3
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ class BinaryStruct:
                 return value.encode(encoding=self.encoding)
             elif isinstance(value, str):
                 return value.encode()  # use default UTF-8 encoding to convert string to bytes
-            elif isinstance(value, (list, tuple)):
+            elif isinstance(value, (list, tuple, Vector3)):
                 return [self.parse_for_pack(v) for v in value]  # recur on each element
             else:
                 return value
@@ -246,7 +247,7 @@ class BinaryStruct:
             source.seek(old_offset)
         return output
 
-    def unpack_count(self, source, count, include_asserted=True, offset: int = None) -> tp.List[AttributeDict]:
+    def unpack_count(self, source, count, include_asserted=True, offset: int = None) -> list[AttributeDict]:
         """Unpack `count` identical structs from `source`. See `unpack()` for more.
 
         Args:
@@ -324,7 +325,7 @@ class BinaryStruct:
                 struct_dict[field.name] = getattr(obj, field.name)
             except AttributeError:
                 if not field.asserted:
-                    raise AttributeDict(
+                    raise AttributeError(
                         f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack."
                     )
         try:

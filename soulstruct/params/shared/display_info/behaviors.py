@@ -65,7 +65,7 @@ BEHAVIOR_PARAM_ST = {
         ),
         FieldDisplayInfo("pad0[2]", "Pad1", False, pad_field(2), "Null padding."),
         DynamicBehaviorRef("refId", "refType"),
-        FieldDisplayInfo("sfxVariationId", "FXVariationID", True, int, "Visual effect ID."),
+        FieldDisplayInfo("sfxVariationId", "VFXVariationID", True, int, "Visual effect ID."),
         FieldDisplayInfo("stamina", "StaminaCost", True, int, "Stamina cost of behavior."),
         FieldDisplayInfo("mp", "DurabilityCost", True, int, "Weapon/shield durability cost of behavior."),
         FieldDisplayInfo(

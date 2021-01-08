@@ -59,7 +59,7 @@ class LightingEditor(BaseFieldEditor):
     FIELD_ROW_COUNT = 45  # highest count (AmbientLight)
 
     ENTRY_ROW_CLASS = LightingEntryRow
-    entries: tp.List[LightingEntryRow]
+    entries: list[LightingEntryRow]
 
     def __init__(self, lighting: DrawParamDirectory, linker, master=None, toplevel=False):
         self.lighting = lighting

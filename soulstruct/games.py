@@ -110,6 +110,7 @@ DARK_SOULS_DSR = Game(
     default_game_path=DSR_PATH,
     save_file_path=Path("~/Documents/NBGI/DARK SOULS REMASTERED").expanduser(),
     executable_name="DarkSoulsRemastered.exe",
+    gadget_name="DSR-Gadget.exe",
     default_file_paths={
         "AIDirectory": "script",
         "DrawParamDirectory": "param/DrawParam",

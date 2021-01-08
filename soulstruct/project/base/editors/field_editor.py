@@ -462,7 +462,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
     FIELD_VALUE_FG_DEFAULT = "#777"
 
     FIELD_ROW_CLASS = FieldRow
-    field_rows: tp.List[FieldRow]
+    field_rows: list[FieldRow]
 
     def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
         if self.FIELD_ROW_COUNT == 0:

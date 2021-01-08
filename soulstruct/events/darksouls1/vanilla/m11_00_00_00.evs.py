@@ -79,11 +79,11 @@ def Constructor():
     RunEvent(11105371)
     DisableSoundEvent(1103800)
     DisableObject(1101992)
-    DeleteFX(1101993, erase_root_only=False)
+    DeleteVFX(1101993, erase_root_only=False)
     SkipLinesIfFlagOff(4, 4)
     RunEvent(11105392)
     DisableObject(1101990)
-    DeleteFX(1101991, erase_root_only=False)
+    DeleteVFX(1101991, erase_root_only=False)
     SkipLines(10)
     RunEvent(11105390)
     RunEvent(11105391)
@@ -126,7 +126,7 @@ def Event11100090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11100090: Event 11100090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1,
@@ -153,7 +153,7 @@ def Event11100090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -355,7 +355,7 @@ def Event11100000():
     Kill(1100161, award_souls=False)
     DisableBackread(1100161)
     DisableObject(1101990)
-    DeleteFX(1101991, erase_root_only=True)
+    DeleteVFX(1101991, erase_root_only=True)
 
 
 def Event11105394():
@@ -624,12 +624,12 @@ def Event11100070(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     End()
     DisableTreasure(arg_4_7)
     SkipLinesIfClient(1)
-    CreateObjectFX(99005, obj=arg_4_7, model_point=90)
+    CreateObjectVFX(99005, obj=arg_4_7, model_point=90)
     ForceAnimation(arg_4_7, arg_8_11, loop=True)
     IfObjectDestroyed(0, arg_0_3)
     ForceAnimation(arg_4_7, arg_12_15, wait_for_completion=True)
     SkipLinesIfClient(1)
-    DeleteObjectFX(arg_4_7, erase_root=True)
+    DeleteObjectVFX(arg_4_7, erase_root=True)
     EnableTreasure(arg_4_7)
 
 
@@ -682,10 +682,10 @@ def Event11100100(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfThisEventSlotOff(4)
     DestroyObject(arg_0_3, slot=1)
     ForceAnimation(arg_0_3, 0)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfObjectDestroyed(0, arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -1368,7 +1368,7 @@ def Event11100532(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableMapPiece(1103100)
     DisableCollision(1103101)
     DisableObject(1101750)
-    DeleteFX(1101751, erase_root_only=False)
+    DeleteVFX(1101751, erase_root_only=False)
     IfFlagOn(0, 11100700)
     DisableFlagRange((arg_4_7, arg_8_11))
     SkipLinesIfFlagOff(2, 8111)
@@ -1379,7 +1379,7 @@ def Event11100532(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableCollision(1103101)
     DisableObject(1101141)
     EnableObject(1101750)
-    CreateFX(1101751)
+    CreateVFX(1101751)
     EnableCharacter(arg_0_3)
     EnableCharacter(arg_20_23)
     SetTeamType(arg_20_23, TeamType.WhitePhantom)
@@ -1509,11 +1509,11 @@ def Event11105846(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     IfUnknownPlayerType5(3)
     IfConditionFalse(2, input_condition=3)
     IfSingleplayer(2)
     IfConditionTrue(0, input_condition=2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Restart()

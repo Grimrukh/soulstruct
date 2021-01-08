@@ -779,7 +779,7 @@ def Event13305171():
     IfConditionTrue(0, input_condition=1)
     EnableCharacter(3300191)
     Wait(1.5)
-    CreateObjectFX(30041, obj=3301170, model_point=0)
+    CreateObjectVFX(30041, obj=3301170, model_point=0)
     Move(
         3300191,
         destination=3300170,
@@ -802,7 +802,7 @@ def Event13305171():
     )
     RestartIfFlagOff(13304179)
     DisplayBattlefieldMessage(2300002, display_location_index=1)
-    DeleteObjectFX(3301170, erase_root=True)
+    DeleteObjectVFX(3301170, erase_root=True)
     DisableCharacter(3300191)
     Wait(5.0)
     SetNetworkConnectedFlagState(flag=13305160, state=FlagState.On)
@@ -823,7 +823,7 @@ def Event13305172():
     SkipLines(1)
     DisplayBattlefieldMessage(10012120, display_location_index=1)
     WaitFrames(1)
-    CreateTemporaryFX(30340, anchor_entity=3300170, anchor_type=CoordEntityType.Character, model_point=236)
+    CreateTemporaryVFX(30340, anchor_entity=3300170, anchor_type=CoordEntityType.Character, model_point=236)
     EnableCharacter(3300170)
     EnableAnimations(3300170)
     SetBackreadStateAlternate(3300170, state=True)
@@ -1320,25 +1320,25 @@ def Event13300412(
 ):
     """ 13300412: Event 13300412 """
     GotoIfThisEventSlotOff(Label.L0)
-    DeleteFX(arg_16_19, erase_root_only=True)
-    DeleteFX(arg_20_23, erase_root_only=True)
-    CreateFX(arg_24_27)
+    DeleteVFX(arg_16_19, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
+    CreateVFX(arg_24_27)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateFX(arg_20_23)
-    DeleteFX(arg_24_27, erase_root_only=True)
-    DeleteObjectFX(arg_12_15, erase_root=False)
+    CreateVFX(arg_20_23)
+    DeleteVFX(arg_24_27, erase_root_only=True)
+    DeleteObjectVFX(arg_12_15, erase_root=False)
     IfPlayerInOwnWorld(1)
     IfActionButtonInRegion(1, action_button_id=9330, region=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=120, short_move=True)
     ForceAnimation(PLAYER, 60380)
     SetNetworkConnectedFlagState(flag=arg_4_7, state=FlagState.On)
-    DeleteFX(arg_20_23, erase_root_only=True)
+    DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(2.4000000953674316)
-    DeleteFX(arg_16_19, erase_root_only=True)
+    DeleteVFX(arg_16_19, erase_root_only=True)
     IfEventValueEqual(-1, arg_0_3, bit_count=2, value=0)
     IfEventValueEqual(-2, arg_0_3, bit_count=2, value=1)
     IfEventValueEqual(-3, arg_0_3, bit_count=2, value=2)
@@ -1404,7 +1404,7 @@ def Event13300412(
     # --- 5 --- #
     DefineLabel(5)
     WaitFrames(1)
-    CreateFX(arg_24_27)
+    CreateVFX(arg_24_27)
     IncrementEventValue(arg_0_3, bit_count=2, max_value=3)
     End()
 
@@ -1432,16 +1432,16 @@ def Event13305470():
     """ 13305470: Event 13305470 """
     EndIfPlayerNotInOwnWorld()
     EndIfThisEventSlotOn()
-    DeleteObjectFX(3301470, erase_root=True)
-    CreateObjectFX(831023, obj=3301470, model_point=200)
-    CreateObjectFX(60, obj=3301470, model_point=200)
+    DeleteObjectVFX(3301470, erase_root=True)
+    CreateObjectVFX(831023, obj=3301470, model_point=200)
+    CreateObjectVFX(60, obj=3301470, model_point=200)
     IfActionButtonInRegion(0, action_button_id=9333, region=3301470)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
-    CreateTemporaryFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
+    CreateTemporaryVFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.c_CharacterMotion, sound_id=999999988)
     AddSpecialEffect(PLAYER, 2005)
-    DeleteObjectFX(3301470, erase_root=True)
+    DeleteObjectVFX(3301470, erase_root=True)
 
 
 @RestartOnRest

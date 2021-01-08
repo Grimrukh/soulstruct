@@ -43,7 +43,7 @@ class ItemLots(ItemLotParam):
     WitchesOfHemwickReward = 21002950
 
 
-class FX(FXEvent):
+class VFX(VFXEvent):
     BossEntryFog = 2203800
     BossExitFog = 2203801
 

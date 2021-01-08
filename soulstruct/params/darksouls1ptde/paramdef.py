@@ -8,6 +8,8 @@ from soulstruct.params.base.paramdef import (
 )
 from soulstruct.utilities.binary_struct import BinaryStruct
 
+from .defaults import DEFAULTS
+
 _BUNDLED = None
 
 
@@ -27,7 +29,14 @@ class ParamDefField(_BaseParamDefField):
         ("name", "32j"),
         ("sort_id", "i"),
     )
-    USES_DEBUG_NAME_OFFSET = False
+
+    def get_default_value(self):
+        v = DEFAULTS[self.param_name].get(self.name, self.default)
+        if self.bit_size == 1 and self.internal_type != "dummy8":
+            return bool(v)
+        elif self.internal_type not in {"f32", "f64"}:
+            return int(v)
+        return v
 
 
 class ParamDef(_BaseParamDef):

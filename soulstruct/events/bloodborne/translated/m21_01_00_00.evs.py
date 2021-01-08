@@ -73,33 +73,33 @@ def GetItemFromStorage():
     """ 12110300: Event 12110300 """
     EndIfThisEventOn()
     EndIfClient()
-    CreateObjectFX(900201, obj=2111100, model_point=200)
+    CreateObjectVFX(900201, obj=2111100, model_point=200)
     IfActionButtonParam(0, action_button_id=2110010, entity=2111100)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110800, host_only=False)
-    DeleteObjectFX(2111100, erase_root=True)
+    DeleteObjectVFX(2111100, erase_root=True)
 
 
 def GetItemFromMemoryAltar():
     """ 12110301: Event 12110301 """
     EndIfThisEventOn()
     EndIfClient()
-    CreateObjectFX(900201, obj=2111101, model_point=200)
+    CreateObjectVFX(900201, obj=2111101, model_point=200)
     IfActionButtonParam(0, action_button_id=2110011, entity=2111101)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110810, host_only=False)
-    DeleteObjectFX(2111101, erase_root=True)
+    DeleteObjectVFX(2111101, erase_root=True)
 
 
 def GetItemFromOldHunterHeadstone():
     """ 12110302: Event 12110302 """
     EndIfThisEventOn()
     EndIfClient()
-    CreateObjectFX(900201, obj=2111102, model_point=200)
+    CreateObjectVFX(900201, obj=2111102, model_point=200)
     IfActionButtonParam(0, action_button_id=2110012, entity=2111102)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110000, host_only=False)
-    DeleteObjectFX(2111102, erase_root=True)
+    DeleteObjectVFX(2111102, erase_root=True)
 
 
 def InitializeMoonPhase():

@@ -580,11 +580,11 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             )
 
         if instruction_index == 24:
-            character, npc_part_id, material_special_effect_id, material_fx_id = req_args
+            character, npc_part_id, material_sfx_id, material_vfx_id = req_args
             character = "PLAYER" if character == 10000 else character
             return (
                 f"SetNPCPartEffects({character}, npc_part_id={npc_part_id}, "
-                f"material_special_effect_id={material_special_effect_id}, material_fx_id={material_fx_id})"
+                f"material_sfx_id={material_sfx_id}, material_vfx_id={material_vfx_id})"
             )
 
         if instruction_index == 25:
@@ -833,29 +833,29 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
     if instruction_class == 2006:  # SFX
 
         if instruction_index == 1:
-            fx_id, erase_root_only = req_args
-            return f"DeleteFX({fx_id}, erase_root_only={boolify(erase_root_only)})"
+            vfx_id, erase_root_only = req_args
+            return f"DeleteVFX({vfx_id}, erase_root_only={boolify(erase_root_only)})"
 
         if instruction_index == 2:
-            (fx_id,) = req_args
-            return f"CreateFX({fx_id})"
+            (vfx_id,) = req_args
+            return f"CreateVFX({vfx_id})"
 
         if instruction_index == 3:
-            anchor_type, anchor_entity_id, model_point, fx_id = req_args
+            anchor_type, anchor_entity_id, model_point, vfx_id = req_args
             anchor_type = get_enum_name(game_module.CoordEntityType, anchor_type, True)
             anchor_entity_id = "PLAYER" if anchor_entity_id == 10000 else anchor_entity_id
             return (
-                f"CreateTemporaryFX({fx_id}, anchor_entity={anchor_entity_id}, "
+                f"CreateTemporaryVFX({vfx_id}, anchor_entity={anchor_entity_id}, "
                 f"anchor_type={anchor_type}, model_point={model_point})"
             )
 
         if instruction_index == 4:
-            obj, model_point, fx_id = req_args
-            return f"CreateObjectFX({fx_id}, obj={obj}, model_point={model_point})"
+            obj, model_point, vfx_id = req_args
+            return f"CreateObjectVFX({vfx_id}, obj={obj}, model_point={model_point})"
 
         if instruction_index == 5:
             obj, erase_root = req_args
-            return f"DeleteObjectFX({obj}, erase_root={boolify(erase_root)})"
+            return f"DeleteObjectVFX({obj}, erase_root={boolify(erase_root)})"
 
     if instruction_class == 2007:  # MESSAGE
 
@@ -943,8 +943,8 @@ def decompile_instruction(game_module, instruction_class, instruction_index, req
             )
 
         if instruction_index == 4:
-            (npc_id,) = req_args
-            return f"ActivateMultiplayerBuffs({npc_id})"
+            (character_id,) = req_args
+            return f"ActivateMultiplayerBuffs({character_id})"
 
         if instruction_index == 6:
             return "NotifyBossBattleStart()"

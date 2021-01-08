@@ -73,7 +73,7 @@ class TextEditor(BaseEditor):
     ENTRY_RANGE_SIZE = 100
 
     ENTRY_ROW_CLASS = TextEntryRow
-    entry_rows: tp.List[TextEntryRow]
+    entry_rows: list[TextEntryRow]
 
     def __init__(self, text: MSGDirectory, linker, master=None, toplevel=False):
         self.Text = text

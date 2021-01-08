@@ -517,7 +517,7 @@ def Constructor():
     RunEvent(13501920, slot=4, args=(13501903, 43820))
     RunEvent(13501920, slot=5, args=(13501905, 43710))
     RunEvent(13501940, slot=0, args=(73500320, 43000))
-    DeleteFX(3503910, erase_root_only=False)
+    DeleteVFX(3503910, erase_root_only=False)
     RunEvent(13504400, slot=0, args=(13504440, 3503910, 13504420, 13504430, 13501850, 6001))
     RunEvent(13504410, slot=0, args=(5, 3500940, 3502920, 13504420, 13504430, 13504440, 13501850, 10564))
     RunEvent(13504450, slot=0, args=(3500940, 3502930, 13504420, 13504430, 13504858))
@@ -744,7 +744,7 @@ def Event13501800():
     DisableCharacter(3500800)
     Kill(3500800, award_souls=False)
     DisableObject(3501800)
-    DeleteFX(3503800, erase_root_only=True)
+    DeleteVFX(3503800, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -752,7 +752,7 @@ def Event13501800():
     IfCharacterDead(0, 3500800)
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(3501800)
-    DeleteFX(3503800, erase_root_only=True)
+    DeleteVFX(3503800, erase_root_only=True)
     SetLockedCameraSlot(game_map=RESEARCH_HALL, camera_slot=0)
     Wait(3.0)
     KillBoss(3500800)
@@ -791,7 +791,7 @@ def Event13501801():
     IfFlagOff(1, 13501800)
     IfThisEventOff(1)
     GotoIfConditionTrue(Label.L5, input_condition=1)
-    DeleteFX(3503820, erase_root_only=False)
+    DeleteVFX(3503820, erase_root_only=False)
     End()
 
     # --- 5 --- #
@@ -799,8 +799,8 @@ def Event13501801():
     DisableCharacter(3500800)
     DisableFlag(13500947)
     IfFlagOn(0, 13500947)
-    DeleteObjectFX(3501905, erase_root=False)
-    DeleteFX(3503820, erase_root_only=False)
+    DeleteObjectVFX(3501905, erase_root=False)
+    DeleteVFX(3503820, erase_root_only=False)
     EnableFlag(9180)
     WaitFrames(1)
     GotoIfFlagOn(Label.L0, 1651)
@@ -868,11 +868,11 @@ def Event13501803():
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
     IfFlagOn(0, 13501800)
-    CreateObjectFX(900201, obj=3501801, model_point=200)
+    CreateObjectVFX(900201, obj=3501801, model_point=200)
     IfActionButtonParam(0, action_button_id=3500911, entity=3501801)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3501800, host_only=False)
-    DeleteObjectFX(3501801, erase_root=True)
+    DeleteObjectVFX(3501801, erase_root=True)
 
 
 def Event13501804():
@@ -931,12 +931,12 @@ def Event13504800():
     GotoIfFlagOn(Label.L0, 13501801)
     SkipLinesIfClient(2)
     DisableObject(3501800)
-    DeleteFX(3503800, erase_root_only=False)
+    DeleteVFX(3503800, erase_root_only=False)
     IfFlagOff(1, 13501800)
     IfFlagOn(1, 13501801)
     IfConditionTrue(0, input_condition=1)
     EnableObject(3501800)
-    CreateFX(3503800)
+    CreateVFX(3503800)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1038,7 +1038,7 @@ def Event13504803():
     DisableSoundEvent(3503802)
     DisableSoundEvent(3503803)
     DisableSoundEvent(3503804)
-    DeleteFX(3503501, erase_root_only=False)
+    DeleteVFX(3503501, erase_root_only=False)
     EndIfFlagOn(13501800)
     GotoIfThisEventOn(Label.L1)
     GotoIfFlagOn(Label.L0, 13504811)
@@ -1062,8 +1062,8 @@ def Event13504803():
     DisableBossMusic(3503802)
     WaitFrames(0)
     EnableBossMusic(3503803)
-    CreateFX(3503501)
-    DeleteFX(3503500, erase_root_only=True)
+    CreateVFX(3503501)
+    DeleteVFX(3503500, erase_root_only=True)
     EnableFlag(13504811)
     IfHasTAEEvent(3, 3500800, tae_event_id=300)
 
@@ -1104,8 +1104,8 @@ def Event13504805():
     DisableBossMusic(3503803)
     DisableBossMusic(3503804)
     DisableBossMusic(-1)
-    CreateFX(3503500)
-    DeleteFX(3503501, erase_root_only=True)
+    CreateVFX(3503500)
+    DeleteVFX(3503501, erase_root_only=True)
 
 
 def Event13504806():
@@ -1152,7 +1152,7 @@ def Event13501850():
     Kill(3500853, award_souls=False)
     Kill(3500854, award_souls=False)
     DisableObject(3501810)
-    DeleteFX(3503810, erase_root_only=True)
+    DeleteVFX(3503810, erase_root_only=True)
     End()
 
     # --- 0 --- #
@@ -1160,7 +1160,7 @@ def Event13501850():
     IfHealthEqual(0, 3500850, 0.0)
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(3501810)
-    DeleteFX(3503810, erase_root_only=True)
+    DeleteVFX(3503810, erase_root_only=True)
     SetLockedCameraSlot(game_map=RESEARCH_HALL, camera_slot=0)
     EnableCollision(3504812)
     DisableCollision(3504814)
@@ -1233,12 +1233,12 @@ def Event13504850():
     GotoIfFlagOn(Label.L0, 13501851)
     SkipLinesIfClient(2)
     DisableObject(3501810)
-    DeleteFX(3503810, erase_root_only=False)
+    DeleteVFX(3503810, erase_root_only=False)
     IfFlagOff(1, 13501850)
     IfFlagOn(1, 13501851)
     IfConditionTrue(0, input_condition=1)
     EnableObject(3501810)
-    CreateFX(3503810)
+    CreateVFX(3503810)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1459,13 +1459,13 @@ def Event13504865():
     IfCharacterHuman(1, PLAYER)
     IfConditionTrue(0, input_condition=1)
     AddSpecialEffect(PLAYER, 8035, affect_npc_part_hp=False)
-    CreateFX(3503854)
+    CreateVFX(3503854)
     EnableFlag(13504866)
     IfFlagOff(0, 13504866)
 
     # --- 0 --- #
     DefineLabel(0)
-    DeleteFX(3503854, erase_root_only=True)
+    DeleteVFX(3503854, erase_root_only=True)
     CancelSpecialEffect(PLAYER, 8035)
     Restart()
 
@@ -1473,11 +1473,11 @@ def Event13504865():
 def Event13504880():
     """ 13504880: Event 13504880 """
     DisableNetworkSync()
-    DeleteFX(3503850, erase_root_only=False)
-    DeleteFX(3503851, erase_root_only=False)
-    DeleteFX(3503852, erase_root_only=False)
-    DeleteFX(3503853, erase_root_only=False)
-    DeleteFX(3503854, erase_root_only=False)
+    DeleteVFX(3503850, erase_root_only=False)
+    DeleteVFX(3503851, erase_root_only=False)
+    DeleteVFX(3503852, erase_root_only=False)
+    DeleteVFX(3503853, erase_root_only=False)
+    DeleteVFX(3503854, erase_root_only=False)
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     GotoIfFlagOn(Label.L0, 13504869)
@@ -2129,12 +2129,12 @@ def Event13501142():
     GotoIfFlagOn(Label.L0, 53502000)
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
-    CreateObjectFX(900201, obj=3501104, model_point=200)
+    CreateObjectVFX(900201, obj=3501104, model_point=200)
     IfFlagOn(0, 53502000)
 
     # --- 0 --- #
     DefineLabel(0)
-    DeleteObjectFX(3501104, erase_root=True)
+    DeleteObjectVFX(3501104, erase_root=True)
 
 
 def Event13501110():
@@ -2664,13 +2664,13 @@ def Event13500111():
     """ 13500111: Event 13500111 """
     DisableNetworkSync()
     GotoIfThisEventOff(Label.L0)
-    DeleteFX(3503120, erase_root_only=False)
+    DeleteVFX(3503120, erase_root_only=False)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     IfEntityWithinDistance(0, PLAYER, 3502120, radius=7.0)
-    DeleteFX(3503120, erase_root_only=True)
+    DeleteVFX(3503120, erase_root_only=True)
 
 
 @RestartOnRest
@@ -3569,7 +3569,7 @@ def Event13500945(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
     EndIfFlagOn(arg_24_27)
-    CreateObjectFX(900201, obj=arg_4_7, model_point=200)
+    CreateObjectVFX(900201, obj=arg_4_7, model_point=200)
     EnableObjectInvulnerability(arg_8_11)
     EnableObject(arg_12_15)
     EnableObjectInvulnerability(arg_12_15)
@@ -3597,7 +3597,7 @@ def Event13500946(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(0, input_condition=1)
     Kill(arg_0_3, award_souls=True)
     IfFlagOn(0, 1650)
-    CreateObjectFX(900201, obj=arg_4_7, model_point=200)
+    CreateObjectVFX(900201, obj=arg_4_7, model_point=200)
 
 
 def Event13500948(_, arg_0_3: int):
@@ -4249,7 +4249,7 @@ def Event13504400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 13504400: Event 13504400 """
     GotoIfFlagOn(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
     IfFlagOff(1, arg_8_11)
     IfFlagOff(1, arg_12_15)
@@ -4266,7 +4266,7 @@ def Event13504400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     EnableFlag(arg_0_3)
-    CreateFX(arg_4_7)
+    CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagOff(2, arg_8_11)
     IfFlagOff(2, arg_12_15)
@@ -4281,7 +4281,7 @@ def Event13504400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionFalse(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
     DisableFlag(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
     Restart()
 
 

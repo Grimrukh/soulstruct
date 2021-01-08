@@ -247,9 +247,10 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             return f"IfCharacterInvadeType({condition}, character={character}, invade_type={invade_type}{target_args})"
 
         if instruction_index == 28:
-            condition, character, chameleon_fx_id, is_transformed = req_args
+            condition, character, chameleon_vfx_id, is_transformed = req_args
             character = "PLAYER" if character == 10000 else character
-            return f"IfCharacterChameleonState({condition}, character={character}, chameleon_fx_id={chameleon_fx_id}, is_transformed={boolify(is_transformed)})"
+            return (f"IfCharacterChameleonState({condition}, character={character}, "
+                    f"chameleon_vfx_id={chameleon_vfx_id}, is_transformed={boolify(is_transformed)})")
 
     if instruction_class == 5:
 
@@ -266,7 +267,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             condition, obj, comparison_type, state, target_comparison_type, target_count = req_args
             comparison_type = get_enum_name(ComparisonType, comparison_type, True)
             target_args = get_target_args(target_comparison_type, target_count)
-            return f"IfObjectBurnState({condition}, obj={obj}, comparison_type={comparison_type}, state={boolify(state)}{target_args})"
+            return (f"IfObjectBurnState({condition}, obj={obj}, comparison_type={comparison_type}, "
+                    f"state={boolify(state)}{target_args})")
 
         if instruction_index == 10:
             condition, obj, state, target_comparison_type, target_count = req_args
@@ -371,10 +373,13 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             label = get_enum_name(Label, label, True)
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
-                return f"GotoIfCharacterHasSpecialEffect({label}, character={character}, special_effect={special_effect}{target_args})"
+                return (f"GotoIfCharacterHasSpecialEffect({label}, character={character}, "
+                        f"special_effect={special_effect}{target_args})")
             elif state == 0:
-                return f"GotoIfCharacterDoesNotHaveSpecialEffect({label}, character={character}, special_effect={special_effect}{target_args})"
-            return f"GotoIfCharacterSpecialEffectState({label}, character={character}, special_effect={special_effect}, state={state}{target_args})"
+                return (f"GotoIfCharacterDoesNotHaveSpecialEffect({label}, character={character}, "
+                        f"special_effect={special_effect}{target_args})")
+            return (f"GotoIfCharacterSpecialEffectState({label}, character={character}, "
+                    f"special_effect={special_effect}, state={state}{target_args})")
 
         if instruction_index == 12:
             label, not_in_own_world = req_args
@@ -405,7 +410,8 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             line_count, client_type, comparison_type, value = req_args
             client_type = get_enum_name(ClientType, client_type, True)
             comparison_type = get_enum_name(ComparisonType, comparison_type, True)
-            return f"SkipLinesIfClientTypeCountComparison({line_count}, client_type={client_type}, comparison_type={comparison_type}, value={value})"
+            return (f"SkipLinesIfClientTypeCountComparison({line_count}, client_type={client_type}, "
+                    f"comparison_type={comparison_type}, value={value})")
 
         if instruction_index == 15:
             label, client_type, comparison_type, value = req_args
@@ -490,25 +496,33 @@ def decompile_instruction(instruction_class, instruction_index, req_args, game_m
             target_args = get_target_args(target_comparison_type, target_count)
             if event_end_type == EventEndType.End:
                 if state == 1:
-                    return f"EndIfCharacterHasSpecialEffect(character={character}, special_effect={special_effect}{target_args})"
+                    return (f"EndIfCharacterHasSpecialEffect(character={character}, "
+                            f"special_effect={special_effect}{target_args})")
                 elif state == 0:
-                    return f"EndIfCharacterDoesNotHaveSpecialEffect(character={character}, special_effect={special_effect}{target_args})"
+                    return (f"EndIfCharacterDoesNotHaveSpecialEffect(character={character}, "
+                            f"special_effect={special_effect}{target_args})")
             elif event_end_type == EventEndType.Restart:
                 if state == 1:
-                    return f"RestartIfCharacterHasSpecialEffect(character={character}, special_effect={special_effect}{target_args})"
+                    return (f"RestartIfCharacterHasSpecialEffect(character={character}, "
+                            f"special_effect={special_effect}{target_args})")
                 elif state == 0:
-                    return f"RestartIfCharacterDoesNotHaveSpecialEffect(character={character}, special_effect={special_effect}{target_args})"
-            return f"TerminateIfCharacterSpecialEffectState(event_end_type={event_end_type}, character={character}, special_effect={special_effect}, state={state}{target_args})"
+                    return (f"RestartIfCharacterDoesNotHaveSpecialEffect(character={character}, "
+                            f"special_effect={special_effect}{target_args})")
+            return (f"TerminateIfCharacterSpecialEffectState(event_end_type={event_end_type}, character={character}, "
+                    f"special_effect={special_effect}, state={state}{target_args})")
 
         if instruction_index == 112:
             line_count, character, special_effect, state, target_comparison_type, target_count = req_args
             character = "PLAYER" if character == 10000 else character
             target_args = get_target_args(target_comparison_type, target_count)
             if state == 1:
-                return f"SkipLinesIfCharacterHasSpecialEffect({line_count}, character={character}, special_effect={special_effect}{target_args})"
+                return (f"SkipLinesIfCharacterHasSpecialEffect({line_count}, character={character}, "
+                        f"special_effect={special_effect}{target_args})")
             elif state == 0:
-                return f"SkipLinesIfCharacterDoesNotHaveSpecialEffect({line_count}, character={character}, special_effect={special_effect}{target_args})"
-            return f"SkipLinesIfCharacterSpecialEffectState({line_count}, character={character}, special_effect={special_effect}, state={state}{target_args})"
+                return (f"SkipLinesIfCharacterDoesNotHaveSpecialEffect({line_count}, character={character}, "
+                        f"special_effect={special_effect}{target_args})")
+            return (f"SkipLinesIfCharacterSpecialEffectState({line_count}, character={character}, "
+                    f"special_effect={special_effect}, state={state}{target_args})")
 
         if instruction_index == 200:
             label, state, character, region, min_target_count = req_args

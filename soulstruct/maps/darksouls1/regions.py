@@ -1,4 +1,19 @@
+from __future__ import annotations
+
+__all__ = [
+    "MSBRegion",
+    "MSBRegionPoint",
+    "MSBRegionCircle",
+    "MSBRegionCylinder",
+    "MSBRegionSphere",
+    "MSBRegionRect",
+    "MSBRegionBox",
+    "MSBRegionList",
+]
+
 import abc
+import typing as tp
+
 from soulstruct.maps.base.regions import (
     MSBRegion as _BaseMSBRegion,
     MSBRegionPoint as _BaseMSBRegionPoint,
@@ -30,7 +45,6 @@ class MSBRegion(_BaseMSBRegion, abc.ABC):
         ("entity_id_offset", "i"),
         "4x",
     )
-
     NAME_ENCODING = "shift_jis_2004"
     UNKNOWN_DATA_SIZE = 4
 
@@ -60,7 +74,7 @@ class MSBRegionBox(_BaseMSBRegionBox, MSBRegion):
 
 
 class MSBRegionList(_BaseMSBRegionList, MSBEntryList):
-    REGION_SUBTYPE_CLASSES = {
+    SUBTYPE_CLASSES = {
         MSBRegionSubtype.Point: MSBRegionPoint,
         MSBRegionSubtype.Circle: MSBRegionCircle,
         MSBRegionSubtype.Sphere: MSBRegionSphere,
@@ -68,12 +82,20 @@ class MSBRegionList(_BaseMSBRegionList, MSBEntryList):
         MSBRegionSubtype.Rect: MSBRegionRect,
         MSBRegionSubtype.Box: MSBRegionBox,
     }
-    REGION_SUBTYPE_OFFSET = 12
+    SUBTYPE_OFFSET = 12
 
+    _entries: list[MSBRegion]
 
-for _entry_subtype in MSBRegionSubtype:
-    setattr(
-        MSBRegionList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    Points: tp.Sequence[MSBRegionPoint]
+    Circles: tp.Sequence[MSBRegionCircle]
+    Spheres: tp.Sequence[MSBRegionSphere]
+    Cylinders: tp.Sequence[MSBRegionCylinder]
+    Rectangles: tp.Sequence[MSBRegionRect]
+    Boxes: tp.Sequence[MSBRegionBox]
+
+    new_point: tp.Callable[..., MSBRegionPoint]
+    new_circle: tp.Callable[..., MSBRegionCircle]
+    new_sphere: tp.Callable[..., MSBRegionSphere]
+    new_cylinder: tp.Callable[..., MSBRegionCylinder]
+    new_rect: tp.Callable[..., MSBRegionRect]
+    new_box: tp.Callable[..., MSBRegionBox]

@@ -7,7 +7,6 @@ from soulstruct.esd.darksouls1ptde import TalkDirectory
 from soulstruct.events.darksouls1 import EMEVDDirectoryPTDE
 from soulstruct.games import DARK_SOULS_PTDE
 from soulstruct.maps.darksouls1 import MapStudioDirectory
-from soulstruct.maps.darksouls1.maps import ALL_MAPS, get_map
 from soulstruct.params.darksouls1r.core import GameParamBND
 from soulstruct.params.darksouls1r.draw_param import DrawParamDirectory
 from soulstruct.project.base.core import GameDirectoryProject as _BaseGameDirectoryProject
@@ -29,8 +28,6 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         "talk": TalkDirectory,
         "text": MSGDirectory,
     }
-    ALL_MAPS = ALL_MAPS
-    GET_MAP = staticmethod(get_map)
 
     def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None):
         self._check_ptde_unpacked()

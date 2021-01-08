@@ -17,29 +17,29 @@ def Constructor():
     EnableNavmeshType(1013100, NavmeshType.Solid)
     SkipLinesIfClient(24)
     DisableObject(1011994)
-    DeleteFX(1011995, erase_root_only=False)
+    DeleteVFX(1011995, erase_root_only=False)
     DisableObject(1011996)
-    DeleteFX(1011997, erase_root_only=False)
+    DeleteVFX(1011997, erase_root_only=False)
     DisableObject(1011998)
-    DeleteFX(1011999, erase_root_only=False)
+    DeleteVFX(1011999, erase_root_only=False)
     DisableObject(1011988)
-    DeleteFX(1011989, erase_root_only=False)
+    DeleteVFX(1011989, erase_root_only=False)
     DisableObject(1011986)
-    DeleteFX(1011987, erase_root_only=False)
+    DeleteVFX(1011987, erase_root_only=False)
     DisableObject(1011984)
-    DeleteFX(1011985, erase_root_only=False)
+    DeleteVFX(1011985, erase_root_only=False)
     DisableObject(1011982)
-    DeleteFX(1011983, erase_root_only=False)
+    DeleteVFX(1011983, erase_root_only=False)
     DisableObject(1011980)
-    DeleteFX(1011981, erase_root_only=False)
+    DeleteVFX(1011981, erase_root_only=False)
     DisableObject(1011978)
-    DeleteFX(1011979, erase_root_only=False)
+    DeleteVFX(1011979, erase_root_only=False)
     DisableObject(1011976)
-    DeleteFX(1011977, erase_root_only=False)
+    DeleteVFX(1011977, erase_root_only=False)
     DisableObject(1011974)
-    DeleteFX(1011975, erase_root_only=False)
+    DeleteVFX(1011975, erase_root_only=False)
     DisableObject(1011972)
-    DeleteFX(1011973, erase_root_only=False)
+    DeleteVFX(1011973, erase_root_only=False)
     RunEvent(11010090, slot=0, args=(1011700, 1011701, 1012600, 1012601))
     RunEvent(11010090, slot=1, args=(1011702, 1011703, 1012602, 1012603))
     RunEvent(11015070)
@@ -85,9 +85,9 @@ def Constructor():
     SkipLinesIfFlagOff(6, 3)
     RunEvent(11015392)
     DisableObject(1011990)
-    DeleteFX(1011991, erase_root_only=False)
+    DeleteVFX(1011991, erase_root_only=False)
     DisableObject(1011992)
-    DeleteFX(1011993, erase_root_only=False)
+    DeleteVFX(1011993, erase_root_only=False)
     SkipLines(11)
     RunEvent(11010000)
     RunEvent(11015390)
@@ -106,9 +106,9 @@ def Constructor():
     SkipLinesIfFlagOff(6, 11010901)
     RunEvent(11010901)
     DisableObject(1011890)
-    DeleteFX(1011891, erase_root_only=False)
+    DeleteVFX(1011891, erase_root_only=False)
     DisableObject(1011892)
-    DeleteFX(1011893, erase_root_only=False)
+    DeleteVFX(1011893, erase_root_only=False)
     SkipLines(8)
     RunEvent(11015380)
     RunEvent(11015381)
@@ -122,7 +122,7 @@ def Constructor():
     SkipLinesIfFlagOff(4, 11010902)
     RunEvent(11010902)
     DisableObject(1011790)
-    DeleteFX(1011791, erase_root_only=False)
+    DeleteVFX(1011791, erase_root_only=False)
     SkipLines(7)
     RunEvent(11015370)
     RunEvent(11015371)
@@ -318,7 +318,7 @@ def Event11010090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 11010090: Event 11010090 """
     SkipLinesIfThisEventSlotOff(3)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=False)
+    DeleteVFX(arg_4_7, erase_root_only=False)
     End()
     IfActionButton(
         1, prompt_text=10010403, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Region, line_intersects=arg_0_3
@@ -335,7 +335,7 @@ def Event11010090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, model_point=-1, short_move=True)
     ForceAnimation(PLAYER, 7410)
     DisableObject(arg_0_3)
-    DeleteFX(arg_4_7, erase_root_only=True)
+    DeleteVFX(arg_4_7, erase_root_only=True)
 
 
 @RestartOnRest
@@ -562,9 +562,9 @@ def Event11010001():
     PlaySoundEffect(anchor_entity=1010801, sound_type=SoundType.s_SFX, sound_id=777777777)
     KillBoss(1010800)
     DisableObject(1011990)
-    DeleteFX(1011991, erase_root_only=True)
+    DeleteVFX(1011991, erase_root_only=True)
     DisableObject(1011992)
-    DeleteFX(1011993, erase_root_only=True)
+    DeleteVFX(1011993, erase_root_only=True)
 
 
 def Event11015394():
@@ -801,9 +801,9 @@ def Event11010901():
     EnableFlag(11010901)
     KillBoss(1010700)
     DisableObject(1011890)
-    DeleteFX(1011891, erase_root_only=True)
+    DeleteVFX(1011891, erase_root_only=True)
     DisableObject(1011892)
-    DeleteFX(1011893, erase_root_only=True)
+    DeleteVFX(1011893, erase_root_only=True)
 
 
 def Event11015370():
@@ -909,7 +909,7 @@ def Event11010902():
     EnableFlag(11010902)
     KillBoss(1010750)
     DisableObject(1011790)
-    DeleteFX(1011791, erase_root_only=True)
+    DeleteVFX(1011791, erase_root_only=True)
 
 
 @RestartOnRest
@@ -1069,7 +1069,7 @@ def Event11010120():
     ResetAnimation(1010103, disable_interpolation=False)
     ForceAnimation(1010103, 3006)
     Wait(0.5)
-    CreateObjectFX(100100, obj=1011102, model_point=1)
+    CreateObjectVFX(100100, obj=1011102, model_point=1)
     ForceAnimation(1011102, 0)
     Wait(0.5)
     EnableAI(1010103)
@@ -1084,7 +1084,7 @@ def Event11010120():
         repetition_time=0.0,
     )
     Wait(3.0)
-    DeleteObjectFX(1011102, erase_root=True)
+    DeleteObjectVFX(1011102, erase_root=True)
 
 
 def Event11010101(_, arg_0_3: int, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int):
@@ -2649,11 +2649,11 @@ def Event11015846(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EnableObject(arg_4_7)
-    CreateFX(arg_8_11)
+    CreateVFX(arg_8_11)
     IfUnknownPlayerType5(3)
     IfConditionFalse(2, input_condition=3)
     IfSingleplayer(2)
     IfConditionTrue(0, input_condition=2)
     DisableObject(arg_4_7)
-    DeleteFX(arg_8_11, erase_root_only=True)
+    DeleteVFX(arg_8_11, erase_root_only=True)
     Restart()
