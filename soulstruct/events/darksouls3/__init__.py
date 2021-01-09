@@ -1,4 +1,4 @@
-from .core import EMEVD, convert_events, compare_events
+from .core import EMEVD, EMEVDDirectory, convert_events, compare_events
 import soulstruct.maps.darksouls3.maps as constants
 from soulstruct.maps.darksouls3.maps import *
 from . import instructions
@@ -14,6 +14,7 @@ name = "darksouls3"
 __all__ = [
     # EMEVD class
     "EMEVD",
+    "EMEVDDirectory",
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
     "instructions",

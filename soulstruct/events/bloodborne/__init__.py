@@ -1,4 +1,4 @@
-from .core import EMEVD, convert_events, compare_events
+from .core import EMEVD, EMEVDDirectory, convert_events, compare_events
 import soulstruct.maps.bloodborne.maps as constants
 from soulstruct.maps.bloodborne.maps import *
 from . import instructions
@@ -15,6 +15,7 @@ name = "bloodborne"
 __all__ = [
     # EMEVD class
     "EMEVD",
+    "EMEVDDirectory",
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
     "instructions",

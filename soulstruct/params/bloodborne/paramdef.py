@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 __all__ = ["ParamDefField", "ParamDef", "ParamDefBND"]
+
+import typing as tp
 
 from soulstruct.params.base.paramdef import (
     ParamDefField as _BaseParamDefField,
@@ -6,6 +10,13 @@ from soulstruct.params.base.paramdef import (
     ParamDefBND as _BaseParamDefBND,
 )
 from soulstruct.utilities.binary_struct import BinaryStruct
+
+from .display_info import get_param_info, get_param_info_field
+
+if tp.TYPE_CHECKING:
+    from soulstruct.params.base.param import ParamRow
+
+_BUNDLED = None
 
 
 class ParamDefField(_BaseParamDefField):
@@ -27,6 +38,13 @@ class ParamDefField(_BaseParamDefField):
         "28x",
     )
 
+    def get_display_info(self, entry: ParamRow):
+        try:
+            field_info = get_param_info_field(self.param_name, self.name)
+        except ValueError:
+            raise ValueError(f"No display information given for field '{self.name}'.")
+        return field_info(entry)
+
 
 class ParamDef(_BaseParamDef):
     BYTE_ORDER = "<"
@@ -46,6 +64,21 @@ class ParamDef(_BaseParamDef):
     )
     FIELD_CLASS = ParamDefField
 
+    @property
+    def param_info(self):
+        try:
+            return get_param_info(self.param_type)
+        except KeyError:
+            # This param has no extra information.
+            return None
+
 
 class ParamDefBND(_BaseParamDefBND):
     PARAMDEF_CLASS = ParamDef
+
+
+def GET_BUNDLED() -> ParamDefBND:
+    global _BUNDLED
+    if _BUNDLED is None:
+        _BUNDLED = ParamDefBND()
+    return _BUNDLED

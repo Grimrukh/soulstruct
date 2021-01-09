@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 __all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED"]
+
+import typing as tp
 
 from soulstruct.games import DARK_SOULS_DSR
 from soulstruct.params.base.paramdef import (
@@ -9,6 +13,10 @@ from soulstruct.params.base.paramdef import (
 from soulstruct.utilities.binary_struct import BinaryStruct
 
 from .defaults import DEFAULTS
+from .display_info import get_param_info, get_param_info_field
+
+if tp.TYPE_CHECKING:
+    from soulstruct.params.base.param import ParamRow
 
 _BUNDLED = None
 
@@ -29,6 +37,13 @@ class ParamDefField(_BaseParamDefField):
         ("name", "32j"),
         ("sort_id", "i"),
     )
+
+    def get_display_info(self, entry: ParamRow):
+        try:
+            field_info = get_param_info_field(self.param_name, self.name)
+        except ValueError:
+            raise ValueError(f"No display information given for field '{self.name}'.")
+        return field_info(entry)
 
     def get_default_value(self):
         v = DEFAULTS[self.param_name].get(self.name, self.default)
@@ -53,6 +68,14 @@ class ParamDef(_BaseParamDef):
         ("format_version", "h", 104),
     )
     FIELD_CLASS = ParamDefField
+
+    @property
+    def param_info(self):
+        try:
+            return get_param_info(self.param_type)
+        except KeyError:
+            # This param has no extra information.
+            return None
 
 
 class ParamDefBND(_BaseParamDefBND):

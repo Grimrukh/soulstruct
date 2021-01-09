@@ -10,7 +10,6 @@ import typing as tp
 from soulstruct.bnd import BND, BNDEntry
 from soulstruct.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.games import *
-from soulstruct.params.shared.display_info import get_param_info, get_param_info_field
 from soulstruct.utilities import read_chars_from_buffer, PACKAGE_PATH
 from soulstruct.utilities.binary_struct import BinaryStruct
 
@@ -73,12 +72,9 @@ class ParamDefField(abc.ABC):
 
         self.new_default = self.get_default_value()
 
+    @abc.abstractmethod
     def get_display_info(self, entry: ParamRow):
-        try:
-            field_info = get_param_info_field(self.param_name, self.name)
-        except ValueError:
-            raise ValueError(f"No display information given for field '{self.name}'.")
-        return field_info(entry)
+        """Get display info from game-specific `params.display_info` subpackage."""
 
     def get_default_value(self):
         """Get default value from game-specific `defaults` module, if specified."""
@@ -237,12 +233,9 @@ class ParamDef(GameFile, abc.ABC):
         )
 
     @property
+    @abc.abstractmethod
     def param_info(self) -> tp.Optional[dict]:
-        try:
-            return get_param_info(self.param_type)
-        except KeyError:
-            # This param has no extra information.
-            return None
+        """Get param info from game-specific `params.display_info` subpackage."""
 
 
 class ParamDefBND(abc.ABC):
