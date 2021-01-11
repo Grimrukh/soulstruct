@@ -86,6 +86,7 @@ class BNDEntry:
 
 class BaseBND(GameFile, abc.ABC):
 
+    # `EXT` depends on BND type.
     BNDEntry = BNDEntry
     binary_entries: list[BNDEntry]
 

@@ -1,6 +1,6 @@
-from __future__ import annotations
+"""Imports all names from all param categories (loosely sorted into scripts here)."""
 
-# Imports all names from all param categories.
+from __future__ import annotations
 
 import typing as tp
 

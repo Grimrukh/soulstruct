@@ -47,6 +47,8 @@ class MSB(GameFile, abc.ABC):
             when they are actually visible in the game. Some MSB Events reference Parts by index, so their order needs
             to be carefully managed internally.
     """
+    EXT = ".msb"
+
     HEADER = b""
 
     MODEL_LIST_CLASS = None  # type: tp.Type[MSBModelList]

@@ -2,7 +2,7 @@ __all__ = ["NPC_THINK_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.core import FieldDisplayInfo, pad_field
-from soulstruct.params.darksouls1r.enums import *
+from soulstruct.params.darksouls1ptde.enums import *
 
 
 NPC_THINK_PARAM_ST = {

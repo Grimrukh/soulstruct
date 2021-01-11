@@ -1,25 +1,18 @@
 from __future__ import annotations
 
-__all__ = ["ParamRow", "Param", "GameParamBND"]
+__all__ = ["Param", "GameParamBND"]
 
 from soulstruct.bnd import BND4
 from soulstruct.games import BLOODBORNE
 from soulstruct.game_types import *
-from soulstruct.params.base.param import ParamRow as _BaseParamRow, Param as _BaseParam
+from soulstruct.params.base.param import Param as _BaseParam
 from soulstruct.params.base.game_param_bnd import GameParamBND as _BaseGameParamBND
 
-from . import enums
-from .paramdef import ParamDefBND
-
-
-class ParamRow(_BaseParamRow):
-    def get_field_type(self, field):
-        """Look for field type in game-specific appropriate `enums` module."""
-        return getattr(enums, field.internal_type)
+from .paramdef import ParamDefBND, GET_BUNDLED_PARAMDEF
 
 
 class Param(_BaseParam):
-    ParamRow = ParamRow
+    GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
 
 
 class GameParamBND(_BaseGameParamBND, BND4):

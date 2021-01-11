@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 from soulstruct.game_types import *
-from soulstruct.params.darksouls1r.enums import *
+from soulstruct.params.darksouls1ptde.enums import *
 from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
 
 # Overrides for basic enum.

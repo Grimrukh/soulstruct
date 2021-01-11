@@ -17,6 +17,7 @@ __all__ = [
     "pad_chars",
     "get_startupinfo",
     "partialmethod",
+    "Timer",
 ]
 
 import ctypes
@@ -352,3 +353,15 @@ class partialmethod(functools.partialmethod):
     """Wrapper for `partialmethod` that adds a `__call__` attribute to stop PyCharm from complaining."""
 
     __call__ = None
+
+
+class Timer:
+
+    def __init__(self, name: str):
+        self._name = name
+
+    def __enter__(self):
+        self._start = time.time()
+
+    def __exit__(self, *exc):
+        print(f"{self._name} completed in {time.time() - self._start} s.")

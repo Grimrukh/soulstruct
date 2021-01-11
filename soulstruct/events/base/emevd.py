@@ -170,11 +170,11 @@ class EMEVD(GameFile, abc.ABC):
                     try:
                         existing_offset = (
                             packed_event_layers_table.index(packed_event_layers)
-                            * self.Event.Instruction.EventLayers.STRUCT.size
+                            * self.Event.Instruction.EventLayers.HEADER_STRUCT.size
                         )
                         instruction.event_layers_offset = existing_offset
                     except ValueError:
-                        new_offset = self.Event.Instruction.EventLayers.STRUCT.size * len(packed_event_layers_table)
+                        new_offset = self.Event.Instruction.EventLayers.HEADER_STRUCT.size * len(packed_event_layers_table)
                         packed_event_layers_table.append(packed_event_layers)
                         instruction.event_layers_offset = new_offset
                 else:
@@ -200,12 +200,12 @@ class EMEVD(GameFile, abc.ABC):
         offsets = {"event": self.STRUCT.size}
         offsets["instruction"] = offsets["event"] + self.Event.STRUCT.size * self.event_count
         # Ignore empty unknown table.
-        offsets["event_layers"] = offsets["instruction"] + self.Event.Instruction.STRUCT.size * self.instruction_count
+        offsets["event_layers"] = offsets["instruction"] + self.Event.Instruction.HEADER_STRUCT.size * self.instruction_count
         offsets["base_arg_data"] = offsets["event_layers"] + (
-            self.Event.Instruction.EventLayers.STRUCT.size * len(event_layers_table)
+                self.Event.Instruction.EventLayers.HEADER_STRUCT.size * len(event_layers_table)
         )
         offsets["event_arg"] = offsets["base_arg_data"] + self.compute_base_args_size(offsets["base_arg_data"])
-        offsets["linked_files"] = offsets["event_arg"] + self.Event.EventArg.STRUCT.size * self.event_arg_count
+        offsets["linked_files"] = offsets["event_arg"] + self.Event.EventArg.HEADER_STRUCT.size * self.event_arg_count
         offsets["packed_strings"] = offsets["linked_files"] + 8 * len(self.linked_file_offsets)
         offsets["end_of_file"] = offsets["packed_strings"] + len(self.packed_strings)
         return offsets
@@ -300,17 +300,17 @@ class EMEVD(GameFile, abc.ABC):
             argument_data_binary += a_bin
             arg_r_binary += p_bin
 
-            if len(i_bin) != self.Event.Instruction.STRUCT.size * e.instruction_count:
+            if len(i_bin) != self.Event.Instruction.HEADER_STRUCT.size * e.instruction_count:
                 raise ValueError(
                     f"Event ID: {e.event_id} returned packed instruction binary of size {len(i_bin)} but "
                     f"reports {e.instruction_count} total instructions (with expected size "
-                    f"{self.Event.Instruction.STRUCT.size * e.instruction_count})."
+                    f"{self.Event.Instruction.HEADER_STRUCT.size * e.instruction_count})."
                 )
-            if len(p_bin) != self.Event.EventArg.STRUCT.size * e.event_arg_count:
+            if len(p_bin) != self.Event.EventArg.HEADER_STRUCT.size * e.event_arg_count:
                 raise ValueError(
                     f"Event ID: {e.event_id} returned packed arg replacement binary of size {len(p_bin)} "
                     f"but reports {e.event_arg_count} total replacements (with expected size "
-                    f"{self.Event.EventArg.STRUCT.size * e.event_arg_count})."
+                    f"{self.Event.EventArg.HEADER_STRUCT.size * e.event_arg_count})."
                 )
             if len(a_bin) != e.total_args_size:
                 raise ValueError(

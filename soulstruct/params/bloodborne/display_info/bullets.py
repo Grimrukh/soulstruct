@@ -299,14 +299,14 @@ BULLET_PARAM_ST = {
             BULLET_LAUNCH_CONDITION_TYPE,
             "Condition for determing if a new bullet will be generated when this bullet lands or expires.",
         ),
-        FieldDisplayInfo("FollowType:3", "FollowType", True, BULLET_FOLLOW_TYPE, "Follow type."),
-        FieldDisplayInfo(
-            "EmittePosType:3",
-            "OriginType",
-            True,
-            BULLET_EMITTE_POS_TYPE,
-            "Origin type of bullet. Usually comes from model points ('damipoly').",
-        ),
+        # FieldDisplayInfo("FollowType:3", "FollowType", True, BULLET_FOLLOW_TYPE, "Follow type."),
+        # FieldDisplayInfo(
+        #     "EmittePosType:3",
+        #     "OriginType",
+        #     True,
+        #     BULLET_EMITTE_POS_TYPE,
+        #     "Origin type of bullet. Usually comes from model points ('damipoly').",
+        # ),
         FieldDisplayInfo(
             "isAttackSFX:1",
             "RemainAttachedToTarget",
@@ -340,13 +340,13 @@ BULLET_PARAM_ST = {
             bool,
             "Set to True if the same model point ('damipoly') is used multiple times when spawning the bullet.",
         ),
-        FieldDisplayInfo(
-            "attachEffectType:2",
-            "AttachEffectType",
-            False,
-            BULLET_ATTACH_EFFECT_TYPE,
-            "Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles).",
-        ),
+        # FieldDisplayInfo(
+        #     "attachEffectType:2",
+        #     "AttachEffectType",
+        #     False,
+        #     BULLET_ATTACH_EFFECT_TYPE,
+        #     "Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles).",
+        # ),
         FieldDisplayInfo(
             "isHitForceMagic:1",
             "CanBeDeflectedByMagic",

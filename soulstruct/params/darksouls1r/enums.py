@@ -1,5 +1,13 @@
 """Enums used in Dark Souls 1 game parameters. Identical to PTDE and imported from there."""
 __all__ = [
+    "u8",
+    "s8",
+    "u16",
+    "s16",
+    "u32",
+    "s32",
+    "f32",
+    "f64",
     "ACCESSORY_CATEGORY",
     "ACTION_PATTERN",
     "ATK_PARAM_BOOL",

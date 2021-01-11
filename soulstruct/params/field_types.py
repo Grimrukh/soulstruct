@@ -1,7 +1,36 @@
+__all__ = [
+    "base_type",
+    "unsigned", "u8", "u16", "u32", "dummy8",
+    "signed", "s8", "s16", "s32",
+    "f32", "f64",
+    "string", "fixstr", "fixstrW"]
+
 from enum import IntEnum
 
 
-class _UnsignedBase(IntEnum):
+class base_type:
+    @staticmethod
+    def size():
+        raise NotImplementedError
+
+    @staticmethod
+    def format():
+        raise NotImplementedError
+
+    @staticmethod
+    def python_type():
+        raise NotImplementedError
+
+    @staticmethod
+    def minimum():
+        raise NotImplementedError
+
+    @staticmethod
+    def maximum():
+        raise NotImplementedError
+
+
+class unsigned(base_type, IntEnum):
     @staticmethod
     def size():
         raise NotImplementedError
@@ -27,7 +56,41 @@ class _UnsignedBase(IntEnum):
         return 2 ** cls.bit_size() - 1
 
 
-class _SignedBase(IntEnum):
+class u8(unsigned):
+    @staticmethod
+    def size():
+        return 1
+
+    @staticmethod
+    def format():
+        return "<B"
+
+
+class u16(unsigned):
+    @staticmethod
+    def size():
+        return 2
+
+    @staticmethod
+    def format():
+        return "<H"
+
+
+class u32(unsigned):
+    @staticmethod
+    def size():
+        return 4
+
+    @staticmethod
+    def format():
+        return "<I"
+
+
+class dummy8(u8):
+    """Pad fields. May not be unpacked/decoded."""
+
+
+class signed(base_type, IntEnum):
     @staticmethod
     def size():
         raise NotImplementedError
@@ -53,17 +116,7 @@ class _SignedBase(IntEnum):
         return 2 ** (cls.bit_size() - 1) - 1
 
 
-class UnsignedChar(_UnsignedBase):
-    @staticmethod
-    def size():
-        return 1
-
-    @staticmethod
-    def format():
-        return "<B"
-
-
-class SignedChar(_SignedBase):
+class s8(signed):
     @staticmethod
     def size():
         return 1
@@ -73,17 +126,7 @@ class SignedChar(_SignedBase):
         return "<b"
 
 
-class UnsignedShort(_UnsignedBase):
-    @staticmethod
-    def size():
-        return 2
-
-    @staticmethod
-    def format():
-        return "<H"
-
-
-class SignedShort(_SignedBase):
+class s16(signed):
     @staticmethod
     def size():
         return 2
@@ -93,17 +136,7 @@ class SignedShort(_SignedBase):
         return "<h"
 
 
-class UnsignedInt(_UnsignedBase):
-    @staticmethod
-    def size():
-        return 4
-
-    @staticmethod
-    def format():
-        return "<I"
-
-
-class SignedInt(_SignedBase):
+class s32(signed):
     @staticmethod
     def size():
         return 4
@@ -113,7 +146,7 @@ class SignedInt(_SignedBase):
         return "<i"
 
 
-class Single:
+class f32:
     @staticmethod
     def size():
         return 4
@@ -139,7 +172,9 @@ class Single:
         return float("inf")
 
 
-class Double:
+class f64:
+    """Not actually used in any known game."""
+
     @staticmethod
     def size():
         return 8
@@ -165,11 +200,59 @@ class Double:
         return float("inf")
 
 
-u8 = UnsignedChar
-s8 = SignedChar
-u16 = UnsignedShort
-s16 = SignedShort
-u32 = UnsignedInt
-s32 = SignedInt
-f32 = Single
-f64 = Double
+class string(base_type):
+    @staticmethod
+    def size():
+        raise NotImplementedError
+
+    @staticmethod
+    def python_type():
+        return str
+
+    @staticmethod
+    def format():
+        return None
+
+    @staticmethod
+    def read(buffer, size):
+        raise NotImplementedError
+
+    @staticmethod
+    def write(value, size):
+        raise NotImplementedError
+
+    @staticmethod
+    def minimum():
+        return None
+
+    @staticmethod
+    def maximum():
+        return None
+
+
+class fixstr(string):
+    @staticmethod
+    def size():
+        return 1
+
+    @staticmethod
+    def read(buffer, size):
+        return buffer.read(size).decode("shift_jis_2004")
+
+    @staticmethod
+    def write(value, size):
+        return value.encode("shift_jis_2004").ljust(size, b"\0")
+
+
+class fixstrW(string):
+    @staticmethod
+    def size():
+        return 2
+
+    @staticmethod
+    def read(buffer, size):
+        return buffer.read(size).decode("utf-16-le")
+
+    @staticmethod
+    def write(value, size):
+        return value.encode("utf-16-le").ljust(size, b"\0")

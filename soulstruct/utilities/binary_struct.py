@@ -141,8 +141,8 @@ class BinaryStruct:
                 field_kwargs["encoding"] = "shift_jis_2004"
                 length = 1
             elif field_type == "u":
-                fmt = f"{field_length}"
-                field_kwargs["encoding"] = "utf-16-be" if byte_order == ">" else "utf-16-be"
+                fmt = f"{field_length}s"
+                field_kwargs["encoding"] = "utf-16-be" if byte_order == ">" else "utf-16-le"
                 length = 1
             elif field_type == "s":
                 length = 1

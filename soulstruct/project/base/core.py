@@ -91,17 +91,23 @@ class GameDirectoryProject(abc.ABC):
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
-        self.ai_directory = self.DATA_TYPES["ai"]()  # type: AIDirectory
-        self.draw_param_directory = self.DATA_TYPES["lighting"]()  # type: DrawParamDirectory
-        self.emevd_directory = self.DATA_TYPES["events"]()  # type: EMEVDDirectory
-        self.game_param_bnd = self.DATA_TYPES["params"]()  # type: GameParamBND
-        self.map_studio_directory = self.DATA_TYPES["maps"]()  # type: MapStudioDirectory
-        self.msg_directory = self.DATA_TYPES["text"]()  # type: MSGDirectory
-        self.talk_directory = self.DATA_TYPES["talk"]()  # type: TalkDirectory
+        self.ai_directory = self._get_default_data("ai")  # type: AIDirectory
+        self.draw_param_directory = self._get_default_data("lighting")  # type: DrawParamDirectory
+        self.emevd_directory = self._get_default_data("events")  # type: EMEVDDirectory
+        self.game_param_bnd = self._get_default_data("params")  # type: GameParamBND
+        self.map_studio_directory = self._get_default_data("maps")  # type: MapStudioDirectory
+        self.msg_directory = self._get_default_data("text")  # type: MSGDirectory
+        self.talk_directory = self._get_default_data("talk")  # type: TalkDirectory
 
         self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
         self.load_config(with_window=with_window)
         self.initialize_project(with_window=with_window)
+
+    def _get_default_data(self, data_type: str):
+        if data_type not in self.DATA_TYPES:
+            return None
+        else:
+            return self.DATA_TYPES[data_type]()
 
     @property
     def ai(self) -> AIDirectory:

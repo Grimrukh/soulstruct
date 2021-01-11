@@ -41,9 +41,10 @@ DRAW_PARAMS = (
 
 class DrawParamBND(BND3, abc.ABC):
 
+    EXT = ".parambnd"
     GAME: Game = None
     DRAW_PARAM_CLASS: tp.Type[Param] = None
-    GET_BUNDLED: tp.Callable = None
+    GET_BUNDLED_PARAMDEF: tp.Callable = None
     UNDECODABLE_ROW_NAMES = {
         "LIGHT_BANK": (b"\x80\x1e", b"\xfe\x1e"),  # invalid single-character used in both versions of DS1
     }
@@ -54,7 +55,7 @@ class DrawParamBND(BND3, abc.ABC):
         self._slot_entry_paths = {}  # type: dict[tuple[str, int], str]
 
         if paramdef_bnd is None:
-            self.paramdef_bnd = self.GET_BUNDLED()
+            self.paramdef_bnd = self.GET_BUNDLED_PARAMDEF()
         elif isinstance(paramdef_bnd, ParamDefBND):
             self.paramdef_bnd = paramdef_bnd
         else:

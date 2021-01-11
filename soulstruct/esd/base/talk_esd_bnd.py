@@ -25,6 +25,7 @@ class TalkESDBND(BaseBND, abc.ABC):
     """Automatically loads all talk ESDs contained inside given path, or constructs BND from scratch using dictionary
     mapping talk IDs to valid ESD instance sources."""
 
+    EXT = ".talkesdbnd"
     TALK_ESD_CLASS: tp.Type[ESD] = None
     BND_ROOT: str = None  # used for creating a new BND if instance is loaded from individual ESD/ESP file
 

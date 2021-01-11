@@ -20,8 +20,9 @@ _LOGGER = logging.getLogger(__name__)
 
 class GameParamBND(BaseBND, abc.ABC):
 
-    Param: tp.Type[Param] = None
+    EXT = ".parambnd"
     GAME: Game = None
+    Param: tp.Type[Param] = None
     ParamDefBND: tp.Type[ParamDefBND] = None
 
     PARAM_NICKNAMES: dict[str, str] = {}

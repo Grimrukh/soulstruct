@@ -4,6 +4,14 @@ I have kept all of the original names of these for simplicity (typos and all). T
 anyway. Ordered alphabetically.
 """
 __all__ = [
+    "u8",
+    "s8",
+    "u16",
+    "s16",
+    "u32",
+    "s32",
+    "f32",
+    "f64",
     "ACCESSORY_CATEGORY",
     "ACTION_BUTTON_REGION_TYPE",
     "ACTION_BUTTON_ANGLE_CHECK_TYPE",
@@ -111,51 +119,51 @@ __all__ = [
 from soulstruct.params.field_types import *
 
 
-class ACCESSORY_CATEGORY(UnsignedChar):
+class ACCESSORY_CATEGORY(u8):
     """Always zero. Internal description says 'decoration' or 'armor' category."""
 
     Default = 0
 
 
-class ACTION_BUTTON_REGION_TYPE(UnsignedChar):
+class ACTION_BUTTON_REGION_TYPE(u8):
     """Type of region in which action button prompt appears."""
 
     SphereWedge = 0  # defined by `radius` and `angle`
     Box = 1  # defined by `depth`, `width`, and `height`
 
 
-class ACTION_BUTTON_ANGLE_CHECK_TYPE(UnsignedChar):
+class ACTION_BUTTON_ANGLE_CHECK_TYPE(u8):
     """TODO"""
 
 
-class ACTION_BUTTON_TEXT_BOX_TYPE(UnsignedChar):
+class ACTION_BUTTON_TEXT_BOX_TYPE(u8):
     """TODO"""
 
 
-class ACTION_BUTTON_EXEC_CIRCLE(UnsignedChar):
+class ACTION_BUTTON_EXEC_CIRCLE(u8):
     """TODO"""
 
 
-class ACTION_PATTERN(UnsignedChar):
+class ACTION_PATTERN(u8):
     """Only used in the junk param table AI_STANDARD_INFO_BANK."""
 
 
-class AI_SOUND_RATE_TYPE(UnsignedChar):
+class AI_SOUND_RATE_TYPE(u8):
     """TODO"""
 
 
-class AI_SOUND_FAKE_TARGET_TYPE(UnsignedChar):
+class AI_SOUND_FAKE_TARGET_TYPE(u8):
     """TODO"""
 
 
-class ATK_PARAM_HIT_SOURCE(UnsignedChar):
+class ATK_PARAM_HIT_SOURCE(u8):
     """Almost always zero. Internal description says 'model point ID used to initiate the attack'."""
 
     Default = 0
     BodyOrParryOrRiposte = 1
 
 
-class ATK_PARAM_HIT_TYPE(UnsignedChar):
+class ATK_PARAM_HIT_TYPE(u8):
     """Almost always zero. Applied to each collision of an attack."""
 
     Default = 0
@@ -163,7 +171,7 @@ class ATK_PARAM_HIT_TYPE(UnsignedChar):
     WhipAttack = 2
 
 
-class ATK_PARAM_MAP_HIT(UnsignedChar):
+class ATK_PARAM_MAP_HIT(u8):
     """Type of contact attack has with the map. Names are just based on the attacks that tend to use them."""
 
     Normal = 0  # deflected by map
@@ -171,25 +179,25 @@ class ATK_PARAM_MAP_HIT(UnsignedChar):
     Hazard = 2  # fire, boulders, pendulums, lava
 
 
-class ATK_PARAM_PARTSDMGTYPE(UnsignedChar):
+class ATK_PARAM_PARTSDMGTYPE(u8):
     """Always zero."""
 
     Default = 0
 
 
-class ATK_PATAM_THROWFLAG_TYPE(UnsignedChar):  # (sic)
+class ATK_PATAM_THROWFLAG_TYPE(u8):  # (sic)
     NoThrow = 0
     ThrowTrigger = 1
     ThrowDamage = 2
 
 
-class ATK_SIZE(UnsignedChar):
+class ATK_SIZE(u8):
     """Always zero. Used to specify 'material size' of Bullets 'for SFX/SE'."""
 
     Default = 0
 
 
-class ATK_TYPE(UnsignedChar):
+class ATK_TYPE(u8):
     """Material attack type for Bullets, to determine sound effects, I believe."""
 
     Slash = 0
@@ -197,7 +205,7 @@ class ATK_TYPE(UnsignedChar):
     Thrust = 2
 
 
-class ATKPARAM_ATKATTR_TYPE(UnsignedChar):
+class ATKPARAM_ATKATTR_TYPE(u8):
     """High correlation with BEHAVIOR_ATK_TYPE below, which seems to specify physical damage type more reliably."""
 
     NoDamage = 0  # some Attacks are guarding actions
@@ -208,7 +216,7 @@ class ATKPARAM_ATKATTR_TYPE(UnsignedChar):
 
 
 # TODO: Make sure the 'damage level' field in Attacks points to this type as well.
-class ATKPARAM_REP_DMGTYPE(SignedChar):
+class ATKPARAM_REP_DMGTYPE(s8):
     """Damage types. This enum is used by Special Effects to override one damage type with another (e.g. Iron Flesh
     reduces the weaker half 1 and the stronger half to 5)."""
 
@@ -226,15 +234,15 @@ class ATKPARAM_REP_DMGTYPE(SignedChar):
     BreathBurn = 11
 
 
-class ATKPARAM_SFX_SE_ATK_DIR(SignedChar):
+class ATKPARAM_SFX_SE_ATK_DIR(s8):
     """TODO"""
 
 
-class ATKPARAM_SFX_SE_ATK_POW(SignedChar):
+class ATKPARAM_SFX_SE_ATK_POW(s8):
     """TODO"""
 
 
-class ATKPARAM_SPATTR_TYPE(UnsignedChar):
+class ATKPARAM_SPATTR_TYPE(u8):
     """Determines weaknesses and visual effect upon damage."""
 
     NoType = 0
@@ -249,13 +257,13 @@ class ATKPARAM_SPATTR_TYPE(UnsignedChar):
     Default = 255  # most basic physical attacks
 
 
-class BEHAVIOR_ATK_SIZE(UnsignedChar):
+class BEHAVIOR_ATK_SIZE(u8):
     """Always zero. Used to specify 'material size' of Attacks 'for SFX/SE'."""
 
     Default = 0
 
 
-class BEHAVIOR_ATK_TYPE(UnsignedChar):
+class BEHAVIOR_ATK_TYPE(u8):
     """Determines sound/visual effects of behaviors. Same as ATK_TYPE. Seems unused, though."""
 
     Slash = 0
@@ -263,7 +271,7 @@ class BEHAVIOR_ATK_TYPE(UnsignedChar):
     Thrust = 2
 
 
-class BEHAVIOR_CATEGORY(UnsignedChar):
+class BEHAVIOR_CATEGORY(u8):
     """Determines which special effects buffs/debuffs will affect the behavior."""
 
     NoCategory = 0
@@ -278,7 +286,7 @@ class BEHAVIOR_CATEGORY(UnsignedChar):
     Riposte = 9
 
 
-class BEHAVIOR_REF_TYPE(UnsignedChar):
+class BEHAVIOR_REF_TYPE(u8):
     """Also used by Goods, where 'Default' (0) does NOT mean Attack."""
 
     Default = 0  # Attack for behaviors, None for goods
@@ -286,7 +294,7 @@ class BEHAVIOR_REF_TYPE(UnsignedChar):
     SpecialEffect = 2
 
 
-class BULLET_LAUNCH_CONDITION_TYPE(UnsignedChar):
+class BULLET_LAUNCH_CONDITION_TYPE(u8):
     """Determines if child bullet should be generated when it lands and/or dies. Names are based solely on usage right
     now. I suspect that 1 and 2 generate bullets on expiry, and -1 (255) and -2 (254) generate bullets on hit."""
 
@@ -297,28 +305,28 @@ class BULLET_LAUNCH_CONDITION_TYPE(UnsignedChar):
     ChainBullet = 255  # -1; used for non-lightning chain bullets
 
 
-class CHARACTER_INIT_SEX(UnsignedChar):
+class CHARACTER_INIT_SEX(u8):
     Female = 0
     Male = 1
 
 
-class CHARMAKEMENU_CMD_TYPE(SignedInt):
+class CHARMAKEMENU_CMD_TYPE(s32):
     """TODO"""
 
 
-class CHARMAKEMENU_VIEW_CONDITION(SignedInt):
+class CHARMAKEMENU_VIEW_CONDITION(s32):
     """TODO"""
 
 
-class CHARMAKEMENU_PREVIEW_MODE(SignedChar):
+class CHARMAKEMENU_PREVIEW_MODE(s8):
     """TODO"""
 
 
-class ChrType(SignedInt):
+class ChrType(s32):
     """This is a real enum used in the junk param table ENEMY_STANDARD_INFO_BANK."""
 
 
-class DURABILITY_DIVERGENCE_CATEGORY(UnsignedChar):
+class DURABILITY_DIVERGENCE_CATEGORY(u8):
     """Interal description says 'do you branch by durability? Magic weapon support: motion branch by durability'.
     Probably related to weapons that consume durability for attacks - possibly determines what alternate animation
     they use if the weapon doesn't have enough durability for the special attack."""
@@ -330,11 +338,11 @@ class DURABILITY_DIVERGENCE_CATEGORY(UnsignedChar):
     CrystalRingShield = 7
 
 
-class ENEMY_BEHAVIOR_ID(SignedInt):
+class ENEMY_BEHAVIOR_ID(s32):
     """From junk param table ENEMY_STANDARD_INFO_BANK."""
 
 
-class EQUIP_MODEL_CATEGORY(UnsignedChar):
+class EQUIP_MODEL_CATEGORY(u8):
     Hands = 1
     Torso = 2
     # 3 is missing.
@@ -344,40 +352,40 @@ class EQUIP_MODEL_CATEGORY(UnsignedChar):
     Weapon = 7
 
 
-class EQUIP_MODEL_GENDER(UnsignedChar):
+class EQUIP_MODEL_GENDER(u8):
     NoGender = 0  # identical model
     Male = 1
     Female = 2
     Player = 3  # auto-detected (guess)
 
 
-class FACE_PARAM(SignedChar):
-    """TODO: Probably just a FaceParam entry ID?"""
+class FACE_PARAM(s32):
+    """FaceParam entry ID."""
 
 
-class GEM_SEGMENT_MASK(UnsignedChar):
+class GEM_SEGMENT_MASK(u8):
     """TODO"""
 
 
-class GEM_SLOT_TYPE_MASK(UnsignedInt):
+class GEM_SLOT_TYPE_MASK(u32):
     """TODO"""
 
 
-class GEM_SLOT_TYPE_NO(UnsignedChar):
+class GEM_SLOT_TYPE_NO(u8):
     """TODO"""
 
 
-class GEMEFFECT_GEN_PT(UnsignedInt):
+class GEMEFFECT_GEN_PT(u32):
     """TODO"""
 
 
-class GOODS_CATEGORY(UnsignedChar):
+class GOODS_CATEGORY(u8):
     """Always zero."""
 
     Default = 0
 
 
-class GOODS_OPEN_MENU(UnsignedChar):
+class GOODS_OPEN_MENU(u8):
     """Menu or dialog activated when good is used."""
 
     NoMenu = 0
@@ -391,7 +399,7 @@ class GOODS_OPEN_MENU(UnsignedChar):
     ServantRosterMenu = 8
 
 
-class GOODS_TYPE(UnsignedChar):
+class GOODS_TYPE(u8):
     Basic = 0  # Consumables, orbs, soapstones, etc. (first inventory tab)
     KeyItem = 1
     Titanite = 2
@@ -400,7 +408,7 @@ class GOODS_TYPE(UnsignedChar):
     Spell = 5
 
 
-class GOODS_USE_ANIM(UnsignedChar):
+class GOODS_USE_ANIM(u8):
     """This only determines the basic animation; the exact sounds and visual effects are determined by the 'effect
     variation ID'."""
 
@@ -423,7 +431,7 @@ class GOODS_USE_ANIM(UnsignedChar):
     DrinkEmpty = 254  # -2
 
 
-class GUARDMOTION_CATEGORY(UnsignedChar):
+class GUARDMOTION_CATEGORY(u8):
     """Type of guard animation."""
 
     MediumShield = 0  # also arrows and bolts, so probably means 'default'
@@ -433,7 +441,7 @@ class GUARDMOTION_CATEGORY(UnsignedChar):
     NonPlayerGuard = 4
 
 
-class ITEMLOT_ITEMCATEGORY(SignedInt):
+class ITEMLOT_ITEMCATEGORY(s32):
     """Inexplicably wide/reversed bit field for simply specifying the item type."""
 
     NoItem = -1
@@ -443,11 +451,11 @@ class ITEMLOT_ITEMCATEGORY(SignedInt):
     Good = 2 ** 30  # 1073741824
 
 
-class ITEMLOT_LVDEP_ITEMCATEGORY(SignedInt):
+class ITEMLOT_LVDEP_ITEMCATEGORY(s32):
     """TODO: Probably the same as ITEMLOT_ITEMCATEGORY."""
 
 
-class MAGIC_CATEGORY(UnsignedChar):
+class MAGIC_CATEGORY(u8):
     """Also called 'EzState Behavior Type'."""
 
     Sorcery = 0
@@ -455,7 +463,7 @@ class MAGIC_CATEGORY(UnsignedChar):
     Pyromancy = 2
 
 
-class MAGIC_MOTION_TYPE(UnsignedChar):
+class MAGIC_MOTION_TYPE(u8):
     """Determines the base animation used when casting a spell."""
 
     SorceryFastProjectile = 0  # Soul Arrow (not Heavy), Soul Spear, Dark Bead
@@ -484,23 +492,23 @@ class MAGIC_MOTION_TYPE(UnsignedChar):
     FireWhip = 24
 
 
-class MENU_PROPERTY_CMP_TYPE(SignedChar):
+class MENU_PROPERTY_CMP_TYPE(s8):
     """TODO"""
 
 
-class MENU_PROPERTY_FORMAT_TYPE(UnsignedChar):
+class MENU_PROPERTY_FORMAT_TYPE(u8):
     """TODO"""
 
 
-class MENU_PROPERTY_ID(SignedInt):
+class MENU_PROPERTY_ID(s32):
     """TODO"""
 
 
-class MENU_VALUE_TABLE_CMP_TYPE(SignedChar):
+class MENU_VALUE_TABLE_CMP_TYPE(s8):
     """TODO"""
 
 
-class NPC_BURN_TYPE(UnsignedChar):
+class NPC_BURN_TYPE(u8):
     """Type of sound effect played during combustion, I believe. Only the Undead Dragon and Mass of Souls use value 1,
     hence the name."""
 
@@ -508,14 +516,14 @@ class NPC_BURN_TYPE(UnsignedChar):
     MassiveUndead = 1
 
 
-class NPC_DRAW_TYPE(UnsignedChar):
+class NPC_DRAW_TYPE(u8):
     Normal = 0
     WhitePhantom = 1
     RedPhantom = 2
     Hollow = 4
 
 
-class NPC_HITSTOP_TYPE(UnsignedChar):
+class NPC_HITSTOP_TYPE(u8):
     """Guesses only."""
 
     Normal = 0
@@ -523,14 +531,14 @@ class NPC_HITSTOP_TYPE(UnsignedChar):
     Boss = 2
 
 
-class NPC_ITEMDROP_TYPE(UnsignedShort):
+class NPC_ITEMDROP_TYPE(u16):
     """Determines appearance of dropped item from NPC."""
 
     GlowingCorpse = 0
     ItemEffect = 1
 
 
-class NPC_MOVE_TYPE(UnsignedChar):
+class NPC_MOVE_TYPE(u8):
     NoMovement = 0  # e.g. tails
     Giant = 1  # e.g. Hydra, Living Tree
     Insects = 2  # e.g. Rockworms, Chaos Bugs
@@ -543,14 +551,14 @@ class NPC_MOVE_TYPE(UnsignedChar):
     BoundingDemon = 9
 
 
-class NPC_SFX_SIZE(UnsignedChar):
+class NPC_SFX_SIZE(u8):
     Normal = 0
     Large = 1
     VeryLarge = 2
     # No other values observed.
 
 
-class NPC_TEAM_TYPE(UnsignedChar):  # "TEMA" typo fixed from older games
+class NPC_TEAM_TYPE(u8):  # "TEMA" typo fixed from older games
     """Unsure how this differs from the standard TeamType event enum."""
 
     Enemy = 0
@@ -561,15 +569,15 @@ class NPC_TEAM_TYPE(UnsignedChar):  # "TEMA" typo fixed from older games
     UnusedSkeletonTest = 9
 
 
-class NPC_THINK_ACTTYPE_ON_FAILEDPATH(UnsignedChar):
+class NPC_THINK_ACTTYPE_ON_FAILEDPATH(u8):
     """TODO"""
 
 
-class NPC_THINK_CHANGE_STATE_ACTION(UnsignedChar):
+class NPC_THINK_CHANGE_STATE_ACTION(u8):
     """TODO"""
 
 
-class NPC_THINK_GOAL_ACTION(UnsignedChar):
+class NPC_THINK_GOAL_ACTION(u8):
     # TODO
     # 0
     # 1
@@ -578,14 +586,14 @@ class NPC_THINK_GOAL_ACTION(UnsignedChar):
     LogicScript = 4
 
 
-class NPC_THINK_REPLY_BEHAVIOR_TYPE(UnsignedChar):
+class NPC_THINK_REPLY_BEHAVIOR_TYPE(u8):
     """Used to indicate whether NPCs respond to calls for help."""
 
     Ignore = 0
     Answer = 1
 
 
-class NPC_TYPE(UnsignedChar):
+class NPC_TYPE(u8):
     """Internal description: 'if the enemies/boss enemies are distinguished OK'. Just guessing at names."""
 
     Normal = 0
@@ -593,40 +601,40 @@ class NPC_TYPE(UnsignedChar):
     NonPlayerAlly = 2
 
 
-class OBJACT_SP_QUALIFIED_TYPE(UnsignedChar):
+class OBJACT_SP_QUALIFIED_TYPE(u8):
     NoCondition = 0
     HasGood = 1
     HasSpecialEffect = 2
 
 
-class OBJACT_CHR_SORB_TYPE(UnsignedChar):
+class OBJACT_CHR_SORB_TYPE(u8):
     """Method of snapping character to object when object is activated. Only occurrence of 1 is for opening chests."""
 
     Normal = 0
     OpenChest = 1
 
 
-class OBJACT_EVENT_KICK_TIMING(UnsignedChar):
+class OBJACT_EVENT_KICK_TIMING(u8):
     """Guessing at these, based on the fact that actions that trigger cutscenes seem to use a value of 0."""
 
     EndOfAction = 0
     StartOfAction = 1
 
 
-class OBJECT_NAVIMESH_FLAG(UnsignedChar):
+class OBJECT_NAVIMESH_FLAG(u8):
     """TODO"""
 
 
-class ON_OFF(UnsignedChar):
+class ON_OFF(u8):
     Off = 0
     On = 1
 
 
-class PHYS_ATK_MENU_DISP_TYPE(UnsignedChar):
+class PHYS_ATK_MENU_DISP_TYPE(u8):
     """TODO"""
 
 
-class PROTECTOR_CATEGORY(UnsignedChar):
+class PROTECTOR_CATEGORY(u8):
     Helm = 0
     Body = 1
     Hands = 2
@@ -634,14 +642,14 @@ class PROTECTOR_CATEGORY(UnsignedChar):
     Hair = 4
 
 
-class RAGDOLL_PARAM_BOOL(UnsignedChar):
+class RAGDOLL_PARAM_BOOL(u8):
     """Boolean used in RAGDOLL_PARAM_ST, which I have hidden."""
 
     Off = 0
     On = 1
 
 
-class REPLACE_CATEGORY(UnsignedChar):
+class REPLACE_CATEGORY(u8):
     """I believe that goods/spells that have non-zero values here will replace the effects of previous goods/spells
     used that have the same value. Names are based on vanilla usage, but presumably these are open slots."""
 
@@ -653,17 +661,17 @@ class REPLACE_CATEGORY(UnsignedChar):
     DragonStones = 5
 
 
-class RETURN_POINT_TYPE_YES_NO(UnsignedChar):
+class RETURN_POINT_TYPE_YES_NO(u8):
     """TODO"""
 
 
-class SHOP_LINEUP_SHOPTYPE(UnsignedChar):
+class SHOP_LINEUP_SHOPTYPE(u8):
     Normal = 0
     # 1 is unused.
     AttunementMenu = 2
 
 
-class SHOP_LINEUP_EQUIPTYPE(UnsignedChar):
+class SHOP_LINEUP_EQUIPTYPE(u8):
     Weapon = 0
     Armor = 1
     Ring = 2
@@ -671,15 +679,15 @@ class SHOP_LINEUP_EQUIPTYPE(UnsignedChar):
     Spell = 4
 
 
-class SKELETON_PARAM_KNEE_AXIS_DIR(UnsignedChar):
+class SKELETON_PARAM_KNEE_AXIS_DIR(u8):
     """TODO"""
 
 
-class SP_EFE_PC_WEAPON_STATE(UnsignedChar):
+class SP_EFE_PC_WEAPON_STATE(u8):
     """TODO"""
 
 
-class SP_EFE_WEP_CHANGE_PARAM(UnsignedChar):
+class SP_EFE_WEP_CHANGE_PARAM(u8):
     All = 0
     CurrentRightHand = 1  # effect will end if weapon is changed
     CurrentLeftHand = 2  # effect will end if weapon is changed
@@ -687,22 +695,22 @@ class SP_EFE_WEP_CHANGE_PARAM(UnsignedChar):
     FootDamage = 4  # from kicking or landing, e.g. Orange Charred Ring effect
 
 
-class SP_EFFECT_BOOL(UnsignedChar):
+class SP_EFFECT_BOOL(u8):
     """Boolean used in Special Effects table."""
 
     Off = 0
     On = 1
 
 
-class SP_EFFECT_CHANGE_TEAM_TYPE(SignedChar):
+class SP_EFFECT_CHANGE_TEAM_TYPE(s8):
     """TODO"""
 
 
-class SP_EFFECT_CONVERT_ATTRIBUTE(UnsignedChar):
+class SP_EFFECT_CONVERT_ATTRIBUTE(u8):
     """TODO"""
 
 
-class SP_EFFECT_MOVE_TYPE(UnsignedChar):
+class SP_EFFECT_MOVE_TYPE(u8):
     """Named after observed usage."""
 
     Normal = 0
@@ -711,7 +719,7 @@ class SP_EFFECT_MOVE_TYPE(UnsignedChar):
     IronFlesh = 5
 
 
-class SP_EFFECT_SAVE_CATEGORY(SignedChar):
+class SP_EFFECT_SAVE_CATEGORY(s8):
     """Determines how often and/or in what order special effects are saved on every update. Names are from observed
     usage only."""
 
@@ -724,7 +732,7 @@ class SP_EFFECT_SAVE_CATEGORY(SignedChar):
     DragonTorsoStone = 5
 
 
-class SP_EFFECT_SPCATEGORY(UnsignedShort):
+class SP_EFFECT_SPCATEGORY(u16):
     """Category of special effect, which determines which other special effects it will replace (and maybe more). Many
     values used."""
 
@@ -732,7 +740,7 @@ class SP_EFFECT_SPCATEGORY(UnsignedShort):
     Miracle = 4
 
 
-class SP_EFFECT_THROW_CONDITION_TYPE(UnsignedChar):
+class SP_EFFECT_THROW_CONDITION_TYPE(u8):
     """Field in SpEffect entries that changes all throws in some way (e.g. disables them / increases riposte damage)."""
 
     Default = 0
@@ -744,11 +752,11 @@ class SP_EFFECT_THROW_CONDITION_TYPE(UnsignedChar):
     HumanityDrain = 6  # lose soft humanity
 
 
-class SP_EFFECT_TYPE(UnsignedChar):
+class SP_EFFECT_TYPE(u16):
     """TODO"""
 
 
-class SP_EFFECT_USELIMIT_CATEGORY(UnsignedChar):
+class SP_EFFECT_USELIMIT_CATEGORY(u8):
     """Category of special effect triggered by goods or spells in which only one effect can be active at once.
     Additional attempts to use goods or cast spells in the same category will be prohibited, rather than overriding
     the earlier one."""
@@ -760,19 +768,19 @@ class SP_EFFECT_USELIMIT_CATEGORY(UnsignedChar):
     BuffShield = 13
 
 
-class SP_EFFECT_VFX_EFFECT_TYPE(UnsignedChar):
+class SP_EFFECT_VFX_EFFECT_TYPE(u8):
     """TODO"""
 
 
-class SP_EFFECT_VFX_PLAYCATEGORY(UnsignedChar):
+class SP_EFFECT_VFX_PLAYCATEGORY(u8):
     """TODO"""
 
 
-class SP_EFFECT_VFX_SOUL_PARAM_TYPE(UnsignedChar):
+class SP_EFFECT_VFX_SOUL_PARAM_TYPE(u8):
     """TODO"""
 
 
-class SpecialStateInfo(UnsignedChar):
+class SpecialStateInfo(u8):
     """Enum documented by me for the SpecialStateIndex field, which specifies many varying hard-coded effects in the
     game engine, like ongoing animations, particle effects, and special triggers. The visual effect parameters are
     specified by the same index in the Special Effect Visuals param table."""
@@ -856,7 +864,7 @@ class SpecialStateInfo(UnsignedChar):
     StrongMagicShield = 204  # Strong Magic Shield.
 
 
-class THROW_DMY_CHR_DIR_TYPE(UnsignedChar):
+class THROW_DMY_CHR_DIR_TYPE(u8):
     """Named after observed usage. Not sure if this simply describes if the model point contains information about
     character direction, or actually makes that so. Non-zero values are rarely used."""
 
@@ -865,18 +873,18 @@ class THROW_DMY_CHR_DIR_TYPE(UnsignedChar):
     IronGolemGapingDragon = 255
 
 
-class THROW_ENABLE_STATE(UnsignedChar):
+class THROW_ENABLE_STATE(u8):
     Off = 0
     On = 1
 
 
-class THROW_PAD_TYPE(UnsignedChar):
+class THROW_PAD_TYPE(u8):
     NoPad = 0  # Used only for test throw.
     Default = 1  # Used for all others.
     Unknown = 3  # Used for Centipede Demon grab, Male Ghost grab, and Dark Hand grab.
 
 
-class THROW_TYPE(UnsignedChar):
+class THROW_TYPE(u8):
     """Named after observed usage. The Hornet Ring variants have slightly different animations when used against PCs."""
 
     Backstab = 0
@@ -892,7 +900,7 @@ class THROW_TYPE(UnsignedChar):
     HornetDrain = 16
 
 
-class WEAPON_CATEGORY(UnsignedChar):
+class WEAPON_CATEGORY(u8):
     """Each category includes weapons of all sizes."""
 
     Dagger = 0
@@ -912,7 +920,7 @@ class WEAPON_CATEGORY(UnsignedChar):
     Bolt = 14
 
 
-class WEP_MATERIAL_ATK(UnsignedChar):
+class WEP_MATERIAL_ATK(u8):
     """Determines both sound and visual effects of attack."""
 
     Metal = 0
@@ -924,7 +932,7 @@ class WEP_MATERIAL_ATK(UnsignedChar):
     Default = 255  # most attacks; uses weapon attack material, presumably.
 
 
-class WEP_MATERIAL_DEF(UnsignedChar):
+class WEP_MATERIAL_DEF(u8):
     """Sound effect when material is struck."""
 
     NoEffect = 0
@@ -943,7 +951,7 @@ class WEP_MATERIAL_DEF(UnsignedChar):
     StoneShield = 79
 
 
-class WEP_MATERIAL_DEF_SFX(UnsignedChar):
+class WEP_MATERIAL_DEF_SFX(u8):
     """Visual effect when material is struck."""
 
     NoEffect = 0
@@ -956,7 +964,7 @@ class WEP_MATERIAL_DEF_SFX(UnsignedChar):
     HeadshotMetal = 63
 
 
-class WEP_CORRECT_TYPE(UnsignedChar):
+class WEP_CORRECT_TYPE(u8):
     """I believe this determines the graph used for applying scaling."""
 
     PhysicalMelee = 0
@@ -969,127 +977,6 @@ class WEP_CORRECT_TYPE(UnsignedChar):
     IvorySunlightTalismans = 16
 
 
-class WEPMOTION_CATEGORY(UnsignedChar):
+class WEPMOTION_CATEGORY(u8):
     """Animation offset for player weapons. Used in TAE lookup (multiplied by 10000)."""
-
-    Default = 0  # includes default one-handed animations; no attack animations
-
-    # One-handed passive animations (if different from default)
-    OneHandedHeavy = 2  # carried on shoulder
-    OneHandedSpear = 3  # held out wide and low
-
-    # Two-handed passive animations (always set)
-    TwoHandedLight = 10  # holds weapon in front (swords, axes, etc.)
-    TwoHandedHeavy = 12  # holds weapon over shoulder (greatswords)
-    TwoHandedSpear = 13  # holds weapon as a spear (spears, halberds, scythes, etc.)
-    TwoHandedBow = 14
-    TwoHandedShield = 15
-    TwoHandedCrossbow = 16
-
-    # Class base attack animations
-    DaggerClass = 20
-    StraightSwordClass = 23
-    GreatswordClass = 25  # includes Curved Greatswords
-    UltraGreatswordClass = 26
-    RapierClass = 27
-    CurvedSwordClass = 28
-    KatanaClass = 29
-    AxeClass = 30
-    GreataxeClass = 32
-    HammerClass = 33
-    GreatHammerClass = 35
-    SpearClass = 36
-    HalberdClass = 38
-    SpellToolClass = 41
-    FistsClass = 42
-    WhipClass = 43
-    BowClass = 44
-    CrossbowClass = 46
-    GreatshieldClass = 47
-    ShieldClass = 48  # small and medium shields
-
-    # Weapon-specific animation overrides
-    GreatScythes = 50  # Great Scythe, Lifehunt Scythe
-    CurvedGreatswords = 51  # Server, Murakumo
-    Talisman = 52  # includes Pyromancy Flame
-    SwordSmash = 53  # Broadsword, Barbed Straight Sword, Straight Sword Hilt
-    BalderSideSword = 54
-    SilverKnightStraightSword = 55
-    QuelaagsFurysword = 56
-    Darksword = 57
-    DrakeSword = 58
-    HammerSmash = 59  # Mace, Morning Star, Blacksmith Hammer, Hammer of Vamos
-    Warpick = 60
-    Pickaxe = 61
-    Grant = 62
-    Partizan = 63
-    DemonsSpear = 64
-    ChannelersTrident = 65
-    SilverKnightSpear = 66
-    Pike = 67
-    DragonslayerSpear = 68
-    GreatClub = 69
-    SmoughsHammer = 70
-    ParryingDagger = 71
-    BanditKnife = 72
-    PriscillasDagger = 73
-    Claymore = 74
-    Flamberge = 75
-    StoneGreatsword = 77
-    GreatswordOfArtorias = 78
-    MoonlightGreatsword = 79
-    BlackKnightSword = 80
-    ShortBowSpecial = 81  # Short Bow, Composite Bow, Darkmoon Bow
-    BlackBowOfPharis = 82
-    GreatbowSpecial = 83  # Dragonslayer Greatbow, Gough's Greatbow
-    Avelyn = 84
-    SniperCrossbow = 85
-    Claw = 86
-    DragonBoneFist = 87
-    Iaito = 89
-    ChaosBlade = 90
-    BetterParry = 91  # Target Shield, Buckler
-    CrystalRingShield = 92
-    MediumShieldBash = 93  # Spiked Shield, Crystal Shield, Pierce Shield
-    HavelsGreatshield = 94
-    Greatsword = 95  # actual weapon named Greatsword, not class
-    DemonGreatMachete = 96
-    GreatLordGreatsword = 97
-    DragonGreatsword = 98
-    Shotel = 99
-    JaggedGhostBlade = 100
-    PaintingGuardianSword = 101
-    HandAxe = 102
-    ButcherKnife = 103
-    GolemAxe = 104
-    DemonsGreataxe = 105
-    DragonKingGreataxe = 106
-    BlackKnightGreataxe = 107
-    Halberd = 108
-    Lucerne = 109
-    GiantsHalberd = 110
-    TitaniteCatchPole = 111
-    BlackKnightHalberd = 112
-    Estoc = 113
-    VelkasRapier = 114
-    RicardsRapier = 115
-    GravelordSword = 116
-    Ryuken = 117  # Seems to be an unused Fists variant.
-    CrescentAxe = 118
-    MailBreaker = 119
-    GhostBlade = 120
-    SkullLantern = 121
-    DarkHand = 123
-    LargeClub = 124
-    GargoyleTailAxe = 125
-    BonewheelShield = 126
-    CatalystThrust = 127  # Tin Crystallization Catalyst, Demon's Catalyst
-    BlackKnightGreatsword = 128
-    HeavyCrossbow = 129
-    DarkSilverTracer = 130
-    AbyssGreatsword = 131
-    GoldTracer = 132
-    StoneGreataxe = 133
-    FourProngedPlow = 134
-    ObsidianGreatsword = 135
-    ManusCatalyst = 136
+    # TODO: Bloodborne.

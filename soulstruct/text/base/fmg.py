@@ -42,6 +42,7 @@ class BaseFMG(GameFile, abc.ABC):
     Since Demon's Souls, only the `version` field differs between games, with slight header structure changes.
     """
 
+    EXT = ".fmg"
     HEADER_STRUCT: BinaryStruct = None
     RANGE_STRUCT: BinaryStruct = None
     STRING_OFFSET_STRUCT: BinaryStruct = None

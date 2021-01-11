@@ -178,7 +178,7 @@ CHARACTER_INIT_PARAM = {
         FieldDisplayInfo("npcPlayerType", "CharacterType", True, NPC_TYPE, "Type of human NPC."),
         FieldDisplayInfo("npcPlayerDrawType", "DrawType", True, NPC_DRAW_TYPE, "Draw type of human NPC."),
         FieldDisplayInfo("npcPlayerSex", "Gender", True, CHARACTER_INIT_SEX, "Character gender."),
-        FieldDisplayInfo("vowType:4", "Covenant", True, CHRINIT_VOW_TYPE, "Character covenant."),
+        # FieldDisplayInfo("vowType:4", "Covenant", True, CHRINIT_VOW_TYPE, "Character covenant."),
         FieldDisplayInfo("pad:4", "Pad0", False, pad_field(4), "Null padding."),
         FieldDisplayInfo("pad0[10]", "Pad1", False, pad_field(10), "Null padding."),
     ],
@@ -590,7 +590,7 @@ NPC_PARAM_ST = {
         FieldDisplayInfo("drawType", "DrawType", True, NPC_DRAW_TYPE, "DOC-TODO"),
         FieldDisplayInfo("npcType", "CharacterType", True, NPC_TYPE, "DOC-TODO"),
         FieldDisplayInfo(
-            "teamType", "TeamType", True, NPC_TEMA_TYPE, "0: enemy, 1: boss, 2: ally, 6: unused, 7: white phantom"
+            "teamType", "TeamType", True, NPC_TEAM_TYPE, "0: enemy, 1: boss, 2: ally, 6: unused, 7: white phantom"
         ),
         FieldDisplayInfo("moveType", "MoveType", True, NPC_MOVE_TYPE, "DOC-TODO"),
         FieldDisplayInfo("lockDist", "LockOnDistance", True, int, "DOC-TODO"),

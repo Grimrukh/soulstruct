@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-__all__ = ["ParamDefField", "ParamDef", "ParamDefBND"]
+__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
 
+import logging
 import typing as tp
 
+from soulstruct.games import BLOODBORNE
 from soulstruct.params.base.paramdef import (
     ParamDefField as _BaseParamDefField,
     ParamDef as _BaseParamDef,
@@ -16,27 +18,11 @@ from .display_info import get_param_info, get_param_info_field
 if tp.TYPE_CHECKING:
     from soulstruct.params.base.param import ParamRow
 
+_LOGGER = logging.getLogger(__name__)
 _BUNDLED = None
 
 
 class ParamDefField(_BaseParamDefField):
-
-    STRUCT = BinaryStruct(
-        ("debug_name", "64u"),
-        ("debug_type", "8j"),
-        ("debug_format", "8j"),  # %i, %u, %d, etc.
-        ("default", "f"),
-        ("minimum", "f"),
-        ("maximum", "f"),
-        ("increment", "f"),
-        ("debug_display", "i"),
-        ("size", "i"),
-        ("description_offset", "q"),
-        ("internal_type", "32j"),  # could be an enum name (see params.enums)
-        ("name", "32j"),
-        ("sort_id", "i"),
-        "28x",
-    )
 
     def get_display_info(self, entry: ParamRow):
         try:
@@ -48,16 +34,14 @@ class ParamDefField(_BaseParamDefField):
 
 class ParamDef(_BaseParamDef):
     BYTE_ORDER = "<"
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("size", "i"),
         ("header_size", "H", 255),
         ("data_version", "H"),
         ("field_count", "H"),
         ("field_size", "H", 208),
-        "4x",
-        ("param_name_offset", "q"),
-        "20x",
-        ("big_endian", "B"),
+        ("param_name", "32j"),
+        ("big_endian", "B", 0),
         ("unicode", "?"),
         ("format_version", "h", 201),
         ("unk1", "q", 56),
@@ -75,10 +59,12 @@ class ParamDef(_BaseParamDef):
 
 class ParamDefBND(_BaseParamDefBND):
     PARAMDEF_CLASS = ParamDef
+    GAME = BLOODBORNE
 
 
-def GET_BUNDLED() -> ParamDefBND:
+def GET_BUNDLED_PARAMDEF() -> ParamDefBND:
     global _BUNDLED
     if _BUNDLED is None:
+        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.GAME.name}.")
         _BUNDLED = ParamDefBND()
     return _BUNDLED

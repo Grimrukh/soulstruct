@@ -9,7 +9,7 @@ from soulstruct.params.base.draw_param import (
 from soulstruct.games import DARK_SOULS_PTDE
 
 from .core import Param
-from .paramdef import GET_BUNDLED
+from .paramdef import GET_BUNDLED_PARAMDEF
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class DrawParamBND(_BaseDrawParamBND):
 
     GAME = DARK_SOULS_PTDE
     DRAW_PARAM_CLASS = DrawParam
-    GET_BUNDLED = staticmethod(GET_BUNDLED)
+    GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
 
     DepthOfField: list[DrawParam]
     # EnvLightTex: list[DrawParam]

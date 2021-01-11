@@ -11,14 +11,14 @@ from soulstruct.utilities.binary_struct import BinaryStruct
 class ParamDefField(_BaseParamDefField):
 
     STRUCT = BinaryStruct(
-        ("debug_name_offset", "q"),
-        ("debug_type", "8j"),
-        ("debug_format", "8j"),  # %i, %u, %d, etc.
+        ("display_name_offset", "q"),
+        ("display_type", "8j"),
+        ("display_format", "8j"),  # %i, %u, %d, etc.
         ("default", "f"),
         ("minimum", "f"),
         ("maximum", "f"),
         ("increment", "f"),
-        ("debug_display", "i"),
+        ("edit_type", "i"),
         ("size", "i"),
         ("description_offset", "q"),
         ("internal_type", "32j"),  # could be an enum name (see params.enums)
@@ -30,7 +30,7 @@ class ParamDefField(_BaseParamDefField):
 
 class ParamDef(_BaseParamDef):
     BYTE_ORDER = "<"
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("size", "i"),
         ("header_size", "H", 255),
         ("data_version", "H"),

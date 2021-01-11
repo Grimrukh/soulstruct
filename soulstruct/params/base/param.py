@@ -6,8 +6,9 @@ import struct
 import typing as tp
 
 from soulstruct.game_file import GameFile
-from soulstruct.params.core import BitField, FieldDisplayInfo, ParamError
 from soulstruct.params.base.paramdef import ParamDef, ParamDefField, ParamDefBND
+from soulstruct.params.core import BitFieldReader, BitFieldWriter, FieldDisplayInfo
+from soulstruct.params import field_types as ft
 from soulstruct.utilities import unpack_from_buffer, read_chars_from_buffer
 from soulstruct.utilities.binary_struct import BinaryStruct
 
@@ -16,12 +17,13 @@ from .flags import ParamFlags1, ParamFlags2
 _LOGGER = logging.getLogger(__name__)
 
 
-class ParamRow(abc.ABC):
+class ParamRow:
 
     def __init__(self, row_source, paramdef: ParamDef, name=None):
         self.fields = {}
         self.paramdef = paramdef
-        self.bit_field = BitField()
+        self.bit_reader = BitFieldReader()
+        self.bit_writer = BitFieldWriter()
         self.name = ""
 
         if isinstance(row_source, dict):
@@ -80,11 +82,6 @@ class ParamRow(abc.ABC):
         else:
             return list(self.fields.keys())
 
-    @abc.abstractmethod
-    def get_field_type(self, field):
-        """Look for field type in game-specific appropriate `enums` module."""
-        raise NotImplementedError
-
     def get_paramdef_field(self, field_name: str) -> ParamDefField:
         return self.paramdef[field_name]
 
@@ -101,66 +98,40 @@ class ParamRow(abc.ABC):
         if isinstance(row_buffer, bytes):
             row_buffer = io.BytesIO(row_buffer)
 
-        for field in self.paramdef.fields:
+        for field in self.paramdef.fields.values():
 
-            if field.bit_size < 8:
-                field_value = self.bit_field.unpack(row_buffer, field.bit_size)
-                self.fields[field.name] = bool(field_value) if field.bit_size == 1 else field_value
-            elif field.internal_type == "dummy8":
-                self.bit_field.clear()
-                field_value = row_buffer.read(field.size)
-                if not field_value == b"\0" * field.size:
-                    # TODO: Canonize these exceptions.
-                    if self.paramdef.param_type == "CHARMAKEMENUTOP_PARAM_ST" and field.name == "reserved[11]":
-                        continue  # identified exception
-                    elif self.paramdef.param_type == "DECAL_PARAM_ST" and field.name == "pad_00[14]":
-                        continue  # identified exception
-                    elif self.paramdef.param_type == "GEM_GEN_PARAM_ST" and field.name == "pad_1[3]":
-                        continue  # identified exception
-                    elif self.paramdef.param_type == "SP_EFFECT_PARAM_ST" and field.name == "pad3[2]":
-                        continue  # identified exception
-                    else:
-                        raise ValueError(
-                            f"Pad value of field {field.name} in row {self.name} of Param {self.paramdef.param_type} "
-                            f"is not null: {field_value}."
-                        )
-                self.fields[field.name] = field_value
-            elif field.internal_type == "fixstr":
-                self.bit_field.clear()
-                self.fields[field.name] = row_buffer.read(field.size).decode("shift_jis_2004")
-            elif field.internal_type == "fixstrW":
-                self.bit_field.clear()
-                self.fields[field.name] = row_buffer.read(field.size).decode("utf-16-le")
+            if field.bit_count != -1:
+                field_value = self.bit_reader.read(row_buffer, field.bit_count, field.fmt)
             else:
-                self.bit_field.clear()
-                try:
-                    field_type = self.get_field_type(field)
-                except AttributeError:
-                    raise KeyError(
-                        f"Field {field.name} in Param {self.paramdef.param_type} has unknown "
-                        f"internal type {field.internal_type} (debug type = {field.debug_type})."
-                    )
-                data = row_buffer.read(field_type.size())
-                try:
-                    (field_value,) = struct.unpack(field_type.format(), data)
-                except struct.error as e:
-                    if field.debug_name in {"inverseToneMapMul", "sfxMultiplier"}:
-                        # These fields are screwed up in m99 and default ToneMapBank.
-                        field_value = 1.0
-                    else:
-                        print(data, field_type)
-                        raise ValueError(
-                            f"Could not unpack data for field {field}.\n"
-                            f"Field type: {field_type}; Raw bytes: {data}\n"
-                            f"Error:\n{str(e)}"
-                        )
-                self.fields[field.name] = bool(field_value) if field.bit_size == 1 else field_value
+                self.bit_reader.clear()
+                if issubclass(field.type_class, ft.string):
+                    field_value = field.type_class.read(row_buffer, field.size)
+                elif field.type_class is ft.dummy8:
+                    # These are often 'array' fields, but we don't even bother unpacking them.
+                    field_value = row_buffer.read(field.size)
+                else:
+                    data = row_buffer.read(field.type_class.size())
+                    try:
+                        (field_value,) = struct.unpack(field.fmt, data)
+                    except struct.error as e:
+                        if field.display_name in {"inverseToneMapMul", "sfxMultiplier"}:
+                            # These fields are malformed in m99 and default ToneMapBank in Dark Souls Remastered.
+                            field_value = 1.0
+                        else:
+                            raise ValueError(
+                                f"Could not unpack data for field {field.name} in ParamRow {self.name}.\n"
+                                f"Field type: {field.display_type}\n"
+                                f"Raw bytes: {data}\n"
+                                f"Error:\n{str(e)}"
+                            )
+            self.fields[field.name] = bool(field_value) if field.bit_count == 1 else field_value
 
     def load_dict(self, data: dict):
-        for field in self.paramdef.fields:
-            if field.bit_size < 8:
+        for field in self.paramdef.fields.values():
+            # TODO: Modernize.
+            if field.bit_count < 8:
                 self.fields[field.name] = data.get(field.name, field.new_default)
-            elif field.internal_type == "dummy8":  # null bytes
+            elif field.internal_type == "dummy8":  # padding
                 # TODO: The exceptions identified in `unpack()` will be overridden with nulls. Probably fine.
                 data.pop(field.name, None)
                 self.fields[field.name] = b"\0" * field.size
@@ -169,51 +140,28 @@ class ParamRow(abc.ABC):
 
     def pack(self):
         packed_row = b""
-        for field_name, field_value in self.fields.items():  # These are ordered correctly already.
+        for field_name, value in self.fields.items():  # These are ordered correctly already.
             field = self.paramdef[field_name]
-            if field.bit_size < 8:
-                # Add bits.
-                completed_byte = self.bit_field.pack(field_value, field.bit_size)
-                if completed_byte is not None:
-                    packed_row += struct.pack("<B", completed_byte)
-                continue
-            completed_byte = self.bit_field.pad()
-            if completed_byte is not None:
-                packed_row += struct.pack("<B", completed_byte)
-            if field.internal_type == "dummy8":
-                # Write nulls.
-                packed_row += b"\x00" * field.size
-                continue
-            try:
-                field_type = self.get_field_type(field)
-            except AttributeError:
-                raise ParamError(
-                    f"Field {field.name} in ParamTable {self.paramdef.param_type} has unknown "
-                    f"internal type {field.internal_type} (debug type = {field.debug_type})."
-                )
-            if not isinstance(self[field.name], field_type.python_type()):
-                raise ParamError(
-                    f"Bad type: field {field.name} in row {repr(self.name)} of table "
-                    f"{self.paramdef.param_type} has value {self[field.name]} with type "
-                    f"{type(self[field.name])}, but should have type {field_type.python_type()}."
-                )
-            if not field_type.minimum() <= self[field.name] <= field_type.maximum():
-                _LOGGER.error(f"Error in field. Field data: {field}")
-                raise ParamError(
-                    f"Invalid: field {field.name} in row {repr(self.name)} of table "
-                    f"{self.paramdef.param_type} has out-of-range value {self[field.name]} "
-                    f"(range is {field_type.minimum()} to {field_type.maximum()})."
-                )
-            packed_row += struct.pack(field_type.format(), field_value)
-
+            field.check_python_type(value)
+            field.check_range(value)
+            if field.bit_count != -1:
+                packed_row += self.bit_writer.write(value, field.bit_count, field.fmt)
+            else:
+                packed_row += self.bit_writer.finish_field()
+                if issubclass(field.type_class, ft.string):
+                    packed_row += field.type_class.write(value, field.size)
+                elif field.type_class is ft.dummy8:
+                    packed_row += value  # already bytes
+                else:
+                    packed_row += struct.pack(field.fmt, value)
         return packed_row
 
-    def to_dict(self) -> dict[str, tp.Any]:
+    def to_dict(self, ignore_pads=True, ignore_defaults=True) -> dict[str, tp.Any]:
         data = {"name": self.name}
-        for field in self.paramdef.fields:
-            if field.internal_type == "dummy8":
+        for field in self.paramdef.fields.values():
+            if ignore_pads and field.internal_type == "dummy8":
                 continue  # pad bytes not written
-            if self.fields[field.name] == field.new_default:
+            if ignore_defaults and self.fields[field.name] == field.new_default:
                 continue  # default values not written
             data[field.name] = self.fields[field.name]
         return data
@@ -222,8 +170,7 @@ class ParamRow(abc.ABC):
 class Param(GameFile, abc.ABC):
     """This base class supports all binary versions, but lacks information about game-specific enums, etc."""
 
-    ParamRow = ParamRow
-    GET_BUNDLED: tp.Callable = None
+    GET_BUNDLED_PARAMDEF: tp.Callable = None
 
     @staticmethod
     def GET_HEADER_STRUCT(flags1: ParamFlags1, byte_order) -> BinaryStruct:
@@ -281,7 +228,7 @@ class Param(GameFile, abc.ABC):
 
     def __init__(self, param_source, dcx_magic=(), paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
         if paramdef_bnd is None:
-            self._paramdef_bnd = self.GET_BUNDLED()
+            self._paramdef_bnd = self.GET_BUNDLED_PARAMDEF()
         elif isinstance(paramdef_bnd, ParamDefBND):
             self._paramdef_bnd = paramdef_bnd
         else:
@@ -325,11 +272,11 @@ class Param(GameFile, abc.ABC):
                 i = int(i)
             except (ValueError, TypeError):
                 raise KeyError(f"All keys of `Param` dict must be integers, not {i}.")
-            if isinstance(row, self.ParamRow):
+            if isinstance(row, ParamRow):
                 self.rows[i] = row
             else:
                 try:
-                    self.rows[i] = self.ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
+                    self.rows[i] = ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
                 except Exception as ex:
                     raise ValueError(f"Could not interpret value of `rows[{i}]` as a `ParamRow`. Error: {ex}")
 
@@ -342,8 +289,8 @@ class Param(GameFile, abc.ABC):
         if isinstance(row, dict):
             if "name" not in row:
                 raise ValueError("New row must have a 'name' field.")
-            row = self.ParamRow(row, self._paramdef_bnd[self.param_type])
-        if isinstance(row, self.ParamRow):
+            row = ParamRow(row, self._paramdef_bnd[self.param_type])
+        if isinstance(row, ParamRow):
             self.rows[row_index] = row
         else:
             raise TypeError("New row must be a `ParamRow` or a dictionary that contains all required fields.")
@@ -462,7 +409,7 @@ class Param(GameFile, abc.ABC):
                     raise
             else:
                 name = ""
-            self.rows[row_struct["id"]] = self.ParamRow(row_data, self.paramdef, name=name)
+            self.rows[row_struct["id"]] = ParamRow(row_data, self.paramdef, name=name)
 
     def pack(self, sort=True):
         # if len(self.entries) > 5461:
@@ -480,6 +427,8 @@ class Param(GameFile, abc.ABC):
         packed_data = b""
         name_encoding = self.get_name_encoding()
 
+        import time
+        t = time.time()
         for row_id, row in sorted_entries:
 
             # Pack names with relative offsets (to be globally offset later).
@@ -496,7 +445,9 @@ class Param(GameFile, abc.ABC):
             packed_data += packed_row
             data_offset_list.append(data_offset)
             data_offset += len(packed_row)
-
+        print(f"Packed {self.param_type} ({len(sorted_entries)} entries, {len(self.paramdef.fields)} fields each) in:\n"
+              f"    {time.time() - t:.04f} s\n"
+              f"    {(time.time() - t) / (len(sorted_entries) * len(self.paramdef.fields)) * 1000:.04f} ms per field")
         header_struct = self.GET_HEADER_STRUCT(self.flags1, self.byte_order)
         if "param_type_offset" in header_struct.field_names:
             raise NotImplementedError(f"Soulstruct cannot current pack this version of `Param`, sorry!")
@@ -533,7 +484,7 @@ class Param(GameFile, abc.ABC):
         header = header_struct.pack(header_fields)
         return header + row_pointer_data + packed_data + packed_names
 
-    def to_dict(self):
+    def to_dict(self, ignore_pads=True, ignore_defaults=True):
         data = {
             "param_type": self.param_type,
             "big_endian": True if self.byte_order == ">" else False,
@@ -544,7 +495,7 @@ class Param(GameFile, abc.ABC):
             "rows": {},
         }
         for i, row in self.rows.items():
-            data["rows"][i] = row.to_dict()
+            data["rows"][i] = row.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
         return data
 
     def get_range(self, start, count):

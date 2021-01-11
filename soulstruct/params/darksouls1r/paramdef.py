@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED"]
+__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
 
+import logging
 import typing as tp
 
 from soulstruct.games import DARK_SOULS_DSR
@@ -18,19 +19,20 @@ from .display_info import get_param_info, get_param_info_field
 if tp.TYPE_CHECKING:
     from soulstruct.params.base.param import ParamRow
 
+_LOGGER = logging.getLogger(__name__)
 _BUNDLED = None
 
 
 class ParamDefField(_BaseParamDefField):
     STRUCT = BinaryStruct(
-        ("debug_name", "64j"),
-        ("debug_type", "8j"),
-        ("debug_format", "8j"),  # %i, %u, %d, etc.
+        ("display_name", "64j"),
+        ("display_type", "8j"),
+        ("display_format", "8j"),  # %i, %u, %d, etc.
         ("default", "f"),
         ("minimum", "f"),
         ("maximum", "f"),
         ("increment", "f"),
-        ("debug_display", "i"),
+        ("edit_type", "i"),
         ("size", "i"),
         ("description_offset", "i"),
         ("internal_type", "32j"),  # could be an enum name (see params.enums)
@@ -47,7 +49,7 @@ class ParamDefField(_BaseParamDefField):
 
     def get_default_value(self):
         v = DEFAULTS[self.param_name].get(self.name, self.default)
-        if self.bit_size == 1 and self.internal_type != "dummy8":
+        if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(v)
         elif self.internal_type not in {"f32", "f64"}:
             return int(v)
@@ -56,14 +58,14 @@ class ParamDefField(_BaseParamDefField):
 
 class ParamDef(_BaseParamDef):
     BYTE_ORDER = "<"
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("size", "i"),
         ("header_size", "H", 48),
         ("data_version", "H"),
         ("field_count", "H"),
         ("field_size", "H", 176),
         ("param_name", "32j"),
-        ("big_endian", "B"),
+        ("big_endian", "B", 0),
         ("unicode", "?"),
         ("format_version", "h", 104),
     )
@@ -83,8 +85,9 @@ class ParamDefBND(_BaseParamDefBND):
     GAME = DARK_SOULS_DSR
 
 
-def GET_BUNDLED() -> ParamDefBND:
+def GET_BUNDLED_PARAMDEF() -> ParamDefBND:
     global _BUNDLED
     if _BUNDLED is None:
+        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.GAME.name}.")
         _BUNDLED = ParamDefBND()
     return _BUNDLED

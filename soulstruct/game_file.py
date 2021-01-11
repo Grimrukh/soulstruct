@@ -106,7 +106,7 @@ class GameFile(abc.ABC):
     def pack(self, **kwargs) -> bytes:
         """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
 
-    def to_dict(self) -> dict:
+    def to_dict(self, **kwargs) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
         raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
@@ -141,7 +141,7 @@ class GameFile(abc.ABC):
 
         The file path will have the `.json` suffix added automatically.
         """
-        json_dict = self.to_dict()
+        json_dict = self.to_dict(**kwargs)
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
@@ -150,17 +150,20 @@ class GameFile(abc.ABC):
         if file_path.suffix != ".json":
             file_path = file_path.with_suffix(file_path.suffix + ".json")
         with file_path.open("w", encoding=encoding) as j:
-            json.dump(json_dict, j, indent=indent, **kwargs)
+            json.dump(json_dict, j, indent=indent)
 
     def copy(self):
         return copy.deepcopy(self)
 
     def _get_file_path(self, file_path: tp.Union[None, str, Path]) -> Path:
+        """Get default path of binary file, based on `EXT` and `dcx_magic`."""
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
             file_path = self.path
         file_path = Path(file_path)
+        if file_path.suffix == ".dcx":
+            file_path = file_path.with_name(file_path.stem)  # remove '.dcx' (may add back below)
         if self.EXT and file_path.suffix != self.EXT:
             file_path = file_path.with_suffix(file_path.suffix + self.EXT)
         if self.dcx_magic and not file_path.suffix == ".dcx":
