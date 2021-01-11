@@ -513,6 +513,18 @@ class MSBPlatoonEvent(MSBEvent):
             [None] * 32,
             "Characters who are in this Platoon.",
         ),
+        "platoon_id_script_active": MapFieldInfo(
+            "Platoon Active Script ID",
+            int,
+            -1,
+            "Unknown. Possibly an AI param ID.",
+        ),
+        "state": MapFieldInfo(
+            "Platoon State",
+            int,
+            -1,
+            "Unknown.",
+        )
     }
 
     FIELD_ORDER = (
@@ -520,6 +532,8 @@ class MSBPlatoonEvent(MSBEvent):
         "base_part_name",
         "base_region_name",
         "platoon_part_names",
+        "platoon_id_script_active",
+        "state",
     )
 
     def __init__(self, source, **kwargs):
@@ -653,6 +667,7 @@ class MSBEnvironmentEvent(_BaseMSBEnvironmentEvent, MSBEvent):
 
 
 class MSBOtherEvent(MSBEvent):
+    EVENT_TYPE_DATA_STRUCT = BinaryStruct()
     ENTRY_SUBTYPE = MSBEventSubtype.Other
 
 

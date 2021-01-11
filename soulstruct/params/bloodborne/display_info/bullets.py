@@ -370,10 +370,10 @@ BULLET_PARAM_ST = {
         ),
         FieldDisplayInfo(
             "isHitDarkForceMagic:1",
-            "CanBeDeflectedBySilverPendant",
+            "CanBeDeflectedByBeastRoar",
             True,
             bool,
-            "If True, this bullet will impact the Silver Pendant shield effect. True only for dark sorceries.",
+            "If True, this bullet will impact the Beast Roar deflection effect.",
         ),
         FieldDisplayInfo("pad[3]", "Pad3", False, pad_field(3), "Null padding."),
     ],

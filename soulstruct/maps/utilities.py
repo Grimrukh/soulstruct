@@ -37,7 +37,7 @@ def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = No
         ffxbnd = BND3(ffxbnd_path)
     except FileNotFoundError:
         raise FileNotFoundError(f"Could not find FFXBND file to modify: {ffxbnd_path}")
-    open_sources = {}  # type: tp.Dict[str, BND3]
+    open_sources = {}  # type: dict[str, BND3]
     existing_ffx_files = {entry.name for entry in ffxbnd.entries}
     next_id = max(i for i in ffxbnd.entries_by_id if i < 100000) + 1
 
@@ -128,7 +128,7 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
                 block_id = 0
             matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
     elif isinstance(source, str):
-        if (source.startswith("m") and "_" in source) or source == "aiCommon":
+        if (source.startswith("m") and "_" in source) or source.lower() == "aicommon":
             source = Path(source).stem  # remove file extensions
             matches = [g for g in game_maps if source in g.stem_set()]
         else:

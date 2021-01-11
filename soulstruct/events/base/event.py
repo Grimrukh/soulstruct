@@ -180,14 +180,12 @@ class Event:
             first_event_arg_offset = -1
 
         event_binary = self.STRUCT.pack(
-            {
-                "event_id": self.event_id,
-                "instruction_count": self.instruction_count,
-                "first_instruction_offset": instruction_offset,
-                "event_arg_count": self.event_arg_count,
-                "first_event_arg_offset": first_event_arg_offset,
-                "restart_type": self.restart_type,
-            }
+            event_id=self.event_id,
+            instruction_count=self.instruction_count,
+            first_instruction_offset=instruction_offset,
+            event_arg_count=self.event_arg_count,
+            first_event_arg_offset=first_event_arg_offset,
+            restart_type=self.restart_type,
         )
 
         base_arg_offset = first_base_arg_offset

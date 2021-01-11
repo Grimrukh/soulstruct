@@ -149,7 +149,7 @@ OBJECT_PARAM_ST = {
             "its HP to -1.)",
         ),
         FieldDisplayInfo("isMoveObj:1", "IsMovingObject", True, bool, "If True, this object can move."),
-        FieldDisplayInfo("pad_1:5", "Pad1", False, pad_field(5), "Null padding."),
+        FieldDisplayInfo("pad_1:5", "Pad1", False, bit_pad_field(5), "Null padding."),
         # TODO: LOD type.
         FieldDisplayInfo("defaultLodParamId", "DefaultLOD", True, int, "Default LOD (level of default) parameter."),
         FieldDisplayInfo(

@@ -259,7 +259,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         next_entry_list_offset = offset if not is_last_table else 0
 
         packed_header = self.MAP_ENTITY_LIST_HEADER.pack(name_offset=name_offset, entry_offset_count=len(entries) + 1,)
-        packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack([{"entry_offset": o} for o in entry_offsets])
+        packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack_multiple([{"entry_offset": o} for o in entry_offsets])
         packed_header += self.MAP_ENTITY_LIST_TAIL.pack(next_entry_list_offset=next_entry_list_offset)
 
         return packed_header + packed_name + packed_entries

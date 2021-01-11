@@ -111,6 +111,8 @@ class MapEntryRow(EntryRow):
 
 class MapFieldRow(FieldRow):
 
+    CAMEL_CASE_NICKNAMES = False  # field nicknames already properly formatted for display
+
     master: MapsEditor
 
     def __init__(self, editor: MapsEditor, row_index: int, main_bindings: dict = None):

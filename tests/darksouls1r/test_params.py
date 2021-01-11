@@ -1,5 +1,6 @@
 import os
 import unittest
+from pathlib import Path
 
 from soulstruct.params.darksouls1r import GameParamBND, GET_BUNDLED_PARAMDEF
 from soulstruct.utilities import Timer
@@ -12,21 +13,44 @@ class ParamsTest(unittest.TestCase):
             paramdef_bnd = GET_BUNDLED_PARAMDEF()
         with Timer("GameParamBND read"):
             game_param = GameParamBND("gameparam.parambnd.dcx", paramdef_bnd=paramdef_bnd)
+
+        # dagger = game_param.Weapons[100000]
+        # packed = dagger.pack()
+        # from soulstruct.params.base.param import ParamRow
+        # dagger2 = ParamRow(packed, game_param.Weapons.paramdef, name=dagger.name)
+        # for field in dagger.fields:
+        #     print(field, dagger[field], dagger2[field])
+        # exit()
+
         with Timer("GameParamBND write"):
             game_param.write("_test_gameparam.parambnd.dcx")
         with Timer("GameParamBND re-read"):
-            GameParamBND("_test_gameparam.parambnd.dcx")
+            game_param_re = GameParamBND("_test_gameparam.parambnd.dcx")
+
         with Timer("GameParamBND JSON write"):
             game_param.write_json("_test_gameparam.parambnd.json")
         with Timer("GameParamBND JSON re-read"):
-            GameParamBND("_test_gameparam.parambnd.json")
+            game_param_from_json = GameParamBND("_test_gameparam.parambnd.json")
+        with Timer("GameParamBND JSON re-write"):
+            game_param_from_json.write_json("_test_json_re_gameparam.parambnd.json")
+        with Timer("GameParamBND re-read JSON write"):
+            game_param_re.write_json("_test_re_gameparam.parambnd.json")
 
-    def tearDown(self) -> None:
-        for test_file in ("_test_gameparam.parambnd.dcx", "_test_gameparam.parambnd.json"):
-            try:
-                os.remove(test_file)
-            except FileNotFoundError:
-                pass
+        # Check that JSON does not change when reloaded and rewritten.
+        with open("_test_gameparam.parambnd.json") as f:
+            json_initial = f.readlines()
+        with open("_test_json_re_gameparam.parambnd.json") as f:
+            json_from_json_read = f.readlines()
+        with open("_test_re_gameparam.parambnd.json") as f:
+            json_from_binary_read = f.readlines()
+        for i, (line_initial, line_json_read) in enumerate(zip(json_initial, json_from_json_read)):
+            self.assertEqual(line_initial, line_json_read, msg=f"Line {i + 1}")
+        for i, (line_initial, line_json_read) in enumerate(zip(json_initial, json_from_binary_read)):
+            self.assertEqual(line_initial, line_json_read, msg=f"Line {i + 1}")
+
+    def tearDown(self):
+        for test_file in Path(".").glob("_test*"):
+            os.remove(str(test_file))
 
 
 if __name__ == '__main__':

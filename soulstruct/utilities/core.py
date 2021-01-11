@@ -31,6 +31,7 @@ import struct
 import subprocess
 import sys
 import textwrap
+import time
 import typing as tp
 from pathlib import Path
 

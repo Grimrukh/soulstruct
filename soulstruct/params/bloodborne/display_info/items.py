@@ -118,11 +118,11 @@ EQUIP_PARAM_PROTECTOR_ST = {
             ArmorParam,
             "Replacement equipment for network ghosts.",
         ),
-        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", True, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", True, ItemLotParam, ""),
         FieldDisplayInfo(
-            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", True, ItemLotParam, "DOC-TODO"
+            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", True, ItemLotParam, ""
         ),
-        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", True, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", True, ItemLotParam, ""),
         FieldDisplayInfo(
             "fixPrice",
             "RepairCost",
@@ -790,11 +790,11 @@ EQUIP_PARAM_ACCESSORY_ST = {
             "Determines what type of special effects affect the stats of this equipment. Unused for rings.",
         ),
         FieldDisplayInfo("pad[1]", "Pad1", False, pad_field(1), "Null padding."),
-        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo(
-            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"
+            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""
         ),
-        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo(
             "isDeposit:1",
             "CanBeStored",
@@ -1179,11 +1179,11 @@ EQUIP_PARAM_GOODS_ST = {
             "If True, this good cannot be used outside the PvP Arena in Oolacile.",
         ),
         FieldDisplayInfo("pad[9]", "Pad1", False, pad_field(9), "Null padding."),
-        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo(
-            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"
+            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""
         ),
-        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, ""),
     ],
 }
 
@@ -1880,11 +1880,11 @@ EQUIP_PARAM_WEAPON_ST = {
             float,
             "Multiplier applied to damage dealt against enemies from the Abyss with this weapon.",
         ),
-        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo(
-            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"
+            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""
         ),
-        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, "DOC-TODO"),
+        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo("equipModelId", "WeaponModel", True, int, "Weapon model ID."),
         FieldDisplayInfo("iconId", "WeaponIcon", True, Texture, "Weapon icon texture ID."),
         FieldDisplayInfo(

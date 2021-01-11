@@ -1004,7 +1004,7 @@ SP_EFFECT_PARAM_ST = {
             bool,
             "Used only by Purple Coward's Crystal.",
         ),
-        FieldDisplayInfo("pad_2:4", "Pad1", False, pad_field(4), "Null padding."),
+        FieldDisplayInfo("pad_2:4", "Pad1", False, bit_pad_field(4), "Null padding."),
         FieldDisplayInfo(
             "vowType0:1",
             "AffectsCharactersWithNoCovenant",
@@ -1280,7 +1280,7 @@ SP_EFFECT_VFX_PARAM_ST = {
         ),
         FieldDisplayInfo("isInvisibleWeapon:1", "HideWeapon", True, bool, "Weapon is invisible if enabled."),
         FieldDisplayInfo("isSilence:1", "IsSilent", True, bool, "Movement noises are silenced if enabled."),
-        FieldDisplayInfo("pad_1:6", "Pad1", False, pad_field(6), "Null padding."),
+        FieldDisplayInfo("pad_1:6", "Pad1", False, bit_pad_field(6), "Null padding."),
         FieldDisplayInfo("pad[16]", "Pad2", False, pad_field(16), "Null padding."),
     ],
 }

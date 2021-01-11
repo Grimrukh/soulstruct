@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-__all__ = ["ParamError", "BitFieldReader", "BitFieldWriter", "FieldDisplayInfo", "DynamicFieldDisplayInfo", "pad_field"]
+__all__ = [
+    "ParamError",
+    "BitFieldReader",
+    "BitFieldWriter",
+    "FieldDisplayInfo",
+    "DynamicFieldDisplayInfo",
+    "pad_field",
+    "bit_pad_field",
+]
 
 import abc
 import io
@@ -28,7 +36,7 @@ class _BitFieldBase:
 
     def clear(self):
         self._field = ""
-        self._field_type = ""
+        self._fmt = ""
         self._offset = 0
 
 
@@ -62,11 +70,12 @@ class BitFieldWriter(_BitFieldBase):
             )
         packed = b""
         if fmt != self._fmt:
-            # Pad and return last bit field (of different type to new one) while starting new bit field.
-            packed = self.finish_field()
+            if self._fmt:
+                # Pad and return last bit field (of different type to new one) while starting new bit field.
+                packed = self.finish_field()
             self._fmt = fmt
         max_bit_count = 8 * struct.calcsize(fmt)
-        self._field += format(value, f"0{max_bit_count}b")[::-1]
+        self._field += format(value, f"0{bit_count}b")[::-1]
         if len(self._field) >= max_bit_count:
             if packed:
                 # This shouldn't happen for new `fmt` because `bit_count < max_size`, but just in case.
@@ -123,3 +132,7 @@ class DynamicFieldDisplayInfo(abc.ABC):
 
 def pad_field(n):
     return f"<Pad:{n}>"
+
+
+def bit_pad_field(n):
+    return f"<BitPad:{n}>"

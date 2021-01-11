@@ -25,7 +25,7 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     """
 
     MSB_CLASS = MSB
-    MAPS = ALL_MAPS_NO_CHALICE
+    ALL_MAPS = ALL_MAPS_NO_CHALICE
     GET_MAP = staticmethod(get_map)
     IS_DCX = True
 

@@ -2,7 +2,7 @@ __all__ = ["MAGIC_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.bloodborne.enums import *
-from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
+from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
 
 # Overrides for basic enum.
 SP_EFFECT_SPCATEGORY = int
@@ -357,7 +357,7 @@ MAGIC_PARAM_ST = {
             bool,
             "If True, using this spell will create a resonance ring to help players in other worlds.",
         ),
-        FieldDisplayInfo("pad_1:6", "Pad1", False, pad_field(6), "Null padding."),
+        FieldDisplayInfo("pad_1:6", "Pad1", False, bit_pad_field(6), "Null padding."),
         FieldDisplayInfo("pad[2]", "Pad2", False, pad_field(2), "Null padding."),
     ],
 }

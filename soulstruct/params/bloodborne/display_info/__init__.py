@@ -29,7 +29,7 @@ def get_param_info(param_name: str) -> dict:
 
 
 def get_param_info_field(param_name: str, field_name: str) -> FieldDisplayInfo:
-    param_info = get_param_info(param_name)
+    param_info = globals()[param_name]
     field_hits = [field for field in param_info["fields"] if field.name == field_name]
     if not field_hits:
         raise ValueError(f"Could not find field {field_name} in param {param_name}.")

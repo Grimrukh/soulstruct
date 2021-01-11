@@ -8,9 +8,9 @@ import threading
 import time
 import typing as tp
 from pathlib import Path
+from queue import Queue
 
 from soulstruct.bnd import BND
-from soulstruct.maps.darksouls1.maps import get_map
 from soulstruct.utilities import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
@@ -34,19 +34,22 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+TAB_EDITORS = {
+    "maps": MapsEditor,
+    "entities": EntityEditor,
+    "params": ParamsEditor,
+    "lighting": LightingEditor,
+    "text": TextEditor,
+    "events": EventEditor,
+    "ai": AIEditor,
+    "talk": TalkEditor,
+}  # also specifies tab order ('runtime' comes last)
+
+
 class ProjectWindow(SmartFrame, abc.ABC):
 
     PROJECT_CLASS: tp.Type[GameDirectoryProject] = None
-    TAB_EDITORS = {
-        "maps": MapsEditor,
-        "entities": EntityEditor,
-        "params": ParamsEditor,
-        "lighting": LightingEditor,
-        "text": TextEditor,
-        "events": EventEditor,
-        "ai": AIEditor,
-        "talk": TalkEditor,
-    }  # also specifies tab order ('runtime' comes last)
+
     RUNTIME_MANAGER_CLASS = None  # type: tp.Type[RuntimeManager]
     CHARACTER_MODELS = {}
 
@@ -68,7 +71,6 @@ class ProjectWindow(SmartFrame, abc.ABC):
             window_title=f"{self.PROJECT_CLASS.GAME.name} Project Editor",
         )
         self.withdraw()
-        self._THREAD_EXCEPTION = None
 
         if not project_path:
             self.CustomDialog(
@@ -177,92 +179,99 @@ class ProjectWindow(SmartFrame, abc.ABC):
             for tab_name in self.ordered_tabs
         }
 
-        self.maps_tab = self.SmartFrame(
-            frame=tab_frames["maps"],
-            smart_frame_class=MapsEditor,
-            maps=self.project.maps,
-            character_models=self.CHARACTER_MODELS,
-            global_map_choice_func=self.set_global_map_choice,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.maps_tab.bind("<Visibility>", self._update_banner)
+        if "maps" in self.data_types:
+            self.maps_tab = self.SmartFrame(
+                frame=tab_frames["maps"],
+                smart_frame_class=MapsEditor,
+                maps=self.project.maps,
+                character_models=self.CHARACTER_MODELS,
+                global_map_choice_func=self.set_global_map_choice,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.maps_tab.bind("<Visibility>", self._update_banner)
 
-        self.entities_tab = self.SmartFrame(
-            frame=tab_frames["entities"],
-            smart_frame_class=EntityEditor,
-            maps=self.project.maps,
-            evs_directory=self.project.project_root / "events",
-            global_map_choice_func=self.set_global_map_choice,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.entities_tab.bind("<Visibility>", self._update_banner)
+            self.entities_tab = self.SmartFrame(
+                frame=tab_frames["entities"],
+                smart_frame_class=EntityEditor,
+                maps=self.project.maps,
+                evs_directory=self.project.project_root / "events",
+                global_map_choice_func=self.set_global_map_choice,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.entities_tab.bind("<Visibility>", self._update_banner)
 
-        self.params_tab = self.SmartFrame(
-            frame=tab_frames["params"],
-            smart_frame_class=ParamsEditor,
-            params=self.project.params,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.params_tab.bind("<Visibility>", self._update_banner)
+        if "params" in self.data_types:
+            self.params_tab = self.SmartFrame(
+                frame=tab_frames["params"],
+                smart_frame_class=ParamsEditor,
+                params=self.project.params,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.params_tab.bind("<Visibility>", self._update_banner)
 
-        self.lighting_tab = self.SmartFrame(
-            frame=tab_frames["lighting"],
-            smart_frame_class=LightingEditor,
-            lighting=self.project.lighting,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.lighting_tab.bind("<Visibility>", self._update_banner)
+        if "lighting" in self.data_types:
+            self.lighting_tab = self.SmartFrame(
+                frame=tab_frames["lighting"],
+                smart_frame_class=LightingEditor,
+                lighting=self.project.lighting,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.lighting_tab.bind("<Visibility>", self._update_banner)
 
-        self.text_tab = self.SmartFrame(
-            frame=tab_frames["text"],
-            smart_frame_class=TextEditor,
-            text=self.project.text,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.text_tab.bind("<Visibility>", self._update_banner)
+        if "text" in self.data_types:
+            self.text_tab = self.SmartFrame(
+                frame=tab_frames["text"],
+                smart_frame_class=TextEditor,
+                text=self.project.text,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.text_tab.bind("<Visibility>", self._update_banner)
 
-        self.events_tab = self.SmartFrame(
-            frame=tab_frames["events"],
-            smart_frame_class=EventEditor,
-            emevd_directory=self.project.emevd_directory,
-            evs_directory=self.project.project_root / "events",
-            game_root=self.project.game_root,
-            global_map_choice_func=self.set_global_map_choice,
-            text_font_size=self.project.text_editor_font_size,
-            sticky="nsew",
-        )
-        self.events_tab.bind("<Visibility>", self._update_banner)
+        if "events" in self.data_types:
+            self.events_tab = self.SmartFrame(
+                frame=tab_frames["events"],
+                smart_frame_class=EventEditor,
+                emevd_directory=self.project.emevd_directory,
+                evs_directory=self.project.project_root / "events",
+                game_root=self.project.game_root,
+                global_map_choice_func=self.set_global_map_choice,
+                text_font_size=self.project.text_editor_font_size,
+                sticky="nsew",
+            )
+            self.events_tab.bind("<Visibility>", self._update_banner)
 
-        self.ai_tab = self.SmartFrame(
-            frame=tab_frames["ai"],
-            smart_frame_class=AIEditor,
-            ai=self.project.ai,
-            script_directory=self.project.project_root / "ai_scripts",
-            game_root=self.project.game_root,
-            allow_decompile=self.project.GAME.name == "Dark Souls Remastered",
-            global_map_choice_func=self.set_global_map_choice,
-            text_font_size=self.project.text_editor_font_size,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.ai_tab.bind("<Visibility>", self._update_banner)
+        if "ai" in self.data_types:
+            self.ai_tab = self.SmartFrame(
+                frame=tab_frames["ai"],
+                smart_frame_class=AIEditor,
+                ai=self.project.ai,
+                script_directory=self.project.project_root / "ai_scripts",
+                game_root=self.project.game_root,
+                allow_decompile=self.project.GAME.name == "Dark Souls Remastered",
+                global_map_choice_func=self.set_global_map_choice,
+                text_font_size=self.project.text_editor_font_size,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.ai_tab.bind("<Visibility>", self._update_banner)
 
-        self.talk_tab = self.SmartFrame(
-            frame=tab_frames["talk"],
-            smart_frame_class=TalkEditor,
-            talk_directory=self.project.talk_directory,
-            esp_directory=self.project.project_root / "talk",
-            global_map_choice_func=self.set_global_map_choice,
-            text_font_size=self.project.text_editor_font_size,
-            linker=self.linker,
-            sticky="nsew",
-        )
-        self.talk_tab.bind("<Visibility>", self._update_banner)
+        if "talk" in self.data_types:
+            self.talk_tab = self.SmartFrame(
+                frame=tab_frames["talk"],
+                smart_frame_class=TalkEditor,
+                talk_directory=self.project.talk_directory,
+                esp_directory=self.project.project_root / "talk",
+                global_map_choice_func=self.set_global_map_choice,
+                text_font_size=self.project.text_editor_font_size,
+                linker=self.linker,
+                sticky="nsew",
+            )
+            self.talk_tab.bind("<Visibility>", self._update_banner)
 
         if self.RUNTIME_MANAGER_CLASS:
             self.runtime_tab = self.SmartFrame(
@@ -287,7 +296,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         save_menu = self.Menu(tearoff=0)
         save_menu.add_command(label=f"Save Entire Project", foreground="#FFF", command=self._save_data)
         save_menu.add_separator()
-        for data_type in self.PROJECT_CLASS.DATA_TYPES:
+        for data_type in self.data_types:
             save_menu.add_command(
                 label=f"Save {data_type_caps(data_type)}",
                 foreground="#FFF",
@@ -303,7 +312,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 command=lambda i=import_dir: self._import_data(import_directory=i),
             )
             import_menu.add_separator()
-            for data_type in self.PROJECT_CLASS.DATA_TYPES:
+            for data_type in self.data_types:
                 import_menu.add_command(
                     label=f"Import {data_type_caps(data_type)}",
                     foreground="#FFF",
@@ -321,7 +330,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 command=lambda e=export_dir: self._export_data(export_directory=e),
             )
             export_menu.add_separator()
-            for data_type in self.PROJECT_CLASS.DATA_TYPES:
+            for data_type in self.data_types:
                 export_menu.add_command(
                     label=f"Export {data_type_caps(data_type)}",
                     foreground="#FFF",
@@ -406,10 +415,10 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     def refresh_tab_data(self, data_type=None):
         if data_type is None:
-            for data_type in self.TAB_EDITORS:
+            for data_type in self.data_types:
                 self.refresh_tab_data(data_type)
         data_type = data_type.lower()
-        if data_type not in self.TAB_EDITORS:
+        if data_type not in self.data_types:
             raise ValueError(f"Invalid data type name: {data_type}")
 
         if data_type == "events":
@@ -462,24 +471,26 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return data_type
 
     def set_global_map_choice(self, map_id, ignore_tabs=()):
-        game_map = get_map(map_id)
-        if "maps" not in ignore_tabs:
+        # noinspection PyUnresolvedReferences
+        game_map = self.PROJECT_CLASS.DATA_TYPES["maps"].GET_MAP(map_id)
+        data_types = self.data_types
+        if "maps" in data_types and "maps" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
                 self.maps_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
-        if "entities" not in ignore_tabs:
+        if "maps" in data_types and "entities" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
                 self.entities_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.entities_tab.on_map_choice()
-        if "events" not in ignore_tabs:
+        if "events" in data_types and "events" not in ignore_tabs:
             if game_map.emevd_file_stem is not None:
                 self.events_tab.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
                 self.events_tab.on_map_choice()
-        if "ai" not in ignore_tabs:
+        if "ai" in data_types and "ai" not in ignore_tabs:
             if game_map.ai_file_stem is not None:
                 self.ai_tab.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
                 self.ai_tab.on_map_choice()
-        if "talk" not in ignore_tabs:
+        if "talk" in data_types and "talk" not in ignore_tabs:
             if game_map.esd_file_stem is not None:
                 self.talk_tab.map_choice.var.set(f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
                 self.talk_tab.on_map_choice()
@@ -490,34 +501,35 @@ class ProjectWindow(SmartFrame, abc.ABC):
             if not import_directory:
                 return  # Abort import.
 
+        result = Queue()
+
         def _threaded_import():
             try:
                 self.project.import_data(data_type, import_directory)
-            except Exception as e:
-                self._THREAD_EXCEPTION = e
-                raise
+            except Exception as thread_ex:
+                result.put(thread_ex)
 
-        loading = self.LoadingDialog(
+        loading_dialog = self.LoadingDialog(
             title="Importing...",
             message=f"Importing {data_type if data_type is not None else 'all files'}...",
             maximum=20,
         )
         import_thread = threading.Thread(target=_threaded_import)
         import_thread.start()
-        loading.update()
-        loading.progress.start()
+        loading_dialog.update()
+        loading_dialog.progress.start()
         while import_thread.is_alive():
-            loading.update()
+            loading_dialog.update()
             time.sleep(1 / 60)
-        loading.progress.stop()
-        loading.destroy()
+        loading_dialog.progress.stop()
+        loading_dialog.destroy()
 
-        if self._THREAD_EXCEPTION:
+        if not result.empty():
+            ex = result.get()
             message = (
-                f"Error occurred while importing data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                f"Error occurred while importing data:\n\n{ex}\n\n"
                 f"Import operation may have only partially completed."
             )
-            self._THREAD_EXCEPTION = None
             return self.CustomDialog(title="Import Error", message=message)
 
         self.refresh_tab_data(data_type)
@@ -574,35 +586,37 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if mimic_click:
             self.mimic_click(self.export_all_button if data_type is None else self.export_tab_button)
 
+        result = Queue()
+
         def _threaded_export():
             try:
                 self.project.export_data(data_type, export_directory)
-            except Exception as e:
-                self._THREAD_EXCEPTION = e
-                raise
+            except Exception as thread_ex:
+                result.put(thread_ex)
 
-        loading = self.LoadingDialog(
+        loading_dialog = self.LoadingDialog(
             title="Exporting...",
             message=f"Exporting {data_type if data_type is not None else 'all files'}...",
             maximum=20,
         )
         export_thread = threading.Thread(target=_threaded_export)
         export_thread.start()
-        loading.update()
-        loading.progress.start()
+        loading_dialog.update()
+        loading_dialog.progress.start()
         while export_thread.is_alive():
-            loading.update()
+            loading_dialog.update()
             time.sleep(1 / 60)
-        loading.progress.stop()
-        loading.destroy()
+        loading_dialog.progress.stop()
+        loading_dialog.destroy()
 
-        if self._THREAD_EXCEPTION:
+        if not result.empty():  # error occurred in threaded export
+            ex = result.get()
             caps = data_type_caps(data_type) if data_type is not None else "all"
             message = (
-                f"Error occurred while exporting {caps} data:\n\n{str(self._THREAD_EXCEPTION)}\n\n"
+                f"Error occurred while exporting {caps} data:\n\n{str(ex)}\n\n"
                 f"Export operation may have only partially completed."
             )
-            if " object has no attribute " in str(self._THREAD_EXCEPTION):
+            if " object has no attribute " in str(ex):
                 message += (
                     f"\n\nThis error may have occurred because of a change in Soulstruct's internal data.\n"
                     f"If you recently updated Soulstruct before seeing this error, try exporting {caps}\n"
@@ -612,7 +626,6 @@ class ProjectWindow(SmartFrame, abc.ABC):
                     f"These format-changing updates will only happen while we are\n"
                     f"discovering the correct data types for the handful of remaining unknown variables."
                 )
-            self._THREAD_EXCEPTION = None
             return self.CustomDialog(title="Export Error", message=message)
 
     def _restore_backup(self, target=None, full_folder=False):
@@ -775,7 +788,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     def _rename_param_entries_from_text(self, param_table=None):
         # TODO: Add `rename_entries_from_text` method to supported games (or base class, even).
         self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_table)
-        if self.page_tabs.index(self.page_tabs.select()) == list(self.TAB_EDITORS).index("params"):
+        if self.page_tabs.index(self.page_tabs.select()) == self.ordered_tabs.index("params"):
             if (
                 not param_table
                 and self.params_tab.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
@@ -784,8 +797,16 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.params_tab.refresh_entries()
 
     @property
-    def ordered_tabs(self):
-        editor_tabs = list(self.TAB_EDITORS.keys())
+    def data_types(self) -> tuple[str]:
+        return tuple(self.PROJECT_CLASS.DATA_TYPES)
+
+    @property
+    def ordered_tabs(self) -> list[str]:
+        editor_tabs = [
+            tab_name for tab_name in TAB_EDITORS
+            if tab_name in self.PROJECT_CLASS.DATA_TYPES
+            or (tab_name == "entities" and "maps" in self.PROJECT_CLASS.DATA_TYPES)
+        ]
         if self.RUNTIME_MANAGER_CLASS:
             return editor_tabs + ["runtime"]
         return editor_tabs

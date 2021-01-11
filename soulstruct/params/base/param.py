@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 class ParamRow:
 
     def __init__(self, row_source, paramdef: ParamDef, name=None):
-        self.fields = {}
+        self.fields = {}  # type: dict[str, tp.Union[bool, int, float, str, bytes]]
         self.paramdef = paramdef
         self.bit_reader = BitFieldReader()
         self.bit_writer = BitFieldWriter()
@@ -76,11 +76,11 @@ class ParamRow:
         self.fields[field] = value
 
     @property
-    def field_names(self):
+    def field_names(self) -> tuple[str, ...]:
         if self.paramdef.param_info:
-            return [field.name for field in self.paramdef.param_info["fields"]]
+            return tuple(field.name for field in self.paramdef.param_info["fields"])
         else:
-            return list(self.fields.keys())
+            return tuple(self.fields.keys())
 
     def get_paramdef_field(self, field_name: str) -> ParamDefField:
         return self.paramdef[field_name]
@@ -128,12 +128,9 @@ class ParamRow:
 
     def load_dict(self, data: dict):
         for field in self.paramdef.fields.values():
-            # TODO: Modernize.
-            if field.bit_count < 8:
-                self.fields[field.name] = data.get(field.name, field.new_default)
-            elif field.internal_type == "dummy8":  # padding
+            if field.type_class is ft.dummy8 and field.bit_count == -1:  # padding bytes
                 # TODO: The exceptions identified in `unpack()` will be overridden with nulls. Probably fine.
-                data.pop(field.name, None)
+                data.pop(field.name, None)  # ignore given value
                 self.fields[field.name] = b"\0" * field.size
             else:
                 self.fields[field.name] = data.get(field.name, field.new_default)
@@ -238,6 +235,8 @@ class Param(GameFile, abc.ABC):
         self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
         self.byte_order = "<"
         self.unknown = 0
+        self.flags1 = ParamFlags1(0)
+        self.flags2 = ParamFlags2(0)
         self.paramdef_data_version = 0
         self.paramdef_format_version = 0
         self.undecodable_row_names = undecodable_row_names
@@ -245,40 +244,6 @@ class Param(GameFile, abc.ABC):
         self.rows = {}
 
         super().__init__(param_source, dcx_magic=dcx_magic)
-
-    def load_dict(self, data: dict):
-        if "rows" not in data:
-            raise KeyError(f"Field `rows` not specified in `Param` dict.")
-        try:
-            self.byte_order = ">" if data.pop("big_endian") else "<"
-        except KeyError:
-            raise KeyError(f"Field `big_endian` not specified in `Param` dict.")
-        for field in (
-            "param_type",
-            "unknown",
-            "paramdef_data_version",
-            "paramdef_format_version",
-            "undecodable_row_names",
-        ):
-            try:
-                value = data.pop(field)
-            except KeyError:
-                raise KeyError(f"Field `{field}` not specified in `Param` dict.")
-            setattr(self, field, value)
-
-        self.rows = {}
-        for i, row in data["rows"].items():
-            try:
-                i = int(i)
-            except (ValueError, TypeError):
-                raise KeyError(f"All keys of `Param` dict must be integers, not {i}.")
-            if isinstance(row, ParamRow):
-                self.rows[i] = row
-            else:
-                try:
-                    self.rows[i] = ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
-                except Exception as ex:
-                    raise ValueError(f"Could not interpret value of `rows[{i}]` as a `ParamRow`. Error: {ex}")
 
     def __getitem__(self, row_id):
         if row_id in self.rows:
@@ -417,7 +382,7 @@ class Param(GameFile, abc.ABC):
         #         f"Param {self.param_type} has {len(self.entries)} entries, which is more than a "
         #         f"DS1 Param can store (5461). Remove some entries before packing it.")
 
-        sorted_entries = sorted(self.rows.items()) if sort else self.rows.items()
+        row_ids = sorted(self.rows) if sort else self.rows
 
         current_name_offset = 0
         name_offset_list = []
@@ -427,9 +392,8 @@ class Param(GameFile, abc.ABC):
         packed_data = b""
         name_encoding = self.get_name_encoding()
 
-        import time
-        t = time.time()
-        for row_id, row in sorted_entries:
+        for row_id in row_ids:
+            row = self.rows[row_id]
 
             # Pack names with relative offsets (to be globally offset later).
             if row.name in self.undecodable_row_names:
@@ -445,20 +409,18 @@ class Param(GameFile, abc.ABC):
             packed_data += packed_row
             data_offset_list.append(data_offset)
             data_offset += len(packed_row)
-        print(f"Packed {self.param_type} ({len(sorted_entries)} entries, {len(self.paramdef.fields)} fields each) in:\n"
-              f"    {time.time() - t:.04f} s\n"
-              f"    {(time.time() - t) / (len(sorted_entries) * len(self.paramdef.fields)) * 1000:.04f} ms per field")
+
         header_struct = self.GET_HEADER_STRUCT(self.flags1, self.byte_order)
         if "param_type_offset" in header_struct.field_names:
-            raise NotImplementedError(f"Soulstruct cannot current pack this version of `Param`, sorry!")
+            raise NotImplementedError("Soulstruct cannot yet pack/write this 2016+ version of `Param`.")
         row_pointer_struct = self.ROW_STRUCT_64 if self.flags1.LongDataOffset else self.ROW_STRUCT_32
         row_pointers_offset = header_struct.size
-        row_data_offset = row_pointers_offset + row_pointer_struct.size * len(sorted_entries)
+        row_data_offset = row_pointers_offset + row_pointer_struct.size * len(self.rows)
         name_data_offset = row_data_offset + len(packed_data)
 
         # Entries.
         row_pointer_data = b""
-        for i, (row_id, _) in enumerate(sorted_entries):
+        for i, row_id in enumerate(row_ids):
             row_pointer_data += row_pointer_struct.pack(
                 id=row_id,
                 data_offset=row_data_offset + data_offset_list[i],
@@ -470,7 +432,7 @@ class Param(GameFile, abc.ABC):
             name_data_offset=name_data_offset,
             unknown=self.unknown,
             paramdef_data_version=self.paramdef_data_version,
-            row_count=len(sorted_entries),
+            row_count=len(self.rows),
             param_type=self.param_type,
             flags1=self.flags1.pack(),
             flags2=self.flags2.pack(),
@@ -484,18 +446,63 @@ class Param(GameFile, abc.ABC):
         header = header_struct.pack(header_fields)
         return header + row_pointer_data + packed_data + packed_names
 
+    def load_dict(self, data: dict):
+        if "rows" not in data:
+            raise KeyError(f"Field `rows` not specified in `Param` dict.")
+        try:
+            self.byte_order = ">" if data.pop("big_endian") else "<"
+        except KeyError:
+            raise KeyError(f"Field `big_endian` not specified in `Param` dict.")
+        for field in (
+            "param_type",
+            "unknown",
+            "paramdef_data_version",
+            "paramdef_format_version",
+            "undecodable_row_names",
+        ):
+            try:
+                value = data.pop(field)
+            except KeyError:
+                raise KeyError(f"Field `{field}` not specified in `Param` dict.")
+            setattr(self, field, value)
+
+        try:
+            self.flags1 = ParamFlags1(data.pop("flags1"))
+        except KeyError:
+            raise KeyError("Field `flags1` not specified in `Param` dict.")
+        try:
+            self.flags2 = ParamFlags2(data.pop("flags2"))
+        except KeyError:
+            raise KeyError("Field `flags2` not specified in `Param` dict.")
+
+        self.rows = {}
+        for i, row in data["rows"].items():
+            try:
+                i = int(i)
+            except (ValueError, TypeError):
+                raise KeyError(f"All keys of `Param` dict must be integers, not {i}.")
+            if isinstance(row, ParamRow):
+                self.rows[i] = row
+            else:
+                try:
+                    self.rows[i] = ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
+                except Exception as ex:
+                    raise ValueError(f"Could not interpret value of `rows[{i}]` as a `ParamRow`. Error: {ex}")
+
     def to_dict(self, ignore_pads=True, ignore_defaults=True):
         data = {
             "param_type": self.param_type,
             "big_endian": True if self.byte_order == ">" else False,
             "unknown": self.unknown,
             "paramdef_data_version": self.paramdef_data_version,
+            "flags1": self.flags1.pack(),
+            "flags2": self.flags2.pack(),
             "paramdef_format_version": self.paramdef_format_version,
             "undecodable_row_names": self.undecodable_row_names,
             "rows": {},
         }
-        for i, row in self.rows.items():
-            data["rows"][i] = row.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
+        for i in sorted(self.rows):
+            data["rows"][i] = self.rows[i].to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
         return data
 
     def get_range(self, start, count):

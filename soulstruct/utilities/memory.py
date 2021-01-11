@@ -155,9 +155,9 @@ class MemoryHook:
 
     def __init__(self, game_pid, pointer_table, value_table):
         self.pid = game_pid
-        self.pointer_table = pointer_table  # type: tp.Dict[str, MemoryPointer]
+        self.pointer_table = pointer_table  # type: dict[str, MemoryPointer]
         self.pointers = {}  # dynamic addresses
-        self.value_table = value_table  # type: tp.Dict[str, MemoryValue]
+        self.value_table = value_table  # type: dict[str, MemoryValue]
         self.process_handle = kernel32.OpenProcess(PROCESS_VM_READ, False, self.pid)
 
         self._load_pointer_table()

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import abc
 import logging
-import pickle
 import typing as tp
 from pathlib import Path
 
@@ -75,22 +74,19 @@ class GameParamBND(BaseBND, abc.ABC):
 
     def load_dict(self, data: dict):
         self.load_manifest_header(data)
-        self._entry_class = self.Param
         if "params" not in data:
             raise KeyError("Field `params` not specified in `GameParamBND` dict.")
         self._entries.clear()
-        self.binary_entries.clear()
         entry_ids = set()
         for i, param_dict in enumerate(data["params"]):
             for field in ("entry_id", "path", "magic", "data"):
                 if field not in param_dict:
                     raise KeyError(f"Field `{field}` not specified in 'params[{i}]' in `GameParamBND` dict.")
             param = self.Param(param_dict["data"], paramdef_bnd=self.paramdef_bnd)
-            entry = self.BNDEntry(b"", param_dict["entry_id"], param_dict["path"], param_dict["magic"])
+            entry = self.BNDEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["magic"])
             if entry.id in entry_ids:
                 _LOGGER.warning(f"Entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP.")
-            self._entries.append(param)
-            self.binary_entries.append(entry)  # binary entry data will be updated on `pack()`
+            self._entries.append(entry)
             p = self.params[entry.path] = param
             # Preferential nickname source order: `self.PARAM_NICKNAMES[BNDEntry.stem]`, `p.nickname`, `BNDEntry.stem`
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
@@ -110,19 +106,6 @@ class GameParamBND(BaseBND, abc.ABC):
                 "data": param_dict,
             })
         return data
-
-    def pickle(self, game_param_pickle_path=None):
-        """Save the entire `GameParamBND` to a pickled file, which will be faster to load in future."""
-        if game_param_pickle_path is None:
-            game_param_pickle_path = self.path
-            if game_param_pickle_path is None:
-                raise ValueError("Could not automatically determine path to pickle `GameParamBND`.")
-            while game_param_pickle_path.suffix in {".dcx", ".parambnd"}:
-                game_param_pickle_path = game_param_pickle_path.with_name(game_param_pickle_path.stem)
-            if game_param_pickle_path.suffix != ".pickle":
-                game_param_pickle_path = game_param_pickle_path.with_suffix(f"{game_param_pickle_path.suffix}.pickle")
-        with Path(game_param_pickle_path).open("wb") as f:
-            pickle.dump(self, f)
 
     def get_param(self, param_nickname) -> Param:
         if param_nickname not in self.PARAM_TYPES:

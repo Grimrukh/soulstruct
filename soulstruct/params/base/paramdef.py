@@ -114,8 +114,11 @@ class ParamDefField(abc.ABC):
     def get_display_info(self, entry: ParamRow):
         """Get display info from game-specific `params.display_info` subpackage."""
 
-    def get_default_value(self):
-        """Get default value from game-specific `defaults` module, if specified."""
+    def get_default_value(self) -> tp.Union[bool, int, float]:
+        """Get default value from game-specific `defaults` module, if specified.
+
+        Base class version here just parses the existing ParamDef default.
+        """
         if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(self.default)
         elif self.internal_type not in {"f32", "f64"}:
@@ -260,7 +263,11 @@ class ParamDef(GameFile, abc.ABC):
         raise AttributeError("Cannot pack `ParamDef`.")
 
     def __getitem__(self, field_name) -> ParamDefField:
-        return self.fields[field_name]
+        try:
+            return self.fields[field_name]
+        except KeyError:
+            print(self)
+            raise
 
     def __repr__(self):
         return f"ParamDef {self.param_type}:\n  " + "\n  ".join(

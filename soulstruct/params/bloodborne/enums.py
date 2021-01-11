@@ -41,6 +41,7 @@ __all__ = [
     "CHARMAKEMENU_CMD_TYPE",
     "CHARMAKEMENU_VIEW_CONDITION",
     "CHARMAKEMENU_PREVIEW_MODE",
+    "CHRINIT_VOW_TYPE",
     "ChrType",
     "DURABILITY_DIVERGENCE_CATEGORY",
     "ENEMY_BEHAVIOR_ID",
@@ -320,6 +321,10 @@ class CHARMAKEMENU_VIEW_CONDITION(s32):
 
 class CHARMAKEMENU_PREVIEW_MODE(s8):
     """TODO"""
+
+
+class CHRINIT_VOW_TYPE(u8):
+    """TODO: Presumably covenant runes in Bloodborne."""
 
 
 class ChrType(s32):

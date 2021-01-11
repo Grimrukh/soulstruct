@@ -176,15 +176,15 @@ class ESD(GameFile, abc.ABC):
             packed += self.STATE_MACHINE_HEADER_STRUCT.pack(sm)
         for sm_i, sm in tables.state_machines.items():
             assert len(packed) == tables.offsets["state_machines"][sm_i]
-            packed += self.State.STRUCT.pack(sm)
+            packed += self.State.STRUCT.pack_multiple(sm)
         assert len(packed) == tables.offsets["conditions"]
-        packed += self.State.Condition.STRUCT.pack(tables.conditions)
+        packed += self.State.Condition.STRUCT.pack_multiple(tables.conditions)
         assert len(packed) == tables.offsets["commands"]
-        packed += self.State.Command.STRUCT.pack(tables.commands)
+        packed += self.State.Command.STRUCT.pack_multiple(tables.commands)
         assert len(packed) == tables.offsets["command_args"]
-        packed += self.State.Command.ARG_STRUCT.pack(tables.command_args)
+        packed += self.State.Command.ARG_STRUCT.pack_multiple(tables.command_args)
         assert len(packed) == tables.offsets["condition_pointers"]
-        packed += self.State.Condition.POINTER_STRUCT.pack(tables.condition_pointers)
+        packed += self.State.Condition.POINTER_STRUCT.pack_multiple(tables.condition_pointers)
         assert len(packed) == tables.offsets["ezl"]
         packed += tables.ezl
         assert len(packed) == tables.offsets["esd_name"]

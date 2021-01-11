@@ -5,9 +5,6 @@ from soulstruct.params.core import FieldDisplayInfo, pad_field
 from soulstruct.params.darksouls1ptde.enums import *
 
 
-ATK_PARAM_HIT_SOURCE = int
-
-
 ATK_PARAM_ST = {
     "paramdef_name": "ATK_PARAM_ST",
     "file_name": "AtkParam_Pc",  # also AtkParam_Npc
@@ -617,7 +614,7 @@ THROW_INFO_BANK = {
             "Armored Tusk backstab, and a few large enemy grabs. (Presumably, if False, the throw trigger relies "
             "on distance and character angles only and is generally easier to trigger.)",
         ),
-        FieldDisplayInfo("pad0:5", "Pad1", False, pad_field(5), "Null padding."),
+        FieldDisplayInfo("pad0:5", "Pad1", False, bit_pad_field(5), "Null padding."),
         FieldDisplayInfo("pad1[4]", "Pad2", False, pad_field(4), "Null padding."),
     ],
 }

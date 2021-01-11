@@ -217,6 +217,10 @@ class BinaryStruct:
                 source.seek(old_offset)
             return output
 
+        output = AttributeDict()
+        if not self.fields:
+            return output  # empty struct
+
         data_offset = 0
         if isinstance(source, bytes):
             data = source if offset is None else source[offset:]
@@ -237,7 +241,6 @@ class BinaryStruct:
                 )
                 raise
             data_offset += size
-        output = AttributeDict()
         unpacked_index = 0
         for field in self.fields:
             if field.length > 0 and (include_asserted or not field.asserted):
@@ -270,46 +273,55 @@ class BinaryStruct:
             source.seek(old_offset)
         return structs
 
-    def pack(self, struct_dicts=None, **struct_kwargs) -> bytes:
-        if struct_dicts and struct_kwargs:
-            raise ValueError("You cannot use both the `struct_dicts` argument and the single-struct `**struct_kwargs`.")
-        elif struct_kwargs:
-            # You can pass a single struct dictionary as keyword arguments.
-            struct_dicts = (struct_kwargs,)
-        if not isinstance(struct_dicts, (list, tuple)):
-            struct_dicts = (struct_dicts,)
+    def pack(self, struct_dict: dict = None, /, **struct_kwargs) -> bytes:
+        if not self.fields and struct_dict is None and not struct_kwargs:
+            return b""  # null struct (error will be raised below if any input is given)
+        if struct_dict is not None and struct_kwargs:
+            raise ValueError("You cannot use both the `struct_dict` argument and the unpacked `**struct_kwargs`.")
+        if isinstance(struct_dict, dict):
+            struct_dict = struct_dict.copy()  # don't modify input dictionary
+        elif struct_dict is None:
+            struct_dict = struct_kwargs
+        else:
+            raise TypeError(f"`struct_dict` must be a dictionary, not `{type(struct_dict)}`.")
+
         output = b""
-        for struct_dict_ in struct_dicts:
-            struct_dict = struct_dict_.copy()  # Does not modify the input dictionary.
-            to_pack = []
-            for field in self.non_padding_fields:
-                if field.asserted is not None:
-                    # Asserted values are written automatically, but you are permitted to pass the asserted value too.
-                    if struct_dict.pop(field.name, field.asserted) != field.asserted:
-                        raise ValueError(
-                            f"Field '{field.name}' has value {struct_dict[field.name]} instead of asserted value "
-                            f"{field.asserted}."
-                        )
-                    value = field.asserted
-                else:
-                    try:
-                        value = struct_dict.pop(field.name)
-                    except KeyError:
-                        raise KeyError(f"Field '{field.name}' missing from struct dictionary.")
-                value = field.parse_for_pack(value)
-                to_pack.extend(value) if isinstance(value, list) else to_pack.append(value)
-            if struct_dict:
-                raise ValueError(f"Struct dict has leftover keys: {struct_dict}")
-            pack_index = 0
-            for sub_fmt, sub_fmt_length in zip(self._struct_format, self._struct_length):
-                try:
-                    output += struct.pack(sub_fmt, *to_pack[pack_index : pack_index + sub_fmt_length])
-                except struct.error:
-                    _LOGGER.error(
-                        f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
-                        f"{sub_fmt_length}:\n{to_pack[pack_index:pack_index + sub_fmt_length]}"
+        to_pack = []
+        for field in self.non_padding_fields:
+            if field.asserted is not None:
+                # Asserted values are written automatically, but you are permitted to pass the asserted value too.
+                if struct_dict.pop(field.name, field.asserted) != field.asserted:
+                    raise ValueError(
+                        f"Field '{field.name}' has value {struct_dict[field.name]} instead of asserted value "
+                        f"{field.asserted}."
                     )
-                    raise
+                value = field.asserted
+            else:
+                try:
+                    value = struct_dict.pop(field.name)
+                except KeyError:
+                    raise KeyError(f"Field '{field.name}' missing from struct dictionary.")
+            value = field.parse_for_pack(value)
+            to_pack.extend(value) if isinstance(value, list) else to_pack.append(value)
+        if struct_dict:
+            raise ValueError(f"`BinaryStruct.pack()` input dictionary has extraneous keys: {struct_dict.keys()}")
+        pack_index = 0
+        for sub_fmt, sub_fmt_length in zip(self._struct_format, self._struct_length):
+            try:
+                output += struct.pack(sub_fmt, *to_pack[pack_index : pack_index + sub_fmt_length])
+            except struct.error:
+                _LOGGER.error(
+                    f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
+                    f"{sub_fmt_length}:\n{to_pack[pack_index:pack_index + sub_fmt_length]}"
+                )
+                raise
+        return output
+
+    def pack_multiple(self, struct_dicts: tp.Sequence[dict]) -> bytes:
+        """Pack multiple instances of this binary struct and return them joined."""
+        output = b""
+        for struct_dict in struct_dicts:
+            output += self.pack(struct_dict)
         return output
 
     def pack_from_object(self, obj) -> bytes:
@@ -329,7 +341,7 @@ class BinaryStruct:
                         f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack."
                     )
         try:
-            return self.pack((struct_dict,))
+            return self.pack(struct_dict)
         except struct.error:
             _LOGGER.error(f"Failed to pack BinaryStruct from object. Dictionary:\n{struct_dict}")
             raise

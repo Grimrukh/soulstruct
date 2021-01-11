@@ -75,7 +75,7 @@ class MapStudioDirectory(abc.ABC):
 
     def _load_all_msbs(self):
         """Load all MSB files in directory, with keys/attribute names matching the MSB stem."""
-        for msb_path in self._directory.glob("*.msb"):
+        for msb_path in self._directory.glob("*.msb" + (".dcx" if self.IS_DCX else "")):
             self.msbs[msb_path.stem] = self.MSB_CLASS(msb_path)
             setattr(self, msb_path.stem, self.msbs[msb_path.stem])
 

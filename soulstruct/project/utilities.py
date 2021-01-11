@@ -156,7 +156,7 @@ interp alias {{}} ::{widget} {{}} widget_proxy _{widget} {callback}
 
 
 class TextEditor(tk.Text):
-    TAGS = {}  # type: tp.Dict[str, TagData]
+    TAGS = {}  # type: dict[str, TagData]
 
     def __init__(self, *args, **kwargs):
         """Text widget that uses some Tcl voodoo (courtesy of Tkinter wizard Bryan Oakley) to allow arbitrary callbacks

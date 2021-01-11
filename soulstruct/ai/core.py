@@ -317,7 +317,7 @@ class LuaBND:
         pack_luainfo=True,
         pack_luagnl=True,
     ):
-        for script_entry_id in [entry.id for entry in self.bnd.binary_entries if entry.id < 1000000]:
+        for script_entry_id in [entry.id for entry in self.bnd.entries if entry.id < 1000000]:
             self.bnd.remove_entry(script_entry_id)
 
         if pack_luagnl:

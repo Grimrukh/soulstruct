@@ -4,7 +4,6 @@ import json
 import logging
 import zlib
 import typing as tp
-from ast import literal_eval
 from pathlib import Path
 
 from soulstruct.bnd.magic import *
@@ -15,6 +14,10 @@ from soulstruct.utilities.binary_struct import BinaryStruct
 
 __all__ = ["BND", "BND3", "BND4", "BaseBND", "BNDEntry"]
 _LOGGER = logging.getLogger(__name__)
+
+
+class BNDError(Exception):
+    pass
 
 
 class BNDEntry:
@@ -87,31 +90,29 @@ class BNDEntry:
 class BaseBND(GameFile, abc.ABC):
 
     # `EXT` depends on BND type.
-    BNDEntry = BNDEntry
-    binary_entries: list[BNDEntry]
+    MANIFEST_FIELDS: tuple[str] = ()
+    VERSION: str = None
 
-    def __init__(self, bnd_source=None, dcx_magic=(), entry_class=None):
+    BNDEntry = BNDEntry  # for convenience
+
+    signature: str
+    magic: int
+    big_endian: bool
+
+    def __init__(self, bnd_source=None, dcx_magic=()):
         """Load a BND binder file.
 
         Source can be a .*bnd[.dcx] file, an unpacked BND directory (or the 'bnd_manifest.json' file inside it), raw
         `bytes`, or an open data stream (or None to create an empty BND).
-
-        If an `entry_class` is given, all entry data will be passed to that class to create instances of it. The paths
-        and IDs of the entries will be maintained in `.binary_entries`, but the data of these entries will be
-        overwritten with packed versions of the classed entry instances when `.pack()` is called. (Until then, any
-        edits to `BNDEntry` instances in `.entries` will diverge from the original binary entry data.)
         """
-        self.version = b""
-        self.signature = b""
-        self.magic = None  # Can't guess this; you'll need to specify it based on your BND type.
+        self.signature = ""
+        self.magic = -1  # Can't guess this; you'll need to specify it based on your BND type.
         self.big_endian = False
-        self._entry_class = entry_class
         self._most_recent_hash_table = b""
         self._most_recent_entry_count = 0
         self._most_recent_paths = []
 
-        self.binary_entries = []  # Always stores binary (unpacked) entries. Only updated when pack() is called.
-        self._entries = []  # List of entries, instantiated with given entry class (or left as binary).
+        self._entries = []  # type: list[BNDEntry]
 
         super().__init__(bnd_source, dcx_magic=dcx_magic)
 
@@ -144,9 +145,13 @@ class BaseBND(GameFile, abc.ABC):
         self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
         self.create_header_structs()  # abstract
 
-    @abc.abstractmethod
     def load_manifest_header(self, manifest: dict):
-        """Called by `load_unpacked_dir` to set fields from manifest dict. May also be used by subclass `load_dict()."""
+        if "version" not in manifest:
+            raise BNDError("JSON manifest file does not contain 'version' key.")
+        self._check_version(manifest["version"])
+        for field in self.MANIFEST_FIELDS:
+            setattr(self, field, manifest[field])
+        self.dcx_magic = tuple(manifest["dcx_magic"])
 
     def add_entries_from_manifest(self, entries: dict, directory, use_id_prefix: bool):
         directory = Path(directory)
@@ -179,7 +184,7 @@ class BaseBND(GameFile, abc.ABC):
         entry_tree_dict = {}
         use_index_prefix = self.has_repeated_entry_names
 
-        for i, entry in enumerate(self.binary_entries):
+        for i, entry in enumerate(self._entries):
             entry_directory = str(Path(entry.path).parent)  # no trailing backslash
             entry_dict = {"magic": entry.magic, "id": entry.id if has_id(self.magic) else i, "name": entry.name}
             entry_tree_dict.setdefault(entry_directory, []).append(entry_dict)
@@ -196,10 +201,11 @@ class BaseBND(GameFile, abc.ABC):
             json.dump(json_dict, f, indent=4)
 
     def add_entry(self, entry: BNDEntry):
+        if entry in self._entries:
+            raise BNDError(f"Given `BNDEntry` instance with ID {entry.id} is already in this BND.")
         if entry.id in self.entries_by_id:
             _LOGGER.warning(f"Entry ID {entry.id} appears more than once in this BND. Fix this as soon as you can.")
-        self.binary_entries.append(entry)
-        self._entries.append(self._entry_class(entry.data) if self._entry_class else entry)
+        self._entries.append(entry)
 
     def remove_entry(self, id_or_path_or_basename):
         if isinstance(id_or_path_or_basename, int):
@@ -211,14 +217,15 @@ class BaseBND(GameFile, abc.ABC):
                 entry = self.entries_by_basename[id_or_path_or_basename]
         else:
             raise TypeError("Entry to be removed should be a BND ID (int) or path/basename (str).")
-        index = self._entries.index(entry)
-        self.binary_entries.pop(index)
-        self._entries.pop(index)
+        self._entries.remove(entry)
 
     def clear_entries(self):
         """Remove all entries from the BND."""
-        self._entries = []
-        self.binary_entries = []
+        self._entries.clear()
+
+    def _check_version(self, version: str):
+        if version != self.VERSION:
+            raise BNDError(f"Version of file ({version}) does not match `BND` class version ({self.VERSION}).")
 
     def get_json_header(self) -> dict:
         raise NotImplementedError
@@ -229,46 +236,45 @@ class BaseBND(GameFile, abc.ABC):
         return self._entries
 
     @property
-    def entries_by_id(self) -> tp.Dict[int, BNDEntry]:
+    def entries_by_id(self) -> dict[int, BNDEntry]:
         """Dictionary mapping entry IDs to entries.
 
         If there are multiple entries with the same ID in the BND, this will raise a `ValueError`. This should never
         happen; if it does, fix it by accessing the culprit entries with `.entries` and changing one or more IDs.
         """
         entries = {}
-        for binary_entry, entry in zip(self.binary_entries, self._entries):
-            if binary_entry.id in entries:
-                raise ValueError(f"There are multiple entries with ID {binary_entry.id}.")
-            entries[binary_entry.id] = entry
+        for entry in self._entries:
+            if entry.id in entries:
+                raise BNDError(f"There are multiple entries with ID {entry.id}.")
+            entries[entry.id] = entry
         return entries
 
     @property
-    def entries_by_path(self) -> tp.Dict[str, BNDEntry]:
+    def entries_by_path(self) -> dict[str, BNDEntry]:
         """Dictionary mapping entry paths to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
         Remastered). If it does, this property will raise an exception.
         """
         entries = {}
-        for binary_entry, entry in zip(self.binary_entries, self._entries):
-            if binary_entry.path in entries:
-                raise ValueError(f"Path '{binary_entry.path}' appears in multiple BND entry paths.")
-            entries[binary_entry.path] = entry
+        for entry in self._entries:
+            if entry.path in entries:
+                raise ValueError(f"Path '{entry.path}' appears in multiple `BNDEntry` paths.")
+            entries[entry.path] = entry
         return entries
 
     @property
-    def entries_by_basename(self) -> tp.Dict[str, BNDEntry]:
+    def entries_by_basename(self) -> dict[str, BNDEntry]:
         """Dictionary mapping entry basenames to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
         Remastered). If it does, this property will raise an exception.
         """
         entries = {}
-        for binary_entry, entry in zip(self.binary_entries, self._entries):
-            entry_name = binary_entry.name
-            if entry_name in entries:
-                raise ValueError(f"Basename '{entry_name}' appears in multiple BND entry paths.")
-            entries[entry_name] = entry
+        for entry in self._entries:
+            if entry.name in entries:
+                raise ValueError(f"Basename '{entry.name}' appears in multiple BND entry paths.")
+            entries[entry.name] = entry
         return entries
 
     @property
@@ -281,10 +287,10 @@ class BaseBND(GameFile, abc.ABC):
         return len(set(entry_names)) < len(entry_names)
 
     def __getitem__(self, id_or_path_or_basename) -> BNDEntry:
-        """ Shortcut for access by ID (int) or path (str) or basename (str).
+        """Shortcut for access by ID (int) or path (str) or basename (str).
 
         If the path of one entry is the basename of another entry, the former will be given precedence here, but this
-        should never happen!
+        should never happen.
         """
         if isinstance(id_or_path_or_basename, int):
             return self.entries_by_id[id_or_path_or_basename]
@@ -293,38 +299,13 @@ class BaseBND(GameFile, abc.ABC):
                 return self.entries_by_path[id_or_path_or_basename]
             except KeyError:
                 return self.entries_by_basename[id_or_path_or_basename]
-        else:
-            raise TypeError("Key should be an entry ID (int) or path/basename (str).")
+        raise TypeError("`BND` key should be an entry ID (int) or path/basename (str).")
 
     def __iter__(self) -> tp.Iterator[BNDEntry]:
         return iter(self._entries)
 
     def __len__(self):
         return len(self._entries)
-
-    @staticmethod
-    def read_bnd_setting(line: bytes, setting_name: str, assert_type=None, assert_values=None):
-        line = line.decode()
-        if not line.startswith(setting_name):
-            raise ValueError(f"Expected BND setting line to start with {repr(setting_name)}.")
-        value = line[len(setting_name) :]
-        if not value.startswith(" = "):
-            raise ValueError(f"Expected ' = ' after BND setting name. Spaces are required.")
-        value = value[3:].strip(" \r\n")
-        if not value:
-            raise ValueError(f"Setting {repr(setting_name)} is blank.")
-        if assert_type is not None:
-            try:
-                value = literal_eval(value)
-            except ValueError:
-                raise ValueError(f"Could not evaluate setting value: '{setting_name} = {value}'")
-            if not isinstance(value, assert_type):
-                raise TypeError(f"Expected a value of a type {assert_type}, but found {type(value)}.")
-        else:
-            value = value.encode()  # Default type is raw bytes.
-        if assert_values is not None and value not in assert_values:
-            raise ValueError(f"{repr(value)} is not a permitted value for setting {repr(setting_name)}.")
-        return value
 
     @classmethod
     def detect(cls, bnd_source):
@@ -388,15 +369,20 @@ class BND3(BaseBND):
     NAME_OFFSET = ("path_offset", "i")
     UNCOMPRESSED_DATA_SIZE = ("uncompressed_data_size", "i")
 
-    def __init__(self, bnd_source=None, dcx_magic=(), entry_class=None):
+    VERSION = "BND3"
+    MANIFEST_FIELDS = ("signature", "magic", "big_endian", "unknown")
+
+    unknown: bool
+
+    def __init__(self, bnd_source=None, dcx_magic=()):
         self.unknown = False
-        super().__init__(bnd_source, dcx_magic, entry_class=entry_class)
+        super().__init__(bnd_source=bnd_source, dcx_magic=dcx_magic)
 
     def unpack(self, buffer, **kwargs):
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         header = self.header_struct.unpack(buffer)
-        self.version = header["version"]
-        self.signature = header["signature"]
+        self._check_version(header["version"].decode())
+        self.signature = header["signature"].rstrip(b"\0").decode()
         self.magic = header["magic"]
         self.big_endian = header["big_endian"] or is_big_endian(self.magic)
         byte_order = ">" if self.big_endian else "<"
@@ -418,11 +404,6 @@ class BND3(BaseBND):
         ):
             self.add_entry(entry)
 
-    def load_manifest_header(self, manifest: dict):
-        for field in ("version", "signature", "magic", "big_endian", "unknown"):
-            setattr(self, field, manifest[field])
-        self.dcx_magic = tuple(manifest["dcx_magic"])
-
     def create_header_structs(self):
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         byte_order = ">" if self.big_endian else "<"
@@ -443,21 +424,7 @@ class BND3(BaseBND):
         packed_entry_data = b""
         relative_entry_data_offsets = []
 
-        if len(self.binary_entries) != len(self._entries):
-            raise ValueError(
-                "Number of classed entries does not match number of binary entries.\n"
-                "Make sure you use the add_entry() method to add new BND entries."
-            )
-
-        for i, entry in enumerate(self._entries):
-            if not isinstance(entry, BNDEntry):
-                if not isinstance(entry, self._entry_class):
-                    raise TypeError(f"Cannot pack BND from invalid entry class {entry.__class__.__name__}.")
-                if not hasattr(entry, "pack"):
-                    raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no `pack()` method.")
-                self.binary_entries[i].data = entry.pack()
-
-        for entry in sorted(self.binary_entries, key=lambda e: e.id):
+        for entry in sorted(self._entries, key=lambda e: e.id):
             entry_header_dict = {
                 "entry_magic": entry.magic,
                 "compressed_data_size": entry.data_size,
@@ -507,7 +474,7 @@ class BND3(BaseBND):
     def get_json_header(self):
         return {
             "version": "BND3",
-            "signature": self.signature.rstrip(b"\0").decode(),
+            "signature": self.signature,
             "magic": self.magic,
             "big_endian": self.big_endian,
             "unknown": self.unknown,
@@ -521,7 +488,8 @@ class BND4(BaseBND):
 
     HEADER_STRUCT_START = (
         ("version", "4s", b"BND4"),
-        ("flags", "2?"),
+        ("flag1", "?"),
+        ("flag2", "?"),
         "2x",
         ("big_endian", "i"),  # 0x00010000 (False) or 0x00000100 (True)
     )
@@ -550,18 +518,29 @@ class BND4(BaseBND):
     PATH_HASH_STRUCT = BinaryStruct(("hashed_value", "I"), ("entry_index", "i"),)
     HASH_GROUP_STRUCT = BinaryStruct(("length", "i"), ("index", "i"),)
 
-    def __init__(self, bnd_source=None, dcx_magic=(), entry_class=None):
-        self.flags = (False, False)  # Two unknown bools.
+    VERSION = "BND4"
+    MANIFEST_FIELDS = ("signature", "magic", "big_endian", "utf16_paths", "hash_table_type", "flag1", "flag2")
+
+    flag1: bool
+    flag2: bool
+    utf16_paths: bool
+    hash_table_type: int
+    hash_table_offset: int
+
+    def __init__(self, bnd_source=None, dcx_magic=()):
+        self.flag1 = False  # unknown
+        self.flag2 = False  # unknown
         self.utf16_paths = False  # If False, paths are written in Shift-JIS.
         self.hash_table_type = 0
         self.hash_table_offset = 0
-        super().__init__(bnd_source, dcx_magic, entry_class)
+        super().__init__(bnd_source=bnd_source, dcx_magic=dcx_magic)
 
     def unpack(self, bnd_buffer, **kwargs):
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         header = self.header_struct.unpack(bnd_buffer)
-        self.flags = header["flags"]
-        self.version = header["version"]
+        self._check_version(header["version"].decode())
+        self.flag1 = header["flag1"]
+        self.flag2 = header["flag2"]
         self.big_endian = header["big_endian"] == 0x00000100  # Magic not used to infer endianness here.
         byte_order = ">" if self.big_endian else "<"
         header.update(self.header_struct.unpack(bnd_buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
@@ -607,13 +586,13 @@ class BND4(BaseBND):
         if self.hash_table_type == 4:
             bnd_buffer.seek(self.hash_table_offset)
             self._most_recent_hash_table = bnd_buffer.read(header["data_offset"] - self.hash_table_offset)
-        self._most_recent_entry_count = len(self.binary_entries)
-        self._most_recent_paths = [entry.path for entry in self.binary_entries]
+        self._most_recent_entry_count = len(self._entries)
+        self._most_recent_paths = [entry.path for entry in self._entries]
 
     def create_header_structs(self):
         self._most_recent_hash_table = b""  # Hash table will need to be built on first pack.
-        self._most_recent_entry_count = len(self.binary_entries)
-        self._most_recent_paths = [entry.path for entry in self.binary_entries]
+        self._most_recent_entry_count = len(self._entries)
+        self._most_recent_paths = [entry.path for entry in self._entries]
 
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT_START, byte_order="<")
         byte_order = ">" if self.big_endian else "<"
@@ -630,12 +609,6 @@ class BND4(BaseBND):
             # Extra pad.
             self.entry_header_struct.add_fields("8x")
 
-    def load_manifest_header(self, manifest: dict):
-        for field in ("version", "signature", "magic", "big_endian", "utf16_paths", "hash_table_type"):
-            setattr(self, field, manifest[field])
-        self.flags = tuple(manifest["flags"])
-        self.dcx_magic = tuple(manifest["dcx_magic"])
-
     def pack(self):
         entry_header_dicts = []
         packed_entry_headers = b""
@@ -646,29 +619,16 @@ class BND4(BaseBND):
         rebuild_hash_table = not self._most_recent_hash_table
         path_encoding = ("utf-16be" if self.big_endian else "utf-16le") if self.utf16_paths else "shift-jis"
 
-        if len(self.binary_entries) != len(self._entries):
-            raise ValueError(
-                "Number of classed entries does not match number of binary entries.\n"
-                "You must use the `add_entry()` method to add new BND entries."
-            )
-
-        if len(self.binary_entries) != self._most_recent_entry_count:
+        if len(self._entries) != self._most_recent_entry_count:
             rebuild_hash_table = True
         for i, entry in enumerate(self._entries):
-            if not isinstance(entry, BNDEntry):
-                if not isinstance(entry, self._entry_class):
-                    raise TypeError(f"Cannot pack BND from invalid entry class {entry.__class__.__name__}.")
-                if not hasattr(entry, "pack"):
-                    raise AttributeError(f"Cannot pack BND: entry class {self._entry_class} has no `pack()` method.")
-                self.binary_entries[i].data = entry.pack()
-                entry = self.binary_entries[i]
             if not rebuild_hash_table and entry.path != self._most_recent_paths[i]:
                 rebuild_hash_table = True
 
-        self._most_recent_entry_count = len(self.binary_entries)
-        self._most_recent_paths = [entry.path for entry in self.binary_entries]
+        self._most_recent_entry_count = len(self._entries)
+        self._most_recent_paths = [entry.path for entry in self._entries]
 
-        for entry in self.binary_entries:
+        for entry in self._entries:
 
             packed_entry_data += b"\0" * 10  # Each entry is separated by ten pad bytes. (Probably not necessary.)
 
@@ -709,7 +669,8 @@ class BND4(BaseBND):
         # BND file size not needed.
 
         packed_header = self.header_struct.pack(
-            flags=self.flags,
+            flag1=self.flag1,
+            flag2=self.flag2,
             big_endian=self.big_endian,
             entry_count=len(self._entries),
             signature=self.signature,
@@ -733,12 +694,13 @@ class BND4(BaseBND):
     def get_json_header(self):
         return {
             "version": "BND4",
-            "signature": self.signature.rstrip(b"\0").decode(),
+            "signature": self.signature,
             "magic": self.magic,
             "big_endian": self.big_endian,
             "utf16_paths": self.utf16_paths,
             "hash_table_type": self.hash_table_type,
-            "flags": self.flags,
+            "flag1": self.flag1,
+            "flag2": self.flag2,
             "use_id_prefix": self.has_repeated_entry_names,
             "dcx_magic": self.dcx_magic,
         }
@@ -773,7 +735,7 @@ class BND4(BaseBND):
         hashes = []
         hash_lists = [[] for _ in range(group_count)]
 
-        for entry_index, entry in enumerate(self.binary_entries):
+        for entry_index, entry in enumerate(self._entries):
             hashes.append(self.path_hash(entry.path))
             list_index = hashes[-1] % group_count
             hash_lists[list_index].append((hashes[-1], entry_index))
@@ -792,11 +754,11 @@ class BND4(BaseBND):
                 total_hash_count += 1
             hash_groups.append({"index": first_hash_index, "length": total_hash_count - first_hash_index})
 
-        packed_hash_groups = self.HASH_GROUP_STRUCT.pack(hash_groups)
+        packed_hash_groups = self.HASH_GROUP_STRUCT.pack_multiple(hash_groups)
         packed_hash_table_header = self.HASH_TABLE_HEADER.pack(
             path_hashes_offset=self.HASH_TABLE_HEADER.size + len(packed_hash_groups), hash_group_count=group_count,
         )
-        packed_path_hashes = self.PATH_HASH_STRUCT.pack(path_hashes)
+        packed_path_hashes = self.PATH_HASH_STRUCT.pack_multiple(path_hashes)
 
         return packed_hash_table_header + packed_hash_groups + packed_path_hashes
 
@@ -813,15 +775,13 @@ class BND4(BaseBND):
         return h
 
 
-def BND(bnd_source=None, dcx_magic=(), entry_class=None) -> BaseBND:
+def BND(bnd_source=None, dcx_magic=()) -> BaseBND:
     """Auto-detects BND version (`BND3` or `BND4`) to use when opening the source, if appropriate.
 
     Args:
         bnd_source: path to BND file or BND file content. The BND version will be automatically detected from the data.
             If None, this function will return an empty `BND4` container. (Default: None)
         dcx_magic: optional DCX magic (pair of integers).
-        entry_class: optional class to load data from each BND entry into after the BND is unpacked, which is convenient
-            for any BNDs that contain file types handled by Soulstruct. (Default: None)
     """
     detect_source = bnd_source
     if isinstance(bnd_source, (str, Path)):
@@ -837,7 +797,7 @@ def BND(bnd_source=None, dcx_magic=(), entry_class=None) -> BaseBND:
             else:
                 detect_source = bnd_path
     if BND3.detect(detect_source):
-        return BND3(bnd_source, dcx_magic=dcx_magic, entry_class=entry_class)
+        return BND3(bnd_source, dcx_magic=dcx_magic)
     elif BND4.detect(detect_source):
-        return BND4(bnd_source, dcx_magic=dcx_magic, entry_class=entry_class)
+        return BND4(bnd_source, dcx_magic=dcx_magic)
     raise TypeError("Data bytes could not be interpreted as `BND3` or `BND4` instance.")

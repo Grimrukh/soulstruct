@@ -687,7 +687,7 @@ class EntityEditor(BaseEditor):
         map_name = self.maps.GET_MAP(self.map_choice_id).name
         return self.maps[map_name]
 
-    def get_category_data(self, category=None) -> tp.Dict[int, MSBEntryEntity]:
+    def get_category_data(self, category=None) -> dict[int, MSBEntryEntity]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
         Entity dictionary is generated from `MSB.get_entity_id_dict()` every time and is sorted by entity ID.

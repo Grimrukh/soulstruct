@@ -29,6 +29,8 @@ class FieldRow:
     selected.
     """
 
+    CAMEL_CASE_NICKNAMES = True
+
     def __init__(self, editor: BaseFieldEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
@@ -151,7 +153,7 @@ class FieldRow:
         """
         self.field_name = name
         self.field_type = field_type
-        self.field_nickname = camel_case_to_spaces(nickname)
+        self.field_nickname = camel_case_to_spaces(nickname) if self.CAMEL_CASE_NICKNAMES else nickname
         self.field_docstring = docstring if docstring else "DOC-TODO"
         self.field_links = []
 
@@ -160,7 +162,7 @@ class FieldRow:
 
         self.update_field_value_display(value)
 
-        self.tool_tip.text = docstring
+        self.tool_tip.text = self.field_docstring
         self.unhide()
 
     def _update_field_GameObjectSequence(self, value):
@@ -609,8 +611,10 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
             except ValueError as e:
                 raise ValueError(f"Could not get field information for field {field_name}. Error: {str(e)}")
 
-            if (isinstance(field_type, str) and "<Pad:" in field_type) or (not is_main and not show_hidden_fields):
-                continue  # Skip hidden field (or always skip Pad field).
+            if isinstance(field_type, str) and ("<Pad:" in field_type or "<BitPad:" in field_type):
+                continue  # always skip pad field
+            if not is_main and not show_hidden_fields:
+                continue  # skip hidden field
 
             try:
                 field_value = field_dict[field_name]

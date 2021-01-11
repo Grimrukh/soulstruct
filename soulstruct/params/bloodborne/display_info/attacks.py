@@ -1,11 +1,8 @@
 __all__ = ["ATK_PARAM_ST", "THROW_INFO_BANK"]
 
 from soulstruct.game_types import *
-from soulstruct.params.core import FieldDisplayInfo, pad_field
+from soulstruct.params.core import FieldDisplayInfo, pad_field, bit_pad_field
 from soulstruct.params.bloodborne.enums import *
-
-
-ATK_PARAM_HIT_SOURCE = int
 
 
 ATK_PARAM_ST = {
@@ -446,7 +443,26 @@ ATK_PARAM_ST = {
             "If True, this attack will ignore invincibility frames from rolling or backstepping (but not other "
             "sources of invincibility such as TAE or events).", 
         ),
-        FieldDisplayInfo("pad[1]", "Pad1", False, pad_field(1), "Null padding."),
+        FieldDisplayInfo("atkPow_forSfxSe", "AttackPowerForEffects", True, int, ""),
+        FieldDisplayInfo("atkDir_forSfxSe", "AttackDirectionForEffects", True, int, "Name might be wrong."),
+        FieldDisplayInfo("opposeTarget:1", "AffectsEnemies", True, bool, ""),
+        FieldDisplayInfo("friendlyTarget:1", "AffectsAllies", True, bool, ""),
+        FieldDisplayInfo("selfTarget:1", "AffectsSelf", True, bool, ""),
+        FieldDisplayInfo("isChargeAtk:1", "IsChargeAttack", True, bool, ""),
+        FieldDisplayInfo("isShareHitList:1", "SharesHitList", True, bool, ""),
+        FieldDisplayInfo("isCheckObjPenetration:1", "CollidesWithObjects", True, bool, "Value might be inverted."),
+        FieldDisplayInfo("pad:2", "Pad", False, bit_pad_field(2), "Null padding."),
+        FieldDisplayInfo("pad2", "Pad", False, pad_field(2), "Null padding."),
+        FieldDisplayInfo("regainableSlotId", "RegainableSlotID", True, int, ""),
+        FieldDisplayInfo("deathcauseId", "DeathCauseID", True, int, ""),
+        FieldDisplayInfo("decalId1", "DecalID1", True, int, ""),
+        FieldDisplayInfo("decalId2", "DecalID2", True, int, ""),
+        FieldDisplayInfo("appearAiSoundId", "AppearAISoundID", True, int, ""),
+        FieldDisplayInfo("hitAiSoundId", "HitAISoundID", True, int, ""),
+        FieldDisplayInfo("wepRegainHpScale", "WeaponRegainHPScale", True, int, ""),
+        FieldDisplayInfo("atkRegainHp", "AttackRegainHP", True, int, ""),
+        FieldDisplayInfo("regainableTimeScale", "RegainTimeScale", True, int, ""),
+        FieldDisplayInfo("regainableHpRateScale", "RegainHPRateScale", True, int, ""),
     ],
 }
 
@@ -617,7 +633,7 @@ THROW_INFO_BANK = {
             "Armored Tusk backstab, and a few large enemy grabs. (Presumably, if False, the throw trigger relies "
             "on distance and character angles only and is generally easier to trigger.)",
         ),
-        FieldDisplayInfo("pad0:5", "Pad1", False, pad_field(5), "Null padding."),
+        FieldDisplayInfo("pad0:5", "Pad1", False, bit_pad_field(5), "Null padding."),
         FieldDisplayInfo("pad1[4]", "Pad2", False, pad_field(4), "Null padding."),
     ],
 }

@@ -216,8 +216,7 @@ class SmartFrame(tk.Frame):
     toplevel: Optional[tk.Toplevel]
 
     def __init__(self, master=None, toplevel=True, window_title="Window Title", icon_data=None, **frame_kwargs):
-        # List of variables (so they aren't garbage-collected).
-        self._variables = []
+        """My ultimate `tkinter` wrapper class."""
 
         # Initialize window.
         toplevel_master = master
@@ -497,7 +496,6 @@ class SmartFrame(tk.Frame):
             font_size = self.FONT_DEFAULTS["label_font_size"]
         if text is not None:
             text_var = tk.StringVar(value=text)
-            self._variables.append(text_var)
         else:
             text_var = None
         if style is not None:
@@ -521,7 +519,6 @@ class SmartFrame(tk.Frame):
     def Checkbutton(self, frame=None, command=None, initial_state=False, text="", **kwargs):
         self.set_style_defaults(kwargs)
         boolean_var = tk.BooleanVar(value=initial_state)
-        self._variables.append(boolean_var)
         checkbutton = tk.Checkbutton(frame, text=text, variable=boolean_var, command=command, **kwargs)
         checkbutton.var = boolean_var
         return checkbutton
@@ -534,7 +531,6 @@ class SmartFrame(tk.Frame):
         if initial_value is None:
             initial_value = values[0] if values else ""
         string_var = tk.StringVar(frame, value=initial_value)
-        self._variables.append(string_var)
         combobox = ttk.Combobox(frame, textvariable=string_var, values=values, state=state, width=width, **kwargs)
         combobox.var = string_var
         if on_select_function is not None:
@@ -560,7 +556,6 @@ class SmartFrame(tk.Frame):
     def Entry(self, frame=None, initial_text="", integers_only=False, numbers_only=False, **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=True)
         text_var = tk.StringVar(value=initial_text)
-        self._variables.append(text_var)
         entry = tk.Entry(frame, textvariable=text_var, **kwargs)
         entry.var = text_var
         entry.integers_only = integers_only
@@ -587,7 +582,6 @@ class SmartFrame(tk.Frame):
             string_var = text
         else:
             raise ValueError("Text must be a string or StringVar.")
-        self._variables.append(string_var)
         label = tk.Label(frame, textvariable=string_var, font=(font_type, font_size), **kwargs)
         label.var = string_var
         return label
@@ -613,7 +607,6 @@ class SmartFrame(tk.Frame):
         self.set_style_defaults(kwargs)
         if variable is None:
             variable = tk.IntVar()
-        self._variables.append(variable)
         radiobutton = tk.Radiobutton(frame, text="", variable=variable, command=command, **kwargs)
         radiobutton.var = variable
         return radiobutton

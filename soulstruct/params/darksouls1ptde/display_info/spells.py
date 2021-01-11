@@ -357,7 +357,7 @@ MAGIC_PARAM_ST = {
             bool,
             "If True, using this spell will create a resonance ring to help players in other worlds.",
         ),
-        FieldDisplayInfo("pad_1:6", "Pad1", False, pad_field(6), "Null padding."),
+        FieldDisplayInfo("pad_1:6", "Pad1", False, bit_pad_field(6), "Null padding."),
         FieldDisplayInfo("pad[2]", "Pad2", False, pad_field(2), "Null padding."),
     ],
 }

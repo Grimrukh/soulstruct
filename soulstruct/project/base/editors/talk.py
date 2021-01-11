@@ -679,7 +679,7 @@ class TalkEditor(BaseEditor):
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
 
-    def get_category_data(self, category=None) -> tp.Dict[int, str]:
+    def get_category_data(self, category=None) -> dict[int, str]:
         """Gets list of talk IDs and their paths. Category argument does nothing."""
         return self.esp_file_paths[self.selected_map_id]
 
