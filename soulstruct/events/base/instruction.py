@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Instruction:
-    STRUCT: BinaryStruct = None
+    HEADER_STRUCT: BinaryStruct = None
     EventLayers = EventLayers
 
     INSTRUCTION_ARG_TYPES = {}
@@ -47,7 +47,7 @@ class Instruction:
         """ Unpack some number of Instructions into a list, starting from the current file offset. """
 
         instructions = []
-        struct_dicts = cls.STRUCT.unpack_count(file, count=count)
+        struct_dicts = cls.HEADER_STRUCT.unpack_count(file, count=count)
         for i, d in enumerate(struct_dicts):
 
             # Process arguments.
@@ -204,4 +204,4 @@ class Instruction:
             "first_base_arg_offset": first_base_arg_offset,
             "first_event_layers_offset": self.event_layers_offset,
         }
-        return self.STRUCT.pack(struct_dict)
+        return self.HEADER_STRUCT.pack(struct_dict)

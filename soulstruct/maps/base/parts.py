@@ -517,8 +517,8 @@ class MSBCollision(MSBPart, abc.ABC):
         "play_region_id": MapFieldInfo(
             "Play Region ID",
             int,
-            -1,
-            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of. If set to -1 (default), no "
+            0,
+            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of. If set to 0 (default), no "
             "multiplayer activity can occur while the player is on this collision.\n\n"
             ""
             "NOTE: This field shares space with Stable Footing Flag, so only one of them can be set to a non-zero "
@@ -889,7 +889,7 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
         if "name" not in kwargs:
             raise ValueError(f"Must pass `name` to Collision duplication call to duplicate attached environment event.")
         new_collision = self.new_collision(
-            copy_from=collision, insert_below_original=insert_below_original, **kwargs,
+            copy_entry=collision, insert_below_original=insert_below_original, **kwargs,
         )
         if new_collision.environment_event_name is None:
             return new_collision

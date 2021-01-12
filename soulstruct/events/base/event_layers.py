@@ -14,7 +14,7 @@ class EventLayers:
     Each instruction will only run if the map's current event layer (e.g. set by a ceremony) is enabled in
     the bit field (or by default, all are enabled).
     """
-    STRUCT: BinaryStruct = None
+    HEADER_STRUCT: BinaryStruct = None
 
     def __init__(self, event_layers: list):
         """The event layer is simply a 32-bit bit field (represented here as a list of enabled bit flags
@@ -33,7 +33,7 @@ class EventLayers:
         e.g. field 01001...110 would be {1, 4, 29, 30}.
         """
         file.seek(event_layers_offset)
-        d = cls.STRUCT.unpack(file)
+        d = cls.HEADER_STRUCT.unpack(file)
         enabled_event_layers_list = []
         for i in range(32):
             if (2 ** i) & d["event_layers"]:
@@ -43,7 +43,7 @@ class EventLayers:
     def pack(self):
         """Opposite of `unpack`. Converts list of enabled flags into a single 32-bit uint."""
         packed_field = sum(2 ** i for i in self.event_layers)
-        return self.STRUCT.pack(event_layers=packed_field)
+        return self.HEADER_STRUCT.pack(event_layers=packed_field)
 
     def to_numeric(self):
         return f" <{', '.join(str(e) for e in self.event_layers)}>"

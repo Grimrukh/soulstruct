@@ -32,7 +32,7 @@ class EMEVD(GameFile, abc.ABC):
     GAME_MODULE = None  # type: ModuleType
     STRING_ENCODING = None
     DCX_MAGIC = ()  # type: tuple[int, int]
-    STRUCT: BinaryStruct = None
+    HEADER_STRUCT: BinaryStruct = None
 
     def __init__(self, emevd_source, dcx_magic=(), script_path=None):
         """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
@@ -106,7 +106,7 @@ class EMEVD(GameFile, abc.ABC):
         )
 
     def unpack(self, emevd_buffer, **kwargs):
-        header = self.STRUCT.unpack(emevd_buffer)
+        header = self.HEADER_STRUCT.unpack(emevd_buffer)
 
         emevd_buffer.seek(header["event_table_offset"])
         self.events.update(
@@ -197,8 +197,8 @@ class EMEVD(GameFile, abc.ABC):
         return sum([e.event_arg_count for e in self.events.values()])
 
     def compute_table_offsets(self, event_layers_table):
-        offsets = {"event": self.STRUCT.size}
-        offsets["instruction"] = offsets["event"] + self.Event.STRUCT.size * self.event_count
+        offsets = {"event": self.HEADER_STRUCT.size}
+        offsets["instruction"] = offsets["event"] + self.Event.HEADER_STRUCT.size * self.event_count
         # Ignore empty unknown table.
         offsets["event_layers"] = offsets["instruction"] + self.Event.Instruction.HEADER_STRUCT.size * self.instruction_count
         offsets["base_arg_data"] = offsets["event_layers"] + (
@@ -232,7 +232,7 @@ class EMEVD(GameFile, abc.ABC):
             "packed_strings_size": len(self.packed_strings),
             "packed_strings_offset": offsets["packed_strings"],
         }
-        return self.STRUCT.pack(header_dict)
+        return self.HEADER_STRUCT.pack(header_dict)
 
     def get_linked_file_names(self):
         names = []
@@ -329,7 +329,7 @@ class EMEVD(GameFile, abc.ABC):
         emevd_binary = b""
         offsets = self.compute_table_offsets(event_layers_table)
         if len(header) != offsets["event"]:
-            raise ValueError(f"Header was of size {len(header)} but expected size was {self.STRUCT.size}.")
+            raise ValueError(f"Header was of size {len(header)} but expected size was {self.HEADER_STRUCT.size}.")
         emevd_binary += header
         if len(emevd_binary) + len(event_table_binary) != offsets["instruction"]:
             raise ValueError(

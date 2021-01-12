@@ -17,7 +17,7 @@ from soulstruct.utilities.binary_struct import BinaryStruct
 
 
 class EventLayers(_BaseEventLayers):
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("two", "I", 2),
         ("event_layers", "I"),  # 32-bit bit field
         ("zero", "Q", 0),
@@ -27,7 +27,7 @@ class EventLayers(_BaseEventLayers):
 
 
 class EventArg(_BaseEventArg):
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("instruction_line", "Q"), ("write_from_byte", "Q"), ("read_from_byte", "Q"), ("bytes_to_write", "Q"),
     )
 
@@ -365,7 +365,7 @@ class Instruction(_BaseInstruction):
         5: {0: "bBibf", 1: "bii", 2: "bi", 3: "bibi", 9: "biBBbf", 10: "biBbf", 11: "biBbf"},
         11: {0: "bi", 1: "bi", 2: "bi"},
     }
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("instruction_class", "I"),
         ("instruction_index", "I"),
         ("base_args_size", "Q"),
@@ -379,7 +379,7 @@ class Event(_BaseEvent):
     EVENT_ARG_TYPES = {}
     Instruction = Instruction
     EventArg = EventArg
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("event_id", "Q"),
         ("instruction_count", "Q"),
         ("first_instruction_offset", "Q"),
@@ -395,7 +395,7 @@ class EMEVD(_BaseEMEVD):
     GAME_MODULE = sys.modules["soulstruct.events.darksouls3"]
     STRING_ENCODING = "utf-16le"
     DCX_MAGIC = (68, 76)
-    STRUCT = BinaryStruct(
+    HEADER_STRUCT = BinaryStruct(
         ("version", "4s", b"EVD\x00"),
         ("ds3_marker_1", "I", 130816),
         ("ds3_marker_2", "I", 205),

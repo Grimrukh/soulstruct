@@ -366,7 +366,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
     def new(
         self,
-        entry_subtype: MSBSubtype,
+        entry_subtype: tp.Union[str, MSBSubtype],
         copy_entry: MSBEntryType = None,
         insert_below_original=True,
         auto_add=True,
@@ -377,6 +377,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
         Use the `new_{subtype}()` shortcut methods to avoid specifying `entry_subtype` and use return type hinting.
         """
+        entry_subtype = self.resolve_entry_subtype(entry_subtype)
         if copy_entry is not None:
             return self.duplicate_entry(
                 entry=copy_entry,

@@ -23,7 +23,7 @@ EVS_ARG_TYPES = {
 
 
 class EventArg:
-    STRUCT: BinaryStruct = None
+    HEADER_STRUCT: BinaryStruct = None
 
     def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, zero=0):
         """Overrides argument data in a particular instruction using from dynamic args attached to the event."""
@@ -37,7 +37,7 @@ class EventArg:
     @classmethod
     def unpack(cls, file, count=1):
         event_args = []
-        struct_dicts = cls.STRUCT.unpack_count(file, count=count)
+        struct_dicts = cls.HEADER_STRUCT.unpack_count(file, count=count)
         for d in struct_dicts:
             event_args.append(cls(**d))
         return event_args
@@ -46,7 +46,7 @@ class EventArg:
         return f"({self.write_from_byte} <- {self.read_from_byte}, {self.bytes_to_write})"
 
     def to_binary(self):
-        return self.STRUCT.pack(
+        return self.HEADER_STRUCT.pack(
             instruction_line=self.line,
             write_from_byte=self.write_from_byte,
             read_from_byte=self.read_from_byte,
@@ -55,14 +55,14 @@ class EventArg:
 
 
 class Event:
-    STRUCT: BinaryStruct = None
+    HEADER_STRUCT: BinaryStruct = None
     Instruction = Instruction
     EventArg = EventArg
     EVENT_ARG_TYPES = {}  # Set before each EVS write.
     WRAP_LIMIT = 120  # PyCharm default line length.
 
     def __init__(self, event_id=0, restart_type=0, instructions=None):
-        if self.STRUCT is None:
+        if self.HEADER_STRUCT is None:
             raise NotImplementedError("You cannot instantiate BaseEvent. Use a game-specific child.")
         self.event_id = event_id
         self.restart_type = restart_type
@@ -80,7 +80,7 @@ class Event:
     ):
 
         event_dict = OrderedDict()
-        struct_dicts = cls.STRUCT.unpack_count(file, count=count)
+        struct_dicts = cls.HEADER_STRUCT.unpack_count(file, count=count)
 
         for d in struct_dicts:
             file.seek(instruction_table_offset + d["first_instruction_offset"])
@@ -179,7 +179,7 @@ class Event:
         if self.event_arg_count == 0:
             first_event_arg_offset = -1
 
-        event_binary = self.STRUCT.pack(
+        event_binary = self.HEADER_STRUCT.pack(
             event_id=self.event_id,
             instruction_count=self.instruction_count,
             first_instruction_offset=instruction_offset,
