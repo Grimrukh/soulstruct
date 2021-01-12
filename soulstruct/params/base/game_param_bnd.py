@@ -39,7 +39,7 @@ class GameParamBND(BaseBND, abc.ABC):
         """
 
         self._reload_warning_given = True
-        self.params = {}
+        self.params = {}  # type: dict[str, Param]
         if paramdef_bnd is None:
             self.paramdef_bnd = self.ParamDefBND()
         self.paramdef_bnd = paramdef_bnd if isinstance(paramdef_bnd, ParamDefBND) else self.ParamDefBND(paramdef_bnd)

@@ -1,8 +1,10 @@
-__all__ = ["SP_EFFECT_PARAM_ST", "SP_EFFECT_VFX_PARAM_ST"]
+__all__ = ["SP_EFFECT_PARAM_ST", "SP_EFFECT_VFX_PARAM_ST", "RESIDENT_FX_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.bloodborne.enums import *
 from soulstruct.params.core import FieldDisplayInfo, pad_field, bit_pad_field
+
+SP_EFFECT_BOOL = bool  # override u8
 
 SP_EFFECT_PARAM_ST = {
     "paramdef_name": "SP_EFFECT_PARAM_ST",
@@ -480,12 +482,11 @@ SP_EFFECT_PARAM_ST = {
             "negative values can be used to make this character *more* visible.",
         ),
         FieldDisplayInfo(
-            "hearingSearchEnemyCut",
-            "EnemyHearingPercentageReduction",
+            "hearingSearchEnemyRate",  # TODO: "rate" rather than "cut" in Bloodborne. Guessing additive.
+            "EnemyHearingMultiplier",
             True,
             int,
-            "Percentage reduction in enemy hearing (from 0 to 100) when looking for this character. Not sure if "
-            "negative values can be used to make this character *more* audible.",
+            "Percentage multiplier in enemy hearing range when looking for this character.",
         ),
         FieldDisplayInfo(
             "grabityRate",
@@ -1004,7 +1005,10 @@ SP_EFFECT_PARAM_ST = {
             bool,
             "Used only by Purple Coward's Crystal.",
         ),
-        FieldDisplayInfo("pad_2:4", "Pad1", False, bit_pad_field(4), "Null padding."),
+        FieldDisplayInfo("disableTherianthrope:1", "DisableBeast", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("chargeAttackParamChange:1", "ChargeAttackParamChange", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("throwAttackParamChange:1", "GrabAttackParamChange", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("enableEquipSlotCheck:1", "EnableEquipSlotCheck", True, SP_EFFECT_BOOL, ""),
         FieldDisplayInfo(
             "vowType0:1",
             "AffectsCharactersWithNoCovenant",
@@ -1117,7 +1121,59 @@ SP_EFFECT_PARAM_ST = {
             bool,
             "Determines if this special effect will affect characters in unused covenant.",
         ),
-        FieldDisplayInfo("pad1[11]", "Pad2", False, pad_field(11), "Null padding."),
+        FieldDisplayInfo("effectTargetOpposeTarget:1", "EFfectTargetsEnemyTarget", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("effectTargetFriendlyTarget:1", "EffectTargetsAllyTarget", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("effectTargetSelfTarget:1", "EffectTargetsSelfTarget", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("deathcauseId", "DeathCauseID", True, int, ""),
+        FieldDisplayInfo("antiDarkSightRadius", "AntiDarkSightRadius", True, float, ""),
+        FieldDisplayInfo("antiDarkSightDmypolyId", "AntiDarkSightModelPoint", True, int, ""),
+        FieldDisplayInfo("sightSearchRate", "SightSearchRate", True, float, ""),
+        FieldDisplayInfo("hearingSearchRate", "HearingSearchRate", True, float, ""),
+        FieldDisplayInfo("registTherianthrope", "ResistBeast", True, int, ""),
+        FieldDisplayInfo("registTherianthropeChangeRate", "ResistBeastChangeRate", True, float, ""),
+        FieldDisplayInfo("changeTeamType", "ChangeTeamType", True, SP_EFFECT_CHANGE_TEAM_TYPE, ""),
+        FieldDisplayInfo("bAdjustStrengthAblity:1", "UseStrengthScaling", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("bAdjustAgilityAblity:1", "UseDexterityScaling", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("weaponConvertAttribute", "WeaponConvertAttribute", True, SP_EFFECT_CONVERT_ATTRIBUTE, ""),
+        FieldDisplayInfo("changeMaxQuantity", "ChangeMaxQuantity", True, int, ""),
+        FieldDisplayInfo("slashAttackRate", "SlashAttackRate", True, float, ""),
+        FieldDisplayInfo("blowAttackRate", "BluntAttackRate", True, float, ""),
+        FieldDisplayInfo("thrustAttackRate", "ThrustAttackRate", True, float, ""),
+        FieldDisplayInfo("neutralAttackRate", "NeutralAttackRate", True, float, ""),
+        FieldDisplayInfo("slashAttackPowerRate", "SlashAttackPowerRate", True, float, ""),
+        FieldDisplayInfo("blowAttackPowerRate", "BluntAttackPowerRate", True, float, ""),
+        FieldDisplayInfo("thrustAttackPowerRate", "ThrustAttackPowerRate", True, float, ""),
+        FieldDisplayInfo("neutralAttackPowerRate", "NeutralAttackPowerRate", True, float, ""),
+        FieldDisplayInfo("slashAttackPower", "SlashAttackPower", True, int, ""),
+        FieldDisplayInfo("blowAttackPower", "BluntAttackPower", True, int, ""),
+        FieldDisplayInfo("thrustAttackPower", "ThrustAttackPower", True, int, ""),
+        FieldDisplayInfo("neutralAttackPower", "NeutralAttackPower", True, int, ""),
+        FieldDisplayInfo("consumeStaminaRate", "StaminaConsumptionRate", True, float, ""),
+        FieldDisplayInfo("addBulletNum", "AddBullets", True, int, ""),
+        FieldDisplayInfo("validCond_PCWeponState", "ValidConditionPlayerWeaponState", True, SP_EFE_PC_WEAPON_STATE, ""),
+        FieldDisplayInfo("addTempBulletNum", "AddBloodBullets", True, int, ""),
+        FieldDisplayInfo("regainGaugeDamage", "RegainGaugeDamage", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("changeStrengthPoint", "ChangeStrength", True, int, ""),
+        FieldDisplayInfo("changeAgilityPoint", "ChangeDexterity", True, int, ""),
+        FieldDisplayInfo("changeMagicPoint", "ChangeBloodtinge", True, int, ""),
+        FieldDisplayInfo("changeFaithPoint", "ChangeArcane", True, int, ""),
+        FieldDisplayInfo("changePoisonResistPoint", "ChangePoisonResistance", True, int, ""),
+        FieldDisplayInfo("changeDiseaseResistPoint", "ChangeToxicResistance", True, int, ""),
+        FieldDisplayInfo("changeBloodResistPoint", "ChangeBleedingResistance", True, int, ""),
+        FieldDisplayInfo("changeCurseResistPoint", "ChangeFrenzyResistance", True, int, ""),
+        FieldDisplayInfo("changeTherianthropeResistPoint", "ChangeBeastResistance", True, int, ""),
+        FieldDisplayInfo("antiDemonDamageCorrectRate", "DemonDamageMultiplier", True, float, ""),
+        FieldDisplayInfo("antiSaintDamageCorrectRate", "HolyDamageMultiplier", True, float, ""),
+        FieldDisplayInfo("antiWeakA_DamageCorrectRate", "WeakADamageMultiplier", True, float, ""),
+        FieldDisplayInfo("antiWeakB_DamageCorrectRate", "WeakBDamageMultiplier", True, float, ""),
+        FieldDisplayInfo("regainRate", "RegainRate", True, float, ""),
+        FieldDisplayInfo("conditionHpRate", "ConditionHPRate", True, float, ""),
+        FieldDisplayInfo("itemDropRate", "ItemDropRate", True, float, ""),
+        FieldDisplayInfo("transfusionHpRate", "TransfusionHPRate", True, float, ""),
+        FieldDisplayInfo("transfusionHpPoint", "TransfusionHPPoints", True, int, ""),
+        FieldDisplayInfo("transfusionHpRecoverRate", "TransfusionHPRecoveryRate", True, float, ""),
+        FieldDisplayInfo("validCond_StateInfo", "ValidConditionStateInfo", True, SP_EFFECT_TYPE, ""),
+        FieldDisplayInfo("pad3[2]", "Pad", False, pad_field(2), ""),
     ],
 }
 
@@ -1272,15 +1328,31 @@ SP_EFFECT_VFX_PARAM_ST = {
             "If enabled, effects are made semi-transparent rather than fully hidden.",
         ),
         FieldDisplayInfo(
-            "isFullBodyTransformProtectorId:1",
-            "ArmorTransformationIsFullBody",
+            "transformArmor:1",
+            "TransformBodyArmor",
             True,
             bool,
             "Indicates whether the armor transformation should be applied to the whole body.",
         ),
         FieldDisplayInfo("isInvisibleWeapon:1", "HideWeapon", True, bool, "Weapon is invisible if enabled."),
         FieldDisplayInfo("isSilence:1", "IsSilent", True, bool, "Movement noises are silenced if enabled."),
-        FieldDisplayInfo("pad_1:6", "Pad1", False, bit_pad_field(6), "Null padding."),
-        FieldDisplayInfo("pad[16]", "Pad2", False, pad_field(16), "Null padding."),
+        FieldDisplayInfo("transformGauntlet:1", "TransformHandArmor", True, bool, ""),
+        FieldDisplayInfo("transformHelmet:1", "TransformHeadArmor", True, bool, ""),
+        FieldDisplayInfo("transformLeggings:1", "TransformLegsArmor", True, bool, ""),
+        FieldDisplayInfo("transformPriority:3", "TransformPriority", True, int, ""),
+        FieldDisplayInfo("transformWeaponId", "TransformWeaponID", True, int, ""),
+        FieldDisplayInfo("pad[12]", "Pad", False, pad_field(12), ""),
+    ],
+}
+
+
+RESIDENT_FX_PARAM_ST = {
+    "paramdef_name": "RESIDENT_FX_PARAM_ST",
+    "file_name": "ResidentVFXParam",
+    "nickname": "ResidentVFX",
+    "fields": [
+        FieldDisplayInfo("sfxId", "VisualEffectID", True, int, ""),
+        FieldDisplayInfo("dmypolyId", "ModelPoint", True, int, ""),
+        FieldDisplayInfo("pad_0[8]", "Pad", False, pad_field(8), ""),
     ],
 }

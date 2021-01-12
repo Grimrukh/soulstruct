@@ -544,7 +544,7 @@ class BND4(BaseBND):
         self.big_endian = header["big_endian"] == 0x00000100  # Magic not used to infer endianness here.
         byte_order = ">" if self.big_endian else "<"
         header.update(self.header_struct.unpack(bnd_buffer, *self.HEADER_STRUCT_ENDIAN, byte_order=byte_order))
-        self.signature = header["signature"]
+        self.signature = header["signature"].rstrip(b"\0").decode()
         self.magic = header["magic"]
         self.utf16_paths = header["utf16_paths"]
         self.hash_table_type = header["hash_table_type"]

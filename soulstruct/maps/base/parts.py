@@ -21,10 +21,10 @@ import struct
 
 from soulstruct.core import InvalidFieldValueError, SoulstructError
 from soulstruct.game_types import *
-from soulstruct.maps.core import MapError, MapFieldInfo
+from soulstruct.maps.core import MapFieldInfo
 from soulstruct.maps.base.msb_entry import MSBEntryList, MSBEntryEntityCoordinates
 from soulstruct.maps.enums import CollisionHitFilter, MSBPartSubtype
-from soulstruct.utilities.core import partialmethod, unpack_from_buffer
+from soulstruct.utilities.core import partialmethod
 from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
@@ -517,8 +517,8 @@ class MSBCollision(MSBPart, abc.ABC):
         "play_region_id": MapFieldInfo(
             "Play Region ID",
             int,
-            0,
-            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of. If set to 0 (default), no "
+            -1,
+            "Determines the multiplayer (e.g. invasion) sub-area this collision is part of. If set to -1 (default), no "
             "multiplayer activity can occur while the player is on this collision.\n\n"
             ""
             "NOTE: This field shares space with Stable Footing Flag, so only one of them can be set to a non-zero "

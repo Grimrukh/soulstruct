@@ -24,12 +24,12 @@ _BUNDLED = None
 
 class ParamDefField(_BaseParamDefField):
 
-    def get_display_info(self, entry: ParamRow):
+    def get_display_info(self, row: ParamRow):
         try:
             field_info = get_param_info_field(self.param_name, self.name)
         except ValueError:
             raise ValueError(f"No display information given for field '{self.name}'.")
-        return field_info(entry)
+        return field_info(row)
 
 
 class ParamDef(_BaseParamDef):

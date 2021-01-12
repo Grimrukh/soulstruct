@@ -146,7 +146,7 @@ NPC_THINK_PARAM_ST = {
             True,
             int,
             "Distance that NPC will search for a lost target before retreating (I think). Set to 20 for everyone "
-            "except the Bounding Demons of Izaltih, who have a value of 0.", 
+            "except the Bounding Demons of Izalith, who have a value of 0.",
         ),
         FieldDisplayInfo(
             "SightTargetForgetTime",

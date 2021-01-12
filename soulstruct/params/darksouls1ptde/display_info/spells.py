@@ -2,10 +2,7 @@ __all__ = ["MAGIC_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.darksouls1ptde.enums import *
-from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
-
-# Overrides for basic enum.
-SP_EFFECT_SPCATEGORY = int
+from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
 
 
 class DynamicSpellRef(DynamicFieldDisplayInfo):

@@ -128,43 +128,43 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         "unknown_x1c_x20": MapFieldInfo(
             "Unknown [1c-20]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x20_x24": MapFieldInfo(
             "Unknown [20-24]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x24_x28": MapFieldInfo(
             "Unknown [24-28]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x28_x2c": MapFieldInfo(
             "Unknown [28-2c]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x2c_x30": MapFieldInfo(
             "Unknown [2c-30]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x30_x34": MapFieldInfo(
             "Unknown [30-34]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x34_x38": MapFieldInfo(
             "Unknown [34-38]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x38_x3c": MapFieldInfo(
@@ -176,7 +176,7 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         "unknown_x3c_x40": MapFieldInfo(
             "Unknown [3c-40]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x42_x44": MapFieldInfo(
@@ -188,13 +188,13 @@ class MSBTreasureEvent(_BaseMSBTreasureEvent, MSBEvent):
         "unknown_x44_x48": MapFieldInfo(
             "Unknown [44-48]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
         "unknown_x48_x4c": MapFieldInfo(
             "Unknown [48-4c]",
             int,
-            0,
+            -1,
             "Unknown integer.",
         ),
     }
@@ -485,7 +485,8 @@ class MSBPlatoonEvent(MSBEvent):
         ("platoon_id_script_active", "i"),
         ("state", "i"),
         "16x",
-        ("_platoon_part_indices", "32i"),
+        ("_platoon_character_indices", "30i"),
+        ("_platoon_parent_indices", "2i"),
     )
 
     FIELD_INFO = MSBEvent.FIELD_INFO | {
@@ -507,11 +508,17 @@ class MSBPlatoonEvent(MSBEvent):
             -1,
             "Probably unused for Platoon.",
         ),
-        "platoon_part_names": MapFieldInfo(
-            "Platoon Characters Names",
-            GameObjectSequence((Character, 32)),
-            [None] * 32,
-            "Characters who are in this Platoon.",
+        "platoon_character_names": MapFieldInfo(
+            "Platoon Character Names",
+            GameObjectSequence((Character, 30)),
+            [None] * 30,
+            "Characters in this Platoon.",
+        ),
+        "platoon_parent_names": MapFieldInfo(
+            "Platoon Parent Names",
+            GameObjectSequence((MapPart, 2)),
+            [None] * 2,
+            "Parent parts of this Platoon.",
         ),
         "platoon_id_script_active": MapFieldInfo(
             "Platoon Active Script ID",
@@ -531,43 +538,68 @@ class MSBPlatoonEvent(MSBEvent):
         "entity_id",
         "base_part_name",
         "base_region_name",
-        "platoon_part_names",
+        "platoon_character_names",
+        "platoon_parent_names",
         "platoon_id_script_active",
         "state",
     )
 
     def __init__(self, source, **kwargs):
-        self._platoon_part_names = [None] * 32
-        self._platoon_part_indices = [-1] * 32
+        self._platoon_character_names = [None] * 30
+        self._platoon_character_indices = [-1] * 30
+        self._platoon_parent_names = [None] * 2
+        self._platoon_parent_indices = [-1] * 2
         super().__init__(source=source, **kwargs)
 
     @property
-    def platoon_part_names(self):
-        return self._platoon_part_names
+    def platoon_character_names(self):
+        return self._platoon_character_names
 
-    @platoon_part_names.setter
-    def platoon_part_names(self, value):
-        """Pads out to 32 names with `None`. Also replaces empty strings with `None`."""
+    @platoon_character_names.setter
+    def platoon_character_names(self, value):
+        """Pads out to 30 names with `None`. Also replaces empty strings with `None`."""
         names = []
         for v in value:
             if v is not None and not isinstance(v, str):
-                raise TypeError("Patrol point names must be strings or `None`.")
+                raise TypeError("Platoon character names must be strings or `None`.")
             names.append(v if v else None)
-        self._platoon_part_names = value
-        while len(self._platoon_part_names) < 32:
-            self._platoon_part_names.append(None)
+        self._platoon_character_names = value
+        while len(self._platoon_character_names) < 30:
+            self._platoon_character_names.append(None)
+
+    @property
+    def platoon_parent_names(self):
+        return self._platoon_parent_names
+
+    @platoon_parent_names.setter
+    def platoon_parent_names(self, value):
+        """Pads out to 2 names with `None`. Also replaces empty strings with `None`."""
+        names = []
+        for v in value:
+            if v is not None and not isinstance(v, str):
+                raise TypeError("Platoon parent names must be strings or `None`.")
+            names.append(v if v else None)
+        self._platoon_parent_names = value
+        while len(self._platoon_parent_names) < 2:
+            self._platoon_parent_names.append(None)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
-        self._platoon_part_indices = [part_indices[n] if n else -1 for n in self._platoon_part_names]
-        while len(self._platoon_part_indices) < 32:
-            self._platoon_part_indices.append(-1)
+        self._platoon_character_indices = [part_indices[n] if n else -1 for n in self._platoon_character_names]
+        while len(self._platoon_character_indices) < 30:
+            self._platoon_character_indices.append(-1)
+        self._platoon_parent_indices = [part_indices[n] if n else -1 for n in self._platoon_parent_names]
+        while len(self._platoon_parent_indices) < 2:
+            self._platoon_parent_indices.append(-1)
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
-        self._platoon_part_names = [part_names[i] if i != -1 else None for i in self._platoon_part_indices]
-        while len(self._platoon_part_names) < 32:
-            self._platoon_part_names.append(None)
+        self._platoon_character_names = [part_names[i] if i != -1 else None for i in self._platoon_character_indices]
+        while len(self._platoon_character_names) < 30:
+            self._platoon_character_names.append(None)
+        self._platoon_parent_names = [part_names[i] if i != -1 else None for i in self._platoon_parent_indices]
+        while len(self._platoon_parent_names) < 2:
+            self._platoon_parent_names.append(None)
 
 
 class MSBMultiSummonEvent(MSBEvent):

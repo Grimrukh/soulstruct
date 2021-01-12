@@ -4,17 +4,17 @@ __all__ = [
     "EQUIP_PARAM_ACCESSORY_ST",
     "EQUIP_PARAM_GOODS_ST",
     "ITEMLOT_PARAM_ST",
+    "ITEMLOT_LVDEP_PARAM_ST",
     "EQUIP_MTRL_SET_PARAM_ST",
     "REINFORCE_PARAM_WEAPON_ST",
     "REINFORCE_PARAM_PROTECTOR_ST",
+    "PROTECTOR_GEN_PARAM_ST",
+    "WEAPON_GEN_PARAM_ST",
 ]
 
 from soulstruct.game_types import *
 from soulstruct.params.bloodborne.enums import *
-from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
-
-# Overrides for basic enum.
-SP_EFFECT_SPCATEGORY = int
+from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
 
 
 class DynamicGoodRef(DynamicFieldDisplayInfo):
@@ -444,7 +444,7 @@ EQUIP_PARAM_PROTECTOR_ST = {
             "Effects applied at consecutive upgrade reinforcement levels.",
         ),
         FieldDisplayInfo(
-            "trophySGradeId",
+            "compTrophySedId",
             "AchievementContributionID",
             False,
             int,
@@ -584,11 +584,34 @@ EQUIP_PARAM_PROTECTOR_ST = {
             "If True, this armor cannot be given to other players by dropping it. Always False in vanilla.",
         ),
         FieldDisplayInfo("simpleModelForDlc:1", "SimpleDLCModelExists", False, bool, "Unknown; always set to False."),
-        FieldDisplayInfo("pad_0[1]", "Pad0", False, pad_field(1), "Null padding."),
-        FieldDisplayInfo(
-            "oldSortId", "OldSortIndex", False, int, "Sorting index for an obsolete build of the game. No effect."
-        ),
-        FieldDisplayInfo("pad_1[6]", "Pad1", False, pad_field(6), "Null padding."),
+        FieldDisplayInfo("isGuestDrop:1", "CanDropToSummons", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("shotDamageCutRate", "GunDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("slashDamageCutRate", "SlashDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("blowDamageCutRate", "BluntDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("thrustDamageCutRate", "ThrustDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("magicDamageCutRate", "MagicDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("fireDamageCutRate", "FireDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("thunderDamageCutRate", "LightningDamagePercentageReduction", True, float, ""),
+        FieldDisplayInfo("resistTherianthrope", "ResistBeasts", True, int, ""),
+        FieldDisplayInfo("invisibleFlag48:1", "HideFlag48", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag49:1", "HideFlag49", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag50:1", "HideFlag50", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag51:1", "HideFlag51", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag52:1", "HideFlag52", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag53:1", "HideFlag53", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag54:1", "HideFlag54", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag55:1", "HideFlag55", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag56:1", "HideFlag56", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag57:1", "HideFlag57", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag58:1", "HideFlag58", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag59:1", "HideFlag59", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag60:1", "HideFlag60", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag61:1", "HideFlag61", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("invisibleFlag62:1", "HideFlag62", False, bool, "Hide part of the character model: (unknown)"),
+        FieldDisplayInfo("repositoryCategory", "StorageCategory", True, int, ""),
+        FieldDisplayInfo("pad2[1]", "Pad", False, pad_field(1), ""),
+        FieldDisplayInfo("trophySeqId", "TrophyID", True, int, ""),
+        FieldDisplayInfo("pad3[8]", "Pad", False, pad_field(8), ""),
     ],
 }
 
@@ -834,7 +857,7 @@ EQUIP_PARAM_GOODS_ST = {
             "Animation variation ID to combine with the base usage animation.",
         ),
         FieldDisplayInfo("weight", "Weight", False, float, "Weight of good. Never used in vanilla Dark Souls."),
-        FieldDisplayInfo("basicPrice", "BasicCost", False, int, "Unsure. Does not appear to be used."),
+        FieldDisplayInfo("fragmentNum", "FragmentCount", True, int, ""),
         FieldDisplayInfo(
             "sellValue",
             "FramptSellValue",
@@ -1101,13 +1124,6 @@ EQUIP_PARAM_GOODS_ST = {
             dsr_only=True,
         ),
         FieldDisplayInfo(
-            "enable_pvp:1",
-            "UseableInPVP",
-            True,
-            bool,
-            "<DSR> Determines if this good can be used in 'PVP' multiplayer. Not sure exactly what that refers to.",
-        ),
-        FieldDisplayInfo(
             "disable_offline:1",
             "DisabledOffline",
             True,
@@ -1178,14 +1194,31 @@ EQUIP_PARAM_GOODS_ST = {
             bool,
             "If True, this good cannot be used outside the PvP Arena in Oolacile.",
         ),
-        FieldDisplayInfo("pad[9]", "Pad1", False, pad_field(9), "Null padding."),
-        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
-        FieldDisplayInfo(
-            "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""
-        ),
+        FieldDisplayInfo("useBulletMaxNum:1", "UseMaxBulletCount", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("useHpCureMaxNum:1", "UseHealingMaxCount", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isAutoReplenish:1", "AutoReplenishes", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("canMultiUse:1", "CanMultiUse", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isEnchantLeftHand:1", "EnchantsLeftHand", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isGuestDrop:1", "CanDropToSummons", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isApplySpecialEffect:1", "ApplySpecialEffect", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("pad0:3", "Pad", False, bit_pad_field(3), ""),
+        FieldDisplayInfo("maxRepositoryNum", "MaxStorageCount", True, int, ""),
+        FieldDisplayInfo("properStrength", "RequiredStrength", True, int, ""),
+        FieldDisplayInfo("properAgility", "RequiredDexterity", True, int, ""),
+        FieldDisplayInfo("properMagic", "RequiredBloodtinge", True, int, ""),
+        FieldDisplayInfo("properFaith", "RequiredArcane", True, int, ""),
+        FieldDisplayInfo("pad[2]", "Pad", False, pad_field(2), ""),
+        FieldDisplayInfo("vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, ""),
+        FieldDisplayInfo("refVirtualWepId", "VirtualWeaponID", True, int, ""),
+        FieldDisplayInfo("bulletConsumeNum", "BulletCost", True, int, ""),
+        FieldDisplayInfo("useLimitCategory2", "UseLimitCategory2", True, SP_EFFECT_USELIMIT_CATEGORY, ""),
+        FieldDisplayInfo("pad1[2]", "Pad", False, pad_field(2), ""),
+        FieldDisplayInfo("replaceItemId_bySpEffect", "ReplaceItemIDBySpecialEffect", True, int, ""),
+        FieldDisplayInfo("replaceTriggerSpEffectId", "ReplaceTriggerSpecialEffect", True, int, ""),
     ],
 }
+
 
 ITEMLOT_PARAM_ST = {
     "paramdef_name": "ITEMLOT_PARAM_ST",
@@ -1559,6 +1592,17 @@ ITEMLOT_PARAM_ST = {
 }
 
 
+ITEMLOT_LVDEP_PARAM_ST = {
+    "paramdef_name": "ITEMLOT_LVDEP_PARAM_ST",
+    "file_name": "ItemLotLvdepParam",
+    "nickname": "ItemLotsWithScaling",
+    "fields": [
+        FieldDisplayInfo("itemCategory", "", True, ITEMLOT_LVDEP_ITEMCATEGORY, ""),
+        FieldDisplayInfo("itemId", "", True, int, ""),  # TODO: dynamic item field
+    ],
+}
+
+
 EQUIP_PARAM_WEAPON_ST = {
     "paramdef_name": "EQUIP_PARAM_WEAPON_ST",
     "file_name": "EquipParamWeapon",
@@ -1880,6 +1924,8 @@ EQUIP_PARAM_WEAPON_ST = {
             float,
             "Multiplier applied to damage dealt against enemies from the Abyss with this weapon.",
         ),
+        FieldDisplayInfo("levelSyncCorrectId", "LevelSyncCorrectID", True, int, ""),
+        FieldDisplayInfo("pad[2]", "Pad", False, pad_field(2), ""),
         FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
         FieldDisplayInfo(
             "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""
@@ -1947,8 +1993,8 @@ EQUIP_PARAM_WEAPON_ST = {
             "Weapon Upgrade parameter that specifies upgrade benefits.",
         ),
         FieldDisplayInfo(
-            "trophySGradeId",
-            "KnightHonorIndex",
+            "compTrophySedId",
+            "AllWeaponsAchievementGroup",
             False,
             int,
             "Index of weapon as it contributes to the Knight's Honor achievement.",
@@ -2256,18 +2302,40 @@ EQUIP_PARAM_WEAPON_ST = {
             bool,
             "If True, this weapon cannot be given to other players by dropping it. Always False in vanilla.",
         ),
-        FieldDisplayInfo("pad_0[1]", "Pad2", False, pad_field(1), "Null padding."),
-        FieldDisplayInfo(
-            "oldSortId", "OldSortIndex", False, int, "Sorting index for an obsolete build of the game. No effect."
-        ),
-        FieldDisplayInfo(
-            "levelSyncCorrectID",
-            "LevelSyncCorrection",
-            False,
-            int,
-            "Level sync correction (DSR only). Probably not useful.",
-        ),
-        FieldDisplayInfo("pad_1[6]", "Pad3", False, pad_field(6), "Null padding."),
+        FieldDisplayInfo("invisibleOnRemo:1", "InvisibleInCutscenes", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isAttributeWep:1", "IsAttributeWeapon", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isEnchantLeftHand:1", "EnchantsLeftHand", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("isGuestDrop:1", "CanDropToSummons", True, EQUIP_BOOL, ""),
+        FieldDisplayInfo("therianthropeGuardResist", "BeastResistanceOnGuard", True, int, ""),
+        FieldDisplayInfo("PhysAtkMenuDispType", "PhysicalAttackMenuDisplayType", True, PHYS_ATK_MENU_DISP_TYPE, ""),
+        FieldDisplayInfo("wepmotionHangType", "WeaponMotionHangType", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot0RightHang", "Slot0RightHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot0RightFormA", "Slot0RightFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot0RightFormB", "Slot0RightFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot0LeftHang", "Slot0LeftHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot0LeftFormA", "Slot0LeftFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot0LeftFormB", "Slot0LeftFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot1RightHang", "Slot1RightHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot1RightFormA", "Slot1RightFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot1RightFormB", "Slot1RightFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot1LeftHang", "Slot1LeftHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot1LeftFormA", "Slot1LeftFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot1LeftFormB", "Slot1LeftFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot2RightHang", "Slot2RightHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot2RightFormA", "Slot2RightFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot2RightFormB", "Slot2RightFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot2LeftHang", "Slot2LeftHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot2LeftFormA", "Slot2LeftFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot2LeftFormB", "Slot2LeftFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot3RightHang", "Slot3RightHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot3RightFormA", "Slot3RightFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot3RightFormB", "Slot3RightFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot3LeftHang", "Slot3LeftHangModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot3LeftFormA", "Slot3LeftFormAModelPoint", True, int, ""),
+        FieldDisplayInfo("dmypolyId_Slot3LeftFormB", "Slot3LeftFormBModelPoint", True, int, ""),
+        FieldDisplayInfo("wepRegainHp", "WeaponRegainHP", True, int, ""),
+        FieldDisplayInfo("bulletConsumeNum", "BulletCost", True, int, ""),
+        FieldDisplayInfo("repositoryCategory", "StorageCategory", True, int, ""),
     ],
 }
 
@@ -2577,14 +2645,50 @@ REINFORCE_PARAM_WEAPON_ST = {
             int,
             "Value to be added to Upgrade Materials field in base weapon parameters.",
         ),
-        FieldDisplayInfo(
-            "reinforcementLevel",
-            "ReinforcementLevel",
-            True,
-            int,
-            "Reinforcement level. Not sure where this is used; it could be used to calculate the final "
-            "weapon ID (e.g. 100005 for Dagger+5).",
-            dsr_only=True,
-        ),
+        FieldDisplayInfo("pad[9]", "Pad", False, pad_field(9), ""),
+    ],
+}
+
+
+PROTECTOR_GEN_PARAM_ST = {
+    "paramdef_name": "PROTECTOR_GEN_PARAM_ST",
+    "file_name": "ProtectorGenParam",
+    "nickname": "ArmorGenerators",
+    "fields": [
+        FieldDisplayInfo("proParamId", "ArmorParamID", True, ArmorParam, ""),
+        FieldDisplayInfo("gemSlotType_0", "GemSlotType0", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_0", "GemGeneratorID0", True, int, ""),  # TODO: Gem Generator param type
+        FieldDisplayInfo("gemSlotType_1", "GemSlotType1", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_1", "GemGeneratorID1", True, int, ""),
+        FieldDisplayInfo("gemSlotType_2", "GemSlotType2", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_2", "GemGeneratorID2", True, int, ""),
+        FieldDisplayInfo("gemSlotType_3", "GemSlotType3", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_3", "GemGeneratorID3", True, int, ""),
+        FieldDisplayInfo("gemSlotType_4", "GemSlotType4", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_4", "GemGeneratorID4", True, int, ""),
+    ],
+}
+
+
+WEAPON_GEN_PARAM_ST = {
+    "paramdef_name": "WEAPON_GEN_PARAM_ST",
+    "file_name": "WeaponGenParam",
+    "nickname": "WeaponGenerators",
+    "fields": [
+        FieldDisplayInfo("wepParamId", "WeaponParamID", True, WeaponParam, ""),
+        FieldDisplayInfo("gemSlotType_0", "GemSlotType0", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_0", "GemGeneratorID0", True, int, ""),
+        FieldDisplayInfo("gemSlotType_1", "GemSlotType1", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_1", "GemGeneratorID1", True, int, ""),
+        FieldDisplayInfo("gemSlotType_2", "GemSlotType2", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_2", "GemGeneratorID2", True, int, ""),
+        FieldDisplayInfo("gemSlotType_3", "GemSlotType3", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_3", "GemGeneratorID3", True, int, ""),
+        FieldDisplayInfo("gemSlotType_4", "GemSlotType4", True, GEM_SLOT_TYPE_MASK, ""),
+        FieldDisplayInfo("gemGenId_4", "GemGeneratorID4", True, int, ""),
+        FieldDisplayInfo("equipableGemSegmentMask", "EquippableGemSegmentMask", True, GEM_SEGMENT_MASK, ""),
+        FieldDisplayInfo("reserveGemSlotNo_0", "ReserveGemSlot0", True, GEM_SLOT_TYPE_NO, ""),
+        FieldDisplayInfo("reserveGemSlotNo_1", "ReserveGemSlot1", True, GEM_SLOT_TYPE_NO, ""),
+        FieldDisplayInfo("reserveGemSlotNo_2", "ReserveGemSlot2", True, GEM_SLOT_TYPE_NO, ""),
     ],
 }

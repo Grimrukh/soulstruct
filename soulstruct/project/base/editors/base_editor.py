@@ -305,6 +305,7 @@ class BaseEditor(SmartFrame, abc.ABC):
 
         with self.set_master(self.entry_i_frame):
             for row in range(self.ENTRY_RANGE_SIZE):
+                self.Frame()  # Makes entry frame resize to null when all rows are hidden.
                 self.entry_rows.append(
                     self.ENTRY_ROW_CLASS(
                         self,

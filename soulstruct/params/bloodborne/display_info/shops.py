@@ -69,6 +69,7 @@ SHOP_LINEUP_PARAM = {
             "Determines if this is a standard shop menu or the spell attunement menu.",
         ),
         FieldDisplayInfo("equipType", "ItemType", True, SHOP_LINEUP_EQUIPTYPE, "Type of item listed in menu."),
-        FieldDisplayInfo("pad_0[8]", "Pad1", False, pad_field(8), "Null padding."),
+        FieldDisplayInfo("value_SAN", "ValueSAN", True, int, ""),
+        FieldDisplayInfo("pad_0[6]", "Pad", False, pad_field(6), ""),
     ],
 }

@@ -5,7 +5,7 @@ from soulstruct.events.darksouls1.enums import SoundType
 from soulstruct.game_types import *
 from soulstruct.maps.core import MapError, MapFieldInfo
 from soulstruct.maps.enums import MSBEventSubtype
-from soulstruct.utilities import read_chars_from_buffer, pad_chars, unpack_from_buffer, partialmethod
+from soulstruct.utilities import read_chars_from_buffer, pad_chars, partialmethod
 from soulstruct.utilities.binary_struct import BinaryStruct
 from soulstruct.utilities.maths import Vector3
 
@@ -768,6 +768,18 @@ class MSBMapOffsetEvent(MSBEvent):
 
     translate: Vector3
     rotate_y: float
+
+    def __init__(self, source=None, **kwargs):
+        self._translate = Vector3.zero()
+        super().__init__(source=source, **kwargs)
+
+    @property
+    def translate(self):
+        return self._translate
+
+    @translate.setter
+    def translate(self, value):
+        self._translate = Vector3(value)
 
 
 class MSBNavigationEvent(MSBEvent):

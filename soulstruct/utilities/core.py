@@ -365,4 +365,7 @@ class Timer:
         self._start = time.time()
 
     def __exit__(self, *exc):
-        print(f"{self._name} completed in {time.time() - self._start} s.")
+        if any(exc):
+            print(f"{self._name} FAILED after {time.time() - self._start} s.")
+        else:
+            print(f"{self._name} COMPLETED in {time.time() - self._start} s.")

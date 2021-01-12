@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import abc
 import copy
 import io
@@ -151,17 +153,37 @@ class ParamRow:
                     packed_row += value  # already bytes
                 else:
                     packed_row += struct.pack(field.fmt, value)
+        packed_row += self.bit_writer.finish_field()
         return packed_row
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True) -> dict[str, tp.Any]:
         data = {"name": self.name}
         for field in self.paramdef.fields.values():
-            if ignore_pads and field.internal_type == "dummy8":
+            if ignore_pads and field.display_type == "dummy8":
                 continue  # pad bytes not written
             if ignore_defaults and self.fields[field.name] == field.new_default:
                 continue  # default values not written
             data[field.name] = self.fields[field.name]
         return data
+
+    def compare(self, other_row: ParamRow):
+        """Prints each field that differs between the given `ParamRow` and this one."""
+        for field_name, field in self.paramdef.fields.items():
+            other = other_row[field_name]
+            this = self[field_name]
+            if other != this:
+                print(f"  {field_name}: this = {this}, other = {other}")
+
+    def __eq__(self, other_row: ParamRow):
+        """Returns `True` if all fields have the same value, and `False` if not."""
+        for field_name, field in self.paramdef.fields.items():
+            other = other_row[field_name]
+            this = self[field_name]
+            if other != this:
+                if field.display_type == "dummy8":
+                    continue  # padding differences have no effect and do not count against equality
+                return False
+        return True
 
 
 class Param(GameFile, abc.ABC):
@@ -241,7 +263,7 @@ class Param(GameFile, abc.ABC):
         self.paramdef_format_version = 0
         self.undecodable_row_names = undecodable_row_names
 
-        self.rows = {}
+        self.rows = {}  # type: dict[int, ParamRow]
 
         super().__init__(param_source, dcx_magic=dcx_magic)
 

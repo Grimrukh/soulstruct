@@ -36,7 +36,11 @@ __all__ = [
     "BEHAVIOR_ATK_TYPE",
     "BEHAVIOR_CATEGORY",
     "BEHAVIOR_REF_TYPE",
+    "BULLET_ATTACH_EFFECT_TYPE",
+    "BULLET_EMITTE_POS_TYPE",
+    "BULLET_FOLLOW_TYPE",
     "BULLET_LAUNCH_CONDITION_TYPE",
+    "BULLET_PARAM_CIRCLE_CROSS_TYPE",
     "CHARACTER_INIT_SEX",
     "CHARMAKEMENU_CMD_TYPE",
     "CHARMAKEMENU_VIEW_CONDITION",
@@ -45,6 +49,8 @@ __all__ = [
     "ChrType",
     "DURABILITY_DIVERGENCE_CATEGORY",
     "ENEMY_BEHAVIOR_ID",
+    "EQUIP_BOOL",
+    "EQUIP_GEN_PARAM_BOOL32",
     "EQUIP_MODEL_CATEGORY",
     "EQUIP_MODEL_GENDER",
     "FACE_PARAM",
@@ -57,6 +63,9 @@ __all__ = [
     "GOODS_TYPE",
     "GOODS_USE_ANIM",
     "GUARDMOTION_CATEGORY",
+    "HMP_FOOT_EFFECT_HEIGHT_TYPE",
+    "HMP_FOOT_EFFECT_DIR_TYPE",
+    "HMP_FLOOR_HEIGHT_TYPE",
     "ITEMLOT_ITEMCATEGORY",
     "ITEMLOT_LVDEP_ITEMCATEGORY",
     "MAGIC_CATEGORY",
@@ -295,6 +304,28 @@ class BEHAVIOR_REF_TYPE(u8):
     SpecialEffect = 2
 
 
+class BULLET_ATTACH_EFFECT_TYPE(u8):
+    NoAttach = 0
+    Attach = 1  # e.g. Grant special attack, Dragon Head Stone breath
+
+
+class BULLET_EMITTE_POS_TYPE(u8):
+    """Source of projectile. Internal description says 'usually from model point'."""
+
+    ModelPoint = 0  # specified in TAE
+    Firestorm = 1  # and Chaos Storm, etc.
+    FromBullet = 2  # spawn projectile at position of the parent bullet that triggered it
+    # 3 is unused.
+    BedOfChaosFirestorm = 4  # used only by the Bed of Chaos's storm pyromancy
+
+
+class BULLET_FOLLOW_TYPE(u8):
+    """This is a guess."""
+
+    DoNotFollow = 0
+    Follow = 1
+
+
 class BULLET_LAUNCH_CONDITION_TYPE(u8):
     """Determines if child bullet should be generated when it lands and/or dies. Names are based solely on usage right
     now. I suspect that 1 and 2 generate bullets on expiry, and -1 (255) and -2 (254) generate bullets on hit."""
@@ -304,6 +335,10 @@ class BULLET_LAUNCH_CONDITION_TYPE(u8):
     LightningParentBullet = 2  # used by all other lightning bullets
     PrismStoneChild = 254  # -2; used by the second of three Prism Stone bullets
     ChainBullet = 255  # -1; used for non-lightning chain bullets
+
+
+class BULLET_PARAM_CIRCLE_CROSS_TYPE(u8):
+    """TODO"""
 
 
 class CHARACTER_INIT_SEX(u8):
@@ -345,6 +380,17 @@ class DURABILITY_DIVERGENCE_CATEGORY(u8):
 
 class ENEMY_BEHAVIOR_ID(s32):
     """From junk param table ENEMY_STANDARD_INFO_BANK."""
+
+
+class EQUIP_BOOL(u8):
+    """Just the name for the boolean used in EQUIP tables."""
+
+    Off = 0
+    On = 1
+
+
+class EQUIP_GEN_PARAM_BOOL32(u32):
+    """TODO"""
 
 
 class EQUIP_MODEL_CATEGORY(u8):
@@ -446,8 +492,31 @@ class GUARDMOTION_CATEGORY(u8):
     NonPlayerGuard = 4
 
 
+class HMP_FOOT_EFFECT_HEIGHT_TYPE(u8):
+    """Determines height at which foot impact effects are generated. Named after observed usage."""
+
+    Normal = 0
+    WaterSwampLava = 1
+    SnowMucusTar = 2
+
+
+class HMP_FOOT_EFFECT_DIR_TYPE(u8):
+    """Determines direction of foot impact effects."""
+
+    Normal = 0
+    SnowMucusTar = 1  # possibly more upward
+
+
+class HMP_FLOOR_HEIGHT_TYPE(u8):
+    """Determines height of floor effects."""
+
+    Flat = 0
+    Raised = 1  # all liquids except 'mucus'
+
+
 class ITEMLOT_ITEMCATEGORY(s32):
     """Inexplicably wide/reversed bit field for simply specifying the item type."""
+    # TODO: I believe enum is different for Bloodborne.
 
     NoItem = -1
     Weapon = 0

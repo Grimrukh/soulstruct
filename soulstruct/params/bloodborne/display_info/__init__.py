@@ -8,8 +8,10 @@ from .ai import *
 from .attacks import *
 from .behaviors import *
 from .bullets import *
+from .chalices import *
 from .characters import *
 from .effects import *
+from .gems import *
 from .items import *
 from .lighting import *
 from .misc import *

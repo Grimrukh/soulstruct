@@ -159,6 +159,11 @@ OBJECT_PARAM_ST = {
             SFXSound,
             "Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)",
         ),
+        FieldDisplayInfo("navimeshFlag", "NavmeshFlag", True, OBJECT_NAVIMESH_FLAG, ""),
+        FieldDisplayInfo("pad_2[1]", "Pad", False, pad_field(1), "Null padding."),
+        FieldDisplayInfo("paintRenderTargetSize", "PaintRenderTargetSize", True, int, ""),
+        FieldDisplayInfo("breakAiSoundId", "BreakAISoundID", True, int, ""),  # TODO: AI Sound param type
+        FieldDisplayInfo("pad_3[8]", "Pad", False, pad_field(8), "Null padding."),
     ],
 }
 
@@ -234,6 +239,7 @@ OBJ_ACT_PARAM_ST = {
             "Model point that specifies where the action occurs on the object (for snapping the player and "
             "distance check).",
         ),
+        FieldDisplayInfo("pad0[1]", "Pad", False, pad_field(1), ""),
         FieldDisplayInfo(
             "objAnimId",
             "ObjectActionAnimation",
@@ -273,5 +279,7 @@ OBJ_ACT_PARAM_ST = {
             "used by game events.",
         ),
         FieldDisplayInfo("pad1[2]", "Pad1", False, pad_field(2), "Null padding."),
+        FieldDisplayInfo("actionButtonParamId", "ActionButtonParamID", True, int, ""),  # TODO: param type
+        FieldDisplayInfo("actionSuccessMsgId", "ActionSuccessMessageID", True, EventText, ""),
     ],
 }

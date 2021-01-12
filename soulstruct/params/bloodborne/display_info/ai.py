@@ -1,4 +1,4 @@
-__all__ = ["NPC_THINK_PARAM_ST"]
+__all__ = ["NPC_THINK_PARAM_ST", "AI_SOUND_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.core import FieldDisplayInfo, pad_field
@@ -146,7 +146,7 @@ NPC_THINK_PARAM_ST = {
             True,
             int,
             "Distance that NPC will search for a lost target before retreating (I think). Set to 20 for everyone "
-            "except the Bounding Demons of Izaltih, who have a value of 0.", 
+            "except the Bounding Demons of Izalith, who have a value of 0.",
         ),
         FieldDisplayInfo(
             "SightTargetForgetTime",
@@ -369,5 +369,22 @@ NPC_THINK_PARAM_ST = {
         FieldDisplayInfo("changeStateAction_ToInterest", "ChangeStateActionToInterest", True, int, ""),
         FieldDisplayInfo("changeStateAction_ToNormal", "ChangeStateActionToNormal", True, int, ""),
         FieldDisplayInfo("pad[6]", "Pad0", False, pad_field(12), "Null padding."),
+    ],
+}
+
+
+AI_SOUND_PARAM_ST = {
+    "paramdef_name": "AI_SOUND_PARAM_ST",
+    "file_name": "AiSoundParam",
+    "nickname": "AISounds",
+    "fields": [
+        FieldDisplayInfo("radius", "", True, float, ""),
+        FieldDisplayInfo("lifeFrame", "", True, float, ""),
+        FieldDisplayInfo("bSpEffectEnable", "", True, int, ""),
+        FieldDisplayInfo("type", "", True, int, ""),
+        FieldDisplayInfo("fakeTargetType", "", True, int, ""),
+        FieldDisplayInfo("interestCategory", "", True, int, ""),
+        FieldDisplayInfo("useHitDamageTeam", "", True, int, ""),
+        FieldDisplayInfo("pad1[19]", "", False, pad_field(19), ""),
     ],
 }

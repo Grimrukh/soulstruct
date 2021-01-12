@@ -164,8 +164,16 @@ class MapFieldRow(FieldRow):
         self.build_field_context_menu()
 
     def _update_field_GameObject(self, value):
-        """Adds any recognized CharacterModel names as hints."""
-        self.field_links = self.master.get_field_links(self.field_type, value)
+        """Adds any recognized `GameObject` names as hints."""
+        try:
+            self.field_links = self.master.get_field_links(self.field_type, value)
+        except ValueError:
+            _LOGGER.warning(
+                f"Could not generate link for value {repr(value)} of field '{self.field_name}'.\n"
+                f"Value type does not match expected field type ({self.field_type})."
+            )
+            self.value_label.var.set(str(value) + "  {LINK ERROR}")
+            self._activate_value_widget(self.value_label)
         if issubclass(self.field_type, MapEntry):
             # `value` is the name of another MSB entry.
             msb_entry_name = str(value)
@@ -389,7 +397,7 @@ class MapsEditor(BaseFieldEditor):
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
-    FIELD_ROW_COUNT = 37  # highest count (Parts.Collisions)
+    FIELD_ROW_COUNT = 42  # highest count found so far (Parts.Collisions in Bloodborne)
     FIELD_NAME_WIDTH = 20
     FIELD_VALUE_BOX_WIDTH = 200
     FIELD_VALUE_WIDTH = 60
@@ -515,15 +523,10 @@ class MapsEditor(BaseFieldEditor):
                 raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
         entry_type_name, entry_subtype_name = category.split(": ")
         entry_list = self.get_selected_msb()[entry_type_name]
-        global_index = entry_list.get_entry_global_index(entry_subtype_index, entry_subtype=entry_subtype_name)
-        if global_index is None:
-            global_index = len(entry_list)  # appending to end locally -> appending to end globally
-
-        if not 0 <= global_index <= len(entry_list):
-            self.CustomDialog(
-                title="Entry Index Error", message=f"Entry index must be between zero and the current list length."
-            )
-            return False
+        try:
+            global_index = entry_list.get_entry_global_index(entry_subtype_index, entry_subtype=entry_subtype_name)
+        except IndexError:
+            global_index = None  # will append to subtype
 
         self._cancel_entry_text_edit()
         new_field_dict.name = text

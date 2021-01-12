@@ -13,9 +13,6 @@ from soulstruct.game_types import *
 from soulstruct.params.darksouls1ptde.enums import *
 from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
 
-# Overrides for basic enum.
-SP_EFFECT_SPCATEGORY = int
-
 
 class DynamicGoodRef(DynamicFieldDisplayInfo):
 
@@ -1948,7 +1945,7 @@ EQUIP_PARAM_WEAPON_ST = {
         ),
         FieldDisplayInfo(
             "trophySGradeId",
-            "KnightHonorIndex",
+            "AllWeaponsAchievementIndex",
             False,
             int,
             "Index of weapon as it contributes to the Knight's Honor achievement.",

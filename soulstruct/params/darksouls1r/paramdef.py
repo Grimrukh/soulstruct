@@ -40,12 +40,12 @@ class ParamDefField(_BaseParamDefField):
         ("sort_id", "i"),
     )
 
-    def get_display_info(self, entry: ParamRow):
+    def get_display_info(self, row: ParamRow):
         try:
             field_info = get_param_info_field(self.param_name, self.name)
         except ValueError:
             raise ValueError(f"No display information given for field '{self.name}'.")
-        return field_info(entry)
+        return field_info(row)
 
     def get_default_value(self):
         v = DEFAULTS[self.param_name].get(self.name, self.default)

@@ -97,25 +97,25 @@ class MSBPart(_BaseMSBPart):
         "base_unk_x04_x05": MapFieldInfo(
             "Unknown Base [04-05]",
             int,
-            0,
+            -1,
             "Unknown base data integer.",
         ),
         "base_unk_x05_x06": MapFieldInfo(
             "Unknown Base [05-06]",
             int,
-            0,
+            -1,
             "Unknown base data integer.",
         ),
         "base_unk_x06_x07": MapFieldInfo(
             "Unknown Base [06-07]",
             int,
-            0,
+            -1,
             "Unknown base data integer.",
         ),
         "base_unk_x07_x08": MapFieldInfo(
             "Unknown Base [07-08]",
             int,
-            0,
+            -1,
             "Unknown base data integer.",
         ),
         "lantern_id": MapFieldInfo(
@@ -127,13 +127,13 @@ class MSBPart(_BaseMSBPart):
         "lod_id": MapFieldInfo(
             "LoD ID",
             int,
-            0,
+            -1,
             "LoD (level of detail) param ID.",
         ),
         "base_unk_x0e_x0f": MapFieldInfo(
             "Unknown Base [0e-0f]",
             int,
-            0,
+            20,
             "Unknown base data integer.",
         ),
         "base_unk_x0f_x10": MapFieldInfo(
@@ -373,37 +373,37 @@ class MSBPartSceneGParam(MSBPartGParam):
 
     FIELD_INFO = MSBPartGParam.FIELD_INFO | {
         "sg_unk_x00_x04": MapFieldInfo(
-            "Unknown SceneGParam [00-04]",
+            "Unk SceneG [00-04]",
             int,
             0,
             "Unknown integer.",
         ),
         "sg_unk_x04_x08": MapFieldInfo(
-            "Unknown SceneGParam [04-08]",
+            "Unk SceneG [04-08]",
             int,
             0,
             "Unknown integer.",
         ),
         "sg_unk_x08_x0c": MapFieldInfo(
-            "Unknown SceneGParam [08-0c]",
+            "Unk SceneG [08-0c]",
             int,
             0,
             "Unknown integer.",
         ),
         "sg_unk_x0c_x10": MapFieldInfo(
-            "Unknown SceneGParam [0c-10]",
+            "Unk SceneG [0c-10]",
             int,
             0,
             "Unknown integer.",
         ),
         "sg_unk_x10_x14": MapFieldInfo(
-            "Unknown SceneGParam [10-14]",
+            "Unk SceneG [10-14]",
             int,
             0,
             "Unknown integer.",
         ),
         "sg_unk_x14_x18": MapFieldInfo(
-            "Unknown SceneGParam [14-18]",
+            "Unk SceneG [14-18]",
             int,
             0,
             "Unknown integer.",
@@ -411,11 +411,11 @@ class MSBPartSceneGParam(MSBPartGParam):
         "event_ids": MapFieldInfo(
             "Event IDs",
             list,
-            [0, 0, 0, 0],
+            [-1, -1, -1, -1],
             "List of four byte-sized event IDs.",
         ),
         "sg_unk_x40_x44": MapFieldInfo(
-            "Unknown SceneGParam [40-44]",
+            "Unk SceneG [40-44]",
             float,
             0.0,
             "Unknown floating-point number.",

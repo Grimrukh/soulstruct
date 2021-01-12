@@ -111,7 +111,7 @@ class ParamDefField(abc.ABC):
         self.new_default = self.get_default_value()
 
     @abc.abstractmethod
-    def get_display_info(self, entry: ParamRow):
+    def get_display_info(self, row: ParamRow):
         """Get display info from game-specific `params.display_info` subpackage."""
 
     def get_default_value(self) -> tp.Union[bool, int, float]:

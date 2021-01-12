@@ -12,7 +12,7 @@ class ParamsTest(unittest.TestCase):
         with Timer("ParamDef read"):
             paramdef_bnd = GET_BUNDLED_PARAMDEF()
         with Timer("GameParamBND read"):
-            game_param = GameParamBND("gameparam.parambnd.dcx", paramdef_bnd=paramdef_bnd)
+            game_param = GameParamBND("GameParam.parambnd.dcx", paramdef_bnd=paramdef_bnd)
 
         # dagger = game_param.Weapons[100000]
         # packed = dagger.pack()
@@ -50,7 +50,8 @@ class ParamsTest(unittest.TestCase):
 
     def tearDown(self):
         for test_file in Path(".").glob("_test*"):
-            os.remove(str(test_file))
+            if test_file.is_file():
+                os.remove(str(test_file))
 
 
 if __name__ == '__main__':
