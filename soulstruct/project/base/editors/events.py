@@ -358,7 +358,7 @@ class EventEditor(SmartFrame):
 
     def export_selected_evs(self, export_directory=None):
         """Convert project EVS file to game EMEVD file. Does not check any loaded text."""
-        # TODO: Update `self.events`.
+        # TODO: Update `self.events`?
         if not self.selected_map_id:
             return
         if export_directory is None:
@@ -370,6 +370,7 @@ class EventEditor(SmartFrame):
             emevd = self.events.EMEVD_CLASS(
                 self.evs_file_paths[self.selected_map_id],
                 script_path=str(self.evs_file_paths[self.selected_map_id].parent),
+                dcx_magic=self.events.EMEVD_CLASS.DCX_MAGIC if self.events.IS_DCX else (),
             )
         except Exception as e:
             return self.error_dialog(
