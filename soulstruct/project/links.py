@@ -30,7 +30,7 @@ class WindowLinker:
         self.project = window.project
 
     def get_tab_index(self, tab_name):
-        return list(self.window.TAB_EDITORS).index(tab_name.lower())
+        return self.window.ordered_tabs.index(tab_name.lower())
 
     def jump(self, tab_name, category, entry_id, field_name=None, choice_func=None):
         data_tab = getattr(self.window, f"{tab_name}_tab")  # type: BaseFieldEditor
