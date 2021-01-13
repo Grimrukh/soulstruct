@@ -2,7 +2,7 @@ __all__ = ["CHARACTER_INIT_PARAM", "NPC_PARAM_ST", "CACL_CORRECT_GRAPH_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.darksouls1ptde.enums import *
-from soulstruct.params.core import FieldDisplayInfo, pad_field
+from soulstruct.params.core import FieldDisplayInfo, pad_field, bit_pad_field
 
 CHARACTER_INIT_PARAM = {
     "internal_name": "CHARACTER_INIT_PARAM",

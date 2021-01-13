@@ -2,7 +2,7 @@ __all__ = ["OBJECT_PARAM_ST", "OBJ_ACT_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.darksouls1ptde.enums import *
-from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
+from soulstruct.params.core import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
 
 
 class DynamicObjActRef(DynamicFieldDisplayInfo):

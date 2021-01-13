@@ -2,7 +2,7 @@ __all__ = ["SP_EFFECT_PARAM_ST", "SP_EFFECT_VFX_PARAM_ST"]
 
 from soulstruct.game_types import *
 from soulstruct.params.darksouls1ptde.enums import *
-from soulstruct.params.core import FieldDisplayInfo, pad_field
+from soulstruct.params.core import FieldDisplayInfo, pad_field, bit_pad_field
 
 SP_EFFECT_PARAM_ST = {
     "paramdef_name": "SP_EFFECT_PARAM_ST",

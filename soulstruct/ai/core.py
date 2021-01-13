@@ -92,6 +92,7 @@ class LuaBND:
             self.goals = LuaInfo(info_entry.data).goals
             self.bnd_name = Path(info_entry.path).stem
 
+        _slow_warning_done = False
         for entry in self.bnd:
             entry_path = Path(entry.path)
             goal_match = _GOAL_SCRIPT_RE.match(entry_path.name)
@@ -107,27 +108,32 @@ class LuaBND:
                 try:
                     goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
-                    scan_script = script if script else decompile_lua(bytecode, script_name=entry_path.name)
-                    # Scan file for goal name.
-                    battle_func_name = rf"^function ([\w\d_]+){goal_id}Battle_Activate\("
-                    goal_name_match = re.match(battle_func_name, scan_script)
-                    if not goal_name_match:
-                        if goal_id == 6000:
-                            print(battle_func_name)
-                            print(scan_script)
+                    if not _slow_warning_done:
                         _LOGGER.warning(
-                            f"Lua file {entry_path.name} in {luabnd_path} has no corresponding goal and its goal name "
-                            f"could not be auto-detected from its script, so it will not be loaded."
+                            f"One or more goals are missing from `LuaInfo` in {luabnd_path.name} and will be "
+                            "automatically decompiled to detect the goal name from the script directly. "
+                            "Initialization may take longer."
+                        )
+                        _slow_warning_done = True
+                    if not script:
+                        script = decompile_lua(bytecode, script_name=entry_path.name)
+                    # Scan file for goal name.
+                    if goal_type == LuaGoal.BATTLE_TYPE:
+                        search_string = rf"^function ([\w\d_]+{goal_id}Battle)_Activate\("
+                    elif goal_type == LuaGoal.LOGIC_TYPE:
+                        search_string = rf"^function ([\w\d_]+{goal_id}_Logic)\("
+                    else:
+                        continue  # ignore 'neither'
+
+                    if (goal_name_match := re.search(search_string, script, re.MULTILINE)) is None:
+                        _LOGGER.warning(
+                            f"Lua file {entry_path.name} in {luabnd_path} has no corresponding `LuaInfo` entry and its "
+                            f"goal name could not be auto-detected from its script, so it will not be loaded."
                         )
                         continue
-                    goal_name = f"{goal_name_match.group(1)}{goal_id}"
-                    if goal_type == LuaGoal.BATTLE_TYPE:
-                        goal_name += "Battle"
-                    elif goal_type == LuaGoal.LOGIC_TYPE:
-                        goal_name += "_Logic"
                     goal = LuaGoal(
                         goal_id=goal_id,
-                        goal_name=goal_name,
+                        goal_name=goal_name_match.group(1),
                         goal_type=goal_type,
                         script_name=entry_path.name,
                         bytecode=bytecode,

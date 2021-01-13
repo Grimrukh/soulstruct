@@ -1,7 +1,7 @@
 __all__ = ["ATK_PARAM_ST", "THROW_INFO_BANK"]
 
 from soulstruct.game_types import *
-from soulstruct.params.core import FieldDisplayInfo, pad_field
+from soulstruct.params.core import FieldDisplayInfo, pad_field, bit_pad_field
 from soulstruct.params.darksouls1ptde.enums import *
 
 
