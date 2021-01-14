@@ -121,6 +121,7 @@ class AIEntryRow(EntryRow):
     ENTRY_TEXT_WIDTH = 40
     ENTRY_TEXT_FG = "#FFF"
 
+    # noinspection PyMissingConstructor
     def __init__(self, editor: AIEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
@@ -279,7 +280,7 @@ class AIEditor(BaseEditor):
         self,
         ai: AIDirectory,
         script_directory,
-        game_root,
+        export_directory,
         allow_decompile,
         global_map_choice_func,
         linker,
@@ -291,7 +292,7 @@ class AIEditor(BaseEditor):
         self.script_directory = Path(script_directory)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
-        self.game_root = Path(game_root)
+        self.export_directory = Path(export_directory)
         self.allow_decompile = allow_decompile
         self.selected_map_id = ""
 
@@ -315,7 +316,7 @@ class AIEditor(BaseEditor):
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
-            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1, 1], auto_columns=0):
                 map_names = [f"{game_map.ai_file_stem} [{game_map.verbose_name}]" for game_map in self.ai.ALL_MAPS]
                 self.map_choice = self.Combobox(
                     values=map_names,
@@ -348,6 +349,14 @@ class AIEditor(BaseEditor):
                     width=20,
                     padx=10,
                     command=self.load_all_from_project_folder,
+                )
+                self.Button(
+                    text="Export This Map",
+                    font_size=10,
+                    bg="#222",
+                    width=20,
+                    padx=10,
+                    command=self.export_selected_map,
                 )
 
             with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1, 2], auto_columns=0):
@@ -693,6 +702,11 @@ class AIEditor(BaseEditor):
                     return
         self.write_all_button["state"] = "normal"
         self.write_all_button.var.set("Write All")
+
+    def export_selected_map(self):
+        luabnd = self.get_selected_bnd()
+        luabnd_path = self.export_directory / luabnd.bnd.path.name
+        luabnd.write(luabnd_path)
 
     def load_all_from_project_folder(self):
         if (

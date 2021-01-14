@@ -71,7 +71,6 @@ class LuaBND:
         self.global_names = []
         self.gnl = LuaGNL()
         self.bnd_name = ""
-        self._bnd_path_parent = None
         self.is_lua_32 = False  # as opposed to 64-bit (can't decompile 32-bit at present)
 
         try:
@@ -92,7 +91,6 @@ class LuaBND:
             self.goals = LuaInfo(info_entry.data).goals
             self.bnd_name = Path(info_entry.path).stem
 
-        _slow_warning_done = False
         for entry in self.bnd:
             entry_path = Path(entry.path)
             goal_match = _GOAL_SCRIPT_RE.match(entry_path.name)
@@ -108,32 +106,36 @@ class LuaBND:
                 try:
                     goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
-                    if not _slow_warning_done:
-                        _LOGGER.warning(
-                            f"One or more goals are missing from `LuaInfo` in {luabnd_path.name} and will be "
-                            "automatically decompiled to detect the goal name from the script directly. "
-                            "Initialization may take longer."
-                        )
-                        _slow_warning_done = True
                     if not script:
-                        script = decompile_lua(bytecode, script_name=entry_path.name)
-                    # Scan file for goal name.
-                    if goal_type == LuaGoal.BATTLE_TYPE:
-                        search_string = rf"^function ([\w\d_]+{goal_id}Battle)_Activate\("
-                    elif goal_type == LuaGoal.LOGIC_TYPE:
-                        search_string = rf"^function ([\w\d_]+{goal_id}_Logic)\("
+                        # Search compiled bytes for function name.
+                        if goal_type == LuaGoal.BATTLE_TYPE:
+                            search_bytes = f"\0([\\w\\d_]+{goal_id}Battle)_Activate\0".encode()
+                        else:  # LuaGoal.LOGIC_TYPE
+                            search_bytes = f"\0([\\w\\d_]+{goal_id}_Logic)\0".encode()
+                        if (goal_name_match := re.search(search_bytes, bytecode)) is None:
+                            _LOGGER.warning(
+                                f"Lua file {entry_path.name} in {luabnd_path} has no corresponding `LuaInfo` entry and "
+                                f"its goal name could not be auto-detected from its bytecode, so it will not be loaded."
+                            )
+                            continue
+                        goal_name = goal_name_match.group(1).decode()
                     else:
-                        continue  # ignore 'neither'
+                        # Scan file for goal name in function definition.
+                        if goal_type == LuaGoal.BATTLE_TYPE:
+                            search_string = rf"^function ([\w\d_]+{goal_id}Battle)_Activate\("
+                        else:  # LuaGoal.LOGIC_TYPE
+                            search_string = rf"^function ([\w\d_]+{goal_id}_Logic)\("
+                        if (goal_name_match := re.search(search_string, script, re.MULTILINE)) is None:
+                            _LOGGER.warning(
+                                f"Lua file {entry_path.name} in {luabnd_path} has no corresponding `LuaInfo` entry and "
+                                f"its goal name could not be auto-detected from its script, so it will not be loaded."
+                            )
+                            continue
+                        goal_name = goal_name_match.group(1)
 
-                    if (goal_name_match := re.search(search_string, script, re.MULTILINE)) is None:
-                        _LOGGER.warning(
-                            f"Lua file {entry_path.name} in {luabnd_path} has no corresponding `LuaInfo` entry and its "
-                            f"goal name could not be auto-detected from its script, so it will not be loaded."
-                        )
-                        continue
                     goal = LuaGoal(
                         goal_id=goal_id,
-                        goal_name=goal_name_match.group(1),
+                        goal_name=goal_name,
                         goal_type=goal_type,
                         script_name=entry_path.name,
                         bytecode=bytecode,
@@ -143,14 +145,10 @@ class LuaBND:
                 else:
                     goal.script = script
                     goal.bytecode = bytecode
-
-                if self._bnd_path_parent is None:
-                    self._bnd_path_parent = str(Path(entry.path).parent)
-                    self.is_lua_32 = "INTERROOT_x32" in self._bnd_path_parent
             elif entry.id not in {1000000, 1000001}:
                 lua_match = _LUA_SCRIPT_RE.match(entry_path.name)
                 if not lua_match:
-                    _LOGGER.warning(f"Found non-Lua file with BND path: '{entry.path}'. File will be ignored.")
+                    _LOGGER.warning(f"Found non-Lua file with BND path '{entry.path}'. File will be ignored.")
                     continue
                 for goal in self.goals:
                     snake_name = _SNAKE_CASE_RE.sub("_", goal.goal_name).lower()
@@ -185,20 +183,22 @@ class LuaBND:
                 except LuaError as e:
                     _LOGGER.error(f"Could not compile Lua non-goal script '{other.script_name}'. Error: {str(e)}")
 
-    def update_bnd_from_compiled(self, lua_entry: LuaScriptBase):
+    def update_bnd_from_compiled(self, lua_file: LuaScriptBase):
         """Insert compiled script into the BND."""
-        bnd_path = self._bnd_path_parent + f"\\{lua_entry.script_name}"
-        if bnd_path in self.bnd.entries_by_path:
-            self.bnd.entries_by_path[bnd_path].data = lua_entry.bytecode
-        else:
+        try:
+            existing_entry = self.bnd.entries_by_basename[lua_file.script_name]
+            existing_entry.data = lua_file.bytecode
+            existing_entry.path = lua_file.script_name  # no nesting necessary
+        except KeyError:
             try:
                 # Get next ID below 1000000 (GNL).
                 bnd_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
             except ValueError:
                 bnd_id = 1000  # first ID
-            new_entry = BNDEntry(data=lua_entry.bytecode, entry_id=bnd_id, path=bnd_path)
+            new_entry = BNDEntry(data=lua_file.bytecode, entry_id=bnd_id, path=lua_file.script_name)
+            print(f"Adding compiled BND entry: {new_entry.path}")
             self.bnd.add_entry(new_entry)
-            _LOGGER.debug(f"New compiled bytecode added to LuaBND[{bnd_id}]: {lua_entry.script_name}")
+            _LOGGER.debug(f"New compiled bytecode added to LuaBND[{bnd_id}]: {lua_file.script_name}")
 
     def decompile_all(self, output_directory=None, including_other=False):
         """Decompile all goals (and optionally, other Lua scripts).
@@ -236,16 +236,20 @@ class LuaBND:
             if x64 is None:
                 raise ValueError("`x64` must be specified to test if script compiles.")
             lua_file.compile(x64=x64)
-        bnd_path = self._bnd_path_parent + f"\\{lua_file.script_name}"
-        if bnd_path in self.bnd.entries_by_path:
-            self.bnd.entries_by_path[bnd_path].data = lua_file.script.encode("shift_jis_2004")
-        else:
+
+        encoded_script = lua_file.script.encode("shift_jis_2004")
+
+        try:
+            existing_entry = self.bnd.entries_by_basename[lua_file.script_name]
+            existing_entry.data = encoded_script
+            existing_entry.path = lua_file.script_name  # no nesting necessary
+        except KeyError:
             try:
                 # Get next ID below 1000000 (GNL).
                 bnd_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
             except ValueError:
                 bnd_id = 1000  # first ID
-            new_entry = BNDEntry(data=lua_file.script.encode("shift_jis_2004"), entry_id=bnd_id, path=bnd_path)
+            new_entry = BNDEntry(data=encoded_script, entry_id=bnd_id, path=lua_file.script_name)
             self.bnd.add_entry(new_entry)
             _LOGGER.debug(f"New decompiled script added to LuaBND[{bnd_id}]: {lua_file.script_name}")
 
@@ -323,13 +327,23 @@ class LuaBND:
         pack_luainfo=True,
         pack_luagnl=True,
     ):
-        for script_entry_id in [entry.id for entry in self.bnd.entries if entry.id < 1000000]:
-            self.bnd.remove_entry(script_entry_id)
+        # Remove BND script entries that aren't still present in this `LuaBND` instance.
+        current_script_names = [goal.script_name for goal in self.goals] + [goal.script_name for goal in self.other]
+        for script_name in [entry.name for entry in self.bnd.entries if entry.id < 1000000]:
+            if script_name not in current_script_names:
+                print(f"Removing BND script entry {script_name}")
+                self.bnd.remove_entry(script_name)
 
         if pack_luagnl:
-            self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
+            if 1000000 not in self.bnd.entries_by_id:
+                _LOGGER.warning(f"No existing `LuaGNL` file in {self.bnd.path.name}. Will not write a new one.")
+            else:
+                self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
         if pack_luainfo:
-            self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
+            if 1000001 not in self.bnd.entries_by_id:
+                _LOGGER.warning(f"No existing `LuaInfo` file in {self.bnd.path.name}. Will not write a new one.")
+            else:
+                self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
         for lua_list, use_decompiled in zip((self.goals, self.other), (use_decompiled_goals, use_decompiled_other)):
             for lua_entry in lua_list:
                 if use_decompiled and lua_entry.script:
@@ -530,7 +544,7 @@ class LuaGoal(LuaScriptBase):
             if goal_type is not None
             else self._detect_goal_type(has_battle_interrupt, has_logic_interrupt, logic_interrupt_name)
         )
-        self._script_name = script_name
+        self._script_name = script_name if script_name != self.get_auto_script_name() else None
 
     def _detect_goal_type(self, has_battle_interrupt, has_logic_interrupt, logic_interrupt_name):
         if has_battle_interrupt and not has_logic_interrupt and not logic_interrupt_name:
@@ -577,7 +591,14 @@ class LuaGoal(LuaScriptBase):
     def script_name(self):
         if self._script_name is not None:
             return self._script_name
-        elif self.goal_type == self.BATTLE_TYPE:
+        return self.get_auto_script_name()
+
+    @script_name.setter
+    def script_name(self, name):
+        self._script_name = name
+
+    def get_auto_script_name(self):
+        if self.goal_type == self.BATTLE_TYPE:
             return f"{self.goal_id:06d}_battle.lua"
         elif self.goal_type == self.LOGIC_TYPE:
             return f"{self.goal_id:06d}_logic.lua"
@@ -585,10 +606,7 @@ class LuaGoal(LuaScriptBase):
             # Shouldn't happen anymore.
             snake_case_name = _SNAKE_CASE_RE.sub("_", self.goal_name).lower()
             return f"{snake_case_name}.lua"
-
-    @script_name.setter
-    def script_name(self, name):
-        self._script_name = name
+        raise ValueError(f"Invalid `LuaGoal.type`: {self.goal_type}")
 
     def __repr__(self):
         return f"LuaGoal({self.goal_id:06d}, {repr(self.goal_name)}, {repr(self.goal_type)})"

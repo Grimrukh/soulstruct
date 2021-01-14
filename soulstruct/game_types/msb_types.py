@@ -77,6 +77,7 @@ class Map(GameObject):
         msb_file_stem=None,
         ai_file_stem=None,
         esd_file_stem=None,
+        ffxbnd_file_name=None,
         variable_name=None,
         verbose_name=None,
     ):
@@ -103,6 +104,10 @@ class Map(GameObject):
             ai_file_stem: Name of 'luabnd[.dcx]' for this map, without extension(s).
             esd_file_stem: Name of 'talkesdbnd[.dcx]' for this map, without extension(s).
 
+            ffxbnd_file_name: Name of 'ffxbnd[.dcx]' file that Soulstruct should modify for this map. Map areas with
+                multiple blocks may have an area-wide file and block-specific files that are both loaded. The block-
+                specific files are preferred for ease/efficiency.
+
             variable_name: Name to use in EVS output (typically upper case with underscores).
             verbose_name: Full descriptive name of map for display in certain output-only fields.
 
@@ -121,6 +126,7 @@ class Map(GameObject):
         self.ai_file_stem = base_id if ai_file_stem is None else ai_file_stem
         self.esd_file_stem = base_id if esd_file_stem is None else esd_file_stem
         self.map_load_tuple = (area_id, block_id, -1, -1)  # for `MSBMapConnection`
+        self.ffxbnd_file_name = ffxbnd_file_name
 
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name

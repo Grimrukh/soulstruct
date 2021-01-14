@@ -35,7 +35,7 @@ class MapStudioDirectory(abc.ABC):
                 which does nothing.)
         """
         self._directory = None
-        self.msbs = {}
+        self.msbs = {}  # type: dict[str, MSB]
 
         if map_studio_directory is None:
             return

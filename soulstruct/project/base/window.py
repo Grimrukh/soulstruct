@@ -11,12 +11,12 @@ from pathlib import Path
 from queue import Queue
 
 from soulstruct.bnd import BND
-from soulstruct.utilities import word_wrap
-from soulstruct.utilities.window import SmartFrame
-
+from soulstruct.maps.utilities import build_ffxbnd
 from soulstruct.project.core import SoulstructProjectError, RestoreBackupError
 from soulstruct.project.icon import SOULSTRUCT_ICON
 from soulstruct.project.links import WindowLinker  # TODO: Move to base, with game subclasses
+from soulstruct.utilities import word_wrap
+from soulstruct.utilities.window import SmartFrame
 
 from .editors.ai import AIEditor
 from .editors.entities import EntityEditor
@@ -251,7 +251,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 smart_frame_class=AIEditor,
                 ai=self.project.ai,
                 script_directory=self.project.project_root / "ai_scripts",
-                game_root=self.project.game_root,
+                export_directory=self.project.get_game_path_of_data_type("ai"),
                 allow_decompile=self.project.GAME.name == "Dark Souls Remastered",
                 global_map_choice_func=self.set_global_map_choice,
                 text_font_size=self.project.text_editor_font_size,
@@ -351,6 +351,13 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         top_menu.add_cascade(label="File", menu=file_menu)
 
+        maps_menu = self.Menu(tearoff=0)
+        maps_menu.add_command(
+            label="Rebuild FFXBNDs from Maps",
+            foreground="#FFF",
+            command=self._rebuild_ffxbnds_from_maps,
+        )
+
         params_menu = self.Menu(tearoff=0)
         params_menu.add_command(
             label="Rename All Items/Equipment from Text",
@@ -365,6 +372,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
 
         tools_menu = self.Menu(tearoff=0)
+        tools_menu.add_cascade(label="Maps", foreground="#FFF", menu=maps_menu)
         tools_menu.add_cascade(label="Params", foreground="#FFF", menu=params_menu)
         # Menus for other data types go here (before or after Params).
         tools_menu.add_separator()
@@ -501,31 +509,15 @@ class ProjectWindow(SmartFrame, abc.ABC):
             if not import_directory:
                 return  # Abort import.
 
-        result = Queue()
-
-        def _threaded_import():
-            try:
-                self.project.import_data(data_type, import_directory)
-            except Exception as thread_ex:
-                result.put(thread_ex)
-
-        loading_dialog = self.LoadingDialog(
-            title="Importing...",
-            message=f"Importing {data_type if data_type is not None else 'all files'}...",
-            maximum=20,
-        )
-        import_thread = threading.Thread(target=_threaded_import)
-        import_thread.start()
-        loading_dialog.update()
-        loading_dialog.progress.start()
-        while import_thread.is_alive():
-            loading_dialog.update()
-            time.sleep(1 / 60)
-        loading_dialog.progress.stop()
-        loading_dialog.destroy()
-
-        if not result.empty():
-            ex = result.get()
+        try:
+            self._thread_with_loading_dialog(
+                "Importing",
+                f"Importing {data_type_caps(data_type) if data_type is not None else 'all files'}...",
+                self.project.import_data,
+                data_type,
+                import_directory,
+            )
+        except Exception as ex:
             message = (
                 f"Error occurred while importing data:\n\n{ex}\n\n"
                 f"Import operation may have only partially completed."
@@ -586,31 +578,15 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if mimic_click:
             self.mimic_click(self.export_all_button if data_type is None else self.export_tab_button)
 
-        result = Queue()
-
-        def _threaded_export():
-            try:
-                self.project.export_data(data_type, export_directory)
-            except Exception as thread_ex:
-                result.put(thread_ex)
-
-        loading_dialog = self.LoadingDialog(
-            title="Exporting...",
-            message=f"Exporting {data_type if data_type is not None else 'all files'}...",
-            maximum=20,
-        )
-        export_thread = threading.Thread(target=_threaded_export)
-        export_thread.start()
-        loading_dialog.update()
-        loading_dialog.progress.start()
-        while export_thread.is_alive():
-            loading_dialog.update()
-            time.sleep(1 / 60)
-        loading_dialog.progress.stop()
-        loading_dialog.destroy()
-
-        if not result.empty():  # error occurred in threaded export
-            ex = result.get()
+        try:
+            self._thread_with_loading_dialog(
+                "Exporting",
+                f"Exporting {data_type_caps(data_type) if data_type is not None else 'all files'}...",
+                self.project.export_data,
+                data_type,
+                export_directory,
+            )
+        except Exception as ex:
             caps = data_type_caps(data_type) if data_type is not None else "all"
             message = (
                 f"Error occurred while exporting {caps} data:\n\n{str(ex)}\n\n"
@@ -795,6 +771,74 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 or param_table == self.params_tab.active_category
             ):
                 self.params_tab.refresh_entries()
+
+    def _rebuild_ffxbnds_from_maps(self):
+        """Rebuild game FFXBND file for each map based on current characters in project."""
+        if self.project.GAME.name != "Dark Souls Remastered":
+            raise SoulstructProjectError("FFXBND Rebuilder is currently only available for Dark Souls Remastered.")
+        vanilla_game_root = self.project.vanilla_game_root
+        if vanilla_game_root == self.project.game_root:
+            _LOGGER.warning(
+                "No 'VanillaGameDirectory' given in project config. Using FFXBND files ('.bak' if possible) in "
+                "standard game directory as sources, which may cause issues if you are modifying them more than once "
+                "and removing the initial backups."
+            )
+
+        def _threaded_rebuild_ffxbnd():
+            for map_name, msb in self.project.maps.msbs.items():
+                game_map = self.project.maps.GET_MAP(map_name)
+                if not game_map.ffxbnd_file_name:
+                    _LOGGER.warning(f"No FFXBND file name known for map: {map_name}. Nothing written.")
+                build_ffxbnd(
+                    msb,
+                    ffxbnd_path=self.project.game_root / f"sfx/{game_map.ffxbnd_file_name}.ffxbnd.dcx",
+                    ffxbnd_search_directory=vanilla_game_root / "sfx",
+                    prefer_bak=True,
+                )
+
+        try:
+            self._thread_with_loading_dialog(
+                "Rebuilding FFXBNDs",
+                "Rebuilding FFXBND files from currrent Maps data...",
+                _threaded_rebuild_ffxbnd,
+            )
+        except Exception as ex:
+            message = (f"Error occurred while rebuilding FFXBND files:\n\n"
+                       f"{ex}\n\n"
+                       f"Only some FFXBND files may have been written.")
+            return self.CustomDialog(title="FFXBND Error", message=message)
+
+    def _thread_with_loading_dialog(self, dialog_title: str, dialog_message: str, func: tp.Callable, *args, **kwargs):
+        """Run `func(*args, **kwargs)` in another thread while displaying an animated loading dialog in the main thread.
+
+        Returns or raises anything returned or raised by the threaded function.
+        """
+
+        output = Queue()
+        errors = Queue()
+
+        def _threaded_func():
+            try:
+                result = func(*args, **kwargs)
+            except Exception as thread_ex:
+                errors.put(thread_ex)
+            else:
+                output.put(result)
+
+        loading_dialog = self.LoadingDialog(title=dialog_title, message=dialog_message, maximum=20)
+        import_thread = threading.Thread(target=_threaded_func)
+        import_thread.start()
+        loading_dialog.update()
+        loading_dialog.progress.start()
+        while import_thread.is_alive():
+            loading_dialog.update()
+            time.sleep(1 / 60)
+        loading_dialog.progress.stop()
+        loading_dialog.destroy()
+
+        if not errors.empty():
+            raise errors.get()
+        return output.get()
 
     @property
     def data_types(self) -> tuple[str]:

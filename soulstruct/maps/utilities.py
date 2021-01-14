@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 _BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d).ffxbnd(.dcx)?")
 
 
-def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = None):
+def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = None, prefer_bak=True):
     """Iterate over all enemy models in given `msb` and ensure all their FFX files are present in the given FFXBND file
     `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations (known by Soulstruct) and added.
 
@@ -29,6 +29,7 @@ def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = No
         ffxbnd_search_directory (Path, optional): path to directory containing FFXBND files to search for missing FFX
             in. It should contain all FFXBND files in the game (e.g. a vanilla backup folder). If not given, it will
             default to the same directory as `ffxbnd_path`.
+        prefer_bak (bool): if True (default), look for '.bak' source files first.
     """
     ffxbnd_path = Path(ffxbnd_path)
     if ffxbnd_search_directory is None:
@@ -57,25 +58,27 @@ def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = No
         if model_id not in CHARACTER_FFX_SOURCES:
             _LOGGER.warning(f"FFX sources for character model {chr_model.name} are not known.")
             continue  # model not handled
-        for ffx_id, source_path in CHARACTER_FFX_SOURCES[model_id].items():
+        for ffx_id, source_file_name in CHARACTER_FFX_SOURCES[model_id].items():
             ffx_file_name = f"f{ffx_id:07d}.ffx"
             if ffx_file_name in existing_ffx_files:
                 continue
+            source_path = ffxbnd_search_directory / f"{source_file_name}.ffxbnd.dcx"
+            if prefer_bak:
+                if (bak_path := source_path.with_suffix(source_path.suffix + ".bak")).is_file():
+                    source_path = bak_path
+            if not source_path.is_file():
+                _LOGGER.error(f"Could not find FFX source file '{source_path}' for FFX {ffx_id} "
+                              f"(character model {model_id}).")
+                continue
+            source_bnd = open_sources.setdefault(source_file_name, BND3(source_path))
             try:
-                source_bnd = open_sources.setdefault(
-                    source_path,
-                    BND3(ffxbnd_search_directory / f"{source_path}.ffxbnd.dcx"),
+                source_entry = source_bnd.entries_by_basename[ffx_file_name]
+            except KeyError:
+                _LOGGER.error(
+                    f"Could not find FFX file '{ffx_file_name}' in source BND '{source_path}' (character model "
+                    f"{model_id})."
                 )
-            except FileNotFoundError:
-                _LOGGER.error(f"Could not find FFX source file '{source_path}.ffxbnd.dcx' for FFX {ffx_id} "
-                              f"(character model {model_id}).")
                 continue
-            matches = [entry for entry in source_bnd.entries if entry.name == ffx_file_name]
-            if not matches:
-                _LOGGER.error(f"Could not find FFX file '{ffx_file_name}' in source BND '{source_path}.ffxbnd.dcx' "
-                              f"(character model {model_id}).")
-                continue
-            source_entry = matches[0]
             source_entry.id = next_id
             next_id += 1
             ffxbnd.add_entry(source_entry)

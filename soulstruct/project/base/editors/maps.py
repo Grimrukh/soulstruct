@@ -863,7 +863,7 @@ class MapsEditor(BaseFieldEditor):
                 cancel_output=1,
             )
             if result == 0:
-                self.get_selected_msb().models.new_model(model_subtype_name, model_name)
+                self.get_selected_msb().models.new(entry_subtype=model_subtype_name, name=model_name)
                 return True
         else:
             self.CustomDialog(

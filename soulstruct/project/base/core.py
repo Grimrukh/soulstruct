@@ -87,6 +87,7 @@ class GameDirectoryProject(abc.ABC):
         self.game_root = Path()
         self.last_import_time = ""
         self.last_export_time = ""
+        self._vanilla_game_root = ""
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
         # TODO: Record last edit time for each file/structure.
 
@@ -300,7 +301,7 @@ class GameDirectoryProject(abc.ABC):
         should contain the appropriate folder structure ('map/MapStudio', 'msg/ENGLISH', etc.) for all files.
         """
         import_directory = Path(import_directory)
-        data_import_path = self._game_path(data_type, root=import_directory)
+        data_import_path = self.get_game_path_of_data_type(data_type, root=import_directory)
         data_instance = self.DATA_TYPES[data_type](data_import_path)
         setattr(self, data_type, data_instance)
         if data_type == "events":  # data in `EMEVDDirectory` is only read upon import and modified upon export
@@ -315,7 +316,7 @@ class GameDirectoryProject(abc.ABC):
     @_data_type_action
     def export_data(self, data_type=None, export_directory=None):
         export_directory = Path(export_directory)
-        data_export_path = self._game_path(data_type, root=export_directory)
+        data_export_path = self.get_game_path_of_data_type(data_type, root=export_directory)
         data_export_path.parent.mkdir(parents=True, exist_ok=True)
         # TODO: Differentiate between exporting single EMEVD or entire directory.
         #  - Annoying to export every script individually.
@@ -524,6 +525,8 @@ class GameDirectoryProject(abc.ABC):
                         self.game_root = Path(config["GameDirectory"])
                         self.last_import_time = config.get("LastImportTime", None)
                         self.last_export_time = config["LastExportTime"]
+                        if vanilla_game_root := config.get("VanillaGameDirectory", ""):
+                            self._vanilla_game_root = Path(vanilla_game_root)
                         self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
                     except KeyError:
                         raise SoulstructProjectError(
@@ -560,7 +563,7 @@ class GameDirectoryProject(abc.ABC):
             if result == 0:
                 self.initialize_project(force_import_from_game=True)
 
-    def _game_path(self, data_type, root=None):
+    def get_game_path_of_data_type(self, data_type, root=None):
         root = self.game_root if root is None else Path(root)
         data_class_name = self.DATA_TYPES[data_type.lower()].__name__
         try:
@@ -578,6 +581,7 @@ class GameDirectoryProject(abc.ABC):
             "GameDirectory": str(self.game_root),
             "LastImportTime": self.last_import_time,
             "LastExportTime": self.last_export_time,
+            "VanillaGameDirectory": str(self._vanilla_game_root),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
         }
 
@@ -635,6 +639,10 @@ class GameDirectoryProject(abc.ABC):
                 raise SoulstructProjectError(f"Invalid game directory: {str(game_root)}.")
 
         return game_root
+
+    @property
+    def vanilla_game_root(self):
+        return self._vanilla_game_root if self._vanilla_game_root else self.game_root
 
     def _check_steam_appid_file(self, game_root):
         steam_appid_path = Path(game_root) / "steam_appid.txt"

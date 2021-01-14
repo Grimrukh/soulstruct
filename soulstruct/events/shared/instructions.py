@@ -1296,7 +1296,7 @@ def DeleteVFX(vfx_id: int, erase_root_only: bool = True):
     return to_numeric(instruction_info, vfx_id, erase_root_only)
 
 
-def CreateTemporaryVFX(vfx_id: int, anchor_entity: CoordEntityTyping, model_point: int, anchor_type=None):
+def CreateTemporaryVFX(vfx_id: int, anchor_entity: CoordEntityTyping, model_point=-1, anchor_type=None):
     """ Create one-off visual VFX attached to the given 'anchor_entity'. The VFX type argument is determined from the
     Entity category. The VFX, of course, must be current loaded (or in common effects). """
     instruction_info = (2006, 3, [0, 0, -1, 0])
