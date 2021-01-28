@@ -168,7 +168,7 @@ FISHING_HAMLET = Map(
     verbose_name="Fishing Hamlet",
 )
 
-ALL_MAPS = [
+ALL_MAPS = (
     COMMON,
     HUNTERS_DREAM,
     ABANDONED_OLD_WORKSHOP,
@@ -187,9 +187,9 @@ ALL_MAPS = [
     HUNTERS_NIGHTMARE,
     RESEARCH_HALL,
     FISHING_HAMLET,
-]
+)
 
-ALL_MAPS_NO_CHALICE = [
+ALL_MAPS_NO_CHALICE = (
     COMMON,
     HUNTERS_DREAM,
     ABANDONED_OLD_WORKSHOP,
@@ -207,7 +207,7 @@ ALL_MAPS_NO_CHALICE = [
     HUNTERS_NIGHTMARE,
     RESEARCH_HALL,
     FISHING_HAMLET,
-]
+)
 
 ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 

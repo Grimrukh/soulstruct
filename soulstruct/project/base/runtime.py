@@ -16,7 +16,6 @@ from soulstruct.utilities.window import SmartFrame
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.memory import MemoryHook
 
-
 try:
     import psutil
 except ImportError:

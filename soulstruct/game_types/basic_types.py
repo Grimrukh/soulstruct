@@ -28,7 +28,7 @@ class GameObjectSequence(type):
         `GameObjectSequence(Region, n=8)`
     Otherwise, `n` defaults to 1.
     """
-    game_objects: tp.Tuple
+    game_objects: tuple
 
     def __new__(mcs, game_objects):
         if not game_objects:

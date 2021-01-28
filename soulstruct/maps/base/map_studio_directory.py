@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 class MapStudioDirectory(abc.ABC):
 
     MSB_CLASS = None  # type: tp.Type[MSB]
-    ALL_MAPS = []  # type: list[Map]
+    ALL_MAPS = ()  # type: tuple[Map]
     GET_MAP = None  # type: tp.Callable
     IS_DCX = False
 

@@ -185,7 +185,7 @@ ARENA_ROUND_PLAZA = Map(
     verbose_name="Arena (Round Plaza)",
 )
 
-ALL_MAPS = [
+ALL_MAPS = (
     COMMON,
     COMMON_FUNC,
     HIGH_WALL_OF_LOTHRIC,
@@ -207,7 +207,7 @@ ALL_MAPS = [
     ARENA_KILN_OF_FLAME,
     ARENA_DRAGON_RUINS,
     ARENA_ROUND_PLAZA,
-]
+)
 
 ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 

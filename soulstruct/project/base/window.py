@@ -799,7 +799,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         try:
             self._thread_with_loading_dialog(
                 "Rebuilding FFXBNDs",
-                "Rebuilding FFXBND files from currrent Maps data...",
+                "Rebuilding FFXBND files from current Maps data...",
                 _threaded_rebuild_ffxbnd,
             )
         except Exception as ex:
