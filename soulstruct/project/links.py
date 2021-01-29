@@ -408,7 +408,7 @@ class WindowLinker:
         summary = getattr(self.project.text, item_type + "Summaries").get(item_id, "")
         if not summary:
             if item_type == "Weapon":
-                summary = "WeaponType"  # reminder to specify weapon type as summary
+                summary = "[weapon type goes here]"  # reminder to user to specify weapon type as summary
             elif item_type == "Armor":
                 summary = " "  # Armor summary defaults to a single blank space.
         description = getattr(self.project.text, item_type + "Descriptions").get(item_id, "")

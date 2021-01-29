@@ -35,7 +35,9 @@ class ESPTextEditor(TextEditor):
         "keyword": TagData("#FF7878", r"(, |\w\()[\w\d_]+(?=\=)", (2, 0)),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
         "string_arg": TagData("#B2D8B2", r"='[\w\d_ ]+'", (1, 0)),
-        "docstring": TagData("#00ABA9", r"^[ ]+\"\"\"[\w\d :.]+\"\"\"", (0, 0)),
+        "comment": TagData("#00ABA9", r"#.*$", (0, 0)),
+        "docstring": TagData("#00ABA9", r'^[ ]+"""[\w\d\n :.]+"""', (0, 0)),
+        "module_docstring": TagData("#00ABA9", r'^"""(.|\n)*"""', (0, 0)),
     }
 
 

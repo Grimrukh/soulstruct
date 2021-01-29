@@ -68,9 +68,10 @@ class DCX:
         compressed = dcx_buffer.read().rstrip(b"\0")  # Nulls stripped from the end.
         if len(compressed) != header["compressed_size"]:
             # No error raised. This happens in some files.
+            file_path = f" {self.dcx_path}" if self.dcx_path else ""
             _LOGGER.warning(
                 f"Compressed data size ({len(compressed)}) does not match size in header "
-                f"({header['compressed_size']}) in file {self.dcx_path}."
+                f"({header['compressed_size']}) in DCX-compressed file{file_path}."
             )
         self.data = zlib.decompressobj().decompress(compressed)
         if len(self.data) != header["decompressed_size"]:

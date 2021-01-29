@@ -36,7 +36,7 @@ class TalkESDBND(BaseBND, abc.ABC):
         super().__init__(talkesdbnd_source, dcx_magic=dcx_magic)
 
     def _handle_other_source_types(self, file_source, **kwargs):
-        if file_source.is_dir() and not (file_source / "bnd_manifest.json").exists():
+        if isinstance(file_source, Path) and file_source.is_dir() and not (file_source / "bnd_manifest.json").exists():
             # Directory of individual ESP files/folders.
             self.set_default_bnd()
             self.path = file_source.name  # directory name
@@ -48,6 +48,7 @@ class TalkESDBND(BaseBND, abc.ABC):
             self.path = None
             self.set_default_bnd()
             self.unpack_from_dict(file_source)
+            self.create_header_structs()
             return
         raise InvalidGameFileTypeError(f"`talkesdbnd_source` was not a folder of ESP files or a dictionary of `ESD`s.")
 
