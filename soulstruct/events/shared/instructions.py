@@ -889,7 +889,7 @@ def DisableObject(obj: ObjectTyping):
     return SetObjectState(obj, False)
 
 
-def DestroyObject(obj: ObjectTyping, slot: int = 0):
+def DestroyObject(obj: ObjectTyping, slot: int = 1):
     """ Technically 'requests' the object's destruction. No idea what the slot number does. """
     instruction_info = (2005, 1)
     return to_numeric(instruction_info, obj, slot)
