@@ -1,6 +1,6 @@
 import os
 import unittest
-from soulstruct.maps.darksouls1 import MSB
+from soulstruct.darksouls1ptde.maps import MSB
 
 
 class MSBTest(unittest.TestCase):

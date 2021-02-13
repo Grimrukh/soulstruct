@@ -1,4 +1,4 @@
-from soulstruct.text.darksouls1 import MSGDirectory
+from soulstruct.text import MSGDirectory
 
 lang = 'JAPANESE'
 version = 'DSR'

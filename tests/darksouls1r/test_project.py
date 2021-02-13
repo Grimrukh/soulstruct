@@ -1,6 +1,6 @@
 import unittest
 
-from soulstruct.project.darksouls1r import ProjectWindow
+from soulstruct.darksouls1r.project import ProjectWindow
 
 
 class ProjectTest(unittest.TestCase):

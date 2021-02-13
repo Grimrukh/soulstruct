@@ -1,6 +1,6 @@
 """ Run this script to compile our example DS1 EVS script, 'example.py'. """
 
-from soulstruct.events.darksouls1 import EMEVD
+from soulstruct.darksouls1r.events import EMEVD
 
 
 def compile_evs():

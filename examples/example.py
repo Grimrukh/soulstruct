@@ -1,10 +1,11 @@
-from soulstruct.events.darksouls1 import *
+from soulstruct.darksouls1r.events import *
 from soulstruct.game_types import *
-from .example_constants import *
+from example_constants import *
 
 DOOR_INACTIVE_DELAY = 2.0
 
-def CONSTRUCTOR():
+
+def Constructor():
     """ 0: Constructor run on map load. """
     PullOutMeltedIronKey()
     DespawnChanneler(0, CHARACTERS.DepthsChanneler)
@@ -21,7 +22,7 @@ def CONSTRUCTOR():
 
 
 def PullOutMeltedIronKey():
-    """ MeltedIronKeyReceived 11000112: Inspect door to Depths from Blighttown and pull out Melted Iron Key. """
+    """ 11000112: Inspect door to Depths from Blighttown and pull out Melted Iron Key. """
     if THIS_FLAG:
         return
     DisableObjectActivation(OBJECTS.DepthsDoor, -1)

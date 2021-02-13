@@ -1,4 +1,9 @@
-from . import _logging
-from .config import PTDE_PATH, DSR_PATH
-from .bnd import BND
-from .dcx import DCX
+from pathlib import Path
+
+from .config import *
+from soulstruct.containers.bnd import BND
+from soulstruct.containers.dcx import DCX
+
+
+with (Path(__file__).parent / "../VERSION").open("r") as _vfp:
+    __version__ = _vfp.read().strip()

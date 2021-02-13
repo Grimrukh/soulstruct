@@ -1,3 +1,21 @@
+__all__ = [
+    "DEFAULT_PROJECT_PATH",
+    "DEFAULT_TEXT_EDITOR_FONT_SIZE",
+    "DES_PATH",
+    "DESR_PATH",
+    "PTDE_PATH",
+    "DSR_PATH",
+    "DS2_PATH",
+    "DS2_SOTFS_PATH",
+    "BB_PATH",
+    "DS3_PATH",
+    "SEKIRO_PATH",
+    "ELDEN_RING_PATH",
+
+    "GET_CONFIG",
+    "SET_CONFIG",
+]
+
 import json
 import logging
 import sys

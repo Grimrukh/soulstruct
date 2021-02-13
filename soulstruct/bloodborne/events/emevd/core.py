@@ -1,0 +1,102 @@
+__all__ = ["EMEVD", "Event", "EventArg", "EventLayers", "Instruction"]
+
+from soulstruct.base.events.emevd import (
+    EventLayers as _BaseEventLayers,
+    EventArg as _BaseEventArg,
+    Instruction as _BaseInstruction,
+    Event as _BaseEvent,
+    EMEVD as _BaseEMEVD,
+)
+from soulstruct.utilities.binary_struct import BinaryStruct
+from .arg_types import INSTRUCTION_ARG_TYPES
+from .decompiler import InstructionDecompiler
+from .evs import EVSParser
+
+
+class EventLayers(_BaseEventLayers):
+    HEADER_STRUCT = BinaryStruct(
+        ("two", "I", 2),
+        ("event_layers", "I"),  # 32-bit bit field
+        ("zero", "Q", 0),
+        ("minus_one", "q", -1),
+        ("one", "Q", 1),
+    )
+
+
+class EventArg(_BaseEventArg):
+    HEADER_STRUCT = BinaryStruct(
+        ("instruction_line", "Q"), ("write_from_byte", "Q"), ("read_from_byte", "Q"), ("bytes_to_write", "Q"),
+    )
+
+
+class Instruction(_BaseInstruction):
+    DECOMPILER = InstructionDecompiler()
+    INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES
+    EventLayers = EventLayers
+    HEADER_STRUCT = BinaryStruct(
+        ("instruction_class", "I"),
+        ("instruction_index", "I"),
+        ("base_args_size", "Q"),
+        ("first_base_arg_offset", "i"),
+        "4x",
+        ("first_event_layers_offset", "i"),  # unused in BB
+        "4x",
+    )
+
+
+class Event(_BaseEvent):
+    Instruction = Instruction
+    EventArg = EventArg
+    EVENT_ARG_TYPES = {}
+    HEADER_STRUCT = BinaryStruct(
+        ("event_id", "Q"),
+        ("instruction_count", "Q"),
+        ("first_instruction_offset", "Q"),
+        ("event_arg_count", "Q"),
+        ("first_event_arg_offset", "i"),
+        "4x",
+        ("restart_type", "I"),
+        "4x",
+    )
+
+
+class EMEVD(_BaseEMEVD):
+    Event = Event
+    EVS_PARSER = EVSParser
+    IMPORT_STRING = "soulstruct.bloodborne.events"
+    STRING_ENCODING = "utf-16le"
+    DCX_MAGIC = (68, 76)
+    HEADER_STRUCT = BinaryStruct(
+        ("version", "4s", b"EVD\x00"),
+        ("bloodborne_marker", "I", 65280),
+        ("unknown", "I", 204),
+        ("file_size_1", "I"),
+        ("event_count", "Q"),
+        ("event_table_offset", "Q"),
+        ("instruction_count", "Q"),
+        ("instruction_table_offset", "Q"),
+        "8x",  # unknown table, unused in all games
+        ("unknown_table_offset", "Q"),
+        ("event_layers_count", "Q"),  # unused in BB
+        ("event_layers_table_offset", "Q"),  # unused in BB
+        ("event_arg_count", "Q"),
+        ("event_arg_table_offset", "Q"),
+        ("linked_files_count", "Q"),
+        ("linked_files_table_offset", "Q"),
+        ("base_arg_data_size", "Q"),
+        ("base_arg_data_offset", "Q"),
+        ("packed_strings_size", "Q"),
+        ("packed_strings_offset", "Q"),
+        # No more 4x at the end.
+    )
+
+    def compute_base_args_size(self, existing_data_size):
+        total_arg_size = sum([e.total_args_size for e in self.events.values()])
+        while (existing_data_size + total_arg_size) % 16 != 0:
+            total_arg_size += 1  # pad to multiple of 16
+        return total_arg_size
+
+    def pad_after_base_args(self, emevd_binary_after_base_args):
+        while len(emevd_binary_after_base_args) % 16 != 0:
+            emevd_binary_after_base_args += b"\0"  # pad to multiple of 16
+        return emevd_binary_after_base_args

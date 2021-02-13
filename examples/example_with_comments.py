@@ -57,24 +57,22 @@
                                                                    Grimrukh
 """
 # This star import is purely so your intelli-sense can pick up all the instructions, tests, and other EVS wrapper
-# functions. It is ignored by the compiler (along with all imports containing 'soulstruct.events') and can actually be
-# removed entirely if you don't care about auto-completion or intelli-sense inspection, etc. Make sure you import from
-# the right game, or your intelli-sense may lead you down paths that the game-specific compiler you call on this script
-# can't follow...
-from soulstruct.events.darksouls1 import *
+# functions. It is ignored by the compiler and can actually be removed entirely if you don't care about auto-completion
+# or intelli-sense inspection, etc. Make sure you import from the right game, or your intelli-sense may lead you down
+# paths that the game-specific compiler you call on this script can't follow...
+from soulstruct.darksouls1r.events import *
 
 # We'll need this import to declare our event arguments as specific game types like Character and Region, which in turn
 # allows us to test certain boolean properties of those objects directly. (Again, this is just for intelli-sense - the
 # compiler is fully aware of all the game types, whether you import them here or not.)
 from soulstruct.game_types import *
 
-# At this point, we can import any names we want into the script. The only restriction is that you have to use
 # This import actually matters. You should define your constants in a separate Python script, and import them here.
 # See 'example_constants.py' for examples. You can then use these constants in your EVS script below. The intent is
 # that you can carefully control which constants (particularly Flags) each map's script has access to, which will
 # reduce the chances of accidental, crippling, silent bugs caused by using the wrong one. Note that unlike the general
 # star import above, any imports here do matter to the compiler and will determine what constants it has access to.
-from .example_constants import *
+from example_constants import *
 
 
 # After constant imports, the rest of the EVS script is strictly comprised of NAME ASSIGNMENTS and EVENT FUNCTION
@@ -101,7 +99,7 @@ DOOR_INACTIVE_DELAY = 2.0
 # calling this anywhere. In future, I'll probably force you to call this CONSTRUCTOR and force its ID to be 0 so you
 # know what you're doing. (There's also a PRECONSTRUCTOR with ID 50, which is called before the CONSTRUCTOR and
 # handles things that are assumed to be done by the CONSTRUCTOR - notably, updating NPC story flags.)
-def CONSTRUCTOR():
+def Constructor():
     """ 0: Constructor run on map load. """
 
     PullOutMeltedIronKey()

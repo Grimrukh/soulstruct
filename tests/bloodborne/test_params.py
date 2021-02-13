@@ -2,7 +2,8 @@ import os
 import unittest
 from pathlib import Path
 
-from soulstruct.params.bloodborne import GameParamBND, GET_BUNDLED_PARAMDEF
+from soulstruct.bloodborne.params import GameParamBND
+from soulstruct.bloodborne.params.paramdef import GET_BUNDLED_PARAMDEF
 from soulstruct.utilities import Timer
 
 

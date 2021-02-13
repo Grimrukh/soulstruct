@@ -9,7 +9,7 @@ from typing import Optional
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
-__all__ = ["SmartFrame", "CustomDialog", "ToolTip"]
+__all__ = ["SmartFrame", "CustomDialog", "ToolTip", "bind_to_all_children"]
 _LOGGER = logging.getLogger(__name__)
 
 _GRID_KEYWORDS = {"column", "columnspan", "in", "ipadx", "ipady", "padx", "pady", "row", "rowspan", "sticky"}
@@ -685,6 +685,7 @@ class SmartFrame(tk.Frame):
         return_output=None,
         escape_enabled=True,
         custom_dialog_subclass=None,
+        **kwargs,
     ):
         """Creates a child `CustomDialog` with `style_defaults` taken from SmartFrame by default."""
         if custom_dialog_subclass is None:
@@ -716,6 +717,7 @@ class SmartFrame(tk.Frame):
             cancel_output=cancel_output,
             return_output=return_output,
             escape_enabled=escape_enabled,
+            **kwargs,
         )
 
         if self.toplevel and not self.toplevel.winfo_viewable():
@@ -932,7 +934,11 @@ class CustomDialog(SmartFrame):
         cancel_output=None,
         return_output=None,
         escape_enabled=True,
+        **kwargs,
     ):
+        if kwargs:
+            raise ValueError("Base `CustomDialog` class does not support any kwargs.")
+
         if style_defaults:
             self.STYLE_DEFAULTS = style_defaults
         if button_kwargs and len(button_names) != len(button_kwargs):

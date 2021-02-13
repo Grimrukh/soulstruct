@@ -1,20 +1,30 @@
 from setuptools import setup
 
 try:
-    with open('README.md') as f:
+    with open("README.md") as f:
         long_description = f.read()
 except FileNotFoundError:
-    long_description = '<README.md not found>'
+    long_description = "<README.md not found>"
+
+
+def _get_version():
+    with open("VERSION") as vfp:
+        return vfp.read().strip()
+
 
 setup(
-    name='soulstruct',
-    version='0.1',
-    packages=['soulstruct'],
-    description='Inspect and mod FromSoft games.',
+    name="soulstruct",
+    version=_get_version(),
+    packages=["soulstruct"],
+    description="Inspect and mod FromSoftware games.",
     long_description=long_description,
-    extras_require={'Interactive': ['IPython'], 'Runtime': ['psutil'], 'ConsoleColor': ['colorama'],
-                    "Hotkeys": ['keyboard'], "Graphs": ['numpy', 'matplotlib']},
-    author='Scott Mooney (Grimrukh)',
-    author_email='grimrukh@gmail.com',
+    extras_require={
+        "Interactive": ["IPython"],
+        "Runtime": ["psutil"],
+        "ConsoleColor": ["colorama"],
+        "Graphs": ["numpy", "matplotlib"],
+    },
+    author="Scott Mooney (Grimrukh)",
+    author_email="grimrukh@gmail.com",
     url="https://github.com/grimrukh/soulstruct",
 )

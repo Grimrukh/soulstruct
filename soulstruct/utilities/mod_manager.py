@@ -6,7 +6,7 @@ from pathlib import Path
 
 from soulstruct.utilities.window import SmartFrame
 from soulstruct.config import DSR_PATH
-from soulstruct.utilities.darksouls1.file_list import DSR_FILE_LIST
+from soulstruct.darksouls1r.utilities.file_list import DSR_FILE_LIST
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -150,7 +150,9 @@ class ModManagerWindow(SmartFrame):
                     file_str = "\n".join(unrecognized_files)
                     confirm = self.yesno_dialog(
                         "Ignore Unrecognized Files?",
-                        "Mod folder contains non-game files:\n\n" + file_str + "\n\n" "Continue with installation anyway?",
+                        "Mod folder contains non-game files:\n\n"
+                        + file_str
+                        + "\n\n" "Continue with installation anyway?",
                     )
                     if not confirm:
                         return

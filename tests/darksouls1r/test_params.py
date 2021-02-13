@@ -2,7 +2,8 @@ import os
 import unittest
 from pathlib import Path
 
-from soulstruct.params.darksouls1r import GameParamBND, GET_BUNDLED_PARAMDEF
+from soulstruct.darksouls1r.params import GameParamBND
+from soulstruct.darksouls1r.params.paramdef import GET_BUNDLED_PARAMDEF
 from soulstruct.utilities import Timer
 
 

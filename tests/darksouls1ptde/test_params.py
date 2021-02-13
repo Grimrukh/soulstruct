@@ -1,7 +1,8 @@
 import os
 import unittest
 
-from soulstruct.params.darksouls1ptde import GameParamBND, GET_BUNDLED_PARAMDEF
+from soulstruct.darksouls1ptde.params import GameParamBND
+from soulstruct.darksouls1ptde.params.paramdef import GET_BUNDLED_PARAMDEF
 from soulstruct.utilities import Timer
 
 

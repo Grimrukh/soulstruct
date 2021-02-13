@@ -15,9 +15,12 @@ python -m soulstruct [source]
     [--fileLogLevel]
 """
 import argparse
+import json
 import logging
+from pathlib import Path
 
 from soulstruct.config import DEFAULT_PROJECT_PATH
+from soulstruct.games import get_game, GameSelector
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
 from soulstruct.utilities import word_wrap
 
@@ -50,13 +53,16 @@ parser.add_argument(
     ),
 )
 parser.add_argument(
-    "-t", "--text", action="store_true", help=word_wrap("Open Soulstruct Text Editor with given source.")
+    "--maps", action="store_true", help=word_wrap("Open Soulstruct Maps Editor with given source.")
 )
 parser.add_argument(
-    "-p", "--params", action="store_true", help=word_wrap("Open Soulstruct Param Editor with given source.")
+    "--text", action="store_true", help=word_wrap("Open Soulstruct Text Editor with given source.")
 )
 parser.add_argument(
-    "-l", "--lighting", action="store_true", help=word_wrap("Open Soulstruct Lighting Editor with given source.")
+    "--params", action="store_true", help=word_wrap("Open Soulstruct Param Editor with given source.")
+)
+parser.add_argument(
+    "--lighting", action="store_true", help=word_wrap("Open Soulstruct Lighting Editor with given source.")
 )
 parser.add_argument(
     "-m",
@@ -92,7 +98,17 @@ Lighting = None
 AI = None
 
 
-def soulstruct_main(ss_args):
+def get_existing_project_game(project_path: str):
+    project_path = Path(project_path)
+    if project_path.is_dir() and (project_path / "project_config.json").is_file():
+        with (project_path / "project_config.json").open("r") as j:
+            project_config = json.load(j)
+        if game_name := project_config.get("GameName", ""):
+            return get_game(game_name)
+    return None
+
+
+def soulstruct_main(ss_args) -> bool:
 
     try:
         console_log_level = int(ss_args.consoleLogLevel)
@@ -118,74 +134,67 @@ def soulstruct_main(ss_args):
         ModManagerWindow().wait_window()
         return ss_args.console
 
-    if ss_args.text:
-        # TODO: Support other games (Bloodborne).
-        from soulstruct.maps.darksouls1 import MapStudioDirectory
-
+    if ss_args.maps:
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne").go()
         global Maps
-        Maps = MapStudioDirectory(source)
+        Maps = game.import_game_submodule("maps").MapStudioDirectory(source)
         return ss_args.console
 
     if ss_args.text:
-        from soulstruct.text.darksouls1 import MSGDirectory
-
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "darksouls3").go()
         global Text
-        Text = MSGDirectory(source)
+        Text = game.import_game_submodule("text").MSGDirectory(source)
         return ss_args.console
 
     if ss_args.params:
-        from soulstruct.params.darksouls1r import GameParamBND
-
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne").go()
         global Params
-        Params = GameParamBND(source)
+        Params = game.import_game_submodule("params").GameParamBND(source)
         return ss_args.console
 
     if ss_args.lighting:
-        from soulstruct.params.darksouls1r import DrawParamDirectory
-
+        game = GameSelector("darksouls1ptde", "darksouls1r").go()
         global Lighting
-        Lighting = DrawParamDirectory(source)
+        Lighting = game.import_game_submodule("lighting").DrawParamDirectory(source)
         return ss_args.console
 
     if ss_args.bndpack is not None:
-        from soulstruct.bnd import BND
-
+        from soulstruct.containers.bnd import BND
         bnd = BND(ss_args.bndpack)
         bnd.write()
-        return
+        return False
 
     if ss_args.bndunpack is not None:
-        from soulstruct.bnd import BND
-
+        from soulstruct.containers.bnd import BND
         bnd = BND(ss_args.bndunpack)
         bnd.write_unpacked_dir()
-        return
+        return False
 
     if ss_args.ai:
-        from soulstruct.ai.darksouls1 import AIDirectory
-
+        game = GameSelector("darksouls1ptde", "darksouls1r").go()
         global AI
-        AI = AIDirectory(source)
+        AI = game.import_game_submodule("ai").AIDirectory(source)
         return ss_args.console
 
     # No specific type. Open entire Soulstruct Project.
+    game = get_existing_project_game(source) if source else None
+    if game is None:
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne").go()
     if ss_args.console:
-        from soulstruct.project.darksouls1r import GameDirectoryProject
-
+        # Console only.
         global Project
-        Project = GameDirectoryProject(source)
-    else:
-        from soulstruct.project.darksouls1r import ProjectWindow
-
-        window = ProjectWindow(source)
-        window.wait_window()  # MAIN LOOP
-    return ss_args.console
+        Project = game.import_game_submodule("project").GameDirectoryProject(source)
+        return True
+    # Window.
+    window = game.import_game_submodule("project").ProjectWindow(source)
+    window.wait_window()  # MAIN LOOP
+    return False
 
 
 try:
     launch_interactive = soulstruct_main(parser.parse_args())
-except Exception as e:
-    _LOGGER.exception(f"Error occurred in soulstruct.__main__: {e}")
+except Exception as ex:
+    _LOGGER.exception(f"Error occurred in soulstruct.__main__: {ex}")
     launch_interactive = False
     input("Press any key to exit.")
 

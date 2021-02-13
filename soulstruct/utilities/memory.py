@@ -4,11 +4,10 @@ import ctypes as c
 import logging
 import re
 import struct
-import typing as tp
 from collections import namedtuple
 from ctypes import wintypes as w
 
-from soulstruct.core import SoulstructError
+from soulstruct.exceptions import SoulstructError
 
 try:
     import psutil

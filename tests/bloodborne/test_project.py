@@ -1,6 +1,6 @@
 import unittest
 
-from soulstruct.project.bloodborne import ProjectWindow
+from soulstruct.bloodborne.project import ProjectWindow
 
 
 class ProjectTest(unittest.TestCase):
