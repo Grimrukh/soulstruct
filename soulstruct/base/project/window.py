@@ -171,7 +171,9 @@ class ProjectWindow(SmartFrame, abc.ABC):
                     "ONLY the currently selected script. (Ctrl + E)"
                 ),
                 command=lambda: self._export_data(
-                    self.current_data_type, self.project.game_root, single_script_only=True
+                    self.current_data_type,
+                    self.project.game_root,
+                    single_script_only=True,
                 ),
             )
             self.export_all_button = self.Button(
@@ -579,7 +581,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 if mimic_click:
                     self.mimic_click(self.export_tab_button)
                 return
-            raise ValueError(f"Cannot use `single_script_only` when exporting data type {data_type}.")
+            # Otherwise, ignore `single_script_only` argument.
 
         if mimic_click:
             self.mimic_click(self.export_all_button if data_type is None else self.export_tab_button)
