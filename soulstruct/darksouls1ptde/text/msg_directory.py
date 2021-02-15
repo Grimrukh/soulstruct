@@ -7,6 +7,8 @@ from .fmg import FMG
 
 
 class MSGDirectory(_BaseMSGDirectory):
+    IS_DCX = False
+
     FMG_CLASS = FMG
 
     _MSGBND_INDEX_NAMES = BiDict(

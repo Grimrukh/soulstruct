@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import abc
 import logging
 import typing as tp
 from copy import deepcopy
 from pathlib import Path
 
 from soulstruct.containers.bnd import BND
-
 from .fmg import BaseFMG
 
 if tp.TYPE_CHECKING:
@@ -17,7 +17,9 @@ __all__ = ["MSGDirectory"]
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSGDirectory:
+class MSGDirectory(abc.ABC):
+
+    IS_DCX: bool = None
 
     # These are text categories you are likely to want to change in mod projects.
     MAIN_CATEGORIES = ()
@@ -51,10 +53,6 @@ class MSGDirectory:
         self._original_names = {}  # Records original names of FMG files in BNDs.
         self.categories = {}  # type: dict[str, dict[int, str]]
 
-        # Patch and non-Patch resources get put into the same attribute here so they can be edited together.
-        # This set contains tuple pairs (fmg_name, entry_index) that came from Patch resources.
-        self._is_patch = set()
-
         if msg_directory is None:
             self.item_msgbnd = None
             self.menu_msgbnd = None
@@ -62,26 +60,9 @@ class MSGDirectory:
 
         self.directory = Path(msg_directory)
 
-        try:
-            self.item_msgbnd = BND(self.directory / "item.msgbnd.dcx")
-        except FileNotFoundError:
-            self.item_msgbnd = BND(self.directory / "item.msgbnd")
-        else:
-            if (self.directory / "item.msgbnd").is_file():
-                _LOGGER.warning("Both DCX and non-DCX 'item.msgbnd' resources were found. Using the DCX version.")
-
-        try:
-            self.menu_msgbnd = BND(self.directory / "menu.msgbnd.dcx")
-        except FileNotFoundError:
-            self.menu_msgbnd = BND(self.directory / "menu.msgbnd")
-        else:
-            if (self.directory / "menu.msgbnd").is_file():
-                _LOGGER.warning("Both DCX and non-DCX 'menu.msgbnd' resources were found. Using the DCX version.")
-
-        if self.item_msgbnd.dcx_magic and not self.menu_msgbnd.dcx_magic:
-            raise ValueError(f"Found DCX `item.msgbnd.dcx`, but non-DCX `menu.msgbnd.dcx`. Fix your directory!")
-        if not self.item_msgbnd.dcx_magic and self.menu_msgbnd.dcx_magic:
-            raise ValueError(f"Found DCX `menu.msgbnd.dcx`, but non-DCX `item.msgbnd.dcx`. Fix your directory!")
+        ext = "msgbnd.dcx" if self.IS_DCX else "msgbnd"
+        self.item_msgbnd = BND(self.directory / f"item.{ext}")
+        self.menu_msgbnd = BND(self.directory / f"menu.{ext}")
 
         self.load_fmg_entries_from_bnd(self.item_msgbnd, is_menu=False)
         self.load_fmg_entries_from_bnd(self.menu_msgbnd, is_menu=True)
@@ -89,30 +70,104 @@ class MSGDirectory:
         for key, fmg_dict in self.categories.items():
             setattr(self, key, fmg_dict)
 
+    @classmethod
+    def from_bnds(cls, item_msgbnd: BaseBND, menu_msgbnd: BaseBND):
+        instance = cls()
+        instance.item_msgbnd = item_msgbnd
+        instance.menu_msgbnd = menu_msgbnd
+        instance.load_fmg_entries_from_bnd(instance.item_msgbnd, is_menu=False)
+        instance.load_fmg_entries_from_bnd(instance.menu_msgbnd, is_menu=True)
+        for key, fmg_dict in instance.categories.items():
+            setattr(instance, key, fmg_dict)
+        return instance
+
     def load_fmg_entries_from_bnd(self, msgbnd: BaseBND, is_menu: bool):
-
-        # remastered = False if 'win32' in msgbnd[0].path else True
-
+        """Loads FMGs from given `msgbnd` into `categories` dictionary."""
         for entry in msgbnd:
             try:
-                new_name = self._MSGBND_INDEX_NAMES[entry.id]
+                attr_name = self._MSGBND_INDEX_NAMES[entry.id]
             except KeyError:
-                raise ValueError(f"BND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
-
-            original_name = entry.name
-
-            self._original_names[new_name] = original_name
-            self._is_menu[new_name] = is_menu
+                raise ValueError(f"MSGBND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
+            self._original_names[attr_name] = entry.name
+            self._is_menu[attr_name] = is_menu
             fmg = self.FMG_CLASS(entry.data)
+            if attr_name.endswith("Patch"):
+                # Patch FMGs are used to update the base FMGs here.
+                # Original source (patch or no) is not tracked; all entries will be written to patch FMG by `pack()`.
+                attr_name = attr_name[:-5]
+            self.categories.setdefault(attr_name, {}).update(fmg.entries)
 
-            if new_name.endswith("Patch"):
-                # Patch FMGs are merged with the originals here. Their origin is tracked in `_is_patch` in order to
-                # separate them again when writing the BNDs (though this is technically optional).
-                new_name = new_name[:-5]
-                for index in fmg.entries:
-                    self._is_patch.add((new_name, index))
+    def update_msgbnd_entry(
+        self, msgbnd, fmg_name, fmg_entries: dict, word_wrap_limit=None, pipe_to_newline=False, use_original_names=True
+    ):
+        fmg_data = self.FMG_CLASS({"entries": fmg_entries}).pack(
+            word_wrap_limit=word_wrap_limit, pipe_to_newline=pipe_to_newline
+        )
+        try:
+            bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
+        except IndexError:
+            raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
+        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
+        bnd_entry.data = fmg_data
+        if not use_original_names:
+            bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
 
-            self.categories.setdefault(new_name, {}).update(fmg.entries)
+    def pack(
+        self,
+        description_word_wrap_limit=None,
+        use_original_names=True,
+        pipe_to_newline=True,
+    ) -> tuple[BaseBND, BaseBND]:
+        """Pack up and return new "item" and "menu" MSGBNDs. Does not modify any instance state."""
+        new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
+        new_menu_msgbnd = deepcopy(self.menu_msgbnd)  # type: BaseBND
+
+        for fmg_name, fmg_entries in self.categories.items():
+            word_wrap = description_word_wrap_limit if "Descriptions" in fmg_name else None
+
+            if fmg_name + "Patch" in self._is_menu:
+                # Updates patch only, if available.
+                fmg_name = fmg_name + "Patch"
+
+            fmg_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
+            self.update_msgbnd_entry(
+                fmg_msgbnd,
+                fmg_name,
+                fmg_entries,
+                word_wrap_limit=word_wrap,
+                pipe_to_newline=pipe_to_newline,
+                use_original_names=use_original_names,
+            )
+
+        return new_item_msgbnd, new_menu_msgbnd
+
+    def write(
+        self,
+        msg_directory=None,
+        description_word_wrap_limit=None,
+        use_original_names=True,
+        pipe_to_newline=True,
+        update_instance=True,
+    ):
+        """Pack up and write new "item" and "menu" MSGBNDs. See `pack()` for more."""
+        msg_directory = self.directory if msg_directory is None else Path(msg_directory)
+
+        new_item_msgbnd, new_menu_msgbnd = self.pack(
+            description_word_wrap_limit=description_word_wrap_limit,
+            use_original_names=use_original_names,
+            pipe_to_newline=pipe_to_newline,
+        )
+
+        # Write BNDs (to original directory by default).
+        new_item_msgbnd.write(msg_directory / new_item_msgbnd.path.name)
+        new_menu_msgbnd.write(msg_directory / new_menu_msgbnd.path.name)
+
+        _LOGGER.info("MSGDirectory files (`item` and `menu` MSGBND files) written successfully.")
+
+        if update_instance:
+            # Update BNDs only after successful write.
+            self.item_msgbnd = new_item_msgbnd
+            self.menu_msgbnd = new_menu_msgbnd
 
     def get_all_item_text(self, index, item_type="good"):
         """ Get name, summary, and description of goods, weapons, armor, or rings. """
@@ -144,91 +199,6 @@ class MSGDirectory:
         self.categories[item_fmg + "Names"][index] = ""
         self.categories[item_fmg + "Summaries"][index] = ""
         self.categories[item_fmg + "Descriptions"][index] = ""
-
-    def update_msgbnd_entry(
-        self, msgbnd, fmg_name, fmg_entries: dict, word_wrap_limit=None, pipe_to_newline=False, use_original_names=True
-    ):
-        fmg_patch_data = self.FMG_CLASS({"entries": fmg_entries}).pack(
-            word_wrap_limit=word_wrap_limit, pipe_to_newline=pipe_to_newline
-        )
-        try:
-            bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
-        except IndexError:
-            raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
-        bnd_entry.data = fmg_patch_data
-        if not use_original_names:
-            bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
-
-    def write(
-        self,
-        msg_directory=None,
-        description_word_wrap_limit=None,
-        separate_patch=False,
-        use_original_names=True,
-        pipe_to_newline=True,
-    ):
-        """Export FMGs and repack BND, then write it as packed. Should really just be 'write' and 'pack' methods."""
-        new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
-        new_menu_msgbnd = deepcopy(self.menu_msgbnd)  # type: BaseBND
-
-        msg_directory = self.directory if msg_directory is None else Path(msg_directory)
-
-        if not separate_patch:
-            # Select Patch indices will be merged into non-Patch FMG, so remove those Patch entries from the BND now.
-            # Note that not all categories (FMGs) can safely be merged. Any edited indices will be kept in the version
-            # (base or patch) from which they originated. (Adding new IDs to these categories is generally impossible.)
-            for patch_fmg_name in _CAN_MERGE_PATCH:
-                if patch_fmg_name in self._is_menu:
-                    bnd_index = self._MSGBND_INDEX_NAMES[patch_fmg_name]
-                    msgbnd = new_menu_msgbnd if self._is_menu[patch_fmg_name] else new_item_msgbnd
-                    if bnd_index in msgbnd.entries_by_id:
-                        msgbnd.remove_entry(bnd_index)
-
-        for fmg_name, fmg_entries in self.categories.items():
-            word_wrap = description_word_wrap_limit if "Descriptions" in fmg_name else None
-            fmg_entries_main = fmg_entries.copy()
-            fmg_entries_patch = {}
-
-            if separate_patch or fmg_name in _CANNOT_MERGE_PATCH:
-                # Separate Patch indices out into Patch dictionary. Some categories do this regardless of whether
-                # `separate_patch=True`. (These are all internal categories where new IDs are meaningless anyway.)
-                for index in fmg_entries.keys():
-                    if (fmg_name, index) in self._is_patch:
-                        patch_text = fmg_entries_main.pop(index)
-                        if patch_text:
-                            fmg_entries_patch[index] = patch_text  # Don't bother adding if empty.
-
-            if fmg_entries_patch:
-                patch_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name + "Patch"] else new_item_msgbnd
-                self.update_msgbnd_entry(
-                    patch_msgbnd,
-                    fmg_name + "Patch",
-                    fmg_entries_patch,
-                    word_wrap_limit=word_wrap,
-                    pipe_to_newline=pipe_to_newline,
-                    use_original_names=use_original_names,
-                )
-
-            main_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
-            self.update_msgbnd_entry(
-                main_msgbnd,
-                fmg_name,
-                fmg_entries,
-                word_wrap_limit=word_wrap,
-                pipe_to_newline=pipe_to_newline,
-                use_original_names=use_original_names,
-            )
-
-        # Write BNDs (to original directory by default).
-        new_item_msgbnd.write(msg_directory / new_item_msgbnd.path.name)
-        new_menu_msgbnd.write(msg_directory / new_menu_msgbnd.path.name)
-
-        # Update BNDs only after successful write.
-        self.item_msgbnd = new_item_msgbnd
-        self.menu_msgbnd = new_menu_msgbnd
-
-        _LOGGER.info("MSGDirectory files (`item` and `menu` MSGBND files) written successfully.")
 
     def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
         if index is None:
@@ -301,20 +271,20 @@ class MSGDirectory:
         ]
 
     @staticmethod
-    def resolve_item_type(item_type):
-        if item_type.lower() in ("good", "consumable"):
+    def resolve_item_type(item_type) -> str:
+        if item_type.lower() in {"good", "consumable"}:
             return "Good"
-        elif item_type.lower() in ("ring", "accessory"):
+        elif item_type.lower() in {"ring", "accessory"}:
             return "Ring"
-        elif item_type.lower() in ("weapon", "shield"):
+        elif item_type.lower() in {"weapon", "shield"}:
             return "Weapon"
-        elif item_type.lower() in ("armour", "armor", "protector"):
+        elif item_type.lower() in {"armour", "armor", "protector"}:
             return "Armor"
         elif item_type.lower() == "equipment":
-            raise ValueError("'Equipment' is ambiguous. Did you mean 'weapon', 'armor', 'ring', or 'good'?")
+            raise ValueError("'equipment' is ambiguous. Did you mean 'weapon', 'armor', 'ring', or 'good'?")
         elif item_type.lower() == "item":
             raise ValueError(
-                "'Item' is ambiguous; it's the term used to describe everything in your inventory.\n"
+                "'item' is ambiguous; it's the term used to describe everything in your inventory.\n"
                 "Did you mean 'weapon', 'armor', 'ring', or 'good'?"
             )
         else:

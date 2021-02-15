@@ -230,9 +230,9 @@ class ModManagerWindow(SmartFrame):
                 dest_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(source_path), str(dest_path))
             restore_count += 1
-        _LOGGER.info(f"Restored vanilla files with Mod Manager ({restore_count} files).")
+        _LOGGER.info(f"Restored {restore_count} vanilla files with Mod Manager.")
         if get_confirmation:
-            self.CustomDialog("Success", "Vanilla files restored successfully.")
+            self.CustomDialog("Success", f"Restored {restore_count} vanilla files successfully.")
 
     def _delete_bak_files(self, get_confirmation=True):
         """Delete all files with a suffix ending in 'bak' (e.g. '.bak', '.smbak')."""
@@ -249,7 +249,7 @@ class ModManagerWindow(SmartFrame):
             deletion_count += 1
         _LOGGER.info(f"Deleted {deletion_count} 'bak' files with Mod Manager.")
         if get_confirmation:
-            self.CustomDialog("Success", f"All 'bak' files were deleted successfully ({deletion_count} files).")
+            self.CustomDialog("Success", f"Deleted {deletion_count} 'bak' files successfully.")
 
     def _show_selected_paths(self):
         try:

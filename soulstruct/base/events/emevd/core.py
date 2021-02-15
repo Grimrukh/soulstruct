@@ -88,6 +88,8 @@ class EMEVD(GameFile, abc.ABC):
             self.map_name = emevd_path.name.split(".")[0]
 
             if emevd_path.suffix in {".evs", ".py"}:
+                if script_path is None:
+                    script_path = emevd_path.parent
                 parsed = self.EVS_PARSER(emevd_path, script_path=script_path)
                 self.map_name = parsed.map_name
                 events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)

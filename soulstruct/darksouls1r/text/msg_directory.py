@@ -1,6 +1,11 @@
 __all__ = ["MSGDirectory", "NEW_FMG_NAMES"]
 
-from soulstruct.darksouls1ptde.text.msg_directory import MSGDirectory
+from soulstruct.darksouls1ptde.text.msg_directory import MSGDirectory as _BaseMSGDirectory
+
+
+class MSGDirectory(_BaseMSGDirectory):
+    IS_DCX = True  # otherwise identical
+
 
 # Unused; using BND index instead.
 NEW_FMG_NAMES = {
