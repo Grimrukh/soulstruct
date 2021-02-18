@@ -39,7 +39,7 @@ from pathlib import Path
 _LOGGER = logging.getLogger(__name__)
 
 
-def PACKAGE_PATH(*relative_parts):
+def PACKAGE_PATH(*relative_parts) -> Path:
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(getattr(sys, "_MEIPASS"), *relative_parts)
     return Path(__file__).absolute().parent.joinpath("..", *relative_parts)
@@ -62,13 +62,13 @@ def find_dcx(file_path):
     raise FileNotFoundError(f"Could not find DCX or non-DCX version of {file_path}.")
 
 
-def create_bak(file_path):
+def create_bak(file_path, bak_suffix=".bak"):
     file_path = Path(file_path)
-    if file_path.is_file() and not file_path.with_suffix(file_path.suffix + ".bak").is_file():
-        backup_path = str(file_path.with_suffix(file_path.suffix + ".bak"))
-        os.rename(str(file_path), backup_path)
-        _LOGGER.info(f"Created {repr(backup_path)} backup file.")
-        return True
+    if file_path.is_file():
+        if not (bak_path := file_path.with_suffix(file_path.suffix + bak_suffix)).is_file():
+            os.rename(str(file_path), str(bak_path))
+            _LOGGER.info(f"Created backup file: '{bak_path}'.")
+            return True
     return False
 
 

@@ -26,29 +26,34 @@ def sort_fmod_bank(source_dir: PathType, dest_dir: PathType, make_voice_subfolde
             this_dest_dir = dest_dir / voice_match.group(1)
         else:
             this_dest_dir = dest_dir
-        this_dest_dir.mkdir(exist_ok=True)
+        this_dest_dir.mkdir(parents=True, exist_ok=True)
         dest_path = this_dest_dir / (stem + ".wav")
         shutil.move(source_path, dest_path)
         print(f"{source_path} -> {dest_path}")
 
 
-def extract_fsb(fsb_path: PathType, dest_dir: PathType, make_voice_subfolders=True):
+def extract_fsb(fsb_path: PathType, dest_dir: PathType, make_voice_subfolders=True, fmod_extr_path=None):
     """Extract FSB and organize its contents into `dest_dir` using `sort_fmod_bank()`.
 
-    The `fmod_extr.exe` utility (and its two required DLLs) must be next to the FSB file.
+    The `fmod_extr.exe` utility (and its two required DLLs) must be next to the FSB file unless `fmod_extr_path` given.
     """
     fsb_path = Path(fsb_path)
-    extr_path = fsb_path.parent / "fmod_extr"
-    if list(fsb_path.parent.glob("*.wav")):
+    dest_dir = Path(dest_dir)
+    if fmod_extr_path is None:
+        fmod_extr_path = fsb_path.parent / "fmod_extr"
+    else:
+        fmod_extr_path = Path(fmod_extr_path)
+    if list(dest_dir.glob("*.wav")):
         raise FileExistsError(
-            "One or more '.wav' files already exist next to FSB. Cannot extract FSB until these are cleared up."
+            "One or more '.wav' files already exist in dest directory. Cannot extract FSB until these are cleared up."
         )
+    dest_dir.mkdir(parents=True, exist_ok=True)
     old_cwd = os.getcwd()
     try:
-        os.chdir(str(fsb_path.parent))
-        retcode = subprocess.call([str(extr_path), str(fsb_path)])  # blocks until extraction completes
+        os.chdir(str(dest_dir))
+        retcode = subprocess.call([str(fmod_extr_path), str(fsb_path)])  # blocks until extraction completes
         if retcode == 0:
-            sort_fmod_bank(fsb_path.parent, dest_dir, make_voice_subfolders=make_voice_subfolders)
+            sort_fmod_bank(dest_dir, dest_dir, make_voice_subfolders=make_voice_subfolders)
         else:
             raise RuntimeError("Error occurred in `fmod_extr.exe`.")
     finally:
@@ -335,9 +340,7 @@ def generate_fdp_voice_events(sound_def_paths, event_names=None):
 
 def main():
     sound_def_paths = [
-        f"/frpg_sm14/v410010{suffix}" for suffix in (
-            100, 101, 102, 200, 210, 211, 212, 213, 220, 221, 300, 301, 302, 400, 600, 601, 700
-        )
+        f"/frpg_sm18/v84400170{suffix}" for suffix in range(5)
     ]
     generate_fdp_voice_events(sound_def_paths)
 

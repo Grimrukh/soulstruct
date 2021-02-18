@@ -7,7 +7,7 @@ import io
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.maths import Vector3, Matrix3
+from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .enums import MSBSubtype, MSBEventSubtype, MSBPartSubtype
 from soulstruct.base.maps.msb.msb_entry import MSBEntry
@@ -130,111 +130,34 @@ class MSB(GameFile, abc.ABC):
 
         return self.HEADER + packed_models + packed_events + packed_regions + packed_parts
 
-    def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=None):
-        """Add given `translate` to `.translate` vectors of all Regions and Parts (including Map Pieces, Collisions, and
-        Navmeshes) by given XYZ. Optionally, only apply it to `selected_entry_names`.
-        """
-        for p in self.parts:
-            if selected_entries is None or p in selected_entries:
-                p.translate += translate
-        for r in self.regions:
-            if selected_entries is None or r in selected_entries:
-                r.translate += translate
+    def get_entry_by_name(self, name: str, entry_types=()):
+        """Get `MSBEntry` with name `name` that is one of the given `entry_types`, or any type if `entry_types=()`."""
+        if not entry_types:
+            entry_types = ("parts", "regions", "events", "models")
+        results = {}
+        for entry_type in entry_types:
+            try:
+                # This will raise a `ValueError` if the name appears more than once in a single entry type list.
+                results[entry_type.lower()] = self[entry_type].get_entry_by_name(name)
+            except KeyError:
+                pass
+        if not results:
+            raise ValueError(f"Could not find an entry named '{name}' with type {entry_types} in MSB.")
+        if len(results) > 1:
+            raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
+        return next(iter(results.values()))
 
-    def rotate_all_in_world(
-        self,
-        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-        pivot_point=(0, 0, 0),
-        radians=False,
-        selected_entries=None,
-    ):
-        """Rotate every Part and Region in the map (or a selection given in `selected_entry_names`) around the given
-        pivot by the given Euler angles coordinate system, modifying both `translate` and `rotate`.
-
-        The pivot defaults to the world origin.
-        """
-        if isinstance(rotation, (int, float)):
-            rotation = Matrix3.from_euler_angles(0.0, rotation, 0.0)  # single rotation value interpreted as Y rotation
-        elif isinstance(rotation, (Vector3, list, tuple)):
-            rotation = Matrix3.from_euler_angles(rotation)
-        elif not isinstance(rotation, Matrix3):
-            raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(pivot_point)
-        for p in self.parts:
-            if selected_entries is None or p in selected_entries:
-                p.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
-        for r in self.regions:
-            if selected_entries is None or r in selected_entries:
-                r.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
-
-    def move_map(
-        self,
-        start_translate: tp.Union[Vector3, list, tuple] = None,
-        end_translate: tp.Union[Vector3, list, tuple] = None,
-        start_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
-        end_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
-        selected_entries=None,
-    ):
-        """Rotate and then translate entire map so that an entity with a translate of `start_translate` and rotate of
-        `start_rotate` ends up with a translate of `end_translate` and a rotate of `end_rotate`.
-
-        Optionally, move only a subset of entry names given in `selected_entry_names`.
-        """
-        if selected_entries is not None:
-            selected_entries = list(selected_entries)  # so strings can be replaced with part instances
-            for i, entry in enumerate(selected_entries):
-                if isinstance(entry, str):
-                    try:
-                        selected_part = self.parts.get_entry_by_name(entry)
-                    except KeyError:
-                        selected_part = None
-                    try:
-                        selected_region = self.regions.get_entry_by_name(entry)
-                    except KeyError:
-                        selected_region = None
-                    if selected_part and selected_region:
-                        raise ValueError(
-                            f"Found both a Part and Region with name '{entry}'. You must pass the desired entry "
-                            f"instance directly.")
-                    elif selected_part:
-                        selected_entries[i] = selected_part
-                    elif selected_region:
-                        selected_entries[i] = selected_region
-                    else:
-                        raise ValueError(f"Could not find a Part or Region named '{entry}' in MSB.")
-                elif not isinstance(entry, MSBEntry):
-                    raise TypeError("`selected_entries` should contain only `MSBEntry` instances or Part names.")
-
-        if start_translate is None:
-            start_translate = Vector3.zero()
-        elif not isinstance(start_translate, Vector3):
-            start_translate = Vector3(start_translate)
-        if end_translate is None:
-            end_translate = Vector3.zero()
-        elif not isinstance(end_translate, Vector3):
-            end_translate = Vector3(end_translate)
-        if start_rotate is None:
-            start_rotate = Vector3.zero()
-        elif isinstance(start_rotate, (int, float)):
-            start_rotate = Vector3(0, start_rotate, 0)
-        else:
-            start_rotate = Vector3(start_rotate)
-        if end_rotate is None:
-            end_rotate = Vector3.zero()
-        elif isinstance(end_rotate, (int, float)):
-            end_rotate = Vector3(0, end_rotate, 0)
-        else:
-            end_rotate = Vector3(end_rotate)
-
-        # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
-        m_start_rotate = Matrix3.from_euler_angles(start_rotate)
-        m_end_rotate = Matrix3.from_euler_angles(end_rotate)
-        m_world_rotate = m_end_rotate @ m_start_rotate.T
-        # Apply global rotation to start point to determine required global translation.
-        translation = end_translate - (m_world_rotate @ start_translate)  # type: Vector3
-
-        self.rotate_all_in_world(m_world_rotate, selected_entries=selected_entries)
-        self.translate_all(translation, selected_entries=selected_entries)
+    def resolve_entries_list(self, entries, entry_types=()):
+        """Lists of entries can include names of entries, if unique, or the actual `MSBEntry` instances."""
+        resolved = []
+        for entry in entries:
+            if isinstance(entry, str):
+                resolved.append(self.get_entry_by_name(entry, entry_types))
+            elif isinstance(entry, MSBEntry):
+                resolved.append(entry)
+            else:
+                raise TypeError(f"Invalid entry specifier: {entry}. Must be a (unique) entry name or instance.")
+        return resolved
 
     def get_repeated_entity_ids(self):
         repeats = {}
@@ -259,12 +182,8 @@ class MSB(GameFile, abc.ABC):
         is used (which matches game engine behavior).
         """
         entry_type = entry_type.lower()
-        if entry_type == "parts":
-            entries = self.parts.get_entries(entry_subtype)
-        elif entry_type == "events":
-            entries = self.events.get_entries(entry_subtype)
-        elif entry_type == "regions":
-            entries = self.regions.get_entries(entry_subtype)
+        if entry_type in {"parts", "events", "regions"}:
+            entries = self[entry_type].get_entries(entry_subtype)
         else:
             raise ValueError("Can only get entity IDs for parts, events, and regions.")
         entries_by_id = {}
@@ -275,7 +194,7 @@ class MSB(GameFile, abc.ABC):
                 entries_by_id[entry.entity_id] = entry.name if names_only else entry
         return entries_by_id
 
-    def get_entry_with_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntryEntity]:
+    def get_entry_by_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntryEntity]:
         """Search all entry types for the given ID and return that `MSBEntry` (or `None` if not found).
 
         If multiple entries with the same (non-default) ID are found, an error will be raised.
@@ -297,6 +216,89 @@ class MSB(GameFile, abc.ABC):
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
         return results[0]
 
+    def move_map(
+        self,
+        start_translate: tp.Union[Vector3, list, tuple] = None,
+        end_translate: tp.Union[Vector3, list, tuple] = None,
+        start_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
+        end_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
+        selected_entries=(),
+    ):
+        """Move everything with a transform in this `MSB` relative to an initial and a final reference point.
+
+        Args:
+            start_translate: initial `(x, y, z)` translate of initial reference point.
+            end_translate: final `(x, y, z)` translate of final reference point.
+            start_rotate: initial `(x, y, z)` rotate of initial reference point, or simply `y` if a number is given.
+            end_rotate: final `(x, y, z)` rotate of final reference point, or simply `y` if a number is given.
+            selected_entries: if not empty, move only these given entries. Each element in this sequence can be
+                an `MSBEntry` instance or the name (if unique) of a Part or Region.
+
+        Optionally, move only a subset of entry names given in `selected_entry_names`.
+        """
+        selected_entries = self.resolve_entries_list(selected_entries, entry_types=("parts", "regions"))
+
+        start_translate = Vector3(start_translate)
+        end_translate = Vector3(end_translate)
+        start_rotate = Vector3(0, start_rotate, 0) if isinstance(start_rotate, (int, float)) else Vector3(start_rotate)
+        end_rotate = Vector3(0, end_rotate, 0) if isinstance(end_rotate, (int, float)) else Vector3(end_rotate)
+
+        # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
+        m_start_rotate = Matrix3.from_euler_angles(start_rotate)
+        m_end_rotate = Matrix3.from_euler_angles(end_rotate)
+        m_world_rotation = m_end_rotate @ m_start_rotate.T
+        # Apply global rotation to start point to determine required global translation.
+        translation = end_translate - (m_world_rotation @ start_translate)  # type: Vector3
+
+        self.rotate_all_in_world(m_world_rotation, selected_entries=selected_entries)
+        self.translate_all(translation, selected_entries=selected_entries)
+
+    def rotate_all_in_world(
+        self,
+        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
+        pivot_point=(0, 0, 0),
+        radians=False,
+        selected_entries=(),
+    ):
+        """Rotate every Part and Region in the map around the given `pivot_point` by the Euler angles specified by
+        `rotation`, modifying both `.rotate` and (unless equal to `pivot_point`) `.translate` for each entry.
+
+        Args:
+            rotation: Euler angles, as specified by `(x, y, z)`, an Euler rotation matrix, or a single value to apply
+                simple `y` rotation only.
+            pivot_point: point around with `rotation` will be applied. Defaults to world origin, `(0, 0, 0)`.
+            radians: if True, given `rotation` is in radians; degrees otherwise. Defaults to `False` (degrees).
+            selected_entries: if not empty, move only these given entries. Each element in this sequence can be
+                an `MSBEntry` instance or the name (if unique) of a Part or Region.
+        """
+        selected_entries = self.resolve_entries_list(selected_entries, entry_types=("parts", "regions"))
+
+        rotation = resolve_rotation(rotation)
+        pivot_point = Vector3(pivot_point)
+        for part in self.parts:
+            if not selected_entries or part in selected_entries:
+                part.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
+        for region in self.regions:
+            if not selected_entries or region in selected_entries:
+                region.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
+
+    def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=()):
+        """Add given `translate` vector to `.translate` vector attributes of all Regions and Parts.
+
+        Args:
+            translate: `(x, y, z)` vector to shift entries by.
+            selected_entries: if not empty, move only these given entries. Each element in this sequence can be
+                an `MSBEntry` instance or the name (if unique) of a Part or Region.
+        """
+        selected_entries = self.resolve_entries_list(selected_entries, entry_types=("parts", "regions"))
+
+        for part in self.parts:
+            if not selected_entries or part in selected_entries:
+                part.translate += translate
+        for region in self.regions:
+            if not selected_entries or region in selected_entries:
+                region.translate += translate
+
     @classmethod
     def get_subtype_dict(cls) -> dict[str, tuple[MSBSubtype]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
@@ -308,7 +310,11 @@ class MSB(GameFile, abc.ABC):
         }
 
     def __getitem__(self, entry_list_name) -> MSBEntryList:
-        if entry_list_name.lower() not in {"models", "events", "regions", "parts"}:
+        """Retrieve entry list by name. Can be plural, like "parts", or singular, like "part"."""
+        entry_list_name = entry_list_name.lower()
+        if entry_list_name in {"model", "event", "region", "part"}:
+            entry_list_name += "s"
+        elif entry_list_name not in {"models", "events", "regions", "parts"}:
             raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
         return getattr(self, entry_list_name.lower())
 

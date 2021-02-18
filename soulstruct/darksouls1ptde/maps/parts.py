@@ -307,7 +307,13 @@ class MSBMapPiece(_BaseMSBMapPiece, MSBPart):
         # "scale",
         "draw_groups",
         # "display_groups",
-    ) + MSBPart.LIGHTING_FIELD_ORDER + (
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        # No tone map, point light, or tone correction (collisions only).
         # "is_shadow_source",
         "is_shadow_destination",
         # "is_shadow_only",

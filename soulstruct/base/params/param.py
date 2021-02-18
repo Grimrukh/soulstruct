@@ -77,6 +77,13 @@ class ParamRow:
         # TODO: Check value type is valid (or that it can be cast).
         self.fields[field] = value
 
+    def update(self, **kwargs):
+        for field in kwargs:
+            if field not in self.fields:
+                raise KeyError(f"Field '{field}' does not exist in params.")
+        for field, value in kwargs.items():
+            self.__setitem__(field, value)
+
     @property
     def field_names(self) -> tuple[str, ...]:
         if self.paramdef.param_info:

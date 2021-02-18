@@ -20,11 +20,17 @@ class Vector3:
 
     PRECISION = 3
 
-    def __init__(self, x, y=None, z=None):
-        if y is None and z is None:
-            x, y, z = x
+    def __init__(self, x=None, y=None, z=None):
+        if x is None:
+            if y is not None or z is not None:
+                raise ValueError("If `x=None`, `y` and `z` must both be left as `None`.")
+            x = y = z = 0  # default
+        elif y is None and z is None:
+            x, y, z = x  # unpack first argument
         elif y is None or z is None:
-            raise ValueError("Vector must be initialized with [x, y, z] as a single list or three separate arguments.")
+            raise ValueError(
+                "Vector3 must be initialized as `Vector3(x, y, z)`, `Vector3((x, y, z))`, or `Vector3(None)`."
+            )
         self.x, self.y, self.z = x, y, z
 
     @classmethod

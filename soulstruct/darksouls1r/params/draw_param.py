@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["DrawParam", "DrawParamBND", "DrawParamDirectory"]
 
 import logging

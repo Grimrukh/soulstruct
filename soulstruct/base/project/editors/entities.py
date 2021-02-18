@@ -485,7 +485,7 @@ class EntityEditor(BaseEditor):
                 continue  # ignore this class
             found_map_entry_class_names.append(attr_name)
             for entity_enum in attr:
-                entry = msb.get_entry_with_entity_id(entity_enum.value, allow_multiple=True)
+                entry = msb.get_entry_by_entity_id(entity_enum.value, allow_multiple=True)
                 if entry is None:
                     not_found.append(entity_enum.value)
                     continue
@@ -568,7 +568,7 @@ class EntityEditor(BaseEditor):
             entry.name = entity_enum.name
         for (attr_name, entity_id), description in descriptions_by_attr_and_id.items():
             # attr_name not actually used, as entity ID uniqueness should have already been resolved
-            entry = msb.get_entry_with_entity_id(entity_id, allow_multiple=True)
+            entry = msb.get_entry_by_entity_id(entity_id, allow_multiple=True)
             if not entry:
                 continue  # shouldn't happen (as missing entity ID should be skipped) but just in case
             if isinstance(entry, list):
