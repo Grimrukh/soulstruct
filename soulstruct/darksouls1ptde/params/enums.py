@@ -345,10 +345,11 @@ class EQUIP_MODEL_CATEGORY(u8):
 
 
 class EQUIP_MODEL_GENDER(u8):
-    NoGender = 0  # identical model
+    Unisex = 0  # identical model
     Male = 1
     Female = 2
-    Player = 3  # auto-detected (guess)
+    Both = 3
+    UseMaleForBoth = 4
 
 
 class FACE_PARAM_HAIRCOLOR_TYPE(u8):
@@ -951,6 +952,7 @@ class WEP_MATERIAL_DEF_SFX(u8):
     MetalWeapon = 50
     WoodOrLeatherWeapon = 52
     MetalArmor = 56
+    Naked = 58
     HandsOrFabricArmor = 59
     HeadshotFabric = 60
     HeadshotMetal = 63

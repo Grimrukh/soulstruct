@@ -45,7 +45,7 @@ class DynamicBehaviorRef(DynamicFieldDisplayInfo):
 
 
 BEHAVIOR_PARAM_ST = {
-    "internal_name": "BEHAVIOR_PARAM_ST",
+    "paramdef_name": "BEHAVIOR_PARAM_ST",
     "file_name": "BehaviorParam",  # also BehaviorParam_PC
     "nickname": None,
     "fields": [

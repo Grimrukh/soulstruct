@@ -6,7 +6,7 @@ from ..enums import *
 
 
 CHARACTER_INIT_PARAM = {
-    "internal_name": "CHARACTER_INIT_PARAM",
+    "paramdef_name": "CHARACTER_INIT_PARAM",
     "file_name": "CharaInitParam",
     "nickname": "Players",
     "fields": [

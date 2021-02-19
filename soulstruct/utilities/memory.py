@@ -569,7 +569,11 @@ class DSRMemoryHook(MemoryHook):
         if not game_param.param_info:
             raise ValueError(f"Cannot write to game memory for Param type '{game_param.param_type}'.")
         param_file_name = game_param.param_info["file_name"]
-        paramdef_name = game_param.param_info["paramdef_name"]
+        try:
+            paramdef_name = game_param.param_info["paramdef_name"]
+        except KeyError:
+            print(game_param.param_info)
+            raise
         self._write_param(game_param.pack(sort=False), param_file_name, paramdef_name)
 
     def write_game_param_bnd_to_memory(self, game_param_bnd: GameParamBND):
