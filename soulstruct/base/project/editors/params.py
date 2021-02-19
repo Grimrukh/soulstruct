@@ -240,7 +240,7 @@ class ParamsEditor(BaseFieldEditor):
 
     def get_field_display_info(self, field_dict, field_name):
         display_info = field_dict.get_paramdef_field_display_info(field_name)
-        return display_info.nickname, display_info.is_enabled, display_info.field_type, display_info.description
+        return display_info.nickname, display_info.is_enabled, display_info.field_type, display_info.docstring
 
     def get_field_names(self, field_dict):
         return field_dict.field_names if field_dict else []

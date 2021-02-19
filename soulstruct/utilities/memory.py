@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["MemoryHook", "DSRMemoryHook"]
 
 import ctypes as c
+import functools
 import io
 import logging
 import pickle
@@ -15,6 +16,7 @@ from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities import PACKAGE_PATH
 
 if tp.TYPE_CHECKING:
+    from soulstruct.darksouls1r.params import Param, GameParamBND
     from soulstruct.darksouls1r.params.draw_param import DrawParam
 
 try:
@@ -240,6 +242,7 @@ class MemoryHook:
         self.process_handle = kernel32.OpenProcess(
             PROCESS_VM_READ + PROCESS_VM_WRITE + PROCESS_VM_OPERATION, False, self.pid
         )
+        self._address_cache = {}
 
         self._load_pointer_table(base_pointer_table)
 
@@ -340,7 +343,7 @@ class MemoryHook:
 
     def scan(
         self,
-        pointer_dict: tp.Union[BasePointerSearch, dict[str, BasePointerSearch]],
+        pointers: tp.Union[bytes, BasePointerSearch, dict[str, tp.Union[bytes, BasePointerSearch]]],
         chunk_size=8192,
         prefer_numpy=False,  # TODO: numpy method is slower and more restrictive, even with chunk size 8192!
         use_regex=False,
@@ -354,24 +357,29 @@ class MemoryHook:
         `pointer.address_func` is not `None`, the address will be fed through that function first. If the address is
         not found, the dictionary value will be `None`.
         """
-        if isinstance(pointer_dict, BasePointerSearch):
-            return self.scan({"x": pointer_dict}, chunk_size, prefer_numpy, use_regex, max_address, ignore_repeats)["x"]
+        if isinstance(pointers, (bytes, BasePointerSearch)):
+            return self.scan({"x": pointers}, chunk_size, prefer_numpy, use_regex, max_address, ignore_repeats)["x"]
 
         use_numpy = prefer_numpy and numpy
         pointer_int32_dict = {}
         if use_numpy:
-            for pointer_name, pointer in pointer_dict.items():
-                if len(pointer.sequence) % 4:
-                    raise ValueError(
-                        f"`BasePointerSearch.sequence` must have a length divisible by 4 "
-                        f"(found length {len(pointer.sequence)})."
-                    )
-                int32_count = len(pointer.sequence) // 4
-                pointer_int32_dict[pointer_name] = struct.unpack("I" * int32_count, pointer.sequence)
+            for pointer_name, pointer in pointers.items():
+                if isinstance(pointer, BasePointerSearch):
+                    sequence = pointer.sequence
+                elif isinstance(pointer, bytes):
+                    sequence = pointer
+                else:
+                    raise TypeError(f"Unsupported pointer type: {pointer}")
+                if len(sequence) % 4:
+                    raise ValueError(f"Pointer sequence length must be divisible by 4 (found length {len(sequence)}).")
+                int32_count = len(sequence) // 4
+                pointer_int32_dict[pointer_name] = struct.unpack("I" * int32_count, sequence)
             largest_sequence_size = max(len(p) for p in pointer_int32_dict.values())
             stride = 4 * (chunk_size - largest_sequence_size)
         else:
-            largest_sequence_size = max(len(p.sequence) for p in pointer_dict.values())
+            largest_sequence_size = max(
+                len(p.sequence if isinstance(p, BasePointerSearch) else p) for p in pointers.values()
+            )
             stride = chunk_size - largest_sequence_size
 
         if largest_sequence_size >= chunk_size:
@@ -386,7 +394,7 @@ class MemoryHook:
 
         bytes_read = SIZE_T()
         search_from_address = self.BASE_ADDRESS
-        found_pointers = {pointer_name: None for pointer_name in pointer_dict}
+        found_pointers = {pointer_name: None for pointer_name in pointers}
         while 1:
 
             if max_address is not None and search_from_address > max_address:
@@ -423,25 +431,32 @@ class MemoryHook:
 
                             first_hit = numpy.argmax(hits)
                             address = search_from_address + 4 * first_hit
-                            if address_func := pointer_dict[pointer_name].address_func is not None:
+                            if address_func := pointers[pointer_name].address_func is not None:
                                 found_pointers[pointer_name] = int(address_func(self, address))
                             else:
                                 found_pointers[pointer_name] = int(address)
                 else:
                     data = bytes(buffer[: bytes_read.value])
-                    for pointer_name, pointer in pointer_dict.items():
+                    for pointer_name, pointer in pointers.items():
+                        if isinstance(pointer, BasePointerSearch):
+                            sequence = pointer.sequence
+                            address_func = pointer.address_func
+                        elif isinstance(pointer, bytes):
+                            sequence = pointer
+                            address_func = None
+                        else:
+                            raise TypeError(f"Unsupported pointer type: {pointer}")
                         address = None
                         if use_regex:
-                            if match := re.search(pointer.sequence, data, re.DOTALL):
+                            if match := re.search(sequence, data, re.DOTALL):
                                 address = search_from_address + match.start()
                         else:
-                            if (index := data.find(pointer.sequence)) != -1:
+                            if (index := data.find(sequence)) != -1:
                                 address = search_from_address + index
                         if address is not None:
                             if not ignore_repeats and found_pointers[pointer_name] is not None:
                                 raise MemoryHookError(f"Scan found multiple matches for pointer {pointer_name}.")
-
-                            if address_func := pointer.address_func is not None:
+                            if address_func is not None:
                                 found_pointers[pointer_name] = address_func(self, address)
                             else:
                                 found_pointers[pointer_name] = address
@@ -490,15 +505,27 @@ class MemoryHookError(SoulstructError):
     pass
 
 
+def _cached(func):
+    """Updates cache from `__address_cache__` file before calling method, then writes latest `__address_cache__`."""
+
+    @functools.wraps(func)
+    def wrapped(self: MemoryHook, *args, **kwargs):
+        try:
+            with PACKAGE_PATH("__address_cache__").open("rb") as f:
+                self._address_cache = pickle.load(f)
+        except (FileNotFoundError, EOFError, ValueError):
+            self._address_cache = {}
+        result = func(self, *args, **kwargs)
+        with PACKAGE_PATH("__address_cache__").open("wb") as f:
+            pickle.dump(self._address_cache, f)
+        return result
+
+    return wrapped
+
+
 class DSRMemoryHook(MemoryHook):
 
-    _DRAW_PARAM_MARKER = b"\xb8\xdf\x36\x41\x01\x00\x00\x00"
-
-    try:
-        with PACKAGE_PATH("__ds1r_cache__").open("rb") as f_:
-            _CACHED_DRAW_PARAM_ADDRESSES = pickle.load(f_)  # type: dict
-    except (FileNotFoundError, EOFError, ValueError):
-        _CACHED_DRAW_PARAM_ADDRESSES = {}  # cached addresses of UTF-16 strings
+    _PARAM_MARKER = b"\xB8\xDF\x36\x41\x01\x00\x00\x00"  # appears at the start of every in-memory Param header struct
 
     def __init__(self, dsr_pid=None):
         if dsr_pid is None:
@@ -519,47 +546,74 @@ class DSRMemoryHook(MemoryHook):
         You MUST NOT change the number of rows in the `DrawParam` since the last time the game was loaded, as the size
         of the binary `DrawParam` data must stay the same. This method will check the DrawParam header to try to
         prevent this, as otherwise the game will definitely crash from invalid memory.
+
+        Unlike GameParams, DrawParams are reloaded every time the game is *loaded*, not every time the game is started.
+        This is fortunate for in-game testing, but it means the DrawParam memory addresses need to be reloaded (and
+        re-cached) every time the game is reloaded.
         """
+        if not draw_param.param_info:
+            raise ValueError(f"Cannot write to game memory for Param type '{draw_param.param_type}'.")
         if slot not in {0, 1}:
             raise ValueError(f"Slot must be 0 or 1, not {slot}.")
-        if not draw_param.param_info:
-            raise ValueError(f"Cannot write to game memory for DrawParam type '{draw_param.param_type}'.")
-        nickname = draw_param.param_info["nickname"]
+        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}"
+        paramdef_name = draw_param.param_info["paramdef_name"]
+        self._write_param(draw_param.pack(sort=False), param_file_name, paramdef_name)
 
-        param_string = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}"
-        param_string_bytes = param_string.encode("utf-16-le")
+    def write_game_param_to_memory(self, game_param: Param):
+        """Write the given `GameParam` Param (NOT the entire `GameParamBND`) to game memory.
 
-        new_binary = draw_param.pack(sort=False)
+        GameParams are loaded into memory only once, when the game is launched, and their addresses do not change after
+        that. Use `write_draw_param_to_memory` for DrawParams, which are reloaded every time the game loads (and require
+        the area ID and slot to find the right param).
+        """
+        if not game_param.param_info:
+            raise ValueError(f"Cannot write to game memory for Param type '{game_param.param_type}'.")
+        param_file_name = game_param.param_info["file_name"]
+        paramdef_name = game_param.param_info["paramdef_name"]
+        self._write_param(game_param.pack(sort=False), param_file_name, paramdef_name)
 
-        data_address = -1
-        existing_header = b""
-        if (cached_address := self._CACHED_DRAW_PARAM_ADDRESSES.get((nickname, area_id, slot), -1)) != -1:
-            # Try cached address first.
-            existing_header = self.read(cached_address, 44)
-            if existing_header[12:] == new_binary[12:44]:
-                data_address = cached_address
-        if data_address == -1:
-            param_string_search = BasePointerSearch(param_string_bytes)
-            param_string_address = self.scan(param_string_search, max_address=0x40000000)
-            if param_string_address is None:
-                raise MemoryError(f"Could not find memory address of DrawParam '{nickname}' in game memory.")
-            string_offset_search = BasePointerSearch(self._DRAW_PARAM_MARKER + struct.pack("Q", param_string_address))
-            string_offset_address = self.scan(string_offset_search, max_address=0x40000000)
-            data_address = self.read(string_offset_address + 56, 8, "q")
-            self._CACHED_DRAW_PARAM_ADDRESSES[nickname, area_id, slot] = data_address
-            # print(hex(param_string_address), hex(string_offset_address), hex(data_address))
-            existing_header = self.read(data_address, 44)  # up to end of param name (32j)
+    def write_game_param_bnd_to_memory(self, game_param_bnd: GameParamBND):
+        """Write all `GameParam` params with `param_info` defined to game memory."""
+        for game_param in game_param_bnd.params.values():
+            if game_param.param_info:
+                self.write_game_param_to_memory(game_param)
 
-        if existing_header != new_binary[:44]:
+    def _write_param(self, packed_param: bytes, param_file_name: str, paramdef_name: str):
+        """Internal method shared by GameParam and DrawParam writes. Use public methods above."""
+        data_address = self.get_param_address(param_file_name, paramdef_name)
+        existing_header = self.read(data_address, 44)  # up to end of param name (32j)
+        if existing_header != packed_param[:44]:
             raise ValueError(
-                f"Start of new DrawParam header does not match start of existing DrawParam header:\n"
-                f"  New: {new_binary[:44]}\n"
-                f"  Old: {existing_header}"
+                f"Start of new Param header does not match start of existing Param header:\n"
+                f"  New: {packed_param[:44]}\n"
+                f"  Old: {existing_header}\n"
+                f"This could be because the number of rows has changed or (less likely) the address is wrong."
             )
-        self.write(data_address, new_binary)
+        self.write(data_address, packed_param)
 
-        with PACKAGE_PATH("__ds1r_cache__").open("wb") as f:
-            pickle.dump(self._CACHED_DRAW_PARAM_ADDRESSES, f)
+    @_cached
+    def get_param_address(self, param_file_name: str, paramdef_name: str):
+        """Find memory address of given `param_file_name` (e.g. "NpcThinkParam" or "m15_1_LightScatteringBank").
+
+        If an address is already cached, it is validated using `paramdef_name` (e.g. "NPC_THINK_PARAM_ST" or
+        "LIGHT_SCATTERING_BANK") first.
+        """
+        cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+        if cached_address is not None:
+            # Try cached address first.
+            paramdef_name_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string (32j)
+            if paramdef_name_at_cached == paramdef_name.encode():
+                return cached_address  # address is still valid
+
+        # Search for address.
+        param_string_address = self.scan(param_file_name.encode("utf-16-le"), max_address=0x40000000)
+        if param_string_address is None:
+            raise MemoryError(f"Could not find memory address of Param '{param_file_name}' in game memory.")
+        string_offset_search = BasePointerSearch(self._PARAM_MARKER + struct.pack("Q", param_string_address))
+        string_offset_address = self.scan(string_offset_search, max_address=0x40000000)
+        data_address = self.read(string_offset_address + 56, 8, "q")
+        self._address_cache.setdefault("ds1r", {})[param_file_name] = data_address
+        return data_address
 
 
 def test_dsr_hook():

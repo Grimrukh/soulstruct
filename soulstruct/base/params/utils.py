@@ -105,6 +105,10 @@ class FieldDisplayInfo:
         """No harm done if you treat this as a `DynamicFieldInfo`."""
         return self
 
+    @property
+    def docstring(self):
+        return f"[{self.name}] {self.description}"
+
 
 class DynamicFieldDisplayInfo(abc.ABC):
     """Called with a `ParamEntry` instance, in which `type_field_name` is checked before returning `FieldInfo`."""
