@@ -12,6 +12,7 @@ from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame, ToolTip
 
 if tp.TYPE_CHECKING:
+    from soulstruct.base.project.core import GameDirectoryProject
     from soulstruct.base.project.links import WindowLinker
 
 _LOGGER = logging.getLogger(__name__)
@@ -208,8 +209,16 @@ class BaseEditor(SmartFrame, abc.ABC):
     ENTRY_ROW_CLASS = EntryRow
     entry_rows: list[EntryRow]
 
-    def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
+    def __init__(
+        self,
+        project: GameDirectoryProject,
+        linker: WindowLinker,
+        master=None,
+        toplevel=False,
+        window_title="Soulstruct Editor",
+    ):
         super().__init__(master=master, toplevel=toplevel, window_title=window_title)
+        self._project = project
         self.linker = linker
         self.action_history = ActionHistory()
         self.view_history = ViewHistory()

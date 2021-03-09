@@ -859,7 +859,7 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
                     local_collision_indices=local_collision_indices,
                 )
             except KeyError as e:
-                raise SoulstructError(str(e))
+                raise SoulstructError(f"Missing name referenced by {entry.name}: {str(e)}")
             else:
                 type_indices[entry.ENTRY_SUBTYPE] += 1
 

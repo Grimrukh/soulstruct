@@ -6,8 +6,7 @@ import logging
 import typing as tp
 from pathlib import Path
 
-if tp.TYPE_CHECKING:
-    from soulstruct.game_types.msb_types import Map
+from soulstruct.game_types.msb_types import Map
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,6 +25,13 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
         raise ImportError("No game maps given. (You should import `get_maps` from `soulstruct.maps.{game}.maps`.)")
 
     source_orig = source if block_id is None else (source, block_id)
+
+    if isinstance(source, Map):
+        if block_id is not None:
+            raise ValueError(f"`block_id` must be None if a Map instance is passed to `get_map`.")
+        if source not in game_maps:
+            raise ValueError(f"Map {source} does not appear in game's maps: {game_maps}")
+        return source
 
     if isinstance(source, (list, tuple)):
         if len(source) == 4 and source[2] in {-1, 0} and source[3] in {-1, 0}:

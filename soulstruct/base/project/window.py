@@ -5,6 +5,7 @@ __all__ = ["ProjectWindow"]
 import abc
 import logging
 import re
+import subprocess
 import sys
 import threading
 import time
@@ -193,7 +194,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.maps_tab = self.SmartFrame(
                 frame=tab_frames["maps"],
                 smart_frame_class=MapsEditor,
-                maps=self.project.maps,
+                project=self.project,
                 character_models=self.CHARACTER_MODELS,
                 global_map_choice_func=self.set_global_map_choice,
                 linker=self.linker,
@@ -204,7 +205,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.entities_tab = self.SmartFrame(
                 frame=tab_frames["entities"],
                 smart_frame_class=EntityEditor,
-                maps=self.project.maps,
+                project=self.project,
                 evs_directory=self.project.project_root / "events",
                 global_map_choice_func=self.set_global_map_choice,
                 linker=self.linker,
@@ -216,7 +217,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.params_tab = self.SmartFrame(
                 frame=tab_frames["params"],
                 smart_frame_class=ParamsEditor,
-                params=self.project.params,
+                project=self.project,
                 linker=self.linker,
                 sticky="nsew",
             )
@@ -226,7 +227,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.lighting_tab = self.SmartFrame(
                 frame=tab_frames["lighting"],
                 smart_frame_class=LightingEditor,
-                lighting=self.project.lighting,
+                project=self.project,
                 linker=self.linker,
                 sticky="nsew",
             )
@@ -236,7 +237,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.text_tab = self.SmartFrame(
                 frame=tab_frames["text"],
                 smart_frame_class=TextEditor,
-                text=self.project.text,
+                project=self.project,
                 linker=self.linker,
                 sticky="nsew",
             )
@@ -246,7 +247,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.events_tab = self.SmartFrame(
                 frame=tab_frames["events"],
                 smart_frame_class=EventEditor,
-                emevd_directory=self.project.emevd_directory,
+                project=self.project,
                 evs_directory=self.project.project_root / "events",
                 game_root=self.project.game_root,
                 global_map_choice_func=self.set_global_map_choice,
@@ -259,7 +260,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.ai_tab = self.SmartFrame(
                 frame=tab_frames["ai"],
                 smart_frame_class=AIEditor,
-                ai=self.project.ai,
+                project=self.project,
                 script_directory=self.project.project_root / "ai_scripts",
                 export_directory=self.project.get_game_path_of_data_type("ai"),
                 allow_decompile=self.project.GAME.name == "Dark Souls Remastered",
@@ -274,7 +275,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.talk_tab = self.SmartFrame(
                 frame=tab_frames["talk"],
                 smart_frame_class=TalkEditor,
-                talk_directory=self.project.talk_directory,
+                project=self.project,
                 esp_directory=self.project.project_root / "talk",
                 global_map_choice_func=self.set_global_map_choice,
                 text_font_size=self.project.text_editor_font_size,
@@ -302,12 +303,12 @@ class ProjectWindow(SmartFrame, abc.ABC):
     def build_top_menu(self):
         top_menu = self.Menu()
 
-        file_menu = self.Menu(tearoff=0)
+        file_menu = self.Menu()
         self._build_file_menu(file_menu)
         top_menu.add_cascade(label="File", menu=file_menu)
 
         # TODO: edit commands
-        # edit_menu = self.Menu(tearoff=0)
+        # edit_menu = self.Menu()
         # edit_menu.add_command(label="Undo", foreground='#FFF', command=lambda: print("Undo"))
         # edit_menu.add_command(label="Redo", foreground='#FFF', command=lambda: print("Redo"))
         # edit_menu.add_command(label="Copy", foreground='#FFF', command=lambda: print("Copy"))
@@ -315,34 +316,44 @@ class ProjectWindow(SmartFrame, abc.ABC):
         # edit_menu.add_command(label="Paste", foreground='#FFF', command=lambda: print("Paste"))
         # top_menu.add_cascade(label="Edit", menu=edit_menu)
 
-        tools_menu = self.Menu(tearoff=0)
+        tools_menu = self.Menu()
         self._build_tools_menu(tools_menu)
         top_menu.add_cascade(label="Tools", menu=tools_menu)
+
+        scripts_menu = self.Menu()
+        self._build_scripts_menu(scripts_menu)
+        top_menu.add_cascade(label="Scripts", menu=scripts_menu)
 
         self.toplevel.config(menu=top_menu)
 
     def _build_file_menu(self, file_menu):
-        save_submenu = self.Menu(tearoff=0)
+        save_submenu = self.Menu()
         self._build_save_submenu(save_submenu)
-        file_menu.add_cascade(label=f"Save", foreground="#FFF", menu=save_submenu)
+        file_menu.add_cascade(label="Save", foreground="#FFF", menu=save_submenu)
 
         file_menu.add_separator()
 
-        import_from_game_submenu = self.Menu(tearoff=0)
+        reload_submenu = self.Menu()
+        self._build_reload_submenu(reload_submenu)
+        file_menu.add_cascade(label="Reload", foreground="#FFF", menu=reload_submenu)
+
+        file_menu.add_separator()
+
+        import_from_game_submenu = self.Menu()
         self._build_import_submenu(import_from_game_submenu, self.project.game_root)
         file_menu.add_cascade(label="Import from Game", foreground="#FFF", menu=import_from_game_submenu)
 
-        import_from_submenu = self.Menu(tearoff=0)
+        import_from_submenu = self.Menu()
         self._build_import_submenu(import_from_submenu, None)
         file_menu.add_cascade(label="Import from...", foreground="#FFF", menu=import_from_submenu)
 
         file_menu.add_separator()
 
-        export_to_game_submenu = self.Menu(tearoff=0)
+        export_to_game_submenu = self.Menu()
         self._build_export_submenu(export_to_game_submenu, self.project.game_root)
         file_menu.add_cascade(label="Export to Game", foreground="#FFF", menu=export_to_game_submenu)
 
-        export_to_submenu = self.Menu(tearoff=0)
+        export_to_submenu = self.Menu()
         self._build_export_submenu(export_to_submenu, None)
         file_menu.add_cascade(label="Export to...", foreground="#FFF", menu=export_to_submenu)
 
@@ -356,13 +367,23 @@ class ProjectWindow(SmartFrame, abc.ABC):
         file_menu.add_command(label="Quit", foreground="#FFF", command=self.confirm_quit)
 
     def _build_save_submenu(self, save_menu):
-        save_menu.add_command(label=f"Save Entire Project", foreground="#FFF", command=self._save_data)
+        save_menu.add_command(label="Save Entire Project", foreground="#FFF", command=self._save_data)
         save_menu.add_separator()
         for data_type in self.data_types:
             save_menu.add_command(
                 label=f"Save {data_type_caps(data_type)}",
                 foreground="#FFF",
                 command=lambda d=data_type: self._save_data(d),
+            )
+
+    def _build_reload_submenu(self, reload_menu):
+        reload_menu.add_command(label="Reload Entire Project", foreground="#FFF", command=self._reload_data)
+        reload_menu.add_separator()
+        for data_type in self.data_types:
+            reload_menu.add_command(
+                label=f"Reload {data_type_caps(data_type)}",
+                foreground="#FFF",
+                command=lambda d=data_type: self._reload_data(d),
             )
 
     def _build_import_submenu(self, import_menu, import_dir):
@@ -407,6 +428,60 @@ class ProjectWindow(SmartFrame, abc.ABC):
         tools_menu.add_command(label="Unpack BND", foreground="#FFF", command=self._unpack_bnd)
         tools_menu.add_command(label="Repack BND", foreground="#FFF", command=self._repack_bnd)
         return tools_menu
+
+    def _build_scripts_menu(self, scripts_menu):
+        for script in self.project.custom_script_directory.rglob("*.py"):
+            if script.name.startswith("_"):
+                continue  # skipped
+            scripts_menu.add_command(label=script.stem, foreground="#FFF", command=lambda s=script: self._run_script(s))
+        scripts_menu.add_separator()
+        scripts_menu.add_command(label="Open Console", foreground="#FFF", command=self._open_console)
+
+    def _run_script(self, script_path: Path):
+        """Run given Python script `script_path` in a subprocess and wait for it to return."""
+        completed_process = self.project.run_script(script_path.absolute())  # same stdout and stderr
+        if completed_process.returncode != 0:
+            self.CustomDialog(
+                title="Script Error",
+                message=f"Script '{script_path.name}' encountered an error. It may have only partially completed.",
+            )
+            return
+        self.CustomDialog(
+            title="Script Successful",
+            message=f"Script '{script_path.name}' ran successfully.",
+        )
+
+    def _open_console(self):
+        _LOGGER.info("Starting interactive console in new window. Note that it will load the LAST SAVED project data.")
+        result = subprocess.run(
+            [sys.executable, "-m", "soulstruct", "--console", str(self.project.project_root)],
+            creationflags=subprocess.CREATE_NEW_CONSOLE,
+        )
+        if result.returncode not in {0, 3221225786}:  # second code is for window close
+            self.CustomDialog(
+                title="Console Error",
+                message="Interactive console encountered an error and terminated. Project data has not been reloaded, "
+                        "as it may have been corrupted. If you believe the console may have written malformed data, "
+                        "make sure to save your project files again from the GUI before closing it. Otherwise, restart "
+                        "Soulstruct to load any new data written by the console.",
+            )
+            _LOGGER.info(f"Interactive console exited with an unexpected return code: {result.returncode}")
+            return
+        _LOGGER.info("Interactive console exited properly.")
+        if (
+            self.CustomDialog(
+                title="Reload Project Data?",
+                message="Reload maps, params, lighting, and text data to acquire any changes made in the console?",
+                button_names=("Yes, reload data", "No, do nothing"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1,
+                default_output=1,
+            )
+        ) == 0:
+            for data_type in self.project.DATA_TYPES:
+                if data_type not in {"maps", "params", "lighting", "text"}:
+                    continue
+                self.project.load(data_type)
 
     def alphanumeric_word_boundaries(self):
         """See: http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19"""
@@ -532,11 +607,12 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         self.refresh_tab_data(data_type)
 
-    def _save_data(self, data_type=None, mimic_click=False):
+    def _save_data(self, data_type=None, mimic_click=False, single_script_only=False):
         if data_type == "runtime":
             return  # nothing to save
         elif data_type == "events":
-            self.events_tab.save_selected_evs()  # TODO: File menu should save all events.
+            # Saves '.evs.py' file(s) to project 'events' directory.
+            self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
             if mimic_click:
                 self.mimic_click(self.save_tab_button)
             return
@@ -553,9 +629,38 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.mimic_click(self.save_all_button if data_type is None else self.save_tab_button)
 
         self.project.save(data_type)
+        self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
+        self.flash_bg(self)
+
+    def _reload_data(self, data_type=None):
         if data_type is None:
-            # TODO: Decide how to save one vs. all EVS files.
-            self.events_tab.save_all_evs()  # saves EVS files to project subdirectory
+            message = "Are you sure you want to reload all project data? Any unsaved changes will be lost."
+        else:
+            message = f"Are you sure you want to reload project {data_type} data? Any unsaved changes will be lost."
+        if (
+            self.CustomDialog(
+                title="Reload Project Data?",
+                message=message,
+                button_names=("Yes, reload data", "No, do nothing"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1,
+                default_output=1,
+            )
+        ) != 0:
+            return
+        if data_type == "runtime":
+            return  # nothing to reload
+        elif data_type == "events":
+            # No need to reload `EMEVDDirectory` instance.
+            self.events_tab.scan_evs_files()
+            self.events_tab.refresh()
+            return
+        elif data_type == "talk":
+            # No need to reload `TalkDirectory` instance.
+            self.talk_tab.refresh()
+            return
+
+        self.project.load(data_type)
         self.flash_bg(self)
 
     def _export_data(self, data_type=None, export_directory=None, mimic_click=False, single_script_only=False):

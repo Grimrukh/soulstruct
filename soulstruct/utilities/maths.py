@@ -8,6 +8,7 @@ __all__ = [
     "shift",
     "matrix_multiply",
     "resolve_rotation",
+    "get_distance",
 ]
 
 import abc
@@ -325,3 +326,14 @@ def resolve_rotation(rotation: tp.Union[Matrix3, Vector3, list, tuple, int, floa
     elif isinstance(rotation, Matrix3):
         return rotation
     raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
+
+
+def get_distance(x1: Vector3, x2: Vector3, squared=False):
+    if not isinstance(x1, Vector3):
+        x1 = Vector3(x1)
+    if not isinstance(x2, Vector3):
+        x2 = Vector3(x2)
+    squared_distance = (x2.x - x1.x) ** 2 + (x2.y - x1.y) ** 2 + (x2.z - x1.z) ** 2
+    if squared:
+        return squared_distance
+    return math.sqrt(squared_distance)

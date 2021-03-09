@@ -278,7 +278,7 @@ class AIEditor(BaseEditor):
 
     def __init__(
         self,
-        ai: AIDirectory,
+        project,
         script_directory,
         export_directory,
         allow_decompile,
@@ -288,7 +288,6 @@ class AIEditor(BaseEditor):
         master=None,
         toplevel=False,
     ):
-        self.ai = ai
         self.script_directory = Path(script_directory)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
@@ -309,7 +308,11 @@ class AIEditor(BaseEditor):
         self.decompile_button = None
         self.write_button = None
         self.reload_button = None
-        super().__init__(linker=linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
+        super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
+
+    @property
+    def ai(self) -> AIDirectory:
+        return self._project.ai
 
     def refresh_categories(self):
         return
@@ -708,8 +711,8 @@ class AIEditor(BaseEditor):
         luabnd_path = self.export_directory / luabnd.bnd.path.name
         luabnd.write(luabnd_path)
 
-    def load_all_from_project_folder(self):
-        if (
+    def load_all_from_project_folder(self, confirm=True):
+        if confirm and (
             self.CustomDialog(
                 title="Confirm Lua Operation",
                 message=f"This will overwrite any decompiled script in the current project state\n"

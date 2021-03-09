@@ -98,11 +98,14 @@ class ParamsEditor(BaseFieldEditor):
     ENTRY_ROW_CLASS = ParamEntryRow
     entry_rows: list[ParamEntryRow]
 
-    def __init__(self, params: GameParamBND, linker, master=None, toplevel=False):
-        self.params = params
+    def __init__(self, project, linker, master=None, toplevel=False):
         self.go_to_param_id_entry = None
         self.search_result = None
-        super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
+        super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
+
+    @property
+    def params(self) -> GameParamBND:
+        return self._project.params
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):

@@ -81,3 +81,5 @@ class DrawParamDirectory(_BaseDrawParamDirectory):
     m18: DrawParamBND
     m99: DrawParamBND
     default: DrawParamBND
+
+    bnds: dict[str, DrawParamBND]

@@ -27,7 +27,7 @@ class TextEntryRow(EntryRow):
             text_categories = ("Names", "Summaries", "Descriptions")
             linked_id = ((text_id // 100) * 100) if item_type in {"Weapon", "Armor"} else text_id
             for link_category in text_categories:
-                if text_type != link_category and linked_id in self.master.Text[item_type + link_category]:
+                if text_type != link_category and linked_id in self.master.text[item_type + link_category]:
                     if not separator_added:
                         self.context_menu.add_separator()
                         separator_added = True
@@ -75,13 +75,16 @@ class TextEditor(BaseEditor):
     ENTRY_ROW_CLASS = TextEntryRow
     entry_rows: list[TextEntryRow]
 
-    def __init__(self, text: MSGDirectory, linker, master=None, toplevel=False):
-        self.Text = text
+    def __init__(self, project, linker, master=None, toplevel=False):
         self.show_all_categories = None
         self.find_text_id_entry = None
         self.find_text_string_entry = None
         self.replace_text_string_entry = None
-        super().__init__(linker, master, toplevel, window_title="Soulstruct Text Editor")
+        super().__init__(project, linker, master, toplevel, window_title="Soulstruct Text Editor")
+
+    @property
+    def text(self) -> MSGDirectory:
+        return self._project.text
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
@@ -110,7 +113,7 @@ class TextEditor(BaseEditor):
         if category is None:
             category = self.active_category
 
-        text_dict = self.Text[category]
+        text_dict = self.text[category]
         if base_text_id % 100 != 0:
             self.CustomDialog(
                 title="Invalid Base ID for Upgrades",
@@ -165,7 +168,7 @@ class TextEditor(BaseEditor):
                 f"The ID must be an integer (zero or greater).",
             )
             return
-        if self.active_category and id_to_find in self.Text[self.active_category]:
+        if self.active_category and id_to_find in self.text[self.active_category]:
             row_index = self._update_first_entry_display_index(self.get_entry_index(id_to_find))
             self.refresh_entries()
             self.select_entry_row_index(row_index, edit_if_already_selected=False)
@@ -205,21 +208,21 @@ class TextEditor(BaseEditor):
             self.flash_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
 
     def _get_display_categories(self):
-        return self.Text.ALL_CATEGORIES if self.show_all_categories.get() else self.Text.MAIN_CATEGORIES
+        return self.text.ALL_CATEGORIES if self.show_all_categories.get() else self.text.MAIN_CATEGORIES
 
     def get_category_data(self, category=None) -> dict:
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        return self.Text[category]
+        return self.text[category]
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:
             category = self.active_category
             if category is None:
                 return []
-        return self.Text.get_range(category, self.first_display_index, self.first_display_index + self.ENTRY_RANGE_SIZE)
+        return self.text.get_range(category, self.first_display_index, self.first_display_index + self.ENTRY_RANGE_SIZE)
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Get index of entry in text category. Ignores current display range."""
@@ -227,20 +230,20 @@ class TextEditor(BaseEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No text category selected.")
-        if entry_id not in self.Text[category]:
+        if entry_id not in self.text[category]:
             raise ValueError(f"Text ID {entry_id} does not appear in category {category}.")
-        return sorted(self.Text[category]).index(entry_id)
+        return sorted(self.text[category]).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No text category selected.")
-        return self.Text[category][entry_id]
+        return self.text[category][entry_id]
 
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
-        entry_text = self.Text[category].pop(entry_id)
-        self.Text[category][new_id] = entry_text
+        entry_text = self.text[category].pop(entry_id)
+        self.text[category][new_id] = entry_text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(new_id, entry_text)
 
@@ -249,6 +252,6 @@ class TextEditor(BaseEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No text category selected.")
-        self.Text[category][entry_id] = text
+        self.text[category][entry_id] = text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text)

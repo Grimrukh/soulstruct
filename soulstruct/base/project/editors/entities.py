@@ -209,19 +209,22 @@ class EntityEditor(BaseEditor):
 
     def __init__(
         self,
-        maps: MapStudioDirectory,
+        project,
         evs_directory,
         global_map_choice_func,
         linker,
         master=None,
         toplevel=False,
     ):
-        self.maps = maps
         self.map_choice = None
         self.global_map_choice_func = global_map_choice_func
         self.evs_directory = Path(evs_directory)
         self._e_entry_description_edit = None
-        super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
+        super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
+
+    @property
+    def maps(self) -> MapStudioDirectory:
+        return self._project.maps
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):

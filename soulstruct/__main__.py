@@ -19,6 +19,21 @@ import json
 import logging
 from pathlib import Path
 
+try:
+    from colorama import init as colorama_init, Fore
+except ImportError:
+    colorama_init = None
+    Fore = None
+    MAGENTA = ""
+    GREEN = ""
+    RED = ""
+    RESET = ""
+else:
+    MAGENTA = Fore.MAGENTA
+    GREEN = Fore.GREEN
+    RED = Fore.RED
+    RESET = Fore.RESET
+
 from soulstruct.config import DEFAULT_PROJECT_PATH
 from soulstruct.games import get_game, GameSelector
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
@@ -53,16 +68,22 @@ parser.add_argument(
     ),
 )
 parser.add_argument(
-    "--maps", action="store_true", help=word_wrap("Open Soulstruct Maps Editor with given source.")
+    "--show_console_startup",
+    action="store_true",
+    default=True,
+    help=word_wrap("Show information message at console startup."),
 )
 parser.add_argument(
-    "--text", action="store_true", help=word_wrap("Open Soulstruct Text Editor with given source.")
+    "--maps", action="store_true", help=word_wrap("Open Soulstruct Maps Editor with given source.")
 )
 parser.add_argument(
     "--params", action="store_true", help=word_wrap("Open Soulstruct Param Editor with given source.")
 )
 parser.add_argument(
     "--lighting", action="store_true", help=word_wrap("Open Soulstruct Lighting Editor with given source.")
+)
+parser.add_argument(
+    "--text", action="store_true", help=word_wrap("Open Soulstruct Text Editor with given source.")
 )
 parser.add_argument(
     "-m",
@@ -72,7 +93,6 @@ parser.add_argument(
 )
 parser.add_argument("--bndpack", action="store", help=word_wrap("Repack a BND from the given source path."))
 parser.add_argument("--bndunpack", action="store", help=word_wrap("Unpack a BND from the given source path."))
-parser.add_argument("--ai", action="store_true", help=word_wrap("Open Soulstruct AI Script Editor with given source."))
 parser.add_argument(
     "--consoleLogLevel",
     action="store",
@@ -95,7 +115,6 @@ Maps = None
 Text = None
 Params = None
 Lighting = None
-AI = None
 
 
 def get_existing_project_game(project_path: str):
@@ -130,7 +149,6 @@ def soulstruct_main(ss_args) -> bool:
 
     if ss_args.modmanager:
         from soulstruct.utilities.mod_manager import ModManagerWindow
-
         ModManagerWindow().wait_window()
         return ss_args.console
 
@@ -138,12 +156,6 @@ def soulstruct_main(ss_args) -> bool:
         game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne").go()
         global Maps
         Maps = game.import_game_submodule("maps").MapStudioDirectory(source)
-        return ss_args.console
-
-    if ss_args.text:
-        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "darksouls3").go()
-        global Text
-        Text = game.import_game_submodule("text").MSGDirectory(source)
         return ss_args.console
 
     if ss_args.params:
@@ -158,6 +170,12 @@ def soulstruct_main(ss_args) -> bool:
         Lighting = game.import_game_submodule("lighting").DrawParamDirectory(source)
         return ss_args.console
 
+    if ss_args.text:
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "darksouls3").go()
+        global Text
+        Text = game.import_game_submodule("text").MSGDirectory(source)
+        return ss_args.console
+
     if ss_args.bndpack is not None:
         from soulstruct.containers.bnd import BND
         bnd = BND(ss_args.bndpack)
@@ -170,12 +188,6 @@ def soulstruct_main(ss_args) -> bool:
         bnd.write_unpacked_dir()
         return False
 
-    if ss_args.ai:
-        game = GameSelector("darksouls1ptde", "darksouls1r").go()
-        global AI
-        AI = game.import_game_submodule("ai").AIDirectory(source)
-        return ss_args.console
-
     # No specific type. Open entire Soulstruct Project.
     game = get_existing_project_game(source) if source else None
     if game is None:
@@ -184,6 +196,26 @@ def soulstruct_main(ss_args) -> bool:
         # Console only.
         global Project
         Project = game.import_game_submodule("project").GameDirectoryProject(source)
+        if ss_args.show_console_startup:
+            if colorama_init:
+                colorama_init()
+            print(
+                "\n"
+                f"Starting interactive console. You can modify your project data directly here through the\n"
+                f"{GREEN}Project{RESET} attributes {GREEN}maps{RESET}, {GREEN}params{RESET}, "
+                f"{GREEN}lighting{RESET}, and {GREEN}text{RESET}. For example:\n\n"
+                f"    {GREEN}Project.maps.parts.new_character(name=\"Pet Gaping Dragon\", model_name=\"c5260\")"
+                f"{RESET}\n\n"
+                "You can also access other common operations, such as:\n\n"
+                f"    {GREEN}Project.save(\"maps\"){RESET}  # save current Maps data to project\n"
+                f"    {GREEN}Project.export_data(\"params\"){RESET}  # export current Params data to game\n"
+                f"    {GREEN}Project.import_data(){RESET}  # import ALL data types from game into project\n\n"
+                f"See the Soulstruct Python package for other functions: "
+                f"{MAGENTA}https://github.com/grimrukh/soulstruct{RESET}\n\n"
+                f"Type {RED}exit{RESET} or close the window to terminate the console. Make sure to use "
+                f"{GREEN}Project.save(){RESET}\n"
+                f"to save your changes first, if desired!\n",
+            )
         return True
     # Window.
     window = game.import_game_submodule("project").ProjectWindow(source)
@@ -209,4 +241,4 @@ if launch_interactive:
             "`import soulstruct` within an existing Python session to use the default Python console."
         )
     else:
-        embed()
+        embed(colors="neutral")

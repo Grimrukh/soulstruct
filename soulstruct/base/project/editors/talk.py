@@ -136,7 +136,7 @@ class TalkEditor(BaseEditor):
 
     def __init__(
         self,
-        talk_directory: TalkDirectory,
+        project,
         esp_directory: tp.Union[str, Path],
         global_map_choice_func: tp.Callable,
         text_font_size=10,
@@ -144,7 +144,6 @@ class TalkEditor(BaseEditor):
         master=None,
         toplevel=False,
     ):
-        self.talk = talk_directory
         self.esp_directory = Path(esp_directory)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
@@ -163,9 +162,14 @@ class TalkEditor(BaseEditor):
         self.compile_button = None
         self.reload_button = None
 
+        self._project = project  # needed before refresh
         self.refresh()
 
-        super().__init__(linker=linker, master=master, toplevel=toplevel, window_title="Soulstruct Talk Editor")
+        super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Talk Editor")
+
+    @property
+    def talk(self) -> TalkDirectory:
+        return self._project.talk
 
     def refresh(self):
         """Reloads all ESP files from all maps."""

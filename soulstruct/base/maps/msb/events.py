@@ -1037,7 +1037,7 @@ class MSBEventList(MSBEntryList[MSBEvent]):
                 )
             except KeyError as e:
                 raise MapEventError(
-                    f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} event {entry.name}: {e}"
+                    f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} event '{entry.name}': {e}"
                 )
             else:
                 subtype_indices[entry.ENTRY_SUBTYPE] += 1

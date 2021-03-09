@@ -16,6 +16,9 @@ from soulstruct.base.project.utilities import bind_events, NumberEditBox
 from soulstruct.utilities import camel_case_to_spaces
 from soulstruct.utilities.window import ToolTip
 
+if tp.TYPE_CHECKING:
+    from soulstruct.base.project.core import GameDirectoryProject
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -466,7 +469,14 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
     FIELD_ROW_CLASS = FieldRow
     field_rows: list[FieldRow]
 
-    def __init__(self, linker: WindowLinker, master=None, toplevel=False, window_title="Soulstruct Editor"):
+    def __init__(
+        self,
+        project: GameDirectoryProject,
+        linker: WindowLinker,
+        master=None,
+        toplevel=False,
+        window_title="Soulstruct Editor",
+    ):
         if self.FIELD_ROW_COUNT == 0:
             raise AttributeError("Class attribute `FIELD_ROW_COUNT` must be set by child of SoulstructBaseFieldEditor.")
         self.show_hidden_fields = None
@@ -476,7 +486,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
         self.selected_field_row_index = None
         self.displayed_field_count = 0
         self.field_rows = []
-        super().__init__(linker=linker, master=master, toplevel=toplevel, window_title=window_title)
+        super().__init__(project=project, linker=linker, master=master, toplevel=toplevel, window_title=window_title)
 
     def build(self):
         """Builds category, entry, and field tables."""

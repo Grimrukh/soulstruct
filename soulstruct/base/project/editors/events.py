@@ -85,7 +85,7 @@ class EventEditor(SmartFrame):
 
     def __init__(
         self,
-        emevd_directory: EMEVDDirectory,
+        project,
         evs_directory,
         game_root,
         global_map_choice_func,
@@ -94,11 +94,11 @@ class EventEditor(SmartFrame):
         toplevel=False,
     ):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct EMEVD Manager")
+        self._project = project
         self.evs_directory = Path(evs_directory)
         self.game_root = Path(game_root)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
-        self.events = emevd_directory  # type: EMEVDDirectory
         self.evs_file_paths = {}
         self.evs_text = {}
         self.selected_map_id = None
@@ -121,6 +121,10 @@ class EventEditor(SmartFrame):
         self.bind_to_all_children("<Control-r>", lambda _: self.reload_selected(mimic_click=True))
 
         self.refresh()
+
+    @property
+    def events(self) -> EMEVDDirectory:
+        return self._project.events
 
     def build(self):
 

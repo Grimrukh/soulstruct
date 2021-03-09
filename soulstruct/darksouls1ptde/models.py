@@ -8,6 +8,7 @@ __all__ = [
     "HAS_ONE_HANDED_SPECIAL_ATTACK",
     "HAS_TWO_HANDED_SPECIAL_ATTACK",
     "SPECIAL_EFFECT_RANGES",
+    "OBJECT_POSES",
 ]
 
 
@@ -1452,4 +1453,31 @@ SPECIAL_EFFECT_RANGES = {
     (70000, 71111): "Immortality Flags",  # last two bits control some kind of immortality system
     (80000, 81111): "Special Flags",  # four bits toggling "remnant", "soul-sucking", "fascination", and something else
     (90000, 91111): "Status Flags",  # four bits toggling poison, bleed, toxic, and curse vulnerability
+}
+
+
+# Values in brackets indicate the offset of the "ground" of each pose relative to the player's position.
+OBJECT_POSES = {
+    "o0500": {  # Naked male Hollow corpse
+        10: "Lying face-down, right knee crooked, head turned right. [-0.25 Y]",
+        11: "Lying face-down, right knee crooked, head turned left [-0.25 Y]",
+        20: "Lying face-up, right knee raised, left hand on chest, head turned right",
+        21: "Lying face-up, fully laid out",
+        31: "Folded over a thin wall (e.g. a well)",
+        35: "Folded over a thick wall, head looking down",
+        42: "Lying face-down, legs hanging off edge at right angle [+0.1 Y]",
+        50: "Sitting against wall, legs spread [-0.2 Y]",
+        51: "Sitting against wall, legs almost crossed [-0.2 Y]",
+        81: "Foetal position on right side",
+        82: "Almost foetal position on left side",
+        90: "Arms wrapped around something (e.g. a spike statue)",
+        95: "Floating face-down in water",
+    },
+    "o0502": {  # Hollow Soldier corpse
+        41: "Folded over a rafter",
+    },
+    "o0504": {  # Female Hollow corpse
+        61: "Kneeling, hunched over",
+        81: "Foetal position on right side",
+    },
 }

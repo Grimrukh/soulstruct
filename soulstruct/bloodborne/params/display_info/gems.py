@@ -123,7 +123,7 @@ GEMEFFECT_PARAM_ST = {
         FieldDisplayInfo("rankMax", "MaximumRank", True, int, ""),
         FieldDisplayInfo("disposalPrice", "DisposalPrice", True, int, ""),
         FieldDisplayInfo("gemIconIdOffset", "GemIconIDOffset", True, int, ""),
-        FieldDisplayInfo("sortId:14", "SordID", True, int, ""),
+        FieldDisplayInfo("sortId:14", "SortID", True, int, ""),
         FieldDisplayInfo("sortCategory:2", "SortCategory", True, int, ""),
         FieldDisplayInfo("gemNameIdOffset", "GemNameIDOffset", True, int, ""),
         FieldDisplayInfo("speffectId_forAtk", "AttackSpecialEffectID", True, SpecialEffectParam, ""),

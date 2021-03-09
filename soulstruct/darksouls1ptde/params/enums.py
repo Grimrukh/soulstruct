@@ -810,6 +810,7 @@ class SpecialStateInfo(u8):
     GreenBlossom = 75  # Green aura VFX (Green Blossom).
     CovetousSilverSerpentRing = 76  # Not sure what it does, since the soul increase is done with params.
     TranquilWalkOfPeace = 102  # Stone Knight "gravity", probably enables Tranquil Walk glyph around player.
+    CounterDamageWindow = 110
     EggParasiteInvisible = 111  # no sign of it yet (incubation).
     EggParasiteScratching = 112  # player scratches head every ten seconds (interval set in params).
     EggParasiteStandby = 113  # seems to pass instantly.
@@ -827,6 +828,11 @@ class SpecialStateInfo(u8):
     MimicSleep = 127  # Lloyd's Talisman used on Mimic.
     UndeadRapport = 132  # Undead enemies (hard-coded list) become your ally temporarily.
     Crystallization = 136  # Turn into a crystal statue and die.
+    Resonance0 = 137  # Effect 40, applied to the player every three seconds if no resonance is active.
+    Resonance1 = 138
+    Resonance2 = 139
+    Resonance3 = 140
+    Resonance4 = 141
     LavaDamage = 142  # Damaging effect of walking in lava.
     SkeletonImmortality = 143  # Immortal skeleton.
     SkeletonDisassembled = 144  # Skeleton disassembled?

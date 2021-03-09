@@ -29,7 +29,6 @@ _LOGGER = logging.getLogger(__name__)
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).
 #  - Validation/SIB path depends on game version.
 
-
 ENTRY_LIST_FG_COLORS = {
     "Parts": "#DDF",
     "Regions": "#FDD",
@@ -261,10 +260,10 @@ class MapFieldRow(FieldRow):
         if self.field_type == list and self.field_name.endswith("_groups"):
             self.context_menu.add_command(label="Show checkbuttons", command=self._set_group_checkbuttons)
 
-        category = self.master.active_category
-        if category.startswith("Regions:") or category.endswith("Objects") or category.endswith("Characters"):
+        msb_type, msb_subtype = self.master.active_category.split(": ")
+        if msb_type == "Regions" or msb_subtype in {"Characters", "Objects", "PlayerStarts"}:
             copy_fields = ("translate", "rotate")
-            if category.endswith("Objects") or category.endswith("Characters"):
+            if msb_subtype in {"Characters", "Objects"}:
                 copy_fields += ("draw_parent_name",)
             if self.field_name in copy_fields:
                 copy_menu = self.master.Menu(tearoff=0)
@@ -410,20 +409,23 @@ class MapsEditor(BaseFieldEditor):
 
     def __init__(
         self,
-        maps: MapStudioDirectory,
+        project,
         global_map_choice_func,
         linker,
         master=None,
         toplevel=False,
         character_models: dict[int, str] = None,
     ):
-        self.maps = maps
         self.global_map_choice_func = global_map_choice_func
         self.character_models = {} if character_models is None else character_models
         self.e_coord = None
         self.map_choice = None
         self.entry_canvas_context_menu = None
-        super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
+        super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
+
+    @property
+    def maps(self) -> MapStudioDirectory:
+        return self._project.maps
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
@@ -788,7 +790,7 @@ class MapsEditor(BaseFieldEditor):
         return selected_msb[entry_list].get_entries(entry_type)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
-        """Returns a zip() generator for parent method."""
+        """Returns a `zip()` generator for parent method."""
         entry_list = self.get_category_data(category)
         return zip(range(first_index, last_index), entry_list[first_index:last_index])
 

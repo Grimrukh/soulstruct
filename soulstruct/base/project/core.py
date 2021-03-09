@@ -91,6 +91,7 @@ class GameDirectoryProject(abc.ABC):
         self.last_export_time = ""
         self._vanilla_game_root = ""
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
+        self.custom_script_directory = Path()
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
@@ -302,7 +303,7 @@ class GameDirectoryProject(abc.ABC):
         """Import data sub-structure from binary game files.
 
         If `data_type` is None (default), all data types will be imported, in which case the given `import_directory`
-        should contain the appropriate folder structure ('map/MapStudio', 'msg/ENGLISH', etc.) for all files.
+        should contain the appropriate folder structure ('map/MapStudio', etc.) for all files.
         """
         import_directory = Path(import_directory)
         data_import_path = self.get_game_path_of_data_type(data_type, root=import_directory)
@@ -530,6 +531,9 @@ class GameDirectoryProject(abc.ABC):
                         self.game_root = Path(config["GameDirectory"])
                         self.last_import_time = config.get("LastImportTime", None)
                         self.last_export_time = config["LastExportTime"]
+                        self.custom_script_directory = Path(config.get("CustomScriptDirectory", "scripts"))
+                        if not self.custom_script_directory.is_absolute():
+                            self.custom_script_directory = self.project_root / self.custom_script_directory
                         if vanilla_game_root := config.get("VanillaGameDirectory", ""):
                             self._vanilla_game_root = Path(vanilla_game_root)
                         self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
@@ -584,6 +588,25 @@ class GameDirectoryProject(abc.ABC):
         except KeyError:
             raise KeyError(f"Could not get data path to {data_type} ({data_class_name}) for game {self.GAME.name}")
 
+    def run_script(self, script_path: Path, stdout=None, stderr=None) -> subprocess.CompletedProcess:
+        """Run given `script_path` Python script in a subprocess and wait for it to return.
+
+        If the given path is relative, it will be resolved relative to `self.custom_script_directory`, which in turn
+        defaults to `{project_root}/scripts`.
+        """
+        script_path = Path(script_path)
+        if not script_path.is_absolute():
+            script_path = (self.custom_script_directory / script_path).absolute()
+        return subprocess.run(
+            [sys.executable, script_path],
+            text=True,
+            stdout=stdout,
+            stderr=stderr,
+            creationflags=subprocess.CREATE_NEW_CONSOLE,
+        )
+
+    # ~~~ PRIVATE METHODS ~~~ #
+
     @staticmethod
     def _get_timestamp(for_path=False):
         return datetime.datetime.now().strftime("%Y-%m-%d %H%M%S" if for_path else "%Y-%m-%d %H:%M:%S")
@@ -607,7 +630,7 @@ class GameDirectoryProject(abc.ABC):
             raise SoulstructProjectError("No write access to 'project_config.json' in project directory.")
 
     @staticmethod
-    def _validate_project_directory(project_path, default_root):
+    def _validate_project_directory(project_path, default_root) -> Path:
         project_path = Path(project_path)
         if not project_path.is_absolute():
             project_path = (default_root / project_path).expanduser().absolute()

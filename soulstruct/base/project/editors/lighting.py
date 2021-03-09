@@ -61,13 +61,16 @@ class LightingEditor(BaseFieldEditor):
     ENTRY_ROW_CLASS = LightingEntryRow
     entries: list[LightingEntryRow]
 
-    def __init__(self, lighting: DrawParamDirectory, linker, master=None, toplevel=False):
-        self.lighting = lighting
+    def __init__(self, project, linker, master=None, toplevel=False):
         self.map_area_choice = None
         self.slot_choice_label = None
         self.slot_choice = None
-        super().__init__(linker, master=master, toplevel=toplevel, window_title="Soulstruct Lighting Editor")
+        super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Lighting Editor")
         self._on_map_area_choice()  # Sets slot option correctly.
+
+    @property
+    def lighting(self) -> DrawParamDirectory:
+        return self._project.lighting
 
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):

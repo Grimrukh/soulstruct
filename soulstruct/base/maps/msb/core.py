@@ -149,6 +149,8 @@ class MSB(GameFile, abc.ABC):
 
     def resolve_entries_list(self, entries, entry_types=()):
         """Lists of entries can include names of entries, if unique, or the actual `MSBEntry` instances."""
+        if not entries:
+            return []
         resolved = []
         for entry in entries:
             if isinstance(entry, str):
