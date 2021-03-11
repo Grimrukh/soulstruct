@@ -517,7 +517,7 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
             "Unknown [27-28]",
             int,
             0,
-            "Unknown. Almost always zero, but see e.g. Anor Londo gondola collision.",
+            "Unknown. Almost always zero, but see e.g. Anor Londo spinning tower collision.",
         ),
     }
 

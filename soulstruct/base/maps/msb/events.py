@@ -224,6 +224,8 @@ class MSBVFXEvent(MSBEvent):
         "vfx_id",
     )
 
+    vfx_id: int
+
 
 class MSBWindEvent(MSBEvent):
     ENTRY_SUBTYPE = MSBEventSubtype.Wind

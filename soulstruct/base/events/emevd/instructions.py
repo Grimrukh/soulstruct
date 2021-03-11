@@ -1342,9 +1342,9 @@ def PlaySoundEffect(
         # For legacy reasons, the keyword argument order here isn't optimal.
         raise ValueError("A non-negative sound_id must be given.")
     if sound_type is None:
-        try:
+        if isinstance(sound_id, Sound):
             sound_type = sound_id.sound_type
-        except AttributeError:
+        else:
             raise ValueError(f"Cannot detect sound type from sound ID. Use `sound_type` or pass a `Sound` instance.")
     return to_numeric(instruction_info, anchor_entity, sound_type, sound_id)
 

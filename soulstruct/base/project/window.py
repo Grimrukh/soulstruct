@@ -460,10 +460,11 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if result.returncode not in {0, 3221225786}:  # second code is for window close
             self.CustomDialog(
                 title="Console Error",
-                message="Interactive console encountered an error and terminated. Project data has not been reloaded, "
-                        "as it may have been corrupted. If you believe the console may have written malformed data, "
-                        "make sure to save your project files again from the GUI before closing it. Otherwise, restart "
-                        "Soulstruct to load any new data written by the console.",
+                message="Interactive console encountered an error and terminated.\n\n"
+                        "Project data has not been reloaded, as it may have been corrupted.\n"
+                        "If you believe the console may have written malformed data, make\n"
+                        "sure to save your project files again from the GUI before closing it\n."
+                        "Otherwise, use File > Reload to load any new data written by the console.\n",
             )
             _LOGGER.info(f"Interactive console exited with an unexpected return code: {result.returncode}")
             return
