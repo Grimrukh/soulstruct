@@ -520,8 +520,6 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.entities_tab.maps = self.project.maps
             self.entities_tab.refresh_entries()
         else:
-            project_data = getattr(self.project, data_type)
-            setattr(getattr(self, f"{data_type}_tab"), data_type, project_data)
             if data_type == "params":
                 self.params_tab.refresh_entries()
             elif data_type == "maps":
