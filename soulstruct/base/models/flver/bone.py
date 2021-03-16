@@ -1,7 +1,7 @@
 import io
 
 from soulstruct.utilities import read_chars_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject, BinaryWriter
 from soulstruct.utilities.maths import Vector3
 
 
@@ -39,3 +39,10 @@ class Bone(BinaryObject):
         encoding = "utf-16-le" if unicode else "shift_jis_2004"
         self.name = read_chars_from_buffer(buffer, offset=data.pop("__name_offset"), encoding=encoding)
         self.set(**data)
+
+    def pack_writer(self, writer: BinaryWriter, bone_index: int):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __name_offset=writer.Reserved(f"BoneNameOffset{bone_index}"),
+        )

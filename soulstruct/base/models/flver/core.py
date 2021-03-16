@@ -8,7 +8,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject, BinaryWriter
 
 from .bone import Bone
 from .dummy import Dummy
@@ -73,6 +73,40 @@ class FLVERHeader(BinaryObject):
     unk_x5c: int
     unk_x5d: int
     unk_x68: int
+
+    def pack_writer(
+        self,
+        writer: BinaryWriter,
+        dummy_count: int,
+        material_count: int,
+        bone_count: int,
+        mesh_count: int,
+        vertex_buffer_count: int,
+        face_set_count: int,
+        buffer_layout_count: int,
+        texture_count: int,
+        true_face_count: int,
+        total_face_count: int,
+        vertex_indices_size: int,
+    ):
+        """All fields are static or can be immediately updated, except the few reserved below."""
+        self.dummy_count = dummy_count
+        self.material_count = material_count
+        self.bone_count = bone_count
+        self.mesh_count = mesh_count
+        self.vertex_buffer_count = vertex_buffer_count
+        self.face_set_count = face_set_count
+        self.buffer_layout_count = buffer_layout_count
+        self.texture_count = texture_count
+        self.true_face_count = true_face_count
+        self.total_face_count = total_face_count
+        self.vertex_indices_size = vertex_indices_size
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            data_offset=writer.Reserved("HeaderDataOffset"),
+            data_size=writer.Reserved("HeaderDataSize"),
+        )
 
 
 class FLVER(GameFile):
@@ -169,40 +203,57 @@ class FLVER(GameFile):
 
     def pack(self):
 
-        # Update header counts.
-        self.header.dummy_count = len(self.dummies)
-        self.header.material_count = len(self.materials)
-        self.header.bone_count = len(self.bones)
-        self.header.mesh_count = len(self.meshes)
-        self.header.vertex_buffer_count = sum(len(mesh.vertex_buffers) for mesh in self.meshes)
-        self.header.face_set_count = sum(len(mesh.face_sets) for mesh in self.meshes)
-        self.header.buffer_layout_count = len(self.buffer_layouts)
-        self.header.texture_count = sum(len(material.textures) for material in self.materials)
+        writer = BinaryWriter(big_endian=self.header.is_big_endian)
 
-        self.header.true_face_count = 0
-        self.header.total_face_count = 0
+        true_face_count = 0
+        total_face_count = 0
         for mesh in self.meshes:
             allow_primitive_restarts = len(mesh.vertices) < 2 ** 16 - 1  # max unsigned short value
             for face_set in mesh.face_sets:
                 face_set_true_count, face_set_total_count = face_set.get_face_counts(allow_primitive_restarts)
-                self.header.true_face_count += face_set_true_count
-                self.header.total_face_count += face_set_total_count
+                true_face_count += face_set_true_count
+                total_face_count += face_set_total_count
 
         if self.header.version < Version.Bloodborne_DS3_A:
             # Set header's `vertex_index_size` to the largest size detected across all `FaceSet`s (16 or 32).
-            self.header.vertex_indices_size = 16
+            vertex_indices_size = 16
             for mesh in self.meshes:
                 for face_set in mesh.face_sets:
                     face_set_vertex_index_size = face_set.get_vertex_index_size()
-                    self.header.vertex_indices_size = max(self.header.vertex_indices_size, face_set_vertex_index_size)
+                    vertex_indices_size = max(self.header.vertex_indices_size, face_set_vertex_index_size)
         else:
             # Vertex size is stored per `VertexBuffer`.
-            self.header.vertex_indices_size = 0
+            vertex_indices_size = 0
 
-        # Header `data_offset` and `data_size` are set just before final write.
+        self.header.pack_writer(
+            writer,
+            dummy_count=len(self.dummies),
+            material_count=len(self.materials),
+            bone_count=len(self.bones),
+            mesh_count=len(self.meshes),
+            vertex_buffer_count=sum(len(mesh.vertex_buffers) for mesh in self.meshes),
+            face_set_count=sum(len(mesh.face_sets) for mesh in self.meshes),
+            buffer_layout_count=len(self.buffer_layouts),
+            texture_count=sum(len(material.textures) for material in self.materials),
+            true_face_count=true_face_count,
+            total_face_count=total_face_count,
+            vertex_indices_size=vertex_indices_size,
+        )
 
-        packed_dummies = b"".join(dummy.pack(self.header.version) for dummy in self.dummies)
-        packed_materials = b"".join(material.pack(i) for i, material in enumerate(self.materials))
+        writer = BinaryWriter(big_endian=self.header.is_big_endian)
+        for dummy in self.dummies:
+            dummy.pack_writer(writer, color_is_argb=self.header.version == Version.DarkSouls2)
+
+        for i, material in enumerate(self.materials):
+            material.pack_writer(writer, material_index=i)
+
+        for i, bone in enumerate(self.bones):
+            bone.pack_writer(writer, bone_index=i)
+
+        for i, mesh in enumerate(self.meshes):
+            mesh.pack_writer(writer, mesh_index=i)
+
+        # TODO: Continue.
 
         # TODO: Set header `data_offset` and `data_size`.
         packed_header = self.header.pack()

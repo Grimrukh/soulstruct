@@ -81,7 +81,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         name_offset = self.EVENT_HEADER_STRUCT.size
         packed_name = pad_chars(self.get_name_to_pack(), encoding=self.NAME_ENCODING, pad_to_multiple_of=4)
         base_data_offset = name_offset + len(packed_name)
-        packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack_from_object(self)
+        packed_base_data = self.EVENT_BASE_DATA_STRUCT.pack(self)
         type_data_offset = base_data_offset + len(packed_base_data)
         packed_type_data = self.pack_type_data()
         packed_header = self.EVENT_HEADER_STRUCT.pack(
@@ -98,7 +98,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         self.set(**self.EVENT_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True))
 
     def pack_type_data(self):
-        return self.EVENT_TYPE_DATA_STRUCT.pack_from_object(self)
+        return self.EVENT_TYPE_DATA_STRUCT.pack(self)
 
 
 class MSBLightEvent(MSBEvent):

@@ -271,7 +271,7 @@ class MSBPart(_BaseMSBPart):
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
         base_data_offset = sib_path_offset + len(packed_sib_path)
-        packed_base_data = self.PART_BASE_DATA_STRUCT.pack_from_object(self)
+        packed_base_data = self.PART_BASE_DATA_STRUCT.pack(self)
         type_data_offset = base_data_offset + len(packed_base_data)
         packed_type_data = self.pack_type_data()
         try:

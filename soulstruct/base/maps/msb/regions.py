@@ -109,7 +109,7 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         self.set(**self.REGION_TYPE_DATA_STRUCT.unpack(msb_buffer))
 
     def pack_type_data(self):
-        return self.REGION_TYPE_DATA_STRUCT.pack_from_object(self)
+        return self.REGION_TYPE_DATA_STRUCT.pack(self)
 
     def set_indices(self, region_index):
         self._region_index = region_index

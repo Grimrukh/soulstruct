@@ -51,7 +51,7 @@ Important
 ---------
 
 Soulstruct is very much a work in progress. Internal code structure should be fairly stable as of version 1.0.0 
-(Feb 12, 2021, but it is still possible that changes will break backward compatibility with past versions of Soulstruct
+(Feb 12, 2021), but it is still possible that changes will break backward compatibility with past versions of Soulstruct
 for existing project files (**.ssp** files). If you update Soulstruct to a new major version, you may need to **export**
 all game files from your old version's project first and **import** them into a new project created with the new 
 Soulstruct, since the new Soulstruct version may not be able to read the old **.ssp** files. Luckily, this is 

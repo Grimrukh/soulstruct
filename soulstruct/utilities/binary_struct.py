@@ -1,4 +1,6 @@
-__all__ = ["BinaryStruct", "BinaryObject"]
+from __future__ import annotations
+
+__all__ = ["BinaryStruct", "BinaryObject", "BinaryWriter"]
 
 import abc
 import enum
@@ -11,7 +13,7 @@ import types
 import typing as tp
 
 from soulstruct.utilities import read_chars_from_bytes, AttributeDict, Flags8
-from soulstruct.utilities.maths import Vector, Vector3
+from soulstruct.utilities.maths import Vector
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,7 +56,7 @@ class BinaryStruct:
                 return value.encode(encoding=self.encoding)
             elif isinstance(value, str):
                 return value.encode()  # use default UTF-8 encoding to convert string to bytes
-            elif isinstance(value, (list, tuple, Vector3)):
+            elif isinstance(value, (list, tuple, Vector)):
                 return [self.parse_for_pack(v) for v in value]  # recur on each element
             else:
                 return value
@@ -297,17 +299,42 @@ class BinaryStruct:
             source.seek(old_offset)
         return structs
 
-    def pack(self, struct_dict: dict = None, /, **struct_kwargs) -> bytes:
-        if not self.fields and struct_dict is None and not struct_kwargs:
-            return b""  # null struct (error will be raised below if any input is given)
-        if struct_dict is not None and struct_kwargs:
-            raise ValueError("You cannot use both the `struct_dict` argument and the unpacked `**struct_kwargs`.")
-        if isinstance(struct_dict, dict):
-            struct_dict = struct_dict.copy()  # don't modify input dictionary
-        elif struct_dict is None:
-            struct_dict = struct_kwargs
+    def parse_object_source(self, source: object, /, **kwargs) -> dict[str, tp.Any]:
+        if isinstance(source, dict):
+            struct_dict = source.copy()  # don't modify input dictionary
+            struct_dict.update(kwargs)
+        elif source is None:
+            struct_dict = kwargs
         else:
-            raise TypeError(f"`struct_dict` must be a dictionary, not `{type(struct_dict)}`.")
+            # Try pulling field values from attributes.
+            struct_dict = {}
+            for field in self.non_padding_fields:
+                try:
+                    struct_dict[field.name] = kwargs.pop(field.name)
+                except KeyError:
+                    try:
+                        struct_dict[field.name] = getattr(source, field.name)
+                    except AttributeError:
+                        if field.asserted is None:
+                            raise KeyError(
+                                f"Non-asserted field {repr(field)} is not an attribute of given object {source} and was "
+                                f"not passed as a keyword argument."
+                            )
+            if kwargs:
+                raise ValueError(f"Invalid field names in `kwargs`: {list(kwargs)}")
+        return struct_dict
+
+    def pack(
+        self, source: tp.Union[dict, object] = None, /, **kwargs
+    ) -> tp.Optional[bytes]:
+        """Pack this `BinaryStruct` with field data given in `source`, which can be a `dict` (fields as keys) or
+        `object` (fields as attributes). Any field names given as `kwargs` will take precedence over the fields given by
+        `source`.
+        """
+        if not self.fields and source is None and not kwargs:
+            return b""  # null struct (error will be raised below if any input is given)
+
+        struct_dict = self.parse_object_source(source, **kwargs)
 
         output = b""
         to_pack = []
@@ -341,39 +368,15 @@ class BinaryStruct:
                 raise
         return output
 
-    def pack_multiple(self, struct_dicts: tp.Sequence[dict]) -> bytes:
-        """Pack multiple instances of this binary struct and return them joined."""
+    def pack_multiple(self, sources: tp.Sequence[dict]) -> bytes:
+        """Pack multiple instances of this binary struct and return them joined.
+
+        Note that `kwargs` of `pack()` cannot be used here. All `sources` must contain all non-asserted fields.
+        """
         output = b""
-        for struct_dict in struct_dicts:
+        for struct_dict in sources:
             output += self.pack(struct_dict)
         return output
-
-    def pack_from_object(self, obj, **kwargs) -> bytes:
-        """Attempts to build complete struct dictionary from attributes of given object `obj`. If any `kwargs` are
-        given, they will take precedence over the `obj` attributes.
-
-        All non-constant fields must be present as attributes or `kwargs`, or an exception will be raised.
-        """
-        struct_dict = {}
-        for field in self.non_padding_fields:
-            if field.length == 0:
-                continue  # padding
-            if field.name in kwargs:
-                struct_dict[field.name] = kwargs[field.name]
-            else:
-                try:
-                    struct_dict[field.name] = getattr(obj, field.name)
-                except AttributeError:
-                    if not field.asserted:
-                        raise AttributeError(
-                            f"Non-asserted field {repr(field)} is not an attribute of given object {obj} and was not "
-                            f"passed as a keyword argument. Cannot pack."
-                        )
-        try:
-            return self.pack(struct_dict)
-        except struct.error:
-            _LOGGER.error(f"Failed to pack `BinaryStruct` from object. Dictionary:\n{struct_dict}")
-            raise
 
     def copy(self):
         bs = BinaryStruct()
@@ -497,7 +500,7 @@ class BinaryObject(abc.ABC):
         self.set(**self.STRUCT.unpack(buffer, exclude_asserted=True))
 
     def pack(self, **kwargs) -> bytes:
-        return self.STRUCT.pack_from_object(self)
+        return self.STRUCT.pack(self)
 
     @classmethod
     def get_field_default(cls, field: BinaryStruct.BinaryField) -> tp.Union[str, bytes, bool, int, float]:
@@ -538,3 +541,101 @@ class BinaryObject(abc.ABC):
     def is_big_endian(buffer: io.BufferedIOBase) -> bool:
         """Examine given binary buffer to determine if it is big-endian. Always seeks back to initial position."""
         return False
+
+
+class BinaryWriter:
+    """Manages `bytearray` binary data, with features like reserved offsets for later writing and big endian mode."""
+
+    class Reserved(str):
+        """Indicates a reserved name that should be used, rather than a string to pack."""
+
+    def __init__(self, big_endian=False):
+        self.big_endian = big_endian  # TODO
+        self.reserved = {}
+        self._array = bytearray()
+
+    def pack(self, fmt: str, *values):
+        # TODO: Support extra formats like JIS (j) and UTF-16 (u).
+        if fmt[0] in "<>@":
+            raise ValueError("Do not specify byte order in `fmt` string. Use `BytesWriter.big_endian` instead.")
+        fmt = (">" if self.big_endian else "<") + fmt
+        self._array += struct.pack(fmt, *values)
+
+    def pack_struct(
+        self,
+        binary_struct: BinaryStruct,
+        source: tp.Union[dict, object] = None,
+        /,
+        **kwargs,
+    ):
+        """Pack and/or reserve all fields present in `binary_struct`.
+
+        Use `BinaryWriter.Reserved("ReservedName")` as keyword argument values to reserve those fields.
+        """
+        reserved = {field: kwargs.pop(field) for field in kwargs if isinstance(kwargs[field], self.Reserved)}
+        struct_dict = binary_struct.parse_object_source(source, **kwargs)
+        for field in binary_struct.fields:
+            if field.length == 0:  # padding
+                if field.name in reserved:
+                    raise ValueError(f"Padding field {repr(field.name)} cannot be in `reserved` dictionary.")
+                self.pack(field.fmt)
+            else:
+                if field.asserted is not None:
+                    if field.name in reserved:
+                        raise ValueError(f"Asserted field {repr(field.name)} cannot be in `reserved` dictionary.")
+                    if struct_dict.pop(field.name, field.asserted) != field.asserted:
+                        raise ValueError(
+                            f"Field '{field.name}' has value {struct_dict[field.name]} instead of asserted value "
+                            f"{field.asserted}."
+                        )
+                    value = field.asserted
+                else:
+                    try:
+                        value = struct_dict.pop(field.name)
+                    except KeyError:
+                        if field.name in reserved:
+                            self.reserve(reserved.pop(field.name), field.fmt)
+                            continue
+                        raise KeyError(f"Field '{field.name}' not given in struct or reserved dictionary.")
+                self.pack(field.fmt, field.parse_for_pack(value))
+
+    def pad(self, size: int):
+        self._array += b"\0" * size
+
+    def reserve(self, name: str, fmt: str):
+        if name in self.reserved:
+            raise ValueError(f"Name {repr(name)} is already reserved in `BytesWriter`.")
+        if fmt[0] in "<>@":
+            raise ValueError("Do not specify byte order in `fmt` string. Use `BytesWriter.big_endian` instead.")
+        fmt = (">" if self.big_endian else "<") + fmt  # endianness is specified at reserve time, not fill time
+        self.reserved[name] = (len(self._array), fmt)
+        self._array += b"\0" * struct.calcsize(fmt)  # reserved space is nulls
+
+    def fill(self, name: str, *values):
+        if name not in self.reserved:
+            raise ValueError(f"Name {repr(name)} is not reserved in `BytesWriter`.")
+        offset, fmt = self.reserved[name]  # fmt endianness already specified
+        try:
+            packed = struct.pack(fmt, *values)
+        except struct.error:
+            raise ValueError(f"Error occurred when packing values to reserved offset with fmt {repr(fmt)}: {values}")
+        self._array[offset:offset + len(packed)] = packed
+        self.reserved.pop(name)  # pop after successful fill only
+
+    def finish(self) -> bytes:
+        """Just checks that no reserved offsets remain, then converts stored `bytearray` to immutable `bytes`."""
+        if self.reserved:
+            raise ValueError(f"Reserved `BytesWriter` offsets not filled: {list(self.reserved)}")
+        return bytes(self.array)
+
+    def __add__(self, other: tp.Union[bytearray, bytes]):
+        """Manually add existing binary data (e.g. a packed `BinaryStruct`) all at once."""
+        self._array += other
+
+    def __repr__(self):
+        return f"BytesWriter({self.array})"
+
+    @property
+    def array(self):
+        """Return immutable copy of current array, for inspection/display only."""
+        return bytes(self._array)

@@ -6,7 +6,7 @@ import io
 import typing as tp
 
 from soulstruct.utilities import unpack_from_buffer, indent_lines, Flags8
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject, BinaryWriter
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex import LayoutSemantic, BufferLayout, Vertex, VertexBuffer
@@ -216,6 +216,19 @@ class Mesh(BinaryObject):
         self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].vertex_count)]
         for vertex_buffer in self.vertex_buffers:
             vertex_buffer.read_buffer(buffer, layouts, self.vertices, data_offset, version)
+
+    def pack_writer(self, writer: BinaryWriter, mesh_index: int):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __bounding_box_offset=writer.Reserved(f"MeshBoundingBox{mesh_index}"),
+            __bone_count=len(self.bone_indices),
+            __bone_offset=writer.Reserved(f"MeshBoneIndices{mesh_index}"),
+            __face_set_count=len(self.face_sets),
+            __face_set_offset=writer.Reserved(f"MeshFaceSetIndices{mesh_index}"),
+            __vertex_buffer_count=len(self.vertex_buffers),
+            __vertex_buffer_offset=writer.Reserved(f"MeshVertexBufferIndices{mesh_index}"),
+        )
 
     def __repr__(self):
         vertices = ",\n".join([f"    {v.repr_position_only()}" for v in self.vertices])

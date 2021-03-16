@@ -229,7 +229,7 @@ class MSBPart(_BaseMSBPart):
             packed_sib_path += b"\0"  # Not done in SoulsFormats, but makes sense to me.
 
         base_data_offset = sib_path_offset + len(packed_sib_path)
-        packed_base_data = self.PART_BASE_DATA_STRUCT.pack_from_object(self)
+        packed_base_data = self.PART_BASE_DATA_STRUCT.pack(self)
         type_data_offset = base_data_offset + len(packed_base_data)
         packed_type_data = self.pack_type_data()
         gparam_data_offset = type_data_offset + len(packed_type_data)
@@ -354,7 +354,7 @@ class MSBPartGParam(MSBPart):
         self.set(**gparam_data)
 
     def _pack_gparam_data(self):
-        return self.PART_GPARAM_STRUCT.pack_from_object(self)
+        return self.PART_GPARAM_STRUCT.pack(self)
 
 
 class MSBPartSceneGParam(MSBPartGParam):
@@ -451,7 +451,7 @@ class MSBPartSceneGParam(MSBPartGParam):
         self.set(**scene_gparam_data)
 
     def _pack_scene_gparam_data(self):
-        return self.PART_SCENE_GPARAM_STRUCT.pack_from_object(self)
+        return self.PART_SCENE_GPARAM_STRUCT.pack(self)
 
 
 class MSBMapPiece(_BaseMSBMapPiece, MSBPartGParam):

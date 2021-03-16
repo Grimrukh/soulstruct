@@ -10,6 +10,7 @@ from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
 from soulstruct.utilities.maths import Vector2
 
 if tp.TYPE_CHECKING:
+    from soulstruct.utilities.binary_struct import BinaryWriter
     from .version import Version
 
 
@@ -185,10 +186,34 @@ class Material(BinaryObject):
         self.set(**data)
 
     def pack(
-        self, name_offset: int = None, mtd_path_offset: int = None, texture_index: int = None, gx_offset: int = None
+        self,
+        name_offset: int = None,
+        mtd_path_offset: int = None,
+        first_texture_index: int = None,
+        gx_offset: int = None,
     ) -> bytes:
-        if any(kwarg is None for kwarg in (name_offset, mtd_path_offset, texture_index, gx_offset)):
+        """Pack with all offsets known."""
+        if any(kwarg is None for kwarg in (name_offset, mtd_path_offset, first_texture_index, gx_offset)):
             raise ValueError("`Material.pack()` did not receive all necessary keyword arguments.")
+        return self.STRUCT.pack(
+            self,
+            __name_offset=name_offset,
+            __mtd_path_offset=mtd_path_offset,
+            _texture_count=len(self.textures),
+            _first_texture_index=first_texture_index,
+            __gx_offset=gx_offset,
+        )
+
+    def pack_writer(self, writer: BinaryWriter, material_index: int):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __name_offset=writer.Reserved(f"MaterialNameOffset{material_index}"),
+            __mtd_path_offset=writer.Reserved(f"MaterialMTDPathOffset{material_index}"),
+            _first_texture_index=writer.Reserved(f"MaterialFirstTextureIndex{material_index}"),
+            __gx_offset=writer.Reserved(f"MaterialGXOffset{material_index}"),
+            _texture_count=len(self.textures),
+        )
 
     def assign_textures(self, textures: dict[int, Texture]):
         if self._texture_count == -1 or self._first_texture_index == -1:

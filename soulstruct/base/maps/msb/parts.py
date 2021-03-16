@@ -79,7 +79,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
 
     def pack_type_data(self):
         try:
-            return self.PART_TYPE_DATA_STRUCT.pack_from_object(self)
+            return self.PART_TYPE_DATA_STRUCT.pack(self)
         except struct.error:
             raise SoulstructError(f"Could not pack type data of MSB part '{self.name}'. See traceback.")
 

@@ -1,6 +1,6 @@
 import io
 
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject, BinaryWriter
 from soulstruct.utilities.maths import Vector3
 
 from .color import Color
@@ -47,4 +47,8 @@ class Dummy(BinaryObject):
         if color_is_argb is None:
             raise ValueError("`color_is_argb` (bool) must be given to `Dummy.pack()`.")
         packed_color = self.color.pack_argb() if color_is_argb else self.color.pack_bgra()
-        return self.STRUCT.pack_from_object(self, color=packed_color)
+        return self.STRUCT.pack(self, color=packed_color)
+
+    def pack_writer(self, writer: BinaryWriter, color_is_argb=False):
+        """Nothing to reserve."""
+        writer += self.pack(color_is_argb)
