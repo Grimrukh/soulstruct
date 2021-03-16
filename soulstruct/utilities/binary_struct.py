@@ -1,3 +1,7 @@
+__all__ = ["BinaryStruct", "BinaryObject"]
+
+import abc
+import inspect
 import io
 import logging
 import re
@@ -15,7 +19,7 @@ class BinaryStruct:
     class BinaryField:
         """Stores information about a field passed to `BinaryStruct`."""
 
-        def __init__(self, name: str, fmt: str, length: int, asserted=None, encoding=None):
+        def __init__(self, name: str, fmt: str, length: int, asserted=None, encoding=""):
             self.name = name
             self.fmt = fmt
             self.length = length
@@ -64,7 +68,7 @@ class BinaryStruct:
         self.fields = []  # type: list[BinaryStruct.BinaryField]
         self._struct_format = []  # Format chunks with different byte order are stored in sub-format strings.
         self._struct_length = []  # Number of values to be packed using each sub-format string.
-        self.size = 0
+        self.size = 0  # Total number of bytes in struct.
         if fields:
             self.add_fields(*fields, byte_order=byte_order)
 
@@ -108,26 +112,28 @@ class BinaryStruct:
                     sub_fmt += field_spec
                     continue
                 else:
-                    raise ValueError("Only pad strings '#x' are permitted outside field tuples.")
+                    raise ValueError("Only pad strings, `'#x'`, are permitted outside field tuples.")
 
-            field_kwargs = {}
+            asserted = None
+            encoding = ""
 
             if isinstance(field_spec, (list, tuple)) and 2 <= len(field_spec) <= 3:
                 if len(field_spec) == 3:
                     name, fmt, asserted = field_spec
                     if isinstance(asserted, tuple):
                         asserted = list(asserted)
-                    field_kwargs["asserted"] = asserted
                 else:
                     name, fmt = field_spec
             else:
                 raise TypeError(
-                    "Each field should be a single pad '#x' format string, a `(name, fmt)` pair, or a "
+                    "Each field should be a single pad `'#x'` format string, a `(name, fmt)` pair, or a "
                     "`(name, fmt, asserted)` triplet."
                 )
 
             if name == "x":
                 raise ValueError("Field name 'x' is reserved for internal labeling of pad fields.")
+            elif name in self.field_names:
+                raise ValueError(f"Field name {repr(name)} already exists in `BinaryStruct`.")
 
             try:
                 field_byte_order, field_length, field_type = self.FMT_RE.match(fmt).groups()
@@ -138,18 +144,18 @@ class BinaryStruct:
                 raise ValueError("Individual field format should not have its own byte order. Use `byte_order` arg.")
             if field_type == "j":
                 fmt = f"{field_length}s"
-                field_kwargs["encoding"] = "shift_jis_2004"
+                encoding = "shift_jis_2004"
                 length = 1
             elif field_type == "u":
                 fmt = f"{field_length}s"
-                field_kwargs["encoding"] = "utf-16-be" if byte_order == ">" else "utf-16-le"
+                encoding = "utf-16-be" if byte_order == ">" else "utf-16-le"
                 length = 1
             elif field_type == "s":
                 length = 1
             else:
                 length = int(field_length) if field_length else 1
 
-            new_fields.append(self.BinaryField(name=name, fmt=fmt, length=length, **field_kwargs))
+            new_fields.append(self.BinaryField(name=name, fmt=fmt, length=length, asserted=asserted, encoding=encoding))
             sub_fmt += fmt
             sub_fmt_length += length
 
@@ -169,7 +175,8 @@ class BinaryStruct:
         source: tp.Union[bytes, io.BufferedIOBase],
         *fields,
         byte_order: str = None,
-        include_asserted=True,
+        exclude_asserted=False,
+        exclude_prefix="",
         offset: int = None,
     ) -> AttributeDict:
         """Unpack a single struct from source data.
@@ -184,7 +191,8 @@ class BinaryStruct:
             fields: optional list of new fields to simultaneously add and unpack (instead of full struct).
             byte_order (str): byte order ('<', '>', etc.) of the new fields, or new byte order to fully override all
                 previous byte orders passed along with fields, if no new fields are given.
-            include_asserted: include any asserted fields in the returned dictionary.
+            exclude_asserted: exclude any asserted fields in the returned dictionary.
+            exclude_prefix: exclude any fields whose names start with this prefix, if given.
             offset (int): optional offset to unpack from. Old offset (for buffers) will be restored if this is given.
 
         Returns:
@@ -210,7 +218,11 @@ class BinaryStruct:
             output = AttributeDict()
             unpacked_index = 0
             for field in struct_fields:
-                if field.length and (include_asserted or not field.asserted):
+                if (
+                    field.length > 0
+                    and not (exclude_asserted and field.asserted)
+                    and not (exclude_prefix and field.name.startswith(exclude_prefix))
+                ):
                     output[field.name] = field.parse_for_unpack(unpacked, unpacked_index)
                 unpacked_index += field.length
             if old_offset is not None:
@@ -243,20 +255,27 @@ class BinaryStruct:
             data_offset += size
         unpacked_index = 0
         for field in self.fields:
-            if field.length > 0 and (include_asserted or not field.asserted):
+            if (
+                field.length > 0
+                and not (exclude_asserted and field.asserted)
+                and not (exclude_prefix and field.name.startswith(exclude_prefix))
+            ):
                 output[field.name] = field.parse_for_unpack(unpacked, unpacked_index)
             unpacked_index += field.length
         if old_offset is not None:
             source.seek(old_offset)
         return output
 
-    def unpack_count(self, source, count, include_asserted=True, offset: int = None) -> list[AttributeDict]:
+    def unpack_count(
+        self, source, count: int, exclude_asserted=False, exclude_prefix="", offset: int = None
+    ) -> list[AttributeDict]:
         """Unpack `count` identical structs from `source`. See `unpack()` for more.
 
         Args:
             source: bytes or open buffer to unpack from.
             count: number of contiguous structs to unpack from source.
-            include_asserted: include asserted fields in the output dictionary. (Default: True)
+            exclude_asserted (bool): exclude asserted fields in the output dictionary. (Default: False)
+            exclude_prefix (str): exclude fields whose names start with this string, if given. (Default: "")
             offset (int): optional offset to unpack from. Old offset (for buffers) will be restored if this is given.
 
         Returns:
@@ -268,7 +287,10 @@ class BinaryStruct:
         elif offset is not None:
             old_offset = source.tell()
             source.seek(offset)
-        structs = [self.unpack(source, include_asserted=include_asserted) for _ in range(count)]
+        structs = [
+            self.unpack(source, exclude_asserted=exclude_asserted, exclude_prefix=exclude_prefix)
+            for _ in range(count)
+        ]
         if old_offset is not None:
             source.seek(old_offset)
         return structs
@@ -367,6 +389,14 @@ class BinaryStruct:
             "\n".join(f"  {i} :: {field}" for i, field in enumerate(self.fields))
         )
 
+    def get_field(self, field_name: str) -> BinaryField:
+        """Looks up `BinaryField` instance from `field_name` string. Cannot get padding fields."""
+        hits = [field for field in self.fields if field.name == field_name and field.length > 0]
+        # Can't get multiple hits, by unique field name rule in constructor.
+        if not hits:
+            raise KeyError(f"Invalid field name: {field_name}")
+        return hits[0]
+
     @property
     def struct_format(self):
         return self._struct_format
@@ -380,3 +410,114 @@ class BinaryStruct:
     def field_names(self):
         """Excludes padding fields and includes asserted fields."""
         return [field.name for field in self.fields if field.length > 0]
+
+
+class BinaryObject(abc.ABC):
+    """Class whose fields are all specified in a `BinaryStruct` class attribute, `STRUCT`, with `set()` method.
+
+    `DEFAULTS` can be used to specify defaults for specific field names. Otherwise, defaults will be based on the format
+    of that field as type-hinted, or failing that, in `STRUCT` (0 for numeric types, False for booleans, etc.).
+
+    Any field names that are type-hinted will also be initialized as that type whenever the attribute is set.
+    """
+
+    STRUCT: BinaryStruct
+    DEFAULTS: dict[str, tp.Any] = {}
+
+    def __init__(self, source: tp.Optional[io.BufferedIOBase] = None, unpack_kwargs=None, **kwargs):
+        """Instance `source` can be `None` or a bytes buffer. In either case, `kwargs` are applied afterwards, and must
+        all be valid `STRUCT` field names that do not start with an underscore. They can be asserted fields, but the
+        values must then match the asserted value.
+
+        `unpack_kwargs` dictionary can also be passed, which will be unpacked as `**kwargs` for `unpack()`.
+
+        Subclass should define its own fields (with default values) for type checking before calling `super().__init__`,
+        or simply specify type hints in the class and use `DEFAULTS` to set default values.
+        """
+        if source is not None:
+            if unpack_kwargs is None:
+                unpack_kwargs = {}
+            self.unpack(source, **unpack_kwargs)
+        else:
+            if unpack_kwargs is not None:
+                raise ValueError("`unpack_kwargs` must be left as `None` if `source` is not a binary buffer.")
+            for field in self.STRUCT.fields:
+                if field.length > 0 and not field.name.startswith("_") and field.name not in kwargs:
+                    setattr(self, field.name, self.DEFAULTS.get(field.name, self.get_field_default(field)))
+            self.set(**kwargs)
+
+    def set(self, **kwargs):
+        """Set multiple fields (attributes) at once, via `__setattr__` below.
+
+        Field names that start with "__" are ignored, which makes it easier to use an unpacked `BinaryStruct` dictionary
+        as `kwargs`.
+        """
+        for field_name, value in kwargs.items():
+            if field_name.startswith("__"):
+                continue  # ignore
+            setattr(self, field_name, value)
+
+    def __setattr__(self, field_name, value):
+        """Checks `field_name` is a valid field, confirms any asserted value, and casts value to a given type."""
+        if field_name in (field_types := tp.get_type_hints(self.__class__)):
+            if value is not None and inspect.isclass(field_types[field_name]):
+                value = field_types[field_name](value)
+        else:
+            # Check `STRUCT` fields if no type hint exists.
+            try:
+                field = self.STRUCT.get_field(field_name)
+            except KeyError:
+                raise AttributeError(f"Invalid field for `BinaryObject`: {repr(field_name)}")
+            if field.asserted:
+                if field.asserted != value:
+                    raise ValueError(
+                        f"Field {repr(field_name)} must have asserted value {field.asserted}, not {value}."
+                    )
+                return  # do nothing (asserted fields are not exposed as attributes but can still be set)
+        super().__setattr__(field_name, value)
+
+    def unpack(self, buffer: io.BufferedIOBase, **kwargs):
+        self.set(**self.STRUCT.unpack(buffer, exclude_asserted=True))
+
+    def pack(self) -> bytes:
+        return self.STRUCT.pack_from_object(self)
+
+    @classmethod
+    def get_field_default(cls, field: BinaryStruct.BinaryField) -> tp.Union[str, bytes, bool, int, float]:
+        if field.asserted:
+            return field.asserted
+        if field.name in (field_types := tp.get_type_hints(cls)):
+            field_type = field_types[field.name]
+            try:
+                return field_type.default()
+            except AttributeError:
+                if field_type is str:
+                    return ""
+                elif field_type is bytes:
+                    return b""
+                elif field_type is bool:
+                    return False
+                elif field_type is int:
+                    return 0
+                elif field_type is float:
+                    return 0.0
+
+        # Fall back to `STRUCT` format.
+        _, field_length, field_type = BinaryStruct.FMT_RE.match(field.fmt).groups()  # cannot fail
+        if field_type == "s":
+            if field.encoding:
+                return ""
+            return b""
+        elif field_type == "?":
+            return False
+        elif field_type in {"f", "d"}:
+            return 0.0
+        elif field_type.lower() in {"b", "h", "i", "q"}:
+            return 0
+        raise TypeError(f"Unrecognized field type for `BinaryObject`: {repr(field_type)}")
+
+    # noinspection PyUnusedLocal
+    @staticmethod
+    def is_big_endian(buffer: io.BufferedIOBase) -> bool:
+        """Examine given binary buffer to determine if it is big-endian. Always seeks back to initial position."""
+        return False

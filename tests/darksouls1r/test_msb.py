@@ -16,7 +16,7 @@ class MSBTest(unittest.TestCase):
         - Re-opening that new MSB.
         - Comparing every entry field.
         """
-        msb = MSB("m10_00_00_00.msb")
+        msb = MSB("resources/m10_00_00_00.msb")
         msb.parts.new_character(
             copy_entry="c1000_0000", name="c1000_0000_COPY", entity_id=1000999, translate=(1.0, 2.0, 3.0)
         )

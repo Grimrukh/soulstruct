@@ -1,23 +1,9 @@
 __all__ = ["ParamFlags1", "ParamFlags2"]
 
-import abc
+from soulstruct.utilities.core import Flags8
 
 
-class ParamFlagsBase(abc.ABC):
-    def __init__(self, byte):
-        self.flags = [bool(2 ** i & byte) for i in range(8)]
-
-    def __getitem__(self, i):
-        return self.flags[i]
-
-    def pack(self) -> int:
-        return sum(2 ** i if enabled else 0 for i, enabled in enumerate(self.flags))
-
-    def __repr__(self):
-        return repr(self.flags)
-
-
-class ParamFlags1(ParamFlagsBase):
+class ParamFlags1(Flags8):
     @property
     def IntDataOffset(self):
         return self.flags[1]
@@ -31,7 +17,7 @@ class ParamFlags1(ParamFlagsBase):
         return self.flags[7]
 
 
-class ParamFlags2(ParamFlagsBase):
+class ParamFlags2(Flags8):
     @property
     def UnicodeRowNames(self):
         return self.flags[0]

@@ -1,7 +1,9 @@
 """Mathematical classes and functions uses by Soulstruct."""
 
 __all__ = [
+    "Vector2",
     "Vector3",
+    "Vector4",
     "Matrix3",
     "Matrix4",
     "shift_msb_coordinates",
@@ -14,6 +16,123 @@ __all__ = [
 import abc
 import math
 import typing as tp
+
+
+class Vector2:
+    """Simple [x, y] container."""
+
+    x: float
+    y: float
+    PRECISION = 3
+
+    def __init__(self, x=None, y=None):
+        if x is None:
+            if y is not None:
+                raise ValueError("If `x=None`, `y` must be left as `None`.")
+            x = y = 0  # default
+        elif y is None:
+            x, y = x  # unpack first argument
+        elif y is None:
+            raise ValueError(
+                "`Vector2` must be initialized as `Vector1(x, y)`, `Vector2((x, y))`, or `Vector2(None)`."
+            )
+        self.x, self.y = x, y
+
+    def to_radians(self):
+        return Vector2(math.radians(self.x), math.radians(self.y))
+
+    def to_degrees(self):
+        return Vector2(math.degrees(self.x), math.degrees(self.y))
+
+    def to_mat_column(self):
+        return [[self.x], [self.y]]
+
+    def to_mat_row(self):
+        return [[self.x, self.y]]
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        raise IndexError("Index of `Vector2` must be between 0 and 1.")
+
+    def __setitem__(self, index, value):
+        if index == 0:
+            self.x = value
+        elif index == 1:
+            self.y = value
+        raise IndexError("Index of `Vector2` must be between 0 and 1.")
+
+    def __eq__(self, other_vector):
+        return len(other_vector) == 2 and all(self[i] == other_vector[i] for i in range(2))
+
+    def __add__(self, other):
+        if isinstance(other, Vector2):
+            return Vector2(self.x + other.x, self.y + other.y)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 2:
+                raise ValueError("List or tuple to add to `Vector2` must have two elements.")
+            return Vector2(self.x + other[0], self.y + other[1])
+        elif isinstance(other, (int, float)):
+            return Vector2(self.x + other, self.y + other)
+        raise TypeError(f"`Vector2` arithmetic not defined for type {type(other)}.")
+
+    def __sub__(self, other):
+        if isinstance(other, Vector2):
+            return Vector2(self.x - other.x, self.y - other.y)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 2:
+                raise ValueError("List or tuple to subtract from `Vector2` must have two elements.")
+            return Vector2(self.x - other[0], self.y - other[1])
+        elif isinstance(other, (int, float)):
+            return Vector2(self.x - other, self.y - other)
+        raise TypeError(f"`Vector2` arithmetic not defined for type {type(other)}.")
+
+    def __mul__(self, other):
+        if isinstance(other, Vector2):
+            return Vector2(self.x * other.x, self.y * other.y)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 2:
+                raise ValueError("List or tuple to multiply `Vector2` by must have two elements.")
+            return Vector2(self.x * other[0], self.y * other[1])
+        elif isinstance(other, (int, float)):
+            return Vector2(self.x * other, self.y * other)
+        raise TypeError(f"`Vector2` arithmetic not defined for type {type(other)}.")
+
+    def __truediv__(self, other):
+        if isinstance(other, Vector2):
+            return Vector2(self.x / other.x, self.y / other.y)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 2:
+                raise ValueError("List or tuple to divide `Vector2` by must have two elements.")
+            return Vector2(self.x / other[0], self.y / other[1])
+        elif isinstance(other, (int, float)):
+            return Vector2(self.x / other, self.y / other)
+        raise TypeError(f"`Vector2` arithmetic not defined for type {type(other)}.")
+
+    def __len__(self):
+        return 2
+
+    def __iter__(self):
+        yield self.x
+        yield self.y
+
+    def __repr__(self):
+        return f"Vector2({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f})"
+
+    def copy(self):
+        return Vector2(self)
+
+    @classmethod
+    def zero(cls):
+        return cls(0, 0)
+
+    default = zero
+
+    @classmethod
+    def ones(cls):
+        return cls(1, 1)
 
 
 class Vector3:
@@ -64,7 +183,7 @@ class Vector3:
             return self.y
         elif index == 2:
             return self.z
-        raise IndexError("Index of Vector must be between 0 and 2.")
+        raise IndexError("Index of `Vector3` must be between 0 and 2.")
 
     def __setitem__(self, index, value):
         if index == 0:
@@ -73,7 +192,7 @@ class Vector3:
             self.y = value
         elif index == 2:
             self.z = value
-        raise IndexError("Index of Vector must be between 0 and 2.")
+        raise IndexError("Index of `Vector3` must be between 0 and 2.")
 
     def __eq__(self, other_vector):
         return len(other_vector) == 3 and all(self[i] == other_vector[i] for i in range(3))
@@ -83,44 +202,44 @@ class Vector3:
             return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
         elif isinstance(other, (list, tuple)):
             if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
+                raise ValueError("List or tuple to add to `Vector3` must have three elements.")
             return Vector3(self.x + other[0], self.y + other[1], self.z + other[2])
         elif isinstance(other, (int, float)):
             return Vector3(self.x + other, self.y + other, self.z + other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+        raise TypeError(f"`Vector3` arithmetic not defined for type {type(other)}.")
 
     def __sub__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
         elif isinstance(other, (list, tuple)):
             if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
+                raise ValueError("List or tuple to subtract from `Vector3` must have three elements.")
             return Vector3(self.x - other[0], self.y - other[1], self.z - other[2])
         elif isinstance(other, (int, float)):
             return Vector3(self.x - other, self.y - other, self.z - other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+        raise TypeError(f"`Vector3` arithmetic not defined for type {type(other)}.")
 
     def __mul__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x * other.x, self.y * other.y, self.z * other.z)
         elif isinstance(other, (list, tuple)):
             if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
+                raise ValueError("List or tuple to multiply `Vector3` by must have three elements.")
             return Vector3(self.x * other[0], self.y * other[1], self.z * other[2])
         elif isinstance(other, (int, float)):
             return Vector3(self.x * other, self.y * other, self.z * other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+        raise TypeError(f"`Vector3` arithmetic not defined for type {type(other)}.")
 
     def __truediv__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x / other.x, self.y / other.y, self.z / other.z)
         elif isinstance(other, (list, tuple)):
             if len(other) != 3:
-                raise ValueError("List or tuple to add to Vector must have three elements.")
+                raise ValueError("List or tuple to divide `Vector3` by must have three elements.")
             return Vector3(self.x / other[0], self.y / other[1], self.z / other[2])
         elif isinstance(other, (int, float)):
             return Vector3(self.x / other, self.y / other, self.z / other)
-        raise TypeError(f"Vector arithmetic not defined for type {type(other)}")
+        raise TypeError(f"`Vector3` arithmetic not defined for type {type(other)}.")
 
     def __len__(self):
         return 3
@@ -140,9 +259,137 @@ class Vector3:
     def zero(cls):
         return cls(0, 0, 0)
 
+    default = zero
+
     @classmethod
     def ones(cls):
         return cls(1, 1, 1)
+
+
+class Vector4:
+    """Simple [x, y, z, w] container."""
+
+    PRECISION = 3
+
+    def __init__(self, x=None, y=None, z=None, w=None):
+        if x is None:
+            if y is not None or z is not None or w is not None:
+                raise ValueError("If `x=None`, `y`, `z`, and `w` must all be left as `None`.")
+            x = y = z = w = 0  # default
+        elif y is None and z is None and w is None:
+            x, y, z, w = x  # unpack first argument
+        elif y is None or z is None or w is None:
+            raise ValueError(
+                "`Vector4` must be initialized as `Vector4(x, y, z, w)`, `Vector4((x, y, z, w))`, or `Vector4(None)`."
+            )
+        self.x, self.y, self.z, self.w = x, y, z, w
+
+    def to_radians(self):
+        return Vector4(math.radians(self.x), math.radians(self.y), math.radians(self.z), math.radians(self.w))
+
+    def to_degrees(self):
+        return Vector4(math.degrees(self.x), math.degrees(self.y), math.degrees(self.z), math.radians(self.w))
+
+    def to_mat_column(self):
+        return [[self.x], [self.y], [self.z], [self.w]]
+
+    def to_mat_row(self):
+        return [[self.x, self.y, self.z, self.w]]
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        elif index == 2:
+            return self.z
+        elif index == 3:
+            return self.w
+        raise IndexError("Index of `Vector4` must be between 0 and 3.")
+
+    def __setitem__(self, index, value):
+        if index == 0:
+            self.x = value
+        elif index == 1:
+            self.y = value
+        elif index == 2:
+            self.z = value
+        elif index == 3:
+            self.w = value
+        raise IndexError("Index of `Vector4` must be between 0 and 3.")
+
+    def __eq__(self, other_vector):
+        return len(other_vector) == 4 and all(self[i] == other_vector[i] for i in range(4))
+
+    def __add__(self, other):
+        if isinstance(other, Vector4):
+            return Vector4(self.x + other.x, self.y + other.y, self.z + other.z, self.w + other.w)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 4:
+                raise ValueError("List or tuple to add to `Vector4` must have four elements.")
+            return Vector4(self.x + other[0], self.y + other[1], self.z + other[2], self.w + other[3])
+        elif isinstance(other, (int, float)):
+            return Vector4(self.x + other, self.y + other, self.z + other, self.w + other)
+        raise TypeError(f"`Vector4` arithmetic not defined for type {type(other)}.")
+
+    def __sub__(self, other):
+        if isinstance(other, Vector4):
+            return Vector4(self.x - other.x, self.y - other.y, self.z - other.z, self.w - other.w)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 4:
+                raise ValueError("List or tuple to subtract from `Vector4` must have four elements.")
+            return Vector4(self.x - other[0], self.y - other[1], self.z - other[2], self.w - other[3])
+        elif isinstance(other, (int, float)):
+            return Vector4(self.x - other, self.y - other, self.z - other, self.w - other)
+        raise TypeError(f"`Vector4` arithmetic not defined for type {type(other)}.")
+
+    def __mul__(self, other):
+        if isinstance(other, Vector4):
+            return Vector4(self.x * other.x, self.y * other.y, self.z * other.z, self.w * other.w)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 4:
+                raise ValueError("List or tuple to multiply `Vector4` by must have four elements.")
+            return Vector4(self.x * other[0], self.y * other[1], self.z * other[2], self.w + other[3])
+        elif isinstance(other, (int, float)):
+            return Vector4(self.x * other, self.y * other, self.z * other, self.w * other)
+        raise TypeError(f"`Vector4` arithmetic not defined for type {type(other)}.")
+
+    def __truediv__(self, other):
+        if isinstance(other, Vector4):
+            return Vector4(self.x / other.x, self.y / other.y, self.z / other.z, self.w / other.w)
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 3:
+                raise ValueError("List or tuple to divide `Vector4` by must have four elements.")
+            return Vector4(self.x / other[0], self.y / other[1], self.z / other[2], self.w / other[3])
+        elif isinstance(other, (int, float)):
+            return Vector4(self.x / other, self.y / other, self.z / other, self.w / other)
+        raise TypeError(f"`Vector4` arithmetic not defined for type {type(other)}.")
+
+    def __len__(self):
+        return 4
+
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
+        yield self.w
+
+    def __repr__(self):
+        return (f"Vector4({self.x:.{self.PRECISION}f}, {self.y:.{self.PRECISION}f}, "
+                f"{self.z:.{self.PRECISION}f}, {self.w:.{self.PRECISION}f})")
+
+    def copy(self):
+        return Vector4(self)
+
+    @classmethod
+    def zero(cls):
+        return cls(0, 0, 0, 0)
+
+    default = zero
+
+    @classmethod
+    def ones(cls):
+        return cls(1, 1, 1, 1)
 
 
 class _Matrix(abc.ABC):

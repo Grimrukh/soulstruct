@@ -95,7 +95,7 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         return packed_header + packed_name + packed_base_data + packed_type_data
 
     def unpack_type_data(self, msb_buffer):
-        self.set(**self.EVENT_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False))
+        self.set(**self.EVENT_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True))
 
     def pack_type_data(self):
         return self.EVENT_TYPE_DATA_STRUCT.pack_from_object(self)

@@ -566,7 +566,7 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
         super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False)
+        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True)
         self.set(**data)
         self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"], assert_size=4)
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
@@ -655,7 +655,7 @@ class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
         super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False)
+        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True)
         self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"], assert_size=4)
 
     def pack_type_data(self):

@@ -436,7 +436,7 @@ class MCP(object):
             if selected_room_indices is None or room.index in selected_room_indices:
                 room.translate(translate)
 
-    def draw(self, axes=None, show=True, room_color="cyan", label_rooms=False):
+    def draw(self, room_color="cyan", label_rooms=False, axes=None, auto_show=True):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
@@ -463,7 +463,7 @@ class MCP(object):
 
         axes.set(xlabel="X", ylabel="Z", zlabel="Y")
         fig.tight_layout()
-        if show:
+        if auto_show:
             plt.show()
 
 
@@ -897,7 +897,7 @@ class MCG(object):
             if selected_node_indices is None or i in selected_node_indices:
                 node.translate += translate
 
-    def draw(self, axes=None, show=True, label_nodes=False):
+    def draw(self, label_nodes=False, axes=None, auto_show=True):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
@@ -914,12 +914,12 @@ class MCG(object):
             end_node = self.nodes[edge.end_node]
             x, y, z = zip(start_node.translate, end_node.translate)
             axes.plot3D(x, z, y, c="black", alpha=0.5)  # note y/z swapped
-        if show:
+        if auto_show:
             plt.show()
 
 
 class NavmeshGraph(object):
-    def __init__(self, map_path: tp.Union[str, Path], msb_path=None):
+    def __init__(self, map_path: tp.Union[str, Path], msb_path=None, map_id: str = None):
         """Simple container for both MCP and MCG, which will generally be edited together.
 
         Loads MSB to validate navmesh room indices. Provides useful methods for joint editing/moving of MCP and MCG.
@@ -931,7 +931,7 @@ class NavmeshGraph(object):
         self.map_path = Path(map_path)
         if not self.map_path.is_dir():
             raise ValueError(f"Map directory does not exist: {str(map_path)}")
-        self.map_id = self.map_path.name
+        self.map_id = self.map_path.name if map_id is None else map_id
         if msb_path is None:
             self.msb_path = (self.map_path / f"../MapStudio/{self.map_id}.msb").resolve()
         else:
@@ -1084,15 +1084,15 @@ class NavmeshGraph(object):
                 output += f"NO EDGES: Room {room.index}\n"
         return output
 
-    def draw(self, axes=None, show=True, room_color="cyan", label_rooms=False, label_nodes=False):
+    def draw(self, room_color="cyan", label_rooms=False, label_nodes=False, axes=None, auto_show=True):
         import matplotlib.pyplot as plt
 
         if axes is None:
             fig = plt.figure(figsize=(8, 8))
             axes = fig.add_subplot(111, projection="3d")
-        self.mcp.draw(axes, show=False, room_color=room_color, label_rooms=label_rooms)
-        self.mcg.draw(axes, show=False, label_nodes=label_nodes)
-        if show:
+        self.mcp.draw(room_color=room_color, label_rooms=label_rooms, axes=axes, auto_show=False)
+        self.mcg.draw(label_nodes=label_nodes, axes=axes, auto_show=False)
+        if auto_show:
             plt.show()
 
     def save(self, map_path=None, write_msb=False, msb_path=None):
@@ -1168,13 +1168,13 @@ def test_move():
     axes_orig = fig.add_subplot(121, projection="3d")
     axes = fig.add_subplot(122, projection="3d")
 
-    mcg.draw(axes_orig, show=False)
-    mcp.draw(axes_orig, show=False)
+    mcg.draw(axes_orig, auto_show=False)
+    mcp.draw(axes_orig, auto_show=False)
 
     mcg.move_in_world((0, 0, 0), (0, 0, 0), 0, 45)
     mcp.move_in_world((0, 0, 0), (0, 0, 0), 0, 45, enclose_original=False)
-    mcg.draw(axes, show=False)
-    mcp.draw(axes, show=False)
+    mcg.draw(axes, auto_show=False)
+    mcp.draw(axes, auto_show=False)
     plt.show()
 
 
@@ -1187,7 +1187,7 @@ def draw_multiple_maps(map_ids):
     colors = ("cyan", "blue", "green", "pink")
     for i, map_id in enumerate(map_ids):
         graph = NavmeshGraph(DSR_PATH + f"/map/{map_id}")
-        graph.draw(axes=axes, show=False, room_color=colors[i])
+        graph.draw(axes=axes, auto_show=False, room_color=colors[i])
     plt.show()
 
 

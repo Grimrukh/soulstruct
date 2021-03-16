@@ -18,8 +18,10 @@ __all__ = [
     "get_startupinfo",
     "partialmethod",
     "Timer",
+    "Flags8",
 ]
 
+import abc
 import ctypes
 import functools
 import io
@@ -237,7 +239,7 @@ def unpack_from_buffer(buffer: tp.Union[str, Path, bytes, io.BufferedIOBase], fm
     return data
 
 
-def read_chars_from_bytes(data, offset=0, length=None, encoding=None):
+def read_chars_from_bytes(data, offset=0, length=None, encoding=None) -> tp.Union[bytes, str]:
     """Read characters from a bytes object (an encoded string). Use 'read_chars_from_buffer' if you are using a buffer.
 
     If 'length=None' (default), characters will be read until null termination from the given offset. Otherwise,
@@ -266,11 +268,13 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None):
         return array
 
 
-def read_chars_from_buffer(buffer, offset=None, length=None, reset_old_offset=True, encoding=None):
+def read_chars_from_buffer(
+    buffer: io.BufferedIOBase, offset=None, length=None, reset_old_offset=True, encoding=None
+) -> tp.Union[str, bytes]:
     """Read characters from a buffer (type IOBase). Use 'read_chars_from_bytes' if your data is already in bytes format.
 
     Args:
-        buffer: byte-format data stream to read from.
+        buffer (io.BufferedIOBase): byte-format data stream to read from.
         offset: offset to `seek()` in buffer before starting to read characters. Defaults to current offset (None).
         reset_old_offset: if True, and 'offset' is not None, the buffer offset will be restored to its original position
             (at function call time) before returning. (Default: True)
@@ -369,3 +373,21 @@ class Timer:
             print(f"{self._name} FAILED after {time.time() - self._start} s.")
         else:
             print(f"{self._name} COMPLETED in {time.time() - self._start} s.")
+
+
+class Flags8(abc.ABC):
+    def __init__(self, byte: int):
+        self.flags = [bool(2 ** i & byte) for i in range(8)]
+
+    def __getitem__(self, i):
+        return self.flags[i]
+
+    def pack(self) -> int:
+        return sum(2 ** i if enabled else 0 for i, enabled in enumerate(self.flags))
+
+    def __repr__(self):
+        return repr(self.flags)
+
+    @classmethod
+    def default(cls):
+        return cls(0)

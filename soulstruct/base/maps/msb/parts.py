@@ -75,7 +75,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
 
     def unpack_type_data(self, msb_buffer):
         """This unpacks simple attributes by default, but some Parts need to process these values more."""
-        self.set(**self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False))
+        self.set(**self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True))
 
     def pack_type_data(self):
         try:
@@ -569,7 +569,7 @@ class MSBCollision(MSBPart, abc.ABC):
         super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, include_asserted=False)
+        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True)
         self.set(**data)
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
         self._force_area_banner = data["__area_name_id"] < 0  # Custom field.

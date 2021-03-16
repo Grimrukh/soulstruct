@@ -13,7 +13,7 @@ class ParamsTest(unittest.TestCase):
         with Timer("ParamDef read"):
             paramdef_bnd = GET_BUNDLED_PARAMDEF()
         with Timer("GameParamBND read"):
-            game_param = GameParamBND("GameParam.parambnd.dcx", paramdef_bnd=paramdef_bnd)
+            game_param = GameParamBND("resources/GameParam.parambnd.dcx", paramdef_bnd=paramdef_bnd)
 
         # dagger = game_param.Weapons[100000]
         # packed = dagger.pack()
