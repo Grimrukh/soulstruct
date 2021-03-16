@@ -15,6 +15,7 @@ __all__ = [
     "read_chars_from_bytes",
     "read_chars_from_buffer",
     "pad_chars",
+    "indent_lines",
     "get_startupinfo",
     "partialmethod",
     "Timer",
@@ -341,6 +342,13 @@ def pad_chars(text, encoding=None, null_terminate=True, pad_to_multiple_of=4):
     return encoded
 
 
+def indent_lines(text: str, indent=4):
+    lines = text.split("\n")
+    if isinstance(indent, int):
+        indent = " " * indent
+    return f"\n{indent}".join(lines)
+
+
 def get_startupinfo():
     """Disables command window for PyInstaller `--noconsole` option.
 
@@ -386,7 +394,7 @@ class Flags8(abc.ABC):
         return sum(2 ** i if enabled else 0 for i, enabled in enumerate(self.flags))
 
     def __repr__(self):
-        return repr(self.flags)
+        return f"{self.__class__.__name__}({''.join(str(int(f)) for f in self.flags)})"
 
     @classmethod
     def default(cls):

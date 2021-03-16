@@ -1,15 +1,17 @@
 __all__ = ["BinaryStruct", "BinaryObject"]
 
 import abc
+import enum
 import inspect
 import io
 import logging
 import re
 import struct
+import types
 import typing as tp
 
-from soulstruct.utilities import read_chars_from_bytes, AttributeDict
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities import read_chars_from_bytes, AttributeDict, Flags8
+from soulstruct.utilities.maths import Vector, Vector3
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -443,6 +445,7 @@ class BinaryObject(abc.ABC):
                 raise ValueError("`unpack_kwargs` must be left as `None` if `source` is not a binary buffer.")
             for field in self.STRUCT.fields:
                 if field.length > 0 and not field.name.startswith("_") and field.name not in kwargs:
+                    # TODO: Mutable `DEFAULTS` members are an issue here.
                     setattr(self, field.name, self.DEFAULTS.get(field.name, self.get_field_default(field)))
             self.set(**kwargs)
 
@@ -459,10 +462,9 @@ class BinaryObject(abc.ABC):
 
     def __setattr__(self, field_name, value):
         """Checks `field_name` is a valid field, confirms any asserted value, and casts value to a given type."""
-        if field_name in (field_types := tp.get_type_hints(self.__class__)):
-            if value is not None and inspect.isclass(field_types[field_name]):
-                value = field_types[field_name](value)
-        else:
+        try:
+            field_type = tp.get_type_hints(self.__class__)[field_name]
+        except KeyError:
             # Check `STRUCT` fields if no type hint exists.
             try:
                 field = self.STRUCT.get_field(field_name)
@@ -473,7 +475,17 @@ class BinaryObject(abc.ABC):
                     raise ValueError(
                         f"Field {repr(field_name)} must have asserted value {field.asserted}, not {value}."
                     )
-                return  # do nothing (asserted fields are not exposed as attributes but can still be set)
+                return  # do nothing (asserted fields are not exposed as attributes but can still be 'set' here)
+        else:
+            if type(field_type) is types.GenericAlias:
+                # TODO: Enforce other `typing` type hints?
+                pass
+            elif inspect.isclass(field_type):
+                if issubclass(field_type, (enum.Enum, Vector, Flags8)):
+                    value = field_type(value)
+                elif field_type in (bytes, str, int, float, tuple, list, set):
+                    value = field_type(value)
+
         super().__setattr__(field_name, value)
 
     def unpack(self, buffer: io.BufferedIOBase, **kwargs):

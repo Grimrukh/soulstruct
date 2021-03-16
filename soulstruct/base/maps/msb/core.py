@@ -10,14 +10,14 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .enums import MSBSubtype, MSBEventSubtype, MSBPartSubtype
-from soulstruct.base.maps.msb.msb_entry import MSBEntry
+from .msb_entry import MSBEntry
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.maps.msb.msb_entry import MSBEntryList, MSBEntryEntity
-    from soulstruct.base.maps.msb.models import MSBModelList
-    from soulstruct.base.maps.msb.events import MSBEventList
-    from soulstruct.base.maps.msb.regions import MSBRegionList
-    from soulstruct.base.maps.msb.parts import MSBPartList
+    from .msb_entry import MSBEntryList, MSBEntryEntity
+    from .models import MSBModelList
+    from .events import MSBEventList
+    from .regions import MSBRegionList
+    from .parts import MSBPartList
 
 _LOGGER = logging.getLogger(__name__)
 
