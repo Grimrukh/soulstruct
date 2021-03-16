@@ -33,7 +33,7 @@ class FLVERHeader(BinaryObject):
         ("vertex_buffer_count", "i"),
         ("bounding_box_min", "3f"),  # `Vector3`
         ("bounding_box_max", "3f"),  # `Vector3`
-        ("raw_face_count", "i"),  # does not include motion blur meshes or degenerate faces
+        ("true_face_count", "i"),  # does not include motion blur meshes or degenerate faces
         ("total_face_count", "i"),  # all faces
         ("vertex_indices_size", "B"),  # 0, 8, 16, 32
         ("unicode", "?"),
@@ -61,7 +61,7 @@ class FLVERHeader(BinaryObject):
     vertex_buffer_count: int
     bounding_box_min: Vector3
     bounding_box_max: Vector3
-    raw_face_count: int
+    true_face_count: int
     total_face_count: int
     vertex_indices_size: int
     unicode: bool
@@ -80,6 +80,8 @@ class FLVER(GameFile):
 
     Technically, this format is FLVER2. Demon's Souls used a different format, FLVER0, which is not supported here.
     """
+
+    header: FLVERHeader
 
     def __init__(
         self,
@@ -166,5 +168,41 @@ class FLVER(GameFile):
             raise ValueError(f"{len(vertex_buffers)} `VertexBuffer`s were left over after assignment to `Mesh`es.")
 
     def pack(self):
-        """TODO"""
-        raise NotImplementedError("Pack not implemented yet.")
+
+        # Update header counts.
+        self.header.dummy_count = len(self.dummies)
+        self.header.material_count = len(self.materials)
+        self.header.bone_count = len(self.bones)
+        self.header.mesh_count = len(self.meshes)
+        self.header.vertex_buffer_count = sum(len(mesh.vertex_buffers) for mesh in self.meshes)
+        self.header.face_set_count = sum(len(mesh.face_sets) for mesh in self.meshes)
+        self.header.buffer_layout_count = len(self.buffer_layouts)
+        self.header.texture_count = sum(len(material.textures) for material in self.materials)
+
+        self.header.true_face_count = 0
+        self.header.total_face_count = 0
+        for mesh in self.meshes:
+            allow_primitive_restarts = len(mesh.vertices) < 2 ** 16 - 1  # max unsigned short value
+            for face_set in mesh.face_sets:
+                face_set_true_count, face_set_total_count = face_set.get_face_counts(allow_primitive_restarts)
+                self.header.true_face_count += face_set_true_count
+                self.header.total_face_count += face_set_total_count
+
+        if self.header.version < Version.Bloodborne_DS3_A:
+            # Set header's `vertex_index_size` to the largest size detected across all `FaceSet`s (16 or 32).
+            self.header.vertex_indices_size = 16
+            for mesh in self.meshes:
+                for face_set in mesh.face_sets:
+                    face_set_vertex_index_size = face_set.get_vertex_index_size()
+                    self.header.vertex_indices_size = max(self.header.vertex_indices_size, face_set_vertex_index_size)
+        else:
+            # Vertex size is stored per `VertexBuffer`.
+            self.header.vertex_indices_size = 0
+
+        # Header `data_offset` and `data_size` are set just before final write.
+
+        packed_dummies = b"".join(dummy.pack(self.header.version) for dummy in self.dummies)
+        packed_materials = b"".join(material.pack(i) for i, material in enumerate(self.materials))
+
+        # TODO: Set header `data_offset` and `data_size`.
+        packed_header = self.header.pack()

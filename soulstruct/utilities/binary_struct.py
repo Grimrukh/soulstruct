@@ -348,26 +348,31 @@ class BinaryStruct:
             output += self.pack(struct_dict)
         return output
 
-    def pack_from_object(self, obj) -> bytes:
-        """Attempts to build complete struct dictionary from attributes of given object `obj`.
+    def pack_from_object(self, obj, **kwargs) -> bytes:
+        """Attempts to build complete struct dictionary from attributes of given object `obj`. If any `kwargs` are
+        given, they will take precedence over the `obj` attributes.
 
-        All non-constant fields must be present as attributes, or an exception will be raised.
+        All non-constant fields must be present as attributes or `kwargs`, or an exception will be raised.
         """
         struct_dict = {}
         for field in self.non_padding_fields:
             if field.length == 0:
                 continue  # padding
-            try:
-                struct_dict[field.name] = getattr(obj, field.name)
-            except AttributeError:
-                if not field.asserted:
-                    raise AttributeError(
-                        f"Non-asserted field {repr(field)} is not an attribute of given object {obj}. Cannot pack."
-                    )
+            if field.name in kwargs:
+                struct_dict[field.name] = kwargs[field.name]
+            else:
+                try:
+                    struct_dict[field.name] = getattr(obj, field.name)
+                except AttributeError:
+                    if not field.asserted:
+                        raise AttributeError(
+                            f"Non-asserted field {repr(field)} is not an attribute of given object {obj} and was not "
+                            f"passed as a keyword argument. Cannot pack."
+                        )
         try:
             return self.pack(struct_dict)
         except struct.error:
-            _LOGGER.error(f"Failed to pack BinaryStruct from object. Dictionary:\n{struct_dict}")
+            _LOGGER.error(f"Failed to pack `BinaryStruct` from object. Dictionary:\n{struct_dict}")
             raise
 
     def copy(self):
@@ -491,7 +496,7 @@ class BinaryObject(abc.ABC):
     def unpack(self, buffer: io.BufferedIOBase, **kwargs):
         self.set(**self.STRUCT.unpack(buffer, exclude_asserted=True))
 
-    def pack(self) -> bytes:
+    def pack(self, **kwargs) -> bytes:
         return self.STRUCT.pack_from_object(self)
 
     @classmethod

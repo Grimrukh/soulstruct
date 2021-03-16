@@ -184,8 +184,11 @@ class Material(BinaryObject):
             buffer.seek(material_offset)
         self.set(**data)
 
-    def pack(self):
-        """TODO"""
+    def pack(
+        self, name_offset: int = None, mtd_path_offset: int = None, texture_index: int = None, gx_offset: int = None
+    ) -> bytes:
+        if any(kwarg is None for kwarg in (name_offset, mtd_path_offset, texture_index, gx_offset)):
+            raise ValueError("`Material.pack()` did not receive all necessary keyword arguments.")
 
     def assign_textures(self, textures: dict[int, Texture]):
         if self._texture_count == -1 or self._first_texture_index == -1:

@@ -42,3 +42,9 @@ class Dummy(BinaryObject):
         color = data.pop("__color")
         self.color = (Color.from_argb if color_is_argb else Color.from_bgra)(*color)
         self.set(**data)
+
+    def pack(self, color_is_argb=None):
+        if color_is_argb is None:
+            raise ValueError("`color_is_argb` (bool) must be given to `Dummy.pack()`.")
+        packed_color = self.color.pack_argb() if color_is_argb else self.color.pack_bgra()
+        return self.STRUCT.pack_from_object(self, color=packed_color)

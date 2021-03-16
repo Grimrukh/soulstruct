@@ -1,6 +1,8 @@
 __all__ = ["Color"]
 
 import io
+import struct
+
 from soulstruct.utilities import unpack_from_buffer
 
 
@@ -22,6 +24,9 @@ class Color:
         red, green, blue, alpha = unpack_from_buffer(buffer, "<4f")
         return cls(red, green, blue, alpha)
 
+    def pack_rgba(self) -> bytes:
+        return struct.pack("<4B", self.red, self.green, self.blue, self.alpha)
+
     @classmethod
     def from_bgra(cls, blue, green, red, alpha):
         return cls(red, green, blue, alpha)
@@ -31,6 +36,9 @@ class Color:
         blue, green, red, alpha = unpack_from_buffer(buffer, "<4f")
         return cls(red, green, blue, alpha)
 
+    def pack_bgra(self) -> bytes:
+        return struct.pack("<4B", self.blue, self.green, self.red, self.alpha)
+
     @classmethod
     def from_argb(cls, alpha, red, green, blue):
         return cls(red, green, blue, alpha)
@@ -39,6 +47,9 @@ class Color:
     def unpack_argb(cls, buffer: io.BufferedIOBase):
         alpha, red, green, blue = unpack_from_buffer(buffer, "<4f")
         return cls(red, green, blue, alpha)
+
+    def pack_argb(self) -> bytes:
+        return struct.pack("<4B", self.alpha, self.red, self.green, self.blue)
 
     @classmethod
     def black(cls):

@@ -73,6 +73,27 @@ class FaceSet(BinaryObject):
 
         self.set(**data)
 
+    def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
+        if self.triangle_strip:
+            true_face_count = 0
+            total_face_count = 0
+            for i in range(len(self.indices) - 2):
+                triplet = self.indices[i:i + 3]
+                if not allow_primitive_restarts or 0xFFFF not in triplet:
+                    total_face_count += 1
+                    if not self.flags.MotionBlur and len(set(triplet)) == 3:
+                        # Vertices are not MotionBlur and not degenerate.
+                        true_face_count += 1
+            return true_face_count, total_face_count
+        else:
+            return len(self.indices) // 3, len(self.indices) // 3
+
+    def get_vertex_index_size(self) -> int:
+        for vertex_index in self.indices:
+            if vertex_index > 2 ** 16:  # unsigned short max value (+1)
+                return 32
+        return 16
+
     def __repr__(self):
         return (
             f"FaceSet(\n"
