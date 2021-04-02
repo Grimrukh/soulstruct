@@ -325,9 +325,9 @@ class EVSParser(abc.ABC):
         event_dict = self.events[name]
         kwargs = self._parse_keyword_nodes(node.keywords)
         event_layer_string = format_event_layers(kwargs.pop("event_layers", None))
-        instruction_name = "RunCommonEvent" if event_dict['common'] else "RunEvent"
         if not args and not kwargs and not event_dict["args"]:
             # Events with no arguments can be called with no argument, ignoring `event_layers` (`slot` defaults to 0).
+            instruction_name = "RunCommonEvent" if event_dict['common'] else "RunEvent"
             instruction = self.instructions[instruction_name](event_dict["id"])
             instruction[0] += event_layer_string
             return instruction
@@ -368,7 +368,11 @@ class EVSParser(abc.ABC):
         args = (0,) if not args else args
         arg_types = None if not event_dict["arg_types"] else event_dict["arg_types"]
 
-        instruction = self.instructions[instruction_name](event_id, slot=slot, args=args, arg_types=arg_types)
+        if event_dict['common']:
+            instruction = self.instructions["RunCommonEvent"](event_id, args=args, arg_types=arg_types)
+        else:
+            instruction = self.instructions["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
+
         instruction[0] += event_layer_string
         return instruction
 
