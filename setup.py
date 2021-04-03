@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 try:
     with open("README.md") as f:
@@ -15,7 +15,7 @@ def _get_version():
 setup(
     name="soulstruct",
     version=_get_version(),
-    packages=["soulstruct"],
+    packages=find_packages(),
     description="Inspect and mod FromSoftware games.",
     long_description=long_description,
     extras_require={
