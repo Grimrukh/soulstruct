@@ -351,12 +351,13 @@ class EVSParser(abc.ABC):
     def _compile_instruction(self, node: ast.Call):
         """Build instruction arguments and call the instruction (which will return a numeric line)."""
         name, args, kwargs = self._parse_function_call(node)
+        event_layers = kwargs.pop("event_layers", None)
         try:
             instruction_lines = self.instructions[name](*args, **kwargs)  # includes event arg load lines
         except Exception as e:
             raise EVSSyntaxError(node.lineno, f"Failed to compile instruction {name}.\n    Error: {str(e)}")
         try:
-            instruction_lines[0] += format_event_layers(kwargs.pop("event_layers", None))
+            instruction_lines[0] += format_event_layers(event_layers)
         except TypeError:
             raise EVSSyntaxError(node.lineno, f"If given, `event_layers` must be a list, tuple, or single integer.")
         return instruction_lines
