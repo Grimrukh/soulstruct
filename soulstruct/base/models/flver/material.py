@@ -61,12 +61,15 @@ class GXList:
             self.gx_items = source
         elif source is None:
             self.gx_items = []
-
-        raise TypeError(f"Invalid `source` for `GXList`: {type(source)}. Must be a buffer, list of `GXItem`s, or None.")
+        else:
+            raise TypeError(f"Invalid `source` for `GXList`: {type(source)}. Must be a buffer, list of `GXItem`s, or None.")
 
     def unpack(self, buffer):
         self.gx_items = []
-        while (gx_id := unpack_from_buffer(buffer, "<i", offset=buffer.tell())) not in {2 ** 31 - 1, -1}:
+        while (gx_id := unpack_from_buffer(buffer, "<i", offset=buffer.tell())):
+            (gx_id,) = gx_id
+            if gx_id in [2 ** 31 - 1, -1]:
+                break
             self.gx_items.append(GXItem(buffer))
         self.terminator_id = gx_id
         terminator_data = BinaryStruct(
