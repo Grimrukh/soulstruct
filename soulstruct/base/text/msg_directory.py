@@ -6,12 +6,13 @@ import typing as tp
 from copy import deepcopy
 from pathlib import Path
 
-from soulstruct.containers.bnd import BND
+from soulstruct.containers import Binder
 from .fmg import BaseFMG
 
 if tp.TYPE_CHECKING:
     from soulstruct.containers.bnd import BaseBND
-    from soulstruct.utilities import BiDict
+    from soulstruct.containers.entry import BinderEntry
+    from soulstruct.utilities.misc import BiDict
 
 __all__ = ["MSGDirectory"]
 _LOGGER = logging.getLogger(__name__)
@@ -61,8 +62,8 @@ class MSGDirectory(abc.ABC):
         self.directory = Path(msg_directory)
 
         ext = "msgbnd.dcx" if self.IS_DCX else "msgbnd"
-        self.item_msgbnd = BND(self.directory / f"item.{ext}")
-        self.menu_msgbnd = BND(self.directory / f"menu.{ext}")
+        self.item_msgbnd = Binder(self.directory / f"item.{ext}")
+        self.menu_msgbnd = Binder(self.directory / f"menu.{ext}")
 
         self.load_fmg_entries_from_bnd(self.item_msgbnd, is_menu=False)
         self.load_fmg_entries_from_bnd(self.menu_msgbnd, is_menu=True)
@@ -90,7 +91,7 @@ class MSGDirectory(abc.ABC):
                 raise ValueError(f"MSGBND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
             self._original_names[attr_name] = entry.name
             self._is_menu[attr_name] = is_menu
-            fmg = self.FMG_CLASS(entry.data)
+            fmg = self.FMG_CLASS(entry.get_uncompressed_data())
             if attr_name.endswith("Patch"):
                 # Patch FMGs are used to update the base FMGs here.
                 # Original source (patch or no) is not tracked; all entries will be written to patch FMG by `pack()`.
@@ -107,8 +108,8 @@ class MSGDirectory(abc.ABC):
             bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
         except IndexError:
             raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]
-        bnd_entry.data = fmg_data
+        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
+        bnd_entry.set_uncompressed_data(fmg_data)
         if not use_original_names:
             bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
 

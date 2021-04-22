@@ -52,28 +52,33 @@ import copy
 import shutil
 import struct
 import typing as tp
-from io import BufferedReader, BytesIO
 from itertools import product
 from pathlib import Path
 
+from soulstruct.base.game_file import GameFile
 from soulstruct.darksouls1r.maps.msb import MSB
-from soulstruct.utilities.core import create_bak
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 
-class MCPRoom:
+class MCPRoom(BinaryObject):
 
     STRUCT = BinaryStruct(
         ("map_id", "4b"),
         ("index", "i"),
-        ("connected_rooms_count", "i"),
-        ("connected_rooms_offset", "i"),
+        ("__connected_rooms_count", "i"),
+        ("__connected_rooms_offset", "i"),
         ("box_start", "3f"),
         ("box_end", "3f"),
     )
 
-    def __init__(self, mcp_room_source=None, **kwargs):
+    map_id: tuple[int, int, int, int]
+    index: int
+    box_start: Vector3
+    box_end: Vector3
+    connected_rooms: list[int]
+
+    def __init__(self, reader: BinaryReader = None, /, **kwargs):
         """Simple bounding box around a navmesh (indexed directly from MSB), with a list of other NavRoom indices that
         this one connects to.
 
@@ -86,36 +91,20 @@ class MCPRoom:
         self.index = -1  # separate (but generally equal) to indexing in MCP
         self.box_start = Vector3(0, 0, 0)
         self.box_end = Vector3(1, 1, 1)
-        self.connected_rooms = []  # type: list[int]  # `.index` of connected MCPRooms
+        self.connected_rooms = []  # `.index` of connected MCPRooms
+        super().__init__(reader, **kwargs)
 
-        if isinstance(mcp_room_source, bytes):
-            self.unpack(BytesIO(mcp_room_source))
-        elif isinstance(mcp_room_source, (BytesIO, BufferedReader)):
-            self.unpack(mcp_room_source)
-        elif mcp_room_source is not None:
-            raise TypeError("'mcp_room_source' must be a buffer or bytes.")
-        self.set(**kwargs)
+    def unpack(self, reader: BinaryReader):
+        room = reader.unpack_struct(self.STRUCT)
 
-    def set(self, **kwargs):
-        for prop, value in kwargs.items():
-            if prop not in {"map_id", "index", "box_start", "box_end", "connected_rooms"}:
-                raise AttributeError(f"Invalid MCPRoom field: {prop}")
-            setattr(self, prop, value)
-
-    def unpack(self, mcp_room_buffer):
-        room_struct = self.STRUCT.unpack(mcp_room_buffer)
-        self.map_id = room_struct["map_id"]
-        self.index = room_struct["index"]
-        self.box_start = Vector3(room_struct["box_start"])
-        self.box_end = Vector3(room_struct["box_end"])
-        old_offset = mcp_room_buffer.tell()
-        mcp_room_buffer.seek(room_struct["connected_rooms_offset"])
         self.connected_rooms = []
-        for _ in range(room_struct["connected_rooms_count"]):
-            self.connected_rooms.append(struct.unpack("i", mcp_room_buffer.read(4))[0])
-        mcp_room_buffer.seek(old_offset)
+        with reader.temp_offset(room.pop("__connected_rooms_offset")):
+            for _ in range(room.pop("__connected_rooms_count")):
+                self.connected_rooms.append(reader.unpack_value("i"))
 
-    def pack(self, connected_rooms_offset):
+        self.set(**room)
+
+    def pack(self, connected_rooms_offset: int):
         """Connected rooms should be packed separately and the starting offset passed to this."""
         return self.STRUCT.pack(
             map_id=self.map_id,
@@ -218,40 +207,30 @@ class MCPRoom:
             plt.show()
 
 
-class MCP(object):
+class MCP(GameFile):
 
     HEADER_STRUCT = BinaryStruct(
         ("two", "i", 2),  # 0x2000000 for Demon's Souls (big endian)
         ("unknown", "i"),
-        ("rooms_count", "i"),
-        ("rooms_offset", "i"),
+        ("__rooms_count", "i"),
+        ("__rooms_offset", "i"),
     )
 
-    def __init__(self, mcp_source=None):
+    unknown: int
+    rooms: list[MCPRoom]
+
+    def __init__(self, mcp_source=None, dcx_magic=()):
         self.unknown = -1
         self.rooms = []  # type: list[MCPRoom]
-        self.mcp_path = None
+        super().__init__(mcp_source, dcx_magic)
 
-        if mcp_source is None:
-            return  # empty MCP
-        elif isinstance(mcp_source, (Path, str)):
-            self.mcp_path = Path(mcp_source)
-            with self.mcp_path.open("rb") as mcp_buffer:
-                self.unpack(mcp_buffer)
-        elif isinstance(mcp_source, bytes):
-            self.unpack(BytesIO(mcp_source))
-        elif isinstance(mcp_source, (BytesIO, BufferedReader)):
-            self.unpack(mcp_source)
-        else:
-            raise TypeError("'mcp_source' must be a path, buffer, bytes, or None.")
-
-    def unpack(self, mcp_buffer):
-        header = self.HEADER_STRUCT.unpack(mcp_buffer)
+    def unpack(self, reader: BinaryReader, **kwargs):
+        header = reader.unpack_struct(self.HEADER_STRUCT)
         self.unknown = header["unknown"]
-        mcp_buffer.seek(header["rooms_offset"])
-        self.rooms = [MCPRoom(mcp_buffer) for _ in range(header["rooms_count"])]
+        reader.seek(header.pop("__rooms_offset"))
+        self.rooms = [MCPRoom(reader) for _ in range(header.pop("rooms_count"))]
 
-    def pack(self):
+    def pack(self) -> bytes:
         offset = self.HEADER_STRUCT.size
         connected_rooms_offsets = []
         all_connected_rooms = b""
@@ -261,24 +240,15 @@ class MCP(object):
             all_connected_rooms += connected_rooms
             offset += len(connected_rooms)
 
-        packed = self.HEADER_STRUCT.pack(unknown=self.unknown, rooms_count=len(self.rooms), rooms_offset=offset,)
+        packed = self.HEADER_STRUCT.pack(
+            unknown=self.unknown,
+            __rooms_count=len(self.rooms),
+            __rooms_offset=offset,
+        )
         packed += all_connected_rooms
         for i, room in enumerate(self.rooms):
             packed += room.pack(connected_rooms_offsets[i])
         return packed
-
-    def write_packed(self, mcp_path=None):
-        if mcp_path is None:
-            if self.mcp_path:
-                mcp_path = self.mcp_path
-            else:
-                raise ValueError("Cannot automatically set MCP path to write to.")
-        else:
-            mcp_path = Path(mcp_path)
-        mcp_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(mcp_path)
-        with mcp_path.open("wb") as f:
-            f.write(self.pack())
 
     def __getitem__(self, room_index):
         for room in self.rooms:
@@ -315,7 +285,7 @@ class MCP(object):
         self.rooms.append(room)
         return room
 
-    def duplicate_room(self, source_index, **kwargs):
+    def duplicate_room(self, source_index, **kwargs) -> MCPRoom:
         """Duplicate given room index. By default, new index is maximum existing room index plus one."""
         kwargs.setdefault("index", self.max_index + 1)
         room = self.get_room_index(source_index).copy()
@@ -467,61 +437,55 @@ class MCP(object):
             plt.show()
 
 
-class MCGNode(object):
+class MCGNode(BinaryObject):
 
     STRUCT = BinaryStruct(
-        ("connection_count", "i"),
+        ("__connection_count", "i"),
         ("translate", "3f"),
-        ("connected_nodes_offset", "i"),
-        ("connected_edges_offset", "i"),
-        ("unk0", "i"),
-        ("unk1", "i"),
+        ("__connected_nodes_offset", "i"),
+        ("__connected_edges_offset", "i"),
+        ("unknowns", "ii"),
     )
 
-    def __init__(self, mcg_node_source):
-        self.translate = Vector3(0, 0, 0)
-        self.connected_nodes = []
-        self.connected_edges = []  # edge i connects to node i
+    translate: Vector3
+    unknowns: tuple[int, int]
+    connected_node_indices: list[int]
+    connected_edge_indices: list[int]
+
+    def __init__(self, reader: BinaryReader = None, /, **kwargs):
+        self.connected_node_indices = []
+        self.connected_edge_indices = []  # edges connect to `connected_nodes` with the same index
         self.unknowns = (-1, -1)
+        super().__init__(reader, **kwargs)
 
-        if isinstance(mcg_node_source, bytes):
-            self.unpack(BytesIO(mcg_node_source))
-        elif isinstance(mcg_node_source, (BytesIO, BufferedReader)):
-            self.unpack(mcg_node_source)
-        else:
-            raise TypeError("'mcg_node_source' must be a buffer or bytes.")
+    def unpack(self, reader: BinaryReader):
+        node = reader.unpack_struct(self.STRUCT)
+        connection_count = node.pop("__connection_count")
 
-    def unpack(self, mcg_node_buffer):
-        node_struct = self.STRUCT.unpack(mcg_node_buffer)
-        self.translate = Vector3(node_struct["translate"])
-        self.unknowns = (node_struct["unk0"], node_struct["unk1"])
+        self.connected_node_indices = []
+        with reader.temp_offset(node.pop("__connected_nodes_offset")):
+            for _ in range(connection_count):
+                self.connected_node_indices.append(reader.unpack_value("<i"))
 
-        old_offset = mcg_node_buffer.tell()
+        self.connected_edge_indices = []
+        with reader.temp_offset(node.pop("__connected_edges_offset")):
+            for _ in range(connection_count):
+                self.connected_edge_indices.append(reader.unpack_value("<i"))
 
-        self.connected_nodes = []
-        mcg_node_buffer.seek(node_struct["connected_nodes_offset"])
-        for _ in range(node_struct["connection_count"]):
-            self.connected_nodes.append(struct.unpack("<i", mcg_node_buffer.read(4))[0])
-        self.connected_edges = []
-        mcg_node_buffer.seek(node_struct["connected_edges_offset"])
-        for _ in range(node_struct["connection_count"]):
-            self.connected_edges.append(struct.unpack("<i", mcg_node_buffer.read(4))[0])
-
-        mcg_node_buffer.seek(old_offset)
+        self.set(**node)
 
     def validate(self):
         if len(self.connected_nodes) != len(self.connected_edges):
             raise ValueError(f"Number of connected nodes does not match number of connected edges.")
 
-    def pack(self, connected_nodes_offset, connected_edges_offset):
+    def pack(self, connected_nodes_offset: int, connected_edges_offset: int):
         self.validate()
         return self.STRUCT.pack(
-            connection_count=len(self.connected_nodes),
+            __connection_count=len(self.connected_nodes),
             translate=list(self.translate),
-            connected_nodes_offset=connected_nodes_offset,
-            connected_edges_offset=connected_edges_offset,
-            unk0=self.unknowns[0],
-            unk1=self.unknowns[1],
+            __connected_nodes_offset=connected_nodes_offset,
+            __connected_edges_offset=connected_edges_offset,
+            unknowns=self.unknowns,
         )
 
     def pack_connected_nodes(self):
@@ -559,68 +523,69 @@ class MCGNode(object):
         self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
 
 
-class MCGEdge(object):
+class MCGEdge(BinaryObject):
+    """Note that these objects, in the `MCG` file, reference absolute indices of `MCPRoom` instances in the `MCP` file.
+
+    The two file types (`MCG` and `MCP`) must be carefully synchronized.
+    """
 
     STRUCT = BinaryStruct(
         ("start_node", "i"),
-        ("unk1_count", "i"),  # unknown indices; likely related to use of start node
-        ("unk1_offset", "i"),
+        ("__unk1_count", "i"),  # unknown indices; likely related to use of start node
+        ("__unk1_offset", "i"),
         ("end_node", "i"),
-        ("unk2_count", "i"),  # unknown indices; likely related to use of end node
-        ("unk2_offset", "i"),
+        ("__unk2_count", "i"),  # unknown indices; likely related to use of end node
+        ("__unk2_offset", "i"),
         ("mcp_room_index", "i"),
         ("map_id", "4b"),
-        ("unk_float", "f"),  # possibly a weight?
+        ("unknown", "f"),  # possibly a weight?
     )
 
-    def __init__(self, mcg_edge_source):
-        self.start_node = -1
-        self.end_node = -1
+    start_node: int
+    end_node: int
+    mcp_room_index: int
+    map_id: tuple[int, int, int, int]
+    unknown: float
+
+    unk1_indices: list[int, ...]
+    unk2_indices: list[int, ...]
+
+    DEFAULTS = {
+        "mcp_room_index": -1,
+        "map_id": (-1, -1, -1, -1),
+    }
+
+    def __init__(self, reader: BinaryReader = None, /, **kwargs):
         self.unk1_indices = []
         self.unk2_indices = []
-        self.mcp_room_index = -1  # `index` of NavRoom
-        self.map_id = (-1, -1, -1, -1)
-        self.unk_float = 0.0
+        super().__init__(reader, **kwargs)
 
-        if isinstance(mcg_edge_source, bytes):
-            self.unpack(BytesIO(mcg_edge_source))
-        elif isinstance(mcg_edge_source, (BytesIO, BufferedReader)):
-            self.unpack(mcg_edge_source)
-        else:
-            raise TypeError("'mcg_edge_source' must be a buffer or bytes.")
-
-    def unpack(self, mcg_edge_buffer):
-        edge_struct = self.STRUCT.unpack(mcg_edge_buffer)
-        self.start_node = edge_struct["start_node"]
-        self.end_node = edge_struct["end_node"]
-        self.mcp_room_index = edge_struct["mcp_room_index"]
-        self.map_id = edge_struct["map_id"]
-        self.unk_float = edge_struct["unk_float"]
-
-        old_offset = mcg_edge_buffer.tell()
+    def unpack(self, reader: BinaryReader):
+        edge = reader.unpack_struct(self.STRUCT)
 
         self.unk1_indices = []
-        mcg_edge_buffer.seek(edge_struct["unk1_offset"])
-        for _ in range(edge_struct["unk1_count"]):
-            self.unk1_indices.append(struct.unpack("<i", mcg_edge_buffer.read(4))[0])
+        with reader.temp_offset(edge.pop("__unk1_offset")):
+            for _ in range(edge.pop("__unk1_count")):
+                self.unk1_indices.append(reader.unpack_value("<i"))
+
         self.unk2_indices = []
-        mcg_edge_buffer.seek(edge_struct["unk2_offset"])
-        for _ in range(edge_struct["unk2_count"]):
-            self.unk2_indices.append(struct.unpack("<i", mcg_edge_buffer.read(4))[0])
+        with reader.temp_offset(edge.pop("__unk2_offset")):
+            for _ in range(edge.pop("__unk2_count")):
+                self.unk2_indices.append(reader.unpack_value("<i"))
 
-        mcg_edge_buffer.seek(old_offset)
+        self.set(**edge)
 
-    def pack(self, unk1_offset, unk2_offset):
+    def pack(self, unk1_offset: int, unk2_offset: int) -> bytes:
         return self.STRUCT.pack(
             start_node=self.start_node,
-            unk1_count=len(self.unk1_indices),
-            unk1_offset=unk1_offset,
+            __unk1_count=len(self.unk1_indices),
+            __unk1_offset=unk1_offset,
             end_node=self.end_node,
-            unk2_count=len(self.unk2_indices),
-            unk2_offset=unk2_offset,
+            __unk2_count=len(self.unk2_indices),
+            __unk2_offset=unk2_offset,
             mcp_room_index=self.mcp_room_index,
             map_id=self.map_id,
-            unk_float=self.unk_float,
+            unknown=self.unknown,
         )
 
     def pack_unk1_indices(self):
@@ -632,45 +597,32 @@ class MCGEdge(object):
         return struct.pack(f"<{index_count}i", *self.unk2_indices)
 
 
-class MCG(object):
+class MCG(GameFile):
 
     HEADER_STRUCT = BinaryStruct(
         ("one", "i", 1),  # 0x1000000 in Demon's Souls (big endian)
-        ("unk0", "i"),
-        ("nodes_count", "i"),
-        ("nodes_offset", "i"),
-        ("edges_count", "i"),
-        ("edges_offset", "i"),
-        ("unk1", "i"),
-        ("unk2", "i"),
+        ("__unk0", "i"),
+        ("__nodes_count", "i"),
+        ("__nodes_offset", "i"),
+        ("__edges_count", "i"),
+        ("__edges_offset", "i"),
+        ("__unk1", "i"),
+        ("__unk2", "i"),
     )
 
-    def __init__(self, mcg_source):
+    unknowns: tuple[int, int, int]
+
+    def __init__(self, mcg_source=None, dcx_magic=()):
         self.unknowns = (-1, -1, -1)
-        self.nodes = []  # type: list[MCGNode]
-        self.edges = []  # type: list[MCGEdge]
-        self.mcg_path = None
+        super().__init__(mcg_source, dcx_magic=dcx_magic)
 
-        if mcg_source is None:
-            return  # empty MCG
-        elif isinstance(mcg_source, (Path, str)):
-            self.mcg_path = Path(mcg_source)
-            with self.mcg_path.open("rb") as mcp_buffer:
-                self.unpack(mcp_buffer)
-        elif isinstance(mcg_source, bytes):
-            self.unpack(BytesIO(mcg_source))
-        elif isinstance(mcg_source, (BytesIO, BufferedReader)):
-            self.unpack(mcg_source)
-        else:
-            raise TypeError("'mcg_source' must be a path, buffer, bytes, or None.")
-
-    def unpack(self, mcg_buffer):
-        header = self.HEADER_STRUCT.unpack(mcg_buffer)
-        self.unknowns = (header["unk0"], header["unk1"], header["unk2"])
-        mcg_buffer.seek(header["nodes_offset"])
-        self.nodes = [MCGNode(mcg_buffer) for _ in range(header["nodes_count"])]
-        mcg_buffer.seek(header["edges_offset"])
-        self.edges = [MCGEdge(mcg_buffer) for _ in range(header["edges_count"])]
+    def unpack(self, reader: BinaryReader, **kwargs):
+        mcg = reader.unpack_struct(self.HEADER_STRUCT)
+        self.unknowns = (mcg["__unk0"], mcg["__unk1"], mcg["__unk2"])
+        reader.seek(mcg["__nodes_offset"])
+        self.nodes = [MCGNode(reader) for _ in range(mcg["__nodes_count"])]
+        reader.seek(mcg["__edges_offset"])
+        self.edges = [MCGEdge(reader) for _ in range(mcg["__edges_count"])]
 
     def pack(self):
         offset = self.HEADER_STRUCT.size
@@ -714,13 +666,13 @@ class MCG(object):
             packed_nodes += node.pack(connected_node_offsets[i], connected_edge_offsets[i])
 
         packed = self.HEADER_STRUCT.pack(
-            unk0=self.unknowns[0],
-            nodes_count=len(self.nodes),
-            nodes_offset=nodes_offset,
-            edges_count=len(self.edges),
-            edges_offset=edges_offset,
-            unk1=self.unknowns[1],
-            unk2=self.unknowns[2],
+            __unk0=self.unknowns[0],
+            __nodes_count=len(self.nodes),
+            __nodes_offset=nodes_offset,
+            __edges_count=len(self.edges),
+            __edges_offset=edges_offset,
+            __unk1=self.unknowns[1],
+            __unk2=self.unknowns[2],
         )
         packed += packed_edge_unk_offsets
         packed += packed_connection_offsets
@@ -728,24 +680,11 @@ class MCG(object):
         packed += packed_nodes
         return packed
 
-    def write_packed(self, mcg_path=None):
-        if mcg_path is None:
-            if self.mcg_path:
-                mcg_path = self.mcg_path
-            else:
-                raise ValueError("Cannot automatically set MCG path to write to.")
-        else:
-            mcg_path = Path(mcg_path)
-        mcg_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(mcg_path)
-        with mcg_path.open("wb") as f:
-            f.write(self.pack())
-
-    def get_edge_indices_in_room(self, room_index):
+    def get_edge_indices_in_room(self, room_index: int):
         """Return a list of all edge indices in the given MCP room."""
         return [i for i, edge in enumerate(self.edges) if edge.mcp_room_index == room_index]
 
-    def delete_edge_between_nodes(self, first_node_index, second_node_index, allow_missing=True):
+    def delete_edge_between_nodes(self, first_node_index: int, second_node_index: int, allow_missing=True):
         """Looks for and deletes the edge between the two nodes (in either direction). This is generally safer than
         calling `delete_edge` directly, since node indices are probably more stable while editing maps.
 
@@ -768,11 +707,11 @@ class MCG(object):
                 f"This should't happen!"
             )
         edge_index = edge_index_matches[0]
-        # print(f"# Deleting edge {edge_index} between nodes {self.edges[edge_index].start_node} and "
-        #       f"{self.edges[edge_index].end_node}.")  # todo
         self.delete_edge(edge_index)
 
-    def add_edge_between_nodes(self, first_node_index, second_node_index, room_index, allow_repeat=False, map_id=None):
+    def add_edge_between_nodes(
+        self, first_node_index: int, second_node_index: int, room_index: int, allow_repeat=False, map_id=None
+    ):
         """If `map_id` is None, copies from last edge. (Also copies unknown indices from last edge.)"""
         if not allow_repeat:
             # Check edge doesn't already exist.
@@ -802,7 +741,7 @@ class MCG(object):
         end_node.connected_edges.append(new_edge_index)
         print(f"Created edge {new_edge_index} between nodes {first_node_index} and {second_node_index}.")
 
-    def delete_edge(self, edge_index):
+    def delete_edge(self, edge_index: int):
         """Delete edge with given index (in MCG) and remove all references to its connection in nodes.
 
         Currently assumes that no two edges have identical (or reversed) start and end nodes, which should be true.
@@ -918,7 +857,8 @@ class MCG(object):
             plt.show()
 
 
-class NavmeshGraph(object):
+class NavmeshGraph:
+
     def __init__(self, map_path: tp.Union[str, Path], msb_path=None, map_id: str = None):
         """Simple container for both MCP and MCG, which will generally be edited together.
 
@@ -1101,8 +1041,8 @@ class NavmeshGraph(object):
         else:
             mcp_path = Path(map_path / f"{self.map_id}.mcp")
             mcg_path = Path(map_path / f"{self.map_id}.mcg")
-        self.mcp.write_packed(mcp_path)
-        self.mcg.write_packed(mcg_path)
+        self.mcp.write(mcp_path)
+        self.mcg.write(mcg_path)
         # print(f"# MCP and MCG files written for map {self.map_id}.")
         if write_msb:
             self._msb.write(msb_path)
@@ -1121,6 +1061,8 @@ def backup_all_mcp_msg(source_map, dest_map):
         shutil.copy2(str(mcp_path), str(dest_path))
 
 
+# TODO: Move to tests.
+
 TEST_MAP = "m12_00_00_01"
 
 
@@ -1135,14 +1077,14 @@ def test_mcp(axes=None, show=False):
     return test
 
 
-def test_mcg(axes=None, show=False):
+def test_mcg(axes=None, auto_show=False):
     from soulstruct import DSR_PATH
 
     test = MCG(DSR_PATH + f"/map/{TEST_MAP}/{TEST_MAP}.mcg")
     for i, node in enumerate(test.nodes):
         print(f"Node {i}:\n" f"     -> nodes: {node.connected_nodes}\n" f"    via edges: {node.connected_edges}")
 
-    test.draw(axes, show)
+    test.draw(axes, auto_show=auto_show)
     return test
 
 

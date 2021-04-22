@@ -12,7 +12,7 @@ from .condition import Condition
 from .ezl_parser import CLEAR_REGISTERS
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary_struct import BinaryStruct
+    from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 
 class State(abc.ABC):
@@ -37,7 +37,7 @@ class State(abc.ABC):
         self.ongoing_commands = ongoing_commands  # type: list[Command]
 
     @classmethod
-    def unpack(cls, esd_buffer, state_machine_offset, count):
+    def unpack(cls, esd_reader: BinaryReader, state_machine_offset, count) -> dict[int, State]:
         """Unpack multiple states from the same state table.
 
         Returns a dictionary of states, because it's always possible (if yet unseen) that state indices are not
@@ -45,24 +45,24 @@ class State(abc.ABC):
         """
 
         state_dict = {}
-        esd_buffer.seek(state_machine_offset)
-        struct_dicts = cls.STRUCT.unpack_count(esd_buffer, count=count)
+        esd_reader.seek(state_machine_offset)
+        struct_dicts = esd_reader.unpack_structs(cls.STRUCT, count=count)
 
         for d in struct_dicts:
             conditions = cls.Condition.unpack(
-                esd_buffer, d["condition_pointers_offset"], count=d["condition_pointers_count"],
+                esd_reader, d["condition_pointers_offset"], count=d["condition_pointers_count"],
             )
 
             enter_commands = cls.Command.unpack(
-                esd_buffer, d["enter_commands_offset"], count=d["enter_commands_count"],
+                esd_reader, d["enter_commands_offset"], count=d["enter_commands_count"],
             )
 
             exit_commands = cls.Command.unpack(
-                esd_buffer, d["exit_commands_offset"], count=d["exit_commands_count"],
+                esd_reader, d["exit_commands_offset"], count=d["exit_commands_count"],
             )
 
             ongoing_commands = cls.Command.unpack(
-                esd_buffer, d["ongoing_commands_offset"], count=d["ongoing_commands_count"],
+                esd_reader, d["ongoing_commands_offset"], count=d["ongoing_commands_count"],
             )
 
             # State 0 will be overwritten when repeated at the end of the table, rather than added.

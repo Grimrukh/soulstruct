@@ -6,20 +6,18 @@ import abc
 import logging
 import struct
 import typing as tp
-from io import BytesIO
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
-from soulstruct.utilities import read_chars_from_buffer
+from soulstruct.utilities.binary import BinaryReader
 
 from .exceptions import EMEVDError
 from .event import Event
 from .numeric import build_numeric
 
 if tp.TYPE_CHECKING:
-    import io
     from soulstruct.base.events.emevd.evs import EVSParser
-    from soulstruct.utilities.binary_struct import BinaryStruct
+    from soulstruct.utilities.binary import BinaryStruct
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +63,7 @@ class EMEVD(GameFile, abc.ABC):
             if self.DCX_MAGIC:
                 self.path = self.path.with_suffix(".emevd.dcx")
 
-    def _handle_other_source_types(self, file_source, script_path=None) -> tp.Optional[io.BufferedIOBase]:
+    def _handle_other_source_types(self, file_source, script_path=None) -> tp.Optional[BinaryReader]:
         if isinstance(file_source, self.EVS_PARSER):
             # Copy data from existing `EVSParser` instance.
             self.map_name = file_source.map_name
@@ -111,13 +109,13 @@ class EMEVD(GameFile, abc.ABC):
             "`emevd_source` is not an `EVSParser`, EVS or numeric string, or .evs/.py/.txt file."
         )
 
-    def unpack(self, emevd_buffer, **kwargs):
-        header = self.HEADER_STRUCT.unpack(emevd_buffer)
+    def unpack(self, emevd_reader: BinaryReader, **kwargs):
+        header = emevd_reader.unpack_struct(self.HEADER_STRUCT)
 
-        emevd_buffer.seek(header["event_table_offset"])
+        emevd_reader.seek(header["event_table_offset"])
         self.events.update(
             self.Event.unpack(
-                emevd_buffer,
+                emevd_reader,
                 header["instruction_table_offset"],
                 header["base_arg_data_offset"],
                 header["event_arg_table_offset"],
@@ -127,14 +125,14 @@ class EMEVD(GameFile, abc.ABC):
         )
 
         if header["packed_strings_size"] != 0:
-            emevd_buffer.seek(header["packed_strings_offset"])
-            self.packed_strings = emevd_buffer.read(header["packed_strings_size"])
+            emevd_reader.seek(header["packed_strings_offset"])
+            self.packed_strings = emevd_reader.read(header["packed_strings_size"])
 
         if header["linked_files_count"] != 0:
-            emevd_buffer.seek(header["linked_files_table_offset"])
+            emevd_reader.seek(header["linked_files_table_offset"])
             # These are relative offsets into the packed string data.
             for _ in range(header["linked_files_count"]):
-                self.linked_file_offsets.append(struct.unpack("<Q", emevd_buffer.read(8))[0])
+                self.linked_file_offsets.append(struct.unpack("<Q", emevd_reader.read(8))[0])
 
     def load_dict(self, data: dict):
         self.map_name = None
@@ -240,19 +238,13 @@ class EMEVD(GameFile, abc.ABC):
         }
         return self.HEADER_STRUCT.pack(header_dict)
 
-    def get_linked_file_names(self):
-        names = []
-        for offset in self.linked_file_offsets:
-            names.append(read_chars_from_buffer(self.packed_strings, offset=offset))
-        return names
-
-    def unpack_strings(self):
+    def unpack_strings(self) -> list[tuple[str, str]]:
         strings = []
-        string_buffer = BytesIO(self.packed_strings)
-        while string_buffer.tell() != len(self.packed_strings):
-            offset = string_buffer.tell()
-            string = read_chars_from_buffer(string_buffer, reset_old_offset=False, encoding=self.STRING_ENCODING)
-            strings.append((str(offset), string))  # repr to include double backslash
+        string_reader = BinaryReader(self.packed_strings)
+        while string_reader.position != len(self.packed_strings):
+            offset = string_reader.position
+            string = string_reader.unpack_string(encoding=self.STRING_ENCODING)
+            strings.append((str(offset), string))
         return strings
 
     def to_dict(self) -> dict:

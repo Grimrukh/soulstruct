@@ -3,8 +3,7 @@ __all__ = ["Command"]
 import abc
 
 from soulstruct.game_types.internal_types import ESDType
-from soulstruct.utilities import read_chars_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .functions import COMMANDS
 from .ezl_parser import decompile
@@ -22,19 +21,19 @@ class Command(abc.ABC):
         self.__indent = indent
 
     @classmethod
-    def unpack(cls, esd_buffer, commands_offset, count=1):
+    def unpack(cls, esd_reader: BinaryReader, commands_offset, count=1):
         """ Returns a list of Command instances. """
         commands = []
         if commands_offset == -1:
             return commands
-        struct_dicts = cls.STRUCT.unpack_count(esd_buffer, count=count, offset=commands_offset)
+        struct_dicts = esd_reader.unpack_structs(cls.STRUCT, count=count, offset=commands_offset)
 
         for d in struct_dicts:
             if d["args_offset"] > 0:
-                esd_buffer.seek(d["args_offset"])
-                arg_structs = cls.ARG_STRUCT.unpack_count(esd_buffer, count=d["args_count"])
+                esd_reader.seek(d["args_offset"])
+                arg_structs = cls.ARG_STRUCT.unpack_count(esd_reader, count=d["args_count"])
                 args = [
-                    read_chars_from_buffer(esd_buffer, offset=a["arg_ezl_offset"], length=a["arg_ezl_size"])
+                    esd_reader.unpack_bytes(offset=a["arg_ezl_offset"], length=a["arg_ezl_size"])
                     for a in arg_structs
                 ]
             else:

@@ -3,7 +3,7 @@ import unittest
 
 from soulstruct.config import DSR_PATH
 from soulstruct.darksouls1r.text import MSGDirectory
-from soulstruct.utilities import Timer
+from soulstruct.utilities.misc import Timer
 
 
 class TextTest(unittest.TestCase):

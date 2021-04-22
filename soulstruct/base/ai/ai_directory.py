@@ -6,7 +6,7 @@ import logging
 import typing as tp
 from pathlib import Path
 
-from soulstruct.containers.bnd import BND
+from soulstruct.containers import Binder
 from .lua_bnd import LuaBND
 
 if tp.TYPE_CHECKING:
@@ -81,7 +81,7 @@ class AIDirectory:
             if not event_path.exists():
                 event_path = event_path.with_name(event_path.stem)
             try:
-                self.event_common_bnd = BND(event_path)
+                self.event_common_bnd = Binder(event_path)
             except FileNotFoundError:
                 raise FileNotFoundError("Could not find `eventCommon.luabnd[.dcx]` file in given directory.")
 

@@ -3,8 +3,9 @@ import typing as tp
 
 from soulstruct.base.events.emevd.enums import SoundType
 from soulstruct.game_types import *
-from soulstruct.utilities import read_chars_from_buffer, pad_chars, partialmethod
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
+from soulstruct.utilities.text import pad_chars
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.maths import Vector3
 
 from .enums import MSBEventSubtype
@@ -53,19 +54,19 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         self._base_region_index = None
         super().__init__(source=source, **kwargs)
 
-    def unpack(self, msb_buffer):
-        event_offset = msb_buffer.tell()
-        header = self.EVENT_HEADER_STRUCT.unpack(msb_buffer)
+    def unpack(self, msb_reader: BinaryReader):
+        event_offset = msb_reader.position
+        header = msb_reader.unpack_struct(self.EVENT_HEADER_STRUCT)
         if header["__event_type"] != self.ENTRY_SUBTYPE:
             raise ValueError(f"Unexpected MSB event type value {header['__event_type']} for {self.__class__.__name__}.")
-        msb_buffer.seek(event_offset + header["__base_data_offset"])
-        base_data = self.EVENT_BASE_DATA_STRUCT.unpack(msb_buffer)
+        msb_reader.seek(event_offset + header["__base_data_offset"])
+        base_data = msb_reader.unpack_struct(self.EVENT_BASE_DATA_STRUCT)
         name_offset = event_offset + header["__name_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, offset=name_offset, encoding=self.NAME_ENCODING)
+        self.name = msb_reader.unpack_string(offset=name_offset, encoding=self.NAME_ENCODING)
         self.set(**header)
         self.set(**base_data)
-        msb_buffer.seek(event_offset + header["__type_data_offset"])
-        self.unpack_type_data(msb_buffer)
+        msb_reader.seek(event_offset + header["__type_data_offset"])
+        self.unpack_type_data(msb_reader)
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         self._event_index = event_index  # TODO: confirm this can safely be handled automatically.
@@ -94,8 +95,8 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         )
         return packed_header + packed_name + packed_base_data + packed_type_data
 
-    def unpack_type_data(self, msb_buffer):
-        self.set(**self.EVENT_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True))
+    def unpack_type_data(self, msb_reader: BinaryReader):
+        self.set(**msb_reader.unpack_struct(self.EVENT_TYPE_DATA_STRUCT, exclude_asserted=True))
 
     def pack_type_data(self):
         return self.EVENT_TYPE_DATA_STRUCT.pack(self)

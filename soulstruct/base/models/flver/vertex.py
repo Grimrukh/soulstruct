@@ -1,14 +1,12 @@
 __all__ = ["LayoutSemantic", "LayoutType", "LayoutMember", "BufferLayout", "Vertex", "VertexBuffer"]
 
-import io
 import typing as tp
 from enum import IntEnum
 
-from soulstruct.utilities import unpack_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.base.models.color import ColorRGBA
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 from soulstruct.utilities.maths import Vector3, Vector4
 
-from .color import Color
 from .version import Version
 
 
@@ -63,7 +61,7 @@ class LayoutMember(BinaryObject):
 
     STRUCT = BinaryStruct(
         ("unk_x00", "i"),
-        ("__struct_offset", "i"),  # ignored
+        ("__struct_offset", "i"),  # validated, but not needed
         ("layout_type", "i"),
         ("semantic", "i"),
         ("index", "i"),
@@ -74,17 +72,28 @@ class LayoutMember(BinaryObject):
     semantic: LayoutSemantic
     index: int
 
-    def unpack(self, buffer: io.BufferedIOBase, struct_offset: int = None):
-        data = self.STRUCT.unpack(buffer)
-        if struct_offset != (binary_struct_offset := data.pop("__struct_offset")):
+    def unpack(self, reader: BinaryReader, struct_offset: int):
+        layout_member = reader.unpack_struct(self.STRUCT)
+        if struct_offset != (binary_struct_offset := layout_member.pop("__struct_offset")):
             raise ValueError(
                 f"`LayoutMember` binary struct offset ({binary_struct_offset}) does not match passed struct offset "
                 f"({struct_offset})."
             )
-        self.set(**data)
+        self.set(**layout_member)
+
+    def pack(self, writer: BinaryWriter, struct_offset: int):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __struct_offset=struct_offset,
+        )
 
     def __repr__(self):
         return f"{self.semantic.name} | {self.layout_type.name}"
+
+    @property
+    def size(self) -> int:
+        return self.layout_type.size()
 
 
 class BufferLayout:
@@ -97,28 +106,41 @@ class BufferLayout:
 
     members: list[LayoutMember]
 
-    def __init__(self, source: tp.Union[io.BufferedIOBase, list[LayoutMember]]):
+    def __init__(self, source: tp.Union[BinaryReader, list[LayoutMember]]):
         self.members = []
 
-        if isinstance(source, io.BufferedIOBase):
+        if isinstance(source, BinaryReader):
             self.unpack(source)
         elif isinstance(source, (list, tuple)) and all(isinstance(e, LayoutMember) for e in source):
             self.members = source
         else:
-            raise TypeError(f"`BufferLayout` source must be a binary buffer or list of `LayoutMember`s, not {source}.")
+            raise TypeError(f"`BufferLayout` source must be a binary reader or list of `LayoutMember`s, not {source}.")
 
-    def unpack(self, buffer: io.BufferedIOBase):
-        data = self.STRUCT.unpack(buffer)
-        layout_offset = buffer.tell()
+    def unpack(self, reader: BinaryReader):
+        buffer_layout = reader.unpack_struct(self.STRUCT)
 
-        buffer.seek(data.pop("__member_offset"))
+        with reader.temp_offset(buffer_layout.pop("__member_offset")):
+            struct_offset = 0
+            self.members = []
+            for _ in range(buffer_layout.pop("__member_count")):
+                member = LayoutMember(reader, struct_offset=struct_offset)
+                self.members.append(member)
+                struct_offset += member.layout_type.size()
+
+    def pack(self, writer: BinaryWriter):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __member_count=len(self.members),
+            __member_offset=writer.AUTO_RESERVE,
+        )
+
+    def pack_members(self, writer: BinaryWriter):
+        writer.fill("__member_offset", writer.position, obj=self)
         struct_offset = 0
-        self.members = []
-        for _ in range(data.pop("__member_count")):
-            member = LayoutMember(buffer, dict(struct_offset=struct_offset))
-            self.members.append(member)
-            struct_offset += member.layout_type.size()
-        buffer.seek(layout_offset)
+        for member in self.members:
+            member.pack(writer, struct_offset)
+            struct_offset += member.size
 
     def __iter__(self):
         return iter(self.members)
@@ -230,9 +252,13 @@ class Vertex:
         self.uvs = []  # type: list[Vector3]
         self.tangents = []  # type: list[Vector4]
         self.bitangent = Vector4.zero()
-        self.colors = []  # type: list[Color]
+        self.colors = []  # type: list[ColorRGBA]
 
-    def read(self, buffer: io.BufferedIOBase, layout: BufferLayout, uv_factor: float):
+        self.uv_queue = []  # type: list[Vector3]
+        self.tangent_queue = []  # type: list[Vector4]
+        self.color_queue = []  # type: list[ColorRGBA]
+
+    def read(self, reader: BinaryReader, layout: BufferLayout, uv_factor: float):
         self.uvs = []
         self.tangents = []
         self.colors = []
@@ -242,80 +268,76 @@ class Vertex:
 
             if member.semantic == LayoutSemantic.Position:
                 if member.layout_type == LayoutType.Float3:
-                    self.position = Vector3(unpack_from_buffer(buffer, "<3f"))
+                    self.position = Vector3(reader.unpack("<3f"))
                 elif member.layout_type == LayoutType.Float4:
-                    self.position = Vector3(unpack_from_buffer(buffer, "<3f"))[:3]
+                    self.position = Vector3(reader.unpack("<3f"))[:3]
                 elif member.layout_type == LayoutType.EdgeCompressed:
                     raise NotImplementedError("Soulstruct cannot load FLVERs with edge-compressed vertex positions.")
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.BoneWeights:
                 if member.layout_type == LayoutType.Byte4A:
-                    self.bone_weights = VertexBoneWeights(*[w / 127.0 for w in unpack_from_buffer(buffer, "<4b")])
+                    self.bone_weights = VertexBoneWeights(*[w / 127.0 for w in reader.unpack("<4b")])
                 elif member.layout_type == LayoutType.Byte4C:
-                    self.bone_weights = VertexBoneWeights(*[w / 255.0 for w in unpack_from_buffer(buffer, "<4B")])
-                elif member.layout_type == LayoutType.UVPair:
-                    self.bone_weights = VertexBoneWeights(*[w / 32767.0 for w in unpack_from_buffer(buffer, "<4h")])
-                elif member.layout_type == LayoutType.Short4ToFloat4A:
-                    self.bone_weights = VertexBoneWeights(*[w / 32767.0 for w in unpack_from_buffer(buffer, "<4h")])
+                    self.bone_weights = VertexBoneWeights(*[w / 255.0 for w in reader.unpack("<4B")])
+                elif member.layout_type in {LayoutType.UVPair, LayoutType.Short4ToFloat4A}:
+                    self.bone_weights = VertexBoneWeights(*[w / 32767.0 for w in reader.unpack("<4h")])
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.BoneIndices:
-                if member.layout_type == LayoutType.Byte4B:
-                    self.bone_indices = VertexBoneIndices(*unpack_from_buffer(buffer, "<4B"))
+                if member.layout_type in {LayoutType.Byte4B, LayoutType.Byte4E}:
+                    self.bone_indices = VertexBoneIndices(*reader.unpack("<4B"))
                 elif member.layout_type == LayoutType.ShortBoneIndices:
-                    self.bone_indices = VertexBoneIndices(*unpack_from_buffer(buffer, "<4h"))
-                elif member.layout_type == LayoutType.Byte4E:
-                    self.bone_indices = VertexBoneIndices(*unpack_from_buffer(buffer, "<4B"))
+                    self.bone_indices = VertexBoneIndices(*reader.unpack("<4h"))
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.Normal:
                 if member.layout_type == LayoutType.Float3:
-                    self.normal = Vector3(unpack_from_buffer(buffer, "<3f"))
+                    self.normal = Vector3(reader.unpack("<3f"))
                 elif member.layout_type == LayoutType.Float4:
-                    self.normal = Vector3(unpack_from_buffer(buffer, "<3f"))
-                    float_normal_w = unpack_from_buffer(buffer, "<f")[0]
+                    self.normal = Vector3(reader.unpack("<3f"))
+                    float_normal_w = reader.unpack_value("<f")
                     self.normal_w = int(float_normal_w)
                     if self.normal_w != float_normal_w:
                         raise ValueError(f"`normal_w` float was not a whole number.")
                 elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E}:
-                    self.normal = Vector3([(x - 127) / 127.0 for x in unpack_from_buffer(buffer, "<3B")])
-                    self.normal_w = unpack_from_buffer(buffer, "<B")[0]
+                    self.normal = Vector3([(x - 127) / 127.0 for x in reader.unpack("<3B")])
+                    self.normal_w = reader.unpack_value("<B")
                 elif member.layout_type == LayoutType.Short2toFloat2:
-                    self.normal_w = unpack_from_buffer(buffer, "<B")[0]
-                    self.normal = Vector3([x / 127.0 for x in unpack_from_buffer(buffer, "<3b")])
+                    self.normal_w = reader.unpack_value("<B")
+                    self.normal = Vector3([x / 127.0 for x in reader.unpack("<3b")])
                 elif member.layout_type == LayoutType.Short4ToFloat4A:
-                    self.normal = Vector3([x / 32767.0 for x in unpack_from_buffer(buffer, "<3h")])
-                    self.normal_w = unpack_from_buffer(buffer, "<h")[0]
+                    self.normal = Vector3([x / 32767.0 for x in reader.unpack("<3h")])
+                    self.normal_w = reader.unpack_value("<h")
                 elif member.layout_type == LayoutType.Short4ToFloat4B:
-                    self.normal = Vector3([(x - 32767) / 32767.0 for x in unpack_from_buffer(buffer, "<3H")])
-                    self.normal_w = unpack_from_buffer(buffer, "<h")[0]
+                    self.normal = Vector3([(x - 32767) / 32767.0 for x in reader.unpack("<3H")])
+                    self.normal_w = reader.unpack_value("<h")
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.UV:
                 if member.layout_type == LayoutType.Float2:
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<2f"), 0.0))
+                    self.uvs.append(Vector3(*reader.unpack("<2f"), 0.0))
                 elif member.layout_type == LayoutType.Float3:
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<3f")))
+                    self.uvs.append(Vector3(*reader.unpack("<3f")))
                 elif member.layout_type == LayoutType.Float4:
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<2f"), 0.0))
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<2f"), 0.0))
+                    self.uvs.append(Vector3(*reader.unpack("<2f"), 0.0))
+                    self.uvs.append(Vector3(*reader.unpack("<2f"), 0.0))
                 elif member.layout_type in {
                     LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Short2toFloat2, LayoutType.Byte4C, LayoutType.UV
                 }:
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<2h"), 0) / uv_factor)
+                    self.uvs.append(Vector3(*reader.unpack("<2h"), 0) / uv_factor)
                 elif member.layout_type == LayoutType.UVPair:
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<2h"), 0) / uv_factor)
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<2h"), 0) / uv_factor)
+                    self.uvs.append(Vector3(*reader.unpack("<2h"), 0) / uv_factor)
+                    self.uvs.append(Vector3(*reader.unpack("<2h"), 0) / uv_factor)
                 elif member.layout_type == LayoutType.Short4ToFloat4B:
-                    self.uvs.append(Vector3(*unpack_from_buffer(buffer, "<3h")) / uv_factor)
-                    if unpack_from_buffer(buffer, "<h") != 0:
-                        raise ValueError("Expected null byte after reading UV | Short4ToFloat4B vertex member.")
+                    self.uvs.append(Vector3(*reader.unpack("<3h")) / uv_factor)
+                    if reader.unpack_value("<h") != 0:
+                        raise ValueError("Expected zero short after reading UV | Short4ToFloat4B vertex member.")
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.Tangent:
                 if member.layout_type == LayoutType.Float4:
-                    self.tangents.append(Vector4(*unpack_from_buffer(buffer, "<4f")))
+                    self.tangents.append(Vector4(*reader.unpack("<4f")))
                 elif member.layout_type in {
                     LayoutType.Byte4A,
                     LayoutType.Byte4B,
@@ -323,7 +345,7 @@ class Vertex:
                     LayoutType.Short4ToFloat4A,
                     LayoutType.Byte4E,
                 }:
-                    tangent = Vector4([(x - 127) / 127.0 for x in unpack_from_buffer(buffer, "<4B")])
+                    tangent = Vector4([(x - 127) / 127.0 for x in reader.unpack("<4B")])
                     self.tangents.append(tangent)
                 else:
                     not_implemented = True
@@ -331,14 +353,15 @@ class Vertex:
                 if member.layout_type in {
                     LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E
                 }:
-                    self.bitangent = Vector4([(x - 127) / 127.0 for x in unpack_from_buffer(buffer, "<4B")])
+                    self.bitangent = Vector4([(x - 127) / 127.0 for x in reader.unpack("<4B")])
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.VertexColor:
                 if member.layout_type == LayoutType.Float4:
-                    self.colors.append(Color(*unpack_from_buffer(buffer, "<4f")))
+                    self.colors.append(ColorRGBA(*reader.unpack("<4f")))
                 elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4C}:
-                    self.colors.append(Color(*[b / 255.0 for b in unpack_from_buffer(buffer, "<4B")]))
+                    # Convert byte channnels [0-255] to float channels [0-1].
+                    self.colors.append(ColorRGBA(*[b / 255.0 for b in reader.unpack("<4B")]))
                 else:
                     not_implemented = True
             else:
@@ -349,6 +372,126 @@ class Vertex:
                     f"Unsupported vertex member semantic/type combination: "
                     f"{member.semantic.name} | {member.layout_type.name}"
                 )
+
+    def prepare_pack(self):
+        """Queue list types so they can be properly split across buffers."""
+        self.uv_queue = list(reversed(self.uvs))
+        self.tangent_queue = list(reversed(self.tangents))
+        self.color_queue = list(reversed(self.colors))
+
+    def pack(self, writer: BinaryWriter, layout: BufferLayout, uv_factor: float):
+        for member in layout:
+
+            not_implemented = False
+
+            if member.semantic == LayoutSemantic.Position:
+                if member.layout_type == LayoutType.Float3:
+                    writer.pack("3f", *self.position)
+                elif member.layout_type == LayoutType.Float4:
+                    writer.pack("4f", *self.position, 0.0)
+                elif member.layout_type == LayoutType.EdgeCompressed:
+                    raise NotImplementedError("Soulstruct cannot load FLVERs with edge-compressed vertex positions.")
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.BoneWeights:
+                if member.layout_type == LayoutType.Byte4A:
+                    writer.pack("4b", *[int(w * 127) for w in self.bone_weights])
+                elif member.layout_type == LayoutType.Byte4C:
+                    writer.pack("4B", *[int(w * 255) for w in self.bone_weights])
+                elif member.layout_type in {LayoutType.UVPair, LayoutType.Short4ToFloat4A}:
+                    writer.pack("4h", *[int(w * 32767) for w in self.bone_weights])
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.BoneIndices:
+                if member.layout_type in {LayoutType.Byte4B, LayoutType.Byte4E}:
+                    writer.pack("4B", *self.bone_indices)
+                elif member.layout_type == LayoutType.ShortBoneIndices:
+                    writer.pack("4h", *self.bone_indices)
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.Normal:
+                if member.layout_type == LayoutType.Float3:
+                    writer.pack("3f", *self.normal)
+                elif member.layout_type == LayoutType.Float4:
+                    writer.pack("4f", *self.normal, self.normal_w)
+                elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E}:
+                    writer.pack("4B", *[int(x * 127 + 127) for x in self.normal], self.normal_w)
+                elif member.layout_type == LayoutType.Short2toFloat2:
+                    writer.pack("B3b", self.normal_w, *[int(x * 127) for x in self.normal])
+                elif member.layout_type == LayoutType.Short4ToFloat4A:
+                    writer.pack("4h", *[int(x * 32767) for x in self.normal], self.normal_w)
+                elif member.layout_type == LayoutType.Short4ToFloat4B:
+                    writer.pack("4H", *[int(x * 32767 + 32767) for x in self.normal], self.normal_w)
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.UV:
+                uv = self.uv_queue.pop() * uv_factor
+                if member.layout_type == LayoutType.Float2:
+                    writer.pack("2f", uv.x, uv.y)
+                elif member.layout_type == LayoutType.Float3:
+                    writer.pack("3f", uv.x, uv.y, uv.z)
+                elif member.layout_type == LayoutType.Float4:
+                    writer.pack("2f", uv.x, uv.y)
+                    uv = self.uv_queue.pop() * uv_factor
+                    writer.pack("2f", uv.x, uv.y)
+                elif member.layout_type in {
+                    LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Short2toFloat2, LayoutType.Byte4C, LayoutType.UV
+                }:
+                    writer.pack("2h", int(uv.x), int(uv.y))
+                elif member.layout_type == LayoutType.UVPair:
+                    writer.pack("2h", int(uv.x), int(uv.y))
+                    uv = self.uv_queue.pop() * uv_factor
+                    writer.pack("2h", int(uv.x), int(uv.y))
+                elif member.layout_type == LayoutType.Short4ToFloat4B:
+                    writer.pack("4h", int(uv.x), int(uv.y), int(uv.z), 0)
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.Tangent:
+                tangent = self.tangent_queue.pop()
+                if member.layout_type == LayoutType.Float4:
+                    writer.pack("4f", *tangent)
+                elif member.layout_type in {
+                    LayoutType.Byte4A,
+                    LayoutType.Byte4B,
+                    LayoutType.Byte4C,
+                    LayoutType.Short4ToFloat4A,
+                    LayoutType.Byte4E,
+                }:
+                    writer.pack("4B", *[int(x * 127 + 127) for x in tangent])
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.Bitangent:
+                if member.layout_type in {
+                    LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E
+                }:
+                    writer.pack("4B", *[int(x * 127 + 127) for x in self.bitangent])
+                else:
+                    not_implemented = True
+            elif member.semantic == LayoutSemantic.VertexColor:
+                color = self.color_queue.pop()
+                if member.layout_type == LayoutType.Float4:
+                    writer.pack("4f", *color)
+                elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4C}:
+                    writer.pack("4B", *[int(c * 255) for c in color])
+                else:
+                    not_implemented = True
+            else:
+                not_implemented = True
+
+            if not_implemented:
+                raise NotImplementedError(
+                    f"Unsupported vertex member semantic/type combination: "
+                    f"{member.semantic.name} | {member.layout_type.name}"
+                )
+
+    def finish_pack(self):
+        """Check queues are empty."""
+        if self.uv_queue:
+            raise ValueError(f"{len(self.uv_queue)} UVs left in vertex queue after it was packed.")
+        if self.tangent_queue:
+            raise ValueError(f"{len(self.tangent_queue)} tangents left in vertex queue after it was packed.")
+        if self.color_queue:
+            raise ValueError(f"{len(self.color_queue)} vertex colors left in vertex queue after it was packed.")
 
     def repr_position_only(self):
         return f"Vertex{repr(self.position)[7:]}"
@@ -388,26 +531,57 @@ class VertexBuffer(BinaryObject):
     _vertex_size: int
     _buffer_offset: int
 
+    unpack = BinaryObject.default_unpack
+
     def read_buffer(
         self,
-        buffer: io.BufferedIOBase,
+        reader: BinaryReader,
         layouts: list[BufferLayout],
         vertices: list[Vertex],
-        data_offset: int,
-        version: Version,
+        vertex_data_offset: int,
+        uv_factor: int,
     ):
         layout = layouts[self.layout_index]
         if self._vertex_size != (layout_size := layout.get_total_size()):
             raise ValueError(f"Vertex buffer size ({self._vertex_size}) does not match layout size ({layout_size}).")
-        uv_factor = 2048 if version >= Version.DarkSouls2_NT else 1024
 
-        old_offset = buffer.tell()
-        buffer.seek(data_offset + self._buffer_offset)
-        for vertex in vertices:
-            vertex.read(buffer, layout, uv_factor)
-        buffer.seek(old_offset)
+        with reader.temp_offset(vertex_data_offset + self._buffer_offset):
+            for vertex in vertices:
+                vertex.read(reader, layout, uv_factor)
 
         self._buffer_index = -1
         self._vertex_size = -1
         self.vertex_count = -1
         self._buffer_offset = -1
+
+    def pack(
+        self,
+        writer: BinaryWriter,
+        version: Version,
+        mesh_vertex_buffer_index: int,
+        buffer_layouts: list[BufferLayout],
+        mesh_vertex_count: int,
+    ):
+        layout_size = buffer_layouts[self.layout_index].get_total_size()
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            _buffer_index=mesh_vertex_buffer_index,
+            _vertex_size=layout_size,
+            vertex_count=mesh_vertex_count,
+            __buffer_length=layout_size * mesh_vertex_count if version >= 0x20005 else 0,
+            _buffer_offset=writer.AUTO_RESERVE,
+        )
+
+    def pack_buffer(
+        self,
+        writer: BinaryWriter,
+        buffer_layouts: list[BufferLayout],
+        vertices: list[Vertex],
+        buffer_offset: int,
+        uv_factor: int,
+    ):
+        layout = buffer_layouts[self.layout_index]
+        self.fill(writer, _buffer_offset=buffer_offset)
+        for vertex in vertices:
+            vertex.pack(writer, layout, uv_factor)

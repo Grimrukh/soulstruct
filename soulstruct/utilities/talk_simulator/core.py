@@ -16,7 +16,7 @@ from soulstruct.darksouls1r.ezstate import TalkESD as TalkESDDSR
 from soulstruct.base.ezstate.esd.ezl_parser import decompile
 from soulstruct.base.ezstate.esd.functions import COMMANDS
 from soulstruct.darksouls1r.text import MSGDirectory
-from soulstruct.utilities.core import camel_case_to_spaces
+from soulstruct.utilities.text import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
 _LOGGER = logging.getLogger(__name__)

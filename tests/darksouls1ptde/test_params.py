@@ -3,7 +3,7 @@ import unittest
 
 from soulstruct.darksouls1ptde.params import GameParamBND
 from soulstruct.darksouls1ptde.params.paramdef import GET_BUNDLED_PARAMDEF
-from soulstruct.utilities import Timer
+from soulstruct.utilities.misc import Timer
 
 
 class ParamsTest(unittest.TestCase):

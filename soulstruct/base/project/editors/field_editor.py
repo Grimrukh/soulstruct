@@ -13,7 +13,7 @@ from soulstruct.game_types import GameObject, GameObjectSequence, MapEntry, Base
 from soulstruct.base.project.editors.base_editor import BaseEditor
 from soulstruct.base.project.links import WindowLinker
 from soulstruct.base.project.utilities import bind_events, NumberEditBox
-from soulstruct.utilities import camel_case_to_spaces
+from soulstruct.utilities.text import camel_case_to_spaces
 from soulstruct.utilities.window import ToolTip
 
 if tp.TYPE_CHECKING:
@@ -41,7 +41,6 @@ class FieldRow:
         self.row_index = row_index
         self._active = False
         self._link_missing = False
-        self._default_value = False
         self.field_name = ""
         self.field_type = type  # type: tp.Union[tp.Type[GameObject], tp.Type[GameObjectSequence], type, tp.Iterable]
         self.field_nickname = ""

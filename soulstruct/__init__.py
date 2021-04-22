@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from .config import *
-from soulstruct.containers.bnd import BND
+from soulstruct.containers import Binder
 from soulstruct.containers.dcx import DCX
 
 

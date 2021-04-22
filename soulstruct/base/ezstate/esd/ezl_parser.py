@@ -8,7 +8,7 @@ import struct
 from binascii import hexlify
 
 from soulstruct.game_types.internal_types import ESDType
-from soulstruct.utilities.core import read_chars_from_buffer
+from soulstruct.utilities.binary import BinaryReader
 
 from .functions import TEST_FUNCTIONS
 
@@ -172,7 +172,7 @@ def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
         elif b == b"\xa5":
             # Start of a null-terminated string. I believe it is always UTF-16LE.
             try:
-                string = read_chars_from_buffer(byte_sequence, offset=i + 1, encoding="utf-16le")
+                string = BinaryReader(byte_sequence).unpack_string(offset=i + 1, encoding="utf-16le")
             except ValueError:
                 _LOGGER.error(f"Could not interpret ESD string from bytes: {byte_sequence}")
                 raise

@@ -8,7 +8,7 @@ import typing as tp
 from functools import partial
 
 from soulstruct.base.project.utilities import ActionHistory, ViewHistory, bind_events, EntryTextEditBox
-from soulstruct.utilities import camel_case_to_spaces
+from soulstruct.utilities.text import camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame, ToolTip
 
 if tp.TYPE_CHECKING:

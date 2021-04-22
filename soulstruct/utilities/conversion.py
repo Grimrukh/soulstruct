@@ -1,4 +1,7 @@
+__all__ = ["int_group_to_bit_set", "bit_set_to_int_group", "floatify"]
+
 import logging
+import struct
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,3 +33,12 @@ def bit_set_to_int_group(enabled_flags, group_size):
             raise ValueError(f"Invalid draw/display/navmesh/backread index {flag} (must be between 0 and {max_flag}).")
         flag_group[flag // 32] += 2 ** (flag % 32)
     return flag_group
+
+
+def floatify(int32: int, signed=False) -> float:
+    """Utility function that re-interprets a 32-bit unsigned (default) or signed integer as a single float.
+
+    This could be useful if you have any old EMEVD scripts that incorrectly represent float event arguments as integers.
+    """
+    pack_fmt = "<i" if signed else "<I"
+    return struct.unpack("<f", struct.pack(pack_fmt, int32))[0]

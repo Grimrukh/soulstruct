@@ -20,7 +20,9 @@ class ParamFieldRow(FieldRow):
 
     def _is_default(self, field_type, value, field_nickname=""):
         # TODO: Each field should specify its default value(s).
-        if field_type == int or issubclass(field_type, (BaseParam, Flag)):
+        if field_nickname in {"EffectDuration", "UpdateInterval"}:
+            return False
+        elif field_type == int or issubclass(field_type, (BaseParam, Flag)):
             if value in (-1, 0, 1):
                 # TODO: Will have some false positives.
                 return True

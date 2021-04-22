@@ -4,7 +4,7 @@ import zlib
 import typing as tp
 from pathlib import Path
 
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,23 +49,23 @@ class DCX:
             return
         elif isinstance(dcx_source, (str, Path)):
             self.dcx_path = Path(dcx_source)
-            with self.dcx_path.open("rb") as file:
-                self.unpack(file)
         elif isinstance(dcx_source, bytes):
             if not self.magic:
                 raise ValueError(f"If `dcx_source` is a `bytes` object, DCX `magic` must be given.")
             self.data = dcx_source
-        elif isinstance(dcx_source, io.BufferedIOBase):
-            self.unpack(dcx_source)
+            return
+
+        if isinstance(dcx_source, (str, Path, io.BufferedIOBase, BinaryReader)):
+            self.unpack(BinaryReader(dcx_source))
         else:
             raise TypeError(f"Invalid DCX source type: {type(dcx_source)}")
 
-    def unpack(self, dcx_buffer):
+    def unpack(self, dcx_reader: BinaryReader):
         if self.magic:
             raise ValueError("`DCX.magic` cannot be set manually before unpack.")
-        header = self.HEADER_STRUCT.unpack(dcx_buffer)
+        header = dcx_reader.unpack_struct(self.HEADER_STRUCT)
         self.magic = header["magic"]
-        compressed = dcx_buffer.read().rstrip(b"\0")  # Nulls stripped from the end.
+        compressed = dcx_reader.read().rstrip(b"\0")  # Nulls stripped from the end.
         if len(compressed) != header["compressed_size"]:
             # No error raised. This happens in some files.
             file_path = f" {self.dcx_path}" if self.dcx_path else ""

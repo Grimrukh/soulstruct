@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]
 
 import abc
@@ -9,8 +11,10 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.exceptions import SoulstructError
+from soulstruct.containers.entry import BinderEntry
 from soulstruct.containers.dcx import DCX
-from soulstruct.utilities import create_bak
+from soulstruct.utilities.binary import BinaryReader
+from soulstruct.utilities.files import create_bak
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,16 +23,19 @@ class InvalidGameFileTypeError(SoulstructError):
     """Exception raised from an unhandled `file_source` type passed to `GameFile` constructor."""
 
 
+T = tp.TypeVar("T", bound="GameFile")
+
+
 class GameFile(abc.ABC):
     """Python structure for a file in a FromSoftware game installation."""
 
     EXT = ""  # if given, this file extension will be enforced (before DCX is checked) when calling `.write()`
-    Typing = tp.Union[str, Path, bytes, io.BufferedIOBase]  # all valid `GameFile` source types
-    Types = (str, Path, bytes, io.BufferedIOBase)
+    Typing = tp.Union[str, Path, bytes, BinderEntry, io.BufferedIOBase, BinaryReader]  # all globally valid source types
+    Types = (str, Path, bytes, io.BufferedIOBase, BinaryReader)
 
     def __init__(
         self,
-        file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase] = None,
+        file_source: Typing = None,
         dcx_magic: tuple[int, int] = (),
         **kwargs,
     ):
@@ -40,7 +47,7 @@ class GameFile(abc.ABC):
             dcx_magic (None, tuple): optional pair of DCX magic values to manually specify the DCX. Only permitted for
                 `file_source` values that are not already DCX-compressed. (If you want to change the DCX for some
                 reason, set `.dcx_magic` directly after the instance is created.)
-            kwargs: keyword arguments to pass on to `unpack` or `load_dict`, depending on the source type.
+            kwargs: keyword arguments to pass on to `unpack` for buffered sources.
         """
         self._dcx_magic = ()
         self.dcx_magic = dcx_magic
@@ -51,8 +58,8 @@ class GameFile(abc.ABC):
             return
 
         try:
-            buffer = self._handle_other_source_types(file_source, **kwargs)
-            if buffer is None:
+            reader = self._handle_other_source_types(file_source, **kwargs)
+            if reader is None:
                 return
         except InvalidGameFileTypeError:
             if isinstance(file_source, dict):
@@ -64,44 +71,45 @@ class GameFile(abc.ABC):
                     with self.path.open("r") as j:
                         self.load_dict(json.load(j))
                         return
-                else:
-                    buffer = self.path.open("rb")
-            elif isinstance(file_source, bytes):
-                buffer = io.BytesIO(file_source)
-            elif isinstance(file_source, io.BufferedIOBase):
-                buffer = file_source
+            if isinstance(file_source, (str, Path, bytes, io.BufferedIOBase, BinderEntry)):
+                reader = BinaryReader(file_source)
+            elif isinstance(file_source, BinaryReader):
+                reader = file_source
             else:
                 raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
 
-        if self._is_dcx(buffer):
+        if self._is_dcx(reader):
             if self.dcx_magic:
-                buffer.close()
+                reader.close()
                 raise ValueError("Cannot manually set `dcx_magic` before reading a DCX file source.")
             try:
-                data, self.dcx_magic = DCX.get_data_and_magic(buffer)
+                data, self.dcx_magic = DCX.get_data_and_magic(reader)
             finally:
-                buffer.close()
-            buffer = io.BytesIO(data)
+                reader.close()
+            reader = BinaryReader(data)
 
         try:
-            self.unpack(buffer, **kwargs)
+            self.unpack(reader, **kwargs)
         except Exception:
             _LOGGER.error(f"Error occurred while parsing game file: {self.path}. See traceback.")
             raise
         finally:
-            buffer.close()
+            reader.close()
 
-    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[io.BufferedIOBase]:
+    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
         """Override this to initialize `GameFile` subclass from other types of `file_source`. This function will be
         called before the standard `GameFile.Types` are checked.
 
-        If a `io.BufferedIOBase` object is returned, the constructor will continue with unpacking from that buffer.
+        If a `BinaryReader` object is returned, the constructor will continue with unpacking from that reader.
         Otherwise, it will return without calling `.unpack()`.
+
+        If no valid source types are found, raise `InvalidGameFileTypeError` (like below) to have the constructor
+        continue checking the standard source types.
         """
         raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
 
     @abc.abstractmethod
-    def unpack(self, buffer: io.BufferedIOBase, **kwargs):
+    def unpack(self, reader: BinaryReader, **kwargs):
         """Unpack game file from given buffer, using various `BinaryStruct`s defined in the class."""
 
     def load_dict(self, data: dict):
@@ -138,7 +146,7 @@ class GameFile(abc.ABC):
         if self.dcx_magic:
             packed = DCX(self.pack(**pack_kwargs), magic=self.dcx_magic).pack()
         else:
-            packed = self.pack()
+            packed = self.pack(**pack_kwargs)
         with file_path.open("wb") as f:
             f.write(packed)
 
@@ -158,6 +166,12 @@ class GameFile(abc.ABC):
         with file_path.open("w", encoding=encoding) as j:
             json.dump(json_dict, j, indent=indent)
 
+    def create_bak(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True):
+        file_path = self._get_file_path(file_path)
+        if make_dirs:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+        create_bak(file_path)
+
     def copy(self):
         return copy.deepcopy(self)
 
@@ -168,22 +182,26 @@ class GameFile(abc.ABC):
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
             file_path = self.path
         file_path = Path(file_path)
-        if file_path.suffix == ".dcx":
+
+        # 1. Remove any existing ".dcx" extension.
+        while file_path.suffix == ".dcx":
             file_path = file_path.with_name(file_path.stem)  # remove '.dcx' (may add back below)
+
+        # 2. If `EXT` is defined, add that extension to the path.
         if self.EXT and file_path.suffix != self.EXT:
             file_path = file_path.with_suffix(file_path.suffix + self.EXT)
+
+        # 3. If `dcx_magic` is given, add ".dcx" extension to the path.
         if self.dcx_magic and not file_path.suffix == ".dcx":
             file_path = file_path.with_suffix(file_path.suffix + ".dcx")  # add ".dcx"
-        elif not self.dcx_magic and file_path.suffix == ".dcx":
-            file_path = file_path.with_name(file_path.stem)  # remove ".dcx"
+
         return file_path
 
     @staticmethod
-    def _is_dcx(buffer: io.BufferedIOBase):
-        offset = buffer.tell()
-        is_dcx = buffer.read(4) == b"DCX\0"
-        buffer.seek(offset)
-        return is_dcx
+    def _is_dcx(reader: BinaryReader) -> bool:
+        """Checks if file data starts with "DCX" magic."""
+        with reader.temp_offset(offset=0):
+            return reader.read(4) == b"DCX\0"
 
     @property
     def dcx_magic(self):
@@ -204,6 +222,21 @@ class GameFile(abc.ABC):
         except (ValueError, TypeError):
             raise ValueError(f"`dcx_magic` should be empty (or None) or a sequence of two integers, not {value}.")
         self._dcx_magic = value
+
+    @classmethod
+    def from_bak(cls: tp.Type[T], game_file_path: tp.Union[Path, str], dcx_magic=(), create_bak_if_missing=True) -> T:
+        """Looks for a `.bak` version of the given path to open preferentially, or optionally creates it if missing."""
+        game_file_path = Path(game_file_path)
+        bak_path = game_file_path.with_name(game_file_path.name + ".bak")
+        if bak_path.is_file():
+            game_file = cls(bak_path, dcx_magic=dcx_magic)
+            game_file.path = game_file.path.with_suffix("")  # remove ".bak" extension
+            return game_file
+        else:
+            game_file = cls(game_file_path, dcx_magic=dcx_magic)
+            if create_bak_if_missing:
+                create_bak(game_file_path)
+            return game_file
 
 
 class GameFolder(abc.ABC):

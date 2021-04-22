@@ -19,14 +19,17 @@ import os
 import re
 import struct
 import subprocess
+import typing as tp
 from contextlib import contextmanager
 from copy import deepcopy
 from pathlib import Path
-from typing import List
 
-from soulstruct.containers.bnd import BND, BNDEntry
-from soulstruct.utilities import read_chars_from_buffer, create_bak, PACKAGE_PATH, get_startupinfo, unpack_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.containers import Binder
+from soulstruct.containers.entry import BinderEntry
+from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
+from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.misc import get_startupinfo
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .exceptions import LuaError, LuaCompileError, LuaDecompileError
 
@@ -47,10 +50,10 @@ class LuaBND:
     """Automatically loads all scripts, LuaInfo, and LuaGNL objects."""
 
     def __init__(self, luabnd_path, sort_goals=True, require_luainfo=False, require_luagnl=False):
-        self.bnd = BND(luabnd_path)  # path is remembered in BND
+        self.bnd = Binder(luabnd_path)  # path is remembered in BND
 
-        self.goals = []  # type: List[LuaGoal]
-        self.other = []  # type: List[LuaOther]
+        self.goals = []  # type: list[LuaGoal]
+        self.other = []  # type: list[LuaOther]
 
         self.global_names = []
         self.gnl = LuaGNL()
@@ -63,7 +66,7 @@ class LuaBND:
             if require_luagnl:
                 raise LuaError(f"Could not find `.luagnl` file in LuaBND: {str(luabnd_path)}")
         else:
-            self.global_names = LuaGNL(gnl_entry.data).names
+            self.global_names = LuaGNL(gnl_entry.get_uncompressed_data()).names
 
         try:
             info_entry = self.bnd.entries_by_id[1000001]
@@ -72,21 +75,22 @@ class LuaBND:
                 # TODO: 'eventCommon.luabnd' has no '.luainfo' file. Not handling this yet.
                 raise LuaError(f"Could not find `.luainfo` file in LuaBND: {str(luabnd_path)}")
         else:
-            self.goals = LuaInfo(info_entry.data).goals
+            self.goals = LuaInfo(info_entry.get_uncompressed_data()).goals
             self.bnd_name = Path(info_entry.path).stem
 
         for entry in self.bnd:
             entry_path = Path(entry.path)
+            entry_data = entry.get_uncompressed_data()
             goal_match = _GOAL_SCRIPT_RE.match(entry_path.name)
             if goal_match:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
                 try:
-                    script = entry.data.decode("shift_jis_2004")
+                    script = entry_data.decode("shift_jis_2004")
                     bytecode = b""
                 except UnicodeDecodeError:
                     script = ""
-                    bytecode = entry.data
+                    bytecode = entry_data
                 try:
                     goal = self.get_goal(goal_id, goal_type)
                 except KeyError:
@@ -137,11 +141,11 @@ class LuaBND:
                 for goal in self.goals:
                     snake_name = _SNAKE_CASE_RE.sub("_", goal.goal_name).lower()
                     if lua_match.group(1) == snake_name:
-                        goal.bytecode = entry.data
+                        goal.bytecode = entry_data
                         goal.script_name = entry_path.name
                         break
                 else:
-                    self.other.append(LuaOther(entry_path.stem, bytecode=entry.data))
+                    self.other.append(LuaOther(entry_path.stem, bytecode=entry_data))
 
         if sort_goals:
             self.goals = sorted(self.goals, key=lambda g: (g.goal_id, g.goal_type))
@@ -171,7 +175,7 @@ class LuaBND:
         """Insert compiled script into the BND."""
         try:
             existing_entry = self.bnd.entries_by_basename[lua_file.script_name]
-            existing_entry.data = lua_file.bytecode
+            existing_entry.set_uncompressed_data(lua_file.bytecode)
             existing_entry.path = lua_file.script_name  # no nesting necessary
         except KeyError:
             try:
@@ -179,7 +183,7 @@ class LuaBND:
                 bnd_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
             except ValueError:
                 bnd_id = 1000  # first ID
-            new_entry = BNDEntry(data=lua_file.bytecode, entry_id=bnd_id, path=lua_file.script_name)
+            new_entry = BinderEntry(data=lua_file.bytecode, entry_id=bnd_id, path=lua_file.script_name)
             self.bnd.add_entry(new_entry)
             _LOGGER.debug(f"New compiled bytecode added to LuaBND[{bnd_id}]: {lua_file.script_name}")
 
@@ -224,7 +228,7 @@ class LuaBND:
 
         try:
             existing_entry = self.bnd.entries_by_basename[lua_file.script_name]
-            existing_entry.data = encoded_script
+            existing_entry.set_uncompressed_data(encoded_script)
             existing_entry.path = lua_file.script_name  # no nesting necessary
         except KeyError:
             try:
@@ -232,7 +236,7 @@ class LuaBND:
                 bnd_id = max([entry.id for entry in self.bnd.entries if entry.id < 1000000]) + 1
             except ValueError:
                 bnd_id = 1000  # first ID
-            new_entry = BNDEntry(data=encoded_script, entry_id=bnd_id, path=lua_file.script_name)
+            new_entry = BinderEntry(data=encoded_script, entry_id=bnd_id, path=lua_file.script_name)
             self.bnd.add_entry(new_entry)
             _LOGGER.debug(f"New decompiled script added to LuaBND[{bnd_id}]: {lua_file.script_name}")
 
@@ -320,12 +324,12 @@ class LuaBND:
             if 1000000 not in self.bnd.entries_by_id:
                 _LOGGER.warning(f"No existing `LuaGNL` file in {self.bnd.path.name}. Will not write a new one.")
             else:
-                self.bnd.entries_by_id[1000000].data = LuaGNL(self.global_names).pack()
+                self.bnd.entries_by_id[1000000].set_uncompressed_data(LuaGNL(self.global_names).pack())
         if pack_luainfo:
             if 1000001 not in self.bnd.entries_by_id:
                 _LOGGER.warning(f"No existing `LuaInfo` file in {self.bnd.path.name}. Will not write a new one.")
             else:
-                self.bnd.entries_by_id[1000001].data = LuaInfo(self.goals).pack()
+                self.bnd.entries_by_id[1000001].set_uncompressed_data(LuaInfo(self.goals).pack())
         for lua_list, use_decompiled in zip((self.goals, self.other), (use_decompiled_goals, use_decompiled_other)):
             for lua_entry in lua_list:
                 if use_decompiled and lua_entry.script:
@@ -622,7 +626,7 @@ class LuaOther(LuaScriptBase):
         return f"LuaOther(name={repr(self.name)})"
 
 
-class LuaInfo:
+class LuaInfo(GameFile):
     """Lists the goals defined in the Lua scripts contained inside this `LuaBND` archive.
 
     Registration in this file is necessary for goal function names (e.g. `{goal}_Activate`) to be called by the AI
@@ -658,43 +662,41 @@ class LuaInfo:
         ("logic_interrupt_name_offset", "q"),
     )
 
-    def __init__(self, luainfo_source=None, big_endian=False, use_struct_64=False):
+    def __init__(
+        self,
+        file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader, list[LuaGoal, ...]] = None,
+        dcx_magic: tuple[int, int] = (),
+        big_endian=False,
+        use_struct_64=False,
+    ):
+        """Global Name List file that lists all the functions declared in all the Lua scripts in the `LuaBND`.
+
+        Not actually required (after Demon's Souls, at least).
+        """
+
         self.big_endian = big_endian
         self.use_struct_64 = use_struct_64
-        self.luainfo_path = None
+        self.goals = []  # type: list[LuaGoal]
+        super().__init__(file_source, dcx_magic, big_endian=big_endian)
+
+    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
+        if isinstance(file_source, (list, tuple)) and all(isinstance(g, LuaGoal) for g in file_source):
+            self.goals = file_source  # type: list[LuaGoal]
+            return
+        raise InvalidGameFileTypeError("LuaInfo source was not a sequence of `LuaGoal`s.")
+
+    def unpack(self, reader: BinaryReader, big_endian=False):
+        self.big_endian = self._check_big_endian(reader)
         self.header_struct = BinaryStruct(*self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
-
-        self.goals = []  # type: List[LuaGoal]
-
-        if luainfo_source is None:
-            return
-        if isinstance(luainfo_source, (list, tuple)):
-            self.goals = luainfo_source  # type: List[LuaGoal]
-            return
-        if isinstance(luainfo_source, (str, Path)):
-            self.luainfo_path = Path(luainfo_source)
-            with self.luainfo_path.open("rb") as f:
-                self.unpack(f)
-            return
-        if hasattr(luainfo_source, "data"):
-            luainfo_source = luainfo_source.data
-        if isinstance(luainfo_source, bytes):
-            luainfo_source = io.BytesIO(luainfo_source)
-        if isinstance(luainfo_source, io.BufferedIOBase):
-            self.unpack(luainfo_source)
-
-    def unpack(self, info_buffer):
-        self.big_endian = self._check_big_endian(info_buffer)
-        self.header_struct = BinaryStruct(*self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
-        header = self.header_struct.unpack(info_buffer)
-        self.use_struct_64 = self._check_use_struct_64(info_buffer, header["goal_count"])
+        header = reader.unpack_struct(self.header_struct)
+        self.use_struct_64 = self._check_use_struct_64(reader, header["goal_count"])
         goal_struct = BinaryStruct(
             *(self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32),
             byte_order=">" if self.big_endian else "<",
         )
         self.goals = []
         for _ in range(header["goal_count"]):
-            goal = self.unpack_goal(info_buffer, goal_struct)
+            goal = self.unpack_goal(reader, goal_struct)
             if goal.script_name in [g.script_name for g in self.goals]:
                 _LOGGER.warning(
                     f"Goal '{goal.goal_id}' is referenced multiple times in LuaInfo (same ID and type). Each goal ID "
@@ -734,29 +736,20 @@ class LuaInfo:
 
         return header + packed_goals + packed_strings
 
-    def write(self, luainfo_path=None):
-        if luainfo_path is None:
-            luainfo_path = self.luainfo_path
-        else:
-            luainfo_path = Path(luainfo_path)
-        create_bak(luainfo_path)
-        with luainfo_path.open("wb") as f:
-            f.write(self.pack())
-
-    def unpack_goal(self, info_buffer, goal_struct) -> LuaGoal:
-        goal = goal_struct.unpack(info_buffer)
-        name = read_chars_from_buffer(info_buffer, offset=goal.name_offset, encoding=self.encoding)
-        if goal.logic_interrupt_name_offset > 0:
-            logic_interrupt_name = read_chars_from_buffer(
-                info_buffer, offset=goal.logic_interrupt_name_offset, encoding=self.encoding
+    def unpack_goal(self, reader: BinaryReader, goal_struct: BinaryStruct) -> LuaGoal:
+        goal = reader.unpack_struct(goal_struct)
+        name = reader.unpack_string(offset=goal["name_offset"], encoding=self.encoding)
+        if goal["logic_interrupt_name_offset"] > 0:
+            logic_interrupt_name = reader.unpack_string(
+                offset=goal["logic_interrupt_name_offset"], encoding=self.encoding
             )
         else:
             logic_interrupt_name = ""
         return LuaGoal(
-            goal_id=goal.goal_id,
+            goal_id=goal["goal_id"],
             goal_name=name,
-            has_battle_interrupt=goal.has_battle_interrupt,
-            has_logic_interrupt=goal.has_logic_interrupt,
+            has_battle_interrupt=goal["has_battle_interrupt"],
+            has_logic_interrupt=goal["has_logic_interrupt"],
             logic_interrupt_name=logic_interrupt_name,
         )
 
@@ -767,10 +760,9 @@ class LuaInfo:
         return "shift_jis_2004"
 
     @staticmethod
-    def _check_big_endian(info_buffer):
-        info_buffer.seek(4)
-        (endian,) = struct.unpack("i", info_buffer.read(4))
-        info_buffer.seek(0)
+    def _check_big_endian(reader: BinaryReader):
+        with reader.temp_offset(4):
+            endian = reader.unpack_value("i")
         if endian == 0x1000000:
             return True
         elif endian == 0x1:
@@ -778,61 +770,55 @@ class LuaInfo:
         raise ValueError(f"Invalid marker for LuaInfo byte order: {hex(endian)}")
 
     @staticmethod
-    def _check_use_struct_64(info_buffer, goal_count):
+    def _check_use_struct_64(reader: BinaryReader, goal_count):
         if goal_count == 0:
             raise LuaError("Cannot detect `LuaInfo` version if no goals are present.")
         elif goal_count >= 2:
-            return unpack_from_buffer(info_buffer, "i", offset=0x24)[0] == 0
+            return reader.unpack_value("i", offset=0x24) == 0
         else:
             # Hacky check if there's only one goal.
-            if unpack_from_buffer(info_buffer, "i", offset=0x18)[0] == 0x28:
+            if reader.unpack_value("i", offset=0x18) == 0x28:
                 return True
-            if unpack_from_buffer(info_buffer, "i", offset=0x14)[0] == 0x20:
+            if reader.unpack_value("i", offset=0x14) == 0x20:
                 return False
             raise ValueError("Found unexpected data while trying to detect `LuaInfo` version from single goal.")
 
 
-class LuaGNL:
+class LuaGNL(GameFile):
 
-    def __init__(self, luagnl_source=None, big_endian=False, use_struct_64=False):
-        """'Global Name List' file that lists all the functions declared in all the Lua scripts in the `LuaBND`.
+    def __init__(
+        self,
+        file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader, tp.Sequence[str, ...]] = None,
+        dcx_magic: tuple[int, int] = (),
+        big_endian=False,
+        use_struct_64=False,
+    ):
+        """Global Name List file that lists all the functions declared in all the Lua scripts in the `LuaBND`.
 
         Not actually required (after Demon's Souls, at least).
         """
 
         self.big_endian = big_endian
         self.use_struct_64 = use_struct_64
-        self.luagnl_path = None
+        self.names = []  # type: list[str]
+        super().__init__(file_source, dcx_magic, big_endian=big_endian, use_struct_64=use_struct_64)
 
-        self.names = []  # type: List[str]
+    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
+        if isinstance(file_source, (list, tuple)) and all(isinstance(s, str) for s in file_source):
+            self.names = file_source
+            return
+        raise InvalidGameFileTypeError("LuaGNL source was not a sequence of names.")
 
-        if luagnl_source is None:
-            return
-        if isinstance(luagnl_source, (list, tuple)):
-            self.names = luagnl_source
-            return
-        if isinstance(luagnl_source, (str, Path)):
-            self.luagnl_path = Path(luagnl_source)
-            with self.luagnl_path.open("rb") as f:
-                self.unpack(f)
-            return
-        if hasattr(luagnl_source, "data"):
-            luagnl_source = luagnl_source.data
-        if isinstance(luagnl_source, bytes):
-            luagnl_source = io.BytesIO(luagnl_source)
-        if isinstance(luagnl_source, io.BufferedIOBase):
-            self.unpack(luagnl_source)
-
-    def unpack(self, gnl_buffer):
-        self.big_endian, self.use_struct_64 = self._check_big_endian_and_struct_64(gnl_buffer)
+    def unpack(self, reader: BinaryReader, **kwargs):
+        self.big_endian, self.use_struct_64 = self._check_big_endian_and_struct_64(reader)
         fmt = f"{'>' if self.big_endian else '<'}{'q' if self.use_struct_64 else 'i'}"
         read_size = struct.calcsize(fmt)
         self.names = []
         offset = None
         while offset != 0:
-            (offset,) = struct.unpack(fmt, gnl_buffer.read(read_size))
+            (offset,) = struct.unpack(fmt, reader.read(read_size))
             if offset != 0:
-                self.names.append(read_chars_from_buffer(gnl_buffer, offset=offset, encoding=self.encoding))
+                self.names.append(reader.unpack_string(offset=offset, encoding=self.encoding))
 
     def pack(self):
         packed_offsets = b""
@@ -849,14 +835,6 @@ class LuaGNL:
         packed_names += b"\0" * 16
         return packed_offsets + packed_names
 
-    def write(self, luagnl_path=None):
-        if luagnl_path is None:
-            luagnl_path = self.luagnl_path
-        luagnl_path = Path(luagnl_path)
-        create_bak(luagnl_path)
-        with luagnl_path.open("wb") as f:
-            f.write(self.pack())
-
     @property
     def encoding(self):
         if self.use_struct_64:
@@ -864,19 +842,19 @@ class LuaGNL:
         return "shift_jis_2004"
 
     @staticmethod
-    def _check_big_endian_and_struct_64(gnl_buffer):
+    def _check_big_endian_and_struct_64(gnl_reader: BinaryReader):
         """Guessed based on the number and position of zero bytes the first offset."""
-        gnl_buffer.seek(0)
+        gnl_reader.seek(0)
         # First two bytes of first offset should be zeroes if big-endian.
-        big_endian = struct.unpack("h", gnl_buffer.read(2))[0] == 0
+        big_endian = gnl_reader.unpack_value("h") == 0
         if big_endian:
             # Remainder of first half of first offset should be zeroes if 64-bit.
-            use_struct_64 = struct.unpack("h", gnl_buffer.read(2))[0] == 0
+            use_struct_64 = gnl_reader.unpack_value("h") == 0
         else:
             # Second half of first offset should be zeroes if 64-bit.
-            gnl_buffer.seek(4)
-            use_struct_64 = struct.unpack("i", gnl_buffer.read(4))[0] == 0
-        gnl_buffer.seek(0)
+            gnl_reader.seek(4)
+            use_struct_64 = gnl_reader.unpack_value("i") == 0
+        gnl_reader.seek(0)
         return big_endian, use_struct_64
 
 

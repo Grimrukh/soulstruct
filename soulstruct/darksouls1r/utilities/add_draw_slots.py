@@ -11,7 +11,7 @@ and shows nothing when any other slots are assigned.
 import logging
 from pathlib import Path
 
-from soulstruct import BND
+from soulstruct.containers import Binder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ def add_draw_slot_1_to_drawparam(parambnd_path):
     parambnd_path = Path(parambnd_path)
     if not parambnd_path.is_file():
         raise FileNotFoundError(f"Could not locate DrawParam file: {str(parambnd_path)}")
-    draw_param = BND(parambnd_path)
+    draw_param = Binder(parambnd_path)
 
     if len(draw_param) != 12:
         _LOGGER.info(f"DrawParam file {str(parambnd_path)} already has more than one slot.")

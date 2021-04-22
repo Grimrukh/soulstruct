@@ -7,10 +7,10 @@ import subprocess
 import typing as tp
 from pathlib import Path
 
-PathType = tp.Union[Path, str]
+PathTyping = tp.Union[Path, str]
 
 
-def sort_fmod_bank(source_dir: PathType, dest_dir: PathType, make_voice_subfolders=True):
+def sort_fmod_bank(source_dir: PathTyping, dest_dir: PathTyping, make_voice_subfolders=True):
     """Sorts all files extracted from an FSB into `source_dir` into `dest_dir`, with a single WAV file extension.
 
     Files that start with "v###", where ### is any three-digit number, are placed into a subfolder called "v###" if
@@ -32,7 +32,7 @@ def sort_fmod_bank(source_dir: PathType, dest_dir: PathType, make_voice_subfolde
         print(f"{source_path} -> {dest_path}")
 
 
-def extract_fsb(fsb_path: PathType, dest_dir: PathType, make_voice_subfolders=True, fmod_extr_path=None):
+def extract_fsb(fsb_path: PathTyping, dest_dir: PathTyping, make_voice_subfolders=True, fmod_extr_path=None):
     """Extract FSB and organize its contents into `dest_dir` using `sort_fmod_bank()`.
 
     The `fmod_extr.exe` utility (and its two required DLLs) must be next to the FSB file unless `fmod_extr_path` given.

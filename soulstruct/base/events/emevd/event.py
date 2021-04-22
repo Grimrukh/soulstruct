@@ -10,7 +10,8 @@ from .enums import RestartType
 from .instruction import Instruction
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary_struct import BinaryStruct
+    from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+
 
 EVS_ARG_TYPES = {
     "i": "int",
@@ -45,9 +46,9 @@ class EventArg(abc.ABC):
             raise ValueError("Last field of arg replacement must be zero.")
 
     @classmethod
-    def unpack(cls, file, count=1):
+    def unpack(cls, reader: BinaryReader, count=1):
         event_args = []
-        struct_dicts = cls.HEADER_STRUCT.unpack_count(file, count=count)
+        struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
         for d in struct_dicts:
             event_args.append(cls(**d))
         return event_args
@@ -80,7 +81,7 @@ class Event(abc.ABC):
     @classmethod
     def unpack(
         cls,
-        file,
+        reader: BinaryReader,
         instruction_table_offset,
         base_arg_data_offset,
         event_arg_table_offset,
@@ -88,16 +89,16 @@ class Event(abc.ABC):
         count=1,
     ):
         event_dict = {}
-        struct_dicts = cls.HEADER_STRUCT.unpack_count(file, count=count)
+        struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
 
         for d in struct_dicts:
-            file.seek(instruction_table_offset + d["first_instruction_offset"])
+            reader.seek(instruction_table_offset + d["first_instruction_offset"])
             instruction_list = cls.Instruction.unpack(
-                file, base_arg_data_offset, event_layers_table_offset, count=d["instruction_count"]
+                reader, base_arg_data_offset, event_layers_table_offset, count=d["instruction_count"]
             )
 
-            file.seek(event_arg_table_offset + d["first_event_arg_offset"])
-            event_args = cls.EventArg.unpack(file, count=d["event_arg_count"])
+            reader.seek(event_arg_table_offset + d["first_event_arg_offset"])
+            event_args = cls.EventArg.unpack(reader, count=d["event_arg_count"])
 
             for arg_r in event_args:
                 # Attach event arg replacements to their instruction line.

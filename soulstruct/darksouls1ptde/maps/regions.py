@@ -25,7 +25,7 @@ from soulstruct.base.maps.msb.regions import (
     MSBRegionList as _BaseMSBRegionList,
 )
 from soulstruct.base.maps.msb.enums import MSBRegionSubtype
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct
 
 from .msb_entry import MSBEntryList
 

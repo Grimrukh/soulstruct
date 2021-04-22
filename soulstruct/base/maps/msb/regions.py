@@ -16,8 +16,9 @@ import typing as tp
 import logging
 import struct
 
-from soulstruct.utilities import read_chars_from_buffer, pad_chars, partialmethod
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
+from soulstruct.utilities.text import pad_chars
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.maths import Vector3
 
 from .enums import MSBRegionSubtype
@@ -58,24 +59,24 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         self._region_index = None  # Final automatic assignment done on `MSB.pack()`.
         super().__init__(source=source, **kwargs)
 
-    def unpack(self, msb_buffer):
-        region_offset = msb_buffer.tell()
-        base_data = self.REGION_STRUCT.unpack(msb_buffer)
-        self.name = read_chars_from_buffer(
-            msb_buffer, offset=region_offset + base_data["name_offset"], encoding=self.NAME_ENCODING,
+    def unpack(self, msb_reader: BinaryReader):
+        region_offset = msb_reader.position
+        base_data = msb_reader.unpack_struct(self.REGION_STRUCT)
+        self.name = msb_reader.unpack_string(
+            offset=region_offset + base_data["name_offset"], encoding=self.NAME_ENCODING,
         )
         self._region_index = base_data["__region_index"]
         self.translate = Vector3(base_data["translate"])
         self.rotate = Vector3(base_data["rotate"])
-        self.check_null_field(msb_buffer, region_offset + base_data["unknown_offset_1"])
-        self.check_null_field(msb_buffer, region_offset + base_data["unknown_offset_2"])
+        self.check_null_field(msb_reader, region_offset + base_data["unknown_offset_1"])
+        self.check_null_field(msb_reader, region_offset + base_data["unknown_offset_2"])
 
         if base_data["type_data_offset"] != 0:
-            msb_buffer.seek(region_offset + base_data["type_data_offset"])
-            self.unpack_type_data(msb_buffer)
+            msb_reader.seek(region_offset + base_data["type_data_offset"])
+            self.unpack_type_data(msb_reader)
 
-        msb_buffer.seek(region_offset + base_data["entity_id_offset"])
-        self.entity_id = struct.unpack("i", msb_buffer.read(4))[0]
+        msb_reader.seek(region_offset + base_data["entity_id_offset"])
+        self.entity_id = msb_reader.unpack_value("i")
 
         return region_offset + base_data["entity_id_offset"]
 
@@ -105,8 +106,8 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         packed_entity_id = struct.pack("i", self.entity_id)
         return packed_base_data + packed_name + b"\0\0\0\0" * 2 + packed_type_data + packed_entity_id
 
-    def unpack_type_data(self, msb_buffer):
-        self.set(**self.REGION_TYPE_DATA_STRUCT.unpack(msb_buffer))
+    def unpack_type_data(self, msb_reader: BinaryReader):
+        self.set(**msb_reader.unpack_struct(self.REGION_TYPE_DATA_STRUCT))
 
     def pack_type_data(self):
         return self.REGION_TYPE_DATA_STRUCT.pack(self)
@@ -115,9 +116,9 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
         self._region_index = region_index
 
     @classmethod
-    def check_null_field(cls, msb_buffer, offset_to_null):
-        msb_buffer.seek(offset_to_null)
-        zero = msb_buffer.read(cls.UNKNOWN_DATA_SIZE)
+    def check_null_field(cls, msb_reader: BinaryReader, offset_to_null):
+        msb_reader.seek(offset_to_null)
+        zero = msb_reader.read(cls.UNKNOWN_DATA_SIZE)
         if zero != b"\0" * cls.UNKNOWN_DATA_SIZE:
             _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
 
@@ -135,7 +136,7 @@ class MSBRegionPoint(MSBRegion, abc.ABC):
         "rotate",
     )
 
-    def unpack_type_data(self, msb_buffer):
+    def unpack_type_data(self, msb_reader: BinaryReader):
         pass
 
     def pack_type_data(self):

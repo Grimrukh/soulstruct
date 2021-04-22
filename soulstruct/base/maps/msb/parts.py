@@ -21,8 +21,8 @@ import struct
 
 from soulstruct.exceptions import InvalidFieldValueError, SoulstructError
 from soulstruct.game_types import *
-from soulstruct.utilities import partialmethod
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.maths import Vector3
 
 from .enums import CollisionHitFilter, MSBPartSubtype
@@ -73,9 +73,9 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
         self._display_groups = set()
         super().__init__(source=source, **kwargs)
 
-    def unpack_type_data(self, msb_buffer):
+    def unpack_type_data(self, msb_reader: BinaryReader):
         """This unpacks simple attributes by default, but some Parts need to process these values more."""
-        self.set(**self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True))
+        self.set(**msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT, exclude_asserted=True))
 
     def pack_type_data(self):
         try:
@@ -568,8 +568,8 @@ class MSBCollision(MSBPart, abc.ABC):
         self._stable_footing_flag = 0
         super().__init__(source=source, **kwargs)
 
-    def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True)
+    def unpack_type_data(self, msb_reader: BinaryReader):
+        data = msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT, exclude_asserted=True)
         self.set(**data)
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
         self._force_area_banner = data["__area_name_id"] < 0  # Custom field.
@@ -751,8 +751,8 @@ class MSBMapConnection(MSBPart, abc.ABC):
         self._connected_map = None
         super().__init__(source=source, **kwargs)
 
-    def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer)
+    def unpack_type_data(self, msb_reader):
+        data = msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT)
         self._collision_index = data["collision_index"]
         area_id, block_id, _, _ = data["map_id"]
         self._connected_map = self.GET_MAP(area_id, block_id)

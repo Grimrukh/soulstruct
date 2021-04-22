@@ -19,7 +19,8 @@ from pathlib import Path
 from soulstruct import __version__
 from soulstruct.config import DEFAULT_TEXT_EDITOR_FONT_SIZE
 from soulstruct.games import Game
-from soulstruct.utilities import PACKAGE_PATH, traverse_path_tree
+from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
 
 from .exceptions import SoulstructProjectError, RestoreBackupError

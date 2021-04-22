@@ -10,9 +10,12 @@ __all__ = [
 ]
 
 import abc
-import io
 import logging
 import struct
+import typing as tp
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,11 +35,11 @@ class _BitFieldBase:
 
 class BitFieldReader(_BitFieldBase):
 
-    def read(self, buffer: io.BufferedIOBase, bit_count: int, fmt: str):
+    def read(self, reader: BinaryReader, bit_count: int, fmt: str):
         max_bit_count = 8 * struct.calcsize(fmt)
         if self._field == "" or fmt != self._fmt or self._offset + bit_count > max_bit_count:
             # Consume (and reverse) new bit field. Any previous bit field is discarded.
-            (integer,) = struct.unpack(fmt, buffer.read(struct.calcsize(fmt)))
+            integer = reader.unpack_value(fmt)
             self._field = format(integer, f"0{max_bit_count}b")[::-1]
             self._fmt = fmt
         binary_str = self._field[self._offset:self._offset + bit_count][::-1]

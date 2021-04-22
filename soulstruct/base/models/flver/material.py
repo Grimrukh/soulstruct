@@ -2,16 +2,13 @@ from __future__ import annotations
 
 __all__ = ["GXItem", "GXList", "Material", "Texture"]
 
-import io
 import typing as tp
 
-from soulstruct.utilities import read_chars_from_buffer, unpack_from_buffer, indent_lines
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.utilities.text import indent_lines
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 from soulstruct.utilities.maths import Vector2
 
-if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary_struct import BinaryWriter
-    from .version import Version
+from .version import Version
 
 
 class GXItem(BinaryObject):
@@ -27,13 +24,18 @@ class GXItem(BinaryObject):
     unk_x04: int
     data: bytes
 
-    def unpack(self, buffer: io.BufferedIOBase, **kwargs):
-        data = self.STRUCT.unpack(buffer)
-        self.data = buffer.read(data.pop("__size") - self.STRUCT.size)
-        self.set(**data)
+    def unpack(self, reader: BinaryReader):
+        gx_item = reader.unpack_struct(self.STRUCT)
+        self.data = reader.read(gx_item.pop("__size") - self.STRUCT.size)
+        self.set(**gx_item)
 
-    def pack(self):
-        """TODO"""
+    def pack(self, writer: BinaryWriter):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __size=len(self.data) + self.STRUCT.size,
+        )
+        writer.append(self.data)
 
 
 class GXList:
@@ -45,14 +47,16 @@ class GXList:
     Prior to Dark Souls 2 (version 0x20010), these lists only ever contained exactly one `GXItem`.
     """
 
-    def __init__(self, source: tp.Union[io.BufferedIOBase, list[GXItem], None], version: Version = None):
+    gx_items: list[GXItem]
+
+    def __init__(self, source: tp.Union[BinaryReader, list[GXItem], None], version: Version = None):
         self.gx_items = []
         self.terminator_id = 2 ** 31 - 1  # max value of signed int; sometimes also -1
         self.terminator_null_count = 0
 
-        if isinstance(source, io.BufferedIOBase):
+        if isinstance(source, BinaryReader):
             if version is None:
-                raise ValueError("`version` must be given to unpack `GXList` from binary buffer.")
+                raise ValueError("`version` must be given to unpack `GXList` from binary reader.")
             if version <= Version.DarkSouls2:
                 self.gx_items = [GXItem(source)]
             else:
@@ -62,30 +66,41 @@ class GXList:
         elif source is None:
             self.gx_items = []
 
-        raise TypeError(f"Invalid `source` for `GXList`: {type(source)}. Must be a buffer, list of `GXItem`s, or None.")
+        raise TypeError(f"Invalid `source` for `GXList`: {type(source)}. Must be a reader, list of `GXItem`s, or None.")
 
-    def unpack(self, buffer):
+    def unpack(self, reader: BinaryReader):
         self.gx_items = []
-        while (gx_id := unpack_from_buffer(buffer, "<i", offset=buffer.tell())) not in {2 ** 31 - 1, -1}:
-            self.gx_items.append(GXItem(buffer))
-        self.terminator_id = gx_id
-        terminator_data = BinaryStruct(
-            ("terminator_id", "i", gx_id),
+        while reader.unpack_value("<i", offset=reader.position) not in {2 ** 31 - 1, -1}:
+            self.gx_items.append(GXItem(reader))
+        self.terminator_id = reader.unpack_value("<i")  # either 2 ** 31 - 1 or -1
+        reader.unpack_value("<i", asserted=100)
+        self.terminator_null_count = reader.unpack_value("<i") - 12
+        if (terminator_nulls := reader.read(self.terminator_null_count)).strip(b"\0"):
+            raise ValueError(f"Found non-null data in terminator: {terminator_nulls}")
+
+    def pack(self, writer: BinaryWriter):
+        for gx_item in self.gx_items:
+            gx_item.pack(writer)
+        writer.pack("iii", self.terminator_id, 100, self.terminator_null_count + 12)
+        writer.pad(self.terminator_null_count)
+
+    def get_terminator_struct(self, terminator_id: int = None) -> BinaryStruct:
+        if terminator_id is None:
+            if self.terminator_id is None:
+                raise ValueError("`GXItem` terminator ID has not yet been determined from `unpack()`.")
+            terminator_id = self.terminator_id
+        return BinaryStruct(
+            ("terminator_id", "i", terminator_id),
             ("one_hundred", "i", 100),
             ("terminator_size", "i"),
         )
-        terminator = terminator_data.unpack(buffer)
-        self.terminator_id = terminator["terminator_id"]
-        self.terminator_null_count = terminator["terminator_size"] - terminator_data.size
-        if (terminator_nulls := buffer.read(self.terminator_null_count)).strip(b"\0"):
-            raise ValueError(f"Found non-null data in terminator: {terminator_nulls}")
 
 
 class Texture(BinaryObject):
 
     STRUCT = BinaryStruct(
-        ("__path_offset", "i"),
-        ("__texture_type_offset", "i"),
+        ("__path__z", "i"),
+        ("__texture_type__z", "i"),
         ("scale", "2f"),
         ("unk_x10", "B"),  # 0, 1, or 2
         ("unk_x11", "?"),
@@ -108,12 +123,8 @@ class Texture(BinaryObject):
         "scale": Vector2.ones(),
     }
 
-    def unpack(self, buffer: io.BufferedIOBase, unicode: bool = None):
-        data = self.STRUCT.unpack(buffer)
-        encoding = "utf-16-le" if unicode else "shift_jis_2004"
-        self.path = read_chars_from_buffer(buffer, offset=data.pop("__path_offset"), encoding=encoding)
-        self.texture_type = read_chars_from_buffer(buffer, offset=data.pop("__texture_type_offset"), encoding=encoding)
-        self.set(**data)
+    unpack = BinaryObject.default_unpack
+    pack = BinaryObject.default_pack
 
     def __repr__(self):
         return (
@@ -133,8 +144,8 @@ class Texture(BinaryObject):
 class Material(BinaryObject):
 
     STRUCT = BinaryStruct(
-        ("__name_offset", "i"),
-        ("__mtd_path_offset", "i"),
+        ("__name__z", "i"),
+        ("__mtd_path__z", "i"),
         ("_texture_count", "i"),
         ("_first_texture_index", "i"),
         ("flags", "i"),
@@ -148,72 +159,37 @@ class Material(BinaryObject):
     flags: int
     gx_index: int
     unk_x18: int
+
     textures: list[Texture]
 
     _texture_count: int
     _first_texture_index: int
 
-    def __init__(self, source, unpack_kwargs, **kwargs):
+    def __init__(self, reader: BinaryReader, /, **kwargs):
         self.textures = []
-        super().__init__(source, unpack_kwargs, **kwargs)
+        super().__init__(reader, **kwargs)
 
     def unpack(
         self,
-        buffer: io.BufferedIOBase,
-        unicode: bool = None,
-        version: Version = None,
-        gx_lists: list[GXList] = None,
-        gx_list_indices: dict[int, int] = None,
+        reader: BinaryReader,
+        encoding: str,
+        version: Version,
+        gx_lists: list[GXList],
+        gx_list_indices: dict[int, int],
     ):
-        if any(var is None for var in (unicode, version, gx_lists, gx_list_indices)):
-            raise ValueError("Not all required keywords were passed to `Material.unpack()`.")
-
-        data = self.STRUCT.unpack(buffer)
-        encoding = "utf-16-le" if unicode else "shift_jis_2004"
-        self.name = read_chars_from_buffer(buffer, offset=data.pop("__name_offset"), encoding=encoding)
-        self.mtd_path = read_chars_from_buffer(buffer, offset=data.pop("__mtd_path_offset"), encoding=encoding)
-        gx_offset = data.pop("__gx_offset")
+        material = reader.unpack_struct(self.STRUCT)
+        self.name = reader.unpack_string(offset=material.pop("__name__z"), encoding=encoding)
+        self.mtd_path = reader.unpack_string(offset=material.pop("__mtd_path__z"), encoding=encoding)
+        gx_offset = material.pop("__gx_offset")
         if gx_offset == 0:
             self.gx_index = -1
         elif gx_offset in gx_list_indices:
             self.gx_index = gx_list_indices[gx_offset]
         else:
             gx_list_indices[gx_offset] = len(gx_lists)
-            material_offset = buffer.tell()
-            buffer.seek(gx_offset)
-            gx_lists.append(GXList(buffer, version))
-            buffer.seek(material_offset)
-        self.set(**data)
-
-    def pack(
-        self,
-        name_offset: int = None,
-        mtd_path_offset: int = None,
-        first_texture_index: int = None,
-        gx_offset: int = None,
-    ) -> bytes:
-        """Pack with all offsets known."""
-        if any(kwarg is None for kwarg in (name_offset, mtd_path_offset, first_texture_index, gx_offset)):
-            raise ValueError("`Material.pack()` did not receive all necessary keyword arguments.")
-        return self.STRUCT.pack(
-            self,
-            __name_offset=name_offset,
-            __mtd_path_offset=mtd_path_offset,
-            _texture_count=len(self.textures),
-            _first_texture_index=first_texture_index,
-            __gx_offset=gx_offset,
-        )
-
-    def pack_writer(self, writer: BinaryWriter, material_index: int):
-        writer.pack_struct(
-            self.STRUCT,
-            self,
-            __name_offset=writer.Reserved(f"MaterialNameOffset{material_index}"),
-            __mtd_path_offset=writer.Reserved(f"MaterialMTDPathOffset{material_index}"),
-            _first_texture_index=writer.Reserved(f"MaterialFirstTextureIndex{material_index}"),
-            __gx_offset=writer.Reserved(f"MaterialGXOffset{material_index}"),
-            _texture_count=len(self.textures),
-        )
+            with reader.temp_offset(gx_offset):
+                gx_lists.append(GXList(reader, version))
+        self.set(**material)
 
     def assign_textures(self, textures: dict[int, Texture]):
         if self._texture_count == -1 or self._first_texture_index == -1:
@@ -227,6 +203,29 @@ class Material(BinaryObject):
             self.textures.append(textures.pop(i))
         self._texture_count = -1
         self._first_texture_index = -1
+
+    def pack(self, writer: BinaryWriter):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __name__z=writer.AUTO_RESERVE,
+            __mtd_path__z=writer.AUTO_RESERVE,
+            _first_texture_index=writer.AUTO_RESERVE,
+            __gx_offset=writer.AUTO_RESERVE,
+            _texture_count=len(self.textures),
+        )
+
+    def pack_textures(self, writer: BinaryWriter, first_texture_index: int):
+        writer.fill("_first_texture_index", first_texture_index, obj=self)
+        for texture in self.textures:
+            texture.pack(writer)
+
+    def fill_gx_offset(self, writer: BinaryWriter, gx_offsets: list[int]):
+        writer.fill("__gx_offset", 0 if self.gx_index == -1 else gx_offsets[self.gx_index], obj=self)
+
+    def pack_strings(self, writer: BinaryWriter, encoding: str):
+        self.pack_zstring(writer, "name", encoding=encoding)
+        self.pack_zstring(writer, "mtd_path", encoding=encoding)
 
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])

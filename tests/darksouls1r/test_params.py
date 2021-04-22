@@ -4,7 +4,7 @@ from pathlib import Path
 
 from soulstruct.darksouls1r.params import GameParamBND
 from soulstruct.darksouls1r.params.paramdef import GET_BUNDLED_PARAMDEF
-from soulstruct.utilities import Timer
+from soulstruct.utilities.misc import Timer
 
 
 class ParamsTest(unittest.TestCase):

@@ -3,8 +3,7 @@ __all__ = ["Condition"]
 import abc
 import typing as tp
 
-from soulstruct.utilities import read_chars_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.game_types.internal_types import ESDType
 
 from .command import Command
@@ -29,23 +28,25 @@ class Condition(abc.ABC):
         self.__indent = print_indent
 
     @classmethod
-    def unpack(cls, esd_buffer, condition_pointers_offset, count=1):
+    def unpack(cls, esd_reader: BinaryReader, condition_pointers_offset, count=1):
         """Returns a list of `Condition` instances`."""
         conditions = []
         if condition_pointers_offset == -1:
             return conditions
-        pointers = cls.POINTER_STRUCT.unpack_count(esd_buffer, count=count, offset=condition_pointers_offset)
+        pointers = esd_reader.unpack_structs(cls.POINTER_STRUCT, count=count, offset=condition_pointers_offset)
         for p in pointers:
-            d = cls.STRUCT.unpack(esd_buffer, offset=p["condition_offset"])
+            d = esd_reader.unpack_struct(cls.STRUCT, offset=p["condition_offset"])
             pass_commands = cls.Command.unpack(
-                esd_buffer, d["pass_commands_offset"], count=d["pass_commands_count"],
+                esd_reader, d["pass_commands_offset"], count=d["pass_commands_count"],
             )
             subconditions = cls.unpack(  # safe recursion
-                esd_buffer, d["subcondition_pointers_offset"], count=d["subcondition_pointers_count"],
+                esd_reader, d["subcondition_pointers_offset"], count=d["subcondition_pointers_count"],
             )
-            test_ezl = read_chars_from_buffer(esd_buffer, offset=d["test_ezl_offset"], length=d["test_ezl_size"])
+            test_ezl = esd_reader.unpack_bytes(offset=d["test_ezl_offset"], length=d["test_ezl_size"])
             if d["next_state_offset"] > 0:
-                next_state_index = cls.STATE_ID_STRUCT.unpack(esd_buffer, offset=d["next_state_offset"])["state_id"]
+                next_state_index = esd_reader.unpack_struct(
+                    cls.STATE_ID_STRUCT, offset=d["next_state_offset"]
+                )["state_id"]
             else:
                 next_state_index = -1
             conditions.append(cls(next_state_index, test_ezl, pass_commands, subconditions))

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     "COMPARISON_NODES",
     "NEG_COMPARISON_NODES",
@@ -16,9 +18,13 @@ __all__ = [
 import ast
 import logging
 import struct
+import typing as tp
 from functools import wraps
 
 from .exceptions import NoSkipOrReturnError, NoNegateError
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -227,10 +233,12 @@ def get_byte_offset_from_struct(format_string):
     return byte_offset_array
 
 
-def get_instruction_args(file, instruction_class, instruction_index, first_arg_offset, event_args_size, format_dict):
+def get_instruction_args(
+    reader: BinaryReader, instruction_class, instruction_index, first_arg_offset, event_args_size, format_dict
+):
     """Process instruction arguments (required and optional) from EMEVD binary."""
 
-    previous_offset = file.tell()
+    previous_offset = reader.position
     if event_args_size == 0:
         return "", []
     try:
@@ -248,8 +256,8 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
             f"only {event_args_size}."
         )
 
-    file.seek(first_arg_offset)
-    args = struct.unpack(true_args_format, file.read(required_args_size))
+    reader.seek(first_arg_offset)
+    args = reader.unpack(true_args_format)
 
     # Additional arguments may appear for the instruction 2000[00], 'RunEvent'. These instructions are tightly packed,
     # and are simply read here as unsigned integers; we need to actually parse the event to interpret them properly.
@@ -258,7 +266,7 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
 
     opt_arg_count = extra_size // 4
     if opt_arg_count == 0:
-        file.seek(previous_offset)
+        reader.seek(previous_offset)
         return args_format[1:], list(args)
     elif extra_size % 4 != 0:
         raise ValueError(
@@ -266,8 +274,8 @@ def get_instruction_args(file, instruction_class, instruction_index, first_arg_o
             f"size is not a multiple of four bytes ({extra_size})."
         )
 
-    opt_args = [struct.unpack("<I", file.read(4))[0] for _ in range(opt_arg_count)]
-    file.seek(previous_offset)
+    opt_args = [reader.unpack_value("<I") for _ in range(opt_arg_count)]
+    reader.seek(previous_offset)
     return args_format[1:] + "|" + "I" * (extra_size // 4), list(args) + opt_args
 
 

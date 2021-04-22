@@ -209,7 +209,7 @@ class ATKPARAM_SPATTR_TYPE(u8):
     Physical = 1  # used for parries, ripostes, guarding, falls, Force miracles
     Fire = 2
     Magic = 3
-    Poison = 4
+    Status = 4  # poison, bleed, etc.
     # 5 is not used.
     Lightning = 6
     StoneCurse = 7  # e.g. Basilisk breath
@@ -715,8 +715,7 @@ class SP_EFFECT_MOVE_TYPE(u8):
 
 
 class SP_EFFECT_SAVE_CATEGORY(s8):
-    """Determines how often and/or in what order special effects are saved on every update. Names are from observed
-    usage only."""
+    """Determines whether the effect is saved to your character. Names are from observed usage only."""
 
     NoSave = -1
     Poison = 0
@@ -861,6 +860,7 @@ class SpecialStateInfo(u8):
     RingOfTheEvilEye = 199  # Triggers hard-coded special effect 2241 whenever an enemy is killed.
     HalfSpellCasts = 203  # Manus Catalyst, Tin Crystallization Catalyst
     StrongMagicShield = 204  # Strong Magic Shield.
+    CalamityRing = 237  # Eye icon over head.
 
 
 class THROW_DMY_CHR_DIR_TYPE(u8):

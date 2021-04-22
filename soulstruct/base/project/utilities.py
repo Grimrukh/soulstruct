@@ -4,7 +4,7 @@ import typing as tp
 from collections import namedtuple
 from functools import wraps
 
-from soulstruct.utilities import word_wrap, camel_case_to_spaces
+from ...utilities.text import word_wrap, camel_case_to_spaces
 from soulstruct.utilities.window import SmartFrame
 
 from .exceptions import SoulstructProjectError

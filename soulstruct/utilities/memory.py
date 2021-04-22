@@ -13,7 +13,7 @@ import typing as tp
 from ctypes import wintypes as w
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities import PACKAGE_PATH
+from soulstruct.utilities.files import PACKAGE_PATH
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params import Param, GameParamBND

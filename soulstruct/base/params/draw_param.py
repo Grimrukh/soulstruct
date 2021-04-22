@@ -77,7 +77,9 @@ class DrawParamBND(BND3, abc.ABC):
 
             undecodable_row_names = self.UNDECODABLE_ROW_NAMES.get(param_name, ())
             p = self.DRAW_PARAM_CLASS(
-                entry.data, paramdef_bnd=self.paramdef_bnd, undecodable_row_names=undecodable_row_names,
+                entry.get_uncompressed_data(),
+                paramdef_bnd=self.paramdef_bnd,
+                undecodable_row_names=undecodable_row_names,
             )
             self.params.setdefault(param_name, [None, None])[slot] = p
             self._slot_entry_paths[param_name, slot] = entry.path
@@ -138,7 +140,7 @@ class DrawParamBND(BND3, abc.ABC):
                 if param_table is None:
                     self.remove_entry(param_table_entry_path)  # Slot deleted.
                 else:
-                    self.entries_by_path[param_table_entry_path].data = param_table.pack()
+                    self.entries_by_path[param_table_entry_path].set_uncompressed_data(param_table.pack())
 
     def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
         """Write to `DrawParamBND` file after updating entries."""

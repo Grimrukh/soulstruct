@@ -1,3 +1,5 @@
+__all__ = ["MSB"]
+
 from soulstruct.base.maps.msb import MSB as _BaseMSB
 
 from .models import MSBModelList

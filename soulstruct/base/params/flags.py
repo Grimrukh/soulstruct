@@ -1,6 +1,6 @@
 __all__ = ["ParamFlags1", "ParamFlags2"]
 
-from soulstruct.utilities.core import Flags8
+from soulstruct.utilities.misc import Flags8
 
 
 class ParamFlags1(Flags8):

@@ -39,10 +39,10 @@ from soulstruct.base.maps.msb.events import (
 )
 from soulstruct.base.maps.msb.utils import MapFieldInfo
 from soulstruct.base.maps.msb.enums import MSBEventSubtype
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
 
 from .msb_entry import MSBEntryList
-from soulstruct.utilities import partialmethod
 
 
 class MSBEvent(_BaseMSBEvent):

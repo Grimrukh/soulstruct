@@ -11,7 +11,7 @@ from .event_layers import EventLayers
 from .utils import get_byte_offset_from_struct, get_instruction_args
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary_struct import BinaryStruct
+    from soulstruct.utilities.binary import BinaryStruct, BinaryReader
     from .decompiler import InstructionDecompiler
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,17 +46,17 @@ class Instruction(abc.ABC):
         self.event_layers_offset = None  # Set by Event class during EMEVD packing.
 
     @classmethod
-    def unpack(cls, file, base_arg_data_offset, event_layers_table_offset, count=1):
+    def unpack(cls, reader: BinaryReader, base_arg_data_offset, event_layers_table_offset, count=1):
         """Unpack some number of Instructions into a list, starting from the current file offset."""
 
         instructions = []
-        struct_dicts = cls.HEADER_STRUCT.unpack_count(file, count=count)
+        struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
         for i, d in enumerate(struct_dicts):
 
             # Process arguments.
             try:
                 args_format, args_list = get_instruction_args(
-                    file,
+                    reader,
                     d["instruction_class"],
                     d["instruction_index"],
                     base_arg_data_offset + d["first_base_arg_offset"],
@@ -65,14 +65,14 @@ class Instruction(abc.ABC):
                 )
             except KeyError:
                 args_size = struct_dicts[i + 1]["first_base_arg_offset"] - d["first_base_arg_offset"]
-                file.seek(base_arg_data_offset + d["first_base_arg_offset"])
-                raw_data = file.read(args_size)
+                reader.seek(base_arg_data_offset + d["first_base_arg_offset"])
+                raw_data = reader.read(args_size)
                 _LOGGER.error(f"Error while processing instruction arguments. Raw arg data: {raw_data}")
                 raise
 
             # Process event layers.
             if d["first_event_layers_offset"] > 0:
-                event_layers = cls.EventLayers.unpack(file, event_layers_table_offset + d["first_event_layers_offset"])
+                event_layers = cls.EventLayers.unpack(reader, event_layers_table_offset + d["first_event_layers_offset"])
             else:
                 event_layers = None
 

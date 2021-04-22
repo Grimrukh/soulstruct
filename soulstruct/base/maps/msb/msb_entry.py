@@ -8,8 +8,7 @@ import typing as tp
 from copy import deepcopy
 from functools import wraps
 
-from soulstruct.utilities import read_chars_from_buffer, unpack_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .exceptions import MapError
@@ -42,9 +41,9 @@ class MSBEntry(abc.ABC):
         self.name = ""
         self.description = ""  # supported by Soulstruct even when game lacks it
 
-        if isinstance(source, bytes):
-            source = io.BytesIO(source)
-        if isinstance(source, io.BufferedIOBase):
+        if isinstance(source, (bytes, io.BufferedIOBase)):
+            source = BinaryReader(source)
+        if isinstance(source, BinaryReader):
             description = kwargs.pop("description", None)
             if kwargs:
                 raise ValueError("Cannot instantiate MSB entry using `kwargs` if binary `source` is given.")
@@ -78,7 +77,7 @@ class MSBEntry(abc.ABC):
         """Pack to bytes."""
 
     @abc.abstractmethod
-    def unpack(self, msb_buffer):
+    def unpack(self, msb_reader: BinaryReader):
         """Unpack from open `MSB` buffer."""
 
     def get_name_to_pack(self):
@@ -212,30 +211,30 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
                     else:
                         raise TypeError("Non-MSBEntry found in source sequence for MSB.")
             return
-        if isinstance(msb_entry_list_source, bytes):
-            msb_entry_list_source = io.BytesIO(msb_entry_list_source)
-        if isinstance(msb_entry_list_source, io.BufferedIOBase):
+        if isinstance(msb_entry_list_source, (bytes, io.BufferedIOBase)):
+            msb_entry_list_source = BinaryReader(msb_entry_list_source)
+        if isinstance(msb_entry_list_source, BinaryReader):
             self.unpack(msb_entry_list_source)
         else:
             raise TypeError(f"Invalid MSB entry list source: {msb_entry_list_source}")
 
-    def unpack(self, msb_buffer):
-        header = self.MAP_ENTITY_LIST_HEADER.unpack(msb_buffer)
+    def unpack(self, msb_reader: BinaryReader):
+        header = msb_reader.unpack_struct(self.MAP_ENTITY_LIST_HEADER)
         entry_offsets = [
-            self.MAP_ENTITY_ENTRY_OFFSET.unpack(msb_buffer)["entry_offset"]
+            msb_reader.unpack_struct(self.MAP_ENTITY_ENTRY_OFFSET)["entry_offset"]
             for _ in range(header["entry_offset_count"] - 1)  # 'entry_offset_count' includes tail offset
         ]
-        next_entry_list_offset = self.MAP_ENTITY_LIST_TAIL.unpack(msb_buffer)["next_entry_list_offset"]
-        self.name = read_chars_from_buffer(msb_buffer, header["name_offset"], encoding=self.NAME_ENCODING)
+        next_entry_list_offset = msb_reader.unpack_struct(self.MAP_ENTITY_LIST_TAIL)["next_entry_list_offset"]
+        self.name = msb_reader.unpack_string(offset=header["name_offset"], encoding=self.NAME_ENCODING)
 
         self._entries = []
 
         for entry_offset in entry_offsets:
-            msb_buffer.seek(entry_offset)
-            entry = self.ENTRY_CLASS(msb_buffer)
+            msb_reader.seek(entry_offset)
+            entry = self.ENTRY_CLASS(msb_reader)
             self._entries.append(entry)
 
-        msb_buffer.seek(next_entry_list_offset)
+        msb_reader.seek(next_entry_list_offset)
 
     def pack(self, start_offset=0, is_last_table=False):
         entries = self.get_entries()
@@ -266,14 +265,14 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         return packed_header + packed_name + packed_entries
 
     @classmethod
-    def ENTRY_CLASS(cls, msb_buffer):
+    def ENTRY_CLASS(cls, msb_reader: BinaryReader):
         """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
-        entry_subtype_int = unpack_from_buffer(msb_buffer, "i", offset=cls.SUBTYPE_OFFSET, relative_offset=True)[0]
+        entry_subtype_int = msb_reader.unpack("i", offset=cls.SUBTYPE_OFFSET, relative_offset=True)[0]
         try:
             entry_subtype = cls.ENTRY_SUBTYPE_ENUM(entry_subtype_int)
         except ValueError:
             raise MapError(f"Entry of type {cls.ENTRY_SUBTYPE_ENUM} has invalid subtype enum: {entry_subtype_int}")
-        return cls.SUBTYPE_CLASSES[entry_subtype](msb_buffer)
+        return cls.SUBTYPE_CLASSES[entry_subtype](msb_reader)
 
     @abc.abstractmethod
     def pack_entry(self, index: int, entry: MSBEntryType):

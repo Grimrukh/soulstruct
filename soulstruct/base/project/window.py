@@ -13,8 +13,8 @@ import typing as tp
 from pathlib import Path
 from queue import Queue
 
-from soulstruct.containers.bnd import BND
-from soulstruct.utilities import word_wrap
+from soulstruct.containers import Binder
+from ...utilities.text import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
 from .editors import (
@@ -425,8 +425,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
             label="Restore .bak Files", foreground="#FFF", command=lambda: self._restore_backup(full_folder=True)
         )
         tools_menu.add_separator()
-        tools_menu.add_command(label="Unpack BND", foreground="#FFF", command=self._unpack_bnd)
-        tools_menu.add_command(label="Repack BND", foreground="#FFF", command=self._repack_bnd)
+        tools_menu.add_command(label="Unpack BND", foreground="#FFF", command=self._unpack_binder)
+        tools_menu.add_command(label="Repack BND", foreground="#FFF", command=self._repack_binder)
         return tools_menu
 
     def _build_scripts_menu(self, scripts_menu):
@@ -741,30 +741,31 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
         return self.CustomDialog("Restore Successful", f"Backup file '{str(target)}' restored.")
 
-    def _unpack_bnd(self):
+    def _unpack_binder(self):
         target = self.FileDialog.askopenfilename(
-            title="Choose BND File to Unpack", initialdir=str(self.project.game_root)
+            title="Choose BND/BHD/BDT File to Unpack", initialdir=str(self.project.game_root)
         )
         if target is None:
             return
-        if not re.match(r".*\.[a-z]*bnd(\.dcx)?$", target):
+        if not re.match(r".*\.[a-z]*(bnd|bhd|bdt)(\.dcx)?$", target):
             return self.CustomDialog(
-                title="Invalid BND File", message=f"A valid BND file (with or without DCX) must be selected."
+                title="Invalid BND/BHD/BDT File",
+                message=f"A BND/BHD/BDT file (with or without DCX) must be selected.",
             )
-        BND(target).write_unpacked_dir()
+        Binder(target).write_unpacked_dir()
 
-    def _repack_bnd(self):
+    def _repack_binder(self):
         target = self.FileDialog.askdirectory(
-            title="Choose Unpacked BND Directory to Repack", initialdir=str(self.project.game_root)
+            title="Choose Unpacked BND/BHD/BDT Directory to Repack", initialdir=str(self.project.game_root)
         )
         if target is None:
             return
-        if not re.match(r".*\.[a-z]*bnd", target):
+        if not re.match(r".*\.[a-z]*(bnd|bhd|bdt).*", target):
             return self.CustomDialog(
                 title="Invalid Directory",
-                message=f"A valid unpacked BND directory (with a 'bnd_manifest.json' file) must be selected.",
+                message=f"An unpacked BND/BHD/BDT directory (with a 'binder_manifest.json' file) must be selected.",
             )
-        BND(target).write()
+        Binder(target).write()
 
     def _set_as_default_project(self):
         """Set this project directory as the Soulstruct default in `config.py`."""

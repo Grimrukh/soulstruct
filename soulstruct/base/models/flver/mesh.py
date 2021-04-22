@@ -2,33 +2,25 @@ from __future__ import annotations
 
 __all__ = ["FaceSetFlags", "FaceSet", "Mesh"]
 
-import io
 import typing as tp
+from enum import IntEnum
 
-from soulstruct.utilities import unpack_from_buffer, indent_lines, Flags8
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject, BinaryWriter
+from soulstruct.utilities.text import indent_lines
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
-from .vertex import LayoutSemantic, BufferLayout, Vertex, VertexBuffer
-from .version import Version
+from .vertex import BufferLayout, Vertex, VertexBuffer
 
 
-class FaceSetFlags(Flags8):
-    @property
-    def LodLevel1(self):
-        return self.flags[0]
+class FaceSetFlags(IntEnum):
 
-    @property
-    def LodLevel2(self):
-        return self.flags[1]
+    LodLevel1 = 0b0000_0001
+    LodLevel2 = 0b0000_0001
+    EdgeCompressed = 0b0100_0000
+    MotionBlur = 0b1000_0000
 
-    @property
-    def EdgeCompressed(self):
-        return self.flags[6]
-
-    @property
-    def MotionBlur(self):
-        return self.flags[7]
+    def has_flag(self, flag_int: int):
+        return flag_int & self.value
 
 
 class FaceSet(BinaryObject):
@@ -39,60 +31,108 @@ class FaceSet(BinaryObject):
         ("triangle_strip", "?"),
         ("cull_back_faces", "?"),
         ("unk_x06", "h"),
-        ("__indices_count", "i"),
-        ("__indices_offset", "i"),  # header stops here for versions < 0x20005, which are not supported by Soulstruct
-        ("__indices_length", "i"),  # unused
+        ("__vertex_indices_count", "i"),
+        ("__vertex_indices_offset", "i"),
+        # Header stops here for versions < 0x20005, which are not supported by Soulstruct.
+        ("__vertex_indices_length", "i"),  # not needed
         "4x",
-        ("__index_size", "i"),  # 0 (from header), 16, or 32
+        ("__vertex_index_size", "i"),  # 0 (from header), 16, or 32
         "4x",
     )
 
-    flags: FaceSetFlags
+    flags: int
     triangle_strip: bool
     cull_back_faces: bool
     unk_x06: int
-    indices: list[int]
+    vertex_indices: list[int]
 
-    def unpack(self, buffer: io.BufferedIOBase, header_index_size: int = None, data_offset: int = None):
-        data = self.STRUCT.unpack(buffer)
+    def unpack(self, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int):
+        face_set = reader.unpack_struct(self.STRUCT)
 
-        if (index_size := data.pop("__index_size")) == 0:
-            index_size = header_index_size
+        if (vertex_index_size := face_set.pop("__vertex_index_size")) == 0:
+            vertex_index_size = header_vertex_index_size
 
-        if index_size == 8:
-            raise NotImplementedError("Soulstruct cannot support edge-compressed FLVER face sets (`index_size=8`).")
-        elif index_size in {16, 32}:
-            face_set_offset = buffer.tell()
-            indices_count = data.pop("__indices_count")
-            indices_offset = data.pop("__indices_offset")
-            buffer.seek(data_offset + indices_offset)
-            self.indices = list(unpack_from_buffer(buffer, f"<{indices_count}{'H' if index_size == 16 else 'I'}"))
-            buffer.seek(face_set_offset)
+        if vertex_index_size == 8:
+            raise NotImplementedError("Soulstruct cannot support edge-compressed FLVER face sets.")
+        elif vertex_index_size in {16, 32}:
+            vertex_indices_count = face_set.pop("__vertex_indices_count")
+            vertex_indices_offset = face_set.pop("__vertex_indices_offset")
+            with reader.temp_offset(vertex_data_offset + vertex_indices_offset):
+                fmt = f"<{vertex_indices_count}{'H' if vertex_index_size == 16 else 'I'}"
+                self.vertex_indices = list(reader.unpack(fmt))
         else:
-            raise ValueError(f"Unsupported face set index size: {index_size}")
+            raise ValueError(f"Unsupported face set index size: {vertex_index_size}")
 
-        self.set(**data)
+        self.set(**face_set)
+
+    def pack(self, writer: BinaryWriter, vertex_index_size: int):
+        writer.pack_struct(
+            self.STRUCT,
+            self,
+            __vertex_indices_count=len(self.vertex_indices),
+            __vertex_indices_offset=writer.AUTO_RESERVE,
+            __vertex_indices_length=len(self.vertex_indices) * vertex_index_size // 8,
+            __vertex_index_size=vertex_index_size,
+        )
+
+    def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_size: int, vertex_indices_offset: int):
+        self.fill(writer, __vertex_indices_offset=vertex_indices_offset)
+        if vertex_index_size == 16:
+            fmt = f"{len(self.vertex_indices)}H"
+        elif vertex_index_size == 32:
+            fmt = f"{len(self.vertex_indices)}i"
+        else:
+            raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
+        writer.pack(fmt, *self.vertex_indices)
 
     def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
         if self.triangle_strip:
             true_face_count = 0
             total_face_count = 0
-            for i in range(len(self.indices) - 2):
-                triplet = self.indices[i:i + 3]
+            for i in range(len(self.vertex_indices) - 2):
+                triplet = self.vertex_indices[i:i + 3]
                 if not allow_primitive_restarts or 0xFFFF not in triplet:
                     total_face_count += 1
-                    if not self.flags.MotionBlur and len(set(triplet)) == 3:
+                    if not self.has_flag(FaceSetFlags.MotionBlur) and len(set(triplet)) == 3:
                         # Vertices are not MotionBlur and not degenerate.
                         true_face_count += 1
             return true_face_count, total_face_count
         else:
-            return len(self.indices) // 3, len(self.indices) // 3
+            return len(self.vertex_indices) // 3, len(self.vertex_indices) // 3
 
     def get_vertex_index_size(self) -> int:
-        for vertex_index in self.indices:
+        for vertex_index in self.vertex_indices:
             if vertex_index > 2 ** 16:  # unsigned short max value (+1)
                 return 32
         return 16
+
+    def has_flag(self, flag: FaceSetFlags):
+        return flag.has_flag(self.flags)
+
+    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> list[int]:
+        """Convert triangle strip to triangle list (i.e. every triangle is a separate vertex index triplet).
+
+        Returns a copy of `self.vertex_indices` if `self.triangle_strip=False` already.
+
+        If `allow_primitive_restarts=True`, a vertex index of 0xFFFF will reset `flip` to False. Only use this if the
+        number of vertices in the mesh is less than 0xFFFF (otherwise the primitive command is ambiguous).
+
+        Also excludes degenerate faces (where two or more vertex indices are identical) by default.
+        """
+        if not self.triangle_strip:
+            return self.vertex_indices.copy()
+
+        triangle_list = []
+        flip = False
+        for i in range(len(self.vertex_indices) - 2):
+            triplet = self.vertex_indices[i:i + 3]
+            if allow_primitive_restarts and 0xFFFF in triplet:
+                flip = False  # restart the strip
+                continue
+            if len(set(triplet)) == 3 or include_degenerate_faces:
+                triangle_list.extend(reversed(triplet) if flip else triplet)
+            flip = not flip
+        return triangle_list
 
     def __repr__(self):
         return (
@@ -101,7 +141,7 @@ class FaceSet(BinaryObject):
             f"  triangle_strip = {self.triangle_strip}\n"
             f"  cull_back_faces = {self.cull_back_faces}\n"
             f"  unk_x06 = {self.unk_x06}\n"
-            f"  indices = {self.indices}\n"
+            f"  vertex_indices = {self.vertex_indices}\n"
             f")"
         )
 
@@ -126,9 +166,9 @@ class Mesh(BinaryObject):
     is_bind_pose: bool
     material_index: int
     default_bone_index: int
-    bone_indices: list[int]
     bounding_box: tp.Optional[BoundingBox]
 
+    bone_indices: list[int]
     face_sets: list[FaceSet]
     vertex_buffers: list[VertexBuffer]
     vertices: list[Vertex]
@@ -140,37 +180,36 @@ class Mesh(BinaryObject):
         "default_bone_index": -1,
     }
 
-    def __init__(self, source, unpack_kwargs, **kwargs):
+    def __init__(self, reader: BinaryReader, /, **kwargs):
+        self.bone_indices = []
         self.face_sets = []
         self.vertex_buffers = []
         self.vertices = []
-        super().__init__(source, unpack_kwargs, **kwargs)
+        super().__init__(reader, **kwargs)
 
-    def unpack(self, buffer: io.BufferedIOBase, bounding_box_has_unknown: bool = None):
-        data = self.STRUCT.unpack(buffer)
-        mesh_offset = buffer.tell()
+    def unpack(self, reader: BinaryReader, bounding_box_has_unknown: bool = None):
+        mesh = reader.unpack_struct(self.STRUCT)
 
-        bounding_box_offset = data.pop("__bounding_box_offset")
-        if bounding_box_offset != 0:
-            buffer.seek(bounding_box_offset)
-            self.bounding_box = BoundingBoxWithUnknown(buffer) if bounding_box_has_unknown else BoundingBox(buffer)
-        else:
+        bounding_box_offset = mesh.pop("__bounding_box_offset")
+        if bounding_box_offset == 0:
             self.bounding_box = None
+        else:
+            with reader.temp_offset(bounding_box_offset):
+                self.bounding_box = BoundingBoxWithUnknown(reader) if bounding_box_has_unknown else BoundingBox(reader)
 
-        buffer.seek(data.pop("__bone_offset"))
-        bone_count = data.pop("__bone_count")
-        self.bone_indices = list(unpack_from_buffer(buffer, f"<{bone_count}i",))
+        bone_count = mesh.pop("__bone_count")
+        with reader.temp_offset(mesh.pop("__bone_offset")):
+            self.bone_indices = list(reader.unpack(f"<{bone_count}i"))
 
-        buffer.seek(data.pop("__face_set_offset"))
-        face_set_count = data.pop("__face_set_count")
-        self._face_set_indices = list(unpack_from_buffer(buffer, f"<{face_set_count}i"))
+        face_set_count = mesh.pop("__face_set_count")
+        with reader.temp_offset(mesh.pop("__face_set_offset")):
+            self._face_set_indices = list(reader.unpack(f"<{face_set_count}i"))
 
-        buffer.seek(data.pop("__vertex_buffer_offset"))
-        vertex_count = data.pop("__vertex_buffer_count")
-        self._vertex_buffer_indices = list(unpack_from_buffer(buffer, f"<{vertex_count}i"))
+        vertex_count = mesh.pop("__vertex_buffer_count")
+        with reader.temp_offset(mesh.pop("__vertex_buffer_offset")):
+            self._vertex_buffer_indices = list(reader.unpack(f"<{vertex_count}i"))
 
-        buffer.seek(mesh_offset)
-        self.set(**data)
+        self.set(**mesh)
 
     def assign_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
@@ -212,23 +251,100 @@ class Mesh(BinaryObject):
 
         # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
 
-    def read_vertices(self, buffer: io.BufferedIOBase, data_offset: int, layouts: list[BufferLayout], version: Version):
+    def read_vertices(
+        self,
+        reader: BinaryReader,
+        vertex_data_offset: int,
+        layouts: list[BufferLayout],
+        uv_factor: int,
+    ):
         self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].vertex_count)]
         for vertex_buffer in self.vertex_buffers:
-            vertex_buffer.read_buffer(buffer, layouts, self.vertices, data_offset, version)
+            vertex_buffer.read_buffer(reader, layouts, self.vertices, vertex_data_offset, uv_factor)
 
-    def pack_writer(self, writer: BinaryWriter, mesh_index: int):
+    def pack(self, writer: BinaryWriter):
         writer.pack_struct(
             self.STRUCT,
             self,
-            __bounding_box_offset=writer.Reserved(f"MeshBoundingBox{mesh_index}"),
+            __bounding_box_offset=writer.AUTO_RESERVE,
             __bone_count=len(self.bone_indices),
-            __bone_offset=writer.Reserved(f"MeshBoneIndices{mesh_index}"),
+            __bone_offset=writer.AUTO_RESERVE,
             __face_set_count=len(self.face_sets),
-            __face_set_offset=writer.Reserved(f"MeshFaceSetIndices{mesh_index}"),
+            __face_set_offset=writer.AUTO_RESERVE,
             __vertex_buffer_count=len(self.vertex_buffers),
-            __vertex_buffer_offset=writer.Reserved(f"MeshVertexBufferIndices{mesh_index}"),
+            __vertex_buffer_offset=writer.AUTO_RESERVE,
         )
+
+    def pack_bounding_box(self, writer: BinaryWriter):
+        if self.bounding_box is None:
+            writer.fill("__bounding_box_offset", 0, obj=self)
+        else:
+            writer.fill("__bounding_box_offset", writer.position, obj=self)
+            self.bounding_box.pack(writer)
+
+    def pack_bone_indices(self, writer: BinaryWriter, bone_indices_start: int):
+        if not self.bone_indices:
+            # Weird case for byte-perfect writing.
+            writer.fill("__bone_offset", bone_indices_start, obj=self)
+        else:
+            writer.fill("__bone_offset", writer.position, obj=self)
+            writer.pack(f"{len(self.bone_indices)}i", *self.bone_indices)
+
+    def pack_face_set_indices(self, writer: BinaryWriter, first_face_set_index: int):
+        writer.fill("__face_set_offset", writer.position, obj=self)
+        mesh_face_set_indices = range(first_face_set_index, first_face_set_index + len(self.face_sets))
+        writer.pack(f"{len(self.face_sets)}i", *mesh_face_set_indices)
+
+    def pack_vertex_buffer_indices(self, writer: BinaryWriter, first_vertex_buffer_index: int):
+        writer.fill("__vertex_buffer_offset", writer.position, obj=self)
+        mesh_vertex_buffer_indices = range(
+            first_vertex_buffer_index, first_vertex_buffer_index + len(self.vertex_buffers)
+        )
+        writer.pack(f"{len(self.vertex_buffers)}i", *mesh_vertex_buffer_indices)
+
+    def to_obj(self, name="Mesh", vertex_offset=0) -> str:
+        """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
+
+        Use `vertex_offset` to offset all vertex indices in face definitions (e.g. if other meshes' vertices have
+        been defined in the same file).
+        """
+        lines = [f"o {name}"]
+        for vertex in self.vertices:
+            position = " ".join(str(x) for x in vertex.position)
+            lines.append(f"v {position}")
+        for vertex in self.vertices:
+            normal = " ".join(str(x) for x in vertex.normal)
+            lines.append(f"vn {normal}")
+        for vertex in self.vertices:
+            if len(vertex.uvs) > 1:
+                print(vertex)
+                raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
+            uv = " ".join(str(x) for x in vertex.uvs[0])
+            lines.append(f"vt {uv}")
+        for i, face_set in enumerate(self.face_sets):
+            lines.append(f"# Face Set {i}")
+            triangles = face_set.triangulate(self.allow_primitive_restarts)
+            for j in range(0, len(triangles), 3):
+                # TODO: Are these UV/normal assignments correct, given that each vertex has one?
+                face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])
+                lines.append(f"f {face}")
+        return "\n".join(lines)
+
+    @property
+    def allow_primitive_restarts(self):
+        return len(self.vertices) < 0xFFFF
+
+    def draw(self, color="red", show_origin=True, auto_show=False, axes=None, **kwargs):
+        import matplotlib.pyplot as plt
+        if axes is None:
+            axes = plt.figure().add_subplot(111, projection="3d")
+        positions = [v.position.swap_yz() for v in self.vertices]
+        axes.scatter(*zip(*positions), c=color, s=1, alpha=0.1)  # note y/z swapped
+        if show_origin:
+            axes.scatter(0, 0, 0, c="black", marker="x", s=5)
+        axes.set(**kwargs)
+        if auto_show:
+            plt.show()
 
     def __repr__(self):
         vertices = ",\n".join([f"    {v.repr_position_only()}" for v in self.vertices])

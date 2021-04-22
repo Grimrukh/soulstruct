@@ -8,7 +8,7 @@ from soulstruct.base.ezstate.esd import (
 )
 from soulstruct.games import BLOODBORNE
 from soulstruct.game_types.internal_types import ESDType
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct
 
 __all__ = ["TalkESD", "ChrESD"]
 

@@ -7,7 +7,7 @@ from soulstruct.base.events.emevd import (
     Instruction as _BaseInstruction,
     EventLayers as _BaseEventLayers,
 )
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct
 from .arg_types import INSTRUCTION_ARG_TYPES
 from .decompiler import InstructionDecompiler
 from .evs import EVSParser

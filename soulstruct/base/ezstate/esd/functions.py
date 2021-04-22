@@ -8,7 +8,7 @@ __all__ = ["COMMANDS", "TEST_FUNCTIONS", "State"]
 import re
 
 from soulstruct.game_types.internal_types import ESDType
-from soulstruct.utilities import PACKAGE_PATH
+from soulstruct.utilities.files import PACKAGE_PATH
 
 
 COMMANDS = {ESDType.CHR: {}, ESDType.TALK: {}}

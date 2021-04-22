@@ -1,7 +1,7 @@
 __all__ = ["MSGDirectory", "NEW_FMG_NAMES"]
 
 from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory
-from soulstruct.utilities.core import BiDict
+from soulstruct.utilities.misc import BiDict
 
 from .fmg import FMG
 

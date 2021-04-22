@@ -51,15 +51,16 @@ class GameParamBND(BaseBND, abc.ABC):
             return  # already generated
 
         for entry in self.entries:
-            p = self.params[entry.path] = self.Param(entry.data, paramdef_bnd=self.paramdef_bnd)
-            # Preferential nickname source order: `self.PARAM_NICKNAMES[BNDEntry.stem]`, `p.nickname`, `BNDEntry.stem`
+            p = self.params[entry.path] = self.Param(entry.get_uncompressed_data(), paramdef_bnd=self.paramdef_bnd)
+            # Preferential nickname source order:
+            #     `self.PARAM_NICKNAMES[BinderEntry.stem]`, `p.nickname`, `BinderEntry.stem`
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
             setattr(self, nickname, p)
 
     def update_bnd_entries(self):
         """Update the `GameParamBND` by packing the current `Param` instances. Called automatically by `write()`."""
         for param_table_entry_path, param_table in self.params.items():
-            self.entries_by_path[param_table_entry_path].data = param_table.pack()
+            self.entries_by_path[param_table_entry_path].set_uncompressed_data(param_table.pack())
 
     def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
         """Write the `GameParamBND` file after updating the binary BND entries from the loadewd `Param` instances.
@@ -80,16 +81,17 @@ class GameParamBND(BaseBND, abc.ABC):
         self._entries.clear()
         entry_ids = set()
         for i, param_dict in enumerate(data["params"]):
-            for field in ("entry_id", "path", "magic", "data"):
+            for field in ("entry_id", "path", "flags", "data"):
                 if field not in param_dict:
                     raise KeyError(f"Field `{field}` not specified in 'params[{i}]' in `GameParamBND` dict.")
             param = self.Param(param_dict["data"], paramdef_bnd=self.paramdef_bnd)
-            entry = self.BNDEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["magic"])
+            entry = self.BinderEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["flags"])
             if entry.id in entry_ids:
                 _LOGGER.warning(f"Entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP.")
             self._entries.append(entry)
             p = self.params[entry.path] = param
-            # Preferential nickname source order: `self.PARAM_NICKNAMES[BNDEntry.stem]`, `p.nickname`, `BNDEntry.stem`
+            # Preferential nickname source order:
+            #     `self.PARAM_NICKNAMES[BinderEntry.stem]`, `p.nickname`, `BinderEntry.stem`
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
             setattr(self, nickname, p)
 
@@ -103,7 +105,7 @@ class GameParamBND(BaseBND, abc.ABC):
             data["params"].append({
                 "entry_id": entry.id,
                 "path": path,
-                "magic": entry.magic,
+                "flags": entry.flags,
                 "data": param_dict,
             })
         return data

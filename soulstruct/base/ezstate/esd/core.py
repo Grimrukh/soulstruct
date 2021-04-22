@@ -4,18 +4,15 @@ __all__ = ["ESD"]
 
 import abc
 import ast
-import io
 import logging
 import re
 import typing as tp
-from io import BytesIO
 from pathlib import Path
 
 from .exceptions import ESDTypeError
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.game_types.internal_types import ESDType
-from soulstruct.utilities.core import read_chars_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .state import State
 from .esp_compiler import ESPCompiler
@@ -57,7 +54,7 @@ class ESD(GameFile, abc.ABC):
         if esd_name:  # override any auto-detected name
             self.esd_name = esd_name
 
-    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[io.BufferedIOBase]:
+    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
         if isinstance(file_source, (Path, str)):
             file_source = Path(file_source)
 
@@ -75,21 +72,21 @@ class ESD(GameFile, abc.ABC):
 
         raise InvalidGameFileTypeError("`esd_source` is not a `.esp[.py]` file or directory.")
 
-    def unpack(self, esd_buffer, **kwargs):
+    def unpack(self, esd_reader: BinaryReader, **kwargs):
 
-        header = self.EXTERNAL_HEADER_STRUCT.unpack(esd_buffer)
+        header = esd_reader.unpack_struct(self.EXTERNAL_HEADER_STRUCT)
         # Internal offsets start here, so we reset the buffer.
-        esd_buffer = BytesIO(esd_buffer.read())
+        esd_reader = BinaryReader(esd_reader.read())
 
-        internal_header = self.INTERNAL_HEADER_STRUCT.unpack(esd_buffer)
+        internal_header = esd_reader.unpack_struct(self.INTERNAL_HEADER_STRUCT)
         self.magic = internal_header["magic"]
-        state_machine_headers = self.STATE_MACHINE_HEADER_STRUCT.unpack_count(
-            esd_buffer, count=header["state_machine_count"],
+        state_machine_headers = esd_reader.unpack_structs(
+            self.STATE_MACHINE_HEADER_STRUCT, count=header["state_machine_count"]
         )
 
         for state_machine_header in state_machine_headers:
             states = self.State.unpack(
-                esd_buffer,
+                esd_reader,
                 state_machine_header["state_machine_offset"],
                 count=state_machine_header["state_count"],
             )
@@ -99,15 +96,15 @@ class ESD(GameFile, abc.ABC):
             esd_name_offset = internal_header["esd_name_offset"]
             esd_name_length = internal_header["esd_name_length"]
             # Note the given length is the length of the final string. The actual UTF-16 encoded bytes are twice that.
-            self.esd_name = read_chars_from_buffer(
-                esd_buffer, offset=esd_name_offset, length=2 * esd_name_length, encoding="utf-16le"
+            self.esd_name = esd_reader.unpack_string(
+                offset=esd_name_offset, length=2 * esd_name_length, encoding="utf-16le"
             )
-            esd_buffer.seek(esd_name_offset + 2 * esd_name_length)
-            self.file_tail = esd_buffer.read()
+            esd_reader.seek(esd_name_offset + 2 * esd_name_length)
+            self.file_tail = esd_reader.read()
         else:
             self.esd_name = ""
-            esd_buffer.seek(header["unk_offset_1"])  # after packed EZL
-            self.file_tail = esd_buffer.read()
+            esd_reader.seek(header["unk_offset_1"])  # after packed EZL
+            self.file_tail = esd_reader.read()
 
     def compile_from_esp_dir(self, esp_dir):
         esp_dir = Path(esp_dir)

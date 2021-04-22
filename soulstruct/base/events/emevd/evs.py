@@ -462,7 +462,9 @@ class EVSParser(abc.ABC):
         # 0. Check if body is just one end/restart function.
         if len(node.body) == 1 and isinstance(node.body[0], ast.Return) and not node.orelse:
             return_node = node.body[0]
-            if return_node.value is None or (isinstance(return_node.value, ast.Name) and return_node.value.id == "END"):
+            if return_node.value is None or (
+                isinstance(return_node.value, ast.Name) and return_node.value.id == "END"
+            ):
                 try:
                     return self._compile_skip_or_return(node.test, end_event=True)
                 except NoSkipOrReturnError:

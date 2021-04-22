@@ -1,6 +1,6 @@
 __all__ = ["BoundingBox", "BoundingBoxWithUnknown"]
 
-from soulstruct.utilities.binary_struct import BinaryStruct, BinaryObject
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject
 from soulstruct.utilities.maths import Vector3
 
 
@@ -14,6 +14,8 @@ class BoundingBox(BinaryObject):
 
     minimum: Vector3
     maximum: Vector3
+
+    pack = BinaryObject.default_pack
 
     def __repr__(self):
         return f"BoundingBox(minimum={tuple(self.minimum)}, maximum={tuple(self.maximum)})"

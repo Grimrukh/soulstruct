@@ -6,8 +6,10 @@ __all__ = [
     "Vector2",
     "Vector3",
     "Vector4",
+    "Quaternion",
     "Matrix3",
     "Matrix4",
+    "QuatTransform",
     "shift_msb_coordinates",
     "shift",
     "matrix_multiply",
@@ -31,7 +33,7 @@ class Vector(abc.ABC):
     def __init__(self, x=None):
         """Initializes `_data` attribute."""
         if x is None:
-            self._data = [0] * self.LENGTH
+            self._data = [0.0] * self.LENGTH
         else:
             try:
                 if len(x) != self.LENGTH:
@@ -96,12 +98,35 @@ class Vector(abc.ABC):
     def __truediv__(self, other):
         return self._arithmetic(other, float.__truediv__, "divide")
 
+    def __neg__(self):
+        return self.__class__([-self[i] for i in range(self.LENGTH)])
+
     def __iter__(self):
         return iter(self._data)
 
     def __repr__(self):
-        data = ", ".join(f"{x:.{self.REPR_PRECISION}f}" for x in self._data)
-        return f"{self.__class__.__name__}({data})"
+        elements = []
+        for x in self._data:
+            if x == 340282346638528859811704183484516925440.0:
+                elements.append("<SINGLE_MAX>")
+            elif x == -340282346638528859811704183484516925440.0:
+                elements.append("<SINGLE_MIN>")
+            else:
+                elements.append(f"{x:.{self.REPR_PRECISION}}")
+        return f"{self.__class__.__name__}({', '.join(elements)})"
+
+    def __abs__(self):
+        """Get norm of `Vector`."""
+        return math.sqrt(sum(v ** 2 for v in self))
+
+    def normalize(self) -> Vector:
+        """Return a copy of this `Vector` with unit magnitude."""
+        return self.copy() / abs(self)
+
+    def dot(self, other_vector) -> float:
+        if len(other_vector) != self.LENGTH:
+            raise TypeError(f"Cannot only use `dot` with another Vector or sequence of the same length: {self.LENGTH}")
+        return sum(self[i] * other_vector[i] for i in range(self.LENGTH))
 
     def copy(self):
         return self.__class__(self)
@@ -185,6 +210,9 @@ class Vector3(Vector):
     def transform(self, matrix3: Matrix3):
         return Vector3(list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
 
+    def swap_yz(self) -> Vector3:
+        return Vector3(self.x, self.z, self.y)
+
 
 class Vector4(Vector):
     """Simple [x, y, z, w] container."""
@@ -197,6 +225,58 @@ class Vector4(Vector):
         elif y is not None or z is not None or w is not None:
             raise ValueError("All of `x`, `y`, `z`, and `w` must be given, or just `x` (if it's a sequence or `None`).")
         super().__init__(x)
+
+    @property
+    def y(self):
+        return self._data[1]
+
+    @y.setter
+    def y(self, value: float):
+        self._data[1] = value
+
+    @property
+    def z(self):
+        return self._data[2]
+
+    @z.setter
+    def z(self, value: float):
+        self._data[2] = value
+
+    @property
+    def w(self):
+        return self._data[3]
+
+    @w.setter
+    def w(self, value: float):
+        self._data[3] = value
+
+
+class Quaternion(Vector4):
+
+    @classmethod
+    def identity(cls):
+        return cls(1, 0, 0, 0)
+
+    @staticmethod
+    def slerp(q1: Quaternion, q2: Quaternion, t: float):
+        """Spherically interpolate between two Quaternions by parameter `t` in interval [0, 1].
+
+        Adapted from:
+            https://stackoverflow.com/questions/44706591/how-to-test-quaternion-slerp
+        """
+        q1 = q1.normalize()
+        q2 = q2.normalize()
+        dot = q1.dot(q2)
+
+        if dot < 0.0:
+            # Quaternions have opposite-handedness, so slerp won't take the shortest path unless one is negated.
+            q2 = -q2
+            dot = -dot
+
+        dot = min(1.0, max(0.0, dot))
+        theta = math.acos(dot) * t
+        q3 = q2 - q1 * dot
+        return q1 * math.cos(theta) + q3 * math.sin(theta)
 
 
 class Matrix(abc.ABC):
@@ -218,6 +298,38 @@ class Matrix(abc.ABC):
         m = cls.identity()
         m.data = data
         return m
+
+    @classmethod
+    def from_flat_row_order(cls, data):
+        """Create `Matrix` from flattened elements, in row-first order."""
+        if len(data) != cls.SIZE ** 2:
+            raise ValueError(f"`data` should be {cls.SIZE ** 2} elements.")
+        m = cls.identity()
+        for row in range(cls.SIZE):
+            m.data[row] = data[row * cls.SIZE:(row + 1) * cls.SIZE]
+        return m
+
+    def to_flat_row_order(self) -> list[tp.Union[int, float]]:
+        flat = []
+        for row in self.data:
+            flat.extend(row)
+        return flat
+
+    @classmethod
+    def from_flat_column_order(cls, data):
+        """Create `Matrix` from flattened elements, in column-first order."""
+        if len(data) != cls.SIZE ** 2:
+            raise ValueError(f"`data` should be {cls.SIZE ** 2} elements.")
+        m = cls.identity()
+        for row in range(cls.SIZE):
+            m.data[row] = [data[i * cls.SIZE + row] for i in range(cls.SIZE)]
+        return m
+
+    def to_flat_column_order(self) -> list[tp.Union[int, float]]:
+        flat = []
+        for c in range(self.SIZE):
+            flat.extend([row[c] for row in self.data])
+        return flat
 
     def __getitem__(self, indices):
         if isinstance(indices, int):
@@ -257,9 +369,9 @@ class Matrix3(Matrix):
     def __init__(self, v00, v01, v02, v10, v11, v12, v20, v21, v22):
         super().__init__()
         self.data = [
-            [v00, v01, v02],
-            [v10, v11, v12],
-            [v20, v21, v22],
+            [float(v) for v in (v00, v01, v02)],
+            [float(v) for v in (v10, v11, v12)],
+            [float(v) for v in (v20, v21, v22)],
         ]
 
     def __matmul__(self, other):
@@ -270,7 +382,11 @@ class Matrix3(Matrix):
         raise TypeError(f"Cannot matrix multiply with type {type(other)}.")
 
     @classmethod
-    def identity(cls):
+    def zero(cls) -> Matrix3:
+        return cls(0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    @classmethod
+    def identity(cls) -> Matrix3:
         return cls(1, 0, 0, 0, 1, 0, 0, 0, 1)
 
     @classmethod
@@ -325,11 +441,15 @@ class Matrix4(Matrix):
     def __init__(self, v00, v01, v02, v03, v10, v11, v12, v13, v20, v21, v22, v23, v30, v31, v32, v33):
         super().__init__()
         self.data = [
-            [v00, v01, v02, v03],
-            [v10, v11, v12, v13],
-            [v20, v21, v22, v23],
-            [v30, v31, v32, v33],
+            [float(v) for v in (v00, v01, v02, v03)],
+            [float(v) for v in (v10, v11, v12, v13)],
+            [float(v) for v in (v20, v21, v22, v23)],
+            [float(v) for v in (v30, v31, v32, v33)],
         ]
+
+    @classmethod
+    def zero(cls):
+        return cls(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     @classmethod
     def identity(cls):
@@ -342,6 +462,94 @@ class Matrix4(Matrix):
             return Vector3.from_column_mat(matrix_multiply(self.data, other.to_mat_column() + [[1]]))
         # TODO: May as well support `Vector4`.
         raise TypeError(f"Cannot matrix multiply with type {type(other)}.")
+
+    def set_scale(self, scale_vector: tp.Union[Vector3, list, tuple, int, float]):
+        """Set the scale part of the matrix (diagonal of top-left 3x3 sub-matrix)."""
+        if isinstance(scale_vector, (list, tuple)):
+            scale_vector = Vector3(scale_vector)
+        elif isinstance(scale_vector, (int, float)):
+            scale_vector = Vector3(scale_vector, scale_vector, scale_vector)
+        elif not isinstance(scale_vector, Vector3):
+            raise TypeError(f"`scale_vector` must be a Vector3, list, tuple, int, or float.")
+        for i in range(3):
+            self.data[i][i] = float(scale_vector[i])
+
+    def set_translate(self, translate_vector: tp.Union[Vector3, list, tuple, int, float]):
+        """Set the translate part of the matrix (first three elements of last column)."""
+        if isinstance(translate_vector, (list, tuple)):
+            translate_vector = Vector3(translate_vector)
+        elif isinstance(translate_vector, (int, float)):
+            translate_vector = Vector3(translate_vector, translate_vector, translate_vector)
+        elif not isinstance(translate_vector, Vector3):
+            raise TypeError(f"`translate_vector` must be a Vector3, list, tuple, int, or float.")
+        for i in range(3):
+            self.data[i][3] = float(translate_vector[i])
+
+
+class QuatTransform:
+
+    translate: Vector3
+    rotation: Quaternion
+    scale: Vector3
+
+    def __init__(self, translate: Vector3, rotation: Quaternion, scale: Vector3):
+        self.translate = translate
+        self.rotation = rotation
+        self.scale = scale
+
+    @classmethod
+    def lerp(cls, transform1: QuatTransform, transform2: QuatTransform, t: float):
+        """Linearly interpolate translate and scale, and spherically interpolate rotation Quaternion.
+
+        `t` will be clamped to [0, 1] interval.
+        """
+        t = min(1.0, max(0.0, t))
+        translate = transform1.translate + (transform2.translate - transform1.translate) * t
+        rotation = Quaternion.slerp(transform1.rotation, transform2.rotation, t)
+        scale = transform1.scale + (transform2.scale - transform1.scale) * t
+        return cls(translate, rotation, scale)
+
+    def to_matrix4(self) -> Matrix4:
+        """Convert a `translate` vector, `q_rotation` quaternion, and `scale` vector to a 4x4 transform matrix."""
+        q0, q1, q2, q3 = self.rotation
+
+        # Rotation sub-matrix.
+        v00 = 2 * (q0 * q0 + q1 * q1) - 1
+        v01 = 2 * (q1 * q2 - q0 * q3)
+        v02 = 2 * (q1 * q3 + q0 * q2)
+        v10 = 2 * (q1 * q2 + q0 * q3)
+        v11 = 2 * (q0 * q0 + q2 * q2) - 1
+        v12 = 2 * (q2 * q3 - q0 * q1)
+        v20 = 2 * (q1 * q3 - q0 * q2)
+        v21 = 2 * (q2 * q3 + q0 * q1)
+        v22 = 2 * (q0 * q0 + q3 * q3) - 1
+
+        # Translate vector.
+        v03 = self.translate[0]
+        v13 = self.translate[1]
+        v23 = self.translate[2]
+
+        # Apply scale on top of rotation sub-matrix.
+        v00 *= self.scale[0]
+        v11 *= self.scale[1]
+        v22 *= self.scale[3]
+
+        # Bottom row.
+        v30 = 0.0
+        v31 = 0.0
+        v32 = 0.0
+        v33 = 1.0
+
+        return Matrix4(v00, v01, v02, v03, v10, v11, v12, v13, v20, v21, v22, v23, v30, v31, v32, v33)
+
+    def __repr__(self) -> str:
+        return (
+            f"QuatTransform(\n"
+            f"    translate={self.translate}\n"
+            f"    rotation={self.rotation}\n"
+            f"    scale={self.scale}\n"
+            f")"
+        )
 
 
 def shift_msb_coordinates(distance: float, translate=(0.0, 0.0, 0.0), ry=0.0):

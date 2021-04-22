@@ -31,8 +31,8 @@ from soulstruct.base.maps.msb.parts import (
 )
 from soulstruct.base.maps.msb.enums import MSBPartSubtype
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.utilities import read_chars_from_buffer, partialmethod
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 
@@ -172,10 +172,10 @@ class MSBPart(_BaseMSBPart):
         self._backread_groups = set()
         super().__init__(source, **kwargs)
 
-    def unpack(self, msb_buffer):
-        part_offset = msb_buffer.tell()
+    def unpack(self, msb_reader: BinaryReader):
+        part_offset = msb_reader.position
 
-        header = self.PART_HEADER_STRUCT.unpack(msb_buffer)
+        header = msb_reader.unpack_struct(self.PART_HEADER_STRUCT)
         if header["__part_type"] != self.ENTRY_SUBTYPE:
             raise ValueError(f"Unexpected part type enum {header['part_type']} for class {self.__class__.__name__}.")
         self._instance_index = header["_instance_index"]
@@ -186,25 +186,25 @@ class MSBPart(_BaseMSBPart):
         self._draw_groups = int_group_to_bit_set(header["__draw_groups"], assert_size=8)
         self._display_groups = int_group_to_bit_set(header["__display_groups"], assert_size=8)
         self._backread_groups = int_group_to_bit_set(header["__backread_groups"], assert_size=8)
-        self.description = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__description_offset"], encoding="utf-16-le",
+        self.description = msb_reader.unpack_string(
+            offset=part_offset + header["__description_offset"], encoding="utf-16-le",
         )
-        self.name = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__name_offset"], encoding="utf-16-le",
+        self.name = msb_reader.unpack_string(
+            offset=part_offset + header["__name_offset"], encoding="utf-16-le",
         )
-        self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding="utf-16-le",
+        self.sib_path = msb_reader.unpack_string(
+            offset=part_offset + header["__sib_path_offset"], encoding="utf-16-le",
         )
 
-        msb_buffer.seek(part_offset + header["__base_data_offset"])
-        base_data = self.PART_BASE_DATA_STRUCT.unpack(msb_buffer)
+        msb_reader.seek(part_offset + header["__base_data_offset"])
+        base_data = msb_reader.unpack_struct(self.PART_BASE_DATA_STRUCT)
         self.set(**base_data)
 
-        msb_buffer.seek(part_offset + header["__type_data_offset"])
-        self.unpack_type_data(msb_buffer)
+        msb_reader.seek(part_offset + header["__type_data_offset"])
+        self.unpack_type_data(msb_reader)
 
-        self._unpack_gparam_data(msb_buffer, part_offset, header)
-        self._unpack_scene_gparam_data(msb_buffer, part_offset, header)
+        self._unpack_gparam_data(msb_reader, part_offset, header)
+        self._unpack_scene_gparam_data(msb_reader, part_offset, header)
 
     def pack(self) -> bytes:
         """Pack to bytes, presumably as part of a full `MSB` pack."""
@@ -284,13 +284,13 @@ class MSBPart(_BaseMSBPart):
                 raise ValueError(f"Invalid backread group: {i}. Must be 0 <= i < {self.FLAG_SET_SIZE}.")
         self._display_groups = display_groups
 
-    def _unpack_gparam_data(self, msb_buffer, part_offset, header):
+    def _unpack_gparam_data(self, msb_reader: BinaryReader, part_offset, header):
         pass
 
     def _pack_gparam_data(self):
         return b""
 
-    def _unpack_scene_gparam_data(self, msb_buffer, part_offset, header):
+    def _unpack_scene_gparam_data(self, msb_reader: BinaryReader, part_offset, header):
         pass
 
     def _pack_scene_gparam_data(self):
@@ -346,11 +346,11 @@ class MSBPartGParam(MSBPart):
     light_scattering_id: int
     environment_map_id: int
 
-    def _unpack_gparam_data(self, msb_buffer, part_offset, header):
+    def _unpack_gparam_data(self, msb_reader: BinaryReader, part_offset, header):
         if header["__gparam_data_offset"] == 0:
             raise ValueError(f"Zero GParam offset found in GParam-supporting part {self.name}.")
-        msb_buffer.seek(part_offset + header["__gparam_data_offset"])
-        gparam_data = self.PART_GPARAM_STRUCT.unpack(msb_buffer)
+        msb_reader.seek(part_offset + header["__gparam_data_offset"])
+        gparam_data = msb_reader.unpack_struct(self.PART_GPARAM_STRUCT)
         self.set(**gparam_data)
 
     def _pack_gparam_data(self):
@@ -443,11 +443,11 @@ class MSBPartSceneGParam(MSBPartGParam):
     event_ids: list[int, int, int, int]
     sg_unk_x40_x44: float
 
-    def _unpack_scene_gparam_data(self, msb_buffer, part_offset, header):
+    def _unpack_scene_gparam_data(self, msb_reader: BinaryReader, part_offset, header):
         if header["__scene_gparam_data_offset"] == 0:
             raise ValueError(f"Zero SceneGParam offset found in SceneGParam-supporting part {self.name}.")
-        msb_buffer.seek(part_offset + header["__scene_gparam_data_offset"])
-        scene_gparam_data = self.PART_SCENE_GPARAM_STRUCT.unpack(msb_buffer)
+        msb_reader.seek(part_offset + header["__scene_gparam_data_offset"])
+        scene_gparam_data = msb_reader.unpack_struct(self.PART_SCENE_GPARAM_STRUCT)
         self.set(**scene_gparam_data)
 
     def _pack_scene_gparam_data(self):
@@ -714,7 +714,7 @@ class MSBOtherPart(MSBPart):
 
     ENTRY_SUBTYPE = MSBPartSubtype.Other
 
-    def unpack_type_data(self, msb_buffer):
+    def unpack_type_data(self, msb_reader: BinaryReader):
         """No data to unpack."""
         pass
 

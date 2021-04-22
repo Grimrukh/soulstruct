@@ -8,8 +8,8 @@ python -m soulstruct [source]
     [-p / --params]
     [-l / --lighting]
     [-m / --modmanager]
-    [--bndpack]
-    [--bndunpack]
+    [--binderpack]
+    [--binderunpack]
     [--ai]
     [--consoleLogLevel]
     [--fileLogLevel]
@@ -37,7 +37,7 @@ else:
 from soulstruct.config import DEFAULT_PROJECT_PATH
 from soulstruct.games import get_game, GameSelector
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
-from soulstruct.utilities import word_wrap
+from soulstruct.utilities.text import word_wrap
 
 LOG_LEVELS = {"debug", "info", "warning", "error", "fatal", "critical"}
 _LOGGER = logging.getLogger("soulstruct")
@@ -91,8 +91,8 @@ parser.add_argument(
     action="store_true",
     help=word_wrap("Open Soulstruct Mod Manager. No sources should be given."),
 )
-parser.add_argument("--bndpack", action="store", help=word_wrap("Repack a BND from the given source path."))
-parser.add_argument("--bndunpack", action="store", help=word_wrap("Unpack a BND from the given source path."))
+parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source path."))
+parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
 parser.add_argument(
     "--consoleLogLevel",
     action="store",
@@ -176,16 +176,16 @@ def soulstruct_main(ss_args) -> bool:
         Text = game.import_game_submodule("text").MSGDirectory(source)
         return ss_args.console
 
-    if ss_args.bndpack is not None:
-        from soulstruct.containers.bnd import BND
-        bnd = BND(ss_args.bndpack)
-        bnd.write()
+    if ss_args.binderpack is not None:
+        from soulstruct.containers import Binder
+        binder = Binder(ss_args.binderpack)
+        binder.write()
         return False
 
-    if ss_args.bndunpack is not None:
-        from soulstruct.containers.bnd import BND
-        bnd = BND(ss_args.bndunpack)
-        bnd.write_unpacked_dir()
+    if ss_args.binderunpack is not None:
+        from soulstruct.containers import Binder
+        binder = Binder(ss_args.binderunpack)
+        binder.write_unpacked_dir()
         return False
 
     # No specific type. Open entire Soulstruct Project.

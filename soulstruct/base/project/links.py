@@ -4,7 +4,7 @@ __all__ = ["WindowLinker", "LinkError"]
 
 import typing as tp
 
-from soulstruct.containers.bnd import BND
+from soulstruct.containers import Binder
 from soulstruct.exceptions import SoulstructError
 from soulstruct.game_types import *
 from soulstruct.base.maps.msb.enums import MSBModelSubtype
@@ -349,7 +349,7 @@ class WindowLinker:
         elif model_subtype == MSBModelSubtype.Navmesh:
             nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
             if nvmbnd_path.is_file():
-                navmesh_bnd = BND(nvmbnd_path)
+                navmesh_bnd = Binder(nvmbnd_path)
                 if name + "A10.nvm" in navmesh_bnd.entries_by_basename.keys():
                     return True
 

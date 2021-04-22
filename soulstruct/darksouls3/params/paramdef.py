@@ -5,7 +5,7 @@ from soulstruct.base.params.paramdef import (
     ParamDef as _BaseParamDef,
     ParamDefBND as _BaseParamDefBND,
 )
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct
 
 
 # TODO: Dark Souls 3 doesn't even use GameParam, right?

@@ -11,7 +11,7 @@ from soulstruct.base.params.paramdef import (
     ParamDef as _BaseParamDef,
     ParamDefBND as _BaseParamDefBND,
 )
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct
 
 from .display_info import get_param_info, get_param_info_field
 

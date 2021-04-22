@@ -7,6 +7,7 @@ import io
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.utilities.binary import BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .enums import MSBSubtype, MSBEventSubtype, MSBPartSubtype
@@ -58,7 +59,7 @@ class MSB(GameFile, abc.ABC):
 
     def __init__(
         self,
-        msb_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase] = None,
+        msb_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader] = None,
         dcx_magic: tuple[int, int] = None,
     ):
         self.models = self.MODEL_LIST_CLASS()
@@ -68,17 +69,17 @@ class MSB(GameFile, abc.ABC):
         self.dcx_magic = ()
         super().__init__(msb_source, dcx_magic=dcx_magic)
 
-    def unpack(self, msb_buffer, **kwargs):
-        """Unpack an MSB from the given buffer."""
+    def unpack(self, msb_reader: BinaryReader, **kwargs):
+        """Unpack an MSB from the given reader."""
 
         # Read (and ignore) constant header, if applicable.
         if self.HEADER:
-            msb_buffer.seek(msb_buffer.tell() + len(self.HEADER))
+            msb_reader.seek(msb_reader.position + len(self.HEADER))
 
-        self.models = self.MODEL_LIST_CLASS(msb_buffer)
-        self.events = self.EVENT_LIST_CLASS(msb_buffer)
-        self.regions = self.REGION_LIST_CLASS(msb_buffer)
-        self.parts = self.PART_LIST_CLASS(msb_buffer)
+        self.models = self.MODEL_LIST_CLASS(msb_reader)
+        self.events = self.EVENT_LIST_CLASS(msb_reader)
+        self.regions = self.REGION_LIST_CLASS(msb_reader)
+        self.parts = self.PART_LIST_CLASS(msb_reader)
 
         model_names = self.models.set_and_get_unique_names()
         environment_names = self.events.get_entry_names(MSBEventSubtype.Environment)

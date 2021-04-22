@@ -8,8 +8,7 @@ import struct
 import typing as tp
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities import unpack_from_buffer, read_chars_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from . import field_types as ft
 from .utils import BitFieldReader, BitFieldWriter, FieldDisplayInfo
@@ -21,7 +20,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class ParamRow:
 
-    def __init__(self, row_source, paramdef: ParamDef, name=None):
+    def __init__(
+        self,
+        row_source: tp.Union[dict, bytes, io.BufferedIOBase, BinaryReader],
+        paramdef: ParamDef,
+        name: tp.Union[bytes, str] = None,
+    ):
         self.fields = {}  # type: dict[str, tp.Union[bool, int, float, str, bytes]]
         self.paramdef = paramdef
         self.bit_reader = BitFieldReader()
@@ -43,11 +47,11 @@ class ParamRow:
             else:
                 raise ValueError("`name` must be a string if given.")
             self.load_dict(row_source)
-        elif isinstance(row_source, (bytes, io.BufferedIOBase)):
+        elif isinstance(row_source, (bytes, io.BufferedIOBase, BinaryReader)):
             if name is None:
                 raise ValueError("`name` argument must be given explictly alongside raw `ParamRow` data.")
             self.name = name
-            self.unpack(row_source)
+            self.unpack(BinaryReader(row_source))
         else:
             raise TypeError(f"Cannot load `ParamRow` from source type: `{type(row_source)}`")
 
@@ -103,25 +107,23 @@ class ParamRow:
     def copy(self):
         return copy.deepcopy(self)
 
-    def unpack(self, row_buffer):
-        if isinstance(row_buffer, bytes):
-            row_buffer = io.BytesIO(row_buffer)
+    def unpack(self, row_reader: BinaryReader):
 
         for field in self.paramdef.fields.values():
 
             if field.bit_count != -1:
-                field_value = self.bit_reader.read(row_buffer, field.bit_count, field.fmt)
+                field_value = self.bit_reader.read(row_reader, field.bit_count, field.fmt)
             else:
                 self.bit_reader.clear()
-                if issubclass(field.type_class, ft.string):
-                    field_value = field.type_class.read(row_buffer, field.size)
+                if issubclass(field.type_class, ft.basestring):
+                    field_value = field.type_class.read(row_reader, field.size)
                 elif field.type_class is ft.dummy8:
                     # These are often 'array' fields, but we don't even bother unpacking them.
-                    field_value = row_buffer.read(field.size)
+                    field_value = row_reader.read(field.size)
                 else:
-                    data = row_buffer.read(field.type_class.size())
+                    data = row_reader.read(field.type_class.size())
                     try:
-                        (field_value,) = struct.unpack(field.fmt, data)
+                        field_value = struct.unpack(field.fmt, data)[0]
                     except struct.error as e:
                         if field.display_name in {"inverseToneMapMul", "sfxMultiplier"}:
                             # These fields are malformed in m99 and default ToneMapBank in Dark Souls Remastered.
@@ -144,7 +146,7 @@ class ParamRow:
             else:
                 self.fields[field.name] = data.get(field.name, field.new_default)
 
-    def pack(self):
+    def pack(self) -> bytes:
         packed_row = b""
         for field_name, value in self.fields.items():  # These are ordered correctly already.
             field = self.paramdef[field_name]
@@ -154,7 +156,7 @@ class ParamRow:
                 packed_row += self.bit_writer.write(value, field.bit_count, field.fmt)
             else:
                 packed_row += self.bit_writer.finish_field()
-                if issubclass(field.type_class, ft.string):
+                if issubclass(field.type_class, ft.basestring):
                     packed_row += field.type_class.write(value, field.size)
                 elif field.type_class is ft.dummy8:
                     packed_row += value  # already bytes
@@ -331,29 +333,27 @@ class Param(GameFile, abc.ABC):
 
     # TODO: __repr__ method returns basic information about Param (but not entire row list).
 
-    def unpack(self, buffer, **kwargs):
-        self.byte_order = ">" if unpack_from_buffer(buffer, "B", 44)[0] == 255 else "<"
-        version_info = unpack_from_buffer(buffer, f"{self.byte_order}bbb", 45)
+    def unpack(self, reader: BinaryReader, **kwargs):
+        self.byte_order = reader.byte_order = ">" if reader.unpack_value("B", offset=44) == 255 else "<"
+        version_info = reader.unpack("bbb", offset=45)
         self.flags1 = ParamFlags1(version_info[0])
         self.flags2 = ParamFlags2(version_info[1])
         self.paramdef_format_version = version_info[2]
         header_struct = self.GET_HEADER_STRUCT(self.flags1, self.byte_order)
-        header = header_struct.unpack(buffer)
+        header = reader.unpack_struct(header_struct)
         try:
             self.param_type = header["param_type"]
         except KeyError:
-            self.param_type = read_chars_from_buffer(buffer, offset=header["param_type_offset"], encoding="utf-8")
+            self.param_type = reader.unpack_string(offset=header["param_type_offset"], encoding="utf-8")
         self.paramdef_data_version = header["paramdef_data_version"]
         self.unknown = header["unknown"]
         # Row data offset in header not used. (It's an unsigned short, yet doesn't limit row count to 5461.)
         name_data_offset = header["name_data_offset"]  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
 
         # Load row pointer data.
-        if self.flags1.LongDataOffset:
-            row_pointers = self.ROW_STRUCT_64.unpack_count(buffer, count=header["row_count"])
-        else:
-            row_pointers = self.ROW_STRUCT_32.unpack_count(buffer, count=header["row_count"])
-        row_data_offset = buffer.tell()  # Reliable row data offset.
+        row_struct = self.ROW_STRUCT_64 if self.flags1.LongDataOffset else self.ROW_STRUCT_32
+        row_pointers = reader.unpack_structs(row_struct, count=header["row_count"])
+        row_data_offset = reader.position  # Reliable row data offset.
 
         # Row size is lazily determined. TODO: Unpack row data in sequence and associate with names separately.
         if len(row_pointers) == 0:
@@ -369,36 +369,33 @@ class Param(GameFile, abc.ABC):
         else:
             row_size = row_pointers[1]["data_offset"] - row_pointers[0]["data_offset"]
 
-        # Note that we no longer need to track buffer offset.
+        # Note that we no longer need to track reader offset.
         name_encoding = self.get_name_encoding()
         for row_struct in row_pointers:
-            buffer.seek(row_struct["data_offset"])
-            row_data = buffer.read(row_size)
+            reader.seek(row_struct["data_offset"])
+            row_data = reader.read(row_size)
             if row_struct["name_offset"] != 0:
                 try:
-                    name = read_chars_from_buffer(
-                        buffer,
+                    name = reader.unpack_string(
                         offset=row_struct["name_offset"],
                         encoding=name_encoding,
                         reset_old_offset=False,  # no need to reset
                     )
                 except UnicodeDecodeError as ex:
                     if ex.object in self.undecodable_row_names:
-                        name = read_chars_from_buffer(
-                            buffer,
+                        name = reader.unpack_bytes(
                             offset=row_struct["name_offset"],
-                            encoding=None,
                             reset_old_offset=False,  # no need to reset
                         )
                     else:
                         raise
                 except ValueError:
-                    buffer.seek(row_struct["name_offset"])
+                    reader.seek(row_struct["name_offset"])
                     _LOGGER.error(
                         f"Error encountered while parsing row name string in {self.param_type}.\n"
                         f"    Header: {header}\n"
                         f"    Row Struct: {row_struct}\n"
-                        f"    30 chrs of name data: {' '.join(f'{{:02x}}'.format(x) for x in buffer.read(30))}"
+                        f"    30 chrs of name data: {' '.join(f'{{:02x}}'.format(x) for x in reader.read(30))}"
                     )
                     raise
             else:

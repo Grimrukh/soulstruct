@@ -7,8 +7,7 @@ import logging
 from textwrap import wrap
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.core import read_chars_from_buffer, unpack_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ def FMG(fmg_source, dcx_magic=(), remove_empty_entries=True) -> BaseFMG:
         except KeyError:
             raise ValueError(f"No `version` key in FMG dictionary to read.")
     elif isinstance(fmg_source, GameFile.Types):
-        version = unpack_from_buffer(fmg_source, "b", offset=6, relative_offset=True)
+        version = BinaryReader(fmg_source).unpack_value("b", offset=6, relative_offset=True)
     else:
         raise ValueError(f"Cannot auto-detect FMG class from source type {type(fmg_source)}.")
 
@@ -64,14 +63,14 @@ class BaseFMG(GameFile, abc.ABC):
             raise ValueError(f"FMG dictionary has version {data['version']}, but requires version {self.VERSION}.")
         self.entries = data["entries"]
 
-    def unpack(self, buffer, remove_empty_entries=True):
-        header = self.HEADER_STRUCT.unpack(buffer)
+    def unpack(self, reader: BinaryReader, remove_empty_entries=True):
+        header = reader.unpack_struct(self.HEADER_STRUCT)
 
         # Groups of contiguous text string IDs are defined by ranges (first ID, last ID) to save space.
-        ranges = self.RANGE_STRUCT.unpack_count(buffer, count=header["range_count"])
-        if buffer.tell() != header["string_offsets_offset"]:
+        ranges = reader.unpack_structs(self.RANGE_STRUCT, count=header["range_count"])
+        if reader.position != header["string_offsets_offset"]:
             _LOGGER.warning("Range data did not end at string data offset given in FMG header.")
-        string_offsets = self.STRING_OFFSET_STRUCT.unpack_count(buffer, count=header["string_count"])
+        string_offsets = reader.unpack_structs(self.STRING_OFFSET_STRUCT, count=header["string_count"])
 
         # Text pointer table corresponds to all the IDs (joined together) of the above ranges, in order.
         for string_range in ranges:
@@ -86,7 +85,7 @@ class BaseFMG(GameFile, abc.ABC):
                         # Distinct from ' ', which is intentionally blank text data (e.g. the unused area subtitles).
                         self.entries[string_id] = ""
                 else:
-                    string = read_chars_from_buffer(buffer, offset=string_offset, encoding="utf-16le")
+                    string = reader.unpack_string(offset=string_offset, encoding="utf-16le")
                     if string or not remove_empty_entries:
                         self.entries[string_id] = string
                 i += 1

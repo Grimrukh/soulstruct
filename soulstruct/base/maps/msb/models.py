@@ -1,8 +1,8 @@
 import typing as tp
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities import read_chars_from_buffer, partialmethod
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .enums import MSBModelSubtype
 from .msb_entry import MSBEntryList, MSBEntry
@@ -58,14 +58,14 @@ class MSBModel(MSBEntry):
 
         super().__init__(source=source, **kwargs)
 
-    def unpack(self, msb_buffer):
-        model_offset = msb_buffer.tell()
-        model_data = self.MODEL_STRUCT.unpack(msb_buffer)
-        self.name = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__name_offset"], encoding=self.NAME_ENCODING,
+    def unpack(self, msb_reader: BinaryReader):
+        model_offset = msb_reader.position
+        model_data = msb_reader.unpack_struct(self.MODEL_STRUCT)
+        self.name = msb_reader.unpack_string(
+            offset=model_offset + model_data["__name_offset"], encoding=self.NAME_ENCODING
         )
-        self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=model_offset + model_data["__sib_path_offset"], encoding=self.NAME_ENCODING,
+        self.sib_path = msb_reader.unpack_string(
+            offset=model_offset + model_data["__sib_path_offset"], encoding=self.NAME_ENCODING,
         )
         try:
             self.ENTRY_SUBTYPE = MSBModelSubtype(model_data["__model_type"])

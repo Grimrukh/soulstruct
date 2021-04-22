@@ -23,7 +23,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.config import *
-from soulstruct.utilities import PACKAGE_PATH
+from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.window import SmartFrame, bind_to_all_children
 
 
@@ -35,7 +35,7 @@ class Game:
         subpackage_name=None,
         aliases=(),
         uses_dcx=True,
-        bundled_paramdef_path="",
+        bundled_paramdef_path=Path(),
         steam_appid=None,
         default_game_path="",
         generic_game_path="",  # for display in game-finding hint dialog

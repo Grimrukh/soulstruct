@@ -31,8 +31,7 @@ from soulstruct.base.maps.msb.parts import (
     MSBMapConnection as _BaseMSBMapConnection,
 )
 from soulstruct.base.maps.msb.enums import MSBPartSubtype
-from soulstruct.utilities import read_chars_from_buffer
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 from .constants import get_map
@@ -234,28 +233,28 @@ class MSBPart(_BaseMSBPart):
     use_depth_bias_float: bool
     disable_point_light_effect: bool
 
-    def unpack(self, msb_buffer):
-        part_offset = msb_buffer.tell()
-        header = self.PART_HEADER_STRUCT.unpack(msb_buffer)
+    def unpack(self, msb_reader: BinaryReader):
+        part_offset = msb_reader.position
+        header = msb_reader.unpack_struct(self.PART_HEADER_STRUCT)
         if header["__part_type"] != self.ENTRY_SUBTYPE:
             raise ValueError(f"Unexpected part type enum {header['part_type']} for class {self.__class__.__name__}.")
         self._model_index = header["_model_index"]
         self._part_type_index = header["_part_type_index"]
         for transform in ("translate", "rotate", "scale"):
-            setattr(self, transform, Vector3(getattr(header, transform)))
+            setattr(self, transform, Vector3(header[transform]))
         self._draw_groups = int_group_to_bit_set(header["__draw_groups"], assert_size=4)
         self._display_groups = int_group_to_bit_set(header["__display_groups"], assert_size=4)
-        self.name = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__name_offset"], encoding=self.NAME_ENCODING
+        self.name = msb_reader.unpack_string(
+            offset=part_offset + header["__name_offset"], encoding=self.NAME_ENCODING
         )
-        self.sib_path = read_chars_from_buffer(
-            msb_buffer, offset=part_offset + header["__sib_path_offset"], encoding=self.NAME_ENCODING
+        self.sib_path = msb_reader.unpack_string(
+            offset=part_offset + header["__sib_path_offset"], encoding=self.NAME_ENCODING
         )
-        msb_buffer.seek(part_offset + header["__base_data_offset"])
-        base_data = self.PART_BASE_DATA_STRUCT.unpack(msb_buffer)
+        msb_reader.seek(part_offset + header["__base_data_offset"])
+        base_data = msb_reader.unpack_struct(self.PART_BASE_DATA_STRUCT)
         self.set(**base_data)
-        msb_buffer.seek(part_offset + header["__type_data_offset"])
-        self.unpack_type_data(msb_buffer)
+        msb_reader.seek(part_offset + header["__type_data_offset"])
+        self.unpack_type_data(msb_reader)
 
     def pack(self):
         """Pack to bytes, presumably as part of a full `MSB` pack."""
@@ -565,8 +564,8 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
             kwargs.setdefault("draw_by_reflect_cam", True)
         super().__init__(source=source, **kwargs)
 
-    def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True)
+    def unpack_type_data(self, msb_reader: BinaryReader):
+        data = msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT, exclude_asserted=True)
         self.set(**data)
         self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"], assert_size=4)
         self.area_name_id = abs(data["__area_name_id"]) if data["__area_name_id"] != -1 else -1
@@ -654,8 +653,8 @@ class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
             kwargs.setdefault("is_shadow_source", True)
         super().__init__(source=source, **kwargs)
 
-    def unpack_type_data(self, msb_buffer):
-        data = self.PART_TYPE_DATA_STRUCT.unpack(msb_buffer, exclude_asserted=True)
+    def unpack_type_data(self, msb_reader: BinaryReader):
+        data = msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT, exclude_asserted=True)
         self._navmesh_groups = int_group_to_bit_set(data["__navmesh_groups"], assert_size=4)
 
     def pack_type_data(self):

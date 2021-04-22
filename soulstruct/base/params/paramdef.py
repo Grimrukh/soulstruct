@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = ["ParamDefField", "ParamDef", "ParamDefBND"]
 
 import abc
-import io
 import logging
 import math
 import re
@@ -11,11 +10,12 @@ import typing as tp
 from enum import IntEnum
 
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
-from soulstruct.containers.bnd import BND, BNDEntry
+from soulstruct.containers import Binder
+from soulstruct.containers.entry import BinderEntry
 from soulstruct.exceptions import SoulstructError
 from soulstruct.games import *
-from soulstruct.utilities import read_chars_from_buffer, PACKAGE_PATH
-from soulstruct.utilities.binary_struct import BinaryStruct
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.files import PACKAGE_PATH
 
 from . import field_types
 from .exceptions import ParamError
@@ -130,29 +130,27 @@ class ParamDefField(abc.ABC):
     def unpack_fields(
         cls,
         param_name: str,
-        paramdef_buffer: io.BytesIO,
+        paramdef_reader: BinaryReader,
         field_count: int,
         format_version: int,
         unicode: bool,
         byte_order: str,
     ) -> dict[str, ParamDefField]:
         """Buffer should be at the start of the packed fields (which are followed by the packed descriptions)."""
-        field_structs = cls.GET_FIELD_STRUCT(format_version, unicode, byte_order).unpack_count(
-            paramdef_buffer, count=field_count
+        field_structs = paramdef_reader.unpack_structs(
+            cls.GET_FIELD_STRUCT(format_version, unicode, byte_order), count=field_count
         )
         fields = {}
         for field_index, field_struct in enumerate(field_structs):
             if field_struct["description_offset"] != 0:
-                field_description = read_chars_from_buffer(
-                    paramdef_buffer,
+                field_description = paramdef_reader.unpack_string(
                     offset=field_struct["description_offset"],
                     encoding="utf-16-le" if unicode else "shift_jis_2004",
                 )
             else:
                 field_description = ""
             if "display_name_offset" in field_struct:
-                display_name = read_chars_from_buffer(
-                    paramdef_buffer,
+                display_name = paramdef_reader.unpack_string(
                     offset=field_struct["display_name_offset"],
                     encoding="utf-16-le",
                 )
@@ -212,7 +210,7 @@ class ParamDef(GameFile, abc.ABC):
         self.unicode = False  # `ParamEntry` description encoding
         super().__init__(paramdef_source, dcx_magic, param_type=param_type)
 
-    def _handle_other_source_types(self, file_source, param_type=None) -> tp.Optional[io.BufferedIOBase]:
+    def _handle_other_source_types(self, file_source, param_type=None) -> tp.Optional[BinaryReader]:
 
         if isinstance(file_source, (tuple, list)):
             if param_type is None:
@@ -239,25 +237,25 @@ class ParamDef(GameFile, abc.ABC):
             self.fields = file_source.copy()
             return
 
-        if isinstance(file_source, BNDEntry):
-            return io.BytesIO(file_source.data)
+        if isinstance(file_source, BinderEntry):
+            return BinaryReader(file_source.get_uncompressed_data())
 
-        raise InvalidGameFileTypeError("`paramdef_source` is not a list of `ParamDefField`s or a `BNDEntry`.")
+        raise InvalidGameFileTypeError("`paramdef_source` is not a list of `ParamDefField`s or a `BinderEntry`.")
 
-    def unpack(self, paramdef_buffer, **kwargs):
+    def unpack(self, paramdef_reader: BinaryReader, **kwargs):
         """Convert a paramdef file to a dictionary, indexed by ID."""
-        header = self.HEADER_STRUCT.unpack(paramdef_buffer)
+        header = paramdef_reader.unpack_struct(self.HEADER_STRUCT)
         if "param_name" in header:
             self.param_type = header["param_name"]
         else:
-            self.param_type = read_chars_from_buffer(
-                paramdef_buffer, offset=header["param_name_offset"], encoding="shift_jis_2004",  # never unicode
+            self.param_type = paramdef_reader.unpack_string(
+                offset=header["param_name_offset"], encoding="shift_jis_2004",  # never unicode
             )
         self.data_version = header["data_version"]
         self.format_version = header["format_version"]
         self.unicode = header["unicode"]
         self.fields = self.FIELD_CLASS.unpack_fields(
-            self.param_type, paramdef_buffer, header["field_count"], self.format_version, self.unicode, self.BYTE_ORDER,
+            self.param_type, paramdef_reader, header["field_count"], self.format_version, self.unicode, self.BYTE_ORDER,
         )
 
     def pack(self):
@@ -341,7 +339,7 @@ class ParamDefBND(abc.ABC):
                     "Update/reinstall Soulstruct or copy the ParamDef files in yourself."
                 )
 
-        self._bnd = BND(paramdef_bnd_source)
+        self._bnd = Binder(paramdef_bnd_source)
 
         self.paramdefs = {}  # type: dict[str, ParamDef]
         for entry in self.bnd.entries:
