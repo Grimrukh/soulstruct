@@ -1,13 +1,27 @@
-__all__ = ["LayoutSemantic", "LayoutType", "LayoutMember", "BufferLayout", "Vertex", "VertexBuffer"]
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 
+__all__ = [
+    "LayoutSemantic",
+    "LayoutType",
+    "LayoutMember",
+    "BufferLayout",
+    "Vertex",
+    "VertexBufferSizeError",
+    "VertexBuffer",
+]
+
+import logging
 import typing as tp
 from enum import IntEnum
 
 from soulstruct.base.models.color import ColorRGBA
+from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 from soulstruct.utilities.maths import Vector3, Vector4
 
 from .version import Version
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class LayoutSemantic(IntEnum):
@@ -74,7 +88,8 @@ class LayoutMember(BinaryObject):
 
     def unpack(self, reader: BinaryReader, struct_offset: int):
         layout_member = reader.unpack_struct(self.STRUCT)
-        if struct_offset != (binary_struct_offset := layout_member.pop("__struct_offset")):
+        binary_struct_offset = layout_member.pop("__struct_offset")
+        if struct_offset != binary_struct_offset:
             raise ValueError(
                 f"`LayoutMember` binary struct offset ({binary_struct_offset}) does not match passed struct offset "
                 f"({struct_offset})."
@@ -89,7 +104,7 @@ class LayoutMember(BinaryObject):
         )
 
     def __repr__(self):
-        return f"{self.semantic.name} | {self.layout_type.name}"
+        return f"{self.semantic.name} | {self.layout_type.name} | {self.size}"
 
     @property
     def size(self) -> int:
@@ -104,9 +119,9 @@ class BufferLayout:
         ("__member_offset", "i"),
     )
 
-    members: list[LayoutMember]
+    members: tp.List[LayoutMember]
 
-    def __init__(self, source: tp.Union[BinaryReader, list[LayoutMember]]):
+    def __init__(self, source: tp.Union[BinaryReader, tp.List[LayoutMember]]):
         self.members = []
 
         if isinstance(source, BinaryReader):
@@ -153,6 +168,15 @@ class BufferLayout:
 
     def get_total_size(self):
         return sum(member.layout_type.size() for member in self.members)
+
+    def __repr__(self):
+        members = "\n        ".join(repr(m) for m in self.members)
+        return (
+            f"BufferLayout(\n"
+            f"    size = {self.get_total_size()}\n"
+            f"    members = [\n        {members}\n    ]\n"
+            f")"
+        )
 
 
 class VertexBoneIndices:
@@ -249,14 +273,14 @@ class Vertex:
         self.bone_indices = VertexBoneIndices()
         self.normal = Vector3.zero()
         self.normal_w = 0
-        self.uvs = []  # type: list[Vector3]
-        self.tangents = []  # type: list[Vector4]
+        self.uvs = []  # type: tp.List[Vector3]
+        self.tangents = []  # type: tp.List[Vector4]
         self.bitangent = Vector4.zero()
-        self.colors = []  # type: list[ColorRGBA]
+        self.colors = []  # type: tp.List[ColorRGBA]
 
-        self.uv_queue = []  # type: list[Vector3]
-        self.tangent_queue = []  # type: list[Vector4]
-        self.color_queue = []  # type: list[ColorRGBA]
+        self.uv_queue = []  # type: tp.List[Vector3]
+        self.tangent_queue = []  # type: tp.List[Vector4]
+        self.color_queue = []  # type: tp.List[ColorRGBA]
 
     def read(self, reader: BinaryReader, layout: BufferLayout, uv_factor: float):
         self.uvs = []
@@ -512,7 +536,22 @@ class Vertex:
         )
 
 
+class VertexBufferSizeError(SoulstructError):
+    """Raised by some vanilla meshes."""
+
+    def __init__(self, vertex_size: int, layout_size: int):
+        self.vertex_size = vertex_size
+        self.layout_size = layout_size
+        super().__init__(
+            f"Vertex buffer vertex size {vertex_size} not equal to size calculated from layout: {layout_size}."
+        )
+
+
 class VertexBuffer(BinaryObject):
+    """Header for a block of vertex data for one mesh.
+
+    The structure of each vertex's data is defined by the indexed `BufferLayout`.
+    """
 
     STRUCT = BinaryStruct(
         ("_buffer_index", "i"),
@@ -520,7 +559,7 @@ class VertexBuffer(BinaryObject):
         ("_vertex_size", "i"),
         ("vertex_count", "i"),
         "8x",
-        ("__buffer_length", "i"),
+        ("_buffer_length", "i"),
         ("_buffer_offset", "i"),
     )
 
@@ -529,6 +568,7 @@ class VertexBuffer(BinaryObject):
 
     _buffer_index: int
     _vertex_size: int
+    _buffer_length: int
     _buffer_offset: int
 
     unpack = BinaryObject.default_unpack
@@ -536,30 +576,35 @@ class VertexBuffer(BinaryObject):
     def read_buffer(
         self,
         reader: BinaryReader,
-        layouts: list[BufferLayout],
-        vertices: list[Vertex],
+        layouts: tp.List[BufferLayout],
+        vertices: tp.List[Vertex],
         vertex_data_offset: int,
         uv_factor: int,
     ):
         layout = layouts[self.layout_index]
-        if self._vertex_size != (layout_size := layout.get_total_size()):
-            raise ValueError(f"Vertex buffer size ({self._vertex_size}) does not match layout size ({layout_size}).")
+        layout_size = layout.get_total_size()
+        if self._vertex_size != self._buffer_length / self.vertex_count:
+            raise ValueError(
+                f"Vertex buffer size ({self._vertex_size}) != buffer length / vertex count "
+                f"({self._buffer_length / self.vertex_count})."
+            )
+        if self._vertex_size != layout_size:
+            # This happens for a few vanilla meshes; we ignore such meshes.
+            # TODO: I've looked at the buffer data for mesh 0 of m8000B2A10, and it appears very abnormal. In fact,
+            #  some of the 28-byte data clusters appear to just be counting upward as integers; there definitely does
+            #  not seem to be any position float data in there. Later on, they appear to change into random shorts.
+            raise VertexBufferSizeError(self._vertex_size, layout_size)
 
         with reader.temp_offset(vertex_data_offset + self._buffer_offset):
             for vertex in vertices:
                 vertex.read(reader, layout, uv_factor)
-
-        self._buffer_index = -1
-        self._vertex_size = -1
-        self.vertex_count = -1
-        self._buffer_offset = -1
 
     def pack(
         self,
         writer: BinaryWriter,
         version: Version,
         mesh_vertex_buffer_index: int,
-        buffer_layouts: list[BufferLayout],
+        buffer_layouts: tp.List[BufferLayout],
         mesh_vertex_count: int,
     ):
         layout_size = buffer_layouts[self.layout_index].get_total_size()
@@ -569,15 +614,15 @@ class VertexBuffer(BinaryObject):
             _buffer_index=mesh_vertex_buffer_index,
             _vertex_size=layout_size,
             vertex_count=mesh_vertex_count,
-            __buffer_length=layout_size * mesh_vertex_count if version >= 0x20005 else 0,
+            _buffer_length=layout_size * mesh_vertex_count if version >= 0x20005 else 0,
             _buffer_offset=writer.AUTO_RESERVE,
         )
 
     def pack_buffer(
         self,
         writer: BinaryWriter,
-        buffer_layouts: list[BufferLayout],
-        vertices: list[Vertex],
+        buffer_layouts: tp.List[BufferLayout],
+        vertices: tp.List[Vertex],
         buffer_offset: int,
         uv_factor: int,
     ):
@@ -585,3 +630,13 @@ class VertexBuffer(BinaryObject):
         self.fill(writer, _buffer_offset=buffer_offset)
         for vertex in vertices:
             vertex.pack(writer, layout, uv_factor)
+
+    def __repr__(self):
+        return (
+            f"VertexBuffer(\n"
+            f"    layout_index = {self.layout_index}\n"
+            f"    vertex_count = {self.vertex_count}\n"
+            f"    buffer_length = {self._buffer_length}\n"
+            f"    vertex_size = {self._vertex_size}\n"
+            ")"
+        )

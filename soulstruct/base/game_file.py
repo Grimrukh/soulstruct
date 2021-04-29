@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 from __future__ import annotations
 
 __all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]

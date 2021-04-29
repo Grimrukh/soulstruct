@@ -1,3 +1,4 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 __all__ = ["BaseBND", "BND3", "BND4"]
 
 import abc
@@ -94,7 +95,7 @@ class BND3(BaseBND):
 
         return writer.finish()
 
-    def get_json_header(self) -> dict[str, tp.Any]:
+    def get_json_header(self) -> tp.Dict[str, tp.Any]:
         return {
             "version": "BND3",
             "signature": self.signature,
@@ -271,7 +272,7 @@ class BND4(BaseBND):
 
         return writer.finish()
 
-    def get_json_header(self) -> dict[str, tp.Any]:
+    def get_json_header(self) -> tp.Dict[str, tp.Any]:
         return {
             "version": "BND4",
             "signature": self.signature,

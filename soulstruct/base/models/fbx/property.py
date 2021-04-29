@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 __all__ = ["PropertyValueTyping", "PropertyType", "FBXProperty"]
 
 import typing as tp
 import zlib
 from enum import IntEnum
 
-if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary import BinaryReader
+from soulstruct.utilities.binary import BinaryReader
 
 
 PropertyValueTyping = tp.Union[bytes, str, bool, int, float, list[bool, ...], list[int, ...], list[float, ...]]

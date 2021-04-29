@@ -1,3 +1,4 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 from __future__ import annotations
 
 __all__ = ["Binder"]
@@ -5,19 +6,31 @@ __all__ = ["Binder"]
 import typing as tp
 from pathlib import Path
 
-from .bnd import BND3, BND4
-from .bxf import BXF3, BXF4
-from .dcx import DCX
+if tp.TYPE_CHECKING:
+    from .bnd import BND3, BND4
+    from .bxf import BXF3, BXF4
+    from .dcx import DCX
+    from .tpf import TPF
 
 
-def Binder(binder_source=None, dcx_magic=(), from_bak=False) -> tp.Union[BND3, BND4, BXF3, BXF4]:
+def Binder(
+    binder_source=None, dcx_magic=(), from_bak=False, create_bak_if_missing=True
+) -> tp.Union[BND3, BND4, BXF3, BXF4]:
     """Auto-detects binder format (BND/BXF) and version (3/4) to use when opening the source.
 
     Args:
         binder_source: path to BND/BXF file or file content. The format and version will be automatically detected.
         dcx_magic: optional DCX magic (pair of integers).
-        from_bak: prefer '.bak' path if it exists, and create it if not.
+        from_bak: prefer '.bak' path if it exists.
+        create_bak_if_missing: if `from_bak` is given, and `.bak` file does not exist, create it.
     """
+
+    # Lazy imports are required to avoid circularity in Python 3.7 (for Blender 2.9X).
+    from .bnd import BND3, BND4
+    from .bxf import BXF3, BXF4
+    from .dcx import DCX
+    from .tpf import TPF
+
     detect_source = binder_source
     if isinstance(binder_source, (str, Path)):
         if not Path(binder_source).is_dir():
@@ -34,6 +47,6 @@ def Binder(binder_source=None, dcx_magic=(), from_bak=False) -> tp.Union[BND3, B
     for cls in (BND3, BND4, BXF3, BXF4):
         if cls.detect(detect_source):
             if from_bak:
-                return cls.from_bak(binder_source, dcx_magic=dcx_magic)
+                return cls.from_bak(binder_source, dcx_magic=dcx_magic, create_bak_if_missing=create_bak_if_missing)
             return cls(binder_source, dcx_magic=dcx_magic)
     raise TypeError("Data bytes could not be interpreted as `BND3`, `BND4`, `BXF3`, or `BXF4`.")

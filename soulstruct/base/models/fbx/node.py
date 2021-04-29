@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-__all__ = ["FBXNode"]
+__all__ = ["FBXNode32", "FBXNode64"]
 
+import abc
 import typing as tp
 from collections import deque
 
 from soulstruct.base.models.color import ColorRGB
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
+from soulstruct.utilities.maths import Vector3
 
 from .field_types import *
 from .property import PropertyValueTyping, FBXProperty
@@ -25,23 +27,16 @@ else:
     RESET = colorama.Fore.RESET
 
 
-class FBXNode(BinaryObject):
+class FBXNodeBase(BinaryObject, abc.ABC):
 
     ARRAY_MAX_REPR = 5
     PROP_MAX_REPR = 10
     INDENT_PER_DEPTH = 4
 
-    STRUCT = BinaryStruct(
-        ("__end_offset", "I"),
-        ("__property_count", "I"),
-        ("__property_list_size", "I"),
-        ("__name_length", "B"),
-    )
-
     name: str
     _properties: list[FBXProperty]
     _field: tp.Optional[FBXPropertyField]
-    children: list[FBXNode]
+    children: list[FBXNodeBase]
 
     # Size is evaluated on unpack, so offsets can be tracked, and updated before pack. May be incorrect before pack.
     size: int
@@ -63,7 +58,7 @@ class FBXNode(BinaryObject):
         self.children = []
         end_offset = data.pop("__end_offset")
         while start_offset + self.size < end_offset:
-            child = FBXNode(reader, start_offset=start_offset + self.size, depth=self.depth + 1)
+            child = self.__class__(reader, start_offset=start_offset + self.size, depth=self.depth + 1)
             self.size += child.size
             if start_offset + self.size == end_offset:
                 break  # empty node is not kept
@@ -99,6 +94,35 @@ class FBXNode(BinaryObject):
 
     # TODO: Allow user to set `field`.
 
+    def __getitem__(self, child_node_name: str):
+        if not self.children:
+            raise KeyError(f"FBX node {self.name} has no child nodes (was looking for {child_node_name}).")
+        hits = [n for n in self.children if n.name == child_node_name]
+        if not hits:
+            raise KeyError(f"FBX node {self.name} has no child nodes named {child_node_name}.")
+        elif len(hits) > 1:
+            raise KeyError(f"FBX node {self.name} has multiple child nodes named {child_node_name}.")
+        child = hits[0]
+        if not child.children:
+            # Return values of basic property node, unpacking single values.
+            if len(child.properties) == 1:
+                return child.properties[0].value
+            else:
+                return [p.value for p in child.properties]
+        else:
+            return child
+
+    def get_extra_field(self, field_name: str):
+        try:
+            prop_node = self["Properties70"]
+        except KeyError:
+            raise KeyError(f"FBX node {self.name} has no 'Properties70' child (where extra fields are stored).")
+        try:
+            prop = next(n for n in prop_node.children if n.field.name == field_name)
+        except StopIteration:
+            raise KeyError(f"FBX node {self.name} has no extra field named {field_name}.")
+        return prop.field.value
+
     def to_string(self) -> str:
         ind = " " * (self.INDENT_PER_DEPTH * self.depth)
         if self._field is not None:
@@ -120,6 +144,28 @@ class FBXNode(BinaryObject):
 
     def __repr__(self):
         return f"FBXNode(name={self.name}, properties={len(self._properties)}, children={len(self.children)})"
+
+
+class FBXNode32(FBXNodeBase):
+    STRUCT = BinaryStruct(
+        ("__end_offset", "I"),
+        ("__property_count", "I"),
+        ("__property_list_size", "I"),
+        ("__name_length", "B"),
+    )
+
+    children: list[FBXNode32]
+
+
+class FBXNode64(FBXNodeBase):
+    STRUCT = BinaryStruct(
+        ("__end_offset", "q"),
+        ("__property_count", "q"),
+        ("__property_list_size", "q"),
+        ("__name_length", "B"),
+    )
+
+    children: list[FBXNode64]
 
 
 class FBXPropertyField:

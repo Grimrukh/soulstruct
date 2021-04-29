@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 __all__ = ["word_wrap", "camel_case_to_spaces", "pad_chars", "indent_lines"]
 
 import re

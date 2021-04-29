@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 from __future__ import annotations
 
 __all__ = [
@@ -14,7 +16,6 @@ import functools
 import logging
 import subprocess
 import time
-
 
 _LOGGER = logging.getLogger(__name__)
 

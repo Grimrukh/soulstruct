@@ -1,11 +1,16 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 from __future__ import annotations
 
 __all__ = ["FLVER"]
 
+import logging
+import re
 import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.containers import Binder
+from soulstruct.containers.tpf import TPF
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 
@@ -14,7 +19,9 @@ from .dummy import Dummy
 from .material import GXList, Material, Texture
 from .mesh import FaceSet, Mesh
 from .version import Version
-from .vertex import BufferLayout, VertexBuffer
+from .vertex import BufferLayout, VertexBuffer, VertexBufferSizeError
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class FLVERHeader(BinaryObject):
@@ -114,21 +121,30 @@ class FLVER(GameFile):
     Technically, this format is FLVER2. Demon's Souls used an older version, `FLVER0`, which is not supported here.
     """
 
+    # Convenience access to classes.
+    Bone = Bone
+    Dummy = Dummy
+    GXList = GXList
+    Material = Material
+    Mesh = Mesh
+    BufferLayout = BufferLayout
+    VertexBuffer = VertexBuffer
+
     EXT = ".flver"
 
     header: FLVERHeader
 
-    dummies: list[Dummy]
-    gx_lists: list[GXList]
-    materials: list[Material]
-    bones: list[Bone]
-    meshes: list[Mesh]
-    buffer_layouts: list[BufferLayout]
+    dummies: tp.List[Dummy]
+    gx_lists: tp.List[GXList]
+    materials: tp.List[Material]
+    bones: tp.List[Bone]
+    meshes: tp.List[Mesh]
+    buffer_layouts: tp.List[BufferLayout]
 
     def __init__(
         self,
         file_source: GameFile.Typing = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_magic: tp.Tuple[int, int] = (),
         **kwargs,
     ):
         self.header = FLVERHeader()
@@ -151,7 +167,7 @@ class FLVER(GameFile):
             for _ in range(self.header.dummy_count)
         ]
 
-        gx_list_indices = {}  # type: dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
+        gx_list_indices = {}  # type: tp.Dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
         self.gx_lists = []
         self.materials = [
             Material(
@@ -194,11 +210,20 @@ class FLVER(GameFile):
         if textures:
             raise ValueError(f"{len(textures)} textures were left over after assignment to materials.")
 
-        for mesh in self.meshes:
+        for i, mesh in enumerate(self.meshes):
             mesh.assign_face_sets(face_sets)
             mesh.assign_vertex_buffers(vertex_buffers, self.buffer_layouts)
             uv_factor = 2048 if self.header.version >= Version.DarkSouls2_NT else 1024
-            mesh.read_vertices(reader, self.header.vertex_data_offset, self.buffer_layouts, uv_factor)
+
+            try:
+                mesh.read_vertices(reader, self.header.vertex_data_offset, self.buffer_layouts, uv_factor)
+            except VertexBufferSizeError as ex:
+                _LOGGER.warning(
+                    f"Mesh {i} in FLVER {self.path.name if self.path else '<unknown>'} has an invalid vertex buffer "
+                    f"size ({ex.vertex_size} rather than layout size {ex.layout_size}). Mesh marked with "
+                    f"`invalid_vertex_size=True`; handle this as needed."
+                )
+                mesh.invalid_vertex_size = True
         if face_sets:
             raise ValueError(f"{len(face_sets)} face sets were left over after assignment to meshes.")
         if vertex_buffers:
@@ -375,7 +400,7 @@ class FLVER(GameFile):
 
         return writer.finish()
 
-    def to_obj(self, name="FLVER", meshes=()):
+    def to_obj(self, name="FLVER", meshes=()) -> str:
         if isinstance(meshes, int):
             meshes = [meshes]
         vertex_offset = 0
@@ -407,12 +432,51 @@ class FLVER(GameFile):
         with obj_path.open("w") as f:
             f.write(obj_str)
 
-    def draw(self, auto_show=False, axes=None, **kwargs):
+    def to_string(self) -> str:
+        if self.bones:
+            bones = "[\n    " + "\n    ".join(repr(self.bones)[1:-1].split("\n")) + "\n  ]"
+        else:
+            bones = "[]"
+        if self.dummies:
+            dummies = "[\n    " + "\n    ".join(repr(self.dummies)[1:-1].split("\n")) + "\n  ]"
+        else:
+            dummies = "[]"
+        if self.materials:
+            materials = "[\n    " + "\n    ".join(repr(self.materials)[1:-1].split("\n")) + "\n  ]"
+        else:
+            materials = "[]"
+        if self.gx_lists:
+            gx_lists = "[\n    " + "\n    ".join(repr(self.gx_lists)[1:-1].split("\n")) + "\n  ]"
+        else:
+            gx_lists = "[]"
+        if self.meshes:
+            meshes = "[\n    " + "\n    ".join(repr(self.meshes)[1:-1].split("\n")) + "\n  ]"
+        else:
+            meshes = "[]"
+        return (
+            f"FLVER(\n"
+            f"  bones = {bones}\n"
+            f"  dummies = {dummies}\n"
+            f"  materials = {materials}\n"
+            f"  gx_lists = {gx_lists}\n"
+            f"  meshes = {meshes}\n"
+            ")"
+        )
+
+    def draw(self, auto_show=False, show_mesh_face_sets=(), show_origin=False, axes=None, **kwargs):
         import matplotlib.pyplot as plt
+        if show_mesh_face_sets == "all":
+            show_mesh_face_sets = tuple(range(len(self.meshes)))
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        for mesh in self.meshes:
-            mesh.draw(show_origin=mesh is self.meshes[-1], auto_show=False, axes=axes, **kwargs)
+        for i, mesh in enumerate(self.meshes):
+            mesh.draw(
+                show_origin=show_origin and mesh is self.meshes[-1],
+                show_face_sets=show_mesh_face_sets,
+                auto_show=False,
+                axes=axes,
+                **kwargs,
+            )
         for bone in self.bones:
             bone_position = bone.get_absolute_translate(self.bones)
             axes.scatter(*bone_position.swap_yz(), color="blue", s=10)
@@ -432,6 +496,44 @@ class FLVER(GameFile):
             for vertex in mesh.vertices:
                 vertex.position *= factor
 
-    def get_all_texture_paths(self) -> list[Path]:
-        """Get all texture paths from all materials. Ignores textures with empty `path`."""
-        return [Path(texture.path) for material in self.materials for texture in material.textures if texture.path]
+    def get_all_texture_paths(self) -> tp.Set[Path]:
+        """Get set of all texture paths from all materials. Ignores textures with empty `path`."""
+        return {Path(texture.path) for material in self.materials for texture in material.textures if texture.path}
+
+    def get_tpfbhd_directory_path(self) -> Path:
+        """Looks for folder containing TPFBHD files adjacent to FLVER's directory.
+
+        Only works for map pieces right now, and requires them to be loaded from their native location (e.g.
+        `{data}/map/m10_00_00_00`).
+        """
+        if not self.path:
+            raise ValueError(f"Cannot automatically find `tpfbhd` directory (FLVER path is unknown).")
+        flver_parent = self.path.parent
+        map_directory_match = re.match(r"^(m\d\d)_\d\d_\d\d_\d\d$", flver_parent.name)
+        if not map_directory_match:
+            raise ValueError(f"FLVER is not located in a map folder (`mAA_BB_CC_DD`).")
+        tpfbhd_directory = flver_parent / f"../{map_directory_match.group(1)}"
+        if not tpfbhd_directory.is_dir():
+            raise FileNotFoundError(f"Required TPFBHD directory does not exist: {tpfbhd_directory}")
+        return tpfbhd_directory
+
+    def find_all_tpfs(self, tpfbhd_directory: tp.Union[None, str, Path] = None) -> tp.Dict[Path, TPF]:
+        if tpfbhd_directory is None:
+            tpfbhd_directory = self.get_tpfbhd_directory_path()
+        else:
+            tpfbhd_directory = Path(tpfbhd_directory)
+        tpf_paths = [(p, re.compile(rf"{p.stem}\.tpf(\.dcx)?")) for p in self.get_all_texture_paths()]
+        tpf_sources = {}
+        for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
+            bxf = Binder(bhd_path, create_bak_if_missing=False)
+            for entry in bxf.entries:
+                for tpf_path, tpf_re in reversed(tpf_paths):
+                    if tpf_re.match(entry.name):
+                        tpf_paths.remove((tpf_path, tpf_re))
+                        tpf_sources[tpf_path] = TPF(entry.data)
+                        break
+                if not tpf_paths:
+                    break
+            if not tpf_paths:
+                break
+        return tpf_sources

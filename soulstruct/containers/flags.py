@@ -1,5 +1,7 @@
 """Binder flags, which indicate various things about the binder file (BND or BXF).
 
+NOTE: This file is Python 3.7 compatible for Blender 2.9X use.
+
 TODO: Determine which file types in which games use which magic values, so they can be initialized to defaults.
 """
 from __future__ import annotations

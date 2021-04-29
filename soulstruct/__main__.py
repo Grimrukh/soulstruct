@@ -10,6 +10,8 @@ python -m soulstruct [source]
     [-m / --modmanager]
     [--binderpack]
     [--binderunpack]
+    [--tpfpack]
+    [--tpfunpack]
     [--ai]
     [--consoleLogLevel]
     [--fileLogLevel]
@@ -93,6 +95,8 @@ parser.add_argument(
 )
 parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source path."))
 parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
+# parser.add_argument("--tpfpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path.")) TODO
+parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source path."))
 parser.add_argument(
     "--consoleLogLevel",
     action="store",
@@ -186,6 +190,16 @@ def soulstruct_main(ss_args) -> bool:
         from soulstruct.containers import Binder
         binder = Binder(ss_args.binderunpack)
         binder.write_unpacked_dir()
+        return False
+
+    if ss_args.tpfunpack is not None:
+        from soulstruct.containers.tpf import TPF
+        tpf = TPF(ss_args.tpfunpack)
+        tpf.write_unpacked_dir()
+        return False
+
+    if ss_args.tpfpack is not None:
+        print("ERROR: TPF pack not yet implemented.")
         return False
 
     # No specific type. Open entire Soulstruct Project.

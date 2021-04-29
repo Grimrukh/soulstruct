@@ -1,3 +1,4 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 __all__ = ["BinderError", "BaseBinder", "BinderHashTable"]
 
 import abc
@@ -23,7 +24,7 @@ class BaseBinder(GameFile, abc.ABC):
     """Base class for both BND and BXF (BHD/BDT) binder files."""
 
     # `EXT` depends on files contained in binder.
-    EXTRA_MANIFEST_FIELDS: tuple[str] = ()  # fields beyond `signature`, `flags`, `big_endian`, and `bit_big_endian`
+    EXTRA_MANIFEST_FIELDS: tp.Tuple[str] = ()  # fields beyond `signature`, `flags`, `big_endian`, and `bit_big_endian`
     BinderEntry = BinderEntry  # for convenience
 
     signature: str
@@ -36,7 +37,7 @@ class BaseBinder(GameFile, abc.ABC):
         self.flags = BinderFlags(0)  # no other sensible default
         self.big_endian = False
         self.bit_big_endian = False
-        self._entries = []  # type: list[BinderEntry]
+        self._entries = []  # type: tp.List[BinderEntry]
         super().__init__(file_source, dcx_magic=dcx_magic, **kwargs)
 
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
@@ -83,7 +84,7 @@ class BaseBinder(GameFile, abc.ABC):
         self._entries.clear()
 
     @abc.abstractmethod
-    def get_json_header(self) -> dict[str, tp.Any]:
+    def get_json_header(self) -> tp.Dict[str, tp.Any]:
         ...
 
     def load_unpacked_dir(self, directory):
@@ -195,12 +196,12 @@ class BaseBinder(GameFile, abc.ABC):
         raise TypeError(f"Cannot detect `Binder` class from source type: {binder_source}")
 
     @property
-    def entries(self) -> list[BinderEntry]:
+    def entries(self) -> tp.List[BinderEntry]:
         """Returns an ordered list of BND entries, unpacked with the `entry_class` given to the constructor."""
         return self._entries
 
     @property
-    def entries_by_id(self) -> dict[int, BinderEntry]:
+    def entries_by_id(self) -> tp.Dict[int, BinderEntry]:
         """Dictionary mapping entry IDs to entries.
 
         If there are multiple entries with the same ID in the BND, this will raise a `ValueError`. This should never
@@ -214,7 +215,7 @@ class BaseBinder(GameFile, abc.ABC):
         return entries
 
     @property
-    def entries_by_path(self) -> dict[str, BinderEntry]:
+    def entries_by_path(self) -> tp.Dict[str, BinderEntry]:
         """Dictionary mapping entry paths to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -228,7 +229,7 @@ class BaseBinder(GameFile, abc.ABC):
         return entries
 
     @property
-    def entries_by_basename(self) -> dict[str, BinderEntry]:
+    def entries_by_basename(self) -> tp.Dict[str, BinderEntry]:
         """Dictionary mapping entry basenames to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -303,7 +304,7 @@ class BinderHashTable:
             raise ValueError("Hash group count could not be determined.")
 
         hashes = []
-        hash_lists = [[] for _ in range(group_count)]  # type: list[list[tuple[int, int]], ...]
+        hash_lists = [[] for _ in range(group_count)]  # type: tp.List[tp.List[tp.Tuple[int, int]], ...]
 
         for entry_index, entry in enumerate(entries):
             hashes.append(cls.path_hash(entry.path))

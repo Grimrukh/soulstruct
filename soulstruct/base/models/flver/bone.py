@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 from __future__ import annotations
 
 __all__ = ["Bone"]
@@ -40,12 +42,12 @@ class Bone(BinaryObject):
     unpack = BinaryObject.default_unpack
     pack = BinaryObject.default_pack
 
-    def get_parent(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_parent(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
         if self.parent_index != -1:
             return bones[self.parent_index]
         return None
 
-    def get_all_parents(self, bones: list[Bone]) -> list[Bone]:
+    def get_all_parents(self, bones: tp.List[Bone]) -> tp.List[Bone]:
         """Get all parents, from the highest to this Bone."""
         parents = [self]
         bone = self
@@ -54,22 +56,22 @@ class Bone(BinaryObject):
             parents.append(bone)
         return list(reversed(parents))
 
-    def get_child(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_child(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
         if self.child_index != -1:
             return bones[self.child_index]
         return None
 
-    def get_next_sibling(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_next_sibling(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
         if self.next_sibling_index != -1:
             return bones[self.next_sibling_index]
         return None
 
-    def get_previous_sibling(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_previous_sibling(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
         if self.previous_sibling_index != -1:
             return bones[self.previous_sibling_index]
         return None
 
-    def get_absolute_translate(self, bones: list[Bone]) -> Vector3:
+    def get_absolute_translate(self, bones: tp.List[Bone]) -> Vector3:
         """Accumulates parents' translates and rotates."""
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()
@@ -81,17 +83,22 @@ class Bone(BinaryObject):
         return absolute_translate
 
     def __repr__(self):
-        return (
+        lines = [
             f"Bone(\n"
-            f"  name = {repr(self.name)}\n"
-            f"  translate = {self.translate}\n"
-            f"  rotate = {self.rotate}\n"
-            f"  scale = {self.scale}\n"
-            f"  parent_index = {self.parent_index}\n"
-            f"  next_sibling_index = {self.next_sibling_index}\n"
-            f"  previous_sibling_index = {self.previous_sibling_index}\n"
-            f"  bounding_box_min = {self.bounding_box_min}\n"
-            f"  bounding_box_max = {self.bounding_box_max}\n"
-            f"  unk_x3c = {self.unk_x3c}\n"
-            f")"
-        )
+            f"  name = {repr(self.name)}",
+            f"  translate = {self.translate}",
+            f"  rotate = {self.rotate}",
+        ]
+        if self.scale != (1.0, 1.0, 1.0):
+            lines.append(f"  scale = {self.scale}")
+        lines.append(f"  parent_index = {self.parent_index}")
+        if self.next_sibling_index != -1:
+            lines.append(f"  next_sibling_index = {self.next_sibling_index}")
+        if self.previous_sibling_index != -1:
+            lines.append(f"  previous_sibling_index = {self.previous_sibling_index}")
+        lines.append(f"  bounding_box_min = {self.bounding_box_min}")
+        lines.append(f"  bounding_box_max = {self.bounding_box_max}")
+        if self.unk_x3c != 0:
+            lines.append(f"  unk_x3c = {self.unk_x3c}")
+        lines.append(")")
+        return "\n".join(lines)

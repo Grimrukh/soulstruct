@@ -1,4 +1,7 @@
-"""Mathematical classes and functions uses by Soulstruct."""
+"""Mathematical classes and functions uses by Soulstruct.
+
+NOTE: This file is Python 3.7 compatible for Blender 2.9X use.
+"""
 from __future__ import annotations
 
 __all__ = [
@@ -28,7 +31,7 @@ class Vector(abc.ABC):
     LENGTH = 1
     REPR_PRECISION = 3
 
-    _data: list[float, ...]
+    _data: tp.List[float, ...]
 
     def __init__(self, x=None):
         """Initializes `_data` attribute."""
@@ -282,7 +285,7 @@ class Quaternion(Vector4):
 class Matrix(abc.ABC):
     SIZE = None
     PRECISION = 3
-    data: list[list[tp.Union[int, float]]]
+    data: tp.List[tp.List[tp.Union[int, float]]]
 
     @abc.abstractmethod
     def __init__(self):
@@ -309,7 +312,7 @@ class Matrix(abc.ABC):
             m.data[row] = data[row * cls.SIZE:(row + 1) * cls.SIZE]
         return m
 
-    def to_flat_row_order(self) -> list[tp.Union[int, float]]:
+    def to_flat_row_order(self) -> tp.List[tp.Union[int, float]]:
         flat = []
         for row in self.data:
             flat.extend(row)
@@ -325,7 +328,7 @@ class Matrix(abc.ABC):
             m.data[row] = [data[i * cls.SIZE + row] for i in range(cls.SIZE)]
         return m
 
-    def to_flat_column_order(self) -> list[tp.Union[int, float]]:
+    def to_flat_column_order(self) -> tp.List[tp.Union[int, float]]:
         flat = []
         for c in range(self.SIZE):
             flat.extend([row[c] for row in self.data])

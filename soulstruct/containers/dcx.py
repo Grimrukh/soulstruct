@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 import io
 import logging
 import zlib
@@ -117,7 +119,7 @@ class DCX:
         return self._magic
 
     @magic.setter
-    def magic(self, value: tp.Optional[tuple[int, int]]):
+    def magic(self, value: tp.Optional[tp.Tuple[int, int]]):
         try:
             # Pair of DCX magic values, or empty tuple to not use DCX.
             value = tuple(value) if value is not None else ()

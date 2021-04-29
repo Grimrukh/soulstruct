@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 __all__ = ["PACKAGE_PATH", "find_dcx", "create_bak", "find_steam_common_paths", ]
 
 import ctypes
@@ -13,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 def PACKAGE_PATH(*relative_parts) -> Path:
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(getattr(sys, "_MEIPASS"), *relative_parts)
-    return Path(__file__).absolute().parent.joinpath("..", *relative_parts)
+    return Path(__file__).parent.joinpath("..").resolve().joinpath(*relative_parts)
 
 
 def find_dcx(file_path):
@@ -36,7 +38,8 @@ def find_dcx(file_path):
 def create_bak(file_path, bak_suffix=".bak"):
     file_path = Path(file_path)
     if file_path.is_file():
-        if not (bak_path := file_path.with_suffix(file_path.suffix + bak_suffix)).is_file():
+        bak_path = file_path.with_suffix(file_path.suffix + bak_suffix)
+        if not bak_path.is_file():
             shutil.copy2(file_path, bak_path)
             _LOGGER.info(f"Created backup file: '{bak_path}'.")
             return True

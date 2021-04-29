@@ -1,7 +1,10 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 from __future__ import annotations
 
 __all__ = ["FaceSetFlags", "FaceSet", "Mesh"]
 
+import logging
+import random
 import typing as tp
 from enum import IntEnum
 
@@ -10,6 +13,8 @@ from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex import BufferLayout, Vertex, VertexBuffer
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class FaceSetFlags(IntEnum):
@@ -44,12 +49,13 @@ class FaceSet(BinaryObject):
     triangle_strip: bool
     cull_back_faces: bool
     unk_x06: int
-    vertex_indices: list[int]
+    vertex_indices: tp.List[int]
 
     def unpack(self, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int):
         face_set = reader.unpack_struct(self.STRUCT)
 
-        if (vertex_index_size := face_set.pop("__vertex_index_size")) == 0:
+        vertex_index_size = face_set.pop("__vertex_index_size")
+        if vertex_index_size == 0:
             vertex_index_size = header_vertex_index_size
 
         if vertex_index_size == 8:
@@ -85,7 +91,7 @@ class FaceSet(BinaryObject):
             raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
         writer.pack(fmt, *self.vertex_indices)
 
-    def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
+    def get_face_counts(self, allow_primitive_restarts: bool) -> tp.Tuple[int, int]:
         if self.triangle_strip:
             true_face_count = 0
             total_face_count = 0
@@ -109,7 +115,7 @@ class FaceSet(BinaryObject):
     def has_flag(self, flag: FaceSetFlags):
         return flag.has_flag(self.flags)
 
-    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> list[int]:
+    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> tp.List[int]:
         """Convert triangle strip to triangle list (i.e. every triangle is a separate vertex index triplet).
 
         Returns a copy of `self.vertex_indices` if `self.triangle_strip=False` already.
@@ -134,14 +140,24 @@ class FaceSet(BinaryObject):
             flip = not flip
         return triangle_list
 
+    def get_triangles(
+        self, allow_primitive_restarts: bool, include_degenerate_faces=False
+    ) -> tp.List[tp.Tuple[int, int, int]]:
+        """Get triangle list and return the triplets as tuples inside a list."""
+        tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
+        return [(tri[i], tri[i + 1], tri[i + 2]) for i in range(0, len(tri), 3)]
+
     def __repr__(self):
+        if self.flags == 0 and self.unk_x06 == 0 and self.triangle_strip:
+            # Simple repr.
+            return f"FaceSet({len(self.vertex_indices)} vertices, cull_back_faces = {self.cull_back_faces})"
         return (
             f"FaceSet(\n"
             f"  flags = {self.flags}\n"
             f"  triangle_strip = {self.triangle_strip}\n"
             f"  cull_back_faces = {self.cull_back_faces}\n"
             f"  unk_x06 = {self.unk_x06}\n"
-            f"  vertex_indices = {self.vertex_indices}\n"
+            f"  vertex_indices = <{len(self.vertex_indices)} indices>\n"
             f")"
         )
 
@@ -168,23 +184,26 @@ class Mesh(BinaryObject):
     default_bone_index: int
     bounding_box: tp.Optional[BoundingBox]
 
-    bone_indices: list[int]
-    face_sets: list[FaceSet]
-    vertex_buffers: list[VertexBuffer]
-    vertices: list[Vertex]
+    bone_indices: tp.List[int]
+    face_sets: tp.List[FaceSet]
+    vertex_buffers: tp.List[VertexBuffer]
+    vertices: tp.List[Vertex]
 
-    _face_set_indices: tp.Optional[list[int]]
-    _vertex_buffer_indices: tp.Optional[list[int]]
+    _face_set_indices: tp.Optional[tp.List[int]]
+    _vertex_buffer_indices: tp.Optional[tp.List[int]]
+
+    invalid_vertex_size: bool
 
     DEFAULTS = {
         "default_bone_index": -1,
     }
 
-    def __init__(self, reader: BinaryReader, /, **kwargs):
+    def __init__(self, reader: BinaryReader, **kwargs):
         self.bone_indices = []
         self.face_sets = []
         self.vertex_buffers = []
         self.vertices = []
+        self.invalid_vertex_size = False
         super().__init__(reader, **kwargs)
 
     def unpack(self, reader: BinaryReader, bounding_box_has_unknown: bool = None):
@@ -211,7 +230,7 @@ class Mesh(BinaryObject):
 
         self.set(**mesh)
 
-    def assign_face_sets(self, face_sets: dict[int, FaceSet]):
+    def assign_face_sets(self, face_sets: tp.Dict[int, FaceSet]):
         self.face_sets = []
         if self._face_set_indices is None:
             raise ValueError("Tried to call `assign_face_sets()` on a `Mesh` more than once.")
@@ -224,7 +243,7 @@ class Mesh(BinaryObject):
             self.face_sets.append(face_sets.pop(i))
         self._face_set_indices = None
 
-    def assign_vertex_buffers(self, vertex_buffers: dict[int, VertexBuffer], layouts: list[BufferLayout]):
+    def assign_vertex_buffers(self, vertex_buffers: tp.Dict[int, VertexBuffer], layouts: tp.List[BufferLayout]):
         self.vertex_buffers = []
         if self._vertex_buffer_indices is None:
             raise ValueError("Tried to call `assign_vertex_buffers()` on a `Mesh` more than once.")
@@ -255,7 +274,7 @@ class Mesh(BinaryObject):
         self,
         reader: BinaryReader,
         vertex_data_offset: int,
-        layouts: list[BufferLayout],
+        layouts: tp.List[BufferLayout],
         uv_factor: int,
     ):
         self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].vertex_count)]
@@ -334,29 +353,68 @@ class Mesh(BinaryObject):
     def allow_primitive_restarts(self):
         return len(self.vertices) < 0xFFFF
 
-    def draw(self, color="red", show_origin=True, auto_show=False, axes=None, **kwargs):
+    def draw(
+        self,
+        vertex_color="red",
+        show_normals=True,
+        show_face_sets=(),
+        show_origin=False,
+        auto_show=False,
+        axes=None,
+        random_face_colors=False,
+        **kwargs,
+    ):
         import matplotlib.pyplot as plt
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
         positions = [v.position.swap_yz() for v in self.vertices]
-        axes.scatter(*zip(*positions), c=color, s=1, alpha=0.1)  # note y/z swapped
+        axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
+        if show_normals:
+            normals = [v.normal.swap_yz() for v in self.vertices]
+            for position, normal in zip(positions, normals):
+                axes.plot(*zip(position, position + normal), c="black", alpha=0.1)
         if show_origin:
             axes.scatter(0, 0, 0, c="black", marker="x", s=5)
+        if show_face_sets == "all":
+            show_face_sets = tuple(range(len(self.face_sets)))
+        if show_face_sets:
+            import numpy as np
+            from mpl_toolkits.mplot3d import art3d
+            vertices = np.array([list(v.position.swap_yz()) for v in self.vertices])
+            faces = []
+            for i, face_set in enumerate(self.face_sets):
+                if i in show_face_sets:
+                    faces += [tri for tri in face_set.get_triangles(False)]
+            faces = np.array(faces)
+            face_colors = list(range(len(faces)))
+            if random_face_colors:
+                random.shuffle(face_colors)
+            colors = np.array(face_colors)
+            norm = plt.Normalize(colors.min(initial=0), colors.max(initial=1))
+            # noinspection PyUnresolvedReferences
+            colors = plt.cm.rainbow(norm(colors))
+            pc = art3d.Poly3DCollection(vertices[faces], facecolors=colors, edgecolor="black", linewidth=0.1)
+            axes.add_collection(pc)
         axes.set(**kwargs)
         if auto_show:
             plt.show()
 
     def __repr__(self):
-        vertices = ",\n".join([f"    {v.repr_position_only()}" for v in self.vertices])
+        # vertices = ",\n".join([f"    {v.repr_position_only()}" for v in self.vertices])
         face_sets = ",\n".join(["    " + indent_lines(repr(f)) for f in self.face_sets])
-        return (
-            f"Mesh(\n"
-            f"  is_bind_pose={self.is_bind_pose}\n"
-            f"  material_index={self.material_index}\n"
-            f"  default_bone_index={self.default_bone_index}\n"
-            f"  bone_indices={self.bone_indices}\n"
-            f"  bounding_box={self.bounding_box}\n"
-            f"  vertices = [\n{vertices}\n]\n"
-            f"  face_sets = [\n{face_sets}\n]\n"
-            f")"
-        )
+        lines = [
+            "Mesh(",
+            f"  material_index = {self.material_index}",
+            f"  default_bone_index = {self.default_bone_index}",
+            f"  bone_indices = {self.bone_indices}",
+            f"  vertices = {len(self.vertices)} vertices",
+
+        ]
+        if not self.is_bind_pose:
+            lines.append("  is_bind_post = False")
+        if self.bounding_box:
+            lines.append(f"  bounding_box = {self.bounding_box}")
+        lines.append(f"  face_sets = [\n{face_sets}\n  ]")
+        lines.append(")")
+
+        return "\n".join(lines)

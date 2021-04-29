@@ -1,3 +1,5 @@
+"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+
 from __future__ import annotations
 
 __all__ = ["GXItem", "GXList", "Material", "Texture"]
@@ -37,6 +39,9 @@ class GXItem(BinaryObject):
         )
         writer.append(self.data)
 
+    def __repr__(self):
+        return f"GXItem(gx_id = {self.gx_id}, unk_x04 = {self.unk_x04}, data = {self.data})"
+
 
 class GXList:
     """List of `GXItem` instances, which set various material rendering properties.
@@ -47,9 +52,9 @@ class GXList:
     Prior to Dark Souls 2 (version 0x20010), these lists only ever contained exactly one `GXItem`.
     """
 
-    gx_items: list[GXItem]
+    gx_items: tp.List[GXItem]
 
-    def __init__(self, source: tp.Union[BinaryReader, list[GXItem], None], version: Version = None):
+    def __init__(self, source: tp.Union[BinaryReader, tp.List[GXItem], None], version: Version = None):
         self.gx_items = []
         self.terminator_id = 2 ** 31 - 1  # max value of signed int; sometimes also -1
         self.terminator_null_count = 0
@@ -65,8 +70,8 @@ class GXList:
             self.gx_items = source
         elif source is None:
             self.gx_items = []
-
-        raise TypeError(f"Invalid `source` for `GXList`: {type(source)}. Must be a reader, list of `GXItem`s, or None.")
+        else:
+            raise TypeError(f"Invalid `source` for `GXList`: {type(source)}")
 
     def unpack(self, reader: BinaryReader):
         self.gx_items = []
@@ -75,7 +80,8 @@ class GXList:
         self.terminator_id = reader.unpack_value("<i")  # either 2 ** 31 - 1 or -1
         reader.unpack_value("<i", asserted=100)
         self.terminator_null_count = reader.unpack_value("<i") - 12
-        if (terminator_nulls := reader.read(self.terminator_null_count)).strip(b"\0"):
+        terminator_nulls = reader.read(self.terminator_null_count)
+        if terminator_nulls.strip(b"\0"):
             raise ValueError(f"Found non-null data in terminator: {terminator_nulls}")
 
     def pack(self, writer: BinaryWriter):
@@ -94,6 +100,9 @@ class GXList:
             ("one_hundred", "i", 100),
             ("terminator_size", "i"),
         )
+
+    def __repr__(self):
+        return repr(self.gx_items)
 
 
 class Texture(BinaryObject):
@@ -127,21 +136,30 @@ class Texture(BinaryObject):
     pack = BinaryObject.default_pack
 
     def __repr__(self):
-        return (
-            f"Texture(\n"
-            f"  path = {repr(self.path)}\n"
-            f"  texture_type = {repr(self.texture_type)}\n"
-            f"  scale = {self.scale}\n"
-            f"  unk_x10 = {self.unk_x10}\n"
-            f"  unk_x11 = {self.unk_x11}\n"
-            f"  unk_x14 = {self.unk_x14}\n"
-            f"  unk_x18 = {self.unk_x18}\n"
-            f"  unk_x1C = {self.unk_x1C}\n"
-            f")"
-        )
+        lines = [
+            f"Texture(",
+            f"  path = {repr(self.path)}",
+            f"  texture_type = {repr(self.texture_type)}",
+        ]
+        if self.scale != (1.0, 1.0):
+            lines.append(f"  scale = {self.scale}")
+        if self.unk_x10 != 1:
+            lines.append(f"  unk_x10 = {self.unk_x10}")
+        if not self.unk_x11:
+            lines.append(f"  unk_x11 = {self.unk_x11}")
+        if self.unk_x14 != 0.0:
+            lines.append(f"  unk_x14 = {self.unk_x14}")
+        if self.unk_x18 != 0.0:
+            lines.append(f"  unk_x18 = {self.unk_x18}")
+        if self.unk_x1C != 0.0:
+            lines.append(f"  unk_x1C = {self.unk_x1C}")
+        lines.append(")")
+        return "\n".join(lines)
 
 
 class Material(BinaryObject):
+
+    Texture = Texture
 
     STRUCT = BinaryStruct(
         ("__name__z", "i"),
@@ -160,12 +178,12 @@ class Material(BinaryObject):
     gx_index: int
     unk_x18: int
 
-    textures: list[Texture]
+    textures: tp.List[Texture]
 
     _texture_count: int
     _first_texture_index: int
 
-    def __init__(self, reader: BinaryReader, /, **kwargs):
+    def __init__(self, reader: BinaryReader, **kwargs):
         self.textures = []
         super().__init__(reader, **kwargs)
 
@@ -174,8 +192,8 @@ class Material(BinaryObject):
         reader: BinaryReader,
         encoding: str,
         version: Version,
-        gx_lists: list[GXList],
-        gx_list_indices: dict[int, int],
+        gx_lists: tp.List[GXList],
+        gx_list_indices: tp.Dict[int, int],
     ):
         material = reader.unpack_struct(self.STRUCT)
         self.name = reader.unpack_string(offset=material.pop("__name__z"), encoding=encoding)
@@ -186,12 +204,12 @@ class Material(BinaryObject):
         elif gx_offset in gx_list_indices:
             self.gx_index = gx_list_indices[gx_offset]
         else:
-            gx_list_indices[gx_offset] = len(gx_lists)
+            self.gx_index = gx_list_indices[gx_offset] = len(gx_lists)
             with reader.temp_offset(gx_offset):
                 gx_lists.append(GXList(reader, version))
         self.set(**material)
 
-    def assign_textures(self, textures: dict[int, Texture]):
+    def assign_textures(self, textures: tp.Dict[int, Texture]):
         if self._texture_count == -1 or self._first_texture_index == -1:
             raise ValueError(f"Tried to call `assign_textures()` on `Material` {self.name} more than once.")
         for i in range(self._first_texture_index, self._first_texture_index + self._texture_count):
@@ -220,24 +238,37 @@ class Material(BinaryObject):
         for texture in self.textures:
             texture.pack(writer)
 
-    def fill_gx_offset(self, writer: BinaryWriter, gx_offsets: list[int]):
+    def fill_gx_offset(self, writer: BinaryWriter, gx_offsets: tp.List[int]):
         writer.fill("__gx_offset", 0 if self.gx_index == -1 else gx_offsets[self.gx_index], obj=self)
 
     def pack_strings(self, writer: BinaryWriter, encoding: str):
         self.pack_zstring(writer, "name", encoding=encoding)
         self.pack_zstring(writer, "mtd_path", encoding=encoding)
 
+    def get_texture_dict(self) -> tp.Dict[str, Texture]:
+        """Get a dictionary mapping texture types to `Texture` instances.
+
+        Will raise a KeyError if any texture type is repeated.
+        """
+        textures = {}
+        for texture in self.textures:
+            if texture.texture_type in textures:
+                raise KeyError(f"Texture type {texture.texture_type} appeared more than once in Material {self.name}.")
+            textures[texture.texture_type] = texture
+        return textures
+
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])
-        return (
-            f"Material(\n"
-            f"  name = {repr(self.name)}\n"
-            f"  mtd_path = {repr(self.mtd_path)}\n"
-            f"  flags = {self.flags}\n"
-            f"  gx_index = {self.gx_index}\n"
-            f"  unk_x18 = {self.unk_x18}\n"
-            f"  textures = [\n"
-            f"{textures}\n"
-            f"  ]\n"
-            f")"
-        )
+        lines = [
+            f"Material(",
+            f"  name = {repr(self.name)}",
+            f"  mtd_path = {repr(self.mtd_path)}",
+            f"  flags = {self.flags:032b}",
+        ]
+        if self.gx_index != -1:
+            lines.append(f"  gx_index = {self.gx_index}")
+        if self.unk_x18 != 0:
+            lines.append(f"  unk_x18 = {self.unk_x18}")
+        lines.append(f"  textures = [\n{textures}\n  ]")
+        lines.append(")")
+        return "\n".join(lines)
