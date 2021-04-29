@@ -1,4 +1,4 @@
-from soulstruct.darksouls1ptde.models import CHARACTER_MODELS
+from soulstruct.darksouls1ptde.constants import CHARACTER_MODELS
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 
 from .core import GameDirectoryProject

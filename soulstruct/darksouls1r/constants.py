@@ -10,4 +10,4 @@ __all__ = [
     "SPECIAL_EFFECT_RANGES",
 ]
 
-from soulstruct.darksouls1ptde.models import *
+from soulstruct.darksouls1ptde.constants import *

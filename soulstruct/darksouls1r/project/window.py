@@ -3,7 +3,7 @@ import logging
 from soulstruct.base.project.exceptions import SoulstructProjectError
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 from soulstruct.darksouls1r.maps.utilities import build_ffxbnd
-from soulstruct.darksouls1r.models import CHARACTER_MODELS
+from soulstruct.darksouls1r.constants import CHARACTER_MODELS
 from .core import GameDirectoryProject
 from .runtime import RuntimeManager
 

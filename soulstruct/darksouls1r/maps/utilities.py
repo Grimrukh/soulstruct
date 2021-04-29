@@ -15,7 +15,7 @@ from soulstruct.containers.bxf import BXF3
 from soulstruct.containers.entry import BinderEntry
 from soulstruct.containers.bnd import BND3
 
-from ..models import CHARACTER_FFX_SOURCES
+from ..constants import CHARACTER_FFX_SOURCES
 
 if tp.TYPE_CHECKING:
     from . import MSB

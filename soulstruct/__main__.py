@@ -95,7 +95,7 @@ parser.add_argument(
 )
 parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source path."))
 parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
-# parser.add_argument("--tpfpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path.")) TODO
+parser.add_argument("--tpfpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
 parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source path."))
 parser.add_argument(
     "--consoleLogLevel",

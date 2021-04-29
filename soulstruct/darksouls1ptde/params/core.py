@@ -7,7 +7,7 @@ import typing as tp
 from soulstruct.containers.bnd import BND3
 from soulstruct.games import DARK_SOULS_PTDE
 from soulstruct.game_types import *
-from soulstruct.darksouls1ptde.models import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
+from soulstruct.darksouls1ptde.constants import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
 from soulstruct.base.params.param import Param as _BaseParam
 from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND
 
