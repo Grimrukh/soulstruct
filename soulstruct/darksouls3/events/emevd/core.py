@@ -59,6 +59,9 @@ class Event(_BaseEvent):
 
 
 class EMEVD(_BaseEMEVD):
+
+    events: dict[int, Event]
+
     Event = Event
     EVS_PARSER = EVSParser
     IMPORT_STRING = "soulstruct.darksouls3.events"

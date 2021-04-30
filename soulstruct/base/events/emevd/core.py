@@ -23,6 +23,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EMEVD(GameFile, abc.ABC):
+
+    events: dict[int, Event]
+
     Event: tp.Type[Event] = None
     EVS_PARSER: tp.Type[EVSParser] = None
     IMPORT_STRING: str = None
@@ -30,29 +33,35 @@ class EMEVD(GameFile, abc.ABC):
     DCX_MAGIC: tuple[int, int] = ()
     HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, emevd_source, dcx_magic=(), script_path=None):
+    def __init__(self, emevd_source: GameFile.Typing, dcx_magic=(), script_path=None):
         """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
 
         Event scripts 50 and 0 are run automatically, in that order. All other scripts are called from them, sometimes
         with a certain slot and set of arguments. Scripts are executed asynchronously and frequently wait for certain
         groups of conditions to be true before continuing. Entities in map MSBs are referenced by their entity ID; param
-        IDs and other IDs are also frequently referencved.
+        IDs and other various internal IDs (sounds, visual effects, etc.) are also frequently referenced.
 
-        Whenever a script finishes (or restarts), the flag with the same ID as that script (plus any slot offset) is
+        Whenever a script finishes (or restarts), the flag with the same ID as that script (plus its `slot` number) is
         enabled. Event IDs are therefore almost always in dedicated ranges for that map, with the format:
-            `1AABXYYY`
-        where the map ID is `mAA_0B_00_00`, X is 0-5, and Y is anything. Flags of this format where X is 4 or 5 are
-        automatically disabled each time the game loads; flags where X is 0-3 are persistent and are saved to your game
+            `1AABX***`
+        where the map ID is `mAA_0B_00_00`, X is 0-5, and * is anything. Flags of this format where X is 4 or 5 are
+        automatically disabled each time the game loads; flags where X is 0-3 are persistent and saved to your game
         file.
 
         If your `emevd_source` is a Python-like EVS script that uses any relative imports, you must pass `script_path`
-        to this class so those relative imports can be resolved.
+        to this class so those relative imports can be resolved. (If the EVS script is a path source, `script_path` can
+        be detected automatically.)
         """
 
         self.events = {}
         self.packed_strings = b""
         self.linked_file_offsets = []  # offsets into packed strings
         self.map_name = ""
+
+        if script_path is None:
+            if isinstance(emevd_source, Path) or (isinstance(emevd_source, str) and "\n" not in emevd_source):
+                script_path = Path(emevd_source)
+
         super().__init__(emevd_source, dcx_magic=dcx_magic, script_path=script_path)
         if not dcx_magic:
             self.dcx_magic = self.DCX_MAGIC  # default to standard game DCX
@@ -113,16 +122,16 @@ class EMEVD(GameFile, abc.ABC):
         header = emevd_reader.unpack_struct(self.HEADER_STRUCT)
 
         emevd_reader.seek(header["event_table_offset"])
-        self.events.update(
-            self.Event.unpack(
-                emevd_reader,
-                header["instruction_table_offset"],
-                header["base_arg_data_offset"],
-                header["event_arg_table_offset"],
-                header["event_layers_table_offset"],
-                count=header["event_count"],
-            )
+        event_dict = self.Event.unpack_event_dict(
+            emevd_reader,
+            header["instruction_table_offset"],
+            header["base_arg_data_offset"],
+            header["event_arg_table_offset"],
+            header["event_layers_table_offset"],
+            count=header["event_count"],
         )
+
+        self.events.update(event_dict)
 
         if header["packed_strings_size"] != 0:
             emevd_reader.seek(header["packed_strings_offset"])
@@ -133,6 +142,12 @@ class EMEVD(GameFile, abc.ABC):
             # These are relative offsets into the packed string data.
             for _ in range(header["linked_files_count"]):
                 self.linked_file_offsets.append(struct.unpack("<Q", emevd_reader.read(8))[0])
+
+        # Parse event args for `RunEvent` and `RunCommonEvent` instructions.
+        for event in self.events.values():
+            event.update_evs_function_args()
+        for event in self.events.values():
+            event.update_run_event_instructions()
 
     def load_dict(self, data: dict):
         self.map_name = None
@@ -248,6 +263,9 @@ class EMEVD(GameFile, abc.ABC):
         return strings
 
     def to_dict(self) -> dict:
+        for event in self.events.values():
+            event.update_evs_function_args()
+
         return {
             "linked": self.linked_file_offsets,
             "strings": self.packed_strings,
@@ -255,6 +273,9 @@ class EMEVD(GameFile, abc.ABC):
         }
 
     def to_numeric(self):
+        for event in self.events.values():
+            event.update_evs_function_args()
+
         numeric_output = "\n\n".join([event.to_numeric() for event in self.events.values()])
         numeric_output += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_file_offsets)
         numeric_output += "\n\nstrings:\n" + "\n".join(s[0] + ": " + s[1] for s in self.unpack_strings())
@@ -268,15 +289,18 @@ class EMEVD(GameFile, abc.ABC):
         return docstring
 
     def to_evs(self):
+        for event in self.events.values():
+            event.update_evs_function_args()
+
         docstring = self.get_evs_docstring()
         imports = f"from {self.IMPORT_STRING} import *"
-        for event in self.events.values():
-            # Build global optional event argument dictionary.
-            event.get_evs_function_args()
         evs_events = [event.to_evs() for event in self.events.values()]
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
     def pack(self):
+        for event in self.events.values():
+            event.update_evs_function_args()
+
         event_table_binary = b""
         instr_table_binary = b""
         argument_data_binary = b""

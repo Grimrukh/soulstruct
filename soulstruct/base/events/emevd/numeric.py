@@ -116,7 +116,7 @@ def build_numeric(numeric_string: str, event_class):
                 # Parse the line as an instruction.
                 instruction_class = int(m_instruction.group(1))
                 instruction_index = int(m_instruction.group(2))
-                args_format = m_instruction.group(3)
+                display_arg_types = m_instruction.group(3)
                 args_list_string = m_instruction.group(4)
                 if m_instruction.group(5) is not None:
                     event_layers = [int(e) for e in m_instruction.group(5)[1:-1].split(", ")]
@@ -126,44 +126,48 @@ def build_numeric(numeric_string: str, event_class):
                 # Check the argument list against the format_string.
                 split_arg_list = args_list_string.split(",")
                 # Remove required|optional separator and replace 's' with 'I' (string offset).
-                raw_args_format = args_format.replace("|", "").replace("s", "I")
+                struct_arg_types = display_arg_types.replace("|", "").replace("s", "I")
                 if split_arg_list == [""]:
                     split_arg_list = []
-                if len(raw_args_format) != len(split_arg_list):
+                if len(struct_arg_types) != len(split_arg_list):
                     _LOGGER.error(
-                        f"Number of args ({len(raw_args_format)}) does not match length of the instruction "
-                        f"format string ('{args_format}') (line {lineno}) (args = {split_arg_list})"
+                        f"Number of args ({len(struct_arg_types)}) does not match length of the instruction "
+                        f"format string ('{display_arg_types}') (line {lineno}) (args = {split_arg_list})"
                     )
                     raise NumericEmevdError(
                         lineno,
-                        f"Number of args ({len(raw_args_format)}) does not match length of the instruction "
-                        f"format string ('{args_format}') (Line {lineno})",
+                        f"Number of args ({len(struct_arg_types)}) does not match length of the instruction "
+                        f"format string ('{display_arg_types}') (Line {lineno})",
                     )
 
                 args_list = []
-                for i, element in enumerate(raw_args_format):
+                for i, fmt in enumerate(struct_arg_types):
                     arg = split_arg_list[i]
-                    if element == "f":
+                    if fmt == "f":
                         args_list.append(float(arg))
-                    elif element in ELEMENT_MIN_MAX:
-                        min_value, max_value = ELEMENT_MIN_MAX[element]
+                    elif fmt in ELEMENT_MIN_MAX:
+                        min_value, max_value = ELEMENT_MIN_MAX[fmt]
                         parsed_arg = int(arg)
                         if min_value <= parsed_arg <= max_value:
                             args_list.append(parsed_arg)
                         else:
                             _LOGGER.error(
                                 f"Argument '{arg}' is not inside the permitted range of data type "
-                                f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (line {lineno}) "
+                                f"'{fmt}' {repr(ELEMENT_MIN_MAX[fmt])} (line {lineno}) "
                                 f"(instruction = {instruction_class}[{instruction_index}], "
-                                f"args_format = {args_format}, args_list = {args_list_string})"
+                                f"args_format = {display_arg_types}, args_list = {args_list_string})"
                             )
                             raise NumericEmevdError(
                                 lineno,
-                                f"Argument '{arg}' is not inside the permitted range of data type "
-                                f"'{element}' {repr(ELEMENT_MIN_MAX[element])} (Line {lineno})",
+                                f"Argument '{arg}' with value {parsed_arg} is not inside the permitted range of data "
+                                f"type '{fmt}' ({repr(ELEMENT_MIN_MAX[fmt])}).",
                             )
+                    else:
+                        raise NumericEmevdError(lineno, f"Invalid arg type: '{fmt}'")
                 instruction_list.append(
-                    event_class.Instruction(instruction_class, instruction_index, args_format, args_list, event_layers)
+                    event_class.Instruction(
+                        instruction_class, instruction_index, display_arg_types, args_list, event_layers
+                    )
                 )
 
             elif m_arg_r:

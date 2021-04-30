@@ -3,7 +3,9 @@ from __future__ import annotations
 __all__ = ["Event", "EventArg"]
 
 import abc
+import logging
 import re
+import struct
 import typing as tp
 
 from .enums import RestartType
@@ -11,6 +13,8 @@ from .instruction import Instruction
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+
+_LOGGER = logging.getLogger(__name__)
 
 
 EVS_ARG_TYPES = {
@@ -70,8 +74,10 @@ class Event(abc.ABC):
     HEADER_STRUCT: BinaryStruct = None
     Instruction: tp.Type[Instruction] = None
     EventArg: tp.Type[EventArg] = None
-    EVENT_ARG_TYPES = {}  # set before each EVS write
+    EVENT_ARG_TYPES = {}  # updated on load and before each write
     WRAP_LIMIT = 121  # PyCharm default line length
+
+    DEFAULT_ARG_SIZE_TYPE = {1: "B", 2: "H", 4: "I"}
 
     def __init__(self, event_id=0, restart_type=0, instructions=None):
         self.event_id = event_id
@@ -79,7 +85,7 @@ class Event(abc.ABC):
         self.instructions = instructions if instructions else []  # type: list[Instruction]
 
     @classmethod
-    def unpack(
+    def unpack_event_dict(
         cls,
         reader: BinaryReader,
         instruction_table_offset,
@@ -87,7 +93,7 @@ class Event(abc.ABC):
         event_arg_table_offset,
         event_layers_table_offset,
         count=1,
-    ):
+    ) -> dict[int, Event]:
         event_dict = {}
         struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
 
@@ -108,6 +114,33 @@ class Event(abc.ABC):
 
         return event_dict
 
+    def update_run_event_instructions(self):
+        """Iterates over instructions and updates any `RunEvent` or `RunCommonEvent` instructions with event arguments
+        with their proper `args_format` and `args_list` values.
+
+        Called after all events have been loaded and `update_evs_function_args()` has been called (to scan events and
+        detect their arguments).
+        """
+        for instruction in self.instructions:
+            if (event_id := instruction.get_called_event()) is not None:
+                var_ind = instruction.display_arg_types.find("|")
+                var_format = self.EVENT_ARG_TYPES[event_id]
+                if not var_format:
+                    # No arguments (zero). Leave "I" in arg types.
+                    continue
+                elif var_ind == -1:
+                    # Only one argument (maybe zero).
+                    new_display_types = f"{instruction.struct_arg_types[:-1]}{var_format[0]}"
+                else:
+                    new_display_types = f"{instruction.struct_arg_types[:var_ind - 1]}{var_format[0]}|{var_format[1:]}"
+
+                old_format = "@" + instruction.struct_arg_types
+                instruction.display_arg_types = new_display_types
+                real_args = list(struct.unpack(
+                    instruction.struct_arg_types, struct.pack(old_format, *instruction.args_list))
+                )
+                instruction.args_list = real_args
+
     @property
     def instruction_count(self):
         return len(self.instructions)
@@ -126,42 +159,65 @@ class Event(abc.ABC):
             event_string += "\n" + "\n".join(instruction.to_numeric())
         return event_string
 
-    def guess_parameter_types(self):
-        event_arg_set = set()
+    def process_all_event_args(self) -> dict[tuple[int, int], set[str]]:
+        """Process event args for all instructions and maintain a dictionary mapping `(read_start, read_stop)` event
+        arg tuples to sets of detected format strings (should generally only contain one value)."""
         event_arg_types = {}
         for instruction in self.instructions:
             try:
-                instruction_arg_set, instruction_arg_types = instruction.apply_event_args()
+                instruction_arg_types = instruction.process_event_args()
             except ValueError:
                 raise ValueError(
                     f"Error occurred while applying event args in instruction "
                     f"{self.instructions.index(instruction)} of event {self.event_id}."
                 )
-            event_arg_set = event_arg_set.union(instruction_arg_set)
-            for arg, arg_types in instruction_arg_types.items():
-                event_arg_types[arg] = event_arg_types.setdefault(arg, set()).union(arg_types)
-        return list(sorted(event_arg_set)), event_arg_types
+            for arg_range, arg_types in instruction_arg_types.items():
+                arg_range_types = event_arg_types.setdefault(arg_range, set())
+                arg_range_types |= arg_types
+        return {arg_range: event_arg_types[arg_range] for arg_range in sorted(event_arg_types)}
 
-    def get_evs_function_args(self):
-        # TODO: 'next(iter(set))' is a hack to get a random type hint, in case multiple types are suggested.
-        #  Usually the set will only have one element in it.
-        sorted_parameter_list, event_arg_types = self.guess_parameter_types()
-        evs_function_args_names = [f"arg_{i}_{j}" for i, j in sorted_parameter_list]
-        evs_function_args_types = [EVS_ARG_TYPES[next(iter(event_arg_types[arg]))] for arg in evs_function_args_names]
-        evs_function_args = [
-            f"{arg_name}: {arg_type}" for arg_name, arg_type in zip(evs_function_args_names, evs_function_args_types)
+    def update_evs_function_args(self):
+        event_arg_types = self.process_all_event_args()
+        all_arg_names = []
+        all_arg_types = []
+        for (i, j), arg_types in event_arg_types.items():
+            arg_name = f"arg_{i}_{j}"
+            if len(arg_types) > 1:
+                # Multiple detected types. Acceptable (using default integer type) only if they all the same size.
+                sizes = {struct.calcsize(fmt) for fmt in arg_types}
+                if len(sizes) == 1:
+                    arg_size = next(iter(sizes))
+                    arg_type = self.DEFAULT_ARG_SIZE_TYPE[arg_size]
+                    _LOGGER.warning(
+                        f"Detected multiple types for event arg '{arg_name}' in event {self.event_id}: {arg_types}. "
+                        f"Using default type '{arg_type}' for this arg size ({arg_size})."
+                    )
+                else:
+                    raise ValueError(
+                        f"Detected multiple types for event arg '{arg_name}' in event {self.event_id}: {arg_types}. "
+                        f"They have incompatible sizes, which is not permitted."
+                    )
+            else:
+                arg_type = next(iter(arg_types))
+
+            all_arg_names.append(arg_name)
+            all_arg_types.append(arg_type)
+
+        evs_function_arg_strings = [
+            f"{arg_name}: {EVS_ARG_TYPES[arg_type]}" for arg_name, arg_type in zip(all_arg_names, all_arg_types)
         ]
-        if evs_function_args:
-            evs_function_args = ["_"] + evs_function_args  # add blank argument for slot (for intellisense)
-        self.EVENT_ARG_TYPES[self.event_id] = "".join(
-            [next(iter(event_arg_types[arg])) for arg in evs_function_args_names]
-        )
-        return ", ".join(evs_function_args)
+        if evs_function_arg_strings:
+            evs_function_arg_strings = ["_"] + evs_function_arg_strings  # prepend blank argument for slot intellisense
+
+        # Record event function args in class attribute.
+        self.EVENT_ARG_TYPES[self.event_id] = "".join(all_arg_types)
+
+        return ", ".join(evs_function_arg_strings)
 
     def to_evs(self):
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event{self.event_id}")
         function_docstring = f'""" {self.event_id}: Event {self.event_id} """'
-        function_args = self.get_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
+        function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
         restart_type_decorator = f"@{RestartType(self.restart_type).name}\n" if self.restart_type != 0 else ""
         function_def = self._indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"

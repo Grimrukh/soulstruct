@@ -13,30 +13,45 @@ from .utils import get_byte_offset_from_struct, get_instruction_args
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
     from .decompiler import InstructionDecompiler
+    from .event import EventArg
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class Instruction(abc.ABC):
+
+    event_args: list[EventArg]
+    event_layers: tp.Optional[EventLayers]
+
     DECOMPILER: InstructionDecompiler = None
     INSTRUCTION_ARG_TYPES = {}
     EventLayers: tp.Type[EventLayers] = None
     HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, instruction_class, instruction_index, args_format="", args_list=None, event_layers=None):
-        if len(args_format.replace("|", "")) != len(args_list):
-            raise ValueError(
-                f"Length of argument list ({len(args_list)}) in Instruction {instruction_class}"
-                f"[{instruction_index}] does not match length of format string '{args_format}' "
-                f"({len(args_format.replace('|', ''))})."
-            )
+    def __repr__(self) -> str:
+        text = (
+            f"Instruction({self.instruction_class}, {self.instruction_index}, "
+            f"display_arg_types=\"{self.display_arg_types}\", args={self.args_list})"
+        )
+        if self.event_layers is not None:
+            text = text[:-1] + f", event_layers={self.event_layers})"
+        return text
+
+    def __init__(self, instruction_class, instruction_index, display_arg_types="", args_list=(), event_layers=None):
         self.instruction_class = instruction_class
         self.instruction_index = instruction_index
-        self.visible_args_format = args_format  # preserves 's' for printing output
-        self.args_format = args_format.replace("s", "I")
+        self.display_arg_types = display_arg_types
+
+        if len(self.struct_arg_types) != len(args_list):
+            raise ValueError(
+                f"Length of argument list ({len(args_list)}) in Instruction {instruction_class}"
+                f"[{instruction_index}] does not match length of format string '{display_arg_types}' "
+                f"({len(display_arg_types.replace('|', ''))})."
+            )
+
         self.args_list = args_list if args_list else []
         self.event_args = []  # Added after construction.
-        self.verbose_args_list = []  # So we don't modify 'args_list'.
+        self.evs_args_list = []  # So we don't modify 'args_list'.
         if isinstance(event_layers, (list, tuple)):
             self.event_layers = self.EventLayers(event_layers)
         elif isinstance(event_layers, self.EventLayers):
@@ -44,6 +59,11 @@ class Instruction(abc.ABC):
         else:
             self.event_layers = None
         self.event_layers_offset = None  # Set by Event class during EMEVD packing.
+
+    @property
+    def struct_arg_types(self):
+        """Used for actually packing/unpacking event argument data."""
+        return self.display_arg_types.replace("s", "I").replace("|", "")
 
     @classmethod
     def unpack(cls, reader: BinaryReader, base_arg_data_offset, event_layers_table_offset, count=1):
@@ -72,7 +92,9 @@ class Instruction(abc.ABC):
 
             # Process event layers.
             if d["first_event_layers_offset"] > 0:
-                event_layers = cls.EventLayers.unpack(reader, event_layers_table_offset + d["first_event_layers_offset"])
+                event_layers = cls.EventLayers.unpack(
+                    reader, event_layers_table_offset + d["first_event_layers_offset"]
+                )
             else:
                 event_layers = None
 
@@ -84,16 +106,25 @@ class Instruction(abc.ABC):
 
     @property
     def args_size(self):
-        return struct.calcsize("@" + self.args_format.replace("|", "") + "0i")
+        return struct.calcsize(f"@{self.struct_arg_types}0i")
 
     @property
     def event_arg_count(self):
         return len(self.event_args)
 
+    def get_called_event(self) -> tp.Optional[int]:
+        """Returns event value if instruction is `RunEvent` or `RunCommonEvent`. Returns `None` otherwise."""
+        if self.instruction_class == 2000:
+            if self.instruction_index == 0:
+                return self.args_list[1]
+            elif self.instruction_class == 6:
+                return self.args_list[0]
+        return None
+
     def to_numeric(self):
         numeric = [
             f"{self.instruction_class: 5d}[{self.instruction_index:02d}] "
-            f"({self.visible_args_format})" + repr(self.args_list)
+            f"({self.display_arg_types})" + repr(self.args_list)
         ]
         if self.event_layers:
             numeric[-1] += self.event_layers.to_numeric()
@@ -119,31 +150,33 @@ class Instruction(abc.ABC):
         return instruction
 
     def get_required_and_optional_args(self):
-        split_point = self.visible_args_format.find("|")
+        split_point = self.display_arg_types.find("|")
         if split_point == -1:
-            required_args = self.verbose_args_list
+            required_args = self.evs_args_list
             optional_args = []
         else:
-            required_args = self.verbose_args_list[:split_point]
-            optional_args = self.verbose_args_list[split_point:]
+            required_args = self.evs_args_list[:split_point]
+            optional_args = self.evs_args_list[split_point:]
         return required_args, optional_args
 
-    def apply_event_args(self):
-        """ Inserts arg replacements into the appropriate places in their instructions for readability (verbose
-        output only). The arg replacements are represented as 'Xi:j', where i and j specify the byte range read
-        from the arguments passed to the RunEvent instruction.
+    def process_event_args(self) -> dict[tuple[int, int], set[str]]:
+        """Inserts arg replacements into the appropriate places in their instructions for readability.
 
-        Also returns a dictionary that allows the RunEvent instruction to guess the format of its arguments,
-        based on how they are actually used in the event instructions.
+        The arg replacements are represented as "arg_i_j", where i and j specify the start and end of the byte range
+        read from the arguments passed to the `RunEvent` instruction.
+
+        Returns a dictionary mapping start-stop bytes for reading the arg `(i, j)` to a set of format characters (e.g
+        `"i"`, "f"`) determined from the instruction's known arg format. The set values in this dictionary will
+        generally only contain one format string, unless the event argument is used for inconsistently-sized fields
+        within the same instruction.
         """
 
-        permitted = [0, 0.0, -1, 1, 10]  # Strings are permitted to overwrite anything.
-        arg_offset_dict = get_byte_offset_from_struct("@" + self.visible_args_format.replace("|", ""))
+        permitted = [0, 0.0, -1, 1, 10]  # NOTE: Strings are permitted to overwrite anything.
+        arg_offset_dict = get_byte_offset_from_struct(self.display_arg_types)
 
-        instruction_arg_set = set()
         instruction_arg_types = {}
 
-        self.verbose_args_list = self.args_list.copy()
+        self.evs_args_list = self.args_list.copy()
 
         for arg_r in self.event_args:
             try:
@@ -151,14 +184,14 @@ class Instruction(abc.ABC):
             except KeyError:
                 raise ValueError(
                     f"No argument in '{self.event_args}' begins at byte {arg_r.write_from_byte}. "
-                    f"Your replacement commands are misaligned."
+                    f"Your replacement commands are probably misaligned."
                 )
 
             if (
                 not (argument_byte_type == "s" and arg_r.bytes_to_write == 4)
                 and struct.calcsize(argument_byte_type) < arg_r.bytes_to_write
             ):
-                # Byte type 's' is actually a four-byte offset into the packed strings.
+                # Byte type "s" is actually a four-byte offset into the packed strings.
                 raise ValueError(
                     f"You cannot write {arg_r.bytes_to_write} bytes over an argument of type "
                     f"{argument_byte_type} (it's too small)."
@@ -170,27 +203,23 @@ class Instruction(abc.ABC):
                 _LOGGER.error(
                     f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
                     f"(position {argument_index}) in instruction {self.instruction_class}[{self.instruction_index}] "
-                    f"with args {self.args_list} (format {self.args_format})"
+                    f"with args {self.args_list} (types '{self.display_arg_types}')"
                 )
                 raise ValueError(
                     f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
                     f"(position {argument_index})."
                 )
 
-            self.verbose_args_list[argument_index] = arg_name
+            self.evs_args_list[argument_index] = arg_name
 
-            instruction_arg_set.add((arg_r.read_from_byte, arg_r.read_from_byte + arg_r.bytes_to_write - 1))
-            if arg_name not in instruction_arg_types:
-                instruction_arg_types[arg_name] = set(argument_byte_type)
-            else:
-                instruction_arg_types[arg_name].add(argument_byte_type)
+            arg_range = (arg_r.read_from_byte, arg_r.read_from_byte + arg_r.bytes_to_write - 1)
+            instruction_arg_types.setdefault(arg_range, set()).add(argument_byte_type)
 
-        return instruction_arg_set, instruction_arg_types
+        return {arg_range: instruction_arg_types[arg_range] for arg_range in sorted(instruction_arg_types)}
 
     def args_list_to_binary(self):
         if self.args_list:
-            format_string = "@" + self.args_format.replace("|", "") + "0i"
-            return struct.pack(format_string, *self.args_list)
+            return struct.pack(f"@{self.struct_arg_types}0i", *self.args_list)
         else:
             return b""
 

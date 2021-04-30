@@ -218,17 +218,16 @@ def get_value_test(
     raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
 
 
-def get_byte_offset_from_struct(format_string):
-    """Returns a dictionary of {byte_offset: (struct_index, struct_format)}.
+def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]]:
+    """Returns a dictionary mapping `byte_offset` to `(struct_index, struct_format)` tuples.
 
-    The byte offsets indicate where the associated element in the struct format string begins. Note that endian-type '@'
-    (native byte alignment) is critical here, as EMEVD uses byte-aligned packed binary data.
+    The byte offsets indicate where the associated element in the struct format string begins. Note that native byte
+    alignment "@" is critical here, as EMEVD uses byte-aligned packed binary data.
     """
-    endian = format_string[0]
-    format_string = format_string[1:]
+    format_string = format_string.replace("|", "")
     byte_offset_array = {}
-    for i in range(0, len(format_string)):
-        offset = struct.calcsize(endian + format_string[: i + 1]) - struct.calcsize(endian + format_string[i])
+    for i in range(len(format_string)):
+        offset = struct.calcsize("@" + format_string[:i + 1]) - struct.calcsize("@" + format_string[i])
         byte_offset_array[offset] = (i, format_string[i])
     return byte_offset_array
 

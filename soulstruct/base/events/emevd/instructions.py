@@ -475,8 +475,8 @@ def RunEvent(event_id, slot=0, args=(0,), arg_types=None, event_layers=None):
     """
     instruction_info = [2000, 0]  # Mutable list for this instruction only, as it may required modification.
     if arg_types is None:
-        # Assume all unsigned integers.
-        arg_types = "I" * len(args)
+        # Assume all signed integers, unless the only argument is zero.
+        arg_types = "I" if args == (0,) else "i" * len(args)
     if len(args) != len(arg_types):
         raise ValueError("Number of event arguments does not match length of argument type string in RunEvent.")
     format_string = "iI" + str(arg_types[0])
