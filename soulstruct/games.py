@@ -1,4 +1,7 @@
-"""Basic information structures for all FromSoftware games used across Soulstruct."""
+"""Basic information structures for all FromSoftware games used across Soulstruct.
+
+These `Game` instances are also used as singletons for game checking.
+"""
 from __future__ import annotations
 
 __all__ = [

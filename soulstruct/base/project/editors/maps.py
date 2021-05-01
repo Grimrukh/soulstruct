@@ -834,8 +834,12 @@ class MapsEditor(BaseFieldEditor):
         if field_type == ObjActParam and field_value == -1:
             # Link to ObjActParam with the object's model ID.
             obj_act_part_name = self.get_selected_field_dict()["obj_act_part_name"]
-            obj_act_part = self.get_selected_msb().parts[obj_act_part_name]
-            field_value = int(obj_act_part.model_name[1:5])
+            try:
+                obj_act_part = self.get_selected_msb().parts[obj_act_part_name]
+            except KeyError:  # invalid part name
+                pass
+            else:
+                field_value = int(obj_act_part.model_name[1:5])
         if valid_null_values is None:
             if field_type == PlaceName:
                 valid_null_values = {-1: "Default Map Name + Force Banner"}

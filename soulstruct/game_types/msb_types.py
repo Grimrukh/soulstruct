@@ -1,17 +1,10 @@
 from __future__ import annotations
 
-import typing as tp
-from enum import IntEnum
-
-from soulstruct.base.events.emevd.utils import get_value_test
-from soulstruct.base.events.emevd import instructions as instr
-from soulstruct.base.events.emevd.enums import CoordEntityType, NavmeshType
-from soulstruct.game_types.basic_types import GameObject
-
 __all__ = [
     "Map",
     "MapTyping",
     "MapEntry",
+    "MapEntity",
 
     "MapModel",
     "MapPieceModel",
@@ -65,6 +58,15 @@ __all__ = [
     "CollisionTyping",
     "NavigationEventTyping",
 ]
+
+import typing as tp
+from enum import IntEnum, unique
+
+from soulstruct.base.events.emevd.utils import get_value_test
+from soulstruct.base.events.emevd import instructions as instr
+from soulstruct.base.events.emevd.enums import CoordEntityType, NavmeshType
+from soulstruct.game_types.basic_types import GameObject
+from soulstruct.games import *
 
 
 class Map(GameObject):
@@ -148,7 +150,7 @@ class Map(GameObject):
         return self.emevd_file_stem
 
 
-class MapEntry(GameObject, IntEnum):
+class MapEntry(GameObject):
     """Anything that appears in an MSB."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False) -> [str, str]:
@@ -164,6 +166,48 @@ class MapEntry(GameObject, IntEnum):
         if cls.__name__ == "MapEntry":
             raise NotImplementedError("MapEntry base class has no corresponding non-abstract MSB class.")
         return f"MSB{cls.__name__}"
+
+
+@unique
+class MapEntity(MapEntry, IntEnum):
+    """Any MSB entry with an entity ID (enum values)."""
+
+    @staticmethod
+    def get_map_range_start():
+        """Should return base entity ID, e.g. `1510000` for m15_01_00_00 (Anor Londo)."""
+        raise TypeError("`get_map()` not defined for `MapEntity` subclass.")
+
+    @staticmethod
+    def get_game():
+        raise TypeError("`get_game()` not defined for `MapEntity` subclass.")
+
+    # noinspection PyMethodOverriding
+    @classmethod
+    def _generate_next_value_(cls, name, start, count, last_values):
+        try:
+            map_range_start = cls.get_map_range_start()
+            game = cls.get_game()
+        except TypeError:
+            raise NotImplementedError(
+                f"To use `auto()`, both `get_map()` and `get_game()` must be defined for {cls.__name__}."
+            )
+        start_value, max_value = cls.get_id_start_and_max(game)  # will raise `TypeError` if not valid for this class
+        value = map_range_start + count
+        if value > max_value:
+            raise ValueError(f"Too many members in `{cls.__name__}` for `auto()` range `({start_value}, {max_value})`.")
+        return value
+
+    @classmethod
+    def get_msb_entry_type_subtype(cls, pluralized_subtype=False) -> [str, str]:
+        raise NotImplementedError
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        """Return first and last entity ID value for automatic generation of entity IDs for specific `game`.
+
+        Not supported by default; supported subclasses will override this method.
+        """
+        raise TypeError(f"`{cls.__name__}` does not use entity IDs.")
 
 
 class MapModel(MapEntry):
@@ -223,7 +267,7 @@ class NavmeshModel(MapModel):
         return ("Models", "Navmeshes") if pluralized_subtype else ("Models", "Navmesh")
 
 
-class MapEvent(MapEntry):
+class MapEvent(MapEntity):
     """Base class for things that appear in the 'events' section of the MSB, such as sounds, ObjActs, and VFX."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -252,6 +296,10 @@ class SoundEvent(MapEvent):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "Sounds") if pluralized_subtype else ("Events", "Sound")
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        return 3800, 3899
+
 
 class VFXEvent(MapEvent):
     """VFX event (visual effect, e.g. fog gate) in MSB attached to a region.
@@ -268,6 +316,12 @@ class VFXEvent(MapEvent):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "VFX") if pluralized_subtype else ("Events", "VFX")
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 3400, 3599
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class WindEvent(MapEvent):
@@ -296,6 +350,12 @@ class SpawnerEvent(MapEvent):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "Spawners") if pluralized_subtype else ("Events", "Spawner")
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 3600, 3699
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
+
 
 class MessageEvent(MapEvent):
     """Message event in MSB that causes a "developer message" to appear in a region. Can be enabled or disabled."""
@@ -308,6 +368,12 @@ class MessageEvent(MapEvent):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "Messages") if pluralized_subtype else ("Events", "Message")
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 3700, 3799
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class ObjActEvent(MapEvent):
@@ -334,6 +400,10 @@ class ObjActEvent(MapEvent):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "ObjActs") if pluralized_subtype else ("Events", "ObjAct")
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        raise TypeError("`ObjActEvent` does not use normal entity IDs, but uses special flags instead.")
+
 
 class SpawnPointEvent(MapEvent):
     """Spawn point attached to an MSB region."""
@@ -343,6 +413,12 @@ class SpawnPointEvent(MapEvent):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "SpawnPoints") if pluralized_subtype else ("Events", "SpawnPoint")
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 3900, 3999
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class MapOffsetEvent(MapEvent):
@@ -371,6 +447,14 @@ class NavigationEvent(MapEvent):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "Navigation") if pluralized_subtype else ("Events", "Navigation")
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        raise NotImplementedError(
+            "Navigation entity IDs are also baked into navmesh NVM geometry, so automatic enumeration is not yet "
+            "supported."
+        )
+        # return 4000, 4199
+
 
 class EnvironmentEvent(MapEvent):
     """Environment event in MSB."""
@@ -386,7 +470,7 @@ class NPCInvasionEvent(MapEvent):
         return ("Events", "NPCInvasion") if pluralized_subtype else ("Events", "NPCInvasion")
 
 
-class Region(MapEntry):
+class Region(MapEntity):
     """Condition upon a region as a shortcut to condition upon the player being inside it (condition only)."""
     def __call__(self, negate=False, condition=None, skip_lines=0):
         try:
@@ -409,6 +493,12 @@ class Region(MapEntry):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Regions", None
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 2000, 2899
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class RegionPoint(Region):
@@ -453,7 +543,7 @@ class RegionBox(Region):
         return ("Regions", "Boxes") if pluralized_subtype else ("Regions", "Box")
 
 
-class MapPart(MapEntry):
+class MapPart(MapEntity):
     """Base class for anything that appears in the Parts section of the MSB."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -471,6 +561,12 @@ class MapPiece(MapPart):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "MapPieces") if pluralized_subtype else ("Parts", "MapPiece")
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 3000, 3199
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class Object(MapPart):
@@ -514,6 +610,13 @@ class Object(MapPart):
     def activate(self, obj_act_id: ObjActEvent, relative_index=None):
         return instr.ActivateObject(self, obj_act_id=obj_act_id, relative_index=relative_index)
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        """Note that range 1900-1999 is reserved for special manual assignment (bonfires, fog objects, fog VFX)."""
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 1000, 1899
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
+
 
 class Character(MapPart):
     """Condition upon a character as a shortcut to condition upon them being alive."""
@@ -551,6 +654,13 @@ class Character(MapPart):
     def disable_collision(self):
         return instr.DisableCharacterCollision(self)
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        """Note that range 0900-0999 is reserved for special manual assignment (bonfire characters)."""
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 0, 899
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
+
 
 class PlayerStart(MapPart):
     """PlayerStart added in MSB. Used as an argument in `Warp` instructions. No additional state."""
@@ -576,6 +686,12 @@ class Collision(MapPart):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "Collisions") if pluralized_subtype else ("Parts", "Collision")
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+            return 3200, 3399
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class Navmesh(MapPart):
