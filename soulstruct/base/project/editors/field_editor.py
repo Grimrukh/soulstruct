@@ -168,14 +168,14 @@ class FieldRow:
         self.unhide()
 
     def _update_field_GameObjectSequence(self, value):
-        if len(self.field_type.game_objects) != len(value):
+        if self.field_type.count != len(value):
             raise ValueError(
                 f"Length of value {value} does not match number of objects in `GameObjectSequence` for field "
                 f"{self.field_name}."
             )
         self.field_links = []
-        for field_type_i, value_i in zip(self.field_type.game_objects, value):
-            self.field_links += self.master.get_field_links(field_type_i, value_i)
+        for value_i in value:
+            self.field_links += self.master.get_field_links(self.field_type.game_object_type, value_i)
         self._set_linked_value_label("(select to edit)", multiple_hint="{MULTIPLE}")
 
     def _update_field_GameObject(self, value):
@@ -299,13 +299,14 @@ class FieldRow:
                 raise SyntaxError
         except SyntaxError:
             raise ValueError(f"Value of field {self.field_nickname} should be a list of strings or numbers.")
-        for field_type_i, new_value_i in zip(self.field_type.game_objects, new_value):
+        game_object_type = self.field_type.game_object_type
+        for new_value_i in new_value:
             if new_value_i is None:
                 continue  # None is valid for any type.
-            if issubclass(field_type_i, BaseParam) and not isinstance(new_value_i, int):
-                raise ValueError(f"Found non-integer {field_type_i} value in sequence: {new_value_i}")
-            elif issubclass(field_type_i, MapEntry) and not isinstance(new_value_i, str):
-                raise ValueError(f"Found non-string {field_type_i} name in sequence: {new_value_i}")
+            if issubclass(game_object_type, BaseParam) and not isinstance(new_value_i, int):
+                raise ValueError(f"Found non-integer {game_object_type} value in sequence: {new_value_i}")
+            elif issubclass(game_object_type, MapEntry) and not isinstance(new_value_i, str):
+                raise ValueError(f"Found non-string {game_object_type} name in sequence: {new_value_i}")
         return new_value
 
     def _string_to_GameObject(self, string):

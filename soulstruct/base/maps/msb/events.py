@@ -44,6 +44,8 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         ),
     }
 
+    REFERENCE_FIELDS = {"parts": ["base_part_name"], "regions": ["base_region_name"]}
+
     base_part_name: tp.Optional[str]
     base_region_name: tp.Optional[str]
 
@@ -414,6 +416,8 @@ class MSBTreasureEvent(MSBEvent, abc.ABC):
         "is_hidden",
     )
 
+    REFERENCE_FIELDS = {"parts": ["base_part_name", "treasure_part_name"], "regions": ["base_region_name"]}
+
     treasure_part_name: tp.Optional[str]
     item_lot_1: int
     item_lot_2: int
@@ -516,6 +520,11 @@ class MSBSpawnerEvent(MSBEvent):
         # 'spawn_region_names' defined in subclass.
     }
 
+    REFERENCE_FIELDS = {
+        "parts": ["base_part_name", "spawn_part_names"],
+        "regions": ["base_region_name", "spawn_region_names"]
+    }
+
     FIELD_ORDER = (
         "entity_id",
         "max_count",
@@ -529,6 +538,9 @@ class MSBSpawnerEvent(MSBEvent):
         "spawn_part_names",
         "spawn_region_names",
     )
+
+    spawn_region_names: list[tp.Union[str, None]]
+    spawn_part_names: list[tp.Union[str, None]]
 
     def __init__(self, source=None, **kwargs):
         self._spawn_region_indices = [-1] * self.SPAWN_REGION_COUNT
@@ -669,6 +681,8 @@ class MSBObjActEvent(MSBEvent):
         "obj_act_flag",
     )
 
+    REFERENCE_FIELDS = {"parts": ["base_part_name", "obj_act_part_name"], "regions": ["base_region_name"]}
+
     obj_act_entity_id: int
     obj_act_part_name: tp.Optional[str]
     obj_act_param_id: int
@@ -721,6 +735,8 @@ class MSBSpawnPointEvent(MSBEvent):
         "base_part_name",
         "spawn_point_region_name",
     )
+
+    REFERENCE_FIELDS = {"parts": ["base_part_name"], "regions": ["base_region_name", "spawn_point_region_name"]}
 
     spawn_point_region_name: tp.Optional[str]
 
@@ -804,7 +820,7 @@ class MSBNavigationEvent(MSBEvent):
             "Navmesh Region",
             Region,
             None,
-            "Region to which Navigation event is attached, which encloses parts of one or more Navmesh parts.",
+            "Region to which Navigation event is attached, which encloses faces of one or more Navmesh parts.",
         ),
     }
 
@@ -813,9 +829,11 @@ class MSBNavigationEvent(MSBEvent):
         "navigation_region_name",
     )
 
+    REFERENCE_FIELDS = {"parts": ["base_part_name"], "regions": ["base_region_name", "navigation_region_name"]}
+
     navigation_region_name: tp.Optional[str]
 
-    def __init__(self, source, **kwargs):
+    def __init__(self, source=None, **kwargs):
         self._navigation_region_index = None
         super().__init__(source=source, **kwargs)
 
@@ -965,6 +983,8 @@ class MSBNPCInvasionEvent(MSBEvent):
         "invasion_flag_id",
         "spawn_point_region_name",
     )
+
+    REFERENCE_FIELDS = {"parts": ["base_part_name"], "regions": ["base_region_name", "spawn_point_region_name"]}
 
     host_entity_id: int
     invasion_flag_id: int

@@ -1,10 +1,13 @@
+__all__ = ["MapStudioDirectory"]
+
 from soulstruct.base.maps.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
+from soulstruct.games import DarkSoulsPTDEType
 
 from .constants import ALL_MAPS, get_map
 from .msb import MSB
 
 
-class MapStudioDirectory(_BaseMapStudioDirectory):
+class MapStudioDirectory(_BaseMapStudioDirectory, DarkSoulsPTDEType):
     """Dark Souls (either version) `MapStudio` directory.
 
     The format of these files is exactly the same in PTD and DSR. The vanilla DSR files have a few new additions (the
@@ -38,3 +41,5 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     DukesArchives: MSB  # and Crystal Cave
     KilnOfTheFirstFlame: MSB
     UndeadAsylum: MSB
+
+    msbs: dict[str, MSB]

@@ -40,8 +40,8 @@ class Instruction(_BaseInstruction):
     INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES
     EventLayers = EventLayers
     HEADER_STRUCT = BinaryStruct(
-        ("instruction_class", "I"),
-        ("instruction_index", "I"),
+        ("category", "I"),
+        ("index", "I"),
         ("base_args_size", "I"),
         ("first_base_arg_offset", "i"),
         ("first_event_layers_offset", "i"),

@@ -85,6 +85,10 @@ class MapEntryRow(EntryRow):
             command=lambda: self.master.popout_entry_text_edit(self.row_index),
         )
         self.context_menu.add_command(
+            label="Translate Japanese Text",
+            command=lambda: self.master.translate_entry_text(self.row_index),
+        )
+        self.context_menu.add_command(
             label="Duplicate Entry to Next Index",
             command=lambda: self.master.add_relative_entry(self.entry_id),
         )
@@ -543,7 +547,7 @@ class MapsEditor(BaseFieldEditor):
         try:
             entry_type, entry_subtype = self.active_category.split(": ")
         except ValueError:
-            raise ValueError(f"Category name was not in [List: Type] format: {self.active_category}")
+            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {self.active_category}")
         entry_list = self.get_selected_msb()[entry_type]
         entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
         msb_entry = entry_list.duplicate_entry(entry_index, entry_subtype=entry_subtype, auto_add=False, name=text)
@@ -554,7 +558,7 @@ class MapsEditor(BaseFieldEditor):
         try:
             entry_type, entry_subtype = self.active_category.split(": ")
         except ValueError:
-            raise ValueError(f"Category name was not in [List: Type] format: {self.active_category}")
+            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {self.active_category}")
         entry_list = self.get_selected_msb()[entry_type]
         entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
         if entry_index is None:
@@ -784,10 +788,10 @@ class MapsEditor(BaseFieldEditor):
                 return []
         selected_msb = self.get_selected_msb()
         try:
-            entry_list, entry_type = category.split(": ")
+            entry_type, entry_subtype = category.split(": ")
         except ValueError:
-            raise ValueError(f"Category name was not in [List: Type] format: {category}")
-        return selected_msb[entry_list].get_entries(entry_type)
+            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {category}")
+        return selected_msb[entry_type].get_entries(entry_subtype)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns a `zip()` generator for parent method."""
@@ -811,7 +815,16 @@ class MapsEditor(BaseFieldEditor):
 
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_data(category)
+
+        try:
+            entry_type, _ = category.split(": ")
+        except ValueError:
+            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {category}")
+        old_name = entry_list[entry_index].name
         entry_list[entry_index].name = text
+
+        self.get_selected_msb().rename_references(old_name, text, entry_types=[entry_type])
+
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_index, text, entry_list[entry_index].description)
 

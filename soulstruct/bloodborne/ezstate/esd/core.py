@@ -6,7 +6,7 @@ from soulstruct.base.ezstate.esd import (
     Condition as _BaseCondition,
     Command as _BaseCommand,
 )
-from soulstruct.games import BLOODBORNE
+from soulstruct.games import BloodborneType
 from soulstruct.game_types.internal_types import ESDType
 from soulstruct.utilities.binary import BinaryStruct
 
@@ -59,8 +59,7 @@ class State(_BaseState, abc.ABC):
     )
 
 
-class ESD(_BaseESD, abc.ABC):
-    GAME = BLOODBORNE
+class ESD(_BaseESD, BloodborneType, abc.ABC):
 
     EXTERNAL_HEADER_STRUCT = BinaryStruct(
         ("version", "4s", b"fsSL"),  # Note specific case.

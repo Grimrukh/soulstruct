@@ -11,9 +11,10 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.utilities.binary import BinaryReader
 
-from .exceptions import EMEVDError
 from .event import Event
+from .exceptions import EMEVDError
 from .numeric import build_numeric
+from .utils import EntityEnumsManager
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.emevd.evs import EVSParser
@@ -33,7 +34,7 @@ class EMEVD(GameFile, abc.ABC):
     DCX_MAGIC: tuple[int, int] = ()
     HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, emevd_source: GameFile.Typing, dcx_magic=(), script_path=None):
+    def __init__(self, emevd_source: GameFile.Typing, dcx_magic=(), script_directory=None):
         """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
 
         Event scripts 50 and 0 are run automatically, in that order. All other scripts are called from them, sometimes
@@ -48,9 +49,9 @@ class EMEVD(GameFile, abc.ABC):
         automatically disabled each time the game loads; flags where X is 0-3 are persistent and saved to your game
         file.
 
-        If your `emevd_source` is a Python-like EVS script that uses any relative imports, you must pass `script_path`
-        to this class so those relative imports can be resolved. (If the EVS script is a path source, `script_path` can
-        be detected automatically.)
+        If your `emevd_source` is a Python-like EVS script that uses any relative imports, you must pass
+        `script_directory` to this class so those relative imports can be resolved. (If the EVS script is a path source,
+        `script_directory` can be detected automatically.)
         """
 
         self.events = {}
@@ -58,11 +59,11 @@ class EMEVD(GameFile, abc.ABC):
         self.linked_file_offsets = []  # offsets into packed strings
         self.map_name = ""
 
-        if script_path is None:
+        if script_directory is None:
             if isinstance(emevd_source, Path) or (isinstance(emevd_source, str) and "\n" not in emevd_source):
-                script_path = Path(emevd_source)
+                script_directory = Path(emevd_source).parent
 
-        super().__init__(emevd_source, dcx_magic=dcx_magic, script_path=script_path)
+        super().__init__(emevd_source, dcx_magic=dcx_magic, script_directory=script_directory)
         if not dcx_magic:
             self.dcx_magic = self.DCX_MAGIC  # default to standard game DCX
         if not self.map_name and self.path:
@@ -72,7 +73,7 @@ class EMEVD(GameFile, abc.ABC):
             if self.DCX_MAGIC:
                 self.path = self.path.with_suffix(".emevd.dcx")
 
-    def _handle_other_source_types(self, file_source, script_path=None) -> tp.Optional[BinaryReader]:
+    def _handle_other_source_types(self, file_source, script_directory=None) -> tp.Optional[BinaryReader]:
         if isinstance(file_source, self.EVS_PARSER):
             # Copy data from existing `EVSParser` instance.
             self.map_name = file_source.map_name
@@ -84,7 +85,7 @@ class EMEVD(GameFile, abc.ABC):
 
         elif isinstance(file_source, str) and "\n" in file_source:
             # Parse EVS or numeric string format.
-            parsed = self.EVS_PARSER(file_source, script_path=script_path)
+            parsed = self.EVS_PARSER(file_source, script_directory=script_directory)
             self.map_name = parsed.map_name
             events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
             self.events.update(events)
@@ -95,9 +96,9 @@ class EMEVD(GameFile, abc.ABC):
             self.map_name = emevd_path.name.split(".")[0]
 
             if emevd_path.suffix in {".evs", ".py"}:
-                if script_path is None:
-                    script_path = emevd_path.parent
-                parsed = self.EVS_PARSER(emevd_path, script_path=script_path)
+                if script_directory is None:
+                    script_directory = emevd_path.parent
+                parsed = self.EVS_PARSER(emevd_path, script_directory=script_directory)
                 self.map_name = parsed.map_name
                 events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
                 self.events.update(events)
@@ -288,13 +289,69 @@ class EMEVD(GameFile, abc.ABC):
         docstring += '\n"""'
         return docstring
 
-    def to_evs(self):
+    def to_evs(
+        self,
+        entity_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
+        entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
+        warn_missing_enums=True,
+        entity_module_prefix=".",
+    ):
+        """Convert EMEVD to a Python-style EVS string.
+
+        Currently, EMEVD instructions are line-for-line with EVS instructions; no automatic 'decompilation' into higher-
+        level Python syntax (e.g. converting conditions and skips into `if` blocks) is supported.
+
+        Any `entity_module_paths` passed in will be star-imported into the EVS script with `entity_module_prefix`. These
+        modules will be scanned for `MapEntity`-subclassed entity ID enumerations, the names of which will be
+        substituted for entity IDs of matching type anywhere in the decompiled EVS script.
+
+        NOTE: It is currently assumed that all entity modules can be imported using the same `entity_module_prefix`. It
+        would be a confusing setup to do otherwise, but you can always edit the import lines yourself to adjust.
+
+        For example:
+        ```
+            # without entities modules
+            AddSpecialEffect(1510100, special_effect_id=1234)
+
+            # entities module `m15_01_00_00_entities.py` defining `class Characters(Character)` enum with 1510100
+            from .m15_01_00_00_entities.py import *
+            ...
+            AddSpecialEffect(Characters.BlackKnight3, special_effect_id=1234)
+        ```
+
+        If `warn_missing_enums=True` (default) and any `entity_module_paths` are given, entity IDs that are not found in
+        any of the given entities modules will cause a warning to be logged and a TO-DO comment to be written at the end
+        of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
+        """
+        if entity_star_module_paths or entity_non_star_module_paths:
+            enums_manager = EntityEnumsManager(entity_star_module_paths, entity_non_star_module_paths)
+        else:
+            enums_manager = None
+
         for event in self.events.values():
             event.update_evs_function_args()
 
         docstring = self.get_evs_docstring()
         imports = f"from {self.IMPORT_STRING} import *"
-        evs_events = [event.to_evs() for event in self.events.values()]
+        evs_events = [event.to_evs(enums_manager) for event in self.events.values()]
+
+        if enums_manager:
+            if warn_missing_enums:
+                for entity_cls_name, missing_id in enums_manager.missing_enums:
+                    _LOGGER.warning(f"Missing '{entity_cls_name}' entity ID: {missing_id}")
+            for name in sorted(enums_manager.used_star_modules):
+                imports += f"\nfrom {entity_module_prefix}{name} import *"
+            for name, enums in sorted(enums_manager.used_non_star_imports.items()):
+                if enums:
+                    import_prefix = f"\nfrom {entity_module_prefix}{name} import "
+                    one_line_suffix = ", ".join(e.import_string for e in enums)
+                    if len(import_prefix + one_line_suffix) > 119:
+                        # Split across multiple lines.
+                        multi_line_imports = "\n    ".join(e.import_string + "," for e in enums)
+                        imports += f"{import_prefix}(\n    {multi_line_imports}\n)"
+                    else:
+                        imports += f"{import_prefix}{one_line_suffix}"
+
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
     def pack(self):
@@ -408,7 +465,14 @@ class EMEVD(GameFile, abc.ABC):
         with numeric_path.open("w", encoding="utf-8") as f:
             f.write(self.to_numeric())
 
-    def write_evs(self, evs_path=None):
+    def write_evs(
+        self,
+        evs_path=None,
+        entity_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
+        entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
+        warn_missing_enums=True,
+        entity_module_prefix=".",
+    ):
         if not evs_path:
             evs_path = self.map_name
             if not evs_path.endswith(".evs.py"):
@@ -417,4 +481,6 @@ class EMEVD(GameFile, abc.ABC):
         if evs_path.parent:
             evs_path.parent.mkdir(exist_ok=True, parents=True)
         with evs_path.open("w", encoding="utf-8") as f:
-            f.write(self.to_evs())
+            f.write(self.to_evs(
+                entity_star_module_paths, entity_non_star_module_paths, warn_missing_enums, entity_module_prefix
+            ))

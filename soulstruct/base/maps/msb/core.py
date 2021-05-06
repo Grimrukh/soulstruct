@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import abc
-import logging
-import typing as tp
 import io
+import logging
+import re
+import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.games import GameSpecificType
+from soulstruct.game_types.msb_types import *
 from soulstruct.utilities.binary import BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
@@ -23,7 +26,36 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSB(GameFile, abc.ABC):
+# These are ordered by convenience (same as GUI).
+ENTITY_GAME_TYPES = {
+    "parts": (
+        MapPiece,
+        Object,
+        Character,
+        PlayerStart,
+        Collision,
+    ),
+    "events": (
+        SoundEvent,
+        VFXEvent,
+        SpawnerEvent,
+        MessageEvent,
+        SpawnPointEvent,
+        NavigationEvent,
+    ),
+    "regions": (
+        RegionPoint,
+        RegionSphere,
+        RegionCylinder,
+        RegionBox,
+    ),
+}
+
+
+MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
+
+
+class MSB(GameFile, GameSpecificType, abc.ABC):
     """Handles MSB ('MapStudio') data. Subclassed by each game.
 
     The MSB contains four types of data entries:
@@ -148,6 +180,27 @@ class MSB(GameFile, abc.ABC):
             raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
         return next(iter(results.values()))
 
+    def rename_references(self, old_name: str, new_name: str, entry_types: tp.Sequence[str] = ()):
+        """Looks for all linked references to `old_name` in parts and events, and renames any to `new_name`.
+
+        If `entry_types` is given, only references to those entry types will be checked.
+        """
+        if entry_types:
+            parsed_entry_types = []
+            for entry_type_name in entry_types:
+                entry_type_name = entry_type_name.lower()
+                if entry_type_name in {"model", "event", "region", "part"}:
+                    entry_type_name += "s"
+                elif entry_type_name not in {"models", "events", "regions", "parts"}:
+                    raise ValueError(f"{entry_type_name} is not a valid MSB entry type.")
+                parsed_entry_types.append(entry_type_name)
+            entry_types = tuple(parsed_entry_types)
+
+        for entry in self.parts:
+            entry.rename_names(old_name, new_name, entry_types=entry_types)
+        for entry in self.events:
+            entry.rename_names(old_name, new_name, entry_types=entry_types)
+
     def resolve_entries_list(self, entries, entry_types=()):
         """Lists of entries can include names of entries, if unique, or the actual `MSBEntry` instances."""
         if not entries:
@@ -162,12 +215,12 @@ class MSB(GameFile, abc.ABC):
                 raise TypeError(f"Invalid entry specifier: {entry}. Must be a (unique) entry name or instance.")
         return resolved
 
-    def get_repeated_entity_ids(self):
+    def get_repeated_entity_ids(self) -> dict[str, list[MSBEntryEntity]]:
         repeats = {}
         for entry_type in ("Parts", "Regions", "Events"):
             entries = getattr(self, entry_type.lower())
             entity_ids = set()
-            repeated_entries = []
+            repeated_entries = []  # type: list[MSBEntryEntity]
             for entry in [e for e in entries if e.entity_id > 0]:
                 if entry.entity_id in entity_ids:
                     repeated_entries.append(entry)
@@ -302,6 +355,91 @@ class MSB(GameFile, abc.ABC):
             if not selected_entries or region in selected_entries:
                 region.translate += translate
 
+    def write_entities_module(self, module_path: tp.Union[str, Path] = None, area_id: int = None, block_id: int = None):
+        """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script."""
+        if module_path is None:
+            if self.path is None:
+                raise ValueError("Cannot auto-detect MSB entities `module_path` (MSB path not known).")
+            module_path = self.path.parent / f"{self.path.name.split('.')[0]}_entities.py"
+
+        module_path.parent.mkdir(parents=True, exist_ok=True)
+
+        auto_map_range_start = None
+        if area_id is None and block_id is None:
+            if self.path:
+                map_name_match = MAP_NAME_RE.match(self.path.name)
+                if map_name_match:
+                    area_id, block_id = map(int, map_name_match.group(1, 2))
+                    auto_map_range_start = area_id * 100000 + block_id * 10000
+                else:
+                    _LOGGER.warning(
+                        f"Could not auto-detect map area and block (cannot parse from MSB path: {self.path}). "
+                        "Auto-enumerator functions will be commented out; replace the {MAP_RANGE_START} string in each "
+                        "one and uncomment to use."
+                    )
+            else:
+                _LOGGER.warning(
+                    "Could not auto-detect map area and block (MSB path not known). Auto-enumerator functions will be"
+                    "commented out; replace the {MAP_RANGE_START} string in each one and uncomment to use."
+                )
+        elif area_id is not None and block_id is not None:
+            auto_map_range_start = area_id * 100000 + block_id * 10000
+        else:
+            raise ValueError("Both `area_id` and `block_id` must be given, or neither for automatic detection.")
+
+        trailing_digit_re = re.compile(r"(.*?)(\d+)")
+
+        def sort_key(key_value) -> tuple[str, int]:
+            """Sort trailing digits properly."""
+            _, value_ = key_value
+            if match := trailing_digit_re.match(value_.name):
+                return match.group(1), int(match.group(2))
+            return value_.name, 0
+
+        module_path = Path(module_path)
+        module_text = "from soulstruct.games import DARK_SOULS_DSR\nfrom soulstruct.game_types import *\n"
+        for entry_type_name, entry_subtypes in ENTITY_GAME_TYPES.items():
+            for entry_subtype in entry_subtypes:
+                class_name = entry_subtype.get_msb_entry_type_subtype(pluralized_subtype=True)[1]
+                class_text = ""
+                entity_id_dict = self.get_entity_id_dict(entry_type_name, entry_subtype)
+                sorted_entity_id_dict = {
+                    k: v for k, v in sorted(entity_id_dict.items(), key=sort_key)
+                }
+                for entity_id, entry in sorted_entity_id_dict.items():
+                    name = entry.name.replace(" ", "_")
+                    try:
+                        name = name.encode("utf-8").decode("ascii")
+                    except UnicodeDecodeError:
+                        class_text += f"    # {name} = {entity_id}  # TODO: Invalid name characters."
+                    else:
+                        class_text += f"    {name} = {entity_id}"
+                    if entry.description:
+                        class_text += f"  # {entry.description}"
+                    class_text += "\n"
+                if class_text:
+                    class_def = f"\n\nclass {class_name}({entry_subtype.__name__}):\n"
+                    class_def += f"    \"\"\"`{entry_subtype.__name__}` entity IDs for MSB and EVS use.\"\"\"\n\n"
+                    auto_lines = [
+                        "    # noinspection PyMethodParameters",
+                        "    def _generate_next_value_(name, _, count, __):",
+                        f"        return {entry_subtype.__name__}.auto_generate(count, {self.GAME.variable_name}, "
+                        f"{{MAP_RANGE_START}})",
+                    ]
+                    if auto_map_range_start is None:
+                        auto_lines = ["    # " + line[4:] for line in auto_lines]
+                    else:
+                        auto_lines[-1] = auto_lines[-1].format(MAP_RANGE_START=auto_map_range_start)
+                    class_def += "\n".join(auto_lines) + "\n\n"
+                    class_text = class_def + class_text
+                    module_text += class_text
+
+        with module_path.open("w", encoding="utf-8") as f:
+            f.write(module_text)
+
+    # TODO: Methods to import entity IDs from module by matching names, and import names from module by matching entity
+    #  IDs (e.g. once you fix exported Japanese names).
+
     @classmethod
     def get_subtype_dict(cls) -> dict[str, tuple[MSBSubtype]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
@@ -319,7 +457,7 @@ class MSB(GameFile, abc.ABC):
             entry_list_name += "s"
         elif entry_list_name not in {"models", "events", "regions", "parts"}:
             raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
-        return getattr(self, entry_list_name.lower())
+        return getattr(self, entry_list_name)
 
     def __iter__(self):
         return iter((self.models, self.events, self.regions, self.parts))

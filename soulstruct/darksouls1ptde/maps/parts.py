@@ -12,6 +12,7 @@ __all__ = [
     "MSBPartList",
 ]
 
+import abc
 import struct
 import typing as tp
 
@@ -38,7 +39,7 @@ from .constants import get_map
 from .msb_entry import MSBEntryList
 
 
-class MSBPart(_BaseMSBPart):
+class MSBPart(_BaseMSBPart, abc.ABC):
     PART_HEADER_STRUCT = BinaryStruct(
         ("__name_offset", "i"),
         ("__part_type", "i"),

@@ -206,7 +206,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 frame=tab_frames["entities"],
                 smart_frame_class=EntityEditor,
                 project=self.project,
-                evs_directory=self.project.project_root / "events",
+                entities_directory=self.project.project_root / "entities",
                 global_map_choice_func=self.set_global_map_choice,
                 linker=self.linker,
                 sticky="nsew",

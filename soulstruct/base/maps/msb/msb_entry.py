@@ -8,6 +8,7 @@ import typing as tp
 from copy import deepcopy
 from functools import wraps
 
+from soulstruct.game_types.basic_types import GameObjectSequence
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
@@ -27,6 +28,7 @@ class MSBEntry(abc.ABC):
     ENTRY_SUBTYPE = None  # type: MSBSubtype
     FIELD_INFO = {}  # type: dict[str, MapFieldInfo]
     FIELD_ORDER = ()  # If given, fields will be displayed in this order. Otherwise uses order of `FIELD_INFO` keys.
+    REFERENCE_FIELDS = {}  # type: dict[str, list[str, ...]]  # maps reference entry types to field names that use them
 
     def __init__(self, source=None, **kwargs):
         """Base class for entries of any type and subtype that appear in an `MSB` (under one of the four entry lists).
@@ -139,6 +141,27 @@ class MSBEntry(abc.ABC):
         field_names = self.field_names
         hidden_fields = [field for field in self.FIELD_INFO.keys() if field not in field_names]
         return self.FIELD_ORDER + tuple(hidden_fields)
+
+    def rename_names(self, old_name: str, new_name: str, entry_types=()):
+        """Check any `REFERENCE_FIELDS` used by this class and rename them from `old_name` to `new_name`.
+
+        If `entry_types` is given, only references to one of those given types will be changed. (References that can be
+        multiple types only need to match one given type.)
+
+        `GameObjectSequence` types are checked properly as well.
+        """
+
+        for reference_type, fields in self.REFERENCE_FIELDS.items():
+            if not entry_types or reference_type in entry_types:
+                for field_name in fields:
+                    field_info = self.FIELD_INFO[field_name]
+                    if issubclass(field_info.display_type, GameObjectSequence):
+                        setattr(self, field_name, [
+                            new_name if name == old_name else name for name in getattr(self, field_name)
+                        ])
+                    else:
+                        if getattr(self, field_name) == old_name:
+                            setattr(self, field_name, new_name)
 
     def __repr__(self):
         kwargs = {}

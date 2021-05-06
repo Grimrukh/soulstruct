@@ -20,6 +20,7 @@ __all__ = [
     "MSBEventList",
 ]
 
+import abc
 import typing as tp
 
 from soulstruct.game_types import *
@@ -45,7 +46,7 @@ from soulstruct.utilities.misc import partialmethod
 from .msb_entry import MSBEntryList
 
 
-class MSBEvent(_BaseMSBEvent):
+class MSBEvent(_BaseMSBEvent, abc.ABC):
     """MSB event entry in Bloodborne."""
 
     EVENT_HEADER_STRUCT = BinaryStruct(
@@ -337,6 +338,8 @@ class MSBWindVFXEvent(MSBEvent):
         "unk_x08_x0c",
     )
 
+    REFERENCE_FIELDS = {"parts": ["base_part_name"], "regions": ["base_region_name", "wind_region_name"]}
+
     wind_region_name: tp.Optional[str]
     vfx_id: int
     unk_x08_x0c: float
@@ -404,6 +407,8 @@ class MSBPatrolRouteEvent(MSBEvent):
         "unk_x00_x04",
         "patrol_region_names",
     )
+
+    REFERENCE_FIELDS = {"parts": ["base_part_name"], "regions": ["base_region_name", "patrol_region_names"]}
 
     unk_x00_x04: int
 
@@ -543,6 +548,11 @@ class MSBPlatoonEvent(MSBEvent):
         "platoon_id_script_active",
         "state",
     )
+
+    REFERENCE_FIELDS = {
+        "parts": ["base_part_name", "platoon_character_names", "platoon_parent_names"],
+        "regions": ["base_region_name"]
+    }
 
     def __init__(self, source, **kwargs):
         self._platoon_character_names = [None] * 30

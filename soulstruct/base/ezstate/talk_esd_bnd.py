@@ -43,20 +43,18 @@ class TalkESDBND(BaseBND, abc.ABC):
             self.path = file_source.with_suffix(self.EXT)
             self.reload_all_esp(file_source, allow_new=True)
             self.update_entries()
-            self.create_header_structs()
             return
         elif isinstance(file_source, dict):
             # Note that `path` cannot be detected and must be passed to `write()` manually.
             self.path = None
             self.set_default_bnd()
             self.unpack_from_dict(file_source)
-            self.create_header_structs()
             return
         raise InvalidGameFileTypeError(f"`talkesdbnd_source` was not a folder of ESP files or a dictionary of `ESD`s.")
 
     @abc.abstractmethod
     def set_default_bnd(self):
-        """Set BND attributes for loading `TalkESDBND` from an ESP file or folder thereof."""
+        """Set BND attributes for loading `TalkESDBND` from a single ESP file or folder containing them."""
 
     def unpack(self, reader: BinaryReader, **kwargs):
         self.talk = {}
@@ -126,7 +124,7 @@ class TalkESDBND(BaseBND, abc.ABC):
                 new_id = max([entry.id for entry in self.entries]) + 1 if self.entries else 1
                 new_entry = BinderEntry(data=talk_entry.pack(), entry_id=new_id, path=entry_path)
                 self.add_entry(new_entry)
-                _LOGGER.debug(f"New ESD entry added to TalkESDBND: t{talk_id}.esd")
+                _LOGGER.debug(f"New ESD entry added to TalkESDBND (ID {new_id}): t{talk_id}.esd")
 
     def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, skip_update=False, **pack_kwargs):
         """Update BND entries from current `ESD` instances before packing/writing BND."""

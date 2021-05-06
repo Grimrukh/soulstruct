@@ -1763,7 +1763,7 @@ def Event13005890():
     DefineLabel(3)
     GotoIfPlayerNotInOwnWorld(Label.L4)
     EnableBossMusic(3002899)
-    Unknown_2010_07(entity=3002898)
+    Unknown_2010_07(sound_id=3002898)
     EnableBossHealthBar(3000899, name=905270)
     SetNetworkUpdateRate(3000899, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     ChangeCamera(normal_camera_id=3000, locked_camera_id=3000)

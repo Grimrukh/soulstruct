@@ -51,12 +51,47 @@ class EMEVDDirectory(abc.ABC):
             emevd.write(emevd_directory / emevd.path.name)
         _LOGGER.info("All binary EMEVD files written successfully.")
 
-    def write_evs(self, emevd_directory=None):
+    def write_evs(
+        self, emevd_directory=None, entities_directory=None, warn_missing_enums=True, entity_module_prefix="."
+    ):
+        """Write EVS scripts for all EMEVD files.
+
+        If given, `entities_directory` should contain files named `{emevd_path_stem}_entities.py`. The entities module
+        matching the map stem for each EMEVD will be available as a star import for that EVS script; all other modules
+        with names ending in "_entities.py" present in the directory will be available for non-star import, for the rare
+        case where map EMEVD references IDs from other maps (e.g. in `PlayCutscene`).
+
+        See `EMEVD.write_evs()` for argument usage.
+        """
         if emevd_directory is None:
             emevd_directory = self._directory
         emevd_directory = Path(emevd_directory)
-        for emevd in self.emevds.values():
-            emevd.write_evs(emevd_directory / emevd.path.with_suffix(".evs.py").name)
+        if entities_directory is not None:
+            entities_directory = Path(entities_directory)
+        for map_name, emevd in self.emevds.items():
+            entity_star_module_paths = []
+            entity_non_star_module_paths = []
+
+            # TODO: Can I somehow support imports in Common?
+
+            # TODO: Would be more efficient to share a single `EntityEnumsManager` across all EMEVDs here, with
+            #  different modules being marked as star imports for each EMEVD.
+
+            if entities_directory and map_name != "Common":
+                matching_map_module_name = f"{emevd.map_name}_entities.py"
+                for module_path in entities_directory.glob("*_entities.py"):
+                    if module_path.name == matching_map_module_name:
+                        entity_star_module_paths.append(module_path)
+                    else:
+                        entity_non_star_module_paths.append(module_path)
+
+            emevd.write_evs(
+                evs_path=emevd_directory / f"{emevd.map_name}.evs.py",
+                entity_star_module_paths=entity_star_module_paths,
+                entity_non_star_module_paths=entity_non_star_module_paths,
+                warn_missing_enums=warn_missing_enums,
+                entity_module_prefix=entity_module_prefix,
+            )
         _LOGGER.info("All EMEVD files written to decompiled EVS scripts successfully.")
 
     def write_numeric(self, emevd_directory=None):

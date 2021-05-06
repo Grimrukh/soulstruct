@@ -62,6 +62,8 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
         # Every concrete subclass defines 'model_name', 'draw_groups', and 'display_groups'.
     }
 
+    REFERENCE_FIELDS = {"models": ["model_name"]}
+
     sib_path: str
     scale: Vector3
     model_name: tp.Optional[str]
@@ -219,6 +221,8 @@ class MSBObject(MSBPart, abc.ABC):
         # "display_groups",
     )
 
+    REFERENCE_FIELDS = MSBPart.REFERENCE_FIELDS | {"parts": ["draw_parent_name"]}
+
     draw_parent_name: tp.Optional[str]
 
     def __init__(self, source=None, **kwargs):
@@ -338,6 +342,8 @@ class MSBCharacter(MSBPart, abc.ABC):
         "default_animation",
         "damage_animation",
     )
+
+    REFERENCE_FIELDS = MSBPart.REFERENCE_FIELDS | {"parts": ["draw_parent_name"], "regions": ["patrol_region_names"]}
 
     ai_id: int
     character_id: int
@@ -561,6 +567,8 @@ class MSBCollision(MSBPart, abc.ABC):
     camera_1_id: int
     camera_2_id: int
 
+    REFERENCE_FIELDS = MSBPart.REFERENCE_FIELDS | {"events": ["environment_event_name"]}
+
     def __init__(self, source=None, **kwargs):
         self._environment_event_index = -1
         self._force_area_banner = False  # Custom field (see property).
@@ -743,6 +751,8 @@ class MSBMapConnection(MSBPart, abc.ABC):
         "collision_name",
         "connected_map",
     )
+
+    REFERENCE_FIELDS = MSBPart.REFERENCE_FIELDS | {"parts": ["collision_name"]}
 
     collision_name: tp.Optional[str]
 

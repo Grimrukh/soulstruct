@@ -1,7 +1,7 @@
 __all__ = ["GameDirectoryProject"]
 
 from soulstruct.base.project.core import GameDirectoryProject as _BaseGameDirectoryProject
-from soulstruct.games import BLOODBORNE
+from soulstruct.games import BloodborneType
 
 # from soulstruct.bloodborne.ai import AIDirectory  # TODO: can't decompile
 from soulstruct.bloodborne.events import EMEVDDirectory
@@ -12,8 +12,7 @@ from soulstruct.bloodborne.params import GameParamBND
 from soulstruct.bloodborne.text import MSGDirectory
 
 
-class GameDirectoryProject(_BaseGameDirectoryProject):
-    GAME = BLOODBORNE
+class GameDirectoryProject(_BaseGameDirectoryProject, BloodborneType):
     DATA_TYPES = {
         # "ai": AIDirectory,
         "events": EMEVDDirectory,

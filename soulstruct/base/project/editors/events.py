@@ -348,7 +348,7 @@ class EventEditor(SmartFrame):
         try:
             self.events.EMEVD_CLASS(
                 self._get_current_text(),
-                script_path=str(self.evs_file_paths[self.selected_map_id].parent)
+                script_directory=str(self.evs_file_paths[self.selected_map_id].parent)
             )
         except EVSError as e:
             self._raise_error(e.lineno, str(e))
@@ -376,7 +376,7 @@ class EventEditor(SmartFrame):
         try:
             emevd = self.events.EMEVD_CLASS(
                 self.evs_file_paths[self.selected_map_id],
-                script_path=str(self.evs_file_paths[self.selected_map_id].parent),
+                script_directory=str(self.evs_file_paths[self.selected_map_id].parent),
                 dcx_magic=self.events.EMEVD_CLASS.DCX_MAGIC if self.events.IS_DCX else (),
             )
         except Exception as e:

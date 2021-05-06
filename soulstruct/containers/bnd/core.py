@@ -24,7 +24,7 @@ class BND3(BaseBND):
     # Not actually used, but here for reference.
     HEADER_STRUCT = BinaryStruct(
         ("version", "4s", b"BND3"),
-        ("signature", "8s"),  # Real signature may be shorter, but packing will pad it out.
+        ("signature", "8s"),
         ("flags", "b"),
         ("big_endian", "?"),
         ("bit_big_endian", "?"),
@@ -190,7 +190,7 @@ class BND4(BaseBND):
             )
 
         entry_headers = [
-            BinderEntryHeader.from_bnd3_reader(reader, self.flags, self.bit_big_endian)
+            BinderEntryHeader.from_bnd4_reader(reader, self.flags, self.bit_big_endian, self.unicode)
             for _ in range(entry_count)
         ]
         for entry_header in entry_headers:

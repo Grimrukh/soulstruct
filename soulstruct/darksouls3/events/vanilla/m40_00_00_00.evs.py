@@ -406,7 +406,7 @@ def Event14005101():
     RestartIfFinishedConditionTrue(1)
     Move(PLAYER, destination=4001950, destination_type=CoordEntityType.Object, model_point=1, short_move=True)
     ForceAnimation(4001950, 60430)
-    EnableBonfireWarping(bonfire=4001950, animation=60430)
+    EnableBonfireWarping(bonfire_obj=4001950, animation=60430)
     DisableFlag(74000010)
     EnableFlag(14000101)
     RemoveGoodFromPlayer(2137, quantity=1)

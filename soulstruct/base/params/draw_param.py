@@ -10,7 +10,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.containers.bnd import BND3
-from soulstruct.games import Game
+from soulstruct.games import GameSpecificType
 
 from .paramdef import ParamDefBND
 
@@ -39,10 +39,9 @@ DRAW_PARAMS = (
 )
 
 
-class DrawParamBND(BND3, abc.ABC):
+class DrawParamBND(GameSpecificType, BND3, abc.ABC):
 
     EXT = ".parambnd"
-    GAME: Game = None
     DRAW_PARAM_CLASS: tp.Type[Param] = None
     GET_BUNDLED_PARAMDEF: tp.Callable = None
     UNDECODABLE_ROW_NAMES = {
@@ -148,7 +147,7 @@ class DrawParamBND(BND3, abc.ABC):
         super().write(file_path, make_dirs, **pack_kwargs)
 
 
-class DrawParamDirectory(abc.ABC):
+class DrawParamDirectory(GameSpecificType, abc.ABC):
 
     # Lod (default only), EnvLightTex (useless) and DebugAmbientLight (useless) are left out.
     PARAM_NAMES = (
@@ -164,7 +163,6 @@ class DrawParamDirectory(abc.ABC):
         "ToneMapping",
     )
 
-    GAME: Game = None
     DRAW_PARAM_BND_CLASS: tp.Type[DrawParamBND] = None
     DRAW_PARAM_MAPS: dict[str, str] = {}
 

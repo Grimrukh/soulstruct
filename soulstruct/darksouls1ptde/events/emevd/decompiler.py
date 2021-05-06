@@ -1,8 +1,10 @@
 __all__ = ["InstructionDecompiler"]
 
+from typing import Union
+
 from soulstruct.base.events.emevd.decompiler import InstructionDecompiler as _BaseDecompiler, parse_parameters
 from soulstruct.darksouls1ptde.maps.constants import get_map
-from .enums import *
+from soulstruct.game_types.msb_types import *
 from . import enums
 
 
@@ -17,9 +19,9 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"ActivateKillplaneForModel({game_map=}, {y_threshold=}, {target_model_id=})"
 
     @parse_parameters("AddSpecialEffect", no_name_count=2)
-    def _2004_08(self, character: EntityEnum, special_effect_id):
+    def _2004_08(self, character: Character, special_effect_id):
         pass
 
     @parse_parameters("RotateToFaceEntity", no_name_count=2)
-    def _2004_14(self, character: EntityEnum, target_entity_id: EntityEnum):
+    def _2004_14(self, character: Character, target_entity_id: Union[Character, Object, Region]):
         pass

@@ -12,7 +12,9 @@ from .enums import RestartType
 from .instruction import Instruction
 
 if tp.TYPE_CHECKING:
+    from soulstruct.game_types.msb_types import MapEntity
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+    from .utils import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,12 +125,20 @@ class Event(abc.ABC):
         """
         for instruction in self.instructions:
             if (event_id := instruction.get_called_event()) is not None:
-                var_ind = instruction.display_arg_types.find("|")
-                var_format = self.EVENT_ARG_TYPES[event_id]
+                try:
+                    var_format = self.EVENT_ARG_TYPES[event_id]
+                except KeyError:
+                    # Undefined event was called. This has only been seen once in vanilla files, in DSR m12_01_00_00,
+                    # where event `4294967295` (2 ** 32 - 1) is run near the end of the constructor for unknown reasons.
+                    # TODO: Handle imported common events.
+                    _LOGGER.warning(f"Event {event_id} was run, but is not defined anywhere.")
+                    continue
                 if not var_format:
                     # No arguments (zero). Leave "I" in arg types.
                     continue
-                elif var_ind == -1:
+
+                var_ind = instruction.display_arg_types.find("|")
+                if var_ind == -1:
                     # Only one argument (maybe zero).
                     new_display_types = f"{instruction.struct_arg_types[:-1]}{var_format[0]}"
                 else:
@@ -136,9 +146,16 @@ class Event(abc.ABC):
 
                 old_format = "@" + instruction.struct_arg_types
                 instruction.display_arg_types = new_display_types
-                real_args = list(struct.unpack(
-                    instruction.struct_arg_types, struct.pack(old_format, *instruction.args_list))
-                )
+                try:
+                    real_args = list(struct.unpack(
+                        instruction.struct_arg_types + "0i", struct.pack(old_format + "0i", *instruction.args_list))
+                    )
+                except struct.error:
+                    _LOGGER.error(
+                        f"Failed to convert event arguments for instruction {instruction} from old format {old_format} "
+                        f"to new format {instruction.struct_arg_types}. Args: {instruction.args_list}"
+                    )
+                    raise
                 instruction.args_list = real_args
 
     @property
@@ -214,7 +231,15 @@ class Event(abc.ABC):
 
         return ", ".join(evs_function_arg_strings)
 
-    def to_evs(self):
+    def to_evs(self, enums_manager: EntityEnumsManager):
+        """Convert single event script to EVS.
+
+        If `enums` is given (e.g. via `EMEVD.to_evs()`), it should map `MapEntity` subclass names to dictionaries that
+        map entity IDs to enum attributes to print in their place (e.g. `1510100: <Characters.BlackKnight2>`).
+
+        If `enums` is given and `warn_missing_enums=True`, entity IDs that do not appear in `enums` will cause a warning
+        to be logged.
+        """
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event{self.event_id}")
         function_docstring = f'""" {self.event_id}: Event {self.event_id} """'
         function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
@@ -223,7 +248,7 @@ class Event(abc.ABC):
         function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def
         for i, instr in enumerate(self.instructions):
-            instruction = instr.to_evs(self.EVENT_ARG_TYPES)
+            instruction = instr.to_evs(self.EVENT_ARG_TYPES, enums_manager)
             if label_match := _LABEL_RE.match(instruction):
                 if evs_event_string[-1] != "\n":
                     evs_event_string += "\n"

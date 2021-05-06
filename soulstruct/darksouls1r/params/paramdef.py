@@ -5,12 +5,12 @@ __all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
 import logging
 import typing as tp
 
-from soulstruct.games import DARK_SOULS_DSR
 from soulstruct.base.params.paramdef import (
     ParamDefField as _BaseParamDefField,
     ParamDef as _BaseParamDef,
     ParamDefBND as _BaseParamDefBND,
 )
+from soulstruct.games import DarkSoulsDSRType
 from soulstruct.utilities.binary import BinaryStruct
 
 from .defaults import DEFAULTS
@@ -80,9 +80,8 @@ class ParamDef(_BaseParamDef):
             return None
 
 
-class ParamDefBND(_BaseParamDefBND):
+class ParamDefBND(_BaseParamDefBND, DarkSoulsDSRType):
     PARAMDEF_CLASS = ParamDef
-    GAME = DARK_SOULS_DSR
 
 
 def GET_BUNDLED_PARAMDEF() -> ParamDefBND:

@@ -57,7 +57,7 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
         dcx_magic = emevd_class.DCX_MAGIC if output_type == "emevd.dcx" else ()
         output_path = output_directory / (name + output_ext)
         try:
-            emevd = emevd_class(source, dcx_magic=dcx_magic, script_path=input_directory)
+            emevd = emevd_class(source, dcx_magic=dcx_magic, script_directory=input_directory)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}: {str(ex)}")
         try:
@@ -76,7 +76,11 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
 def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True):
     """Converts both `EMEVD` sources to raw, decompiled EVS (if `use_evs=True`) or numeric form.
 
-    Returns the first line that differs (as subsequent lines may just be offset and this isn't a fancy tool).
+    Note that if a source is already an EVS script, it will still be compiled and then decompiled before comparison, so
+    only genuine functional changes (or maybe semi-functional ones, like exact condition registers) will be caught here.
+
+    Prints only the first line that differs before returning (as subsequent lines may just be offset and this isn't a
+    fancy diff tool).
     """
     if use_evs:
         string_1 = emevd_class(source_1).to_evs()
@@ -84,7 +88,7 @@ def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True
     else:
         string_1 = emevd_class(source_1).to_numeric()
         string_2 = emevd_class(source_2).to_numeric()
-    for i, (line_1, line_2) in zip(string_1.split("\n"), string_2.split("\n")):
+    for i, (line_1, line_2) in enumerate(zip(string_1.split("\n"), string_2.split("\n"))):
         if line_1 != line_2:
             print(
                 f"Sources disagree on line {i + 1}.\n"
@@ -92,3 +96,7 @@ def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True
                 f"  Source 2: {line_2}"
             )
             return
+    if use_evs:
+        print("EMEVD sources have identical EVS representations.")
+    else:
+        print("EMEVD sources have identical 'numeric'-format representations.")

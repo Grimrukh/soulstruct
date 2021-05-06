@@ -2183,7 +2183,7 @@ def Event15105844(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterHasSpecialEffect(2, PLAYER, 9110)
     IfConditionTrue(0, input_condition=2)
     EnableBossMusic(arg_4_7)
-    Unknown_2010_07(entity=arg_8_11)
+    Unknown_2010_07(sound_id=arg_8_11)
     IfFlagOn(-1, arg_12_15)
     IfFlagOn(-1, arg_0_3)
     IfFlagOn(-1, arg_16_19)

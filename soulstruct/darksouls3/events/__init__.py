@@ -707,7 +707,7 @@ __all__ = [
     "EnableBossMusic",
     "DisableBossMusic",
     "NotifyDoorEventSoundDampening",
-    "SetMapSoundWithFade",
+    "SetSoundEventWithFade",
     "EnableSoundEventWithFade",
     "DisableSoundEventWithFade",
     "Unknown_2010_07",
@@ -824,7 +824,7 @@ __all__ = [
     "CLIENT_PLAYER_3",
     "CLIENT_PLAYER_4",
     "CLIENT_PLAYER_5",
-    "EntityEnum",
+    "PlayerEntity",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",

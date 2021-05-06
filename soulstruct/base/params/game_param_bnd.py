@@ -21,7 +21,6 @@ _LOGGER = logging.getLogger(__name__)
 class GameParamBND(BaseBND, abc.ABC):
 
     EXT = ".parambnd"
-    GAME: Game = None
     Param: tp.Type[Param] = None
     ParamDefBND: tp.Type[ParamDefBND] = None
 

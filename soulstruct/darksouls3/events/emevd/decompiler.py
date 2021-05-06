@@ -2,9 +2,16 @@ __all__ = ["InstructionDecompiler"]
 
 import struct
 import logging
+from typing import Union
 
-from soulstruct.base.events.emevd.decompiler import InstructionDecompiler as _BaseDecompiler, parse_parameters
+from soulstruct.base.events.emevd.decompiler import (
+    InstructionDecompiler as _BaseDecompiler,
+    parse_parameters,
+    EnumValue,
+)
+from soulstruct.base.events.emevd.utils import EntityEnumsManager
 from soulstruct.darksouls3.maps.constants import get_map
+from soulstruct.game_types.msb_types import *
 from .enums import *
 from . import enums
 
@@ -28,50 +35,69 @@ class InstructionDecompiler(_BaseDecompiler):
         target_comparison_type = f"ComparisonType.{ComparisonType(target_comparison_type).name}"
         return string[:-1] + f", {target_comparison_type=}, {target_count=})"
 
-    def _2000_06(self, req_args, opt_args, arg_types):
+    def _2000_06(self, req_args, opt_args, arg_types, enums_manager):
         event_id, first_arg = req_args
-        if arg_types:
-            req_args = (first_arg, *opt_args)
-            if not arg_types.replace("i", ""):
-                # All signed integers (default).
-                return f"RunCommonEvent({event_id}, args={req_args})"
-            elif all(isinstance(i, int) for i in req_args):
-                try:
-                    req_args = self._process_args(req_args, arg_types)
-                except struct.error:
-                    _LOGGER.error(
-                        f"Error intepreting event arguments for event ID {event_id}: "
-                        f"args = {req_args}, arg_types = {arg_types}"
-                    )
-                    raise
-            return f"RunCommonEvent({event_id}, args={req_args}, arg_types=\"{arg_types}\")"
-        elif not opt_args and first_arg == 0:
+        if not opt_args and first_arg == 0:
             return f"RunCommonEvent({event_id})"
-        else:
-            # Assume all integers.
-            return f"RunCommonEvent({event_id}, args={(first_arg, *opt_args)})"
 
-    def _3_02(self, condition, state, character, region, min_target_count=-1):
+        args = (first_arg, *opt_args)
+
+        if arg_types and arg_types.strip("i") and all(isinstance(i, int) for i in args):
+            # Process incorrectly unpacked arguments (e.g. floats represented by integers).
+            try:
+                args = self._process_args(args, arg_types)
+            except struct.error:
+                _LOGGER.error(
+                    f"Error interpreting event arguments for event ID {event_id}: "
+                    f"args = {args}, arg_types = {arg_types}"
+                )
+                raise
+
+        if enums_manager is not None:
+            new_args = list(args)
+            for i, arg in enumerate(args):
+                if self._looks_like_entity_id(arg):
+                    try:
+                        new_args[i] = enums_manager.check_out_enum(arg, any_class=True)
+                    except EntityEnumsManager.MissingEntityError:
+                        pass  # do nothing
+            args = tuple(new_args)
+
+        if not arg_types or not arg_types.strip("i"):
+            # No arg types, or all signed integers (default). "arg_types" keyword omitted.
+            return f"RunCommonEvent({event_id}, args={args})"
+        return f"RunCommonEvent({event_id}, args={args}, arg_types=\"{arg_types}\")"
+
+    def _3_02(self, condition, state, character: Character, region: Region, min_target_count=-1):
         return self._add_min_target_count(
             super()._3_02(condition, state, character, region),
             min_target_count,
         )
 
-    def _3_03(self, condition, state, entity, other_entity, radius, min_target_count=1):
+    def _3_03(
+        self,
+        condition,
+        state,
+        entity: Union[Character, Object, Region],
+        other_entity: Union[Character, Object, Region],
+        radius,
+        min_target_count=1,
+    ):
+        """`IfEntityDistanceState`"""
         return self._add_min_target_count(
             super()._3_03(condition, state, entity, other_entity, radius),
             min_target_count,
         )
 
     @parse_parameters
-    def _3_23(self, condition, attacked_entity: EntityEnum, attacker: EntityEnum, damage_type: DamageType):
+    def _3_23(self, condition, attacked_entity: Character, attacker: Character, damage_type: DamageType):
         if not self._any_vars(damage_type) and damage_type.name == "Unspecified":
             # Leave out default `damage_type` value.
             return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=})"
         return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=}, {damage_type=})"
 
     @parse_parameters("IfActionButtonParam", no_name_count=1)
-    def _3_24(self, condition, action_button_id, entity: EntityEnum):
+    def _3_24(self, condition, action_button_id, entity: PlayerEntity):
         pass
 
     @parse_parameters
@@ -130,56 +156,56 @@ class InstructionDecompiler(_BaseDecompiler):
     # Many DS3 EMEVD instructions have two "target" arguments added to the old ones. These are omitted from the
     # decompiled script if left as their default values.
 
-    def _4_00(self, condition, character, state, target_comparison_type=0, target_count=1):
+    def _4_00(self, condition, character: Character, state, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_00(condition, character, state),
             target_comparison_type,
             target_count,
         )
 
-    def _4_02(self, condition, character, comparison_type, value, target_comparison_type=0, target_count=1):
+    def _4_02(self, condition, character: Character, comparison_type, value, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_02(condition, character, comparison_type, value),
             target_comparison_type,
             target_count,
         )
 
-    def _4_03(self, condition, character, character_type, target_comparison_type=0, target_count=1):
+    def _4_03(self, condition, character: Character, character_type, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_03(condition, character, character_type),
             target_comparison_type,
             target_count,
         )
 
-    def _4_05(self, condition, character, special_effect, state, target_comparison_type=0, target_count=1):
+    def _4_05(self, condition, character: Character, special_effect, state, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_05(condition, character, special_effect, state),
             target_comparison_type,
             target_count,
         )
 
-    def _4_07(self, condition, character, state, target_comparison_type=0, target_count=1):
+    def _4_07(self, condition, character: Character, state, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_07(condition, character, state),
             target_comparison_type,
             target_count,
         )
 
-    def _4_08(self, condition, character, tae_event_id, state, target_comparison_type=0, target_count=1):
+    def _4_08(self, condition, character: Character, tae_event_id, state, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_08(condition, character, tae_event_id, state),
             target_comparison_type,
             target_count,
         )
 
-    def _4_09(self, condition, character, ai_status, target_comparison_type=0, target_count=1):
+    def _4_09(self, condition, character: Character, ai_status, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_09(condition, character, ai_status),
             target_comparison_type,
             target_count,
         )
 
-    def _4_14(self, condition, character, comparison_type, value, target_comparison_type=0, target_count=1):
+    def _4_14(self, condition, character: Character, comparison_type, value, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._4_14(condition, character, comparison_type, value),
             target_comparison_type,
@@ -190,7 +216,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _4_15(
         self,
         condition,
-        character: EntityEnum,
+        character: Character,
         state: bool,
         target_comparison_type: ComparisonType = 0,
         target_count=1,
@@ -212,7 +238,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _4_27(
         self,
         condition,
-        character: EntityEnum,
+        character: Character,
         invade_type,
         target_comparison_type: ComparisonType = 0,
         target_count=1,
@@ -224,10 +250,10 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("IfCharacterChameleonState", no_name_count=1)
-    def _4_28(self, condition, character: EntityEnum, chameleon_vfx_id, is_transformed: bool):
+    def _4_28(self, condition, character: Character, chameleon_vfx_id, is_transformed: bool):
         pass
 
-    def _5_00(self, condition, state, obj, target_comparison_type=0, target_count=1):
+    def _5_00(self, condition, state, obj: Object, target_comparison_type=0, target_count=1):
         return self._add_target_args(
             super()._5_00(condition, state, obj),
             target_comparison_type,
@@ -238,7 +264,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _5_09(
         self,
         condition,
-        obj,
+        obj: Object,
         comparison_type: ComparisonType,
         state: bool,
         target_comparison_type: ComparisonType = 0,
@@ -251,7 +277,7 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters
-    def _5_10(self, condition, obj, state: bool, target_comparison_type: ComparisonType = 0, target_count=1):
+    def _5_10(self, condition, obj: Object, state: bool, target_comparison_type: ComparisonType = 0, target_count=1):
         if state is True:
             string = f"IfObjectBackreadEnabled({condition}, {obj=})"
         elif state is False:
@@ -261,7 +287,7 @@ class InstructionDecompiler(_BaseDecompiler):
         return self._add_target_args(string, target_comparison_type, target_count)
 
     @parse_parameters
-    def _5_11(self, condition, obj, state: bool, target_comparison_type: ComparisonType = 0, target_count=1):
+    def _5_11(self, condition, obj: Object, state: bool, target_comparison_type: ComparisonType = 0, target_count=1):
         if state is True:
             string = f"IfObjectBackreadEnabled_Alternate({condition}, {obj=})"
         elif state is False:
@@ -308,7 +334,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _1003_11(
         self,
         label: Label,
-        character: EntityEnum,
+        character: Character,
         special_effect,
         state: bool,
         target_comparison_type: ComparisonType = 0,
@@ -405,7 +431,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _1003_111(
         self,
         event_return_type: EventReturnType,
-        character: EntityEnum,
+        character: Character,
         special_effect,
         state: bool,
         target_comparison_type: ComparisonType = 0,
@@ -426,7 +452,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _1003_112(
         self,
         line_count,
-        character: EntityEnum,
+        character: Character,
         special_effect,
         state: bool,
         target_comparison_type: ComparisonType = 0,
@@ -440,7 +466,7 @@ class InstructionDecompiler(_BaseDecompiler):
         return self._add_target_args(string, target_comparison_type, target_count)
 
     @parse_parameters
-    def _1003_200(self, label: Label, state: bool, character: EntityEnum, region, min_target_count=-1):
+    def _1003_200(self, label: Label, state: bool, character: Character, region: Region, min_target_count=-1):
         if state is True:
             string = f"GotoIfCharacterInsideRegion({label}, {character=}, {region=})"
         elif state == 0:
@@ -454,8 +480,8 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         event_return_type: EventReturnType,
         state: bool,
-        character: EntityEnum,
-        region,
+        character: Character,
+        region: Region,
         min_target_count=-1,
     ):
         if self._any_vars(event_return_type):
@@ -468,7 +494,7 @@ class InstructionDecompiler(_BaseDecompiler):
         return self._add_min_target_count(string, min_target_count)
 
     @parse_parameters
-    def _1003_202(self, line_count, state: bool, character: EntityEnum, region, min_target_count=-1):
+    def _1003_202(self, line_count, state: bool, character: Character, region: Region, min_target_count=-1):
         if state is True:
             string = f"SkipLinesIfCharacterInsideRegion({line_count}, {character=}, {region=})"
         elif state is False:
@@ -482,7 +508,9 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _1005_01(self, line_count, state: bool, obj, target_comparison_type: ComparisonType = 0, target_count=-1):
+    def _1005_01(
+        self, line_count, state: bool, obj: Object, target_comparison_type: ComparisonType = 0, target_count=-1
+    ):
         if state is True:
             string = f"SkipLinesIfObjectDestroyed({line_count}, {obj=})"
         elif state is False:
@@ -496,7 +524,7 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         event_return_type: EventReturnType,
         state: bool,
-        obj,
+        obj: Object,
         target_comparison_type: ComparisonType = 0,
         target_count=-1,
     ):
@@ -512,7 +540,7 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         label: Label,
         state: bool,
-        obj,
+        obj: Object,
         target_comparison_type: ComparisonType = 0,
         target_count=-1,
     ):
@@ -591,10 +619,10 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         cutscene,
         cutscene_type: CutsceneType,
-        move_to_region,
+        move_to_region: Region,
         area_id,
         block_id,
-        player_id: EntityEnum,
+        player_id: PlayerEntity,
         time_period_id,
     ):
         move_to_map = self._get_game_map_variable_name(area_id, block_id)
@@ -604,11 +632,11 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("PlayCutsceneAndSetTimePeriod", no_name_count=2)
-    def _2002_07(self, cutscene, cutscene_type: CutsceneType, player_id: EntityEnum, time_period_id):
+    def _2002_07(self, cutscene, cutscene_type: CutsceneType, player_id: PlayerEntity, time_period_id):
         pass
 
     @parse_parameters
-    def _2002_08(self, move_to_region, area_id, block_id):
+    def _2002_08(self, move_to_region: Region, area_id, block_id):
         move_to_map = self._get_game_map_variable_name(area_id, block_id)
         return f"PlayCutsceneAndMovePlayer_Dummy({move_to_region}, {move_to_map})"
 
@@ -619,10 +647,10 @@ class InstructionDecompiler(_BaseDecompiler):
         cutscene_type: CutsceneType,
         ceremony_id,
         unknown,
-        move_to_region,
+        move_to_region: Region,
         area_id,
         block_id,
-        player_id: EntityEnum,
+        player_id: PlayerEntity,
     ):
         move_to_map = self._get_game_map_variable_name(area_id, block_id)
         return (
@@ -631,7 +659,7 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("PlayCutsceneAndSetMapCeremony", no_name_count=1)
-    def _2002_10(self, cutscene, cutscene_type: CutsceneType, ceremony_id, unknown, player_id: EntityEnum):
+    def _2002_10(self, cutscene, cutscene_type: CutsceneType, ceremony_id, unknown, player_id: PlayerEntity):
         pass
 
     @parse_parameters
@@ -639,10 +667,10 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         cutscene,
         cutscene_type: CutsceneType,
-        move_to_region,
+        move_to_region: Region,
         area_id,
         block_id,
-        player_id: EntityEnum,
+        player_id: PlayerEntity,
         unknown1,
         unknown2,
     ):
@@ -657,11 +685,11 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         cutscene,
         cutscene_type: CutsceneType,
-        move_to_region,
+        move_to_region: Region,
         area_id,
         block_id,
-        player_id: EntityEnum,
-        other_region,
+        player_id: PlayerEntity,
+        other_region: Region,
     ):
         move_to_map = self._get_game_map_variable_name(area_id, block_id)
         return (
@@ -670,7 +698,7 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters
-    def _2003_11(self, state: bool, character: EntityEnum, slot, name):
+    def _2003_11(self, state: bool, character: Character, slot, name):
         """Argument order has changed from DS1."""
         if self._any_vars(state, slot):
             return f"SetBossHealthBarState({character}, {name=}, {slot=}, {state=})"
@@ -686,7 +714,7 @@ class InstructionDecompiler(_BaseDecompiler):
     @parse_parameters("ForceAnimation", no_name_count=2)
     def _2003_18(
         self,
-        entity: EntityEnum,
+        entity: PlayerEntity,
         animation_id,
         loop: bool = False,
         wait_for_completion: bool = False,
@@ -743,7 +771,7 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"SetMapBoundariesDisplay({hierarchy}, {grid_x}, {grid_y}, {state=})"
 
     @parse_parameters
-    def _2003_48(self, region, state: bool, duration, wind_parameter_id):
+    def _2003_48(self, region: Region, state: bool, duration, wind_parameter_id):
         return f"SetAreaWind({region}, {state=}, {duration=}, {wind_parameter_id=})"
 
     @parse_parameters("WarpPlayerToRespawnPoint", no_name_count=1)
@@ -756,16 +784,16 @@ class InstructionDecompiler(_BaseDecompiler):
 
     @parse_parameters("SummonNPC", no_name_count=3)
     def _2003_51(
-            self, sign_type: SingleplayerSummonSignType, character: EntityEnum, region, summon_flag, dismissal_flag
+        self, sign_type: SingleplayerSummonSignType, character: Character, region: Region, summon_flag, dismissal_flag
     ):
         pass
 
     @parse_parameters("InitializeWarpObject", no_name_count=1)
-    def _2003_52(self, warp_object_id):
+    def _2003_52(self, warp_object_id: Object):
         pass
 
     @parse_parameters("MakeEnemyAppear", no_name_count=1)
-    def _2003_54(self, character: EntityEnum):
+    def _2003_54(self, character: Character):
         pass
 
     @parse_parameters("SetCurrentMapCeremony")
@@ -803,7 +831,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("InitializeCrowTradeRegion", no_name_count=1)
-    def _2003_67(self, region):
+    def _2003_67(self, region: Region):
         pass
 
     @parse_parameters("SetNetworkInteractionState", no_name_count=1)
@@ -819,19 +847,19 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"SetHUDVisibilityState({is_invisible=})"
 
     @parse_parameters
-    def _2003_72(self, bonfire, animation, state: bool):
+    def _2003_72(self, bonfire_obj: Object, animation, state: bool):
         if state is True:
-            return f"EnableBonfireWarping({bonfire=}, {animation=})"
+            return f"EnableBonfireWarping({bonfire_obj=}, {animation=})"
         if state is False:
-            return f"DisableBonfireWarping({bonfire=}, {animation=})"
-        return f"SetBonfireWarpingState({bonfire=}, {animation=}, {state=})"
+            return f"DisableBonfireWarping({bonfire_obj=}, {animation=})"
+        return f"SetBonfireWarpingState({bonfire_obj=}, {animation=}, {state=})"
 
     @parse_parameters("SetAutogeneratedEventSpecificFlag_1")
     def _2003_73(self, unknown1, unknown2):
         pass
 
     @parse_parameters("HandleBossDefeatAndDisplayBanner")
-    def _2003_74(self, boss, banner: BannerType):
+    def _2003_74(self, boss: Character, banner: BannerType):
         pass
 
     @parse_parameters("SetAutogeneratedEventSpecificFlag_2")
@@ -851,7 +879,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _2003_78(self, character: EntityEnum):
+    def _2003_78(self, character: Character):
         return f"SendNPCSummonHome({character})"
 
     @parse_parameters("Unknown_2003_79")
@@ -859,7 +887,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _2003_80(self, state: bool, character: EntityEnum, slot, name, decoration):
+    def _2003_80(self, state: bool, character: Character, slot, name, decoration):
         if state is True:
             return f"EnableDecoratedBossHealthBar({character}, {slot=}, {name=}, {decoration=})"
         if state is False:
@@ -867,36 +895,42 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"SetDecoratedBossHealthBarState({state=}, {character=}, {slot=}, {name=}, {decoration=})"
 
     @parse_parameters("PlaceNPCSummonSign_WithoutEmber")
-    def _2003_81(self, sign_type: SummonSignType, character: EntityEnum, region, summon_flag, dismissal_flag):
+    def _2003_81(self, sign_type: SummonSignType, character: Character, region: Region, summon_flag, dismissal_flag):
         pass
 
     @parse_parameters("AddSpecialEffect", no_name_count=2)
-    def _2004_08(self, character: EntityEnum, special_effect_id):
+    def _2004_08(self, character: Character, special_effect_id):
         pass
 
     @parse_parameters("RotateToFaceEntity", no_name_count=2)
-    def _2004_14(self, character: EntityEnum, target_entity: EntityEnum, animation, wait_for_completion: bool):
+    def _2004_14(
+        self,
+        character: Character,
+        target_entity: Union[Character, Object, Region],
+        animation,
+        wait_for_completion: bool,
+    ):
         pass
 
     @parse_parameters("ChangeCharacterCloth", no_name_count=1)
-    def _2004_48(self, character: EntityEnum, bit_count, state_id):
+    def _2004_48(self, character: Character, bit_count, state_id):
         pass
 
     @parse_parameters("ChangePatrolBehavior", no_name_count=1)
-    def _2004_49(self, character: EntityEnum, patrol_information_id):
+    def _2004_49(self, character: Character, patrol_information_id):
         pass
 
     @parse_parameters("SetLockOnPoint", no_name_count=1)
-    def _2004_50(self, character: EntityEnum, lock_on_model_point, state: bool):
+    def _2004_50(self, character: Character, lock_on_model_point, state: bool):
         pass
 
     @parse_parameters("Test_RequestRagdollRestraint")
     def _2004_51(
         self,
-        recipient_character,
+        recipient_character: Character,
         recipient_target_rigid_index,
         recipient_model_point,
-        attachment_character,
+        attachment_character: Character,
         attachment_target_rigid_index,
         attachment_model_point,
     ):
@@ -907,27 +941,27 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("AdaptSpecialEffectHealthChangeToNPCPart", no_name_count=1)
-    def _2004_53(self, character: EntityEnum):
+    def _2004_53(self, character: Character):
         pass
 
     @parse_parameters("ImmediateActivate")
-    def _2004_54(self, character: EntityEnum, state: bool):
+    def _2004_54(self, character: Character, state: bool):
         pass
 
     @parse_parameters("SetCharacterTalkRange", no_name_count=1)
-    def _2004_55(self, character: EntityEnum, distance):
+    def _2004_55(self, character: Character, distance):
         pass
 
     @parse_parameters("IncrementCharacterNewGameCycle", no_name_count=1)
-    def _2004_57(self, character: EntityEnum):
+    def _2004_57(self, character: Character):
         pass
 
     @parse_parameters("SetMultiplayerBuffs_NonBoss", no_name_count=1)
-    def _2004_58(self, character: EntityEnum, state: bool):
+    def _2004_58(self, character: Character, state: bool):
         pass
 
     @parse_parameters("Unknown_2004_59", no_name_count=1)
-    def _2004_59(self, character: EntityEnum, state: bool):
+    def _2004_59(self, character: Character, state: bool):
         pass
 
     @parse_parameters("SetPlayerRemainingYoelLevels")
@@ -939,11 +973,11 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("ShowObjectByMapCeremony")
-    def _2005_17(self, obj, ceremony_id, unknown):
+    def _2005_17(self, obj: Object, ceremony_id, unknown):
         pass
 
     @parse_parameters("DestroyObject_NoSlot")
-    def _2005_19(self, obj):
+    def _2005_19(self, obj: Object):
         pass
 
     @parse_parameters("DisplayDialogAndSetFlags")
@@ -952,7 +986,7 @@ class InstructionDecompiler(_BaseDecompiler):
         message,
         button_type: ButtonType,
         number_buttons: NumberButtons,
-        anchor_entity,
+        anchor_entity: Union[Character, Object, Region],
         display_distance,
         left_flag,
         right_flag,
@@ -969,7 +1003,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("RegisterLantern", no_name_count=2)
-    def _2009_05(self, flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level):
+    def _2009_05(self, flag, obj: Object, reaction_distance, reaction_angle, initial_sword_number, sword_level):
         pass
 
     @parse_parameters("BanishInvaders")
@@ -985,31 +1019,31 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _2010_04(self, sound_id, state: bool):
+    def _2010_04(self, sound_id: SoundEvent, state: bool):
         return self._set_state("BossMusic", state, entity=sound_id)
 
     @parse_parameters("NotifyDoorEventSoundDampening", no_name_count=1)
-    def _2010_05(self, entity_id, state: DoorState):
+    def _2010_05(self, entity_id: Object, state: DoorState):
         pass
 
     @parse_parameters
-    def _2010_06(self, sound_id, state: bool, fade_duration):
+    def _2010_06(self, sound_id: SoundEvent, state: bool, fade_duration):
         if state is True:
             return f"EnableSoundEventWithFade({sound_id=}, {fade_duration=})"
         elif state is False:
             return f"DisableSoundEventWithFade({sound_id=}, {fade_duration=})"
-        return f"SetMapSoundWithFade({sound_id=}, {state=}, {fade_duration=})"
+        return f"SetSoundEventWithFade({sound_id=}, {state=}, {fade_duration=})"
 
     @parse_parameters("Unknown_2010_07")
-    def _2010_07(self, entity):
+    def _2010_07(self, sound_id: SoundEvent):
         pass
 
     @parse_parameters("SetCollisionResState")
-    def _2011_03(self, collision, state: bool):
+    def _2011_03(self, collision: Collision, state: bool):
         pass
 
     @parse_parameters("ActivateCollisionAndCreateNavmesh")
-    def _2011_04(self, collision, state: bool):
+    def _2011_04(self, collision: Collision, state: bool):
         pass
 
     @parse_parameters

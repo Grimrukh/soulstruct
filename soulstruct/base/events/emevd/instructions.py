@@ -1395,18 +1395,18 @@ def RegisterBonfire(
     return to_numeric(instruction_info, bonfire_flag, obj, reaction_distance, reaction_angle, initial_kindle_level)
 
 
-def SetMapPieceState(map_part_id, state: bool):
-    """ Set the visibility of individual map parts (e.g. all the crystals in Seath's tower). """
+def SetMapPieceState(map_piece_id, state: bool):
+    """ Set the visibility of individual map pieces (e.g. all the crystals in Seath's tower). """
     instruction_info = (2012, 1)
-    return to_numeric(instruction_info, map_part_id, state)
+    return to_numeric(instruction_info, map_piece_id, state)
 
 
-def DisableMapPiece(map_part_id):
-    return SetMapPieceState(map_part_id, False)
+def DisableMapPiece(map_piece_id):
+    return SetMapPieceState(map_piece_id, False)
 
 
-def EnableMapPiece(map_part_id: MapPieceTyping):
-    return SetMapPieceState(map_part_id, True)
+def EnableMapPiece(map_piece_id: MapPieceTyping):
+    return SetMapPieceState(map_piece_id, True)
 
 
 # MESSAGES

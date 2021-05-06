@@ -18,7 +18,7 @@ from pathlib import Path
 
 from soulstruct import __version__
 from soulstruct.config import DEFAULT_TEXT_EDITOR_FONT_SIZE
-from soulstruct.games import Game
+from soulstruct.games import GameSpecificType
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
@@ -26,6 +26,7 @@ from soulstruct.utilities.window import CustomDialog
 from .exceptions import SoulstructProjectError, RestoreBackupError
 
 if tp.TYPE_CHECKING:
+    from soulstruct.games import Game
     from ..ai.ai_directory import AIDirectory
     from ..events.emevd_directory import EMEVDDirectory
     from ..ezstate.talk_directory import TalkDirectory
@@ -53,7 +54,7 @@ def _with_config_write(func):
 
 
 def _data_type_action(func):
-    """Validate `data_type` argument and recur on all project types if it is none."""
+    """Validate `data_type` argument and recur on all project types if it is `None`."""
     @wraps(func)
     def data_type_action(self: GameDirectoryProject, data_type, *args, **kwargs):
         if data_type is None:
@@ -69,7 +70,7 @@ def _data_type_action(func):
     return data_type_action
 
 
-class GameDirectoryProject(abc.ABC):
+class GameDirectoryProject(GameSpecificType, abc.ABC):
     """Manages an entire editable instance of a game installation (or rather, all the file types Soulstruct can handle).
 
     It is recommended that you create one of these projects for each Soulstruct-based mod.
@@ -82,10 +83,9 @@ class GameDirectoryProject(abc.ABC):
     else:
         _DEFAULT_PROJECT_ROOT = Path(os.getcwd())
 
-    GAME: Game = None
     DATA_TYPES = {}  # type: dict[str, type]
 
-    def __init__(self, project_path="", with_window: ProjectWindow = None):
+    def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: tp.Union[str, Path] = None):
 
         self.game_root = Path()
         self.last_import_time = ""
@@ -105,8 +105,8 @@ class GameDirectoryProject(abc.ABC):
         self.talk_directory = self._get_default_data("talk")  # type: TalkDirectory
 
         self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
-        self.load_config(with_window=with_window)
-        self.initialize_project(with_window=with_window)
+        first_time, force_import_from_game = self.load_config(with_window=with_window, game_root=game_root)
+        self.initialize_project(force_import_from_game, with_window=with_window, first_time=first_time)
 
     def _get_default_data(self, data_type: str):
         if data_type not in self.DATA_TYPES:
@@ -170,100 +170,113 @@ class GameDirectoryProject(abc.ABC):
     def text(self, value: MSGDirectory):
         self.msg_directory = value
 
-    def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None):
+    def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None, first_time=False):
         """Load project structures from pickled project files if available, or prompt for initial import to create."""
 
         yes_to_all = force_import_from_game
         for data_type in self.DATA_TYPES:
-            if data_type in ("events", "talk"):
-                continue  # Events and Talk are not saved and loaded as pickles, just imported and exported.
-            try:
-                if force_import_from_game:
-                    raise FileNotFoundError  # don't bother looking for existing file
-                self.load(data_type)
-            except FileNotFoundError:
-                if yes_to_all:
-                    self.import_data_from_game(data_type)
-                    self.save(data_type)
+            yes_to_all = self.import_data_type(data_type, force_import_from_game, yes_to_all, with_window=with_window)
+
+        if "events" in self.DATA_TYPES:
+            self.import_events(force_import=yes_to_all, with_window=with_window)
+
+        if "talk" in self.DATA_TYPES:
+            self.import_talk(force_import=yes_to_all, with_window=with_window)
+
+    def import_data_type(
+        self, data_type: str, force_import_from_game=False, yes_to_all=False, with_window: ProjectWindow = None
+    ):
+        if data_type in ("events", "talk"):
+            return yes_to_all  # events and talk are not saved and loaded as pickles, just imported and exported
+        try:
+            if force_import_from_game:
+                raise FileNotFoundError  # don't bother looking for existing file
+            self.load(data_type)
+        except FileNotFoundError:
+            if yes_to_all:
+                self.import_data_from_game(data_type)
+                self.save(data_type)
+            else:
+                if with_window:
+                    result = with_window.CustomDialog(
+                        title="Data Missing",
+                        message=f"Could not find saved '{data_type}' data in project.\n"
+                                f"Would you like to import it from the game directory now?",
+                        button_names=("Yes", "Yes to All", "No, quit now"),
+                        button_kwargs=("YES", "YES", "NO"),
+                        cancel_output=2,
+                        default_output=2,
+                    )
                 else:
-                    if with_window:
-                        result = with_window.CustomDialog(
-                            title="Project Error",
-                            message=f"Could not find saved '{data_type}' data in project.\n"
-                            f"Would you like to import it from the game directory now?",
-                            button_names=("Yes", "Yes to All", "No, quit now"),
-                            button_kwargs=("YES", "YES", "NO"),
-                            cancel_output=2,
-                            default_output=2,
-                        )
-                    else:
-                        result = 2 if (
+                    result = 2 if (
                             input(
                                 f"Could not find saved '{data_type}' data in project.\n"
                                 f"Would you like to import it from the game directory now? [y]/n "
                             ).lower() == "n"
-                        ) else 0
-                    if result in {0, 1}:
-                        self.import_data_from_game(data_type)
-                        self.save(data_type)
-                        if result == 1:
-                            yes_to_all = True
-                    else:
-                        raise SoulstructProjectError("Could not open project files.")
-
-        if "events" in self.DATA_TYPES:
-            if not (self.project_root / "events").is_dir() or not (self.project_root / "events").glob("*"):
-                if yes_to_all:
-                    self.import_data_from_game("events")
+                    ) else 0
+                if result in {0, 1}:
+                    self.import_data_from_game(data_type)
+                    self.save(data_type)
+                    if result == 1:
+                        yes_to_all = True
                 else:
-                    if with_window:
-                        result = with_window.CustomDialog(
-                            title="Project Error",
-                            message=f"Could not find any event scripts in project.\n"
-                            f"Would you like to decompile and import them from the game directory now?",
-                            button_names=("Yes", "No, I'll handle events"),
-                            button_kwargs=("YES", "NO"),
-                            cancel_output=1,
-                            default_output=1,
-                        )
-                    else:
-                        result = 1 if (
+                    raise SoulstructProjectError("Could not open project files.")
+
+        return yes_to_all
+
+    def import_events(self, force_import=False, with_window: ProjectWindow = None):
+        if not (self.project_root / "events").is_dir() or not (self.project_root / "events").glob("*"):
+            if force_import:
+                self.import_data_from_game("events")
+            else:
+                if with_window:
+                    result = with_window.CustomDialog(
+                        title="Project Error",
+                        message=f"Could not find any event scripts in project.\n"
+                                f"Would you like to decompile and import them from the game directory now?",
+                        button_names=("Yes", "No, I'll handle events"),
+                        button_kwargs=("YES", "NO"),
+                        cancel_output=1,
+                        default_output=1,
+                    )
+                else:
+                    result = 1 if (
                             input(
                                 f"Could not find any event scripts in project.\n"
                                 f"Would you like to import them from the game directory now? [y]/n "
                             ).lower() == "n"
-                        ) else 0
-                    if result == 0:
-                        self.import_data_from_game("events")
+                    ) else 0
+                if result == 0:
+                    self.import_data_from_game("events")
 
-        if "talk" in self.DATA_TYPES:
-            if not (self.project_root / "talk").is_dir() or not (self.project_root / "talk").glob("*"):
-                if yes_to_all:
-                    self.import_data_from_game("talk")
+    def import_talk(self, force_import=False, with_window: ProjectWindow = None):
+        if not (self.project_root / "talk").is_dir() or not (self.project_root / "talk").glob("*"):
+            if force_import:
+                self.import_data_from_game("talk")
+            else:
+                if with_window:
+                    result = with_window.CustomDialog(
+                        title="Project Error",
+                        message=f"Could not find any talk scripts in project.\n"
+                                f"Would you like to decompile and import them from the game directory now?",
+                        button_names=("Yes", "No, I'll handle talk"),
+                        button_kwargs=("YES", "NO"),
+                        cancel_output=1,
+                        default_output=1,
+                    )
                 else:
-                    if with_window:
-                        result = with_window.CustomDialog(
-                            title="Project Error",
-                            message=f"Could not find any talk scripts in project.\n"
-                            f"Would you like to decompile and import them from the game directory now?",
-                            button_names=("Yes", "No, I'll handle talk"),
-                            button_kwargs=("YES", "NO"),
-                            cancel_output=1,
-                            default_output=1,
-                        )
-                    else:
-                        result = 1 if (
+                    result = 1 if (
                             input(
                                 f"Could not find any talk scripts in project.\n"
                                 f"Would you like to import them from the game directory now? [y]/n "
                             ).lower() == "n"
-                        ) else 0
-                    if result == 0:
-                        self.import_data_from_game("talk")
+                    ) else 0
+                if result == 0:
+                    self.import_data_from_game("talk")
 
     @_with_config_write
     @_data_type_action
-    def save(self, data_type=None):
+    def save(self, data_type: str = None):
         """Save given data type ('maps', 'text', etc.) as pickled project file.
 
         Events and Talk scripts have no additional data to save beyond the project's text script files.
@@ -311,7 +324,12 @@ class GameDirectoryProject(abc.ABC):
         data_instance = self.DATA_TYPES[data_type](data_import_path)
         setattr(self, data_type, data_instance)
         if data_type == "events":  # data in `EMEVDDirectory` is only read upon import and modified upon export
-            self.events.write_evs(self.project_root / "events")
+            self.events.write_evs(
+                self.project_root / "events",
+                entities_directory=self.project_root / "entities",  # TODO: project setting
+                warn_missing_enums=True,  # TODO: project setting
+                entity_module_prefix="..entities.",
+            )
         if data_type == "talk":  # data in `TalkDirectory` is only read upon import and modified upon export
             self.talk.write_esp(self.project_root / "talk")
 
@@ -511,7 +529,12 @@ class GameDirectoryProject(abc.ABC):
             game_file_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(backup_file_path), str(game_file_path))
 
-    def load_config(self, with_window: ProjectWindow = None):
+    def load_config(self, with_window: ProjectWindow = None, game_root: Path = None) -> tuple[bool, bool]:
+        """Load config JSON from project, or create it if missing.
+
+        Returns two bools: `first_time` (if project JSON was created) and `force_import_from_game` (if the user
+        accepted the offer to import all game data immediately).
+        """
         try:
             with (self.project_root / "project_config.json").open("r") as f:
                 try:
@@ -530,6 +553,11 @@ class GameDirectoryProject(abc.ABC):
                             )
                         last_save_version = config.get("LastSaveVersion", "'unknown'")
                         self.game_root = Path(config["GameDirectory"])
+                        if game_root and game_root != self.game_root:
+                            _LOGGER.warning(
+                                f"You passed `game_root` {game_root}` to the project, but it already has root "
+                                f"{self.game_root}. You should change this in the config JSON directly."
+                            )
                         self.last_import_time = config.get("LastImportTime", None)
                         self.last_export_time = config["LastExportTime"]
                         self.custom_script_directory = Path(config.get("CustomScriptDirectory", "scripts"))
@@ -554,15 +582,19 @@ class GameDirectoryProject(abc.ABC):
 
         except FileNotFoundError:
             # Create project config file.
-            try:
-                self.game_root = self._get_game_root(with_window=with_window)
-            except SoulstructProjectError as e:
-                raise SoulstructProjectError(str(e) + "\n\nAborting project setup.")
+            if game_root:
+                self.game_root = game_root
+            else:
+                try:
+                    self.game_root = self._get_game_root(with_window=with_window)
+                except SoulstructProjectError as ex:
+                    raise SoulstructProjectError(str(ex) + "\n\nAborting project setup.")
             self._write_config()
+            # Offer import of all data types immediately.
             if with_window:
                 result = with_window.CustomDialog(
                     title="Import Project Files",
-                    message="Import game files now? This will override any project\n"
+                    message="Import all game files now? This will override any project\n"
                     "files that are already in this folder.",
                     button_names=("Yes, import the files", "No, I'll do it later"),
                     button_kwargs=("YES", "NO"),
@@ -579,7 +611,10 @@ class GameDirectoryProject(abc.ABC):
                 else:
                     result = 0
             if result == 0:
-                self.initialize_project(force_import_from_game=True)
+                return True, True
+            return True, False
+
+        return False, False
 
     def get_game_path_of_data_type(self, data_type, root=None):
         root = self.game_root if root is None else Path(root)

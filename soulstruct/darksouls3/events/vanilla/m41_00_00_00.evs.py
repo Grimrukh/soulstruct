@@ -361,7 +361,7 @@ def Event14105813(
     IfCharacterInsideRegion(1, PLAYER, region=arg_12_15)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(arg_16_19)
-    Unknown_2010_07(entity=arg_20_23)
+    Unknown_2010_07(sound_id=arg_20_23)
     IfFlagOn(-1, arg_24_27)
     IfFlagOn(-1, arg_0_3)
     IfConditionTrue(0, input_condition=-1)

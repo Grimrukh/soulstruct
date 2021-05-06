@@ -5,7 +5,7 @@ __all__ = ["Param", "GameParamBND"]
 import typing as tp
 
 from soulstruct.containers.bnd import BND3
-from soulstruct.games import DARK_SOULS_PTDE
+from soulstruct.games import DarkSoulsPTDEType
 from soulstruct.game_types import *
 from soulstruct.darksouls1ptde.constants import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
 from soulstruct.base.params.param import Param as _BaseParam
@@ -21,9 +21,8 @@ class Param(_BaseParam):
     GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
 
 
-class GameParamBND(_BaseGameParamBND, BND3):
+class GameParamBND(_BaseGameParamBND, DarkSoulsPTDEType, BND3):
     Param = Param
-    GAME = DARK_SOULS_PTDE
     ParamDefBND = ParamDefBND
 
     PARAM_NICKNAMES = {

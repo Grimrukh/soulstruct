@@ -6,7 +6,7 @@ from soulstruct.base.ezstate.esd import (
     Condition as _BaseCondition,
     State as _BaseState,
 )
-from soulstruct.games import DARK_SOULS_2
+from soulstruct.games import DarkSouls2Type
 from soulstruct.game_types.internal_types import ESDType
 from soulstruct.utilities.binary import BinaryStruct
 
@@ -59,8 +59,7 @@ class State(_BaseState, abc.ABC):
     )
 
 
-class ESD(_BaseESD, abc.ABC):
-    GAME = DARK_SOULS_2
+class ESD(_BaseESD, DarkSouls2Type, abc.ABC):
 
     EXTERNAL_HEADER_STRUCT = BinaryStruct(
         ("version", "4s", b"fsSL"),  # Note specific case.

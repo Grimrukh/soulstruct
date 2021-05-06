@@ -1,9 +1,6 @@
 import typing as tp
 from enum import IntEnum
 
-from soulstruct.base.events.emevd.utils import get_value_test
-from soulstruct.base.events.emevd import instructions as instr
-
 __all__ = [
     "GameObject",
     "GameObjectSequence",
@@ -24,22 +21,24 @@ class GameObject:
 class GameObjectSequence(type):
     """Metaclass that generates types that represent sequences of `GameObject`s.
 
-    You can use the `n` keyword argument to repeat the given `GameObject` *args that many times, e.g.:
-        `GameObjectSequence(Region, n=8)`
-    Otherwise, `n` defaults to 1.
-    """
-    game_objects: tuple
+    `GameObjectSequence` takes one sequence of two: a `GameObject` subclass, and an integer indicating the length of the
+    sequence. For example:
 
-    def __new__(mcs, game_objects):
-        if not game_objects:
-            raise TypeError(f"`GameObjectSequence` must contain at least one type.")
-        if len(game_objects) >= 2 and isinstance(game_objects[-1], int):
-            game_objects = game_objects[:-1] * game_objects[-1]
-        for o in game_objects:
-            if not issubclass(o, GameObject):
-                raise TypeError(f"All `GameObjectSequence` args must be `GameObject` subclasses, not {type(o)}.")
+        `GameObjectSequence((Region, 8))`
+    """
+    game_object_type: tp.Type[GameObject]
+    count: int
+
+    def __new__(mcs, game_object_and_count):
+        if not game_object_and_count or len(game_object_and_count) != 2:
+            raise TypeError("`GameObjectSequence` argument must be `(game_object_type, count)`.")
+        if not issubclass(game_object_and_count[0], GameObject):
+            raise TypeError(
+                f"`GameObjectSequence` takes one sequence of `GameObject` subclasses, with the last element "
+                f"optionally being an integer. Invalid sequence element: {type(game_object_and_count[0])}."
+            )
         cls = super().__new__(mcs, "GameObjectSequence", (GameObjectSequence,), {})
-        cls.game_objects = game_objects
+        cls.game_object_type, cls.count = game_object_and_count
         return cls
 
 
@@ -47,6 +46,9 @@ class Flag(GameObject, IntEnum):
     """ Condition upon a flag as a shortcut to condition upon it being enabled. """
 
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         value = self if isinstance(self, (int, float, tuple)) else self.value
         return get_value_test(
             value=value,
@@ -74,6 +76,9 @@ class FlagRange(GameObject):
     # TODO: use the methods below in EVS parser.
 
     def any(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         return get_value_test(
             value=self,
             negate=negate,
@@ -92,6 +97,9 @@ class FlagRange(GameObject):
         )
 
     def all(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         return get_value_test(
             value=self,
             negate=negate,

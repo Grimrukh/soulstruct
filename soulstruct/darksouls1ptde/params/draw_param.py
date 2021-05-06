@@ -6,7 +6,7 @@ from soulstruct.base.params.draw_param import (
     DrawParamBND as _BaseDrawParamBND,
     DrawParamDirectory as _BaseDrawParamDirectory,
 )
-from soulstruct.games import DARK_SOULS_PTDE
+from soulstruct.games import DarkSoulsPTDEType
 
 from .core import Param
 from .paramdef import GET_BUNDLED_PARAMDEF
@@ -31,9 +31,8 @@ class DrawParam(Param):
         }
 
 
-class DrawParamBND(_BaseDrawParamBND):
+class DrawParamBND(_BaseDrawParamBND, DarkSoulsPTDEType):
 
-    GAME = DARK_SOULS_PTDE
     DRAW_PARAM_CLASS = DrawParam
     GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
 
@@ -51,9 +50,8 @@ class DrawParamBND(_BaseDrawParamBND):
     # DebugAmbientLight: list[DrawParam]
 
 
-class DrawParamDirectory(_BaseDrawParamDirectory):
+class DrawParamDirectory(_BaseDrawParamDirectory, DarkSoulsPTDEType):
 
-    GAME = DARK_SOULS_PTDE
     DRAW_PARAM_BND_CLASS = DrawParamBND
     DRAW_PARAM_MAPS = {
         "m10": "Depths, Undead Burg/Parish, Firelink Shrine",

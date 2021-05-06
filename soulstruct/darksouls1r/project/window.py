@@ -15,6 +15,8 @@ class ProjectWindow(_BaseProjectWindow):
     RUNTIME_MANAGER_CLASS = RuntimeManager
     CHARACTER_MODELS = CHARACTER_MODELS
 
+    project: GameDirectoryProject
+
     def _build_tools_menu(self, tools_menu):
         maps_submenu = self.Menu(tearoff=0)
         self._build_maps_submenu(maps_submenu)
@@ -47,6 +49,11 @@ class ProjectWindow(_BaseProjectWindow):
             label="Rebuild FFXBNDs from Maps",
             foreground="#FFF",
             command=self._rebuild_ffxbnds_from_maps,
+        )
+        maps_menu.add_command(
+            label="Translate Vanilla Event/Region Entries with Entity IDs",
+            foreground="#FFF",
+            command=self._translate_all_event_region_entity_id_names,
         )
 
     def _rename_param_entries_from_text(self, param_table=None):
@@ -95,3 +102,12 @@ class ProjectWindow(_BaseProjectWindow):
                        f"{ex}\n\n"
                        f"Only some FFXBND files may have been written.")
             return self.CustomDialog(title="FFXBND Error", message=message)
+
+    def _translate_all_event_region_entity_id_names(self):
+        """Translate all MSB entry names that have entity IDs.
+
+        Allows events and regions with Japanese names to be written to entities module. Parts should already be valid
+        identifiers, but are checked as well anyway.
+        """
+        for msb in self.project.maps.msbs.values():
+            msb.translate_entity_id_names()

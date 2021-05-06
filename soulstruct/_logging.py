@@ -45,7 +45,7 @@ class _ColoredFormatter(logging.Formatter):
 
 
 CONSOLE_FORMATTER = _ColoredFormatter(
-    fmt="$COLOR{levelname:>7} :: $BOLD_COLOR{asctime}$COLOR :: {name:<35} :: Line {lineno:>4d} :: {message}$RESET",
+    fmt="$COLOR{levelname:>7} :: $BOLD_COLOR{asctime}$COLOR :: {name:<45} :: Line {lineno:>4d} :: {message}$RESET",
     style="{",
     use_color=bool(colorama),
 )
@@ -57,7 +57,7 @@ LOG_PATH = str(Path(_path_source).parent / "soulstruct.log")
 FILE_FORMATTER = logging.Formatter(
     fmt="{levelname:>7} :: {asctime} :: {name:<35} :: Line {lineno:>4d} :: {message}", style="{"
 )
-FILE_HANDLER = logging.FileHandler(LOG_PATH, mode="w")
+FILE_HANDLER = logging.FileHandler(LOG_PATH, mode="w", encoding="shift_jis_2004")
 FILE_HANDLER.setFormatter(FILE_FORMATTER)
 FILE_HANDLER.setLevel(logging.DEBUG)  # default
 

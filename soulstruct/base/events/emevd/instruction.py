@@ -14,6 +14,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
     from .decompiler import InstructionDecompiler
     from .event import EventArg
+    from .utils import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,30 +29,20 @@ class Instruction(abc.ABC):
     EventLayers: tp.Type[EventLayers] = None
     HEADER_STRUCT: BinaryStruct = None
 
-    def __repr__(self) -> str:
-        text = (
-            f"Instruction({self.instruction_class}, {self.instruction_index}, "
-            f"display_arg_types=\"{self.display_arg_types}\", args={self.args_list})"
-        )
-        if self.event_layers is not None:
-            text = text[:-1] + f", event_layers={self.event_layers})"
-        return text
-
-    def __init__(self, instruction_class, instruction_index, display_arg_types="", args_list=(), event_layers=None):
-        self.instruction_class = instruction_class
-        self.instruction_index = instruction_index
+    def __init__(self, category, index, display_arg_types="", args_list=(), event_layers=None):
+        self.category = category
+        self.index = index
         self.display_arg_types = display_arg_types
 
         if len(self.struct_arg_types) != len(args_list):
             raise ValueError(
-                f"Length of argument list ({len(args_list)}) in Instruction {instruction_class}"
-                f"[{instruction_index}] does not match length of format string '{display_arg_types}' "
-                f"({len(display_arg_types.replace('|', ''))})."
+                f"Length of argument list ({len(args_list)}) in instruction {category}[{index:02d}] does not match "
+                f"length of format string '{display_arg_types}' ({len(self.struct_arg_types)})."
             )
 
         self.args_list = args_list if args_list else []
-        self.event_args = []  # Added after construction.
-        self.evs_args_list = []  # So we don't modify 'args_list'.
+        self.event_args = []  # added after construction
+        self.evs_args_list = []  # e.g. `['arg_0_3']`
         if isinstance(event_layers, (list, tuple)):
             self.event_layers = self.EventLayers(event_layers)
         elif isinstance(event_layers, self.EventLayers):
@@ -62,7 +53,10 @@ class Instruction(abc.ABC):
 
     @property
     def struct_arg_types(self):
-        """Used for actually packing/unpacking event argument data."""
+        """Used for actually packing/unpacking event argument data.
+
+        Note that "0i" is added to end by the caller if needed for converting packed data aligned to four bytes.
+        """
         return self.display_arg_types.replace("s", "I").replace("|", "")
 
     @classmethod
@@ -77,8 +71,8 @@ class Instruction(abc.ABC):
             try:
                 args_format, args_list = get_instruction_args(
                     reader,
-                    d["instruction_class"],
-                    d["instruction_index"],
+                    d["category"],
+                    d["index"],
                     base_arg_data_offset + d["first_base_arg_offset"],
                     d["base_args_size"],
                     cls.INSTRUCTION_ARG_TYPES,
@@ -99,7 +93,7 @@ class Instruction(abc.ABC):
                 event_layers = None
 
             instructions.append(
-                cls(d["instruction_class"], d["instruction_index"], args_format, args_list, event_layers)
+                cls(d["category"], d["index"], args_format, args_list, event_layers)
             )
 
         return instructions
@@ -114,16 +108,16 @@ class Instruction(abc.ABC):
 
     def get_called_event(self) -> tp.Optional[int]:
         """Returns event value if instruction is `RunEvent` or `RunCommonEvent`. Returns `None` otherwise."""
-        if self.instruction_class == 2000:
-            if self.instruction_index == 0:
+        if self.category == 2000:
+            if self.index == 0:
                 return self.args_list[1]
-            elif self.instruction_class == 6:
+            elif self.category == 6:
                 return self.args_list[0]
         return None
 
     def to_numeric(self):
         numeric = [
-            f"{self.instruction_class: 5d}[{self.instruction_index:02d}] "
+            f"{self.category: 5d}[{self.index:02d}] "
             f"({self.display_arg_types})" + repr(self.args_list)
         ]
         if self.event_layers:
@@ -132,31 +126,31 @@ class Instruction(abc.ABC):
             numeric.append("    ^" + replacement.to_numeric())
         return numeric
 
-    def to_evs(self, event_arg_types):
+    def to_evs(self, event_arg_types, enums_manager: EntityEnumsManager):
+        """Convert single event instruction to EVS.
+
+        If `enums` is given (e.g. via `EMEVD.to_evs()`), it should map `MapEntity` subclass names to dictionaries that
+        map entity IDs to enum attributes to print in their place (e.g. `1510100: "Characters.BlackKnight2`). If `enums`
+        is given and `warn_missing_enums=True`, entity IDs that do not appear in `enums` will cause a warning to be
+        logged and a TO-DO comment to be written to that line.
+        """
         args, opt_args = self.get_required_and_optional_args()
         opt_arg_types = None
-        if (
-            self.instruction_class == 2000
-            and self.instruction_index == 0
-            and opt_args
-            and args[1] in event_arg_types
-        ):
+        if self.get_called_event() is not None and opt_args and args[1] in event_arg_types:
             opt_arg_types = event_arg_types[args[1]]
-        instruction = self.DECOMPILER.decompile(
-            self.instruction_class, self.instruction_index, args, opt_args, opt_arg_types
-        )
+        instruction = self.DECOMPILER.decompile(self.category, self.index, args, opt_args, opt_arg_types, enums_manager)
         if self.event_layers:
             instruction = instruction[:-1] + self.event_layers.to_evs()
         return instruction
 
     def get_required_and_optional_args(self):
-        split_point = self.display_arg_types.find("|")
-        if split_point == -1:
+        separator_index = self.display_arg_types.find("|")
+        if separator_index == -1:
             required_args = self.evs_args_list
             optional_args = []
         else:
-            required_args = self.evs_args_list[:split_point]
-            optional_args = self.evs_args_list[split_point:]
+            required_args = self.evs_args_list[:separator_index]
+            optional_args = self.evs_args_list[separator_index:]
         return required_args, optional_args
 
     def process_event_args(self) -> dict[tuple[int, int], set[str]]:
@@ -202,7 +196,7 @@ class Instruction(abc.ABC):
             if value_to_overwrite not in permitted and value_to_overwrite != arg_name and argument_byte_type != "s":
                 _LOGGER.error(
                     f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
-                    f"(position {argument_index}) in instruction {self.instruction_class}[{self.instruction_index}] "
+                    f"(position {argument_index}) in instruction {self.category}[{self.index}] "
                     f"with args {self.args_list} (types '{self.display_arg_types}')"
                 )
                 raise ValueError(
@@ -230,10 +224,19 @@ class Instruction(abc.ABC):
         if self.event_layers_offset is None:
             raise ValueError("Instruction event layer offset not set. (Only use EMEVD.pack() to pack events.)")
         struct_dict = {
-            "instruction_class": self.instruction_class,
-            "instruction_index": self.instruction_index,
+            "category": self.category,
+            "index": self.index,
             "base_args_size": self.args_size,
             "first_base_arg_offset": first_base_arg_offset,
             "first_event_layers_offset": self.event_layers_offset,
         }
         return self.HEADER_STRUCT.pack(struct_dict)
+
+    def __repr__(self) -> str:
+        text = (
+            f"Instruction({self.category}, {self.index}, "
+            f"display_arg_types=\"{self.display_arg_types}\", args={self.args_list})"
+        )
+        if self.event_layers is not None:
+            text = text[:-1] + f", event_layers={self.event_layers})"
+        return text

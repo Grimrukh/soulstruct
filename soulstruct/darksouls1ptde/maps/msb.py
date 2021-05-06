@@ -1,6 +1,7 @@
 __all__ = ["MSB"]
 
 from soulstruct.base.maps.msb import MSB as _BaseMSB
+from soulstruct.games import DarkSoulsPTDEType
 
 from .models import MSBModelList
 from .events import MSBEventList
@@ -20,3 +21,5 @@ class MSB(_BaseMSB):
     events: MSBEventList
     regions: MSBRegionList
     parts: MSBPartList
+
+    GAME: DarkSoulsPTDEType

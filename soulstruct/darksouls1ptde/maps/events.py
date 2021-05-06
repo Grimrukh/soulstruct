@@ -18,6 +18,7 @@ __all__ = [
     "MSBNPCInvasionEvent",
 ]
 
+import abc
 import typing as tp
 
 from soulstruct.game_types import *
@@ -46,7 +47,7 @@ from .msb_entry import MSBEntryList
 from soulstruct.utilities.misc import partialmethod
 
 
-class MSBEvent(_BaseMSBEvent):
+class MSBEvent(_BaseMSBEvent, abc.ABC):
 
     EVENT_HEADER_STRUCT = BinaryStruct(
         ("__name_offset", "i"),

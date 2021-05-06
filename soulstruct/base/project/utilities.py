@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import re
 import tkinter as tk
 import typing as tp
 from collections import namedtuple

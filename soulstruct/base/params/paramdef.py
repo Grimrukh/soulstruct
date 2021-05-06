@@ -306,7 +306,6 @@ class ParamDef(GameFile, abc.ABC):
 class ParamDefBND(abc.ABC):
 
     PARAMDEF_CLASS: tp.Type[ParamDef] = None
-    GAME: Game = None
 
     def __init__(self, paramdef_bnd_source=None):
         """BND container with all the `ParamDef` definitions for a given game.

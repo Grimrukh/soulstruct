@@ -1,8 +1,11 @@
 __all__ = ["InstructionDecompiler"]
 
+from typing import Union
+
 from soulstruct.base.events.emevd.decompiler import parse_parameters
 from soulstruct.darksouls1ptde.events.emevd.decompiler import InstructionDecompiler as _BaseDecompiler
 from soulstruct.darksouls1r.maps.constants import get_map
+from soulstruct.game_types.msb_types import *
 from .enums import *
 from . import enums
 
@@ -64,7 +67,7 @@ class InstructionDecompiler(_BaseDecompiler):
     @parse_parameters("ForceAnimation_WithUnknownEffect1", no_name_count=1)
     def _2003_44(
         self,
-        entity: EntityEnum,
+        entity: Union[Character, Object],
         animation,
         loop: bool,
         wait_for_completion: bool,
@@ -77,7 +80,7 @@ class InstructionDecompiler(_BaseDecompiler):
     @parse_parameters("ForceAnimation_WithUnknownEffect2", no_name_count=1)
     def _2003_46(
         self,
-        entity: EntityEnum,
+        entity: Union[Character, Object],
         animation,
         loop: bool,
         wait_for_completion: bool,
@@ -93,20 +96,27 @@ class InstructionDecompiler(_BaseDecompiler):
 
     @parse_parameters("Unknown_2003_48")
     def _2003_48(
-            self, entity: EntityEnum, arg1, model_point, magic_id, shoot_angle_x, shoot_angle_y, shoot_angle_z
+        self,
+        entity: Union[Character, Object],
+        arg1,
+        model_point,
+        magic_id,
+        shoot_angle_x,
+        shoot_angle_y,
+        shoot_angle_z,
     ):
         pass
 
     @parse_parameters("EraseNPCSummonSign")
-    def _2003_49(self, summoned_character: EntityEnum):
+    def _2003_49(self, summoned_character: Character):
         pass
 
     @parse_parameters("FadeOutCharacter", no_name_count=1)
-    def _2004_48(self, character: EntityEnum, duration):
+    def _2004_48(self, character: Character, duration):
         pass
 
     @parse_parameters("FadeInCharacter", no_name_count=1)
-    def _2004_49(self, character: EntityEnum, duration):
+    def _2004_49(self, character: Character, duration):
         pass
 
     @parse_parameters("Unknown_2004_50")
@@ -122,11 +132,11 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("ArenaSetNametag5", no_name_count=1)
-    def _2007_10(self, player_id: EntityEnum):
+    def _2007_10(self, player_id: PlayerEntity):
         pass
 
     @parse_parameters("ArenaSetNametag6", no_name_count=1)
-    def _2007_11(self, player_id: EntityEnum):
+    def _2007_11(self, player_id: PlayerEntity):
         pass
 
     @parse_parameters("DisplayConcatenatedMessage")

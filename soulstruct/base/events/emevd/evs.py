@@ -6,12 +6,12 @@ import importlib
 import importlib.util  # TODO: needed? IDE doesn't think so...
 import logging
 import re
-import sys
 import typing as tp
 from functools import partial
 from pathlib import Path
 
 import soulstruct.game_types as gt
+from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
 from .numeric import SET_INSTRUCTION_ARG_TYPES
 from .utils import COMPARISON_NODES, NEG_COMPARISON_NODES, ConstantCondition, format_event_layers, get_write_offset
@@ -39,6 +39,18 @@ SkipReturnTyping = tp.Union[ast.UnaryOp, ast.Name, ast.Attribute, ast.Compare, a
 SkipReturnTypes = (ast.UnaryOp, ast.Name, ast.Attribute, ast.Compare, ast.Call)
 
 
+class EventInfo(tp.NamedTuple):
+    name: str
+    id: int
+    args: dict[str, tuple[int, int]]
+    arg_types: str
+    arg_classes: dict[str, tp.Type[gt.GameObject]]
+    flag_name: str
+    restart_type: int
+    nodes: list[ast.stmt]
+    description: str
+
+
 class EVSParser(abc.ABC):
 
     GAME_MODULE = None  # type: tp.Any
@@ -47,7 +59,27 @@ class EVSParser(abc.ABC):
     CONDITION_COUNT = 0
     INSTRUCTION_ARG_TYPES = {}
 
-    def __init__(self, evs_path_or_string, map_name=None, script_path=None):
+    tree: ast.AST
+    map_name: str
+    script_directory: tp.Optional[Path]
+    linked_offsets: list[int]
+    strings_with_offsets: list[str]
+    globals: dict[str, tp.Any]  # global script namespace
+    for_vars: dict[str, tp.Any]  # local to each event function
+
+    instructions: dict[str, tp.Callable]
+    tests: dict[str, tp.Union[tp.Callable, ConstantCondition, gt.FlagRange, gt.Character]]
+    events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
+
+    held_conditions: list[int]
+    finished_conditions: list[int]
+    script_event_flags: dict[str, int]
+    current_event: tp.Optional[EventInfo]
+    event_function_strings: list[str]
+
+    numeric_emevd: str
+
+    def __init__(self, evs_path_or_string: tp.Union[str, Path], map_name=None, script_directory=None):
         """Converts Python-like EVS code to numeric EMEVD (in `.numeric_emevd`), which can be fed to an `EMEVD` class.
 
         Args:
@@ -56,23 +88,21 @@ class EVSParser(abc.ABC):
             map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
         """
 
-        if script_path and str(script_path) not in sys.path:
-            sys.path.append(str(script_path))
-
         SET_INSTRUCTION_ARG_TYPES(self.INSTRUCTION_ARG_TYPES)
 
         if isinstance(evs_path_or_string, Path) or "\n" not in evs_path_or_string:
-            evs_path_or_string = Path(evs_path_or_string)
-            with evs_path_or_string.open("r", encoding="utf-8") as script:
+            evs_path = Path(evs_path_or_string)
+            with evs_path.open("r", encoding="utf-8") as script:
                 self.tree = ast.parse(script.read())
-            self.map_name = evs_path_or_string.name.split(".")[0] if map_name is None else map_name
+            self.map_name = evs_path.name.split(".")[0] if map_name is None else map_name
+            self.script_directory = Path(script_directory) if script_directory else evs_path.parent
         else:
             self.tree = ast.parse(evs_path_or_string)
             self.map_name = map_name
+            self.script_directory = Path(script_directory) if script_directory else None
 
         self.linked_offsets = []
         self.strings_with_offsets = []
-        self.event_layers = []
 
         # Global namespace with game-specific enums and constants. May be updated with user imports and definitions.
         self.globals = vars(self.GAME_MODULE.enums)
@@ -98,7 +128,7 @@ class EVSParser(abc.ABC):
         self.finished_conditions = []  # These conditions need to be accessed with 'finished' instruction variants.
 
         self.script_event_flags = {}
-        self.current_event = {}
+        self.current_event = None
         self.event_function_strings = []
 
         self.numeric_emevd = ""
@@ -161,17 +191,17 @@ class EVSParser(abc.ABC):
         elif flag_name:
             self.script_event_flags[flag_name] = int(event_id)  # Loaded into constants later under EVENTS enum.
 
-        self.events[event_name] = {
-            "name": event_name,
-            "id": int(event_id),
-            "args": arg_dict,
-            "arg_types": arg_types,
-            "arg_classes": arg_classes,
-            "flag_name": flag_name,
-            "restart_type": restart_type,
-            "nodes": node.body[1:],  # Skips docstring.
-            "description": description.lstrip(":"),
-        }
+        self.events[event_name] = EventInfo(
+            name=event_name,
+            id=int(event_id),
+            args=arg_dict,
+            arg_types=arg_types,
+            arg_classes=arg_classes,
+            flag_name=flag_name,
+            restart_type=restart_type,
+            nodes=node.body[1:],  # Skips docstring.
+            description=description.lstrip(":"),
+        )
 
     def _validate_event_name(self, event_node: ast.FunctionDef):
         name = event_node.name
@@ -207,7 +237,7 @@ class EVSParser(abc.ABC):
             if isinstance(node, ast.Import):
                 _import_module(node, self.globals)
             elif isinstance(node, ast.ImportFrom):
-                _import_from(node, self.globals)
+                _import_from(node, self.globals, self.script_directory)
             elif isinstance(node, ast.FunctionDef):
                 self._scan_event(node)
             elif isinstance(node, ast.Assign):
@@ -237,12 +267,17 @@ class EVSParser(abc.ABC):
         self.numeric_emevd += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_offsets)
         self.numeric_emevd += "\n\nstrings:\n" + "\n".join(self.strings_with_offsets)
 
-    def _compile_event_function(self, event_function: dict):
+    def _compile_event_function(self, event_info: EventInfo):
         """ Writes header, then iterates over all nodes in function body. """
 
-        event_emevd = _header(event_function["id"], event_function["restart_type"])
+        event_emevd = _header(event_info.id, event_info.restart_type)
 
-        for node in event_function["nodes"]:
+        for node in event_info.nodes:
+            if not isinstance(node, EventStatementTypes):
+                raise EVSSyntaxError(
+                    node,
+                    f"Invalid line: {ast.dump(node)}. Must be `Condition()` assignment, IF/ELSE block, or instruction.",
+                )
             built_function = self._compile_event_body_node(node)
             if built_function is None:
                 raise EVSSyntaxError(node, "Builder returned None for instruction.")
@@ -305,19 +340,19 @@ class EVSParser(abc.ABC):
 
         raise EVSSyntaxError(
             node,
-            f"Invalid line: {ast.dump(node)}. Must be a Condition() assignment, IF/ELSE block, " f"or instruction.",
+            f"Invalid line: {ast.dump(node)}. Must be `Condition()` assignment, IF/ELSE block, or instruction.",
         )
 
     def _compile_event_call(self, node: ast.Call):
         """Shortcut for RunEvent(...) instruction."""
         name, args, kwargs = self._parse_function_call(node)
-        event_dict = self.events[name]
+        event_info = self.events[name]
         kwargs = self._parse_keyword_nodes(node.keywords)
         event_layer_string = format_event_layers(kwargs.pop("event_layers", None))
 
-        if not args and not kwargs and not event_dict["args"]:
+        if not args and not kwargs and not event_info.args:
             # Events with no arguments can be called with no argument, ignoring `event_layers` (`slot` defaults to 0).
-            instruction = self.instructions["RunEvent"](event_dict["id"])
+            instruction = self.instructions["RunEvent"](event_info.id)
             instruction[0] += event_layer_string
             return instruction
 
@@ -336,7 +371,7 @@ class EVSParser(abc.ABC):
 
         if kwargs:
             args = []
-            for arg_name in event_dict["args"]:
+            for arg_name in event_info.args:
                 try:
                     args.append(kwargs.pop(arg_name))  # order event arguments correctly
                 except KeyError:
@@ -344,18 +379,18 @@ class EVSParser(abc.ABC):
             if kwargs:
                 raise EVSValueError(node, f"Invalid keyword arguments in event call: {kwargs}")
         else:
-            if len(args) != len(event_dict["args"]):
+            if len(args) != len(event_info.args):
                 raise EVSValueError(
                     node,
                     f"Number of positional arguments in event call (excluding the slot) "
                     f"does not match the event function signature:\n"
-                    f"    {['slot'] + list(event_dict['args'].keys())}.",
+                    f"    {['slot'] + list(event_info.args.keys())}.",
                 )
 
-        event_id = event_dict["id"]
+        event_id = event_info.id
         slot = 0 if slot is None else slot
         args = (0,) if not args else args
-        arg_types = None if not event_dict["arg_types"] else event_dict["arg_types"]
+        arg_types = event_info.arg_types if event_info.arg_types else None
 
         instruction = self.instructions["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
         instruction[0] += event_layer_string
@@ -418,15 +453,15 @@ class EVSParser(abc.ABC):
             return self._compile_condition(arg, condition=0)
 
         if name in {"EnableThisFlag", "DisableThisFlag"}:
-            if self.events["args"]:
+            if self.current_event.args:
                 raise EVSNameError(
                     node,
                     "Cannot use 'EnableThisFlag' or 'DisableThisFlag' shortcuts in an event that "
                     "takes arguments (the slot number cannot be determined from within).",
                 )
             if name == "EnableThisFlag":
-                return self.instructions["EnableFlag"](self.current_event["id"])
-            return self.instructions["DisableFlag"](self.current_event["id"])
+                return self.instructions["EnableFlag"](self.current_event.id)
+            return self.instructions["DisableFlag"](self.current_event.id)
 
         if name in self.instructions:
             return self._compile_instruction(node)
@@ -445,11 +480,11 @@ class EVSParser(abc.ABC):
         for_emevd = []
         for_var = node.target
         if isinstance(for_var, ast.Name):
-            if for_var in self.for_vars:
+            if for_var.id in self.for_vars:
                 raise EVSSyntaxError(
                     node, f"Variable {repr(for_var.id)} is already a 'for' loop variable in this scope."
                 )
-            if for_var in self.current_event["args"]:
+            if for_var in self.current_event.args:
                 raise EVSSyntaxError(
                     node, f"Loop variable {repr(for_var.id)} is already the name of an event argument."
                 )
@@ -465,11 +500,11 @@ class EVSParser(abc.ABC):
                 if not isinstance(sub_var, ast.Name):
                     # TODO: Implement arbitrary depth values.
                     raise EVSSyntaxError(node, "`for` loop variables cannot currently use nested tuples.")
-                if sub_var in self.for_vars:
+                if sub_var.id in self.for_vars:
                     raise EVSSyntaxError(
                         node, f"Variable {repr(sub_var.id)} is already a 'for' loop variable in this scope."
                     )
-                if sub_var in self.current_event["args"]:
+                if sub_var in self.current_event.args:
                     raise EVSSyntaxError(
                         node, f"Loop variable {repr(sub_var.id)} is already the name of an event argument."
                     )
@@ -514,7 +549,7 @@ class EVSParser(abc.ABC):
             else:
                 raise EVSSyntaxError(
                     node,
-                    f"Invalid return value '{node.value}'. It should be None (empty) to end the "
+                    f"Invalid return value '{return_node.value}'. It should be None (empty) to end the "
                     f"event, or the constant RESTART to restart it.",
                 )
 
@@ -600,10 +635,10 @@ class EVSParser(abc.ABC):
             raise EVSSyntaxError(node.lineno, "The `not` keyword is the only valid unary operator.")
 
         # 2. The condition is an event argument with a callable, testable game type.
-        if isinstance(node, ast.Name) and node.id in self.current_event["args"]:
-            if node.id in self.current_event["arg_classes"]:
-                arg = self.current_event["args"][node.id]
-                arg_class = self.current_event["arg_classes"][node.id]
+        if isinstance(node, ast.Name) and node.id in self.current_event.args:
+            if node.id in self.current_event.arg_classes:
+                arg = self.current_event.args[node.id]
+                arg_class = self.current_event.arg_classes[node.id]
                 test_func = partial(arg_class.__call__, arg)
                 if not callable(test_func):
                     raise EVSValueError(node.lineno, f"Event argument type {repr(arg_class)} is not testable.")
@@ -700,7 +735,7 @@ class EVSParser(abc.ABC):
         if isinstance(left_node, ast.Name):
             name = left_node.id
             try:
-                arg = self.current_event["args"][name]
+                arg = self.current_event.args[name]
             except KeyError:
                 raise NoSkipOrReturnError
             if not negate:  # note inversion
@@ -802,10 +837,10 @@ class EVSParser(abc.ABC):
             emevd_args += [op_node, comparison_value]
 
         # Testable event argument
-        if isinstance(node, ast.Name) and node.id in self.current_event["args"]:
-            if node.id in self.current_event["arg_classes"]:
-                arg = self.current_event["args"][node.id]
-                arg_class = self.current_event["arg_classes"][node.id]
+        if isinstance(node, ast.Name) and node.id in self.current_event.args:
+            if node.id in self.current_event.arg_classes:
+                arg = self.current_event.args[node.id]
+                arg_class = self.current_event.arg_classes[node.id]
                 test_func = partial(arg_class.__call__, arg)
                 if not callable(test_func):
                     raise EVSValueError(node.lineno, f"Event argument type {repr(arg_class)} is not testable.")
@@ -1053,13 +1088,13 @@ class EVSParser(abc.ABC):
         an `EvsSyntaxError` if the name is a reserved event argument (currently "slot" and "event_layers").
         """
         name = node.id
-        if name in self.current_event["args"]:
+        if name in self.current_event.args:
             if name in {"slot", "event_layers"}:
                 raise EVSSyntaxError(node, f"Cannot use reserved event argument {repr(name)}.")
-            arg = self.current_event["args"][name]
-            if test and name in self.current_event["arg_classes"]:
+            arg = self.current_event.args[name]
+            if test and name in self.current_event.arg_classes:
                 # Bake arg into game type __call__ as 'self' (becomes a valid zero-argument test call).
-                return partial(self.current_event["arg_classes"][name].__call__, arg)
+                return partial(self.current_event.arg_classes[name].__call__, arg)
             return arg
 
         # Look in tests first (boolean objects), then 'for' loop variables, then globals.
@@ -1249,22 +1284,29 @@ class EVSParser(abc.ABC):
             return highest_and
 
 
-def _parse_event_arguments(event_node: ast.FunctionDef):
-    arg_names = []
+def _parse_event_arguments(
+    event_node: ast.FunctionDef
+) -> tuple[dict[str, tuple[int, int]], str, dict[str, tp.Type[gt.GameObject]]]:
+    """Parse argument nodes of given event function node and return:
+        - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArg` instances
+        - event's argument format string, e.g. `"iIIBh"`
+        - dictionary mapping argument names (where applicable) to `GameObject` subclasses
+    """
+    arg_names = []  # type: list[str]
     arg_types = ""
-    arg_classes = {}
+    arg_classes = {}  # type: dict[str, tp.Type[gt.GameObject]]
 
     if event_node.args.defaults:
         raise EVSSyntaxError(event_node, "You cannot provide default values for event arguments.")
     if event_node.args.vararg or event_node.args.kwarg:
-        raise EVSSyntaxError(event_node, "You cannot use *args or **kwargs in event functions.")
+        raise EVSSyntaxError(event_node, "You cannot use `*args` or `**kwargs` in event functions.")
     if event_node.args.kwonlyargs:
         raise EVSSyntaxError(event_node, "You cannot have keyword-only arguments in event functions.")
 
     for arg_node in event_node.args.args:
         arg_name = arg_node.arg
         if arg_name == "_":
-            continue  # My personal protocol for the first 'slot' arg.
+            continue  # recommended intellisense placeholder for the first `slot` arg
         if arg_name in {"slot", "event_layers"}:
             # Previously raised an error here, but now allowing them for IDE purposes (but they do nothing). An error
             # will still be raised if you try to use either of these names in the event function body.
@@ -1273,14 +1315,14 @@ def _parse_event_arguments(event_node: ast.FunctionDef):
 
         arg_type_node = arg_node.annotation
 
-        if isinstance(arg_type_node, ast.Str):
-            if arg_type_node.s not in _EVS_TYPES:
+        if isinstance(arg_type_node, ast.Constant) and isinstance(arg_type_node.value, str):
+            if arg_type_node.value not in _EVS_TYPES:
                 raise EVSSyntaxError(
                     event_node,
                     f"Invalid event argument type string {repr(arg_type_node)}. "
                     f"Must be one of: {' '.join(_EVS_TYPES)}",
                 )
-            arg_type = arg_type_node.s
+            arg_type = arg_type_node.value
 
         elif isinstance(arg_type_node, ast.Name):
             try:
@@ -1306,15 +1348,13 @@ def _parse_event_arguments(event_node: ast.FunctionDef):
 
         arg_types += arg_type
 
-    arg_values = _define_args(arg_types)
-    arg_dict = {}
-    for name, value in zip(arg_names, arg_values):
-        arg_dict[name] = value
+    arg_dict = {name: value for name, value in zip(arg_names, _define_args(arg_types))}
 
     return arg_dict, arg_types, arg_classes
 
 
 def _parse_decorator(event_node: ast.FunctionDef) -> int:
+    """Extract `RestartType` enum value from function decorator (default is 0)."""
     decorators = event_node.decorator_list
     if decorators:
         if len(decorators) > 1:
@@ -1362,7 +1402,7 @@ def _validate_comparison_node(node):
     return node.left, node.ops[0].__class__, node.comparators[0].n
 
 
-def _import_module(node: ast.Import, namespace: dict):
+def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
     for alias in node.names:
         name = alias.name
         if _GAME_IMPORT_RE.match(name):
@@ -1376,16 +1416,32 @@ def _import_module(node: ast.Import, namespace: dict):
         try:
             namespace[as_name] = getattr(module, name)
         except AttributeError as e:
-            raise EVSImportFromError(node, node.module, name, str(e))
+            raise EVSImportError(node, name, str(e))
 
 
-def _import_from(node: ast.ImportFrom, namespace: dict):
+def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
     """Import names into given namespace dictionary."""
     try:
+        # Try to import module normally.
         module = importlib.import_module(node.module)
+    except ImportError:
+        # Try to import module on path.
+        print(f"Importing from path: {node.module}")
+        if script_directory is None:
+            raise EVSImportError(
+                node,
+                node.module,
+                "`script_directory` needed for relative import, but was not given to `EVSParser` or be detected.",
+            )
+        level = 1 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
+        module_path = script_directory / ("../" * level + node.module.replace(".", "/") + ".py")
+        print(module_path)
+        if not module_path.is_file():
+            raise EVSImportError(node, node.module, f"Cannot import missing module file: {module_path}")
+        module = import_arbitrary_file(module_path)
+    else:
         importlib.reload(module)
-    except ImportError as e:
-        raise EVSImportError(node, node.module, str(e))
+
     for alias in node.names:
         name = alias.name
         if _GAME_IMPORT_RE.match(name):
@@ -1395,10 +1451,11 @@ def _import_from(node: ast.ImportFrom, namespace: dict):
                 all_names = vars(module)["__all__"]
             else:
                 # Get all names that were defined in the module and don't begin with an underscore.
+                module_name = node.module.split(".")[-1]
                 all_names = [
                     n
                     for n, attr in vars(module).items()
-                    if not n.startswith("_") and (not hasattr(attr, "__module__") or attr.__module__ == node.module)
+                    if not n.startswith("_") and (not hasattr(attr, "__module__") or attr.__module__ == module_name)
                 ]
             for name_ in all_names:
                 try:
@@ -1421,7 +1478,9 @@ def _header(event_id, restart_type=0):
     return [f"{event_id}, {restart_type}"]
 
 
-def _define_args(arg_types):
+def _define_args(arg_types: str) -> list[tuple[int, int]]:
+    """Converts an argument format string (e.g. `"iIIfB"`) to a list of `(write_offset, size)` tuples, usually for
+    generating `EventArg` instances."""
     args = []
     for i, c in enumerate(arg_types):
         if c in "Bb":
@@ -1431,13 +1490,13 @@ def _define_args(arg_types):
         elif c in "Iif":
             c_size = 4
         else:
-            raise ValueError(f"Invalid character {c} in arg_types.")
+            raise ValueError(f"Invalid format character '{c}' in `arg_types`.")
         args.append((get_write_offset(arg_types, i), c_size))
     return args
 
 
 class EVSError(Exception):
-    def __init__(self, lineno: tp.Union[ast.AST, int], msg):
+    def __init__(self, lineno: tp.Union[ast.AST, EventStatementTyping, int], msg):
         if isinstance(lineno, ast.AST):
             lineno = lineno.lineno
         self.lineno = lineno
@@ -1458,8 +1517,7 @@ class EVSImportError(EVSError):
     def __init__(self, lineno, module, msg):
         super().__init__(
             lineno,
-            f"Could not import {repr(module)}. Note you need to specify `script_path` to use "
-            f"relative imports.\nError: {msg}",
+            f"Could not import {repr(module)}.\nError: {msg}",
         )
 
 

@@ -5,7 +5,7 @@ __all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
 import logging
 import typing as tp
 
-from soulstruct.games import DARK_SOULS_PTDE
+from soulstruct.games import DarkSoulsPTDEType
 from soulstruct.base.params.paramdef import (
     ParamDefField as _BaseParamDefField,
     ParamDef as _BaseParamDef,
@@ -80,9 +80,8 @@ class ParamDef(_BaseParamDef):
             return None
 
 
-class ParamDefBND(_BaseParamDefBND):
+class ParamDefBND(_BaseParamDefBND, DarkSoulsPTDEType):
     PARAMDEF_CLASS = ParamDef
-    GAME = DARK_SOULS_PTDE
 
 
 def GET_BUNDLED_PARAMDEF() -> ParamDefBND:

@@ -166,6 +166,10 @@ class EntityEntryRow(EntryRow):
             label="Edit in Floating Box (Shift + Click)",
             command=lambda: self.master.popout_entry_text_edit(self.row_index),
         )
+        self.context_menu.add_command(
+            label="Translate Japanese Text",
+            command=lambda: self.master.translate_entry_text(self.row_index),
+        )
 
     def hide(self):
         """Called when this row has no entry to display."""
@@ -210,7 +214,7 @@ class EntityEditor(BaseEditor):
     def __init__(
         self,
         project,
-        evs_directory,
+        entities_directory,
         global_map_choice_func,
         linker,
         master=None,
@@ -218,7 +222,7 @@ class EntityEditor(BaseEditor):
     ):
         self.map_choice = None
         self.global_map_choice_func = global_map_choice_func
-        self.evs_directory = Path(evs_directory)
+        self.entities_directory = Path(entities_directory)
         self._e_entry_description_edit = None
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
@@ -229,7 +233,7 @@ class EntityEditor(BaseEditor):
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
-            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1, 1], auto_columns=0):
+            with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1], auto_columns=0):
                 map_display_names = [
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
                     for game_map in self.maps.ALL_MAPS
@@ -265,24 +269,6 @@ class EntityEditor(BaseEditor):
                     "this map's EVS script. If you have changed any existing names and want to "
                     "update the names in the EVS script, make sure to restore the IDs before "
                     "regenerating this file.",
-                )
-                self.Button(
-                    text="Event IDs to Names",
-                    font_size=10,
-                    width=18,
-                    padx=10,
-                    command=self._replace_evs_ids,
-                    tooltip_text="Go through this map's EVS script and replace any entity IDs with their names "
-                    "imported from the map's entities module, if present.",
-                )
-                self.Button(
-                    text="Event Names to IDs",
-                    font_size=10,
-                    width=18,
-                    padx=10,
-                    command=self._restore_evs_ids,
-                    tooltip_text="Go through this map's EVS script and replace any names imported from the "
-                    "map's entities module with their original entity IDs, if present.",
                 )
 
             with self.set_master(sticky="nsew", row_weights=[1], column_weights=[0, 1], auto_columns=0):
@@ -449,7 +435,7 @@ class EntityEditor(BaseEditor):
         self.select_entry_row_index(None)
         self.refresh_entries()
 
-    def _get_map(self):
+    def _get_map(self) -> Map:
         return self.maps.GET_MAP(self.map_choice_id)
 
     def _import_entities_module(self):
@@ -460,10 +446,10 @@ class EntityEditor(BaseEditor):
         """
         game_map = self.maps.GET_MAP(self.map_choice_id)
         msb = self.get_selected_msb()
-        module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
+        module_path = self.entities_directory / f"{game_map.emevd_file_stem}_entities.py"
         if not module_path.is_file():
             return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
-        evs_path = self.evs_directory / f"{game_map.emevd_file_stem}.evs.py"
+        evs_path = self.entities_directory / f"{game_map.emevd_file_stem}.evs.py"
         if not evs_path.is_file():
             return self.error_dialog("No EVS Script", "EVS script not yet imported into project 'events' folder.")
         sys.path.append(str(module_path.parent))
@@ -580,103 +566,25 @@ class EntityEditor(BaseEditor):
 
         self.refresh_entries()
 
-        self.CustomDialog("Import Successful", f"Entity names and descriptions imported successfully.")
+        self.CustomDialog("Import Successful", "Entity names and descriptions imported successfully.")
 
     def _write_entities_module(self):
         """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script."""
         game_map = self._get_map()
-        module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
-        module_text = "from soulstruct.game_types import *\n"
-        for game_type in ENTITY_GAME_TYPES:
-            category = "{}: {}".format(*game_type.get_msb_entry_type_subtype(pluralized_subtype=True))
-            class_name = "{}{}".format(*reversed(game_type.get_msb_entry_type_subtype()))
-            class_text = ""
-            requires_pass = True
-            for entity_id, msb_entry in self.get_category_data(category).items():
-                name = msb_entry.name.replace(" ", "")
-                try:
-                    name = name.encode("utf-8").decode("ascii")
-                except UnicodeDecodeError:
-                    class_text += f"    # {name} = {entity_id}"
-                else:
-                    class_text += f"    {name} = {entity_id}"
-                    requires_pass = False
-                if msb_entry.description:
-                    class_text += f"  # {msb_entry.description}"
-                class_text += "\n"
-            if class_text:
-                class_text = f"\n\nclass {class_name}({game_type.__name__}):\n" + class_text
-                if requires_pass:
-                    class_text += "    pass\n"
-                module_text += class_text
+        module_path = self.entities_directory / f"{game_map.emevd_file_stem}_entities.py"
 
-        with module_path.open("w", encoding="utf-8") as f:
-            f.write(module_text)
-
-        self.CustomDialog(
-            "Write Successful", f"'{{project}}/events/{module_path.name}'\n" f"created or overwritten successfully."
-        )
-
-    def _replace_evs_ids(self):
-        game_map = self._get_map()
-        module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
-        if not module_path.is_file():
-            return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
-        evs_path = self.evs_directory / f"{game_map.emevd_file_stem}.evs.py"
-        if not evs_path.is_file():
-            return self.error_dialog("No EVS Script", "EVS script not yet imported into project 'events' folder.")
-        sys.path.append(str(module_path.parent))
-
+        msb = self.get_selected_msb()
+        print(game_map.name, game_map.area_id, game_map.block_id)
         try:
-            entity_module = import_module(module_path.stem)
-        except Exception as e:
-            return self.CustomDialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(e)}")
-        with evs_path.open("r", encoding="utf-8") as f:
-            evs = f.read()
-        for attr_name, attr in [
-            m[0:2]
-            for m in inspect.getmembers(entity_module, inspect.isclass)
-            if m[1].__module__ == entity_module.__name__
-        ]:
-            for entity in attr:
-                evs = re.sub(fr"([ ,(=]){entity.value}([,)])", fr"\1{attr_name}.{entity.name}\2", evs)
-
-        # TODO: Make this EMEVD class access cleaner.
-        import_string = self.linker.window.project.emevd_directory.EMEVD_CLASS.IMPORT_STRING
-        if f"from {module_path.stem} import *" not in evs:
-            evs = evs.replace(
-                f"from {import_string} import *\n",
-                f"from {import_string} import *\nfrom {module_path.stem} import *\n",
+            msb.write_entities_module(module_path, area_id=game_map.area_id, block_id=game_map.block_id)
+        except Exception as ex:
+            self.CustomDialog(
+                "Write Failed", f"An error occurred while writing '{{project}}/events/{module_path.name}':\n{ex}"
             )
-        with evs_path.open("w", encoding="utf-8") as f:
-            f.write(evs)
-
-    def _restore_evs_ids(self):
-        game_map = self._get_map()
-        module_path = self.evs_directory / f"{game_map.emevd_file_stem}_entities.py"
-        if not module_path.is_file():
-            return self.CustomDialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
-        evs_path = self.evs_directory / f"{game_map.emevd_file_stem}.evs.py"
-        if not evs_path.is_file():
-            return self.CustomDialog("No EVS Script", "EVS script not yet imported into project 'events' folder.")
-        sys.path.append(str(module_path.parent))
-
-        try:
-            entity_module = import_module(module_path.stem)
-        except Exception as e:
-            return self.CustomDialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(e)}")
-        with evs_path.open("r", encoding="utf-8") as f:
-            evs = f.read()
-        for attr_name, attr in [
-            m[0:2]
-            for m in inspect.getmembers(entity_module, inspect.isclass)
-            if m[1].__module__ == entity_module.__name__
-        ]:
-            for entity in attr:
-                evs = re.sub(fr"([ ,(=]){attr_name}.{entity.name}([,)])", fr"\1{entity.value}\2", evs)
-
-        with evs_path.open("w", encoding="utf-8") as f:
-            f.write(evs)
+        else:
+            self.CustomDialog(
+                "Write Successful", f"'{{project}}/events/{module_path.name}'\ncreated or overwritten successfully."
+            )
 
     @staticmethod
     def _get_category_text_fg(category: str):

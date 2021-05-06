@@ -1,12 +1,15 @@
 """NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
 
-__all__ = ["PACKAGE_PATH", "find_dcx", "create_bak", "find_steam_common_paths", ]
+__all__ = ["PACKAGE_PATH", "find_dcx", "create_bak", "find_steam_common_paths", "import_arbitrary_file"]
 
 import ctypes
+import importlib.util
 import logging
 import shutil
 import string
 import sys
+import types
+import typing as tp
 from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
@@ -65,3 +68,13 @@ def _get_drives():
             drives.append(letter + ":/")
         bit_mask >>= 1
     return drives
+
+
+def import_arbitrary_file(path: tp.Union[str, Path]) -> types.ModuleType:
+    path = Path(path)
+    spec = importlib.util.spec_from_file_location(path.stem, str(path))
+    module = importlib.util.module_from_spec(spec)
+    # noinspection PyUnresolvedReferences
+    spec.loader.exec_module(module)
+    sys.modules[spec.name] = module
+    return module

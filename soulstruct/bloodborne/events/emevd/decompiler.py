@@ -1,7 +1,10 @@
 __all__ = ["InstructionDecompiler"]
 
+import typing as tp
+
 from soulstruct.base.events.emevd.decompiler import InstructionDecompiler as _BaseDecompiler, parse_parameters
 from soulstruct.bloodborne.maps.constants import get_map
+from soulstruct.game_types.msb_types import *
 from .enums import *
 from . import enums
 
@@ -12,7 +15,7 @@ class InstructionDecompiler(_BaseDecompiler):
     GET_MAP = staticmethod(get_map)
 
     @parse_parameters
-    def _3_23(self, condition, attacked_entity: EntityEnum, attacker: EntityEnum, damage_type: DamageType):
+    def _3_23(self, condition, attacked_entity: CharacterType, attacker: Character, damage_type: DamageType):
         if not self._any_vars(damage_type) and damage_type.name == "Unspecified":
             # Leave out default `damage_type` value.
             if attacker == -1:
@@ -23,7 +26,7 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=}, {damage_type=})"
 
     @parse_parameters("IfActionButtonParam", no_name_count=1)
-    def _3_24(self, condition, action_button_id, entity: EntityEnum):
+    def _3_24(self, condition, action_button_id, entity: tp.Union[Character, Object, Region]):
         pass
 
     @parse_parameters("IfPlayerArmorType", no_name_count=1)
@@ -49,7 +52,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _4_15(self, condition, character: EntityEnum, state: bool):
+    def _4_15(self, condition, character: Character, state: bool):
         if state is True:
             return f"IfCharacterDrawGroupActive({condition}, {character})"
         if state is False:
@@ -159,7 +162,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _1005_101(self, label: Label, obj, state: bool):
+    def _1005_101(self, label: Label, obj: Object, state: bool):
         if state is True:
             return f"GotoIfObjectDestroyed({label}, {obj})"
         if state is False:
@@ -201,10 +204,10 @@ class InstructionDecompiler(_BaseDecompiler):
         self,
         cutscene,
         cutscene_type: CutsceneType,
-        move_to_region,
+        move_to_region: Region,
         area_id,
         block_id,
-        player_id: EntityEnum,
+        player_id: PlayerEntity,
         time_period_id,
     ):
         move_to_map = self._get_game_map_variable_name(area_id, block_id)
@@ -214,16 +217,16 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("PlayCutsceneAndSetTimePeriod", no_name_count=2)
-    def _2002_07(self, cutscene, cutscene_type: CutsceneType, player_id: EntityEnum, time_period_id):
+    def _2002_07(self, cutscene, cutscene_type: CutsceneType, player_id: PlayerEntity, time_period_id):
         pass
 
     @parse_parameters
-    def _2002_08(self, region, area_id, block_id):
+    def _2002_08(self, region: Region, area_id, block_id):
         move_to_map = self._get_game_map_variable_name(area_id, block_id)
         return f"PlayCutsceneAndMovePlayer_Dummy({region}, {move_to_map=})"
 
     @parse_parameters("HandleMinibossDefeat", no_name_count=1)
-    def _2003_15(self, miniboss_id):
+    def _2003_15(self, miniboss_id: Character):
         pass
 
     @parse_parameters("Unknown_2003_27", no_name_count=1)
@@ -255,7 +258,7 @@ class InstructionDecompiler(_BaseDecompiler):
         return self._set_state("DirectionDisplay", state)
 
     @parse_parameters
-    def _2003_45(self, collision, level, grid_x, grid_y, state: bool):
+    def _2003_45(self, collision: Collision, level, grid_x, grid_y, state: bool):
         if state is True:
             return f"EnableMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y})"
         if state is False:
@@ -273,11 +276,11 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"SetMapBoundariesDisplay({hierarchy}, {grid_x}, {grid_y}, {state=})"
 
     @parse_parameters
-    def _2003_48(self, region, state: bool, duration, wind_parameter_id):
+    def _2003_48(self, region: Region, state: bool, duration, wind_parameter_id):
         return f"SetAreaWind({region}, {state=}, {duration=}, {wind_parameter_id=})"
 
     @parse_parameters("WarpPlayerToRespawnPoint", no_name_count=1)
-    def _2003_49(self, respawn_point_id):
+    def _2003_49(self, respawn_point_id: SpawnPointEvent):
         pass
 
     @parse_parameters("StartEnemySpawner", no_name_count=1)
@@ -286,7 +289,12 @@ class InstructionDecompiler(_BaseDecompiler):
 
     @parse_parameters("SummonNPC", no_name_count=3)
     def _2003_51(
-        self, sign_type: SingleplayerSummonSignType, character: EntityEnum, region, summon_flag, dismissal_flag
+        self,
+        sign_type: SingleplayerSummonSignType,
+        character: PlayerEntity,
+        region: Region,
+        summon_flag,
+        dismissal_flag,
     ):
         pass
 
@@ -295,40 +303,40 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("BossDefeat", no_name_count=2)
-    def _2003_53(self, boss_id, banner_type: BannerType):
+    def _2003_53(self, boss_id: Character, banner_type: BannerType):
         pass
 
     @parse_parameters("SendNPCSummonHome", no_name_count=1)
-    def _2003_54(self, character: EntityEnum):
+    def _2003_54(self, character: Character):
         pass
 
     @parse_parameters("AddSpecialEffect", no_name_count=2)
-    def _2004_08(self, character: EntityEnum, special_effect_id, affect_npc_part_hp: bool):
+    def _2004_08(self, character: Character, special_effect_id, affect_npc_part_hp: bool):
         pass
 
     @parse_parameters("RotateToFaceEntity", no_name_count=2)
-    def _2004_14(self, character: EntityEnum, target_entity: EntityEnum, animation, wait_for_completion: bool = False):
+    def _2004_14(self, character: Character, target_entity: Character, animation, wait_for_completion: bool = False):
         pass
 
     @parse_parameters("ChangeCharacterCloth", no_name_count=2)
-    def _2004_48(self, character: EntityEnum, bit_count, state_id):
+    def _2004_48(self, character: Character, bit_count, state_id):
         pass
 
     @parse_parameters("ChangePatrolBehavior", no_name_count=1)
-    def _2004_49(self, character: EntityEnum, patrol_information_id):
+    def _2004_49(self, character: Character, patrol_information_id):
         pass
 
     @parse_parameters("SetDistanceLimitForConversationStateChanges", no_name_count=1)
-    def _2004_50(self, character: EntityEnum, distance):
+    def _2004_50(self, character: Character, distance):
         pass
 
     @parse_parameters("Test_RequestRagdollRestraint", no_name_count=6)
     def _2004_51(
         self,
-        recipient_character,
+        recipient_character: Character,
         recipient_target_rigid_index,
         recipient_model_point,
-        attachment_character,
+        attachment_character: Character,
         attachment_target_rigid_index,
         attachment_model_point,
     ):
@@ -339,27 +347,27 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters("AdaptSpecialEffectHealthChangeToNPCPart", no_name_count=1)
-    def _2004_53(self, character: EntityEnum):
+    def _2004_53(self, character: Character):
         pass
 
     @parse_parameters("SetGravityAndCollisionExcludingOwnWorld", no_name_count=2)
-    def _2004_54(self, character: EntityEnum, state: bool):
+    def _2004_54(self, character: Character, state: bool):
         pass
 
     @parse_parameters("AddSpecialEffect_WithUnknownEffect", no_name_count=2)
-    def _2004_55(self, character: EntityEnum, speffect, affect_npc_parts_hp: bool):
+    def _2004_55(self, character: Character, speffect, affect_npc_parts_hp: bool):
         pass
 
     @parse_parameters("ActivateObjectWithSpecificCharacter", no_name_count=1)
-    def _2005_16(self, obj, objact_id, relative_index, character: EntityEnum):
+    def _2005_16(self, obj: Object, objact_id, relative_index, character: Character):
         pass
 
     @parse_parameters("SetObjectDamageShieldState", no_name_count=1)
-    def _2005_17(self, obj, state: bool):
+    def _2005_17(self, obj: Object, state: bool):
         pass
 
     @parse_parameters("RegisterLantern", no_name_count=2)
-    def _2009_05(self, flag, obj, reaction_distance, reaction_angle, initial_sword_number, sword_level):
+    def _2009_05(self, flag, obj: Object, reaction_distance, reaction_angle, initial_sword_number, sword_level):
         pass
 
     @parse_parameters
@@ -367,11 +375,11 @@ class InstructionDecompiler(_BaseDecompiler):
         return self._set_state("BossMusic", state, entity=sound_id)
 
     @parse_parameters("NotifyDoorEventSoundDampening", no_name_count=1)
-    def _2010_05(self, entity_id, state: DoorState):
+    def _2010_05(self, entity_id: Object, state: DoorState):
         pass
 
     @parse_parameters("SetCollisionResState", no_name_count=1)
-    def _2011_03(self, collision, state: bool):
+    def _2011_03(self, collision: Collision, state: bool):
         return
 
     @parse_parameters("CreatePlayLog", no_name_count=1)

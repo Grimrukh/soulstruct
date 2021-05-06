@@ -1650,7 +1650,7 @@ def Event13305828(
     IfFlagOn(1, arg_8_11)
     IfCharacterInsideRegion(1, PLAYER, region=arg_12_15)
     IfConditionTrue(0, input_condition=1)
-    Unknown_2010_07(entity=arg_20_23)
+    Unknown_2010_07(sound_id=arg_20_23)
     WaitFrames(1)
     EnableBossMusic(arg_16_19)
     IfFlagOn(-1, arg_24_27)

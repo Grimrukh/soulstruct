@@ -29,7 +29,6 @@ _LOGGER = logging.getLogger(__name__)
 class ESD(GameFile, abc.ABC):
     """An EzState state machine that controls character/bonfire interactions (TALK) or character animations (CHR)."""
 
-    GAME: Game = None
     EXT = ".esd"
     EXTERNAL_HEADER_STRUCT: BinaryStruct = None
     INTERNAL_HEADER_STRUCT: BinaryStruct = None

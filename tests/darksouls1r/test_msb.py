@@ -36,6 +36,10 @@ class MSBTest(unittest.TestCase):
                 for field_name in entry.field_names:
                     self.assertEqual(getattr(entry, field_name), getattr(test_entry, field_name))
 
+    def test_entities_module(self):
+        msb = MSB("resources/m10_00_00_00.msb")
+        msb.write_entities_module("test_m10_00_00_00_entities.py")
+
     def tearDown(self):
         for test_file in Path(".").glob("_test*"):
             if test_file.is_file():

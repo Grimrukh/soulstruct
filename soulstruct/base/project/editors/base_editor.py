@@ -7,8 +7,18 @@ import logging
 import typing as tp
 from functools import partial
 
-from soulstruct.base.project.utilities import ActionHistory, ViewHistory, bind_events, EntryTextEditBox
-from soulstruct.utilities.text import camel_case_to_spaces
+try:
+    from googletrans import Translator
+except ImportError:
+    Translator = None
+
+from soulstruct.base.project.utilities import (
+    ActionHistory,
+    ViewHistory,
+    bind_events,
+    EntryTextEditBox,
+)
+from soulstruct.utilities.text import camel_case_to_spaces, string_to_identifier
 from soulstruct.utilities.window import SmartFrame, ToolTip
 
 if tp.TYPE_CHECKING:
@@ -124,6 +134,10 @@ class EntryRow:
             command=lambda: self.master.popout_entry_text_edit(self.row_index),
         )
         self.context_menu.add_command(
+            label="Translate Japanese Text",
+            command=lambda: self.master.translate_entry_text(self.row_index),
+        )
+        self.context_menu.add_command(
             label="Duplicate Entry to Next ID",
             command=lambda: self.master.add_relative_entry(self.entry_id, offset=1),
         )
@@ -208,6 +222,8 @@ class BaseEditor(SmartFrame, abc.ABC):
 
     ENTRY_ROW_CLASS = EntryRow
     entry_rows: list[EntryRow]
+
+    TRANSLATOR = Translator() if Translator is not None else None
 
     def __init__(
         self,
@@ -645,6 +661,61 @@ class BaseEditor(SmartFrame, abc.ABC):
                 back=partial(self.linker.jump, self.TAB_NAME, current_category, current_entry_id),
                 forward=partial(self.linker.jump, self.TAB_NAME, category, entry_id),
             )
+
+    def translate_entry_text(self, row_index: int):
+        """Try to translate entry text from Japanese to English.
+
+        Prompts user to accept translation before changing the text, since there's no undo function.
+        """
+        if self.TRANSLATOR is None:
+            self.CustomDialog(
+                "Translation Not Available",
+                "You must install the `googletrans` package (version >= 3.1.0a0) to use this feature."
+            )
+            return
+        entry_id = self.get_entry_id(row_index)
+        current_text = self.get_entry_text(entry_id, category=self.active_category)
+        try:
+            translation = self.TRANSLATOR.translate(current_text, src="ja", dest="en")
+        except Exception as ex:
+            self.CustomDialog(
+                "Translation Error",
+                f"Encountered an error while translating '{current_text}' (see log).\n"
+                f"(The Google Translate API is not particularly stable!)"
+            )
+            _LOGGER.error(f"Error while translating '{current_text}': {ex}")
+            return
+
+        new_text = translation.text
+        if new_text == current_text:
+            self.CustomDialog(
+                "No Translation",
+                "Translation was identical to input text. If this seems surprising, sorry - the Google "
+                "Translate API is unreliable and does not always work through Python.\n\n",
+            )
+            return
+
+        id_text = string_to_identifier(new_text)
+        result = self.CustomDialog(
+            title="Translation Successful",
+            message=(
+                f"Direct translation: {new_text}\n"
+                f"Smart translation: {id_text}\n\n"
+                + (
+                    f"If no translation occurred, sorry - the Google Translate API is unreliable.\n\n"
+                    if new_text == current_text else ""
+                )
+                + "Accept translation?\n"
+            ),
+            button_names=("Take direct", "Take smart", "Do nothing"),
+            button_kwargs=("YES", "YES", "NO"),
+            cancel_output=2,
+            default_output=2,
+        )
+        if result == 0:
+            self.change_entry_text(row_index, new_text, self.active_category)
+        elif result == 1:
+            self.change_entry_text(row_index, id_text, self.active_category)
 
     def popout_entry_text_edit(self, row_index):
         """Can actually change both ID and text."""

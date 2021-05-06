@@ -62,9 +62,6 @@ __all__ = [
 import typing as tp
 from enum import IntEnum, unique
 
-from soulstruct.base.events.emevd.utils import get_value_test
-from soulstruct.base.events.emevd import instructions as instr
-from soulstruct.base.events.emevd.enums import CoordEntityType, NavmeshType
 from soulstruct.game_types.basic_types import GameObject
 from soulstruct.games import *
 
@@ -172,31 +169,6 @@ class MapEntry(GameObject):
 class MapEntity(MapEntry, IntEnum):
     """Any MSB entry with an entity ID (enum values)."""
 
-    @staticmethod
-    def get_map_range_start():
-        """Should return base entity ID, e.g. `1510000` for m15_01_00_00 (Anor Londo)."""
-        raise TypeError("`get_map()` not defined for `MapEntity` subclass.")
-
-    @staticmethod
-    def get_game():
-        raise TypeError("`get_game()` not defined for `MapEntity` subclass.")
-
-    # noinspection PyMethodOverriding
-    @classmethod
-    def _generate_next_value_(cls, name, start, count, last_values):
-        try:
-            map_range_start = cls.get_map_range_start()
-            game = cls.get_game()
-        except TypeError:
-            raise NotImplementedError(
-                f"To use `auto()`, both `get_map()` and `get_game()` must be defined for {cls.__name__}."
-            )
-        start_value, max_value = cls.get_id_start_and_max(game)  # will raise `TypeError` if not valid for this class
-        value = map_range_start + count
-        if value > max_value:
-            raise ValueError(f"Too many members in `{cls.__name__}` for `auto()` range `({start_value}, {max_value})`.")
-        return value
-
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False) -> [str, str]:
         raise NotImplementedError
@@ -208,6 +180,19 @@ class MapEntity(MapEntry, IntEnum):
         Not supported by default; supported subclasses will override this method.
         """
         raise TypeError(f"`{cls.__name__}` does not use entity IDs.")
+
+    @classmethod
+    def auto_generate(cls, count, game: Game, map_range_start: int):
+        start_value, max_value = cls.get_id_start_and_max(game)  # will raise `TypeError` if not valid for this class
+        value = map_range_start + start_value + count
+        if value > map_range_start + max_value:
+            raise ValueError(f"Too many members in `{cls.__name__}` for `auto()` range `({start_value}, {max_value})`.")
+        return value
+
+    # noinspection PyMethodOverriding
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        raise ValueError("Cannot use `auto()` for this `MapEntity` subclass.")
 
 
 class MapModel(MapEntry):
@@ -286,11 +271,6 @@ class SoundEvent(MapEvent):
 
     Note that these are enabled on map load, so you may want to disable it (e.g. boss music) in your constructor event.
     """
-    def enable(self):
-        return instr.EnableSoundEvent(self)
-
-    def disable(self):
-        return instr.DisableSoundEvent(self)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -298,7 +278,9 @@ class SoundEvent(MapEvent):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        return 3800, 3899
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
+            return 3800, 3899
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class VFXEvent(MapEvent):
@@ -307,11 +289,6 @@ class VFXEvent(MapEvent):
     Can be created or deleted. When deleted, the particles already emitted can be allowed to live out their remaining
     life (`erase_root_only=True` by default).
     """
-    def create(self):
-        return instr.CreateVFX(self)
-
-    def delete(self, erase_root_only=True):
-        return instr.DeleteVFX(self, erase_root_only=erase_root_only)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -319,7 +296,7 @@ class VFXEvent(MapEvent):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 3400, 3599
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -340,11 +317,6 @@ class TreasureEvent(MapEvent):
 
 class SpawnerEvent(MapEvent):
     """Spawner event (causes linked enemies to respawn) in MSB attached to a region. Can be enabled or disabled."""
-    def enable(self):
-        return instr.EnableSpawner(self)
-
-    def disable(self):
-        return instr.DisableSpawner(self)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -352,18 +324,13 @@ class SpawnerEvent(MapEvent):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 3600, 3699
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class MessageEvent(MapEvent):
     """Message event in MSB that causes a "developer message" to appear in a region. Can be enabled or disabled."""
-    def enable(self):
-        return instr.EnableSoapstoneMessage(self)
-
-    def disable(self):
-        return instr.DisableSoapstoneMessage(self)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -371,7 +338,7 @@ class MessageEvent(MapEvent):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 3700, 3799
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -382,6 +349,9 @@ class ObjActEvent(MapEvent):
     It can be used in conditions as a test for the ObjAct event being triggered.
     """
     def __call__(self, negate=False, condition=None, skip_lines=0):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         try:
             value = self.value
         except AttributeError:
@@ -389,12 +359,6 @@ class ObjActEvent(MapEvent):
         return get_value_test(
             value=value, negate=negate, condition=condition, skip_lines=skip_lines, if_true_func=instr.IfObjectActivated
         )
-
-    def enable(self, obj: Object, relative_index=None):
-        return instr.EnableObjectActivation(obj=obj, obj_act_id=self, relative_index=relative_index)
-
-    def disable(self, obj: Object, relative_index=None):
-        return instr.DisableObjectActivation(obj=obj, obj_act_id=self, relative_index=relative_index)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -407,8 +371,6 @@ class ObjActEvent(MapEvent):
 
 class SpawnPointEvent(MapEvent):
     """Spawn point attached to an MSB region."""
-    def set_respawn(self):
-        return instr.SetRespawnPoint(self)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -416,7 +378,7 @@ class SpawnPointEvent(MapEvent):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 3900, 3999
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -434,14 +396,6 @@ class NavigationEvent(MapEvent):
     Enable/disable/toggle functions require you to specify a navigation type; only the flags for that type will be
     modified in the navmesh.
     """
-    def enable(self, navmesh_type: NavmeshType):
-        return instr.EnableNavmeshType(self, navmesh_type)
-
-    def disable(self, navmesh_type: NavmeshType):
-        return instr.DisableNavmeshType(self, navmesh_type)
-
-    def toggle(self, navmesh_type: NavmeshType):
-        return instr.ToggleNavmeshType(self, navmesh_type)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -449,7 +403,7 @@ class NavigationEvent(MapEvent):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        raise NotImplementedError(
+        raise TypeError(
             "Navigation entity IDs are also baked into navmesh NVM geometry, so automatic enumeration is not yet "
             "supported."
         )
@@ -473,6 +427,9 @@ class NPCInvasionEvent(MapEvent):
 class Region(MapEntity):
     """Condition upon a region as a shortcut to condition upon the player being inside it (condition only)."""
     def __call__(self, negate=False, condition=None, skip_lines=0):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         try:
             value = self.value
         except AttributeError:
@@ -488,6 +445,8 @@ class Region(MapEntity):
 
     @property
     def coord_entity_type(self):
+        from soulstruct.base.events.emevd.enums import CoordEntityType
+
         return CoordEntityType.Region
 
     @classmethod
@@ -496,7 +455,7 @@ class Region(MapEntity):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 2000, 2899
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -552,11 +511,6 @@ class MapPart(MapEntity):
 
 class MapPiece(MapPart):
     """Map Piece added in MSB."""
-    def enable(self):
-        return instr.EnableMapPiece(self)
-
-    def disable(self):
-        return instr.DisableMapPiece(self)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -564,7 +518,7 @@ class MapPiece(MapPart):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 3000, 3199
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -572,6 +526,9 @@ class MapPiece(MapPart):
 class Object(MapPart):
     """Condition upon an object as a shortcut to condition upon it *not* being destroyed."""
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         try:
             value = self.value
         except AttributeError:
@@ -595,25 +552,18 @@ class Object(MapPart):
 
     @property
     def coord_entity_type(self):
+        from soulstruct.base.events.emevd.enums import CoordEntityType
+
         return CoordEntityType.Object
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "Objects") if pluralized_subtype else ("Parts", "Object")
 
-    def enable(self):
-        return instr.EnableObject(self)
-
-    def disable(self):
-        return instr.DisableObject(self)
-
-    def activate(self, obj_act_id: ObjActEvent, relative_index=None):
-        return instr.ActivateObject(self, obj_act_id=obj_act_id, relative_index=relative_index)
-
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
         """Note that range 1900-1999 is reserved for special manual assignment (bonfires, fog objects, fog VFX)."""
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 1000, 1899
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -621,6 +571,9 @@ class Object(MapPart):
 class Character(MapPart):
     """Condition upon a character as a shortcut to condition upon them being alive."""
     def __call__(self, negate=False, condition=None, skip_lines=0):
+        from soulstruct.base.events.emevd.utils import get_value_test
+        from soulstruct.base.events.emevd import instructions as instr
+
         try:
             value = self.value
         except AttributeError:
@@ -636,28 +589,18 @@ class Character(MapPart):
 
     @property
     def coord_entity_type(self):
+        from soulstruct.base.events.emevd.enums import CoordEntityType
+
         return CoordEntityType.Character
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "Characters") if pluralized_subtype else ("Parts", "Character")
 
-    def enable(self):
-        return instr.EnableCharacter(self)
-
-    def disable(self):
-        return instr.EnableCharacter(self)
-
-    def enable_collision(self):
-        return instr.EnableCharacterCollision(self)
-
-    def disable_collision(self):
-        return instr.DisableCharacterCollision(self)
-
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
         """Note that range 0900-0999 is reserved for special manual assignment (bonfire characters)."""
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 0, 899
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
@@ -671,17 +614,6 @@ class PlayerStart(MapPart):
 
 class Collision(MapPart):
     """Collision added in MSB."""
-    def enable(self):
-        return instr.EnableCollision(self)
-
-    def disable(self):
-        return instr.DisableCollision(self)
-
-    def enable_backread_mask(self):
-        return instr.EnableCollisionBackreadMask(self)
-
-    def disable_backread_mask(self):
-        return instr.DisableCollisionBackreadMask(self)
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -689,7 +621,7 @@ class Collision(MapPart):
 
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
-        if game in {DARK_SOULS_PTDE, DARK_SOULS_DSR}:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
             return 3200, 3399
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 

@@ -12,7 +12,7 @@ __all__ = [
     "CLIENT_PLAYER_3",
     "CLIENT_PLAYER_4",
     "CLIENT_PLAYER_5",
-    "EntityEnum",
+    "PlayerEntity",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",
@@ -65,7 +65,7 @@ CLIENT_PLAYER_4 = 10004
 CLIENT_PLAYER_5 = 10005
 
 
-class EntityEnum(IntEnum):
+class PlayerEntity(IntEnum):
     """Hard-coded entity IDs used in EMEVD instructions. Used by decompiler; you can use global names above instead."""
     Player = PLAYER
     ClientPlayer1 = CLIENT_PLAYER_1
@@ -200,7 +200,11 @@ class RangeState(IntEnum):
 
 
 class CoordEntityType(IntEnum):
-    # Originally "Category", which was ambiguous. Used often to identify the type of an MSB part.
+    """Originally "Category", which was ambiguous. Used often to identify the type of an MSB part (or region).
+
+    Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
+    are the big three types/subtypes.
+    """
     Object = 0
     Region = 1
     Character = 2

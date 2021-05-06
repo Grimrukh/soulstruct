@@ -6,21 +6,31 @@ from __future__ import annotations
 
 __all__ = [
     "Game",
+    "GameSpecificType",
     "GAMES",
     "get_game",
     "GameSelector",
 
     "DEMONS_SOULS",
+    "DemonsSoulsType",
     "DEMONS_SOULS_REMAKE",
+    "DemonsSoulsRemakeType",
     "DARK_SOULS_PTDE",
+    "DarkSoulsPTDEType",
     "DARK_SOULS_DSR",
+    "DarkSoulsDSRType",
     "DARK_SOULS_2",
+    "DarkSouls2Type",
     "DARK_SOULS_2_SOTFS",
+    "DarkSouls2SOTFSType",
     "BLOODBORNE",
+    "BloodborneType",
     "DARK_SOULS_3",
+    "DarkSouls3Type",
     "SEKIRO",
 ]
 
+import abc
 import importlib
 import typing as tp
 from pathlib import Path
@@ -34,7 +44,8 @@ class Game:
 
     def __init__(
         self,
-        name,
+        variable_name: str,
+        name: str,
         subpackage_name=None,
         aliases=(),
         uses_dcx=True,
@@ -47,6 +58,7 @@ class Game:
         gadget_name="",
         default_file_paths=None,
     ):
+        self.variable_name = variable_name
         self.name = name
         self.submodule_name = subpackage_name
         self.aliases = aliases
@@ -84,20 +96,41 @@ class Game:
         return f"Game(\"{self.name}\")"
 
 
+class GameSpecificType(abc.ABC):
+    """Base class for classes that define `GAME`, which can be mixed in to classes for those games."""
+
+    GAME: Game = None
+
+
 DEMONS_SOULS = Game(
+    "DEMONS_SOULS",
     "Demon's Souls",
     aliases=("demonssouls", "des"),
     uses_dcx=False,
     default_game_path=DES_PATH,
     executable_name="EBOOT.BIN",
 )
+
+
+class DemonsSoulsType(GameSpecificType):
+    GAME = DEMONS_SOULS
+
+
 DEMONS_SOULS_REMAKE = Game(
+    "DEMONS_SOULS_REMAKE",
     "Demon's Souls Remake",
     aliases=("demonssoulsremake", "desr"),
     uses_dcx=False,  # TODO: Unknown.
     default_game_path=DESR_PATH,
 )
+
+
+class DemonsSoulsRemakeType(GameSpecificType):
+    GAME = DEMONS_SOULS_REMAKE
+
+
 DARK_SOULS_PTDE = Game(
+    "DARK_SOULS_PTDE",
     "Dark Souls Prepare to Die Edition",
     subpackage_name="darksouls1ptde",
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
@@ -120,7 +153,14 @@ DARK_SOULS_PTDE = Game(
         "TalkDirectory": "script/talk",
     },
 )
+
+
+class DarkSoulsPTDEType(GameSpecificType):
+    GAME = DARK_SOULS_PTDE
+
+
 DARK_SOULS_DSR = Game(
+    "DARK_SOULS_DSR",
     "Dark Souls Remastered",
     subpackage_name="darksouls1r",
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
@@ -143,21 +183,42 @@ DARK_SOULS_DSR = Game(
         "TalkDirectory": "script/talk",
     },
 )
+
+
+class DarkSoulsDSRType(GameSpecificType):
+    GAME = DARK_SOULS_DSR
+
+
 DARK_SOULS_2 = Game(
+    "DARK_SOULS_2",
     "Dark Souls II",
     subpackage_name="darksouls2",
     aliases=("darksouls2", "ds2", "dks2"),
     uses_dcx=True,
     default_game_path=DS2_PATH,
 )
+
+
+class DarkSouls2Type(GameSpecificType):
+    GAME = DARK_SOULS_2
+
+
 DARK_SOULS_2_SOTFS = Game(
+    "DARK_SOULS_2_SOTFS",
     "Dark Souls II Scholar of the First Sin",
     subpackage_name="darksouls2",  # TODO: Currently identical to DS2.
     aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
     uses_dcx=True,
     default_game_path=DS2_SOTFS_PATH,
 )
+
+
+class DarkSouls2SOTFSType(GameSpecificType):
+    GAME = DARK_SOULS_2_SOTFS
+
+
 BLOODBORNE = Game(
+    "BLOODBORNE",
     "Bloodborne",
     subpackage_name="bloodborne",
     aliases=("bloodborne", "bb"),
@@ -177,7 +238,14 @@ BLOODBORNE = Game(
         "TalkDirectory": "script/talk",
     },
 )
+
+
+class BloodborneType(GameSpecificType):
+    GAME = BLOODBORNE
+
+
 DARK_SOULS_3 = Game(
+    "DARK_SOULS_3",
     "Dark Souls III",
     subpackage_name="darksouls3",
     aliases=("darksouls3", "ds3", "dks3"),
@@ -185,18 +253,36 @@ DARK_SOULS_3 = Game(
     default_game_path=DS3_PATH,
     executable_name="DarkSoulsIII.exe",
 )
+
+
+class DarkSouls3Type(GameSpecificType):
+    GAME = DARK_SOULS_3
+
+
 SEKIRO = Game(
+    "SEKIRO",
     "Sekiro",
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
     uses_dcx=True,
     default_game_path=SEKIRO_PATH,
 )
+
+
+class SekiroType(GameSpecificType):
+    GAME = SEKIRO
+
+
 ELDEN_RING = Game(
+    "ELDEN_RING",
     "Elden Ring",
     aliases=("eldenring", "er"),
     uses_dcx=True,
     default_game_path=ELDEN_RING_PATH,
 )
+
+
+class EldenRingType(GameSpecificType):
+    GAME = ELDEN_RING
 
 
 GAMES = (

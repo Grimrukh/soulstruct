@@ -6,7 +6,7 @@ import typing as tp
 
 from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryProject
 from soulstruct.base.project.exceptions import SoulstructProjectError
-from soulstruct.games import DARK_SOULS_PTDE
+from soulstruct.games import DarkSoulsPTDEType
 
 from soulstruct.darksouls1ptde.ai import AIDirectory
 from soulstruct.darksouls1ptde.ezstate import TalkDirectory
@@ -20,8 +20,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.project.window import ProjectWindow
 
 
-class GameDirectoryProject(_BaseGameDirectoryProject):
-    GAME = DARK_SOULS_PTDE
+class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsPTDEType):
     DATA_TYPES = {
         "ai": AIDirectory,
         "events": EMEVDDirectory,

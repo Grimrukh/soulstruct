@@ -29,7 +29,7 @@ from soulstruct.containers.entry import BinderEntry
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import get_startupinfo
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter
 
 from .exceptions import LuaError, LuaCompileError, LuaDecompileError
 
@@ -382,7 +382,7 @@ class LuaBND:
 
 @contextmanager
 def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
-    temp = PACKAGE_PATH("ai/lua/temp")
+    temp = PACKAGE_PATH("/base/ai/lua/temp")
     if set_cwd:
         previous_cwd = os.getcwd()
         os.chdir(str(temp.parent))
@@ -392,7 +392,7 @@ def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
         f.write(content)
     yield temp
     try:
-        os.remove(str(PACKAGE_PATH("ai/lua/temp")))
+        os.remove(str(PACKAGE_PATH("base/ai/lua/temp")))
     except FileNotFoundError:
         pass
     if previous_cwd:
@@ -637,14 +637,14 @@ class LuaInfo(GameFile):
     Individual Lua function names may also be registered in the adjacent `LuaGNL` file but this is generally not needed.
     """
 
-    HEADER_STRUCT = (
+    HEADER_STRUCT = BinaryStruct(
         ("lua_version", "4s", b"LUAI"),
         ("endian_one", "i", 1),  # checked manually to guess endianness
         ("goal_count", "i"),
         "4x",
     )
 
-    GOAL_STRUCT_32 = (
+    GOAL_STRUCT_32 = BinaryStruct(
         ("goal_id", "i"),
         ("name_offset", "I"),
         ("logic_interrupt_name_offset", "I"),
@@ -653,7 +653,7 @@ class LuaInfo(GameFile):
         "2x",
     )
 
-    GOAL_STRUCT_64 = (
+    GOAL_STRUCT_64 = BinaryStruct(
         ("goal_id", "i"),
         ("has_battle_interrupt", "?"),
         ("has_logic_interrupt", "?"),
@@ -687,13 +687,11 @@ class LuaInfo(GameFile):
 
     def unpack(self, reader: BinaryReader, big_endian=False):
         self.big_endian = self._check_big_endian(reader)
-        self.header_struct = BinaryStruct(*self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
-        header = reader.unpack_struct(self.header_struct)
-        self.use_struct_64 = self._check_use_struct_64(reader, header["goal_count"])
-        goal_struct = BinaryStruct(
-            *(self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32),
-            byte_order=">" if self.big_endian else "<",
-        )
+        header = reader.unpack_struct(self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
+        if self._check_use_struct_64(reader, header["goal_count"]):
+            goal_struct = self.GOAL_STRUCT_64
+        else:
+            goal_struct = self.GOAL_STRUCT_32
         self.goals = []
         for _ in range(header["goal_count"]):
             goal = self.unpack_goal(reader, goal_struct)
@@ -707,14 +705,13 @@ class LuaInfo(GameFile):
                 self.goals.append(goal)
 
     def pack(self):
-        header = self.header_struct.pack(goal_count=len(self.goals))
+        writer = BinaryWriter(big_endian=self.big_endian)
+        writer.pack_struct(self.HEADER_STRUCT, goal_count=len(self.goals))
+        goal_struct = self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32
+        packed_strings_offset = writer.position + len(self.goals) * goal_struct.size
+
         packed_goals = b""
         packed_strings = b""
-        goal_struct = BinaryStruct(
-            *(self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32),
-            byte_order=">" if self.big_endian else "<",
-        )
-        packed_strings_offset = len(header) + len(self.goals) * goal_struct.size
         encoding = self.encoding
         z_term = b"\0\0" if self.use_struct_64 else b"\0"
         for goal in self.goals:
@@ -734,10 +731,13 @@ class LuaInfo(GameFile):
                 **goal_kwargs,
             )
 
-        return header + packed_goals + packed_strings
+        writer.append(packed_goals)
+        writer.append(packed_strings)
+
+        return writer.finish()
 
     def unpack_goal(self, reader: BinaryReader, goal_struct: BinaryStruct) -> LuaGoal:
-        goal = reader.unpack_struct(goal_struct)
+        goal = reader.unpack_struct(goal_struct, byte_order=">" if self.big_endian else "<")
         name = reader.unpack_string(offset=goal["name_offset"], encoding=self.encoding)
         if goal["logic_interrupt_name_offset"] > 0:
             logic_interrupt_name = reader.unpack_string(

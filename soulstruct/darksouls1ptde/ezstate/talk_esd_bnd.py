@@ -1,6 +1,7 @@
 __all__ = ["TalkESDBND"]
 
 from soulstruct.containers.bnd import BND3
+from soulstruct.containers.flags import BinderFlags
 from soulstruct.base.ezstate.talk_esd_bnd import TalkESDBND as _BaseTalkESDBND
 from .esd import TalkESD
 
@@ -10,9 +11,8 @@ class TalkESDBND(_BaseTalkESDBND, BND3):
     BND_ROOT = "N:\\FRPG\\data\\INTERROOT_x32\\script\\talk"
 
     def set_default_bnd(self):
-        self.version = "BND3"
-        self.signature = "07D7R7"
-        self.magic = 116
+        self.signature = "07D7R6"
+        self.flags = BinderFlags(46)
         self.big_endian = False
-        self.unknown = False
+        self.bit_big_endian = False
         self.dcx_magic = ()

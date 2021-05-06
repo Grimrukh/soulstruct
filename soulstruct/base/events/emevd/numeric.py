@@ -114,8 +114,8 @@ def build_numeric(numeric_string: str, event_class):
 
             if m_instruction:
                 # Parse the line as an instruction.
-                instruction_class = int(m_instruction.group(1))
-                instruction_index = int(m_instruction.group(2))
+                category = int(m_instruction.group(1))
+                index = int(m_instruction.group(2))
                 display_arg_types = m_instruction.group(3)
                 args_list_string = m_instruction.group(4)
                 if m_instruction.group(5) is not None:
@@ -154,7 +154,7 @@ def build_numeric(numeric_string: str, event_class):
                             _LOGGER.error(
                                 f"Argument '{arg}' is not inside the permitted range of data type "
                                 f"'{fmt}' {repr(ELEMENT_MIN_MAX[fmt])} (line {lineno}) "
-                                f"(instruction = {instruction_class}[{instruction_index}], "
+                                f"(instruction = {category}[{index}], "
                                 f"args_format = {display_arg_types}, args_list = {args_list_string})"
                             )
                             raise NumericEmevdError(
@@ -166,7 +166,7 @@ def build_numeric(numeric_string: str, event_class):
                         raise NumericEmevdError(lineno, f"Invalid arg type: '{fmt}'")
                 instruction_list.append(
                     event_class.Instruction(
-                        instruction_class, instruction_index, display_arg_types, args_list, event_layers
+                        category, index, display_arg_types, args_list, event_layers
                     )
                 )
 

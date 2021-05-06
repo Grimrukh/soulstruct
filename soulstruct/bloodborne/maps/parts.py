@@ -12,6 +12,7 @@ __all__ = [
     "MSBPartList",
 ]
 
+import abc
 import struct
 import typing as tp
 
@@ -40,7 +41,7 @@ from .constants import get_map
 from .msb_entry import MSBEntryList
 
 
-class MSBPart(_BaseMSBPart):
+class MSBPart(_BaseMSBPart, abc.ABC):
     PART_HEADER_STRUCT = BinaryStruct(
         ("__description_offset", "q"),
         ("__name_offset", "q"),
@@ -297,7 +298,7 @@ class MSBPart(_BaseMSBPart):
         return b""
 
 
-class MSBPartGParam(MSBPart):
+class MSBPartGParam(MSBPart, abc.ABC):
     """Subclass of `MSBPart` that includes GParam fields."""
     PART_GPARAM_STRUCT = BinaryStruct(
         ("light_set_id", "i"),
@@ -357,7 +358,7 @@ class MSBPartGParam(MSBPart):
         return self.PART_GPARAM_STRUCT.pack(self)
 
 
-class MSBPartSceneGParam(MSBPartGParam):
+class MSBPartSceneGParam(MSBPartGParam, abc.ABC):
     """Subclass of `MSBPart` that includes SceneGParam (and GParam) fields."""
     PART_SCENE_GPARAM_STRUCT = BinaryStruct(
         ("sg_unk_x00_x04", "i"),

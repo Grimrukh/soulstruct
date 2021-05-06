@@ -9,19 +9,22 @@ class EMEVDTest(unittest.TestCase):
 
     def test_emevd(self):
         emevd = EMEVD("resources/m10_00_00_00.emevd.dcx")
-        emevd.write_numeric("_test_emevd_numeric.txt")
+        emevd.write_evs(
+            "_test_emevd.evs.py",
+            entity_module_paths=(Path("resources/m10_00_00_00_entities.py"),),
+            warn_missing_enums=False,
+            entity_module_prefix="resources.",
+        )
 
-        numeric = EMEVD("_test_emevd_numeric.txt")
-        numeric.write("_test_numeric.emevd.dcx")
-
-        emevd.write_evs("_test_emevd.evs.py")
         evs = EMEVD("_test_emevd.evs.py")
-        evs.write_numeric("_test_evs_numeric.txt")
+        print(evs.events[0].instructions[0])
+        print(evs.events[0].instructions[1])
+        print(evs.events[0].instructions[2])
 
-    def tearDown(self):
-        for test_file in Path(".").glob("_test*"):
-            if test_file.is_file():
-                os.remove(str(test_file))
+    # def tearDown(self):
+    #     for test_file in Path(".").glob("_test*"):
+    #         if test_file.is_file():
+    #             os.remove(str(test_file))
 
 
 if __name__ == '__main__':

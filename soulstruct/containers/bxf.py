@@ -200,6 +200,20 @@ class BXF4(BaseBXF):
     unknown1: bool
     unknown2: bool
     hash_table_type: int
+    unicode: bool
+
+    def __init__(
+        self,
+        file_source: GameFile.Typing = None,
+        bdt_source: GameFile.Typing = None,
+        dcx_magic: tp.Tuple[int, int] = (),
+    ):
+        self.unknown1 = False
+        self.unknown2 = False
+        self.hash_table_type = 0
+        self.unicode = True
+        self._most_recent_hash_table = b""
+        super().__init__(file_source, bdt_source, dcx_magic)
 
     def unpack_header(self, reader: BinaryReader):
         reader.unpack_value("4s", asserted=b"BND4")
@@ -236,7 +250,7 @@ class BXF4(BaseBXF):
             )
 
         entry_headers = [
-            BinderEntryHeader.from_bnd3_reader(reader, self.flags, self.bit_big_endian)
+            BinderEntryHeader.from_bnd4_reader(reader, self.flags, self.bit_big_endian, self.unicode)
             for _ in range(entry_count)
         ]
 
