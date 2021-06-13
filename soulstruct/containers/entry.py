@@ -137,9 +137,9 @@ class BinderEntry:
         """Compress data (with `zlib` level 7) before setting it to `.data` attribute, if appropriate."""
         self.data = zlib.compress(data, level=7) if self.flags.is_compressed else data
 
-    def get_packed_path(self, encoding) -> bytes:
+    def get_packed_path(self, encoding: str) -> bytes:
         """Encodes path and null-terminates."""
-        return self.path.encode(encoding) + b"\0"
+        return self.path.encode(encoding) + (b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0")
 
     @property
     def data_size(self) -> int:

@@ -6,6 +6,7 @@ import logging
 import re
 import typing as tp
 from copy import deepcopy
+from enum import IntEnum
 from functools import wraps
 
 from soulstruct.game_types.basic_types import GameObjectSequence
@@ -30,6 +31,9 @@ class MSBEntry(abc.ABC):
     FIELD_ORDER = ()  # If given, fields will be displayed in this order. Otherwise uses order of `FIELD_INFO` keys.
     REFERENCE_FIELDS = {}  # type: dict[str, list[str, ...]]  # maps reference entry types to field names that use them
 
+    name: str
+    description: str
+
     def __init__(self, source=None, **kwargs):
         """Base class for entries of any type and subtype that appear in an `MSB` (under one of the four entry lists).
 
@@ -48,7 +52,9 @@ class MSBEntry(abc.ABC):
         if isinstance(source, BinaryReader):
             description = kwargs.pop("description", None)
             if kwargs:
-                raise ValueError("Cannot instantiate MSB entry using `kwargs` if binary `source` is given.")
+                raise ValueError(
+                    "Cannot instantiate MSB entry using `kwargs` (except `description`) if binary `source` is given."
+                )
             self.set_defaults()
             self.unpack(source)
             if self.description and description is not None:
@@ -68,6 +74,8 @@ class MSBEntry(abc.ABC):
                         value = field_info.default.copy()  # mutable default
                     except AttributeError:
                         value = field_info.default  # immutable default
+                if isinstance(value, IntEnum):
+                    value = value.value
                 setattr(self, field_name, value)
             if kwargs:
                 raise ValueError(f"Invalid arguments for MSB entry class `{self.__class__.__name__}`: {tuple(kwargs)}")
@@ -96,6 +104,8 @@ class MSBEntry(abc.ABC):
 
         `field_name` must be 'name', 'description', or a key in the `FIELD_INFO` dictionary for this class.
         """
+        if isinstance(value, IntEnum):
+            value = value.value
         if field_name.startswith("_") and hasattr(self, field_name):
             setattr(self, field_name, value)
         elif field_name in {"name", "description"} or field_name in self.FIELD_INFO:
@@ -443,7 +453,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         """
         duplicated = entry.copy()
 
-        if kwargs.get("name", "") == entry.name:
+        if kwargs.get("name", "") == entry.name and entry in self._entries:
             raise ValueError(f"Name of duplicated entry cannot be set to the source entry's name: {entry.name}")
         if "name" not in kwargs or kwargs["name"] is None:
             # First, try a basic increment of any trailing numerals.
@@ -461,7 +471,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         duplicated.set(**kwargs)
 
         if auto_add:
-            if insert_below_original:
+            if insert_below_original and entry in self._entries:
                 global_index = self._entries.index(entry) + 1
             else:
                 global_index = self.get_subtype_next_global_index(entry.ENTRY_SUBTYPE)
@@ -485,7 +495,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         the end of its local subtype. This is inferred by just finding the last existing instance of that subtype.
 
         Note that the game may not read entries that do not appear in their contiguous local subtype lists, so this
-        method is often necessary to find the correct place for a new entry. (This has been confirmed for
+        method is often necessary to find the correct place for a new entry. (This has been  confirmed for
         `MSBTreasureEvent`, for example.)
         """
         entry_subtype = self.resolve_entry_subtype(entry_subtype)
@@ -493,7 +503,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             last_global_index = max(i for i, entry in enumerate(self._entries) if entry.ENTRY_SUBTYPE == entry_subtype)
         except ValueError:  # no entries of given subtype exist yet
             # Iterate over entries in enum order to find correct global index.
-            last_global_index = 0
+            last_global_index = -1
             for subtype in self.ENTRY_SUBTYPE_ENUM:
                 if subtype == entry_subtype:
                     break

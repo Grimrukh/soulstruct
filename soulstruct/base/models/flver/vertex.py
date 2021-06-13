@@ -267,6 +267,9 @@ class VertexBoneWeights:
 
 class Vertex:
 
+    VertexBoneWeights = VertexBoneWeights
+    VertexBoneIndices = VertexBoneIndices
+
     def __init__(self):
         self.position = Vector3.zero()
         self.bone_weights = VertexBoneWeights()
@@ -278,6 +281,8 @@ class Vertex:
         self.bitangent = Vector4.zero()
         self.colors = []  # type: tp.List[ColorRGBA]
 
+        self.raw = b""
+
         self.uv_queue = []  # type: tp.List[Vector3]
         self.tangent_queue = []  # type: tp.List[Vector4]
         self.color_queue = []  # type: tp.List[ColorRGBA]
@@ -286,6 +291,10 @@ class Vertex:
         self.uvs = []
         self.tangents = []
         self.colors = []
+
+        with reader.temp_offset(reader.position):
+            self.raw = reader.read(layout.get_total_size())
+
         for member in layout:
 
             not_implemented = False

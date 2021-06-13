@@ -4,6 +4,7 @@ from __future__ import annotations
 __all__ = ["TPFTexture", "TPF"]
 
 import json
+import re
 import typing as tp
 from enum import IntEnum
 from pathlib import Path
@@ -289,3 +290,19 @@ class TPF(GameFile):
             f"    tpf_flags = {self.tpf_flags}\n"
             f")"
         )
+
+    @classmethod
+    def collect_tpfs(cls, tpfbhd_directory: tp.Union[str, Path]) -> tp.Dict[str, TPF]:
+        """Build a dictionary mapping TGA texture names to TPF instances."""
+        from soulstruct.containers import Binder
+
+        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?")
+        tpfbhd_directory = Path(tpfbhd_directory)
+        tpf_sources = {}
+        for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
+            bxf = Binder(bhd_path, create_bak_if_missing=False)
+            for entry in bxf.entries:
+                match = tpf_re.match(entry.name)
+                if match:
+                    tpf_sources[f"{match.group(1)}.tga"] = TPF(entry.data)
+        return tpf_sources

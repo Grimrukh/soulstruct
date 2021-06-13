@@ -16,8 +16,10 @@ class MapStudioDirectory(abc.ABC):
 
     MSB_CLASS = None  # type: tp.Type[MSB]
     ALL_MAPS = ()  # type: tuple[Map]
-    GET_MAP = None  # type: tp.Callable
+    GET_MAP = None  # type: tp.Callable[[tp.Union[str, tuple], tp.Optional[int]], Map]
     IS_DCX = False
+
+    directory: tp.Optional[Path]
 
     def __init__(self, map_studio_directory=None, maps=None):
         """Unpack MSB map data files from a `MapStudio` directory into one single modifiable structure.
@@ -34,7 +36,7 @@ class MapStudioDirectory(abc.ABC):
                 your game directory (either version). (Ignore the 'MapStudioNew' folder next to this directory in DSR,
                 which does nothing.)
         """
-        self._directory = None
+        self.directory = None
         self.msbs = {}  # type: dict[str, MSB]
 
         if map_studio_directory is None:
@@ -50,7 +52,7 @@ class MapStudioDirectory(abc.ABC):
                 "`MapStudioDirectory` should be initialized with the `MapStudio` directory containing the MSB files."
             )
 
-        self._directory = map_studio_directory
+        self.directory = map_studio_directory
 
         if self.ALL_MAPS is not None:
             self._load_given_msbs()
@@ -62,12 +64,12 @@ class MapStudioDirectory(abc.ABC):
         for game_map in self.ALL_MAPS:
             if game_map.msb_file_stem is None:
                 continue
-            msb_path = self._directory / (game_map.msb_file_stem + ".msb")
+            msb_path = self.directory / (game_map.msb_file_stem + ".msb")
             if self.IS_DCX:
                 msb_path = msb_path.with_suffix(msb_path.suffix + ".dcx")
             try:
-                self.msbs[game_map.name] = self.MSB_CLASS(msb_path)
-                setattr(self, game_map.name, self.msbs[game_map.name])
+                self.msbs[game_map.msb_file_stem] = self.MSB_CLASS(msb_path)
+                setattr(self, game_map.name, self.msbs[game_map.msb_file_stem])
             except FileNotFoundError:
                 raise FileNotFoundError(
                     f"Could not find MSB file {repr(game_map.msb_file_stem)} ({game_map.name}) in given directory."
@@ -75,14 +77,14 @@ class MapStudioDirectory(abc.ABC):
 
     def _load_all_msbs(self):
         """Load all MSB files in directory, with keys/attribute names matching the MSB stem."""
-        for msb_path in self._directory.glob("*.msb" + (".dcx" if self.IS_DCX else "")):
+        for msb_path in self.directory.glob("*.msb" + (".dcx" if self.IS_DCX else "")):
             self.msbs[msb_path.stem] = self.MSB_CLASS(msb_path)
             setattr(self, msb_path.stem, self.msbs[msb_path.stem])
 
-    def __getitem__(self, map_source):
+    def __getitem__(self, map_source: tp.Union[str, tuple]):
         """Look up the MSB corresponding to `map_source` specifier. See `get_map()`."""
         game_map = self.GET_MAP(map_source)
-        return self.msbs[game_map.name]
+        return self.msbs[game_map.msb_file_stem]
 
     def __iter__(self):
         return iter(self.msbs)
@@ -91,7 +93,7 @@ class MapStudioDirectory(abc.ABC):
         return self.msbs.items()
 
     def write(self, msb_directory=None):
-        msb_directory = self._directory if msb_directory is None else Path(msb_directory)
+        msb_directory = self.directory if msb_directory is None else Path(msb_directory)
         for msb in self.msbs.values():
             msb_path = msb_directory / msb.path.name
             try:

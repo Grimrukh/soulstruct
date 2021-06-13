@@ -181,11 +181,11 @@ class Instruction(abc.ABC):
                     f"Your replacement commands are probably misaligned."
                 )
 
+            # Byte type "s" is actually a four-byte offset into the packed strings.
             if (
                 not (argument_byte_type == "s" and arg_r.bytes_to_write == 4)
                 and struct.calcsize(argument_byte_type) < arg_r.bytes_to_write
             ):
-                # Byte type "s" is actually a four-byte offset into the packed strings.
                 raise ValueError(
                     f"You cannot write {arg_r.bytes_to_write} bytes over an argument of type "
                     f"{argument_byte_type} (it's too small)."

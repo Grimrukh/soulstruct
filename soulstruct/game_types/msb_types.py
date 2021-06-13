@@ -69,8 +69,8 @@ from soulstruct.games import *
 class Map(GameObject):
     def __init__(
         self,
-        area_id,
-        block_id,
+        area_id: tp.Optional[int],
+        block_id: tp.Optional[int],
         name=None,
         emevd_file_stem=None,
         msb_file_stem=None,
@@ -129,6 +129,10 @@ class Map(GameObject):
 
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name
+
+        if self.area_id is not None:
+            self.base_entity_id = 100000 * self.area_id + 10000 * self.block_id
+            self.flag_prefix = 1000 + 10 * self.area_id + self.block_id
 
     def stem_set(self):
         return {

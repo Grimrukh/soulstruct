@@ -343,11 +343,12 @@ class EMEVD(GameFile, abc.ABC):
                 imports += f"\nfrom {entity_module_prefix}{name} import *"
             for name, enums in sorted(enums_manager.used_non_star_imports.items()):
                 if enums:
+                    import_strings = sorted({e.import_string for e in enums})
                     import_prefix = f"\nfrom {entity_module_prefix}{name} import "
-                    one_line_suffix = ", ".join(e.import_string for e in enums)
+                    one_line_suffix = ", ".join(import_strings)
                     if len(import_prefix + one_line_suffix) > 119:
                         # Split across multiple lines.
-                        multi_line_imports = "\n    ".join(e.import_string + "," for e in enums)
+                        multi_line_imports = "\n    ".join(import_strings)
                         imports += f"{import_prefix}(\n    {multi_line_imports}\n)"
                     else:
                         imports += f"{import_prefix}{one_line_suffix}"

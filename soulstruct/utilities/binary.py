@@ -261,7 +261,7 @@ class BinaryStruct:
                 sub_fmt = f"{byte_order}{sub_fmt.lstrip('<>@')}"
             size = struct.calcsize(sub_fmt)
             try:
-                unpacked += struct.unpack(sub_fmt, data[data_offset : data_offset + size])
+                unpacked += struct.unpack(sub_fmt, data[data_offset:data_offset + size])
             except struct.error:
                 _LOGGER.error(
                     f"Failed to unpack data at offset {data_offset} with sub-format {sub_fmt}: "
@@ -372,7 +372,7 @@ class BinaryStruct:
         pack_index = 0
         for sub_fmt, sub_fmt_length in zip(self._struct_format, self._struct_length):
             try:
-                output += struct.pack(sub_fmt, *to_pack[pack_index : pack_index + sub_fmt_length])
+                output += struct.pack(sub_fmt, *to_pack[pack_index:pack_index + sub_fmt_length])
             except struct.error:
                 _LOGGER.error(
                     f"Failed to pack data at offset {pack_index} with sub-format {sub_fmt} and length "
@@ -928,6 +928,11 @@ class BinaryWriter:
         return len(self._array)
 
     @property
+    def position_hex(self) -> str:
+        """Return current 'position' of writer as a hex string."""
+        return hex(len(self._array))
+
+    @property
     def array(self):
         """Return immutable copy of current array, for inspection/display only."""
         return bytes(self._array)
@@ -945,7 +950,7 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None) -> tp.Unio
     """
     bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16") else 1
     if length is not None:
-        stripped_array = data[offset : offset + length].rstrip()  # remove trailing spaces
+        stripped_array = data[offset:offset + length].rstrip()  # remove trailing spaces
         while stripped_array.endswith(b"\0\0" if bytes_per_char == 2 else b"\0"):
             stripped_array = stripped_array[:-bytes_per_char]  # remove (pairs of) nulls
         if encoding is not None:
@@ -956,7 +961,7 @@ def read_chars_from_bytes(data, offset=0, length=None, encoding=None) -> tp.Unio
         null_termination = data[offset:].find(b"\0" * bytes_per_char)
         if null_termination == -1:
             raise ValueError("No null termination found for characters.")
-        array = data[offset : offset + null_termination]
+        array = data[offset:offset + null_termination]
         if encoding is not None:
             return array.decode(encoding)
         return array

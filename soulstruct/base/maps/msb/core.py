@@ -341,6 +341,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
     def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=()):
         """Add given `translate` vector to `.translate` vector attributes of all Regions and Parts.
 
+        Also automatically applies vertical component (`translate.y`) to `reflect_plane_height` for Collisions.
+
         Args:
             translate: `(x, y, z)` vector to shift entries by.
             selected_entries: if not empty, move only these given entries. Each element in this sequence can be
@@ -351,6 +353,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         for part in self.parts:
             if not selected_entries or part in selected_entries:
                 part.translate += translate
+            if hasattr(part, "reflect_plane_height"):
+                part.reflect_plane_height += translate.y
         for region in self.regions:
             if not selected_entries or region in selected_entries:
                 region.translate += translate

@@ -26,19 +26,26 @@ _BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d).ffxbnd(.dcx)?")
 _MAP_PIECE_RE = re.compile(r"^m(\d\d\d\d)B(\d)A(\d\d)\.flver\.dcx$")
 
 
-def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = None, prefer_bak=True):
-    """Iterate over all enemy models in given `msb` and ensure all their FFX files are present in the given FFXBND file
-    `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations (known by Soulstruct) and added.
+def build_ffxbnd(
+    msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = None, write_ffxbnd_path: Path = None, prefer_bak=True
+) -> BND3:
+    """Iterate over all character models in given `msb` and ensure all their FFX files are present in the given FFXBND
+    file `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations (known by Soulstruct) and added.
+
+    Use `write_ffxbnd_path` to write to a location other than `ffxbnd_path` (default if `write_ffxbnd_path` not given).
 
     Args:
         msb (MSB): MSB structure to check.
-        ffxbnd_path (Path): path to initial FFXBND to check, e.g. a vanilla FFXBND.
+        ffxbnd_path (Path): path to FFXBND to scan and potentially modify, likely in `{game}/sfx`.
         ffxbnd_search_directory (Path, optional): path to directory containing FFXBND files to search for missing FFX
             in. It should contain all FFXBND files in the game (e.g. a vanilla backup folder). If not given, it will
             default to the same directory as `ffxbnd_path`.
+        write_ffxbnd_path (Path): path to write final FFXBND. If not given (default), uses `ffxbnd_path`.
         prefer_bak (bool): if True (default), look for '.bak' source files first.
     """
     ffxbnd_path = Path(ffxbnd_path)
+    if write_ffxbnd_path is None:
+        write_ffxbnd_path = ffxbnd_path
     if ffxbnd_search_directory is None:
         ffxbnd_search_directory = ffxbnd_path.parent
     try:
@@ -91,7 +98,8 @@ def build_ffxbnd(msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = No
             ffxbnd.add_entry(source_entry)
             existing_ffx_files.add(ffx_file_name)
 
-    ffxbnd.write()
+    ffxbnd.write(write_ffxbnd_path)
+    return ffxbnd
 
 
 def import_map_piece_flver(

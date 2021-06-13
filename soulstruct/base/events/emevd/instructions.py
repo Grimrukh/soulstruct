@@ -1453,7 +1453,7 @@ def DisplayDialog(
     return to_numeric(instruction_info, text, button_type, number_buttons, anchor_entity, display_distance)
 
 
-def DisplayBanner(banner_type: BannerType):
+def DisplayBanner(banner_type: tp.Union[BannerType, int]):
     """ Display a pre-rendered banner. You'll have to change the textures (in menu_local.tpf) to change them. """
     instruction_info = (2007, 2)
     return to_numeric(instruction_info, banner_type)

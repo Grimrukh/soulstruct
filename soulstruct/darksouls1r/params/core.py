@@ -124,6 +124,61 @@ class GameParamBND(_BaseGameParamBND, DarkSoulsDSRType, BND3):
                     if param_id in text_dict:
                         param_entry.name = text_dict[param_id]
 
+    def better_debug_player(self):
+        """Set the default debug player param (9000) to something better."""
+        debug_player = self.Players[9000]
+        debug_player.update(
+            equip_Wep_Right=500010,  # Uchigatana +10
+            equip_Subwep_Right=1201010,  # Longbow +10
+            equip_Wep_Left=1457000,  # Dragon Crest Shield
+            equip_Subwep_Left=1300000,  # Sorcerer's Catalyst
+            equip_Helm=300000,  # Thief Set
+            equip_Armer=301000,
+            equip_Gaunt=302000,
+            equip_Leg=303000,
+            equip_Arrow=2002000,  # Feather Arrow
+            equip_Bolt=-1,
+            equip_SubArrow=-1,
+            equip_SubBolt=-1,
+            equip_Accessory01=100,  # Havel's Ring
+            equip_Accessory02=138,  # Covenant of Artorias
+            equip_Accessory03=-1,
+            equip_Accessory04=-1,
+            equip_Accessory05=-1,
+            equip_Spell_01=3010,  # Great Soul Arrow
+            equip_Spell_02=3070,  # Crystal Soul Spear
+            equip_Spell_03=3210,  # Crystal Magic Weapon
+            equip_Spell_04=3500,  # Cast Light
+            equip_Spell_05=3550,  # Chameleon
+            equip_Spell_06=-1,
+            equip_Spell_07=-1,
+            item_01=201,  # Estus Flask
+            item_02=500,  # Humanity
+            item_03=240,  # Divine Blessing
+            item_04=-1,
+            item_05=-1,
+            item_06=-1,
+            item_07=-1,
+            item_08=-1,
+            item_09=-1,
+            item_10=-1,
+            arrowNum=999,
+            boltNum=0,
+            subArrowNum=0,
+            subBoltNum=0,
+            itemNum_01=5,
+            itemNum_02=99,
+            itemNum_03=99,
+            itemNum_04=0,
+            itemNum_05=0,
+            itemNum_06=0,
+            itemNum_07=0,
+            itemNum_08=0,
+            itemNum_09=0,
+            itemNum_10=0,
+            npcPlayerSex=0,  # Female
+        )
+
     def print_hitbox_info(self):
         current_var_id = None
         for b_id, b_entry in self.PlayerBehaviors.items():

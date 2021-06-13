@@ -183,7 +183,7 @@ class Material(BinaryObject):
     _texture_count: int
     _first_texture_index: int
 
-    def __init__(self, reader: BinaryReader, **kwargs):
+    def __init__(self, reader: BinaryReader = None, **kwargs):
         self.textures = []
         super().__init__(reader, **kwargs)
 

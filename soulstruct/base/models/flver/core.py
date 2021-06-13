@@ -311,32 +311,32 @@ class FLVER(GameFile):
 
         # Indexed data only after this point, with 16 pad bytes between each data type.
 
-        writer.pad(16)
+        writer.pad_align(16)
         for i, buffer_layout in enumerate(self.buffer_layouts):
             buffer_layout.pack_members(writer)
 
-        writer.pad(16)
+        writer.pad_align(16)
         for i, mesh in enumerate(self.meshes):
             mesh.pack_bounding_box(writer)
 
-        writer.pad(16)
+        writer.pad_align(16)
         bone_indices_start = writer.position
         for i, mesh in enumerate(self.meshes):
             mesh.pack_bone_indices(writer, bone_indices_start=bone_indices_start)
 
-        writer.pad(16)
+        writer.pad_align(16)
         first_face_set_index = 0
         for i, mesh in enumerate(self.meshes):
             mesh.pack_face_set_indices(writer, first_face_set_index)
             first_face_set_index += len(mesh.face_sets)
 
-        writer.pad(16)
+        writer.pad_align(16)
         first_vertex_buffer_index = 0
         for mesh in self.meshes:
             mesh.pack_vertex_buffer_indices(writer, first_vertex_buffer_index)
             first_vertex_buffer_index += len(mesh.vertex_buffers)
 
-        writer.pad(16)
+        writer.pad_align(16)
         gx_offsets = []
         for gx_list in self.gx_lists:
             gx_offsets.append(writer.position)
@@ -344,19 +344,19 @@ class FLVER(GameFile):
         for material in self.materials:
             material.fill_gx_offset(writer, gx_offsets)
 
-        writer.pad(16)
+        writer.pad_align(16)
         for material in self.materials:
             material.pack_strings(writer, encoding)
             for texture in material.textures:
                 texture.pack_zstring(writer, "path", encoding=encoding)
                 texture.pack_zstring(writer, "texture_type", encoding=encoding)
 
-        writer.pad(16)
+        writer.pad_align(16)
         for bone in self.bones:
             bone.pack_zstring(writer, "name", encoding=encoding)
 
         alignment = 32 if self.header.version <= 0x2000E else 16
-        writer.pad(alignment)
+        writer.pad_align(alignment)
         if self.header.version in {Version.DarkSouls2_NT, Version.DarkSouls2}:
             writer.pad(32)
 
@@ -369,7 +369,7 @@ class FLVER(GameFile):
                     face_set_vertex_index_size = face_set.get_vertex_index_size()
                 else:
                     face_set_vertex_index_size = header_vertex_indices_size
-                writer.pad(alignment)
+                writer.pad_align(16)
                 face_set.pack_vertex_indices(
                     writer,
                     vertex_index_size=face_set_vertex_index_size,
@@ -380,7 +380,7 @@ class FLVER(GameFile):
                 vertex.prepare_pack()
 
             for vertex_buffer in mesh.vertex_buffers:
-                writer.pad(alignment)
+                writer.pad_align(16)
                 uv_factor = 2048 if self.header.version >= Version.DarkSouls2_NT else 1024
                 vertex_buffer.pack_buffer(
                     writer,
@@ -393,7 +393,7 @@ class FLVER(GameFile):
             for vertex in mesh.vertices:
                 vertex.finish_pack()
 
-        writer.pad(16)
+        writer.pad_align(16)
         self.header.fill(writer, vertex_data_size=writer.position - vertex_data_start)
         if self.header.version in {Version.DarkSouls2_NT, Version.DarkSouls2}:
             writer.pad(32)

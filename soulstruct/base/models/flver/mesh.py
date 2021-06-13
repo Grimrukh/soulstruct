@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 class FaceSetFlags(IntEnum):
 
     LodLevel1 = 0b0000_0001
-    LodLevel2 = 0b0000_0001
+    LodLevel2 = 0b0000_0010
     EdgeCompressed = 0b0100_0000
     MotionBlur = 0b1000_0000
 
@@ -31,8 +31,8 @@ class FaceSetFlags(IntEnum):
 class FaceSet(BinaryObject):
 
     STRUCT = BinaryStruct(
-        ("flags", "B"),
         "3x",
+        ("flags", "B"),
         ("triangle_strip", "?"),
         ("cull_back_faces", "?"),
         ("unk_x06", "h"),
@@ -147,6 +147,29 @@ class FaceSet(BinaryObject):
         tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
         return [(tri[i], tri[i + 1], tri[i + 2]) for i in range(0, len(tri), 3)]
 
+    def get_connected_vertex_indices(self, vertex_index: int) -> tp.Set[int]:
+        """Find all vertices connected to the given `vertex_index`, including `vertex_index` itself."""
+        triangles = self.get_triangles(allow_primitive_restarts=False, include_degenerate_faces=False)
+        connected = {vertex_index}
+        for tri in (set(t) for t in triangles):
+            if connected.intersection(tri):
+                connected |= tri
+        return connected
+
+    @classmethod
+    def from_triangles(cls, triangles: tp.List[tp.Tuple[int, int, int], ...], cull_back_faces=True):
+        """Create a `FaceSet` with `triangle_strip=False` from a list of three-index triangle tuples.
+
+        TODO: Currently sets `flags=0` and `unk_x06=0`, which is correct so far in my usage.
+        """
+        return cls(
+            flags=0,
+            unk_x06=0,
+            triangle_strip=False,
+            cull_back_faces=cull_back_faces,
+            vertex_indices=[i for tri in triangles for i in tri],
+        )
+
     def __repr__(self):
         if self.flags == 0 and self.unk_x06 == 0 and self.triangle_strip:
             # Simple repr.
@@ -163,6 +186,9 @@ class FaceSet(BinaryObject):
 
 
 class Mesh(BinaryObject):
+
+    Vertex = Vertex
+    FaceSet = FaceSet
 
     STRUCT = BinaryStruct(
         ("is_bind_pose", "?"),
@@ -198,7 +224,7 @@ class Mesh(BinaryObject):
         "default_bone_index": -1,
     }
 
-    def __init__(self, reader: BinaryReader, **kwargs):
+    def __init__(self, reader: BinaryReader = None, **kwargs):
         self.bone_indices = []
         self.face_sets = []
         self.vertex_buffers = []

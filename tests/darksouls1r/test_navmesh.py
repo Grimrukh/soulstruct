@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from soulstruct.darksouls1r.maps.navmesh import NavmeshGraph
+from soulstruct.darksouls1r.maps.navmesh import NavInfo
 
 
 class NavmeshTest(unittest.TestCase):
@@ -9,10 +9,10 @@ class NavmeshTest(unittest.TestCase):
     def test_rewrite(self):
         """Test:
 
-        - Opening the (vanilla) Depths NavmeshGraph (MCG, MCP, and MSB).
+        - Opening the (vanilla) Depths NavInfo (MCG, MCP, and MSB).
         - TODO
         """
-        navmesh = NavmeshGraph("resources", msb_path="resources/m10_00_00_00.msb", map_id="m10_00_00_00")
+        navmesh = NavInfo("resources", msb_source="resources/m10_00_00_00.msb", map_id="m10_00_00_00")
         navmesh.draw()
 
 

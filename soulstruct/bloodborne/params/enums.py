@@ -138,7 +138,7 @@ class ACCESSORY_CATEGORY(u8):
 class ACTION_BUTTON_REGION_TYPE(u8):
     """Type of region in which action button prompt appears."""
 
-    SphereWedge = 0  # defined by `radius` and `angle`
+    CylinderWedge = 0  # defined by `radius`, `angle`, and `height`
     Box = 1  # defined by `depth`, `width`, and `height`
 
 
@@ -516,7 +516,7 @@ class HMP_FLOOR_HEIGHT_TYPE(u8):
 
 
 class ITEMLOT_ITEMCATEGORY(s32):
-    """Inexplicably wide/reversed bit field for simply specifying the item type."""
+    """More sensible bit field than Dark Souls."""
 
     NoItem = -1
     Weapon = 0

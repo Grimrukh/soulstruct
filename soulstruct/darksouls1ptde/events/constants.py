@@ -145,14 +145,14 @@ class Common:
         GapingDragonDead = 2
         BellGargoylesDead = 3
         CrossbreedPriscillaDead = 4
-        SIfCharacterDead = 5
+        SifDead = 5
         PinwheelDead = 6
         NitoDead = 7
         # Flag 8 missing.
         QuelaagDead = 9
         BedOfChaosDead = 10
         IronGolemDead = 11
-        # Flag 12 missing.
+        OrnsteinSmoughDead = 12
         FourKingsDead = 13
         SeathDead = 14
         GwynLordOfCinderDead = 15

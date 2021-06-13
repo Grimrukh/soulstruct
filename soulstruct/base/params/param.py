@@ -83,10 +83,11 @@ class ParamRow:
 
     def update(self, **kwargs):
         for field in kwargs:
-            if field not in self.fields:
+            if field not in self.fields and field != "name":
                 raise KeyError(f"Field '{field}' does not exist in params.")
-        for field, value in kwargs.items():
-            self.__setitem__(field, value)
+        if "name" in kwargs:
+            self.name = kwargs.pop("name")
+        self.fields |= kwargs
 
     @property
     def field_names(self) -> tuple[str, ...]:

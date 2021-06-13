@@ -265,14 +265,17 @@ class InstructionDecompiler(abc.ABC):
         return f"Set{state_type}State(" + (f"{entity}, " if entity else "") + f"{state=})"
 
     @staticmethod
-    def _looks_like_entity_id(value: int):
+    def _looks_like_entity_id(value: int, event_id: int = None):
         """Guesses if `value` is an entity ID. Used with `RunEvent{Common}` calls.
 
         TODO: Currently blindly converting seven-digit integers in event calls, under the probably safe
          assumption that there will be no false positives. Also including four-digit integers starting with 6
-         (NPC entity IDs).
+         (NPC entity IDs), unless `event_id` is 11210117 (DS1R arena event - super hacky).
+         Ideally, we would inspect if the event argument is used in an instruction as an entity.
         """
-        return isinstance(value, int) and (len(str(value)) == 7 or len(str(value)) == 4 and str(value)[0] == "6")
+        if not isinstance(value, int) or event_id == 11210717:
+            return False
+        return len(str(value)) == 7 or (len(str(value)) == 4 and str(value)[0] == "6")
 
     def _2000_00(self, req_args, opt_args, arg_types, enums_manager: EntityEnumsManager = None):
         slot, event_id, first_arg = req_args
@@ -298,7 +301,7 @@ class InstructionDecompiler(abc.ABC):
         if enums_manager is not None:
             new_args = list(args)
             for i, arg in enumerate(args):
-                if self._looks_like_entity_id(arg):
+                if self._looks_like_entity_id(arg, event_id):
                     try:
                         new_args[i] = enums_manager.check_out_enum(arg, any_class=True)
                     except EntityEnumsManager.MissingEntityError:

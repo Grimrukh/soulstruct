@@ -183,7 +183,6 @@ class ATKPARAM_ATKATTR_TYPE(u8):
     Neutral = 4  # most common
 
 
-# TODO: Make sure the 'damage level' field in Attacks points to this type as well.
 class ATKPARAM_REP_DMGTYPE(s8):
     """Damage types. This enum is used by Special Effects to override one damage type with another (e.g. Iron Flesh
     reduces the weaker half 1 and the stronger half to 5)."""
@@ -776,13 +775,16 @@ class SP_EFFECT_VFX_SOUL_PARAM_TYPE(u8):
 
 class SpecialStateInfo(u8):
     """Enum documented by me for the SpecialStateIndex field, which specifies many varying hard-coded effects in the
-    game engine, like ongoing animations, particle effects, and special triggers. The visual effect parameters are
-    specified by the same index in the Special Effect Visuals param table."""
+    game engine, like ongoing animations, particle effects, and special triggers.
+
+    The visual effect parameters are specified by the same index in the Special Effect Visuals param table.
+    Unfortunately, it's hard to tell which ones are for VFX only and which ones have hard-coded effects.
+    """
 
     NoState = 0
     LavaBurning = 1  # Lava damage on self, probably burning feet (not visible with resin though).
     PoisonAura = 2  # Poison cloud on self.
-    SlimeCovered = 3  # "Jelly covered".
+    SlimeCovered = 3  # "Jelly covered" (likely just VFX).
     DurabilityDamage = 4  # Corrosive attack.
     ToxicAura = 5  # Toxic on self.
     BleedAura = 6  # Bleeding on self.
@@ -791,12 +793,12 @@ class SpecialStateInfo(u8):
     BloomingPurpleMossClump = 11  # Blooming Purple Moss Clump application effect.
     BloodRedMossClump = 12  # Blood-Red Moss Clump application effect.
     DivineBlessing = 13  # Divine Blessing full health recovery.
-    BinocularsZoom = 15  # Apply Binoculars camera zoom. Not recommended.
+    BinocularsZoom = 15  # Apply Binoculars camera zoom. (Left stick movement is disabled.)
     ForceRespawn = 16  # Return to last spawn point (Darksign/Homeward Bone).
     # 17 CRASHES THE GAME. Unfinished "resurrection stone" stuff.
     RepairPowder = 26  # Repair Powder, no visible effect for resin.
     MagicWeapon = 28  # Magic Weapon.
-    FallingControl = 47  # Falling Control glowing blue feet. TODO: damage reduction as well?
+    FallControl = 47  # Fall Control glowing blue feet. TODO: damage reduction as well?
     TearstoneRingAura = 48  # Tearstone Ring aura; yellow rays come out of you. Kind of annoying, actually.
     ElizabethMushroom = 50  # Elizabeth's Mushroom regen effect.
     SilentMovement = 54  # Sound cancellation. Does not affect enemy hearing itself.
@@ -850,6 +852,7 @@ class SpecialStateInfo(u8):
     KarmicJustice = 170  # (Karmic Justice)
     AlluringSkullA = 176  # Alluring Skull "A".
     AlluringSkullB = 177  # Alluring Skull "B".
+    ChannelerBuff = 178  # visual aura
     HiddenWeapon = 184  # Hidden Weapon.
     OrangeCharredRing = 186  # "lava walk", probably involved with canceling damage from effect 4030.
     EggParasiteFinal = 192  # kick replaced by larva attack.

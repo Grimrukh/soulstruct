@@ -169,33 +169,43 @@ class InstructionDecompiler(_BaseDecompiler):
             return f"GotoIfObjectNotDestroyed({label}, {obj})"
         return f"GotoIfObjectDestructionState({label}, {obj}, {state=})"
 
+    @parse_parameters
     def _1014_00(self):
         return "DefineLabel(0)"
 
+    @parse_parameters
     def _1014_01(self):
         return "DefineLabel(1)"
 
+    @parse_parameters
     def _1014_02(self):
         return "DefineLabel(2)"
 
+    @parse_parameters
     def _1014_03(self):
         return "DefineLabel(3)"
 
+    @parse_parameters
     def _1014_04(self):
         return "DefineLabel(4)"
 
+    @parse_parameters
     def _1014_05(self):
         return "DefineLabel(5)"
 
+    @parse_parameters
     def _1014_06(self):
         return "DefineLabel(6)"
 
+    @parse_parameters
     def _1014_07(self):
         return "DefineLabel(7)"
 
+    @parse_parameters
     def _1014_08(self):
         return "DefineLabel(8)"
 
+    @parse_parameters
     def _1014_09(self):
         return "DefineLabel(9)"
 

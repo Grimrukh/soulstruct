@@ -43,7 +43,7 @@ def main():
         # print(f"{fmg}[{text_id}] = {repr(r[fmg, text_id])}")
         foreign_text[fmg][text_id] = r[fmg, text_id]
 
-    foreign_text.save(output, description_word_wrap_limit=None, separate_patch=True)
+    foreign_text.write(output, description_word_wrap_limit=None, separate_patch=True)
 
 
 if __name__ == '__main__':

@@ -1122,7 +1122,7 @@ SP_EFFECT_PARAM_ST = {
             bool,
             "Determines if this special effect will affect characters in unused covenant.",
         ),
-        FieldDisplayInfo("effectTargetOpposeTarget:1", "EFfectTargetsEnemyTarget", True, SP_EFFECT_BOOL, ""),
+        FieldDisplayInfo("effectTargetOpposeTarget:1", "EffectTargetsEnemyTarget", True, SP_EFFECT_BOOL, ""),
         FieldDisplayInfo("effectTargetFriendlyTarget:1", "EffectTargetsAllyTarget", True, SP_EFFECT_BOOL, ""),
         FieldDisplayInfo("effectTargetSelfTarget:1", "EffectTargetsSelfTarget", True, SP_EFFECT_BOOL, ""),
         FieldDisplayInfo("deathcauseId", "DeathCauseID", True, int, ""),

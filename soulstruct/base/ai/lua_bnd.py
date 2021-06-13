@@ -35,9 +35,9 @@ from .exceptions import LuaError, LuaCompileError, LuaDecompileError
 
 _LOGGER = logging.getLogger(__name__)
 
-COMPILER_x64 = str(PACKAGE_PATH("ai/lua/x64/LuaC.exe"))
-COMPILER_x86 = str(PACKAGE_PATH("ai/lua/x86/luac50.exe"))
-DECOMPILER_x64 = str(PACKAGE_PATH("ai/lua/x64/DSLuaDecompiler.exe"))
+COMPILER_x64 = str(PACKAGE_PATH("base/ai/lua/x64/LuaC.exe"))
+COMPILER_x86 = str(PACKAGE_PATH("base/ai/lua/x86/luac50.exe"))
+DECOMPILER_x64 = str(PACKAGE_PATH("base/ai/lua/x64/DSLuaDecompiler.exe"))
 # No x86 decompiler.
 
 
@@ -359,8 +359,10 @@ class LuaBND:
         self.update_bnd(use_decompiled_goals=use_decompiled_goals, use_decompiled_other=use_decompiled_other)
         self.bnd.write(luabnd_path)
 
-    def get_goal(self, goal_id, goal_type) -> LuaGoal:
-        if goal_type not in {LuaGoal.BATTLE_TYPE, LuaGoal.LOGIC_TYPE, LuaGoal.NEITHER_TYPE}:
+    def get_goal(self, goal_id, goal_type=None) -> LuaGoal:
+        if goal_type is None:
+            goal_type = LuaGoal.BATTLE_TYPE
+        elif goal_type not in {LuaGoal.BATTLE_TYPE, LuaGoal.LOGIC_TYPE, LuaGoal.NEITHER_TYPE}:
             raise ValueError("goal_type must be 'battle', 'logic', or 'neither'.")
         goals = [g for g in self.goals if g.goal_id == goal_id and g.goal_type == goal_type]
         if not goals:
@@ -382,7 +384,7 @@ class LuaBND:
 
 @contextmanager
 def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
-    temp = PACKAGE_PATH("/base/ai/lua/temp")
+    temp = PACKAGE_PATH("base/ai/lua/temp")
     if set_cwd:
         previous_cwd = os.getcwd()
         os.chdir(str(temp.parent))

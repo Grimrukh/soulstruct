@@ -116,7 +116,7 @@ class CollisionHitFilter(IntEnum):
     Unknown_12 = 12
     DeathCam = 13  # white
     LethalFall = 14  # red
-    DeathPlane = 15  # black
+    KillPlane = 15  # black
     Water_B = 16  # dark blue
     GroupSwitch = 17  # turquoise; in elevator shafts
     Unknown_18 = 18

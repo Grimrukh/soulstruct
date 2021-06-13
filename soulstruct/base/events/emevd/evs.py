@@ -33,8 +33,8 @@ _GAME_IMPORT_RE = re.compile(r"^(from|import) soulstruct\.\w[\w\d]+\.events")
 
 EventStatementTyping = tp.Union[ast.Expr, ast.For, ast.If, ast.Assign, ast.Return]
 EventStatementTypes = (ast.Expr, ast.For, ast.If, ast.Assign, ast.Return)
-ConditionNodeTyping = tp.Union[ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Name, ast.Call]
-ConditionNodeTypes = (ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Name, ast.Call)
+ConditionNodeTyping = tp.Union[ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Name, ast.Attribute, ast.Call]
+ConditionNodeTypes = (ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Name, ast.Attribute, ast.Call)
 SkipReturnTyping = tp.Union[ast.UnaryOp, ast.Name, ast.Attribute, ast.Compare, ast.Call]
 SkipReturnTypes = (ast.UnaryOp, ast.Name, ast.Attribute, ast.Compare, ast.Call)
 
@@ -59,7 +59,7 @@ class EVSParser(abc.ABC):
     CONDITION_COUNT = 0
     INSTRUCTION_ARG_TYPES = {}
 
-    tree: ast.AST
+    tree: ast.Module
     map_name: str
     script_directory: tp.Optional[Path]
     linked_offsets: list[int]
@@ -448,7 +448,7 @@ class EVSParser(abc.ABC):
             if not isinstance(arg, ConditionNodeTypes):
                 raise EVSSyntaxError(
                     node,
-                    "Await() argument must be a Condition or boolean expression."
+                    f"Await() argument must be a Condition or boolean expression, not: {type(arg)}."
                 )
             return self._compile_condition(arg, condition=0)
 
@@ -561,7 +561,7 @@ class EVSParser(abc.ABC):
             try:
                 body_emevd += self._compile_event_body_node(child_node)
             except TypeError:
-                raise EVSSyntaxError(node, f"Error IF block:\n  {ast.dump(node)}")
+                raise EVSSyntaxError(node, f"Error in IF block:\n  {ast.dump(node)}")
 
         # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a fully-fledged Condition,
         #    depending on the test. Note that the body length has 1 added (an extra skip line) if there is an ELSE body
@@ -586,8 +586,10 @@ class EVSParser(abc.ABC):
         return if_emevd
 
     def _compile_test(self, node, body_length, negate=False):
-        """ Tries a simple skip, then a chain skip, then resorts to building a condition. Argument 'node'
-        should be the test node of the If node. """
+        """Tries a simple skip, then a chain skip, then resorts to building a condition.
+
+        Argument `node` should be the test node of the If node.
+        """
         test_emevd = []
 
         # 1. If the test starts with a 'not' operator, simply recur this method on the operand with 'negate' inverted.
@@ -785,11 +787,11 @@ class EVSParser(abc.ABC):
             chain_skip_emevd = []
             for i, arg in enumerate(sequence):
                 chain_skip_lines = n_args - i if negate else skip_lines + n_args - i - 1
-                if not isinstance(node, SkipReturnTypes):
+                if not isinstance(arg, SkipReturnTypes):
                     raise NoSkipOrReturnError
                 # Next line may also raise a `NoSkipOrReturnError` if a non-simple test is present.
                 chain_skip_emevd += self._compile_skip_or_return(
-                    node, skip_lines=chain_skip_lines, negate=skip_negate, chain=True
+                    arg, skip_lines=chain_skip_lines, negate=skip_negate, chain=True
                 )
             if chain_skip_emevd:
                 if negate:
@@ -1422,25 +1424,22 @@ def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
 def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
     """Import names into given namespace dictionary."""
     try:
-        # Try to import module normally.
+        # Try to import and reload module normally.
         module = importlib.import_module(node.module)
+        importlib.reload(module)
     except ImportError:
         # Try to import module on path.
-        print(f"Importing from path: {node.module}")
         if script_directory is None:
             raise EVSImportError(
                 node,
                 node.module,
                 "`script_directory` needed for relative import, but was not given to `EVSParser` or be detected.",
             )
-        level = 1 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
+        level = 0 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
         module_path = script_directory / ("../" * level + node.module.replace(".", "/") + ".py")
-        print(module_path)
         if not module_path.is_file():
             raise EVSImportError(node, node.module, f"Cannot import missing module file: {module_path}")
         module = import_arbitrary_file(module_path)
-    else:
-        importlib.reload(module)
 
     for alias in node.names:
         name = alias.name
