@@ -74,6 +74,9 @@ class EVSParser(abc.ABC):
         self.strings_with_offsets = []
         self.event_layers = []
 
+        # Save script_path to try and parse common_func from it later if referenced
+        self.script_path = script_path
+
         # Global namespace with game-specific enums and constants. May be updated with user imports and definitions.
         self.globals = vars(self.GAME_MODULE.enums)
         self.globals.update(vars(self.GAME_MODULE.constants))
@@ -113,7 +116,24 @@ class EVSParser(abc.ABC):
     #  FIRST PASS METHODS: These scan the event functions and collect information about each script.
     # ~~~~~~~~~~~~~~~~~~~
 
-    def _scan_event(self, node: ast.FunctionDef):
+    def _import_from(self, node: ast.ImportFrom):
+        if node.module == "common_func":
+            common_func_path = Path(self.script_path) / 'common_func.py'
+
+            with common_func_path.open("r", encoding="utf-8") as script:
+                common_func_tree = ast.parse(script.read())
+
+            self._scan_common_events(common_func_tree, names=[alias.name for alias in node.names])
+
+        _import_from(node, self.globals)
+
+    def _scan_common_events(self, node: ast.Module, names: tp.List[str] = None):
+        wildcard = names is None or "*" in names
+        for node in node.body[1:]:
+            if isinstance(node, ast.FunctionDef) and (wildcard or node.name in names):
+                self._scan_event(node, common=True)
+
+    def _scan_event(self, node: ast.FunctionDef, common=False):
         """Confirm syntax of event function and add it to self.events dictionary.
 
         An event should look like:
@@ -171,6 +191,7 @@ class EVSParser(abc.ABC):
             "restart_type": restart_type,
             "nodes": node.body[1:],  # Skips docstring.
             "description": description.lstrip(":"),
+            "common": common,
         }
 
     def _validate_event_name(self, event_node: ast.FunctionDef):
@@ -207,7 +228,7 @@ class EVSParser(abc.ABC):
             if isinstance(node, ast.Import):
                 _import_module(node, self.globals)
             elif isinstance(node, ast.ImportFrom):
-                _import_from(node, self.globals)
+                self._import_from(node)
             elif isinstance(node, ast.FunctionDef):
                 self._scan_event(node)
             elif isinstance(node, ast.Assign):
@@ -226,6 +247,9 @@ class EVSParser(abc.ABC):
             self.globals["EVENTS"] = gt.Flag("EVENTS", self.script_event_flags)
 
         for event_name, event_function in self.events.items():
+            if event_function['common']:
+                pass
+
             self.current_event = self.events[event_name]
             self.for_vars = {}
             self._reset_conditions()
@@ -314,10 +338,10 @@ class EVSParser(abc.ABC):
         event_dict = self.events[name]
         kwargs = self._parse_keyword_nodes(node.keywords)
         event_layer_string = format_event_layers(kwargs.pop("event_layers", None))
-
         if not args and not kwargs and not event_dict["args"]:
             # Events with no arguments can be called with no argument, ignoring `event_layers` (`slot` defaults to 0).
-            instruction = self.instructions["RunEvent"](event_dict["id"])
+            instruction_name = "RunCommonEvent" if event_dict['common'] else "RunEvent"
+            instruction = self.instructions[instruction_name](event_dict["id"])
             instruction[0] += event_layer_string
             return instruction
 
@@ -357,7 +381,11 @@ class EVSParser(abc.ABC):
         args = (0,) if not args else args
         arg_types = None if not event_dict["arg_types"] else event_dict["arg_types"]
 
-        instruction = self.instructions["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
+        if event_dict['common']:
+            instruction = self.instructions["RunCommonEvent"](event_id, args=args, arg_types=arg_types)
+        else:
+            instruction = self.instructions["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
+
         instruction[0] += event_layer_string
         return instruction
 
