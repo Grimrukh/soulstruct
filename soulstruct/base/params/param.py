@@ -166,14 +166,15 @@ class ParamRow:
         packed_row += self.bit_writer.finish_field()
         return packed_row
 
-    def to_dict(self, ignore_pads=True, ignore_defaults=True) -> dict[str, tp.Any]:
+    def to_dict(self, ignore_pads=True, ignore_defaults=True, ignore_sizes=False) -> dict[str, tp.Any]:
         data = {"name": self.name}
         for field in self.paramdef.fields.values():
             if ignore_pads and field.display_type == "dummy8":
                 continue  # pad bytes not written
             if ignore_defaults and self.fields[field.name] == field.new_default:
                 continue  # default values not written
-            data[field.name] = self.fields[field.name]
+            field_name = field.name.split(":")[0] if ignore_sizes else field.name
+            data[field_name] = self.fields[field.name]
         return data
 
     def compare(self, other_row: ParamRow):

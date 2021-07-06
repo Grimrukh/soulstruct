@@ -11,7 +11,6 @@ from .paramdef import ParamDefBND
 
 if tp.TYPE_CHECKING:
     from soulstruct.game_types import BaseGameParam
-    from soulstruct.games import Game
     from .param import Param
 
 
@@ -61,13 +60,13 @@ class GameParamBND(BaseBND, abc.ABC):
         for param_table_entry_path, param_table in self.params.items():
             self.entries_by_path[param_table_entry_path].set_uncompressed_data(param_table.pack())
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
+    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Write the `GameParamBND` file after updating the binary BND entries from the loadewd `Param` instances.
 
         See `GameFile.write()` for more.
         """
         self.update_bnd_entries()
-        super().write(file_path, make_dirs, **pack_kwargs)
+        super().write(file_path, make_dirs=make_dirs, check_hash=check_hash, **pack_kwargs)
         _LOGGER.info("GameParamBND written successfully.")
         if not self._reload_warning_given:
             _LOGGER.info("Remember to reload your game to see changes.")

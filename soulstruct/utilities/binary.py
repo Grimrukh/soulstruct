@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-__all__ = ["BinaryStruct", "BinaryObject", "BinaryReader", "BinaryWriter", "read_chars_from_bytes"]
+__all__ = ["BinaryStruct", "BinaryObject", "BinaryReader", "BinaryWriter", "read_chars_from_bytes", "get_blake2b_hash"]
 
 import abc
 import enum
+import hashlib
 import inspect
 import io
 import logging
@@ -451,6 +452,8 @@ class BinaryObject(abc.ABC):
 
     Z_STRING_RE = re.compile(r"^__(\w[\w\d]+)__z$")
 
+    _TYPE_HINTS = None  # type: tp.Optional[dict]
+
     def __init__(self, reader: BinaryReader = None, **kwargs):
         """Create instance from `reader`, in which case `kwargs` are passed to `unpack()`, or use `kwargs` directly
         to override default field values if `reader` is None.
@@ -469,6 +472,13 @@ class BinaryObject(abc.ABC):
         else:
             self._set_defaults()
             self.set(**kwargs)  # `kwargs` are field names
+
+    @classmethod
+    def _get_type_hints(cls):
+        """Generated on first use and then saved to class, as `tp.get_type_hints()` is expensive."""
+        if cls._TYPE_HINTS is None:
+            cls._TYPE_HINTS = tp.get_type_hints(cls)
+        return cls._TYPE_HINTS
 
     def set(self, **kwargs):
         """Set multiple fields (attributes) at once, via `__setattr__` below.
@@ -491,10 +501,10 @@ class BinaryObject(abc.ABC):
             default = self.DEFAULTS.get(field.name, self.get_field_default(field))
             setattr(self, field.name, default)
 
-    def __setattr__(self, field_name, value):
+    def __setattr__(self, field_name: str, value):
         """Checks `field_name` is a valid field, confirms any asserted value, and casts value to a given type."""
         try:
-            field_type = tp.get_type_hints(self.__class__)[field_name]
+            field_type = self._get_type_hints()[field_name]
         except KeyError:
             # Check `STRUCT` fields if no type hint exists.
             try:
@@ -578,7 +588,7 @@ class BinaryObject(abc.ABC):
     def get_field_default(cls, field: BinaryStruct.BinaryField) -> tp.Union[str, bytes, bool, int, float]:
         if field.asserted:
             return field.asserted
-        field_types = tp.get_type_hints(cls)
+        field_types = cls._get_type_hints()
         if field.name in field_types:
             field_type = field_types[field.name]
             try:
@@ -1031,3 +1041,17 @@ def read_chars_from_buffer(
                 if encoding is not None:
                     return stripped_array.decode(encoding)
                 return stripped_array
+
+
+def get_blake2b_hash(data: tp.Union[bytes, str, Path]) -> bytes:
+    if isinstance(data, (str, Path)):
+        file_hash = hashlib.blake2b()
+        with Path(data).open("rb") as f:
+            chunk = f.read(8192)
+            while chunk:
+                file_hash.update(chunk)
+                chunk = f.read(8192)
+        return file_hash.digest()
+    elif isinstance(data, bytes):
+        return hashlib.blake2b(data).digest()
+    raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")

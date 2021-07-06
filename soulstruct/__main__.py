@@ -36,9 +36,10 @@ else:
     RED = Fore.RED
     RESET = Fore.RESET
 
-from soulstruct.config import DEFAULT_PROJECT_PATH
-from soulstruct.games import get_game, GameSelector
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
+from soulstruct.config import DEFAULT_PROJECT_PATH
+from soulstruct.games import get_game
+from soulstruct.utilities.game_selector import GameSelector
 from soulstruct.utilities.text import word_wrap
 
 LOG_LEVELS = {"debug", "info", "warning", "error", "fatal", "critical"}

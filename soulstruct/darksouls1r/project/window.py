@@ -5,6 +5,8 @@ from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 from soulstruct.darksouls1r.maps.utilities import build_ffxbnd
 from soulstruct.darksouls1r.constants import CHARACTER_MODELS
 from .core import GameDirectoryProject
+from .lighting import LightingEditor
+from .links import WindowLinker
 from .runtime import RuntimeManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -12,10 +14,13 @@ _LOGGER = logging.getLogger(__name__)
 
 class ProjectWindow(_BaseProjectWindow):
     PROJECT_CLASS = GameDirectoryProject
+    LINKER_CLASS = WindowLinker
+    LIGHTING_EDITOR_CLASS = LightingEditor
     RUNTIME_MANAGER_CLASS = RuntimeManager
     CHARACTER_MODELS = CHARACTER_MODELS
 
     project: GameDirectoryProject
+    runtime_tab: RuntimeManager
 
     def _build_tools_menu(self, tools_menu):
         maps_submenu = self.Menu(tearoff=0)

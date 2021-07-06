@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from soulstruct.darksouls1r.maps.navmesh import NavInfo
+from soulstruct.darksouls1r.maps.navinfo import NavInfo
 
 
 class NavmeshTest(unittest.TestCase):

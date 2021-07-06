@@ -5,7 +5,7 @@ from .emevd import EMEVD
 from ..maps import ALL_MAPS
 
 
-def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):
+def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None, check_hash=False):
     """Convert all Dark Souls 1 event files of any format (binary EMEVD, EVS script, numeric text) to any other format.
 
     Args:
@@ -27,6 +27,7 @@ def convert_events(output_type, output_directory, input_type=None, input_directo
         maps=maps,
         emevd_class=EMEVD,
         input_type=input_type,
+        check_hash=check_hash,
     )
 
 

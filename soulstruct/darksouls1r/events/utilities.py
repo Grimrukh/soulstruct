@@ -5,7 +5,7 @@ from .emevd import EMEVD
 from ..maps.constants import ALL_MAPS
 
 
-def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):
+def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None, check_hash=False):
     """Convert all Dark Souls 1 event files of any format (binary EMEVD, EVS script, numeric text) to any other format.
 
     Args:
@@ -16,6 +16,7 @@ def convert_events(output_type, output_directory, input_type=None, input_directo
             type will be accepted for each map, with an error being raised if the same map has multiple file types.
         input_directory: Path to read event files from. Defaults to vanilla EVS scripts that come with Soulstruct.
         maps: Sequence of maps to look for. These should be `Map` constants. By default, all maps will be converted.
+        check_hash (bool): If True, will not replace existing file with same hash. (Default: False)
     """
     input_directory = Path(input_directory) if input_directory is not None else Path(__file__).parent / "vanilla"
     if maps is None:
@@ -27,6 +28,7 @@ def convert_events(output_type, output_directory, input_type=None, input_directo
         maps=maps,
         emevd_class=EMEVD,
         input_type=input_type,
+        check_hash=check_hash,
     )
 
 

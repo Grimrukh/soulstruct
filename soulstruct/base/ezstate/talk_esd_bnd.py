@@ -126,11 +126,18 @@ class TalkESDBND(BaseBND, abc.ABC):
                 self.add_entry(new_entry)
                 _LOGGER.debug(f"New ESD entry added to TalkESDBND (ID {new_id}): t{talk_id}.esd")
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, skip_update=False, **pack_kwargs):
+    def write(
+        self,
+        file_path: tp.Union[None, str, Path] = None,
+        make_dirs=True,
+        check_hash=False,
+        skip_update=False,
+        **pack_kwargs,
+    ):
         """Update BND entries from current `ESD` instances before packing/writing BND."""
         if not skip_update:
             self.update_entries()
-        super().write(file_path, make_dirs)
+        super().write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     def __getitem__(self, talk_id):
         return self.talk[talk_id]

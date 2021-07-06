@@ -8,6 +8,7 @@ from pathlib import Path
 from .emevd.exceptions import EMEVDError
 
 if tp.TYPE_CHECKING:
+    from soulstruct.game_types.msb_types import Map
     from .emevd import EMEVD
 
 EVENT_EXTENSIONS = {
@@ -18,7 +19,15 @@ EVENT_EXTENSIONS = {
 }
 
 
-def convert_events(output_type, output_directory, input_directory, maps, emevd_class: tp.Type[EMEVD], input_type=None):
+def convert_events(
+    output_type: str,
+    output_directory: tp.Union[str, Path],
+    input_directory: tp.Union[str, Path],
+    maps: tp.Iterable[Map],
+    emevd_class: tp.Type[EMEVD],
+    input_type: tp.Optional[str] = None,
+    check_hash=False,
+):
     """Convert all events from one format to another.
 
     The possible formats are 'evs' (or 'py'), 'emevd', 'emevd.dcx', and 'numeric' (or 'txt'). By default, the input
@@ -28,14 +37,19 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
 
     A subset of EMEVD map constants to convert can be passed to `maps`, or it can be left to default to looking for all
     EMEVD files used in this game (in which case an error will be raised if any are not found).
+
+    If `check_hash=True`, the file will not be written if a file with the same hash already exists.
     """
     output_ext = "." + output_type.lower().lstrip(".")
     output_type = None
     for ext_type, exts in EVENT_EXTENSIONS.items():
         if output_ext in exts:
             output_type = ext_type
+            break
     if output_type is None:
         raise ValueError(f"Invalid EMEVD output extension: {repr(output_ext)}.")
+    if output_type in {"evs", "numeric"} and check_hash:
+        raise ValueError(f"Cannot use `check_hash=True` for EMEVD output type '{output_type}'.")
     output_directory = Path(output_directory)
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
     input_directory = Path(input_directory)
@@ -64,9 +78,9 @@ def convert_events(output_type, output_directory, input_directory, maps, emevd_c
             if output_type == "evs":
                 emevd.write_evs(output_path)
             elif output_type == "emevd":
-                emevd.write(output_path)
+                emevd.write(output_path, check_hash=check_hash)
             elif output_type == "emevd.dcx":
-                emevd.write(output_path)
+                emevd.write(output_path, check_hash=check_hash)
             elif output_type == "numeric":
                 emevd.write_numeric(output_path)
         except Exception as ex:

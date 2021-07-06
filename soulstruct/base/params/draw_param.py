@@ -141,10 +141,10 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
                 else:
                     self.entries_by_path[param_table_entry_path].set_uncompressed_data(param_table.pack())
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
+    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Write to `DrawParamBND` file after updating entries."""
         self.update_entries()
-        super().write(file_path, make_dirs, **pack_kwargs)
+        super().write(file_path, make_dirs, check_hash=check_hash, **pack_kwargs)
 
 
 class DrawParamDirectory(GameSpecificType, abc.ABC):

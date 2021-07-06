@@ -9,7 +9,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import BinaryReader, BinaryWriter, get_blake2b_hash
 
 from .base import BaseBinder, BinderHashTable
 from .dcx import DCX
@@ -81,6 +81,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         file_path: tp.Union[None, str, Path] = None,
         bdt_file_path: tp.Union[None, str, Path] = None,
         make_dirs=True,
+        check_hash=False,
     ):
         """Writes both the `BHD` and `BDT` files at once.
 
@@ -96,6 +97,8 @@ class BaseBXF(BaseBinder, abc.ABC):
             bdt_file_path (None, str, Path): file path to write `BDT` to. Defaults to `self.path` with "bdt"
                 replacing "bhd", if a file path is used as a source.
             make_dirs (bool): if True, any absent directories in both `file_path` and `bdt_file_path` will be created.
+            check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
+                exist. (Default: False)
         """
         file_path = self._get_file_path(file_path)
         if make_dirs:
@@ -106,13 +109,18 @@ class BaseBXF(BaseBinder, abc.ABC):
             bdt_file_path = file_path.with_name(bdt_name)
         if make_dirs:
             bdt_file_path.parent.mkdir(parents=True, exist_ok=True)
-        self.create_bak(file_path, make_dirs=make_dirs)
-        self.create_bak(bdt_file_path, make_dirs=make_dirs)
         packed_bhd, packed_bdt = self.pack()
         if self.dcx_magic:
-            # I think this is unusual.
+            # I haven't actually seen any BDT archives with DCX compression.
             packed_bhd = DCX(packed_bhd, magic=self.dcx_magic).pack()
             packed_bdt = DCX(packed_bdt, magic=self.dcx_magic).pack()
+        if check_hash and file_path.is_file() and bdt_file_path.is_file():
+            bhd_match = get_blake2b_hash(file_path) == get_blake2b_hash(packed_bhd)
+            bdt_match = get_blake2b_hash(bdt_file_path) == get_blake2b_hash(packed_bdt)
+            if bhd_match and bdt_match:
+                return  # don't write file
+        self.create_bak(file_path, make_dirs=make_dirs)
+        self.create_bak(bdt_file_path, make_dirs=make_dirs)
         with file_path.open("wb") as f:
             f.write(packed_bhd)
         with bdt_file_path.open("wb") as f:

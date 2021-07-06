@@ -15,7 +15,7 @@ from pathlib import Path
 from soulstruct.exceptions import SoulstructError
 from soulstruct.containers.entry import BinderEntry
 from soulstruct.containers.dcx import DCX
-from soulstruct.utilities.binary import BinaryReader
+from soulstruct.utilities.binary import BinaryReader, get_blake2b_hash
 from soulstruct.utilities.files import create_bak
 
 _LOGGER = logging.getLogger(__name__)
@@ -126,7 +126,7 @@ class GameFile(abc.ABC):
         """Create a dictionary from `GameFile` instance. Not supported by default."""
         raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, **pack_kwargs):
+    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -138,17 +138,21 @@ class GameFile(abc.ABC):
         Args:
             file_path (None, str, Path): file path to write to. Defaults to `self.path`, which is automatically set at
                 instance creation if a file path is used as a source.
-            make_dirs (bool): if True, any directories in `file_path` that are missing will be created.
+            make_dirs (bool): if True, any directories in `file_path` that are missing will be created. (Default: True)
+            check_hash (bool): if True, file will not be written if file with same hash already exists. (Default: False)
             pack_kwargs: extra keyword arguments to pass to `.pack()`.
         """
         file_path = self._get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(file_path)
         if self.dcx_magic:
             packed = DCX(self.pack(**pack_kwargs), magic=self.dcx_magic).pack()
         else:
             packed = self.pack(**pack_kwargs)
+        if check_hash and file_path.is_file():
+            if get_blake2b_hash(file_path) == get_blake2b_hash(packed):
+                return  # don't write file
+        create_bak(file_path)
         with file_path.open("wb") as f:
             f.write(packed)
 

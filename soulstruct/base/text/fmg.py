@@ -217,6 +217,7 @@ class BaseFMG(GameFile, abc.ABC):
         self,
         file_path=None,
         makedirs=True,
+        check_hash=False,
         remove_empty_entries=True,
         pipe_to_newline=True,
         word_wrap_limit=None,
@@ -226,6 +227,7 @@ class BaseFMG(GameFile, abc.ABC):
         super().write(
             file_path=file_path,
             makedirs=makedirs,
+            check_hash=check_hash,
             remove_empty_entries=remove_empty_entries,
             pipe_to_newline=pipe_to_newline,
             word_wrap_limit=word_wrap_limit,

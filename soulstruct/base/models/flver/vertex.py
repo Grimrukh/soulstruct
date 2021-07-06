@@ -182,6 +182,8 @@ class BufferLayout:
 class VertexBoneIndices:
 
     def __init__(self, a=0, b=0, c=0, d=0):
+        if isinstance(a, (tuple, list)):
+            a, b, c, d = a
         self.a = a
         self.b = b
         self.c = c

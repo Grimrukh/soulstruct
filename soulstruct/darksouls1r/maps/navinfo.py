@@ -1176,11 +1176,13 @@ class NavInfo:
             if not self.get_related_nodes(aabb):
                 nodeless_navmesh_indices.append(i)
         if nodeless_navmesh_indices:
-            print(
-                f"Found navmesh (AABB) indices with no related nodes: {nodeless_navmesh_indices}. Every navmesh needs "
-                f"at least one related node (with an edge in that AABB or a direct connection) for the navmesh system "
-                f"to function properly, including collision backread."
-            )
+            # TODO: I thought related nodes were necessary, but vanilla m12_01 has navmeshes without any?
+            # print(
+            #     f"Found navmesh (AABB) indices with no related nodes: {nodeless_navmesh_indices}. Every navmesh
+            #     f"needs at least one related node (with an edge in that AABB or a direct connection) for the navmesh
+            #     f"system to function properly, including collision backread."
+            # )
+            pass
 
     def get_related_nodes(self, aabb: tp.Union[NavmeshAABB, str, MSBNavmesh], direct_connections_only=False):
         """Return all MCG nodes with at least one edge in the given `AABB` or corresponding MSB navmesh/name."""

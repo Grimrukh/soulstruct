@@ -7,7 +7,7 @@ from .emevd import EMEVD
 from ..maps.constants import ALL_MAPS_NO_CHALICE
 
 
-def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None):
+def convert_events(output_type, output_directory, input_type=None, input_directory=None, maps=None, check_hash=False):
     input_directory = Path(input_directory) if input_directory is not None else Path(__file__.parent) / "vanilla"
     if not maps:
         maps = ALL_MAPS_NO_CHALICE
@@ -18,6 +18,7 @@ def convert_events(output_type, output_directory, input_type=None, input_directo
         maps=maps,
         emevd_class=EMEVD,
         input_type=input_type,
+        check_hash=check_hash,
     )
 
 

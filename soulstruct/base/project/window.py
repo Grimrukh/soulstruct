@@ -14,7 +14,7 @@ from pathlib import Path
 from queue import Queue
 
 from soulstruct.containers import Binder
-from ...utilities.text import word_wrap
+from soulstruct.utilities.text import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
 from .editors import (
@@ -53,8 +53,16 @@ TAB_EDITORS = {
 class ProjectWindow(SmartFrame, abc.ABC):
 
     PROJECT_CLASS: tp.Type[GameDirectoryProject] = None
-
-    RUNTIME_MANAGER_CLASS = None  # type: tp.Type[RuntimeManager]
+    LINKER_CLASS: tp.Type[WindowLinker] = WindowLinker
+    MAPS_EDITOR_CLASS: tp.Type[MapsEditor] = MapsEditor
+    ENTITIES_EDITOR_CLASS: tp.Type[EntityEditor] = EntityEditor
+    PARAMS_EDITOR_CLASS: tp.Type[ParamsEditor] = ParamsEditor
+    LIGHTING_EDITOR_CLASS: tp.Type[LightingEditor] = LightingEditor
+    TEXT_EDITOR_CLASS: tp.Type[TextEditor] = TextEditor
+    EVENT_EDITOR_CLASS: tp.Type[EventEditor] = EventEditor
+    AI_EDITOR_CLASS: tp.Type[AIEditor] = AIEditor
+    TALK_EDITOR_CLASS: tp.Type[TalkEditor] = TalkEditor
+    RUNTIME_MANAGER_CLASS: tp.Type[RuntimeManager] = None
     CHARACTER_MODELS = {}
 
     maps_tab: tp.Optional[MapsEditor]
@@ -117,7 +125,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.CustomDialog(title="Internal Error", message=msg)
             raise
 
-        self.linker = WindowLinker(self)  # TODO: Individual editors should have a lesser linker.
+        self.linker = self.LINKER_CLASS(self)  # TODO: Individual editors should have a lesser linker.
 
         with self.set_master(column_weights=[1], row_weights=[0, 1], auto_rows=0, sticky="nsew"):
             self.global_ribbon = self.Frame(row_weights=[1], column_weights=[1, 1, 1, 1], pady=(10, 5))
@@ -193,7 +201,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "maps" in self.data_types:
             self.maps_tab = self.SmartFrame(
                 frame=tab_frames["maps"],
-                smart_frame_class=MapsEditor,
+                smart_frame_class=self.MAPS_EDITOR_CLASS,
                 project=self.project,
                 character_models=self.CHARACTER_MODELS,
                 global_map_choice_func=self.set_global_map_choice,
@@ -204,7 +212,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
             self.entities_tab = self.SmartFrame(
                 frame=tab_frames["entities"],
-                smart_frame_class=EntityEditor,
+                smart_frame_class=self.ENTITIES_EDITOR_CLASS,
                 project=self.project,
                 entities_directory=self.project.project_root / "entities",
                 global_map_choice_func=self.set_global_map_choice,
@@ -216,7 +224,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "params" in self.data_types:
             self.params_tab = self.SmartFrame(
                 frame=tab_frames["params"],
-                smart_frame_class=ParamsEditor,
+                smart_frame_class=self.PARAMS_EDITOR_CLASS,
                 project=self.project,
                 linker=self.linker,
                 sticky="nsew",
@@ -226,7 +234,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "lighting" in self.data_types:
             self.lighting_tab = self.SmartFrame(
                 frame=tab_frames["lighting"],
-                smart_frame_class=LightingEditor,
+                smart_frame_class=self.LIGHTING_EDITOR_CLASS,
                 project=self.project,
                 linker=self.linker,
                 sticky="nsew",
@@ -236,7 +244,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "text" in self.data_types:
             self.text_tab = self.SmartFrame(
                 frame=tab_frames["text"],
-                smart_frame_class=TextEditor,
+                smart_frame_class=self.TEXT_EDITOR_CLASS,
                 project=self.project,
                 linker=self.linker,
                 sticky="nsew",
@@ -246,7 +254,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "events" in self.data_types:
             self.events_tab = self.SmartFrame(
                 frame=tab_frames["events"],
-                smart_frame_class=EventEditor,
+                smart_frame_class=self.EVENT_EDITOR_CLASS,
                 project=self.project,
                 evs_directory=self.project.project_root / "events",
                 game_root=self.project.game_root,
@@ -259,7 +267,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "ai" in self.data_types:
             self.ai_tab = self.SmartFrame(
                 frame=tab_frames["ai"],
-                smart_frame_class=AIEditor,
+                smart_frame_class=self.AI_EDITOR_CLASS,
                 project=self.project,
                 script_directory=self.project.project_root / "ai_scripts",
                 export_directory=self.project.get_game_path_of_data_type("ai"),
@@ -274,7 +282,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if "talk" in self.data_types:
             self.talk_tab = self.SmartFrame(
                 frame=tab_frames["talk"],
-                smart_frame_class=TalkEditor,
+                smart_frame_class=self.TALK_EDITOR_CLASS,
                 project=self.project,
                 esp_directory=self.project.project_root / "talk",
                 global_map_choice_func=self.set_global_map_choice,
@@ -628,7 +636,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.mimic_click(self.save_all_button if data_type is None else self.save_tab_button)
 
         self.project.save(data_type)
-        self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
+        if data_type is None:
+            self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
         self.flash_bg(self)
 
     def _reload_data(self, data_type=None):
@@ -668,7 +677,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             if not export_directory:
                 return  # Abort export.
         if single_script_only and data_type is not None:
-            if data_type == "events" :
+            if data_type == "events":
                 # Specifying 'events' here means the selected script only.
                 self.events_tab.save_selected_evs()
                 self.mimic_click(self.save_tab_button)
