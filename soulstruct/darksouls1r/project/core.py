@@ -47,7 +47,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
             yes_to_all = self.import_data_type(data_type, force_import_from_game, yes_to_all, with_window=with_window)
 
             if data_type == "maps" and first_time and self.maps is not None:
-                archives_msb = self.maps.msbs["DukesArchives"]
+                archives_msb = self.maps.DukesArchives
                 repeats = archives_msb.get_repeated_entity_ids()
                 if {e.entity_id for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
                     if self.offer_fix_broken_regions(with_window):
@@ -82,7 +82,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
                 ).lower() == "n"
             ) else 0
         if result == 0:
-            archives_msb = self.maps.msbs["DukesArchives"]
+            archives_msb = self.maps.DukesArchives
             repeats = archives_msb.get_repeated_entity_ids()  # re-checking just in case
             if {e.entity_id for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
                 for entry in repeats["Regions"]:
