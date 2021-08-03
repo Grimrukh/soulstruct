@@ -15,7 +15,7 @@ class InstructionDecompiler(_BaseDecompiler):
     GET_MAP = staticmethod(get_map)
 
     @parse_parameters
-    def _3_23(self, condition, attacked_entity: CharacterType, attacker: Character, damage_type: DamageType):
+    def _3_23(self, condition, attacked_entity: Character, attacker: Character, damage_type: DamageType):
         if not self._any_vars(damage_type) and damage_type.name == "Unspecified":
             # Leave out default `damage_type` value.
             if attacker == -1:

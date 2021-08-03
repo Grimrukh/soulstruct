@@ -33,13 +33,13 @@ Detailed information about the relationship between MSB navmeshes and collisions
     connected) are used to upgrade two backread tables, one "normal" (possibly characters, objects, etc., or possibly
     unused) and one "hit" (collisions). In DS1, the distances for "normal" backread (enabled at 20m, disabled at 25m)
     are smaller than for "hit" backread (enabled after spending 0.2s closer than 80m, disabled after spending 1.3s
-    further than 90m). You can play with these values in the debug menu.
+    further than 90m). You can play with these values in the debug menu (`GAME > WorldBackRead`).
 
     - By default (i.e. without any navmeshes and no navmesh-produced backread), the player's current collision has
     backread 4 (low + hi poly versions), all other collisions in the current map have backread 2 (low poly only), and
     all collisions in all other loaded maps have backread 0.
 
-    - These backreads states are "upgraded" by navmesh backread groups. If a navmesh's MCP room is within the "hit"
+    - These backreads states are "upgraded" by navmesh backread groups. If a navmesh's MCP AABB is within the "hit"
     backread distance, it is loaded (appears under "WorldBackRead" menu).
 
     - The distance to the room the player is current inside is always 0.0. If the player is standing inside multiple
@@ -1372,8 +1372,14 @@ class NavInfo:
         return output
 
     def draw(
-        self, aabb_color="cyan", label_aabbs=True, label_nodes=True, axes=None, auto_show=True,
-        focus_xzy=None, focus_size=50,
+        self,
+        aabb_color="cyan",
+        label_aabbs=True,
+        label_nodes=True,
+        axes=None,
+        auto_show=True,
+        focus_xzy=None,
+        focus_size=50,
     ):
         import matplotlib.pyplot as plt
 
