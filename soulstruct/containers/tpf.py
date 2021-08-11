@@ -12,6 +12,7 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 from .dcx import DCX
+from .dds import DDS
 
 
 class TPFPlatform(IntEnum):
@@ -56,46 +57,6 @@ class FloatStruct:
         writer.pack("i", self.unk0)
         writer.pack("i", len(self.values) * 4)
         writer.pack(f"{len(self.values)}f", *self.values)
-
-
-class DDSHeader:
-
-    flags: int
-    height: int
-    width: int
-    pitch_or_linear_size: int
-    depth: int
-    mipmap_count: int
-    reserved_1: tp.Tuple[int]
-
-    def __init__(self, data: bytes):
-        reader = BinaryReader(data)
-
-        reader.unpack_value("4s", asserted=b"DDS ")
-        reader.unpack_value("i", asserted=0x7C)
-        self.flags = reader.unpack_value("I")
-        self.height = reader.unpack_value("i")
-        self.width = reader.unpack_value("i")
-        self.pitch_or_linear_size = reader.unpack_value("i")
-        self.depth = reader.unpack_value("i")
-        self.mipmap_count = reader.unpack_value("i")
-        self.reserved_1 = reader.unpack("11i")
-
-        # TODO: More here (see SoulsFormats excerpt below), but I care mainly about width/height right now.
-
-        """
-        ddspf = new PIXELFORMAT(br);
-        dwCaps = (DDSCAPS)br.ReadUInt32();
-        dwCaps2 = (DDSCAPS2)br.ReadUInt32();
-        dwCaps3 = br.ReadInt32();
-        dwCaps4 = br.ReadInt32();
-        dwReserved2 = br.ReadInt32();
-
-        if (ddspf.dwFourCC == "DX10")
-            header10 = new HEADER_DXT10(br);
-        else
-            header10 = null;
-        """
 
 
 class TPFTexture:
@@ -187,8 +148,8 @@ class TPFTexture:
     def pack(self):
         """TODO"""
 
-    def get_dds_header(self) -> DDSHeader:
-        return DDSHeader(self.data)
+    def get_dds(self) -> DDS:
+        return DDS(self.data)
 
     def write_dds(self, dds_path: tp.Union[None, str, Path] = None):
         if dds_path is None:

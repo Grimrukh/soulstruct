@@ -213,6 +213,29 @@ class Vector3(Vector):
     def transform(self, matrix3: Matrix3):
         return Vector3(list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
 
+    def get_as_axes(self, axes: str) -> tp.Union[Vector2, Vector3]:
+        """Reorder and/or negate axes, e.g. `get_as_axes("-x-zy")`."""
+        new_data = []
+        axes_done = set()
+        negate = False
+        for c in axes:
+            if c == "-":
+                negate = not negate
+            elif c in {"x", "y", "z"}:
+                if c in axes_done:
+                    raise ValueError(f"Axis '{c}' appears multiple times in `axes` string.")
+                axes_done.add(c)
+                new_data.append(-getattr(self, c) if negate else getattr(self, c))
+                negate = False
+            else:
+                raise ValueError(f"Invalid `axes` character: '{c}'. Should be '-' or in 'xyz'.")
+        if len(new_data) == 2:
+            return Vector2(new_data)
+        elif len(new_data) == 3:
+            return Vector3(new_data)
+        else:
+            raise ValueError(f"Not enough axes given in `axes`: '{axes}'. Must be at least 2.")
+
     def swap_yz(self) -> Vector3:
         return Vector3(self.x, self.z, self.y)
 

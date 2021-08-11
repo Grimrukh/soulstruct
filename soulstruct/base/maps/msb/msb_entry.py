@@ -576,6 +576,17 @@ class MSBEntryEntity(MSBEntry, abc.ABC):
 
     entity_id: int
 
+    def __init__(self, source=None, entity_enum: IntEnum = None, **kwargs):
+        """Accepts `entity_enum` kwargs to pull both `name` and `entity_id` (value) from."""
+        if entity_enum is not None:
+            if "name" in kwargs or "entity_id" in kwargs:
+                raise ValueError("Cannot initialize `MSBEntryEntity` with both `entity_enum` and `name`/`entity_id`.")
+            if not isinstance(entity_enum, IntEnum):
+                raise TypeError(f"`entity_enum` must be an `IntEnum` subclass, not `{type(entity_enum)}`.")
+            kwargs["name"] = entity_enum.name
+            kwargs["entity_id"] = entity_enum.value
+        super().__init__(source, **kwargs)
+
 
 class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):
     """Subclass of MSBEntryEntity with `translate` and `rotate` fields, and `rotate_in_world` method.

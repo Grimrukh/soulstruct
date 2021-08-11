@@ -163,8 +163,11 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
 
         return self.HEADER + packed_models + packed_events + packed_regions + packed_parts
 
-    def get_entry_by_name(self, name: str, entry_types=()):
-        """Get `MSBEntry` with name `name` that is one of the given `entry_types`, or any type if `entry_types=()`."""
+    def get_entry_by_name(self, name: str, entry_types=()) -> tp.Optional[MSBEntry]:
+        """Get `MSBEntry` with name `name` that is one of the given `entry_types`, or any type if `entry_types=()`.
+
+        Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
+        """
         if not entry_types:
             entry_types = ("parts", "regions", "events", "models")
         results = {}
@@ -175,7 +178,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             except KeyError:
                 pass
         if not results:
-            raise ValueError(f"Could not find an entry named '{name}' with type {entry_types} in MSB.")
+            raise KeyError(f"Could not find an entry named '{name}' with type {entry_types} in MSB.")
         if len(results) > 1:
             raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
         return next(iter(results.values()))
@@ -261,7 +264,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         results += [e for e in self.events.get_entries() if e.entity_id == entity_id]
         results += [e for e in self.regions.get_entries() if e.entity_id == entity_id]
         if not results:
-            return None
+            raise KeyError(f"Could not find an entry with entity ID {entity_id} in MSB.")
         elif len(results) > 1:
             if allow_multiple:
                 _LOGGER.warning(

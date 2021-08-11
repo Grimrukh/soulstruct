@@ -93,6 +93,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         self._vanilla_game_root = ""
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
         self.custom_script_directory = Path()
+        self.entities_in_events_directory = False
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
@@ -326,7 +327,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         if data_type == "events":  # data in `EMEVDDirectory` is only read upon import and modified upon export
             self.events.write_evs(
                 self.project_root / "events",
-                entities_directory=self.project_root / "entities",  # TODO: project setting
+                entities_directory=self.entities_directory,
                 warn_missing_enums=True,  # TODO: project setting
                 entity_module_prefix="..entities.",
             )
@@ -566,6 +567,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                         if vanilla_game_root := config.get("VanillaGameDirectory", ""):
                             self._vanilla_game_root = Path(vanilla_game_root)
                         self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
+                        self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
@@ -641,6 +643,10 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             creationflags=subprocess.CREATE_NEW_CONSOLE,
         )
 
+    @property
+    def entities_directory(self) -> Path:
+        return self.project_root / ("events" if self.entities_in_events_directory else "entities")
+
     # ~~~ PRIVATE METHODS ~~~ #
 
     @staticmethod
@@ -656,6 +662,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             "LastExportTime": self.last_export_time,
             "VanillaGameDirectory": str(self._vanilla_game_root),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
+            "EntitiesInEventsDirectory": self.entities_in_events_directory,
         }
 
     def _write_config(self):

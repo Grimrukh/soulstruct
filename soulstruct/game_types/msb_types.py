@@ -383,7 +383,7 @@ class SpawnPointEvent(MapEvent):
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
         if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
-            return 3900, 3999
+            return 3900, 3949  # 3950-3989 reserved for bonfire spawn points
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
@@ -614,6 +614,12 @@ class PlayerStart(MapPart):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "PlayerStarts") if pluralized_subtype else ("Parts", "PlayerStart")
+
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
+            return 990, 999
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
 class Collision(MapPart):

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from .base.models.flver import FLVER
 from .config import *
 from soulstruct.containers import Binder
 from soulstruct.containers.dcx import DCX

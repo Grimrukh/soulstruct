@@ -924,7 +924,7 @@ class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
         return new_collision
 
     def create_map_connection_from_collision(
-        self, collision, connected_map, name=None, draw_groups=None, display_groups=None
+        self, collision: tp.Union[str, MSBCollision], connected_map, name=None, draw_groups=None, display_groups=None
     ):
         """Creates a new `MapConnection` that references and copies the transform of the given `collision`.
 
