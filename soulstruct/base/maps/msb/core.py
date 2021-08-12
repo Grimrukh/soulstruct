@@ -468,3 +468,96 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
 
     def __iter__(self):
         return iter((self.models, self.events, self.regions, self.parts))
+
+    def new_sound_event_with_box(
+        self,
+        translate: tp.Union[Vector3, tuple, list],
+        rotate: tp.Union[Vector3, tuple, list],
+        width: float,
+        depth: float,
+        height: float,
+        **sound_event_kwargs,
+    ):
+        if "base_region_name" in sound_event_kwargs:
+            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        sound = self.events.new_sound(**sound_event_kwargs)
+        box = self.regions.new_box(
+            name=f"_SoundEvent_{sound.name.lstrip('_')}",
+            translate=translate,
+            rotate=rotate,
+            width=width,
+            depth=depth,
+            height=height,
+        )
+        sound.base_region_name = box.name
+        return sound
+
+    def new_sound_event_with_sphere(
+        self,
+        translate: tp.Union[Vector3, tuple, list],
+        rotate: tp.Union[Vector3, tuple, list],
+        radius: float,
+        **sound_event_kwargs,
+    ):
+        if "base_region_name" in sound_event_kwargs:
+            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        sound = self.events.new_sound(**sound_event_kwargs)
+        sphere = self.regions.new_sphere(
+            name=f"_SoundEvent_{sound.name.lstrip('_')}",
+            translate=translate,
+            rotate=rotate,
+            radius=radius,
+        )
+        sound.base_region_name = sphere.name
+        return sound
+
+    def new_vfx_event_with_point(
+        self,
+        translate: tp.Union[Vector3, tuple, list],
+        rotate: tp.Union[Vector3, tuple, list],
+        **vfx_event_kwargs,
+    ):
+        if "base_region_name" in vfx_event_kwargs:
+            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        vfx = self.events.new_vfx(**vfx_event_kwargs)
+        point = self.regions.new_point(
+            name=f"_VFXEvent_{vfx.name.lstrip('_')}",
+            translate=translate,
+            rotate=rotate,
+        )
+        vfx.base_region_name = point.name
+        return vfx
+
+    def new_spawn_point_event_with_point(
+        self,
+        translate: tp.Union[Vector3, tuple, list],
+        rotate: tp.Union[Vector3, tuple, list],
+        **spawn_point_event_kwargs,
+    ):
+        if "base_region_name" in spawn_point_event_kwargs:
+            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        spawn_point = self.events.new_spawn_point(**spawn_point_event_kwargs)
+        point = self.regions.new_point(
+            name=f"_SpawnPointEvent_{spawn_point.name.lstrip('_')}",
+            translate=translate,
+            rotate=rotate,
+        )
+        spawn_point.base_region_name = point.name
+        return spawn_point
+
+    def new_message_event_with_point(
+        self,
+        translate: tp.Union[Vector3, tuple, list],
+        rotate: tp.Union[Vector3, tuple, list],
+        **message_event_kwargs,
+    ):
+        if "base_region_name" in message_event_kwargs:
+            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        message = self.events.new_message(**message_event_kwargs)
+        point = self.regions.new_point(
+            name=f"_MessageEvent_{message.name.lstrip('_')}",
+            translate=translate,
+            rotate=rotate,
+        )
+        message.base_region_name = point.name
+        return message

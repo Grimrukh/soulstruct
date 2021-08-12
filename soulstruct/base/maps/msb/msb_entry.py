@@ -189,13 +189,16 @@ class MSBEntry(abc.ABC):
 
 
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
-EntrySpecType = tp.Union[MSBEntry, int, str]  # valid entry specifications: entry instance, local index, or name
+# Valid ways to specify an entry: entry instance, local index, or name from a `str` or the name of an `IntEnum` member
+EntrySpecType = tp.Union[MSBEntry, int, IntEnum, str]
 
 
 def _entry_lookup(func):
     @wraps(func)
     def wrapped(self: MSBEntryList, entry: EntrySpecType, entry_subtype: MSBSubtype = None, *args, **kwargs):
-        if isinstance(entry, int):
+        if isinstance(entry, IntEnum):
+            entry = self.get_entry_by_name(entry_name=entry.name, entry_subtype=entry_subtype)
+        elif isinstance(entry, int):
             entry = self.get_entries(entry_subtype)[entry]
         elif isinstance(entry, str):
             entry = self.get_entry_by_name(entry_name=entry, entry_subtype=entry_subtype)
@@ -419,7 +422,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
                 insert_below_original=insert_below_original,
                 **kwargs,
             )
-        if "name" not in kwargs or kwargs["name"] is None:
+        if kwargs.get("name", None) is None and kwargs.get("entity_enum", None) is None:
             kwargs["name"] = self._get_duplicate_tagged_name(f"New {entry_subtype.name}")
         entry = self.SUBTYPE_CLASSES[entry_subtype](source=None, **kwargs)
         if auto_add:
@@ -455,7 +458,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
         if kwargs.get("name", "") == entry.name and entry in self._entries:
             raise ValueError(f"Name of duplicated entry cannot be set to the source entry's name: {entry.name}")
-        if "name" not in kwargs or kwargs["name"] is None:
+        if kwargs.get("name", None) is None and kwargs.get("entity_enum", None) is None:
             # First, try a basic increment of any trailing numerals.
             if name_index_match := re.match(r"(.*)(\d+)", duplicated.name):
                 name_prefix = name_index_match.group(1)
@@ -579,13 +582,30 @@ class MSBEntryEntity(MSBEntry, abc.ABC):
     def __init__(self, source=None, entity_enum: IntEnum = None, **kwargs):
         """Accepts `entity_enum` kwargs to pull both `name` and `entity_id` (value) from."""
         if entity_enum is not None:
-            if "name" in kwargs or "entity_id" in kwargs:
-                raise ValueError("Cannot initialize `MSBEntryEntity` with both `entity_enum` and `name`/`entity_id`.")
-            if not isinstance(entity_enum, IntEnum):
-                raise TypeError(f"`entity_enum` must be an `IntEnum` subclass, not `{type(entity_enum)}`.")
-            kwargs["name"] = entity_enum.name
-            kwargs["entity_id"] = entity_enum.value
+            self._parse_entity_enum(entity_enum, kwargs)
         super().__init__(source, **kwargs)
+
+    def set(self, entity_enum: IntEnum = None, **kwargs):
+        """Update any attribute fields with keyword arguments.
+
+        Argument keys starting with double underscore are ignored so that `BinaryStruct`-produced dictionaries can
+        easily be passed in. See `__setitem__()` for more.
+        """
+        if entity_enum is not None:
+            self._parse_entity_enum(entity_enum, kwargs)
+        for field_name, value in kwargs.items():
+            if not field_name.startswith("__"):
+                self[field_name] = value
+
+    @classmethod
+    def _parse_entity_enum(cls, entity_enum: IntEnum, kwargs: dict[str, tp.Any]):
+        if "name" in kwargs or "entity_id" in kwargs:
+            raise ValueError(
+                f"Cannot initialize or set `{cls.__name__}` with both `entity_enum` and `name`/`entity_id`.")
+        if not isinstance(entity_enum, IntEnum):
+            raise TypeError(f"`entity_enum` must be an `IntEnum` subclass, not `{type(entity_enum)}`.")
+        kwargs["name"] = entity_enum.name
+        kwargs["entity_id"] = entity_enum.value
 
 
 class MSBEntryEntityCoordinates(MSBEntryEntity, abc.ABC):

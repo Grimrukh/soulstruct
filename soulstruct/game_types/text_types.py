@@ -30,6 +30,7 @@ __all__ = [
     "Subtitle",
     "StringOffset",
     "EventTextTyping",
+    "NPCNameTyping",
     "SubtitleTyping",
     "StringOffsetTyping",
 ]
@@ -227,5 +228,6 @@ class StringOffset(GameObject, IntEnum):
 
 TextTyping = Union[Text, int]
 EventTextTyping = Union[EventText, int]
+NPCNameTyping = Union[NPCName, int]
 SubtitleTyping = Union[Subtitle, int]
 StringOffsetTyping = Union[StringOffset, int]

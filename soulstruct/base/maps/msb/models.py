@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as tp
 
 from soulstruct.exceptions import SoulstructError
@@ -102,6 +104,9 @@ class MSBModel(MSBEntry):
         if isinstance(sib_path, str):
             return sib_path
 
+        if name == "__DEFAULT__":
+            return ""
+
         if entry_type in (MSBModelSubtype.MapPiece, MSBModelSubtype.Collision, MSBModelSubtype.Navmesh):
             if not isinstance(sib_path, (list, tuple)) or len(sib_path) not in {2, 4}:
                 raise TypeError(
@@ -198,6 +203,13 @@ class MSBModelList(MSBEntryList[MSBModel]):
                 )
             else:
                 type_indices[entry.ENTRY_SUBTYPE] += 1
+
+    def sort(self):
+        """Sort all models by type, then alphabetically."""
+        sorted_entries = []  # type: list[MSBModel]
+        for entry_subtype in MSBModelSubtype:
+            sorted_entries += list(sorted(self.get_entries(entry_subtype), key=lambda m: m.name))
+        self._entries = sorted_entries
 
 
 for _entry_subtype in MSBModelSubtype:

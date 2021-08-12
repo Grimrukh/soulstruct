@@ -1339,7 +1339,7 @@ def PlaySoundEffect(
     """ Anchor entity determines the localization of the sound, and the sound type is used to look up the source. """
     instruction_info = (2010, 2)
     if sound_id == -1:
-        # For legacy reasons, the keyword argument order here isn't optimal.
+        # For legacy reasons, the keyword argument order here isn't optimal, so `sound_id` isn't actually optional.
         raise ValueError("A non-negative sound_id must be given.")
     if sound_type is None:
         if isinstance(sound_id, Sound):

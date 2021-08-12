@@ -7,6 +7,7 @@ from pathlib import Path
 
 from soulstruct.base.maps.msb import MSB as _BaseMSB, ENTITY_GAME_TYPES
 from soulstruct.games import DarkSoulsDSRType
+from soulstruct.utilities.maths import Vector3
 
 from .constants import VANILLA_MSB_TRANSLATIONS
 from .models import MSBModelList
@@ -68,3 +69,20 @@ class MSB(_BaseMSB, DarkSoulsDSRType):
             }
         with Path(json_path).open("w") as f:
             json.dump(info, f, indent=4)
+
+    def new_light_event_with_point(
+        self,
+        translate: tp.Union[Vector3, tuple, list],
+        rotate: tp.Union[Vector3, tuple, list],
+        **light_event_kwargs,
+    ):
+        if "base_region_name" in light_event_kwargs:
+            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        light = self.events.new_light(**light_event_kwargs)
+        point = self.regions.new_point(
+            name=f"_LightEvent_{light.name}",
+            translate=translate,
+            rotate=rotate,
+        )
+        light.base_region_name = point.name
+        return light

@@ -1943,7 +1943,7 @@ def PlayCutsceneAndMovePlayer_WithSecondRegion(
 # 2003: EVENT
 
 
-def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slot, state: bool):
+def SetBossHealthBarState(character: CharacterTyping, name: NPCNameTyping, slot, state: bool):
     """Argument order changed.
 
     Note: slot number can be 0-2 in DS3.
@@ -1954,12 +1954,12 @@ def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slo
     return to_numeric(instruction_info, state, character, slot, name)
 
 
-def EnableBossHealthBar(character: CharacterTyping, name: EventTextTyping, slot=0):
+def EnableBossHealthBar(character: CharacterTyping, name: NPCNameTyping, slot=0):
     """The character's health bar will appear at the bottom of the screen, with a name."""
     return SetBossHealthBarState(character, name, slot, True)
 
 
-def DisableBossHealthBar(character: CharacterTyping, name: EventTextTyping = 0, slot=0):
+def DisableBossHealthBar(character: CharacterTyping, name: NPCNameTyping = 0, slot=0):
     """The character's health bar will disappear from the bottom of the screen.
 
     TODO: Confirm the below is still true in DS3 (disabling one disables all).

@@ -1036,7 +1036,7 @@ def PlayCutsceneAndMovePlayer_Dummy(region: RegionTyping, move_to_map: MapTyping
     return to_numeric(instruction_info, region, area_id, block_id)
 
 
-def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slot, state: bool):
+def SetBossHealthBarState(character: CharacterTyping, name: NPCNameTyping, slot, state: bool):
     """Note: slot number can be 0-2 in Bloodborne."""
     instruction_info = (2003, 11)
     if isinstance(slot, int) and slot not in (0, 1, 2):
@@ -1044,12 +1044,12 @@ def SetBossHealthBarState(character: CharacterTyping, name: EventTextTyping, slo
     return to_numeric(instruction_info, state, character, slot, name)
 
 
-def EnableBossHealthBar(character: CharacterTyping, name: EventTextTyping, slot=0):
+def EnableBossHealthBar(character: CharacterTyping, name: NPCNameTyping, slot=0):
     """The character's health bar will appear at the bottom of the screen, with a name."""
     return SetBossHealthBarState(character, name, slot, True)
 
 
-def DisableBossHealthBar(character: CharacterTyping, name: EventTextTyping = 0, slot=0):
+def DisableBossHealthBar(character: CharacterTyping, name: NPCNameTyping = 0, slot=0):
     """The character's health bar will disappear from the bottom of the screen.
 
     WARNING: In Dark Souls, disabling either boss health will disable both of them, and the name_id doesn't matter. Yet
