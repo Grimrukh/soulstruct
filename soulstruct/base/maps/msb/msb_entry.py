@@ -340,9 +340,11 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         except (TypeError, ValueError):
             raise TypeError(f"Invalid entry subtype for entry list {cls.PLURALIZED_NAME}: {entry_subtype}")
 
-    def __getitem__(self, entry: tp.Union[int, str]) -> MSBEntryType:
+    def __getitem__(self, entry: tp.Union[int, IntEnum, str]) -> MSBEntryType:
         """You can access entries using their global index or (if unique) name."""
-        if isinstance(entry, int):
+        if isinstance(entry, IntEnum):
+            return self.get_entry_by_name(entry_name=entry.name, entry_subtype=None)
+        elif isinstance(entry, int):
             return self.get_entries()[entry]
         elif isinstance(entry, str):
             return self.get_entry_by_name(entry_name=entry, entry_subtype=None)

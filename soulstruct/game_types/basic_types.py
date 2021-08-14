@@ -1,5 +1,5 @@
 import typing as tp
-from enum import IntEnum
+from enum import IntEnum, unique
 
 __all__ = [
     "GameObject",
@@ -42,6 +42,7 @@ class GameObjectSequence(type):
         return cls
 
 
+@unique
 class Flag(GameObject, IntEnum):
     """ Condition upon a flag as a shortcut to condition upon it being enabled. """
 
