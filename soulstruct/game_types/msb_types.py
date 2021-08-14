@@ -187,7 +187,11 @@ class MapEntity(MapEntry, IntEnum):
 
     @classmethod
     def auto_generate(cls, count, game: Game, map_range_start: int):
-        start_value, max_value = cls.get_id_start_and_max(game)  # will raise `TypeError` if not valid for this class
+        """Get value for `auto()`.
+
+        Raises `TypeError` if not valid for this class, and `NotImplementedError` if not implemented for given `game`.
+        """
+        start_value, max_value = cls.get_id_start_and_max(game)
         value = map_range_start + start_value + count
         if value > map_range_start + max_value:
             raise ValueError(f"Too many members in `{cls.__name__}` for `auto()` range `({start_value}, {max_value})`.")
@@ -457,10 +461,14 @@ class Region(MapEntity):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Regions", None
 
+
+class RegionVolume(Region):
+    """Soulstruct ABC for Spheres, Cylinders, and Boxes, which share an auto-enumeration schema separate from Points."""
+
     @classmethod
     def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
         if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
-            return 2000, 2899
+            return 2000, 2499
         raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
 
 
@@ -470,6 +478,12 @@ class RegionPoint(Region):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Points") if pluralized_subtype else ("Regions", "Point")
 
+    @classmethod
+    def get_id_start_and_max(cls, game: Game) -> tuple[int, int]:
+        if game in (DARK_SOULS_PTDE, DARK_SOULS_DSR):
+            return 2500, 2899
+        raise NotImplementedError(f"Entity ID range not implemented for {game.name}.")
+
 
 class RegionCircle(Region):
     """2D circle region. Never used."""
@@ -478,14 +492,14 @@ class RegionCircle(Region):
         return ("Regions", "Circles") if pluralized_subtype else ("Regions", "Circle")
 
 
-class RegionSphere(Region):
+class RegionSphere(RegionVolume):
     """3D spherical region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Spheres") if pluralized_subtype else ("Regions", "Sphere")
 
 
-class RegionCylinder(Region):
+class RegionCylinder(RegionVolume):
     """3D cylindrical region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -499,7 +513,7 @@ class RegionRect(Region):
         return ("Regions", "Rects") if pluralized_subtype else ("Regions", "Rect")
 
 
-class RegionBox(Region):
+class RegionBox(RegionVolume):
     """3D box region."""
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):

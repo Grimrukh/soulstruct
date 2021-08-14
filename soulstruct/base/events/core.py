@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["convert_events", "compare_events"]
 
+import logging
 import typing as tp
 from pathlib import Path
 
@@ -10,6 +11,8 @@ from .emevd.exceptions import EMEVDError
 if tp.TYPE_CHECKING:
     from soulstruct.game_types.msb_types import Map
     from .emevd import EMEVD
+
+_LOGGER = logging.getLogger(__name__)
 
 EVENT_EXTENSIONS = {
     "evs": {".evs", ".evs.py", ".py", ".emevd.py"},
@@ -27,6 +30,7 @@ def convert_events(
     emevd_class: tp.Type[EMEVD],
     input_type: tp.Optional[str] = None,
     check_hash=False,
+    merge_emevd_sources: tp.Sequence[tp.Union[str, Path]] = (),
 ):
     """Convert all events from one format to another.
 
@@ -39,6 +43,9 @@ def convert_events(
     EMEVD files used in this game (in which case an error will be raised if any are not found).
 
     If `check_hash=True`, the file will not be written if a file with the same hash already exists.
+
+    If any `merge_emevd_sources` are given, sources with a shortest stem (i.e. ignoring ALL file extensions) that
+    matches one of the map's EMEVD file stems will be merged into that `EMEVD` before conversion.
     """
     output_ext = "." + output_type.lower().lstrip(".")
     output_type = None
@@ -57,6 +64,7 @@ def convert_events(
     all_exts = EVENT_EXTENSIONS["evs"].union(
         EVENT_EXTENSIONS["emevd"].union(EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"]))
     )
+    merge_emevd_sources = list(merge_emevd_sources)
     for available in input_directory.glob("*"):
         parts = available.name.split(".")
         name, ext = parts[0], "." + ".".join(parts[1:])
@@ -74,6 +82,10 @@ def convert_events(
             emevd = emevd_class(source, dcx_magic=dcx_magic, script_directory=input_directory)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}: {str(ex)}")
+        for merge_source in tuple(merge_emevd_sources):
+            if Path(merge_source).name.split(".")[0] == name.split(".")[0]:
+                emevd = emevd.merge(merge_source)
+                merge_emevd_sources.remove(merge_source)
         try:
             if output_type == "evs":
                 emevd.write_evs(output_path)
@@ -85,6 +97,8 @@ def convert_events(
                 emevd.write_numeric(output_path)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to write {name + output_ext}: {str(ex)}")
+    if merge_emevd_sources:
+        _LOGGER.warning(f"Unused `merge_emevd_sources` after EMEVD conversion: {merge_emevd_sources}")
 
 
 def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True):
