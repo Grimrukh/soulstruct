@@ -322,6 +322,10 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
         """Count of all entries."""
         return len(self._entries)
 
+    def clear(self):
+        """Delete all entries of all subtypes in list."""
+        self._entries.clear()
+
     @classmethod
     def resolve_entry_subtype(cls, entry_subtype):
         """Converts any valid entry subtype specification into the proper subtype enum."""

@@ -353,7 +353,7 @@ class MSBObject(_BaseMSBObject, MSBPart):
         "default_animation": MapFieldInfo(
             "Default Animation",
             int,  # TODO: Animation
-            0,
+            -1,
             "Object animation ID to auto-play on map load, e.g. for different corpse poses.",
         ),
         "unk_x0e_x10": MapFieldInfo(

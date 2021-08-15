@@ -275,6 +275,37 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
         return results[0]
 
+    def merge(self, other_msb_source: tp.Union[GameFile.Typing, MSB], filter_func: tp.Callable = None):
+        """Merge `other_msb_source` into this one by simply appending each of the other MSB's four entry lists to this.
+
+        If `filter_func` is given, only entries (of all four types) for which `filter_func(entry) == True` will be
+        merged in. Make sure the function can handle all four entry types, if appropriate.
+
+        If any (non-filtered-out) entry in `other_msb_source` has the same name as an existing entry in this MSB, a
+        `ValueError` will be raised.
+
+        Returns a copy of the MSB.
+        """
+        if filter_func is not None and not callable(filter_func):
+            raise ValueError("`filter_func` must be callable, take an MSB entry as an argument, and return a bool.")
+        if not isinstance(other_msb_source, self.__class__):
+            other_msb_source = self.__class__(other_msb_source)
+        merged_msb = self.copy()
+        for entry_type in ("Model", "Event", "Region", "Part"):  # capitalized for nice error message below
+            existing_entries = merged_msb[entry_type]
+            existing_entry_list = set(existing_entries.get_entry_names())
+            other_entry_list = other_msb_source[entry_type]
+            for other_entry in other_entry_list:
+                if filter_func is not None and not filter_func(other_entry):
+                    continue  # skip entry
+                if other_entry.name in existing_entry_list:
+                    raise ValueError(
+                        f"Cannot merge {entry_type} '{other_entry.name}' into this MSB. Name already exists."
+                    )
+                existing_entries.add_entry(other_entry)
+                existing_entry_list.add(other_entry.name)
+        return merged_msb
+
     def move_map(
         self,
         start_translate: tp.Union[Vector3, list, tuple] = None,

@@ -266,6 +266,12 @@ class MapEvent(MapEntity):
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Events", None
 
+    def auto_region_name(self):
+        event_enum_subclass = self.__class__.__bases__[0]
+        while event_enum_subclass.__bases__[0] is not MapEvent:
+            event_enum_subclass = event_enum_subclass.__bases__[0]
+        return f"_{event_enum_subclass.__name__}_{self.name.lstrip('_')}"
+
 
 class LightEvent(MapEvent):
     """Light event in MSB."""
