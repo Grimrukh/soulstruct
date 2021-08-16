@@ -41,6 +41,7 @@ __all__ = [
     "MapConnection",
 
     "Region",
+    "RegionVolume",
     "RegionPoint",
     "RegionCircle",
     "RegionSphere",

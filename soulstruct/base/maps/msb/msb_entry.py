@@ -363,7 +363,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             - the `MSBEnvironmentEvent` entry linked to by an `MSBCollision` entry
         """
         if entry_subtype is None:
-            return self._entries  # Full entry list, with types potentially intermingled.
+            return list(self._entries)  # Full entry list, with types potentially intermingled.
         entry_subtype = self.resolve_entry_subtype(entry_subtype)
         return [e for e in self._entries if e.ENTRY_SUBTYPE == entry_subtype]
 
