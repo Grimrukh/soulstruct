@@ -275,6 +275,13 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
         return results[0]
 
+    def clear_all(self):
+        """Clear all four entry lists."""
+        self.models.clear()
+        self.events.clear()
+        self.regions.clear()
+        self.parts.clear()
+
     def merge(self, other_msb_source: tp.Union[GameFile.Typing, MSB], filter_func: tp.Callable = None):
         """Merge `other_msb_source` into this one by simply appending each of the other MSB's four entry lists to this.
 
@@ -546,13 +553,22 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         self,
         translate: tp.Union[Vector3, tuple, list],
         rotate: tp.Union[Vector3, tuple, list],
+        point_entity_enum: tp.Optional[RegionPoint] = None,
         **vfx_event_kwargs,
     ):
         if "base_region_name" in vfx_event_kwargs:
             raise KeyError("`base_region_name` will be created and assigned automatically.")
         vfx = self.events.new_vfx(**vfx_event_kwargs)
+        point_name = f"_VFXEvent_{vfx.name.lstrip('_')}"
+        if point_entity_enum is not None:
+            if point_entity_enum.name != point_name:
+                raise ValueError(f"Name of `point_entity_enum` must be '{point_name}', not '{point_entity_enum.name}'.")
+            point_entity_id = point_entity_enum.value
+        else:
+            point_entity_id = -1
         point = self.regions.new_point(
-            name=f"_VFXEvent_{vfx.name.lstrip('_')}",
+            name=point_name,
+            entity_id=point_entity_id,
             translate=translate,
             rotate=rotate,
         )

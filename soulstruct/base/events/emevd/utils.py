@@ -7,6 +7,7 @@ __all__ = [
     "negate_only",
     "skip_and_negate_and_return",
     "ConstantCondition",
+    "EventArgumentData",
     "get_value_test",
     "boolify",
     "get_write_offset",
@@ -31,6 +32,7 @@ from .enums import PlayerEntity
 from .exceptions import NoSkipOrReturnError, NoNegateError
 
 if tp.TYPE_CHECKING:
+    from soulstruct.game_types import GameObject
     from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
@@ -164,6 +166,26 @@ class ConstantCondition:
             return self.restart_if_true_func()
 
         raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
+
+
+class EventArgumentData:
+    """Holds event argument offset tuple, e.g. `(12, 4)`, and event argument type, e.g. `Region`.
+
+    Passed to EMEVD instructions/tests so that arguments like `anchor_type` and `destination_type` do not need to be
+    specified with properly type-annotated event arguments.
+    """
+    offset_tuple: tuple[int, int]
+    arg_class: tp.Optional[tp.Type[GameObject]]
+
+    def __init__(self, offset_tuple: tuple[int, int], arg_class: tp.Optional[tp.Type[GameObject]] = None):
+        self.offset_tuple = offset_tuple
+        self.arg_class = arg_class
+
+    def get_coord_entity_type(self):
+        if self.arg_class in {Object, Region, Character}:
+            self.arg_class: tp.Union[Object, Region, Character]
+            return self.arg_class.get_coord_entity_type()
+        raise AttributeError(f"Event argument does not have a `CoordEntityType`.")
 
 
 def get_value_test(

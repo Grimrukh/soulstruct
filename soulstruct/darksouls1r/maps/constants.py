@@ -1746,7 +1746,7 @@ VANILLA_MSB_TRANSLATIONS = {
     1512996: "OrnsteinSmoughCombatStart",
     1512997: "OrnsteinSmoughFogRotationTarget",
     1512998: "OrnsteinSmoughFogPrompt",
-    1513200: "Navmesh_GardenGate",
+    1513200: "Navmesh_BlacksmithGate",
     1513250: "Navmesh_Door00",
     1513251: "Navmesh_Door01",
     1513252: "Navmesh_Door02",

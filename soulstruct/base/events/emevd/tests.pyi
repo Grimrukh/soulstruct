@@ -10,6 +10,7 @@ __all__ = [
     "UnknownRestart",
     "EVENTS",
     "Condition",
+    "HeldCondition",
     "END",
     "RESTART",
     "Await",
@@ -99,6 +100,9 @@ class EVENTS(Flag): ...
 # Dummy class for creating conditions.
 class Condition:
     def __init__(self, condition, hold: bool = False): ...
+
+class HeldCondition:
+    def __init__(self, condition): ...
 
 # Terminators.
 END = ...

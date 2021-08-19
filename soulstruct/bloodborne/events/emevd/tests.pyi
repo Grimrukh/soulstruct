@@ -5,6 +5,7 @@ __all__ = [
     "UnknownRestart",
     "EVENTS",
     "Condition",
+    "HeldCondition",
     "END",
     "RESTART",
     "Await",

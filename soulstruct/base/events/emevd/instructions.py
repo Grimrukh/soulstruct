@@ -1306,7 +1306,7 @@ def CreateTemporaryVFX(vfx_id: int, anchor_entity: CoordEntityTyping, anchor_typ
             anchor_type = CoordEntityType.Character
         else:
             try:
-                anchor_type = anchor_entity.coord_entity_type
+                anchor_type = anchor_entity.get_coord_entity_type()
             except AttributeError:
                 raise AttributeError("`anchor_type` not detected. Specify `anchor_type` or use typed `anchor_entity`.")
     return to_numeric(instruction_info, anchor_type, anchor_entity, model_point, vfx_id)
@@ -1764,7 +1764,7 @@ def Move(
             destination_type = CoordEntityType.Character
         else:
             try:
-                destination_type = destination.coord_entity_type
+                destination_type = destination.get_coord_entity_type()
             except AttributeError:
                 raise AttributeError(
                     "Warp destination has no category. Use 'destination_type' keyword or a " "typed destination."
@@ -1786,7 +1786,7 @@ def MoveToEntity(character: CharacterTyping, destination: CoordEntityTyping, mod
     """ Basic move. I recommend you use the easier 'Move' wrapper above. """
     if destination_type is None:
         try:
-            destination_type = destination.coord_entity_type
+            destination_type = destination.get_coord_entity_type()
         except AttributeError:
             raise AttributeError(
                 "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
@@ -1801,7 +1801,7 @@ def MoveAndSetDrawParent(
 ):
     if destination_type is None:
         try:
-            destination_type = destination.coord_entity_type
+            destination_type = destination.get_coord_entity_type()
         except AttributeError:
             raise AttributeError(
                 "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
@@ -1813,7 +1813,7 @@ def MoveAndSetDrawParent(
 def ShortMove(character: CharacterTyping, destination: CoordEntityTyping, model_point=-1, destination_type=None):
     if destination_type is None:
         try:
-            destination_type = destination.coord_entity_type
+            destination_type = destination.get_coord_entity_type()
         except AttributeError:
             raise AttributeError(
                 "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
@@ -1831,7 +1831,7 @@ def MoveAndCopyDrawParent(
 ):
     if destination_type is None:
         try:
-            destination_type = destination.coord_entity_type
+            destination_type = destination.get_coord_entity_type()
         except AttributeError:
             raise AttributeError(
                 "Move destination has no category. Use 'destination_type' keyword or a " "typed destination."
@@ -1914,7 +1914,7 @@ def SetCameraVibration(
 ):
     instruction_info = (2008, 2)
     if anchor_type is None:
-        anchor_type = anchor_entity.coord_entity_type
+        anchor_type = anchor_entity.get_coord_entity_type()
     return to_numeric(
         instruction_info,
         vibration_id,
@@ -2850,7 +2850,7 @@ def IfActionButton(
     if anchor_type is None:
         # Anchor type will never be PLAYER here.
         try:
-            anchor_type = anchor_entity.coord_entity_type
+            anchor_type = anchor_entity.get_coord_entity_type()
         except AttributeError:
             raise ValueError(
                 "The `anchor_type` keyword is needed if `anchor_entity` is not an `Object`, `Region`, or `Character`."

@@ -12,6 +12,7 @@ EMEVD_GAME_TYPES = {
     "Character",
     "Region",
     "Object",
+    "PlayerStart",
     "Flag",
     "ItemLotParam",
     "ItemParam",

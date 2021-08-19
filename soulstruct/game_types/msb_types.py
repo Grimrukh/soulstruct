@@ -441,6 +441,7 @@ class NPCInvasionEvent(MapEvent):
 
 class Region(MapEntity):
     """Condition upon a region as a shortcut to condition upon the player being inside it (condition only)."""
+
     def __call__(self, negate=False, condition=None, skip_lines=0):
         from soulstruct.base.events.emevd.utils import get_value_test
         from soulstruct.base.events.emevd import instructions as instr
@@ -458,8 +459,8 @@ class Region(MapEntity):
             if_false_func=instr.IfPlayerOutsideRegion,
         )
 
-    @property
-    def coord_entity_type(self):
+    @classmethod
+    def get_coord_entity_type(cls):
         from soulstruct.base.events.emevd.enums import CoordEntityType
 
         return CoordEntityType.Region
@@ -550,6 +551,7 @@ class MapPiece(MapPart):
 
 class Object(MapPart):
     """Condition upon an object as a shortcut to condition upon it *not* being destroyed."""
+
     def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
         from soulstruct.base.events.emevd.utils import get_value_test
         from soulstruct.base.events.emevd import instructions as instr
@@ -575,8 +577,8 @@ class Object(MapPart):
             restart_if_false_func=instr.RestartIfObjectDestroyed,
         )
 
-    @property
-    def coord_entity_type(self):
+    @classmethod
+    def get_coord_entity_type(cls):
         from soulstruct.base.events.emevd.enums import CoordEntityType
 
         return CoordEntityType.Object
@@ -595,6 +597,7 @@ class Object(MapPart):
 
 class Character(MapPart):
     """Condition upon a character as a shortcut to condition upon them being alive."""
+
     def __call__(self, negate=False, condition=None, skip_lines=0):
         from soulstruct.base.events.emevd.utils import get_value_test
         from soulstruct.base.events.emevd import instructions as instr
@@ -612,8 +615,8 @@ class Character(MapPart):
             if_false_func=instr.IfCharacterDead,
         )
 
-    @property
-    def coord_entity_type(self):
+    @classmethod
+    def get_coord_entity_type(cls):
         from soulstruct.base.events.emevd.enums import CoordEntityType
 
         return CoordEntityType.Character
@@ -695,4 +698,4 @@ AnimatedTyping = tp.Union[Character, Object, int]
 MapPieceTyping = tp.Union[MapPiece, int]
 CollisionTyping = tp.Union[Collision, int]
 NavigationEventTyping = tp.Union[NavigationEvent, int]
-# TODO
+# TODO: More.

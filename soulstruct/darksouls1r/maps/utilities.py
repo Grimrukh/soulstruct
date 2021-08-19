@@ -27,7 +27,12 @@ _MAP_PIECE_RE = re.compile(r"^m(\d\d\d\d)B(\d)A(\d\d)\.flver\.dcx$")
 
 
 def build_ffxbnd(
-    msb: MSB, ffxbnd_path: Path, ffxbnd_search_directory: Path = None, write_ffxbnd_path: Path = None, prefer_bak=True
+    msb: MSB,
+    ffxbnd_path: Path,
+    ffxbnd_search_directory: Path = None,
+    write_ffxbnd_path: Path = None,
+    extra_ffx_sources: tp.Sequence[tuple[int, str]] = (),
+    prefer_bak=True,
 ) -> BND3:
     """Iterate over all character models in given `msb` and ensure all their FFX files are present in the given FFXBND
     file `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations (known by Soulstruct) and added.
@@ -41,7 +46,10 @@ def build_ffxbnd(
             in. It should contain all FFXBND files in the game (e.g. a vanilla backup folder). If not given, it will
             default to the same directory as `ffxbnd_path`.
         write_ffxbnd_path (Path): path to write final FFXBND. If not given (default), uses `ffxbnd_path`.
-        prefer_bak (bool): if True (default), look for '.bak' source files first.
+        extra_ffx_sources (sequence of tuples): sequence of `(ffx_id, ffx_source_file)` tuples that specify extra FFX
+            files to import (e.g. for VFX events in the MSB).
+        prefer_bak (bool): if True (default), look for '.bak' source files first, in case the FFXBNDs have been modded
+            and some vanilla FFX entries removed.
     """
     ffxbnd_path = Path(ffxbnd_path)
     if write_ffxbnd_path is None:
@@ -62,8 +70,9 @@ def build_ffxbnd(
         try:
             area_ffxbnd = BND3(area_ffxbnd_path)
         except FileNotFoundError:
-            _LOGGER.warning(f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for "
-                            f"existing FFX files.")
+            _LOGGER.warning(
+                f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for existing FFX."
+            )
         else:
             existing_ffx_files |= {entry.name for entry in area_ffxbnd.entries}
 
@@ -97,6 +106,28 @@ def build_ffxbnd(
             next_id += 1
             ffxbnd.add_entry(source_entry)
             existing_ffx_files.add(ffx_file_name)
+
+    for extra_ffx_id, extra_source_file_name in extra_ffx_sources:
+        ffx_file_name = f"f{extra_ffx_id:07d}.ffx"
+        if ffx_file_name in existing_ffx_files:
+            continue
+        source_path = ffxbnd_search_directory / f"{extra_source_file_name}.ffxbnd.dcx"
+        if prefer_bak:
+            if (bak_path := source_path.with_suffix(source_path.suffix + ".bak")).is_file():
+                source_path = bak_path
+        if not source_path.is_file():
+            _LOGGER.error(f"Could not find FFX source file '{source_path}' for extra FFX {extra_ffx_id}.")
+            continue
+        source_bnd = open_sources.setdefault(extra_source_file_name, BND3(source_path))
+        try:
+            source_entry = source_bnd.entries_by_basename[ffx_file_name]
+        except KeyError:
+            _LOGGER.error(f"Could not find extra FFX file '{ffx_file_name}' in given source BND '{source_path}'.")
+            continue
+        source_entry.id = next_id
+        next_id += 1
+        ffxbnd.add_entry(source_entry)
+        existing_ffx_files.add(ffx_file_name)
 
     ffxbnd.write(write_ffxbnd_path)
     return ffxbnd

@@ -3,7 +3,7 @@ import re
 from enum import Enum
 
 from .exceptions import NumericEmevdError
-from .utils import get_write_offset, format_event_layers
+from .utils import EventArgumentData, get_write_offset, format_event_layers
 
 __all__ = ["SET_INSTRUCTION_ARG_TYPES", "to_numeric", "build_numeric"]
 
@@ -49,6 +49,9 @@ def to_numeric(instruction_info, *args, arg_types=None, event_layers=None):
         except KeyError:
             raise KeyError(f"Could not find instruction {instruction_info[0]}[{instruction_info[1]:02d} in type dict.")
     for i, arg in enumerate(args):
+        if isinstance(arg, EventArgumentData):
+            arg = arg.offset_tuple
+
         if isinstance(arg, Enum):
             event_args.append(args[i].value)
         elif isinstance(arg, bool):

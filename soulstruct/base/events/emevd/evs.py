@@ -14,7 +14,14 @@ import soulstruct.game_types as gt
 from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
 from .numeric import SET_INSTRUCTION_ARG_TYPES
-from .utils import COMPARISON_NODES, NEG_COMPARISON_NODES, ConstantCondition, format_event_layers, get_write_offset
+from .utils import (
+    COMPARISON_NODES,
+    NEG_COMPARISON_NODES,
+    ConstantCondition,
+    EventArgumentData,
+    format_event_layers,
+    get_write_offset,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -121,6 +128,7 @@ class EVSParser(abc.ABC):
             and (isinstance(attr, ConstantCondition) or getattr(attr, "__module__", "").endswith("tests"))
         }
         self.events = {}  # Maps your event names to their IDs, so you can call them to initialize them.
+        self.event_ids = set()  # Used to ensure the same ID is not repeated.
 
         self._reset_conditions()
 
@@ -144,7 +152,7 @@ class EVSParser(abc.ABC):
     # ~~~~~~~~~~~~~~~~~~~
 
     def _scan_event(self, node: ast.FunctionDef):
-        """Confirm syntax of event function and add it to self.events dictionary.
+        """Confirm syntax of event function and add it to `self.events` dictionary.
 
         An event should look like:
 
@@ -164,7 +172,9 @@ class EVSParser(abc.ABC):
             raise EVSSyntaxError(node, f"Invalid docstring for event {event_name}. See EVS documentation.")
 
         event_id = int(event_id)
-        if event_id == 0:
+        if event_id in self.event_ids:
+            raise EVSSyntaxError(node, f"Event ID {event_id} is defined multiple times in EVS script.")
+        elif event_id == 0:
             if event_name.lower() not in {"event0", "constructor"}:
                 raise EVSSyntaxError(node, "Event 0 must be called CONSTRUCTOR (or 'Event0').")
         elif event_id == 50:
@@ -189,11 +199,11 @@ class EVSParser(abc.ABC):
                     f"a constant with the same name.",
                 )
         elif flag_name:
-            self.script_event_flags[flag_name] = int(event_id)  # Loaded into constants later under EVENTS enum.
+            self.script_event_flags[flag_name] = event_id  # Loaded into constants later under EVENTS enum.
 
         self.events[event_name] = EventInfo(
             name=event_name,
-            id=int(event_id),
+            id=event_id,
             args=arg_dict,
             arg_types=arg_types,
             arg_classes=arg_classes,
@@ -202,6 +212,7 @@ class EVSParser(abc.ABC):
             nodes=node.body[1:],  # Skips docstring.
             description=description.lstrip(":"),
         )
+        self.event_ids.add(event_id)
 
     def _validate_event_name(self, event_node: ast.FunctionDef):
         name = event_node.name
@@ -315,15 +326,16 @@ class EVSParser(abc.ABC):
             try:
                 if not isinstance(node.value, ast.Call) or not isinstance(node.value.func, ast.Name):
                     raise ValueError
-                if node.value.func.id != "Condition":
+                if node.value.func.id not in {"Condition", "HeldCondition"}:
                     raise ValueError
             except ValueError:
                 raise EVSSyntaxError(
                     node.lineno,
                     "Cannot create local variables inside event script functions. Define them globally or import them "
-                    "from other modules. All assignment statements must be `c = Condition()` statements.",
+                    "from other modules. All assignment statements must be `c = Condition()` or `c = HeldCondition()` "
+                    "statements.",
                 )
-            return self._assign_condition(node)
+            return self._assign_condition(node, held=node.value.func.id == "HeldCondition")
 
         # RETURN
         if isinstance(node, ast.Return):
@@ -437,6 +449,8 @@ class EVSParser(abc.ABC):
 
         if name == "Condition":
             raise EVSError(node, "You must assign the Condition() to a variable.")
+        if name == "HeldCondition":
+            raise EVSError(node, "You must assign the HeldCondition() to a variable.")
 
         if name == "Await":
             if node.keywords or len(node.args) != 1:
@@ -651,7 +665,7 @@ class EVSParser(abc.ABC):
                 f"such as Flag (tests for enabled state), Region (tests if player is inside), etc.",
             )
 
-        # 3. The condition is a previously-defined Condition() instance.
+        # 3. The condition is a previously-defined Condition() or HeldCondition() instance.
         if isinstance(node, ast.Name) and node.id in self.conditions:
             i = self.conditions.index(node.id)
             try:
@@ -660,7 +674,7 @@ class EVSParser(abc.ABC):
                 raise EVSError(
                     node.lineno,
                     "(internal) Cannot resolve simple condition check: 'skip_lines, 'end_event', and "
-                    "'restart_event are all 0 or False.",
+                    "'restart_event' are all 0 or False.",
                 )
 
         # 4. The condition is a builtin test constant (e.g. THIS_FLAG, HOST, OFFLINE, SKULL_LANTERN_ACTIVE, ...)
@@ -860,7 +874,9 @@ class EVSParser(abc.ABC):
         if isinstance(node, ast.Name) and node.id in self.conditions:
             i = self.conditions.index(node.id)
             if i in self.finished_conditions:
-                raise EVSSyntaxError(node.lineno, f"Finished condition {node.id} cannot be an input condition.")
+                raise EVSSyntaxError(
+                    node.lineno, f"Finished condition {node.id} cannot be an input condition. You must use line skips."
+                )
             self.finished_conditions.append(i)
             logic = "False" if negate else "True"
             return self.instructions[f"IfCondition{logic}"](condition, i)
@@ -888,8 +904,8 @@ class EVSParser(abc.ABC):
                 condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
                 condition_emevd += self.instructions[instr](skip_lines, temp_condition)
                 return condition_emevd
-            except ValueError:
-                raise EVSError(node.lineno, f"(internal) Error occurred in test function: {node.id}.")
+            except ValueError as ex:
+                raise EVSError(node.lineno, f"Error occurred in test function '{node.id}': {ex}")
 
         # Constant / Event Argument
         if isinstance(node, (ast.Attribute, ast.Name)):
@@ -1007,7 +1023,7 @@ class EVSParser(abc.ABC):
             else:
                 self.globals[name] = value  # will override any previous value
 
-    def _assign_condition(self, node: ast.Assign):
+    def _assign_condition(self, node: ast.Assign, held=False):
         if len(node.targets) != 1:
             raise EVSSyntaxError(node, "Can only assign a Condition to one name.")
         assert isinstance(node.value, ast.Call)
@@ -1024,8 +1040,10 @@ class EVSParser(abc.ABC):
         if condition_name == "_":
             raise EVSSyntaxError(node, "Condition name cannot be '_' (builtin symbol for temp condition).")
         condition_argument = node.value.args[0]
-        hold = False
+        hold = held
         if len(node.value.keywords) == 1:
+            if held:
+                raise EVSSyntaxError(node, "HeldCondition() does not allow any keyword arguments.")
             hold_keyword = node.value.keywords[0]
             if hold_keyword.arg != "hold":
                 raise EVSSyntaxError(
@@ -1093,9 +1111,13 @@ class EVSParser(abc.ABC):
         if name in self.current_event.args:
             if name in {"slot", "event_layers"}:
                 raise EVSSyntaxError(node, f"Cannot use reserved event argument {repr(name)}.")
-            arg = self.current_event.args[name]
+            arg = EventArgumentData(
+                offset_tuple=self.current_event.args[name],
+                arg_class=self.current_event.arg_classes.get(name, None),
+            )
             if test and name in self.current_event.arg_classes:
-                # Bake arg into game type __call__ as 'self' (becomes a valid zero-argument test call).
+                # TODO: Never used.
+                # Bake arg into game type `__call__` method as 'self' (becomes a valid zero-argument test call).
                 return partial(self.current_event.arg_classes[name].__call__, arg)
             return arg
 
@@ -1344,8 +1366,8 @@ def _parse_event_arguments(
             raise EVSSyntaxError(
                 event_node,
                 f"Every event argument needs a type. You can specify any type with a type format\n"
-                f"character in {repr(_EVS_TYPES)}, use a special game type like Flag or Character,\n"
-                f"or use the Python built-in types int (which is signed), float, or (unlikely) str.",
+                f"character in {repr(_EVS_TYPES)}, use a Soulstruct game type like `Flag` or `Character`,\n"
+                f"or use the Python built-in types `int` (signed), `float`, or (in very rare cases) `str`.",
             )
 
         arg_types += arg_type
