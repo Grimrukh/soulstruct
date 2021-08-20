@@ -158,7 +158,7 @@ class MSBModel(MSBEntry):
 
 
 class MSBModelList(MSBEntryList[MSBModel]):
-
+    INTERNAL_NAME = "MODEL_PARAM_ST"
     PLURALIZED_NAME = "Models"
     ENTRY_SUBTYPE_ENUM = MSBModelSubtype
     SUBTYPE_CLASSES = {}  # type: dict[MSBModelSubtype, tp.Callable]

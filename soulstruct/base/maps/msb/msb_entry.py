@@ -229,6 +229,7 @@ def _entry_lookup(func):
 
 class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
 
+    INTERNAL_NAME = ""
     MAP_ENTITY_LIST_HEADER: BinaryStruct = None
     MAP_ENTITY_ENTRY_OFFSET: BinaryStruct = None
     MAP_ENTITY_LIST_TAIL: BinaryStruct = None
@@ -238,21 +239,13 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
     SUBTYPE_CLASSES: dict[MSBSubtype, tp.Type[MSBEntry]] = None
     SUBTYPE_OFFSET: int = None  # binary `MSBEntry` offset where subtype integer can be read from
 
-    def __init__(self, msb_entry_list_source=None, name=""):
-        self.name = ""
+    def __init__(self, msb_entry_list_source=None):
         self._entries = []
 
         if msb_entry_list_source is None:
             return
 
         if isinstance(msb_entry_list_source, (list, tuple, dict)):
-            if not name:
-                raise ValueError("Name of MSB entry list must be given if created manually.")
-            if name not in {"POINT_PARAM_ST", "EVENT_PARAM_ST", "PARTS_PARAM_ST", "MODEL_PARAM_ST"}:
-                raise ValueError(
-                    "Name of MSB entry list must be MODEL_PARAM_ST, EVENT_PARAM_ST, POINT_PARAM_ST, "
-                    "or PARTS_PARAM_ST."
-                )
             if isinstance(msb_entry_list_source, dict):
                 msb_entry_list_source = [msb_entry_list_source[k] for k in sorted(msb_entry_list_source)]
             if isinstance(msb_entry_list_source, (list, tuple)):
@@ -276,8 +269,9 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             for _ in range(header["entry_offset_count"] - 1)  # 'entry_offset_count' includes tail offset
         ]
         next_entry_list_offset = msb_reader.unpack_struct(self.MAP_ENTITY_LIST_TAIL)["next_entry_list_offset"]
-        self.name = msb_reader.unpack_string(offset=header["name_offset"], encoding=self.NAME_ENCODING)
-
+        name = msb_reader.unpack_string(offset=header["name_offset"], encoding=self.NAME_ENCODING)
+        if name != self.INTERNAL_NAME:
+            raise ValueError(f"MSB entry list internal name '{name}' does not match known name '{self.INTERNAL_NAME}'.")
         self._entries = []
 
         for entry_offset in entry_offsets:
@@ -296,7 +290,7 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
             + self.MAP_ENTITY_ENTRY_OFFSET.size * len(entries)
             + self.MAP_ENTITY_LIST_TAIL.size
         )
-        packed_name = self.name.encode("utf-8")
+        packed_name = self.INTERNAL_NAME.encode("utf-8")
         name_offset = offset
         while len(packed_name) < 32:
             packed_name += b"\0"

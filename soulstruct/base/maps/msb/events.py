@@ -1010,6 +1010,7 @@ class MSBNPCInvasionEvent(MSBEvent):
 
 
 class MSBEventList(MSBEntryList[MSBEvent]):
+    INTERNAL_NAME = "EVENT_PARAM_ST"
     ENTRY_LIST_NAME = "Events"
     ENTRY_SUBTYPE_ENUM = MSBEventSubtype
     SUBTYPE_CLASSES = {}  # type: dict[MSBEventSubtype, type]

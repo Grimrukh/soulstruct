@@ -309,6 +309,7 @@ class MSBRegionBox(MSBRegion, abc.ABC):
 
 
 class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
+    INTERNAL_NAME = "POINT_PARAM_ST"
     ENTRY_LIST_NAME = "Regions"
     ENTRY_SUBTYPE_ENUM = MSBRegionSubtype
     SUBTYPE_CLASSES = {}  # type: dict[MSBRegionSubtype, tp.Type[MSBRegion]]

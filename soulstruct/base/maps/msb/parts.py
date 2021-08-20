@@ -818,6 +818,7 @@ class MSBMapConnection(MSBPart, abc.ABC):
 
 
 class MSBPartList(MSBEntryList[MSBPart], abc.ABC):
+    INTERNAL_NAME = "PARTS_PARAM_ST"
     ENTRY_LIST_NAME = "Parts"
     ENTRY_SUBTYPE_ENUM = MSBPartSubtype
     SUBTYPE_CLASSES: dict[MSBPartSubtype, tp.Type[MSBPart]] = {}
