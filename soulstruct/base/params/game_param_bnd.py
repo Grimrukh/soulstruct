@@ -72,11 +72,17 @@ class GameParamBND(BaseBND, abc.ABC):
             _LOGGER.info("Remember to reload your game to see changes.")
             self._reload_warning_given = True
 
-    def load_dict(self, data: dict):
-        self.load_manifest_header(data)
+    def load_dict(self, data: dict, clear_old_data=True):
         if "params" not in data:
             raise KeyError("Field `params` not specified in `GameParamBND` dict.")
-        self._entries.clear()
+        for field, value in self.get_manifest_header(data).items():
+            if not clear_old_data:
+                if (old_value := getattr(self, field)) != value:
+                    raise ValueError(f"New `{field}` value {repr(value)} does not match old value {repr(old_value)}.")
+            else:
+                setattr(self, field, value)
+        if clear_old_data:
+            self._entries.clear()
         entry_ids = set()
         for i, param_dict in enumerate(data["params"]):
             for field in ("entry_id", "path", "flags", "data"):
@@ -85,7 +91,9 @@ class GameParamBND(BaseBND, abc.ABC):
             param = self.Param(param_dict["data"], paramdef_bnd=self.paramdef_bnd)
             entry = self.BinderEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["flags"])
             if entry.id in entry_ids:
-                _LOGGER.warning(f"Entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP.")
+                _LOGGER.warning(
+                    f"Binder entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP."
+                )
             self._entries.append(entry)
             p = self.params[entry.path] = param
             # Preferential nickname source order:
@@ -93,13 +101,13 @@ class GameParamBND(BaseBND, abc.ABC):
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
             setattr(self, nickname, p)
 
-    def to_dict(self):
+    def to_dict(self, ignore_pads=True, ignore_defaults=True):
         data = self.get_json_header()
         data.pop("use_id_prefix")
         data["params"] = []
         for path, param in self.params.items():
             entry = self.entries_by_path[path]
-            param_dict = param.to_dict()
+            param_dict = param.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
             data["params"].append({
                 "entry_id": entry.id,
                 "path": path,

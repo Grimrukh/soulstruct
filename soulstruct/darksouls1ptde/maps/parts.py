@@ -297,7 +297,14 @@ class MSBPart(_BaseMSBPart, abc.ABC):
 class MSBMapPiece(_BaseMSBMapPiece, MSBPart):
     """Struct is common (and empty)."""
 
-    FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBMapPiece.FIELD_INFO  # no additional game-specific fields
+    FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBMapPiece.FIELD_INFO | {
+        "display_groups": MapFieldInfo(
+            "Display Groups",
+            list,
+            set(),
+            "Display groups are present in all MSB Parts, but only function for collisions.",
+        ),
+    }
 
     FIELD_ORDER = (
         "model_name",
@@ -338,6 +345,24 @@ class MSBObject(_BaseMSBObject, MSBPart):
     )
 
     FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBObject.FIELD_INFO | {
+        "is_shadow_source": MapFieldInfo(
+            "Casts Shadow",
+            bool,
+            True,
+            "If True, this entity will cast dynamic shadows.",
+        ),
+        "is_shadow_destination": MapFieldInfo(
+            "Receives Shadow",
+            bool,
+            True,
+            "If True, this entity can have dynamic shadows cast onto it.",
+        ),
+        "draw_by_reflect_cam": MapFieldInfo(
+            "Is Reflected",
+            bool,
+            True,
+            "If True, this entity will be reflected in water, etc.",
+        ),
         "break_term": MapFieldInfo(
             "Break Term",
             int,
@@ -401,11 +426,6 @@ class MSBObject(_BaseMSBObject, MSBPart):
     unk_x10_x14: int
 
     def __init__(self, source=None, **kwargs):
-        if source is None:
-            # Set some defaults.
-            kwargs.setdefault("is_shadow_source", True)
-            kwargs.setdefault("is_shadow_destination", True)
-            kwargs.setdefault("draw_by_reflect_cam", True)
         super().__init__(source=source, **kwargs)
 
 
@@ -427,6 +447,24 @@ class MSBCharacter(_BaseMSBCharacter, MSBPart):
     )
 
     FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBCharacter.FIELD_INFO | {
+        "is_shadow_source": MapFieldInfo(
+            "Casts Shadow",
+            bool,
+            True,
+            "If True, this entity will cast dynamic shadows.",
+        ),
+        "is_shadow_destination": MapFieldInfo(
+            "Receives Shadow",
+            bool,
+            True,
+            "If True, this entity can have dynamic shadows cast onto it.",
+        ),
+        "draw_by_reflect_cam": MapFieldInfo(
+            "Is Reflected",
+            bool,
+            True,
+            "If True, this entity will be reflected in water, etc.",
+        ),
         "patrol_type": MapFieldInfo(
             "Patrol Type",
             int,
@@ -458,11 +496,6 @@ class MSBCharacter(_BaseMSBCharacter, MSBPart):
     platoon_id: int
 
     def __init__(self, source=None, **kwargs):
-        if source is None:
-            # Set some different defaults.
-            kwargs.setdefault("is_shadow_source", True)
-            kwargs.setdefault("is_shadow_destination", True)
-            kwargs.setdefault("draw_by_reflect_cam", True)
         super().__init__(source=source, **kwargs)
 
 
@@ -501,6 +534,24 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
     )
 
     FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBCollision.FIELD_INFO | {
+        "is_shadow_source": MapFieldInfo(
+            "Casts Shadow",
+            bool,
+            True,
+            "If True, this entity will cast dynamic shadows.",
+        ),
+        "is_shadow_destination": MapFieldInfo(
+            "Receives Shadow",
+            bool,
+            True,
+            "If True, this entity can have dynamic shadows cast onto it.",
+        ),
+        "draw_by_reflect_cam": MapFieldInfo(
+            "Is Reflected",
+            bool,
+            True,
+            "If True, this entity will be reflected in water, etc.",
+        ),
         "navmesh_groups": MapFieldInfo(
             "Navmesh Groups",
             list,
@@ -559,10 +610,6 @@ class MSBCollision(_BaseMSBCollision, MSBPart):
 
     def __init__(self, source=None, **kwargs):
         self._navmesh_groups = set()
-        if source is None:
-            kwargs.setdefault("is_shadow_source", True)
-            kwargs.setdefault("is_shadow_destination", True)
-            kwargs.setdefault("draw_by_reflect_cam", True)
         super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_reader: BinaryReader):
@@ -636,11 +683,29 @@ class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
     )
 
     FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBNavmesh.FIELD_INFO | {
+        "is_shadow_source": MapFieldInfo(
+            "Casts Shadow",
+            bool,
+            True,
+            "If True, this entity will cast dynamic shadows.",
+        ),
         "navmesh_groups": MapFieldInfo(
             "Navmesh Groups",
             list,
             set(range(MSBPart.FLAG_SET_SIZE)),
             "Controls collision backread.",
+        ),
+        "draw_groups": MapFieldInfo(
+            "Draw Groups",
+            list,
+            set(),
+            "Draw groups of part. This part will be drawn when the corresponding display group is active.",
+        ),
+        "display_groups": MapFieldInfo(
+            "Display Groups",
+            list,
+            set(),
+            "Display groups are present in all MSB Parts, but only function for collisions.",
         ),
     }
 
@@ -650,8 +715,6 @@ class MSBNavmesh(_BaseMSBNavmesh, MSBPart):
 
     def __init__(self, source=None, **kwargs):
         self._navmesh_groups = set()
-        if source is None:
-            kwargs.setdefault("is_shadow_source", True)
         super().__init__(source=source, **kwargs)
 
     def unpack_type_data(self, msb_reader: BinaryReader):
@@ -701,22 +764,29 @@ class MSBMapConnection(_BaseMSBMapConnection, MSBPart):
     GET_MAP = staticmethod(get_map)
 
     FIELD_INFO = MSBPart.FIELD_INFO | _BaseMSBMapConnection.FIELD_INFO | {
-        "connected_map": MapFieldInfo(
-            "Map ID",
-            Map,
-            (10, 0, 0, 0),  # Depths
-            "Vanilla name or 'mAA_BB_CC_DD'-style name or (AA, BB, CC, DD) sequence of the map to be loaded.",
+        "is_shadow_source": MapFieldInfo(
+            "Casts Shadow",
+            bool,
+            True,
+            "If True, this entity will cast dynamic shadows.",
+        ),
+        "is_shadow_destination": MapFieldInfo(
+            "Receives Shadow",
+            bool,
+            True,
+            "If True, this entity can have dynamic shadows cast onto it.",
+        ),
+        "draw_by_reflect_cam": MapFieldInfo(
+            "Is Reflected",
+            bool,
+            True,
+            "If True, this entity will be reflected in water, etc.",
         ),
     }
 
     FIELD_ORDER = _BaseMSBMapConnection.FIELD_ORDER + MSBPart.LIGHTING_FIELD_ORDER
 
     def __init__(self, source=None, **kwargs):
-        if source is None:
-            # Set some defaults.
-            kwargs.setdefault("is_shadow_source", True)
-            kwargs.setdefault("is_shadow_destination", True)
-            kwargs.setdefault("draw_by_reflect_cam", True)
         super().__init__(source=source, **kwargs)
 
 

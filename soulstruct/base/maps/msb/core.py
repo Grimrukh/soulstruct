@@ -183,6 +183,36 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
         return next(iter(results.values()))
 
+    def to_dict(self, ignore_defaults=True) -> dict:
+        """Return a dictionary form of the MSB.
+
+        If `ignore_defaults=True` (default), entry fields that have the default values for that entry subclass will not
+        be included in the entry's dictionary.
+
+        TODO: Later MSB versions may have header data.
+        """
+        return {
+            "parts": self.parts.to_dict(ignore_defaults=ignore_defaults),
+            "events": self.events.to_dict(ignore_defaults=ignore_defaults),
+            "regions": self.regions.to_dict(ignore_defaults=ignore_defaults),
+            "models": self.models.to_dict(ignore_defaults=ignore_defaults),
+        }
+
+    def load_dict(self, data: dict, clear_old_data=True):
+        if clear_old_data:
+            self.parts.clear()
+            self.events.clear()
+            self.regions.clear()
+            self.models.clear()
+        for entry_type in ("parts", "events", "regions", "models"):
+            entry_list = getattr(self, entry_type)  # type: MSBEntryList
+            for entry_subtype_name, entries in data.get(entry_type, []).items():
+                entry_subtype_enum = getattr(entry_list.ENTRY_SUBTYPE_ENUM, entry_subtype_name)
+                subtype_class = entry_list.SUBTYPE_CLASSES[entry_subtype_enum]
+                for entry_dict in entries:
+                    entry = subtype_class(**entry_dict)
+                    entry_list.add_entry(entry)
+
     def rename_references(self, old_name: str, new_name: str, entry_types: tp.Sequence[str] = ()):
         """Looks for all linked references to `old_name` in parts and events, and renames any to `new_name`.
 

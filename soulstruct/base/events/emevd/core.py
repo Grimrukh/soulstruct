@@ -26,6 +26,9 @@ _LOGGER = logging.getLogger(__name__)
 class EMEVD(GameFile, abc.ABC):
 
     events: dict[int, Event]
+    packed_strings: bytes
+    linked_file_offset: list[int]
+    map_name: str
 
     Event: tp.Type[Event] = None
     EVS_PARSER: tp.Type[EVSParser] = None
@@ -150,16 +153,28 @@ class EMEVD(GameFile, abc.ABC):
         for event in self.events.values():
             event.update_run_event_instructions()
 
-    def load_dict(self, data: dict):
-        self.map_name = None
+    def load_dict(self, data: dict, clear_old_data=True):
+        if clear_old_data:
+            self.events = {}
+            self.packed_strings = b""
+            self.linked_file_offsets = []
+            self.map_name = ""
+        else:
+            if self.map_name and (new_map_name := data.pop("map_name", "")) not in {"", self.map_name}:
+                raise ValueError(f"New map name '{new_map_name}' conflicts with old map name '{self.map_name}'.")
         try:
-            self.linked_file_offsets = data.pop("linked")
+            linked_file_offsets = data.pop("linked")
         except KeyError:
             _LOGGER.warning("No linked file offsets found in EMEVD source.")
+        else:
+            # Increment new offsets by existing packed string length.
+            self.linked_file_offsets += [offset + len(self.packed_strings) for offset in linked_file_offsets]
         try:
-            self.packed_strings = data.pop("strings")
+            packed_strings = data.pop("strings")
         except KeyError:
             _LOGGER.warning("No strings found in EMEVD source.")
+        else:
+            self.packed_strings += packed_strings
         self.events.update(data)
 
     def build_from_numeric_path(self, numeric_path):
@@ -268,6 +283,7 @@ class EMEVD(GameFile, abc.ABC):
             event.update_evs_function_args()
 
         return {
+            "map_name": self.map_name,
             "linked": self.linked_file_offsets,
             "strings": self.packed_strings,
             **self.events,

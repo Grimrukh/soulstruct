@@ -142,7 +142,7 @@ class Map(GameObject):
             if stem
         }
 
-    def __eq__(self, other_map):
+    def __eq__(self, other_map: Map):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id
 
     def __iter__(self):
@@ -150,6 +150,11 @@ class Map(GameObject):
 
     def __repr__(self):
         return self.emevd_file_stem
+
+    @classmethod
+    def NO_MAP(cls):
+        """Used as a default null map in MSB."""
+        return cls(0, 0, name="NONE")
 
 
 class MapEntry(GameObject):

@@ -26,6 +26,7 @@ from soulstruct.utilities.window import CustomDialog
 from .exceptions import SoulstructProjectError, RestoreBackupError
 
 if tp.TYPE_CHECKING:
+    from soulstruct.base.game_file import GameFile
     from soulstruct.games import Game
     from ..ai.ai_directory import AIDirectory
     from ..events.emevd_directory import EMEVDDirectory
@@ -94,6 +95,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
         self.custom_script_directory = Path()
         self.entities_in_events_directory = False
+        self.prefer_json = False
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
@@ -283,7 +285,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         Events and Talk scripts have no additional data to save beyond the project's text script files.
         """
         if data_type not in {"events", "talk"}:
-            self._save_project_data(getattr(self, data_type), data_type + ".ssp")
+            self._save_project_data(getattr(self, data_type), data_type=data_type)
 
     @_data_type_action
     def load(self, data_type=None):
@@ -292,19 +294,72 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         Events and Talk scripts have no additional data to load beyond the project's text script files.
         """
         if data_type not in {"events", "talk"}:
-            setattr(self, data_type, self._load_project_data(data_type + ".ssp"))
+            setattr(self, data_type, self._load_project_data(data_type))
 
-    def _save_project_data(self, obj, pickled_path):
-        with (self.project_root / pickled_path).open("wb") as f:
-            pickle.dump(obj, f)
+    def _save_project_data(self, data: GameFile, data_type: str):
+        """Pickle given project data structure `obj` to path `{data_path}.ssp`.
 
-    def _load_project_data(self, pickled_path):
-        with (self.project_root / pickled_path).open("rb") as f:
+        If `self.prefer_json=True`, and `obj.write_json()` is supported, that will be used instead. The extension of
+        `data_path` will be set to `{data_path}.json` in this case.
+        """
+        if self.prefer_json:
+            if data_type == "maps":  # TODO: Can use `data_type` as folder name and just try to use `write_json_dir()`.
+                # Save separate JSONs to `{project}/{data_type}/` directory.
+                data: MapStudioDirectory
+                data_dir_path = self.project_root / data_type
+                first_time = not data_dir_path.exists()
+                data.write_json_dir(data_dir_path)
+                if first_time:
+                    _LOGGER.info(
+                        f"Created new '{data_type}' project folder with separate JSON files inside. As long as "
+                        f"`PreferJSON` is enabled for this project, that directory will be loaded instead of "
+                        f"'{data_type}.ssp'."
+                    )
+                return
+            else:
+                data_file_path = (self.project_root / data_type).with_suffix(".json")
+                try:
+                    first_time = not data_file_path.exists()
+                    data.write_json(data_file_path)
+                except NotImplementedError:
+                    pass  # continue to pickle backup
+                else:
+                    if first_time:
+                        _LOGGER.info(
+                            f"Created new '{data_type}.json' project file. As long as `PreferJSON` is enabled for this "
+                            f"project, that file will be loaded instead of '{data_type}.ssp'."
+                        )
+                    return
+        data_file_path = (self.project_root / data_type).with_suffix(".ssp")
+        with data_file_path.open("wb") as f:
+            pickle.dump(data, f)
+
+    def _load_project_data(self, data_type: str):
+        if self.prefer_json:
+            try:
+                if data_type == "maps" and (data_dir_path := self.project_root / data_type).is_dir():
+                    # Load JSONs from directory.
+                    return self.DATA_TYPES[data_type](data_dir_path, use_json=True)
+                elif (data_file_path := (self.project_root / data_type).with_suffix(".json")).exists():
+                    data_class = self.DATA_TYPES[data_type]
+                    try:
+                        return data_class(data_file_path)
+                    except NotImplementedError:
+                        raise SoulstructProjectError(
+                            f"Found a '{data_type}.json' file in this project, but the Soulstruct class used to load "
+                            f"this data type does not support loading from JSON files. Was this file generated with a "
+                            f"newer version?"
+                        )
+            except FileNotFoundError:
+                pass  # continue to load SSP files below
+
+        data_file_path = (self.project_root / data_type).with_suffix(".ssp")
+        with data_file_path.open("rb") as f:
             try:
                 return pickle.load(f)
             except Exception as ex:
                 raise SoulstructProjectError(
-                    f"Could not open project file: {self.project_root / pickled_path}.\n\n"
+                    f"Could not open project file: '{data_file_path}'.\n\n"
                     f"If you are seeing this after downloading a new version of Soulstruct, there may have been a "
                     f"non-backwards-compatible change in the internal structure of the program. Please export your "
                     f"project files from the last working version, delete the problematic file(s) after backing them "
@@ -345,7 +400,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         data_export_path.parent.mkdir(parents=True, exist_ok=True)
         # TODO: Differentiate between exporting single EMEVD or entire directory.
         #  - Annoying to export every script individually.
-        #  - Also annoying to update the 'last modified' time of every game EMEVD when only one is updated.
+        #  - Also annoying to update the 'last modified time' metadata of every game EMEVD when only one is updated.
         data = getattr(self, data_type)
         if data_type in {"events", "talk"}:
             data.load(self.project_root / data_type)  # load text files into managed `Directory` structure for export
@@ -568,6 +623,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                             self._vanilla_game_root = Path(vanilla_game_root)
                         self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
                         self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
+                        self.prefer_json = config.get("PreferJSON", False)
                     except KeyError:
                         raise SoulstructProjectError(
                             "Project config file does not contain necessary settings. "
@@ -663,6 +719,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             "VanillaGameDirectory": str(self._vanilla_game_root),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
             "EntitiesInEventsDirectory": self.entities_in_events_directory,
+            "PreferJSON": self.prefer_json,
         }
 
     def _write_config(self):

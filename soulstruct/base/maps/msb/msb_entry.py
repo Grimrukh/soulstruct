@@ -10,8 +10,9 @@ from enum import IntEnum
 from functools import wraps
 
 from soulstruct.game_types.basic_types import GameObjectSequence
+from soulstruct.game_types.msb_types import Map
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
-from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
+from soulstruct.utilities.maths import Vector, Vector3, Matrix3, resolve_rotation
 
 from .exceptions import MapError
 from .utils import MapFieldInfo
@@ -66,14 +67,15 @@ class MSBEntry(abc.ABC):
             except KeyError:
                 raise ValueError(f"`name` must be given to `{self.__class__.__name__}` if no binary `source` is given.")
             self.description = kwargs.pop("description", "")
-            for field_name, field_info in self.FIELD_INFO.items():
+            default_values = self.get_default_values()
+            for field_name in self.FIELD_INFO:
                 try:
                     value = kwargs.pop(field_name)
                 except KeyError:
                     try:
-                        value = field_info.default.copy()  # mutable default
+                        value = default_values[field_name].copy()  # mutable default (e.g. `list`, `set`, `Vector3`)
                     except AttributeError:
-                        value = field_info.default  # immutable default
+                        value = default_values[field_name]  # immutable default (e.g. `int`, `float`, `str`, `tuple`)
                 if isinstance(value, IntEnum):
                     value = value.value
                 setattr(self, field_name, value)
@@ -173,17 +175,30 @@ class MSBEntry(abc.ABC):
                         if getattr(self, field_name) == old_name:
                             setattr(self, field_name, new_name)
 
-    def __repr__(self):
-        kwargs = {}
-        default = self.__class__(name="__DEFAULT__")
-        for name in self.field_names:
+    def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
+        default_values = self.get_default_values()
+        data = {"name": self.name}
+        for name in self.all_field_names:
             value = getattr(self, name)
-            default_value = getattr(default, name)
-            if value == default_value:
-                continue  # ignore default values
-            kwargs[name] = value
-        if kwargs:
-            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in kwargs.items())
+            if ignore_defaults and value == default_values[name]:
+                continue  # don't add default values to dictionary
+            if isinstance(value, Vector):
+                data[name] = list(value)
+            elif isinstance(value, Map):
+                data[name] = str(value)
+            elif isinstance(value, set):
+                data[name] = sorted(value)
+            else:
+                data[name] = value
+        return data
+
+    def get_default_values(self):
+        return {field_name: field_info.default for field_name, field_info in self.FIELD_INFO.items()}
+
+    def __repr__(self):
+        data = self.to_dict(ignore_defaults=True)
+        if data:
+            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
             return f"{self.__class__.__name__}(\n    name={repr(self.name)},\n    {fields}\n)"
         return f"{self.__class__.__name__}(name={repr(self.name)})"
 
@@ -569,6 +584,17 @@ class MSBEntryList(abc.ABC, tp.Generic[MSBEntryType]):
                 entry.name += f" <{repeat_count[entry.name]}>"
             unique_names[i] = entry.name
         return unique_names
+
+    def to_dict(self, ignore_defaults=True) -> [dict[str, list[dict[str, tp.Any]]]]:
+        """Get the entry list as a dictionary mapping entry subtype names to lists of entry dictionaries."""
+        data = {}
+        for entry_subtype_enum in self.ENTRY_SUBTYPE_ENUM:
+            subtype_entries = self.get_entries(entry_subtype_enum)
+            if subtype_entries:
+                data[entry_subtype_enum.name] = [
+                    entry.to_dict(ignore_defaults=ignore_defaults) for entry in subtype_entries
+                ]
+        return data
 
 
 class MSBEntryEntity(MSBEntry, abc.ABC):

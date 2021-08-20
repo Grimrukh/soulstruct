@@ -29,7 +29,7 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
     if isinstance(source, Map):
         if block_id is not None:
             raise ValueError(f"`block_id` must be None if a Map instance is passed to `get_map`.")
-        if source not in game_maps:
+        if source != Map.NO_MAP() and source not in game_maps:
             raise ValueError(f"Map {source} does not appear in game's maps: {game_maps}")
         return source
 

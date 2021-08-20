@@ -108,15 +108,22 @@ class GameFile(abc.ABC):
         If no valid source types are found, raise `InvalidGameFileTypeError` (like below) to have the constructor
         continue checking the standard source types.
         """
-        raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
+        raise InvalidGameFileTypeError(f"No special handler for `GameFile` source type: {type(file_source)}")
 
     @abc.abstractmethod
     def unpack(self, reader: BinaryReader, **kwargs):
         """Unpack game file from given buffer, using various `BinaryStruct`s defined in the class."""
 
-    def load_dict(self, data: dict):
-        """Load game file from given `data` dictionary (which is a copy of the source). Not supported by default."""
-        raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary input.")
+    def load_dict(self, data: dict, clear_old_data=True):
+        """Load game file from given `data` dictionary (which is a copy of the source).
+
+        Where implemented, if `clear_old_data=True` (default), the `GameFile` instance will have all relevant data
+        cleared  first. Otherwise, existing data will not be cleared, and newer data with the same ID, key, etc. will
+        override old data. In this case, any conflicting header data will raise a `ValueError`.
+
+        Not supported by default.
+        """
+        raise NotImplementedError(f"`{self.__class__.__name__}` class does not support JSON/dictionary input.")
 
     @abc.abstractmethod
     def pack(self, **kwargs) -> bytes:
@@ -124,7 +131,7 @@ class GameFile(abc.ABC):
 
     def to_dict(self, **kwargs) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
-        raise TypeError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
+        raise NotImplementedError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
     def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).

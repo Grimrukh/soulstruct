@@ -621,12 +621,15 @@ class MSBCollision(MSBPart, abc.ABC):
 
     @stable_footing_flag.setter
     def stable_footing_flag(self, value):
-        if self._play_region_id != 0:
-            raise InvalidFieldValueError(
-                "Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' " "is non-zero."
-            )
         if not isinstance(value, int) or value < 0:
-            raise InvalidFieldValueError("'stable_footing_flag' must be an integer greater than or equal to 0.")
+            raise InvalidFieldValueError(
+                f"'stable_footing_flag' must be an integer greater than or equal to 0 (Collision '{self.name}')."
+            )
+        if value != 0 and self._play_region_id != 0:
+            raise InvalidFieldValueError(
+                f"Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' is non-zero "
+                f"({self._play_region_id}) (Collision '{self.name}')."
+            )
         self._stable_footing_flag = value
 
     def set_indices(
@@ -738,7 +741,12 @@ class MSBMapConnection(MSBPart, abc.ABC):
             None,
             "Collision part that triggers this map load.",
         ),
-        # 'connected_map' field is defined in subclass so proper default map can be specified.
+        "connected_map": MapFieldInfo(
+            "Map ID",
+            Map,
+            Map.NO_MAP(),
+            "Constant name, 'mAA_BB_CC_DD'-style name, or `(AA, BB, CC, DD)` sequence of the map to be loaded.",
+        ),
     }
 
     FIELD_ORDER = (

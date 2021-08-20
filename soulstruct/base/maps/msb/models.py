@@ -12,7 +12,10 @@ from .utils import MapFieldInfo
 
 
 class MSBModel(MSBEntry):
-    """`ENTRY_SUBTYPE` is spoofed as an instance variable, since all Models have identical binary formats."""
+    """Class used by all MSB models."""
+
+    # Spoofed as an instance variable, since all Models have identical binary formats.
+    ENTRY_SUBTYPE: MSBModelSubtype
 
     MODEL_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""
@@ -55,7 +58,7 @@ class MSBModel(MSBEntry):
                     "if no binary `source` is given."
                 )
             kwargs["sib_path"] = self.auto_sib_path(
-                name=name, entry_type=self.ENTRY_SUBTYPE, sib_path=kwargs.get("sib_path", None),
+                name=name, model_subtype=self.ENTRY_SUBTYPE, sib_path=kwargs.get("sib_path", None),
             )
 
         super().__init__(source=source, **kwargs)
@@ -97,17 +100,14 @@ class MSBModel(MSBEntry):
 
     def set_sib_path_from_map_id(self, map_id):
         """Use given map ID sequence, e.g. (10, 2, 0, 0), to auto-set SIB path."""
-        self.sib_path = self.auto_sib_path(name=self.name, entry_type=self.ENTRY_SUBTYPE, sib_path=map_id)
+        self.sib_path = self.auto_sib_path(name=self.name, model_subtype=self.ENTRY_SUBTYPE, sib_path=map_id)
 
     @classmethod
-    def auto_sib_path(cls, name, entry_type, sib_path):
+    def auto_sib_path(cls, name, model_subtype, sib_path):
         if isinstance(sib_path, str):
             return sib_path
 
-        if name == "__DEFAULT__":
-            return ""
-
-        if entry_type in (MSBModelSubtype.MapPiece, MSBModelSubtype.Collision, MSBModelSubtype.Navmesh):
+        if model_subtype in (MSBModelSubtype.MapPiece, MSBModelSubtype.Collision, MSBModelSubtype.Navmesh):
             if not isinstance(sib_path, (list, tuple)) or len(sib_path) not in {2, 4}:
                 raise TypeError(
                     f"`sib_path` for Map Pieces, Collisions, and Navmeshes must be a full string or a "
@@ -117,39 +117,36 @@ class MSBModel(MSBEntry):
                 sib_path = (sib_path[0], sib_path[1], 0, 0)
             sib_path = f"m{sib_path[0]:02d}_{sib_path[1]:02d}_{sib_path[2]:02d}_{sib_path[3]:02d}"
             stem = cls.SIB_PATH_STEM + f"map\\{sib_path}\\"
-            if entry_type == MSBModelSubtype.MapPiece:
+            if model_subtype == MSBModelSubtype.MapPiece:
                 if not name.startswith("m"):
                     raise ValueError(f"MapPiece model name did not start with 'm': {name}")
                 return stem + f"sib\\{name}.sib"
-            elif entry_type == MSBModelSubtype.Collision:
+            elif model_subtype == MSBModelSubtype.Collision:
                 if not name.startswith("h"):
                     raise ValueError(f"Collision model name did not start with 'h': {name}")
                 return stem + f"hkxwin\\{name}.hkxwin"
-            elif entry_type == MSBModelSubtype.Navmesh:
+            elif model_subtype == MSBModelSubtype.Navmesh:
                 if not name.startswith("n"):
                     raise ValueError(f"Navmesh model name did not start with 'n': {name}")
                 return stem + f"navimesh\\{name}.SIB"
-        elif entry_type in (MSBModelSubtype.Character, MSBModelSubtype.Player):
+        elif model_subtype in (MSBModelSubtype.Character, MSBModelSubtype.Player):
             if not name.startswith("c"):
                 raise ValueError(f"Character/Player model name did not start with 'c': {name}")
             return cls.SIB_PATH_STEM + f"chr\\{name}\\sib\\{name}.sib"
-        elif entry_type == MSBModelSubtype.Object:
+        elif model_subtype == MSBModelSubtype.Object:
             if not name.startswith("o"):
                 raise ValueError(f"Object model name did not start with 'o': {name}")
             return cls.SIB_PATH_STEM + f"obj\\{name}\\sib\\{name}.sib"
-        raise ValueError(f"Invalid MSB model type: {repr(entry_type)}. Cannot determine SIB path.")
+        raise ValueError(f"Invalid MSB model type: {repr(model_subtype)}. Cannot determine SIB path.")
+
+    def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
+        # TODO: Do some models use generic sib paths?
+        return {"name": self.name, "sib_path": self.sib_path}
 
     def __repr__(self):
-        kwargs = {}
-        default = self.__class__(name="__DEFAULT__", model_subtype=self.ENTRY_SUBTYPE)
-        for name in self.field_names:
-            value = getattr(self, name)
-            default_value = getattr(default, name)
-            if value == default_value:
-                continue  # ignore default values
-            kwargs[name] = value
-        if kwargs:
-            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in kwargs.items())
+        data = self.to_dict(ignore_defaults=True)
+        if data:
+            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
             return (
                 f"{self.__class__.__name__}(\n"
                 f"    model_subtype={repr(self.ENTRY_SUBTYPE.name)},\n"

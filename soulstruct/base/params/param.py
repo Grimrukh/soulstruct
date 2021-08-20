@@ -474,13 +474,18 @@ class Param(GameFile, abc.ABC):
         header = header_struct.pack(header_fields)
         return header + row_pointer_data + packed_data + packed_names
 
-    def load_dict(self, data: dict):
+    def load_dict(self, data: dict, clear_old_data=True):
         if "rows" not in data:
-            raise KeyError(f"Field `rows` not specified in `Param` dict.")
+            raise KeyError("Field `rows` not specified in `Param` dict.")
         try:
-            self.byte_order = ">" if data.pop("big_endian") else "<"
+            byte_order = ">" if data.pop("big_endian") else "<"
         except KeyError:
-            raise KeyError(f"Field `big_endian` not specified in `Param` dict.")
+            raise KeyError("Field `big_endian` not specified in `Param` dict.")
+        if not clear_old_data:
+            if byte_order != self.byte_order:
+                raise ValueError(f"New byte order '{byte_order}' does not match old byte order '{self.byte_order}'.")
+        else:
+            self.byte_order = byte_order
         for field in (
             "param_type",
             "unknown",
@@ -492,30 +497,45 @@ class Param(GameFile, abc.ABC):
                 value = data.pop(field)
             except KeyError:
                 raise KeyError(f"Field `{field}` not specified in `Param` dict.")
-            setattr(self, field, value)
+            if not clear_old_data:
+                if value != getattr(self, field):
+                    raise ValueError(
+                        f"New `{field}` value {repr(value)} does not match old value {repr(getattr(self, field))}."
+                    )
+            else:
+                setattr(self, field, value)
 
         try:
-            self.flags1 = ParamFlags1(data.pop("flags1"))
+            flags1 = ParamFlags1(data.pop("flags1"))
         except KeyError:
             raise KeyError("Field `flags1` not specified in `Param` dict.")
         try:
-            self.flags2 = ParamFlags2(data.pop("flags2"))
+            flags2 = ParamFlags2(data.pop("flags2"))
         except KeyError:
             raise KeyError("Field `flags2` not specified in `Param` dict.")
+        if not clear_old_data:
+            if flags1 != self.flags1:
+                raise ValueError(f"New `flags1` value {flags1} does not match old value {self.flags1}.")
+            if flags2 != self.flags2:
+                raise ValueError(f"New `flags2` value {flags2} does not match old value {self.flags2}.")
+        else:
+            self.flags1 = flags1
+            self.flags2 = flags2
 
-        self.rows = {}
+        if clear_old_data:
+            self.rows = {}
         for i, row in data["rows"].items():
             try:
                 i = int(i)
             except (ValueError, TypeError):
-                raise KeyError(f"All keys of `Param` dict must be integers, not {i}.")
+                raise KeyError(f"All keys of 'rows' dict in `Param` dict must be integers, not {i}.")
             if isinstance(row, ParamRow):
                 self.rows[i] = row
             else:
                 try:
                     self.rows[i] = ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
                 except Exception as ex:
-                    raise ValueError(f"Could not interpret value of `rows[{i}]` as a `ParamRow`. Error: {ex}")
+                    raise ValueError(f"Could not load value of `rows[{i}]` into a `ParamRow`. Error: {ex}")
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True):
         data = {

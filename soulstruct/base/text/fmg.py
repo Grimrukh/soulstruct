@@ -58,10 +58,13 @@ class BaseFMG(GameFile, abc.ABC):
         if remove_empty_entries:
             self.entries = {i: entry for i, entry in self.entries.items() if entry}
 
-    def load_dict(self, data: dict):
+    def load_dict(self, data: dict, clear_old_data=True):
         if data["version"] != self.VERSION:
             raise ValueError(f"FMG dictionary has version {data['version']}, but requires version {self.VERSION}.")
-        self.entries = data["entries"]
+        if clear_old_data:
+            self.entries = data["entries"]
+        else:
+            self.entries.update(data["entries"])
 
     def unpack(self, reader: BinaryReader, remove_empty_entries=True):
         header = reader.unpack_struct(self.HEADER_STRUCT)
