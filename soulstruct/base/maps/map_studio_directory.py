@@ -71,8 +71,8 @@ class MapStudioDirectory(abc.ABC):
             if not use_json and self.IS_DCX:
                 msb_path = msb_path.with_suffix(msb_path.suffix + ".dcx")
             try:
-                self.msbs[game_map.msb_file_stem] = self.MSB_CLASS(msb_path)
-                setattr(self, game_map.name, self.msbs[game_map.msb_file_stem])
+                msb = self.msbs[game_map.msb_file_stem] = self.MSB_CLASS(msb_path)
+                setattr(self, game_map.name, msb)
             except FileNotFoundError:
                 raise FileNotFoundError(
                     f"Could not find {'MSB JSON' if use_json else 'MSB'} file {repr(game_map.msb_file_stem)} "
@@ -102,8 +102,9 @@ class MapStudioDirectory(abc.ABC):
 
     def write(self, msb_directory=None):
         msb_directory = self.directory if msb_directory is None else Path(msb_directory)
-        for msb in self.msbs.values():
-            msb_path = msb_directory / msb.path.name
+        for msb_file_stem, msb in self.msbs.items():
+            msb_name = f"{msb_file_stem}.msb.dcx" if self.IS_DCX else f"{msb_file_stem}.msb"
+            msb_path = msb_directory / msb_name
             try:
                 msb.write(msb_path)
             except Exception as e:
