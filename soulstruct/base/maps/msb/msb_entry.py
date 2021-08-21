@@ -197,10 +197,8 @@ class MSBEntry(abc.ABC):
 
     def __repr__(self):
         data = self.to_dict(ignore_defaults=True)
-        if data:
-            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
-            return f"{self.__class__.__name__}(\n    name={repr(self.name)},\n    {fields}\n)"
-        return f"{self.__class__.__name__}(name={repr(self.name)})"
+        fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
+        return f"{self.__class__.__name__}(\n    {fields}\n)"
 
 
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)

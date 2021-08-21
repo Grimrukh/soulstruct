@@ -131,7 +131,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             draw_groups = set(value)
         except (TypeError, ValueError):
             raise TypeError(
-                "Draw groups must be a set, sequence, `None`, 'None', or ''. Or use `set` methods like `.add()`."
+                "Draw groups must be a set, sequence, `None`, `'None'`, or `''`. Or use `set` methods like `.add()`."
             )
         for i in draw_groups:
             if not isinstance(i, int) and 0 <= i < self.FLAG_SET_SIZE:
@@ -152,7 +152,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             display_groups = set(value)
         except (TypeError, ValueError):
             raise TypeError(
-                "Display groups must be a set, sequence, `None`, 'None', or ''. Or use `set` methods like `.add()`."
+                "Display groups must be a set, sequence, `None`, `'None'`, or `''`. Or use `set` methods like `.add()`."
             )
         for i in display_groups:
             if not isinstance(i, int) and 0 <= i < self.FLAG_SET_SIZE:
