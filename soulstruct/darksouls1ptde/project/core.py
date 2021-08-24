@@ -31,7 +31,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsPTDEType):
         "text": MSGDirectory,
     }
 
-    def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None):
+    def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None, **kwargs):
         self._check_ptde_unpacked()
         super().initialize_project(force_import_from_game, with_window)
 
