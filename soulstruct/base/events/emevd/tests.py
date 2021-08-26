@@ -338,11 +338,12 @@ def PlayerBeyondDistance(entity: CoordEntityTyping, min_distance, condition, neg
 
 
 @negate_only
-def HasItem(item: ItemTyping, condition, negate=False):
-    try:
-        item_type = item.item_enum
-    except AttributeError:
-        raise ValueError("Can only use auto-detecting HasItem() on declared item types (Weapon, Armor, Ring, Good).")
+def HasItem(item: ItemTyping, condition, item_type=None, negate=False):
+    if item_type is None:
+        try:
+            item_type = item.item_enum
+        except AttributeError:
+            raise ValueError("Can only use auto-detecting HasItem() on declared item types (Weapon, Armor, Ring, Good).")
     return instr.IfPlayerItemStateNoBox(condition, item_type, item, not negate)
 
 
@@ -430,20 +431,22 @@ def AnyItemDroppedInRegion(region: Region, condition):
 
 
 @no_skip_or_negate_or_return
-def ItemDropped(item: ItemTyping, condition):
-    try:
-        item_type = item.item_enum
-    except AttributeError:
-        raise ValueError("Can only use HasItem() on declared item types (Weapon, Armor, Ring, Good).")
+def ItemDropped(item: ItemTyping, condition, item_type=None):
+    if item_type is None:
+        try:
+            item_type = item.item_enum
+        except AttributeError:
+            raise ValueError("Can only use ItemDropped() on declared item types (Weapon, Armor, Ring, Good).")
     return instr.IfItemDropped(condition, item, item_type)
 
 
 @negate_only
-def OwnsItem(item: ItemTyping, condition, negate=False):
-    try:
-        item_type = item.type
-    except AttributeError:
-        raise ValueError("Can only use OwnsItem() on declared item types (Weapon, Armor, Ring, Good).")
+def OwnsItem(item: ItemTyping, condition, item_type=None, negate=False):
+    if item_type is None:
+        try:
+            item_type = item.type
+        except AttributeError:
+            raise ValueError("Can only use OwnsItem() on declared item types (Weapon, Armor, Ring, Good).")
     return instr.IfPlayerItemStateBox(condition, item_type, item, not negate)
 
 
