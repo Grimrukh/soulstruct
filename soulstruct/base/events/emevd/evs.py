@@ -1412,18 +1412,23 @@ def _validate_comparison_node(node):
     """
     if len(node.comparators) != 1:
         raise EVSSyntaxError(node, "Comparisons must be binary.")
-
-    if isinstance(node.left, ast.Num) or not isinstance(node.comparators[0], ast.Num):
-        raise EVSSyntaxError(
-            node, "Comparisons must be between a name or function (left) " "and number (right)."
-        )
-
+    if isinstance(node.left, ast.Constant) or not isinstance(node.comparators[0], ast.Constant):
+        # if the value on the right is not a constant, it may be a unaryop that represents a negative number
+        if isinstance(node.comparators[0], ast.UnaryOp) and isinstance(node.comparators[0].op, ast.USub):
+            # evaluate the unary operation
+            n = ast.literal_eval(node.comparators[0])
+            # pack the result back into an ast.Constant
+            node.comparators[0] = ast.Constant(n)
+        else:
+            raise EVSSyntaxError(
+                node, "Comparisons must be between a name or function (left) " "and number (right)."
+            )
     if node.ops[0].__class__ not in COMPARISON_NODES:
         raise EVSSyntaxError(
             node, f"Only valid comparisons operators are: ==, !=, >, <, >=, <= (not {node.ops[0]})"
         )
 
-    return node.left, node.ops[0].__class__, node.comparators[0].n
+    return node.left, node.ops[0].__class__, node.comparators[0].value
 
 
 def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
