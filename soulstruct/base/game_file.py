@@ -12,17 +12,13 @@ import logging
 import typing as tp
 from pathlib import Path
 
-from soulstruct.exceptions import SoulstructError
+from soulstruct.exceptions import InvalidGameFileTypeError, GameFileDictSupportError
 from soulstruct.containers.entry import BinderEntry
 from soulstruct.containers.dcx import DCX
 from soulstruct.utilities.binary import BinaryReader, get_blake2b_hash
 from soulstruct.utilities.files import create_bak
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class InvalidGameFileTypeError(SoulstructError):
-    """Exception raised from an unhandled `file_source` type passed to `GameFile` constructor."""
 
 
 T = tp.TypeVar("T", bound="GameFile")
@@ -123,7 +119,7 @@ class GameFile(abc.ABC):
 
         Not supported by default.
         """
-        raise NotImplementedError(f"`{self.__class__.__name__}` class does not support JSON/dictionary input.")
+        raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary input.")
 
     @abc.abstractmethod
     def pack(self, **kwargs) -> bytes:
@@ -131,7 +127,7 @@ class GameFile(abc.ABC):
 
     def to_dict(self, **kwargs) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
-        raise NotImplementedError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
+        raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
     def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
@@ -164,7 +160,7 @@ class GameFile(abc.ABC):
             f.write(packed)
 
     def write_json(self, file_path: tp.Union[None, str, Path], encoding="utf-8", indent=4, **kwargs):
-        """Create a dictionary from `GameFile` instance. Requires `.as_dict()` to be supported.
+        """Create a dictionary from `GameFile` instance. Requires `.to_dict()` to be implemented by `GameFile` subclass.
 
         The file path will have the `.json` suffix added automatically.
         """

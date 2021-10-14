@@ -19,6 +19,7 @@ from pathlib import Path
 from soulstruct import __version__
 from soulstruct.config import DEFAULT_TEXT_EDITOR_FONT_SIZE
 from soulstruct.games import GameSpecificType
+from soulstruct.exceptions import GameFileDictSupportError
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
@@ -303,9 +304,9 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         `data_path` will be set to `{data_path}.json` in this case.
         """
         if self.prefer_json:
-            if data_type == "maps":  # TODO: Can use `data_type` as folder name and just try to use `write_json_dir()`.
-                # Save separate JSONs to `{project}/{data_type}/` directory.
-                data: MapStudioDirectory
+            if data_type in {"maps", "params"}:
+                # Save separate JSONs to `{project}/{data_type}/` directory with `write_json_dir()`.
+                data: tp.Union[MapStudioDirectory, GameParamBND]
                 data_dir_path = self.project_root / data_type
                 first_time = not data_dir_path.exists()
                 data.write_json_dir(data_dir_path)
@@ -317,11 +318,12 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     )
                 return
             else:
+                # TODO: Not currently implemented for any data type except 'maps' and 'params' (handled above).
                 data_file_path = (self.project_root / data_type).with_suffix(".json")
                 try:
                     first_time = not data_file_path.exists()
                     data.write_json(data_file_path)
-                except NotImplementedError:
+                except GameFileDictSupportError:
                     pass  # continue to pickle backup
                 else:
                     if first_time:
@@ -337,14 +339,15 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
     def _load_project_data(self, data_type: str):
         if self.prefer_json:
             try:
-                if data_type == "maps" and (data_dir_path := self.project_root / data_type).is_dir():
+                if data_type in {"maps", "params"} and (data_dir_path := self.project_root / data_type).is_dir():
                     # Load JSONs from directory.
                     return self.DATA_TYPES[data_type](data_dir_path, use_json=True)
                 elif (data_file_path := (self.project_root / data_type).with_suffix(".json")).exists():
+                    # Try to load from `{game_type}.json` file.
                     data_class = self.DATA_TYPES[data_type]
                     try:
                         return data_class(data_file_path)
-                    except NotImplementedError:
+                    except GameFileDictSupportError:
                         raise SoulstructProjectError(
                             f"Found a '{data_type}.json' file in this project, but the Soulstruct class used to load "
                             f"this data type does not support loading from JSON files. Was this file generated with a "

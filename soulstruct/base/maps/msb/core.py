@@ -619,7 +619,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             translate=translate,
             rotate=rotate,
         )
-        spawn_point.base_region_name = point.name
+        spawn_point.spawn_point_region_name = point.name
         return spawn_point
 
     def new_message_event_with_point(

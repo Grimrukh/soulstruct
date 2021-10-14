@@ -98,10 +98,14 @@ class BaseBinder(GameFile, abc.ABC):
             setattr(self, field, value)
         self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
 
-    def get_manifest_header(self, manifest: dict) -> dict[str, tp.Any]:
+    def get_manifest_header(self, manifest: tp.Dict) -> tp.Dict[str, tp.Any]:
+        """Extract manifest header data from given `manifest` dictionary and parse them into appropriate types.
+
+        Other keys may be present in `manifest`, and will be ignored.
+        """
         if "version" not in manifest:
             raise BinderError("JSON manifest file does not contain 'version' key.")
-        if manifest["version"] != self.__class__.__name__:
+        if manifest["version"] not in [base.__name__ for base in self.__class__.__bases__]:
             raise BinderError(
                 f"Version of file ({manifest['version']}) does not match "
                 f"`BaseBinder` child class name ({self.__class__.__name__})."
@@ -117,7 +121,7 @@ class BaseBinder(GameFile, abc.ABC):
             loaded_manifest[field] = manifest[field]
         return loaded_manifest
 
-    def add_entries_from_manifest(self, entries: dict, directory: tp.Union[str, Path], use_id_prefix: bool):
+    def add_entries_from_manifest(self, entries: tp.Dict, directory: tp.Union[str, Path], use_id_prefix: bool):
         directory = Path(directory)
         unsorted_entries = {}  # maps ID to `(path, data, flags)` tuple
         for root, entry_dicts in entries.items():
