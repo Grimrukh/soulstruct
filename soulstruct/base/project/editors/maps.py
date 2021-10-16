@@ -277,12 +277,18 @@ class MapFieldRow(FieldRow):
                     self._add_copy_option(copy_menu, **kwargs)
                     if self.master.active_category.endswith("Boxes"):
                         self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
-                # Double/single options.
-                for copy_field in copy_fields:
-                    kwargs = {f: f in {self.field_name, copy_field} for f in copy_fields}
-                    self._add_copy_option(copy_menu, **kwargs)
-                    if self.master.active_category.endswith("Boxes"):
-                        self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
+                if len(copy_fields) >= 2:
+                    # Double options (iterate over OTHER copy fields).
+                    for copy_field in (f for f in copy_fields if f != self.field_name):
+                        kwargs = {f: f in {self.field_name, copy_field} for f in copy_fields}
+                        self._add_copy_option(copy_menu, **kwargs)
+                        if kwargs.get("translate", False) and self.master.active_category.endswith("Boxes"):
+                            self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
+                # Single option (this field only).
+                kwargs = {self.field_name: True}
+                self._add_copy_option(copy_menu, **kwargs)
+                if self.field_name == "translate" and self.master.active_category.endswith("Boxes"):
+                    self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
                 self.context_menu.add_cascade(label="Copy from hook...", foreground="#FFF", menu=copy_menu)
 
     def choose_linked_map_entry(self):
@@ -695,7 +701,7 @@ class MapsEditor(BaseFieldEditor):
                 row.update_field_value_display(new_value)
             self._cancel_field_value_edit()
 
-            if issubclass(row.field_type, CharacterModel) and row.field_links[0].name is None:
+            if issubclass(row.field_type, (CharacterModel, ObjectModel)) and row.field_links[0].name is None:
                 # Offer to create models (after checking if they're valid) then update field display again if done.
                 if self.add_models(row.field_type, new_value):
                     row.update_field_value_display(new_value)
