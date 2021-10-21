@@ -105,7 +105,8 @@ class BaseBinder(GameFile, abc.ABC):
         """
         if "version" not in manifest:
             raise BinderError("JSON manifest file does not contain 'version' key.")
-        if manifest["version"] not in [base.__name__ for base in self.__class__.__bases__]:
+        all_class_names = [self.__class__.__name__] + [base.__name__ for base in self.__class__.__bases__]
+        if manifest["version"] not in all_class_names:
             raise BinderError(
                 f"Version of file ({manifest['version']}) does not match "
                 f"`BaseBinder` child class name ({self.__class__.__name__})."

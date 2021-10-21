@@ -323,7 +323,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                 try:
                     first_time = not data_file_path.exists()
                     data.write_json(data_file_path)
-                except GameFileDictSupportError:
+                except (AttributeError, GameFileDictSupportError):
                     pass  # continue to pickle backup
                 else:
                     if first_time:

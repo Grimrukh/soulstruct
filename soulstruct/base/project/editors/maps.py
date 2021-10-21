@@ -7,11 +7,17 @@ import math
 import typing as tp
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.game_types import GameObject, PlaceName, BaseLightingParam, ObjActParam
+from soulstruct.game_types import GameObject, GameObjectSequence, PlaceName, BaseLightingParam, ObjActParam
 from soulstruct.game_types.msb_types import *
 from soulstruct.base.maps.msb.enums import *
 from soulstruct.base.maps.msb.models import MSBModel
-from soulstruct.base.project.utilities import bind_events, NameSelectionBox, EntryTextEditBox, BitGroupEditBox
+from soulstruct.base.project.utilities import (
+    bind_events,
+    NameSelectionBox,
+    EntryTextEditBox,
+    SequenceNameEditBox,
+    BitGroupEditBox,
+)
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import BaseFieldEditor, FieldRow
 from soulstruct.utilities.conversion import int_group_to_bit_set
@@ -290,6 +296,21 @@ class MapFieldRow(FieldRow):
                 if self.field_name == "translate" and self.master.active_category.endswith("Boxes"):
                     self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
                 self.context_menu.add_cascade(label="Copy from hook...", foreground="#FFF", menu=copy_menu)
+
+        if issubclass(self.field_type, GameObjectSequence):
+            self.context_menu.add_command(
+                label=f"Edit sequence names in popout box",
+                command=lambda: self.master.popout_sequence_name_edit(
+                    self.field_name, self.field_nickname, self.field_type.game_object_type
+                ),
+            )
+            if self.field_type.game_object_type is Region:
+                # Option to add a point to a list of Points, based on current player translate/rotate.
+                # NOTE: Assumes that Points are sufficient, which I think is true for all sequence fields I've seen.
+                self.context_menu.add_command(
+                    label=f"Add new Point from player translate + rotate",
+                    command=lambda: self.master.add_point_from_player_position(self.field_name, self.field_nickname),
+                )
 
     def choose_linked_map_entry(self):
         if not issubclass(self.field_type, MapEntry):
@@ -977,4 +998,85 @@ class MapsEditor(BaseFieldEditor):
             field_dict["rotate"].y = new_rotate_y
         if draw_parent_name:
             field_dict["draw_parent_name"] = new_collision.name
+        self.refresh_fields()
+
+    def popout_sequence_name_edit(self, field_name: str, field_nickname: str, game_object_type: tp.Type):
+        msb_entry = self.get_selected_field_dict()
+        valid_names = [
+            name for name in self.linker.get_map_entry_type_names(game_object_type)
+            if not name.startswith("_EnvironmentEvent")  # exclude all these
+        ]
+        popout_editor = SequenceNameEditBox(
+            self,
+            initial_names=msb_entry[field_name],
+            valid_names=valid_names,
+            window_title=f"Editing {field_nickname}",
+        )
+        try:
+            new_names = popout_editor.go()
+        except Exception as ex:
+            _LOGGER.error(ex, exc_info=True)
+            return self.CustomDialog("Sequence Name Error", f"Error occurred while setting sequence names:\n\n{ex}")
+        if new_names is not None:
+            msb_entry[field_name] = new_names
+            self.refresh_fields()
+
+    def add_point_from_player_position(self, sequence_field: str, field_nickname: str):
+        if not self.linker.is_hooked:
+            if (
+                self.CustomDialog(
+                    title="Cannot Read Memory",
+                    message="Game has not been hooked. Would you like to try hooking into the game now?",
+                    default_output=0,
+                    cancel_output=1,
+                    return_output=0,
+                    button_names=("Yes, hook in", "No, forget it"),
+                    button_kwargs=("YES", "NO"),
+                )
+                == 1
+            ):
+                return
+            if self.linker.runtime_hook():
+                # Call this function again.
+                return self.add_point_from_player_position(sequence_field, field_nickname)
+            return
+
+        field_dict = self.get_selected_field_dict()
+        sequence = field_dict[sequence_field]
+        i = -1
+        for i, existing_region_name in enumerate(sequence):
+            if existing_region_name is None:
+                break
+        if i == -1:
+            # Sequence is full.
+            self.CustomDialog(
+                title="Cannot Add New Point",
+                message=f"Field '{sequence_field}' of entry '{field_dict.name}' cannot hold any more Points.",
+            )
+            return
+        point_name = f"{field_dict.name} {field_nickname} {i}"
+
+        try:
+            player_x = self.linker.get_game_value("player_x")
+            player_y = self.linker.get_game_value("player_y")
+            player_z = self.linker.get_game_value("player_z")
+            new_translate = Vector3(player_x, player_y, player_z)
+            new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
+        except MemoryHookError as e:
+            _LOGGER.error(str(e), exc_info=True)
+            self.CustomDialog(
+                title="Cannot Read Memory",
+                message=f"An error occurred when trying to copy player position (see log for full traceback):\n\n"
+                f"{str(e)}\n\n"
+                f"If this error doesn't seem like it can be solved (e.g. did you close the game after\n"
+                f"hooking into it?) please inform Grimrukh.",
+            )
+            return
+
+        self.get_selected_msb().regions.new_point(
+            name=point_name,
+            translate=new_translate,
+            rotate=Vector3(0, new_rotate_y, 0),
+        )
+        sequence[i] = point_name
         self.refresh_fields()
