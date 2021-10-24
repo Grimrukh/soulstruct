@@ -591,9 +591,12 @@ class EntityEditor(BaseEditor):
         ]:
             for entry_game_type in ENTITY_GAME_TYPES:
                 if entry_game_type in attr.__bases__:
-                    break
+                    break  # found matching type
             else:
-                continue  # ignore this class
+                if RegionVolume in attr.__bases__:  # if unique, Volume enums are valid as Boxes/Spheres/Cylinders
+                    entry_game_type = RegionVolume
+                else:
+                    continue  # ignore this class
             found_map_entry_class_names.append(attr_name)
             for entity_enum in attr:
                 try:
@@ -609,11 +612,20 @@ class EntityEditor(BaseEditor):
                     continue
                 entry_type_name = entry.ENTRY_SUBTYPE.get_pluralized_type_name()
                 entry_subtype_name = entry.ENTRY_SUBTYPE.name
-                if entry_game_type.get_msb_entry_type_subtype() != (entry_type_name, entry_subtype_name):
+                if entry_game_type is RegionVolume:
+                    if entry_type_name != "Regions" or entry_subtype_name not in {"Sphere", "Cylinder", "Box"}:
+                        return self.error_dialog(
+                            "Entity Type Mismatch",
+                            f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
+                            f"`RegionVolume`, but is not a Sphere, Cylinder, or Box in the MSB. Cannot "
+                            f"import entity IDs from entities module until this is fixed.",
+                        )
+                    entries_by_entity_enum[entity_enum] = entry
+                elif entry_game_type.get_msb_entry_type_subtype() != (entry_type_name, entry_subtype_name):
                     return self.error_dialog(
                         "Entity Type Mismatch",
                         f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
-                        f"'{attr_name}', but has different type '{entry_type_name}.{entry_subtype_name} in MSB. Cannot "
+                        f"`{attr_name}`, but has different type '{entry_type_name}.{entry_subtype_name}` in MSB. Cannot "
                         f"import entity IDs from entities module until this is fixed.",
                     )
                 entries_by_entity_enum[entity_enum] = entry

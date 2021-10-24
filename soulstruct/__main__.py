@@ -92,7 +92,7 @@ parser.add_argument(
     "-m",
     "--modmanager",
     action="store_true",
-    help=word_wrap("Open Soulstruct Mod Manager. No sources should be given."),
+    help=word_wrap("Open Soulstruct Mod Manager for given installation path. Defaults to `DSR_PATH` variable."),
 )
 parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source path."))
 parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
@@ -154,7 +154,7 @@ def soulstruct_main(ss_args) -> bool:
 
     if ss_args.modmanager:
         from soulstruct.utilities.mod_manager import ModManagerWindow
-        ModManagerWindow().wait_window()
+        ModManagerWindow(source).wait_window()
         return ss_args.console
 
     if ss_args.maps:

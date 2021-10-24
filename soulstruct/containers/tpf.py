@@ -6,13 +6,14 @@ __all__ = ["TPFTexture", "TPF"]
 import json
 import re
 import typing as tp
+import zlib
 from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 from .dcx import DCX
-from .dds import DDS
+from .dds import DDS, DDSCAPS2
 
 
 class TPFPlatform(IntEnum):
@@ -145,8 +146,68 @@ class TPFTexture:
 
         return self
 
-    def pack(self):
-        """TODO"""
+    def pack_header(self, writer: BinaryWriter, index: int, platform: TPFPlatform, tpf_flags: int):
+        if platform == TPFPlatform.PC:
+            dds = self.get_dds()
+            if dds.header.caps_2 & DDSCAPS2.CUBEMAP:
+                tex_type = TextureType.Cubemap
+            elif dds.header.caps_2 & DDSCAPS2.VOLUME:
+                tex_type = TextureType.Volume
+            else:
+                tex_type = TextureType.Texture
+            mipmap_count = dds.header.mipmap_count
+        else:
+            tex_type = self.texture_type
+            mipmap_count = self.mipmaps
+
+        writer.reserve(f"file_data_{index}", "I")
+        writer.reserve(f"file_size_{index}", "i")
+        writer.pack("b", self.format)
+        writer.pack("b", tex_type)
+        writer.pack("b", mipmap_count)
+        writer.pack("b", self.texture_flags)
+
+        if platform != TPFPlatform.PC:
+            writer.pack("h", self.header.width)
+            writer.pack("h", self.header.height)
+            if platform == TPFPlatform.Xbox360:
+                writer.pad(4)
+            elif platform == TPFPlatform.PS3:
+                writer.pack("i", self.header.unk1)
+                if tpf_flags != 0:
+                    writer.pack("i", self.header.unk2)
+            elif platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
+                writer.pack("i", self.header.texture_count)
+                writer.pack("i", self.header.unk2)
+
+        writer.reserve(f"file_name_{index}", "I")
+        writer.pack("i", 0 if self.float_struct is None else 1)
+
+        if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
+            writer.pack("i", self.header.dxgi_format)
+
+        if self.float_struct:
+            self.float_struct.pack(writer)
+
+    def pack_name(self, writer: BinaryWriter, index: int, encoding: int):
+        writer.fill(f"file_name_{index}", writer.position)
+        if encoding == 1:
+            name = self.name.encode(encoding="utf-16-be" if writer.big_endian else "utf-16-le") + b"\0\0"
+        elif encoding in {0, 2}:
+            name = self.name.encode(encoding="shift-jis") + b"\0"
+        else:
+            raise ValueError(f"Invalid TPF texture encoding: {encoding}. Must be 0, 1, or 2.")
+        writer.append(name)
+
+    def pack_data(self, writer: BinaryWriter, index: int):
+        writer.fill(f"file_data_{index}", writer.position)
+        if self.texture_flags in {2, 3}:
+            data = zlib.compress(self.data, level=7)
+        else:
+            data = self.data
+
+        writer.fill(f"file_size_{index}", len(data))
+        writer.append(data)
 
     def get_dds(self) -> DDS:
         return DDS(self.data)
@@ -205,7 +266,29 @@ class TPF(GameFile):
         ]
 
     def pack(self) -> bytes:
-        """TODO"""
+        """Pack TPF file to bytes."""
+        writer = BinaryWriter(big_endian=self.platform in {TPFPlatform.Xbox360, TPFPlatform.PS3})
+        writer.append(b"TPF\0")
+        writer.reserve("data_size", "i")
+        writer.pack("i", len(self.textures))
+        writer.pack("b", self.platform)
+        writer.pack("b", self.tpf_flags)
+        writer.pack("b", self.encoding)
+        writer.pad(1)
+
+        for i, texture in enumerate(self.textures):
+            texture.pack_header(writer, i, self.platform, self.tpf_flags)
+        for i, texture in enumerate(self.textures):
+            texture.pack_name(writer, i, self.encoding)
+
+        data_start = writer.position
+        for i, texture in enumerate(self.textures):
+            # TKGP notes: padding varies wildly across games, so don't worry about it too much.
+            if len(texture.data) > 0:
+                writer.pad_align(4)
+            texture.pack_data(writer, i)
+        writer.fill("data_size", writer.position - data_start)
+        return writer.finish()
 
     def write_unpacked_dir(self, directory=None):
         if directory is None:

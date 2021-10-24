@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import json
 import logging
 import typing as tp
 from pathlib import Path
@@ -26,7 +27,7 @@ class GameParamBND(BaseBND, abc.ABC):
     PARAM_NICKNAMES: dict[str, str] = {}
     PARAM_TYPES: dict[str, BaseGameParam] = {}
 
-    def __init__(self, game_param_bnd_source=None, dcx_magic=(), paramdef_bnd=None):
+    def __init__(self, game_param_bnd_source=None, dcx_magic=(), paramdef_bnd=None, use_json=False):
         """Unpack a `GameParam.gameparambnd[.dcx]` file binder into a single modifiable structure.
 
         Args:
@@ -35,6 +36,8 @@ class GameParamBND(BaseBND, abc.ABC):
             dcx_magic: optional DCX magic (sequence of two integers).
             paramdef_bnd: previously loaded `ParamDefBND` instance, or source to create it. Can also be automatically
                 detected from subclass.
+            use_json: if `True`, will assume the source is a path to a folder containing `gameparam_manifest.json` and
+                a `*Param.json` file for each Param to be loaded.
         """
 
         self._reload_warning_given = True
@@ -43,7 +46,11 @@ class GameParamBND(BaseBND, abc.ABC):
             self.paramdef_bnd = self.ParamDefBND()
         self.paramdef_bnd = paramdef_bnd if isinstance(paramdef_bnd, ParamDefBND) else self.ParamDefBND(paramdef_bnd)
 
-        super().__init__(game_param_bnd_source, dcx_magic=dcx_magic)
+        if use_json:  # source is a folder with individual `*Param.json` files and a manifest
+            super().__init__(None, dcx_magic=dcx_magic)
+            self.load_json_dir(game_param_bnd_source, clear_old_data=True)
+        else:  # must be a standard `BaseBND` source
+            super().__init__(game_param_bnd_source, dcx_magic=dcx_magic)
 
         if self.params:
             return  # already generated
@@ -83,7 +90,9 @@ class GameParamBND(BaseBND, abc.ABC):
                 setattr(self, field, value)
         if clear_old_data:
             self._entries.clear()
-        entry_ids = set()
+            entry_ids = set()
+        else:
+            entry_ids = set(self.entries_by_id.keys())
         for i, param_dict in enumerate(data["params"]):
             for field in ("entry_id", "path", "flags", "data"):
                 if field not in param_dict:
@@ -101,7 +110,8 @@ class GameParamBND(BaseBND, abc.ABC):
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
             setattr(self, nickname, p)
 
-    def to_dict(self, ignore_pads=True, ignore_defaults=True):
+    def to_dict(self, ignore_pads=True, ignore_defaults=True) -> dict[str, tp.Any]:
+        """Convert entire `GameParamBND` to a single dictionary with both the `Binder` header and all Param data."""
         data = self.get_json_header()
         data.pop("use_id_prefix")
         data["params"] = []
@@ -115,6 +125,85 @@ class GameParamBND(BaseBND, abc.ABC):
                 "data": param_dict,
             })
         return data
+
+    def load_json_dir(self, directory: tp.Union[Path, str], clear_old_data=True):
+        """Load individual Param JSON files from an unpacked Binder folder (produced by `write_json_dir()`).
+
+        The names of the Param JSON files to be loaded from the folder are recorded in the "entries" key of the
+        `gameparam_manifest.json` file.
+
+        Functionally very similar to `load_dict()`, but avoids the need for one gigantic JSON file for all Params.
+        """
+        directory = Path(directory)
+        manifest_path = directory / "gameparam_manifest.json"
+        if not manifest_path.is_file():
+            raise FileNotFoundError(f"Could not find GameParamBND manifest file '{manifest_path}'.")
+        with manifest_path.open("r") as f:
+            manifest = json.load(f)
+        for field, value in self.get_manifest_header(manifest).items():
+            if not clear_old_data:
+                if (old_value := getattr(self, field)) != value:
+                    raise ValueError(f"New `{field}` value {repr(value)} does not match old value {repr(old_value)}.")
+            else:
+                setattr(self, field, value)
+
+        if clear_old_data:
+            self._entries.clear()
+            entry_ids = set()
+        else:
+            entry_ids = set(self.entries_by_id.keys())
+        for json_name in manifest["entries"]:
+            try:
+                with (directory / json_name).open("r") as f:
+                    param_dict = json.load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Could not find Param JSON file '{directory / json_name}'.")
+            for field in ("entry_id", "path", "flags", "data"):
+                if field not in param_dict:
+                    raise KeyError(
+                        f"Field `{field}` not specified in '{json_name}' in `GameParamBND` folder."
+                    )
+            param = self.Param(param_dict["data"], paramdef_bnd=self.paramdef_bnd)
+            entry = self.BinderEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["flags"])
+            if entry.id in entry_ids:
+                _LOGGER.warning(
+                    f"Binder entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP."
+                )
+            self._entries.append(entry)
+            p = self.params[entry.path] = param
+            # Preferential nickname source order:
+            #     `self.PARAM_NICKNAMES[BinderEntry.stem]`, `p.nickname`, `BinderEntry.stem`
+            nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if p.nickname is None else p.nickname)
+            setattr(self, nickname, p)
+
+    def write_json_dir(self, directory: tp.Union[Path, str], ignore_pads=True, ignore_defaults=True):
+        """Write a folder containing a `gameparam_manifest.json` file with standard `Binder` header information and
+        a list of Param JSON files to load from the same folder.
+
+        The resulting folder can be loaded with `load_json_dir(directory)`.
+        """
+        directory = Path(directory)
+        directory.mkdir(parents=True, exist_ok=True)
+        manifest = self.get_json_header()
+        manifest.pop("use_id_prefix")
+        manifest["entries"] = []
+
+        for path, param in self.params.items():
+            entry = self.entries_by_path[path]
+            param_dict = {
+                "entry_id": entry.id,
+                "path": path,
+                "flags": entry.flags,
+                "data": param.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults),
+            }
+            nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if param.nickname is None else param.nickname)
+            json_name = nickname + ".json"
+            with (directory / json_name).open("w", encoding="shift-jis") as f:
+                json.dump(param_dict, f, indent=4)
+            manifest["entries"].append(json_name)
+
+        with (directory / "gameparam_manifest.json").open("w") as f:
+            json.dump(manifest, f, indent=4)
 
     def get_param(self, param_nickname) -> Param:
         if param_nickname not in self.PARAM_TYPES:

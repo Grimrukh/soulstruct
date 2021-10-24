@@ -5,6 +5,7 @@ import io
 import logging
 import re
 import typing as tp
+from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
@@ -619,7 +620,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             translate=translate,
             rotate=rotate,
         )
-        spawn_point.base_region_name = point.name
+        spawn_point.spawn_point_region_name = point.name
         return spawn_point
 
     def new_message_event_with_point(
@@ -638,3 +639,46 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         )
         message.base_region_name = point.name
         return message
+
+    def new_objact_event_for_object(
+        self,
+        obj_spec: tp.Union[str, int, IntEnum],
+        obj_act_entity_id: int,
+        obj_act_state: int = 0,
+        obj_act_param_id: int = -1,
+        obj_act_flag: int = None,
+        name: str = None,
+    ):
+        """Add an `MSBObjActEvent` to the MSB attached to the given MSB `obj_name`.
+
+        Entity ID (generally equal to the event ID that handles the ObjAct) must be given. All other variables are
+        optional: ObjAct state (defaults to 0), ObjAct param ID (defaults to -1, i.e. the object's model ID), and
+        associated state flag (defaults to 60000000 + the object's entity ID, if present).
+
+        A `ValueError` will be raised if the `obj_name` has no entity ID and `obj_act_flag` is not given.
+        """
+        if isinstance(obj_spec, IntEnum):
+            obj_spec = obj_spec.name
+        if isinstance(obj_spec, str):
+            obj = self.parts.get_entry_by_name(obj_spec, "Object")
+        elif isinstance(obj_spec, int):
+            obj = self.parts.get_entries("Object")[obj_spec]
+        else:
+            raise TypeError(f"`obj_spec` must be an index, name, or name-synchronised `IntEnum`, not {obj_spec}.")
+        if obj_act_flag is None:
+            if obj.entity_id <= 0:
+                raise ValueError(
+                    f"Cannot automatically set `obj_act_flag` for ObjAct attached to object '{obj.name}', as it does "
+                    f"not have a valid entity ID."
+                )
+            obj_act_flag = 60000000 + obj.entity_id
+        if name is None:
+            name = f"_ObjAct_{obj.name.lstrip('_')}"
+        return self.events.new_obj_act(
+            name=name,
+            obj_act_part_name=obj.name,
+            obj_act_entity_id=obj_act_entity_id,
+            obj_act_param_id=obj_act_param_id,
+            obj_act_state=obj_act_state,
+            obj_act_flag=obj_act_flag,
+        )

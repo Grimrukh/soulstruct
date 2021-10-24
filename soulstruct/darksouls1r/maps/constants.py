@@ -1537,7 +1537,7 @@ VANILLA_MSB_TRANSLATIONS = {
     1412996: "BedOfChaosNotify",
     1412997: "BedFogRotationTarget",
     1412998: "BedFogPrompt",
-    1413300: "BedSlide",
+    1413300: "BedSlideDirectionControl",
     1413400: "BedSealRight",
     1413401: "BedSealLeft",
     1413410: "BedSealRootLeft",
