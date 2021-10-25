@@ -1389,7 +1389,7 @@ class NavInfo:
 
         aabb_labels = [n.name for n in self.navmeshes] if label_aabbs else None
         node_labels = [
-            f"{i} ({self.get_aabb_navmesh(node.connected_aabb).name})" if node.connected_aabb else f""
+            f"{i} ({self.get_aabb_navmesh(node.connected_aabb).name})" if node.connected_aabb else f"{i}"
             for i, node in enumerate(self.nodes)
         ] if label_nodes else None
 

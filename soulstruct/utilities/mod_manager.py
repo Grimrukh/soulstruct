@@ -17,7 +17,9 @@ class ModManagerWindow(SmartFrame):
     Currently for Dark Souls: Remastered only.
     """
 
-    def __init__(self, game_path=None):
+    DEFAULT_VANILLA_BACKUP = "vanilla-backup"  # inside `game_path`
+
+    def __init__(self, game_path=None, vanilla_backup=None):
         super().__init__(toplevel=True, window_title="Dark Souls Mod Manager")
         if not game_path:
             game_path = Path(DSR_PATH)
@@ -28,6 +30,8 @@ class ModManagerWindow(SmartFrame):
             self._game_path = game_path
         else:
             raise ValueError(f"`game_path` should point to DARK SOULS REMASTERED folder or the executable within.")
+
+        self.backup_path = self._game_path / self.DEFAULT_VANILLA_BACKUP if not vanilla_backup else Path(vanilla_backup)
 
         if self._manager_json_path.is_file():
             with self._manager_json_path.open("r") as f:
@@ -177,7 +181,7 @@ class ModManagerWindow(SmartFrame):
             "Confirm Vanilla Backup Creation",
             "Are you sure you want to create a backup of all vanilla game files? This "
             "may take several minutes.\n\n"
-            "The backup will be created in 'vanilla-backup' in your game directory. "
+            f"The backup will be created in '{self.backup_path}' in your game directory. "
             "Existing backup files will only be replaced if they have a different size or "
             "last-modified time.",
         )
@@ -186,7 +190,7 @@ class ModManagerWindow(SmartFrame):
         backup_count = 0
         for dsr_file in DSR_FILE_LIST:
             source_path = self._game_path / dsr_file
-            dest_path = self._game_path / "vanilla-backup" / dsr_file
+            dest_path = self.backup_path / dsr_file
             if dest_path.is_file():
                 source_path_stat = source_path.stat()
                 dest_path_stat = dest_path.stat()
@@ -210,13 +214,13 @@ class ModManagerWindow(SmartFrame):
                 "Are you sure you want to restore vanilla game files? Note that this is "
                 "also done automatically before installing any mod.\n\n"
                 "Files will only be restored if their size or last-modified time "
-                "have changed from the file in 'vanilla-backup'.",
+                f"have changed from the file in '{self.backup_path}'.",
             )
             if not confirm:
                 return
         restore_count = 0
         for dsr_file in DSR_FILE_LIST:
-            source_path = self._game_path / "vanilla-backup" / dsr_file
+            source_path = self.backup_path / dsr_file
             dest_path = self._game_path / dsr_file
             if dest_path.is_file():
                 source_path_stat = source_path.stat()

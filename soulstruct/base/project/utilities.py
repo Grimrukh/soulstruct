@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import tkinter as tk
 import typing as tp
 from collections import namedtuple
@@ -23,6 +22,7 @@ __all__ = [
     "TextEditBox",
     "EntryTextEditBox",
     "ItemTextEditBox",
+    "SequenceNameEditBox",
     "BitGroupEditBox",
     "ActionHistory",
     "ViewHistory",
@@ -567,6 +567,76 @@ class ItemTextEditBox(SmartFrame):
             self.output[0] = self._name_entry.var.get()
             self.output[1] = self._summary_entry.var.get()
             self.output[2] = self._description_box.get("1.0", "end" + "-1c")
+        self.quit()
+
+
+class SequenceNameEditBox(SmartFrame):
+    """Small pop-out widget that allows you to set the MSB entry names for a sequence.
+
+    Pass it a list of valid names to get access to a selection box.
+    """
+
+    def __init__(
+        self,
+        master: SmartFrame,
+        initial_names: tp.Sequence[str],
+        valid_names: tp.Sequence[str] = None,
+        window_title="Editing Sequence Names",
+    ):
+        super().__init__(toplevel=True, master=master, window_title=window_title)
+        self.editor = master
+        # Convert `None` names to empty strings.
+        self._initial_names = ["" if name is None else name for name in initial_names]
+        self._valid_names = valid_names
+        self.output = None  # will be a list of names
+        self._width = 50
+
+        self._entries = []
+
+        self.build()
+
+    def build(self):
+        with self.set_master(auto_rows=0, padx=10, grid_defaults={"padx": 5, "pady": 10}):
+            for i, name in enumerate(self._initial_names):
+                with self.set_master(auto_columns=0):
+                    self._entries.append(
+                        self.Entry(initial_text=name, width=self._width)
+                    )
+                    if self._valid_names:
+                        self.Button(text=f"Choose Name", width=12, bg="#422", command=lambda: self.select_name(i))
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
+                self.Button(
+                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
+                self.Button(
+                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
+
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def select_name(self, name_index: int):
+        selected_name = NameSelectionBox(self.master, self._valid_names).go()
+        if selected_name is not None:
+            self._entries[name_index].var.set(selected_name)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            new_names = [e.var.get() for e in self._entries]
+            # Convert empty string names to `None`.
+            output = [name if name else None for name in new_names]
+            if output == self._initial_names:
+                self.output = None  # no change
+            self.output = output
         self.quit()
 
 

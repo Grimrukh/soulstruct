@@ -529,6 +529,26 @@ class BinaryObject(abc.ABC):
 
         super().__setattr__(field_name, value)
 
+    def extract_kwargs_from_struct(
+        self, reader: BinaryReader, binary_struct: BinaryStruct = None, encoding=None, byte_order=None
+    ) -> tp.Dict[str, tp.Any]:
+        if binary_struct is None:
+            binary_struct = self.STRUCT
+        data = reader.unpack_struct(binary_struct, exclude_asserted=True, byte_order=byte_order)
+        kwargs = {}
+        for field, value in data.items():
+            match = self.Z_STRING_RE.match(field)
+            if match:
+                field_name = match.group(1)
+                if encoding is None:
+                    raise ValueError(
+                        f"You must pass `encoding` to read {repr(field_name)} from string offset."
+                    )
+                kwargs[field_name] = reader.unpack_string(offset=data[field], encoding=encoding)
+            else:
+                kwargs[field] = data[field]
+        return kwargs
+
     def default_unpack(self, reader: BinaryReader, encoding=None, byte_order=None):
         """`BinaryObject` unpack methods will frequently require extra arguments, so the exact signature of `unpack()
         is left to each subclass.
@@ -538,19 +558,7 @@ class BinaryObject(abc.ABC):
         `STRUCT` fields that match template `STRING_OFFSET_RE` will immediately be read as null-terminated strings from
         the unpacked offset, and set to the field name in the template.
         """
-        data = reader.unpack_struct(self.STRUCT, exclude_asserted=True, byte_order=byte_order)
-        kwargs = {}
-        for field, value in data.items():
-            match = self.Z_STRING_RE.match(field)
-            if match:
-                field_name = match.group(1)
-                if encoding is None:
-                    raise ValueError(
-                        f"You must pass `encoding` to `default_unpack` to read {repr(field_name)} from string offset."
-                    )
-                kwargs[field_name] = reader.unpack_string(offset=data[field], encoding=encoding)
-            else:
-                kwargs[field] = data[field]
+        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT, encoding, byte_order)
         self.set(**kwargs)
 
     unpack = default_unpack
@@ -583,6 +591,14 @@ class BinaryObject(abc.ABC):
         writer.fill(field_zstring, writer.position, obj=self)
         z = b"\0\0" if encoding.startswith("utf-16") else b"\0"
         writer.append(getattr(self, field).encode(encoding) + z)
+
+    def __repr__(self) -> str:
+        output = f"{self.__class__.__name__}(\n"
+        for field_name in self._get_type_hints():
+            if field_name not in {"STRUCT", "DEFAULTS"}:
+                output += f"    {field_name}={repr(getattr(self, field_name))},\n"
+        output += ")"
+        return output
 
     @classmethod
     def get_field_default(cls, field: BinaryStruct.BinaryField) -> tp.Union[str, bytes, bool, int, float]:
@@ -769,7 +785,7 @@ class BinaryReader:
         """Read and assert `size` instances of `char` (defaults to null/zero byte)."""
         padding = self.buffer.read(size)
         if padding.strip(char):
-            raise ValueError(f"Reader `pad({size})` found bytes other than {char}: {padding}")
+            raise ValueError(f"Reader `assert_pad({size})` found bytes other than {char}: {padding}")
 
     def align(self, alignment: int):
         """Align reader position to next multiple of `alignment`."""

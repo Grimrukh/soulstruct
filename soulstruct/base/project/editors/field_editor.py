@@ -175,8 +175,10 @@ class FieldRow:
             )
         self.field_links = []
         for value_i in value:
-            self.field_links += self.master.get_field_links(self.field_type.game_object_type, value_i)
-        self._set_linked_value_label("(select to edit)", multiple_hint="{MULTIPLE}")
+            if value_i is not None:
+                self.field_links += self.master.get_field_links(self.field_type.game_object_type, value_i)
+        valid_count = sum(v is not None for v in value)
+        self._set_linked_value_label(f"<{valid_count} entries>", multiple_hint="{MULTIPLE}")
 
     def _update_field_GameObject(self, value):
         self.field_links = self.master.get_field_links(self.field_type, value)

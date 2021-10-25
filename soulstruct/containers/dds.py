@@ -6,7 +6,7 @@ As always, courtesy of SoulsFormats by TKGP:
 
 from __future__ import annotations
 
-__all__ = ["DDS"]
+__all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2"]
 
 import typing as tp
 from enum import IntEnum, auto
@@ -212,7 +212,7 @@ class DDSHeader(BinaryObject):
         ("width", "i"),
         ("pitch_or_linear_size", "i"),
         ("depth", "i"),
-        ("mip_map_count", "i"),
+        ("mipmap_count", "i"),
         ("reserved_1", "11i"),
         # Start of `PIXELFORMAT` in SoulsFormats.
         ("size", "i", 32),
@@ -247,8 +247,8 @@ class DDSHeader(BinaryObject):
     b_bitmask: int
     a_bitmask: int
     # End of `PIXELFORMAT`.
-    caps: DDSCAPS
-    caps_2: DDSCAPS2
+    caps: int
+    caps_2: int
     caps_3: int
     caps_4: int
     reserved_2: int
@@ -269,7 +269,7 @@ class DXT10Header(BinaryObject):
 
     dxgi_format: DXGI_FORMAT
     resource_dimension: DIMENSION
-    misc_flag: RESOURCE_MISC
+    misc_flag: int  # RESOURCE_MISC
     array_size: int
     alpha_mode: ALPHA_MODE
 
@@ -283,7 +283,6 @@ class DDS(GameFile):
     dxt10_header: tp.Optional[DXT10Header]
 
     def unpack(self, reader: BinaryReader, **kwargs):
-
         self.header = DDSHeader(reader)
         self.dxt10_header = DXT10Header(reader) if self.header.fourcc == b"DX10" else None
 

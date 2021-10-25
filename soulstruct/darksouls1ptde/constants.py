@@ -1242,6 +1242,15 @@ WEAPON_MODELS = {
     2026: "Bolt",
 }
 
+# 1000 and 100 digits, multiplied by 10000, give TAE animation offset (excluding ammo).
+# e.g. Straight Sword (variation 2300+) use animation set a23_0000 (offset 230000).
+# Other TAE offsets:
+#   - 00_0000: default (one-handed sword)
+#   - 02_0000: sword resting on shoulder
+#   - 03_0000: one-handed spear
+#   - 10_0000: two-handed sword
+#   - 12_0000: two-handed sword resting on shoulder
+#   - 13_0000: two-handed spear
 PLAYER_WEAPON_BEHAVIOR_VARIATIONS = {
     1000: "Standard Arrow",
     1001: "Large Arrow",

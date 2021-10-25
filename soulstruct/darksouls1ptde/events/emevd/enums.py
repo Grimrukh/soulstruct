@@ -107,11 +107,11 @@ class TeamType(IntEnum):
     Ally = 8  # Targets no one, targeted by Enemy/Boss. (Not sure about HostileAlly.)
     HostileAlly = 9  # Targets and targeted by everyone.
     Decoy = 10
-    RedChild = 11
+    RedChild = 11  # Seems identical to Enemy.
     FightingAlly = 12  # Targets Enemy/Boss, targeted by Enemy/Boss.
     Intruder = 13  # Targets and targeted by Human/WhitePhantom/Hollow
     Neutral = 14
-    Charm = 15
+    Charm = 15  # Seems to target and hurt everyone, but can't be locked onto, and keeps attacking dead (Charm) enemies.
 
 
 class BannerType(IntEnum):
