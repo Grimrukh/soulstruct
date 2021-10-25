@@ -1405,30 +1405,77 @@ def _parse_decorator(event_node: ast.FunctionDef) -> int:
     return _RESTART_TYPES["NeverRestart"]
 
 
-def _validate_comparison_node(node):
+def _validate_comparison_node(node, globals):
     """ Comparisons must:
         (a) only involve two values;
-        (b) have a non-numeric value on the left and a numeric value on the right.
+            eg, arg_0_3 > 5 but not arg_0_3 > 5 != 10
+        (b) have a non-constant numeric value on the left
+            eg, an event argument
+        (c) have a constant numeric value on the right
+            eg, a numeric literal or a global variable
+        (d) be an evaluation of ==, !=, >, <, >=, <=
     """
     if len(node.comparators) != 1:
+        # rule (a) broken - the comparison doesn't involve two values
         raise EVSSyntaxError(node, "Comparisons must be binary.")
-    if isinstance(node.left, ast.Constant) or not isinstance(node.comparators[0], ast.Constant):
-        # if the value on the right is not a constant, it may be a unaryop that represents a negative number
+    if isinstance(node.left, ast.Constant):
+        # rule (b) broken - the left side is a constant numeric value
+        raise EVSSyntaxError(
+            node, "Comparisons must be between a name or function (left) " "and number (right)." f"left was {type(node.left)}"
+        )
+    if not isinstance(node.comparators[0], ast.Constant):
+        # rule (c) might be broken; the right side isn't a numeric literal, but we may be able to evaluate the right side
+        # the right side may be an `ast.UnaryOp` that represents a negative number
         if isinstance(node.comparators[0], ast.UnaryOp) and isinstance(node.comparators[0].op, ast.USub):
             # evaluate the unary operation
             n = ast.literal_eval(node.comparators[0])
             # pack the result back into an ast.Constant
             node.comparators[0] = ast.Constant(n)
+        # the right side may be an `ast.Attribute` that represents a global variable
+        elif isinstance(node.comparators[0], ast.Attribute):
+            # try to unpack the `Ast.Attribute` into a list of strings
+            current_node = node.comparators[0]
+            attribute_stack = []
+            while isinstance(current_node, ast.Attribute):
+                if not isinstance(current_node.ctx, ast.Load):
+                    raise EVSSyntaxError(node, "Object attributes can only be read, not assigned or deleted.")
+                attribute_stack.append(current_node.attr)
+                current_node = current_node.value
+            
+            # what we should end up with is the Name of where to start looking in our globals namespace
+            assert(isinstance(current_node, ast.Name))
+            attribute_stack.append(current_node.id)
+
+            # starting from the globals dict, try to find each string we unpacked earlier
+            value = globals
+            while attribute_stack:
+                attr = attribute_stack.pop()
+                try:
+                    value = value[attr]
+                except AttributeError:
+                    raise EVSSyntaxError(node.comparators[0], value, attr)
+            
+            # now that we've found where the `ast.Attribute` resolved to, make sure it's a number
+            if isinstance(value.value, int):
+                node.comparators[0] = ast.Constant(value.value)
+            else:
+                # rule (c) broken - the right side didn't evaluate to a number
+                raise EVSSyntaxError(
+                    node, "Comparisons must be between an name or function (left) " "and number (right)." f"right was {type(value.value)}"
+                )
         else:
+            # rule (c) broken - the right side can't be evaluated into something that is a number
             raise EVSSyntaxError(
-                node, "Comparisons must be between a name or function (left) " "and number (right)."
+                node, "Comparisons must be between a name or function (left) " "and number (right)." f"right was {type(node.comparators[0])}"
             )
     if node.ops[0].__class__ not in COMPARISON_NODES:
+        # rule (d) broken - unrecognized comparison operator
         raise EVSSyntaxError(
             node, f"Only valid comparisons operators are: ==, !=, >, <, >=, <= (not {node.ops[0]})"
         )
 
     return node.left, node.ops[0].__class__, node.comparators[0].value
+
 
 
 def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
