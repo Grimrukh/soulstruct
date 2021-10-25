@@ -747,7 +747,7 @@ class EVSParser(abc.ABC):
         raise NoSkipOrReturnError
 
     def _compile_simple_comparison(self, node: ast.Compare, negate, skip_lines):
-        left_node, op_node, comparison_value = _validate_comparison_node(node)
+        left_node, op_node, comparison_value = _validate_comparison_node(node, self.globals)
         if isinstance(left_node, ast.Name):
             name = left_node.id
             try:
@@ -849,7 +849,7 @@ class EVSParser(abc.ABC):
 
         # Compare
         if isinstance(node, ast.Compare):
-            node, op_node, comparison_value = _validate_comparison_node(node)
+            node, op_node, comparison_value = _validate_comparison_node(node, self.globals)
             emevd_args += [op_node, comparison_value]
 
         # Testable event argument
