@@ -1421,7 +1421,7 @@ def _validate_comparison_node(node, globals):
     if isinstance(node.left, ast.Constant):
         # rule (b) broken - the left side is a constant numeric value
         raise EVSSyntaxError(
-            node, "Comparisons must be between a name or function (left) " "and number (right)." f"left was {type(node.left)}"
+            node, "Comparisons must be between a name or function (left) " "and number (right).\n" f"left was {type(node.left)}"
         )
     if not isinstance(node.comparators[0], ast.Constant):
         # rule (c) might be broken; the right side isn't a numeric literal, but we may be able to evaluate the right side
@@ -1431,7 +1431,7 @@ def _validate_comparison_node(node, globals):
             n = ast.literal_eval(node.comparators[0])
             # pack the result back into an ast.Constant
             node.comparators[0] = ast.Constant(n)
-        # the right side may be an `ast.Attribute` that represents a global variable
+        # the right side may be an `ast.Attribute` that represents an imported global variable
         elif isinstance(node.comparators[0], ast.Attribute):
             # try to unpack the `Ast.Attribute` into a list of strings
             current_node = node.comparators[0]
@@ -1461,12 +1461,16 @@ def _validate_comparison_node(node, globals):
             else:
                 # rule (c) broken - the right side didn't evaluate to a number
                 raise EVSSyntaxError(
-                    node, "Comparisons must be between an name or function (left) " "and number (right)." f"right was {type(value.value)}"
+                    node, "Comparisons must be between a name or function (left) " "and number (right).\n" f"right was {type(value.value)}"
                 )
+        # the right side may be an `ast.Name` that repressents a global variable declared in the file
+        elif isinstance(node.comparators[0], ast.Name) and node.comparators[0].id in globals and isinstance(globals[node.comparators[0].id], int):
+            # in which case, the number we're looking for is just the value mapped to in the globals dict
+            node.comparators[0] = ast.Constant(globals[node.comparators[0].id])
         else:
             # rule (c) broken - the right side can't be evaluated into something that is a number
             raise EVSSyntaxError(
-                node, "Comparisons must be between a name or function (left) " "and number (right)." f"right was {type(node.comparators[0])}"
+                node, "Comparisons must be between a name or function (left) " "and number (right).\n" f"right was {type(node.comparators[0])}"
             )
     if node.ops[0].__class__ not in COMPARISON_NODES:
         # rule (d) broken - unrecognized comparison operator
