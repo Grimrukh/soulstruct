@@ -896,13 +896,22 @@ class EVSParser(abc.ABC):
                 )
             except (NoSkipOrReturnError, NoNegateError):
                 # No builtin tests for terminating/negating condition. Need to construct a temporary one.
+                # either skip_lines > 0 or negate == True (or both) since one of these errors have been raised
                 condition_emevd = []
                 temp_condition = self._check_out_TEMP(node.lineno)
-                skip_negate = False if skip_lines > 0 else negate  # avoids double negative with negated skip
-                logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
-                instr = f"SkipLinesIfCondition{logic}"
-                condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
-                condition_emevd += self.instructions[instr](skip_lines, temp_condition)
+
+                if skip_lines > 0:
+                    # if skip_lines > 0, then this is part of an if and we need to use SkipLinesIfConditionTrue/False with the temp condition
+                    # NoSkipOrReturn must have been raised, so we compile the test using a temp condition first and skip depending on its result
+                    condition_emevd += self._compile_condition(node_to_recur, negate=False, condition=temp_condition)
+                    condition_emevd += self.instructions[f"SkipLinesIfCondition{str(negate)}"](skip_lines, temp_condition)
+
+                else:
+                    # if skip_lines == 0, then this is part of an Await and we need to use IfConditionTrue/False with condition 0 and the temp condition as input
+                    # NoNegateError must have been raised, so negate must be True; therefore IfConditionFalse is always used here
+                    condition_emevd += self._compile_condition(node_to_recur, negate=False, condition=temp_condition)
+                    condition_emevd += self.instructions["IfConditionFalse"](0, temp_condition)
+
                 return condition_emevd
             except ValueError as ex:
                 raise EVSError(node.lineno, f"Error occurred in test function '{node.id}': {ex}")
