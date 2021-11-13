@@ -99,7 +99,7 @@ class MapEntryRow(EntryRow):
             command=lambda: self.master.add_relative_entry(self.entry_id),
         )
         msb_type, msb_subtype = self.master.active_category.split(": ")
-        if msb_type == "Regions" or msb_subtype in {"Characters", "Objects", "PlayerStarts"}:
+        if msb_type == "Regions" or (msb_type == "Parts" and msb_subtype in {"Characters", "Objects", "PlayerStarts"}):
             copy_fields = ("translate", "rotate")
             if msb_subtype in {"Characters", "Objects"}:
                 copy_fields += ("draw_parent_name",)
@@ -195,19 +195,22 @@ class MapFieldRow(FieldRow):
             self.value_label.var.set(str(value) + "  {LINK ERROR}")
             self._activate_value_widget(self.value_label)
         if issubclass(self.field_type, MapEntry):
-            # `value` is the name of another MSB entry.
-            msb_entry_name = str(value)
-            if self.field_type == CharacterModel:
-                # Auto-display DS1 character model names for convenience.
-                if self.field_links[0].name is None:
-                    msb_entry_name += "  {BROKEN LINK}"
-                else:
-                    model_id = int(msb_entry_name[1:])  # ignore 'c' prefix
-                    try:
-                        msb_entry_name += f"  {{{self.master.character_models[model_id]}}}"
-                    except KeyError:
-                        msb_entry_name += "  {UNKNOWN}"
-            self.value_label.var.set(msb_entry_name)
+            # `value` is the name of another MSB entry, or an empty string to reset to `None`.
+            if not value:
+                self.value_label.var.set("None")
+            else:
+                msb_entry_name = str(value)
+                if self.field_type == CharacterModel:
+                    # Auto-display DS1 character model names for convenience.
+                    if self.field_links[0].name is None:
+                        msb_entry_name += "  {BROKEN LINK}"
+                    else:
+                        model_id = int(msb_entry_name[1:])  # ignore 'c' prefix
+                        try:
+                            msb_entry_name += f"  {{{self.master.character_models[model_id]}}}"
+                        except KeyError:
+                            msb_entry_name += "  {UNKNOWN}"
+                self.value_label.var.set(msb_entry_name)
             self._activate_value_widget(self.value_label)
         else:
             self._update_field_int(value)
