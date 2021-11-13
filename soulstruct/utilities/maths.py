@@ -558,7 +558,7 @@ class QuatTransform:
         # Apply scale on top of rotation sub-matrix.
         v00 *= self.scale[0]
         v11 *= self.scale[1]
-        v22 *= self.scale[3]
+        v22 *= self.scale[2]
 
         # Bottom row.
         v30 = 0.0

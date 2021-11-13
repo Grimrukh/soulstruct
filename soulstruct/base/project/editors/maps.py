@@ -98,6 +98,17 @@ class MapEntryRow(EntryRow):
             label="Duplicate Entry to Next Index",
             command=lambda: self.master.add_relative_entry(self.entry_id),
         )
+        msb_type, msb_subtype = self.master.active_category.split(": ")
+        if msb_type == "Regions" or msb_subtype in {"Characters", "Objects", "PlayerStarts"}:
+            copy_fields = ("translate", "rotate")
+            if msb_subtype in {"Characters", "Objects"}:
+                copy_fields += ("draw_parent_name",)
+        self.context_menu.add_command(
+            label="Duplicate Entry to Next Index + Copy Player Transform",
+            command=lambda: self.master.add_relative_entry_and_copy_player_transform(
+                self.entry_id, **{f: True for f in copy_fields}
+            ),
+        )
         self.context_menu.add_command(
             label="Create New Entry at Next Index",
             command=lambda: self.master.add_new_default_entry(self.entry_id + 1),
@@ -579,6 +590,13 @@ class MapsEditor(BaseFieldEditor):
         entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
         msb_entry = entry_list.duplicate_entry(entry_index, entry_subtype=entry_subtype, auto_add=False, name=text)
         return self._add_entry(entry_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
+
+    def add_relative_entry_and_copy_player_transform(
+        self, entry_index, translate=False, rotate=False, draw_parent_name=False
+    ):
+        self.add_relative_entry(entry_index)
+        # Duplicated entry is selected, so we can apply player transform now.
+        self.copy_player_position(translate=translate, rotate=rotate, draw_parent_name=draw_parent_name)
 
     def add_new_default_entry(self, entry_index=None):
         """Add a new `MSBEntry` instance of the appropriate subtype to the end of the list, with all default values."""

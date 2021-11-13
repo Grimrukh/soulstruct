@@ -376,10 +376,11 @@ class FLVER(GameFile):
                     vertex_indices_offset=writer.position - vertex_data_start,
                 )
 
-            for vertex in mesh.vertices:
-                vertex.prepare_pack()
-
             for vertex_buffer in mesh.vertex_buffers:
+
+                for vertex in mesh.vertices:
+                    vertex.prepare_pack()
+
                 writer.pad_align(16)
                 uv_factor = 2048 if self.header.version >= Version.DarkSouls2_NT else 1024
                 vertex_buffer.pack_buffer(
