@@ -771,11 +771,13 @@ class BinaryReader:
     def read(self, size: int = None) -> bytes:
         return self.buffer.read(size)
 
-    def seek(self, offset: int, whence=None):
+    def seek(self, offset: int, whence=None) -> int:
+        """Returns final position."""
         if whence is not None:
             self.buffer.seek(offset, whence)
         else:
             self.buffer.seek(offset)
+        return self.buffer.tell()
 
     def tell(self):
         """Also has alias property `position` for this."""
@@ -817,6 +819,12 @@ class BinaryReader:
     @property
     def position_hex(self) -> str:
         return hex(self.buffer.tell())
+
+    def print_labeled_position(self, label: str, as_hex=False):
+        if as_hex:
+            print(f"{label} position: {self.position_hex}")
+        else:
+            print(f"{label} position: {self.position}")
 
 
 class BinaryWriter:
@@ -909,6 +917,11 @@ class BinaryWriter:
     def pad(self, size: int, char=b"\0"):
         if size > 0:
             self._array += char * size
+
+    def pad_to_offset(self, offset: int, char=b"\0"):
+        if self.position > offset:
+            raise ValueError(f"Writer is already past offset {offset}: {self.position}")
+        self.pad(offset - self.position, char=char)
 
     def pad_align(self, alignment: int, char=b"\0"):
         amount = alignment - self.position % alignment
