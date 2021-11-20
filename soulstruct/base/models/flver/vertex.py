@@ -80,6 +80,10 @@ class LayoutMember(BinaryObject):
         ("semantic", "i"),
         ("index", "i"),
     )
+    DEFAULTS = {
+        "layout_type": LayoutType.Float3,
+        "semantic": LayoutSemantic.Position,
+    }
 
     unk_x00: int
     layout_type: LayoutType
@@ -415,6 +419,7 @@ class Vertex:
         self.color_queue = list(reversed(self.colors))
 
     def pack(self, writer: BinaryWriter, layout: BufferLayout, uv_factor: float):
+
         for member in layout:
 
             not_implemented = False
@@ -460,14 +465,26 @@ class Vertex:
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.UV:
-                uv = self.uv_queue.pop() * uv_factor
+                try:
+                    uv = self.uv_queue.pop() * uv_factor
+                except IndexError:
+                    print(layout)
+                    print(member)
+                    print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
+                    raise IndexError("Ran out of vertex UVs to buffer.")
                 if member.layout_type == LayoutType.Float2:
                     writer.pack("2f", uv.x, uv.y)
                 elif member.layout_type == LayoutType.Float3:
                     writer.pack("3f", uv.x, uv.y, uv.z)
                 elif member.layout_type == LayoutType.Float4:
                     writer.pack("2f", uv.x, uv.y)
-                    uv = self.uv_queue.pop() * uv_factor
+                    try:
+                        uv = self.uv_queue.pop() * uv_factor
+                    except IndexError:
+                        print(layout)
+                        print(member)
+                        print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
+                        raise IndexError("Ran out of vertex UVs to buffer.")
                     writer.pack("2f", uv.x, uv.y)
                 elif member.layout_type in {
                     LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Short2toFloat2, LayoutType.Byte4C, LayoutType.UV
@@ -475,14 +492,26 @@ class Vertex:
                     writer.pack("2h", int(uv.x), int(uv.y))
                 elif member.layout_type == LayoutType.UVPair:
                     writer.pack("2h", int(uv.x), int(uv.y))
-                    uv = self.uv_queue.pop() * uv_factor
+                    try:
+                        uv = self.uv_queue.pop() * uv_factor
+                    except IndexError:
+                        print(layout)
+                        print(member)
+                        print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
+                        raise IndexError("Ran out of vertex UVs to buffer.")
                     writer.pack("2h", int(uv.x), int(uv.y))
                 elif member.layout_type == LayoutType.Short4ToFloat4B:
                     writer.pack("4h", int(uv.x), int(uv.y), int(uv.z), 0)
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.Tangent:
-                tangent = self.tangent_queue.pop()
+                try:
+                    tangent = self.tangent_queue.pop()
+                except IndexError:
+                    print(layout)
+                    print(member)
+                    print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
+                    raise IndexError("Ran out of vertex tangents to buffer.")
                 if member.layout_type == LayoutType.Float4:
                     writer.pack("4f", *tangent)
                 elif member.layout_type in {
@@ -503,7 +532,13 @@ class Vertex:
                 else:
                     not_implemented = True
             elif member.semantic == LayoutSemantic.VertexColor:
-                color = self.color_queue.pop()
+                try:
+                    color = self.color_queue.pop()
+                except IndexError:
+                    print(layout)
+                    print(member)
+                    print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
+                    raise IndexError("Ran out of vertex colors to buffer.")
                 if member.layout_type == LayoutType.Float4:
                     writer.pack("4f", *color)
                 elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4C}:

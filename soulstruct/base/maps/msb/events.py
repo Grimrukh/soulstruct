@@ -53,7 +53,9 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         self._event_index = None  # global index
         self._local_event_index = None  # local type index
         self._base_part_index = None
+        self._base_part_name = None
         self._base_region_index = None
+        self._base_region_name = None
         super().__init__(source=source, **kwargs)
 
     def unpack(self, msb_reader: BinaryReader):
@@ -70,15 +72,41 @@ class MSBEvent(MSBEntryEntity, abc.ABC):
         msb_reader.seek(event_offset + header["__type_data_offset"])
         self.unpack_type_data(msb_reader)
 
+    @property
+    def base_part_name(self):
+        return self._base_part_name
+
+    @base_part_name.setter
+    def base_part_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._base_part_name = value if value else None
+        elif value is None:
+            self._base_part_name = None
+        else:
+            raise TypeError(f"`base_part_name` must be a string or `None`, not {value}.")
+
+    @property
+    def base_region_name(self):
+        return self._base_region_name
+
+    @base_region_name.setter
+    def base_region_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._base_region_name = value if value else None
+        elif value is None:
+            self._base_region_name = None
+        else:
+            raise TypeError(f"`base_region_name` must be a string or `None`, not {value}.")
+
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         self._event_index = event_index  # TODO: confirm this can safely be handled automatically.
         self._local_event_index = local_event_index
-        self._base_part_index = part_indices[self.base_part_name] if self.base_part_name else -1
-        self._base_region_index = region_indices[self.base_region_name] if self.base_region_name else -1
+        self._base_part_index = part_indices[self._base_part_name] if self._base_part_name else -1
+        self._base_region_index = region_indices[self._base_region_name] if self._base_region_name else -1
 
     def set_names(self, region_names, part_names):
-        self.base_part_name = part_names[self._base_part_index] if self._base_part_index != -1 else None
-        self.base_region_name = region_names[self._base_region_index] if self._base_region_index != -1 else None
+        self._base_part_name = part_names[self._base_part_index] if self._base_part_index != -1 else None
+        self._base_region_name = region_names[self._base_region_index] if self._base_region_index != -1 else None
 
     def pack(self):
         name_offset = self.EVENT_HEADER_STRUCT.size
@@ -427,15 +455,29 @@ class MSBTreasureEvent(MSBEvent, abc.ABC):
 
     def __init__(self, source=None, **kwargs):
         self._treasure_part_index = None
+        self._treasure_part_name = None
         super().__init__(source=source, **kwargs)
+
+    @property
+    def treasure_part_name(self):
+        return self._treasure_part_name
+
+    @treasure_part_name.setter
+    def treasure_part_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._treasure_part_name = value if value else None
+        elif value is None:
+            self._treasure_part_name = None
+        else:
+            raise TypeError(f"`treasure_part_name` must be a string or `None`, not {value}.")
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
-        self._treasure_part_index = part_indices[self.treasure_part_name] if self.treasure_part_name else -1
+        self._treasure_part_index = part_indices[self._treasure_part_name] if self.treasure_part_name else -1
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
-        self.treasure_part_name = part_names[self._treasure_part_index] if self._treasure_part_index != -1 else None
+        self._treasure_part_name = part_names[self._treasure_part_index] if self._treasure_part_index != -1 else None
 
 
 class MSBSpawnerEvent(MSBEvent):
@@ -691,15 +733,29 @@ class MSBObjActEvent(MSBEvent):
 
     def __init__(self, source=None, **kwargs):
         self._obj_act_part_index = None
+        self._obj_act_part_name = None
         super().__init__(source=source, **kwargs)
+
+    @property
+    def obj_act_part_name(self):
+        return self._obj_act_part_name
+
+    @obj_act_part_name.setter
+    def obj_act_part_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._obj_act_part_name = value if value else None
+        elif value is None:
+            self._obj_act_part_name = None
+        else:
+            raise TypeError(f"`obj_act_part_name` must be a string or `None`, not {value}.")
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
-        self._obj_act_part_index = part_indices[self.obj_act_part_name] if self.obj_act_part_name else -1
+        self._obj_act_part_index = part_indices[self._obj_act_part_name] if self.obj_act_part_name else -1
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
-        self.obj_act_part_name = part_names[self._obj_act_part_index] if self._obj_act_part_index != -1 else None
+        self._obj_act_part_name = part_names[self._obj_act_part_index] if self._obj_act_part_index != -1 else None
 
 
 class MSBSpawnPointEvent(MSBEvent):
@@ -742,21 +798,35 @@ class MSBSpawnPointEvent(MSBEvent):
 
     def __init__(self, source=None, **kwargs):
         self._spawn_point_region_index = None
+        self._spawn_point_region_name = None
         super().__init__(source=source, **kwargs)
+
+    @property
+    def spawn_point_region_name(self):
+        return self._spawn_point_region_name
+
+    @spawn_point_region_name.setter
+    def spawn_point_region_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._spawn_point_region_name = value if value else None
+        elif value is None:
+            self._spawn_point_region_name = None
+        else:
+            raise TypeError(f"`spawn_point_region_name` must be a string or `None`, not {value}.")
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
         if self.spawn_point_region_name:
-            self._spawn_point_region_index = region_indices[self.spawn_point_region_name]
+            self._spawn_point_region_index = region_indices[self._spawn_point_region_name]
         else:
             self._spawn_point_region_index = -1
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
         if self._spawn_point_region_index != -1:
-            self.spawn_point_region_name = region_names[self._spawn_point_region_index]
+            self._spawn_point_region_name = region_names[self._spawn_point_region_index]
         else:
-            self.spawn_point_region_name = None
+            self._spawn_point_region_name = None
 
 
 class MSBMapOffsetEvent(MSBEvent):
@@ -835,21 +905,35 @@ class MSBNavigationEvent(MSBEvent):
 
     def __init__(self, source=None, **kwargs):
         self._navigation_region_index = None
+        self._navigation_region_name = None
         super().__init__(source=source, **kwargs)
+
+    @property
+    def navigation_region_name(self):
+        return self._navigation_region_name
+
+    @navigation_region_name.setter
+    def navigation_region_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._navigation_region_name = value if value else None
+        elif value is None:
+            self._navigation_region_name = None
+        else:
+            raise TypeError(f"`navigation_region_name` must be a string or `None`, not {value}.")
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
         if self.navigation_region_name:
-            self._navigation_region_index = region_indices[self.navigation_region_name]
+            self._navigation_region_index = region_indices[self._navigation_region_name]
         else:
             self._navigation_region_index = -1
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
         if self._navigation_region_index != -1:
-            self.navigation_region_name = region_names[self._navigation_region_index]
+            self._navigation_region_name = region_names[self._navigation_region_index]
         else:
-            self.navigation_region_name = None
+            self._navigation_region_name = None
 
 
 class MSBEnvironmentEvent(MSBEvent):
@@ -992,21 +1076,35 @@ class MSBNPCInvasionEvent(MSBEvent):
 
     def __init__(self, source=None, **kwargs):
         self._spawn_point_region_index = None
+        self._spawn_point_region_name = None
         super().__init__(source=source, **kwargs)
+
+    @property
+    def spawn_point_region_name(self):
+        return self._spawn_point_region_name
+
+    @spawn_point_region_name.setter
+    def spawn_point_region_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._spawn_point_region_name = value if value else None
+        elif value is None:
+            self._spawn_point_region_name = None
+        else:
+            raise TypeError(f"`spawn_point_region_name` must be a string or `None`, not {value}.")
 
     def set_indices(self, event_index, local_event_index, region_indices, part_indices):
         super().set_indices(event_index, local_event_index, region_indices, part_indices)
         if self.spawn_point_region_name:
-            self._spawn_point_region_index = region_indices[self.spawn_point_region_name]
+            self._spawn_point_region_index = region_indices[self._spawn_point_region_name]
         else:
             self._spawn_point_region_index = -1
 
     def set_names(self, region_names, part_names):
         super().set_names(region_names, part_names)
         if self._spawn_point_region_index != -1:
-            self.spawn_point_region_name = region_names[self._spawn_point_region_index]
+            self._spawn_point_region_name = region_names[self._spawn_point_region_index]
         else:
-            self.spawn_point_region_name = None
+            self._spawn_point_region_name = None
 
 
 class MSBEventList(MSBEntryList[MSBEvent]):
