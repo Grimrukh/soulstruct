@@ -5,6 +5,7 @@ import abc
 import io
 import json
 import logging
+import re
 import typing as tp
 from pathlib import Path
 
@@ -259,6 +260,22 @@ class BaseBinder(GameFile, abc.ABC):
     def has_repeated_entry_names(self):
         entry_names = [e.name for e in self.entries]
         return len(set(entry_names)) < len(entry_names)
+
+    def find_entries_matching_name(self, regex: str) -> tp.List[BinderEntry]:
+        """Returns a list of entries whose names match the given `regex` pattern."""
+        return [entry for entry in self._entries if re.match(regex, entry.name)]
+
+    def find_entry_matching_name(self, regex: str) -> BinderEntry:
+        """Returns a single entry whose name matches the given `regex` pattern.
+
+        Only one match must exist.
+        """
+        matches = [entry for entry in self._entries if re.match(regex, entry.name)]
+        if len(matches) > 1:
+            raise ValueError(f"Found multiple Binder entries with name matching '{regex}'.")
+        if not matches:
+            raise ValueError(f"No Binder entries found with name matching '{regex}'.")
+        return matches[0]
 
     def __getitem__(self, id_or_path_or_basename) -> BinderEntry:
         """Shortcut for access by ID (int) or path (str) or basename (str).

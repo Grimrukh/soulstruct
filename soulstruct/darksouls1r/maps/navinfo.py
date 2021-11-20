@@ -690,6 +690,15 @@ class GateNode(BinaryObject):
 
         self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
 
+    def __repr__(self) -> str:
+        return (
+            f"GateNode({self.translate},"
+            f"connected_nodes=<{len(self.connected_nodes)}>, "
+            f"connected_edges=<{len(self.connected_edges)}>, "
+            f"connected_aabb={'<AABB>' if self.connected_aabb else 'None'}"
+            f")"
+        )
+
 
 class GateEdge(BinaryObject):
     """Edge between two `GateNode` instances in an `MCG` file.

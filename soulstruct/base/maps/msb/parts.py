@@ -206,7 +206,8 @@ class MSBObject(MSBPart, abc.ABC):
             MapPart,
             None,
             "Object will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn. Used as "
-            "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set).",
+            "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set). Set "
+            "to an empty string to indicate no draw parent (`None`).",
         ),
     }
 
@@ -227,7 +228,21 @@ class MSBObject(MSBPart, abc.ABC):
 
     def __init__(self, source=None, **kwargs):
         self._draw_parent_index = -1
+        self._draw_parent_name = None
         super().__init__(source, **kwargs)
+
+    @property
+    def draw_parent_name(self):
+        return self._draw_parent_name
+
+    @draw_parent_name.setter
+    def draw_parent_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._draw_parent_name = value if value else None
+        elif value is None:
+            self._draw_parent_name = None
+        else:
+            raise TypeError(f"`draw_parent_name` must be a string or `None`, not {value}.")
 
     def set_indices(
         self,
@@ -246,7 +261,7 @@ class MSBObject(MSBPart, abc.ABC):
             part_indices,
             local_collision_indices,
         )
-        self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
+        self._draw_parent_index = part_indices[self._draw_parent_name] if self._draw_parent_name else -1
 
     def set_names(
         self, model_names, region_names, environment_names, part_names, collision_names,
@@ -254,7 +269,7 @@ class MSBObject(MSBPart, abc.ABC):
         super().set_names(
             model_names, environment_names, region_names, part_names, collision_names,
         )
-        self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
+        self._draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
 
 
 class MSBCharacter(MSBPart, abc.ABC):
@@ -303,7 +318,8 @@ class MSBCharacter(MSBPart, abc.ABC):
             MapPart,
             None,
             "Character will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn. Used as "
-            "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set).",
+            "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set). Set "
+            "to an empty string to indicate no draw parent (`None`).",
         ),
         "patrol_region_names": MapFieldInfo(
             "Patrol Regions",
@@ -355,9 +371,23 @@ class MSBCharacter(MSBPart, abc.ABC):
 
     def __init__(self, source=None, **kwargs):
         self._draw_parent_index = -1
+        self._draw_parent_name = None
         self._patrol_region_names = [None] * 8
         self._patrol_region_indices = [-1] * 8
         super().__init__(source=source, **kwargs)
+
+    @property
+    def draw_parent_name(self):
+        return self._draw_parent_name
+
+    @draw_parent_name.setter
+    def draw_parent_name(self, value: tp.Union[None, str]):
+        if isinstance(value, str):
+            self._draw_parent_name = value if value else None
+        elif value is None:
+            self._draw_parent_name = None
+        else:
+            raise TypeError(f"`draw_parent_name` must be a string or `None`, not {value}.")
 
     @property
     def patrol_region_names(self):
@@ -392,7 +422,7 @@ class MSBCharacter(MSBPart, abc.ABC):
             part_indices,
             local_collision_indices,
         )
-        self._draw_parent_index = part_indices[self.draw_parent_name] if self.draw_parent_name else -1
+        self._draw_parent_index = part_indices[self._draw_parent_name] if self._draw_parent_name else -1
         self._patrol_region_indices = [region_indices[n] if n else -1 for n in self._patrol_region_names]
         while len(self._patrol_region_indices) < 8:
             self._patrol_region_indices.append(-1)
@@ -403,7 +433,7 @@ class MSBCharacter(MSBPart, abc.ABC):
         super().set_names(
             model_names, environment_names, region_names, part_names, collision_names,
         )
-        self.draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
+        self._draw_parent_name = part_names[self._draw_parent_index] if self._draw_parent_index != -1 else None
         self._patrol_region_names = [region_names[i] if i != -1 else None for i in self._patrol_region_indices]
 
 
@@ -609,7 +639,7 @@ class MSBCollision(MSBPart, abc.ABC):
     def play_region_id(self, value):
         if self._stable_footing_flag != 0:
             raise InvalidFieldValueError(
-                "Cannot set 'play_region_id' to a non-zero value while 'stable_footing_flag' " "is non-zero."
+                "Cannot set 'play_region_id' to a non-zero value while `stable_footing_flag` is non-zero."
             )
         if not isinstance(value, int) or value <= -10:
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")
@@ -621,14 +651,14 @@ class MSBCollision(MSBPart, abc.ABC):
 
     @stable_footing_flag.setter
     def stable_footing_flag(self, value):
-        if not isinstance(value, int) or value < 0:
+        if not isinstance(value, int) or value < -1:
             raise InvalidFieldValueError(
-                f"'stable_footing_flag' must be an integer greater than or equal to 0 (Collision '{self.name}')."
+                f"`stable_footing_flag` must be an integer no less than -1 (Collision '{self.name}')."
             )
         if value != 0 and self._play_region_id != 0:
             raise InvalidFieldValueError(
-                f"Cannot set 'stable_footing_flag' to a non-zero value while 'play_region_id' is non-zero "
-                f"({self._play_region_id}) (Collision '{self.name}')."
+                f"Cannot set `stable_footing_flag` to a non-zero value while 'play_region_id' is not zero, even if it "
+                f"is just -1: {self._play_region_id} (Collision '{self.name}')."
             )
         self._stable_footing_flag = value
 
