@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from soulstruct.config import DEFAULT_PROJECT_PATH
-
 __all__ = ["ProjectWindow"]
 
 import abc
