@@ -76,6 +76,12 @@ Notes for functional navmesh system:
 
     - It should go without saying that breaking correspondence between the connected nodes and edges of nodes will
     cause major issues, so don't do this.
+
+Miscellaneous extra notes (made long after the above):
+
+    - MCG gates are definitely used to determine map backread. If you're near a gate that has a connection to a gate
+    that is near a connect collision ("near" being somehow determined by physical navmeshes), that map will enter
+    backread.
 """
 from __future__ import annotations
 

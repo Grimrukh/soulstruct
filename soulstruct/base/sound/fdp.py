@@ -110,6 +110,8 @@ def generate_fdp_xml(fev_path: Path):
 
 
 if __name__ == '__main__':
-    s = generate_fdp_xml(Path(r"F:\Steam\steamapps\common\DARK SOULS REMASTERED (Workbench)\sound\fdlc_c3471.fev"))
-    with open("test.xml", "w") as f:
+    p = Path("C:/Steam/steamapps/common/DARK SOULS REMASTERED (Nightfall)/sound/frpg_c2240.fev")
+    # p = Path(r"C:\Users\Scott\Downloads\frpg_c5420_fdp\frpg_c5420.fev")
+    s = generate_fdp_xml(p)
+    with Path(r"C:\Users\Scott\Downloads\frpg_c5420_fdp\frpg_c5420_grim.fdp").open("w") as f:
         f.write(s)

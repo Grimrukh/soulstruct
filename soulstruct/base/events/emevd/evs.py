@@ -747,7 +747,7 @@ class EVSParser(abc.ABC):
         raise NoSkipOrReturnError
 
     def _compile_simple_comparison(self, node: ast.Compare, negate, skip_lines):
-        left_node, op_node, comparison_value = _validate_comparison_node(node)
+        left_node, op_node, comparison_value = self._validate_comparison_node(node)
         if isinstance(left_node, ast.Name):
             name = left_node.id
             try:
@@ -849,7 +849,7 @@ class EVSParser(abc.ABC):
 
         # Compare
         if isinstance(node, ast.Compare):
-            node, op_node, comparison_value = _validate_comparison_node(node)
+            node, op_node, comparison_value = self._validate_comparison_node(node)
             emevd_args += [op_node, comparison_value]
 
         # Testable event argument
@@ -1233,6 +1233,35 @@ class EVSParser(abc.ABC):
             return {keywords.arg: self._parse_nodes(keywords.value)}
         return {kw.arg: self._parse_nodes(kw.value) for kw in keywords}
 
+    def _validate_comparison_node(self, node):
+        """ Comparisons must:
+            (a) only involve two values;
+            (b) have a non-numeric value on the left and a numeric value or attribute on the right.
+        """
+        if len(node.comparators) != 1:
+            raise EVSSyntaxError(node, "Comparisons must be binary.")
+
+        if isinstance(node.left, ast.Num):
+            raise EVSSyntaxError(
+                node, "Comparisons must be between a name or function (left) and number (right)."
+            )
+
+        if isinstance(node.comparators[0], ast.Num):
+            comparator = node.comparators[0].n
+        elif isinstance(node.comparators[0], ast.Attribute):
+            comparator = self._parse_attributes(node.comparators[0])
+        else:
+            raise EVSSyntaxError(
+                node, "Comparisons must be between a name or function (left) and number (right)."
+            )
+
+        if node.ops[0].__class__ not in COMPARISON_NODES:
+            raise EVSSyntaxError(
+                node, f"Only valid comparisons operators are: ==, !=, >, <, >=, <= (not {node.ops[0]})"
+            )
+
+        return node.left, node.ops[0].__class__, comparator
+
     # ~~~~~~~~~~~~~~~~~~
     #  CONDITION METHODS: These provide and manage conditions that are in use by the current event.
     # ~~~~~~~~~~~~~~~~~~
@@ -1403,27 +1432,6 @@ def _parse_decorator(event_node: ast.FunctionDef) -> int:
                 f"Must be one of: {', '.join(_RESTART_TYPES)}",
             )
     return _RESTART_TYPES["NeverRestart"]
-
-
-def _validate_comparison_node(node):
-    """ Comparisons must:
-        (a) only involve two values;
-        (b) have a non-numeric value on the left and a numeric value on the right.
-    """
-    if len(node.comparators) != 1:
-        raise EVSSyntaxError(node, "Comparisons must be binary.")
-
-    if isinstance(node.left, ast.Num) or not isinstance(node.comparators[0], ast.Num):
-        raise EVSSyntaxError(
-            node, "Comparisons must be between a name or function (left) " "and number (right)."
-        )
-
-    if node.ops[0].__class__ not in COMPARISON_NODES:
-        raise EVSSyntaxError(
-            node, f"Only valid comparisons operators are: ==, !=, >, <, >=, <= (not {node.ops[0]})"
-        )
-
-    return node.left, node.ops[0].__class__, node.comparators[0].n
 
 
 def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
