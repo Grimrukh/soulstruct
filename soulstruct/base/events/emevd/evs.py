@@ -144,7 +144,7 @@ class EVSParser(abc.ABC):
         self._compile_evs()
 
     def _reset_conditions(self):
-        """Reset for every new event. Contains names of conditions."""
+        """Reset for every new event. Contains names of `Condition` and/or `HeldCondition` instances created in EVS."""
         self.conditions = [""] * self.CONDITION_COUNT
 
     # ~~~~~~~~~~~~~~~~~~~
@@ -665,7 +665,7 @@ class EVSParser(abc.ABC):
                 f"such as Flag (tests for enabled state), Region (tests if player is inside), etc.",
             )
 
-        # 3. The condition is a previously-defined Condition() or HeldCondition() instance.
+        # 3. The condition is a previously-defined `Condition` or `HeldCondition` instance.
         if isinstance(node, ast.Name) and node.id in self.conditions:
             i = self.conditions.index(node.id)
             try:
@@ -731,7 +731,7 @@ class EVSParser(abc.ABC):
                 *args, skip_lines=skip_lines, negate=negate, end_event=end_event, restart_event=restart_event, **kwargs
             )  # This will raise the same error as below.
 
-        # 8. The condition is any() or all() called on a FlagRange of a sequence of simple skips that can be chained.
+        # 8. The condition is any() or all() called on a FlagRange or a sequence of simple skips that can be chained.
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
             if node.func.id in ("any", "all"):
                 if len(node.args) != 1:
