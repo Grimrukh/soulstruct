@@ -1141,7 +1141,6 @@ EQUIP_PARAM_GOODS_ST = {
             True,
             bool,
             "Determines if this good can be used while multiple players are together.",
-            dsr_only=True,
         ),
         FieldDisplayInfo(
             "disable_offline:1",
