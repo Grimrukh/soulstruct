@@ -376,7 +376,6 @@ DEFAULTS = {
         "isDeposit:1": 1,
         "disableMultiDropShare:1": 0,
         "oldSortId": 0,
-        "levelSyncCorrectID": 0,
     },
     "EQUIP_PARAM_PROTECTOR_ST": {
         "sortId": 0,
@@ -585,7 +584,6 @@ DEFAULTS = {
         "enable_white:1": 0,
         "enable_black:1": 0,
         "enable_multi:1": 0,
-        "enable_pvp:1": 0,
         "disable_offline:1": 0,
         "isEquip:1": 1,
         "isConsume:1": 1,
@@ -635,7 +633,6 @@ DEFAULTS = {
         "residentSpEffectId2": 0,
         "residentSpEffectId3": 0,
         "materialSetId": 0,
-        "reinforcementLevel": 0,
     },
     "REINFORCE_PARAM_PROTECTOR_ST": {
         "physicsDefRate": 1.0,

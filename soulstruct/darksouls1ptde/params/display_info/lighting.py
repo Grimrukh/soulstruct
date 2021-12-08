@@ -654,14 +654,6 @@ TONE_MAP_BANK = {
             float,
             "Smaller values will shorten the light shafts more.",
         ),
-        FieldDisplayInfo(
-            "inverseToneMapMul",
-            "InverseToneMapMultiplier",
-            False,
-            float,
-            "New parameter introduced in DSR.",
-            dsr_only=True,
-        ),
     ],
 }
 
@@ -684,14 +676,6 @@ TONE_CORRECT_BANK = {
         FieldDisplayInfo("contrastB", "ContrastBlue", True, float, "Blue channel (0-255) of tone correction contrast."),
         FieldDisplayInfo("saturation", "SaturationCorrection", True, float, "Color saturation correction value."),
         FieldDisplayInfo("hue", "HueCorrection", True, float, "Color hue correction value."),
-        FieldDisplayInfo(
-            "sfxMultiplier",
-            "VisualEffectMultiplier",
-            False,
-            float,
-            "New parameter introduced in DSR.",
-            dsr_only=True,
-        )
     ],
 }
 

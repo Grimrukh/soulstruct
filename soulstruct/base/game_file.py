@@ -125,6 +125,12 @@ class GameFile(abc.ABC):
     def pack(self, **kwargs) -> bytes:
         """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
 
+    def pack_dcx(self, **kwargs) -> bytes:
+        """Call `pack()` and apply DCX compression to binary data, if appropriate, based on `self.dcx_magic`."""
+        if self.dcx_magic:
+            return DCX(self.pack(**kwargs), magic=self.dcx_magic).pack()
+        return self.pack(**kwargs)
+
     def to_dict(self, **kwargs) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
         raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
@@ -148,11 +154,10 @@ class GameFile(abc.ABC):
         file_path = self._get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
-        if self.dcx_magic:
-            packed = DCX(self.pack(**pack_kwargs), magic=self.dcx_magic).pack()
-        else:
-            packed = self.pack(**pack_kwargs)
+        packed = self.pack_dcx(**pack_kwargs)
         if check_hash and file_path.is_file():
+            # TODO: This may always report that DCX files have changed, but decompressing the existing file to check its
+            #  real hash seems excessive?
             if get_blake2b_hash(file_path) == get_blake2b_hash(packed):
                 return  # don't write file
         create_bak(file_path)

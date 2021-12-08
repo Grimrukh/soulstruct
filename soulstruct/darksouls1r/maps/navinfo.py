@@ -76,6 +76,12 @@ Notes for functional navmesh system:
 
     - It should go without saying that breaking correspondence between the connected nodes and edges of nodes will
     cause major issues, so don't do this.
+
+Miscellaneous extra notes (made long after the above):
+
+    - MCG gates are definitely used to determine map backread. If you're near a gate that has a connection to a gate
+    that is near a connect collision ("near" being somehow determined by physical navmeshes), that map will enter
+    backread.
 """
 from __future__ import annotations
 
@@ -993,8 +999,15 @@ class MCG(GameFile):
             edge = self.edges[edge]
         elif edge not in self.edges:
             raise ValueError("Given `edge` is not an edge in this `MCG`.")
-        edge.start_node.remove_connections(nodes={edge.end_node})
-        edge.end_node.remove_connections(nodes={edge.start_node})
+        for node in self.nodes:
+            connected_nodes = []
+            connected_edges = []
+            for n, e in zip(node.connected_nodes, node.connected_edges):
+                if e is not edge:
+                    connected_nodes.append(n)
+                    connected_edges.append(e)
+            node.connected_nodes = connected_nodes
+            node.connected_edges = connected_edges
         self.edges.remove(edge)
 
     def move_in_world(
@@ -1221,10 +1234,26 @@ class NavInfo:
         aabb_index = self.mcp.aabbs.index(aabb)
         return self.navmeshes[aabb_index]
 
+    def new_node(self, translate: Vector3, connected_aabb: tp.Optional[NavmeshAABB] = None) -> GateNode:
+        """Create and return a new `GateNode` with the given `translate` and optional `connected_aabb`."""
+        node = GateNode(translate=translate, connected_aabb=connected_aabb)
+        self.mcg.nodes.append(node)
+        return node
+
+    def delete_node(self, node: tp.Union[GateNode, int]):
+        """Delete given node and any edges to it."""
+        if isinstance(node, int):
+            node = self.mcg.nodes[node]
+        elif node not in self.mcg.nodes:
+            raise ValueError("Given `node` does not appear in this `NavInfo`.")
+        for edge in [e for e in self.mcg.edges if node in {e.start_node, e.end_node}]:
+            self.mcg.delete_edge(edge)
+        self.mcg.nodes.remove(node)
+
     def connect_nodes(
         self,
-        start_node: GateNode,
-        end_node: GateNode,
+        start_node: tp.Union[GateNode, int],
+        end_node: tp.Union[GateNode, int],
         aabb: tp.Union[NavmeshAABB, str, MSBNavmesh],
         edge_indices_1=(1, 2),  # TODO: unknown purpose or good defaults
         edge_indices_2=(3, 4),  # TODO: unknown purpose or good defaults
@@ -1234,6 +1263,10 @@ class NavInfo:
 
         TODO: The unknown edge indices definitely matter to some degree, but we don't know what they index.
         """
+        if isinstance(start_node, int):
+            start_node = self.nodes[start_node]
+        if isinstance(end_node, int):
+            end_node = self.nodes[end_node]
         if end_node in start_node.connected_nodes or start_node in end_node.connected_nodes:
             raise ExistingConnectionError("Given nodes are already connected by an edge.")
         if isinstance(aabb, (str, MSBNavmesh)):
