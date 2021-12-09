@@ -1256,7 +1256,7 @@ class EVSParser(abc.ABC):
             # rule (c) not broken, since negative numbers are parsed as a UnaryOp
             # we just have to evaluate the negative number and pack it back into an ast.Constant ourselves
             n = ast.literal_eval(node.comparators[0])
-            comparator = ast.Constant(n)
+            comparator = ast.Constant(n).value
         elif isinstance(node.comparators[0], ast.Attribute):
             # rule (c) may not be broken, since global variables are parsed as ast.Attribute
             # if the right side isn't actually a global variable, _parse_attributes will fail
