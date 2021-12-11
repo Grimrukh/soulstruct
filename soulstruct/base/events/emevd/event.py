@@ -247,9 +247,9 @@ class Event(abc.ABC):
         to be logged.
         """
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event{self.event_id}")
-        function_docstring = f'""" {self.event_id}: Event {self.event_id} """'
+        function_docstring = f'"""Event {self.event_id}"""'
         function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
-        restart_type_decorator = f"@{RestartType(self.restart_type).name}\n" if self.restart_type != 0 else ""
+        restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
         function_def = self._indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import csv
 import logging
 import typing as tp
 from copy import deepcopy
@@ -270,6 +271,35 @@ class MSGDirectory(abc.ABC):
             (text_id, self.categories[category][text_id])
             for text_id in sorted(self.categories[category])[start:end]
         ]
+
+    def update_from_csv(
+        self,
+        csv_path: Path,
+        category_column: int,
+        id_column: int,
+        text_column: int,
+        skip_first_row=True,
+        delimiter=",",
+        quotechar="\"",
+        parse_newlines=True,
+    ):
+        """Update this `MSGDirectory` instance from the given CSV.
+
+        Arguments specify which columns the category names (e.g. 'RingNames'), text IDs, and text entries are in.
+        Use `skip_first_row` to indicate if a header row is present (defaults to True).
+
+        If `parse_newlines=True` (default), doubly-escaped newlines in the CSV will be replaced by actual newlines
+        (i.e., '\\n' -> '\n').
+        """
+        with Path(csv_path).open(newline="", encoding="utf-8") as f:
+            reader = csv.reader(f, delimiter=delimiter, quotechar=quotechar)
+            for i, row in enumerate(reader):
+                if i == 0 and skip_first_row:
+                    continue
+                category, text_id, text_value = row[category_column], row[id_column], row[text_column]
+                if parse_newlines:
+                    text_value = text_value.replace("\\n", "\n")
+                self[category][int(text_id)] = text_value
 
     @staticmethod
     def resolve_item_type(item_type) -> str:

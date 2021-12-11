@@ -665,7 +665,7 @@ def ClearTargetList(character: CharacterTyping):
 
 
 def AICommand(character: CharacterTyping, command_id, slot):
-    """ These instructions can be accessed in AI Lua scripts. """
+    """ The given `command_id` can be accessed in AI Lua scripts with `ai:GetEventRequest(slot)`. """
     instruction_info = (2004, 17)
     return to_numeric(instruction_info, character, command_id, slot)
 

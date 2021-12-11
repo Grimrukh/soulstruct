@@ -31,10 +31,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 _RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
-_EVENT_DOCSTRING_RE = re.compile(r"(\w+ )?([0-9]+)(:\s*.*)?", re.DOTALL)
+_EVENT_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?", re.DOTALL)
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
-_BUILTIN_NAMES = {"Condition", "EVENTS", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
+_BUILTIN_NAMES = {"Condition", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
 _GAME_IMPORT_RE = re.compile(r"^(from|import) soulstruct\.\w[\w\d]+\.events")
 
 
@@ -52,7 +52,6 @@ class EventInfo(tp.NamedTuple):
     args: dict[str, tuple[int, int]]
     arg_types: str
     arg_classes: dict[str, tp.Type[gt.GameObject]]
-    flag_name: str
     restart_type: int
     nodes: list[ast.stmt]
     description: str
@@ -162,44 +161,50 @@ class EVSParser(abc.ABC):
             ...
         """
         event_name = self._validate_event_name(node)
+        restart_type, event_id = self._parse_decorator(node)
 
         docstring = ast.get_docstring(node)
         if docstring is None:
-            raise EVSSyntaxError(node, f"No docstring given for event {event_name}. See EVS documentation.")
-        try:
-            flag_name, event_id, description = _EVENT_DOCSTRING_RE.match(docstring).group(1, 2, 3)
-        except AttributeError:
-            raise EVSSyntaxError(node, f"Invalid docstring for event {event_name}. See EVS documentation.")
+            if event_id == -1:
+                raise EVSSyntaxError(
+                    node,
+                    f"No docstring given for event {event_name}, and no event ID was given in the decorator. See EVS "
+                    f"documentation for more details."
+                )
+            description = ""
+        else:
+            try:
+                doc_event_id, description = _EVENT_DOCSTRING_RE.match(docstring).group(1, 2)
+            except AttributeError:
+                if event_id == -1:
+                    raise EVSSyntaxError(
+                        node,
+                        f"Invalid docstring for event {event_name}. Note that the docstring must start with an event "
+                        f"ID if one is not given in the decorator. See EVS documentation for more details."
+                    )
+                description = ""
+            else:
+                doc_event_id = int(doc_event_id)
+                if event_id != -1 and event_id != doc_event_id:
+                    raise EVSSyntaxError(node, f"Different event IDs were given in decorator and docstring.")
+                event_id = doc_event_id
 
-        event_id = int(event_id)
         if event_id in self.event_ids:
             raise EVSSyntaxError(node, f"Event ID {event_id} is defined multiple times in EVS script.")
         elif event_id == 0:
             if event_name.lower() not in {"event0", "constructor"}:
-                raise EVSSyntaxError(node, "Event 0 must be called CONSTRUCTOR (or 'Event0').")
+                raise EVSSyntaxError(node, "Event 0 must be called 'Constructor' (or 'Event0').")
         elif event_id == 50:
             if event_name.lower() not in {"event50", "preconstructor"}:
-                raise EVSSyntaxError(node, "Event 50 must be called PRECONSTRUCTOR (or 'Event50').")
+                raise EVSSyntaxError(node, "Event 50 must be called 'Preconstructor' (or 'Event50').")
         elif event_name.lower() in {"constructor", "preconstructor"}:
             raise EVSSyntaxError(
-                node, "Builtin event names CONSTRUCTOR and PRECONSTRUCTOR are reserved for events 0 and 50."
+                node, "Builtin event names 'Constructor' and 'Preconstructor' are reserved for events 0 and 50."
             )
 
-        flag_name = None if not flag_name else flag_name.rstrip()  # Remove trailing space.
         description = "" if not description else description.lstrip(":")  # Remove leading colon.
 
         arg_dict, arg_types, arg_classes = _parse_event_arguments(node)
-        restart_type = _parse_decorator(node)
-
-        if flag_name in self.globals:
-            if self.globals[flag_name] != event_id:
-                raise EVSSyntaxError(
-                    node,
-                    f"Event flag name '{flag_name}' for event ID {event_id} clashes with the ID of "
-                    f"a constant with the same name.",
-                )
-        elif flag_name:
-            self.script_event_flags[flag_name] = event_id  # Loaded into constants later under EVENTS enum.
 
         self.events[event_name] = EventInfo(
             name=event_name,
@@ -207,9 +212,8 @@ class EVSParser(abc.ABC):
             args=arg_dict,
             arg_types=arg_types,
             arg_classes=arg_classes,
-            flag_name=flag_name,
             restart_type=restart_type,
-            nodes=node.body[1:],  # Skips docstring.
+            nodes=node.body if docstring is None else node.body[1:],  # skip docstring, if present
             description=description.lstrip(":"),
         )
         self.event_ids.add(event_id)
@@ -261,10 +265,6 @@ class EVSParser(abc.ABC):
                     f"Invalid content: {node.__class__}. The only valid global EVS lines are "
                     f"from-imports, event script function definitions, and global name assignments.",
                 )
-
-        if self.script_event_flags:
-            # noinspection PyTypeChecker
-            self.globals["EVENTS"] = gt.Flag("EVENTS", self.script_event_flags)
 
         for event_name, event_function in self.events.items():
             self.current_event = self.events[event_name]
@@ -1108,7 +1108,7 @@ class EVSParser(abc.ABC):
         an `EvsSyntaxError` if the name is a reserved event argument (currently "slot" and "event_layers").
         """
         name = node.id
-        if name in self.current_event.args:
+        if self.current_event and name in self.current_event.args:
             if name in {"slot", "event_layers"}:
                 raise EVSSyntaxError(node, f"Cannot use reserved event argument {repr(name)}.")
             arg = EventArgumentData(
@@ -1246,13 +1246,12 @@ class EVSParser(abc.ABC):
                 node, "Comparisons must be between a name or function (left) and number (right)."
             )
 
-        if isinstance(node.comparators[0], ast.Num):
-            comparator = node.comparators[0].n
-        elif isinstance(node.comparators[0], ast.Attribute):
-            comparator = self._parse_attributes(node.comparators[0])
-        else:
+        comparator = self._parse_nodes(node.comparators[0])
+        if not isinstance(comparator, (int, float, EventArgumentData)):
             raise EVSSyntaxError(
-                node, "Comparisons must be between a name or function (left) and number (right)."
+                node,
+                f"Comparisons must be between a name or function (left) and number or event argument (right), but "
+                f"right value is {comparator}."
             )
 
         if node.ops[0].__class__ not in COMPARISON_NODES:
@@ -1261,6 +1260,50 @@ class EVSParser(abc.ABC):
             )
 
         return node.left, node.ops[0].__class__, comparator
+
+    def _parse_decorator(self, event_node: ast.FunctionDef) -> tuple[int, int]:
+        """Extract `RestartType` enum value (default is 0) and event ID (default is -1) from function decorator."""
+        decorators = event_node.decorator_list
+        if not decorators:
+            return _RESTART_TYPES["NeverRestart"], -1
+
+        if len(decorators) > 1:
+            raise EVSSyntaxError(
+                event_node,
+                f"Event function cannot have more than one decorator (restart type).\n"
+                f"Must be one of: {', '.join(_RESTART_TYPES)}",
+            )
+
+        dec_node = decorators[0]
+        if isinstance(dec_node, ast.Name):
+            name = dec_node.id
+            event_id = -1
+        elif isinstance(dec_node, ast.Call):
+            name, args, kwargs = self._parse_function_call(dec_node)
+            if kwargs or len(args) != 1 or not isinstance(args[0], int):
+                raise EVSSyntaxError(
+                    event_node,
+                    f"Event function decorator must have exactly one numeric argument (event ID).",
+                )
+            event_id = args[0]
+        else:
+            raise EVSSyntaxError(
+                event_node,
+                f"Event function decorator must be a single name, like `@NeverRestart`, or function call with an event "
+                f"ID, like `@RestartOnRest(11020100)`, not: {dec_node}.\n"
+                f"The restart type must be one of: {', '.join(_RESTART_TYPES)}",
+            )
+
+        try:
+            restart_type = _RESTART_TYPES[name]
+        except KeyError:
+            raise EVSSyntaxError(
+                event_node,
+                f"Event function decorator name is not a valid event restart type: {dec_node.id}\n"
+                f"Must be one of: {', '.join(_RESTART_TYPES)}",
+            )
+
+        return restart_type, event_id
 
     # ~~~~~~~~~~~~~~~~~~
     #  CONDITION METHODS: These provide and manage conditions that are in use by the current event.
@@ -1404,34 +1447,6 @@ def _parse_event_arguments(
     arg_dict = {name: value for name, value in zip(arg_names, _define_args(arg_types))}
 
     return arg_dict, arg_types, arg_classes
-
-
-def _parse_decorator(event_node: ast.FunctionDef) -> int:
-    """Extract `RestartType` enum value from function decorator (default is 0)."""
-    decorators = event_node.decorator_list
-    if decorators:
-        if len(decorators) > 1:
-            raise EVSSyntaxError(
-                event_node,
-                f"Event function cannot have more than one decorator (restart type).\n"
-                f"Must be one of: {', '.join(_RESTART_TYPES)}",
-            )
-        dec_node = decorators[0]
-        if not isinstance(dec_node, ast.Name):
-            raise EVSSyntaxError(
-                event_node,
-                f"Event function decorator must be a single name, not: {dec_node}.\n"
-                f"Must be one of: {', '.join(_RESTART_TYPES)}",
-            )
-        try:
-            return _RESTART_TYPES[dec_node.id]
-        except KeyError:
-            raise EVSSyntaxError(
-                event_node,
-                f"Invalid event function decorator: {dec_node.id}\n"
-                f"Must be one of: {', '.join(_RESTART_TYPES)}",
-            )
-    return _RESTART_TYPES["NeverRestart"]
 
 
 def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
