@@ -30,12 +30,15 @@ _LOGGER = logging.getLogger(__name__)
 # TODO: Support event function imports from '.common_func', including kwarg names.
 
 
+_MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
+_COMMON_FUNC_IMPORT_RE = re.compile(r"\nfrom (\.*)([\w\d_]+) +import ([\w\d_, ]+) +# *\[COMMON_FUNC] *\n")
 _RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
 _EVENT_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?", re.DOTALL)
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
 _BUILTIN_NAMES = {"Condition", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
 _GAME_IMPORT_RE = re.compile(r"^(from|import) soulstruct\.\w[\w\d]+\.events")
+_IGNORE_IMPORT_RE = re.compile(r"^import typing.*")
 
 
 EventStatementTyping = tp.Union[ast.Expr, ast.For, ast.If, ast.Assign, ast.Return]
@@ -67,6 +70,7 @@ class EVSParser(abc.ABC):
 
     tree: ast.Module
     map_name: str
+    map_base_flag: tp.Optional[int]
     script_directory: tp.Optional[Path]
     linked_offsets: list[int]
     strings_with_offsets: list[str]
@@ -76,36 +80,44 @@ class EVSParser(abc.ABC):
     instructions: dict[str, tp.Callable]
     tests: dict[str, tp.Union[tp.Callable, ConstantCondition, gt.FlagRange, gt.Character]]
     events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
+    common_func_events: dict[str, EventInfo]  # information about [COMMON_FUNC] imported events
+    event_ids: set[int]  # set of event IDs used, so duplicates can easily be spotted
 
     held_conditions: list[int]
     finished_conditions: list[int]
     script_event_flags: dict[str, int]
     current_event: tp.Optional[EventInfo]
-    event_function_strings: list[str]
+    event_function_strings: dict[str, str]  # maps function names (NOT IDs) to their numeric strings, in defined order
 
     numeric_emevd: str
 
-    def __init__(self, evs_path_or_string: tp.Union[str, Path], map_name=None, script_directory=None):
+    def __init__(self, evs_source: tp.Union[str, Path], map_name=None, script_directory=None):
         """Converts Python-like EVS code to numeric EMEVD (in `.numeric_emevd`), which can be fed to an `EMEVD` class.
 
         Args:
-            evs_path_or_string: string or Path pointing to an EVS file, or direct string input (auto-detected based on
+            evs_source: string or Path pointing to an EVS file, or direct string input (auto-detected based on
                 any newlines being present in value).
             map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
         """
 
         SET_INSTRUCTION_ARG_TYPES(self.INSTRUCTION_ARG_TYPES)
 
-        if isinstance(evs_path_or_string, Path) or "\n" not in evs_path_or_string:
-            evs_path = Path(evs_path_or_string)
+        if isinstance(evs_source, Path) or "\n" not in evs_source:
+            evs_path = Path(evs_source)
             with evs_path.open("r", encoding="utf-8") as script:
-                self.tree = ast.parse(script.read())
+                evs_string = script.read()
             self.map_name = evs_path.name.split(".")[0] if map_name is None else map_name
             self.script_directory = Path(script_directory) if script_directory else evs_path.parent
         else:
-            self.tree = ast.parse(evs_path_or_string)
+            evs_string = evs_source  # raw EVS source given
             self.map_name = map_name
             self.script_directory = Path(script_directory) if script_directory else None
+
+        if self.map_name is not None and (map_id_match := _MAP_ID_RE.match(self.map_name)):
+            area, block = map_id_match.groups()
+            self.map_base_flag = 10000000 + int(area) * 100000 + int(block) * 10000  # e.g. 11020000 for m10_02
+        else:
+            self.map_base_flag = None
 
         self.linked_offsets = []
         self.strings_with_offsets = []
@@ -127,6 +139,7 @@ class EVSParser(abc.ABC):
             and (isinstance(attr, ConstantCondition) or getattr(attr, "__module__", "").endswith("tests"))
         }
         self.events = {}  # Maps your event names to their IDs, so you can call them to initialize them.
+        self.common_func_events = {}  # Same, but for [COMMON_FUNC] imports, which are added to `events` last.
         self.event_ids = set()  # Used to ensure the same ID is not repeated.
 
         self._reset_conditions()
@@ -136,15 +149,47 @@ class EVSParser(abc.ABC):
 
         self.script_event_flags = {}
         self.current_event = None
-        self.event_function_strings = []
+        self.event_function_strings = {}
 
+        evs_string = self._import_common_funcs(evs_string)
+
+        self.tree = ast.parse(evs_string)
         self.numeric_emevd = ""
-
         self._compile_evs()
 
     def _reset_conditions(self):
         """Reset for every new event. Contains names of `Condition` and/or `HeldCondition` instances created in EVS."""
         self.conditions = [""] * self.CONDITION_COUNT
+
+    def _import_common_funcs(self, evs_string: str):
+        for common_func_import_match in re.finditer(_COMMON_FUNC_IMPORT_RE, evs_string):
+            level = len(common_func_import_match.group(1))
+            if level == 1:
+                level = 0  # single dot is the same as no dot (same directory)
+            cf_module_name = common_func_import_match.group(2)
+            cf_imported_names = [name.strip() for name in common_func_import_match.group(3).split(",")]
+            cf_module_path = self.script_directory / ("../" * level + cf_module_name.replace(".", "/") + ".py")
+            if not cf_module_path.is_file():
+                raise EVSCommonFuncImportError(
+                    cf_module_name, "", f"Cannot import missing COMMON_FUNC file: {cf_module_path}."
+                )
+            common_func_parser = self.__class__(  # force this map's base flag
+                cf_module_path, map_name=self.map_name, script_directory=self.script_directory
+            )
+            for cf_name in cf_imported_names:
+                if cf_name in self.common_func_events:
+                    raise EVSCommonFuncImportError(
+                        cf_module_name, cf_name, "Common func name imported more than once."
+                    )
+                try:
+                    self.common_func_events[cf_name] = common_func_parser.events[cf_name]
+                except KeyError:
+                    raise EVSCommonFuncImportError(
+                        cf_module_name, cf_name, "Common func name not found in parsed EVS source file."
+                    )
+
+        # Strip these imports from the EVS string to be parsed properly.
+        return re.sub(_COMMON_FUNC_IMPORT_RE, "\n", evs_string)
 
     # ~~~~~~~~~~~~~~~~~~~
     #  FIRST PASS METHODS: These scan the event functions and collect information about each script.
@@ -259,6 +304,8 @@ class EVSParser(abc.ABC):
                 self._assign_name(node)
             elif isinstance(node, ast.ClassDef):
                 continue  # Class definitions (e.g. enums) are collected from the real Python parser.
+            elif isinstance(node, ast.AnnAssign):
+                continue  # type hints are allowed and ignored
             else:
                 raise EVSSyntaxError(
                     node.lineno,
@@ -266,15 +313,19 @@ class EVSParser(abc.ABC):
                     f"from-imports, event script function definitions, and global name assignments.",
                 )
 
+        # Add common_func events in now, after local events.
+        self.events |= self.common_func_events
+        self.event_ids |= {event.id for event in self.common_func_events.values()}
+
         for event_name, event_function in self.events.items():
             self.current_event = self.events[event_name]
             self.for_vars = {}
             self._reset_conditions()
             self.finished_conditions = []
             parsed_event = self._compile_event_function(event_function)  # numeric format
-            self.event_function_strings.append("\n".join(parsed_event))
+            self.event_function_strings[event_name] = "\n".join(parsed_event)
 
-        self.numeric_emevd = "\n\n".join(self.event_function_strings)
+        self.numeric_emevd = "\n\n".join(self.event_function_strings.values())
         self.numeric_emevd += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_offsets)
         self.numeric_emevd += "\n\nstrings:\n" + "\n".join(self.strings_with_offsets)
 
@@ -1275,10 +1326,10 @@ class EVSParser(abc.ABC):
             )
 
         dec_node = decorators[0]
-        if isinstance(dec_node, ast.Name):
+        if isinstance(dec_node, ast.Name):  # e.g. just `@NeverRestart`
             name = dec_node.id
             event_id = -1
-        elif isinstance(dec_node, ast.Call):
+        elif isinstance(dec_node, ast.Call):  # e.g. `@NeverRestart(11020000)`
             name, args, kwargs = self._parse_function_call(dec_node)
             if kwargs or len(args) != 1 or not isinstance(args[0], int):
                 raise EVSSyntaxError(
@@ -1286,6 +1337,14 @@ class EVSParser(abc.ABC):
                     f"Event function decorator must have exactly one numeric argument (event ID).",
                 )
             event_id = args[0]
+            if isinstance(event_id, gt.MapFlagSuffix):
+                if self.map_base_flag is None:
+                    raise EVSSyntaxError(
+                        dec_node,
+                        f"MapFlagSuffix `{event_id}` cannot be used when map base flag is unknown. (Pass `map_name` to "
+                        f"the EVS parser explicitly if your EVS file name does not start with the usual 'mAA_BB_'.)",
+                    )
+                event_id += self.map_base_flag
         else:
             raise EVSSyntaxError(
                 event_node,
@@ -1452,7 +1511,7 @@ def _parse_event_arguments(
 def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
     for alias in node.names:
         name = alias.name
-        if _GAME_IMPORT_RE.match(name):
+        if _GAME_IMPORT_RE.match(name) or name == "typing":
             return
         try:
             module = importlib.import_module(alias.name)
@@ -1518,6 +1577,37 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
     del module
 
 
+def _import_from_common_func(
+    module_name: str, namespace: dict, script_directory: Path, names: list[str], level: int
+):
+    """Import names into given namespace dictionary."""
+    try:
+        # Try to import and reload module normally.
+        module = importlib.import_module(module_name)
+        importlib.reload(module)
+    except ImportError:
+        # Try to import module on path.
+        if script_directory is None:
+            raise EVSCommonFuncImportError(
+                module_name,
+                "",
+                "`script_directory` needed for relative import, but was not given to `EVSParser` or be detected.",
+            )
+        module_path = script_directory / ("../" * level + module_name.replace(".", "/") + ".py")
+        if not module_path.is_file():
+            raise EVSCommonFuncImportError(module_name, "", "Cannot import missing module file.")
+        module = import_arbitrary_file(module_path)
+
+    for name in names:
+        if name == "*":
+            raise EVSCommonFuncImportError(module_name, "", "Cannot star import from COMMON_FUNC module.")
+        try:
+            namespace[name] = getattr(module, name)
+        except AttributeError as ex:
+            raise EVSCommonFuncImportError(module_name, name, str(ex))
+    del module
+
+
 def _header(event_id, restart_type=0):
     return [f"{event_id}, {restart_type}"]
 
@@ -1570,6 +1660,16 @@ class EVSImportFromError(EVSError):
 
     def __init__(self, lineno, module, name, msg):
         super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}. Error: {msg}")
+
+
+class EVSCommonFuncImportError(EVSError):
+    """Raised when a [COMMON_FUNC]-tagged import cannot be completed."""
+
+    def __init__(self, module, name, msg):
+        if name == "":
+            super().__init__(0, f"Could not import COMMON_FUNC module {repr(module)}. Error: {msg}")
+        else:
+            super().__init__(0, f"Could not import {repr(name)} from COMMON_FUNC module {repr(module)}. Error: {msg}")
 
 
 class EVSNameError(EVSError):

@@ -3,6 +3,8 @@ __all__ = [
     "UNUSED_CHARACTERS",
     "CHARACTER_FFX_SOURCES",
     "WEAPON_MODELS",
+    "BONFIRE_ESDS",
+    "FOG_WALL_MODELS",
     "BEHAVIOR_SUB_ID",
     "PLAYER_WEAPON_BEHAVIOR_VARIATIONS",
     "HAS_ONE_HANDED_SPECIAL_ATTACK",
@@ -10,7 +12,6 @@ __all__ = [
     "SPECIAL_EFFECT_RANGES",
     "OBJECT_POSES",
 ]
-
 
 CHARACTER_MODELS = {
     0: "Player Character",
@@ -1430,7 +1431,6 @@ HAS_TWO_HANDED_SPECIAL_ATTACK = {
     "Obsidian Greatsword",
 }
 
-
 # My rough descriptions of various SpEffect ID ranges.
 # I've extended the ranges to 99 or 999 where obvious, but many are unused.
 # The 8000 range is likely the best range to add custom effects.
@@ -1464,7 +1464,6 @@ SPECIAL_EFFECT_RANGES = {
     (90000, 91111): "Status Flags",  # four bits toggling poison, bleed, toxic, and curse vulnerability
 }
 
-
 # Values in brackets indicate the offset of the "ground" of each pose relative to the player's position.
 OBJECT_POSES = {
     "o0500": {  # Naked male Hollow corpse
@@ -1491,6 +1490,117 @@ OBJECT_POSES = {
     },
 }
 
+# Maps `talkesd` map file stems to lists of `tXXXXXX` bonfire ESD files inside them.
+# All vanilla bonfire ESD files are identical, so this helps with modifying all of them at once.
+BONFIRE_ESDS = {
+    "m10_00_00_00": [
+        "t100000",
+        "t100001",
+        "t100002",
+        "t100010",
+    ],
+    "m10_01_00_00": [
+        "t100100",
+        "t100101",
+        "t100102",
+        "t100103",
+        "t100104",
+        "t100105",
+        "t100106",
+        "t100110",
+    ],
+    "m10_02_00_00": [
+        "t100200",
+        "t100201",
+        "t100202",
+        "t100210",
+    ],
+    "m11_00_00_00": [
+        "t110000",
+        "t110001",
+        "t110002",
+        "t110010",
+    ],
+    "m12_00_00_00": [
+        "t120000",
+        "t120001",
+        "t120002",
+        "t120010",
+    ],
+    "m12_01_00_00": [
+        "t121000",
+        "t121001",
+        "t121002",
+        "t121003",
+        "t121004",
+    ],
+    "m13_00_00_00": [
+        "t130000",
+        "t130001",
+        "t130002",
+        "t130010",
+    ],
+    "m13_01_00_00": [
+        "t131000",
+        "t131001",
+        "t131002",
+        "t131010",
+    ],
+    "m13_02_00_00": [
+        "t132000",
+        "t132001",
+        "t132002",
+        "t132010",
+    ],
+    "m14_00_00_00": [
+        "t140000",
+        "t140001",
+        "t140002",
+        "t140010",
+    ],
+    "m14_01_00_00": [
+        "t141000",
+        "t141001",
+        "t141002",
+        "t141003",
+        "t141004",
+        "t141010",
+    ],
+    "m15_00_00_00": [
+        "t150000",
+        "t150001",
+        "t150002",
+        "t150010",
+    ],
+    "m15_01_00_00": [
+        "t151000",
+        "t151001",
+        "t151002",
+        "t151010",
+    ],
+    "m16_00_00_00": [
+        "t160000",
+        "t160001",
+        "t160002",
+        "t160010",
+    ],
+    "m17_00_00_00": [
+        "t170000",
+        "t170001",
+        "t170002",
+        "t170010",
+    ],
+    "m18_00_00_00": [
+        "t180000",
+        "t180001",
+        "t180002",
+        "t180010",
+    ],
+    "m18_01_00_00": [
+        "t181000",
+        "t181001",
+    ],
+}
 
 # Maps each fog wall object ID to its matching VFX (FFX) ID, FFXBND source file name, and a description of its location.
 FOG_WALL_MODELS = {

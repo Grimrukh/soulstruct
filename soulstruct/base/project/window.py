@@ -461,6 +461,17 @@ class ProjectWindow(SmartFrame, abc.ABC):
         )
 
     def _open_console(self):
+        try:
+            import IPython
+        except ImportError:
+            self.CustomDialog(
+                title="Console Error",
+                message="Interactive console requires the `ipython` package to be installed\n"
+                        "in your Python environment.",
+            )
+            _LOGGER.info(f"Interactive console aborted as `ipython` not installed.")
+            return
+
         _LOGGER.info("Starting interactive console in new window. Note that it will load the LAST SAVED project data.")
         result = subprocess.run(
             [sys.executable, "-m", "soulstruct", "--console", str(self.project.project_root)],

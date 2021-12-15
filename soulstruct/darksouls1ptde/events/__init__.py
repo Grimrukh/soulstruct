@@ -465,8 +465,6 @@ __all__ = [
     "ArenaSetNametag3",
     "ArenaSetNametag4",
     "DisplayArenaDissolutionMessage",
-    # Special additions
-    "SendToScript",
     # Dark Souls 1 specific instructions
     "IfCharacterRegionState",
     "IfCharacterInsideRegion",

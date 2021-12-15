@@ -469,8 +469,6 @@ __all__ = [
     "DisplayArenaDissolutionMessage",
     "ArenaSetNametag5",
     "ArenaSetNametag6",
-    # Special additions
-    "SendToScript",
     # Dark Souls 1 specific instructions
     "IfCharacterRegionState",
     "IfCharacterInsideRegion",
@@ -535,6 +533,9 @@ __all__ = [
     "DisplayConcatenatedMessage",
     "Unknown_2007_13",
     "Unknown_2008_04",
+    # Special additions
+    "SendToScript",
+    "NightfallCameraResetRequest",
     # Names processed directly by EVS parser
     "NeverRestart",
     "RestartOnRest",

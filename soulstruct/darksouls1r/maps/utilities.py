@@ -32,6 +32,7 @@ def build_ffxbnd(
     ffxbnd_search_directory: Path = None,
     write_ffxbnd_path: Path = None,
     extra_ffx_sources: tp.Sequence[tuple[int, str]] = (),
+    extra_character_ffx_directory: Path = None,
     prefer_bak=True,
 ) -> BND3:
     """Iterate over all character models in given `msb` and ensure all their FFX files are present in the given FFXBND
@@ -47,7 +48,10 @@ def build_ffxbnd(
             default to the same directory as `ffxbnd_path`.
         write_ffxbnd_path (Path): path to write final FFXBND. If not given (default), uses `ffxbnd_path`.
         extra_ffx_sources (sequence of tuples): sequence of `(ffx_id, ffx_source_file)` tuples that specify extra FFX
-            files to import (e.g. for VFX events in the MSB).
+            files to import (e.g. for VFX events in the MSB). The source files can be FFXBND files to look inside, or
+            just raw unpacked FFX files (in which case, anything after their ID in the filename will be removed).
+        extra_character_ffx_directory: optional path to a directory containing loose FFX files in character model
+            subdirectories, to be used for models not on the known path.
         prefer_bak (bool): if True (default), look for '.bak' source files first, in case the FFXBNDs have been modded
             and some vanilla FFX entries removed.
     """
@@ -79,10 +83,30 @@ def build_ffxbnd(
     for chr_model in msb.models.Characters:
         model_id = int(chr_model.name[1:])
         if model_id not in CHARACTER_FFX_SOURCES:
+            if extra_character_ffx_directory is not None:
+                chr_dir = (extra_character_ffx_directory / chr_model.name).resolve()
+                if chr_dir.is_dir():
+                    for ffx_path in chr_dir.glob("*.ffx"):
+                        if ffx_id_match := re.match(r"f(\d+).*\.ffx", ffx_path.name):
+                            ffx_file_name = f"f{ffx_id_match.group(1)}.ffx"
+                            source_entry = BND3.BinderEntry(
+                                data=ffx_path.read_bytes(),
+                                entry_id=next_id,
+                                path=f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{ffx_file_name}",
+                                flags=2,
+                            )
+                            # TODO: Should log, not print.
+                            print(f"    Added loose FFX for {chr_model.name}: {source_entry.id} ({ffx_file_name})")
+                            next_id += 1
+                            ffxbnd.add_entry(source_entry)
+                            existing_ffx_files.add(ffx_file_name)
+                        else:
+                            _LOGGER.warning(f"Ignoring non-FFX file in loose character FFX folder: {ffx_path}")
+                    continue
             _LOGGER.warning(f"FFX sources for character model {chr_model.name} are not known.")
             continue  # model not handled
         for ffx_id, source_file_name in CHARACTER_FFX_SOURCES[model_id].items():
-            ffx_file_name = f"f{ffx_id:07d}.ffx"
+            ffx_file_name = f"f{ffx_id:07d}.ffx"  # ID can still be longer than seven digits
             if ffx_file_name in existing_ffx_files:
                 continue
             source_path = ffxbnd_search_directory / f"{source_file_name}.ffxbnd.dcx"
@@ -108,23 +132,38 @@ def build_ffxbnd(
             existing_ffx_files.add(ffx_file_name)
 
     for extra_ffx_id, extra_source_file_name in extra_ffx_sources:
-        ffx_file_name = f"f{extra_ffx_id:07d}.ffx"
+        extra_source_path = Path(extra_source_file_name)
+        ffx_file_name = f"f{extra_ffx_id:07d}.ffx"  # ID can still be longer than seven digits
         if ffx_file_name in existing_ffx_files:
             continue
-        source_path = ffxbnd_search_directory / f"{extra_source_file_name}.ffxbnd.dcx"
-        if prefer_bak:
-            if (bak_path := source_path.with_suffix(source_path.suffix + ".bak")).is_file():
-                source_path = bak_path
-        if not source_path.is_file():
-            _LOGGER.error(f"Could not find FFX source file '{source_path}' for extra FFX {extra_ffx_id}.")
-            continue
-        source_bnd = open_sources.setdefault(extra_source_file_name, BND3(source_path))
-        try:
-            source_entry = source_bnd.entries_by_basename[ffx_file_name]
-        except KeyError:
-            _LOGGER.error(f"Could not find extra FFX file '{ffx_file_name}' in given source BND '{source_path}'.")
-            continue
-        source_entry.id = next_id
+        if extra_source_path.name.startswith("FRPG"):
+            if extra_source_path.is_absolute():
+                source_path = extra_source_path
+            else:
+                source_path = ffxbnd_search_directory / f"{extra_source_path.name.split('.')[0]}.ffxbnd.dcx"
+            if prefer_bak:
+                if (bak_path := source_path.with_suffix(source_path.suffix + ".bak")).is_file():
+                    source_path = bak_path
+            if not source_path.is_file():
+                _LOGGER.error(f"Could not find FFX source file '{source_path}' for extra FFX {extra_ffx_id}.")
+                continue
+            source_bnd = open_sources.setdefault(extra_source_file_name, BND3(source_path))
+            try:
+                source_entry = source_bnd.entries_by_basename[ffx_file_name]
+            except KeyError:
+                _LOGGER.error(f"Could not find extra FFX file '{ffx_file_name}' in given source BND '{source_path}'.")
+                continue
+            source_entry.id = next_id
+        elif extra_source_path.suffix == ".ffx":
+            source_entry = BND3.BinderEntry(
+                data=extra_source_path.read_bytes(),
+                entry_id=next_id,
+                path=f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{ffx_file_name}",
+                flags=2,
+            )
+        else:
+            raise ValueError(f"Invalid extra FFX/FFXBND source file name: {extra_source_file_name}")
+
         next_id += 1
         ffxbnd.add_entry(source_entry)
         existing_ffx_files.add(ffx_file_name)

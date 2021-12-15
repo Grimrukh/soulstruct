@@ -1077,11 +1077,6 @@ class InstructionDecompiler(abc.ABC):
     def _2009_06(self):
         pass
 
-    @parse_parameters("SendToScript")
-    def _2009_07(self, int1, int2, float1, float2):
-        """Special function added by Horkrux for DarkSoulsScripting communication."""
-        pass
-
     # ~~~~~~~~~~~~~ #
     # ~~~ SOUND ~~~ #
     # ~~~~~~~~~~~~~ #

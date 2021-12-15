@@ -438,8 +438,6 @@ __all__ = [
     "DisplayArenaDissolutionMessage",
     "ArenaSetNametag5",
     "ArenaSetNametag6",
-    # Special additions
-    "SendToScript",
 
     # DS1PTDE and DS1R
     "IfCharacterRegionState",
@@ -506,6 +504,10 @@ __all__ = [
     "DisplayConcatenatedMessage",
     "Unknown_2007_13",
     "Unknown_2008_04",
+
+    # Special additions
+    "SendToScript",
+    "NightfallCameraResetRequest",
 ]
 
 from soulstruct.base.events.emevd.numeric import to_numeric
@@ -661,14 +663,6 @@ def FadeInCharacter(character: CharacterTyping, duration: float):
     return to_numeric(instruction_info, character, duration)
 
 
-"""
-[50] - UNKNOWN 2004[50] (DS1R ONLY)
- [51] - UNKNOWN 2004[51] (DS1R ONLY)
-      i  Unknown [ENUM: BOOL]
- [52] - UNKNOWN 2004[52] (DS1R ONLY)
-"""
-
-
 def Unknown_2004_50():
     instruction_info = (2004, 50)
     return to_numeric(instruction_info)
@@ -706,4 +700,19 @@ def Unknown_2007_13(arg1: int):
 
 def Unknown_2008_04():
     instruction_info = (2008, 4)
+    return to_numeric(instruction_info)
+
+
+# SPECIAL ADDITIONS
+
+
+def SendToScript(int1: int, int2: int, float1: float, float2: float):
+    """Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`."""
+    instruction_info = (2009, 7)
+    return to_numeric(instruction_info, int1, int2, float1, float2)
+
+
+def NightfallCameraResetRequest():
+    """Special instruction added by Meowmaritus for camera manipulation in Nightfall."""
+    instruction_info = (2009, 12)
     return to_numeric(instruction_info)

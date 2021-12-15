@@ -150,3 +150,13 @@ class InstructionDecompiler(_BaseDecompiler):
     @parse_parameters("Unknown_2008_04")
     def _2008_04(self):
         pass
+
+    @parse_parameters("SendToScript")
+    def _2009_07(self, int1, int2, float1, float2):
+        """Special function added by Horkrux for DarkSoulsScripting communication."""
+        pass
+
+    @parse_parameters("NightfallCameraResetRequest")
+    def _2009_12(self):
+        """Special function added by Meowmaritus for Nightfall camera manipulation."""
+        pass

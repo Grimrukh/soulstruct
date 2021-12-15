@@ -444,9 +444,6 @@ __all__ = [
     "ArenaSetNametag3",
     "ArenaSetNametag4",
     "DisplayArenaDissolutionMessage",
-
-    # Special additions
-    "SendToScript",
 ]
 
 import logging
@@ -3217,12 +3214,3 @@ def ArenaSetNametag4(player_id: int):
 def DisplayArenaDissolutionMessage(text_id):
     instruction_info = (2007, 9)
     return to_numeric(instruction_info, text_id)
-
-
-# SPECIAL ADDITIONS
-
-
-def SendToScript(int1: int, int2: int, float1: float, float2: float):
-    """Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`."""
-    instruction_info = (2009, 7)
-    return to_numeric(instruction_info, int1, int2, float1, float2)

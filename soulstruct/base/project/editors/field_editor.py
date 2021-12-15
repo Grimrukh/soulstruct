@@ -577,7 +577,11 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
         self.refresh_entries(reset_field_display=True)  # TODO: this argument is the only difference. Better way?
         last_selected_entry_id = self.remembered_ids.get(self.active_category, None)
         if last_selected_entry_id is not None:
-            self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+            try:
+                self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+            except ValueError:
+                self.remembered_ids.pop(self.active_category)  # entry ID is invalid
+                self.entry_canvas.yview_moveto(0)
         else:
             # Leave no entry selected.
             self.entry_canvas.yview_moveto(0)
