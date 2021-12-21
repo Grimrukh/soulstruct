@@ -1932,7 +1932,8 @@ def SetLockedCameraSlot(game_map: MapTyping, camera_slot: int):
 
 def HellkiteBreathControl(character: CharacterTyping, obj: ObjectTyping, animation_id):
     """ I don't recommend you mess with this. It seems to be used to create the fire VFX and damaging effect when the
-    Hellkite breathes fire on the bridge. It may simply trigger a certain behavior params ID.
+    Hellkite breathes fire on the bridge, with (otherwise invisible) object model o1060. It may simply trigger a certain
+    behavior param ID.
 
     Unclear whether the animation applies to the character or object (which is probably an invisible "burning" plane).
     """

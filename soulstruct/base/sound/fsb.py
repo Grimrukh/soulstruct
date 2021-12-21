@@ -23,7 +23,7 @@ def tag(tag_name: str, value: tp.Any = ""):
 
 
 def new_guid() -> str:
-    return "<guid>" + str(uuid.uuid4()) + "</guid>"
+    return f"<guid>{{{str(uuid.uuid4())}}}</guid>"
 
 
 @unique
@@ -63,11 +63,11 @@ class FSBSampleMode(IntEnum):
 
 
 class FSBSampleHeader(BinaryObject):
-    """A representation of wavetable data that is written to the FSB file."""
+    """Wavetable data that is written to the FSB file."""
 
     STRUCT = BinaryStruct(
         ("total_size", "H"),
-        ("_name", "30s"),
+        ("__name", "30s"),
         ("length", "I"),
         ("compressed_length", "I"),
         ("loop_start", "I"),
@@ -86,6 +86,7 @@ class FSBSampleHeader(BinaryObject):
     )
 
     total_size: int
+    __name: bytes
     name: str
     length: int
     compressed_length: int
@@ -103,10 +104,18 @@ class FSBSampleHeader(BinaryObject):
     varvol: int
     varpan: int
 
-    def unpack(self, reader: BinaryReader):
-        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
-        self.name = kwargs.pop("_name").rstrip(b"\0").decode()
-        self.set(**kwargs)
+    @property
+    def name(self) -> str:
+        return self.__name.rstrip(b"\0").decode()
+
+    @name.setter
+    def name(self, value: str):
+        if len(value) > 29:
+            raise ValueError(f"`FSBSampleHeader.name` must be 29 characters or less: {value}")
+        self.__name = value.rstrip("\0").encode() + b"\0"
+
+    unpack = BinaryObject.default_unpack
+    pack = BinaryObject.default_pack
 
     def to_xml_string(self, sample_path: Path = None) -> list[str]:
         """Convert FSB sample header to XML string for use in an FMOD Designer Project file (FDP).
@@ -283,6 +292,7 @@ class FSB(GameFile):
 
     def pack(self, **kwargs) -> bytes:
         """TODO"""
+        raise ValueError("FSB pack not implemented.")
 
     def __repr__(self):
         return (

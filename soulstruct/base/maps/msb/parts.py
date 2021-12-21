@@ -637,9 +637,9 @@ class MSBCollision(MSBPart, abc.ABC):
 
     @play_region_id.setter
     def play_region_id(self, value):
-        if self._stable_footing_flag != 0:
+        if value != 0 and self._stable_footing_flag != 0:
             raise InvalidFieldValueError(
-                "Cannot set 'play_region_id' to a non-zero value while `stable_footing_flag` is non-zero."
+                f"Cannot set 'play_region_id' to a non-zero value ({value}) while `stable_footing_flag` is non-zero."
             )
         if not isinstance(value, int) or value <= -10:
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")

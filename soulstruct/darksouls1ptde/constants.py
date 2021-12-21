@@ -11,6 +11,7 @@ __all__ = [
     "HAS_TWO_HANDED_SPECIAL_ATTACK",
     "SPECIAL_EFFECT_RANGES",
     "OBJECT_POSES",
+    "HELLKITE_BRIDGE_FIRE_FFX",
 ]
 
 CHARACTER_MODELS = {
@@ -1765,3 +1766,21 @@ FOG_WALL_MODELS = {
     8952: (81805, "FRPG_SfxBnd_m18_01", "Asylum checkpoint"),  # before Oscar
     8953: (81806, "FRPG_SfxBnd_m18_01", "Stray Demon exit"),  # in front of ladder
 }
+
+
+HELLKITE_BRIDGE_FIRE_FFX = (
+    14010,
+    14011,
+    14015,
+    14025,
+    14035,
+    14040,
+    14045,
+    14120,
+    14130,
+    14151,
+    14152,
+    14153,
+    14154,
+    14162,
+)

@@ -67,7 +67,11 @@ class GameFile(abc.ABC):
                 self.path = Path(file_source)
                 if self.path.suffix == ".json":
                     with self.path.open("r") as j:
-                        self.load_dict(json.load(j))
+                        try:
+                            json_dict = json.load(j)
+                        except json.JSONDecodeError as ex:
+                            raise ValueError(f"Encountered JSON decode error in file {self.path}: {ex}")
+                        self.load_dict(json_dict)
                         return
             if isinstance(file_source, (str, Path, bytes, io.BufferedIOBase, BinderEntry)):
                 reader = BinaryReader(file_source)
