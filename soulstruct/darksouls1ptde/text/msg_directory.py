@@ -1,6 +1,7 @@
 __all__ = ["MSGDirectory", "NEW_FMG_NAMES"]
 
 from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory
+from soulstruct.containers.bnd import BND3
 from soulstruct.utilities.misc import BiDict
 
 from .fmg import FMG
@@ -10,6 +11,7 @@ class MSGDirectory(_BaseMSGDirectory):
     IS_DCX = False
 
     FMG_CLASS = FMG
+    MSGBND_CLASS = BND3
 
     _MSGBND_INDEX_NAMES = BiDict(
         (1, "Subtitles"),

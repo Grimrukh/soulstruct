@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import abc
-import json
 import logging
 import typing as tp
 from pathlib import Path
 
 from soulstruct.containers.bnd import BaseBND
+from soulstruct.utilities.files import read_json, write_json
 
 from .paramdef import ParamDefBND
 
@@ -104,6 +104,7 @@ class GameParamBND(BaseBND, abc.ABC):
                     f"Binder entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP."
                 )
             self._entries.append(entry)
+            entry_ids.add(entry.id)
             p = self.params[entry.path] = param
             # Preferential nickname source order:
             #     `self.PARAM_NICKNAMES[BinderEntry.stem]`, `p.nickname`, `BinderEntry.stem`
@@ -138,8 +139,7 @@ class GameParamBND(BaseBND, abc.ABC):
         manifest_path = directory / "gameparam_manifest.json"
         if not manifest_path.is_file():
             raise FileNotFoundError(f"Could not find GameParamBND manifest file '{manifest_path}'.")
-        with manifest_path.open("r") as f:
-            manifest = json.load(f)
+        manifest = read_json(manifest_path)
         for field, value in self.get_manifest_header(manifest).items():
             if not clear_old_data:
                 if (old_value := getattr(self, field)) != value:
@@ -154,8 +154,7 @@ class GameParamBND(BaseBND, abc.ABC):
             entry_ids = set(self.entries_by_id.keys())
         for json_name in manifest["entries"]:
             try:
-                with (directory / json_name).open("r") as f:
-                    param_dict = json.load(f)
+                param_dict = read_json(directory / json_name, encoding="shift_jis")
             except FileNotFoundError:
                 raise FileNotFoundError(f"Could not find Param JSON file '{directory / json_name}'.")
             for field in ("entry_id", "path", "flags", "data"):
@@ -198,12 +197,10 @@ class GameParamBND(BaseBND, abc.ABC):
             }
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if param.nickname is None else param.nickname)
             json_name = nickname + ".json"
-            with (directory / json_name).open("w", encoding="shift-jis") as f:
-                json.dump(param_dict, f, indent=4)
+            write_json(directory / json_name, param_dict, encoding="shift-jis")
             manifest["entries"].append(json_name)
 
-        with (directory / "gameparam_manifest.json").open("w") as f:
-            json.dump(manifest, f, indent=4)
+        write_json(directory / "gameparam_manifest.json", manifest)
 
     def get_param(self, param_nickname) -> Param:
         if param_nickname not in self.PARAM_TYPES:

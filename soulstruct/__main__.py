@@ -17,7 +17,6 @@ python -m soulstruct [source]
     [--fileLogLevel]
 """
 import argparse
-import json
 import logging
 from pathlib import Path
 
@@ -39,6 +38,7 @@ else:
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
 from soulstruct.config import DEFAULT_PROJECT_PATH
 from soulstruct.games import get_game
+from soulstruct.utilities.files import read_json
 from soulstruct.utilities.game_selector import GameSelector
 from soulstruct.utilities.text import word_wrap
 
@@ -125,8 +125,7 @@ Lighting = None
 def get_existing_project_game(project_path: str):
     project_path = Path(project_path)
     if project_path.is_dir() and (project_path / "project_config.json").is_file():
-        with (project_path / "project_config.json").open("r") as j:
-            project_config = json.load(j)
+        project_config = read_json(project_path / "project_config.json")
         if game_name := project_config.get("GameName", ""):
             return get_game(game_name)
     return None
