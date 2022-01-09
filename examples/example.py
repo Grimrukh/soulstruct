@@ -52,7 +52,7 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
     """ 11005100: Slime ambushes. Now takes two region triggers rather than one. """
     if not THIS_SLOT_FLAG:
         DisableGravity(slime)
-        DisableCollision(slime)
+        DisableMapCollision(slime)
         if trigger_region_2 == 0:
             Await(trigger_region_1 or IsAttacked(slime, PLAYER))
         else:
@@ -60,5 +60,5 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
         Wait(delay)
 
     EnableGravity(slime)
-    EnableCollision(slime)
+    EnableMapCollision(slime)
     ResetStandbyAnimationSettings(slime)

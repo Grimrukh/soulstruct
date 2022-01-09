@@ -22,10 +22,10 @@ def Constructor():
     DeleteVFX(1211999, erase_root_only=False)
     DisableObject(1211986)
     DeleteVFX(1211987, erase_root_only=False)
-    DisableCollision(1213061)
+    DisableMapCollision(1213061)
     SkipLinesIfFlagOff(2, 11210539)
-    EnableCollision(1213061)
-    DisableCollision(1213060)
+    EnableMapCollision(1213061)
+    DisableMapCollision(1213060)
     RunEvent(11215090)
     RunEvent(11215091)
     RunEvent(11215092)
@@ -57,7 +57,7 @@ def Constructor():
     DeleteVFX(1211891, erase_root_only=False)
     DisableObject(1211892)
     DeleteVFX(1211893, erase_root_only=False)
-    DisableCollision(1213001)
+    DisableMapCollision(1213001)
     SkipLines(7)
     RunEvent(11215010)
     RunEvent(11215011)
@@ -87,7 +87,7 @@ def Constructor():
     SkipLinesIfConditionTrue(3, 1)
     DisableObject(1211690)
     DeleteVFX(1211691, erase_root_only=False)
-    DisableCollision(1213001)
+    DisableMapCollision(1213001)
     SkipLinesIfFlagOn(8, 11210004)
     RunEvent(11215060)
     RunEvent(11215061)
@@ -789,7 +789,7 @@ def Event11215013():
     EnableFlag(11210030)
     EnableAI(1210820)
     EnableBossHealthBar(1210820, name=4100, slot=0)
-    EnableCollision(1213001)
+    EnableMapCollision(1213001)
 
 
 def Event11215014():
@@ -841,7 +841,7 @@ def Event11210001():
     DeleteVFX(1211891, erase_root_only=True)
     DisableObject(1211892)
     DeleteVFX(1211893, erase_root_only=True)
-    DisableCollision(1213001)
+    DisableMapCollision(1213001)
     Wait(17.0)
     DisableBackread(1210820)
     EnableBackread(6720)
@@ -1090,7 +1090,7 @@ def Event11215063():
     EnableAI(1210401)
     DisableInvincibility(1210401)
     EnableBossHealthBar(1210401, name=4510, slot=0)
-    EnableCollision(1213001)
+    EnableMapCollision(1213001)
 
 
 def Event11215064():
@@ -1148,7 +1148,7 @@ def Event11210005():
     KillBoss(1210401)
     DisableObject(1211690)
     DeleteVFX(1211691, erase_root_only=True)
-    DisableCollision(1213001)
+    DisableMapCollision(1213001)
 
 
 def Event11210340():
@@ -1997,13 +1997,13 @@ def Event11210140():
 
 def Event11210170(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 11210170: Event 11210170 """
-    DisableCollision(arg_4_7)
+    DisableMapCollision(arg_4_7)
     SkipLinesIfNotEqual(1, left=arg_0_3, right=11215220)
     IfAllPlayersOutsideRegion(1, region=1212100)
     IfCharacterInsideRegion(1, PLAYER, region=arg_8_11)
     IfFlagOn(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    EnableCollision(arg_4_7)
+    EnableMapCollision(arg_4_7)
     SkipLinesIfNotEqual(3, left=arg_0_3, right=11215220)
     IfCharacterInsideRegion(7, PLAYER, region=1212100)
     IfTimeElapsed(7, 2.0)
@@ -2768,8 +2768,8 @@ def Event11210535():
     DisableCharacter(1210402)
     EnableObject(1211690)
     CreateVFX(1211691)
-    EnableCollision(1213061)
-    DisableCollision(1213060)
+    EnableMapCollision(1213061)
+    DisableMapCollision(1213060)
 
 
 def Event11210544():

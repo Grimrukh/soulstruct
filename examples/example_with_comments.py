@@ -240,7 +240,7 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
     # away from the slime to despawn it, then run back without reloading.
     if not THIS_SLOT_FLAG:
         DisableGravity(slime)
-        DisableCollision(slime)
+        DisableMapCollision(slime)
         if trigger_region_2 == 0:
             # Nested IF! Comparison test! Look at the verbose result. Anything with a value can be used in a numeric
             # comparison, but it's generally only used to query event arguments, because comparing two predefined
@@ -257,7 +257,7 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
         Wait(delay)
 
     EnableGravity(slime)
-    EnableCollision(slime)
+    EnableMapCollision(slime)
     ResetStandbyAnimationSettings(slime)
 
 

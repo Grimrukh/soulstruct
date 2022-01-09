@@ -23,7 +23,7 @@ def Constructor():
     SkipLinesIfClient(2)
     DisableObject(1501994)
     DeleteVFX(1501995, erase_root_only=False)
-    DisableCollision(1503210)
+    DisableMapCollision(1503210)
     DisableObject(1501800)
     DisableObject(1501801)
     DisableObject(1501802)
@@ -40,21 +40,21 @@ def Constructor():
     EndOfAnimation(1501790, 1)
     SkipLinesIfFlagOff(1, 11500812)
     EndOfAnimation(1501790, 2)
-    DisableCollision(1503200)
-    DisableCollision(1503201)
-    DisableCollision(1503202)
+    DisableMapCollision(1503200)
+    DisableMapCollision(1503201)
+    DisableMapCollision(1503202)
     SkipLinesIfFlagOff(3, 11500821)
     EnableObject(1501801)
     EndOfAnimation(1501801, 5)
-    EnableCollision(1503200)
+    EnableMapCollision(1503200)
     SkipLinesIfFlagOff(3, 11500822)
     EnableObject(1501802)
     EndOfAnimation(1501802, 6)
-    EnableCollision(1503201)
+    EnableMapCollision(1503201)
     SkipLinesIfFlagOff(3, 11500823)
     EnableObject(1501803)
     EndOfAnimation(1501803, 7)
-    EnableCollision(1503202)
+    EnableMapCollision(1503202)
     SkipLinesIfFlagOff(21, 11500100)
     SkipLinesIfFlagOn(10, 11500101)
     EnableNavmeshType(1503100, NavmeshType.Wall)
@@ -746,9 +746,9 @@ def Event11505353():
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionFalse(2, 1)
-    DisableCollision(1503000)
+    DisableMapCollision(1503000)
     SkipLines(1)
-    EnableCollision(1503000)
+    EnableMapCollision(1503000)
     EndIfFinishedConditionTrue(3)
     IfDoesNotHaveTAEEvent(4, 1500800, tae_event_id=400)
     IfDoesNotHaveTAEEvent(4, 1500800, tae_event_id=300)
@@ -776,7 +776,7 @@ def Event11500790():
     EnableObject(1501800)
     ForceAnimation(1501800, 0)
     Wait(1.5)
-    EnableCollision(1503210)
+    EnableMapCollision(1503210)
     Wait(3.5)
     WaitForNetworkApproval(max_seconds=10.0)
     SkipLinesIfFlagOn(2, 11505210)
@@ -982,7 +982,7 @@ def Event11500798():
 
 def Event11500700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: int, arg_20_23: int):
     """ 11500700: Event 11500700 """
-    DisableCollision(1503210)
+    DisableMapCollision(1503210)
     ForceAnimation(arg_16_19, 1)
     CreateHazard(
         arg_0_3,
@@ -1013,7 +1013,7 @@ def Event11500750(
     arg_28_31: int,
 ):
     """ 11500750: Event 11500750 """
-    DisableCollision(1503210)
+    DisableMapCollision(1503210)
     EnableFlag(arg_24_27)
     EnableObject(arg_4_7)
     DisableObject(arg_28_31)
@@ -1029,7 +1029,7 @@ def Event11500750(
         repetition_time=0.20000000298023224,
     )
     ForceAnimation(arg_4_7, arg_8_11, wait_for_completion=True)
-    EnableCollision(arg_12_15)
+    EnableMapCollision(arg_12_15)
     RemoveObjectFlag(arg_0_3)
     DisableFlag(arg_20_23)
 

@@ -105,12 +105,12 @@ __all__ = [
     "SetEventState",
     "StopEvent",
     "RestartEvent",
-    "SetCollisionState",
-    "EnableCollision",
-    "DisableCollision",
-    "SetCollisionBackreadMaskState",
-    "EnableCollisionBackreadMask",
-    "DisableCollisionBackreadMask",
+    "SetMapCollisionState",
+    "EnableMapCollision",
+    "DisableMapCollision",
+    "SetMapCollisionBackreadMaskState",
+    "EnableMapCollisionBackreadMask",
+    "DisableMapCollisionBackreadMask",
     "AwardItemLot",
     "AwardItemLotToHostOnly",
     "RemoveItemFromPlayer",
@@ -1140,37 +1140,37 @@ def RestartEvent(event_id, slot=0):
 # Collisions
 
 
-def SetCollisionState(collision: CollisionTyping, state: bool):
+def SetMapCollisionState(collision: CollisionTyping, state: bool):
     instruction_info = (2011, 1)
     return to_numeric(instruction_info, collision, state)
 
 
-def EnableCollision(collision: CollisionTyping):
+def EnableMapCollision(collision: CollisionTyping):
     """Enable a collision (i.e. hitbox). The ID is specified in the MSB. Note that a Collision doesn't have to be solid
     ground, but could be anything triggered by collision, such as a kill plane (which this is often used to disable).
     """
-    return SetCollisionState(collision, True)
+    return SetMapCollisionState(collision, True)
 
 
-def DisableCollision(collision: CollisionTyping):
+def DisableMapCollision(collision: CollisionTyping):
     """Disable a collision (i.e. hitbox). The ID is specified in the MSB. Note that a Collision doesn't have to be solid
     ground, but could be anything triggered by collision, such as a kill plane (which this is often used to disable).
     """
-    return SetCollisionState(collision, False)
+    return SetMapCollisionState(collision, False)
 
 
-def SetCollisionBackreadMaskState(collision: CollisionTyping, state: bool):
+def SetMapCollisionBackreadMaskState(collision: CollisionTyping, state: bool):
     """ Unused. """
     instruction_info = (2011, 2)
     return to_numeric(instruction_info, collision, state)
 
 
-def EnableCollisionBackreadMask(collision: CollisionTyping):
-    return SetCollisionBackreadMaskState(collision, True)
+def EnableMapCollisionBackreadMask(collision: CollisionTyping):
+    return SetMapCollisionBackreadMaskState(collision, True)
 
 
-def DisableCollisionBackreadMask(collision: CollisionTyping):
-    return SetCollisionBackreadMaskState(collision, False)
+def DisableMapCollisionBackreadMask(collision: CollisionTyping):
+    return SetMapCollisionBackreadMaskState(collision, False)
 
 
 # ITEMS

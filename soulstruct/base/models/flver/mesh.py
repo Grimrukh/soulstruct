@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["FaceSetFlags", "FaceSet", "Mesh"]
@@ -49,7 +49,7 @@ class FaceSet(BinaryObject):
     triangle_strip: bool
     cull_back_faces: bool
     unk_x06: int
-    vertex_indices: tp.List[int]
+    vertex_indices: list[int]
 
     def unpack(self, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int):
         face_set = reader.unpack_struct(self.STRUCT)
@@ -91,7 +91,7 @@ class FaceSet(BinaryObject):
             raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
         writer.pack(fmt, *self.vertex_indices)
 
-    def get_face_counts(self, allow_primitive_restarts: bool) -> tp.Tuple[int, int]:
+    def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
         if self.triangle_strip:
             true_face_count = 0
             total_face_count = 0
@@ -115,7 +115,7 @@ class FaceSet(BinaryObject):
     def has_flag(self, flag: FaceSetFlags):
         return flag.has_flag(self.flags)
 
-    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> tp.List[int]:
+    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> list[int]:
         """Convert triangle strip to triangle list (i.e. every triangle is a separate vertex index triplet).
 
         Returns a copy of `self.vertex_indices` if `self.triangle_strip=False` already.
@@ -142,12 +142,12 @@ class FaceSet(BinaryObject):
 
     def get_triangles(
         self, allow_primitive_restarts: bool, include_degenerate_faces=False
-    ) -> tp.List[tp.Tuple[int, int, int]]:
+    ) -> list[tuple[int, int, int]]:
         """Get triangle list and return the triplets as tuples inside a list."""
         tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
         return [(tri[i], tri[i + 1], tri[i + 2]) for i in range(0, len(tri), 3)]
 
-    def get_connected_vertex_indices(self, vertex_index: int) -> tp.Set[int]:
+    def get_connected_vertex_indices(self, vertex_index: int) -> set[int]:
         """Find all vertices connected to the given `vertex_index`, including `vertex_index` itself."""
         triangles = self.get_triangles(allow_primitive_restarts=False, include_degenerate_faces=False)
         connected = {vertex_index}
@@ -157,7 +157,7 @@ class FaceSet(BinaryObject):
         return connected
 
     @classmethod
-    def from_triangles(cls, triangles: tp.List[tp.Tuple[int, int, int], ...], cull_back_faces=True):
+    def from_triangles(cls, triangles: list[tuple[int, int, int], ...], cull_back_faces=True):
         """Create a `FaceSet` with `triangle_strip=False` from a list of three-index triangle tuples.
 
         TODO: Currently sets `flags=0` and `unk_x06=0`, which is correct so far in my usage.
@@ -210,13 +210,13 @@ class Mesh(BinaryObject):
     default_bone_index: int
     bounding_box: tp.Optional[BoundingBox]
 
-    bone_indices: tp.List[int]
-    face_sets: tp.List[FaceSet]
-    vertex_buffers: tp.List[VertexBuffer]
-    vertices: tp.List[Vertex]
+    bone_indices: list[int]
+    face_sets: list[FaceSet]
+    vertex_buffers: list[VertexBuffer]
+    vertices: list[Vertex]
 
-    _face_set_indices: tp.Optional[tp.List[int]]
-    _vertex_buffer_indices: tp.Optional[tp.List[int]]
+    _face_set_indices: tp.Optional[list[int]]
+    _vertex_buffer_indices: tp.Optional[list[int]]
 
     invalid_vertex_size: bool
 
@@ -256,7 +256,7 @@ class Mesh(BinaryObject):
 
         self.set(**mesh)
 
-    def assign_face_sets(self, face_sets: tp.Dict[int, FaceSet]):
+    def assign_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
         if self._face_set_indices is None:
             raise ValueError("Tried to call `assign_face_sets()` on a `Mesh` more than once.")
@@ -269,7 +269,7 @@ class Mesh(BinaryObject):
             self.face_sets.append(face_sets.pop(i))
         self._face_set_indices = None
 
-    def assign_vertex_buffers(self, vertex_buffers: tp.Dict[int, VertexBuffer], layouts: tp.List[BufferLayout]):
+    def assign_vertex_buffers(self, vertex_buffers: dict[int, VertexBuffer], layouts: list[BufferLayout]):
         self.vertex_buffers = []
         if self._vertex_buffer_indices is None:
             raise ValueError("Tried to call `assign_vertex_buffers()` on a `Mesh` more than once.")
@@ -300,7 +300,7 @@ class Mesh(BinaryObject):
         self,
         reader: BinaryReader,
         vertex_data_offset: int,
-        layouts: tp.List[BufferLayout],
+        layouts: list[BufferLayout],
         uv_factor: int,
     ):
         self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].vertex_count)]

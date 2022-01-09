@@ -1,15 +1,13 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 __all__ = ["BaseBND", "BND3", "BND4"]
 
 import abc
 import logging
 import typing as tp
 
+from soulstruct.base.binder_entry import BinderEntryHeader, BinderEntry
+from soulstruct.containers.base import BaseBinder, BinderHashTable, BinderFlags
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter
-
-from soulstruct.containers.base import BaseBinder, BinderHashTable
-from soulstruct.containers.entry import BinderEntryHeader, BinderEntry
-from soulstruct.containers.flags import *
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +32,7 @@ class BND3(BaseBND):
         "8x",
     )
 
-    EXTRA_MANIFEST_FIELDS = ()  # nothing
+    # No extra `MANIFEST_FIELDS`.
 
     def unpack_header(self, reader: BinaryReader) -> int:
         self.big_endian = reader.unpack_value("?", offset=0xD)
@@ -95,7 +93,7 @@ class BND3(BaseBND):
 
         return writer.finish()
 
-    def get_json_header(self) -> tp.Dict[str, tp.Any]:
+    def get_json_header(self) -> dict[str, tp.Any]:
         return {
             "version": "BND3",
             "signature": self.signature,
@@ -131,7 +129,12 @@ class BND4(BaseBND):
         ("hash_table_offset", "q"),  # only non-zero if hash_table_type == 4
     )
 
-    EXTRA_MANIFEST_FIELDS = ("unicode", "hash_table_type", "unknown1", "unknown2")
+    MANIFEST_FIELDS = BaseBinder.MANIFEST_FIELDS + (
+        "unicode",
+        "hash_table_type",
+        "unknown1",
+        "unknown2",
+    )
 
     unknown1: bool
     unknown2: bool
@@ -272,7 +275,7 @@ class BND4(BaseBND):
 
         return writer.finish()
 
-    def get_json_header(self) -> tp.Dict[str, tp.Any]:
+    def get_json_header(self) -> dict[str, tp.Any]:
         return {
             "version": "BND4",
             "signature": self.signature,

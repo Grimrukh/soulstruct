@@ -690,7 +690,7 @@ class BitGroupEditBox(SmartFrame):
         self.resizable(width=False, height=False)
         self.set_geometry(relative_position=(0.5, 0.3), transient=True)
 
-    def go(self) -> tp.Optional[tp.Set[int]]:
+    def go(self) -> tp.Optional[set[int]]:
         self.wait_visibility()
         self.grab_set()
         self.mainloop()

@@ -1668,12 +1668,12 @@ def Event11010790():
     IfCharacterInsideRegion(0, PLAYER, region=1012301)
     EnableFlag(11010790)
     SetNetworkUpdateRate(1010302, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    DisableCollision(1013200)
+    DisableMapCollision(1013200)
     EnableCharacter(1010302)
     Move(1010302, destination=1012300, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(1010302, 7012, wait_for_completion=True)
     DisableCharacter(1010302)
-    EnableCollision(1013200)
+    EnableMapCollision(1013200)
 
 
 def Event11010791():

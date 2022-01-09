@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 
 from __future__ import annotations
 
@@ -15,15 +15,12 @@ import struct
 import typing as tp
 from contextlib import contextmanager
 from pathlib import Path
+from types import GenericAlias
 
-from soulstruct.containers.entry import BinderEntry
+from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.utilities.misc import Flags8
 from soulstruct.utilities.maths import Vector
 
-try:  # Python 3.9
-    from types import GenericAlias
-except ImportError:
-    GenericAlias = None
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,14 +77,14 @@ class BinaryStruct:
 
     def __init__(self, *fields, byte_order="<"):
         """Flexible binary unpacker/repacker."""
-        self.fields = []  # type: tp.List[BinaryStruct.BinaryField]
-        self._struct_format = []  # type: tp.List[str]  # fmt chunks with different byte orders are stored here
+        self.fields = []  # type: list[BinaryStruct.BinaryField]
+        self._struct_format = []  # type: list[str]  # fmt chunks with different byte orders are stored here
         self._struct_length = []  # Number of values to be packed using each sub-format string.
         self.size = 0  # Total number of bytes in struct.
         if fields:
             self.add_fields(*fields, byte_order=byte_order)
 
-    def add_fields(self, *fields, byte_order=None) -> tp.Tuple[tp.List[BinaryField], str]:
+    def add_fields(self, *fields, byte_order=None) -> tuple[list[BinaryField], str]:
         """Add new fields to the BinaryStruct.
 
         Args:
@@ -193,7 +190,7 @@ class BinaryStruct:
         exclude_asserted=False,
         exclude_prefix="",
         offset: int = None,
-    ) -> tp.Dict[str, tp.Any]:
+    ) -> dict[str, tp.Any]:
         """Unpack a single struct from source data.
 
         If any 'fields' are specified (same allowed formats as the constructor above), only those fields will be
@@ -285,7 +282,7 @@ class BinaryStruct:
 
     def unpack_count(
         self, source, count: int, byte_order: str = None, exclude_asserted=False, exclude_prefix="", offset: int = None
-    ) -> tp.List[tp.Dict[str, tp.Any]]:
+    ) -> list[dict[str, tp.Any]]:
         """Unpack `count` identical structs from `source`. See `unpack()` for more.
 
         Args:
@@ -313,7 +310,7 @@ class BinaryStruct:
             source.seek(old_offset)
         return structs
 
-    def parse_object_source(self, source: object, **kwargs) -> tp.Dict[str, tp.Any]:
+    def parse_object_source(self, source: object, **kwargs) -> dict[str, tp.Any]:
         if isinstance(source, dict):
             struct_dict = source.copy()  # don't modify input dictionary
             struct_dict.update(kwargs)
@@ -448,7 +445,7 @@ class BinaryObject(abc.ABC):
     """
 
     STRUCT: BinaryStruct = None
-    DEFAULTS: tp.Dict[str, tp.Any] = {}
+    DEFAULTS: dict[str, tp.Any] = {}
 
     Z_STRING_RE = re.compile(r"^__(\w[\w\d]+)__z$")
 
@@ -518,7 +515,7 @@ class BinaryObject(abc.ABC):
                     )
                 return  # do nothing (asserted fields are not exposed as attributes but can still be 'set' here)
         else:
-            if GenericAlias and type(field_type) is GenericAlias:
+            if type(field_type) is GenericAlias:
                 # TODO: Enforce other `typing` type hints?
                 pass
             elif inspect.isclass(field_type):
@@ -531,7 +528,7 @@ class BinaryObject(abc.ABC):
 
     def extract_kwargs_from_struct(
         self, reader: BinaryReader, binary_struct: BinaryStruct = None, encoding=None, byte_order=None
-    ) -> tp.Dict[str, tp.Any]:
+    ) -> dict[str, tp.Any]:
         if binary_struct is None:
             binary_struct = self.STRUCT
         data = reader.unpack_struct(binary_struct, exclude_asserted=True, byte_order=byte_order)
@@ -719,7 +716,7 @@ class BinaryReader:
         exclude_asserted=False,
         exclude_prefix="",
         offset: int = None,
-    ) -> tp.Dict[str, tp.Any]:
+    ) -> dict[str, tp.Any]:
         return binary_struct.unpack(
             self.buffer,
             *fields,
@@ -737,7 +734,7 @@ class BinaryReader:
         exclude_asserted=False,
         exclude_prefix="",
         offset: int = None,
-    ) -> tp.List[tp.Dict[str, tp.Any]]:
+    ) -> list[dict[str, tp.Any]]:
         return binary_struct.unpack_count(self.buffer, count, byte_order, exclude_asserted, exclude_prefix, offset)
 
     def unpack_bytes(
@@ -839,7 +836,7 @@ class BinaryWriter:
     AUTO_RESERVE = Reserved()  # reserve using `id(source)` and field name
 
     big_endian: bool
-    reserved: tp.Dict[str, tp.Tuple[int, str]]
+    reserved: dict[str, tuple[int, str]]
 
     def __init__(self, big_endian=False):
         self.big_endian = big_endian

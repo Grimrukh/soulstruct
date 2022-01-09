@@ -1399,7 +1399,7 @@ def Event11100040():
 def Event11100532(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 11100532: Event 11100532 """
     DisableMapPiece(1103100)
-    DisableCollision(1103101)
+    DisableMapCollision(1103101)
     DisableObject(1101750)
     DeleteVFX(1101751, erase_root_only=False)
     IfFlagOn(0, 11100700)
@@ -1409,7 +1409,7 @@ def Event11100532(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLines(1)
     EnableFlag(arg_16_19)
     EnableMapPiece(1103100)
-    EnableCollision(1103101)
+    EnableMapCollision(1103101)
     DisableObject(1101141)
     EnableObject(1101750)
     CreateVFX(1101751)

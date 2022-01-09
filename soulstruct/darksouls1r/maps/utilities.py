@@ -8,11 +8,11 @@ import shutil
 import typing as tp
 from pathlib import Path
 
+from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.maps.utilities import get_map
 from soulstruct.base.models.flver import FLVER
 from soulstruct.config import DSR_PATH
 from soulstruct.containers.bxf import BXF3
-from soulstruct.containers.entry import BinderEntry
 from soulstruct.containers.bnd import BND3
 
 from ..constants import CHARACTER_FFX_SOURCES

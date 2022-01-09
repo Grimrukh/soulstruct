@@ -1,9 +1,18 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 
-__all__ = ["PACKAGE_PATH", "find_dcx", "create_bak", "find_steam_common_paths", "import_arbitrary_file"]
+__all__ = [
+    "PACKAGE_PATH",
+    "find_dcx",
+    "create_bak",
+    "find_steam_common_paths",
+    "import_arbitrary_file",
+    "read_json",
+    "write_json",
+]
 
 import ctypes
 import importlib.util
+import json
 import logging
 import shutil
 import string
@@ -16,9 +25,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def PACKAGE_PATH(*relative_parts) -> Path:
+    """Returns resolved path of given files in `soulstruct` package directory (the actual namespace directory containing
+    `__init__`, NOT the one above it containing `setup.py`)."""
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(getattr(sys, "_MEIPASS"), *relative_parts)
-    return Path(__file__).parent.joinpath("..").resolve().joinpath(*relative_parts)
+    return Path(__file__).parent.parent.resolve().joinpath(*relative_parts)
 
 
 def find_dcx(file_path):
@@ -78,3 +89,13 @@ def import_arbitrary_file(path: tp.Union[str, Path]) -> types.ModuleType:
     spec.loader.exec_module(module)
     sys.modules[spec.name] = module
     return module
+
+
+def read_json(json_path: tp.Union[str, Path], encoding=None) -> tp.Union[dict, list]:
+    """Read JSON file using given `encoding` into list or dictionary."""
+    return json.loads(Path(json_path).read_text(encoding=encoding))
+
+
+def write_json(json_path: tp.Union[str, Path], data: tp.Union[list, dict], indent=4, encoding=None):
+    """Write given `data` list or dictionary to JSON file with given `encoding`."""
+    Path(json_path).write_text(json.dumps(data, indent=indent), encoding=encoding)

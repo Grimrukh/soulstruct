@@ -56,7 +56,7 @@ def Preconstructor():
 
 def Event14100100():
     """ 14100100: Event 14100100 """
-    DisableCollision(4104101)
+    DisableMapCollision(4104101)
     DisableCharacter(4100100)
     DisableAnimations(4100100)
     DisableFlag(74100100)
@@ -90,8 +90,8 @@ def Event14100100():
     EnableImmortality(PLAYER)
     EnableImmortality(4100100)
     DeleteObjectVFX(4101100, erase_root=True)
-    DisableCollision(4104100)
-    EnableCollision(4104103)
+    DisableMapCollision(4104100)
+    EnableMapCollision(4104103)
     WaitFrames(1)
     PlayCutsceneAndMovePlayer_WithUnknowns(
         41000060,
@@ -108,9 +108,9 @@ def Event14100100():
     ForceAnimation(4100100, 30004, loop=True)
     DisableObject(4101952)
     ForceAnimation(PLAYER, 0)
-    DisableCollision(4104103)
-    EnableCollision(4104101)
-    EnableCollision(4104102)
+    DisableMapCollision(4104103)
+    EnableMapCollision(4104101)
+    EnableMapCollision(4104102)
     WaitFrames(1)
     ForceAnimation(4100100, 30004, loop=True)
     IfOngoingCutsceneFinished(0, 4102110)

@@ -1,7 +1,7 @@
 __all__ = ["TalkESDBND"]
 
+from soulstruct.containers.base import BinderFlags
 from soulstruct.containers.bnd import BND4
-from soulstruct.containers.flags import BinderFlags
 from soulstruct.base.ezstate.talk_esd_bnd import TalkESDBND as _BaseTalkESDBND
 
 from .esd import TalkESD
