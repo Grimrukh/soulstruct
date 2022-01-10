@@ -35,6 +35,7 @@ class MSGDirectory(abc.ABC):
     ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
 
     _MSGBND_INDEX_NAMES = None  # type: BiDict[int, str]
+    _ORIGINAL_PATCH_SUFFIX = ""
 
     FMG_CLASS = None  # type: tp.Type[BaseFMG]
     MSGBND_CLASS = None  # type: tp.Type[BaseBND]
@@ -120,10 +121,41 @@ class MSGDirectory(abc.ABC):
             bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
         except IndexError:
             raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
-        bnd_entry.set_uncompressed_data(fmg_data)
+        try:
+            bnd_entry = msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
+        except KeyError:
+            # BND entry does not exist. If it's "Patch", we can try to create it by duplicating the path (and flags)
+            # from the non-Patch version.
+            if fmg_name.endswith("Patch"):
+                bnd_entry = self.create_patch_msgbnd_entry(msgbnd, fmg_name, fmg_data)
+            else:
+                raise KeyError(
+                    f"Text (FMG) category '{fmg_name}' does not exist in this `MSGDirectory` instance, and it is not a "
+                    f"'Patch' FMG that could be created automatically."
+                )
+        else:
+            bnd_entry.set_uncompressed_data(fmg_data)
         if not use_original_names:
             bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
+
+    def create_patch_msgbnd_entry(self, msgbnd: BaseBND, patch_fmg_name: str, data: bytes):
+        non_patch_fmg_name = patch_fmg_name.removesuffix("Patch")
+        if non_patch_fmg_name not in self._MSGBND_INDEX_NAMES:
+            raise KeyError(f"Patch text (FMG) category '{patch_fmg_name}' is not a known Patch category for this game.")
+        non_patch_entry_id = self._MSGBND_INDEX_NAMES[non_patch_fmg_name]
+        non_patch_bnd_entry = msgbnd.entries_by_id[non_patch_entry_id]
+        non_patch_entry_stem = Path(non_patch_bnd_entry.path).stem
+        patch_entry_path = non_patch_bnd_entry.path.replace(
+            non_patch_entry_stem, non_patch_entry_stem + self._ORIGINAL_PATCH_SUFFIX
+        )
+        bnd_entry = msgbnd.BinderEntry(
+            data=data,
+            entry_id=self._MSGBND_INDEX_NAMES[patch_fmg_name],
+            path=patch_entry_path,
+            flags=non_patch_bnd_entry.flags,
+        )
+        msgbnd.add_entry(bnd_entry)
+        return bnd_entry
 
     def pack(
         self,
@@ -148,8 +180,8 @@ class MSGDirectory(abc.ABC):
                 use_original_names=use_original_names,
             )
 
-            if fmg_name + "Patch" in self._is_menu:
-                # Updates patch as well (with identical content), if available.
+            if fmg_name + "Patch" in self._MSGBND_INDEX_NAMES.values():
+                # Updates patch version as well (with identical content), if it exists for this game and category.
                 self.update_msgbnd_entry(
                     fmg_msgbnd,
                     fmg_name + "Patch",

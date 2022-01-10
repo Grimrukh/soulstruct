@@ -75,6 +75,7 @@ class MSGDirectory(_BaseMSGDirectory):
         (123, "MenuText_OtherPatch"),
         (124, "MenuText_CommonPatch"),
     )
+    _ORIGINAL_PATCH_SUFFIX = "パッチ"
 
     MAIN_CATEGORIES = (
         "NPCNames",

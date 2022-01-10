@@ -57,6 +57,7 @@ class MSGDirectory(_BaseMSGDirectory):
         (204, "MenuDialogs_SP"),
         # NOTE: No Patch categories.
     )
+    _ORIGINAL_PATCH_SUFFIX = ""  # no Patch categories
 
     MAIN_CATEGORIES = (
         "NPCNames",
