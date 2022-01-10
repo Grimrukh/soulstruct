@@ -96,6 +96,6 @@ def read_json(json_path: tp.Union[str, Path], encoding=None) -> tp.Union[dict, l
     return json.loads(Path(json_path).read_text(encoding=encoding))
 
 
-def write_json(json_path: tp.Union[str, Path], data: tp.Union[list, dict], indent=4, encoding=None):
+def write_json(json_path: tp.Union[str, Path], data: tp.Union[list, dict], indent=4, encoding=None, ensure_ascii=False):
     """Write given `data` list or dictionary to JSON file with given `encoding`."""
-    Path(json_path).write_text(json.dumps(data, indent=indent), encoding=encoding)
+    Path(json_path).write_text(json.dumps(data, indent=indent, ensure_ascii=ensure_ascii), encoding=encoding)

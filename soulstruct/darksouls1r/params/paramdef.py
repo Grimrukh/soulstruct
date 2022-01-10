@@ -51,6 +51,10 @@ class ParamDefField(_BaseParamDefField):
         v = DEFAULTS[self.param_name].get(self.name, self.default)
         if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(v)
+        elif self.internal_type == "":
+            if self.display_name == "sfxMultiplier":  # malformed in ParamDef
+                return v  # float
+            raise ValueError(f"No internal type for {self.param_name} field {self.display_name}")
         elif self.internal_type not in {"f32", "f64"}:
             return int(v)
         return v

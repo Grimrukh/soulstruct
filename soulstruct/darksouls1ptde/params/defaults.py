@@ -135,7 +135,7 @@ DEFAULTS = {
         "contrastB": 1.0,
         "saturation": 1.0,
         "hue": 0.0,
-        "sfxMultiplier": 1,
+        "sfxMultiplier": 1.0,
     },
     "SHADOW_BANK": {
         "lightDegRotX": 0,

@@ -304,7 +304,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         `data_path` will be set to `{data_path}.json` in this case.
         """
         if self.prefer_json:
-            if data_type in {"maps", "params", "text"}:
+            if data_type in {"maps", "params", "lighting", "text"}:
                 # Save separate JSONs to `{project}/{data_type}/` directory with `write_json_dir()`.
                 data: tp.Union[MapStudioDirectory, GameParamBND, MSGDirectory]
                 data_dir_path = self.project_root / data_type
@@ -340,7 +340,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         if self.prefer_json:
             try:
                 if (
-                    data_type in {"maps", "params", "text"}
+                    data_type in {"maps", "params", "text", "lighting"}
                     and (data_dir_path := self.project_root / data_type).is_dir()
                 ):
                     # Load JSONs from directory.

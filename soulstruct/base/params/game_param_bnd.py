@@ -36,7 +36,7 @@ class GameParamBND(BaseBND, abc.ABC):
             dcx_magic: optional DCX magic (sequence of two integers).
             paramdef_bnd: previously loaded `ParamDefBND` instance, or source to create it. Can also be automatically
                 detected from subclass.
-            use_json: if `True`, will assume the source is a path to a folder containing `gameparam_manifest.json` and
+            use_json: if `True`, will assume the source is a path to a folder containing `GameParamBND_manifest.json` and
                 a `*Param.json` file for each Param to be loaded.
         """
 
@@ -131,12 +131,12 @@ class GameParamBND(BaseBND, abc.ABC):
         """Load individual Param JSON files from an unpacked Binder folder (produced by `write_json_dir()`).
 
         The names of the Param JSON files to be loaded from the folder are recorded in the "entries" key of the
-        `gameparam_manifest.json` file.
+        `GameParamBND_manifest.json` file.
 
         Functionally very similar to `load_dict()`, but avoids the need for one gigantic JSON file for all Params.
         """
         directory = Path(directory)
-        manifest_path = directory / "gameparam_manifest.json"
+        manifest_path = directory / "GameParamBND_manifest.json"
         if not manifest_path.is_file():
             raise FileNotFoundError(f"Could not find GameParamBND manifest file '{manifest_path}'.")
         manifest = read_json(manifest_path)
@@ -176,7 +176,7 @@ class GameParamBND(BaseBND, abc.ABC):
             setattr(self, nickname, p)
 
     def write_json_dir(self, directory: tp.Union[Path, str], ignore_pads=True, ignore_defaults=True):
-        """Write a folder containing a `gameparam_manifest.json` file with standard `Binder` header information and
+        """Write a folder containing a `GameParamBND_manifest.json` file with standard `Binder` header information and
         a list of Param JSON files to load from the same folder.
 
         The resulting folder can be loaded with `load_json_dir(directory)`.
@@ -200,7 +200,7 @@ class GameParamBND(BaseBND, abc.ABC):
             write_json(directory / json_name, param_dict, encoding="shift-jis")
             manifest["entries"].append(json_name)
 
-        write_json(directory / "gameparam_manifest.json", manifest)
+        write_json(directory / "GameParamBND_manifest.json", manifest)
 
     def get_param(self, param_nickname) -> Param:
         if param_nickname not in self.PARAM_TYPES:
