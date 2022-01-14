@@ -678,7 +678,11 @@ class BinaryReader:
         initial_offset = self.position if offset is not None else None
         if offset is not None:
             self.seek(initial_offset + offset if relative_offset else offset)
-        data = struct.unpack(fmt, self.buffer.read(struct.calcsize(fmt)))
+        fmt_size = struct.calcsize(fmt)
+        raw_data = self.buffer.read(fmt_size)
+        if not raw_data and fmt_size > 0:
+            return None
+        data = struct.unpack(fmt, raw_data)
         if asserted is not None and data != asserted:
             raise AssertionError(f"Unpacked data {repr(data)} does not equal asserted data {repr(asserted)}.")
         if initial_offset is not None:
@@ -765,7 +769,10 @@ class BinaryReader:
         """
         return read_chars_from_buffer(self.buffer, offset, length, reset_old_offset, encoding=encoding, strip=strip)
 
-    def read(self, size: int = None) -> bytes:
+    def read(self, size: int = None, offset: int = None) -> bytes:
+        if offset is not None:
+            with self.temp_offset(offset):
+                return self.buffer.read(size)
         return self.buffer.read(size)
 
     def seek(self, offset: int, whence=None) -> int:
@@ -850,6 +857,10 @@ class BinaryWriter:
 
     def pack(self, fmt: str, *values):
         self._array += struct.pack(self.parse_fmt(fmt), *values)
+
+    def pack_at(self, offset: int, fmt: str, *values):
+        packed = struct.pack(self.parse_fmt(fmt), *values)
+        self._array[offset:offset + len(packed)] = packed
 
     def append(self, other: tp.Union[bytearray, bytes]):
         """Manually add existing binary data (e.g. a packed `BinaryStruct`) all at once."""

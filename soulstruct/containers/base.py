@@ -391,6 +391,14 @@ class BaseBinder(GameFile, abc.ABC):
     def __len__(self):
         return len(self._entries)
 
+    def __repr__(self):
+        if not self._entries:
+            return
+        entries = f",\n    ".join(repr(entry) for entry in self._entries)
+        if entries:
+            entries = f"\n    {entries},\n"
+        return f"{self.__class__.__name__}({entries})"
+
 
 class BinderHashTable:
 

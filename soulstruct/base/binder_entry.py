@@ -220,3 +220,6 @@ class BinderEntry:
 
     def __eq__(self, other_bnd_entry) -> bool:
         return all(getattr(self, field) == getattr(other_bnd_entry, field) for field in ("id", "path", "flags", "data"))
+
+    def __repr__(self):
+        return f"BinderEntry({self.id}, {hex(self.flags)}, \"{self.path}\")"
