@@ -507,6 +507,13 @@ class FLVER(GameFile):
             for vertex in mesh.vertices:
                 vertex.position *= factor
 
+    def replace_tpf_name(self, old_name: str, new_name: str):
+        """Iterate over all `Material` textures and replace all '{old_name}.tga' names with '{new_name}.tga'."""
+        for material in self.materials:
+            for texture in material.textures:
+                # TODO: To be safe, probably make sure we're only replacing the file name of the path.
+                texture.path = texture.path.replace(old_name, new_name)
+
     def get_all_texture_paths(self) -> set[Path]:
         """Get set of all texture paths from all materials. Ignores textures with empty `path`."""
         return {Path(texture.path) for material in self.materials for texture in material.textures if texture.path}
