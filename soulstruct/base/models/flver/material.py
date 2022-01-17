@@ -5,6 +5,7 @@ from __future__ import annotations
 __all__ = ["GXItem", "GXList", "Material", "Texture"]
 
 import typing as tp
+from pathlib import Path
 
 from soulstruct.utilities.text import indent_lines
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
@@ -130,10 +131,20 @@ class Texture(BinaryObject):
 
     DEFAULTS = {
         "scale": Vector2.ones(),
+        "unk_x10": 1,
+        "unk_x11": True,
+        "unk_x14": 0.0,
+        "unk_x18": 0.0,
+        "unk_x1C": 0.0,
     }
 
     unpack = BinaryObject.default_unpack
     pack = BinaryObject.default_pack
+
+    def set_name(self, name: str):
+        """Set '.tga' name of `path`."""
+        name = name.removesuffix(".tga").removesuffix(".tpf") + ".tga"
+        self.path = str(Path(self.path).with_name(name))
 
     def __repr__(self):
         lines = [
@@ -256,6 +267,19 @@ class Material(BinaryObject):
                 raise KeyError(f"Texture type {texture.texture_type} appeared more than once in Material {self.name}.")
             textures[texture.texture_type] = texture
         return textures
+
+    def set_mtd_name(self, name: str):
+        """Set '.mtd' name of `mtd_path`."""
+        name = name.removesuffix(".mtd") + ".mtd"
+        self.mtd_path = str(Path(self.mtd_path).with_name(name))
+
+    def replace_in_all_texture_names(self, old_string: str, new_string: str):
+        """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""
+        for tex in self.textures:
+            if tex.path:
+                tex_path = Path(tex.path)
+                tex_name = tex_path.name.replace(old_string, new_string)
+                tex.path = str(tex_path.with_name(tex_name))
 
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])

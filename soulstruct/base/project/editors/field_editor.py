@@ -697,6 +697,14 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
         new_field_dict = self.get_field_dict(entry_id).copy()
         self._add_entry(entry_id=entry_id + offset, text=text, new_field_dict=new_field_dict)
 
+    def add_entry_to_next_available_id(self, entry_id, text=None):
+        """Find next available entry ID after `entry_id`."""
+        entry_ids = set(self.get_category_data())
+        new_id = entry_id + 1
+        while new_id in entry_ids:
+            new_id += 1
+        self.add_relative_entry(entry_id, offset=new_id - entry_id, text=text)
+
     def _right_click_field(self, event, field_index):
         self.select_displayed_field_row(field_index, edit_if_already_selected=False)
         self.field_rows[field_index].context_menu.tk_popup(event.x_root, event.y_root)

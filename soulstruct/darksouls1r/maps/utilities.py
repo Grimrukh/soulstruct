@@ -22,8 +22,16 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d).ffxbnd(.dcx)?")
+_BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d)\.ffxbnd(\.dcx)?")
 _MAP_PIECE_RE = re.compile(r"^m(\d\d\d\d)B(\d)A(\d\d)\.flver\.dcx$")
+
+# The FFX and FLVER matches allow arbitrary non-numeric characters to appear after the ID digits
+# (e.g. "f0000123_MyEffect.ffx"), but these characters will not be written to the FFXBND.
+_FFX_FILE_MATCH = re.compile(r"f(\d+).*\.ffx")  # typically 7 digits
+_FLVER_FILE_MATCH = re.compile(r"s(\d+).*\.flver")  # typically 5 digits
+# TPF files may have material suffixes like "_n", so extra strings will be included in the file name. Make sure not to
+# include any!
+_TPF_FILE_MATCH = re.compile(r"s(\d+[_\w]*)\.tpf")  # typically 5 digits
 
 
 def build_ffxbnd(
@@ -31,12 +39,17 @@ def build_ffxbnd(
     ffxbnd_path: Path,
     ffxbnd_search_directory: Path = None,
     write_ffxbnd_path: Path = None,
-    extra_ffx_sources: tp.Sequence[tuple[int, str]] = (),
+    extra_sources: tp.Sequence[tuple[tp.Union[int, str], str, str]] = (),
     extra_character_ffx_directory: Path = None,
+    check_area_ffxbnd=True,
     prefer_bak=True,
 ) -> BND3:
-    """Iterate over all character models in given `msb` and ensure all their FFX files are present in the given FFXBND
-    file `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations (known by Soulstruct) and added.
+    """Iterate over all character models in given `msb` and ensure all their FFX files (including FLVER and TPF files)
+    are present in the given FFXBND file `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations
+    (known by Soulstruct) and added.
+
+    Loose sources of FFX files can also be specified with `extra_sources`. These may be '.ffx', '.flver', or '.tpf'
+    files.
 
     Use `write_ffxbnd_path` to write to a location other than `ffxbnd_path` (default if `write_ffxbnd_path` not given).
 
@@ -47,11 +60,16 @@ def build_ffxbnd(
             in. It should contain all FFXBND files in the game (e.g. a vanilla backup folder). If not given, it will
             default to the same directory as `ffxbnd_path`.
         write_ffxbnd_path (Path): path to write final FFXBND. If not given (default), uses `ffxbnd_path`.
-        extra_ffx_sources (sequence of tuples): sequence of `(ffx_id, ffx_source_file)` tuples that specify extra FFX
-            files to import (e.g. for VFX events in the MSB). The source files can be FFXBND files to look inside, or
-            just raw unpacked FFX files (in which case, anything after their ID in the filename will be removed).
-        extra_character_ffx_directory: optional path to a directory containing loose FFX files in character model
-            subdirectories, to be used for models not on the known path.
+        extra_sources (sequence of tuples): sequence of `(file_id, file_type, source_file)` tuples that specify extra
+            FFX, FLVER, and/or TPF files to import (e.g. for VFX events in the MSB). The source files can be FFXBND
+            files to look inside, or just raw unpacked FFX files (in which case, anything after their ID in the filename
+            will be removed for FFX/FLVER files). For TPF files with name suffixes like "_n", the given `file_id` may
+            be a string.
+        extra_character_ffx_directory: optional path to a directory containing loose FFX/FLVER/TPF files in character
+            model subdirectories, to be used for models not on the known path.
+        check_area_ffxbnd (bool): if True (default), and if `ffxbnd_path` is a block FFXBND file (with 'mAA_BB' in its
+            file stem), the corresponding area FFXBND file ('mAA.ffxbnd') will also be checked if it exists. Any FFX
+            already existing in that file will count just like existing FFX in the given block file.
         prefer_bak (bool): if True (default), look for '.bak' source files first, in case the FFXBNDs have been modded
             and some vanilla FFX entries removed.
     """
@@ -64,50 +82,195 @@ def build_ffxbnd(
         ffxbnd = BND3(ffxbnd_path)
     except FileNotFoundError:
         raise FileNotFoundError(f"Could not find FFXBND file to modify: {ffxbnd_path}")
-    open_sources = {}  # type: dict[str, BND3]
-    existing_ffx_files = {entry.name for entry in ffxbnd.entries}
-    next_id = max(i for i in ffxbnd.entries_by_id if i < 100000) + 1
+    open_ffxbnd_sources = {}  # type: dict[str, BND3]
+    existing_file_names = {entry.name for entry in ffxbnd.entries}
+    existing_ffx_ids = [i for i in ffxbnd.entries_by_id if i < 100000]
+    existing_tpf_ids = [i for i in ffxbnd.entries_by_id if 100000 <= i < 200000]
+    existing_flver_ids = [i for i in ffxbnd.entries_by_id if 200000 <= i < 300000]
+    next_ffx_id = max(existing_ffx_ids) + 1 if existing_ffx_ids else 0
+    next_tpf_id = max(existing_tpf_ids) + 1 if existing_tpf_ids else 0
+    next_flver_id = max(existing_flver_ids) + 1 if existing_flver_ids else 0
 
-    match = _BLOCK_FFXBND_RE.match(str(ffxbnd_path))
-    if match:
-        area_ffxbnd_path = ffxbnd_path.parent / f"FRPG_SfxBnd_m{match.group(1)}.ffxbnd.dcx{match.group(2)}"
+    # If a block) FFXBND is specified, also check its area FFXBND for existing files, if requested.
+    if check_area_ffxbnd and (block_match := _BLOCK_FFXBND_RE.match(str(ffxbnd_path))):
+        area_ffxbnd_path = ffxbnd_path.parent / f"FRPG_SfxBnd_m{block_match.group(1)}.ffxbnd{block_match.group(3)}"
         try:
             area_ffxbnd = BND3(area_ffxbnd_path)
         except FileNotFoundError:
             _LOGGER.warning(
-                f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for existing FFX."
+                f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for existing files."
             )
         else:
-            existing_ffx_files |= {entry.name for entry in area_ffxbnd.entries}
+            existing_file_names |= {entry.name for entry in area_ffxbnd.entries if entry.name}
+            # The next available IDs, of course, are still the same in the block file.
+
+    # Add extra FFX sources. These will take precedence over any vanilla files or extra character files that are found
+    # in the subsequent sections.
+    for extra_id, file_type, extra_source_file_name in extra_sources:
+        # `extra_source_file_name` may be a naked FFX/FLVER/TPF file or an FFXBND containing the given FFX ID.
+
+        extra_source_path = Path(extra_source_file_name)
+        extra_source_file_name = str(extra_source_path)  # for dictionary
+
+        if file_type is None:
+            # Auto-detect file type from path suffix.
+            file_type = extra_source_path.suffix
+            if file_type not in {".ffx", ".flver", ".tpf"}:
+                raise ValueError(
+                    f"Invalid source file suffix for FFX file type detection: {file_type}. Should be '.ffx', '.tpf', "
+                    f"or '.flver"
+                )
+        else:
+            file_type = "." + file_type.lower().lstrip(".")
+
+        if extra_id is None:
+            # Auto-detect file ID from path name.
+            try:
+                if file_type == ".ffx":
+                    extra_id = int(_FFX_FILE_MATCH.match(extra_source_path.name).group(1))
+                elif file_type == ".flver":
+                    extra_id = int(_FLVER_FILE_MATCH.match(extra_source_path.name).group(1))
+                elif file_type == ".tpf":
+                    extra_id = _TPF_FILE_MATCH.match(extra_source_path.name).group(1)  # string, not int
+            except AttributeError:
+                # No match.
+                raise ValueError(f"Cannot auto-detect FFX file ID from '{file_type}' file: {extra_source_path}")
+
+        if file_type == ".ffx":
+            if not isinstance(extra_id, int):
+                raise ValueError(f"Extra file ID for FFX must be an `int`.")
+            file_name = f"f{extra_id:07d}.ffx"  # this formatting will still allow ID to be longer than 7 digits
+            entry_id = next_ffx_id
+            entry_path = f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{file_name}"
+        elif file_type == ".tpf":
+            if isinstance(extra_id, int):
+                file_name = f"s{extra_id:05d}.tpf"
+            else:
+                file_name = f"s{extra_id}.tpf"  # use full given name string
+            entry_id = next_tpf_id
+            entry_path = f"N:\\FRPG\\data\\Sfx\\tex\\{file_name}"
+        elif file_type == ".flver":
+            if not isinstance(extra_id, int):
+                raise ValueError(f"Extra file ID for FFX FLVER must be an `int`.")
+            file_name = f"s{extra_id:05d}.flver"
+            entry_id = next_flver_id
+            entry_path = f"N:\\FRPG\\data\\Sfx\\model\\{file_name}"
+        else:
+            raise ValueError(f"Invalid extra FFX file type: {file_type}. Must be 'ffx', 'tpf', or 'flver'.")
+
+        if file_name in existing_file_names:
+            continue
+
+        if extra_source_path.name.startswith("FRPG"):
+            # Find file in FFXBND file source.
+            if extra_source_path.is_absolute():
+                source_path = extra_source_path
+            else:
+                source_path = ffxbnd_search_directory / f"{extra_source_path.name.split('.')[0]}.ffxbnd.dcx"
+            if prefer_bak:
+                if (bak_path := source_path.with_suffix(source_path.suffix + ".bak")).is_file():
+                    source_path = bak_path
+            if not source_path.is_file():
+                _LOGGER.error(f"Could not find FFXBND source file '{source_path}' for extra {file_type} {extra_id}.")
+                continue
+            source_bnd = open_ffxbnd_sources.setdefault(extra_source_file_name, BND3(source_path))
+            try:
+                # No need to make a copy of the source file.
+                source_entry = source_bnd.entries_by_basename[file_name]
+            except KeyError:
+                _LOGGER.error(
+                    f"Could not find extra {file_type} file '{file_name}' in given source FFXBND '{source_path}'."
+                )
+                continue
+            source_entry.id = entry_id
+        else:
+            if extra_source_path.suffix != file_type:
+                raise ValueError(
+                    f"Source path suffix '{extra_source_path.suffix}' does not match file type {file_type}."
+                )
+            source_entry = BND3.BinderEntry(
+                data=extra_source_path.read_bytes(),
+                entry_id=entry_id,
+                path=entry_path,
+                flags=2,
+            )
+
+        ffxbnd.add_entry(source_entry)
+        existing_file_names.add(file_name)
+
+        if file_type == ".ffx":
+            next_ffx_id += 1
+        elif file_type == ".tpf":
+            next_tpf_id += 1
+        elif file_type == ".flver":
+            next_flver_id += 1
+        # No way for `else` to occur.
 
     for chr_model in msb.models.Characters:
         model_id = int(chr_model.name[1:])
+
+        # Check extra character directory.
+        if extra_character_ffx_directory is not None:
+            extra_chr_dir = (extra_character_ffx_directory / chr_model.name).resolve()
+            if extra_chr_dir.is_dir():
+                for extra_file_path in extra_chr_dir.rglob("*"):
+                    if extra_file_path.is_dir():
+                        continue  # skip directories
+                    is_ffx = is_tpf = is_flver = False
+                    if ffx_id_match := _FFX_FILE_MATCH.match(extra_file_path.name):
+                        is_ffx = True
+                        file_name = f"f{int(ffx_id_match.group(1)):07d}.ffx"
+                        entry_id = next_ffx_id
+                        entry_path = f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{file_name}"
+                    elif flver_id_match := _FLVER_FILE_MATCH.match(extra_file_path.name):
+                        is_flver = True
+                        file_name = f"s{int(flver_id_match.group(1)):05d}.flver"
+                        entry_id = next_flver_id
+                        entry_path = f"N:\\FRPG\\data\\Sfx\\model\\{file_name}"
+                    elif tpf_id_match := _TPF_FILE_MATCH.match(extra_file_path.name):
+                        # NOTE: TPF name match includes any characters after the ID digits (e.g. "_n").
+                        is_tpf = True
+                        file_name = f"s{tpf_id_match.group(1)}.tpf"
+                        entry_id = next_tpf_id
+                        entry_path = f"N:\\FRPG\\data\\Sfx\\tex\\{file_name}"
+                    else:
+                        _LOGGER.warning(
+                            f"Ignoring non-FFX/FLVER/TPF file in extra character folder: {extra_file_path.name}"
+                        )
+                        continue
+
+                    source_entry = BND3.BinderEntry(
+                        data=extra_file_path.read_bytes(),
+                        entry_id=entry_id,
+                        path=entry_path,
+                        flags=2,
+                    )
+                    ffxbnd.add_entry(source_entry)
+                    existing_file_names.add(file_name)
+
+                    # TODO: Should log, not print.
+                    if is_ffx:
+                        print(f"    Added loose FFX for {chr_model.name}: ({file_name})")
+                        next_ffx_id += 1
+                    elif is_tpf:
+                        print(f"    Added loose FFX TPF for {chr_model.name}: ({file_name})")
+                        next_tpf_id += 1
+                    elif is_flver:
+                        print(f"    Added loose FFX FLVER for {chr_model.name}: ({file_name})")
+                        next_flver_id += 1
+
+                # Found character model's folder, so stop searching for it.
+                continue
+
         if model_id not in CHARACTER_FFX_SOURCES:
-            if extra_character_ffx_directory is not None:
-                chr_dir = (extra_character_ffx_directory / chr_model.name).resolve()
-                if chr_dir.is_dir():
-                    for ffx_path in chr_dir.glob("*.ffx"):
-                        if ffx_id_match := re.match(r"f(\d+).*\.ffx", ffx_path.name):
-                            ffx_file_name = f"f{ffx_id_match.group(1)}.ffx"
-                            source_entry = BND3.BinderEntry(
-                                data=ffx_path.read_bytes(),
-                                entry_id=next_id,
-                                path=f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{ffx_file_name}",
-                                flags=2,
-                            )
-                            # TODO: Should log, not print.
-                            print(f"    Added loose FFX for {chr_model.name}: {source_entry.id} ({ffx_file_name})")
-                            next_id += 1
-                            ffxbnd.add_entry(source_entry)
-                            existing_ffx_files.add(ffx_file_name)
-                        else:
-                            _LOGGER.warning(f"Ignoring non-FFX file in loose character FFX folder: {ffx_path}")
-                    continue
-            _LOGGER.warning(f"FFX sources for character model {chr_model.name} are not known.")
-            continue  # model not handled
+            _LOGGER.warning(f"Vanilla FFX sources for character model {chr_model.name} are not known.")
+            continue
+
+        # TODO: Only FFX files (not FLVER or TPF) are in `CHARACTER_FFX_SOURCES` at the moment.
         for ffx_id, source_file_name in CHARACTER_FFX_SOURCES[model_id].items():
             ffx_file_name = f"f{ffx_id:07d}.ffx"  # ID can still be longer than seven digits
-            if ffx_file_name in existing_ffx_files:
+            if ffx_file_name in existing_file_names:
+                # Already existing (or added from extra character sources).
                 continue
             source_path = ffxbnd_search_directory / f"{source_file_name}.ffxbnd.dcx"
             if prefer_bak:
@@ -117,7 +280,7 @@ def build_ffxbnd(
                 _LOGGER.error(f"Could not find FFX source file '{source_path}' for FFX {ffx_id} "
                               f"(character model {model_id}).")
                 continue
-            source_bnd = open_sources.setdefault(source_file_name, BND3(source_path))
+            source_bnd = open_ffxbnd_sources.setdefault(source_file_name, BND3(source_path))
             try:
                 source_entry = source_bnd.entries_by_basename[ffx_file_name]
             except KeyError:
@@ -126,47 +289,10 @@ def build_ffxbnd(
                     f"{model_id})."
                 )
                 continue
-            source_entry.id = next_id
-            next_id += 1
+            source_entry.id = next_ffx_id
+            next_ffx_id += 1
             ffxbnd.add_entry(source_entry)
-            existing_ffx_files.add(ffx_file_name)
-
-    for extra_ffx_id, extra_source_file_name in extra_ffx_sources:
-        extra_source_path = Path(extra_source_file_name)
-        ffx_file_name = f"f{extra_ffx_id:07d}.ffx"  # ID can still be longer than seven digits
-        if ffx_file_name in existing_ffx_files:
-            continue
-        if extra_source_path.name.startswith("FRPG"):
-            if extra_source_path.is_absolute():
-                source_path = extra_source_path
-            else:
-                source_path = ffxbnd_search_directory / f"{extra_source_path.name.split('.')[0]}.ffxbnd.dcx"
-            if prefer_bak:
-                if (bak_path := source_path.with_suffix(source_path.suffix + ".bak")).is_file():
-                    source_path = bak_path
-            if not source_path.is_file():
-                _LOGGER.error(f"Could not find FFX source file '{source_path}' for extra FFX {extra_ffx_id}.")
-                continue
-            source_bnd = open_sources.setdefault(extra_source_file_name, BND3(source_path))
-            try:
-                source_entry = source_bnd.entries_by_basename[ffx_file_name]
-            except KeyError:
-                _LOGGER.error(f"Could not find extra FFX file '{ffx_file_name}' in given source BND '{source_path}'.")
-                continue
-            source_entry.id = next_id
-        elif extra_source_path.suffix == ".ffx":
-            source_entry = BND3.BinderEntry(
-                data=extra_source_path.read_bytes(),
-                entry_id=next_id,
-                path=f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{ffx_file_name}",
-                flags=2,
-            )
-        else:
-            raise ValueError(f"Invalid extra FFX/FFXBND source file name: {extra_source_file_name}")
-
-        next_id += 1
-        ffxbnd.add_entry(source_entry)
-        existing_ffx_files.add(ffx_file_name)
+            existing_file_names.add(ffx_file_name)
 
     ffxbnd.write(write_ffxbnd_path)
     return ffxbnd
