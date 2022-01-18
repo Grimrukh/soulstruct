@@ -114,22 +114,22 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
         are out of sync (i.e. changes have been made to a table since the last `save()` or `update_bnd()` call), they
         will be equally out of sync for slot 1.
         """
-        if len(self.entries) == 12:
+        if len(self.entries) == 12:  # slot 1 entries do not exist
             # Create new paths and move up slot 0 IDs.
-            for table_name, slots in self.params.items():
-                slot_0_path = self._slot_entry_paths[table_name, 0]
-                self._slot_entry_paths[table_name, 1] = _DRAW_PARAM_FILE_NAME_RE.sub(r"\1_1\2", slot_0_path)
-            s_ambient = self.entries[11]
-            self.remove_entry(11)
+            for param_name, slots in self.params.items():
+                slot_0_path = self._slot_entry_paths[param_name, 0]
+                slot_1_path = _DRAW_PARAM_FILE_NAME_RE.sub(r"\1_1\3", slot_0_path)
+                self._slot_entry_paths[param_name, 1] = slot_1_path
+            s_ambient = self.remove_entry(11)
             for i in range(11):
                 slot_0 = self.entries[i].copy()
                 slot_0.id += 11
-                new_path = _DRAW_PARAM_FILE_NAME_RE.sub(r"\1_1\2", self.entries[i].path)
+                new_path = _DRAW_PARAM_FILE_NAME_RE.sub(r"\1_1\3", self.entries[i].path)
                 self.entries[i].path = new_path
                 self.add_entry(slot_0)
             s_ambient_0 = s_ambient.copy()
             s_ambient_0.id = 23
-            s_ambient.path = _DRAW_PARAM_FILE_NAME_RE.sub(r"\1_1\2", s_ambient.path)
+            s_ambient.path = _DRAW_PARAM_FILE_NAME_RE.sub(r"\1_1\3", s_ambient.path)
             s_ambient.id = 22
             self.add_entry(s_ambient)
             self.add_entry(s_ambient_0)

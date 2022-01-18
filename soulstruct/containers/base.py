@@ -158,7 +158,7 @@ class BaseBinder(GameFile, abc.ABC):
             _LOGGER.warning(f"Entry ID {entry.id} appears more than once in this binder. You should fix this!")
         self._entries.append(entry)
 
-    def remove_entry(self, id_or_path_or_basename):
+    def remove_entry(self, id_or_path_or_basename) -> BinderEntry:
         if isinstance(id_or_path_or_basename, int):
             entry = self.entries_by_id[id_or_path_or_basename]
         elif isinstance(id_or_path_or_basename, str):
@@ -169,6 +169,7 @@ class BaseBinder(GameFile, abc.ABC):
         else:
             raise TypeError("Entry to be removed should be a binder entry ID (int) or path/basename (str).")
         self._entries.remove(entry)
+        return entry
 
     def clear_entries(self):
         """Remove all entries from the BND."""
