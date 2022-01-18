@@ -183,7 +183,7 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
         for json_name in manifest["entries"]:
             # The rest of the JSON file name doesn't actually matter; we use the BND "path" within to identify it.
             try:
-                param_dict = read_json(directory / json_name, encoding="shift_jis")
+                param_dict = read_json(directory / json_name, encoding="utf-8")
             except FileNotFoundError:
                 raise FileNotFoundError(f"Could not find DrawParam JSON file '{directory / json_name}'.")
             for field in ("entry_id", "path", "flags", "data"):
@@ -249,7 +249,7 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
                 json_name = f"{nickname}_{slot}.json"
                 if param_name.startswith("s_"):
                     json_name = "s_" + json_name
-                write_json(directory / json_name, param_dict, encoding="shift-jis")
+                write_json(directory / json_name, param_dict, encoding="utf-8", ensure_ascii=False)
                 manifest["entries"].append(json_name)
 
         write_json(directory / "DrawParamBND_manifest.json", manifest)

@@ -67,22 +67,7 @@ class GameFile(abc.ABC):
             if isinstance(file_source, (str, Path)):
                 self.path = Path(file_source)
                 if self.path.suffix == ".json":
-                    try:
-                        json_dict = read_json(self.path, encoding="utf-8")
-                    except UnicodeDecodeError as ex:
-                        if pos_match := re.findall(r" in position (\d+):", str(ex)):
-                            raw = self.path.read_bytes()
-                            pos = int(pos_match[0])
-                            line = raw[:pos].count(b"\n") + 1
-                            pos_context = raw[pos - 100:pos + 100]
-                            raise ValueError(
-                                f"Encountered Unicode decode error in JSON file {self.path}: {ex}\n"
-                                f"   Line number: {line}\n"
-                                f"   Byte context: {pos_context}"
-                            )
-                        raise ValueError(f"Encountered Unicode decode error in JSON file {self.path}: {ex}")
-                    except json.JSONDecodeError as ex:
-                        raise ValueError(f"Encountered JSON decode error in file {self.path}: {ex}")
+                    json_dict = read_json(self.path, encoding="utf-8")
                     self.load_dict(json_dict)
                     return
             if isinstance(file_source, (str, Path, bytes, io.BufferedIOBase, BinderEntry)):

@@ -250,13 +250,13 @@ def build_ffxbnd(
 
                     # TODO: Should log, not print.
                     if is_ffx:
-                        print(f"    Added loose FFX for {chr_model.name}: ({file_name})")
+                        print(f"    Added loose FFX for {chr_model.name}: {file_name}")
                         next_ffx_id += 1
                     elif is_tpf:
-                        print(f"    Added loose FFX TPF for {chr_model.name}: ({file_name})")
+                        print(f"    Added loose FFX TPF for {chr_model.name}: {file_name}")
                         next_tpf_id += 1
                     elif is_flver:
-                        print(f"    Added loose FFX FLVER for {chr_model.name}: ({file_name})")
+                        print(f"    Added loose FFX FLVER for {chr_model.name}: {file_name}")
                         next_flver_id += 1
 
                 # Found character model's folder, so stop searching for it.

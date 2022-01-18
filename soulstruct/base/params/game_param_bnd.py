@@ -154,7 +154,7 @@ class GameParamBND(BaseBND, abc.ABC):
             entry_ids = set(self.entries_by_id.keys())
         for json_name in manifest["entries"]:
             try:
-                param_dict = read_json(directory / json_name, encoding="shift_jis")
+                param_dict = read_json(directory / json_name, encoding="utf-8")
             except FileNotFoundError:
                 raise FileNotFoundError(f"Could not find Param JSON file '{directory / json_name}'.")
             for field in ("entry_id", "path", "flags", "data"):
@@ -197,7 +197,7 @@ class GameParamBND(BaseBND, abc.ABC):
             }
             nickname = self.PARAM_NICKNAMES.get(entry.stem, entry.stem if param.nickname is None else param.nickname)
             json_name = nickname + ".json"
-            write_json(directory / json_name, param_dict, encoding="shift-jis")
+            write_json(directory / json_name, param_dict, encoding="utf-8", ensure_ascii=False)
             manifest["entries"].append(json_name)
 
         write_json(directory / "GameParamBND_manifest.json", manifest)

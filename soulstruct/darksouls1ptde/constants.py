@@ -394,20 +394,20 @@ CHARACTER_FFX_SOURCES = {
         12704: "FRPG_SfxBnd_m17",
     },
     2710: {
-        12714: "FRPG_SfxBnd_m17",
         12713: "FRPG_SfxBnd_m17",
+        12714: "FRPG_SfxBnd_m17",
     },
     2711: {
-        12711: "FRPG_SfxBnd_m17",
         12710: "FRPG_SfxBnd_m17",
+        12711: "FRPG_SfxBnd_m17",
         12712: "FRPG_SfxBnd_m17",
     },
     2730: {
+        12730: "FRPG_SfxBnd_m11",
+        12732: "FRPG_SfxBnd_m11",
+        12733: "FRPG_SfxBnd_m11",
         1273000: "FRPG_SfxBnd_m11",
         1273100: "FRPG_SfxBnd_m11",
-        12730: "FRPG_SfxBnd_m11",
-        12733: "FRPG_SfxBnd_m11",
-        12732: "FRPG_SfxBnd_m11",
     },
     2731: {},
     2750: {

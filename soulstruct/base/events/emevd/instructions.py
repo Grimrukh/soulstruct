@@ -1295,8 +1295,8 @@ def DeleteVFX(vfx_id: int, erase_root_only: bool = True):
 
 
 def CreateTemporaryVFX(vfx_id: int, anchor_entity: CoordEntityTyping, anchor_type=None, model_point=-1):
-    """ Create one-off visual VFX attached to the given 'anchor_entity'. The VFX type argument is determined from the
-    Entity category. The VFX, of course, must be current loaded (or in common effects). """
+    """Create one-off visual VFX (an FFX ID) attached to the given 'anchor_entity'. The VFX, of course, must be
+    currently loaded (or in common effects)."""
     instruction_info = (2006, 3, [0, 0, -1, 0])
     if anchor_type is None:
         if anchor_entity == PLAYER:

@@ -466,7 +466,9 @@ class MSGDirectory(abc.ABC):
 
         for fmg_name, fmg_entries in self.categories.items():
             if remove_empty_entries:
-                fmg_entries = {k: v for k, v in fmg_entries.items() if v != ""}
+                fmg_entries = {k: fmg_entries[k] for k in sorted(fmg_entries) if fmg_entries[k] != ""}
+            else:
+                fmg_entries = {k: fmg_entries[k] for k in sorted(fmg_entries)}
             if fmg_name + "Patch" in self._is_menu:
                 # Updates patch only, if available.
                 fmg_name = fmg_name + "Patch"
@@ -485,7 +487,7 @@ class MSGDirectory(abc.ABC):
                 "data": fmg_entries,
             }
             json_name = fmg_name + ".json"
-            write_json(directory / json_name, fmg_dict, encoding="shift_jis")
+            write_json(directory / json_name, fmg_dict, encoding="utf-8")
             manifest["entries"].append(json_name)
 
         write_json(directory / "item_manifest.json", item_manifest)
