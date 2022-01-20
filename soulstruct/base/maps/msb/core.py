@@ -431,8 +431,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         for part in self.parts:
             if not selected_entries or part in selected_entries:
                 part.translate += translate
-            if hasattr(part, "reflect_plane_height"):
-                part.reflect_plane_height += translate.y
+                if hasattr(part, "reflect_plane_height"):
+                    part.reflect_plane_height += translate.y
         for region in self.regions:
             if not selected_entries or region in selected_entries:
                 region.translate += translate
