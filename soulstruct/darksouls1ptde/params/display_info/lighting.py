@@ -493,7 +493,7 @@ LENS_FLARE_EX_BANK = {
         ),
         FieldDisplayInfo(
             "lightDegRotY",
-            "LensFlareSourceRotationX",
+            "LensFlareSourceRotationY",
             True,
             int,
             "Rotation (Y-axis) of visible light source (e.g. sun) that causes lens flares.",
@@ -705,7 +705,7 @@ SHADOW_BANK = {
             "ShadowStartDistance",
             True,
             float,
-            "Minimum distance (m) at which shadoes are cast. A value of 0 means the camera's near-clip plane is "
+            "Minimum distance (m) at which shadows are cast. A value of 0 means the camera's near-clip plane is "
             "used.",
         ),
         FieldDisplayInfo("endDist", "ShadowEndDistance", True, float, "Maximum distance (m) at which shadows are cast."),

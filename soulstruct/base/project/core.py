@@ -306,7 +306,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         if self.prefer_json:
             if data_type in {"maps", "params", "lighting", "text"}:
                 # Save separate JSONs to `{project}/{data_type}/` directory with `write_json_dir()`.
-                data: tp.Union[MapStudioDirectory, GameParamBND, MSGDirectory]
+                data: tp.Union[MapStudioDirectory, GameParamBND, DrawParamDirectory, MSGDirectory]
                 data_dir_path = self.project_root / data_type
                 first_time = not data_dir_path.exists()
                 data.write_json_dir(data_dir_path)
@@ -318,7 +318,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     )
                 return
             else:
-                # TODO: Not currently implemented for any data type except 'maps', 'params', and 'text' (handled above).
+                # JSON not implemented for other data types.
                 data_file_path = (self.project_root / data_type).with_suffix(".json")
                 try:
                     first_time = not data_file_path.exists()
