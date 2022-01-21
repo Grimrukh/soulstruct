@@ -218,6 +218,9 @@ class EventEditor(SmartFrame):
 
     def scan_evs_files(self):
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
+            if evs_file_path.name.startswith("_"):
+                # Ignore files starting with an underscore.
+                continue
             evs_name = evs_file_path.name.split(".")[0]
             self.evs_file_paths[evs_name] = evs_file_path
             with evs_file_path.open("r", encoding="utf-8") as f:
