@@ -535,6 +535,8 @@ __all__ = [
     "Unknown_2008_04",
     # Special additions
     "SendToScript",
+    "NightfallSetSpecialMovement",
+    "NightfallClearSpecialMovement",
     "NightfallCameraResetRequest",
     # Names processed directly by EVS parser
     "NeverRestart",

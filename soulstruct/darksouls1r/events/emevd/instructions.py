@@ -507,6 +507,8 @@ __all__ = [
 
     # Special additions
     "SendToScript",
+    "NightfallSetSpecialMovement",
+    "NightfallClearSpecialMovement",
     "NightfallCameraResetRequest",
 ]
 
@@ -710,6 +712,18 @@ def SendToScript(int1: int, int2: int, float1: float, float2: float):
     """Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`."""
     instruction_info = (2009, 7)
     return to_numeric(instruction_info, int1, int2, float1, float2)
+
+
+def NightfallSetSpecialMovement(character: CharacterTyping, movement_type: int, is_active: OnOffChange):
+    """Special instruction added by Meowmaritus for [redacted] in Nightfall."""
+    instruction_info = (2009, 10)
+    return to_numeric(instruction_info, character, movement_type, is_active)
+
+
+def NightfallClearSpecialMovement():
+    """Special instruction added by Meowmaritus for [redacted] in Nightfall."""
+    instruction_info = (2009, 11)
+    return to_numeric(instruction_info)
 
 
 def NightfallCameraResetRequest():

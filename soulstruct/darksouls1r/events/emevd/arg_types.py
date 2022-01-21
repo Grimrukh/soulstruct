@@ -179,6 +179,8 @@ INSTRUCTION_ARG_TYPES = {
         5: "ii",
         6: "B",
         7: "iiff",  # Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`.
+        10: "iiB",  # Special instruction added by Meowmaritus for [redacted] in Nightfall.
+        11: "",  # Special instruction added by Meowmaritus for [redacted] in Nightfall.
         12: "",  # Special instruction added by Meowmaritus for camera manipulation in Nightfall.
     },
     2010: {1: "BHiii", 2: "iii", 3: "iB"},

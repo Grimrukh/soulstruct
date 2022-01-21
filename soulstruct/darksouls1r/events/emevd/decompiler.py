@@ -156,6 +156,14 @@ class InstructionDecompiler(_BaseDecompiler):
         """Special function added by Horkrux for DarkSoulsScripting communication."""
         pass
 
+    @parse_parameters("NightfallSetSpecialMovement")
+    def _2009_10(self, character: Character, ride_type: int, is_active: OnOffChange):
+        pass
+
+    @parse_parameters("NightfallClearSpecialMovement")
+    def _2009_11(self):
+        pass
+
     @parse_parameters("NightfallCameraResetRequest")
     def _2009_12(self):
         """Special function added by Meowmaritus for Nightfall camera manipulation."""
