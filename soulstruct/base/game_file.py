@@ -7,9 +7,7 @@ __all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]
 import abc
 import copy
 import io
-import json
 import logging
-import re
 import typing as tp
 from pathlib import Path
 
@@ -106,6 +104,13 @@ class GameFile(abc.ABC):
         continue checking the standard source types.
         """
         raise InvalidGameFileTypeError(f"No special handler for `GameFile` source type: {type(file_source)}")
+
+    @classmethod
+    def from_binder(cls, binder_source, entry_id: int):
+        """Open a file of this type from the given `entry_id` of the given `Binder` source."""
+        from soulstruct.containers import Binder
+        binder = Binder(binder_source)
+        return cls(binder[entry_id])
 
     @abc.abstractmethod
     def unpack(self, reader: BinaryReader, **kwargs):
