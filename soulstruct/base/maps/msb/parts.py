@@ -57,7 +57,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             "Scale",
             Vector3,
             Vector3.ones(),
-            "Scale of part. Only works for Map Pieces.",  # TODO: and maybe Objects?
+            "Scale of part. Only works for Map Pieces and Objects.",
         ),
         # Every concrete subclass defines 'model_name', 'draw_groups', and 'display_groups'.
     }
@@ -71,6 +71,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
     def __init__(self, source=None, **kwargs):
         self._part_type_index = -1
         self._model_index = -1
+        self._scale = Vector3().ones()
         self._draw_groups = set()
         self._display_groups = set()
         super().__init__(source=source, **kwargs)
@@ -158,6 +159,14 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             if not isinstance(i, int) and 0 <= i < self.FLAG_SET_SIZE:
                 raise ValueError(f"Invalid display group: {i}. Must be 0 <= i < {self.FLAG_SET_SIZE}.")
         self._display_groups = display_groups
+
+    @property
+    def scale(self):
+        return self._scale
+
+    @scale.setter
+    def scale(self, value):
+        self._scale = Vector3(value)
 
 
 class MSBMapPiece(MSBPart, abc.ABC):
