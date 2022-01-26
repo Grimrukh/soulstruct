@@ -8,10 +8,8 @@ import typing as tp
 import uuid
 from enum import IntEnum, unique
 
-import fev_parser_xml_const
-
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,6 +35,109 @@ def field_ratio_to_decibel(field_ratio) -> float:
     if field_ratio <= 0.001:
         return -60.0
     return 20 * math.log10(field_ratio)
+
+
+CONSOLES = ("PC", "XBOX", "XBOX360", "GC", "PS2", "PSP", "PS3", "WII")
+TEMPLATE_PROPS = (
+    "LAYERS",
+    "KEEP_EFFECTS_PARAMS",
+    "VOLUME",
+    "PITCH",
+    "PITCH_RANDOMIZATION",
+    "VOLUME_RANDOMIZATION",
+    "PRIORITY",
+    "MAX_PLAYBACKS",
+    "MAX_PLAYBACKS_BEHAVIOR",
+    "STEAL_PRIORITY",
+    "MODE",
+    "IGNORE_GEOMETRY",
+    "X_3D_ROLLOFF",
+    "X_3D_MIN_DISTANCE",
+    "X_3D_MAX_DISTANCE",
+    "X_3D_POSITION",
+    "X_3D_POSITION_RANDOMIZATION",
+    "X_3D_CONE_INSIDE_ANGLE",
+    "X_3D_CONE_OUTSIDE_ANGLE",
+    "X_3D_CONE_OUTSIDE_VOLUME",
+    "X_3D_DOPPLER_FACTOR",
+    "REVERB_WET_LEVEL",
+    "REVERB_DRY_LEVEL",
+    "X_3D_SPEAKER_SPREAD",
+    "X_3D_PAN_LEVEL",
+    "X_2D_SPEAKER_L",
+    "X_2D_SPEAKER_C",
+    "X_2D_SPEAKER_R",
+    "X_2D_SPEAKER_LS",
+    "X_2D_SPEAKER_RS",
+    "X_2D_SPEAKER_LR",
+    "X_2D_SPEAKER_RR",
+    "X_SPEAKER_LFE",
+    "ONESHOT",
+    "FADEIN_TIME",
+    "FADEOUT_TIME",
+    "NOTES",
+    "USER_PROPERTIES",
+)
+
+
+PROJECT_FOOTER_COMPOSITION = """
+<Composition>
+    <AuditionConsoleControlRepository>
+        <AuditionConsoleControl Type="Utility" Xpos="18" Ypos="18">
+            <SimpleRack>
+                <ControlName>Reset</ControlName>
+                <ControlRange>0, 1</ControlRange>
+                <ControlWidget>
+                    <ResetControl/>
+                </ControlWidget>
+                <ControlMapping Type="3" ID="0"/>
+            </SimpleRack>
+        </AuditionConsoleControl>
+    </AuditionConsoleControlRepository>
+    <CompositionUI>
+        <SceneEditor>
+            <SceneEditorItemRepository/>
+        </SceneEditor>
+        <ThemeEditor>
+            <ThemeEditorItemRepository/>
+        </ThemeEditor>
+    </CompositionUI>
+    <CueFactory>
+        <UID>2</UID>
+    </CueFactory>
+    <CueRepository/>
+    <ExtLinkFactory>
+        <UID>1</UID>
+    </ExtLinkFactory>
+    <ExtLinkRepository/>
+    <ExtSegmentFactory>
+        <UID>1</UID>
+    </ExtSegmentFactory>
+    <MusicSettings>
+        <BaseVolume>1</BaseVolume>
+        <BaseReverbLevel>1</BaseReverbLevel>
+    </MusicSettings>
+    <ParameterFactory>
+        <UID>1</UID>
+    </ParameterFactory>
+    <ParameterRepository/>
+    <SceneRepository>
+        <Scene ID="1">
+            <CueSheet></CueSheet>
+        </Scene>
+    </SceneRepository>
+    <SegmentRepository/>
+    <SharedFile/>
+    <ThemeFactory>
+        <UID>1</UID>
+    </ThemeFactory>
+    <ThemeRepository/>
+    <TimelineFactory>
+        <UID>1</UID>
+    </TimelineFactory>
+    <TimelineRepository/>
+</Composition>
+"""
 
 
 class WavebankInfo(BinaryObject):
@@ -90,27 +191,71 @@ class WavebankInfo(BinaryObject):
             f")"
         )
 
-    def to_xml_string_header(self) -> list[str]:
-        # TODO: Change constant import to formatted string template.
+    def to_xml_lines_header(self) -> list[str]:
         return [
-                   "<soundbank>",
-                   tag("name", self.bank_name),
-                   new_guid(),
-               ] + fev_parser_xml_const.WAVEBANK_HEADER_OPTIONS.splitlines() + [
-                   tag("_PC_banktype", self.bank_type.to_xml_name()),
-               ] + fev_parser_xml_const.WAVEBANK_UNUSED_BANKTYPE.splitlines()
+            "<soundbank>",
+            tag("name", self.bank_name),
+            new_guid(),
+            tag("load_into_rsx", 0),
+            tag("disable_seeking", 0),
+            tag("enable_syncpoints", 1),
+            tag("hasbuiltwithsyncpoints", 0),
+            tag("_PC_banktype", self.bank_type.to_xml_name()),
+            tag("_XBOX_banktype", "DecompressedSample"),
+            tag("_XBOX360_banktype", "DecompressedSample"),
+            tag("_GC_banktype", "DecompressedSample"),
+            tag("_PS2_banktype", "DecompressedSample"),
+            tag("_PSP_banktype", "DecompressedSample"),
+            tag("_PS3_banktype", "DecompressedSample"),
+            tag("_WII_banktype", "DecompressedSample"),
+            tag("notes"),
+            tag("rebuild", 1),
+        ]
 
-    def to_xml_string_footer(self, bank_output_format: BankOutputFormat) -> list[str]:
-        # TODO: Change constant import to formatted string template.
-        return [
-                   tag("_PC_format", bank_output_format.name),
-                   tag("_PC_quality", 50),
-                   tag("_PC_optimisesamplerate", 0),
-                   tag("_PC_forcesoftware", 1),
-                   tag("_PC_maxstreams", self.max_streams),
-               ] + fev_parser_xml_const.WAVEBANK_UNUSED_QUALITY.splitlines() + [
-                   "</soundbank>",
-               ]
+    def to_xml_lines_footer(self, bank_output_format: BankOutputFormat) -> list[str]:
+        console_info = [
+            tag("_PC_format", bank_output_format.name),
+            tag("_PC_quality", 50),
+            tag("_PC_optimisesamplerate", 0),
+            tag("_PC_forcesoftware", 1),
+            tag("_PC_maxstreams", self.max_streams),
+        ]
+        for console in CONSOLES[1:]:  # PC done above
+            console_info += [
+                tag(f"_{console}_format", "PCM"),
+                tag(f"_{console}_quality", 50),
+                tag(f"_{console}_optimisesamplerate", 0),
+                tag(f"_{console}_forcesoftware", 1 if console in {"XBOX360", "PS3"} else 0),
+                tag(f"_{console}_maxstreams", 10),
+            ]
+        return console_info + ["</soundbank>"]
+
+    @staticmethod
+    def get_default_props():
+        default_props = [
+            "<default_soundbank_props>",
+            tag("name", "default_soundbank_props"),
+            new_guid(),
+            tag("load_into_rsx", 0),
+            tag("disable_seeking", 0),
+            tag("enable_syncpoints", 1),
+            tag("hasbuiltwithsyncpoints", 0),
+        ]
+        default_props += [tag(f"_{console}_banktype", "DecompressedSample") for console in CONSOLES]
+        default_props += [
+            tag("notes"),
+            tag("rebuild", 0),
+        ]
+        for console in CONSOLES:
+            default_props += [
+                tag(f"_{console}_format", "PCM"),
+                tag(f"_{console}_quality", 50),
+                tag(f"_{console}_optimisesamplerate", 0),
+                tag(f"_{console}_forcesoftware", 1 if console in {"PC", "XBOX360", "PS3"} else 0),
+                tag(f"_{console}_maxstreams", 10),
+            ]
+        default_props += ["</default_soundbank_props>"]
+        return default_props
 
 
 class EventCategory(BinaryObject):
@@ -159,7 +304,7 @@ class EventCategory(BinaryObject):
         self.subcategories = [EventCategory(reader) for _ in range(kwargs.pop("_subcategory_count"))]
         self.set(**kwargs)
 
-    def to_xml_string(self):
+    def to_xml_lines(self) -> list[str]:
         output = [
             "<eventcategory>",
             tag("name", self.name),
@@ -172,7 +317,7 @@ class EventCategory(BinaryObject):
             tag("open", 0),
         ]
         for sc in self.subcategories:
-            output += sc.to_xml_string()
+            output += sc.to_xml_lines()
         output += [
             f"</eventcategory>"
         ]
@@ -221,7 +366,7 @@ class UserProperty(BinaryObject):
             raise ValueError(f"Invalid `UserProperty.property_type`: {self.property_type}")
         # No other fields to set.
 
-    def to_xml_string(self):
+    def to_xml_lines(self) -> list[str]:
         return [
             "<userproperty>",
             tag("name", self.name),
@@ -310,7 +455,7 @@ class SoundDefInstance(BinaryObject):
 
     unpack = BinaryObject.default_unpack
 
-    def to_xml_string(self, sounddefs: list[SoundDef]):
+    def to_xml_lines(self, sounddefs: list[SoundDef]) -> list[str]:
         return [
             "<sound>",
             tag("name", sounddefs[self.index].name),
@@ -351,7 +496,7 @@ class Point(BinaryObject):
     point_y: float
     curve_shape: Point.CurveShape
 
-    def to_xml_string(self, index: int):
+    def to_xml_string(self, index: int) -> str:
         is_first = "1" if index == 0 else "0"
         return tag("point", ",".join([str(self.point_x), str(self.point_y), is_first, str(self.curve_shape.value)]))
 
@@ -428,7 +573,7 @@ class Envelope(BinaryObject):
         kwargs |= self.extract_kwargs_from_struct(reader, self.STRUCT_2, encoding, byte_order)
         self.set(**kwargs)
 
-    def to_xml_string(self, envelope_name: str, envelopes: list[Envelope], parameters: list[Parameter]):
+    def to_xml_lines(self, envelope_name: str, envelopes: list[Envelope], parameters: list[Parameter]) -> list[str]:
         """Get XML representation of Envelope.
 
         In normal use, effect envelopes are given a unique color upon creation, but this color is not important to the
@@ -447,25 +592,26 @@ class Envelope(BinaryObject):
         """
         envelope = envelopes[self.parent_index] if self.parent_index != -1 else self
         dsp_name = envelope.effect.to_xml_name() if envelope.effect != self.EffectType.DSP_EFFECT else envelope.name
+        layer_enables = [tag(f"_{console}_enable", 1) for console in CONSOLES]
 
         return [
-                   "<envelope>",
-                   tag("name", envelope_name),
-                   tag("dsp_name", dsp_name),
-                   tag("dsp_paramindex", self.effect_parameter_index),
-                   tag("colour", "#7f0000")  # NOTE: all use the same default color. TODO: randomize for variety?
+           "<envelope>",
+           tag("name", envelope_name),
+           tag("dsp_name", dsp_name),
+           tag("dsp_paramindex", self.effect_parameter_index),
+           tag("colour", "#7f0000")  # NOTE: all use the same default color. TODO: randomize for variety?
                ] + [point.to_xml_string(i) for i, point in enumerate(self.points)] + [
-                   tag("parametername", parameters[0].name),
-                   tag("controlparameter", parameters[self.control_parameter_index].name)
-               ] + fev_parser_xml_const.LAYER_ENABLES.splitlines() + [
-                   tag("mute", "1" if self.is_muted else "0"),
-                   tag("visible", "1"),
-                   tag("hidden", "0"),
-                   tag("fromtemplate", "No"),
-                   tag("mappingmethod", self.mapping_method),
-                   tag("flags", self.flags),
-                   tag("exflags", "0"),
-                   "</envelope>",
+           tag("parametername", parameters[0].name),
+           tag("controlparameter", parameters[self.control_parameter_index].name)
+               ] + layer_enables + [
+           tag("mute", "1" if self.is_muted else "0"),
+           tag("visible", "1"),
+           tag("hidden", "0"),
+           tag("fromtemplate", "No"),
+           tag("mappingmethod", self.mapping_method),
+           tag("flags", self.flags),
+           tag("exflags", "0"),
+           "</envelope>",
                ]
 
 
@@ -503,7 +649,7 @@ class Layer(BinaryObject):
         self.envelopes = [Envelope(reader) for _ in range(data["_envelope_count"])]
         # No other fields to set.
 
-    def to_xml_string(self, layer_name: str, parameters: list[Parameter], sounddefs: list[SoundDef]):
+    def to_xml_lines(self, layer_name: str, parameters: list[Parameter], sounddefs: list[SoundDef]) -> list[str]:
         """XML string for `Layer`, including all attached SoundDefInstances and Envelopes.
 
         Args:
@@ -528,10 +674,10 @@ class Layer(BinaryObject):
         if self.control_parameter != -1:
             xml_lines += [tag("controlparameter", parameters[self.control_parameter].name)]
         for sdi in self.sounddef_instances:
-            xml_lines += sdi.to_xml_string(sounddefs)
+            xml_lines += sdi.to_xml_lines(sounddefs)
         for i, envelope in enumerate(self.envelopes):
-            xml_lines += envelope.to_xml_string(f"parsed_envelope{i}", self.envelopes, parameters)
-        xml_lines += fev_parser_xml_const.LAYER_ENABLES.splitlines()
+            xml_lines += envelope.to_xml_lines(f"parsed_envelope{i}", self.envelopes, parameters)
+        xml_lines += [tag(f"_{console}_enable", 1) for console in CONSOLES]
         xml_lines += ["</layer>"]
         return xml_lines
 
@@ -580,11 +726,8 @@ class Parameter(BinaryObject):
         self.loop_behavior = self.LoopBehavior(param_info & ~0x01)
         self.set(**kwargs)
 
-    # Emits a string list representation of the Property as it appears in the .fdp.
-
-    # Each element of the list corresponds to a line in the representation.
-    def to_xml_string(self):
-        """XML data for FDP.
+    def to_xml_lines(self) -> list[str]:
+        """
 
         The parameter ruler spacing is not needed by the event data, so it is not saved to the FEV. We set the spacing
         to be in 10% intervals, and it can later be changed by the user to their liking.
@@ -809,11 +952,7 @@ class Event(BinaryObject):
 
         self.set(**kwargs)
 
-    # Emits a string list representation of the Event as it appears in the
-    #  .fdp, including all attached Layers, Parameters and User Properties.
-    # sounddefs is the
-    # Each element of the list corresponds to a line in the representation.    
-    def to_xml_string(self, sounddefs):
+    def to_xml_lines(self, sounddefs) -> list[str]:
         """XML string for Event class, including Layers, Parameters, and User Properties.
 
         Args:
@@ -828,11 +967,15 @@ class Event(BinaryObject):
             tag("layer_nextid", "0"),
         ]
         for i, layer in enumerate(self.layers):
-            xml_lines += layer.to_xml_string(f"parsed_layer{i}", self.parameters, sounddefs)
+            xml_lines += layer.to_xml_lines(f"parsed_layer{i}", self.parameters, sounddefs)
         for param in self.parameters:
-            xml_lines += param.to_xml_string()
-        xml_lines += fev_parser_xml_const.EVENT_CAR.splitlines()
+            xml_lines += param.to_xml_lines()
         xml_lines += [
+            tag("car_rpm", 0),
+            tag("car_rpmsmooth", 0.075),
+            tag("car_loadsmooth", 0.05),
+            tag("car_loadscale", 6),
+            tag("car_dialog", 0),
             tag("volume_db", field_ratio_to_decibel(self.volume)),
             tag("pitch", self.pitch / 4.0),
             tag("pitch_units", self.pitch_rand_units.to_xml_name()),  # used in place of lost pitch units
@@ -855,7 +998,7 @@ class Event(BinaryObject):
             tag("notes"),
         ]
         for user_prop in self.user_properties:
-            xml_lines += user_prop.to_xml_string()
+            xml_lines += user_prop.to_xml_lines()
         xml_lines += [
             tag("category", self.category_names[0]),
             tag("position_randomization", self.position_rand),
@@ -883,10 +1026,8 @@ class Event(BinaryObject):
             tag("spawn_intensity", self.spawn_intensity),
             tag("spawn_intensity_randomization", self.spawn_intensity_rand),
         ]
-        xml_lines += fev_parser_xml_const.EVENT_TEMPLATE.splitlines()
-        xml_lines += [
-            "</event>"
-        ]
+        xml_lines += [tag(f"TEMPLATE_PROP_{prop_name}", 1) for prop_name in TEMPLATE_PROPS]
+        xml_lines += ["</event>"]
         return xml_lines
 
 
@@ -918,7 +1059,7 @@ class EventGroup(BinaryObject):
         self.events = [Event(reader) for _ in range(kwargs.pop("_event_count"))]
         self.set(**kwargs)
 
-    def to_xml_string(self, sounddefs: list[SoundDef]):
+    def to_xml_lines(self, sounddefs: list[SoundDef]) -> list[str]:
         xml_lines = [
             "<eventgroup>",
             tag("name", self.name),
@@ -929,11 +1070,11 @@ class EventGroup(BinaryObject):
             tag("notes"),
         ]
         for user_prop in self.user_properties:
-            xml_lines += user_prop.to_xml_string()
+            xml_lines += user_prop.to_xml_lines()
         for subgroup in self.subgroups:
-            xml_lines += subgroup.to_xml_string(sounddefs)
+            xml_lines += subgroup.to_xml_lines(sounddefs)
         for event in self.events:
-            xml_lines += event.to_xml_string(sounddefs)
+            xml_lines += event.to_xml_lines(sounddefs)
         xml_lines += [
             "</eventgroup>"
         ]
@@ -1016,7 +1157,7 @@ class SoundDefProperty(BinaryObject):
         self.recalc_pitch_rand = self.RecalculateRand(kwargs.pop("_recalc_pitch_rand_value"))
         self.set(**kwargs)
 
-    def to_xml_string(self) -> list[str]:
+    def to_xml_lines(self) -> list[str]:
         """Chunk of data to be inserted into a `SoundDef`."""
         return [
             tag("type", self.play_mode.to_xml_name()),
@@ -1065,7 +1206,7 @@ class Waveform(BinaryObject):
         kwargs = self.extract_kwargs_from_struct(reader)
         self.set(**kwargs)
 
-    def to_xml_string(self):
+    def to_xml_lines(self) -> list[str]:
         """Note that `playtime` is not stored in the FDP XML."""
         return [
             "<waveform>",
@@ -1097,18 +1238,18 @@ class SoundDef(BinaryObject):
         self.waveforms = [Waveform(reader) for _ in range(kwargs.pop("_waveform_count"))]
         self.set(**kwargs)
 
-    def to_xml_string(self, sounddef_properties_list: list[SoundDefProperty]) -> list[str]:
+    def to_xml_lines(self, sounddef_properties_list: list[SoundDefProperty]) -> list[str]:
         xml_lines = [
             "<sounddef>",
             tag("name", self.name),
             new_guid(),
         ]
-        xml_lines += sounddef_properties_list[self.sounddef_prop_index].to_xml_string()
+        xml_lines += sounddef_properties_list[self.sounddef_prop_index].to_xml_lines()
         xml_lines += [
             tag("notes"),
         ]
         for wf in self.waveforms:
-            xml_lines += wf.to_xml_string()
+            xml_lines += wf.to_xml_lines()
         xml_lines += [
             "</sounddef>",
         ]
@@ -1149,7 +1290,7 @@ class SoundDefFolder:
         else:
             raise ValueError(f"Path '{sounddef_path}' is not relative to SoundDefFolder '{self.name}'.")
 
-    def to_xml_string(self, sounddef_properties_list: list[SoundDefProperty]):
+    def to_xml_lines(self, sounddef_properties_list: list[SoundDefProperty]) -> list[str]:
         """XML representation of the SoundDefFolder as it appears in the FDP.
 
         Recursively includes all contained SoundDefFolders and SoundDefs.
@@ -1165,17 +1306,15 @@ class SoundDefFolder:
             tag("open", "0"),
         ]
         for sf in self.subfolders.values():
-            xml_lines += sf.to_xml_string(sounddef_properties_list)
+            xml_lines += sf.to_xml_lines(sounddef_properties_list)
         for sounddef in self.sounddefs:
-            xml_lines += sounddef.to_xml_string(sounddef_properties_list)
+            xml_lines += sounddef.to_xml_lines(sounddef_properties_list)
         xml_lines += [
             "</sounddeffolder>",
         ]
         return xml_lines
 
 
-# The structure of the .fev file, the FMOD Event file that holds all
-# event data about an FMOD project.
 class FEV(GameFile):
     """FMOD Event file that holes all event data about an FMOD project.
 
@@ -1231,38 +1370,74 @@ class FEV(GameFile):
         reader.seek(music_block_size, 1)
 
     def pack(self):
-        """TODO"""
+        raise ValueError("FEV pack not implemented. Use FMOD Designer to build FEV/FSB from the generated FDP.")
 
-    def to_xml_string_start(self) -> list[str]:
+    def to_xml_lines_start(self) -> list[str]:
         """Start of FDP XML contribution from FEV.
 
-        Subsequent chunks are found from Wavebanks referenced by the FSB. Finally, `to_xml_string_end()` below should be
+        Subsequent chunks are found from Wavebanks referenced by the FSB. Finally, `to_xml_lines_end()` below should be
         called.
         """
         xml_lines = [
             "<project>",
             tag("name", self.project_name),
             new_guid(),
+            tag("version", 4),
+            tag("eventgroup_nextid", 0),
+            tag("soundbank_nextid", 0),
+            tag("sounddef_nextid", 0),
+            tag("build_project", 1),
+            tag("build_headerfile", 0),
+            tag("build_banklists", 0),
+            tag("build_programmerreport", 0),
+            tag("build_applytemplate", 0),
         ]
-        xml_lines += fev_parser_xml_const.PROJECT_VERSION.splitlines()
         if self.wavebanks:
             xml_lines += [tag("currentbank", self.wavebanks[0].bank_name)]
-        xml_lines += fev_parser_xml_const.PROJECT_LANGUAGE.splitlines()
+        xml_lines += [
+            tag("currentlanguage", "default"),
+            tag("primarylanguage", "default"),
+            tag("language", "default"),
+            tag("templatefilename"),
+            tag("templatefileopen", 1),
+        ]
         # Handle Event Categories. The top-level master category is not included.
         for event_category in self.top_event_category.subcategories:
-            xml_lines += event_category.to_xml_string()
+            xml_lines += event_category.to_xml_lines()
         # Handle Sounddefs
         #  Build Sounddef directory structure and populate it with the Sounddefs
         master_sounddeffolder = SoundDefFolder("master")
         for sd in self.sounddefs:
             master_sounddeffolder.add_new_sounddef(sd.name, sd)
-        xml_lines += master_sounddeffolder.to_xml_string(self.sounddef_properties)
+        xml_lines += master_sounddeffolder.to_xml_lines(self.sounddef_properties)
         # Handle Event Groups.
         for event_group in self.top_event_groups:
-            xml_lines += event_group.to_xml_string(self.sounddefs)
-        xml_lines += fev_parser_xml_const.DEFAULT_SOUNDBANK_PROPS.splitlines()
+            xml_lines += event_group.to_xml_lines(self.sounddefs)
+        xml_lines += WavebankInfo.get_default_props()
         return xml_lines
 
-    def to_xml_string_end(self) -> list[str]:
+    @staticmethod
+    def to_xml_lines_end() -> list[str]:
         """Last part of FDP XML."""
-        return fev_parser_xml_const.PROJECT_FOOTER.splitlines() + ["</project>"]
+        project_footer = [
+            tag("notes"),
+            tag("currentplatform", "PC"),
+        ]
+        for console in CONSOLES:
+            project_footer += [
+                tag(f"_{console}_encryptionkey"),
+                tag(f"_{console}_builddirectory"),
+                tag(f"_{console}_audiosourcedirectory"),
+                tag(f"_{console}_prebuildcommands"),
+                tag(f"_{console}_postbuildcommands"),
+                tag(f"_{console}_buildinteractivemusic", "Yes"),
+            ]
+        project_footer += [
+            tag("presavecommands"),
+            tag("postsavecommands"),
+            tag("neweventusetemplate", 0),
+            tag("neweventlasttemplatename"),
+        ]
+        project_footer += PROJECT_FOOTER_COMPOSITION.splitlines()
+        project_footer += ["</project>"]
+        return project_footer
