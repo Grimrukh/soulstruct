@@ -1099,11 +1099,11 @@ class InstructionDecompiler(abc.ABC):
 
     @parse_parameters
     def _2011_01(self, collision_id: Collision, state: bool):
-        return self._set_state("Collision", state, entity=collision_id)
+        return self._set_state("MapCollision", state, entity=collision_id)
 
     @parse_parameters
     def _2011_02(self, collision_id: Collision, state: bool):
-        return self._set_state("CollisionBackreadMask", state, entity=collision_id)
+        return self._set_state("MapCollisionBackreadMask", state, entity=collision_id)
 
     # ~~~~~~~~~~~~~~~~~~ #
     # ~~~ MAP PIECES ~~~ #
