@@ -577,23 +577,23 @@ def Event11020350():
     """ 11020350: Event 11020350 """
     SkipLinesIfThisEventOn(7)
     DisableObject(1021481)
-    DisableCollision(1023510)
+    DisableMapCollision(1023510)
     IfFlagOn(1, 11010700)
     IfFlagOn(1, 11400200)
     IfConditionTrue(0, input_condition=1)
     EnableObject(1021481)
-    EnableCollision(1023510)
+    EnableMapCollision(1023510)
     DisableObject(1021480)
-    DisableCollision(1023500)
+    DisableMapCollision(1023500)
     DisableMapPiece(1023501)
-    DisableCollision(1023502)
+    DisableMapCollision(1023502)
 
 
 def Event11020351():
     """ 11020351: Event 11020351 """
     SkipLinesIfFlagOff(2, 0)
-    DisableCollision(0)
-    DisableCollision(0)
+    DisableMapCollision(0)
+    DisableMapCollision(0)
     IfCharacterInsideRegion(0, PLAYER, region=1022111)
     SkipLinesIfFlagOn(2, 710)
     Kill(PLAYER, award_souls=False)
@@ -613,8 +613,8 @@ def Event11020351():
 def Event11020352():
     """ 11020352: Event 11020352 """
     IfFlagOn(0, 710)
-    DisableCollision(1023600)
-    DisableCollision(1023601)
+    DisableMapCollision(1023600)
+    DisableMapCollision(1023601)
 
 
 def Event11020700(_, arg_0_3: int, arg_4_7: int):

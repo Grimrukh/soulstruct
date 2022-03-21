@@ -7,7 +7,7 @@ from soulstruct.base.project.editors.field_editor import BaseFieldEditor
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.param import Param, ParamRow
-    from soulstruct.base.params.draw_param import DrawParamDirectory
+    from soulstruct.base.params.draw_param import DrawParamBND, DrawParamDirectory
 
 
 class LightingEntryRow(EntryRow):
@@ -41,6 +41,10 @@ class LightingEntryRow(EntryRow):
 
     def build_entry_context_menu(self, text_links=()):
         super().build_entry_context_menu()
+        self.context_menu.add_command(
+            label="Duplicate Entry to Next Available ID",
+            command=lambda: self.master.add_entry_to_next_available_id(self.entry_id),
+        )
         text_links = self.master.linker.param_entry_text_link(self.entry_id)
         if text_links:
             self.context_menu.add_separator()
@@ -137,8 +141,8 @@ class LightingEditor(BaseFieldEditor):
 
     def regenerate_slot_1(self):
         map_area = self.get_map_area_name()
-        map_draw_param = getattr(self.lighting, map_area)
-        if map_draw_param["AmbientLight"][1] is not None:  # picking a random category to check slots
+        map_draw_param = getattr(self.lighting, map_area)  # type: DrawParamBND
+        if map_draw_param.params["LightBank.param"][1] is not None:  # picking a random category to check slots
             if (
                 self.CustomDialog(
                     title="Overwrite Slot 1?",

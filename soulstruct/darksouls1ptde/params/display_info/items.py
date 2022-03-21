@@ -1115,14 +1115,6 @@ EQUIP_PARAM_GOODS_ST = {
             True,
             bool,
             "Determines if this good can be used while multiple players are together.",
-            dsr_only=True,
-        ),
-        FieldDisplayInfo(
-            "enable_pvp:1",
-            "UseableInPVP",
-            True,
-            bool,
-            "<DSR> Determines if this good can be used in 'PVP' multiplayer. Not sure exactly what that refers to.",
         ),
         FieldDisplayInfo(
             "disable_offline:1",
@@ -2277,14 +2269,7 @@ EQUIP_PARAM_WEAPON_ST = {
         FieldDisplayInfo(
             "oldSortId", "OldSortIndex", False, int, "Sorting index for an obsolete build of the game. No effect."
         ),
-        FieldDisplayInfo(
-            "levelSyncCorrectID",
-            "LevelSyncCorrection",
-            False,
-            int,
-            "Level sync correction (DSR only). Probably not useful.",
-        ),
-        FieldDisplayInfo("pad_1[6]", "Pad3", False, pad_field(6), "Null padding."),
+        FieldDisplayInfo("pad_1[8]", "Pad3", False, pad_field(8), "Null padding."),
     ],
 }
 
@@ -2594,14 +2579,6 @@ REINFORCE_PARAM_WEAPON_ST = {
             int,
             "Value to be added to Upgrade Materials field in base weapon parameters.",
         ),
-        FieldDisplayInfo(
-            "reinforcementLevel",
-            "ReinforcementLevel",
-            True,
-            int,
-            "Reinforcement level. Not sure where this is used; it could be used to calculate the final "
-            "weapon ID (e.g. 100005 for Dagger+5).",
-            dsr_only=True,
-        ),
+        FieldDisplayInfo("pad[9]", "Pad1", False, pad_field(9), "Null padding."),
     ],
 }

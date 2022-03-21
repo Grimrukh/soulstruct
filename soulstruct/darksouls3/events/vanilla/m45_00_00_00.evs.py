@@ -1989,7 +1989,7 @@ def Event14505610():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableCollision(4503610)
+    DisableMapCollision(4503610)
     ActivateCollisionAndCreateNavmesh(collision=4503611, state=True)
     IfPlayerInOwnWorld(1)
     IfObjectActivated(1, obj_act_id=4503611)
@@ -2009,7 +2009,7 @@ def Event14505610():
         repetition_time=0.0,
     )
     ForceAnimation(4501610, 1, loop=True, wait_for_completion=True)
-    EnableCollision(4503610)
+    EnableMapCollision(4503610)
     ActivateCollisionAndCreateNavmesh(collision=4503612, state=True)
 
 

@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 
 __all__ = ["Dummy"]
 

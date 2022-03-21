@@ -8674,15 +8674,15 @@ def Event12905245(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12905271(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12905271: Event 12905271 """
     SkipLinesIfFlagOff(2, arg_4_7)
-    DisableCollision(arg_0_3)
+    DisableMapCollision(arg_0_3)
     SkipLines(1)
-    DisableCollision(arg_8_11)
+    DisableMapCollision(arg_8_11)
     End()
 
 
 def Event12905302(_, arg_0_3: int):
     """ 12905302: Event 12905302 """
-    DisableCollision(arg_0_3)
+    DisableMapCollision(arg_0_3)
     SkipLines(1)
 
 

@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 
 from __future__ import annotations
 
@@ -42,12 +42,12 @@ class Bone(BinaryObject):
     unpack = BinaryObject.default_unpack
     pack = BinaryObject.default_pack
 
-    def get_parent(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
+    def get_parent(self, bones: list[Bone]) -> tp.Optional[Bone]:
         if self.parent_index != -1:
             return bones[self.parent_index]
         return None
 
-    def get_all_parents(self, bones: tp.List[Bone]) -> tp.List[Bone]:
+    def get_all_parents(self, bones: list[Bone]) -> list[Bone]:
         """Get all parents, from the highest to this Bone."""
         parents = [self]
         bone = self
@@ -56,22 +56,22 @@ class Bone(BinaryObject):
             parents.append(bone)
         return list(reversed(parents))
 
-    def get_child(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
+    def get_child(self, bones: list[Bone]) -> tp.Optional[Bone]:
         if self.child_index != -1:
             return bones[self.child_index]
         return None
 
-    def get_next_sibling(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
+    def get_next_sibling(self, bones: list[Bone]) -> tp.Optional[Bone]:
         if self.next_sibling_index != -1:
             return bones[self.next_sibling_index]
         return None
 
-    def get_previous_sibling(self, bones: tp.List[Bone]) -> tp.Optional[Bone]:
+    def get_previous_sibling(self, bones: list[Bone]) -> tp.Optional[Bone]:
         if self.previous_sibling_index != -1:
             return bones[self.previous_sibling_index]
         return None
 
-    def get_absolute_translate(self, bones: tp.List[Bone]) -> Vector3:
+    def get_absolute_translate(self, bones: list[Bone]) -> Vector3:
         """Accumulates parents' translates and rotates."""
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()

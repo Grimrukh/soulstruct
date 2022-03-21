@@ -1247,12 +1247,12 @@ def Event12410815():
 
 def Event12410820():
     """ 12410820: Event 12410820 """
-    DisableCollisionBackreadMask(2414400)
-    DisableCollisionBackreadMask(2414401)
-    DisableCollisionBackreadMask(2414402)
-    DisableCollisionBackreadMask(2414410)
-    DisableCollisionBackreadMask(2414420)
-    DisableCollisionBackreadMask(2414421)
+    DisableMapCollisionBackreadMask(2414400)
+    DisableMapCollisionBackreadMask(2414401)
+    DisableMapCollisionBackreadMask(2414402)
+    DisableMapCollisionBackreadMask(2414410)
+    DisableMapCollisionBackreadMask(2414420)
+    DisableMapCollisionBackreadMask(2414421)
 
 
 @RestartOnRest
@@ -5174,7 +5174,7 @@ def Event12414500():
     EnableCharacter(2410740)
     ForceAnimation(2410740, 101201, wait_for_completion=True)
     EnableAI(2410740)
-    DisableCollision(2414200)
+    DisableMapCollision(2414200)
 
 
 @RestartOnRest
@@ -5328,7 +5328,7 @@ def Event12414600():
     EnableCharacter(2410158)
     ForceAnimation(2410158, 7010, wait_for_completion=True)
     EnableAI(2410158)
-    DisableCollision(2414200)
+    DisableMapCollision(2414200)
 
 
 @RestartOnRest
@@ -5341,7 +5341,7 @@ def Event12414601():
     DefineLabel(0)
     DisableCharacter(2410158)
     SetBackreadStateAlternate(2410158, state=False)
-    EnableCollision(2414200)
+    EnableMapCollision(2414200)
 
 
 @RestartOnRest

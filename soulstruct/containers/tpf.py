@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["TPFTexture", "TPF"]
@@ -11,9 +11,9 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.base.textures.dds import DDS, DDSCAPS2
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 from .dcx import DCX
-from .dds import DDS, DDSCAPS2
 
 
 class TPFPlatform(IntEnum):
@@ -43,7 +43,7 @@ class TextureHeader:
 class FloatStruct:
     """Unknown optional data for some textures."""
     unk0: int
-    values: tp.List[float]
+    values: list[float]
 
     @classmethod
     def unpack_from(cls, reader: BinaryReader):
@@ -239,7 +239,7 @@ class TPFTexture:
 
 class TPF(GameFile):
 
-    textures: tp.List[TPFTexture]
+    textures: list[TPFTexture]
     platform: TPFPlatform
     encoding: int
     tpf_flags: int  # non-zero value on PS3 means textures have `unk2`; unknown otherwise
@@ -336,7 +336,7 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def collect_tpfs(cls, tpfbhd_directory: tp.Union[str, Path]) -> tp.Dict[str, TPF]:
+    def collect_tpfs(cls, tpfbhd_directory: tp.Union[str, Path]) -> dict[str, TPF]:
         """Build a dictionary mapping TGA texture names to TPF instances."""
         from soulstruct.containers import Binder
 

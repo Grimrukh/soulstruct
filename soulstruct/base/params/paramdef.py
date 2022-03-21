@@ -9,9 +9,9 @@ import re
 import typing as tp
 from enum import IntEnum
 
+from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.containers import Binder
-from soulstruct.containers.entry import BinderEntry
 from soulstruct.exceptions import SoulstructError
 from soulstruct.games import *
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader

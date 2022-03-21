@@ -57,7 +57,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             "Scale",
             Vector3,
             Vector3.ones(),
-            "Scale of part. Only works for Map Pieces.",  # TODO: and maybe Objects?
+            "Scale of part. Only works for Map Pieces and Objects.",
         ),
         # Every concrete subclass defines 'model_name', 'draw_groups', and 'display_groups'.
     }
@@ -71,6 +71,7 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
     def __init__(self, source=None, **kwargs):
         self._part_type_index = -1
         self._model_index = -1
+        self._scale = Vector3().ones()
         self._draw_groups = set()
         self._display_groups = set()
         super().__init__(source=source, **kwargs)
@@ -158,6 +159,14 @@ class MSBPart(MSBEntryEntityCoordinates, abc.ABC):
             if not isinstance(i, int) and 0 <= i < self.FLAG_SET_SIZE:
                 raise ValueError(f"Invalid display group: {i}. Must be 0 <= i < {self.FLAG_SET_SIZE}.")
         self._display_groups = display_groups
+
+    @property
+    def scale(self):
+        return self._scale
+
+    @scale.setter
+    def scale(self, value):
+        self._scale = Vector3(value)
 
 
 class MSBMapPiece(MSBPart, abc.ABC):
@@ -637,9 +646,9 @@ class MSBCollision(MSBPart, abc.ABC):
 
     @play_region_id.setter
     def play_region_id(self, value):
-        if self._stable_footing_flag != 0:
+        if value != 0 and self._stable_footing_flag != 0:
             raise InvalidFieldValueError(
-                "Cannot set 'play_region_id' to a non-zero value while `stable_footing_flag` is non-zero."
+                f"Cannot set 'play_region_id' to a non-zero value ({value}) while `stable_footing_flag` is non-zero."
             )
         if not isinstance(value, int) or value <= -10:
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")

@@ -1,9 +1,7 @@
 __all__ = ["MSB"]
 
-import json
 import logging
 import typing as tp
-from pathlib import Path
 
 from soulstruct.base.maps.msb import MSB as _BaseMSB, ENTITY_GAME_TYPES
 from soulstruct.games import DarkSoulsDSRType
@@ -51,24 +49,6 @@ class MSB(_BaseMSB, DarkSoulsDSRType):
                             entry.name = VANILLA_MSB_TRANSLATIONS[entry.entity_id]
                             self.rename_references(old_name, entry.name, entry_types=[entry_type_name])
                             translated_entity_ids.add(entry.entity_id)
-
-    def write_info_json(self, json_path: tp.Union[str, Path]):
-        """For use in Blender, as loading the entire MSBs is too cumbersome at the moment (Blender 2.9 uses Python 3.7).
-
-        Write a simple JSON mapping `MSBMapPiece` part names to their model name, translate, rotate, and scale. The
-        Blender import utility can optionally look for this file and use it to adjust the positions of imported FLVER
-        models so relationships between pieces can be properly seen.
-        """
-        info = {}
-        for map_piece in self.parts.MapPieces:
-            info[map_piece.name] = {
-                "model_name": map_piece.model_name,
-                "translate": list(map_piece.translate),
-                "rotate": list(map_piece.rotate),
-                "scale": list(map_piece.scale),
-            }
-        with Path(json_path).open("w") as f:
-            json.dump(info, f, indent=4)
 
     def new_light_event_with_point(
         self,

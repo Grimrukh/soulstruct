@@ -567,7 +567,7 @@ def Constructor():
     Event12405272()
     Event12400990()
     GotoIfFlagOff(Label.L0, Flags.VicarAmeliaDead)
-    DisableCollision(2404121)
+    DisableMapCollision(2404121)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -5939,7 +5939,7 @@ def Event12404410(
     CancelSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
-    DisableCollision(2404120)
+    DisableMapCollision(2404120)
 
 
 @RestartOnRest

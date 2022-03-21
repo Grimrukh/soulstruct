@@ -3,14 +3,16 @@ __all__ = [
     "UNUSED_CHARACTERS",
     "CHARACTER_FFX_SOURCES",
     "WEAPON_MODELS",
+    "BONFIRE_ESDS",
+    "FOG_WALL_MODELS",
     "BEHAVIOR_SUB_ID",
     "PLAYER_WEAPON_BEHAVIOR_VARIATIONS",
     "HAS_ONE_HANDED_SPECIAL_ATTACK",
     "HAS_TWO_HANDED_SPECIAL_ATTACK",
     "SPECIAL_EFFECT_RANGES",
     "OBJECT_POSES",
+    "HELLKITE_BRIDGE_FIRE_FFX",
 ]
-
 
 CHARACTER_MODELS = {
     0: "Player Character",
@@ -392,20 +394,20 @@ CHARACTER_FFX_SOURCES = {
         12704: "FRPG_SfxBnd_m17",
     },
     2710: {
-        12714: "FRPG_SfxBnd_m17",
         12713: "FRPG_SfxBnd_m17",
+        12714: "FRPG_SfxBnd_m17",
     },
     2711: {
-        12711: "FRPG_SfxBnd_m17",
         12710: "FRPG_SfxBnd_m17",
+        12711: "FRPG_SfxBnd_m17",
         12712: "FRPG_SfxBnd_m17",
     },
     2730: {
+        12730: "FRPG_SfxBnd_m11",
+        12732: "FRPG_SfxBnd_m11",
+        12733: "FRPG_SfxBnd_m11",
         1273000: "FRPG_SfxBnd_m11",
         1273100: "FRPG_SfxBnd_m11",
-        12730: "FRPG_SfxBnd_m11",
-        12733: "FRPG_SfxBnd_m11",
-        12732: "FRPG_SfxBnd_m11",
     },
     2731: {},
     2750: {
@@ -1430,7 +1432,6 @@ HAS_TWO_HANDED_SPECIAL_ATTACK = {
     "Obsidian Greatsword",
 }
 
-
 # My rough descriptions of various SpEffect ID ranges.
 # I've extended the ranges to 99 or 999 where obvious, but many are unused.
 # The 8000 range is likely the best range to add custom effects.
@@ -1464,7 +1465,6 @@ SPECIAL_EFFECT_RANGES = {
     (90000, 91111): "Status Flags",  # four bits toggling poison, bleed, toxic, and curse vulnerability
 }
 
-
 # Values in brackets indicate the offset of the "ground" of each pose relative to the player's position.
 OBJECT_POSES = {
     "o0500": {  # Naked male Hollow corpse
@@ -1491,167 +1491,296 @@ OBJECT_POSES = {
     },
 }
 
+# Maps `talkesd` map file stems to lists of `tXXXXXX` bonfire ESD files inside them.
+# All vanilla bonfire ESD files are identical, so this helps with modifying all of them at once.
+BONFIRE_ESDS = {
+    "m10_00_00_00": [
+        "t100000",
+        "t100001",
+        "t100002",
+        "t100010",
+    ],
+    "m10_01_00_00": [
+        "t100100",
+        "t100101",
+        "t100102",
+        "t100103",
+        "t100104",
+        "t100105",
+        "t100106",
+        "t100110",
+    ],
+    "m10_02_00_00": [
+        "t100200",
+        "t100201",
+        "t100202",
+        "t100210",
+    ],
+    "m11_00_00_00": [
+        "t110000",
+        "t110001",
+        "t110002",
+        "t110010",
+    ],
+    "m12_00_00_00": [
+        "t120000",
+        "t120001",
+        "t120002",
+        "t120010",
+    ],
+    "m12_01_00_00": [
+        "t121000",
+        "t121001",
+        "t121002",
+        "t121003",
+        "t121004",
+    ],
+    "m13_00_00_00": [
+        "t130000",
+        "t130001",
+        "t130002",
+        "t130010",
+    ],
+    "m13_01_00_00": [
+        "t131000",
+        "t131001",
+        "t131002",
+        "t131010",
+    ],
+    "m13_02_00_00": [
+        "t132000",
+        "t132001",
+        "t132002",
+        "t132010",
+    ],
+    "m14_00_00_00": [
+        "t140000",
+        "t140001",
+        "t140002",
+        "t140010",
+    ],
+    "m14_01_00_00": [
+        "t141000",
+        "t141001",
+        "t141002",
+        "t141003",
+        "t141004",
+        "t141010",
+    ],
+    "m15_00_00_00": [
+        "t150000",
+        "t150001",
+        "t150002",
+        "t150010",
+    ],
+    "m15_01_00_00": [
+        "t151000",
+        "t151001",
+        "t151002",
+        "t151010",
+    ],
+    "m16_00_00_00": [
+        "t160000",
+        "t160001",
+        "t160002",
+        "t160010",
+    ],
+    "m17_00_00_00": [
+        "t170000",
+        "t170001",
+        "t170002",
+        "t170010",
+    ],
+    "m18_00_00_00": [
+        "t180000",
+        "t180001",
+        "t180002",
+        "t180010",
+    ],
+    "m18_01_00_00": [
+        "t181000",
+        "t181001",
+    ],
+}
 
-# Maps fog wall object IDs to their VFX (FFX) ID and a description of their location.
+# Maps each fog wall object ID to its matching VFX (FFX) ID, FFXBND source file name, and a description of its location.
 FOG_WALL_MODELS = {
     # Depths
-    1400: (81000, "Gaping Dragon entrance"),
-    1401: (81001, "Undead Burg entrance"),  # bottom of stairs after locked door
-    1402: (81002, "Blighttown entrance"),
-    1420: (81020, "Depths checkpoint"),  # before Channeler
+    1400: (81000, "FRPG_SfxBnd_m10_00", "Gaping Dragon entrance"),
+    1401: (81001, "FRPG_SfxBnd_m10_00", "Undead Burg entrance"),  # bottom of stairs after locked door
+    1402: (81002, "FRPG_SfxBnd_m10_00", "Blighttown entrance"),
+    1420: (81020, "FRPG_SfxBnd_m10_00", "Depths checkpoint"),  # before Channeler
 
     # Undead Burg / Parish
-    1403: (81003, "Bell Gargoyles entrance"),
-    1404: (81004, "Bell Gargoyles exit"),
-    1405: (81005, "Taurus Demon entrance"),
-    1406: (81006, "Taurus Demon exit"),
-    1407: (81007, "Upper Burg exit to Firelink Shrine"),  # bottom of stairs
-    1408: (81008, "Parish exit to Andre"),  # start of long walkway behind Parish
-    1409: (81009, "Bridge exit to Taurus Demon"),  # opposite Basement door
-    1410: (81010, "Parish elevator to Firelink Shrine"),  # blocks both elevators
-    1411: (81011, "Upper Burg exit to Darkroot Basin"),  # behind Havel
-    1412: (81012, "Bridge exit to Lower Burg"),  # Basement door
-    1413: (81013, "Capra Demon entrance"),
-    1414: (81014, "Lower Burg exit to Firelink Shrine"),  # near Female Undead Merchant
-    1415: (81015, "Lower Burg exit to Bridge"),  # below Basement door
-    1416: (81016, "Parish checkpoint"),  # to bridge above gate
-    1417: (81017, "Lower Burg one-way gate"),  # to Upper Burg
-    1418: (81018, "Upper Burg bonfire room lower entrance"),
-    1419: (81019, "Upper Burg checkpoint"),  # before first Hellkite appearance
-    1421: (81021, "Upper Burg bonfire room upper entrance"),  # just below bridge
+    1403: (81003, "FRPG_SfxBnd_m10_01", "Bell Gargoyles entrance"),
+    1404: (81004, "FRPG_SfxBnd_m10_01", "Bell Gargoyles exit"),
+    1405: (81005, "FRPG_SfxBnd_m10_01", "Taurus Demon entrance"),
+    1406: (81006, "FRPG_SfxBnd_m10_01", "Taurus Demon exit"),
+    1407: (81007, "FRPG_SfxBnd_m10_01", "Upper Burg exit to Firelink Shrine"),  # bottom of stairs
+    1408: (81008, "FRPG_SfxBnd_m10_01", "Parish exit to Andre"),  # start of long walkway behind Parish
+    1409: (81009, "FRPG_SfxBnd_m10_01", "Bridge exit to Taurus Demon"),  # opposite Basement door
+    1410: (81010, "FRPG_SfxBnd_m10_01", "Parish elevator to Firelink Shrine"),  # blocks both elevators
+    1411: (81011, "FRPG_SfxBnd_m10_01", "Upper Burg exit to Darkroot Basin"),  # behind Havel
+    1412: (81012, "FRPG_SfxBnd_m10_01", "Bridge exit to Lower Burg"),  # Basement door
+    1413: (81013, "FRPG_SfxBnd_m10_01", "Capra Demon entrance"),
+    1414: (81014, "FRPG_SfxBnd_m10_01", "Lower Burg exit to Firelink Shrine"),  # near Female Undead Merchant
+    1415: (81015, "FRPG_SfxBnd_m10_01", "Lower Burg exit to Bridge"),  # below Basement door
+    1416: (81016, "FRPG_SfxBnd_m10_01", "Parish checkpoint"),  # to bridge above gate
+    1417: (81017, "FRPG_SfxBnd_m10_01", "Lower Burg one-way gate"),  # to Upper Burg
+    1418: (81018, "FRPG_SfxBnd_m10_01", "Upper Burg bonfire room lower entrance"),
+    1419: (81019, "FRPG_SfxBnd_m10_01", "Upper Burg checkpoint"),  # before first Hellkite appearance
+    1421: (81021, "FRPG_SfxBnd_m10_01", "Upper Burg bonfire room upper entrance"),  # just below bridge
 
     # Painted World
-    1600: (81100, "Priscilla entrance"),
-    1601: (81101, "Priscilla exit"),  # appears strangely unaligned
-    1602: (-1, "<UNUSED>"),
-    1603: (81103, "Painted World checkpoint"),  # bottom of tower to Phalanx courtyard
-    1604: (81104, "Sewer exit to courtyard"),
-    1605: (-1, "<UNUSED>"),
+    1600: (81100, "FRPG_SfxBnd_m11", "Priscilla entrance"),
+    1601: (81101, "FRPG_SfxBnd_m11", "Priscilla exit"),  # appears strangely unaligned
+    1602: (-1, "", "<UNUSED>"),
+    1603: (81103, "FRPG_SfxBnd_m11", "Painted World checkpoint"),  # bottom of tower to Phalanx courtyard
+    1604: (81104, "FRPG_SfxBnd_m11", "Sewer exit to courtyard"),
+    1605: (-1, "", "<UNUSED>"),
 
     # Darkroot Garden / Basin
-    2900: (81200, "Sif entrance"),
-    2901: (81201, "Garden exit to Parish"),  # behind Titanite Demon
-    2902: (81202, "Basin exit to Upper Burg"),  # into Havel's tower
-    2903: (81203, "Basin exit to Valley of Drakes"),  # entrance to bonfire tunnel
-    2904: (81204, "Moonlight Butterfly entrance"),
-    2905: (81205, "Moonlight Butterfly exit"),
-    2906: (81206, "Darkroot Garden checkpoint"),  # entrance to area before Butterfly
-    2907: (81207, "Bridge above Hydra"),  # ladder side of bridge
-    2908: (81209, "Crest of Artorias door"),
+    2900: (81200, "FRPG_SfxBnd_m12", "Sif entrance"),
+    2901: (81201, "FRPG_SfxBnd_m12", "Garden exit to Parish"),  # behind Titanite Demon
+    2902: (81202, "FRPG_SfxBnd_m12", "Basin exit to Upper Burg"),  # into Havel's tower
+    2903: (81203, "FRPG_SfxBnd_m12", "Basin exit to Valley of Drakes"),  # entrance to bonfire tunnel
+    2904: (81204, "FRPG_SfxBnd_m12", "Moonlight Butterfly entrance"),
+    2905: (81205, "FRPG_SfxBnd_m12", "Moonlight Butterfly exit"),
+    2906: (81206, "FRPG_SfxBnd_m12", "Darkroot Garden checkpoint"),  # entrance to area before Butterfly
+    2907: (81207, "FRPG_SfxBnd_m12", "Bridge above Hydra"),  # ladder side of bridge
+    2908: (81209, "FRPG_SfxBnd_m12", "Crest of Artorias door"),
 
     # Oolacile / Chasm of the Abyss
-    2909: (81213, "Sanctuary Guardian entrance"),
-    2910: (81214, "Sanctuary Guardian exit"),
-    2911: (81210, "Manus entrance"),
-    2912: (81218, "Chasm exit to Royal Wood"),  # bottom of elevator
-    2913: (81215, "Sanctuary exit to Royal Wood"),  # before bridge
-    2914: (81216, "Royal Wood exit to Chasm"),  # top of elevator
-    2915: (81211, "Artorias entrance"),
-    2916: (81212, "Artorias exit"),
-    2917: (81217, "Battle of Stoicism exit to Township"),
-    2918: (-1, "<UNUSED>"),
-    2919: (81220, "Kalameet entrance"),
-    2920: (81221, "Battle of Stoicism exit to Artorias"),  # immediately after Artorias exit
+    2909: (81213, "FRPG_SfxBnd_m12_01", "Sanctuary Guardian entrance"),
+    2910: (81214, "FRPG_SfxBnd_m12_01", "Sanctuary Guardian exit"),
+    2911: (81210, "FRPG_SfxBnd_m12_01", "Manus entrance"),
+    2912: (81218, "FRPG_SfxBnd_m12_01", "Chasm exit to Royal Wood"),  # bottom of elevator
+    2913: (81215, "FRPG_SfxBnd_m12_01", "Sanctuary exit to Royal Wood"),  # before bridge
+    2914: (81216, "FRPG_SfxBnd_m12_01", "Royal Wood exit to Chasm"),  # top of elevator
+    2915: (81211, "FRPG_SfxBnd_m12_01", "Artorias entrance"),
+    2916: (81212, "FRPG_SfxBnd_m12_01", "Artorias exit"),
+    2917: (81217, "FRPG_SfxBnd_m12_01", "Battle of Stoicism exit to Township"),
+    2918: (-1, "", "<UNUSED>"),
+    2919: (81220, "FRPG_SfxBnd_m12_01", "Kalameet entrance"),
+    2920: (81221, "FRPG_SfxBnd_m12_01", "Battle of Stoicism exit to Artorias"),  # immediately after Artorias exit
 
     # Catacombs
-    3950: (-1, "<UNUSED>"),
-    3951: (81301, "Catacombs exit to Firelink Shrine"),  # top of first ladder
-    3952: (81302, "Catacombs checkpoint"),  # after first rotating bridge
-    3953: (-1, "<UNUSED>"),
-    3954: (81300, "Pinwheel entrance"),  # in rock tunnel before drop
-    3955: (-1, "<UNUSED>"),
+    3950: (-1, "", "<UNUSED>"),
+    3951: (81301, "FRPG_SfxBnd_m13_00", "Catacombs exit to Firelink Shrine"),  # top of first ladder
+    3952: (81302, "FRPG_SfxBnd_m13_00", "Catacombs checkpoint"),  # after first rotating bridge
+    3953: (-1, "", "<UNUSED>"),
+    3954: (81300, "FRPG_SfxBnd_m13_00", "Pinwheel entrance"),  # in rock tunnel before drop
+    3955: (-1, "", "<UNUSED>"),
 
     # Tomb of the Giants
-    3960: (-1, "<UNUSED>"),
-    3961: (81310, "Tomb exit to Catacombs"),  # giant fog wall above Pinwheel coffin
-    3962: (81311, "Tomb checkpoint"),  # shortly after Patches
-    3963: (81312, "Tomb golden fog wall"),
-    3964: (81315, "Nito entrance"),
-    3965: (-1, "<UNUSED>"),
+    3960: (-1, "", "<UNUSED>"),
+    3961: (81310, "FRPG_SfxBnd_m13_01", "Tomb exit to Catacombs"),  # giant fog wall above Pinwheel coffin
+    3962: (81311, "FRPG_SfxBnd_m13_01", "Tomb checkpoint"),  # shortly after Patches
+    3963: (81312, "FRPG_SfxBnd_m13_01", "Tomb golden fog wall"),
+    3964: (81315, "FRPG_SfxBnd_m13_01", "Nito entrance"),
+    3965: (-1, "", "<UNUSED>"),
 
     # Great Hollow / Ash Lake
-    3970: (81320, "Great Hollow exit to Blighttown"),  # before both illusory walls
-    3971: (81321, "Ash Lake checkpoint"),  # in tunnel between Great Hollow and Ash Lake
-    3972: (-1, "<UNUSED>"),
-    3973: (-1, "<UNUSED>"),
+    3970: (81320, "FRPG_SfxBnd_m13_02", "Great Hollow exit to Blighttown"),  # before both illusory walls
+    3971: (81321, "FRPG_SfxBnd_m13_02", "Ash Lake checkpoint"),  # in tunnel between Great Hollow and Ash Lake
+    3972: (-1, "", "<UNUSED>"),
+    3973: (-1, "", "<UNUSED>"),
 
     # Blighttown / Quelaag's Domain
-    4950: (81400, "Quelaag entrance"),
-    4951: (81401, "Quelaag exit"),
-    4952: (81402, "Blighttown exit to Depths"),
-    4953: (81403, "Blighttown exit to Valley of Drakes"),
-    4954: (81404, "Blighttown exit to Great Hollow"),  # before both illusory walls
-    4955: (-1, "<UNUSED>"),
-    4956: (81406, "Blighttown checkpoint"),  # before last ladders down to swamp
-    4957: (-1, "<UNUSED>"),
-    4958: (-1, "<UNUSED>"),
+    4950: (81400, "FRPG_SfxBnd_m14_00", "Quelaag entrance"),
+    4951: (81401, "FRPG_SfxBnd_m14_00", "Quelaag exit"),
+    4952: (81402, "FRPG_SfxBnd_m14_00", "Blighttown exit to Depths"),
+    4953: (81403, "FRPG_SfxBnd_m14_00", "Blighttown exit to Valley of Drakes"),
+    4954: (81404, "FRPG_SfxBnd_m14_00", "Blighttown exit to Great Hollow"),  # before both illusory walls
+    4955: (-1, "", "<UNUSED>"),
+    4956: (81406, "FRPG_SfxBnd_m14_00", "Blighttown checkpoint"),  # before last ladders down to swamp
+    4957: (-1, "", "<UNUSED>"),
+    4958: (-1, "", "<UNUSED>"),
 
     # Demon Ruins / Lost Izalith
-    4960: (81410, "Demon Ruins golden fog wall"),
-    4961: (81411, "Ceaseless Discharge entrance"),
-    4962: (81412, "Demon Firesage entrance"),
-    4963: (81413, "Demon Firesage exit"),
-    4964: (81414, "Centipede Demon entrance"),
-    4965: (81415, "Centipede Demon exit"),
-    4966: (81416, "Demon Ruins exit to Quelaag's Domain"),  # just before first bonfire
-    4967: (81417, "Demon Ruins elevator bottom"),  # on stairs to elevator
-    4968: (81418, "Ceaseless lava field exit"),  # near first Kirk invasion
-    4969: (81419, "Demon Firesage exit (multiplayer)"),
-    4970: (81420, "Centipede Demon exit (multiplayer)"),
-    4971: (81422, "Izalith shortcut gate"),
-    4972: (81421, "Bed of Chaos entrance"),
-    4973: (81423, "Arch before Ceaseless bridge"),
+    4960: (81410, "FRPG_SfxBnd_m14_01", "Demon Ruins golden fog wall"),
+    4961: (81411, "FRPG_SfxBnd_m14_01", "Ceaseless Discharge entrance"),
+    4962: (81412, "FRPG_SfxBnd_m14_01", "Demon Firesage entrance"),
+    4963: (81413, "FRPG_SfxBnd_m14_01", "Demon Firesage exit"),
+    4964: (81414, "FRPG_SfxBnd_m14_01", "Centipede Demon entrance"),
+    4965: (81415, "FRPG_SfxBnd_m14_01", "Centipede Demon exit"),
+    4966: (81416, "FRPG_SfxBnd_m14_01", "Demon Ruins exit to Quelaag's Domain"),  # just before first bonfire
+    4967: (81417, "FRPG_SfxBnd_m14_01", "Demon Ruins elevator bottom"),  # on stairs to elevator
+    4968: (81418, "FRPG_SfxBnd_m14_01", "Ceaseless lava field exit"),  # near first Kirk invasion
+    4969: (81419, "FRPG_SfxBnd_m14_01", "Demon Firesage exit (multiplayer)"),
+    4970: (81420, "FRPG_SfxBnd_m14_01", "Centipede Demon exit (multiplayer)"),
+    4971: (81422, "FRPG_SfxBnd_m14_01", "Izalith shortcut gate"),
+    4972: (81421, "FRPG_SfxBnd_m14_01", "Bed of Chaos entrance"),
+    4973: (81423, "FRPG_SfxBnd_m14_01", "Arch before Ceaseless bridge"),
 
     # Sen's Fortress
-    5150: (81500, "Iron Golem entrance"),
-    5151: (81501, "Fortress exit to Parish"),  # start of bridge
-    5152: (81502, "Fortress checkpoint 1"),  # after outdoor boulder ramp
-    5153: (81503, "Fortress checkpoint 2"),  # to roof area
-    5154: (-1, "<UNUSED>"),
-    5155: (-1, "<UNUSED>"),
+    5150: (81500, "FRPG_SfxBnd_m15_00", "Iron Golem entrance"),
+    5151: (81501, "FRPG_SfxBnd_m15_00", "Fortress exit to Parish"),  # start of bridge
+    5152: (81502, "FRPG_SfxBnd_m15_00", "Fortress checkpoint 1"),  # after outdoor boulder ramp
+    5153: (81503, "FRPG_SfxBnd_m15_00", "Fortress checkpoint 2"),  # to roof area
+    5154: (-1, "", "<UNUSED>"),
+    5155: (-1, "", "<UNUSED>"),
 
     # Anor Londo
-    5860: (81510, "O&S entrance"),
-    5861: (81511, "O&S exit (small)"),
-    5862: (81512, "O&S exit (large)"),
-    5863: (81513, "Corkscrew elevator bottom"),
-    5864: (81514, "Anor Londo checkpoint 1"),  # from rafters to spinning tower
-    5865: (81515, "Anor Londo checkpoint 2"),  # balcony after archers
-    5866: (-1, "<UNUSED>"),
-    5867: (81517, "Gwyndolin entrance"),
-    5868: (81518, "Gwyndolin entrance in endless corridor"),
-    5869: (81521, "Cathedral broken window"),  # to Dragonslayer Greatbow
-    5870: (81519, "Cathedral to Giant Blacksmith"),
-    5871: (81520, "Cathedral to bedroom area"),
+    5860: (81510, "FRPG_SfxBnd_m15_01", "O&S entrance"),
+    5861: (81511, "FRPG_SfxBnd_m15_01", "O&S exit (small)"),
+    5862: (81512, "FRPG_SfxBnd_m15_01", "O&S exit (large)"),
+    5863: (81513, "FRPG_SfxBnd_m15_01", "Corkscrew elevator bottom"),
+    5864: (81514, "FRPG_SfxBnd_m15_01", "Anor Londo checkpoint 1"),  # from rafters to spinning tower
+    5865: (81515, "FRPG_SfxBnd_m15_01", "Anor Londo checkpoint 2"),  # balcony after archers
+    5866: (-1, "", "<UNUSED>"),
+    5867: (81517, "FRPG_SfxBnd_m15_01", "Gwyndolin entrance"),
+    5868: (81518, "FRPG_SfxBnd_m15_01", "Gwyndolin entrance in endless corridor"),
+    5869: (81521, "FRPG_SfxBnd_m15_01", "Cathedral broken window"),  # to Dragonslayer Greatbow
+    5870: (81519, "FRPG_SfxBnd_m15_01", "Cathedral to Giant Blacksmith"),
+    5871: (81520, "FRPG_SfxBnd_m15_01", "Cathedral to bedroom area"),
 
     # New Londo Ruins
-    6600: (-1, "<UNUSED>"),
-    6601: (81601, "New Londo exit to Firelink Shrine"),  # bottom of elevator
-    6602: (81602, "New Londo exit to Valley of Drakes"),  # locked gate
-    6603: (81603, "New Londo giant gate"),
-    6604: (81604, "New Londo checkpoint 1"),  # above broken cathedral
-    6605: (81605, "New Londo checkpoint 2"),  # entrance to broken cathedral ground floor
-    6606: (81608, "Four Kings entrance"),
-    6607: (-1, "<UNUSED>"),
+    6600: (-1, "", "<UNUSED>"),
+    6601: (81601, "FRPG_SfxBnd_m16", "New Londo exit to Firelink Shrine"),  # bottom of elevator
+    6602: (81602, "FRPG_SfxBnd_m16", "New Londo exit to Valley of Drakes"),  # locked gate
+    6603: (81603, "FRPG_SfxBnd_m16", "New Londo giant gate"),
+    6604: (81604, "FRPG_SfxBnd_m16", "New Londo checkpoint 1"),  # above broken cathedral
+    6605: (81605, "FRPG_SfxBnd_m16", "New Londo checkpoint 2"),  # entrance to broken cathedral ground floor
+    6606: (81608, "FRPG_SfxBnd_m16", "Four Kings entrance"),
+    6607: (-1, "", "<UNUSED>"),
 
     # Duke's Archives
-    7900: (81700, "Seath cave entrance"),
-    7901: (81701, "Seath tower entrance"),
-    7902: (81702, "Archives first elevator top"),  # top of first elevator
-    7903: (-1, "<UNUSED>"),
-    7904: (-1, "<UNUSED>"),
-    7905: (-1, "<UNUSED>"),
-    7906: (81706, "Archives checkpoint"),  # from wooden room to garden area
-    7907: (81707, "Archives golden fog"),
-    7908: (81708, "Archives tower elevator top"),  # bottom of long passage to Seath
+    7900: (81700, "FRPG_SfxBnd_m17", "Seath cave entrance"),
+    7901: (81701, "FRPG_SfxBnd_m17", "Seath tower entrance"),
+    7902: (81702, "FRPG_SfxBnd_m17", "Archives first elevator top"),  # top of first elevator
+    7903: (-1, "", "<UNUSED>"),
+    7904: (-1, "", "<UNUSED>"),
+    7905: (-1, "", "<UNUSED>"),
+    7906: (81706, "FRPG_SfxBnd_m17", "Archives checkpoint"),  # from wooden room to garden area
+    7907: (81707, "FRPG_SfxBnd_m17", "Archives golden fog"),
+    7908: (81708, "FRPG_SfxBnd_m17", "Archives tower elevator top"),  # bottom of long passage to Seath
 
     # Kiln of the First Flame
-    8050: (81800, "Gwyn entrance"),
-    8051: (81801, "Ghost staircase bottom"),
+    8050: (81800, "FRPG_SfxBnd_m18_00", "Gwyn entrance"),
+    8051: (81801, "FRPG_SfxBnd_m18_00", "Ghost staircase bottom"),
 
     # Undead Asylum
-    8950: (81802, "Asylum Demon top entrance"),
-    8951: (-1, "<UNUSED>"),
-    8952: (81805, "Asylum checkpoint"),  # before Oscar
-    8953: (81806, "Stray Demon exit"),  # in front of ladder
+    8950: (81802, "FRPG_SfxBnd_m18_01", "Asylum Demon top entrance"),
+    8951: (-1, "", "<UNUSED>"),
+    8952: (81805, "FRPG_SfxBnd_m18_01", "Asylum checkpoint"),  # before Oscar
+    8953: (81806, "FRPG_SfxBnd_m18_01", "Stray Demon exit"),  # in front of ladder
 }
+
+
+HELLKITE_BRIDGE_FIRE_FFX = (
+    14010,
+    14011,
+    14015,
+    14025,
+    14035,
+    14040,
+    14045,
+    14120,
+    14130,
+    14151,
+    14152,
+    14153,
+    14154,
+    14162,
+)

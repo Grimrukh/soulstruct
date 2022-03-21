@@ -1,12 +1,12 @@
-import json
 import logging
 import os
 import shutil
 from pathlib import Path
 
-from soulstruct.utilities.window import SmartFrame
 from soulstruct.config import DSR_PATH
 from soulstruct.darksouls1r.utilities.file_list import DSR_FILE_LIST
+from soulstruct.utilities.files import read_json, write_json
+from soulstruct.utilities.window import SmartFrame
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,8 +34,7 @@ class ModManagerWindow(SmartFrame):
         self.backup_path = self._game_path / self.DEFAULT_VANILLA_BACKUP if not vanilla_backup else Path(vanilla_backup)
 
         if self._manager_json_path.is_file():
-            with self._manager_json_path.open("r") as f:
-                self.mods = json.load(f)
+            self.mods = read_json(self._manager_json_path)
         else:
             self.mods = []
 
@@ -264,8 +263,7 @@ class ModManagerWindow(SmartFrame):
             self.CustomDialog("Mod Root Paths", "\n".join(self.mods[selected]["root_paths"]), font_type="Consolas")
 
     def _write_manager_json(self):
-        with self._manager_json_path.open("w") as f:
-            json.dump(self.mods, f, indent=4)
+        write_json(self._manager_json_path, self.mods)
 
     @property
     def _manager_json_path(self):

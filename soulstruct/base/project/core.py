@@ -20,7 +20,7 @@ from soulstruct import __version__
 from soulstruct.config import DEFAULT_TEXT_EDITOR_FONT_SIZE
 from soulstruct.games import GameSpecificType
 from soulstruct.exceptions import GameFileDictSupportError
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
 
@@ -304,9 +304,9 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         `data_path` will be set to `{data_path}.json` in this case.
         """
         if self.prefer_json:
-            if data_type in {"maps", "params"}:
+            if data_type in {"maps", "params", "lighting", "text"}:
                 # Save separate JSONs to `{project}/{data_type}/` directory with `write_json_dir()`.
-                data: tp.Union[MapStudioDirectory, GameParamBND]
+                data: tp.Union[MapStudioDirectory, GameParamBND, DrawParamDirectory, MSGDirectory]
                 data_dir_path = self.project_root / data_type
                 first_time = not data_dir_path.exists()
                 data.write_json_dir(data_dir_path)
@@ -318,7 +318,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     )
                 return
             else:
-                # TODO: Not currently implemented for any data type except 'maps' and 'params' (handled above).
+                # JSON not implemented for other data types.
                 data_file_path = (self.project_root / data_type).with_suffix(".json")
                 try:
                     first_time = not data_file_path.exists()
@@ -339,7 +339,10 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
     def _load_project_data(self, data_type: str):
         if self.prefer_json:
             try:
-                if data_type in {"maps", "params"} and (data_dir_path := self.project_root / data_type).is_dir():
+                if (
+                    data_type in {"maps", "params", "text", "lighting"}
+                    and (data_dir_path := self.project_root / data_type).is_dir()
+                ):
                     # Load JSONs from directory.
                     return self.DATA_TYPES[data_type](data_dir_path, use_json=True)
                 elif (data_file_path := (self.project_root / data_type).with_suffix(".json")).exists():
@@ -563,8 +566,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             backup_path = self.game_root / "soulstruct-backup"
         else:
             backup_path = Path(backup_path)
-        with PACKAGE_PATH("project/files.json").open("r") as f:
-            game_files = json.load(f)[self.GAME.name]
+        game_files = read_json(PACKAGE_PATH("project/files.json"))[self.GAME.name]
         for file_path_parts in traverse_path_tree(game_files):
             game_file_path = self.game_root / Path(*file_path_parts)
             if not game_file_path.is_file():
@@ -578,8 +580,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         Create these backup files with `create_game_backup(backup_dir)`."""
         if backup_path is None:
             backup_path = self.game_root / "soulstruct-backup"
-        with PACKAGE_PATH("project/files.json").open("rb") as f:
-            game_files = json.load(f)[self.GAME.name]
+        game_files = read_json(PACKAGE_PATH("project/files.json"))[self.GAME.name]
         for file_path_parts in traverse_path_tree(game_files):
             backup_file_path = backup_path / Path(*file_path_parts)
             if not backup_file_path.is_file():
@@ -594,45 +595,45 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         Returns two bools: `first_time` (if project JSON was created) and `force_import_from_game` (if the user
         accepted the offer to import all game data immediately).
         """
-        try:
-            with (self.project_root / "project_config.json").open("r") as f:
-                try:
-                    config = json.load(f)
-                except json.JSONDecodeError:
+        config_path = self.project_root / "project_config.json"
+
+        if config_path.is_file():
+            try:
+                config = read_json(config_path)
+            except json.JSONDecodeError:
+                raise SoulstructProjectError(
+                    "Could not interpret 'project_config.json' file. Check it for errors, or "
+                    "delete it to have Soulstruct create a fresh copy on next load."
+                )
+            try:
+                if self.GAME.name != config["GameName"]:
                     raise SoulstructProjectError(
-                        "Could not interpret 'project_config.json' file. Check it for errors, or "
-                        "delete it to have Soulstruct create a fresh copy on next load."
+                        f"Project config 'GameName' is {config['GameName']}, but `GameDirectoryProject` "
+                        f"instance belongs to {self.GAME.name}."
                     )
-                else:
-                    try:
-                        if self.GAME.name != config["GameName"]:
-                            raise SoulstructProjectError(
-                                f"Project config 'GameName' is {config['GameName']}, but `GameDirectoryProject` "
-                                f"instance belongs to {self.GAME.name}."
-                            )
-                        last_save_version = config.get("LastSaveVersion", "'unknown'")
-                        self.game_root = Path(config["GameDirectory"])
-                        if game_root and game_root != self.game_root:
-                            _LOGGER.warning(
-                                f"You passed `game_root` {game_root}` to the project, but it already has root "
-                                f"{self.game_root}. You should change this in the config JSON directly."
-                            )
-                        self.last_import_time = config.get("LastImportTime", None)
-                        self.last_export_time = config["LastExportTime"]
-                        self.custom_script_directory = Path(config.get("CustomScriptDirectory", "scripts"))
-                        if not self.custom_script_directory.is_absolute():
-                            self.custom_script_directory = self.project_root / self.custom_script_directory
-                        if vanilla_game_root := config.get("VanillaGameDirectory", ""):
-                            self._vanilla_game_root = Path(vanilla_game_root)
-                        self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
-                        self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
-                        self.prefer_json = config.get("PreferJSON", False)
-                    except KeyError:
-                        raise SoulstructProjectError(
-                            "Project config file does not contain necessary settings. "
-                            "Delete it and load the project directory again to create "
-                            "a fresh copy and re-link your project to the game."
-                        )
+                last_save_version = config.get("LastSaveVersion", "'unknown'")
+                self.game_root = Path(config["GameDirectory"])
+                if game_root and game_root != self.game_root:
+                    _LOGGER.warning(
+                        f"You passed `game_root` {game_root}` to the project, but it already has root "
+                        f"{self.game_root}. You should change this in the config JSON directly."
+                    )
+                self.last_import_time = config.get("LastImportTime", None)
+                self.last_export_time = config["LastExportTime"]
+                self.custom_script_directory = Path(config.get("CustomScriptDirectory", "scripts"))
+                if not self.custom_script_directory.is_absolute():
+                    self.custom_script_directory = self.project_root / self.custom_script_directory
+                if vanilla_game_root := config.get("VanillaGameDirectory", ""):
+                    self._vanilla_game_root = Path(vanilla_game_root)
+                self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
+                self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
+                self.prefer_json = config.get("PreferJSON", False)
+            except KeyError:
+                raise SoulstructProjectError(
+                    "Project config file does not contain necessary settings. "
+                    "Delete it and load the project directory again to create "
+                    "a fresh copy and re-link your project to the game."
+                )
             if last_save_version.split(".")[0] != __version__.split(".")[0]:
                 # Major version difference indicates potential project file incompatibility.
                 _LOGGER.warning(
@@ -640,8 +641,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     f"version number to this version of Soulstruct ({__version__}). You may need to export your "
                     f"project from the other version of Soulstruct and import those game files into this project."
                 )
-
-        except FileNotFoundError:
+        else:
             # Create project config file.
             if game_root:
                 self.game_root = game_root
@@ -727,8 +727,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
 
     def _write_config(self):
         try:
-            with (self.project_root / "project_config.json").open("w") as f:
-                json.dump(self._build_config_dict(), f, indent=4)
+            write_json(self.project_root / "project_config.json", self._build_config_dict())
         except PermissionError:
             raise SoulstructProjectError("No write access to 'project_config.json' in project directory.")
 

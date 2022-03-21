@@ -25,7 +25,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from soulstruct.containers import Binder
-from soulstruct.containers.entry import BinderEntry
+from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import get_startupinfo

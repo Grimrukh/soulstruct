@@ -4,7 +4,9 @@ from soulstruct.darksouls1ptde.text.msg_directory import MSGDirectory as _BaseMS
 
 
 class MSGDirectory(_BaseMSGDirectory):
-    IS_DCX = True  # otherwise identical
+    """Mostly identical to PTDE."""
+    IS_DCX = True
+    _ORIGINAL_PATCH_SUFFIX = ""  # Patch FMG names are identical to non-Patch ones
 
 
 # Unused; using BND index instead.

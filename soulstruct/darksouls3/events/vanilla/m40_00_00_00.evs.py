@@ -469,14 +469,14 @@ def Event14005103():
     IfPlayerInOwnWorld(1)
     IfFlagOff(1, 131)
     IfConditionTrue(0, input_condition=1)
-    EnableCollision(4004109)
-    DisableCollision(4004100)
+    EnableMapCollision(4004109)
+    DisableMapCollision(4004100)
 
 
 def Event14005104():
     """ 14005104: Event 14005104 """
-    EnableCollision(4004109)
-    DisableCollision(4004100)
+    EnableMapCollision(4004109)
+    DisableMapCollision(4004100)
 
 
 def Event14005110():
@@ -1348,7 +1348,7 @@ def Event14005810():
     Kill(4000800, award_souls=False)
     DisableCharacter(4000800)
     DisableAnimations(4000800)
-    DisableCollision(4004150)
+    DisableMapCollision(4004150)
     End()
 
     # --- 0 --- #

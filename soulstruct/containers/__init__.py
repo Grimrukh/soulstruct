@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["Binder"]
@@ -6,11 +6,10 @@ __all__ = ["Binder"]
 import typing as tp
 from pathlib import Path
 
-if tp.TYPE_CHECKING:
-    from .bnd import BND3, BND4
-    from .bxf import BXF3, BXF4
-    from .dcx import DCX
-    from .tpf import TPF
+from .bnd import BND3, BND4
+from .bxf import BXF3, BXF4
+from .dcx import DCX
+from .tpf import TPF
 
 
 def Binder(
@@ -24,13 +23,6 @@ def Binder(
         from_bak: prefer '.bak' path if it exists.
         create_bak_if_missing: if `from_bak` is given, and `.bak` file does not exist, create it.
     """
-
-    # Lazy imports are required to avoid circularity in Python 3.7 (for Blender 2.9X).
-    from .bnd import BND3, BND4
-    from .bxf import BXF3, BXF4
-    from .dcx import DCX
-    from .tpf import TPF
-
     detect_source = binder_source
     if isinstance(binder_source, (str, Path)):
         if not Path(binder_source).is_dir():

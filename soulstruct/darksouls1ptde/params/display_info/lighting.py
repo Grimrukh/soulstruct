@@ -493,7 +493,7 @@ LENS_FLARE_EX_BANK = {
         ),
         FieldDisplayInfo(
             "lightDegRotY",
-            "LensFlareSourceRotationX",
+            "LensFlareSourceRotationY",
             True,
             int,
             "Rotation (Y-axis) of visible light source (e.g. sun) that causes lens flares.",
@@ -654,14 +654,6 @@ TONE_MAP_BANK = {
             float,
             "Smaller values will shorten the light shafts more.",
         ),
-        FieldDisplayInfo(
-            "inverseToneMapMul",
-            "InverseToneMapMultiplier",
-            False,
-            float,
-            "New parameter introduced in DSR.",
-            dsr_only=True,
-        ),
     ],
 }
 
@@ -684,14 +676,6 @@ TONE_CORRECT_BANK = {
         FieldDisplayInfo("contrastB", "ContrastBlue", True, float, "Blue channel (0-255) of tone correction contrast."),
         FieldDisplayInfo("saturation", "SaturationCorrection", True, float, "Color saturation correction value."),
         FieldDisplayInfo("hue", "HueCorrection", True, float, "Color hue correction value."),
-        FieldDisplayInfo(
-            "sfxMultiplier",
-            "VisualEffectMultiplier",
-            False,
-            float,
-            "New parameter introduced in DSR.",
-            dsr_only=True,
-        )
     ],
 }
 
@@ -721,7 +705,7 @@ SHADOW_BANK = {
             "ShadowStartDistance",
             True,
             float,
-            "Minimum distance (m) at which shadoes are cast. A value of 0 means the camera's near-clip plane is "
+            "Minimum distance (m) at which shadows are cast. A value of 0 means the camera's near-clip plane is "
             "used.",
         ),
         FieldDisplayInfo("endDist", "ShadowEndDistance", True, float, "Maximum distance (m) at which shadows are cast."),

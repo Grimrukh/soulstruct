@@ -326,6 +326,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         """
         if filter_func is not None and not callable(filter_func):
             raise ValueError("`filter_func` must be callable, take an MSB entry as an argument, and return a bool.")
+        other_msb_path = other_msb_source if isinstance(other_msb_source, (str, Path)) else "<MSB>"
         if not isinstance(other_msb_source, self.__class__):
             other_msb_source = self.__class__(other_msb_source)
         merged_msb = self.copy()
@@ -333,15 +334,20 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             existing_entries = merged_msb[entry_type]
             existing_entry_list = set(existing_entries.get_entry_names())
             other_entry_list = other_msb_source[entry_type]
+            skipped_repeated_entries = []
             for other_entry in other_entry_list:
                 if filter_func is not None and not filter_func(other_entry):
                     continue  # skip entry
                 if other_entry.name in existing_entry_list:
-                    raise ValueError(
-                        f"Cannot merge {entry_type} '{other_entry.name}' into this MSB. Name already exists."
-                    )
+                    skipped_repeated_entries.append(other_entry)
+                    continue
                 existing_entries.add_entry(other_entry)
                 existing_entry_list.add(other_entry.name)
+            if skipped_repeated_entries:
+                print(
+                    f"# WARNING: {len(skipped_repeated_entries)} MSB {entry_type} entries already exist in MSB and "
+                    f"were not merged in from '{other_msb_path.name}'."
+                )
         return merged_msb
 
     def move_map(
@@ -425,8 +431,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         for part in self.parts:
             if not selected_entries or part in selected_entries:
                 part.translate += translate
-            if hasattr(part, "reflect_plane_height"):
-                part.reflect_plane_height += translate.y
+                if hasattr(part, "reflect_plane_height"):
+                    part.reflect_plane_height += translate.y
         for region in self.regions:
             if not selected_entries or region in selected_entries:
                 region.translate += translate

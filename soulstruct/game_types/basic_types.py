@@ -5,6 +5,7 @@ __all__ = [
     "GameObject",
     "GameObjectSequence",
     "Flag",
+    "MapFlagSuffix",
     "FlagRange",
     "Texture",
     "VisualEffect",
@@ -67,6 +68,13 @@ class Flag(GameObject, IntEnum):
             restart_if_true_func=instr.RestartIfFlagOn,
             restart_if_false_func=instr.RestartIfFlagOff,
         )
+
+
+class MapFlagSuffix(Flag):
+    """Flag up to four digits long, intended to be added to a map base flag (such as 11020000 for m10_02).
+
+    `EVSParser` will compute the true flag ID automatically if it knows the map's base flag ID.
+    """
 
 
 class FlagRange(GameObject):

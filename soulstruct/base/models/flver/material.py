@@ -1,10 +1,11 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 
 from __future__ import annotations
 
 __all__ = ["GXItem", "GXList", "Material", "Texture"]
 
 import typing as tp
+from pathlib import Path
 
 from soulstruct.utilities.text import indent_lines
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
@@ -52,9 +53,9 @@ class GXList:
     Prior to Dark Souls 2 (version 0x20010), these lists only ever contained exactly one `GXItem`.
     """
 
-    gx_items: tp.List[GXItem]
+    gx_items: list[GXItem]
 
-    def __init__(self, source: tp.Union[BinaryReader, tp.List[GXItem], None], version: Version = None):
+    def __init__(self, source: tp.Union[BinaryReader, list[GXItem], None], version: Version = None):
         self.gx_items = []
         self.terminator_id = 2 ** 31 - 1  # max value of signed int; sometimes also -1
         self.terminator_null_count = 0
@@ -130,10 +131,20 @@ class Texture(BinaryObject):
 
     DEFAULTS = {
         "scale": Vector2.ones(),
+        "unk_x10": 1,
+        "unk_x11": True,
+        "unk_x14": 0.0,
+        "unk_x18": 0.0,
+        "unk_x1C": 0.0,
     }
 
     unpack = BinaryObject.default_unpack
     pack = BinaryObject.default_pack
+
+    def set_name(self, name: str):
+        """Set '.tga' name of `path`."""
+        name = name.removesuffix(".tga").removesuffix(".tpf") + ".tga"
+        self.path = str(Path(self.path).with_name(name))
 
     def __repr__(self):
         lines = [
@@ -178,7 +189,7 @@ class Material(BinaryObject):
     gx_index: int
     unk_x18: int
 
-    textures: tp.List[Texture]
+    textures: list[Texture]
 
     _texture_count: int
     _first_texture_index: int
@@ -192,8 +203,8 @@ class Material(BinaryObject):
         reader: BinaryReader,
         encoding: str,
         version: Version,
-        gx_lists: tp.List[GXList],
-        gx_list_indices: tp.Dict[int, int],
+        gx_lists: list[GXList],
+        gx_list_indices: dict[int, int],
     ):
         material = reader.unpack_struct(self.STRUCT)
         self.name = reader.unpack_string(offset=material.pop("__name__z"), encoding=encoding)
@@ -209,7 +220,7 @@ class Material(BinaryObject):
                 gx_lists.append(GXList(reader, version))
         self.set(**material)
 
-    def assign_textures(self, textures: tp.Dict[int, Texture]):
+    def assign_textures(self, textures: dict[int, Texture]):
         if self._texture_count == -1 or self._first_texture_index == -1:
             raise ValueError(f"Tried to call `assign_textures()` on `Material` {self.name} more than once.")
         for i in range(self._first_texture_index, self._first_texture_index + self._texture_count):
@@ -238,14 +249,14 @@ class Material(BinaryObject):
         for texture in self.textures:
             texture.pack(writer)
 
-    def fill_gx_offset(self, writer: BinaryWriter, gx_offsets: tp.List[int]):
+    def fill_gx_offset(self, writer: BinaryWriter, gx_offsets: list[int]):
         writer.fill("__gx_offset", 0 if self.gx_index == -1 else gx_offsets[self.gx_index], obj=self)
 
     def pack_strings(self, writer: BinaryWriter, encoding: str):
         self.pack_zstring(writer, "name", encoding=encoding)
         self.pack_zstring(writer, "mtd_path", encoding=encoding)
 
-    def get_texture_dict(self) -> tp.Dict[str, Texture]:
+    def get_texture_dict(self) -> dict[str, Texture]:
         """Get a dictionary mapping texture types to `Texture` instances.
 
         Will raise a KeyError if any texture type is repeated.
@@ -256,6 +267,19 @@ class Material(BinaryObject):
                 raise KeyError(f"Texture type {texture.texture_type} appeared more than once in Material {self.name}.")
             textures[texture.texture_type] = texture
         return textures
+
+    def set_mtd_name(self, name: str):
+        """Set '.mtd' name of `mtd_path`."""
+        name = name.removesuffix(".mtd") + ".mtd"
+        self.mtd_path = str(Path(self.mtd_path).with_name(name))
+
+    def replace_in_all_texture_names(self, old_string: str, new_string: str):
+        """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""
+        for tex in self.textures:
+            if tex.path:
+                tex_path = Path(tex.path)
+                tex_name = tex_path.name.replace(old_string, new_string)
+                tex.path = str(tex_path.with_name(tex_name))
 
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])

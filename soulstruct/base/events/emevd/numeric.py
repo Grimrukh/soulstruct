@@ -47,7 +47,7 @@ def to_numeric(instruction_info, *args, arg_types=None, event_layers=None):
         try:
             arg_types = INSTRUCTION_ARG_TYPES[instruction_info[0]][instruction_info[1]]
         except KeyError:
-            raise KeyError(f"Could not find instruction {instruction_info[0]}[{instruction_info[1]:02d} in type dict.")
+            raise KeyError(f"Could not find instruction {instruction_info[0]}[{instruction_info[1]:02d}] in type dict.")
     for i, arg in enumerate(args):
         if isinstance(arg, EventArgumentData):
             arg = arg.offset_tuple

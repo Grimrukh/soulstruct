@@ -1,6 +1,6 @@
 """Mathematical classes and functions uses by Soulstruct.
 
-NOTE: This file is Python 3.7 compatible for Blender 2.9X use.
+NOTE: This file is Python 3.9 compatible for Blender 3.X use.
 """
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ class Vector(abc.ABC):
     LENGTH = 1
     REPR_PRECISION = 3
 
-    _data: tp.List[float, ...]
+    _data: list[float, ...]
 
     def __init__(self, x=None):
         """Initializes `_data` attribute."""
@@ -121,6 +121,10 @@ class Vector(abc.ABC):
     def __abs__(self):
         """Get norm of `Vector`."""
         return math.sqrt(sum(v ** 2 for v in self))
+
+    def __hash__(self):
+        """Simply hashed by data."""
+        return hash(tuple(self._data))
 
     def normalize(self) -> Vector:
         """Return a copy of this `Vector` with unit magnitude."""
@@ -308,7 +312,7 @@ class Quaternion(Vector4):
 class Matrix(abc.ABC):
     SIZE = None
     PRECISION = 3
-    data: tp.List[tp.List[tp.Union[int, float]]]
+    data: list[list[tp.Union[int, float]]]
 
     @abc.abstractmethod
     def __init__(self):
@@ -335,7 +339,7 @@ class Matrix(abc.ABC):
             m.data[row] = data[row * cls.SIZE:(row + 1) * cls.SIZE]
         return m
 
-    def to_flat_row_order(self) -> tp.List[tp.Union[int, float]]:
+    def to_flat_row_order(self) -> list[tp.Union[int, float]]:
         flat = []
         for row in self.data:
             flat.extend(row)
@@ -351,7 +355,7 @@ class Matrix(abc.ABC):
             m.data[row] = [data[i * cls.SIZE + row] for i in range(cls.SIZE)]
         return m
 
-    def to_flat_column_order(self) -> tp.List[tp.Union[int, float]]:
+    def to_flat_column_order(self) -> list[tp.Union[int, float]]:
         flat = []
         for c in range(self.SIZE):
             flat.extend([row[c] for row in self.data])

@@ -103,12 +103,12 @@ __all__ = [
     "SetEventState",
     "StopEvent",
     "RestartEvent",
-    "SetCollisionState",
-    "EnableCollision",
-    "DisableCollision",
-    "SetCollisionBackreadMaskState",
-    "EnableCollisionBackreadMask",
-    "DisableCollisionBackreadMask",
+    "SetMapCollisionState",
+    "EnableMapCollision",
+    "DisableMapCollision",
+    "SetMapCollisionBackreadMaskState",
+    "EnableMapCollisionBackreadMask",
+    "DisableMapCollisionBackreadMask",
     "AwardItemLot",
     "AwardItemLotToHostOnly",
     "RemoveItemFromPlayer",
@@ -438,8 +438,6 @@ __all__ = [
     "ArenaSetNametag3",
     "ArenaSetNametag4",
     "DisplayArenaDissolutionMessage",
-    # Special additions
-    "SendToScript",
 
     # Dark Souls 1
     "IfCharacterRegionState",

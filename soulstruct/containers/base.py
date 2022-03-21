@@ -1,20 +1,91 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
+from __future__ import annotations
+
 __all__ = ["BinderError", "BaseBinder", "BinderHashTable"]
 
 import abc
 import io
-import json
 import logging
 import re
 import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
-from soulstruct.containers.entry import BinderEntry
-from soulstruct.containers.flags import BinderFlags
-from soulstruct.utilities.binary import BinaryReader, BinaryStruct
+from soulstruct.base.binder_entry import BinderEntry
+from soulstruct.utilities.binary import BinaryReader, BinaryStruct, BinaryWriter
+from soulstruct.utilities.files import read_json, write_json
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class BinderFlags(int):
+    """Bit flags for binder file. Note that the bit order is 'big endian' here.
+
+    TODO: Determine which file types in which games use which magic values, so they can be initialized to defaults.
+    """
+
+    @property
+    def is_big_endian(self):
+        return self & 0b0000_0001  # 0x80
+
+    @property
+    def has_ids(self):
+        return self & 0b0000_0010  # 0x40
+
+    @property
+    def has_names_1(self):
+        return self & 0b0000_0100  # 0x20
+
+    @property
+    def has_names_2(self):
+        return self & 0b0000_1000  # 0x10
+
+    @property
+    def has_names(self):
+        """Looks for either 'names' flag. Unsure what the difference is."""
+        return self & (0b0000_0100 | 0b0000_1000)
+
+    @property
+    def has_long_offsets(self):
+        return self & 0b0001_0000  # 0x08
+
+    @property
+    def has_compression(self):
+        return self & 0b0010_0000  # 0x04
+
+    @property
+    def has_flag_6(self):
+        return self & 0b0100_0000  # 0x02
+
+    @property
+    def has_flag_7(self):
+        return self & 0b1000_0000  # 0x01
+
+    @classmethod
+    def read(cls, reader: BinaryReader, bit_big_endian: bool) -> BinderFlags:
+        """Read a byte, reverse it if necessary, and return flags integer."""
+        flags = cls(reader.unpack_value("B"))
+        if not bit_big_endian and not (flags.is_big_endian and not flags.has_flag_7):
+            flags = cls(int(f"{flags:08b}"[::-1], 2))
+        return flags
+
+    def pack(self, writer: BinaryWriter, bit_big_endian: bool):
+        if not bit_big_endian and not (self.is_big_endian and not self.has_flag_7):
+            writer.pack("B", int(f"{self:08b}"[::-1], 2))
+        else:
+            writer.pack("B", self)
+
+    def get_bnd_entry_header_size(self) -> int:
+        """Calculate binder entry header size."""
+        size = 16  # Base size.
+        if self.has_ids:
+            size += 4
+        if self.has_names_1 or self.has_names_2:
+            size += 4
+        if self.has_compression:
+            size += 8
+        size += 8 if self.has_long_offsets else 4
+        return size
 
 
 class BinderError(Exception):
@@ -25,7 +96,13 @@ class BaseBinder(GameFile, abc.ABC):
     """Base class for both BND and BXF (BHD/BDT) binder files."""
 
     # `EXT` depends on files contained in binder.
-    EXTRA_MANIFEST_FIELDS: tp.Tuple[str] = ()  # fields beyond `signature`, `flags`, `big_endian`, and `bit_big_endian`
+    MANIFEST_FIELDS = (
+        "signature",
+        "flags",
+        "big_endian",
+        "bit_big_endian",
+        "dcx_magic",
+    )
     BinderEntry = BinderEntry  # for convenience
 
     signature: str
@@ -38,11 +115,12 @@ class BaseBinder(GameFile, abc.ABC):
         self.flags = BinderFlags(0)  # no other sensible default
         self.big_endian = False
         self.bit_big_endian = False
-        self._entries = []  # type: tp.List[BinderEntry]
+        self._entries = []  # type: list[BinderEntry]
         super().__init__(file_source, dcx_magic=dcx_magic, **kwargs)
 
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
-        """A BND can also be loaded from a `binder_manifest.json` file or a directory containing such a file."""
+        """A Binder can also be loaded from a `binder_manifest.json` file or a directory containing such a file, or
+        a dictionary containing header information to initialize a Binder with no entries."""
 
         if isinstance(file_source, (str, Path)):
             file_source = Path(file_source)
@@ -57,8 +135,20 @@ class BaseBinder(GameFile, abc.ABC):
                 self.load_unpacked_dir(directory)
                 return
 
+        if isinstance(file_source, dict):
+            # Manifest dictionary. All `MANIFEST_FIELDS` must be present. Other fields will be ignored.
+            manifest = self.get_manifest_header(file_source)
+            for field in self.MANIFEST_FIELDS:
+                try:
+                    setattr(self, field, manifest[field])
+                except KeyError:
+                    raise KeyError(
+                        f"Manifest dictionary source for `{self.__class__.__name__}` is missing field '{field}'."
+                    )
+            return
+
         raise InvalidGameFileTypeError(
-            f"`file_source` is not a `binder_manifest.json` file or directory containing one."
+            "`file_source` is not a `binder_manifest.json` file or directory containing one, or a manifest dict."
         )
 
     def add_entry(self, entry: BinderEntry):
@@ -68,7 +158,7 @@ class BaseBinder(GameFile, abc.ABC):
             _LOGGER.warning(f"Entry ID {entry.id} appears more than once in this binder. You should fix this!")
         self._entries.append(entry)
 
-    def remove_entry(self, id_or_path_or_basename):
+    def remove_entry(self, id_or_path_or_basename) -> BinderEntry:
         if isinstance(id_or_path_or_basename, int):
             entry = self.entries_by_id[id_or_path_or_basename]
         elif isinstance(id_or_path_or_basename, str):
@@ -79,13 +169,14 @@ class BaseBinder(GameFile, abc.ABC):
         else:
             raise TypeError("Entry to be removed should be a binder entry ID (int) or path/basename (str).")
         self._entries.remove(entry)
+        return entry
 
     def clear_entries(self):
         """Remove all entries from the BND."""
         self._entries.clear()
 
     @abc.abstractmethod
-    def get_json_header(self) -> tp.Dict[str, tp.Any]:
+    def get_json_header(self) -> dict[str, tp.Any]:
         ...
 
     def load_unpacked_dir(self, directory):
@@ -93,37 +184,37 @@ class BaseBinder(GameFile, abc.ABC):
         directory = Path(directory)
         if not directory.is_dir():
             raise ValueError(f"Could not find unpacked binder directory {repr(directory)}.")
-        with (directory / "binder_manifest.json").open("r", encoding="shift-jis") as f:
-            manifest = json.load(f)
+        manifest = read_json(directory / "binder_manifest.json", encoding="shift-jis")
         for field, value in self.get_manifest_header(manifest).items():
             setattr(self, field, value)
         self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
 
-    def get_manifest_header(self, manifest: tp.Dict) -> tp.Dict[str, tp.Any]:
+    @classmethod
+    def get_manifest_header(cls, manifest: dict) -> dict[str, tp.Any]:
         """Extract manifest header data from given `manifest` dictionary and parse them into appropriate types.
 
         Other keys may be present in `manifest`, and will be ignored.
         """
         if "version" not in manifest:
             raise BinderError("JSON manifest file does not contain 'version' key.")
-        all_class_names = [self.__class__.__name__] + [base.__name__ for base in self.__class__.__bases__]
+        all_class_names = [base.__name__ for base in cls.__mro__]
         if manifest["version"] not in all_class_names:
             raise BinderError(
                 f"Version of file ({manifest['version']}) does not match "
-                f"`BaseBinder` child class name ({self.__class__.__name__})."
+                f"`BaseBinder` child class name ({cls.__name__})."
             )
-        loaded_manifest = {
-            "dcx_magic": tuple(manifest["dcx_magic"]),
-            "signature": manifest["signature"],
-            "flags": BinderFlags(manifest["flags"]),
-            "big_endian": manifest["big_endian"],
-            "bit_big_endian": manifest["bit_big_endian"],
-        }
-        for field in self.EXTRA_MANIFEST_FIELDS:
-            loaded_manifest[field] = manifest[field]
+        loaded_manifest = {}
+        for field in cls.MANIFEST_FIELDS:
+            if field == "flags":
+                value = BinderFlags(manifest[field])
+            elif field == "dcx_magic":
+                value = tuple(manifest["dcx_magic"])
+            else:
+                value = manifest[field]
+            loaded_manifest[field] = value
         return loaded_manifest
 
-    def add_entries_from_manifest(self, entries: tp.Dict, directory: tp.Union[str, Path], use_id_prefix: bool):
+    def add_entries_from_manifest(self, entries: dict, directory: tp.Union[str, Path], use_id_prefix: bool):
         directory = Path(directory)
         unsorted_entries = {}  # maps ID to `(path, data, flags)` tuple
         for root, entry_dicts in entries.items():
@@ -164,20 +255,23 @@ class BaseBinder(GameFile, abc.ABC):
         json_dict["entries"] = entry_tree_dict
 
         # NOTE: Binder manifest is always encoded in shift-JIS, not `shift_jis_2004`.
-        with (directory / "binder_manifest.json").open("w", encoding="shift-jis") as f:
-            json.dump(json_dict, f, indent=4)
+        write_json(directory / "binder_manifest.json", json_dict, encoding="shift-jis")
 
     @classmethod
-    def detect(cls, binder_source: GameFile.Typing) -> bool:
+    def detect(cls, binder_source: tp.Union[GameFile.Typing, dict]) -> bool:
         """Returns True if `binder_source` appears to be this subclass of `BaseBinder`. Does not support DCX sources."""
+        if isinstance(binder_source, dict):
+            # Manifest dictionary. Simply check version.
+            return binder_source.get("version") == cls.__name__  # "BND3", "BND4", etc.
+
         if isinstance(binder_source, (str, Path)):
             binder_path = Path(binder_source)
             if binder_path.is_file() and binder_path.name == "binder_manifest.json":
                 binder_path = binder_path.parent
             if binder_path.is_dir():
                 try:
-                    with (binder_path / "binder_manifest.json").open("rb") as f:
-                        return json.load(f)["version"] == cls.__name__  # "BND3" or "BND4"
+                    manifest = read_json(binder_path / "binder_manifest.json", encoding="shift_jis")
+                    return manifest.get("version") == cls.__name__  # "BND3", "BND4", etc.
                 except FileNotFoundError:
                     return False
             elif binder_path.is_file():
@@ -206,12 +300,12 @@ class BaseBinder(GameFile, abc.ABC):
         raise TypeError(f"Cannot detect `Binder` class from source type: {binder_source}")
 
     @property
-    def entries(self) -> tp.List[BinderEntry]:
+    def entries(self) -> list[BinderEntry]:
         """Returns an ordered list of BND entries, unpacked with the `entry_class` given to the constructor."""
         return self._entries
 
     @property
-    def entries_by_id(self) -> tp.Dict[int, BinderEntry]:
+    def entries_by_id(self) -> dict[int, BinderEntry]:
         """Dictionary mapping entry IDs to entries.
 
         If there are multiple entries with the same ID in the BND, this will raise a `ValueError`. This should never
@@ -225,7 +319,7 @@ class BaseBinder(GameFile, abc.ABC):
         return entries
 
     @property
-    def entries_by_path(self) -> tp.Dict[str, BinderEntry]:
+    def entries_by_path(self) -> dict[str, BinderEntry]:
         """Dictionary mapping entry paths to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -239,7 +333,7 @@ class BaseBinder(GameFile, abc.ABC):
         return entries
 
     @property
-    def entries_by_basename(self) -> tp.Dict[str, BinderEntry]:
+    def entries_by_basename(self) -> dict[str, BinderEntry]:
         """Dictionary mapping entry basenames to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -261,7 +355,7 @@ class BaseBinder(GameFile, abc.ABC):
         entry_names = [e.name for e in self.entries]
         return len(set(entry_names)) < len(entry_names)
 
-    def find_entries_matching_name(self, regex: str) -> tp.List[BinderEntry]:
+    def find_entries_matching_name(self, regex: str) -> list[BinderEntry]:
         """Returns a list of entries whose names match the given `regex` pattern."""
         return [entry for entry in self._entries if re.match(regex, entry.name)]
 
@@ -298,6 +392,14 @@ class BaseBinder(GameFile, abc.ABC):
     def __len__(self):
         return len(self._entries)
 
+    def __repr__(self):
+        if not self._entries:
+            return
+        entries = f",\n    ".join(repr(entry) for entry in self._entries)
+        if entries:
+            entries = f"\n    {entries},\n"
+        return f"{self.__class__.__name__}({entries})"
+
 
 class BinderHashTable:
 
@@ -330,7 +432,7 @@ class BinderHashTable:
             raise ValueError("Hash group count could not be determined.")
 
         hashes = []
-        hash_lists = [[] for _ in range(group_count)]  # type: tp.List[tp.List[tp.Tuple[int, int]], ...]
+        hash_lists = [[] for _ in range(group_count)]  # type: list[list[tuple[int, int]], ...]
 
         for entry_index, entry in enumerate(entries):
             hashes.append(cls.path_hash(entry.path))

@@ -577,7 +577,11 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
         self.refresh_entries(reset_field_display=True)  # TODO: this argument is the only difference. Better way?
         last_selected_entry_id = self.remembered_ids.get(self.active_category, None)
         if last_selected_entry_id is not None:
-            self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+            try:
+                self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
+            except ValueError:
+                self.remembered_ids.pop(self.active_category)  # entry ID is invalid
+                self.entry_canvas.yview_moveto(0)
         else:
             # Leave no entry selected.
             self.entry_canvas.yview_moveto(0)
@@ -692,6 +696,14 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
             text = self.get_entry_text(entry_id)  # Copies name of origin entry by default (can be overridden).
         new_field_dict = self.get_field_dict(entry_id).copy()
         self._add_entry(entry_id=entry_id + offset, text=text, new_field_dict=new_field_dict)
+
+    def add_entry_to_next_available_id(self, entry_id, text=None):
+        """Find next available entry ID after `entry_id`."""
+        entry_ids = set(self.get_category_data())
+        new_id = entry_id + 1
+        while new_id in entry_ids:
+            new_id += 1
+        self.add_relative_entry(entry_id, offset=new_id - entry_id, text=text)
 
     def _right_click_field(self, event, field_index):
         self.select_displayed_field_row(field_index, edit_if_already_selected=False)

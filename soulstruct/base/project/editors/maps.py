@@ -896,8 +896,10 @@ class MapsEditor(BaseFieldEditor):
             # Link to ObjActParam with the object's model ID.
             obj_act_part_name = self.get_selected_field_dict()["obj_act_part_name"]
             try:
+                if obj_act_part_name is None:
+                    raise KeyError(f"`obj_act_part_name` is None.")
                 obj_act_part = self.get_selected_msb().parts[obj_act_part_name]
-            except KeyError:  # invalid part name
+            except KeyError:  # invalid or `None` part name
                 pass
             else:
                 field_value = int(obj_act_part.model_name[1:5])

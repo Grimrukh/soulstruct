@@ -50,8 +50,10 @@ class BaseFMG(GameFile, abc.ABC):
 
     MAX_LINES = None  # type: int
 
+    entries: dict[int, str]
+
     def __init__(self, fmg_source, dcx_magic=(), remove_empty_entries=True):
-        self.entries = {}  # type: dict[int, str]
+        self.entries = {}
         if isinstance(fmg_source, dict) and "version" not in fmg_source:
             fmg_source["version"] = self.VERSION
         super().__init__(fmg_source, dcx_magic)
@@ -219,7 +221,7 @@ class BaseFMG(GameFile, abc.ABC):
     def write(
         self,
         file_path=None,
-        makedirs=True,
+        make_dirs=True,
         check_hash=False,
         remove_empty_entries=True,
         pipe_to_newline=True,
@@ -229,7 +231,7 @@ class BaseFMG(GameFile, abc.ABC):
         """Write binary FMG to given path. See `pack` for descriptions of the other arguments."""
         super().write(
             file_path=file_path,
-            makedirs=makedirs,
+            make_dirs=make_dirs,
             check_hash=check_hash,
             remove_empty_entries=remove_empty_entries,
             pipe_to_newline=pipe_to_newline,
