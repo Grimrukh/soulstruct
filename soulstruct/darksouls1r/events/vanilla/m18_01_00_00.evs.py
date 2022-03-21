@@ -13,7 +13,7 @@ def Constructor():
     RegisterBonfire(11810992, obj=1811960, reaction_distance=1.0, reaction_angle=180.0, initial_kindle_level=0)
     RegisterBonfire(11810984, obj=1811961, reaction_distance=1.0, reaction_angle=180.0, initial_kindle_level=0)
     RegisterLadder(start_climbing_flag=11810010, stop_climbing_flag=11810011, obj=1811140)
-    DisableCollision(1813121)
+    DisableMapCollision(1813121)
     DisableFlag(11810315)
     DisableFlag(11810112)
     DisableObjectActivation(1811100, obj_act_id=-1)
@@ -365,9 +365,9 @@ def Event11810312():
     DisableObjectActivation(1811111, obj_act_id=-1)
     SetRespawnPoint(1812961)
     SaveRequest()
-    EnableCollision(1813121)
+    EnableMapCollision(1813121)
     ForceAnimation(1811115, 3, wait_for_completion=True)
-    DisableCollision(1813121)
+    DisableMapCollision(1813121)
 
 
 def Event11810313():

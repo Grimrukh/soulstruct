@@ -182,9 +182,9 @@ def Event13205260(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
 @RestartOnRest
 def Event13205290():
     """ 13205290: Event 13205290 """
-    EnableCollision(3204280)
+    EnableMapCollision(3204280)
     IfHasTAEEvent(0, 3205290, tae_event_id=10)
-    DisableCollision(3204280)
+    DisableMapCollision(3204280)
     Wait(2.0)
     Restart()
 

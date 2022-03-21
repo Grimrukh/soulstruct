@@ -743,7 +743,7 @@ def Event13201800():
     Kill(3200800, award_souls=False)
     DisableObject(3201800)
     DeleteVFX(3203800, erase_root_only=False)
-    DisableCollision(3204010)
+    DisableMapCollision(3204010)
     End()
 
     # --- 0 --- #
@@ -752,7 +752,7 @@ def Event13201800():
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(3201800)
     DeleteVFX(3203800, erase_root_only=True)
-    DisableCollision(3204010)
+    DisableMapCollision(3204010)
     SetLockedCameraSlot(game_map=BYRGENWERTH, camera_slot=0)
     Wait(3.0)
     KillBoss(3200800)
@@ -941,13 +941,13 @@ def Event13204830():
     SkipLinesIfClient(2)
     DisableObject(3201800)
     DeleteVFX(3203800, erase_root_only=False)
-    DisableCollision(3204010)
+    DisableMapCollision(3204010)
     IfFlagOff(1, 13201800)
     IfFlagOn(1, 13201802)
     IfConditionTrue(0, input_condition=1)
     EnableObject(3201800)
     CreateVFX(3203800)
-    EnableCollision(3204010)
+    EnableMapCollision(3204010)
 
     # --- 0 --- #
     DefineLabel(0)

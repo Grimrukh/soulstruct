@@ -138,10 +138,6 @@ class EntryRow:
             command=lambda: self.master.translate_entry_text(self.row_index),
         )
         self.context_menu.add_command(
-            label="Duplicate Entry to Next ID",
-            command=lambda: self.master.add_relative_entry(self.entry_id, offset=1),
-        )
-        self.context_menu.add_command(
             label="Delete Entry",
             command=lambda: self.master.delete_entry(self.row_index),
         )
@@ -749,7 +745,7 @@ class BaseEditor(SmartFrame, abc.ABC):
             return False
         if entry_id in self.get_category_data():
             self.CustomDialog(
-                title="Text ID Error",
+                title="Entry ID Error",
                 message=f"Entry ID {entry_id} already exists in category {camel_case_to_spaces(self.active_category)}.",
             )
             return False
@@ -775,6 +771,16 @@ class BaseEditor(SmartFrame, abc.ABC):
         if text is None:
             text = self.get_entry_text(entry_id)  # Copies name of origin entry by default.
         self._add_entry(entry_id=entry_id + offset, text=text)
+
+    def add_entry_to_next_available_id(self, entry_id, text=None):
+        """Find next available entry ID after `entry_id` and """
+        entry_ids = set(self.get_category_data())
+        new_id = entry_id + 1
+        while new_id in entry_ids:
+            new_id += 1
+        if text is None:
+            text = self.get_entry_text(entry_id)  # Copies name of origin entry by default.
+        self._add_entry(entry_id=new_id, text=text)
 
     def delete_entry(self, row_index, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""

@@ -105,12 +105,12 @@ __all__ = [
     "SetEventState",
     "StopEvent",
     "RestartEvent",
-    "SetCollisionState",
-    "EnableCollision",
-    "DisableCollision",
-    "SetCollisionBackreadMaskState",
-    "EnableCollisionBackreadMask",
-    "DisableCollisionBackreadMask",
+    "SetMapCollisionState",
+    "EnableMapCollision",
+    "DisableMapCollision",
+    "SetMapCollisionBackreadMaskState",
+    "EnableMapCollisionBackreadMask",
+    "DisableMapCollisionBackreadMask",
     "AwardItemLot",
     "AwardItemLotToHostOnly",
     "RemoveItemFromPlayer",
@@ -444,9 +444,6 @@ __all__ = [
     "ArenaSetNametag3",
     "ArenaSetNametag4",
     "DisplayArenaDissolutionMessage",
-
-    # Special additions
-    "SendToScript",
 ]
 
 import logging
@@ -665,7 +662,7 @@ def ClearTargetList(character: CharacterTyping):
 
 
 def AICommand(character: CharacterTyping, command_id, slot):
-    """ These instructions can be accessed in AI Lua scripts. """
+    """ The given `command_id` can be accessed in AI Lua scripts with `ai:GetEventRequest(slot)`. """
     instruction_info = (2004, 17)
     return to_numeric(instruction_info, character, command_id, slot)
 
@@ -1143,37 +1140,37 @@ def RestartEvent(event_id, slot=0):
 # Collisions
 
 
-def SetCollisionState(collision: CollisionTyping, state: bool):
+def SetMapCollisionState(collision: CollisionTyping, state: bool):
     instruction_info = (2011, 1)
     return to_numeric(instruction_info, collision, state)
 
 
-def EnableCollision(collision: CollisionTyping):
+def EnableMapCollision(collision: CollisionTyping):
     """Enable a collision (i.e. hitbox). The ID is specified in the MSB. Note that a Collision doesn't have to be solid
     ground, but could be anything triggered by collision, such as a kill plane (which this is often used to disable).
     """
-    return SetCollisionState(collision, True)
+    return SetMapCollisionState(collision, True)
 
 
-def DisableCollision(collision: CollisionTyping):
+def DisableMapCollision(collision: CollisionTyping):
     """Disable a collision (i.e. hitbox). The ID is specified in the MSB. Note that a Collision doesn't have to be solid
     ground, but could be anything triggered by collision, such as a kill plane (which this is often used to disable).
     """
-    return SetCollisionState(collision, False)
+    return SetMapCollisionState(collision, False)
 
 
-def SetCollisionBackreadMaskState(collision: CollisionTyping, state: bool):
+def SetMapCollisionBackreadMaskState(collision: CollisionTyping, state: bool):
     """ Unused. """
     instruction_info = (2011, 2)
     return to_numeric(instruction_info, collision, state)
 
 
-def EnableCollisionBackreadMask(collision: CollisionTyping):
-    return SetCollisionBackreadMaskState(collision, True)
+def EnableMapCollisionBackreadMask(collision: CollisionTyping):
+    return SetMapCollisionBackreadMaskState(collision, True)
 
 
-def DisableCollisionBackreadMask(collision: CollisionTyping):
-    return SetCollisionBackreadMaskState(collision, False)
+def DisableMapCollisionBackreadMask(collision: CollisionTyping):
+    return SetMapCollisionBackreadMaskState(collision, False)
 
 
 # ITEMS
@@ -1298,8 +1295,8 @@ def DeleteVFX(vfx_id: int, erase_root_only: bool = True):
 
 
 def CreateTemporaryVFX(vfx_id: int, anchor_entity: CoordEntityTyping, anchor_type=None, model_point=-1):
-    """ Create one-off visual VFX attached to the given 'anchor_entity'. The VFX type argument is determined from the
-    Entity category. The VFX, of course, must be current loaded (or in common effects). """
+    """Create one-off visual VFX (an FFX ID) attached to the given 'anchor_entity'. The VFX, of course, must be
+    currently loaded (or in common effects)."""
     instruction_info = (2006, 3, [0, 0, -1, 0])
     if anchor_type is None:
         if anchor_entity == PLAYER:
@@ -1935,7 +1932,8 @@ def SetLockedCameraSlot(game_map: MapTyping, camera_slot: int):
 
 def HellkiteBreathControl(character: CharacterTyping, obj: ObjectTyping, animation_id):
     """ I don't recommend you mess with this. It seems to be used to create the fire VFX and damaging effect when the
-    Hellkite breathes fire on the bridge. It may simply trigger a certain behavior params ID.
+    Hellkite breathes fire on the bridge, with (otherwise invisible) object model o1060. It may simply trigger a certain
+    behavior param ID.
 
     Unclear whether the animation applies to the character or object (which is probably an invisible "burning" plane).
     """
@@ -3217,12 +3215,3 @@ def ArenaSetNametag4(player_id: int):
 def DisplayArenaDissolutionMessage(text_id):
     instruction_info = (2007, 9)
     return to_numeric(instruction_info, text_id)
-
-
-# SPECIAL ADDITIONS
-
-
-def SendToScript(int1: int, int2: int, float1: float, float2: float):
-    """Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`."""
-    instruction_info = (2009, 7)
-    return to_numeric(instruction_info, int1, int2, float1, float2)

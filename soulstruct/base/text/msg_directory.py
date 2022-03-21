@@ -1,17 +1,19 @@
 from __future__ import annotations
 
 import abc
+import csv
 import logging
 import typing as tp
 from copy import deepcopy
 from pathlib import Path
 
 from soulstruct.containers import Binder
+from soulstruct.utilities.files import read_json, write_json
 from .fmg import BaseFMG
 
 if tp.TYPE_CHECKING:
+    from soulstruct.base.binder_entry import BinderEntry
     from soulstruct.containers.bnd import BaseBND
-    from soulstruct.containers.entry import BinderEntry
     from soulstruct.utilities.misc import BiDict
 
 __all__ = ["MSGDirectory"]
@@ -32,11 +34,13 @@ class MSGDirectory(abc.ABC):
 
     ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
 
-    _MSGBND_INDEX_NAMES = None  # type: BiDict[str, str]
+    _MSGBND_INDEX_NAMES = None  # type: BiDict[int, str]
+    _ORIGINAL_PATCH_SUFFIX = ""
 
     FMG_CLASS = None  # type: tp.Type[BaseFMG]
+    MSGBND_CLASS = None  # type: tp.Type[BaseBND]
 
-    def __init__(self, msg_directory=None):
+    def __init__(self, msg_directory=None, use_json=False):
         """Unpack all text data in given folder (from both 'item' and 'menu' MSGBND files) into one unified structure.
 
         You can access and modify the `entries` attributes of each loaded `FMG` instance using the names of the FMGs,
@@ -48,6 +52,8 @@ class MSGDirectory(abc.ABC):
         Args:
             msg_directory: Directory containing 'item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]', in any of the language
                 folders (such as 'ENGLISH' or 'engus') within the 'msg' directory in your game installation.
+            use_json: if `True`, will assume the source is a path to a folder containing `item_manifest.json`,
+                `menu_manifest.json`, and JSON file for each text category in those manifests' `entries`.
         """
         self.directory = None
         self._is_menu = {}  # Records whether each FMG belongs in 'item' or 'menu' MSGBND.
@@ -60,6 +66,13 @@ class MSGDirectory(abc.ABC):
             return
 
         self.directory = Path(msg_directory)
+
+        if use_json:
+            # BNDs will be generated from information in manifests.
+            self.item_msgbnd = None
+            self.menu_msgbnd = None
+            self.load_json_dir(msg_directory, clear_old_data=False)
+            return
 
         ext = "msgbnd.dcx" if self.IS_DCX else "msgbnd"
         self.item_msgbnd = Binder(self.directory / f"item.{ext}")
@@ -108,10 +121,41 @@ class MSGDirectory(abc.ABC):
             bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
         except IndexError:
             raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-        bnd_entry = msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
-        bnd_entry.set_uncompressed_data(fmg_data)
+        try:
+            bnd_entry = msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
+        except KeyError:
+            # BND entry does not exist. If it's "Patch", we can try to create it by duplicating the path (and flags)
+            # from the non-Patch version.
+            if fmg_name.endswith("Patch"):
+                bnd_entry = self.create_patch_msgbnd_entry(msgbnd, fmg_name, fmg_data)
+            else:
+                raise KeyError(
+                    f"Text (FMG) category '{fmg_name}' does not exist in this `MSGDirectory` instance, and it is not a "
+                    f"'Patch' FMG that could be created automatically."
+                )
+        else:
+            bnd_entry.set_uncompressed_data(fmg_data)
         if not use_original_names:
             bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
+
+    def create_patch_msgbnd_entry(self, msgbnd: BaseBND, patch_fmg_name: str, data: bytes):
+        non_patch_fmg_name = patch_fmg_name.removesuffix("Patch")
+        if non_patch_fmg_name not in self._MSGBND_INDEX_NAMES:
+            raise KeyError(f"Patch text (FMG) category '{patch_fmg_name}' is not a known Patch category for this game.")
+        non_patch_entry_id = self._MSGBND_INDEX_NAMES[non_patch_fmg_name]
+        non_patch_bnd_entry = msgbnd.entries_by_id[non_patch_entry_id]
+        non_patch_entry_stem = Path(non_patch_bnd_entry.path).stem
+        patch_entry_path = non_patch_bnd_entry.path.replace(
+            non_patch_entry_stem, non_patch_entry_stem + self._ORIGINAL_PATCH_SUFFIX
+        )
+        bnd_entry = msgbnd.BinderEntry(
+            data=data,
+            entry_id=self._MSGBND_INDEX_NAMES[patch_fmg_name],
+            path=patch_entry_path,
+            flags=non_patch_bnd_entry.flags,
+        )
+        msgbnd.add_entry(bnd_entry)
+        return bnd_entry
 
     def pack(
         self,
@@ -126,10 +170,6 @@ class MSGDirectory(abc.ABC):
         for fmg_name, fmg_entries in self.categories.items():
             word_wrap = description_word_wrap_limit if "Descriptions" in fmg_name else None
 
-            if fmg_name + "Patch" in self._is_menu:
-                # Updates patch only, if available.
-                fmg_name = fmg_name + "Patch"
-
             fmg_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
             self.update_msgbnd_entry(
                 fmg_msgbnd,
@@ -139,6 +179,17 @@ class MSGDirectory(abc.ABC):
                 pipe_to_newline=pipe_to_newline,
                 use_original_names=use_original_names,
             )
+
+            if fmg_name + "Patch" in self._MSGBND_INDEX_NAMES.values():
+                # Updates patch version as well (with identical content), if it exists for this game and category.
+                self.update_msgbnd_entry(
+                    fmg_msgbnd,
+                    fmg_name + "Patch",
+                    fmg_entries,
+                    word_wrap_limit=word_wrap,
+                    pipe_to_newline=pipe_to_newline,
+                    use_original_names=use_original_names,
+                )
 
         return new_item_msgbnd, new_menu_msgbnd
 
@@ -160,8 +211,9 @@ class MSGDirectory(abc.ABC):
         )
 
         # Write BNDs (to original directory by default).
-        new_item_msgbnd.write(msg_directory / new_item_msgbnd.path.name)
-        new_menu_msgbnd.write(msg_directory / new_menu_msgbnd.path.name)
+        ext = "msgbnd.dcx" if self.IS_DCX else "msgbnd"
+        new_item_msgbnd.write(msg_directory / f"item.{ext}")
+        new_menu_msgbnd.write(msg_directory / f"menu.{ext}")
 
         _LOGGER.info("MSGDirectory files (`item` and `menu` MSGBND files) written successfully.")
 
@@ -171,7 +223,7 @@ class MSGDirectory(abc.ABC):
             self.menu_msgbnd = new_menu_msgbnd
 
     def get_all_item_text(self, index, item_type="good"):
-        """ Get name, summary, and description of goods, weapons, armor, or rings. """
+        """Get name, summary, and description of goods, weapons, armor, or rings."""
         item_fmg = self.resolve_item_type(item_type)
         if index not in self.categories[item_fmg + "Names"]:
             return None
@@ -193,7 +245,7 @@ class MSGDirectory(abc.ABC):
         self.categories[item_fmg + "Descriptions"][index] = description
 
     def delete_item_text(self, index, item_fmg="good"):
-        """ Remove entries for item name, summary, and description. """
+        """Remove entries for item name, summary, and description."""
         item_fmg = self.resolve_item_type(item_fmg)
         if index not in self.categories[item_fmg + "Names"]:
             raise ValueError(f"There is no {item_fmg} with index {index} to delete.")
@@ -270,6 +322,176 @@ class MSGDirectory(abc.ABC):
             (text_id, self.categories[category][text_id])
             for text_id in sorted(self.categories[category])[start:end]
         ]
+
+    def update_from_csv(
+        self,
+        csv_path: Path,
+        category_column: int,
+        id_column: int,
+        text_column: int,
+        skip_first_row=True,
+        delimiter=",",
+        quotechar="\"",
+        parse_newlines=True,
+    ):
+        """Update this `MSGDirectory` instance from the given CSV.
+
+        Arguments specify which columns the category names (e.g. 'RingNames'), text IDs, and text entries are in.
+        Use `skip_first_row` to indicate if a header row is present (defaults to True).
+
+        If `parse_newlines=True` (default), doubly-escaped newlines in the CSV will be replaced by actual newlines
+        (i.e., '\\n' -> '\n').
+        """
+        with Path(csv_path).open(newline="", encoding="utf-8") as f:
+            reader = csv.reader(f, delimiter=delimiter, quotechar=quotechar)
+            for i, row in enumerate(reader):
+                if i == 0 and skip_first_row:
+                    continue
+                category, text_id, text_value = row[category_column], row[id_column], row[text_column]
+                if parse_newlines:
+                    text_value = text_value.replace("\\n", "\n")
+                self[category][int(text_id)] = text_value
+
+    def load_json_dir(self, directory: tp.Union[Path, str], clear_old_data=True):
+        """Load individual text (FMG) JSON files from an unpacked Binder folder (produced by `write_json_dir()`).
+
+        The names of the JSON files to be loaded from the folder are recorded in the "categories" key of the
+        `item_manifest.json` and `menu_manifest.json` files, along with header information for each BND.
+
+        Note that this will immediately modify the underlying MSGBNDs held in this `MSGDirectory` instance.
+        """
+        directory = Path(directory)
+        item_manifest_path = directory / "item_manifest.json"
+        if not item_manifest_path.is_file():
+            raise FileNotFoundError(f"Could not find `MSGDirectory` manifest file '{item_manifest_path}'.")
+        item_manifest = read_json(item_manifest_path)
+        menu_manifest_path = directory / "menu_manifest.json"
+        if not menu_manifest_path.is_file():
+            raise FileNotFoundError(f"Could not find `MSGDirectory` manifest file '{menu_manifest_path}'.")
+        menu_manifest = read_json(menu_manifest_path)
+
+        if clear_old_data:
+            self._original_names = {}
+            self._is_menu = {}
+
+        # Update MSGBND binder information.
+        for bnd_name, bnd, manifest in zip(
+            ("item", "menu"),
+            (self.item_msgbnd, self.menu_msgbnd),
+            (item_manifest, menu_manifest),
+        ):
+            entry_ids = set()
+            if bnd is None:
+                bnd = self.MSGBND_CLASS(manifest)
+                bnd.path = Path(f"{bnd_name}.msgbnd.dcx" if self.IS_DCX else f"{bnd_name}.msgbnd")
+                setattr(self, f"{bnd_name}_msgbnd", bnd)
+            else:
+                for field, value in bnd.get_manifest_header(manifest).items():
+                    if not clear_old_data:
+                        if (old_value := getattr(bnd, field)) != value:
+                            raise ValueError(
+                                f"New `{field}` value {repr(value)} does not match old value {repr(old_value)}."
+                            )
+                    else:
+                        setattr(bnd, field, value)
+                if clear_old_data:
+                    bnd.clear_entries()
+                else:
+                    entry_ids = set(bnd.entries_by_id)
+
+            for json_name in manifest["entries"]:
+                try:
+                    fmg_dict = read_json(directory / json_name)
+                except FileNotFoundError:
+                    raise FileNotFoundError(f"Could not find text (FMG) JSON file '{directory / json_name}'.")
+                for field in ("entry_id", "path", "flags", "data"):
+                    if field not in fmg_dict:
+                        raise KeyError(f"Required field `{field}` not specified in '{json_name}'.")
+                fmg = self.FMG_CLASS({"entries": {int(k): v for k, v in fmg_dict["data"].items()}})
+
+                if json_name.endswith("Patch.json"):
+                    # "Patch" JSONs are also written into non-Patch Binder entries.
+                    non_patch_entry_id = self._MSGBND_INDEX_NAMES[json_name.removesuffix("Patch.json")]
+                    non_patch_entry = bnd.BinderEntry(
+                        fmg.pack(),
+                        non_patch_entry_id,
+                        fmg_dict["path"],  # TODO: Patch and non-Patch paths are identical in DSR, but not others.
+                        fmg_dict["flags"],
+                    )
+                    if non_patch_entry_id in entry_ids:
+                        _LOGGER.warning(
+                            f"Binder entry ID {non_patch_entry_id} appears more than once in `MSGDirectory` "
+                            f"'{bnd_name}' MSGBND. Fix this ASAP."
+                        )
+                    bnd.add_entry(non_patch_entry)
+
+                entry = bnd.BinderEntry(fmg.pack(), fmg_dict["entry_id"], fmg_dict["path"], fmg_dict["flags"])
+                if entry.id in entry_ids:
+                    _LOGGER.warning(
+                        f"Binder entry ID {entry.id} appears more than once in `MSGDirectory` '{bnd_name}' MSGBND. "
+                        f"Fix this ASAP."
+                    )
+                bnd.add_entry(entry)
+
+        # Refresh `MSGDirectory` instance data from new MSGBNDs.
+        self.load_fmg_entries_from_bnd(self.item_msgbnd, is_menu=False)
+        self.load_fmg_entries_from_bnd(self.menu_msgbnd, is_menu=True)
+
+        for key, fmg_dict in self.categories.items():
+            setattr(self, key, fmg_dict)
+
+    def write_json_dir(self, directory: tp.Union[Path, str], remove_empty_entries=True):
+        """Write a folder containing 'item_manifest.json' and 'menu_manifest.json' files with `Binder` header
+        information for those MSGBNDs and a list of text category (FMG) JSON files to load from the same folder.
+
+        The resulting folder can be loaded with `load_json_dir(directory)`.
+
+        The JSON file names will always be the more readable Soulstruct names, but the Binder "path" key inside each
+        JSON will be the original BND entry paths at the time this method is called, so these will still be the original
+        internal game names unless modified elsewhere. Other `pack()` arguments (description word wrap, pipe to newline)
+        are not offered, as these JSONs are intended to preserve the exact state of this class rather then preparing
+        data for ingame use.
+        """
+        directory = Path(directory)
+        directory.mkdir(parents=True, exist_ok=True)
+        item_manifest = self.item_msgbnd.get_json_header()
+        menu_manifest = self.menu_msgbnd.get_json_header()
+        item_manifest.pop("use_id_prefix")
+        item_manifest["entries"] = []
+        menu_manifest.pop("use_id_prefix")
+        menu_manifest["entries"] = []
+
+        new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
+        new_menu_msgbnd = deepcopy(self.menu_msgbnd)  # type: BaseBND
+
+        for fmg_name, fmg_entries in self.categories.items():
+            if remove_empty_entries:
+                fmg_entries = {k: fmg_entries[k] for k in sorted(fmg_entries) if fmg_entries[k] != ""}
+            else:
+                fmg_entries = {k: fmg_entries[k] for k in sorted(fmg_entries)}
+            if fmg_name + "Patch" in self._is_menu:
+                # Updates patch only, if available.
+                fmg_name = fmg_name + "Patch"
+            fmg_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
+            manifest = menu_manifest if self._is_menu[fmg_name] else item_manifest
+            try:
+                bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
+            except IndexError:
+                raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
+            bnd_entry = fmg_msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
+            # Don't need to actually update BND data. We just want the entry information.
+            fmg_dict = {
+                "entry_id": bnd_entry.id,
+                "path": bnd_entry.path,  # will still be original unless already modified
+                "flags": bnd_entry.flags,
+                "data": fmg_entries,
+            }
+            json_name = fmg_name + ".json"
+            write_json(directory / json_name, fmg_dict, encoding="utf-8")
+            manifest["entries"].append(json_name)
+
+        write_json(directory / "item_manifest.json", item_manifest)
+        write_json(directory / "menu_manifest.json", menu_manifest)
 
     @staticmethod
     def resolve_item_type(item_type) -> str:

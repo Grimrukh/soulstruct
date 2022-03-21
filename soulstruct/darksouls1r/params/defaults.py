@@ -132,7 +132,7 @@ DEFAULTS = {
         "contrastB": 1.0,
         "saturation": 1.0,
         "hue": 0.0,
-        "sfxMultiplier": 1,
+        "sfxMultiplier": 1.0,  # NOTE: Field is malformed in DS1R.
     },
     "SHADOW_BANK": {
         "lightDegRotX": 0,

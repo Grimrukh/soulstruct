@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["BaseBXF", "BXF3", "BXF4"]
@@ -8,13 +8,12 @@ import logging
 import typing as tp
 from pathlib import Path
 
+from soulstruct.base.binder_entry import BinderEntryHeader, BinderEntry
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter, get_blake2b_hash
 
-from .base import BaseBinder, BinderHashTable
+from .base import BaseBinder, BinderHashTable, BinderFlags
 from .dcx import DCX
-from .entry import BinderEntryHeader, BinderEntry
-from .flags import BinderFlags
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         self,
         file_source: GameFile.Typing = None,
         bdt_source: GameFile.Typing = None,
-        dcx_magic: tp.Tuple[int, int] = (),
+        dcx_magic: tuple[int, int] = (),
     ):
         """Data archive that is basically a `BND` split into a `BHD` header file and `BDT` data file.
 
@@ -61,7 +60,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         super().__init__(file_source, dcx_magic=dcx_magic, bdt_source=bdt_source)
 
     @abc.abstractmethod
-    def unpack_header(self, reader: BinaryReader) -> tp.List[BinderEntryHeader]:
+    def unpack_header(self, reader: BinaryReader) -> list[BinderEntryHeader]:
         ...
 
     @abc.abstractmethod
@@ -73,7 +72,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         ...
 
     @abc.abstractmethod
-    def pack(self) -> tp.Tuple[bytes, bytes]:
+    def pack(self) -> tuple[bytes, bytes]:
         """Returns `BHD` bytes and `BDT` bytes."""
 
     def write(
@@ -129,7 +128,7 @@ class BaseBXF(BaseBinder, abc.ABC):
 
 class BXF3(BaseBXF):
 
-    def unpack_header(self, reader: BinaryReader) -> tp.List[BinderEntryHeader]:
+    def unpack_header(self, reader: BinaryReader) -> list[BinderEntryHeader]:
         self.big_endian = reader.unpack_value("?", offset=0xD)
         reader.byte_order = ">" if self.big_endian else "<"
         self.bit_big_endian = reader.unpack_value("?", offset=0xE)
@@ -163,7 +162,7 @@ class BXF3(BaseBXF):
         writer.pack("i", len(self._entries))
         writer.pad(12)
 
-    def pack(self) -> tp.Tuple[bytes, bytes]:
+    def pack(self) -> tuple[bytes, bytes]:
         header_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
         data_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
         self.pack_header(header_writer)
@@ -191,7 +190,7 @@ class BXF3(BaseBXF):
 
         return header_writer.finish(), data_writer.finish()
 
-    def get_json_header(self) -> tp.Dict[str, tp.Any]:
+    def get_json_header(self) -> dict[str, tp.Any]:
         return {
             "version": "BXF3",
             "signature": self.signature,
@@ -214,7 +213,7 @@ class BXF4(BaseBXF):
         self,
         file_source: GameFile.Typing = None,
         bdt_source: GameFile.Typing = None,
-        dcx_magic: tp.Tuple[int, int] = (),
+        dcx_magic: tuple[int, int] = (),
     ):
         self.unknown1 = False
         self.unknown2 = False
@@ -299,7 +298,7 @@ class BXF4(BaseBXF):
         else:
             writer.pad(8)
 
-    def pack(self) -> tp.Tuple[bytes, bytes]:
+    def pack(self) -> tuple[bytes, bytes]:
         header_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
         data_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
         self.pack_header(header_writer)
@@ -357,7 +356,7 @@ class BXF4(BaseBXF):
 
         return header_writer.finish(), data_writer.finish()
 
-    def get_json_header(self) -> tp.Dict[str, tp.Any]:
+    def get_json_header(self) -> dict[str, tp.Any]:
         return {
             "version": "BXF4",
             "signature": self.signature,

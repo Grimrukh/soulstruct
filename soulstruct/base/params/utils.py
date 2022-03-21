@@ -95,14 +95,13 @@ class BitFieldWriter(_BitFieldBase):
 
 
 class FieldDisplayInfo:
-    def __init__(self, name, nickname, is_enabled, field_type, description="TODO", default_value=None, dsr_only=False):
+    def __init__(self, name, nickname, is_enabled, field_type, description="TODO", default_value=None):
         self.name = name
         self.nickname = nickname
         self.is_enabled = is_enabled
         self.field_type = field_type
         self.description = description
         self.default_value = default_value
-        self.dsr_only = dsr_only
 
     def __call__(self, entry):
         """No harm done if you treat this as a `DynamicFieldInfo`."""

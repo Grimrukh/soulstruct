@@ -535,7 +535,9 @@ class EMEVD(GameFile, abc.ABC):
                     )
                 existing_event.instructions += other_event.instructions
             else:
-                raise ValueError(f"Event {event_id} appears in both EMEVD sources and is not in `merge_events`.")
+                raise ValueError(
+                    f"Event {event_id} appears in both EMEVD sources and is not in allowed `merge_events`."
+                )
         return combined_emevd
 
     def __add__(self, other_emevd_source: tp.Union[EMEVD, GameFile.Typing]) -> EMEVD:

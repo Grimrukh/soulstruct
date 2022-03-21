@@ -23,7 +23,7 @@ def tag(tag_name: str, value: tp.Any = ""):
 
 
 def new_guid() -> str:
-    return "<guid>" + str(uuid.uuid4()) + "</guid>"
+    return f"<guid>{{{str(uuid.uuid4())}}}</guid>"
 
 
 @unique
@@ -63,7 +63,7 @@ class FSBSampleMode(IntEnum):
 
 
 class FSBSampleHeader(BinaryObject):
-    """A representation of wavetable data that is written to the FSB file."""
+    """Wavetable data that is written to the FSB file."""
 
     STRUCT = BinaryStruct(
         ("total_size", "H"),
@@ -86,6 +86,7 @@ class FSBSampleHeader(BinaryObject):
     )
 
     total_size: int
+    _name: bytes
     name: str
     length: int
     compressed_length: int
@@ -103,12 +104,20 @@ class FSBSampleHeader(BinaryObject):
     varvol: int
     varpan: int
 
-    def unpack(self, reader: BinaryReader):
-        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
-        self.name = kwargs.pop("_name").rstrip(b"\0").decode()
-        self.set(**kwargs)
+    @property
+    def name(self) -> str:
+        return self._name.rstrip(b"\0").decode()
 
-    def to_xml_string(self, sample_path: Path = None) -> list[str]:
+    @name.setter
+    def name(self, value: str):
+        if len(value) > 29:
+            raise ValueError(f"`FSBSampleHeader.name` must be 29 characters or less: {value}")
+        self._name = value.rstrip("\0").encode() + b"\0"
+
+    unpack = BinaryObject.default_unpack
+    pack = BinaryObject.default_pack
+
+    def to_xml_lines(self, sample_path: Path = None) -> list[str]:
         """Convert FSB sample header to XML string for use in an FMOD Designer Project file (FDP).
 
         Returns a list of lines to be formatted/indented as needed by the caller.
@@ -172,6 +181,17 @@ class FSBSample:
         self.header = header
         self.metadata = metadata
         self.data = data
+
+    def write_mp3(self, mp3_path: tp.Union[str, Path] = None, mkdirs=True):
+        if mp3_path is None:
+            mp3_path = Path(self.header.name)
+        else:
+            mp3_path = Path(mp3_path)
+            if mp3_path.is_dir():
+                mp3_path = mp3_path / self.header.name
+        if mkdirs:
+            mp3_path.parent.mkdir(parents=True, exist_ok=True)
+        mp3_path.write_bytes(self.data)
 
     @classmethod
     def unpack_from(cls, reader: BinaryReader, data_offset: int):
@@ -282,7 +302,7 @@ class FSB(GameFile):
             raise ValueError(f"Sample data end offset ({data_offset}) does not equal expected file size ({file_size}).")
 
     def pack(self, **kwargs) -> bytes:
-        """TODO"""
+        raise ValueError("FSB pack not implemented. Use FMOD Designer to build FEV/FSB from the generated FDP.")
 
     def __repr__(self):
         return (

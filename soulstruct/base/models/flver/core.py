@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["FLVER"]
@@ -134,17 +134,17 @@ class FLVER(GameFile):
 
     header: FLVERHeader
 
-    dummies: tp.List[Dummy]
-    gx_lists: tp.List[GXList]
-    materials: tp.List[Material]
-    bones: tp.List[Bone]
-    meshes: tp.List[Mesh]
-    buffer_layouts: tp.List[BufferLayout]
+    dummies: list[Dummy]
+    gx_lists: list[GXList]
+    materials: list[Material]
+    bones: list[Bone]
+    meshes: list[Mesh]
+    buffer_layouts: list[BufferLayout]
 
     def __init__(
         self,
         file_source: GameFile.Typing = None,
-        dcx_magic: tp.Tuple[int, int] = (),
+        dcx_magic: tuple[int, int] = (),
         **kwargs,
     ):
         self.header = FLVERHeader()
@@ -167,7 +167,7 @@ class FLVER(GameFile):
             for _ in range(self.header.dummy_count)
         ]
 
-        gx_list_indices = {}  # type: tp.Dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
+        gx_list_indices = {}  # type: dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
         self.gx_lists = []
         self.materials = [
             Material(
@@ -228,6 +228,16 @@ class FLVER(GameFile):
             raise ValueError(f"{len(face_sets)} face sets were left over after assignment to meshes.")
         if vertex_buffers:
             raise ValueError(f"{len(vertex_buffers)} vertex buffers were left over after assignment to meshes.")
+
+    @classmethod
+    def from_chrbnd(cls, chrbnd_source: GameFile.Typing) -> FLVER:
+        """Open CHRBND from given `chrbnd_source` and load its `.flver` file (with or without DCX extension).
+
+        Will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
+        """
+        chrbnd = Binder(chrbnd_source)
+        flver_entry = chrbnd.find_entry_matching_name(r".*\.flver(\.dcx)?")
+        return cls(flver_entry)
 
     def pack(self):
 
@@ -497,7 +507,14 @@ class FLVER(GameFile):
             for vertex in mesh.vertices:
                 vertex.position *= factor
 
-    def get_all_texture_paths(self) -> tp.Set[Path]:
+    def replace_tpf_name(self, old_name: str, new_name: str):
+        """Iterate over all `Material` textures and replace all '{old_name}.tga' names with '{new_name}.tga'."""
+        for material in self.materials:
+            for texture in material.textures:
+                # TODO: To be safe, probably make sure we're only replacing the file name of the path.
+                texture.path = texture.path.replace(old_name, new_name)
+
+    def get_all_texture_paths(self) -> set[Path]:
         """Get set of all texture paths from all materials. Ignores textures with empty `path`."""
         return {Path(texture.path) for material in self.materials for texture in material.textures if texture.path}
 
@@ -518,7 +535,7 @@ class FLVER(GameFile):
             raise FileNotFoundError(f"Required TPFBHD directory does not exist: {tpfbhd_directory}")
         return tpfbhd_directory
 
-    def find_all_tpfs(self, tpfbhd_directory: tp.Union[None, str, Path] = None) -> tp.Dict[Path, TPF]:
+    def find_all_tpfs(self, tpfbhd_directory: tp.Union[None, str, Path] = None) -> dict[Path, TPF]:
         if tpfbhd_directory is None:
             tpfbhd_directory = self.get_tpfbhd_directory_path()
         else:
@@ -538,3 +555,17 @@ class FLVER(GameFile):
             if not tpf_paths:
                 break
         return tpf_sources
+
+    def check_if_all_zero_bone_weights(self) -> bool:
+        """Reliable (so far) indicator of map piece FLVER, as opposed to character/object FLVER.
+
+        Map pieces sometimes use bone indices as an offset for certain meshes (or even a subset of a mesh's vertices),
+        but never use bone weights (in DS1 at least).
+
+        This method checks every vertex and is therefore reasonably expensive to compute, so do it sparingly.
+        """
+        for m in self.meshes:
+            for v in m.vertices:
+                if any(v.bone_weights):
+                    return False
+        return True

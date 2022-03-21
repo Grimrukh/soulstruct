@@ -1,4 +1,5 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
+from __future__ import annotations
 
 __all__ = [
     "LayoutSemantic",
@@ -123,9 +124,9 @@ class BufferLayout:
         ("__member_offset", "i"),
     )
 
-    members: tp.List[LayoutMember]
+    members: list[LayoutMember]
 
-    def __init__(self, source: tp.Union[BinaryReader, tp.List[LayoutMember]]):
+    def __init__(self, source: tp.Union[BinaryReader, list[LayoutMember]]):
         self.members = []
 
         if isinstance(source, BinaryReader):
@@ -224,6 +225,11 @@ class VertexBoneIndices:
         for i in range(4):
             yield self[i]
 
+    def __eq__(self, other: tp.Union[VertexBoneIndices, tuple, list]):
+        if len(other) != 4:
+            raise ValueError("Cannot only compare `VertexBoneIndices` for equality to a sequence of length 4.")
+        return all(self[i] == other[i] for i in range(4))
+
     def __repr__(self):
         return f"VertexBoneIndices{tuple(self)}"
 
@@ -267,6 +273,11 @@ class VertexBoneWeights:
         for i in range(4):
             yield self[i]
 
+    def __eq__(self, other: tp.Union[VertexBoneWeights, tuple, list]):
+        if len(other) != 4:
+            raise ValueError("Cannot only compare `VertexBoneWeights` for equality to a sequence of length 4.")
+        return all(self[i] == other[i] for i in range(4))
+
     def __repr__(self):
         return f"VertexBoneWeights{tuple(self)}"
 
@@ -276,22 +287,33 @@ class Vertex:
     VertexBoneWeights = VertexBoneWeights
     VertexBoneIndices = VertexBoneIndices
 
-    def __init__(self):
-        self.position = Vector3.zero()
-        self.bone_weights = VertexBoneWeights()
-        self.bone_indices = VertexBoneIndices()
-        self.normal = Vector3.zero()
-        self.normal_w = 0
-        self.uvs = []  # type: tp.List[Vector3]
-        self.tangents = []  # type: tp.List[Vector4]
-        self.bitangent = Vector4.zero()
-        self.colors = []  # type: tp.List[ColorRGBA]
+    def __init__(
+        self,
+        position: Vector3 = None,
+        bone_weights: VertexBoneWeights = None,
+        bone_indices: VertexBoneIndices = None,
+        normal: Vector3 = None,
+        normal_w: int = None,
+        uvs: list[Vector3] = None,
+        tangents: list[Vector4] = None,
+        bitangent: Vector4 = None,
+        colors: list[ColorRGBA] = None,
+    ):
+        self.position = Vector3.zero() if position is None else position
+        self.bone_weights = VertexBoneWeights() if bone_weights is None else bone_weights
+        self.bone_indices = VertexBoneIndices() if bone_indices is None else bone_indices
+        self.normal = Vector3.zero() if normal is None else normal
+        self.normal_w = 0 if normal_w is None else normal_w
+        self.uvs = [] if uvs is None else uvs
+        self.tangents = [] if tangents is None else tangents
+        self.bitangent = Vector4.zero() if bitangent is None else bitangent
+        self.colors = [] if colors is None else colors
 
         self.raw = b""
 
-        self.uv_queue = []  # type: tp.List[Vector3]
-        self.tangent_queue = []  # type: tp.List[Vector4]
-        self.color_queue = []  # type: tp.List[ColorRGBA]
+        self.uv_queue = []  # type: list[Vector3]
+        self.tangent_queue = []  # type: list[Vector4]
+        self.color_queue = []  # type: list[ColorRGBA]
 
     def read(self, reader: BinaryReader, layout: BufferLayout, uv_factor: float):
         self.uvs = []
@@ -622,8 +644,8 @@ class VertexBuffer(BinaryObject):
     def read_buffer(
         self,
         reader: BinaryReader,
-        layouts: tp.List[BufferLayout],
-        vertices: tp.List[Vertex],
+        layouts: list[BufferLayout],
+        vertices: list[Vertex],
         vertex_data_offset: int,
         uv_factor: int,
     ):
@@ -650,7 +672,7 @@ class VertexBuffer(BinaryObject):
         writer: BinaryWriter,
         version: Version,
         mesh_vertex_buffer_index: int,
-        buffer_layouts: tp.List[BufferLayout],
+        buffer_layouts: list[BufferLayout],
         mesh_vertex_count: int,
     ):
         layout_size = buffer_layouts[self.layout_index].get_total_size()
@@ -667,8 +689,8 @@ class VertexBuffer(BinaryObject):
     def pack_buffer(
         self,
         writer: BinaryWriter,
-        buffer_layouts: tp.List[BufferLayout],
-        vertices: tp.List[Vertex],
+        buffer_layouts: list[BufferLayout],
+        vertices: list[Vertex],
         buffer_offset: int,
         uv_factor: int,
     ):

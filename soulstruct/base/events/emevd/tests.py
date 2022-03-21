@@ -101,16 +101,16 @@ from .enums import *
 # Dummy names parsed directly in `EVSParser` (correct EVS signatures given in `tests.pyi` stub file).
 
 
-def NeverRestart(func: tp.Callable):
-    return func
+def NeverRestart(event_id_or_func: tp.Union[tp.Callable, int]):
+    return event_id_or_func
 
 
-def RestartOnRest(func: tp.Callable):
-    return func
+def RestartOnRest(event_id_or_func: tp.Union[tp.Callable, int]):
+    return event_id_or_func
 
 
-def UnknownRestart(func: tp.Callable):
-    return func
+def UnknownRestart(event_id_or_func: tp.Union[tp.Callable, int]):
+    return event_id_or_func
 
 
 class EVENTS:
@@ -498,9 +498,9 @@ def HealthValue(op_node, comparison_value, character: Character, condition, nega
 
 
 @negate_only
-def PartHealthValue(op_node, comparison_value, character: Character, part_type, condition, negate=False):
+def PartHealthValue(op_node, comparison_value, character: Character, npc_part_id, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return instr.IfCharacterPartHealthComparison(condition, character, part_type, comparison_value, comparison_type)
+    return instr.IfCharacterPartHealthComparison(condition, character, npc_part_id, comparison_type, comparison_value)
 
 
 @no_skip_or_negate_or_return

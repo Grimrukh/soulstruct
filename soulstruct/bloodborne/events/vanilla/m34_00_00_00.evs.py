@@ -2561,7 +2561,7 @@ def Event13405218():
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableCollision(3404250)
+    DisableMapCollision(3404250)
 
 
 @RestartOnRest

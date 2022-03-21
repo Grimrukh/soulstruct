@@ -9,7 +9,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.containers.bnd import BaseBND
-from soulstruct.containers.entry import BinderEntry
+from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import InvalidGameFileTypeError
 
 if tp.TYPE_CHECKING:

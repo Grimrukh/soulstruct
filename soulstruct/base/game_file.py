@@ -1,4 +1,4 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 
 from __future__ import annotations
 
@@ -7,16 +7,15 @@ __all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]
 import abc
 import copy
 import io
-import json
 import logging
 import typing as tp
 from pathlib import Path
 
 from soulstruct.exceptions import InvalidGameFileTypeError, GameFileDictSupportError
-from soulstruct.containers.entry import BinderEntry
 from soulstruct.containers.dcx import DCX
 from soulstruct.utilities.binary import BinaryReader, get_blake2b_hash
-from soulstruct.utilities.files import create_bak
+from soulstruct.utilities.files import create_bak, read_json, write_json
+from .binder_entry import BinderEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,9 +65,9 @@ class GameFile(abc.ABC):
             if isinstance(file_source, (str, Path)):
                 self.path = Path(file_source)
                 if self.path.suffix == ".json":
-                    with self.path.open("r") as j:
-                        self.load_dict(json.load(j))
-                        return
+                    json_dict = read_json(self.path, encoding="utf-8")
+                    self.load_dict(json_dict)
+                    return
             if isinstance(file_source, (str, Path, bytes, io.BufferedIOBase, BinderEntry)):
                 reader = BinaryReader(file_source)
             elif isinstance(file_source, BinaryReader):
@@ -106,6 +105,13 @@ class GameFile(abc.ABC):
         """
         raise InvalidGameFileTypeError(f"No special handler for `GameFile` source type: {type(file_source)}")
 
+    @classmethod
+    def from_binder(cls, binder_source, entry_id: int):
+        """Open a file of this type from the given `entry_id` of the given `Binder` source."""
+        from soulstruct.containers import Binder
+        binder = Binder(binder_source)
+        return cls(binder[entry_id])
+
     @abc.abstractmethod
     def unpack(self, reader: BinaryReader, **kwargs):
         """Unpack game file from given buffer, using various `BinaryStruct`s defined in the class."""
@@ -124,6 +130,12 @@ class GameFile(abc.ABC):
     @abc.abstractmethod
     def pack(self, **kwargs) -> bytes:
         """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
+
+    def pack_dcx(self, **kwargs) -> bytes:
+        """Call `pack()` and apply DCX compression to binary data, if appropriate, based on `self.dcx_magic`."""
+        if self.dcx_magic:
+            return DCX(self.pack(**kwargs), magic=self.dcx_magic).pack()
+        return self.pack(**kwargs)
 
     def to_dict(self, **kwargs) -> dict:
         """Create a dictionary from `GameFile` instance. Not supported by default."""
@@ -148,11 +160,10 @@ class GameFile(abc.ABC):
         file_path = self._get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
-        if self.dcx_magic:
-            packed = DCX(self.pack(**pack_kwargs), magic=self.dcx_magic).pack()
-        else:
-            packed = self.pack(**pack_kwargs)
+        packed = self.pack_dcx(**pack_kwargs)
         if check_hash and file_path.is_file():
+            # TODO: This may always report that DCX files have changed, but decompressing the existing file to check its
+            #  real hash seems excessive?
             if get_blake2b_hash(file_path) == get_blake2b_hash(packed):
                 return  # don't write file
         create_bak(file_path)
@@ -172,8 +183,7 @@ class GameFile(abc.ABC):
         file_path = Path(file_path)
         if file_path.suffix != ".json":
             file_path = file_path.with_suffix(file_path.suffix + ".json")
-        with file_path.open("w", encoding=encoding) as j:
-            json.dump(json_dict, j, indent=indent)
+        write_json(file_path, json_dict, indent=indent, encoding=encoding)
 
     def create_bak(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True):
         file_path = self._get_file_path(file_path)

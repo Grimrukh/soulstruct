@@ -16,6 +16,11 @@ class TextEntryRow(EntryRow):
 
     def build_entry_context_menu(self):
         super().build_entry_context_menu()
+        self.context_menu.add_command(
+            label="Duplicate Entry to Next Available ID",
+            command=lambda: self.master.add_entry_to_next_available_id(self.entry_id),
+        )
+
         text_id = self.entry_id
 
         item_match = self._MATCH_ITEM.match(self.master.active_category)

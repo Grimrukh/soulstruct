@@ -1,17 +1,19 @@
-"""NOTE: This file is Python 3.7 compatible for Blender 2.9X use.
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use.
 
 As always, courtesy of SoulsFormats by TKGP:
     https://github.com/JKAnderson/SoulsFormats/blob/master/SoulsFormats/Formats/TPF/DDS.cs
 """
-
 from __future__ import annotations
 
-__all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2"]
+__all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2", "convert_dds_file"]
 
+import subprocess
 import typing as tp
 from enum import IntEnum, auto
+from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryObject, BinaryStruct
 
 
@@ -237,7 +239,7 @@ class DDSHeader(BinaryObject):
     pitch_or_linear_size: int
     depth: int
     mipmap_count: int
-    reserved_1: tp.Tuple[int]
+    reserved_1: tuple[int]
     # Start of `PIXELFORMAT` in SoulsFormats.
     flags: DDPF
     fourcc: bytes
@@ -278,6 +280,10 @@ class DXT10Header(BinaryObject):
 
 
 class DDS(GameFile):
+    """Unpacks DDS header information.
+
+    Does NOT unpack actual DDS information or support packing or writing.
+    """
 
     header: DDSHeader
     dxt10_header: tp.Optional[DXT10Header]
@@ -287,8 +293,33 @@ class DDS(GameFile):
         self.dxt10_header = DXT10Header(reader) if self.header.fourcc == b"DX10" else None
 
     def pack(self, **kwargs) -> bytes:
+        raise AttributeError("Cannot pack `DDS`. Use `.pack_header()` to pack header only.")
+
+    def pack_header(self) -> bytes:
         writer = BinaryWriter()
         self.header.pack(writer)
         if self.dxt10_header:
             self.dxt10_header.pack(writer)
         return writer.finish()
+
+
+def convert_dds_file(
+    dds_path: tp.Union[str, Path], output_dir: tp.Union[str, Path], output_format: str, input_format: str = None
+):
+    """Convert DDS file path to a different format using DirectX-powered `texconv.exe`.
+
+    If `input_format` is given, the source DDS will be checked to make sure it matches that format.
+    """
+    texconv_path = PACKAGE_PATH("base/textures/texconv.exe")
+    if not texconv_path.is_file():
+        raise FileNotFoundError("Cannot find `texconv.exe` that should be bundled with Soulstruct in 'base/textures'.")
+    if input_format is not None:
+        dds = DDS(dds_path)
+        if dds.header.fourcc.decode() != input_format:
+            raise ValueError(f"DDS format {dds.header.fourcc} does not match `input_format` {input_format}")
+    subprocess.run(
+        f"{texconv_path} -f {output_format} -o {output_dir} {dds_path}",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    # TODO: Check if texconv ran successfully.

@@ -64,7 +64,7 @@ def convert_events(
     all_exts = EVENT_EXTENSIONS["evs"].union(
         EVENT_EXTENSIONS["emevd"].union(EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"]))
     )
-    merge_emevd_sources = list(merge_emevd_sources)
+    merge_emevd_sources = [Path(merge_source) for merge_source in merge_emevd_sources]
     for available in input_directory.glob("*"):
         parts = available.name.split(".")
         name, ext = parts[0], "." + ".".join(parts[1:])
@@ -84,9 +84,16 @@ def convert_events(
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}: {str(ex)}")
         for merge_source in tuple(merge_emevd_sources):
-            if Path(merge_source).stem.startswith(name_stem):
+            if merge_source.stem.startswith(name_stem):
                 emevd = emevd.merge(merge_source)
                 merge_emevd_sources.remove(merge_source)
+                parts = merge_source.name.split(".")
+                if "." + ".".join(parts[1:]) not in EVENT_EXTENSIONS["evs"]:
+                    print(f"# Merged '{merge_source.name}' into {name} EMEVD. (EVS version dumped.)")
+                    dump_name = "__" + parts[0] + ".evs.py"
+                    emevd_class(merge_source).write_evs(merge_source.with_name(dump_name))
+                else:
+                    print(f"# Merged '{merge_source.name}' into {name} EMEVD.")
         try:
             if output_type == "evs":
                 emevd.write_evs(output_path)

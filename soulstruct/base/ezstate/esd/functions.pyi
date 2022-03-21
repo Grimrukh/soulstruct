@@ -591,7 +591,7 @@ def OpenArenaRanking(*args): ...
 def ReportConversationEndToHavokBehavior(*args): ...
 
 # command talk[1][72]
-def Command_talk_1_72(*args): ...  # TODO
+def Command_talk_1_72(*args): ...  # TODO: OpenCovenantMenu from DS1R
 
 # command talk[1][75]
 def Command_talk_1_75(*args): ...  # TODO
