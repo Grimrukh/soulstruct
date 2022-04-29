@@ -37,7 +37,7 @@ _CONFIG_DEFAULTS = {
     "BB_PATH": r"C:\Bloodborne\dvdroot_ps4",
     "DS3_PATH": _DEFAULT_STEAM_PATH + r"\DARK SOULS III\Game",
     "SEKIRO_PATH": _DEFAULT_STEAM_PATH + r"\Sekiro",
-    "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH + r"\Elden Ring",
+    "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH + r"\ELDEN RING\Game",
 }
 
 

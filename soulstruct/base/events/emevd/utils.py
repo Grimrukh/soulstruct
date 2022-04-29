@@ -40,6 +40,8 @@ _LOGGER = logging.getLogger(__name__)
 COMPARISON_NODES = {ast.Eq: 0, ast.NotEq: 1, ast.Gt: 2, ast.Lt: 3, ast.GtE: 4, ast.LtE: 5}
 NEG_COMPARISON_NODES = {ast.Eq: 1, ast.NotEq: 0, ast.Gt: 5, ast.Lt: 4, ast.GtE: 3, ast.LtE: 2}
 
+_OPTIONAL_ARGS_ALLOWED = ((2000, 0), (2000, 6))
+
 
 def no_skip_or_negate_or_return(func):
     @wraps(func)
@@ -272,7 +274,7 @@ def get_instruction_args(
     try:
         args_format = "@" + format_dict[category][index]
     except KeyError:
-        raise KeyError(f"Cannot find argument types for instruction {category}[{index:02d}].")
+        raise KeyError(f"Cannot find argument types for instruction {category}[{index:02d}] ({event_args_size} bytes)")
 
     # 's' arguments are actually four-byte offsets into the packed string data, though we will keep the 's' symbol.
     struct_args_format = args_format.replace("s", "I")
@@ -297,6 +299,13 @@ def get_instruction_args(
     if opt_arg_count == 0:
         reader.seek(previous_offset)
         return args_format[1:], list(args)
+    elif (category, index) not in _OPTIONAL_ARGS_ALLOWED:
+        raise ValueError(
+            f"Extra arguments found for instruction {category}[{index}], which is not permitted. Arg types may be "
+            f"wrong (too short) for this instruction.\n"
+            f"    required size = {required_args_size}\n"
+            f"    actual size = {event_args_size}"
+        )
     elif extra_size % 4 != 0:
         raise ValueError(
             f"Error interpreting instruction {category}[{index}]: optional argument "

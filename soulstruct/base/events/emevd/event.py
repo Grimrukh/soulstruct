@@ -41,14 +41,13 @@ _LABEL_RE = re.compile(r"DefineLabel\((\d+)\)")
 class EventArg(abc.ABC):
     HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, zero=0):
+    def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, unknown=0):
         """Overrides argument data in a particular instruction using from dynamic args attached to the event."""
         self.line = instruction_line
         self.write_from_byte = write_from_byte
         self.read_from_byte = read_from_byte
         self.bytes_to_write = bytes_to_write
-        if zero != 0:
-            raise ValueError("Last field of arg replacement must be zero.")
+        self.unknown = unknown
 
     @classmethod
     def unpack(cls, reader: BinaryReader, count=1):
@@ -59,6 +58,7 @@ class EventArg(abc.ABC):
         return event_args
 
     def to_numeric(self):
+        # TODO: Should include `unknown`, since (as of Elden Ring?) it is not always zero.
         return f"({self.write_from_byte} <- {self.read_from_byte}, {self.bytes_to_write})"
 
     def to_binary(self):
@@ -67,6 +67,18 @@ class EventArg(abc.ABC):
             write_from_byte=self.write_from_byte,
             read_from_byte=self.read_from_byte,
             bytes_to_write=self.bytes_to_write,
+            unknown=self.unknown,
+        )
+
+    def __repr__(self) -> str:
+        if self.unknown == 0:
+            return (
+                f"EventArg(line={self.line}, write_from_bytes={self.write_from_byte}, "
+                f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write})"
+            )
+        return (
+            f"EventArg(line={self.line}, write_from_bytes={self.write_from_byte}, "
+            f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write}, unknown={self.unknown})"
         )
 
 
@@ -192,7 +204,8 @@ class Event(abc.ABC):
             except ValueError:
                 raise ValueError(
                     f"Error occurred while applying event args in instruction "
-                    f"{self.instructions.index(instruction)} of event {self.event_id}."
+                    f"{self.instructions.index(instruction)}, {instruction.category}[{instruction.index}], of "
+                    f"event {self.event_id}."
                 )
             for arg_range, arg_types in instruction_arg_types.items():
                 arg_range_types = event_arg_types.setdefault(arg_range, set())

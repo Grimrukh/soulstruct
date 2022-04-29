@@ -25,7 +25,11 @@ class EventLayers(_BaseEventLayers):
 
 class EventArg(_BaseEventArg):
     HEADER_STRUCT = BinaryStruct(
-        ("instruction_line", "Q"), ("write_from_byte", "Q"), ("read_from_byte", "Q"), ("bytes_to_write", "Q"),
+        ("instruction_line", "Q"),
+        ("write_from_byte", "Q"),
+        ("read_from_byte", "Q"),
+        ("bytes_to_write", "i"),
+        ("unknown", "i"),
     )
 
 
@@ -68,9 +72,12 @@ class EMEVD(_BaseEMEVD):
     STRING_ENCODING = "utf-16le"
     DCX_MAGIC = (68, 76)
     HEADER_STRUCT = BinaryStruct(
-        ("version", "4s", b"EVD\x00"),
-        ("ds3_marker_1", "I", 130816),
-        ("ds3_marker_2", "I", 205),
+        ("signature", "4s", b"EVD\0"),
+        ("big_endian", "?", False),
+        ("is_64_bit", "b", -1),  # -1 if True, 0 if False
+        ("version_unk_1", "?", True),
+        ("version_unk_2", "b", 0),
+        ("version", "I", 205),  # TODO: 204 in network test
         ("file_size_1", "I"),
         ("event_count", "Q"),
         ("event_table_offset", "Q"),

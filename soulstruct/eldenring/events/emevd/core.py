@@ -1,11 +1,11 @@
 __all__ = ["EMEVD", "Event", "EventArg", "EventLayers", "Instruction"]
 
 from soulstruct.base.events.emevd import (
-    EventLayers as _BaseEventLayers,
+    EMEVD as _BaseEMEVD,
+    Event as _BaseEvent,
     EventArg as _BaseEventArg,
     Instruction as _BaseInstruction,
-    Event as _BaseEvent,
-    EMEVD as _BaseEMEVD,
+    EventLayers as _BaseEventLayers,
 )
 from soulstruct.utilities.binary import BinaryStruct
 from .arg_types import INSTRUCTION_ARG_TYPES
@@ -25,7 +25,11 @@ class EventLayers(_BaseEventLayers):
 
 class EventArg(_BaseEventArg):
     HEADER_STRUCT = BinaryStruct(
-        ("instruction_line", "Q"), ("write_from_byte", "Q"), ("read_from_byte", "Q"), ("bytes_to_write", "Q"),
+        ("instruction_line", "Q"),
+        ("write_from_byte", "Q"),
+        ("read_from_byte", "Q"),
+        ("bytes_to_write", "i"),
+        ("unknown", "i"),
     )
 
 
@@ -39,43 +43,42 @@ class Instruction(_BaseInstruction):
         ("base_args_size", "Q"),
         ("first_base_arg_offset", "i"),
         "4x",
-        ("first_event_layers_offset", "i"),  # unused in BB
-        "4x",
+        ("first_event_layers_offset", "q"),
     )
 
 
 class Event(_BaseEvent):
+    EVENT_ARG_TYPES = {}
     Instruction = Instruction
     EventArg = EventArg
-    EVENT_ARG_TYPES = {}
     HEADER_STRUCT = BinaryStruct(
         ("event_id", "Q"),
         ("instruction_count", "Q"),
         ("first_instruction_offset", "Q"),
         ("event_arg_count", "Q"),
-        ("first_event_arg_offset", "i"),
-        "4x",
+        ("first_event_arg_offset", "q"),
         ("restart_type", "I"),
         "4x",
     )
 
 
 class EMEVD(_BaseEMEVD):
+    """Same file format (header) as Sekiro."""
 
     events: dict[int, Event]
 
     Event = Event
     EVS_PARSER = EVSParser
-    IMPORT_STRING = "soulstruct.bloodborne.events"
+    IMPORT_STRING = "soulstruct.eldenring.events"
     STRING_ENCODING = "utf-16le"
     DCX_MAGIC = (68, 76)
     HEADER_STRUCT = BinaryStruct(
         ("signature", "4s", b"EVD\0"),
         ("big_endian", "?", False),
-        ("is_64_bit", "b", -1),  # -1 if True, 0 if False
-        ("version_unk_1", "?", False),
-        ("version_unk_2", "b", 0),
-        ("version", "I", 204),
+        ("is_64_bit", "b"),  # -1 if True, 0 if False
+        ("version_unk_1", "?", True),
+        ("version_unk_2", "b", -1),
+        ("version", "I", 205),  # same as DS3
         ("file_size_1", "I"),
         ("event_count", "Q"),
         ("event_table_offset", "Q"),
@@ -83,8 +86,8 @@ class EMEVD(_BaseEMEVD):
         ("instruction_table_offset", "Q"),
         "8x",  # unknown table, unused in all games
         ("unknown_table_offset", "Q"),
-        ("event_layers_count", "Q"),  # unused in BB
-        ("event_layers_table_offset", "Q"),  # unused in BB
+        ("event_layers_count", "Q"),
+        ("event_layers_table_offset", "Q"),
         ("event_arg_count", "Q"),
         ("event_arg_table_offset", "Q"),
         ("linked_files_count", "Q"),

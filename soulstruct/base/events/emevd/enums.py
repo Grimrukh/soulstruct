@@ -149,6 +149,7 @@ class CutsceneType(IntEnum):
     Unskippable = 0b0010  # 2
     SkippableFadeOut = 0b1000  # 8
     UnskippableFadeOut = 0b1010  # 10
+    UnknownEldenRing = 0b10000  # 16
 
     def is_skippable(self):
         return f"{self.value:04b}"[-2] == "0"

@@ -74,9 +74,12 @@ class EMEVD(_BaseEMEVD):
     STRING_ENCODING = "utf-8"
     DCX_MAGIC = ()
     HEADER_STRUCT = BinaryStruct(
-        ("version", "4s", b"EVD\x00"),
-        ("ds1_marker_1", "I", 0),
-        ("ds1_marker_2", "I", 204),
+        ("signature", "4s", b"EVD\0"),
+        ("big_endian", "?", False),
+        ("is_64_bit", "b", 0),  # -1 if True, 0 if False
+        ("version_unk_1", "?", False),
+        ("version_unk_2", "b", 0),
+        ("version", "I", 204),
         ("file_size_1", "I"),
         ("event_count", "I"),
         ("event_table_offset", "I"),

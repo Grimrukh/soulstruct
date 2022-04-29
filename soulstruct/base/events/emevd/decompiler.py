@@ -41,7 +41,7 @@ def parse_parameters(func_name: str = None, no_name_count=0, ignore_args=()):
         defaults = {k: v.default for k, v in sig.parameters.items() if v.default is not inspect.Parameter.empty}
 
         @wraps(func)
-        def _wrapper(self: InstructionDecompiler, *args, enums_manager: EntityEnumsManager):
+        def _wrapper(self: InstructionDecompiler, *args, enums_manager: EntityEnumsManager = None):
             if func_name is not None and ignore_args and args == ignore_args:
                 return f"{func_name}()"  # arguments are ignored
             try:
@@ -140,7 +140,13 @@ class InstructionDecompiler(abc.ABC):
             raise InstructionNotFoundError(
                 f"Unknown instruction in decompiler: {category}[{index:02d}].")
         try:
-            instr_string = instr_method(*args, enums_manager=enums_manager)
+            try:
+                instr_string = instr_method(*args, enums_manager=enums_manager)
+            except TypeError as ex:
+                if "got an unexpected keyword argument 'enums_manager'" in str(ex):
+                    instr_string = instr_method(*args)
+                else:
+                    raise
         except Exception:
             _LOGGER.error(
                 f"Could not decompile instruction {category}[{index:02d}].\nArgs: {args}"

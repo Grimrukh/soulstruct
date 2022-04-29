@@ -36,7 +36,7 @@ class Instruction(abc.ABC):
 
         if len(self.struct_arg_types) != len(args_list):
             raise ValueError(
-                f"Length of argument list ({len(args_list)}) in instruction {category}[{index:02d}] does not match "
+                f"Length of argument list ({len(args_list)}) in instruction {self.instruction_id} does not match "
                 f"length of format string '{display_arg_types}' ({len(self.struct_arg_types)})."
             )
 
@@ -50,6 +50,10 @@ class Instruction(abc.ABC):
         else:
             self.event_layers = None
         self.event_layers_offset = None  # Set by Event class during EMEVD packing.
+
+    @property
+    def instruction_id(self) -> str:
+        return f"{self.category}[{self.index:02d}]"
 
     @property
     def struct_arg_types(self):
@@ -178,7 +182,7 @@ class Instruction(abc.ABC):
             except KeyError:
                 raise ValueError(
                     f"No argument in '{self.event_args}' begins at byte {arg_r.write_from_byte}. "
-                    f"Your replacement commands are probably misaligned."
+                    f"Your replacement commands are probably misaligned. Arg offset dict: {arg_offset_dict}"
                 )
 
             # Byte type "s" is actually a four-byte offset into the packed strings.
@@ -188,7 +192,9 @@ class Instruction(abc.ABC):
             ):
                 raise ValueError(
                     f"You cannot write {arg_r.bytes_to_write} bytes over an argument of type "
-                    f"{argument_byte_type} (it's too small)."
+                    f"{argument_byte_type} (it's too small).\n"
+                    f"    Instruction: {self.instruction_id}\n"
+                    f"    Event arg: {arg_r}"
                 )
             value_to_overwrite = self.args_list[argument_index]
             arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
@@ -199,10 +205,10 @@ class Instruction(abc.ABC):
                     f"(position {argument_index}) in instruction {self.category}[{self.index}] "
                     f"with args {self.args_list} (types '{self.display_arg_types}')"
                 )
-                raise ValueError(
-                    f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
-                    f"(position {argument_index})."
-                )
+                # raise ValueError(
+                #     f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
+                #     f"(position {argument_index})."
+                # )
 
             self.evs_args_list[argument_index] = arg_name
 
