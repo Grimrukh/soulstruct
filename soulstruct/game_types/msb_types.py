@@ -72,6 +72,8 @@ class Map(GameObject):
         self,
         area_id: tp.Optional[int],
         block_id: tp.Optional[int],
+        cc_id: tp.Optional[int] = 0,
+        dd_id: tp.Optional[int] = 0,
         name=None,
         emevd_file_stem=None,
         msb_file_stem=None,
@@ -95,6 +97,8 @@ class Map(GameObject):
             block_id: Block ID of map, which is the second number (of four) in the full map ID. Generally, the area ID
                 and block ID fully specify the map. The third number in the map ID is essentially never used and the
                 fourth number is only used for file revision purposes (e.g. the Dark Souls DLC version of Darkroot).
+            cc_id: Third part of map ID, used only in later games with lots of maps.
+            dd_id: Fourth and final part of map ID, used only in later games with lots of maps.
 
             name: Canonical name of map (e.g. "undeadburg"). Note that the map-finding utility `get_map` ignores case
                 and underscores when looking for a specific name.
@@ -117,8 +121,13 @@ class Map(GameObject):
         """
         self.area_id = area_id
         self.block_id = block_id
+        self.cc_id = cc_id
+        self.dd_id = dd_id
 
-        base_id = f"m{area_id:02d}_{block_id:02d}_00_00" if area_id is not None and block_id is not None else None
+        if area_id is not None and block_id is not None:
+            base_id = f"m{area_id:02d}_{block_id:02d}_{cc_id:02d}_{dd_id:02d}"
+        else:
+            base_id = None
         self.name = base_id if name is None else name
 
         self.emevd_file_stem = base_id if emevd_file_stem is None else emevd_file_stem
@@ -154,7 +163,7 @@ class Map(GameObject):
     @classmethod
     def NO_MAP(cls):
         """Used as a default null map in MSB."""
-        return cls(0, 0, name="NONE")
+        return cls(0, 0, 0, 0, name="NONE")
 
 
 class MapEntry(GameObject):
