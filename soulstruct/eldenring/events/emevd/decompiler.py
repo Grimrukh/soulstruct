@@ -7,10 +7,9 @@ from typing import Union
 from soulstruct.base.events.emevd.decompiler import (
     InstructionDecompiler as _BaseDecompiler,
     parse_parameters,
-    EnumValue,
 )
 from soulstruct.base.events.emevd.utils import EntityEnumsManager
-from soulstruct.darksouls3.maps.constants import get_map
+from soulstruct.eldenring.maps.constants import get_map
 from soulstruct.game_types.msb_types import *
 from .enums import *
 from . import enums
@@ -30,7 +29,7 @@ class InstructionDecompiler(_BaseDecompiler):
         Falls back to "(area_id, block_id)" tuple (e.g. for event arguments or custom map IDs).
         """
         try:
-            return self.GET_MAP(area_id, block_id).variable_name
+            return self.GET_MAP((area_id, block_id, cc_id, dd_id)).variable_name
         except (KeyError, ValueError):
             return f"({area_id}, {block_id}, {cc_id}, {dd_id})"
 
@@ -78,17 +77,26 @@ class InstructionDecompiler(_BaseDecompiler):
             return f"RunCommonEvent({event_id}, args={args})"
         return f"RunCommonEvent({event_id}, args={args}, arg_types=\"{arg_types}\")"
 
-    @parse_parameters("UNK_2000_07")
-    def _2000_07(self, unk):
+    @parse_parameters("UnknownSystem_07")
+    def _2000_07(self, slot):
+        """TODO: Not known to HPR. Argument seems to match event slot number."""
         pass
 
-    @parse_parameters("UNK_2000_08")
-    def _2000_08(self, unk):
+    @parse_parameters("UnknownSystem_08")
+    def _2000_08(self, slot):
+        """TODO: Not known to HPR. Argument seems to match event slot number."""
         pass
 
-    @parse_parameters("UNK_1_05")
-    def _1_05(self, unk_1, unk_2):
+    @parse_parameters("IfUnsignedValueComparison", no_name_count=2)
+    def _0_02(self, condition, comparison_type: ComparisonType, left, right):
         pass
+
+    @parse_parameters
+    def _1_05(self, condition, start_hours, start_minutes, start_seconds, end_hours, end_minutes, end_seconds):
+        return (
+            f"IfTimeOfDay({condition}, earliest=({start_hours}, {start_minutes}, {start_seconds}), "
+            f"latest=({end_hours}, {end_minutes}, {end_seconds}))"
+        )
 
     def _3_02(self, condition, state, character: Character, region: Region, min_target_count=-1):
         return self._add_min_target_count(
@@ -155,18 +163,19 @@ class InstructionDecompiler(_BaseDecompiler):
     @parse_parameters
     def _3_30(self, condition, area_id, block_id, cc_id, dd_id):
         game_map = self._get_game_map_variable_name(area_id, block_id, cc_id, dd_id)
-        return f"IfInsideMap_New({condition}, {game_map=})"
+        return f"IfInsideMapTile({condition}, {game_map=})"
 
-    @parse_parameters("IfOngoingCutsceneFinished", no_name_count=2)
-    def _3_31(self, condition, cutscene, unk_1, unk_2):
+    @parse_parameters("IfUnknownCondition_31", no_name_count=1)
+    def _3_31(self, condition, hours, unk_2, unk_3):
         pass
 
     @parse_parameters("IfHollowArenaMatchReadyState", no_name_count=1)
     def _3_32(self, condition, is_ready: bool):
         return
 
-    @parse_parameters("UNK_3_33")
-    def _3_33(self, condition, unk_1, unk_2):
+    @parse_parameters("IfUnknownCondition_33", no_name_count=1)
+    def _3_33(self, condition, unk_1, unk_2: bool):
+        """TODO: Not known to HPR."""
         pass
 
     @parse_parameters("IfPlayerHasArmorEquipped", no_name_count=1)
@@ -177,8 +186,9 @@ class InstructionDecompiler(_BaseDecompiler):
     def _3_35(self, condition, result: HollowArenaResult):
         pass
 
-    @parse_parameters("UNK_3_37")
-    def _3_37(self, condition, unk_1, unk_2):
+    @parse_parameters("IfUnknownFlagCheck", no_name_count=1)
+    def _3_37(self, condition, flag, state: bool):
+        """TODO: Not known to HPR."""
         pass
 
     @parse_parameters("IfSteamDisconnected", no_name_count=1)
@@ -286,8 +296,17 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("IfCharacterChameleonState", no_name_count=1)
-    def _4_28(self, condition, character: Character, chameleon_vfx_id, is_transformed: bool):
+    def _4_28(self, condition, character: Character, chameleon_vfx_id, unk_1):
+        """TODO: Maybe changed completely."""
         pass
+
+    @parse_parameters
+    def _4_34(self, condition, character: Character, unk_1, unk_2, target_comparison_type=0, target_count=1):
+        return self._add_target_args(
+            f"IfUnknownCharacterCondition_34({condition}, {character}, {unk_1=}, {unk_2=})",
+            target_comparison_type=target_comparison_type,
+            target_count=target_count,
+        )
 
     def _5_00(self, condition, state, obj: Object, target_comparison_type=0, target_count=1):
         return self._add_target_args(
@@ -332,13 +351,22 @@ class InstructionDecompiler(_BaseDecompiler):
             string = f"IfObjectBackreadState_Alternate({condition}, {obj=}, {state=})"
         return self._add_target_args(string, target_comparison_type, target_count)
 
-    @parse_parameters("UNK_1000_10")
-    def _1000_10(self, unk_1, unk_2, unk_3):
-        pass
+    @parse_parameters
+    def _1000_10(self, line_count, comparison_type: ComparisonType, left, right):
+        if comparison_type == ComparisonType.Equal:
+            return f"SkipIfUnsignedEqual({line_count}, {left}, {right})"
+        elif comparison_type == ComparisonType.NotEqual:
+            return f"SkipIfUnsignedNotEqual({line_count}, {left}, {right})"
+        return f"SkipIfUnsignedComparison({line_count}, {comparison_type}, {left=}, {right=})"
 
-    @parse_parameters("UNK_1000_11")
-    def _1000_11(self, unk_1, unk_2, unk_3):
-        pass
+    @parse_parameters
+    def _1000_11(self, event_return_type: EventReturnType, comparison_type: ComparisonType, left, right):
+        if (
+            self._any_vars(event_return_type, comparison_type)
+            or comparison_type not in (ComparisonType.Equal, ComparisonType.NotEqual)
+        ):
+            return f"ReturnIfUnsignedComparison({event_return_type}, {comparison_type}, {left=}, {right=})"
+        return f"{event_return_type.name}IfUnsigned{comparison_type.name}({left=}, {right=})"
 
     @parse_parameters
     def _1000_101(self, label: Label, state: bool, input_condition):
@@ -364,8 +392,8 @@ class InstructionDecompiler(_BaseDecompiler):
     def _1001_04(self, match_type, is_second_half: bool):
         pass
 
-    @parse_parameters("UnknownWait")
-    def _1001_06(self, unk_1):
+    @parse_parameters("WaitFramesAfterCutscene", no_name_count=1)
+    def _1001_06(self, frames):
         pass
 
     @parse_parameters("SkipLinesIfCoopClientCountComparison", no_name_count=3)
@@ -420,26 +448,6 @@ class InstructionDecompiler(_BaseDecompiler):
             return f"{event_return_type.name}IfPlayerOwnWorldState({not_in_own_world=})"
         state = "Not" if not_in_own_world else ""
         return f"{event_return_type.name}IfPlayer{state}InOwnWorld()"
-
-    @parse_parameters("SkipLinesIfClientTypeCountComparison", no_name_count=4)
-    def _1003_14(self, skip_lines, client_type: ClientType, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters("GotoIfClientTypeCountComparison", no_name_count=4)
-    def _1003_15(self, label: Label, client_type: ClientType, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters
-    def _1003_16(
-        self,
-        event_return_type: EventReturnType,
-        client_type: ClientType,
-        comparison_type: ComparisonType,
-        value,
-    ):
-        if not self._any_vars(event_return_type):
-            return f"{event_return_type.name}IfClientTypeCountComparison({client_type}, {comparison_type}, {value})"
-        return f"ReturnIfClientTypeCountComparison({event_return_type}, {client_type}, {comparison_type}, {value})"
 
     @parse_parameters
     def _1003_101(self, label: Label, state: FlagState, flag_type: FlagType, flag):
@@ -563,8 +571,71 @@ class InstructionDecompiler(_BaseDecompiler):
     def _1003_211(self, label: Label, match_type: HollowArenaMatchType):
         pass
 
-    @parse_parameters("UNK_1004_01")
-    def _1004_01(self, unk_1, unk_2, unk_3, unk_4, unk_5):
+    @parse_parameters
+    def _1004_00(
+        self,
+        line_count,
+        character: Character,
+        special_effect,
+        state: bool,
+        target_comparison_type: ComparisonType = 0,
+        target_count=1,
+    ):
+        if state is True:
+            string = f"SkipIfCharacterHasSpecialEffect({line_count}, {character=}, {special_effect=})"
+        elif state is False:
+            string = f"SkipIfCharacterDoesNotHaveSpecialEffect({line_count}, {character=}, {special_effect=})"
+        else:
+            string = (
+                f"SkipIfCharacterSpecialEffectState({line_count}, {character=}, "
+                f"{special_effect=}, state={state=})"
+            )
+        return self._add_target_args(string, target_comparison_type, target_count)
+
+    @parse_parameters
+    def _1004_01(
+        self,
+        label: Label,
+        character: Character,
+        special_effect,
+        state: bool,
+        target_comparison_type: ComparisonType = 0,
+        target_count=1,
+    ):
+        if state is True:
+            string = f"GotoIfCharacterHasSpecialEffect({label}, {character=}, {special_effect=})"
+        elif state is False:
+            string = f"GotoIfCharacterDoesNotHaveSpecialEffect({label}, {character=}, {special_effect=})"
+        else:
+            string = (
+                f"GotoIfCharacterSpecialEffectState({label}, {character=}, "
+                f"{special_effect=}, has_effect={state=})"
+            )
+        return self._add_target_args(string, target_comparison_type, target_count)
+
+    @parse_parameters
+    def _1004_02(
+        self,
+        event_return_type: EventReturnType,
+        character: Character,
+        special_effect,
+        state: bool,
+        target_comparison_type: ComparisonType = 0,
+        target_count=1,
+    ):
+        if self._any_vars(event_return_type, state):
+            string = (
+                f"ReturnIfCharacterSpecialEffectState({event_return_type}, {character}, {special_effect=}, {state=})"
+            )
+        else:
+            state_name = "Has" if state else "DoesNotHave"
+            string = (
+                f"{event_return_type.name}IfCharacter{state_name}SpecialEffect({character}, {special_effect=})"
+            )
+        return self._add_target_args(string, target_comparison_type, target_count)
+
+    @parse_parameters("UnknownCharacterControl_05")
+    def _1004_05(self, unk_1, unk_2, unk_3):
         pass
 
     @parse_parameters
@@ -674,11 +745,11 @@ class InstructionDecompiler(_BaseDecompiler):
     def _1014_20(self):
         return "DefineLabel(20)"
 
-    @parse_parameters("UNK_2001_04")
-    def _2001_04(self, unk_1, unk_2, unk_3, unk_4, unk_5):
+    @parse_parameters("UnknownTimer_04")
+    def _2001_04(self, hours, minutes, seconds, unk_1, unk_2, unk_3, unk_4, unk_5, unk_6):
         pass
 
-    @parse_parameters("UNK_2001_05")
+    @parse_parameters("UnknownTimer_05")
     def _2001_05(self, unk_1):
         pass
 
@@ -726,13 +797,13 @@ class InstructionDecompiler(_BaseDecompiler):
             f"{move_to_region=}, {move_to_map=}, {player_id=})"
         )
 
-    @parse_parameters("UNK_2002_10")
+    @parse_parameters("UnknownCutscene_10")
     def _2002_10(
         self,
         cutscene,
         cutscene_type: CutsceneType,
         player_id: PlayerEntity,
-        unk_1,
+        hours,
         unk_2,
         unk_3,
         unk_4,
@@ -741,7 +812,7 @@ class InstructionDecompiler(_BaseDecompiler):
     ):
         pass
 
-    @parse_parameters("UNK_2002_11")
+    @parse_parameters("UnknownCutscene_11")
     def _2002_11(
         self,
         cutscene,
@@ -757,12 +828,12 @@ class InstructionDecompiler(_BaseDecompiler):
     ):
         pass
 
-    @parse_parameters("UNK_2002_12")
+    @parse_parameters("UnknownCutscene_12")
     def _2002_12(
         self,
         cutscene,
         cutscene_type: CutsceneType,
-        unk_1,
+        respawn_point,
         move_to_region: Region,
         player_id: PlayerEntity,
         unk_2,
@@ -787,9 +858,9 @@ class InstructionDecompiler(_BaseDecompiler):
         return f"{state_name}BossHealthBar({character}, {name=}, {slot=})"
 
     @parse_parameters
-    def _2003_14(self, area_id, block_id, cc_id, dd_id, player_start: PlayerStart, unk_6):
+    def _2003_14(self, area_id, block_id, cc_id, dd_id, player_start: PlayerStart, unk_1):
         game_map = self._get_game_map_variable_name(area_id, block_id, cc_id, dd_id)
-        return f"WarpToMap({game_map=}, {player_start=}, {unk_6=})"
+        return f"WarpToMap({game_map=}, {player_start=}, {unk_1=})"
 
     @parse_parameters("HandleMinibossDefeat", no_name_count=1)
     def _2003_15(self, miniboss_id):
@@ -803,8 +874,8 @@ class InstructionDecompiler(_BaseDecompiler):
         loop: bool = False,
         wait_for_completion: bool = False,
         skip_transition: bool = False,
-        unknown1=0,
-        unknown2=1.0,
+        unknown1=0,  # NOT just `target_comparison_type`, apparently
+        unknown2=0.0,  # NOT the usual 1.0 from `target_count`
     ):
         pass
 
@@ -944,10 +1015,10 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _2003_71(self, is_invisible: bool):
-        if is_invisible is True:
+    def _2003_71(self, is_invisible):
+        if is_invisible == 1:
             return f"DisableHUDVisibility()"
-        elif is_invisible is False:
+        elif is_invisible == 0:
             return f"EnableHUDVisibility()"
         return f"SetHUDVisibilityState({is_invisible=})"
 
@@ -991,11 +1062,11 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2003_79(self, unknown1):
         pass
 
-    @parse_parameters("UNK_2003_80")
+    @parse_parameters("UnknownEvent_80")
     def _2003_80(self, unk_1):
         pass
 
-    @parse_parameters("UNK_2003_81")
+    @parse_parameters("UnknownEvent_81")
     def _2003_81(self, unk_1):
         pass
 
@@ -1069,19 +1140,19 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2004_60(self, level_count):
         pass
 
-    @parse_parameters("UNK_2004_74")
-    def _2004_74(self, unk_1, unk_2, unk_3, unk_4, unk_5, unk_6):
+    @parse_parameters("UnknownCharacter_74")
+    def _2004_74(self, character: Character, unk_1, region: Region, unk_2, character_2: Character, unk_3, unk_4):
         pass
 
-    @parse_parameters("UNK_2004_75")
-    def _2004_75(self, unk_1, unk_2, unk_3):
+    @parse_parameters("UnknownCharacter_75")
+    def _2004_75(self, character: Character, unk_1, unk_2):
         pass
 
-    @parse_parameters("UNK_2004_76")
-    def _2004_76(self, unk_1, unk_2):
+    @parse_parameters("UnknownCharacter_76")
+    def _2004_76(self, flag, item_lot):
         pass
 
-    @parse_parameters("UNK_2004_77")
+    @parse_parameters("UnknownCharacter_77")
     def _2004_77(self, unk_1, unk_2, unk_3, unk_4):
         pass
 
@@ -1097,8 +1168,8 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2005_19(self, obj: Object):
         pass
 
-    @parse_parameters("UNK_2006_06")
-    def _2006_06(self, unk_1):
+    @parse_parameters("SetUnknownVFX_06")
+    def _2006_06(self, vfx_id):
         pass
 
     @parse_parameters("DisplayDialogAndSetFlags")
@@ -1123,11 +1194,11 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2007_12(self, message, unknown, pad_enabled: bool):
         pass
 
-    @parse_parameters("TutorialPopup")
-    def _2007_15(self, unk_1, unk_2):
+    @parse_parameters("DisplayTutorialMessage")
+    def _2007_15(self, tutorial_param_id, unk_1: bool, unk_2: bool):
         pass
 
-    @parse_parameters("UNK_2007_16")
+    @parse_parameters("DisplayUnknownMessage_16")
     def _2007_16(self, unk_1, unk_2):
         pass
 
@@ -1167,8 +1238,8 @@ class InstructionDecompiler(_BaseDecompiler):
             return f"DisableSoundEventWithFade({sound_id=}, {fade_duration=})"
         return f"SetSoundEventWithFade({sound_id=}, {state=}, {fade_duration=})"
 
-    @parse_parameters("Unknown_2010_07")
-    def _2010_07(self, sound_id: SoundEvent, unk_1, unk_2):
+    @parse_parameters("SuppressSoundEvent")
+    def _2010_07(self, sound_id: SoundEvent, unk_1, is_suppressed: bool):
         pass
 
     @parse_parameters("SetCollisionResState")
@@ -1187,7 +1258,7 @@ class InstructionDecompiler(_BaseDecompiler):
             return "DisableAreaWelcomeMessage()"
         return f"SetAreaWelcomeMessageState({state=})"
 
-    @parse_parameters("UNK_2012_12")
+    @parse_parameters("UnknownMap_12")
     def _2012_12(self, unk_1):
         pass
 

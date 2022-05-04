@@ -227,13 +227,14 @@ class Instruction(abc.ABC):
         return b"".join([arg_replacement.to_binary() for arg_replacement in self.event_args])
 
     def to_binary(self, first_base_arg_offset):
+        """Note that instruction category 1014 (DefineLabel) does not use `first_base_arg_offset`."""
         if self.event_layers_offset is None:
             raise ValueError("Instruction event layer offset not set. (Only use EMEVD.pack() to pack events.)")
         struct_dict = {
             "category": self.category,
             "index": self.index,
             "base_args_size": self.args_size,
-            "first_base_arg_offset": first_base_arg_offset,
+            "first_base_arg_offset": first_base_arg_offset if self.category != 1014 else -1,
             "first_event_layers_offset": self.event_layers_offset,
         }
         return self.HEADER_STRUCT.pack(struct_dict)

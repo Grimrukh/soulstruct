@@ -157,6 +157,9 @@ class CutsceneType(IntEnum):
     def is_fade_out(self):
         return f"{self.value:04b}"[-4] == "1"
 
+    def is_unknown_elden_ring(self):
+        return f"{self.value:05b}"[-5] == "1"
+
 
 class DamageTargetType(IntEnum):
     Character = 1

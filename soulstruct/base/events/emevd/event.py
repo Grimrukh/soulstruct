@@ -293,10 +293,12 @@ class Event(abc.ABC):
         instructions_binary = b""
         args_binary = b""
         event_args_list = []
-        for instruction in self.instructions:
+        for i, instruction in enumerate(self.instructions):
+            print(f"    Instruction {i} ({instruction.category}, {instruction.index})")
             instructions_binary += instruction.to_binary(base_arg_offset)
 
             arg_binary = instruction.args_list_to_binary()
+            print(f"        Offset {hex(0x33600 + base_arg_offset)}: {arg_binary}")
             args_binary += arg_binary
             base_arg_offset += len(arg_binary)
 

@@ -41,8 +41,7 @@ class Instruction(_BaseInstruction):
         ("category", "I"),
         ("index", "I"),
         ("base_args_size", "Q"),
-        ("first_base_arg_offset", "i"),
-        "4x",
+        ("first_base_arg_offset", "q"),
         ("first_event_layers_offset", "q"),
     )
 
@@ -75,7 +74,7 @@ class EMEVD(_BaseEMEVD):
     HEADER_STRUCT = BinaryStruct(
         ("signature", "4s", b"EVD\0"),
         ("big_endian", "?", False),
-        ("is_64_bit", "b"),  # -1 if True, 0 if False
+        ("is_64_bit", "b", -1),  # -1 if True, 0 if False
         ("version_unk_1", "?", True),
         ("version_unk_2", "b", -1),
         ("version", "I", 205),  # same as DS3

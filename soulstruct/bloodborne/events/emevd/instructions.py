@@ -873,7 +873,7 @@ def GotoIfSingleplayer(label: Label):
 
 def GotoIfMapPresenceState(label: Label, game_map: MapTyping, state: bool):
     instruction_info = (1003, 107, [0, 0, 0, 0])
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, label, state, area_id, block_id)
 
 
@@ -1017,7 +1017,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     moon begins. The time period ID may in fact be unused.
     """
     instruction_info = (2002, 6)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, time_period_id
     )
@@ -1032,7 +1032,7 @@ def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, pla
 def PlayCutsceneAndMovePlayer_Dummy(region: RegionTyping, move_to_map: MapTyping):
     """Likely not used, doesn't even take a cutscene ID argument."""
     instruction_info = (2002, 8, [0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(instruction_info, region, area_id, block_id)
 
 

@@ -14,9 +14,9 @@ _LOGGER = logging.getLogger(__name__)
 def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
     """Flexible-input function for retrieving valid `Map` object instances for a particular FromSoft game.
 
-    Valid inputs:
-        (area_id: int, block_id: int) (such as (10, 0))
-        (area_id: int, block_id: int, -1/0, -1/0)
+    Valid `source` values:
+        (area_id: int, block_id: int), e.g., (10, 0)
+        (area_id: int, block_id: int, cc_id: int, dd_id: int), e.g., (60, 44, 36, 10)
         four_digit_id: int (such as 1000)
         file_stem: str (such as "m10_00_00_00"; file extensions don't matter, both EMEVD and MSB names will be checked)
         map_name: str (such as "UNDEAD_BURG" or "UndeadBurg"; case and underscores don't matter)
@@ -28,21 +28,30 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
 
     if isinstance(source, Map):
         if block_id is not None:
-            raise ValueError(f"`block_id` must be None if a Map instance is passed to `get_map`.")
+            raise ValueError(f"`block_id` must be None if a `Map` instance is passed to `get_map`.")
         if source != Map.NO_MAP() and source not in game_maps:
             raise ValueError(f"Map {source} does not appear in game's maps: {game_maps}")
         return source
 
     if isinstance(source, (list, tuple)):
-        if len(source) == 4 and source[2] in {-1, 0} and source[3] in {-1, 0}:
-            source = (source[0], source[1])  # drop redundant indices (only need area and block)
+        if len(source) == 2:
+            source = (source[0], source[1], 0, 0)
         try:
-            area_id, block_id = source
+            area_id, block_id, cc_id, dd_id = source
         except ValueError:
-            raise ValueError(f"Sequence source for map-finding should be two values (area_id, block_id), not {source}.")
+            raise ValueError(
+                f"Sequence source for map-finding should be two (a, b) or four (a, b, c, d) values, not: {source}."
+            )
         if block_id == -1:
             block_id = 0
-        matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
+        if cc_id == -1:
+            cc_id = 0
+        if dd_id == -1:
+            dd_id = 0
+        matches = [
+            g for g in game_maps
+            if g.area_id == area_id and g.block_id == block_id and g.cc_id == cc_id and g.dd_id == dd_id
+        ]
     elif isinstance(source, int):
         if block_id is not None:
             try:

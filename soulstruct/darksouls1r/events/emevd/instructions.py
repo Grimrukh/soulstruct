@@ -590,7 +590,7 @@ def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(
     game_map: MapTyping,
 ):
     instruction_info = (2002, 6)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, condition, cutscene_type, first_region, last_region, area_id, block_id)
 
 
@@ -602,7 +602,7 @@ def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2(
     game_map: MapTyping,
 ):
     instruction_info = (2002, 7)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, condition, cutscene_type, first_region, last_region, area_id, block_id)
 
 

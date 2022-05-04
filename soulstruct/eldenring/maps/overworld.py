@@ -1,5 +1,7 @@
 """Maps of Elden Ring's "overworld", the Lands Between.
 
+Complete map grid image: https://cdn.discordapp.com/attachments/944650430032519208/948525952261038101/mapcoords.jpg
+
 Rules:
 - All overworld maps have area 60, i.e., start with m60.
 - Maps are shaped like tiles and come in three nested sizes: large, medium, and small.

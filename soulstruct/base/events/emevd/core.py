@@ -386,7 +386,10 @@ class EMEVD(GameFile, abc.ABC):
 
         header = self.build_emevd_header()
 
-        for e in self.events.values():
+        for e_id, e in self.events.items():
+
+            print(f"Event {e_id}")
+
             e_bin, i_bin, a_bin, p_bin = e.to_binary(
                 current_instruction_offset, current_arg_data_offset, current_event_arg_offset
             )
@@ -432,12 +435,14 @@ class EMEVD(GameFile, abc.ABC):
                 f"Event table was of size {len(event_table_binary)} but expected size was "
                 f"{offsets['instruction'] - len(emevd_binary)}."
             )
+        print(f"Event table binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += event_table_binary
         if len(emevd_binary) + len(instr_table_binary) != offsets["event_layers"]:
             raise ValueError(
                 f"Instruction table was of size {len(instr_table_binary)} but expected size was "
                 f"{offsets['event_layers'] - len(emevd_binary)}."
             )
+        print(f"Instruction table binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += instr_table_binary
         if len(emevd_binary) + len(event_layers_binary) != offsets["base_arg_data"]:
             raise ValueError(
@@ -445,9 +450,11 @@ class EMEVD(GameFile, abc.ABC):
                 f"{offsets['base_arg_data'] - len(emevd_binary)}."
             )
 
+        print(f"Event layers table binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += event_layers_binary
 
         # No argument data length check due to padding.
+        print(f"Arg data binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += argument_data_binary
         emevd_binary = self.pad_after_base_args(emevd_binary)
 
@@ -456,6 +463,7 @@ class EMEVD(GameFile, abc.ABC):
                 f"Argument replacement table was of size {len(linked_file_data_binary)} but expected size "
                 f"was {offsets['linked_files'] - len(emevd_binary)}."
             )
+        print(f"Arg replacement data binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += arg_r_binary
         if len(emevd_binary) + len(linked_file_data_binary) != offsets["packed_strings"]:
             raise ValueError(

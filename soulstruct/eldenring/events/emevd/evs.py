@@ -1,7 +1,7 @@
 __all__ = ["EVSParser"]
 
 from soulstruct.base.events.emevd.evs import EVSParser as _BaseEVSParser
-from soulstruct.darksouls3 import events
+from soulstruct.eldenring import events
 from .arg_types import INSTRUCTION_ARG_TYPES
 
 

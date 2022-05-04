@@ -155,7 +155,7 @@ class Map(GameObject):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id
 
     def __iter__(self):
-        return iter((self.area_id, self.block_id))
+        return iter((self.area_id, self.block_id, self.cc_id, self.dd_id))
 
     def __repr__(self):
         return self.emevd_file_stem

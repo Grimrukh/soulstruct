@@ -990,7 +990,7 @@ def CreateHazard(
 def RegisterStatue(obj: ObjectTyping, game_map: MapTyping, statue_type: StatueType):
     """ Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online. """
     instruction_info = (2005, 10)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, obj, area_id, block_id, statue_type)
 
 
@@ -1541,7 +1541,7 @@ def PlayCutsceneAndMovePlayer(
 ):
     """For ease, I recommend you use my `PlayCutscene()` wrapper instead of any of these low-level versions."""
     instruction_info = (2002, 2)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(instruction_info, cutscene_id, cutscene_type, move_to_region, area_id, block_id)
 
 
@@ -1554,7 +1554,7 @@ def PlayCutsceneAndMoveSpecificPlayer(
     cutscene_id: int, cutscene_type: CutsceneType, move_to_region: RegionTyping, move_to_map: MapTyping, player_id: int
 ):
     instruction_info = (2002, 4)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(instruction_info, cutscene_id, cutscene_type, move_to_region, area_id, block_id, player_id)
 
 
@@ -1726,7 +1726,7 @@ def WarpToMap(game_map: MapTyping, player_start=-1):
     default, this warps to the 'default position' in the map (-1), which is the same point you would spawn at if the
     game lost track of your stable footing (e.g. in 'wrong warp' glitches). """
     instruction_info = (2003, 14, [0, 0, -1])
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, area_id, block_id, player_start)
 
 
@@ -1926,7 +1926,7 @@ def SetCameraVibration(
 def SetLockedCameraSlot(game_map: MapTyping, camera_slot: int):
     """ Switch between one of two camera slots associated with the player's current collision in the MSB. """
     instruction_info = (2008, 3)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, area_id, block_id, camera_slot)
 
 
@@ -2123,7 +2123,7 @@ def IfRandomFramesElapsed(output_condition: int, min_frames: int, max_frames: in
 
 def SkipLinesIfMapPresenceState(line_count, state: bool, game_map: MapTyping):
     instruction_info = (1003, 7)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, line_count, state, area_id, block_id)
 
 
@@ -2137,7 +2137,7 @@ def SkipLinesIfOutsideMap(line_count, game_map: MapTyping):
 
 def ReturnIfMapPresenceState(event_return_type: EventReturnType, state: bool, game_map: MapTyping):
     instruction_info = (1003, 8)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, event_return_type, state, area_id, block_id)
 
 
@@ -2159,7 +2159,7 @@ def RestartIfOutsideMap(game_map: MapTyping):
 
 def IfMapPresenceState(output_condition, state: bool, game_map: MapTyping):
     instruction_info = (3, 8, [0, 0, 10, 0])
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, output_condition, state, area_id, block_id)
 
 

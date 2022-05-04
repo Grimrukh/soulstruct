@@ -223,6 +223,7 @@ __all__ = [
     "IfFramesElapsed",
     "IfRandomTimeElapsed",
     "IfRandomFramesElapsed",
+    "IfTimeOfDay",
     "SkipLinesIfMapPresenceState",
     "SkipLinesIfInsideMap",
     "SkipLinesIfOutsideMap",
@@ -441,8 +442,10 @@ __all__ = [
     "ArenaSetNametag3",
     "ArenaSetNametag4",
     "DisplayArenaDissolutionMessage",
-    # Dark Souls 3
+    # Elden Ring
     "RunCommonEvent",
+    "UnknownSystem_07",
+    "UnknownSystem_08",
     "IfMultiplayerState",
     "IfHost",
     "IfClient",
@@ -459,12 +462,13 @@ __all__ = [
     "IfMapInCeremony",
     "IfMapNotInCeremony",
     "IfMultiplayerNetworkPenalized",
-    "IfPlayerGender",
-    "IfOngoingCutsceneFinished",
+    "IfInsideMapTile",
+    "IfUnknownCondition_31",
     "IfHollowArenaMatchReadyState",
-    "IfHollowArenaSoloResults",
+    "IfUnknownCondition_33",
     "IfPlayerHasArmorEquipped",
     "IfHollowArenaTeamResults",
+    "IfUnknownFlagCheck",
     "IfSteamDisconnected",
     "IfAllyPhantomCountComparison",
     "IfPlayerHasSpecialEffect",
@@ -482,6 +486,14 @@ __all__ = [
     "IfObjectBackreadState_Alternate",
     "IfObjectBackreadEnabled_Alternate",
     "IfObjectBackreadDisabled_Alternate",
+    "SkipIfUnsignedComparison",
+    "SkipIfUnsignedEqual",
+    "SkipIfUnsignedNotEqual",
+    "ReturnIfUnsignedComparison",
+    "EndIfUnsignedEqual",
+    "EndIfUnsignedNotEqual",
+    "RestartIfUnsignedEqual",
+    "RestartIfUnsignedNotEqual",
     "GotoIfConditionState",
     "GotoIfConditionTrue",
     "GotoIfConditionFalse",
@@ -491,7 +503,7 @@ __all__ = [
     "GotoIfFinishedConditionTrue",
     "GotoIfFinishedConditionFalse",
     "WaitHollowArenaHalftime",
-    "UnknownWait",
+    "WaitFramesAfterCutscene",
     "SkipLinesIfMultiplayerState",
     "SkipLinesIfHost",
     "SkipLinesIfClient",
@@ -516,9 +528,6 @@ __all__ = [
     "ReturnIfCoopClientCountComparison",
     "EndIfCoopClientCountComparison",
     "RestartIfCoopClientCountComparison",
-    "GotoIfCharacterSpecialEffectState",
-    "GotoIfCharacterHasSpecialEffect",
-    "GotoIfCharacterDoesNotHaveSpecialEffect",
     "SkipIfPlayerOwnWorldState",
     "SkipIfPlayerInOwnWorld",
     "SkipIfPlayerNotInOwnWorld",
@@ -532,11 +541,6 @@ __all__ = [
     "RestartIfPlayerOwnWorldState",
     "RestartIfPlayerInOwnWorld",
     "RestartIfPlayerNotInOwnWorld",
-    "SkipLinesIfClientTypeCountComparison",
-    "GotoIfClientTypeCountComparison",
-    "ReturnIfClientTypeCountComparison",
-    "EndIfClientTypeCountComparison",
-    "RestartIfClientTypeCountComparison",
     "GotoIfFlagState",
     "GotoIfThisEventOn",
     "GotoIfThisEventOff",
@@ -560,22 +564,6 @@ __all__ = [
     "GotoIfInsideMap",
     "GotoIfOutsideMap",
     "GotoIfCoopClientCountComparison",
-    "ReturnIfCharacterSpecialEffectState",
-    "EndIfCharacterSpecialEffectState",
-    "EndIfCharacterHasSpecialEffect",
-    "EndIfCharacterDoesNotHaveSpecialEffect",
-    "RestartIfCharacterSpecialEffectState",
-    "RestartIfCharacterHasSpecialEffect",
-    "RestartIfCharacterDoesNotHaveSpecialEffect",
-    "EndIfPlayerHasSpecialEffect",
-    "EndIfPlayerDoesNotHaveSpecialEffect",
-    "RestartIfPlayerHasSpecialEffect",
-    "RestartIfPlayerDoesNotHaveSpecialEffect",
-    "SkipLinesIfCharacterSpecialEffectState",
-    "SkipLinesIfCharacterHasSpecialEffect",
-    "SkipLinesIfCharacterDoesNotHaveSpecialEffect",
-    "SkipLinesIfPlayerHasSpecialEffect",
-    "SkipLinesIfPlayerDoesNotHaveSpecialEffect",
     "GotoIfCharacterRegionState",
     "GotoIfCharacterInsideRegion",
     "GotoIfCharacterOutsideRegion",
@@ -590,16 +578,39 @@ __all__ = [
     "SkipLinesIfCharacterInsideRegion",
     "SkipLinesIfCharacterOutsideRegion",
     "GotoIfHollowArenaMatchType",
+    "SkipLinesIfCharacterSpecialEffectState",
+    "SkipLinesIfCharacterHasSpecialEffect",
+    "SkipLinesIfCharacterDoesNotHaveSpecialEffect",
+    "SkipLinesIfPlayerHasSpecialEffect",
+    "GotoIfCharacterSpecialEffectState",
+    "GotoIfCharacterHasSpecialEffect",
+    "GotoIfCharacterDoesNotHaveSpecialEffect",
+    "SkipLinesIfPlayerDoesNotHaveSpecialEffect",
+    "ReturnIfCharacterSpecialEffectState",
+    "EndIfCharacterSpecialEffectState",
+    "EndIfCharacterHasSpecialEffect",
+    "EndIfCharacterDoesNotHaveSpecialEffect",
+    "RestartIfCharacterSpecialEffectState",
+    "RestartIfCharacterHasSpecialEffect",
+    "RestartIfCharacterDoesNotHaveSpecialEffect",
+    "EndIfPlayerHasSpecialEffect",
+    "EndIfPlayerDoesNotHaveSpecialEffect",
+    "RestartIfPlayerHasSpecialEffect",
+    "RestartIfPlayerDoesNotHaveSpecialEffect",
     "GotoIfObjectDestructionState",
     "GotoIfObjectDestroyed",
     "GotoIfObjectNotDestroyed",
     "DefineLabel",
+    "UnknownTimer_04",
+    "UnknownTimer_05",
     "PlayCutsceneAndMovePlayerAndSetTimePeriod",
     "PlayCutsceneAndSetTimePeriod",
     "PlayCutsceneAndMovePlayer_Dummy",
     "PlayCutsceneAndMovePlayerAndSetMapCeremony",
     "PlayCutsceneAndSetMapCeremony",
-    "PlayCutsceneAndMovePlayer_WithUnknowns",
+    "UnknownCutscene_10",
+    "UnknownCutscene_11",
+    "UnknownCutscene_12",
     "PlayCutsceneAndMovePlayer_WithSecondRegion",
     "SetBossHealthBarState",
     "EnableBossHealthBar",
@@ -661,10 +672,8 @@ __all__ = [
     "AwardGestureItem",
     "SendNPCSummonHome",
     "Unknown_2003_79",
-    "SetDecoratedBossHealthBarState",
-    "EnableDecoratedBossHealthBar",
-    "DisableDecoratedBossHealthBar",
-    "PlaceNPCSummonSign_WithoutEmber",
+    "UnknownEvent_80",
+    "UnknownEvent_81",
     "AddSpecialEffect",
     "RotateToFaceEntity",
     "ChangeCharacterCloth",
@@ -679,12 +688,19 @@ __all__ = [
     "SetMultiplayerBuffs_NonBoss",
     "Unknown_2004_59",
     "SetPlayerRemainingYoelLevels",
+    "UnknownCharacter_74",
+    "UnknownCharacter_75",
+    "UnknownCharacter_76",
+    "UnknownCharacter_77",
     "ExtinguishBurningObjects",
     "ShowObjectByMapCeremony",
     "DestroyObject_NoSlot",
+    "SetUnknownVFX_06",
     "DisplayDialogAndSetFlags",
     "DisplayAreaWelcomeMessage",
     "DisplayHollowArenaMessage",
+    "DisplayTutorialMessage",
+    "DisplayUnknownMessage_16",
     "UnknownCameraCommand",
     "RegisterHealingFountain",
     "BanishInvaders",
@@ -697,12 +713,13 @@ __all__ = [
     "SetSoundEventWithFade",
     "EnableSoundEventWithFade",
     "DisableSoundEventWithFade",
-    "Unknown_2010_07",
+    "SuppressSoundEvent",
     "SetCollisionResState",
     "ActivateCollisionAndCreateNavmesh",
     "SetAreaWelcomeMessageState",
     "EnableAreaWelcomeMessage",
     "DisableAreaWelcomeMessage",
+    "UnknownMap_12",
     "CreatePlayLog",
     "StartPlayLogMeasurement",
     "StopPlayLogMeasurement",
@@ -715,6 +732,10 @@ from soulstruct.base.events.emevd.instructions import *
 from soulstruct.base.events.emevd.numeric import to_numeric
 from soulstruct.game_types import *
 from .enums import *
+from soulstruct.eldenring.maps.constants import MapTile
+
+
+MapTyping = tp.Union[Map, MapTile, tuple, list]
 
 
 # 2000: SYSTEM
@@ -737,6 +758,24 @@ def RunCommonEvent(event_id: int, args=(0,), arg_types=None, event_layers=None):
     if len(arg_types) > 1:
         format_string += f"|{arg_types[1:]}"
     return to_numeric(instruction_info, event_id, *args, arg_types=format_string, event_layers=event_layers)
+
+
+def UnknownSystem_07(slot: int):
+    instruction_info = (2000, 7)
+    return to_numeric(instruction_info, slot)
+
+
+def UnknownSystem_08(slot: int):
+    instruction_info = (2000, 8)
+    return to_numeric(instruction_info, slot)
+
+
+# 1: CONDITIONS (TIME)
+
+
+def IfTimeOfDay(condition, earliest: tuple[int, int, int], latest: tuple[int, int, int]):
+    instruction_info = (1, 5)
+    return to_numeric(instruction_info, condition, *earliest, *latest)
 
 
 # 3: CONDITIONS (EVENT)
@@ -832,6 +871,59 @@ def IfFailedToCreateSession(condition: int):
     return IfMultiplayerState(condition, MultiplayerState.FailedToCreateSession)
 
 
+# MAP
+
+
+def SkipLinesIfMapPresenceState(line_count, state: bool, game_map: MapTyping):
+    instruction_info = (1003, 7)
+    area_id, block_id, cc_id, dd_id = tuple(game_map)
+    return to_numeric(instruction_info, line_count, state, area_id, block_id, cc_id, dd_id)
+
+
+def SkipLinesIfInsideMap(line_count, game_map: MapTyping):
+    return SkipLinesIfMapPresenceState(line_count, True, game_map)
+
+
+def SkipLinesIfOutsideMap(line_count, game_map: MapTyping):
+    return SkipLinesIfMapPresenceState(line_count, False, game_map)
+
+
+def ReturnIfMapPresenceState(event_return_type: EventReturnType, state: bool, game_map: MapTyping):
+    instruction_info = (1003, 8)
+    area_id, block_id, cc_id, dd_id = tuple(game_map)
+    return to_numeric(instruction_info, event_return_type, state, area_id, block_id, cc_id, dd_id)
+
+
+def EndIfInsideMap(game_map: MapTyping):
+    return ReturnIfMapPresenceState(EventReturnType.End, True, game_map)
+
+
+def EndIfOutsideMap(game_map: MapTyping):
+    return ReturnIfMapPresenceState(EventReturnType.End, False, game_map)
+
+
+def RestartIfInsideMap(game_map: MapTyping):
+    return ReturnIfMapPresenceState(EventReturnType.Restart, True, game_map)
+
+
+def RestartIfOutsideMap(game_map: MapTyping):
+    return ReturnIfMapPresenceState(EventReturnType.Restart, False, game_map)
+
+
+def IfMapPresenceState(output_condition, state: bool, game_map: MapTyping):
+    instruction_info = (3, 8, [0, 0, 10, 0])
+    area_id, block_id, cc_id, dd_id = tuple(game_map)
+    return to_numeric(instruction_info, output_condition, state, area_id, block_id, cc_id, dd_id)
+
+
+def IfInsideMap(output_condition, game_map: MapTyping):
+    return IfMapPresenceState(output_condition, True, game_map)
+
+
+def IfOutsideMap(output_condition, game_map: MapTyping):
+    return IfMapPresenceState(output_condition, False, game_map)
+
+
 def IfAttackedWithDamageType(
     condition: int,
     attacked_entity: AnimatedTyping,
@@ -845,7 +937,7 @@ def IfAttackedWithDamageType(
 
 def IfActionButtonParam(condition: int, action_button_id: int, entity: CoordEntityTyping):
     """Streamlined version of `IfActionButton` that uses information from an `ActionButtonParam` entry."""
-    instruction_info = (3, 24, [0, -1, -1])
+    instruction_info = (3, 24, [0, -1, 0])
     return to_numeric(instruction_info, condition, action_button_id, entity)
 
 
@@ -866,7 +958,7 @@ def IfPlayerNotInOwnWorld(condition: int):
 def IfMapCeremonyState(condition: int, state: bool, game_map: MapTyping, ceremony_id: int):
     """Ceremony states are unused (except for Untended Graves, I believe)."""
     instruction_info = (3, 28)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, condition, state, area_id, block_id, ceremony_id)
 
 
@@ -883,18 +975,15 @@ def IfMultiplayerNetworkPenalized(condition: int):
     return to_numeric(instruction_info, condition)
 
 
-def IfPlayerGender(condition: int, gender: Gender):
-    """Note that this condition version of the gender test was absent in Bloodborne."""
+def IfInsideMapTile(condition: int, game_map: MapTile):
     instruction_info = (3, 30)
-    return to_numeric(instruction_info, condition, gender)
+    area_id, block_id, cc_id, dd_id = tuple(game_map)
+    return to_numeric(instruction_info, condition, area_id, block_id, cc_id, dd_id)
 
 
-def IfOngoingCutsceneFinished(condition: int, cutscene_id: int, unk_1, unk_2):
-    """TODO: Seems to be used with low cutscene IDs in common. Unknowns always seem to be zero. May not be related to
-        cutscenes at all anymore.
-    """
+def IfUnknownCondition_31(condition: int, hours: int, unk_2: float, unk_3: int):
     instruction_info = (3, 31)
-    return to_numeric(instruction_info, condition, cutscene_id)
+    return to_numeric(instruction_info, condition, hours, unk_2, unk_3)
 
 
 def IfHollowArenaMatchReadyState(condition: int, is_ready: bool):
@@ -902,9 +991,9 @@ def IfHollowArenaMatchReadyState(condition: int, is_ready: bool):
     return to_numeric(instruction_info, condition, is_ready)
 
 
-def IfHollowArenaSoloResults(condition: int, result: HollowArenaResult):
+def IfUnknownCondition_33(condition: int, unk_1: int, unk_2: bool):
     instruction_info = (3, 33)
-    return to_numeric(instruction_info, condition, result)
+    return to_numeric(instruction_info, condition, unk_1, unk_2)
 
 
 def IfPlayerHasArmorEquipped(condition: int, armor_slot, armor_id: ItemTyping, unk_1):
@@ -915,6 +1004,11 @@ def IfPlayerHasArmorEquipped(condition: int, armor_slot, armor_id: ItemTyping, u
 def IfHollowArenaTeamResults(condition: int, result: HollowArenaResult):
     instruction_info = (3, 35)
     return to_numeric(instruction_info, condition, result)
+
+
+def IfUnknownFlagCheck(condition: int, flag, state: bool):
+    instruction_info = (3, 37)
+    return to_numeric(instruction_info, condition, flag, state)
 
 
 def IfSteamDisconnected(condition: int, is_disconnected: bool):
@@ -1175,9 +1269,10 @@ def IfCharacterInvadeType(
     return to_numeric(instruction_info, condition, character, invade_type, target_comparison_type, target_count)
 
 
-def IfCharacterChameleonState(condition: int, character: CharacterTyping, chameleon_vfx_id: int, is_transformed: bool):
+def IfCharacterChameleonState(condition: int, character: CharacterTyping, chameleon_vfx_id: int, unk_1: int):
+    """TODO: Maybe changed completely."""
     instruction_info = (4, 28)
-    return to_numeric(instruction_info, condition, character, chameleon_vfx_id, is_transformed)
+    return to_numeric(instruction_info, condition, character, chameleon_vfx_id, unk_1)
 
 
 # 5: CONDITIONS (OBJECT)
@@ -1262,6 +1357,42 @@ def IfObjectBackreadDisabled_Alternate(condition: int, obj: ObjectTyping):
 # 1000: CONTROL FLOW (BASIC)
 
 
+def SkipIfUnsignedComparison(line_count: int, comparison_type: ComparisonType, left: int, right: int):
+    instruction_info = (1000, 10)
+    return to_numeric(instruction_info, line_count, comparison_type, left, right)
+
+
+def SkipIfUnsignedEqual(line_count, left: int, right: int):
+    return SkipIfUnsignedComparison(line_count, ComparisonType.Equal, left, right)
+
+
+def SkipIfUnsignedNotEqual(line_count, left: int, right: int):
+    return SkipIfUnsignedComparison(line_count, ComparisonType.NotEqual, left, right)
+
+
+def ReturnIfUnsignedComparison(
+    event_return_type: EventReturnType, comparison_type: ComparisonType, left: int, right: int
+):
+    instruction_info = (1000, 11)
+    return to_numeric(instruction_info, event_return_type, comparison_type, left, right)
+
+
+def EndIfUnsignedEqual(left: int, right: int):
+    return ReturnIfUnsignedComparison(EventReturnType.End, ComparisonType.Equal, left, right)
+
+
+def EndIfUnsignedNotEqual(left: int, right: int):
+    return ReturnIfUnsignedComparison(EventReturnType.End, ComparisonType.NotEqual, left, right)
+
+
+def RestartIfUnsignedEqual(left: int, right: int):
+    return ReturnIfUnsignedComparison(EventReturnType.Restart, ComparisonType.Equal, left, right)
+
+
+def RestartIfUnsignedNotEqual(left: int, right: int):
+    return ReturnIfUnsignedComparison(EventReturnType.Restart, ComparisonType.NotEqual, left, right)
+
+
 def GotoIfConditionState(label: Label, required_state: bool, input_condition: int):
     instruction_info = (1000, 101, [0, 0, 0])
     return to_numeric(instruction_info, label, required_state, input_condition)
@@ -1309,10 +1440,10 @@ def WaitHollowArenaHalftime(match_type: HollowArenaMatchType, is_second_half: bo
     return to_numeric(instruction_info, match_type, is_second_half)
 
 
-def UnknownWait(unk_1):
-    """TODO: NOT just frames (`WaitFrames` is still used). Argument is always 1, in common events at least."""
+def WaitFramesAfterCutscene(frames: int):
+    """Always used after cutscene instructions with argument 1."""
     instruction_info = (1001, 6)
-    return to_numeric(instruction_info, unk_1)
+    return to_numeric(instruction_info, frames)
 
 
 # 1003: CONTROL FLOW (EVENT)
@@ -1419,43 +1550,6 @@ def RestartIfCoopClientCountComparison(comparison_type: ComparisonType, value: i
     return ReturnIfCoopClientCountComparison(EventReturnType.Restart, comparison_type, value)
 
 
-def GotoIfCharacterSpecialEffectState(
-    label: Label,
-    character: CharacterTyping,
-    special_effect: int,
-    state: bool,
-    target_comparison_type: ComparisonType = ComparisonType.Equal,
-    target_count: int = 1,
-):
-    """Note that 'target_count' is now an integer again..."""
-    instruction_info = (1003, 11)
-    return to_numeric(instruction_info, label, character, special_effect, state, target_comparison_type, target_count)
-
-
-def GotoIfCharacterHasSpecialEffect(
-    label: Label,
-    character: CharacterTyping,
-    special_effect: int,
-    target_comparison_type: ComparisonType = ComparisonType.Equal,
-    target_count: int = 1,
-):
-    return GotoIfCharacterSpecialEffectState(
-        label, character, special_effect, True, target_comparison_type, target_count
-    )
-
-
-def GotoIfCharacterDoesNotHaveSpecialEffect(
-    label: Label,
-    character: CharacterTyping,
-    special_effect: int,
-    target_comparison_type: ComparisonType = ComparisonType.Equal,
-    target_count: int = 1,
-):
-    return GotoIfCharacterSpecialEffectState(
-        label, character, special_effect, False, target_comparison_type, target_count
-    )
-
-
 def SkipIfPlayerOwnWorldState(lines: int, not_in_own_world: bool):
     instruction_info = (1003, 12)
     return to_numeric(instruction_info, lines, not_in_own_world)
@@ -1509,38 +1603,6 @@ def RestartIfPlayerInOwnWorld():
 
 def RestartIfPlayerNotInOwnWorld():
     return ReturnIfPlayerOwnWorldState(EventReturnType.Restart, True)
-
-
-def SkipLinesIfClientTypeCountComparison(
-    line_count: int, client_type: ClientType, comparison_type: ComparisonType, value: int
-):
-    """Value from 0 to 4."""
-    instruction_info = (1003, 14, [0, 0, 0, 0])
-    return to_numeric(instruction_info, line_count, client_type, comparison_type, value)
-
-
-def GotoIfClientTypeCountComparison(label: Label, client_type: ClientType, comparison_type: ComparisonType, value: int):
-    """Value from 0 to 4."""
-    instruction_info = (1003, 15, [0, 0, 0, 0])
-    return to_numeric(instruction_info, label, client_type, comparison_type, value)
-
-
-def ReturnIfClientTypeCountComparison(
-    event_return_type: EventReturnType, client_type: ClientType, comparison_type: ComparisonType, value: int
-):
-    """Value from 0 to 4."""
-    instruction_info = (1003, 16, [0, 0, 0, 0])
-    return to_numeric(instruction_info, event_return_type, client_type, comparison_type, value)
-
-
-def EndIfClientTypeCountComparison(client_type: ClientType, comparison_type: ComparisonType, value: int):
-    """Value from 0 to 4."""
-    return ReturnIfClientTypeCountComparison(EventReturnType.End, client_type, comparison_type, value)
-
-
-def RestartIfClientTypeCountComparison(client_type: ClientType, comparison_type: ComparisonType, value: int):
-    """Value from 0 to 4."""
-    return ReturnIfClientTypeCountComparison(EventReturnType.Restart, client_type, comparison_type, value)
 
 
 def GotoIfFlagState(label: Label, state: bool, flag_type: FlagType, flag: FlagInt):
@@ -1625,7 +1687,7 @@ def GotoIfFailedToCreateSession(label: Label):
 
 def GotoIfMapPresenceState(label: Label, game_map: MapTyping, state: bool):
     instruction_info = (1003, 107, [0, 0, 0, 0])
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, label, state, area_id, block_id)
 
 
@@ -1640,90 +1702,6 @@ def GotoIfOutsideMap(label: Label, game_map: MapTyping):
 def GotoIfCoopClientCountComparison(label: Label, comparison_type: ComparisonType, value: int):
     instruction_info = (1003, 109, [0, 0, 0])
     return to_numeric(instruction_info, label, comparison_type, value)
-
-
-def ReturnIfCharacterSpecialEffectState(
-    event_return_type: EventReturnType,
-    character: CharacterTyping,
-    special_effect: int,
-    state: bool,
-    target_comparison_type: ComparisonType = ComparisonType.Equal,
-    target_count: int = 1,
-):
-    instruction_info = (1003, 111)
-    return to_numeric(
-        instruction_info, event_return_type, character, special_effect, state, target_comparison_type, target_count
-    )
-
-
-def EndIfCharacterSpecialEffectState(character: CharacterTyping, special_effect: int, state: bool):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, character, special_effect, state)
-
-
-def EndIfCharacterHasSpecialEffect(character: CharacterTyping, special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, character, special_effect, True)
-
-
-def EndIfCharacterDoesNotHaveSpecialEffect(character: CharacterTyping, special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, character, special_effect, False)
-
-
-def RestartIfCharacterSpecialEffectState(character: CharacterTyping, special_effect: int, state: bool):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, character, special_effect, state)
-
-
-def RestartIfCharacterHasSpecialEffect(character: CharacterTyping, special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, character, special_effect, True)
-
-
-def RestartIfCharacterDoesNotHaveSpecialEffect(character: CharacterTyping, special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, character, special_effect, False)
-
-
-def EndIfPlayerHasSpecialEffect(special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, PLAYER, special_effect, True)
-
-
-def EndIfPlayerDoesNotHaveSpecialEffect(special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, PLAYER, special_effect, False)
-
-
-def RestartIfPlayerHasSpecialEffect(special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, PLAYER, special_effect, True)
-
-
-def RestartIfPlayerDoesNotHaveSpecialEffect(special_effect: int):
-    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, PLAYER, special_effect, False)
-
-
-def SkipLinesIfCharacterSpecialEffectState(
-    line_count: int,
-    character: CharacterTyping,
-    special_effect: int,
-    state: bool,
-    target_comparison_type: ComparisonType = ComparisonType.Equal,
-    target_count: int = 1,
-):
-    instruction_info = (1003, 112, [0, 0, -1, 0, 0, 0])
-    return to_numeric(
-        instruction_info, line_count, character, special_effect, state, target_comparison_type, target_count
-    )
-
-
-def SkipLinesIfCharacterHasSpecialEffect(line_count: int, character: CharacterTyping, special_effect: int):
-    return SkipLinesIfCharacterSpecialEffectState(line_count, character, special_effect, True)
-
-
-def SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count: int, character: CharacterTyping, special_effect: int):
-    return SkipLinesIfCharacterSpecialEffectState(line_count, character, special_effect, False)
-
-
-def SkipLinesIfPlayerHasSpecialEffect(line_count: int, special_effect: int):
-    return SkipLinesIfCharacterSpecialEffectState(line_count, PLAYER, special_effect, True)
-
-
-def SkipLinesIfPlayerDoesNotHaveSpecialEffect(line_count: int, special_effect: int):
-    return SkipLinesIfCharacterSpecialEffectState(line_count, PLAYER, special_effect, False)
 
 
 def GotoIfCharacterRegionState(
@@ -1795,6 +1773,131 @@ def SkipLinesIfCharacterOutsideRegion(line_count: int, character: CharacterTypin
 def GotoIfHollowArenaMatchType(label: Label, match_type: HollowArenaMatchType):
     instruction_info = (1003, 211)
     return to_numeric(instruction_info, label, match_type)
+
+
+# 1004: CONTROL FLOW (CHARACTERS)
+# DS3 had a 'Goto' for character special effect state, but it has been consolidated here.
+
+
+def SkipLinesIfCharacterSpecialEffectState(
+    line_count: int,
+    character: CharacterTyping,
+    special_effect: int,
+    state: bool,
+    target_comparison_type: ComparisonType = ComparisonType.Equal,
+    target_count: int = 1,
+):
+    instruction_info = (1004, 0, [0, 0, -1, 0, 0, 0])
+    return to_numeric(
+        instruction_info, line_count, character, special_effect, state, target_comparison_type, target_count
+    )
+
+
+def SkipLinesIfCharacterHasSpecialEffect(line_count: int, character: CharacterTyping, special_effect: int):
+    return SkipLinesIfCharacterSpecialEffectState(line_count, character, special_effect, True)
+
+
+def SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count: int, character: CharacterTyping, special_effect: int):
+    return SkipLinesIfCharacterSpecialEffectState(line_count, character, special_effect, False)
+
+
+def SkipLinesIfPlayerHasSpecialEffect(line_count: int, special_effect: int):
+    return SkipLinesIfCharacterSpecialEffectState(line_count, PLAYER, special_effect, True)
+
+
+def SkipLinesIfPlayerDoesNotHaveSpecialEffect(line_count: int, special_effect: int):
+    return SkipLinesIfCharacterSpecialEffectState(line_count, PLAYER, special_effect, False)
+
+
+def GotoIfCharacterSpecialEffectState(
+    label: Label,
+    character: CharacterTyping,
+    special_effect: int,
+    state: bool,
+    target_comparison_type: ComparisonType = ComparisonType.Equal,
+    target_count: int = 1,
+):
+    """Note that 'target_count' is now an integer again..."""
+    instruction_info = (1004, 1)
+    return to_numeric(instruction_info, label, character, special_effect, state, target_comparison_type, target_count)
+
+
+def GotoIfCharacterHasSpecialEffect(
+    label: Label,
+    character: CharacterTyping,
+    special_effect: int,
+    target_comparison_type: ComparisonType = ComparisonType.Equal,
+    target_count: int = 1,
+):
+    return GotoIfCharacterSpecialEffectState(
+        label, character, special_effect, True, target_comparison_type, target_count
+    )
+
+
+def GotoIfCharacterDoesNotHaveSpecialEffect(
+    label: Label,
+    character: CharacterTyping,
+    special_effect: int,
+    target_comparison_type: ComparisonType = ComparisonType.Equal,
+    target_count: int = 1,
+):
+    return GotoIfCharacterSpecialEffectState(
+        label, character, special_effect, False, target_comparison_type, target_count
+    )
+
+
+def ReturnIfCharacterSpecialEffectState(
+    event_return_type: EventReturnType,
+    character: CharacterTyping,
+    special_effect: int,
+    state: bool,
+    target_comparison_type: ComparisonType = ComparisonType.Equal,
+    target_count: int = 1,
+):
+    instruction_info = (1004, 2)
+    return to_numeric(
+        instruction_info, event_return_type, character, special_effect, state, target_comparison_type, target_count
+    )
+
+
+def EndIfCharacterSpecialEffectState(character: CharacterTyping, special_effect: int, state: bool):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, character, special_effect, state)
+
+
+def EndIfCharacterHasSpecialEffect(character: CharacterTyping, special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, character, special_effect, True)
+
+
+def EndIfCharacterDoesNotHaveSpecialEffect(character: CharacterTyping, special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, character, special_effect, False)
+
+
+def RestartIfCharacterSpecialEffectState(character: CharacterTyping, special_effect: int, state: bool):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, character, special_effect, state)
+
+
+def RestartIfCharacterHasSpecialEffect(character: CharacterTyping, special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, character, special_effect, True)
+
+
+def RestartIfCharacterDoesNotHaveSpecialEffect(character: CharacterTyping, special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, character, special_effect, False)
+
+
+def EndIfPlayerHasSpecialEffect(special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, PLAYER, special_effect, True)
+
+
+def EndIfPlayerDoesNotHaveSpecialEffect(special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.End, PLAYER, special_effect, False)
+
+
+def RestartIfPlayerHasSpecialEffect(special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, PLAYER, special_effect, True)
+
+
+def RestartIfPlayerDoesNotHaveSpecialEffect(special_effect: int):
+    return ReturnIfCharacterSpecialEffectState(EventReturnType.Restart, PLAYER, special_effect, False)
 
 
 # 1005: CONTROL FLOW (OBJECTS)
@@ -1879,7 +1982,91 @@ def DefineLabel(label: tp.Union[Label, int]):
     return to_numeric(instruction_info)
 
 
+# 2001: TIMER
+
+
+def UnknownTimer_04(
+    hours: int, minutes: int, seconds: int, unk_1: int, unk_2: int, unk_3: int, unk_4: int, unk_5: int, unk_6: int
+):
+    instruction_info = (2001, 4)
+    return to_numeric(instruction_info, hours, minutes, seconds, unk_1, unk_2, unk_3, unk_4, unk_5, unk_6)
+
+
+def UnknownTimer_05(unk_1: int):
+    instruction_info = (2001, 5)
+    return to_numeric(instruction_info, unk_1)
+
+
 # 2002: CUTSCENES
+
+
+def PlayCutscene(
+    cutscene_id: int,
+    skippable: bool = False,
+    fade_out: bool = False,
+    is_unknown_elden_ring: bool = False,
+    player_id: int = None,
+    move_to_map: MapTyping = None,
+    move_to_region: RegionTyping = None,
+    rotation: int = 0,
+    relative_rotation_axis_x: float = 0.0,
+    relative_rotation_axis_z: float = 0.0,
+    vertical_translation: float = 0.0,
+):
+    """Unified instruction for playing cutscenes. EMEVD has several instructions for playing cutscenes that allow
+    different side-effects like playing the cutscene to a specific player, moving a player to a new region/map, or
+    rotating a player. This method detects the appropriate low-level instruction to call.
+
+    Args:
+        cutscene_id: six-digit cutscene ID which looks up "remo/scn{cutscene_id}.remobnd" in your game files.
+        skippable: if False (default), cutscene cannot be skipped. Cutscenes are generally not skippable in multiplayer.
+        fade_out: if True, the game will fade to black before starting the cutscene. Default is False.
+        is_unknown_elden_ring: if True, unknown.
+        player_id: player who will see cutscene or be moved/rotated. Defaults to host player (`10000`). Note that other
+            players, e.g. summons, will generally have their own cutscene be played to them in their own EMEVD.
+        move_to_map: game map that player will be moved to (`move_to_region` also required).
+        move_to_region: MSB region that player will be moved to (`move_to_map` also required).
+        rotation: degrees around Y axis by which to rotate `player_id` after the cutscene is done. Cannot be used with
+            `move` args, but can be used with `vertical_translation`. Used once in known vanilla EMEVD, after you move
+            the giant Anor Londo elevator for the first time in DS1.
+        relative_rotation_axis_x: world X coordinate that `rotation` is relative to. Default is 0.0.
+        relative_rotation_axis_z: world Z coordinate that `rotation` is relative to. Default is 0.0
+        vertical_translation: vertical distance player should be moved. Can be used with `rotation`. Note that this is
+            never used in any Soulstruct-supported game.
+    """
+    if is_unknown_elden_ring:
+        if not skippable or fade_out:
+            raise ValueError("Unknown Elden Ring cutscene type (16) not supported with being unskippable/fading out.")
+        cutscene_type = CutsceneType.UnknownEldenRing
+    elif skippable:
+        cutscene_type = CutsceneType.SkippableFadeOut if fade_out else CutsceneType.Skippable
+    else:
+        cutscene_type = CutsceneType.UnskippableFadeOut if fade_out else CutsceneType.Unskippable
+
+    if move_to_map or move_to_region:
+        if not (move_to_map and move_to_region):
+            raise ValueError("You must set both 'move_to_map' and 'move_to_region' for cutscene moves.")
+        if rotation or relative_rotation_axis_x or relative_rotation_axis_z or vertical_translation:
+            raise ValueError("You cannot use move arguments *and* rotation/translation arguments with cutscenes.")
+        if player_id is None:
+            return PlayCutsceneAndMovePlayer(cutscene_id, cutscene_type, move_to_region, move_to_map)
+        return PlayCutsceneAndMoveSpecificPlayer(cutscene_id, cutscene_type, move_to_region, move_to_map, player_id)
+
+    if player_id is None:
+        player_id = PLAYER
+
+    if rotation or relative_rotation_axis_x or relative_rotation_axis_z or vertical_translation:
+        return PlayCutsceneAndRotatePlayer(
+            cutscene_id,
+            cutscene_type,
+            relative_rotation_axis_x,
+            relative_rotation_axis_z,
+            rotation,
+            vertical_translation,
+            player_id,
+        )
+
+    return PlayCutsceneToPlayer(cutscene_id, cutscene_type, player_id)
 
 
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
@@ -1897,7 +2084,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     this event *is* capable of warping to an entirely new map.
     """
     instruction_info = (2002, 6)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, time_period_id
     )
@@ -1912,7 +2099,7 @@ def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, pla
 def PlayCutsceneAndMovePlayer_Dummy(move_to_region: RegionTyping, move_to_map: MapTyping):
     """Likely not used, doesn't even take a cutscene ID argument."""
     instruction_info = (2002, 8, [0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(instruction_info, move_to_region, area_id, block_id)
 
 
@@ -1930,7 +2117,7 @@ def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     Contains an unknown argument that may always be zero. TODO: Check.
     """
     instruction_info = (2002, 9)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, ceremony_id, unknown, move_to_region, area_id, block_id, player_id
     )
@@ -1943,20 +2130,62 @@ def PlayCutsceneAndSetMapCeremony(
     return to_numeric(instruction_info, cutscene, cutscene_type, ceremony_id, unknown, player_id)
 
 
-def PlayCutsceneAndMovePlayer_WithUnknowns(
+def UnknownCutscene_10(
     cutscene: int,
     cutscene_type: CutsceneType,
+    player_id,
+    hours,
+    unk_2,
+    unk_3,
+    unk_4,
+    unk_5,
+    unk_6,
+):
+    instruction_info = (2002, 10)
+    return to_numeric(
+        instruction_info, cutscene, cutscene_type, player_id, hours,
+        unk_2, unk_3, unk_4, unk_5, unk_6,
+    )
+
+
+def UnknownCutscene_11(
+    cutscene,
+    cutscene_type: CutsceneType,
+    unk_1,
     move_to_region: RegionTyping,
-    move_to_map: MapTyping,
-    player_id: int,
-    unknown1: int,
-    unknown2: int,
+    player_id: PlayerEntity,
+    unk_2,
+    unk_3,
+    unk_4,
+    unk_5,
+    unk_6,
 ):
     """Unknown arguments at the end."""
-    instruction_info = (2002, 11, [0, 0, 0, 0, 0, 0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    instruction_info = (2002, 11)
     return to_numeric(
-        instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, unknown1, unknown2
+        instruction_info, cutscene, cutscene_type, unk_1, move_to_region, player_id, unk_2, unk_3, unk_4, unk_5, unk_6
+    )
+
+
+def UnknownCutscene_12(
+    cutscene,
+    cutscene_type: CutsceneType,
+    respawn_point: int,
+    move_to_region: RegionTyping,
+    player_id: PlayerEntity,
+    unk_2,
+    unk_3,
+    unk_4,
+    unk_5,
+    unk_6,
+    unk_7,
+    unk_8,
+    unk_9,
+):
+    instruction_info = (2002, 12, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0])
+    return to_numeric(
+        instruction_info, cutscene, cutscene_type, respawn_point, move_to_region, player_id,
+        unk_2, unk_3, unk_4, unk_5, unk_6, unk_7, unk_8, unk_9,
     )
 
 
@@ -1970,7 +2199,7 @@ def PlayCutsceneAndMovePlayer_WithSecondRegion(
 ):
     """Takes a second Region argument with unknown purpose."""
     instruction_info = (2002, 12, [0, 0, 0, 0, 0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, other_region
     )
@@ -2161,7 +2390,7 @@ def SetCurrentMapCeremony(ceremony_id: int):
 
 def SetMapCeremony(game_map: MapTyping, ceremony_id: int):
     instruction_info = (2003, 59)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, area_id, block_id, ceremony_id)
 
 
@@ -2272,7 +2501,7 @@ def SetNetworkInteractionState(state: bool):
     return to_numeric(instruction_info, state)
 
 
-def SetHUDVisibilityState(is_invisible: bool):
+def SetHUDVisibilityState(is_invisible: int):
     instruction_info = (2003, 71)
     return to_numeric(instruction_info, is_invisible)
 
@@ -2347,34 +2576,14 @@ def Unknown_2003_79(unknown1: int):
     return to_numeric(instruction_info, unknown1)
 
 
-def SetDecoratedBossHealthBarState(
-    state: bool, character: CharacterTyping, slot: int, name: EventTextTyping, decoration: int
-):
-    """Pretty cool; not sure when this is used in the vanilla game or what decorations are available (apparently 255).
-    As in Bloodborne, slot must be from 0 to 2."""
-    if not 0 <= slot <= 2:
-        raise ValueError("Boss health bar slot must be between 0 (lowermost) and 2 (uppermost). ")
+def UnknownEvent_80(unk_1):
     instruction_info = (2003, 80)
-    return to_numeric(instruction_info, state, character, slot, name, decoration)
+    return to_numeric(instruction_info, unk_1)
 
 
-def EnableDecoratedBossHealthBar(character: CharacterTyping, slot: int, name: EventTextTyping, decoration: int):
-    return SetDecoratedBossHealthBarState(True, character, slot, name, decoration)
-
-
-def DisableDecoratedBossHealthBar(character: CharacterTyping, slot: int, name: EventTextTyping, decoration: int):
-    return SetDecoratedBossHealthBarState(False, character, slot, name, decoration)
-
-
-def PlaceNPCSummonSign_WithoutEmber(
-    sign_type: SummonSignType,
-    character: CharacterTyping,
-    region: RegionTyping,
-    summon_flag: FlagInt,
-    dismissal_flag: FlagInt,
-):
+def UnknownEvent_81(unk_1):
     instruction_info = (2003, 81)
-    return to_numeric(instruction_info, sign_type, character, region, summon_flag, dismissal_flag)
+    return to_numeric(instruction_info, unk_1)
 
 
 # 2004: CHARACTER
@@ -2485,6 +2694,26 @@ def SetPlayerRemainingYoelLevels(level_count: int):
     return to_numeric(instruction_info, level_count)
 
 
+def UnknownCharacter_74(character: Character, unk_1, region: RegionTyping, unk_2, character_2: Character, unk_3, unk_4):
+    instruction_info = (2004, 74)
+    return to_numeric(instruction_info, character, unk_1, region, unk_2, character_2, unk_3, unk_4)
+
+
+def UnknownCharacter_75(character: Character, unk_1, unk_2):
+    instruction_info = (2004, 75)
+    return to_numeric(instruction_info, character, unk_1, unk_2)
+
+
+def UnknownCharacter_76(flag, item_lot):
+    instruction_info = (2004, 76)
+    return to_numeric(instruction_info, flag, item_lot)
+
+
+def UnknownCharacter_77(unk_1, unk_2, unk_3, unk_4):
+    instruction_info = (2004, 77)
+    return to_numeric(instruction_info, unk_1, unk_2, unk_3, unk_4)
+
+
 # 2005: OBJECT
 
 
@@ -2502,6 +2731,14 @@ def DestroyObject_NoSlot(obj: ObjectTyping):
     """No 'slot' argument here."""
     instruction_info = (2005, 19)
     return to_numeric(instruction_info, obj)
+
+
+# 2006: VFX
+
+
+def SetUnknownVFX_06(vfx_id: int):
+    instruction_info = (2006, 6)
+    return to_numeric(instruction_info, vfx_id)
 
 
 # 2007: MESSAGE
@@ -2541,6 +2778,16 @@ def DisplayAreaWelcomeMessage(message: EventTextTyping):
 def DisplayHollowArenaMessage(message: EventTextTyping, unknown: int, pad_enabled: bool):
     instruction_info = (2007, 12)
     return to_numeric(instruction_info, message, unknown, pad_enabled)
+
+
+def DisplayTutorialMessage(tutorial_param_id: int, unk_1: bool, unk_2: bool):
+    instruction_info = (2007, 15)
+    return to_numeric(instruction_info, tutorial_param_id, unk_1, unk_2)
+
+
+def DisplayUnknownMessage_16(unk_1: int, unk_2: int):
+    instruction_info = (2007, 16)
+    return to_numeric(instruction_info, unk_1, unk_2)
 
 
 # 2008: CAMERA
@@ -2619,10 +2866,9 @@ def DisableSoundEventWithFade(sound_id: int, fade_duration: float):
     return SetSoundEventWithFade(sound_id, False, fade_duration)
 
 
-def Unknown_2010_07(sound_id: int):
-    """Unknown SoundEvent instruction."""
+def SuppressSoundEvent(sound_id: int, unk_1: int, is_suppressed: bool):
     instruction_info = (2010, 7)
-    return to_numeric(instruction_info, sound_id)
+    return to_numeric(instruction_info, sound_id, unk_1, is_suppressed)
 
 
 # 2011: Collision
@@ -2655,6 +2901,11 @@ def EnableAreaWelcomeMessage():
 
 def DisableAreaWelcomeMessage():
     return SetAreaWelcomeMessageState(False)
+
+
+def UnknownMap_12(unk_1: float):
+    instruction_info = (2012, 12)
+    return to_numeric(instruction_info, unk_1)
 
 
 # 2013: PLAY LOG

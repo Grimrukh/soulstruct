@@ -1600,3 +1600,8 @@ ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 
 def get_map(source, block_id=None):
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
+
+
+if __name__ == '__main__':
+    m = get_map((10, 0, 0, 0))
+    print(m.variable_name)

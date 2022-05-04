@@ -851,7 +851,7 @@ def IfPlayerNotInOwnWorld(condition: int):
 def IfMapCeremonyState(condition: int, state: bool, game_map: MapTyping, ceremony_id: int):
     """Ceremony states are unused (except for Untended Graves, I believe)."""
     instruction_info = (3, 28)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, condition, state, area_id, block_id, ceremony_id)
 
 
@@ -1589,7 +1589,7 @@ def GotoIfFailedToCreateSession(label: Label):
 
 def GotoIfMapPresenceState(label: Label, game_map: MapTyping, state: bool):
     instruction_info = (1003, 107, [0, 0, 0, 0])
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, label, state, area_id, block_id)
 
 
@@ -1861,7 +1861,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     this event *is* capable of warping to an entirely new map.
     """
     instruction_info = (2002, 6)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, time_period_id
     )
@@ -1876,7 +1876,7 @@ def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, pla
 def PlayCutsceneAndMovePlayer_Dummy(move_to_region: RegionTyping, move_to_map: MapTyping):
     """Likely not used, doesn't even take a cutscene ID argument."""
     instruction_info = (2002, 8, [0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(instruction_info, move_to_region, area_id, block_id)
 
 
@@ -1894,7 +1894,7 @@ def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     Contains an unknown argument that may always be zero. TODO: Check.
     """
     instruction_info = (2002, 9)
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, ceremony_id, unknown, move_to_region, area_id, block_id, player_id
     )
@@ -1918,7 +1918,7 @@ def PlayCutsceneAndMovePlayer_WithUnknowns(
 ):
     """Unknown arguments at the end."""
     instruction_info = (2002, 11, [0, 0, 0, 0, 0, 0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, unknown1, unknown2
     )
@@ -1934,7 +1934,7 @@ def PlayCutsceneAndMovePlayer_WithSecondRegion(
 ):
     """Takes a second Region argument with unknown purpose."""
     instruction_info = (2002, 12, [0, 0, 0, 0, 0, 0, 0])
-    area_id, block_id = tuple(move_to_map)
+    area_id, block_id = tuple(move_to_map)[:2]
     return to_numeric(
         instruction_info, cutscene, cutscene_type, move_to_region, area_id, block_id, player_id, other_region
     )
@@ -2112,7 +2112,7 @@ def SetCurrentMapCeremony(ceremony_id: int):
 
 def SetMapCeremony(game_map: MapTyping, ceremony_id: int):
     instruction_info = (2003, 59)
-    area_id, block_id = tuple(game_map)
+    area_id, block_id = tuple(game_map)[:2]
     return to_numeric(instruction_info, area_id, block_id, ceremony_id)
 
 

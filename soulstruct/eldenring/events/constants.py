@@ -1,6 +1,6 @@
 from soulstruct.base.events.emevd_directory import EMEVDDirectory as _BaseEMEVDDirectory
 from .emevd import EMEVD
-from soulstruct.darksouls3.maps.constants import ALL_MAPS, get_map
+from soulstruct.eldenring.maps.constants import ALL_MAPS, get_map
 
 
 # TODO: See http://soulsmodding.wikidot.com/reference:elden-ring-map-list

@@ -1,6 +1,6 @@
 from soulstruct.base.events.emevd_directory import EMEVDDirectory as _BaseEMEVDDirectory
-from soulstruct.darksouls3.events.emevd.core import EMEVD
-from soulstruct.darksouls3.maps import ALL_MAPS, get_map
+from soulstruct.eldenring.events.emevd.core import EMEVD
+from soulstruct.eldenring.maps import ALL_MAPS, get_map
 
 
 class EMEVDDirectory(_BaseEMEVDDirectory):

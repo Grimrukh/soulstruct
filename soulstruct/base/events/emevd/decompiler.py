@@ -350,7 +350,11 @@ class InstructionDecompiler(abc.ABC):
             return f"PlayCutsceneAndMovePlayer({cutscene_id}, {cutscene_type=}, {move_to_region=}, {move_to_map=})"
         skippable = cutscene_type.is_skippable()
         fade_out = cutscene_type.is_fade_out()
-        return f"PlayCutscene({cutscene_id}, {skippable=}, {fade_out=}, {move_to_region=}, {move_to_map=})"
+        is_unknown_elden_ring = cutscene_type.is_unknown_elden_ring()
+        return (
+            f"PlayCutscene({cutscene_id}, {skippable=}, {fade_out=}, {is_unknown_elden_ring=}, {move_to_region=}, "
+            f"{move_to_map=})"
+        )
 
     @parse_parameters
     def _2002_03(self, cutscene_id, cutscene_type: CutsceneType, player_id: PlayerEntity):
@@ -358,7 +362,8 @@ class InstructionDecompiler(abc.ABC):
             return f"PlayCutsceneToPlayer({cutscene_id}, {cutscene_type=}, {player_id=})"
         skippable = cutscene_type.is_skippable()
         fade_out = cutscene_type.is_fade_out()
-        return f"PlayCutscene({cutscene_id}, {skippable=}, {fade_out=}, {player_id=})"
+        is_unknown_elden_ring = cutscene_type.is_unknown_elden_ring()
+        return f"PlayCutscene({cutscene_id}, {skippable=}, {fade_out=}, {is_unknown_elden_ring=}, {player_id=})"
 
     @parse_parameters
     def _2002_04(
@@ -378,8 +383,10 @@ class InstructionDecompiler(abc.ABC):
             )
         skippable = cutscene_type.is_skippable()
         fade_out = cutscene_type.is_fade_out()
+        is_unknown_elden_ring = cutscene_type.is_unknown_elden_ring()
         return (
-            f"PlayCutscene({cutscene_id}, {skippable=}, {fade_out=}, {player_id=}, {move_to_region=}, {move_to_map=})"
+            f"PlayCutscene({cutscene_id}, {skippable=}, {fade_out=}, {is_unknown_elden_ring=}, "
+            f"{player_id=}, {move_to_region=}, {move_to_map=})"
         )
 
     @parse_parameters
@@ -400,9 +407,10 @@ class InstructionDecompiler(abc.ABC):
             )
         skippable = cutscene_type.is_skippable()
         fade_out = cutscene_type.is_fade_out()
+        is_unknown_elden_ring = cutscene_type.is_unknown_elden_ring()
         return (
-            f"PlayCutscene({cutscene_id=}, {skippable=}, {fade_out=}, {player_id=}, {rotation=}, "
-            f"{relative_rotation_axis_x=}, {relative_rotation_axis_z=}, {vertical_translation=})"
+            f"PlayCutscene({cutscene_id=}, {skippable=}, {fade_out=}, {is_unknown_elden_ring=}, {player_id=}, "
+            f"{rotation=}, {relative_rotation_axis_x=}, {relative_rotation_axis_z=}, {vertical_translation=})"
         )
 
     # ~~~~~~~~~~~~~ #
