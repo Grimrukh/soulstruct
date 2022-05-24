@@ -31,7 +31,7 @@ class EventArg(_BaseEventArg):
         ("write_from_byte", "I"),
         ("read_from_byte", "I"),
         ("bytes_to_write", "I"),
-        "4x",
+        ("unknown", "i"),
     )
 
 
