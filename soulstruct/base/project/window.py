@@ -792,13 +792,13 @@ class ProjectWindow(SmartFrame, abc.ABC):
         """Set this project directory as the Soulstruct default in `config.py`."""
         from soulstruct.config import SET_CONFIG
 
-        SET_CONFIG(default_project_path=str(self.project.project_root))
+        SET_CONFIG(DEFAULT_PROJECT_PATH=str(self.project.project_root))
 
     @staticmethod
     def _clear_default_project():
         from soulstruct.config import SET_CONFIG
 
-        SET_CONFIG(default_project_path="")
+        SET_CONFIG(DEFAULT_PROJECT_PATH="")
 
     def _create_game_backup(self):
         backup_path = self.project.game_root / "soulstruct-backup"
