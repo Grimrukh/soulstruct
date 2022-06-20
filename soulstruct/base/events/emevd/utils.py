@@ -552,7 +552,7 @@ class EntityEnumsManager:
 
     @staticmethod
     def _get_subclasses_in_module(
-            module: types.ModuleType, entity_class: tp.Type[MapEntity]
+        module: types.ModuleType, entity_class: tp.Type[MapEntity]
     ) -> list[tuple[str, tp.Type[MapEntity]]]:
         """Return a dictionary of `entity_class` subclasses from given `module`"""
         return inspect.getmembers(module, lambda o: inspect.isclass(o) and issubclass(o, entity_class))

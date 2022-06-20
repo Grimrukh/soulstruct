@@ -130,6 +130,13 @@ class FlagRange(GameObject):
         """Allows easy conversion to sequence."""
         return iter((self.first, self.last))
 
+    def __getitem__(self, index: int):
+        if index == 0:
+            return self.first
+        elif index == 1:
+            return self.last
+        raise ValueError(f"`FlagRange` index must be 0 or 1, not {index}.")
+
 
 class Texture(GameObject, IntEnum):
     """2D texture ID of something."""

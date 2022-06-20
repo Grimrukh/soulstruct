@@ -19,6 +19,7 @@ __all__ = [
     "UNDEAD_ASYLUM",
     "ALL_MAPS",
     "get_map",
+    "get_map_variable_name",
 ]
 
 from soulstruct.base.maps.utilities import get_map as _get_map_base
@@ -195,3 +196,11 @@ ALL_MAPS = (
 
 def get_map(source, block_id=None):
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
+
+
+# TODO: implement for other games (adding CC and DD if appropriate).
+def get_map_variable_name(area_id: int, block_id: int):
+    try:
+        return get_map(area_id, block_id).variable_name
+    except (KeyError, ValueError):
+        return f"({area_id}, {block_id})"

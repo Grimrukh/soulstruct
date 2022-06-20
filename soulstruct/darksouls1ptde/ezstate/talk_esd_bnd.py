@@ -15,4 +15,4 @@ class TalkESDBND(_BaseTalkESDBND, BND3):
         self.flags = BinderFlags(46)
         self.big_endian = False
         self.bit_big_endian = False
-        self.dcx_magic = ()
+        self.dcx_type = None

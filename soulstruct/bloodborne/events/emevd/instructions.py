@@ -1003,7 +1003,7 @@ def DefineLabel(label: tp.Union[Label, int]):
 
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     move_to_region: RegionTyping,
     move_to_map: MapTyping,
     player_id: int,
@@ -1023,7 +1023,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     )
 
 
-def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, player_id: int, time_period_id: int):
+def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneFlags, player_id: int, time_period_id: int):
     """Probably used when you examine Laurence's skull, etc."""
     instruction_info = (2002, 7, [-1, 0, -1, 0])
     return to_numeric(instruction_info, cutscene, cutscene_type, player_id, time_period_id)

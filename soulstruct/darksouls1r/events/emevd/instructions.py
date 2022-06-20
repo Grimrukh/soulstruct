@@ -584,7 +584,7 @@ def Unknown_2000_06(arg1: int):
 
 def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(
     condition: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     first_region: RegionTyping,
     last_region: RegionTyping,
     game_map: MapTyping,
@@ -596,7 +596,7 @@ def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(
 
 def PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2(
     condition: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     first_region: RegionTyping,
     last_region: RegionTyping,
     game_map: MapTyping,

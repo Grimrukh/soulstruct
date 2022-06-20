@@ -1506,9 +1506,9 @@ def PlayCutscene(
             never used in any Soulstruct-supported game.
     """
     if skippable:
-        cutscene_type = CutsceneType.SkippableFadeOut if fade_out else CutsceneType.Skippable
+        cutscene_type = CutsceneFlags.SkippableFadeOut if fade_out else CutsceneFlags.Skippable
     else:
-        cutscene_type = CutsceneType.UnskippableFadeOut if fade_out else CutsceneType.Unskippable
+        cutscene_type = CutsceneFlags.UnskippableFadeOut if fade_out else CutsceneFlags.Unskippable
 
     if move_to_map or move_to_region:
         if not (move_to_map and move_to_region):
@@ -1537,7 +1537,7 @@ def PlayCutscene(
 
 
 def PlayCutsceneAndMovePlayer(
-    cutscene_id: int, cutscene_type: CutsceneType, move_to_region: RegionTyping, move_to_map: MapTyping
+    cutscene_id: int, cutscene_type: CutsceneFlags, move_to_region: RegionTyping, move_to_map: MapTyping
 ):
     """For ease, I recommend you use my `PlayCutscene()` wrapper instead of any of these low-level versions."""
     instruction_info = (2002, 2)
@@ -1545,13 +1545,13 @@ def PlayCutsceneAndMovePlayer(
     return to_numeric(instruction_info, cutscene_id, cutscene_type, move_to_region, area_id, block_id)
 
 
-def PlayCutsceneToPlayer(cutscene_id: int, cutscene_type: CutsceneType, player_id: int):
+def PlayCutsceneToPlayer(cutscene_id: int, cutscene_type: CutsceneFlags, player_id: int):
     instruction_info = (2002, 3)
     return to_numeric(instruction_info, cutscene_id, cutscene_type, player_id)
 
 
 def PlayCutsceneAndMoveSpecificPlayer(
-    cutscene_id: int, cutscene_type: CutsceneType, move_to_region: RegionTyping, move_to_map: MapTyping, player_id: int
+    cutscene_id: int, cutscene_type: CutsceneFlags, move_to_region: RegionTyping, move_to_map: MapTyping, player_id: int
 ):
     instruction_info = (2002, 4)
     area_id, block_id = tuple(move_to_map)[:2]
@@ -1560,7 +1560,7 @@ def PlayCutsceneAndMoveSpecificPlayer(
 
 def PlayCutsceneAndRotatePlayer(
     cutscene_id: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     axis_x: float = 0.0,
     axis_z: float = 0.0,
     rotation: float = 0.0,
@@ -2422,7 +2422,7 @@ def IfFlagRangeAnyOff(condition: int, flag_range: FlagRangeTyping):
 def IfTrueFlagCountComparison(
     condition: int,
     value: int,
-    flag_type: FlagType.Absolute,
+    flag_type: FlagType,
     comparison_type: ComparisonType,
     flag_range: FlagRangeTyping,
 ):

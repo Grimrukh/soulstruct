@@ -201,11 +201,11 @@ class Event(abc.ABC):
         for instruction in self.instructions:
             try:
                 instruction_arg_types = instruction.process_event_args()
-            except ValueError:
+            except ValueError as ex:
                 raise ValueError(
                     f"Error occurred while applying event args in instruction "
                     f"{self.instructions.index(instruction)}, {instruction.category}[{instruction.index}], of "
-                    f"event {self.event_id}."
+                    f"event {self.event_id}.\n    Error: {ex}"
                 )
             for arg_range, arg_types in instruction_arg_types.items():
                 arg_range_types = event_arg_types.setdefault(arg_range, set())
@@ -294,11 +294,11 @@ class Event(abc.ABC):
         args_binary = b""
         event_args_list = []
         for i, instruction in enumerate(self.instructions):
-            print(f"    Instruction {i} ({instruction.category}, {instruction.index})")
+            # print(f"    Instruction {i} ({instruction.category}, {instruction.index})")
             instructions_binary += instruction.to_binary(base_arg_offset)
 
             arg_binary = instruction.args_list_to_binary()
-            print(f"        Offset {hex(0x33600 + base_arg_offset)}: {arg_binary}")
+            # print(f"        Offset {hex(0x33600 + base_arg_offset)}: {arg_binary}")
             args_binary += arg_binary
             base_arg_offset += len(arg_binary)
 

@@ -51,10 +51,10 @@ class InstructionDecompiler(_BaseDecompiler):
 
         args = (first_arg, *opt_args)
 
-        if arg_types and arg_types.strip("i") and all(isinstance(i, int) for i in args):
+        if arg_types and "f" in arg_types and not arg_types.strip("i").strip("f") and all(isinstance(i, int) for i in args):
             # Process incorrectly unpacked arguments (e.g. floats represented by integers).
             try:
-                args = self._process_args(args, arg_types)
+                args = self._reprocess_args(args, arg_types)
             except struct.error:
                 _LOGGER.error(
                     f"Error interpreting event arguments for event ID {event_id}: "
@@ -298,6 +298,10 @@ class InstructionDecompiler(_BaseDecompiler):
     @parse_parameters("IfCharacterChameleonState", no_name_count=1)
     def _4_28(self, condition, character: Character, chameleon_vfx_id, unk_1):
         """TODO: Maybe changed completely."""
+        pass
+
+    @parse_parameters("IfUnknownCharacterCondition_31", no_name_count=1)
+    def _4_31(self, condition, character: Character, unk_1, unk_2):
         pass
 
     @parse_parameters
@@ -582,12 +586,12 @@ class InstructionDecompiler(_BaseDecompiler):
         target_count=1,
     ):
         if state is True:
-            string = f"SkipIfCharacterHasSpecialEffect({line_count}, {character=}, {special_effect=})"
+            string = f"SkipLinesIfCharacterHasSpecialEffect({line_count}, {character=}, {special_effect=})"
         elif state is False:
-            string = f"SkipIfCharacterDoesNotHaveSpecialEffect({line_count}, {character=}, {special_effect=})"
+            string = f"SkipLinesIfCharacterDoesNotHaveSpecialEffect({line_count}, {character=}, {special_effect=})"
         else:
             string = (
-                f"SkipIfCharacterSpecialEffectState({line_count}, {character=}, "
+                f"SkipLinesIfCharacterSpecialEffectState({line_count}, {character=}, "
                 f"{special_effect=}, state={state=})"
             )
         return self._add_target_args(string, target_comparison_type, target_count)
@@ -757,7 +761,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2002_06(
         self,
         cutscene,
-        cutscene_type: CutsceneType,
+        cutscene_type: CutsceneFlags,
         move_to_region: Region,
         area_id,
         block_id,
@@ -771,7 +775,7 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("PlayCutsceneAndSetTimePeriod", no_name_count=2)
-    def _2002_07(self, cutscene, cutscene_type: CutsceneType, player_id: PlayerEntity, time_period_id):
+    def _2002_07(self, cutscene, cutscene_type: CutsceneFlags, player_id: PlayerEntity, time_period_id):
         pass
 
     @parse_parameters
@@ -783,7 +787,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2002_09(
         self,
         cutscene,
-        cutscene_type: CutsceneType,
+        cutscene_type: CutsceneFlags,
         ceremony_id,
         unknown,
         move_to_region: Region,
@@ -801,7 +805,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2002_10(
         self,
         cutscene,
-        cutscene_type: CutsceneType,
+        cutscene_type: CutsceneFlags,
         player_id: PlayerEntity,
         hours,
         unk_2,
@@ -816,7 +820,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2002_11(
         self,
         cutscene,
-        cutscene_type: CutsceneType,
+        cutscene_type: CutsceneFlags,
         unk_1,
         move_to_region: Region,
         player_id: PlayerEntity,
@@ -832,7 +836,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2002_12(
         self,
         cutscene,
-        cutscene_type: CutsceneType,
+        cutscene_type: CutsceneFlags,
         respawn_point,
         move_to_region: Region,
         player_id: PlayerEntity,
@@ -845,6 +849,23 @@ class InstructionDecompiler(_BaseDecompiler):
         unk_8,
         unk_9,
     ):
+        pass
+
+    @parse_parameters("UnknownCutscene_13")
+    def _2002_13(
+        self,
+        cutscene,
+        cutscene_type: CutsceneFlags,
+        respawn_point,
+        move_to_region: Region,
+        player_id: PlayerEntity,
+        unk_2,
+        unk_3,
+    ):
+        pass
+
+    @parse_parameters("KillBossWithUnknown")
+    def _2003_12(self, game_area_param_id, unk1):
         pass
 
     @parse_parameters
@@ -1042,13 +1063,9 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2003_75(self, unknown1, unknown2):
         pass
 
-    @parse_parameters
-    def _2003_76(self, tips_disabled: bool):
-        if tips_disabled is True:
-            return "DisableLoadingScreenTips()"
-        elif tips_disabled is False:
-            return "EnableLoadingScreenTips()"
-        return f"SetLoadingScreenTipsState({tips_disabled=})"
+    @parse_parameters("SetLoadingScreenTipsState")
+    def _2003_76(self, tips_disabled: bool, unk1, unk2, unk3, unk4):
+        pass
 
     @parse_parameters("AwardGestureItem")
     def _2003_77(self, gesture_id, item_type: ItemType, item_id):
@@ -1138,6 +1155,14 @@ class InstructionDecompiler(_BaseDecompiler):
 
     @parse_parameters("SetPlayerRemainingYoelLevels")
     def _2004_60(self, level_count):
+        pass
+
+    @parse_parameters("UnknownCharacter_68")
+    def _2004_68(self, character: Character, unk_1, unk_2):
+        pass
+
+    @parse_parameters("UnknownCharacter_73")
+    def _2004_73(self, character: Character, unk_1):
         pass
 
     @parse_parameters("UnknownCharacter_74")

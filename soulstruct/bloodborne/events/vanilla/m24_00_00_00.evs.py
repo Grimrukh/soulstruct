@@ -1335,7 +1335,7 @@ def Event12400750():
     WaitFrames(1)
     PlayCutsceneAndMovePlayerAndSetTimePeriod(
         24000020,
-        CutsceneType.Skippable,
+        CutsceneFlags.Skippable,
         move_to_region=2402200,
         move_to_map=CATHEDRAL_WARD,
         player_id=PLAYER,
@@ -5459,7 +5459,7 @@ def Event12401803():
     DeleteVFX(2403413, erase_root_only=True)
     PlayCutsceneAndMovePlayerAndSetTimePeriod(
         24000030,
-        CutsceneType.Skippable,
+        CutsceneFlags.Skippable,
         move_to_region=-1,
         move_to_map=CATHEDRAL_WARD,
         player_id=PLAYER,

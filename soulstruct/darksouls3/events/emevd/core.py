@@ -7,6 +7,7 @@ from soulstruct.base.events.emevd import (
     Instruction as _BaseInstruction,
     EventLayers as _BaseEventLayers,
 )
+from soulstruct.containers.dcx import DCXType
 from soulstruct.utilities.binary import BinaryStruct
 from .arg_types import INSTRUCTION_ARG_TYPES
 from .decompiler import InstructionDecompiler
@@ -70,7 +71,7 @@ class EMEVD(_BaseEMEVD):
     EVS_PARSER = EVSParser
     IMPORT_STRING = "soulstruct.darksouls3.events"
     STRING_ENCODING = "utf-16le"
-    DCX_MAGIC = (68, 76)
+    DCX_TYPE = DCXType.DCX_DFLT_10000_44_9
     HEADER_STRUCT = BinaryStruct(
         ("signature", "4s", b"EVD\0"),
         ("big_endian", "?", False),

@@ -213,7 +213,7 @@ class InstructionDecompiler(_BaseDecompiler):
     def _2002_06(
         self,
         cutscene,
-        cutscene_type: CutsceneType,
+        cutscene_type: CutsceneFlags,
         move_to_region: Region,
         area_id,
         block_id,
@@ -227,7 +227,7 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters("PlayCutsceneAndSetTimePeriod", no_name_count=2)
-    def _2002_07(self, cutscene, cutscene_type: CutsceneType, player_id: PlayerEntity, time_period_id):
+    def _2002_07(self, cutscene, cutscene_type: CutsceneFlags, player_id: PlayerEntity, time_period_id):
         pass
 
     @parse_parameters

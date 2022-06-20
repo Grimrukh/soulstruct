@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 _LOGGER = logging.getLogger(__name__)
 
 
-def FMG(fmg_source, dcx_magic=(), remove_empty_entries=True) -> BaseFMG:
+def FMG(fmg_source, dcx_type=None, remove_empty_entries=True) -> BaseFMG:
     if fmg_source is None:
         raise ValueError(f"Cannot auto-detect FMG class from source `None`.")
     if isinstance(fmg_source, dict):
@@ -26,11 +26,11 @@ def FMG(fmg_source, dcx_magic=(), remove_empty_entries=True) -> BaseFMG:
         raise ValueError(f"Cannot auto-detect FMG class from source type {type(fmg_source)}.")
 
     if version == 0:
-        return FMG0(fmg_source, dcx_magic=dcx_magic, remove_empty_entries=remove_empty_entries)
+        return FMG0(fmg_source, dcx_type=dcx_type, remove_empty_entries=remove_empty_entries)
     elif version == 1:
-        return FMG1(fmg_source, dcx_magic=dcx_magic, remove_empty_entries=remove_empty_entries)
+        return FMG1(fmg_source, dcx_type=dcx_type, remove_empty_entries=remove_empty_entries)
     elif version == 2:
-        return FMG2(fmg_source, dcx_magic=dcx_magic, remove_empty_entries=remove_empty_entries)
+        return FMG2(fmg_source, dcx_type=dcx_type, remove_empty_entries=remove_empty_entries)
     else:
         raise ValueError(f"Unrecognized FMG version: {version}")
 
@@ -52,11 +52,11 @@ class BaseFMG(GameFile, abc.ABC):
 
     entries: dict[int, str]
 
-    def __init__(self, fmg_source, dcx_magic=(), remove_empty_entries=True):
+    def __init__(self, fmg_source, dcx_type=None, remove_empty_entries=True):
         self.entries = {}
         if isinstance(fmg_source, dict) and "version" not in fmg_source:
             fmg_source["version"] = self.VERSION
-        super().__init__(fmg_source, dcx_magic)
+        super().__init__(fmg_source, dcx_type)
         if remove_empty_entries:
             self.entries = {i: entry for i, entry in self.entries.items() if entry}
 
@@ -97,7 +97,7 @@ class BaseFMG(GameFile, abc.ABC):
 
     def to_dict(self):
         return {
-            "dcx_magic": self.dcx_magic,
+            "dcx_type": self.dcx_type,
             "version": self.VERSION,
             "entries": self.entries.copy(),
         }

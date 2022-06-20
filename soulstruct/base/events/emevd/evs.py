@@ -33,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
 _COMMON_FUNC_IMPORT_RE = re.compile(r"\nfrom (\.*)([\w\d_]+) +import ([\w\d_, ]+) +# *\[COMMON_FUNC] *\n")
 _RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
-_EVENT_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?", re.DOTALL)
+_EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
 _BUILTIN_NAMES = {"Condition", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
@@ -62,11 +62,14 @@ class EventInfo(tp.NamedTuple):
 
 class EVSParser(abc.ABC):
 
+    EMEDF_ALIASES: dict[str, tp.Any] = None
     GAME_MODULE = None  # type: tp.Any
     OR_SLOTS = []  # type: list[int, ...]
     AND_SLOTS = []  # type: list[int, ...]
     CONDITION_COUNT = 0
     INSTRUCTION_ARG_TYPES = {}
+    COMPILER: dict[str, tp.Callable]
+    AUTO_COMPILE: tp.Callable
 
     tree: ast.Module
     map_name: str
@@ -77,7 +80,6 @@ class EVSParser(abc.ABC):
     globals: dict[str, tp.Any]  # global script namespace
     for_vars: dict[str, tp.Any]  # local to each event function
 
-    instructions: dict[str, tp.Callable]
     tests: dict[str, tp.Union[tp.Callable, ConstantCondition, gt.FlagRange, gt.Character]]
     events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
     common_func_events: dict[str, EventInfo]  # information about [COMMON_FUNC] imported events
@@ -129,9 +131,6 @@ class EVSParser(abc.ABC):
         # Note that there is no event-specific local namespace, except for this dictionary of 'for' loop variables:
         self.for_vars = {}
 
-        self.instructions = {
-            name: attr for name, attr in vars(self.GAME_MODULE.instructions).items() if not name.startswith("__")
-        }
         self.tests = {
             name: attr
             for name, attr in vars(self.GAME_MODULE.tests).items()
@@ -265,7 +264,7 @@ class EVSParser(abc.ABC):
 
     def _validate_event_name(self, event_node: ast.FunctionDef):
         name = event_node.name
-        if name in self.instructions or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
+        if name in self.EMEDF_ALIASES or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
             raise EVSSyntaxError(event_node, f"Event name cannot match an instruction name ({name}).")
         if name in _BUILTIN_NAMES:
             raise EVSSyntaxError(event_node, f"Event name cannot match a builtin EVS name ({name}).")
@@ -391,9 +390,9 @@ class EVSParser(abc.ABC):
         # RETURN
         if isinstance(node, ast.Return):
             if node.value is None or (isinstance(node.value, ast.Name) and node.value.id == "END"):
-                return self.instructions["End"]()
+                return self.AUTO_COMPILE("End")
             elif isinstance(node.value, ast.Name) and node.value.id == "RESTART":
-                return self.instructions["Restart"]()
+                return self.AUTO_COMPILE("Restart")
             else:
                 raise EVSSyntaxError(
                     node,
@@ -415,7 +414,7 @@ class EVSParser(abc.ABC):
 
         if not args and not kwargs and not event_info.args:
             # Events with no arguments can be called with no argument, ignoring `event_layers` (`slot` defaults to 0).
-            instruction = self.instructions["RunEvent"](event_info.id)
+            instruction = self._instr("RunEvent", event_info.id)
             instruction[0] += event_layer_string
             return instruction
 
@@ -455,7 +454,7 @@ class EVSParser(abc.ABC):
         args = (0,) if not args else args
         arg_types = event_info.arg_types if event_info.arg_types else None
 
-        instruction = self.instructions["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
+        instruction = self.COMPILER["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
         instruction[0] += event_layer_string
         return instruction
 
@@ -463,10 +462,8 @@ class EVSParser(abc.ABC):
         """Build instruction arguments and call the instruction (which will return a numeric line)."""
         name, args, kwargs = self._parse_function_call(node)
         event_layers = kwargs.pop("event_layers", None)
-        try:
-            instruction_lines = self.instructions[name](*args, **kwargs)  # includes event arg load lines
-        except Exception as e:
-            raise EVSSyntaxError(node, f"Failed to compile instruction {name}.\n    Error: {str(e)}")
+        instruction_lines = self._instr(name, *args, **kwargs)
+
         try:
             instruction_lines[0] += format_event_layers(event_layers)
         except TypeError:
@@ -525,10 +522,10 @@ class EVSParser(abc.ABC):
                     "takes arguments (the slot number cannot be determined from within).",
                 )
             if name == "EnableThisFlag":
-                return self.instructions["EnableFlag"](self.current_event.id)
-            return self.instructions["DisableFlag"](self.current_event.id)
+                return self._instr("EnableFlag", self.current_event.id)
+            return self._instr("DisableFlag", self.current_event.id)
 
-        if name in self.instructions:
+        if name in self.EMEDF_ALIASES:
             return self._compile_instruction(node)
 
         raise EVSSyntaxError(
@@ -645,7 +642,7 @@ class EVSParser(abc.ABC):
         if_emevd += test_emevd + body_emevd
         if else_emevd:
             skip_line_count = len([line for line in else_emevd if not line.startswith("    ^")])
-            if_emevd += self.instructions["SkipLines"](skip_line_count)
+            if_emevd += self._instr("SkipLines", skip_line_count)
             if_emevd += else_emevd
 
         return if_emevd
@@ -806,11 +803,11 @@ class EVSParser(abc.ABC):
             except KeyError:
                 raise NoSkipOrReturnError
             if not negate:  # note inversion
-                return self.instructions["SkipLinesIfComparison"](
-                    skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value
+                return self._instr(
+                    "SkipLinesIfComparison", skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value
                 )
-            return self.instructions["SkipLinesIfComparison"](
-                skip_lines, COMPARISON_NODES[op_node], arg, comparison_value
+            return self._instr(
+                "SkipLinesIfComparison", skip_lines, COMPARISON_NODES[op_node], arg, comparison_value
             )
         raise NoSkipOrReturnError
 
@@ -831,11 +828,11 @@ class EVSParser(abc.ABC):
                     node, "`range()` used inside `all()` or `any()` must have exactly two arguments: `(first, last)`."
                 )
             first, last = self._parse_nodes(arg.args)
-            return self.instructions["SkipLinesIfFlagRange" + tests[negate]](skip_lines, (first, last))
+            return self._instr("SkipLinesIfFlagRange" + tests[negate], skip_lines, (first, last))
         else:
             flag_range = self._parse_nodes(arg)
             if isinstance(flag_range, gt.FlagRange):
-                return self.instructions["SkipLinesIfFlagRange" + tests[negate]](skip_lines, flag_range)
+                return self._instr("SkipLinesIfFlagRange" + tests[negate], skip_lines, flag_range)
             raise EVSSyntaxError(node, "The only valid non-sequence argument to 'all' is a FlagRange.")
 
     def _compile_chain_test(self, node: tp.Union[ast.Tuple, ast.List], func_name: str, negate, skip_lines):
@@ -860,7 +857,7 @@ class EVSParser(abc.ABC):
                 )
             if chain_skip_emevd:
                 if negate:
-                    chain_skip_emevd += self.instructions["SkipLines"](skip_lines)  # Extra skip required.
+                    chain_skip_emevd += self._instr("SkipLines", skip_lines)  # Extra skip required.
                 return chain_skip_emevd
 
         raise NoSkipOrReturnError
@@ -930,7 +927,7 @@ class EVSParser(abc.ABC):
                 )
             self.finished_conditions.append(i)
             logic = "False" if negate else "True"
-            return self.instructions[f"IfCondition{logic}"](condition, i)
+            return self._instr(f"IfCondition{logic}", condition, i)
 
         # Call
         if isinstance(node, ast.Call):
@@ -953,7 +950,7 @@ class EVSParser(abc.ABC):
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
                 instr = f"SkipLinesIfCondition{logic}"
                 condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
-                condition_emevd += self.instructions[instr](skip_lines, temp_condition)
+                condition_emevd += self._instr(instr, skip_lines, temp_condition)
                 return condition_emevd
             except ValueError as ex:
                 raise EVSError(node.lineno, f"Error occurred in test function '{node.id}': {ex}")
@@ -979,7 +976,7 @@ class EVSParser(abc.ABC):
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
                 instr = f"SkipLinesIfCondition{logic}"
                 condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
-                condition_emevd += self.instructions[instr](skip_lines, temp_condition)
+                condition_emevd += self._instr(instr, skip_lines, temp_condition)
                 return condition_emevd
 
         # Failure to compile the condition will be raised as a genuine syntax error, unlike the skip/return compiler.
@@ -992,33 +989,33 @@ class EVSParser(abc.ABC):
         if skip_lines > 0:
             if negate:
                 if condition in self.finished_conditions:
-                    return self.instructions["SkipLinesIfFinishedConditionTrue"](skip_lines, condition)
+                    return self._instr("SkipLinesIfFinishedConditionTrue", skip_lines, condition)
                 self.finished_conditions.append(condition)  # Condition is now finished.
-                return self.instructions["SkipLinesIfConditionTrue"](skip_lines, condition)
+                return self._instr("SkipLinesIfConditionTrue", skip_lines, condition)
             if condition in self.finished_conditions:
-                return self.instructions["SkipLinesIfFinishedConditionFalse"](skip_lines, condition)
+                return self._instr("SkipLinesIfFinishedConditionFalse", skip_lines, condition)
             self.finished_conditions.append(condition)  # Condition is now finished.
-            return self.instructions["SkipLinesIfConditionFalse"](skip_lines, condition)
+            return self._instr("SkipLinesIfConditionFalse", skip_lines, condition)
         elif end_event:
             if negate:
                 if condition in self.finished_conditions:
-                    return self.instructions["EndIfFinishedConditionFalse"](condition)
+                    return self._instr("EndIfFinishedConditionFalse", condition)
                 self.finished_conditions.append(condition)  # Condition is now finished.
-                return self.instructions["EndIfConditionFalse"](condition)
+                return self._instr("EndIfConditionFalse", condition)
             if condition in self.finished_conditions:
-                return self.instructions["EndIfFinishedConditionTrue"](condition)
+                return self._instr("EndIfFinishedConditionTrue", condition)
             self.finished_conditions.append(condition)  # Condition is now finished.
-            return self.instructions["EndIfConditionTrue"](condition)
+            return self._instr("EndIfConditionTrue", condition)
         elif restart_event:
             if negate:
                 if condition in self.finished_conditions:
-                    return self.instructions["RestartIfFinishedConditionFalse"](condition)
+                    return self._instr("RestartIfFinishedConditionFalse", condition)
                 self.finished_conditions.append(condition)  # Condition is now finished.
-                return self.instructions["RestartIfConditionFalse"](condition)
+                return self._instr("RestartIfConditionFalse", condition)
             if condition in self.finished_conditions:
-                return self.instructions["RestartIfFinishedConditionTrue"](condition)
+                return self._instr("RestartIfFinishedConditionTrue", condition)
             self.finished_conditions.append(condition)  # Condition is now finished.
-            return self.instructions["RestartIfConditionTrue"](condition)
+            return self._instr("RestartIfConditionTrue", condition)
         else:
             raise ValueError
 
@@ -1041,18 +1038,35 @@ class EVSParser(abc.ABC):
         if skip_lines > 0:
             logic = "True" if negate else "False"
             instr = f"SkipLinesIf{finished}Condition{logic}"
-            condition_emevd += self.instructions[instr](skip_lines, i)
+            condition_emevd += self._instr(instr, skip_lines, i)
         elif finished:
             raise EVSValueError(node, "Cannot use a finished condition as an input to another condition.")
         else:
             logic = "False" if negate else "True"
             instr = f"IfCondition{logic}"
-            condition_emevd += self.instructions[instr](condition, i)
+            condition_emevd += self._instr(instr, condition, i)
 
         if i not in self.finished_conditions:
             self.finished_conditions.append(i)
 
         return condition_emevd
+
+    def _instr(self, instr_name, *args, **kwargs) -> list[str]:
+        """Prefer `COMPILER[instr_name]` but fall back to `AUTO_COMPILE(instr_name)`."""
+        try:
+            compile_func = self.COMPILER[instr_name]
+        except KeyError:
+            try:
+                return self.AUTO_COMPILE(instr_name, *args, **kwargs)
+            except Exception as ex:
+                raise EVSSyntaxError(instr_name, f"Failed to auto-compile instruction {instr_name}.\n    Error: {ex}")
+        else:
+            try:
+                return compile_func(*args, **kwargs)  # includes event arg load lines
+            except Exception as ex:
+                raise EVSSyntaxError(
+                    instr_name, f"Failed to manually compile instruction {instr_name}.\n    Error: {ex}"
+                )
 
     # ~~~~~~~~~~~~~~~~~~~~
     #  ASSIGNMENT METHODS: These create global/local objects, including Conditions, from assignment nodes.
@@ -1065,7 +1079,7 @@ class EVSParser(abc.ABC):
             if not isinstance(target, ast.Name):
                 raise EVSSyntaxError(node, "Values can only be assigned to (any number of) single names.")
             name = target.id
-            if name in self.instructions or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
+            if name in self.EMEDF_ALIASES or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
                 raise EVSSyntaxError(node, f"Cannot assign to an instruction name ({name}).")
             if name in _BUILTIN_NAMES:
                 raise EVSSyntaxError(node, f"Cannot assign to a builtin EVS name ({name}).")

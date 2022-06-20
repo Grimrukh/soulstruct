@@ -160,6 +160,18 @@ class Map(GameObject):
     def __repr__(self):
         return self.emevd_file_stem
 
+    def __getitem__(self, index: int):
+        if index == 0:
+            return self.area_id
+        elif index == 1:
+            return self.block_id
+        elif index == 2:
+            return self.cc_id
+        elif index == 3:
+            return self.dd_id
+        else:
+            raise ValueError(f"Index for `Map` must be 0, 1, 2, or 3, not {index}.")
+
     @classmethod
     def NO_MAP(cls):
         """Used as a default null map in MSB."""

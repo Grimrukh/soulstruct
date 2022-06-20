@@ -9,6 +9,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
+from soulstruct.containers.dcx import DCXType
 from soulstruct.utilities.binary import BinaryReader
 
 from .event import Event
@@ -34,10 +35,10 @@ class EMEVD(GameFile, abc.ABC):
     EVS_PARSER: tp.Type[EVSParser] = None
     IMPORT_STRING: str = None
     STRING_ENCODING: str = None
-    DCX_MAGIC: tuple[int, int] = ()
+    DCX_TYPE: DCXType = None
     HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, emevd_source: GameFile.Typing, dcx_magic=(), script_directory=None):
+    def __init__(self, emevd_source: GameFile.Typing, dcx_type=None, script_directory=None):
         """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
 
         Event scripts 50 and 0 are run automatically, in that order. All other scripts are called from them, sometimes
@@ -66,14 +67,14 @@ class EMEVD(GameFile, abc.ABC):
             if isinstance(emevd_source, Path) or (isinstance(emevd_source, str) and "\n" not in emevd_source):
                 script_directory = Path(emevd_source).parent
 
-        super().__init__(emevd_source, dcx_magic=dcx_magic, script_directory=script_directory)
-        if not dcx_magic:
-            self.dcx_magic = self.DCX_MAGIC  # default to standard game DCX
+        super().__init__(emevd_source, dcx_type=dcx_type, script_directory=script_directory)
+        if not dcx_type:
+            self.dcx_type = self.DCX_TYPE  # default to standard game DCX
         if not self.map_name and self.path:
             self.map_name = self.path.name.split(".")[0]
         elif self.map_name and not self.path:
             self.path = Path(self.map_name + ".emevd")
-            if self.DCX_MAGIC:
+            if self.DCX_TYPE:
                 self.path = self.path.with_suffix(".emevd.dcx")
 
     def _handle_other_source_types(self, file_source, script_directory=None) -> tp.Optional[BinaryReader]:
@@ -388,7 +389,7 @@ class EMEVD(GameFile, abc.ABC):
 
         for e_id, e in self.events.items():
 
-            print(f"Event {e_id}")
+            # print(f"Event {e_id}")
 
             e_bin, i_bin, a_bin, p_bin = e.to_binary(
                 current_instruction_offset, current_arg_data_offset, current_event_arg_offset
@@ -435,14 +436,12 @@ class EMEVD(GameFile, abc.ABC):
                 f"Event table was of size {len(event_table_binary)} but expected size was "
                 f"{offsets['instruction'] - len(emevd_binary)}."
             )
-        print(f"Event table binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += event_table_binary
         if len(emevd_binary) + len(instr_table_binary) != offsets["event_layers"]:
             raise ValueError(
                 f"Instruction table was of size {len(instr_table_binary)} but expected size was "
                 f"{offsets['event_layers'] - len(emevd_binary)}."
             )
-        print(f"Instruction table binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += instr_table_binary
         if len(emevd_binary) + len(event_layers_binary) != offsets["base_arg_data"]:
             raise ValueError(
@@ -450,11 +449,9 @@ class EMEVD(GameFile, abc.ABC):
                 f"{offsets['base_arg_data'] - len(emevd_binary)}."
             )
 
-        print(f"Event layers table binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += event_layers_binary
 
         # No argument data length check due to padding.
-        print(f"Arg data binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += argument_data_binary
         emevd_binary = self.pad_after_base_args(emevd_binary)
 
@@ -463,7 +460,6 @@ class EMEVD(GameFile, abc.ABC):
                 f"Argument replacement table was of size {len(linked_file_data_binary)} but expected size "
                 f"was {offsets['linked_files'] - len(emevd_binary)}."
             )
-        print(f"Arg replacement data binary starts at: {hex(len(emevd_binary))}")
         emevd_binary += arg_r_binary
         if len(emevd_binary) + len(linked_file_data_binary) != offsets["packed_strings"]:
             raise ValueError(

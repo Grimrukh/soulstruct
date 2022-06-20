@@ -911,7 +911,7 @@ def RestartIfOutsideMap(game_map: MapTyping):
 
 
 def IfMapPresenceState(output_condition, state: bool, game_map: MapTyping):
-    instruction_info = (3, 8, [0, 0, 10, 0])
+    instruction_info = (3, 8)
     area_id, block_id, cc_id, dd_id = tuple(game_map)
     return to_numeric(instruction_info, output_condition, state, area_id, block_id, cc_id, dd_id)
 
@@ -975,7 +975,7 @@ def IfMultiplayerNetworkPenalized(condition: int):
     return to_numeric(instruction_info, condition)
 
 
-def IfInsideMapTile(condition: int, game_map: MapTile):
+def IfInsideMapTile(condition: int, game_map: tp.Union[MapTile, tuple[int, int, int, int]]):
     instruction_info = (3, 30)
     area_id, block_id, cc_id, dd_id = tuple(game_map)
     return to_numeric(instruction_info, condition, area_id, block_id, cc_id, dd_id)
@@ -2037,11 +2037,11 @@ def PlayCutscene(
     if is_unknown_elden_ring:
         if not skippable or fade_out:
             raise ValueError("Unknown Elden Ring cutscene type (16) not supported with being unskippable/fading out.")
-        cutscene_type = CutsceneType.UnknownEldenRing
+        cutscene_type = CutsceneFlags.UnknownEldenRing
     elif skippable:
-        cutscene_type = CutsceneType.SkippableFadeOut if fade_out else CutsceneType.Skippable
+        cutscene_type = CutsceneFlags.SkippableFadeOut if fade_out else CutsceneFlags.Skippable
     else:
-        cutscene_type = CutsceneType.UnskippableFadeOut if fade_out else CutsceneType.Unskippable
+        cutscene_type = CutsceneFlags.UnskippableFadeOut if fade_out else CutsceneFlags.Unskippable
 
     if move_to_map or move_to_region:
         if not (move_to_map and move_to_region):
@@ -2071,7 +2071,7 @@ def PlayCutscene(
 
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     move_to_region: RegionTyping,
     move_to_map: MapTyping,
     player_id: int,
@@ -2090,7 +2090,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     )
 
 
-def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, player_id: int, time_period_id: int):
+def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneFlags, player_id: int, time_period_id: int):
     """Probably used when you examine Laurence's skull, etc."""
     instruction_info = (2002, 7, [-1, 0, -1, 0])
     return to_numeric(instruction_info, cutscene, cutscene_type, player_id, time_period_id)
@@ -2105,7 +2105,7 @@ def PlayCutsceneAndMovePlayer_Dummy(move_to_region: RegionTyping, move_to_map: M
 
 def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     ceremony_id: int,
     unknown: int,
     move_to_region: RegionTyping,
@@ -2124,7 +2124,7 @@ def PlayCutsceneAndMovePlayerAndSetMapCeremony(
 
 
 def PlayCutsceneAndSetMapCeremony(
-    cutscene: int, cutscene_type: CutsceneType, ceremony_id: int, unknown: int, player_id: int
+    cutscene: int, cutscene_type: CutsceneFlags, ceremony_id: int, unknown: int, player_id: int
 ):
     instruction_info = (2002, 10, [-1, 0, -1, 0])
     return to_numeric(instruction_info, cutscene, cutscene_type, ceremony_id, unknown, player_id)
@@ -2132,7 +2132,7 @@ def PlayCutsceneAndSetMapCeremony(
 
 def UnknownCutscene_10(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     player_id,
     hours,
     unk_2,
@@ -2150,7 +2150,7 @@ def UnknownCutscene_10(
 
 def UnknownCutscene_11(
     cutscene,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     unk_1,
     move_to_region: RegionTyping,
     player_id: PlayerEntity,
@@ -2169,7 +2169,7 @@ def UnknownCutscene_11(
 
 def UnknownCutscene_12(
     cutscene,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     respawn_point: int,
     move_to_region: RegionTyping,
     player_id: PlayerEntity,
@@ -2191,7 +2191,7 @@ def UnknownCutscene_12(
 
 def PlayCutsceneAndMovePlayer_WithSecondRegion(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     move_to_region: RegionTyping,
     move_to_map: MapTyping,
     player_id: int,
@@ -2694,12 +2694,14 @@ def SetPlayerRemainingYoelLevels(level_count: int):
     return to_numeric(instruction_info, level_count)
 
 
-def UnknownCharacter_74(character: Character, unk_1, region: RegionTyping, unk_2, character_2: Character, unk_3, unk_4):
+def UnknownCharacter_74(
+    character: CharacterTyping, unk_1, region: RegionTyping, unk_2, character_2: CharacterTyping, unk_3, unk_4
+):
     instruction_info = (2004, 74)
     return to_numeric(instruction_info, character, unk_1, region, unk_2, character_2, unk_3, unk_4)
 
 
-def UnknownCharacter_75(character: Character, unk_1, unk_2):
+def UnknownCharacter_75(character: CharacterTyping, unk_1, unk_2):
     instruction_info = (2004, 75)
     return to_numeric(instruction_info, character, unk_1, unk_2)
 

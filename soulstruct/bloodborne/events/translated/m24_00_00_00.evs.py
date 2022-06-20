@@ -1340,7 +1340,7 @@ def Event12400750():
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
     PlayCutsceneAndMovePlayerAndSetTimePeriod(
-        Cutscenes.CathedralWardFirstArrival, CutsceneType.Skippable, 2402200, CATHEDRAL_WARD, player_id=10000,
+        Cutscenes.CathedralWardFirstArrival, CutsceneFlags.Skippable, 2402200, CATHEDRAL_WARD, player_id=10000,
         time_period_id=1
     )
     WaitFrames(1)
@@ -5446,7 +5446,7 @@ def PlayMasterWillemCutscene():
     WaitFrames(1)
     DeleteVFX(VFX.LaurenceSkull, erase_root_only=True)
     PlayCutsceneAndMovePlayerAndSetTimePeriod(
-        Cutscenes.LaurenceFlashback, CutsceneType.Skippable, -1, CATHEDRAL_WARD, player_id=10000, time_period_id=2
+        Cutscenes.LaurenceFlashback, CutsceneFlags.Skippable, -1, CATHEDRAL_WARD, player_id=10000, time_period_id=2
     )
     WaitFrames(1)
     DisableFlag(CommonFlags.CutsceneActive)

@@ -27,17 +27,17 @@ class GameParamBND(BaseBND, abc.ABC):
     PARAM_NICKNAMES: dict[str, str] = {}
     PARAM_TYPES: dict[str, BaseGameParam] = {}
 
-    def __init__(self, game_param_bnd_source=None, dcx_magic=(), paramdef_bnd=None, use_json=False):
+    def __init__(self, game_param_bnd_source=None, dcx_type=None, paramdef_bnd=None, use_json=False):
         """Unpack a `GameParam.gameparambnd[.dcx]` file binder into a single modifiable structure.
 
         Args:
             game_param_bnd_source: any valid source for GameParam.parambnd[.dcx] (its file path, the directory
                 containing it, the unpacked BND directory, or an existing BND instance).
-            dcx_magic: optional DCX magic (sequence of two integers).
+            dcx_type: optional DCX type.
             paramdef_bnd: previously loaded `ParamDefBND` instance, or source to create it. Can also be automatically
                 detected from subclass.
-            use_json: if `True`, will assume the source is a path to a folder containing `GameParamBND_manifest.json` and
-                a `*Param.json` file for each Param to be loaded.
+            use_json: if `True`, will assume the source is a path to a folder containing `GameParamBND_manifest.json`
+                and a `*Param.json` file for each Param to be loaded.
         """
 
         self._reload_warning_given = True
@@ -47,10 +47,10 @@ class GameParamBND(BaseBND, abc.ABC):
         self.paramdef_bnd = paramdef_bnd if isinstance(paramdef_bnd, ParamDefBND) else self.ParamDefBND(paramdef_bnd)
 
         if use_json:  # source is a folder with individual `*Param.json` files and a manifest
-            super().__init__(None, dcx_magic=dcx_magic)
+            super().__init__(None, dcx_type=dcx_type)
             self.load_json_dir(game_param_bnd_source, clear_old_data=True)
         else:  # must be a standard `BaseBND` source
-            super().__init__(game_param_bnd_source, dcx_magic=dcx_magic)
+            super().__init__(game_param_bnd_source, dcx_type=dcx_type)
 
         if self.params:
             return  # already generated

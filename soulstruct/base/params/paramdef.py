@@ -7,7 +7,8 @@ import logging
 import math
 import re
 import typing as tp
-from enum import IntEnum
+from pathlib import Path
+from xml.etree import ElementTree
 
 from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
@@ -35,12 +36,17 @@ class ParamDefField(abc.ABC):
 
     _ARRAY_LENGTH_RE = re.compile(r"^\s*.+\s*\[\s*(\d+)\s*]\s*$")
     _BIT_SIZE_RE = re.compile(r"^\s*.+\s*:\s*(\d+)\s*$")
+    _PARAMDEX_NAME_RE = re.compile(r"^")
 
-    class EditType(IntEnum):
-        DoesNotWrap = 0
-        Wraps = 1
-        Locked = 4
-        Unknown = 5  # appears in Attack Param hitbox priority fields and some Item Lot Param fields
+    class EditFlags(int):
+
+        @property
+        def is_wrap(self):
+            return self & 0b0000_0001  # 1
+
+        @property
+        def is_lock(self):
+            return self & 0b0000_0100  # 4
 
     @staticmethod
     def GET_FIELD_STRUCT(format_version, unicode, byte_order="<"):
@@ -54,7 +60,7 @@ class ParamDefField(abc.ABC):
             ("minimum", "f"),
             ("maximum", "f"),
             ("increment", "f"),
-            ("edit_type", "i"),
+            ("edit_flags", "i"),
             ("size", "i"),
             ("description_offset", "q" if format_version >= 200 else "i"),
             ("internal_type", "32j"),  # could be an enum name (see params.enums)
@@ -84,8 +90,13 @@ class ParamDefField(abc.ABC):
         self.maximum = field_struct["maximum"]
         self.increment = field_struct["increment"]
 
-        self.edit_type = self.EditType(field_struct["edit_type"])
+        self.edit_flags = self.EditFlags(field_struct["edit_flags"])
         self.sort_id = field_struct["sort_id"]
+
+        # Optional strings that appear in newer games.
+        self.unk_b8 = field_struct.get("unk_b8", "")
+        self.unk_c0 = field_struct.get("unk_c0", "")
+        self.unk_c8 = field_struct.get("unk_c8", "")
 
         try:
             self.type_class = getattr(field_types, self.display_type)  # type: tp.Type[field_types.base_type]
@@ -99,9 +110,10 @@ class ParamDefField(abc.ABC):
         self.length = self.size // self.type_class.size()  # number of values (>1 for padding only)
         if match := self._ARRAY_LENGTH_RE.match(self.name):
             if int(match.group(1)) != self.length:
+                print(self.name, self.size)
                 raise ParamDefError(
-                    f"Length of field '{self.name}' calculated from byte size ({self.length}) does not match length "
-                    f"implied by name: [{match.group(1)}]. This should NOT happen unless you have edited the ParamDef."
+                    f"Length of field '{self.name}' with type `{self.display_type}` calculated from byte size "
+                    f"({self.length}) does not match length implied by name: [{match.group(1)}]."
                 )
 
         if match := self._BIT_SIZE_RE.match(self.name):
@@ -160,6 +172,93 @@ class ParamDefField(abc.ABC):
             fields[field.name] = field
         return fields
 
+    @classmethod
+    def from_paramdex_xml(cls, index: int, xml_node, param_name: str):
+        """Load field information from Paramdex XML node."""
+        field_dict = {
+            "internal_type": "",
+            "edit_flags": cls.EditFlags(0),
+            "display_format": "%i",
+            "increment": 1.0,
+            "sort_id": -1,
+        }
+        description = ""
+        def_string = xml_node.attrib["Def"]  # e.g., "s32 spEffectId0 = -1"
+
+        def_split = def_string.split(" ")
+        display_type = field_dict["display_type"] = def_split[0]
+        type_class = getattr(field_types, display_type)  # type: tp.Type[field_types.base_type]
+        name = field_dict["name"] = def_split[1]
+
+        if match := cls._ARRAY_LENGTH_RE.match(name):
+            # Size is equal to array length times data size.
+            field_dict["size"] = type_class.size() * int(match.group(1))
+        else:
+            field_dict["size"] = type_class.size()
+
+        # Defaults.
+        field_dict["internal_type"] = display_type
+        field_dict["minimum"] = type_class.minimum()
+        field_dict["maximum"] = type_class.maximum()
+        if issubclass(type_class, (field_types.unsigned, field_types.signed)):
+            field_dict["display_format"] = "%i"
+        elif issubclass(type_class, (field_types.f32, field_types.f64)):
+            field_dict["display_format"] = "%d"
+        elif issubclass(type_class, field_types.fixstr):
+            field_dict["display_format"] = "%s"
+        elif issubclass(type_class, field_types.fixstrW):
+            field_dict["display_format"] = "%u"
+
+        if len(def_split) > 2:
+            # Find default.
+            default_str = def_split[3]  # index 2 should be "="
+            field_dict["default"] = type_class.python_type()(default_str)
+        else:
+            # Use sensible default (0 or 0.0 or empty string).
+            field_dict["default"] = type_class.default()
+
+        for child in xml_node:
+            if child.tag == "DisplayName":
+                field_dict["display_name"] = child.text
+            elif child.tag == "DisplayFormat":
+                field_dict["display_format"] = child.text
+            elif child.tag == "Enum":
+                field_dict["internal_type"] = child.text
+            elif child.tag == "Description":
+                description = child.text
+            elif child.tag == "EditFlags":
+                if child.text == "None":
+                    field_dict["edit_flags"] = cls.EditFlags(0)
+                elif child.text == "Wrap":
+                    field_dict["edit_flags"] = cls.EditFlags(0b0000_0001)
+                elif child.text == "Lock":
+                    field_dict["edit_flags"] = cls.EditFlags(0b0000_0100)
+                elif child.text == "Wrap, Lock":
+                    field_dict["edit_flags"] = cls.EditFlags(0b0000_0001 | 0b0000_0100)
+                else:
+                    raise ValueError(f"Unsupported Paramdex 'EditFlags': {child.text}")
+            elif child.tag == "Minimum":
+                field_dict["minimum"] = float(child.text)
+            elif child.tag == "Maximum":
+                field_dict["maximum"] = float(child.text)
+            elif child.tag == "Increment":
+                field_dict["increment"] = float(child.text)
+            elif child.tag == "SortID":
+                field_dict["sort_id"] = int(child.text)
+            elif child.tag == "UnkB8":
+                field_dict["unk_b8"] = child.text
+            elif child.tag == "UnkC0":
+                field_dict["unk_c0"] = child.text
+            elif child.tag == "UnkC8":
+                field_dict["unk_c8"] = child.text
+            elif child.tag.startswith("ParamRef"):
+                # TODO: Could make use of these links from Yapped. Ignoring for now.
+                pass
+            else:
+                raise ValueError(f"Unrecognized field tag name in Paramdex: {child.tag}")
+
+        return cls(field_dict, index, description, param_name)
+
     def check_python_type(self, value):
         """Check given `value` has the expected Python type of this field."""
         if self.type_class is field_types.dummy8 and self.bit_count == -1:
@@ -187,15 +286,22 @@ class ParamDefField(abc.ABC):
         self.check_python_type(value)
         self.check_range(value)
 
+    def __repr__(self):
+        return (
+            f"{self.name} ({self.display_name}) | {self.internal_type} ({self.display_type}) | "
+            f"size = {self.size} | min/max/increment = {self.minimum}, {self.maximum}, {self.increment} | "
+            f"default = {self.default} | {self.description}"
+        )
+
 
 class ParamDef(GameFile, abc.ABC):
 
-    EXT = ".paramdefbnd"
+    EXT = ".paramdef"
     HEADER_STRUCT: BinaryStruct = None
     BYTE_ORDER: str = None
     FIELD_CLASS: tp.Type[ParamDefField] = None
 
-    def __init__(self, paramdef_source, dcx_magic=(), param_type=None):
+    def __init__(self, paramdef_source, dcx_type=None, param_type=None):
         """Defines the row fields in a particular type of `Param`.
 
         No pack/write methods; these are essentially hard-coded definitions for each game, and therefore read-only. If
@@ -203,14 +309,19 @@ class ParamDef(GameFile, abc.ABC):
         """
 
         self.param_type = None
-        self.paramdef_path = None
+        self.big_endian = False
         self.fields = {}  # type: dict[str, ParamDefField]
         self.data_version = 0
         self.format_version = 104  # defaults to Dark Souls 1
         self.unicode = False  # `ParamEntry` description encoding
-        super().__init__(paramdef_source, dcx_magic, param_type=param_type)
+        super().__init__(paramdef_source, dcx_type, param_type=param_type)
 
     def _handle_other_source_types(self, file_source, param_type=None) -> tp.Optional[BinaryReader]:
+
+        if isinstance(file_source, (str, Path)) and Path(file_source).suffix == ".xml":
+            self.path = Path(file_source)
+            self.read_paramdex_xml(ElementTree.parse(file_source).getroot())
+            return
 
         if isinstance(file_source, (tuple, list)):
             if param_type is None:
@@ -243,7 +354,6 @@ class ParamDef(GameFile, abc.ABC):
         raise InvalidGameFileTypeError("`paramdef_source` is not a list of `ParamDefField`s or a `BinderEntry`.")
 
     def unpack(self, paramdef_reader: BinaryReader, **kwargs):
-        """Convert a paramdef file to a dictionary, indexed by ID."""
         header = paramdef_reader.unpack_struct(self.HEADER_STRUCT)
         if "param_name" in header:
             self.param_type = header["param_name"]
@@ -269,11 +379,7 @@ class ParamDef(GameFile, abc.ABC):
             raise
 
     def __repr__(self):
-        return f"ParamDef {self.param_type}:\n  " + "\n  ".join(
-            [f"{f.index:>3d} | {f.name} ({f.display_name}) | {f.internal_type} ({f.display_type}) | "
-             f"{f.description}"
-             for f in self.fields.values()]
-        )
+        return f"ParamDef {self.param_type}:\n  " + "\n  ".join(f"{f.index:>3d}: {f}" for f in self.fields.values())
 
     def verbose(self):
         return f"ParamDef {self.param_type}:\n  " + "\n  ".join(
@@ -291,11 +397,30 @@ class ParamDef(GameFile, abc.ABC):
              f"      minimum = {f.minimum}\n"
              f"      maximum = {f.maximum}\n"
              f"      increment = {f.increment}\n"
-             f"      edit_type = {f.edit_type}\n"
+             f"      edit_flags = {f.edit_flags}\n"
              f"      sort_id = {f.sort_id}\n"
              f"      bit_size = {f.bit_count}\n"
              for f in self.fields.values()]
         )
+
+    def read_paramdex_xml(self, root: ElementTree):
+        """Read Paramdex XML."""
+        for child in root:
+            if child.tag == "ParamType":
+                self.param_type = child.text
+            elif child.tag == "DataVersion":
+                self.data_version = int(child.text)
+            elif child.tag == "BigEndian":
+                self.big_endian = bool(child.text)
+            elif child.tag == "Unicode":
+                self.unicode = bool(child.text)
+            elif child.tag == "FormatVersion":
+                self.format_version = int(child.text)
+            elif child.tag == "Fields":
+                fields = [self.FIELD_CLASS.from_paramdex_xml(i, node, self.param_type) for i, node in enumerate(child)]
+                self.fields = {f.name: f for f in fields}
+            else:
+                raise ValueError(f"Unknown Paramdex XML tag: {child.tag}")
 
     @property
     @abc.abstractmethod
@@ -306,6 +431,7 @@ class ParamDef(GameFile, abc.ABC):
 class ParamDefBND(abc.ABC):
 
     PARAMDEF_CLASS: tp.Type[ParamDef] = None
+    GAME: Game  # must be mixed in
 
     def __init__(self, paramdef_bnd_source=None):
         """BND container with all the `ParamDef` definitions for a given game.

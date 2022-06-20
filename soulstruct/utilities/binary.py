@@ -2,7 +2,15 @@
 
 from __future__ import annotations
 
-__all__ = ["BinaryStruct", "BinaryObject", "BinaryReader", "BinaryWriter", "read_chars_from_bytes", "get_blake2b_hash"]
+__all__ = [
+    "BinaryStruct",
+    "BinaryObject",
+    "BinaryReader",
+    "BinaryWriter",
+    "read_chars_from_bytes",
+    "get_blake2b_hash",
+    "ReadableTyping",
+]
 
 import abc
 import enum
@@ -1098,3 +1106,6 @@ def get_blake2b_hash(data: tp.Union[bytes, str, Path]) -> bytes:
     elif isinstance(data, bytes):
         return hashlib.blake2b(data).digest()
     raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
+
+
+ReadableTyping = tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinderEntry, BinaryReader]

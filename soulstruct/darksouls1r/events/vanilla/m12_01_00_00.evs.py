@@ -4033,7 +4033,7 @@ def Event11210850(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLinesIfFlagOn(2, 11215402)
     PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1(
         120130,
-        CutsceneType.Unskippable,
+        CutsceneFlags.Unskippable,
         first_region=arg_12_15,
         last_region=arg_16_19,
         game_map=OOLACILE,
@@ -4041,7 +4041,7 @@ def Event11210850(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLines(1)
     PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2(
         120130,
-        CutsceneType.Unskippable,
+        CutsceneFlags.Unskippable,
         first_region=arg_12_15,
         last_region=arg_16_19,
         game_map=OOLACILE,

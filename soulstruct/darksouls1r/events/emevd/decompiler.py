@@ -41,7 +41,7 @@ class InstructionDecompiler(_BaseDecompiler):
         pass
 
     @parse_parameters
-    def _2002_06(self, cutscene_id, cutscene_type: CutsceneType, first_region, last_region, area_id, block_id):
+    def _2002_06(self, cutscene_id, cutscene_type: CutsceneFlags, first_region, last_region, area_id, block_id):
         game_map = self._get_game_map_variable_name(area_id, block_id)
         return (
             f"PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect1({cutscene_id}, {cutscene_type}, {first_region=}, "
@@ -49,7 +49,7 @@ class InstructionDecompiler(_BaseDecompiler):
         )
 
     @parse_parameters
-    def _2002_07(self, cutscene_id, cutscene_type: CutsceneType, first_region, last_region, area_id, block_id):
+    def _2002_07(self, cutscene_id, cutscene_type: CutsceneFlags, first_region, last_region, area_id, block_id):
         game_map = self._get_game_map_variable_name(area_id, block_id)
         return (
             f"PlayCutsceneAndRandomlyWarpPlayer_WithUnknownEffect2({cutscene_id}, {cutscene_type}, {first_region=}, "

@@ -12,7 +12,6 @@ from .utils import get_byte_offset_from_struct, get_instruction_args
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
-    from .decompiler import InstructionDecompiler
     from .event import EventArg
     from .utils import EntityEnumsManager
 
@@ -24,10 +23,13 @@ class Instruction(abc.ABC):
     event_args: list[EventArg]
     event_layers: tp.Optional[EventLayers]
 
-    DECOMPILER: InstructionDecompiler = None
     INSTRUCTION_ARG_TYPES = {}
     EventLayers: tp.Type[EventLayers] = None
     HEADER_STRUCT: BinaryStruct = None
+
+    DECOMPILER: dict[tuple[int, int], tp.Callable]
+    OPT_ARGS_DECOMPILER: dict[tuple[int, int], tp.Callable]
+    AUTO_DECOMPILE: tp.Callable
 
     def __init__(self, category, index, display_arg_types="", args_list=(), event_layers=None):
         self.category = category
@@ -115,7 +117,7 @@ class Instruction(abc.ABC):
         if self.category == 2000:
             if self.index == 0:
                 return self.args_list[1]
-            elif self.category == 6:
+            elif self.index == 6:  # no `slot` argument
                 return self.args_list[0]
         return None
 
@@ -130,7 +132,7 @@ class Instruction(abc.ABC):
             numeric.append("    ^" + replacement.to_numeric())
         return numeric
 
-    def to_evs(self, event_arg_types, enums_manager: EntityEnumsManager):
+    def to_evs(self, event_arg_types, enums_manager: EntityEnumsManager = None) -> str:
         """Convert single event instruction to EVS.
 
         If `enums` is given (e.g. via `EMEVD.to_evs()`), it should map `MapEntity` subclass names to dictionaries that
@@ -139,10 +141,18 @@ class Instruction(abc.ABC):
         logged and a TO-DO comment to be written to that line.
         """
         args, opt_args = self.get_required_and_optional_args()
-        opt_arg_types = None
-        if self.get_called_event() is not None and opt_args and args[1] in event_arg_types:
-            opt_arg_types = event_arg_types[args[1]]
-        instruction = self.DECOMPILER.decompile(self.category, self.index, args, opt_args, opt_arg_types, enums_manager)
+        opt_arg_types = ""
+
+        if (self.category, self.index) in self.OPT_ARGS_DECOMPILER:
+            if self.get_called_event() is not None and opt_args and args[1] in event_arg_types:
+                opt_arg_types = event_arg_types[args[1]]
+            decompile_func = self.OPT_ARGS_DECOMPILER[self.category, self.index]
+            instruction = decompile_func(*args, *opt_args, opt_arg_types, enums_manager=enums_manager)
+        elif (self.category, self.index) in self.DECOMPILER:
+            decompile_func = self.DECOMPILER[self.category, self.index]
+            instruction = decompile_func(*args)
+        else:
+            instruction = self.AUTO_DECOMPILE(*args)
         if self.event_layers:
             instruction = instruction[:-1] + self.event_layers.to_evs()
         return instruction

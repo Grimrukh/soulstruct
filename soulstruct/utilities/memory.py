@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["MemoryHook", "DSRMemoryHook"]
 
+import abc
 import ctypes as c
 import functools
 import io
@@ -20,11 +21,13 @@ if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params.draw_param import DrawParam
 
 try:
+    # noinspection PyPackageRequirements
     import numpy
 except ImportError:
     numpy = None
 
 try:
+    # noinspection PyPackageRequirements
     import psutil
 except ImportError:
     psutil = None
@@ -97,6 +100,7 @@ DSR_BASE_POINTER_TABLE = {
     #     br"\x48\x8B\x05....\x48\x8B\x48\x68\x48\x85\xC9\x0F\x84....\x48\x39\x5e\x10\x0F\x84....\x48",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
     "WORLD_CHR_BASE": 0x141D151B0,
+    "CURRENT_MAP": 0x141D27D60,
     # "CHR_CLASS_BASE": BasePointerSearch(
     #     br"\x48\x8B\x05....\x48\x85\xC0..\xF3\x0F\x58\x80\xAC\x00\x00\x00",
     #     lambda hook, addr: addr + hook.read_int32(addr + 3) + 7),
@@ -172,11 +176,14 @@ DSR_VALUE_TABLE = {
     # "stable_x": MemoryValue("CHR_CLASS_WARP", (0xBA0,), 4, "<f"),
     # "stable_y": MemoryValue("CHR_CLASS_WARP", (0xBA4,), 4, "<f"),
     # "stable_z": MemoryValue("CHR_CLASS_WARP", (0xBA8,), 4, "<f"),
+    "current_map": MemoryValue("CURRENT_MAP", (0xA20,), 4, "<BBBB"),  # (dd, cc, bb, aa)
 }
 
 
-class MemoryHook:
+class MemoryHook(abc.ABC):
     """Hooks into running game and edits values at given memory addresses (a la CheatEngine)."""
+
+    EVENT_FLAG_OFFSETS = ()  # base address and jump offsets for event flags (not including flag-specific offset)
 
     class _ProcessStream(io.BufferedIOBase):
 
@@ -265,7 +272,7 @@ class MemoryHook:
 
         if pointers_to_find:
             _LOGGER.info(f"Scanning game memory for {len(pointers_to_find)} pointers...")
-            pointer_addresses = self.scan(pointers_to_find)
+            pointer_addresses = self.scan(pointers_to_find, use_regex=True)
             for pointer_name, address in pointer_addresses.items():
                 if address is None:
                     raise MemoryHookError(f"Could not locate memory pointer: {pointer_name}")
@@ -311,6 +318,15 @@ class MemoryHook:
     def read_int64(self, address):
         return self.read(address, size=8, fmt="<q")
 
+    def read_uint16(self, address):
+        return self.read(address, size=2, fmt="<H")
+
+    def read_uint32(self, address):
+        return self.read(address, size=4, fmt="<I")
+
+    def read_uint64(self, address):
+        return self.read(address, size=8, fmt="<Q")
+
     def read_float(self, address):
         return self.read(address, size=4, fmt="<f")
 
@@ -326,11 +342,50 @@ class MemoryHook:
     def write_int64(self, address, value):
         return self.write(address, data=(value,), fmt="<q")
 
+    def write_uint16(self, address, value):
+        return self.write(address, data=(value,), fmt="<H")
+
+    def write_uint32(self, address, value):
+        return self.write(address, data=(value,), fmt="<I")
+
+    def write_uint64(self, address, value):
+        return self.write(address, data=(value,), fmt="<Q")
+
     def write_float(self, address, value):
         return self.write(address, data=(value,), fmt="<f")
 
     def write_double(self, address, value):
         return self.write(address, data=(value,), fmt="<d")
+
+    @abc.abstractmethod
+    def get_event_flag_offset_mask(self, flag_id: int):
+        pass
+
+    def read_event_flag(self, flag_id: int) -> bool:
+        offset, mask = self.get_event_flag_offset_mask(flag_id)
+
+        if not self.EVENT_FLAG_OFFSETS:
+            raise ValueError(f"No `EVENT_FLAG_OFFSETS` defined for `{self.__class__.__name__}`.")
+        address = self.EVENT_FLAG_OFFSETS[0]
+        for jump in self.EVENT_FLAG_OFFSETS[1:]:
+            address = self.read_int64(address + jump)
+        flags32 = self.read_uint32(address + offset)
+        return flags32 & mask != 0
+
+    def write_event_flag(self, flag_id: int, state: bool):
+        offset, mask = self.get_event_flag_offset_mask(flag_id)
+
+        if not self.EVENT_FLAG_OFFSETS:
+            raise ValueError(f"No `EVENT_FLAG_OFFSETS` defined for `{self.__class__.__name__}`.")
+        address = self.EVENT_FLAG_OFFSETS[0]
+        for jump in self.EVENT_FLAG_OFFSETS[1:]:
+            address = self.read_int64(address + jump)
+        flags32 = self.read_uint32(address + offset)
+        if state:
+            flags32 |= mask
+        else:
+            flags32 &= ~mask
+        self.write_uint32(address + offset, flags32)
 
     @staticmethod
     def _rolling_window(a, size):
@@ -395,7 +450,7 @@ class MemoryHook:
         bytes_read = SIZE_T()
         search_from_address = self.BASE_ADDRESS
         found_pointers = {pointer_name: None for pointer_name in pointers}
-        while 1:
+        while True:
 
             if max_address is not None and search_from_address > max_address:
                 break  # not found
@@ -525,7 +580,39 @@ def _cached(func):
 
 class DSRMemoryHook(MemoryHook):
 
+    # B8 DF 36 41 01 00 00 00
     _PARAM_MARKER = b"\xB8\xDF\x36\x41\x01\x00\x00\x00"  # appears at the start of every in-memory Param header struct
+
+    EVENT_FLAG_OFFSETS = (0x141D19950, 0, 0)
+
+    EVENT_FLAG_GROUPS = {
+        "0": 0x00000,
+        "1": 0x00500,
+        "5": 0x05F00,
+        "6": 0x0B900,
+        "7": 0x11300,
+    }
+
+    EVENT_FLAG_AREAS = {
+        "000": 0,
+        "100": 1,
+        "101": 2,
+        "102": 3,
+        "110": 4,
+        "120": 5,
+        "121": 6,
+        "130": 7,
+        "131": 8,
+        "132": 9,
+        "140": 10,
+        "141": 11,
+        "150": 12,
+        "151": 13,
+        "160": 14,
+        "170": 15,
+        "180": 16,
+        "181": 17,
+    }
 
     def __init__(self, dsr_pid=None):
         if dsr_pid is None:
@@ -539,6 +626,32 @@ class DSRMemoryHook(MemoryHook):
             print(f"Found Dark Souls Remastered process ID: {dsr_pid}")
 
         super().__init__(dsr_pid, DSR_BASE_POINTER_TABLE, DSR_VALUE_TABLE)
+
+    def get_event_flag_offset_mask(self, flag_id: int) -> (int, int):
+        """Returns offset and bit mask of given flag ID.
+
+        Raises a ValueError if the flag ID is not valid.
+        """
+        id_string = f"{flag_id:0>8}"
+        if len(id_string) > 8:
+            raise ValueError(f"Invalid flag ID (too large): {id_string}")
+        group = id_string[:1]  # first digit
+        area = id_string[1:4]  # second, third, fourth digits
+        section = int(id_string[4:5])  # fifth digit
+        number = int(id_string[5:8])  # sixth, seventh, eighth digits
+
+        if group not in self.EVENT_FLAG_GROUPS:
+            raise ValueError(f"Invalid flag ID (invalid group): {id_string}")
+        if area not in self.EVENT_FLAG_AREAS:
+            raise ValueError(f"Invalid flag ID (invalid area): {id_string}")
+
+        offset = self.EVENT_FLAG_GROUPS[group]
+        offset += self.EVENT_FLAG_AREAS[area] * 0x500
+        offset += section * 128
+        offset += (number - (number % 32)) // 8
+
+        mask = 0x80000000 >> (number % 32)
+        return offset, mask
 
     def write_draw_param_to_memory(self, draw_param: DrawParam, area_id: int, slot=0):
         """Write the given `draw_param` for area `area_id` and slot `slot` to game memory.

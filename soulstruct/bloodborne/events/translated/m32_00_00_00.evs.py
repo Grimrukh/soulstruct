@@ -863,7 +863,7 @@ def TriggerBloodMoon():
     IfConditionTrue(0, input_condition=8)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
-    PlayCutsceneAndSetTimePeriod(32000000, CutsceneType.Skippable, 10000, 3)
+    PlayCutsceneAndSetTimePeriod(32000000, CutsceneFlags.Skippable, 10000, 3)
     WaitFrames(1)
     DisableFlag(CommonFlags.CutsceneActive)
     EnableFlag(70002802)

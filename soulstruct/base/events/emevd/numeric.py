@@ -2,6 +2,7 @@ import logging
 import re
 from enum import Enum
 
+from .emedf import ArgType
 from .exceptions import NumericEmevdError
 from .utils import EventArgumentData, get_write_offset, format_event_layers
 
@@ -11,16 +12,8 @@ __all__ = ["SET_INSTRUCTION_ARG_TYPES", "to_numeric", "build_numeric"]
 _LOGGER = logging.getLogger(__name__)
 
 
-ELEMENT_MIN_MAX = {
-    "b": (-128, 127),
-    "B": (0, 255),
-    "h": (-32768, 32767),
-    "H": (0, 65535),
-    "i": (-2147483648, 2147483647),
-    "I": (0, 4294967295),
-}
-INSTRUCTION_RE = re.compile(r" [ ]*(\d+)\[(\d+)] \(([iIhHbBfs|]*)\)\[([\d, .-]*)][ ]?(<[\d, ]*>)?")
-EVENT_ARG_REPLACEMENT_RE = re.compile(r" [ ]*\^\((\d+) <- (\d+), (\d+)\)")
+INSTRUCTION_RE = re.compile(r" +(\d+)\[(\d+)] \(([iIhHbBfs|]*)\)\[([\d, .-]*)] ?(<[\d, ]*>)?")
+EVENT_ARG_REPLACEMENT_RE = re.compile(r" +\^\((\d+) <- (\d+), (\d+)\)")
 EVENT_HEADER_RE = re.compile(r"^(\d+), ([012])")
 
 INSTRUCTION_ARG_TYPES = {}  # Set by game module.
@@ -31,43 +24,48 @@ def SET_INSTRUCTION_ARG_TYPES(arg_types):
     INSTRUCTION_ARG_TYPES = arg_types
 
 
-def to_numeric(instruction_info, *args, arg_types=None, event_layers=None):
-    """Instruction info should be (class, index, [defaults]), with defaults assumed all zeroes if absent.
+class MissingInstructionError(Exception):
+    """Raised when an instruction `(category, index)` cannot be found in EMEDF dictionary."""
+    def __init__(self, category: int, index: int):
+        super().__init__(f"Instruction ({category}, {index}) is not present in EMEDF dictionary.")
 
-    `event_layers` is supported here for intellisense purposes, and does function, but the EVS parser will always
-    process it separately anyway (as it's too clunky, API-wise, to pass it through every instruction).
+
+def to_numeric(category: int, index: int, emedf_info: dict, *args, arg_types="", event_layers=None) -> list[str]:
+    """Convert an instruction to numeric format.
+
+    `arg_types` should only be non-empty for initialization instructions such as `RunEvent` and `RunCommonEvent`.
+
+    `event_layers` is supported here for intellisense purposes, and will lead to expected numeric output if given, but
+    the EVS parser will process it separately anyway as it's too clunky to add it to every instruction signature.
+
+    Returns a list of numeric lines (the instruction line and any event arg replacement lines).
     """
-    global INSTRUCTION_ARG_TYPES
-    if not INSTRUCTION_ARG_TYPES:
-        raise AttributeError("EMEVD instruction arg types have not been set with `SET_INSTRUCTION_ARG_TYPES`.")
-    event_args = []
+    instr_args = []
     arg_loads = []
     event_layer_string = format_event_layers(event_layers)
-    if arg_types is None:
-        try:
-            arg_types = INSTRUCTION_ARG_TYPES[instruction_info[0]][instruction_info[1]]
-        except KeyError:
-            raise KeyError(f"Could not find instruction {instruction_info[0]}[{instruction_info[1]:02d}] in type dict.")
+    if not arg_types:
+        arg_types = "".join(arg["type"].get_fmt() for arg in emedf_info["args"])
     for i, arg in enumerate(args):
         if isinstance(arg, EventArgumentData):
             arg = arg.offset_tuple
 
         if isinstance(arg, Enum):
-            event_args.append(args[i].value)
+            instr_args.append(args[i].value)
         elif isinstance(arg, bool):
-            event_args.append(int(arg))
+            instr_args.append(int(arg))
         elif isinstance(arg, tuple):
             # Start offset and size of an event argument.
             write_offset = get_write_offset(arg_types, i)
             arg_loads.append(f"    ^({write_offset} <- {arg[0]}, {arg[1]})")
-            if len(instruction_info) == 3:
-                # Use optional dummy dictionary.
-                event_args.append(instruction_info[2][i])
-            else:
-                event_args.append(0)
+            try:
+                # This lookup could fail for instructions with optional arguments or unspecified internal default (0).
+                internal_default = emedf_info["args"][i]["internal_default"]
+            except (KeyError, IndexError):
+                internal_default = 0
+            instr_args.append(internal_default)
         else:
-            event_args.append(arg)
-    instruction_string = f"{instruction_info[0]: 5d}[{instruction_info[1]:02d}] ({arg_types}){event_args}"
+            instr_args.append(arg)
+    instruction_string = f"{category: 5d}[{index:02d}] ({arg_types}){instr_args}"
     return [instruction_string + event_layer_string] + arg_loads
 
 
@@ -146,32 +144,32 @@ def build_numeric(numeric_string: str, event_class):
                 args_list = []
                 for i, fmt in enumerate(struct_arg_types):
                     arg = split_arg_list[i]
-                    if fmt == "f":
+                    try:
+                        arg_type = ArgType.from_fmt(fmt)
+                    except ValueError:
+                        raise NumericEmevdError(lineno, f"Invalid arg type: '{fmt}'")
+                    if arg_type == ArgType.f32:
                         args_list.append(float(arg))
-                    elif fmt in ELEMENT_MIN_MAX:
-                        min_value, max_value = ELEMENT_MIN_MAX[fmt]
+                    else:
                         parsed_arg = int(arg)
+                        min_value, max_value = arg_type.get_type_min_max()
                         if min_value <= parsed_arg <= max_value:
                             args_list.append(parsed_arg)
                         else:
                             _LOGGER.error(
                                 f"Argument '{arg}' is not inside the permitted range of data type "
-                                f"'{fmt}' {repr(ELEMENT_MIN_MAX[fmt])} (line {lineno}) "
+                                f"'{fmt}': ({min_value}, {max_value}) (line {lineno}) "
                                 f"(instruction = {category}[{index}], "
                                 f"args_format = {display_arg_types}, args_list = {args_list_string})"
                             )
                             raise NumericEmevdError(
                                 lineno,
                                 f"Argument '{arg}' with value {parsed_arg} is not inside the permitted range of data "
-                                f"type '{fmt}' ({repr(ELEMENT_MIN_MAX[fmt])}).",
+                                f"type '{fmt}': ({min_value}, {max_value}).",
                             )
-                    else:
-                        raise NumericEmevdError(lineno, f"Invalid arg type: '{fmt}'")
-                instruction_list.append(
-                    event_class.Instruction(
-                        category, index, display_arg_types, args_list, event_layers
-                    )
-                )
+
+                instr = event_class.Instruction(category, index, display_arg_types, args_list, event_layers)
+                instruction_list.append(instr)
 
             elif m_arg_r:
                 if len(instruction_list) >= 1:
@@ -180,9 +178,10 @@ def build_numeric(numeric_string: str, event_class):
                     read_from_byte = int(m_arg_r.group(2))
                     bytes_to_write = int(m_arg_r.group(3))
 
-                    instruction_list[-1].event_args.append(
-                        event_class.EventArg(len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write)
+                    event_arg = event_class.EventArg(
+                        len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write
                     )
+                    instruction_list[-1].event_args.append(event_arg)
                 else:
                     raise NumericEmevdError(
                         lineno,

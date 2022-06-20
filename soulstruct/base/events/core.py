@@ -76,11 +76,11 @@ def convert_events(
     if missing:
         raise FileNotFoundError(f"Could not find EMEVD sources for: {missing}.")
     for name, source in emevd_sources.items():
-        dcx_magic = emevd_class.DCX_MAGIC if output_type == "emevd.dcx" else ()
+        dcx_type = emevd_class.DCX_TYPE if output_type == "emevd.dcx" else ()
         output_path = output_directory / (name + output_ext)
         name_stem = name.split(".")[0]
         try:
-            emevd = emevd_class(source, dcx_magic=dcx_magic, script_directory=input_directory)
+            emevd = emevd_class(source, dcx_type=dcx_type, script_directory=input_directory)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}: {str(ex)}")
         for merge_source in tuple(merge_emevd_sources):

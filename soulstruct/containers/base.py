@@ -1,7 +1,7 @@
 """NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
-__all__ = ["BinderError", "BaseBinder", "BinderHashTable"]
+__all__ = ["BinderFlags", "BinderError", "BaseBinder", "BinderHashTable"]
 
 import abc
 import io
@@ -12,6 +12,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.base.binder_entry import BinderEntry
+from soulstruct.containers.dcx import DCXType
 from soulstruct.utilities.binary import BinaryReader, BinaryStruct, BinaryWriter
 from soulstruct.utilities.files import read_json, write_json
 
@@ -101,7 +102,7 @@ class BaseBinder(GameFile, abc.ABC):
         "flags",
         "big_endian",
         "bit_big_endian",
-        "dcx_magic",
+        "dcx_type",
     )
     BinderEntry = BinderEntry  # for convenience
 
@@ -110,13 +111,13 @@ class BaseBinder(GameFile, abc.ABC):
     big_endian: bool
     bit_big_endian: bool
 
-    def __init__(self, file_source: GameFile.Typing = None, dcx_magic=(), **kwargs):
+    def __init__(self, file_source: GameFile.Typing = None, dcx_type=None, **kwargs):
         self.signature = ""
         self.flags = BinderFlags(0)  # no other sensible default
         self.big_endian = False
         self.bit_big_endian = False
         self._entries = []  # type: list[BinderEntry]
-        super().__init__(file_source, dcx_magic=dcx_magic, **kwargs)
+        super().__init__(file_source, dcx_type=dcx_type, **kwargs)
 
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
         """A Binder can also be loaded from a `binder_manifest.json` file or a directory containing such a file, or
@@ -207,8 +208,8 @@ class BaseBinder(GameFile, abc.ABC):
         for field in cls.MANIFEST_FIELDS:
             if field == "flags":
                 value = BinderFlags(manifest[field])
-            elif field == "dcx_magic":
-                value = tuple(manifest["dcx_magic"])
+            elif field == "dcx_type":
+                value = DCXType(manifest["dcx_type"])
             else:
                 value = manifest[field]
             loaded_manifest[field] = value

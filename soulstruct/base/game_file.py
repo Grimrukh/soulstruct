@@ -12,10 +12,13 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.exceptions import InvalidGameFileTypeError, GameFileDictSupportError
-from soulstruct.containers.dcx import DCX
+from soulstruct.containers.dcx import DCXType, compress, decompress
 from soulstruct.utilities.binary import BinaryReader, get_blake2b_hash
 from soulstruct.utilities.files import create_bak, read_json, write_json
 from .binder_entry import BinderEntry
+
+if tp.TYPE_CHECKING:
+    from soulstruct.games import Game
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,6 +29,7 @@ T = tp.TypeVar("T", bound="GameFile")
 class GameFile(abc.ABC):
     """Python structure for a file in a FromSoftware game installation."""
 
+    GAME: Game = None  # mixed in by game-specific classes
     EXT = ""  # if given, this file extension will be enforced (before DCX is checked) when calling `.write()`
     Typing = tp.Union[str, Path, bytes, BinderEntry, io.BufferedIOBase, BinaryReader]  # all globally valid source types
     Types = (str, Path, bytes, io.BufferedIOBase, BinaryReader)
@@ -33,7 +37,7 @@ class GameFile(abc.ABC):
     def __init__(
         self,
         file_source: Typing = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type: DCXType = None,
         **kwargs,
     ):
         """Base class for a game file, with key methods and automatic DCX detection.
@@ -41,13 +45,13 @@ class GameFile(abc.ABC):
         Args:
             file_source (None, str, Path, bytes, BufferedIOBase): a file path, `bytes` object, or binary stream to load
                 the file from. It will be checked for DCX first. Set to None (default) to create a default instance.
-            dcx_magic (None, tuple): optional pair of DCX magic values to manually specify the DCX. Only permitted for
+            dcx_type (DCXType): optional DCX compression type enum to manually specify the DCX. Only permitted for
                 `file_source` values that are not already DCX-compressed. (If you want to change the DCX for some
-                reason, set `.dcx_magic` directly after the instance is created.)
+                reason, set `.dcx_type` directly after the instance is created.)
             kwargs: keyword arguments to pass on to `unpack` for buffered sources.
         """
-        self._dcx_magic = ()
-        self.dcx_magic = dcx_magic
+        self._dcx_type = None
+        self.dcx_type = dcx_type  # run through setter
 
         self.path = None  # type: tp.Optional[Path]
 
@@ -76,11 +80,11 @@ class GameFile(abc.ABC):
                 raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
 
         if self._is_dcx(reader):
-            if self.dcx_magic:
+            if self.dcx_type:
                 reader.close()
-                raise ValueError("Cannot manually set `dcx_magic` before reading a DCX file source.")
+                raise ValueError("Cannot manually set `dcx_type` before reading a DCX file source.")
             try:
-                data, self.dcx_magic = DCX.get_data_and_magic(reader)
+                data, self.dcx_type = decompress(reader)
             finally:
                 reader.close()
             reader = BinaryReader(data)
@@ -132,9 +136,9 @@ class GameFile(abc.ABC):
         """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
 
     def pack_dcx(self, **kwargs) -> bytes:
-        """Call `pack()` and apply DCX compression to binary data, if appropriate, based on `self.dcx_magic`."""
-        if self.dcx_magic:
-            return DCX(self.pack(**kwargs), magic=self.dcx_magic).pack()
+        """Call `pack()` and apply DCX compression to binary data, if appropriate, based on `self.dcx_type`."""
+        if self._dcx_type:
+            return compress(self.pack(**kwargs), self._dcx_type)
         return self.pack(**kwargs)
 
     def to_dict(self, **kwargs) -> dict:
@@ -147,7 +151,7 @@ class GameFile(abc.ABC):
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
         already exist.
 
-        Will compress with DCX automatically and add `.dcx` file extension if `.dcx_magic` is defined. Will also
+        Will compress with DCX automatically and add `.dcx` file extension if `.dcx_type` is not None. Will also
         automatically create a `.bak` version of the `file_path`, if a backup does not already exist.
 
         Args:
@@ -195,7 +199,7 @@ class GameFile(abc.ABC):
         return copy.deepcopy(self)
 
     def _get_file_path(self, file_path: tp.Union[None, str, Path]) -> Path:
-        """Get default path of binary file, based on `EXT` and `dcx_magic`."""
+        """Get default path of binary file, based on `EXT` and `dcx_type`."""
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
@@ -210,49 +214,43 @@ class GameFile(abc.ABC):
         if self.EXT and file_path.suffix != self.EXT:
             file_path = file_path.with_suffix(file_path.suffix + self.EXT)
 
-        # 3. If `dcx_magic` is given, add ".dcx" extension to the path.
-        if self.dcx_magic and not file_path.suffix == ".dcx":
+        # 3. If `dcx_type` is given, add ".dcx" extension to the path.
+        if self.dcx_type and not file_path.suffix == ".dcx":
             file_path = file_path.with_suffix(file_path.suffix + ".dcx")  # add ".dcx"
 
         return file_path
 
     @staticmethod
     def _is_dcx(reader: BinaryReader) -> bool:
-        """Checks if file data starts with "DCX" magic."""
-        with reader.temp_offset(offset=0):
-            return reader.read(4) == b"DCX\0"
+        """Checks if file data starts with DCX (or DCP) magic."""
+        return reader.unpack_value("4s", offset=0) in {b"DCP\0", b"DCX\0"}
 
     @property
-    def dcx_magic(self):
-        return self._dcx_magic
+    def dcx_type(self):
+        return self._dcx_type
 
-    @dcx_magic.setter
-    def dcx_magic(self, value: tp.Optional[tuple[int, int]]):
-        try:
-            # Pair of DCX magic values, or empty tuple to not use DCX.
-            value = tuple(value) if value is not None else ()
-            if value:
-                if len(value) != 2:
-                    raise ValueError(f"Expected DXC `dcx_magic` to be a sequence of two integers.")
-                if value[0] not in {36, 68}:
-                    raise ValueError(f"Expected `dcx_magic[0]` (header offset 0x16) to be 36 or 68, not {value[0]}.")
-                if value[1] not in {44, 76}:
-                    raise ValueError(f"Expected `dcx_magic[1]` (header offset 0x1a) to be 44 or 76, not {value[1]}.")
-        except (ValueError, TypeError):
-            raise ValueError(f"`dcx_magic` should be empty (or None) or a sequence of two integers, not {value}.")
-        self._dcx_magic = value
+    @dcx_type.setter
+    def dcx_type(self, value: DCXType):
+        """Set `dcx_type to `value`, which must be a `DCXType` or `None`."""
+        if value is None or value == DCXType.Null:
+            self._dcx_type = None
+        elif isinstance(value, DCXType):
+            self._dcx_type = value
+        else:
+            raise ValueError(f"`dcx_type` must be `DCXType` or None, not {value}.")
+        self._dcx_type = value
 
     @classmethod
-    def from_bak(cls: tp.Type[T], game_file_path: tp.Union[Path, str], dcx_magic=(), create_bak_if_missing=True) -> T:
+    def from_bak(cls: tp.Type[T], game_file_path: tp.Union[Path, str], dcx_type=None, create_bak_if_missing=True) -> T:
         """Looks for a `.bak` version of the given path to open preferentially, or optionally creates it if missing."""
         game_file_path = Path(game_file_path)
         bak_path = game_file_path.with_name(game_file_path.name + ".bak")
         if bak_path.is_file():
-            game_file = cls(bak_path, dcx_magic=dcx_magic)
+            game_file = cls(bak_path, dcx_type=dcx_type)
             game_file.path = game_file.path.with_suffix("")  # remove ".bak" extension
             return game_file
         else:
-            game_file = cls(game_file_path, dcx_magic=dcx_magic)
+            game_file = cls(game_file_path, dcx_type=dcx_type)
             if create_bak_if_missing:
                 create_bak(game_file_path)
             return game_file

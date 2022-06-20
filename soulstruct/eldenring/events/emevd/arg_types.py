@@ -70,6 +70,7 @@ INSTRUCTION_ARG_TYPES = {
         26: "bBi",
         27: "bIBbf",
         28: "bIiB",
+        31: "bIII",  # TODO: New
         34: "bIhbbf",
     },
     5: {0: "bBibf", 1: "bii", 2: "bi", 3: "bibi", 9: "biBBbf", 10: "biBbf", 11: "biBbf"},
@@ -184,6 +185,7 @@ INSTRUCTION_ARG_TYPES = {
         10: "iIIbbfbbb",  # TODO: +4. Play Cutscene to Player and Change Current Map Ceremony
         11: "iIIIiIBBBB",  # TODO: Changed (Play Ongoing Cutscene and Warp Player). Six extra bytes.
         12: "iIiIIIBBBBfBB",  # TODO: +12. Play Cutscene and Warp Player + UNKNOWN 2002[12]
+        13: "iIIIIII",  # TODO: New.
     },
     2003: {
         1: "iiBB",
@@ -197,7 +199,7 @@ INSTRUCTION_ARG_TYPES = {
         9: "i",
         10: "h",
         11: "bihi",
-        12: "i",
+        12: "iI",  # TODO: +4.
         13: "iIB",
         14: "BBBBii",  # TODO: +4. Warp Player. Probably accepts map CC and DD.
         15: "i",
@@ -256,7 +258,7 @@ INSTRUCTION_ARG_TYPES = {
         73: "BB",
         74: "iB",
         75: "BB",
-        76: "B",
+        76: "BIIII",  # TODO: New.
         77: "HHi",
         78: "i",
         79: "B",
@@ -324,6 +326,8 @@ INSTRUCTION_ARG_TYPES = {
         59: "IB",
         60: "B",
 
+        68: "III",  # TODO: New.
+        73: "II",  # TODO: New.
         74: "IbIiIbb",  # TODO: New.
         75: "Ibi",  # TODO: New.
         76: "Ii",  # TODO: New.

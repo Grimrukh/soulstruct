@@ -12,6 +12,8 @@ __all__ = [
     "SEKIRO_PATH",
     "ELDEN_RING_PATH",
 
+    "PARAMDEX_PATH",
+
     "GET_CONFIG",
     "SET_CONFIG",
 ]
@@ -36,8 +38,9 @@ _CONFIG_DEFAULTS = {
     "DS2_SOTFS_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls II Scholar of the First Sin\Game",
     "BB_PATH": r"C:\Bloodborne\dvdroot_ps4",
     "DS3_PATH": _DEFAULT_STEAM_PATH + r"\DARK SOULS III\Game",
-    "SEKIRO_PATH": _DEFAULT_STEAM_PATH + r"\Sekiro",
+    "SEKIRO_PATH": _DEFAULT_STEAM_PATH + r"\Sekiro",  # TODO: 'Game'?
     "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH + r"\ELDEN RING\Game",
+    "PARAMDEX_PATH": "",  # will default to PACKAGE_PATH
 }
 
 
@@ -113,3 +116,4 @@ BB_PATH = __config.get("BB_PATH")
 DS3_PATH = __config.get("DS3_PATH")
 SEKIRO_PATH = __config.get("SEKIRO_PATH")
 ELDEN_RING_PATH = __config.get("ELDEN_RING_PATH")
+PARAMDEX_PATH = __config.get("PARAMDEX_PATH")

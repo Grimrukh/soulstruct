@@ -2,6 +2,7 @@
 
 __all__ = ["EMEVD", "Event", "EventArg", "EventLayers", "Instruction"]
 
+from soulstruct.containers.dcx import DCXType
 from soulstruct.darksouls1ptde.events.emevd.core import (
     EMEVD as _BaseEMEVD,
     Event as _BaseEvent,
@@ -30,4 +31,4 @@ class EMEVD(_BaseEMEVD):
     Event = Event
     EVS_PARSER = EVSParser
     IMPORT_STRING = "soulstruct.darksouls1r.events"
-    DCX_MAGIC = (36, 44)
+    DCX_TYPE = DCXType.DCX_DFLT_10000_24_9

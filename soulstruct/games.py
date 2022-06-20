@@ -28,6 +28,8 @@ __all__ = [
     "DARK_SOULS_3",
     "DarkSouls3Type",
     "SEKIRO",
+    "ELDEN_RING",
+    "EldenRingType",
 ]
 
 import abc
@@ -36,6 +38,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.config import *
+from soulstruct.containers.dcx import DCXType
 from soulstruct.utilities.files import PACKAGE_PATH
 
 
@@ -47,7 +50,7 @@ class Game:
         name: str,
         subpackage_name=None,
         aliases=(),
-        uses_dcx=True,
+        default_dcx: DCXType = None,
         bundled_paramdef_path=Path(),
         steam_appid=None,
         default_game_path="",
@@ -61,7 +64,7 @@ class Game:
         self.name = name
         self.submodule_name = subpackage_name
         self.aliases = aliases
-        self.uses_dcx = uses_dcx
+        self.default_dcx = default_dcx
         self.bundled_paramdef_path = bundled_paramdef_path
         self.steam_appid = steam_appid
         self.default_game_path = default_game_path
@@ -74,11 +77,11 @@ class Game:
         # TODO: Soulstruct event import shortcut functions, etc.
 
     def dcxify(self, path: tp.Union[str, Path]) -> Path:
-        """Append or remove ".dcx" to/from given path according to `.uses_dcx`."""
+        """Append or remove ".dcx" to/from given path according to `.default_dcx`."""
         path = Path(path)
-        if not self.uses_dcx and path.suffix == ".dcx":
+        if not self.default_dcx and path.suffix == ".dcx":
             return path.with_name(path.stem)
-        elif self.uses_dcx and not path.suffix == ".dcx":
+        elif self.default_dcx and not path.suffix == ".dcx":
             return path.with_name(path.name + ".dcx")
         return path
 
@@ -105,7 +108,7 @@ DEMONS_SOULS = Game(
     "DEMONS_SOULS",
     "Demon's Souls",
     aliases=("demonssouls", "des"),
-    uses_dcx=False,
+    default_dcx=DCXType.DCX_EDGE,
     default_game_path=DES_PATH,
     executable_name="EBOOT.BIN",
 )
@@ -119,7 +122,7 @@ DEMONS_SOULS_REMAKE = Game(
     "DEMONS_SOULS_REMAKE",
     "Demon's Souls Remake",
     aliases=("demonssoulsremake", "desr"),
-    uses_dcx=False,  # TODO: Unknown.
+    default_dcx=None,  # TODO: Unknown.
     default_game_path=DESR_PATH,
 )
 
@@ -133,7 +136,7 @@ DARK_SOULS_PTDE = Game(
     "Dark Souls Prepare to Die Edition",
     subpackage_name="darksouls1ptde",
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
-    uses_dcx=False,
+    default_dcx=None,
     bundled_paramdef_path=PACKAGE_PATH("darksouls1ptde/params/resources/darksouls1ptde.paramdefbnd"),
     steam_appid=211420,
     default_game_path=PTDE_PATH,
@@ -163,7 +166,7 @@ DARK_SOULS_DSR = Game(
     "Dark Souls Remastered",
     subpackage_name="darksouls1r",
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_DFLT_10000_24_9,
     bundled_paramdef_path=PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
     steam_appid=570940,
     default_game_path=DSR_PATH,
@@ -193,7 +196,7 @@ DARK_SOULS_2 = Game(
     "Dark Souls II",
     subpackage_name="darksouls2",
     aliases=("darksouls2", "ds2", "dks2"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_PATH,
 )
 
@@ -207,7 +210,7 @@ DARK_SOULS_2_SOTFS = Game(
     "Dark Souls II Scholar of the First Sin",
     subpackage_name="darksouls2",  # TODO: Currently identical to DS2.
     aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_SOTFS_PATH,
 )
 
@@ -221,7 +224,7 @@ BLOODBORNE = Game(
     "Bloodborne",
     subpackage_name="bloodborne",
     aliases=("bloodborne", "bb"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_DFLT_10000_44_9,
     bundled_paramdef_path=PACKAGE_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
     steam_appid=None,
     default_game_path=BB_PATH,
@@ -248,7 +251,7 @@ DARK_SOULS_3 = Game(
     "Dark Souls III",
     subpackage_name="darksouls3",
     aliases=("darksouls3", "ds3", "dks3"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_DFLT_10000_44_9,
     default_game_path=DS3_PATH,
     executable_name="DarkSoulsIII.exe",
 )
@@ -262,7 +265,7 @@ SEKIRO = Game(
     "SEKIRO",
     "Sekiro",
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_KRAK,
     default_game_path=SEKIRO_PATH,
 )
 
@@ -275,8 +278,9 @@ ELDEN_RING = Game(
     "ELDEN_RING",
     "Elden Ring",
     aliases=("eldenring", "er"),
-    uses_dcx=True,
+    default_dcx=DCXType.DCX_KRAK,
     default_game_path=ELDEN_RING_PATH,
+    executable_name="ELDENRING.exe",
 )
 
 

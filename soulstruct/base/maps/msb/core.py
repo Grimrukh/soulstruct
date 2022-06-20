@@ -9,6 +9,7 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.containers.dcx import DCXType
 from soulstruct.games import GameSpecificType
 from soulstruct.game_types.msb_types import *
 from soulstruct.utilities.binary import BinaryReader
@@ -93,14 +94,14 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
     def __init__(
         self,
         msb_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader] = None,
-        dcx_magic: tuple[int, int] = None,
+        dcx_type: DCXType = None,
     ):
         self.models = self.MODEL_LIST_CLASS()
         self.events = self.EVENT_LIST_CLASS()
         self.regions = self.REGION_LIST_CLASS()
         self.parts = self.PART_LIST_CLASS()
-        self.dcx_magic = ()
-        super().__init__(msb_source, dcx_magic=dcx_magic)
+        self.dcx_type = None  # MSB files never use DCX
+        super().__init__(msb_source, dcx_type=dcx_type)
 
     def unpack(self, msb_reader: BinaryReader, **kwargs):
         """Unpack an MSB from the given reader."""

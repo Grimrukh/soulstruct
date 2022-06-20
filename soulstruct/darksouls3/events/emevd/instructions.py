@@ -1848,7 +1848,7 @@ def DefineLabel(label: tp.Union[Label, int]):
 
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     move_to_region: RegionTyping,
     move_to_map: MapTyping,
     player_id: int,
@@ -1867,7 +1867,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     )
 
 
-def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneType, player_id: int, time_period_id: int):
+def PlayCutsceneAndSetTimePeriod(cutscene: int, cutscene_type: CutsceneFlags, player_id: int, time_period_id: int):
     """Probably used when you examine Laurence's skull, etc."""
     instruction_info = (2002, 7, [-1, 0, -1, 0])
     return to_numeric(instruction_info, cutscene, cutscene_type, player_id, time_period_id)
@@ -1882,7 +1882,7 @@ def PlayCutsceneAndMovePlayer_Dummy(move_to_region: RegionTyping, move_to_map: M
 
 def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     ceremony_id: int,
     unknown: int,
     move_to_region: RegionTyping,
@@ -1901,7 +1901,7 @@ def PlayCutsceneAndMovePlayerAndSetMapCeremony(
 
 
 def PlayCutsceneAndSetMapCeremony(
-    cutscene: int, cutscene_type: CutsceneType, ceremony_id: int, unknown: int, player_id: int
+    cutscene: int, cutscene_type: CutsceneFlags, ceremony_id: int, unknown: int, player_id: int
 ):
     instruction_info = (2002, 10, [-1, 0, -1, 0])
     return to_numeric(instruction_info, cutscene, cutscene_type, ceremony_id, unknown, player_id)
@@ -1909,7 +1909,7 @@ def PlayCutsceneAndSetMapCeremony(
 
 def PlayCutsceneAndMovePlayer_WithUnknowns(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     move_to_region: RegionTyping,
     move_to_map: MapTyping,
     player_id: int,
@@ -1926,7 +1926,7 @@ def PlayCutsceneAndMovePlayer_WithUnknowns(
 
 def PlayCutsceneAndMovePlayer_WithSecondRegion(
     cutscene: int,
-    cutscene_type: CutsceneType,
+    cutscene_type: CutsceneFlags,
     move_to_region: RegionTyping,
     move_to_map: MapTyping,
     player_id: int,

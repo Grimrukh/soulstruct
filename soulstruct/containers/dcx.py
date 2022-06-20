@@ -1,135 +1,234 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
+"""NOTE: This file is Python 3.9 compatible for Blender 3.X use.
 
-import io
+This module originally used a `DCX` class, but I changed it to static functions to avoid the unnecessary OOP confusion
+when loading files, since `DCX(data).pack()` and `DCX(path).data` were the most common use cases anyway.
+"""
+from __future__ import annotations
+
+__all__ = [
+    "DCXType",
+    "compress",
+    "decompress",
+]
+
 import logging
 import zlib
-import typing as tp
-from pathlib import Path
+from enum import Enum
 
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.containers import oodle
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ReadableTyping
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class DCX:
-
-    # TODO: Support types of DCX other than DCP-DFLT.
-
-    # NOTE: completely big-endian.
-    HEADER_STRUCT = BinaryStruct(
-        ("dcx_name", "4s", b"DCX\0"),
-        ("unk1", "i", 65536),
-        ("unk2", "i", 24),
-        ("unk3", "i", 36),
-        ("magic", "2i"),  # Differs between games.
-        ("dcs_name", "4s", b"DCS\0"),
-        ("decompressed_size", "I"),
-        ("compressed_size", "I"),
-        ("dcp_name", "4s", b"DCP\0"),
-        ("dflt_name", "4s", b"DFLT"),
-        ("unk4", "6i", (32, 150994944, 0, 0, 0, 65792)),
-        ("dca_name", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),  # TODO: asserting for now, haven't come across any variation
-        byte_order=">",
-    )
-
-    def __init__(self, dcx_source=None, magic=()):
-        """Open a ".dcx" file, which is a compressed version of any FromSoftware file type (e.g. a BND).
-
-        Use `.data` to get the `bytes` of the uncompressed file within. The `.magic` attribute specifies information
-        about the DCX header.
-
-        Note that the `GameFile` base class handles DCX automatically.
-        """
-
-        self.dcx_path = None
-        self.data = b""
-        self._magic = ()
-        self.magic = magic
-
-        if dcx_source is None:
-            return
-        elif isinstance(dcx_source, (str, Path)):
-            self.dcx_path = Path(dcx_source)
-        elif isinstance(dcx_source, bytes):
-            if not self.magic:
-                raise ValueError(f"If `dcx_source` is a `bytes` object, DCX `magic` must be given.")
-            self.data = dcx_source
-            return
-
-        if isinstance(dcx_source, (str, Path, io.BufferedIOBase, BinaryReader)):
-            self.unpack(BinaryReader(dcx_source))
-        else:
-            raise TypeError(f"Invalid DCX source type: {type(dcx_source)}")
-
-    def unpack(self, dcx_reader: BinaryReader):
-        if self.magic:
-            raise ValueError("`DCX.magic` cannot be set manually before unpack.")
-        header = dcx_reader.unpack_struct(self.HEADER_STRUCT)
-        self.magic = header["magic"]
-        compressed = dcx_reader.read().rstrip(b"\0")  # Nulls stripped from the end.
-        if len(compressed) != header["compressed_size"]:
-            # No error raised. This happens in some files.
-            file_path = f" {self.dcx_path}" if self.dcx_path else ""
-            _LOGGER.warning(
-                f"Compressed data size ({len(compressed)}) does not match size in header "
-                f"({header['compressed_size']}) in DCX-compressed file{file_path}."
-            )
-        self.data = zlib.decompressobj().decompress(compressed)
-        if len(self.data) != header["decompressed_size"]:
-            raise ValueError("Decompressed data size does not match size in header.")
-
-    def pack(self):
-        compressed = zlib.compress(self.data, level=7)
-        header = self.HEADER_STRUCT.pack(
-            {
-                "magic": self.magic,
-                "decompressed_size": len(self.data),
-                "compressed_size": len(compressed),
-            }
-        )
-        return header + compressed
-
-    def write_packed(self, dcx_path=None):
-        if dcx_path is None:
-            if self.dcx_path is None:
-                raise ValueError("DCX path cannot be determined automatically.")
-            dcx_path = self.dcx_path
-        packed = self.pack()
-        with open(dcx_path, "wb") as file:
-            file.write(packed)
-
-    def write_unpacked(self, data_path=None):
-        if data_path is None:
-            if self.dcx_path is None:
-                raise ValueError("DCX path cannot be determined automatically.")
-            data_path = self.dcx_path.parent / self.dcx_path.stem
-        else:
-            data_path = Path(data_path)
-        with data_path.open("wb") as file:
-            file.write(self.data)
+class DCXType(Enum):
+    Unknown = -1  # could not be detected
+    Null = 0  # no compression
+    Zlib = 1  # not really DCX but supported
+    DCP_EDGE = 2  # DCP header, chunked deflate compression. Used in ACE:R TPFs.
+    DCP_DFLT = 3  # DCP header, deflate compression. Used in DeS test maps.
+    DCX_EDGE = 4  # DCX header, chunked deflate compression. Primarily used in DeS.
+    DCX_DFLT_10000_24_9 = 5  # DCX header, deflate compression. Primarily used in DS1 and DS2.
+    DCX_DFLT_10000_44_9 = 6  # DCX header, deflate compression. Primarily used in BB and DS3.
+    DCX_DFLT_11000_44_8 = 7  # DCX header, deflate compression. Used for the backup regulation in DS3 save files.
+    DCX_DFLT_11000_44_9 = 8  # DCX header, deflate compression. Used in Sekiro.
+    DCX_DFLT_11000_44_9_15 = 9  # DCX header, deflate compression. Used in the ER regulation.
+    DCX_KRAK = 10  # DCX header, Oodle compression. Used in Sekiro and Elden Ring.
 
     @classmethod
-    def get_data_and_magic(cls, dcx_source):
-        dcx = cls(dcx_source)
-        return dcx.data, dcx.magic
+    def detect(cls, reader: BinaryReader) -> DCXType:
+        """Detect type of DCX. Resets offset when done."""
+        old_offset = reader.tell()
 
-    @property
-    def magic(self):
-        return self._magic
+        dcx_type = cls.Unknown
 
-    @magic.setter
-    def magic(self, value: tp.Optional[tuple[int, int]]):
-        try:
-            # Pair of DCX magic values, or empty tuple to not use DCX.
-            value = tuple(value) if value is not None else ()
-            if value:
-                if len(value) != 2:
-                    raise ValueError(f"Expected DXC `magic` to be a sequence of two integers.")
-                if value[0] not in {36, 68}:
-                    raise ValueError(f"Expected DCX `magic[0]` (header offset 0x16) to be 36 or 68, not {value[0]}.")
-                if value[1] not in {44, 76}:
-                    raise ValueError(f"Expected DCX `magic[1]` (header offset 0x1a) to be 44 or 76, not {value[1]}.")
-        except (ValueError, TypeError):
-            raise ValueError(f"`magic` should be empty (or None) or a sequence of two integers, not {value}.")
-        self._magic = value
+        magic = reader.unpack_value("4s")
+        if magic == b"DCP\0":  # rare, only for older games and DeS test maps
+            # Possible file pattern for DFLT or EDGE compression.
+            dcx_fmt = reader.unpack_value("4s", offset=4)
+            if dcx_fmt == b"DCP\0":
+                dcx_type = cls.DCP_DFLT
+            elif dcx_fmt == b"EDGE":
+                dcx_type = cls.DCP_EDGE
+        elif magic == b"DCX\0":
+            dcx_fmt = reader.unpack_value("4s", offset=0x28)
+            if dcx_fmt == b"EDGE":
+                dcx_type = cls.DCX_EDGE
+            elif dcx_fmt == b"DFLT":
+                # Check four unknown header fields to determine DFLT subtype.
+                unk04 = reader.unpack_value("i", offset=0x4)
+                unk10 = reader.unpack_value("i", offset=0x10)
+                unk30 = reader.unpack_value("i", offset=0x30)
+                unk38 = reader.unpack_value("B", offset=0x38)
+                if unk10 == 0x24:
+                    dcx_type = cls.DCX_DFLT_10000_24_9
+                elif unk10 == 0x44:
+                    if unk04 == 0x10000:
+                        dcx_type = cls.DCX_DFLT_10000_44_9
+                    elif unk04 == 0x11000:
+                        if unk30 == 0x8000000:
+                            dcx_type = cls.DCX_DFLT_11000_44_8
+                        elif unk30 == 0x9000000:
+                            if unk38 == 15:
+                                dcx_type = cls.DCX_DFLT_11000_44_9_15
+                            elif unk38 == 0:
+                                dcx_type = cls.DCX_DFLT_11000_44_9
+            elif dcx_fmt == b"KRAK":  # requires `oo2core_6_win64.dll`
+                dcx_type = cls.DCX_KRAK
+        else:
+            b0 = reader.unpack_value("B", offset=0)
+            b1 = reader.unpack_value("B", offset=1)
+            if b0 == 0x78 and (b1 in {0x01, 0x5E, 0x9C, 0xDA}):
+                dcx_type = cls.Zlib
+
+        reader.seek(old_offset)
+        return dcx_type
+
+
+# Maps DCX types to their expected header `BinaryStruct`s.
+DCX_HEADER_STRUCTS = {
+    DCXType.DCP_DFLT: BinaryStruct(
+        ("type", "4s", b"DCP\0"),
+        ("subtype", "4s", b"DFLT"),
+        ("unks", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "i"),
+        ("compressed_size", "i"),
+        byte_order=">",
+    ),
+    # TODO: DCP_EDGE
+    # TODO: DCX_EDGE
+    DCXType.DCX_DFLT_10000_24_9: BinaryStruct(
+        ("type", "4s", b"DCX\0"),
+        ("unks1", "5i", (0x10000, 0x18, 0x24, 0x24, 0x2C)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "i"),
+        ("compressed_size", "i"),
+        ("dcp", "4s", b"DCP\0"),
+        ("dflt", "4s", b"DFLT"),
+        ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
+        ("dca", "4s", b"DCA\0"),
+        ("compressed_header_size", "i", 8),
+        byte_order=">",
+    ),
+    DCXType.DCX_DFLT_10000_44_9: BinaryStruct(
+        ("type", "4s", b"DCX\0"),
+        ("unks1", "5i", (0x10000, 0x18, 0x24, 0x44, 0x4C)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "i"),
+        ("compressed_size", "i"),
+        ("dcp", "4s", b"DCP\0"),
+        ("dflt", "4s", b"DFLT"),
+        ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
+        ("dca", "4s", b"DCA\0"),
+        ("compressed_header_size", "i", 8),
+        byte_order=">",
+    ),
+    DCXType.DCX_DFLT_11000_44_8: BinaryStruct(
+        ("type", "4s", b"DCX\0"),
+        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "i"),
+        ("compressed_size", "i"),
+        ("dcp", "4s", b"DCP\0"),
+        ("dflt", "4s", b"DFLT"),
+        ("unks2", "6i", (0x20, 0x8000000, 0, 0, 0, 0x10100)),
+        ("dca", "4s", b"DCA\0"),
+        ("compressed_header_size", "i", 8),
+        byte_order=">",
+    ),
+    DCXType.DCX_DFLT_11000_44_9: BinaryStruct(
+        ("type", "4s", b"DCX\0"),
+        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "i"),
+        ("compressed_size", "i"),
+        ("dcp", "4s", b"DCP\0"),
+        ("dflt", "4s", b"DFLT"),
+        ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
+        ("dca", "4s", b"DCA\0"),
+        ("compressed_header_size", "i", 8),
+        byte_order=">",
+    ),
+    DCXType.DCX_DFLT_11000_44_9_15: BinaryStruct(
+        ("type", "4s", b"DCX\0"),
+        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "i"),
+        ("compressed_size", "i"),
+        ("dcp", "4s", b"DCP\0"),
+        ("dflt", "4s", b"DFLT"),
+        ("unks2", "6i", (0x20, 0x9000000, 0, 0xF000000, 0, 0x10100)),
+        ("dca", "4s", b"DCA\0"),
+        ("compressed_header_size", "i", 8),
+        byte_order=">",
+    ),
+
+    DCXType.DCX_KRAK: BinaryStruct(
+        ("type", "4s", b"DCX\0"),
+        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
+        ("dcs", "4s", b"DCS\0"),
+        ("decompressed_size", "I"),
+        ("compressed_size", "I"),
+        ("dcp", "4s", b"DCP\0"),
+        ("dflt", "4s", b"KRAK"),
+        ("unks2", "6i", (0x20, 0x6000000, 0, 0, 0, 0x10100)),
+        ("dca", "4s", b"DCA\0"),
+        ("compressed_header_size", "i", 8),
+        byte_order=">",
+    ),
+}
+
+
+# TODO: Add default DCX types to `Game` class instances.
+"""
+DemonsSouls = Type.DCX_EDGE
+DarkSouls1 = Type.DCX_DFLT_10000_24_9
+DarkSouls2 = Type.DCX_DFLT_10000_24_9
+Bloodborne = Type.DCX_DFLT_10000_44_9
+DarkSouls3 = Type.DCX_DFLT_10000_44_9
+Sekiro = Type.DCX_KRAK
+EldenRing = Type.DCX_KRAK
+"""
+
+
+def decompress(dcx_source: ReadableTyping) -> (bytes, DCXType):
+    """Decompress the given file path, raw bytes, or buffer/reader.
+
+    Returns a tuple containing the decompressed `bytes` and a `DCXInfo` instance that can be used to compress later
+    with the same DCX type/parameters.
+    """
+    reader = BinaryReader(dcx_source, byte_order=">")  # always big-endian
+    dcx_type = DCXType.detect(reader)
+
+    if dcx_type == DCXType.Unknown:
+        raise ValueError("Unknown DCX type. Cannot decompress.")
+
+    header = reader.unpack_struct(DCX_HEADER_STRUCTS[dcx_type], byte_order=">")
+    compressed = reader.read(header["compressed_size"])  # TODO: do I need to rstrip nulls?
+
+    if dcx_type == DCXType.DCX_KRAK:
+        decompressed = oodle.decompress(compressed, header["decompressed_size"])
+    else:
+        decompressed = zlib.decompressobj().decompress(compressed)
+
+    if len(decompressed) != header["decompressed_size"]:
+        raise ValueError("Decompressed DCX data size does not match size in header.")
+    return decompressed, dcx_type
+
+
+def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
+    """Compress `raw_data` with DCX of `dcx_type`.
+
+    Returns bytes that are ready to be written to a DCX file.
+    """
+    if dcx_type == DCXType.DCX_KRAK:
+        compressed = oodle.compress(raw_data)  # default compressor and compression level are correct
+    else:
+        compressed = zlib.compress(raw_data, level=7)
+
+    header = DCX_HEADER_STRUCTS[dcx_type].pack(
+        decompressed_size=len(raw_data),
+        compressed_size=len(compressed),
+    )
+    return header + compressed

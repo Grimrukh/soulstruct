@@ -21,7 +21,7 @@ __all__ = [
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
-    "CutsceneType",
+    "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
     "FlagState",
@@ -110,6 +110,7 @@ class CharacterUpdateRate(IntEnum):
     Always = 0
     EveryTwoFrames = 2
     EveryFiveFrames = 5
+    Unknown105 = 105  # TODO: Move to `eldenring`
 
 
 class ClassType(IntEnum):
@@ -143,22 +144,14 @@ class ComparisonType(IntEnum):
     LessThanOrEqual = 5
 
 
-class CutsceneType(IntEnum):
-    """Four-bit field. Unclear what other bits do."""
-    Skippable = 0b0000  # 0
-    Unskippable = 0b0010  # 2
-    SkippableFadeOut = 0b1000  # 8
-    UnskippableFadeOut = 0b1010  # 10
-    UnknownEldenRing = 0b10000  # 16
-
-    def is_skippable(self):
-        return f"{self.value:04b}"[-2] == "0"
-
-    def is_fade_out(self):
-        return f"{self.value:04b}"[-4] == "1"
-
-    def is_unknown_elden_ring(self):
-        return f"{self.value:05b}"[-5] == "1"
+class CutsceneFlags(IntEnum):
+    """Bit flags, stored in one byte."""
+    Unskippable = 0b0000_0010  # 2
+    FadeOut = 0b0000_1000  # 8
+    # TODO: Move these to `eldenring` (or `sekiro` if appropriate)
+    Unknown16 = 0b0001_0000  # 16
+    Unknown32 = 0b0010_0000  # 32
+    Unknown64 = 0b0100_0000  # 64
 
 
 class DamageTargetType(IntEnum):

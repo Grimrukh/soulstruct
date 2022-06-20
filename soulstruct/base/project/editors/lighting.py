@@ -76,12 +76,7 @@ class LightingEditor(BaseFieldEditor):
     def lighting(self) -> DrawParamDirectory:
         return self._project.lighting
 
-    def build(self, super_only=False):
-        if super_only:
-            # TODO: Very hacky.
-            super().build()
-            return
-
+    def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):

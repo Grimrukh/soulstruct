@@ -607,7 +607,7 @@ __all__ = [
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
-    "CutsceneType",
+    "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
     "FlagType",

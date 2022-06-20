@@ -857,7 +857,7 @@ def Event13201803():
     IfConditionTrue(0, input_condition=8)
     EnableFlag(9180)
     WaitFrames(1)
-    PlayCutsceneAndSetTimePeriod(32000000, CutsceneType.Skippable, player_id=PLAYER, time_period_id=3)
+    PlayCutsceneAndSetTimePeriod(32000000, CutsceneFlags.Skippable, player_id=PLAYER, time_period_id=3)
     WaitFrames(1)
     DisableFlag(9180)
     EnableFlag(70002802)

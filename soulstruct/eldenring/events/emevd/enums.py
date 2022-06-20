@@ -25,7 +25,7 @@ __all__ = [
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
-    "CutsceneType",
+    "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
     "FlagState",
@@ -78,22 +78,13 @@ class ArmorType(IntEnum):
 
 
 class BannerType(IntEnum):
-    HeirOfFireDestroyed = 1
+    """TODO: More to add here."""
     YouDied = 2
-    Revival = 3
-    SoulRecovery = 4
-    TargetedDefeated = 5
-    PhantomDeath = 6  # Phantom version of "YOU DIED"
-    BlackPhantomDestroyed = 7
-    AreaName = 8  # Name determined by current floor Collision.
-    BeginMatch = 12
-    HollowArenaDraw = 14
-    HollowArenaWin = 15
-    HollowArenaLoss = 16
-    Unknown = 17
-    DutyFulfilled = 18
-    LordOfCinderFallen = 19
-    UnknownBossDefeat = 22  # Used for Lords of Cinder (including last boss); probably the actual version of the above.
+    HostVanquished = 5
+    BloodyFingerVanquished = 7
+    EnemyFelled = 16
+    GreatEnemyFelled = 17
+    MapFound = 22
 
 
 class CalculationType(IntEnum):

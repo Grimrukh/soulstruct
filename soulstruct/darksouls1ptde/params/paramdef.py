@@ -32,7 +32,7 @@ class ParamDefField(_BaseParamDefField):
         ("minimum", "f"),
         ("maximum", "f"),
         ("increment", "f"),
-        ("edit_type", "i"),
+        ("edit_flags", "i"),
         ("size", "i"),
         ("description_offset", "i"),
         ("internal_type", "32j"),  # could be an enum name (see params.enums)

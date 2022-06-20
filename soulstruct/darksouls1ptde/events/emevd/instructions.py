@@ -611,27 +611,6 @@ def DisableBossHealthBar(character: CharacterTyping, name: NPCNameTyping = 0, sl
 # MISC.
 
 
-def ActivateKillplaneForModel(game_map: MapTyping, y_threshold, target_model_id):
-    """ Not used much. Activates a horizontal killplane that only affects a particular model ID. """
-    instruction_info = (2003, 41)
-    return to_numeric(instruction_info, game_map.area_id, game_map.block_id, y_threshold, target_model_id)
-
-
-def AddSpecialEffect(character: CharacterTyping, special_effect_id: int):
-    """ 'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
-    nothing if the character already has the special effect active (i.e. they do not stack or even reset timers). """
-    instruction_info = (2004, 8)
-    return to_numeric(instruction_info, character, special_effect_id)
-
-
-def RotateToFaceEntity(character: CharacterTyping, target_entity: CoordEntityTyping):
-    """ Rotate a character to face a target map entity of any type.
-    WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at least.)
-    """
-    instruction_info = (2004, 14)
-    return to_numeric(instruction_info, character, target_entity)
-
-
 def RegisterHealingFountain(flag: FlagInt, obj: ObjectTyping):
     """ No idea what this is. Clearly unused. The Bloodborne version has more arguments. """
     instruction_info = (2009, 5)

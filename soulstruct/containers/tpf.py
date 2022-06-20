@@ -13,7 +13,7 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
-from .dcx import DCX
+from .dcx import decompress
 
 
 class TPFPlatform(IntEnum):
@@ -138,9 +138,8 @@ class TPFTexture:
             self.data = reader.read(file_size)
         if self.texture_flags in {2, 3}:
             # Data is DCX-compressed.
-            dcx = DCX(BinaryReader(self.data))
-            # TODO: should enforce DCX type as 'DCP_EDGE'.
-            self.data = dcx.data
+            # TODO: should enforce DCX type as 'DCP_EDGE'?
+            self.data = decompress(self.data)
 
         self.name = reader.unpack_string(offset=name_offset, encoding=encoding)
 

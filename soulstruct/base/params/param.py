@@ -256,7 +256,7 @@ class Param(GameFile, abc.ABC):
 
     rows: dict[int, ParamRow]
 
-    def __init__(self, param_source, dcx_magic=(), paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
+    def __init__(self, param_source, dcx_type=None, paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
         if paramdef_bnd is None:
             self._paramdef_bnd = self.GET_BUNDLED_PARAMDEF()
         elif isinstance(paramdef_bnd, ParamDefBND):
@@ -276,7 +276,7 @@ class Param(GameFile, abc.ABC):
 
         self.rows = {}  # type: dict[int, ParamRow]
 
-        super().__init__(param_source, dcx_magic=dcx_magic)
+        super().__init__(param_source, dcx_type=dcx_type)
 
     def __getitem__(self, row_id):
         if row_id in self.rows:

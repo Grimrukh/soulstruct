@@ -613,7 +613,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     )
                 last_save_version = config.get("LastSaveVersion", "'unknown'")
                 self.game_root = Path(config["GameDirectory"])
-                if game_root and game_root != self.game_root:
+                if game_root and str(game_root) != str(self.game_root):
                     _LOGGER.warning(
                         f"You passed `game_root` {game_root}` to the project, but it already has root "
                         f"{self.game_root}. You should change this in the config JSON directly."
@@ -644,7 +644,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         else:
             # Create project config file.
             if game_root:
-                self.game_root = game_root
+                self.game_root = Path(game_root)
             else:
                 try:
                     self.game_root = self._get_game_root(with_window=with_window)
@@ -677,7 +677,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
 
         return False, False
 
-    def get_game_path_of_data_type(self, data_type, root=None):
+    def get_game_path_of_data_type(self, data_type, root=None) -> Path:
         root = self.game_root if root is None else Path(root)
         data_class_name = self.DATA_TYPES[data_type.lower()].__name__
         try:
