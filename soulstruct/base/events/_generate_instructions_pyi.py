@@ -83,7 +83,7 @@ def generate_instr_pyi(game_module_name: str, emedf_json_path: Path | str, emedf
         if name not in {"COMPILER", "compile_instruction", "get_compile_func"}
     ]
 
-    emedf = read_json(emedf_json_path)
+    common_emedf = read_json(emedf_json_path)
 
     pyi_docstring = (
         "\"\"\"AUTOMATICALLY GENERATED. Do not edit this module.\n"
@@ -101,47 +101,38 @@ def generate_instr_pyi(game_module_name: str, emedf_json_path: Path | str, emedf
 
     pyi_funcs_str = ""
 
-    for cat_cls in emedf["main_classes"]:
-        category = cat_cls["index"]
-        for instr_class in cat_cls["instrs"]:
-            index = instr_class["index"]
-            try:
-                instr_info = emedf_dict[category, index]
-            except KeyError:
-                c_i = f"({category}, {index})"
-                print(f"Instruction {c_i} is not in Soulstruct `EMEDF` dictionary.")
-                continue  # TODO: should raise error once I've mapped all game instructions
-            alias = instr_info["alias"]
-            if alias in compiler_names:
-                # Default function is overridden in `compiler`. Omit def AND partials from PYI.
-                # Should only really occur for `RunEvent` and its kin.
-                pyi_funcs_str += f"\n\n# Instruction `{alias}` is manually defined in the `compiler` module.\n"
-                continue
-            args_dict = {}
-            for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
-                args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
-            args = get_arg_string(args_dict, len(alias))
-            pyi_funcs_str += _DEF_TEMPLATE.format(alias=alias, args=args) + "\n"
-            docstring = instr_info.get("docstring", "TODO")
-            for arg_name, arg_info in args_dict.items():
-                if "comment" in arg_info:
-                    docstring += f"\n{arg_name}: {arg_info['comment']}"
-            pyi_funcs_str += format_docstring(docstring) + "\n"
-            pyi_all_lines.append(f"\"{alias}\",  # {category}[{index}]")
+    for (category, index), instr_info in emedf_dict.items():
+        alias = instr_info["alias"]
+        if alias in compiler_names:
+            # Default function is overridden in `compiler`. Omit def AND partials from PYI.
+            # Should only really occur for `RunEvent` and its kin.
+            pyi_funcs_str += f"\n\n# Instruction `{alias}` is manually defined in the `compiler` module.\n"
+            continue
+        args_dict = {}
+        for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
+            args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
+        args = get_arg_string(args_dict, len(alias))
+        pyi_funcs_str += _DEF_TEMPLATE.format(alias=alias, args=args) + "\n"
+        docstring = instr_info.get("docstring", "TODO")
+        for arg_name, arg_info in args_dict.items():
+            if "comment" in arg_info:
+                docstring += f"\n{arg_name}: {arg_info['comment']}"
+        pyi_funcs_str += format_docstring(docstring) + "\n"
+        pyi_all_lines.append(f"\"{alias}\",  # {category}[{index}]")
 
-            for partial_name, partial_kwargs in instr_info.get("partials", {}).items():
-                partial_args_dict = {
-                    arg_name: arg_info for arg_name, arg_info in args_dict.items()
-                    if arg_name not in partial_kwargs
-                }
-                partial_args = get_arg_string(partial_args_dict, len(partial_name))
-                pyi_funcs_str += _DEF_TEMPLATE.format(alias=partial_name, args=partial_args) + "\n"
-                partial_kwargs_str = ", ".join(f"`{k}={v}`" for k, v in partial_kwargs.items() if k != "__docstring")
-                partial_docstring = f"Calls `{alias}` with {partial_kwargs_str}."
-                if "__docstring" in partial_kwargs:
-                    partial_docstring += f"\n{partial_kwargs['__docstring']}"
-                pyi_funcs_str += format_docstring(partial_docstring) + "\n"
-                pyi_all_lines.append(f"\"{partial_name}\",")
+        for partial_name, partial_kwargs in instr_info.get("partials", {}).items():
+            partial_args_dict = {
+                arg_name: arg_info for arg_name, arg_info in args_dict.items()
+                if arg_name not in partial_kwargs
+            }
+            partial_args = get_arg_string(partial_args_dict, len(partial_name))
+            pyi_funcs_str += _DEF_TEMPLATE.format(alias=partial_name, args=partial_args) + "\n"
+            partial_kwargs_str = ", ".join(f"`{k}={v}`" for k, v in partial_kwargs.items() if k != "__docstring")
+            partial_docstring = f"Calls `{alias}` with {partial_kwargs_str}."
+            if "__docstring" in partial_kwargs:
+                partial_docstring += f"\n{partial_kwargs['__docstring']}"
+            pyi_funcs_str += format_docstring(partial_docstring) + "\n"
+            pyi_all_lines.append(f"\"{partial_name}\",")
 
     pyi_funcs_str += (
         "\n\ndef EnableThisFlag():\n"

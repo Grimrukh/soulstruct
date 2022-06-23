@@ -364,8 +364,8 @@ __all__ = [
     "ActivateKillplaneForModel",  # 2003[41]
     "CopyEventValue",  # 2003[42]
     "Unknown_2003_43",  # 2003[43]
-    "ForceAnimation_2003_44",  # 2003[44]
-    "ForceAnimation_2003_46",  # 2003[46]
+    "ForceAnimation_Unknown_2003_44",  # 2003[44]
+    "ForceAnimation_Unknown_2003_46",  # 2003[46]
     "Unknown_2003_47",  # 2003[47]
     "Unknown_2003_48",  # 2003[48]
     "EraseNPCSummonSign",  # 2003[49]
@@ -490,7 +490,6 @@ __all__ = [
     "ActivateMultiplayerBuffs",  # 2009[4]
     "RegisterHealingFountain",  # 2009[5]
     "NotifyBossBattleStart",  # 2009[6]
-    "SendToScript",  # 2009[7]
     "SetBackgroundMusic",  # 2010[1]
     "PlaySoundEffect",  # 2010[2]
     "SetSoundEventState",  # 2010[3]
@@ -505,6 +504,10 @@ __all__ = [
     "SetMapPieceState",  # 2012[1]
     "EnableMapPiece",
     "DisableMapPiece",
+    "NightfallSendToScript",  # 2009[7]
+    "NightfallSetSpecialMovement",  # 2009[10]
+    "NightfallClearSpecialMovement",  # 2009[11]
+    "NightfallCameraResetRequest",  # 2009[12]
     "EnableThisFlag",
     "DisableThisFlag",
 
@@ -2467,8 +2470,8 @@ def PlayCutsceneAndMoveSpecificPlayer(
 def PlayCutsceneAndRotatePlayer(
     cutscene_id: int,
     cutscene_flags: int,
-    axis_x: float = 0.0,
-    axis_z: float = 0.0,
+    relative_rotation_axis_x: float = 0.0,
+    relative_rotation_axis_z: float = 0.0,
     rotation: float = 0.0,
     vertical_translation: float = 0.0,
     player_id: int = 10000,
@@ -2948,12 +2951,12 @@ def Unknown_2003_43(flag: Flag | int, bit_count: int, unk1: int, unk2: int):
     """
 
 
-def ForceAnimation_2003_44(
+def ForceAnimation_Unknown_2003_44(
     entity: Character | Object | int,
     animation: int,
-    loop: bool = False,
-    wait_for_completion: bool = False,
-    skip_transition: bool = False,
+    loop: bool,
+    wait_for_completion: bool,
+    skip_transition: bool,
     unk1: int,
 ):
     """
@@ -2961,12 +2964,12 @@ def ForceAnimation_2003_44(
     """
 
 
-def ForceAnimation_2003_46(
+def ForceAnimation_Unknown_2003_46(
     entity: Character | Object | int,
     animation: int,
-    loop: bool = False,
-    wait_for_completion: bool = False,
-    skip_transition: bool = False,
+    loop: bool,
+    wait_for_completion: bool,
+    skip_transition: bool,
     unk1: int,
 ):
     """
@@ -3888,12 +3891,6 @@ def NotifyBossBattleStart(dummy: int = 0):
     """
 
 
-def SendToScript(int1: int, int2: int, float1: float, float2: float):
-    """
-    Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`.
-    """
-
-
 def SetBackgroundMusic(
     state: bool,
     slot: int,
@@ -3983,6 +3980,30 @@ def EnableMapPiece(map_piece_id: MapPiece | int):
 def DisableMapPiece(map_piece_id: MapPiece | int):
     """
     Calls `SetMapPieceState` with `state=False`.
+    """
+
+
+def NightfallSendToScript(int1: int, int2: int, float1: float, float2: float):
+    """
+    Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`.
+    """
+
+
+def NightfallSetSpecialMovement(character: Character | int, movement_type: int, is_active: OnOffChange):
+    """
+    Special instruction added by Meowmaritus for initiating [redacted] in Nightfall.
+    """
+
+
+def NightfallClearSpecialMovement():
+    """
+    Special instruction added by Meowmaritus for stopping [redacted] in Nightfall.
+    """
+
+
+def NightfallCameraResetRequest():
+    """
+    Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.
     """
 
 

@@ -386,12 +386,16 @@ EMEDF = PTDE_EMEDF | {
 }
 
 
+# Re-sort dictionary by (category, index) BEFORE adding Nightfall additions.
+EMEDF = {k: EMEDF[k] for k in sorted(EMEDF.keys())}
+
+
 # NIGHTFALL ADDITIONS
 # These require the special Nightfall DLL to work and are here for my dev purposes. They occupy unused instruction
 # indices in category 2009. Do not try to use them yourself!
 EMEDF |= {
     (2009, 7): {
-        "alias": "SendToScript",
+        "alias": "NightfallSendToScript",
         "docstring": "Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`.",
         "args": {
             "int1": INT | {"internal_type": ArgType.s32},

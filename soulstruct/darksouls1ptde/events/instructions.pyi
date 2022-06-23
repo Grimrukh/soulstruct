@@ -2349,8 +2349,8 @@ def PlayCutsceneAndMoveSpecificPlayer(
 def PlayCutsceneAndRotatePlayer(
     cutscene_id: int,
     cutscene_flags: int,
-    axis_x: float = 0.0,
-    axis_z: float = 0.0,
+    relative_rotation_axis_x: float = 0.0,
+    relative_rotation_axis_z: float = 0.0,
     rotation: float = 0.0,
     vertical_translation: float = 0.0,
     player_id: int = 10000,
