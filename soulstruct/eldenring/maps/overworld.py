@@ -426,7 +426,7 @@ __all__ = [
     "NORTHEAST_ALTUS_PLATEAU_ASHEN_SW_SE",
 ]
 
-from soulstruct.game_types.msb_types import Map
+from soulstruct.darksouls1ptde.game_types.map_types import Map
 import typing as tp
 
 

@@ -8,7 +8,7 @@ import typing as tp
 
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.game_types import GameObject, GameObjectSequence, PlaceName, BaseLightingParam, ObjActParam
-from soulstruct.game_types.msb_types import *
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.base.maps.msb.enums import *
 from soulstruct.base.maps.msb.models import MSBModel
 from soulstruct.base.project.utilities import (

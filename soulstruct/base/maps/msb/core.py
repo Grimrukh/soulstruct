@@ -11,19 +11,17 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers.dcx import DCXType
 from soulstruct.games import GameSpecificType
-from soulstruct.game_types.msb_types import *
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.utilities.binary import BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
-from .enums import MSBSubtype, MSBEventSubtype, MSBPartSubtype
 from .msb_entry import MSBEntry
 
 if tp.TYPE_CHECKING:
-    from .msb_entry import MSBEntryList, MSBEntryEntity
-    from .models import MSBModelList
-    from .events import MSBEventList
-    from .regions import MSBRegionList
-    from .parts import MSBPartList
+    from .enums import BaseMSBSubtype
+    from .msb_entry import MSBEntryEntity
+    from .msb_entry_list import *
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,10 +84,10 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
 
     HEADER = b""
 
-    MODEL_LIST_CLASS = None  # type: tp.Type[MSBModelList]
-    EVENT_LIST_CLASS = None  # type: tp.Type[MSBEventList]
-    REGION_LIST_CLASS = None  # type: tp.Type[MSBRegionList]
-    PART_LIST_CLASS = None  # type: tp.Type[MSBPartList]
+    MODEL_LIST_CLASS = None  # type: tp.Type[BaseMSBModelList]
+    EVENT_LIST_CLASS = None  # type: tp.Type[BaseMSBEventList]
+    REGION_LIST_CLASS = None  # type: tp.Type[BaseMSBRegionList]
+    PART_LIST_CLASS = None  # type: tp.Type[BaseMSBPartList]
 
     def __init__(
         self,
@@ -102,6 +100,20 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         self.parts = self.PART_LIST_CLASS()
         self.dcx_type = None  # MSB files never use DCX
         super().__init__(msb_source, dcx_type=dcx_type)
+
+    @property
+    def environment_event_enum(self):
+        try:
+            return getattr(self.EVENT_LIST_CLASS.ENTRY_SUBTYPE_ENUM, "Environment")
+        except AttributeError:
+            raise AttributeError("Cannot unpack MSB when `MSBEventSubtype.Environment` does not exist.")
+
+    @property
+    def collision_part_enum(self):
+        try:
+            return getattr(self.PART_LIST_CLASS.ENTRY_SUBTYPE_ENUM, "Collision")
+        except AttributeError:
+            raise AttributeError("Cannot unpack MSB when `MSBPartSubtype.Collision` does not exist.")
 
     def unpack(self, msb_reader: BinaryReader, **kwargs):
         """Unpack an MSB from the given reader."""
@@ -116,10 +128,10 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         self.parts = self.PART_LIST_CLASS(msb_reader)
 
         model_names = self.models.set_and_get_unique_names()
-        environment_names = self.events.get_entry_names(MSBEventSubtype.Environment)
+        environment_names = self.events.get_entry_names(self.environment_event_enum)
         region_names = self.regions.set_and_get_unique_names()
         part_names = self.parts.set_and_get_unique_names()
-        collision_names = self.parts.get_entry_names(MSBPartSubtype.Collision)
+        collision_names = self.parts.get_entry_names(self.collision_part_enum)
 
         self.events.set_names(region_names=region_names, part_names=part_names)
         self.parts.set_names(
@@ -134,12 +146,12 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         """Constructs {name: id} dictionaries, then passes them to pack() methods as required by each."""
         model_indices = self.models.get_indices()
         local_environment_indices = {
-            name: i for i, name in enumerate(self.events.get_entry_names(MSBEventSubtype.Environment))
+            name: i for i, name in enumerate(self.events.get_entry_names(self.environment_event_enum))
         }
         region_indices = self.regions.get_indices()
         part_indices = self.parts.get_indices()
         local_collision_indices = {
-            name: i for i, name in enumerate(self.parts.get_entry_names(MSBPartSubtype.Collision))
+            name: i for i, name in enumerate(self.parts.get_entry_names(self.collision_part_enum))
         }
 
         # Set entry indices (both self and linked) and other auto-detected fields.
@@ -207,7 +219,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             self.regions.clear()
             self.models.clear()
         for entry_type in ("parts", "events", "regions", "models"):
-            entry_list = getattr(self, entry_type)  # type: MSBEntryList
+            entry_list = getattr(self, entry_type)  # type: BaseMSBEntryList
             for entry_subtype_name, entries in data.get(entry_type, []).items():
                 entry_subtype_enum = getattr(entry_list.ENTRY_SUBTYPE_ENUM, entry_subtype_name)
                 subtype_class = entry_list.SUBTYPE_CLASSES[entry_subtype_enum]
@@ -524,16 +536,16 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
     #  IDs (e.g. once you fix exported Japanese names).
 
     @classmethod
-    def get_subtype_dict(cls) -> dict[str, tuple[MSBSubtype]]:
+    def get_subtype_dict(cls) -> dict[str, tuple[BaseMSBSubtype]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
         return {
-            "Parts": tuple(cls.PART_LIST_CLASS.SUBTYPE_CLASSES),
-            "Regions": tuple(cls.REGION_LIST_CLASS.SUBTYPE_CLASSES),
-            "Events": tuple(cls.EVENT_LIST_CLASS.SUBTYPE_CLASSES),
-            "Models": tuple(cls.MODEL_LIST_CLASS.SUBTYPE_CLASSES),
+            "Parts": tuple(cls.PART_LIST_CLASS.SUBTYPE_CLASSES.keys()),
+            "Regions": tuple(cls.REGION_LIST_CLASS.SUBTYPE_CLASSES.keys()),
+            "Events": tuple(cls.EVENT_LIST_CLASS.SUBTYPE_CLASSES.keys()),
+            "Models": tuple(cls.MODEL_LIST_CLASS.SUBTYPE_CLASSES.keys()),
         }
 
-    def __getitem__(self, entry_list_name) -> MSBEntryList:
+    def __getitem__(self, entry_list_name) -> BaseMSBEntryList:
         """Retrieve entry list by name. Can be plural, like "parts", or singular, like "part"."""
         entry_list_name = entry_list_name.lower()
         if entry_list_name in {"model", "event", "region", "part"}:

@@ -9,7 +9,7 @@ from pathlib import Path
 from .emevd.exceptions import EMEVDError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.game_types.msb_types import Map
+    from soulstruct.darksouls1ptde.game_types.map_types import Map
     from .emevd import EMEVD
 
 _LOGGER = logging.getLogger(__name__)

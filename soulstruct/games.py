@@ -48,7 +48,7 @@ class Game:
         self,
         variable_name: str,
         name: str,
-        subpackage_name=None,
+        submodule_name=None,
         aliases=(),
         default_dcx: DCXType = None,
         bundled_paramdef_path=Path(),
@@ -62,7 +62,7 @@ class Game:
     ):
         self.variable_name = variable_name
         self.name = name
-        self.submodule_name = subpackage_name
+        self.submodule_name = submodule_name
         self.aliases = aliases
         self.default_dcx = default_dcx
         self.bundled_paramdef_path = bundled_paramdef_path
@@ -134,7 +134,7 @@ class DemonsSoulsRemakeType(GameSpecificType):
 DARK_SOULS_PTDE = Game(
     "DARK_SOULS_PTDE",
     "Dark Souls Prepare to Die Edition",
-    subpackage_name="darksouls1ptde",
+    submodule_name="darksouls1ptde",
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
     default_dcx=None,
     bundled_paramdef_path=PACKAGE_PATH("darksouls1ptde/params/resources/darksouls1ptde.paramdefbnd"),
@@ -164,7 +164,7 @@ class DarkSoulsPTDEType(GameSpecificType):
 DARK_SOULS_DSR = Game(
     "DARK_SOULS_DSR",
     "Dark Souls Remastered",
-    subpackage_name="darksouls1r",
+    submodule_name="darksouls1r",
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
     default_dcx=DCXType.DCX_DFLT_10000_24_9,
     bundled_paramdef_path=PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
@@ -194,7 +194,7 @@ class DarkSoulsDSRType(GameSpecificType):
 DARK_SOULS_2 = Game(
     "DARK_SOULS_2",
     "Dark Souls II",
-    subpackage_name="darksouls2",
+    submodule_name="darksouls2",
     aliases=("darksouls2", "ds2", "dks2"),
     default_dcx=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_PATH,
@@ -208,7 +208,7 @@ class DarkSouls2Type(GameSpecificType):
 DARK_SOULS_2_SOTFS = Game(
     "DARK_SOULS_2_SOTFS",
     "Dark Souls II Scholar of the First Sin",
-    subpackage_name="darksouls2",  # TODO: Currently identical to DS2.
+    submodule_name="darksouls2",  # TODO: Currently identical to DS2.
     aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
     default_dcx=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_SOTFS_PATH,
@@ -222,7 +222,7 @@ class DarkSouls2SOTFSType(GameSpecificType):
 BLOODBORNE = Game(
     "BLOODBORNE",
     "Bloodborne",
-    subpackage_name="bloodborne",
+    submodule_name="bloodborne",
     aliases=("bloodborne", "bb"),
     default_dcx=DCXType.DCX_DFLT_10000_44_9,
     bundled_paramdef_path=PACKAGE_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
@@ -249,7 +249,7 @@ class BloodborneType(GameSpecificType):
 DARK_SOULS_3 = Game(
     "DARK_SOULS_3",
     "Dark Souls III",
-    subpackage_name="darksouls3",
+    submodule_name="darksouls3",
     aliases=("darksouls3", "ds3", "dks3"),
     default_dcx=DCXType.DCX_DFLT_10000_44_9,
     default_game_path=DS3_PATH,

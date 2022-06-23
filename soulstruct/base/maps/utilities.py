@@ -6,7 +6,7 @@ import logging
 import typing as tp
 from pathlib import Path
 
-from soulstruct.game_types.msb_types import Map
+from soulstruct.base.game_types.map_types import Map
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -7,11 +7,10 @@ from typing import Union
 from soulstruct.base.events.emevd.decompiler import (
     InstructionDecompiler as _BaseDecompiler,
     parse_parameters,
-    EnumValue,
 )
 from soulstruct.base.events.emevd.utils import EntityEnumsManager
 from soulstruct.darksouls3.maps.constants import get_map
-from soulstruct.game_types.msb_types import *
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from .enums import *
 from . import enums
 

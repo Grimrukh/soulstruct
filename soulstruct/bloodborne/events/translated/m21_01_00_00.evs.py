@@ -56,7 +56,7 @@ def InspectDoll():
 
 def OpenChest(_, arg_0_3: int, arg_4_7: int):
     """ 12110200: Event 12110200 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, 0)
     DisableObjectActivation(arg_0_3, obj_act_id=-1)
     EnableTreasure(arg_0_3)
@@ -71,7 +71,7 @@ def OpenChest(_, arg_0_3: int, arg_4_7: int):
 
 def GetItemFromStorage():
     """ 12110300: Event 12110300 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     CreateObjectVFX(900201, obj=2111100, model_point=200)
     IfActionButtonParam(0, action_button_id=2110010, entity=2111100)
@@ -82,7 +82,7 @@ def GetItemFromStorage():
 
 def GetItemFromMemoryAltar():
     """ 12110301: Event 12110301 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     CreateObjectVFX(900201, obj=2111101, model_point=200)
     IfActionButtonParam(0, action_button_id=2110011, entity=2111101)
@@ -93,7 +93,7 @@ def GetItemFromMemoryAltar():
 
 def GetItemFromOldHunterHeadstone():
     """ 12110302: Event 12110302 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     CreateObjectVFX(900201, obj=2111102, model_point=200)
     IfActionButtonParam(0, action_button_id=2110012, entity=2111102)
@@ -104,9 +104,9 @@ def GetItemFromOldHunterHeadstone():
 
 def InitializeMoonPhase():
     """ 12110400: Event 12110400 """
-    GotoIfFlagOn(Label.L0, CommonFlags.BloodMoonPhase)
-    GotoIfFlagOn(Label.L1, CommonFlags.NightPhase)
-    GotoIfFlagOn(Label.L2, CommonFlags.EveningPhase)
+    GotoIfFlagEnabled(Label.L0, CommonFlags.BloodMoonPhase)
+    GotoIfFlagEnabled(Label.L1, CommonFlags.NightPhase)
+    GotoIfFlagEnabled(Label.L2, CommonFlags.EveningPhase)
 
     # --- 2 --- #
     DefineLabel(2)
@@ -132,7 +132,7 @@ def InitializeMoonPhase():
 
 def AwardAbandonedOldWorkshopAchievement():
     """ 12110990: Event 12110990 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     IfStandingOnCollision(0, Collisions.CollisionForAchievement)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 0, PlayLogMultiplayerType.HostOnly)

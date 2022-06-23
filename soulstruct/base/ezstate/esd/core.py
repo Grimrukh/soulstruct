@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .exceptions import ESDTypeError
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .state import State

@@ -4,7 +4,7 @@ import typing as tp
 
 from soulstruct.base.events.emevd.decompiler import InstructionDecompiler as _BaseDecompiler, parse_parameters
 from soulstruct.bloodborne.maps.constants import get_map
-from soulstruct.game_types.msb_types import *
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from .enums import *
 from . import enums
 

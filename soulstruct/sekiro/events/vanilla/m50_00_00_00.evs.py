@@ -278,7 +278,7 @@ def Preconstructor():
 def Event15005100():
     """ 15005100: Event 15005100 """
     EndIfPlayerNotInOwnWorld()
-    IfFlagOn(1, 15000800)
+    IfFlagEnabled(1, 15000800)
     IfActionButtonParam(1, action_button_id=9380, entity=5001100)
     IfConditionTrue(0, input_condition=1)
     IfPlayerHasGood(2, 2156, including_box=False)
@@ -334,7 +334,7 @@ def Event15005200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event15005210(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 15005210: Event 15005210 """
     IfCharacterHasSpecialEffect(1, arg_0_3, arg_4_7)
-    IfFlagOn(1, arg_16_19)
+    IfFlagEnabled(1, arg_16_19)
     IfConditionTrue(0, input_condition=1)
     MakeEnemyAppear(arg_8_11)
     DisableFlag(arg_16_19)
@@ -448,7 +448,7 @@ def Event15005265(
 ):
     """ 15005265: Event 15005265 """
     SkipLinesIfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.Equal, 0)
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableAI(arg_0_3)
     EnableFlag(15005217)
     IfCharacterType(9, PLAYER, CharacterType.BlackPhantom)
@@ -494,7 +494,7 @@ def Event15005266(
 ):
     """ 15005266: Event 15005266 """
     SkipLinesIfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.Equal, 0)
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableAI(arg_0_3)
     IfCharacterType(9, PLAYER, CharacterType.BlackPhantom)
     IfCharacterHasSpecialEffect(9, PLAYER, 3710)
@@ -540,7 +540,7 @@ def Event15005270(_, arg_0_3: int):
 @RestartOnRest
 def Event15005280(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 15005280: Event 15005280 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
     IfCharacterHasSpecialEffect(1, 5000211, 16610)
     IfCharacterBackreadEnabled(1, arg_0_3)
@@ -569,7 +569,7 @@ def Event15005280(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event15005285(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 15005285: Event 15005285 """
-    GotoIfFlagOff(Label.L0, arg_0_3)
+    GotoIfFlagDisabled(Label.L0, arg_0_3)
     DisableAnimations(arg_4_7)
     DisableAnimations(arg_8_11)
     DisableCharacter(arg_4_7)
@@ -594,7 +594,7 @@ def Event15005290(_, arg_0_3: int):
 def Event15005300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 15005300: Event 15005300 """
     CancelSpecialEffect(arg_0_3, 16240)
-    SkipLinesIfThisEventSlotOff(1)
+    SkipLinesIfThisEventSlotFlagDisabled(1)
     IfCharacterDead(1, arg_4_7)
     IfCharacterHasSpecialEffect(1, arg_0_3, 16240)
     IfCharacterBackreadEnabled(1, arg_0_3)
@@ -640,7 +640,7 @@ def Event15005340(_, arg_0_3: int, arg_4_7: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    GotoIfThisEventSlotOff(Label.L1)
+    GotoIfThisEventSlotFlagDisabled(Label.L1)
     DisableCharacter(arg_0_3)
     DisableAnimations(arg_0_3)
     End()
@@ -672,7 +672,7 @@ def Event15005340(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event15005360(_, arg_0_3: int, arg_4_7: int):
     """ 15005360: Event 15005360 """
-    SkipLinesIfThisEventSlotOn(2)
+    SkipLinesIfThisEventSlotFlagEnabled(2)
     DisableCharacter(arg_4_7)
     DisableAnimations(arg_4_7)
     DisableAI(arg_4_7)
@@ -713,7 +713,7 @@ def Event15005365(_, arg_0_3: int):
 @RestartOnRest
 def Event15005370(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 15005370: Event 15005370 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     AddSpecialEffect(arg_0_3, 16229)
     IfCharacterHasSpecialEffect(1, arg_4_7, arg_8_11)
     IfConditionTrue(0, input_condition=1)
@@ -761,7 +761,7 @@ def Event15005390(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event15005400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float):
     """ 15005400: Event 15005400 """
     CancelSpecialEffect(arg_0_3, 16240)
-    SkipLinesIfThisEventSlotOff(1)
+    SkipLinesIfThisEventSlotFlagDisabled(1)
     IfCharacterDead(1, arg_4_7)
     IfCharacterHasSpecialEffect(1, arg_0_3, 16240)
     IfCharacterBackreadEnabled(1, arg_0_3)
@@ -770,7 +770,7 @@ def Event15005400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterAlive(3, arg_4_7)
     SkipLinesIfConditionTrue(1, 3)
     MakeEnemyAppear(arg_8_11)
-    SkipLinesIfThisEventSlotOff(2)
+    SkipLinesIfThisEventSlotFlagDisabled(2)
     IfCharacterAlive(2, arg_12_15)
     SkipLinesIfConditionTrue(1, 2)
     MakeEnemyAppear(arg_16_19)
@@ -785,7 +785,7 @@ def Event15005400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event15005410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: float):
     """ 15005410: Event 15005410 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, arg_4_7)
     IfCharacterType(9, PLAYER, CharacterType.BlackPhantom)
     IfCharacterHasSpecialEffect(9, PLAYER, 3710)
@@ -797,7 +797,7 @@ def Event15005410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterInsideRegion(1, PLAYER, region=arg_12_15)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfCharacterHasSpecialEffect(1, arg_0_3, 5450)
-    IfFlagOn(1, arg_16_19)
+    IfFlagEnabled(1, arg_16_19)
     IfConditionTrue(-3, input_condition=1)
     IfAttackedWithDamageType(-3, attacked_entity=arg_0_3, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-3)
@@ -813,7 +813,7 @@ def Event15005410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event15005440(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 15005440: Event 15005440 """
-    SkipLinesIfFlagOn(1, 0)
+    SkipLinesIfFlagEnabled(1, 0)
     SkipLinesIfEqual(1, left=0, right=arg_12_15)
     IfAttacked(-1, arg_12_15, attacker=arg_4_7)
     IfAttacked(-1, arg_0_3, attacker=arg_4_7)
@@ -834,12 +834,12 @@ def Event15005440(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event15005444():
     """ 15005444: Event 15005444 """
     GotoIfPlayerInOwnWorld(Label.L9)
-    GotoIfFlagOn(Label.L0, 15005445)
+    GotoIfFlagEnabled(Label.L0, 15005445)
     Goto(Label.L1)
 
     # --- 9 --- #
     DefineLabel(9)
-    GotoIfFlagOff(Label.L0, 15000180)
+    GotoIfFlagDisabled(Label.L0, 15000180)
     Goto(Label.L1)
 
     # --- 0 --- #
@@ -868,8 +868,8 @@ def Event15005444():
 @RestartOnRest
 def Event15005447():
     """ 15005447: Event 15005447 """
-    EndIfFlagOn(15000180)
-    EndIfThisEventSlotOn()
+    EndIfFlagEnabled(15000180)
+    EndIfThisEventSlotFlagEnabled()
     AddSpecialEffect(5000272, 16805)
     IfEntityWithinDistance(0, 5000272, 5000180, radius=5.0)
     CancelSpecialEffect(5000272, 16805)
@@ -878,7 +878,7 @@ def Event15005447():
 @RestartOnRest
 def Event15005448(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: float):
     """ 15005448: Event 15005448 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableGravity(arg_0_3)
     DisableCharacterCollision(arg_0_3)
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
@@ -927,7 +927,7 @@ def Event15005460(
     arg_28_31: int,
 ):
     """ 15005460: Event 15005460 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, arg_4_7)
     DisableGravity(arg_0_3)
     IfCharacterType(9, PLAYER, CharacterType.BlackPhantom)
@@ -964,7 +964,7 @@ def Event15005460(
 @RestartOnRest
 def Event15005470():
     """ 15005470: Event 15005470 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterInsideRegion(0, 5000236, region=5002260)
     IfCharacterType(9, PLAYER, CharacterType.BlackPhantom)
     IfCharacterHasSpecialEffect(9, PLAYER, 3710)
@@ -988,13 +988,13 @@ def Event15005470():
 @RestartOnRest
 def Event15005480(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 15005480: Event 15005480 """
-    GotoIfFlagOff(Label.L0, arg_16_19)
+    GotoIfFlagDisabled(Label.L0, arg_16_19)
     DisableAI(arg_0_3)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    GotoIfThisEventSlotOn(Label.L1)
+    GotoIfThisEventSlotFlagEnabled(Label.L1)
     DisableAI(arg_0_3)
     IfCharacterType(9, PLAYER, CharacterType.BlackPhantom)
     IfCharacterHasSpecialEffect(9, PLAYER, 3710)
@@ -1009,7 +1009,7 @@ def Event15005480(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int
     IfAttacked(-3, arg_0_3, attacker=PLAYER)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(3, input_condition=-3)
-    IfFlagOff(3, arg_16_19)
+    IfFlagDisabled(3, arg_16_19)
     IfConditionTrue(0, input_condition=3)
 
     # --- 1 --- #
@@ -1026,7 +1026,7 @@ def Event15005500():
     """ 15005500: Event 15005500 """
     ActivateCollisionAndCreateNavmesh(collision=5001505, state=False)
     ActivateCollisionAndCreateNavmesh(collision=5001506, state=False)
-    GotoIfFlagOff(Label.L0, 15000500)
+    GotoIfFlagDisabled(Label.L0, 15000500)
     EndOfAnimation(5001500, 2)
     DisableObject(5001501)
     DisableObject(5001502)
@@ -1089,8 +1089,8 @@ def Event15005500():
 def Event15005502():
     """ 15005502: Event 15005502 """
     DisableNetworkSync()
-    EndIfFlagOn(15000500)
-    IfFlagOn(0, 15000500)
+    EndIfFlagEnabled(15000500)
+    IfFlagEnabled(0, 15000500)
     IfCharacterInsideRegion(1, PLAYER, region=5002502)
     EndIfConditionFalse(1)
     Wait(0.4000000059604645)
@@ -1122,7 +1122,7 @@ def Event15005502():
 @RestartOnRest
 def Event15005510():
     """ 15005510: Event 15005510 """
-    GotoIfThisEventSlotOn(Label.L0)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     ForceAnimation(5001301, 310, loop=True, skip_transition=True)
     IfCharacterInsideRegion(0, PLAYER, region=5002510)
     DestroyObject_NoSlot(obj=5001510)
@@ -1140,7 +1140,7 @@ def Event15005510():
 @RestartOnRest
 def Event15005520(_, arg_0_3: int, arg_4_7: int):
     """ 15005520: Event 15005520 """
-    GotoIfThisEventSlotOn(Label.L0)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     DestroyObject_NoSlot(obj=arg_4_7)
     End()
@@ -1186,7 +1186,7 @@ def Event15005550(_, arg_0_3: int):
 @RestartOnRest
 def Event15005570():
     """ 15005570: Event 15005570 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     RestoreObject(5001510)
     RestoreObject(5001520)
     RestoreObject(5001521)
@@ -1208,7 +1208,7 @@ def Event15005580():
 def Event15005590():
     """ 15005590: Event 15005590 """
     IfCharacterInsideRegion(1, PLAYER, region=5002590)
-    IfFlagOff(1, 15000590)
+    IfFlagDisabled(1, 15000590)
     GotoIfConditionTrue(Label.L0, input_condition=1)
     End()
 
@@ -1221,10 +1221,10 @@ def Event15005590():
 @RestartOnRest
 def Event15005800():
     """ 15005800: Event 15005800 """
-    EndIfFlagOn(15000800)
-    IfFlagOn(1, 15005803)
+    EndIfFlagEnabled(15000800)
+    IfFlagEnabled(1, 15005803)
     IfHealthLessThanOrEqual(1, 5000801, 0.0)
-    IfFlagOn(2, 15005804)
+    IfFlagEnabled(2, 15005804)
     IfHealthLessThanOrEqual(2, 5000802, 0.0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1255,7 +1255,7 @@ def Event15005800():
 @RestartOnRest
 def Event15005810():
     """ 15005810: Event 15005810 """
-    GotoIfFlagOff(Label.L0, 15000800)
+    GotoIfFlagDisabled(Label.L0, 15000800)
     DisableCharacter(5005800)
     DisableAnimations(5005800)
     Kill(5005800, award_souls=False)
@@ -1284,7 +1284,7 @@ def Event15005810():
 
     # --- 1 --- #
     DefineLabel(1)
-    IfFlagOn(9, 15005805)
+    IfFlagEnabled(9, 15005805)
     IfCharacterInsideRegion(9, PLAYER, region=5002800)
     IfConditionTrue(0, input_condition=9)
 
@@ -1296,7 +1296,7 @@ def Event15005810():
     ReferDamageToEntity(5000801, 5000800)
     Wait(0.30000001192092896)
     EnableAI(5005801)
-    SkipLinesIfFlagOn(1, 15005810)
+    SkipLinesIfFlagEnabled(1, 15005810)
     Wait(3.0)
     EnableBossHealthBar(5000801, name=905020)
     EnableBossHealthBar(5000802, name=905021, slot=1)
@@ -1310,15 +1310,15 @@ def Event15005810():
 @RestartOnRest
 def Event15005811():
     """ 15005811: Event 15005811 """
-    EndIfFlagOn(15000800)
+    EndIfFlagEnabled(15000800)
     EnableImmortality(5000802)
     DisableAI(5005802)
     DisableHealthBar(5000802)
     SetCollisionMask(5000802, bit_index=1, switch_type=OnOffChange.Off)
     IfPlayerInOwnWorld(1)
-    IfFlagOn(1, 15005809)
+    IfFlagEnabled(1, 15005809)
     IfConditionTrue(-1, input_condition=1)
-    IfFlagOn(-1, 15005811)
+    IfFlagEnabled(-1, 15005811)
     IfAttackedWithDamageType(-1, attacked_entity=5000802, attacker=-1)
     IfHealthLessThanOrEqual(-1, 5000801, 0.6499999761581421)
     IfCharacterHasSpecialEffect(-1, 5000801, 15025)
@@ -1332,7 +1332,7 @@ def Event15005811():
 @RestartOnRest
 def Event15005812():
     """ 15005812: Event 15005812 """
-    EndIfFlagOn(15000800)
+    EndIfFlagEnabled(15000800)
     IfCharacterHasSpecialEffect(2, 5000801, 15202)
     IfCharacterHasSpecialEffect(3, 5000802, 15202)
     IfConditionTrue(-1, input_condition=2)
@@ -1383,7 +1383,7 @@ def Event15005812():
 @RestartOnRest
 def Event15005813():
     """ 15005813: Event 15005813 """
-    EndIfFlagOn(15000800)
+    EndIfFlagEnabled(15000800)
     IfHealthValueEqual(1, 5000801, 1)
     IfHealthValueEqual(2, 5000802, 1)
     IfConditionTrue(-1, input_condition=1)
@@ -1416,12 +1416,12 @@ def Event15005813():
 def Event15005820(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 15005820: Event 15005820 """
     EndIfPlayerNotInOwnWorld()
-    EndIfFlagOn(15000800)
-    EndIfFlagOn(15005803)
+    EndIfFlagEnabled(15000800)
+    EndIfFlagEnabled(15005803)
     IfPlayerInOwnWorld(1)
     IfCharacterAlive(1, arg_0_3)
     IfCharacterDead(1, arg_4_7)
-    IfFlagOn(1, arg_8_11)
+    IfFlagEnabled(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
     SetNetworkConnectedFlagState(flag=arg_8_11, state=FlagState.Off)
     WaitFrames(1)
@@ -1440,11 +1440,11 @@ def Event15005825(
     arg_24_27: int,
 ):
     """ 15005825: Event 15005825 """
-    EndIfFlagOn(15000800)
-    EndIfFlagOn(15005803)
+    EndIfFlagEnabled(15000800)
+    EndIfFlagEnabled(15005803)
     DisableGravity(arg_4_7)
     IfCharacterHasSpecialEffect(1, arg_0_3, arg_12_15)
-    IfFlagOff(1, arg_8_11)
+    IfFlagDisabled(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
     MakeEnemyAppear(arg_16_19)
     WaitFrames(1)
@@ -1467,7 +1467,7 @@ def Event15005825(
 @RestartOnRest
 def Event15005830(_, arg_0_3: int):
     """ 15005830: Event 15005830 """
-    EndIfFlagOn(15000800)
+    EndIfFlagEnabled(15000800)
     DisableNetworkSync()
     IfHealthValueLessThanOrEqual(-5, 5000801, 0)
     IfHealthValueLessThanOrEqual(-5, 5000802, 0)
@@ -1507,14 +1507,14 @@ def Event15005830(_, arg_0_3: int):
 @RestartOnRest
 def Event15005835():
     """ 15005835: Event 15005835 """
-    EndIfFlagOn(15000800)
+    EndIfFlagEnabled(15000800)
     DisableNetworkSync()
     IfCharacterInsideRegion(13, PLAYER, region=5002800)
-    IfFlagOn(13, 15005810)
+    IfFlagEnabled(13, 15005810)
     IfConditionTrue(0, input_condition=13)
-    IfFlagOn(14, 15005803)
+    IfFlagEnabled(14, 15005803)
     IfCharacterDead(14, 5000801)
-    IfFlagOn(15, 15005804)
+    IfFlagEnabled(15, 15005804)
     IfCharacterDead(15, 5000802)
     IfConditionTrue(-15, input_condition=14)
     IfConditionTrue(-15, input_condition=15)
@@ -1618,7 +1618,7 @@ def Event15005835():
 @RestartOnRest
 def Event15005850(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 15005850: Event 15005850 """
-    EndIfFlagOn(15000800)
+    EndIfFlagEnabled(15000800)
     DeleteVFX(arg_4_7, erase_root_only=True)
     SkipLinesIfEqual(3, left=1, right=arg_12_15)
     IfCharacterInsideRegion(-1, 5000801, region=arg_0_3)
@@ -1627,7 +1627,7 @@ def Event15005850(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
     IfCharacterHasSpecialEffect(-1, 5000801, 5404)
     IfCharacterHasSpecialEffect(-1, 5000802, 5404)
     IfConditionTrue(1, input_condition=-1)
-    IfFlagOn(1, 15005802)
+    IfFlagEnabled(1, 15005802)
     IfConditionTrue(0, input_condition=1)
     Wait(arg_8_11)
     CreateVFX(arg_4_7)
@@ -1638,7 +1638,7 @@ def Event15005849():
     """ 15005849: Event 15005849 """
     RunCommonEvent(20005800, args=(15000800, 5001800, 5002800, 15005805, 5001800, 5005800, 15005801, 0))
     RunCommonEvent(20005801, args=(15000800, 5001800, 5002801, 15005805, 5001800, 15005806))
-    SkipLinesIfFlagOn(2, 15005801)
+    SkipLinesIfFlagEnabled(2, 15005801)
     RunCommonEvent(20001836, args=(15000800, 15005805, 15005806, 15005810, 5004801, 5004802, 15005802))
     SkipLines(1)
     RunCommonEvent(20005831, args=(15000800, 15005805, 15005806, 5002800, 5004801, 5004802, 15005802))
@@ -1663,55 +1663,55 @@ def Event15005849():
 def Event15005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 15005700: Event 15005700 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyOn(2, (1815, 1819))
+    SkipLinesIfFlagRangeAnyEnabled(2, (1815, 1819))
     SetNetworkConnectedFlagRangeState((1815, 1819), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1815, state=FlagState.On)
-    IfFlagOn(1, 1816)
-    IfFlagOn(1, 70001073)
+    IfFlagEnabled(1, 1816)
+    IfFlagEnabled(1, 70001073)
     SkipLinesIfConditionFalse(2, 1)
     SetNetworkConnectedFlagRangeState((1815, 1819), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1815, state=FlagState.On)
-    SkipLinesIfFlagRangeAnyOn(2, (1800, 1814))
+    SkipLinesIfFlagRangeAnyEnabled(2, (1800, 1814))
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1800, state=FlagState.On)
-    GotoIfFlagOff(Label.L9, 1815)
-    IfFlagOn(2, 1800)
-    IfFlagOn(2, 75000101)
+    GotoIfFlagDisabled(Label.L9, 1815)
+    IfFlagEnabled(2, 1800)
+    IfFlagEnabled(2, 75000101)
     SkipLinesIfConditionFalse(2, 2)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1801, state=FlagState.On)
-    SkipLinesIfFlagOff(2, 1803)
+    SkipLinesIfFlagDisabled(2, 1803)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1801, state=FlagState.On)
-    IfFlagOn(3, 1801)
-    IfFlagOn(3, 9324)
+    IfFlagEnabled(3, 1801)
+    IfFlagEnabled(3, 9324)
     SkipLinesIfConditionFalse(2, 3)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1805, state=FlagState.On)
-    IfFlagOn(4, 1801)
-    IfFlagOn(4, 75000131)
-    IfFlagOff(4, 55000450)
-    IfFlagOn(4, 1875)
+    IfFlagEnabled(4, 1801)
+    IfFlagEnabled(4, 75000131)
+    IfFlagDisabled(4, 55000450)
+    IfFlagEnabled(4, 1875)
     SkipLinesIfConditionFalse(2, 4)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1802, state=FlagState.On)
-    SkipLinesIfFlagOff(2, 1804)
+    SkipLinesIfFlagDisabled(2, 1804)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1802, state=FlagState.On)
-    IfFlagOn(5, 1802)
-    IfFlagOn(5, 9324)
+    IfFlagEnabled(5, 1802)
+    IfFlagEnabled(5, 9324)
     SkipLinesIfConditionFalse(2, 5)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1806, state=FlagState.On)
-    IfFlagOn(6, 1805)
-    IfFlagOn(6, 75000131)
-    IfFlagOff(6, 55000450)
-    IfFlagOn(6, 1875)
+    IfFlagEnabled(6, 1805)
+    IfFlagEnabled(6, 75000131)
+    IfFlagDisabled(6, 55000450)
+    IfFlagEnabled(6, 1875)
     SkipLinesIfConditionFalse(2, 6)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1806, state=FlagState.On)
-    IfFlagRangeAnyOn(7, (1805, 1806))
-    IfFlagOn(7, 75000104)
+    IfFlagRangeAnyEnabled(7, (1805, 1806))
+    IfFlagEnabled(7, 75000104)
     SkipLinesIfConditionFalse(2, 7)
     SetNetworkConnectedFlagRangeState((1800, 1814), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1807, state=FlagState.On)
@@ -1719,44 +1719,44 @@ def Event15005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 9 --- #
     DefineLabel(9)
     DisableFlag(70001073)
-    SkipLinesIfFlagOff(1, 1815)
+    SkipLinesIfFlagDisabled(1, 1815)
     DisableFlag(75000120)
-    IfFlagOn(-1, 1802)
-    IfFlagOn(-1, 1806)
+    IfFlagEnabled(-1, 1802)
+    IfFlagEnabled(-1, 1806)
     SkipLinesIfConditionFalse(1, -1)
     EnableFlag(15000703)
-    SkipLinesIfFlagRangeAllOff(1, (1807, 1814))
+    SkipLinesIfFlagRangeAllDisabled(1, (1807, 1814))
     EnableFlag(75000135)
-    IfFlagOn(-2, 1801)
-    IfFlagOn(-2, 1803)
-    IfFlagOn(-2, 1805)
-    IfFlagOn(8, 75000130)
-    IfFlagOff(8, 55000450)
-    IfFlagOn(8, 1875)
+    IfFlagEnabled(-2, 1801)
+    IfFlagEnabled(-2, 1803)
+    IfFlagEnabled(-2, 1805)
+    IfFlagEnabled(8, 75000130)
+    IfFlagDisabled(8, 55000450)
+    IfFlagEnabled(8, 1875)
     IfConditionTrue(8, input_condition=-2)
     SkipLinesIfConditionFalse(1, 8)
     EnableFlag(75000131)
-    IfFlagOn(-3, 1801)
-    IfFlagOn(-3, 1803)
-    IfFlagOn(-3, 1805)
-    IfFlagOn(9, 75000103)
-    IfFlagOff(9, 55000450)
-    IfFlagOn(9, 1875)
+    IfFlagEnabled(-3, 1801)
+    IfFlagEnabled(-3, 1803)
+    IfFlagEnabled(-3, 1805)
+    IfFlagEnabled(9, 75000103)
+    IfFlagDisabled(9, 55000450)
+    IfFlagEnabled(9, 1875)
     IfConditionTrue(9, input_condition=-3)
     SkipLinesIfConditionFalse(1, 9)
     EnableFlag(75000130)
     IfPlayerHasGood(-4, 2153, including_box=False)
-    IfFlagOn(-4, 6500)
+    IfFlagEnabled(-4, 6500)
     SkipLinesIfConditionFalse(1, -4)
     EnableFlag(50006623)
 
     # --- 10 --- #
     DefineLabel(10)
-    GotoIfFlagOn(Label.L0, 1800)
-    GotoIfFlagOn(Label.L1, 1801)
-    GotoIfFlagOn(Label.L2, 1802)
-    GotoIfFlagOn(Label.L5, 1805)
-    GotoIfFlagOn(Label.L6, 1806)
+    GotoIfFlagEnabled(Label.L0, 1800)
+    GotoIfFlagEnabled(Label.L1, 1801)
+    GotoIfFlagEnabled(Label.L2, 1802)
+    GotoIfFlagEnabled(Label.L5, 1805)
+    GotoIfFlagEnabled(Label.L6, 1806)
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
     DisableCharacter(arg_4_7)
@@ -1771,8 +1771,8 @@ def Event15005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableBackread(arg_4_7)
     DisableCharacter(arg_8_11)
     DisableBackread(arg_8_11)
-    GotoIfFlagOn(Label.L16, 1816)
-    GotoIfFlagOn(Label.L18, 1818)
+    GotoIfFlagEnabled(Label.L16, 1816)
+    GotoIfFlagEnabled(Label.L18, 1818)
     ForceAnimation(arg_0_3, arg_12_15)
     End()
 
@@ -1797,8 +1797,8 @@ def Event15005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableBackread(arg_0_3)
     DisableCharacter(arg_8_11)
     DisableBackread(arg_8_11)
-    GotoIfFlagOn(Label.L16, 1816)
-    GotoIfFlagOn(Label.L18, 1818)
+    GotoIfFlagEnabled(Label.L16, 1816)
+    GotoIfFlagEnabled(Label.L18, 1818)
     ForceAnimation(arg_4_7, arg_16_19)
     End()
 
@@ -1823,8 +1823,8 @@ def Event15005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableBackread(arg_0_3)
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
-    GotoIfFlagOn(Label.L16, 1816)
-    GotoIfFlagOn(Label.L18, 1818)
+    GotoIfFlagEnabled(Label.L16, 1816)
+    GotoIfFlagEnabled(Label.L18, 1818)
     ForceAnimation(arg_8_11, arg_20_23)
     End()
 
@@ -1845,7 +1845,7 @@ def Event15005700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 def Event15005701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 15005701: Event 15005701 """
     DisableObject(arg_8_11)
-    IfFlagOn(0, 15000703)
+    IfFlagEnabled(0, 15000703)
     DisableTreasure(arg_0_3)
     DisableCharacter(arg_4_7)
     DisableBackread(arg_4_7)
@@ -1854,11 +1854,11 @@ def Event15005701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 def Event15005702(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 15005702: Event 15005702 """
-    EndIfFlagRangeAnyOn((1805, 1814))
+    EndIfFlagRangeAnyEnabled((1805, 1814))
     IfPlayerInOwnWorld(1)
-    IfFlagOn(1, 1815)
-    IfFlagOn(1, arg_8_11)
-    IfFlagOff(1, 9324)
+    IfFlagEnabled(1, 1815)
+    IfFlagEnabled(1, arg_8_11)
+    IfFlagDisabled(1, 9324)
     IfCharacterHasSpecialEffect(1, PLAYER, 490)
     IfEntityWithinDistance(1, PLAYER, arg_4_7, radius=10.0)
     IfCharacterBackreadEnabled(1, arg_4_7)
@@ -1876,25 +1876,25 @@ def Event15005702(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event15005720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 15005720: Event 15005720 """
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyOn(2, (1875, 1879))
+    SkipLinesIfFlagRangeAnyEnabled(2, (1875, 1879))
     SetNetworkConnectedFlagRangeState((1875, 1879), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1875, state=FlagState.On)
-    IfFlagOn(1, 1876)
-    IfFlagOn(1, 70001076)
+    IfFlagEnabled(1, 1876)
+    IfFlagEnabled(1, 70001076)
     SkipLinesIfConditionFalse(2, 1)
     SetNetworkConnectedFlagRangeState((1875, 1879), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1875, state=FlagState.On)
-    SkipLinesIfFlagRangeAnyOn(2, (1860, 1874))
+    SkipLinesIfFlagRangeAnyEnabled(2, (1860, 1874))
     SetNetworkConnectedFlagRangeState((1860, 1874), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1860, state=FlagState.On)
-    IfFlagOn(2, 1860)
-    IfFlagOn(2, 1878)
+    IfFlagEnabled(2, 1860)
+    IfFlagEnabled(2, 1878)
     SkipLinesIfConditionFalse(2, 2)
     SetNetworkConnectedFlagRangeState((1860, 1874), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1861, state=FlagState.On)
-    IfFlagOn(3, 1860)
-    IfFlagOn(3, 1875)
-    IfFlagOn(3, 15100500)
+    IfFlagEnabled(3, 1860)
+    IfFlagEnabled(3, 1875)
+    IfFlagEnabled(3, 15100500)
     SkipLinesIfConditionFalse(4, 3)
     SetNetworkConnectedFlagRangeState((1860, 1874), state=RangeState.AllOn)
     SetNetworkConnectedFlagState(flag=1862, state=FlagState.On)
@@ -1908,16 +1908,16 @@ def Event15005720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 10 --- #
     DefineLabel(10)
-    GotoIfFlagOn(Label.L0, 1860)
-    GotoIfFlagOn(Label.L1, 1861)
-    GotoIfFlagOn(Label.L2, 1862)
+    GotoIfFlagEnabled(Label.L0, 1860)
+    GotoIfFlagEnabled(Label.L1, 1861)
+    GotoIfFlagEnabled(Label.L2, 1862)
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    GotoIfFlagOn(Label.L18, 1878)
+    GotoIfFlagEnabled(Label.L18, 1878)
     DisableHealthBar(arg_0_3)
     ForceAnimation(arg_0_3, arg_4_7)
     DisableCharacterCollision(arg_0_3)
@@ -1948,8 +1948,8 @@ def Event15005720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 def Event15005721(_, arg_0_3: int, arg_4_7: int):
     """ 15005721: Event 15005721 """
-    GotoIfFlagOn(Label.L0, 15000721)
-    EndIfFlagOff(1860)
+    GotoIfFlagEnabled(Label.L0, 15000721)
+    EndIfFlagDisabled(1860)
     GotoIfPlayerNotInOwnWorld(Label.L1)
     IfPlayerInOwnWorld(1)
     IfCharacterHasSpecialEffect(1, arg_0_3, 5450)
@@ -1984,7 +1984,7 @@ def Event15005722(_, arg_0_3: int):
     """ 15005722: Event 15005722 """
     DisableCharacter(arg_0_3)
     DisableBackread(arg_0_3)
-    IfFlagRangeAnyOn(0, (1861, 1862))
+    IfFlagRangeAnyEnabled(0, (1861, 1862))
     EnableCharacter(arg_0_3)
     EnableBackread(arg_0_3)
     DisableGravity(arg_0_3)

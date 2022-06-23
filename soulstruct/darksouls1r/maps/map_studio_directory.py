@@ -3,7 +3,7 @@ __all__ = ["MapStudioDirectory"]
 import typing as tp
 
 from soulstruct.base.maps.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
-from soulstruct.game_types.msb_types import Map
+from soulstruct.darksouls1ptde.game_types.map_types import Map
 from soulstruct.games import DarkSoulsDSRType
 
 from .constants import ALL_MAPS, get_map

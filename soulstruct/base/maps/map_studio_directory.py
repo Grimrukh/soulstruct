@@ -8,7 +8,7 @@ from soulstruct.base.maps.msb.exceptions import MapError
 
 if tp.TYPE_CHECKING:
     from .msb import MSB
-    from soulstruct.game_types.msb_types import Map
+    from soulstruct.darksouls1ptde.game_types.map_types import Map
 
 _LOGGER = logging.getLogger(__name__)
 

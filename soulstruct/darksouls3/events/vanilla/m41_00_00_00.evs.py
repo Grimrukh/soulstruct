@@ -62,13 +62,13 @@ def Event14100100():
     DisableFlag(74100100)
     DisableFlag(100)
     EndIfPlayerNotInOwnWorld()
-    EndIfFlagRangeAnyOn((9920, 9923))
-    IfFlagOff(1, 50006020)
-    IfFlagOn(1, 14101100)
+    EndIfFlagRangeAnyEnabled((9920, 9923))
+    IfFlagDisabled(1, 50006020)
+    IfFlagEnabled(1, 14101100)
     IfConditionTrue(0, input_condition=1)
-    SkipLinesIfFlagOn(1, 14105100)
+    SkipLinesIfFlagEnabled(1, 14105100)
     CreateObjectVFX(30001, obj=4101100, model_point=0)
-    IfFlagOff(2, 101)
+    IfFlagDisabled(2, 101)
     IfLeavingSession(2)
     IfActionButtonParam(2, action_button_id=9341, entity=4101100)
     IfConditionTrue(0, input_condition=2)
@@ -82,7 +82,7 @@ def Event14100100():
         right_flag=14105100,
         cancel_flag=14105100,
     )
-    RestartIfFlagOff(100)
+    RestartIfFlagDisabled(100)
     EnableFlag(100)
     DisableFlag(101)
     AddSpecialEffect(PLAYER, 4900)
@@ -153,12 +153,12 @@ def Event14100101():
     """ 14100101: Event 14100101 """
     DisableFlag(101)
     EndIfPlayerNotInOwnWorld()
-    EndIfFlagRangeAnyOn((9920, 9923))
-    IfFlagOn(1, 14101100)
+    EndIfFlagRangeAnyEnabled((9920, 9923))
+    IfFlagEnabled(1, 14101100)
     IfConditionTrue(0, input_condition=1)
     EnableObject(4101952)
     ForceAnimation(4101952, 11, loop=True)
-    IfFlagOff(2, 100)
+    IfFlagDisabled(2, 100)
     IfLeavingSession(2)
     IfActionButtonParam(2, action_button_id=9342, entity=4101952)
     IfConditionTrue(0, input_condition=2)
@@ -172,7 +172,7 @@ def Event14100101():
         right_flag=14105101,
         cancel_flag=14105101,
     )
-    RestartIfFlagOff(101)
+    RestartIfFlagDisabled(101)
     EnableFlag(101)
     DisableFlag(100)
     ForceAnimation(4101952, 1)
@@ -192,7 +192,7 @@ def Event14100101():
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfFlagOff(2, 9013)
+    SkipLinesIfFlagDisabled(2, 9013)
     PlayCutscene(41000050, skippable=False, fade_out=False, player_id=PLAYER)
     SkipLines(1)
     PlayCutscene(41000051, skippable=False, fade_out=False, player_id=PLAYER)
@@ -233,11 +233,11 @@ def Event14105500():
 def Event14105510():
     """ 14105510: Event 14105510 """
     DisableObject(4106102)
-    IfFlagOn(1, 14100511)
+    IfFlagEnabled(1, 14100511)
     EndIfConditionFalse(1)
     EnableObject(4106102)
     EndIfPlayerNotInOwnWorld()
-    SkipLinesIfFlagOn(1, 14100512)
+    SkipLinesIfFlagEnabled(1, 14100512)
     EnableFlag(14100512)
     IfPlayerInOwnWorld(2)
     IfLeavingSession(2)
@@ -258,7 +258,7 @@ def Event14105200():
 
 def Event14100800():
     """ 14100800: Event 14100800 """
-    EndIfFlagOn(14100800)
+    EndIfFlagEnabled(14100800)
     IfHealthLessThanOrEqual(0, 4100800, 0.0)
     Wait(3.0)
     PlaySoundEffect(anchor_entity=4100800, sound_type=SoundType.s_SFX, sound_id=777777777)
@@ -274,7 +274,7 @@ def Event14100800():
 @RestartOnRest
 def Event14105810():
     """ 14105810: Event 14105810 """
-    GotoIfFlagOff(Label.L0, 14100800)
+    GotoIfFlagDisabled(Label.L0, 14100800)
     Kill(4100800, award_souls=False)
     DisableCharacter(4100800)
     DisableAI(4100800)
@@ -283,7 +283,7 @@ def Event14105810():
     # --- 0 --- #
     DefineLabel(0)
     DisableAI(4100800)
-    GotoIfFlagOn(Label.L1, 14100801)
+    GotoIfFlagEnabled(Label.L1, 14100801)
     IfPlayerInOwnWorld(1)
     IfEntityWithinDistance(1, 4100800, PLAYER, radius=40.0)
     IfConditionTrue(0, input_condition=1)
@@ -293,7 +293,7 @@ def Event14105810():
 
     # --- 1 --- #
     DefineLabel(1)
-    IfFlagOn(1, 14105805)
+    IfFlagEnabled(1, 14105805)
     IfCharacterInsideRegion(1, PLAYER, region=4102800)
     IfConditionTrue(0, input_condition=1)
 
@@ -311,8 +311,8 @@ def Event14105810():
 @RestartOnRest
 def Event14105811():
     """ 14105811: Event 14105811 """
-    EndIfFlagOn(14100800)
-    EndIfFlagOn(14105802)
+    EndIfFlagEnabled(14100800)
+    EndIfFlagEnabled(14105802)
     EnableImmortality(4100800)
     IfHealthLessThanOrEqual(1, 4100800, 0.05000000074505806)
     IfAttackedWithDamageType(1, attacked_entity=4100800, attacker=PLAYER)
@@ -327,9 +327,9 @@ def Event14105811():
 @RestartOnRest
 def Event14105812():
     """ 14105812: Event 14105812 """
-    EndIfFlagOn(14100800)
-    GotoIfFlagOn(Label.L0, 14100801)
-    GotoIfFlagOn(Label.L0, 14100801)
+    EndIfFlagEnabled(14100800)
+    GotoIfFlagEnabled(Label.L0, 14100801)
+    GotoIfFlagEnabled(Label.L0, 14100801)
     ForceAnimation(4100800, 700)
 
     # --- 0 --- #
@@ -354,20 +354,20 @@ def Event14105813(
     DisableNetworkSync()
     DisableSoundEvent(arg_16_19)
     DisableSoundEvent(arg_20_23)
-    EndIfFlagOn(arg_0_3)
-    IfFlagOn(1, arg_4_7)
+    EndIfFlagEnabled(arg_0_3)
+    IfFlagEnabled(1, arg_4_7)
     SkipLinesIfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.Equal, 0)
-    IfFlagOn(1, arg_8_11)
+    IfFlagEnabled(1, arg_8_11)
     IfCharacterInsideRegion(1, PLAYER, region=arg_12_15)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(arg_16_19)
     Unknown_2010_07(sound_id=arg_20_23)
-    IfFlagOn(-1, arg_24_27)
-    IfFlagOn(-1, arg_0_3)
+    IfFlagEnabled(-1, arg_24_27)
+    IfFlagEnabled(-1, arg_0_3)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFlagOn(Label.L0, arg_0_3)
+    GotoIfFlagEnabled(Label.L0, arg_0_3)
     EnableBossMusic(arg_20_23)
-    IfFlagOn(0, arg_0_3)
+    IfFlagEnabled(0, arg_0_3)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -396,8 +396,8 @@ def Event14005900():
     CancelSpecialEffect(PLAYER, 4901)
     SetNetworkInteractionState(True)
     DisableHUDVisibility()
-    IfFlagOn(-1, 100)
-    IfFlagOn(-1, 101)
+    IfFlagEnabled(-1, 100)
+    IfFlagEnabled(-1, 101)
     IfConditionTrue(0, input_condition=-1)
     DisableCharacter(4100800)
     DisableAnimations(4100800)

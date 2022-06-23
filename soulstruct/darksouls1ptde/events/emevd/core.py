@@ -8,9 +8,11 @@ from soulstruct.base.events.emevd import (
     EventLayers as _BaseEventLayers,
 )
 from soulstruct.containers.dcx import DCXType
+from soulstruct.games import DarkSoulsPTDEType
 from soulstruct.utilities.binary import BinaryStruct
-from .arg_types import INSTRUCTION_ARG_TYPES
-from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, auto_decompile
+from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
+from .emedf import EMEDF
+from .entity_enums_manager import EntityEnumsManager
 from .evs import EVSParser
 
 
@@ -37,10 +39,10 @@ class EventArg(_BaseEventArg):
 
 
 class Instruction(_BaseInstruction):
+    EMEDF = EMEDF
     DECOMPILER = DECOMPILER
     OPT_ARGS_DECOMPILER = OPT_ARGS_DECOMPILER
-    AUTO_DECOMPILE = staticmethod(auto_decompile)
-    INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES
+    DECOMPILE = staticmethod(decompile_instruction)
     EventLayers = EventLayers
     HEADER_STRUCT = BinaryStruct(
         ("category", "I"),
@@ -67,14 +69,14 @@ class Event(_BaseEvent):
     )
 
 
-class EMEVD(_BaseEMEVD):
+class EMEVD(DarkSoulsPTDEType, _BaseEMEVD):
 
     events: dict[int, Event]
 
     Event = Event
     EVS_PARSER = EVSParser
-    IMPORT_STRING = "soulstruct.darksouls1ptde.events"
     STRING_ENCODING = "utf-8"
+    ENTITY_ENUMS_MANAGER = EntityEnumsManager
     DCX_TYPE: DCXType = None
     HEADER_STRUCT = BinaryStruct(
         ("signature", "4s", b"EVD\0"),

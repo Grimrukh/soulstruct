@@ -10,7 +10,7 @@ import types
 import typing as tp
 from pathlib import Path
 
-from soulstruct.game_types.msb_types import *
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.base.project.utilities import bind_events
 from soulstruct.utilities.files import import_arbitrary_file

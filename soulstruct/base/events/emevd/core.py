@@ -15,11 +15,11 @@ from soulstruct.utilities.binary import BinaryReader
 from .event import Event
 from .exceptions import EMEVDError
 from .numeric import build_numeric
-from .utils import EntityEnumsManager
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.emevd.evs import EVSParser
     from soulstruct.utilities.binary import BinaryStruct
+    from .entity_enums_manager import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,8 +32,8 @@ class EMEVD(GameFile, abc.ABC):
     map_name: str
 
     Event: tp.Type[Event] = None
+    ENTITY_ENUMS_MANAGER: tp.Type[EntityEnumsManager] = None
     EVS_PARSER: tp.Type[EVSParser] = None
-    IMPORT_STRING: str = None
     STRING_ENCODING: str = None
     DCX_TYPE: DCXType = None
     HEADER_STRUCT: BinaryStruct = None
@@ -312,7 +312,7 @@ class EMEVD(GameFile, abc.ABC):
         entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
         warn_missing_enums=True,
         entity_module_prefix=".",
-    ):
+    ) -> str:
         """Convert EMEVD to a Python-style EVS string.
 
         Currently, EMEVD instructions are line-for-line with EVS instructions; no automatic 'decompilation' into higher-
@@ -340,16 +340,16 @@ class EMEVD(GameFile, abc.ABC):
         any of the given entities modules will cause a warning to be logged and a TO-DO comment to be written at the end
         of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
         """
-        if entity_star_module_paths or entity_non_star_module_paths:
-            enums_manager = EntityEnumsManager(entity_star_module_paths, entity_non_star_module_paths)
-        else:
-            enums_manager = None
+        enums_manager = self.ENTITY_ENUMS_MANAGER(
+            entity_star_module_paths, entity_non_star_module_paths, list(self.events)
+        )
 
         for event in self.events.values():
             event.update_evs_function_args()
 
         docstring = self.get_evs_docstring()
-        imports = f"from {self.IMPORT_STRING} import *"
+        imports = f"from soulstruct.{self.GAME.submodule_name}.events import *"
+        imports += f"\nfrom soulstruct.{self.GAME.submodule_name}.events.instructions import *"
         evs_events = [event.to_evs(enums_manager) for event in self.events.values()]
 
         if enums_manager:

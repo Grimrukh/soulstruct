@@ -12,8 +12,8 @@ from .utils import get_byte_offset_from_struct, get_instruction_args
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+    from .entity_enums_manager import EntityEnumsManager
     from .event import EventArg
-    from .utils import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,13 +23,13 @@ class Instruction(abc.ABC):
     event_args: list[EventArg]
     event_layers: tp.Optional[EventLayers]
 
-    INSTRUCTION_ARG_TYPES = {}
     EventLayers: tp.Type[EventLayers] = None
     HEADER_STRUCT: BinaryStruct = None
 
+    EMEDF: dict[tuple[int, int], dict]
     DECOMPILER: dict[tuple[int, int], tp.Callable]
     OPT_ARGS_DECOMPILER: dict[tuple[int, int], tp.Callable]
-    AUTO_DECOMPILE: tp.Callable
+    DECOMPILE: tp.Callable
 
     def __init__(self, category, index, display_arg_types="", args_list=(), event_layers=None):
         self.category = category
@@ -81,7 +81,7 @@ class Instruction(abc.ABC):
                     d["index"],
                     base_arg_data_offset + d["first_base_arg_offset"],
                     d["base_args_size"],
-                    cls.INSTRUCTION_ARG_TYPES,
+                    cls.EMEDF,
                 )
             except KeyError:
                 args_size = struct_dicts[i + 1]["first_base_arg_offset"] - d["first_base_arg_offset"]
@@ -133,31 +133,29 @@ class Instruction(abc.ABC):
         return numeric
 
     def to_evs(self, event_arg_types, enums_manager: EntityEnumsManager = None) -> str:
-        """Convert single event instruction to EVS.
-
-        If `enums` is given (e.g. via `EMEVD.to_evs()`), it should map `MapEntity` subclass names to dictionaries that
-        map entity IDs to enum attributes to print in their place (e.g. `1510100: "Characters.BlackKnight2`). If `enums`
-        is given and `warn_missing_enums=True`, entity IDs that do not appear in `enums` will cause a warning to be
-        logged and a TO-DO comment to be written to that line.
-        """
+        """Convert single event instruction to EVS."""
         args, opt_args = self.get_required_and_optional_args()
-        opt_arg_types = ""
 
-        if (self.category, self.index) in self.OPT_ARGS_DECOMPILER:
-            if self.get_called_event() is not None and opt_args and args[1] in event_arg_types:
-                opt_arg_types = event_arg_types[args[1]]
-            decompile_func = self.OPT_ARGS_DECOMPILER[self.category, self.index]
-            instruction = decompile_func(*args, *opt_args, opt_arg_types, enums_manager=enums_manager)
-        elif (self.category, self.index) in self.DECOMPILER:
-            decompile_func = self.DECOMPILER[self.category, self.index]
-            instruction = decompile_func(*args)
+        if self.get_called_event() is not None and opt_args and args[1] in event_arg_types:
+            opt_arg_types = event_arg_types[args[1]]
         else:
-            instruction = self.AUTO_DECOMPILE(*args)
+            opt_arg_types = ""
+
+        try:
+            instruction = self.DECOMPILE(
+                self.category, self.index, args, opt_args, opt_arg_types, enums_manager=enums_manager
+            )
+        except Exception as ex:
+            raise ValueError(
+                f"Error while decompiling instruction ({self.category}, {self.index}):\n"
+                f"  {ex}\n"
+                f"  args = {self.evs_args_list}"
+            )
         if self.event_layers:
             instruction = instruction[:-1] + self.event_layers.to_evs()
         return instruction
 
-    def get_required_and_optional_args(self):
+    def get_required_and_optional_args(self) -> tuple[list[str], list[str]]:
         separator_index = self.display_arg_types.find("|")
         if separator_index == -1:
             required_args = self.evs_args_list
@@ -170,8 +168,8 @@ class Instruction(abc.ABC):
     def process_event_args(self) -> dict[tuple[int, int], set[str]]:
         """Inserts arg replacements into the appropriate places in their instructions for readability.
 
-        The arg replacements are represented as "arg_i_j", where i and j specify the start and end of the byte range
-        read from the arguments passed to the `RunEvent` instruction.
+        The arg replacements are represented as "arg_i_j", where i and j specify the start and end (inclusive) of the
+        byte range read from the arguments passed to the `RunEvent` instruction.
 
         Returns a dictionary mapping start-stop bytes for reading the arg `(i, j)` to a set of format characters (e.g
         `"i"`, "f"`) determined from the instruction's known arg format. The set values in this dictionary will

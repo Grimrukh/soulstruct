@@ -1,6 +1,17 @@
 from __future__ import annotations
 
-__all__ = ["ArgType", "add_common_emedf_info"]
+__all__ = [
+    "ArgType",
+    "add_common_emedf_info",
+    "HIDE",
+    "BOOL",
+    "INT",
+    "FLOAT",
+    "MODEL_POINT",
+    "BIT_COUNT",
+    "SPECIAL_EFFECT",
+    "NO_DEFAULT",
+]
 
 from enum import IntEnum
 from pathlib import Path
@@ -95,23 +106,75 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
     Currently, just adds internal argument types.
     """
     common_emedf_path = Path(common_emedf_path)
-    common_emedf = read_json(common_emedf_path)
+    common_emedf_raw = read_json(common_emedf_path)
+
+    common_emedf = {}
+    for cat_dict in common_emedf_raw["main_classes"]:
+        category = cat_dict["index"]
+        for instr_dict in cat_dict["instrs"]:
+            index = instr_dict["index"]
+            common_emedf[category, index] = instr_dict
+
     for (category, index), info in emedf.items():
         try:
-            instr = common_emedf["main_classes"][category]["instrs"][index]
+            instr = common_emedf[category, index]
         except KeyError:
+            if all("internal_type" in arg_dict for arg_dict in info["args"].values()):
+                continue  # permitted to be missing from real EMEDF
             raise KeyError(f"Invalid instruction ID for common EMEDF '{common_emedf_path.name}': ({category}, {index})")
         if len(info["args"]) != len(instr["args"]):
+            print(category, index, info["alias"], instr["name"])
             raise ValueError(
-                f"Instruction ID ({category}, {index}) has {len(instr['args'])} in common EMEDF but has "
-                f"{len(info['args'])} in Soulstruct."
+                f"Instruction ID ({category}, {index}) has {len(instr['args'])} args in common EMEDF but has "
+                f"{len(info['args'])} args in Soulstruct."
             )
-        for i, (arg_name, arg_info) in enumerate(info["args"].items()):
+        for i, arg_name in enumerate(info["args"]):
             instr_type = int(instr["args"][i]["type"])
             try:
-                arg_info["internal_type"] = ArgType(instr_type)
+                # Original dictionary is copied, as many arguments across instructions refer to common dicts.
+                info["args"][arg_name] = info["args"][arg_name].copy() | {"internal_type": ArgType(instr_type)}
             except ValueError:
                 raise ValueError(
                     f"Instruction ({category}, {index}) argument '{arg_name}' has unrecognized type in common EMEDF: "
                     f"{instr_type}"
                 )
+
+
+HIDE = {
+    "hide_name": True,
+}
+BOOL = {
+    "type": bool,
+    "default": None,
+}
+INT = {
+    "type": int,
+    "default": None,
+}
+FLOAT = {
+    "type": float,
+    "default": None,
+}
+
+MODEL_POINT = {
+    "type": int,
+    "default": -1,
+    "internal_default": -1,
+}
+BIT_COUNT = {
+    "type": int,
+    "default": None,
+    "internal_default": 1,
+}
+SPECIAL_EFFECT = {
+    "type": int,
+    "default": None,
+    "internal_default": -1,
+}
+
+
+def NO_DEFAULT(enum_cls):
+    return {
+        "type": enum_cls,
+        "default": None
+    }

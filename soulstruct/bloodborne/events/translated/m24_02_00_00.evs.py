@@ -242,9 +242,9 @@ def Constructor():
     Event12420700()
     IfCharacterHuman(15, PLAYER)
     SkipLinesIfConditionFalse(2, 15)
-    SkipLinesIfFlagOff(1, 6648)
+    SkipLinesIfFlagDisabled(1, 6648)
     EnableFlag(12421999)
-    SkipLinesIfFlagOn(5, 12421999)
+    SkipLinesIfFlagEnabled(5, 12421999)
     EnableObject(2421102)
     DisableObject(2421103)
     EnableTreasure(2421102)
@@ -256,9 +256,9 @@ def Constructor():
     EnableTreasure(2421103)
     IfCharacterHuman(14, PLAYER)
     SkipLinesIfConditionFalse(2, 14)
-    SkipLinesIfFlagOff(1, 6313)
+    SkipLinesIfFlagDisabled(1, 6313)
     EnableFlag(12421998)
-    SkipLinesIfFlagOn(5, 12421998)
+    SkipLinesIfFlagEnabled(5, 12421998)
     EnableObject(2421500)
     DisableObject(2421501)
     EnableTreasure(2421500)
@@ -287,7 +287,7 @@ def Preconstructor():
 @RestartOnRest
 def Event12420700():
     """ 12420700: Event 12420700 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
     IfCharacterDead(0, 2420268)
@@ -296,7 +296,7 @@ def Event12420700():
 
 def EbrietasDies():
     """ 12421800: Ebrietas, Daughter of the Cosmos is defeated. """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableSoundEvent(2423802)
     DisableSoundEvent(2423803)
     DisableCharacter(Characters.Ebrietas)
@@ -341,8 +341,8 @@ def EbrietasDies():
 def Event12421801():
     """ 12421801: Event 12421801 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.EbrietasDead)
-    IfFlagOn(1, Flags.EbrietasDead)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    IfFlagEnabled(1, Flags.EbrietasDead)
     IfCharacterBackreadDisabled(2, Characters.Ebrietas)
     IfHealthLessThanOrEqual(2, Characters.Ebrietas, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -354,8 +354,8 @@ def Event12421801():
 
 def EbrietasFirstTime():
     """ 12421802: Event 12421802 """
-    EndIfFlagOn(Flags.EbrietasDead)
-    GotoIfThisEventOff(Label.L0)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    GotoIfThisEventFlagDisabled(Label.L0)
     Move(Characters.Ebrietas, destination=2422800, destination_type=CoordEntityType.Region, short_move=True)
     RotateToFaceEntity(Characters.Ebrietas, 2422804, animation=-1, wait_for_completion=False)
     End()
@@ -365,8 +365,8 @@ def EbrietasFirstTime():
     ForceAnimation(Characters.Ebrietas, 7001, loop=True)
     EnableImmortality(Characters.Ebrietas)
     AddSpecialEffect(Characters.Ebrietas, 5647, affect_npc_part_hp=False)
-    IfFlagOff(1, Flags.EbrietasDead)
-    IfThisEventOff(1)
+    IfFlagDisabled(1, Flags.EbrietasDead)
+    IfThisEventFlagDisabled(1)
     IfCharacterHuman(1, PLAYER)
     IfAttackedWithDamageType(1, attacked_entity=Characters.Ebrietas, attacker=PLAYER)
     IfConditionTrue(0, input_condition=1)
@@ -374,7 +374,7 @@ def EbrietasFirstTime():
     DisableImmortality(Characters.Ebrietas)
     CancelSpecialEffect(Characters.Ebrietas, 5647)
     EnableFlag(Flags.EbrietasFogEntered)
-    EndIfFlagOn(9304)
+    EndIfFlagEnabled(9304)
     RunEvent(9350, 0, args=(3,))
     EnableFlag(9304)
 
@@ -382,7 +382,7 @@ def EbrietasFirstTime():
 def SummonStartEbrietasBattle():
     """ 12421803: Event 12421803 """
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.EbrietasFogEntered)
+    IfFlagEnabled(1, Flags.EbrietasFogEntered)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
     EnableFlag(Flags.EbrietasFogEntered)
@@ -391,23 +391,23 @@ def SummonStartEbrietasBattle():
 
 def EnterEbrietasFog():
     """ 12424810: Event 12424810 """
-    EndIfFlagOn(Flags.EbrietasDead)
-    GotoIfFlagOn(Label.L0, Flags.EbrietasFirstTimeDone)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    GotoIfFlagEnabled(Label.L0, Flags.EbrietasFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.EbrietasFog)
     DeleteVFX(VFX.EbrietasFog, erase_root_only=False)
-    IfFlagOff(1, Flags.EbrietasDead)
-    IfFlagOn(1, Flags.EbrietasFirstTimeDone)
+    IfFlagDisabled(1, Flags.EbrietasDead)
+    IfFlagEnabled(1, Flags.EbrietasFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.EbrietasFog)
     CreateVFX(VFX.EbrietasFog)
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, Flags.EbrietasDead)
+    IfFlagDisabled(2, Flags.EbrietasDead)
     IfCharacterHuman(2, PLAYER)
     IfActionButtonParam(2, action_button_id=2420800, entity=Objects.EbrietasFog)
-    IfFlagOn(3, Flags.EbrietasDead)
+    IfFlagEnabled(3, Flags.EbrietasDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -428,10 +428,10 @@ def EnterEbrietasFog():
 def EnterEbrietasFogAsSummon():
     """ 12424811: Event 12424811 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.EbrietasDead)
-    IfFlagOff(1, Flags.EbrietasDead)
-    IfFlagOn(1, Flags.EbrietasFirstTimeDone)
-    IfFlagOn(1, Flags.EbrietasFogEntered)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    IfFlagDisabled(1, Flags.EbrietasDead)
+    IfFlagEnabled(1, Flags.EbrietasFirstTimeDone)
+    IfFlagEnabled(1, Flags.EbrietasFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParam(1, action_button_id=2420800, entity=Objects.EbrietasFog)
     IfConditionTrue(0, input_condition=1)
@@ -471,11 +471,11 @@ def Event12424813():
 
 def StartEbrietasBattle():
     """ 12424802: Event 12424802 """
-    EndIfFlagOn(Flags.EbrietasDead)
+    EndIfFlagEnabled(Flags.EbrietasDead)
     DisableAI(Characters.Ebrietas)
     DisableHealthBar(Characters.Ebrietas)
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(0, Flags.EbrietasFogEntered)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    IfFlagEnabled(0, Flags.EbrietasFogEntered)
     GotoIfClient(Label.L0)
     NotifyBossBattleStart()
     SetNetworkUpdateAuthority(Characters.Ebrietas, UpdateAuthority.Forced)
@@ -516,26 +516,26 @@ def StartEbrietasBattle():
 def ControlEbrietasMusic():
     """ 12424803: Event 12424803 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.EbrietasDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableSoundEvent(2423802)
     DisableSoundEvent(2423803)
-    IfFlagOff(1, Flags.EbrietasDead)
-    IfFlagOn(1, Flags.EbrietasBattleStarted)
+    IfFlagDisabled(1, Flags.EbrietasDead)
+    IfFlagEnabled(1, Flags.EbrietasBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(1, 12424801)
+    IfFlagEnabled(1, 12424801)
     IfCharacterInsideRegion(1, PLAYER, region=2422802)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(2423802)
     EnableFlag(12425246)
-    IfHasTAEEvent(2, Characters.Ebrietas, tae_event_id=100)
+    IfCharacterHasTAEEvent(2, Characters.Ebrietas, tae_event_id=100)
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, Flags.EbrietasDead)
-    IfFlagOn(2, Flags.EbrietasBattleStarted)
+    IfFlagDisabled(2, Flags.EbrietasDead)
+    IfFlagEnabled(2, Flags.EbrietasBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(2, 12424801)
+    IfFlagEnabled(2, 12424801)
     IfCharacterInsideRegion(2, PLAYER, region=2422802)
     IfConditionTrue(0, input_condition=2)
     DisableBossMusic(2423802)
@@ -547,10 +547,10 @@ def ControlEbrietasMusic():
 def ControlEbrietasCamera():
     """ 12424804: Event 12424804 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.EbrietasDead)
-    IfHasTAEEvent(0, Characters.Ebrietas, tae_event_id=10)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    IfCharacterHasTAEEvent(0, Characters.Ebrietas, tae_event_id=10)
     SetLockedCameraSlot(game_map=UPPER_CATHEDRAL_WARD, camera_slot=1)
-    IfHasTAEEvent(0, Characters.Ebrietas, tae_event_id=20)
+    IfCharacterHasTAEEvent(0, Characters.Ebrietas, tae_event_id=20)
     SetLockedCameraSlot(game_map=UPPER_CATHEDRAL_WARD, camera_slot=0)
     Restart()
 
@@ -558,8 +558,8 @@ def ControlEbrietasCamera():
 def StopEbrietasMusic():
     """ 12424805: Event 12424805 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.EbrietasDead)
-    IfFlagOn(0, Flags.EbrietasDead)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    IfFlagEnabled(0, Flags.EbrietasDead)
     DisableBossMusic(2423802)
     DisableBossMusic(2423803)
     DisableBossMusic(-1)
@@ -604,7 +604,7 @@ def EbrietasHeadDamage(
     AddSpecialEffect(Characters.Ebrietas, arg_16_19, affect_npc_part_hp=True)
     CancelSpecialEffect(Characters.Ebrietas, arg_20_23)
     ReplanAI(Characters.Ebrietas)
-    IfHasTAEEvent(0, Characters.Ebrietas, tae_event_id=100)
+    IfCharacterHasTAEEvent(0, Characters.Ebrietas, tae_event_id=100)
     SetNPCPartHealth(Characters.Ebrietas, npc_part_id=arg_4_7, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(Characters.Ebrietas, arg_20_23, affect_npc_part_hp=True)
     CancelSpecialEffect(Characters.Ebrietas, arg_16_19)
@@ -652,7 +652,7 @@ def EbrietasLimbDamage(
     AddSpecialEffect(Characters.Ebrietas, arg_16_19, affect_npc_part_hp=True)
     CancelSpecialEffect(Characters.Ebrietas, arg_20_23)
     ReplanAI(Characters.Ebrietas)
-    IfHasTAEEvent(0, Characters.Ebrietas, tae_event_id=100)
+    IfCharacterHasTAEEvent(0, Characters.Ebrietas, tae_event_id=100)
     SetNPCPartHealth(Characters.Ebrietas, npc_part_id=arg_4_7, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(Characters.Ebrietas, arg_20_23, affect_npc_part_hp=True)
     CancelSpecialEffect(Characters.Ebrietas, arg_16_19)
@@ -667,12 +667,12 @@ def EbrietasPhaseTwoTrigger():
     WaitFrames(1)
     IfCharacterDead(1, Characters.Ebrietas)
     EndIfConditionTrue(1)
-    IfFlagOn(2, Flags.EbrietasFogEntered)
+    IfFlagEnabled(2, Flags.EbrietasFogEntered)
     IfHealthLessThan(2, Characters.Ebrietas, 0.5)
     IfConditionTrue(0, input_condition=2)
     AICommand(Characters.Ebrietas, command_id=100, slot=0)
     ReplanAI(Characters.Ebrietas)
-    IfHasTAEEvent(0, Characters.Ebrietas, tae_event_id=500)
+    IfCharacterHasTAEEvent(0, Characters.Ebrietas, tae_event_id=500)
     AICommand(Characters.Ebrietas, command_id=-1, slot=0)
     ReplanAI(Characters.Ebrietas)
 
@@ -697,7 +697,7 @@ def DismissEbrietasStarsOnDeath():
 
 def CelestialEmissaryDies():
     """ 12421700: Event 12421700 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableSoundEvent(2423812)
     DisableSoundEvent(2423813)
     DisableCharacter(Characters.CelestialEmissarySmall)
@@ -742,7 +742,7 @@ def CelestialEmissaryDies():
     IfCharacterHuman(0, PLAYER)
     RunEvent(9350, 0, args=(2,))
     AwardAchievement(27)
-    SkipLinesIfFlagOn(2, 6332)
+    SkipLinesIfFlagEnabled(2, 6332)
     AwardItemLot(25700000, host_only=False)
     SkipLines(1)
     AwardItemLot(25700005, host_only=False)
@@ -767,8 +767,8 @@ def CelestialEmissaryDies():
 def PlayCelestialEmissaryDeathSound():
     """ 12421701: Event 12421701 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.EbrietasDead)
-    IfFlagOn(1, Flags.EbrietasDead)
+    EndIfFlagEnabled(Flags.EbrietasDead)
+    IfFlagEnabled(1, Flags.EbrietasDead)
     IfCharacterBackreadDisabled(2, Characters.Ebrietas)
     IfHealthLessThanOrEqual(2, Characters.Ebrietas, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -780,8 +780,8 @@ def PlayCelestialEmissaryDeathSound():
 
 def CelestialEmissaryFirstTime():
     """ 12421702: Event 12421702 """
-    EndIfFlagOn(Flags.CelestialEmissaryDead)
-    EndIfThisEventOn()
+    EndIfFlagEnabled(Flags.CelestialEmissaryDead)
+    EndIfThisEventFlagEnabled()
     DisableCharacter(Characters.CelestialEmissarySmall)
     DisableCharacter(Characters.CelestialMinion1)
     DisableCharacter(Characters.CelestialMinion2)
@@ -790,8 +790,8 @@ def CelestialEmissaryFirstTime():
     DisableCharacter(Characters.CelestialMinion5)
     DisableCharacter(Characters.CelestialMinion6)
     DisableCharacter(Characters.CelestialMinion7)
-    IfFlagOff(1, Flags.CelestialEmissaryDead)
-    IfThisEventSlotOff(1)
+    IfFlagDisabled(1, Flags.CelestialEmissaryDead)
+    IfThisEventSlotFlagDisabled(1)
     IfCharacterHuman(1, PLAYER)
     IfCharacterInsideRegion(1, PLAYER, region=2422815)
     IfConditionTrue(0, input_condition=1)
@@ -828,7 +828,7 @@ def CelestialEmissaryFirstTime():
 def SummonStartCelestialEmissaryBattle():
     """ 12421703: Event 12421703 """
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.CelestialEmissaryFogEntered)
+    IfFlagEnabled(1, Flags.CelestialEmissaryFogEntered)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
     EnableFlag(Flags.CelestialEmissaryFogEntered)
@@ -863,15 +863,15 @@ def SummonStartCelestialEmissaryBattle():
 
 def EnterCelestialEmissaryFog():
     """ 12424710: Event 12424710 """
-    EndIfFlagOn(Flags.CelestialEmissaryDead)
-    GotoIfFlagOn(Label.L0, Flags.CelestialEmissaryFirstTimeDone)
+    EndIfFlagEnabled(Flags.CelestialEmissaryDead)
+    GotoIfFlagEnabled(Label.L0, Flags.CelestialEmissaryFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.CelestialEmissaryEntranceFog)
     DeleteVFX(VFX.CelestialEmissaryEntranceFog, erase_root_only=False)
     DisableObject(Objects.CelestialEmissaryExitFog)
     DeleteVFX(VFX.CelestialEmissaryExitFog, erase_root_only=False)
-    IfFlagOff(1, Flags.CelestialEmissaryDead)
-    IfFlagOn(1, Flags.CelestialEmissaryFirstTimeDone)
+    IfFlagDisabled(1, Flags.CelestialEmissaryDead)
+    IfFlagEnabled(1, Flags.CelestialEmissaryFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.CelestialEmissaryEntranceFog)
     EnableObject(Objects.CelestialEmissaryExitFog)
@@ -880,10 +880,10 @@ def EnterCelestialEmissaryFog():
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(1, Flags.CelestialEmissaryDead)
+    IfFlagDisabled(1, Flags.CelestialEmissaryDead)
     IfCharacterHuman(2, PLAYER)
     IfActionButtonParam(2, action_button_id=2420700, entity=Objects.CelestialEmissaryEntranceFog)
-    IfFlagOn(3, Flags.CelestialEmissaryDead)
+    IfFlagEnabled(3, Flags.CelestialEmissaryDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -904,9 +904,9 @@ def EnterCelestialEmissaryFog():
 def EnterCelestialEmissaryFogAsSummon():
     """ 12424711: Event 12424711 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.CelestialEmissaryDead)
-    IfFlagOff(1, Flags.CelestialEmissaryDead)
-    IfFlagOn(1, Flags.CelestialEmissaryFogEntered)
+    EndIfFlagEnabled(Flags.CelestialEmissaryDead)
+    IfFlagDisabled(1, Flags.CelestialEmissaryDead)
+    IfFlagEnabled(1, Flags.CelestialEmissaryFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParam(1, action_button_id=2420700, entity=Objects.CelestialEmissaryEntranceFog)
     IfConditionTrue(0, input_condition=1)
@@ -946,7 +946,7 @@ def Event12424713():
 
 def StartCelestialEmissaryBattle():
     """ 12424702: Event 12424702 """
-    EndIfFlagOn(Flags.CelestialEmissaryDead)
+    EndIfFlagEnabled(Flags.CelestialEmissaryDead)
     DisableAI(Characters.CelestialEmissarySmall)
     DisableAI(Characters.CelestialMinion1)
     DisableAI(Characters.CelestialMinion2)
@@ -956,8 +956,8 @@ def StartCelestialEmissaryBattle():
     DisableAI(Characters.CelestialMinion6)
     DisableAI(Characters.CelestialMinion7)
     EnableImmortality(Characters.CelestialEmissarySmall)
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(0, Flags.CelestialEmissaryFogEntered)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    IfFlagEnabled(0, Flags.CelestialEmissaryFogEntered)
     GotoIfClient(Label.L0)
     NotifyBossBattleStart()
     SetNetworkUpdateAuthority(2800810, UpdateAuthority.Forced)
@@ -1005,7 +1005,7 @@ def StartCelestialEmissaryBattle():
     EnableBossHealthBar(Characters.CelestialEmissarySmall, name=257000, slot=0)
     CreatePlayLog(104)
     StartPlayLogMeasurement(2800010, 40, overwrite=True)
-    EndIfFlagOff(Flags.CelestialEmissaryFirstTimeDone)
+    EndIfFlagDisabled(Flags.CelestialEmissaryFirstTimeDone)
     IfCharacterInsideRegion(-1, PLAYER, region=2422817)
     IfAttackedWithDamageType(-1, attacked_entity=Characters.CelestialEmissarySmall, attacker=PLAYER)
     IfAttackedWithDamageType(-1, attacked_entity=Characters.CelestialMinion1, attacker=PLAYER)
@@ -1029,26 +1029,26 @@ def StartCelestialEmissaryBattle():
 def ControlCelestialEmissaryMusic():
     """ 12424703: Event 12424703 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.CelestialEmissaryDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.CelestialEmissaryDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableSoundEvent(2703802)
     DisableSoundEvent(2703803)
-    IfFlagOff(1, Flags.CelestialEmissaryDead)
-    IfFlagOn(1, Flags.CelestialEmissaryBattleStarted)
+    IfFlagDisabled(1, Flags.CelestialEmissaryDead)
+    IfFlagEnabled(1, Flags.CelestialEmissaryBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(1, 12424701)
+    IfFlagEnabled(1, 12424701)
     IfCharacterInsideRegion(1, PLAYER, region=2422812)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(2423812)
     EnableFlag(12425246)
-    IfFlagOn(0, Flags.CelestialEmissaryPhaseTwo)
+    IfFlagEnabled(0, Flags.CelestialEmissaryPhaseTwo)
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, Flags.CelestialEmissaryDead)
-    IfFlagOn(2, Flags.CelestialEmissaryBattleStarted)
+    IfFlagDisabled(2, Flags.CelestialEmissaryDead)
+    IfFlagEnabled(2, Flags.CelestialEmissaryBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(2, 12424701)
+    IfFlagEnabled(2, 12424701)
     IfCharacterInsideRegion(2, PLAYER, region=2422812)
     IfConditionTrue(0, input_condition=2)
     DisableBossMusic(2423812)
@@ -1075,8 +1075,8 @@ def ControlCelestialEmissaryCamera():
 def StopCelestialEmissaryMusic():
     """ 12424705: Event 12424705 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.CelestialEmissaryDead)
-    IfFlagOn(0, Flags.CelestialEmissaryDead)
+    EndIfFlagEnabled(Flags.CelestialEmissaryDead)
+    IfFlagEnabled(0, Flags.CelestialEmissaryDead)
     DisableBossMusic(2423812)
     DisableBossMusic(2423813)
     DisableBossMusic(-1)
@@ -1105,7 +1105,7 @@ def Event12424770(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def ApplyCelestialEmissaryAura():
     """ 12424780: Minion aliens get buff from Celestial Emissary action. """
-    IfHasTAEEvent(0, Characters.CelestialEmissaryGiant, tae_event_id=40)
+    IfCharacterHasTAEEvent(0, Characters.CelestialEmissaryGiant, tae_event_id=40)
     AddSpecialEffect(Characters.CelestialMinion1, Effects.CelestialEmissaryAura, affect_npc_part_hp=False)
     AddSpecialEffect(Characters.CelestialMinion2, Effects.CelestialEmissaryAura, affect_npc_part_hp=False)
     AddSpecialEffect(Characters.CelestialMinion3, Effects.CelestialEmissaryAura, affect_npc_part_hp=False)
@@ -1119,7 +1119,7 @@ def ApplyCelestialEmissaryAura():
 @RestartOnRest
 def Event12424785(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12424785: Event 12424785 """
-    IfFlagOn(1, arg_12_15)
+    IfFlagEnabled(1, arg_12_15)
     IfCharacterOutsideRegion(1, arg_0_3, region=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     AICommand(arg_0_3, command_id=arg_8_11, slot=0)
@@ -1134,7 +1134,7 @@ def Event12424785(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12424787(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12424787: Event 12424787 """
-    IfFlagOn(1, arg_12_15)
+    IfFlagEnabled(1, arg_12_15)
     IfHealthGreaterThan(1, arg_16_19, 0.6000000238418579)
     IfCharacterOutsideRegion(1, arg_0_3, region=arg_4_7)
     IfConditionTrue(0, input_condition=1)
@@ -1181,7 +1181,7 @@ def CelestialEmissaryPhaseTwoTrigger():
     SetNest(Characters.CelestialEmissaryGiant, 2422721)
     AICommand(Characters.CelestialEmissarySmall, command_id=40, slot=1)
     ReplanAI(Characters.CelestialEmissarySmall)
-    IfHasTAEEvent(0, Characters.CelestialEmissarySmall, tae_event_id=30)
+    IfCharacterHasTAEEvent(0, Characters.CelestialEmissarySmall, tae_event_id=30)
     DisableBossHealthBar(Characters.CelestialEmissarySmall, name=257000, slot=0)
     WaitFrames(5)
     DisableCharacter(Characters.CelestialEmissarySmall)
@@ -1202,7 +1202,7 @@ def CelestialEmissaryPhaseTwoTrigger():
 def ControlCelestialEmissaryTendrils():
     """ 12424791: Event 12424791 """
     IfHealthLessThanOrEqual(0, Characters.CelestialEmissaryGiant, 0.30000001192092896)
-    SkipLinesIfThisEventOn(1)
+    SkipLinesIfThisEventFlagEnabled(1)
     WaitFrames(135)
     Move(
         2420750,
@@ -1225,7 +1225,7 @@ def ControlCelestialEmissaryTendrils():
 def CelestialEmissaryTendrilAttack(_, tendrils: int):
     """ 12424792: Event 12424792 """
     IfHealthLessThanOrEqual(0, Characters.CelestialEmissaryGiant, 0.30000001192092896)
-    SkipLinesIfThisEventSlotOn(2)
+    SkipLinesIfThisEventSlotFlagEnabled(2)
     WaitFrames(145)
     ForceAnimation(tendrils, 3000)
     IfCharacterHasSpecialEffect(0, Characters.CelestialEmissaryGiant, 5402)
@@ -1255,7 +1255,7 @@ def Event12424795():
 
 def Event12420000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12420000: Event 12420000 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, arg_4_7)
     DisableObjectActivation(arg_0_3, obj_act_id=arg_8_11)
     NotifyDoorEventSoundDampening(arg_0_3, state=DoorState.DoorOpening)
@@ -1270,14 +1270,14 @@ def Event12420000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event12420030(_, arg_0_3: int):
     """ 12420030: Event 12420030 """
     DisableNetworkSync()
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfObjectActivated(0, obj_act_id=arg_0_3)
     Wait(0.0)
 
 
 def Event12420050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12420050: Event 12420050 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, 0)
     DisableObjectActivation(arg_0_3, obj_act_id=arg_8_11)
     EnableTreasure(arg_0_3)
@@ -1292,7 +1292,7 @@ def Event12420050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 def Event12420100():
     """ 12420100: Event 12420100 """
-    SkipLinesIfThisEventOff(2)
+    SkipLinesIfThisEventFlagDisabled(2)
     PostDestruction(2421850)
     End()
     IfObjectDestroyed(0, 2421850)
@@ -1301,7 +1301,7 @@ def Event12420100():
 
 def Event12420123():
     """ 12420123: Event 12420123 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     EndOfAnimation(2421200, 1)
     DisableObjectActivation(2421270, obj_act_id=2420000)
     End()
@@ -1317,11 +1317,11 @@ def Event12420123():
 def Event12420124():
     """ 12420124: Event 12420124 """
     DisableNetworkSync()
-    EndIfFlagOn(12420123)
+    EndIfFlagEnabled(12420123)
     IfActionButtonParam(1, action_button_id=2420030, entity=2421200)
     IfActionButtonParam(2, action_button_id=2420000, entity=2421200)
     IfObjectActivated(3, obj_act_id=12420122)
-    IfFlagOn(4, 12420123)
+    IfFlagEnabled(4, 12420123)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1342,7 +1342,7 @@ def Event12420124():
 
 def Event12420130(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12420130: Event 12420130 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, arg_4_7)
     DisableObjectActivation(arg_0_3, obj_act_id=arg_12_15)
     End()
@@ -1356,7 +1356,7 @@ def Event12420130(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event12420140():
     """ 12420140: Event 12420140 """
     DisableNetworkSync()
-    IfFlagOn(1, 12420123)
+    IfFlagEnabled(1, 12420123)
     IfActionButtonParam(1, action_button_id=7100, entity=2421270)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
@@ -1372,8 +1372,8 @@ def Event12420140():
 
 def Event12420150():
     """ 12420150: Event 12420150 """
-    IfFlagOn(1, 12420154)
-    IfFlagOff(2, 12420154)
+    IfFlagEnabled(1, 12420154)
+    IfFlagDisabled(2, 12420154)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -1389,14 +1389,14 @@ def Event12420150():
 
 def Event12420151():
     """ 12420151: Event 12420151 """
-    IfFlagOff(3, 12420154)
-    IfFlagOn(3, 12420155)
+    IfFlagDisabled(3, 12420154)
+    IfFlagEnabled(3, 12420155)
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfFlagOff(1, 12420154)
-    IfFlagOff(1, 12420155)
+    IfFlagDisabled(1, 12420154)
+    IfFlagDisabled(1, 12420155)
     IfCharacterInsideRegion(1, PLAYER, region=2422651)
-    IfFlagOff(2, 12420154)
-    IfFlagOff(2, 12420155)
+    IfFlagDisabled(2, 12420154)
+    IfFlagDisabled(2, 12420155)
     IfObjectActivated(2, obj_act_id=12420124)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1420,14 +1420,14 @@ def Event12420151():
 
 def Event12420152():
     """ 12420152: Event 12420152 """
-    IfFlagOn(3, 12420154)
-    IfFlagOn(3, 12420155)
+    IfFlagEnabled(3, 12420154)
+    IfFlagEnabled(3, 12420155)
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfFlagOn(1, 12420154)
-    IfFlagOff(1, 12420155)
+    IfFlagEnabled(1, 12420154)
+    IfFlagDisabled(1, 12420155)
     IfCharacterInsideRegion(1, PLAYER, region=2422652)
-    IfFlagOn(2, 12420154)
-    IfFlagOff(2, 12420155)
+    IfFlagEnabled(2, 12420154)
+    IfFlagDisabled(2, 12420155)
     IfObjectActivated(2, obj_act_id=12420123)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1452,8 +1452,8 @@ def Event12420152():
 def Event12420153():
     """ 12420153: Event 12420153 """
     DisableNetworkSync()
-    IfFlagOff(-1, 12420154)
-    IfFlagOn(-1, 12420155)
+    IfFlagDisabled(-1, 12420154)
+    IfFlagEnabled(-1, 12420155)
     IfConditionTrue(1, input_condition=-1)
     IfActionButtonParam(1, action_button_id=7100, entity=2421251)
     IfConditionTrue(0, input_condition=1)
@@ -1470,8 +1470,8 @@ def Event12420153():
 def Event12420156():
     """ 12420156: Event 12420156 """
     DisableNetworkSync()
-    IfFlagOn(-1, 12420154)
-    IfFlagOn(-1, 12420155)
+    IfFlagEnabled(-1, 12420154)
+    IfFlagEnabled(-1, 12420155)
     IfConditionTrue(1, input_condition=-1)
     IfActionButtonParam(1, action_button_id=7100, entity=2421252)
     IfConditionTrue(0, input_condition=1)
@@ -1498,7 +1498,7 @@ def Event12420280(_, arg_0_3: int):
 @RestartOnRest
 def Event12420285(_, arg_0_3: int, arg_4_7: int):
     """ 12420285: Event 12420285 """
-    IfFlagOn(0, arg_4_7)
+    IfFlagEnabled(0, arg_4_7)
     DisableNetworkSync()
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     AddSpecialEffect(PLAYER, 4150, affect_npc_part_hp=False)
@@ -1510,7 +1510,7 @@ def Event12420285(_, arg_0_3: int, arg_4_7: int):
 def Event12420300():
     """ 12420300: Event 12420300 """
     DisableNetworkSync()
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfCharacterInsideRegion(0, PLAYER, region=2422681)
     PlaySoundEffect(anchor_entity=2422680, sound_type=SoundType.a_Ambient, sound_id=20011001)
     EnableFlag(12420301)
@@ -1519,7 +1519,7 @@ def Event12420300():
 @RestartOnRest
 def Event12420310():
     """ 12420310: Event 12420310 """
-    SkipLinesIfThisEventSlotOff(5)
+    SkipLinesIfThisEventSlotFlagDisabled(5)
     EnableCharacter(2420205)
     DisableCharacter(2420204)
     Move(2420205, destination=2422205, destination_type=CoordEntityType.Region, short_move=True)
@@ -1532,7 +1532,7 @@ def Event12420310():
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
-    IfFlagOn(1, 52420170)
+    IfFlagEnabled(1, 52420170)
     IfCharacterInsideRegion(1, PLAYER, region=2422660)
     IfConditionTrue(0, input_condition=1)
     PlaySoundEffect(anchor_entity=2421121, sound_type=SoundType.a_Ambient, sound_id=20011004)
@@ -1548,7 +1548,7 @@ def Event12420310():
 @RestartOnRest
 def Event12420320():
     """ 12420320: Event 12420320 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableObject(2421300)
     Move(2420200, destination=2422200, destination_type=CoordEntityType.Region, set_draw_parent=2420203)
     Move(2420201, destination=2422201, destination_type=CoordEntityType.Region, set_draw_parent=2420203)
@@ -1647,10 +1647,10 @@ def Event12420320():
 
 def Event12420400():
     """ 12420400: Event 12420400 """
-    GotoIfFlagOn(Label.L3, 9802)
-    GotoIfFlagOn(Label.L2, 9801)
-    GotoIfFlagOn(Label.L1, 9800)
-    GotoIfFlagOff(Label.L0, 9800)
+    GotoIfFlagEnabled(Label.L3, 9802)
+    GotoIfFlagEnabled(Label.L2, 9801)
+    GotoIfFlagEnabled(Label.L1, 9800)
+    GotoIfFlagDisabled(Label.L0, 9800)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1675,7 +1675,7 @@ def Event12420500():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     DisableFlag(72500326)
-    IfFlagOn(0, 72500326)
+    IfFlagEnabled(0, 72500326)
     DisableFlagRange((72500304, 72500309))
     EnableFlag(72500328)
     RemoveGoodFromPlayer(4305, quantity=1)
@@ -1702,7 +1702,7 @@ def Event12420850(
     DeleteVFX(arg_0_3, erase_root_only=False)
     DeleteVFX(arg_4_7, erase_root_only=False)
     DeleteVFX(arg_8_11, erase_root_only=False)
-    SkipLinesIfFlagOff(3, arg_12_15)
+    SkipLinesIfFlagDisabled(3, arg_12_15)
     CreateVFX(arg_4_7)
     CreateVFX(arg_8_11)
     End()
@@ -1721,7 +1721,7 @@ def Event12420853():
     DeleteVFX(2427031, erase_root_only=False)
     DeleteVFX(2427032, erase_root_only=False)
     DeleteVFX(2427033, erase_root_only=False)
-    SkipLinesIfFlagOff(3, 12420133)
+    SkipLinesIfFlagDisabled(3, 12420133)
     CreateVFX(2427032)
     CreateVFX(2427033)
     End()
@@ -1740,10 +1740,10 @@ def Event12420854():
     """ 12420854: Event 12420854 """
     DeleteVFX(2427023, erase_root_only=False)
     DeleteVFX(2427024, erase_root_only=False)
-    SkipLinesIfFlagOff(2, 12420310)
+    SkipLinesIfFlagDisabled(2, 12420310)
     CreateVFX(2427024)
     End()
-    IfFlagOn(0, 12420310)
+    IfFlagEnabled(0, 12420310)
     Wait(1.0)
     CreateVFX(2427023)
     Wait(4.0)
@@ -1783,7 +1783,7 @@ def Event12425200(_, arg_0_3: int):
 @RestartOnRest
 def Event12425210(_, arg_0_3: int):
     """ 12425210: Event 12425210 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, 7000, loop=True)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -1848,7 +1848,7 @@ def Event12425250(
 @RestartOnRest
 def Event12425225():
     """ 12425225: Event 12425225 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     ForceAnimation(2420253, 7000, loop=True)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1869,11 +1869,11 @@ def Event12425245():
     DisableNetworkSync()
     DisableSoundEvent(2423600)
     IfInsideMap(1, game_map=UPPER_CATHEDRAL_WARD)
-    IfFlagOff(1, 12425246)
+    IfFlagDisabled(1, 12425246)
     IfConditionTrue(0, input_condition=1)
     EnableSoundEvent(2423600)
     IfOutsideMap(-1, game_map=UPPER_CATHEDRAL_WARD)
-    IfFlagOn(-1, 12425246)
+    IfFlagEnabled(-1, 12425246)
     IfConditionTrue(0, input_condition=-1)
     DisableSoundEvent(2423600)
     Restart()
@@ -1892,8 +1892,8 @@ def Event12425290():
 @RestartOnRest
 def Event12425300(_, arg_0_3: int):
     """ 12425300: Event 12425300 """
-    IfFlagOn(-1, 12425291)
-    IfFlagOn(-1, 9802)
+    IfFlagEnabled(-1, 12425291)
+    IfFlagEnabled(-1, 9802)
     IfConditionTrue(0, input_condition=-1)
     SetDisplayMask(arg_0_3, bit_index=3, switch_type=OnOffChange.On)
     SetDisplayMask(arg_0_3, bit_index=4, switch_type=OnOffChange.Off)
@@ -1903,8 +1903,8 @@ def Event12425300(_, arg_0_3: int):
 @RestartOnRest
 def Event12425305(_, arg_0_3: int):
     """ 12425305: Event 12425305 """
-    IfFlagOn(-1, 12425291)
-    IfFlagOn(-1, 9802)
+    IfFlagEnabled(-1, 12425291)
+    IfFlagEnabled(-1, 9802)
     IfConditionTrue(0, input_condition=-1)
     AddSpecialEffect(arg_0_3, 5552, affect_npc_part_hp=False)
     AddSpecialEffect(arg_0_3, 5553, affect_npc_part_hp=False)
@@ -1914,7 +1914,7 @@ def Event12425305(_, arg_0_3: int):
 @RestartOnRest
 def Event12425310(_, arg_0_3: int):
     """ 12425310: Event 12425310 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, 7018, loop=True)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
@@ -1931,7 +1931,7 @@ def Event12425310(_, arg_0_3: int):
 @RestartOnRest
 def Event12425320(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12425320: Event 12425320 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterBackreadEnabled(0, arg_0_3)
     Wait(1.0)
     SetNest(arg_0_3, arg_12_15)
@@ -1952,7 +1952,7 @@ def Event12425320(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12425350(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12425350: Event 12425350 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterBackreadEnabled(0, arg_0_3)
     SetAIParamID(arg_0_3, arg_4_7)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
@@ -1966,7 +1966,7 @@ def Event12425350(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event12425500(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int, arg_16_19: float):
     """ 12425500: Event 12425500 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterBackreadEnabled(0, arg_0_3)
     Wait(arg_16_19)
     DisableAI(arg_0_3)
@@ -1988,7 +1988,7 @@ def Event12425500(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int
 @RestartOnRest
 def Event12425600():
     """ 12425600: Event 12425600 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfCharacterBackreadEnabled(1, 2420401)
     IfCharacterBackreadEnabled(1, 2420402)
     IfConditionTrue(0, input_condition=1)
@@ -2042,7 +2042,7 @@ def Event12425603():
 @RestartOnRest
 def Event12425400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12425400: Event 12425400 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
@@ -2058,7 +2058,7 @@ def Event12425400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 def Event12420990():
     """ 12420990: Event 12420990 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     IfStandingOnCollision(0, 2423500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 154, PlayLogMultiplayerType.HostOnly)
@@ -2071,12 +2071,12 @@ def Event12420990():
 @RestartOnRest
 def Event12424450(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12424450: Event 12424450 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     EndIfClient()
     SetEventPoint(arg_0_3, region=arg_4_7, reaction_range=1.0)
-    IfFlagOn(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOn(1, arg_16_19)
+    IfFlagEnabled(1, arg_8_11)
+    IfFlagDisabled(1, arg_12_15)
+    IfFlagEnabled(1, arg_16_19)
     IfConditionTrue(0, input_condition=1)
     AICommand(arg_0_3, command_id=990, slot=0)
     ReplanAI(arg_0_3)
@@ -2085,15 +2085,15 @@ def Event12424450(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event12424400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 12424400: Event 12424400 """
-    GotoIfFlagOn(Label.L0, arg_0_3)
+    GotoIfFlagEnabled(Label.L0, arg_0_3)
     DisableFlag(arg_0_3)
     DeleteVFX(arg_4_7, erase_root_only=True)
     IfPlayerHasGood(1, 4312, including_box=False)
-    IfFlagOff(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOff(1, arg_16_19)
+    IfFlagDisabled(1, arg_8_11)
+    IfFlagDisabled(1, arg_12_15)
+    IfFlagDisabled(1, arg_16_19)
     IfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfFlagOff(-1, arg_20_23)
+    IfFlagDisabled(-1, arg_20_23)
     IfConditionTrue(1, input_condition=-1)
     IfHost(1)
     IfConditionTrue(0, input_condition=1)
@@ -2103,11 +2103,11 @@ def Event12424400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableFlag(arg_0_3)
     CreateVFX(arg_4_7)
     IfPlayerHasGood(2, 4312, including_box=False)
-    IfFlagOff(2, arg_8_11)
-    IfFlagOff(2, arg_12_15)
-    IfFlagOff(2, arg_16_19)
+    IfFlagDisabled(2, arg_8_11)
+    IfFlagDisabled(2, arg_12_15)
+    IfFlagDisabled(2, arg_16_19)
     IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfFlagOff(-3, arg_20_23)
+    IfFlagDisabled(-3, arg_20_23)
     IfConditionTrue(2, input_condition=-3)
     IfHost(3)
     IfConditionFalse(3, input_condition=2)
@@ -2130,22 +2130,22 @@ def Event12424410(
     arg_28_31: int,
 ):
     """ 12424410: Event 12424410 """
-    SkipLinesIfFlagOn(1, arg_12_15)
+    SkipLinesIfFlagEnabled(1, arg_12_15)
     DisableCharacter(arg_4_7)
-    SkipLinesIfFlagOn(3, arg_16_19)
+    SkipLinesIfFlagEnabled(3, arg_16_19)
     IfClient(1)
-    IfFlagOn(1, arg_12_15)
+    IfFlagEnabled(1, arg_12_15)
     SkipLinesIfConditionTrue(1, 1)
     DisableCharacter(arg_4_7)
-    EndIfFlagOn(arg_24_27)
+    EndIfFlagEnabled(arg_24_27)
     IfClient(3)
     SkipLinesIfConditionTrue(1, 3)
     SetNetworkUpdateAuthority(arg_4_7, UpdateAuthority.Forced)
     IfPlayerHasGood(2, 4312, including_box=False)
-    IfFlagOff(2, arg_12_15)
-    IfFlagOff(2, arg_16_19)
-    IfFlagOn(2, arg_20_23)
-    IfFlagOff(2, arg_24_27)
+    IfFlagDisabled(2, arg_12_15)
+    IfFlagDisabled(2, arg_16_19)
+    IfFlagEnabled(2, arg_20_23)
+    IfFlagDisabled(2, arg_24_27)
     IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
@@ -2163,7 +2163,7 @@ def Event12424460(
 ):
     """ 12424460: Event 12424460 """
     EndIfClient()
-    IfFlagOn(1, arg_20_23)
+    IfFlagEnabled(1, arg_20_23)
     IfCharacterInsideRegion(1, arg_0_3, region=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     ResetAnimation(arg_0_3, disable_interpolation=False)

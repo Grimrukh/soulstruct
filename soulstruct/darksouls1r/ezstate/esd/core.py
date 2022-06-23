@@ -8,7 +8,7 @@ from soulstruct.base.ezstate.esd import (
 )
 from soulstruct.containers.dcx import DCXType
 from soulstruct.games import DarkSoulsDSRType
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
 from soulstruct.utilities.binary import BinaryStruct
 
 __all__ = ["TalkESD", "ChrESD"]

@@ -1,7 +1,7 @@
 __all__ = ["BEHAVIOR_PARAM_ST"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
-from soulstruct.game_types.param_types import AttackParam, BulletParam, SpecialEffectParam
+from soulstruct.darksouls1ptde.game_types.param_types import AttackParam, BulletParam, SpecialEffectParam
 from ..enums import *
 
 

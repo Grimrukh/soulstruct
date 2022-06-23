@@ -7,7 +7,7 @@ import logging
 import struct
 from binascii import hexlify
 
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
 from soulstruct.utilities.binary import BinaryReader
 
 from .functions import TEST_FUNCTIONS

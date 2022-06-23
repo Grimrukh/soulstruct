@@ -150,9 +150,9 @@ def Constructor():
     RunEvent(13304730, slot=0, args=(3300700, 13304701, 13304711, 3300, Flags.AmygdalaFogEntered, 13301700))
     IfCharacterHuman(15, PLAYER)
     SkipLinesIfConditionFalse(2, 15)
-    SkipLinesIfFlagOff(1, 6327)
+    SkipLinesIfFlagDisabled(1, 6327)
     EnableFlag(13301999)
-    SkipLinesIfFlagOn(5, 13301999)
+    SkipLinesIfFlagEnabled(5, 13301999)
     EnableObject(3301500)
     DisableObject(3301501)
     EnableTreasure(3301500)
@@ -164,9 +164,9 @@ def Constructor():
     EnableTreasure(3301501)
     IfCharacterHuman(14, PLAYER)
     SkipLinesIfConditionFalse(2, 14)
-    SkipLinesIfFlagOff(1, 6328)
+    SkipLinesIfFlagDisabled(1, 6328)
     EnableFlag(13301998)
-    SkipLinesIfFlagOn(5, 13301998)
+    SkipLinesIfFlagEnabled(5, 13301998)
     EnableObject(3301502)
     DisableObject(3301503)
     EnableTreasure(3301502)
@@ -178,9 +178,9 @@ def Constructor():
     EnableTreasure(3301503)
     IfCharacterHuman(13, PLAYER)
     SkipLinesIfConditionFalse(2, 13)
-    SkipLinesIfFlagOff(1, 6329)
+    SkipLinesIfFlagDisabled(1, 6329)
     EnableFlag(13301997)
-    SkipLinesIfFlagOn(5, 13301997)
+    SkipLinesIfFlagEnabled(5, 13301997)
     EnableObject(3301504)
     DisableObject(3301505)
     EnableTreasure(3301504)
@@ -192,9 +192,9 @@ def Constructor():
     EnableTreasure(3301505)
     IfCharacterHuman(12, PLAYER)
     SkipLinesIfConditionFalse(2, 12)
-    SkipLinesIfFlagOff(1, 6330)
+    SkipLinesIfFlagDisabled(1, 6330)
     EnableFlag(13301996)
-    SkipLinesIfFlagOn(5, 13301996)
+    SkipLinesIfFlagEnabled(5, 13301996)
     EnableObject(3301506)
     DisableObject(3301507)
     EnableTreasure(3301506)
@@ -206,9 +206,9 @@ def Constructor():
     EnableTreasure(3301507)
     IfCharacterHuman(11, PLAYER)
     SkipLinesIfConditionFalse(2, 11)
-    SkipLinesIfFlagOff(1, 6331)
+    SkipLinesIfFlagDisabled(1, 6331)
     EnableFlag(13301995)
-    SkipLinesIfFlagOn(5, 13301995)
+    SkipLinesIfFlagEnabled(5, 13301995)
     EnableObject(3301508)
     DisableObject(3301509)
     EnableTreasure(3301508)
@@ -233,22 +233,22 @@ def Preconstructor():
 @RestartOnRest
 def Event13304700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 13304700: Event 13304700 """
-    GotoIfFlagOff(Label.L0, arg_8_11)
+    GotoIfFlagDisabled(Label.L0, arg_8_11)
     DisableAI(arg_0_3)
     ForceAnimation(arg_0_3, 7010)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    EndIfFlagOn(arg_4_7)
+    EndIfFlagEnabled(arg_4_7)
     DisableAI(arg_0_3)
     ForceAnimation(arg_0_3, 7010, loop=True)
     IfOnline(1)
-    IfFlagOff(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
+    IfFlagDisabled(1, arg_8_11)
+    IfFlagDisabled(1, arg_12_15)
     IfCharacterHuman(2, PLAYER)
     IfPlayerSoulLevelGreaterThanOrEqual(2, 30)
-    SkipLinesIfFlagOff(1, arg_16_19)
+    SkipLinesIfFlagDisabled(1, arg_16_19)
     IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.GreaterThanOrEqual, value=1)
     IfCharacterHasSpecialEffect(3, PLAYER, 9025)
     IfConditionTrue(-1, input_condition=2)
@@ -256,7 +256,7 @@ def Event13304700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     IfRandomTimeElapsed(0, min_seconds=10.0, max_seconds=10.0)
-    SkipLinesIfFlagOff(1, arg_16_19)
+    SkipLinesIfFlagDisabled(1, arg_16_19)
     DisplayBattlefieldMessage(109000, display_location_index=0)
     ForceAnimation(arg_0_3, 7011, wait_for_completion=True)
     EnableAI(arg_0_3)
@@ -266,10 +266,10 @@ def Event13304700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event13304710(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13304710: Event 13304710 """
-    EndIfFlagOn(arg_8_11)
-    IfFlagOn(1, arg_4_7)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOff(1, arg_8_11)
+    EndIfFlagEnabled(arg_8_11)
+    IfFlagEnabled(1, arg_4_7)
+    IfFlagDisabled(1, arg_12_15)
+    IfFlagDisabled(1, arg_8_11)
     IfClientTypeCountComparison(1, ClientType.Invader, ComparisonType.Equal, value=0)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(2, PLAYER)
@@ -280,7 +280,7 @@ def Event13304710(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     ReplanAI(arg_0_3)
     EnableFlag(arg_12_15)
     DisplayBattlefieldMessage(100002, display_location_index=0)
-    IfFlagOn(-1, arg_8_11)
+    IfFlagEnabled(-1, arg_8_11)
     IfClientTypeCountComparison(-1, ClientType.Invader, ComparisonType.GreaterThanOrEqual, value=1)
     IfConditionTrue(0, input_condition=-1)
     IfCharacterHuman(0, PLAYER)
@@ -291,10 +291,10 @@ def Event13304710(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event13304720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13304720: Event 13304720 """
-    EndIfFlagOn(arg_8_11)
-    IfFlagOn(1, arg_4_7)
-    IfFlagOn(1, arg_12_15)
-    IfFlagOn(-1, arg_8_11)
+    EndIfFlagEnabled(arg_8_11)
+    IfFlagEnabled(1, arg_4_7)
+    IfFlagEnabled(1, arg_12_15)
+    IfFlagEnabled(-1, arg_8_11)
     IfClientTypeCountComparison(-1, ClientType.Invader, ComparisonType.GreaterThanOrEqual, value=1)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
@@ -309,13 +309,13 @@ def Event13304720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event13304730(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 13304730: Event 13304730 """
-    IfFlagOn(-15, arg_8_11)
-    IfFlagOn(-15, arg_12_15)
-    IfFlagOn(-15, arg_16_19)
+    IfFlagEnabled(-15, arg_8_11)
+    IfFlagEnabled(-15, arg_12_15)
+    IfFlagEnabled(-15, arg_16_19)
     EndIfConditionTrue(-15)
-    IfFlagOn(1, arg_4_7)
+    IfFlagEnabled(1, arg_4_7)
     IfHealthEqual(2, arg_0_3, 0.0)
-    IfFlagOn(3, arg_16_19)
+    IfFlagEnabled(3, arg_16_19)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(1, input_condition=-1)
@@ -337,7 +337,7 @@ def Event13304730(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 def AmygdalaDies():
     """ 13301800: Event 13301800 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableSoundEvent(3303802)
     DisableSoundEvent(3303803)
     DisableCharacter(Characters.Amygdala)
@@ -380,8 +380,8 @@ def AmygdalaDies():
 def PlayAmygdalaDeathSound():
     """ 13301801: Event 13301801 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.AmygdalaDead)
-    IfFlagOn(1, Flags.AmygdalaDead)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    IfFlagEnabled(1, Flags.AmygdalaDead)
     IfCharacterBackreadDisabled(2, Characters.Amygdala)
     IfHealthLessThanOrEqual(2, Characters.Amygdala, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -394,14 +394,14 @@ def PlayAmygdalaDeathSound():
 @RestartOnRest
 def AmygdalaFirstTime():
     """ 13301802: Event 13301802 """
-    EndIfFlagOn(Flags.AmygdalaDead)
-    EndIfThisEventOn()
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    EndIfThisEventFlagEnabled()
     DisableCharacterCollision(Characters.Amygdala)
     DisableGravity(Characters.Amygdala)
     EnableInvincibility(Characters.Amygdala)
     ForceAnimation(Characters.Amygdala, 7003, loop=True)
-    IfFlagOff(1, Flags.AmygdalaDead)
-    IfThisEventOff(1)
+    IfFlagDisabled(1, Flags.AmygdalaDead)
+    IfThisEventFlagDisabled(1)
     IfCharacterHuman(1, PLAYER)
     IfCharacterInsideRegion(1, PLAYER, region=3302805)
     IfConditionTrue(0, input_condition=1)
@@ -413,7 +413,7 @@ def AmygdalaFirstTime():
     EnableGravity(Characters.Amygdala)
     DisableInvincibility(Characters.Amygdala)
     EnableCharacterCollision(Characters.Amygdala)
-    EndIfFlagOn(9302)
+    EndIfFlagEnabled(9302)
     RunEvent(9350, 0, args=(3,))
     EnableFlag(9302)
 
@@ -421,7 +421,7 @@ def AmygdalaFirstTime():
 def SummonStartAmygdalaBattle():
     """ 13301803: Event 13301803 """
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.AmygdalaFogEntered)
+    IfFlagEnabled(1, Flags.AmygdalaFogEntered)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
     EnableFlag(Flags.AmygdalaFogEntered)
@@ -430,18 +430,18 @@ def SummonStartAmygdalaBattle():
 
 def EnterAmygdalaFog():
     """ 13304870: Event 13304870 """
-    EndIfFlagOn(Flags.AmygdalaDead)
-    GotoIfFlagOn(Label.L0, Flags.AmygdalaFirstTimeDone)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    GotoIfFlagEnabled(Label.L0, Flags.AmygdalaFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.AmygdalaFog1)
     DeleteVFX(VFX.AmygdalaFog1, erase_root_only=False)
     DisableObject(Objects.AmygdalaFog2)
     DeleteVFX(VFX.AmygdalaFog2, erase_root_only=False)
-    IfFlagOff(1, Flags.AmygdalaDead)
-    IfFlagOn(1, Flags.AmygdalaFirstTimeDone)
+    IfFlagDisabled(1, Flags.AmygdalaDead)
+    IfFlagEnabled(1, Flags.AmygdalaFirstTimeDone)
     IfConditionTrue(-1, input_condition=1)
-    IfFlagOff(2, Flags.AmygdalaDead)
-    IfFlagOn(2, Flags.AmygdalaFogEntered)
+    IfFlagDisabled(2, Flags.AmygdalaDead)
+    IfFlagEnabled(2, Flags.AmygdalaFogEntered)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     EnableObject(Objects.AmygdalaFog1)
@@ -453,8 +453,8 @@ def EnterAmygdalaFog():
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
     IfActionButtonParam(3, action_button_id=3300800, entity=Objects.AmygdalaFog1)
-    IfFlagOff(3, Flags.AmygdalaDead)
-    IfFlagOn(4, Flags.AmygdalaDead)
+    IfFlagDisabled(3, Flags.AmygdalaDead)
+    IfFlagEnabled(4, Flags.AmygdalaDead)
     IfConditionTrue(-2, input_condition=3)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(0, input_condition=-2)
@@ -476,10 +476,10 @@ def EnterAmygdalaFog():
 def EnterAmygdalaFogAsSummon():
     """ 13304871: Event 13304871 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.AmygdalaDead)
-    IfFlagOff(1, Flags.AmygdalaDead)
-    IfFlagOn(1, Flags.AmygdalaFirstTimeDone)
-    IfFlagOn(1, Flags.AmygdalaFogEntered)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    IfFlagDisabled(1, Flags.AmygdalaDead)
+    IfFlagEnabled(1, Flags.AmygdalaFirstTimeDone)
+    IfFlagEnabled(1, Flags.AmygdalaFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParam(1, action_button_id=3300800, entity=Objects.AmygdalaFog1)
     IfConditionTrue(0, input_condition=1)
@@ -519,10 +519,10 @@ def Event13304873():
 @RestartOnRest
 def StartAmygdalaBattle():
     """ 13304802: Event 13304802 """
-    EndIfFlagOn(Flags.AmygdalaDead)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
     DisableAI(Characters.Amygdala)
     DisableHealthBar(Characters.Amygdala)
-    IfFlagOn(0, Flags.AmygdalaFogEntered)
+    IfFlagEnabled(0, Flags.AmygdalaFogEntered)
     GotoIfClient(Label.L0)
     NotifyBossBattleStart()
     SetNetworkUpdateAuthority(Characters.Amygdala, UpdateAuthority.Forced)
@@ -563,25 +563,25 @@ def StartAmygdalaBattle():
 def ControlAmygdalaMusic():
     """ 13304803: Event 13304803 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.AmygdalaDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableSoundEvent(3303802)
     DisableSoundEvent(3303803)
-    IfFlagOff(1, Flags.AmygdalaDead)
-    IfFlagOn(1, Flags.AmygdalaBattleStarted)
+    IfFlagDisabled(1, Flags.AmygdalaDead)
+    IfFlagEnabled(1, Flags.AmygdalaBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(1, 13304801)
+    IfFlagEnabled(1, 13304801)
     IfCharacterInsideRegion(1, PLAYER, region=3302802)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(3303802)
-    IfHasTAEEvent(2, Characters.Amygdala, tae_event_id=10)
+    IfCharacterHasTAEEvent(2, Characters.Amygdala, tae_event_id=10)
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, Flags.AmygdalaDead)
-    IfFlagOn(2, Flags.AmygdalaBattleStarted)
+    IfFlagDisabled(2, Flags.AmygdalaDead)
+    IfFlagEnabled(2, Flags.AmygdalaBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(2, 13304801)
+    IfFlagEnabled(2, 13304801)
     IfCharacterInsideRegion(2, PLAYER, region=3302802)
     IfConditionTrue(0, input_condition=2)
     DisableBossMusic(3303802)
@@ -591,7 +591,7 @@ def ControlAmygdalaMusic():
 
 def ControlAmygdalaCamera():
     """ 13304804: Event 13304804 """
-    EndIfFlagOn(Flags.AmygdalaDead)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
     DisableNetworkSync()
     IfHealthGreaterThan(1, Characters.Amygdala, 0.0)
     IfEntityWithinDistance(1, PLAYER, Characters.Amygdala, radius=14.0)
@@ -607,8 +607,8 @@ def ControlAmygdalaCamera():
 def StopAmygdalaMusic():
     """ 13304805: Event 13304805 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.AmygdalaDead)
-    IfFlagOn(0, Flags.AmygdalaDead)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    IfFlagEnabled(0, Flags.AmygdalaDead)
     DisableBossMusic(3303802)
     DisableBossMusic(3303803)
     DisableBossMusic(-1)
@@ -616,30 +616,30 @@ def StopAmygdalaMusic():
 
 def AmygdalaPhaseTwoTrigger():
     """ 13304807: Event 13304807 """
-    EndIfFlagOn(Flags.AmygdalaDead)
-    EndIfThisEventOn()
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    EndIfThisEventFlagEnabled()
     IfHealthLessThan(0, Characters.Amygdala, 0.699999988079071)
     Wait(0.10000000149011612)
     ResetAnimation(Characters.Amygdala, disable_interpolation=True)
     AICommand(Characters.Amygdala, command_id=100, slot=0)
     ReplanAI(Characters.Amygdala)
-    IfHasTAEEvent(0, Characters.Amygdala, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, Characters.Amygdala, tae_event_id=10)
     AICommand(Characters.Amygdala, command_id=-1, slot=0)
     ReplanAI(Characters.Amygdala)
 
 
 def AmygdalaPhaseThreeTrigger():
     """ 13304808: Event 13304808 """
-    EndIfFlagOn(Flags.AmygdalaDead)
-    EndIfThisEventOn()
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    EndIfThisEventFlagEnabled()
     IfHealthLessThan(1, Characters.Amygdala, 0.30000001192092896)
-    IfFlagOn(1, Flags.AmygdalaPhaseTwo)
+    IfFlagEnabled(1, Flags.AmygdalaPhaseTwo)
     IfConditionTrue(0, input_condition=1)
     Wait(0.10000000149011612)
     ResetAnimation(Characters.Amygdala, disable_interpolation=True)
     AICommand(Characters.Amygdala, command_id=110, slot=0)
     ReplanAI(Characters.Amygdala)
-    IfHasTAEEvent(0, Characters.Amygdala, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, Characters.Amygdala, tae_event_id=10)
     AICommand(Characters.Amygdala, command_id=-1, slot=0)
     ReplanAI(Characters.Amygdala)
 
@@ -647,8 +647,8 @@ def AmygdalaPhaseThreeTrigger():
 @RestartOnRest
 def AmygdalaHoldingOwnArm(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_10_10: uchar, arg_11_11: uchar):
     """ 13304820: Event 13304820 """
-    EndIfFlagOn(Flags.AmygdalaDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     SetCollisionMask(Characters.Amygdala, bit_index=arg_11_11, switch_type=OnOffChange.Off)
 
     # --- 0 --- #
@@ -682,7 +682,7 @@ def AmygdalaLimbDamage(
     wounded_damage_correction: float,
 ):
     """ 13304830: Event 13304830 """
-    EndIfFlagOn(Flags.AmygdalaDead)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
     CreateNPCPart(
         Characters.Amygdala,
         npc_part_id=part_id,
@@ -719,7 +719,7 @@ def AmygdalaLimbDamage(
     Wait(30.0)
     AICommand(Characters.Amygdala, command_id=100, slot=1)
     ReplanAI(Characters.Amygdala)
-    IfHasTAEEvent(0, Characters.Amygdala, tae_event_id=300)
+    IfCharacterHasTAEEvent(0, Characters.Amygdala, tae_event_id=300)
     SetNPCPartHealth(Characters.Amygdala, npc_part_id=effect_part_id, desired_health=-1, overwrite_max=True)
     CancelSpecialEffect(Characters.Amygdala, wounded_effect)
     AICommand(Characters.Amygdala, command_id=-1, slot=1)
@@ -731,7 +731,7 @@ def AmygdalaLimbDamage(
 @RestartOnRest
 def AmygdalaHeadDamage():
     """ 13304840: Event 13304840 """
-    EndIfFlagOn(Flags.AmygdalaDead)
+    EndIfFlagEnabled(Flags.AmygdalaDead)
     CreateNPCPart(
         Characters.Amygdala,
         npc_part_id=3300,
@@ -768,7 +768,7 @@ def AmygdalaHeadDamage():
     Wait(30.0)
     AICommand(Characters.Amygdala, command_id=100, slot=1)
     ReplanAI(Characters.Amygdala)
-    IfHasTAEEvent(0, Characters.Amygdala, tae_event_id=300)
+    IfCharacterHasTAEEvent(0, Characters.Amygdala, tae_event_id=300)
     SetNPCPartHealth(Characters.Amygdala, npc_part_id=3300, desired_health=-1, overwrite_max=True)
     CancelSpecialEffect(Characters.Amygdala, 480)
     AICommand(Characters.Amygdala, command_id=-1, slot=1)
@@ -780,7 +780,7 @@ def AmygdalaHeadDamage():
 @RestartOnRest
 def Event13300100():
     """ 13300100: Event 13300100 """
-    SkipLinesIfThisEventOff(2)
+    SkipLinesIfThisEventFlagDisabled(2)
     EndOfAnimation(3301100, 1)
     End()
     ForceAnimation(3301100, 0)
@@ -790,8 +790,8 @@ def Event13300100():
 
 def Event13300110():
     """ 13300110: Event 13300110 """
-    IfFlagOn(1, 13300115)
-    IfFlagOff(2, 13300115)
+    IfFlagEnabled(1, 13300115)
+    IfFlagDisabled(2, 13300115)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -803,7 +803,7 @@ def Event13300110():
     EndOfAnimation(3301000, 2)
     EnableObjectActivation(3301010, obj_act_id=3300000)
     DisableObjectActivation(3301011, obj_act_id=3300000)
-    SkipLinesIfFlagOn(4, 13300111)
+    SkipLinesIfFlagEnabled(4, 13300111)
     EndOfAnimation(3301000, 2)
     EnableFlag(13300115)
     DisableObjectActivation(3301010, obj_act_id=3300000)
@@ -812,7 +812,7 @@ def Event13300110():
 
 def Event13300111():
     """ 13300111: Event 13300111 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableObjectActivation(3301010, obj_act_id=3300000)
     DisableObjectActivation(3301011, obj_act_id=3300000)
     IfCharacterInsideRegion(0, PLAYER, region=3302702)
@@ -823,15 +823,15 @@ def Event13300111():
 
 def Event13300112():
     """ 13300112: Event 13300112 """
-    IfFlagOff(3, 13300115)
-    IfFlagOn(3, 13300116)
+    IfFlagDisabled(3, 13300115)
+    IfFlagEnabled(3, 13300116)
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfFlagOn(0, 13300111)
-    IfFlagOff(1, 13300115)
-    IfFlagOff(1, 13300116)
+    IfFlagEnabled(0, 13300111)
+    IfFlagDisabled(1, 13300115)
+    IfFlagDisabled(1, 13300116)
     IfCharacterInsideRegion(1, PLAYER, region=3302700)
-    IfFlagOff(2, 13300115)
-    IfFlagOff(2, 13300116)
+    IfFlagDisabled(2, 13300115)
+    IfFlagDisabled(2, 13300116)
     IfCharacterInsideRegion(2, PLAYER, region=3302706)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -860,15 +860,15 @@ def Event13300112():
 
 def Event13300113():
     """ 13300113: Event 13300113 """
-    IfFlagOn(3, 13300115)
-    IfFlagOn(3, 13300116)
+    IfFlagEnabled(3, 13300115)
+    IfFlagEnabled(3, 13300116)
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfFlagOn(0, 13300111)
-    IfFlagOn(1, 13300115)
-    IfFlagOff(1, 13300116)
+    IfFlagEnabled(0, 13300111)
+    IfFlagEnabled(1, 13300115)
+    IfFlagDisabled(1, 13300116)
     IfCharacterInsideRegion(1, PLAYER, region=3302701)
-    IfFlagOn(2, 13300115)
-    IfFlagOff(2, 13300116)
+    IfFlagEnabled(2, 13300115)
+    IfFlagDisabled(2, 13300116)
     IfCharacterInsideRegion(2, PLAYER, region=3302705)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -897,9 +897,9 @@ def Event13300113():
 
 def Event13300120():
     """ 13300120: Event 13300120 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DeleteVFX(3303002, erase_root_only=True)
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterInsideRegion(0, PLAYER, region=3303000)
     DeleteVFX(3303010, erase_root_only=True)
     CreateVFX(3303002)
@@ -910,7 +910,7 @@ def Event13300120():
 @RestartOnRest
 def Event13300130(_, arg_0_3: int, arg_4_7: int):
     """ 13300130: Event 13300130 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     DisableCharacter(arg_0_3)
     End()
 
@@ -918,15 +918,15 @@ def Event13300130(_, arg_0_3: int, arg_4_7: int):
     DefineLabel(0)
     IfCharacterHuman(1, PLAYER)
     SkipLinesIfClient(1)
-    IfFlagOn(1, arg_4_7)
+    IfFlagEnabled(1, arg_4_7)
     IfConditionTrue(0, input_condition=1)
     Wait(0.0)
 
 
 def Event13300200():
     """ 13300200: Event 13300200 """
-    EndIfThisEventOn()
-    EndIfFlagOn(1431)
+    EndIfThisEventFlagEnabled()
+    EndIfFlagEnabled(1431)
     IfCharacterHuman(1, PLAYER)
     IfCharacterInsideRegion(1, PLAYER, region=3302170)
     IfConditionTrue(0, input_condition=1)
@@ -991,8 +991,8 @@ def Event13300200():
 @RestartOnRest
 def Event13300210():
     """ 13300210: Event 13300210 """
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(0, 13300200)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    IfFlagEnabled(0, 13300200)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1003,7 +1003,7 @@ def Event13300210():
 @RestartOnRest
 def Event13300220(_, arg_0_3: int):
     """ 13300220: Event 13300220 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     DropMandatoryTreasure(arg_0_3)
     DisableBackread(arg_0_3)
     DisableCharacter(arg_0_3)
@@ -1018,7 +1018,7 @@ def Event13300220(_, arg_0_3: int):
 @RestartOnRest
 def Event13305150(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 13305150: Event 13305150 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableAI(arg_0_3)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1045,7 +1045,7 @@ def Event13305150(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
 def Event13305030(_, arg_0_3: int, arg_4_7: int):
     """ 13305030: Event 13305030 """
     DisableGravity(arg_4_7)
-    SkipLinesIfThisEventSlotOn(2)
+    SkipLinesIfThisEventSlotFlagEnabled(2)
     IfCharacterBackreadEnabled(0, arg_0_3)
     Wait(1.0)
     IfHealthLessThanOrEqual(1, arg_0_3, 0.0)
@@ -1097,7 +1097,7 @@ def Event13305041():
 @RestartOnRest
 def Event13305200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: int):
     """ 13305200: Event 13305200 """
-    GotoIfThisEventSlotOn(Label.L0)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -1114,7 +1114,7 @@ def Event13305200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float
 @RestartOnRest
 def Event13305210(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int, arg_16_19: float, arg_20_23: int):
     """ 13305210: Event 13305210 """
-    GotoIfThisEventSlotOn(Label.L0)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     ForceAnimation(arg_0_3, arg_8_11, loop=True)
     SetAIParamID(arg_0_3, 218390)
     IfCharacterHuman(-1, PLAYER)
@@ -1139,12 +1139,12 @@ def Event13305210(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int
 @RestartOnRest
 def Event13305220():
     """ 13305220: Event 13305220 """
-    GotoIfThisEventSlotOn(Label.L0)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfCharacterInsideRegion(1, PLAYER, region=3302150)
-    IfFlagOff(1, 13305212)
+    IfFlagDisabled(1, 13305212)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(3300104, 7001)
 
@@ -1157,8 +1157,8 @@ def Event13305220():
 @RestartOnRest
 def Event13305230():
     """ 13305230: Event 13305230 """
-    EndIfThisEventOn()
-    IfFlagOn(0, 13305220)
+    EndIfThisEventFlagEnabled()
+    IfFlagEnabled(0, 13305220)
     SetCharacterEventTarget(3300104, 10000)
     AICommand(3300104, command_id=50, slot=0)
     IfEntityWithinDistance(-1, 3300104, PLAYER, radius=5.0)
@@ -1170,8 +1170,8 @@ def Event13305230():
 @RestartOnRest
 def Event13305250(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13305250: Event 13305250 """
-    EndIfFlagOn(arg_8_11)
-    GotoIfThisEventSlotOn(Label.L0)
+    EndIfFlagEnabled(arg_8_11)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
@@ -1186,7 +1186,7 @@ def Event13305250(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event13305255(_, arg_0_3: int, arg_4_7: int):
     """ 13305255: Event 13305255 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterInsideRegion(0, arg_0_3, region=arg_4_7)
     ForceAnimation(arg_0_3, 3000)
     AICommand(arg_0_3, command_id=-1, slot=0)
@@ -1196,7 +1196,7 @@ def Event13305255(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event13300700():
     """ 13300700: Event 13300700 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DropMandatoryTreasure(3300710)
     End()
 
@@ -1218,7 +1218,7 @@ def Event13300700():
 
 def Event13300990():
     """ 13300990: Event 13300990 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     IfStandingOnCollision(0, 3303500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 140, PlayLogMultiplayerType.HostOnly)

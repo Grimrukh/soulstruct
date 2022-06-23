@@ -1,14 +1,19 @@
 __all__ = ["EVSParser"]
 
 from soulstruct.base.events.emevd.evs import EVSParser as _BaseEVSParser
-from soulstruct.darksouls1r import events
-from .arg_types import INSTRUCTION_ARG_TYPES
+from soulstruct.games import DarkSoulsDSRType
+from soulstruct.darksouls1r import events, game_types
+from .compiler import COMPILER, compile_instruction
+from .emedf import EMEDF_ALIASES
 
 
-class EVSParser(_BaseEVSParser):
+class EVSParser(DarkSoulsDSRType, _BaseEVSParser):
 
-    GAME_MODULE = events
+    EMEDF_ALIASES = EMEDF_ALIASES
+    EVENTS_MODULE = events
+    GAME_TYPES = game_types
     OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
     AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
     CONDITION_COUNT = 15
-    INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES
+    COMPILER = COMPILER
+    COMPILE = staticmethod(compile_instruction)

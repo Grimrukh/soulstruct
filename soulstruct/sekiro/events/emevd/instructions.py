@@ -243,56 +243,56 @@ __all__ = [
     "AwaitThisEventOff",
     "AwaitThisEventSlotOn",
     "AwaitThisEventSlotOff",
-    "AwaitFlagOn",
-    "AwaitFlagOff",
+    "AwaitFlagEnabled",
+    "AwaitFlagDisabled",
     "AwaitFlagChange",
     "SkipLinesIfFlagState",
-    "SkipLinesIfThisEventOn",
-    "SkipLinesIfThisEventOff",
-    "SkipLinesIfThisEventSlotOn",
-    "SkipLinesIfThisEventSlotOff",
-    "SkipLinesIfFlagOn",
-    "SkipLinesIfFlagOff",
+    "SkipLinesIfThisEventFlagEnabled",
+    "SkipLinesIfThisEventFlagDisabled",
+    "SkipLinesIfThisEventSlotFlagEnabled",
+    "SkipLinesIfThisEventSlotFlagDisabled",
+    "SkipLinesIfFlagEnabled",
+    "SkipLinesIfFlagDisabled",
     "ReturnIfFlagState",
-    "EndIfThisEventOn",
-    "EndIfThisEventOff",
-    "EndIfThisEventSlotOn",
-    "EndIfThisEventSlotOff",
-    "EndIfFlagOn",
-    "EndIfFlagOff",
-    "RestartIfThisEventOn",
-    "RestartIfThisEventOff",
-    "RestartIfThisEventSlotOn",
-    "RestartIfThisEventSlotOff",
-    "RestartIfFlagOn",
-    "RestartIfFlagOff",
+    "EndIfThisEventFlagEnabled",
+    "EndIfThisEventFlagDisabled",
+    "EndIfThisEventSlotFlagEnabled",
+    "EndIfThisEventSlotFlagDisabled",
+    "EndIfFlagEnabled",
+    "EndIfFlagDisabled",
+    "RestartIfThisEventFlagEnabled",
+    "RestartIfThisEventFlagDisabled",
+    "RestartIfThisEventSlotFlagEnabled",
+    "RestartIfThisEventSlotFlagDisabled",
+    "RestartIfFlagEnabled",
+    "RestartIfFlagDisabled",
     "IfFlagState",
-    "IfThisEventOn",
-    "IfThisEventOff",
-    "IfThisEventSlotOn",
-    "IfThisEventSlotOff",
-    "IfFlagOn",
-    "IfFlagOff",
+    "IfThisEventFlagEnabled",
+    "IfThisEventFlagDisabled",
+    "IfThisEventSlotFlagEnabled",
+    "IfThisEventSlotFlagDisabled",
+    "IfFlagEnabled",
+    "IfFlagDisabled",
     "IfFlagChange",
     "SkipLinesIfFlagRangeState",
-    "SkipLinesIfFlagRangeAllOn",
-    "SkipLinesIfFlagRangeAllOff",
-    "SkipLinesIfFlagRangeAnyOn",
-    "SkipLinesIfFlagRangeAnyOff",
+    "SkipLinesIfFlagRangeAllEnabled",
+    "SkipLinesIfFlagRangeAllDisabled",
+    "SkipLinesIfFlagRangeAnyEnabled",
+    "SkipLinesIfFlagRangeAnyDisabled",
     "ReturnIfFlagRangeState",
-    "EndIfFlagRangeAllOn",
-    "EndIfFlagRangeAllOff",
-    "EndIfFlagRangeAnyOn",
-    "EndIfFlagRangeAnyOff",
-    "RestartIfFlagRangeAllOn",
-    "RestartIfFlagRangeAllOff",
-    "RestartIfFlagRangeAnyOn",
-    "RestartIfFlagRangeAnyOff",
+    "EndIfFlagRangeAllEnabled",
+    "EndIfFlagRangeAllDisabled",
+    "EndIfFlagRangeAnyEnabled",
+    "EndIfFlagRangeAnyDisabled",
+    "RestartIfFlagRangeAllEnabled",
+    "RestartIfFlagRangeAllDisabled",
+    "RestartIfFlagRangeAnyEnabled",
+    "RestartIfFlagRangeAnyDisabled",
     "IfFlagRangeState",
-    "IfFlagRangeAllOn",
-    "IfFlagRangeAllOff",
-    "IfFlagRangeAnyOn",
-    "IfFlagRangeAnyOff",
+    "IfFlagRangeAllEnabled",
+    "IfFlagRangeAllDisabled",
+    "IfFlagRangeAnyEnabled",
+    "IfFlagRangeAnyDisabled",
     "IfTrueFlagCountComparison",
     "IfTrueFlagCountEqual",
     "IfTrueFlagCountNotEqual",
@@ -321,8 +321,8 @@ __all__ = [
     "IfEntityBeyondDistance",
     "IfPlayerWithinDistance",
     "IfPlayerBeyondDistance",
-    "IfPlayerItemStateNoBox",
-    "IfPlayerItemStateBox",
+    "IfPlayerItemStateExcludingStorage",
+    "IfPlayerItemStateIncludingStorage",
     "IfPlayerItemState",
     "IfPlayerHasItem",
     "IfPlayerHasWeapon",
@@ -417,8 +417,8 @@ __all__ = [
     "IfCharacterBackreadEnabled",
     "IfCharacterBackreadDisabled",
     "IfTAEEventState",
-    "IfHasTAEEvent",
-    "IfDoesNotHaveTAEEvent",
+    "IfCharacterHasTAEEvent",
+    "IfCharacterDoesNotHaveTAEEvent",
     "IfHasAIStatus",
     "IfSkullLanternState",
     "IfSkullLanternActive",
@@ -537,17 +537,17 @@ __all__ = [
     "EndIfClientTypeCountComparison",
     "RestartIfClientTypeCountComparison",
     "GotoIfFlagState",
-    "GotoIfThisEventOn",
-    "GotoIfThisEventOff",
-    "GotoIfThisEventSlotOn",
-    "GotoIfThisEventSlotOff",
-    "GotoIfFlagOn",
-    "GotoIfFlagOff",
+    "GotoIfThisEventFlagEnabled",
+    "GotoIfThisEventFlagDisabled",
+    "GotoIfThisEventSlotFlagEnabled",
+    "GotoIfThisEventSlotFlagDisabled",
+    "GotoIfFlagEnabled",
+    "GotoIfFlagDisabled",
     "GotoIfFlagRangeState",
-    "GotoIfFlagRangeAllOn",
-    "GotoIfFlagRangeAllOff",
-    "GotoIfFlagRangeAnyOn",
-    "GotoIfFlagRangeAnyOff",
+    "GotoIfFlagRangeAllEnabled",
+    "GotoIfFlagRangeAllDisabled",
+    "GotoIfFlagRangeAnyEnabled",
+    "GotoIfFlagRangeAnyDisabled",
     "GotoIfMultiplayerState",
     "GotoIfHost",
     "GotoIfClient",
@@ -729,7 +729,7 @@ def RunCommonEvent(event_id: int, args=(0,), arg_types=None, event_layers=None):
 
 def IfCharacterRegionState(
     condition,
-    entity: AnimatedTyping,
+    entity: AnimatedEntityTyping,
     region: RegionTyping,
     state: bool,
     min_target_count: int = 1,
@@ -739,11 +739,11 @@ def IfCharacterRegionState(
     return to_numeric(instruction_info, condition, state, entity, region, min_target_count)
 
 
-def IfCharacterInsideRegion(condition: int, entity: AnimatedTyping, region: RegionTyping):
+def IfCharacterInsideRegion(condition: int, entity: AnimatedEntityTyping, region: RegionTyping):
     return IfCharacterRegionState(condition, entity, region, True)
 
 
-def IfCharacterOutsideRegion(condition: int, entity: AnimatedTyping, region: RegionTyping):
+def IfCharacterOutsideRegion(condition: int, entity: AnimatedEntityTyping, region: RegionTyping):
     return IfCharacterRegionState(condition, entity, region, False)
 
 
@@ -819,7 +819,7 @@ def IfFailedToCreateSession(condition: int):
 
 def IfAttackedWithDamageType(
     condition: int,
-    attacked_entity: AnimatedTyping,
+    attacked_entity: AnimatedEntityTyping,
     attacker: CharacterTyping,
     damage_type: DamageType = DamageType.Unspecified,
 ):
@@ -1063,11 +1063,11 @@ def IfTAEEventState(
     return to_numeric(instruction_info, condition, character, tae_event_id, state, target_comparison_type, target_count)
 
 
-def IfHasTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
+def IfCharacterHasTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, True)
 
 
-def IfDoesNotHaveTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
+def IfCharacterDoesNotHaveTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
     return IfTAEEventState(condition, character, tae_event_id, False)
 
 
@@ -1512,27 +1512,27 @@ def GotoIfFlagState(label: Label, state: bool, flag_type: FlagType, flag: FlagIn
     return to_numeric(instruction_info, label, state, flag_type, flag)
 
 
-def GotoIfThisEventOn(label: Label):
+def GotoIfThisEventFlagEnabled(label: Label):
     return GotoIfFlagState(label, True, FlagType.RelativeToThisEvent, 0)
 
 
-def GotoIfThisEventOff(label: Label):
+def GotoIfThisEventFlagDisabled(label: Label):
     return GotoIfFlagState(label, False, FlagType.RelativeToThisEvent, 0)
 
 
-def GotoIfThisEventSlotOn(label: Label):
+def GotoIfThisEventSlotFlagEnabled(label: Label):
     return GotoIfFlagState(label, True, FlagType.RelativeToThisEventSlot, 0)
 
 
-def GotoIfThisEventSlotOff(label: Label):
+def GotoIfThisEventSlotFlagDisabled(label: Label):
     return GotoIfFlagState(label, False, FlagType.RelativeToThisEventSlot, 0)
 
 
-def GotoIfFlagOn(label: Label, flag: FlagInt):
+def GotoIfFlagEnabled(label: Label, flag: FlagInt):
     return GotoIfFlagState(label, True, FlagType.Absolute, flag)
 
 
-def GotoIfFlagOff(label: Label, flag: FlagInt):
+def GotoIfFlagDisabled(label: Label, flag: FlagInt):
     return GotoIfFlagState(label, False, FlagType.Absolute, flag)
 
 
@@ -1542,19 +1542,19 @@ def GotoIfFlagRangeState(label: Label, state: RangeState, flag_type: FlagType, f
     return to_numeric(instruction_info, label, state, flag_type, first_flag, last_flag)
 
 
-def GotoIfFlagRangeAllOn(label: Label, flag_range: FlagRangeTyping):
+def GotoIfFlagRangeAllEnabled(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AllOn, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAllOff(label: Label, flag_range: FlagRangeTyping):
+def GotoIfFlagRangeAllDisabled(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AllOff, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAnyOn(label: Label, flag_range: FlagRangeTyping):
+def GotoIfFlagRangeAnyEnabled(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AnyOn, FlagType.Absolute, flag_range)
 
 
-def GotoIfFlagRangeAnyOff(label: Label, flag_range: FlagRangeTyping):
+def GotoIfFlagRangeAnyDisabled(label: Label, flag_range: FlagRangeTyping):
     return GotoIfFlagRangeState(label, RangeState.AnyOff, FlagType.Absolute, flag_range)
 
 
@@ -1975,7 +1975,7 @@ def HandleMinibossDefeat(miniboss_id: int):
 
 
 def ForceAnimation(
-    entity: AnimatedTyping,
+    entity: AnimatedEntityTyping,
     animation_id: int,
     loop: bool = False,
     wait_for_completion: bool = False,

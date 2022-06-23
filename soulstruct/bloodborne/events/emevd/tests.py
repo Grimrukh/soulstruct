@@ -134,7 +134,7 @@ MULTIPLAYER = ConstantCondition(
 
 @no_skip_or_negate_or_return
 def IsAttackedWithDamageType(
-    attacked_entity: AnimatedTyping, attacker: CharacterTyping, damage_type: DamageType, condition: int
+    attacked_entity: AnimatedEntityTyping, attacker: CharacterTyping, damage_type: DamageType, condition: int
 ):
     return instr.IfAttackedWithDamageType(condition, attacked_entity, attacker, damage_type)
 

@@ -9,7 +9,7 @@ __all__ = [
     "END",
     "RESTART",
     "Await",
-    # Shared tests
+
     "THIS_FLAG",
     "THIS_SLOT_FLAG",
     "ONLINE",
@@ -83,7 +83,6 @@ __all__ = [
     "PlayerStandingOnCollision",
     "PlayerMovingOnCollision",
     "PlayerRunningOnCollision",
-    # Dark Souls 1 specific tests
     "HOST",
     "CLIENT",
     "SINGLEPLAYER",

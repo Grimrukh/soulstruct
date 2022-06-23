@@ -1,6 +1,6 @@
 
 from soulstruct.game_types import Character, Flag, Object, Text
-from soulstruct.game_types.param_types import ItemLotParam
+from soulstruct.darksouls1ptde.game_types.param_types import ItemLotParam
 
 
 class FLAGS(Flag):

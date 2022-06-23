@@ -4,7 +4,7 @@ import re
 import typing as tp
 from pathlib import Path
 
-from soulstruct.game_types import Map
+from soulstruct.base.game_types.map_types import Map
 from .emevd import EMEVD
 
 _LOGGER = logging.getLogger(__name__)
@@ -112,7 +112,10 @@ class EMEVDDirectory(abc.ABC):
             events_path = re.compile(self._FILE_RE.format(map_name=game_map.emevd_file_stem))
             for file_path in emevd_directory.glob("*"):
                 if events_path.match(file_path.name):
-                    self.emevds[game_map.name] = self.EMEVD_CLASS(file_path)
+                    try:
+                        self.emevds[game_map.name] = self.EMEVD_CLASS(file_path)
+                    except Exception as ex:
+                        raise ValueError(f"Error while loading '{file_path}': {ex}")
                     setattr(self, game_map.name, self.emevds[game_map.name])
                     break
             else:

@@ -487,7 +487,7 @@ __all__ = [
 ]
 
 from soulstruct.base.maps.utilities import get_map as _get_map_base
-from soulstruct.game_types.msb_types import Map
+from soulstruct.darksouls1ptde.game_types.map_types import Map
 from soulstruct.eldenring.maps.generic_dungeons import *
 from soulstruct.eldenring.maps.overworld import *
 

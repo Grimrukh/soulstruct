@@ -1,12 +1,10 @@
 import logging
 import re
-from enum import Enum
 
 from .emedf import ArgType
 from .exceptions import NumericEmevdError
-from .utils import EventArgumentData, get_write_offset, format_event_layers
 
-__all__ = ["SET_INSTRUCTION_ARG_TYPES", "to_numeric", "build_numeric"]
+__all__ = ["build_numeric"]
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,57 +14,11 @@ INSTRUCTION_RE = re.compile(r" +(\d+)\[(\d+)] \(([iIhHbBfs|]*)\)\[([\d, .-]*)] ?
 EVENT_ARG_REPLACEMENT_RE = re.compile(r" +\^\((\d+) <- (\d+), (\d+)\)")
 EVENT_HEADER_RE = re.compile(r"^(\d+), ([012])")
 
-INSTRUCTION_ARG_TYPES = {}  # Set by game module.
-
-
-def SET_INSTRUCTION_ARG_TYPES(arg_types):
-    global INSTRUCTION_ARG_TYPES
-    INSTRUCTION_ARG_TYPES = arg_types
-
 
 class MissingInstructionError(Exception):
     """Raised when an instruction `(category, index)` cannot be found in EMEDF dictionary."""
     def __init__(self, category: int, index: int):
         super().__init__(f"Instruction ({category}, {index}) is not present in EMEDF dictionary.")
-
-
-def to_numeric(category: int, index: int, emedf_info: dict, *args, arg_types="", event_layers=None) -> list[str]:
-    """Convert an instruction to numeric format.
-
-    `arg_types` should only be non-empty for initialization instructions such as `RunEvent` and `RunCommonEvent`.
-
-    `event_layers` is supported here for intellisense purposes, and will lead to expected numeric output if given, but
-    the EVS parser will process it separately anyway as it's too clunky to add it to every instruction signature.
-
-    Returns a list of numeric lines (the instruction line and any event arg replacement lines).
-    """
-    instr_args = []
-    arg_loads = []
-    event_layer_string = format_event_layers(event_layers)
-    if not arg_types:
-        arg_types = "".join(arg["type"].get_fmt() for arg in emedf_info["args"])
-    for i, arg in enumerate(args):
-        if isinstance(arg, EventArgumentData):
-            arg = arg.offset_tuple
-
-        if isinstance(arg, Enum):
-            instr_args.append(args[i].value)
-        elif isinstance(arg, bool):
-            instr_args.append(int(arg))
-        elif isinstance(arg, tuple):
-            # Start offset and size of an event argument.
-            write_offset = get_write_offset(arg_types, i)
-            arg_loads.append(f"    ^({write_offset} <- {arg[0]}, {arg[1]})")
-            try:
-                # This lookup could fail for instructions with optional arguments or unspecified internal default (0).
-                internal_default = emedf_info["args"][i]["internal_default"]
-            except (KeyError, IndexError):
-                internal_default = 0
-            instr_args.append(internal_default)
-        else:
-            instr_args.append(arg)
-    instruction_string = f"{category: 5d}[{index:02d}] ({arg_types}){instr_args}"
-    return [instruction_string + event_layer_string] + arg_loads
 
 
 def build_numeric(numeric_string: str, event_class):
@@ -131,6 +83,7 @@ def build_numeric(numeric_string: str, event_class):
                 if split_arg_list == [""]:
                     split_arg_list = []
                 if len(struct_arg_types) != len(split_arg_list):
+                    print(m_instruction, args_list_string)
                     _LOGGER.error(
                         f"Number of args ({len(struct_arg_types)}) does not match length of the instruction "
                         f"format string ('{display_arg_types}') (line {lineno}) (args = {split_arg_list})"

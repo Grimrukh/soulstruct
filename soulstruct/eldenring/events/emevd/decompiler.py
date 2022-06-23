@@ -10,7 +10,7 @@ from soulstruct.base.events.emevd.decompiler import (
 )
 from soulstruct.base.events.emevd.utils import EntityEnumsManager
 from soulstruct.eldenring.maps.constants import get_map
-from soulstruct.game_types.msb_types import *
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from .enums import *
 from . import enums
 

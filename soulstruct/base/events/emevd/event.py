@@ -251,15 +251,8 @@ class Event(abc.ABC):
         return ", ".join(evs_function_arg_strings)
 
     def to_evs(self, enums_manager: EntityEnumsManager):
-        """Convert single event script to EVS.
-
-        If `enums` is given (e.g. via `EMEVD.to_evs()`), it should map `MapEntity` subclass names to dictionaries that
-        map entity IDs to enum attributes to print in their place (e.g. `1510100: <Characters.BlackKnight2>`).
-
-        If `enums` is given and `warn_missing_enums=True`, entity IDs that do not appear in `enums` will cause a warning
-        to be logged.
-        """
-        function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event{self.event_id}")
+        """Convert single event script to EVS."""
+        function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event_{self.event_id}")
         function_docstring = f'"""Event {self.event_id}"""'
         function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
         restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"

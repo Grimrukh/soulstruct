@@ -55,7 +55,7 @@ __all__ = [
     "ISOLATED_DIVINE_TOWER",
 ]
 
-from soulstruct.game_types.msb_types import Map
+from soulstruct.darksouls1ptde.game_types.map_types import Map
 
 # CATACOMBS (m30)
 
