@@ -3,7 +3,8 @@ __all__ = ["MSB"]
 import logging
 import typing as tp
 
-from soulstruct.base.maps.msb import MSB as _BaseMSB, ENTITY_GAME_TYPES
+from soulstruct.darksouls1ptde.maps.msb import MSB as _BaseMSB
+from soulstruct.darksouls1r.game_types.map_types import *
 from soulstruct.games import DarkSoulsDSRType
 from soulstruct.utilities.maths import Vector3
 
@@ -16,7 +17,7 @@ from .parts import MSBPartList
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSB(_BaseMSB, DarkSoulsDSRType):
+class MSB(DarkSoulsDSRType, _BaseMSB):
     """Only difference from DS1PTDE is in the methods."""
 
     MODEL_LIST_CLASS = MSBModelList
@@ -29,10 +30,33 @@ class MSB(_BaseMSB, DarkSoulsDSRType):
     regions: MSBRegionList
     parts: MSBPartList
 
-    GAME: DarkSoulsDSRType
+    # These are ordered by convenience (same as GUI).
+    ENTITY_GAME_TYPES = {
+        "parts": (
+            MapPiece,
+            Object,
+            Character,
+            PlayerStart,
+            Collision,
+        ),
+        "events": (
+            SoundEvent,
+            VFXEvent,
+            SpawnerEvent,
+            MessageEvent,
+            SpawnPointEvent,
+            NavigationEvent,
+        ),
+        "regions": (
+            RegionPoint,
+            RegionSphere,
+            RegionCylinder,
+            RegionBox,
+        ),
+    }
 
     def translate_entity_id_names(self):
-        for entry_type_name, entry_subtypes in ENTITY_GAME_TYPES.items():
+        for entry_type_name, entry_subtypes in self.ENTITY_GAME_TYPES.items():
             if entry_type_name == "parts":
                 continue  # translations not provided for parts (names are all ASCII already)
             translated_entity_ids = set()  # reset per entry type

@@ -63,7 +63,6 @@ __all__ = [
 import typing as tp
 
 from soulstruct.base.game_types.map_types import Map, MapEntry, MapEntity, MapTyping
-from .emevd_types import EMEVDObject
 
 
 class MapModel(MapEntry):
@@ -136,13 +135,6 @@ class MapEvent(MapEntity):
         return f"_{event_enum_subclass.__name__}_{self.name.lstrip('_')}"
 
 
-class LightEvent(MapEvent):
-    """Light event in MSB."""
-    @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Events", "Lights") if pluralized_subtype else ("Events", "Light")
-
-
 class SoundEvent(MapEvent):
     """Sound event in MSB attached to a Region (a 'map sound'), which can be enabled or disabled.
 
@@ -172,13 +164,6 @@ class VFXEvent(MapEvent):
     @classmethod
     def get_id_start_and_max(cls) -> tuple[int, int]:
         return 3400, 3599
-
-
-class WindEvent(MapEvent):
-    """Wind event in MSB."""
-    @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Events", "Wind") if pluralized_subtype else ("Events", "Wind")
 
 
 class TreasureEvent(MapEvent):
@@ -212,27 +197,14 @@ class MessageEvent(MapEvent):
         return 3700, 3799
 
 
-class ObjActEvent(EMEVDObject, MapEvent):
+class ObjActEvent(MapEvent):
     """ObjAct (object activation event) added in MSB.
 
     It can be used in conditions as a test for the ObjAct event being triggered.
     """
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
-
-    def __call__(self, negate=False, condition=None, skip_lines=0):
-        try:
-            value = self.value
-        except AttributeError:
-            value = self
-        return self.get_value_test(
-            value=value,
-            negate=negate,
-            condition=condition,
-            skip_lines=skip_lines,
-            if_true_func=self.GET_COMPILE_FUNC("IfObjectActivated"),
-        )
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -241,6 +213,9 @@ class ObjActEvent(EMEVDObject, MapEvent):
     @classmethod
     def get_id_start_and_max(cls) -> tuple[int, int]:
         raise TypeError("`ObjActEvent` does not use normal entity IDs, but uses special flags instead.")
+
+
+# TODO: New Bloodborne MSB event types.
 
 
 class SpawnPointEvent(MapEvent):
@@ -296,30 +271,17 @@ class NPCInvasionEvent(MapEvent):
         return ("Events", "NPCInvasion") if pluralized_subtype else ("Events", "NPCInvasion")
 
 
-class Region(EMEVDObject, MapEntity):
+class Region(MapEntity):
     """Condition upon a region as a shortcut to condition upon the player being inside it (condition only)."""
 
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
-
-    def __call__(self, negate=False, condition=None, skip_lines=0):
-        try:
-            value = self.value
-        except AttributeError:
-            value = self
-        return self.get_value_test(
-            value=value,
-            negate=negate,
-            condition=condition,
-            skip_lines=skip_lines,
-            if_true_func=self.GET_COMPILE_FUNC("IfPlayerInsideRegion"),
-            if_false_func=self.GET_COMPILE_FUNC("IfPlayerOutsideRegion"),
-        )
 
     @classmethod
     def get_coord_entity_type(cls):
-        return cls.ENUMS.CoordEntityType.Region
+        from ..events.emevd.enums import CoordEntityType
+        return CoordEntityType.Region
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -383,13 +345,16 @@ class RegionBox(RegionVolume):
 class MapPart(MapEntity):
     """Base class for anything that appears in the Parts section of the MSB."""
     @classmethod
+    def get_event_arg_fmt(cls):
+        return "i"
+
+    @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return "Parts", None
 
 
 class MapPiece(MapPart):
     """Map Piece added in MSB."""
-
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "MapPieces") if pluralized_subtype else ("Parts", "MapPiece")
@@ -399,38 +364,12 @@ class MapPiece(MapPart):
         return 3000, 3199
 
 
-class Object(EMEVDObject, MapPart):
+class Object(MapPart):
     """Condition upon an object as a shortcut to condition upon it *not* being destroyed."""
-
-    @property
-    def event_arg_fmt(self):
-        return "I"
-
-    def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
-        try:
-            value = self.value
-        except AttributeError:
-            value = self
-        return self.get_value_test(
-            value=value,
-            negate=negate,
-            condition=condition,
-            skip_lines=skip_lines,
-            end_event=end_event,
-            restart_event=restart_event,
-            skip_if_true_func=self.GET_COMPILE_FUNC("SkipLinesIfObjectNotDestroyed"),
-            skip_if_false_func=self.GET_COMPILE_FUNC("SkipLinesIfObjectDestroyed"),
-            if_true_func=self.GET_COMPILE_FUNC("IfObjectNotDestroyed"),
-            if_false_func=self.GET_COMPILE_FUNC("IfObjectDestroyed"),
-            end_if_true_func=self.GET_COMPILE_FUNC("EndIfObjectNotDestroyed"),
-            end_if_false_func=self.GET_COMPILE_FUNC("EndIfObjectDestroyed"),
-            restart_if_true_func=self.GET_COMPILE_FUNC("RestartIfObjectNotDestroyed"),
-            restart_if_false_func=self.GET_COMPILE_FUNC("RestartIfObjectDestroyed"),
-        )
-
     @classmethod
     def get_coord_entity_type(cls):
-        return cls.ENUMS.CoordEntityType.Object
+        from ..events.emevd.enums import CoordEntityType
+        return CoordEntityType.Object
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -442,30 +381,12 @@ class Object(EMEVDObject, MapPart):
         return 1000, 1899
 
 
-class Character(EMEVDObject, MapPart):
+class Character(MapPart):
     """Condition upon a character as a shortcut to condition upon them being alive."""
-
-    @property
-    def event_arg_fmt(self):
-        return "I"
-
-    def __call__(self, negate=False, condition=None, skip_lines=0):
-        try:
-            value = self.value
-        except AttributeError:
-            value = self
-        return self.get_value_test(
-            value=value,
-            negate=negate,
-            condition=condition,
-            skip_lines=skip_lines,
-            if_true_func=self.GET_COMPILE_FUNC("IfCharacterAlive"),
-            if_false_func=self.GET_COMPILE_FUNC("IfCharacterDead"),
-        )
-
     @classmethod
     def get_coord_entity_type(cls):
-        return cls.ENUMS.CoordEntityType.Character
+        from ..events.emevd.enums import CoordEntityType
+        return CoordEntityType.Character
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -490,7 +411,6 @@ class PlayerStart(MapPart):
 
 class Collision(MapPart):
     """Collision added in MSB."""
-
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "Collisions") if pluralized_subtype else ("Parts", "Collision")
@@ -503,12 +423,20 @@ class Collision(MapPart):
 class Navmesh(MapPart):
     """Navmesh instance. NavmeshEvents are attached to it and manipulated with EMEVD."""
     @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
+    @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "Navmeshes") if pluralized_subtype else ("Parts", "Navmesh")
 
 
 class UnusedObject(MapPart):
     """Unused (or cutscene-only) object in MSB."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "UnusedObjects") if pluralized_subtype else ("Parts", "UnusedObject")
@@ -517,12 +445,20 @@ class UnusedObject(MapPart):
 class UnusedCharacter(MapPart):
     """Unused (or cutscene-only) character in MSB."""
     @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
+    @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "UnusedCharacters") if pluralized_subtype else ("Parts", "UnusedCharacter")
 
 
 class MapConnection(MapPart):
     """MapConnection added in MSB. No additional state."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Parts", "MapConnections") if pluralized_subtype else ("Parts", "MapConnection")

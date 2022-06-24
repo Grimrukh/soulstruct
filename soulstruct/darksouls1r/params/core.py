@@ -5,7 +5,7 @@ __all__ = ["Param", "GameParamBND"]
 import typing as tp
 
 from soulstruct.containers.bnd import BND3
-from soulstruct.game_types import *
+from soulstruct.darksouls1r.game_types import *
 from soulstruct.games import DarkSoulsDSRType
 from soulstruct.darksouls1ptde.constants import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
 from soulstruct.base.params.param import Param as _BaseParam

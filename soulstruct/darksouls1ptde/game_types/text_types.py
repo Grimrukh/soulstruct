@@ -32,28 +32,17 @@ __all__ = [
 from enum import IntEnum
 import typing as tp
 
-from soulstruct.base.game_types import BaseGameObject
-from .emevd_types import EMEVDObject
+from soulstruct.base.game_types import BaseGameObject, Text
 from .map_types import CoordEntityTyping
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1ptde.events.emevd.enums import *
 
 
-class Text(BaseGameObject, IntEnum):
-    """Base class for a text ID from an FMG.
-
-    Note that only the EventText subclass can be used in any EMEVD instructions.
-    """
-    @classmethod
-    def get_text_category(cls):
-        raise NotImplementedError
-
-
-class NPCName(EMEVDObject, Text):
+class NPCName(Text):
     """NPC name ID."""
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
 
     @classmethod
@@ -68,14 +57,14 @@ class PlaceName(Text):
         return "PlaceNames"
 
 
-class EventText(EMEVDObject, Text):
+class EventText(Text):
     """Text ID from the EventText FMG.
 
     Call the 'as_dialog' or 'as_status' methods in EMEVD to display this text in-game.
     """
 
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
 
     def as_dialog(
@@ -86,7 +75,8 @@ class EventText(EMEVDObject, Text):
         number_buttons: NumberButtons = None,
     ):
         """Display single line of text in a small dialog box at the bottom of the game window."""
-        from soulstruct.darksouls1ptde.events.emevd.enums import PLAYER, ButtonType, NumberButtons
+        from ..events.emevd.enums import PLAYER, ButtonType, NumberButtons
+        from ..events.emevd.compiler import compile_instruction
         if anchor_entity is None:
             anchor_entity = PLAYER
         if button_type is None:
@@ -94,7 +84,7 @@ class EventText(EMEVDObject, Text):
         if number_buttons is None:
             number_buttons = NumberButtons.NoButton
 
-        self.compile_instruction(
+        return compile_instruction(
             "DisplayDialog",
             self.value,
             anchor_entity=anchor_entity,
@@ -112,7 +102,8 @@ class EventText(EMEVDObject, Text):
         Note that this text can have two lines. In the vanilla game, it appears when you are cursed for the first time,
         when you first arrive in Lordran, when you obtain the Lordvessel, when you approach a golden fog gate, etc.
         """
-        self.compile_instruction("DisplayStatus", self.value, pad_enabled=pad_enabled)
+        from ..events.emevd.compiler import compile_instruction
+        return compile_instruction("DisplayStatus", self.value, pad_enabled=pad_enabled)
 
     @classmethod
     def get_text_category(cls):

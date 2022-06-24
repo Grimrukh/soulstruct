@@ -11,6 +11,7 @@ from soulstruct.utilities.maths import Vector3
 from .core import GameDirectoryProject
 from .lighting import LightingEditor
 from .links import WindowLinker
+from .maps import MapsEditor
 from .runtime import RuntimeManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class ProjectWindow(_BaseProjectWindow):
     PROJECT_CLASS = GameDirectoryProject
     LINKER_CLASS = WindowLinker
     LIGHTING_EDITOR_CLASS = LightingEditor
+    MAPS_EDITOR_CLASS = MapsEditor
     RUNTIME_MANAGER_CLASS = RuntimeManager
     CHARACTER_MODELS = CHARACTER_MODELS
 

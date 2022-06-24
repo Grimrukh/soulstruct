@@ -192,7 +192,7 @@ EldenRing = Type.DCX_KRAK
 """
 
 
-def decompress(dcx_source: ReadableTyping) -> (bytes, DCXType):
+def decompress(dcx_source: ReadableTyping) -> tuple[bytes, DCXType]:
     """Decompress the given file path, raw bytes, or buffer/reader.
 
     Returns a tuple containing the decompressed `bytes` and a `DCXInfo` instance that can be used to compress later

@@ -12,7 +12,7 @@ import typing as tp
 from enum import IntEnum
 from pathlib import Path
 
-from soulstruct.utilities.files import read_json, PACKAGE_PATH
+from soulstruct.utilities.files import PACKAGE_PATH
 
 
 _DEF_TEMPLATE = "\n\ndef {alias}({args}):"
@@ -27,10 +27,16 @@ def get_arg_string(args_dict: dict[str, dict], alias_length: int) -> str:
         if arg_info["type"] is not None:
             if inspect.isclass(arg_info["type"]):
                 arg_string += f": {arg_info['type'].__name__}"
+                if issubclass(arg_info["type"], IntEnum):
+                    # `int` always permitted as well.
+                    arg_string += " | int"
             else:
                 if tp.get_origin(arg_info["type"]) is tp.Union:
                     arg_types = tp.get_args(arg_info['type'])
                     arg_string += f": {' | '.join(a.__name__ for a in arg_types)}"
+                    if int not in arg_types and any(issubclass(arg_type, IntEnum) for arg_type in arg_types):
+                        # `int` always permitted as well.
+                        arg_string += " | int"
                 else:
                     raise TypeError(f"Invalid type for arg '{arg_name}': {arg_info['type']}")
             long_default = True
@@ -76,14 +82,12 @@ def format_docstring(docstring: str):
     return "    " + "\n    ".join(out_docstring_lines)  # lines are already indented
 
 
-def generate_instr_pyi(game_module_name: str, emedf_json_path: Path | str, emedf_dict: dict, pyi_path: Path | str):
+def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path | str):
     from soulstruct.darksouls1ptde.events.emevd import compiler
     compiler_names = [
         name for name in compiler.__all__
         if name not in {"COMPILER", "compile_instruction", "get_compile_func"}
     ]
-
-    common_emedf = read_json(emedf_json_path)
 
     pyi_docstring = (
         "\"\"\"AUTOMATICALLY GENERATED. Do not edit this module.\n"
@@ -162,7 +166,6 @@ def darksouls1r():
     from soulstruct.darksouls1r.events.emevd.emedf import EMEDF
     generate_instr_pyi(
         "darksouls1r",
-        PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"),
         EMEDF,
         PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
     )
@@ -172,7 +175,6 @@ def darksouls1ptde():
     from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF
     generate_instr_pyi(
         "darksouls1ptde",
-        PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"),
         EMEDF,
         PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
     )

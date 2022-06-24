@@ -1,4 +1,4 @@
-from soulstruct.game_types import Animation
+from soulstruct.bloodborne.game_types import Animation
 
 
 class c9020(Animation):

@@ -542,7 +542,7 @@ def Event_11015392():
     IfCharacterInsideRegion(1, PLAYER, region=1012990)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1010800)
-    EnableBossHealthBar(1010800, name=5350, slot=0)
+    EnableBossHealthBar(1010800, name=5350)
 
 
 @NeverRestart(11010001)
@@ -558,9 +558,9 @@ def Event_11010001():
     IfConditionTrue(0, input_condition=3)
     EnableFlag(3)
     SkipLinesIfFinishedConditionTrue(2, condition=1)
-    PlaySoundEffect(anchor_entity=1010800, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1010800, 777777777, sound_type=SoundType.s_SFX)
     SkipLines(1)
-    PlaySoundEffect(anchor_entity=1010801, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1010801, 777777777, sound_type=SoundType.s_SFX)
     KillBoss(game_area_param_id=1010800)
     DisableObject(1011990)
     DeleteVFX(vfx_id=1011991)
@@ -757,7 +757,7 @@ def Event_11015384():
     IfFlagEnabled(1, 11015381)
     IfCharacterInsideRegion(1, PLAYER, region=1012890)
     IfConditionTrue(0, input_condition=1)
-    EnableBossHealthBar(1010700, name=2250, slot=0)
+    EnableBossHealthBar(1010700, name=2250)
     EnableSoundEvent(sound_id=1013802)
 
 
@@ -768,7 +768,7 @@ def Event_11015385():
     IfFlagEnabled(1, 11015384)
     IfFlagEnabled(1, 11010901)
     IfConditionTrue(0, input_condition=1)
-    DisableBossHealthBar(1010700, name=2250, slot=0)
+    DisableBossHealthBar(1010700, name=2250)
     DisableSoundEvent(sound_id=1013802)
 
 
@@ -797,7 +797,7 @@ def Event_11010901():
     End()
     IfHealthLessThanOrEqual(0, 1010700, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1010700, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1010700, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1010700)
     EnableFlag(11010901)
     KillBoss(game_area_param_id=1010700)
@@ -867,7 +867,7 @@ def Event_11015372():
     IfCharacterInsideRegion(1, PLAYER, region=1012880)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1010750)
-    EnableBossHealthBar(1010750, name=2240, slot=0)
+    EnableBossHealthBar(1010750, name=2240)
 
 
 @NeverRestart(11015374)
@@ -910,7 +910,7 @@ def Event_11010902():
     Kill(1010511)
     IfHealthLessThanOrEqual(0, 1010750, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1010750, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1010750, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1010750)
     EnableFlag(11010902)
     KillBoss(game_area_param_id=1010750)
@@ -1515,11 +1515,11 @@ def Event_11015170():
     """Event 11015170"""
     IfMultiplayerEvent(0, event_id=10010)
     DisableNetworkSync()
-    PlaySoundEffect(anchor_entity=1011111, sound_id=130300002, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1011111, 130300002, sound_type=SoundType.o_Object)
     WaitRandomSeconds(min_seconds=0.5, max_seconds=2.0)
-    PlaySoundEffect(anchor_entity=1011111, sound_id=130300002, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1011111, 130300002, sound_type=SoundType.o_Object)
     WaitRandomSeconds(min_seconds=0.5, max_seconds=2.0)
-    PlaySoundEffect(anchor_entity=1011111, sound_id=130300002, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1011111, 130300002, sound_type=SoundType.o_Object)
     Restart()
 
 
@@ -1936,7 +1936,7 @@ def Event_11015303():
     EnableFlag(11015306)
     Restart()
     DisableFlag(11015306)
-    RestartEvent(event_id=11015304, slot=0)
+    RestartEvent(event_id=11015304)
     Restart()
 
 
@@ -1983,7 +1983,7 @@ def Event_11010851():
     EnableFlag(11015316)
     Restart()
     DisableFlag(11015316)
-    RestartEvent(event_id=11010852, slot=0)
+    RestartEvent(event_id=11010852)
     Restart()
 
 
@@ -2413,7 +2413,7 @@ def Event_11010583():
     SetStandbyAnimationSettings(6190, standby_animation=9000)
     DisableFlag(11015090)
     RestoreObject(1011010)
-    RestartEvent(event_id=11015090, slot=0)
+    RestartEvent(event_id=11015090)
     Move(6230, destination=1012014, destination_type=CoordEntityType.Region, short_move=True)
     SetStandbyAnimationSettings(6230, standby_animation=9000)
     Move(6300, destination=1012015, destination_type=CoordEntityType.Region, short_move=True)
@@ -2474,7 +2474,7 @@ def Event_11015090(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     DisableObjectInvulnerability(arg_8_11)
     WaitFrames(frames=1)
     DestroyObject(arg_8_11)
-    PlaySoundEffect(anchor_entity=arg_8_11, sound_id=125200000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_8_11, 125200000, sound_type=SoundType.o_Object)
     EnableFlag(11015090)
     IfFlagEnabled(0, 703)
     End()

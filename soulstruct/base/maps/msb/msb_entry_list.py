@@ -22,6 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _DUPLICATE_TAG_MATCH = re.compile(r"(.*)<(\d+)>$")
 
+MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 # Valid ways to specify an entry: entry instance, local index, or name from a `str` or the name of an `IntEnum` member
 EntrySpecType = tp.Union[MSBEntry, int, IntEnum, str]
 
@@ -129,13 +130,14 @@ class BaseMSBEntryList(abc.ABC):
 
     @classmethod
     def ENTRY_CLASS(cls, msb_reader: BinaryReader):
-        """Detects the appropriate subclass of `MSBPart` to instantiate, and does so."""
+        """Detects the appropriate subclass of `MSBEntry` to instantiate, and does so."""
         entry_subtype_int = msb_reader.unpack("i", offset=cls.SUBTYPE_OFFSET, relative_offset=True)[0]
         try:
             entry_subtype = cls.ENTRY_SUBTYPE_ENUM(entry_subtype_int)
         except ValueError:
             raise MapError(f"Entry of type {cls.ENTRY_SUBTYPE_ENUM} has invalid subtype enum: {entry_subtype_int}")
-        return cls.SUBTYPE_CLASSES[entry_subtype](msb_reader)
+        entry_subtype_class = cls.SUBTYPE_CLASSES[entry_subtype]
+        return entry_subtype_class(msb_reader)
 
     @abc.abstractmethod
     def pack_entry(self, index: int, entry: MSBEntryType):

@@ -73,7 +73,7 @@ class MSBModelList(MSBEntryList[MSBModel]):
         MSBModelSubtype.Collision: MSBCollisionModel,
         MSBModelSubtype.Navmesh: MSBNavmeshModel,
     }
-    ENTRY_CLASS = MSBModel
+    SUBTYPE_OFFSET = 4
 
     _entries: list[MSBModel]
 

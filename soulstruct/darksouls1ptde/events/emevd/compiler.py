@@ -11,7 +11,7 @@ or combine multiple underlying EMEVD instructions into one (e.g., `IfActionButto
 __all__ = [
     "COMPILER",
     "compile_instruction",
-    "get_compile_func",
+    "compile_game_object_test",
 
     "RunEvent",
     "EnableObjectActivation",
@@ -36,7 +36,7 @@ __all__ = [
 import logging
 import typing as tp
 
-from soulstruct.base.events.emevd.compiler import base_compile_instruction
+from soulstruct.base.events.emevd.compiler import *
 from soulstruct.darksouls1ptde.game_types import *
 
 from .enums import *
@@ -60,9 +60,42 @@ def compile_instruction(instr_name: str, *args, **kwargs) -> list[str]:
     return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, **kwargs)
 
 
-def get_compile_func(instr_name: str) -> tp.Callable:
-    """Return an instruction compilation function ready to be called with args and kwargs."""
-    return lambda *args, **kwargs: compile_instruction(instr_name, *args, **kwargs)
+def compile_game_object_test(
+    game_object_type: tp.Type[BaseGameObject],
+    game_object: tp.Union[BaseGameObject, tuple],
+    negate=False,
+    condition: int = None,
+    skip_lines=0,
+    end_event=False,
+    restart_event=False,
+) -> list[str]:
+    test = BooleanTestCompiler(compile_instruction)
+
+    if issubclass(game_object_type, Flag):
+        test.set_all("FlagEnabled", "FlagDisabled")
+    elif issubclass(game_object_type, RegionVolume):
+        test.if_true = "IfPlayerInsideRegion"
+        test.if_false = "IfPlayerOutsideRegion"
+    elif issubclass(game_object_type, Region):
+        raise TypeError(f"Only `RegionVolume` subclasses can be used as direct booleans, not just `Region`.")
+    elif issubclass(game_object_type, Object):
+        test.set_all("ObjectNotDestroyed", "ObjectDestroyed")  # True == object NOT destroyed
+    elif issubclass(game_object_type, Character):
+        test.if_true = "IfCharacterAlive"
+        test.if_false = "IfCharacterDead"
+    elif issubclass(game_object_type, ObjActEvent):
+        test.if_true = "IfObjectActivated"
+    else:
+        raise TypeError(f"Type `{game_object_type.__name__}` cannot be used as a boolean directly in EVS script.")
+
+    return test.compile_object(
+        game_object,
+        negate=negate,
+        condition=condition,
+        skip_lines=skip_lines,
+        end_event=end_event,
+        restart_event=restart_event,
+    )
 
 
 def _compile(func):
@@ -290,7 +323,7 @@ def IfPlayerItemState(
     """My wrapper for the two versions that do and do not include storage (e.g., Bottomless Box) in the test."""
     if item_type is None:
         try:
-            item_type = item.item_enum
+            item_type = item.get_item_enum()
         except AttributeError:
             raise AttributeError("Item type not detected. Use keyword or typed item.")
     if including_storage:

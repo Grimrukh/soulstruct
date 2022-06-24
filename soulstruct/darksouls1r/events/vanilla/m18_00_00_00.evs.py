@@ -237,7 +237,7 @@ def Event_11805392():
     IfCharacterInsideRegion(1, PLAYER, region=1802996)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1800800)
-    EnableBossHealthBar(1800800, name=5370, slot=0)
+    EnableBossHealthBar(1800800, name=5370)
 
 
 @NeverRestart(11800001)

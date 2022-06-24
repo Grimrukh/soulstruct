@@ -104,7 +104,13 @@ class EMEVD(GameFile, abc.ABC):
                     script_directory = emevd_path.parent
                 parsed = self.EVS_PARSER(emevd_path, script_directory=script_directory)
                 self.map_name = parsed.map_name
-                events, self.linked_file_offsets, self.packed_strings = build_numeric(parsed.numeric_emevd, self.Event)
+                try:
+                    events, self.linked_file_offsets, self.packed_strings = build_numeric(
+                        parsed.numeric_emevd, self.Event
+                    )
+                except Exception:
+                    print("\n".join(f"{i}:   {line}" for i, line in enumerate(parsed.numeric_emevd.split("\n"))))
+                    raise
                 self.events.update(events)
                 return None
 
@@ -501,10 +507,14 @@ class EMEVD(GameFile, abc.ABC):
         evs_path = Path(evs_path)
         if evs_path.parent:
             evs_path.parent.mkdir(exist_ok=True, parents=True)
+        evs_string = self.to_evs(
+            entity_star_module_paths,
+            entity_non_star_module_paths,
+            warn_missing_enums,
+            entity_module_prefix,
+        )
         with evs_path.open("w", encoding="utf-8") as f:
-            f.write(self.to_evs(
-                entity_star_module_paths, entity_non_star_module_paths, warn_missing_enums, entity_module_prefix
-            ))
+            f.write(evs_string)
 
     def merge(
         self,

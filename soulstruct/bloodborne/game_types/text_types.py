@@ -32,7 +32,7 @@ __all__ = [
 from enum import IntEnum
 import typing as tp
 
-from soulstruct.base.game_types import BaseGameObject
+from soulstruct.base.game_types import BaseGameObject, Text
 from .emevd_types import EMEVDObject
 from .map_types import CoordEntityTyping
 
@@ -40,20 +40,10 @@ if tp.TYPE_CHECKING:
     from soulstruct.darksouls1ptde.events.emevd.enums import *
 
 
-class Text(BaseGameObject, IntEnum):
-    """Base class for a text ID from an FMG.
-
-    Note that only the EventText subclass can be used in any EMEVD instructions.
-    """
-    @classmethod
-    def get_text_category(cls):
-        raise NotImplementedError
-
-
 class NPCName(EMEVDObject, Text):
     """NPC name ID."""
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
 
     @classmethod
@@ -74,8 +64,8 @@ class EventText(EMEVDObject, Text):
     Call the 'as_dialog' or 'as_status' methods in EMEVD to display this text in-game.
     """
 
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
 
     def as_dialog(

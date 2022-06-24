@@ -19,9 +19,9 @@ class MSBModelSubtype(BaseMSBModelSubtype):
     Collision = 5
     Navmesh = 6
 
-    @property
-    def sib_path_stem(self):
-        return "N:\\SPRJ\\data\\Model\\"
+    @classmethod
+    def get_sib_path_stem(cls):
+        return "N:\\FRPG\\data\\Model\\"
 
     @classmethod
     def get_pluralized_type_name(cls):
@@ -36,7 +36,7 @@ class MSBModelSubtype(BaseMSBModelSubtype):
                 )
             if len(map_id) == 2:
                 map_id = (map_id[0], map_id[1], 0, 0)
-            stem = self.sib_path_stem + "map\\m{:02d}_{:02d}_{:02d}_{:02d}\\".format(*map_id)
+            stem = self.get_sib_path_stem() + "map\\m{:02d}_{:02d}_{:02d}_{:02d}\\".format(*map_id)
             if self == MSBModelSubtype.MapPiece:
                 if not name.startswith("m"):
                     raise ValueError(f"MapPiece model name did not start with 'm': {name}")
@@ -52,11 +52,11 @@ class MSBModelSubtype(BaseMSBModelSubtype):
         elif self in (MSBModelSubtype.Character, MSBModelSubtype.Player):
             if not name.startswith("c"):
                 raise ValueError(f"Character/Player model name did not start with 'c': {name}")
-            return self.sib_path_stem + f"chr\\{name}\\sib\\{name}.sib"
+            return self.get_sib_path_stem() + f"chr\\{name}\\sib\\{name}.sib"
         elif self == MSBModelSubtype.Object:
             if not name.startswith("o"):
                 raise ValueError(f"Object model name did not start with 'o': {name}")
-            return self.sib_path_stem + f"obj\\{name}\\sib\\{name}.sib"
+            return self.get_sib_path_stem() + f"obj\\{name}\\sib\\{name}.sib"
         raise ValueError(f"Invalid MSB model type: {repr(self)}. Cannot determine SIB path.")
 
 

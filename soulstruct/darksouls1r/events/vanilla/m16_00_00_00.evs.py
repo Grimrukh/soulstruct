@@ -424,7 +424,7 @@ def Event_11605392():
     EnableAI(1600802)
     EnableAI(1600803)
     EnableAI(1600804)
-    EnableBossHealthBar(1600800, name=5390, slot=0)
+    EnableBossHealthBar(1600800, name=5390)
     ReferDamageToEntity(1600801, target_entity=1600800)
     ReferDamageToEntity(1600802, target_entity=1600800)
     ReferDamageToEntity(1600803, target_entity=1600800)
@@ -686,7 +686,7 @@ def Event_11605382():
     IfCharacterInsideRegion(1, PLAYER, region=1602890)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1600810)
-    EnableBossHealthBar(1600810, name=2390, slot=0)
+    EnableBossHealthBar(1600810, name=2390)
 
 
 @NeverRestart(11600900)

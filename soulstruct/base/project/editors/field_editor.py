@@ -9,7 +9,7 @@ from ast import literal_eval
 from enum import IntEnum
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.game_types import GameObject, GameObjectSequence, MapEntry, BaseParam
+from soulstruct.base.game_types import BaseGameObject, GameObjectSequence, MapEntry, BaseParam
 from soulstruct.base.project.editors.base_editor import BaseEditor
 from soulstruct.base.project.links import WindowLinker
 from soulstruct.base.project.utilities import bind_events, NumberEditBox
@@ -20,6 +20,9 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.project.core import GameDirectoryProject
 
 _LOGGER = logging.getLogger(__name__)
+
+
+FieldTypeTyping = tp.Union[tp.Type[BaseGameObject], tp.Type[GameObjectSequence], type, tp.Iterable]
 
 
 class FieldRow:
@@ -42,7 +45,7 @@ class FieldRow:
         self._active = False
         self._link_missing = False
         self.field_name = ""
-        self.field_type = type  # type: tp.Union[tp.Type[GameObject], tp.Type[GameObjectSequence], type, tp.Iterable]
+        self.field_type = type  # type: FieldTypeTyping
         self.field_nickname = ""
         self.field_docstring = ""
         self.field_links = []
@@ -234,7 +237,7 @@ class FieldRow:
             return self._set_linked_value_label
         if issubclass(self.field_type, GameObjectSequence):
             return self._update_field_GameObjectSequence
-        if issubclass(self.field_type, GameObject):
+        if issubclass(self.field_type, BaseGameObject):
             return self._update_field_GameObject
         if issubclass(self.field_type, IntEnum):
             return self._update_field_IntEnum
@@ -374,7 +377,7 @@ class FieldRow:
             return lambda value: value
         if issubclass(self.field_type, GameObjectSequence):
             return self._string_to_GameObjectSequence
-        if issubclass(self.field_type, GameObject):
+        if issubclass(self.field_type, BaseGameObject):
             return self._string_to_GameObject
         if issubclass(self.field_type, IntEnum):
             raise NotImplementedError

@@ -93,7 +93,7 @@ import typing as tp
 from soulstruct.base.events.emevd.utils import *
 from soulstruct.darksouls1ptde.game_types import *
 
-from .compiler import compile_instruction, get_compile_func
+from .compiler import BooleanTestCompiler, compile_instruction
 from .enums import *
 
 
@@ -135,46 +135,52 @@ RESTART = None
 # Special constant conditions.
 
 
-THIS_FLAG = ConstantCondition(
-    if_true_func=get_compile_func("IfThisEventFlagEnabled"),
-    if_false_func=get_compile_func("IfThisEventFlagDisabled"),
-    skip_if_true_func=get_compile_func("SkipLinesIfThisEventFlagEnabled"),
-    skip_if_false_func=get_compile_func("SkipLinesIfThisEventFlagDisabled"),
-    end_if_true_func=get_compile_func("EndIfThisEventFlagEnabled"),
-    end_if_false_func=get_compile_func("EndIfThisEventFlagDisabled"),
-    restart_if_true_func=get_compile_func("RestartIfThisEventFlagEnabled"),
-    restart_if_false_func=get_compile_func("RestartIfThisEventFlagDisabled"),
+THIS_FLAG = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfThisEventFlagEnabled",
+    if_false="IfThisEventFlagDisabled",
+    skip_if_true="SkipLinesIfThisEventFlagEnabled",
+    skip_if_false="SkipLinesIfThisEventFlagDisabled",
+    end_if_true="EndIfThisEventFlagEnabled",
+    end_if_false="EndIfThisEventFlagDisabled",
+    restart_if_true="RestartIfThisEventFlagEnabled",
+    restart_if_false="RestartIfThisEventFlagDisabled",
 )
 
-THIS_SLOT_FLAG = ConstantCondition(
-    if_true_func=get_compile_func("IfThisEventSlotFlagEnabled"),
-    if_false_func=get_compile_func("IfThisEventSlotFlagDisabled"),
-    skip_if_true_func=get_compile_func("SkipLinesIfThisEventSlotFlagEnabled"),
-    skip_if_false_func=get_compile_func("SkipLinesIfThisEventSlotFlagDisabled"),
-    end_if_true_func=get_compile_func("EndIfThisEventSlotFlagEnabled"),
-    end_if_false_func=get_compile_func("EndIfThisEventSlotFlagDisabled"),
-    restart_if_true_func=get_compile_func("RestartIfThisEventSlotFlagEnabled"),
-    restart_if_false_func=get_compile_func("RestartIfThisEventSlotFlagDisabled"),
+THIS_SLOT_FLAG = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfThisEventSlotFlagEnabled",
+    if_false="IfThisEventSlotFlagDisabled",
+    skip_if_true="SkipLinesIfThisEventSlotFlagEnabled",
+    skip_if_false="SkipLinesIfThisEventSlotFlagDisabled",
+    end_if_true="EndIfThisEventSlotFlagEnabled",
+    end_if_false="EndIfThisEventSlotFlagDisabled",
+    restart_if_true="RestartIfThisEventSlotFlagEnabled",
+    restart_if_false="RestartIfThisEventSlotFlagDisabled",
 )
 
-ONLINE = ConstantCondition(
-    if_true_func=get_compile_func("IfOnline"),
-    if_false_func=get_compile_func("IfOffline"),
+ONLINE = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfOnline",
+    if_false="IfOffline",
 )
 
-OFFLINE = ConstantCondition(
-    if_true_func=get_compile_func("IfOffline"),
-    if_false_func=get_compile_func("IfOnline"),
+OFFLINE = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfOffline",
+    if_false="IfOnline",
 )
 
-DLC_OWNED = ConstantCondition(
-    if_true_func=get_compile_func("IfDLCOwned"),
-    if_false_func=get_compile_func("IfDLCNotOwned"),
+DLC_OWNED = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfDLCOwned",
+    if_false="IfDLCNotOwned",
 )
 
-SKULL_LANTERN_ACTIVE = ConstantCondition(
-    if_true_func=get_compile_func("IfSkullLanternActive"),
-    if_false_func=get_compile_func("IfSkullLanternInactive"),
+SKULL_LANTERN_ACTIVE = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfSkullLanternActive",
+    if_false="IfSkullLanternInactive",
 )
 
 
@@ -194,9 +200,9 @@ def BLACK_WORLD_TENDENCY(op_node, comparison_value, condition, negate=False):
 
 
 @negate_only
-def NEW_GAME_CYCLE(op_node, comparison_value, condition, negate=False):
+def NEW_GAME_CYCLE(op_node, completion_count, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return compile_instruction("IfNewGameCycleComparison", condition, comparison_type, comparison_value)
+    return compile_instruction("IfNewGameCycleComparison", condition, comparison_type, completion_count)
 
 
 @negate_only
@@ -260,32 +266,32 @@ def FramesElapsed(elapsed_frames, condition):
 
 @negate_only
 def CharacterInsideRegion(entity: AnimatedEntityTyping, region: Region, condition, negate=False):
-    return compile_instruction("IfCharacterRegionState", condition, entity, region, not negate)
+    return compile_instruction("IfCharacterRegionState", condition, not negate, entity, region)
 
 
 @negate_only
 def CharacterOutsideRegion(entity: AnimatedEntityTyping, region: Region, condition, negate=False):
-    return compile_instruction("IfCharacterRegionState", condition, entity, region, negate)
+    return compile_instruction("IfCharacterRegionState", condition, negate, entity, region)
 
 
 @negate_only
 def PlayerInsideRegion(region: Region, condition, negate=False):
-    return compile_instruction("IfCharacterRegionState", condition, PLAYER, region, not negate)
+    return compile_instruction("IfCharacterRegionState", condition, not negate, PLAYER, region)
 
 
 @negate_only
 def PlayerOutsideRegion(region: Region, condition, negate=False):
-    return compile_instruction("IfCharacterRegionState", condition, PLAYER, region, negate)
+    return compile_instruction("IfCharacterRegionState", condition, negate, PLAYER, region)
 
 
 @negate_only
 def AllPlayersInsideRegion(region: Region, condition, negate=False):
-    return compile_instruction("IfAllPlayersRegionState", condition, region, not negate)
+    return compile_instruction("IfAllPlayersRegionState", condition, not negate, region)
 
 
 @negate_only
 def AllPlayersOutsideRegion(region: Region, condition, negate=False):
-    return compile_instruction("IfAllPlayersRegionState", condition, region, negate)
+    return compile_instruction("IfAllPlayersRegionState", condition, negate, region)
 
 
 @skip_and_negate_and_return
@@ -323,7 +329,7 @@ def EntityWithinDistance(
     negate=False,
 ):
     return compile_instruction(
-        "IfEntityDistanceState", condition, first_entity, second_entity, max_distance, not negate
+        "IfEntityDistanceState", condition, not negate, first_entity, second_entity, max_distance
     )
 
 
@@ -335,49 +341,49 @@ def EntityBeyondDistance(
     condition,
     negate=False,
 ):
-    return compile_instruction("IfEntityDistanceState", condition, first_entity, second_entity, min_distance, negate)
+    return compile_instruction("IfEntityDistanceState", condition, negate, first_entity, second_entity, min_distance)
 
 
 @negate_only
 def PlayerWithinDistance(entity: CoordEntityTyping, max_distance, condition, negate=False):
-    return compile_instruction("IfEntityDistanceState", condition, PLAYER, entity, max_distance, not negate)
+    return compile_instruction("IfEntityDistanceState", condition, not negate, PLAYER, entity, max_distance)
 
 
 @negate_only
 def PlayerBeyondDistance(entity: CoordEntityTyping, min_distance, condition, negate=False):
-    return compile_instruction("IfEntityDistanceState", condition, PLAYER, entity, min_distance, negate)
+    return compile_instruction("IfEntityDistanceState", condition, negate, PLAYER, entity, min_distance)
 
 
 @negate_only
 def HasItem(item: ItemTyping, condition, item_type=None, negate=False):
     if item_type is None:
         try:
-            item_type = item.item_enum
+            item_type = item.get_item_enum()
         except AttributeError:
             raise ValueError(
                 "Can only use auto-detecting HasItem() on declared item types (Weapon, Armor, Ring, Good)."
             )
-    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, item_type, item, not negate)
+    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, item, not negate, item_type)
 
 
 @negate_only
 def HasWeapon(weapon: WeaponParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, ItemType.Weapon, weapon, not negate)
+    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, weapon, not negate, ItemType.Weapon)
 
 
 @negate_only
 def HasArmor(armor: ArmorParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, ItemType.Armor, armor, not negate)
+    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, armor, not negate, ItemType.Armor, )
 
 
 @negate_only
 def HasRing(ring: RingParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, ItemType.Ring, ring, not negate)
+    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, ring, not negate, ItemType.Ring)
 
 
 @negate_only
 def HasGood(good: GoodParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, ItemType.Good, good, not negate)
+    return compile_instruction("IfPlayerItemStateExcludingStorage", condition, good, not negate, ItemType.Good)
 
 
 @no_skip_or_negate_or_return
@@ -419,7 +425,7 @@ def MultiplayerEvent(multiplayer_event, condition):
 def TrueFlagCount(op_node, comparison_value, flag_range: FlagRangeTyping, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
     return compile_instruction(
-        "IfTrueFlagCountComparison", condition, comparison_value, FlagType.Absolute, comparison_type, flag_range
+        "IfTrueFlagCountComparison", condition, FlagType.Absolute, comparison_type, flag_range, comparison_value
     )
 
 
@@ -458,7 +464,7 @@ def AnyItemDroppedInRegion(region: Region, condition):
 def ItemDropped(item: ItemTyping, condition, item_type=None):
     if item_type is None:
         try:
-            item_type = item.item_enum
+            item_type = item.get_item_enum()
         except AttributeError:
             raise ValueError("Can only use ItemDropped() on declared item types (Weapon, Armor, Ring, Good).")
     return compile_instruction("IfItemDropped", condition, item, item_type)
@@ -468,30 +474,30 @@ def ItemDropped(item: ItemTyping, condition, item_type=None):
 def OwnsItem(item: ItemTyping, condition, item_type=None, negate=False):
     if item_type is None:
         try:
-            item_type = item.item_enum
+            item_type = item.get_item_enum()
         except AttributeError:
             raise ValueError("Can only use OwnsItem() on declared item types (Weapon, Armor, Ring, Good).")
-    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, item_type, item, not negate)
+    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, item, not negate, item_type)
 
 
 @negate_only
 def OwnsWeapon(weapon: WeaponParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, ItemType.Weapon, weapon, not negate)
+    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, weapon, not negate, ItemType.Weapon)
 
 
 @negate_only
 def OwnsArmor(armor: ArmorParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, ItemType.Armor, armor, not negate)
+    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, armor, not negate, ItemType.Armor)
 
 
 @negate_only
 def OwnsRing(ring: RingParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, ItemType.Ring, ring, not negate)
+    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, ring, not negate, ItemType.Ring)
 
 
 @negate_only
 def OwnsGood(good: GoodParam, condition, negate=False):
-    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, ItemType.Good, good, not negate)
+    return compile_instruction("IfPlayerItemStateIncludingStorage", condition, good, not negate, ItemType.Good)
 
 
 @negate_only
@@ -576,7 +582,7 @@ def BackreadDisabled(character: Character, condition, negate=False):
 
 @negate_only
 def HasTaeEvent(character: Character, tae_event_id, condition, negate=False):
-    return compile_instruction("IfTAEEventState", condition, character, tae_event_id, not negate)
+    return compile_instruction("IfCharacterTAEEventState", condition, character, tae_event_id, not negate)
 
 
 @negate_only
@@ -585,8 +591,8 @@ def IsTargeting(targeting_chr, targeted_chr, condition, negate=False):
 
 
 @no_skip_or_negate_or_return
-def HasAiStatus(character: Character, ai_state, condition):
-    return compile_instruction("IfHasAIStatus", condition, character, ai_state)
+def HasAiStatus(character: Character, ai_status, condition):
+    return compile_instruction("IfHasAIStatus", condition, character, ai_status)
 
 
 @no_skip_or_negate_or_return
@@ -627,12 +633,12 @@ def IsDamaged(attacked_obj: Object, attacker, condition):
 @skip_and_negate_and_return
 def IsDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=False, restart_event=False):
     if skip_lines > 0:
-        return compile_instruction("SkipLinesIfObjectDestructionState", skip_lines, obj, negate)
+        return compile_instruction("SkipLinesIfObjectDestructionState", skip_lines, negate, obj)
     if end_event:
-        return compile_instruction("ReturnIfObjectDestructionState", EventReturnType.End, obj, not negate)
+        return compile_instruction("ReturnIfObjectDestructionState", EventReturnType.End, not negate, obj)
     if restart_event:
-        return compile_instruction("ReturnIfObjectDestructionState", EventReturnType.Restart, obj, not negate)
-    return compile_instruction("IfObjectDestructionState", condition, obj, not negate)
+        return compile_instruction("ReturnIfObjectDestructionState", EventReturnType.Restart, not negate, obj)
+    return compile_instruction("IfObjectDestructionState", condition, not negate, obj)
 
 
 @no_skip_or_negate_or_return
@@ -655,30 +661,34 @@ def PlayerRunningOnCollision(collision: Collision, condition):
     return compile_instruction("IfRunningOnCollision", condition, collision)
 
 
-HOST = ConstantCondition(
-    if_true_func=get_compile_func("IfHost"),
-    skip_if_true_func=get_compile_func("SkipLinesIfHost"),
-    end_if_true_func=get_compile_func("EndIfHost"),
-    restart_if_true_func=get_compile_func("RestartIfHost"),
+HOST = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfHost",
+    skip_if_true="SkipLinesIfHost",
+    end_if_true="EndIfHost",
+    restart_if_true="RestartIfHost",
 )
 
-CLIENT = ConstantCondition(
-    if_true_func=get_compile_func("IfClient"),
-    skip_if_true_func=get_compile_func("SkipLinesIfClient"),
-    end_if_true_func=get_compile_func("EndIfClient"),
-    restart_if_true_func=get_compile_func("RestartIfClient"),
+CLIENT = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfClient",
+    skip_if_true="SkipLinesIfClient",
+    end_if_true="EndIfClient",
+    restart_if_true="RestartIfClient",
 )
 
-SINGLEPLAYER = ConstantCondition(
-    if_true_func=get_compile_func("IfSingleplayer"),
-    skip_if_true_func=get_compile_func("SkipLinesIfSingleplayer"),
-    end_if_true_func=get_compile_func("EndIfSingleplayer"),
-    restart_if_true_func=get_compile_func("RestartIfSingleplayer"),
+SINGLEPLAYER = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfSingleplayer",
+    skip_if_true="SkipLinesIfSingleplayer",
+    end_if_true="EndIfSingleplayer",
+    restart_if_true="RestartIfSingleplayer",
 )
 
-MULTIPLAYER = ConstantCondition(
-    if_true_func=get_compile_func("IfMultiplayer"),
-    skip_if_true_func=get_compile_func("SkipLinesIfMultiplayer"),
-    end_if_true_func=get_compile_func("EndIfMultiplayer"),
-    restart_if_true_func=get_compile_func("RestartIfMultiplayer"),
+MULTIPLAYER = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfMultiplayer",
+    skip_if_true="SkipLinesIfMultiplayer",
+    end_if_true="EndIfMultiplayer",
+    restart_if_true="RestartIfMultiplayer",
 )

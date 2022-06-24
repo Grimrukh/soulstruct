@@ -2,7 +2,7 @@ __all__ = ["MAGIC_PARAM_ST"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 class DynamicSpellRef(DynamicFieldDisplayInfo):

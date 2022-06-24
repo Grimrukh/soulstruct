@@ -539,7 +539,7 @@ def Event_11215003():
     IfCharacterInsideRegion(1, PLAYER, region=1212886)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1210800)
-    EnableBossHealthBar(1210800, name=3471, slot=0)
+    EnableBossHealthBar(1210800, name=3471)
     ForceAnimation(1210800, 3017, wait_for_completion=True)
 
 
@@ -577,7 +577,7 @@ def Event_11210000():
     End()
     IfHealthLessThanOrEqual(0, 1210800, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1210800, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1210800, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1210800)
     EnableFlag(11210000)
     KillBoss(game_area_param_id=1210800)
@@ -790,7 +790,7 @@ def Event_11215013():
     EnableCharacter(1210820)
     EnableFlag(11210030)
     EnableAI(1210820)
-    EnableBossHealthBar(1210820, name=4100, slot=0)
+    EnableBossHealthBar(1210820, name=4100)
     EnableMapCollision(collision=1213001)
 
 
@@ -832,7 +832,7 @@ def Event_11210001():
     DisableCharacter(1210802)
     IfHealthLessThanOrEqual(0, 1210820, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1210820, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1210820, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1210820)
     EnableFlag(11210001)
     EnableFlag(121)
@@ -958,7 +958,7 @@ def Event_11215023():
     DisableAI(1210840)
     IfCharacterInsideRegion(0, PLAYER, region=1212021)
     EnableAI(1210840)
-    EnableBossHealthBar(1210840, name=4500, slot=0)
+    EnableBossHealthBar(1210840, name=4500)
 
 
 @NeverRestart(11215024)
@@ -998,7 +998,7 @@ def Event_11210002():
     End()
     IfHealthLessThanOrEqual(0, 1210840, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1210840, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1210840, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1210840)
     EnableFlag(11210002)
     EnableFlag(17)
@@ -1096,7 +1096,7 @@ def Event_11215063():
     IfConditionTrue(0, input_condition=1)
     EnableAI(1210401)
     DisableInvincibility(1210401)
-    EnableBossHealthBar(1210401, name=4510, slot=0)
+    EnableBossHealthBar(1210401, name=4510)
     EnableMapCollision(collision=1213001)
 
 
@@ -1151,7 +1151,7 @@ def Event_11210005():
     EndIfThisEventFlagEnabled()
     IfHealthLessThanOrEqual(0, 1210401, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1210401, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1210401, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1210401)
     EnableFlag(11210004)
     EnableFlag(11210005)
@@ -1267,7 +1267,7 @@ def Event_11210347():
     DisableObjectInvulnerability(1211250)
     DestroyObject(1211250)
     ForceAnimation(1211250, 0)
-    PlaySoundEffect(anchor_entity=1211250, sound_id=262000000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1211250, 262000000, sound_type=SoundType.o_Object)
 
 
 @NeverRestart(11210025)
@@ -2663,7 +2663,7 @@ def Event_11210200(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(1, input_condition=-1)
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    PlaySoundEffect(anchor_entity=arg_0_3, sound_id=262000000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_0_3, 262000000, sound_type=SoundType.o_Object)
     ForceAnimation(arg_0_3, 1, wait_for_completion=True)
     DisableObject(arg_0_3)
 
@@ -2674,7 +2674,7 @@ def Event_11210205(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     DisableNetworkSync()
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
     EndIfFlagEnabled(arg_8_11)
-    PlaySoundEffect(anchor_entity=arg_0_3, sound_id=120199999, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_0_3, 120199999, sound_type=SoundType.o_Object)
     Wait(2.0)
     Restart()
 

@@ -1,6 +1,6 @@
 """Weapon Param in DSR has additional fields."""
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
-from soulstruct.game_types import *
+from soulstruct.darksouls1r.game_types import *
 from ..enums import *
 
 

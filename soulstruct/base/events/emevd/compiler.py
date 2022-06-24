@@ -1,8 +1,10 @@
 
-__all__ = ["base_compile_instruction"]
+__all__ = ["base_compile_instruction", "BooleanTestCompiler"]
 
+import typing as tp
 from enum import Enum
 
+from .exceptions import NoNegateError, NoSkipOrReturnError
 from .utils import EventArgumentData, get_write_offset
 
 
@@ -22,7 +24,6 @@ def base_compile_instruction(emedf_aliases: dict, instr_name: str, *args, arg_ty
 
     # Build real `evs_kwargs` from `args` and `kwargs`. Default values for missing arguments will be attempted below.
     args = list(args)
-    # print(instr_name, args, kwargs)
     evs_kwargs = {}
     for evs_arg_name in tuple(signature):
         if args:
@@ -37,7 +38,6 @@ def base_compile_instruction(emedf_aliases: dict, instr_name: str, *args, arg_ty
                 )
             evs_kwargs[evs_arg_name] = kwargs.pop(evs_arg_name)
             signature.remove(evs_arg_name)
-    # print(f"  ---> {evs_kwargs}")
 
     if kwargs:
         raise ValueError(f"Invalid argument(s) for instruction ({category}, {index}) '{instr_name}': {list(kwargs)}")
@@ -123,3 +123,145 @@ def base_compile_instruction(emedf_aliases: dict, instr_name: str, *args, arg_ty
 
     instruction_string = f"{category: 5d}[{index:02d}] ({arg_types}){arg_list}"
     return [instruction_string] + arg_loads
+
+
+class BooleanTestCompiler:
+    """Simple container for test functions.
+
+    Initialize with available EMEVD test functions, then use call it directly (e.g., for built-in tests like `HOST`)
+    or call `compile_object(game_object)` to pass a single `game_object` to the underlying functions.
+    """
+
+    def __init__(
+        self,
+        compile_instruction: tp.Callable,
+        skip_if_true="",
+        skip_if_false="",
+        if_true="",
+        if_false="",
+        end_if_true="",
+        end_if_false="",
+        restart_if_true="",
+        restart_if_false="",
+    ):
+        self._compile_instruction = compile_instruction
+        self.skip_if_true = skip_if_true
+        self.skip_if_false = skip_if_false
+        self.if_true = if_true
+        self.if_false = if_false
+        self.end_if_true = end_if_true
+        self.end_if_false = end_if_false
+        self.restart_if_true = restart_if_true
+        self.restart_if_false = restart_if_false
+
+    def set_all(self, true_name: str, false_name: str):
+        """Set all eight test at once using the same basic template, e.g. 'FlagEnabled' and 'FlagDisabled'."""
+        self.skip_if_true = f"SkipLinesIf{true_name}"
+        self.skip_if_false = f"SkipLinesIf{false_name}"
+        self.if_true = f"If{true_name}"
+        self.if_false = f"If{false_name}"
+        self.end_if_true = f"EndIf{true_name}"
+        self.end_if_false = f"EndIf{false_name}"
+        self.restart_if_true = f"RestartIf{true_name}"
+        self.restart_if_false = f"RestartIf{false_name}"
+
+    def __call__(
+        self,
+        negate=False,
+        condition=None,
+        skip_lines=0,
+        end_event=False,
+        restart_event=False,
+    ) -> list[str]:
+        if skip_lines > 0:
+            if condition is not None or end_event or restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if not self.skip_if_true or not self.skip_if_false:
+                raise NoSkipOrReturnError  # Both of these functions must be defined.
+            if negate:
+                return self._compile_instruction(self.skip_if_true, skip_lines)
+            return self._compile_instruction(self.skip_if_false, skip_lines)
+        elif skip_lines < 0:
+            raise ValueError("You cannot skip a negative number of lines.")
+
+        if condition is not None:
+            if end_event or restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                if not self.if_false:
+                    raise NoNegateError  # Some game types only have a positive condition test (e.g. IfObjectActivated).
+                return self._compile_instruction(self.if_false, condition)
+            return self._compile_instruction(self.if_true, condition)
+
+        if end_event:
+            if restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                if not self.end_if_false:
+                    raise NoSkipOrReturnError
+                return self._compile_instruction(self.end_if_false)
+            if not self.end_if_true:
+                raise NoSkipOrReturnError
+            return self._compile_instruction(self.end_if_true)
+
+        if restart_event:
+            if negate:
+                if not self.restart_if_false:
+                    raise NoSkipOrReturnError
+                return self._compile_instruction(self.restart_if_false)
+            if not self.restart_if_true:
+                raise NoSkipOrReturnError
+            return self._compile_instruction(self.restart_if_true)
+
+        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
+
+    def compile_object(
+        self,
+        game_object,
+        negate=False,
+        condition=None,
+        skip_lines=0,
+        end_event=False,
+        restart_event=False,
+    ) -> list[str]:
+        if skip_lines > 0:
+            if condition is not None or end_event or restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if not self.skip_if_true or not self.skip_if_false:
+                raise NoSkipOrReturnError  # Both of these functions must be defined.
+            if negate:
+                return self._compile_instruction(self.skip_if_true, skip_lines, game_object)
+            return self._compile_instruction(self.skip_if_false, skip_lines, game_object)
+        elif skip_lines < 0:
+            raise ValueError("You cannot skip a negative number of lines.")
+
+        if condition is not None:
+            if end_event or restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                if not self.if_false:
+                    raise NoNegateError  # Some game types only have a positive condition test (e.g. IfObjectActivated).
+                return self._compile_instruction(self.if_false, condition, game_object)
+            return self._compile_instruction(self.if_true, condition, game_object)
+
+        if end_event:
+            if restart_event:
+                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
+            if negate:
+                if not self.end_if_false:
+                    raise NoSkipOrReturnError
+                return self._compile_instruction(self.end_if_false, game_object)
+            if not self.end_if_true:
+                raise NoSkipOrReturnError
+            return self._compile_instruction(self.end_if_true, game_object)
+
+        if restart_event:
+            if negate:
+                if not self.restart_if_false:
+                    raise NoSkipOrReturnError
+                return self._compile_instruction(self.restart_if_false, game_object)
+            if not self.restart_if_true:
+                raise NoSkipOrReturnError
+            return self._compile_instruction(self.restart_if_true, game_object)
+
+        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")

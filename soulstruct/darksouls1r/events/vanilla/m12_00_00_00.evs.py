@@ -511,7 +511,7 @@ def Event_11205392():
     IfFlagEnabled(1, 11205393)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1200800)
-    EnableBossHealthBar(1200800, name=5210, slot=0)
+    EnableBossHealthBar(1200800, name=5210)
 
 
 @NeverRestart(11200001)
@@ -622,7 +622,7 @@ def Event_11205382():
     IfFlagEnabled(0, 11205383)
     SetStandbyAnimationSettings(1200801, cancel_animation=7001)
     EnableAI(1200801)
-    EnableBossHealthBar(1200801, name=3230, slot=0)
+    EnableBossHealthBar(1200801, name=3230)
 
 
 @NeverRestart(11200900)

@@ -2,13 +2,12 @@ from __future__ import annotations
 
 __all__ = ["WindowLinker", "LinkError"]
 
+import abc
 import typing as tp
 
-from soulstruct.containers import Binder
 from soulstruct.exceptions import SoulstructError
-from soulstruct.game_types import *
-from soulstruct.base.maps.msb.enums import MSBModelSubtype
-from soulstruct.base.maps.msb.models import MSBModelList
+from soulstruct.base.game_types import *
+from soulstruct.base.maps.msb.enums import BaseMSBModelSubtype
 
 from .utilities import ItemTextEditBox
 
@@ -57,8 +56,6 @@ class WindowLinker:
 
         if valid_null_values is None:
             valid_null_values = {}
-
-        name_extension = ""
 
         if issubclass(field_type, MapEntry):
             entry_name = field_value
@@ -125,88 +122,18 @@ class WindowLinker:
             return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
 
         if issubclass(field_type, BaseGameParam):
-            if field_type in {AttackParam, BehaviorParam}:
-                # Try to determine Player vs. Non Player table.
-                param_nickname = ""
-                if field_type == AttackParam:
-                    if self.window.params_tab.active_category == "PlayerBehaviors":
-                        param_nickname = "PlayerAttacks"
-                    elif self.window.params_tab.active_category == "NonPlayerBehaviors":
-                        param_nickname = "NonPlayerAttacks"
-                elif field_type == BehaviorParam:
-                    if self.window.params_tab.active_category == "Players":
-                        param_nickname = "PlayerBehaviors"
-                if not param_nickname:
-                    # Could be Player or Non Player. Provide both links.
-                    param_nickname = "Attacks" if field_type == AttackParam else "Behaviors"
-                    player_table = self.project.params.get_param(f"Player{param_nickname}")
-                    non_player_table = self.project.params.get_param(f"NonPlayer{param_nickname}")
-                    links = []
-                    if field_value in player_table:
-                        links.append(
-                            ParamsLink(
-                                self,
-                                param_name=f"Player{param_nickname}",
-                                param_entry_id=field_value,
-                                name=player_table[field_value].name,
-                            )
-                        )
-                    if field_value in non_player_table:
-                        links.append(
-                            ParamsLink(
-                                self,
-                                param_name=f"NonPlayer{param_nickname}",
-                                param_entry_id=field_value,
-                                name=non_player_table[field_value].name,
-                            )
-                        )
-                    if links:
-                        return links
-                    return [BaseLink()]
-
-            elif field_type in {ArmorParam, WeaponParam}:
-                param_nickname = field_type.get_param_nickname()
-                true_param_id = (
-                    self.check_armor_id(field_value) if field_type == ArmorParam else self.check_weapon_id(field_value)
-                )
-                if true_param_id is None:
-                    return [BaseLink()]  # Invalid weapon/armor ID, even considering reinforcement.
-                if field_value != true_param_id:
-                    name_extension = "+" + str(field_value - true_param_id)
-                field_value = true_param_id
-
-            else:
-                param_nickname = field_type.get_param_nickname()
-
+            param_nickname = field_type.get_param_nickname()
             param_table = self.project.params.get_param(param_nickname)
             try:
-                name = param_table[field_value].name + name_extension
+                name = param_table[field_value].name
             except KeyError:
                 return [BaseLink()]
             else:
                 return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
-        if issubclass(field_type, BaseLightingParam):
-            # Always uses slot 0. You can easily jump to other slots from there (entry names should be the same).
-            # Looks up map from Maps tab, since nothing else links there right now.
-            param_nickname = field_type.get_param_nickname()
-            map_area_name = map_override[:3] if map_override else f"{self.window.maps_tab.map_choice_id.split('_')[0]}"
-            param_table = self.project.lighting.get_draw_param_bnd(map_area_name).get_param(param_nickname)[0]
-            try:
-                name = param_table[field_value].name + name_extension
-            except KeyError:
-                return [BaseLink()]
-            else:
-                return [LightingLink(
-                    self,
-                    param_name=param_nickname,
-                    map_area_name=map_area_name,
-                    param_entry_id=field_value,
-                    slot=0,
-                    name=name,
-                )]
+        # No other base data types (Texture, Map, Animation, etc.) supported yet.
 
-        return []  # No other data types (Flag, Texture, Map, Animation, etc.) supported yet.
+        return []
 
     def get_map_entry_type_names(self, field_type: type):
         """Retrieves a list of names of the given type, sometimes with hint suffixes.
@@ -321,39 +248,10 @@ class WindowLinker:
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
-    def validate_model_subtype(self, model_subtype, name, map_id):
-        """Check appropriate game model files to confirm the given model name is valid.
-
-        Note that Character and Object models don't actually need `map_id` to validate them.
-        """
-        model_subtype = MSBModelList.resolve_entry_subtype(model_subtype)
-
-        dcx = ".dcx" if self.project.GAME.default_dcx else ""
-
-        if model_subtype == MSBModelSubtype.Character:
-            if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
-                return True
-        elif model_subtype == MSBModelSubtype.Object:
-            if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
-                return True
-        elif model_subtype == MSBModelSubtype.MapPiece:
-            if (self.project.game_root / f"map/{map_id}/{name}A{map_id[1:3]}.flver{dcx}").is_file():
-                return True
-        elif model_subtype == MSBModelSubtype.Collision:
-            # TODO: Rough BHD string scan until I have that file format.
-            hkxbhd_path = self.project.game_root / f"map/{map_id}/h{map_id}.hkxbhd"
-            if hkxbhd_path.is_file():
-                with hkxbhd_path.open("r") as f:
-                    if name + "A10.hkx" in f.read():
-                        return True
-        elif model_subtype == MSBModelSubtype.Navmesh:
-            nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
-            if nvmbnd_path.is_file():
-                navmesh_bnd = Binder(nvmbnd_path)
-                if name + "A10.nvm" in navmesh_bnd.entries_by_basename.keys():
-                    return True
-
-        return False
+    @abc.abstractmethod
+    def validate_model_subtype(self, model_subtype: BaseMSBModelSubtype, name: str, map_id: str):
+        """Check appropriate game model files to confirm the given model name is valid."""
+        ...
 
     def params_link(self, param_name, param_entry_id, field_name=None):
         # TODO: Create if missing.
@@ -498,6 +396,7 @@ class TextLink(BaseLink):
 
 
 class LightingLink(BaseLink):
+    """TODO: If/when I implemented GParam window, this will probably change to a base class for DrawParam AND GParam."""
     def __init__(self, linker, param_name, map_area_name, param_entry_id, slot=0, name=None):
         super().__init__(
             linker,

@@ -408,7 +408,7 @@ def Event_11405392():
     EnableCharacter(1400800)
     EnableFlag(11400000)
     EnableAI(1400800)
-    EnableBossHealthBar(1400800, name=5280, slot=0)
+    EnableBossHealthBar(1400800, name=5280)
 
 
 @NeverRestart(11400001)
@@ -869,11 +869,11 @@ def Event_11415170():
     """Event 11415170"""
     IfMultiplayerEvent(0, event_id=10010)
     DisableNetworkSync()
-    PlaySoundEffect(anchor_entity=1401111, sound_id=130300002, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1401111, 130300002, sound_type=SoundType.o_Object)
     WaitRandomSeconds(min_seconds=0.5, max_seconds=2.0)
-    PlaySoundEffect(anchor_entity=1401111, sound_id=130300002, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1401111, 130300002, sound_type=SoundType.o_Object)
     WaitRandomSeconds(min_seconds=0.5, max_seconds=2.0)
-    PlaySoundEffect(anchor_entity=1401111, sound_id=130300002, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1401111, 130300002, sound_type=SoundType.o_Object)
     Restart()
 
 

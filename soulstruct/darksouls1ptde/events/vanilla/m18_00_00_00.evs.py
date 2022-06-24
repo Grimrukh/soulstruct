@@ -235,7 +235,7 @@ def Event_11805392():
     IfCharacterInsideRegion(1, PLAYER, region=1802996)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1800800)
-    EnableBossHealthBar(1800800, name=5370, slot=0)
+    EnableBossHealthBar(1800800, name=5370)
 
 
 @NeverRestart(11800001)
@@ -736,7 +736,7 @@ def Event_11806200():
     IfFlagEnabled(1, 824)
     IfConditionTrue(0, input_condition=1)
     DisableFlag(824)
-    PlayCutscene(180050, cutscene_flags=0, player_id=10000, move_to_region=1022110, move_to_map=FIRELINK_SHRINE)
+    PlayCutscene(180050, cutscene_flags=0, player_id=10000, move_to_region=1022110, game_map=FIRELINK_SHRINE)
     PlayCutscene(100250, cutscene_flags=0, player_id=10000)
     WaitFrames(frames=1)
     DisableCharacter(6331)
@@ -755,7 +755,7 @@ def Event_11806201():
     IfFlagEnabled(1, 825)
     IfConditionTrue(0, input_condition=1)
     DisableFlag(825)
-    PlayCutscene(180051, cutscene_flags=0, player_id=10000, move_to_region=1602110, move_to_map=NEW_LONDO_RUINS)
+    PlayCutscene(180051, cutscene_flags=0, player_id=10000, move_to_region=1602110, game_map=NEW_LONDO_RUINS)
     PlayCutscene(160050, cutscene_flags=0, player_id=10000)
     WaitFrames(frames=1)
     DisableCharacter(6341)

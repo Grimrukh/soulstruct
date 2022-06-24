@@ -23,7 +23,7 @@ def Constructor():
     DisableObjectActivation(1811102, obj_act_id=-1)
     SkipLinesIfOutsideMap(4, game_map=UNDEAD_ASYLUM)
     SkipLinesIfFlagEnabled(3, 11810002)
-    PlayCutscene(180101, cutscene_flags=8, player_id=10000, move_to_region=1812011, move_to_map=UNDEAD_ASYLUM)
+    PlayCutscene(180101, cutscene_flags=8, player_id=10000, move_to_region=1812011, game_map=UNDEAD_ASYLUM)
     EnableFlag(11810002)
     SetRespawnPoint(respawn_point=1812900)
     Event_11810090(0, 1811700, 1811701, 1812600, 1812601)
@@ -273,7 +273,7 @@ def Event_11815392():
 def Event_11810001():
     """Event 11810001"""
     IfHealthLessThanOrEqual(0, 1810800, value=0.0)
-    PlaySoundEffect(anchor_entity=1810800, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1810800, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1810800)
     EnableFlag(16)
     KillBoss(game_area_param_id=1810800)
@@ -299,7 +299,7 @@ def Event_11815394():
     IfConditionTrue(0, input_condition=1)
     EnableFlag(11815396)
     EnableSoundEvent(sound_id=1813800)
-    EnableBossHealthBar(1810800, name=2232, slot=0)
+    EnableBossHealthBar(1810800, name=2232)
     Restart()
 
 
@@ -316,7 +316,7 @@ def Event_11815395():
     IfConditionTrue(0, input_condition=-1)
     DisableFlag(11815396)
     DisableSoundEvent(sound_id=1813800)
-    DisableBossHealthBar(1810800, name=2232, slot=0)
+    DisableBossHealthBar(1810800, name=2232)
     Restart()
 
 
@@ -430,7 +430,7 @@ def Event_11815382():
     IfCharacterInsideRegion(0, PLAYER, region=1812896)
     EnableAI(1810810)
     DisableInvincibility(1810810)
-    EnableBossHealthBar(1810810, name=2231, slot=0)
+    EnableBossHealthBar(1810810, name=2231)
     EnableObject(1811890)
     CreateVFX(vfx_id=1811891)
 
@@ -475,7 +475,7 @@ def Event_11810000():
     IssuePrefetchRequest(request_id=0)
     WaitFrames(frames=1)
     PlayCutscene(180125, cutscene_flags=0, player_id=10000)
-    PlayCutscene(100225, cutscene_flags=0, player_id=10000, move_to_region=1022100, move_to_map=FIRELINK_SHRINE)
+    PlayCutscene(100225, cutscene_flags=0, player_id=10000, move_to_region=1022100, game_map=FIRELINK_SHRINE)
     WaitFrames(frames=1)
     SkipLinesIfFlagEnabled(1, 16)
     EnableBackread(1810800)
@@ -503,7 +503,7 @@ def Event_11810150():
     ForceAnimation(PLAYER, 7815, wait_for_completion=True)
     SkipLinesIfMultiplayer(6)
     SetStandbyAnimationSettings(PLAYER)
-    PlayCutscene(180126, cutscene_flags=0, player_id=10000, move_to_region=1022121, move_to_map=FIRELINK_SHRINE)
+    PlayCutscene(180126, cutscene_flags=0, player_id=10000, move_to_region=1022121, game_map=FIRELINK_SHRINE)
     PlayCutscene(100226, cutscene_flags=0, player_id=10000)
     WaitFrames(frames=1)
     AwardAchievement(achievement_id=28)
@@ -738,7 +738,7 @@ def Event_11810220():
     EnableObject(1811201)
     DestroyObject(1811201)
     DisableObject(1811202)
-    PlaySoundEffect(anchor_entity=1811200, sound_id=851000000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1811200, 851000000, sound_type=SoundType.o_Object)
     CreateTemporaryVFX(vfx_id=180100, anchor_entity=1811200, anchor_type=CoordEntityType.Object)
 
 

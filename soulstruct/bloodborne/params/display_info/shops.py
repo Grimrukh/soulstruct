@@ -2,7 +2,7 @@ __all__ = ["SHOP_LINEUP_PARAM"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 class DynamicShopRef(DynamicFieldDisplayInfo):

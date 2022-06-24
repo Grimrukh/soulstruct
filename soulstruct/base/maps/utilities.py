@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["get_map"]
+__all__ = ["get_map", "GET_MAP_TYPING"]
 
 import logging
 import typing as tp
@@ -87,3 +87,9 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
         raise ValueError(f"No maps matched for '{source_orig}'.")
 
     return matches[0]
+
+
+class GET_MAP_TYPING(tp.Protocol):
+    """Type hint for `get_map` function that can be used for base classes."""
+    def __call__(self, source: tp.Union[str, tuple], block_id: int = ...):
+        ...

@@ -1280,7 +1280,7 @@ def Event_840(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     RotateToFaceEntity(PLAYER, target_entity=arg_8_11)
     ForceAnimation(PLAYER, arg_4_7)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=PLAYER, sound_id=123456789, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(PLAYER, 123456789, sound_type=SoundType.s_SFX)
     Wait(4.0)
     SkipLinesIfEqual(1, left=arg_12_15, right=-1)
     ForceAnimation(PLAYER, arg_12_15, loop=True)

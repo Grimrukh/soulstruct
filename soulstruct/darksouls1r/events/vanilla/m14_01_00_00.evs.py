@@ -518,7 +518,7 @@ def Event_11415392():
     SetStandbyAnimationSettings(1410801)
     ForceAnimation(1410801, 9060)
     EnableAI(1410801)
-    EnableBossHealthBar(1410802, name=5400, slot=0)
+    EnableBossHealthBar(1410802, name=5400)
 
 
 @NeverRestart(11410001)
@@ -714,19 +714,19 @@ def Event_11410200():
     DisableObjectInvulnerability(1411204)
     CreateTemporaryVFX(vfx_id=140009, anchor_entity=1411202, anchor_type=CoordEntityType.Object)
     DestroyObject(1411200)
-    PlaySoundEffect(anchor_entity=1411200, sound_id=463300000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1411200, 463300000, sound_type=SoundType.o_Object)
     WaitFrames(frames=4)
     DestroyObject(1411201)
-    PlaySoundEffect(anchor_entity=1411201, sound_id=463400000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1411201, 463400000, sound_type=SoundType.o_Object)
     WaitFrames(frames=3)
     DestroyObject(1411202)
-    PlaySoundEffect(anchor_entity=1411202, sound_id=463500000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1411202, 463500000, sound_type=SoundType.o_Object)
     WaitFrames(frames=2)
     DestroyObject(1411203)
-    PlaySoundEffect(anchor_entity=1411203, sound_id=463600000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1411203, 463600000, sound_type=SoundType.o_Object)
     WaitFrames(frames=1)
     DestroyObject(1411204)
-    PlaySoundEffect(anchor_entity=1411204, sound_id=463700000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1411204, 463700000, sound_type=SoundType.o_Object)
     DisableNetworkSync()
     Wait(10.0)
     DisableObject(1411200)
@@ -749,7 +749,7 @@ def Event_11410201(_, arg_0_3: int, arg_4_7: int):
     DisableObjectInvulnerability(arg_0_3)
     DestroyObject(arg_0_3)
     CreateTemporaryVFX(vfx_id=140008, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object)
-    PlaySoundEffect(anchor_entity=arg_0_3, sound_id=arg_4_7, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_0_3, arg_4_7, sound_type=SoundType.o_Object)
     DisableNetworkSync()
     Wait(10.0)
     DisableObject(arg_0_3)
@@ -933,7 +933,7 @@ def Event_11415372():
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     EnableAI(1410600)
-    EnableBossHealthBar(1410600, name=5250, slot=0)
+    EnableBossHealthBar(1410600, name=5250)
 
 
 @NeverRestart(11410900)
@@ -1153,7 +1153,7 @@ def Event_11415382():
     DisableObject(1411110)
     EnableFlag(11410002)
     EnableAI(1410700)
-    EnableBossHealthBar(1410700, name=5200, slot=0)
+    EnableBossHealthBar(1410700, name=5200)
 
 
 @NeverRestart(11410901)
@@ -1557,7 +1557,7 @@ def Event_11415342():
     IfCharacterInsideRegion(1, PLAYER, region=1412416)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1410400)
-    EnableBossHealthBar(1410400, name=2230, slot=0)
+    EnableBossHealthBar(1410400, name=2230)
 
 
 @NeverRestart(11415344)
@@ -1847,7 +1847,7 @@ def Event_11410350():
     DisableObject(1411350)
     EnableObject(1411351)
     CreateTemporaryVFX(vfx_id=140001, anchor_entity=1411351, anchor_type=CoordEntityType.Object)
-    PlaySoundEffect(anchor_entity=1411351, sound_id=481000001, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1411351, 481000001, sound_type=SoundType.o_Object)
     DestroyObject(1411351)
     ForceAnimation(1411600, 116, wait_for_completion=True)
     EnableTreasure(obj=1411600)

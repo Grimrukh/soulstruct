@@ -72,19 +72,10 @@ __all__ = [
 
 import typing as tp
 
-from soulstruct.base.game_types import BaseParam
-from .emevd_types import EMEVDObject
+from soulstruct.base.game_types import BaseParam, BaseGameParam
 
 
-class BaseGameParam(BaseParam):
-    """Base class for IDs of GameParam entries."""
-
-    @classmethod
-    def get_param_nickname(cls):
-        raise NotImplementedError
-
-
-class BaseItemParam(EMEVDObject, BaseGameParam):
+class BaseItemParam(BaseGameParam):
     """Base class for items.
 
     Unfortunately, the naming of item types is inconsistent. There are four types of items, which are internally called
@@ -102,12 +93,12 @@ class BaseItemParam(EMEVDObject, BaseGameParam):
     You can call an instance of any Item to test if the player currently has that item (excluding storage).
     """
 
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
 
-    @property
-    def item_enum(self):
+    @classmethod
+    def get_item_enum(cls):
         raise NotImplementedError("You must use a subclass of `BaseItemParam`.")
 
     @classmethod
@@ -133,9 +124,10 @@ class AIParam(BaseGameParam):
 class ArmorParam(BaseItemParam):
     """Armor entry."""
 
-    @property
-    def item_enum(self):
-        return self.get_enum("ItemType", "Armor")
+    @classmethod
+    def get_item_enum(cls):
+        from ..events.emevd.enums import ItemType
+        return ItemType.Armor
 
     @classmethod
     def get_param_nickname(cls):
@@ -208,9 +200,10 @@ class FaceParam(BaseGameParam):
 class GoodParam(BaseItemParam):
     """Good entry."""
 
-    @property
-    def item_enum(self):
-        return self.get_enum("ItemType", "Good")
+    @classmethod
+    def get_item_enum(cls):
+        from ..events.emevd.enums import ItemType
+        return ItemType.Good
 
     @classmethod
     def get_param_nickname(cls):
@@ -276,9 +269,10 @@ class PlayerParam(BaseGameParam):
 class RingParam(BaseItemParam):
     """Ring entry."""
 
-    @property
-    def item_enum(self):
-        return self.get_enum("ItemType", "Ring")
+    @classmethod
+    def get_item_enum(cls):
+        from ..events.emevd.enums import ItemType
+        return ItemType.Ring
 
     @classmethod
     def get_param_nickname(cls):
@@ -337,9 +331,10 @@ class UpgradeMaterialParam(BaseGameParam):
 class WeaponParam(BaseItemParam):
     """Weapon entry."""
 
-    @property
-    def item_enum(self):
-        return self.get_enum("ItemType", "Weapon")
+    @classmethod
+    def get_item_enum(cls):
+        from ..events.emevd.enums import ItemType
+        return ItemType.Weapon
 
     @classmethod
     def get_param_nickname(cls):

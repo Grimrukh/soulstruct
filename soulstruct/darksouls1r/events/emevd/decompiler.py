@@ -209,7 +209,7 @@ def _MoveAndCopyDrawParent(
 
 @_decompile(3, 4)
 def _IfPlayerItemStateExcludingStorage(condition: int, item_type: ItemType, item, state: bool):
-    if not isinstance(state, str):
+    if not isinstance(state, str) and not isinstance(item_type, str):
         state_name = "Has" if state else "DoesNotHave"
         if isinstance(item_type, str):
             return f"IfPlayer{state_name}Item({condition}, {item}, {item_type=})"

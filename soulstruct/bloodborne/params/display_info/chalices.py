@@ -6,7 +6,7 @@ __all__ = [
 ]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 DUNGEON_FEATURE_PARAM_ST = {

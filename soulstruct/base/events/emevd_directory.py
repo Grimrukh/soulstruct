@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+__all__ = ["EMEVDDirectory"]
+
 import abc
 import logging
 import re
@@ -6,6 +10,9 @@ from pathlib import Path
 
 from soulstruct.base.game_types.map_types import Map
 from .emevd import EMEVD
+
+if tp.TYPE_CHECKING:
+    from soulstruct.base.maps.utilities import GET_MAP_TYPING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,7 +23,7 @@ class EMEVDDirectory(abc.ABC):
     _FILE_RE = r"{map_name}(\.evs\.py|\.evs|\.py|\.emevd|\.txt)"
 
     ALL_MAPS: tuple[Map] = None
-    GET_MAP: tp.Callable = None
+    GET_MAP: GET_MAP_TYPING = None
     IS_DCX: bool = None
     EMEVD_CLASS: tp.Type[EMEVD] = None
 

@@ -2,7 +2,7 @@ __all__ = ["CHARACTER_INIT_PARAM", "NPC_PARAM_ST", "CACL_CORRECT_GRAPH_ST"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field, bit_pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 CHARACTER_INIT_PARAM = {

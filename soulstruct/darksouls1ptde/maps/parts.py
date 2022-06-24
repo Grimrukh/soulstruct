@@ -37,7 +37,7 @@ if tp.TYPE_CHECKING:
     from .regions import MSBRegion
 
 
-class MSBPart(BaseMSBPart, MSB_Scale, MSB_ModelName, MSB_DrawParent, MSB_DrawGroups, MSB_DisplayGroups, abc.ABC):
+class MSBPart(MSB_Scale, MSB_ModelName, MSB_DrawParent, MSB_DrawGroups, MSB_DisplayGroups, BaseMSBPart, abc.ABC):
     PART_HEADER_STRUCT = BinaryStruct(
         ("__name_offset", "i"),
         ("__part_type", "i"),
@@ -1311,6 +1311,7 @@ class MSBPartList(MSBEntryList[MSBPart]):
             return new_collision
 
         try:
+            # noinspection PyTypeChecker
             environment_event: MSBEnvironmentEvent = msb.events.get_entry_by_name(
                 new_collision.environment_event_name, "Environment",
             )

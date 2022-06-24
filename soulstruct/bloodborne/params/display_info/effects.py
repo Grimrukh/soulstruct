@@ -2,7 +2,7 @@ __all__ = ["SP_EFFECT_PARAM_ST", "SP_EFFECT_VFX_PARAM_ST", "RESIDENT_FX_PARAM_ST
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 SP_EFFECT_BOOL = bool  # override u8

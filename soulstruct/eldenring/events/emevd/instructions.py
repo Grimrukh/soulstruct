@@ -414,7 +414,7 @@ __all__ = [
     "IfCharacterBackreadState",
     "IfCharacterBackreadEnabled",
     "IfCharacterBackreadDisabled",
-    "IfTAEEventState",
+    "IfCharacterTAEEventState",
     "IfCharacterHasTAEEvent",
     "IfCharacterDoesNotHaveTAEEvent",
     "IfHasAIStatus",
@@ -1162,7 +1162,7 @@ def IfCharacterBackreadDisabled(condition: int, character: CharacterTyping):
     return IfCharacterBackreadState(condition, character, False)
 
 
-def IfTAEEventState(
+def IfCharacterTAEEventState(
     condition: int,
     character: CharacterTyping,
     tae_event_id: int,
@@ -1175,11 +1175,11 @@ def IfTAEEventState(
 
 
 def IfCharacterHasTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
-    return IfTAEEventState(condition, character, tae_event_id, True)
+    return IfCharacterTAEEventState(condition, character, tae_event_id, True)
 
 
 def IfCharacterDoesNotHaveTAEEvent(condition: int, character: CharacterTyping, tae_event_id: int):
-    return IfTAEEventState(condition, character, tae_event_id, False)
+    return IfCharacterTAEEventState(condition, character, tae_event_id, False)
 
 
 def IfHasAIStatus(

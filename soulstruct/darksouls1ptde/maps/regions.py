@@ -23,21 +23,21 @@ from .msb_entry import MSBEntryList
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
     REGION_STRUCT = BinaryStruct(
-        ("name_offset", "q"),
+        ("name_offset", "i"),
         "4x",
         ("__region_index", "i"),
         ("region_type", "i"),
         ("translate", "3f"),
         ("rotate", "3f"),  # These are Euler angle rotations (and can therefore be gimbal-locked).
+        ("unknown_offset_1", "i"),
+        ("unknown_offset_2", "i"),
+        ("type_data_offset", "i"),
+        ("entity_id_offset", "i"),
         "4x",
-        ("unknown_offset_1", "q"),
-        ("unknown_offset_2", "q"),
-        ("type_data_offset", "q"),
-        ("entity_id_offset", "q"),
     )
 
-    NAME_ENCODING = "utf-16-le"
-    UNKNOWN_DATA_SIZE = 2
+    NAME_ENCODING = "shift_jis_2004"
+    UNKNOWN_DATA_SIZE = 4
 
 
 class MSBRegionPoint(BaseMSBRegionPoint, MSBRegion):
@@ -77,7 +77,7 @@ class MSBRegionList(MSBEntryList[MSBRegion]):
         MSBRegionSubtype.Rect: MSBRegionRect,
         MSBRegionSubtype.Box: MSBRegionBox,
     }
-    SUBTYPE_OFFSET = 16
+    SUBTYPE_OFFSET = 12
 
     _entries: list[MSBRegion]
 

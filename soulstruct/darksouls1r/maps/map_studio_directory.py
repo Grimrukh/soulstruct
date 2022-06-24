@@ -25,7 +25,7 @@ class MapStudioDirectory(_BaseMapStudioDirectory, DarkSoulsDSRType):
 
     MSB_CLASS = MSB
     ALL_MAPS = ALL_MAPS
-    GET_MAP = staticmethod(get_map)  # type: tp.Callable[[tp.Union[str, tuple], tp.Optional[int]], Map]
+    GET_MAP = staticmethod(get_map)
 
     Depths: MSB
     UndeadBurg: MSB  # and Undead Parish

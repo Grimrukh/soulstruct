@@ -2,7 +2,7 @@ __all__ = ["ATK_PARAM_ST", "THROW_INFO_BANK"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field, bit_pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 ATK_PARAM_ST = {

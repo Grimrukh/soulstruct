@@ -4,6 +4,7 @@ Used in tandem with `*.emedf.json` to compile/decompile EVS <-> EMEVD scripts.
 """
 from __future__ import annotations
 
+import typing as tp
 from pathlib import Path
 
 from soulstruct.base.events.emevd.emedf import *
@@ -53,7 +54,7 @@ GAME_MAP_EVS = {
 }
 ITEM_TYPE = {
     "type": ItemType,
-    "default": lambda args: args["item"].item_enum,
+    "default": lambda args: args["item"].get_item_enum(),
     "comment": "Auto-detected from `item` type by default.",
 }
 FLAG = {
@@ -794,7 +795,7 @@ EMEDF = {
         },
     },
     (4, 8): {
-        "alias": "IfTAEEventState",
+        "alias": "IfCharacterTAEEventState",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE,
@@ -1739,7 +1740,7 @@ EMEDF = {
         """,
         "args": {
             "event_id": INT,
-            "slot": INT,
+            "slot": INT | {"default": 0},
             "event_return_type": EVENT_RETURN_TYPE,
         },
         "partials": {
@@ -1756,6 +1757,11 @@ EMEDF = {
                 """,
             ),
         },
+        "evs_args": {
+            "event_id": {},
+            "event_return_type": {},
+            "slot": {},
+        }
     },
     # TODO: Could not find [2003, 9]: Invert Event Flag
     # TODO: Could not find [2003, 10]: Set Event Navimesh
@@ -1767,10 +1773,10 @@ EMEDF = {
         "args": {
             "state": BOOL | HIDE,
             "character": NO_DEFAULT(CharacterTyping) | HIDE,
-            "slot": INT,
+            "slot": INT | {"default": 0},
             "name": {
                 "type": NPCNameTyping,
-                "default": None,
+                "default": 0,  # mainly for `Disable` partial, in which name does not matter
             },
         },
         "partials": {
@@ -1791,9 +1797,9 @@ EMEDF = {
         },
         "evs_args": {
             "character": {},
+            "state": {},
             "name": {},
             "slot": {},
-            "state": {},
         },
     },
     (2003, 12): {
@@ -1850,7 +1856,7 @@ EMEDF = {
             "area_id": AREA_ID,
             "block_id": BLOCK_ID,
             "player_start": {
-                "type": PlayerStart,
+                "type": tp.Union[PlayerStart, int],
                 "default": -1,
                 "internal_default": -1,
             },
@@ -3342,12 +3348,12 @@ EMEDF = {
         "alias": "PlaySoundEffect",
         "docstring": "Anchor entity determines sound position and the sound type is used to look up the source.",
         "args": {
-            "anchor_entity": NO_DEFAULT(CoordEntityTyping),
+            "anchor_entity": NO_DEFAULT(CoordEntityTyping) | HIDE,
             "sound_type": {
                 "type": SoundType,
-                "default": lambda args: args["sound_id"].sound_type,
+                "default": lambda args: args["sound_id"].get_sound_enum(),
             },
-            "sound_id": INT,
+            "sound_id": INT | HIDE,
         },
         "evs_args": {
             "anchor_entity": {},

@@ -467,7 +467,7 @@ def Event_11020020():
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     DisableFlag(11025060)
-    RestartEvent(event_id=11020021, slot=0)
+    RestartEvent(event_id=11020021)
     SetStandbyAnimationSettings(PLAYER)
     SkipLinesIfFinishedConditionTrue(1, condition=2)
     ForceAnimation(PLAYER, 7817, wait_for_completion=True)

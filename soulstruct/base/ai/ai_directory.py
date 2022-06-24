@@ -10,7 +10,8 @@ from soulstruct.containers import Binder
 from .lua_bnd import LuaBND
 
 if tp.TYPE_CHECKING:
-    from soulstruct.game_types import Map
+    from soulstruct.base.game_types.map_types import Map
+    from soulstruct.base.maps.utilities import GET_MAP_TYPING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 class AIDirectory:
 
     ALL_MAPS: tuple[Map] = ()
-    GET_MAP = None  # type: tp.Callable
+    GET_MAP: GET_MAP_TYPING = None
     EVENT_COMMON_NAME = ""
 
     def __init__(self, script_directory=None):

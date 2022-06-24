@@ -125,7 +125,7 @@ __all__ = [
     "IfCharacterBackreadState",  # 4[7]
     "IfCharacterBackreadEnabled",
     "IfCharacterBackreadDisabled",
-    "IfTAEEventState",  # 4[8]
+    "IfCharacterTAEEventState",  # 4[8]
     "IfCharacterHasTAEEvent",
     "IfCharacterDoesNotHaveTAEEvent",
     "IfHasAIStatus",  # 4[9]
@@ -512,6 +512,7 @@ __all__ = [
     "DisableThisFlag",
 
     # From `compiler`:
+    "compile_game_object_test",
     "RunEvent",
     "EnableObjectActivation",
     "DisableObjectActivation",
@@ -555,7 +556,7 @@ def IfConditionFalse(condition: int, input_condition: int):
     """
 
 
-def IfValueComparison(condition: int, comparison_type: ComparisonType, left: int, right: int):
+def IfValueComparison(condition: int, comparison_type: ComparisonType | int, left: int, right: int):
     """
     TODO
     """
@@ -621,7 +622,7 @@ def IfRandomFramesElapsed(condition: int, min_frames: int, max_frames: int):
     """
 
 
-def IfFlagState(condition: int, state: FlagState, flag_type: FlagType, flag: Flag | int):
+def IfFlagState(condition: int, state: FlagState | int, flag_type: FlagType | int, flag: Flag | int):
     """
     TODO
     """
@@ -663,7 +664,12 @@ def IfThisEventSlotFlagDisabled(condition: int):
     """
 
 
-def IfFlagRangeState(condition: int, state: RangeState, flag_type: FlagType, flag_range: FlagRange | tuple | list):
+def IfFlagRangeState(
+    condition: int,
+    state: RangeState | int,
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+):
     """
     TODO
     """
@@ -773,7 +779,7 @@ def IfPlayerItemStateExcludingStorage(
     condition: int,
     item: BaseItemParam | int,
     state: bool,
-    item_type: ItemType = None,
+    item_type: ItemType | int = None,
 ):
     """
     TODO
@@ -785,11 +791,11 @@ def IfActionButtonBasic(
     condition: int,
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
-    anchor_type: CoordEntityType = None,
+    anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
     button: int = 0,
 ):
     """
@@ -801,7 +807,7 @@ def IfActionButtonBasic(
     """
 
 
-def IfMultiplayerState(condition: int, state: MultiplayerState):
+def IfMultiplayerState(condition: int, state: MultiplayerState | int):
     """
     TODO
     """
@@ -887,8 +893,8 @@ def IfMultiplayerEvent(condition: int, event_id: int):
 
 def IfTrueFlagCountComparison(
     condition: int,
-    flag_type: FlagType,
-    comparison_type: ComparisonType,
+    flag_type: FlagType | int,
+    comparison_type: ComparisonType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
 ):
@@ -897,25 +903,40 @@ def IfTrueFlagCountComparison(
     """
 
 
-def IfTrueFlagCountEqual(condition: int, flag_type: FlagType, flag_range: FlagRange | tuple | list, value: int):
+def IfTrueFlagCountEqual(condition: int, flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int):
     """
     Calls `IfTrueFlagCountComparison` with `comparison_type=0`.
     """
 
 
-def IfTrueFlagCountNotEqual(condition: int, flag_type: FlagType, flag_range: FlagRange | tuple | list, value: int):
+def IfTrueFlagCountNotEqual(
+    condition: int,
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+):
     """
     Calls `IfTrueFlagCountComparison` with `comparison_type=1`.
     """
 
 
-def IfTrueFlagCountGreaterThan(condition: int, flag_type: FlagType, flag_range: FlagRange | tuple | list, value: int):
+def IfTrueFlagCountGreaterThan(
+    condition: int,
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+):
     """
     Calls `IfTrueFlagCountComparison` with `comparison_type=2`.
     """
 
 
-def IfTrueFlagCountLessThan(condition: int, flag_type: FlagType, flag_range: FlagRange | tuple | list, value: int):
+def IfTrueFlagCountLessThan(
+    condition: int,
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+):
     """
     Calls `IfTrueFlagCountComparison` with `comparison_type=3`.
     """
@@ -923,7 +944,7 @@ def IfTrueFlagCountLessThan(condition: int, flag_type: FlagType, flag_range: Fla
 
 def IfTrueFlagCountGreaterThanOrEqual(
     condition: int,
-    flag_type: FlagType,
+    flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
 ):
@@ -934,7 +955,7 @@ def IfTrueFlagCountGreaterThanOrEqual(
 
 def IfTrueFlagCountLessThanOrEqual(
     condition: int,
-    flag_type: FlagType,
+    flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
 ):
@@ -945,8 +966,8 @@ def IfTrueFlagCountLessThanOrEqual(
 
 def IfWorldTendencyComparison(
     condition: int,
-    world_tendency_type: WorldTendencyType,
-    comparison_type: ComparisonType,
+    world_tendency_type: WorldTendencyType | int,
+    comparison_type: ComparisonType | int,
     value: int,
 ):
     """
@@ -954,13 +975,13 @@ def IfWorldTendencyComparison(
     """
 
 
-def IfWhiteWorldTendencyComparison(condition: int, comparison_type: ComparisonType, value: int):
+def IfWhiteWorldTendencyComparison(condition: int, comparison_type: ComparisonType | int, value: int):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=0`.
     """
 
 
-def IfBlackWorldTendencyComparison(condition: int, comparison_type: ComparisonType, value: int):
+def IfBlackWorldTendencyComparison(condition: int, comparison_type: ComparisonType | int, value: int):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=1`.
     """
@@ -982,7 +1003,7 @@ def IfEventValueComparison(
     condition: int,
     flag: Flag | int,
     bit_count: int,
-    comparison_type: ComparisonType,
+    comparison_type: ComparisonType | int,
     value: int,
 ):
     """
@@ -1030,11 +1051,11 @@ def IfActionButtonBoss(
     condition: int,
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
-    anchor_type: CoordEntityType = None,
+    anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
     button: int = 0,
 ):
     """
@@ -1052,7 +1073,7 @@ def IfAnyItemDroppedInRegion(condition: int, region: Region | int):
     """
 
 
-def IfItemDropped(condition: int, item: BaseItemParam | int, item_type: ItemType = None):
+def IfItemDropped(condition: int, item: BaseItemParam | int, item_type: ItemType | int = None):
     """
     TODO
     item_type: Auto-detected from `item` type by default.
@@ -1063,7 +1084,7 @@ def IfPlayerItemStateIncludingStorage(
     condition: int,
     item: BaseItemParam | int,
     state: bool,
-    item_type: ItemType = None,
+    item_type: ItemType | int = None,
 ):
     """
     TODO
@@ -1071,7 +1092,7 @@ def IfPlayerItemStateIncludingStorage(
     """
 
 
-def IfNewGameCycleComparison(condition: int, comparison_type: ComparisonType, completion_count: int):
+def IfNewGameCycleComparison(condition: int, comparison_type: ComparisonType | int, completion_count: int):
     """
     TODO
     """
@@ -1118,11 +1139,11 @@ def IfActionButtonBasicLineIntersect(
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
     line_intersects: int,
-    anchor_type: CoordEntityType = None,
+    anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
     button: int = 0,
 ):
     """
@@ -1139,11 +1160,11 @@ def IfActionButtonBossLineIntersect(
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
     line_intersects: int,
-    anchor_type: CoordEntityType = None,
+    anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
     button: int = 0,
 ):
     """
@@ -1159,7 +1180,7 @@ def IfEventsComparison(
     condition: int,
     left_flag: Flag | int,
     left_bit_count: int,
-    comparison_type: ComparisonType,
+    comparison_type: ComparisonType | int,
     right_flag: Flag | int,
     right_bit_count: int,
 ):
@@ -1240,7 +1261,7 @@ def IfAttacked(condition: int, attacked_entity: Character | int, attacker: Chara
     """
 
 
-def IfHealthComparison(condition: int, character: Character | int, comparison_type: ComparisonType, value: float):
+def IfHealthComparison(condition: int, character: Character | int, comparison_type: ComparisonType | int, value: float):
     """
     Conditions upon a comparison to character health ratio (0-1).
     """
@@ -1282,7 +1303,7 @@ def IfHealthLessThanOrEqual(condition: int, character: Character | int, value: f
     """
 
 
-def IfCharacterType(condition: int, character: Character | int, character_type: CharacterType):
+def IfCharacterType(condition: int, character: Character | int, character_type: CharacterType | int):
     """
     TODO
     """
@@ -1357,7 +1378,7 @@ def IfCharacterPartHealthComparison(
     condition: int,
     character: Character | int,
     npc_part_id: int,
-    comparison_type: ComparisonType,
+    comparison_type: ComparisonType | int,
     value: float,
 ):
     """
@@ -1389,7 +1410,7 @@ def IfCharacterBackreadDisabled(condition: int, character: Character | int):
     """
 
 
-def IfTAEEventState(condition: int, character: Character | int, tae_event_id: int, state: bool):
+def IfCharacterTAEEventState(condition: int, character: Character | int, tae_event_id: int, state: bool):
     """
     TODO
     """
@@ -1397,17 +1418,17 @@ def IfTAEEventState(condition: int, character: Character | int, tae_event_id: in
 
 def IfCharacterHasTAEEvent(condition: int, character: Character | int, tae_event_id: int):
     """
-    Calls `IfTAEEventState` with `state=True`.
+    Calls `IfCharacterTAEEventState` with `state=True`.
     """
 
 
 def IfCharacterDoesNotHaveTAEEvent(condition: int, character: Character | int, tae_event_id: int):
     """
-    Calls `IfTAEEventState` with `state=False`.
+    Calls `IfCharacterTAEEventState` with `state=False`.
     """
 
 
-def IfHasAIStatus(condition: int, character: Character | int, ai_status: AIStatusType):
+def IfHasAIStatus(condition: int, character: Character | int, ai_status: AIStatusType | int):
     """
     TODO
     """
@@ -1431,19 +1452,19 @@ def IfSkullLanternInactive(condition: int):
     """
 
 
-def IfPlayerClass(condition: int, class_type: ClassType):
+def IfPlayerClass(condition: int, class_type: ClassType | int):
     """
     TODO
     """
 
 
-def IfPlayerCovenant(condition: int, covenant: Covenant):
+def IfPlayerCovenant(condition: int, covenant: Covenant | int):
     """
     TODO
     """
 
 
-def IfPlayerSoulLevelComparison(condition: int, comparison_type: ComparisonType, value: int):
+def IfPlayerSoulLevelComparison(condition: int, comparison_type: ComparisonType | int, value: int):
     """
     TODO
     """
@@ -1485,7 +1506,12 @@ def IfPlayerSoulLevelLessThanOrEqual(condition: int, value: int):
     """
 
 
-def IfHealthValueComparison(condition: int, character: Character | int, comparison_type: ComparisonType, value: int):
+def IfHealthValueComparison(
+    condition: int,
+    character: Character | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
     """
     TODO
     """
@@ -1575,7 +1601,7 @@ def IfObjectActivated(condition: int, obj_act_id: int):
     """
 
 
-def IfObjectHealthValueComparison(condition: int, obj: Object | int, comparison_type: ComparisonType, value: int):
+def IfObjectHealthValueComparison(condition: int, obj: Object | int, comparison_type: ComparisonType | int, value: int):
     """
     TODO
     """
@@ -1635,7 +1661,7 @@ def SkipLinesIfConditionFalse(line_count: int, condition: int):
     """
 
 
-def ReturnIfConditionState(event_return_type: EventReturnType, state: bool, input_condition: int):
+def ReturnIfConditionState(event_return_type: EventReturnType | int, state: bool, input_condition: int):
     """
     TODO
     """
@@ -1671,7 +1697,7 @@ def SkipLines(line_count: int):
     """
 
 
-def Return(event_return_type: EventReturnType):
+def Return(event_return_type: EventReturnType | int):
     """
     TODO
     """
@@ -1689,7 +1715,7 @@ def Restart():
     """
 
 
-def SkipLinesIfComparison(line_count: int, comparison_type: ComparisonType, left: int, right: int):
+def SkipLinesIfComparison(line_count: int, comparison_type: ComparisonType | int, left: int, right: int):
     """
     TODO
     """
@@ -1731,7 +1757,12 @@ def SkipLinesIfLessThanOrEqual(line_count: int, left: int, right: int):
     """
 
 
-def ReturnIfComparison(event_return_type: EventReturnType, comparison_type: ComparisonType, left: int, right: int):
+def ReturnIfComparison(
+    event_return_type: EventReturnType | int,
+    comparison_type: ComparisonType | int,
+    left: int,
+    right: int,
+):
     """
     TODO
     """
@@ -1830,7 +1861,7 @@ def SkipLinesIfFinishedConditionFalse(line_count: int, condition: int):
     """
 
 
-def ReturnIfFinishedConditionState(event_return_type: EventReturnType, state: bool, input_condition: int):
+def ReturnIfFinishedConditionState(event_return_type: EventReturnType | int, state: bool, input_condition: int):
     """
     TODO
     """
@@ -1890,7 +1921,7 @@ def WaitRandomFrames(min_frames: int, max_frames: int):
     """
 
 
-def AwaitFlagState(state: FlagState, flag_type: FlagType, flag: Flag | int):
+def AwaitFlagState(state: FlagState | int, flag_type: FlagType | int, flag: Flag | int):
     """
     Not sure if this is really used rather than `IfFlagState` with MAIN condition (0).
     """
@@ -1932,7 +1963,7 @@ def AwaitThisEventSlotOff():
     """
 
 
-def SkipLinesIfFlagState(line_count: int, state: FlagState, flag_type: FlagType, flag: Flag | int):
+def SkipLinesIfFlagState(line_count: int, state: FlagState | int, flag_type: FlagType | int, flag: Flag | int):
     """
     Skip some number of lines if the specified flag (absolute, event-relative, or slot-relative) has the
     specified state.
@@ -1975,7 +2006,12 @@ def SkipLinesIfThisEventSlotFlagDisabled(line_count: int):
     """
 
 
-def ReturnIfFlagState(event_return_type: EventReturnType, state: FlagState, flag_type: FlagType, flag: Flag | int):
+def ReturnIfFlagState(
+    event_return_type: EventReturnType | int,
+    state: FlagState | int,
+    flag_type: FlagType | int,
+    flag: Flag | int,
+):
     """
     TODO
     """
@@ -2055,8 +2091,8 @@ def RestartIfThisEventSlotFlagDisabled():
 
 def SkipLinesIfFlagRangeState(
     line_count: int,
-    state: RangeState,
-    flag_type: FlagType,
+    state: RangeState | int,
+    flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
 ):
     """
@@ -2089,9 +2125,9 @@ def SkipLinesIfFlagRangeAnyDisabled(line_count: int, flag_range: FlagRange | tup
 
 
 def ReturnIfFlagRangeState(
-    event_return_type: EventReturnType,
-    state: RangeState,
-    flag_type: FlagType,
+    event_return_type: EventReturnType | int,
+    state: RangeState | int,
+    flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
 ):
     """
@@ -2147,7 +2183,7 @@ def RestartIfFlagRangeAnyDisabled(flag_range: FlagRange | tuple | list):
     """
 
 
-def SkipLinesIfMultiplayerState(line_count: int, state: MultiplayerState):
+def SkipLinesIfMultiplayerState(line_count: int, state: MultiplayerState | int):
     """
     TODO
     """
@@ -2189,7 +2225,7 @@ def SkipLinesIfUnknownPlayerType5(line_count: int):
     """
 
 
-def ReturnIfMultiplayerState(event_return_type: EventReturnType, state: MultiplayerState):
+def ReturnIfMultiplayerState(event_return_type: EventReturnType | int, state: MultiplayerState | int):
     """
     TODO
     """
@@ -2285,7 +2321,7 @@ def SkipLinesIfOutsideMap(line_count: int, game_map: Map | tuple | list):
     """
 
 
-def ReturnIfMapPresenceState(event_return_type: EventReturnType, state: bool, game_map: Map | tuple | list):
+def ReturnIfMapPresenceState(event_return_type: EventReturnType | int, state: bool, game_map: Map | tuple | list):
     """
     TODO
     """
@@ -2351,7 +2387,7 @@ def SkipLinesIfObjectNotDestroyed(line_count: int, obj: Object | int):
     """
 
 
-def ReturnIfObjectDestructionState(event_return_type: EventReturnType, state: bool, obj: Object | int):
+def ReturnIfObjectDestructionState(event_return_type: EventReturnType | int, state: bool, obj: Object | int):
     """
     TODO
     """
@@ -2516,7 +2552,7 @@ def RequestAnimation(
     """
 
 
-def SetFlagState(flag: Flag | int, state: FlagState):
+def SetFlagState(flag: Flag | int, state: FlagState | int):
     """
     Enable, disable, or toggle (change) a binary flag.
     """
@@ -2582,21 +2618,21 @@ def ShootProjectile(
     """
 
 
-def SetEventState(event_id: int, slot: int, event_return_type: EventReturnType):
+def SetEventState(event_id: int, event_return_type: EventReturnType | int, slot: int = 0):
     """
     Stop or restart a particular slot (default of 0) of the given event ID. Note that you cannot restart events
     that have already ended.
     """
 
 
-def StopEvent(event_id: int, slot: int):
+def StopEvent(event_id: int, slot: int = 0):
     """
     Calls `SetEventState` with `event_return_type=0`.
     Force a running event to stop.
     """
 
 
-def RestartEvent(event_id: int, slot: int):
+def RestartEvent(event_id: int, slot: int = 0):
     """
     Calls `SetEventState` with `event_return_type=1`.
     
@@ -2606,20 +2642,20 @@ def RestartEvent(event_id: int, slot: int):
     """
 
 
-def SetBossHealthBarState(character: Character | int, name: NPCName | int, slot: int, state: bool):
+def SetBossHealthBarState(character: Character | int, state: bool, name: NPCName | int = 0, slot: int = 0):
     """
     Note: slot number can be 0-1 in DS1.
     """
 
 
-def EnableBossHealthBar(character: Character | int, name: NPCName | int, slot: int):
+def EnableBossHealthBar(character: Character | int, name: NPCName | int = 0, slot: int = 0):
     """
     Calls `SetBossHealthBarState` with `state=True`.
     The character's health bar will appear at the bottom of the screen, with a name.
     """
 
 
-def DisableBossHealthBar(character: Character | int, name: NPCName | int, slot: int):
+def DisableBossHealthBar(character: Character | int, name: NPCName | int = 0, slot: int = 0):
     """
     Calls `SetBossHealthBarState` with `state=False`.
     
@@ -2646,31 +2682,31 @@ def KillBoss(game_area_param_id: int):
     """
 
 
-def SetNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType, operation: BitOperation):
+def SetNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, operation: BitOperation | int):
     """
     Set given navmesh type.
     """
 
 
-def EnableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType):
+def EnableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int):
     """
     Calls `SetNavmeshType` with `operation=0`.
     """
 
 
-def DisableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType):
+def DisableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int):
     """
     Calls `SetNavmeshType` with `operation=1`.
     """
 
 
-def ToggleNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType):
+def ToggleNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int):
     """
     Calls `SetNavmeshType` with `operation=2`.
     """
 
 
-def WarpToMap(game_map: Map | tuple | list, player_start: PlayerStart = -1):
+def WarpToMap(game_map: Map | tuple | list, player_start: PlayerStart | int = -1):
     """
     Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
     default, this warps to the 'default position' in the map (-1), which is the same point you would spawn at if
@@ -2684,7 +2720,7 @@ def TriggerMultiplayerEvent(event_id: int):
     """
 
 
-def SetRandomFlagInRange(flag_range: FlagRange | tuple | list, state: FlagState):
+def SetRandomFlagInRange(flag_range: FlagRange | tuple | list, state: FlagState | int):
     """
     Set the state of a random flag from a given range (inclusive).
     """
@@ -2739,7 +2775,7 @@ def IncrementNewGameCycle(dummy_arg: int):
     """
 
 
-def SetFlagRangeState(flag_range: FlagRange | tuple | list, state: FlagState):
+def SetFlagRangeState(flag_range: FlagRange | tuple | list, state: FlagState | int):
     """
     Set the state of an entire flag range (inclusive).
     """
@@ -2769,7 +2805,7 @@ def SetRespawnPoint(respawn_point: int):
     """
 
 
-def RemoveItemFromPlayer(item: BaseItemParam | int, quantity: int = 0, item_type: ItemType = None):
+def RemoveItemFromPlayer(item: BaseItemParam | int, quantity: int = 0, item_type: ItemType | int = None):
     """
     Item type is automatically detected. This instruction has a 'quantity' argument, but it seems broken, so you
     always have to remove *all* instances of the item. (Strangely, the similar command used in EzState doesn't
@@ -2806,7 +2842,7 @@ def RemoveGoodFromPlayer(item: BaseItemParam | int, quantity: int = 0):
 
 
 def PlaceSummonSign(
-    sign_type: SummonSignType,
+    sign_type: SummonSignType | int,
     character: Character | int,
     region: Region | int,
     summon_flag: Flag | int,
@@ -3021,7 +3057,7 @@ def DisableAI(character: Character | int):
     """
 
 
-def SetTeamType(character: Character | int, new_team: TeamType):
+def SetTeamType(character: Character | int, new_team: TeamType | int):
     """
     TODO
     """
@@ -3031,7 +3067,7 @@ def MoveToEntity(
     character: Character | int,
     destination: Object | Region | Character | int,
     model_point: int = -1,
-    destination_type: CoordEntityType = None,
+    destination_type: CoordEntityType | int = None,
 ):
     """
     Basic move. I recommend you use the combined `Move` function.
@@ -3215,7 +3251,7 @@ def CancelSpecialEffect(character: Character | int, special_effect_id: int):
 def CreateNPCPart(
     character: Character | int,
     npc_part_id: int,
-    part_index: NPCPartType,
+    part_index: NPCPartType | int,
     part_health: int,
     damage_correction: float = 1.0,
     body_damage_correction: float = 1.0,
@@ -3247,7 +3283,7 @@ def SetNPCPartBulletDamageScaling(character: Character | int, npc_part_id: int, 
     """
 
 
-def SetDisplayMask(character: Character | int, bit_index: int, switch_type: OnOffChange):
+def SetDisplayMask(character: Character | int, bit_index: int, switch_type: OnOffChange | int):
     """
     Different bits correspond to different parts of the character model. You can see the initial values for
     these in the NPC params. This is generally used to disable tails when they are cut off.
@@ -3256,13 +3292,13 @@ def SetDisplayMask(character: Character | int, bit_index: int, switch_type: OnOf
     """
 
 
-def SetCollisionMask(character: Character | int, bit_index: int, switch_type: OnOffChange):
+def SetCollisionMask(character: Character | int, bit_index: int, switch_type: OnOffChange | int):
     """
     See above. This affects the NPC's Collision, not appearance.
     """
 
 
-def SetNetworkUpdateAuthority(character: Character | int, authority_level: UpdateAuthority):
+def SetNetworkUpdateAuthority(character: Character | int, authority_level: UpdateAuthority | int):
     """
     Complex; look at existing usage. Authority level must be 'Normal' or 'Forced'.
     """
@@ -3347,7 +3383,7 @@ def ReferDamageToEntity(character: Character | int, target_entity: Character | i
     """
 
 
-def SetNetworkUpdateRate(character: Character | int, is_fixed: bool, update_rate: CharacterUpdateRate):
+def SetNetworkUpdateRate(character: Character | int, is_fixed: bool, update_rate: CharacterUpdateRate | int):
     """
     Not sure what 'is_fixed' does. I believe only 'Always' and 'Never' are used in the vanilla game.
     """
@@ -3406,7 +3442,7 @@ def MoveAndSetDrawParent(
     destination: Object | Region | Character | int,
     set_draw_parent: MapPart | int,
     model_point: int = -1,
-    destination_type: CoordEntityType = None,
+    destination_type: CoordEntityType | int = None,
 ):
     """
     TODO
@@ -3418,7 +3454,7 @@ def ShortMove(
     character: Character | int,
     destination: Object | Region | Character | int,
     model_point: int = -1,
-    destination_type: CoordEntityType = None,
+    destination_type: CoordEntityType | int = None,
 ):
     """
     TODO
@@ -3431,7 +3467,7 @@ def MoveAndCopyDrawParent(
     destination: Object | Region | Character | int,
     copy_draw_parent: Character | Object | int,
     model_point: int = -1,
-    destination_type: CoordEntityType = None,
+    destination_type: CoordEntityType | int = None,
 ):
     """
     TODO
@@ -3445,7 +3481,7 @@ def ResetAnimation(character: Character | int, disable_interpolation: bool = Fal
     """
 
 
-def SetTeamTypeAndExitStandbyAnimation(character: Character | int, team_type: TeamType):
+def SetTeamTypeAndExitStandbyAnimation(character: Character | int, team_type: TeamType | int):
     """
     Two for the price of one. Often used when NPCs with resting animations become hostile.
     """
@@ -3595,7 +3631,7 @@ def CreateHazard(
     obj: Object | int,
     model_point: int,
     behavior_param_id: int,
-    target_type: DamageTargetType,
+    target_type: DamageTargetType | int,
     radius: float,
     life: float,
     repetition_time: float,
@@ -3611,7 +3647,7 @@ def CreateHazard(
     """
 
 
-def RegisterStatue(obj: int, game_map: Map | tuple | list, statue_type: StatueType):
+def RegisterStatue(obj: int, game_map: Map | tuple | list, statue_type: StatueType | int):
     """
     Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online.
     """
@@ -3679,7 +3715,7 @@ def CreateTemporaryVFX(
     vfx_id: int,
     anchor_entity: Object | Region | Character | int,
     model_point: int = -1,
-    anchor_type: CoordEntityType = None,
+    anchor_type: CoordEntityType | int = None,
 ):
     """
     Create one-off visual VFX (an FFX ID) attached to the given 'anchor_entity'. The VFX, of course, must be
@@ -3705,8 +3741,8 @@ def DisplayDialog(
     text: EventText | int,
     anchor_entity: Object | Region | Character | int = -1,
     display_distance: float = 3.0,
-    button_type: ButtonType = ButtonType.OK_or_Cancel,
-    number_buttons: NumberButtons = NumberButtons.NoButton,
+    button_type: ButtonType | int = ButtonType.OK_or_Cancel,
+    number_buttons: NumberButtons | int = NumberButtons.NoButton,
 ):
     """
     Display a dialog box at the bottom of the screen. You can't use this to get player input, but you can
@@ -3719,7 +3755,7 @@ def DisplayDialog(
     """
 
 
-def DisplayBanner(banner_type: BannerType):
+def DisplayBanner(banner_type: BannerType | int):
     """
     Display a pre-rendered banner. You'll have to change the textures (in menu_local.tpf) to change them.
     """
@@ -3805,7 +3841,7 @@ def SetCameraVibration(
     model_point: int = -1,
     decay_start_distance: float = 999.0,
     decay_end_distance: float = 999.0,
-    anchor_type: CoordEntityType = None,
+    anchor_type: CoordEntityType | int = None,
 ):
     """
     TODO
@@ -3895,7 +3931,7 @@ def SetBackgroundMusic(
     state: bool,
     slot: int,
     entity: Object | Region | Character | int,
-    sound_type: SoundType,
+    sound_type: SoundType | int,
     sound_id: int,
 ):
     """
@@ -3903,7 +3939,11 @@ def SetBackgroundMusic(
     """
 
 
-def PlaySoundEffect(anchor_entity: Object | Region | Character | int, sound_id: int, sound_type: SoundType = None):
+def PlaySoundEffect(
+    anchor_entity: Object | Region | Character | int,
+    sound_id: int,
+    sound_type: SoundType | int = None,
+):
     """
     Anchor entity determines sound position and the sound type is used to look up the source.
     """
@@ -3989,7 +4029,7 @@ def NightfallSendToScript(int1: int, int2: int, float1: float, float2: float):
     """
 
 
-def NightfallSetSpecialMovement(character: Character | int, movement_type: int, is_active: OnOffChange):
+def NightfallSetSpecialMovement(character: Character | int, movement_type: int, is_active: OnOffChange | int):
     """
     Special instruction added by Meowmaritus for initiating [redacted] in Nightfall.
     """

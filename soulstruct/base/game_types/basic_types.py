@@ -4,9 +4,16 @@ __all__ = [
     "BaseGameObject",
     "GameObjectSequence",
     "BaseParam",
+    "BaseGameParam",
+    "Flag",
+    "FlagInt",
+    "MapFlagSuffix",
+    "FlagRange",
+    "FlagRangeTyping",
     "Texture",
     "VisualEffect",
     "TalkScript",
+    "Text",
     "Animation",
     "PlayerAnimation",
     "BaseAIScript",
@@ -23,6 +30,11 @@ class BaseGameObject:
 
     Note that using `abc.ABC` for this, or any of its technically abstract intermediate subclasses, leads to problems.
     """
+
+    @classmethod
+    def get_event_arg_fmt(cls) -> tp.Optional[str]:
+        """If not `None`, allows this type to be used as an EVS event arg type hint for this format."""
+        return None
 
 
 class GameObjectSequence(type):
@@ -57,6 +69,50 @@ class BaseParam(BaseGameObject, IntEnum):
         raise NotImplementedError
 
 
+class BaseGameParam(BaseParam):
+    """Base class for IDs of GameParam entries."""
+
+    @classmethod
+    def get_param_nickname(cls):
+        raise NotImplementedError
+
+
+class Flag(BaseGameObject, IntEnum):
+    """Event flag."""
+
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "i"
+
+
+class MapFlagSuffix(IntEnum):
+    """Flag up to four digits long, intended to be added to a map base flag (such as 11020000 for m10_02).
+
+    `EVSParser` will compute the true flag ID automatically if it knows the map's base flag ID.
+    """
+
+
+class FlagRange(BaseGameObject):
+
+    def __init__(self, first, last):
+        self.first = first
+        self.last = last
+
+    def __iter__(self):
+        """Allows easy conversion to sequence."""
+        return iter((self.first, self.last))
+
+    def __getitem__(self, index: int):
+        if index == 0:
+            return self.first
+        elif index == 1:
+            return self.last
+        raise ValueError(f"`FlagRange` index must be 0 or 1, not {index}.")
+
+    def __repr__(self) -> str:
+        return f"({self.first}, {self.last})"
+
+
 class Texture(BaseGameObject, IntEnum):
     """2D texture ID of something."""
 
@@ -67,6 +123,14 @@ class VisualEffect(BaseGameObject, IntEnum):
 
 class TalkScript(BaseGameObject, IntEnum):
     """Talk ID of a Map Character."""
+
+
+class Text(BaseGameObject, IntEnum):
+    """Text ID for an entry in some FMG."""
+
+    @classmethod
+    def get_text_category(cls):
+        raise NotImplementedError
 
 
 class Animation(BaseGameObject, IntEnum):
@@ -87,3 +151,7 @@ class LogicAIScript(BaseAIScript):
 
 class BattleAIScript(BaseAIScript):
     """Script that governs a character in battle."""
+
+
+FlagInt = tp.Union[Flag, int]
+FlagRangeTyping = tp.Union[FlagRange, tuple, list]

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import typing as tp
 
-from soulstruct.game_types import BaseParam, Flag
+from soulstruct.base.game_types import BaseParam
 from soulstruct.base.params.utils import DynamicFieldDisplayInfo
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import FieldRow, BaseFieldEditor
@@ -22,7 +22,8 @@ class ParamFieldRow(FieldRow):
         # TODO: Each field should specify its default value(s).
         if field_nickname in {"EffectDuration", "UpdateInterval"}:
             return False
-        elif field_type == int or issubclass(field_type, (BaseParam, Flag)):
+        elif field_type == int or issubclass(field_type, BaseParam):
+            # TODO: Used to check `Flag` type in here as well, which is no longer a base type. Necessary?
             if value in (-1, 0, 1):
                 # TODO: Will have some false positives.
                 return True

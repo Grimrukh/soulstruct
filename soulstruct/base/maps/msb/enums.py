@@ -25,8 +25,8 @@ class BaseMSBSubtype(IntEnum):
 
 class BaseMSBModelSubtype(BaseMSBSubtype):
 
-    @property
-    def sib_path_stem(self) -> str:
+    @classmethod
+    def get_sib_path_stem(cls) -> str:
         raise NotImplementedError
 
     @classmethod

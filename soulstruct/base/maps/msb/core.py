@@ -9,47 +9,25 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.containers.dcx import DCXType
 from soulstruct.games import GameSpecificType
-from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.utilities.binary import BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .msb_entry import MSBEntry
 
 if tp.TYPE_CHECKING:
+    from .models import BaseMSBModelList
+    from .events import BaseMSBEventList
+    from .regions import BaseMSBRegionList
+    from .parts import BaseMSBPartList
     from .enums import BaseMSBSubtype
     from .msb_entry import MSBEntryEntity
     from .msb_entry_list import *
 
 
 _LOGGER = logging.getLogger(__name__)
-
-
-# These are ordered by convenience (same as GUI).
-ENTITY_GAME_TYPES = {
-    "parts": (
-        MapPiece,
-        Object,
-        Character,
-        PlayerStart,
-        Collision,
-    ),
-    "events": (
-        SoundEvent,
-        VFXEvent,
-        SpawnerEvent,
-        MessageEvent,
-        SpawnPointEvent,
-        NavigationEvent,
-    ),
-    "regions": (
-        RegionPoint,
-        RegionSphere,
-        RegionCylinder,
-        RegionBox,
-    ),
-}
 
 
 MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
@@ -88,6 +66,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
     EVENT_LIST_CLASS = None  # type: tp.Type[BaseMSBEventList]
     REGION_LIST_CLASS = None  # type: tp.Type[BaseMSBRegionList]
     PART_LIST_CLASS = None  # type: tp.Type[BaseMSBPartList]
+
+    ENTITY_GAME_TYPES: dict[str, tuple[MapEntity, ...]]
 
     def __init__(
         self,
@@ -492,8 +472,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             return value_.name, 0
 
         module_path = Path(module_path)
-        module_text = "from soulstruct.games import DARK_SOULS_DSR\nfrom soulstruct.game_types import *\n"
-        for entry_type_name, entry_subtypes in ENTITY_GAME_TYPES.items():
+        module_text = f"from soulstruct.{self.GAME.submodule_name}.game_types import *\n"
+        for entry_type_name, entry_subtypes in self.ENTITY_GAME_TYPES.items():
             for entry_subtype in entry_subtypes:
                 class_name = entry_subtype.get_msb_entry_type_subtype(pluralized_subtype=True)[1]
                 class_text = ""
@@ -518,8 +498,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
                     auto_lines = [
                         "    # noinspection PyMethodParameters",
                         "    def _generate_next_value_(name, _, count, __):",
-                        f"        return {entry_subtype.__name__}.auto_generate(count, {self.GAME.variable_name}, "
-                        f"{{MAP_RANGE_START}})",
+                        f"        return {entry_subtype.__name__}.auto_generate(count, {{MAP_RANGE_START}})",
                     ]
                     if auto_map_range_start is None:
                         auto_lines = ["    # " + line[4:] for line in auto_lines]
@@ -556,148 +535,3 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
 
     def __iter__(self):
         return iter((self.models, self.events, self.regions, self.parts))
-
-    def new_sound_event_with_box(
-        self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
-        width: float,
-        depth: float,
-        height: float,
-        **sound_event_kwargs,
-    ):
-        if "base_region_name" in sound_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
-        sound = self.events.new_sound(**sound_event_kwargs)
-        box = self.regions.new_box(
-            name=f"_SoundEvent_{sound.name.lstrip('_')}",
-            translate=translate,
-            rotate=rotate,
-            width=width,
-            depth=depth,
-            height=height,
-        )
-        sound.base_region_name = box.name
-        return sound
-
-    def new_sound_event_with_sphere(
-        self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
-        radius: float,
-        **sound_event_kwargs,
-    ):
-        if "base_region_name" in sound_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
-        sound = self.events.new_sound(**sound_event_kwargs)
-        sphere = self.regions.new_sphere(
-            name=f"_SoundEvent_{sound.name.lstrip('_')}",
-            translate=translate,
-            rotate=rotate,
-            radius=radius,
-        )
-        sound.base_region_name = sphere.name
-        return sound
-
-    def new_vfx_event_with_point(
-        self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
-        point_entity_enum: tp.Optional[RegionPoint] = None,
-        **vfx_event_kwargs,
-    ):
-        if "base_region_name" in vfx_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
-        vfx = self.events.new_vfx(**vfx_event_kwargs)
-        point_name = f"_VFXEvent_{vfx.name.lstrip('_')}"
-        if point_entity_enum is not None:
-            if point_entity_enum.name != point_name:
-                raise ValueError(f"Name of `point_entity_enum` must be '{point_name}', not '{point_entity_enum.name}'.")
-            point_entity_id = point_entity_enum.value
-        else:
-            point_entity_id = -1
-        point = self.regions.new_point(
-            name=point_name,
-            entity_id=point_entity_id,
-            translate=translate,
-            rotate=rotate,
-        )
-        vfx.base_region_name = point.name
-        return vfx
-
-    def new_spawn_point_event_with_point(
-        self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
-        **spawn_point_event_kwargs,
-    ):
-        if "base_region_name" in spawn_point_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
-        spawn_point = self.events.new_spawn_point(**spawn_point_event_kwargs)
-        point = self.regions.new_point(
-            name=f"_SpawnPointEvent_{spawn_point.name.lstrip('_')}",
-            translate=translate,
-            rotate=rotate,
-        )
-        spawn_point.spawn_point_region_name = point.name
-        return spawn_point
-
-    def new_message_event_with_point(
-        self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
-        **message_event_kwargs,
-    ):
-        if "base_region_name" in message_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
-        message = self.events.new_message(**message_event_kwargs)
-        point = self.regions.new_point(
-            name=f"_MessageEvent_{message.name.lstrip('_')}",
-            translate=translate,
-            rotate=rotate,
-        )
-        message.base_region_name = point.name
-        return message
-
-    def new_objact_event_for_object(
-        self,
-        obj_spec: tp.Union[str, int, IntEnum],
-        obj_act_entity_id: int,
-        obj_act_state: int = 0,
-        obj_act_param_id: int = -1,
-        obj_act_flag: int = None,
-        name: str = None,
-    ):
-        """Add an `MSBObjActEvent` to the MSB attached to the given MSB `obj_name`.
-
-        Entity ID (generally equal to the event ID that handles the ObjAct) must be given. All other variables are
-        optional: ObjAct state (defaults to 0), ObjAct param ID (defaults to -1, i.e. the object's model ID), and
-        associated state flag (defaults to 60000000 + the object's entity ID, if present).
-
-        A `ValueError` will be raised if the `obj_name` has no entity ID and `obj_act_flag` is not given.
-        """
-        if isinstance(obj_spec, IntEnum):
-            obj_spec = obj_spec.name
-        if isinstance(obj_spec, str):
-            obj = self.parts.get_entry_by_name(obj_spec, "Object")
-        elif isinstance(obj_spec, int):
-            obj = self.parts.get_entries("Object")[obj_spec]
-        else:
-            raise TypeError(f"`obj_spec` must be an index, name, or name-synchronised `IntEnum`, not {obj_spec}.")
-        if obj_act_flag is None:
-            if obj.entity_id <= 0:
-                raise ValueError(
-                    f"Cannot automatically set `obj_act_flag` for ObjAct attached to object '{obj.name}', as it does "
-                    f"not have a valid entity ID."
-                )
-            obj_act_flag = 60000000 + obj.entity_id
-        if name is None:
-            name = f"_ObjAct_{obj.name.lstrip('_')}"
-        return self.events.new_obj_act(
-            name=name,
-            obj_act_part_name=obj.name,
-            obj_act_entity_id=obj_act_entity_id,
-            obj_act_param_id=obj_act_param_id,
-            obj_act_state=obj_act_state,
-            obj_act_flag=obj_act_flag,
-        )

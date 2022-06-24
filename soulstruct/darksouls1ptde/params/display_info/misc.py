@@ -9,7 +9,7 @@ __all__ = [
 ]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
-from soulstruct.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
 from ..enums import *
 
 

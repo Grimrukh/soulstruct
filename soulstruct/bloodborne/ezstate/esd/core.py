@@ -7,7 +7,7 @@ from soulstruct.base.ezstate.esd import (
     Command as _BaseCommand,
 )
 from soulstruct.games import BloodborneType
-from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import BinaryStruct
 
 __all__ = ["TalkESD", "ChrESD"]

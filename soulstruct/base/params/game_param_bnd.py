@@ -11,7 +11,7 @@ from soulstruct.utilities.files import read_json, write_json
 from .paramdef import ParamDefBND
 
 if tp.TYPE_CHECKING:
-    from soulstruct.game_types import BaseGameParam
+    from soulstruct.base.game_types import BaseGameParam
     from .param import Param
 
 

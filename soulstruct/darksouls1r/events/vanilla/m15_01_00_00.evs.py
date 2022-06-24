@@ -534,7 +534,7 @@ def Event_11515382():
     SaveRequest()
     EnableAI(1510650)
     SetTeamType(1510650, TeamType.Boss)
-    EnableBossHealthBar(1510650, name=5320, slot=0)
+    EnableBossHealthBar(1510650, name=5320)
 
 
 @NeverRestart(11510900)
@@ -731,7 +731,7 @@ def Event_11515392():
     EnableAI(1510800)
     EnableAI(1510810)
     EnableBossHealthBar(1510800, name=5270, slot=1)
-    EnableBossHealthBar(1510810, name=2360, slot=0)
+    EnableBossHealthBar(1510810, name=2360)
 
 
 @NeverRestart(11510001)
@@ -746,7 +746,7 @@ def Event_11510001():
     SkipLinesIfFinishedConditionTrue(10, condition=1)
     IfCharacterDead(0, 1510801)
     EnableFlag(11510902)
-    PlaySoundEffect(anchor_entity=1510801, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1510801, 777777777, sound_type=SoundType.s_SFX)
     Kill(1510811)
     KillBoss(game_area_param_id=1510801)
     DisableFlag(11807100)
@@ -756,7 +756,7 @@ def Event_11510001():
     SkipLines(9)
     IfCharacterDead(0, 1510811)
     EnableFlag(11510903)
-    PlaySoundEffect(anchor_entity=1510811, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1510811, 777777777, sound_type=SoundType.s_SFX)
     Kill(1510801)
     KillBoss(game_area_param_id=1510811)
     DisableFlag(11807060)
@@ -822,7 +822,7 @@ def Event_11515396():
     DisableImmortality(1510810)
     Kill(1510810)
     EnableCharacter(1510811)
-    EnableBossHealthBar(1510811, name=2360, slot=0)
+    EnableBossHealthBar(1510811, name=2360)
     End()
     SkipLinesIfMultiplayer(2)
     PlayCutscene(150120, cutscene_flags=0, player_id=10000)
@@ -1652,7 +1652,7 @@ def Event_11510401():
     DisableObjectInvulnerability(1511400)
     DestroyObject(1511400)
     ForceAnimation(1511400, 0)
-    PlaySoundEffect(anchor_entity=1511400, sound_id=590000000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1511400, 590000000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(11510450)
@@ -2512,7 +2512,7 @@ def Event_11515092(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     DisableObjectInvulnerability(arg_4_7)
     WaitFrames(frames=1)
     DestroyObject(arg_4_7)
-    PlaySoundEffect(anchor_entity=arg_4_7, sound_id=596500000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_4_7, 596500000, sound_type=SoundType.o_Object)
 
 
 @NeverRestart(11515030)

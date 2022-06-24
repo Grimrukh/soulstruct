@@ -349,7 +349,7 @@ def Event_11005392():
     EnableCharacter(1000800)
     EnableFlag(11000000)
     EnableAI(1000800)
-    EnableBossHealthBar(1000800, name=5260, slot=0)
+    EnableBossHealthBar(1000800, name=5260)
 
 
 @NeverRestart(11000001)
@@ -672,7 +672,7 @@ def Event_11005150(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionFalse(5, condition=1)
     DestroyObject(arg_4_7)
-    PlaySoundEffect(anchor_entity=arg_4_7, sound_id=132200000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_4_7, 132200000, sound_type=SoundType.o_Object)
     EnableCharacter(arg_0_3)
     ForceAnimation(arg_0_3, 3002)
     End()

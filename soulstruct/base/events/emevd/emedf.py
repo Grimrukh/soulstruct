@@ -129,6 +129,8 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
                 f"{len(info['args'])} args in Soulstruct."
             )
         for i, arg_name in enumerate(info["args"]):
+            if "internal_type" in instr["args"][i]:
+                continue  # already specified manually
             instr_type = int(instr["args"][i]["type"])
             try:
                 # Original dictionary is copied, as many arguments across instructions refer to common dicts.

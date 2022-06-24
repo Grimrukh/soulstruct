@@ -384,7 +384,7 @@ def Event_11315392():
     EnableCharacter(1310800)
     EnableFlag(11310000)
     EnableAI(1310800)
-    EnableBossHealthBar(1310800, name=5220, slot=0)
+    EnableBossHealthBar(1310800, name=5220)
     EnableFlag(11315392)
     DisableNetworkSync()
     SetStandbyAnimationSettings(1310120)
@@ -691,7 +691,7 @@ def Event_11315091():
     IfTimeElapsed(1, seconds=2.0)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(11315090)
-    RestartEvent(event_id=11315092, slot=0)
+    RestartEvent(event_id=11315092)
     Restart()
 
 

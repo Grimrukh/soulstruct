@@ -34,10 +34,10 @@ class BaseMSBModel(MSBEntry, abc.ABC):
 
     sib_path: str
 
-    def __init__(self, source=None, **kwargs):
+    def __init__(self, source=None, map_id=(), **kwargs):
         """Create an instance of an MSB model entry using packed data (`source`) or keyword arguments.
 
-        If `source` is not given, then at least `name` or `sib_path` must be.
+        If `source` is not given, then at least `sib_path` or both `name` (in kwargs) and `map_id` must be.
         """
         self._model_type_index = None  # not sure if this matters
         self._instance_count = None
@@ -45,7 +45,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
             if "sib_path" not in kwargs:
                 if "name" not in kwargs:
                     raise ValueError(f"`name` must be given to `{self.__class__.__name__}` if `sib_path` is not given.")
-                kwargs["sib_path"] = self.ENTRY_SUBTYPE.get_default_sib_path(kwargs["name"], kwargs.get("map_id", ()))
+                kwargs["sib_path"] = self.ENTRY_SUBTYPE.get_default_sib_path(kwargs["name"], map_id)
 
         super().__init__(source=source, **kwargs)
 
@@ -58,9 +58,10 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         self.sib_path = msb_reader.unpack_string(
             offset=model_offset + header["__sib_path_offset"], encoding=self.NAME_ENCODING,
         )
-        if header["__model_type"] != self.ENTRY_SUBTYPE:
+        if header["__model_type"] != self.ENTRY_SUBTYPE.value:
             raise ValueError(
-                f"Unexpected MSB model type value {header['__model_type']} for {self.__class__.__name__}."
+                f"Unexpected MSB model type value {header['__model_type']} for {self.__class__.__name__}. "
+                f"Expected {self.ENTRY_SUBTYPE.value}."
             )
         self.set(**header)
 
@@ -105,7 +106,7 @@ class BaseMSBGeometryModel(BaseMSBModel):
 
     def __init__(self, source=None, **kwargs):
         """Additionally Requires `map_id` if `source` is None."""
-        if source is None and ("map_id" not in kwargs or "name" not in kwargs):
+        if source is None and "sib_path" not in kwargs and ("map_id" not in kwargs or "name" not in kwargs):
             raise ValueError(
                 f"`name` and `map_id` must be given to `{self.__class__.__name__}` if `sib_path` is not given."
             )

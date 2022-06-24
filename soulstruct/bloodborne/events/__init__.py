@@ -441,7 +441,7 @@ __all__ = [
     "IfCharacterBackreadState",
     "IfCharacterBackreadEnabled",
     "IfCharacterBackreadDisabled",
-    "IfTAEEventState",
+    "IfCharacterTAEEventState",
     "IfCharacterHasTAEEvent",
     "IfCharacterDoesNotHaveTAEEvent",
     "IfHasAIStatus",

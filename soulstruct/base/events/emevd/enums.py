@@ -7,6 +7,7 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
+    "BaseEMEVDEnum",
 ]
 
 from enum import IntEnum
@@ -25,6 +26,14 @@ char = "b"
 uchar = "B"
 
 PLAYER = 10000
+
+
+class BaseEMEVDEnum(IntEnum):
+    """Base class for all EMEVD enums."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        # All EMEVD enums that I'm aware of are `uchar`.
+        return "B"
 
 
 # Basic obvious booleans are omitted:

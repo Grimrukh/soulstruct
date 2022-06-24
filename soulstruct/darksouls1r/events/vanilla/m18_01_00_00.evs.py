@@ -273,7 +273,7 @@ def Event_11815392():
 def Event_11810001():
     """Event 11810001"""
     IfHealthLessThanOrEqual(0, 1810800, value=0.0)
-    PlaySoundEffect(anchor_entity=1810800, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1810800, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1810800)
     EnableFlag(16)
     KillBoss(game_area_param_id=1810800)
@@ -299,7 +299,7 @@ def Event_11815394():
     IfConditionTrue(0, input_condition=1)
     EnableFlag(11815396)
     EnableSoundEvent(sound_id=1813800)
-    EnableBossHealthBar(1810800, name=2232, slot=0)
+    EnableBossHealthBar(1810800, name=2232)
     Restart()
 
 
@@ -316,7 +316,7 @@ def Event_11815395():
     IfConditionTrue(0, input_condition=-1)
     DisableFlag(11815396)
     DisableSoundEvent(sound_id=1813800)
-    DisableBossHealthBar(1810800, name=2232, slot=0)
+    DisableBossHealthBar(1810800, name=2232)
     Restart()
 
 
@@ -430,7 +430,7 @@ def Event_11815382():
     IfCharacterInsideRegion(0, PLAYER, region=1812896)
     EnableAI(1810810)
     DisableInvincibility(1810810)
-    EnableBossHealthBar(1810810, name=2231, slot=0)
+    EnableBossHealthBar(1810810, name=2231)
     EnableObject(1811890)
     CreateVFX(vfx_id=1811891)
 
@@ -738,7 +738,7 @@ def Event_11810220():
     EnableObject(1811201)
     DestroyObject(1811201)
     DisableObject(1811202)
-    PlaySoundEffect(anchor_entity=1811200, sound_id=851000000, sound_type=SoundType.o_Object)
+    PlaySoundEffect(1811200, 851000000, sound_type=SoundType.o_Object)
     CreateTemporaryVFX(vfx_id=180100, anchor_entity=1811200, anchor_type=CoordEntityType.Object)
 
 

@@ -2,7 +2,7 @@ __all__ = ["Command"]
 
 import abc
 
-from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .functions import COMMANDS

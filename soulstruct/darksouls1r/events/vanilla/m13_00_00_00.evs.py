@@ -391,7 +391,7 @@ def Event_11305392():
     SkipLinesIfClient(1)
     SetNetworkUpdateAuthority(1300800, authority_level=UpdateAuthority.Forced)
     EnableAI(1300800)
-    EnableBossHealthBar(1300800, name=3320, slot=0)
+    EnableBossHealthBar(1300800, name=3320)
 
 
 @NeverRestart(11300001)
@@ -399,7 +399,7 @@ def Event_11300001():
     """Event 11300001"""
     IfHealthLessThanOrEqual(0, 1300800, value=0.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=1300800, sound_id=777777777, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(1300800, 777777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(0, 1300800)
     EnableFlag(6)
     KillBoss(game_area_param_id=1300800)
@@ -623,7 +623,7 @@ def Event_11305350(
     EnableFlag(arg_0_3)
     EnableFlag(arg_4_7)
     EndIfFlagEnabled(11305399)
-    RestartEvent(event_id=11305250, slot=0)
+    RestartEvent(event_id=11305250)
     Restart()
 
 
@@ -646,7 +646,7 @@ def Event_11305370(_, arg_0_3: int, arg_4_7: int):
     DisableCharacter(arg_0_3)
     DisableFlag(arg_4_7)
     EndIfFinishedConditionTrue(input_condition=2)
-    RestartEvent(event_id=11305250, slot=0)
+    RestartEvent(event_id=11305250)
     RestartIfFlagDisabled(arg_4_7)
 
 
@@ -1109,8 +1109,8 @@ def Event_11305001():
     EnableFlag(11305006)
     DisableObjectActivation(1301104, obj_act_id=3060)
     EnableObjectActivation(1301104, obj_act_id=3061)
-    RestartEvent(event_id=11305002, slot=0)
-    RestartEvent(event_id=11305009, slot=0)
+    RestartEvent(event_id=11305002)
+    RestartEvent(event_id=11305009)
     Restart()
 
 
@@ -1133,9 +1133,9 @@ def Event_11305003():
     DisableObjectActivation(1301104, obj_act_id=3061)
     DisableFlag(11305006)
     DisableFlag(11305008)
-    RestartEvent(event_id=11305000, slot=0)
-    RestartEvent(event_id=11305001, slot=0)
-    RestartEvent(event_id=11305002, slot=0)
+    RestartEvent(event_id=11305000)
+    RestartEvent(event_id=11305001)
+    RestartEvent(event_id=11305002)
     Restart()
 
 
@@ -1189,7 +1189,7 @@ def Event_11300100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     IfConditionTrue(0, input_condition=1)
     DestroyObject(arg_8_11)
     CreateTemporaryVFX(vfx_id=130000, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object)
-    PlaySoundEffect(anchor_entity=arg_8_11, sound_id=arg_12_15, sound_type=SoundType.o_Object)
+    PlaySoundEffect(arg_8_11, arg_12_15, sound_type=SoundType.o_Object)
 
 
 @NeverRestart(11300150)
@@ -1202,7 +1202,7 @@ def Event_11300150():
     IfCharacterInsideRegion(0, PLAYER, region=1302020)
     EnableAI(1300050)
     DestroyObject(1301020)
-    PlaySoundEffect(anchor_entity=1301020, sound_id=303600000, sound_type=SoundType.a_Ambient)
+    PlaySoundEffect(1301020, 303600000, sound_type=SoundType.a_Ambient)
 
 
 @NeverRestart(11300160)

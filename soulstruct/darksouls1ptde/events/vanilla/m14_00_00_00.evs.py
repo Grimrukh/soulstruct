@@ -400,7 +400,7 @@ def Event_11405392():
     EnableCharacter(1400800)
     EnableFlag(11400000)
     EnableAI(1400800)
-    EnableBossHealthBar(1400800, name=5280, slot=0)
+    EnableBossHealthBar(1400800, name=5280)
 
 
 @NeverRestart(11400001)

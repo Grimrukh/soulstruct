@@ -72,16 +72,8 @@ __all__ = [
 
 import typing as tp
 
-from soulstruct.base.game_types import BaseParam
+from soulstruct.base.game_types import BaseParam, BaseGameParam
 from .emevd_types import EMEVDObject
-
-
-class BaseGameParam(BaseParam):
-    """Base class for IDs of GameParam entries."""
-
-    @classmethod
-    def get_param_nickname(cls):
-        raise NotImplementedError
 
 
 class BaseItemParam(EMEVDObject, BaseGameParam):
@@ -102,8 +94,8 @@ class BaseItemParam(EMEVDObject, BaseGameParam):
     You can call an instance of any Item to test if the player currently has that item (excluding storage).
     """
 
-    @property
-    def event_arg_fmt(self):
+    @classmethod
+    def get_event_arg_fmt(cls):
         return "I"
 
     @property

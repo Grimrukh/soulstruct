@@ -4,7 +4,7 @@ import abc
 import typing as tp
 
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
-from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 
 from .command import Command
 from .ezl_parser import decompile

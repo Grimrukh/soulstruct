@@ -444,10 +444,10 @@ def Event_11700000():
     SkipLinesIfConditionFalse(1, 2)
     IfFlagEnabled(0, 703)
     SkipLinesIfMultiplayer(2)
-    PlayCutscene(170000, cutscene_flags=0, player_id=10000, move_to_region=1702801, move_to_map=DUKES_ARCHIVES)
+    PlayCutscene(170000, cutscene_flags=0, player_id=10000, move_to_region=1702801, game_map=DUKES_ARCHIVES)
     SkipLines(4)
     SkipLinesIfClient(2)
-    PlayCutscene(170000, cutscene_flags=2, player_id=10000, move_to_region=1702801, move_to_map=DUKES_ARCHIVES)
+    PlayCutscene(170000, cutscene_flags=2, player_id=10000, move_to_region=1702801, game_map=DUKES_ARCHIVES)
     SkipLines(1)
     PlayCutscene(170000, cutscene_flags=2, player_id=10000)
     WaitFrames(frames=1)
@@ -524,7 +524,7 @@ def Event_11705382():
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, target_entity=1702894)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
-    DisableBossHealthBar(1700700, name=5290, slot=0)
+    DisableBossHealthBar(1700700, name=5290)
     Restart()
 
 
@@ -537,7 +537,7 @@ def Event_11705383():
     IfCharacterInsideRegion(1, PLAYER, region=1702890)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1700700)
-    EnableBossHealthBar(1700700, name=5290, slot=0)
+    EnableBossHealthBar(1700700, name=5290)
     IfAllPlayersOutsideRegion(0, region=1702890)
     Restart()
 
@@ -646,7 +646,7 @@ def Event_11705392():
     IfCharacterInsideRegion(1, PLAYER, region=1702990)
     IfConditionTrue(0, input_condition=1)
     EnableAI(1700800)
-    EnableBossHealthBar(1700800, name=5290, slot=0)
+    EnableBossHealthBar(1700800, name=5290)
 
 
 @NeverRestart(11700001)

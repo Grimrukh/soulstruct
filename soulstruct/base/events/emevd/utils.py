@@ -6,7 +6,6 @@ __all__ = [
     "no_skip_or_negate_or_return",
     "negate_only",
     "skip_and_negate_and_return",
-    "ConstantCondition",
     "EventArgumentData",
     "boolify",
     "get_write_offset",
@@ -93,75 +92,6 @@ def skip_and_negate_and_return(func):
     return decorated
 
 
-class ConstantCondition:
-    """Condition with no arguments. These conditions have 'hard-coded' methods in the EMEVD API."""
-
-    def __init__(
-        self,
-        if_true_func=None,
-        if_false_func=None,
-        skip_if_true_func=None,
-        skip_if_false_func=None,
-        end_if_true_func=None,
-        end_if_false_func=None,
-        restart_if_true_func=None,
-        restart_if_false_func=None,
-    ):
-        self.if_true_func = if_true_func
-        self.if_false_func = if_false_func
-        self.skip_if_true_func = skip_if_true_func
-        self.skip_if_false_func = skip_if_false_func
-        self.end_if_true_func = end_if_true_func
-        self.end_if_false_func = end_if_false_func
-        self.restart_if_true_func = restart_if_true_func
-        self.restart_if_false_func = restart_if_false_func
-
-    def __call__(self, negate=False, condition=None, skip_lines=0, end_event=False, restart_event=False):
-        """ Constants are called with no user-level args. """
-
-        if skip_lines > 0:
-            if condition is not None or end_event or restart_event:
-                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
-            if negate:
-                if self.skip_if_true_func is None:
-                    raise NoSkipOrReturnError
-                return self.skip_if_true_func(skip_lines)
-            if self.skip_if_false_func is None:
-                raise NoSkipOrReturnError
-            return self.skip_if_false_func(skip_lines)
-        elif skip_lines < 0:
-            raise ValueError("You cannot skip a negative number of lines.")
-
-        if condition is not None:
-            if end_event or restart_event:
-                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
-            if negate:
-                return self.if_false_func(condition)
-            return self.if_true_func(condition)
-
-        if end_event:
-            if restart_event:
-                raise ValueError("Multiple condition outcomes specified (condition, skip, end, restart).")
-            if negate:
-                if self.end_if_false_func is None:
-                    raise NoSkipOrReturnError
-                return self.end_if_false_func()
-            if self.end_if_true_func is None:
-                raise NoSkipOrReturnError
-            return self.end_if_true_func()
-
-        if restart_event:
-            if negate:
-                if self.restart_if_false_func is None:
-                    raise NoSkipOrReturnError
-                return self.restart_if_false_func()
-            if self.restart_if_true_func is None:
-                raise NoSkipOrReturnError
-            return self.restart_if_true_func()
-
-        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
-
-
 class EventArgumentData:
     """Holds event argument offset tuple, e.g. `(12, 4)`, and event argument type, e.g. `Region`.
 
@@ -180,6 +110,11 @@ class EventArgumentData:
             return self.arg_class.get_coord_entity_type()
         else:
             raise AttributeError("Event argument does not have a `CoordEntityType`.")
+
+    def __repr__(self):
+        if self.arg_class:
+            return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]}, {self.arg_class})"
+        return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]})"
 
 
 def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]]:

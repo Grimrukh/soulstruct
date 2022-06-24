@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+__all__ = ["WindowLinker"]
+
 import typing as tp
-from soulstruct.base.project.links import WindowLinker as _BaseWindowLinker
+from soulstruct.darksouls1ptde.project.links import WindowLinker as _BaseWindowLinker
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params.draw_param import DrawParam
