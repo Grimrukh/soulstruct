@@ -10,6 +10,7 @@ import logging
 import re
 import typing as tp
 from pathlib import Path
+from tkinter import TclError
 
 from soulstruct.base.events.emevd.evs import EVSError
 from soulstruct.base.project.utilities import TagData, TextEditor
@@ -35,7 +36,7 @@ class EvsTextEditor(TextEditor):
         "low_level_test": TagData("#AAAAFF", r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
         "main_condition": TagData("#FF3355", r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
         "await_statement": TagData("#FF3355", r" await ", (0, 0)),
-        "named_arg": TagData("#AAFFFF", r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
+        "named_arg": TagData("#AAFFFF", r"[(,=][ \n]*(?!False)(?!True)\w[\w\d.]* *[,)]", (1, 1)),
         "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
         "event_arg_name": TagData("#FFAAFF", r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
@@ -52,7 +53,7 @@ class EvsTextEditor(TextEditor):
         """Get all event arg names (e.g. "arg_0_3") and color them."""
         self.tag_remove("event_arg_name", "1.0", "end")
         start_index = "1.0"
-        while 1:
+        while True:
             def_index = self.search(r"^def [\w\d_]+\(", start_index, regexp=True)
             if not def_index:
                 break
@@ -64,6 +65,8 @@ class EvsTextEditor(TextEditor):
             if event_args_match:
                 event_args = event_args_match.group(1).replace("\n", "").replace(" ", "")
                 for event_arg in event_args.split(","):
+                    if event_arg == "_":
+                        continue  # don't recolor `slot` underscore argument
                     parts = event_arg.split(":")
                     if len(parts) == 2:
                         arg_name, arg_type = parts
@@ -244,11 +247,15 @@ class EventEditor(SmartFrame):
 
     def _control_f_search(self, _):
         if self.selected_map_id:
-            highlighted = self.text_editor.selection_get()
-            self.string_to_find.var.set(highlighted)
-            self.string_to_find.select_range(0, "end")
-            self.string_to_find.icursor("end")
-            self.string_to_find.focus_force()
+            try:
+                highlighted = self.text_editor.selection_get()
+            except TclError:  # just focus on search box
+                self.string_to_find.focus_force()
+            else:
+                self.string_to_find.var.set(highlighted)
+                self.string_to_find.select_range(0, "end")
+                self.string_to_find.icursor("end")
+                self.string_to_find.focus_force()
 
     def _go_to_line(self, _):
         number = self.go_to_line.var.get()

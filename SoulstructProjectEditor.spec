@@ -16,6 +16,7 @@ added_files = [
     ("soulstruct\\base\\ai\\lua\\x86\\luac50.exe", "base\\ai\\lua\\x86"),
     ("soulstruct\\base\\ezstate\\esd\\functions.pyi", "base\\ezstate\\esd"),
     ("soulstruct\\darksouls1ptde\\params\\resources\\darksouls1ptde.paramdefbnd", "darksouls1ptde\\params\\resources"),
+    ("soulstruct\\darksouls1ptde\\events\\emevd\\ds1-common.emedf.json", "darksouls1ptde\\events\\emevd"),
     ("soulstruct\\darksouls1r\\params\\resources\\darksouls1r.paramdefbnd.dcx", "darksouls1r\\params\\resources"),
     ("soulstruct\\bloodborne\\params\\resources\\bloodborne.paramdefbnd.dcx", "bloodborne\\params\\resources"),
 ]

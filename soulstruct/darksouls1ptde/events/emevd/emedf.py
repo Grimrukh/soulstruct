@@ -5,11 +5,11 @@ Used in tandem with `*.emedf.json` to compile/decompile EVS <-> EMEVD scripts.
 from __future__ import annotations
 
 import typing as tp
-from pathlib import Path
 
 from soulstruct.base.events.emevd.emedf import *
 from soulstruct.darksouls1ptde.maps.constants import get_map_variable_name
 from soulstruct.darksouls1ptde.game_types import *
+from soulstruct.utilities.files import PACKAGE_PATH
 from .enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES"]
@@ -774,8 +774,8 @@ EMEDF = {
             "condition": INT | HIDE,
             "character": NO_DEFAULT(CharacterTyping) | HIDE,
             "npc_part_id": INT,
-            "comparison_type": COMPARISON_TYPE,
             "value": FLOAT,
+            "comparison_type": COMPARISON_TYPE,
         },
         "partials": {
             "IfCharacterPartHealthLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
@@ -2943,7 +2943,7 @@ EMEDF = {
             Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online.
         """,
         "args": {
-            "obj": INT,
+            "obj": NO_DEFAULT(ObjectTyping),
             "area_id": AREA_ID,
             "block_id": BLOCK_ID,
             "statue_type": {
@@ -3025,7 +3025,7 @@ EMEDF = {
             the rest of their lifetimes (e.g. making a fog gate disappear organically). The ID is given in the MSB.
         """,
         "args": {
-            "vfx_id": INT,
+            "vfx_id": NO_DEFAULT(VFXEventTyping),
             "erase_root_only": {
                 "type": bool,
                 "default": True,
@@ -3038,7 +3038,7 @@ EMEDF = {
             Create visual VFX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints).
         """,
         "args": {
-            "vfx_id": INT,
+            "vfx_id": NO_DEFAULT(VFXEventTyping),
         },
     },
     (2006, 3): {
@@ -3422,7 +3422,7 @@ EMEDF = {
 }
 
 
-add_common_emedf_info(EMEDF, Path(__file__).parent / "ds1-common.emedf.json")
+add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"))
 
 
 # Retrieve instruction information by EVS instruction alias name (or partial name).

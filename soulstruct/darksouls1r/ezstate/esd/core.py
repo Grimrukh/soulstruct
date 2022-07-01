@@ -60,7 +60,7 @@ class State(_BaseState, abc.ABC):
     )
 
 
-class ESD(_BaseESD, DarkSoulsDSRType, abc.ABC):
+class ESD(DarkSoulsDSRType, _BaseESD, abc.ABC):
 
     DCX_TYPE = DCXType.DCX_DFLT_10000_24_9
 

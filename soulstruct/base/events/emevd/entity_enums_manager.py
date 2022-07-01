@@ -148,7 +148,7 @@ class EntityEnumsManager(abc.ABC):
                 if enum_info:
                     break
             elif cls_name not in self.enums:
-                raise KeyError(f"Invalid entity class name for entity enums: '{cls_name}'")
+                raise self.MissingEntityError(f"Invalid entity class name for entity enums: {cls_name}")
             else:
                 try:
                     enum_info = self.enums[cls_name][entity_id]

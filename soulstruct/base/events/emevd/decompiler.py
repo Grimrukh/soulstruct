@@ -107,9 +107,9 @@ def _process_arg_types(
 
             try:
                 if union_types:
-                    args[arg_name] = enums_manager.check_out_enum(arg_value, *union_types)
+                    args[arg_name] = Variable(enums_manager.check_out_enum(arg_value, *union_types))
                 else:  # single class
-                    args[arg_name] = enums_manager.check_out_enum(arg_value, arg_type)
+                    args[arg_name] = Variable(enums_manager.check_out_enum(arg_value, arg_type))
             except EntityEnumsManager.MissingEntityError:
                 pass
             continue  # leave as entity ID if not replaced
@@ -265,7 +265,7 @@ def base_run_event(
         for i, arg in enumerate(event_args):
             if looks_like_entity_id(arg, event_id):
                 try:
-                    new_args[i] = enums_manager.check_out_enum(arg, any_class=True)
+                    new_args[i] = Variable(enums_manager.check_out_enum(arg, any_class=True))
                 except EntityEnumsManager.MissingEntityError:
                     pass  # do nothing
         event_args = tuple(new_args)

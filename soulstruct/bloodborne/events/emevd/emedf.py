@@ -5,11 +5,11 @@ Used in tandem with `*.emedf.json` to compile/decompile EVS <-> EMEVD scripts.
 from __future__ import annotations
 
 import typing as tp
-from pathlib import Path
 
 from soulstruct.base.events.emevd.emedf import *
 from soulstruct.darksouls1ptde.maps.constants import get_map_variable_name
 from soulstruct.darksouls1ptde.game_types import *
+from soulstruct.utilities.files import PACKAGE_PATH
 from .enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES"]
@@ -3425,7 +3425,7 @@ EMEDF = {
 }
 
 
-add_common_emedf_info(EMEDF, Path(__file__).parent / "ds1-common.emedf.json")
+add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"))
 
 
 # Retrieve instruction information by EVS instruction alias name (or partial name).

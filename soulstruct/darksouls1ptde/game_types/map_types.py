@@ -58,6 +58,7 @@ __all__ = [
     "MapPieceTyping",
     "CollisionTyping",
     "NavigationEventTyping",
+    "VFXEventTyping",
 ]
 
 import typing as tp
@@ -486,3 +487,4 @@ CollisionTyping = tp.Union[Collision, int]
 NavigationEventTyping = tp.Union[NavigationEvent, int]
 EnvironmentEventTyping = tp.Union[EnvironmentEvent, int]
 NPCInvasionEventTyping = tp.Union[NPCInvasionEvent, int]
+VFXEventTyping = tp.Union[VFXEvent, int]
