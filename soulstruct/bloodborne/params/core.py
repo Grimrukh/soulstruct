@@ -6,7 +6,7 @@ import typing as tp
 
 from soulstruct.containers.bnd import BND4
 from soulstruct.games import BLOODBORNE
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND
 from soulstruct.base.params.param import Param as _BaseParam
 
@@ -74,7 +74,7 @@ class GameParamBND(_BaseGameParamBND, BND4):
         "SpecialEffects": SpecialEffectParam,
         "Weapons": WeaponParam,
         "Armor": ArmorParam,
-        "Rings": RingParam,
+        "Accessories": AccessoryParam,
         "Goods": GoodParam,
         "WeaponUpgrades": WeaponUpgradeParam,
         "ArmorUpgrades": ArmorUpgradeParam,
@@ -167,7 +167,7 @@ class GameParamBND(_BaseGameParamBND, BND4):
     PlayerBehaviors: Param
     ResidentVFX: Param  # TODO: possibly `PlayerVFX`
     ReturnPoints: Param  # TODO: ?
-    # Rings: Param
+    # Accessories: Param
     RitualChalices: Param
     RitualMaterials: Param
     Shops: Param

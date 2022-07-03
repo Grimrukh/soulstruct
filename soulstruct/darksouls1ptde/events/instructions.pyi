@@ -130,13 +130,13 @@ __all__ = [
     "IfSkullLanternInactive",
     "IfPlayerClass",  # 4[11]
     "IfPlayerCovenant",  # 4[12]
-    "IfPlayerSoulLevelComparison",  # 4[13]
-    "IfPlayerSoulLevelEqual",
-    "IfPlayerSoulLevelNotEqual",
-    "IfPlayerSoulLevelGreaterThan",
-    "IfPlayerSoulLevelLessThan",
-    "IfPlayerSoulLevelGreaterThanOrEqual",
-    "IfPlayerSoulLevelLessThanOrEqual",
+    "IfPlayerLevelComparison",  # 4[13]
+    "IfPlayerLevelEqual",
+    "IfPlayerLevelNotEqual",
+    "IfPlayerLevelGreaterThan",
+    "IfPlayerLevelLessThan",
+    "IfPlayerLevelGreaterThanOrEqual",
+    "IfPlayerLevelLessThanOrEqual",
     "IfHealthValueComparison",  # 4[14]
     "IfHealthValueEqual",
     "IfHealthValueNotEqual",
@@ -1317,8 +1317,8 @@ def IfCharacterPartHealthComparison(
     condition: int,
     character: Character | int,
     npc_part_id: int,
-    comparison_type: ComparisonType | int,
     value: float,
+    comparison_type: ComparisonType | int,
 ):
     """
     TODO
@@ -1403,45 +1403,45 @@ def IfPlayerCovenant(condition: int, covenant: Covenant | int):
     """
 
 
-def IfPlayerSoulLevelComparison(condition: int, comparison_type: ComparisonType | int, value: int):
+def IfPlayerLevelComparison(condition: int, comparison_type: ComparisonType | int, value: int):
     """
     TODO
     """
 
 
-def IfPlayerSoulLevelEqual(condition: int, value: int):
+def IfPlayerLevelEqual(condition: int, value: int):
     """
-    Calls `IfPlayerSoulLevelComparison` with `comparison_type=0`.
-    """
-
-
-def IfPlayerSoulLevelNotEqual(condition: int, value: int):
-    """
-    Calls `IfPlayerSoulLevelComparison` with `comparison_type=1`.
+    Calls `IfPlayerLevelComparison` with `comparison_type=0`.
     """
 
 
-def IfPlayerSoulLevelGreaterThan(condition: int, value: int):
+def IfPlayerLevelNotEqual(condition: int, value: int):
     """
-    Calls `IfPlayerSoulLevelComparison` with `comparison_type=2`.
-    """
-
-
-def IfPlayerSoulLevelLessThan(condition: int, value: int):
-    """
-    Calls `IfPlayerSoulLevelComparison` with `comparison_type=3`.
+    Calls `IfPlayerLevelComparison` with `comparison_type=1`.
     """
 
 
-def IfPlayerSoulLevelGreaterThanOrEqual(condition: int, value: int):
+def IfPlayerLevelGreaterThan(condition: int, value: int):
     """
-    Calls `IfPlayerSoulLevelComparison` with `comparison_type=4`.
+    Calls `IfPlayerLevelComparison` with `comparison_type=2`.
     """
 
 
-def IfPlayerSoulLevelLessThanOrEqual(condition: int, value: int):
+def IfPlayerLevelLessThan(condition: int, value: int):
     """
-    Calls `IfPlayerSoulLevelComparison` with `comparison_type=5`.
+    Calls `IfPlayerLevelComparison` with `comparison_type=3`.
+    """
+
+
+def IfPlayerLevelGreaterThanOrEqual(condition: int, value: int):
+    """
+    Calls `IfPlayerLevelComparison` with `comparison_type=4`.
+    """
+
+
+def IfPlayerLevelLessThanOrEqual(condition: int, value: int):
+    """
+    Calls `IfPlayerLevelComparison` with `comparison_type=5`.
     """
 
 
@@ -3408,7 +3408,7 @@ def CreateHazard(
     """
 
 
-def RegisterStatue(obj: int, game_map: Map | tuple | list, statue_type: StatueType | int):
+def RegisterStatue(obj: Object | int, game_map: Map | tuple | list, statue_type: StatueType | int):
     """
     Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online.
     """
@@ -3459,14 +3459,14 @@ def EnableTreasureCollection(obj: Object | int):
     """
 
 
-def DeleteVFX(vfx_id: int, erase_root_only: bool = True):
+def DeleteVFX(vfx_id: VFXEvent | int, erase_root_only: bool = True):
     """
     Delete visual VFX. If 'erase_root_only' is True (default), effect particles already emitted will live out
     the rest of their lifetimes (e.g. making a fog gate disappear organically). The ID is given in the MSB.
     """
 
 
-def CreateVFX(vfx_id: int):
+def CreateVFX(vfx_id: VFXEvent | int):
     """
     Create visual VFX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints).
     """

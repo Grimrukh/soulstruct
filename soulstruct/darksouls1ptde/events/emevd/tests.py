@@ -19,7 +19,7 @@ __all__ = [
     "WHITE_WORLD_TENDENCY",
     "BLACK_WORLD_TENDENCY",
     "NEW_GAME_CYCLE",
-    "SOUL_LEVEL",
+    "PLAYER_LEVEL",
     "FlagEnabled",
     "FlagDisabled",
     "SecondsElapsed",
@@ -90,10 +90,11 @@ __all__ = [
 ]
 import typing as tp
 
+from soulstruct.base.events.emevd.compiler import BooleanTestCompiler
 from soulstruct.base.events.emevd.utils import *
 from soulstruct.darksouls1ptde.game_types import *
 
-from .compiler import BooleanTestCompiler, compile_instruction
+from .compiler import compile_instruction
 from .enums import *
 
 
@@ -206,9 +207,9 @@ def NEW_GAME_CYCLE(op_node, completion_count, condition, negate=False):
 
 
 @negate_only
-def SOUL_LEVEL(op_node, comparison_value, condition, negate=False):
+def PLAYER_LEVEL(op_node, comparison_value, condition, negate=False):
     comparison_type = NEG_COMPARISON_NODES[op_node] if negate else COMPARISON_NODES[op_node]
-    return compile_instruction("IfPlayerSoulLevelComparison", condition, comparison_type, comparison_value)
+    return compile_instruction("IfPlayerLevelComparison", condition, comparison_type, comparison_value)
 
 
 # All other tests.
@@ -377,7 +378,7 @@ def HasArmor(armor: ArmorParam, condition, negate=False):
 
 
 @negate_only
-def HasRing(ring: RingParam, condition, negate=False):
+def HasRing(ring: AccessoryParam, condition, negate=False):
     return compile_instruction("IfPlayerItemStateExcludingStorage", condition, ring, not negate, ItemType.Ring)
 
 
@@ -491,7 +492,7 @@ def OwnsArmor(armor: ArmorParam, condition, negate=False):
 
 
 @negate_only
-def OwnsRing(ring: RingParam, condition, negate=False):
+def OwnsRing(ring: AccessoryParam, condition, negate=False):
     return compile_instruction("IfPlayerItemStateIncludingStorage", condition, ring, not negate, ItemType.Ring)
 
 

@@ -26,7 +26,6 @@ import typing as tp
 from soulstruct.bloodborne.events.emevd.enums import SoundType
 from soulstruct.bloodborne.game_types import *
 from soulstruct.base.maps.msb.events import *
-from soulstruct.base.maps.msb.msb_entry_list import BaseMSBEventList
 from soulstruct.base.maps.msb.exceptions import MapEventError
 from soulstruct.base.maps.msb.utils import MapFieldInfo
 from soulstruct.utilities.binary import BinaryStruct

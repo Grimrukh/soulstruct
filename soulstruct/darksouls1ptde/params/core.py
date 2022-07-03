@@ -78,7 +78,7 @@ class GameParamBND(_BaseGameParamBND, DarkSoulsPTDEType, BND3):
         "SpecialEffects": SpecialEffectParam,
         "Weapons": WeaponParam,
         "Armor": ArmorParam,
-        "Rings": RingParam,
+        "Rings": AccessoryParam,
         "Goods": GoodParam,
         "WeaponUpgrades": WeaponUpgradeParam,
         "ArmorUpgrades": ArmorUpgradeParam,
@@ -117,7 +117,7 @@ class GameParamBND(_BaseGameParamBND, DarkSoulsPTDEType, BND3):
         for item_type_check, param_table, text_dict in zip(
             ("weapon", "armor", "ring", "good", "spell"),
             (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
-            (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames),
+            (text.WeaponNames, text.ArmorNames, text.AccessoryNames, text.GoodNames, text.SpellNames),
         ):
             if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_entry in param_table.items():

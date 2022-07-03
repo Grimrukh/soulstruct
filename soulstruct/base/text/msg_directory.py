@@ -336,7 +336,7 @@ class MSGDirectory(abc.ABC):
     ):
         """Update this `MSGDirectory` instance from the given CSV.
 
-        Arguments specify which columns the category names (e.g. 'RingNames'), text IDs, and text entries are in.
+        Arguments specify which columns the category names (e.g. 'AccessoryNames'), text IDs, and text entries are in.
         Use `skip_first_row` to indicate if a header row is present (defaults to True).
 
         If `parse_newlines=True` (default), doubly-escaped newlines in the CSV will be replaced by actual newlines
@@ -521,9 +521,9 @@ _CAN_MERGE_PATCH = {
     "ArmorNamesPatch",
     "ArmorSummariesPatch",
     "ArmorDescriptionsPatch",
-    "RingNamesPatch",
-    "RingSummariesPatch",
-    "RingDescriptionsPatch",
+    "AccessoryNamesPatch",
+    "AccessorySummariesPatch",
+    "AccessoryDescriptionsPatch",
     "GoodNamesPatch",
     "GoodSummariesPatch",
     "GoodDescriptionsPatch",

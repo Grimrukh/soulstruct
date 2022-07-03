@@ -15,10 +15,8 @@ __all__ = [
     "NavmeshModel",
 
     "MapEvent",
-    "LightEvent",
     "SoundEvent",
     "VFXEvent",
-    "WindEvent",
     "TreasureEvent",
     "SpawnerEvent",
     "MessageEvent",

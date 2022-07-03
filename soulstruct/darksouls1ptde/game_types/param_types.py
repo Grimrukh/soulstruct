@@ -26,7 +26,7 @@ __all__ = [
     "ObjActParam",
     "ObjectParam",
     "PlayerParam",
-    "RingParam",
+    "AccessoryParam",
     "ShopParam",
     "SpecialEffectParam",
     "SpecialEffectVisualParam",
@@ -61,7 +61,7 @@ __all__ = [
     "ItemTyping",
     "ItemLotTyping",
     "KnockbackTyping",
-    "RingTyping",
+    "AccessoryTyping",
     "SpecialEffectTyping",
     "SpellTyping",
     "TerrainTyping",
@@ -266,7 +266,7 @@ class PlayerParam(BaseGameParam):
         return "Players"
 
 
-class RingParam(BaseItemParam):
+class AccessoryParam(BaseItemParam):
     """Ring entry."""
 
     @classmethod
@@ -419,7 +419,7 @@ DialogueTyping = tp.Union[DialogueParam, int]
 ItemTyping = tp.Union[BaseItemParam, int]
 WeaponTyping = tp.Union[WeaponParam, int]
 ArmorTyping = tp.Union[ArmorParam, int]
-RingTyping = tp.Union[RingParam, int]
+AccessoryTyping = tp.Union[AccessoryParam, int]
 GoodTyping = tp.Union[GoodParam, int]
 CameraTyping = tp.Union[CameraParam, int]
 FaceTyping = tp.Union[FaceParam, int]

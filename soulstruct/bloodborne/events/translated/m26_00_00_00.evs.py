@@ -375,7 +375,7 @@ def Event12604700(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagDisabled(1, arg_12_15)
     IfFlagEnabled(1, arg_16_19)
     IfCharacterHuman(2, PLAYER)
-    IfPlayerSoulLevelGreaterThanOrEqual(2, 30)
+    IfPlayerLevelGreaterThanOrEqual(2, 30)
     SkipLinesIfFlagDisabled(1, arg_20_23)
     IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.GreaterThanOrEqual, value=1)
     IfCharacterHasSpecialEffect(3, PLAYER, 9025)

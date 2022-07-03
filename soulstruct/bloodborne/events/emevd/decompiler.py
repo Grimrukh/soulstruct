@@ -1,409 +1,437 @@
-__all__ = ["InstructionDecompiler"]
+from __future__ import annotations
 
+__all__ = ["DECOMPILER", "OPT_ARGS_DECOMPILER", "decompile_instruction"]
+
+import logging
 import typing as tp
 
-from soulstruct.base.events.emevd.decompiler import InstructionDecompiler as _BaseDecompiler, parse_parameters
-from soulstruct.bloodborne.maps.constants import get_map
+from soulstruct.base.events.emevd.decompiler import (
+    base_decompiler_instruction,
+    assemble_arg_string,
+    base_run_event,
+)
 from soulstruct.darksouls1ptde.game_types.map_types import *
-from .enums import *
+from soulstruct.darksouls1r.maps.constants import get_map_variable_name
+
 from . import enums
-
-
-class InstructionDecompiler(_BaseDecompiler):
-
-    ENUMS = enums
-    GET_MAP = staticmethod(get_map)
-
-    @parse_parameters
-    def _3_23(self, condition, attacked_entity: Character, attacker: Character, damage_type: DamageType):
-        if not self._any_vars(damage_type) and damage_type.name == "Unspecified":
-            # Leave out default `damage_type` value.
-            if attacker == -1:
-                return f"IfAttackedWithDamageType({condition}, {attacked_entity=})"
-            return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=})"
-        if attacker == -1:
-            return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {damage_type=})"
-        return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=}, {damage_type=})"
-
-    @parse_parameters("IfActionButtonParam", no_name_count=1)
-    def _3_24(self, condition, action_button_id, entity: tp.Union[Character, Object, Region]):
-        pass
-
-    @parse_parameters("IfPlayerArmorType", no_name_count=1)
-    def _3_25(self, condition, armor_type: ArmorType, required_armor_range_first, required_armor_range_last):
-        pass
-
-    @parse_parameters
-    def _3_26(self, condition, value, comparison_type: ComparisonType):
-        if self._any_vars(comparison_type):
-            return f"IfPlayerInsightAmountComparison({condition}, {value}, {comparison_type=})"
-        return f"IfPlayerInsightAmount{comparison_type.name}({condition}, {value})"
-
-    @parse_parameters("IfDialogChoice", no_name_count=2)
-    def _3_27(self, condition, dialog_result: DialogResult):
-        pass
-
-    @parse_parameters("IfPlayGoState", no_name_count=2)
-    def _3_28(self, condition, playgo_state: PlayGoState):
-        pass
-
-    @parse_parameters("IfClientTypeCountComparison", no_name_count=3)
-    def _3_29(self, condition, client_type: ClientType, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters
-    def _4_15(self, condition, character: Character, state: bool):
-        if state is True:
-            return f"IfCharacterDrawGroupActive({condition}, {character})"
-        if state is False:
-            return f"IfCharacterDrawGroupInactive({condition}, {character})"
-        return f"IfCharacterDrawGroupState({condition}, {character}, {state=})"
-
-    @parse_parameters
-    def _1000_101(self, label: Label, state: bool, input_condition):
-        if not self._any_vars(state):
-            return f"GotoIfCondition{state}({label}, {input_condition=})"
-        return f"GotoIfConditionState({label}, {state=}, {input_condition=})"
-
-    @parse_parameters("Goto", no_name_count=1)
-    def _1000_103(self, label: Label):
-        pass
-
-    @parse_parameters("GotoIfValueComparison", no_name_count=2)
-    def _1000_105(self, label: Label, comparison_type: ComparisonType, left, right):
-        pass
-
-    @parse_parameters
-    def _1000_107(self, label: Label, state: bool, input_condition):
-        if not self._any_vars(state):
-            return f"GotoIfFinishedCondition{state}({label}, {input_condition=})"
-        return f"GotoIfFinishedConditionState({label}, {state=}, {input_condition=})"
-
-    @parse_parameters("SkipLinesIfCoopClientCountComparison", no_name_count=3)
-    def _1003_09(self, skip_lines, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters
-    def _1003_10(self, event_return_type: EventReturnType, comparison_type: ComparisonType, value):
-        if not self._any_vars(event_return_type):
-            return f"{event_return_type.name}IfCoopClientCountComparison({comparison_type}, {value})"
-        return f"ReturnIfCoopClientCountComparison({event_return_type}, {comparison_type}, {value})"
-
-    @parse_parameters("SkipLinesIfPlayerGender", no_name_count=2)
-    def _1003_11(self, skip_lines, gender: Gender):
-        pass
-
-    @parse_parameters("GotoIfPlayerGender", no_name_count=2)
-    def _1003_12(self, label: Label, gender: Gender):
-        pass
-
-    @parse_parameters
-    def _1003_13(self, event_return_type: EventReturnType, gender: Gender):
-        if not self._any_vars(event_return_type):
-            return f"{event_return_type.name}IfPlayerGender({gender})"
-        return f"ReturnIfPlayerGender({event_return_type}, {gender})"
-
-    @parse_parameters("SkipLinesIfClientTypeCountComparison", no_name_count=4)
-    def _1003_14(self, skip_lines, client_type: ClientType, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters("GotoIfClientTypeCountComparison", no_name_count=4)
-    def _1003_15(self, label: Label, client_type: ClientType, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters
-    def _1003_16(
-        self, event_return_type: EventReturnType, client_type: ClientType, comparison_type: ComparisonType, value
-    ):
-        if not self._any_vars(event_return_type):
-            return f"{event_return_type.name}IfClientTypeCountComparison({client_type}, {comparison_type}, {value})"
-        return f"ReturnIfClientTypeCountComparison({event_return_type}, {client_type}, {comparison_type}, {value})"
-
-    @parse_parameters
-    def _1003_101(self, label: Label, state: FlagState, flag_type: FlagType, flag):
-        if self._any_vars(state, flag_type):
-            return f"GotoIfFlagState({label}, {state=}, {flag_type=}, {flag=})"
-        if state != FlagState.Change:
-            if flag_type == FlagType.Absolute:
-                return f"GotoIfFlag{state.name}({label}, {flag})"
-            elif flag == 0:
-                if flag_type == FlagType.RelativeToThisEvent:
-                    return f"GotoIfThisEvent{state.name}({label})"
-                elif flag_type == FlagType.RelativeToThisEventSlot:
-                    return f"GotoIfThisEventSlot{state.name}({label})"
-        return f"GotoIfFlagState({label}, {state=}, {flag_type=}, {flag=})" + self.SUSPICIOUS
-
-    @parse_parameters
-    def _1003_103(self, label: Label, state: RangeState, flag_type: FlagType, first_flag, last_flag):
-        flag_range = f"({first_flag}, {last_flag})"
-        if self._any_vars(state, flag_type):
-            return f"GotoIfFlagRangeState({label}, {state=}, {flag_type=}, {flag_range=})"
-        if flag_type == FlagType.Absolute:
-            return f"GotoIfFlagRange{state.name}({label}, {flag_range})"
-        return f"GotoIfFlagRangeState({label}, {state=}, {flag_type=}, {flag_range=})" + self.SUSPICIOUS
-
-    @parse_parameters
-    def _1003_105(self, label: Label, state: MultiplayerState):
-        if self._any_vars(state):
-            return f"GotoIfMultiplayerState({label}, {state=})"
-        return f"GotoIf{state.name}({label})"
-
-    @parse_parameters
-    def _1003_107(self, label: Label, state: bool, area_id, block_id):
-        game_map = self._get_game_map_variable_name(area_id, block_id)
-        if state is True:
-            return f"GotoIfInsideMap({label}, {game_map})"
-        if state is False:
-            return f"GotoIfOutsideMap({label}, {game_map})"
-        return f"GotoIfMapPresenceState({label}, {game_map}, {state=})"
-
-    @parse_parameters("GotoIfCoopClientCountComparison", no_name_count=3)
-    def _1003_109(self, label: Label, comparison_type: ComparisonType, value):
-        pass
-
-    @parse_parameters
-    def _1005_101(self, label: Label, obj: Object, state: bool):
-        if state is True:
-            return f"GotoIfObjectDestroyed({label}, {obj})"
-        if state is False:
-            return f"GotoIfObjectNotDestroyed({label}, {obj})"
-        return f"GotoIfObjectDestructionState({label}, {obj}, {state=})"
-
-    @parse_parameters
-    def _1014_00(self):
-        return "DefineLabel(0)"
-
-    @parse_parameters
-    def _1014_01(self):
-        return "DefineLabel(1)"
-
-    @parse_parameters
-    def _1014_02(self):
-        return "DefineLabel(2)"
-
-    @parse_parameters
-    def _1014_03(self):
-        return "DefineLabel(3)"
-
-    @parse_parameters
-    def _1014_04(self):
-        return "DefineLabel(4)"
-
-    @parse_parameters
-    def _1014_05(self):
-        return "DefineLabel(5)"
-
-    @parse_parameters
-    def _1014_06(self):
-        return "DefineLabel(6)"
-
-    @parse_parameters
-    def _1014_07(self):
-        return "DefineLabel(7)"
-
-    @parse_parameters
-    def _1014_08(self):
-        return "DefineLabel(8)"
-
-    @parse_parameters
-    def _1014_09(self):
-        return "DefineLabel(9)"
-
-    @parse_parameters
-    def _2002_06(
-        self,
-        cutscene,
-        cutscene_type: CutsceneFlags,
-        move_to_region: Region,
-        area_id,
-        block_id,
-        player_id: PlayerEntity,
-        time_period_id,
-    ):
-        move_to_map = self._get_game_map_variable_name(area_id, block_id)
-        return (
-            f"PlayCutsceneAndMovePlayerAndSetTimePeriod({cutscene}, {cutscene_type}, {move_to_region=}, "
-            f"{move_to_map=}, {player_id=}, {time_period_id=})"
-        )
-
-    @parse_parameters("PlayCutsceneAndSetTimePeriod", no_name_count=2)
-    def _2002_07(self, cutscene, cutscene_type: CutsceneFlags, player_id: PlayerEntity, time_period_id):
-        pass
-
-    @parse_parameters
-    def _2002_08(self, region: Region, area_id, block_id):
-        move_to_map = self._get_game_map_variable_name(area_id, block_id)
-        return f"PlayCutsceneAndMovePlayer_Dummy({region}, {move_to_map=})"
-
-    @parse_parameters("HandleMinibossDefeat", no_name_count=1)
-    def _2003_15(self, miniboss_id: Character):
-        pass
-
-    @parse_parameters("Unknown_2003_27", no_name_count=1)
-    def _2003_27(self, arg1):
-        pass
-
-    @parse_parameters("EventValueOperation")
-    def _2003_41(
-        self,
-        source_flag,
-        source_flag_bit_count,
-        operand,
-        target_flag,
-        target_flag_bit_count,
-        calculation_type: CalculationType,
-    ):
-        pass
-
-    @parse_parameters("StoreItemAmountSpecifiedByFlagValue", no_name_count=2)
-    def _2003_42(self, item_type: ItemType, item, flag, bit_count):
-        pass
-
-    @parse_parameters("GivePlayerItemAmountSpecifiedByFlagValue", no_name_count=2)
-    def _2003_43(self, item_type: ItemType, item, flag, bit_count):
-        pass
-
-    @parse_parameters
-    def _2003_44(self, state: bool):
-        return self._set_state("DirectionDisplay", state)
-
-    @parse_parameters
-    def _2003_45(self, collision: Collision, level, grid_x, grid_y, state: bool):
-        if state is True:
-            return f"EnableMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y})"
-        if state is False:
-            return f"DisableMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y})"
-        return f"SetMapHitGridCorrespondence({collision}, {level}, {grid_x}, {grid_y}, {state=})"
-
-    @parse_parameters
-    def _2003_46(self, content_image_part_id, state: bool):
-        """No Enable/Disable wrappers."""
-        return f"SetMapContentImageDisplayState({content_image_part_id}, {state=})"
-
-    @parse_parameters
-    def _2003_47(self, hierarchy, grid_x, grid_y, state: bool):
-        """No Enable/Disable wrappers."""
-        return f"SetMapBoundariesDisplay({hierarchy}, {grid_x}, {grid_y}, {state=})"
-
-    @parse_parameters
-    def _2003_48(self, region: Region, state: bool, duration, wind_parameter_id):
-        return f"SetAreaWind({region}, {state=}, {duration=}, {wind_parameter_id=})"
-
-    @parse_parameters("WarpPlayerToRespawnPoint", no_name_count=1)
-    def _2003_49(self, respawn_point_id: SpawnPointEvent):
-        pass
-
-    @parse_parameters("StartEnemySpawner", no_name_count=1)
-    def _2003_50(self, spawner_id):
-        pass
-
-    @parse_parameters("SummonNPC", no_name_count=3)
-    def _2003_51(
-        self,
-        sign_type: SingleplayerSummonSignType,
-        character: PlayerEntity,
-        region: Region,
-        summon_flag,
-        dismissal_flag,
-    ):
-        pass
-
-    @parse_parameters("InitializeWarpObject", no_name_count=1)
-    def _2003_52(self, warp_object_id):
-        pass
-
-    @parse_parameters("BossDefeat", no_name_count=2)
-    def _2003_53(self, boss_id: Character, banner_type: BannerType):
-        pass
-
-    @parse_parameters("SendNPCSummonHome", no_name_count=1)
-    def _2003_54(self, character: Character):
-        pass
-
-    @parse_parameters("AddSpecialEffect", no_name_count=2)
-    def _2004_08(self, character: Character, special_effect_id, affect_npc_part_hp: bool):
-        pass
-
-    @parse_parameters("RotateToFaceEntity", no_name_count=2)
-    def _2004_14(self, character: Character, target_entity: Character, animation, wait_for_completion: bool = False):
-        pass
-
-    @parse_parameters("ChangeCharacterCloth", no_name_count=2)
-    def _2004_48(self, character: Character, bit_count, state_id):
-        pass
-
-    @parse_parameters("ChangePatrolBehavior", no_name_count=1)
-    def _2004_49(self, character: Character, patrol_information_id):
-        pass
-
-    @parse_parameters("SetDistanceLimitForConversationStateChanges", no_name_count=1)
-    def _2004_50(self, character: Character, distance):
-        pass
-
-    @parse_parameters("Test_RequestRagdollRestraint", no_name_count=6)
-    def _2004_51(
-        self,
-        recipient_character: Character,
-        recipient_target_rigid_index,
-        recipient_model_point,
-        attachment_character: Character,
-        attachment_target_rigid_index,
-        attachment_model_point,
-    ):
-        pass
-
-    @parse_parameters("ChangePlayerCharacterInitParam", no_name_count=1)
-    def _2004_52(self, character_init_param):
-        pass
-
-    @parse_parameters("AdaptSpecialEffectHealthChangeToNPCPart", no_name_count=1)
-    def _2004_53(self, character: Character):
-        pass
-
-    @parse_parameters("SetGravityAndCollisionExcludingOwnWorld", no_name_count=2)
-    def _2004_54(self, character: Character, state: bool):
-        pass
-
-    @parse_parameters("AddSpecialEffect_WithUnknownEffect", no_name_count=2)
-    def _2004_55(self, character: Character, speffect, affect_npc_parts_hp: bool):
-        pass
-
-    @parse_parameters("ActivateObjectWithSpecificCharacter", no_name_count=1)
-    def _2005_16(self, obj: Object, objact_id, relative_index, character: Character):
-        pass
-
-    @parse_parameters("SetObjectDamageShieldState", no_name_count=1)
-    def _2005_17(self, obj: Object, state: bool):
-        pass
-
-    @parse_parameters("RegisterLantern", no_name_count=2)
-    def _2009_05(self, flag, obj: Object, reaction_distance, reaction_angle, initial_sword_number, sword_level):
-        pass
-
-    @parse_parameters
-    def _2010_04(self, sound_id, state: bool):
-        return self._set_state("BossMusic", state, entity=sound_id)
-
-    @parse_parameters("NotifyDoorEventSoundDampening", no_name_count=1)
-    def _2010_05(self, entity_id: Object, state: DoorState):
-        pass
-
-    @parse_parameters("SetCollisionResState", no_name_count=1)
-    def _2011_03(self, collision: Collision, state: bool):
-        return
-
-    @parse_parameters("CreatePlayLog", no_name_count=1)
-    def _2013_01(self, name_string):
-        pass
-
-    @parse_parameters("StartPlayLogMeasurement", no_name_count=2)
-    def _2013_02(self, measurement_id, name_string, overwrite: bool):
-        pass
-
-    @parse_parameters("StopPlayLogMeasurement", no_name_count=1)
-    def _2013_03(self, measurement_id):
-        pass
-
-    @parse_parameters("PlayLogParameterOutput", no_name_count=3)
-    def _2013_04(self, category: PlayerPlayLogParameter, name_string, output_multiplayer_state: PlayLogMultiplayerType):
-        pass
+from .entity_enums_manager import EntityEnumsManager
+from .enums import *
+from .emedf import EMEDF
+
+_LOGGER = logging.getLogger(__name__)
+
+
+# This dictionary maps IDs, i.e. `(category, index)` pairs, to functions that generate EVS text.
+# Multiple instruction IDs may map to the same function, e.g., `IfActionButton`.
+# These function values MUST support the EMEDF arguments of all instruction IDs that map to them.
+# If an instruction ID does not appear in here, it will be decompiled automatically from its EMEDF information.
+DECOMPILER = {}
+# Alternate dictionary for instructions whose decompiling functions expect `*opt_args, arg_types, enums_manager` args,
+# such as `RunEvent` (2000, 0).
+OPT_ARGS_DECOMPILER = {}
+
+
+def _decompile(category: int, index: int, uses_opt_args=False):
+    """Generated decorator that adds the decorated function to the `DECOMPILER` dictionary under `(category, index)`.
+
+    The decorated function will be called from `Instruction.to_evs()` with its EMEVD arguments passed in.
+    """
+    decompiler_dict = OPT_ARGS_DECOMPILER if uses_opt_args else DECOMPILER
+    if (category, index) in decompiler_dict:
+        raise ValueError(f"Decompiler for ({category}, {index}) appeared more than once in module.")
+
+    def decorator(func):
+        decompiler_dict[category, index] = func
+        return func  # no actual decoration
+
+    return decorator
+
+
+def decompile_instruction(
+    category: int,
+    index: int,
+    req_args: list[tp.Any],
+    opt_args: list[tp.Any] = None,
+    opt_arg_types="",
+    enums_manager: EntityEnumsManager = None,
+) -> str:
+    """Uses a manual function (decorated below) or EMEDF information to decompile an EMEVD instruction to EVS format.
+
+    `opt_args` and `opt_arg_types` are only permitted for instructions that take optional arguments, such as `RunEvent`.
+    """
+    return base_decompiler_instruction(
+        EMEDF,
+        DECOMPILER,
+        OPT_ARGS_DECOMPILER,
+        enums,
+        category,
+        index,
+        req_args,
+        opt_args,
+        opt_arg_types,
+        enums_manager,
+    )
+
+
+@_decompile(2000, 0, uses_opt_args=True)
+def _RunEvent(
+    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+):
+    return base_run_event(slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager)
+
+
+@_decompile(2002, 2)
+def _PlayCutsceneAndMovePlayer(
+    cutscene_id: int, cutscene_flags: CutsceneFlags, move_to_region: Region, area_id: int, block_id: int
+):
+    """Wrapper is always allowable."""
+    game_map = get_map_variable_name(area_id, block_id)
+    return f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {move_to_region=}, game_map={game_map})"
+
+
+@_decompile(2002, 3)
+def _PlayCutsceneToPlayer(cutscene_id, cutscene_flags: CutsceneFlags, player_id: Character):
+    """Wrapper is always allowable."""
+    return f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {player_id=})"
+
+
+@_decompile(2002, 4)
+def _PlayCutsceneAndMoveSpecificPlayer(
+    cutscene_id: int,
+    cutscene_flags: int,
+    move_to_region: Region,
+    area_id: int,
+    block_id: int,
+    player_id: Character,
+):
+    """Wrapper is always allowable."""
+    game_map = get_map_variable_name(area_id, block_id)
+    return (
+        f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {player_id=}, {move_to_region=}, game_map={game_map})"
+    )
+
+
+@_decompile(2002, 5)
+def _PlayCutsceneAndRotatePlayer(
+    cutscene_id: int,
+    cutscene_flags: int,
+    relative_rotation_axis_x,
+    relative_rotation_axis_z,
+    rotation,
+    vertical_translation,
+    player_id: Character,
+):
+    """Wrapper is always allowable."""
+    return (
+        f"PlayCutscene({cutscene_id=}, {cutscene_flags=}, {player_id=}, "
+        f"{rotation=}, {relative_rotation_axis_x=}, {relative_rotation_axis_z=}, {vertical_translation=})"
+    )
+
+
+@_decompile(2003, 4)
+def _AwardItemLotToAllPlayers(item_lot_id: int):
+    return f"AwardItemLot({item_lot_id}, host_only=False)"
+
+
+@_decompile(2003, 36)
+def _AwardItemLotToHostOnly(item_lot_id: int):
+    return f"AwardItemLot({item_lot_id}, host_only=True)"
+
+
+@_decompile(2005, 6)
+def _SetObjectActivation(obj: Object, obj_act_id: int, state: bool):
+    if state is True:
+        return f"EnableObjectActivation({obj}, {obj_act_id=})"
+    elif state is False:
+        return f"DisableObjectActivation({obj}, {obj_act_id=})"
+    return f"SetObjectActivation({obj}, {obj_act_id=}, {state=})"
+
+
+@_decompile(2005, 14)
+def _SetObjectActivationWithIdx(obj: Object, obj_act_id, relative_index, state: bool):
+    """Defers to a wrapper instruction shared with (2005, 6) if `state` is not an event argument."""
+    if state is True:
+        return f"EnableObjectActivation({obj}, {obj_act_id=}, {relative_index=})"
+    elif state is False:
+        return f"DisableObjectActivation({obj}, {obj_act_id=}, {relative_index=})"
+    return f"SetObjectActivationWithIdx({obj}, {obj_act_id=}, {relative_index=}, {state=})"
+
+
+@_decompile(2004, 40)
+def _MoveAndSetDrawParent(
+    character: Character,
+    destination_type: CoordEntityType,
+    destination: tp.Union[Character, Object, Region],
+    model_point: int,
+    set_draw_parent: MapPart,
+):
+    if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
+        if isinstance(destination, MapEntity):  # `destination_type` is implicit
+            return f"Move({character}, {destination=}, {set_draw_parent=})"  # default model point
+        return f"Move({character}, {destination=}, {destination_type=}, {set_draw_parent=})"  # default model point
+    if isinstance(destination, MapEntity):  # `destination_type` is implicit
+        return f"Move({character}, {destination=}, {model_point=}, {set_draw_parent=})"
+    return f"Move({character}, {destination=}, {destination_type=}, {model_point=}, {set_draw_parent=})"
+
+
+@_decompile(2004, 41)
+def _ShortMove(
+    character: Character,
+    destination_type: CoordEntityType,
+    destination: tp.Union[Character, Object, Region],
+    model_point: int,
+):
+    if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
+        if isinstance(destination, MapEntity):  # `destination_type` is implicit
+            return f"Move({character}, {destination=}, short_move=True)"  # default model point
+        return f"Move({character}, {destination=}, {destination_type=}, short_move=True)"  # default model point
+    if isinstance(destination, MapEntity):  # `destination_type` is implicit
+        return f"Move({character}, {destination=}, {model_point=}, short_move=True)"
+    return f"Move({character}, {destination=}, {destination_type=}, {model_point=}, short_move=True)"
+
+
+@_decompile(2004, 42)
+def _MoveAndCopyDrawParent(
+    character: Character,
+    destination_type: CoordEntityType,
+    destination: tp.Union[Character, Object, Region],
+    model_point: int,
+    copy_draw_parent: tp.Union[Character, Object],
+):
+    if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
+        if isinstance(destination, MapEntity):  # `destination_type` is implicit
+            return f"Move({character}, {destination=}, {copy_draw_parent=})"  # default model point
+        return f"Move({character}, {destination=}, {destination_type=}, {copy_draw_parent=})"  # default model point
+    if isinstance(destination, MapEntity):  # `destination_type` is implicit
+        return f"Move({character}, {destination=}, {model_point=}, {copy_draw_parent=})"
+    return f"Move({character}, {destination=}, {destination_type=}, {model_point=}, {copy_draw_parent=})"
+
+
+@_decompile(3, 4)
+def _IfPlayerItemStateExcludingStorage(condition: int, item_type: ItemType, item, state: bool):
+    if not isinstance(state, str) and not isinstance(item_type, str):
+        state_name = "Has" if state else "DoesNotHave"
+        if isinstance(item_type, str):
+            return f"IfPlayer{state_name}Item({condition}, {item}, {item_type=})"
+        return f"IfPlayer{state_name}{item_type.name}({condition}, {item})"
+    return f"IfPlayerItemState({condition}, {state=}, {item=}, {item_type=})"
+
+
+@_decompile(3, 16)
+def _IfPlayerItemStateIncludingStorage(condition: int, item_type: ItemType, item, state: bool):
+    if not isinstance(state, str):
+        state_name = "Has" if state else "DoesNotHave"
+        if isinstance(item_type, str):
+            return f"IfPlayer{state_name}Item({condition}, {item}, {item_type=}, including_storage=True)"
+        return f"IfPlayer{state_name}{item_type.name}({condition}, {item}, including_storage=True)"
+    return f"IfPlayerItemState({condition}, {state=}, {item=}, {item_type=}, including_storage=True)"
+
+
+# TODO: I'm not 100% certain that the old `IfActionButton` works in Bloodborne. I can't remember if I got it to work
+#  for Boss Rush or if I ended up implementing an ActionButton param properly... I *think* the below still works.
+
+
+def _IfActionButton(
+    condition: int,
+    anchor_type: CoordEntityType,
+    anchor_entity: tp.Union[Character, Object, Region],
+    facing_angle: float,
+    model_point: int,
+    max_distance: float,
+    prompt_text: int,
+    trigger_attribute: TriggerAttribute,
+    button: int,
+    boss_version=False,
+    line_intersects=None,
+):
+    defaults = {
+        "trigger_attribute": TriggerAttribute.Human_or_Hollow,
+        "button": 0,
+    }
+    if not isinstance(anchor_type, str):
+        defaults["facing_angle"] = 0.0 if anchor_type.name == "Region" else 180.0
+        defaults["max_distance"] = 0.0 if anchor_type.name == "Region" else 2.0
+        if anchor_type.name == "Region":
+            defaults["model_point"] = -1
+    arg_string = assemble_arg_string(
+        defaults,
+        condition,
+        prompt_text=prompt_text,
+        anchor_entity=anchor_entity,
+        anchor_type=anchor_type,
+        facing_angle=facing_angle,
+        max_distance=max_distance,
+        model_point=model_point,
+        button=button,
+        trigger_attribute=trigger_attribute,
+    )
+    if boss_version:
+        if line_intersects is not None:
+            return f"IfActionButton({arg_string}, {boss_version=}, {line_intersects=})"
+        else:
+            return f"IfActionButton({arg_string}, {boss_version=})"
+    else:
+        if line_intersects is not None:
+            return f"IfActionButton({arg_string}, {line_intersects=})"
+        else:
+            return f"IfActionButton({arg_string})"
+
+
+@_decompile(3, 5)
+def _IfActionButtonBasic(
+    condition: int,
+    anchor_type: CoordEntityType,
+    anchor_entity: tp.Union[Character, Object, Region],
+    facing_angle: float,
+    model_point: int,
+    max_distance: float,
+    prompt_text: int,
+    trigger_attribute: TriggerAttribute,
+    button: int,
+):
+    return _IfActionButton(
+        condition,
+        anchor_type,
+        anchor_entity,
+        facing_angle,
+        model_point,
+        max_distance,
+        prompt_text,
+        trigger_attribute,
+        button,
+        boss_version=False,
+        line_intersects=None,
+    )
+
+
+@_decompile(3, 13)
+def _IfActionButtonBasic(
+    condition: int,
+    anchor_type: CoordEntityType,
+    anchor_entity: tp.Union[Character, Object, Region],
+    facing_angle: float,
+    model_point: int,
+    max_distance: float,
+    prompt_text: int,
+    trigger_attribute: TriggerAttribute,
+    button: int,
+):
+    return _IfActionButton(
+        condition,
+        anchor_type,
+        anchor_entity,
+        facing_angle,
+        model_point,
+        max_distance,
+        prompt_text,
+        trigger_attribute,
+        button,
+        boss_version=True,
+        line_intersects=None,
+    )
+
+
+@_decompile(3, 18)
+def _IfActionButtonBasic(
+    condition: int,
+    anchor_type: CoordEntityType,
+    anchor_entity: tp.Union[Character, Object, Region],
+    facing_angle: float,
+    model_point: int,
+    max_distance: float,
+    prompt_text: int,
+    trigger_attribute: TriggerAttribute,
+    button: int,
+    line_intersects: tp.Union[Character, Object, Region],
+):
+    return _IfActionButton(
+        condition,
+        anchor_type,
+        anchor_entity,
+        facing_angle,
+        model_point,
+        max_distance,
+        prompt_text,
+        trigger_attribute,
+        button,
+        boss_version=False,
+        line_intersects=line_intersects,
+    )
+
+
+@_decompile(3, 19)
+def _IfActionButtonBasic(
+    condition: int,
+    anchor_type: CoordEntityType,
+    anchor_entity: tp.Union[Character, Object, Region],
+    facing_angle: float,
+    model_point: int,
+    max_distance: float,
+    prompt_text: int,
+    trigger_attribute: TriggerAttribute,
+    button: int,
+    line_intersects: tp.Union[Character, Object, Region],
+):
+    return _IfActionButton(
+        condition,
+        anchor_type,
+        anchor_entity,
+        facing_angle,
+        model_point,
+        max_distance,
+        prompt_text,
+        trigger_attribute,
+        button,
+        boss_version=True,
+        line_intersects=line_intersects,
+    )
+
+
+@_decompile(1014, 0)
+def _DefineLabel_0():
+    return "DefineLabel(0)"
+
+
+@_decompile(1014, 1)
+def _DefineLabel_1():
+    return "DefineLabel(1)"
+
+
+@_decompile(1014, 2)
+def _DefineLabel_2():
+    return "DefineLabel(2)"
+
+
+@_decompile(1014, 3)
+def _DefineLabel_3():
+    return "DefineLabel(3)"
+
+
+@_decompile(1014, 4)
+def _DefineLabel_4():
+    return "DefineLabel(4)"
+
+
+@_decompile(1014, 5)
+def _DefineLabel_5():
+    return "DefineLabel(5)"
+
+
+@_decompile(1014, 6)
+def _DefineLabel_6():
+    return "DefineLabel(6)"
+
+
+@_decompile(1014, 7)
+def _DefineLabel_7():
+    return "DefineLabel(7)"
+
+
+@_decompile(1014, 8)
+def _DefineLabel_8():
+    return "DefineLabel(8)"
+
+
+@_decompile(1014, 9)
+def _DefineLabel_9():
+    return "DefineLabel(9)"

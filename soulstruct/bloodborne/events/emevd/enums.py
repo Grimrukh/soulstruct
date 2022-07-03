@@ -7,12 +7,7 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
-    "CLIENT_PLAYER_1",
-    "CLIENT_PLAYER_2",
-    "CLIENT_PLAYER_3",
-    "CLIENT_PLAYER_4",
-    "CLIENT_PLAYER_5",
-    "PlayerEntity",
+    "ProtectedEntities",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",
@@ -21,6 +16,7 @@ __all__ = [
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
+    "Covenant",
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
@@ -66,14 +62,14 @@ from enum import IntEnum
 from soulstruct.base.events.emevd.enums import *
 
 
-class PlayerEntity(IntEnum):
+class ProtectedEntities(IntEnum):
     """Hard-coded entity IDs used in EMEVD instructions. Used by decompiler; you can use global names above instead."""
     Player = PLAYER
-    ClientPlayer1 = CLIENT_PLAYER_1
-    ClientPlayer2 = CLIENT_PLAYER_2
-    ClientPlayer3 = CLIENT_PLAYER_3
-    ClientPlayer4 = CLIENT_PLAYER_4
-    ClientPlayer5 = CLIENT_PLAYER_5
+    ClientPlayer1 = 10001
+    ClientPlayer2 = 10002
+    ClientPlayer3 = 10003
+    ClientPlayer4 = 10004
+    ClientPlayer5 = 10005
 
 
 # Basic obvious booleans are omitted:
@@ -186,7 +182,7 @@ class InterpolationState(IntEnum):
 class ItemType(IntEnum):
     Weapon = 0
     Armor = 1
-    Ring = 2
+    Rune = 2
     Good = 3
 
 

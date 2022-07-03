@@ -49,7 +49,7 @@ __all__ = [
     "WHITE_WORLD_TENDENCY",
     "BLACK_WORLD_TENDENCY",
     "NEW_GAME_CYCLE",
-    "SOUL_LEVEL",
+    "PLAYER_LEVEL",
     "FlagEnabled",
     "FlagDisabled",
     "SecondsElapsed",

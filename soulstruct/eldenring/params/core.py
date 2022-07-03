@@ -77,7 +77,7 @@ class GameParamBND(_BaseGameParamBND, BND4):
         "SpecialEffects": SpecialEffectParam,
         "Weapons": WeaponParam,
         "Armor": ArmorParam,
-        "Rings": RingParam,
+        "Rings": AccessoryParam,
         "Goods": GoodParam,
         "WeaponUpgrades": WeaponUpgradeParam,
         "ArmorUpgrades": ArmorUpgradeParam,

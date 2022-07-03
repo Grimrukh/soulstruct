@@ -47,9 +47,8 @@ __all__ = [
     "IfHost",
     "IfClient",
     "IfMultiplayer",
+    "IfConnectingMultiplayer",
     "IfSingleplayer",
-    "IfUnknownPlayerType4",
-    "IfUnknownPlayerType5",
     "IfAllPlayersRegionState",  # 3[7]
     "IfAllPlayersInsideRegion",
     "IfAllPlayersOutsideRegion",
@@ -96,8 +95,19 @@ __all__ = [
     "IfOnlineState",  # 3[22]
     "IfOnline",
     "IfOffline",
-    "If_Unknown_3_23",  # 3[23]
-    "If_Unknown_3_24",  # 3[24]
+    "IfAttackedWithDamageType",  # 3[23]
+    "IfActionButtonParam",  # 3[24]
+    "IfPlayerArmorType",  # 3[25]
+    "IfPlayerInsightAmountComparison",  # 3[26]
+    "IfPlayerInsightAmountEqual",
+    "IfPlayerInsightAmountNotEqual",
+    "IfPlayerInsightAmountGreaterThan",
+    "IfPlayerInsightAmountLessThan",
+    "IfPlayerInsightAmountGreaterThanOrEqual",
+    "IfPlayerInsightAmountLessThanOrEqual",
+    "IfDialogChoice",  # 3[27]
+    "IfPlayGoState",  # 3[28]
+    "IfClientTypeCountComparison",  # 3[29]
     "IfCharacterDeathState",  # 4[0]
     "IfCharacterDead",
     "IfCharacterAlive",
@@ -148,9 +158,9 @@ __all__ = [
     "IfHealthValueLessThan",
     "IfHealthValueGreaterThanOrEqual",
     "IfHealthValueLessThanOrEqual",
-    "Unknown_4_15",  # 4[15]
-    "Unknown_4_16",  # 4[16]
-    "IfArenaMatchmaking",  # 4[17]
+    "IfCharacterDrawGroupState",  # 4[15]
+    "IfCharacterDrawGroupEnabled",
+    "IfCharacterDrawGroupDisabled",
     "IfObjectDestructionState",  # 5[0]
     "IfObjectDestroyed",
     "IfObjectNotDestroyed",
@@ -204,6 +214,14 @@ __all__ = [
     "RestartIfFinishedConditionTrue",
     "RestartIfFinishedConditionFalse",
     "WaitForNetworkApproval",  # 1000[9]
+    "GotoIfConditionState",  # 1000[101]
+    "GotoIfConditionTrue",
+    "GotoIfConditionFalse",
+    "Goto",  # 1000[103]
+    "GotoIfValueComparison",  # 1000[105]
+    "GotoIfFinishedConditionState",  # 1000[107]
+    "GotoIfFinishedConditionTrue",
+    "GotoIfFinishedConditionFalse",
     "Wait",  # 1001[0]
     "WaitFrames",  # 1001[1]
     "WaitRandomSeconds",  # 1001[2]
@@ -253,22 +271,19 @@ __all__ = [
     "SkipLinesIfHost",
     "SkipLinesIfClient",
     "SkipLinesIfMultiplayer",
+    "SkipLinesIfConnectingMultiplayer",
     "SkipLinesIfSingleplayer",
-    "SkipLinesIfUnknownPlayerType4",
-    "SkipLinesIfUnknownPlayerType5",
     "ReturnIfMultiplayerState",  # 1003[6]
     "EndIfHost",
     "EndIfClient",
     "EndIfMultiplayer",
+    "EndIfConnectingMultiplayer",
     "EndIfSingleplayer",
-    "EndIfUnknownPlayerType4",
-    "EndIfUnknownPlayerType5",
     "RestartIfHost",
     "RestartIfClient",
     "RestartIfMultiplayer",
+    "RestartIfConnectingMultiplayer",
     "RestartIfSingleplayer",
-    "RestartIfUnknownPlayerType4",
-    "RestartIfUnknownPlayerType5",
     "SkipLinesIfMapPresenceState",  # 1003[7]
     "SkipLinesIfInsideMap",
     "SkipLinesIfOutsideMap",
@@ -277,6 +292,42 @@ __all__ = [
     "EndIfOutsideMap",
     "RestartIfInsideMap",
     "RestartIfOutsideMap",
+    "SkipLinesIfCoopClientCountComparison",  # 1003[9]
+    "ReturnIfCoopClientCountComparison",  # 1003[10]
+    "EndIfCoopClientCountComparison",
+    "RestartIfCoopClientCountComparison",
+    "SkipLinesIfPlayerGender",  # 1003[11]
+    "GotoIfPlayerGender",  # 1003[12]
+    "ReturnIfPlayerGender",  # 1003[13]
+    "EndIfPlayerGender",
+    "RestartIfPlayerGender",
+    "SkipLinesIfClientTypeCountComparison",  # 1003[14]
+    "GotoIfClientTypeCountComparison",  # 1003[15]
+    "ReturnIfClientTypeCountComparison",  # 1003[16]
+    "EndIfClientTypeCountComparison",
+    "RestartIfClientTypeCountComparison",
+    "GotoIfFlagState",  # 1003[101]
+    "GotoIfThisEventFlagEnabled",
+    "GotoIfThisEventFlagDisabled",
+    "GotoIfThisEventSlotFlagEnabled",
+    "GotoIfThisEventSlotFlagDisabled",
+    "GotoIfFlagEnabled",
+    "GotoIfFlagDisabled",
+    "GotoIfFlagRangeState",  # 1003[103]
+    "GotoIfFlagRangeAllEnabled",
+    "GotoIfFlagRangeAllDisabled",
+    "GotoIfFlagRangeAnyEnabled",
+    "GotoIfFlagRangeAnyDisabled",
+    "GotoIfMultiplayerState",  # 1003[105]
+    "GotoIfHost",
+    "GotoIfClient",
+    "GotoIfMultiplayer",
+    "GotoIfConnectingMultiplayer",
+    "GotoIfSingleplayer",
+    "GotoIfMapPresenceState",  # 1003[107]
+    "GotoIfInsideMap",
+    "GotoIfOutsideMap",
+    "GotoIfCoopClientCountComparison",  # 1003[109]
     "AwaitObjectDestructionState",  # 1005[0]
     "AwaitObjectDestroyed",
     "AwaitObjectNotDestroyed",
@@ -288,6 +339,17 @@ __all__ = [
     "EndIfObjectNotDestroyed",
     "RestartIfObjectDestroyed",
     "RestartIfObjectNotDestroyed",
+    "GotoIfObjectDestructionState",  # 1005[101]
+    "DefineLabel_0",  # 1014[0]
+    "DefineLabel_1",  # 1014[1]
+    "DefineLabel_2",  # 1014[2]
+    "DefineLabel_3",  # 1014[3]
+    "DefineLabel_4",  # 1014[4]
+    "DefineLabel_5",  # 1014[5]
+    "DefineLabel_6",  # 1014[6]
+    "DefineLabel_7",  # 1014[7]
+    "DefineLabel_8",  # 1014[8]
+    "DefineLabel_9",  # 1014[9]
     "TerminateEvent",  # 2000[1]
     "SetNetworkSyncState",  # 2000[2]
     "EnableNetworkSync",
@@ -295,14 +357,14 @@ __all__ = [
     "ClearMainCondition",  # 2000[3]
     "IssuePrefetchRequest",  # 2000[4]
     "SaveRequest",  # 2000[5]
-    "Unknown_2000_6",  # 2000[6]
     "PlayCutsceneToAll",  # 2002[1]
     "PlayCutsceneAndMovePlayer",  # 2002[2]
     "PlayCutsceneToPlayer",  # 2002[3]
     "PlayCutsceneAndMoveSpecificPlayer",  # 2002[4]
     "PlayCutsceneAndRotatePlayer",  # 2002[5]
-    "PlayCutsceneAndRandomlyWarpPlayer_2002_6",  # 2002[6]
-    "PlayCutsceneAndRandomlyWarpPlayer_2002_7",  # 2002[7]
+    "PlayCutsceneAndMovePlayerAndSetTimePeriod",  # 2002[6]
+    "PlayCutsceneAndSetTimePeriod",  # 2002[7]
+    "PlayCutsceneAndMovePlayer_Dummy",  # 2002[8]
     "RequestAnimation",  # 2003[1]
     "SetFlagState",  # 2003[2]
     "EnableFlag",
@@ -325,6 +387,7 @@ __all__ = [
     "DisableNavmeshType",
     "ToggleNavmeshType",
     "WarpToMap",  # 2003[14]
+    "HandleMinibossDefeat",  # 2003[15]
     "TriggerMultiplayerEvent",  # 2003[16]
     "SetRandomFlagInRange",  # 2003[17]
     "EnableRandomFlagInRange",
@@ -347,6 +410,7 @@ __all__ = [
     "SetSoapstoneMessageState",  # 2003[26]
     "EnableSoapstoneMessage",
     "DisableSoapstoneMessage",
+    "Unknown_2003_27",  # 2003[27]
     "AwardAchievement",  # 2003[28]
     "SetVagrantSpawningState",  # 2003[30]
     "EnableVagrantSpawning",
@@ -361,14 +425,24 @@ __all__ = [
     "ArenaRankingRequest2v2",  # 2003[38]
     "ArenaRankingRequestFFA",  # 2003[39]
     "ArenaExitRequest",  # 2003[40]
-    "ActivateKillplaneForModel",  # 2003[41]
-    "CopyEventValue",  # 2003[42]
-    "Unknown_2003_43",  # 2003[43]
-    "ForceAnimation_Unknown_2003_44",  # 2003[44]
-    "ForceAnimation_Unknown_2003_46",  # 2003[46]
-    "Unknown_2003_47",  # 2003[47]
-    "Unknown_2003_48",  # 2003[48]
-    "EraseNPCSummonSign",  # 2003[49]
+    "EventValueOperation",  # 2003[41]
+    "StoreItemAmountSpecifiedByFlagValue",  # 2003[42]
+    "GivePlayerItemAmountSpecifiedByFlagValue",  # 2003[43]
+    "SetDirectionDisplayState",  # 2003[44]
+    "EnableDirectionDisplayState",
+    "DisableDirectionDisplayState",
+    "SetMapHitGridCorrespondence",  # 2003[45]
+    "EnableMapHitGridCorrespondence",
+    "DisableMapHitGridCorrespondence",
+    "SetMapContentImageDisplayState",  # 2003[46]
+    "SetMapBoundariesDisplay",  # 2003[47]
+    "SetAreaWind",  # 2003[48]
+    "WarpPlayerToRespawnPoint",  # 2003[49]
+    "StartEnemySpawner",  # 2003[50]
+    "SummonNPC",  # 2003[51]
+    "InitializeWarpObject",  # 2003[52]
+    "BossDefeat",  # 2003[53]
+    "SendNPCSummonHome",  # 2003[54]
     "SetAIState",  # 2004[1]
     "EnableAI",
     "DisableAI",
@@ -435,11 +509,14 @@ __all__ = [
     "HumanityRegistration",  # 2004[45]
     "IncrementPvPSin",  # 2004[46]
     "EqualRecovery",  # 2004[47]
-    "FadeOutCharacter",  # 2004[48]
-    "FadeInCharacter",  # 2004[49]
-    "Unknown_2004_50",  # 2004[50]
-    "Unknown_2004_51",  # 2004[51]
-    "Unknown_2004_52",  # 2004[52]
+    "ChangeCharacterCloth",  # 2004[48]
+    "ChangePatrolBehavior",  # 2004[49]
+    "SetDistanceLimitForConversationStateChanges",  # 2004[50]
+    "Test_RequestRagdollRestraint",  # 2004[51]
+    "ChangePlayerCharacterInitParam",  # 2004[52]
+    "AdaptSpecialEffectHealthChangeToNPCPart",  # 2004[53]
+    "SetGravityAndCollisionExcludingOwnWorld",  # 2004[54]
+    "AddSpecialEffect_WithUnknownEffect",  # 2004[55]
     "DestroyObject",  # 2005[1]
     "RestoreObject",  # 2005[2]
     "SetObjectState",  # 2005[3]
@@ -461,6 +538,8 @@ __all__ = [
     "DisableObjectInvulnerability",
     "SetObjectActivationWithIdx",  # 2005[14]
     "EnableTreasureCollection",  # 2005[15]
+    "ActivateObjectWithSpecificCharacter",  # 2005[16]
+    "SetObjectDamageShieldState",  # 2005[17]
     "DeleteVFX",  # 2006[1]
     "CreateVFX",  # 2006[2]
     "CreateTemporaryVFX",  # 2006[3]
@@ -475,39 +554,39 @@ __all__ = [
     "ArenaSetNametag3",  # 2007[7]
     "ArenaSetNametag4",  # 2007[8]
     "DisplayArenaDissolutionMessage",  # 2007[9]
-    "ArenaSetNametag5",  # 2007[10]
-    "ArenaSetNametag6",  # 2007[11]
-    "DisplayConcatenatedMessage",  # 2007[12]
-    "Unknown_2007_13",  # 2007[13]
     "ChangeCamera",  # 2008[1]
     "SetCameraVibration",  # 2008[2]
     "SetLockedCameraSlot",  # 2008[3]
-    "Unknown_2008_04",  # 2008[4]
     "RegisterLadder",  # 2009[0]
     "InitializeWanderingDemon",  # 2009[1]
     "RegisterWanderingDemon",  # 2009[2]
     "RegisterBonfire",  # 2009[3]
     "ActivateMultiplayerBuffs",  # 2009[4]
-    "RegisterHealingFountain",  # 2009[5]
+    "RegisterLantern",  # 2009[5]
     "NotifyBossBattleStart",  # 2009[6]
     "SetBackgroundMusic",  # 2010[1]
     "PlaySoundEffect",  # 2010[2]
     "SetSoundEventState",  # 2010[3]
     "EnableSoundEvent",
     "DisableSoundEvent",
+    "SetBossMusicState",  # 2010[4]
+    "EnableBossMusic",
+    "DisableBossMusic",
+    "NotifyDoorEventSoundDampening",  # 2010[5]
     "SetMapCollisionState",  # 2011[1]
     "EnableMapCollision",
     "DisableMapCollision",
     "SetMapCollisionBackreadMaskState",  # 2011[2]
     "EnableMapCollisionBackreadMask",
     "DisableMapCollisionBackreadMask",
+    "SetCollisionResState",  # 2011[3]
     "SetMapPieceState",  # 2012[1]
     "EnableMapPiece",
     "DisableMapPiece",
-    "NightfallSendToScript",  # 2009[7]
-    "NightfallSetSpecialMovement",  # 2009[10]
-    "NightfallClearSpecialMovement",  # 2009[11]
-    "NightfallCameraResetRequest",  # 2009[12]
+    "CreatePlayLog",  # 2013[1]
+    "StartPlayLogMeasurement",  # 2013[2]
+    "StopPlayLogMeasurement",  # 2013[3]
+    "PlayLogParameterOutput",  # 2013[4]
     "EnableThisFlag",
     "DisableThisFlag",
 
@@ -523,17 +602,18 @@ __all__ = [
     "IfPlayerHasItem",
     "IfPlayerHasWeapon",
     "IfPlayerHasArmor",
-    "IfPlayerHasRing",
+    "IfPlayerHasRune",
     "IfPlayerHasGood",
     "IfPlayerDoesNotHaveItem",
     "IfPlayerDoesNotHaveWeapon",
     "IfPlayerDoesNotHaveArmor",
-    "IfPlayerDoesNotHaveRing",
+    "IfPlayerDoesNotHaveRune",
     "IfPlayerDoesNotHaveGood",
     "IfActionButton",
+    "DefineLabel",
 ]
 
-from soulstruct.darksouls1r.game_types import *
+from soulstruct.bloodborne.game_types import *
 from .emevd.compiler import *
 from .emevd.enums import *
 
@@ -831,21 +911,15 @@ def IfMultiplayer(condition: int):
     """
 
 
-def IfSingleplayer(condition: int):
+def IfConnectingMultiplayer(condition: int):
     """
     Calls `IfMultiplayerState` with `state=3`.
     """
 
 
-def IfUnknownPlayerType4(condition: int):
+def IfSingleplayer(condition: int):
     """
     Calls `IfMultiplayerState` with `state=4`.
-    """
-
-
-def IfUnknownPlayerType5(condition: int):
-    """
-    Calls `IfMultiplayerState` with `state=5`.
     """
 
 
@@ -1225,15 +1299,96 @@ def IfOffline(condition: int):
     """
 
 
-def If_Unknown_3_23(condition: int, unk1: int, unk2: int):
+def IfAttackedWithDamageType(
+    condition: int,
+    attacked_entity: Character | int,
+    attacker: Character | int = -1,
+    damage_type: DamageType | int = DamageType.Unspecified,
+):
     """
-    Unknown command. Second and third arguments appear to both always be zero.
+    TODO
     """
 
 
-def If_Unknown_3_24(condition: int, unk1: int, unk2: int):
+def IfActionButtonParam(condition: int, action_button_id: int, entity: Object | Region | Character | int):
     """
-    'If Multiplayer Count', apparently.
+    TODO
+    """
+
+
+def IfPlayerArmorType(
+    condition: int,
+    armor_type: ArmorType | int,
+    required_armor_range_first: ArmorParam | int,
+    required_armor_range_last: ArmorParam | int,
+):
+    """
+    TODO
+    """
+
+
+def IfPlayerInsightAmountComparison(condition: int, value: int, comparison_type: ComparisonType | int):
+    """
+    TODO
+    """
+
+
+def IfPlayerInsightAmountEqual(condition: int, value: int):
+    """
+    Calls `IfPlayerInsightAmountComparison` with `comparison_type=0`.
+    """
+
+
+def IfPlayerInsightAmountNotEqual(condition: int, value: int):
+    """
+    Calls `IfPlayerInsightAmountComparison` with `comparison_type=1`.
+    """
+
+
+def IfPlayerInsightAmountGreaterThan(condition: int, value: int):
+    """
+    Calls `IfPlayerInsightAmountComparison` with `comparison_type=2`.
+    """
+
+
+def IfPlayerInsightAmountLessThan(condition: int, value: int):
+    """
+    Calls `IfPlayerInsightAmountComparison` with `comparison_type=3`.
+    """
+
+
+def IfPlayerInsightAmountGreaterThanOrEqual(condition: int, value: int):
+    """
+    Calls `IfPlayerInsightAmountComparison` with `comparison_type=4`.
+    """
+
+
+def IfPlayerInsightAmountLessThanOrEqual(condition: int, value: int):
+    """
+    Calls `IfPlayerInsightAmountComparison` with `comparison_type=5`.
+    """
+
+
+def IfDialogChoice(condition: int, dialog_result: DialogResult | int):
+    """
+    TODO
+    """
+
+
+def IfPlayGoState(condition: int, playgo_state: PlayGoState | int):
+    """
+    Blocks off areas of the game (namely, beyond Father Gascoigne) that have not been downloaded/installed yet.
+    """
+
+
+def IfClientTypeCountComparison(
+    condition: int,
+    client_type: ClientType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
+    """
+    Value should only range between 0 and 4 (the maximum number of clients).
     """
 
 
@@ -1553,21 +1708,21 @@ def IfHealthValueLessThanOrEqual(condition: int, character: Character | int, val
     """
 
 
-def Unknown_4_15(condition: int, unk1: int):
+def IfCharacterDrawGroupState(condition: int, character: Character | int, state: bool):
     """
-    TODO
-    """
-
-
-def Unknown_4_16(condition: int, unk1: int, unk2: int, unk3: int):
-    """
-    TODO
+    Tests if character's draw group is currently enabled or disabled.
     """
 
 
-def IfArenaMatchmaking(condition: int):
+def IfCharacterDrawGroupEnabled(condition: int, character: Character | int):
     """
-    TODO
+    Calls `IfCharacterDrawGroupState` with `state=True`.
+    """
+
+
+def IfCharacterDrawGroupDisabled(condition: int, character: Character | int):
+    """
+    Calls `IfCharacterDrawGroupState` with `state=False`.
     """
 
 
@@ -1897,6 +2052,54 @@ def WaitForNetworkApproval(max_seconds: float):
     """
 
 
+def GotoIfConditionState(label: Label | int, required_state: bool, input_condition: int):
+    """
+    TODO
+    """
+
+
+def GotoIfConditionTrue(label: Label | int, input_condition: int):
+    """
+    Calls `GotoIfConditionState` with `required_state=True`.
+    """
+
+
+def GotoIfConditionFalse(label: Label | int, input_condition: int):
+    """
+    Calls `GotoIfConditionState` with `required_state=False`.
+    """
+
+
+def Goto(label: Label | int):
+    """
+    Unconditional GOTO.
+    """
+
+
+def GotoIfValueComparison(label: Label | int, comparison_type: ComparisonType | int, left: int, right: int):
+    """
+    TODO
+    """
+
+
+def GotoIfFinishedConditionState(label: Label | int, required_state: bool, input_condition: int):
+    """
+    Finished version.
+    """
+
+
+def GotoIfFinishedConditionTrue(label: Label | int, input_condition: int):
+    """
+    Calls `GotoIfFinishedConditionState` with `required_state=True`.
+    """
+
+
+def GotoIfFinishedConditionFalse(label: Label | int, input_condition: int):
+    """
+    Calls `GotoIfFinishedConditionState` with `required_state=False`.
+    """
+
+
 def Wait(seconds: float):
     """
     Wait for some number of seconds.
@@ -2207,21 +2410,15 @@ def SkipLinesIfMultiplayer(line_count: int):
     """
 
 
-def SkipLinesIfSingleplayer(line_count: int):
+def SkipLinesIfConnectingMultiplayer(line_count: int):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=3`.
     """
 
 
-def SkipLinesIfUnknownPlayerType4(line_count: int):
+def SkipLinesIfSingleplayer(line_count: int):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=4`.
-    """
-
-
-def SkipLinesIfUnknownPlayerType5(line_count: int):
-    """
-    Calls `SkipLinesIfMultiplayerState` with `state=5`.
     """
 
 
@@ -2249,21 +2446,15 @@ def EndIfMultiplayer():
     """
 
 
-def EndIfSingleplayer():
+def EndIfConnectingMultiplayer():
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=3`.
     """
 
 
-def EndIfUnknownPlayerType4():
+def EndIfSingleplayer():
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=4`.
-    """
-
-
-def EndIfUnknownPlayerType5():
-    """
-    Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=5`.
     """
 
 
@@ -2285,21 +2476,15 @@ def RestartIfMultiplayer():
     """
 
 
-def RestartIfSingleplayer():
+def RestartIfConnectingMultiplayer():
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=3`.
     """
 
 
-def RestartIfUnknownPlayerType4():
+def RestartIfSingleplayer():
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=4`.
-    """
-
-
-def RestartIfUnknownPlayerType5():
-    """
-    Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=5`.
     """
 
 
@@ -2348,6 +2533,250 @@ def RestartIfInsideMap(game_map: Map | tuple | list):
 def RestartIfOutsideMap(game_map: Map | tuple | list):
     """
     Calls `ReturnIfMapPresenceState` with `event_return_type=1`, `state=False`.
+    """
+
+
+def SkipLinesIfCoopClientCountComparison(skip_lines: int, comparison_type: ComparisonType | int, value: int):
+    """
+    Value should be from 0 to 4.
+    """
+
+
+def ReturnIfCoopClientCountComparison(
+    event_return_type: EventReturnType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
+    """
+    TODO
+    """
+
+
+def EndIfCoopClientCountComparison(comparison_type: ComparisonType | int, value: int):
+    """
+    Calls `ReturnIfCoopClientCountComparison` with `event_return_type=0`.
+    """
+
+
+def RestartIfCoopClientCountComparison(comparison_type: ComparisonType | int, value: int):
+    """
+    Calls `ReturnIfCoopClientCountComparison` with `event_return_type=1`.
+    """
+
+
+def SkipLinesIfPlayerGender(skip_lines: int, gender: Gender | int):
+    """
+    TODO
+    """
+
+
+def GotoIfPlayerGender(label: Label | int, gender: Gender | int):
+    """
+    TODO
+    """
+
+
+def ReturnIfPlayerGender(event_return_type: EventReturnType | int, gender: Gender | int):
+    """
+    TODO
+    """
+
+
+def EndIfPlayerGender(gender: Gender | int):
+    """
+    Calls `ReturnIfPlayerGender` with `event_return_type=0`.
+    """
+
+
+def RestartIfPlayerGender(gender: Gender | int):
+    """
+    Calls `ReturnIfPlayerGender` with `event_return_type=1`.
+    """
+
+
+def SkipLinesIfClientTypeCountComparison(
+    skip_lines: int,
+    client_type: ClientType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
+    """
+    Value from 0 to 4.
+    """
+
+
+def GotoIfClientTypeCountComparison(
+    label: Label | int,
+    client_type: ClientType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
+    """
+    Value from 0 to 4.
+    """
+
+
+def ReturnIfClientTypeCountComparison(
+    event_return_type: EventReturnType | int,
+    client_type: ClientType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
+    """
+    Value from 0 to 4.
+    """
+
+
+def EndIfClientTypeCountComparison(client_type: ClientType | int, comparison_type: ComparisonType | int, value: int):
+    """
+    Calls `ReturnIfClientTypeCountComparison` with `event_return_type=0`.
+    """
+
+
+def RestartIfClientTypeCountComparison(
+    client_type: ClientType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
+    """
+    Calls `ReturnIfClientTypeCountComparison` with `event_return_type=1`.
+    """
+
+
+def GotoIfFlagState(label: Label | int, state: bool, flag_type: FlagType | int, flag: Flag | int):
+    """
+    TODO
+    """
+
+
+def GotoIfThisEventFlagEnabled(label: Label | int):
+    """
+    Calls `GotoIfFlagState` with `state=True`, `flag_type=1`, `flag=0`.
+    """
+
+
+def GotoIfThisEventFlagDisabled(label: Label | int):
+    """
+    Calls `GotoIfFlagState` with `state=False`, `flag_type=1`, `flag=0`.
+    """
+
+
+def GotoIfThisEventSlotFlagEnabled(label: Label | int):
+    """
+    Calls `GotoIfFlagState` with `state=True`, `flag_type=2`, `flag=0`.
+    """
+
+
+def GotoIfThisEventSlotFlagDisabled(label: Label | int):
+    """
+    Calls `GotoIfFlagState` with `state=False`, `flag_type=2`, `flag=0`.
+    """
+
+
+def GotoIfFlagEnabled(label: Label | int, flag: Flag | int):
+    """
+    Calls `GotoIfFlagState` with `state=True`, `flag_type=0`.
+    """
+
+
+def GotoIfFlagDisabled(label: Label | int, flag: Flag | int):
+    """
+    Calls `GotoIfFlagState` with `state=False`, `flag_type=0`.
+    """
+
+
+def GotoIfFlagRangeState(
+    label: Label | int,
+    state: RangeState | int,
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+):
+    """
+    TODO
+    """
+
+
+def GotoIfFlagRangeAllEnabled(label: Label | int, flag_range: FlagRange | tuple | list):
+    """
+    Calls `GotoIfFlagRangeState` with `state=0`, `flag_type=0`.
+    """
+
+
+def GotoIfFlagRangeAllDisabled(label: Label | int, flag_range: FlagRange | tuple | list):
+    """
+    Calls `GotoIfFlagRangeState` with `state=1`, `flag_type=0`.
+    """
+
+
+def GotoIfFlagRangeAnyEnabled(label: Label | int, flag_range: FlagRange | tuple | list):
+    """
+    Calls `GotoIfFlagRangeState` with `state=2`, `flag_type=0`.
+    """
+
+
+def GotoIfFlagRangeAnyDisabled(label: Label | int, flag_range: FlagRange | tuple | list):
+    """
+    Calls `GotoIfFlagRangeState` with `state=3`, `flag_type=0`.
+    """
+
+
+def GotoIfMultiplayerState(label: Label | int, state: MultiplayerState | int):
+    """
+    TODO
+    """
+
+
+def GotoIfHost(label: Label | int):
+    """
+    Calls `GotoIfMultiplayerState` with `state=0`.
+    """
+
+
+def GotoIfClient(label: Label | int):
+    """
+    Calls `GotoIfMultiplayerState` with `state=1`.
+    """
+
+
+def GotoIfMultiplayer(label: Label | int):
+    """
+    Calls `GotoIfMultiplayerState` with `state=2`.
+    """
+
+
+def GotoIfConnectingMultiplayer(label: Label | int):
+    """
+    Calls `GotoIfMultiplayerState` with `state=3`.
+    """
+
+
+def GotoIfSingleplayer(label: Label | int):
+    """
+    Calls `GotoIfMultiplayerState` with `state=4`.
+    """
+
+
+def GotoIfMapPresenceState(label: Label | int, state: bool, game_map: Map | tuple | list):
+    """
+    TODO
+    """
+
+
+def GotoIfInsideMap(label: Label | int, game_map: Map | tuple | list):
+    """
+    Calls `GotoIfMapPresenceState` with `state=True`.
+    """
+
+
+def GotoIfOutsideMap(label: Label | int, game_map: Map | tuple | list):
+    """
+    Calls `GotoIfMapPresenceState` with `state=False`.
+    """
+
+
+def GotoIfCoopClientCountComparison(label: Label | int, comparison_type: ComparisonType | int, value: int):
+    """
+    TODO
     """
 
 
@@ -2417,6 +2846,72 @@ def RestartIfObjectNotDestroyed(obj: Object | int):
     """
 
 
+def GotoIfObjectDestructionState(label: Label | int, state: bool, obj: Object | int):
+    """
+    TODO
+    """
+
+
+def DefineLabel_0():
+    """
+    Define position of label 0 for Goto instructions.
+    """
+
+
+def DefineLabel_1():
+    """
+    Define position of label 1 for Goto instructions.
+    """
+
+
+def DefineLabel_2():
+    """
+    Define position of label 2 for Goto instructions.
+    """
+
+
+def DefineLabel_3():
+    """
+    Define position of label 3 for Goto instructions.
+    """
+
+
+def DefineLabel_4():
+    """
+    Define position of label 4 for Goto instructions.
+    """
+
+
+def DefineLabel_5():
+    """
+    Define position of label 5 for Goto instructions.
+    """
+
+
+def DefineLabel_6():
+    """
+    Define position of label 6 for Goto instructions.
+    """
+
+
+def DefineLabel_7():
+    """
+    Define position of label 7 for Goto instructions.
+    """
+
+
+def DefineLabel_8():
+    """
+    Define position of label 8 for Goto instructions.
+    """
+
+
+def DefineLabel_9():
+    """
+    Define position of label 9 for Goto instructions.
+    """
+
+
 # Instruction `RunEvent` is manually defined in the `compiler` module.
 
 
@@ -2459,12 +2954,6 @@ def IssuePrefetchRequest(request_id: int):
 def SaveRequest(dummy: int = 0):
     """
     Request the game to save player progress.
-    """
-
-
-def Unknown_2000_6(unk1: int):
-    """
-    TODO
     """
 
 
@@ -2517,27 +3006,37 @@ def PlayCutsceneAndRotatePlayer(
     """
 
 
-def PlayCutsceneAndRandomlyWarpPlayer_2002_6(
-    condition: int,
-    cutscene_flags: int,
-    first_region: Region | int,
-    last_region: Region | int,
+def PlayCutsceneAndMovePlayerAndSetTimePeriod(
+    cutscene: int,
+    cutscene_type: CutsceneFlags | int,
+    move_to_region: Region | int,
     game_map: Map | tuple | list,
+    time_period_id: int,
 ):
     """
-    TODO
+    Warp a particular player to a region and set the time period. I assume that this must be a map that is
+    already loaded, like in DS1, but possibly not.
+    
+    It's used only twice: to play the cutscene when you first reach Cathedral Ward (time period 1) and when you
+    examine Laurence's skull after defeating Vicar Amelia (time period 2). It's NOT used after you defeat Rom,
+    when the blood moon begins. The time period ID may in fact be unused.
     """
 
 
-def PlayCutsceneAndRandomlyWarpPlayer_2002_7(
-    condition: int,
-    cutscene_flags: int,
-    first_region: Region | int,
-    last_region: Region | int,
-    game_map: Map | tuple | list,
+def PlayCutsceneAndSetTimePeriod(
+    cutscene: int,
+    cutscene_type: CutsceneFlags | int,
+    player_id: int,
+    time_period_id: int,
 ):
     """
-    TODO
+    Probably used when you examine Laurence's skull, etc.
+    """
+
+
+def PlayCutsceneAndMovePlayer_Dummy(move_to_region: Region | int, game_map: Map | tuple | list):
+    """
+    Likely not used, doesn't even take a cutscene ID argument.
     """
 
 
@@ -2644,7 +3143,7 @@ def RestartEvent(event_id: int, slot: int = 0):
 
 def SetBossHealthBarState(character: Character | int, state: bool, name: NPCName | int = 0, slot: int = 0):
     """
-    Note: slot number can be 0-1 in DS1.
+    Note: slot number can be 0-2 in BB.
     """
 
 
@@ -2661,9 +3160,9 @@ def DisableBossHealthBar(character: Character | int, name: NPCName | int = 0, sl
     
     The character's health bar will disappear from the bottom of the screen.
     
-    WARNING: Disabling either boss health will disable both of them, and the name_id doesn't matter, so
-    only the first argument actually does anything. You're welcome to specify the name for clarity
-    anyway (and vanilla events will show it when decompiled).
+    WARNING: Disabling either boss health will disable both of them, and the name_id doesn't matter,
+    so only the first argument actually does anything. You're welcome to specify the name for
+    clarity anyway (and vanilla events will show it when decompiled).
     """
 
 
@@ -2711,6 +3210,15 @@ def WarpToMap(game_map: Map | tuple | list, player_start: PlayerStart | int = -1
     Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
     default, this warps to the 'default position' in the map (-1), which is the same point you would spawn at if
     the game lost track of your stable footing (e.g. in 'wrong warp' glitches).
+    """
+
+
+def HandleMinibossDefeat(miniboss_id: int):
+    """
+    Called instead of `KillBoss` for bosses that aren't the final boss of the area.
+    
+    Note that outside of Chalice Dungeons, this is ONLY used when you have defeated Gehrman and are about to
+    fight Moon Presence.
     """
 
 
@@ -2871,6 +3379,13 @@ def DisableSoapstoneMessage(message_id: int):
     """
 
 
+def Unknown_2003_27(arg1: int):
+    """
+    No information. Used exactly once, after the cutscene that played when Ludwig's first phase was defeated
+    with the Old Hunters DLC demo flag enabled. Unknown effect. Maybe just terminated the whole DLC demo.
+    """
+
+
 def AwardAchievement(achievement_id: int):
     """
     For obvious reasons, I *highly* discourage you from abusing this, except in the interest of maintaining the
@@ -2969,71 +3484,139 @@ def ArenaExitRequest():
     """
 
 
-def ActivateKillplaneForModel(game_map: Map | tuple | list, y_threshold: float, target_model_id: int):
+def EventValueOperation(
+    source_flag: Flag | int,
+    source_flag_bit_count: int,
+    operand: int,
+    target_flag: Flag | int,
+    target_flag_bit_count: int,
+    calculation_type: CalculationType | int,
+):
     """
-    Not used much. Activates a horizontal killplane that only affects a particular model ID.
-    """
-
-
-def CopyEventValue(source_flag: Flag | int, destination_flag: Flag | int, bit_count: int):
-    """
-    TODO
-    """
-
-
-def Unknown_2003_43(flag: Flag | int, bit_count: int, unk1: int, unk2: int):
-    """
-    TODO
+    Performs a binary operation on the source flag and operand value, and stores the result in the target flag.
     """
 
 
-def ForceAnimation_Unknown_2003_44(
-    entity: Character | Object | int,
-    animation: int,
-    loop: bool,
-    wait_for_completion: bool,
-    skip_transition: bool,
-    unk1: int,
+def StoreItemAmountSpecifiedByFlagValue(
+    item_type: ItemType | int,
+    item: BaseItemParam | int,
+    flag: Flag | int,
+    bit_count: int,
+):
+    """
+    Stores some amount of items read from a flag array.
+    """
+
+
+def GivePlayerItemAmountSpecifiedByFlagValue(
+    item_type: ItemType | int,
+    item: BaseItemParam | int,
+    flag: Flag | int,
+    bit_count: int,
+):
+    """
+    Gives player some amount of items read from a flag array. Probably used when taking items out of storage
+    (i.e. the reverse of the above instruction).
+    """
+
+
+def SetDirectionDisplayState(state: bool):
+    """
+    Not sure what this is.
+    """
+
+
+def EnableDirectionDisplayState():
+    """
+    Calls `SetDirectionDisplayState` with `state=True`.
+    """
+
+
+def DisableDirectionDisplayState():
+    """
+    Calls `SetDirectionDisplayState` with `state=False`.
+    """
+
+
+def SetMapHitGridCorrespondence(
+    collision: Collision | int,
+    level: int,
+    grid_coord_x: int,
+    grid_coord_y: int,
+    state: bool,
 ):
     """
     TODO
     """
 
 
-def ForceAnimation_Unknown_2003_46(
-    entity: Character | Object | int,
-    animation: int,
-    loop: bool,
-    wait_for_completion: bool,
-    skip_transition: bool,
-    unk1: int,
+def EnableMapHitGridCorrespondence(collision: Collision | int, level: int, grid_coord_x: int, grid_coord_y: int):
+    """
+    Calls `SetMapHitGridCorrespondence` with `state=True`.
+    """
+
+
+def DisableMapHitGridCorrespondence(collision: Collision | int, level: int, grid_coord_x: int, grid_coord_y: int):
+    """
+    Calls `SetMapHitGridCorrespondence` with `state=False`.
+    """
+
+
+def SetMapContentImageDisplayState(content_image_part_id: int, state: bool):
+    """
+    TODO
+    """
+
+
+def SetMapBoundariesDisplay(hierarchy: int, grid_coord_x: int, grid_coord_y: int, state: bool):
+    """
+    TODO
+    """
+
+
+def SetAreaWind(region: Region | int, state: bool, duration: float, wind_parameter_id: int):
+    """
+    TODO
+    """
+
+
+def WarpPlayerToRespawnPoint(respawn_point_id: int):
+    """
+    TODO
+    """
+
+
+def StartEnemySpawner(spawner_id: int):
+    """
+    TODO
+    """
+
+
+def SummonNPC(
+    sign_type: SingleplayerSummonSignType | int,
+    character: Character | int,
+    region: Region | int,
+    summon_flag: Flag | int,
+    dismissal_flag: Flag | int,
 ):
     """
     TODO
     """
 
 
-def Unknown_2003_47():
+def InitializeWarpObject(warp_object_id: int):
     """
     TODO
     """
 
 
-def Unknown_2003_48(
-    entity: Character | Object | int,
-    unk1: int,
-    model_point: int,
-    magic_id: int,
-    launch_angle_x: int,
-    launch_angle_y: int,
-    launch_angle_z: int,
-):
+def BossDefeat(boss_id: int, banner_type: BannerType | int):
     """
-    TODO
+    Handle boss defeat and display banner. 'boss_id' is probably similar to GameAreaParam from DS1.
     """
 
 
-def EraseNPCSummonSign(summoned_character: Character | int):
+def SendNPCSummonHome(character: Character | int):
     """
     TODO
     """
@@ -3111,9 +3694,13 @@ def CreateProjectileOwner(entity: Object | Region | Character | int):
     """
 
 
-def AddSpecialEffect(character: Character | int, special_effect_id: int):
+def AddSpecialEffect(character: Character | int, special_effect_id: int, affect_npc_part_hp: bool = True):
     """
-    'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
+    'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
+    nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
+    
+    The Bloodborne version has an additional argument that determines whether any HP changes caused by the
+    special effect should also affect NPC parts, which I set to `True` by default.
     """
 
 
@@ -3186,11 +3773,19 @@ def SetNest(character: Character | int, region: Region | int):
     """
 
 
-def RotateToFaceEntity(character: Character | int, target_entity: Object | Region | Character | int):
+def RotateToFaceEntity(
+    character: Character | int,
+    target_entity: Object | Region | Character | int,
+    animation: int = -1,
+    wait_for_completion: bool = False,
+):
     """
     Rotate a character to face a target map entity of any type.
     WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at
     least.)
+    
+    The Bloodborne version allows you to force an animation at the same time (post-rotation) and optionally wait
+    until that animation is completed. (I assume a value of -1 avoids it.)
     """
 
 
@@ -3510,33 +4105,62 @@ def EqualRecovery():
     """
 
 
-def FadeOutCharacter(character: Character | int, duration: float):
+def ChangeCharacterCloth(character: Character | int, bit_count: int, state_id: int):
     """
     TODO
     """
 
 
-def FadeInCharacter(character: Character | int, duration: float):
+def ChangePatrolBehavior(character: Character | int, patrol_information_id: int):
+    """
+    I don't know what a 'patrol_information_id' actually is.
+    """
+
+
+def SetDistanceLimitForConversationStateChanges(character: Character | int, distance: float):
     """
     TODO
     """
 
 
-def Unknown_2004_50():
+def Test_RequestRagdollRestraint(
+    recipient_character: Character | int,
+    recipient_target_rigid_index: int,
+    recipient_model_point: int,
+    attachment_character: Character | int,
+    attachment_target_rigid_index: int,
+    attachment_model_point: int,
+):
     """
     TODO
     """
 
 
-def Unknown_2004_51(unk1: int):
+def ChangePlayerCharacterInitParam(character_init_param: int):
+    """
+    I assume this affects the player.
+    """
+
+
+def AdaptSpecialEffectHealthChangeToNPCPart(character: Character | int):
     """
     TODO
     """
 
 
-def Unknown_2004_52():
+def SetGravityAndCollisionExcludingOwnWorld(character: Character | int, state: bool):
     """
-    TODO
+    I assume "own world" refers to the world you're hosting.
+    """
+
+
+def AddSpecialEffect_WithUnknownEffect(
+    character: Character | int,
+    special_effect: int,
+    affect_npc_parts_hp: bool = False,
+):
+    """
+    Unknown additional affect from the standard instruction, presumably.
     """
 
 
@@ -3698,6 +4322,25 @@ def EnableTreasureCollection(obj: Object | int):
     """
 
 
+def ActivateObjectWithSpecificCharacter(
+    obj: Object | int,
+    objact_id: int,
+    relative_index: int,
+    character: Character | int,
+):
+    """
+    The standard version of this 'grabs' the nearest character and uses them in the ObjAct (e.g. Patches pulling
+    the lever in the Catacombs in DS1). I presume this version lets you specify which character should be
+    involved in the ObjAct.
+    """
+
+
+def SetObjectDamageShieldState(obj: Object | int, state: bool):
+    """
+    Not sure how this differs from object invulnerability.
+    """
+
+
 def DeleteVFX(vfx_id: VFXEvent | int, erase_root_only: bool = True):
     """
     Delete visual VFX. If 'erase_root_only' is True (default), effect particles already emitted will live out
@@ -3805,30 +4448,6 @@ def DisplayArenaDissolutionMessage(text: EventText | int):
     """
 
 
-def ArenaSetNametag5(player_id: int):
-    """
-    TODO
-    """
-
-
-def ArenaSetNametag6(player_id: int):
-    """
-    TODO
-    """
-
-
-def DisplayConcatenatedMessage(message_id: int, pad_enabled: bool, concatenator_base_flag: Flag | int, bit_count: int):
-    """
-    TODO
-    """
-
-
-def Unknown_2007_13(unk1: int):
-    """
-    TODO
-    """
-
-
 def ChangeCamera(normal_camera_id: int, locked_camera_id: int):
     """
     TODO
@@ -3852,12 +4471,6 @@ def SetCameraVibration(
 def SetLockedCameraSlot(game_map: Map | tuple | list, camera_slot: int):
     """
     Switch between one of two camera slots associated with the player's current collision in the MSB.
-    """
-
-
-def Unknown_2008_04():
-    """
-    TODO
     """
 
 
@@ -3915,9 +4528,18 @@ def ActivateMultiplayerBuffs(character: Character | int):
     """
 
 
-def RegisterHealingFountain(flag: Flag | int, obj: Object | int):
+def RegisterLantern(
+    flag: Flag | int,
+    obj: Object | int,
+    reaction_distance: float,
+    reaction_angle: float,
+    initial_sword_number: int = 0,
+    sword_level: int = 0,
+):
     """
-    No idea what this is. Clearly unused. The Bloodborne version has more arguments.
+    Register a Lantern. Used instead of the bonfire registration.
+    
+    No idea what the 'sword' arguments do, but they default to zero and are always zero when this is called.
     """
 
 
@@ -3967,6 +4589,34 @@ def DisableSoundEvent(sound_id: int):
     """
 
 
+def SetBossMusicState(sound_id: int, state: bool):
+    """
+    Not sure how this differs from the standard map sound instructions, but my guess is that it fades the music
+    out rather than abruptly stopping it.
+    
+    TODO: Can probably be used to fade out ANY music. Not sure why it would only work for boss music.
+    TODO: Argument -1 is sometimes used. Fades out ALL music?
+    """
+
+
+def EnableBossMusic(sound_id: int):
+    """
+    Calls `SetBossMusicState` with `state=True`.
+    """
+
+
+def DisableBossMusic(sound_id: int):
+    """
+    Calls `SetBossMusicState` with `state=False`.
+    """
+
+
+def NotifyDoorEventSoundDampening(entity_id: int, state: DoorState | int):
+    """
+    No idea what this is or what entity the first argument is. Probably the door object.
+    """
+
+
 def SetMapCollisionState(collision: Collision | int, state: bool):
     """
     Enable or disable a map collision (HKX). The ID is specified in the MSB. Note that a Collision doesn't have
@@ -4005,6 +4655,12 @@ def DisableMapCollisionBackreadMask(collision: Collision | int):
     """
 
 
+def SetCollisionResState(collision: Collision | int, state: bool):
+    """
+    No idea what this is.
+    """
+
+
 def SetMapPieceState(map_piece_id: MapPiece | int, state: bool):
     """
     Set the visibility of individual map pieces (e.g. all the crystals in Seath's tower).
@@ -4023,27 +4679,31 @@ def DisableMapPiece(map_piece_id: MapPiece | int):
     """
 
 
-def NightfallSendToScript(int1: int, int2: int, float1: float, float2: float):
+def CreatePlayLog(name: StringOffset | int):
     """
-    Special instruction added by Horkrux for communication with `DarkSoulsScripting.dll`.
-    """
-
-
-def NightfallSetSpecialMovement(character: Character | int, movement_type: int, is_active: OnOffChange | int):
-    """
-    Special instruction added by Meowmaritus for initiating [redacted] in Nightfall.
+    TODO
     """
 
 
-def NightfallClearSpecialMovement():
+def StartPlayLogMeasurement(measurement_id: int, name: StringOffset | int, overwrite: bool):
     """
-    Special instruction added by Meowmaritus for stopping [redacted] in Nightfall.
+    TODO
     """
 
 
-def NightfallCameraResetRequest():
+def StopPlayLogMeasurement(measurement_id: int):
     """
-    Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.
+    TODO
+    """
+
+
+def PlayLogParameterOutput(
+    category: PlayerPlayLogParameter | int,
+    name: StringOffset | int,
+    output_multiplayer_state: PlayLogMultiplayerType | int,
+):
+    """
+    TODO
     """
 
 

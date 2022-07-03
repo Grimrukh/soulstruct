@@ -352,7 +352,7 @@ def IfPlayerHasArmor(condition: int, armor: ArmorTyping, including_storage: bool
 
 
 @_compile
-def IfPlayerHasRing(condition: int, ring: RingTyping, including_storage: bool = False):
+def IfPlayerHasRing(condition: int, ring: AccessoryTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, True, ring, ItemType.Ring, including_storage)
 
 
@@ -379,7 +379,7 @@ def IfPlayerDoesNotHaveArmor(condition: int, armor: ArmorTyping, including_stora
 
 
 @_compile
-def IfPlayerDoesNotHaveRing(condition: int, ring: RingTyping, including_storage: bool = False):
+def IfPlayerDoesNotHaveRing(condition: int, ring: AccessoryTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, False, ring, ItemType.Ring, including_storage)
 
 

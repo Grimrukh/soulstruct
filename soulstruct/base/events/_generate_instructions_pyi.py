@@ -82,11 +82,10 @@ def format_docstring(docstring: str):
     return "    " + "\n    ".join(out_docstring_lines)  # lines are already indented
 
 
-def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path | str):
-    from soulstruct.darksouls1ptde.events.emevd import compiler
+def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path | str, compiler_module):
     compiler_names = [
-        name for name in compiler.__all__
-        if name not in {"COMPILER", "compile_instruction", "get_compile_func"}
+        name for name in compiler_module.__all__
+        if name not in {"COMPILER", "compile_instruction", "get_compile_func", "BooleanTestCompiler"}
     ]
 
     pyi_docstring = (
@@ -163,23 +162,39 @@ def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path |
 
 
 def darksouls1r():
+    from soulstruct.darksouls1r.events.emevd import compiler
     from soulstruct.darksouls1r.events.emevd.emedf import EMEDF
     generate_instr_pyi(
         "darksouls1r",
         EMEDF,
         PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
+        compiler,
     )
 
 
 def darksouls1ptde():
+    from soulstruct.darksouls1ptde.events.emevd import compiler
     from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF
     generate_instr_pyi(
         "darksouls1ptde",
         EMEDF,
         PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
+        compiler,
+    )
+
+
+def bloodborne():
+    from soulstruct.bloodborne.events.emevd import compiler
+    from soulstruct.bloodborne.events.emevd.emedf import EMEDF
+    generate_instr_pyi(
+        "bloodborne",
+        EMEDF,
+        PACKAGE_PATH("bloodborne/events/instructions.pyi"),
+        compiler,
     )
 
 
 if __name__ == '__main__':
     darksouls1ptde()
     darksouls1r()
+    bloodborne()

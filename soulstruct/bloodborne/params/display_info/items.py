@@ -58,7 +58,7 @@ class DynamicGoodRef(DynamicFieldDisplayInfo):
 
 class DynamicItemLotRef(DynamicFieldDisplayInfo):
 
-    POSSIBLE_TYPES = {WeaponParam, ArmorParam, RingParam, GoodParam}
+    POSSIBLE_TYPES = {WeaponParam, ArmorParam, AccessoryParam, GoodParam}
 
     def __call__(self, entry) -> FieldDisplayInfo:
         item_type = entry[self.type_field_name]

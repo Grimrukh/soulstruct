@@ -9,17 +9,17 @@ from pathlib import Path
 from soulstruct.utilities.files import read_json, PACKAGE_PATH
 
 
-def _generate():
+def _generate(old_instr_module, emedf_json_path):
 
     def_re = re.compile(r"^def (.*)\((.*)\):", re.DOTALL)
     arg_re = re.compile(r"(\w[\w\d_]*)(: \w[\w\d_]*)?( *= *.*)?")
     doc_re = re.compile(r"^[ \"\n]*(.*?)[ \"\n]*$", re.DOTALL)  # strips all quotes and spaces
 
-    base_module = PACKAGE_PATH("base/events/emevd/instructions.py").read_text().split("\n")
-    game_module = Path("instructions.py").read_text().split("\n")
-    instr_module = base_module + game_module
+    # base_module = PACKAGE_PATH("base/events/emevd/instructions.py").read_text().split("\n")
+    # game_module = Path("instructions.py").read_text().split("\n")
+    instr_module = Path(old_instr_module).read_text().split("\n")
 
-    emedf = read_json("../../darksouls1ptde/events/emevd/ds1-common.emedf.json")
+    emedf = read_json(emedf_json_path)
 
     new_module = "EMEDF = {\n"
 
@@ -31,9 +31,14 @@ def _generate():
             category_index = f"[{category}, {index}]"
 
             # Search module for (category, index)
-            i_re = re.compile(rf"^ *instruction_info = \({category}, {index}\)")
+            i_re = re.compile(rf"^ *instruction_info = \({category}, {index}(, .*)?\)")
             for i, line in enumerate(instr_module):
-                if i_re.match(line):
+                if i_match := i_re.match(line):
+                    if i_match.group(1):
+                        # Internal defaults given.
+                        internal_defaults = literal_eval(i_match.group(1)[2:])  # cut ", " at start
+                    else:
+                        internal_defaults = None
                     # Go backwards to find function def start line
                     while not instr_module[i].startswith("def "):
                         i -= 1
@@ -75,10 +80,13 @@ def _generate():
 
                     arg_dicts = []
 
-                    for arg in args:
+                    for arg_i, arg in enumerate(args):
                         if not (arg_match := arg_re.match(arg)):
                             raise ValueError(f"    {category_index} -- COULD NOT PARSE ARG: {arg}")
                         arg_dict = {"name": arg_match.group(1)}  # type: dict[str, tp.Any]
+
+                        if internal_defaults and len(internal_defaults) > arg_i:
+                            arg_dict["internal_default"] = internal_defaults[arg_i]
                         if arg_match.group(2):
                             arg_dict["type"] = arg_match.group(2)[2:]  # skip ": "
                         else:
@@ -109,16 +117,22 @@ def _generate():
                             else:
                                 new_module += f"                \"type\": {arg_dict['type']},\n"
                             new_module += f"                \"default\": {repr(arg_dict['default'])},\n"
+                            if "internal_default" in arg_dict and arg_dict["internal_default"] != 0:
+                                new_module += f"{' ' * 16}\"internal_default\": {repr(arg_dict['internal_default'])},\n"
                             new_module += f"            }},\n"
                         new_module += f"        }},\n"
                     new_module += "    },\n"
                     break
             else:
-                new_module += f"    # TODO: Could not find {category_index}: {instruction_class['name']}\n"
+                # new_module += f"    # TODO: Could not find {category_index}: {instruction_class['name']}\n"
+                pass
 
     new_module += "}\n"
     print(new_module)
 
 
 if __name__ == '__main__':
-    _generate()
+    _generate(
+        PACKAGE_PATH("bloodborne/events/emevd/instructions.py"),
+        PACKAGE_PATH("bloodborne/events/emevd/bb-common.emedf.json"),
+    )

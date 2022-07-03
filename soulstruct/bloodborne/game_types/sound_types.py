@@ -1,16 +1,16 @@
 from enum import IntEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import CoordEntityTyping, SoundEvent
-from .emevd_types import EMEVDObject
 
 __all__ = ["Sound", "MusicSound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSound", "SoundEvent"]
 
 
-class Sound(EMEVDObject, IntEnum):
+class Sound(IntEnum):
     """Base class for a sound event that can be played transiently at a given anchor entity."""
 
     def play(self, anchor_entity: CoordEntityTyping):
-        return self.compile_instruction("PlaySoundEffect", anchor_entity, self.get_sound_enum(), self.value)
+        from ..events.emevd.compiler import compile_instruction
+        return compile_instruction("PlaySoundEffect", anchor_entity, self.get_sound_enum(), self.value)
 
     @classmethod
     def get_sound_enum(cls):
@@ -22,7 +22,8 @@ class MusicSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        return cls.get_enum("SoundType", "m_Music")
+        from ..events.emevd.enums import SoundType
+        return SoundType.m_Music
 
 
 class SFXSound(Sound):
@@ -30,7 +31,8 @@ class SFXSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        return cls.get_enum("SoundType", "s_SFX")
+        from ..events.emevd.enums import SoundType
+        return SoundType.s_SFX
 
 
 class ObjectSound(Sound):
@@ -38,7 +40,8 @@ class ObjectSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        return cls.get_enum("SoundType", "o_Object")
+        from ..events.emevd.enums import SoundType
+        return SoundType.o_Object
 
 
 class VoiceSound(Sound):
@@ -46,7 +49,8 @@ class VoiceSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        return cls.get_enum("SoundType", "v_Voice")
+        from ..events.emevd.enums import SoundType
+        return SoundType.v_Voice
 
 
 class CharacterMotionSound(Sound):
@@ -54,7 +58,8 @@ class CharacterMotionSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        return cls.get_enum("SoundType", "c_CharacterMotion")
+        from ..events.emevd.enums import SoundType
+        return SoundType.c_CharacterMotion
 
 
 # I haven't bothered implementing the other sound types (MenuEffect, Cutscene, Armor/FloorMaterialDependent, Ghost).

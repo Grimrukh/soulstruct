@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = [
     "ArgType",
     "add_common_emedf_info",
-    "HIDE",
+    "HIDE_NAME",
     "BOOL",
     "INT",
     "FLOAT",
@@ -142,7 +142,7 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
                 )
 
 
-HIDE = {
+HIDE_NAME = {
     "hide_name": True,
 }
 BOOL = {

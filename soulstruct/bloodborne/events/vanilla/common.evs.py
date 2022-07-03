@@ -1371,7 +1371,7 @@ def Event9220(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_
     IfFlagDisabled(1, arg_12_15)
     IfInsideMap(1, game_map=(arg_16_16, arg_17_17))
     IfCharacterHuman(2, PLAYER)
-    IfPlayerSoulLevelGreaterThanOrEqual(2, 30)
+    IfPlayerLevelGreaterThanOrEqual(2, 30)
     IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.GreaterThanOrEqual, value=1)
     IfCharacterHasSpecialEffect(3, PLAYER, 9025)
     IfConditionTrue(-1, input_condition=2)

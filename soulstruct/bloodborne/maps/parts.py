@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     "MSBPart",
     "MSBMapPiece",
@@ -450,7 +452,7 @@ class MSBPartSceneGParam(MSBPartGParam, abc.ABC):
         return self.PART_SCENE_GPARAM_STRUCT.pack(self)
 
 
-class MSBMapPiece(MSBPart, MSBPartGParam):
+class MSBMapPiece(MSBPartGParam):
     """No further modifications beyond inheritance of GParam."""
 
     FIELD_INFO = MSBPartGParam.FIELD_INFO | {
@@ -473,7 +475,7 @@ class MSBMapPiece(MSBPart, MSBPartGParam):
     ) + MSBPartGParam.FIELD_ORDER
 
 
-class MSBObject(MSBPart, MSBPartGParam):
+class MSBObject(MSBPartGParam):
     """Interactable object. Note that Bloodborne has six-digit model IDs for Objects."""
 
     ENTRY_SUBTYPE = MSBPartSubtype.Object
@@ -567,7 +569,7 @@ class MSBObject(MSBPart, MSBPartGParam):
     model_vfx_param_id_offsets: list[int, int, int, int]
 
 
-class MSBCharacter(MSBPart, MSBPartGParam):
+class MSBCharacter(MSBPartGParam):
     PART_TYPE_DATA_STRUCT = BinaryStruct(
         "8x",
         ("ai_id", "i"),
@@ -718,7 +720,7 @@ class MSBPlayerStart(MSBPart):
         super().__init__(source=source, **kwargs)
 
 
-class MSBCollision(MSBPart, MSBPartSceneGParam):
+class MSBCollision(MSBPartSceneGParam):
     PART_TYPE_DATA_STRUCT = BinaryStruct(
         ("hit_filter_id", "B"),
         ("sound_space_type", "B"),
@@ -1030,7 +1032,7 @@ class MSBUnusedCharacter(MSBCharacter):
     ENTRY_SUBTYPE = MSBPartSubtype.UnusedCharacter
 
 
-class MSBMapConnection(MSBPart, MSBPart):
+class MSBMapConnection(MSBPart):
     """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
     is itself in backread in the current map.
 

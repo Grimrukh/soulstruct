@@ -63,7 +63,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfMultiplayerState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "state": {
                 "type": MultiplayerState,
                 "default": None,
@@ -82,7 +82,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "If_Unknown_3_23",
         "docstring": "Unknown command. Second and third arguments appear to both always be zero.",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "unk1": INT,
             "unk2": INT,
         },
@@ -91,7 +91,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "If_Unknown_3_24",
         "docstring": "'If Multiplayer Count', apparently.",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "unk1": INT,
             "unk2": INT,
         },
@@ -100,7 +100,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "Unknown_4_15",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "unk1": INT,
         },
     },
@@ -108,7 +108,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "Unknown_4_16",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "unk1": INT,
             "unk2": INT,
             "unk3": INT,
@@ -118,14 +118,14 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfArenaMatchmaking",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
         },
     },
     (1003, 5): {  # more partials for extended `MultiplayerState` enum
         "alias": "SkipLinesIfMultiplayerState",
         "docstring": "TODO",
         "args": {
-            "line_count": INT | HIDE,
+            "line_count": INT | HIDE_NAME,
             "state": {
                 "type": MultiplayerState,
                 "default": None,
@@ -212,7 +212,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "PlayCutsceneAndRandomlyWarpPlayer_2002_6",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "cutscene_flags": INT,
             "first_region": NO_DEFAULT(RegionTyping),
             "last_region": NO_DEFAULT(RegionTyping),
@@ -231,7 +231,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "PlayCutsceneAndRandomlyWarpPlayer_2002_7",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE,
+            "condition": INT | HIDE_NAME,
             "cutscene_flags": INT,
             "first_region": NO_DEFAULT(RegionTyping),
             "last_region": NO_DEFAULT(RegionTyping),
