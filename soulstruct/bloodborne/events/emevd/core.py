@@ -8,6 +8,7 @@ from soulstruct.base.events.emevd import (
     EMEVD as _BaseEMEVD,
 )
 from soulstruct.containers.dcx import DCXType
+from soulstruct.games import BloodborneType
 from soulstruct.utilities.binary import BinaryStruct
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
 from .emedf import EMEDF
@@ -65,7 +66,7 @@ class Event(_BaseEvent):
     )
 
 
-class EMEVD(_BaseEMEVD):
+class EMEVD(BloodborneType, _BaseEMEVD):
 
     events: dict[int, Event]
 

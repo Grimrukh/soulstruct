@@ -445,10 +445,12 @@ class EVSParser(abc.ABC):
                 raise EVSValueError(node, f"Invalid keyword arguments in event call: {kwargs}")
         else:
             if len(args) != len(event_info.args):
+                print(name, args, kwargs)
+                print(event_info.args)
                 raise EVSValueError(
                     node,
-                    f"Number of positional arguments in event call (excluding the slot) "
-                    f"does not match the event function signature:\n"
+                    f"Number of positional arguments in event call (excluding the slot), {len(args)}, does not match "
+                    f"the event function signature:\n"
                     f"    {['slot'] + list(event_info.args.keys())}.",
                 )
 

@@ -44,7 +44,7 @@ class Instruction(abc.ABC):
 
         self.args_list = args_list if args_list else []
         self.event_args = []  # added after construction
-        self.evs_args_list = []  # e.g. `['arg_0_3']`
+        self.evs_args_list = []  # e.g. `[0, 1000800, 'arg_0_3', 5.0]`
         if isinstance(event_layers, (list, tuple)):
             self.event_layers = self.EventLayers(event_layers)
         elif isinstance(event_layers, self.EventLayers):
@@ -113,7 +113,7 @@ class Instruction(abc.ABC):
         return len(self.event_args)
 
     def get_called_event(self) -> tp.Optional[int]:
-        """Returns event value if instruction is `RunEvent` or `RunCommonEvent`. Returns `None` otherwise."""
+        """Returns called event ID if instruction is `RunEvent` or `RunCommonEvent`. Returns `None` otherwise."""
         if self.category == 2000:
             if self.index == 0:
                 return self.args_list[1]
@@ -165,22 +165,27 @@ class Instruction(abc.ABC):
             optional_args = self.evs_args_list[separator_index:]
         return required_args, optional_args
 
-    def process_event_args(self) -> dict[tuple[int, int], set[str]]:
+    def process_event_args(self) -> dict[tuple[int, int], tuple[set[str], set[str]]]:
         """Inserts arg replacements into the appropriate places in their instructions for readability.
 
-        The arg replacements are represented as "arg_i_j", where i and j specify the start and end (inclusive) of the
-        byte range read from the arguments passed to the `RunEvent` instruction.
+        By default, the arg replacements are represented as "arg_i_j", where i and j specify the start and end
+        (exclusive) of the byte range read from the arguments passed to the `RunEvent` instruction. The `Event` class
+        may replace these default names with more useful argument names, detected from the corresponding argument names
+        across the full set of instructions in the event that actually use them.
 
-        Returns a dictionary mapping start-stop bytes for reading the arg `(i, j)` to a set of format characters (e.g
-        `"i"`, "f"`) determined from the instruction's known arg format. The set values in this dictionary will
-        generally only contain one format string, unless the event argument is used for inconsistently-sized fields
-        within the same instruction.
+        Returns a dictionary mapping start-stop bytes for reading the arg `(i, j)` to two sets:
+            - a set of format characters (e.g, `"i"`, "f"`) determined from the instruction's known arg format. The set
+            values in this dictionary will generally only contain one format string, unless the event argument is used
+            for inconsistently-sized fields within the same instruction.
+            - a set of argument names taken from the instructions in `EMEDF`, which are used to generate a more useful
+            name for the event arg than the default 'arg_i_j'. Again, this will only contain multiple names if the same
+            event argument is used for multiple arguments within the same instruction, which would be very unusual.
         """
 
         permitted = [0, 0.0, -1, 1, 10]  # NOTE: Strings are permitted to overwrite anything.
         arg_offset_dict = get_byte_offset_from_struct(self.display_arg_types)
 
-        instruction_arg_types = {}
+        instruction_arg_types_names = {}
 
         self.evs_args_list = self.args_list.copy()
 
@@ -199,18 +204,25 @@ class Instruction(abc.ABC):
                 and struct.calcsize(argument_byte_type) < arg_r.bytes_to_write
             ):
                 raise ValueError(
-                    f"You cannot write {arg_r.bytes_to_write} bytes over an argument of type "
+                    f"You cannot write event argument with size {arg_r.bytes_to_write} bytes over an argument of type "
                     f"{argument_byte_type} (it's too small).\n"
                     f"    Instruction: {self.instruction_id}\n"
                     f"    Event arg: {arg_r}"
                 )
-            value_to_overwrite = self.args_list[argument_index]
-            arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
 
-            if value_to_overwrite not in permitted and value_to_overwrite != arg_name and argument_byte_type != "s":
+            value_to_overwrite = self.args_list[argument_index]
+            evs_arg_name = list(self.EMEDF[self.category, self.index]["args"])[argument_index]
+            if evs_arg_name == "slot":
+                # Not permitted as an event argument (conflicts with `RunEvent` slot).
+                raise ValueError(
+                    f"Internal error: `slot` is not a valid instruction argument name in {self.category}[{self.index}]."
+                )
+            default_arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
+
+            if value_to_overwrite not in permitted and argument_byte_type != "s":
                 _LOGGER.error(
-                    f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
-                    f"(position {argument_index}) in instruction {self.category}[{self.index}] "
+                    f"Event argument '{default_arg_name}' ({evs_arg_name}) is overwriting non-zero value "
+                    f"{value_to_overwrite} (position {argument_index}) in instruction {self.category}[{self.index}] "
                     f"with args {self.args_list} (types '{self.display_arg_types}')"
                 )
                 # raise ValueError(
@@ -218,12 +230,16 @@ class Instruction(abc.ABC):
                 #     f"(position {argument_index})."
                 # )
 
-            self.evs_args_list[argument_index] = arg_name
+            self.evs_args_list[argument_index] = default_arg_name  # will generally be replaced with an EVS name later
 
             arg_range = (arg_r.read_from_byte, arg_r.read_from_byte + arg_r.bytes_to_write - 1)
-            instruction_arg_types.setdefault(arg_range, set()).add(argument_byte_type)
 
-        return {arg_range: instruction_arg_types[arg_range] for arg_range in sorted(instruction_arg_types)}
+            if arg_range not in instruction_arg_types_names:
+                instruction_arg_types_names[arg_range] = (set(), set())
+            instruction_arg_types_names[arg_range][0].add(argument_byte_type)
+            instruction_arg_types_names[arg_range][1].add(evs_arg_name)
+
+        return {arg_range: instruction_arg_types_names[arg_range] for arg_range in sorted(instruction_arg_types_names)}
 
     def args_list_to_binary(self):
         if self.args_list:

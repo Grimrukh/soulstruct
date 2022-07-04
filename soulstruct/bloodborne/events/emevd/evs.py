@@ -2,11 +2,12 @@ __all__ = ["EVSParser"]
 
 from soulstruct.base.events.emevd.evs import EVSParser as _BaseEVSParser
 from soulstruct.bloodborne import game_types, events
+from soulstruct.games import BloodborneType
 from .compiler import COMPILER, compile_instruction, compile_game_object_test
 from .emedf import EMEDF_ALIASES
 
 
-class EVSParser(_BaseEVSParser):
+class EVSParser(BloodborneType, _BaseEVSParser):
 
     EMEDF_ALIASES = EMEDF_ALIASES
     EVENTS_MODULE = events

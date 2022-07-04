@@ -4,6 +4,7 @@ __all__ = ["EMEVD"]
 
 import abc
 import logging
+import re
 import struct
 import typing as tp
 from pathlib import Path
@@ -358,6 +359,40 @@ class EMEVD(GameFile, abc.ABC):
         imports += f"\nfrom soulstruct.{self.GAME.submodule_name}.events.instructions import *"
         evs_events = [event.to_evs(enums_manager) for event in self.events.values()]
 
+        # Add keyword argument names to `Event_{ID}(_, x, y, z)` calls and reformat call to multiple lines if necessary.
+        event_call_re = re.compile(r"( *)Event_(\d+)\(([\d ,]+)\) *\n")
+        for i, event_string in enumerate(evs_events):
+            new_event_string = event_string
+            for match in event_call_re.finditer(event_string):
+                if match.group(3) == "":
+                    continue  # no arguments
+                indent = match.group(1)
+                event_id = int(match.group(2))
+                try:
+                    event_arg_names = self.Event.EVENT_ARG_NAMES[event_id]
+                except KeyError:
+                    pass  # event ID not defined in this script
+                else:
+                    args = match.group(3).replace(" ", "").replace("\n", "").split(",")
+                    if len(args) != len(event_arg_names) + 1:
+                        _LOGGER.warning(f"Mismatch in defined/called event arg count for event {event_id}.")
+                        continue
+                    slot = args[0]
+                    kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(event_arg_names, args[1:])]
+                    one_line_event_call = f"{indent}Event_{event_id}({slot}, {', '.join(kwargs)})\n"
+                    if len(one_line_event_call) > 122:  # two newline characters don't count
+                        # Multiline call.
+                        arg_indent = " " * (len(indent) + 4)
+                        multi_line_kwargs = f",\n{arg_indent}".join([slot] + kwargs)
+                        multi_line_event_call = (
+                            f"{indent}Event_{event_id}(\n{arg_indent}{multi_line_kwargs}\n{indent})\n"
+                        )
+                        new_event_string = new_event_string.replace(match.group(0), multi_line_event_call)
+                    else:
+                        new_event_string = new_event_string.replace(match.group(0), one_line_event_call)
+            evs_events[i] = new_event_string
+
+        # Create imports.
         if enums_manager:
             if warn_missing_enums:
                 for entity_cls_name, missing_id in enums_manager.missing_enums:

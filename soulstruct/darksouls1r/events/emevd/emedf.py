@@ -18,6 +18,10 @@ EVENT_RETURN_TYPE = {
     "type": EventReturnType,
     "default": None,
 }
+CUTSCENE_FLAGS = {
+    "type": CutsceneFlags,
+    "default": 0,
+}
 AREA_ID = {
     "type": int,
     "default": None,
@@ -213,7 +217,7 @@ EMEDF = PTDE_EMEDF | {
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
             "first_region": NO_DEFAULT(RegionTyping),
             "last_region": NO_DEFAULT(RegionTyping),
             "area_id": AREA_ID,
@@ -232,7 +236,7 @@ EMEDF = PTDE_EMEDF | {
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
             "first_region": NO_DEFAULT(RegionTyping),
             "last_region": NO_DEFAULT(RegionTyping),
             "area_id": AREA_ID,

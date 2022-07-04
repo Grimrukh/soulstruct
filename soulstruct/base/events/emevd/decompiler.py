@@ -12,6 +12,7 @@ import struct
 import typing as tp
 
 from soulstruct.base.events.emevd.entity_enums_manager import EntityEnumsManager
+from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
 from soulstruct.base.game_types.map_types import *
 
 _LOGGER = logging.getLogger(__name__)
@@ -118,10 +119,20 @@ def _process_arg_types(
             enum = getattr(enums_module, arg_type.__name__)  # get real enum class from game-specific module
         except AttributeError:
             raise ValueError(f"Invalid enum type for decompiler (arg '{arg_name}'): {arg_type.__name__}")
-        try:
-            args[arg_name] = EnumValue(enum, arg_value)
-        except ValueError:
-            raise ValueError(f"Invalid {str(enum)} value: {arg_value}")
+        if issubclass(enum, BaseEMEVDFlags):
+            if arg_value == 0:
+                args[arg_name] = 0
+            else:
+                flag_enum_values = []
+                for flag_value in enum:
+                    if arg_value & flag_value:
+                        flag_enum_values.append(EnumValue(enum, arg_value))
+                args[arg_name] = Variable(" | ".join(f"{v}" for v in flag_enum_values))
+        else:
+            try:
+                args[arg_name] = EnumValue(enum, arg_value)
+            except ValueError:
+                raise ValueError(f"Invalid {str(enum)} value: {arg_value}")
 
 
 def assemble_arg_string(defaults: dict, *args, **kwargs):
@@ -272,6 +283,7 @@ def base_run_event(
 
     if event_id in enums_manager.all_event_ids:
         # Arg types are given in event definition and are not needed in this call.
+        # TODO: Support multiline.
         return f"Event_{event_id}({slot}, {', '.join(repr(e) for e in event_args)})"
 
     if not arg_types or not arg_types.strip("i"):

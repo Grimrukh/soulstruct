@@ -128,7 +128,7 @@ class ComparisonType(BaseEMEVDEnum):
     LessThanOrEqual = 5
 
 
-class CutsceneFlags(BaseEMEVDEnum):
+class CutsceneFlags(BaseEMEVDFlags):
     """Bit flags, stored in one byte."""
     Unskippable = 0b0000_0010  # 2
     FadeOut = 0b0000_1000  # 8

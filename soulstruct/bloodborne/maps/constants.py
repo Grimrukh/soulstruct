@@ -22,6 +22,7 @@ __all__ = [
     "ALL_MAPS_NO_CHALICE",
     "ALL_MSB_FILE_NAMES",
     "get_map",
+    "get_map_variable_name",
 ]
 
 from soulstruct.base.maps.utilities import get_map as _get_map_base
@@ -224,3 +225,10 @@ def get_map(source, block_id=None):
         # Reference to missing map m30_00_00_00 in Castle Cainhurst (m25_00_00_00).
         return UNKNOWN_MAP_30
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
+
+
+def get_map_variable_name(area_id: int, block_id: int):
+    try:
+        return get_map(area_id, block_id).variable_name
+    except (KeyError, ValueError):
+        return f"({area_id}, {block_id})"

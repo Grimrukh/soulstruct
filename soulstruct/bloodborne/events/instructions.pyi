@@ -121,6 +121,7 @@ __all__ = [
     "IfHealthLessThanOrEqual",
     "IfCharacterType",  # 4[3]
     "IfCharacterHuman",
+    "IfCharacterWhitePhantom",
     "IfCharacterHollow",
     "IfCharacterTargetingState",  # 4[4]
     "IfCharacterTargeting",
@@ -404,7 +405,7 @@ __all__ = [
     "RemoveItemFromPlayer",  # 2003[24]
     "RemoveWeaponFromPlayer",
     "RemoveArmorFromPlayer",
-    "RemoveRingFromPlayer",
+    "RemoveRuneFromPlayer",
     "RemoveGoodFromPlayer",
     "PlaceSummonSign",  # 2003[25]
     "SetSoapstoneMessageState",  # 2003[26]
@@ -1467,6 +1468,12 @@ def IfCharacterType(condition: int, character: Character | int, character_type: 
 def IfCharacterHuman(condition: int, character: Character | int):
     """
     Calls `IfCharacterType` with `character_type=0`.
+    """
+
+
+def IfCharacterWhitePhantom(condition: int, character: Character | int):
+    """
+    Calls `IfCharacterType` with `character_type=1`.
     """
 
 
@@ -2915,7 +2922,7 @@ def DefineLabel_9():
 # Instruction `RunEvent` is manually defined in the `compiler` module.
 
 
-def TerminateEvent(slot: int, event_id: int):
+def TerminateEvent(event_slot: int, event_id: int):
     """
     Delete an instance (slot) of an event script.
     """
@@ -2957,7 +2964,7 @@ def SaveRequest(dummy: int = 0):
     """
 
 
-def PlayCutsceneToAll(cutscene_id: int, cutscene_flags: int):
+def PlayCutsceneToAll(cutscene_id: int, cutscene_flags: CutsceneFlags | int):
     """
     TODO
     """
@@ -2965,7 +2972,7 @@ def PlayCutsceneToAll(cutscene_id: int, cutscene_flags: int):
 
 def PlayCutsceneAndMovePlayer(
     cutscene_id: int,
-    cutscene_flags: int,
+    cutscene_flags: CutsceneFlags | int,
     move_to_region: Region | int,
     game_map: Map | tuple | list,
 ):
@@ -2974,7 +2981,7 @@ def PlayCutsceneAndMovePlayer(
     """
 
 
-def PlayCutsceneToPlayer(cutscene_id: int, cutscene_flags: int, player_id: int):
+def PlayCutsceneToPlayer(cutscene_id: int, cutscene_flags: CutsceneFlags | int, player_id: int):
     """
     TODO
     """
@@ -2982,7 +2989,7 @@ def PlayCutsceneToPlayer(cutscene_id: int, cutscene_flags: int, player_id: int):
 
 def PlayCutsceneAndMoveSpecificPlayer(
     cutscene_id: int,
-    cutscene_flags: int,
+    cutscene_flags: CutsceneFlags | int,
     move_to_region: Region | int,
     game_map: Map | tuple | list,
     player_id: int,
@@ -2994,7 +3001,7 @@ def PlayCutsceneAndMoveSpecificPlayer(
 
 def PlayCutsceneAndRotatePlayer(
     cutscene_id: int,
-    cutscene_flags: int,
+    cutscene_flags: CutsceneFlags | int,
     relative_rotation_axis_x: float = 0.0,
     relative_rotation_axis_z: float = 0.0,
     rotation: float = 0.0,
@@ -3008,9 +3015,10 @@ def PlayCutsceneAndRotatePlayer(
 
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
-    cutscene_type: CutsceneFlags | int,
+    cutscene_flags: CutsceneFlags | int,
     move_to_region: Region | int,
     game_map: Map | tuple | list,
+    player_id: int,
     time_period_id: int,
 ):
     """
@@ -3025,7 +3033,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
 
 def PlayCutsceneAndSetTimePeriod(
     cutscene: int,
-    cutscene_type: CutsceneFlags | int,
+    cutscene_flags: CutsceneFlags | int,
     player_id: int,
     time_period_id: int,
 ):
@@ -3117,21 +3125,21 @@ def ShootProjectile(
     """
 
 
-def SetEventState(event_id: int, event_return_type: EventReturnType | int, slot: int = 0):
+def SetEventState(event_id: int, event_return_type: EventReturnType | int, event_slot: int = 0):
     """
     Stop or restart a particular slot (default of 0) of the given event ID. Note that you cannot restart events
     that have already ended.
     """
 
 
-def StopEvent(event_id: int, slot: int = 0):
+def StopEvent(event_id: int, event_slot: int = 0):
     """
     Calls `SetEventState` with `event_return_type=0`.
     Force a running event to stop.
     """
 
 
-def RestartEvent(event_id: int, slot: int = 0):
+def RestartEvent(event_id: int, event_slot: int = 0):
     """
     Calls `SetEventState` with `event_return_type=1`.
     
@@ -3141,20 +3149,20 @@ def RestartEvent(event_id: int, slot: int = 0):
     """
 
 
-def SetBossHealthBarState(character: Character | int, state: bool, name: NPCName | int = 0, slot: int = 0):
+def SetBossHealthBarState(character: Character | int, state: bool, name: NPCName | int = 0, bar_slot: int = 0):
     """
     Note: slot number can be 0-2 in BB.
     """
 
 
-def EnableBossHealthBar(character: Character | int, name: NPCName | int = 0, slot: int = 0):
+def EnableBossHealthBar(character: Character | int, name: NPCName | int = 0, bar_slot: int = 0):
     """
     Calls `SetBossHealthBarState` with `state=True`.
     The character's health bar will appear at the bottom of the screen, with a name.
     """
 
 
-def DisableBossHealthBar(character: Character | int, name: NPCName | int = 0, slot: int = 0):
+def DisableBossHealthBar(character: Character | int, name: NPCName | int = 0, bar_slot: int = 0):
     """
     Calls `SetBossHealthBarState` with `state=False`.
     
@@ -3264,7 +3272,7 @@ def ForceAnimation(
     """
 
 
-def SetMapDrawParamSlot(map_area_id: int, slot: int):
+def SetMapDrawParamSlot(map_area_id: int, draw_param_slot: int):
     """
     Each map area (NOT each map) can have two sets of DrawParams (0 and 1), and this can be used to switch
     between them. Originally only used for Dark Anor Londo.
@@ -3337,7 +3345,7 @@ def RemoveArmorFromPlayer(item: BaseItemParam | int, quantity: int = 0):
     """
 
 
-def RemoveRingFromPlayer(item: BaseItemParam | int, quantity: int = 0):
+def RemoveRuneFromPlayer(item: BaseItemParam | int, quantity: int = 0):
     """
     Calls `RemoveItemFromPlayer` with `item_type=2`.
     """
@@ -3682,7 +3690,7 @@ def DisableCharacter(character: Character | int):
     """
 
 
-def EzstateAIRequest(character: Character | int, command_id: int, slot: int):
+def EzstateAIRequest(character: Character | int, command_id: int, command_slot: int):
     """
     Slot number ranges from 0 to 3.
     """
@@ -3694,13 +3702,13 @@ def CreateProjectileOwner(entity: Object | Region | Character | int):
     """
 
 
-def AddSpecialEffect(character: Character | int, special_effect_id: int, affect_npc_part_hp: bool = True):
+def AddSpecialEffect(character: Character | int, special_effect_id: int, affect_npc_part_hp: bool = False):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
     nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
     
     The Bloodborne version has an additional argument that determines whether any HP changes caused by the
-    special effect should also affect NPC parts, which I set to `True` by default.
+    special effect should also affect NPC parts, which I set to `False` by default (more common).
     """
 
 
@@ -3813,7 +3821,7 @@ def ClearTargetList(character: Character | int):
     """
 
 
-def AICommand(character: Character | int, command_id: int, slot: int):
+def AICommand(character: Character | int, command_id: int, command_slot: int):
     """
     The given `command_id` can be accessed in AI Lua scripts with `ai:GetEventRequest(slot)`.
     """
@@ -3960,7 +3968,7 @@ def DisableCharacterCollision(character: Character | int):
 def AIEvent(
     character: Character | int,
     command_id: int,
-    slot: int,
+    command_slot: int,
     first_event_flag: Flag | int,
     last_event_flag: Flag | int,
 ):
@@ -4164,7 +4172,7 @@ def AddSpecialEffect_WithUnknownEffect(
     """
 
 
-def DestroyObject(obj: Object | int, slot: int = 1):
+def DestroyObject(obj: Object | int, request_slot: int = 1):
     """
     Technically 'requests' the object's destruction. No idea what the slot number does.
     """
@@ -4242,7 +4250,7 @@ def EndOfAnimation(obj: Object | int, animation_id: int):
     """
 
 
-def PostDestruction(obj: Object | int, slot: int = 1):
+def PostDestruction(obj: Object | int, request_slot: int = 1):
     """
     Sets the object to whatever appearance it would have after being destroyed. Again, not sure what 'slot'
     does, but it's literally *always* 1 in vanilla scripts (and from my testing, the instruction doesn't work
@@ -4368,7 +4376,7 @@ def CreateTemporaryVFX(
     """
 
 
-def CreateObjectVFX(vfx_id: int, obj: Object | int, model_point: int):
+def CreateObjectVFX(obj: Object | int, vfx_id: int, model_point: int):
     """
     TODO
     """
@@ -4551,7 +4559,7 @@ def NotifyBossBattleStart(dummy: int = 0):
 
 def SetBackgroundMusic(
     state: bool,
-    slot: int,
+    music_slot: int,
     entity: Object | Region | Character | int,
     sound_type: SoundType | int,
     sound_id: int,
@@ -4611,7 +4619,7 @@ def DisableBossMusic(sound_id: int):
     """
 
 
-def NotifyDoorEventSoundDampening(entity_id: int, state: DoorState | int):
+def NotifyDoorEventSoundDampening(obj: Object | int, state: DoorState | int):
     """
     No idea what this is or what entity the first argument is. Probably the door object.
     """

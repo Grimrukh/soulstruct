@@ -37,6 +37,10 @@ COMPARISON_TYPE = {
     "type": ComparisonType,
     "default": None,
 }
+CUTSCENE_FLAGS = {
+    "type": CutsceneFlags,
+    "default": None,
+}
 AREA_ID = {
     "type": int,
     "default": None,
@@ -734,6 +738,7 @@ EMEDF = {
         },
         "partials": {
             "IfCharacterHuman": dict(character_type=CharacterType.Human),
+            "IfCharacterWhitePhantom": dict(character_type=CharacterType.WhitePhantom),
             "IfCharacterHollow": dict(character_type=CharacterType.Hollow),
         },
     },
@@ -1541,7 +1546,7 @@ EMEDF = {
         "alias": "RunEvent",
         "docstring": "Initialize an instance (slot) of an event script with the given (optional) arguments.",
         "args": {
-            "slot": INT | HIDE_NAME,
+            "event_slot": INT | HIDE_NAME,
             "event_id": INT | HIDE_NAME,
             # Default argument is a single 32-bit zero, but more packed data can be passed.
             "args": {
@@ -1554,7 +1559,7 @@ EMEDF = {
         "alias": "TerminateEvent",
         "docstring": "Delete an instance (slot) of an event script.",
         "args": {
-            "slot": INT,
+            "event_slot": INT,
             "event_id": INT,
         },
     },
@@ -1599,7 +1604,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "cutscene_id": INT,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
         },
     },
     (2002, 2): {
@@ -1607,7 +1612,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "cutscene_id": INT,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
             "move_to_region": NO_DEFAULT(RegionTyping),
             "area_id": AREA_ID,
             "block_id": BLOCK_ID,
@@ -1624,7 +1629,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "cutscene_id": INT,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
             "player_id": INT,
         },
     },
@@ -1633,7 +1638,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "cutscene_id": INT,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
             "move_to_region": NO_DEFAULT(RegionTyping),
             "area_id": AREA_ID,
             "block_id": BLOCK_ID,
@@ -1652,7 +1657,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "cutscene_id": INT,
-            "cutscene_flags": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
             "relative_rotation_axis_x": FLOAT | {"default": 0.0},
             "relative_rotation_axis_z": FLOAT | {"default": 0.0},
             "rotation": FLOAT | {"default": 0.0},
@@ -1722,7 +1727,7 @@ EMEDF = {
         """,
         "args": {
             "owner_entity": NO_DEFAULT(CoordEntityTyping),
-            "projectile_id": INT,
+            "projectile_id": INT,  # TODO: BulletParam?
             "model_point": INT,
             "behavior_id": INT,
             "launch_angle_x": INT,
@@ -1740,7 +1745,7 @@ EMEDF = {
         """,
         "args": {
             "event_id": INT,
-            "slot": INT | {"default": 0},
+            "event_slot": INT | {"default": 0},
             "event_return_type": EVENT_RETURN_TYPE,
         },
         "partials": {
@@ -1760,7 +1765,7 @@ EMEDF = {
         "evs_args": {
             "event_id": {},
             "event_return_type": {},
-            "slot": {},
+            "event_slot": {},
         }
     },
     # TODO: Could not find [2003, 9]: Invert Event Flag
@@ -1773,7 +1778,7 @@ EMEDF = {
         "args": {
             "state": BOOL | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "slot": INT | {"default": 0},
+            "bar_slot": INT | {"default": 0},
             "name": {
                 "type": NPCNameTyping,
                 "default": 0,  # mainly for `Disable` partial, in which name does not matter
@@ -1799,7 +1804,7 @@ EMEDF = {
             "character": {},
             "state": {},
             "name": {},
-            "slot": {},
+            "bar_slot": {},
         },
     },
     (2003, 12): {
@@ -1921,7 +1926,7 @@ EMEDF = {
         """,
         "args": {
             "map_area_id": INT,
-            "slot": INT,
+            "draw_param_slot": INT,
         },
     },
     # TODO: Could not find [2003, 20]: Set Temporary Player Respawn Point
@@ -2227,7 +2232,7 @@ EMEDF = {
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "command_id": INT,
-            "slot": INT,
+            "command_slot": INT,
         },
     },
     (2004, 7): {
@@ -2384,7 +2389,7 @@ EMEDF = {
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "command_id": INT,
-            "slot": INT,
+            "command_slot": INT,
         },
     },
     (2004, 18): {
@@ -2596,7 +2601,7 @@ EMEDF = {
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "command_id": INT,
-            "slot": INT,
+            "command_slot": INT,
             "first_event_flag": FLAG,
             "last_event_flag": FLAG,
         },
@@ -2807,7 +2812,7 @@ EMEDF = {
         """,
         "args": {
             "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
-            "slot": {
+            "request_slot": {
                 "type": int,
                 "default": 1,
             },
@@ -2906,7 +2911,7 @@ EMEDF = {
         """,
         "args": {
             "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
-            "slot": {
+            "request_slot": {
                 "type": int,
                 "default": 1,
             },
@@ -3025,7 +3030,7 @@ EMEDF = {
             the rest of their lifetimes (e.g. making a fog gate disappear organically). The ID is given in the MSB.
         """,
         "args": {
-            "vfx_id": NO_DEFAULT(VFXEventTyping),
+            "vfx_id": NO_DEFAULT(VFXEventTyping) | HIDE_NAME,
             "erase_root_only": {
                 "type": bool,
                 "default": True,
@@ -3038,7 +3043,7 @@ EMEDF = {
             Create visual VFX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints).
         """,
         "args": {
-            "vfx_id": NO_DEFAULT(VFXEventTyping),
+            "vfx_id": NO_DEFAULT(VFXEventTyping) | HIDE_NAME,
         },
     },
     (2006, 3): {
@@ -3064,8 +3069,8 @@ EMEDF = {
         "alias": "CreateObjectVFX",
         "docstring": "TODO",
         "args": {
+            "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
             "vfx_id": INT,
-            "obj": NO_DEFAULT(ObjectTyping),
             "model_point": INT,
         },
     },
@@ -3335,7 +3340,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "state": BOOL | HIDE_NAME,
-            "slot": INT,
+            "music_slot": INT,
             "entity": NO_DEFAULT(CoordEntityTyping),
             "sound_type": {
                 "type": SoundType,

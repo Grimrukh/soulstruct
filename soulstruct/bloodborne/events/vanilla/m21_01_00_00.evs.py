@@ -12,128 +12,148 @@ strings:
 110: 
 """
 from soulstruct.bloodborne.events import *
+from soulstruct.bloodborne.events.instructions import *
 
 
+@NeverRestart(0)
 def Constructor():
-    """ 0: Event 0 """
-    RunEvent(12110200, slot=0, args=(2111000, 12110000))
-    RunEvent(12110990)
-    RunEvent(12110400)
-    RunEvent(12110100)
-    RunEvent(12110300)
-    RunEvent(12110301)
-    RunEvent(12110302)
+    """Event 0"""
+    Event_12110200(0, obj=2111000, obj_act_id=12110000)
+    Event_12110990()
+    Event_12110400()
+    Event_12110100()
+    Event_12110300()
+    Event_12110301()
+    Event_12110302()
     RunEvent(7000, slot=52, args=(2110950, 2111950, 999, 12117800))
     RunEvent(7100, slot=52, args=(72110200, 2111950))
     RunEvent(7200, slot=52, args=(72110100, 2111950, 2102952))
     RunEvent(7300, slot=52, args=(72102110, 2111950))
 
 
+@NeverRestart(50)
 def Preconstructor():
-    """ 50: Event 50 """
+    """Event 50"""
     DisableHealthBar(2110700)
     DisableGravity(2110700)
     DisableCharacterCollision(2110700)
 
 
-def Event12110100():
-    """ 12110100: Event 12110100 """
+@NeverRestart(12110100)
+def Event_12110100():
+    """Event 12110100"""
     DisableNetworkSync()
     IfActionButtonParam(0, action_button_id=2110000, entity=2110700)
-    DisplayDialog(
-        10010190,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    DisplayDialog(text=10010190, number_buttons=NumberButtons.OneButton)
     Restart()
 
 
-def Event12110200(_, arg_0_3: int, arg_4_7: int):
-    """ 12110200: Event 12110200 """
+@NeverRestart(12110200)
+def Event_12110200(_, obj: int, obj_act_id: int):
+    """Event 12110200"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    EndOfAnimation(arg_0_3, 0)
-    DisableObjectActivation(arg_0_3, obj_act_id=-1)
-    EnableTreasure(arg_0_3)
+    EndOfAnimation(obj=obj, animation_id=0)
+    DisableObjectActivation(obj, obj_act_id=-1)
+    EnableTreasure(obj=obj)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    IfObjectActivated(0, obj_act_id=arg_4_7)
-    WaitFrames(10)
-    EnableTreasure(arg_0_3)
+    IfObjectActivated(0, obj_act_id=obj_act_id)
+    WaitFrames(frames=10)
+    EnableTreasure(obj=obj)
 
 
-def Event12110300():
-    """ 12110300: Event 12110300 """
+@NeverRestart(12110300)
+def Event_12110300():
+    """Event 12110300"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    CreateObjectVFX(900201, obj=2111100, model_point=200)
+    CreateObjectVFX(2111100, vfx_id=200, model_point=900201)
     IfActionButtonParam(0, action_button_id=2110010, entity=2111100)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110800, host_only=False)
-    DeleteObjectVFX(2111100, erase_root=True)
+    DeleteObjectVFX(2111100)
 
 
-def Event12110301():
-    """ 12110301: Event 12110301 """
+@NeverRestart(12110301)
+def Event_12110301():
+    """Event 12110301"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    CreateObjectVFX(900201, obj=2111101, model_point=200)
+    CreateObjectVFX(2111101, vfx_id=200, model_point=900201)
     IfActionButtonParam(0, action_button_id=2110011, entity=2111101)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110810, host_only=False)
-    DeleteObjectVFX(2111101, erase_root=True)
+    DeleteObjectVFX(2111101)
 
 
-def Event12110302():
-    """ 12110302: Event 12110302 """
+@NeverRestart(12110302)
+def Event_12110302():
+    """Event 12110302"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    CreateObjectVFX(900201, obj=2111102, model_point=200)
+    CreateObjectVFX(2111102, vfx_id=200, model_point=900201)
     IfActionButtonParam(0, action_button_id=2110012, entity=2111102)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110000, host_only=False)
-    DeleteObjectVFX(2111102, erase_root=True)
+    DeleteObjectVFX(2111102)
 
 
-def Event12110400():
-    """ 12110400: Event 12110400 """
-    GotoIfFlagEnabled(Label.L0, 9802)
-    GotoIfFlagEnabled(Label.L1, 9801)
-    GotoIfFlagEnabled(Label.L2, 9800)
+@NeverRestart(12110400)
+def Event_12110400():
+    """Event 12110400"""
+    GotoIfFlagEnabled(Label.L0, flag=9802)
+    GotoIfFlagEnabled(Label.L1, flag=9801)
+    GotoIfFlagEnabled(Label.L2, flag=9800)
 
     # --- 2 --- #
     DefineLabel(2)
-    EnableMapPiece(2114002)
-    DisableMapPiece(2114000)
-    DisableMapPiece(2114001)
+    EnableMapPiece(map_piece_id=2114002)
+    DisableMapPiece(map_piece_id=2114000)
+    DisableMapPiece(map_piece_id=2114001)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    DisableMapPiece(2114002)
-    EnableMapPiece(2114000)
-    DisableMapPiece(2114001)
+    DisableMapPiece(map_piece_id=2114002)
+    EnableMapPiece(map_piece_id=2114000)
+    DisableMapPiece(map_piece_id=2114001)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    DisableMapPiece(2114002)
-    DisableMapPiece(2114000)
-    EnableMapPiece(2114001)
+    DisableMapPiece(map_piece_id=2114002)
+    DisableMapPiece(map_piece_id=2114000)
+    EnableMapPiece(map_piece_id=2114001)
     End()
 
 
-def Event12110990():
-    """ 12110990: Event 12110990 """
+@NeverRestart(12110990)
+def Event_12110990():
+    """Event 12110990"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
     IfStandingOnCollision(0, 2113500)
-    PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 0, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 0, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 0, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.Armor, 0, PlayLogMultiplayerType.HostOnly)
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.PrimaryParameters,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.TemporaryParameters,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.Weapon,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.Armor,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
     RunEvent(9350, slot=0, args=(2,))
-    AwardAchievement(12)
+    AwardAchievement(achievement_id=12)

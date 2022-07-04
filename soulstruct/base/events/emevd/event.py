@@ -89,8 +89,9 @@ class Event(abc.ABC):
     HEADER_STRUCT: BinaryStruct = None
     Instruction: tp.Type[Instruction] = None
     EventArg: tp.Type[EventArg] = None
-    EVENT_ARG_TYPES = {}  # updated on load and before each write
-    WRAP_LIMIT = 121  # PyCharm default line length
+    EVENT_ARG_TYPES = {}  # type: dict[int, str]  # updated on load and before each write
+    EVENT_ARG_NAMES = {}  # type: dict[int, list[str]]  # updated on load and before each write
+    WRAP_LIMIT = 120  # PyCharm default line length
 
     DEFAULT_ARG_SIZE_TYPE = {1: "B", 2: "H", 4: "I"}
 
@@ -194,30 +195,57 @@ class Event(abc.ABC):
             event_string += "\n" + "\n".join(instruction.to_numeric())
         return event_string
 
-    def process_all_event_args(self) -> dict[tuple[int, int], set[str]]:
+    def process_all_event_args(self) -> dict[tuple[int, int], tuple[set[str], set[str]]]:
         """Process event args for all instructions and maintain a dictionary mapping `(read_start, read_stop)` event
-        arg tuples to sets of detected format strings (should generally only contain one value)."""
-        event_arg_types = {}
+        arg tuples to a pair of sets `({fmts}, {evs_names})` (each should generally only contain one value)."""
+        event_arg_types_names = {}
         for instruction in self.instructions:
             try:
-                instruction_arg_types = instruction.process_event_args()
+                instruction_arg_types_names = instruction.process_event_args()
             except ValueError as ex:
                 raise ValueError(
                     f"Error occurred while applying event args in instruction "
                     f"{self.instructions.index(instruction)}, {instruction.category}[{instruction.index}], of "
                     f"event {self.event_id}.\n    Error: {ex}"
                 )
-            for arg_range, arg_types in instruction_arg_types.items():
-                arg_range_types = event_arg_types.setdefault(arg_range, set())
-                arg_range_types |= arg_types
-        return {arg_range: event_arg_types[arg_range] for arg_range in sorted(event_arg_types)}
+            for arg_range, (arg_types, arg_names) in instruction_arg_types_names.items():
+                arg_range_types_names = event_arg_types_names.setdefault(arg_range, [set(), set()])
+                arg_range_types_names[0] |= arg_types
+                arg_range_types_names[1] |= arg_names
+        return {arg_range: event_arg_types_names[arg_range] for arg_range in sorted(event_arg_types_names)}
 
     def update_evs_function_args(self):
-        event_arg_types = self.process_all_event_args()
+        event_arg_types_names = self.process_all_event_args()
         all_arg_names = []
         all_arg_types = []
-        for (i, j), arg_types in event_arg_types.items():
-            arg_name = f"arg_{i}_{j}"
+        for (i, j), (arg_types, arg_names) in event_arg_types_names.items():
+
+            # Remove non-preferred arg names.
+            for vague_arg_name in (
+                "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
+                "destination", "flag", "left", "right",
+            ):
+                if len(arg_names) >= 2 and vague_arg_name in arg_names:
+                    arg_names.remove(vague_arg_name)
+            try_arg_name = "__".join(sorted(arg_names))  # conjoin remaining arg names with "__"
+
+            # Add suffix to distinguish duplicate event arg names.
+            if try_arg_name in all_arg_names:
+                arg_duplicate_index = 1
+                arg_name = try_arg_name + f"_{arg_duplicate_index}"
+                while arg_name in all_arg_names:
+                    arg_duplicate_index += 1
+                    arg_name = try_arg_name + f"_{arg_duplicate_index}"
+            else:
+                arg_name = try_arg_name
+
+            default_arg_name = f"arg_{i}_{j}"
+            for instruction in self.instructions:
+                # Replace default arg name with combined EVS arg name.
+                for arg_index, old_arg_name in enumerate(instruction.evs_args_list):
+                    if old_arg_name == default_arg_name:
+                        instruction.evs_args_list[arg_index] = arg_name
+
             if len(arg_types) > 1:
                 # Multiple detected types. Acceptable (using default integer type) only if they all the same size.
                 sizes = {struct.calcsize(fmt) for fmt in arg_types}
@@ -247,6 +275,7 @@ class Event(abc.ABC):
 
         # Record event function args in class attribute.
         self.EVENT_ARG_TYPES[self.event_id] = "".join(all_arg_types)
+        self.EVENT_ARG_NAMES[self.event_id] = all_arg_names
 
         return ", ".join(evs_function_arg_strings)
 
@@ -256,7 +285,7 @@ class Event(abc.ABC):
         function_docstring = f'"""Event {self.event_id}"""'
         function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
         restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
-        function_def = self._indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
+        function_def = self.indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def
         for i, instr in enumerate(self.instructions):
@@ -366,7 +395,7 @@ class Event(abc.ABC):
         return f"\n{name_indent}{instr_name}(\n{arg_lines}\n{name_indent})"
 
     @staticmethod
-    def _indent_and_wrap_function_def(function_name: str, function_args, wrap_limit=121):
+    def indent_and_wrap_function_def(function_name: str, function_args, wrap_limit=120):
         one_line_def = f"def {function_name}({function_args}):"
         if len(one_line_def) <= wrap_limit:
             return one_line_def

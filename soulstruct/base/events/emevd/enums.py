@@ -8,6 +8,7 @@ __all__ = [
     "uchar",
     "PLAYER",
     "BaseEMEVDEnum",
+    "BaseEMEVDFlags",
 ]
 
 from enum import IntEnum
@@ -34,6 +35,10 @@ class BaseEMEVDEnum(IntEnum):
     def get_event_arg_fmt(cls):
         # All EMEVD enums that I'm aware of are `uchar`.
         return "B"
+
+
+class BaseEMEVDFlags(BaseEMEVDEnum):
+    """Base class for EMEVD enums that represent bit flags."""
 
 
 # Basic obvious booleans are omitted:
